@@ -86,6 +86,11 @@ than version 1--that is, it will refuse to install under Apache 2 (for now).
 
 Added Russian localization. [Sergey Samoilenko].
 
+=item *
+
+Fixed double listing of the "All" group in the group membership double list
+manager. [Christian Hauser]
+
 =back
 
 =head2 Bug Fixes
