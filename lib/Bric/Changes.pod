@@ -73,8 +73,14 @@ C<undef>. Spotted by Clare Parkinson. [Scott]
 
 =item *
 
-Now requiring Exception::Class 1.20, as its Classes method moved in a
-backwards-incompatible way. [David]
+Fix in the SOAP server code to adjust for changes in Exception::Class 1.20.
+[David]
+
+=item *
+
+Stories and Media created or updated via the SOAP interface will now associate
+contributors of the appropriate type, instead of "All Contributors". [Scott &
+David]
 
 =back
 
@@ -235,8 +241,9 @@ The category browser works again. [David]
 
 =item *
 
-Fixed the "event" table to use the correct sequence the id column's default
-value (although the default is never used, this is a good precaution). [David]
+Fixed the "event" table to use the correct sequence the for they id column's
+default value (although the default is never used, this is a good precaution).
+[David]
 
 =item *
 

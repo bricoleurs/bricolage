@@ -783,8 +783,14 @@ sub load_asset {
 
             # add contributors, if any
             if ($mdata->{contributors} and $mdata->{contributors}{contributor}) {
+                my %grps;
                 foreach my $c (@{$mdata->{contributors}{contributor}}) {
-                    my %init = (fname => $c->{fname},
+                    my $grp = $grps{$c->{type}} ||=
+                      Bric::Util::Grp::Person->lookup({ name => $c->{type} })
+                      or throw_ap __PACKAGE__ . "::create: No contributor type found "
+                      . "matching (type => $c->{type})";
+                    my %init = (grp   => $grp,
+                                fname => $c->{fname},
                                 mname => $c->{mname},
                                 lname => $c->{lname});
                     my ($contrib) =
