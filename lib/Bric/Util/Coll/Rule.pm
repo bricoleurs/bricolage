@@ -7,15 +7,15 @@ Bric::Util::Coll::Rule - Interface for managing collections of alert type rules.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.6.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.6.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 05:55:08 $
+$Date: 2003-07-07 13:58:09 $
 
 =head1 SYNOPSIS
 
@@ -171,7 +171,7 @@ B<Notes:> NONE.
 sub save {
     my ($self, $atid) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
-    foreach my $r (%$del_objs) {
+    foreach my $r (values %$del_objs) {
 	$r->remove;
 	$r->save;
     }
