@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.16 $
+$Revision: 1.13.2.17 $
 
 =head1 DATE
 
-$Date: 2001-10-05 13:56:56 $
+$Date: 2001-10-05 13:59:09 $
 
 =head1 DESCRIPTION
 
@@ -401,6 +401,12 @@ are under development -- that is, without deploying them.
 
 Add support for individual user preferences that can override (some) global
 preferences. (Also add group-level prefs?)
+
+=item *
+
+Allow multiple files to be associated with a single media asseet (e.g., when
+there's an image, a thumbnail, a high-res version, etc., all essentially for the
+same asset).
 
 =back
 
