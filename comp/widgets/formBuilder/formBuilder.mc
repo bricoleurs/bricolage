@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-06 01:30:36 $
+$Date: 2002-07-19 09:42:30 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -324,8 +324,8 @@ date_table     += '</td></tr></table></form>&nbsp;'
 %	 number  => $num,
 %        height  => 230);
 
-<form name='fb_switch'>
 <table border=0 cellpadding=0 cellspacing=0 width=570 height=230>
+<form name="fb_switch">
 <tr>
   <td width=20><img src="/media/images/spacer.gif" width=20 height=1 /></td>
   <td width=150 valign=top>
