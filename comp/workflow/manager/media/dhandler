@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-04-23 23:45:43 $
+$Date: 2002-06-26 19:12:50 $
 
 =head1 SYNOPSIS
 
@@ -39,7 +39,7 @@ my $profile = sub {
     } else {
 	$ret = [['View', "/workflow/profile/media/$id?return=search", '']];
     }
-    push @$ret, [ 'Log', "/admin/events/story/$id", ''];
+    push @$ret, [ 'Log', "/workflow/events/media/$id", ''];
     return $ret;
 };
 
