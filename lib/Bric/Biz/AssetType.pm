@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.55 $ )[-1];
+our $VERSION = (qw$Revision: 1.56 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-30 19:06:06 $
+$Date: 2003-12-12 05:10:27 $
 
 =head1 SYNOPSIS
 
@@ -626,6 +626,12 @@ B<Notes:> NONE.
 
 =cut
 
+my $tmpl_archs =  [[BURNER_MASON, 'Mason']];
+push @$tmpl_archs,  [BURNER_TEMPLATE, 'HTML::Template']
+  if $Bric::Util::Burner::Template::VERSION;
+push @$tmpl_archs,  [BURNER_TT,'Template::Toolkit']
+  if $Bric::Util::Burner::TemplateToolkit::VERSION;
+
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
 
@@ -691,10 +697,7 @@ sub my_meths {
 			      req      => 1,
 			      type     => 'short',
 			      props    => { type => 'select',
-					    vals => [[BURNER_MASON, 'Mason'],
-						     [BURNER_TEMPLATE, 'HTML::Template'],
-						     [BURNER_TT,'Template::Toolkit'],
-						     ],
+					    vals => $tmpl_archs,,
 					  }
 			     },
 	      type_name      => {

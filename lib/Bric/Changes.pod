@@ -77,6 +77,11 @@ A field that is both required and repeatable now allows instances of the field
 after the first instance to be deleted. Setting a field to required
 essentially means that one must always be present in the UI. [David]
 
+=item *
+
+HTML::Template and Template Toolkit are now optional. If they're not installed
+on your system, they won't be loaded by Bricolage. [David]
+
 =back
 
 =head2 Bug Fixes

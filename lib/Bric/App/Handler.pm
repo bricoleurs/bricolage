@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$Revision: 1.54 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.53 $ )[-1];
+our $VERSION = (qw$Revision: 1.54 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-05 21:23:55 $
+$Date: 2003-12-12 05:10:27 $
 
 =head1 SYNOPSIS
 
@@ -161,8 +161,8 @@ use MasonX::Interp::WithCallbacks;
     use Bric::Util::AlertType;
     use Bric::Util::Burner;
     use Bric::Util::Burner::Mason;
-    use Bric::Util::Burner::Template;
-    use Bric::Util::Burner::TemplateToolkit;
+    require Bric::Util::Burner::Template if eval { require HTML::Template };
+    require Bric::Util::Burner::TemplateToolkit if eval { require Template };
     use Bric::Util::Class;
     use Bric::Util::Fault qw(:all);
     use Bric::Util::Language;
