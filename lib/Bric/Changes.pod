@@ -80,6 +80,11 @@ become out of order, the error message will be more appropriate ("Warning!
 State inconsistent" instead of "Can't call method 'get_name' on an undefined
 value"). Reported by Curtis Poe. [David]
 
+=item *
+
+Updated mail list information in L<Bric::Hacker|Bric::Hacker>. Reported by
+Marshall Roch. [David]
+
 =back
 
 =head2 Bug Fixes
