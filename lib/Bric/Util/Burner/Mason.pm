@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.56 $
+$Revision: 1.57 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.56 $ )[-1];
+our $VERSION = (qw$Revision: 1.57 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-25 05:30:50 $
+$Date: 2004-02-27 21:49:36 $
 
 =head1 SYNOPSIS
 
@@ -46,6 +46,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
+use HTML::Mason::Exceptions;
 use HTML::Mason::Interp;
 use HTML::Mason::Compiler::ToObject;
 use Bric::Util::Fault qw(throw_gen rethrow_exception isa_exception
@@ -237,6 +238,8 @@ sub burn_one {
     # Create the interpreter
     my $interp = HTML::Mason::Interp->new(
         $self->_interp_args,
+        request_class => 'HTML::Mason::Request',
+        error_mode    => 'fatal',
         comp_root     => $comp_root,
         data_dir      => $self->get_data_dir,
         out_method    => \$outbuf,
@@ -278,6 +281,15 @@ sub burn_one {
         # Run the biz asset through the template
         eval { $retval = $interp->exec($tmpl_path) };
         if (my $err = $@) {
+
+            # If we rethrow a TopLevelNotFound exception, it
+            # percolates to the Mason request executing the bricolage
+            # component, which returns a 404 for the requested
+            # bricolage component (which should be
+            # /workflow/profile/preview/dhandler)
+	    if (isa_mason_exception($err, 'TopLevelNotFound')) {
+		$err = $err->message;
+	    }
             rethrow_exception($err) if isa_exception($err);
             throw_burn_error error   => "Error executing '"
                                       . $fs->cat_uri($tmpl_path, $tmpl_name)
@@ -918,6 +930,7 @@ sub _interp_args {
        ( %interp_args,
          preprocess => sub { _custom_preprocess(shift, $self) }
        );
+
      return %interp_args;
 }
 
