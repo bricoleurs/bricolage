@@ -101,6 +101,11 @@ the spot! [David]
 The "Advanced Search" interface once again works for searching for related
 story and media documents. Reported by Ben Bangert and many others. [David]
 
+=item *
+
+Renaming a site and its domain name now always properly renames the associated
+site permission user groups. Reported by Will Trillich. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)

@@ -451,7 +451,7 @@ sub test_save : Test(36) {
 
 ##############################################################################
 # Test permission groups.
-sub test_grps : Test(99) {
+sub test_grps : Test(105) {
     my $self = shift;
     my $site = $self->{test_sites}[0];
     # Look at a site we've created.
@@ -489,6 +489,7 @@ sub compare_grps {
 
     # Check their names.
     ok( my $name = $site->get_name, "Get name" );
+    ok( my $dn = $site->get_domain_name, "Get domain name" );
     my $name_regex = qr/^$name/;
     foreach my $grp (@grps) {
         isa_ok($grp, 'Bric::Util::Grp::User');
@@ -497,8 +498,9 @@ sub compare_grps {
         ok( $grp->is_secret, "Check that it's secret" );
     }
 
-    # Change the site's name.
+    # Change the site's name and domain name.
     ok( $site->set_name("Biggie $name"), "Change name" );
+    ok( $site->set_domain_name("$dn.com"),"Change domain name" );
     ok( $site->save, "Save site" );
 
     # Load 'em up again.
@@ -518,8 +520,9 @@ sub compare_grps {
     is( $grp->get_id, $site->get_id, "Check asset group ID is site ID" );
     is( $grp->get_name, 'Secret Site Asset Group', "Check site name" );
 
-    # Reset the name.
+    # Reset the name and domain name.
     ok( $site->set_name($name), "Set name to '$name'" );
+    ok( $site->set_domain_name($dn), "Set name to '$name'" );
     ok( $site->save, "Save site with original name" );
 }
 

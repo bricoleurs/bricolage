@@ -734,7 +734,9 @@ $set_unique_attr = sub {
     }
 
     # Success!
-    $self->_set([$field, '_rename'], [$value, $old_value]);
+    return $self->_set([$field, '_rename'] => [$value, $old_value])
+      if $field eq 'name';
+    return $self->_set([$field] => [$value]);
 };
 
 ##############################################################################
