@@ -57,7 +57,7 @@ Options:
 
   --desk - required desk option for move command
 
-  --workflow - optional workflow option for move command
+  --workflow - workflow option for move command
 
   --search "field=value" - specify a search for list_ids, field must
                            be a valid search field for the list_ids()
@@ -94,18 +94,33 @@ Copy all stories from the local Bricolage to the server at some.host.org:
   | bric_soap story export - \
   | bric_soap story create --server http://some.host.org -
 
-Copy the story titled "Annoying Ad Turns Man Pro-Whaling" to the
-server at some.host.org along with any related media and related
-stories:
-
-  bric_soap story list_ids--search \
-     "title=Annoying Ad Turns Man Pro-Whaling" \
-  | bric_soap story export --all -
-  | bric_soap story create --server http://some.host.org -
-
 Delete all stories (gasp!):
 
   bric_soap story list_ids | bric_soap story delete -
+
+Publish all unpublished stories:
+
+  bric_soap story list_ids --search "publish_status=0" 
+  | bric_soap workflow publish -
+
+Republish all published stories.  This is useful when a template
+change needs to reflected across a site.  The C<sort -n> is a crude
+way to make sure that newer stories overwrite older ones.
+
+  bric_soap story list_ids --search "publish_status=1" \
+  | sort -n \
+  | bric_soap workflow publish -
+
+Copy the story titled "Annoying Ad Turns Man Pro-Whaling" to the
+server at some.host.org along with any related media and related
+stories.  Then publish the story along with any related stories or
+media.
+
+  bric_soap story list_ids \
+     --search "title=Annoying Ad Turns Man Pro-Whaling" \
+  | bric_soap story export --all - \
+  | bric_soap story create --server http://some.host.org - \
+  | bric_soap workflow publish --server http://some.host.org -
 
 =head1 ID PARAMETERS
 
@@ -149,6 +164,8 @@ our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
 our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
 our $server                 = 'http://localhost:80';
 our $verbose                = 0;
+our $desk;
+our $workflow;
 our ($help, $man);
 GetOptions("help"                   => \$help, 
 	   "man"                    => \$man,
@@ -161,6 +178,8 @@ GetOptions("help"                   => \$help,
 	   "with-related-media"     => \$with_related_media,
 	   "all"                    => sub { $with_related_stories = 1;
 					     $with_related_media   = 1; },
+	   "desk=s"                 => \$desk,
+	   "workflow=s"             => \$workflow,
 	  ) or  pod2usage(2);
 
 pod2usage(1)             if $help;
@@ -249,9 +268,10 @@ $jump{$module}{$command}->();
 
 
 sub list_ids {
-    print STDERR "$module $command: Calling Bric::SOAP::$module->$command with search: (",
-	join(', ', map { "$_ => $search{$_}" } keys %search), ")\n"
-	    if $verbose;
+    print STDERR "$module $command: Calling Bric::SOAP::$module->$command ",
+	"with search: (",
+	    join(', ', map { "$_ => $search{$_}" } keys %search), ")\n"
+		if $verbose;
     $response = $soap->list_ids(map { name($_ => $search{$_}) } keys %search);
     die "Call to Bric::SOAP::$module->$command failed : \n" .
 	$response->faultstring
@@ -265,12 +285,6 @@ sub list_ids {
 sub export {
     # collect ids
     my @ids = _read_ids(lc($module) . "_id");
-    die "No ids found for export.\n"
-	unless @ids;
-  
-    print STDERR "$module $command: Calling $module->$command with ids: ", 
-	join(', ', map { $_->name . " => " . $_->value } @ids) , "\n"
-	    if $verbose;
 
     my @opts;
     push @opts, name(lc $module . '_ids', \@ids);
@@ -288,12 +302,6 @@ sub export {
 sub delete {
     # collect ids
     my @ids = _read_ids(lc($module) . "_id");
-    die "No ids found for delete.\n"
-	unless @ids;
-  
-    print STDERR "$module $command: Calling $module->$command with ids: ", 
-	join(', ', map { $_->name . " => " . $_->value } @ids) , "\n"
-	    if $verbose;
 
     $response = $soap->delete(name(lc $module . '_ids', \@ids));
     die "Call to Bric::SOAP::$module->$command failed : \n" .
@@ -306,7 +314,8 @@ sub create {
     foreach (@ARGV) {
 	my $document;
 	if ($_ eq '-') {
-	    print STDERR "$module $command: Reading document from STDIN...\n" if $verbose;
+	    print STDERR "$module $command: Reading document from STDIN...\n"
+		if $verbose;
 	    $document = join('', <STDIN>);
 	} else { 
 	    open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
@@ -323,17 +332,11 @@ sub create {
 	    $response->faultstring
 		if $response->fault;
 
-	# print out ids with types
-	my ($count, $data);
-	for($count = 1; 
-	    $data = $response->dataof("/Envelope/Body/[1]/[1]/[$count]");
-	    $count++) {
-	    my $name = $data->name;
-	    $name =~ s/_id$//;
-	    print $name, "_", $data->value, "\n";
-	}
+	# print out response ids
+	_print_ids($response);
     }
 }
+
 
 
 sub update {
@@ -341,7 +344,8 @@ sub update {
     foreach (@ARGV) {
 	my $document;
 	if ($_ eq '-') {
-	    print STDERR "$module $command: Reading document from STDIN...\n" if $verbose;
+	    print STDERR "$module $command: Reading document from STDIN...\n"
+		if $verbose;
 	    $document = join('', <STDIN>);
 	} else { 
 	    open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
@@ -353,11 +357,12 @@ sub update {
 	my @update_ids = $document =~ /<$name.*id="(\d+)"/g;
 	die "No $module ids found in update document.\n"
 	    unless @update_ids;
-	print STDERR "$module $command: Found ids for update: ", join(', ', @update_ids), "\n"
-	    if $verbose;	
+	print STDERR "$module $command: Found ids for update: ", 
+	    join(', ', @update_ids), "\n"
+		if $verbose;	
        
-	print STDERR "$module $command: Calling Bric::SOAP::$module->$command with document:  ", 
-	    length($document), " bytes\n"
+	print STDERR "$module $command: Calling Bric::SOAP::$module->$command",
+	    " with document:  ", length($document), " bytes\n"
 		if $verbose;
 	
 	$response = $soap->update(name(document => $document)->type('base64'),
@@ -369,36 +374,83 @@ sub update {
 	    $response->faultstring
 		if $response->fault;
 
-	# print out ids with types
-	my ($count, $data);
-	for($count = 1; 
-	    $data = $response->dataof("/Envelope/Body/[1]/[1]/[$count]");
-	    $count++) {
-	    my $name = $data->name;
-	    $name =~ s/_id$//;
-	    print $name, "_", $data->value, "\n";
-	}	
+	# print out ids
+	_print_ids($response);
     }
 }
 
 sub publish {
-    die "$module $command not yet implemented\n";
+    # collect ids
+    my @ids = _read_ids();
+
+    my @opts;
+    push @opts, name(publish_related_stories => 1) if $with_related_stories;
+    push @opts, name(publish_related_media   => 1) if $with_related_media;
+
+    $response = $soap->publish(name(publish_ids => \@ids), @opts);
+    die "Call to Bric::SOAP::$module->$command failed : \n" .
+	$response->faultstring
+	    if $response->fault;
+    
+    # print out ids
+    _print_ids($response);
 }
 
 sub deploy {
-    die "$module $command not yet implemented\n";
+    # collect ids
+    my @ids = _read_ids();
+
+    $response = $soap->deploy(name(deploy_ids => \@ids));
+    die "Call to Bric::SOAP::$module->$command failed : \n" .
+	$response->faultstring
+	    if $response->fault;
+
+    # print out ids
+    _print_ids($response);
 }
 
 sub checkin {
-    die "$module $command not yet implemented\n";
+    # collect ids
+    my @ids = _read_ids();
+
+    $response = $soap->checkin(name(checkin_ids => \@ids));
+    die "Call to Bric::SOAP::$module->$command failed : \n" .
+	$response->faultstring
+	    if $response->fault;
+
+    # print out ids
+    _print_ids($response);    
 }
 
 sub checkout {
-    die "$module $command not yet implemented\n";
+    # collect ids
+    my @ids = _read_ids();
+
+    $response = $soap->checkout(name(checkout_ids => \@ids));
+    die "Call to Bric::SOAP::$module->$command failed : \n" .
+	$response->faultstring
+	    if $response->fault;
+    
+    # print out ids
+    _print_ids($response);
 }
 
 sub move {
-    die "$module $command not yet implemented\n";
+    # collect ids
+    my @ids = _read_ids();
+
+    die "$module $command requires a desk option.\n"
+	unless defined $desk;
+    my @opts = (name(desk => $desk));
+    push @opts, name(workflow => $workflow) if defined $workflow;
+
+    $response = $soap->move(name(move_ids => \@ids), @opts);
+    die "Call to Bric::SOAP::$module->$command failed : \n" .
+	$response->faultstring
+	    if $response->fault;
+    
+    # print out ids
+    _print_ids($response);
 }
 
 #
@@ -425,12 +477,35 @@ sub _read_ids {
 	      "(story_1024, for example).\n"
 		  unless $default_type;
 	  push @ids, name($default_type, $_);
-      } elsif (/([a-zA-Z]+)_(\d+)/) {
+      } elsif (/^([a-zA-Z]+)_(\d+)$/) {
 	  my ($name, $id) = ($1, $2);
-	  push @ids, name(lc $name, $id);
+	  push @ids, name(lc $name . "_id", $id);
       } else {
 	  die "$module $command : found malformed id : \"$_\".\n";
       }
   }
+
+  die "No ids found for $command.\n"
+      unless @ids;
+
+  print STDERR "$module $command: Calling $module->$command with ids: ", 
+      join(', ', map { $_->name . " => " . $_->value } @ids) , "\n"
+	  if $verbose;
+
   return @ids;
 }
+
+# prints out ids from a SOAP response
+sub _print_ids {
+    my $response = shift;
+    # print out ids with types
+    my ($count, $data);
+    for($count = 1; 
+	$data = $response->dataof("/Envelope/Body/[1]/[1]/[$count]");
+	$count++) {
+	my $name = $data->name;
+	$name =~ s/_id$//;
+	print $name, "_", $data->value, "\n";
+    }
+}
+
