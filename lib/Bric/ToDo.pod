@@ -49,6 +49,10 @@ in mind as long term goals further down the line.
 
 =item *
 
+Add ability to reverse the sort order of items on desks.
+
+=item *
+
 Add Checkin & Shelve (And Checkin & Publish?) to the dropdown menu on My
 Workspace.
 
