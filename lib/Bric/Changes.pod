@@ -119,6 +119,13 @@ Fixed bug where a user could create two assets with the same URI as long as
 they were both checked out by that user. Thanks to Shannon Brown for the spot!
 [David]
 
+=item *
+
+Date fields can now be unset. That is, if each of the select fields is set to
+its label, rather than a value, it'll stay that way. This was first noticed
+with the "Expire Date" in stories. Thanks to Philip Fibiger for the spot.
+[David]
+
 =back
 
 =head1 VERSION 1.4.5
