@@ -8,7 +8,7 @@ $Revision: 1.49.2.1 $
 
 =head1 DATE
 
-$Date: 2004-05-06 03:59:53 $
+$Date: 2004/05/06 03:59:53 $
 
 =head1 DESCRIPTION
 
@@ -40,8 +40,8 @@ http://lists.sourceforge.net/lists/listinfo/bricolage-devel
 
 =item bricolage-commits@lists.sourceforge.net
 
-This list gets an email for every commit to the CVS tree (see below
-for more about CVS).  B<DO NOT POST TO THIS LIST!> To subscribe:
+This list gets an email for every commit to the Subversion tree (see below for
+more about Subversion). B<DO NOT POST TO THIS LIST!> To subscribe:
 
 http://lists.sourceforge.net/lists/listinfo/bricolage-commits
 

@@ -47,6 +47,7 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 use strict;
 use Bric::App::ApacheStartup;
+use Bric::Constant qw(:ui);
 use constant DEBUGGING => 0;
 
 do {

@@ -19,11 +19,11 @@ our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =item Date
 
-$Date: 2003-12-22 19:27:45 $
+$Date: 2003/12/22 19:27:45 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.10 2003-12-22 19:27:45 wheeler Exp $
+$Id: Site.pm,v 1.10 2003/12/22 19:27:45 wheeler Exp $
 
 =back
 

@@ -9,7 +9,7 @@ $Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-09-29 18:41:47 $
+$Date: 2003/09/29 18:41:47 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/checkbox.mc",

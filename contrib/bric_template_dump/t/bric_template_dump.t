@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: bric_template_dump.t,v 1.2 2004-03-24 19:10:21 wheeler Exp $
+# $Id: bric_template_dump.t,v 1.2 2004/03/24 19:10:21 wheeler Exp $
 
 use strict;
 use File::Spec::Functions 'catfile';

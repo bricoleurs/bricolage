@@ -1,7 +1,7 @@
 -- Project: Bricolage
 -- VERSION: $Revision: 1.1 $
 --
--- $Date: 2003-03-30 18:34:20 $
+-- $Date: 2003/03/30 18:34:20 $
 -- Author: David Wheeler <david@kineticode.com>
 
 ALTER TABLE    keyword_member

@@ -2,7 +2,7 @@
 -- File:    ServerType.tst
 -- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-12 18:36:39 $
+-- $Date: 2003/03/12 18:36:39 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 DELETE FROM server_type;

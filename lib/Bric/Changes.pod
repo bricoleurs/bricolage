@@ -25,6 +25,11 @@ This document lists the Changes to Bricolage introduced with each release.
 Bulk Publish now ensures that users have at least READ access to catgories
 they wish to publish from. [Scott]
 
+=item *
+
+Eliminated 'Bareword "ENABLE_HTMLAREA" not allowed while "strict subs" in use'
+warning that prevented startup for some installations. [Scott]
+
 =back
 
 =cut

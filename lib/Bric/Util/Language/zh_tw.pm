@@ -14,7 +14,7 @@ our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 20:44:19 $
+$Date: 2004/03/24 20:44:19 $
 
 =head1 SYNOPSIS
 
