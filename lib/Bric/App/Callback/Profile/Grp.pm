@@ -3,11 +3,13 @@ package Bric::App::Callback::Profile::Grp;
 use base qw(Bric::App::Callback::Package);
 __PACKAGE__->register_subclass('class_key' => 'grp');
 use strict;
+use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
 my $type = CLASS_KEY;
 my $disp_name = get_disp_name($type);
+my $class = get_package_name($type);
 
 
 sub save : Callback {
@@ -18,8 +20,7 @@ sub save : Callback {
     my $param = $self->request_args;
     my $grp = $self->obj;
 
-    # XXX: $class was from %args
-    $param->{grp_type} ||= $class;
+    $param->{'grp_type'} ||= $class;
     my $name = "&quot;$param->{name}&quot;";
 
     # Make the changes and save them.
@@ -35,14 +36,47 @@ sub permissions : Callback {
     my $param = $self->request_args;
     my $grp = $self->obj;
 
-    # XXX: $class was from %args
-    $param->{grp_type} ||= $class;
+    $param->{'grp_type'} ||= $class;
     my $name = "&quot;$param->{name}&quot;";
 
     # Make the changes and save them.
     return &$save_sub($type, $param, $self->trigger_key, $grp, $class, $name,
                       "/admin/profile/grp/perm/$param->{grp_id}", 1);
 }
+
+
+# strictly speaking, this is a Manager (not a Profile) callback
+
+sub deactivate : Callback {
+    my $self = shift;
+
+    foreach my $id (@{ mk_aref($self->value) }) {
+        my $grp = $class->lookup({ id => $id }) || next;
+        if (chk_authz($grp, EDIT)) {
+            if ($grp->get_permanent) {
+                # Disallow deletion of permanent groups.
+                $msg = '[_1] cannot be deleted';
+                add_msg($self->lang->maketext($msg, $disp_name));
+            } else {
+                # Deactivate it.
+                $grp->deactivate;
+                $grp->save;
+                log_event('grp_deact', $grp);
+                # Note that a user has been updated to force all
+                # users logged into the system to reload their
+                # user objects from the database.
+                $self->cache->set_lmu_time if $grp->isa('Bric::Util::Grp::User');
+            }
+            $grp->save;
+            log_event('grp_deact', $grp);
+        } else {
+            my $msg = 'Permission to delete [_1] denied.';
+            my $arg = '&quot;' . $grp->get_name . '&quot;';
+            add_msg($self->lang->maketext($msg, $arg));
+        }
+    }
+}
+
 
 # XXX: there's also an empty else clause in grp.mc
 # so there might be other grp callbacks to handle
