@@ -1,0 +1,85 @@
+Version  To Do Items
+-------  ------------------------------------------------------------------
+1.0      * Change name (and references to it) to "Bricolage" [David & Sam].
+         * Clean Up Time Zones (Bug # 287) [David].
+         * Finish Element Administration Documentation [David].
+         * Change Version Number to 1.0 and decide how it should work in
+           all the packages [David & Sam].
+         * Create installation makefile (Sam or David?).
+
+1.2      * Context-sensitive, online help [Sam].
+         * Make SSL optional (and off by default) [David or Sam].
+         * XML::Writer (or related) support in Templates [David].
+         * HTML::Template support in Templates [Sam].
+         * User-created help (add a "Help Text" field to Form Builder)
+           [David or Sam].
+         * Simplify associating media with stories (ugh) [David & Sam].
+         * Have CE::Util::Class use CE::Util::Cache [David].
+         * Add file-naming conventions to Burn system (Bug # 748) [David].
+         * Change CE::_set() to only set if the values are different.
+         * Add keywords to media.
+         * Resolve "Adding Element and hitting Cancel" issue (Bug # 723).
+         * Add preference for Contributors to be automatically added to
+           assets as keywords (Bug # 366) [David].
+         * Add HTML Cleaning Action [David].
+         * Add HTML Checking Action [David].
+         * Add Akamaization Action [David].
+         * Add new move methods (FTP, SCP, etc.).
+         * Add regression test suite.
+         * Preferences Improvements (Bug # 282) [David].
+         * Add listManager preferences (Bug # 280) [David].
+         * Change "asset_type" key to "element" and "component_type" key
+           to "element_type" (Bug # 283) [David or Sam].
+         * Add interface for editing Contact Types (Bug # 285) [David].
+         * Add check for existing people before adding new ones (Bug #
+           325) [David].
+         * Add URI Case preference (Bug # 674) [David].
+         * Add Keyword Rules preference (Bug # 689) [David].
+         * Add category selector to template profile (maybe - Bug # 577).
+
+1.4      * Scheduled Burning/Syndication (Bug # 329).
+         * Basic project management.
+         * Add pagination to listManager (maybe - Bug # 281).
+         * Make Session an object (Bug # 279).
+         * Add Category object flags (Bug # 288).
+         * Integrate with CVS and/or Subversion.
+         * Integrate with WebDAV (Slide? mod_dav?).
+         * Improved Attribute/Field editing and design.
+         * Improved Element editing and design (Bug # 742 & Bug # 780).
+         * Full-text indexing (Bug # 745).
+         * Add file system-like asset browsing (especially for templates
+           and media -- Bug # 746).
+         * Directory Support (as in MPS).
+         * Add support for Organizations [David].
+         * Add support for addresses [David].
+         * Add support for contributor contracts [David].
+         * Have objects load their group IDs when they're selected to save
+           time checking permissions.
+         * Add strong type checking.
+         * Add previewing to Template Editing (Bug # 370).
+         *
+
+This is a pretty rough draft, although I've tried to include everything
+we've thought of so far. This should be the begininning of a comprehensive
+feature list. Bugs should just go into Bugzilla, I think. Let me know if
+I've missed anything. I expect that I'll have to move a lot of these
+things around, and add 1.6, 1.8, and maybe 2.0 versions to the map before
+long.
+
+David
+
+-- 
+David Wheeler                                         AIM: dwTheory
+David@Wheeler.net                                     ICQ: 15726394
+                                                   Yahoo!: dew7e
+                                                   Jabber: Theory@jabber.org
+
+
+
+
+
+
+
+
+
+
