@@ -128,6 +128,11 @@ of the slug, since media assets have no slug. [David]
 
 The friendly messages confirming publishes are back. [David]
 
+=item *
+
+Fixed bug where selecting a large number of list options in the story
+profile would cause an SQL error.  [Matt]
+
 =back
 
 =head1 VERSION 1.4.3
