@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.38.2.2 $
+$Revision: 1.38.2.3 $
 
 =head1 DATE
 
-$Date: 2004-05-01 17:36:53 $
+$Date: 2004-05-02 23:26:07 $
 
 =head1 DESCRIPTION
 
@@ -648,7 +648,7 @@ is always available, you can use the C<$story> or C<$element> object in a C<<
 
   <%once>;
   unless ($burner->get_mode == SYNTAX_MODE) {
-      # Do stuff with $story or $template.
+      # Do stuff with $story or $element.
   }
   </%once>
 
