@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.68 $
+$Revision: 1.69 $
 
 =head1 DATE
 
-$Date: 2002-08-16 16:34:41 $
+$Date: 2002-08-25 18:06:23 $
 
 =head1 DESCRIPTION
 
@@ -181,6 +181,10 @@ will be preserved as pasted (e.g., when pasting in poetry). When it's not
 checked, the lines will be unwrapped into a single line (as happens now), so
 that they wrap inside the textarea box nicely. It will be unchecked by default
 to keep the interface basically the same as it is now.
+
+=item *
+
+Merge use of IO::String and IO::Stringy.
 
 =back
 
