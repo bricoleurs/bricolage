@@ -84,6 +84,7 @@ if ($field eq "$widget|save_cb") {
 			return $cat;
 		    }
 		}
+		$cat->set_directory($param->{directory});
 	    } else {
 		$cat->set_directory($param->{directory});
 	    }
@@ -136,11 +137,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.5.2.1 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-02-28 05:07:22 $
 
 =head1 SYNOPSIS
 

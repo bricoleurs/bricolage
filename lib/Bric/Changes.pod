@@ -49,6 +49,11 @@ Fixed broken support for audio and video files. These can be set up by the Media
 Type menu in Element Types. Eventually these should arrange for some fields to
 be auto-populated (e.g., bit rate, frame size, length, encoding, etc.).
 
+=item *
+
+Fixed bug where Categories with the same directory name could not be created.
+Thanks to Andrew Baio for the spot. [David]
+
 =back
 
 =head1 VERSION 1.2.1
