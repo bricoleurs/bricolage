@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.98.2.4 $
+$Revision: 1.98.2.5 $
 
 =head1 DATE
 
-$Date: 2003-03-27 23:48:03 $
+$Date: 2003-03-31 15:40:57 $
 
 =head1 DESCRIPTION
 
@@ -41,7 +41,7 @@ In the Bricolage source directory:
 
   perl Makefile.PL
   make
-  make tests
+  make test
 
 And then as root:
 
