@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-26 00:17:36 $
+$Date: 2002-11-24 09:32:35 $
 
 =head1 SYNOPSIS
 
@@ -383,7 +383,7 @@ sub get_objs {
 Returns a list or array reference of all of the objects that have been added
 to the collection via C<new_objs()>. Note that, once C<save()> has been
 called, the new objects are themselves saved, and are no longer considered new
-objects. If there are no new objects, C<get_new_objs() will return an empty
+objects. If there are no new objects, C<get_new_objs()> will return an empty
 list in an array context, and undef in a scalar context.
 
 B<Throws:> NONE.
