@@ -80,7 +80,7 @@ if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
 <tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
     object => 'output_channel',
     field  => 'name',
-    exclude => [ $id, map { $_->get_id } $comp->get_output_channels ],
+    exclude => [ map { $_->get_id } $comp->get_output_channels ],
     no_persist => 1,
     name   => 'formBuilder|add_oc_id_cb',
     default => ['' => 'Add Output Channel'],
@@ -92,16 +92,6 @@ if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
 <br />
 <%perl>;
     $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
-    # Now load a select widget so a primary output channel can be selected.
-#    $m->comp('/widgets/profile/select.mc',
-#	     disp => 'Primary Output Channel',
-#	     name => 'primary_oc_id',
-#	     options => $opt,
-#	     req => 1,
-#	     readOnly => $no_edit,
-#	     value => $comp->get_primary_oc_id
-#	    );
-
 }
 
 
@@ -246,11 +236,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:10 $
+$Date: 2002-10-25 20:30:17 $
 
 =head1 DESCRIPTION
 
