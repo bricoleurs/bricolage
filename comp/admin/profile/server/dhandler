@@ -40,6 +40,7 @@ my $dest_class = get_package_name($dest_key);
 %#-- Args Section --#
 <%args>
 $id => undef
+$dest_id => undef
 </%args>
 
 %#-- Init Section --#
@@ -56,7 +57,7 @@ $id ||= $s->get_id;
 
 # Get the server type (destination profile) ID and instantiate the destination
 # object.
-my $dest_id = get_state_data($widget, $dest_key) || $s->get_server_type_id;
+$dest_id ||= get_state_data($widget, $dest_key) || $s->get_server_type_id;
 my $dest = $dest_class->lookup({ id => $dest_id });
 
 # Check authorization.
@@ -78,11 +79,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.4.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:12 $
+$Date: 2003-07-27 15:06:19 $
 
 =head1 DESCRIPTION
 

@@ -271,6 +271,11 @@ Fixed issue where adding an output channel to a document type element removed
 that output channel from another document type element. Thanks to Clive Jones
 for the spot! [David]
 
+=item *
+
+Adding a server to a new destination before saving the destination or adding
+an action no longer causes an SQL error. [David]
+
 =back
 
 =head1 VERSION 1.6.1
