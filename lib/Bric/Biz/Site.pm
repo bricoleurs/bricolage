@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =item Date
 
-$Date: 2003-10-30 03:51:28 $
+$Date: 2003-12-22 19:27:45 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.9 2003-10-30 03:51:28 wheeler Exp $
+$Id: Site.pm,v 1.10 2003-12-22 19:27:45 wheeler Exp $
 
 =back
 
@@ -583,7 +583,7 @@ sub save {
 
         # Swipe the group's ID for our own!
         $id = $grp->get_id;
-        $self->_set([qw(id _grp)], [$id, $grp]);
+        $self->_set([qw(id _asset_grp)], [$id, $grp]);
 
         # Insert a new record into the database.
         my $value_cols = join ', ', ('?') x @COLS;
