@@ -5,7 +5,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
-exit if fetch_sql(qq{SELECT 1 FROM element__site});
+exit if test_sql(qq{SELECT 1 FROM element__site});
 
 do_sql
 
