@@ -107,7 +107,7 @@ finally motivated this change. [David]
 
 =item *
 
-Improved zh-cn translation. [lgjut@sohu.com]
+Improved zh-cn translation. [Gang Luo]
 
 =item *
 
