@@ -16,13 +16,38 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.5.2
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+Out of the box, the Story Editors, Media Producers, and Template Develpers
+groups now have READ permission to access members of the "All Categories" and
+"All Elements" groups, which allow them to actually create assets based on
+elements and within categories. [David]
+
+=item *
+
+Workflow and Desk permissions are a little more sensible now. CREATE
+permission can be granted for the start desk in each workflow, instead of for
+the entire workflow. This allows a lower permission to be set on the workflow
+(e.g., READ), and then higher permissions on the individual desks in the
+workflow. [David]
+
+=item *
+
+New "Tuning" sections have been added to L<Bric::DBA>. [Mark]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
 
 =item *
 
-The default required length for usernames and passwords has been chnaged from
+The default required length for usernames and passwords has been changed from
 6 to 5. This is to make dealing with the default "admin" login easier.
 
 =item *
@@ -37,18 +62,17 @@ output channel is already in use if it happens to be true. [David]
 
 =item *
 
-Bric::Config now does its best to find a workable F<httpd.conf> file when
-tests are begin run. [David]
+Bric::Config now does its best to find a workable F<httpd.conf> file during
+C<make test>. [David]
 
 =item *
 
 Subclasses of Bric::Biz::Asset::Business::Media work again, and can have
 keywords associated with them, too. [David]
 
-
 =item *
 
-The "Acces Denied" message is back for when someone tries to access an object
+The "Access Denied" message is back for when someone tries to access an object
 to which they don't have adequate permission. [David]
 
 =item *
@@ -57,25 +81,25 @@ Previews of assets that are not checked out work again. [David]
 
 =item *
 
-Workfow and desk permissions relative to the assets they contain are now
+Workflow and desk permissions relative to the assets they contain are now
 restored to their previous behavior. Desks no longer simply inherit the
 permission granted on any of the workflows they're in. This issue was resolved
 by creating a new secret asset group ID for each workflow. [David]
 
 =item *
 
-The primary output channel is now always enabled by default in elements. This
-is to make it much harder to create documents without output channel
-associations, an event that can lead to database exceptions. [David]
+The primary output channel is now always enabled by default in top-level
+elements. This is to make it much harder to create documents without output
+channel associations, an event that can lead to database exceptions. [David]
 
 =item *
 
-The root category now lists itself as being in the "All Categories" group once
-in the category profile. [David]
+The root category now lists itself as being in the "All Categories" group only
+once in the category profile. [David]
 
 =item *
 
-Assets will no longer appear to randomlly dissappear from workflow. [David]
+Assets will no longer appear to randomly dissappear from workflow. [David]
 
 =item *
 
@@ -86,21 +110,6 @@ left out of 1.5.1. [David]
 
 Permissions are now once again properly checked for asets in categories,
 workflows, and on desks. [Mark]
-
-=item *
-
-Out of the box, the Story Editors, Media Producers, and Template Develpers
-groups now have READ permission to access members of the All Categories and
-All Elements groups, which allow them create assets based on elements and
-within categories. [David]
-
-=item *
-
-Workflow and Desk permissions are a little more sensible now. CREATE
-permission can be granted for the start desk in each workflow now, instead of
-for the entire workflow. This allows a lower permission to be set on the
-workflow (e.g., READ), and then higher permissions on the individual desks in
-the workflow. [David]
 
 =back
 
