@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-12-17 21:51:10 $
+$Date: 2003-12-17 22:04:20 $
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,7 @@ my $select = sub {
     my $o = shift;
     my $u = $o->get_user__id;
 
-    if (not defined $u && chk_authz($o, EDIT, 1)) {
+    if (! defined $u && chk_authz($o, EDIT, 1)) {
 	if ($o->get_workflow_id) {
             # Allow checkout if they can see the desk the asset is on.
 	    return ['Checkout', "$widg\_prof|checkout_cb"]
@@ -131,7 +131,7 @@ $wf = $wf->get_name;
      field_titles => { version => $lang->maketext('V.'), },
 &>
 <p></p>
-<input type="image" src="/media/images/<% $lang_key %>/checkout_red.gif" border=0 name="Checkout" value="Checkout">
+<input type="image" src="/media/images/<% $lang_key %>/checkout_red.gif" border="0" name="Checkout" value="Checkout">
 </form>
 
 <& /widgets/wrappers/sharky/footer.mc &>
