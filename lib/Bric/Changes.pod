@@ -78,6 +78,11 @@ The example generic template (autohandler) included in the database is now
 included in the burn root, too, since it's marked as "Deployed" in the
 database. [David]
 
+=item *
+
+Deleted output channels no longer show up in the "New Template" output channel
+select list. Thanks to Daniel Fisher for the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.0
