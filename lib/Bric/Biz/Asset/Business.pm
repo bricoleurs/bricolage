@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.18.2.2 $
+$Revision: 1.18.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-27 22:06:19 $
+$Date: 2002-09-28 00:24:09 $
 
 =head1 SYNOPSIS
 
@@ -1468,7 +1468,7 @@ sub get_all_keywords {
     my $self = shift;
     my %kw = map { ($_->get_id, $_) } 
       ( Bric::Biz::Keyword->list({ object => $self }), 
-        _get_category_keywords() );
+        $self->_get_category_keywords() );
     my @kw = sort { lc $a->get_sort_name cmp lc $b->get_sort_name }
       values %kw;
 

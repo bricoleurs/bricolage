@@ -30,6 +30,11 @@ spot. [David]
 
 Assets can once again be recalled from the library and put on a desk. [David]
 
+=item *
+
+The C<get_all_keywords()> method of Bric::Biz::Asset::Business works
+again. [David]
+
 =back
 
 =head1 VERSION 1.4.2
