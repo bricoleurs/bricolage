@@ -488,6 +488,15 @@ Consult the documentation for your Web server for more information.
 Apache inadvertantly compiled the wrong expat XML parser into itself. Rebuild
 Apache, this time using the C<--disable-rule=EXPAT> option.
 
+=head3 After creating a new output channel, why doesn't it show up in the Story Profile?
+
+Your story is a type of Element. An element defines the "structure" of the
+story, what it's allowed to have. When you're on the Story Profile, the OCs
+that it displays include only those OCs that the story is allowed to have.
+Thus, in order to see your new OC in the Story Profile, you have to go to
+the Element Profile and add the OC to the element which your story is a
+type of (Book Review, Story, etc.).
+
 =head2 Element Administration
 
 =head3 I added a field to an element and deleted it, and now I can't add a new field with the same name. Why not?
@@ -680,7 +689,7 @@ F</reviews/books/book_review.mc>.
 
 =back
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Scott Lanning <slanning@theworld.com>
 
