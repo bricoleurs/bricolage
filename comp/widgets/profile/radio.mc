@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:21 $
+$Date: 2003-09-16 16:52:25 $
 
 =head1 SYNOPSIS
 
@@ -39,6 +39,7 @@ $options     => undef
 $js          => ''
 $req         => 0
 $readOnly    => 0
+$localize    => 1
 $useTable    => 0
 $label_after => 0
 $checked     => 0
@@ -70,6 +71,7 @@ $m->comp("/widgets/profile/displayFormElement.mc",
 	 key  => $name,
 	 vals => $vals,
 	 readOnly => $readOnly,
+	 localize => $localize,
 	 useTable => $useTable
 );
 </%perl>

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:21 $
+$Date: 2003-09-16 16:52:25 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/textarea.mc",
@@ -35,6 +35,7 @@ $cols   => ''
 $js     => ''
 $req    => 0
 $useTable => 1
+$localize => 1
 $readOnly => 0
 $width     => ''
 $indent    => ''
@@ -61,6 +62,7 @@ $m->comp("/widgets/profile/displayFormElement.mc",
          useTable => $useTable,
 	 readOnly => $readOnly,
 	 width    => $width,
+	 localize => $localize,
 	 indent   => $indent
 );
 

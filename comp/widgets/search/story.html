@@ -11,10 +11,12 @@ $use_form_tag
 <%init>
 my $agent = detect_agent();
 my $spacerRow = $agent->ie ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
+
 my $advanced_search = get_state_data($widget, 'advanced_search')
   || get_pref('Default Search');
+
 my $asset_opts = $advanced_search ? {
-        '' => 'All Types',
+        '' => $lang->maketext('All Types'),
         map { $_->get_id, $_->get_name }
           Bric::Biz::AssetType->list({
               top_level => 1,
@@ -122,6 +124,7 @@ my $asset_opts = $advanced_search ? {
                      name     => $widget.'|element__id',
                      value    => get_state_data($widget, 'element__id') || '',
                      options  => $asset_opts,
+                     localize => 0,
                      useTable => 0 &>
                 </td>
               </tr>

@@ -7,11 +7,11 @@ dhandler -- Implement the user workspace.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:55 $
+$Date: 2003-09-16 16:52:26 $
 
 =head1 DESCRIPTION
 
@@ -33,8 +33,7 @@ my $id = get_user_id();
 %#-- Begin HTML --#
 <%perl>;
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 'title' => $lang->maketext('Workspace for [_1]',
-                                    get_user_object->format_name),
+	 'title' => ['Workspace for [_1]', get_user_object->format_name],
 	  context => 'My Workspace');
 
 $m->out(qq{<form method="post" action="} . $r->uri .

@@ -66,6 +66,7 @@ $m->comp('/widgets/profile/select.mc',
                      qq{?' + this.name + '=' +} .
                      qq{this.options[this.selectedIndex].value"},
          useTable => 0,
+         localize => 0,
          value    => $cx
         );
 </%init>
@@ -78,11 +79,11 @@ $m->comp('/widgets/profile/select.mc',
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2003-04-24 15:41:54 $
+$Date: 2003-09-16 16:52:25 $
 
 =head1 SYNOPSIS
 

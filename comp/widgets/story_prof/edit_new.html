@@ -34,6 +34,7 @@ $m->comp( '/widgets/select_object/select_object.mc',
                           site_id => $site_id,
                         },
           useTable   => 1,
+          localize   => 0,
           exclude  => $excl_sub,
         );
 $m->out($ieSpacer);
@@ -42,6 +43,7 @@ $m->comp( '/widgets/select_object/select_object.mc',
           object   => 'source',
           name     => "$widget|source__id",
           field    => 'source_name',
+          localize => 0,
           useTable => 1,
         );
 $m->out($ieSpacer);
@@ -54,6 +56,7 @@ $m->comp( '/widgets/select_object/select_object.mc',
           req        => 1,
           field      => 'uri',
           sort_field => 'uri',
+          localize   => 0,
           useTable   => 1
         );
 $m->out($ieSpacer);

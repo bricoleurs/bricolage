@@ -34,6 +34,7 @@ if ($day) {
     $mk_time_field->({'base'    => $base_name.'_day',
 		      'default' => $s->{'day'},
 		      'label'   => 'Day',
+		      'localize'=> 0,
 		      'vals'    => $day,
 		      'width'   => $cellWidth,
 		      'compact' => $compact});
@@ -46,6 +47,7 @@ if ($year) {
 		      'default' => $s->{'year'},
 		      'label'   => 'Year',
 		      'vals'    => $year,
+		      'localize'=> 0,
 		      'width'   => $cellWidth,
 		      'compact' => $compact});
     $cellsDisplayed++;
@@ -56,6 +58,7 @@ if ($hour) {
     $mk_time_field->({'base'    => $base_name.'_hour',
 		      'default' => $s->{'hour'},
 		      'label'   => 'Hour',
+		      'localize'=> 0,
 		      'vals'    => $hour,
 		      'width'   => $cellWidth,
 		      'compact' => $compact});
@@ -67,6 +70,7 @@ if ($min) {
     $mk_time_field->({'base'    => $base_name.'_min',
 		      'default' => $s->{'min'},
 		      'label'   => 'Minute',
+              'localize' => 0,
 		      'vals'    => $min,
 		      'width'   => $cellWidth,
 		      'compact' => $compact});
@@ -145,7 +149,8 @@ my $mk_time_field = sub {
              'name'     => $p->{base},
              'value'    => $p->{default},
              'options'  => [ [ '-1' , $p->{label}], @{$p->{vals}} ],
-             'useTable' => 0);
+             'useTable' => 0,
+             'localize'=> $p->{localize});
 
     $m->out('</td>') unless $p->{compact};
 };

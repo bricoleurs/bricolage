@@ -8,11 +8,11 @@ select_object - Provide a select box listing all objects of a certain type.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-10-25 20:24:25 $
+$Date: 2003-09-16 16:52:25 $
 
 =head1 SYNOPSIS
 
@@ -182,6 +182,7 @@ $readOnly   => 0
 $req        => 0
 $size       => undef
 $js         => undef
+$localize   => 1
 </%args>
 
 %#--- Initialization ---#
@@ -267,6 +268,7 @@ $m->comp($style.'.html',
          size     => $size || @vals <= 20 ? 1 : 5,
          req      => $req,
          sel_id   => $selected,
+         localize => $localize,
          js       => $js
 );
 

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:21 $
+$Date: 2003-09-16 16:52:25 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/text.mc",
@@ -43,6 +43,7 @@ $req       => 0
 $width     => ''
 $indent    => ''
 $useTable  => 1
+$localize  => 1
 $readOnly  => 0
 </%args>
 
@@ -68,6 +69,7 @@ $m->comp("/widgets/profile/displayFormElement.mc",
 	 width     => $width,
 	 indent    => $indent,
 	 useTable  => $useTable,
+	 localize  => $localize,
 	 readOnly  => $readOnly
 );
 

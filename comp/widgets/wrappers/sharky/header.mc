@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =head1 DATE
 
-$Date: 2003-08-18 23:26:53 $
+$Date: 2003-09-16 16:52:26 $
 
 =head1 SYNOPSIS
 
@@ -32,11 +32,13 @@ $no_hist => 0
 $debug => undef
 </%args>
 <%init>;
-$title = $lang->maketext($title);
+
+   $context =~ s/\&quot\;/\"/g;
 my @context =  split /\|/, $context;
+
 for (@context){
-    s/^\s|\s$//g;
-    s /^(\"??)(.+?)(\"??)$/$1.$lang->maketext($2).$3/e;
+    s/^\s+|\s+$//g;
+    s /^(\"?)(.+?)(\"?)$/$1.$lang->maketext($2).$3/e;
 }
 
 $context = join ' |',@context;
@@ -79,16 +81,17 @@ if ($agent->nav4) {
 my $margins = DISABLE_NAV_LAYER && $agent->gecko ?
   'marginwidth="5" marginheight="5"' : '';
 
-# clean up the title
-$title = '';
-foreach my $t (@title) {
-  $title .= uc(substr($t,0,1)) .lc( substr($t,1) ) . " " ;
+if(ref($title) eq 'ARRAY') {
+    $title = $lang->maketext(@$title);
+} else {
+    # clean up the title
+    $title = $lang->maketext( join ' ', map { ucfirst($_) } split / /, $title);
 }
 
 </%init>
 <html>
 <head>
-<title><% $lang->maketext($title) %></title>
+<title><% $title %></title>
 % if ($useSideNav) {
 <script type="text/javascript" src="/media/js/lib.js"></script>
 <script type="text/javascript" src="/media/js/<% $lang_key %>_messages.js"></script>
@@ -216,7 +219,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
   <table width="580" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <td class="<% $tab %>" valign="top" width="11"><img src="<% $curve_left %>" width="11" height="22"></td>
-    <td class="<% $tab %>" width="330"><% $lang->maketext($title) %></td>
+    <td class="<% $tab %>" width="330"><% $title %></td>
     <td valign="top" width="11" class="<% $tab %>"><img src="<% $curve_right %>" width="11" height="22"></td>
 % if ($useSideNav) {
     <td width="10">&nbsp;</td>

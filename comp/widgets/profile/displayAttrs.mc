@@ -9,6 +9,7 @@ $usePosition => 1
 $form_name   => 'theForm'
 $useDelete   => 1
 $readOnly    => 0
+$localize    => 0
 $useEdit     => 0
 </%args>
 
@@ -59,10 +60,10 @@ foreach my $attr (@$attr) {
     $m->comp('/widgets/profile/displayFormElement.mc',
 	     key => "attr|$attr->{name}",
 	     vals => $vals,
-             localize => 0,
 	     useTable => ($vals->{props}{type} eq 'date') ? 0:1,
 	     width => $width,
 	     indent => FIELD_INDENT,
+	     localize => $localize,
 	     readOnly => $readOnly
 	    );
 

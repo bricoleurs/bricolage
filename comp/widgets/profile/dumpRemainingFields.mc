@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2003-09-16 16:52:25 $
 
 =head1 SYNOPSIS
 
@@ -33,6 +33,7 @@ fields not explicitly displayed by profile element.
 $objref
 $useTable => 1
 $readOnly => 0
+$localize => 1
 </%args>
 <%perl>
 
@@ -44,6 +45,7 @@ foreach my $meth ( @{$methods} ) {
 		 key      => $meth->{name},
 		 objref   => $objref,
 		 useTable => $useTable,
+		 localize => $localize,
 		 readOnly => $readOnly
 		);
     }
