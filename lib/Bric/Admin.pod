@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:14 $
+$Date: 2002-04-08 23:33:22 $
 
 =head1 DESCRIPTION
 
@@ -337,7 +337,7 @@ use any Configure commands other than those specified below. Then execute the
 commands:
 
   perl Makefile.PL \
-    APACHE_SRC=../apache_1.3.xx/src \
+    APACHE_SRC=../apache_1.3.*/src \
     DO_HTTPD=1 \
     USE_APACI=1 \
     PREP_HTTPD=1 \
