@@ -200,17 +200,21 @@ my $cats = $story->get_categories;
 % # BEGIN FOREACH CAT
 % my $curr_cats = {};
 % foreach (@cat) {
-%     $curr_cats->{$_->get_id} = 1;
+%     my $cat_id = $_->get_id;
+%     $curr_cats->{$cat_id} = 1;
   <tr>
     <td width=20><img src="/media/images/spacer.gif" width="20" height="20" /></td>
     <td colspan="2"><% $_->get_name %></td>
     <td colspan="2"><% $_->get_uri %></td>
-    <td colspan=2 align="center"><input type="radio" name="<% $widget %>|primary_cat" value="<% $_->get_id %>" <% $_->get_id() eq $p_id ? 'CHECKED' : '' %>></td>
+    <td colspan=2 align="center"><input type="radio" name="<% $widget %>|primary_cat" value="<% $_->get_id %>" <% $cat_id == $p_id ? 'CHECKED' : '' %>></td>
     <td align="center">
+% if ($cat_id != $p_id) {
 <& '/widgets/profile/checkbox.mc',
 	name => "$widget|delete_cat",
 	value => $_->get_id
-&>&nbsp;
+&>
+% }
+&nbsp;
     </td>
   </tr>
 % }

@@ -128,6 +128,15 @@ characters. Thanks to Josh Cox for the spot. [David]
 Fixed bug where dumber browsers would submit a new template without any
 Element selected. Thanks to Michael Robinton for reporting the bug. [David]
 
+=item *
+
+All stories and media are now required to be associated with a category. For
+stories, the primary category cannot be deleted. If you want to change the
+primary category, add a new category, change it to the primary, and then
+delete the old primary category. This fix prevents previews and publishes
+from breaking on stories and media that had no categories. Thanks to Mark fo
+the heads-up. [David]
+
 =back
 
 =head2 New Features
