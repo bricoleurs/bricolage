@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.12.6.12 $
+$Revision: 1.12.6.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.6.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.6.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-29 20:10:07 $
+$Date: 2004-04-04 15:43:34 $
 
 =head1 SYNOPSIS
 
@@ -138,10 +138,7 @@ END {
 }
 
 ##############################################################################
-# Grab the Bricolage version number and put it into a v-string. We can
-# eliminate the eval if, in the future, we change the Bric version number
-# to an actual v-string.
-my $old_version = eval "v$Bric::VERSION";
+# What Perl are we using?
 my $perl = $ENV{PERL} || $^X;
 
 # Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
