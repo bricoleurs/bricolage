@@ -273,6 +273,12 @@ sub publish {
             # loop through related objects, adding to the todo list as
             # appropriate
             foreach my $rel ($obj->get_related_objects) {
+                # Skip documents whose current version has already been
+                # published.
+                next unless $rel->needs_publish;
+                # Skip deactivated documents.
+                next unless $rel->is_active;
+
                 # Add it in.
                 if ($args->{publish_related_stories} &&
                     UNIVERSAL::isa($rel, 'Bric::Biz::Asset::Business::Story'))
