@@ -402,32 +402,30 @@ Page 1
 }
 
 ##############################################################################
-# Test execute_me error_handling. 
+# Test execute_me error_handling.
 sub h_test_execute_me : Test(9) {
     my $self = shift;
 
-    my $elem = Bric::Biz::AssetType->new( 
-        {
-            name          => 'Test Element',
-            key_name      => 'test_element',
-            description   => 'Testing Publish Job error handling',
-            burner        => Bric::Biz::AssetType::BURNER_MASON,
-            type__id      => 1,
-            reference     => 0,
-            primary_oc_id => 1
-        });
+    my $elem = Bric::Biz::AssetType->new({
+        name          => 'Test Element',
+        key_name      => 'test_element',
+        description   => 'Testing Publish Job error handling',
+        burner        => Bric::Biz::AssetType::BURNER_MASON,
+        type__id      => 1,
+        reference     => 0,
+        primary_oc_id => 1
+    });
     $elem->save;
     $self->add_del_ids($elem->get_id, 'element');
 
-    my $tmpl = Bric::Biz::Asset::Formatting->new(
-        {
-            output_channel__id => 1,
-            user__id           => $self->user_id,
-            category_id        => 1,
-            site_id            => 100,
-            element            => $elem,
-            data               => '% die "Goodbye cruel world !";',
-        });
+    my $tmpl = Bric::Biz::Asset::Formatting->new({
+        output_channel__id => 1,
+        user__id           => $self->user_id,
+        category_id        => 1,
+        site_id            => 100,
+        element            => $elem,
+        data               => '% die "Goodbye cruel world !";',
+    });
     $tmpl->save;
     $self->add_del_ids($tmpl->get_id, 'formatting');
 
@@ -441,11 +439,12 @@ sub h_test_execute_me : Test(9) {
     $burner->deploy($tmpl);
 
     # We'll need a destination, since there are none by default
-    my $dest = Bric::Dist::ServerType->new({ 
-                                             name => 'Big Test',
-                                             move_method => 'File System',
-                                             site_id     => 100,
-                                          });
+    my $dest = Bric::Dist::ServerType->new({
+        name => 'Big Test',
+        move_method => 'File System',
+        site_id     => 100,
+    });
+
     # the default OutputChannel.
     my $oc = Bric::Biz::OutputChannel->lookup({ id => 1 });
     $dest->add_output_channels($oc); # this is crucial for publishing
@@ -455,15 +454,16 @@ sub h_test_execute_me : Test(9) {
 
     # Create a story
     my $story = Bric::Biz::Asset::Business::Story->new({
-            name        => 'bad test story',
-            description => 'this is a test',
-            priority    => 1,
-            source__id  => 1,
-            slug        => 'badtest',
-            user__id    => $self->user_id(),
-            element     => $elem, 
-            site_id     => 100,
-        });
+        name        => 'bad test story',
+        description => 'this is a test',
+        priority    => 1,
+        source__id  => 1,
+        slug        => 'badtest',
+        user__id    => $self->user_id(),
+        element     => $elem,
+        site_id     => 100,
+    });
+
     my $cat = Bric::Biz::Category->lookup({ id => 1 });
     $story->add_categories([$cat]);
     $story->set_primary_category($cat);
@@ -473,11 +473,11 @@ sub h_test_execute_me : Test(9) {
     $self->add_del_ids($story->get_id, 'story');
 
     my $job = Bric::Util::Job::Pub->new({
-            name        => 'Test Job',
-            user_id     => $self->user_id,
-            sched_time  => $date,
-            story_id    => $story->get_id,
-        });
+        name        => 'Test Job',
+        user_id     => $self->user_id,
+        sched_time  => $date,
+        story_id    => $story->get_id,
+    });
 
     if (QUEUE_PUBLISH_JOBS) {
         $job->save;
@@ -500,6 +500,9 @@ sub h_test_execute_me : Test(9) {
     dies_ok {$job->execute_me} "Try again.";
     is($job->get_tries, 3, "... should have three tries now.");
     is($job->has_failed, 1, "... has_failed should now return true.");
+
+    # Undeploy the template.
+    $burner->undeploy($tmpl);
 }
 
 1;
