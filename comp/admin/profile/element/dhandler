@@ -126,7 +126,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
         };
         my %poc_ids = map { $comp->get_primary_oc_id($_->get_id) => 1 }
           $comp->get_sites;
-        $sel_sub = sub {
+        my $oc_sel_sub = sub {
             return if $poc_ids{$_[0]->get_id};
             return ['Delete', 'rem_oc'];
         };
@@ -142,7 +142,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
                  field_titles => { enabled => 'Enabled' },
                  field_values => $oc_sub,
                  profile => undef,
-                 select => $sel_sub,
+                 select => $oc_sel_sub,
                  number => ++$num
                 );
         my @available_ocs;
@@ -322,11 +322,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:50 $
+$Date: 2004-01-27 02:52:22 $
 
 =head1 DESCRIPTION
 

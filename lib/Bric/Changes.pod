@@ -246,6 +246,10 @@ that was selected last time.
 Group membership now correctly shows the site name for each object when
 there is more than one site in the installation. [JoE<atilde>o Pedro]
 
+=item *
+
+Sites can now be disassociated with elements. Reported by Alexander Ling.
+[David]
 
 =back
 

@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.56 $
+$Revision: 1.57 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.56 $ )[-1];
+our $VERSION = (qw$Revision: 1.57 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-12 05:10:27 $
+$Date: 2004-01-27 02:52:24 $
 
 =head1 SYNOPSIS
 
@@ -1754,8 +1754,8 @@ sub add_sites {
 
 =item $element = $element->remove_sites([$sites])
 
-This takes an array reference of output channels and removes their association
-from the object.
+This takes an array reference of sites and removes their association from the
+object.
 
 B<Throws:>
 
@@ -1767,7 +1767,8 @@ Cannot remove last site from an element.
 
 =back
 
-B<Side Effects:> NONE.
+B<Side Effects:> Also disassociates any output channels for the site that are
+associated with this element.
 
 B<Notes:> NONE.
 
