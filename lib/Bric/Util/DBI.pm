@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.19 $
+$Revision: 1.21.2.20 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.20 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-15 16:03:19 $
+$Date: 2003-08-15 16:32:47 $
 
 =head1 SYNOPSIS
 
@@ -92,7 +92,7 @@ use Digest::MD5 qw(md5_hex);
 use constant CALL_TRACE => DBI_CALL_TRACE || 0;
 use constant DEBUG => DBI_DEBUG || 0;
 # You can set DBI_TRACE from 0 (Disabled) through 9 (super verbose).
-use constant DBI_TRACE => 9;
+use constant DBI_TRACE => 0;
 
 DBI->trace(DBI_TRACE);
 
