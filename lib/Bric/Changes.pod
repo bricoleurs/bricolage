@@ -96,6 +96,11 @@ to become the primary category. Reported by Simon Wilcox. [David]
 Editing notes from My Workspace now works properly. Thanks to Simon Wilcox for
 the spot! [David]
 
+=item *
+
+The "Advanced Search" interface once again works for searching for related
+story and media documents. Reported by Ben Bangert and many others. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
