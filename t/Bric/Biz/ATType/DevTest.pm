@@ -10,6 +10,7 @@ sub table {'at_type '}
 my $story_att_id = 1;
 my $story_class_id = Bric::Biz::ATType::STORY_CLASS_ID;
 my $media_class_id = 46;
+my $image_class_id = 50;
 
 my %et = ( name => 'Bogus',
            description => 'Bogus ATType',
@@ -36,7 +37,7 @@ sub test_lookup : Test(9) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(42) {
+sub test_list : Test(44) {
     my $self = shift;
 
     # Create a new element type group.
@@ -136,7 +137,12 @@ sub test_list : Test(42) {
     # Try media class type. There is one already.
     ok( @ets = Bric::Biz::ATType->list({ biz_class_id => $media_class_id }),
         "Look up biz_class_id $media_class_id" );
-    is( scalar @ets, 3, "Check for 3 element types" );
+    is( scalar @ets, 2, "Check for 1 element types" );
+
+    # Try image class type.
+    ok( @ets = Bric::Biz::ATType->list({ biz_class_id => $image_class_id }),
+        "Look up biz_class_id $image_class_id" );
+    is( scalar @ets, 1, "Check for 1 element type" );
 }
 
 ##############################################################################
