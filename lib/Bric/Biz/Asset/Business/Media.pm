@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-27 20:11:20 $
+$Date: 2003-02-28 20:29:07 $
 
 =head1 SYNOPSIS
 
@@ -1511,6 +1511,7 @@ sub _do_list {
         my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
         execute($select,@bind);
         bind_columns($select, \@d[0 .. $count ]);
+        $class = ref $class || $class;
         while (my $row = fetch($select) ) {
             # Create the new media object.
             my $self = bless {}, $class;
