@@ -6,16 +6,16 @@ Bric::Util::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 16:01:27 $
+$Date: 2004-02-23 21:16:44 $
 
 =head1 SYNOPSIS
 
@@ -134,8 +134,8 @@ my @PROPS = qw(id name type user_id sched_time priority comp_time tries
 my @ORD = @PROPS[1..$#PROPS - 6];
 
 my $SEL_COLS = 'a.id, a.name, a.expire, a.usr__id, a.sched_time, a.priority, '
-  . 'a.comp_time, a.tries, a.executing, a.story__id, a.media__id, '
-  . 'a.class__id, a.error_message, a.failed, m.grp__id';
+  . 'a.comp_time, a.tries, a.error_message, a.executing, a.story__id, '
+  . 'a.media__id, a.class__id, a.failed, m.grp__id';
 my @SEL_PROPS = (@PROPS, 'grp_ids');
 
 my @SCOL_ARGS = ('Bric::Util::Coll::ServerType', '_server_types');
@@ -1665,7 +1665,7 @@ sub save {
     # truncate the error message if necessary
     if (defined $err && length $err > ERR_MAX_LENGTH) {
         $err = substr($err, 0, ERR_MAX_LENGTH);
-        $self->_set(['error_message'], [$err]) 
+        $self->_set(['error_message'], [$err])
     }
 
     if (defined $id && $cancel) {
@@ -1989,11 +1989,12 @@ $get_em = sub {
     my (@d, @jobs, $grp_ids);
     bind_columns($sel, \@d[0..$#SEL_PROPS]);
     my $last = -1;
+    $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
         if ($d[0] != $last) {
             $last = $d[0];
             # Create a new job object.
-            my $self = bless {}, 'Bric::Util::Job';
+            my $self = bless {}, $pkg;
             $self->SUPER::new;
             # Get a reference to the array of group IDs.
             $grp_ids = $d[$#d] = [$d[$#d]];

@@ -218,7 +218,7 @@ has been uploaded. [David]
 
 Autopopulated fields in media elements can once again have their values
 fetched in templates. This problem was due to bad key names being created for
-new image elements created after upgradeing to 1.7.0. [David]
+new image elements created after upgrading to 1.7.0. [David]
 
 =item *
 
@@ -264,6 +264,11 @@ The creation of the Bricolage PostgreSQL user and database during installtion
 no longer complains about usernames or database names with dashes and other
 non-alphanumeric characters in them. Thanks to Marshall Roch for the spot!
 [David]
+
+=item *
+
+Distribution jobs can be edited via the UI again. Thanks to Marshall Roch for
+the spot. [David]
 
 =back
 
