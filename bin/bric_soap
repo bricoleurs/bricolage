@@ -136,97 +136,187 @@ pod2usage(-verbose => 2) if $man;
 
 # make sure we have what we need
 foreach my $opt (qw(username password server)) {
-  no strict 'refs';
-  pod2usage("Missing required $opt option.")
-    unless $$opt;
+    no strict 'refs';
+    pod2usage("Missing required $opt option.")
+	unless $$opt;
 }
 
 # get module
 $module = shift @ARGV;
 pod2usage("Missing required module and command parameters.")
-  unless $module;
+    unless $module;
 $module = ucfirst lc $module;
 pod2usage("Unknown module \"$module\".")
-  unless $module eq 'Story' or 
-         $module eq 'Media';
+    unless $module eq 'Story' or 
+    $module eq 'Media';
 
 # get command
 $command = shift @ARGV;
 pod2usage("Missing required command parameter.")
-  unless $command;
+    unless $command;
 $command = lc $command;
 pod2usage("Unknown command \"$command\".")
-  unless $command eq 'list_ids' or
-         $command eq 'export'   or
-         $command eq 'create'   or
-         $command eq 'update'   or
-         $command eq 'delete';
+    unless $command eq 'list_ids' or
+    $command eq 'export'   or
+    $command eq 'create'   or
+    $command eq 'update'   or
+    $command eq 'delete';
 
 # setup soap object to login with
 my $soap = new SOAP::Lite
-  uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth';
+    uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth';
 $soap->proxy($server . '/soap',
 	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 
 
 
 # login
-print STDERR "Authenticating to Bricolage...\n" if $verbose;
+print STDERR "$module $command: Authenticating to Bricolage...\n" if $verbose;
 my $response = $soap->login(name(username => $username), 
 			    name(password => $password));
 die "Login failed.\n" if $response->fault;
-print STDERR "Login success.\n" if $verbose;
+print STDERR "$module $command: Login success.\n" if $verbose;
 
 # switch to requested module
 $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $module);
-print STDERR "Switched to $module module.\n" if $verbose;
+print STDERR "$module $command: Switched to $module module.\n" if $verbose;
 
 # execute the command
 if ($command eq 'list_ids') {  
-  print STDERR "Calling Bric::SOAP::$module->$command with search: (",
-    join(', ', map { "$_ => $search{$_}" } keys %search), ")\n"
-      if $verbose;
-  $response = $soap->list_ids(map { name($_ => $search{$_}) } keys %search);
-  die "Call to Bric::SOAP::$module->$command failed : \n" .
-    $response->faultstring
-      if $response->fault;
-  my $list = $response->result;
-  foreach (@$list) {
-    print $_, "\n";
-  }
+    print STDERR "$module $command: Calling Bric::SOAP::$module->$command with search: (",
+	join(', ', map { "$_ => $search{$_}" } keys %search), ")\n"
+	    if $verbose;
+    $response = $soap->list_ids(map { name($_ => $search{$_}) } keys %search);
+    die "Call to Bric::SOAP::$module->$command failed : \n" .
+	$response->faultstring
+	    if $response->fault;
+    my $list = $response->result;
+    foreach (@$list) {
+	print $_, "\n";
+    }
 
 } elsif ($command eq 'export') {
-  # collect ids
-  my @ids;
-  foreach (@ARGV) {
-    if ($_ eq '-') {
-      print STDERR "Reading ids from STDIN...\n" if $verbose;
-      push @ids, map { chomp; $_ } <STDIN>;
-    } else { 
-      push @ids, $_;
+    # collect ids
+    my @ids;
+    foreach (@ARGV) {
+	if ($_ eq '-') {
+	    print STDERR "$module $command: Reading ids from STDIN...\n" if $verbose;
+	    push @ids, map { chomp; $_ } <STDIN>;
+	} else { 
+	    push @ids, $_;
+	}
     }
-  }
-  die "No ids found for export.\n"
-    unless @ids;
-  die "Non-numeric ids found in id list (", join(', ', @ids), ")\n"
-    if grep { $_ !~ /^\d+$/ } @ids;
+    die "No ids found for export.\n"
+	unless @ids;
+    die "Non-numeric ids found in id list (", join(', ', @ids), ")\n"
+	if grep { $_ !~ /^\d+$/ } @ids;
   
-  print STDERR "Calling Bric::SOAP::$module->$command with id: ", 
-    join(', ', @ids), "\n"
-      if $verbose;
+    print STDERR "$module $command: Calling Bric::SOAP::$module->$command with id: ", 
+	join(', ', @ids), "\n"
+	    if $verbose;
 
-  my @opts;
-  push @opts, name(lc $module . '_ids', \@ids);
-  push @opts, name(export_related_stories => 1) if $export_related_stories;
-  push @opts, name(export_related_media   => 1) if $export_related_media;
+    my @opts;
+    push @opts, name(lc $module . '_ids', \@ids);
+    push @opts, name(export_related_stories => 1) if $export_related_stories;
+    push @opts, name(export_related_media   => 1) if $export_related_media;
 
-  $response = $soap->export(@opts);
-  die "Call to Bric::SOAP::$module->$command failed : \n" .
-    $response->faultstring
-      if $response->fault;
+    $response = $soap->export(@opts);
+    die "Call to Bric::SOAP::$module->$command failed : \n" .
+	$response->faultstring
+	    if $response->fault;
 
-  print $response->result;
+    print $response->result;
 
-} else {
-  die "Sorry, $command is not yet implemented.\n";
+} elsif ($command eq 'delete') {
+    # collect ids
+    my @ids;
+    foreach (@ARGV) {
+	if ($_ eq '-') {
+	    print STDERR "$module $command: Reading ids from STDIN...\n" if $verbose;
+	    push @ids, map { chomp; $_ } <STDIN>;
+	} else { 
+	    push @ids, $_;
+	}
+    }
+    die "No ids found for delete.\n"
+	unless @ids;
+    die "Non-numeric ids found in id list (", join(', ', @ids), ")\n"
+	if grep { $_ !~ /^\d+$/ } @ids;
+  
+    print STDERR "$module $command: Calling Bric::SOAP::$module->$command with id: ", 
+	join(', ', @ids), "\n"
+	    if $verbose;
+
+    $response = $soap->delete(name(lc $module . '_ids', \@ids));
+    die "Call to Bric::SOAP::$module->$command failed : \n" .
+	$response->faultstring
+	    if $response->fault;
+
+} elsif ($command eq 'create') {
+
+    # work through documents1
+    foreach (@ARGV) {
+	my $document;
+	if ($_ eq '-') {
+	    print STDERR "$module $command: Reading document from STDIN...\n" if $verbose;
+	    $document = join('', <STDIN>);
+	} else { 
+	    open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
+	    $document = join('', <DOC>);
+	    close(DOC);
+	}
+
+	print STDERR "$module $command: Calling Bric::SOAP::$module->$command with document:  ", 
+	    length($document), " bytes\n"
+		if $verbose;
+
+	$response = $soap->create(name(document => $document)->type('base64'));
+	die "Call to Bric::SOAP::$module->$command failed : \n" .
+	    $response->faultstring
+		if $response->fault;
+
+	# print out ids
+	my $list = $response->result;
+	foreach (@$list) {
+	    print $_, "\n";
+	}
+    }
+
+} elsif ($command eq 'update') {
+
+    # work through documents1
+    foreach (@ARGV) {
+	my $document;
+	if ($_ eq '-') {
+	    print STDERR "$module $command: Reading document from STDIN...\n" if $verbose;
+	    $document = join('', <STDIN>);
+	} else { 
+	    open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
+	    $document = join('', <DOC>);
+	    close(DOC);
+	}
+
+	my @update_ids = $document =~ /<story.*id="(\d+)"/g;
+	print STDERR "$module $command: Found ids for update: ", join(', ', @update_ids), "\n"
+	    if $verbose;
+       
+	print STDERR "$module $command: Calling Bric::SOAP::$module->$command with document:  ", 
+	    length($document), " bytes\n"
+		if $verbose;
+	
+	$response = $soap->update(name(document => $document)->type('base64'),
+				  name(update_ids => 
+				       [ map 
+					 { name(story_id => $_) } 
+					 @update_ids ]));
+	die "Call to Bric::SOAP::$module->$command failed : \n" .
+	    $response->faultstring
+		if $response->fault;
+	
+	# print out ids
+	my $list = $response->result;
+	foreach (@$list) {
+	    print $_, "\n";
+	}
+    }
 }
