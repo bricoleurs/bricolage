@@ -352,9 +352,9 @@ my $handle_checkin_and_pub = sub {
     # Clear the state out.
     clear_state($widget);
 
-    # HACK: Commit this checkin
-    # WHY?? Because Postgres does NOT like it when you insert and
-    # delete a record within the same transaction.
+    # HACK: Commit this checkin WHY?? Because Postgres does NOT like it when
+    # you insert and delete a record within the same transaction. This will
+    # be fixed in PostgreSQL 7.3. Be sure to start a new transaction!
     Bric::Util::DBI::commit(1);
     Bric::Util::DBI::begin(1);
 

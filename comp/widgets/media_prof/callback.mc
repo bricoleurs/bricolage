@@ -292,12 +292,12 @@ my $handle_checkin_and_pub = sub {
     add_msg("Media &quot;" . $media->get_title . "&quot; saved and checked in to"
             . " &quot;$dname&quot;.");
 
-
     # HACK: Commit this checkin WHY?? Because Postgres does NOT like it when
     # you insert and delete a record within the same transaction. This will
     # be fixed in PostgreSQL 7.3. Be sure to start a new transaction!
-    Bric::Util::DBI::commit;
-    Bric::Util::DBI::begin;
+    Bric::Util::DBI::commit(1);
+    Bric::Util::DBI::begin(1);
+
     # Instantiate the Burner object.
     my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
     my $published = $b->publish($media, 'media', get_user_id);

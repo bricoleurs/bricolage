@@ -75,6 +75,11 @@ I<are> outputting UTF-8 in your templates, and just haven't realized it.
 Fixed bug when reverting stories and media with no associated contributors.
 [Mark]
 
+=item *
+
+"Check In and Publish" now works again for Media assets. Thanks to Matt Vella
+for the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.3
