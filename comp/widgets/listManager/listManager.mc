@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.32.2.2 $
+$Revision: 1.32.2.3 $
 
 =head1 DATE
 
-$Date: 2004-04-20 17:59:48 $
+$Date: 2004-04-20 18:13:33 $
 
 =head1 SYNOPSIS
 
@@ -572,7 +572,6 @@ my $output_select_controls = sub {
 
     # Turn this value into an array of arrays if it isn't already.
     $vals = ref $vals->[0] eq 'ARRAY' ? $vals : [$vals];
-    use Data::Dumper; warn "Dump: ", Dumper $vals;
 
     my @cntl;
     foreach my $v (@$vals) {
