@@ -6,11 +6,11 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:14 $
+$Date: 2002-05-10 19:44:54 $
 
 =head1 DESCRIPTION
 
@@ -101,33 +101,14 @@ sub get_users {
     ask_confirm("Postgres Root Password (leave empty for no password)", 
 		\$PG{root_pass});
 
-    # make sure this account is really a root user and that postgres
-    # is really running.
-    print "Checking provided Postgres Root Username and Password...\n";
-    open(PSQL, "|$PG{bin_dir}/psql -U $PG{root_user} -A -q template1 > psql.tmp")
-	or die "Unable to run psql using $PG{bin_dir}/psql: $!";
-    print PSQL qq{\\x 
-                  SELECT 1 as super
-                  FROM pg_shadow 
-                  WHERE usename='$PG{root_user}' AND usesuper;
-                 };
-    close(PSQL);
-
-    # check query results
-    my $result = "";
-    if (open(TMP, "psql.tmp")) {
-	$result = join('',<TMP>);
-	close(TMP);
-	unlink("psql.tmp");
+    while(1) {
+	$PG{system_user} = $PG{root_user};
+	ask_confirm("Postgres System Username", \$PG{system_user});
+	$PG{system_user_uid} = (getpwnam($PG{system_user}))[2];
+	last if defined $PG{system_user_uid};
+	print "User \"$PG{system_user}\" not found!  This user must exist ".
+	    "on your system.\n";
     }
-
-    hard_fail(<<END) unless $result =~ /super\|1/;
-Unable to verify Postgres Root Username and Password.  You should
-check that Postgres is running and verify that the username and
-password you provided are the Postgres Root Username and Password
-on your system.
-END
-    print "Ok.\n\n";
 
     while(1) {
       ask_confirm("Bricolage Postgres Username", \$PG{sys_user});

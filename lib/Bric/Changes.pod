@@ -111,6 +111,11 @@ Fixed bug in Bric::SOAP where Bricolage exceptions resulted in an
 uninformative "Application error" message. Now the full exception message is
 displayed. [Sam]
 
+=item *
+
+Fixed installation to work under Debian Linux 3.0 (testing).  Thanks
+to Mark Jaroski for a helpful patch.  [Sam]
+
 =back
 
 =head2 New Features

@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-04-08 23:00:12 $
+$Date: 2002-05-10 19:44:54 $
 
 =head1 DESCRIPTION
 
@@ -98,6 +98,12 @@ sub read_conf {
 	print "Reading Apache conf file: $AP{conf_file}.\n";
 	$AP{conf} = join('', <CONF>);
 	close CONF;
+    } elsif (open(CONF, "/usr/share/doc/apache-perl/examples/httpd.conf")) {
+	# debian keeps an example conf in a funny location, maybe it's there?
+	$AP{conf_file} = "/usr/share/doc/apache-perl/examples/httpd.conf";
+	print "Reading Apache conf file: $AP{conf_file}.\n";
+	$AP{conf} = join('', <CONF>);
+	close CONF;
     } else {
 	$AP{conf} = '';
     }    
@@ -168,6 +174,7 @@ sub check_modules {
 
     my @missing;
     # loop over required modules
+ MOD: 
     foreach my $mod (qw(perl rewrite proxy ssl log_config mime alias)) {
 	# first look in static modules
 	next if exists $AP{static_modules}{"mod_$mod"};
@@ -179,40 +186,46 @@ sub check_modules {
 		$AP{load_modules}{"${mod}_module"} and
 		-e catfile($AP{HTTPD_ROOT}, 
 			   $AP{load_modules}{"${mod}_module"})) {
-		next;
+		next MOD;
 	    }
 	    
-	    # last chance, see if we can find them in
-	    # $HTTPD_ROOT/modules by guessing.  This comes in handy if
-	    # someone decides to install a DSO module but doesn't put
-	    # it in their default conf file.  Like Redhat 7.2 and
-	    # mod_proxy.
-
-	    # perl and proxy use libfoo.so format filenames
-	    if ($mod eq 'perl' or $mod eq 'proxy') {
-		if (-e catfile($AP{HTTPD_ROOT}, "modules/lib${mod}.so")) {
-		    $AP{add_modules}{"mod_$mod"} = 1;
-		    $AP{load_modules}{"${mod}_module"} = "modules/lib${mod}.so";
-		    next;
-		} elsif (-e catfile($AP{HTTPD_ROOT}, "libexec/lib${mod}.so")) {
-		    $AP{add_modules}{"mod_$mod"} = 1;
-		    $AP{load_modules}{"${mod}_module"} = "libexec/lib${mod}.so";
-		    next;
-		}
+	    # The apache-perl package provided by Debian doesn't 
+	    # use the AddModule directive.  Also it uses the full 
+	    # path to the module on the LoadModule line.
+	    if ($AP{load_modules}{"${mod}_module"} and
+		file_name_is_absolute($AP{load_modules}{"${mod}_module"}) and
+		-e $AP{load_modules}{"${mod}_module"}) {
+		next MOD;
 	    }
+	    
+	    # last chance, see if we can find them in on the
+	    # filesystem by guessing.  This comes in handy if someone
+	    # decides to install a DSO module but doesn't put it in
+	    # their default conf file.  Like Redhat 7.2 and mod_proxy.
 
-	    # everything else is mod_foo.so.  Not an elsif in case
-	    # perl or proxy are sometimes mod_foo.so too.  I can
-	    # imagine a package maintainer getting smart and "fixing"
-	    # them.
-	    if (-e catfile($AP{HTTPD_ROOT}, "modules/mod_${mod}.so")) {
-		$AP{add_modules}{"mod_$mod"} = 1;
-		$AP{load_modules}{"${mod}_module"} = "modules/mod_${mod}.so";
-		next;
-	    } elsif (-e catfile($AP{HTTPD_ROOT}, "libexec/mod_${mod}.so")) {
-		$AP{add_modules}{"mod_$mod"} = 1;
-		$AP{load_modules}{"${mod}_module"} = "libexec/mod_${mod}.so";
-		next;
+	    # potential paths for modules
+	    foreach my $path (catdir($AP{HTTPD_ROOT}, "modules"),
+			      catdir($AP{HTTPD_ROOT}, "libexec"),
+			      "/usr/lib/apache/1.3"              ) {		
+
+		# perl and proxy use libfoo.so format filenames
+		if ($mod eq 'perl' or $mod eq 'proxy') {
+		    if (-e ($_ = catfile($path, "lib${mod}.so"))) {
+			$AP{add_modules}{"mod_$mod"} = 1;
+			$AP{load_modules}{"${mod}_module"} = $_;
+			next MOD;
+		    } 
+		}
+
+		# everything else is mod_foo.so.  Not an elsif in case
+		# perl or proxy are sometimes mod_foo.so too.  I can
+		# imagine a package maintainer getting smart and "fixing"
+		# them.
+		if (-e ($_ = catfile($path, "mod_${mod}.so"))) {
+		    $AP{add_modules}{"mod_$mod"} = 1;
+		    $AP{load_modules}{"${mod}_module"} = $_;
+		    next MOD;
+		} 
 	    }
 	}
 

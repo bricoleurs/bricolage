@@ -6,11 +6,11 @@ cpan.pl - installation script to install CPAN modules
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-04-23 22:24:33 $
+$Date: 2002-05-10 19:44:54 $
 
 =head1 DESCRIPTION
 
@@ -123,12 +123,11 @@ our $PG;
 do "./postgres.db" or die "Failed to read postgres.db : $!";
 
 # loop through modules installing as we go
-foreach my $mod (@$MOD) {
-    my ($name, $found, $req_version) = @{$mod}{qw(name found req_version)};
-    next if $mod->{found};
+for my $i (0 .. $#$MOD) {
+    next if $MOD->[$i]{found};
 
-    install_module($mod->{name}, $mod->{req_version});
-    $mod->{found} = 1;
+    install_module($MOD->[$i]{name}, $MOD->[$i]{req_version});
+    $MOD->[$_]{found} = 1;
 
     # make sure we don't redo this work, even if we're run twice in a
     # row after a failure.

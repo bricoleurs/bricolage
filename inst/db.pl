@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:13 $
+$Date: 2002-05-10 19:44:54 $
 
 =head1 DESCRIPTION
 
@@ -40,6 +40,12 @@ print "\n\n==> Creating Bricolage Database <==\n\n";
 
 our $PG;
 do "./postgres.db" or die "Failed to read postgres.db : $!";
+
+# switch to postgres system user
+print "Becoming $PG->{system_user}...\n";
+$> = $PG->{system_user_uid};
+die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
+    unless $> == $PG->{system_user_uid};
 
 # setup database and user while connected to dummy template1
 my $dbh = db_connect('template1');
