@@ -87,6 +87,11 @@ Deleted destinations will now be dissociated from output channels when
 they're deleted. This prevents stories from being published to deleted
 destinations. Thanks to Mark for the heads-up. [David]
 
+=item *
+
+Fixed bug where attribute metadata wasn't getting deleted when it was
+supposed to. [Joao Pedro Goncalves]
+
 =back
 
 =head2 New Features

@@ -8,15 +8,15 @@ package Bric::Util::Attribute;
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:45 $
+$Date: 2002-05-03 16:51:27 $
 
 =head1 SYNOPSIS
 
@@ -1200,13 +1200,9 @@ B<Notes:>
 =cut
 
 sub delete_meta {
-    my $self = shift;
-    my ($param) = @_;
-
+    my ($self, $param) = @_;
     my $meta = $self->_get_meta($param);
-
-    $meta->{'_dirty'} = 1;
-
+    $meta->{_delete} = 1;
     return $self;
 }
 
