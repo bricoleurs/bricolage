@@ -105,12 +105,12 @@ use constant DEFAULT_ORDER => 'cover_date';
 
 sub test_build_query: Test(2) {
     my $self = shift;
-    ok( my $got = build_query('pkg', 'cols', 'grp_cols', 'tables', 'where', 'order'),
+    ok( my $got = build_query('pkg', 'cols', 'grp_by', 'tables', 'where', 'order'),
         "Build query" );
-    my $expected = q{  SELECT cols, grp_cols
+    my $expected = q{  SELECT cols
                     FROM   tables
                     WHERE  where
-                    GROUP BY cols
+                    grp_by
                     order
                  };
     $$got =~ s/\s+/ /gm; # ignore whitespace
