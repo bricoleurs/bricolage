@@ -8,11 +8,11 @@ select_object - Provide a select box listing all objects of a certain type.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-09-16 16:52:25 $
+$Date: 2004-02-19 15:23:32 $
 
 =head1 SYNOPSIS
 
@@ -54,6 +54,15 @@ field
 
 The field that will be displayed as labels in this widget.  The values will be
 the ID of the objects themselves.
+
+=item *
+
+getter
+
+An optional code reference that returns the string to be used as the display
+label. If it is not passed in, C<select_object.mc> will retreive the getter
+from the C<my_meths()> method fo the class specified in the C<object>
+parameter.
 
 =item *
 
@@ -164,6 +173,7 @@ $style      => 'dropdown'
 $object
 $name       => ''
 $field
+$getter     => undef
 $constrain  => {}
 $objs       => undef
 $crit_field => undef
@@ -239,7 +249,7 @@ if ($pkg) {
     $vals[0] = [@$default] if ($default);
 
     # Add the rest of the values from the object.
-    my $val_get = $meth->{$field}->{'get_meth'};
+    my $val_get = $getter || $meth->{$field}->{'get_meth'};
     my $val_arg = $meth->{$field}->{'get_args'};
 
     foreach my $o (@$objs) {
