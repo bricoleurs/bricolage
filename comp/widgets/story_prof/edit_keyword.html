@@ -26,8 +26,13 @@ $m->comp('/widgets/add_more/add_more.mc', type => 'keyword', param => $param,
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Output the save buttons.
-$m->comp('/widgets/profile/formButtons.mc', type => 'story', section => 'workflow',
-	 no_del => 1, widget => $widget, cb => 'add_kw_cb');
+$m->comp('/widgets/profile/formButtons.mc',
+         type => 'story',
+         section => 'workflow',
+	 no_del => 1,
+         return => '/workflow/profile/story',
+         widget => $widget,
+         cb => 'add_kw_cb');
 </%perl>
 
 <%args>

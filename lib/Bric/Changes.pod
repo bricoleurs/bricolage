@@ -168,6 +168,12 @@ The size of the database column that stores custom field options (such as for
 select lists) has been changed to the TEXT PostgreSQL type, so that the number
 of options isn't arbitrarily limited. [Matt Vella]
 
+=item *
+
+Clicking "Cancel" when editing keywords in a new story now properly returns to
+the story profile, rather than to the last screen before the story was
+created. [David]
+
 =back
 
 =head2 Bug Fixes
