@@ -71,8 +71,9 @@ Options:
                            a second --verbose and you'll get debugging
                            output too.
 
-  --force                - use force option for
-                           Bric::SOAP::Element->delete()
+  --force                - use force option for element delete
+
+  --to-preview           - use to_preview option for workflow publish
 
 
 =head1 EXAMPLES
@@ -170,6 +171,7 @@ our %search;
 our $with_related_stories = 0;
 our $with_related_media   = 0;
 our $force                = 0;
+our $to_preview           = 0;
 our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
 our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
 our $server                 = 'http://localhost';
@@ -189,6 +191,7 @@ GetOptions("help"                   => \$help,
 	   "all"                    => sub { $with_related_stories = 1;
 					     $with_related_media   = 1; },
 	   "force"                  => \$force,
+	   "to-preview"             => \$to_preview,
 	   "desk=s"                 => \$desk,
 	   "workflow=s"             => \$workflow,
 	  ) or  pod2usage(2);
@@ -423,6 +426,7 @@ sub publish {
     my @opts;
     push @opts, name(publish_related_stories => 1) if $with_related_stories;
     push @opts, name(publish_related_media   => 1) if $with_related_media;
+    push @opts, name(to_preview              => 1) if $to_preview;
 
     $response = $soap->publish(name(publish_ids => \@ids), @opts);
     die "Call to Bric::SOAP::$module->$command failed : \n" .

@@ -11,7 +11,7 @@ use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow qw(STORY_WORKFLOW MEDIA_WORKFLOW TEMPLATE_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
-use Bric::Config        qw(STAGE_ROOT);
+use Bric::Config        qw(STAGE_ROOT PREVIEW_ROOT PREVIEW_LOCAL);
 use Bric::App::Event    qw(log_event);
 use Bric::Util::Time    qw(strfdate);
 use Bric::Util::MediaType;
@@ -35,15 +35,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-23 00:14:20 $
+$Date: 2002-03-14 23:06:43 $
 
 =head1 SYNOPSIS
 
@@ -108,6 +108,12 @@ the web interface this happens if and only if the related media
 objects have never been published before.  This option is false by
 default.
 
+=item to_preview
+
+Set this to true to publish to the preview destination instead of the
+publish destination.  This will fail if PREVIEW_LOCAL is On in
+bricolage.conf.
+
 =back
 
 Throws: NONE
@@ -128,7 +134,8 @@ code in a module so it could be kept in one place.
 # hash of allowed parameters
 my %allowed = map { $_ => 1 } qw(story_id media_id publish_ids
 				 publish_related_stories 
-				 publish_related_media);
+				 publish_related_media
+				 to_preview);
 
 sub publish {
     my $pkg = shift;
@@ -144,12 +151,17 @@ sub publish {
  	    unless exists $allowed{$_};
     }
     
+    my $preview = exists $args->{to_preview} and $args->{to_preview};
+    die __PACKAGE__ . "::publish : cannot publish to_preview with ".
+	"PREVIEW_LOCAL set.\n" if $preview and PREVIEW_LOCAL;
+
     my @ids = _collect_ids("publish_ids", 
 			   [ 'story_id', 'media_id' ],
 			   $env);
 
     # Instantiate the Burner object.
-    my $burner = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
+    my $burner = Bric::Util::Burner->new(
+                          { out_dir => $preview ? PREVIEW_ROOT : STAGE_ROOT });
     
     # iterate through ids publishing shiznats
     my %seen;
@@ -184,10 +196,11 @@ sub publish {
 
 	# check check check
 	die "Cannot publish checked-out $type : \"".$id->value."\".\n" 
-	    if $obj->get_checked_out;
+	    if $obj->get_checked_out and not $preview;
 
-	# Check for EDIT permission
-	die "Access denied.\n" unless chk_authz($obj, EDIT, 1);
+	# Check for EDIT permission, or READ if previewing
+	die "Access denied.\n" unless chk_authz($obj, EDIT, 1) or
+                                      ($preview and chk_authz($obj, READ, 1));
 
 	# schedule related stuff if requested
 	if ($args->{publish_related_stories} or 
@@ -222,7 +235,10 @@ sub publish {
       
 	# grab the asset type for this object
 	my $at  = $obj->_get_element_object;
-	my $ocs = $at->get_output_channels;
+	my $ocs = $preview 
+	    ? [ Bric::Biz::OutputChannel->lookup(
+                                        { id => $at->get_primary_oc_id }) ] 
+	    : $at->get_output_channels;
 	my @res;
 	my %servers;
 
@@ -232,8 +248,8 @@ sub publish {
 	
 	    # get a list of server types this categroy applies to.
 	    my $server_list = Bric::Dist::ServerType->list(
-					   { can_publish => 1,
-					     output_channel_id => $oc_id });
+		       { ($preview ? (can_preview => 1) : (can_publish => 1)),
+			 output_channel_id => $oc_id });
 	    die "Cannot publish ($type => $id ) " .
 		"because there are no Destinations associated with its " .
 		    "output channels.\n"
