@@ -47,7 +47,7 @@ sub checkin : Callback {
 
     if ($a_class eq 'formatting') {
         my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
-           $sb->undeploy($a_obj);
+        $sb->undeploy($a_obj);
     }
 
     log_event("${a_class}_checkin", $a_obj, { Version => $a_obj->get_version });
@@ -176,7 +176,7 @@ sub publish : Callback {
                 # Cannot publish checked-out assets.
                 my $doc_disp_name = lc get_disp_name($key);
                 add_msg("Cannot publish $doc_disp_name \"[_1]\" because it is"
-                          . " checked out.", $doc->get_name);
+                        . " checked out.", $doc->get_name);
                 delete $pub_ids->{$id};
                 next;
             }
@@ -184,7 +184,7 @@ sub publish : Callback {
             unless (chk_authz($doc, PUBLISH, 1)) {
                 my $doc_disp_name = lc get_disp_name($key);
                 add_msg('You do not have permission to publish '
-                          . qq{$doc_disp_name "[_1]"}, $doc->get_name);
+                        . qq{$doc_disp_name "[_1]"}, $doc->get_name);
                 next;
             }
 
