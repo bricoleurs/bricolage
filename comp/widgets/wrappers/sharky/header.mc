@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.15.2.1 $
+$Revision: 1.15.2.2 $
 
 =head1 DATE
 
-$Date: 2002-01-17 16:16:05 $
+$Date: 2002-01-18 00:36:55 $
 
 =head1 SYNOPSIS
 
@@ -111,7 +111,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
     // Turn off the toolbar, back button, etc.
     var newWin = window.open(location.href, 'Bricolage_<% SERVER_WINDOW_NAME %>',
       'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1,width=780');
-    document.location = 'about:blank';
+    location.href = 'about:blank';
     newWin.focus(true);
 } else {
     history.forward(1);

@@ -33,7 +33,7 @@ if ($type eq 'grp') {
 			   indent  => 140,
 			   width   => 500,
 			   value => $ARGS{grp_type} || 'all',
-			   js => qq{onChange="document.location='} . $r->uri .
+			   js => qq{onChange="location.href='} . $r->uri .
                                  "?grp_type=' + " .
                                  qq{escape(this.options[this.selectedIndex].value)"}
                            );
@@ -67,7 +67,7 @@ if ($type eq 'grp') {
 			   indent  => 140,
 			   width   => 500,
 			   selected => $ctype,
-			   js => qq{onChange="document.location='} . $r->uri .
+			   js => qq{onChange="location.href='} . $r->uri .
                                  "?ctype=' + " .
                                  qq{escape(this.options[this.selectedIndex].value)"}
                            );
@@ -357,11 +357,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.6.2.1 $
+$Revision: 1.6.2.2 $
 
 =head1 DATE
 
-$Date: 2002-01-17 02:12:16 $
+$Date: 2002-01-18 00:36:55 $
 
 =head1 SYNOPSIS
 

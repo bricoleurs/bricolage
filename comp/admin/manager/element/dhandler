@@ -83,7 +83,7 @@ $groupList = $m->scomp('/widgets/select_object/select_object.mc',
 		       disp => 'Or Pick a Type',
 		       reset_key => $ARGS{elem_type},
 		       selected => $ARGS{elem_type},
-		       js => qq{onChange="document.location='} . $r->uri .
+		       js => qq{onChange="location.href='} . $r->uri .
                              "?elem_type=' + " .
                              qq{escape(this.options[this.selectedIndex].value)"}
 		      );
@@ -141,11 +141,11 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.2.1 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:37 $
+$Date: 2002-01-18 00:36:55 $
 
 =head1 SYNOPSIS
 
