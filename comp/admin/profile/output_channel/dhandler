@@ -93,8 +93,8 @@ var selectOrderNames = new Array("include_pos")
     );
 
 </%perl>
-<table border="1" width="580" cellpadding="0" cellspacing="0">
-<tr><td class="medHeader"><& '/widgets/select_object/select_object.mc',
+<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
+<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
     object => 'output_channel',
     field  => 'name',
     exclude => [ $id, map { $_->get_id } $oc->get_includes ],
@@ -139,11 +139,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-23 00:34:58 $
+$Date: 2002-10-08 20:31:02 $
 
 =head1 SYNOPSIS
 
