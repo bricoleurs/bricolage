@@ -2,20 +2,20 @@ package Bric::App::ApacheHandler;
 
 =head1 NAME
 
-Bric::App::ApacheHandler - subclass of HTML::Mason::ApacheHandler
+Bric::App::ApacheHandler - subclass of MasonX::ApacheHandler::WithCallbacks
 
 =head1 VERSION
 
-$Revision: 1.2.6.1 $
+$Revision: 1.2.6.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2.6.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.6.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-05-02 08:14:43 $
+$Date: 2003-06-16 10:14:47 $
 
 =head1 DESCRIPTION
 
@@ -34,7 +34,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::App::Callback;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(:all);
 use Bric::Config qw(:char);
 use Bric::Util::CharTrans;
 
@@ -118,13 +118,20 @@ B<NOTES:> NONE.
 sub request_args {
     my $self = shift;
     my ($args, $r, $q) = $self->SUPER::request_args(@_);
-    eval { $ct->to_utf8($args) };
-    if ($@) {
-        # assumes $@ isa Bric::Util::Fault::Exception
-        die ref $@ ? $@ : Bric::Util::Fault::Exception::DP->new
-          ({msg => 'Error translating from ' . CHAR_SET . ' to UTF-8.',
-            payload => $@});
+
+    # Translate chars if non-UTF8 (see also Handler.pm)
+    unless (CHAR_SET eq 'UTF-8') {
+        eval { $ct->to_utf8($args) };
+        if ($@) {
+            if (isa_bric_exception($@)) {
+                rethrow_exception($@);
+            } else {
+                throw_dp(error => 'Error translating from ' . CHAR_SET . ' to UTF-8.',
+                         payload => $@);
+            }
+        }
     }
+
     return ($args, $r, $q);
 }
 
