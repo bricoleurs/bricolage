@@ -88,6 +88,11 @@ profile if you've checked out one media asset, or My Workspace if you've checked
 out more than one. This puts it in line with how "Find Stories" and "Find
 Templates" work. Thanks to Sam for the report. [David]
 
+=item *
+
+Fixed bulk edit functionality for Media assets. Thanks to Sam for the spot.
+[David]
+
 =back
 
 =head1 VERSION 1.2.0
