@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.16.2.3 $
+$Revision: 1.16.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-27 00:27:01 $
+$Date: 2002-10-23 19:03:33 $
 
 =head1 SYNOPSIS
 
@@ -1500,7 +1500,7 @@ sub has_member {
                 if ($self->get_object_class_id) {
                     # It's in one class. Just look for the object ID.
                     foreach my $m (@$new_memb) {
-                        $mem = $m and last MEMCHK if $mem->get_obj_id == $oid;
+                        $mem = $m and last MEMCHK if $m->get_obj_id == $oid;
                     }
                 } else {
                     # Ugh, we need to convert it to a special hash.
