@@ -1,11 +1,5 @@
 package Bric::App::Callback::Profile::FormBuilder;
 
-# XXX: from David msg on May 2nd:
-# I think that the formBuilder/element.mc and
-# formBuilder/contributor_type.mc callbacks should also be under
-# Profile...but I leave that up to you.
-# -- Now I understand this
-
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'formBuilder');
 use strict;
@@ -200,8 +194,6 @@ my $do_contrib_type = sub {
 
     # Grab the ID.
     $param->{"$key\_id"} ||= $obj->get_id;
-
-    # XXX: why doesn't it return the object here?
 };
 
 my $do_element = sub {
@@ -263,7 +255,7 @@ my $do_element = sub {
     $obj->add_site($self->value) if $cb_key eq 'add_site_id';
 
     # delete any selected sub elements
-    if ($param->{"$key|delete_cb"}) {   # XXX: not a callback
+    if ($param->{"$key|delete_cb"}) {   # note: not a callback
         $obj->del_containers(mk_aref($param->{"$key|delete_cb"}));
     }
 
@@ -502,7 +494,6 @@ my $add_new_attrs = sub {
               if $param->{'fb_type'} eq 'checkbox';
 
             # Log that we've created it.
-            # XXX: is 'Name' supposed to be capitalized?
             log_event("$key\_data_new", $atd, { Name => $param->{'fb_name'} });
             log_event("$key\_attr_add", $obj, { Name => $param->{'fb_name'} });
         }
