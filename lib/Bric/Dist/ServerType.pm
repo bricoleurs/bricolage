@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-23 05:43:31 $
+$Date: 2003-01-23 21:06:49 $
 
 =head1 SYNOPSIS
 
@@ -238,8 +238,8 @@ sub new {
 =item my $st = Bric::Dist::ServerType->lookup({ name => $name })
 
 Looks up and instantiates a new Bric::Dist::ServerType object based on the
-Bric::Dist::ServerType object ID or name passed. If $id or $name is not found in
-the database, lookup() returns undef.
+Bric::Dist::ServerType object ID or name passed. If C<$id> or C<$name> is not
+found in the database, C<lookup()> returns C<undef>.
 
 B<Throws:>
 
@@ -286,7 +286,8 @@ sub lookup {
     my $st = &$get_em(@_);
     # We want @$st to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Dist::ServerType objects found.' }) if @$st > 1;
+      msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+      if @$st > 1;
     return @$st ? $st->[0] : undef;
 }
 
@@ -1983,13 +1984,9 @@ sub _get_mover_class { $_[0]->_get('_mover_class') }
 
 =item my $st_ids_aref = &$get_em( $pkg, $params, 1 )
 
-Function used by lookup() and list() to return a list of Bric::Dist::ServerType objects
-or, if called with an optional third argument, returns a listof Bric::Dist::ServerType
-object IDs (used by list_ids()).
-
-Function used by lookup() and list() to return a list of Bric::Dist::Resource
-objects or, if called with an optional third argument, returns a listof
-Bric::Dist::Resource object IDs (used by list_ids()).
+Function used by C<lookup()> and C<list()> to return a list of
+Bric::Dist::ServerType objects or, if called with an optional third argument,
+returns a list of Bric::Dist::ServerType object IDs (used by C<list_ids()>).
 
 B<Throws:>
 

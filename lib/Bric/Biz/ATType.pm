@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-22 05:36:03 $
+$Date: 2003-01-23 21:06:47 $
 
 =head1 SYNOPSIS
 
@@ -40,6 +40,7 @@ use strict;
 # Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::ElementType;
+use Bric::Util::Fault::Exception::DP;
 
 #==============================================================================#
 # Inheritance                          #
@@ -49,26 +50,16 @@ use base qw(Bric);
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-# None.
+my $get_em;
 
 
 #==============================================================================#
 # Constants                            #
 #======================================#
 use constant DEBUG => 0;
-use constant TABLE  => 'at_type';
-use constant COLS   => qw(name description top_level media paginated
-			  fixed_url related_story related_media biz_class__id
-			  active);
-use constant FIELDS => qw(name description top_level media paginated
-			  fixed_url related_story related_media biz_class_id
-			  _active);
-use constant ORD   => qw(name description top_level media paginated
-			  fixed_url related_story related_media biz_class_id
-			  active);
-
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::ElementType';
 use constant INSTANCE_GROUP_ID => 28;
+use constant STORY_CLASS_ID => 10;
 
 #==============================================================================#
 # FIELDS                               #
@@ -81,8 +72,19 @@ use constant INSTANCE_GROUP_ID => 28;
 #--------------------------------------#
 # Private Class Fields
 my $METH;
+my $TABLE = 'at_type';
+my @COLS  = qw(name description top_level media paginated fixed_url
+                related_story related_media biz_class__id active);
+my @PROPS = qw(name description top_level media paginated fixed_url
+               related_story related_media biz_class_id _active);
 
+my $SEL_COLS = 'a.id, a.name, a.description, a.top_level, a.media, ' .
+  'a.paginated, a.fixed_url, a.related_story, a.related_media, ' .
+  'a.biz_class__id, a.active, m.grp__id';
+my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
 
+my @ORD = qw(name description top_level media paginated fixed_url
+             related_story related_media biz_class_id active);
 
 #--------------------------------------#
 # Instance Fields
@@ -99,6 +101,7 @@ BEGIN {
 			 'related_media'  => Bric::FIELD_RDWR,
 			 'media'          => Bric::FIELD_RDWR,
 			 'biz_class_id'   => Bric::FIELD_RDWR,
+			 'grp_ids'        => Bric::FIELD_READ,
 
 			 # Private Fields
 			 '_active'         => Bric::FIELD_NONE,
@@ -113,73 +116,97 @@ BEGIN {
 
 =over 4
 
-=cut
+=item $obj = Bric::Biz::ATType->new($init);
 
-#--------------------------------------#
-# Constructors
-#------------------------------------------------------------------------------#
-
-=item $obj = new Bric::Biz::ATType($init);
-
-Keys for $init are:
+Constructs and returns a new Bric::Biz::ATType object initialized with the
+parameters in the C<$init> hash reference. The supported keys for C<$init>
+are:
 
 =over 4
 
-=item *
+=item name
 
-name
+The name of this ATType.
 
-The name of this type
+=item description
 
-=item *
+A short description of this ATType.
 
-description
+=item top_level
 
-A short description of this type.
+A boolean value flagging whether elements (AssetTypes) of this this ATType
+represent top level elements (story type elements or media type elements) or
+subelements. Defaults to false.
 
-=item *
+=item paginated
 
-top_level
+A boolean value flagging whether elements (AssetTypes) of this this ATType
+represent pages. Defaults to false.
 
-A boolean value flagging whether this AssetType represents a top level 
-AssetType, rather than a container AssetType.
+=item fixed_url
 
-=item *
+A boolean value flagging whether elements (AssetTypes) of this this ATType
+are fixed URL elements. Defaults to false.
 
-paginated
+=item related_story
 
-If each of this type of AssetType represents a page of output.
+A boolean value flagging whether elements (AssetTypes) of this this ATType
+are rleated story elements. Defaults to false.
+
+=item related_media
+
+A boolean value flagging whether elements (AssetTypes) of this this ATType
+are rleated media elements. Defaults to false.
+
+=item media
+
+A boolean value flagging whether elements (AssetTypes) of this this ATType
+are media elements. Defaults to false.
+
+=item biz_class_id
+
+The ID corresponding to the Bric::Util::Class entry for one of the following
+classes:
+
+=over 4
+
+=item Bric::Biz::Asset::Busines::Story
+
+=item Bric::Biz::Asset::Busines::Media
+
+=item Bric::Biz::Asset::Busines::Media::Image
+
+=item Bric::Biz::Asset::Busines::Media::Audio
+
+=item Bric::Biz::Asset::Busines::Media::Video
 
 =back
 
-Creates a new ATType object.
+=back
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub new {
-    my $class = shift;
-    my ($init) = @_;
+    my ($pkg, $init) = @_;
 
     # Create the object via fields which returns a blessed object.
-    my $self = bless {}, $class;
+    my $self = bless {}, ref $pkg || $pkg;
 
-    # Set active to true.
-    $init->{'_active'} = 1;
+    # Set active to true and biz_class_id to the story class ID.
+    $init->{_active} = 1;
+    $init->{biz_class_id} ||= STORY_CLASS_ID;
+
+    # Set other boolean values.
     for (qw(top_level media paginated fixed_url related_story related_media)) {
 	$init->{$_} = $init->{$_} ? 1 : 0;
     }
+
     # Call the parent's constructor.
     $self->SUPER::new($init);
 
@@ -187,188 +214,235 @@ sub new {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $obj = lookup Bric::Biz::ATType($key_id);
+=item my $st = Bric::Biz::ATType->lookup({ id => $id })
 
-Retrieves an existing AT type from the database.  Takes an AT Type ID.
+=item my $st = Bric::Biz::ATType->lookup({ name => $name })
+
+Looks up and instantiates a new Bric::Biz::ATType object based on the
+Bric::Biz::ATType object ID or name passed. If C<$id> or C<$name> is not found
+in the database, C<lookup()> returns C<undef>.
 
 B<Throws:>
 
-NONE
+=over
 
-B<Side Effects:>
+=item *
 
-NONE
+Too many Bric::Biz::ATType objects found.
 
-B<Notes:>
+=item *
 
-NONE
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub lookup {
-    my $class = shift;
-    my ($init) = @_;
-    return unless exists $init->{'id'};
-
-    # Create the object via fields which returns a blessed object.
-    my $self = bless {}, $class;
-
-    # Call the parent's constructor.
-    $self->SUPER::new();
-
-    my $ret = _select_attype('id=?', [$init->{'id'}]);
-
-    # Set the columns selected as well as the passed ID.
-    $self->_set(['id', FIELDS], $ret->[0]);
-
-    # Return the object.
-    return $self;
+    my $att = &$get_em(@_);
+    # We want @$att to have only one value.
+    die Bric::Util::Fault::Exception::DP->new({
+      msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+      if @$att > 1;
+    return @$att ? $att->[0] : undef;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item @objs = list Bric::Biz::ATType($param);
+=item my (@attypes || $attypes_aref) = Bric::Biz::ATType->list($params)
 
-The possible keys to $param are the following;
+Returns a list or anonymous array of Bric::Biz::ATType objects based on the
+search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item name
 
-name
+Lookup ATType by name.
 
-Lookup ATType by name
+=item name
 
-=item *
+Lookup ATType by description.
 
-top_level
+=item top_level
 
-Return all top level types
+Boolean; return all top level ATTypes
 
-=item *
+=item paginated
 
-paginated
+Boolean; return all paginated ATTypes.
 
-Return all paginated types.
+=item fixed_url
 
-=item *
+Boolean; return all fixed URL ATTypes.
 
-active
+=item active
 
-Return all types that are currently active
+Boolean; return all active ATTypes.
+
+=item related_story
+
+Boolean; return all related story ATTypes.
+
+=item related_media
+
+Boolean; return all related media ATTypes.
+
+=item media
+
+Boolean; return all media ATTypes.
+
+=item biz_class_id
+
+Return all ATTypes associated with this business class ID. See C<new()> for a
+list of business asset classes.
+
+=item grp_id
+
+Return all ATTypes in the Bric::Util::Grp::ElementType group corresponding to
+this ID.
 
 =back
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Unable to connect to database.
 
-B<Notes:>
+=item *
 
-NONE
+Unable to prepare SQL statement.
 
-=cut
+=item *
 
-sub list {
-    my $class = shift;
-    my ($param, $id_only) = @_;
-    my (@num, @txt);
+Unable to select column into arrayref.
 
-    # Make sure to set active explictly if its not passed.
-    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
-    delete $param->{active} if $param->{active} eq 'all';
+=item *
 
-    foreach (keys %$param) {
-	if (/^(?:name|description)$/) {
-	    push @txt, $_;
-	    $param->{$_} = lc $param->{$_};
-	} else {
-	    push @num, $_;
-	}
-    }
+Unable to execute SQL statement.
 
-    my $where = join(' AND ', (map { "$_=?" }             @num),
-		              (map { "LOWER($_) LIKE ?" } @txt));
+=item *
 
-    my $ret = _select_attype($where, [@$param{@num,@txt}], $id_only);
+Unable to bind to columns to statement handle.
 
-    # $ret is just a bunch of IDs if the $id_only flag is set.  Return them.
-    return wantarray ? @$ret : $ret if $id_only;
+=item *
 
-    my @all;
+Unable to fetch row from statement handle.
 
-    foreach my $d (@$ret) {
-	# Create the object via fields which returns a blessed object.
-	my $self = bless {}, $class;
+=back
 
-	# Call the parent's constructor.
-	$self->SUPER::new();
+B<Side Effects:> NONE.
 
-	# Set the columns selected as well as the passed ID.
-	$self->_set(['id', FIELDS], $d);
-
-	push @all, $self;
-    }
-
-    return wantarray ? @all : \@all;
-}
-
-#------------------------------------------------------------------------------#
-
-=item (@ids || $ids) = Bric::Biz::Workflow->list_ids();
-
-Return a list of IDs for all known at_type types.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-sub list_ids {
-    my $self = shift;
-    my ($param) = @_;
-    return $self->list($param, 1);
-}
+sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
-#--------------------------------------#
+##############################################################################
 
 =back
 
 =head2 Destructors
 
-NONE
+=over 4
+
+=item $st->DESTROY
+
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=back
 
 =cut
 
-sub DESTROY {
-    # This method should be here even if its empty so that we don't waste time
-    # making Bricolage's autoload method try to find it.
-}
+sub DESTROY {}
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
 =head2 Public Class Methods
 
 =over 4
 
+=item my (@st_ids || $st_ids_aref) = Bric::Biz::ATType->list_ids($params)
+
+Returns a list or anonymous array of Bric::Biz::ATType object IDs based on the
+search criteria passed via an anonymous hash. The supported lookup keys are
+the same as those for C<list()>.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
 =cut
 
-#------------------------------------------------------------------------------#
+sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
+
+##############################################################################
 
 =item my $meths = Bric::Biz::ATType->my_meths
 
@@ -507,7 +581,7 @@ sub my_meths {
     my ($pkg, $ord) = @_;
 
     # Return 'em if we got em.
-    return !$ord ? $METH : wantarray ? @{$METH}{&ORD} : [@{$METH}{&ORD}]
+    return !$ord ? $METH : wantarray ? @{$METH}{@ORD} : [@{$METH}{@ORD}]
       if $METH;
 
     # We don't got 'em. So get 'em! Start by getting a list of Business Asset
@@ -655,11 +729,11 @@ sub my_meths {
 			      props    => { type => 'checkbox' }
 			     }
 	  };
-    return !$ord ? $METH : wantarray ? @{$METH}{&ORD} : [@{$METH}{&ORD}];
+    return !$ord ? $METH : wantarray ? @{$METH}{@ORD} : [@{$METH}{@ORD}];
 
 }
 
-#--------------------------------------#
+##############################################################################
 
 =back
 
@@ -667,93 +741,114 @@ sub my_meths {
 
 =over 4
 
-=item $name = $att->get_name();
+=item $name = $att->get_name;
 
 =item $name = $att->set_name($name);
 
-Get/Set the name of this AT type
+Get/Set the name of this AT type.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
+B<Notes:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $desc = $att->get_description();
+=item $desc = $att->get_description;
 
 =item $desc = $att->set_description($desc);
 
 Get/Set the description for this AT type.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
+B<Notes:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $topl = $att->get_top_level();
+=item $topl = $att->get_top_level;
 
 =item $topl = $att->set_top_level(1 || 0);
 
 Get/Set the top level flag.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
+B<Notes:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $page = $att->get_paginated();
+=item $page = $att->get_paginated;
 
 =item $page = $att->set_paginated(1 || 0);
 
 Get/Set the paginated flag.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
+B<Notes:> NONE.
 
-NONE
+=item $page = $att->get_fixed_url;
 
-B<Notes:>
+=item $page = $att->set_fixed_url(1 || 0);
 
-NONE
+Get/Set the fixed url flag.
 
-=cut
+B<Throws:> NONE.
 
-#------------------------------------------------------------------------------#
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $page = $att->get_related_story;
+
+=item $page = $att->set_related_story(1 || 0);
+
+Get/Set the related story flag.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $page = $att->get_related_media;
+
+=item $page = $att->set_related_media(1 || 0);
+
+Get/Set the related media flag.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $page = $att->get_media;
+
+=item $page = $att->set_media(1 || 0);
+
+Get/Set the media flag.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $page = $att->get_biz_class_id;
+
+=item $page = $att->set_biz_class_id(1 || 0);
+
+Get/Set the business class ID. See C<new()> for a list of the business asset
+classes.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =item $att = $att->is_active;
 
@@ -763,37 +858,19 @@ NONE
 
 Get/Set the active flag.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-sub is_active {
-    my $self = shift;
+sub is_active { $_[0]->_get('_active') ? $_[0] : undef }
 
-    return $self->_get('_active') ? $self : undef;
-}
+sub activate { $_[0]->_set(['_active'], [1]) }
 
-sub activate {
-    my $self = shift;
-    $self->_set__dirty(1);
-    $self->_set(['_active'], [1]) and return $self;
-}
-
-sub deactivate {
-    my $self = shift;
-    $self->_set__dirty(1);
-    $self->_set(['_active'], [0]) and return $self;
-}
+sub deactivate { $_[0]->_set(['_active'], [0]) }
 
 =item $success = $attype->remove;
 
@@ -801,15 +878,25 @@ Deletes the AT type from the database.
 
 B<Throws:>
 
-NONEEE
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Unable to connect to database.
 
-B<Notes:>
+=item *
 
-NONE
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to execute SQL statement.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -817,12 +904,12 @@ sub remove {
     my $self = shift;
     my $id   = $self->get_id;
     return unless defined $id;
-    my $sth = prepare_c('DELETE FROM '.TABLE.' WHERE id=?');
+    my $sth = prepare_c("DELETE FROM $TABLE WHERE id = ?");
     execute($sth, $id);
     return 1;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
 =item $att = $att->save;
 
@@ -830,36 +917,42 @@ Save the AT type and/or all changes to the database.
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Unable to connect to database.
 
-B<Notes:>
+=item *
 
-NONE
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to execute SQL statement.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub save {
     my $self = shift;
-    my $id = $self->get_id;
-
     return unless $self->_get__dirty;
 
-    if ($id) {
-	$self->_update_attype();
+    if ($self->_get('id')) {
+	$self->_update_attype;
     } else {
-	$self->_insert_attype();
+	$self->_insert_attype;
     }
 
-    $self->_set__dirty(0);
-
-    return $self;
+    $self->SUPER::save;
 }
 
-#==============================================================================#
+##############################################################################
 
 =back
 
@@ -869,82 +962,228 @@ NONE
 
 =head2 Private Instance Methods
 
-Several that need documenting.
+=over 4
+
+=item _update_attype
+
+Updates the ATType in the database.
+
+B<Throws:>
 
 =over 4
 
-=item _select_attype
+=item *
 
-=cut
+Unable to connect to database.
 
-sub _select_attype {
-    my ($where, $bind, $id_only) = @_;
-    my (@d, @ret);
-    my @cols = 'id';
+=item *
 
-    # Don't bother selecting the other columns if they just want the IDs.
-    push @cols, COLS unless $id_only;
+Unable to prepare SQL statement.
 
-    my $sql = 'SELECT '.join(',',@cols).' FROM '.TABLE;
-    $sql   .= ' WHERE '.$where if $where;
-    $sql   .= ' ORDER BY name';
+=item *
 
-    my $sth = prepare_ca($sql, undef, DEBUG);
+Unable to execute SQL statement.
 
-    if ($id_only) {
-	my $ids = col_aref($sth,@$bind);
+=back
 
-	return wantarray ? @$ids : $ids;
-    } else {
-	execute($sth, @$bind);
-	bind_columns($sth, \@d[0..(scalar COLS)]);
-	while (fetch($sth)) {
-	    push @ret, [@d];
-	}
-	finish($sth);
-	return \@ret;
-    }
-}
+B<Side Effects:> NONE.
 
-=item _update_attype
+B<Notes:> NONE.
 
 =cut
 
 sub _update_attype {
     my $self = shift;
 
-    my $sql = 'UPDATE '.TABLE.
-              ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
-
+    my $sql = "UPDATE $TABLE SET " . join(',', map {"$_ = ?"} @COLS) .
+      ' WHERE id = ?';
 
     my $sth = prepare_c($sql);
-    execute($sth, $self->_get(FIELDS), $self->get_id);
+    execute($sth, $self->_get(@PROPS), $self->get_id);
     return 1;
 }
 
+##############################################################################
+
 =item _insert_attype
+
+Inserts the ATType into the database.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to execute SQL statement.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub _insert_attype {
     my $self = shift;
-    my $nextval = next_key(TABLE);
+    my $nextval = next_key($TABLE);
 
     # Create the insert statement.
-    my $sql = 'INSERT INTO '.TABLE." (id,".join(',',COLS).") ".
-              "VALUES ($nextval,".join(',', ('?') x COLS).')';
+    my $sql = "INSERT INTO $TABLE (id," . join(', ', @COLS) . ") " .
+              "VALUES ($nextval, " . join(', ', ('?') x @COLS) . ')';
 
     my $sth = prepare_c($sql);
-    execute($sth, $self->_get(FIELDS));
+    execute($sth, $self->_get(@PROPS));
 
     # Set the ID of this object.
-    $self->_set(['id'],[last_key(TABLE)]);
+    $self->_set(['id'],[last_key($TABLE)]);
 
     # And finally, register this person in the "All Element Types" group.
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
 
     return 1;
 }
+
+##############################################################################
+
+=back
+
+=head2 Private Functions
+
+=over 4
+
+=item my $attypes_aref = &$get_em( $pkg, $params )
+
+=item my $attypes_ids_aref = &$get_em( $pkg, $params, 1 )
+
+Function used by C<lookup()> and C<list()> to return a list of
+Bric::Biz::ATType objects or, if called with an optional third argument,
+returns a list of Bric::Biz::ATType object IDs (used by C<list_ids()>).
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_em = sub {
+    my ($pkg, $params, $ids, $href) = @_;
+    my $tables = "$TABLE a, member m, element_type_member c";
+    my $wheres = 'a.id = c.object_id AND c.member__id = m.id';
+    my @params;
+
+    # Set the active parameter, if necessary.
+    if ($params->{id} or delete $params->{all}) {
+        # Disregard any active parameter.
+        delete $params->{active};
+    } else {
+        # Make sure it's a boolean value.
+        $params->{active} = exists $params->{active} ?
+          delete $params->{active} ? 1 : 0 : 1;
+    }
+
+    while (my ($k, $v) = each %$params) {
+	if ($k eq 'id') {
+            # Simple ID lookup.
+            $wheres .= " AND a.id = ?";
+	    push @params, $v;
+	} elsif ($k eq 'biz_class_id') {
+            # Simple ID lookup.
+            $wheres .= " AND a.biz_class__id = ?";
+	    push @params, $v;
+        } elsif ($k eq 'name' or $k eq 'description') {
+            # Simple string comparison.
+	    $wheres .= " AND LOWER(a.$k) LIKE ?";
+	    push @params, lc $v;
+        } elsif ($k eq 'grp_id') {
+            # Add in the group tables a second time and join to them.
+            $tables .= ", member m2, element_type_member c2";
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.grp__id = ?";
+            push @params, $v;
+	} else {
+            # It's a boolean comparison.
+	    $wheres .= " AND a.$k = ?";
+	    push @params, $v ? 1 : 0;
+	}
+    }
+
+    # Assemble and prepare the query.
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :
+      (\$SEL_COLS, 'a.name, a.id');
+    my $sel = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
+    }, undef, DEBUG);
+
+    # Just return the IDs, if they're what's wanted.
+    return col_aref($sel, @params) if $ids;
+
+    # Grab all the records.
+    execute($sel, @params);
+    my (@d, @atts, $grp_ids);
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
+    $pkg = ref $pkg || $pkg;
+    while (fetch($sel)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new server type object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @atts, $self
+        } else {
+            push @$grp_ids, $d[$#d];
+        }
+    }
+    # Return the objects.
+    return \@atts;
+};
 
 1;
 __END__
@@ -958,6 +1197,8 @@ NONE
 =head1 AUTHOR
 
 Garth Webb <garth@perijove.com>
+
+Refactored by David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
