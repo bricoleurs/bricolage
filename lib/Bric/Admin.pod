@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.141 $
+$Revision: 1.142 $
 
 =head1 DATE
 
-$Date: 2004-02-16 08:16:59 $
+$Date: 2004-02-16 08:44:06 $
 
 =head1 DESCRIPTION
 
@@ -29,7 +29,11 @@ F</usr/share/doc/README.Debian> to complete the installation.
 =item 1
 
 Install Perl 5.6.0 or greater (5.8.0 or later strongly recommended for better
-Unicode support, and required if you're using a character set other than UTF-8).
+Unicode support, and required if you're using a character set other than
+ASCII). Accented characters and other non-ASCII characters are incorrectly
+handled when using a Perl older than 5.8.0, so using a 5.8.0 or greater Perl
+is required whenever handling non-ASCII characters for the UI or in
+Bricolage stories.
 
 =item 2
 
@@ -39,7 +43,7 @@ apache-ssl.
 
 =item 3
 
-Install PostgreSQL 7.1 or greater.
+Install PostgreSQL 7.1 or greater. Be sure to use UNICODE for data encoding.
 
 =item 4
 
@@ -66,7 +70,8 @@ them:
 
 =item *
 
-Perl 5.6.0 (5.6.1 or later recommended)
+Perl 5.6.0 (5.6.1 or later recommended, 5.8.0 or later required if using
+characters beyond the ASCII set).
 
 =item *
 
@@ -611,6 +616,12 @@ Initialize the PostgreSQL database. Be sure to pass the directory you just
 created to the C<-D> command.
 
   su - postgres -c "/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data"
+
+You might find it easier to set PostgreSQL default encoding for new databases
+to UNICODE when initializing the database cluster, using the following
+command instead of the former one:
+
+  su - postgres -c "/usr/local/pgsql/bin/initdb --encoding UNICODE -D /usr/local/pgsql/data"
 
 =item *
 

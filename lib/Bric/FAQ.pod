@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =head1 DATE
 
-$Date: 2004-02-06 06:55:16 $
+$Date: 2004-02-16 08:44:13 $
 
 =head1 DESCRIPTION
 
@@ -451,6 +451,14 @@ Most likely you're using Safari on Mac OS X to access the Bricolage
 interface. Unfortunately, that browser seems to have some bugs related to
 rendering layers. The only workaround is to use a different browser. I
 recommend Camino, Firebird, or Mozilla.
+
+=head3 Bricolage seems to be automatically changing my accented and other non-ASCII characters: when I enter element content with accented characters 'à's become 'Ã¨'s and similar things occur to other accented characters. What's going on?
+
+You need Perl 5.8.0 or later for Bricolage to properly handle
+non-ASCII characters. Also, PostgreSQL database for Bricolage must be
+using UNICODE encoding. Please see L<Bric::Admin|Bric::Admin> for further
+information on recommended setup for letting Bricolage correctly handle
+non-ASCII content.
 
 =head2 Element Administration
 
