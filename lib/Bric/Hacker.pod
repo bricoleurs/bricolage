@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =head1 DATE
 
-$Date: 2004-03-17 15:51:52 $
+$Date: 2004-03-18 21:33:09 $
 
 =head1 DESCRIPTION
 
@@ -627,7 +627,7 @@ and make any changes, be sure to update the tag of any files you change and
 commit to CVS, then do the whole thing over again. Once everything appears to
 be working properly, release!
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Sam Tregar <stregar@about-inc.com>
 
