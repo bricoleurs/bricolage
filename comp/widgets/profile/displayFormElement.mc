@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2003-10-10 17:51:59 $
+$Date: 2003-10-10 18:10:42 $
 
 =head1 SYNOPSIS
 
@@ -223,7 +223,7 @@ my $len_sub = sub {
 
 my $inpt_sub = sub {
     my ($type, $key, $vals, $value, $js, $name, $width, $indent,
-        $useTable, $label, $readOnly, $agent, $extra) = @_;
+        $useTable, $label, $readOnly, $agent, $id, $extra) = @_;
     my $class = ($type eq "text" || $type eq "password")
       ? qq{ class="textInput"} : "";
     $extra ||= '';
@@ -301,7 +301,7 @@ my %formSubs = (
             $extra .= qq{ id="$id"} if defined $id;
 	    $indent -= 5 if ($useTable && !$readOnly);
 	    &$inpt_sub('checkbox', $key, $vals, $value, $js, $name, $width,
-		       $indent, $useTable, $label, $readOnly, $agent, $extra);
+		       $indent, $useTable, $label, $readOnly, $agent, $id, $extra);
 	},
 
 	textarea => sub {
