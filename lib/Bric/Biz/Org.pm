@@ -7,15 +7,15 @@ Bric::Biz::Org - Bricolage Interface to Organizations
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:24 $
+$Date: 2003-02-25 05:07:39 $
 
 =head1 SYNOPSIS
 
@@ -557,17 +557,17 @@ sub my_meths {
                            },
               long_name => {
                              name     => 'long_name',
-                             get_meth => sub { shift->get_description(@_) },
+                             get_meth => sub { shift->get_long_name(@_) },
                              get_args => [],
-                             set_meth => sub { shift->set_description(@_) },
+                             set_meth => sub { shift->set_long_name(@_) },
                              set_args => [],
                              disp     => 'Long name',
                              search   => 1,
                              len      => 128,
                              req      => 0,
                              type     => 'short',
-                             props    => { type => 'text',
-                                           length     => 32,
+                             props    => { type      => 'text',
+                                           length    => 32,
                                            maxlength => 128
                                          }
                             },
