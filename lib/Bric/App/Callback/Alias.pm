@@ -5,7 +5,7 @@ __PACKAGE__->register_subclass(class_key => 'alias');
 use strict;
 use Bric::App::Authz;
 use Bric::App::Session qw(:state :user);
-use Bric::App::Event;
+use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 use Bric::Biz::Asset;
 use Bric::Biz::Asset::Business::Story;
@@ -28,10 +28,9 @@ my %dispmap = (
 
 sub make_alias : Callback {
     my $self = shift;
-    my ($param, $field) = @{ $self->request_args }['param', 'field'];
     my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->();
  
-    my $aliased_id = $param->{$field};
+    my $aliased_id = $self->param_value;
     my $aliased = $classes{$class_key}->lookup({ id => $aliased_id });
 
     # Check permissions. Users must have READ permission to the asset to be
@@ -56,7 +55,7 @@ sub make_alias : Callback {
 
 sub pick_cats : Callback {
     my $self = shift;
-    my ($param, $field) = @{ $self->request_args }['param', 'field'];
+    my $param = $self->param;
     my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->();
 
     # Grab the asset to be aliased.

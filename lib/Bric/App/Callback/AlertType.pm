@@ -4,7 +4,7 @@ use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'alert_type');
 use strict;
 use Bric::App::Authz;
-use Bric::App::Event;
+use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 use Bric::Util::Priv::Parts::Const qw(EDIT);
 
@@ -13,9 +13,8 @@ my $class = get_package_name(CLASS_KEY);
 
 sub delete : Callback {
     my $self = shift;
-    my ($param, $field) = @{ $self->request_args }['param', 'field'];
 
-    foreach my $id (@{ mk_aref($param->{$field}) }) {
+    foreach my $id (@{ mk_aref($self->param_value) }) {
         my $at = $class->lookup({ id => $id }) || next;
         if (chk_authz($at, EDIT, 1)) {
             $at->remove();

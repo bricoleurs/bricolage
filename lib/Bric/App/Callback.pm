@@ -4,6 +4,9 @@ use strict;
 use base qw(MasonX::CallbackHandler);
 use constant CLASS_KEY => 'Callback';
 
+use Bric::Config qw(:ui);
+use Bric::Util::Language;
+
 use Bric::App::Callback::Action;
 use Bric::App::Callback::AddMore;
 use Bric::App::Callback::Alert;
@@ -36,6 +39,20 @@ use Bric::App::Callback::TmplProf;
 use Bric::App::Callback::Workflow;
 use Bric::App::Callback::Workspace;
 
+
+my $lang = Bric::Util::Language->get_handle(LANGUAGE);
+
+
+sub lang { $lang }
+
+sub field { shift->request_args->{'field'} }
+
+sub param { shift->request_args->{'param'} }
+
+sub param_value {
+    my $self = shift;
+    return $self->param->{$self->field};
+}
 
 
 1;

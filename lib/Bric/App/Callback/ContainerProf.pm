@@ -7,6 +7,7 @@ __PACKAGE__->register_subclass(class_key => 'container_prof');
 use strict;
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
+use Bric::App::Event qw(log_event);
 use Bric::Biz::AssetType;
 use Bric::Biz::AssetType::Parts::Data;
 use Bric::Biz::Asset::Business::Parts::Tile::Container;
@@ -34,7 +35,7 @@ sub drift_correction : PreCallback {
     # (is this necessary/possible?)
     return unless $self->class_key eq CLASS_KEY;
 
-    my $param = $self->request_args->{'param'};
+    my $param = $self->param;
 
     # Don't do anything if we've already corrected ourselves.
     return if $param->{'_drift_corrected_'};
@@ -87,7 +88,6 @@ sub drift_correction : PreCallback {
 
     # Drift has now been corrected.
     $param->{'_drift_corrected_'} = 1;
-    # XXX: hrm, setting global $param...  FIXME
 }
 
 
@@ -97,6 +97,7 @@ sub default : PostCallback {
     my $self = shift;
     my $r = $self->apache_req;
 
+    # XXX:
 #    my ($param, $field) = @{ $self->request_args }['param', 'field'];
     # parse $param for field I guess
 
@@ -159,14 +160,11 @@ sub default : PostCallback {
 
 
 sub clear : Callback {
-    my $self = shift;
-
     clear_state(CLASS_KEY);
 }
 
 sub add_element : Callback {
     my $self = shift;
-    my $param = $self->request_args->{'param'};
     my $r = $self->apache_req;
 
     # get the tile
@@ -177,7 +175,7 @@ sub add_element : Callback {
     if (Bric::Biz::AssetType->lookup({id => $tile->get_element_id()})->get_top_level()) {
         $a_obj = $pkgs{$key}->lookup({id => $tile->get_object_instance_id()});
     }
-    my $fields = mk_aref($param->{CLASS_KEY . '|add_element'});
+    my $fields = mk_aref($self->param->{CLASS_KEY . '|add_element'});
 
     foreach my $f (@$fields) {
         my ($type,$id) = unpack('A5 A*', $f);
@@ -210,9 +208,8 @@ sub add_element : Callback {
 
 sub update : Callback {
     my $self = shift;
-    my $param = $self->request_args->{'param'};
 
-    $update_parts->(CLASS_KEY, $param);
+    $update_parts->(CLASS_KEY, $self->param);
     my $tile = get_state_data(CLASS_KEY, 'tile');
     $tile->save();
 }
@@ -228,10 +225,9 @@ sub pick_related_media : Callback {
 
 sub relate_media : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
-    my ($param, $field) = @{ $self->request_args }['param', 'field'];
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
-    $tile->set_related_media($param->{$field});
+    $tile->set_related_media($self->param_value);
     &$handle_related_up;
 }
 
@@ -256,7 +252,7 @@ sub relate_story : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
-    $tile->set_related_instance_id($param->{$field});
+    $tile->set_related_instance_id($self->param_value);
     &$handle_related_up;
 }
 
@@ -274,9 +270,8 @@ sub related_up : Callback {
 
 sub lock_val : Callback {
     my $self = shift;
-    my ($param, $field) = @{ $self->request_args }['param', 'field'];
-
-    my $autopop = ref $param->{$field} ? $param->{$field} : [$param->{$field}];
+    my $value = $self->param_value;
+    my $autopop = ref $self->param_value ? $self->param_value : [$self->param_value];
     my $tile    = get_state_data(CLASS_KEY, 'tile');
 
     # Map all the data tiles into a hash keyed by Tile::Data ID.
@@ -284,7 +279,7 @@ sub lock_val : Callback {
                  grep(not($_->is_container()), $tile->get_tiles()) };
 
     foreach my $id (@$autopop) {
-        my $lock_set = $param->{CLASS_KEY.'|lock_val_'.$id} || 0;
+        my $lock_set = $self->param->{CLASS_KEY.'|lock_val_'.$id} || 0;
         my $dt = $data->{$id};
 
         # Skip if there is no data tile here.
@@ -299,9 +294,8 @@ sub lock_val : Callback {
 
 sub save_and_up : Callback {
     my $self = shift;
-    my $param = $self->request_args->{'param'};
 
-    if ($param->{CLASS_KEY . '|delete_element'}) {
+    if ($self->param->{CLASS_KEY . '|delete_element'}) {
         $delete_element->(CLASS_KEY);
         return;
     }
@@ -320,9 +314,8 @@ sub save_and_up : Callback {
 
 sub save_and_stay : Callback {
     my $self = shift;
-    my $param = $self->request_args->{'param'};
 
-    if ($param->{CLASS_KEY . '|delete_element'}) {
+    if ($self->param->{CLASS_KEY . '|delete_element'}) {
         $delete_element->(CLASS_KEY);
         return;
     }
@@ -347,7 +340,7 @@ sub up : Callback {
 
 sub resize : Callback {
     my $self = shift;
-    my $param = $self->request_args->{'param'};
+    my $param = $self->param;
 
     $split_fields->(CLASS_KEY, $param->{CLASS_KEY.'|text'});
     set_state_data(CLASS_KEY, 'rows', $param->{CLASS_KEY.'|rows'});
@@ -356,9 +349,8 @@ sub resize : Callback {
 
 sub change_default_field : Callback {
     my $self = shift;
-    my $param = $self->request_args->{'param'};
 
-    my $def  = $param->{CLASS_KEY.'|default_field'};
+    my $def  = $self->param->{CLASS_KEY.'|default_field'};
     my $tile = get_state_data(CLASS_KEY, 'tile');
     my $at   = $tile->get_element();
 
@@ -368,7 +360,7 @@ sub change_default_field : Callback {
 
 sub change_sep : Callback {
     my $self = shift;
-    my $param = $self->request_args->{'param'};
+    my $param = $self->param;
     my ($data, $sep);
 
     # Save off the custom separator in case it changes.
@@ -397,16 +389,13 @@ sub change_sep : Callback {
 
 sub recount : Callback {
     my $self = shift;
-    my $param = $self->request_args->{'param'};
-
-    $split_fields->(CLASS_KEY, $param->{CLASS_KEY.'|text'});
+    $split_fields->(CLASS_KEY, $self->param->{CLASS_KEY.'|text'});
 }
 
 sub bulk_edit_this : Callback {
     my $self = shift;
-    my $param = $self->request_args->{'param'};
 
-    my $be_field = $param->{CLASS_KEY . '|bulk_edit_field'};
+    my $be_field = $self->param->{CLASS_KEY . '|bulk_edit_field'};
 
     # Save the bulk edit field name
     set_state_data(CLASS_KEY, 'field', $be_field);
@@ -710,7 +699,7 @@ my $handle_bulk_up = sub {
 
 my $handle_bulk_save = sub {
     my ($self) = @_;
-    my $param = $self->request_args->{'param'};
+    my $param = $self->param;
 
     my $state_name = get_state_name(CLASS_KEY);
 

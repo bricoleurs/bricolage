@@ -6,7 +6,7 @@ use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'action');
 
 use Bric::App::Authz;
-use Bric::App::Event;
+use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 use Bric::Util::Priv::Parts::Const qw(EDIT);
 
@@ -16,10 +16,9 @@ my $dest_class = get_package_name('dest');
 
 sub delete : Callback {
     my $self = shift;
-    my ($param, $field) = @{ $self->request_args }['param', 'field'];
 
     chk_authz($dest, EDIT);
-    foreach my $id (@{ mk_aref($param->{$field}) }) {
+    foreach my $id (@{ mk_aref($self->param_value) }) {
         my $act = $class->lookup({ id => $id }) || next;
         $act->del();
         $act->save();
