@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.20 $
+$Revision: 1.13.2.21 $
 
 =head1 DATE
 
-$Date: 2001-10-11 20:24:24 $
+$Date: 2001-11-05 20:04:06 $
 
 =head1 DESCRIPTION
 
@@ -37,10 +37,6 @@ significant (including the addition of new libraries).
 
 Add name of Output Channel to list of Templates in Find Templates interface
 [Michele].
-
-=item *
-
-Add a "Save and Stay" button to the Element Profile. [David]
 
 =item *
 
@@ -86,11 +82,6 @@ Change the term "attribute" to "field" in the UI [Michele].
 =item *
 
 Make SSL optional (and off by default) [David or Sam].
-
-=item *
-
-Add preference for Contributors to be automatically added to assets as keywords
-[David].
 
 =back
 
@@ -151,6 +142,11 @@ Add interface for editing Contact Types [David].
 
 Add check for existing people before adding new ones in the Contributor and
 User interfaces [David].
+
+=item *
+
+Add preference for Contributors to be automatically added to assets as keywords
+[David].
 
 =item *
 
