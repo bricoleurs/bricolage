@@ -69,12 +69,6 @@ my $save_data = sub {
     $story->set_priority($param->{priority})
       if exists $param->{priority};
 
-    my $site_id = Bric::Biz::Workflow->lookup
-      ({ id => get_state_data($widget, 'work_id')})->
-        get_site_id;
-
-    $story->set_site_id($site_id);
-
     # Delete output channels.
     if ($param->{rem_oc}) {
         my $del_oc_ids = mk_aref($param->{rem_oc});
@@ -459,6 +453,7 @@ my $handle_create = sub {
     # Create a new story with the initial values given.
     my $init = { element__id => $param->{"$widget|at_id"},
                  source__id  => $param->{"$widget|source__id"},
+                 site_id     => $wf->get_site_id,
                  user__id    => get_user_id };
 
     my $story = Bric::Biz::Asset::Business::Story->new($init);
