@@ -299,7 +299,6 @@ my $save_object = sub {
 
 my $checkin = sub {
     my ($widget, $param, $fa) = @_;
-    my $fa = get_state_data($widget, 'fa');
     my $new = defined $fa->get_id ? 0 : 1;
     $save_meta->($param, $widget, $fa);
 
