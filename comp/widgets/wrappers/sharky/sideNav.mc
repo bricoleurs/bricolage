@@ -83,11 +83,12 @@ unless ($workflows) {
         $tmp += scalar(@desks);
         my @gids = ($w->get_all_desk_grp_id, $w->get_grp_ids);
 
-        my $wf = { type  => $w->get_type,
-                   id    => $w->get_id,
-                   name  => $w->get_name,
-                   desks => \@desks,
-                   gids  => \@gids
+        my $wf = { type    => $w->get_type,
+                   id      => $w->get_id,
+                   name    => $w->get_name,
+                   site_id => $w->get_site_id,
+                   desks   => \@desks,
+                   gids    => \@gids
                  };
         push @$workflows, $wf;
     }
@@ -146,7 +147,9 @@ unless ($workflows) {
 
 # Begin Workflows -------------------------------------
 # iterate thru workflows
+my $site_id = $c->get_user_cx(get_user_id) || 0;
 foreach my $wf (@$workflows) {
+    next if($site_id && $site_id != $wf->{site_id});
     # Check permissions.
     next unless chk_authz(0, READ, 1, @{ $wf->{gids} });
     my $esc_name = escape_html($wf->{name});
@@ -449,10 +452,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:54 $
+$Date: 2003-03-17 21:31:27 $
 
 </%doc>
