@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -16,11 +16,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-02-08 01:05:30 $
+$Date: 2002-02-12 22:08:32 $
 
 =head1 SYNOPSIS
 
@@ -486,7 +486,7 @@ The XSD source:
 		   <xs:documentation>ommited if not published</xs:documentation>
 		 </xs:annotation>
 	       </xs:element>
-               <xs:element name="category" type="xs:string"/>
+	       <xs:element name="category" type="xs:string"/>
 	       <xs:element name="contributors">
 		 <xs:complexType>
 		   <xs:sequence>
@@ -558,12 +558,59 @@ The XSD source:
 	     <xs:attribute name="id" type="xs:int" use="required"/>
 	   </xs:complexType>
 	 </xs:element>
-	 <xs:element name="element" minOccurs="0" maxOccurs="unbounded">
-	   <xs:annotation>
-	     <xs:documentation>TODO</xs:documentation>
-	   </xs:annotation>
-	 </xs:element>
 	 <xs:element name="template" minOccurs="0" maxOccurs="unbounded">
+	   <xs:complexType>
+	     <xs:sequence>
+	       <xs:element name="element">
+		 <xs:simpleType>
+		   <xs:restriction base="xs:string">
+		     <xs:maxLength value="64"/>
+		   </xs:restriction>
+		 </xs:simpleType>
+	       </xs:element>
+	       <xs:element name="generic" type="xs:boolean"/>
+	       <xs:element name="file_name">
+		 <xs:simpleType>
+		   <xs:restriction base="xs:string">
+		     <xs:maxLength value="256"/>
+		   </xs:restriction>
+		 </xs:simpleType>
+	       </xs:element>
+	       <xs:element name="description">
+		 <xs:simpleType>
+		   <xs:restriction base="xs:string">
+		     <xs:maxLength value="1024"/>
+		   </xs:restriction>
+		 </xs:simpleType>
+	       </xs:element>
+	       <xs:element name="priority">
+		 <xs:simpleType>
+		   <xs:restriction base="xs:int">
+		     <xs:minInclusive value="1"/>
+		     <xs:maxInclusive value="5"/>
+		   </xs:restriction>
+		 </xs:simpleType>
+	       </xs:element>
+	       <xs:element name="deploy_status" type="xs:boolean"/>
+	       <xs:element name="active" type="xs:boolean"/>
+	       <xs:element name="category" type="xs:string"/>
+	       <xs:element name="output_channel" type="xs:string"/>
+	       <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
+		 <xs:annotation>
+		   <xs:documentation>ommited if no expire date</xs:documentation>
+		 </xs:annotation>
+	       </xs:element>
+	       <xs:element name="deploy_date" type="xs:dateTime" minOccurs="0">
+		 <xs:annotation>
+		   <xs:documentation>ommited if not deployed</xs:documentation>
+		 </xs:annotation>
+	       </xs:element>
+	       <xs:element name="data" type="xs:base64Binary"/>
+	     </xs:sequence>
+	     <xs:attribute name="id" type="xs:int" use="required"/>
+	   </xs:complexType>
+	 </xs:element>
+	 <xs:element name="element" minOccurs="0" maxOccurs="unbounded">
 	   <xs:annotation>
 	     <xs:documentation>TODO</xs:documentation>
 	   </xs:annotation>
