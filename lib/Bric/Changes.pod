@@ -78,6 +78,12 @@ The category browser works again. [David]
 Fixed the "event" table to use the correct sequence the id column's default
 value (although the default is never used, this is a good precaution). [David]
 
+=item *
+
+Fixed Media Upload bug where the full local path was being used, by adding
+a 'winxp' key to Bric::Util::Trans::FS to account for an update to
+HTTP::BrowserDetect. [Mark Kennedy]
+
 =back
 
 =cut
