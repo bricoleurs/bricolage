@@ -39,9 +39,14 @@ do_sql
 
 sub update_all {
     my ($table) = @_;
+    my $preupdate = prepare("UPDATE $table SET key_name = name");
     my $select = prepare("SELECT DISTINCT name FROM $table");
     my $update = prepare("UPDATE $table SET key_name = ? WHERE name = ?");
 
+    # First pass: set key_name to name for all rows
+    execute($preupdate);
+
+    # Get all the possible names
     my $name;
     execute($select);
     bind_columns($select, \$name);
@@ -49,7 +54,12 @@ sub update_all {
     while (fetch($select)) {
         my $key_name = lc($name);
         $key_name =~ y/a-z0-9/_/cs;
-        execute($update, $key_name, $name);
+        if ($name ne $key_name) {
+            # Update key_name if it was different than name
+            execute($update, $key_name, $name);
+        } else {
+            print "key_name '$name' didn't need updated\n";
+        }
     }
 }
 
