@@ -36,7 +36,7 @@ sub preview : Callback {
     }
 
     # Instantiate the Burner object.
-    my $b = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
+    my $b = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT, user_id => get_user_id() });
     if (defined $media_id) {
         my $media = get_state_data('media_prof', 'media');
         unless ($media && (defined $media_id) && ($media->get_id == $media_id)) {

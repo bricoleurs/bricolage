@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 01:17:05 $
+$Date: 2003-10-01 11:19:55 $
 
 =head1 SYNOPSIS
 
@@ -205,6 +205,10 @@ sub burn_one {
     my $comp_root = [];
     foreach my $inc ($oc, $oc->get_includes) {
         my $inc_dir = "oc_" . $inc->get_id;
+
+        push @$comp_root, [ 'sandbox' . $inc_dir => $fs->cat_dir($self->get_sandbox_dir, $inc_dir ) ] 
+            if $self->get_sandbox_dir;
+
         push @$comp_root, [ $inc_dir => $fs->cat_dir($comp_dir, $inc_dir) ];
     }
 

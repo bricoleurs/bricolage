@@ -40,6 +40,10 @@ sub save : Callback {
         return unless $check_syntax->($self, $widget, $fa);
         # Save it.
         $fa->save;
+
+        my $b = Bric::Util::Burner->new({user_id => get_user_id() });
+        $b->deploy($fa);
+
         log_event('formatting_save', $fa);
         add_msg('Template "[_1]" saved.', $fa->get_name);
     }
@@ -124,6 +128,7 @@ sub cancel : Callback {
     my $fa = get_state_data($self->class_key, 'fa');
     $fa->cancel_checkout;
     $fa->save;
+    Bric::Util::Burner->new({user_id => get_user_id()})->undeploy($fa);
     log_event('formatting_cancel_checkout', $fa);
     clear_state($self->class_key);
     set_redirect("/");
@@ -237,6 +242,9 @@ sub recall : Callback {
             $start_desk->save;
             log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
             log_event('formatting_checkout', $fa);
+            my $b = Bric::Util::Burner->new({user_id => get_user_id()});
+            $b->deploy($fa);
+
         } else {
             add_msg('Permission to checkout "[_1]" denied.', $fa->get_name);
         }
@@ -264,6 +272,8 @@ sub checkout : Callback {
             $t_obj->checkout({ user__id => get_user_id() });
             $t_obj->save;
             log_event("formatting_checkout", $t_obj);
+            my $b = Bric::Util::Burner->new({user_id => get_user_id() });
+            $b->deploy($t_obj);
         } else {
             add_msg('Permission to checkout "[_1]" denied.', $t_obj->get_file_name);
         }
@@ -406,6 +416,7 @@ $checkin = sub {
         $cb->deploy;
     }
 
+    Bric::Util::Burner->new({user_id => get_user_id() })->undeploy($fa);
     # Clear the state out, set redirect, and return.
     clear_state($widget);
     set_redirect("/");
@@ -432,6 +443,7 @@ $delete_fa = sub {
     log_event("formatting_rem_workflow", $fa);
     my $burn = Bric::Util::Burner->new;
     $burn->undeploy($fa);
+    Bric::Util::Burner->new({user_id => get_user_id() })->undeploy($fa);
     $fa->set_workflow_id(undef);
     $fa->deactivate;
     $fa->save;

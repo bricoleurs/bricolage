@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.52 $ )[-1];
+our $VERSION = (qw$Revision: 1.53 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 14:57:18 $
+$Date: 2003-10-01 11:19:54 $
 
 =head1 SYNOPSIS
 
@@ -175,6 +175,8 @@ BEGIN {
           comp_dir        => Bric::FIELD_RDWR,
           out_dir         => Bric::FIELD_RDWR,
           page_numb_start => Bric::FIELD_RDWR,
+          sandbox_dir     => Bric::FIELD_RDWR,
+          user_id         => Bric::FIELD_RDWR,
           mode            => Bric::FIELD_READ,
           story           => Bric::FIELD_READ,
           element         => Bric::FIELD_READ,
@@ -240,6 +242,11 @@ C<$init> hash reference are:
 The directory where the Burner stores compiled template files. Defaults to the
 value stored in the C<BURN_DATA_ROOT> directive set in F<bricolage.conf>.
 
+=item C<user_id>
+
+ID of the user to get a sandbox to deploy/undeploy templates for previewing. 
+C<sandbox_dir> is set from this value.
+
 =item C<comp_dir>
 
 The directory to which the burner deploys and can find templates for
@@ -264,13 +271,16 @@ B<Notes:> NONE.
 
 sub new {
     my ($class, $init) = @_;
-
+    
     # setup defaults
     $init->{data_dir} ||= BURN_DATA_ROOT;
     $init->{comp_dir} ||= BURN_COMP_ROOT;
     $init->{out_dir}  ||= STAGE_ROOT;
     $init->{page_numb_start} ||= 1;
     $init->{_page_extensions}  ||= [''];
+
+    $init->{sandbox_dir} = $fs->cat_dir(BURN_SANDBOX_ROOT, 'user_'. $init->{user_id})
+       if defined($init->{user_id});
 
     # create the object using mother's constructor and return it
     return $class->SUPER::new($init);
@@ -632,7 +642,9 @@ B<Notes:> NONE.
 
 =item $success = $b->deploy($fa);
 
-Deploys a template to the file system.
+Deploys a template to the file system. If the burner object
+was provided with a user_id, the template is deployed into the user's
+sandbox.
 
 B<Throws:> NONE.
 
@@ -647,7 +659,8 @@ sub deploy {
     my $oc_dir  = 'oc_' . $fa->get_output_channel->get_id;
 
     # Grab the file name and directory.
-    my $file = $fs->cat_dir($self->get_comp_dir, $oc_dir, $fa->get_file_name);
+    my $file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir, 
+                   $oc_dir, $fa->get_file_name);
     my $dir = $fs->dir_name($file);
 
     # Create the directory path and write the file.
@@ -675,7 +688,9 @@ sub deploy {
 
 =item $success = $b->undeploy($fa);
 
-Deletes a template from the file system.
+Deletes a template from the file system. If the burner object
+was provided with a user_id, the template is undeployed from the user's
+sandbox.
 
 B<Throws:> NONE.
 
@@ -690,7 +705,7 @@ sub undeploy {
     my $oc_dir = 'oc_' . $fa->get_output_channel->get_id;
 
     # Grab the file name.
-    my $file = $fs->cat_dir($self->get_comp_dir, $oc_dir, $fa->get_file_name);
+    my $file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir, $oc_dir, $fa->get_file_name);
 
     # Delete it from the file system.
     $fs->del($file) if -e $file;

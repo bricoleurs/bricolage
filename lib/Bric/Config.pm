@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.75 $
+$Revision: 1.76 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.75 $ )[-1];
+our $VERSION = (qw$Revision: 1.76 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-29 18:41:48 $
+$Date: 2003-10-01 11:19:53 $
 
 =head1 SYNOPSIS
 
@@ -110,6 +110,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     PREVIEW_ROOT
                     BURN_COMP_ROOT
                     BURN_DATA_ROOT
+                    BURN_SANDBOX_ROOT
                     BURN_ARGS_METHOD
                     TEMPLATE_BURN_PKG
                     INCLUDE_XML_WRITER
@@ -167,6 +168,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      PREVIEW_ROOT
                                      BURN_COMP_ROOT
                                      BURN_DATA_ROOT
+                                     BURN_SANDBOX_ROOT
                                      TEMPLATE_BURN_PKG
                                      DEFAULT_FILENAME
                                      INCLUDE_XML_WRITER
@@ -437,6 +439,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant PREVIEW_ROOT            => catdir(BURN_ROOT, 'preview');
     use constant BURN_COMP_ROOT          => catdir(BURN_ROOT, 'comp');
     use constant BURN_DATA_ROOT          => catdir(BURN_ROOT, 'data');
+    use constant BURN_SANDBOX_ROOT       => catdir(BURN_ROOT, 'sandbox');
     use constant BURN_ARGS_METHOD        => MASON_ARGS_METHOD;
     use constant TEMPLATE_BURN_PKG       => 'Bric::Util::Burner::Commands';
     use constant INCLUDE_XML_WRITER      => $config->{INCLUDE_XML_WRITER};

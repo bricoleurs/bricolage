@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 21:57:52 $
+$Date: 2003-10-01 11:19:55 $
 
 =head1 SYNOPSIS
 
@@ -207,6 +207,12 @@ sub burn_one {
     my $comp_dir = $self->get_comp_dir;
     my $template_roots = [ map { $fs->cat_dir($comp_dir, "oc_" . $_->get_id) }
                            ($oc, $oc->get_includes) ];
+
+    # add to the beginning of template_roots the sandbox paths if we are using a sandbox.
+    if ( my $sandbox_dir = $self->get_sandbox_dir ) {
+        unshift @$template_roots, map { $fs->cat_dir($sandbox_dir, "oc_" . $_->get_id) }
+                           ($oc, $oc->get_includes);
+    }
 
     # save burn parameters
     $self->_set([qw(_res _at _template_roots)],
