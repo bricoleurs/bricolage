@@ -159,6 +159,8 @@ Folks who have submitted patches include:
 
 =item Simon Wilcox
 
+=item Nate Perry-Thistle
+
 =back
 
 Friends who have spotted bugs include:
