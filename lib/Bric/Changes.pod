@@ -89,6 +89,12 @@ Help has been restored. [David]
 A value of "0" (zero) can now be given to element fields. This bug has been in
 Bricolage since the beginning! Thanks to Mark for the spot. [David]
 
+=item *
+
+Stories with subelements containting no field elements no longer cause an
+error when the container profile is looking for contextual information to
+display about a a subelement. Thanks to Chris Jantzen for the spot. [David]
+
 =back
 
 =head1 VERSION 1.5.2
