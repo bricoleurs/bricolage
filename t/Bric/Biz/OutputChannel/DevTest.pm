@@ -157,7 +157,7 @@ sub test_list : Test(79) {
     is( scalar @ocs, 5, "Check for 5 output channels" );
 
     # Try site_id
-    ok (@ocs = Bric::Biz::OutputChannel->list({site__id => $oc{site_id}}),
+    ok (@ocs = Bric::Biz::OutputChannel->list({site_id => $oc{site_id}}),
         "Look up site '$oc{site_id}'");
     is (scalar @ocs, 6, "Check for 6 output channels" );
 

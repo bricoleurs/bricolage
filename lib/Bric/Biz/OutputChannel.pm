@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.24.2.1 $
+$Revision: 1.24.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-07 23:52:09 $
+$Date: 2003-03-09 02:05:52 $
 
 =head1 SYNOPSIS
 
@@ -39,6 +39,10 @@ $Date: 2003-03-07 23:52:09 $
   $oc = $oc->set_description($description);
   if ($oc->get_primary) { # do stuff }
   $oc = $oc->set_primary(1); # or pass undef.
+  my $site_id = $oc->get_site_id;
+  $site = $site->set_site_id($site_id);
+  my $protocol = $oc->get_protocol;
+  $site = $site->set_protocol($protocol);
 
   # URI Format instance methods.
   my $uri_format = $oc->get_uri_format;
@@ -154,7 +158,8 @@ my $SEL_COLS = 'oc.id, oc.name, oc.description, oc.protocol, oc.site__id, '.
                'oc.use_slug, oc.active, m.grp__id';
 my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
 
-my @ORD = qw(name description site_id protocol pre_path post_path filename file_ext  uri_format
+my @ORD = qw(name description site_id protocol pre_path post_path filename
+             file_ext  uri_format
              fixed_uri_format uri_case use_slug active);
 my $GRP_ID_IDX = $#SEL_PROPS;
 
@@ -294,9 +299,11 @@ sub new {
     return $class->SUPER::new($init);
 }
 
+##############################################################################
+
 =item $oc = Bric::Biz::OutputChannel->lookup({ id => $id })
 
-=item $oc = Bric::Biz::OutputChannel->lookup({ name => $name, site__id => $id})
+=item $oc = Bric::Biz::OutputChannel->lookup({ name => $name, site_id => $id})
 
 Looks up and instantiates a new Bric::Biz::OutputChannel object based on an
 Bric::Biz::OutputChannel object ID or name. If no output channelobject is
@@ -308,7 +315,7 @@ B<Throws:>
 
 =item *
 
-Missing required parameter 'id' or 'name'/'site__id'.
+Missing required parameter 'id' or 'name'/'site_id'.
 
 =item *
 
@@ -344,8 +351,9 @@ B<Notes:> NONE.
 
 sub lookup {
     my ($class, $params) = @_;
-    die $gen->new({ msg => "Missing required parameter 'id' or 'name'/'site__id'" })
-      unless $params->{id} or ($params->{name} and $params->{site__id});
+    die $gen->new
+      ({ msg => "Missing required parameter 'id' or 'name'/'site_id'" })
+      unless $params->{id} or ($params->{name} and $params->{site_id});
 
     my $oc = $class->cache_lookup($params);
     return $oc if $oc;
@@ -376,7 +384,7 @@ description
 
 =item *
 
-site__id
+site_id
 
 =item *
 
@@ -952,7 +960,7 @@ sub my_meths {
 
 =item $id = $oc->get_id
 
-Returns the OutputChannel\'s unique ID.
+Returns the OutputChannel's unique ID.
 
 B<Throws:> NONE.
 
@@ -1710,7 +1718,7 @@ sub _do_list {
         } elsif ($k eq 'include_parent_id') {
             $wheres .= ' AND inc.output_channel__id = ?';
             push @params, $v;
-        } elsif ($k eq 'site__id') {
+        } elsif ($k eq 'site_id') {
             $wheres .= ' AND oc.site__id = ?';
             push @params, $v;
         } else {
