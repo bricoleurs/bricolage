@@ -8,18 +8,18 @@ Bric::Util::DBD::Pg - The Bricolage PostgreSQL Driver
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-03-09 01:41:48 $
+$Date: 2003-08-01 04:39:51 $
 
 =head1 SYNOPSIS
 
@@ -81,9 +81,9 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-
 use DBD::Pg;
 use Bric::Config qw(:dbi);
+use Bric::Util::Fault qw(throw_dp)
 
 ################################################################################
 # Constants
@@ -139,10 +139,8 @@ sub db_date_parts {
     # This function unpacks a date/time string as it is formatted for the
     # database and returns a list of time tokens for use by timelocal(). Used by
     # Bric::Util::Time::strfdate().
-    my @t;
-    eval { @t = unpack('a4 x a2 x a2 x a2 x a2 x a2', shift) };
-    die Bric::Util::Fault::Exception::AP->new(
-      { msg => "Unable to unpack date: $@" }) if $@;
+    my @t = eval { unpack('a4 x a2 x a2 x a2 x a2 x a2', shift) };
+    throw_dp "Unable to unpack date: $@" if $@;
     $t[0] -= 1900;
     $t[1] -= 1;
     return reverse @t;
