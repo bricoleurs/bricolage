@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1.2.1 $
+-- VERSION: $Revision: 1.1.2.2 $
 --
--- $Date: 2003-03-04 01:26:46 $
+-- $Date: 2003-03-08 20:34:12 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -55,5 +55,6 @@ CREATE INDEX fkx_member__site_member ON site_member(member__id);
 --
 
 CREATE SEQUENCE seq_site_member START 1024;
+CREATE SEQUENCE seq_site        START 1024;
 
 
