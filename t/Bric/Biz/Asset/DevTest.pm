@@ -35,16 +35,26 @@ sub get_elem {
 ##############################################################################
 # Test basic asset persistence.
 ##############################################################################
-sub test_persist : Test(5) {
+sub test_persist : Test(10) {
     my $self = shift;
     ok( my $class = $self->class, "Get class" );
     ok( my $key = $class->key_name, "Get key_name" );
     return "Abstract class" if $key eq 'asset' or $key eq 'biz';
     ok( my $ass = $self->construct, "Construct new asset" );
     ok( $ass->save, "Save my ass" );
-    ok( my $aid = $ass->get_id, "Get asset ID" );
+
     # Save the ID for cleanup.
+    ok( my $aid = $ass->get_id, "Get asset ID" );
     push @{$self->{$key}}, $aid;
+
+    # Update the asset.
+    ok( $ass->set_name('Foo'), "set name" );
+    ok( $ass->save, "Save my ass again" );
+
+    # Look up the asset.
+    ok( $ass = $class->lookup({ id => $aid}), "Lookup asset" );
+    is( $ass->get_id, $aid, "Check asset ID" );
+    is( $ass->get_name, 'Foo', "Check asset name" );
 }
 
 ##############################################################################
