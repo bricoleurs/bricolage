@@ -12,7 +12,7 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =pod
 
@@ -92,7 +92,7 @@ sub pre_configuration_hook {
 
   # add to version info
   $self->{version_string} .= " Bric::Util::FTP::Server/$VERSION";
-  
+
   print STDERR "Bricolage FTP Server Started\n" if FTP_DEBUG;
 }
 
@@ -112,17 +112,17 @@ sub authentication_hook {
   my $user = shift;
   my $pass = shift;
   my $user_is_anon = shift;
-  
+
   # disallow anonymous access.
   return -1 if $user_is_anon;
-  
+
   # lookup user and store in object
   my $u = Bric::Biz::Person::User->lookup({ login => $user });
   $self->{user_obj} = $u;
 
   # return failure if authentication fails.
   return -1 unless $u && $u->chk_password($pass);
-  
+
   # successful login.
   return 0;
 }
@@ -136,7 +136,7 @@ directory.  This method just calls Bric::Util::FTP::DirHandle->new().
 
 sub root_directory_hook {
   my $self = shift;
-  return new Bric::Util::FTP::DirHandle ($self);
+  return Bric::Util::FTP::DirHandle->new($self);
 }
 
 =item system_error_hook()
