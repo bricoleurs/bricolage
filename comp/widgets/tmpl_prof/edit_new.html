@@ -71,6 +71,7 @@ if ($param->{tplate_type}) {
              name      => 'site_id',
              field     => 'name',
              disp      => 'Site',
+             req       => 1,
              exclude   => sub { ! chk_authz($_[0], EDIT, 1) },
              selected  => scalar $c->get_user_cx(get_user_id),
             );
