@@ -30,6 +30,7 @@ use Bric::Util::Grp::Pref;
 use Bric::Util::Grp::Source;
 use Bric::Util::Grp::Story;
 use Bric::Util::Grp::Workflow;
+use Bric::Biz::AssetType;
 
 sub table { 'grp' }
 
@@ -188,7 +189,7 @@ sub test_href_class_keys : Test(6) {
 ##############################################################################
 # Member tests.
 ##############################################################################
-sub test_members : Test(17) {
+sub test_members : Test(33) {
 # First, get a well-known group to play with.
     ok( my $grp = Bric::Util::Grp->lookup({ id => 22 }), "Get Prefs grp" );
 
@@ -219,6 +220,41 @@ sub test_members : Test(17) {
         "Yes, has_member" );
     ok( ! $grp->has_member({ package => 'Bric::Util::Pref', id => -1 }),
         "No has_member" );
+
+    # Now try an element group.
+    my $story_elem_grp_id = 330;
+    my $pull_quote_id = 7;
+    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+        "Look up story element group" );
+    isa_ok($grp, "Bric::Util::Grp::AssetType");
+    ok( @mems = $grp->get_members, "Get story element members" );
+    is( scalar @mems, 2, "Check number of story element mems" );
+
+    # Grab the "Pull Quote" element member and remove it.
+    ok( ($mem) = (grep { $_->get_obj_id == $pull_quote_id  } @mems),
+        "Get pull quote member" );
+    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+        "Look up story element group again" );
+    ok( $grp->delete_member($mem), "Delete pull quote member" );
+    ok( $grp->save, "Save element group" );
+
+    # Look it up again and make sure all is well.
+    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+        "Look up story element group again" );
+    ok( @mems = $grp->get_members, "Get story element members" );
+    is( scalar @mems, 1, "Check number of story element mems" );
+
+    # Now restore it.
+    ok( $grp->add_member({ id      => $pull_quote_id,
+                           package => 'Bric::Biz::AssetType',}),
+        "Add pull quote element back in" );
+    ok( $grp->save, "Save element group again" );
+
+    # Look it up yet again and make sure all is well.
+    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+        "Look up story element group again" );
+    ok( @mems = $grp->get_members, "Get story element members" );
+    is( scalar @mems, 2, "Check number of story element mems" );
 }
 
 ##############################################################################
