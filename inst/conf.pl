@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-08-21 20:18:34 $
+$Date: 2002-08-27 19:43:22 $
 
 =head1 DESCRIPTION
 
@@ -233,7 +233,7 @@ sub create_httpd_conf {
 sub set_httpd_var {
     my ($httpd, $var, $val, $global) = @_;
     if ($global && $$httpd =~ s/^(\s*$var\s+).*$/$1$val/gmi) {
-	return $1.$val;
+	return "$var $val";
     } elsif ($$httpd =~ s/^(\s*$var\s+).*$/$1$val/mi) {
 	return $1.$val;
     } else {
