@@ -43,11 +43,11 @@ From http://search.cpan.org/, download the latest versions of Text::Iconv
 and XML::Parser.
 
 Complete details for building everything you need to run Bricolage on Mac OS X
-will always be found at http://david.wheeler.net/osx.html. Below is a
-summarization of the instructions on that page, for those who just need the
-barest of hints for compiling and installing software. Just be sure that
-you've installed the latest Mac OS X Developer tools, available for a free
-registration at http://developer.apple.com/.
+will always be found at http://david.wheeler.net/osx.html. Below is a summary
+of the instructions on that page, for those who just need the barest of hints
+for compiling and installing software. Just be sure that you've installed the
+latest Mac OS X Developer tools, available for a free registration at
+http://developer.apple.com/.
 
 INSTALLATION SUMMARY
 
