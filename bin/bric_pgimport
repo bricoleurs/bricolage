@@ -188,7 +188,7 @@ sub initialize {
 
     if ($opt_w) {
         # Add on the location of the SQL.
-        $opt_w = catdir($$opt_w, 'sql', DBD);
+        $opt_w = catdir($opt_w, 'sql', DBD);
     } else {
 	$ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
 	$opt_w = catdir($ENV{BRICOLAGE_ROOT}, 'sql', DBD);
