@@ -8,18 +8,18 @@ Bric::Util::Time - Bricolage Time & Date Functions
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.4.1 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-02-18 03:38:21 $
+$Date: 2003-07-27 22:57:12 $
 
 =head1 SYNOPSIS
 
@@ -64,7 +64,7 @@ our @EXPORT_OK = qw(strfdate local_date db_date);
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
-
+$ENV{TZ} = 'UTC';
 
 ############################################################################
 # Private Functions
