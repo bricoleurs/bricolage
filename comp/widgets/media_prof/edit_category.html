@@ -2,13 +2,11 @@
 $m->comp('/widgets/listManager/listManager.mc',
          object    => 'category',
          userSort => 0,
-#         def_sort_field => 'order',
          def_sort_field => 'name',
          title     => 'Current Category',
          objs      => [ $category ],
          profile   => undef,
          fields    => [qw(name uri)],
-#         select =>  ['Delete', "$widget|delete_id"],
          select => '',
          addition  => '',
         );
@@ -16,9 +14,6 @@ $m->comp('/widgets/profile/hidden.mc',
          name => 'category_id',
          value => $existing_category);
 </%perl>
-<script language="javascript">
-var selectOrderNames = new Array(<% join ', ', @sort_array %>);
-</script>
 <p></p>
 
 <& /widgets/search/search.mc,
