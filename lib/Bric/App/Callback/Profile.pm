@@ -70,10 +70,7 @@ sub new {
         $self->has_perms(1);
     }
 
-    # Process its data in a subclass:
-    # action, alert_type, category, contrib, desk, dest, element_data,
-    # element_type, grp, job, media_type, output_channel, pref,
-    # server, site, source, user, workflow
+    return $self;
 }
 
 
