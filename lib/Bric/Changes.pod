@@ -47,6 +47,10 @@ Added DISABLE_NAV_LAYER directive. It's off by default, but if you turn it on in
 bricolage.conf, the side navigation layer will be rendered as plain HTML in
 every page instead of as a separate layer. [David]
 
+=item *
+
+Documented PERL_LOADER directive in Bric::AdvTemplates. [David]
+
 =back
 
 =head2 Bug Fixes

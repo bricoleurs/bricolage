@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.37.2.6 $
+$Revision: 1.37.2.7 $
 
 =head1 DATE
 
-$Date: 2002-02-19 02:44:20 $
+$Date: 2002-02-26 01:33:05 $
 
 =head1 DESCRIPTION
 
@@ -43,9 +43,9 @@ in mind as long term goals further down the line.
 
 ################################################################################
 
-=head2 VERSION 1.2.1
+=head2 High Priority Minor Items
 
-=over 4
+=over
 
 =item *
 
@@ -53,21 +53,17 @@ Create installation makefile [Mark].
 
 =item *
 
-Mention PERL_LOADER paramenter in Bric::AdvTemplate [David].
-
-=item *
-
 Create category browser so that, in interfaces where users have to navigate
 categories (e.g., when creating subcategories, or when assigning an asset to a
 category), they can do it hierarchically, rather than have to look at a long-ass
-list of all categories. [David]
+list of all categories.
 
 =item *
 
 When clicking "New" for an existing contributor, allow choice of Contributor
 Type, and B<then> role. Right now, if you want an existing to be a contributor
 of a different type, you have to create a new person, and this duplication is
-bad [David].
+bad.
 
 =item *
 
@@ -76,17 +72,7 @@ that the person doesn't already exist. That is, when adding a new user, it could
 be that the person being added is already in the system as a contributor, so the
 new user object can be based on the person object underlying the contributor
 object. Similarly, when adding a new contributor, the person being added could
-having an existing person record as an existing contributor or user. [David]
-
-=back
-
-=cut
-
-################################################################################
-
-=head2 High Priority Minor Items
-
-=over
+having an existing person record as an existing contributor or user.
 
 =item *
 
