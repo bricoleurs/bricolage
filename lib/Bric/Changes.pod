@@ -44,6 +44,12 @@ Its possible to create new stories again without running into errors saying
 that a URI is not unique because the cover date and slug were accidentally
 exclued from the URI. [David]
 
+=item *
+
+Mason story templates now inherit from all category templates, thus enabling
+the access of C<< <%attr> >>s and calling of C<< <%method> >>s in category
+templates from story templates.
+
 =back
 
 =head1 VERSION 1.6.7 (2003-10-22)

@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.31.4.4 $
+$Revision: 1.31.4.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31.4.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.31.4.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-16 19:30:44 $
+$Date: 2003-11-17 18:35:52 $
 
 =head1 SYNOPSIS
 
@@ -848,7 +848,7 @@ my $template = $burner->find_template($m->current_comp->dir_path,
                                               cat  => $burner->get_cat,
                                               elem => $element }}
                    });
-$m->comp($template);
+$m->comp({ base_comp => $m->base_comp }, $template, %ARGS);
 </%init>
 };
         close(DH);
