@@ -71,17 +71,25 @@ if ($field eq 'preview') {
     my $media = mk_aref($media_pub_ids);
 
     # Iterate through each story and media object to be published.
+    my $count = @$stories;
     foreach my $sid (@$stories) {
 	# Instantiate the story.
 	my $s = Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
 	$b->publish($s, 'story', get_user_id(), $param->{pub_date});
+        add_msg("Story &quot;" . $s->get_title . "&quot; published.")
+          if $count <= 3;
     }
+    add_msg("$count stories published.") if $count > 3;
 
+    $count = @$media;
     foreach my $mid (@$media) {
 	# Instantiate the media.
 	my $media = Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
-	$b->publish($media, 'media', get_user_id(), $param->{pub_date});	
+	$b->publish($media, 'media', get_user_id(), $param->{pub_date});
+        add_msg("Media &quot;" . $m->get_title . "&quot; published.")
+          if $count <= 3;
     }
+    add_msg("$count media published.") if $count > 3;
 
     redirect_onload(last_page());
 }
