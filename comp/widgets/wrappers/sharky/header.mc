@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.6 $
+$Revision: 1.2.2.7 $
 
 =head1 DATE
 
-$Date: 2001-10-04 15:47:49 $
+$Date: 2001-10-05 08:52:15 $
 
 =head1 SYNOPSIS
 
@@ -103,10 +103,9 @@ function init() {
 
 % if ($agent->{browser} ne 'Internet Explorer') {
 %     # We have to strip out non-alphanumeric chars because Netscape is lame!
-%     (my $hostname = $r->hostname) =~ s/\W/_/g;
 if (window.toolbar.visible == true) {
     // Turn off the toolbar, back button, etc.
-    window.open("<% $uri %>", 'Bricolage_<% $hostname %>',
+    window.open("<% $uri %>", 'Bricolage_<% SERVER_WINDOW_NAME %>',
                 'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1');
     self.close();
 }
@@ -129,7 +128,7 @@ Please activate JavaScript in your browser before continuing.
 <tr>
 	<td width=150>
 % if ($useSideNav) {
-        <a href="#" onClick="window.open('/help/about.html', 'About', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=620'); return false;"><img src="/media/images/bricolage.gif" width="150" height="25" border="0" /></a>
+        <a href="#" onClick="window.open('/help/about.html', 'About_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=620'); return false;"><img src="/media/images/bricolage.gif" width="150" height="25" border="0" /></a>
 % } else {
         <img src="/media/images/bricolage.gif" width="150" height="25" border="0" />
 % }
@@ -265,7 +264,10 @@ while (my $txt = next_msg) {
 <%doc>
 
 $Log: header.mc,v $
-Revision 1.2.2.6  2001-10-04 15:47:49  wheeler
+Revision 1.2.2.7  2001-10-05 08:52:15  wheeler
+Added server name to all new window names opened by window.open() or <a target>.
+
+Revision 1.2.2.6  2001/10/04 15:47:49  wheeler
 Added server host name to window name for new toolbar-less window. Resolves
 http://bricolage-bugzilla.about.com/show_bug.cgi?id=15.
 
