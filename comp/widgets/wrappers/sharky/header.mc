@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2002-02-26 03:38:44 $
+$Date: 2002-05-08 19:46:55 $
 
 =head1 SYNOPSIS
 
@@ -66,14 +66,14 @@ $numLinks += 8 if ($agent->{os} eq "MacOS");
 # define variables to output sideNav layer or iframe
 if ($agent->{browser} eq "Netscape") {
     $layer = "layer";
-    $properties = qq { width="150" height="100%" border="0" scrolling="no" frameborder="no" z-index="10" left="8" top="35" };
+    $properties = qq { width="150" height="200%" border="0" scrolling="auto" frameborder="no" z-index="100" left="8" top="35"};
 } else {
     $layer = "iframe";
     $properties = ($agent->{os} eq "MacOS")
-      ? qq { width="150" height="100%" border="0" scrolling="no" }
-        . qq{frameborder="no" marginwidth="0" style="z-index:10;" }
-      : qq{ width="150" height="100%" border="0" scrolling="no" }
-	. qq{frameborder="no" marginwidth="0" style="z-index:10;" };
+      ? qq { width="150" height="200%" border="0" scrolling="auto" }
+        . qq{frameborder="no" marginwidth="0" style="z-index:200;" }
+      : qq{ width="150" height="200%" border="0" scrolling="auto" }
+	. qq{frameborder="no" marginwidth="1" style="z-index:200; visibility:visible; position: absolute; left: 8; top: 35;"};
 }
 
 my $margins = DISABLE_NAV_LAYER && $agent->{browser} eq 'Mozilla' ?
@@ -126,7 +126,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 
 <& "/widgets/wrappers/sharky/css.mc" &>
 
-<body bgcolor="#ffffff" <% $margins %> onLoad="init()">
+<body bgcolor="#ffffff" <% $margins %> onLoad="init()" marginwidth="8" marginheight="8" topmargin="8" leftmargin="8">
 <noscript>
 <h1>Warning! Bricolage is designed to run with JavaScript enabled.</h1>
 Using Bricolage without JavaScript can result in corrupt data and system instability.
@@ -172,7 +172,7 @@ function doLink(link) {
 <!-- begin side nav and content container table -->
 <table border=0 cellpadding=0 cellspacing=0 width=750 height="100%">
 <tr>
-  <td width=150 valign=top bgcolor="#666633" height="100%">
+  <td width=150 valign=top bgcolor="#666633" height="150%">
 
 <%perl>
 

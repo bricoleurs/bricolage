@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:34 $
+$Date: 2002-05-08 19:46:55 $
 
 =head1 SYNOPSIS
 
@@ -29,12 +29,11 @@ Finish off the HTML.
 	
 	</td>
 </tr>
-<tr>
-  <td bgcolor="#666633">&nbsp;</td>
-</tr>
+
 </table>
 <!-- end side nav and content table -->
 
 
 </body>
 </html>
+

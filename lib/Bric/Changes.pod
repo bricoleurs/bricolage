@@ -100,6 +100,11 @@ to it. This caused callbacks to be triggered twice for a single field! I
 noticed with with Mozilla on Mac OS X, and presume it would happen
 elsewhere, too. [David]
 
+=item *
+
+Fixed bug in navigation bar HTML that caused the bar to disappear on
+certain browsers. [Rachel]
+
 =back
 
 =head2 New Features
