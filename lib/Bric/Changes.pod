@@ -96,6 +96,10 @@ Added URI information to associated categories in the story profile. [David]
 Changed category selection for new Templates to use the category URI rather than
 the name, in line with how Story and Media work. [David]
 
+=item *
+
+Added "Save and Stay" button to the Element Profile. [David]
+
 =back
 
 =head2 Bug Fixes
