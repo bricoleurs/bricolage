@@ -66,9 +66,9 @@ elsif ($field eq "$widget|move_cb") {
     my $next_desk = $param->{$widget.'|next_desk'};
     my $assets    = ref $next_desk ? $next_desk : [$next_desk];
 
-    my ($a_id, $a_class, $d_id, $pkg);
+    my ($a_id, $a_class, $d_id, $pkg, %wfs);
     foreach my $a (@$assets) {
-        my ($a_id,$from_id,$to_id,$a_class) = split('-', $a);
+        my ($a_id, $from_id, $to_id, $a_class, $wfid) = split('-', $a);
 
         # Do not move assets where the user has not chosen a next desk.
         # And where the desk ID is the same.
@@ -96,6 +96,18 @@ elsif ($field eq "$widget|move_cb") {
         # Save both desks.
         $d->save;
         $next->save;
+
+        if (ALLOW_WORKFLOW_TRANSFER) {
+            if ($wfid != $a_obj->get_workflow_id) {
+                # Transfer workflows.
+                $a_obj->set_workflow_id($wfid);
+                $a_obj->save;
+                my $wf = $wfs{$wfid} ||=
+                  Bric::Biz::Workflow->lookup({ id => $wfid });
+                log_event("${a_class}_add_workflow", $a_obj,
+                          { Workflow => $wf->get_name });
+            }
+        }
 
         # Log an event
         log_event("${a_class}_moved", $a_obj, { Desk => $next->get_name });
@@ -174,10 +186,10 @@ elsif ($field eq "$widget|publish_cb") {
     if (%$story_pub or %$media_pub) {
         # Instant publish!
         $m->comp('/widgets/publish/callback.mc',
-                 field  => 'publish',
-                 widget => 'publish',
-                 messages => 1,
-                 param  => { pub_date => Bric::Util::Time::strfdate }
+                 field   => 'publish',
+                 widget  => 'publish',
+                 instant => 1,
+                 param   => { pub_date => Bric::Util::Time::strfdate }
                 );
     } else {
         set_redirect('/workflow/profile/publish');

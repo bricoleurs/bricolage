@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2002-10-16 03:38:14 $
+$Date: 2002-10-23 20:53:12 $
 
 =head1 SYNOPSIS
 
@@ -288,10 +288,33 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
                 }
             }
 
+            my %seen;
+            my $a_wfid = $a_wf->get_id;
             foreach ($a_wf->allowed_desks) {
-                next if $_->get_id == $desk_id and $desk_type eq 'workflow';
-                push @$desk_opts, [join('-',$aid,$desk_id,$_->get_id,$class),
+                my $did = $_->get_id;
+                next if $did == $desk_id and $desk_type eq 'workflow';
+                push @$desk_opts, [join('-', $aid, $desk_id, $did, $class,
+                                        $a_wfid),
                                    $_->get_name];
+                $seen{$did} = 1;
+            }
+
+            if (ALLOW_WORKFLOW_TRANSFER) {
+                # Find all the other workflows this desk is in.
+                foreach my $wf (Bric::Biz::Workflow->list({ desk_id => $desk_id })) {
+                    my $wid = $wf->get_id;
+                    next if $wid == $a_wfid;
+                    # Add all of their desks to the list.
+                    foreach ($wf->allowed_desks) {
+                        my $did = $_->get_id;
+                        next if $seen{$did};
+                        next if $did == $desk_id and $desk_type eq 'workflow';
+                        push @$desk_opts, [join('-', $aid, $desk_id, $did,
+                                                $class, $wid),
+                                           $_->get_name];
+                        $seen{$did} = 1;
+                    }
+                }
             }
         }
 

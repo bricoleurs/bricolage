@@ -5,7 +5,7 @@ $param
 $oc_id => undef
 $story_id => undef
 $media_id => undef
-$messages => 0
+$instant  => 0
 </%args>
 <%once>;
 my $fs = PREVIEW_LOCAL ? Bric::Util::Trans::FS->new : undef;
@@ -73,24 +73,28 @@ if ($field eq 'preview') {
     my $media = mk_aref($media_pub_ids);
 
     # Iterate through each story and media object to be published.
+    my $count = @$stories;
     foreach my $sid (@$stories) {
         # Instantiate the story.
         my $s = $story_pub->{$sid} ||
           Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
         $b->publish($s, 'story', get_user_id(), $param->{pub_date});
         add_msg("Story &quot;" . $s->get_title . "&quot; published.")
-          if $messages;
+          if $count <= 3;
     }
+    add_msg("$count stories published.") if $count > 3;
 
+    $count = @$media;
     foreach my $mid (@$media) {
         # Instantiate the media.
         my $m = $media_pub->{$mid} ||
           Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
         $b->publish($m, 'media', get_user_id(), $param->{pub_date});
         add_msg("Media &quot;" . $m->get_title . "&quot; published.")
-          if $messages;
+          if $count <= 3;
     }
+    add_msg("$count media published.") if $count > 3;
 
-    redirect_onload(last_page()) unless $messages;
+    redirect_onload(last_page()) unless $instant;
 }
 </%init>

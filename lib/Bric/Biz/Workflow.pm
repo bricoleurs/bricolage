@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2002-10-23 20:53:14 $
 
 =head1 SYNOPSIS
 
@@ -296,27 +296,25 @@ Return a list of all known workflow types.  Keys of $param are:
 
 =over 4
 
-=item *
+=item name
 
-name
+Return all workflows matching a certain name.
 
-Return all workflows matching a certain name
-
-=item *
-
-description
+=item description
 
 Return all workflows with a matching description.
 
-=item *
+=item active
 
-active
+Boolean; Return all in/active workflows.
 
-Boolean; Return all in/active workflows
+=item desk_id
+
+Return all worfkflows containing a desk with this desk ID.
 
 =back
 
-All searches except 'active' are done using the LIKE operator, so '%' can be 
+All searches except 'active' are done using the LIKE operator, so '%' can be
 used for substring searching.
 
 B<Throws:>
@@ -338,19 +336,32 @@ sub list {
     my ($param, $id_only) = @_;
 
     # Make sure to set active explictly if its not passed.
-    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
+    $param->{active} = exists $param->{active} ? $param->{active} : 1;
 
-    # Note that the below matches anything ending in 'id'.
-    my @num = grep($_ =~ /(?:id|active|type)$/, keys %$param);
-    my @txt = grep($_ !~ /(?:id|active|type)$/, keys %$param);
+    my (@wheres, @params);
+    while (my ($k, $v) = each %$param) {
+        if ($k eq 'desk_id') {
+            # Yes, this is a hack. It requires too much knowledge of the Group
+            # schema. This will go away once Workflow has this group stuff
+            # refactored out of it.
+            push @wheres, qq{all_desk_grp_id IN (
+              SELECT grp__id
+              FROM   member m, desk_member d
+              WHERE m.id = d.member__id
+                    AND d.object_id = ?)};
+            push @params, $v;
+        } elsif ($k eq 'id' || $k eq 'active' || $k eq 'type') {
+            push @wheres, "$k = ?";
+            push @params, $v;
+        } else {
+            push @wheres, "LOWER($k) LIKE ?";
+            push @params, lc $v;
+        }
+    }
 
-    my $where = join(' AND ', (map { "$_=?" }      @num),
-	            	      (map { "LOWER($_) LIKE ?" } @txt));
+    my $where = join ' AND ', @wheres;
 
-    # Lowercase all the text values.
-    @$param{@txt} = map { lc($_) } @$param{@txt};
-
-    my $ret = _select_workflow($where, [@$param{@num,@txt}], $id_only);
+    my $ret = _select_workflow($where, \@params, $id_only);
 
     # $ret is just a bunch of IDs if the $id_only flag is set.  Return them.
     return wantarray ? @$ret : $ret if $id_only;
@@ -360,13 +371,13 @@ sub list {
     foreach my $d (@$ret) {
 	# Create the object via fields which returns a blessed object.
 	my $self = bless {}, $class;
-	
+
 	# Call the parent's constructor.
 	$self->SUPER::new();
-	
+
 	# Set the columns selected as well as the passed ID.
 	$self->_set(['id', FIELDS], $d);
-	
+
 	push @all, $self;
     }
 
@@ -1188,13 +1199,13 @@ sub _select_workflow {
     } else {
 	execute($sth, @$bind);
 	bind_columns($sth, \@d[0..(scalar COLS)]);
-	
+
 	while (fetch($sth)) {
 	    push @ret, [@d];
 	}
-	
+
 	finish($sth);
-	
+
 	return \@ret;
     }
 }

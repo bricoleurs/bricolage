@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.52 $ )[-1];
+our $VERSION = (qw$Revision: 1.53 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-16 03:38:15 $
+$Date: 2002-10-23 20:53:14 $
 
 =head1 SYNOPSIS
 
@@ -131,6 +131,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MIN_SHARE_SIZE
                     MAX_UNSHARED_SIZE
                     MANUAL_APACHE
+                    ALLOW_WORKFLOW_TRANSFER
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -185,6 +186,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     char      => [qw(CHAR_SET)],
                     ui        => [qw(FIELD_INDENT
                                      DISABLE_NAV_LAYER
+                                     ALLOW_WORKFLOW_TRANSFER
                                      SERVER_WINDOW_NAME
                                      NO_TOOLBAR)],
                     email     => [qw(SMTP_SERVER)],
@@ -286,7 +288,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         # While these default to 0.
         foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER MANUAL_APACHE
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
-                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER ALWAYS_USE_SSL))
+                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER ALWAYS_USE_SSL
+                    ALLOW_WORKFLOW_TRANSFER))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -442,6 +445,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # UI Settings.
     use constant FIELD_INDENT => 125;
     use constant DISABLE_NAV_LAYER => $config->{DISABLE_NAV_LAYER};
+    use constant ALLOW_WORKFLOW_TRANSFER => $config->{ALLOW_WORKFLOW_TRANSFER};
 
     # Search Settings
     use constant FULL_SEARCH => => $config->{FULL_SEARCH};
