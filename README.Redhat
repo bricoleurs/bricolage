@@ -15,10 +15,15 @@ RPM Notes
   - You must install the PostgreSQL server and devel RPMs in order for
     Bricolage to find PostgreSQL. This is because the devel RPMs contain the
     pg_config binary that Bricolage uses to find PostgreSQL. For example, for
-    PostgreSQL version 7.1.3 you would install these RPMs:
+    PostgreSQL version 7.4.5 you would install these RPMs:
 
-      postgresql-server-7.1.3-2.i386.rpm
-      postgresql-devel-7.1.3-2.i386.rpm
+      postgresql-server-7.4.5-1PGDG.i686.rpm
+      postgresql-devel-7.4.5-1PGDG.i686.rpm
+
+    To install parts of PostgreSQL, we recommend:
+
+      postgresql-7.4.5-1PGDG.i686.rmp
+
 
 Red Hat 8.0 Notes
 -----------------
