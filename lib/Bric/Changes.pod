@@ -163,6 +163,12 @@ Changed the vertical alignment of the labels for textarea fields in the story
 profile to be consistent with the labels on the element profile. i.e. top
 aligned. [Paul Orrick/Digital Craftsmen]
 
+=item *
+
+Made the default installed "Photograph" and "Illustration" media document
+types true image objects, with autopopulated fields for height, width,
+etc. Suggested by Simon Wilcox. [David]
+
 =back
 
 =head2 Bug Fixes
