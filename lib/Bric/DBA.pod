@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2004-03-25 20:48:22 $
+$Date: 2004-03-25 23:34:02 $
 
 =head1 DESCRIPTION
 
@@ -154,34 +154,56 @@ WAL and recovering databases with WAL.
 
 =head1 VACUUM
 
-VACUUM is a PostgreSQL SQL command that cleans and analyzes a Postgres
-database.  Its purpose is to reclaim storage and to collect
-information for the optimizer.  PostgreSQL uses a non-overwriting storage
-manager, which means that B<DELETE> commands don't actually remove data,
-they just mark it invalid; similarly, B<UPDATE> commands and rolled-back
-transactions will create more "old versions" of rows. These should be
-cleaned up on a periodic basis by running B<VACUUM>. Running B<VACUUM
-ANALYZE> also collects statistics representing the dispersion of the
-data in each column.  The statistics maintained include the number of
-tuples and number of pages stored in all transactions.  This
-information is valuable when several query execution paths are
-possible. Running B<VACUUM ANALYZE> periodically will increase the
-speed of the database in processing user queries.
+VACUUM is a PostgreSQL SQL command that cleans and analyzes a PostgreSQL
+database. Its purpose is to reclaim storage and to collect information for the
+optimizer. PostgreSQL uses a non-overwriting storage manager, which means that
+C<DELETE> commands don't actually remove data, they just mark it invalid;
+similarly, C<UPDATE> commands and rolled-back transactions will create more
+"old versions" of rows. These should be cleaned up on a periodic basis by
+running C<VACUUM>. Running C<ANALYZE> (known prior to PostgreSQL 7.3 as
+C<VACUUM ANALYZE>) also collects statistics representing the dispersion of the
+data in each column. The statistics maintained include the number of tuples
+and number of pages stored in all transactions. This information is valuable
+when several query execution paths are possible. Running C<ANALYZE>
+periodically will increase the speed of the database in processing user
+queries.
 
-We recommend that you run B<VACUUM ANALYZE> on your Bricolage database
-nightly, in order to remove expired rows and keep the database running
+We recommend that you C<VACUUM> and C<ANALYZE> on your Bricolage database
+regularly, in order to remove expired rows and keep the database running
 efficiently.
 
-There are two ways to B<VACUUM ANALYZE> a database. The first is through an interactive
-shell such as psql. We suggest, however, that you instead schedule a nightly
-cron job to do the task, and use the C<vacuumdb> utility. Here's an example:
+There are three ways to C<VACUUM> and B<ANALYZE> a database. The first is
+through an interactive shell such as C<psql>. Another approach is to schedule
+a nightly C<cron> job to do the task, and use the C<vacuumdb> utility. Here's an
+example:
 
-  set PGPASSWORD=password; vacuumdb -z -d bric_dbname -U username
+  PGPASSWORD=password /usr/local/pgsql/bin/vacuumdb -U postgres -q -a
+  PGPASSWORD=password /usr/local/pgsql/bin/vacuumdb -U postgres -q -a -z
 
-If the vacuum is successful, C<vacuumdb> will output "VACUUM". In the event of a
-failure, it will output C<vacuumdb: Vacuum failed.>
+These commands vacuum all of the databases on your PostgreSQL server. If the
+vacuum is successful, C<vacuumdb> will output "VACUUM". In the event of a
+failure, it will output "vacuumdb: Vacuum failed."
 
-Consult the PostgreSQL documentation for more information.
+However, the best way to keep your database well vacuumed is to use the
+C<pg_autovacuum> utility that comes with PostgreSQL 7.4 and later (and which
+can be used with PostgreSQL 7.3, as well). To quote the C<pg_autovacuum>
+F<README> document:
+
+"C<pg_autovacuum> is a libpq client program that monitors all the databases
+associated with a PostgreSQL server. It uses the statistics collector to
+monitor insert, update and delete activity."
+
+The advantages to C<pg_autovacuum> are also detailed in the F<README>:
+
+The primary benefit of F<pg_autovacuum is> that the FSM and table statistic
+information are updated more nearly as frequently as needed. When a table is
+actively changing, C<pg_autovacuum> will perform the C<VACUUM>s and
+C<ANALYZE>s that such a table needs, whereas if a table remains static, no
+cycles will be wasted performing this unnecessarily."
+
+This has the effect of keeping your database highly optimized at all times.
+Read the rest of the C<pg_autovacuum> F<README> for installation and
+configuration instructions.
 
 =head1 TUNING
 
