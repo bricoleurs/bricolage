@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.63 $
+$Revision: 1.64 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.63 $ )[-1];
+our $VERSION = (qw$Revision: 1.64 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-07 16:25:19 $
+$Date: 2004-01-13 16:39:08 $
 
 =head1 SYNOPSIS
 
@@ -792,14 +792,17 @@ sub preview {
         }
 
         # Create a job for moving this asset in this output Channel.
-        my $name = 'Preview &quot;' . $ba->get_name . "&quot; in &quot;" .
-          $oc->get_name . "&quot;";
+        my $name = 'Preview "' . $ba->get_name . '" in "' .
+          $oc->get_name . '"';
 
-        my $job = Bric::Dist::Job->new({ sched_time => '',
-                                         user_id => $user_id,
-                                         name => $name,
-                                         server_types => $bat});
-
+        my $job = Bric::Util::Job::Dist->new(
+            { 
+                sched_time => '',
+                user_id => $user_id,
+                name => $name,
+                server_types => $bat,
+                priority => $ba->get_priority,
+            });
         my $res = [];
         # Burn, baby, burn!
         if ($key eq 'story') {
@@ -831,7 +834,7 @@ sub preview {
         # Execute the job and redirect.
         status_msg("Distributing files.");
         # We don't need to execute the job if it has already been executed.
-        $job->execute_me unless ENABLE_DIST;
+        $job->execute_me unless $job->get_comp_time;
         if (PREVIEW_LOCAL) {
             # Make sure there are some files to redirect to.
             unless (@$res) {
@@ -944,12 +947,16 @@ sub publish {
         }
 
         # Create a job for moving this asset in this output Channel.
-        my $name = 'Publish &quot;' . $ba->get_name . "&quot; to &quot;" .
-          $oc->get_name . "&quot;";
-        my $job = Bric::Dist::Job->new({ sched_time => $publish_date,
-                                         user_id => $user_id,
-                                         name => $name,
-                                         server_types => $bat});
+        my $name = 'Distribute "' . $ba->get_name . '" to "' .
+          $oc->get_name . '"';
+        my $job = Bric::Util::Job::Dist->new(
+            { 
+                sched_time => $publish_date,
+                user_id => $user_id,
+                name => $name,
+                server_types => $bat,
+                priority => $ba->get_priority,
+            });
 
         # Burn, baby, burn!
         if ($key eq 'story') {
@@ -987,15 +994,16 @@ sub publish {
         # Set up an expire job, if necessary.
         if ($exp_date and my @res = $job->get_resources) {
             # We'll need to expire it.
-            my $expname = "Expire &quot;" . $ba->get_name .
-              "&quot; from &quot;" . $oc->get_name . "&quot;";
-            my $exp_job = Bric::Dist::Job->new
+            my $expname = 'Expire "' . $ba->get_name .
+              '" from "' . $oc->get_name . '"';
+            my $exp_job = Bric::Util::Job::Dist->new
               ({ sched_time   => $exp_date,
                  user_id      => $user_id,
                  server_types => $bat,
                  name         => $expname,
                  resources    => \@res,
-                 type         => 1
+                 type         => 1,
+                 priority     => $ba->get_priority,
                });
             $exp_job->save;
             log_event('job_new', $exp_job);
@@ -1008,15 +1016,16 @@ sub publish {
                path       => "$base_path/%" }))
         {
             # Yep, there are old resources to expire.
-            my $stale_name = "Expire stale &quot;" . $ba->get_name .
-              "&quot; from &quot;" . $oc->get_name . "&quot; files";
+            my $stale_name = 'Expire stale "' . $ba->get_name .
+              '" from "' . $oc->get_name . '" files';
             my $stale_job = Bric::Dist::Job->new
               ({ sched_time   => $publish_date,
                  user_id      => $user_id,
                  server_types => $bat,
                  name         => $stale_name,
                  resources    => \@stale,
-                 type         => 1
+                 type         => 1,
+                 priority     => $ba->get_priority,
                });
             $stale_job->save;
             log_event('job_new', $stale_job);

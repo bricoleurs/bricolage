@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 21:19:08 $
+$Date: 2004-01-13 16:39:08 $
 
 =head1 SYNOPSIS
 
@@ -74,7 +74,7 @@ an ordered list of actions will be performed whenever a job is executed for that
 server type. For example, if there is a server type "Production Server", the
 list of actions (represented as Bric::Dist::Action objects) for that server type
 might be "Akamaize", "Ultraseek", "Gzip", and "Put". When a job (represented by
-a Bric::Dist::Job object) is executed for that server group, then each of those
+a Bric::Util::Job object) is executed for that server group, then each of those
 actions will be instantiated in turn, and their do_it() methods called on the
 job's resources.
 
@@ -897,6 +897,7 @@ B<Notes:> NONE.
 
 sub set_type {
     my ($self, $type) = @_;
+
     # Clear out the attributes for the last type.
     $self->_clear_attr;
 
@@ -1377,7 +1378,7 @@ sub do_it {
 
 Undoes the action on the resources associated with $job. Here is is actually a
 no-op that returns false, but when overridden, it should return true, as
-Bric::Dist::Job uses this return value to determine whether or not to log an
+Bric::Util::Job uses this return value to determine whether or not to log an
 event.
 
 B<Throws:>
@@ -1612,7 +1613,8 @@ $get_em = sub {
 
     # Grab all the records.
     execute($sel, @params);
-    my ($last, @d, @init, $media, @acts, %acts) = (-1);
+    my (@d, @init, $media, @acts, %acts);
+    my $last = -1;
     bind_columns($sel, \@d[0..$#cols - 1], \$media);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {

@@ -83,6 +83,14 @@ Added --published-only option to bric_soap and bric_republish
 so that you can republish the last-published version rather than
 the current version. [Scott]
 
+=item *
+
+Added Bric::Util::Job::Pub (and bric_queued).  Publication can be placed into a
+queue, and deferred until a scheduled time.  This along with the addition of a
+bric_queue daemon or the use of a carefully tuned instance of Bricolage allow
+the Bricolage administrator to control the amount of system resources given
+over to publishing.  [Mark]
+
 =back
 
 =head2 Improvements
@@ -1513,8 +1521,8 @@ should be checked out via "Active Media" and moved to a new desk. [David]
 
 =item *
 
-Documented the support for passing C<%ARGS> to C<< $burner->display_element()
->> in templates. It was added to Bric::Util::Burner::Mason a while ago, but I
+Documented the support for passing C<%ARGS> to C<< $burner->display_element() >> 
+in templates. It was added to Bric::Util::Burner::Mason a while ago, but I
 forgot to document it! Thanks to Mike Slattery for the spot. [David]
 
 =item *

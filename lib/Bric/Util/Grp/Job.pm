@@ -2,20 +2,20 @@ package Bric::Util::Grp::Job;
 
 =head1 NAME
 
-Bric::Util::Grp::Job - Interface to Bric::Dist::Job Groups
+Bric::Util::Grp::Job - Interface to Bric::Util::Job Groups
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:18 $
+$Date: 2004-01-13 16:39:09 $
 
 =head1 SYNOPSIS
 
@@ -120,7 +120,11 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_supported_classes { { 'Bric::Dist::Job' => 'job' } }
+sub get_supported_classes { { 
+                                'Bric::Util::Job' => 'job',
+                                'Bric::Util::Job::Dist' => 'job',
+                                'Bric::Util::Job::Pub' => 'job',
+                          } }
 
 ##############################################################################
 
@@ -141,7 +145,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_list_classes { ('Bric::Dist::Job') }
+sub get_list_classes { ('Bric::Util::Job') }
 
 ################################################################################
 
@@ -272,7 +276,7 @@ David Wheeler <david@wheeler.net>
 =head1 SEE ALSO
 
 L<Bric|Bric>, 
-L<Bric::Dist::Job|Bric::Dist::Job>, 
+L<Bric::Util::Job|Bric::Util::Job>, 
 L<Bric::Util::Grp|Bric::Util::Grp>
 
 =cut

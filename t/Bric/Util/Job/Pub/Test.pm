@@ -1,4 +1,4 @@
-package Bric::Dist::Job::Test;
+package Bric::Util::Job::Pub::Test;
 use strict;
 use warnings;
 use base qw(Bric::Test::Base);
@@ -9,7 +9,7 @@ use Bric::Util::Time qw(local_date);
 # Test class loading.
 ##############################################################################
 sub _test_load : Test(1) {
-    use_ok('Bric::Dist::Job');
+    use_ok('Bric::Util::Job::Pub');
 }
 
 1;

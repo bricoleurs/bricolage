@@ -247,6 +247,26 @@ my $owner_sub = sub {
     $u->format_name($fmt);
 };
 
+# For marking failed jobs as failed
+my $job_name_sub = sub {
+    my ($name, $job) = @_;
+    if ($job->has_failed) {
+        return qq{<span class="redLabel"><image src="/media/images/bang_red.gif" /> $name</span>};
+    } else {
+        return $name;
+    }
+};
+
+# Deals with the job type and class
+my $job_type_sub = sub {
+    my ($type, $job) = @_;
+    if (ref $job eq 'Bric::Util::Job::Dist') {
+        return $type ? 'Expire' : 'Deliver';
+    } else {
+        return 'Publish';
+    }
+};
+
 # We'll use these variables for redirection relative to the user profiles.
 my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 my $ssl_port = SSL_PORT == 443 ? '' : ':' . SSL_PORT;
@@ -364,7 +384,9 @@ my $def = {
 			       title => 'Pending %n',
 	                       constrain => {comp_time => undef},
 			       field_values => $usr_sub,
-			       alter => { type => sub { $_[0] ? 'Expire' : 'Deliver' } },
+			       alter => { type => $job_type_sub,
+                                          name => $job_name_sub,
+                                        },
 			       select => $sel_sub },
 	   site           => { list_fields => [qw(name domain_name)],
 			       behavior => 'narrow',
@@ -387,11 +409,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =head1 DATE
 
-$Date: 2003-12-20 20:23:43 $
+$Date: 2004-01-13 16:39:09 $
 
 =head1 SYNOPSIS
 

@@ -10,6 +10,14 @@ $m->out(qq{<form method="post" name="job_profile" action="} . $r->uri
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'job_id')
   if defined $id;
 
+if ($job->has_failed) { 
+    $m->out('<span class="redLabel"><b>' 
+      . $lang->maketext('This job has failed')
+      . '</b></span><p>'
+      .  $lang->maketext(q{ The error message is available below.  No further execution attempts will be made on this job.  Please leave it in the queue until your administrator has seen the error message.})
+      . '</p>');
+}
+
 # Display the Basics.
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption => "Properties",
@@ -20,9 +28,17 @@ $m->comp('/widgets/profile/dumpRemainingFields.mc',
 	 readOnly => $no_edit,
 	 objref => $job,
 	 fieldsUsed => { comp_time => 1,
-		         sched_time => 1
+		         sched_time => 1,
+                         type => 1,
 		       }
 	);
+
+# Type should really be read-only
+$m->comp("/widgets/profile/displayFormElement.mc",
+         key      => 'type',
+         objref   => $job,
+         readOnly => 1 
+        );
 
 $m->comp("/widgets/select_time/select_time.mc",
 	 base_name => 'sched_time' ,
@@ -33,28 +49,30 @@ $m->comp("/widgets/select_time/select_time.mc",
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-# Show a list of the Distribution Profiles.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Destinations",
-	 number => 2);
-$m->out("<table border=0 cellpadding=0 cellspacing=0 width=575>");
-foreach my $st ($job->get_server_types) {
-    $m->out(qq{<tr><td width="20" height="25"></td><td width="555">&nbsp;} . $st->get_name . "</td></tr>\n");
-}
-$m->out("</table>\n");
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+if (ref $job eq 'Bric::Util::Job::Dist') {
+    # Show a list of the Distribution Profiles.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+             caption => "Destinations",
+             number => 2);
+    $m->out("<table border=0 cellpadding=0 cellspacing=0 width=575>");
+    foreach my $st ($job->get_server_types) {
+        $m->out(qq{<tr><td width="20" height="25"></td><td width="555">&nbsp;} . $st->get_name . "</td></tr>\n");
+    }
+    $m->out("</table>\n");
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-# Show a list of the Resources.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Resources",
-	 number => 3
-	);
-$m->out("<table border=0 cellpadding=0 cellspacing=0 width=575>");
-foreach my $st ($job->get_resources) {
-    $m->out(qq{<tr><td width="20" height="25"></td><td width="555">&nbsp;} . $st->get_uri . "</td></tr>\n");
+    # Show a list of the Resources.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+             caption => "Resources",
+             number => 3
+            );
+    $m->out("<table border=0 cellpadding=0 cellspacing=0 width=575>");
+    foreach my $st ($job->get_resources) {
+        $m->out(qq{<tr><td width="20" height="25"></td><td width="555">&nbsp;} . $st->get_uri . "</td></tr>\n");
+    }
+    $m->out("</table>\n");
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 }
-$m->out("</table>\n");
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 
 # Add the form buttons and other necessities.
@@ -67,7 +85,7 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS );
 
 %#-- Once Section --#
 <%once>;
-my $class = "Bric::Dist::Job";
+my $class = "Bric::Util::Job";
 my $widget = 'profile';
 my $type = 'job';
 my $disp = get_disp_name($type);
@@ -100,11 +118,11 @@ my $no_del = !$id || $no_edit;
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:48 $
+$Date: 2004-01-13 16:39:09 $
 
 =head1 SYNOPSIS
 

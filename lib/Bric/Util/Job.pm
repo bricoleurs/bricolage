@@ -1,36 +1,36 @@
-package Bric::Dist::Job;
+package Bric::Util::Job;
 
 =head1 NAME
 
-Bric::Dist::Job - Manages Bricolage distribution jobs.
+Bric::Util::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2004-01-13 16:39:08 $
 
 =head1 SYNOPSIS
 
-  use Bric::Dist::Job;
+  use Bric::Util::Job;
 
   my $id = 1;
   my $format = "%D %T";
 
   # Constructors.
-  my $job = Bric::Dist::Job->new($init);
-  $job = Bric::Dist::Job->lookup({ id => $id });
-  my @jobs = Bric::Dist::Job->list($params);
+  my $job = Bric::Util::Job->new($init);
+  $job = Bric::Util::Job->lookup({ id => $id });
+  my @jobs = Bric::Util::Job->list($params);
 
   # Class Methods.
-  my @job_ids = Bric::Dist::Job->list_ids($params);
+  my @job_ids = Bric::Util::Job->list_ids($params);
 
   # Instance Methods
   my $id = $job->get_id;
@@ -49,6 +49,13 @@ $Date: 2003-08-14 23:24:11 $
   my @server_types = $job->get_server_types;
   my @server_type_ids = $job->get_server_type_ids;
   $job = $job->set_server_type_ids(@server_type_ids);
+
+  my $boolean = $job->get_failed;
+  $job = $job->set_failed($boolean);
+
+  my $err_msg = $job->get_error_message;
+
+  my $boolean = $job->get_executing;
 
   # Save the job.
   $job = $job->save;
@@ -76,16 +83,17 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Config qw(:dist :temp);
+use Bric::Config qw(:dist :temp STAGE_ROOT);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
+use Bric::Util::Fault qw(:all);
 use Bric::Util::Trans::FS;
 use Bric::Util::Coll::Resource;
 use Bric::Util::Coll::ServerType;
-use Bric::Util::Fault qw(throw_dp throw_gen rethrow_exception);
 use Bric::Util::Grp::Job;
-use Bric::App::Event qw(log_event);
+use Bric::Util::Burner;
 use File::Spec::Functions qw(catdir);
+use Bric::App::Event qw(log_event);
 
 ################################################################################
 # Inheritance
@@ -95,7 +103,7 @@ use base qw(Bric);
 ################################################################################
 # Function and Closure Prototypes
 ################################################################################
-my ($get_em, $get_coll, $set_pend);
+my ($get_em, $get_coll, $set_executing, $check_priority);
 
 ################################################################################
 # Constants
@@ -103,6 +111,14 @@ my ($get_em, $get_coll, $set_pend);
 use constant DEBUG => 0;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Job';
 use constant INSTANCE_GROUP_ID => 30;
+use constant NAME_MAX_LENGTH => 246;
+use constant ERR_MAX_LENGTH => 2000;
+
+my $PKG_MAP = {
+    54 => 'Bric::Util::Job',
+    79 => 'Bric::Util::Job::Dist',
+    80 => 'Bric::Util::Job::Pub',
+};
 
 ################################################################################
 # Fields
@@ -111,12 +127,13 @@ use constant INSTANCE_GROUP_ID => 30;
 
 ################################################################################
 # Private Class Fields
-my @COLS = qw(id name expire usr__id sched_time comp_time tries pending);
-my @PROPS = qw(id name type user_id sched_time comp_time tries _pending);
+my @COLS = qw(id name expire usr__id sched_time priority comp_time tries executing story__id media__id class__id error_message failed);
+my @PROPS = qw(id name type user_id sched_time priority comp_time tries _executing story_id media_id _class_id error_message _failed);
 my @ORD = @PROPS[1..$#PROPS - 1];
 
-my $SEL_COLS = 'a.id, a.name, a.expire, a.usr__id, a.sched_time, ' .
-  'a.comp_time, a.tries, a.pending, m.grp__id';
+my $SEL_COLS = 'a.id, a.name, a.expire, a.usr__id, a.sched_time, a.priority, '
+  . 'a.comp_time, a.tries, a.executing, a.story__id, a.media__id, '
+  . 'a.class__id, a.error_message, a.failed, m.grp__id';
 my @SEL_PROPS = (@PROPS, 'grp_ids');
 
 my @SCOL_ARGS = ('Bric::Util::Coll::ServerType', '_server_types');
@@ -133,11 +150,15 @@ BEGIN {
                          id => Bric::FIELD_READ,
                          name => Bric::FIELD_RDWR,
                          user_id => Bric::FIELD_RDWR,
-                         sched_time => Bric::FIELD_NONE,
-                         comp_time => Bric::FIELD_NONE,
+                         sched_time => Bric::FIELD_READ,
+                         priority => Bric::FIELD_RDWR,
+                         comp_time => Bric::FIELD_READ,
                          type => Bric::FIELD_RDWR,
                          tries => Bric::FIELD_READ,
                          grp_ids => Bric::FIELD_READ,
+                         story_id => Bric::FIELD_RDWR,
+                         media_id => Bric::FIELD_RDWR,
+                         error_message => Bric::FIELD_READ,
 
                          # Private Fields
                          _resources => Bric::FIELD_NONE,
@@ -145,7 +166,9 @@ BEGIN {
                          _server_types => Bric::FIELD_NONE,
                          _server_type_ids => Bric::FIELD_NONE,
                          _cancel => Bric::FIELD_NONE,
-                         _pending => Bric::FIELD_NONE
+                         _executing => Bric::FIELD_NONE,
+                         _class_id => Bric::FIELD_NONE,
+                         _failed => Bric::FIELD_NONE,
                         });
 }
 
@@ -159,9 +182,9 @@ BEGIN {
 
 =over 4
 
-=item my $job = Bric::Dist::Job->new($init)
+=item my $job = Bric::Util::Job->new($init)
 
-Instantiates a Bric::Dist::Job object. An anonymous hash of initial values may be
+Instantiates a Bric::Util::Job object. An anonymous hash of initial values may be
 passed. The supported initial value keys are:
 
 =over 4
@@ -217,7 +240,7 @@ Cannot add resources to a completed job.
 
 =item *
 
-Cannot add resources to a pending job.
+Cannot add resources to a executing job.
 
 =back
 
@@ -235,22 +258,34 @@ sub new {
       if $init->{server_types};
     $self->add_resources(@{ delete $init->{resources} }) if $init->{resources};
 
-    # Set the type and the _pending and tries defaults.
+    # Check for a legitimate Class ID, or die.
+    my $class = Bric::Util::Class->lookup({ pkg_name => $pkg });
+    $self->_set({ _class_id => $class->get_id });
+
+    # truncate the name param to 256 characters 
+    $init->{name} = substr $init->{name}, 0, 256;
+
+    # Set the type and the _executing and tries defaults.
     $init->{type} = $init->{type} ? 1 : 0;
-    @{$init}{qw(_pending tries)} = (0, 0);
+    @{$init}{qw(_executing tries _failed)} = (0, 0, 0);
+
+    # check priority, and default to 3
+    if (defined $init->{priority}) {
+        &$check_priority($init->{priority});
+    } else {
+        $init->{priority} = 3;
+    }
 
     # Default schedule time to now.
     $init->{sched_time} = db_date($init->{sched_time}, 1);
-
-    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $self->SUPER::new($init);
 }
 
 ################################################################################
 
-=item my $job = Bric::Dist::Job->lookup({ id => $id })
+=item my $job = Bric::Util::Job->lookup({ id => $id })
 
-Looks up and instantiates a new Bric::Dist::Job object based on the Bric::Dist::Job
+Looks up and instantiates a new Bric::Util::Job object based on the Bric::Util::Job
 object ID passed. If $id is not found in the database, lookup() returns undef.
 
 B<Throws:>
@@ -259,7 +294,7 @@ B<Throws:>
 
 =item *
 
-Too many Bric::Dist::Job objects found.
+Too many Bric::Util::Job objects found.
 
 =item *
 
@@ -287,7 +322,7 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> If $id is found, populates the new Bric::Dist::Job object with
+B<Side Effects:> If $id is found, populates the new Bric::Util::Job object with
 data from the database before returning it.
 
 B<Notes:> NONE.
@@ -301,16 +336,16 @@ sub lookup {
 
     $job = $get_em->($pkg, @_);
     # We want @$job to have only one value.
-    throw_dp(error => 'Too many Bric::Dist::Job objects found.')
+    throw_dp({ error => 'Too many Bric::Util::Job objects found.' })
       if @$job > 1;
     return @$job ? $job->[0] : undef;
 }
 
 ################################################################################
 
-=item my (@jobs || $jobs_aref) = Bric::Dist::Job->list($params)
+=item my (@jobs || $jobs_aref) = Bric::Util::Job->list($params)
 
-Returns a list or anonymous array of Bric::Dist::Job objects based on the search
+Returns a list or anonymous array of Bric::Util::Job objects based on the search
 parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
@@ -354,6 +389,15 @@ server_type_id - A Bric::Dist::ServerType object ID.
 
 grp_id - A Bric::Util::Grp::Job object ID.
 
+=item * 
+
+failed - A boolean indicating whether or not a job is considered a failure
+
+=item * 
+
+executing - A boolean indicating whether some process is running C<execute_me>
+on this job
+
 =back
 
 B<Throws:>
@@ -386,14 +430,19 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Populates each Bric::Dist::Job object with data from the database
+B<Side Effects:> Populates each Bric::Util::Job object with data from the database
 before returning them all.
 
 B<Notes:> NONE.
 
 =cut
 
-sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
+sub list { 
+    my ($pkg, $params) = @_;
+    my $class = ref $pkg || $pkg;
+    $params->{_class_id} = $class->CLASS_ID unless $class eq __PACKAGE__;
+    return wantarray ? @{ &$get_em($pkg, $params) } : &$get_em($pkg, $params);
+}
 
 ################################################################################
 
@@ -425,9 +474,9 @@ sub DESTROY {}
 
 =over
 
-=item my (@job_ids || $job_ids_aref) = Bric::Dist::Job->list_ids($params)
+=item my (@job_ids || $job_ids_aref) = Bric::Util::Job->list_ids($params)
 
-Returns a list or anonymous array of Bric::Dist::Job object IDs based on the
+Returns a list or anonymous array of Bric::Util::Job object IDs based on the
 search criteria passed via an anonymous hash. The supported lookup keys are the
 same as those for list().
 
@@ -467,15 +516,20 @@ B<Notes:> NONE.
 
 =cut
 
-sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
+sub list_ids { 
+    my ($pkg, $params) = @_;
+    my $class = ref $pkg || $pkg;
+    $params->{_class_id} = $class->CLASS_ID unless $class eq __PACKAGE__;
+    return wantarray ? @{ &$get_em($pkg, $params, 1) } : &$get_em($pkg, $params, 1) 
+}
 
 ################################################################################
 
-=item $meths = Bric::Dist::Job->my_meths
+=item $meths = Bric::Util::Job->my_meths
 
-=item (@meths || $meths_aref) = Bric::Dist::Job->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Util::Job->my_meths(TRUE)
 
-=item my (@meths || $meths_aref) = Bric::Dist::Job->my_meths(0, TRUE)
+=item my (@meths || $meths_aref) = Bric::Util::Job->my_meths(0, TRUE)
 
 Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
@@ -649,6 +703,24 @@ sub my_meths {
                                                       [1, 'Expire'] ]
                                           }
                              },
+              priority   => {
+                              name     => 'priority',
+                              get_meth => sub { shift->get_priority(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_priority(@_) },
+                              set_args => [],
+                              disp     => 'Priority',
+                              len      => 1,
+                              req      => 1,
+                              type     => 'short',
+                              props    => { type => 'select',
+                                            vals => [ [1, '1'],
+                                                      [2, '2'], 
+                                                      [3, '3'], 
+                                                      [4, '4'], 
+                                                      [5, '5'], ],
+                                          }
+                             },
               user_id     => {
                               name     => 'user_id',
                               get_meth => sub { shift->get_user_id(@_) },
@@ -667,7 +739,6 @@ sub my_meths {
                               len      => 64,
                               req      => 0,
                               type     => 'short',
-                              props    => { type      => 'date' }
                              },
               comp_time   => {
                               name     => 'comp_time',
@@ -689,6 +760,23 @@ sub my_meths {
                               len      => 1,
                               type     => 'short',
                              },
+              error_message => {
+                              name     => 'error_message',
+                              get_meth => sub { shift->get_error_message(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_error_message(@_) },
+                              set_args => [],
+                              disp     => 'Error Message',
+                              search   => 0,
+                              len      => ERR_MAX_LENGTH,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type      => 'textarea',
+                                            cols      => 60,
+                                            rows      => 10,
+                                            maxlength => ERR_MAX_LENGTH,
+                                          }
+                             },
              };
     return !$ord ? $meths : wantarray ? @{$meths}{@ORD} : [@{$meths}{@ORD}];
 }
@@ -703,7 +791,7 @@ sub my_meths {
 
 =item my $id = $job->get_id
 
-Returns the ID of the Bric::Dist::Job object.
+Returns the ID of the Bric::Util::Job object.
 
 B<Throws:>
 
@@ -729,13 +817,69 @@ No AUTOLOAD method.
 
 B<Side Effects:> NONE.
 
-B<Notes:> If the Bric::Dist::Job object has been instantiated via the new()
+B<Notes:> If the Bric::Util::Job object has been instantiated via the new()
 constructor and has not yet been C<save>d, the object will not yet have an ID,
 so this method call will return undef.
 
+=item my $priority = $job->get_priority
+
+Returns the priority of the Bric::Util::Job object.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
+
+=item *
+
+Access denied: READ access for field 'name' required.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $self = $job->set_priority($priority)
+
+Sets the server type name.
+
+B<Throws:> 
+
+=over 4
+
+=item *
+
+Priority must be between 1 and 5 inclusive
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_priority {
+    my ($self, $priority) = @_;
+    &$check_priority($priority);
+    $self->_set(['priority'] => [$priority]);
+}
+
 =item my $name = $job->get_name
 
-Returns the name of the Bric::Dist::Job object.
+Returns the name of the Bric::Util::Job object.
 
 B<Throws:>
 
@@ -779,7 +923,7 @@ sub set_name { $_[0]->_set( ['name'] => [substr $_[1], 0, 256] ) }
 
 =item my $user_id = $job->get_user_id
 
-Returns the user_id of the Bric::Dist::Job object.
+Returns the user_id of the Bric::Util::Job object.
 
 B<Throws:>
 
@@ -885,7 +1029,7 @@ Cannot change scheduled time on completed job.
 
 =item *
 
-Cannot change scheduled time on pending job.
+Cannot change scheduled time on executing job.
 
 =item *
 
@@ -917,10 +1061,10 @@ B<Notes:> NONE.
 
 sub set_sched_time {
     my ($self, $time) = @_;
-    throw_gen(error => "Cannot change scheduled time on completed job.")
+    throw_gen({ error => "Cannot change scheduled time on completed job." })
       if $self->_get('comp_time');
-    throw_gen(error => "Cannot change scheduled time on pending job.")
-      if $self->_get('_pending');
+    throw_gen({ error => "Cannot change scheduled time on executing job." })
+      if $self->_get('_executing');
     $self->_set( ['sched_time'], [db_date($time)] );
 }
 
@@ -1072,7 +1216,7 @@ Cannot add resources to a completed job.
 
 =item *
 
-Cannot add resources to a pending job.
+Cannot add resources to a executing job.
 
 =item *
 
@@ -1092,10 +1236,10 @@ B<Notes:> Uses Bric::Util::Coll::Server internally.
 
 sub add_resources {
     my $self = shift;
-    throw_gen(error => "Cannot add resources to a completed job.")
+    throw_gen({ error => "Cannot add resources to a completed job." })
       if $self->_get('comp_time');
-    throw_gen(error => "Cannot add resources to a pending job.")
-      if $self->_get('_pending');
+    throw_gen({ error => "Cannot add resources to a executing job." })
+      if $self->_get('_executing');
     my $col = &$get_coll($self, @RCOL_ARGS);
     $col->add_new_objs(@_);
     $self->_set__dirty(1);
@@ -1122,7 +1266,7 @@ Cannot delete resources from a completed job.
 
 =item *
 
-Cannot delete resources from a pending job.
+Cannot delete resources from a executing job.
 
 =item *
 
@@ -1166,10 +1310,10 @@ B<Notes:> NONE.
 
 sub del_resources {
     my $self = shift;
-    throw_gen(error => "Cannot delete resources from a completed job.")
+    throw_gen({ error => "Cannot delete resources from a completed job." })
       if $self->_get('comp_time');
-    throw_gen(error => "Cannot delete resources from a pending job.")
-      if $self->_get('_pending');
+    throw_gen({ error => "Cannot delete resources from a executing job." })
+      if $self->_get('_executing');
     my $col = &$get_coll($self, @RCOL_ARGS);
     $col->del_objs(@_);
     $self->_set__dirty(1);
@@ -1260,7 +1404,7 @@ Cannot add server types to a completed job.
 
 =item *
 
-Cannot add server types to a pending job.
+Cannot add server types to a executing job.
 
 =item *
 
@@ -1280,10 +1424,10 @@ B<Notes:> Uses Bric::Util::Coll::Server internally.
 
 sub add_server_types {
     my $self = shift;
-    throw_gen(error => "Cannot add server types to a completed job.")
+    throw_gen({ error => "Cannot add server types to a completed job." })
       if $self->_get('comp_time');
-    throw_gen(error => "Cannot add server types to a pending job.")
-      if $self->_get('_pending');
+    throw_gen({ error => "Cannot add server types to a executing job." })
+      if $self->_get('_executing');
     my $col = &$get_coll($self, @SCOL_ARGS);
     $col->add_new_objs(@_);
     $self->_set__dirty(1);
@@ -1310,7 +1454,7 @@ Cannot delete server types from a completed job.
 
 =item *
 
-Cannot delete server types from a pending job.
+Cannot delete server types from a executing job.
 
 =item *
 
@@ -1354,10 +1498,10 @@ B<Notes:> NONE.
 
 sub del_server_types {
     my $self = shift;
-    throw_gen(error => "Cannot delete server types from a completed job.")
+    throw_gen({ error => "Cannot delete server types from a completed job." })
       if $self->_get('comp_time');
-    throw_gen(error => "Cannot delete server types from a pending job.")
-      if $self->_get('_pending');
+    throw_gen({ error => "Cannot delete server types from a executing job." })
+      if $self->_get('_executing');
     my $col = &$get_coll($self, @SCOL_ARGS);
     $col->del_objs(@_);
     $self->_set__dirty(1);
@@ -1365,9 +1509,9 @@ sub del_server_types {
 
 ################################################################################
 
-=item $self = $job->is_pending
+=item $self = $job->is_executing
 
-Returns true ($self) if the job is pending (that is, in the process of being
+Returns true ($self) if the job is executing (that is, in the process of being
 executed), and undef it is not.
 
 B<Throws:>
@@ -1386,7 +1530,31 @@ B<Notes:> NONE.
 
 =cut
 
-sub is_pending { $_[0]->_get('_pending') ? $_[0] : undef }
+sub is_executing { $_[0]->_get('_executing') ? $_[0] : undef }
+
+################################################################################
+
+=item $self = $job->has_failed
+
+Returns true ($self) if the job threw an error on execution, returns false otherwise.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub has_failed { $_[0]->_get('_failed') ? 1 : 0 }
 
 ################################################################################
 
@@ -1408,7 +1576,7 @@ Cannot cancel completed job.
 
 =item *
 
-Cannot cancel pending job.
+Cannot cancel executing job.
 
 =item *
 
@@ -1432,10 +1600,10 @@ B<Notes:> NONE.
 
 sub cancel {
     my $self = shift;
-    throw_gen(error => "Cannot cancel completed job.")
+    throw_gen({ error => "Cannot cancel completed job." })
       if $self->_get('_comp_time');
-    throw_gen(error => "Cannot cancel pending job.")
-      if $self->_get('_pending');
+    throw_gen({ error => "Cannot cancel executing job." })
+      if $self->_get('_executing');
     $self->_set({_cancel => 1 });
 }
 
@@ -1443,7 +1611,7 @@ sub cancel {
 
 =item $self = $job->save
 
-Saves any changes to the Bric::Dist::Job object. Returns $self on success and
+Saves any changes to the Bric::Util::Job object. Returns $self on success and
 undef on failure.
 
 B<Throws:>
@@ -1489,15 +1657,21 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
     return unless $self->_get__dirty;
-    my ($id, $cancel, $res, $sts) =
-      $self->_get(qw(id _cancel _resources _server_types));
+    my ($id, $cancel, $res, $sts, $err) =
+      $self->_get(qw(id _cancel _resources _server_types error_message));
+
+    # truncate the error message if necessary
+    if (defined $err && length $err > ERR_MAX_LENGTH) {
+        $err = substr($err, 0, ERR_MAX_LENGTH);
+        $self->_set(['error_message'], [$err]) 
+    }
 
     if (defined $id && $cancel) {
         # It has been marked for deletion. So do it!
         my $del = prepare_c(qq{
             DELETE FROM job
             WHERE  id = ?
-        },undef);
+        });
         execute($del, $id);
     } elsif (defined $id) {
         # Existing record. Update it.
@@ -1506,7 +1680,7 @@ sub save {
             UPDATE job
             SET    @COLS = ?
             WHERE  id = ?
-        }, undef);
+        });
         execute($upd, $self->_get(@PROPS), $id);
     } else {
         # It's a new job. Insert it.
@@ -1515,19 +1689,23 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO job (@COLS)
             VALUES ($fields)
-        }, undef);
+        }, undef, DEBUG);
 
         # Don't try to set ID - it will fail!
         my @ps = $self->_get(@PROPS[1..$#PROPS]);
-        execute($ins, $self->_get(@PROPS[1..$#PROPS]));
+        execute($ins, @ps);
 
         # Now grab the ID.
         $id = last_key('job');
         $self->_set(['id'], [$id]);
 
-        # Now execute the job if distribution is enabled.
+        # For simple deployments of Bricolage where the neither a job queue
+        # nor a seperated dist machine are in use we want to execute *newly
+        # inserted* jobs right away.
         $self->execute_me
-          if ENABLE_DIST && $self->get_sched_time('epoch') <= time;
+          if ENABLE_DIST 
+          && (!QUEUE_PUBLISH_JOBS)
+          && $self->get_sched_time('epoch') <= time;
 
         # And finally, register this job in the "All Jobs" group.
         $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
@@ -1599,82 +1777,49 @@ B<Notes:> NONE.
 sub execute_me {
     my $self = shift;
     # Check to make sure we can actually do this.
-    throw_gen(error => "Cannot execute job before its scheduled time.")
+    throw_gen({ error => "Cannot execute job before its scheduled time."})
       if $self->get_sched_time('epoch') > time;
-    throw_gen(error => "Cannot execute job that has already been executed.")
+    throw_gen({ error => "Cannot execute job that has already been executed."})
       if $self->get_comp_time;
 
-    # Mark this job pending.
-    &$set_pend($self, 1)
-      || throw_dp(error => "Can't get a lock on job No. " . $self->get_id . '.');
+    # Mark this job executing.
+    &$set_executing($self, 1) 
+      || throw_dp({ error => "Can't get a lock on job No. " . $self->get_id . '.' });
+    return $self;
 
-    eval {
-        # Grab all of the resources.
-        my $resources = $self->get_resources;
-        # Figure out what we're doing here.
-        if ($self->get_type) {
-            # This is an expiration job.
-            foreach my $st ($self->get_server_types) {
-                # Go through the actions in reverse order.
-                foreach my $a (reverse $st->get_actions) {
-                    # Undo the action.
-                    my $ret = $a->undo_it($resources, $st);
-                    if ($ret) {
-                        my $type = $a->get_type;
-                        next if $type eq 'Move';
-                    grep { log_event('resource_undo_action', $_,
-                                     { Action => $type } ) } @$resources;
-                    }
-                }
-            }
-        } else {
-            # A Delivery job. Go through the server types one at a time.
-            foreach my $st ($self->get_server_types) {
-                if ($st->can_copy) {
-                    # The resources should be copied to a temporary directory.
-                    my $fs = Bric::Util::Trans::FS->new;
-                    foreach my $res (@$resources) {
-                        # Create the temporary resource path.
-                        my $path = $res->get_path;
-                        my $tmp_path = catdir TEMP_DIR, $path;
-                        # Copy the resources to the tmp location.
-                        $fs->copy($path, $tmp_path);
-                        # Add the temporary path to the resource.
-                        $res->set_tmp_path($tmp_path);
-                    }
-                }
-                # Okay, we know where the resources are on disk. Let's
-                # perform each of the actions in turn.
-                foreach my $a ($st->get_actions) {
-                    # Execute the action.
-                    $a->do_it($resources, $st);
-                    # Grab the action type and log the action for each resource.
-                    my $type = $a->get_type;
-                    next if $type eq 'Move';
-                    grep { log_event('resource_action', $_,
-                                     { Action => $type } ) } @$resources;
-                }
-            }
-        }
-    };
+}
 
-    if (my $err = $@) {
-        # Hmmm...something went wrong.
-        if ($self->_get('tries') >= DIST_ATTEMPTS) {
-            # We've met or exceeded the maximum number of attempts. Mark the job
-            # completed and then log an event.
-            $self->_set([qw(comp_time _pending)], [db_date(0, 1), 0]);
-        } else {
-            # We're gonna try again. Unlock the job.
-            $self->_set([qw(_pending)], [0]);
-        }
-        # Save our changes and rethrow exception
-        $self->save;
-        rethrow_exception($err);
+################################################################################
+
+=back
+
+=item $self = $job->handle_error($msg)
+
+Concatinates the msg to the I<top> of the error_message field.  After
+Bric::Config::DIST_ATTEMPTS it also marks the Job as having failed.
+
+=cut
+
+sub handle_error {
+    my ($self, $err) = @_;
+    # make sure that we unset executing first thing
+    &$set_executing($self,0);
+    # convert the error to text
+    if ($self->_get('tries') >= DIST_ATTEMPTS) {
+        # We've met or exceeded the maximum number of attempts. Save
+        # the error message and mark the job as failed, and no longer
+        # executing.
+        $self->_set([qw(_executing error_message _failed)], [0, "$err", 1]);
+        # log the event
+        my $et = Bric::Util::EventType->lookup({ key_name => $self->KEY_NAME . '_failed' });
+        my $user = Bric::Biz::Person::User->lookup({ id => $self->get_user_id });
+        $et->log_event($user, $self);
+    } else {
+        # We're gonna try again. Unlock the job.
+        $self->_set([qw(_executing error_message)], [0, "$err"]);
     }
-    # Mark it complete, unlock it, and we're done!
-    $self->_set([qw(comp_time _pending)], [db_date(0, 1), 0]);
     $self->save;
+    die $err;  # now re-throw the error that got us here
 }
 
 ################################################################################
@@ -1699,8 +1844,8 @@ NONE.
 
 =item my $_ids_aref = &$get_em( $pkg, $params, 1 )
 
-Function used by lookup() and list() to return a list of Bric::Dist::Job objects
-or, if called with an optional third argument, returns a listof Bric::Dist::Job
+Function used by lookup() and list() to return a list of Bric::Util::Job objects
+or, if called with an optional third argument, returns a listof Bric::Util::Job
 object IDs (used by list_ids()).
 
 B<Throws:>
@@ -1750,6 +1895,18 @@ $get_em = sub {
             # Simple numeric comparison.
             $wheres .= " AND a.id = ?";
             push @params, $v;
+        } elsif ($k eq '_class_id') {
+            # Simple numeric comparison.
+            $wheres .= " AND a.class__id = ?";
+            push @params, $v;
+        } elsif ($k eq 'media_id') {
+            # Simple numeric comparison.
+            $wheres .= " AND a.media__id = ?";
+            push @params, $v;
+        } elsif ($k eq 'story_id') {
+            # Simple numeric comparison.
+            $wheres .= " AND a.story__id = ?";
+            push @params, $v;
         } elsif ($k eq 'user_id') {
             # Simple numeric comparison.
             $wheres .= " AND a.usr__id = ?";
@@ -1774,6 +1931,19 @@ $get_em = sub {
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
+        } elsif ($k eq 'failed') {
+            # boolean 
+            $wheres .= " AND a.$k = ?";
+            push @params, $v;
+        } elsif ($k eq 'executing') {
+            # boolean 
+            $wheres .= " AND a.$k = ?";
+            $v = 0 unless $v;
+            push @params, $v;
+        } elsif ($k eq 'error_message') {
+            # Simple string comparison.
+            $wheres .= " AND LOWER(a.$k) LIKE ?";
+            push @params, lc $v;
         } else {
             # It's a date column.
             if (ref $v) {
@@ -1803,32 +1973,32 @@ $get_em = sub {
     }
 
     # Assemble and prepare the query.
-    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :
-      (\$SEL_COLS, 'a.sched_time, a.id');
+    my $qry_cols = $ids ? \'DISTINCT a.id, a.sched_time, a.priority' :
+      \$SEL_COLS;
     my $sel = prepare_c(qq{
         SELECT $$qry_cols
         FROM   $tables
         WHERE  $wheres
-        ORDER BY $order
-    }, undef);
+        ORDER BY a.priority, a.sched_time, a.id
+    }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
     my (@d, @jobs, $grp_ids);
-    $pkg = ref $pkg || $pkg;
     bind_columns($sel, \@d[0..$#SEL_PROPS]);
     my $last = -1;
     while (fetch($sel)) {
         if ($d[0] != $last) {
             $last = $d[0];
             # Create a new job object.
-            my $self = bless {}, $pkg;
+            my $self = bless {}, 'Bric::Util::Job';
             $self->SUPER::new;
             # Get a reference to the array of group IDs.
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@SEL_PROPS, \@d);
+            bless $self, $PKG_MAP->{$self->_get('_class_id')};
             $self->_set__dirty; # Disables dirty flag.
             push @jobs, $self;
         } else {
@@ -1904,9 +2074,21 @@ $get_coll = sub {
     return $coll;
 };
 
-=item my $bool = &$set_pend($self, $value)
+=item my $bool = &$check_priority($priority)
 
-Sets the pending column in the database, as well as the pending property in the
+Checks a number to see if it is in the correct range for a priority
+setting (1 to 5, inclusive), and throws an error if it isn't.
+
+=cut
+
+$check_priority = sub {
+    throw_gen({ error => "Priority must be between 1 and 5 inclusive." })
+      unless $_[0] >= 1 && $_[0] <= 5;
+};
+
+=item my $bool = &$set_executing($self, $value)
+
+Sets the executing column in the database, as well as the executing property in the
 job object. Used by execute().
 
 B<Throws:>
@@ -1941,20 +2123,20 @@ B<Notes:> NONE.
 
 =cut
 
-$set_pend = sub {
+$set_executing = sub {
     my ($self, $value) = @_;
     my ($id, $exec) = $self->_get(qw(id tries));
-    $exec++;
+    $exec++ if $value;
     my $upd = prepare_c(qq{
         UPDATE job
-        SET    pending = ?,
+        SET    executing = ?,
                tries = ?
         WHERE  id = ?
-               AND pending <> ?
-    }, undef);
+               AND executing <> ?
+    });
     my $ret = execute($upd, $value, $exec, $id, $value);
     return if $ret eq '0E0';
-    $self->_set([qw(_pending tries)], [$value, $exec]);
+    $self->_set([qw(_executing tries)], [$value, $exec]);
     return $ret;
 };
 
@@ -1967,9 +2149,11 @@ __END__
 
 NONE.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 David Wheeler <david@wheeler.net>
+
+Mark Jaroski <jaroskim@who.int>
 
 =head1 SEE ALSO
 

@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:13 $
+$Date: 2004-01-13 16:39:08 $
 
 =head1 DESCRIPTION
 
@@ -280,7 +280,7 @@ the data actually not being used for much of anything, so from time to time we
 do this:
 
     DELETE FROM job
-    WHERE  pending = 0
+    WHERE  executing = 0
            AND comp_time IS NOT NULL
 
 This can result in significant boosts in preview and publish performance,

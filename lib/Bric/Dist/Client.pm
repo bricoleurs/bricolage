@@ -7,16 +7,16 @@ distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2004-01-13 16:39:08 $
 
 =head1 SYNOPSIS
 
@@ -53,7 +53,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Dist::Job;
+use Bric::Util::Job;
 use Bric::Util::DBI qw(:standard);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Fault qw(throw_gen);
@@ -120,11 +120,11 @@ be passed. The supported initial value keys are:
 
 =item *
 
-exec_ids - An anonymous array of Bric::Dist::Job IDs to be executed.
+exec_ids - An anonymous array of Bric::Util::Job IDs to be executed.
 
 =item *
 
-exp_ids - An anonymous array of Bric::Dist::Job IDs to be expired.
+exp_ids - An anonymous array of Bric::Util::Job IDs to be expired.
 
 =back
 
@@ -150,7 +150,7 @@ Cannot add resources to a completed job.
 
 =item *
 
-Cannot add resources to a pending job.
+Cannot add resources to a executing job.
 
 =back
 
@@ -203,7 +203,7 @@ NONE.
 
 =item $dist = $dist->load_ids
 
-Looks up the IDs of all Bric::Dist::Job objects in the database that are ready
+Looks up the IDs of all Bric::Util::Job objects in the database that are ready
 to be executed or expired and populates the properties of this object with those
 IDs.
 
@@ -250,9 +250,12 @@ B<Notes:> NONE.
 sub load_ids {
     my $self = shift;
     my $jids = $self->_get('exec_ids');
-    my $new_jids = Bric::Dist::Job->list_ids(
-      { sched_time => [undef, strfdate()],
-	comp_time => undef });
+    my $new_jids = Bric::Util::Job->list_ids( { 
+        sched_time  => [undef, strfdate()],
+        comp_time   => undef,
+        failed      => 0,
+        executing   => 0,
+    });
     grep { $jids->{$_} = undef } @$new_jids;
     return $self;
 }
@@ -384,7 +387,7 @@ B<Notes:> NONE.
 
 =item my (@exec_jids, $exec_jids_aref) = $dist->get_exec_ids
 
-Returns a list anonymous array of Bric::Dist::Job IDs to be executed.
+Returns a list anonymous array of Bric::Util::Job IDs to be executed.
 
 B<Throws:>
 
@@ -411,7 +414,7 @@ sub get_exec_ids {
 
 =item $self = $dist->add_exec_ids(@exec_ids)
 
-Adds to the list of Bric::Dist::Job IDs to be executed.
+Adds to the list of Bric::Util::Job IDs to be executed.
 
 B<Throws:>
 
@@ -440,7 +443,7 @@ sub add_exec_ids {
 
 =item $self = $dist->del_exec_ids(@exec_ids)
 
-Deletes from the list of Bric::Dist::Job IDs to be executed. If no exec IDs are
+Deletes from the list of Bric::Util::Job IDs to be executed. If no exec IDs are
 passed, they will all be deleted.
 
 B<Throws:>
@@ -470,7 +473,7 @@ sub del_exec_ids {
 
 =item $self = $dist->send
 
-Sends the lists of Bric::Dist::Job IDs to be expired to the distribution server.
+Sends the lists of Bric::Util::Job IDs to be expired to the distribution server.
 
 B<Throws:>
 

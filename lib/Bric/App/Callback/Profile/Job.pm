@@ -11,7 +11,7 @@ use Bric::App::Util qw(:aref :msg);
 
 my $type = CLASS_KEY;
 my $disp_name = 'Job';
-my $class = 'Bric::Dist::Job';
+my $class = 'Bric::Util::Job';
 
 
 sub save : Callback {
@@ -34,6 +34,7 @@ sub save : Callback {
         $job->set_name($param->{name});
         $job->set_sched_time($param->{sched_time});
         $job->set_type($param->{type});
+        $job->set_priority($param->{priority});
         $job->save;
         log_event('job_save', $job);
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
@@ -50,7 +51,7 @@ sub cancel : Callback {
     foreach my $id (@{ mk_aref($self->value) }) {
         my $job = $class->lookup({'id' => $id}) || next;
         if (chk_authz($job, EDIT)) {
-            if ($job->is_pending) {
+            if ($job->is_executing) {
                 # It's executing right now. Don't cancel it.
                 add_msg('Cannot cancel "[_1]" because it is currently executing.', $job->get_name);
             } else {

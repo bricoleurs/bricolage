@@ -8,15 +8,15 @@ types.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2004-01-13 16:39:09 $
 
 =head1 SYNOPSIS
 
@@ -131,7 +131,7 @@ sub class_name { 'Bric::Dist::ServerType' }
 =item $self = $coll->save($server_type_id)
 
 Saves the changes made to all the objects in the collection. Pass in a
-Bric::Dist::Job object ID to make sure all the Bric::Dist::ServerType objects are
+Bric::Util::Job object ID to make sure all the Bric::Dist::ServerType objects are
 associated with that job.
 
 B<Throws:>

@@ -1,0 +1,438 @@
+#!/usr/bin/perl
+
+=head1 NAME 
+
+Bricolage jobs queue daemon
+
+=head1 SYNOPSIS
+
+  bric_queud [options]
+
+=head1 DISCRIPTION
+
+bric_queued is normally run as a daemon which will poll a Bricolage jobs
+queue and execute any jobs found there with a sched_time in the past, but
+which have not been executed.  Normally, (see C<-s>) all of the jobs found in
+a given poll are executed in order of schedule_time, with the Distribtion
+and Publish jobs being handled by seperate sub-processes, since
+distribution is normally an order of magnitude faster than publishing.
+
+In cases where the program finds no jobs in the queue it will wait a
+specified amount of time (defaulting to 30 seconds) and then re-poll.
+
+B<Note:>
+
+Unlike bric_dist_mon, this is a stand-alone program which does not make
+http requests to the running bricolage-apache-mod-perl server.
+
+=head1 OPTIONS
+
+=head2 -p <file> | --pid <file>
+
+Specifies a pid file.
+
+=head2 -d <number> | --delay <number>
+
+Specifies a delay in seconds after finding the queue empty.
+
+=head2 -s [type] | --single [type]
+
+Run a single job of C<type> where C<type> is one of 'pub' or 'dist'.
+Implies -verbose.
+
+=head2 -v | --verbose
+
+Turn on verbose mode for debugging.
+
+=head2 -l <file> | --log <file>
+ 
+Specifies a file to send debugging information to.  There is no need to use
+this for normal operation since Bricolage stores this information in it's
+database in much greater detail.
+
+=head2 -h | --help
+
+Print usage information and exit.
+
+=head1 DEPENDENCIES
+
+=head2 BRICOLAGE_ROOT
+
+Set this as usual to indicate where on your system the Bricolage libraries are
+stored.  
+
+=head2 Perl Modules
+
+=item Getopt::Long
+
+=item Pod::Usage
+
+=item POSIX
+
+=item File::Spec::Functions
+
+=cut
+
+use warnings;
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+use POSIX 'setsid';
+use File::Spec::Functions qw(catdir);
+
+BEGIN {
+    # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
+    $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
+    # use $BRICOLAGE_ROOT/lib if exists
+    my $lib = catdir($ENV{BRICOLAGE_ROOT}, "lib");
+    if (-e $lib) {
+        $ENV{PERL5LIB} = defined $ENV{PERL5LIB} ?
+          "$ENV{PERL5LIB}:$lib" : $lib;
+        unshift @INC, $lib;
+    }
+    # make sure Bric is found
+    eval { require Bric };
+    die <<"END" if $@;
+######################################################################
+
+   Cannot load Bricolage libraries. Please set the environment
+   variable BRICOLAGE_ROOT to the location of your Bricolage
+   installation or set the environment variable PERL5LIB to the
+   directory where Bricolage's libraries are installed.
+
+   The specific error encountered was as follows:
+
+   $@
+
+######################################################################
+END
+}
+
+use Bric::Util::Time qw(:all);
+use Bric::Util::Job;
+use Bric::Util::Job::Dist;
+use Bric::Util::Job::Pub;
+use Bric::Dist::Action;
+use Bric::Dist::Action::Mover;
+use Bric::Dist::Action::Email;
+use Bric::Dist::Action::DTDValidate;
+
+##############################################################################
+
+=begin comment
+
+=head1 CONSTANTS 
+
+##############################################################################
+
+=cut
+
+use constant DELAY      => 30; # seconds to wait after finding an empty queue
+use constant JOB_PKG    => 'Bric::Util::Job';
+use constant DIST_PKG   => JOB_PKG . '::Dist';
+use constant PUB_PKG    => JOB_PKG . '::Pub';
+
+##############################################################################
+
+=head1 FIELDS
+
+##############################################################################
+
+=cut
+
+my $Pidfile = undef;            # pid of *daemonized* process
+my $DistPid = undef;            # pid of Dist child process
+my $Delay = DELAY;
+my $SingleJobMode = undef;
+my $Verbose = undef;
+my $Logfile = '/dev/null';
+my $HelpMode = undef;
+my $CaughtSignal = 0;         # to be set by the signal handler
+
+##############################################################################
+
+=head1 SUBROUTINES
+
+=head2 main
+
+This is executed by a command at the bottom just before the end of the
+code.
+
+=cut
+
+##############################################################################
+
+sub main {
+    # parse the command line options (using Getopt)
+    Getopt::Long::Configure ("bundling");
+    GetOptions( 
+                "pid|p=s"     => \$Pidfile,
+                "delay|d=i"   => \$Delay,
+                "single|s=s"  => \$SingleJobMode,
+                "verbose|v" => \$Verbose,
+                "log|l=s"     => \$Logfile,
+                "help|h"    => \$HelpMode,
+               );
+    # do help if we got the help flag
+    pod2usage(1) if $HelpMode; # see Pod::Usage(8)
+    if ($SingleJobMode) {
+        run_single_job();
+    } else {
+        run_as_daemon();
+    }
+}
+
+##############################################################################
+
+=head2 run_as_daemon
+
+This is our main loop for normal daemon mode
+
+=cut
+
+##############################################################################
+
+sub run_as_daemon {
+    daemonize();
+    # fork off a process for dist jobs
+    my $pkg = fork_to_dist();
+    for (;;) {
+        my ($job) = $pkg->list({
+            sched_time => [undef, strfdate()],
+            comp_time => undef, 
+            failed => 0,
+            executing => 0,
+        });
+        if ($job) {
+            print 'Executing ' . $_->get_name . "\n" if $Verbose;
+            eval { $_->execute_me } or print $@;
+            terminate() if $CaughtSignal;
+        } else {
+            # no need to store the TERM signal during sleep
+            $SIG{TERM} = \&terminate;
+            sleep $Delay;
+            $SIG{TERM} = \&handle_term;
+        }
+        # If we are the parent (pub) process we should check to see that
+        # the child (dist) process is still running so that the user only
+        # has one to worry about. 
+        if ($DistPid) {
+            print "Checking on Dist process, $DistPid ...";
+            if (kill 0 => $DistPid) {
+                print "OK\n";
+            } else {
+                print "None found.  Panic time!!!\n";
+                # The safest thing to do at this point is to quit and let
+                # perl clean everything up.
+                terminate();
+            }
+        }
+    };
+}
+
+##############################################################################
+
+=head2 run_single_job
+
+This is our main loop for normal daemon mode
+
+=cut
+
+##############################################################################
+
+sub run_single_job{
+    $Verbose = 1;  # as promised in OPTIONS
+    # get the package name from the command line type
+    my $pkg;
+    if (lc $SingleJobMode eq 'dist') {
+        $pkg = DIST_PKG;
+    } elsif (lc $SingleJobMode eq 'pub') {
+        $pkg = PUB_PKG;
+    } else {
+        pod2usage({
+                    -message => "Invalid argument to -s or --single.\n",
+                    -verbose => 1,
+                    -exitval => 1,
+                 });
+    }
+    # get the list of jobs and run the first one
+    my ($job) = $pkg->list({ 
+        sched_time => [undef, strfdate()],
+        comp_time => undef, 
+        failed => 0,
+        executing => 0,
+    });
+    exit unless $job;
+    print 'Executing ' . $job->get_name . "\n" if $Verbose;
+    use Data::Dumper;
+    eval { $job->execute_me } or print $@;
+}
+
+##############################################################################
+
+=head2 fork_to_dist
+
+This forks a second process and stores its PID so that the user only has to
+worry about keeping the parent (pub) running.
+
+Returns a package name from which we will get jobs to run.
+
+=cut 
+
+##############################################################################
+
+sub fork_to_dist {
+    $SIG{CHLD} = 'IGNORE';  # prevents defunct children.  See perlipc(8).
+    defined ($DistPid = fork) or die "Can't fork: $!";
+    if ($DistPid) {  # a non-zero pid means we are the parent
+        return PUB_PKG;
+    } else {
+        return DIST_PKG;
+    }
+}
+
+##############################################################################
+
+=head2 terminate
+
+To be run after whatever job is in progress when we catch a SIGTERM.
+
+=cut 
+
+##############################################################################
+
+sub terminate {
+    print "Received TERM signal. Shutting down.";
+    if ($DistPid) {  # we are the parent if this is non-zero
+        kill 15 => $DistPid;
+        del_pid(); 
+    }
+    print " OK\n";
+    exit;
+}
+
+##############################################################################
+
+=head2 handle_term
+
+Deal with SIGTERM.  We'll ignore the others for now.
+
+B<Note:>
+
+This does as little as possible itself as so to avoid problems associated
+with catching signals in pre 5.7.x, even though Bricolage requires 5.8 or
+better we can never be too careful.  Besides, we want to finish what we are
+doing before we acutally exit.
+
+=cut 
+
+##############################################################################
+
+sub handle_term {
+    $CaughtSignal = 1;
+}
+
+##############################################################################
+
+=head2 write_pid
+
+open and write the pidfile if any then close it again right away
+
+=cut 
+
+##############################################################################
+
+sub write_pid {
+    my $pid = shift;
+    return unless $Pidfile;
+    open PID, ">$Pidfile" or die "Cannot open PID file $Pidfile";
+    print PID $pid;
+    close PID;
+}
+
+##############################################################################
+
+=head2 read_pid
+
+if there is a pidfile open and read it, then close it again right away
+
+=cut
+
+##############################################################################
+
+sub read_pid {
+    return unless $Pidfile;
+    open PID, $Pidfile or die "Cannot open PID file $Pidfile.";
+    my $pid = <PID>;
+    close PID;
+    return chomp $pid;
+}
+
+##############################################################################
+
+=head2 del_pid
+
+delete the pidfile if any
+
+=cut
+
+##############################################################################
+
+sub del_pid {
+    return unless $Pidfile;
+    unlink $Pidfile or die "Cannot unlink PID file $Pidfile."
+}
+
+##############################################################################
+
+=head2 daemonize
+
+based on an approach found in the perlipc documentation
+
+=cut
+
+##############################################################################
+
+sub daemonize {
+    write_pid('');  # tests the writability of Pidfile
+    del_pid();      # in case the process dies before forking
+    $SIG{TERM} = \&handle_term;
+    chdir '/'                or die "Can't chdir to /: $!";
+    open STDIN, '/dev/null'  or die "Can't read from /dev/null: $!";
+    open STDOUT, ">>$Logfile" or die "Can't write to logfile: $!";
+    defined (my $pid = fork) or die "Can't fork: $!";
+    if ($pid) {
+        # only the original process gets the PID of the new running daemon
+        write_pid($pid); 
+        exit;
+    }
+    setsid                   or die "Can't start a new session: $!";
+    open STDERR, '>&STDOUT'  or die "Can't dup stdout: $!";
+}
+
+##############################################################################
+
+main(@ARGV);
+
+__END__
+
+=end comment
+
+=head1 VITALS
+
+=head2 Version
+
+$Revision: 1.1 $
+
+=head2 Date
+
+$Date: 2004-01-13 16:39:10 $
+
+=cut
+
+=head1 AUTHOR
+
+Mark Jaroski <jaroskim@who.int>
+
+=head1 SEE ALSO
+

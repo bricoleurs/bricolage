@@ -17,7 +17,7 @@ use Bric::Util::Time    qw(strfdate local_date);
 use Bric::Util::MediaType;
 use Bric::Util::Fault qw(throw_ap);
 use Bric::Util::Priv::Parts::Const qw(:all);
-use Bric::Dist::Job;
+use Bric::Util::Job;
 use Bric::Dist::ServerType;
 use Bric::Dist::Resource;
 use Bric::Biz::Workflow::Parts::Desk;
@@ -48,15 +48,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-03 21:39:43 $
+$Date: 2004-01-13 16:39:08 $
 
 =head1 SYNOPSIS
 

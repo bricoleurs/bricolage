@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-07 15:23:33 $
+$Date: 2004-01-13 16:39:09 $
 
 =head1 SYNOPSIS
 
@@ -697,6 +697,8 @@ To translate:
   'Element must be associated with at least one site and one output channel.'
   'Permission to manage "[_1]" group membership denied'
   'Permission to grant permission "[_1]" to group "[_2]" denied'
+  'This job has failed'
+  'The error message is available below.  No further execution attempts will be made on this job.  Please leave it in the queue until your administrator has seen the error message.'
 
 =end comment
 

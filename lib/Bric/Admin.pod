@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.138 $
+$Revision: 1.139 $
 
 =head1 DATE
 
-$Date: 2003-12-22 17:54:35 $
+$Date: 2004-01-13 16:39:08 $
 
 =head1 DESCRIPTION
 
@@ -1308,6 +1308,30 @@ uploaded to the WebDAV server. It's recommended not to use the WebDAV
 transport to transfer large files, such as movies. Check
 L<http://www.webdav.org/> for information on the WebDAV protocol.
 
+=item *
+
+B<QUEUE_PUBLISH_JOBS>.  This directive indicates that all publishing should be
+run from a queue.  If this is set to "On" or "Yes" or "1" then a request for
+publication either from a publish desk or from the story profile page will
+result in the creation of a Bric::Util::Job::Pub object, which will be tracked
+in the job list.  Publish jobs can fail on C<DIST_ATTEMPTS> or more errors,
+wether cause by a template error or some other fault.  In this case they will
+be left in the queue but marked failed to prevent further execution attempts,
+and the error message will be stored for debugging.
+
+This feature can be used with either bric_queued, or with a specially tuned
+instance of Bricolage to limit the system resources given over to publishing.
+
+The new queue daemon, bric_queued always executes publish jobs one at a time,
+while maintaining a seperate thread for distribution jobs.
+
+If you prefer to run publish jobs from the queue concurrently you can still
+control the use of system resources by running a second instance of Bricolage,
+setting the Apache MaxClients configuration directive to control the number of
+Apache processes which will be used for publishing, and thus the amount of
+memory and processor cycles.
+
+
 =back
 
 =head2 UI Configuration
@@ -1639,7 +1663,7 @@ written to them upon publish and preview, respectively. These will be good
 targets for periodic cleanup if you need to reclaim disk space, as generally the
 files stored there will not be much accessed after they're created. If you
 decide to clean some of them out to reclaim file space, just be sure not to
-delete any files for which there are pending distribution jobs, otherwise the
+delete any files for which there are executing distribution jobs, otherwise the
 distribution jobs will fail!
 
 The C<$MASON_COMP_ROOT/data/preview> directory gets formatted story files copied

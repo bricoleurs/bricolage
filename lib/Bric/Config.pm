@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.82 $
+$Revision: 1.83 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.82 $ )[-1];
+our $VERSION = (qw$Revision: 1.83 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-24 22:00:51 $
+$Date: 2004-01-13 16:39:08 $
 
 =head1 SYNOPSIS
 
@@ -92,6 +92,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     LOGIN_LENGTH
                     ERROR_URI
                     ENABLE_DIST
+                    QUEUE_PUBLISH_JOBS
                     DIST_ATTEMPTS
                     MEDIA_URI_ROOT
                     DEF_MEDIA_TYPE
@@ -189,6 +190,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MASON_COMP_ROOT
                                      PREVIEW_MASON)],
                     dist      => [qw(ENABLE_DIST
+                                     QUEUE_PUBLISH_JOBS
                                      ENABLE_SFTP_MOVER
                                      ENABLE_SFTP_V2
                                      ENABLE_WEBDAV_MOVER
@@ -229,6 +231,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      SSL_PORT
                                      LISTEN_PORT
                                      ENABLE_DIST
+                                     QUEUE_PUBLISH_JOBS
                                      NAME_VHOST
                                      VHOST_SERVER_NAME
                                      MASON_COMP_ROOT
@@ -319,7 +322,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
                     PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER ENABLE_SFTP_V2
                     ENABLE_WEBDAV_MOVER ALWAYS_USE_SSL ALLOW_WORKFLOW_TRANSFER
-                    ALLOW_ALL_SITES_CX STORY_URI_WITH_FILENAME ENABLE_CATEGORY_BROWSER))
+                    ALLOW_ALL_SITES_CX STORY_URI_WITH_FILENAME ENABLE_CATEGORY_BROWSER
+                    QUEUE_PUBLISH_JOBS))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -423,6 +427,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
     # Distribution Settings.
     use constant ENABLE_DIST => $config->{ENABLE_DIST};
+    use constant QUEUE_PUBLISH_JOBS => $config->{QUEUE_PUBLISH_JOBS};
     use constant DIST_ATTEMPTS => $config->{DIST_ATTEMPTS} || 3;
     use constant PREVIEW_LOCAL => $config->{PREVIEW_LOCAL} ? qw(data preview) : 0;
     use constant PREVIEW_MASON => $config->{PREVIEW_MASON};

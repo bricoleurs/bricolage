@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.9 $
+-- VERSION: $Revision: 1.10 $
 --
--- $Date: 2003-12-18 22:32:31 $
+-- $Date: 2004-01-13 16:39:07 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -841,3 +841,14 @@
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'From Site');
+
+-- ********** 'dist_job_failed' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'dist_job_failed', 'Distribution job failed', 'Distribution job failed due to error.', 79, 1);
+
+-- ********** 'pub_job_failed' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'pub_job_failed', 'Publish job failed', 'Publish job failed due to error.', 80, 1);
+

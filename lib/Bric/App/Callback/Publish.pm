@@ -11,6 +11,8 @@ use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Config qw(:prev);
 use Bric::Util::Burner;
+use Bric::Util::Job::Pub;
+use Bric::App::Event qw(log_event);
 
 
 sub preview : Callback {
@@ -104,8 +106,6 @@ sub publish : Callback {
         return;
     }
 
-    # Instantiate the Burner object.
-    my $burner = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
     my $stories = mk_aref($story_pub_ids);
     my $media = mk_aref($media_pub_ids);
 
@@ -113,32 +113,66 @@ sub publish : Callback {
     my $count = @$stories;
     my $pubed;
     foreach my $sid (@$stories) {
-        # Instantiate the story.
-        my $s = $story_pub->{$sid} ||
-          Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
-        if ($burner->publish($s, 'story', get_user_id(), $param->{pub_date})) {
-            add_msg('Story "[_1]" published.', $s->get_title)
-              if $count <= 3;
-            $pubed++;
+        # Schedule
+        my $s = Bric::Biz::Asset::Business::Story->lookup({id => $sid});
+        my $name = 'Publish "' . $s->get_name . '"';
+        my $job = Bric::Util::Job::Pub->new({ 
+            sched_time    => $param->{pub_date},
+            user_id       => get_user_id(),
+            name          => $name,
+            story_id      => $sid,
+            priority      => $s->get_priority(),
+        });
+        $job->save();
+        # Report publishing if the job was excuted on save, otherwise
+        # report scheduling
+        my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
+        add_msg("Story [_1] $saved: \"" .  $s->get_title . '"')
+           if $count <= 3;
+        # Remove it from the desk it's on.
+        if (my $d = $s->get_current_desk) {
+            $d->remove_asset($s);
+            $d->save;
         }
+        # Remove it from the workflow by setting is workflow ID to undef
+        if ($s->get_workflow_id) {
+            $s->set_workflow_id(undef);
+            log_event("story_rem_workflow", $s);
+        }
+        $s->save();
     }
-    add_msg("[quant,_1,story,stories] published.", $pubed)
-      if $pubed && $count > 3;
 
     $count = @$media;
     $pubed = 0;
     foreach my $mid (@$media) {
-        # Instantiate the media.
-        my $ma = $media_pub->{$mid} ||
-          Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
-        if ($burner->publish($ma, 'media', get_user_id(), $param->{pub_date})) {
-            add_msg('Media "[_1]" published.', $ma->get_title)
-              if $count <= 3;
-            $pubed++;
+        # Schedule
+        my $m = Bric::Biz::Asset::Business::Media->lookup({id => $mid});
+        my $name = 'Publish "' . $m->get_name . '"';
+        my $job = Bric::Util::Job::Pub->new({ 
+            sched_time    => $param->{pub_date},
+            user_id       => get_user_id(),
+            name          => $name,
+            media_id      => $mid,
+            priority      => $m->get_priority(),
+        });
+        $job->save();
+        # Report publishing if the job was excuted on save, otherwise
+        # report scheduling
+        my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
+        add_msg("Media item [_1] $saved: \"" .  $m->get_title . '"')
+          if $count <= 3;
+        # Remove it from the desk it's on.
+        if (my $d = $m->get_current_desk) {
+            $d->remove_asset($m);
+            $d->save;
         }
+        # Remove it from the workflow by setting is workflow ID to undef
+        if ($m->get_workflow_id) {
+            $m->set_workflow_id(undef);
+            log_event("media_rem_workflow", $m);
+        }
+        $m->save();
     }
-    add_msg("[quant,_1,media,media] published.", $pubed)
-      if $pubed && $count > 3;
 
     unless (exists($param->{'instant'}) && $param->{'instant'}) {
         # redirect_onload() prevents any other callbacks from executing.

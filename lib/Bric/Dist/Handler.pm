@@ -6,16 +6,16 @@ Bric::Dist::Handler - Apache/mod_perl handler for executing distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:26 $
+$Date: 2004-01-13 16:39:08 $
 
 =head1 SYNOPSIS
 
@@ -28,7 +28,7 @@ $Date: 2003-07-25 04:39:26 $
 
 This module is a simple Apache/mod_perl handler for executing Bricolage distribution
 jobs. It responds to a request with the headers "execute" and/or expire, where
-the values are a comma-separated list of Bric::Dist::Job IDs. Bric::Dist::Handler
+the values are a comma-separated list of Bric::Util::Job IDs. Bric::Dist::Handler
 will instantiate and execute and/ore expire each of those jobs in turn. See
 Bric::Dist::Client for an interface to send those headers.
 
@@ -44,7 +44,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(log_event clear_events);
-use Bric::Dist::Job;
+use Bric::Util::Job;
 use Apache::Constants qw(HTTP_OK);
 use Apache::Log;
 
@@ -151,7 +151,7 @@ sub handler {
 	# Execute all the jobs.
 	foreach my $jid (split /\s*,\s*/, $headers{Execute}) {
 	    eval {
-		my $job = Bric::Dist::Job->lookup({ id => $jid }) ||
+		my $job = Bric::Util::Job->lookup({ id => $jid }) ||
                     throw_gen(error => "Job $jid does not exist.");
 		$job->execute_me();
 		log_event("job_exec", $job);
@@ -214,6 +214,6 @@ David Wheeler <david@wheeler.net>
 =head1 SEE ALSO
 
 L<Bric|Bric>,
-L<Bric::Dist::Job|Bric::Dist::Job>
+L<Bric::Util::Job|Bric::Util::Job>
 
 =cut

@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.8 $
+-- VERSION: $Revision: 1.9 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -174,7 +174,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES (53, 'server', 'Bric::Dist::Server', 'Server', 'Servers', 'Server objects.', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES (54, 'job', 'Bric::Dist::Job', 'Job', 'Jobs', 'Distribution job objects.', 0);
+VALUES (54, 'job', 'Bric::Util::Job', 'Job', 'Jobs', 'Distribution job objects.', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (55, 'resource', 'Bric::Dist::Resource', 'Resource', 'Resources', 'Distribution resource objects.', 0);
@@ -247,3 +247,10 @@ VALUES (77, 'media_type_grp', 'Bric::Util::Grp::MediaType', 'Media Type Group', 
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (78, 'user_pref', 'Bric::Util::UserPref', 'User Preference', 'User Preferences', 'User preferences', 0);
+
+INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
+VALUES (79, 'dist_job', 'Bric::Util::Job::Dist', 'Distribution Job', 'Distribution Jobs', 'Distribution job objects.', 0);
+
+INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
+VALUES (80, 'pub_job', 'Bric::Util::Job::Pub', 'Publication Job', 'Publication Jobs', 'Publication job objects.', 0);
+

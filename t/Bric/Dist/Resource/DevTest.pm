@@ -5,7 +5,7 @@ use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Config qw(:temp);
 use Bric::Dist::Resource;
-use Bric::Dist::Job;
+use Bric::Util::Job::Dist;
 use Bric::Util::Time qw(strfdate);
 use Bric::Util::Trans::FS;
 use Bric::Biz::Asset::Business::Story::DevTest;
@@ -54,7 +54,7 @@ sub test_setup : Test(setup => 50) {
     my $date = '2030-01-22 14:43:23';
     my @jobs;
     for my $i (1, 2) {
-        ok( my $j = Bric::Dist::Job->new({ name => "Test Job $i",
+        ok( my $j = Bric::Util::Job::Dist->new({ name => "Test Job $i",
                                            user_id => __PACKAGE__->user_id,
                                            sched_time => $date }),
             "Create job $i" );

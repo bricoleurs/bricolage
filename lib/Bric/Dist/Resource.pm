@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:13 $
+$Date: 2004-01-13 16:39:08 $
 
 =head1 SYNOPSIS
 
@@ -902,7 +902,7 @@ B<Notes:> NONE.
 =item my $tmp_path = $res->get_tmp_path
 
 Returns the file system path to the a temporary copy of the resource. Used by
-Bric::Dist::Job and does not persist to the database.
+Bric::Util::Job and does not persist to the database.
 
 B<Throws:>
 
@@ -934,7 +934,7 @@ get_path() and set_path() methods using File::Spec.
 =item $self = $res->set_tmp_path($tmp_path)
 
 Sets the file system path to a temporary copy of the resource. Used by
-Bric::Dist::Job and does not persist to the database.
+Bric::Util::Job and does not persist to the database.
 
 B<Throws:>
 
@@ -2205,6 +2205,6 @@ David Wheeler <david@wheeler.net>
 =head1 SEE ALSO
 
 L<Bric|Bric>,
-L<Bric::Dist::Job|Bric::Dist::Job>
+L<Bric::Util::Job|Bric::Util::Job>
 
 =cut
