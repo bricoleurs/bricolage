@@ -225,6 +225,8 @@ Friends who have spotted bugs include:
 
 =item Creighton Higgins
 
+=item Earle Martin
+
 =back
 
 Bricolage's translation team:
