@@ -6,11 +6,11 @@ modules.pl - installation script to probe for required Perl modules
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:14 $
+$Date: 2002-06-10 20:46:16 $
 
 =head1 DESCRIPTION
 
@@ -86,13 +86,16 @@ sub check_module {
     $|++;
     print "Looking for $name...";
 
-    # try loading the module
-    eval "require $name";
-    return soft_fail("not found.") if $@;
-    print "found.\n";
+    { 
+        local $SIG{__WARN__} = sub { }; # ignore warnings from modules
+        my $result = eval "require $name;";
+        return soft_fail("not found.") if $@;
+        print "found.\n";
+    }
 
     if (defined $req_version) {
 	print "Checking that $name version is >= $req_version... ";
+        local $SIG{__WARN__} = sub { }; # ignore warnings from modules
 	eval { $name->VERSION($req_version) };
 	return soft_fail("not ok.") if $@;
 	print "ok.\n";
