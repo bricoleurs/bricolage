@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.9 $
+$Revision: 1.5.2.10 $
 
 =head1 DATE
 
-$Date: 2001-10-11 20:23:51 $
+$Date: 2001-10-16 18:47:52 $
 
 =head1 DESCRIPTION
 
@@ -17,9 +17,8 @@ configuring, or tuning a Bricolage system.
 
 =head1 PACKAGES
 
-I've created a package that contains all the software required by Bricolage.
-Here's how to use it to configure and install all that software. The software
-includes the following packages:
+Bricolage requires a lot of other components to be installed; here's a list of
+them:
 
 =over 4
 
@@ -103,40 +102,301 @@ Apache 1.3.20
 
 =item *
 
-PostgreSQL 7.1.2
+PostgreSQL 7.1.3
+
+=item *
+
+Bricolage 1.0.2
 
 =back
 
 =head1 INSTALLATION
 
-All of the above packages may be found in bricolage.tar.gz. [Enter something
-here about where to find it once we've gone open source.] The included shell
-script will install all of the packages for you. It has been tested on RedHat
-Linux 6.2 only, unfortunately, so your milage may vary. Here are the steps for
-installing the software using that script:
+At some point, we hope to have a makefile that will automate the installation of
+all of these packages for you. Until then, the following instructions will get
+you through installing all the needed components.
+
+=head2 Perl
+
+The standard Perl installation should apply with no problems. We do recomend the
+following Configure commands:
+
+=over 4
+
+=item -Umymalloc
+
+This Configure command will build perl without perl's malloc. This is necessary
+to prevent segfaults with XML::Parser under mod_perl. [Note that XML::Parser
+isn't currently part of Bricolage, but will soon be, and users will likely
+install it, anyway.]
+
+=item  -Dinstallusrbinperl
+
+This Configure command will arrange for /usr/bin/perl to be linked to the
+current version of perl. If you don't specify this command, configure will
+prompt you to find out whether to link /usr/bin/perl to the current version of
+perl. We strongly suggest that you answer "yes".
+
+=item -des
+
+This optional command tells Configure that you except all the other defaults,
+and it will therefore provide terse output during the configuration.
+
+=back
+
+Here is how to install Perl:
 
 =over 4
 
 =item *
 
-Download bricolage.tar.gz and save it to /usr/local/src (you will need to have
-root access to your system to do this).
+Download the Perl source tarball from www.perl.com.
 
 =item *
 
-Untar and unzip bricolage.tar.gz. This should create the directory
-/usr/local/src/bricolage.
+Gunzip and untar the sources.
 
 =item *
 
-Change directories into bricolage, and then run the installer script:
+Change to the source directory and execute these commands:
 
-  ./install
+  sh Configure -Umymalloc -Dinstallusrbinperl -des
+  make
+  make test
+  make install
+
+=back
+
+=head2 Perl Modules
+
+There are quite a few Perl modules required by Bricolage (see "PACKAGES" above for a
+list). Installation of these modules follows the usual perl module installation
+process:
+
+=over 4
 
 =item *
 
-The script will begin installing all the above software packages for you.
-Details on installing the individual packages may be found below.
+Download the package sources.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change to the source directory and execute these commands:
+
+  perl Makefile.PL
+  make
+  make test
+  make install
+
+=back
+
+You can also use the CPAN module to install the modules (perldoc CPAN for
+details), or use ActiveState PPM packages if they're available. We do recommend
+that you install all but three of the required packages immediately after
+installing Perl, and before installing the other software packages. (You must,
+of course, install them B<all> after installing Perl; otherwise, they'll be
+compiled under and associated with the extant perl on your system.) The three
+exceptions are DBD::Pg, which can only be installed after PostgreSQL has been
+installed (see below); and Apache::Session and libapreq, both of which can only
+be installed once Apache and mod_perl have been installed.
+
+=head2 OpenSSL
+
+Installation of OpenSSL follows the usual conventions. Here's an example:
+
+=over 4
+
+=item *
+
+Download the OpenSSL source tarball from www.openssl.org.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change into the source directory, read the INSTALL file to see if you need to
+use any Configure commands, and execute these commands:
+
+  sh config <commands>
+  make
+  make test
+
+=back
+
+C<make install> insn't necessary because the sources will be compiled into
+Apache.
+
+=head2 MM - Shared Memory Library
+
+Installation of MM follows the usual conventions. Here's an example:
+
+=over 4
+
+=item *
+
+Download the MM source tarball from www.engelschall.com.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change into the source directory, read the INSTALL file to see if you need to
+use any Configure commands (we recommend --disable-shared, to prevent building
+shared libraries), and execute these commands:
+
+  ./configure --disable-shared
+  make
+
+=back
+
+C<make install> insn't necessary because the sources will be compiled into
+Apache.
+
+=head2 Apache Interface to OpenSSL (mod_ssl)
+
+Installation of mod_ssl follows the usual conventions. Here's an example:
+
+=over 4
+
+=item *
+
+Download the mod_ssl source tarball from www.modssl.org.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change into the source directory, read the INSTALL file to see if you need to
+use any Configure commands. The only one required here is C<--with-apache>, so
+you'll need to have already downloaded, gunzipped, and untarred the Apache
+sources (see below). If you already have a server certificate and a server key,
+use the C<--with-crt> and C<--with-key> commands to point to them. Then, execute
+this command:
+
+  ./configure --with-apache=/usr/local/src/bricolage/apache_1.3.xx
+
+Where "apache_1.3.xx" represents ther version of Apache you will be installing
+(see the "Packages" section above for a recommended version number.
+
+=back
+
+C<make> and C<make install> aren't necessary because the sources will be
+compiled into Apache.
+
+=head2 Apache/Perl (mod_perl)
+
+Installation of mod_perl follows the usual conventions for installing Perl
+modules. It does require a number of Configure commands, however. The most
+important command is <APACHE_SRC>, which points to the Apache sources. You will
+need to have already downloaded, gunzipped, and untarred the Apache sources
+before compiling mod_perl. Here's the routine:
+
+=over 4
+
+=item *
+
+=item *
+
+Download the mod_perl source tarball from perl.apache.org.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change into the source directory, read the INSTALL file to see if you need to
+use any Configure commands other than those specified below. Then execute the
+commands:
+
+  perl Makefile.PL \
+    APACHE_SRC=/usr/local/src/bricolage/apache_1.3.xx/src \
+    DO_HTTPD=1 \
+    USE_APACI=1 \
+    PREP_HTTPD=1 \
+    EVERYTHING=1
+  make
+  make install
+
+=back
+
+=head2 Apache
+
+By now you've downloaded Apache and gunzipped and untarred its sources. There
+are a lot of Configure commands supported by Apache. We recommend that you use
+at least the following for Bricolage:
+
+=over 4
+
+=item --with-layout=Apache
+
+This command selects the classical Apache path layout.
+
+=item --disable-rule=EXPAT
+
+This command prevents incompatabilities between Apache's implementation of the
+Expat XML parser, and that used by Perl's XML::Parser module.
+
+=item --enable-module=ssl
+
+This command compiles in SSL support, using the mod_ssl sources configured
+earlier.
+
+=item --enable-module=rewrite
+
+This command enables the mod_rewrite module that ships with the Apache sources.
+While mod_rewrite is not currently used in Bricolage, it may be in future
+versions.
+
+=item --enable-module=so
+
+This command enables the mod_so module that ships with Apache. This shared
+libarary is used by mod_perl. [Is this true, or did I make it up?]
+
+=item --enable-module=proxy
+
+This command enables the mod_proxy module.
+
+=item --activate-module=src/modules/perl/libperl.a
+
+This command compiles in mod_perl. The library it points to was installed by the
+mod_perl make process.
+
+=back
+
+The commands you'll execute, therefore, should look something like this:
+
+=over 4
+
+=item *
+
+  ./configure \
+    "--with-layout=Apache" \
+    "--disable-rule=EXPAT" \
+    "--enable-module=ssl" \
+    "--enable-module=rewrite" \
+    "--enable-module=so" \
+    "--enable-module=proxy" \
+    "--activate-module=src/modules/perl/libperl.a"
+  make
+
+=item *
+
+Before you install Apache, however, you'll need to install the SSL certificates.
+If you compiled OpenSSL with the C<--with-crt> and C<--with-key> commands, you
+can skip this step.
+
+  make certificate TYPE=custom
 
 =item *
 
@@ -144,27 +404,158 @@ Near the end of the installation process, you will be prompted to enter
 information for the certificate. Do so however you like - or better yet, get
 yourself a formal certificate from a certificate authority such as VeriSign. If
 you do it yourself, you may have to tweak the FQDN entry in order to ge the
-server to properly start up with SSL. More on that below. You'll be prompted to
-enter the certificate information twice. Afterwards, you'll see this prompt:
+server to properly start up with SSL. See "Building Certificate" below for more
+detailed instructions on building your SSL certificate.
+
+=item *
+
+You'll be prompted to enter the certificate information twice. Afterwards,
+you'll see this prompt:
 
   Encrypt the private key now? [Y/n]:
 
-Enter "n" or you'll have to type in a password every time you start Apache -
-yuck! Enter "y" if you really don't trust your system users.
+Enter "n" or you'll have to type in a passphrase every time you start Apache.
+Enter "y" if you really don't trust your system users.
 
 =item *
 
-When the install script has finished, start PostgreSQL. You can use one of the
-scripts in startup/ if you like.
+Finally, install Apache:
+
+  make install
 
 =item *
 
-Checkout Bricolage into /usr/local/bricolage (cvs checkout bricolage). [Change this
-later, once we've packaged up the code for actual distribution].
+Don't forget to install the Apache::Session and libapreq perl modules now (See
+"Perl Modules," above).
+
+=back
+
+And you're done! You can test the installation by calling
+
+  /usr/local/apache/bin/apachectl configtest
+
+=head2 PostgreSQL
+
+PostgreSQL is an integral part of Bricolage: it's where all of your assets are
+stored! Its installation is pretty straight-forward and typical, but it requires
+a number of extra steps that one might not expect. Here are the details:
+
+=over 4
 
 =item *
 
-Change directories into bin and run pgimport as follows:
+Download the PostgreSQL source tarball from www.postgresql.org.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Create a new system user named "postgres". This is the user that will start the
+PostgreSQL server. The startup scripts that come with PostgreSQL mostly seem to
+expect that the postgres user will use the tcsh shell, so you may wish to set
+that shell now. Here's an example under Linux:
+
+  /usr/sbin/useradd -d /home/postgres postgres -s /bin/tcsh
+
+=item *
+
+Change into the source directory and read the INSTALL file to see if you need to
+use any Configure commands. One Configure command is required by Bricolage:
+C<--enable-multibyte=UNICODE>. Because Bric stores all of its textual data in
+Unicode format, this command is not optional. If you require the use of a
+different character set for your installation, see the CHAR_SET configuration
+directive above to ensure that data will be translated to and from your
+character set and the Unicode stored in the database.
+
+=item *
+
+Install PostgreSQL:
+
+  ./configure --enable-multibyte=UNICODE
+  make
+  make install
+
+=item *
+
+Set and export the LD_LIBRARY_PATH environment variable (this example uses Bash
+shell):
+
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/pgsql/lib
+  export LD_LIBRARY_PATH
+
+=item *
+
+Be sure to include the PostgreSQL libraries in all LD_LIBRARY_PATH environment
+variables on the system:
+
+  echo "/usr/local/pgsql/lib" >> /etc/ld.so.conf
+  ldconfig
+
+=item *
+
+Now make a directory in which you want to keep your PostgreSQL databases,
+including the Bricolage database. Make the "postgres" user the owner of that
+directory. Think carefully about where you want this directory to be, and on
+what partition. The Bricolage database will get to be quite large, and will
+require a great deal of disk accessing, so we recommend you put it on its own
+partition. This example just demonstrates the default:
+
+  mkdir /usr/local/pgsql/data
+  chown postgres /usr/local/pgsql/data
+
+=item *
+
+Intitialize the PostgreSQL database. Be sure to pass the directory you just
+created to the C<-D> command.
+
+  su - postgres -c "/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data"
+
+=item *
+
+Start the PostgreSQL "postmaster". You can use one of the scripts in
+contrib/start-scripts.
+
+=item *
+
+Make the PostgreSQL documentation. This step is optional, if you don't need the
+docs or have them available elsewhere:
+
+  cd docs
+  make install
+
+=item *
+
+Don't forget to install the DBD::Pg perl module! You'll need to set the
+C<POSTGRES_INCLUDE> and C<POSTGRES_LIB> environment variables, first:
+
+  POSTGRES_INCLUDE=/usr/local/pgsql/include
+  POSTGRES_LIB=/usr/local/pgsql/lib
+  export POSTGRES_INCLUDE POSTGRES_LIB
+  cd /path/to/DBD-Pg-1.00
+  perl Makefile.PL
+  make
+  make test
+  make install
+
+=back
+
+And now PostgreSQL is ready to go!
+
+=head2 Bricolage
+
+When all of the basic software components have been insalled, start PostgreSQL.
+You can use one of the scripts in startup/ if you like.
+
+=item *
+
+Download the latest Bricolage sources from L<http://bricolage.sourceforge.net/>.
+Decompress them into /usr/local/bricolage.
+
+=item *
+
+Change directories into /usr/local/bricolage/bin and run pgimport as follows:
 
   ./pgimport -u postgres -p postgres -d dbname -c -m bric_user:bric_user_password
 
@@ -193,8 +584,10 @@ check the Apache error log to figure out what might have gone wrong.
 
 To start using Bricolage, log in as the default user. The user name is "admin"
 and the password is "c@st3l!@n". This user is not special, so you can change it
-however you like. We do recommend that, at a minimum, you change the default
-password. Use the admin login to create other user accounts.
+however you like. The first thing you should do is to B<change the admin login
+password> so that others who download the Bricolage sources can't just use that
+login to get into I<your> installation! Now use the admin login to create other
+user accounts.
 
 =back
 
@@ -959,427 +1352,6 @@ steps, entering different values for the certificate prompts, until it does
 work.
 
 =back
-
-=head1 MANUAL INSTALLATION
-
-It's likely that errors will occur with the C<install> script that comes with
-the bricolage.tar.gz package, especially since it was developed and tested only
-on RedHat Linux 6.2 systems. (It certainly won't work on Windows Systems!) Or
-perhaps you are the kind of administrator who likes to do everything yourself.
-In either case, we provide these instructions for installing all the required
-packages manually.
-
-=head2 Perl 5.6.1
-
-The standard Perl installation should apply with no problems. We do recomend the
-following Configure commands:
-
-=over 4
-
-=item -Umymalloc
-
-This Configure command will build perl without perl's malloc. This is necessary
-to prevent segfaults with XML::Parser under mod_perl. [Note that XML::Parser
-isn't currently part of Bricolage, but will soon be, and users will likely
-install it, anyway.]
-
-=item  -Dinstallusrbinperl
-
-This Configure command will arrange for /usr/bin/perl to be linked to the
-current version of perl. If you don't specify this command, configure will
-prompt you to find out whether to link /usr/bin/perl to the current version of
-perl. We strongly suggest that you answer "yes".
-
-=item -des
-
-This optional command tells Configure that you except all the other defaults,
-and it will therefore provide terse output during the configuration.
-
-=back
-
-Here is how to install Perl 5.6.1:
-
-=over 4
-
-=item *
-
-Download perl-5.6.1.tar.gz from www.perl.com.
-
-=item *
-
-Gunzip and untar the sources.
-
-=item *
-
-Change to the source directory and execute these commands:
-
-  sh Configure -Umymalloc -Dinstallusrbinperl -des
-  make
-  make test
-  make install
-
-=back
-
-=head2 Perl Modules
-
-There are quite a few Perl modules required by Bricolage (see "PACKAGES" above for a
-list). Installation of these modules follows the usual perl module installation
-process:
-
-=over 4
-
-=item *
-
-Download the package sources.
-
-=item *
-
-Gunzip and untar the sources.
-
-=item *
-
-Change to the source directory and execute these commands:
-
-  perl Makefile.PL
-  make
-  make test
-  make install
-
-=back
-
-You can also use the CPAN module to install the modules (perldoc CPAN for
-details), or use ActiveState PPM packages if they're available. We do recommend
-that you install all but three of the required packages immediately after
-installing perl 5.6.1, and before installing the other software packages. (You
-must, of course, install them B<all> after installing Perl 5.6.1; otherwise,
-they'll be compiled under and associated with the extant perl on your system.)
-The three exceptions are DBD::Pg, which can only be installed after PostgreSQL
-7.1.2 has been installed (see below); and Apache::Session and libapreq, both of
-which can only be installed once Apache and mod_perl have been installed.
-
-=head2 OpenSSL
-
-Installation of OpenSSL follows the usual conventions. Here's an example:
-
-=over 4
-
-=item *
-
-Download openssl-0.9.6a.tar.gz from www.openssl.org.
-
-=item *
-
-Gunzip and untar the sources.
-
-=item *
-
-Change into the source directory, read the INSTALL file to see if you need to
-use any Configure commands, and execute these commands:
-
-  sh config <commands>
-  make
-  make test
-
-=back
-
-C<make install> insn't necessary because the sources will be compiled into
-Apache.
-
-=head2 MM - Shared Memory Library
-
-Installation of MM follows the usual conventions. Here's an example:
-
-=over 4
-
-=item *
-
-Download mm-1.1.3.tar.gz from www.engelschall.com.
-
-=item *
-
-Gunzip and untar the sources.
-
-=item *
-
-Change into the source directory, read the INSTALL file to see if you need to
-use any Configure commands (we recommend --disable-shared, to prevent building
-shared libraries), and execute these commands:
-
-  ./configure --disable-shared
-  make
-
-=back
-
-C<make install> insn't necessary because the sources will be compiled into
-Apache.
-
-=head2 Apache Interface to OpenSSL (mod_ssl)
-
-Installation of mod_ssl follows the usual conventions. Here's an example:
-
-=over 4
-
-=item *
-
-Download mod_ssl-2.8.4-1.3.20.tar.gz from www.modssl.org.
-
-=item *
-
-Gunzip and untar the sources.
-
-=item *
-
-Change into the source directory, read the INSTALL file to see if you need to
-use any Configure commands. The only one required here is C<--with-apache>, so
-you'll need to have already downloaded, gunzipped, and untarred the Apache
-sources (see below). If you already have a server certificate and a server key,
-use the C<--with-crt> and C<--with-key> commands to point to them. Then, execute
-this command:
-
-  ./configure --with-apache=/usr/local/src/bricolage/apache_1.3.20
-
-=back
-
-C<make> and C<make install> aren't necessary because the sources will be
-compiled into Apache.
-
-=head2 Apache/Perl (mod_perl)
-
-Installation of mod_perl follows the usual conventions for installing Perl
-modules. It does require a number of Configure commands, however. The most
-important command is <APACHE_SRC>, which points to the Apache sources. You will
-need to have already downloaded, gunzipped, and untarred the Apache sources
-before compiling mod_perl. Here's the routine:
-
-=over 4
-
-=item *
-
-=item *
-
-Download mod_perl-1.25.tar.gz from perl.apache.org.
-
-=item *
-
-Gunzip and untar the sources.
-
-=item *
-
-Change into the source directory, read the INSTALL file to see if you need to
-use any Configure commands other than those specified below. Then execute the
-commands:
-
-  perl Makefile.PL \
-    APACHE_SRC=/usr/local/src/bricolage/apache_1.3.20/src \
-    DO_HTTPD=1 \
-    USE_APACI=1 \
-    PREP_HTTPD=1 \
-    EVERYTHING=1
-  make
-  make install
-
-=back
-
-=head2 Apache
-
-By now you've downloaded Apache and gunzipped and untarred its sources. There
-are a lot of Configure commands supported by Apache. We recommend that you use
-at least the following for Bricolage:
-
-=over 4
-
-=item --with-layout=Apache
-
-This command selects the classical Apache path layout.
-
-=item --disable-rule=EXPAT
-
-This command prevents incompatabilities between Apache's implementation of the
-Expat XML parser, and that used by Perl's XML::Parser module.
-
-=item --enable-module=ssl
-
-This command compiles in SSL support, using the mod_ssl sources configured
-earlier.
-
-=item --enable-module=rewrite
-
-This command enables the mod_rewrite module that ships with the Apache sources.
-While mod_rewrite is not currently used in Bricolage, it may be in future
-versions.
-
-=item --enable-module=so
-
-This command enables the mod_so module that ships with Apache. This shared
-libarary is used by mod_perl. [Is this true, or did I make it up?]
-
-=item --enable-module=proxy
-
-This command enables the mod_proxy module.
-
-=item --activate-module=src/modules/perl/libperl.a
-
-This command compiles in mod_perl. The library it points to was installed by the
-mod_perl make process.
-
-=back
-
-The commands you'll execute, therefore, should look something like this:
-
-=over 4
-
-=item *
-
-  ./configure \
-    "--with-layout=Apache" \
-    "--disable-rule=EXPAT" \
-    "--enable-module=ssl" \
-    "--enable-module=rewrite" \
-    "--enable-module=so" \
-    "--enable-module=proxy" \
-    "--activate-module=src/modules/perl/libperl.a"
-  make
-
-=item *
-
-Before you install Apache, however, you'll need to install the SSL certificates.
-If you compiled OpenSSL with the C<--with-crt> and C<--with-key> commands, you
-can skip this step.
-
-  make certificate TYPE=custom
-
-Follow the instructions in "Building Certificate" above to complete the
-certificate installation.
-
-=item *
-
-Finally, install Apache:
-
-  make install
-
-=item *
-
-Don't forget to install the Apache::Session and libapreq perl modules now (See
-"Perl Modules," above).
-
-=back
-
-And you're done! You can test the installation by calling
-
-  /usr/local/apache/bin/apachectl configtest
-
-=head2 PostgreSQL
-
-PostgreSQL is an integral part of Bricolage: it's where all of your assets are
-stored! Its installation is pretty straight-forward and typical, but it requires
-a number of extra steps that one might not expect. Here are the details:
-
-=over 4
-
-=item *
-
-Download postgresql-7.1.2.tar.gz from www.postgresql.org.
-
-=item *
-
-Gunzip and untar the sources.
-
-=item *
-
-Create a new system user named "postgres". This is the user that will start the
-PostgreSQL server. The startup scripts that come with PostgreSQL mostly seem to
-expect that the postgres user will use the tcsh shell, so you may wish to set
-that shell now. Here's an example under Linux:
-
-  /usr/sbin/useradd -d /home/postgres postgres -s /bin/tcsh
-
-=item *
-
-Change into the source directory and read the INSTALL file to see if you need to
-use any Configure commands. One Configure command is required by Bricolage:
-C<--enable-multibyte=UNICODE>. Because Bric stores all of its textual data in
-Unicode format, this command is not optional. If you require the use of a
-different character set for your installation, see the CHAR_SET configuration
-directive above to ensure that data will be translated to and from your
-character set and the Unicode stored in the database.
-
-=item *
-
-Install PostgreSQL:
-
-  ./configure --enable-multibyte=UNICODE
-  make
-  make install
-
-=item *
-
-Set and export the LD_LIBRARY_PATH environment variable (this example uses Bash
-shell):
-
-  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/pgsql/lib
-  export LD_LIBRARY_PATH
-
-=item *
-
-Be sure to include the PostgreSQL libraries in all LD_LIBRARY_PATH environment
-variables on the system:
-
-  echo "/usr/local/pgsql/lib" >> /etc/ld.so.conf
-  ldconfig
-
-=item *
-
-Now make a directory in which you want to keep your PostgreSQL databases,
-including the Bricolage database. Make the "postgres" user the owner of that
-directory. Think carefully about where you want this directory to be, and on
-what partition. The Bricolage database will get to be quite large, and will
-require a great deal of disk accessing, so we recommend you put it on its own
-partition. This example just demonstrates the default:
-
-  mkdir /usr/local/pgsql/data
-  chown postgres /usr/local/pgsql/data
-
-=item *
-
-Intitialize the PostgreSQL database. Be sure to pass the directory you just
-created to the C<-D> command.
-
-  su - postgres -c "/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data"
-
-=item *
-
-Start the PostgreSQL "postmaster". You can use one of the scripts in
-contrib/start-scripts.
-
-=item *
-
-Make the PostgreSQL documentation. This step is optional, if you don't need the
-docs or have them available elsewhere:
-
-  cd docs
-  make install
-
-=item *
-
-Don't forget to install the DBD::Pg perl module! You'll need to set the
-C<POSTGRES_INCLUDE> and C<POSTGRES_LIB> environment variables, first:
-
-  POSTGRES_INCLUDE=/usr/local/pgsql/include
-  POSTGRES_LIB=/usr/local/pgsql/lib
-  export POSTGRES_INCLUDE POSTGRES_LIB
-  cd /path/to/DBD-Pg-1.00
-  perl Makefile.PL
-  make
-  make test
-  make install
-
-=back
-
-And now PostgreSQL is ready to go!
-
-=head2 Bricolage [Put instructions for installing Bricolage itself here, once
-we've created a way to do it. Until then, follow the instructions above for
-checking it out of CVS.]
 
 =head1 SYSTEM ADMINISTRATION
 
