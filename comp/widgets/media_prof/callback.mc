@@ -29,7 +29,8 @@ my $handle_update = sub {
       if $param->{"$widget|source__id"};
 
     $media->set_category__id($param->{"$widget|category__id"})
-      if (defined($param->{"$widget|category__id"}) && ($media->get_category__id ne $param->{"$widget|category__id"}));
+      if (defined($param->{"$widget|category__id"}) &&
+        ($media->get_category__id ne $param->{"$widget|category__id"}));
 
     # set the name
     $media->set_title($param->{title})
@@ -42,30 +43,26 @@ my $handle_update = sub {
     $media->set_priority($param->{priority})
       if exists $param->{priority};
 
-    # Set output channels.
-    if (exists $param->{"$widget|do_ocs"}) {
-        # Check boxes.
-        my %ocids = map { $_ => 1 } @{ mk_aref($param->{"$widget|oc"}) };
-        # Delete unchecked output channels.
-        foreach my $oc ($media->get_output_channels) {
-            $media->del_output_channels($oc) unless delete $ocids{$oc->get_id};
+    # Delete output channels.
+    if ($param->{rem_oc}) {
+        my $del_oc_ids = mk_aref($param->{rem_oc});
+        foreach my $delid (@$del_oc_ids) {
+            if ($delid == $param->{primary_oc_id}) {
+                add_msg("Cannot both delete and make primary a single " .
+                            "output channel.");
+                $param->{__data_errors__} = 1;
+            } else {
+                my ($oc) = $media->get_output_channels($delid);
+                $media->del_output_channels($delid);
+                log_event('media_del_oc', $media,
+                          { 'Output Channel' => $oc->get_name });
+            }
         }
-
-        # Add those that are left.
-        $media->add_output_channels
-          (map { Bric::Biz::OutputChannel->lookup({ id => $_ }) } keys %ocids )
-          if %ocids;
-    } else {
-        # Double list. Remove output channels.
-        $media->del_output_channels(@{ mk_aref($param->{rem_oc}) })
-          if defined $param->{rem_oc};
-
-        # Add new output channels.
-        $media->add_output_channels
-          (map { Bric::Biz::OutputChannel->lookup({ id => $_ }) }
-           @{ mk_aref($param->{add_oc}) } )
-           if defined $param->{add_oc};
     }
+
+    # Set primary output channel.
+    $media->set_primary_oc_id($param->{primary_oc_id})
+      if exists $param->{primary_oc_id};
 
     # Set the dates.
     $media->set_cover_date($param->{cover_date})
@@ -146,6 +143,9 @@ my $handle_save = sub {
         return;
     }
 
+    # Just return if there was a problem with the update callback.
+    return if delete $param->{__data_errors__};
+
     my $work_id = get_state_data($widget, 'work_id');
 
     if ($work_id) {
@@ -210,6 +210,9 @@ my $handle_checkin = sub {
                 "Please change the category, cover date, or file name.");
         return;
     }
+
+    # Just return if there was a problem with the update callback.
+    return if delete $param->{__data_errors__};
 
     my $work_id = get_state_data($widget, 'work_id');
     my $wf;
@@ -346,6 +349,9 @@ my $handle_save_stay = sub {
                 "Please change the category, cover date, or file name.");
         return;
     }
+
+    # Just return if there was a problem with the update callback.
+    return if delete $param->{__data_errors__};
 
     if ($work_id) {
         $media->set_workflow_id($work_id);
@@ -486,6 +492,18 @@ my $handle_contributors = sub {
     my ($widget, $field, $param) = @_;
 
     set_redirect("/workflow/profile/media/contributors.html");
+};
+
+##############################################################################
+
+my $handle_add_oc = sub {
+    my ($widget, $field, $param) = @_;
+    my $media = get_state_data($widget, 'media');
+    chk_authz($media, EDIT);
+    my $oc = Bric::Biz::OutputChannel->lookup({ id => $param->{$field} });
+    $media->add_output_channels($oc);
+    log_event('media_add_oc', $media, { 'Output Channel' => $oc->get_name });
+    $media->save;
 };
 
 ################################################################################
@@ -747,8 +765,8 @@ my %cbs = (
            save_and_stay_cb      => $handle_save_stay,
            checkin_cb            => $handle_checkin,
            save_contrib_cb       => $handle_save_contrib,
-           save_and_stay_contrib_cb => $handle_save_and_stay_contrib
-
+           save_and_stay_contrib_cb => $handle_save_and_stay_contrib,
+           add_oc_id_cb             => $handle_add_oc,
 );
 </%once>
 

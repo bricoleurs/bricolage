@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.9 $
+-- VERSION: $Revision: 1.10 $
 --
--- $Date: 2002-09-21 00:41:30 $
+-- $Date: 2002-10-25 23:53:18 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -41,33 +41,33 @@ CREATE SEQUENCE seq_attr_media_meta START 1024;
 -- Table media
 -- 
 -- Description: The Media table this houses the data for a given media asset
--- 				and its related asset_version_data
+--                              and its related asset_version_data
 --
 
 CREATE TABLE media (
-    id               NUMERIC(10,0)   NOT NULL
-                                     DEFAULT NEXTVAL('seq_media'),
-    element__id   NUMERIC(10,0)   NOT NULL,
-    priority          NUMERIC(1,0)   NOT NULL
-                                     DEFAULT 3
-                                     CONSTRAINT ck_media__priority
-                                       CHECK (priority BETWEEN 1 AND 5),
-    source__id       NUMERIC(10,0)   NOT NULL,
-    current_version  NUMERIC(10,0),
-	published_version	NUMERIC(10,0),
-    usr__id          NUMERIC(10,0),
-    publish_date     TIMESTAMP,
-    expire_date      TIMESTAMP,
-    cover_date       TIMESTAMP,
-	workflow__id	 NUMERIC(10,0),
-    publish_status   NUMERIC(1,0)    NOT NULL
-                                     DEFAULT 0
-                                     CONSTRAINT ck_media__publish_status 
-                                       CHECK (publish_status IN (0,1)),
-    active           NUMERIC(1,0)    NOT NULL
-                                     DEFAULT 1
-                                     CONSTRAINT ck_media__active
-                                       CHECK (active IN (0,1)),
+    id                NUMERIC(10,0)   NOT NULL
+                                      DEFAULT NEXTVAL('seq_media'),
+    element__id       NUMERIC(10,0)   NOT NULL,
+    priority          NUMERIC(1,0)    NOT NULL
+                                      DEFAULT 3
+                                      CONSTRAINT ck_media__priority
+                                        CHECK (priority BETWEEN 1 AND 5),
+    source__id        NUMERIC(10,0)   NOT NULL,
+    current_version   NUMERIC(10,0),
+    published_version NUMERIC(10,0),
+    usr__id           NUMERIC(10,0),
+    publish_date      TIMESTAMP,
+    expire_date       TIMESTAMP,
+    cover_date        TIMESTAMP,
+    workflow__id      NUMERIC(10,0),
+    publish_status    NUMERIC(1,0)    NOT NULL
+                                      DEFAULT 0
+                                      CONSTRAINT ck_media__publish_status 
+                                        CHECK (publish_status IN (0,1)),
+    active            NUMERIC(1,0)    NOT NULL
+                                      DEFAULT 1
+                                      CONSTRAINT ck_media__active
+                                        CHECK (active IN (0,1)),
     CONSTRAINT pk_media__id PRIMARY KEY (id)
 );
 
@@ -79,23 +79,24 @@ CREATE TABLE media (
 --
 
 CREATE TABLE media_instance (
-    id           	NUMERIC(10,0)   NOT NULL
-                                 	DEFAULT NEXTVAL('seq_media_instance'),
+    id                  NUMERIC(10,0)   NOT NULL
+                                        DEFAULT NEXTVAL('seq_media_instance'),
     name                VARCHAR(256),
     description         VARCHAR(1024),
-    media__id    	NUMERIC(10,0)   NOT NULL,
-    usr__id      	NUMERIC(10,0)   NOT NULL,
-    version      	NUMERIC(10,0),
+    media__id           NUMERIC(10,0)   NOT NULL,
+    usr__id             NUMERIC(10,0)   NOT NULL,
+    version             NUMERIC(10,0),
     category__id        NUMERIC(10,0)   NOT NULL,
-    media_type__id	NUMERIC(10,0),
-    file_size    	NUMERIC(10,0),
-    file_name    	VARCHAR(256),
-    location     	VARCHAR(256),
-    uri          	VARCHAR(256),
-    checked_out  	NUMERIC(1,0)    NOT NULL
-                                 	DEFAULT 0
-                                 	CONSTRAINT ck_media_instance__checked_out 
-                                   	CHECK (checked_out IN(0,1)),
+    media_type__id      NUMERIC(10,0),
+    primary_oc__id      NUMERIC(10,0)   NOT NULL,
+    file_size           NUMERIC(10,0),
+    file_name           VARCHAR(256),
+    location            VARCHAR(256),
+    uri                 VARCHAR(256),
+    checked_out         NUMERIC(1,0)    NOT NULL
+                                        DEFAULT 0
+                                        CONSTRAINT ck_media_instance__checked_out 
+                                        CHECK (checked_out IN(0,1)),
     CONSTRAINT pk_media_instance__id PRIMARY KEY (id)
 );
 
@@ -117,10 +118,10 @@ CREATE TABLE media__output_channel (
 -- Table: media_fields
 -- 
 -- Description: A mapping table between Media classes and functions that
---				Will be run against uploaded files
+--                              Will be run against uploaded files
 -- 
 CREATE TABLE media_fields (
-    id              NUMERIC(10,0)  NOT NULL 	
+    id              NUMERIC(10,0)  NOT NULL     
                                    DEFAULT NEXTVAL('seq_media_fields'),
     biz_pkg         NUMERIC(10,0)  NOT NULL,
     name            VARCHAR(32)    NOT NULL,
@@ -284,6 +285,7 @@ CREATE INDEX fkx_media__media_instance ON media_instance(media__id);
 CREATE INDEX fkx_usr__media_instance ON media_instance(usr__id);
 CREATE INDEX fkx_media_type__media_instance ON media_instance(media_type__id);
 CREATE INDEX fkx_category__media_instance ON media_instance(category__id);
+CREATE INDEX fdx_primary_oc__media_instance ON media_instance(primary_oc__id);
 
 -- media__output_channel
 CREATE INDEX fkx_media__oc__media ON media__output_channel(media_instance__id);

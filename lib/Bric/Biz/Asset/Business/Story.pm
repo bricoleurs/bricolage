@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-19 00:50:11 $
+$Date: 2002-10-25 23:53:18 $
 
 =head1 SYNOPSIS
 
@@ -222,6 +222,7 @@ use constant VERSION_COLS => qw( name
                                  story__id
                                  version
                                  usr__id
+                                 primary_oc__id
                                  slug
                                  checked_out);
 
@@ -244,6 +245,7 @@ use constant VERSION_FIELDS => qw( name
                                    id
                                    version
                                    modifier
+                                   primary_oc_id
                                    slug
                                    checked_out);
 
@@ -514,6 +516,10 @@ element__id
 =item *
 
 source__id
+
+=item *
+
+primary_oc_id
 
 =item *
 
@@ -920,12 +926,10 @@ sub get_uri {
         $oc = Bric::Biz::OutputChannel->lookup({ id =>$oc })
           unless ref $oc;
     } else {
-        my $at = $self->_get_element_object;
-        ($oc) = $at->get_output_channels($at->get_primary_oc_id);
+        $oc = $self->get_primary_oc;
     }
 
     my $uri = $self->_construct_uri($cat, $oc);
-
     # Update the 'primary_uri' field if we were called with no arguments.
     $self->_set(['primary_uri'], [$uri]) unless scalar(@_);
     $self->_set__dirty($dirty);
@@ -1647,15 +1651,18 @@ sub _do_list {
         push @bind, (lc($param->{'simple'})) x 4;
     }
 
+    $param->{primary_oc__id} = delete $param->{primary_oc_id}
+      if exists $param->{primary_oc_id};
+
     # Build the where clause for the trivial story table fields.
-    foreach my $f (qw(workflow__id primary_uri element__id 
+    foreach my $f (qw(workflow__id primary_uri element__id primary_oc_id
                       priority active id publish_status source__id)) {
         next unless exists $param->{$f};
 
         if ($f eq 'primary_uri') {
             push @where, "LOWER(s.$f) LIKE ?";
             push @bind,  lc($param->{$f});
-        } elsif ($f eq 'workflow__id' and not defined $param->{$f}){ 
+        } elsif ($f eq 'workflow__id' and not defined $param->{$f}){
             # support search for NULL workflow__id
             push @where, "s.$f IS NULL";
         } else {

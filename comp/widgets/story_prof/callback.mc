@@ -67,30 +67,26 @@ my $save_data = sub {
     $story->set_priority($param->{priority})
       if exists $param->{priority};
 
-    # Set output channels.
-    if (exists $param->{"$widget|do_ocs"}) {
-        # Check boxes.
-        my %ocids = map { $_ => 1 } @{ mk_aref($param->{"$widget|oc"}) };
-        # Delete unchecked output channels.
-        foreach my $oc ($story->get_output_channels) {
-            $story->del_output_channels($oc) unless delete $ocids{$oc->get_id};
+    # Delete output channels.
+    if ($param->{rem_oc}) {
+        my $del_oc_ids = mk_aref($param->{rem_oc});
+        foreach my $delid (@$del_oc_ids) {
+            if ($delid == $param->{primary_oc_id}) {
+                add_msg("Cannot both delete and make primary a single " .
+                            "output channel.");
+                $param->{__data_errors__} = 1;
+            } else {
+                my ($oc) = $story->get_output_channels($delid);
+                $story->del_output_channels($delid);
+                log_event('story_del_oc', $story,
+                          { 'Output Channel' => $oc->get_name });
+            }
         }
-
-        # Add those that are left.
-        $story->add_output_channels
-          (map { Bric::Biz::OutputChannel->lookup({ id => $_ }) } keys %ocids )
-          if %ocids;
-    } else {
-        # Double list. Remove output channels.
-        $story->del_output_channels(@{ mk_aref($param->{rem_oc}) })
-          if defined $param->{rem_oc};
-
-        # Add new output channels.
-        $story->add_output_channels
-          (map { Bric::Biz::OutputChannel->lookup({ id => $_ }) }
-           @{ mk_aref($param->{add_oc}) } )
-           if defined $param->{add_oc};
     }
+
+    # Set primary output channel.
+    $story->set_primary_oc_id($param->{primary_oc_id})
+      if exists $param->{primary_oc_id};
 
     if (($param->{cover_date} || '') ne ($story->get_cover_date || '')) {
         my $old_date = $story->get_cover_date();
@@ -130,6 +126,9 @@ my $save_data = sub {
     # avoid repeated messages from repeated calls to &$save_data
     &$unique_msgs if $data_errors;
 
+    set_state_data($widget, 'story', $story);
+
+    $param->{__data_errors__} = $data_errors;
     return not $data_errors;
 };
 
@@ -190,8 +189,8 @@ my $handle_save = sub {
     my ($widget, $field, $param, $story, $new) = @_;
     $story ||= get_state_data($widget, 'story');
 
-    # Abort this save if there were any errors.
-#    return unless &$save_data($param, $widget, $story);
+    # Just return if there was a problem with the update callback.
+    return if delete $param->{__data_errors__};
 
     my $work_id = get_state_data($widget, 'work_id');
 
@@ -378,10 +377,10 @@ my $handle_checkin = sub {
 my $handle_save_stay = sub {
     my ($widget, $field, $param, $story, $new) = @_;
 
-    $story ||= get_state_data($widget, 'story');
+    # Just return if there was a problem with the update callback.
+    return if delete $param->{__data_errors__};
 
-    # Abort this save if there were any errors.
-#    return unless &$save_data($param, $widget, $story);
+    $story ||= get_state_data($widget, 'story');
 
     my $work_id = get_state_data($widget, 'work_id');
 
@@ -609,6 +608,19 @@ my $handle_add_category = sub {
         my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
         log_event('story_add_category', $story, { Category => $cat->get_name });        add_msg("Category &quot;" . $cat->get_name . "&quot; added.");
     }
+    set_state_data($widget, 'story', $story);
+};
+
+##############################################################################
+
+my $handle_add_oc = sub {
+    my ($widget, $field, $param) = @_;
+    my $story = get_state_data($widget, 'story');
+    chk_authz($story, EDIT);
+    my $oc = Bric::Biz::OutputChannel->lookup({ id => $param->{$field} });
+    $story->add_output_channels($oc);
+    log_event('story_add_oc', $story, { 'Output Channel' => $oc->get_name });
+    $story->save;
     set_state_data($widget, 'story', $story);
 };
 
@@ -976,6 +988,7 @@ my %cbs = (
            save_contrib_cb          => $handle_save_contrib,
            save_and_stay_contrib_cb => $handle_save_and_stay_contrib,
            clone_cb                 => $handle_clone,
+           add_oc_id_cb             => $handle_add_oc,
           );
 </%once>
 

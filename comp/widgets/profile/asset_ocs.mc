@@ -1,58 +1,54 @@
-% if (@$ocs < 4) {
-%    # Output check boxes.
-<table border="0" width="578" cellpadding="0" cellspacing="0">
-  <tr><td align="right" width="125" valign="top">
-    <span class="label">Output Channels:</span>
-  </td>
-  <td width="4"><img src="/media/images/spacer.gif" width="4" height="1" /></td>
-  <td width="449">
-     <& /widgets/profile/hidden.mc, name => "$widget|do_ocs" &>
-%    my %curocs = map { $_->get_id => $_ } $asset->get_output_channels;
-%    foreach my $oc (@$ocs) {
-         <& /widgets/profile/checkbox.mc,
-                 label_after => 1,
-                 checked => delete $curocs{$oc->get_id},
-                 disp => $oc->get_name,
-                 value => $oc->get_id,
-                 name => "$widget|oc",
-          &><br />
-%    }
-%    # Add any remainders from the asset itself.
-%    foreach my $oc (values %curocs) {
-         <& /widgets/profile/checkbox.mc,
-                 label_after => 1,
-                 checked => 1,
-                 disp => $oc->get_name,
-                 value => $oc->get_id,
-                 name => "$widget|oc",
-          &><br />
-%    }
-  </td></tr>
-</table>
-<%perl>;
-} else {
-    # Output double list manager.
-    my $left = [ map { { description => $_->get_name, value => $_->get_id } }
-                 @$ocs ];
-    my $right = [ map { { description => $_->get_name, value => $_->get_id } }
-                  $asset->get_output_channels ];
-    $m->out("<br />\n");
-    $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
-              size         => 4,
-	      leftOpts     => $left,
-	      rightOpts    => $right,
-	      formName     => 'theForm',
-	      leftName     => 'rem_oc',
-	      rightName    => 'add_oc',
-	      leftCaption  => "Available Output Channels",
-	      rightCaption => 'Current Output Channels',
+<%perl>
+    my $primid = $asset->get_primary_oc_id;
+    my $oc_sub = sub {
+        return unless $_[1] eq 'primary';
+        my $ocid = $_[0]->get_id;
+        # Output a hidden field for this included OC.
+        $m->scomp('/widgets/profile/radio.mc',
+                  name => 'primary_oc_id',
+                  value => $ocid,
+                  checked => $ocid == $primid,
+                  useTable => 0
+                 );
+    };
+
+    $m->comp('/widgets/listManager/listManager.mc',
+	     object => 'output_channel',
+	     userSort => 0,
+	     def_sort_field => 'name',
+	     title => 'Output Channels',
+	     objs => scalar $asset->get_output_channels,
+	     addition => undef,
+	     fields => [qw(name description primary)],
+	     field_titles => { primary => 'Primary' },
+	     field_values => $oc_sub,
+	     profile => undef,
+	     select =>  sub { return if $_[0]->get_id == $primid;
+                              return ['Delete', 'rem_oc']
+                            },
+	     number => $num
 	    );
-}
+
 </%perl>
+<table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
+<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
+    object => 'output_channel',
+    field  => 'name',
+    exclude => [ map { $_->get_id } $asset->get_output_channels ],
+    no_persist => 1,
+    name   => "$widget|add_oc_id_cb",
+    default => ['' => 'Add Output Channel'],
+    objs => $at_ocs,
+    js => "onChange='submit()'",
+    useTable => 0,
+&></td></tr>
+</table>
 <%args>
 $widget
 $asset
 $ocs
+$num
+$at_ocs
 </%args>
 <%doc>
 
@@ -62,11 +58,11 @@ $ocs
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-10-09 17:40:25 $
+$Date: 2002-10-25 23:53:18 $
 
 =head1 SYNOPSIS
 

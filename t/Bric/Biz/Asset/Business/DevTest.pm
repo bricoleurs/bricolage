@@ -21,9 +21,10 @@ sub class { 'Bric::Biz::Asset::Business' }
 # necessary in subclasses.
 sub new_args {
     my $self = shift;
-    ( element    => $self->get_elem,
-      user__id   => 1,
-      source__id => 1
+    ( element       => $self->get_elem,
+      user__id      => 1,
+      source__id    => 1,
+      primary_oc_id => 1
     )
 }
 
@@ -37,7 +38,7 @@ sub construct {
 ##############################################################################
 # Test output channel associations.
 ##############################################################################
-sub test_oc : Test(40) {
+sub test_oc : Test(36) {
     my $self = shift;
     my $class = $self->class;
     ok( my $key = $class->key_name, "Get key" );
@@ -65,16 +66,6 @@ sub test_oc : Test(40) {
     ok( $ba->del_output_channels($oc), "Delete OC from $key" );
     @ocs = $ba->get_output_channels;
     is( scalar @ocs, 0, "No more OCs" );
-
-    # Make sure it looks the same after saving.
-    ok( $ba->save, "Save ST again" );
-    @ocs = $ba->get_output_channels;
-    is( scalar @ocs, 0, "Still no OCs" );
-
-    # And again after looking up the business asset again.
-    ok( $ba = $class->lookup({ id => $baid }), "Lookup $key" );
-    @ocs = $ba->get_output_channels;
-    is( scalar @ocs, 0, "Again no OCs" );
 
     # Add the new output channel to the asset.
     ok( $ba->add_output_channels($oc), "Add OC" );
@@ -106,6 +97,33 @@ sub test_oc : Test(40) {
     ok( @ocs = $ba->get_output_channels, "Get OCs 4" );
     is( scalar @ocs, 1, "Check for 1 OC 4" );
     is( $ocs[0]->get_name, $ocname, "Check OC name 4" );
+}
+
+##############################################################################
+# Test primary_oc_id property.
+##############################################################################
+sub test_primary_oc_id : Test(8) {
+    my $self = shift;
+    my $class = $self->class;
+    ok( my $key = $class->key_name, "Get key" );
+    return "OCs tested only by subclass" if $key eq 'biz';
+
+    ok( my $ba = $self->construct( name => 'Flubberman',
+                                   slug => 'hugoman'),
+        "Construct asset" );
+    ok( $ba->save, "Save asset" );
+
+    # Save the ID for cleanup.
+    ok( my $id = $ba->get_id, "Get ID" );
+    push @{ $self->{$key} }, $id;
+
+    is( $ba->get_primary_oc_id, 1, "Check primary OC ID" );
+
+    # Try list().
+    ok( my @bas = $class->list({ primary_oc_id => 1, user__id => 1 }),
+        "Get asset list" );
+    is( scalar @bas, 1, "Check for one asset" );
+    is( $bas[0]->get_primary_oc_id, 1, "Check for OC ID 1" );
 }
 
 1;

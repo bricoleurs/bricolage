@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-16 03:38:15 $
+$Date: 2002-10-25 23:53:18 $
 
 =head1 SYNOPSIS
 
@@ -87,6 +87,7 @@ use constant VERSION_COLS   => qw( name
                                    usr__id
                                    version
                                    media_type__id
+                                   primary_oc__id
                                    category__id
                                    file_size
                                    file_name
@@ -113,6 +114,7 @@ use constant VERSION_FIELDS => qw( name
                                    modifier
                                    version
                                    media_type_id
+                                   primary_oc_id
                                    category__id
                                    size
                                    file_name
@@ -375,6 +377,10 @@ workflow__id
 =item *
 
 element__id
+
+=item *
+
+primary_oc_id
 
 =item *
 
@@ -776,11 +782,10 @@ sub set_category__id {
     my ($self, $cat_id) = @_;
 
     my $cat = Bric::Biz::Category->lookup( { id => $cat_id });
-    my $at_obj = $self->_get_element_object;
-    my ($oc_obj) = $at_obj->get_output_channels($at_obj->get_primary_oc_id);
+    my $oc = $self->get_primary_oc;
 
     my $uri = Bric::Util::Trans::FS->cat_uri
-      ( $self->_construct_uri($cat, $oc_obj), $oc_obj->get_filename($self));
+      ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
 
     $self->_set({ _category_obj => $cat,
                   category__id  => $cat_id,
@@ -953,7 +958,7 @@ sub upload_file {
 
     # Get the Output Channel object.
     my $at_obj = $self->_get_element_object;
-    my ($oc_obj) = $at_obj->get_output_channels($at_obj->get_primary_oc_id);
+    my $oc_obj = $self->get_primary_oc;
 
     # Set the location, name, and URI.
     $self->_set(['file_name'], [$name]);
@@ -1062,7 +1067,9 @@ Returns name of media with conflicting URI, if any.
 sub check_uri {
     my $self = shift;
     my $media_cat = $self->get_category__id();
-    die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the category__id of this media' }) if ( not defined $media_cat);
+    die Bric::Util::Fault::Exception::GEN->new
+      ({ msg => 'Was not able to retrieve the category__id of this media' })
+      unless defined $media_cat;
 
     # get media in the same category
     my %parm;
@@ -1315,6 +1322,12 @@ sub _do_list {
             push @where, "i.$f=?";
             push @bind, $param->{$f};
         }
+    }
+
+    # Do for primary OC ID.
+    if (exists $param->{primary_oc_id}) {
+        push @where, "i.primary_oc__id = ?";
+        push @bind, $param->{primary_oc_id};
     }
 
     # handle the special fields

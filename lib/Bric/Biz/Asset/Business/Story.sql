@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.9 $
+-- VERSION: $Revision: 1.10 $
 --
--- $Date: 2002-09-21 00:41:30 $
+-- $Date: 2002-10-25 23:53:18 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -79,18 +79,19 @@ CREATE TABLE story (
 --
 
 CREATE TABLE story_instance (
-    id           NUMERIC(10,0)   NOT NULL
-                                 DEFAULT NEXTVAL('seq_story_instance'),
-    name         VARCHAR(256),
-    description  VARCHAR(1024),
-    story__id    NUMERIC(10,0)   NOT NULL,
-    version      NUMERIC(10,0),
-    usr__id      NUMERIC(10,0)   NOT NULL,
-    slug         VARCHAR(64),
-    checked_out  NUMERIC(1,0)    NOT NULL
-                                 DEFAULT 0
-                                 CONSTRAINT ck_story_instance__checked_out
-                                   CHECK (checked_out IN (0,1)),
+    id             NUMERIC(10,0)   NOT NULL
+                                  DEFAULT NEXTVAL('seq_story_instance'),
+    name           VARCHAR(256),
+    description    VARCHAR(1024),
+    story__id      NUMERIC(10,0)   NOT NULL,
+    version        NUMERIC(10,0),
+    usr__id        NUMERIC(10,0)   NOT NULL,
+    slug           VARCHAR(64),
+    primary_oc__id NUMERIC(10,0)   NOT NULL,
+    checked_out    NUMERIC(1,0)    NOT NULL
+                                   DEFAULT 0
+                                   CONSTRAINT ck_story_instance__checked_out
+                                     CHECK (checked_out IN (0,1)),
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
 
@@ -224,6 +225,7 @@ CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));
 CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
 CREATE INDEX fdx_story__story_instance ON story_instance(story__id);
 CREATE INDEX fdx_usr__story_instance ON story_instance(usr__id);
+CREATE INDEX fdx_primary_oc__story_instance ON story_instance(primary_oc__id);
 
 -- story__category
 CREATE UNIQUE INDEX udx_story_category__story__cat ON story__category(story_instance__id, category__id);

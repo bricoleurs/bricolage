@@ -59,8 +59,23 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">URI:&nbsp;</span></td>
-  <td width="470">&nbsp;<a href="/workflow/profile/preview/media/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $media->get_uri %></a></td>
+% if (my $uri = $media->get_primary_uri) {
+%     if (@ocs == 1) {
+  <td width="470">&nbsp;<a href="/workflow/profile/preview/media/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $uri %></a></td>
   </tr>
+% } else {
+  <td width="470">&nbsp;<% $uri %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Preview in:&nbsp;</span></td>
+  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></td>
+  </tr>
+%     }
+% }
   <tr>
   <td class="medHeader" colspan=3><img src="/media/images/spacer.gif" height="1" width="1" /></td>
   </tr>
@@ -119,18 +134,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 &>
 <% $ieSpacer %>
 <%perl>;
-# get output channel info
-my $at = $media->get_element__id;
-my $asset_type = Bric::Biz::AssetType->lookup({id => $at});
-my @ocs = $asset_type->get_output_channels;
-$m->comp('/widgets/profile/asset_ocs.mc',
-         asset  => $media,
-         widget => $widget,
-         ocs    => \@ocs
-        );
-
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Upload a file",
          number => $num++
@@ -141,7 +145,11 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <tr>
   <td width=<% $infoIndent %> valign=top align=right><span class="label">File Path:</span></td>
   <td width=<% 578 - $infoIndent %>>
-  <input type="file" name="<% $widget %>|file" size="30"> <br />
+    <input type="file" name="<% $widget %>|file" size="30">
+  </td>
+<tr>
+  <td></td>
+  <td>
   <& '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget ."|update_pc",
@@ -172,6 +180,16 @@ $num = $m->comp( '/widgets/container_prof/container_prof.mc',
         title => 'Content',
         start_count => 6
 );
+
+$m->comp('/widgets/profile/asset_ocs.mc',
+         asset  => $media,
+         widget => $widget,
+         ocs    => \@ocs,
+         num    => $num++,
+         at_ocs => \@aocs
+        );
+
+$m->out("$ieSpacer<br />\n");
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Contributors",
@@ -236,5 +254,20 @@ my $agent = $m->comp("/widgets/util/detectAgent.mc");
 my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 my $num = 1;
 my $ieSpacer = ($agent->{browser} eq "Internet Explorer") ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=578 height=5 /></td></tr></table>} : '';
+
+# get output channel info
+my $at = $media->get_element__id;
+my $asset_type = Bric::Biz::AssetType->lookup({id => $at});
+my @aocs = $asset_type->get_output_channels;
+my @ocs = $media->get_output_channels;
+my $primocid = $media->get_primary_oc_id;
+
+my $oc_select = '<select name="ocSelect">';
+foreach my $oc (@ocs) {
+    my $ocid = $oc->get_id;
+    my $selected = $ocid == $primocid ? ' selected' : '';
+    $oc_select .= qq{<option value="$ocid"$selected>} . $oc->get_name . '</option>';
+}
+$oc_select .= '</select>';
 </%init>
 

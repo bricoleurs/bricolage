@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-25 01:34:22 $
+$Date: 2002-10-25 23:53:18 $
 
 =head1 SYNOPSIS
 
@@ -180,7 +180,7 @@ BEGIN {
               publish_date              => Bric::FIELD_RDWR,
               cover_date                => Bric::FIELD_RDWR,
               publish_status            => Bric::FIELD_RDWR,
-
+              primary_oc_id             => Bric::FIELD_RDWR,
 
               # Private Fields
               _contributors             => Bric::FIELD_NONE,
@@ -699,6 +699,55 @@ sub set_element__id {
                             $elem->get_output_channels );
     $self->_set([qw(element__id element)], [$eid, $elem]);
 }
+
+##############################################################################
+
+=item my $primary_oc_id = $p->get_primary_oc_id
+
+Returns the asset's primary output channel ID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $oc = $p->get_primary_oc
+
+Returns the primary output channel object.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_primary_oc {
+    my $self = shift;
+    my $pocid = $self->get_primary_oc_id;
+    my ($oc) = $self->get_output_channels($pocid);
+    unless ($oc) {
+        # Must be a new media. Go through the OCs till we find the primary.
+        foreach ($self->get_output_channels) {
+            next unless $_->get_id == $pocid;
+            $oc = $_;
+            last;
+        }
+    }
+    return $oc;
+}
+
+=item $self = $p->set_primary_oc_id($primary_oc_id)
+
+Sets the asset's primary output channel ID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 ################################################################################
 
@@ -1999,6 +2048,7 @@ sub _init {
     # Set up the output channels.
     $self->add_output_channels( map { $_->is_enabled ? $_ : () }
                                 $init->{element}->get_output_channels);
+    $self->set_primary_oc_id($init->{element}->get_primary_oc_id);
 
     # Let's create the new tile as well.
     my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new

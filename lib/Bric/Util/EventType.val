@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.7 $
+-- VERSION: $Revision: 1.8 $
 --
--- $Date: 2002-09-26 01:39:12 $
+-- $Date: 2002-10-25 23:53:18 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -113,6 +113,42 @@
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Category');
+
+-- ********** 'story_add_oc' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'story_add_oc', 'Output Channel Added to Story',
+                    'An output channel was associated with the story.', 10, 1);
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Output Channel');
+
+-- ********** 'story_del_oc' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'story_del_oc', 'Output Channel Removed from Story',
+            'An output channel was dissociated from the story.', 10, 1);
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Output Channel');
+
+-- ********** 'media_add_oc' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'media_add_oc', 'Output Channel Added to Media',
+                    'An output channel was associated with the media.', 46, 1);
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Output Channel');
+
+-- ********** 'media_del_oc' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'media_del_oc', 'Output Channel Removed from Media',
+            'An output channel was dissociated from the media.', 46, 1);
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Output Channel');
 
 -- ********** 'story_moved' ************ --
 

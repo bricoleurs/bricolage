@@ -167,10 +167,10 @@ channel for publishing. [David]
 =item *
 
 On a related note, Stories and Media can now select which output channels to
-be published to on a per-story basis, and the selection sticks with each
-version of a an asset. The list of available output channels comes from the
-output channels associated with the element on which the story or media asset
-is based. [David]
+be published to on a per-story basis as well as which is the primary output
+channel, and the selection sticks with each version of a an asset. The list of
+available output channels comes from the output channels associated with the
+element on which the story or media asset is based. [David]
 
 =item *
 
