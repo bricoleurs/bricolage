@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.137 $
+$Revision: 1.138 $
 
 =head1 DATE
 
-$Date: 2003-12-15 20:54:23 $
+$Date: 2003-12-22 17:54:35 $
 
 =head1 DESCRIPTION
 
@@ -29,8 +29,7 @@ F</usr/share/doc/README.Debian> to complete the installation.
 =item 1
 
 Install Perl 5.6.0 or greater (5.8.0 or later strongly recommended for better
-Unicode support, and required if you're using a L<character set|"L10N & I18N
-Configuration"> other than UTF-8).
+Unicode support, and required if you're using a character set other than UTF-8).
 
 =item 2
 
@@ -578,13 +577,13 @@ that shell now. Here's an example under Linux:
 
 =item *
 
-Change into the source directory and read the INSTALL file to see if you need to
-use any Configure commands. One Configure command is required by Bricolage:
-C<--enable-multibyte=UNICODE>. Because Bric stores all of its textual data in
-Unicode format, this command is not optional. If you require the use of a
-different character set for your installation, see the CHAR_SET configuration
-directive above to ensure that data will be translated to and from your
-character set and the Unicode stored in the database.
+Change into the source directory and read the INSTALL file to see if
+you need to use any Configure commands. One Configure command is
+required by Bricolage: C<--enable-multibyte=UNICODE>. Because Bric
+stores all of its textual data in Unicode format, this command is not
+optional. If you require the use of a different character set for your
+installation, this can be configured as part of the system
+preferences, via the Admin interface.
 
 =item *
 
@@ -1213,54 +1212,6 @@ B<LOGIN_LENGTH:> The minimum length of login name allowed to users. Defaults to
 
 B<PASSWD_LENGTH:> The minimum length of password allowed to users. Note that
 passwords can be of infinite length. Defaults to "5" if not specified.
-
-=back
-
-=head2 L10N & I18N Configuration
-
-=over 4
-
-=item *
-
-B<CHAR_SET:> Character translation settings. All character data is stored in
-the PostgreSQL database in Unicode (UTF-8). However, most browsers submit data
-to the Bricolage server in other character sets. This directive specifies what
-character set to expect from Bricolage users' browsers. C<CHAR_SET> is the
-character set of in which data will be passed to the API. UTF-8 should work
-for most users. Note that this setting is necessary for character set
-translation, as all data is stored in the database in UTF-8. Defaults to UTF-8
-if not specified.
-
-=item *
-
-B<LANGUAGE>: Localization language. This is the language to display in the
-Bricolage UI. The available languages are:
-
-=over 4
-
-=item de_de
-
-German.
-
-=item en_us
-
-American English.
-
-=item it_it
-
-Italian.
-
-=item pt_pt
-
-Portuguese.
-
-=item zh_tw
-
-Traditional Chinese.
-
-=back
-
-Defaults to "en_us" if not specified.
 
 =back
 
