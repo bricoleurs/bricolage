@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-04-28 13:36:00 $
+$Date: 2003-04-29 12:38:18 $
 
 
 =head1 SYNOPSIS
@@ -602,9 +602,9 @@ sub my_meths {
     $METHS ||= {
               name        => {
                   name     => 'name',
-                  get_meth => sub { shift->get_name() },
+                  get_meth => sub { shift->get_key_name() },
                   get_args => [],
-                  set_meth => sub { shift->set_name(@_) },
+                  set_meth => sub { shift->set_key_name(@_) },
                   set_args => [],
                   disp     => 'Key Name',
                   search   => 1,
