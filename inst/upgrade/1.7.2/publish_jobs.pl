@@ -49,8 +49,8 @@ do_sql
 
     # add the contraints
     q{ALTER TABLE job ADD CONSTRAINT ck_job__priority CHECK (priority BETWEEN 1 AND 5)},
-    q{ALTER TABLE job ADD CONSTRAINT ck_job__failed CHECK (failed IN 1,0)},
-    q{ALTER TABLE job ADD CONSTRAINT ck_job__executing CHECK (failed IN 1,0)},
+    q{ALTER TABLE job ADD CONSTRAINT ck_job__failed CHECK (failed IN (1,0))},
+    q{ALTER TABLE job ADD CONSTRAINT ck_job__executing CHECK (failed IN (1,0))},
 
     # create a couple of indexes
     q{CREATE INDEX idx_job__pending ON job(pending)},
