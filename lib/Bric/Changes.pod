@@ -339,6 +339,13 @@ Users can now edit their own user-overrideable preferences. [David]
 Group management now works more correctly in user profiles where users have on
 READ access to the user object. [David]
 
+=item *
+
+Removed queries added in 1.7.2 that were running at Bricolage startup
+time. They could cause DBI to cache a database handle and return it after
+Apache forks, leading to strange errors such as "message type 0x49 arrived
+from server while idle", and occaisionally a frozen server. [David]
+
 =back
 
 =head1 VERSION 1.7.3 (2004-03-01)

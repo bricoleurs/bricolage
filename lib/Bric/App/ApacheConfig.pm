@@ -47,19 +47,18 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 use strict;
 use Bric::App::ApacheStartup;
-use Bric::App::Util qw(get_pref);
 use constant DEBUGGING => 0;
 
 do {
-    my $char_set = get_pref('Character Set');
     my $names = 'NameVirtualHost ' . NAME_VHOST . ':' . LISTEN_PORT . "\n";
 
-    # Set up the basic configuration.
+    # Set up the basic configuration. Default to UTF-8 (it can be overridden
+    # on a per-request basis in Bric::App::Handler.
     my @config = (
         '  DocumentRoot           ' . MASON_COMP_ROOT->[0][1],
         '  ServerName             ' . VHOST_SERVER_NAME,
-        "  DefaultType            \"text/html; charset=$char_set\"",
-        "  AddDefaultCharset      $char_set",
+        "  DefaultType            \"text/html; charset=utf-8\"",
+        "  AddDefaultCharset      utf-8",
         '  SetHandler             perl-script',
         '  PerlHandler            Bric::App::Handler',
         '  PerlAccessHandler      Bric::App::AccessHandler',

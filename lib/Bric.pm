@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.4';
 
 =item Date
 
-$Date: 2004-03-16 19:35:43 $
+$Date: 2004-03-19 04:48:48 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.52 2004-03-16 19:35:43 wheeler Exp $
+$Id: Bric.pm,v 1.53 2004-03-19 04:48:48 wheeler Exp $
 
 =back
 
@@ -935,7 +935,9 @@ C<mod_perl>.
 
 unless (MOD_PERL) {
     $SIG{__DIE__} = \&throw_gen;
-    $SIG{__WARN__} = sub { print STDERR throw_gen @_ };
+    $SIG{__WARN__} = sub {
+        print STDERR Bric::Util::Fault::Exception::GEN->new(error => shift)
+    };
 }
 
 ##############################################################################
