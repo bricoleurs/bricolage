@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-07 01:28:20 $
+$Date: 2002-03-07 01:37:44 $
 
 =head1 SYNOPSIS
 
@@ -1233,18 +1233,6 @@ sub _do_list {
 	push @where, " m.current_version=i.version ";
     }
 
-<<<<<<< Media.pm
-	my $sql;
-	$sql = 'SELECT DISTINCT ' . join(', ', @select) . ' FROM ' . join(', ', @tables);
-	$sql .= ' WHERE ' . join(' AND ', @where);
-
-        if ($ids) {
-                # when doing a SELECT DISTINCT you can't ORDER BY a
-                # field outside the SELECT list.
-	        $sql .= ' ORDER BY m.id';
-        } elsif ($param->{'return_versions'}) {
-		$sql .= ' ORDER BY i.version ';
-=======
     # Handle searches on dates
     foreach my $type (qw(publish_date cover_date expire_date)) {
 	my ($start, $end) = ($param->{$type.'_start'},
@@ -1254,7 +1242,6 @@ sub _do_list {
 	if ($start && $end) {
 	    push @where, "m.$type BETWEEN ? AND ?";
 	    push @bind, $start, $end;
->>>>>>> 1.11.2.1
 	} else {
 	    # Handle 'everying before' or 'everything after' $date
 	    # searches.
@@ -1273,8 +1260,14 @@ sub _do_list {
     my $sql;
     $sql = 'SELECT DISTINCT ' . join(', ', @select) . ' FROM ' . join(', ', @tables);
     $sql .= ' WHERE ' . join(' AND ', @where);
-    $sql .= $param->{return_versions} ? ' ORDER BY i.version '
-      : ' ORDER BY m.cover_date';
+
+    if ($ids) {
+	# when doing a SELECT DISTINCT you can't ORDER BY a
+	# field outside the SELECT list.
+	$sql .= ' ORDER BY m.id';
+    } elsif ($param->{'return_versions'}) {
+	$sql .= ' ORDER BY i.version ';
+    }
 
     my $select = prepare_ca($sql, undef, DEBUG);
 
