@@ -10,20 +10,20 @@ Bric::Biz::Keyword - Interface to Bricolage Keyword Objects
 
 =item Version
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =item Date
 
-$Date: 2003-09-16 04:29:49 $
+$Date: 2003-09-16 04:44:46 $
 
 =item CVS ID
 
-$Id: Keyword.pm,v 1.19 2003-09-16 04:29:49 wheeler Exp $
+$Id: Keyword.pm,v 1.20 2003-09-16 04:44:46 wheeler Exp $
 
 =back
 
@@ -368,7 +368,7 @@ The keyword's active status boolean.
                          set_meth => sub {shift->set_name(@_)},
                          set_args => [],
                          disp     => 'Name',
-                         search   => 1,
+                         search   => 0,
                          len      => 256,
                          req      => 1,
                          type     => 'short',
@@ -397,7 +397,7 @@ The keyword's active status boolean.
                          set_meth => sub {shift->set_sort_name(@_)},
                          set_args => [],
                          disp     => 'Sort Name',
-                         search   => 0,
+                         search   => 1,
                          len      => 256,
                          type     => 'short',
                          props    => { type       => 'text',
@@ -721,7 +721,7 @@ $get_em = sub {
     }
 
     my ($qry_cols, $order) = $ids_only ? (\'DISTINCT a.id', 'a.id') :
-      (\$SEL_COLS, 'a.sort_name, a.id');
+      (\$SEL_COLS, 'LOWER(a.sort_name), a.id');
 
     my $sel = prepare_c(qq{
         SELECT $$qry_cols

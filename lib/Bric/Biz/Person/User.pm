@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2003-09-16 04:44:46 $
 
 =head1 SYNOPSIS
 
@@ -1436,7 +1436,7 @@ $get_em = sub {
 
     $wheres .= ' AND u.active = 1' unless defined $args->{id};
     my ($qry_cols, $order) = $ids ? (\'DISTINCT u.id', 'u.id') :
-      (\$sel_cols, 'p.lname, p.fname, p.mname, u.id');
+      (\$sel_cols, 'LOWER(p.lname), LOWER(p.fname), LOWER(p.mname), u.id');
 
     my $sel = prepare_c(qq{
         SELECT $$qry_cols

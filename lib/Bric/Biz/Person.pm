@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:10 $
+$Date: 2003-09-16 04:44:46 $
 
 =head1 SYNOPSIS
 
@@ -1814,7 +1814,7 @@ $get_em = sub {
 
     local $" = ', ';
     my ($qry_cols, $order) = $ids ? (['p.id'], 'p.id') :
-      (\@sel_cols, 'p.lname, p.fname, p.mname, p.id');
+      (\@sel_cols, 'LOWER(p.lname), LOWER(p.fname), LOWER(p.mname), p.id');
     my $sel = prepare_c(qq{
         SELECT @$qry_cols
         FROM   $table p, $mem_table m, $map_table c $extra_tables

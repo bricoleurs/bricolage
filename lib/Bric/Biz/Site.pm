@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =item Date
 
-$Date: 2003-08-08 19:45:27 $
+$Date: 2003-09-16 04:44:46 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.6 2003-08-08 19:45:27 wheeler Exp $
+$Id: Site.pm,v 1.7 2003-09-16 04:44:46 wheeler Exp $
 
 =back
 
@@ -802,7 +802,7 @@ $get_em = sub {
     }
 
     my ($qry_cols, $order) = $ids_only ? (\'DISTINCT a.id', 'a.id') :
-      (\$SEL_COLS, 'a.name, a.id');
+      (\$SEL_COLS, 'LOWER(a.name), a.id');
 
     my $sel = prepare_c(qq{
         SELECT $$qry_cols
