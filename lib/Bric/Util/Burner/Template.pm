@@ -283,7 +283,10 @@ sub chk_syntax {
         # which aren't available in the chk_syntax context.
         $data =~ s/<[tT][mM][pP][lL]_[iI][nN][cC][lL][uU][dD][eE][^>]+>//g;
 
-        eval { HTML::Template::Expr->new(scalarref => \$data) };
+        eval {
+            use utf8;
+            HTML::Template::Expr->new(scalarref => \$data);
+        };
         if ($@) {
             $$err = $@;
             $$err =~ s!/fake/path/for/non/file/template!$file_name!g;
@@ -299,6 +302,7 @@ sub chk_syntax {
     my $code = <<END;
 package Bric::Util::Burner::Template::SYNTAX$time;
 use strict;
+use utf8;
 use vars ('\$burner', '\$element', '\$story');
 sub _run_script {
 #line 1 $file_name
@@ -412,6 +416,7 @@ sub run_script {
                           oc    => $self->get_oc->get_name,
                           cat   => $self->get_cat->get_uri,
                           elem  => $element->get_name;
+    binmode(SCRIPT, ':utf8') if ENCODE_OK;
     while(read(SCRIPT, $sub, 102400, length($sub))) {};
     close(SCRIPT);
 
@@ -436,6 +441,7 @@ sub run_script {
         my $code = <<END;
 package $package;
 use strict;
+use utf8;
 use vars ('\$burner', '\$element', '\$story');
 sub _run_script {
 #line 1 $line_file
@@ -631,7 +637,10 @@ sub new_template {
     $args{functions}{prev_page_link} = sub { $self->page_file($_[0] - 1); };
 
     # instantiate the template object
-    my $template = HTML::Template::Expr->new(%args);
+    my $template = do {
+        use utf8;
+        HTML::Template::Expr->new(%args);
+    };
 
     # autofill with element data
     if ($autofill and $element) {
