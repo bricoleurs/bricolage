@@ -151,6 +151,18 @@ Removed the CVS $Log entries from all files, as these were likely to cause
 conflicts between branches and because few end users will be interested in
 seeing them in the docs, anyway. [Sam and David]
 
+=item *
+
+Fixed bug where new workflows weren't able to add new desks, but were showing up
+in the side nav before "Save" was clicked. Thanks to Chris Brody for the
+heads-up. [David]
+
+=item *
+
+Fixed bug where workflows deleted via the Workflow Manager (rather than the
+Workflow Profile) continued to show up in the side nav. Thanks to Sam Tregar for
+the spot. [David]
+
 =back
 
 =head1 VERSION 1.0.1
