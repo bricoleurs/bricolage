@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.47.2.1 $
 
 =head1 DATE
 
-$Date: 2004-02-25 19:15:35 $
+$Date: 2004-04-16 14:02:42 $
 
 =head1 SYNOPSIS
 
@@ -33,22 +33,20 @@ $debug => undef
 </%args>
 <%init>;
 
-   $context =~ s/\&quot\;/\"/g;
+$context =~ s/\&quot\;/\"/g;
 my @context =  split /\|/, $context;
 
 for (@context){
     s/^\s+//g;
     s/\s+$//g;
     if (/^(\"?)(.+?)(\"?)$/) {
-        my $startquote = $1;
-        my $endquote = $3;
-        my $text = $2;
+        my ($startquote, $text, $endquote) = ($1, $2, $3);
         $text =~ s/([\[\],~])/~$1/g;
         $_ = $startquote . $lang->maketext($text) . $endquote;
     }
 }
 
-$context = join ' |',@context;
+$context = join ' | ', @context;
 
 # Figure out where we are (assume workflow).
 my ($section, $mode, $type) = parse_uri($r->uri);

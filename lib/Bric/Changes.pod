@@ -16,6 +16,16 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.8.0 "Portland" ()
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Added a missing space to the breadcrumb in the header. [Marshall Roch].
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
