@@ -48,6 +48,62 @@ HTML::Template burner if the output channel had a post_path. [Sam]
 
 =back
 
+=head1 VERSION 1.2.1
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Created new method of configuring Bricolage in Apache. [David]
+
+=item *
+
+Added support for Mozilla (and there was much rejoicing!). [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Turned off the PREVIW_MASON configuration directive in bricolage.conf. It should
+be off by default. [David]
+
+=item *
+
+Deleted Output Channels now properly don't show up in the Output Channel manager
+again. Thanks to Sara for the spot! [David]
+
+=item *
+
+All previews now preview assets in the primary Output Channel only. Previously,
+the previews were in the Output Channel whose name came first alphabetically.
+Thanks to Sara Wood for catching this bug. [David]
+
+=item *
+
+Fixed bug where templates often couldn't be found by the Mason burner if the
+output channel had a post_path. [David]
+
+=item *
+
+Fixed bug where templates often couldn't be found by the HTML::Template burner
+if the output channel had a post_path. [Sam]
+
+=item *
+
+Fixed some problems with the sideNav menus under Netscape. [David]
+
+=item *
+
+Fixed broken "Preview" button in Read-only story profile. [Matt Vella]
+
+=back
+
 =head1 VERSION 1.2.0
 
 =head2 New Features

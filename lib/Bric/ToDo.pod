@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =head1 DATE
 
-$Date: 2002-01-23 20:13:33 $
+$Date: 2002-01-31 02:19:06 $
 
 =head1 DESCRIPTION
 
@@ -164,9 +164,8 @@ Add ability to "undeploy" templates without deactivating them.
 
 =item *
 
-Add a check that a user has selected at least one output channel when
-creating a new element.  Elements without output channels cause
-Bricolage indigestion.
+Add a check that a user has selected at least one output channel when creating a
+new element. Elements without output channels cause Bricolage indigestion.
 
 =item *
 
@@ -228,11 +227,6 @@ published. Suggested method name: needs_publish().
 =head2 Low Priority Minor Items
 
 =over 4
-
-=item *
-
-Add support for Mozilla/Netscape 6. Essentially, the JavaScript needs to be
-updated.
 
 =item *
 
@@ -320,12 +314,12 @@ length, etc. Use a tool such as RIFF::Info.
 
 =item *
 
-Change template deployment to not append the output-channel post_path
-to the template filename.  Currently the burners have hacks in them to
-look in the post_path for templates but ultimately this should be
-fixed the right way.  If you choose to accept this mission you'll need
-to write an upgrade script to correct template entries in the database
-and move deployed templates on the filesystem.
+Change template deployment to not append the output-channel post_path to the
+template filename. Currently the burners have hacks in them to look in the
+post_path for templates but ultimately this should be fixed the right way. If
+you choose to accept this mission you'll need to write an upgrade script to
+correct template entries in the database and move deployed templates on the
+filesystem.
 
 =back
 
@@ -534,8 +528,8 @@ Add support for skins -- different colors, etc, probably via preferences.
 
 =item *
 
-Add support for creating PDFs in templates (is there something on CPAN for
-this?).
+Add support for creating PDFs in templates. PDF support is available from the
+CPAN: http://search.cpan.org/search?mode=module&query=PDF.
 
 =item *
 
@@ -548,7 +542,7 @@ levels.
 
 =item *
 
-Version element individually, separate from stories?
+Version elements individually, separate from stories?
 
 =item *
 

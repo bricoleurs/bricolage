@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-14 00:48:59 $
+$Date: 2002-01-31 02:19:06 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -68,7 +68,7 @@ my $agent        = $m->comp('/widgets/util/detectAgent.mc');
 my $div          = 'div';
 my $name         = "id";
 my $closeDiv     = "div";
-my $numFieldsTxt = '<input type=hidden name=fieldNum value=1>';
+my $numFieldsTxt = '<input type="hidden" name="fieldNum" value="1">';
 my $position     = 'style="position:relative; width:340; height:230; visibility:visible; z-index:10;"';
 my $textStyle    = 'style="width:120px"';
 my $textareaRows = 5;
@@ -82,7 +82,7 @@ if ($agent->{browser} ne "Netscape") {
 # hack.  why wouldn't the div tag work in NS for this case? a mystery to solve when
 # there is time.
 if ($agent->{browser} eq "Netscape") {
-	$div = "layer position=relative";
+	$div = "layer position=\"relative\"";
 	$closeDiv = "layer";
 	$name = "name";
 	$position = "left=350";

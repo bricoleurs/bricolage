@@ -48,7 +48,15 @@ if ($param->{delete} &&
 }  else {
     # Make sure the name isn't already in use.
     my $no_save;
-    my @cs = $class->list_ids({ name => $param->{name}, active => undef });
+    #### Bug. I'm passing active => 0 here because Bric::Biz::AssetType has a bug
+    # where it ignores the active argument if passed a false value. Really, it should
+    # check for when active is set to 0. However, since what I want to do is ignore
+    # the active column, this will work for now. Eventually, AssetType should be
+    # fixed, and then this call will have to be changed to do a call with active => 1
+    # and active => 0, and the resulting list grepped to get rid of duplicate IDs.
+    # I would do it now, but I don't want to break anything else that may be relying
+    # on the bug in AssetType.
+    my @cs = $class->list_ids({ name => $param->{name}, active => 0 });
     if (@cs > 1) { $no_save = 1 }
     elsif (@cs == 1 && !defined $param->{element_id}) { $no_save = 1 }
     elsif (@cs == 1 && defined $param->{element_id}
@@ -205,11 +213,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2002-01-31 02:19:05 $
 
 =head1 SYNOPSIS
 

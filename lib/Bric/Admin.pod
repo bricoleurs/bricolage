@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =head1 DATE
 
-$Date: 2002-01-23 20:13:33 $
+$Date: 2002-01-31 02:19:06 $
 
 =head1 DESCRIPTION
 
@@ -721,17 +721,24 @@ the settings stay in sync.
 
 =item *
 
-B<APACHE_SERVER_ROOTL:> This directive is the equivalent of Apache's ServerRoot
-directive. It sets the directory in which the server lives. Defaults to
-'/usr/local/apache' if not specified. This isn't portable, so we recommend you
-set it!
+B<APACHE_BIN:> This directive sets the location of the Apache server binary.
+Defaults to C</usr/local/apache/bin/httpd> if not specified. This isn't
+portable, so we recommend you set it! Used only in bric_apachectl.
+
+=item *
+
+B<APACHE_CONF:> This directive sets the location of the Apache server
+configuration file. Defaults to C</usr/local/apache/conf/httpd.conf> if not
+specified. This isn't portable, so we recommend you set it! Used only in
+bric_apachectl.
 
 =item *
 
 B<PID_FILE:> Sets the file to which the server records the process id of the
 daemon. If the filename does not begin with a slash (/) then it is assumed to be
 relative to the ServerRoot. Defaults to "/usr/local/apache/logs/httpd.pid" if
-not specified. This isn't portable, so we recommend you set it!
+not specified. This isn't portable, so we recommend you set it. Used only in
+bric_apachectl.
 
 =item *
 
@@ -749,320 +756,33 @@ directive has been turned on, then C<LISTEN_PORT> I<must> be set to 80. The
 Bricolage server will not start if C<SSL_ENABLE> is on and C<LISTEN_PORT> is set
 to a value other than 80.
 
-=item *
-
-B<SERVER_ADMIN:> The email address of the server administrator. Defaults to
-"root@SERVER_NAME".
-
-=item *
-
-B<DOCUMENT_ROOT:> Sets the directory from which Apache will serve files.
-Defaults to C<$BRICOLAGE_ROOT/comp> if not specified.
-
-=item *
-
-B<MIN_SPARE_SERVERS:> Sets the desired minimum number of idle Apache child
-server processes. An idle process is one which is not handling a request. If
-there are fewer than MinSpareServers idle, then the parent process creates new
-children at a maximum rate of 1 per second. Defaults to "2" if not specified.
+B<SSL_ENABLE:> Turn on this boolean directive to enable SSL support. The Apache
+OpenSSL interface (mod_ssl) is an optional part of the Bricolage application.
+Not only does it enabled secure logons to the system, but it also allows
+completely secure access to the entire application, should you need it (and not
+need to worry about the performance overhead). Make sure you've followed the
+installation instructions for building a mod_ssl Apache. Disabled by default.
+B<Note:> The C<LISTEN_PORT> directive I<must> be set to 80 if C<SSL_ENABLE> is
+on. The Bricolage server will not start if C<SSL_ENABLE> is on and
+C<LISTEN_PORT> is set to a value other than 80.
 
 =item *
 
-B<MAX_SPARE_SERVERS:> Sets the desired maximum number of idle Apache child
-server processes. An idle process is one which is not handling a request. If
-there are more than MaxSpareServers idle, then the parent process will kill off
-the excess processes. Defaults to "6" if not specified.
+B<NAME_VHOST:> The IP address on which the virtual host name specified in the
+C<VHOST_SERVER_NAME> directive will respond. Note that the syntax for this
+directive is identical to the syntax for Apache's C<NameVirtualHost> directive.
+Also note that the VirtualHost record that Bricolage creates will be for
+C<NAME_VHOST . ':' . LISTEN_PORT>, so if you want to identify your own vitual
+hosts to listen for on the same IP address, you will need to include the port
+number in your C<VirtualHost> declarations. Also note that if the C<SSL_ENABLE>
+is turned on, then a C<NAME_VHOST . ':443'> VirtualHost directive will also be
+created by Bricolage. The upshot is to remember to always use the port number in
+your own VirtualHost declarations. Defaults to "*" if not specified.
 
 =item *
 
-B<START_SERVERS:> Sets the number of Apache child server processes created on
-startup. As the number of processes is dynamically controlled depending on the
-load, there is usually little reason to adjust this parameter. Defaults to "2"
-if not specified.
-
-=item *
-
-B<MAX_REQUESTS_PER_CHILD:> Sets the limit on the number of requests that an
-individual Apache child server process will handle. After MaxRequestsPerChild
-requests, the child process will die. If MaxRequestsPerChild is 0, then the
-process will never expire. Defaults to "0" if not specified.
-
-=item *
-
-B<MAX_CLIENTS:> Sets the limit on the number of simultaneous requests that can
-be supported; not more than this number of Apache child server processes will be
-created. Defaults to "150" if not specified.
-
-=item *
-
-B<KEEP_ALIVE:> Provides long-lived Apache HTTP sessions which allow multiple
-requests to be sent over the same TCP connection. Performance benefits to
-Bricolage in enabling this feature are unknown. Defaults to "Off" if not
-specified.
-
-=item *
-
-B<MAX_KEEP_ALIVE_REQUESTS:> Limits the number of requests allowed per connection
-when KEEP_ALIVE is on. If it is set to "0", unlimited requests will be allowed.
-Defaults to "100" if not specified.
-
-=item *
-
-B<KEEP_ALIVE_TIMEOUT:> The number of seconds Apache will wait for a subsequent
-request before closing the connection when KEEP_ALIVE is on. Defaults to "15" if
-not specified.
-
-=item *
-
-B<ERROR_LOG:> Sets the name of the file to which the server will log any errors
-it encounters. Defaults to " /usr/local/apache/logs/error_log" if not specified.
-This is not portable, so it may need to be changed.
-
-=begin comment
-
-We may want to change it to keep the log in the Bricolage directory space,
-anyway.
-
-=end comment
-
-=item *
-
-B<LOG_LEVEL:> Adjusts the verbosity of the messages recorded in the error logs
-(see ERROR_LOG directive). The following levels are available, in order of
-decreasing significance:
-
-=over 4
-
-=item emerg
-
-=item alert
-
-=item crit
-
-=item error
-
-=item warn
-
-=item notice
-
-=item info
-
-=item debug
-
-=back
-
-Defaults to "info" if not specified.
-
-=item *
-
-B<CUSTOM_LOG:> Specifies the location of the access log. Defaults to
-"/usr/local/apache/logs/access_log combined" if not specified. Note that this
-location is not portable, so it may need to be changed. The 'custom' alias is
-used by the LOG_FORMAT directive below.
-
-=item *
-
-B<LOG_FORMAT:> The format in which all logging will be, erm, I<logged> to the
-log file specified by the ERROR_LOG directive. See the Apache documentation for
-details on how this argument may be formatted. IF unspecified, the default is
-this string:
-
-  '%h %l %u %t "%r" %>s %b "%{Referer}i "%{User-Agent}i" "%{Cookie}i" "%v:%p"' combined
-
-=item *
-
-B<SCORE_BOARD_FILE:> This directive is required on some architectures to place a
-file that the Apache server will use to communicate between its children and the
-parent. The easiest way to find out if your architecture requires a scoreboard
-file is to run Apache and see if it creates the file named by the directive. If
-your architecture requires it then you must ensure that this file is not used at
-the same time by more than one invocation of Apache. Will not be defined if not
-specified.
-
-=item *
-
-B<TYPES_CONFIG:> Sets the location of the MIME types configuration file. The
-file name value is assumed to be relative to the APACHE_SERVER_ROOT if it
-doesn't start with a "/". This file sets the default list of mappings from
-filename extensions to content type Defaults to
-"/usr/local/apache/conf/mime.types" if not specified.
-
-=item *
-
-B<USE_CANONICAL_NAME:> With USE_CANONICAL_NAME on, Apache will use the
-SERVER_NAME and PORT directives to construct a canonical name for the server.
-This name is used in all self-referential URLs, Defaults to "On" if not
-specified.
-
-With USE_CANONICAL_NAME off, Apache will form self-referential URLs using the
-hostname and port supplied by the client if any are supplied (otherwise it will
-use the canonical name).
-
-=item *
-
-B<HOST_NAME_LOOKUPS:> Enables DNS lookups so that host names can be logged. The
-available values are "On", "Off", and "Double". The value "Double" refers to
-doing double-reverse DNS. That is, after a reverse lookup is performed, a
-forward lookup is then performed on that result. At least one of the ip
-addresses in the forward lookup must match the original address. Defaults to
-"Off" if not specified.
-
-=item *
-
-B<SERVER_SIGNATURE:> Allows the configuration of a trailing footer line under
-server-generated documents. The available values are "Off", "On", and "Email".
-Defaults to "Email" if not specified.
-
-=item *
-
-B<TIMEOUT:> The TIMEOUT directive defines the amount of time Apache will wait
-for three things:
-
-=over 4
-
-=item 1.
-
-The total amount of time it takes to receive a GET request.
-
-=item 2.
-
-The amount of time between receipt of TCP packets on a POST or PUT request.
-
-=item 3.
-
-The amount of time between ACKs on transmissions of TCP packets in responses.
-
-=back
-
-Defaults to "30" if not specified.
-
-=back
-
-=head2 Apache OpenSSL (mod_ssl) Configuration
-
-The Apache OpenSSL interface (mod_ssl) is an optional part of the Bricolage
-application. Not only does it enabled secure logons to the system, but it also
-allows completely secure access to the entire application, should you need it
-(and not need to worry about the performance overhead.). The following
-directives derive from their similarly-named mod_ssl directives. See the mod_ssl
-documentation <http://www.modssl.org/docs> for more detail.
-
-=over 4
-
-=item *
-
-B<SSL_ENABLE:> Turn on this boolean directive to enable SSL support. Make sure
-you've followed the installation instructions for building a mod_ssl Apache.
-Disabled by default. B<Note:> The C<LISTEN_PORT> directive I<must> be set to 80
-if C<SSL_ENABLE> is on. The Bricolage server will not start if C<SSL_ENABLE> is
-on and C<LISTEN_PORT> is set to a value other than 80.
-
-=item *
-
-B<SSL_SESSION_CACHE:> Configures the storage type of the global/inter-process
-SSL Session Cache. This cache is an optional facility which speeds up parallel
-request processing. For requests to the same server process (via HTTP keep-alive
--- see the KEEP_ALIVE directive above), OpenSSL already caches the SSL session
-information locally. But because modern clients request inlined images and other
-data via parallel requests (usually up to four parallel requests are common)
-those requests are served by different pre-forked server processes. Here an
-inter-process cache helps to avoid unneccessary session handshakes.
-
-The available values are "none", which could lead to speed penalties;
-"dbm:/path/to/datafile", which makes use of a DBM hashfile on the local disk to
-synchronize the local OpenSSL memory caches of the server processes; and
-"shm:/path/to/datafile[(size)]", which makes use of a high-performance hash
-table (approx. size bytes in size) inside a shared memory segment in RAM
-(established via /path/to/datafile) to synchronize the local OpenSSL memory
-caches of the server processes. See the mod_ssl documentation for more
-information. Defaults to "dbm:/usr/local/apache/logs/ssl_scache" if not
-specified. This default isn't portable, so we recommend you set it!
-
-=item *
-
-B<SSL_SESSION_CACHE_TIMEOUT:> Sets the timeout in seconds for the information
-stored in the global/inter-process SSL Session Cache and the OpenSSL internal
-memory cache. It can be set as low as 15 for testing, but should be set to
-higher values like 300 in real life. Defaults to "300" if not specified.
-
-=item *
-
-B<SSL_MUTEX:> Configures the SSL engine's semaphore (aka. lock) which is used
-for mutual exclusion of operations which have to be done in a synchronized way
-between the pre-forked Apache server processes. The available values are "none",
-which isn't recommended; "file:/path/to/mutex", which is the portable and (under
-Unix) always provided Mutex variant where a physical (lock-)file is used as the
-Mutex; and "sem", which is the most elegant but also most non-portable Mutex
-variant, and is only available when the underlying platform supports it.
-Defaults to "file:/usr/local/apache/logs/ssl_mutex" if not specified. This
-default isn't portable, so we recommend you set it!
-
-=item *
-
-B<SSL_LOG:> Sets the name of the dedicated SSL protocol engine logfile. Error
-type messages are additionally duplicated to the general Apache error log file
-(directive ERROR_LOG). Defaults to "/usr/local/apache/logs/ssl_engine_log" if
-not specified. This default isn't portable, so we recommend you set it!
-
-=item *
-
-B<SSL_LOG_LEVEL:> Sets the verbosity degree of the dedicated SSL protocol engine
-logfile. The level is one of the following (in ascending order where higher
-levels include lower levels):
-
-=over 4
-
-=item none
-
-=item error
-
-=item warn
-
-=item info
-
-=item trace
-
-=item debug
-
-=back
-
-Defaults to "info" if not specified.
-
-=item *
-
-B<SSL_CERTIFICATE_FILE:> Points to the PEM-encoded Certificate file for the
-server and optionally also to the corresponding RSA or DSA Private Key file for
-it (contained in the same file). If the contained Private Key is encrypted the
-Pass Phrase dialog is forced at startup time. Defaults to
-"/usr/local/apache/conf/ssl.crt/server.crt" if not specified. This default isn't
-portable, so we recommend you set it!
-
-=item *
-
-B<SSL_CERTIFICATE_KEY_FILE:> Points to the PEM-encoded Private Key file for the
-server. Defaults to "/usr/local/apache/conf/ssl.key/server.key" if not
-specified. This default isn't portable, so we recommend you set it!
-
-=item *
-
-B<SSL_CIPHER_SUITE:> This complex directive uses a colon-separated cipher-spec
-string consisting of OpenSSL cipher specifications to configure the Cipher Suite
-the client is permitted to negotiate in the SSL handshake phase. See the mod_ssl
-documentation on the "SSLCipherSuite" directive for details on how to use this
-directive. Defaults to
-"ALL:!ADH:!EXP56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL" if not
-specified.
-
-=item *
-
-B<SSL_PASS_PHRASE_DIALOG:> The mehtod for Apache to use to query the
-administrator for a pass phrase should the private key file be encrypted (see
-SSL_CERTIFICATE_KEY_FILE above and "Building Certificates" below). The available
-values are "builtin", which will prompt the administrator for the pass phrase
-upon Apache startup; and "exec:/path/to/program", which will force Apache to
-call an external program to prompt for the pass phrase and decrypt the private
-key. Use the latter option only if you know exactly what you're doing! Defaults
-to "builtin" if not specified.
+B<VHOST_SERVER_NAME:> The host name under which Bricolage will run as a virtual
+host in the Apache server. Defaults to the default host if not specified.
 
 =back
 
@@ -1099,22 +819,20 @@ second half of the -m argument to C<pgimport> (see above). Defaults to
 =head2 System User Configuration
 
 This is the name and group of the system user as whom Bricolage and Apache run.
-If you decide to edit httpd.conf yourself (but you wouldn't do that, right?),
-you'll want to make sure that the names set in bricolage.conf agree with the
-httpd.conf C<User> and C<Group> directives, since the user name is expected to
-be the same for other parts of the application.
 
 =over 4
 
 =item *
 
-B<SYS_USER:> The system user as whom Bricolage runs. Defaults to "nobody" if not
-specified.
+B<SYS_USER:> The system user as whom Bricolage runs. Must be the same as the
+C<User> directive used in the Apache configuration file specified in the
+C<APACHE_CONF> configuration direcive. Defaults to "nobody" if not specified.
 
 =item *
 
-B<SYS_GROUP:> The system group of which SYS_USER is a member. Defaults to
-"nobody" if not specified.
+B<SYS_GROUP:> The system group of which SYS_USER is a member. Must be the same
+as the C<Group> directive used in the Apache configuration file specified in the
+C<APACHE_CONF> configuration direcive. Defaults to "nobody" if not specified.
 
 =back
 
@@ -1304,7 +1022,7 @@ directives that affect Bricolage Alerting.
 
 B<SMTP_SERVER:> The DNS name of an SMTP server that the Alerting API can send
 alerts to. All alerts are sent by email, so this directive is important to fill
-out. Defaults to SERVER_NAME directive if not specified.
+out. Defaults to VHOST_SERVER_NAME directive if not specified.
 
 =item *
 

@@ -38,6 +38,7 @@ POSTGRES_ROOT_USER = @POSTGRES_ROOT_USER@
 POSTGRES_SYSTEM_USER = @POSTGRES_SYSTEM_USER@
 POSTGRES_ROOT_PASS = @PG_ROOT_PASS@
 HAVE_SSL = @HAVE_SSL@
+HOSTNAME = @HOSTNAME@
 
 
 # Installation related variables
@@ -168,7 +169,7 @@ CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
 # ****************************************************************
 # Standard targets follow.  These are discussed at length
 # in the GNU Make manual: http://www.gnu.org/manual/
-all:  doc
+all:  doc config
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
 		 install-man install-html chowndirs chownpg chmoddirs
@@ -257,6 +258,26 @@ ${CPAN_TARGETS}:
 	${PERL} -MCPAN -e '$$m = "$(@F)" ;$$m =~ s/\./:/g ; install $$m' 
 	touch $@
 
+# This is where we do our config files
+config: inst/bric.sql conf/bricolage.tmp.conf
+
+inst/bric.sql: inst/bric.sql.in
+	cp $^ $@
+	perl -pi -e 's/%DBI_USER%/${DBI_USER}/g' $@
+
+conf/bricolage.tmp.conf: conf/bricolage.tmp.conf.in
+	cp $^ $@
+	perl -pi -e 's/%HOSTNAME%/${HOSTNAME}/g' $@
+	perl -pi -e 's/%HAVE_SSL%/${HAVE_SSL}/g' $@
+	perl -pi -e 's,%APACHE%,${APACHE},g' $@
+	perl -pi -e 's,%APACHE_CONF%,${APACHE_CONF},g' $@
+	perl -pi -e 's/%APACHE_USER%/${APACHE_USER}/g' $@
+	perl -pi -e 's/%APACHE_GROUP%/${APACHE_GROUP}/g' $@
+	perl -pi -e 's/%DB_NAME%/${DB_NAME}/g' $@
+	perl -pi -e 's/%DBI_USER%/${DBI_USER}/g' $@
+	perl -pi -e 's/%DBI_PASS%/${DBI_PASS}/g' $@
+	perl -pi -e 's,%compdir%,${compdir},g' $@
+	perl -pi -e 's,%datadir%,${datadir},g' $@
 
 
 # and here are our document files.
@@ -282,7 +303,7 @@ endif
 
 
 clean: docclean
-	${RM} -f Changes TODO License tags
+	${RM} -f Changes TODO License tags conf/bricolage.tmp.conf inst/bric.sql
 
 dist-clean: 
 	${RM} -f ${INST}/install.log 
@@ -296,7 +317,7 @@ docclean:
 .PHONY : clean dep clean cpan doc install installdirs \
 		 install-bin install-comp install-conf install-data \
 		 install-lib install-doc install-html install-man \
-		 uninstall uninstalldirs \
+		 uninstall uninstalldirs config \
 		 uninstall-bin uninstall-comp uninstall-conf uninstall-data \
 		 uninstall-lib uninstall-doc uninstall-html uninstall-man 
 

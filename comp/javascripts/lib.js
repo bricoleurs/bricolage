@@ -324,7 +324,7 @@ function showForm(which) {
     var name, caption, vals, length, maxlength;
 
     // get handle to fb form object
-    var fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all.fbDiv.all.fb_form;
+    var fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all ? document.all.fbDiv.all.fb_form : document.getElementById('fbDiv').getElementsByTagName('form')[0];
 
     // gather the current values the user may have entered in the form
     if (typeof fb_obj != "undefined" ) { // prevent error if first time
@@ -343,7 +343,7 @@ function showForm(which) {
 
     // repopulate the new form with any values that may have been present in the old form, where applicable.
     if (typeof fb_obj != "undefined" ) { // prevent error if first time
-	fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all.fbDiv.all.fb_form;
+	fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all ? document.all.fbDiv.all.fb_form : document.getElementById('fbDiv').getElementsByTagName('form')[0];
 	fb_obj.fb_name.value = name;
 	fb_obj.fb_disp.value = caption;
 	if (typeof fb_obj.fb_vals      != "undefined") fb_obj.fb_vals.value = vals;
@@ -353,7 +353,7 @@ function showForm(which) {
 
 % if ($agent->{browser} ne "Netscape" && $agent->{os} ne "Windows" ) { # the focus method causes the window to jump on NS/PC 
     // get handle to new form
-    fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all.fbDiv.all.fb_form;
+    fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all ? document.all.fbDiv.all.fb_form : document.getElementById('fbDiv').getElementsByTagName('form')[0];
  
     // move the focus to the name field
     if (typeof fb_obj != "undefined" ) fb_obj.fb_name.focus();
@@ -371,8 +371,11 @@ function writeDiv(which, html) {
 	document.layers[which].document.open();
 	document.layers[which].document.write(html);
 	document.layers[which].document.close();
-    } else {
+    } else if (document.all) {
 	var tmp = eval("document.all." + which);
+	tmp.innerHTML = html;
+    } else {
+        var tmp = document.getElementById(which);
 	tmp.innerHTML = html;
     }
 }
@@ -420,17 +423,8 @@ function formBuilderMagicSubmit(formName, action) {
 }
 
 function confirmFormBuilder(formName) {
-    var fb_obj;
     var obj    = document[formName];
-
-    // get object reference
-% if ($agent->{browser} eq "Netscape") {  
-    if (document.layers["fbDiv"]) {
-	fb_obj = document.layers["fbDiv"].document.fb_form;
-    }
-% } else {
-    if (document.all.fbDiv) fb_obj = document.all.fbDiv.all.fb_form;
-% }
+    var fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all ? document.all.fbDiv.all.fb_form : document.getElementById('fbDiv').getElementsByTagName('form')[0];
 
     // look for formbuilder objects, and get their values
     // assign these values to the hidden fields in the main form
