@@ -172,6 +172,11 @@ Pagination now works properly when searching for elements by element type in
 the element manager and when searching for contributors by contributor type in
 the contributor manager. [David]
 
+=item *
+
+Creating a new story that has a URI that conflicts with an existing story no
+longer creates an extra story. Reported by Clive Jones. [David]
+
 =back
 
 =head1 VERSION 1.6.1

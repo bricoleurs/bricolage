@@ -462,6 +462,9 @@ my $handle_create = sub {
     $story->set_primary_category($cid);
     my $cat = Bric::Biz::Category->lookup({ id => $cid });
 
+    # Save everything else unless there were data errors
+    return unless $save_data->($param, $widget, $story);
+
     # Set the workflow this story should be in.
     $story->set_workflow_id($work_id);
 
@@ -471,9 +474,6 @@ my $handle_create = sub {
     # Send this story to the first desk.
     $start_desk->accept({ asset => $story });
     $start_desk->save;
-
-    # Save everything else unless there were data errors
-    return unless &$save_data($param, $widget, $story);
     $story->save;
 
     # Log that a new story has been created and generally handled.
