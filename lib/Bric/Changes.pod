@@ -333,6 +333,12 @@ properly removes a template from a user's sandbox. [David]
 When creating a new workflow, the workflow profile no longer forgets the
 selected site when you click the "New Desk" button. [David]
 
+=item *
+
+Changing a template in such a way that it will be deployed to a new location
+(by changing the category, for example) once again deletes the previous
+version from the previous location when it is deployed. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)

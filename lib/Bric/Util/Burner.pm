@@ -722,7 +722,6 @@ sub deploy {
     # Delete older versions, if they live elsewhere.
     my $old_version = $fa->get_published_version or return $self;
     my $old_fa = $fa->lookup({ id          => $fa->get_id,
-                               checked_out => 0,
                                version     => $old_version })
       or return $self;
     my $old_file = $old_fa->get_file_name or return $self;
@@ -734,7 +733,6 @@ sub deploy {
     $fs->del($old_file);
 
     return $self;
-
 }
 
 #------------------------------------------------------------------------------#

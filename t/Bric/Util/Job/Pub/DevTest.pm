@@ -4,7 +4,6 @@ use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
 use Test::Exception;
-use Bric::App::Session;
 use Bric::Util::Job::Pub;
 use Bric::Util::Job::Dist;
 use Bric::Util::Grp::Job;
