@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-27 20:47:13 $
+$Date: 2001-12-27 20:57:46 $
 
 =head1 SYNOPSIS
 
@@ -386,9 +386,9 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant STAGE_ROOT              => catdir(BURN_ROOT, 'stage');
     use constant PREVIEW_ROOT            => catdir(BURN_ROOT, 'preview');
     use constant BURN_COMP_ROOT          => $config->{BURN_COMP_ROOT}
-      || catdir(MASON_DATA_ROOT, 'burn', 'comp');
+      || catdir(BURN_ROOT, 'comp');
     use constant BURN_DATA_ROOT          => $config->{BURN_DATA_ROOT}
-      || catdir(MASON_DATA_ROOT, 'burn', 'data');
+      || catdir(BURN_ROOT, 'data');
     use constant BURN_ARGS_METHOD        => MASON_ARGS_METHOD;
     use constant INCLUDE_XML_WRITER      => $config->{INCLUDE_XML_WRITER};
     use constant XML_WRITER_ARGS         => $config->{XML_WRITER_ARGS} ?
