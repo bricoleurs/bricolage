@@ -193,9 +193,9 @@ done		: bconf/bricolage.conf db files bin lib cpan
 # upgrade rules          #
 ##########################
 
-upgrade		: upgrade.db required.db bconf/bricolage.conf is_root cpan \
-	          stop db_upgrade lib bin  db_grant upgrade_files \
-	          upgrade_conf upgrade_done
+upgrade		: upgrade.db required.db postgres.db bconf/bricolage.conf \
+	          is_root cpan stop db_upgrade lib bin  db_grant  \
+	          upgrade_files upgrade_conf upgrade_done
 
 upgrade.db	: 
 	$(PERL) inst/upgrade.pl
