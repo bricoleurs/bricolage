@@ -826,30 +826,6 @@ sub leave_category : Callback {
     pop_page();
 }
 
-sub set_primary_category : Callback {
-    my $self = shift;
-    my $param = $self->params;
-    my $widget = $self->class_key;
-
-    my $story = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-
-    my $primary_cat_id = $self->value;
-    if (defined $param->{$widget.'|delete_id'}
-        && $param->{$widget.'|delete_id'} == $primary_cat_id) {
-        add_msg("Cannot make a dissociated category the primary category.");
-        return;
-    }
-    my $primary_cat = Bric::Biz::Category->lookup({ id => $primary_cat_id });
-    $story->set_primary_category($primary_cat);
-
-    # set this so that we don't have to $story->save
-    # (used in widgets/story_prof/edit_categories.html)
-#    set_state_data($self->class_key, 'primary_cat', $primary_cat);
-    # Avoid unnecessary empty searches.
-    Bric::App::Callback::Search->no_new_search;
-}
-
 ### end of callbacks
 
 sub clear_my_state {
@@ -908,7 +884,7 @@ $save_contrib = sub {
 $save_category = sub {
     my ($widget, $param, $self) = @_;
 
-    # get the contribs to delete
+    # get the categories to delete
     my $story = get_state_data($widget, 'story');
 
     my $existing = { map { $_->get_id => 1 } $story->get_categories };
@@ -933,6 +909,14 @@ $save_category = sub {
         add_msg('Categories disassociated.');
         $story->delete_categories(\@to_delete);
     }
+
+    # Change the primary category?
+    my $new_prime = $param->{"$widget|set_primary_category"};
+    if ($new_prime != $primary_cid && exists $existing->{$new_prime}) {
+        my $primary_cat = Bric::Biz::Category->lookup({ id => $new_prime });
+        $story->set_primary_category($primary_cat);
+    }
+
     # Avoid unnecessary empty searches.
     Bric::App::Callback::Search->no_new_search;
 };

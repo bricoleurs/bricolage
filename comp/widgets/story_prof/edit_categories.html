@@ -72,7 +72,7 @@ my $primary_sub = sub {
 
     # Output the radio button.
     $m->scomp('/widgets/profile/radio.mc',
-              name => "$widget|set_primary_category_cb",
+              name => "$widget|set_primary_category",
               disp => '',
               value => $cid,
               checked => $cid == $primary_cat->get_id,
