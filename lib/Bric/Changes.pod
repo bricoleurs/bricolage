@@ -258,6 +258,10 @@ L<http://sourceforge.net/tracker/index.php?func=detail&aid=1155712&group_id=6975
 for the htmlArea patch. As of this writing, you must run the version of
 htmlArea in CVS. [David & Marshall]
 
+=item *
+
+Logging now works properly with the virtual FTP server. [Keith Grennan]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
