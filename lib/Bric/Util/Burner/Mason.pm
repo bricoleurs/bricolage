@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.61 $
+$Revision: 1.61.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.61 $ )[-1];
+our $VERSION = (qw$Revision: 1.61.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-03 22:26:03 $
+$Date: 2004-05-01 17:10:02 $
 
 =head1 SYNOPSIS
 
@@ -361,6 +361,8 @@ sub chk_syntax {
                                           'comp_root'  => $self->get_comp_dir,
                                           'data_dir'   => $self->get_data_dir,
                                           );
+
+    $interp->set_global('$burner', $self);
 
     # Try to create a component.
     my $comp = eval { $interp->make_component(comp_source => $data) };

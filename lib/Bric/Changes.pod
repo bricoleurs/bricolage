@@ -67,8 +67,6 @@ Delfim Machado. [David]
 
 Login redirection now works properly with Safari. [David]
 
-=back
-
 =head2 Bug Fixes
 
 =over 4
@@ -131,6 +129,24 @@ checked-out assets won't be published. Thanks to Serge Sozonoff for the spot!
 =item *
 
 Safari users will no longer be stuck on the login page. [David]
+
+=item *
+
+The C<$burner> object is now available in Mason template C<< <%once> >> blocks
+during the syntax check, although C<$story> and C<$element> are not. All three
+are in the C<< <%once> >> block during previews and publishes. This means that
+they can all be used in a C<< <%once> >> block like this:
+
+  <%once>
+  my @all_story;
+  unless ($burner->get_mode == SYNTAX_MODE) {
+      # Do stuff with $story or $template.
+  }
+  </%once>
+
+Reported by Serge Sozonoff. [David]
+
+=back
 
 =back
 
