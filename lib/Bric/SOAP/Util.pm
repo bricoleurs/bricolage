@@ -457,13 +457,13 @@ sub _deserialize_tile {
             if ($at->get_sql_type eq 'date') {
                 # add date data to container
                 $element->add_data($at,
-                                   defined exists $d->{content} ?
+                                   exists $d->{content} ?
                                    xs_date_to_db_date($d->{content}) : '',
                                    $d->{order});
             } else {
                 # add data to container
                 $element->add_data($at,
-                                   defined exists $d->{content} ? $d->{content} : '',
+                                   exists $d->{content} ? $d->{content} : '',
                                    $d->{order});
             }
 
