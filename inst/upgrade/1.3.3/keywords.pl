@@ -7,7 +7,7 @@ use Bric::Util::DBI qw(:all);
 
 # Exit if change already exist in db
 exit if fetch_sql( qq{
-	SELECT 1 FROM story_keyword
+        SELECT 1 FROM pg_class WHERE RELNAME = 'story_keyword'
 } );
 
 my @sql = (
