@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =head1 DATE
 
-$Date: 2004-02-22 19:55:37 $
+$Date: 2004-02-29 20:02:32 $
 
 =head1 DESCRIPTION
 
@@ -100,7 +100,7 @@ sub create_db {
             if (ask_yesno("Database named \"$PG->{db_name}\" already exists.  ".
                           "Drop database? [no] ", 0)) {
                 # Drop the database.
-                if ($err = exec_sql("DROP DATABASE $PG->{db_name}", 0,
+                if ($err = exec_sql(qq{DROP DATABASE "$PG->{db_name}"}, 0,
                                     $PGDEFDB)) {
                     hard_fail("Failed to drop database.  The database error ",
                               "was:\n\n$err\n")
@@ -133,7 +133,7 @@ sub create_user {
         if ($err =~ /user( name)? "[^"]+" already exists/) {
             if (ask_yesno("User named \"$PG->{sys_user}\" already exists.  ".
                           "Drop user? [no] ", 0)) {
-                if ($err = exec_sql("DROP USER $PG->{sys_user}", 0, $PGDEFDB)) {
+                if ($err = exec_sql(qq{DROP USER "$PG->{sys_user}"}, 0, $PGDEFDB)) {
                     hard_fail("Failed to drop user.  The database error was:\n\n",
                               "$err\n");
                 }
