@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.18.2.5 $
+$Revision: 1.18.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-11 13:59:09 $
+$Date: 2003-06-12 09:06:55 $
 
 =head1 SYNOPSIS
 
@@ -39,12 +39,13 @@ use strict;
 # Programmatic Dependencies
 #use CGI::Cookie;
 #use Bric::Config qw(:qa :cookies);
-use Bric::App::Session;
+use Bric::App::Session qw(:state);
 use Bric::Config qw(:cookies);
 use Bric::Util::Class;
 use Bric::Util::Pref;
 use Apache;
 use Apache::Request;
+use HTTP::BrowserDetect;
 
 #==============================================================================#
 # Inheritance                          #
@@ -79,6 +80,7 @@ our @EXPORT_OK = qw(
 
                     mk_aref
 
+                    detect_agent
                     parse_uri
                    );
 
@@ -674,6 +676,38 @@ Was comp/lib/util/parseUri.mc.
 sub parse_uri {
     my $uri = shift;
     return split /\//, substr($uri, 1);
+}
+
+#--------------------------------------#
+
+=item $href = detect_agent;
+
+Returns an HTTP::BrowserDetect object. The object is cached
+for efficiency.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+Was comp/widgets/util/detectAgent.mc
+
+=cut
+
+sub detect_agent {
+    my $ua = get_state_data('util', 'user-agent');
+    if ($ua) {
+        return $ua;
+    } else {
+        $ua = HTTP::BrowserDetect->new;
+        set_state_data('util', 'user-agent', $ua);
+        return $ua;
+    }
 }
 
 #--------------------------------------#

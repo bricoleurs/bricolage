@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.19.2.3 $
+$Revision: 1.19.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.19.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-11 13:41:00 $
+$Date: 2003-06-12 09:06:47 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -64,7 +64,7 @@ $stay                   => undef
 <%init>
 
 my ($section, $mode, $type) = parse_uri($r->uri);
-my $agent        = new HTTP::BrowserDetect;
+my $agent        = detect_agent();
 my $div          = 'div';
 my $name         = "id";
 my $closeDiv     = "div";
@@ -74,14 +74,14 @@ my $textStyle    = 'style="width:120px"';
 my $textareaRows = 5;
 my $textareaCols = 20;
 
-unless ($agent->netscape) {
+unless ($agent->nav4) {
     $textareaRows = 5;
     $textareaCols = 25;
 }
 
 # hack.  why wouldn't the div tag work in NS for this case? a mystery to solve when
 # there is time.
-if ($agent->netscape) {
+if ($agent->nav4) {
 	$div = "layer position=\"relative\"";
 	$closeDiv = "layer";
 	$name = "name";
@@ -338,7 +338,7 @@ date_table     += '</td></tr></table></form>&nbsp;'
 
 </script>
 
-% if ($agent->netscape) {
+% if ($agent->nav4) {
 
 <<% $div %> <% $position %> <% $name %>="fbDiv" visibility=show width=300 height=400 z-index=5 style="font-family:sans-serif; font-weight:bold; font-size:10pt; width:380; height:400">
 
@@ -412,7 +412,7 @@ date_table     += '</td></tr></table></form>&nbsp;'
 
   </td>
   <td width=400 height=230 valign=top rowspan=2>
-% unless ($agent->netscape) {
+% unless ($agent->nav4) {
 
 <<% $div %> <% $position %> id="fbDiv">
 

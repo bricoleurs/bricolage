@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.18.2.2 $
+$Revision: 1.18.2.3 $
 
 =head1 DATE
 
-$Date: 2003-06-11 13:41:01 $
+$Date: 2003-06-12 09:06:49 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -32,7 +32,7 @@ $obj
 
 <%init>;
 # browser spacing stuff
-my $agent = new HTTP::BrowserDetect;
+my $agent = detect_agent();
 
 my $ieSpacer = ($agent->user_agent !~ /(linux|freebsd|sunos)/) ?
   qq{<tr><td colspan="3"><img src="/media/images/spacer.gif" } .

@@ -180,7 +180,7 @@ my $tile = $media->get_tile();
 
 set_state_data('container_prof', 'tile', $tile);
 
-my $agent = new HTTP::BrowserDetect;
-my $infoIndent = $agent->netscape ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+my $agent = detect_agent();
+my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 my $num = 1;
 </%init>

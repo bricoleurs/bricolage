@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.37.2.3 $
+$Revision: 1.37.2.4 $
 
 =head1 DATE
 
-$Date: 2003-06-11 13:41:05 $
+$Date: 2003-06-12 09:06:54 $
 
 =head1 SYNOPSIS
 
@@ -53,7 +53,7 @@ my ($section, $mode, $type) = parse_uri($r->uri);
 $section ||= 'workflow';
 
 my ($layer, $properties);
-my $agent       = new HTTP::BrowserDetect;
+my $agent       = detect_agent();
 my $tab         = ($section eq "admin") ? "adminTab" : "workflowTab";
 my $curve_left  = ($section eq "admin") ? "/media/images/CC6633_curve_left.gif" : "/media/images/006666_curve_left.gif";
 my $curve_right = ($section eq "admin") ? "/media/images/CC6633_curve_right.gif" : "/media/images/006666_curve_right.gif";
@@ -71,7 +71,7 @@ $numLinks ||= 50;
 $numLinks += 8 if $agent->mac;
 
 # define variables to output sideNav layer or iframe
-if ($agent->netscape) {
+if ($agent->nav4) {
     $layer = "layer";
     $properties = qq { width="150" height="200%" border="0" scrolling="auto" frameborder="no" z-index="100" left="8" top="35"};
 } else {
@@ -110,7 +110,7 @@ function init() {
     <% $jsInit %>;
 % # the following is a hack for pc/ns because it fails to obey
 % # the style rule when it is first drawn.
-% if ($agent->netscape && $jsInit =~ /showForm/) {
+% if ($agent->nav4 && $jsInit =~ /showForm/) {
     <% $jsInit %>;
 % }
 
@@ -195,7 +195,7 @@ if ($useSideNav) {
 	# create a unique uri to defeat browser caching attempts.
 	$uri .= "&rnd=" . time;
 	chomp $uri;
-	$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } ) if $agent->netscape;
+	$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } ) if $agent->nav4;
 	$m->out( qq {<$layer name="sideNav" src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" $properties>} );
 	$m->out("</$layer>\n");
     }
@@ -205,7 +205,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 </%perl>
 
 % # write out space so the silly browser will provide a scroll bar for the layered content
-% if (!DISABLE_NAV_LAYER && $agent->netscape && $agent->user_agent !~ /(linux|freebsd|sunos)/) {
+% if (!DISABLE_NAV_LAYER && $agent->nav4 && $agent->user_agent !~ /(linux|freebsd|sunos)/) {
 
   <script type="text/javascript">
   for (var i=0; i < <% $numLinks %>; i++) {

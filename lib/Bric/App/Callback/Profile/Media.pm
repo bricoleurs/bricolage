@@ -18,7 +18,6 @@ use Bric::Util::DBI;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::MediaType;
 use Bric::Util::Trans::FS;
-use HTTP::BrowserDetect;
 
 my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
@@ -88,7 +87,7 @@ sub update : Callback {
     if ($param->{"$widget|file"}) {
         my $upload = $self->apache_req->upload;
         my $fh = $upload->fh;
-        my $agent = new HTTP::BrowserDetect;
+        my $agent = detect_agent();
         my $filename = Bric::Util::Trans::FS->base_name($upload->filename, $agent->os_string);
         $media->upload_file($fh, $filename);
         $media->set_size($upload->size);

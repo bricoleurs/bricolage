@@ -10,7 +10,7 @@
 <br />
 
 <%init>;
-my $agent = new HTTP::BrowserDetect;
+my $agent = detect_agent();
 my %map = (
     'Browser' => 'browser_string',
     'Version' => 'version',

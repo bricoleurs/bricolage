@@ -50,7 +50,7 @@ my $printLink = sub {
 my ($section, $mode, $type) = split '/', substr($ARGS{uri}, 1);
 ($section, $mode, $type) = qw(workflow profile workspace) unless $section;
 
-my $agent                     = new HTTP::BrowserDetect;
+my $agent                     = detect_agent();
 my $workflowIndent            = 25;
 my $adminIndent               = 25;
 my $tabHeight                 = "height=20";
@@ -107,7 +107,7 @@ unless ($workflows) {
   <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
 
-% unless ($agent->netscape) {
+% unless ($agent->nav4) {
     <script language="javascript">
     function doNav(callback) {
         document.location.href = callback;
@@ -454,10 +454,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.32.2.3 $
+$Revision: 1.32.2.4 $
 
 =head1 DATE
 
-$Date: 2003-06-11 13:41:06 $
+$Date: 2003-06-12 09:06:54 $
 
 </%doc>
