@@ -46,6 +46,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(log_event clear_events);
+use Bric::App::Util qw(:pref);
 use Bric::Util::Job;
 use Apache::Constants qw(HTTP_OK);
 use Apache::Log;
@@ -148,6 +149,9 @@ sub handler {
         $r->content_type('text/plain');
         $r->header_out(BricolageDist => 1);
         $r->send_http_header;
+
+        # Set up the language object and handle the request.
+        Bric::Util::Language->get_handle(get_pref('Language'));
 
 	my %headers = $r->headers_in;
 	# Execute all the jobs.

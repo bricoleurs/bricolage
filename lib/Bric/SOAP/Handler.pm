@@ -87,6 +87,7 @@ use Bric::App::Session;
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(clear_events);
+use Bric::App::Util qw(:pref);
 use Exception::Class 1.12;
 use Apache;
 use Apache::Request;
@@ -155,6 +156,8 @@ sub handler {
             my ($res, $msg) = Bric::App::Auth::auth($r);
 
             if ($res) {
+                # Set up the language object and handle the request.
+                Bric::Util::Language->get_handle(get_pref('Language'));
                 $status = $SERVER->handler(@_);
             } else {
                 $r->log_reason($msg);

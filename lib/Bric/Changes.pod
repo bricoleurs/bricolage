@@ -151,6 +151,12 @@ desks. Reported by Serge Sozonoff. [David]
 Related media and story subelements of media documents now work properly.
 Thanks to Kang-min Liu for the spot! [David]
 
+=item *
+
+The distribution and SOAP handlers now load a localization object so that any
+code that uses localization will work properly. Reported by Clive Jones.
+[David]
+
 =back
 
 =cut
