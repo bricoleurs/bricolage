@@ -45,8 +45,6 @@ my $lang = Bric::Util::Language->get_handle(LANGUAGE);
 
 sub lang { $lang }
 
-sub field { $_[0]->trigger_key }
-
 sub param { $_[0]->request_args }
 
 
