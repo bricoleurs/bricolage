@@ -47,6 +47,7 @@ DROPDB = @DROPDB@
 DROPUSER = @DROPUSER@
 CREATEDB = @CREATEDB@
 CONFIG_STRING = @CONFIG_STRING@
+CPAN_WORKS = @CPAN_WORKS@
 
 
 # Installation related variables
@@ -164,11 +165,6 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 
-# A list of any missing modules
-CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
-
-
-
 # ****************************************************************
 # *  RULES follow
 # ****************************************************************
@@ -196,20 +192,21 @@ chmoddirs:
 	chmod -R a+r ${htmldir} ${docdir}
 chownpg:
 	chown -R ${POSTGRES_ROOT_USER} ${bindir}/bric_pgimport
-uninstall: uninstall-lib uninstallfiles uninstalldirs dist-clean
+uninstall: uninstalldatabase uninstall-lib uninstallfiles uninstalldirs dist-clean
 uninstall-lib:
-	--cd ${LIB} && make uninstall
+	-cd ${LIB} && make uninstall
 uninstalldirs:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing installed dirs 
-	--@for D in ${INSTALLED_DIRS} ; do \
+	-@for D in ${INSTALLED_DIRS} ; do \
 		rmdir --ignore-fail-on-non-empty `find $$D -depth -type d`; \
 	done
 uninstallfiles:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing previously installed files
-	--@rm -f ${INSTALLED_FILES}
+	-@rm -f ${INSTALLED_FILES}
 uninstalldatabase:
+	-${BIN}/bric_apachectl stop
 	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
 	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
 
@@ -274,7 +271,7 @@ ${INST}/installed-database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/gra
 
 # This makes the grant script
 ${INST}/grants.sql: ${INST}/bricolage.sql
-	${BIN}/bric_pggrant -u ${DBI_USER} -f $< -o $@
+	${INST}/bric_pggrant -u ${DBI_USER} -f $< -o $@
 	chmod a+r $@
 
 # This makes a simple create user script
@@ -294,9 +291,20 @@ ${INST}/bricolage.sql:
 
 # obviously we depend on the cpan stuff
 dep: cpan
-cpan: ${CPAN_TARGETS} 
+
+# This now tries to install Bundle:Bricolage every time
+# provided we have net access...
+cpan: ${INST}/missing_modules
+ifeq (CPAN_WORKS,yes)
+	${PERL} -MCPAN -e 'install Bundle::Bricolage' 
+endif
+
+${INST}/missing_modules:
+	for M in ${MISSING_MODULES} ; do echo "$$M\n" >> $@ ; done
+	
+# These targets are unused for the moment
 ${CPAN_TARGETS}:
-	${PERL} -MCPAN -e '$$m = "$(@F)" ;$$m =~ s/\./:/g ; install $$m' 
+	#${PERL} -MCPAN -e '$$m = "$(@F)" ;$$m =~ s/\./:/g ; install $$m' 
 	touch $@
 
 # This is where we do our config files
