@@ -32,16 +32,10 @@ my %pkgs = (
     media => 'Bric::Biz::Asset::Business::Media',
 );
 
-my ($push_tile_stack, $pop_tile_stack, $pop_and_redirect,
-    $delete_element, $update_parts, $handle_related_up,
-    $save_data, $handle_bulk_up, $handle_bulk_save, $super_save_data,
-    $split_fields, $compare_soundex, $compare_levenshtein,
-    $compare, $closest, $split_super_bulk, $drift_correction);
-
 
 sub edit : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -50,10 +44,10 @@ sub edit : Callback {
     my $tile = get_state_data($self->class_key, 'tile');
 
     # Update the existing fields and get the child tile matching ID
-    my $edit_tile = $update_parts->($self, $param);
+    my $edit_tile = $self->_update_parts($param);
 
     # Push this child tile on top of the stack
-    $push_tile_stack->($self->class_key, $edit_tile);
+    $self->_push_tile_stack($edit_tile);
 
     # Don't redirect if we're already on the right page.
     if ($tile->get_object_type eq 'media') {
@@ -69,7 +63,7 @@ sub edit : Callback {
 
 sub bulk_edit : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -79,10 +73,10 @@ sub bulk_edit : Callback {
     my $tile = get_state_data($self->class_key, 'tile');
     my $tile_id = $param->{'edit_view_bulk_tile_id'};
     # Update the existing fields and get the child tile matching ID $tile_id
-    my $edit_tile = $update_parts->($self, $param);
+    my $edit_tile = $self->_update_parts($param);
 
     # Push the current tile onto the stack.
-    $push_tile_stack->($self->class_key, $edit_tile);
+    $self->_push_tile_stack($edit_tile);
 
     # Get the name of the field to bulk edit
     my $field = $param->{$self->class_key.'|bulk_edit_tile_field-'.$tile_id};
@@ -101,7 +95,7 @@ sub bulk_edit : Callback {
 
 sub view : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -113,7 +107,7 @@ sub view : Callback {
     my ($view_tile) = grep(($_->get_id == $tile_id), $tile->get_containers);
 
     # Push this child tile on top of the stack
-    $push_tile_stack->($self->class_key, $view_tile);
+    $self->_push_tile_stack($view_tile);
 
     if ($tile->get_object_type eq 'media') {
         set_redirect("$MEDIA_CONT/") unless $r->uri eq "$MEDIA_CONT/";
@@ -132,7 +126,7 @@ sub delete : Callback {
 
 sub clear : Callback(priority => 1) {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -141,7 +135,7 @@ sub clear : Callback(priority => 1) {
 
 sub add_element : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -164,7 +158,7 @@ sub add_element : Callback {
             $at = Bric::Biz::AssetType->lookup({id=>$id});
             my $cont = $tile->add_container($at);
             $tile->save();
-            $push_tile_stack->($self->class_key, $cont);
+            $self->_push_tile_stack($cont);
 
             if ($key eq 'story') {
                 # Don't redirect if we're already at the edit page.
@@ -188,19 +182,19 @@ sub add_element : Callback {
 
 sub update : Callback(priority => 1) {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     my $widget = $self->class_key;
     return if $param->{'_inconsistent_state_'} || $param->{"$widget|up_cb"};
 
-    $update_parts->($self, $self->params);
+    $self->_update_parts($self->params);
     my $tile = get_state_data($self->class_key, 'tile');
     $tile->save();
 }
 
 sub pick_related_media : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -211,30 +205,30 @@ sub pick_related_media : Callback {
 }
 
 sub relate_media : Callback {
-    my ($self) = @_;     # @_ for &$handle_related_up
-    $drift_correction->($self);
+    my ($self) = @_;
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
     $tile->set_related_media($self->value);
-    &$handle_related_up;
+    $self->_handle_related_up;
 }
 
 sub unrelate_media : Callback {
-    my ($self) = @_;     # @_ for &$handle_related_up
-    $drift_correction->($self);
+    my ($self) = @_;
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
     $tile->set_related_media(undef);
-    &$handle_related_up;
+    $self->_handle_related_up;
 }
 
 sub pick_related_story : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -245,39 +239,39 @@ sub pick_related_story : Callback {
 }
 
 sub relate_story : Callback {
-    my ($self) = @_;     # @_ for &$handle_related_up
-    $drift_correction->($self);
+    my ($self) = @_;
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
     $tile->set_related_instance_id($self->value);
-    &$handle_related_up;
+    $self->_handle_related_up;
 }
 
 sub unrelate_story : Callback {
-    my ($self) = @_;     # @_ for &$handle_related_up
-    $drift_correction->($self);
+    my ($self) = @_;
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
     $tile->set_related_instance_id(undef);
-    &$handle_related_up;
+    $self->_handle_related_up;
 }
 
 sub related_up : Callback {
-    my ($self) = @_;     # @_ for &$handle_related_up
-    $drift_correction->($self);
+    my ($self) = @_;
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    &$handle_related_up;
+    $self->_handle_related_up;
 }
 
 sub lock_val : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -305,12 +299,12 @@ sub lock_val : Callback {
 
 sub save_and_up : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     if ($self->params->{$self->class_key . '|delete_element'}) {
-        $delete_element->($self);
+        $self->_delete_element;;
         return;
     }
 
@@ -322,18 +316,18 @@ sub save_and_up : Callback {
         my $tile = get_state_data($self->class_key, 'tile');
         $tile->save();
         add_msg('Element "[_1]" saved.', $tile->get_name);
-        $pop_and_redirect->($self, $self->class_key);
+        $self->_pop_and_redirect;
     }
 }
 
 sub save_and_stay : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     if ($self->params->{$self->class_key . '|delete_element'}) {
-        $delete_element->($self);
+        $self->_delete_element;;
         return;
     }
 
@@ -350,25 +344,27 @@ sub save_and_stay : Callback {
 
 sub up : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    $pop_and_redirect->($self, $self->class_key);
+    $self->_pop_and_redirect;
 }
 
 # bulk edit callbacks
 
 sub resize : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
     my $widget = $self->class_key;
 
-    my $splitter = get_state_name($widget) eq 'edit_bulk'
-      ? $split_fields : $split_super_bulk;
-    $splitter->($widget, $param->{$widget . '|text'});
+    if ( get_state_name($widget) eq 'edit_bulk' ) {
+	$self->_split_fields($param->{$widget . '|text'});
+    } else {
+	$self->_split_super_bulk($param->{$widget . '|text'});
+    }
 
     set_state_data($widget, 'rows', $param->{$widget . '|rows'});
     set_state_data($widget, 'cols', $param->{$widget . '|cols'});
@@ -376,7 +372,7 @@ sub resize : Callback {
 
 sub change_default_field : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -390,7 +386,7 @@ sub change_default_field : Callback {
 
 sub change_sep : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -400,7 +396,7 @@ sub change_sep : Callback {
     set_state_data($self->class_key, 'custom_sep', $param->{$self->class_key.'|custom_sep'});
 
     # First split the fields along the old boundary character.
-    $split_fields->($self->class_key, $param->{$self->class_key.'|text'});
+    $self->_split_fields($param->{$self->class_key.'|text'});
 
     # Now load the new separator
     $sep = $param->{$self->class_key.'|separator'};
@@ -416,22 +412,22 @@ sub change_sep : Callback {
     # Get the data and pass it back to be resplit against the new separator
     $data = get_state_data($self->class_key, 'data');
     $sep  = get_state_data($self->class_key, 'separator');
-    $split_fields->($self->class_key, join("\n$sep\n", @$data));
+    $self->_split_fields(join("\n$sep\n", @$data));
     add_msg("Separator Changed.");
 }
 
 sub recount : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    $split_fields->($self->class_key, $self->params->{$self->class_key.'|text'});
+    $self->_split_fields($self->params->{$self->class_key.'|text'});
 }
 
 sub bulk_edit_this : Callback {
     my $self = shift;
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
@@ -454,39 +450,40 @@ sub bulk_edit_this : Callback {
 }
 
 sub bulk_save : Callback {
-    my ($self) = @_;     # @_ for &$handle_related_up
-    $drift_correction->($self);
+    my ($self) = @_;
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    &$handle_bulk_save;
+    $self->_handle_bulk_save;
 }
 
 sub bulk_up : Callback {
     my ($self) = @_;     # @_ for &$handle_bulk_up
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    &$handle_bulk_up;
+    $self->_handle_bulk_up;
 }
 
 sub bulk_save_and_up : Callback {
     my ($self) = @_;     # @_ for &$handle_bulk_*
-    $drift_correction->($self);
+    $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    &$handle_bulk_save;
-    &$handle_bulk_up;
+    $self->_handle_bulk_save;
+    $self->_handle_bulk_up;
 }
 
 
 ####################
 ## Misc Functions ##
 
-$push_tile_stack = sub {
-    my ($widget, $new_tile) = @_;
+sub _push_tile_stack {
+    my ($self, $new_tile) = @_;
+    my $widget = $self->class_key;
 
     # Push the current tile onto the stack.
     my $tiles    = get_state_data($widget, 'tiles');
@@ -502,9 +499,9 @@ $push_tile_stack = sub {
     set_state_data($widget, 'crumb', $crumb);
     set_state_data($widget, 'tiles', $tiles);
     set_state_data($widget, 'tile', $new_tile);
-};
+}
 
-$pop_tile_stack = sub {
+sub _pop_tile_stack {
     my ($widget) = @_;
 
     my $tiles = get_state_data($widget, 'tiles');
@@ -520,15 +517,16 @@ $pop_tile_stack = sub {
     set_state_data($widget, 'tile', $parent_tile);
     set_state_data($widget, 'tiles', $tiles);
     return $parent_tile;
-};
+}
 
-$pop_and_redirect = sub {
-    my ($self, $widget, $flip) = @_;
+sub _pop_and_redirect {
+    my ($self, $flip) = @_;
+    my $widget = $self->class_key;
     my $r = $self->apache_req;
 
     # Get the tile stack and pop off the current tile.
     my $tile = $flip ? get_state_data($widget, 'tile')
-                     : $pop_tile_stack->($widget);
+                     : _pop_tile_stack($widget);
 
     my $object_type = $tile->get_object_type;
 
@@ -545,15 +543,15 @@ $pop_and_redirect = sub {
         my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
         set_redirect($uri);
     }
-};
+}
 
-$delete_element = sub {
+sub _delete_element {
     my $self = shift;
     my $r = $self->apache_req;
     my $widget = $self->class_key;
 
     my $tile = get_state_data($widget, 'tile');
-    my $parent = $pop_tile_stack->($widget);
+    my $parent = _pop_tile_stack($widget);
     $parent->delete_tiles( [ $tile ]);
     $parent->save();
     my $object_type = $parent->get_object_type;
@@ -574,10 +572,10 @@ $delete_element = sub {
 
     add_msg('Element "[_1]" deleted.', $tile->get_name);
     return;
-};
+}
 
 
-$update_parts = sub {
+sub _update_parts {
     my ($self, $param) = @_;
     my (@curr_tiles, @delete, $locate_tile);
 
@@ -647,9 +645,9 @@ $update_parts = sub {
 
     set_state_data($widget, 'tile', $tile);
     return $locate_tile;
-};
+}
 
-$handle_related_up = sub {
+sub _handle_related_up {
     my ($self) = @_;
     my $r = $self->apache_req;
 
@@ -670,7 +668,7 @@ $handle_related_up = sub {
         set_redirect($uri);
     }
     pop_page();
-};
+}
 
 
 ################################################################################
@@ -683,8 +681,9 @@ $handle_related_up = sub {
 # each chunk into its own element, reusing existing elements if possible and
 # creating new ones otherwise.
 
-$save_data = sub {
-    my ($widget) = @_;
+sub _save_data {
+    my ($self) = @_;
+    my $widget = $self->class_key;
 
     # The tile currently being edited by container_prof
     my $tile   = get_state_data($widget, 'tile');
@@ -728,9 +727,9 @@ $save_data = sub {
     my @dtiles = grep($_->get_key_name eq $field, $tile->get_tiles());
 
     set_state_data($widget, 'dtiles', \@dtiles);
-};
+}
 
-$handle_bulk_up = sub {
+sub _handle_bulk_up {
     my ($self) = @_;
 
     # Set the state back to edit mode.
@@ -745,30 +744,30 @@ $handle_bulk_up = sub {
     if (get_state_data($self->class_key, 'view_flip')) {
         # Set flip back to false.
         set_state_data($self->class_key, 'view_flip', 0);
-        $pop_and_redirect->($self, $self->class_key, 1);
+        $self->_pop_and_redirect(1);
     } else {
-        $pop_and_redirect->($self, $self->class_key, 0);
+        $self->_pop_and_redirect(0);
     }
-};
+}
 
-$handle_bulk_save = sub {
+sub _handle_bulk_save {
     my ($self) = @_;
     my $param = $self->params;
 
     my $state_name = get_state_name($self->class_key);
 
     if ($state_name eq 'edit_bulk') {
-        $split_fields->($self->class_key, $param->{$self->class_key.'|text'});
-        $save_data->($self->class_key);
+        $self->_split_fields($param->{$self->class_key.'|text'});
+        $self->_save_data;
         my $data_field = get_state_data($self->class_key, 'field');
         add_msg('"[_1]" Elements saved.', $data_field);
     } else {
-        $split_super_bulk->($self, $param->{$self->class_key.'|text'});
+        $self->_split_super_bulk($param->{$self->class_key.'|text'});
         unless (num_msg() > 0) {
-            $super_save_data->($self);
+            $self->_super_save_data;
         }
     }
-};
+}
 
 #------------------------------------------------------------------------------#
 # super_save_data
@@ -776,7 +775,7 @@ $handle_bulk_save = sub {
 # Like save_data above, but recognize the POD style commands that allow the user
 # to specify what element goes with each chunk of text
 
-$super_save_data = sub {
+sub _super_save_data {
     my ($self) = @_;
     my $widget = $self->class_key;
 
@@ -855,7 +854,7 @@ $super_save_data = sub {
     $tile->save;
 
     set_state_data($widget, 'dtiles', $dtiles);
-};
+}
 
 #------------------------------------------------------------------------------#
 # split_fields
@@ -863,8 +862,9 @@ $super_save_data = sub {
 # Splits a bulk edit text area into chunks based on the separator the user has
 # choosen.  The default separator is "\n\n".
 
-$split_fields = sub {
-    my ($widget, $text) = @_;
+sub _split_fields {
+    my ($self, $text) = @_;
+    my $widget = $self->class_key;
     my $sep = get_state_data($widget, 'separator');
     my @data;
 
@@ -884,7 +884,7 @@ $split_fields = sub {
 
     # Save 'em.
     set_state_data($widget, 'data', \@data);
-};
+}
 
 #------------------------------------------------------------------------------#
 # compare_soundex
@@ -892,7 +892,7 @@ $split_fields = sub {
 # Compare two words using the Soundex algorithm and then subtracting the result
 # to find the nearest matching word.
 
-$compare_soundex = sub {
+sub _compare_soundex {
     my ($a, $b) = @_;
 
     ($a, $b) = Text::Soundex::soundex($a, $b);
@@ -901,7 +901,7 @@ $compare_soundex = sub {
             abs((substr($a, 1, 1)) - (substr($b, 1, 1))) +
             abs((substr($a, 2, 1)) - (substr($b, 2, 1))) +
             abs((substr($a, 3, 1)) - (substr($b, 3, 1))))
-};
+}
 
 #------------------------------------------------------------------------------#
 # compare_levenshtein
@@ -909,10 +909,10 @@ $compare_soundex = sub {
 # Compare two words using the levenshtein algorithm which returns a single
 # comparable number.
 
-$compare_levenshtein = sub {
+sub _compare_levenshtein {
     my ($a, $b) = @_;
     return Text::Levenshtein::distance($a, $b);
-};
+}
 
 #------------------------------------------------------------------------------#
 # compare
@@ -920,7 +920,7 @@ $compare_levenshtein = sub {
 # Alias to the comparison method to use.  First check for Text::levenshtein and
 # then the less effective Text::Soundex
 
-$compare = $Text::Levenshtein::VERSION ? $compare_levenshtein : $compare_soundex;
+my $compare = $Text::Levenshtein::VERSION ? \&_compare_levenshtein : \&_compare_soundex;
 
 #------------------------------------------------------------------------------#
 # closest
@@ -928,7 +928,7 @@ $compare = $Text::Levenshtein::VERSION ? $compare_levenshtein : $compare_soundex
 # Given a list of words and a target word, return the word from the list that
 # most closely matches the target word.
 
-$closest = sub {
+sub _closest {
     my ($words, $w) = @_;
     my ($lowest, $score);
 
@@ -942,7 +942,7 @@ $closest = sub {
     }
 
     return $lowest;
-};
+}
 
 #------------------------------------------------------------------------------#
 # split_super_bulk
@@ -950,7 +950,7 @@ $closest = sub {
 # Splits out chunks of text from the bulk edit textarea box as well as the
 # element name associated with it
 
-$split_super_bulk = sub {
+sub _split_super_bulk {
     my ($self, $text) = @_;
     my $widget = $self->class_key;
 
@@ -1031,7 +1031,7 @@ $split_super_bulk = sub {
             $seen{$type} = 1;
 
             if (not exists $poss_names{$type}) {
-                my $new_type = $closest->([keys %poss_names], $type);
+                my $new_type = _closest([keys %poss_names], $type);
                 add_msg('Bad element name "[_1]". Did you mean "[_2]"?', $type, $new_type);
             }
 
@@ -1060,12 +1060,12 @@ $split_super_bulk = sub {
     }
 
     set_state_data($widget, 'data', \@chunks);
-};
+}
 
 
 ###
 
-$drift_correction = sub {
+sub _drift_correction {
     my ($self) = @_;
     my $param = $self->params;
 
@@ -1119,7 +1119,7 @@ $drift_correction = sub {
 
     # Drift has now been corrected.
     $param->{'_drift_corrected_'} = 1;
-};
+}
 
 
 1;
