@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.8.3 ()
+=head1 VERSION 1.8.3 (2004-11-09)
 
 =head2 Improvements
 
@@ -67,7 +67,7 @@ the chances of a deadlock between long-running publishing transactions.
 
 =item *
 
-The installer now requires PostgreSQL 7.3 or later. This is becauase 7.2
+The installer now requires PostgreSQL 7.3 or later. This is because 7.2
 hasn't worked properly with Bricolage since 1.8.0. [David]
 
 =item *
@@ -90,10 +90,10 @@ Added Russian localization. [Sergey Samoilenko].
 
 Changed the foreign keys in the story, media, and formatting (template) tables
 so that C<DELETE>s do not cascade, but are restricted. This means that before
-deleting any source, element, site, worflow, or other related object that has
+deleting any source, element, site, workflow, or other related object that has
 a foreign key reference in an asset table, those rows must be deleted.
 Otherwise, PostgreSQL will throw an exception. Hopefully, this will put a stop
-to the mysterious but very rare disappearence of stories from Bricolage.
+to the mysterious but very rare disappearance of stories from Bricolage.
 [David]
 
 =item *
@@ -108,7 +108,7 @@ and makes the operation of Bric::Dist::Handler more efficient. [David]
 
 A call to C<< $burner->burn_another >> in a template that passes in a
 date/time string in the future now causes a publish job to be scheduled for
-that time, rather than immediate burning the document and then scheduing the
+that time, rather than immediate burning the document and then scheduling the
 distribution to take place in the future. Reported by Ashlee Caul. [David]
 
 =item *
@@ -136,7 +136,7 @@ Added missing constraint to the "type" column of the "workflow" table. [David]
 =item *
 
 Changing the sort order of a list of items in a search interface now properly
-reverses the entire colletion of object over the pages, rather than just the
+reverses the entire collection of object over the pages, rather than just the
 objects for the current page. Thanks to Marshall for the spot! [David]
 
 =back
@@ -162,7 +162,7 @@ Documents that the SOAP workflow publish finds in workflow but not on a desk
 
 =item *
 
-The Burner object's C<encoding> attribute is now settable as well as readable.
+The Burner object's C<encoding> attribute is now setable as well as readable.
 [David]
 
 =item *
@@ -199,7 +199,7 @@ Reported by Rod Taylor. [David]
 =item *
 
 A false value passed to the C<checked_out> parameter of the C<list()> and
-C<list_ids()> methods of thestory, media, and template (formatting) classes
+C<list_ids()> methods of the story, media, and template (formatting) classes
 now properly returns only objects or IDs for assets that are not checked out.
 [David]
 
@@ -297,7 +297,7 @@ properly execute. Thanks to Christian Hauser for the spot! [David]
 =item *
 
 Publishing stories or media via SOAP with the C<published_only> parameter
-(C<--published-only> fof F<bric_republish>) now correctly republishes the
+(C<--published-only> for F<bric_republish>) now correctly republishes the
 published versions of documents even if the current version is in workflow.
 Reported by Adam Rinehart. [David]
 
