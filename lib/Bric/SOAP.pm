@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -18,11 +18,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2002-02-22 20:18:13 $
+$Date: 2002-02-22 23:54:13 $
 
 =head1 SYNOPSIS
 
@@ -178,7 +178,7 @@ Provides query, export, update, create and delete for Element definitions.
 
 Provides query, export, update, create and delete for Category objects.
 
-=item L<Bric::SOAP::Workflow|Bric::SOAP::Workflow> B<[Implementation Incomplete]>
+=item L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>
 
 Provides the ability to move Story, Media and Formatting objects
 between desks, publish and deploy.
