@@ -8,7 +8,7 @@
 #   upgrade   - upgrades an existing installation
 #   uninstall - uninstalls an existing installation
 #   clean     - delete intermediate files
-#   dist      - prepare a distrubution from a Subversion checkout
+#   dist      - prepare a distribution from a Subversion checkout
 #   clone     - create a distribution based on an existing system
 #   test      - run non-database changing test suite
 #   devtest   - run all tests, including those that change the database
@@ -39,7 +39,7 @@ modules.db 	: inst/modules.pl lib/Bric/Admin.pod
 apache.db	: inst/apache.pl required.db
 	$(PERL) inst/apache.pl
 
-# This shoudl be updated to something more database-independent. In fact,
+# This should be updated to something more database-independent. In fact,
 # what should happen is that a script should present a list of supported
 # databases, the user picks which one (each with a key name for the DBD
 # driver, e.g., "Pg", "mysql", "Oracle", etc.), and then the rest of the
