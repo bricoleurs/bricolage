@@ -14,6 +14,19 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.6.15 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+The C<desk_id> parameter to the C<list()> methods of the story, media, and
+template classes now works. [JoE<atilde>o Pedro]
+
+=back
+
 =head1 VERSION 1.6.14 (2004-05-02)
 
 =head2 Bug Fixes
