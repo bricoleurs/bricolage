@@ -20,20 +20,24 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Revised Bric::Biz::Keyword implementation to improve performance. The
-new implementation no longer relies on the Bric::Util::Grp system.
-Also implemented API and database support for Media keywords.  [Sam]
+Revised Bric::Biz::Keyword implementation to improve performance. The new
+implementation no longer relies on the Bric::Util::Grp system. Also
+implemented API and database support for Media keywords. [Sam]
 
 =item *
 
-Added support for search Media by category and file name through the
-SOAP inerface and standard API. [Sam]
+Added support for search Media by category and file name through the SOAP
+inerface and standard API. [Sam]
 
 =item *
 
-Added new --save-cookie-file and --use-cookie-file options to
-bric_soap to allow authentication to span bric_soap calls.  This can
-result in significant time savings across multiple invocations.  [Matt]
+Added new --save-cookie-file and --use-cookie-file options to bric_soap to
+allow authentication to span bric_soap calls. This can result in significant
+time savings across multiple invocations. [Matt]
+
+=item *
+
+Added README.MacOSX. [David]
 
 =item *
 
@@ -92,12 +96,17 @@ be more portable. [David]
 
 =item *
 
-Fixed bug that was preventing 'make upgrade' from running database
-upgrade scripts. [Sam]
+Fixed bug that was preventing 'make upgrade' from running database upgrade
+scripts. [Sam]
 
 =item *
 
-Fixed broken "Log" link on Media Search results screen.  [Sam]
+Fixed broken "Log" link on Media Search results screen. [Sam]
+
+=item *
+
+Fixed bug where deleted output channels were showing up in list of available
+output channels in the element profile. [David]
 
 =back
 

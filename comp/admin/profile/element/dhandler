@@ -52,7 +52,7 @@ if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
     }
 
     # Assemble a list of all output channels.
-    foreach my $oc ( Bric::Biz::OutputChannel->list ) {
+    foreach my $oc ( Bric::Biz::OutputChannel->list({ active => 1 }) ) {
 	push @$left, { value =>  $oc->get_id, description => $oc->get_name };
 	push @$opt, [ $oc->get_id, $oc->get_name ];
     }
@@ -231,11 +231,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2001-12-10 21:39:21 $
+$Date: 2002-06-29 00:34:54 $
 
 =head1 DESCRIPTION
 
