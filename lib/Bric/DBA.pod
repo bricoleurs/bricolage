@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.9.2.3 $
+$Revision: 1.9.2.4 $
 
 =head1 DATE
 
-$Date: 2003-06-05 16:12:03 $
+$Date: 2003-06-05 16:26:43 $
 
 =head1 DESCRIPTION
 
@@ -222,7 +222,7 @@ memory to PostgreSQL!
 Since Bricolage is a large database and we recommend the use of a server with
 lots of RAM, you will likely want to set C<shared_buffers> to a value between
 2048 and 4096. (Bricolage typically doesn't have too many concurrent
-connections.) In the following example, we'll domonstrate how to set the value
+connections.) In the following example, we'll demonstrate how to set the value
 to 4096 (32 MB).
 
 First you may need to set your kernel to allow for the shared memory
@@ -246,6 +246,18 @@ default setting is 1024 (again these are 8Kb buffers). You'll probably want
 this set to at least 8192 (32 MB).
 
   sort_mem = 8192
+
+And finally, since Bricolage is a web application with persistent database
+connections, you can likely decrease the value of the C<max_connections>
+setting in F<postgresql.conf> from its default value of 32 to between 6 and 16
+or so. Watch your Bricolage server to see how many connections it holds to the
+database in order to determine the optimum setting. Since the amount of shared
+memory that PostgreSQL will request from the OS kernel is the value of
+C<max_connections * shared_buffers>, lowering this number can also help you to
+find a middle ground between a healthy value for C<shared_buffers> and needing
+to reconfigure the kernel's SHMMAX.
+
+  max_connections = 8
 
 See Bruce Momjian's article "PostgreSQL Hardware Performance Tuning" at
 L<http://www.ca.postgresql.org/docs/momjian/hw_performance/> for more on
