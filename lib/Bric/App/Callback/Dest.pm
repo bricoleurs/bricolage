@@ -5,7 +5,6 @@ __PACKAGE__->register_subclass(class_key => 'dest');
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Session;
 use Bric::App::Util qw(:all);
 
 my $type = 'dest';
