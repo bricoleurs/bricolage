@@ -28,7 +28,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 	useTable => 0
 	) unless $no_del;
 
-$m->out('&nbsp;<span class=burgandyLabel>' . $chk_label . '</span>') unless $no_del;
+$m->out('&nbsp;<span class=burgandyLabel>' . $lang->maketext($chk_label) . '</span>') unless $no_del;
 </%perl>
   </td>
 </tr>
@@ -63,15 +63,15 @@ formButtons.mc
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 03:25:48 $
+$Date: 2003-09-23 17:25:57 $
 
 =head1 SYNOPSIS
 

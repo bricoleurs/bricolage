@@ -98,7 +98,7 @@ $m->comp('/widgets/listManager/listManager.mc',
 	 behavior => $behavior,
 	 object => $obj_key,
 	 profile => $prof_sub,
-	 title => $def->{$type}{title} || $lang->maketext('Existing %n'),
+	 title =>   $def->{$type}{title} || 'Existing %n',
 	 fields => $def->{$type}{list_fields},
 	 addition => $type eq 'pref' || $type eq 'job' ? undef : $add_sub,
 	 select => $def->{$type}{select},
@@ -383,11 +383,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2003-09-16 04:45:30 $
+$Date: 2003-09-23 17:25:54 $
 
 =head1 SYNOPSIS
 

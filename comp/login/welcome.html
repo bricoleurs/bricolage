@@ -5,11 +5,19 @@
 &>
 
 <& /widgets/wrappers/sharky/table_top.mc &>
+<%perl>
+
+my $string   = $lang->maketext('Please click [_1]here[_2] to start.',
+               "<a href='#' class='redLinkLarge' onclick=\"var newWin = window.open('$ARGS{referer}', 'Bricolage_" . SERVER_WINDOW_NAME .
+               "', 'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1,width=780'); newWin.focus(true);\">",
+               '</a>'
+               );
+</%perl>
 
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td>&nbsp;</td></tr>
 <tr><td>&nbsp;</td><td class="subHeader">
-Please click <a href="#" class="redLinkLarge" onclick="var newWin = window.open('<% $ARGS{referer} %>', 'Bricolage_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1,width=780'); newWin.focus(true);">here</a> to start.</p>
+<% $string %></p>
 </td><td>&nbsp;</td></tr>
 <tr><td>&nbsp;</td></tr>
 </table>

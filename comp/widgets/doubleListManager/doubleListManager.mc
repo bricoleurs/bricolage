@@ -7,15 +7,15 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 04:36:58 $
+$Date: 2003-09-23 17:25:57 $
 
 =head1 SYNOPSIS
 
@@ -74,6 +74,9 @@ $size           => 10
 
 my ($left, $right, %seen) = ('', '');
 my (@leftVals, @rightVals);
+
+$leftCaption  = $lang->maketext($leftCaption);
+$rightCaption = $lang->maketext($rightCaption);
 
 
 # Build the right-hand list.

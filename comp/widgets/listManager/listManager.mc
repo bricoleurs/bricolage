@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:19 $
+$Date: 2003-09-23 17:25:57 $
 
 =head1 SYNOPSIS
 
@@ -344,7 +344,7 @@ $pkg->list({'name'        => $param->{'name_field'},
 <%args>
 $object                        # The object type to display
 $style          => 'full_list'  # The list style (full or paginated)
-$title          => $lang->maketext('Existing %n') # Text for the title of this list.
+$title          => 'Existing %n' # Text for the title of this list.
 $sortBy         => ''           # Default to sorting by ID
 $userSort       => 1            # A flag for whether the user can resort the list
 $profile        => ['Edit', ''] # URL to the profile for this object.
@@ -388,6 +388,9 @@ $fields ||= [sort keys %$meth];
 
 # Set the title
 my $name = get_class_info($object)->get_plural_name;
+
+$title = $lang->maketext($title);
+
 $title =~ s/\%n/$lang->maketext($name)/e;
 
 # We need a hash of featured IDs to use for later
