@@ -6,7 +6,7 @@ $id => undef
 </%args>
 <%init>;
 
-if ($ARGS{id}) {
+if ($ARGS{id} or $ARGS{site_id}) {
     $m->comp('edit.html', widget => $widget,
                           id     => $id,
                           %ARGS);
@@ -43,11 +43,11 @@ if ($ARGS{id}) {
 
 =head1 VERSION
 
-$Revision: 1.10.2.6 $
+$Revision: 1.10.2.7 $
 
 =head1 DATE
 
-$Date: 2003-03-10 18:30:54 $
+$Date: 2003-03-11 02:50:05 $
 
 =head1 DESCRIPTION
 
