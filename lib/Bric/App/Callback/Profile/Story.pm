@@ -797,18 +797,19 @@ $save_data = sub {
             $story->set_slug($param->{slug});
             my $msg = $story->check_uri($uid);
             if ($msg) {
+                my $lang = $self->lang;
                 if ($old_slug) {
                     my $langmsg = "The slug has been reverted to [_1], as "
                       . "the slug [_2] caused this story to have a URI "
                       . "conflicting with that of story [_3].";
                     my @args = ("'$old_slug'", "'$param->{slug}'", "'$msg'");
-                    add_msg(lang->maketext($langmsg, @args));
+                    add_msg($lang->maketext($langmsg, @args));
                     $story->set_slug($old_slug);
                 } else {
                     my $langmsg = "The slug, category and cover date you selected "
                       . "would have caused this story to have a URI "
                       . "conflicting with that of story [_1].";
-                    add_msg($self->lang->maketext($langmsg, "'$msg'"));
+                    add_msg($lang->maketext($langmsg, "'$msg'"));
                 }
                 $data_errors = 1;
             }
