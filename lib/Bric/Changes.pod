@@ -228,6 +228,13 @@ reverts all changes to the time the user checked out the document or
 template. Reversion is also a bit more efficient in how it looks up the
 previous version in the database. [David]
 
+=item *
+
+The SOAP server now rolls back any changes whenever an error is thrown. This
+prevents problems when a few objects are created or updated before an
+exception is thrown. Now any error will cause the entire SOAP request to
+fail. Thanks to Neal Sofge for the spot! [David]
+
 =back
 
 =cut
