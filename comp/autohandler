@@ -10,7 +10,6 @@ Bric::App::Session::handle_callbacks($m, \%ARGS) unless $ARGS{__CB_DONE};
 # Execute the dhandlers.
 $m->call_next(%ARGS);
 </%perl>
-
 <%doc>
 ###############################################################################
 
@@ -20,11 +19,11 @@ autohandler - The first Mason element to execute during a request.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-02-27 21:58:58 $
+$Date: 2003-03-12 04:02:27 $
 
 =head1 SYNOPSIS
 
@@ -35,4 +34,3 @@ N/A
 This is the root autohandler. It's job is to handle callbacks.
 
 </%doc>
-

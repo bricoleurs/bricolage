@@ -1,4 +1,4 @@
 <help page="Not Found">
-<p>No help available for this topic.</p>
+<p><% $lang->maketext("No help available for this topic.") %></p>
 
 </help>

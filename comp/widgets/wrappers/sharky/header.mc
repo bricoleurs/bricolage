@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =head1 DATE
 
-$Date: 2003-03-12 03:25:54 $
+$Date: 2003-03-12 04:03:37 $
 
 =head1 SYNOPSIS
 
@@ -20,8 +20,8 @@ $Date: 2003-03-12 03:25:54 $
 HTML wrapper for top and side navigation.
 
 =cut
-</%doc>
 
+</%doc>
 <%args>
 $title   => get_pref('Bricolage Instance Name')
 $jsInit  => ""
@@ -31,7 +31,6 @@ $no_toolbar => NO_TOOLBAR
 $no_hist => 0
 $debug => undef
 </%args>
-
 <%init>;
 my @context =  split /\|/, $context;
 for (@context){
@@ -94,7 +93,6 @@ foreach my $t (@title) {
 }
 
 </%init>
-
 <html>
 <head>
 <title><% $lang->maketext($title) %></title>
@@ -142,7 +140,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 <tr>
 	<td width=150>
 % if ($useSideNav) {
-        <a href="#" onClick="window.open('/help/about.html', 'About_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'); return false;"><img src="/media/images/<% $lang_key %>/bricolage.gif" width="150" height="25" border="0" /></a>
+        <a href="#" onClick="window.open('/help/<% $lang_key %>/about.html', 'About_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'); return false;"><img src="/media/images/<% $lang_key %>/bricolage.gif" width="150" height="25" border="0" /></a>
 % } else {
         <img src="/media/images/<% $lang_key %>/bricolage.gif" width="150" height="25" border="0" />
 % }
@@ -270,8 +268,3 @@ while (my $txt = next_msg) {
   </table>
 % }
 <br />
-
-
-
-
-

@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-03-12 03:25:59 $
+$Date: 2003-03-12 04:03:38 $
 
 =head1 SYNOPSIS
 
@@ -699,6 +699,7 @@ use constant key => 'pt_pt';
       'Template' => 'Modelo',
       'Clone' => 'Clone',
       'Cascade into Subcategories' => 'Cascade into Subcategories',
+      'No help available for this topic.' => 'No help available for this topic.',
   );
 
 =cut
