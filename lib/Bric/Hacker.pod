@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.37.2.4 $
+$Revision: 1.37.2.5 $
 
 =head1 DATE
 
-$Date: 2003-04-06 02:41:50 $
+$Date: 2003-04-29 00:02:46 $
 
 =head1 DESCRIPTION
 
@@ -544,6 +544,8 @@ does indeed build and properly install itself.
   # Start PostgreSQL.
   sudo make install
   make devtest
+  sudo bric_apachectl start
+  # Log in to the UI and test it a bit.
   sudo make uninstall
 
 Be sure to run C<make devtest> after everything is installed to make sure that
