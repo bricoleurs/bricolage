@@ -23,7 +23,7 @@ sub deactivate : Callback {
         if (chk_authz($grp, EDIT)) {
             if ($grp->get_permanent) {
                 # Disallow deletion of permanent groups.
-                add_msg($lang->maketext("[_1] cannot be deleted", $disp_name));
+                add_msg($self->lang->maketext("[_1] cannot be deleted", $disp_name));
             } else {
                 # Deactivate it.
                 $grp->deactivate;
@@ -38,7 +38,7 @@ sub deactivate : Callback {
             log_event('grp_deact', $grp);
         } else {
             my $msg = 'Permission to delete [_1] denied.';
-            add_msg($lang->maketext($msg, '&quot;' . $grp->get_name . '&quot;'));
+            add_msg($self->lang->maketext($msg, '&quot;' . $grp->get_name . '&quot;'));
         }
     }
 }
