@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-22 03:42:22 $
+$Date: 2004-02-11 19:08:42 $
 
 =head1 SYNOPSIS
 
@@ -464,7 +464,7 @@ Unable to connect to database.
 
 Unable to prepare SQL statement.
 
-
+=item *
 
 Unable to select column into arrayref.
 
