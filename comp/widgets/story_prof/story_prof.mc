@@ -8,11 +8,11 @@ story_prof.mc - The profile of stories widget
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-11-30 06:23:37 $
+$Date: 2003-03-15 21:30:09 $
 
 =head1 SYNOPSIS
 
@@ -138,7 +138,7 @@ if (my $story = get_state_data($widget, 'story')) {
     # Set the title for this request.
     $r->pnotes("$widget|title", '&quot;' . $story->get_title . '&quot;');
 }
-
+print STDERR $state.'_'.$section.'.html' . "\n";
 $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
 </%init>
 

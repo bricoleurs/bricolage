@@ -433,6 +433,9 @@ my $handle_create = sub {
     # Set the workflow this media should be in.
     $media->set_workflow_id($WORK_ID);
 
+    $media->set_site_id($param->{site_id})
+      if exists $param->{site_id};
+
     # Save the media object.
     $media->save;
 
