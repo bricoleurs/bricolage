@@ -86,7 +86,7 @@ if ($field eq 'preview') {
 	# Instantiate the media.
 	my $media = Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
 	$b->publish($media, 'media', get_user_id(), $param->{pub_date});
-        add_msg("Media &quot;" . $m->get_title . "&quot; published.")
+        add_msg("Media &quot;" . $media->get_title . "&quot; published.")
           if $count <= 3;
     }
     add_msg("$count media published.") if $count > 3;

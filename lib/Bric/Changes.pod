@@ -154,6 +154,11 @@ Previewing a story while searching for a related story to link to an element
 no longer replaces the Bricolage UI with the preview, as was happening with
 some browsers. Instead, a separate preview window is opened. [David]
 
+=item *
+
+When publishing a media asset, its name will not be properly added to the UI
+message, without causing an error. [Petar Bojkov]
+
 =back
 
 =head1 VERSION 1.4.4

@@ -104,6 +104,8 @@ Folks who have submitted patches include:
 
 =item Michael Robinton
 
+=item Petar Bojkov
+
 =back
 
 Friends who have spotted bugs include:
