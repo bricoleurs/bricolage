@@ -32,7 +32,7 @@ AC_VAR_WITH(POSTGRES_ROOT_USER,pgroot-user,postgres)
 AC_VAR_WITH(POSTGRES_SYSTEM_USER,pgsystem-user,postgres)
 # TODO: System defaults for these can be determined from $APACHE -V
 AC_VAR_WITH(SERVER_ROOT,server_root,/usr/local/apache)
-AC_VAR_WITH(APACHE_CONF,apache-conf,'${prefix}/conf')
+AC_VAR_WITH(APACHE_CONF,apache-conf,'${prefix}/conf/httpd.conf')
 AC_VAR_WITH(LOGDIR,lod_dir,${SERVER_ROOT}/logs)
 AC_VAR_WITH(ERROR_LOG,error_log,${LOGDIR}/error.log)
 AC_VAR_WITH(ACCESS_LOG,access_log,${LOGDIR}/access.log)

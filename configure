@@ -644,7 +644,7 @@ Optional Packages:
 
   --with-server_root   defaults to /usr/local/apache
 
-  --with-apache-conf   defaults to '${prefix}/conf'
+  --with-apache-conf   defaults to '${prefix}/conf/httpd.conf'
 
   --with-lod_dir       defaults to ${SERVER_ROOT}/logs
 
@@ -1110,7 +1110,7 @@ if test "${with_apache_conf+set}" = set; then
   withval="$with_apache_conf"
   APACHE_CONF=${withval}
 else
-  APACHE_CONF='${prefix}/conf'
+  APACHE_CONF='${prefix}/conf/httpd.conf'
 fi;
 
 # Check whether --with-lod_dir or --without-lod_dir was given.
