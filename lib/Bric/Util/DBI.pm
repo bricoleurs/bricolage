@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.16 $
+$Revision: 1.21.2.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.17 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-14 22:04:07 $
+$Date: 2003-08-14 22:15:45 $
 
 =head1 SYNOPSIS
 
@@ -467,7 +467,7 @@ B<Notes:> NONE.
 
 sub prepare_ca {
     my $dbh = _connect();
-    my $sth = eval { $dbh->prepare_cached(@_, 1) };
+    my $sth = eval { $dbh->prepare_cached(@_[0, 1], 1) };
     throw_da error   => "Unable to prepare SQL statement\n\n$_[0]",
              payload => $@
       if $@;
