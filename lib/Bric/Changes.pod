@@ -238,6 +238,11 @@ Assigned apporpriate permissions to allow the default "Story Editors," "Media
 Producers," and "Template Developers" to access the default workflow and desks
 relevant to them. They hadn't had that access by default before. [David]
 
+=item *
+
+Changed the plural name of the "Category Group" class from "Category Group" to
+"Category Groups". [David]
+
 =back
 
 =head1 VERSION 1.5.0

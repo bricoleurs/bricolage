@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -152,7 +152,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES (46, 'media', 'Bric::Biz::Asset::Business::Media', 'Media', 'Media', 'Media objects.', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES (47, 'category_set', 'Bric::Util::Grp::CategorySet', 'Category Group', 'Category Group', 'A group of related categories', 0);
+VALUES (47, 'category_set', 'Bric::Util::Grp::CategorySet', 'Category Group', 'Category Groups', 'A group of related categories', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (48, 'pref', 'Bric::Util::Pref', 'Preference', 'Preferences', 'Preference objects.', 0);
