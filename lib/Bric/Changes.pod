@@ -116,6 +116,12 @@ C<list_ids()> methods of thestory, media, and template (formatting) classes
 now properly returns only objects or IDs for assets that are not checked out.
 [David]
 
+=item *
+
+The cover date select widget now works properly in the clone interface when a
+non-ISO style date preference is selected. Thanks to Susan G. for the spot!
+[David]
+
 =back
 
 =cut

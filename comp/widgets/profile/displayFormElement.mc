@@ -137,7 +137,6 @@ my $agent = detect_agent();
 $vals->{props}{cols} = $cols if ($cols);
 $vals->{props}{rows} = $rows if ($rows);
 $localize_opts = $localize;
-
 if ($objref) {
     # fetch ref to introspection hash
     my $methods = $objref->my_meths;
@@ -171,7 +170,7 @@ if ($objref) {
 	    . qq{"$methods->{$key}{disp}"</script>\n}) if $methods->{$key}{req};
 } elsif ($vals) {
     my $value     = $vals->{value};
-    my $formType  = $vals->{props}{type} || return;;
+    my $formType  = $vals->{props}{type} || return;
     $width   ||= $vals->{width}  ? $vals->{width}  : 578;
     $indent  ||= $vals->{indent} ? $vals->{indent} : FIELD_INDENT;
     my $label     =  ($vals->{req}) ? "redLabel" : "label";
