@@ -55,6 +55,12 @@ infinite loop with redirects of redirects. The F<favicon.ico> still doesn't
 pop up in the location field in my browser, but it does display proplerly if I
 point my browser at it. [David]
 
+=item *
+
+An attempt to create a document with the same URI as an existing document no
+longer litters the database with broken stories. Thanks to Arthur for the
+spot. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)

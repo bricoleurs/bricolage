@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+our $VERSION = (qw$Revision: 1.52 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 16:48:40 $
+$Date: 2003-10-28 00:08:24 $
 
 =head1 SYNOPSIS
 
@@ -428,6 +428,9 @@ sub filter {
 sub cb_exception_handler {
     my $err = shift;
     rethrow_exception $err unless isa_bric_exception($err, 'Error');
+    # Rollback any changes.
+    rollback(1);
+    begin(1);
     add_msg($err->maketext);
 }
 

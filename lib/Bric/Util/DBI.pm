@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-10-15 23:01:04 $
+$Date: 2003-10-28 00:08:24 $
 
 =head1 SYNOPSIS
 
@@ -105,7 +105,7 @@ use constant DB_DATE_FORMAT => '%Y-%m-%d %T';
 # Package constant variables. This one is for the DB connection attributes.
 my $ATTR =  { RaiseError => 1,
 	      PrintError => 0,
-	      AutoCommit => 1,
+	      AutoCommit => 0,
 	      ChopBlanks => 1,
 	      ShowErrorStatement => 1,
 	      LongReadLen => 32768,

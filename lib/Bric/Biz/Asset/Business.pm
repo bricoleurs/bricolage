@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 10:54:22 $
+$Date: 2003-10-28 00:08:24 $
 
 =head1 SYNOPSIS
 
@@ -2508,19 +2508,9 @@ sub _update_uris {
 
     if (my $err = $@) {
         # Just die if its any exception other than the one we're interested in.
+        # XXX This isn't really compatable with non-7.3 PostgreSQLs. Fix.
         rethrow_exception($err) unless $err->get_payload =~
           /Cannot insert a duplicate key into unique index udx_$key\_uri__site_id__uri/;
-        # There's a URI conflict. Rollback the database changes if we're in
-        # mod_perl (otherwise, save() will roll it back for us.
-        if (MOD_PERL) {
-            rollback(1);
-            # Start a new transaction, since Bricolage's Apache handler will
-            # commit it, anyway.
-            begin(1);
-        } else {
-            # Nothing! Leaving this in keeps the compiler from emitting the
-            # "Useless use of a constant in void context" warning.
-        }
         my $things = $key eq 'media'
           ? 'category, or file name'
           : 'or categories';
