@@ -49,7 +49,7 @@ sub construct {
 # Test the clone() method.
 ##############################################################################
 
-sub test_clone : Test(15) {
+sub test_clone : Test(17) {
     my $self = shift;
     ok( my $story = $self->construct( name => 'Flubber',
                                       slug => 'hugo'),
@@ -63,7 +63,7 @@ sub test_clone : Test(15) {
 
     # Clone the story.
     ok( $story->clone, "Clone story" );
-#    ok( $story->set_slug('jarkko'), "Change the slug" );
+    ok( $story->set_slug('jarkko'), "Change the slug" );
     ok( $story->save, "Save cloned story" );
     ok( my $cid = $story->get_id, "Get cloned ID" );
     $self->add_del_ids([$cid], $key);
@@ -78,9 +78,11 @@ sub test_clone : Test(15) {
 
     # Check that the story is really cloned!
     isnt( $sid, $cid, "Check for different IDs" );
-    is( $orig->get_title, $clone->get_title, "Compare titles" );
-    is( $orig->get_slug, $clone->get_slug, "Compare slugs" );
-    is( $orig->get_uri, $clone->get_uri, "Compare uris" );
+    is( $clone->get_title, $orig->get_title, "Compare titles" );
+    is( $clone->get_slug, 'jarkko', "Compare slugs" );
+    ok( my $ouri = $orig->get_uri, "Get original URI" );
+    $ouri =~ s/slug4/jarkko/;
+    is( $clone->get_uri, $ouri, "Compare uris" );
 
     # Check that the output channels are the same.
     ok( my @oocs = $orig->get_output_channels, "Get original OCs" );
