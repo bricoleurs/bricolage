@@ -7,24 +7,24 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-26 00:39:03 $
+$Date: 2003-01-22 05:36:03 $
 
 =head1 SYNOPSIS
 
  use Bric::Biz::ATType;
 
-
 =head1 DESCRIPTION
 
-
+This class sets up properties that are common to all elements
+(Bric::Biz::AssetType) objects of a type.
 
 =cut
 
@@ -33,26 +33,23 @@ $Date: 2002-10-26 00:39:03 $
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
- 
+# Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::ElementType;
 
 #==============================================================================#
 # Inheritance                          #
 #======================================#
-
 use base qw(Bric);
 
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
+# None.
 
 
 #==============================================================================#
@@ -78,19 +75,17 @@ use constant INSTANCE_GROUP_ID => 28;
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-our $METH;
-
-#--------------------------------------#
-# Private Class Fields                  
-
-
+# Public Class Fields
+# None.
 
 #--------------------------------------#
-# Instance Fields                       
+# Private Class Fields
+my $METH;
 
-# This method of Bricolage will call 'use fields' for you and set some permissions.
+
+
+#--------------------------------------#
+# Instance Fields
 BEGIN {
     Bric::register_fields({
 			 # Public Fields
@@ -121,8 +116,7 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors                          
-
+# Constructors
 #------------------------------------------------------------------------------#
 
 =item $obj = new Bric::Biz::ATType($init);
@@ -216,7 +210,6 @@ NONE
 sub lookup {
     my $class = shift;
     my ($init) = @_;
-    
     return unless exists $init->{'id'};
 
     # Create the object via fields which returns a blessed object.
@@ -313,13 +306,13 @@ sub list {
     foreach my $d (@$ret) {
 	# Create the object via fields which returns a blessed object.
 	my $self = bless {}, $class;
-	
+
 	# Call the parent's constructor.
 	$self->SUPER::new();
-	
+
 	# Set the columns selected as well as the passed ID.
 	$self->_set(['id', FIELDS], $d);
-	
+
 	push @all, $self;
     }
 
@@ -349,7 +342,6 @@ NONE
 sub list_ids {
     my $self = shift;
     my ($param) = @_;
-
     return $self->list($param, 1);
 }
 
@@ -370,44 +362,6 @@ sub DESTROY {
 
 #------------------------------------------------------------------------------#
 
-=head2 Public Instance Methods
-
-=over
-
-=item $success = $attype->remove;
-
-Deletes the AT type from the database.
-
-B<Throws:>
-
-NONEEE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub remove {
-    my $self = shift;
-    my $id   = $self->get_id;
-
-    return unless defined $id;
-
-    my $sth = prepare_c('DELETE FROM '.TABLE.' WHERE id=?');
-    execute($sth, $id);
-    
-    return 1;
-}
-
-#--------------------------------------#
-
-=back
-
 =head2 Public Class Methods
 
 =over 4
@@ -416,21 +370,136 @@ sub remove {
 
 #------------------------------------------------------------------------------#
 
-=item $val = my_meths->{$key}->[0]->($obj);
+=item my $meths = Bric::Biz::ATType->my_meths
 
-Introspect this object.
+=item my (@meths || $meths_aref) = Bric::Biz::ATType->my_meths(TRUE)
 
-B<Throws:>
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
+intrspection data. The format for each introspection item introspection is as
+follows:
 
-NONE
+Each hash key is the name of a property or attribute of the object. The value
+for a hash key is another anonymous hash containing the following keys:
 
-B<Side Effects:>
+=over 4
 
-NONE
+=item name
 
-B<Notes:>
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-NONE
+=item disp
+
+The display name of the property or attribute.
+
+=item get_meth
+
+A reference to the method that will retrieve the value of the property or
+attribute.
+
+=item get_args
+
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
+
+=item set_meth
+
+A reference to the method that will set the value of the property or
+attribute.
+
+=item set_args
+
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
+
+=item type
+
+The type of value the property or attribute contains. There are only three
+types:
+
+=over 4
+
+=item short
+
+=item date
+
+=item blob
+
+=back
+
+=item len
+
+If the value is a 'short' value, this hash key contains the length of the
+field.
+
+=item search
+
+The property is searchable via the list() and list_ids() methods.
+
+=item req
+
+The property or attribute is required.
+
+=item props
+
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
+
+=over 4
+
+=item type
+
+The display field type. Possible values are
+
+=over 4
+
+=item text
+
+=item textarea
+
+=item password
+
+=item hidden
+
+=item radio
+
+=item checkbox
+
+=item select
+
+=back
+
+=item length
+
+The Length, in letters, to display a text or password field.
+
+=item maxlength
+
+The maximum length of the property or value - usually defined by the SQL DDL.
+
+=back
+
+=item rows
+
+The number of rows to format in a textarea field.
+
+=item cols
+
+The number of columns to format in a textarea field.
+
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -598,10 +667,6 @@ sub my_meths {
 
 =over 4
 
-=cut
-
-#------------------------------------------------------------------------------#
-
 =item $name = $att->get_name();
 
 =item $name = $att->set_name($name);
@@ -720,18 +785,41 @@ sub is_active {
 
 sub activate {
     my $self = shift;
-
     $self->_set__dirty(1);
-
     $self->_set(['_active'], [1]) and return $self;
 }
 
 sub deactivate {
     my $self = shift;
-
     $self->_set__dirty(1);
-    
     $self->_set(['_active'], [0]) and return $self;
+}
+
+=item $success = $attype->remove;
+
+Deletes the AT type from the database.
+
+B<Throws:>
+
+NONEEE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub remove {
+    my $self = shift;
+    my $id   = $self->get_id;
+    return unless defined $id;
+    my $sth = prepare_c('DELETE FROM '.TABLE.' WHERE id=?');
+    execute($sth, $id);
+    return 1;
 }
 
 #------------------------------------------------------------------------------#
@@ -757,7 +845,7 @@ NONE
 sub save {
     my $self = shift;
     my $id = $self->get_id;
- 
+
     return unless $self->_get__dirty;
 
     if ($id) {
@@ -773,28 +861,19 @@ sub save {
 
 #==============================================================================#
 
-=head2 Private Methods
-
-=cut
-
-#--------------------------------------#
+=back
 
 =head2 Private Class Methods
 
 NONE
 
-=cut
-
-
-# Add methods here that do not require an object be instantiated, and should not
-# be called outside this module (e.g. utility functions for class methods).
-# Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
-
 =head2 Private Instance Methods
 
-NONE
+Several that need documenting.
+
+=over 4
+
+=item _select_attype
 
 =cut
 
@@ -819,31 +898,33 @@ sub _select_attype {
     } else {
 	execute($sth, @$bind);
 	bind_columns($sth, \@d[0..(scalar COLS)]);
-	
 	while (fetch($sth)) {
 	    push @ret, [@d];
 	}
-	
 	finish($sth);
-	
 	return \@ret;
     }
 }
 
+=item _update_attype
 
+=cut
 
 sub _update_attype {
     my $self = shift;
-    
+
     my $sql = 'UPDATE '.TABLE.
               ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
 
 
     my $sth = prepare_c($sql);
     execute($sth, $self->_get(FIELDS), $self->get_id);
-    
     return 1;
 }
+
+=item _insert_attype
+
+=cut
 
 sub _insert_attype {
     my $self = shift;
@@ -864,7 +945,6 @@ sub _insert_attype {
 
     return 1;
 }
-
 
 1;
 __END__
