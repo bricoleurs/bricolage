@@ -1614,7 +1614,9 @@ sub revert {
     $new_tile->prepare_clone;
     $self->_set({ _delete_tile => $tile,
                   _tile        => $new_tile});
-    return $self;
+
+    # Make sure the current version is cached.
+    return $self->cache_me;
 }
 
 ################################################################################

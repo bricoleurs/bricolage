@@ -1671,7 +1671,9 @@ sub revert {
                 });
 
     $self->_set__dirty(1);
-    return $self;
+
+    # Make sure the current version is cached.
+    return $self->cache_me;
 }
 
 ################################################################################

@@ -1825,7 +1825,9 @@ sub revert {
     }) or throw_gen "The requested version does not exist";
 
     $self->_set(['data'], [$revert_obj->get_data]);
-    return $self;
+
+    # Make sure the current version is cached.
+    return $self->cache_me;
 }
 
 ################################################################################
