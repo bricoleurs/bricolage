@@ -96,7 +96,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                 </td>
               </tr>
               <tr>
-                <td colspan=2><span class=label><% $lang->('Publish Date') %></span><br />
+                <td colspan=2><span class=label><% $lang->maketext('Publish Date') %></span><br />
                   <% $lang->maketext('From') %>:
                   <& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|publish_date_start",
