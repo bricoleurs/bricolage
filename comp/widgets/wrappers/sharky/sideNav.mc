@@ -75,7 +75,6 @@ $nav ||= get_state_data("nav");
 unless ($workflows) {
     # The cache hasn't been loaded yet. Load it.
     $workflows = [];
-
     foreach my $w (Bric::Biz::Workflow->list({site_id => $site_id})) {
         # account for desks
         my @desks = map { [ $_->get_id, $_->get_name,

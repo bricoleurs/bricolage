@@ -188,7 +188,12 @@ sub update : Callback(priority => 1) {
     return if $param->{'_inconsistent_state_'} || $param->{"$widget|up_cb"};
 
     $self->_update_parts($self->params);
-    my $tile = get_state_data($self->class_key, 'tile');
+
+    # Don't save the element; that's handled by the callback for the button
+    # that was actually clicked (e.g., "Save")--or not (e.g., "Cancel"), as
+    # the case may be.
+#    my $tile = get_state_data($self->class_key, 'tile');
+#    $tile->save;
 }
 
 sub pick_related_media : Callback {

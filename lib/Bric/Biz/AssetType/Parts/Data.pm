@@ -72,7 +72,8 @@ $LastChangedDate$
 =head1 DESCRIPTION
 
 This class holds the data about data that will eventualy populate Published
-Assets.  The name and description fields can be set as can a number of rules.
+Assets. The C<key_name> and C<description> fields can be set as can a number
+of rules.
 
 The max length field.   This will allow someone to set the max length allowed
 for their field.   It will have a rule set upon it so that the max length will
