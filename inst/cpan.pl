@@ -6,11 +6,11 @@ cpan.pl - installation script to install CPAN modules
 
 =head1 VERSION
 
-$Revision: 1.8.4.1 $
+$Revision: 1.8.4.2 $
 
 =head1 DATE
 
-$Date: 2003-12-01 17:13:56 $
+$Date: 2004-01-27 03:24:41 $
 
 =head1 DESCRIPTION
 
@@ -29,13 +29,17 @@ L<Bric::Admin>
 
 use strict;
 use File::Spec::Functions qw(:ALL);
+use Cwd;
 
 our $MOD;
 my $perl;
+my $cwd;
 
 BEGIN { $perl = $ENV{PERL} || $^X }
 
 BEGIN {
+    # Figure out where we are.
+    $cwd = getcwd;
     # read in list of required modules
     do "./modules.db" or die "Failed to read modules.db : $!";
     # See if we need to install any modules.
@@ -88,6 +92,7 @@ END
     }
 }
 
+use Cwd;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
@@ -95,8 +100,8 @@ use Data::Dumper;
 use Config;
 use CPAN;
 
-# make sure this is a recent version of CPAN.pm.  The stuff I'm doing
-# below is dependent on some recently fixes.
+# make sure this is a recent version of CPAN.pm.  The stuff we're doing
+# below is dependent on some recent fixes.
 {
     no warnings; # avoid blabber about "1.59_54" not being numeric
     hard_fail(<<END) unless $CPAN::VERSION >= 1.59;
@@ -252,6 +257,7 @@ END
 # updates modules.db with progress
 sub update_modules_db {
     # update modules database with progress
+    chdir $cwd;
     open(OUT, ">modules.db") or die "Unable to open modules.db : $!";
     print OUT Data::Dumper->Dump([$MOD],['MOD']);
     close OUT;

@@ -79,6 +79,12 @@ no longer redirects back to the desk profile. [David]
 Made publish_date not be empty when publish is done through
 the SOAP API and no publish_date argument is passed. [Scott]
 
+=item *
+
+Fixed CPAN installer to correctly update the list of modules to be installed
+after a module hass been successfully installed. Reported by Perrin Harkins.
+[David]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)
