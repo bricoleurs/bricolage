@@ -209,8 +209,8 @@ sub initialize {
     }
 
     # Set up the environment variables for psql.
-    $ENV{PGHOST} ||= $opt_H;
-    $ENV{PGPORT} ||= $opt_o;
+    $ENV{PGHOST} ||= $opt_H if $opt_H
+    $ENV{PGPORT} ||= $opt_o if $opt_o;
     $ENV{PGDATABASE} ||= $opt_d;
     $ENV{PGUSER} ||= $opt_u;
     $ENV{PGPASSWORD} ||= $opt_p;
