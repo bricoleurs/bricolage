@@ -702,7 +702,7 @@ sub category : Callback {
 
 sub save_category : Callback {
     my $self = shift;
-    $save_category->($self->class_key, $self->request_args, $self);
+    $save_category->($self->class_key, $self->params, $self);
     # Set a redirect for the previous page.
     $self->set_redirect(last_page);
     # Pop this page off the stack.
@@ -713,7 +713,7 @@ sub save_category : Callback {
 
 sub save_and_stay_category : Callback {
     my $self = shift;
-    $save_category->($self->class_key, $self->request_args, $self);
+    $save_category->($self->class_key, $self->params, $self);
 }
 
 ###############################################################################
