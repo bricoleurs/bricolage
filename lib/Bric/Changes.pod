@@ -170,6 +170,12 @@ In the Element manager, doing a search after selecting an Element Type from
 which to display elements no longer causes an error. Thanks to Adam Robinson
 for the spot. [David]
 
+=item *
+
+Created a stored proceedure to eliminate costly repeat queries on the same
+data when building a tree structure for the category URI's.  Note that this
+proceedure will have to be installed in everybody's db. [Mark]
+
 =back
 
 =head2 New Features
