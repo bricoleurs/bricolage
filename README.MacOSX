@@ -7,14 +7,22 @@ that Bricolage will not run on the verion of Apache that comes with Mac OS
 X. This is because Bricolage requires the apreq library of Perl modules to
 run, and these have not yet been ported to Mac OS X.
 
-The solution is to compile your own Apache with mod_perl (and optionally
-mod_ssl) with a special patch that statically compiles support for apreq into
-Apache. The patch can be found here:
+The solution is to compile your own Apache with mod_perl with a special patch
+that statically compiles support for apreq into Apache. The patch can be found
+here:
 
   http://www.apache.org/~joes/
 
-Download the files "apreq.tar.gz" and "apreq.patch". Other files and libraries
-you'll need to download are as follows:
+Download the files "apreq.tar.gz" and "apreq.patch".
+
+If you're planning to use mod_ssl for secure connections to your Mac OS X
+Bricolage server, you'll also need to download a patch that allows the
+compiler to properly find libdbm while configuring Apache. The patch can
+be found here:
+
+  http://david.wheeler.net/macosx/apache_dbm.patch
+
+Other files and libraries you'll need to download are as follows:
 
 From http://www.apache.org/dist/httpd/, download the latest Apache 1.3
 sources.
@@ -34,7 +42,7 @@ From http://perl.apache.org/dist/, download the the sources for latest 1.x
 version of mod_perl.
 
 From http://www.gnu.org/prep/ftp.html, download the sources for the latest
-gdbm and iconv libraries.
+version of the iconv library.
 
 From http://expat.sourceforge.net/, download the sources for the latest
 version of the expat libraries.
@@ -75,7 +83,8 @@ tarballs into /usr/local/src, e.g., with the command
   % cd perl-5.8.0/
   % export LC_ALL=C     # or setenv LC_ALL C
   % export LANG="en_US" # or setenv LANG en_US
-  % sh Configure -des -Uversiononly -Dprefix=/usr/local -Uinstallusrbinperl
+  % sh Configure -des -Uversiononly -Dprefix=/usr/local \
+    -Uinstallusrbinperl
   % make
   % make test # Will be a few expected and documented failures
   % make install
@@ -86,37 +95,31 @@ Or, for Perl 5.6.1, do this:
   % export LC_ALL=C     # or setenv LC_ALL C
   % export LANG="en_US" # or setenv LANG en_US
   % perl -i.bak -p -e 's|Local/Library|Library|g' hints/darwin.sh
-  % sh Configure -des -Dfirstmakefile=GNUmakefile -Dldflags="-flat_namespace" \    -Uinstallusrbinperl
+  % sh Configure -des -Dfirstmakefile=GNUmakefile \
+    -Dldflags="-flat_namespace" -Uinstallusrbinperl
   % make
   % make test # will be a few errors -- should be okay.
   % make install
 
-4. Install gdbm (Optional -- needed by mod_ssl):
-
-  % cd gdbm-VERSION/
-  % cp /usr/share/libtool/config* . # or on 10.1: cp /usr/libexec/config* .
-  % ./configure
-  % make install
-  % ln -s /usr/local/lib/libgdbm.a /usr/local/lib/libdbm.a
-
-5. Patch Apache:
+4. Patch Apache:
 
   % cd apache_1.3.xx
+  % patch -p0 < /usr/local/src/apache_dbm.patch
   % patch -p0 < /usr/local/src/apreq.patch
-
-6. Install OpenSSL (Optional):
+  
+5. Install OpenSSL (Optional -- Required for SSL support):
 
   % cd openssl-VERSION/
   % ./config
   % make
   % make install # Optional -- Mac OS X already has its own.
 
-7. Configure mod_ssl (Optional):
+6. Configure mod_ssl (Optional -- Required for SSL support):
 
   % cd mod_ssl-VERSION/
   % ./configure --with-apache=/usr/local/src/apache_1.3.xx
 
-8. Install mod_perl:
+7. Install mod_perl:
 
   % cd mod_perl-1.xx
   % perl Makefile.PL \
@@ -127,13 +130,13 @@ Or, for Perl 5.6.1, do this:
   % make
   % make install
 
-9. Install Apache:
+8. Install Apache:
 
   % cd apache_1.3.26/
   % SSL_BASE=/usr/local/src/openssl-VERSION/ \
     ./configure \
     --with-layout=Apache \
-    --enable-module=ssl \
+    --enable-module=ssl \ # Optional.
     --enable-module=so \
     --activate-module=src/modules/perl/libperl.a \
     --disable-shared=perl \
@@ -142,14 +145,14 @@ Or, for Perl 5.6.1, do this:
   % make certificate # Optional -- to make SSL certificate. Read messages.
   % make install
 
-10. Install apreq:
+9. Install apreq:
 
   % cd httpd-apreq/
   % /usr/local/bin/perl Makefile.PL
   % make
   % make intall
 
-11. Install Text::Iconv:
+10. Install Text::Iconv:
 
   % cd Text-Iconv-VERSION/
   % perl -i.bak -p -e "s/'LIBS'\s*=>\s*\[''\]/'LIBS' => \['-liconv'\]/" \
@@ -159,7 +162,7 @@ Or, for Perl 5.6.1, do this:
   % make test
   % make install
 
-12. Install XML::Parser:
+11. Install XML::Parser:
 
   % cd XML-Parser-VERSION/
   % /usr/local/bin/perl Makefile.PL EXPATLIBPATH=/usr/local/lib \
