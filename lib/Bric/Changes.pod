@@ -43,6 +43,11 @@ existing database. Suggested by Mark Fournier and Marshall Roch. [David]
 
 Added some missing translations for English. [David]
 
+=item *
+
+The installer is now a bit smarter in how it handles loading the C<log_config>
+(or C<config_log>, as the case may be) module. [Marshall Roch]
+
 =back
 
 =head2 Bug Fixes

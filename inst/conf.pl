@@ -196,15 +196,16 @@ sub create_httpd_conf {
     # up in the morning
     if ($AP->{dso}) {
         my $dso_section = "# Load DSOs\n\n";
-        foreach my $mod (qw(perl log_config mime alias ssl apache_ssl)) {
+        foreach my $mod (qw(perl log_config config_log mime alias ssl apache_ssl)) {
             # static modules need no load
             next if exists $AP->{static_modules}{"mod_$mod"};
             next if $mod eq 'apache_ssl' && exists $AP->{static_modules}{apache_ssl};
 
-            if ($mod eq 'log_config') {
+            if ($mod eq 'log_config'|| $mod eq 'config_log') {
                 # I want to kill whoever decided this was a good idea
-                $dso_section .= "LoadModule \t config_log_module " . 
-                    $AP->{load_modules}{"${mod}_module"} . "\n";
+                $dso_section .= "LoadModule \t config_log_module " .
+                  $AP->{load_modules}{"${mod}_module"} . "\n"
+                  if $AP->{load_modules}{"${mod}_module"};
                 $dso_section .= "AddModule \t mod_$mod.c\n\n";
             } elsif ($mod eq 'apache_ssl') {
                 next unless $AP->{ssl} =~ /apache_ssl/;
