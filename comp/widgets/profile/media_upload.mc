@@ -30,8 +30,8 @@ $site_id
 # in this site.
 return unless find_desk(find_workflow($site_id, MEDIA_WORKFLOW, READ), CREATE);
 my @elems = grep { chk_authz($_, READ, 1) }
-  Bric::Biz::AssetType->list({ top_level => 1,
-                               media => 1,
-                             })
-  or return;
+  Bric::Biz::AssetType->list({
+      top_level => 1,
+      media => 1,
+  }) or return;
 </%init>
