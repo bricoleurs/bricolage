@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'element';
 
 use strict;
 use Bric::App::Authz qw(:all);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg :history);
 use Bric::Biz::AssetType;
 
 my $type = 'element';

@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'action';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg);
 use Bric::Util::Fault qw(rethrow_exception);
 
 my $disp_name = 'Action';

@@ -8,7 +8,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg :aref);
 use Bric::Biz::Asset;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;

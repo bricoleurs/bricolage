@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'category';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg);
 use Bric::Biz::Category;
 use Bric::Biz::Keyword;
 use Bric::Util::Grp;

@@ -9,7 +9,7 @@ use Apache::Util qw(escape_uri);
 use Bric::App::Callback::Util::Contact qw(update_contacts);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg);
 use Bric::Util::Attribute::Grp;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Person;

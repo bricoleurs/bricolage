@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'dest';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg);
 use Bric::Biz::OutputChannel;
 use Bric::Dist::ServerType;
 

@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'element_type';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg :pkg);
 use Bric::Biz::ATType;
 
 my $type = CLASS_KEY;

@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'asset_meta';
 
 use strict;
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg :history);
 use Bric::Biz::Asset::Formatting;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;

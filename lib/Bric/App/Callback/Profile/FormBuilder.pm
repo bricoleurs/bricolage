@@ -8,7 +8,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:user);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg :history :pkg :browser);
 use Bric::Biz::AssetType::Parts::Data;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::OutputChannel::Element;

@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'workspace';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg);
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Formatting;

@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'alert';
 
 use strict;
 use Bric::App::Session qw(:user);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg :history);
 use Bric::Util::Alerted;
 
 my $class = 'Bric::Util::Alerted';

@@ -9,7 +9,7 @@ use Bric::App::Authz qw(:all);
 use Bric::App::Callback::Desk;
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg :history :aref);
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Category;
 use Bric::Biz::Keyword;

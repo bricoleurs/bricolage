@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'pref';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg);
 
 my $disp_name = 'Preference';
 

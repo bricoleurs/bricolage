@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'perm';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg);
 
 my $type = 'perm';
 my $disp_name = 'Permissions';

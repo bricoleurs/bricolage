@@ -8,7 +8,7 @@ use strict;
 use Bric::App::Callback::Util::Contact qw(update_contacts);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg redirect_onload);
 use Bric::Biz::Person::User;
 use Bric::Config qw(:auth_len LISTEN_PORT);
 use Bric::Util::Grp;

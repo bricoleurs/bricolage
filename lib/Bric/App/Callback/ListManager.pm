@@ -8,32 +8,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:all);
-
-
-# XXX: as far as I can tell, this is never used anywhere  ???
-
-# Try to match a custom select action.
-# sub select-(.+) : Callback {          # XXX: callback subversion
-#     my $method = $1;                  # XXX
-
-#     my $self = shift;
-#     my $value = $self->value;
-#     my $ids = ref $value ? $value : [$value];
-#     my $pkg = get_state_data($self->class_key, 'pkg_name');
-
-#     foreach my $id (@$ids) {
-#         my $obj = $pkg->lookup({'id' => $id});
-#         if (chk_authz($obj, EDIT, 1)) {
-#             $obj->$method;
-#             $obj->save;
-#         } else {
-#             my $name = defined($obj->get_name) ?
-#               $obj->get_name : 'Object';
-#             add_msg('Permission to delete "[_1]" denied.', "$method $name");
-#         }
-#     }
-# }
+use Bric::App::Util qw(:msg :aref);
 
 sub delete : Callback {
     my $self = shift;

@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'publish';
 
 use strict;
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg :history :browser redirect_onload);
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Config qw(:prev);

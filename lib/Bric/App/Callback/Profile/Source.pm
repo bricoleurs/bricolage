@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'source';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg);
 use Bric::Biz::Org;
 use Bric::Biz::Org::Source;
 

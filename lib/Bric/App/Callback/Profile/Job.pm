@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'job';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg);
 
 my $type = CLASS_KEY;
 my $disp_name = 'Job';

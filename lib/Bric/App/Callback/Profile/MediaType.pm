@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'media_type';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg);
 use Bric::Util::MediaType;
 
 my $type = 'media_type';

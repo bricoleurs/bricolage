@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'login';
 use strict;
 use Bric::App::Auth ();
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(del_redirect redirect_onload);
+use Bric::App::Util qw(:msg del_redirect redirect_onload);
 
 use Bric::Config qw(LISTEN_PORT);
 

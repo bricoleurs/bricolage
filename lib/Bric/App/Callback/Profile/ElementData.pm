@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'element_data';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg :history);
 
 
 my $type = CLASS_KEY;

@@ -1,7 +1,7 @@
 package Bric::App::Callback::Util::Contact;
 
 use strict;
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref);
 
 use base qw(Exporter);
 our @EXPORT_OK = qw(update_contacts);

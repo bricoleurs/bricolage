@@ -9,7 +9,7 @@ use constant CLASS_KEY => 'desk_asset';
 use strict;
 use Bric::App::Session qw(:state :user);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg :pkg :aref);
 use Bric::App::Callback::Publish;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;

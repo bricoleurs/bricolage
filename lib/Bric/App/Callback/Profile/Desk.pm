@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'desk';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg :history);
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 

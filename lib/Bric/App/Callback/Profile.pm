@@ -8,7 +8,7 @@ use HTML::Mason::MethodMaker('read_write' => [qw(obj type class has_perms)]);
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Authz qw(:all);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref :msg :history :pkg :browser);
 
 my $excl = {'desk' => 1, 'action' => 1, 'server' => 1};
 

@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'container_prof';
 
 use strict;
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg :aref :history);
 use Bric::App::Event qw(log_event);
 use Bric::Biz::AssetType;
 use Bric::Biz::AssetType::Parts::Data;

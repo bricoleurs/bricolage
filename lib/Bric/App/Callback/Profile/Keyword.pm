@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'keyword';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:msg);
 
 my $disp_name = 'Keyword';
 my $class = 'Bric::Biz::Keyword';

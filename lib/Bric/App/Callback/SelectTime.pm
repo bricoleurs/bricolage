@@ -6,7 +6,7 @@ use constant CLASS_KEY => 'select_time';
 
 use strict;
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(:aref);
 
 my $defs = {
     min  => '00',
