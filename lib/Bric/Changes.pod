@@ -54,6 +54,12 @@ Reported by Marshall Roch. [David]
 C<make clone> once again properly copies the F<lib/Makefile.PL>
 F<bin/Makefile.PL> files from the source directory. [David]
 
+=item *
+
+In F<lib/Bric/Biz/AssetType/Parts/Data.pm> constant ORD, changed 'name'
+to 'key_name' (name was replaced with key_name throughout that module,
+by the way...) [Scott]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)

@@ -140,7 +140,7 @@ use constant COLS  => qw(
                          sql_type
                          active);
 
-use constant ORD => qw(name description max_length required quantifier active);
+use constant ORD => qw(key_name description max_length required quantifier active);
 
 #==============================================================================#
 # Fields                               #
