@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-01-16 00:25:47 $
 
 =head1 SYNOPSIS
 
@@ -1226,11 +1226,7 @@ NONE
 
 =cut
 
-sub is_container {
-	my ($self) = @_;
-
-	return $self;
-}
+sub is_container { 1; }
 
 ###############################################################################
 
