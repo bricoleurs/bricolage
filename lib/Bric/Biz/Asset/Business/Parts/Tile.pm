@@ -8,15 +8,15 @@ Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-15 17:33:30 $
+$Date: 2004-03-11 04:56:42 $
 
 =head1 SYNOPSIS
 
@@ -105,7 +105,7 @@ BEGIN {
                 'place'                         => Bric::FIELD_RDWR,
 
                 # The data base id of the Tile
-                'id'                            => Bric::FIELD_RDWR,
+                'id'                            => Bric::FIELD_READ,
 
                 # The type of object that this tile is associated with
                 # will also be used to determine what table to put the data into
@@ -391,9 +391,9 @@ sub my_meths {
                                },
 
                 key_name    => { name     => 'key_name',
-                                 get_meth => sub { shift->get_name(@_) },
+                                 get_meth => sub { shift->get_key_name(@_) },
                                  get_args => [],
-                                 set_meth => sub { shift->set_name(@_) },
+                                 set_meth => sub { shift->set_key_name(@_) },
                                  set_args => [],
                                  disp     => 'Key Name',
                                  type     => 'short',
@@ -458,19 +458,170 @@ sub list_ids {
 
 =over 4
 
+=item my $id = $p->get_id
+
+Returns the element ID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $name = $p->get_name
+
+Returns the element name.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $p->set_name($name)
+
+Sets the element name.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $key_name = $p->get_key_name
+
+Returns the element key name.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $p->set_key_name($key_name)
+
+Sets the element key name.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $description = $p->get_description
+
+Returns the element description.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $p->set_description($description)
+
+Sets the element description.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $parent_id = $p->get_parent_id
+
+Returns the ID of the element's parent element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $p->set_parent_id($parent_id)
+
+Sets the ID of the element's parent element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $place = $p->get_place
+
+Returns the element place, that is, its place in the order of subelements of
+the parent element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $p->set_place($place)
+
+Sets the element place, that is, its place in the order of subelements of
+the parent element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $object_type = $p->get_object_type
+
+Returns the element object type ("story" or "media");
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $p->set_object_type($object_type)
+
+Sets the element object type ("story" or "media");
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $object_id = $p->get_object_id
+
+Returns the ID of the document (story or media) that the element is associated
+with.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $p->set_object_id($object_id)
+
+Sets the ID of the document (story or media) that the element is associated
+with.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
 =item (1 || 0) = $tile->has_name($name);
 
 Test to see whether this tile has a name matching the argument $name.  Returns
 1 if the name is a match and 0 otherwise.
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -489,43 +640,19 @@ sub has_name {
 Test to see whether this tile has a key name matching the argument $key_name.
 Returns 1 if the name is a match and 0 otherwise.
 
-B<Throws:>
-NONE
+B<Throws: NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub has_key_name {
     my $self = shift;
     my ($test_name) = @_;
-
     return $self->get_key_name eq $test_name;
 }
-
-################################################################################
-
-=item $id = $tile->get_id()
-
-Returns the database id of the tile object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
 
 ################################################################################
 
@@ -578,11 +705,9 @@ NONE
 =cut
 
 sub activate {
-        my ($self) = @_;
-
-        $self->_set( {'_active' => 1 });
-
-        return $self;
+    my ($self) = @_;
+    $self->_set( {'_active' => 1 });
+    return $self;
 }
 
 ################################################################################
@@ -606,11 +731,9 @@ NONE
 =cut
 
 sub deactivate {
-        my ($self) = @_;
-
-        $self->_set( {'_active' => 0 });
-
-        return $self;
+    my ($self) = @_;
+    $self->_set( {'_active' => 0 });
+    return $self;
 }
 
 ################################################################################
@@ -634,10 +757,8 @@ NONE
 =cut
 
 sub is_active {
-        my ($self) = @_;
-
-
-        return $self->_get('_active') ? $self : undef;
+    my ($self) = @_;
+    return $self->_get('_active') ? $self : undef;
 }
 
 ################################################################################
@@ -653,7 +774,6 @@ NON
 =head2 Private Class Methods
 
 NONE
-
 
 =head2 Private Instance Methods
 
@@ -674,8 +794,9 @@ michael soderstrom ( miraso@pacbell.net )
 
 =head1 SEE ALSO
 
-L<perl>,L<Bric>,L<Bric::Biz::Asset::Business::Story>,L<Bric::Biz::Asset_type>,
-L<Bric::Biz::Asset_type::Parts::Data>,L<Bric::Biz::Asset::Business::Media> 
+L<perl>, L<Bric>,
+L<Bric::Biz::Asset::Business::Story>,L<Bric::Biz::Asset_type>,
+L<Bric::Biz::Asset_type::Parts::Data>,L<Bric::Biz::Asset::Business::Media>
 
 =cut
 
