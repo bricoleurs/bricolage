@@ -114,7 +114,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -143,7 +143,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -227,8 +227,11 @@ AC_DEFUN([AC_PROG_POSTGRES],[
    POSTGRES_REQUEST_MAJOR=`expr $2 : '\([0-9]*\)'`
    POSTGRES_REQUEST_MINOR=`expr $2 : "$POSTGRES_REQUEST_MAJOR.\([0-9]*\)"`
    POSTGRES_REQUEST_SUBMINOR=`expr $2 : "$POSTGRES_REQUEST_MAJOR.$POSTGRES_REQUEST_MINOR.\([0-9]*\)"`
+   if test -z "$POSTGRES_SUBMINOR" ; then
+   	 POSTGRES_SUBMINOR=0
+   fi
    changequote([, ])dnl
-   if test "$POSTGRES_MAJOR" -lt "$POSTGRES_REQUEST_MAJOR" -o "$POSTGRES_MINOR" -lt "$POSTGRES_REQUEST_MINOR" -o "$POSTGRES_SUBMINOR" -lt "$POSTGRES_REQUEST_SUBMINOR" ; then
+   if test "$POSTGRES_MAJOR" -lt "$POSTGRES_REQUEST_MAJOR" -o "$POSTGRES_MAJOR" -eq "$POSTGRES_REQUEST_MAJOR" -a "$POSTGRES_MINOR" -lt "$POSTGRES_REQUEST_MINOR" -o "$POSTGRES_MINOR" -lt "$POSTGRES_REQUEST_MINOR" -a "$POSTGRES_SUBMINOR" -lt "$POSTGRES_REQUEST_SUBMINOR" ; then
      AC_MSG_RESULT(no)
      AC_MSG_ERROR(postgres version is $POSTGRES_VERSION)
    else
@@ -248,7 +251,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -444,7 +447,7 @@ dnl DEFAULT value if the user merely hits return.  Also calls
 dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
 dnl be entered into the config.h file as well.
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER],
@@ -470,7 +473,7 @@ dnl
 dnl Asks a QUESTION and puts the results in VARIABLENAME with an optional
 dnl DEFAULT value if the user merely hits return.
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER_NO_DEFINE],
@@ -498,7 +501,7 @@ dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl there is a password, and if so what it is.
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_FOR_PGPASS],[
@@ -538,7 +541,7 @@ dnl
 dnl This is for setting Makefile variables with command line
 dnl switches instead of passing them in the environment.
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_VAR_WITH],[
@@ -555,7 +558,7 @@ dnl
 dnl Check to see if a user exists.  VAR will be set
 dnl to "yes" on success, "no" on failure.
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_SYS_USER],[
@@ -577,7 +580,7 @@ dnl to "yes" on success, "no" on failure.  user should
 dnl a user id which is known to exist, and should be in this 
 dnl group.
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_SYS_GROUP],[
@@ -610,7 +613,7 @@ dnl Try to figure out which pod2html we're working with
 dnl the variable will be set to Christiansen, McDougall, 
 dnl or none, depending on which pod2html is found.
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POD2HTML],[
@@ -633,7 +636,7 @@ dnl Checks to see if the indicated apache binary has
 dnl mod_perl compiled in.  Returns "yes" or "no" in 
 dnl VAR.
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_APACHE_MOD_PERL],[
@@ -653,7 +656,7 @@ dnl Checks to see if CPAN Module is functional
 dnl and has the correct web access. Returns yes 
 dnl or no in VAR.  
 dnl
-dnl @version $Id: aclocal.m4,v 1.17 2002-03-07 17:04:46 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.18 2002-03-08 14:47:04 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_CPAN],[
