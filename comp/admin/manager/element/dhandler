@@ -28,7 +28,7 @@ my $add_sub = sub {
 # Figure out where we are.
 my ($section, $mode, undef, $id) = $m->comp("/lib/util/parseUri.mc");
 undef $id if $id && $id eq '';
-my ($can_del, $sel_label, $sel_widg, $title, $excl_sub, $context);
+my ($can_del, $sel_label, $sel_widg, $title, $context);
 my ($constrain, $behavior) = ({}, 'expand');
 
 if (exists $ARGS{elem_type}) {
@@ -45,14 +45,12 @@ if (exists $ARGS{elem_type}) {
 # Set the title, selection label, and widget.
 if (defined $id) {
     $constrain->{top_level} = 0;
-    $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
     $title = 'Choose Subelements';
     my $name = $pkg_name->lookup({ id => $id })->get_name;
     $context = "Admin | Profile | $disp | &quot;$name&quot; | Subelements";
     $sel_label = 'Add to Element';
     $sel_widg  = 'element|addElement_cb'
 } else {
-    $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
     $title = "$disp Manager";
     $context = "Admin | Manager | $disp";
     $sel_label = 'Delete';
@@ -119,7 +117,7 @@ $m->comp('/widgets/listManager/listManager.mc',
 	 profile   => ($id) ? undef : $prof_sub,
 	 title     => 'Existing %n',
 	 fields    => [qw(name description type_name)],
-         exclude   => $excl_sub,
+         exclude   => sub { ! chk_authz($_[0], READ, 1) },
 	 addition  => defined $id ? undef : $add_sub,
 	 select    => $sel_sub,
 );
@@ -147,11 +145,11 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 
 =head1 VERSION
 
-$Revision: 1.14.2.2 $
+$Revision: 1.14.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-20 23:15:22 $
+$Date: 2003-03-20 23:16:29 $
 
 =head1 SYNOPSIS
 
