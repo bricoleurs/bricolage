@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2004-02-24 21:42:01 $
+$Date: 2004-04-15 11:05:25 $
 
 
 =head1 SYNOPSIS
@@ -82,8 +82,8 @@ what ever storarge is available for a field just larger than the one listed
 ( Thought needs to be given how to handle those that change their length
 after data has been entered as it might switch storage catagories)
 
-The quantifier field will state whether the field may be repeated indeffinatly,
-zero or more times, zero or one, one, or an arbritiary number of times.
+The quantifier field will state whether the field may be repeated indefinitely,
+zero or more times, zero or one, one, or an arbitrary number of times.
 
 the sql type will map to a type in the DB ( varchar or date )
 

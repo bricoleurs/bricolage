@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.71 $
+$Revision: 1.72 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.71 $ )[-1];
+our $VERSION = (qw$Revision: 1.72 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-26 03:43:46 $
+$Date: 2004-04-15 11:05:25 $
 
 =head1 SYNOPSIS
 
@@ -603,7 +603,7 @@ sub new {
 
 Returns an object that matches the parameters
 
-Suported Keys
+Supported Keys
 
 =over 4
 
@@ -636,7 +636,8 @@ Inherited from Bric::Biz::Asset.
 
 =item ($fa_list || @fas) = Bric::Biz::Asset::Formatting->list( $criteria )
 
-This will return a list of blessed objects that match the defined criteria
+This will return a list of blessed objects that match the defined criteria,
+or undef/empty-list if there is no match.
 
 Supported Keys:
 

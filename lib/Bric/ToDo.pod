@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.130 $
+$Revision: 1.131 $
 
 =head1 DATE
 
-$Date: 2004-03-02 19:24:11 $
+$Date: 2004-04-15 11:05:24 $
 
 =head1 DESCRIPTION
 
@@ -51,12 +51,6 @@ in mind as long term goals further down the line.
 
 Add Checkin & Shelve (And Checkin & Publish?) to the dropdown menu on My
 Workspace.
-
-=item *
-
-Give users the option to reactivate deleted templates when they try to create
-a template that already exists in the database as a deactivated template.
-[David]
 
 =item *
 
@@ -226,9 +220,9 @@ created.
 
 =item *
 
-Allow deactivation of objects to cascade into their assocaitions. For example,
+Allow deactivation of objects to cascade into their associations. For example,
 if one wanted to delete an output channel, the UI should present the user with
-a list of objects it is associdated with (story and media type elements,
+a list of objects it is associated with (story and media type elements,
 stories and media, destinations) and ask if the user is sure she wants to
 delete it and remove all of the associations. This might be tricky if, for
 example, a given story has only that one OC associated with it, or it is the

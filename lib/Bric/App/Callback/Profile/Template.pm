@@ -568,12 +568,29 @@ $create_fa = sub {
         });
     };
 
+    my $was_reactivated = 0;
     if (my $err = $@) {
         unless ($err->error =~ /already exists/) {
             rethrow_exception($err);
         } else {
-            add_msg("A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.");
-            return;
+            # XXX: it should never return more than one asset, right?
+            ($fa) = Bric::Biz::Asset::Formatting->list({
+                active => 0,
+                output_channel_id => $oc_id,
+                category_id => $cat_id,
+                element_id => $at_id,
+                site_id => $site_id,
+            });
+            if (defined $fa) {
+                add_msg("Deactivated template was reactivated.");
+                $was_reactivated = 1;
+            } else {
+                # XXX: it's redundant to say "element and burner"
+                # because a burner is associated uniquely with the element
+                # (don't forget to update Locale if this changes)
+                add_msg("A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.");
+                return;
+            }
         }
     }
 
@@ -587,8 +604,8 @@ $create_fa = sub {
     $start_desk->accept({ asset => $fa });
     $start_desk->save;
 
-    # Log that a new media has been created.
-    log_event('formatting_new', $fa);
+    # Log that a new template has been created.
+    log_event('formatting_new', $fa) unless $was_reactivated;
     log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
     log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
     log_event('formatting_save', $fa);

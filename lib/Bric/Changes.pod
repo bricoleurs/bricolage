@@ -14,6 +14,19 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.9.0 "Back to the Future" (change that if you want :)
+
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Creating a template that was deactivated now reactivates it instead of
+just giving an error message. [Scott]
+
+=back
+
 =head1 VERSION 1.8.0 "Portland" ()
 
 =head2 Bug Fixes
