@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.11 $
+$Revision: 1.13.2.12 $
 
 =head1 DATE
 
-$Date: 2001-10-03 16:33:58 $
+$Date: 2001-10-04 11:14:12 $
 
 =head1 DESCRIPTION
 
@@ -32,11 +32,6 @@ significant (including the addition of new libraries).
 =head2 VERSION 1.0.2
 
 =over 4
-
-=item *
-
-Add Explanation/Philosophy statement linkable from the logo (make French
-speakers more comfortable with the name) [David].
 
 =item *
 
@@ -207,7 +202,7 @@ Add ability to "undeploy" templates without deactivating them.
 
 =item *
 
-allow only one template with a given name for a given category and output
+Allow only one template with a given name for a given category and output
 channel.
 
 =item *
