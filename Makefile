@@ -9,9 +9,14 @@
 #   clean     - delete intermediate files
 #   dist      - prepare a distrubution from a CVS checkout
 #   clone     - create a distribution based on an existing system
+#   test      - run non-database changing test suite
+#   devtest   - run all tests, including those that change the database
 #
 # See INSTALL for details.
 #
+
+# Set the location of Perl.
+PERL = /usr/bin/perl
 
 #########################
 # build rules           #
@@ -21,19 +26,19 @@ all 		: required.db modules.db apache.db postgres.db config.db \
                   build_done
 
 required.db	: inst/required.pl
-	perl inst/required.pl
+	$(PERL) inst/required.pl
 
 modules.db 	: inst/modules.pl lib/Bric/Admin.pod
-	perl inst/modules.pl
+	$(PERL) inst/modules.pl
 
 apache.db	: inst/apache.pl required.db
-	perl inst/apache.pl
+	$(PERL) inst/apache.pl
 
 postgres.db 	: inst/postgres.pl required.db
-	perl inst/postgres.pl
+	$(PERL) inst/postgres.pl
 
 config.db	: inst/config.pl required.db apache.db postgres.db
-	perl inst/config.pl
+	$(PERL) inst/config.pl
 
 build_done	: required.db modules.db apache.db postgres.db config.db
 	@echo
@@ -61,10 +66,10 @@ dist            : check_dist distclean inst/bricolage.sql dist_dir rm_sql \
 
 # can't load Bric since it loads Bric::Config which has dependencies
 # that won't be solved till make install.
-BRIC_VERSION = `perl -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib/Bric.pm`
+BRIC_VERSION = `$(PERL) -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib/Bric.pm`
 
 check_dist      :
-	perl inst/check_dist.pl $(BRIC_VERSION)
+	$(PERL) inst/check_dist.pl $(BRIC_VERSION)
 
 distclean	: clean
 	-rm -rf bricolage-$(BRIC_VERSION)
@@ -74,7 +79,7 @@ distclean	: clean
 dist_dir	:
 	-rm -rf dist
 	mkdir dist
-	ls | grep -v dist | perl -lne 'system("cp -pR $$_ dist")'
+	ls | grep -v dist | $(PERL) -lne 'system("cp -pR $$_ dist")'
 
 rm_sql		:
 	find dist/lib/ -name '*.sql' -o -name '*.val' -o -name '*.con' \
@@ -131,20 +136,20 @@ clone           : distclean clone.db clone_dist_dir clone_files clone_sql \
 		  clone_tar 
 
 clone.db	:
-	perl inst/clone.pl
+	$(PERL) inst/clone.pl
 
 clone_dist_dir  : 
 	-rm -rf dist
 	mkdir dist
 
 clone_files     :
-	perl inst/clone_files.pl
+	$(PERL) inst/clone_files.pl
 
 clone_sql       : 
-	perl inst/clone_sql.pl
+	$(PERL) inst/clone_sql.pl
 
 clone_tar	:
-	perl inst/clone_tar.pl
+	$(PERL) inst/clone_tar.pl
 
 .PHONY 		: clone_dist_dir clone_files clone_sql clone_tar
 
@@ -155,28 +160,28 @@ clone_tar	:
 install 	: all cpan lib bin files db conf done
 
 cpan 		: modules.db postgres.db inst/cpan.pl
-	perl inst/cpan.pl
+	$(PERL) inst/cpan.pl
 
 lib 		: 
 	-rm -f lib/Makefile
-	cd lib; perl Makefile.PL; $(MAKE) install
+	cd lib; $(PERL) Makefile.PL; $(MAKE) install
 
 bin 		:
 	-rm -f bin/Makefile
-	cd bin; perl Makefile.PL; $(MAKE) install
+	cd bin; $(PERL) Makefile.PL; $(MAKE) install
 
 files 		: config.db
-	perl inst/files.pl
+	$(PERL) inst/files.pl
 
 db    		: inst/db.pl postgres.db
-	perl inst/db.pl
+	$(PERL) inst/db.pl
 
 conf		: inst/conf.pl files required.db config.db postgres.db \
                   apache.db
-	perl inst/conf.pl
+	$(PERL) inst/conf.pl
 
 done		: conf db files bin lib cpan
-	perl inst/done.pl
+	$(PERL) inst/done.pl
 
 .PHONY 		: install lib bin files db conf done
 
@@ -189,19 +194,19 @@ upgrade		: upgrade.db required.db cpan stop lib bin db_upgrade \
 	          upgrade_files upgrade_conf upgrade_done
 
 upgrade.db	:
-	perl inst/upgrade.pl
+	$(PERL) inst/upgrade.pl
 
 db_upgrade	: upgrade.db
-	perl inst/db_upgrade.pl
+	$(PERL) inst/db_upgrade.pl
 
 stop		:
-	perl inst/stop.pl
+	$(PERL) inst/stop.pl
 
 upgrade_files   :
-	perl inst/files.pl UPGRADE
+	$(PERL) inst/files.pl UPGRADE
 
 upgrade_conf    :
-	perl inst/conf.pl UPGRADE
+	$(PERL) inst/conf.pl UPGRADE
 
 upgrade_done    :
 	@echo
@@ -217,6 +222,16 @@ upgrade_done    :
 
 .PHONY		: db_upgrade upgrade_files stop upgrade_done
 
+##########################
+# test rules             #
+##########################
+TEST_VERBOSE=0
+
+test		:
+	PERL_DL_NONLAZY=1 $(PERL) inst/runtests.pl
+
+devtest         :
+	PERL_DL_NONLAZY=1 $(PERL) inst/runtests.pl -d
 
 ##########################
 # clean rules            #
@@ -225,9 +240,9 @@ upgrade_done    :
 clean 		: 
 	-rm -rf *.db
 	-rm -rf build_done
-	cd lib ; perl Makefile.PL ; $(MAKE) clean
+	cd lib ; $(PERL) Makefile.PL ; $(MAKE) clean
 	-rm -rf lib/Makefile.old
-	cd bin ; perl Makefile.PL ; $(MAKE) clean
+	cd bin ; $(PERL) Makefile.PL ; $(MAKE) clean
 	-rm -rf bin/Makefile.old
 
 .PHONY 		: clean

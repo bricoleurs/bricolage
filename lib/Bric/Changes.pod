@@ -14,6 +14,48 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.5.0
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added unit testing framework based on L<Test::Class|Test::Class> and executed
+by L<Test::Harness|Test::Harness>. Tests can be run after C<make install> by
+running C<make test> or C<make devtest>. The former runs tests that access
+database data but execute no C<INSERT>, C<UPDATE>, or C<DELETE> commands. The
+latter runs tests that can make changes to the datbase, and are intended to be
+a full testing of Bricolage's API. Both make targets can be executed in
+verbose mode by passing C<TEST_VERBOSE=1> to the make command. From now on,
+all tests will be expected to pass before changes are committed to the
+repository. [David]
+
+=item *
+
+Added F<Makefile.PL>. This is mainly a dummy script designed to mimic the
+usual way in which Perl modules are installed. It doesn't actually create a
+F<Makefile>, but processes the existing one, setting it up to use whatever
+Perl was used to execute F<Makefile.PL> itself. The advantage to this is that
+the Perl the executes F<Makefile.PL> will be used throughout Bricolage. [David]
+
+=item *
+
+Migrated tests in F<lib/Bric/Util/Grp.pl> to F<t/lib/Bric/Util/Grp/Test.pm>
+and F<t/lib/Bric/Util/Grp/DevTest.pm>. [David]
+
+=item *
+
+Added F<t/lib/Bric/Test/PodTest.pm>, which uses L<Pod::Checker|Pod::Checker>
+to examine the POD in all the Bricolage modules, scripts, and test modules and
+report errors. Currently, all the errors are "TODO" tests, which means that,
+technically, they'll pass. But as soon as all existing POD errors are cleaned
+out, errors will turn into test failures. This will help us to keep all of our
+POD valid. These tests run as a part of C<make devtest>. [David]
+
+=back
+
 =head1 VERSION 1.4.0
 
 =head2 New Features
