@@ -55,7 +55,8 @@ build_done	: required.db modules.db apache.db postgres.db config.db
 ###########################
 
 dist            : check_dist distclean inst/bricolage.sql dist_dir rm_sql \
-                  rm_use rm_CVS dist/INSTALL dist/Changes dist/License dist_tar
+                  rm_use rm_CVS rm_tmp dist/INSTALL dist/Changes dist/License \
+                  dist_tar
 
 # this makes FreeBSD's make happier than "print $$Bric::Version" for
 # some reason.
@@ -72,7 +73,7 @@ distclean	: clean
 dist_dir	:
 	-rm -rf dist
 	mkdir dist
-	ls | grep -v dist | xargs cp -a --target-directory=dist
+	ls | grep -v dist | perl -lne 'system("cp -pR $$_ dist")'
 
 rm_sql		:
 	find dist/lib/ -name '*.sql' -o -name '*.val' -o -name '*.con' \
@@ -87,6 +88,9 @@ rm_use          :
 rm_CVS		:
 	find dist/ -type d -name 'CVS' | xargs rm -rf
 	find dist/ -name '.cvsignore'  | xargs rm -rf
+
+rm_tmp		:
+	find dist/ -name '#*#' -o -name '*~' | xargs rm -rf
 
 dist/INSTALL	: lib/Bric/Admin.pod
 	pod2text --loose lib/Bric/Admin.pod   > dist/INSTALL

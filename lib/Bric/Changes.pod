@@ -237,6 +237,10 @@ UID for the user "nobody". [David]
 Adding a note to a story that has not yet been saved no longer causes an
 error. [David]
 
+=item *
+
+Fixed "make dist" to work on Mac OS/X and FreeBSD. [Sam]
+
 =back
 
 =head1 VERSION 1.3.2
