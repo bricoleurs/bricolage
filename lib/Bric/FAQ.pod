@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =head1 DATE
 
-$Date: 2004-03-26 17:31:39 $
+$Date: 2004-03-29 23:54:06 $
 
 =head1 DESCRIPTION
 
@@ -175,6 +175,11 @@ Open Forum Europe - L<http://www.openforumeurope.org/>
 =item *
 
 The Lab School of Washington - L<http://my.labschool.org/>
+
+=item *
+
+Brain Mapping Unit, University of Cambridge -
+L<http://www-bmu.psychiatry.cam.ac.uk/>
 
 =item *
 
