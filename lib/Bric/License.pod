@@ -350,6 +350,8 @@ Others who contributed to its support and development:
 
 =item Elizabeth Kairys
 
+=item JosE<eacute> Castro
+
 =back
 
 =cut

@@ -1345,7 +1345,7 @@ sub chk_syntax {
 
   % # Mason syntax.
   % my $page_file = $burner->page_file($number);
-  <a href="<% $page_file %>">Page Number $number</a>
+  <a href="<% $page_file %>">Page Number <% $number %></a>
 
 Returns the file name for a page in a story as the story is being burned. The
 page number must be greater than 0.
@@ -1395,7 +1395,7 @@ sub page_file {
 
   % # Mason syntax.
   % my $page_uri = $burner->page_uri($number);
-  <a href="<% $page_uri %>">Page Number $number</a>
+  <a href="<% $page_uri %>">Page Number <% $number %></a>
 
 Returns the URI for a page in a story as the story is being burned. The
 page number must be greater than 0.
