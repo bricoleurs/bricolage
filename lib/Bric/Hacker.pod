@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2002-09-06 22:32:56 $
+$Date: 2002-09-11 02:14:37 $
 
 =head1 DESCRIPTION
 
@@ -343,20 +343,20 @@ If the branch has not been merged into the trunk before, cd into a checkout
 from HEAD and do a simple merge:
 
   cd bricolage-head-checkout/
-  cvs -z3 -q update -j Release_1_4_0
+  cvs -z3 -q update -kk -j Release_1_4_0
 
 Otherwise, do a merge from the most recently-dated merge tag. In the above
 example, that would be "Release_1_4_0_merge-2002-08-31".
 
-  cvs -q3 -q update -j Release_1_4_0_merge-2002-08-31 \
+  cvs -z3 -q update -kk -j Release_1_4_0_merge-2002-08-31 \
     -j Release_1_4_0
 
 =item 3
 
-Resolve any conflicts (hopefully none, but they do happen occaisionally) and
+Resolve any conflicts (hopefully none, but they do happen occasionally) and
 commit the changes to the trunk.
 
-  cvs -z3 -q update
+  cvs -z3 -q commit
 
 =item 4
 
