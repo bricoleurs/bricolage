@@ -10,20 +10,20 @@ Bric::Dist::Action::Email - Class to email distribution resources
 
 =item Version
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =item Date
 
-$Date: 2003-07-10 09:27:47 $
+$Date: 2003-09-18 06:24:53 $
 
 =item CVS ID
 
-$Id: Email.pm,v 1.1 2003-07-10 09:27:47 wheeler Exp $
+$Id: Email.pm,v 1.2 2003-09-18 06:24:53 wheeler Exp $
 
 =back
 
@@ -47,8 +47,8 @@ $Id: Email.pm,v 1.1 2003-07-10 09:27:47 wheeler Exp $
 
 =head1 DESCRIPTION
 
-This subclass of Bric::Dist::Action can be used email distribution resources
-to one or more email addresses.
+This subclass of Bric::Dist::Action can be used to email distribution
+resources to one or more email addresses.
 
 =cut
 
@@ -119,7 +119,7 @@ Bric::Dist::Action, and overrides the same method in that class.
 
 =head3 has_more
 
-  if (Bric::Dist::Action::Akamaize->has_more) {
+  if (Bric::Dist::Action::Email->has_more) {
       print "It has more attributes than Bric::Dist::Action\n";
   }
 
@@ -509,7 +509,7 @@ sub do_it {
 
   $action = $action->save;
 
-Saves the action for the server type an job, along with all of its attributes.
+Saves the action for the server type and job, along with all of its attributes.
 
 B<Thows:>
 
