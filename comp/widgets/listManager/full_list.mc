@@ -19,7 +19,7 @@
 
 
 <!-- table header display -->
-<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor=#cccc99>
+<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
   <tr>
 <%perl>
   my $field_disp = shift @$data;
@@ -36,7 +36,7 @@
 	  ($aclass, $thclass) = ('blackLink', 'medHeader')
       }
 
-      $m->out("<th class=$thclass>&nbsp;");
+      $m->out(qq{<th class=$thclass style="border-style:solid; border-color:#cccc99;">&nbsp;});
 
       # Only make a link if user sorting is enabled.
       if ($userSort) {
@@ -49,7 +49,7 @@
 
   # Adjust the tabel size.
   if (scalar @$fields < $cols) {
-      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader><img src="/media/images/spacer.gif" width=1 height=19></th>');
+      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;"><img src="/media/images/spacer.gif" width=1 height=19></th>');
   }
 </%perl>
 
@@ -65,9 +65,9 @@
   foreach my $c (0..$#{$data->[$r]}) {
       my $val   = $data->[$r]->[$c];
       if ($c eq $sort_col) {
-	  $m->out("<td height=25 valign=top><b>$val</b></td>\n");
+	  $m->out(qq{<td height=25 valign=top style="border-style:solid; border-color:#cccc99;"><b>$val</b></td>\n});
       } else {
-	  $m->out("<td height=25 valign=top>$val</td>\n");
+	  $m->out(qq{<td height=25 valign=top style="border-style:solid; border-color:#cccc99;">$val</td>\n});
       }
   }
 
