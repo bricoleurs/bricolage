@@ -224,7 +224,8 @@ sub find_plpgsql {
                     /opt/pgsql/lib
                     /usr/local/lib
                     /usr/lib
-                    /lib));
+                    /lib
+                    /usr/lib/pgsql));
     foreach my $path (@paths) {
         my $plpgsql = File::Spec::Functions::catfile($path, "plpgsql");
         return $plpgsql if -e $plpgsql . '.so';
