@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-23 03:47:27 $
+$Date: 2001-12-23 05:03:32 $
 
 =head1 SYNOPSIS
 
@@ -88,14 +88,15 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
 
 <form action=<% $r->uri %> method="post">
 <& '/widgets/listManager/listManager.mc',
-   'object'   => $object,
-   title      => '%n Found',
-   'fields'   => [qw(id name file_name output_channel_name)],
-   'profile'  => $profile,
-   exclude    => $exclude,
-   addition   => $addition,
-   'select'   => $select,
-   behavior   => 'expand'
+  'object'   => $object,
+  sortBy     => 'name',
+  title      => '%n Found',
+  'fields'   => [qw(id name file_name output_channel_name)],
+  'profile'  => $profile,
+  exclude    => $exclude,
+  addition   => $addition,
+  'select'   => $select,
+  behavior   => 'expand'
 &>
 <p></p>
 <input type="image" src="/media/images/checkout_red.gif" border=0 name="Checkout" value="Checkout">
