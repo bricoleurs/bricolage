@@ -12,6 +12,8 @@ AC_PREFIX_DEFAULT(/usr/local/bricolage)
 # Use braces instead of parens because sh, perl, etc. also accept them.
 datadir='${prefix}/data'
 sysconfdir='${prefix}/conf'
+# Capture the config string early
+CONFIG_STRING="$@"
 
 # Additional --with-switches
 # SYNTAX: AC_VAR_WITH(VARNAME,switchname,default)
@@ -25,18 +27,20 @@ AC_VAR_WITH(HOSTNAME,hostname,`hostname --fqdn || true`)
 AC_VAR_WITH(ADMINISTRATOR,administrator,root)
 AC_VAR_WITH(DB_NAME,db-name,wwwdata)
 AC_VAR_WITH(DBI_USER,dbi-user,nobody)
-AC_VAR_WITH(DBI_PASS,dbi-pass,c@st3l!@n)
+AC_VAR_WITH(DBI_PASS,dbi-pass,ChangeMeNow)
 AC_VAR_WITH(POSTGRES_ROOT_USER,pgroot-user,postgres)
 AC_VAR_WITH(POSTGRES_SYSTEM_USER,pgsystem-user,postgres)
 # TODO: System defaults for these can be determined from $APACHE -V
 AC_VAR_WITH(SERVER_ROOT,server_root,/usr/local/apache)
-AC_VAR_WITH(APACHE_CONF,apache-conf,'${prefix}/conf')
+AC_VAR_WITH(APACHE_CONF,apache-conf,'${prefix}/conf/httpd.conf')
 AC_VAR_WITH(LOGDIR,lod_dir,${SERVER_ROOT}/logs)
 AC_VAR_WITH(ERROR_LOG,error_log,${LOGDIR}/error.log)
 AC_VAR_WITH(ACCESS_LOG,access_log,${LOGDIR}/access.log)
 AC_VAR_WITH(SSL_LOG,ssl_log,${LOGDIR}/ssl_engine_log)
 AC_VAR_WITH(PID_FILE,pid_file,${LOGDIR}/httpd.pid)
 
+# Warn if the specified user doesn't seem to 
+# exist
 AC_CHECK_SYS_USER(ISUSERHERE,${APACHE_USER})
 if test "$ISUSERHERE" = "no" ;then
 	AC_MSG_ERROR([
@@ -51,7 +55,8 @@ if test "$ISUSERHERE" = "no" ;then
 ])
 fi
 
-AC_CHECK_SYS_GROUP(ISGROUPHERE,${APACHE_GROUP})
+# Warn if the specified group doesn't seem to exist
+AC_CHECK_SYS_GROUP(ISGROUPHERE,${APACHE_GROUP},${APACHE_USER})
 if test "$ISGROUPHERE" = "no" ;then
 	AC_MSG_ERROR([
 
@@ -66,11 +71,12 @@ if test "$ISGROUPHERE" = "no" ;then
 fi
 
 # Checks for programs
-AC_PROG_APACHE(1.3.20)
+AC_PROG_APACHE(1.3.12)
 AC_PROG_POSTGRES(PGHOME, 7.1.3)
 AC_POSTGRES_ENCODING(UNICODE)
 AC_PROG_PERL(PERL, 5.6.1)
 AC_PATH_PROG(POD2HTML, pod2html)
+AC_POD2HTML(POD2HTML_TYPE)
 AC_PATH_PROG(POD2TEXT, pod2text)
 AC_PATH_PROG(POD2MAN, pod2man)
 AC_PATH_PROG(GZIP, gzip)
@@ -115,6 +121,9 @@ CHECK_CPAN_MODULE(MISSING_MOD, HTML::Mason, 1.03)
 CHECK_CPAN_MODULE(MISSING_MOD, DBD::Pg, 1.00)
 CHECK_CPAN_MODULE(MISSING_MOD, Net::FTPServer)
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::Session, 1.53)
+CHECK_CPAN_MODULE(MISSING_MOD, Apache::ConfigFile)
+# FIXME: if there's a version requirement please note it here
+CHECK_CPAN_MODULE(MISSING_MOD, HTML::Template)
 # Apache::libapreq does not define $Apache::libapreq::VERSION
 # so we can't check for it here
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::libapreq) 
@@ -128,9 +137,11 @@ CHECK_FOR_PGPASS
 
 # predefined
 AC_SUBST(VERSION)
+AC_SUBST(CONFIG_STRING)
 
 # write out the makefiles
 # TODO: The files here that aren't makefiles should eventually
 # 		be handled by make, this is cheating in a way
 AC_CONFIG_FILES([Makefile doc/Makefile])
 AC_OUTPUT
+

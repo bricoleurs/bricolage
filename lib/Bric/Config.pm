@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-05 01:42:37 $
+$Date: 2002-02-12 00:58:51 $
 
 =head1 SYNOPSIS
 
@@ -40,6 +40,7 @@ and their use.
 # Standard Dependencies
 use strict;
 use File::Spec::Functions qw(catdir);
+use Apache::ConfigFile;
 
 #--------------------------------------#
 # Programatic Dependencies
@@ -191,7 +192,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 #======================================#
 {
     # We'll store the settings loaded from the configuration file here.
-    my $config;
+    my ($config, $aconf);
 
     BEGIN {
 	# Load the configuration file, if it exists.
@@ -216,7 +217,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
 	    # Set up the server window name (because Netscape is retarted!).
 	    ($config->{SERVER_WINDOW_NAME} =
-	     $config->{VHOST_SERVER_NAME}) =~ s/\W+/_/g;
+	     $config->{VHOST_SERVER_NAME} || '_default_') =~ s/\W+/_/g;
 
 	}
 	# Process boolean directives here. These default to 1.
@@ -231,7 +232,13 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 	}
 
 	# Set the Mason component root to its default here.
-	$config->{MASON_COMP_ROOT} ||= catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'comp');
+	$config->{MASON_COMP_ROOT} ||=
+	  catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'comp');
+
+	# Grab the Apache configuration file.
+	$config->{APACHE_CONF} ||= '/usr/local/apache/conf/httpd.conf';
+	$aconf = Apache::ConfigFile->new(file => $config->{APACHE_CONF},
+					 ignore_case => 1);
     }
 
     # Apache Settings.
@@ -239,9 +246,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
     use constant APACHE_BIN              => $config->{APACHE_BIN}
       || '/usr/local/apache/bin/httpd';
-    use constant APACHE_CONF             => $config->{APACHE_CONF}
-      || '/usr/local/apache/conf/httpd.conf';
-    use constant PID_FILE                => $config->{PID_FILE}
+    use constant APACHE_CONF             => $config->{APACHE_CONF};
+
+    use constant PID_FILE                => $aconf->pidfile
       || '/usr/local/apache/logs/httpd.pid';
 
     use constant LISTEN_PORT             => $config->{LISTEN_PORT} || 80;

@@ -183,7 +183,7 @@ if ($class eq 'formatting') {
     my $c = $highlight eq 'name' ? 'whiteMedUnderlinedLink'
       : 'blackMedUnderlinedLink';
     $name = qq{<a href="/workflow/profile/preview/$class/$id" class="$c"}
-      . qq{target="preview_} . SERVER_WINDOW_NAME . qq{">$name</a>};
+      . ' ' . qq{target="preview_} . SERVER_WINDOW_NAME . qq{">$name</a>};
     if ($class eq 'media') {
 	$cat = $cats->{$obj->get_category__id} ||= $obj->get_category_object;
 	$cat = $cat->get_name if $cat;
@@ -207,11 +207,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2001-12-27 19:50:31 $
+$Date: 2002-02-12 00:59:17 $
 
 =head1 DESCRIPTION
 

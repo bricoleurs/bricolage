@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =head1 DATE
 
-$Date: 2002-01-31 02:19:06 $
+$Date: 2002-02-12 00:58:51 $
 
 =head1 DESCRIPTION
 
@@ -43,6 +43,8 @@ Perl Modules:
 =item Devel::Symdump 2.01
 
 =item DBI 1.19
+
+=item Error 0.15
 
 =item Cache::Cache 0.09
 
@@ -99,6 +101,8 @@ Perl Modules:
 =item MIME::Parser 5.22
 
 =item SOAP::Lite 0.52
+
+=item Apache::ConfigFile 0.14
 
 =back
 
@@ -627,11 +631,11 @@ Try to hit the web server. If you're prompted for a login, you're in! If not,
 check the Apache error log to figure out what might have gone wrong.
 
 To start using Bricolage, log in as the default user. The user name is "admin"
-and the password is "c@st3l!@n". This user is not special, so you can change it
-however you like. The first thing you should do is to B<change the admin login
-password> so that others who download the Bricolage sources can't just use that
-login to get into I<your> installation! Now use the admin login to create other
-user accounts.
+and the password is "change me now!". This user is not special, so you can
+change it however you like. The first thing you should do is to B<change the
+admin login password> so that others who download the Bricolage sources can't
+just use that login to get into I<your> installation! Now use the admin login to
+create other user accounts.
 
 =back
 
@@ -734,27 +738,15 @@ bric_apachectl.
 
 =item *
 
-B<PID_FILE:> Sets the file to which the server records the process id of the
-daemon. If the filename does not begin with a slash (/) then it is assumed to be
-relative to the ServerRoot. Defaults to "/usr/local/apache/logs/httpd.pid" if
-not specified. This isn't portable, so we recommend you set it. Used only in
-bric_apachectl.
-
-=item *
-
-B<SERVER_NAME:> The DNS name or IP address of the Bricolage server. If this
-configuration is not specified, Bricolage will use the unix-specific system
-tools C<hostname> and C<dnsdomainname> to try to establish the server name.
-Needless to say, these tools are not portable, so we highly recommend that you
-set this configuration directive in bricolage.conf.
-
-=item *
-
 B<LISTEN_PORT:> The TCP/IP Port on which the Bricolage server should listen for
-requests. Defaults to 80 if not specified. B<Note:> If the C<SSL_ENABLE>
-directive has been turned on, then C<LISTEN_PORT> I<must> be set to 80. The
-Bricolage server will not start if C<SSL_ENABLE> is on and C<LISTEN_PORT> is set
-to a value other than 80.
+requests. Defaults to 80 if not specified. You must also tell Apache to listen
+on this port in the configuration file specified in C<APACHE_CONF> (using
+Listen, Port, or BindAddress). B<Note:> If the C<SSL_ENABLE> directive has been
+turned on, then C<LISTEN_PORT> I<must> be set to 80. The Bricolage server will
+not start if C<SSL_ENABLE> is on and C<LISTEN_PORT> is set to a value other than
+80.
+
+=item *
 
 B<SSL_ENABLE:> Turn on this boolean directive to enable SSL support. The Apache
 OpenSSL interface (mod_ssl) is an optional part of the Bricolage application.

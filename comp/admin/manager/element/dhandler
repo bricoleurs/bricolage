@@ -141,11 +141,11 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-01-23 20:13:29 $
+$Date: 2002-02-12 00:59:17 $
 
 =head1 SYNOPSIS
 

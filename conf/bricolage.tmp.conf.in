@@ -1,10 +1,11 @@
 # Apache Settings. APACHE_BIN is the location of the Apache server executable,
 # and APACHE_CONF is the location of the Apache configuration file. LISTEN_PORT
-# is equivalent to the Apache Listen directive, and must agree with the Listen
-# setting in the Apache configuration file specified in APACHE_CONF. SSL_ENABLE
-# turns on SSL support. Note that if SSL_ENABLE is turned on, then LISTEN_PORT
-# *must* be 80, or else Bricolage will not start. VHOST is the Virtual host name
-# under which Bricolage should run.
+# is the port on which Bricolage will listen for connections. You must also tell
+# Apache to listen on this port in the configuration file specified in
+# APACHE_CONF (using Listen, Port, or BindAddress). SSL_ENABLE turns on SSL
+# support. Note that if SSL_ENABLE is turned on, then LISTEN_PORT *must* be 80,
+# or else Bricolage will not start. VHOST is the Virtual host name under which
+# Bricolage should run.
 APACHE_BIN              = %APACHE%
 APACHE_CONF             = %APACHE_CONF%
 LISTEN_PORT             = 80
@@ -70,7 +71,7 @@ CHAR_SET                = ISO-8859-1
 # User login and password settings These settings specify the minimum length of
 # a user login as well as the minimum lenght of a user password. Both default to
 # '6' if they're not specified.
-LOGIN_LENGTH            = 4
+LOGIN_LENGTH            = 6
 PASSWD_LENGTH           = 6
 
 # Distribution settings. ENABLE_DIST, if set to 'yes' or 'on' or '1', tells the
@@ -93,7 +94,7 @@ PASSWD_LENGTH           = 6
 ENABLE_DIST             = 1
 DIST_ATTEMPTS           = 3
 PREVIEW_LOCAL           = 1
-PREVIEW_MASON           = 1
+PREVIEW_MASON           = 0
 DEF_MEDIA_TYPE          = 'text/html'
 
 # Alert Settings. ALERT_FROM is the email address that will appear in the 'From'
@@ -132,10 +133,10 @@ DEFAULT_FILE_EXT         = html
 # that code will be executed at startup time in the context of your Templates.
 # That is, if any of the code you add here exports functions, they'll be
 # available in your templates.
-#PERL_LOADER              = use CGI; use Apache::DBI;
+#PERL_LOADER             = use CGI; use Apache::DBI;
 
 # FTP settings - see Bric::Admin for details
-ENABLE_FTP_SERVER         = Off
+ENABLE_FTP_SERVER        = Off
 # FTP_ADDRESS             = 127.0.0.1
 # FTP_PORT                = 2121
 # FTP_DEBUG               = 1

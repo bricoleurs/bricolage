@@ -70,7 +70,17 @@ Created new method of configuring Bricolage in Apache. [David]
 
 =item *
 
+Changed password for the default "admin" user to "change me now!" [David]
+
+=item *
+
 Added support for Mozilla (and there was much rejoicing!). [David]
+
+=item *
+
+The slug is stored in the database for both fixed and non-fixed
+stories. This is in anticipation of adding the ability to use the slug
+for fixed story URIs later on. Thanks to Darren Graves for the patch.
 
 =back
 
@@ -114,8 +124,30 @@ Fixed broken "Preview" button in Read-only story profile. [Matt Vella]
 
 =item *
 
-Fixed bug where templates often couldn't be found by the
-HTML::Template burner if the output channel had a post_path. [Sam]
+Updated debugging code to accommodate new syntax in Cache::Cache. Thanks to Sam
+Tregar for the spot. [David]
+
+=item *
+
+Fixed problem with Element names containing non-alphanumeric characters. [Sam]
+
+=item *
+
+Checking out media assets from "Find Media" now redirects you to the media
+profile if you've checked out one media asset, or My Workspace if you've checked
+out more than one. This puts it in line with how "Find Stories" and "Find
+Templates" work. Thanks to Sam for the report. [David]
+
+=item *
+
+Fixed bulk edit functionality for Media assets. Thanks to Sam for the spot.
+[David]
+
+=item *
+
+In Bric::Biz::Asset::Business, the source get_meth key in my_meths() now works
+properly. Also, get_all_keywords() now also returns the category keywords as
+well as the story keywords. Thanks to Darren Graves for the patch.
 
 =back
 

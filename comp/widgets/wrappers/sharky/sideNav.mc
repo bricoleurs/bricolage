@@ -54,7 +54,7 @@ my $agent                     = $m->comp("/widgets/util/detectAgent.mc");
 my $workflowIndent            = 25;
 my $adminIndent               = 25;
 my $tabHeight                 = "height=20";
-my $numLinks                  = $c->get("__NUM_LINKS__");
+my $numLinks                  = $c->get("__NUM_LINKS__") || 0;
 my $workflowGraphic           = ( $section eq 'admin') ? "/media/images/workflow_admin.gif"
                                                        : "/media/images/workflow_workflow.gif";
 my $workspaceGraphic          = $type eq "workspace"
@@ -442,10 +442,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-01-31 02:19:06 $
+$Date: 2002-02-12 00:59:17 $
 
 </%doc>
