@@ -31,6 +31,11 @@ and output channel associations. This should eliminate errors when users try
 to create documents based on types without output channel associations.
 [David]
 
+=item *
+
+The "Output Channel" item for templates on desks now displays properly.
+[David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)
