@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.34.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:38 $
+$Date: 2003-05-29 18:01:11 $
 
 =head1 SYNOPSIS
 
@@ -525,7 +525,7 @@ sub undeploy {
 }
 #------------------------------------------------------------------------------#
 
-=item $url = $b->preview($ba, $key, $user_id, $m);
+=item $url = $b->preview($ba, $key, $user_id, $oc_id);
 
 Sends story or media to preview server and returns URL. Params:
 
@@ -543,9 +543,9 @@ The string "story" or "media".
 
 The ID of the user publishing the asset.
 
-=item C<$m>
+=item C<$oc_id>
 
-A Mason request object (optional).
+Output channel ID (optional).
 
 =back
 
@@ -561,9 +561,7 @@ sub preview {
     my $self = shift;
     $self->_set(['mode'], [PREVIEW_MODE]);
     my ($ats, $oc_sts) = ({}, {});
-    my ($ba, $key, $user_id, $m, $oc_id) = @_;
-    my $send_msg = $m ? sub { $m->comp('/lib/util/status_msg.mc', @_) } :
-                        sub { 0; };
+    my ($ba, $key, $user_id, $oc_id) = @_;
     my $comp_root = MASON_COMP_ROOT->[0][1];
     my $site_id = $ba->get_site_id;
 
@@ -578,8 +576,6 @@ sub preview {
                 ({ id => $oc_id ? $oc_id : $at->get_primary_oc_id($site_id) });
 
     # Burn to each output channel.
-    &$send_msg("Writing files to &quot;" . $oc->get_name
-               . '&quot; Output Channel.');
     my $ocid = $oc->get_id;
     # Get a list of server types this categroy applies to.
     my $bat = $oc_sts->{$ocid} ||=
@@ -588,11 +584,6 @@ sub preview {
     # Make sure we have some destinations.
     unless (@$bat) {
         if (not PREVIEW_LOCAL) {
-            # can't use add_msg here because we're already in a new window
-            &$send_msg("<font color=red><b>Cannot preview asset &quot;" .
-                       $ba->get_name . "&quot; because there are no " .
-                       "Preview Destinations associated with its " .
-                       "output channels.</b></font>");
             next;
         }
     }
@@ -635,8 +626,7 @@ sub preview {
     log_event('job_new', $job);
 
     # Execute the job and redirect.
-    &$send_msg("Distributing files.");
-    # We don't need to exeucte the job if it has already been executed.
+    # We don't need to execute the job if it has already been executed.
     $job->execute_me unless ENABLE_DIST;
     if (PREVIEW_LOCAL) {
         # Copy the files for previewing locally.

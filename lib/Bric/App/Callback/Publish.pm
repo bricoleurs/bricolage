@@ -14,12 +14,10 @@ use Bric::App::Util qw(:all);
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Util::Burner;
-use HTML::Mason::Request;
 
 
 sub preview : Callback {
     my $self = shift;
-    my $m = HTML::Mason::Request->instance;
     my $param = $self->request_args;
 
     # Grab the story and media IDs from the session.
@@ -44,7 +42,7 @@ sub preview : Callback {
 
         # Move out the story and then redirect to preview.
         #XXX: $oc_id
-        my $url = $b->preview($media, 'media', get_user_id(), $m, $oc_id);
+        my $url = $b->preview($media, 'media', get_user_id(), $oc_id);
         &$send_msg("Redirecting to preview.");
         redirect_onload($url);
     } else {
@@ -68,11 +66,11 @@ sub preview : Callback {
                 next;
             }
             # XXX: $oc_id
-            $b->preview($ra, 'media', get_user_id(), $m, $oc_id);
+            $b->preview($ra, 'media', get_user_id(), $oc_id);
         }
         # Move out the story and then redirect to preview.
         # XXX: $oc_id
-        my $url = $b->preview($s, 'story', get_user_id(), $m, $oc_id);
+        my $url = $b->preview($s, 'story', get_user_id(), $oc_id);
         &$send_msg("Redirecting to preview.");
         redirect_onload($url);
     }
