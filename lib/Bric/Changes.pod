@@ -130,6 +130,10 @@ it a default value that's actualy useful. [David]
 
 Perl 5.8.0 or later is now strongly recommended for better Unicode support.
 
+=item *
+
+Fixed deleting an Alert Type Rule [Scott]
+
 =back
 
 =head1 VERSION 1.6.1
