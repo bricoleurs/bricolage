@@ -30,7 +30,7 @@ sub test_lookup : Test(2) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(23) {
+sub test_list : Test(26) {
     my $self = shift;
 
     # Create a new workflow group.
@@ -72,6 +72,13 @@ sub test_list : Test(23) {
         ({ grp_id => $grp_id }),
         "Look up grp_id $grp_id" );
     is( scalar @desks, 3, "Check for 3 desks" );
+    # Make sure we've got all the Group IDs we think we should have.
+    my $all_grp_id = Bric::Biz::Workflow::Parts::Desk::INSTANCE_GROUP_ID;
+    foreach my $desk (@desks) {
+        my %grp_ids = map { $_ => 1 } $desk->get_grp_ids;
+        ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
+          "Check for both IDs" );
+    }
 
     # Try publish.
     ok( @desks = Bric::Biz::Workflow::Parts::Desk->list({ publish => 1 }),
