@@ -6,11 +6,11 @@ clone_db.pl - installation script to clone an existing database
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2004-03-03 02:20:24 $
+$Date: 2004-03-18 00:21:50 $
 
 =head1 DESCRIPTION
 
@@ -39,36 +39,13 @@ use DBI;
 print "\n\n==> Cloning Bricolage Database <==\n\n";
 
 our $PG;
-do "./postgres.db" or die "Failed to read postgres.db : $!";
+do "./postgres.db" or die "Failed to read postgres.db: $!";
 
 $ENV{PGHOST} = $PG->{host_name} if $PG->{host_name};
 $ENV{PGPORT} = $PG->{host_port} if $PG->{host_port};
 
-# dump out database (NOTE: when the installer uses psql to load
-# Pg.sql drop the -d for a speedup)
+# dump out database
 system(catfile($PG->{bin_dir}, 'pg_dump') .
-       " -U$PG->{root_user} -O -x -d $PG->{db_name} > inst/Pg.sql.tmp");
+       " -U$PG->{root_user} -O -x $PG->{db_name} > inst/Pg.sql.tmp");
 
-# fix problem with the Usr table's circular dependecy on login_avail().
-open(TMP, "inst/Pg.sql.tmp") or die $!;
-open(SQL, ">inst/Pg.sql") or die $!;
-my $last;
-while(<TMP>) {
-    if (/CONSTRAINT\s+"?ck_usr__login"?/) {
-        $last =~ s/,\s*$//;
-        print SQL $last if $last;
-        $last = '';
-    } else {
-        print SQL $last if $last;
-        $last = $_;
-    }
-}
-print SQL $last if $last;
-close TMP;
-print SQL "\nALTER TABLE usr ADD CONSTRAINT ck_usr__login ",
-  "CHECK (login_avail(LOWER(login), active, id));\n";
-close SQL;
-unlink "inst/Pg.sql.tmp" or die $!;
-
-print "\n\n==> Finished Cloning Bricolage Database <==\n\n";
 exit 0;

@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.150 $
+$Revision: 1.151 $
 
 =head1 DATE
 
-$Date: 2004-03-17 03:44:52 $
+$Date: 2004-03-18 00:21:51 $
 
 =head1 DESCRIPTION
 
@@ -43,7 +43,7 @@ apache-ssl.
 
 =item 3
 
-Install PostgreSQL 7.1 or greater. Be sure to use UNICODE for data encoding.
+Install PostgreSQL 7.2 or greater. Be sure to use UNICODE for data encoding.
 
 =item 4
 
@@ -223,7 +223,7 @@ mod_perl 1.25 - Apache/Perl Integration
 
 =item *
 
-PostgreSQL 7.1.3
+PostgreSQL 7.2.4
 
 =item *
 
@@ -654,21 +654,16 @@ docs or have them available elsewhere:
 
 =item *
 
-Don't forget to install the DBD::Pg perl module! You'll need to set the
+Don't forget to install the DBD::Pg perl module! If its F<Makefile.PL>
+can't find your installed version of PostgreSQL, you'll need to set the
 C<POSTGRES_INCLUDE> and C<POSTGRES_LIB> environment variables, first:
 
   export POSTGRES_INCLUDE=/usr/local/include
   export POSTGRES_LIB=/usr/local/lib
 
-Or, if you're using an older version of Postgres (pre 7.2) that put
-all of its files in /usr/local/pgsql:
-
-  export POSTGRES_INCLUDE=/usr/local/pgsql/include
-  export POSTGRES_LIB=/usr/local/pgsql/lib
-
 Then you can build the module:
 
-  cd /path/to/DBD-Pg-1.00
+  cd /path/to/DBD-Pg-1.xx
   perl Makefile.PL
   make
   make test

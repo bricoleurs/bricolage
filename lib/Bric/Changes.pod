@@ -294,6 +294,15 @@ method (and therefore the SOAP interface):
 
 [David]
 
+=item *
+
+Eliminated C<login_avail()> PostgreSQL function, replacing it with a partial
+constraint. This not only makes things simpler code-wise, but it also
+eliminates backup and restore problems where the C<usr> table is missing. The
+downside is that it requires PostgreSQL 7.2 instead of our traditional minimum
+requirement of 7.1. So any PostgreSQL 7.1 users will need to upgrade before
+upgrading to this version of Bricolage. Suggested by Josh Berkus. [David]
+
 =back
 
 =head2 Bug Fixes
