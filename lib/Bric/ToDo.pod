@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.85 $
+$Revision: 1.86 $
 
 =head1 DATE
 
-$Date: 2003-02-09 16:13:14 $
+$Date: 2003-02-13 21:33:39 $
 
 =head1 DESCRIPTION
 
@@ -402,11 +402,6 @@ Add support for LDAP authentication.
 Change way objects are deactivated (archived?) in the database such that, where
 there are name uniqueness constraints, a new object can be created with the name
 of a deleted one without any clashes (e.g., for Elements and Element Types).
-
-=item *
-
-Update all interface elements to use localization libraries. No text that
-appears to the user should appear except in reference to a localization library.
 
 =item *
 
