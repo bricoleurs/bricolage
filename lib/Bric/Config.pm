@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-27 20:15:58 $
+$Date: 2001-12-27 20:47:13 $
 
 =head1 SYNOPSIS
 
@@ -107,6 +107,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    ALERT_FROM
 		    ALERT_TO_METH
 		    BURN_ROOT
+		    STAGE_ROOT
+		    PREVIEW_ROOT
 		    BURN_COMP_ROOT
 		    BURN_DATA_ROOT
 		    BURN_ARGS_METHOD
@@ -153,6 +155,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 				 MASON_DATA_ROOT
 				 MASON_ARGS_METHOD)],
 		    burn => [qw(BURN_ROOT
+				STAGE_ROOT
+				PREVIEW_ROOT
 				BURN_COMP_ROOT
 			        BURN_DATA_ROOT
                                 DEFAULT_FILENAME
@@ -169,6 +173,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 		    auth_len => [qw(PASSWD_LENGTH
 				    LOGIN_LENGTH)],
 		    prev => [qw(PREVIEW_LOCAL
+                                STAGE_ROOT
+                                PREVIEW_ROOT
 				DOCUMENT_ROOT
 				PREVIEW_MASON)],
 		    dist => [qw(ENABLE_DIST
@@ -376,7 +382,9 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 
     # Burner settings.
     use constant BURN_ROOT               => $config->{BURN_ROOT}
-      || catdir(MASON_DATA_ROOT, 'burn', 'stage');
+      || catdir(MASON_DATA_ROOT, 'burn');
+    use constant STAGE_ROOT              => catdir(BURN_ROOT, 'stage');
+    use constant PREVIEW_ROOT            => catdir(BURN_ROOT, 'preview');
     use constant BURN_COMP_ROOT          => $config->{BURN_COMP_ROOT}
       || catdir(MASON_DATA_ROOT, 'burn', 'comp');
     use constant BURN_DATA_ROOT          => $config->{BURN_DATA_ROOT}
