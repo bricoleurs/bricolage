@@ -32,8 +32,6 @@ my ($save_contrib, $handle_delete);
 sub update : Callback(priority => 1) {
     my $self = shift;
 
-    return unless $self->has_perms;
-
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
