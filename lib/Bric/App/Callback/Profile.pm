@@ -47,7 +47,7 @@ include:
 
 =item *
 
-Construting the object on which the callback methods will be operating.
+Constructing the object on which the callback methods will be operating.
 
 =item *
 
