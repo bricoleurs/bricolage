@@ -257,6 +257,12 @@ than before. Thus it is only set if the publish is successful, while at the
 same time templates can check C<publish_status> to determine if a story is
 being published for the first time. [David]
 
+=item *
+
+Added C<get_more_pages()> method to Bric::Util::Burner::Mason. It returns true
+if more pages remain to be burned, and false if not. However it's only
+enumerated when C<display_pages()> is being used to output pages. [David]
+
 =back
 
 =head1 VERSION 1.4.4

@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-23 22:08:40 $
+$Date: 2002-10-24 22:37:15 $
 
 =head1 SYNOPSIS
 
@@ -101,6 +101,7 @@ BEGIN {
                          'oc'             => Bric::FIELD_READ,
                          'cat'            => Bric::FIELD_READ,
                          'uri_path'       => Bric::FIELD_READ,
+                         'more_pages'     => Bric::FIELD_READ,
 
                          # Private Fields
                          '_interp'         => Bric::FIELD_NONE,
@@ -111,7 +112,6 @@ BEGIN {
                          '_at'             => Bric::FIELD_NONE,
                          '_files'          => Bric::FIELD_NONE,
                          '_res'            => Bric::FIELD_NONE,
-                         '_more_pages'     => Bric::FIELD_NONE,
                          '_page_place'     => Bric::FIELD_NONE,
                         });
 }
@@ -266,7 +266,7 @@ sub burn_one {
         $self->end_page if $outbuf !~ /^\s*$/;
 
         # Keep burning this template if it contains more pages.
-        last unless $self->_get('_more_pages');
+        last unless $self->_get('more_pages');
     }
 
     $self->_pop_element();
@@ -462,8 +462,8 @@ sub display_pages {
         }
     }
 
-    # Set the '_more_pages' and '_page_place' properties.
-    $self->_set([ qw(_more_pages _page_place) ],
+    # Set the 'more_pages' and '_page_place' properties.
+    $self->_set([ qw(more_pages _page_place) ],
                 [ $next_page,
                   $page_elem ? $page_elem->get_place + 1 : $page_place + 1 ]);
 
@@ -520,7 +520,26 @@ sub display_element {
 
 ##############################################################################
 
-=item $prev_page_file = $b->prev_page_file
+=item my $more_pages = $b->get_more_pages
+
+  % unless ($burner->get_more_pages) {
+        <h3>Last page</h3>
+  % }
+
+Returns true if more pages remain to be burned, and false if not. Only
+enumerated when C<display_pages()> is being used to output pages.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+##############################################################################
+
+=item my $prev_page_file = $b->prev_page_file
 
   % if (my $prev = $burner->prev_page_file) {
       <a href="<% $prev %>">Previous Page</a>
@@ -551,7 +570,7 @@ sub prev_page_file {
 
 ##############################################################################
 
-=item $prev_page_uri = $b->prev_page_uri
+=item my $prev_page_uri = $b->prev_page_uri
 
   % if (my $prev = $burner->prev_page_uri) {
       <a href="<% $prev %>">Previous Page</a>
@@ -580,7 +599,7 @@ sub prev_page_uri {
 
 ##############################################################################
 
-=item $next_page_file = $b->next_page_file
+=item my $next_page_file = $b->next_page_file
 
   % if (my $next = $burner->next_page_file) {
       <a href="<% $next %>">Next Page</a>
@@ -600,7 +619,7 @@ B<Notes:> NONE.
 sub next_page_file {
     my $self = shift;
     my ($page, $isnext, $story, $oc) =
-      $self->_get(qw(page _more_pages story oc));
+      $self->_get(qw(page more_pages story oc));
     return unless $isnext;
     $page++;
     my $fn = $oc->get_filename($story);
@@ -610,7 +629,7 @@ sub next_page_file {
 
 ##############################################################################
 
-=item $next_page_uri = $b->next_page_uri
+=item my $next_page_uri = $b->next_page_uri
 
   % if (my $next = $burner->next_page_uri) {
       <a href="<% $next %>">Next Page</a>
