@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2002-12-11 09:38:55 $
 
 =head1 SYNOPSIS
 
@@ -49,6 +49,7 @@ $Date: 2002-08-30 22:13:38 $
 
   my @contacts = $p->get_contacts;
   my $contact = $p->new_contact;
+  $p->add_new_contacts(@contacts);
   $p = $p->del_contacts;
 
   my @gids = $p->get_grp_ids;
@@ -1275,6 +1276,38 @@ sub get_contacts {
     my $self = shift;
     my $cont_coll = &$get_cont_coll($self);
     $cont_coll->get_objs(@_);
+}
+
+################################################################################
+
+=item my $contact = $p->add_contacts(@contacts)
+
+  $p->add_contacts(@contacts);
+  $p->save;
+
+Adds a list of contacts to the contacts associated with this Person Object
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=back
+
+B<Side Effects:> Uses Bric::Util::Coll::Contact internally.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_new_contacts {
+    my $self = shift;
+    my $cont_coll = &$get_cont_coll($self);
+    $self->_set__dirty(1);
+    $cont_coll->add_new_objs(@_);
 }
 
 ################################################################################
