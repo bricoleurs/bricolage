@@ -25,7 +25,9 @@ our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(
                     category_path_to_id
                     output_channel_name_to_id
-                    xs_date_to_db_date db_date_to_xs_date
+                    workflow_name_to_id
+                    xs_date_to_db_date
+                    db_date_to_xs_date
                     parse_asset_document
                     serialize_elements
                     deserialize_elements
@@ -42,15 +44,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-17 03:12:47 $
+$Date: 2004-03-24 01:39:09 $
 
 =head1 SYNOPSIS
 
@@ -83,7 +85,19 @@ Notes: NONE
 
 =cut
 
-sub category_path_to_id { (Bric::Biz::Category->list_ids({ uri => shift }))[0] }
+sub category_path_to_id {
+    my ($pkg, $uri, $args) = @_;
+    my ($cat_id) = Bric::Biz::Category->list_ids({
+        uri => $uri,
+        $args->{site_id} ? (site_id => $args->{site_id}) : ()
+    });
+    return $cat_id if defined $cat_id;
+    my $site = $args->{site} || $args->{site_id}
+      ? ', site => "' . $args->{site} || $args->{site_id} . '"'
+      : '';
+    throw_ap qq{$pkg\::list_ids: no category found matching }
+      . qq{(category => "$uri"$site)};
+}
 
 =item $output_channel_id = output_channel_name_to_id($path)
 
@@ -98,7 +112,43 @@ Notes: NONE
 =cut
 
 sub output_channel_name_to_id {
-    (Bric::Biz::OutputChannel->list_ids({ name => shift }))[0]
+    my ($pkg, $name, $args) = @_;
+    my ($oc_id) = Bric::Biz::OutputChannel->list_ids({
+        name => $name,
+        $args->{site_id} ? (site_id => $args->{site_id}) : ()
+    });
+    return $oc_id if defined $oc_id;
+    my $site = $args->{site} || $args->{site_id}
+      ? ', site => "' . $args->{site} || $args->{site_id} . '"'
+      : '';
+    throw_ap qq{$pkg\::list_ids: no output channel found matching }
+      . qq{(output_channel => "$name"$site)};
+}
+
+=item $workflow_id = workflow_name_to_id($path)
+
+Returns a workflow ID for a workflow name.
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+sub workflow_name_to_id {
+    my ($pkg, $name, $args) = @_;
+    my ($wf_id) = Bric::Biz::Workflow->list_ids({
+        name => $name,
+        $args->{site_id} ? (site_id => $args->{site_id}) : ()
+    });
+    return $wf_id if defined $wf_id;
+    my $site = $args->{site} || $args->{site_id}
+      ? ', site => "' . $args->{site} || $args->{site_id} . '"'
+      : '';
+    throw_ap qq{$pkg\::list_ids: no workflow found matching }
+      . qq{(workflow => "$name"$site)};
 }
 
 =item $site_id = site_path_to_id($path)

@@ -74,13 +74,19 @@ identify the element. [JoE<atilde>o Pedro]
 
 =item *
 
-Story creation via SOAP now correctly looks up the Category by URI and site
-ID. [JoE<atilde>o Pedro]
+Story, Media, and Template creation via SOAP now correctly look up the
+Category by URI and site ID. [JoE<atilde>o Pedro & David]
 
 =item *
 
 The Template SOAP interface now suports the C<site> parameter to
 C<list_ids()>. [David]
+
+=item *
+
+The Story, Template, and Media SOAP C<list_ids() intefaces now properly look
+up categories, output channels, and workflows with the C<site> paremeter, if
+there is one. [David]
 
 =back
 

@@ -18,6 +18,8 @@ use Bric::App::Event    qw(log_event);
 use Bric::Util::Priv::Parts::Const qw(:all);
 
 use Bric::SOAP::Util qw(category_path_to_id
+                        output_channel_name_to_id
+                        workflow_name_to_id
                         site_to_id
                         xs_date_to_db_date
                         db_date_to_xs_date
@@ -41,15 +43,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-23 18:27:35 $
+$Date: 2004-03-24 01:39:09 $
 
 =head1 SYNOPSIS
 
@@ -246,16 +248,24 @@ sub list_ids {
           unless $self->is_allowed_param($_, $method);
     }
 
+    # handle site => site_id conversion
+    $args->{site_id} = site_to_id(__PACKAGE__, $args->{site})
+      if exists $args->{site};
+
     # handle workflow => workflow__id mapping
-    if (exists $args->{workflow}) {
-        my ($workflow_id) = Bric::Biz::Workflow->list_ids(
-                                { name => $args->{workflow} });
-        throw_ap(error => __PACKAGE__ . "::list_ids : no workflow found matching "
-                   . "(workflow => \"$args->{workflow}\")")
-          unless defined $workflow_id;
-        $args->{workflow__id} = $workflow_id;
-        delete $args->{workflow};
-    }
+    $args->{workflow_id} =
+      workflow_name_to_id(__PACKAGE__, delete $args->{workflow}, $args)
+      if exists $args->{workflow};
+
+    # handle output_channel => output_channel__id mapping
+    $args->{output_channel_id} =
+      output_channel_name_to_id(__PACKAGE__, delete $args->{output_channel}, $args)
+      if exists $args->{output_channel};
+
+    # handle category => category_id conversion
+    $args->{category_id} =
+      category_path_to_id(__PACKAGE__, delete $args->{category}, $args)
+      if exists $args->{category};
 
     # handle element => element__id conversion
     if (exists $args->{element}) {
@@ -267,30 +277,6 @@ sub list_ids {
         $args->{element__id} = $element_id;
         delete $args->{element};
     }
-
-    # handle category => category_id conversion
-    if (exists $args->{category}) {
-        my $category_id = category_path_to_id($args->{category});
-        throw_ap(error => __PACKAGE__ . "::list_ids : no category found matching "
-                   . "(category => \"$args->{category}\")")
-          unless defined $category_id;
-        $args->{category__id} = $category_id;
-        delete $args->{category};
-    }
-
-    # handle output_channel => output_channel_id conversion
-    if (exists $args->{output_channel}) {
-        my $output_channel_id = output_channel_name_to_id($args->{output_channel});
-        throw_ap(error => __PACKAGE__ . "::list_ids : no output channel found matching "
-                   . "(output_channel => \"$args->{output_channel}\")")
-          unless defined $output_channel_id;
-        $args->{output_channel_id} = $output_channel_id;
-        delete $args->{output_channel};
-    }
-
-    # handle site => site_id conversion
-    $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
-      if exists $args->{site};
 
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
@@ -710,9 +696,8 @@ sub load_asset {
         }
 
         # assign catgeory__id
-        $init{category__id} = category_path_to_id($mdata->{category}[0]);
-        throw_ap(error => __PACKAGE__ . "::create : no category found matching " .
-                   "(category => \"$mdata->{category}[0]\")")
+        $init{category__id} =
+          category_path_to_id(__PACKAGE__, $mdata->{category}[0], \%init)
           unless defined $init{category__id};
 
         # get base media object

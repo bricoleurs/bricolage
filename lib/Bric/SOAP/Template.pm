@@ -19,8 +19,11 @@ use File::Basename qw(fileparse basename);
 use Bric::Util::Priv::Parts::Const qw(:all);
 
 use Bric::SOAP::Util qw(category_path_to_id
+                        output_channel_name_to_id
+                        workflow_name_to_id
                         site_to_id
-                        xs_date_to_db_date db_date_to_xs_date
+                        xs_date_to_db_date
+                        db_date_to_xs_date
                         parse_asset_document
                        );
 
@@ -42,15 +45,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 00:55:27 $
+$Date: 2004-03-24 01:39:09 $
 
 =head1 SYNOPSIS
 
@@ -191,41 +194,24 @@ sub list_ids {
             unless $self->is_allowed_param($_, $method);
     }
 
+    # handle site => site_id conversion
+    $args->{site_id} = site_to_id(__PACKAGE__, $args->{site})
+      if exists $args->{site};
+
     # handle workflow => workflow__id mapping
-    if (exists $args->{workflow}) {
-        my ($workflow_id) = Bric::Biz::Workflow->list_ids(
-                                { name => $args->{workflow} });
-        throw_ap(error => __PACKAGE__ . "::list_ids : no workflow found matching "
-                   . "(workflow => \"$args->{workflow}\")")
-          unless defined $workflow_id;
-        $args->{workflow__id} = $workflow_id;
-        delete $args->{workflow};
-    }
+    $args->{workflow_id} =
+      workflow_name_to_id(__PACKAGE__, delete $args->{workflow}, $args)
+      if exists $args->{workflow};
 
     # handle output_channel => output_channel__id mapping
-    if (exists $args->{output_channel}) {
-        my ($output_channel_id) = Bric::Biz::OutputChannel->list_ids(
-                                { name => $args->{output_channel} });
-        throw_ap(error => __PACKAGE__ . "::list_ids : no output_channel found matching "
-                   . "(output_channel => \"$args->{output_channel}\")")
-          unless defined $output_channel_id;
-        $args->{output_channel__id} = $output_channel_id;
-        delete $args->{output_channel};
-    }
+    $args->{output_channel_id} =
+      output_channel_name_to_id(__PACKAGE__, delete $args->{output_channel}, $args)
+      if exists $args->{output_channel};
 
     # handle category => category_id conversion
-    if (exists $args->{category}) {
-        my $category_id = category_path_to_id($args->{category});
-        throw_ap(error => __PACKAGE__ . "::list_ids : no category found matching "
-                   . "(category => \"$args->{category}\")")
-          unless defined $category_id;
-        $args->{category_id} = $category_id;
-        delete $args->{category};
-    }
-
-    # handle site => site_id conversion
-    $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
-      if exists $args->{site};
+    $args->{category_id} =
+      category_path_to_id(__PACKAGE__, delete $args->{category}, $args)
+      if exists $args->{category};
 
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
@@ -239,6 +225,9 @@ sub list_ids {
     # element is name for templates
     $args->{name} = delete $args->{element}
       if exists $args->{element};
+
+    # We're done with the site now.
+    delete $args->{site};
 
     my @list = Bric::Biz::Asset::Formatting->list_ids($args);
 
@@ -635,9 +624,8 @@ sub load_asset {
         }
 
         # assign catgeory_id (not category__id, for some reason...)
-        $init{category_id} = category_path_to_id($tdata->{category}[0]);
-        throw_ap(error => __PACKAGE__ . " : no category found matching " .
-                   "(category => \"$tdata->{category}[0]\")")
+        $init{category_id} =
+          category_path_to_id(__PACKAGE__, $tdata->{category}[0], \%init)
           unless defined $init{category_id};
 
         # setup data
