@@ -129,6 +129,11 @@ The install process will now find Apache modules in
 /usr/lib/apache/modules, which is where they are in OpenBSD. Thanks to
 Mark Johnson for his help tracking this one down.  [Sam]
 
+=item *
+
+The install process will no longer install an incompatible version of
+HTML::Mason (>1.09).  [Sam]
+
 =back
 
 =head1 VERSION 1.3.3

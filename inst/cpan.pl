@@ -6,11 +6,11 @@ cpan.pl - installation script to install CPAN modules
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-09-03 19:03:13 $
 
 =head1 DESCRIPTION
 
@@ -142,8 +142,14 @@ exit 0;
 sub install_module {
     my ($name, $req_version) = @_;
 
-    # push onto the queue.  This keeps everything simpler below
-    CPAN::Queue->new($name);
+    unless ($name eq 'HTML::Mason') {
+        # push onto the queue.  This keeps everything simpler below
+        CPAN::Queue->new($name);
+    } else {
+        # HTML::Mason's current version breaks Bricolage, so make sure
+        # we get an old one
+        CPAN::Queue->new("J/JS/JSWARTZ/HTML-Mason-1.05.tar.gz");
+    }
 
     # process the queue
     while (my $q = CPAN::Queue->first) {
@@ -158,8 +164,13 @@ END
 
 	print "Found ", $m->id, ".  Installing...\n";
 
-	# need to force?
+	# get name of module being installed
 	my $key = $m->isa('CPAN::Distribution') ? $m->called_for : $m->id;
+
+        # for some reason that doesn't work for HTML::Mason
+        $key = 'HTML::Mason' unless defined $key;
+
+        # sometimes I used a little too much force
 	$m->force('install') if $flags{$key} and $flags{$key} & FORCE;
 
 	# need PG env vars?
