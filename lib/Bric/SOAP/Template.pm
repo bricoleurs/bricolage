@@ -42,15 +42,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 15:26:25 $
+$Date: 2004-03-18 15:27:40 $
 
 =head1 SYNOPSIS
 
@@ -515,7 +515,6 @@ sub is_allowed_param {
     my $module = $pkg->module;
 
     my @extra_listids = keys %{ Bric::Biz::Asset::Formatting->PARAM_WHERE_MAP };
-print STDERR "@extra_listids\n";
     my $allowed = {
         list_ids => { map { $_ => 1 } qw(element file_name output_channel
                                          category workflow simple
