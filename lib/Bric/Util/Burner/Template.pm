@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-27 20:09:24 $
+$Date: 2002-08-05 19:34:41 $
 
 =head1 SYNOPSIS
 
@@ -289,7 +289,7 @@ sub chk_syntax {
 	# which aren't available in the chk_syntax context.
 	$data =~ s/<[tT][mM][pP][lL]_[iI][nN][cC][lL][uU][dD][eE][^>]+>//g;
 	
-	eval { HTML::Template::Expr->new(scalarref => \$data, cache => 0) };
+	eval { HTML::Template::Expr->new(scalarref => \$data) };
 	if ($@) {
 	    $$err = $@;
 	    $$err =~ s!/fake/path/for/non/file/template!$file_name!g;
@@ -513,7 +513,8 @@ Defaults to on since you'll definitely want 'em.
 
 =item cache
 
-Defaults to on.
+Defaults to off.  Don't turn it on unless you know what you're doing -
+there are some potential problems with <tmpl_include> and Bricolage.
 
 =back
 
@@ -604,7 +605,7 @@ sub new_template {
     # setup defaults
     $args{global_vars} = 1       unless exists $args{global_vars};
     $args{loop_context_vars} = 1 unless exists $args{loop_context_vars};
-    $args{cache} = 1             unless exists $args{cache};
+    $args{cache} = 0             unless exists $args{cache};
 
     # setup some useful functions
     # $args{functions}{call} => sub { $self->run_script($_[0]) };
