@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32.4.2 $
+$Revision: 1.32.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-05-07 19:11:14 $
+$Date: 2003-06-22 17:07:07 $
 
 =head1 SYNOPSIS
 
@@ -774,7 +774,7 @@ sub publish {
         if ($exp_date) {
             # We'll need to expire it.
             my $expname = "Expire &quot;" . $ba->get_name .
-              "&quot; from &quot" . $oc->get_name . "&quot;";
+              "&quot; from &quot;" . $oc->get_name . "&quot;";
             my $exp_job = Bric::Dist::Job->new
               ({ sched_time   => $exp_date,
                  user_id      => $user_id,

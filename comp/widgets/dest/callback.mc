@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.4.1 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:15 $
+$Date: 2003-06-22 17:07:07 $
 
 =head1 SYNOPSIS
 
@@ -46,7 +46,7 @@ foreach my $id (@{ mk_aref($param->{$field}) }) {
 	$dest->save;
 	log_event("${type}_deact", $dest);
     } else {
-	my $name = '&quot;' . $dest->get_name . '&quot';
+	my $name = '&quot;' . $dest->get_name . '&quot;';
         add_msg($lang->maketext("Permission to delete [_1] denied.",$name));
     }
 }

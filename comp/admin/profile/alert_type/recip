@@ -122,7 +122,7 @@ $id = $at->get_id unless defined $id;
 my $atname = $at->get_name;
 # Output the header.
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 context => "Admin | Profile | $disp | &quot;" . $atname . "&quot | Recipients",
+	 context => "Admin | Profile | $disp | &quot;" . $atname . "&quot; | Recipients",
          title => "$atname Recipients");
 
 # Redirect if we haven't got the contact type.

@@ -1,15 +1,19 @@
 Bricolage Debian README
 -----------------------
 
-==============================================================================
-Note: This README is out of date. If you'd like to see it updated, or
-to lay your hands on a native Debian package, prod Gerfried Fuchs to
-get on with it already!
-==============================================================================
+There are currently efforts going on to produce a native Debian package
+that you can simply install with your favorite Debian package tool.
+Gerfried Fuchs knows about the current status. There are/were already
+preliminary packages available which were produced by Erich Schubert.
+You can find them at <http://people.debian.org/~erich/bricolage/>.
 
-Bricolage has been tested on Debian's testing distribution (3.0).  The
-current stable Debian (2.2) will not work with Bricolage as it does
-not include Perl 5.6.
+Any hints/comments/suggestions appreciated, you can reach Gerfried Fuchs
+at <alfie@users.sourceforge.net>. Please give him some days time to react,
+he tends to be overworked sometimes....
+
+Bricolage has been tested on Debian's stable distribution (woody, 3.0).
+The old stable Debian (potato, 2.2) will not work with Bricolage as it
+does not include Perl 5.6.
 
 The following DEBs should be installed with apt-get before installing
 Bricolage:

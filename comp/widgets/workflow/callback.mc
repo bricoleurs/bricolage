@@ -47,7 +47,7 @@ foreach my $id (@{ mk_aref($param->{$field}) }) {
 	log_event("${type}_deact", $wf);
 	$flag = 1;
     } else {
-	my $name = '&quot;' . $wf->get_name . '&quot';
+	my $name = '&quot;' . $wf->get_name . '&quot;';
         add_msg($lang->maketext("Permission to delete [_1] denied.",$name));
     }
 }

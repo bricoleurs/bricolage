@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.98.2.12 $
+$Revision: 1.98.2.13 $
 
 =head1 DATE
 
-$Date: 2003-06-12 00:15:24 $
+$Date: 2003-06-22 17:07:07 $
 
 =head1 DESCRIPTION
 
@@ -1218,17 +1218,21 @@ Bricolage UI. The available languages are:
 
 =over 4
 
+=item de_de
+
+German.
+
 =item en_us
 
 American English.
 
-=item pt_pt
-
-Portuguese.
-
 =item it_it
 
 Italian.
+
+=item pt_pt
+
+Portuguese.
 
 =item zh_tw
 

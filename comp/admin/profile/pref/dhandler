@@ -11,7 +11,7 @@ my $no_edit = !chk_authz($pref, EDIT, 1);
 # Output the header and other necessities.
 $m->comp('/widgets/wrappers/sharky/header.mc',
          title => "$disp Profile",
-	 context => "Admin | Profile | $disp | &quot;" . $pref->get_name . "&quot"
+	 context => "Admin | Profile | $disp | &quot;" . $pref->get_name .  "&quot;"
 );
 $m->out(qq{<form method="post" name="pref_profile" action="} . $r->uri
         . qq{" onSubmit="return confirmChanges(this)">\n});
@@ -88,11 +88,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.4.1 $
 
 =head1 DATE
 
-$Date: 2002-11-27 04:58:57 $
+$Date: 2003-06-22 17:07:06 $
 
 =head1 DESCRIPTION
 

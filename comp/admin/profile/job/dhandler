@@ -2,7 +2,7 @@
 # Output the header and other necessities.
 $m->comp('/widgets/wrappers/sharky/header.mc',
          title => "$disp Profile",
-	 context => "Admin | Profile | $disp | &quot;" . $job->get_name . "&quot"
+	 context => "Admin | Profile | $disp | &quot;" . $job->get_name . "&quot;"
 );
 $m->out(qq{<form method="post" name="job_profile" action="} . $r->uri
         . qq{" onSubmit="return confirmChanges(this)">\n});
@@ -100,11 +100,11 @@ my $no_del = !$id || $no_edit;
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.4.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:11 $
+$Date: 2003-06-22 17:07:05 $
 
 =head1 SYNOPSIS
 

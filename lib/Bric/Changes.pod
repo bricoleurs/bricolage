@@ -47,13 +47,13 @@ subelements so as to prevent HTML in fields from messing up thedisplay. [Mark]
 
 =item *
 
-Fix for 'Can't call method "out_method" on an undefined value' generated
-during a burn. [Mark]
+Fixed installer to again work with versions of PostgreSQL prior to 7.3. Thanks
+to Marc Hawson for the spot. [David]
 
 =item *
 
-Fixed installer to again work with versions of PostgreSQL prior to 7.3. Thanks
-to Marc Hawson for the spot. [David]
+Fix for 'Can't call method "out_method" on an undefined value' generated
+during a burn. [Mark]
 
 =back
 

@@ -55,7 +55,7 @@ if ($field eq 'preview') {
 
             # Make sure this media object isn't checked out.
             if ($r->get_checked_out) {
-                add_msg($lang->maketext('Cannot auto-publish related media [_1] because it is checked out','&quot;'.$r->get_title.'&quot'));
+                add_msg($lang->maketext('Cannot auto-publish related media [_1] because it is checked out','&quot;'.$r->get_title.'&quot;'));
                 next;
             }
             $b->preview($r, 'media', get_user_id(), $m, $oc_id);

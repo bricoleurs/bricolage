@@ -19,7 +19,7 @@ if ($field eq "$widget|delete_cb") {
             log_event($obj_key.'_del', $obj);
         } else {
             my $name = defined($obj->get_name) ?
-              '&quot;' . $obj->get_name . '&quot' : 'Object';
+              '&quot;' . $obj->get_name . '&quot;' : 'Object';
             add_msg($lang->maketext("Permission to delete [_1] denied.",$name));
         }
     }
@@ -36,7 +36,7 @@ if ($field eq "$widget|delete_cb") {
             log_event($obj_key.'_deact', $obj);
         } else {
             my $name = defined($obj->get_name) ?
-              '&quot;' . $obj->get_name . '&quot' : 'Object';
+              '&quot;' . $obj->get_name . '&quot;' : 'Object';
             add_msg($lang->maketext("Permission to delete [_1] denied.",$name));
         }
     }
@@ -64,7 +64,7 @@ elsif ($field =~ /$widget\|select-(.+)_cb/) {
             $obj->save;
         } else {
             my $name = defined($obj->get_name) ?
-              '&quot;' . $obj->get_name . '&quot' : 'Object';
+              '&quot;' . $obj->get_name . '&quot;' : 'Object';
             add_msg($lang->maketext("Permission to delete [_1] denied.","$method $name"));
         }
     }

@@ -1,7 +1,7 @@
 %#-- Begin HTML --#
 <& '/widgets/wrappers/sharky/header.mc',
    title => "$grp_name Permissions",
-   context => "Admin | Profile | $disp | &quot;$grp_name&quot | Permissions"
+   context => "Admin | Profile | $disp | &quot;$grp_name&quot; | Permissions"
  &>
 <form method="post" action="<% $r->uri %>" name="grp_profile" onSubmit="return confirmChanges(this)">
 <%perl>;
@@ -69,11 +69,11 @@ my $grp_name = $grp->get_name;
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.4.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:10 $
+$Date: 2003-06-22 17:07:05 $
 
 =head1 DESCRIPTION
 
