@@ -52,7 +52,8 @@ if (defined $id) {
 	     name       => 'site_id',
              field      => 'name',
              disp       => 'Site',
-	     selected   => $cat->get_site_id,
+             exclude    => sub { ! chk_authz($_[0], EDIT, 1) },
+	     selected   => $c->get_user_cx(get_user_id),
 	     sort_field => 'name',
              reset_key  => $reset,
              req        => 1);
@@ -194,11 +195,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.10.2.1 $
+$Revision: 1.10.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-06 03:44:07 $
+$Date: 2003-03-06 06:54:23 $
 
 =head1 DESCRIPTION
 
