@@ -41,23 +41,22 @@ sub test_mods : Test(no_plan) {
 
 sub find_mods {
     # Find the lib directory.
-    my $lib = File::Spec->catdir(File::Spec->updir, 'lib');
     die "Cannot find Bricolage lib directory"
-      unless -d $lib;
+      unless -d 'lib';
+
     # Find the test lib directory.
     die "Cannot fine Bricolage test lib directory"
-      unless -d 'lib';
+      unless -d 't';
 
     # Find all the modules.
     my @mods;
-    find( sub { push @mods, $File::Find::name if m/\.pm$/ }, $lib, 'lib' );
+    find( sub { push @mods, $File::Find::name if m/\.pm$/ }, 'lib', 't' );
 
     # Find the bin directory.
-    my $bin = File::Spec->catdir(File::Spec->updir, 'bin');
     die "Cannot find Bricolage lib directory"
-      unless -d $bin;
+      unless -d 'bin';
 
     # Find all the scripts.
-    find( sub { push @mods, $File::Find::name if -f and -x }, $bin );
+    find( sub { push @mods, $File::Find::name if -f and -x }, 'bin' );
     return \@mods;
 }
