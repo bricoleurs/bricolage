@@ -29,6 +29,17 @@ index that already exists (and that will be dropped, anyway). [David]
 
 Removed documentation for intalling mod_proxy with Apache. [David]
 
+=item *
+
+Improved documentation for upgrading from older versions of Bricolage that
+were not installed by C<make install>. Thanks to Andrew Baio for helping to
+identify the problems. [David]
+
+=item *
+
+Added C<use Bric::Util::Grp::Keyword;> back into Bric::Biz::Keyword. This
+prevents some upgraded Bricolage installations from breaking. [David]
+
 =back
 
 =head1 VERSION 1.4.0
