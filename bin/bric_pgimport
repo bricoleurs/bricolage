@@ -1,5 +1,108 @@
 #!/usr/bin/perl -w
 
+=head1 NAME
+
+bric_pgimport - Builds a Bricolage Database
+
+=head1 VERSION
+
+$Revision$
+
+=head1 DATE
+
+$Date$
+
+=head1 SYNOPSIS
+
+ $prog [options]
+
+=head1 DESCRIPTION
+
+This is a developer program. Users should C<make> and C<make install> to build
+their Bricolage installations and database.
+
+=head1 OPTIONS
+
+=over 4
+
+=item -P
+
+The location of the psql program. Defaults to simply 'psql' if undefined. This
+should work if psql is in your path.
+
+=item -w
+
+The directory with the CVS SQL files. Defaults to lib subdirectory of
+BRICOLAGE_ROOT environment variable, which itself defaults to
+F</usr/local/bricolage>.
+
+=item -u
+
+Database user login. Defaults to C<PGUSER> environment variable.
+
+=item -p
+
+Database user password. Defaults to C<PGPASSWORD> environment variable.
+
+=item -d
+
+Database name. Defaults to C<PGDATABASE> environment variable.
+
+=item -H
+
+PostgreSQL server host name. Will use C<PGHOST> environment variable and
+defaults to "localhost".
+
+=item -o
+
+PostgreSQL server port number. Will use C<PGPORT> environment variable and
+defaults to 5432.
+
+=item -c
+
+Create the database first.
+
+=item -r
+
+Drop and recreate the exiting database (assumes -c).
+
+=item -m
+
+Make a new user. Pass in the user name and password separated by a
+colon. Permissions will be granted to this user to access the new database
+(assumes -g for this user).
+
+=item -g
+
+User name to which permissions should be granted on the new database.
+
+=item -t
+
+If true, insert database test values.
+
+=item -h
+
+Print this help message.
+
+=item -q
+
+Quiet mode.
+
+=back
+
+
+=head1 AUTHORS
+
+Garth Web <garth@perijove.com>
+
+David Wheeler <david@kineticode.net>
+
+=head1 SEE ALSO
+
+L<Bric::Admin>
+
+=cut
+
 #==============================================================================#
 # Dependencies                         #
 #======================================#
@@ -274,7 +377,6 @@ sub grant_permissions {
         exec_sql($sql);
     }
 }
-
 
 1;
 __END__
