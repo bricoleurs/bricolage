@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.57 $
+$Revision: 1.58 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.57 $ )[-1];
+our $VERSION = (qw$Revision: 1.58 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 21:49:36 $
+$Date: 2004-02-28 00:12:46 $
 
 =head1 SYNOPSIS
 
@@ -281,19 +281,22 @@ sub burn_one {
         # Run the biz asset through the template
         eval { $retval = $interp->exec($tmpl_path) };
         if (my $err = $@) {
-
-            # If we rethrow a TopLevelNotFound exception, it
-            # percolates to the Mason request executing the bricolage
-            # component, which returns a 404 for the requested
-            # bricolage component (which should be
-            # /workflow/profile/preview/dhandler)
+            my $msg;
 	    if (isa_mason_exception($err, 'TopLevelNotFound')) {
-		$err = $err->message;
-	    }
-            rethrow_exception($err) if isa_exception($err);
-            throw_burn_error error   => "Error executing '"
-                                      . $fs->cat_uri($tmpl_path, $tmpl_name)
-                                      . "'",
+                # We'll handle this exception ourselves to prevent it from
+                # percolating back up to the UI and returning a 404.
+		$err = "Mason error: ". $err->message;
+                $msg = "Template '$tmpl_name' not found in path '$tmpl_path'";
+	    } elsif (isa_exception($err)) {
+                # Just dump it.
+                rethrow_exception($err);
+            } else {
+                # Create a generic error message.
+                $msg = "Error executing '"
+                  . $fs->cat_uri($tmpl_path, $tmpl_name) . "'";
+            }
+            # Throw the exception.
+            throw_burn_error error   => $msg,
                              payload => $err,
                              mode    => $self->get_mode,
                              oc      => $self->get_oc->get_name,
