@@ -8,11 +8,13 @@ Bric::HTMLTemplate - Writing HTML::Template scripts and templates
 
 This document describes how to use Bricolage's HTML::Template
 templating system.  To get the most out of this document you'll need
-to have some familiarity with Bricolage templating using Mason -
-see L<Bric::Template> and L<Bric::AdvTemplate> for details.  I'll try
-to keep the overlap between the those documents and this one to a
+to have some familiarity with Bricolage templating using Mason - see
+L<Bric::Templates|Bric::Templates> and
+L<Bric::AdvTemplates|Bric::AdvTemplates> for details.  I'll try to
+keep the overlap between the those documents and this one to a
 minimum.  It also helps to have an idea of how HTML::Template works
-outside of Bricolage - for that you can refer to L<HTML::Template>.
+outside of Bricolage - for that you can refer to HTML::Template's
+documentation.
 
 =head1 TEMPLATES IN BRICOLAGE
 
@@ -81,8 +83,8 @@ number of Page elements.  Pages are composed of Paragraph attributes
 and Pull Quote attributes, both of which can be repeated.
 
 If this doesn't immediately make sense then you should probably go
-check out L<Bric::ElementAdmin> before continuing - it's hard to write
-templates if you don't understand elements!
+check out L<Bric::ElementAdmin|Bric::ElementAdmin> before continuing -
+it's hard to write templates if you don't understand elements!
 
 =head1 CHOOSING A STRATEGY
 
