@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.75 $
+$Revision: 1.76 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.75 $ )[-1];
+our $VERSION = (qw$Revision: 1.76 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 23:05:47 $
+$Date: 2004-02-12 00:14:53 $
 
 =head1 SYNOPSIS
 
@@ -287,7 +287,7 @@ use constant PARAM_FROM_MAP =>
     {
        keyword            => 'story_keyword sk, keyword k',
        output_channel_id  => 'story__output_channel soc',
-       _not_simple        => 'story_member sm, member m, story__category sc, '
+       simple             => 'story_member sm, member m, story__category sc, '
                              . 'category c, desk d, workflow w, ' . TABLE . ' s ',
        grp_id             => 'member m2, story_member sm2',
        category_id        => 'story__category sc2',
@@ -297,12 +297,7 @@ use constant PARAM_FROM_MAP =>
        element_key_name   => 'element e'
     };
 
-PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple}
-  . ' LEFT OUTER JOIN ('
-  . 'SELECT sk.story_id, k.name '
-  . 'FROM   story_keyword sk, keyword k '
-  . 'WHERE  sk.keyword_id = k.id'
-  . ') skk ON (s.id = skk.story_id)';
+PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
 
 use constant PARAM_WHERE_MAP =>
     {
@@ -359,10 +354,15 @@ use constant PARAM_WHERE_MAP =>
                               . 'm2.active = 1 AND '
                               . 'sm2.member__id = m2.id AND '
                               . 's.id = sm2.object_id',
-      simple                 => '( LOWER(skk.name) LIKE LOWER(?) OR '
-                              . 'LOWER(i.name) LIKE LOWER(?) OR '
-                              . 'LOWER(i.description) LIKE LOWER(?) OR '
-                              . 'LOWER(s.primary_uri) LIKE LOWER(?) )',
+      simple                 => 's.id IN ('
+                              . 'SELECT story.id FROM story '
+                              . 'JOIN story_instance ON story__id = story.id '
+                              . 'WHERE LOWER(name) LIKE LOWER(?) '
+                              . 'OR LOWER(description) LIKE LOWER(?) '
+                              . 'OR LOWER(primary_uri) LIKE LOWER(?) '
+                              . 'UNION SELECT story_id FROM story_keyword '
+                              . 'JOIN keyword ON (keyword.id = keyword_id) '
+                              . 'WHERE LOWER(name) LIKE LOWER(?))',
       contrib_id             => 'i.id = sic.story_instance__id AND sic.member__id = ?',
     };
 

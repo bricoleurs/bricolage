@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.70 $
+$Revision: 1.71 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.70 $ )[-1];
+our $VERSION = (qw$Revision: 1.71 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 23:05:46 $
+$Date: 2004-02-12 00:14:53 $
 
 =head1 SYNOPSIS
 
@@ -176,19 +176,14 @@ use constant PARAM_FROM_MAP =>
     {
      keyword            => 'media_keyword mk, keyword k',
      output_channel_id  => 'media__output_channel moc',
-     _not_simple        => 'media_member mm, member m, at_type at, element e, '
+     simple             => 'media_member mm, member m, at_type at, element e, '
                            . 'category c, desk d, workflow w,' . TABLE . ' mt ',
      grp_id             => 'member m2, media_member mm2',
      data_text          => 'media_data_tile md',
      contrib_id         => 'media__contributor sic',
     };
 
-PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple}
-  . ' LEFT OUTER JOIN ('
-  . 'SELECT mk.media_id, k.name '
-  . 'FROM   media_keyword mk, keyword k '
-  . 'WHERE  mk.keyword_id = k.id'
-  . ') mkk ON (s.id = mkk.media_id)';
+PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
 
 use constant PARAM_WHERE_MAP =>
     {
@@ -245,10 +240,15 @@ use constant PARAM_WHERE_MAP =>
                              . 'm2.active = 1 AND '
                              . 'mm2.member__id = m2.id AND '
                              . 'mt.id = mm2.object_id',
-      simple                => '( LOWER(mkk.name) LIKE LOWER(?) OR '
-                             . 'LOWER(i.name) LIKE LOWER(?) OR '
-                             . 'LOWER(i.uri) LIKE LOWER(?) OR '
-                             . 'LOWER(i.description) LIKE LOWER(?) )',
+      simple                => 'mt.id IN ('
+                             . 'SELECT media.id FROM media '
+                             . 'JOIN media_instance ON media__id = media.id '
+                             . 'WHERE LOWER(name) LIKE LOWER(?) '
+                             . 'OR LOWER(description) LIKE LOWER(?) '
+                             . 'OR LOWER(primary_uri) LIKE LOWER(?) '
+                             . 'UNION SELECT media_id FROM media_keyword '
+                             . 'JOIN keyword ON (keyword.id = keyword_id) '
+                             . 'WHERE LOWER(name) LIKE LOWER(?))',
       contrib_id            => 'i.id = sic.media_instance__id AND sic.member__id = ?',
     };
 
