@@ -2,7 +2,7 @@
 use strict;
 use Getopt::Std;
 
-our $VERSION = ( qw$Revision: 1.2 $ )[-1];
+our $VERSION = ( qw$Revision: 1.3 $ )[-1];
 our ($opt_h, $opt_v, $opt_o, $opt_f, $opt_u);
 
 getopts('hvu:f:o:');
@@ -29,7 +29,7 @@ print OUT  qq{
     ON     @objects
     TO     postgres;
 
-    GRANT  SELECT, UPDATE, INSERT, UPDATE
+    GRANT  SELECT, UPDATE, INSERT, DELETE
     ON     @objects
     TO     $opt_u
 };
