@@ -1,0 +1,140 @@
+#!/usr/bin/perl -w
+use strict;
+
+=head1 NAME
+
+bric_dev_sync - copies dev resources (Elements and Templates) between servers
+
+=head1 SYNOPSIS
+
+bric_dev_sync [options] source_url target_url [target_url, ...]
+
+Arguments:
+
+  source_url        - the url for the source server 
+                      (example: http://localhost or just localhost)
+
+  target_url        - the url for the target server(s) 
+                      (example: http://bric.bar.com or just bar.com)
+
+Options:
+
+  --help            - shows this screen
+
+  --man             - shows the full documentation
+
+  --verbose         - print a running dialogue of operations
+
+  --source-username - the Bricolage username to use on the source
+                      server.  Defaults to the BRICOLAGE_USERNAME
+                      environment variable if set.
+
+  --source-password - the password to use on the source server.
+                      Default to the BRICOLAGE_PASSWORD environment
+                      variable if set.
+
+  --target-username - the Bricolage username to use on the target
+                      server(s).  Defaults to the BRICOLAGE_USERNAME
+                      environment variable if set.
+
+  --target-password - the password to use on the target server(s).
+                      Default to the BRICOLAGE_PASSWORD environment
+                      variable if set.
+
+  --category        - set to a particular category path to only copy
+                      templates in this category.
+
+  --template        - set to the name of a template to copy.  Also 
+                      accepts SQL match variables to specify groups 
+                      of templates (ex. "%.pl", "story.%")
+
+  --element         - set to the name of an element to copy.  Also 
+                      copies templates for just this element unless
+                      --no-templates is set.
+
+  --copy-categories - copy categories from source to target.  Off by
+                      default.  You will need this option to copy
+                      templates from a category on the source that
+                      does not exist in the target.
+
+  --delete-existing - delete all existing dev resources before copying
+                      from source.  Off by default.
+
+  --no-elements     - only copies templates.  This may cause failure if
+                      the source contains templates for elements that
+                      do not exist on the target.
+
+  --no-templates    - only copy elements.
+
+  --no-deploy       - by default templates are deployed after being 
+                      copied.
+
+  --yes             - don't ask questions, assume the answer is yes and 
+                      proceed.
+
+  --dry-run         - don't actually perform potentially destructive 
+                      operations (delete, update, create, deploy).  
+                      Combine with --verbose for maximum utility.
+
+=head1 DESCRIPTION
+
+This program allows you to copy development resources (elements and
+templates) from a source server to one or more target servers.  There
+are two main use cases for this program:
+
+=over 4
+
+=item *
+
+Copying development resources from a development machine into
+production.
+
+=item *
+
+Copying development resources from a development machine to a private
+development environment and back again after changes are made.
+
+=back
+
+For more general resource copying functionality, see the bric_soap
+client.
+
+=head1 AUTHOR
+
+Sam Tregar <stregar@about-inc.com>
+
+=head1 SEE ALSO
+
+L<Bric::SOAP>
+
+=cut
+
+use Getopt::Long;
+use Pod::Usage;
+use SOAP::Lite ($ENV{DEBUG} ? (trace => [qw(debug)]) : ());
+import SOAP::Data 'name';
+use HTTP::Cookies;
+
+our $source_url;
+our @targ_urls;
+our $source_username        = $ENV{BRICOLAGE_USERNAME}
+our $source_password        = $ENV{BRICOLAGE_PASSWORD};
+our $target_username        = $ENV{BRICOLAGE_USERNAME}
+our $target_password        = $ENV{BRICOLAGE_PASSWORD};
+our $verbose                = 0;
+our ($category, $template, $element);
+our ($help, $man);
+GetOptions("help"                   => \$help,
+	   "man"                    => \$man,
+	   "verbose+"               => \$verbose,
+	   "source-username=s"      => \$source_username,
+	   "source-password=s"      => \$source_password,
+	   "target-username=s"      => \$target_username,
+	   "target-password=s"      => \$target_password,
+	   "category=s"             => \$category,
+	   "element=s"              => \$element,
+	   "template=s"             => \$template,
+	  ) or  pod2usage(2);
+
+pod2usage(1)             if $help;
+pod2usage(-verbose => 2) if $man;
