@@ -44,6 +44,18 @@ Removed passing of DEBUG argument to C<prepare()>, C<prepare_c()> and
 C<prepare_ca()>, since it hasn't actually worked in some time, and could
 potentially change the behavior of the prepare. [David]
 
+=item *
+
+Bric::SOAP::Workflow no longer throws an error when its C<publish_date>
+parameter is undefined. Reported by Kevin Elliott. [David]
+
+=item *
+
+Passing an undef via the C<workflow__id> parameters to the C<list()> method of
+Story, Media, or Template really does again cause Bricolage to correctly
+return only those assets that are not in workflow. It wasn't as fixed in 1.6.3
+as I had thought. Reported by Kevin Elliott. [David]
+
 =back
 
 =head1 VERSION 1.6.4 (2003-08-12)

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.20 $
+$Revision: 1.39.2.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:45 $
+$Date: 2003-08-14 21:10:59 $
 
 =head1 SYNOPSIS
 
@@ -325,7 +325,7 @@ use constant PARAM_WHERE_MAP =>
       active                => 's.active = ?',
       inactive              => 's.active = ?',
       workflow__id          => 's.workflow__id = ?',
-      _null_workflow__id    => 's.workflow__id IS NULL',
+      _null_workflow_id     => 's.workflow__id IS NULL',
       primary_uri           => 'LOWER(s.primary_uri) LIKE LOWER(?)',
       element__id           => 's.element__id = ?',
       source__id            => 's.source__id = ?',

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.17 $
+$Revision: 1.38.2.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:45 $
+$Date: 2003-08-14 21:10:59 $
 
 =head1 SYNOPSIS
 
@@ -267,7 +267,7 @@ use constant PARAM_WHERE_MAP =>
       active                => 'f.active = ?',
       inactive              => 'f.active = ?',
       workflow__id          => 'f.workflow__id = ?',
-      _null_workflow__id    => 'f.workflow__id IS NULL',
+      _null_workflow_id     => 'f.workflow__id IS NULL',
       element__id           => 'f.element__id = ?',
       output_channel__id    => 'f.output_channel__id = ?',
       priority              => 'f.priority = ?',
