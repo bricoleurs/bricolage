@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-14 21:35:45 $
+$Date: 2003-01-21 19:58:44 $
 
 =head1 SYNOPSIS
 
@@ -90,22 +90,22 @@ use constant DEBUG => 0;
 # Private Class Fields
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $osen = { mac => 'MacOS',
-	     macos => 'MacOS',
-	     os2 => 'os2',
-	     vms => 'VMS',
-	     win32 => 'MSWin32',
-	     'windows nt' => 'MSWin32',
-	     'windows 95' => 'MSWin32',
-	     'windows 98' => 'MSWin32',
-	     'windows xp' => 'MSWin32',
-	     'windows me' => 'MSWin32',
-	     dos => 'MSDOS',
-	     msdos => 'MSDOS',
-	     amiga => 'AmigaOS',
-	     amigaos => 'AmigaOS',
-	     somenix => 'unix',
-	     unix => 'unix'
-	   };
+             macos => 'MacOS',
+             os2 => 'os2',
+             vms => 'VMS',
+             win32 => 'MSWin32',
+             'windows nt' => 'MSWin32',
+             'windows 95' => 'MSWin32',
+             'windows 98' => 'MSWin32',
+             'windows xp' => 'MSWin32',
+             'windows me' => 'MSWin32',
+             dos => 'MSDOS',
+             msdos => 'MSDOS',
+             amiga => 'AmigaOS',
+             amigaos => 'AmigaOS',
+             somenix => 'unix',
+             unix => 'unix'
+           };
 my $escape_uri;
 
 ################################################################################
@@ -117,13 +117,13 @@ BEGIN {
 
     # Set up the best escape_uri() function.
     if ($ENV{MOD_PERL}) {
-	require Apache::Util;
-	die $@ if $@;
-	$escape_uri = \&Apache::Util::escape_uri;
+        require Apache::Util;
+        die $@ if $@;
+        $escape_uri = \&Apache::Util::escape_uri;
     } else {
-	require URI::Escape;
-	die $@ if $@;
-	$escape_uri = \&URI::Escape::uri_escape;
+        require URI::Escape;
+        die $@ if $@;
+        $escape_uri = \&URI::Escape::uri_escape;
     }
 }
 
@@ -288,13 +288,13 @@ sub put_res {
     # Get the resource URIs and paths.
     my %src_paths = map { $_->get_uri => $_->get_tmp_path || $_->get_path } @$res;
     foreach my $s ($st->get_servers) {
-	next unless $s->is_active;
-	my $doc_root = $s->get_doc_root;
-	# We've got the document root on each server.
-	while (my ($uri, $src) = each %src_paths) {
-	    # Copy the resource to $doc_root/$uri.
-	    copy($pkg, $src, cat_dir($pkg, $doc_root, $uri));
-	}
+        next unless $s->is_active;
+        my $doc_root = $s->get_doc_root;
+        # We've got the document root on each server.
+        while (my ($uri, $src) = each %src_paths) {
+            # Copy the resource to $doc_root/$uri.
+            copy($pkg, $src, cat_dir($pkg, $doc_root, $uri));
+        }
     }
     return 1;
 }
@@ -380,11 +380,11 @@ sub del_res {
     # Get the resource paths.
     my @paths = map { $_->get_uri } @$res;
     foreach my $s ($st->get_servers) {
-	next unless $s->is_active;
-	# Grab the document root.
-	my $doc_root = $s->get_doc_root;
-	# Delete all the resources.
-	del($pkg, map { cat_dir($pkg, $doc_root, $_) } @paths);
+        next unless $s->is_active;
+        # Grab the document root.
+        my $doc_root = $s->get_doc_root;
+        # Delete all the resources.
+        del($pkg, map { cat_dir($pkg, $doc_root, $_) } @paths);
     }
     return 1;
 }
@@ -452,49 +452,58 @@ sub copy {
     my $dst_base = base_name($self, $dst);
 
     if (!$is_src_dir && !$is_dst) {
-	# $src is a file and $dst doesn't exist. Create a path to $dst's
-	# directory, if necessary.
-	mk_path($self, $dst_dir) if $dst_dir;
-	# Do a straight-ahead copy.
-	&$cp($src, $dst);
+        # $src is a file and $dst doesn't exist. Create a path to $dst's
+        # directory, if necessary.
+        mk_path($self, $dst_dir) if $dst_dir;
+        # Do a straight-ahead copy.
+        &$cp($src, $dst);
     } elsif (!$is_src_dir && $is_dst) {
-	# $src is a file and $dst exists. Do a straight-ahead copy. If $dst is a
-	# file, it will be replaced. If $dst is a directory, $src will be copied
-	# into it.
-	my $new_file = "$dst/$src_base";
-	# Delete existing directory inside $dst.
-	del($self, $new_file) if -d $new_file;
-	# Copy $src to $dst.
-	&$cp($src, $dst);
+        # $src is a file and $dst exists. Do a straight-ahead copy. If $dst is
+        # a file, it will be replaced atomically. If $dst is a directory, $src
+        # will be copied into it.
+        my $new_file = cat_dir($self, $dst, $src_base);
+        if(-d $new_file) {
+            # Delete existing directory inside $dst.
+            del($self, $new_file);
+            # Copy $src to $dst.
+            &$cp($src, $dst);
+        }  else {
+            # Copy to a temporary file in the same destination path.
+            my $tmpdst = $dst . '.tmp';
+            &$cp($src, $tmpdst);
+            # Move the file to its final destination, overwriting the old
+            # file.
+            &$mv($tmpdst, $dst);
+        }
     } elsif ($is_src_dir && !$is_dst) {
-	# $src is a directory and $dst doesn't exist. Create a path to $dst and
-	# copy $src's contents into it.
-	mk_path($self, $dst);
-	&$cpdir($src, $dst, $recurse);
+        # $src is a directory and $dst doesn't exist. Create a path to $dst and
+        # copy $src's contents into it.
+        mk_path($self, $dst);
+        &$cpdir($src, $dst, $recurse);
     } elsif ($is_src_dir && $is_dst_dir) {
-	# $src is a directory and so is $dst. Create a subdirectory of $dst with
-	# the same name as $src, and then copy $src into $dst. May want to
-	# change this behavior to copy contents of $src into $dst, rather than
-	# into a subdirectory of $dst. This is trickier - either have to blow
-	# away the existing contents of $dst, or check to see if each file to be
-	# copied to $dst doesn't already exist as a directory. However, neither
-	# opition is very appealing, and the current implementation matches what
-	# cp -r does.
-	my $newdir = "$dst/$src_base";
-	# Get rid of any existing file or directory inside $dst.
-	del($self, $newdir) if -e $newdir;
-	# Create a new path to $newdir.
-	mk_path($self, $newdir);
-	# Copy the contents of $src to $newdir.
-	&$cpdir($src, $newdir, $recurse);
+        # $src is a directory and so is $dst. Create a subdirectory of $dst with
+        # the same name as $src, and then copy $src into $dst. May want to
+        # change this behavior to copy contents of $src into $dst, rather than
+        # into a subdirectory of $dst. This is trickier - either have to blow
+        # away the existing contents of $dst, or check to see if each file to be
+        # copied to $dst doesn't already exist as a directory. However, neither
+        # opition is very appealing, and the current implementation matches what
+        # cp -r does.
+    my $newdir = cat_dir($self, $dst,$src_base);
+        # Get rid of any existing file or directory inside $dst.
+        del($self, $newdir) if -e $newdir;
+        # Create a new path to $newdir.
+        mk_path($self, $newdir);
+        # Copy the contents of $src to $newdir.
+        &$cpdir($src, $newdir, $recurse);
     } elsif ($is_src_dir && $is_dst) {
-	# $src is a directory and $dst is a file. Wipe out $dst, then create a
-	# path to $dst, then copy the contents of $src into $dst.
-	del($self, $dst);
-	mk_path($self, $dst);
-	&$cpdir($src, $dst, $recurse);
+        # $src is a directory and $dst is a file. Wipe out $dst, then create a
+        # path to $dst, then copy the contents of $src into $dst.
+        del($self, $dst);
+        mk_path($self, $dst);
+        &$cpdir($src, $dst, $recurse);
     } else {
-	# Nothing.
+        # Nothing.
     }
     return $self;
 }
@@ -539,16 +548,16 @@ B<Notes:> NONE.
 sub move {
     my ($self, $src, $dst) = @_;
     if (-d $src && -e $dst) {
-	# Source is a directory.
-	if (-d $dst) {
-	    # Destination is a directory. Create a subdirectory name and then
-	    # do the move.
-	    $dst = cat_dir($self, $dst, base_name($self, $src));
-	    mk_path($self, $dst);
-	} else {
-	    # Destination is a file. Delete it.
-	    del($self, $dst);
-	}
+        # Source is a directory.
+        if (-d $dst) {
+            # Destination is a directory. Create a subdirectory name and then
+            # do the move.
+            $dst = cat_dir($self, $dst, base_name($self, $src));
+            mk_path($self, $dst);
+        } else {
+            # Destination is a file. Delete it.
+            del($self, $dst);
+        }
     }
     # Okay, now we can just do the move!
     return &$mv($src, $dst) ? $self : undef;
@@ -1043,10 +1052,10 @@ $glob = sub {
     my ($src_dir, $dst_dir) = @_;
     opendir DIR, $src_dir
       || die $gen->new({ msg => "Error opening directory $src_dir",
-			 payload => $!});
+                         payload => $!});
     foreach my $src ( grep { ! -d $_ } map { cat_dir(__PACKAGE__, $src_dir, $_) }
-					       readdir (DIR) ) {
-	&$cp($src, $dst_dir);
+                                               readdir (DIR) ) {
+        &$cp($src, $dst_dir);
     }
     closedir DIR;
     return 1;
@@ -1078,9 +1087,9 @@ $glob_rec = sub {
     my ($src_dir, $dst_dir) = @_;
 
     my $wanted = sub {
-	if (-d) {
-	    cat_dir(__PACKAGE__, $dst_dir, $_);
-	}
+        if (-d) {
+            cat_dir(__PACKAGE__, $dst_dir, $_);
+        }
     };
 
     find($wanted, $src_dir);

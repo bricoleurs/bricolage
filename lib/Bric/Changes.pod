@@ -52,6 +52,11 @@ groups so that it properly displays its URI instead of its name. This only
 affects the display of the root category in the permisisons profile for people
 who installed (rather than upgraded to) Bricolage 1.4.5 or later. [David]
 
+=item *
+
+FTP and File System movers now atomically copy files to their destination
+servers. [JoE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.5.0

@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-15 17:54:00 $
+$Date: 2003-01-21 19:58:44 $
 
 =head1 SYNOPSIS
 
@@ -126,6 +126,10 @@ Unable to put resource on remote server.
 
 =item *
 
+Unable to rename resource on remote server.
+
+=item *
+
 Unable to properly close connection to remote server.
 
 =back
@@ -191,8 +195,16 @@ sub put_res {
                 $ftp->cwd('/');
             }
             # Now, put the file on the server.
-            $ftp->put($src, $dest) || die $gen->new
-              ({ msg => "Unable to put file '$dest' on remote server '$hn'.",
+            my $tmpdest = $dest . '.tmp';
+            $ftp->put($src, $tmpdest) || die $gen->new
+              ({ msg => "Unable to put file '$tmpdest' on remote server " .
+                        "'$hn'",
+                 payload => $ftp->message });
+
+            # Rename the temporary file.
+            $ftp->rename($tmpdest, $dest) || die $gen->new
+              ({ msg => "Unable to rename file '$tmpdest' to '$dest' on " .
+                         "remote server '$hn'.",
                  payload => $ftp->message });
         }
         # Log off.
