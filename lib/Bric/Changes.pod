@@ -59,6 +59,11 @@ after the current year to display in the list of years in the date and time
 select widget. The default values are 10 for each, meaning that if the current
 year is 2003, then the date span will be from 1993 to 2013.
 
+=item *
+
+Added the C<ENABLE_SFTP_V2> F<bricolage.conf> directive to make
+SSH protocol 2 be tried first.
+
 =back
 
 =head2 Bug Fixes

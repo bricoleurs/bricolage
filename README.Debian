@@ -20,3 +20,18 @@ Bricolage:
   postgresql-dev
   expat
   unzip
+
+
+SFTP Mover
+----------
+
+If you use the optional SFTP mover, you have to install Net::SFTP.
+I found that this will work if you first install some of its prerequisite
+classes as built by Debian:
+
+    $ sudo apt-get install libnet-ssh-perl
+    $ sudo apt-get install libstring-crc32-perl
+
+There was no Net::SFTP installer from Debian, so proceed with
+
+    $ sudo cpan install Net::SFTP

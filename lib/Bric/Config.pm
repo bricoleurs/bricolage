@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.64 $
+$Revision: 1.65 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.64 $ )[-1];
+our $VERSION = (qw$Revision: 1.65 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:13 $
+$Date: 2003-07-06 19:20:15 $
 
 =head1 SYNOPSIS
 
@@ -99,6 +99,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MEDIA_URI_ROOT
                     DEF_MEDIA_TYPE
                     ENABLE_SFTP_MOVER
+                    ENABLE_SFTP_V2
                     ENABLE_WEBDAV_MOVER
                     MEDIA_FILE_ROOT
                     SMTP_SERVER
@@ -185,6 +186,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      PREVIEW_MASON)],
                     dist      => [qw(ENABLE_DIST
                                      ENABLE_SFTP_MOVER
+                                     ENABLE_SFTP_V2
                                      ENABLE_WEBDAV_MOVER
                                      DEF_MEDIA_TYPE
                                      DIST_ATTEMPTS
@@ -309,7 +311,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         # While these default to 0.
         foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER MANUAL_APACHE
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
-                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER
+                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER_MOVER ENABLE_SFTP_V2
                     ENABLE_WEBDAV_MOVER ALWAYS_USE_SSL ALLOW_WORKFLOW_TRANSFER
                     ALLOW_ALL_SITES_CX STORY_URI_WITH_FILENAME))
         {
@@ -409,6 +411,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant PREVIEW_MASON => $config->{PREVIEW_MASON};
     use constant DEF_MEDIA_TYPE => $config->{DEF_MEDIA_TYPE} || 'text/html';
     use constant ENABLE_SFTP_MOVER => $config->{ENABLE_SFTP_MOVER};
+    use constant ENABLE_SFTP_V2 => $config->{ENABLE_SFTP_V2};
     use constant ENABLE_WEBDAV_MOVER => $config->{ENABLE_WEBDAV_MOVER};
 
     # Mason settings.
