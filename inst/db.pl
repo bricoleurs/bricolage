@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-08-30 01:43:47 $
+$Date: 2002-08-30 22:43:37 $
 
 =head1 DESCRIPTION
 
@@ -41,16 +41,17 @@ print "\n\n==> Creating Bricolage Database <==\n\n";
 our $PG;
 do "./postgres.db" or die "Failed to read postgres.db : $!";
 
-# switch to postgres system user
+# Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
+# filter them out. This *must* happen before setting $> below, or Perl will
+# complain.
+open STDERR, "| perl -ne 'print unless /^NOTICE:  /'"
+  or die "Cannot pipe STDERR: $!\n";
+
+# Switch to postgres system user
 print "Becoming $PG->{system_user}...\n";
 $> = $PG->{system_user_uid};
 die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
     unless $> == $PG->{system_user_uid};
-
-# Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
-# filter them out.
-open STDERR, "| perl -ne 'print unless /^NOTICE:  /'"
-  or die "Cannot pipe STDERR: $!\n";
 
 # setup database and user while connected to dummy template1
 my $dbh = db_connect('template1');
