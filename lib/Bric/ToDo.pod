@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.111 $
+$Revision: 1.112 $
 
 =head1 DATE
 
-$Date: 2003-08-25 18:48:53 $
+$Date: 2003-08-28 17:47:30 $
 
 =head1 DESCRIPTION
 
@@ -196,6 +196,28 @@ Add support for Instant messaging (using Jabber server) in Alerts.
 =item *
 
 Port installation system to use Module::Build.
+
+=item *
+
+Add C<Limit>, C<Offset>, C<SortBy>, and C<SortDirection> parameters to
+C<list()> in all methods. C<Limit> and C<Offset> can be added by using derived
+tables (Stephan Szabo is my hero for suggesting this -- I didn't even know it
+was possible!). Here's a quick example for person objects:
+
+  select p.id, p.prefix, p.fname, p.mname, p.lname, p.suffix, p.active,
+         m.grp__id
+  FROM   ( SELECT id, prefix, fname, mname, lname, suffix, active
+           FROM   person
+           LIMIT  2
+           OFFSET 1) AS p,
+          member m, user_member c
+  WHERE  p.id = c.object_id AND c.member__id = m.id and m.active = 1;
+
+Obviously, you only change the query to use a derived table if the C<Limit> or
+C<Offset> parameter is passed to C<list()>.
+
+MySQL 4.1 also supports this feature, so I feel totally comfortable adding it
+to Bricolage and feeling like it's still portable to other databases.
 
 =back
 
