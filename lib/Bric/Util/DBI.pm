@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-04-08 00:19:34 $
+$Date: 2004-04-10 00:22:29 $
 
 =head1 SYNOPSIS
 
@@ -849,10 +849,6 @@ sub clean_params {
                    expire_date expire_date_start expire_date_end)) {
         $param->{$df} = Bric::Util::Time::db_date($param->{$df}) if $param->{$df};
     }
-
-    # Fixup unexpired to use the current UTC time.
-    $param->{unexpired} = Bric::Util::Time::db_date(undef, 1)
-      if delete $param->{unexpired};
 
     # Return the parameters.
     return $param;
