@@ -71,6 +71,12 @@ for the spot. [David]
 Added tests for validity of the POD in F<*.pod> files as well as F<*.pm>
 files. Fixed a few POD typos found as a result. [David]
 
+=item *
+
+Fixed C<element_data_id> parameter to
+Bric::Biz::Asset::Business::Parts::Tile::Data to actually work. Reported by
+Eldar Kononov. [David]
+
 =back
 
 =head1 VERSION 1.6.6 (2003-10-03)
