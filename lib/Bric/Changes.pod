@@ -182,6 +182,10 @@ Fixed the display of permissions settings to be more consistent with the
 design and layout of the rest of the application. Also neatened listManager
 display a bit. [David]
 
+=item *
+
+Fixed misnamed database constraint. [David]
+
 =back
 
 =head1 VERSION 1.4.0

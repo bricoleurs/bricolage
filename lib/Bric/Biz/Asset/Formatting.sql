@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.4.4.1 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2002-09-24 02:46:02 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -55,7 +55,7 @@ CREATE TABLE formatting (
 	workflow__id		NUMERIC(10,0),
     deploy_status       NUMERIC(1,0)   NOT NULL
                                        DEFAULT 0
-                                       CONSTRAINT ck_media__deploy_status
+                                       CONSTRAINT ck_formatting__deploy_status
                                          CHECK (deploy_status IN (0,1)),
     deploy_date         TIMESTAMP,
     expire_date         TIMESTAMP,
