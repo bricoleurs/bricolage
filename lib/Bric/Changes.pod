@@ -34,6 +34,13 @@ the course of publishing a single story in a single category to a single
 output channel. Any data stored here persists for the duration of a call to
 C<burn_one()>. [David]
 
+=item *
+
+Added new contributed scripts for Bricolage button generation. These scripts
+use the Gimp to generate localized buttons for the Bricolage UI based on the
+contents of an input file. See F<contrib/button_gen/README> for details.
+[Florian Rossol]
+
 =back
 
 =head2 Improvements

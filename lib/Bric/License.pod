@@ -171,6 +171,8 @@ Folks who have submitted patches include:
 
 =item Paul Orrock
 
+=item Florian Rossol
+
 =back
 
 Friends who have spotted bugs include:
