@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.4.4.2 $
+$Revision: 1.4.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.4.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-24 08:48:51 $
+$Date: 2003-08-18 15:35:40 $
 
 =head1 SYNOPSIS
 
@@ -289,7 +289,7 @@ our %Lexicon = (
    'STORY INFORMATION' => 'INFORMAZIONI SULLA STORIA',
    'Grant [_1] members permission to access assets on these desks.' => 'Consenti ai membri del gruppo [_1] accesso ai materiali di questo desk.',
    'Manage' => 'Gestire',
-   'An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' => 'Esiste già un template attivo per questo canale di distribuzione, categoria, elemento e burner selezionato. Cancellate il template esistente per poterne aggiungere uno nuovo.',
+   'A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' => 'Esiste già un template attivo per questo canale di distribuzione, categoria, elemento e burner selezionato. Cancellate il template esistente per poterne aggiungere uno nuovo.',
    'Select' => 'Selezionare',
    'Separator String' => 'Separatore',
    'Position' => 'Posizione',

@@ -442,8 +442,8 @@ my $create_fa = sub {
         my $msg = $err->get_msg;
         die $err unless $msg =~ /already exists/;
         # This template already exists.
-        add_msg("An active template already exists for the selected output " .
-                 "channel, category, element, and burner you selected. You " .
+        add_msg("A active template already exists for the selected output " .
+                "channel, category, element, and burner you selected. You " .
                 "must delete the existing template before you can add a " .
                 "new one.");
         return;

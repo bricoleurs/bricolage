@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.1.2.1 $
+$Revision: 1.1.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-22 17:21:29 $
+$Date: 2003-08-18 15:35:40 $
 
 =head1 SYNOPSIS
 
@@ -339,7 +339,7 @@ use constant key => 'de_de';
    'Active Templates' => 'Modelos Activos',
    'Add a New User' => 'Criar Novo Utilizador',
 
-   'An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' =>
+   'A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' =>
      'Já existe um template activo para o canal de distribuição, categoria, elemento e burner que assinalou. Tem de apagar o temp+late existtente para poder adicionar um novo.',
 
    'At least one extension is required.' =>
