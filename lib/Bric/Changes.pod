@@ -191,6 +191,12 @@ The C<list()> and C<list_ids()> methods of the Story, Media, and Template
 in the hash references passed to them. This had caused problems for date/time
 parameters. Reported by Paul Orrock. [David]
 
+=item *
+
+Auto-generated slugs (enabled via the C<AUTOGENERATE_SLUG> F<bricolage.conf>
+directive) no longer convert uppercase characters to underscores. Thanks to
+Paul Orrock for the spot! [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
