@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.12 $
+$Revision: 1.7.2.13 $
 
 =head1 DATE
 
-$Date: 2003-08-18 18:50:30 $
+$Date: 2003-08-18 19:02:39 $
 
 =head1 DESCRIPTION
 
@@ -361,6 +361,53 @@ Kallen, in which he discussed what Salon needed out of a CMS (including
 workflow) and how he came to select the tools to use the CMS that was the
 proof-of-concept for Bricolage. The article is at
 L<http://www.salon.com/contact/staff/idk/print.html>.
+
+=head2 Template Administration
+
+=head3 I added a template to a category and then deleted it, and now I can't add a new
+template with the same name. Why not?
+
+Deleted template profiles don't actually get deleted but instead marked
+inactive in the database. Rhis prevents creating a new template with the same
+name in them same category in the same output chanel. In a future release, an
+easy way to reactivate deleted template profiles will be integrated in the
+GUI.
+
+In the meantime, deleted (that is, deactivated) template can be brought back
+by using a updating the database directly and querying against the output
+channel ID and the template's file name:
+
+  psql -U [username] -d [databasename] -c \
+    "UPDATE formatting SET active = 1 WHERE output_channel__id = [ocid] \
+     AND file_name = '[path]'"
+
+The arguments in brackets above are:
+
+=over 4
+
+=item username
+
+The username for your Bricolage PostgreSQL user. This is the username the
+Bricolage installer created for you, and which is listed as the C<DBI_USER>
+F<bricoalge.conf> directive.
+
+=item password
+
+The password for your Bricolage PostgreSQL user.
+
+=item ocid
+
+The ID of the output channel that the template is in.
+
+=item path
+
+The full URI path name of the template. This is a combination of the category
+path and the name of the template, usually constructed from the element for
+which it is created. For example, a Mason template created for the "Book
+Review" element in the category "/reviews/books" would be called
+F</reviews/books/book_review.mc>.
+
+=back
 
 =head1 AUTHOR
 
