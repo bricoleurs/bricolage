@@ -1759,7 +1759,7 @@ sub _debug_execute {
     my $sig = _statement_signature(\$sth);
     print STDERR "+++++++++++++ Execute Query [$sig]\n";
     print STDERR "+++++++++++++ ARGS: ", 
-	join(', ', map { defined $_ ? $_ : 'NULL' } @{$_[0]}),
+	join(', ', map { defined $_ ? $_ : 'NULL' } @$args),
 	    "\n\n";
     _print_call_trace() if CALL_TRACE;
 }
