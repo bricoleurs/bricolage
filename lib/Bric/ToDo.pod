@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.94.2.1 $
+$Revision: 1.94.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-06 01:54:42 $
+$Date: 2003-03-07 23:17:07 $
 
 =head1 DESCRIPTION
 
@@ -46,6 +46,12 @@ in mind as long term goals further down the line.
 =head2 High Priority Minor Items
 
 =over
+
+=item *
+
+Take the "Group Membership" sections of the User, Category, and Site profiles
+and abstract them into a single widget. Use the widget to add a "Group
+Permissions" section to all relevant profiles.
 
 =item *
 
