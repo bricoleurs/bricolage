@@ -32,10 +32,6 @@ Added F<README.Solaris>, with thanks to Oscar Sodani and Thorsten Biel.
 
 =item *
 
-When there is no defined file extension Bricolage now doesn't insert an ending '.' (dot). [Arthur/Fotango]
-
-=item *
-
 When an asset is published or deployed directly from the asset profile, it is
 now properly removed from the publish or deploy desk. Repoted by Andy Baio's
 coworker. [David]
@@ -104,6 +100,11 @@ so that any issues are immediately identified and correctable. [David]
 
 An invalid date in a date element field no longer causes an error. Thanks to
 Arthur for the spot! [David]
+
+=item *
+
+When there is no defined file extension Bricolage now doesn't insert an ending
+'.' (dot). [Arthur/Fotango]
 
 =back
 
