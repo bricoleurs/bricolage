@@ -1,5 +1,5 @@
 %# http://www.dictionary.com/wordoftheday/archive/2001/04/26.html
-% $m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "About the Name");
+% $m->comp(".t_top", caption => "About the Name");
 <table>
 
 <tr><td>The name &quot;Bricolage&quot; was not drawn directly from the common
@@ -43,9 +43,9 @@ Bricolage content is built using the elements that are available.
 </td></tr>
 
 </table>
-% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+% $m->comp(".t_bottom");
 <br />
-% $m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "License");
+% $m->comp(".t_top", caption => "License");
 <table>
 <tr><td> Copyright &copy; 2001, About.com. All rights reserved.
 </td></tr>
@@ -80,9 +80,9 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </td></tr>
 </table>
-% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+% $m->comp(".t_bottom");
 <br />
-% $m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Credits");
+% $m->comp(".t_top", caption => "Credits");
 <table>
 <tr><td>
 <span class="label">Bricolage was Developed by:</span>
@@ -125,6 +125,42 @@ THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </ul>
 </td></tr>
 </table>
-% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+% $m->comp(".t_bottom");
 </body>
 </html>
+
+<%def .t_top>
+<%args>
+$caption => '&nbsp;'
+</%args>
+<table border="0" cellpadding="0" cellspacing="0" width="475">
+<tr>
+  <td width="20" align="top" bgcolor="#669999"><img src="/media/images/numbers/669999_curve_blank.gif" width="20" height="18" border="0"></td>
+  <td class="light" width="475">&nbsp;<% uc $caption %></td>
+  <td width="8" bgcolor="#cccc99"><img src="/media/images/lt_green_curve_right.gif" width="8" height="18"></td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="475">
+<tr>
+<td valign="top" bgcolor=669999 width="1">
+<img src="/media/images/spacer.gif" width="1" height="1" border="0">
+</td>
+<td width="475" valign="top">
+</%def>
+
+<%def .t_bottom>
+</td>
+<td valign="top" bgcolor="#669999" width="1">
+<img src="/media/images/spacer.gif" width="1" height="1" border="0">
+</td>
+</tr>
+</table>
+<table width="475" border="0" cellpadding="0" cellspacing="0">
+<tr>
+  <td valign="top" bgcolor="#669999"><img src="/media/images/spacer.gif" width="475" height="1" border="0"></td>
+</tr>
+<tr>
+  <td><img src="/media/images/spacer.gif" width="475" height="10" border="0"></td>
+</tr>
+</table>
+</%def>
