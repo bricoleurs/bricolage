@@ -61,7 +61,10 @@ declare themselves on search results. [JoE<atilde>o Pedro]
 Story and Media SOAP calls now correctly use the element's key_name to identify
 the element. [JoE<atilde>o Pedro]
 
+=item *
 
+Story creation via SOAP now correctly looks up the Category by uri and site ID.
+[JoE<atilde>o Pedro]
 
 =back
 

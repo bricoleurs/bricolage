@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.60 $
+$Revision: 1.61 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.60 $ )[-1];
+our $VERSION = (qw$Revision: 1.61 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-23 18:27:35 $
+$Date: 2004-03-23 18:40:41 $
 
 =head1 SYNOPSIS
 
@@ -920,7 +920,7 @@ sub load_asset {
         foreach my $cdata (@{$sdata->{categories}{category}}) {
             # get cat id
             my $path = ref $cdata ? $cdata->{content} : $cdata;
-            my $cat = Bric::Biz::Category->lookup({ uri => $path });
+            my $cat = Bric::Biz::Category->lookup({ uri => $path, site_id => $init{site_id} });
             throw_ap(error => __PACKAGE__ . "::create : no category found matching "
                        . "(category => \"$path\")")
               unless defined $cat;
