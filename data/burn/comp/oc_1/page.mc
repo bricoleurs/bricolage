@@ -7,7 +7,7 @@ foreach my $e ($element->get_elements) {
     } elsif ($e->has_name('pull_quote')) {
         $burner->display_element($e);
 
-    } elsif ($e->has_name('inset')) {
+    } else {
         $burner->display_element($e);
 
     }

@@ -126,6 +126,8 @@ Folks who have submitted patches include:
 
 =item ClE<aacute>udio Valente
 
+=item Eldar Kononov
+
 =back
 
 Friends who have spotted bugs include:
