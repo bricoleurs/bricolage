@@ -18,7 +18,7 @@ use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Config qw(ALLOW_WORKFLOW_TRANSFER);
 use Bric::Util::Burner;
-use Bric::Util::Time;
+use Bric::Util::Time qw(strfdate);
 
 my %num = (
     1 => 'One',
@@ -219,7 +219,7 @@ sub publish : Callback {
             'apache_req' => $self->apache_req,
             'request_args' => {
                 'instant' => 1,
-                'pub_date' => Bric::Util::Time::strfdate,
+                'pub_date' => strfdate(),
             },
         );
         $pub->publish();
@@ -243,7 +243,7 @@ sub deploy : Callback {
         my $action = $fa->get_deploy_status ? 'formatting_redeploy'
           : 'formatting_deploy';
         $b->deploy($fa);
-        $fa->set_deploy_date(Bric::Util::Time::strfdate());
+        $fa->set_deploy_date(strfdate());
         $fa->set_deploy_status(1);
         $fa->set_published_version($fa->get_current_version);
         $fa->save;
