@@ -60,7 +60,7 @@ sub test_lmu : Test(3) {
     my $c = $self->{cache};
     ok( ! defined $c->get_lmu_time, "No lmu_time, yet" );
     ok( $c->set_lmu_time, "Set lmu_time" );
-    ok( $c->get_lmu_time >= time, "Check lmu_time" );
+    ok( $c->get_lmu_time <= time, "Check lmu_time" );
 }
 
 ##############################################################################
