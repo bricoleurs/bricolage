@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.13 $
+$Revision: 1.7.2.14 $
 
 =head1 DATE
 
-$Date: 2003-08-18 19:02:39 $
+$Date: 2003-08-18 19:09:28 $
 
 =head1 DESCRIPTION
 
@@ -235,7 +235,7 @@ I worked around the problem by ignoring it; in pg_hba.conf,
   host    all         all         0.0.0.0          0.0.0.0        reject
 
 A Short introduction to F<pg_hba.conf> can be found in L<Bric::DBA|Bric::DBA>,
-and it is more thorougly documented at
+and it is more thoroughly documented at
 L<http://www.postgresql.org/docs/current/interactive/client-authentication.html>.
 
 =head3 Why do I get a 404 when I connect to the Bricolage UI and get an error like the following in Apache's F<error_log>?
@@ -277,7 +277,7 @@ simply copying these two files from the Bricolage source directories to your
 installed component root will correct the problem. Holler on the
 bricolage-general mail list if it doesn't.
 
-=head3 When I try to login to Bricolage, I get redirected to F</login>, but the webserver reported a "500 Internal Server Error". What's wrong?
+=head3 When I try to login to Bricolage, I get redirected to F</login>, but the web server reported a "500 Internal Server Error". What's wrong?
 
 Look in your Apache F<error_log> file. If you find an error along the lines of
 
@@ -349,9 +349,9 @@ online help.
 
 Read the F<README> document in the directory where you unpacked Bricolage to
 learn about other documents on specific things like Bricolage administration,
-usage, or hacking. The project's website is
+usage, or hacking. The project's web site is
 L<http://www.bricolage.cc/>. The
-website lists information about mailing lists.
+web site lists information about mailing lists.
 
 =head3 I can't get my head around the idea of workflow. Is there any documentation on it?
 
@@ -368,8 +368,8 @@ L<http://www.salon.com/contact/staff/idk/print.html>.
 template with the same name. Why not?
 
 Deleted template profiles don't actually get deleted but instead marked
-inactive in the database. Rhis prevents creating a new template with the same
-name in them same category in the same output chanel. In a future release, an
+inactive in the database. This prevents creating a new template with the same
+name in them same category in the same output channel. In a future release, an
 easy way to reactivate deleted template profiles will be integrated in the
 GUI.
 
@@ -389,11 +389,13 @@ The arguments in brackets above are:
 
 The username for your Bricolage PostgreSQL user. This is the username the
 Bricolage installer created for you, and which is listed as the C<DBI_USER>
-F<bricoalge.conf> directive.
+F<bricolage.conf> directive.
 
-=item password
+=item databasename
 
-The password for your Bricolage PostgreSQL user.
+The name of the Bricolage database. This is the database the Bricolage
+installer created for you, and which is listed as the C<DB_NAME>
+F<bricolage.conf> directive.
 
 =item ocid
 
