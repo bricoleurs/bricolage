@@ -6,11 +6,11 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:51 $
+$Date: 2004-02-19 13:37:08 $
 
 =head1 DESCRIPTION
 
@@ -151,9 +151,9 @@ sub get_users {
 # ask for host specifics
 sub get_host {
     print "\n";
-    ask_confirm("Postgres Database Server Hostname (default is 'localhost')",
+    ask_confirm("Postgres Database Server Hostname (default is unset, i.e. local domain socket)",
                 \$PG{host_name});
-    ask_confirm("Postgres Database Server Port Number (default is '5432')",
+    ask_confirm("Postgres Database Server Port Number (default is local domain socket)",
                 \$PG{host_port});
 }
 

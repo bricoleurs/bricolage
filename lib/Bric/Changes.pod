@@ -219,6 +219,11 @@ database now properly sets that date for existing assets, no matter how many
 "publish" events have been logged. There should be only one, but some systems
 apparently have more. [Thorsten Biel]
 
+=item *
+
+Media, Story, and Template groups now properly display all of the permissions
+that can be granted to user groups to access them. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)

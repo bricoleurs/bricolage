@@ -78,24 +78,11 @@ if ($perm_type eq 'object' || $perm_type eq 'all') {
         my $gid = $grp->get_id;
 	next if $gid == ADMIN_GRP_ID;
 
-        # Check to see if it's an asset group.
-        my $is_asset_grp = do {
-            my $classes = $grp->get_supported_classes;
-            1 if $classes->{'Bric::Biz::Asset'}
-              || $classes->{'Bric::Biz::Asset::Formatting'}
-              || $classes->{'Bric::Biz::Asset::Business'}
-              || $classes->{'Bric::Biz::Asset::Business::Story'}
-              || $classes->{'Bric::Biz::Asset::Business::Media'}
-              || $classes->{'Bric::Biz::Asset::Business::Media::Image'}
-              || $classes->{'Bric::Biz::Asset::Business::Media::Audio'}
-              || $classes->{'Bric::Biz::Asset::Business::Media::Video'}
-        };
-
 	$m->comp($row_comp,
 		 grp => $grp,
 		 gid => $gid,
 		 type => 'obj',
-                 is_asset_grp => $is_asset_grp,
+                 is_asset_grp => $chk_asset_grp->($grp),
                  publish => 1,
                  recall => 1,
 		 perm => $perms{$gid});
@@ -189,8 +176,11 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
 	     number => $num,
              border => 0);
 
-    $m->comp($head_comp, $lang->maketext("Grant the members of the following groups permission to access"
-    ." the members of the [_1] group.","&quot;$name&quot;"));
+    $m->comp($head_comp, $lang->maketext("Grant the members of the following groups "
+                                         . "permission to access the members of the "
+                                         . "[_1] group.","&quot;$name&quot;"));
+
+    my $is_asset_grp = $chk_asset_grp->($grp);
 
     # Get any existing permissions.
     foreach my $perm ($pkg->list({ obj_grp_id => $id }) ) {
@@ -199,13 +189,17 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
         $perms{$gid} = $perm;
     }
     # Now get the rows for all user groups.
-    foreach my $grp ($usr_grp_pkg->list) {
-        my $gid = $grp->get_id;
+    foreach my $ugrp ($usr_grp_pkg->list) {
+        my $gid = $ugrp->get_id;
         next if $gid == ADMIN_GRP_ID;
         $m->comp($row_comp,
-                 grp => $grp,
-                 gid => $gid,
-                 perm => $perms{$gid});
+                 grp          => $ugrp,
+                 gid          => $gid,
+                 is_asset_grp => $is_asset_grp,
+                 create       => $is_asset_grp,
+                 publish      => $is_asset_grp,
+                 recall       => $is_asset_grp,
+                 perm         => $perms{$gid});
     }
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
@@ -253,6 +247,19 @@ my $asset_grp_pkg = get_package_name('asset_grp');
 my $asset_grp_keys = { story_grp      => 1,
 	               media_grp      => 1,
                        formatting_grp => 1 };
+# Check to see if it's an asset group.
+my $chk_asset_grp = sub {
+    my $classes = shift->get_supported_classes;
+    return 1 if $classes->{'Bric::Biz::Asset'}
+      || $classes->{'Bric::Biz::Asset::Formatting'}
+      || $classes->{'Bric::Biz::Asset::Business'}
+      || $classes->{'Bric::Biz::Asset::Business::Story'}
+      || $classes->{'Bric::Biz::Asset::Business::Media'}
+      || $classes->{'Bric::Biz::Asset::Business::Media::Image'}
+      || $classes->{'Bric::Biz::Asset::Business::Media::Audio'}
+      || $classes->{'Bric::Biz::Asset::Business::Media::Video'};
+    return 0;
+};
 </%once>
 
 %#--- Init ---#
