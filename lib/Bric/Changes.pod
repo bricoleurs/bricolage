@@ -29,6 +29,11 @@ the spot. [David]
 
 Fixed broken "Return" buttons on related media and related story pages. [David]
 
+=item *
+
+Fixed bug where assets weren't activated when they were creaed and then checked
+in without clicking the "Save" button. [David]
+
 =back
 
 =head1 VERSION 1.2.1
