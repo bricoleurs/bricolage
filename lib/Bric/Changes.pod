@@ -105,7 +105,7 @@ C<list_ids()>. [David]
 
 =item *
 
-The Story, Template, and Media SOAP C<list_ids() intefaces now properly look
+The Story, Template, and Media SOAP C<list_ids()> intefaces now properly look
 up categories, output channels, and workflows with the C<site> paremeter, if
 there is one. [David]
 
