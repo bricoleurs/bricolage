@@ -23,7 +23,6 @@ unless ($sites) {
 }
 
 $sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
-my $sites = $c->get('__SITES__');
 
 unless ($sites) {
     $sites = Bric::Biz::Site->list;
