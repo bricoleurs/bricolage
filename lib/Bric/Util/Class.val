@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -225,4 +225,6 @@ VALUES (70, 'element_grp', 'Bric::Util::Grp::Element', 'Element Group', 'Element
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (71, 'perm', 'Bric::Util::Priv', 'Permission', 'Permissions', 'Permission objects', 0);
 
+INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
+VALUES (72, 'media_type', 'Bric::Util::MediaType', 'Media Type', 'Media Types', 'Media Type objects', 0);
 

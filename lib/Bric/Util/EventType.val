@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2001-12-04 18:17:46 $
+-- $Date: 2002-06-29 09:08:16 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -684,7 +684,18 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'alert_type_del', 'Alert Type Deleted', 'Alert Type profile was deleted.', 30, 1);
 
+-- ********** 'media_type_new' ************ --
 
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'media_type_new', 'Media Type Created', 'Media Type was created.', 72, 1);
+ 
+-- ********** 'media_type_save' ************ --
 
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'media_type_save', 'Media Type Saved', 'Media Type profile changes were saved.', 72, 1);
 
+-- ********** 'media_type_deact' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'media_type_deact', 'Media Type Deactivated', 'Media Type profile was deactivated.', 72, 1);
 

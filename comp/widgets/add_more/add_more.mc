@@ -181,11 +181,11 @@ my $no_ed = { map { $_ => 1 } @$no_edit };
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:57 $
+$Date: 2002-06-29 09:08:16 $
 
 =head1 SYNOPSIS
 
@@ -339,7 +339,7 @@ More", of course.
 
 =item *
 
-no_label - If passed a true value, prevents the labels for each column of inputs
+no_labels - If passed a true value, prevents the labels for each column of inputs
 from being displayed.
 
 =item *

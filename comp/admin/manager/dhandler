@@ -128,7 +128,7 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 use Bric::Config qw(:ssl);
 
 # Figure out where we are.
-my ($section, $moe, $type) = $m->comp("/lib/util/parseUri.mc");
+my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
 
 # Redirect if necessary.
 $m->comp('/errors/404.mc') unless $type && $def->{$type};
@@ -138,26 +138,22 @@ my $title = get_disp_name($type) . " Manager";
 my $context = "Admin | Manager | " . get_class_info($type)->get_plural_name;
 
 # Set the selection label and widget.
+$sel_label = 'Delete';
+
 if ($type eq 'job') {
     $sel_label = 'Cancel';
     $sel_widg = 'job|cancel_cb';
 } elsif ($type eq 'alert_type') {
-    $sel_label = 'Delete';
     $sel_widg = 'alert_type|delete_cb';
 } elsif ($type eq 'workflow') {
-    $sel_label = 'Delete';
     $sel_widg = 'workflow|delete_cb';
 } elsif ($type eq 'dest') {
-    $sel_label = 'Delete';
     $sel_widg = 'dest|delete_cb';
 } else {
-    $sel_label = 'Delete';
     $sel_widg = 'listManager|deactivate_cb';
 }
 
 $fmt = get_pref('List Name Format') if $type eq 'job' || $type eq 'alert_type';
-
-$sel_label = $type eq 'job' ? 'Cancel' : 'Delete';
 
 my $prefix = '';
 if ($type eq 'user') {
@@ -287,6 +283,16 @@ my $def = {
 			       srch_field => 'name',
 			       constrain => {},
 			       select => $sel_sub },
+           media_type     => { list_fields => [qw(name extension)],
+                               field_values => sub { return unless $_[1] eq 'extension';
+                                                     join(', ', $_[0]->get_exts) },
+                               field_titles => { extension => 'Extensions' },
+                               sort_by => 'name',
+                               behavior => 'expand',
+                               srch_field => 'name',
+                               constrain => { active => 1 },
+                               select => $sel_sub,
+                             },
 	   output_channel => { list_fields => [qw(name description)],
 			       srch_field => 'name',
 			       behavior => 'narrow',
@@ -360,11 +366,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:56 $
+$Date: 2002-06-29 09:08:16 $
 
 =head1 SYNOPSIS
 

@@ -6,16 +6,16 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-06-29 09:08:16 $
 
 =head1 SYNOPSIS
 
@@ -598,7 +598,7 @@ sub my_meths {
 			      get_args => [],
 			      set_meth => sub { shift->set_name(@_) },
 			      set_args => [],
-			      disp     => 'Name',
+			      disp     => 'MIME Type',
 			      search   => 1,
 			      len      => 128,
 			      req      => 0,
@@ -950,7 +950,14 @@ B<Notes:> NONE.
 
 =cut
 
-sub deactivate { $_[0]->_set(['_active'], [0]) }
+sub deactivate {
+    my $self = shift;
+    $self->_set(['_active'], [0]);
+
+    # ON DEACTIVATE CASCADE
+    my @exts = $self->get_exts();
+    $self->del_exts(@exts);
+}
 
 =item $self = $mt->is_active
 
@@ -1175,7 +1182,7 @@ $get_em = sub {
     my ($pkg, $params, $ids) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id') {
+	if ($k eq 'id' || $k eq 'active') {
 	    push @wheres, "m.$k = ?";
 	    push @params, $v;
 	} else {
@@ -1190,12 +1197,25 @@ $get_em = sub {
 
     # Assemble the query.
     local $" = ', ';
-    my $qry_cols = $ids ? ['DISTINCT m.id'] : \@cols;
+    # When calling list_ids, I received an error: "For SELECT DISTINCT,
+    # ORDER BY expressions must appear in target list". This was because
+    # "ORDER BY m.name" was present when "SELECT DISTINCT m.id" was called,
+    # so I made the ORDER BY optional.
+    # (Note: we still need to join media_type with media_type_ext, in case
+    # the WHERE clause uses 'extension'.)
+    my ($qry_cols, $order_by);
+    if ($ids) {
+        $qry_cols = ['DISTINCT m.id'];
+        $order_by = '';
+    } else {
+        $qry_cols = \@cols;
+        $order_by = 'ORDER BY m.name';
+    }
     my $sel = prepare_ca(qq{
         SELECT @$qry_cols
         FROM   media_type m, media_type_ext e
         WHERE  m.id = e.media_type__id$where
-        ORDER BY m.name
+        $order_by
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
