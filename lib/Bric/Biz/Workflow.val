@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2003-01-19 02:40:07 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -18,8 +18,20 @@ VALUES (1, 101, 407);
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
 VALUES (41, NULL, 40, 'All Workflow Desks', 'All desks available to a workflow', 1, 0, 1);
 
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (501, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (50, 41, 501);
+
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
 VALUES (42, NULL, 40, 'Required Workflow Desks', 'Desks required in a workflow', 1, 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (502, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (51, 42, 502);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (201, 41, 45, 1);
@@ -76,8 +88,20 @@ VALUES (2, 102, 408);
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
 VALUES (43, NULL, 40, 'All Workflow Desks', 'All desks available to a workflow', 1, 0, 1);
 
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (503, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (52, 43, 503);
+
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
 VALUES (44, NULL, 40, 'Required Workflow Desks', 'Desks required in a workflow', 1, 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (504, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (53, 44, 504);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (208, 43, 45, 1);
@@ -128,8 +152,20 @@ VALUES (3, 103, 409);
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
 VALUES (45, NULL, 40, 'All Workflow Desks', 'All desks available to a workflow', 1, 0, 1);
 
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (505, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (54, 45, 505);
+
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
 VALUES (46, NULL, 40, 'Required Workflow Desks', 'Desks required in a workflow', 1, 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (506, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (55, 46, 506);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (214, 45, 45, 1);

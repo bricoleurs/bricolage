@@ -36,6 +36,11 @@ details. [David]
 Added ability to publish assets at a future time to Bric::SOAP::Workflow.
 Includes addition of new C<--publish-date> option to F<bric_soap>. [David]
 
+=item *
+
+A number of default groups where not properly added to the "All Groups"
+group. Now they are. [David]
+
 =back
 
 =head1 VERSION 1.5.0

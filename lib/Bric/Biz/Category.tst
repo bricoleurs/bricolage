@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
 -- Test values.
 --
@@ -45,6 +45,12 @@ INSERT INTO grp (id, parent_id, class__id, name, description, secret)
 VALUES (51, NULL, 47, 'Hard Science', 'Hard Science Categories.', 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
+VALUES (851, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (251, 51, 851);
+
+INSERT INTO member (id, grp__id, class__id, active)
 VALUES (51, 51, 20, 1);
 
 INSERT INTO category_member (id, object_id, member__id)
@@ -61,6 +67,12 @@ INSERT INTO grp (id, parent_id, class__id, name, description, secret)
 VALUES (52, NULL, 47, 'Bio Science', 'Biological Science Categories.', 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
+VALUES (852, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (252, 52, 852);
+
+INSERT INTO member (id, grp__id, class__id, active)
 VALUES (53, 52, 20, 1);
 
 INSERT INTO category_member (id, object_id, member__id)
@@ -70,14 +82,38 @@ VALUES (53, 4, 53);
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (53, NULL, 43, 'Category Assets', 'Science', 1, 0);
 
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (853, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (253, 53, 853);
+
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (54, NULL, 43, 'Category Assets', 'Material', 1, 0);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (854, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (254, 54, 854);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (55, NULL, 43, 'Category Assets', 'Physical', 1, 0);
 
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (855, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (255, 55, 855);
+
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (56, NULL, 43, 'Category Assets', 'Biological', 1, 0);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (856, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (256, 56, 856);
 
 -- All Categories.
 INSERT INTO member (id, grp__id, class__id, active)
