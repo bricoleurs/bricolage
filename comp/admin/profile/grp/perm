@@ -3,7 +3,7 @@
    title => "$grp_name Permissions",
    context => "Admin | Profile | $disp | &quot;$grp_name&quot; | Permissions"
  &>
-<form method="post" action="<% $r->uri %>" name="grp_profile" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="grp_profile">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc',
          value => $id,
@@ -69,11 +69,11 @@ my $grp_name = $grp->get_name;
 
 =head1 VERSION
 
-$Revision: 1.6.4.1 $
+$Revision: 1.6.4.2 $
 
 =head1 DATE
 
-$Date: 2003-06-22 17:07:05 $
+$Date: 2003-09-20 17:12:41 $
 
 =head1 DESCRIPTION
 

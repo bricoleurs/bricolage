@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.6.1 $
 
 =head1 DATE
 
-$Date: 2002-08-18 21:51:52 $
+$Date: 2003-09-20 17:12:41 $
 
 =head1 DESCRIPTION
 
@@ -52,7 +52,7 @@ my $wfname = '&quot;' . $wf->get_name . '&quot;';
 <%perl>;
 # Don't display anything if the desk object could not be found.
 if ($d) {
-    $m->out(qq{<form method="post" action="} . $r->uri . qq{" name="desk" onSubmit="return confirmChanges(this)">});
+    $m->out(qq{<form method="post" action="} . $r->uri . qq{" name="desk">});
 
     $m->comp('/widgets/desk/desk.mc',
 	     desk_id => $d_id,
