@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31.2.11 $
+$Revision: 1.31.2.12 $
 
 =head1 DATE
 
-$Date: 2002-02-23 00:39:57 $
+$Date: 2002-02-26 01:48:32 $
 
 =head1 DESCRIPTION
 
@@ -24,7 +24,7 @@ them:
 
 =item *
 
-Perl 5.6.1
+Perl 5.6.0 (recommend 5.6.1)
 
 =item *
 
@@ -186,9 +186,15 @@ Change to the source directory and execute these commands:
 
 =head2 Perl Modules
 
-There are quite a few Perl modules required by Bricolage (see "PACKAGES" above for a
-list). Installation of these modules follows the usual perl module installation
-process:
+There are quite a few Perl modules required by Bricolage (see "PACKAGES" above
+for a list). The easiest way to install them all is to use CPAN.pm to download
+the latest Bundle::Bricolage package from the CPAN and use it to install all the
+required packages:
+
+  perl -MCPAN -e install Bundle::Bricolage
+
+However, manual installation of each of the required modules follows the usual
+perl module installation process:
 
 =over 4
 
@@ -609,6 +615,17 @@ See L<Bric::DBA/> for more information on database security. You may want to
 alter the default security policy. Also, bric_import uses a TCP/IP connection so
 you may need to run postmaster with the I<-i> option.
 
+=item *
+
+Configure Apache to use Bricolage. To have Bricolage run as the main server
+process on your Apache server, simply add the following two lines to your
+httpd.conf file (an example is provided in conf/httpd.conf):
+
+  PerlPassEnv BRICOLAGE_ROOT
+  PerlModule Bric::App::ApacheConfig
+
+But you can also configure Bricolage to run on a virutal host. See
+<"Configuration"> below.
 
 =item *
 
