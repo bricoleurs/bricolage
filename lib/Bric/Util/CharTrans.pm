@@ -8,17 +8,17 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-03 21:26:56 $
+$Date: 2002-04-23 15:57:33 $
 
 =head1 SYNOPSIS
 
@@ -68,18 +68,16 @@ use base qw(Bric);
 # Constants
 ##############################################################################
 #use constant DEBUG => 0;
-#use constant UTF8 => 'UTF-8';
+use constant UTF8 => 'UTF-8';
 
-# This hash contains aliases for common character sets..
-# Useful for mapping 
+# This hash contains aliases for common character sets. Useful for mapping.
 
 our $CHARSET_ALIASES =  {
-    
 	'JIS' => 'ISO-2022-JP',
 	'X-EUC-JP'=> 'ISO-2022-JP',
 	'SHIFT-JIS' => 'SJIS',
-	'X-SHIFT-JIS' => 'SJIS', 
-	'X-SJIS' => 'SJIS' 
+	'X-SHIFT-JIS' => 'SJIS',
+	'X-SJIS' => 'SJIS'
 };
 
 
@@ -300,7 +298,7 @@ sub charset {
     # also returns the validity of the conversion object right away..
 
     eval {
-		my $cvt = Text::Iconv->new($new_charset, 'UTF-8');
+		my $cvt = Text::Iconv->new($new_charset, UTF8);
 		$cvt->raise_error(1);
 		$self->{'_to_utf8_converter'} = $cvt;
     };
@@ -308,7 +306,7 @@ sub charset {
    die $@ if $@;
 
     eval {
-		my $cvt = Text::Iconv->new('UTF-8', $new_charset);
+		my $cvt = Text::Iconv->new(UTF8, $new_charset);
 		$cvt->raise_error(1);
 		$self->{'_from_utf8_converter'} = $cvt;
     };
