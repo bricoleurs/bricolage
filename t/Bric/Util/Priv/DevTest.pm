@@ -104,7 +104,7 @@ sub test_list : Test(8) {
     # Try value.
     ok( @privs = Bric::Util::Priv->list({ value => CREATE }),
         "Look up by value 'CREATE'" );
-    is( scalar @privs, 25, "Check for 25 privs" );
+    is( scalar @privs, 22, "Check for 22 privs" );
     ok( @privs = Bric::Util::Priv->list({ value => READ }),
         "Look up by value 'READ'" );
     is( scalar @privs, 12, "Check for 12 privs" );
@@ -116,18 +116,18 @@ sub test_list : Test(8) {
 # Test get_acl.
 sub test_get_acl : Test(3) {
     my $self = shift;
-    my $test_acl = { 22 => 3,
-                     1  => 3,
+    my $test_acl = { 22 => 4,
+                     1  => 4,
 #                     'mtime' => '2003-02-22 02:43:35',
                      23 => 1,
-                     26 => 3,
+                     26 => 4,
                      29 => 1
                    };
 
     my $uid = $self->user_id; # Admin user is in "All Users" group.
     ok( my $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
     ok( local_date(delete $acl->{mtime}), "Check for parsable mtime" );
-    ok( eq_hash($acl, $test_acl), "Compare ACLs" );
+    is_deeply($acl, $test_acl, "Compare ACLs" );
 }
 
 ##############################################################################
