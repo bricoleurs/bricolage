@@ -705,11 +705,6 @@ for a list of possible values.
 Returns a list of templates in the category represented by a category ID. May
 use C<ANY> for a list of possible values.
 
-=item checked_out
-
-A boolean value indicating whether to return only checked out or not checked
-out templates.
-
 =item published_version
 
 Returns the versions of the templates as they were last deployed. The

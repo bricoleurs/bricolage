@@ -518,8 +518,10 @@ most recent version. May use C<ANY> for a list of possible values.
 
 =item checked_out
 
-A boolean value indicating whether to return only checked out or not checked
-out media.
+Indicates whether to list media that are checked out or not. If "0", then
+only non-checked out media will be returned. If "1", then only checked-out
+media will be returned. If "all", then the checked_out attributed will be
+ignored (unless the C<user__id> parameter is passed).
 
 =item published_version
 
