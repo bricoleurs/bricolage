@@ -405,6 +405,11 @@ my $def = {
                                constrain => {active => 1},
                                select => $sel_sub },
 	  };
+
+unless (Bric::Config::ENCODE_OK) {
+    # Exclude the character set preference if we can't convert character sets.
+    $def->{pref}{exclude} = sub { shift->get_name eq 'Character Set' };
+}
 </%once>
 <%doc>
 ###############################################################################
@@ -415,11 +420,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =head1 DATE
 
-$Date: 2004-02-28 00:41:10 $
+$Date: 2004-03-03 19:07:05 $
 
 =head1 SYNOPSIS
 

@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.62 $
+$Revision: 1.63 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.62 $ )[-1];
+our $VERSION = (qw$Revision: 1.63 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-02 18:00:24 $
+$Date: 2004-03-03 19:07:09 $
 
 =head1 SYNOPSIS
 
@@ -52,7 +52,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Config qw(:mason :sys_user :err LOAD_CHAR_SETS);
+use Bric::Config qw(:mason :sys_user :err :l10n);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::Trans::FS;
@@ -70,7 +70,8 @@ use Bric::App::Callback::Alert;
 use Bric::App::Callback::Alias;
 use Bric::App::Callback::AssetMeta;
 use Bric::App::Callback::BulkPublish;
-use Bric::App::Callback::CharTrans;
+# Only load CharTrans if we have Perl 5.8 or later.
+BEGIN { require Bric::App::Callback::CharTrans if ENCODE_OK }
 use Bric::App::Callback::ContainerProf;
 use Bric::App::Callback::Desk;
 use Bric::App::Callback::Element;
@@ -284,40 +285,18 @@ B<Notes:> NONE.
 
 =cut
 
-# I'm not sure if this belongs in this module.  But if not here, where?
-BEGIN {
-    foreach my $char_set ( @{ LOAD_CHAR_SETS() } ) {
-        if ($char_set !~ /utf-8/i) {
-            require Bric::Util::CharTrans;
-            # This seems to be the only way to force Encode to pre-load
-            # various character sets.
-            my $string = 'foo';
-            Encode::encode($char_set, $string);
-        }
-    }
-}
-
 sub handler {
     my ($r) = @_;
     # Handle the request.
     my $status;
 
     my $lang_name = get_pref('Language');
-    my $char_set  = get_pref('Character Set');
 
     # A global for localization purposes
     local $HTML::Mason::Commands::lang =
         Bric::Util::Language->get_handle($lang_name);
     local $HTML::Mason::Commands::lang_key = $HTML::Mason::Commands::lang->key;
-
-    # This needs to be reset on every request
-    local $HTML::Mason::Commands::ct;
-    if ($char_set ne 'UTF-8') {
-        # Load the character translation code and set up the pieces we'll
-        # need to do it.
-        require Bric::Util::CharTrans;
-        $HTML::Mason::Commands::ct = Bric::Util::CharTrans->new($char_set);
-    }
+    my $char_set = get_pref('Character Set');
 
     eval {
         # Prevent browsers from caching pages.

@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.93 $
+$Revision: 1.94 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.93 $ )[-1];
+our $VERSION = (qw$Revision: 1.94 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-02 15:34:58 $
+$Date: 2004-03-03 19:07:08 $
 
 =head1 SYNOPSIS
 
@@ -150,6 +150,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ENABLE_CATEGORY_BROWSER
                     USE_XHTML
                     LOAD_LANGUAGES
+                    ENCODE_OK
                     LOAD_CHAR_SETS
                    );
 
@@ -265,7 +266,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MIN_SHARE_SIZE
                                      MAX_UNSHARED_SIZE)],
                     mod_perl  => [qw(MOD_PERL)],
-                    uri       => [qw(STORY_URI_WITH_FILENAME)]
+                    uri       => [qw(STORY_URI_WITH_FILENAME)],
+                    l10n      => [qw(LOAD_LANGUAGES
+                                     ENCODE_OK
+                                     LOAD_CHAR_SETS)],
                    );
 
 #=============================================================================#
@@ -574,6 +578,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # XHTML setting.
     use constant USE_XHTML              => $config->{USE_XHTML};
 
+    # L10N & Character Translation settings.
+    use constant ENCODE_OK              => $] >= 5.008;
     use constant LOAD_LANGUAGES         => $config->{LOAD_LANGUAGES};
     use constant LOAD_CHAR_SETS         => $config->{LOAD_CHAR_SETS};
 
