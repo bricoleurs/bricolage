@@ -37,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-19 23:03:57 $
+$Date: 2002-10-26 00:39:03 $
 
 =head1 SYNOPSIS
 
@@ -212,7 +212,7 @@ sub list_ids {
     # handle element => element__id conversion
     if (exists $args->{element}) {
 	my ($element_id) = Bric::Biz::AssetType->list_ids(
-			      { name => $args->{element} });
+			      { name => $args->{element}, media => 1 });
 	die __PACKAGE__ . "::list_ids : no element found matching " .
 	    "(element => \"$args->{element}\")\n"
 		unless defined $element_id;
@@ -608,8 +608,8 @@ sub _load_media {
 	
 	# get element object for asset type
 	($init{element__id}) = Bric::Biz::AssetType->list_ids(
-                                 { name => $mdata->{element} });
-	die __PACKAGE__ . "::create : no element found matching " .
+                                 { name => $mdata->{element}, media => 1 });
+	die __PACKAGE__ . "::create : no media element found matching " .
 	    "(element => \"$mdata->{element}\")\n"
 		unless defined $init{element__id};
 

@@ -386,6 +386,28 @@ of the slug, since media assets have no slug. [David]
 
 The friendly messages confirming publishes are back. [David]
 
+=item *
+
+Fixed bug where selecting a large number of list options in the story profile
+would cause an SQL error. [Matt]
+
+=item *
+
+Fixed bug where Bric::SOAP would accept story element types for media and vice
+versa. Thanks to Evan Prodromou for the spot. [Sam]
+
+=item *
+
+Added code to installation scripts to delete existing Mason object files when
+upgrading. This hasn't been a problem thus far, but this step will help to
+ensure that users are always running the latest UI components. [David]
+
+=item *
+
+Fixed bug where deactivated element types weren't checked before creating a
+new element type with the same name as a deactivated element type. Thanks to
+Geoff Richards for the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.3

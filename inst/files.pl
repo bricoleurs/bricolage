@@ -6,11 +6,11 @@ files.pl - installation script to create directories and copy files
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-06-11 18:09:55 $
+$Date: 2002-10-26 00:39:02 $
 
 =head1 DESCRIPTION
 
@@ -33,7 +33,7 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
-use File::Path qw(mkpath);
+use File::Path qw(mkpath rmtree);
 use File::Find qw(find);
 use File::Copy qw(copy);
 
@@ -56,6 +56,7 @@ our $UPGRADE;
 $UPGRADE = 1 if $ARGV[0] and $ARGV[0] eq 'UPGRADE';
 
 create_paths();
+rmtree(catdir $CONFIG->{MASON_DATA_ROOT}, 'obj' ) if $UPGRADE;
 find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}) }, 
        no_chdir => 1 }, './comp');
 find({ wanted   => sub { copy_files($CONFIG->{MASON_DATA_ROOT}) }, 

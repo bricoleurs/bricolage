@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-19 23:06:39 $
+$Date: 2002-10-26 00:39:03 $
 
 =head1 SYNOPSIS
 
@@ -265,8 +265,8 @@ sub list_ids {
     # handle element => element__id conversion
     if (exists $args->{element}) {
 	my ($element_id) = Bric::Biz::AssetType->list_ids(
-			      { name => $args->{element} });
-	die __PACKAGE__ . "::list_ids : no element found matching " .
+			      { name => $args->{element}, media => 0 });
+	die __PACKAGE__ . "::list_ids : no story element found matching " .
 	    "(element => \"$args->{element}\")\n"
 		unless defined $element_id;
 	$args->{element__id} = $element_id;
@@ -699,8 +699,8 @@ sub _load_stories {
 	
 	# get element__id from story element
 	($init{element__id}) = Bric::Biz::AssetType->list_ids(
-                                 { name => $sdata->{element} });
-	die __PACKAGE__ . "::create : no element found matching " .
+                                 { name => $sdata->{element}, media => 0 });
+	die __PACKAGE__ . "::create : no story element found matching " .
 	    "(element => \"$sdata->{element}\")\n"
 		unless defined $init{element__id};
 

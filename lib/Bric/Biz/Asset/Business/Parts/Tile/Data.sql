@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2002-02-06 20:18:18 $
+-- $Date: 2002-10-26 00:39:03 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -40,7 +40,7 @@ CREATE TABLE story_data_tile (
     place                NUMERIC(10,0)  NOT NULL,
     object_order         NUMERIC(10,0)  NOT NULL,
     date_val             TIMESTAMP,
-    short_val            VARCHAR(1024),
+    short_val            TEXT,
     blob_val             TEXT,
     active               NUMERIC(1,0)   NOT NULL
                                         DEFAULT 1

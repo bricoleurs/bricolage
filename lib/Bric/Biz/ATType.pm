@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-04 00:48:23 $
+$Date: 2002-10-26 00:39:03 $
 
 =head1 SYNOPSIS
 
@@ -289,6 +289,7 @@ sub list {
 
     # Make sure to set active explictly if its not passed.
     $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
+    delete $param->{active} if $param->{active} eq 'all';
 
     foreach (keys %$param) {
 	if (/^(?:name|description)$/) {

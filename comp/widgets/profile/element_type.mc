@@ -8,11 +8,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-10-26 00:39:02 $
 
 =head1 SYNOPSIS
 
@@ -22,6 +22,8 @@ $Date: 2001-12-04 18:17:41 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the element Type Profile page.
+
+=cut
 
 </%doc>
 <%once>;
@@ -50,7 +52,7 @@ if ($param->{delete}) {
     add_msg("$disp_name profile $name deleted.");
 } else {
     # Make sure the name isn't already in use.
-    my @cts = $class->list_ids({ name => $param->{name} });
+    my @cts = $class->list_ids({ name => $param->{name}, active => 'all' });
     if (@cts > 1) { $used = 1 }
     elsif (@cts == 1 && !defined $param->{element_type_id}) { $used = 1 }
     elsif (@cts == 1 && defined $param->{element_type_id}

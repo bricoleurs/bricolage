@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-24 22:37:15 $
+$Date: 2002-10-26 00:39:04 $
 
 =head1 SYNOPSIS
 

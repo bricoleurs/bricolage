@@ -124,6 +124,10 @@ Friends who have spotted bugs include:
 
 =item Philip Fibiger
 
+=item Evan Prodromou
+
+=item Geoff Richards
+
 =back
 
 Others who contributed to its support and development:
