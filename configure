@@ -2087,7 +2087,7 @@ echo "$as_me: error:
 fi
 
 # Check for ssl option, and find ssl if yes
-HAVE_SSL=no
+HAVE_SSL=off
   echo "$as_me:2091: checking if ssl is wanted" >&5
 echo $ECHO_N "checking if ssl is wanted... $ECHO_C" >&6
 
@@ -2117,7 +2117,7 @@ echo "$as_me: error: Cannot find ssl libraries" >&2;}
 		  printf "OpenSSL found in $ssldir\n";
 		  LIBS="$LIBS -lssl -lcrypto";
 		  LDFLAGS="$LDFLAGS -L$ssldir/lib";
-		  HAVE_SSL=yes
+		  HAVE_SSL=on
 	  fi
 
 else

@@ -304,12 +304,7 @@ ${CONF_BRIC}: ${CONF_BRIC}.in
 	perl -pi -e 's/%DBI_PASS%/${DBI_PASS}/g' $@
 	perl -pi -e 's,%compdir%,${compdir},g' $@
 	perl -pi -e 's,%datadir%,${datadir},g' $@
-ifeq(HAVE_SSL,no)
-	perl -pi -e 's/%HAVE_SSL%/off/g' $@
-endif
-ifeq(HAVE_SSL,yes)
-	perl -pi -e 's/%HAVE_SSL%/on/g' $@
-endif
+	perl -pi -e 's/%HAVE_SSL%/${HAVE_SSL}/g' $@
 
 
 ${CONF_HTTPD}: ${CONF_HTTPD}.in
