@@ -10,8 +10,8 @@ library takes a few extra steps on Mac OS X.
 
 The solution is to compile your own Apache with mod_perl. Complete details for
 building everything you need to run Bricolage on Mac OS X 10.2 will always be
-found at http://david.wheeler.net/osx.html and on OS X 10.3 at
-http://www.spastically.com/projects/bricolage/installing_bricolage_on_mac_os_x.html.
+found at http://www.justatheory.com/computers/os/macosx/my_adventures.html and on OS X 10.3 at
+http://www.spastically.com/projects/bricolage/installing_bricolage_on_mac_os_x/.html.
 
 More detailed instructions, as well as a discussion of the issues of running 
 Apache/mod_perl/mod_ssl on Mac OS X, may be found in the following articles 
