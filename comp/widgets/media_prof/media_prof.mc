@@ -8,11 +8,11 @@ media_prof.mc - Profile for templates
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2002-01-31 00:15:11 $
 
 =head1 SYNOPSIS
 
@@ -39,7 +39,7 @@ my $needs_reload = sub {
     return 1 if $media->get_id != $id;
 
     # Reload if there is a user ID but its not the current user ID
-    return 1 if $media->get_user__id and ($media->get_user__id != get_user_id);
+    return 1 if defined $media->get_user__id and ($media->get_user__id != get_user_id);
 
     # Reload if $checkout is passed but doesn't sync w/ the media checkout.
     return 1 if defined($checkout) and ($media->get_checked_out != $checkout);

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-05 18:52:06 $
+$Date: 2002-01-31 00:17:30 $
 
 =head1 SYNOPSIS
 
@@ -1473,7 +1473,7 @@ sub cancel {
     my ($self) = @_;
     my $dirty = $self->_get__dirty;
 
-    if (not $self->get_user__id) {
+    if (not defined $self->get_user__id) {
 	# this is not checked out, it can not be deleted
 	my $msg = 'Cannot cancel an asset that is not checked out';
 	die Bric::Util::Fault::Exception::AP->new({'msg' => $msg});
