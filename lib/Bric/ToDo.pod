@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =head1 DATE
 
-$Date: 2002-01-06 18:18:06 $
+$Date: 2002-01-09 17:53:53 $
 
 =head1 DESCRIPTION
 
@@ -43,11 +43,17 @@ in mind as long term goals further down the line.
 
 ################################################################################
 
-=head2 VERSION 1.2.0
-
-Estimated ship date: 28 December 2001.
+=head2 VERSION 1.2.1
 
 =over 4
+
+=item *
+
+Create installation makefile [Mark].
+
+=item *
+
+Mention PERL_LOADER paramenter in Bric::AdvTemplate [Daviid].
 
 =item *
 
@@ -84,12 +90,8 @@ having an existing person record as an existing contributor or user. [David]
 
 =item *
 
-Create installation makefile.
-
-=item *
-
 Resolve the "Adding Element and hitting Cancel" issue (See
-http://bricolage-bugzilla.about.com/show_bug.cgi?id=3).
+http://bricolage-bugzilla.thepirtgroup.com/show_bug.cgi?id=3).
 
 =item *
 
