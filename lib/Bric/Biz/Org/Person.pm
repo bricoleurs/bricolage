@@ -7,15 +7,15 @@ Bric::Biz::Org::Person - Manages Organizations Related to Persons
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-05-16 00:29:45 $
 
 =head1 SYNOPSIS
 
@@ -1437,7 +1437,8 @@ $get_addr_coll = sub {
     my $self = shift;
     my ($id, $addr_coll) = $self->_get('id', '_addr');
     return $addr_coll if $addr_coll;
-    $addr_coll = Bric::Util::Coll::Addr::Person->new({po_id => $id});
+    $addr_coll = Bric::Util::Coll::Addr::Person->new
+      (defined $id ? {po_id => $id} : undef);
     $self->_set(['_addr'], [$addr_coll]);
     return $addr_coll;
 };
@@ -1457,8 +1458,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Biz::Org|Bric::Biz::Org>, 
+L<Bric|Bric>,
+L<Bric::Biz::Org|Bric::Biz::Org>,
 L<Bric::Biz::Person|Bric::Biz::Person>
 
 =cut

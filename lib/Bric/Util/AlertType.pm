@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-05-16 00:29:45 $
 
 =head1 SYNOPSIS
 
@@ -2610,8 +2610,9 @@ B<Notes:> NONE.
 $get_rules = sub {
     my $self = shift;
     my ($id, $rules) = $self->_get('id', '_rules');
-    return $rules if $rules || ! defined $id;
-    $rules = Bric::Util::Coll::Rule->new({alert_type_id => $id});
+    return $rules if $rules;
+    $rules = Bric::Util::Coll::Rule->new
+      ( defined $id ? { alert_type_id => $id } : undef );
     my $dirt = $self->_get__dirty;
     $self->_set(['_rules'], [$rules]);
     $self->_set__dirty($dirt); # Reset the dirty flag.

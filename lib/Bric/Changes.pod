@@ -68,7 +68,8 @@ Related to the last item, fixed a bug in Bric::Util::Coll that would call
 the href() method on a class and pass in undefined values as parameters.
 This will happen if a collection is created for a new object that does not
 yet have an ID. The fix thus prevents the "= NULL" SQL syntax, which always
-matches nothing. [David]
+matches nothing. The new syntax for constructing a collection has been
+implemented across the API. [David]
 
 =item *
 

@@ -6,16 +6,16 @@ Bric::Util::Grp::User - Interface to Bric::Biz::Person::User Groups
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:37 $
+$Date: 2002-05-16 00:29:45 $
 
 =head1 SYNOPSIS
 
@@ -332,8 +332,9 @@ B<Notes:> NONE.
 $get_priv_coll = sub {
     my Bric::Util::Grp::User $self = shift;
     my ($id, $privs) = $self->_get('id', '_privs');
-    return $privs if $privs || ! defined $id;
-    $privs = Bric::Util::Coll::Priv->new({usr_grp_id => $id});
+    return $privs if $privs;
+    $privs = Bric::Util::Coll::Priv->new
+      (defined $id ? { usr_grp_id => $id } : undef);
     $self->_set(['_privs'], [$privs]);
     $self->_set__dirty; # Unset the dirty flag.
     return $privs;

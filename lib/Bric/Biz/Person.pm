@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-05-16 00:29:45 $
 
 =head1 SYNOPSIS
 
@@ -1834,7 +1834,8 @@ $get_cont_coll = sub {
     my $dirt = $self->_get__dirty;
     my ($id, $cont_coll) = $self->_get('id', '_cont');
     return $cont_coll if $cont_coll;
-    $cont_coll = Bric::Util::Coll::Contact->new({person_id => $id});
+    $cont_coll = Bric::Util::Coll::Contact->new
+      (defined $id ? {person_id => $id} : undef);
     $self->_set(['_cont'], [$cont_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $cont_coll;
@@ -1855,9 +1856,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Biz::Contact|Bric::Biz::Contact>, 
-L<Bric::Biz::Org|Bric::Biz::Org>, 
+L<Bric|Bric>,
+L<Bric::Biz::Contact|Bric::Biz::Contact>,
+L<Bric::Biz::Org|Bric::Biz::Org>,
 L<Bric::Biz::Person::User|Bric::Biz::Person::User>
 
 =cut

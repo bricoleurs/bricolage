@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-03 16:25:57 $
+$Date: 2002-05-16 00:29:45 $
 
 =head1 SYNOPSIS
 
@@ -2127,7 +2127,7 @@ $get_coll = sub {
     my ($id, $coll) = $self->_get('id', $key);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $coll if $coll;
-    $coll = $class->new({server_type_id => $id});
+    $coll = $class->new(defined $id ? { server_type_id => $id } : undef);
     $self->_set([$key], [$coll]);
     $self->_set__dirty; # Unset the dirty flag.
     return $coll;

@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-23 00:34:58 $
+$Date: 2002-05-16 00:29:45 $
 
 =head1 SYNOPSIS
 
@@ -1491,7 +1491,8 @@ $get_inc = sub {
     my ($id, $inc) = $self->_get('id', '_includes');
 
     unless ($inc) {
-	$inc = Bric::Util::Coll::OCInclude->new({ include_parent_id => $id });
+	$inc = Bric::Util::Coll::OCInclude->new
+	  (defined $id ? { include_parent_id => $id } : undef);
 	my $dirty = $self->_get__dirty;
 	$self->_set(['_includes'], [$inc]);
 	$self->_set__dirty($dirty);
@@ -1516,7 +1517,7 @@ David Wheeler L<lt>david@wheeler.netL<gt>
 
 =head1 SEE ALSO
 
-L<perl>,L<Bric>,L<Bric::Biz::Asset::Business>,L<Bric::Biz::AssetType>,
+L<perl>, L<Bric>, L<Bric::Biz::Asset::Business>, L<Bric::Biz::AssetType>,
 L<Bric::Biz::Asset::Formatting>.
 
 =cut
