@@ -55,6 +55,9 @@ sub test_do_it : Test(31) {
     # Make sure there's a localization handle to translate the error message.
     ok( Bric::Util::Language->get_handle('en_us'), "Create lang handle" );
 
+    # Start trapping the output to STDERR.
+    $self->trap_stderr;
+
     # Make sure that we get a parse failure for bad.html.
     eval { $act->do_it([$bad]) };
     ok( my $err = $@, "Catch parse exception" );

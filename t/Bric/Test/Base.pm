@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 21:19:09 $
+$Date: 2003-10-03 02:48:50 $
 
 =head1 SYNOPSIS
 
@@ -84,11 +84,16 @@ END { File::Path::rmtree($ENV{BRIC_TEMP_DIR}) }
 # Tie off STDERR and STDOUT so that we don't output anything, but then can
 # read from them in our tests. Also tie off STDIN so we can print stuff to
 # it.
-my $stdout = tie *STDOUT, 'Bric::Test::TieOut'
+open REALOUT, ">&STDOUT" or die "Can't dup STDOUT: $!";
+my $stdout = tie *STDOUT, 'Bric::Test::TieOut', \*REALOUT
   or die "Cannot tie STDOUT: $!\n";
-my $stderr = tie *STDERR, 'Bric::Test::TieOut'
+
+open REALERR, ">&STDERR"  or die "Can't dup STDERR: $!";
+my $stderr = tie *STDERR, 'Bric::Test::TieOut', \*REALERR
   or die "Cannot tie STDERR: $!\n";
-my $stdin = tie *STDIN, 'Bric::Test::TieOut'
+
+open REALIN, ">&STDIN"  or die "Can't dup STDIN: $!";
+my $stdin = tie *STDIN, 'Bric::Test::TieOut', \*REALIN
   or die "Cannot tie STDIN: $!\n";
 
 =head1 INTERFACE
@@ -106,9 +111,41 @@ this user when you construct it!
 
 sub user_id { 0 }
 
+##############################################################################
+
+=head3 trap_stdout
+
+=head3 trap_stderr
+
+  $test->trap_stdout;
+  Bric::Test::Base->trap_stdout;
+
+  $test->trap_stderr;
+  Bric::Test::Base->trap_stderr;
+
+Traps output printed to C<STDOUT> or C<STDERR> so that it can be retreived by
+a call to C<read_stdout()> or C<read_stderr()>. The trapping will last only
+for the lifetime of a test, and any output not retreived from C<read_stdout()>
+or C<read_stderr()> will be output in the default fashion at during the test
+teardown phase.
+
+=cut
+
+sub trap_stdout { $stdout->autoflush(0) }
+sub trap_stderr { $stderr->autoflush(0) }
+
+sub zzuntrap : Test(teardown) {
+    $stdout->autoflush(1);
+    $stdout->printit;
+    $stderr->autoflush(1);
+    $stderr->printit;
+}
+
+##############################################################################
+
 =head3 read_stdout
 
-=head3 read_std_err
+=head3 read_stderr
 
   my $stdout = Bric::Test::Base->read_stdout;
   $stdout = $test->read_stdout;
@@ -127,6 +164,8 @@ They can also be used as instance methods.
 
 sub read_stdout { $stdout->read }
 sub read_stderr { $stderr->read }
+
+##############################################################################
 
 =head3 print_stdin
 
