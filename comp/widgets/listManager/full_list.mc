@@ -57,6 +57,8 @@
 
 %# Output the rows of data
 % my $first;
+
+% # here's where the rows diplayed are limited - see lines 209-18
 % foreach my $r ($start..$end) {
 % my $o_id = shift @{$data->[$r]};
   <tr <% $featured->{$o_id} ? "bgcolor=\"$featured_color\"" : "" %>>
@@ -94,11 +96,12 @@
 
 %# Paging footer stuff
 % if( $rppg && ( $rows - 1 ) > $rppg ) {
-<table align="center" border="0" cellpadding="0" cellspacing="0" width="50%">
+%     my $align = QA_MODE ? "left" : "center";
+<table align="<% $align %>" border="0" cellpadding="0" cellspacing="0" width="435">
 <tr>
 
 <%perl>
-my $sprint_string = qq( <a href="$url?listManager|start_page_cb=%d">%s</a> );
+my $sprint_string = qq( <a href="$url?$param) . qq(listManager|start_page_cb=%d">%s</a> );
 
 if( $multiple_pages ) {
     my $pages = sprintf( "%d", ( ( $rows - 1 ) / $rppg ) ) + ( ( $rows - 1 ) % $rppg ? 1 : 0 )
@@ -116,16 +119,16 @@ if( $multiple_pages ) {
 
     $m->out( '&nbsp;' . ($next || '') . '</td>' );
 
+    $m->out( "<td align=\"right\"><a href=\"$url?$param" .
+             "listManager|show_all_listings_cb=1\">Show All</a></td>" );
+
 } else {
     $m->out( qq{ <td align="left"> } . sprintf( $sprint_string, 1, 'Paginate Records' ) . "</td>" );
 }
 </%perl>
 
-%# this is broken
-     <!-- <td align="right"><a href="<% $url %>?listManager|show_all_listings_cb=1">Show All</a></td> -->
 </tr>
 </table>
-</div>
 % }
 %# End Paging Footer Stuff
 
@@ -154,15 +157,53 @@ $pkg => undef
 <%init>;
 # Setup paging vars
 my ($current_page, $end, $start);
-my $rppg = Bric::Util::Pref->lookup_val( 'Search Results / Page' ) || 0;
-my $multiple_pages = get_state_data( 'listManager', 'pages' ) || 0;
 
-if( $rppg
-|| ( $multiple_pages != 0 ) ) {
+# indicates whether search paging is on and if so
+# how many rows to show per page
+my $rppg = Bric::Util::Pref->lookup_val( 'Search Results / Page' ) || 0;
+
+# set 'show all rows' bool
+my $multiple_pages = get_state_data( 'listManager', 'multiple_pages' ) || 0;
+
+# checking the query string to see if we're in the Elements admin
+# if we are the query string will have to be prepended to the paging
+# links; see lines 104-29
+my $param = grep( /elem_type/, $r->param ) ?
+    "elem_type=" . $r->param('elem_type') . "&" :
+    "";
+
+# block for setting $new_params...this block is designed to support
+# proper paging associated with the admin->publishing->elements.
+# if a different element type is selected from the drop down we
+# want to reset the current_page to 1. the past element type if any
+# is grabbed from the 'params' var.  if a new query string is supplied
+# to the mason component then $new_params is set to 1.
+my $new_params = 0;
+if ($param) {
+    my $old_param = get_state_data( $widget, 'params' ) || '';
+
+    if ( $old_param eq '' ||
+         ( $old_param && $param ne $old_param ) ) {
+        set_state_data( $widget, 'params', $param );
+        $new_params = 1;
+    }
+}
+
+# Enter here if the multiple page flag bool is set of if search paging is
+# turned on and we're looking at a new item from the Elements drop-down list
+if ( $multiple_pages != 0 ||
+     ( $rppg && $new_params ) ) {
+
     $multiple_pages ||= 1;
 
-    if( not ($current_page = get_state_data( $widget, 'start_page' ))
-        or $current_page eq 'x' ) {
+    # resets $current_page and the session value 'start_page' to 1 if:
+    # 'start_page' is undefined OR
+    # 'start_page' eq 'x' OR
+    # $new_params is non-zero (hence a new query string was supplied
+    # by /admin/profile/element)
+    if( not ( $current_page = get_state_data( $widget, 'start_page' ) )
+        || $current_page eq 'x'
+        || $new_params ) {
 	set_state_data( $widget, 'start_page', 1 );
 	$current_page = 1;
     }
@@ -174,11 +215,11 @@ if( $rppg
     $start = ( $current_page - 1 ) * $rppg
         if( $current_page - 1 > 0 );
 } else {
+# show all rows of data...
     $end = $#{ $data } - 1;
     $start = 0;
 }
 
-# Load some values.
 my $url       = $r->uri;
 my $object    = get_state_data($widget, 'object');
 my $sortBy    = get_state_data($widget, 'sortBy')

@@ -45,8 +45,11 @@ if ($field eq "$widget|delete_cb") {
 } elsif ($field eq "$widget|sortBy_cb") {
     set_state_data('listManager', 'sortBy', $param->{$field});
 } elsif ( $field eq "$widget|start_page_cb" ) {
-    my $arg = get_state_data( $widget, 'start_page' ) eq 'x' ? 1 : $param->{ $field };
-    &$set_pages( 1, $arg );
+    # ensure paging is turned on
+    set_state_data( $widget, 'multiple_pages', 1 );
+
+    # set the page of results to be displayed to the passed value
+    set_state_data( $widget, 'start_page', $param->{ $field } );
 }
 # Try to match a custom select action.
 elsif ($field =~ /$widget\|select-(.+)_cb/) {
@@ -66,25 +69,8 @@ elsif ($field =~ /$widget\|select-(.+)_cb/) {
 	}
     }
 } elsif( $field eq "$widget|show_all_listings_cb" ) {
-    my $arg = get_state_data( $widget, 'start_page' ) eq 'x' ? 1 : 0;
-    &$set_pages( $arg );
+    # turn off paging
+    set_state_data( $widget, 'multiple_pages', 0 );
 }
 
 </%init>
-
-<%once>
-my $set_pages = sub {
-   my $pages = shift;
-   my $wdgt = 'listManager';
-   my $start;
-
-   unless( $pages ) {
-     set_state_data( $wdgt, 'pages', $pages )
-   } else {
-     set_state_data( $wdgt, 'pages', 1 ) unless( get_state_data( $wdgt, 'pages' ) );
-     $start = ( $_[0] ) =~ /^[1-9]+$/ ? $_[0] : 1;
-     set_state_data( $wdgt, 'start_page', $start );
-   }
-
-};
-</%once>
