@@ -430,13 +430,13 @@ my $create_fa = sub {
     my $fa;
     eval {
         $fa = Bric::Biz::Asset::Formatting->new
-          ({'element'     		=> $at,
-            'file_type'                => $file_type,
-            'output_channel__id' 	=> $oc_id,
-            'category_id'        	=> $cat_id,
-            'priority'           	=> $param->{priority},
-            'name'               	=> $name,
-            'user__id'           	=> get_user_id})
+          ({'element'            => $at,
+            'file_type'          => $file_type,
+            'output_channel__id' => $oc_id,
+            'category_id'        => $cat_id,
+            'priority'           => $param->{priority},
+            'name'               => $name,
+            'user__id'           => get_user_id})
     };
 
     if (my $err = $@) {
