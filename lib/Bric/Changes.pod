@@ -14,6 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+<<<<<<< Changes.pod
 =head1 VERSION 1.7.3 ()
 
 =head2 New Features
@@ -1126,7 +1127,7 @@ upgrading. [David]
 
 =back
 
-=head1 VERSION 1.6.10 ()
+=head1 VERSION 1.6.10 "Jump" (2004-02-29)
 
 =head2 Bug Fixes
 
