@@ -57,6 +57,11 @@ the desk and profile views if they're checked out to the current user,
 and only viewable otherwise. Thanks to Tracey Largay for the
 spot. [David]
 
+=item *
+
+Fixed a few poorly-named timezones in the time zone preference. More
+still needs to be done here, actually. [David]
+
 =back
 
 =head1 Version 1.2.3

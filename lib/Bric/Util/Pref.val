@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
--- VERSION: $Revision: 1.5.2.1 $
+-- VERSION: $Revision: 1.5.2.2 $
 --
--- $Date: 2002-04-03 02:57:07 $
+-- $Date: 2002-04-03 18:27:46 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO pref (id, name, description, value, def)
@@ -442,7 +442,7 @@ INSERT INTO pref_opt (pref__id, value, description)
 VALUES (1, 'Africa/Algiers', 'Africa - Algiers');
 
 INSERT INTO pref_opt (pref__id, value, description)
-VALUES (1, 'America/Guayaquil', 'Mainland');
+VALUES (1, 'America/Guayaquil', 'America -Guayaquil');
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (1, 'Pacific/Galapagos', 'Galapagos Islands');
@@ -460,7 +460,7 @@ INSERT INTO pref_opt (pref__id, value, description)
 VALUES (1, 'Africa/Asmera', 'Africa - Asmera');
 
 INSERT INTO pref_opt (pref__id, value, description)
-VALUES (1, 'Europe/Madrid', 'Mainland');
+VALUES (1, 'Europe/Madrid', 'Europe - Madrid');
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (1, 'Africa/Ceuta', 'Ceuta & Melilla');
@@ -871,7 +871,7 @@ INSERT INTO pref_opt (pref__id, value, description)
 VALUES (1, 'Asia/Gaza', 'Asia - Gaza');
 
 INSERT INTO pref_opt (pref__id, value, description)
-VALUES (1, 'Europe/Lisbon', 'Mainland');
+VALUES (1, 'Europe/Lisbon', 'Europe - Lisbon');
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (1, 'Atlantic/Madeira', 'Madeira Islands');
