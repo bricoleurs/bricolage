@@ -7,51 +7,62 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 00:29:45 $
+$Date: 2002-09-10 23:28:13 $
 
 =head1 SYNOPSIS
 
   use Bric::Biz::OutputChannel;
 
   # Constructors.
-  $oc = Bric::Biz::OutputChannel->new( $initial_state );
-  $oc = Bric::Biz::OutputChannel->lookup( { id => $id} );
-  my $ocs_aref = Bric::Biz::OutputChannel->list( $criteria );
-  my @ocs = Bric::Biz::OutputChannel->list( $criteria );
+  $oc = Bric::Biz::OutputChannel->new($init);
+  $oc = Bric::Biz::OutputChannel->lookup({ id => $id});
+  my $ocs_aref = Bric::Biz::OutputChannel->list($params);
+  my @ocs = Bric::Biz::OutputChannel->list($params);
 
   # Class Methos.
-  my $id_aref = Bric::Biz::OutputChannel->list_ids( $criteria );
-  my @ids = Bric::Biz::OutputChannel->list_ids( $criteria );
+  my $id_aref = Bric::Biz::OutputChannel->list_ids($params);
+  my @ids = Bric::Biz::OutputChannel->list_ids($params);
 
   # Instance Methods.
   $id = $oc->get_id;
-
   my $name = $oc->get_name;
   $oc = $oc->set_name( $name );
-
   my $description = $oc->get_description;
-  $oc = $oc->set_description( $description );
-
+  $oc = $oc->set_description($description);
   if ($oc->get_primary) { # do stuff }
   $oc = $oc->set_primary(1); # or pass undef.
 
+  # URI Format instance methods.
+  my $uri_format = $oc->get_uri_format;
+  $oc->set_uri_format($uri_format);
+  my $fixed_uri_format = $oc->get_fixed_uri_format;
+  $oc->set_fixed_uri_format($uri_fixed_format);
+  my $uri_case = $oc->get_uri_case;
+  $oc->set_uri_case($uri_case);
+  if ($oc->can_use_slug) { # do stuff }
+  $oc->use_slug_on;
+  $oc->use_slug_off;
+
+  # Output Channel Includes instance methods.
   my @ocs = >$oc->get_includes(@ocs);
   $oc->set_includes(@ocs);
   $oc->add_includes(@ocs);
   $oc->del_includes(@ocs);
 
+  # Active instance methods.
   $oc = $oc->activate;
   $oc = $oc->deactivate;
   $oc = $oc->is_active;
 
+  # Persistence methods.
   $oc = $oc->save;
 
 =head1 DESCRIPTION
@@ -81,12 +92,14 @@ use Bric::Util::Fault::Exception::DP;
 #==============================================================================
 ## Inheritance                         #
 #======================================#
-use base qw(Bric);
+use base qw(Bric Exporter);
+our @EXPORT_OK = qw(MIXEDCASE LOWERCASE UPPERCASE);
+our %EXPORT_TAGS = (case_constants => \@EXPORT_OK);
 
 #=============================================================================
 ## Function Prototypes                 #
 #======================================#
-my $get_inc;
+my ($get_inc, $parse_uri_format);
 
 #==============================================================================
 ## Constants                           #
@@ -96,16 +109,31 @@ use constant DEBUG => 0;
 
 use constant TABLE => 'output_channel';
 use constant FIELDS => qw(name description pre_path post_path primary filename
-                          file_ext _active);
+                          file_ext uri_format fixed_uri_format uri_case
+                          _use_slug _active);
 use constant COLS => qw(name description pre_path post_path primary_ce filename
-                        file_ext active);
+                        file_ext uri_format fixed_uri_format uri_case use_slug
+                        active);
 use constant SEL_COLS => qw(oc.name oc.description oc.pre_path oc.post_path
-                        oc.primary_ce oc.filename oc.file_ext oc.active);
+                            oc.primary_ce oc.filename oc.file_ext oc.uri_format
+                            oc.fixed_uri_format oc.uri_case oc.use_slug
+                            oc.active);
 use constant ORD => qw(name description pre_path post_path filename file_ext
-                       active);
+                       uri_format fixed_uri_format uri_case use_slug active);
 
 use constant INSTANCE_GROUP_ID => 23;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::OutputChannel';
+
+# URI Case options.
+use constant MIXEDCASE => 1;
+use constant LOWERCASE => 2;
+use constant UPPERCASE => 3;
+
+# URI Defaults.
+use constant DEFAULT_URI_FORMAT => '/categories/year/month/day/slug/';
+use constant DEFAULT_FIXED_URI_FORMAT => '/categories/';
+use constant DEFAULT_URI_CASE => MIXEDCASE;
+use constant DEFAULT_USE_SLUG => 0;
 
 #==============================================================================
 ## Fields                              #
@@ -122,17 +150,25 @@ my $meths;
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $dp  = 'Bric::Util::Fault::Exception::DP';
 
-my %txt_map = ( name      => 'LOWER(oc.name) LIKE ?',
-		pre_path  => 'LOWER(oc.pre_path) LIKE ?',
-		post_path => 'LOWER(oc.post_path) LIKE ?',
+
+my %bool_map = ( active  => 'oc.active = ?',
+                 use_slug => 'oc.use_slug = ?',
 );
-my %num_map = ( primary => 'oc.primary = ?',
-	        active  => 'oc.active = ?',
-		id      => 'oc.id = ?',
-	        server_type_id => 'id in (select output_channel__id from '
-		                  . 'server_type__output_channel where '
+
+my %txt_map = ( name             => 'LOWER(oc.name) LIKE ?',
+                description      => 'LOWER(oc.description) LIKE ?',
+                pre_path         => 'LOWER(oc.pre_path) LIKE ?',
+                post_path        => 'LOWER(oc.post_path) LIKE ?',
+                uri_format       => 'LOWER(oc.uri_format) LIKE ?',
+                fixed_uri_format => 'LOWER(oc.fixed_uri_format) LIKE ?',
+);
+my %num_map = ( primary => 'oc.primary_ce = ?',
+                id      => 'oc.id = ?',
+                uri_case => 'oc.uri_case = ?',
+                server_type_id => 'id in (select output_channel__id from '
+                                  . 'server_type__output_channel where '
                                   . 'server_type__id = ?)',
-		include_parent_id => 'inc.output_channel__id = ?'
+                include_parent_id => 'inc.output_channel__id = ?'
 );
 
 #--------------------------------------#
@@ -144,37 +180,43 @@ BEGIN {
       {
        # Public Fields
        # The human readable name field
-       'name'		=> Bric::FIELD_RDWR,
+       'name'           => Bric::FIELD_RDWR,
 
        # The human readable description field
-       'description'	=> Bric::FIELD_RDWR,
+       'description'    => Bric::FIELD_RDWR,
 
        # might want to be write since if it changes
        # it will fuck alot up
-       'pre_path'		=> Bric::FIELD_RDWR,
+       'pre_path'               => Bric::FIELD_RDWR,
 
        # same as prepath
-       'post_path'		=> Bric::FIELD_RDWR,
+       'post_path'              => Bric::FIELD_RDWR,
 
        # These will be used to construct file names
        # for content files burned to the Output Channel.
        'filename'              => Bric::FIELD_RDWR,
        'file_ext'              => Bric::FIELD_RDWR,
 
+       # URI formatting settings.
+       uri_format              => Bric::FIELD_RDWR,
+       fixed_uri_format        => Bric::FIELD_RDWR,
+       uri_case                => Bric::FIELD_RDWR,
+       _use_slug               => Bric::FIELD_NONE,
+
        # the flag as to wheather this is a primary
        # output channel
-       'primary'		=> Bric::FIELD_RDWR,
+       'primary'                => Bric::FIELD_RDWR,
 
        # The data base id
        'id'           => Bric::FIELD_READ,
 
        # Private Fileds
        # The active flag
-       '_active'		=> Bric::FIELD_NONE,
+       '_active'                => Bric::FIELD_NONE,
 
        # Storage for includes list of OCs.
-       '_includes'		=> Bric::FIELD_NONE,
-       '_include_id'		=> Bric::FIELD_NONE,
+       '_includes'              => Bric::FIELD_NONE,
+       '_include_id'            => Bric::FIELD_NONE,
       });
 }
 
@@ -229,14 +271,32 @@ B<Notes:> NONE.
 =cut
 
 sub new {
-	my ($class, $init) = @_;
-	$init->{_active} = exists $init->{active}
-	  ? delete $init->{active} : 1;
-	$init->{filename} ||= DEFAULT_FILENAME;
-	$init->{file_ext} ||= DEFAULT_FILE_EXT;
-	my $self = bless {}, $class;
-	$self->SUPER::new($init);
-	return $self;
+        my ($class, $init) = @_;
+        # Set active attribute.
+        $init->{_active} = exists $init->{active}
+          ? delete $init->{active} : 1;
+
+        # Set file naming attributes.
+        $init->{filename} ||= DEFAULT_FILENAME;
+        $init->{file_ext} ||= DEFAULT_FILE_EXT;
+
+        # Set URI formatting attributes.
+        $init->{uri_format} = $init->{uri_format} ?
+          $parse_uri_format->($class->my_meths->{uri_format}{disp},
+                              $init->{uri_format})
+          : DEFAULT_URI_FORMAT;
+        $init->{fixed_uri_format} = $init->{fixed_uri_format} ?
+          $parse_uri_format->($class->my_meths->{fixed_uri_format}{disp},
+                              $init->{fixed_uri_format})
+          : DEFAULT_FIXED_URI_FORMAT;
+
+        # Set URI case and use slug attributes.
+        $init->{uri_case} ||= DEFAULT_URI_CASE;
+        $init->{_use_slug} = exists $init->{use_slug} && $init->{use_slug}
+          ? 1 : 0;
+
+        # Construct this puppy!
+        return $class->SUPER::new($init);
 }
 
 =item $oc = Bric::Biz::OutputChannel->lookup( { id => $id } )
@@ -246,6 +306,8 @@ Bric::Biz::OutputChannel object ID passed. If $id is not found in the database,
 lookup() returns undef.
 
 B<Throws:>
+
+=over 4
 
 =item *
 
@@ -311,6 +373,10 @@ name
 
 =item *
 
+description
+
+=item *
+
 primary
 
 =item *
@@ -320,6 +386,18 @@ server_type_id
 =item *
 
 include_parent_id
+
+=item *
+
+uri_format
+
+=item *
+
+uri_case
+
+=item *
+
+use_slug
 
 =item *
 
@@ -417,7 +495,11 @@ sub href {
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -431,10 +513,11 @@ sub DESTROY {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
 
-=cut
-
+=over 4
 
 =item ($id_aref || @ids) = Bric::Biz::OutputChannel->list_ids( $criteria )
 
@@ -561,9 +644,9 @@ Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
 
 =item text
 
@@ -594,7 +677,7 @@ SQL DDL.
 
 rows - The number of rows to format in a textarea field.
 
-=item
+=item *
 
 cols - The number of columns to format in a textarea field.
 
@@ -622,115 +705,177 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      name        => {
-			       name     => 'name',
-			      get_meth => sub { shift->get_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_name(@_) },
-			      set_args => [],
-			      disp     => 'Name',
-			      search   => 1,
-			      len      => 64,
-			      req      => 1,
-			      type     => 'short',
-			      props    => {   type       => 'text',
-					      length     => 32,
-					      maxlength => 64
-					  }
-			     },
-	      description => {
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_description(@_) },
-			      set_args => [],
-			      name     => 'description',
-			      disp     => 'Description',
-			      len      => 256,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'textarea',
-					    cols => 40,
-					    rows => 4
-					  }
-			     },
-	      pre_path      => {
-			     name     => 'pre_path',
-			     get_meth => sub { shift->get_pre_path(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_pre_path(@_) },
-			     set_args => [],
-			     disp     => 'Pre',
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      post_path      => {
-			     name     => 'post_path',
-			     get_meth => sub { shift->get_post_path(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_post_path(@_) },
-			     set_args => [],
-			     disp     => 'Post',
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      filename      => {
-			     name     => 'filename',
-			     get_meth => sub { shift->get_filename(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_filename(@_) },
-			     set_args => [],
-			     disp     => 'File Name',
-			     len      => 32,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type      => 'text',
-					   length    => 32,
-				           maxlength => 32
-					 }
-			    },
-	      file_ext      => {
-			     name     => 'file_ext',
-			     get_meth => sub { shift->get_file_ext(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_file_ext(@_) },
-			     set_args => [],
-			     disp     => 'File Extension',
-			     len      => 32,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type      => 'text',
-					   length    => 32,
-				           maxlength => 32
-					 }
-			    },
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->activate(@_)
-						 : shift->deactivate(@_) },
-			     set_args => [],
-			     disp     => 'Active',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	     };
+              name        => {
+                               name     => 'name',
+                              get_meth => sub { shift->get_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_name(@_) },
+                              set_args => [],
+                              disp     => 'Name',
+                              search   => 1,
+                              len      => 64,
+                              req      => 1,
+                              type     => 'short',
+                              props    => {   type       => 'text',
+                                              length     => 32,
+                                              maxlength => 64
+                                          }
+                             },
+              description => {
+                              get_meth => sub { shift->get_description(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_description(@_) },
+                              set_args => [],
+                              name     => 'description',
+                              disp     => 'Description',
+                              len      => 256,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'textarea',
+                                            cols => 40,
+                                            rows => 4
+                                          }
+                             },
+              pre_path      => {
+                             name     => 'pre_path',
+                             get_meth => sub { shift->get_pre_path(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_pre_path(@_) },
+                             set_args => [],
+                             disp     => 'Pre',
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 64
+                                         }
+                            },
+              post_path      => {
+                             name     => 'post_path',
+                             get_meth => sub { shift->get_post_path(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_post_path(@_) },
+                             set_args => [],
+                             disp     => 'Post',
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 64
+                                         }
+                            },
+              filename      => {
+                             name     => 'filename',
+                             get_meth => sub { shift->get_filename(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_filename(@_) },
+                             set_args => [],
+                             disp     => 'File Name',
+                             len      => 32,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type      => 'text',
+                                           length    => 32,
+                                           maxlength => 32
+                                         }
+                            },
+              file_ext      => {
+                             name     => 'file_ext',
+                             get_meth => sub { shift->get_file_ext(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_file_ext(@_) },
+                             set_args => [],
+                             disp     => 'File Extension',
+                             len      => 32,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type      => 'text',
+                                           length    => 32,
+                                           maxlength => 32
+                                         }
+                            },
+              uri_format => {
+                             name     => 'uri_format',
+                             get_meth => sub { shift->get_uri_format(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_uri_format(@_) },
+                             set_args => [],
+                             disp     => 'URI Format',
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type      => 'text',
+                                           length    => 32,
+                                           maxlength => 64
+                                         }
+                            },
+              fixed_uri_format => {
+                             name     => 'fixed_uri_format',
+                             get_meth => sub { shift->get_fixed_uri_format(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_fixed_uri_format(@_) },
+                             set_args => [],
+                             disp     => 'Fixed URI Format',
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type      => 'text',
+                                           length    => 32,
+                                           maxlength => 64
+                                         }
+                            },
+               uri_case  => {
+                             name     => 'uri_case',
+                             get_meth => sub { shift->get_uri_case(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_uri_case(@_) },
+                             set_args => [],
+                             disp     => 'URI Case',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'select',
+                                           vals => [[ &MIXEDCASE => 'Mixed Case'],
+                                                    [ &LOWERCASE => 'Lowercase'],
+                                                    [ &UPPERCASE => 'Uppercase'],
+                                                   ]
+                                         }
+                            },
+               use_slug  => {
+                             name     => 'use_slug',
+                             get_meth => sub { shift->can_use_slug(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->use_slug_on(@_)
+                                                 : shift->use_slug_off(@_) },
+                             set_args => [],
+                             disp     => 'Use Slug for Filename',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+              active     => {
+                             name     => 'active',
+                             get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->activate(@_)
+                                                 : shift->deactivate(@_) },
+                             set_args => [],
+                             disp     => 'Active',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{&ORD} : [@{$meths}{&ORD}];
 }
 
 #--------------------------------------#
+
+=back
 
 =head2 Public Instance Methods
 
@@ -843,15 +988,39 @@ B<Notes:> NONE.
 
 =item $filename = $oc->get_filename
 
+=item $filename = $oc->get_filename($asset)
+
 Gets the filename that will be used in the names of files burned into this
 Output Channel. Defaults to the value of the DEFAULT_FILENAME configuration
-directive if unset.
+directive if unset. The value of the C<uri_case> property affects the case of
+the filename returned. If <$asset> is passed in, then C<get_filename()> will
+return the proper filename for that asset based on the value of the
+C<use_slug> property and on the class of the asset object.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=cut
+
+sub get_filename {
+    my ($self, $asset) = @_;
+    my ($fn, $us, $case) = $self->_get(qw(filename _use_slug uri_case));
+
+    # Determine what filename to return.
+    if ($us && UNIVERSAL::isa($asset, 'Bric::Biz::Asset::Business::Story')) {
+        my $slug = $asset->get_slug;
+        $fn = $slug if defined $slug && $slug ne '';
+    } elsif (UNIVERSAL::isa($asset, 'Bric::Biz::Asset::Business::Media')) {
+        $fn = $asset->get_file_name;
+    }
+
+    # Return the filename with the proper case.
+    return $case eq MIXEDCASE ? $fn :
+      $case eq LOWERCASE ? lc $fn : uc $fn;
+}
 
 =item $oc = $oc->set_file_ext($file_ext)
 
@@ -866,15 +1035,24 @@ B<Notes:> NONE.
 
 =item $file_ext = $oc->get_file_ext
 
-Gets the filename extension that will be used in the names of files burned into
-this Output Channel. Defaults to the value of the DEFAULT_FILE_EXT configuration
-directive if unset.
+Gets the filename extension that will be used in the names of files burned
+into this Output Channel. Defaults to the value of the DEFAULT_FILE_EXT
+configuration directive if unset. The case of the file extension returned is
+affected by the value of the C<uri_case> property.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=cut
+
+sub get_file_ext {
+    my ($ext, $case) = $_[0]->_get(qw(file_ext uri_case));
+    return $case eq MIXEDCASE ? $ext :
+      $case eq LOWERCASE ? lc $ext : uc $ext;
+}
 
 =item $oc = $oc->set_primary( undef || 1)
 
@@ -886,7 +1064,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item (undef || 1 ) = $oc->get_primary()
+=item (undef || 1 ) = $oc->get_primary
 
 Returns true if this is the primary Output Channel and false (undef) if it is
 not.
@@ -896,6 +1074,135 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> Only one Output channel can be the primary output channel.
+
+=item $oc = $oc->set_uri_format($uri_format)
+
+Sets the URI format for documents output in this Output Channel.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+No URI Format value specified.
+
+=item *
+
+Invalid URI Format tokens.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_uri_format {
+    $_[0]->_set(['uri_format'],
+                [$parse_uri_format->($_[0]->my_meths->{uri_format}{disp},
+                                     $_[1])])
+}
+
+=item my $format = $oc->get_uri_format
+
+Returns the URI format for documents output in this Output Channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> Only one Output channel can be the uri_format output channel.
+
+=item $oc = $oc->set_fixed_uri_format($uri_format)
+
+Sets the fixed URI format for documents output in this Output Channel.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+No Fixed URI Format value specified.
+
+=item *
+
+Invalid Fixed URI Format tokens.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_fixed_uri_format {
+    $_[0]->_set(['fixed_uri_format'],
+                [$parse_uri_format->($_[0]->my_meths->{fixed_uri_format}{disp},
+                                     $_[1])])
+}
+
+=item my $format = $oc->get_uri_format
+
+Returns the URI format for documents output in this Output Channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> Only one Output channel can be the uri_format output channel.
+
+=item (undef || 1 ) = $oc->can_use_slug
+
+Returns true if this is Output Channel can use the C<slug> property of a story
+as the filename for files output for the story.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub can_use_slug { $_[0]->_get('_use_slug') ? $_[0] : undef }
+
+##############################################################################
+
+=item $oc = $oc->use_slug_on
+
+Sets the C<use_slug> property to a true value.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub use_slug_on { $_[0]->_set(['_use_slug'], [1]) }
+
+##############################################################################
+
+=item $oc = $oc->use_slug_off
+
+Sets the C<use_slug> property to a false value.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub use_slug_off { $_[0]->_set(['_use_slug'], [0]) }
+
+##############################################################################
 
 =item my @inc = $oc->get_includes
 
@@ -945,6 +1252,8 @@ Unable to bind to columns to statement handle.
 =item *
 
 Unable to fetch row from statement handle.
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -1194,6 +1503,8 @@ sub save {
 ## Private Methods                     #
 #======================================#
 
+=back
+
 =head1 PRIVATE
 
 =cut
@@ -1201,6 +1512,8 @@ sub save {
 #--------------------------------------#
 
 =head2 Private Class Methods
+
+=over 4
 
 =item _do_list
 
@@ -1248,31 +1561,34 @@ sub _do_list {
     my (@wheres, @params);
 
     while (my ($k, $v) = each %$params) {
-	if ($txt_map{$k}) {
-	    push @wheres, $txt_map{$k};
-	    push @params, lc $v;
-	} elsif ($num_map{$k}) {
-	    push @wheres, $num_map{$k};
-	    push @params, $v;
-	} elsif ($k eq 'all') {
-	    push @wheres, 'active = ?';
-	    push @params, 1;
-	} else {
-	    $dp->new({ msg => "Invalid property argument '$k'." });
-	}
+        if ($txt_map{$k}) {
+            push @wheres, $txt_map{$k};
+            push @params, lc $v;
+        } elsif ($num_map{$k}) {
+            push @wheres, $num_map{$k};
+            push @params, $v;
+        } elsif ($bool_map{$k}) {
+            push @wheres, $bool_map{$k};
+            push @params, $v ? 1 : 0;
+        } elsif ($k eq 'all') {
+            push @wheres, 'active = ?';
+            push @params, 1;
+        } else {
+            $dp->new({ msg => "Invalid property argument '$k'." });
+        }
     }
 
     local $" = ' AND ';
     my $where = @wheres ? "WHERE  @wheres" : '';
     my ($order, $join, $fields, $qry_cols) = ('ORDER BY name', '', ['id', FIELDS]);
     if (defined $params->{include_parent_id}) {
-	$order = '';
-	$join = ', output_channel_include inc';
-	$where .= ' AND oc.id = inc.include_oc_id';
-	$qry_cols = $ids ? ['oc.id'] : ['oc.id', SEL_COLS, 'inc.id'];
-	push @$fields, '_include_id';
+        $order = '';
+        $join = ', output_channel_include inc';
+        $where .= ' AND oc.id = inc.include_oc_id';
+        $qry_cols = $ids ? ['oc.id'] : ['oc.id', SEL_COLS, 'inc.id'];
+        push @$fields, '_include_id';
     } else {
-	$qry_cols = $ids ? ['oc.id'] : ['oc.id', SEL_COLS];
+        $qry_cols = $ids ? ['oc.id'] : ['oc.id', SEL_COLS];
     }
 
     # Assemble and prepare the query.
@@ -1285,22 +1601,22 @@ sub _do_list {
     }, undef, DEBUG);
 
     if ( $ids ) {
-	# called from list_ids give em what they want
-	my $return = col_aref($sel, @params);
-	return wantarray ? @{ $return } : $return;
+        # called from list_ids give em what they want
+        my $return = col_aref($sel, @params);
+        return wantarray ? @{ $return } : $return;
     } else { # end if ids
-	# this must have been called from list so give objects
-	my (@d, @objs, %objs);
-	execute($sel, @params);
-	bind_columns($sel, \@d[0 .. (scalar $#$qry_cols)]);
-	while (my $row = fetch($sel) ) {
-	    my $self = bless {}, $class;
-	    $self->SUPER::new();
-	    $self->_set( $fields, \@d);
-	    $href ? $objs{$d[0]} = $self : push @objs, $self;
-	}
-	return \%objs if $href;
-	return wantarray ? @objs : \@objs;
+        # this must have been called from list so give objects
+        my (@d, @objs, %objs);
+        execute($sel, @params);
+        bind_columns($sel, \@d[0 .. (scalar $#$qry_cols)]);
+        while (my $row = fetch($sel) ) {
+            my $self = bless {}, $class;
+            $self->SUPER::new();
+            $self->_set( $fields, \@d);
+            $href ? $objs{$d[0]} = $self : push @objs, $self;
+        }
+        return \%objs if $href;
+        return wantarray ? @objs : \@objs;
     }
 }
 
@@ -1442,6 +1758,8 @@ interface details.
 
 B<Throws:>
 
+=over 4
+
 =item *
 
 Bric::_get() - Problems retrieving fields.
@@ -1491,14 +1809,73 @@ $get_inc = sub {
     my ($id, $inc) = $self->_get('id', '_includes');
 
     unless ($inc) {
-	$inc = Bric::Util::Coll::OCInclude->new
-	  (defined $id ? { include_parent_id => $id } : undef);
-	my $dirty = $self->_get__dirty;
-	$self->_set(['_includes'], [$inc]);
-	$self->_set__dirty($dirty);
+        $inc = Bric::Util::Coll::OCInclude->new
+          (defined $id ? { include_parent_id => $id } : undef);
+        my $dirty = $self->_get__dirty;
+        $self->_set(['_includes'], [$inc]);
+        $self->_set__dirty($dirty);
     }
     return $inc;
 };
+
+##############################################################################
+
+=item my $uri_format = $parse_uri_format->($name, $format)
+
+Parses a URI format as passed to C<set_uri_format()> or
+C<set_fixed_uri_format()> and returns it if it parses properly. If it doesn't,
+it throws an exception. The C<$name> attribute is used in the exceptions.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+No URI Format value specified.
+
+=item *
+
+Invalid URI Format tokens.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$parse_uri_format = sub {
+    my ($name, $format) = @_;
+    my %toks = map { $_ => 1 } qw(categories day month year slug);
+
+    # Throw an exception for an empty or bogus format.
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => "No $name value specified" })
+      if not $format or $format =~ /^\s*$/;
+
+    # Parse the format for invalid tokens.
+    $format =~ s#/?(.+)/?#$1#;
+    my (@tokens, @bad);
+    foreach my $token (split /\//, $format) {
+        $toks{$token} ?
+          push @tokens, $token :
+          push @bad, $token;
+    }
+
+    # Throw an exception for a format with invalid tokens.
+    if (my $c = @bad) {
+        my $pl = $c > 1 ? 's' : '';
+        my $bad = join ', ', @bad;
+        die Bric::Util::Fault::Exception::DP->new
+          ({ msg => "Invalid $name token$pl: $bad" });
+    }
+
+    # Return the format.
+    return '/' . join('/', @tokens) . '/';
+};
+
 
 1;
 __END__
@@ -1509,11 +1886,11 @@ __END__
 
 NONE.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Michael Soderstrom L<lt>miraso@pacbell.netL<gt>
+Michael Soderstrom <miraso@pacbell.net>
 
-David Wheeler L<lt>david@wheeler.netL<gt>
+David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 

@@ -66,6 +66,25 @@ we'll be able to use the old tests to write the new tests. [David]
 Added documentation on merging CVS branches to
 L<Bric::Hacker|Bric::Hacker>. [David]
 
+=item *
+
+Removed the URI Format and URI Case preferences and put them into Output
+Channel objects, instead. They are now output-channel specific. [David]
+
+=item *
+
+URI format and URI case settings now properly format the URIs of media
+objects, too. [David]
+
+=item *
+
+The slug can now be used in the Fixed URI Format. [David]
+
+=item *
+
+The slug can now be used for story file names. The option is supported on an
+Output Channel basis, and will only work for stories that have a slug. [David]
+
 =back
 
 =head1 VERSION 1.4.1

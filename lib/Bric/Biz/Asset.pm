@@ -3,20 +3,20 @@ package Bric::Biz::Asset;
 
 =head1 NAME
 
-Bric::Biz::Asset - A base class of behaviours that all assets must exhibit. 
-An asset is anything that goes through workflow
+Bric::Biz::Asset - A base class of behaviours that all assets must exhibit. An
+asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-04 00:48:23 $
+$Date: 2002-09-10 23:28:13 $
 
 =head1 SYNOPSIS
 
@@ -959,7 +959,8 @@ NONE
 
 =item $needs_publish = $asset->needs_publish()
 
-Compares current_version and published_version from asset table.  If the same, needs_publish returns 0.  If different, returns 1.
+Compares current_version and published_version from asset table. If the same,
+needs_publish returns 0. If different, returns 1.
 
 B<Throws:>
 

@@ -30,19 +30,13 @@ my $c = scalar keys %$vals;
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
 	 caption => $name);
 
-if( $name eq 'URI Format' || $name eq 'Fixed URI Format' ) {
-	my $fixed = $name eq 'URI Format' ? 0 : 1;
-	$m->comp("/widgets/profile/uri_pref.mc", fixed => $fixed,
-		 pref => $pref, vals => $vals);
-} else {
-	$m->comp('/widgets/profile/displayFormElement.mc', key => 'value',
-	 	readOnly => $no_edit,
-	 	vals => { props => { type =>  $c < 4 ? 'radio' : 'select',
-			  	     size => $c > 15 ? 10 : 1,
-			  	     vals => $vals },
-		disp => '',
-		value => $pref->get_value } );
-}
+$m->comp('/widgets/profile/displayFormElement.mc', key => 'value',
+         readOnly => $no_edit,
+         vals => { props => { type =>  $c < 4 ? 'radio' : 'select',
+                              size => $c > 15 ? 10 : 1,
+                              vals => $vals },
+                   disp => '',
+                   value => $pref->get_value } );
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
@@ -78,11 +72,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-03-15 22:55:02 $
+$Date: 2002-09-10 23:28:12 $
 
 =head1 DESCRIPTION
 

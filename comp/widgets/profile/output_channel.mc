@@ -37,16 +37,26 @@ if ($param->{delete}) {
 	   && $ocs[0] != $oc_id) { $used = 1 }
     add_msg("The name $name is already used by another $disp_name.") if $used;
 
+    # Set the basic properties.
     $oc->set_description( $param->{description} );
     $oc->set_pre_path( $param->{pre_path} );
     $oc->set_post_path( $param->{post_path});
     $oc->set_filename( $param->{filename});
     $oc->set_file_ext( $param->{file_ext});
+    $oc->set_uri_case($param->{uri_case});
+    exists $param->{use_slug} ? $oc->use_slug_on : $oc->use_slug_off;
     $oc->activate;
 
-    return $oc if $used;
+    # Set the URI Formatting properties, catching all exceptions.
+    my $bad_uri;
+    eval { $oc->set_uri_format($param->{uri_format}) };
+    $bad_uri = 1 && add_msg($@->get_msg) if $@;
+    eval { $oc->set_fixed_uri_format($param->{fixed_uri_format}) };
+    $bad_uri = 1 && add_msg($@->get_msg) if $@;
 
+    return $oc if $used;
     $oc->set_name($param->{name});
+    return $oc if $bad_uri;
 
     if ($oc_id) {
 	if ($param->{include_id}) {

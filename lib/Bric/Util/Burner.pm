@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-28 20:36:42 $
+$Date: 2002-09-10 23:28:14 $
 
 =head1 SYNOPSIS
 
@@ -432,8 +432,9 @@ sub preview {
     my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
     my $bats = {};
     my $res = [];
-    my $ocs = [ Bric::Biz::OutputChannel->lookup({ id => $oc_id ? $oc_id : $at->get_primary_oc_id }) ];
-	
+    my $ocs = [ Bric::Biz::OutputChannel->lookup
+                ({ id => $oc_id ? $oc_id : $at->get_primary_oc_id }) ];
+
     # Iterate through each output channel.
     foreach my $oc (@$ocs) {
     	&$send_msg("Writing files to &quot;" . $oc->get_name
@@ -465,7 +466,7 @@ sub preview {
 	    }
     	} else {
 	    my $path = $ba->get_path;
-	    my $uri = $ba->get_uri;
+	    my $uri = $ba->get_uri($oc);
 	    if ($path && $uri) {
 		my $r = Bric::Dist::Resource->lookup({ path => $path })
 		    || Bric::Dist::Resource->new({ path => $path,
@@ -621,7 +622,8 @@ sub publish {
 	    $published=1;
 	} else {
 	    my $path = $ba->get_path;
-	    my $uri = $ba->get_uri;
+	    my $uri = $ba->get_uri($oc);
+            print STDERR "$path => $uri\n";
 	    if ($path && $uri) {
 		my $r = Bric::Dist::Resource->lookup({ path => $path })
                     || Bric::Dist::Resource->new({ path => $path,

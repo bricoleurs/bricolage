@@ -1,21 +1,30 @@
 -- -----------------------------------------------------------------------------
 -- OutputChannel.tst
 --
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
 -- Test values.
 --
 
 DELETE FROM output_channel WHERE id IN (2, 3, 4);
 
-INSERT INTO output_channel (id,name,description,pre_path,post_path,filename, file_ext, primary_ce)
-VALUES (2, 'Email', 'Output in Email format', '', 'email', 'index', 'html', 0);
+INSERT INTO output_channel (id, name, description, pre_path, post_path,
+                            filename, file_ext, uri_format, fixed_uri_format,
+                            uri_case, use_slug, primary_ce)
+VALUES (2, 'Email', 'Output in Email format', '', 'email', 'index', 'html',
+        '/categories/year/month/day/slug/', '/categories/', 1, 0, 0);
 
-INSERT INTO output_channel (id,name,description,pre_path,post_path,filename, file_ext, primary_ce)
-VALUES (3, 'WAP', 'Ouput to WAP format', '', 'wap', 'index', 'html', 0);
+INSERT INTO output_channel (id, name, description, pre_path, post_path,
+                            filename, file_ext, uri_format, fixed_uri_format,
+                            uri_case, use_slug, primary_ce)
+VALUES (3, 'WAP', 'Ouput to WAP format', '', 'wap', 'index', 'html',
+        '/categories/year/month/day/slug/', '/categories/', 1, 0, 0);
 
-INSERT INTO output_channel (id,name,description,pre_path,post_path,filename, file_ext, primary_ce)
-VALUES (4, 'Print', 'Print version', '', 'print', 'index', 'html', 0);
+INSERT INTO output_channel (id, name, description, pre_path, post_path,
+                            filename, file_ext, uri_format, fixed_uri_format,
+                            uri_case, use_slug, primary_ce)
+VALUES (4, 'Print', 'Print version', '', 'print', 'index', 'html',
+        '/categories/year/month/day/slug/', '/categories/', 1, 0, 0);
 
 -- Add 'em to the 'All Output Channels' Group.
 INSERT INTO member (id, grp__id, class__id, active)

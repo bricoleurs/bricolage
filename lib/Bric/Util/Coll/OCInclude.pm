@@ -7,15 +7,15 @@ Bric::Util::Coll::OCInclude - Interface for managing Output Channels includes.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:43 $
+$Date: 2002-09-10 23:28:14 $
 
 =head1 SYNOPSIS
 
@@ -35,7 +35,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Biz::OutputChannel;
+#use Bric::Biz::OutputChannel;
 use Bric::Util::DBI qw(:standard);
 
 ################################################################################

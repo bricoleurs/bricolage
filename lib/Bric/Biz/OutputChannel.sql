@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2001-12-23 00:34:58 $
+-- $Date: 2002-09-10 23:28:13 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -29,17 +29,27 @@ CREATE SEQUENCE seq_output_channel_member START 1024;
 CREATE TABLE output_channel (
     id	         NUMERIC(10,0)  NOT NULL
                                 DEFAULT NEXTVAL('seq_output_channel'),
-    name         VARCHAR(64)    NOT NULL,
-    description  VARCHAR(256),
-    pre_path     VARCHAR(64),
-    post_path    VARCHAR(64),
-    filename     VARCHAR(32)    NOT NULL,
-    file_ext     VARCHAR(32),
-    primary_ce   NUMERIC(1,0),
-    active       NUMERIC(1,0)   NOT NULL
-                                DEFAULT 1
-                                CONSTRAINT ck_output_channel__active
-                                  CHECK (active IN (0,1)),
+    name             VARCHAR(64)    NOT NULL,
+    description      VARCHAR(256),
+    pre_path         VARCHAR(64),
+    post_path        VARCHAR(64),
+    filename         VARCHAR(32)    NOT NULL,
+    file_ext         VARCHAR(32),
+    primary_ce       NUMERIC(1,0),
+    uri_format       VARCHAR(64)    NOT NULL,
+    fixed_uri_format VARCHAR(64)    NOT NULL,
+    uri_case         NUMERIC(1,0)   NOT NULL
+                                    DEFAULT 1
+                                    CONSTRAINT ck_output_channel__uri_case
+                                      CHECK (uri_case IN (1,2,3)),
+    use_slug         NUMERIC(1,0)   NOT NULL
+                                    DEFAULT 0
+                                    CONSTRAINT ck_output_channel__use_slug
+                                      CHECK (use_slug IN (0,1)),
+    active           NUMERIC(1,0)   NOT NULL
+                                    DEFAULT 1
+                                    CONSTRAINT ck_output_channel__active
+                                      CHECK (active IN (0,1)),
     CONSTRAINT pk_output_channel__id PRIMARY KEY (id)
 );
 

@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 17:05:25 $
+$Date: 2002-09-10 23:28:14 $
 
 =head1 SYNOPSIS
 
@@ -208,7 +208,7 @@ sub burn_one {
     my $page     = 0;
 
     # compute output filename and extension
-    my $oc_filename = $oc->get_filename;
+    my $oc_filename = $oc->get_filename($story);
     my $oc_ext      = $oc->get_file_ext;
     my $base_uri    = $story->get_uri($cat, $oc);
     my $path        = $fs->cat_dir($self->get_out_dir, 'oc_'.

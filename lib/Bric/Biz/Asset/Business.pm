@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-04 00:48:23 $
+$Date: 2002-09-10 23:28:14 $
 
 =head1 SYNOPSIS
 
@@ -111,7 +111,7 @@ This class contains all the interfact to these data points
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies 
+# Programatic Dependencies
 
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
@@ -120,6 +120,7 @@ use Bric::Util::Grp::AssetLanguage;
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::Asset::Business::Parts::Tile::Container;
 use Bric::Biz::Category;
+use Bric::Biz::OutputChannel qw(:case_constants);
 use Bric::Biz::Org::Source;
 
 use Bric::Util::Pref;
@@ -1230,7 +1231,7 @@ sub get_tile {
 
 ################################################################################
 
-=item $uri = $biz->get_primary_uri()
+=item $uri = $biz->get_primary_uri
 
 Returns the primary URL for this business asset. The primary URL is determined
 by the pre- and post- directory strings of the primary output channel, the
@@ -1892,26 +1893,21 @@ sub _construct_uri {
     # Add the pre value.
     my @path = ('', defined $pre ? $pre : ());
 
-    # Get URI Format pref
-    my( $pref_value ) = ( Bric::Util::Pref->lookup_val( 
-        ( $fu ? 'Fixed ' : '' ) . 'URI Format' ) =~ /\/?(.+)\/?/ );
+    # Get URI Format.
+    my $fmt = $fu ? $oc_obj->get_fixed_uri_format : $oc_obj->get_uri_format;
 
-    my @tokens = split( '/', $pref_value );
+    my @tokens = split( '/', $fmt );
 
     # iterate over tokens pushing each onto @path
     foreach my $token( @tokens ) {
-
-        if( $uri_format_hash{ $token } ne '' ) {
-
+        next unless $token;
+        if( $uri_format_hash{$token}  ne '' ) {
 	    # Add the cover date value.
 	    push @path, $self->get_cover_date( $uri_format_hash{ $token } );
-
 	} else {
-
 	    if( $token eq 'categories' ) {
 	        # Add Category
 	        push @path, $cat_obj->ancestry_path if $cat_obj;
-
 	    } elsif( $token eq 'slug' ) {
 		# Add the slug.
 	        push @path, $self->get_slug if $self->key_name eq 'story';
@@ -1922,17 +1918,15 @@ sub _construct_uri {
     # Add the post value.
     push @path, $post if $post;
 
-    # Adjust case of URI, if necessary
-    $pref_value = Bric::Util::Pref->lookup_val( 'URI Case' );
-
-    if( $pref_value eq 'lower' ) {
-	@path = map( lc, @path );
-    } elsif( $pref_value eq 'upper' ) {
-	@path = map( uc, @path );
+    # Return the URI with the case adjusted as necessary.
+    my $uri_case = $oc_obj->get_uri_case;
+    if( $uri_case eq LOWERCASE ) {
+        return lc Bric::Util::Trans::FS->cat_uri(@path);
+    } elsif( $uri_case eq UPPERCASE ) {
+        return uc Bric::Util::Trans::FS->cat_uri(@path);
+    } else {
+        return Bric::Util::Trans::FS->cat_uri(@path);
     }
-
-    # Return the URL.
-    return Bric::Util::Trans::FS->cat_uri(@path);
 }
 
 ###############################################################################

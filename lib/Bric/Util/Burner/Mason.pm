@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-03 21:26:56 $
+$Date: 2002-09-10 23:28:14 $
 
 =head1 SYNOPSIS
 
@@ -543,8 +543,8 @@ sub end_page {
     my $buf  = $self->_get('_buf');
 
     my ($cat, $oc) = $self->_get('cat', 'oc');
-    my $fn = $oc->get_filename;
-    my $ext = $oc->get_file_ext;
+    my $fn         = $oc->get_filename($ba);
+    my $ext        = $oc->get_file_ext;
     my $page       = $self->get_page || '';
     my $filename   = "$fn$page.$ext";
     my $base       = $fs->cat_dir($self->get_out_dir, 'oc_' . $oc->get_id);
@@ -565,7 +565,7 @@ sub end_page {
     {
 	no strict 'refs';
 	${TEMPLATE_BURN_PKG . '::m'}->flush_buffer;
-	}
+    }
 
     # Save the page we've created so far.
     open(OUT, ">$file")
@@ -575,7 +575,7 @@ sub end_page {
     close(OUT);
 
     # Add a resource to the job object.
-    $self->_add_resource($file, $uri);
+    $self->_add_resource($file, $uri, $ext);
 
     # Clear the output buffer.
     $$buf = '';
@@ -607,11 +607,7 @@ sub _fmt_name {
 
 =head2 Private Instance Methods
 
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $success = $b->_add_resource();
 
@@ -627,15 +623,16 @@ B<Notes:> NONE.
 
 sub _add_resource {
     my $self = shift;
-    my ($file, $uri) = @_;
+    my ($file, $uri, $ext) = @_;
     my $ba  = $self->get_story;
 
     # Create a resource for the distribution stuff.
     my $res = Bric::Dist::Resource->lookup({ path => $file}) ||
       Bric::Dist::Resource->new({ path => $file,
 				uri  => $uri});
+
     # Set the media type.
-    $res->set_media_type(Bric::Util::MediaType->get_name_by_ext('html'));
+    $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
     # Add our story ID.
     $res->add_story_ids($ba->get_id);
     $res->save;

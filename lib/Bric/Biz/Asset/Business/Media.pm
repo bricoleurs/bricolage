@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-04 00:48:23 $
+$Date: 2002-09-10 23:28:14 $
 
 =head1 SYNOPSIS
 
@@ -779,13 +779,17 @@ sub set_category__id {
     my ($self, $cat_id) = @_;
 
     my $cat = Bric::Biz::Category->lookup( { id => $cat_id });
-    my $uri = Bric::Util::Trans::FS->cat_uri(
-          $self->_construct_uri($cat), $self->_get('file_name'));
+    my $at_obj = $self->_get_element_object;
+    my ($oc_obj) = $at_obj->get_output_channels($at_obj->get_primary_oc_id);
+
+    my $uri = Bric::Util::Trans::FS->cat_uri
+      ( $self->_construct_uri($cat, $oc_obj), $oc_obj->get_filename($self));
 
     $self->_set({ _category_obj => $cat,
                   category__id  => $cat_id,
                   uri           => $uri
     });
+
     return $self;
 }
 
@@ -830,7 +834,33 @@ sub get_category_object {
 
 *get_category = *get_category_object;
 
-################################################################################
+##############################################################################
+
+=item my $uri = $media->get_uri
+
+=item my $uri = $media->get_uri($oc)
+
+Returns the URI for the media object. If the C<$oc> output channel parameter
+is passed in, then the URI will be returned in the output channel's preferred
+format.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_uri {
+    my ($self, $oc) = @_;
+    return $self->_get('uri') unless $oc;
+    return Bric::Util::Trans::FS->cat_uri
+      ($self->_construct_uri($self->get_category_object, $oc),
+       $oc->get_filename($self));
+}
+
+##############################################################################
 
 =item $uri = $media->get_local_uri()
 
@@ -918,17 +948,25 @@ sub upload_file {
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
     open FILE, ">$path" or die
-      Bric::Util::Fault::Exception::GEN->new({ msg => "Unable to open '$path': $!" });
+      Bric::Util::Fault::Exception::GEN->new
+          ({ msg => "Unable to open '$path': $!" });
     my $buffer;
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
     close FILE;
 
+    # Get the Output Channel object.
+    my $at_obj = $self->_get_element_object;
+    my ($oc_obj) = $at_obj->get_output_channels($at_obj->get_primary_oc_id);
+
     # Set the location, name, and URI.
-    my $uri = Bric::Util::Trans::FS->cat_uri(
-      $self->_construct_uri($self->get_category_object), $name);
+    $self->_set(['file_name'], [$name]);
+    my $uri = Bric::Util::Trans::FS->cat_uri
+      ($self->_construct_uri($self->get_category_object, $oc_obj),
+       $oc_obj->get_filename($self));
+
     my $loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
-    $self->_set([qw(location file_name uri)], [$loc, $name, $uri]);
+    $self->_set([qw(location uri)], [$loc, $uri]);
 
     # determine what needs to get autopopulated
     my $auto_fields = $self->_get_auto_fields();
