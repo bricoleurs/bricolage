@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.26.2.8 $
+$Revision: 1.26.2.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26.2.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.26.2.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-07 23:55:36 $
+$Date: 2002-03-08 16:59:11 $
 
 =head1 SYNOPSIS
 
@@ -269,8 +269,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
       if SSL_ENABLE && LISTEN_PORT != 80;
 
     # DBI Settings.
-    use constant DBD_PACKAGE             => 'Bric::Util::DBD::Pg';
     use constant DBD_TYPE                => 'Pg';
+    use constant DBD_PACKAGE             => 'Bric::Util::DBD::' . DBD_TYPE;
     use constant DB_NAME                 => $config->{DB_NAME} || 'sharky';
     use constant DB_HOST                 => $config->{DB_HOST};
     use constant DB_PORT                 => $config->{DB_PORT};
