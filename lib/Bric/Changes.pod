@@ -16,6 +16,20 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.2.1
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+Created new method of configuring Bricolage in Apache. [David]
+
+=item *
+
+Added support for Mozilla (and there was much rejoicing!). [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
@@ -49,6 +63,10 @@ if the output channel had a post_path. [Sam]
 =item *
 
 Fixed some problems with the sideNav menus under Netscape. [David]
+
+=item *
+
+Fixed broken "Preview" button in Read-only story profile. [Matt Vella]
 
 =back
 
