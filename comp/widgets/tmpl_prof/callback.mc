@@ -442,7 +442,7 @@ my $check_syntax = sub {
 	my $error;
 	
 	# Add the global variables so we get no complaints about them
-	$code = '% my ($story, $burner, $element);'."\n$code";
+	$code = "<%init>; my (\$story, \$burner, \$element)\n</%init>\n$code";
 
 	my $c = $parser->make_component(script   => $code,
 					error    => \$error) 
