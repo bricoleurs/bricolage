@@ -84,7 +84,8 @@ function init() {
 }
 
 % if ($no_toolbar) {
-if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
+if (window.name == 'sideNav') { parent.location.href = location.href; }
+if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != "sideNav") {
     // Redirect to the window opening page.
     location.href = '/login/welcome.html?referer=<% $r->uri %>';
 } else {
