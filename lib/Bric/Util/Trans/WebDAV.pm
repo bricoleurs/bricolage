@@ -6,16 +6,16 @@ Bric::Util::Trans::WebDAV - WebDAV Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:37 $
+$Date: 2004-01-15 12:27:39 $
 
 =head1 SYNOPSIS
 
@@ -200,7 +200,7 @@ sub put_res {
                               || throw_gen(error => "Unable to change to directory '$dir' " .
                                              "in path '$dest_dir' on remote server " .
                                              "'$hn'.",
-                                           payload => $d->message });
+                                           payload => $d->message );
                         }
                     }
                 }
