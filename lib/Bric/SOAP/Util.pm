@@ -20,7 +20,7 @@ our @EXPORT_OK = qw(
                     parse_asset_document
                     serialize_elements
                     deserialize_elements
-                    do_output_channels
+                    load_ocs
                    );
 
 # set to 1 to see debugging output on STDERR
@@ -32,15 +32,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-20 20:52:07 $
+$Date: 2002-11-21 20:44:48 $
 
 =head1 SYNOPSIS
 
@@ -199,7 +199,53 @@ sub serialize_elements {
     return @related;
 }
 
-sub do_output_channels {
+=item load_ocs($asset, $ocdata, $elem_ocs, $key, $update)
+
+Sets the output channels on a business asset. If it's a new asset, all of the
+output channels in the $ocdata array reference will be loaded into the
+asset. If the asset is being updated, then C<load_ocs()> compares the output
+channels in $ocdata to those in the asset and adds and removes the appropriate
+output channels. The arguments are:
+
+=over 4
+
+=item C<$asset>
+
+The business asset with which to associate the output channels.
+
+=item C<$ocdata>
+
+The array reference of output channels from the SOAP data, e.g.,
+C<$data->{stories}{story}[0]{output_channels}{output_channel}.
+
+=item C<$elem_ocs>
+
+A hash reference of the output channels in the element that defines the asset
+(i.e., the story type element or the media type element). The hash keys are
+the output channel names, and the values are the corresponding output channel
+objects.
+
+=item C<$key>
+
+The key name for the class of asset being updated, either "story" or "media".
+
+=item C<$update>
+
+Boolean value indicating whether C<$asset> is being updated or not.
+
+=back
+
+Throws: NONE
+
+Side Effects: NONE
+
+B<Notes:> Only call this function if there is output channel data to be
+managed in the XML data. If there isn't, don't call this function, and the
+output channels in an asset will be left unchanged.
+
+=cut
+
+sub load_ocs {
     my ($asset, $ocdata, $elem_ocs, $key, $update) = @_;
         my %ocs;
         if ($update) {

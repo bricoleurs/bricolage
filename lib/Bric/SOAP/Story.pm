@@ -21,7 +21,7 @@ use Bric::SOAP::Util qw(category_path_to_id
                         parse_asset_document
                         serialize_elements
                         deserialize_elements
-                        do_output_channels
+                        load_ocs
                        );
 use Bric::SOAP::Media;
 
@@ -40,15 +40,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-20 20:52:06 $
+$Date: 2002-11-21 20:44:48 $
 
 =head1 SYNOPSIS
 
@@ -858,7 +858,7 @@ sub _load_stories {
         # add contributors, if any
         if ($sdata->{contributors} and $sdata->{contributors}{contributor}) {
             foreach my $c (@{$sdata->{contributors}{contributor}}) {
-                my %init = (fname => defined $c->{fname} ? $c->{fname} : "", 
+                my %init = (fname => defined $c->{fname} ? $c->{fname} : "",
                             mname => defined $c->{mname} ? $c->{mname} : "",
                             lname => defined $c->{lname} ? $c->{lname} : "");
                 my ($contrib) =
@@ -879,9 +879,10 @@ sub _load_stories {
         $story->deactivate;
         $story->save;
 
-        # Manage the output channels.
-        do_output_channels($story, $sdata->{output_channels}{output_channel},
-                           $selems{$sdata->{element}}->[1], 'story', $update);
+        # Manage the output channels if any are included in the XML file.
+        load_ocs($story, $sdata->{output_channels}{output_channel},
+                 $selems{$sdata->{element}}->[1], 'story', $update)
+          if $sdata->{output_channels}{output_channel};
 
         # sanity checks
         die __PACKAGE__ . "::create : no output channels defined!"

@@ -21,7 +21,7 @@ use Bric::SOAP::Util qw(category_path_to_id
                         parse_asset_document
                         serialize_elements
                         deserialize_elements
-                        do_output_channels
+                        load_ocs
                        );
 
 use SOAP::Lite;
@@ -39,15 +39,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-20 20:52:06 $
+$Date: 2002-11-21 20:44:48 $
 
 =head1 SYNOPSIS
 
@@ -785,9 +785,10 @@ sub _load_media {
         $media->deactivate;
         $media->save;
 
-        # Manage the output channels.
-        do_output_channels($media, $mdata->{output_channels}{output_channel},
-                           $melems{$mdata->{element}}->[1], 'media', $update);
+        # Manage the output channels if any are included in the XML file.
+        load_ocs($media, $mdata->{output_channels}{output_channel},
+                 $melems{$mdata->{element}}->[1], 'media', $update)
+          if $mdata->{output_channels}{output_channel};
 
         # sanity checks
         die __PACKAGE__ . "::create : no output channels defined!"
