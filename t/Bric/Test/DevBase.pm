@@ -152,6 +152,21 @@ sub del_ids : Test(teardown => 0) {
     Bric::Util::DBI::prepare(qq{DELETE FROM event})->execute;
 }
 
+=begin comment
+
+# This would be a better way to go than del_ids, but it won't work for those
+# classes that commit transactions themselves (such as Bric::Util::Job.).
+# Startup and shutdown methods run before and after all the tests in a single
+# Test::Class class.
+
+use Bric::Util::DBI qw(:trans);
+sub startup : Test(startup) { begin(1) }
+sub shutdown : Test(shutdown) { rollback(1) }
+
+=end comment
+
+=cut
+
 sub _do_deletes {
     my ($table, $ids) = @_;
 

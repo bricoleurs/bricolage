@@ -11,9 +11,6 @@ use Bric::Biz::Asset;
 ##############################################################################
 sub test_fetch_objects: Test(4) {
     my $self = shift;
-    # drop to prevent sql errors that wouldn't tell us anything anyhow
-    eval { Bric::Util::DBI::execute(
-      Bric::Util::DBI::prepare('DROP TABLE test_fetch_objects') ) };
     # create a fake story table. It doesn't need to have
     # the same structure as the real ones, it just needs
     # to produce the same result
@@ -33,6 +30,7 @@ sub test_fetch_objects: Test(4) {
                 twelve     NUMERIC(10,0) NULL
             ) }));
 
+    eval {
     my $sth = prepare(q{
         INSERT INTO test_fetch_objects (
             one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve
@@ -217,9 +215,13 @@ sub test_fetch_objects: Test(4) {
                     }, 'Bric::Biz::Asset' ),
            ];
     is_deeply($stories, $expect, 'can use limit and offset together to return middle two objects');
-    # drop the test objects
-    Bric::Util::DBI::execute( Bric::Util::DBI::prepare('DROP TABLE test_fetch_objects'));
+    };
 
+    my $err = $@;
+    Bric::Util::DBI::execute(
+      Bric::Util::DBI::prepare('DROP TABLE test_fetch_objects')
+    );
+    die $err if $err;
 }
 
 1;
