@@ -39,15 +39,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.14.4.1 $
+$Revision: 1.14.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.14.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 05:41:55 $
+$Date: 2003-08-11 09:23:33 $
 
 =head1 SYNOPSIS
 
@@ -625,7 +625,7 @@ sub _load_template {
         } else {
             die __PACKAGE__ .
                 " : unable to determine file_type for file_name " .
-                    \"$tdata->{file_name}\".\n";
+                    "\"$tdata->{file_name}\".\n";
         }
 
         # get element and name for asset type unless this generic
