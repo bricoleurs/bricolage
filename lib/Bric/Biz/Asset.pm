@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.20 $
+$Revision: 1.25.2.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-29 20:10:09 $
+$Date: 2004-03-16 19:19:21 $
 
 =head1 SYNOPSIS
 
@@ -132,6 +132,7 @@ use base qw(Bric);
 
 use constant DEBUG => 0;
 sub RO_FIELDS () { return };
+use constant OBJECT_SELECT_COLUMN_NUMBER => 0;
 
 #==============================================================================#
 # Fields                               #

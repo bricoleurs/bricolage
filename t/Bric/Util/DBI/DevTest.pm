@@ -4,6 +4,7 @@ use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
 use Bric::Util::DBI qw(:standard);
+use Bric::Biz::Asset;
 
 ##############################################################################
 # Set up a flat version of the story for easy testing of _fetch_objects
@@ -121,7 +122,7 @@ sub test_fetch_objects: Test(4) {
                  FROM test_fetch_objects
                  ORDER BY one, twelve ASC };
     my $fields = [ qw( one two three four five six seven eight nine ten eleven twelve ) ];
-    my $stories = fetch_objects('Bric', $sql, $fields, undef, undef, undef);
+    my $stories = fetch_objects('Bric::Biz::Asset', $sql, $fields, undef, undef, undef);
     my $expect = [
              bless( {
                       one     => 1,
@@ -137,7 +138,7 @@ sub test_fetch_objects: Test(4) {
                       eleven  => 1,
                       twelve  => [ 1, 2, 3 ],
                       _dirty  => 0,
-                    }, 'Bric' ),
+                    }, 'Bric::Biz::Asset' ),
              bless( {
                       one     => 2,
                       two     => 2,
@@ -152,7 +153,7 @@ sub test_fetch_objects: Test(4) {
                       eleven  => 2,
                       twelve  => [ 1, 2, 3 ],
                       _dirty  => 0,
-                    }, 'Bric' ),
+                    }, 'Bric::Biz::Asset' ),
              bless( {
                       one     => 3,
                       two     => 3,
@@ -167,7 +168,7 @@ sub test_fetch_objects: Test(4) {
                       eleven  => 3,
                       twelve  => [ 1, 2, 3 ],
                       _dirty  => 0,
-                    }, 'Bric' ),
+                    }, 'Bric::Biz::Asset' ),
              bless( {
                       one     => 4,
                       two     => 4,
@@ -182,11 +183,11 @@ sub test_fetch_objects: Test(4) {
                       eleven  => 4,
                       twelve  => [ 1, 2, 3 ],
                       _dirty  => 0,
-                    }, 'Bric' ),
+                    }, 'Bric::Biz::Asset' ),
            ];
     is_deeply($stories, $expect, 'Checking that _fetch_objects produces the correct object structure');
     # test limit
-    $stories = fetch_objects('Bric', $sql, $fields, undef, 2, undef);
+    $stories = fetch_objects('Bric::Biz::Asset', $sql, $fields, undef, 2, undef);
     $expect = [
              bless( {
                       one     => 1,
@@ -202,7 +203,7 @@ sub test_fetch_objects: Test(4) {
                       eleven  => 1,
                       twelve  => [ 1, 2, 3 ],
                       _dirty  => 0,
-                    }, 'Bric' ),
+                    }, 'Bric::Biz::Asset' ),
              bless( {
                       one     => 2,
                       two     => 2,
@@ -217,11 +218,11 @@ sub test_fetch_objects: Test(4) {
                       eleven  => 2,
                       twelve  => [ 1, 2, 3 ],
                       _dirty  => 0,
-                    }, 'Bric' ),
+                    }, 'Bric::Biz::Asset' ),
            ];
     is_deeply($stories, $expect, 'limit of 2 gets first two objects');
     # test offset
-    $stories = fetch_objects('Bric', $sql, $fields, undef, undef, 2);
+    $stories = fetch_objects('Bric::Biz::Asset', $sql, $fields, undef, undef, 2);
     $expect = [
              bless( {
                       one     => 3,
@@ -237,7 +238,7 @@ sub test_fetch_objects: Test(4) {
                       eleven  => 3,
                       twelve  => [ 1, 2, 3 ],
                       _dirty  => 0,
-                    }, 'Bric' ),
+                    }, 'Bric::Biz::Asset' ),
              bless( {
                       one     => 4,
                       two     => 4,
@@ -252,11 +253,11 @@ sub test_fetch_objects: Test(4) {
                       eleven  => 4,
                       twelve  => [ 1, 2, 3 ],
                       _dirty  => 0,
-                    }, 'Bric' ),
+                    }, 'Bric::Biz::Asset' ),
            ];
     is_deeply($stories, $expect, 'offset of two gets last two objects');
     # test limit and offset together
-    $stories = fetch_objects('Bric', $sql, $fields, undef, 2, 1);
+    $stories = fetch_objects('Bric::Biz::Asset', $sql, $fields, undef, 2, 1);
     $expect = [
              bless( {
                       one     => 2,
@@ -272,7 +273,7 @@ sub test_fetch_objects: Test(4) {
                       eleven  => 2,
                       twelve  => [ 1, 2, 3 ],
                       _dirty  => 0,
-                    }, 'Bric' ),
+                    }, 'Bric::Biz::Asset' ),
              bless( {
                       one     => 3,
                       two     => 3,
@@ -287,7 +288,7 @@ sub test_fetch_objects: Test(4) {
                       eleven  => 3,
                       twelve  => [ 1, 2, 3 ],
                       _dirty  => 0,
-                    }, 'Bric' ),
+                    }, 'Bric::Biz::Asset' ),
            ];
     is_deeply($stories, $expect, 'can use limit and offset together to return middle two objects');
     # drop the test objects

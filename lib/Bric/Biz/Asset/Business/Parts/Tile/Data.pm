@@ -8,15 +8,15 @@ the business data.
 
 =head1 VERSION
 
-$Revision: 1.12.4.2 $
+$Revision: 1.12.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-22 16:12:50 $
+$Date: 2004-03-16 19:19:21 $
 
 =head1 SYNOPSIS
 
@@ -507,12 +507,12 @@ sub set_data {
     my $sql_type  = $self->_get_sql_type;
     $value = db_date($value) if $sql_type eq 'date';
 
-    no warnings;
-    unless ($self->_get('_'.$sql_type.'_val') eq $value) {
-        $self->_set(['_'.$sql_type.'_val'], [$value]);
-    }
+    my $old_val = $self->_get('_'.$sql_type.'_val');
+    return $self unless (defined $value && not defined $old_val)
+      || (not defined $value && defined $old_val)
+      || ($value ne $old_val);
 
-    return $self;
+    $self->_set(['_'.$sql_type.'_val'] => [$value]);
 }
 
 ################################################################################

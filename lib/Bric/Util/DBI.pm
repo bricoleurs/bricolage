@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.22 $
+$Revision: 1.21.2.23 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.23 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-03-16 00:12:11 $
+$Date: 2004-03-16 19:19:21 $
 
 =head1 SYNOPSIS
 
@@ -880,6 +880,16 @@ sub clean_params {
         $param->{_null_workflow_id} = 1;
         delete $param->{workflow__id};
     }
+
+    # Convert dates to UTC. Note that Bric::Util::Time must be loaded external
+    # to Bric::Util::DBI, or else we run into nasty mutual dependencies.
+    for my $df (qw(publish_date publish_date_start publish_date_end
+                   first_publish_date first_publish_date_start first_publish_date_end
+                   cover_date cover_date_start cover_date_end
+                   expire_date expire_date_start expire_date_end)) {
+        $param->{$df} = Bric::Util::Time::db_date($param->{$df}) if $param->{$df};
+    }
+
     return $param;
 }
 
