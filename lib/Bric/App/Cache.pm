@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.16.2.2 $
+$Revision: 1.16.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-06 07:28:38 $
+$Date: 2003-03-07 05:14:33 $
 
 =head1 SYNOPSIS
 
@@ -482,7 +482,7 @@ will be checked to ensure that they are proper arguments.
 sub get_user_cx {
     if (QA_MODE) {
         throw_da "Must pass in a valid user ID"
-          unless $_[1] and $_[1] =~ /^\d+$/;
+          unless defined $_[1] and $_[1] =~ /^\d+$/;
     }
     $_[0]->get('CX_' . $_[1])
 }
@@ -503,7 +503,7 @@ will be checked to ensure that they are proper arguments.
 sub set_user_cx {
     if (QA_MODE) {
         throw_dp "Must pass in a valid user ID"
-          unless $_[1] and $_[1] =~ /^\d+$/;
+          unless defined $_[1] and $_[1] =~ /^\d+$/;
         throw_dp "Must pass in a valid site ID"
           unless ! defined $_[2] or $_[2] =~ /^\d+$/;
     }
