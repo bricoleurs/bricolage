@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.11.2.1 $
+$Revision: 1.11.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-23 18:12:23 $
+$Date: 2003-10-22 05:50:29 $
 
 =head1 SYNOPSIS
 
@@ -52,8 +52,8 @@ BEGIN {
       unless -d 't';
 
     # Find all the modules.
-    find( sub { push @$files, $File::Find::name if m/\.pm$/ }, 'lib',
-          catdir('t', 'Bric', 'Test') );
+    find( sub { push @$files, $File::Find::name if m/\.pm$/ or m/\.pod$/ },
+          'lib', catdir('t', 'Bric', 'Test') );
 
     # Find the bin directory.
     die "Cannot find Bricolage lib directory"
