@@ -11,6 +11,7 @@ while (my ($k, $v) = each %h) {
     my $c = $i ? 'lemonchiffon' : 'lightblue';
     $i = !$i;
     $chk = 1;
+    HTML::Mason::Escapes::html_entities_escape(\$v);
     $m->out(qq{<tr bgcolor="$c" valign="top"><td align="right"><font face="Verdana, Helvetica, Arial"><b>$k</b></font></td><td><font face="Verdana, Helvetica, Arial">$v</font></td></tr>\n});
 }
 $m->out($chk ? "</table>\n" : qq{<tr bgcolor="lightblue"><td colspan="2"><font face="Verdana, Helvetica, Arial"><b>None</b></font></td><td></tr>\n</table>\n});
@@ -29,6 +30,7 @@ while (my ($k, $v) = each %ARGS) {
 	local $" = "<br />\n";
 	$v = $ref eq 'ARRAY' ? "@$v" : $ref;
     }
+    HTML::Mason::Escapes::html_entities_escape(\$v);
     $m->out(qq{<tr bgcolor="$c" valign="top"><td align="right"><font face="Verdana, Helvetica, Arial"><b>$k</b></font></td><td><font face="Verdana, Helvetica, Arial">$v</font></td></tr>\n});
 }
 $m->out($chk ? "</table>\n" : qq{<tr bgcolor="lightblue"><td colspan="2"><font face="Verdana, Helvetica, Arial"><b>None</b></font></td></tr></table>\n\n});
