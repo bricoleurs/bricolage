@@ -2,7 +2,7 @@ package Bric::App::Callback::Profile;
 
 =head1 NAME
 
-Bric::App::Callback - The Bricolage callback base class
+Bric::App::Callback::Profile - The Bricolage profile callback base class
 
 =head1 SYNOPSIS
 
