@@ -214,6 +214,13 @@ Bricolage will still assume that everything's in /usr/local/bricolage, but any
 location is fine as long as the BRICOLAGE_ROOT environment variable is set to
 the proper location. [David]
 
+=item *
+
+Added code to force all preview pages to be re-requested from the server every
+time they're viewed. This prevents the browser from loading older versions from
+its cache, and allows users to always see the most recently-burned output of a
+story. [David]
+
 =back
 
 =head1 VERSION 1.0.1
