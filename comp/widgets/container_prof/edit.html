@@ -60,15 +60,24 @@ my $x=0;
   <td align="right" colspan="2"><span class="label"><% $dt->get_name %>:</span>&nbsp;</td>
   <td align="left" colspan=3>
   <table border="0" cellpadding="0" cellspacing="0">
-% my $first_tile = ($dt->get_tiles)[0];
-% if (my $t_buf = substr($dt->get_data($first_tile->get_name),0,64) ) {
+<%perl>
+# Find a suitable tile to display
+my($disp_buf, $value_buf);
+foreach my $tile ($dt->get_tiles) {
+    my $props = $tile->get_element_data_obj->get_meta('html_info');
+    if (my $data = $dt->get_data($tile->get_name)) {
+        next unless $props->{type} =~ /^text/;
+        $disp_buf  =  $props->{disp};
+        $value_buf =  substr($data, 0, 64);
+        last;
+    }
+}
+</%perl>
+% if ($value_buf) {
     <tr>
-      <td colspan="3">
-        <b><% $first_tile->get_element_data_obj->get_meta('html_info')->{disp} %> :</b>
-           <% $t_buf %>
-      </td>
+      <td colspan="3"><b><% $disp_buf %>:</b> <% $value_buf %></td>
     </tr>
-% }
+% } # if ($value_buf)
     <tr>
       <td>
 
