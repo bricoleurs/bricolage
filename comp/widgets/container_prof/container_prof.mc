@@ -8,11 +8,11 @@ container_prof - The container profile editor.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.10.2.1 $
 
 =head1 DATE
 
-$Date: 2003-02-02 21:51:20 $
+$Date: 2003-03-03 03:00:21 $
 
 =head1 SYNOPSIS
 
@@ -104,7 +104,7 @@ if ($state eq 'edit_bulk') {
             unless ($dt->is_container) {
                 my $atd = $dt->get_element_data_obj();
                 if (!defined($def_fld) and $atd->get_quantifier) {
-                    $def_fld = lc($atd->get_name);
+                    $def_fld = lc($atd->get_key_name);
                     $def_fld =~ y/a-z0-9/_/cs;
                 }
             }

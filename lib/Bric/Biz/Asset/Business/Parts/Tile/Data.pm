@@ -8,15 +8,15 @@ the business data.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.12.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:03 $
+$Date: 2003-03-03 03:03:18 $
 
 =head1 SYNOPSIS
 
@@ -229,7 +229,7 @@ sub new {
         my $atd = delete $init->{'element_data'};
 
         $init->{'element_data_id'} = $atd->get_id();
-        $init->{'name'}            = $atd->get_name();
+        $init->{'name'}            = $atd->get_key_name();
         $init->{'description'}     = $atd->get_description();
         $init->{'_element_obj'}    = $atd;
     }

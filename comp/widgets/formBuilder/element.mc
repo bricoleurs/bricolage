@@ -99,7 +99,7 @@ if ($param->{delete} &&
     my $all_data = Bric::Biz::AssetType::Parts::Data->list(
       { element__id => $param->{element_id} });
 #    my $all_data = $comp->get_data;
-    my $data_href = { map { lc ($_->get_name) => $_ } @$all_data };
+    my $data_href = { map { lc ($_->get_key_name) => $_ } @$all_data };
     my $pos = mk_aref($param->{attr_pos});
     my $i = 0;
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
@@ -144,7 +144,7 @@ if ($param->{delete} &&
 	    my $max = $param->{fb_maxlength} ? $param->{fb_maxlength}
 	      : $param->{fb_maxlength} eq '0' ? 0 : undef;
 
-	    my $atd = $comp->new_data({ name        => $param->{fb_name},
+	    my $atd = $comp->new_data({ key_name    => $param->{fb_name},
 					required    => $param->{fb_req} ? 1 : 0,
 					quantifier  => $param->{fb_quant} ? 1 : 0,
 					sql_type    => $sqltype,
@@ -252,11 +252,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22.2.1 $
+$Revision: 1.22.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-03 01:07:19 $
+$Date: 2003-03-03 03:01:20 $
 
 =head1 SYNOPSIS
 

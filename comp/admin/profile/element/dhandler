@@ -141,14 +141,14 @@ if (defined $id) {
     my $all_data = $comp->get_data;
     my $attrs = [];
     foreach my $dataObj (sort { $a->get_place <=> $b->get_place } @$all_data) {
-	my $attr = $dataObj->get_name;
+	my $attr = $dataObj->get_key_name;
 	my $metas = $dataObj->get_meta('html_info');
 	my $tmp;
 	foreach my $meta (keys %$metas) {
 	    $tmp->{meta}{$meta} =  { value => $metas->{$meta} };
 	}
 	$tmp->{value} = $metas->{value};
-	$tmp->{name} = $dataObj->get_name;
+	$tmp->{name} = $dataObj->get_key_name;
 	push @$attrs, $tmp;
     }
 
@@ -240,11 +240,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.2.1 $
 
 =head1 DATE
 
-$Date: 2003-02-03 20:38:07 $
+$Date: 2003-03-03 02:58:38 $
 
 =head1 DESCRIPTION
 
