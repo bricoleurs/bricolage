@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-07-10 09:27:47 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -25,6 +25,10 @@ CREATE TABLE action (
     ord              NUMERIC(3, 0)     NOT NULL,
     server_type__id  NUMERIC(10, 0)    NOT NULL,
     action_type__id  NUMERIC(10, 0)    NOT NULL,
+    active           NUMERIC(1, 0)     NOT NULL
+                                       DEFAULT 1
+                                       CONSTRAINT ck_action__active
+                                         CHECK (active IN (1,0)),
     CONSTRAINT pk_action__id PRIMARY KEY (id)
 );
 

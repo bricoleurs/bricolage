@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    ActionType.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-07-10 09:27:47 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO action_type ( id, name, description, active)
@@ -10,6 +10,12 @@ VALUES (1, 'Move', 'Puts resources on servers.', 1);
 
 INSERT INTO action_type__media_type (action_type__id, media_type__id)
 VALUES (1, 0);
+
+INSERT INTO action_type ( id, name, description, active)
+VALUES (4, 'Email', 'Email resources.', 1);
+
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES (4, 0);
 
 /*
 

@@ -8,15 +8,15 @@ Bric::Util::Trans::Mail - Utility class for sending email.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 20:10:54 $
+$Date: 2003-07-10 09:27:47 $
 
 =head1 SYNOPSIS
 
@@ -24,7 +24,7 @@ $Date: 2003-01-21 20:10:54 $
   my $m = Bric::Util::Trans::Mail->new(
     { smtp    => 'mail.sourceforge.net',
       from    => 'bricolage-devel@lists.sourceforge.net',
-      to      => ['joe@bricolage_customer.com'],
+      to      => ['joe@example.com'],
       subject => 'Greetings',
       message => 'This is a message sent via Bric::Util::Trans::Mail'
      });
@@ -32,8 +32,9 @@ $Date: 2003-01-21 20:10:54 $
 
 =head1 DESCRIPTION
 
-This class provides a thin abstraction to the Net::SMTP module. Use it to send
-email from within Bricolage applications.
+This class provides a thin abstraction to the MIME::Entity and Net::SMTP
+modules. Use it to send email from within Bricolage applications. Or from
+within other applications. We don't care.
 
 =cut
 
@@ -46,7 +47,8 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Net::SMTP;
-use Bric::Util::Fault::Exception::DP;
+use MIME::Entity;
+use Bric::Util::Fault qw(throw_dp);
 use Bric::Config qw(:email);
 
 ################################################################################
@@ -70,24 +72,33 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
+my $mailer = "Bricolage " . Bric->VERSION . ' (' . __PACKAGE__ . " "
+  . __PACKAGE__->VERSION . ")";
 
 ################################################################################
 
 ################################################################################
 # Instance Fields
 BEGIN {
-    Bric::register_fields({
-			 # Public Fields
-			 smtp => Bric::FIELD_RDWR,
-			 from => Bric::FIELD_RDWR,
-			 subject => Bric::FIELD_RDWR,
-			 message => Bric::FIELD_RDWR,
-			 to => Bric::FIELD_RDWR,
-			 cc => Bric::FIELD_RDWR,
-			 bcc => Bric::FIELD_RDWR
+    Bric::register_fields
+        ({
+          # Public Fields
+          smtp         => Bric::FIELD_RDWR,
+          from         => Bric::FIELD_RDWR,
+          subject      => Bric::FIELD_RDWR,
+          message      => Bric::FIELD_RDWR,
+          to           => Bric::FIELD_RDWR,
+          cc           => Bric::FIELD_RDWR,
+          bcc          => Bric::FIELD_RDWR,
+          content_type => Bric::FIELD_RDWR,
+          resources    => Bric::FIELD_RDWR,
 
-			 # Private Fields
-			});
+          # Private Fields
+          _to_recip    => Bric::FIELD_NONE,
+          _cc_recip    => Bric::FIELD_NONE,
+          _bcc_recip   => Bric::FIELD_NONE,
+          _from_recip  => Bric::FIELD_NONE,
+         });
 }
 
 ################################################################################
@@ -130,11 +141,21 @@ bcc - Anonymous array of email addresses to Bcc email to.
 
 =item *
 
+content_type - The content type of the email. Defaults to "text/plain" if
+unspecified.
+
+=item *
+
 subject - The subject of the message.
 
 =item *
 
 message - The message to be sent.
+
+=item *
+
+resources - Anonymous array of Bric::Dist::Resource objects representing files
+to send as attachments.
 
 =back
 
@@ -161,7 +182,11 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $init) = @_;
     my $self = bless {}, ref $pkg || $pkg;
+    $self->set_to(delete $init->{to}) if $init->{to};
+    $self->set_cc(delete $init->{cc}) if $init->{cc};
+    $self->set_bcc(delete $init->{bcc}) if $init->{bcc};
     $init->{smtp} ||= SMTP_SERVER;
+    $init->{content_type} ||= 'text/plain';
     $self->SUPER::new($init);
 }
 
@@ -376,7 +401,11 @@ No AUTOLOAD method.
 
 =back
 
-B<Side Effects:> NONE.
+B<Side Effects:> Parses out the one or more email addresses in each item in
+the array reference to use as the recipients. The string in each item will be
+used literally in the "From" header of the outgoing email. To change the
+recipients, pass in a new array reference rather than edit the existing array
+reference.
 
 B<Notes:> NONE.
 
@@ -437,7 +466,11 @@ No AUTOLOAD method.
 
 =back
 
-B<Side Effects:> NONE.
+B<Side Effects:> Parses out the one or more email addresses in each item in
+the array reference to use as the recipients. The string in each item will be
+used literally in the "Cc" header of the outgoing email. To change the
+recipients, pass in a new array reference rather than edit the existing array
+reference.
 
 B<Notes:> NONE.
 
@@ -491,6 +524,68 @@ Cannot AUTOLOAD private methods.
 =item *
 
 Access denied: WRITE access for field 'bcc' required.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> Parses out the one or more email addresses in each item in
+the array reference to use as the recipients. To change the recipients, pass
+in a new array reference rather than edit the existing array reference.
+
+B<Notes:> NONE.
+
+=item my $sub = $mail->get_content_type
+
+Returns the content type of the mail. Defaults to "text/plain" if unspecified.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
+
+=item *
+
+Access denied: READ access for field 'content_type' required.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $self = $mail->set_content_type($sub)
+
+Sets content type of the email.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
+
+=item *
+
+Access denied: WRITE access for field 'content_type' required.
 
 =item *
 
@@ -622,6 +717,92 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=item my $resources_aref = $mail->get_resources
+
+Returns an anonymous array of Bric::Dist::Resource objects representing files
+to send as attachments. Returns C<undef> if no resources are to be attached.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
+
+=item *
+
+Access denied: READ access for field 'resources' required.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $self = $mail->set_resources($resources_aref)
+
+Sets the anonymous array of Bric::Dist::Resource objects representing files to
+send as attachments.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
+
+=item *
+
+Access denied: WRITE access for field 'resources' required.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+foreach my $attr (qw(to cc bcc)) {
+    no strict 'refs';
+    *{"get_$attr"} = sub { shift->_get($attr) };
+    *{"set_$attr"} = sub {
+        my ($self, $addrs) = @_;
+        $self->_set( [$attr, "_$attr\_recip"],
+                     [ $addrs,
+                       [map { $_->address }
+                        map { Mail::Address->parse($_) } @$addrs ] ] );
+    };
+}
+
+sub get_from { shift->_get('from') }
+sub set_from {
+    my ($self, $from) = @_;
+    my ($fromre) = Mail::Address->parse($from);
+    $fromre = $fromre->address if $fromre;
+    $self->_set([ qw(from _from_recip) ], [ $from, $fromre ]);
+}
+
+##############################################################################
+
 =item $self = $mail->send
 
 =item $self = $mail->send($debug)
@@ -648,24 +829,55 @@ B<Notes:> NONE.
 
 sub send {
     my ($self, $debug) = @_;
-    my ($smtp, $to, $from, $cc, $bcc, $sub, $msg) =
-      $self->_get(qw(smtp to from cc bcc subject message));
+    my ($smtp, $to, $from, $fromre, $cc, $bcc, $ct, $sub, $msg, $res) =
+      $self->_get(qw(smtp to from _from_recip cc bcc content_type subject
+                     message resources));
+
+    # Assemble the arguments we'll need for MIME::Entity.
+    my @args = ( 'X-Mailer' => $mailer,
+                 ($from ? (From => $from) : ()),
+                 ($to ? (To => join(', ', @$to)) : ()),
+                 ($cc ? (Cc => join(', ', @$cc)) : ()),
+                 Subject    => $sub );
     eval {
-	my $smtp = Net::SMTP->new($smtp, Debug => $debug || DEBUG) ||
-	  die "Unable to create Net::SMTP object for '$smtp'";;
-	$smtp->mail($from);
-	$smtp->to(@$to, @$cc, @$bcc);
+        my $top;
+        if ($res && @$res) {
+            # There are files to attach. Use multipart/mixed.
+            $top = MIME::Entity->build( @args,
+                                        Type => "multipart/mixed" );
+            # Add the message.
+            $top->attach( Data     => $msg,
+                          Type     => $ct,
+                          Encoding => "quoted-printable");
+            # Attach each file.
+            foreach my $r (@$res) {
+                $top->attach( Path => $r->get_tmp_path || $r->get_path,
+                              Type => $r->get_media_type);
+            }
+        } else {
+            # Just make it a simple message using quoted-printable.
+            $top = MIME::Entity->build( @args,
+                                        Type     => $ct,
+                                        Encoding => "quoted-printable",
+                                        Data     => $msg );
+        }
+
+        # Package it up and send it out!
+	my $smtp = Net::SMTP->new($smtp, Debug => $debug || DEBUG)
+	  or die "Unable to create Net::SMTP object for '$smtp'";
+	$smtp->mail($fromre);
+        # Send it to everyone.
+	$smtp->to( map { $_ ? @$_ : () }
+                   $self->_get(qw(_to_recip _cc_recip _bcc_recip)) );
 	$smtp->data;
-	$smtp->datasend("From: $from\n");
-	local $" = ', ';
-	$smtp->datasend("To: @$to\n");
-	$smtp->datasend("Cc: @$cc\n");
-	$smtp->datasend("Subject: $sub\n\n");
-	$smtp->datasend($msg);
+        # Let MIME::Entity do the fun stuff.
+        $smtp->datasend($top->as_string);
 	$smtp->quit;
     };
+
+    # Return or die.
     return $self unless $@;
-    die Bric::Util::Fault::Exception::DP->new({msg => "Unable to send mail: $@"});
+    throw_dp "Unable to send mail: $@";
 }
 
 ################################################################################
@@ -701,7 +913,10 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Net::SMTP|Net::SMTP>
+L<Bric|Bric>,
+L<Bric::Dist::Resource|Bric::Dist::Resource>,
+L<Bric::Dist::Action::Email|Bric::Dist::Action::Email>,
+L<Net::SMTP|Net::SMTP>,
+L<MIME::Entity|MIME::Entity>
 
 =cut

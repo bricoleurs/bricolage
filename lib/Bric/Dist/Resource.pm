@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-07-10 09:27:47 $
 
 =head1 SYNOPSIS
 
@@ -98,9 +98,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::MediaType;
 use Bric::App::Event qw(log_event);
-use Bric::Util::Fault::Exception::DP;
-use Bric::Util::Fault::Exception::GEN;
-#use File::Spec; # To get platform dependent path strings.
+use Bric::Util::Fault qw(throw_gen);
 
 ################################################################################
 # Inheritance
@@ -1632,6 +1630,35 @@ sub save {
 }
 
 ################################################################################
+
+################################################################################
+
+=item $contents = $res->get_contents
+
+Returns the contents of the file represented by the Bric::Dist::Resource object.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Cannot open file.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_contents {
+    my $self = shift;
+    my $path = $self->get_tmp_path || $self->get_path or return;
+    open F, $path or throw_gen "Cannot open file '$path': $!";
+    return join '', <F>;
+}
 
 =back
 

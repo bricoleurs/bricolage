@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.108 $
+$Revision: 1.109 $
 
 =head1 DATE
 
-$Date: 2003-07-06 19:20:14 $
+$Date: 2003-07-10 09:27:46 $
 
 =head1 DESCRIPTION
 
@@ -101,6 +101,12 @@ START MODULE LIST
 =item HTML::Parser
 
 =item MIME::Base64
+
+=item MIME::Tools
+
+=item Mail::Address
+
+=item Net::SMTP
 
 =item XML::Writer
 

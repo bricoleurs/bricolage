@@ -6,16 +6,16 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 06:46:48 $
+$Date: 2003-07-10 09:27:47 $
 
 =head1 SYNOPSIS
 
@@ -45,7 +45,6 @@ use Bric::Util::Trans::FS;
 use Bric::Util::Trans::FTP;
 use Bric::Config qw(:dist);
 if (ENABLE_SFTP_MOVER) {
-    require Net::SFTP;
     require Bric::Util::Trans::SFTP;
 }
 

@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-07-10 09:27:47 $
 
 =head1 SYNOPSIS
 
@@ -120,8 +120,8 @@ use constant DEBUG => 0;
 # Fields
 ################################################################################
 # Public Class Fields
-my @cols = qw(a.id a.ord a.server_type__id t.name t.description m.name);
-my @props = qw(id ord server_type_id type description medias_href);
+my @cols = qw(a.id a.ord a.server_type__id a.active t.name t.description m.name);
+my @props = qw(id ord server_type_id _active type description medias_href);
 
 my %nmap = ( id => 'a.id = ?',
              server_type_id => 'a.server_type__id = ?');
@@ -143,6 +143,7 @@ while (my $l = <DATA>) {
     my ($key, $class) = split / => /, $l, 2;
     $acts->{$key} = $class;
     eval "require $class";
+    die $@ if $@;
 }
 
 ################################################################################
@@ -151,7 +152,7 @@ while (my $l = <DATA>) {
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-                         # Public Fields
+                        # Public Fields
                          id => Bric::FIELD_READ,
                          ord => Bric::FIELD_READ,
                          server_type_id => Bric::FIELD_RDWR,
@@ -192,10 +193,6 @@ type
 
 server_type_id
 
-=item *
-
-class
-
 =back
 
 The active property will be set to true by default. Call $act->save() to save
@@ -232,7 +229,9 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $init) = @_;
     $init->{_active} = 1;
-    $pkg->SUPER::new($init);
+    my $self = $pkg->SUPER::new($init);
+    $self->set_type($init->{type}) if $init->{type};
+    return $self;
 }
 
 ################################################################################
@@ -485,7 +484,7 @@ B<Notes:> NONE.
 
 sub next_ord {
     my ($pkg, $st_id, $from, $to) = @_;
-    my @ord = list_ids(undef, { server_type_id => $st_id });
+    my @ord = $pkg->list_ids({ server_type_id => $st_id });
     return @ord + 1;
 }
 
@@ -912,16 +911,14 @@ B<Notes:> NONE.
 
 sub set_type {
     my ($self, $type) = @_;
-    # Require the action subclass.
-    $acts->{$type} ||= "Bric::Dist::Action::$type";
-    eval "require $acts->{$type}";
-    die $gen->new({ msg => "Unable to load $acts->{$type} action subclass.",
-                    payload => $@ }) if $@;
-
     # Clear out the attributes for the last type.
     $self->_clear_attr;
+
+    # Get the new type class.
+    my $class = $acts->{$type};
+
     # Rebless $self with the new class type and set the type.
-    $self = bless $self, $acts->{$type};
+    $self = $class->_rebless($self);
     $self->_set(['type'], [$type]);
 }
 
@@ -1326,10 +1323,11 @@ sub save {
         my $upd = prepare_c(qq{
             UPDATE action
             SET    server_type__id = ?,
+                   active = ?,
                    action_type__id = (SELECT id FROM action_type WHERE name = ?)
             WHERE  id = ?
         });
-        execute($upd, $self->_get(qw(server_type_id type)), $id);
+        execute($upd, $self->_get(qw(server_type_id _active type)), $id);
         # Reorder the actions, if this one has changed.
         &$reorder($st_id, $old_ord, $ord) if $old_ord && $old_ord != $ord;
     } else {
@@ -1338,16 +1336,18 @@ sub save {
         my $next_ord = next_ord($self, $st_id);
         my $next = next_key('action');
         my $ins = prepare_c(qq{
-            INSERT INTO action (id, ord, server_type__id, action_type__id)
-            VALUES ($next, ?, ?, (SELECT id FROM action_type WHERE name = ?))
+            INSERT INTO action (id, ord, server_type__id, active, action_type__id)
+            VALUES ($next, ?, ?, ?, (SELECT id FROM action_type WHERE name = ?))
         }, undef, DEBUG);
         # Don't try to set ID - it will fail!
-        execute($ins, $next_ord, $self->_get(qw(server_type_id type)));
+        execute($ins, $next_ord, $self->_get(qw(server_type_id _active type)));
         # Now grab the ID.
-        $self->_set(['id'], [last_key('action')]);
+        $id = last_key('action');
+        $self->_set(['id'], [$id]);
         # Finally, reorder the actions, if necessary.
         $ord && $ord != $next_ord ? &$reorder($st_id, $next_ord, $ord)
           : $self->_set(['ord'], [$next_ord]);
+        $attr->set_object_id($id) if $attr;
     }
 
     # Okay, now save any changes to its attributes.
@@ -1409,7 +1409,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub undo_it { return }
+sub undo_it { shift }
 
 ################################################################################
 
@@ -1458,10 +1458,12 @@ sub _get_attr {
     my ($id, $attr) = $self->_get('id', '_attr');
     return $attr if $attr;
     $attr = Bric::Util::Attribute::Action->new({ object_id => $id,
-                                               subsys => $subsys });
+                                                 subsys => $subsys });
     $self->_set(['_attr'], [$attr]);
     return $attr;
 };
+
+##############################################################################
 
 =item $action = $action->_clear_attr
 
@@ -1479,6 +1481,26 @@ B<Notes:> NONE.
 =cut
 
 sub _clear_attr { $_[0] }
+
+##############################################################################
+
+=item $action = $action->_rebless
+
+Called by C<set_type()> to rebless an action into a new class. Useful for for
+subclasses to override in order to set default values on attributes, such as
+they would typically do in C<new()>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _rebless { bless $_[1], ref $_[0] || $_[0] }
+
+##############################################################################
 
 =back
 
@@ -1548,6 +1570,9 @@ $get_em = sub {
         } elsif ($tmap{$k}) {
             push @wheres, $tmap{$k};
             push @params, lc $v;
+        } elsif ($k eq 'active') {
+            push @wheres, 'a.active = ?';
+            push @params, $v ? 1 : 0;
         } else {
             die $gen->new({ msg =>
               "Invalid parameter '$k' passed to constructor method." });
@@ -1634,10 +1659,10 @@ B<Notes:> NONE.
 
 $make_obj = sub {
     my ($pkg, $init) = @_;
-    if ($init->[3]) {
-        $pkg = $acts->{$init->[3]} ||= "Bric::Dist::Action::$init->[3]";
-        eval "require $acts->{$init->[3]}";
-        die $gen->new({ msg => "Unable to load $acts->{$init->[3]} action subclass.",
+    if ($init->[4]) {
+        $pkg = $acts->{$init->[4]} ||= "Bric::Dist::Action::$init->[4]";
+        eval "require $acts->{$init->[4]}";
+        die $gen->new({ msg => "Unable to load $acts->{$init->[4]} action subclass.",
                         payload => $@ }) if $@;
     }
     my $self = bless {}, $pkg;
@@ -1747,6 +1772,49 @@ $reorder = sub {
 
 =back
 
+=head1 ADDING A NEW ACTION
+
+=over 4
+
+=item *
+
+Add a new subclass for Bric::Dist::Action. Use Bric::Dist::Actcion::Email as a
+model.
+
+=item *
+
+Add the name and class name for the new class to the C<__DATA__> section of
+Bric::Dist::Action. This will allow Bric::Dist::Action to register and load
+your subclass.
+
+=item *
+
+Add inserts to F<sql/Pg/Bric/Dist/ActionType.val>. If your action can act on
+files of any type, add one record to the action_type__media_type table with
+the media_type__id column set to 0, which corresponds to no (and therefore
+all) media types.
+
+=item *
+
+Add an upgrade script with the above inserts. Use
+F<inst/upgrade/1.7.0/email_action.pl> as a model.
+
+=item *
+
+Add a test class to test your action. Subclass Bric::Dist::Action::DevTest.
+Use Bric::Dist::Action::Email::DevTest as a model.
+
+=item *
+
+Run C<make devtest> to make sure that all tests pass.
+
+=item *
+
+Follow the instructions in L<Bric::Hacker|Bric::Hacker> to create a patch and
+send it to bricolage-devel@lists.sourceforge.net>.
+
+=back
+
 =head1 NOTES
 
 NONE.
@@ -1763,3 +1831,4 @@ L<Bric|Bric>
 
 __DATA__
 Move => Bric::Dist::Action::Mover
+Email => Bric::Dist::Action::Email

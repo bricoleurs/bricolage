@@ -7,15 +7,15 @@ Bric::Util::Attribute - A module to manage attributes for various objects.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 05:06:49 $
+$Date: 2003-07-10 09:27:47 $
 
 =head1 SYNOPSIS
 
@@ -508,6 +508,37 @@ NONE
 B<Notes:>
 
 =cut
+
+#------------------------------------------------------------------------------#
+
+=item $attr_obj = $attr_obj->set_object_id($id);
+
+Set the object ID for this attribute object. This is the object to which these
+attributes apply. The object ID can be set only once.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Cannot assign new object ID.
+
+=back
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+=cut
+
+sub set_object_id {
+    my ($self, $obj_id) = @_;
+    die "Cannot assign new object ID" if defined $self->_get('object_id');
+    $self->_set(['object_id'], [$obj_id]);
+}
 
 #------------------------------------------------------------------------------#
 

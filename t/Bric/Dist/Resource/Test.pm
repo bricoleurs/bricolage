@@ -3,13 +3,32 @@ use strict;
 use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
+use File::Spec::Functions qw(catfile);
+use Cwd;
+use Bric::Dist::Resource;
+
+my $file = catfile cwd, 'Makefile.PL';
 
 ##############################################################################
-# Test class loading.
+# Test getting resource contents.
 ##############################################################################
-sub _test_load : Test(1) {
-    use_ok('Bric::Dist::Resource');
+sub content : Test(4) {
+    return "$file does not exist" unless -f $file;
+    ok( my $res = Bric::Dist::Resource->new({ path => $file }),
+        "Create resource" );
+    isa_ok($res, 'Bric::Dist::Resource');
+    isa_ok($res, 'Bric');
+
+    # Read in the contents of the file.
+    open F, $file or die "Cannot open '$file': $!\n";
+    my $contents = join '', <F>;
+    close F;
+
+    # Compare 'em.
+    is($res->get_contents, $contents, "Check the contents");
 }
+
+
 
 1;
 __END__

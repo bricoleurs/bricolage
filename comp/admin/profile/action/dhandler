@@ -14,16 +14,30 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Properties");
 my $used = { active => 1, ord => 1 };
 my $label = 'next_dkgreen';
 
-if (defined $id || $next) {
+if (defined $id || $act->get_type) {
     # This is an existing action. Disallow ability to change the type.
-    $m->comp('/widgets/profile/displayFormElement.mc', objref => $act,
-	     key => 'type', readOnly => 1);
+    $m->comp('/widgets/profile/displayFormElement.mc',
+             objref   => $act,
+	     key      => 'type',
+             readOnly => 1);
     $used->{type} = 1;
     $label = 'save_red';
+    unless (defined $id) {
+        # They've selected a type, but haven't yet set attributes.
+        # Make sure that the callback knows to save the action.
+        $m->comp('/widgets/profile/hidden.mc',
+                 name  => 'type',
+                 value => $act->get_type);
+        $m->comp('/widgets/profile/hidden.mc',
+                 name  => 'save_it',
+                 value => 1);
+    }
 }
 # Okay now, output the normal form fields.
-$m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $act,
-         fieldsUsed => $used, readOnly => $no_edit );
+$m->comp('/widgets/profile/dumpRemainingFields.mc',
+         objref     => $act,
+         fieldsUsed => $used,
+         readOnly   => $no_edit );
 
 # Output the Order from field.
 # HACK. There should probably be a more elegant way for my_meths to determine
@@ -38,9 +52,13 @@ $m->comp('/widgets/profile/displayFormElement.mc', vals => $ord_vals,
 
 # Close 'er up!
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-$m->comp('/widgets/profile/formButtons.mc', type => $type, no_del => $no_del,
-	 section => $section, return => "/admin/profile/dest?id=$dest_id",
-	 val => $label, no_save => $no_edit);
+$m->comp('/widgets/profile/formButtons.mc',
+         type    => $type,
+         no_del  => $no_del,
+	 section => $section,
+         return  => "/admin/profile/dest?id=$dest_id",
+	 val     => $label,
+         no_save => $no_edit);
 </%perl>
 </form>
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
@@ -108,11 +126,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:09 $
+$Date: 2003-07-10 09:27:46 $
 
 =head1 DESCRIPTION
 
