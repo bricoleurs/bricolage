@@ -17,6 +17,7 @@ our @EXPORT_OK = qw(
 		    xs_date_to_pg_date pg_date_to_xs_date
 		    parse_asset_document
 		    serialize_elements
+		    deserialize_elements
 		   );
 
 =head1 NAME
@@ -25,15 +26,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-09 00:19:25 $
+$Date: 2002-02-11 22:24:30 $
 
 =head1 SYNOPSIS
 
@@ -159,7 +160,7 @@ sub parse_asset_document {
 		 keyattr       => [],
 		 suppressempty => '',
 		 forcearray    => [qw( contributor category
-					keyword element container 
+	                               keyword element container 
 				       data story media )
 				  ]
 		);
@@ -208,11 +209,124 @@ sub serialize_elements {
 }
 
 
+=item @relations = deseralize_elements(object => $story, data => $data)
+
+Loads an asset object with element data from the data hash.  Calls
+_deserialize_tile recursively down through containers.
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes:
+
+=cut
+
+sub deserialize_elements {
+    my %options = @_;
+    my $object = $options{object};
+
+    return _deserialize_tile(element   => $object->get_tile,
+			     data      => $options{data});
+}
+
+
 =back
 
 =head2 Private Class Methods
 
 =over 4
+
+=item @related = _deserialize_tile(element => $element, data => $data)
+
+Deserializes a single tile from <elements> data into $element.  Calls
+recursively down through containers building up fixup data from
+related objects in @related.
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: This method isn't checking compliance with the asset type
+constraints in some cases.  After Bric::SOAP::Element is done I should
+contain the kung-fu necessary for this task.
+
+=cut
+
+sub _deserialize_tile {
+    my %options   = @_;
+    my $element   = $options{element};
+    my $data      = $options{data}; 
+    my @relations;
+	
+    # make sure we have an empty element - Story->new() helpfully (?)
+    # creates empty data elements for required elements.
+    if (my @e = $element->get_elements) {
+	$element->delete_tiles(\@e);
+	$element->save; # required for delete to "take"
+    }
+
+    # get lists of possible data types and possible containers that
+    # can be added to this element.  Hash on names for quick lookups.
+    my %valid_data      = map { ($_->get_name, $_) }
+	$element->get_possible_data();
+    my %valid_container = map { ($_->get_name, $_) } 
+	$element->get_possible_containers();
+
+    # load data elements
+    if ($data->{data}) {
+	foreach my $d (@{$data->{data}}) {
+	    my $at = $valid_data{$d->{element}};
+	    die "Error loading data element for " . 
+		$element->get_element_name .
+		    " cannot add data element $d->{element} here.\n"
+			unless $at;
+
+	    # add data to container
+	    $element->add_data($at, $d->{content}, $d->{order});
+	    $element->save; # I'm not sure why this is necessary after
+                            # every add, but removing it causes errors
+	}
+    }	    
+
+    # load containers
+    if ($data->{container}) {
+	foreach my $c (@{$data->{container}}) {
+	    my $at = $valid_container{$c->{element}};
+	    die "Error loading container element for " . 
+		$element->get_element_name .
+		    " cannot add data element $c->{element} here.\n"
+			unless $at;
+
+	    # setup container object
+	    my $container = $element->add_container($at);
+	    $container->set_place($c->{order});
+	    $element->save; # I'm not sure why this is necessary after
+                            # every add, but removing it causes errors
+	    
+
+	    # deal with related stories and media
+	    if ($c->{related_media_id}) {
+		# store fixup information - the object to be updated
+		# and the external id
+		push(@relations, { container => $container, 
+				   media_id  => $c->{related_media_id},
+				   relative  => $c->{relative} || 0 });
+	    } elsif ($c->{related_story_id}) {
+		push(@relations, { container => $container, 
+				   story_id  => $c->{related_story_id}, 
+				   relative  => $c->{relative} || 0 });
+	    }
+
+	    # recurse
+	    push @relations, _deserialize_tile(element   => $container,
+					       data      => $c);
+	}
+    }
+    return @relations;
+}
+
+
 
 =item @related = _serialize_tile(writer => $writer, element => $element, args => $args)
 

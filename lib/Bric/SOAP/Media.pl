@@ -191,6 +191,7 @@ my $xsd = extract_schema();
 ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
 
 # try exporting and importing every media object
+my $copy_sym = 1;
 foreach my $media_id (@$media_ids) {
     $response = $soap->export(name(media_id => $media_id));
     if ($response->fault) {
@@ -202,6 +203,38 @@ foreach my $media_id (@$media_ids) {
 	my $document = $response->result;
 	ok($document, "recieved document for media $media_id");
 	check_doc($document, $xsd, "media $media_id");
+
+	# add (copy) to title and try to create copy
+	$document =~ s!<name>(.*?)</name>!<name>$1 (copy $copy_sym)</name>!;
+	$copy_sym++;
+	$response = $soap->create(name(document => $document)->type('base64'));
+	ok(!$response->fault, 'SOAP create() result is not a fault');
+	exit 1 if $response->fault;
+	my $ids = $response->result;
+	isa_ok($ids, 'ARRAY');
+
+	# modify copy with update to add to description of first item
+	$document =~ s!<description>(.*?)</description>!<description>$1 (description updated $copy_sym)</description>!;
+	$document =~ s!<name>(.*?)</name>!<name>$1 (update)</name>!;
+	$document =~ s!id=".*?"!id="$ids->[0]"!;
+	$copy_sym++;
+	$response = $soap->update(name(document => $document)->type('base64'),
+				  name(update_ids => [ name(story_id => 
+							    $ids->[0]) ]));
+	ok(!$response->fault, 'SOAP update() result is not a fault');
+	exit 1 if $response->fault;
+	my $updated_ids = $response->result;
+	isa_ok($ids, 'ARRAY');
+	is($updated_ids->[0], $ids->[0], "update() worked in place");
+
+	# delete copies unless debugging and NO_DELETE unset
+	if (DELETE_TEST_MEDIA) {		
+	    my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
+	    $response = $soap->delete(name(media_ids => [ map { name(media_id => $_) } keys %to_delete ]));
+	    ok(!$response->fault, 'SOAP delete() result is not a fault');
+	    exit 1 if $response->fault;
+	    ok($response->result, "SOAP delete() result check");
+	}
     }
 }
 

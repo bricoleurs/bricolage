@@ -20,6 +20,7 @@ use Bric::SOAP::Util qw(category_path_to_id
 			xs_date_to_pg_date pg_date_to_xs_date
 			parse_asset_document
 			serialize_elements
+                        deserialize_elements
 		       );
 
 use SOAP::Lite;
@@ -37,15 +38,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-08 01:05:30 $
+$Date: 2002-02-11 22:24:30 $
 
 =head1 SYNOPSIS
 
@@ -338,11 +339,441 @@ sub export {
 }
 }
 
+=item create
+
+The create method creates new objects using the data contained in an
+XML document of the format created by export().
+
+Returns a list of new ids created in the order of the assets in the
+document.
+
+Available options:
+
+=over 4
+
+=item document (required)
+
+The XML document containing objects to be created.  The document must
+contain at least one media object.
+
+=back 4
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(document);
+
+sub create {
+    my $pkg = shift;
+    our $ef;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->create() called : args : ", 
+      Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::create : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # make sure we have a document
+    die __PACKAGE__ . "::create : missing required document parameter.\n"
+      unless $args->{document};
+
+    # setup empty update_ids arg to indicate create state
+    $args->{update_ids} = [];
+
+    # call _load_media
+    return $pkg->_load_media($args);
+}
+}
+
+=item update
+
+The update method updates media using the data in an XML document of
+the format created by export().  A common use of update() is to
+export() a selected media object, make changes to one or more fields
+and then submit the changes with update().
+
+Returns a list of new ids created in the order of the assets in the
+document.
+
+Takes the following options:
+
+=over 4
+
+=item document (required)
+
+The XML document where the objects to be updated can be found.  The
+document must contain at least one media and may contain any number of
+related media objects.
+
+=item update_ids (required)
+
+A list of "media_id" integers for the assets to be updated.  These
+must match id attributes on media elements in the document.  If you
+include objects in the document that are not listed in update_ids then
+they will be treated as in create().  For that reason an update() with
+an empty update_ids list is equivalent to a create().
+
+=back 4
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(document update_ids);
+
+sub update {
+    my $pkg = shift;
+    our $ef;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->update() called : args : ", 
+      Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::update : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # make sure we have a document
+    die __PACKAGE__ . "::update : missing required document parameter.\n"
+      unless $args->{document};
+
+    # make sure we have an update_ids array
+    die __PACKAGE__ . "::update : missing required update_ids parameter.\n"
+      unless $args->{update_ids};
+    die __PACKAGE__ . 
+	"::update : malformed update_ids parameter - must be an array.\n"
+	    unless ref $args->{update_ids} and 
+                   ref $args->{update_ids} eq 'ARRAY';
+
+    # call _load_media
+    return $pkg->_load_media($args);
+}
+}
+
+
+=item delete
+
+The delete() method deletes media.  It takes the following options:
+
+=over 4
+
+=item media_id
+
+Specifies a single media_id to be deleted.
+
+=item media_ids
+
+Specifies a list of media_ids to delete.
+
+=back 4
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=back 4
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(media_id media_ids);
+
+sub delete {
+    my $pkg = shift;
+    our $ef;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->delete() called : args : ", 
+	Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # media_id is sugar for a one-element media_ids arg
+    $args->{media_ids} = [ $args->{media_id} ] if exists $args->{media_id};
+
+    # make sure media_ids is an array
+    die __PACKAGE__ . "::delete : missing required media_id(s) setting.\n"
+	unless defined $args->{media_ids};
+    die __PACKAGE__ . "::delete : malformed media_id(s) setting.\n"
+	unless ref $args->{media_ids} and ref $args->{media_ids} eq 'ARRAY';
+
+    # delete the media
+    foreach my $media_id (@{$args->{media_ids}}) {
+      print STDERR __PACKAGE__ . "->delete() : deleting media_id $media_id\n"
+	if DEBUG;
+      
+      # first look for a checked out version
+      my $media = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id, checkout => 1 });
+      unless ($media) {
+	# settle for a non-checked-out version and check it out
+	$media = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id });
+	die __PACKAGE__ . "::delete : no media found for id \"$media_id\"\n"
+	  unless $media;
+	die __PACKAGE__ . "::deleye : access denied for media \"$media_id\".\n"
+	    unless chk_authz($media, CREATE, 1);
+
+	$media->checkout({ user__id => get_user_id });
+      }
+
+      # deletion dance sampled from widgets/workspace/callback.mc
+      my $desk = $media->get_current_desk;
+      $desk->checkin($media);
+      $desk->remove_asset($media);
+      $desk->save;
+      $media->deactivate;
+      $media->save;
+    }
+
+    return name(result => 1);
+}
+}
+
+
 =back
 
 =head2 Private Class Methods
 
 =over 4
+
+=item $pkg->_load_media($args)
+
+This method provides the meat of both create() and update().  The only
+difference between the two methods is that update_ids will be empty on
+create().
+
+=cut
+
+sub _load_media {
+    my ($pkg, $args) = @_;
+    my $document = $args->{document};
+    my %to_update = map { $_ => 1 } @{$args->{update_ids}};
+
+    # parse and catch erros
+    my $data;
+    eval { $data = parse_asset_document($document) };
+    die __PACKAGE__ . " : problem parsing asset document : $@\n"
+      if $@;
+    die __PACKAGE__ . " : problem parsing asset document : no media found!\n"
+	unless ref $data and ref $data eq 'HASH' and exists $data->{media};
+    print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+
+    # loop over media, filling in @media_ids
+    my @media_ids;
+    foreach my $mdata (@{$data->{media}}) {
+	my $id = $mdata->{id};
+
+	# are we updating?
+	my $update = exists $to_update{$id};	
+
+	# setup init data for create
+	my %init;
+
+	# get user__id from Bric::App::Session
+	$init{user__id} = get_user_id;
+	
+	# get element object for asset type
+	($init{element__id}) = Bric::Biz::AssetType->list_ids(
+                                 { name => $mdata->{element} });
+	die __PACKAGE__ . "::create : no element found matching " .
+	    "(element => \"$mdata->{element}\")\n"
+		unless defined $init{element__id};
+
+	# get source__id from source
+	($init{source__id}) = Bric::Biz::Org::Source->list_ids(
+                                 { source_name => $mdata->{source} });
+	die __PACKAGE__ . "::create : no source found matching " .
+	    "(source => \"$mdata->{source}\")\n"
+		unless defined $init{source__id};
+
+	# setup simple fields
+	$init{priority} = $mdata->{priority};
+	$init{name}     = $mdata->{name};
+
+	# mix in dates 
+	for my $name qw(cover_date expire_date publish_date) {
+	    my $date = $mdata->{$name};
+	    next unless $date; # skip missing date
+	    my $pg_date = xs_date_to_pg_date($date);
+	    die __PACKAGE__ . "::export : bad date format for $name : $date\n"
+		unless defined $pg_date;
+	    $init{$name} = $pg_date;
+	}
+
+	# assign catgeory__id
+	$init{category__id} = category_path_to_id($mdata->{category}[0]);
+	die __PACKAGE__ . "::create : no category found matching " .
+	    "(category => \"$mdata->{category}\")\n"
+		unless defined $init{category__id};
+	
+	# get base media object
+	my $media;
+	unless ($update) {
+	    # create empty media
+	    $media = Bric::Biz::Asset::Business::Media->new(\%init);
+	    die __PACKAGE__ . "::create : failed to create empty media object."
+		unless $media;
+	    print STDERR __PACKAGE__ . "::create : created empty media object\n"
+		if DEBUG;
+
+	    # is this is right way to check create access for media?
+	    die __PACKAGE__ . " : access denied.\n"
+		unless chk_authz($media, CREATE, 1);
+
+	} else {
+	    # updating - first look for a checked out version
+	    $media = Bric::Biz::Asset::Business::Media->lookup({ id => $id,
+								 checkout => 1
+							       });
+	    if ($media) {
+		# make sure it's ours
+		die __PACKAGE__ . 
+		    "::update : media \"$id\" is checked out to another user.\n"
+			unless $media->get_user__id == get_user_id;
+		die __PACKAGE__ . " : access denied.\n"
+		    unless chk_authz($media, CREATE, 1);
+	    } else {
+		# try a non-checked out version
+		$media = Bric::Biz::Asset::Business::Media->lookup({ id => $id });
+		die __PACKAGE__ . "::update : no media found for \"$id\"\n"
+		    unless $media;
+		die __PACKAGE__ . " : access denied.\n"
+		    unless chk_authz($media, CREATE, 1);
+
+	        # FIX: race condition here - between lookup and checkout 
+                #      someone else could checkout...
+
+		# check it out 
+		$media->checkout( { user__id => get_user_id });
+		$media->save();
+	    }
+
+	    # update %init fields
+	    $media->_set([keys(%init)],[values(%init)]);
+	}
+	
+	# set simple fields
+	my @simple_fields = qw(description uri publish_status);
+	$media->_set(\@simple_fields, [ @{$mdata}{@simple_fields} ]);
+
+	# remove all contributors if updating
+	$media->delete_contributors([ $media->get_contributors ])
+	    if $update and $media->get_contributors;
+
+	# add contributors, if any
+	if ($mdata->{contributors} and $mdata->{contributors}{contributor}) {
+	    foreach my $c (@{$mdata->{contributors}{contributor}}) {
+		my %init = (fname => $c->{fname}, 
+			    mname => $c->{mname},
+			    lname => $c->{lname});
+		my ($contrib) = 
+		    Bric::Util::Grp::Parts::Member::Contrib->list(\%init);
+		die __PACKAGE__ . "::create : no contributor found matching " .
+		    "(contributer => " . 
+			join(', ', map { "$_ => $c->{$_}" } keys %$c)
+		    unless defined $contrib;
+		$media->add_contributor($contrib, $c->{role});
+	    }
+	}
+
+	# deal with file data if we have one	
+	if ($mdata->{file}) {
+	    my $filename = $mdata->{file}{name};
+	    my $size     = $mdata->{file}{size};
+	    my $data     = MIME::Base64::decode_base64($mdata->{file}{data}[0]);
+	    my $fh       = new IO::Scalar \$data;
+	    
+	    # upload the file into the media object
+	    $media->upload_file($fh, $filename);
+	    $media->set_size($size);
+
+	    # lookup MediaType by extension, if we have one
+	    my ($ext) = $filename =~ /\.(.*)$/;
+	    my $media_type;
+	    $media_type = Bric::Util::MediaType->lookup({'ext' => $ext})
+		if $ext;
+	    $media->set_media_type_id($media_type ? $media_type->get_id : 0);
+	} else {
+	    # clear the media object by uploading an empty file - this
+	    # is functionality that isn't actually supported by
+	    # Bricolage.  We should add a Media->delete_file() method at
+	    # some point and use it here.
+	    my $data = "";
+	    my $fh  = new IO::Scalar \$data;
+	    $media->upload_file($fh, "empty");
+	    $media->set_size(0);
+	    $media->set_media_type_id(0);
+	}
+
+	# save the media in an inactive state.  this is necessary to
+	# allow element addition - you can't add elements to an
+	# unsaved media, strangely.
+	$media->deactivate;
+	$media->save;
+
+	# updates are in-place, no need to futz with workflows and desks
+	my $desk;
+	unless ($update) {
+	    # find a suitable workflow and desk for the media.  Might be
+	    # nice if Bric::Biz::Workflow->list took a type key...
+	    foreach my $workflow (Bric::Biz::Workflow->list()) {
+		if ($workflow->get_type == MEDIA_WORKFLOW) {
+		    $media->set_workflow_id($workflow->get_id());
+		    $desk = $workflow->get_start_desk;
+		    $desk->accept({'asset' => $media});
+		    last;
+		}
+	    }
+	}
+
+	# add element data
+	deserialize_elements(object => $media,
+			     data   => $mdata->{elements} || {});
+
+	# save the media and desk after activating if desired
+	$media->activate if $mdata->{active};
+	$desk->save unless $update;
+	$media->save;
+
+	# checkin and save again for good luck
+	$media->checkin();
+	$media->save();
+
+	# all done, setup the media_id
+	push(@media_ids, $media->get_id);
+    }
+
+    return name(ids => [ map { name(id => $_) } @media_ids ]);
+}
+
 
 =item $pkg->_serialize_media(writer => $writer, media_id => $media_id, args => $args)
 

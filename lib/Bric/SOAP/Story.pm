@@ -19,6 +19,7 @@ use Bric::SOAP::Util qw(category_path_to_id
 			xs_date_to_pg_date pg_date_to_xs_date
 			parse_asset_document
                         serialize_elements
+                        deserialize_elements
 		       );
 use Bric::SOAP::Media;
 
@@ -37,15 +38,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-09 00:19:25 $
+$Date: 2002-02-11 22:24:30 $
 
 =head1 SYNOPSIS
 
@@ -853,17 +854,10 @@ sub _load_stories {
 	    }
 	}
 
-	# add element data (no need to delete first on update,
-	# _load_element already has to)
-	if ($sdata->{elements}) {
-	    $pkg->_load_element(element   => $story->get_tile, 
-				data      => $sdata->{elements},
-			        relations => \@relations);
-	} else {
-	    # load an empty set to create a really empty story
-	    $pkg->_load_element(element   => $story->get_tile, 
-				data      => {});
-	}
+	# add element data
+	push @relations, 
+	    deserialize_elements(object => $story,
+				 data   => $sdata->{elements} || {});
 
 	# save the story and desk after activating if desired
 	$story->activate if $sdata->{active};
@@ -895,108 +889,6 @@ sub _load_stories {
     
     return name(ids => [ map { name(id => $_) } @story_ids ]);
 }
-
-
-=item $pkg->_load_element(element => $element, data => $sdata->{elements}, relations => \@relations);
-
-Loads a container element with data from the data hash.  Calls
-recursively down through containers.  Adds to the relations array as
-it goes containing data to fixup related media and related stories.
-Dies if it finds bad data.
-
-Throws: NONE
-
-Side Effects: NONE
-
-Notes: This method isn't checking compliance with the asset type
-constraints in some cases.  After Bric::SOAP::Element is done I should
-contain the kung-fu necessary for this task.
-
-=cut
-
-sub _load_element {
-    my $pkg       = shift;
-    my %options   = @_;
-    my $element   = $options{element};
-    my $data      = $options{data}; 
-    my $relations = $options{relations};
-	
-    # sanity check
-    croak("Called _load_element on none container!")
-	unless $element->is_container;
-    
-    # make sure we have an empty element - Story->new() helpfully (?)
-    # creates empty data elements for required elements.
-    if (my @e = $element->get_elements) {
-	$element->delete_tiles(\@e);
-	$element->save; # required for delete to "take"
-    }
-
-    # get lists of possible data types and possible containers that
-    # can be added to this element.  Hash on names for quick lookups.
-    my %valid_data      = map { ($_->get_name, $_) }
-	$element->get_possible_data();
-    my %valid_container = map { ($_->get_name, $_) } 
-	$element->get_possible_containers();
-
-    # load data elements
-    if ($data->{data}) {
-	foreach my $d (@{$data->{data}}) {
-	    my $at = $valid_data{$d->{element}};
-	    die "Error loading data element for " . 
-		$element->get_element_name .
-		    " cannot add data element $d->{element} here.\n"
-			unless $at;
-
-	    # add data to container
-	    $element->add_data($at, $d->{content}, $d->{order});
-	    $element->save; # I'm not sure why this is necessary after
-                            # every add, but removing it causes errors
-	}
-    }	    
-
-    # load containers
-    if ($data->{container}) {
-	foreach my $c (@{$data->{container}}) {
-	    my $at = $valid_container{$c->{element}};
-	    die "Error loading container element for " . 
-		$element->get_element_name .
-		    " cannot add data element $c->{element} here.\n"
-			unless $at;
-
-	    # setup container object
-	    my $container = $element->add_container($at);
-	    $container->set_place($c->{order});
-	    $element->save; # I'm not sure why this is necessary after
-                            # every add, but removing it causes errors
-	    
-
-	    # deal with related stories and media
-	    if ($c->{related_media_id}) {
-		# store fixup information - the object to be updated
-		# and the external id
-		push(@$relations, { container => $container, 
-				    media_id  => $c->{related_media_id},
-				    relative  => $c->{relative} || 0 });
-	    } elsif ($c->{related_story_id}) {
-		push(@$relations, { container => $container, 
-				    story_id  => $c->{related_story_id}, 
-				    relative  => $c->{relative} || 0 });
-	    }
-
-	    # recurse
-	    $pkg->_load_element(element   => $container,
-				data      => $c,
-				relations => $relations);
-
-
-
-
-
-	}
-    }				
-}
-
 
 =item @related = $pkg->_serialize_story(writer => $writer, story_id => $story_id, args => $args)
 
