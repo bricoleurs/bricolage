@@ -212,12 +212,12 @@ our $zombies = 0;
 #$SIG{CHLD} = sub { $zombies++ };
 $SIG{CHLD} = 'IGNORE';
 sub reaper {
-    log_err("Reaping zombie processes.") if $opt_d;
+    log_msg("Reaping zombie processes.") if $opt_d;
     my $zombie;
     $zombies = 0;
     while (($zombie = waitpid(-1,WNOHANG)) != -1) {
 	# Log it in debug mode.
-	log_err("Reaped process $zombie.") if $opt_d;
+	log_msg("Reaped process $zombie.") if $opt_d;
     }
 }
 
@@ -233,7 +233,7 @@ if ($opt_c) {
     while ($opt_f ? $i < $opt_f : 1) {
 	# Increment if we're only doing this a few times.
 	$i++ if $opt_f;
-	log_err("Forking new process.") if $opt_d;
+	log_msg("Forking new process.") if $opt_d;
 	my $pid;
 	if ($pid = fork) {
 	    # Parent process - take a nap.
@@ -251,11 +251,12 @@ if ($opt_c) {
 ################################################################################
 
 sub send_jobs {
-    log_err("Checking for new jobs.") if $opt_d;
+    log_msg("Checking for new jobs.") if $opt_d;
     eval {
 	# Create the authentication cookie.
 	my $r = Apache::FakeRequest->new(connection => FakeConn->new);
-	my $cookie = Bric::App::Auth::login($r, $opt_u, $opt_p);
+	my ($cookie, $msg) = Bric::App::Auth::login($r, $opt_u, $opt_p);
+        log_err($msg) if $msg;
 
 	# Create a client and load the Job IDs.
 	my $client = Bric::Dist::Client->new({ url => $opt_U,
@@ -268,7 +269,7 @@ sub send_jobs {
 	    $exec = !@$exec ? 'no Job IDs' : $#$exec > 0 ? "Job ID @$exec" :
 	      "Job IDs @$exec";
 	    local $" = ', ';
-	    log_err("Sending $exec for execution.");
+	    log_msg("Sending $exec for execution.");
 	}
 	# Send the Job IDs.
 	$client->send;
@@ -279,7 +280,7 @@ sub send_jobs {
 
 ################################################################################
 
-sub log_err {
+sub log_msg {
     my ($err) = @_;
     # Log the error to the system log.
     if ($opt_d) {
@@ -307,6 +308,15 @@ sub log_err {
     # Identifier: LOG_PID   0x01    /* log the pid with each message */
     # Priority:   LOG_ERR   3       /* error conditions */
     # Facility:   LOG_USER  (1<<3)  /* random user-level messages */
+}
+
+##############################################################################
+
+sub log_err {
+    my $err = shift;
+    log_msg($err);
+    print STDERR "$err\n" unless $opt_d;
+    exit 1;
 }
 
 ################################################################################

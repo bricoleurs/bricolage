@@ -95,6 +95,12 @@ provide debugging information that might help us to track down when an asset
 forgets its workflow and/or desk, so that we might eventually be able to
 eliminate the code that picks up on this and corrects it. [David]
 
+=item *
+
+The distribution monitor, F<bric_dist_mon>, now prints error information to
+STDERR when there is an error, instead of just printing it to the system log.
+[David]
+
 =back
 
 =head2 Bug Fixes
