@@ -7,27 +7,31 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.44.2.1 $
+$Revision: 1.44.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.44.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-06 03:44:07 $
+$Date: 2003-03-06 06:18:04 $
 
 =head1 SYNOPSIS
 
  # Return a new category object.
- my $cat = new Bric::Biz::Category($init);
+ my $cat = Bric::Biz::Category->new($init);
 
- my $cat = lookup Bric::Biz::Category({'id' => $cat_id});
+ my $cat = Bric::Biz::Category->lookup({'id' => $cat_id});
 
- my $cat = list Bric::Biz::Category($crit);
+ my $cat = Bric::Biz::Category->list($crit);
 
- $cat->get_name;
- $cat->get_description;
+ my $name = $cat->get_name;
+ $cat = $cat->set_name($name);
+ my $desc = $cat->get_description;
+ $cat = $cat->set_description($desc);
+ my $site_id = $cat->get_site_id;
+ $cat = $cat->set_site_id($site_id);
 
  # Return a list of keywords associated with this category.
  @keys   = $cat->keywords();
@@ -854,7 +858,7 @@ B<Notes:>
 
 NONE
 
-=item $name = $cat->get_description;
+=item $desc = $cat->get_description;
 
 Returns the description of this category.
 
@@ -873,6 +877,38 @@ NONE
 =item $self = $cat->set_description($desc);
 
 Sets the description of this category.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=item $site_id = $cat->get_site_id;
+
+Returns the site ID of this category.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=item $self = $cat->set_site_id($site_id);
+
+Sets the site ID of this category.
 
 B<Throws:>
 
