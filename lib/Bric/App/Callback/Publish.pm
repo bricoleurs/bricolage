@@ -147,6 +147,8 @@ sub publish : Callback {
         }
 
         # Remove it from the workflow by setting its workflow ID to undef
+        # Yes, we have to use user__id instead of checked_out because non-current
+        # versions of documents always have checked_out set to 0.
         if ($s->get_workflow_id
             && !$s->get_user__id # Not checked out.
             && $s->get_version == $s->get_current_version # Is the current version.
