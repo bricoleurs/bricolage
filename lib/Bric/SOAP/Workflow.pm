@@ -35,15 +35,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-23 23:45:42 $
+$Date: 2002-05-01 22:20:29 $
 
 =head1 SYNOPSIS
 
@@ -195,7 +195,7 @@ sub publish {
 	$seen{$type}{$id} = 1;    
 
 	# check check check
-	die "Cannot publish checked-out $type : \"".$id->value."\".\n" 
+	die "Cannot publish checked-out $type : \"".$id."\".\n" 
 	    if $obj->get_checked_out and not $preview;
 
 	# Check for EDIT permission, or READ if previewing
