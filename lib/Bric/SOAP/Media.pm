@@ -43,15 +43,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-25 10:39:13 $
 
 =head1 SYNOPSIS
 
@@ -373,6 +373,14 @@ Available options:
 The XML document containing objects to be created.  The document must
 contain at least one media object.
 
+=item workflow
+
+Specifies the initial workflow the story is to be created in
+
+=item desk
+
+Specifies the initial desk the story is to be created on
+
 =back
 
 Throws: NONE
@@ -382,11 +390,15 @@ Side Effects: NONE
 Notes: The setting for publish_status in the incoming media is ignored
 and always 0 for new media.
 
+New stories are put in the first "media workflow" unless you pass in
+the --workflow option. The start desk of the workflow is used unless
+you pass the --desk option.
+
 =cut
 
 # hash of allowed parameters
 {
-my %allowed = map { $_ => 1 } qw(document);
+my %allowed = map { $_ => 1 } qw(document workflow desk);
 
 sub create {
     my $pkg = shift;
@@ -442,6 +454,14 @@ include objects in the document that are not listed in update_ids then
 they will be treated as in create().  For that reason an update() with
 an empty update_ids list is equivalent to a create().
 
+=item workflow
+
+Specifies the workflow to move the media to
+
+=item desk
+
+Specifies the desk to move the media to
+
 =back
 
 Throws: NONE
@@ -456,7 +476,7 @@ set from the incoming document.
 
 # hash of allowed parameters
 {
-my %allowed = map { $_ => 1 } qw(document update_ids);
+my %allowed = map { $_ => 1 } qw(document update_ids workflow desk);
 
 sub update {
     my $pkg = shift;
@@ -860,18 +880,38 @@ sub _load_media {
             $media->add_keywords(@kws);
         }
 
-        # updates are in-place, no need to futz with workflows and desks
-        my $desk;
-        unless ($update) {
+        my ($workflow, $desk);
+        unless ($update && !(exists $args->{workflow} || exists $args->{desk})) {
             # find a suitable workflow and desk for the media.
-            my $workflow = (Bric::Biz::Workflow->list
-                            ({ type => MEDIA_WORKFLOW,
-                               site_id => $init{site_id} }))[0];
+            if (exists $args->{workflow}) {
+                $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
+                  || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
+            } else {
+                $workflow = (Bric::Biz::Workflow->list({ type => MEDIA_WORKFLOW,
+                                                         site_id => $init{site_id} }))[0];
+            }
             $media->set_workflow_id($workflow->get_id);
             log_event("media_add_workflow", $media,
                       { Workflow => $workflow->get_name });
-            $desk = $workflow->get_start_desk;
-            $desk->accept({'asset' => $media});
+
+            if (exists $args->{desk}) {
+                $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
+                  || throw_ap error => "desk '" . $args->{desk} . "' not found!";
+            } else {
+                $desk = $workflow->get_start_desk;
+            }
+
+            if ($update) {
+                my $olddesk = $media->get_current_desk;
+                if (defined $olddesk) {
+                    $olddesk->transfer({ asset => $media, to => $desk });
+                    $olddesk->save;
+                } else {
+                    $desk->accept({ asset => $media });
+                }
+            } else {
+                $desk->accept({ asset => $media });
+            }
             log_event('media_moved', $media, { Desk => $desk->get_name });
         }
 
@@ -883,7 +923,7 @@ sub _load_media {
 
         # save the media and desk after activating if desired
         $media->activate if $mdata->{active};
-        $desk->save unless $update;
+        $desk->save if defined $desk;
         $media->save;
         log_event('media_save', $media);
 

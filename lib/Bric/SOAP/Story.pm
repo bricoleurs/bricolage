@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-25 10:39:13 $
 
 =head1 SYNOPSIS
 
@@ -466,6 +466,14 @@ The XML document containing objects to be created.  The document must
 contain at least one story and may contain any number of related media
 objects.
 
+=item workflow
+
+Specifies the initial workflow the story is to be created in
+
+=item desk
+
+Specifies the initial desk the story is to be created on
+
 =back
 
 Throws: NONE
@@ -475,11 +483,15 @@ Side Effects: NONE
 Notes: The setting for publish_status in the incoming story is ignored
 and always 0 for new stories.
 
+New stories are put in the first "story workflow" unless you pass in
+the --workflow option. The start desk of the workflow is used unless
+you pass the --desk option.
+
 =cut
 
 # hash of allowed parameters
 {
-my %allowed = map { $_ => 1 } qw(document);
+my %allowed = map { $_ => 1 } qw(document workflow desk);
 
 sub create {
     my $pkg = shift;
@@ -535,6 +547,14 @@ include objects in the document that are not listed in update_ids then
 they will be treated as in create().  For that reason an update() with
 an empty update_ids list is equivalent to a create().
 
+=item workflow
+
+Specifies the workflow to move the story to
+
+=item desk
+
+Specifies the desk to move the story to
+
 =back
 
 Throws: NONE
@@ -549,7 +569,7 @@ publish_status set from the document setting.
 
 # hash of allowed parameters
 {
-my %allowed = map { $_ => 1 } qw(document update_ids);
+my %allowed = map { $_ => 1 } qw(document update_ids workflow desk);
 
 sub update {
     my $pkg = shift;
@@ -948,18 +968,38 @@ sub _load_stories {
             $story->add_keywords(@kws);
         }
 
-        # updates are in-place, no need to futz with workflows and desks
-        my $desk;
-        unless ($update) {
+        my ($workflow, $desk);
+        unless ($update && !(exists $args->{workflow} || exists $args->{desk})) {
             # find a suitable workflow and desk for the story.
-            my $workflow = (Bric::Biz::Workflow->list
-                            ({ type => STORY_WORKFLOW,
-                               site_id => $init{site_id} }))[0];
+            if (exists $args->{workflow}) {
+                $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
+                  || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
+            } else {
+                $workflow = (Bric::Biz::Workflow->list({ type => STORY_WORKFLOW,
+                                                         site_id => $init{site_id} }))[0];
+            }
             $story->set_workflow_id($workflow->get_id());
             log_event("story_add_workflow", $story,
                       { Workflow => $workflow->get_name });
-            $desk = $workflow->get_start_desk;
-            $desk->accept({'asset' => $story});
+
+            if (exists $args->{desk}) {
+                $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
+                  || throw_ap error => "desk '" . $args->{desk} . "' not found!";
+            } else {
+                $desk = $workflow->get_start_desk;
+            }
+
+            if ($update) {
+                my $olddesk = $story->get_current_desk;
+                if (defined $olddesk) {
+                    $olddesk->transfer({ asset => $story, to => $desk });
+                    $olddesk->save;
+                } else {
+                    $desk->accept({ asset => $story });
+                }
+            } else {
+                $desk->accept({ asset => $story });
+            }
             log_event('story_moved', $story, { Desk => $desk->get_name });
         }
 
@@ -972,7 +1012,7 @@ sub _load_stories {
 
         # save the story and desk after activating if desired
         $story->activate if $sdata->{active};
-        $desk->save unless $update;
+        $desk->save if defined $desk;
         $story->save;
         log_event('story_save', $story);
 

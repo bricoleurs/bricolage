@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2003-08-25 10:39:13 $
 
 
 =head1 SYNOPSIS
@@ -736,7 +736,7 @@ sub checkout {
 
 =item $ret = $desk->transfer($param);
 
-Transfer a asset to a different desk.  Keys for $param are:
+Transfer an asset to a different desk.  Keys for $param are:
 
 =over 4
 
@@ -797,7 +797,7 @@ sub transfer {
 
 =item $ret = $desk->accept($param);
 
-Accept a asset from another desk.  Keys for $param are:
+Accept an asset from another desk.  Keys for $param are:
 
 =over 4
 
@@ -805,7 +805,7 @@ Accept a asset from another desk.  Keys for $param are:
 
 from
 
-The desk from which this asset is comming.  Can be omitted if this is the first
+The desk from which this asset is coming.  Can be omitted if this is the first
 desk in the workflow.
 
 =item *

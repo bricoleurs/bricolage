@@ -40,15 +40,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:44 $
+$Date: 2003-08-25 10:39:14 $
 
 =head1 SYNOPSIS
 
@@ -349,19 +349,29 @@ Available options:
 The XML document containing objects to be created.  The document must
 contain at least one template object.
 
+=item workflow
+
+Specifies the initial workflow the story is to be created in
+
+=item desk
+
+Specifies the initial desk the story is to be created on
+
 =back
 
 Throws: NONE
 
 Side Effects: NONE
 
-Notes: NONE
+Notes: New stories are put in the first "template workflow" unless you pass
+in the --workflow option. The start desk of the workflow is used unless
+you pass the --desk option.
 
 =cut
 
 # hash of allowed parameters
 {
-my %allowed = map { $_ => 1 } qw(document);
+my %allowed = map { $_ => 1 } qw(document workflow desk);
 
 sub create {
     my $pkg = shift;
@@ -417,6 +427,14 @@ include objects in the document that are not listed in update_ids then
 they will be treated as in create().  For that reason an update() with
 an empty update_ids list is equivalent to a create().
 
+=item workflow
+
+Specifies the workflow to move the template to
+
+=item desk
+
+Specifies the desk to move the template to
+
 =back
 
 Throws: NONE
@@ -432,7 +450,7 @@ extension.  This should be fixed.
 
 # hash of allowed parameters
 {
-my %allowed = map { $_ => 1 } qw(document update_ids);
+my %allowed = map { $_ => 1 } qw(document update_ids workflow desk);
 
 sub update {
     my $pkg = shift;
@@ -754,24 +772,44 @@ sub _load_template {
         $template->deactivate;
         $template->save;
 
-        # updates are in-place, no need to futz with workflows and desks
-        my $desk;
-        unless ($update) {
+        my ($workflow, $desk);
+        unless ($update && !(exists $args->{workflow} || exists $args->{desk})) {
             # find a suitable workflow and desk for the template.
-            my $workflow = (Bric::Biz::Workflow->list
-                            ({ type => TEMPLATE_WORKFLOW }))[0];
+            if (exists $args->{workflow}) {
+                $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
+                  || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
+            } else {
+                $workflow = (Bric::Biz::Workflow->list({ type => TEMPLATE_WORKFLOW,
+                                                         site_id => $init{site_id} }))[0];
+            }
+            $template->set_workflow_id($workflow->get_id());
             log_event("formatting_add_workflow", $template,
                       { Workflow => $workflow->get_name });
 
-            $template->set_workflow_id($workflow->get_id());
-            $desk = $workflow->get_start_desk;
-            $desk->accept({'asset' => $template});
+            if (exists $args->{desk}) {
+                $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
+                  || throw_ap error => "desk '" . $args->{desk} . "' not found!";
+            } else {
+                $desk = $workflow->get_start_desk;
+            }
+
+            if ($update) {
+                my $olddesk = $template->get_current_desk;
+                if (defined $olddesk) {
+                    $olddesk->transfer({ asset => $template, to => $desk });
+                    $olddesk->save;
+                } else {
+                    $desk->accept({ asset => $template });
+                }
+            } else {
+                $desk->accept({ asset => $template });
+            }
             log_event('formatting_moved', $template, { Desk => $desk->get_name });
         }
 
         # save the template and desk after activating if desired
         $template->activate if $tdata->{active};
-        $desk->save unless $update;
+        $desk->save if defined $desk;
         $template->save;
         log_event('formatting_save', $template);
 

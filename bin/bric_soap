@@ -60,9 +60,10 @@ Options:
   --all                  - synonym for setting --with-related-stories and
                            --with-related-media
 
-  --desk                 - required desk option for move command
+  --desk                 - required desk option for move command; optional for
+                           create and update commands
 
-  --workflow             - workflow option for move command
+  --workflow             - workflow option for move, create, and update commands
 
   --search field=value   - specify a search for list_ids, field must
                            be a valid search field for the list_ids()
@@ -415,6 +416,10 @@ sub delete {
 }
 
 sub create {
+    my @opts;
+    push @opts, name(workflow => $workflow) if defined $workflow;
+    push @opts, name(desk => $desk) if defined $desk;
+
     # work through documents1
     foreach (@ARGV) {
 	my $document;
@@ -435,13 +440,17 @@ sub create {
           if $verbose;
 
 	# print out response ids
-	_print_ids($soap->create(name(document => $document)->type('base64')));
+	_print_ids($soap->create(name(document => $document)->type('base64'), @opts));
     }
 }
 
 
 
 sub update {
+    my @opts;
+    push @opts, name(workflow => $workflow) if defined $workflow;
+    push @opts, name(desk => $desk) if defined $desk;
+
     # work through documents1
     foreach (@ARGV) {
 	my $document;
@@ -469,12 +478,13 @@ sub update {
 	    " with document:  ", length($document), " bytes\n"
 		if $verbose;
 
-	my $response = $soap->update(name(document => 
+	my $response = $soap->update(name(document =>
                                           $document)->type('base64'),
                                      name(update_ids =>
                                           [ map
                                             { name("${name}_id" => $_) }
-                                            @update_ids ]));
+                                            @update_ids ]),
+                                     @opts);
 	# print out ids
 	_print_ids($response);
     }

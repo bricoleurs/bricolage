@@ -116,6 +116,12 @@ desks or My Workspace. [Scott]
 
 Added Keyword Management interface to centrally manage keywords. [Scott]
 
+=item *
+
+Added --workflow and --desk options to create and update commands
+of bric_soap, so that assets can be moved to a desk at the same
+time as creation or updation. [Scott]
+
 =back
 
 =head2 Bug Fixes
