@@ -29,16 +29,16 @@ my $spacerRow = ($agent->{browser} eq "Internet Explorer") ? '<img src="/media/i
   <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
   <td class=lightHeader>
 <% $spacerRow %>
-  <%perl>    
-  $m->comp("substr.html", 
-	   widget     => $widget,
-	   object     => $object,
-	   disp_field => $disp_field);
+  <%perl>
+  $m->comp("substr.html",
+           widget     => $widget,
+           object     => $object,
+           disp_field => $disp_field);
 
   $m->comp("alpha.html", 
-	   widget     => $widget,
-	   object     => $object,
-	   disp_field => $disp_field);
+           widget     => $widget,
+           object     => $object,
+           disp_field => $disp_field);
 
   </%perl>
   </td>
@@ -52,4 +52,3 @@ my $spacerRow = ($agent->{browser} eq "Internet Explorer") ? '<img src="/media/i
 % if ($use_form_tag) {
 </form>
 % }
-

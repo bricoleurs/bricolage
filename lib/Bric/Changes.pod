@@ -102,6 +102,11 @@ the Element manager all work again. [David]
 Changing category names now updates the name of the category asset group
 object, which appears in the user group permissions page. [David]
 
+=item *
+
+Hitting the "enter" key after filling in a serach field now properly submits
+the search as if the "Search" button had been clicked. [David]
+
 =back
 
 =head1 VERSION 1.4.0

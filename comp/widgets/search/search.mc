@@ -8,11 +8,11 @@ search - A search widget
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.5.4.1 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-09-13 21:19:18 $
 
 =head1 SYNOPSIS
 
@@ -70,11 +70,11 @@ my $meth = $pkg->my_meths();
 
 unless (get_state_data($widget, 'field')) {
     # Find a real field name if we were given '_default'
-    if ($field eq '_default') {	
-	foreach my $f (keys %$meth) 	{
-	    # Break out of the loop if we find the searchable field.
-	    $field = $f and last if $meth->{$f}->{'search'};
-	}
+    if ($field eq '_default') { 
+        foreach my $f (keys %$meth)     {
+            # Break out of the loop if we find the searchable field.
+            $field = $f and last if $meth->{$f}->{'search'};
+        }
     }
 
     # Set the field on which to search.
@@ -85,12 +85,8 @@ unless (get_state_data($widget, 'field')) {
 $m->comp("$type.html", widget       => $widget,
                        object       => $object,
                        disp_field   => $meth->{$field}->{'disp'},
-	               groupList    => $groupList,
-		       use_form_tag => $use_form_tag
-	);
+                       groupList    => $groupList,
+                       use_form_tag => $use_form_tag
+        );
 
 </%init>
-
-%#--- Log History ---#
-
-
