@@ -109,6 +109,11 @@ finally motivated this change. [David]
 
 Improved zh-cn translation. [lgjut@sohu.com]
 
+=item *
+
+Burner notes now persist for all sub burns (triggered by C<publish_another()>
+and C<preview_another()> in a single burn. [Serge Sozonoff]
+
 =back
 
 =head2 Bug Fixes
