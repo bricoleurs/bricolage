@@ -928,10 +928,10 @@ sub get_data_element {
   my @data = $element->get_data_elements;
   @data = $element->get_data_elements(@key_names);
 
-Returns a list or anonymous array of the data subelements of this data
-subelement. If called with no arguments, it returns all of the data
-subelements. If passed a list of key names, the only the data subelements with
-those key names will be returned.
+Returns a list or anonymous array of the data subelements of this element. If
+called with no arguments, it returns all of the data subelements. If passed a
+list of key names, the only the data subelements with those key names will be
+returned.
 
 B<Throws:> NONE.
 
