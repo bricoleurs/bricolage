@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-08 19:16:04 $
+$Date: 2002-04-16 22:01:01 $
 
 =head1 SYNOPSIS
 
@@ -476,8 +476,11 @@ sub delete {
 		unless chk_authz($element, CREATE, 1);
 
 	# force the delete by mangling name if force is set
-	$element->set_name($element->get_name . "[ deleted ". time ." ]")
-	    if ($args->{force});
+	if ($args->{force}) {
+	    my $new_name = $element->get_name . "[ deleted ". time ." ]";
+	    $new_name = substr(0,63,$new_name) if length $new_name > 64;
+	    $element->set_name($new_name);
+	}
 	    
 	# delete the element
 	$element->deactivate;
@@ -646,7 +649,9 @@ sub _load_element {
 	if ($update) {
 	    my @data = $element->get_data();
 	    foreach my $data (@data) {	    
-		$data->set_name($data->get_name . rand());
+		my $new_name = $data->get_name . "[ deleted ". time ." ]";
+		$new_name = substr(0,31,$new_name) if length $new_name > 32;
+		$data->set_name($new_name);
 		$data->save;
 	    }
 	    $element->del_data(\@data) if @data;
