@@ -124,7 +124,6 @@ sub publish : Callback {
         return;
     }
 
-
     my $stories = mk_aref($story_pub_ids);
     my $media = mk_aref($media_pub_ids);
 
@@ -170,7 +169,7 @@ sub publish : Callback {
             user_id       => get_user_id(),
             name          => $name,
             media_id      => $mid,
-            priority      => $m->get_priority(),
+            priority      => $m->get_priority,
         });
         $job->save();
         # Report publishing if the job was executed on save, otherwise

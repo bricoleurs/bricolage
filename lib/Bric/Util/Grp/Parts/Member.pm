@@ -1246,7 +1246,7 @@ sub _do_list {
         $object_id = $param->{object}->get_id;
         # If the group class can contain objects of more than one class, we
         # need to look up the member object for that class only.
-        $object_class_id = $class->_get_class_id($package)
+        $force = $class->_get_class_id($package)
           unless $param->{grp_package}
           and $param->{grp_package}->get_object_class_id;
     } elsif ( $param->{object_id} && $param->{object_package} ) {

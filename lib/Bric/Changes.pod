@@ -65,6 +65,11 @@ The "New Alias" search interface now displays thumbnails when searching for
 media documents to alias and the C<USE_THUMBNAILS> F<bricolage.conf> diretive
 is enabled. Reported by Serge Sozonoff. [David]
 
+=item *
+
+The C<has_member()> method of Bric::Util::Grp is now faster when searching for
+a specific group member. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -124,6 +129,18 @@ for stories and media "By Type". [David]
 
 Improved error logging for more recent versions of Apache, which unfortunately
 escape newlines. [David]
+
+=item *
+
+When Bricolage discovers a document or template on a desk but not in a
+workflow, it now places it in a workflows associated with the same site as the
+document or template is associated with. Thanks to Serge Sozonoff for the
+spot! [David]
+
+=item *
+
+Aliases of Image, Audio, or Video media documents no longer remain stuck on
+desks. Reported by Serge Sozonoff. [David]
 
 =back
 

@@ -899,9 +899,9 @@ NONE
 sub remove_asset {
     my $self = shift;
     my ($asset) = @_;
-    my $asset_grp_obj= $self->_get_grp_obj(ASSET_GRP_PKG,
-                                           'asset_grp',
-                                           '_asset_grp_obj');
+    my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG,
+                                            'asset_grp',
+                                            '_asset_grp_obj');
 
     # If the asset was accepted and we get here, remove this asset from the desk
     $asset_grp_obj->delete_member({ obj => $asset });

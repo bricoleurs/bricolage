@@ -2184,6 +2184,9 @@ sub _init {
         throw_dp "Cannot create an alias to an alias"
           if $alias_target->get_alias_id;
 
+        # Re-bless the alias into the same class as the aliased.
+        bless $self, ref $alias_target;
+
         $self->_set([qw(alias_id _alias_obj)],
                     [$init->{alias_id}, $alias_target]);
 
