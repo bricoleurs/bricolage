@@ -6,8 +6,9 @@ use constant CLASS_KEY => 'login';
 
 use strict;
 use Bric::App::Auth ();
-use Bric::App::Session qw(:state);
+use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:msg del_redirect redirect_onload);
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 use Bric::Config qw(LISTEN_PORT);
 
@@ -43,14 +44,14 @@ sub masquerade : Callback {
     my $self = shift;
     my $r = $self->apache_req;
 
-    my $un = $self->value;
-    my ($res, $msg) = Bric::App::Auth::masquerade($r, $un);
+    my $u = Bric::Biz::Person::User->lookup({ login => $self->value });
 
-    if ($res) {
+    if (get_user_object->can_do($u, EDIT)) {
+        my ($res, $msg) = Bric::App::Auth::masquerade($r, $u);
 	$self->set_redirect('/');
     } else {
-	add_msg($msg);
-	$r->log_reason($msg);
+	add_msg('You do not have permission to override user "[_1]"',
+                $u->get_name);
     }
 }
 

@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-19 07:44:31 $
+$Date: 2004-03-11 23:46:07 $
 
 =head1 SYNOPSIS
 
@@ -211,19 +211,29 @@ sub login {
     return $cookie;
 }
 
+################################################################################
+
+=item masquerade($r, $user)
+
+Sets up a different user for the current user to masquerade as. This is useful
+when an administrator needs a to masquerade as another user in order to check
+in assets that user hasn't checked in. Note that C<masquerade()> performs no
+authentication. It is expected that the current user will have permission to
+masquerade as the user passed in.
+
+B<Throws:> None.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
 sub masquerade {
-    my ($r, $un) = @_;
-    my $u = Bric::Biz::Person::User->lookup({ login => $un });
-
-    # Do not continue unless they are already logged in as an admin.
-    unless (user_is_admin()) {
-        return (undef, "You must be an administrator to use this function.");
-    }
-
-    # Authentication succeeded. Set up session data and the authentication
-    # cookie.
+    my ($r, $u) = @_;
+    # Set up session data and the authentication cookie.
     set_user($r, $u);
-    &$make_cookie($r, $un, time);
+    &$make_cookie($r, $u, time);
 }
 
 ################################################################################

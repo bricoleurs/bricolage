@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-02 22:57:14 $
+$Date: 2004-03-11 23:46:08 $
 
 =head1 SYNOPSIS
 
@@ -533,6 +533,7 @@ To translate:
   '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
   'Object Groups' => 'Object Groups',
   '[_1] Site Categories' => '[_1] Site Categories',
+  'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
 
 =end comment
 

@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-02 22:57:14 $
+$Date: 2004-03-11 23:46:08 $
 
 =head1 SYNOPSIS
 
@@ -708,6 +708,7 @@ To translate:
   '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
   'Object Groups' => 'Object Groups',
   '[_1] Site Categories' => '[_1] Site Categories',
+  'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
 
 =end comment
 

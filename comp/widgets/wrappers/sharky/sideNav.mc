@@ -278,10 +278,8 @@ foreach my $wf (@$workflows) {
               <% &$printLink('/admin/manager/site', $uri, $pl_disp->{site}) %>
               <% &$printLink('/admin/manager/alert_type', $uri, $pl_disp->{alert_type}) %>
 %# Show the change users link if we are an admin.
-%             if (user_is_admin()) {
-                  <br />
-                  <% &$printLink('/admin/control/change_user', $uri, 'User Override') %>
-%             }
+              <br />
+              <% &$printLink('/admin/control/change_user', $uri, 'User Override') %>
             </td>
           </tr>
         </table>
@@ -461,10 +459,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =head1 DATE
 
-$Date: 2004-03-02 18:00:24 $
+$Date: 2004-03-11 23:46:07 $
 
 </%doc>

@@ -6,15 +6,15 @@ Bric::Util::Language::zh_cn - Bricolage 簡体中文翻译
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-02 22:57:14 $
+$Date: 2004-03-11 23:46:08 $
 
 =head1 SYNOPSIS
 
@@ -562,6 +562,7 @@ To translate:
   'All' => 'All',
   'Object Groups' => 'Object Groups',
   '[_1] Site Categories' => '[_1] Site Categories',
+  'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
 
 =end comment
 

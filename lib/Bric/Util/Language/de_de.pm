@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-03 20:25:40 $
+$Date: 2004-03-11 23:46:08 $
 
 =head1 SYNOPSIS
 
@@ -712,6 +712,8 @@ translation, which I'll gradually try to remove. I'd be very grateful for
 any error pointers.
 
 To Translate:
+
+  'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
 
 =end comment
 
