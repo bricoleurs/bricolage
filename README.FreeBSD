@@ -1,37 +1,6 @@
 Bricolage FreeBSD README
 ------------------------
 
-Bricolage works well with FreeBSD but installation requires some
-additional preparation.  Follow these steps before beginning the
-installation process:
-
-  1) Install the libiconv package found at:
-
-       http://www.gnu.org/software/libiconv/
-
-  2) Download the Text::Iconv Perl module from CPAN:
-
-       http://cpan.org/authors/id/MPIOTR/Text-Iconv-1.2.tar.gz
-
-     Decompress and edit the Makefile.PL inside, changing:
-
-        'LIBS'         => [''],
-
-     To:
-
-        'LIBS'         => ['-liconv'],
-
-     Now make and install as usual:
-
-       perl Makefile.PL
-       make
-       make test
-       make install
-
-
-Additional Notes
-----------------
-
   - FreeBSD defaults to a very low limit on shared memory usage.  This
     may require you to throttle PostgreSQL with options that limit the
     number of connections: "-B16 -N8" for example.  See the PostgreSQL
@@ -42,7 +11,7 @@ Additional Notes
 
     AcceptFilter         Off
 
-to get rid of
+    to get rid of
 
-   [info] (2)No such file or directory: make_sock: for port 8080, setsockopt:
-   (SO_ACCEPTFILTER)
+    [info] (2)No such file or directory: make_sock: for port 8080, setsockopt:
+    (SO_ACCEPTFILTER)

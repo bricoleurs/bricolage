@@ -6,16 +6,16 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:23 $
+$Date: 2003-09-16 03:47:11 $
 
 =head1 DESCRIPTION
 
 This script is called during "make" to probe for required software -
-Perl, Apache, Postgres, Expat and Iconv currently.  Output collected
+Perl, Apache, Postgres, and Expat currently.  Output collected
 in "required.db".
 
 =head1 AUTHOR
@@ -76,11 +76,10 @@ print "\n\n==> Probing Required Software <==\n\n";
 $RESULTS{PG}      = find_pg();
 $RESULTS{APACHE}  = find_apache();
 $RESULTS{EXPAT}   = find_expat();
-$RESULTS{ICONV}   = find_iconv();
 
 # print error message and fail if something not found
 unless ($RESULTS{PG} and $RESULTS{APACHE} and 
-	$RESULTS{EXPAT} and $RESULTS{ICONV}) {
+	$RESULTS{EXPAT}) {
   hard_fail("Required software not found:\n\n",
 	    $RESULTS{PG}     ? "" : 
 	    "\tPostgreSQL >= 7.1.0 (http://postgresql.org)\n",
@@ -88,8 +87,6 @@ unless ($RESULTS{PG} and $RESULTS{APACHE} and
 	    "\tApache >= 1.3.12    (http://apache.org)\n",
 	    $RESULTS{EXPAT}  ? "" : 
 	    "\texpat >= 1.95.0     (http://expat.sourceforge.net)\n",
-	    $RESULTS{ICONV}  ? "" : 
-	    "\ticonv               (http://www.gnu.org/software/libiconv)\n",
 	    "\nSee INSTALL for details.\n"
 	   );
 }
@@ -261,27 +258,3 @@ sub find_expat {
 
     return 1;
 }
-
-# look for iconv
-sub find_iconv {
-    print "Looking for iconv...\n";
-   
-    # find iconv by looking for the iconv binary.  First search user's
-    # path then some standard locations.
-    my @paths = (path(), qw(/usr/local/bin
-			    /usr/bin
-			    /bin
-                            /sw/bin));
-    foreach my $path (@paths) {
-	if (-e catfile($path, "iconv")) {
-	    $REQ{ICONV} = catfile($path, "iconv");
-	    last;
-	}    
-    }
-    return soft_fail("Failed to find iconv.  Looked in:", 
-		     map { "\n\t$_" } @paths) unless $REQ{ICONV};
-    print "Found iconv at $REQ{ICONV}.\n";
-
-    return 1;
-}
-

@@ -3,195 +3,117 @@ use strict;
 use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
+use Bric::Util::CharTrans;
+use File::Spec::Functions qw(catfile);
+use File::Basename;
+use Storable qw(dclone);
+use Bric::Config qw(:char);
+
+# Borrowed these files from the Encode test suite, but renamed them and
+# truncated each of them to 100 lines. I figure if we demonstrate that
+# Encode is working, then Encode's own tests can be the comprehensive ones!
+my %test_files =
+  ('euc-cn'    => [ catfile(dirname(__FILE__), 'euc-cn.enc'),
+                    catfile(dirname(__FILE__), 'euc-cn.utf') ],
+   'euc-jp'    => [ catfile(dirname(__FILE__), 'euc-jp.enc'),
+                    catfile(dirname(__FILE__), 'euc-jp.utf') ],
+   'euc-kr'    => [ catfile(dirname(__FILE__), 'euc-kr.enc'),
+                    catfile(dirname(__FILE__), 'euc-kr.utf') ],
+   'big5-eten' => [ catfile(dirname(__FILE__), 'big5-eten.enc'),
+                    catfile(dirname(__FILE__), 'big5-eten.utf') ]
+  );
 
 ##############################################################################
-# Test class loading.
+# Simple string conversion tests.
 ##############################################################################
-sub _test_load : Test(1) {
-    use_ok('Bric::Util::CharTrans');
+sub test_strings : Test(1612) {
+    my $self = shift;
+
+    # Failing constructors.
+    eval { Bric::Util::CharTrans->new };
+    ok( my $err = $@, "Got no charset exception" );
+    isa_ok($err, 'Bric::Util::Fault::Exception::GEN');
+
+    eval { Bric::Util::CharTrans->new('flintstone_runes') };
+    ok( $err = $@, "Got bogus charset exception" );
+    isa_ok($err, 'Bric::Util::Fault::Exception::GEN');
+
+    while (my ($charset, $files) = each %test_files) {
+        ok( my $ct = Bric::Util::CharTrans->new($charset),
+            "Create new CT for '$charset' charset" );
+        isa_ok($ct, 'Bric::Util::CharTrans');
+        open ENC, $files->[0] or die "Unable to open $files->[0]: $!\n";
+        open UTF, $files->[1] or die "Unable to open $files->[1]: $!\n";
+        my $i;
+        while (my $enc_line = <ENC>) {
+            my $utf_line = <UTF>;
+            ++$i;
+            my $cp = $enc_line;
+            ok( $ct->to_utf8($cp), "Convert $charset line $i to UTF-8" );
+            is( $cp, $utf_line, "Compare to UTF-8");
+            $cp = $utf_line;
+            ok( $ct->from_utf8($cp), "Convert line $i to $charset" );
+            is( $cp, $enc_line, "Compare to $charset");
+        }
+    }
+}
+
+##############################################################################
+# Test conversion of complex structures.
+##############################################################################
+sub test_structs : Test(24) {
+    my $self = shift;
+    while (my ($charset, $files) = each %test_files) {
+        ok( my $ct = Bric::Util::CharTrans->new($charset),
+            "Create new CT for '$charset' charset" );
+        isa_ok($ct, 'Bric::Util::CharTrans');
+        open ENC, $files->[0] or die "Unable to open $files->[0]: $!\n";
+        open UTF, $files->[1] or die "Unable to open $files->[1]: $!\n";
+
+        # Create a hash of arrays of hashes, with a scalarref for good
+        # measure.
+        my $enc_struct = { one => [ scalar <ENC>, scalar <ENC>, scalar <ENC>,
+                                    { two   => scalar <ENC>,
+                                      three => scalar <ENC>,
+                                      four  => scalar <ENC>,
+                                    },
+                                    \scalar <ENC>
+                                  ]
+                         };
+
+        # Do the same with some UTF-8 data.
+        my $utf_struct = { one => [ scalar <UTF>, scalar <UTF>, scalar <UTF>,
+                                    { two   => scalar <UTF>,
+                                      three => scalar <UTF>,
+                                      four  => scalar <UTF>,
+                                    },
+                                    \scalar <UTF>
+                                  ]
+                         };
+
+        # Close the files.
+        close ENC;
+        close UTF;
+
+        # Now clone (deep copy) those data structures.
+        my $enc_struct_clone = dclone $enc_struct;
+        my $utf_struct_clone = dclone $utf_struct;
+
+        # Now try to convert the encoded string to UTF-8.
+        ok( $ct->to_utf8($enc_struct_clone),
+            "Convert $charset structure to UTF-8" );
+        # It should be UTF-8 now!
+        is_deeply($enc_struct_clone, $utf_struct,
+                  "$charset structure converted to UTF-8 structure");
+
+        # Now try to convert the UTF-8 string the encoding.
+        ok( $ct->from_utf8($utf_struct_clone),
+            "Convert UTF-8 structure to $charset" );
+        # It should be UTF-8 now!
+        is_deeply($utf_struct_clone, $enc_struct,
+                  "UTF-8 structure converted to $charset structure");
+
+    }
 }
 
 1;
-__END__
-
-# Here is the original test script for reference. If there's something usable
-# here, then use it. Otherwise, feel free to discard it once the tests have
-# been fully written above.
-
-#!/usr/bin/perl -w
-use strict;
-use Test;
-
-BEGIN { plan tests => 55}
-
-use lib qw(../..);
-
-use Bric::Util::CharTrans;
-
-my $from_or_to = shift;
-my $charset = shift;
-
-if ($charset) {
-   # skip tests, do a file conversion..
-   my $text;
-   while (<>) {
-	$text .= $_;
-   }
-   my $ct = new Bric::Util::CharTrans($charset);
-
-   die "$!" unless ($ct);
-
-   my $out;
-   if ($from_or_to eq 'from') {
-     print $ct->to_utf8($text);
-   } else {
-     print $ct->from_utf8($text);
-   }
-
-   exit;
-}
-
-#############################################################
-print <<EOF
-
-Verify Module Loads
-EOF
-;
-
-ok(1);
-
-
-
-#############################################################
-print <<EOF
-
-Create broken object, flintstone_runes
-EOF
-;
-my $chartrans;
-
-eval { $chartrans = new Bric::Util::CharTrans('flintstone_runes');};
-
-ok($@);
-
-
-#############################################################
-print <<EOF
-
-Create bogus empty object, no args at all..
-EOF
-;
-
-eval { $chartrans = new Bric::Util::CharTrans()};
-
-ok($@);
-
-#############################################################
-print <<EOF
-
-Create new object, iso8859-1
-EOF
-;
-
-eval { $chartrans = new Bric::Util::CharTrans('iso-8859-1');};
-ok(!$@ && defined($chartrans));
-print "$@" if ($@);
-######################################################################
-
-die "can't continue" unless ($chartrans);  # can't continue without it..
-
-# Test proper behavior for conversions
-
-my $ascii_utf8 = {
-    '' => '',
-    'abcdefghijklmnopqrstuvwxyz' => 'abcdefghijklmnopqrstuvwxyz',
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZ' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-    '0123456789!@#$%^&*()_-+=[]{}:;,.<>/?\|\'"`~' =>     '0123456789!@#$%^&*()_-+=[]{}:;,.<>/?\|\'"`~',
-    "\n\t\r" => "\n\t\r"
-    };
-
-test_set('ASCII', $ascii_utf8);
-
-my $latin1_utf8 = {
-   'áàäâãÁÀÄÂÃ ç éèëêÉÈËÊ  íìïîÍÌÏÎ óòöôõÓÒÖÔÕ ñÑ úùüûÚÙÜÛ' =>
-
-'Ã¡Ã Ã¤Ã¢Ã£ÃÃ€Ã„Ã‚Ãƒ Ã§ Ã©Ã¨Ã«ÃªÃ‰ÃˆÃ‹ÃŠ  Ã­Ã¬Ã¯Ã®ÃÃŒÃÃŽ Ã³Ã²Ã¶Ã´ÃµÃ“Ã’Ã–Ã”Ã• Ã±Ã‘ ÃºÃ¹Ã¼Ã»ÃšÃ™ÃœÃ›',
-   'åÅ øØ æÆ ýÿÝ ¡ðþß«»' => 'Ã¥Ã… Ã¸Ã˜ Ã¦Ã† Ã½Ã¿Ã Â¡Ã°Ã¾ÃŸÂ«Â»',
-   };
-
-
-test_set('ISO-8859-1', $latin1_utf8);
-
-#####################################################################
-my $latin2_utf8 = {
-  'mù¾e být pou¾ito za pou¾ití Mo¿na ju¿ zamieniæ zawarto¶æ' => 
-  'mÅ¯Å¾e bÃ½t pouÅ¾ito za pouÅ¾itÃ­ MoÅ¼na juÅ¼ zamieniÄ‡ zawartoÅ›Ä‡'
-   };
-
-eval { $chartrans = new Bric::Util::CharTrans('iso-8859-2');};
-ok(!$@ && defined($chartrans));
-print "$@" if ($@);
-test_set('ISO-8859-2', $latin2_utf8);
-
-#####################################################################
-my $jis_utf8 = {
-     '$B%W%m%@%/%H(BOK' => 'ãƒ—ãƒ­ãƒ€ã‚¯ãƒˆOK',
-     '$B%l%C%I%O%C%H$N;qK\(BOK' => 'ãƒ¬ãƒƒãƒ‰ãƒãƒƒãƒˆã®è³‡æœ¬OK',
-     'test ascii' => 'test ascii'
-   };
-
-eval { $chartrans = new Bric::Util::CharTrans('ISO-2022-JP');};
-ok(!$@ && defined($chartrans));
-print "$@" if ($@);
-test_set('ISO-2022-JP', $jis_utf8);
-
-######################################################################
-my $sjis_utf8 = {
-	'' => '',
-};
-
-eval { $chartrans = new Bric::Util::CharTrans('ISO-2022-JP');};
-ok(!$@ && defined($chartrans));
-print "$@" if ($@);
-test_set('ISO-2022-JP', $sjis_utf8);
-
-######################################################################
-# Test a set of translations
-#
-# First test scalar, then test ref..
-
-sub test_set {
-  my ($name, $set) = @_;
-  print "*** Testing set $name\n";
-  foreach my $t (sort(keys(%{$set}))) {
-    my $as_utf8 = $set->{$t};
-
-    my $result = $chartrans->to_utf8($t);
-    
-    print "Testing '$t'\n";
-    ok($result, $as_utf8);
-    my $storage = $t;
-
-    $chartrans->to_utf8(\$storage);
-    ok($storage, $as_utf8);
-
-    print "...reversed\n";
-    $result = $chartrans->from_utf8($as_utf8);
-    ok ($result, $t);
-
-    $storage = $as_utf8;
-    $chartrans->from_utf8(\$storage);
-    ok($storage, $t); 
-  }
-  if  ($name eq 'iso-8859-1') {
-  my $texts = ['abcdefg','áàäâãÁÀÄÂÃ', ['bbb', 'ccc'], {a=>"Ã111222", b=>'2222'}];
-  print "Testing multilevel data structure fixing\n";
-  use Data::Dumper;
-  print Dumper($texts);
-  $chartrans->to_utf8($texts);
-  print "Recursive conversion...\n";
-  use Data::Dumper;
-  print Dumper($texts), "\n";
-  }
-}
-

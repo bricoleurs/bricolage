@@ -55,14 +55,10 @@ version of mod_perl.
 
 From http://www.apache.org/dist/httpd/libapreq/, download libapreq-1.1.tar.gz.
 
-From ftp://ftp.gnu.org/gnu/libiconv/, download the sources for the latest
-version of the iconv library.
-
 From http://expat.sourceforge.net/, download the sources for the latest
 version of the expat libraries.
 
-From http://search.cpan.org/, download the latest versions of Text::Iconv
-and XML::Parser.
+From http://search.cpan.org/, download the latest version of XML::Parser.
 
 From ftp://ftp.gnu.org/pub/gnu/readline/, download the latest readline
 sources.
@@ -79,10 +75,10 @@ tarballs into /usr/local/src, e.g., with the command
   tar zxvf sources.tar.gz
 
 Note that if you've never installed anything in /usr/local before, you must
-install at least one library (expat or libiconv are good candidates) before
-installing Perl. This is so that Perl will pick up on the existence of
-/usr/local/lib and /usr/local/include and make sure that modules that need
-access to the library files in these directories will be able to find them.
+install at least one library (expat is a good candidate) before installing Perl.
+This is so that Perl will pick up on the existence of /usr/local/lib
+and /usr/local/include and make sure that modules that need access
+to the library files in these directories will be able to find them.
 You should be fine if you follow the steps outlined here.
 
 1. Install expat:
@@ -93,15 +89,7 @@ You should be fine if you follow the steps outlined here.
   % make install
   % cd ..
 
-2. Install libiconv:
-
-  % cd libiconv-VERSION/
-  % ./configure
-  % make
-  % make install
-  % cd ..
-
-3. Install readline (omit the perl line on Mac OS X 10.1):
+2. Install readline (omit the perl line on Mac OS X 10.1):
 
   % cd readline-4.x
   % perl -i.bak -p -e \
@@ -111,7 +99,7 @@ You should be fine if you follow the steps outlined here.
   % make
   % make install
 
-4. Install Perl. For Perl 5.8.0, do this:
+3. Install Perl. For Perl 5.8.0, do this:
 
   % cd perl-5.8.0/
   % export LC_ALL=C     # or setenv LC_ALL C
@@ -134,20 +122,20 @@ Or, for Perl 5.6.1, do this:
   % make install
   % cd ..
 
-5. Patch Apache:
+4. Patch Apache:
 
   % cd apache_1.3.xx
   % patch -p0 < ../apache_dbm.patch
   % cd ..
   
-6. Configure mod_ssl (Optional -- Required for SSL support):
+5. Configure mod_ssl (Optional -- Required for SSL support):
 
   % cd mod_ssl-VERSION/
   % patch -p0 < ../mod_ssl_dylib.patch
   % ./configure --with-apache=/usr/local/src/apache_1.3.xx
   % cd ..
 
-7. Install mod_perl:
+6. Install mod_perl:
 
   % cd mod_perl-1.xx
   % /usr/local/bin/perl Makefile.PL \
@@ -159,7 +147,7 @@ Or, for Perl 5.6.1, do this:
   % make install
   % cd ..
 
-8. Install Apache:
+7. Install Apache:
 
   % cd apache_1.3.26/
   % SSL_BASE=/usr/local/src/openssl-VERSION/ \
@@ -175,7 +163,7 @@ Or, for Perl 5.6.1, do this:
   % make install
   % cd ..
 
-9. Install libapreq:
+8. Install libapreq:
 
   % cd libapreq-1.1
   % ./configure --with-apache-includes=/usr/local/apache/include
@@ -187,18 +175,7 @@ Or, for Perl 5.6.1, do this:
   % make install
   % cd ..
 
-10. Install Text::Iconv:
-
-  % cd Text-Iconv-VERSION/
-  % perl -i.bak -p -e "s/'LIBS'\s*=>\s*\[''\]/'LIBS' => \['-liconv'\]/" \
-    Makefile.PL
-  % /usr/local/bin/perl Makefile.PL
-  % make
-  % make test
-  % make install
-  % cd ..
-
-11. Install XML::Parser:
+9. Install XML::Parser:
 
   % cd XML-Parser-VERSION/
   % /usr/local/bin/perl Makefile.PL EXPATLIBPATH=/usr/local/lib \

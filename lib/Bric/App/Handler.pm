@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-15 21:15:49 $
+$Date: 2003-09-16 03:47:11 $
 
 =head1 SYNOPSIS
 
@@ -400,8 +400,7 @@ sub filter {
     }
 
     # Do the translation.
-    my $ret;
-    eval { $ret = $ct->from_utf8($_[0]) };
+    eval { $ct->from_utf8($_[0]) };
 
     # Do error processing, if necessary.
     if (my $err = $@) {
@@ -409,13 +408,14 @@ sub filter {
         if (isa_exception($err)) {
             rethrow_exception($err);
         } else {
-            my $msg = 'Error translating from UTF-8 to ' . $ct->charset;
-            throw_dp(error => $msg, payload => $err);
+            throw_dp error   => 'Error translating from UTF-8 to '
+                                . $ct->charset,
+                     payload => $err;
         }
     }
 
     # Dump the data.
-    print STDOUT $ret;
+    print STDOUT $_[0];
 }
 
 ##############################################################################

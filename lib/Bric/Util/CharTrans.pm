@@ -6,17 +6,17 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2003-09-16 03:47:11 $
 
 =head1 SYNOPSIS
 
@@ -24,21 +24,21 @@ $Date: 2003-08-11 09:33:36 $
   my $chartrans = Bric::Util::CharTrans->new('iso-8859-1');
 
   # Instance Methods.
-  my $charset     = $chartrans->charset();
+  my $charset     = $chartrans->charset;
   my $charset     = $chartrans->charset('iso-8859-1');
 
   my $utf8_text   = $chartrans->to_utf8($target_text);
   my $target_text = $chartrans->from_utf8($utf8_text);
 
-  $chartrans->to_utf(\$some_data);
-  $chartrans->from_utf(\$some_data);
+  $chartrans->to_utf8(\$some_data);
+  $chartrans->from_utf8(\$some_data);
 
 
 =head1 DESCRIPTION
 
-Bric::Util::CharTrans provides an object-oriented interface
-to conversion of characters from a target character set to Unicode UTF-8
-and from Unicode UTF-8 to a target character set.
+Bric::Util::CharTrans provides an object-oriented interface to conversion of
+characters from a target character set to Unicode UTF-8 and from Unicode UTF-8
+to a target character set.
 
 =cut
 
@@ -48,48 +48,31 @@ and from Unicode UTF-8 to a target character set.
 # Standard Dependencies
 use strict;
 use Bric::Util::Fault qw(throw_gen rethrow_exception);
-use Text::Iconv; # requires v1.1, not 1.0 which is on CPAN
 
 ################################################################################
 # Programmatic Dependences
-
+use Encode qw(from_to);
+use Encode::Alias;
 ################################################################################
 # Inheritance
 ################################################################################
 use base qw(Bric);
 
-################################################################################
-# Function Prototypes
-################################################################################
-
-
 ##############################################################################
 # Constants
 ##############################################################################
-#use constant DEBUG => 0;
-use constant UTF8 => 'UTF-8';
 
-# This hash contains aliases for common character sets. Useful for mapping.
+# Map some useful aliases.
+define_alias JIS           => 'ISO-2022-JP';
+define_alias 'X-EUC-JP'    => 'ISO-2022-JP';
+define_alias 'SHIFT-JIS'   => 'SJIS';
+define_alias 'X-SHIFT-JIS' => 'SJIS';
+define_alias 'X-SJIS'      => 'SJIS';
 
-our $CHARSET_ALIASES =  {
-	'JIS' => 'ISO-2022-JP',
-	'X-EUC-JP'=> 'ISO-2022-JP',
-	'SHIFT-JIS' => 'SJIS',
-	'X-SHIFT-JIS' => 'SJIS',
-	'X-SJIS' => 'SJIS'
-};
-
+sub _convert;
 
 ################################################################################
 # Fields
-################################################################################
-# Public Class Fields
-
-################################################################################
-# Private Class Fields
-
-################################################################################
-
 ################################################################################
 # Instance Fields
 BEGIN {
@@ -98,8 +81,6 @@ BEGIN {
 
 			 # Private Fields
 			 _charset => Bric::FIELD_NONE,
-			 _to_utf8_converter => Bric::FIELD_NONE,
-			 _from_utf8_converter => Bric::FIELD_NONE
 			});
 }
 
@@ -123,6 +104,10 @@ B<Throws:>
 
 Unspecified charset
 
+=item *
+
+Unknown charset
+
 =back
 
 B<Side Effects:>
@@ -132,15 +117,9 @@ B<Notes:> Use new() to get a working CharTrans object.
 =cut
 
 sub new {
-    my ($pkg, $args) = @_;
+    my $pkg = shift;
     my $self = bless {}, ref $pkg || $pkg;
-
-    my $charset  = $args;
-    throw_gen(error => "Unspecified charset") unless ($charset);
-
-    $self->charset($charset);
-
-    return $self;
+    $self->charset(shift);
 }
 
 ################################################################################
@@ -155,189 +134,120 @@ None.
 
 =over 4
 
-=item my $utf8_text = $chartrans->to_utf8($somedata, $options);
+=item my $charset = $chartrans->charset;
 
-to_utf8() operates in one of two ways.
-
-If passed a scalar value it returns utf8 text corresponding to text
-in $sometext that is encoded in the target character set.
-
-If passed a reference it will recursively process the data within and 
-convert it all to UTF-8
-
-$options may contains localized overrides in the future...
-
-
-B<Throws:> error on text that does not correspond to the specified input text.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut 
-
-sub to_utf8 {
-    my ($self, $in, $options) = @_;
-    
-    return(undef) unless(defined($in));
-
-    my $in_ptr;
-    my $out_ptr;
-
-    if (my $in_type = ref($in)) {
-	if ($in_type eq 'SCALAR') {
-	    $in_ptr = $in;
-	    $out_ptr = $in;
-	} elsif ($in_type eq 'ARRAY') {
-	    # recurse through the array elements..
-
-	    foreach my $idx (0..(scalar(@{$in})-1)) {
-		if (ref(@{$in}[$idx])) {
-		    $self->to_utf8(@{$in}[$idx]);
-		} else {
-		    $self->to_utf8(\@{$in}[$idx]);
-		}
-	    }
-	    
-	    return;
-	} elsif ($in_type eq 'HASH') {
-	    foreach my $k (keys(%{$in})) {
-		if (ref($in->{$k})) {
-		    $self->to_utf8($in->{$k});
-		} else {
-		    $self->to_utf8(\$in->{$k});
-		}
-	    }
-	    return;
-	}
-	
-    } else {
-	my $storage;
-	$in_ptr = \$in;
-	$out_ptr = \$storage;
-    }
-    
-    my $converter = $self->{_to_utf8_converter};
-    return($$out_ptr = $converter->convert($$in_ptr));
-}
-
-
-
-=item my $target_text = $chartrans->from_utf8($utf8_text);
-
-Returns utf8 text corresponding to text in $sometext
-
-from_utf8() operates in one of two ways.
-
-If passed a scalar value it returns native charset text corresponding to utf-8 
-text in $utf8_text.
-
-If passed a reference it will recursively process the data within and 
-convert it all to the target character set.
-
-
-Silently returns undef if passed undef.
-
-B<Throws:> error on text that does not correspond to the specified input text.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut 
-
-sub from_utf8 {
-     my ($self, $in, $options) = @_;
-     return(undef) unless(defined($in));
-
-     my $in_ptr;
-     my $out_ptr;
-
-     if (my $in_type = ref($in)) {
-	 if ($in_type eq 'SCALAR') {
-	     $in_ptr = $in;
-	     $out_ptr = $in;
-	 }
-     } else {
-	 my $storage;
-	 $in_ptr = \$in;
-	 $out_ptr = \$storage;
-     }
-
-    return('') unless(defined($$in_ptr));
-
-     my $converter =  $self->{_from_utf8_converter};
-     return($$out_ptr = $converter->convert($$in_ptr));
-}
-
-
-
-=item my $charset = $chartrans->charset(<$new_charset>);
+=item $chartrans = $chartrans->charset($new_charset);
 
 Gets the current target character set in use.
 
 Optionally sets the current character set.
 
-B<Throws:> error on bad character set / utf8 combinations.
+B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=cut 
+=cut
 
 sub charset {
+    my $self = shift;
+    return $self->{_charset} unless @_;
 
-    my ($self, $new_charset) = @_;
+    my $charset = shift;
+    throw_gen "Unspecified character set" unless $charset;
+    # getEncoding is undocumented, but very useful. It's in the Encode test
+    # suite.
+    throw_gen "Invalid character set" unless Encode->getEncoding($charset);
 
-
-    return ($self->{'_charset'}) unless ($new_charset);
-
-    $new_charset = uc($new_charset);
-
-    if ($CHARSET_ALIASES->{$new_charset}) {
-    	$new_charset = $CHARSET_ALIASES->{$new_charset};
-    }
-
-
-    # Set up the to/from utf converters, store them in the class.  This
-    # also returns the validity of the conversion object right away..
-
-    eval {
-        my $cvt = Text::Iconv->new($new_charset, UTF8);
-        $cvt->raise_error(1);
-        $self->{'_to_utf8_converter'} = $cvt;
-    };
-
-    rethrow_exception($@) if $@;
-
-    eval {
-        my $cvt = Text::Iconv->new(UTF8, $new_charset);
-        $cvt->raise_error(1);
-        $self->{'_from_utf8_converter'} = $cvt;
-    };
-    rethrow_exception($@) if $@;
-
-    $self->{'_charset'} = $new_charset;
-
-    return($self->{'_charset'});
+    $self->{_charset} = $charset;
+    return $self;
 }
 
-=back
+##############################################################################
 
-=head1 PRIVATE
+=item $chartrans = $chartrans->to_utf8($somedata);
 
-=head2 Private Class Methods
+Performs an in-place conversion of the data in C<$somedata> from the character
+set specified via C<charset()> to UTF-8. References to SCALARs, ARRAYs, and
+HASHes will be recursively processed and their data replaced.
 
-NONE.
+B<Throws:> NONE.
 
-=head2 Private Instance Methods
+B<Side Effects:> NONE.
 
-NONE.
+B<Notes:> NONE.
 
-=head2 Private Functions
+=cut
 
-NONE.
+sub to_utf8 {
+    my $self = shift;
+    return $self unless defined $_[0];
+    _convert shift, $self->charset, 'utf8';
+    return $self;
+}
+
+
+
+##############################################################################
+
+=item my $target_text = $chartrans->from_utf8($utf8_text);
+
+Performs an in-place conversion of the UTF-8 data in C<$utf8_text> to the
+character set specified via C<charset()>. References to SCALARs, ARRAYs, and
+HASHes will be recursively processed and their data replaced.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub from_utf8 {
+    my $self = shift;
+    return $self unless defined $_[0];
+    _convert shift, 'utf8', $self->charset;
+    return $self;
+}
+
+##############################################################################
+# Private Functions.
+
+=begin private
+
+=item _convert
+
+  _convert $string, $from, $to;
+
+Converts C<$string> in-place from character set C<$from> to character set
+C<$to>. This is the function that does most of the work for C<to_utf8()> and
+C<from_utf8()>, in that it handles recursive conversion of all of the strings
+of a data structure.
+
+=cut
+
+sub _convert {
+    if (my $ref = ref $_[0]) {
+        my $in = shift;
+        if ($ref eq 'SCALAR') {
+            return from_to($$in, $_[0], $_[1]);
+        } elsif ($ref eq 'ARRAY') {
+            # Recurse through the array elements.
+            _convert($_, @_) for @$in;
+        } elsif ($ref eq 'HASH') {
+            # Recurse through the hash values.
+            _convert($_, @_) for values %$in;
+        } else {
+            # Do nothing.
+        }
+    } else {
+        return from_to(shift, $_[0], $_[1]);
+    }
+}
+
+=end private
 
 =cut
 
@@ -355,7 +265,6 @@ Paul Lindner <lindner@inuus.com>
 =head1 SEE ALSO
 
 L<Bric|Bric>,
-L<Text::Iconv|Text::Iconv>
+L<Encode|Encode>
 
 =cut
-

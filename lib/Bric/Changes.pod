@@ -176,6 +176,14 @@ Bric::Biz::Asset::Business::Story and Bric::Biz::Asset::Business::Media to
 return a lisdt of story or media documents associated with a given
 contributor. [David]
 
+=item *
+
+Switched Bric::Util::CharTrans from using Text::Iconv to Encode, thus removing
+the dependency on a C library (libiconv). Note that this changed the API of
+Bric::Util::CharTrans. Its C<to_utf8()> and C<from_utf8()> methods now always
+convert the argument passed in in place. They did this before for references,
+but now they do it for plain strings, as well. [Scott & David]
+
 =back
 
 =head2 Bug Fixes

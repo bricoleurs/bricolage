@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.116 $
+$Revision: 1.117 $
 
 =head1 DATE
 
-$Date: 2003-09-12 05:13:54 $
+$Date: 2003-09-16 03:47:11 $
 
 =head1 DESCRIPTION
 
@@ -151,10 +151,6 @@ to keep the interface basically the same as it is now.
 
 The installation system should allow the PostgreSQL database to exist on a
 separarate machine. Currently only a local database will work.
-
-=item *
-
-Replace use of Text::Iconv with Encode?
 
 =item *
 

@@ -19,15 +19,14 @@ BEGIN {
                 my $self = shift;
 
                 # Translate chars if non-UTF8 (see also Handler.pm)
-                my $args = $self->params;
-                eval { $ct->to_utf8($args) };
+                eval { $ct->to_utf8($self->params) };
                 if ($@) {
                     if (isa_bric_exception($@)) {
                         rethrow_exception($@);
                     } else {
-                        throw_dp error => 'Error translating from ' . CHAR_SET .
-                          ' to UTF-8.',
-                            payload => $@;
+                        throw_dp error => 'Error translating from ' .
+                                          $ct->charset . ' to UTF-8.',
+                            payload    => $@;
                     }
                 }
             }
