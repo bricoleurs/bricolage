@@ -38,15 +38,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-11 22:24:30 $
+$Date: 2002-02-11 23:16:57 $
 
 =head1 SYNOPSIS
 
@@ -575,16 +575,19 @@ create().
 sub _load_media {
     my ($pkg, $args) = @_;
     my $document = $args->{document};
+    my $data     = $args->{data};
     my %to_update = map { $_ => 1 } @{$args->{update_ids}};
 
     # parse and catch erros
-    my $data;
-    eval { $data = parse_asset_document($document) };
-    die __PACKAGE__ . " : problem parsing asset document : $@\n"
-      if $@;
-    die __PACKAGE__ . " : problem parsing asset document : no media found!\n"
-	unless ref $data and ref $data eq 'HASH' and exists $data->{media};
-    print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+    unless ($data) {
+	eval { $data = parse_asset_document($document) };
+	die __PACKAGE__ . " : problem parsing asset document : $@\n"
+	    if $@;
+	die __PACKAGE__ . 
+	    " : problem parsing asset document : no media found!\n"
+		unless ref $data and ref $data eq 'HASH' and exists $data->{media};
+	print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+    }
 
     # loop over media, filling in @media_ids
     my @media_ids;
@@ -771,7 +774,11 @@ sub _load_media {
 	push(@media_ids, $media->get_id);
     }
 
-    return name(ids => [ map { name(id => $_) } @media_ids ]);
+    # return a SOAP structure unless this is an internal call
+    unless ($args->{internal}) {
+	return name(ids => [ map { name(id => $_) } @media_ids ]);
+    }
+    return @media_ids;
 }
 
 

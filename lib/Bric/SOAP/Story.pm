@@ -38,15 +38,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-11 22:24:30 $
+$Date: 2002-02-11 23:16:57 $
 
 =head1 SYNOPSIS
 
@@ -872,17 +872,53 @@ sub _load_stories {
 	push(@story_ids, $story_ids{$id} = $story->get_id);
     }
 
+    # if we have any media objects, create them
+    my %media_ids;
+    if ($data->{media}) {	
+	my @media_ids = Bric::SOAP::Media->_load_media({ data       => $data,
+							 internal   => 1,
+							 upload_ids => []    });
+
+	# correlate to relative ids
+	for (0 .. $#media_ids) {
+	    $media_ids{$data->{media}[$_]{id}} = $media_ids[$_];
+	}	
+    }
+
     # resolve relations
-    # FIX: more checking here would be nice
     foreach my $r (@relations) {
-	if (defined $r->{story_id}) {
-	    if ($r->{relative}) {
-		$r->{container}->set_related_instance_id($story_ids{$r->{story_id}});
+	if ($r->{relative}) {
+	    # handle relative links
+	    if ($r->{story_id}) {
+		die __PACKAGE__ . 
+		    " : Unable to find related story by relative id ". 
+			"\"$r->{story_id}\""
+			    unless exists $story_ids{$r->{story_id}};
+		$r->{container}->
+		    set_related_instance_id($story_ids{$r->{story_id}});
 	    } else {
-		$r->{container}->set_related_instance_id($r->{story_id});
+		die __PACKAGE__ . 
+		    " : Unable to find related media by relative id ". 
+			"\"$r->{media_id}\""
+			    unless exists $media_ids{$r->{media_id}};
+		$r->{container}->
+		    set_related_media($media_ids{$r->{media_id}});
 	    }
 	} else {
-	    # FIX: do related media stuff when Bric::SOAP::Media is done
+	    # handle absolute links
+	    if ($r->{story_id}) {
+		die __PACKAGE__ . " : related story_id \"$r->{story_id}\" ".
+		    "not found.\n"
+			unless Bric::Biz::Asset::Business::Story->lookup(
+                                                  {id => $r->{story_id}});
+		$r->{container}->set_related_instance_id($r->{story_id});
+	    } else {
+		die __PACKAGE__ . " : related media_id \"$r->{media_id}\" ".
+		    "not found.\n"
+			unless Bric::Biz::Asset::Business::Media->lookup(
+                                                  {id => $r->{media_id}});
+		$r->{container}->set_related_media($r->{media_id});
+	    }
 	}
 	$r->{container}->save;
     }
