@@ -54,38 +54,38 @@ do {
     my @names = ('NameVirtualHost ' . NAME_VHOST . ':' . LISTEN_PORT);
     # Set up the basic configuration.
     my @config = (
-        'DocumentRoot        ' . MASON_COMP_ROOT->[0][1],
-        'ServerName          ' . VHOST_SERVER_NAME,
-        'DefaultType         "text/html; charset=' . lc CHAR_SET . '"',
-        'AddDefaultCharset   ' . lc CHAR_SET,
-        'SetHandler          perl-script',
-        'PerlHandler         Bric::App::Handler',
-        'PerlAccessHandler   Bric::App::AccessHandler',
-        'PerlCleanupHandler  Bric::App::CleanupHandler',
-        'RedirectMatch       '.
+        '  DocumentRoot           ' . MASON_COMP_ROOT->[0][1],
+        '  ServerName             ' . VHOST_SERVER_NAME,
+        '  DefaultType            "text/html; charset=' . lc CHAR_SET . '"',
+        '  AddDefaultCharset      ' . lc CHAR_SET,
+        '  SetHandler             perl-script',
+        '  PerlHandler            Bric::App::Handler',
+        '  PerlAccessHandler      Bric::App::AccessHandler',
+        '  PerlCleanupHandler     Bric::App::CleanupHandler',
+        '  RedirectMatch          '.
           'permanent .*\/favicon\.ico$ /media/images/favicon.ico',
     );
 
     # Setup Apache::DB handler if debugging
-    push @config, 'PerlFixupHandler    Apache::DB' if DEBUGGING;
+    push @config, '  PerlFixupHandler       Apache::DB' if DEBUGGING;
 
     # see Apache::SizeLimit manpage
-    push @config, 'PerlFixupHandler    Apache::SizeLimit'
+    push @config, '  PerlFixupHandler       Apache::SizeLimit'
       if CHECK_PROCESS_SIZE;
 
     # This will slow down every request; thus we recommend that previews
     # not be local.
     push @config,
-      'PerlTransHandler    Bric::App::PreviewHandler::uri_handler'
+      '  PerlTransHandler       Bric::App::PreviewHandler::uri_handler'
       if PREVIEW_LOCAL;
 
     # This URI will handle logging users out.
-    my @locs = (<<"    EOF");
-      <Location /logout>
-        PerlAccessHandler  Bric::App::AccessHandler::logout_handler
-        PerlCleanupHandler Bric::App::CleanupHandler
-      </Location>
-    EOF
+    my @locs = (
+        "  <Location /logout>\n" .
+        "    PerlAccessHandler   Bric::App::AccessHandler::logout_handler\n" .
+        "    PerlCleanupHandler  Bric::App::CleanupHandler\n" .
+        "  </Location>"
+    );
 
     # Mask off Apache::DB handler if debugging - the debugger
     # seems to cause problems for login for some reason.  With the
@@ -93,74 +93,67 @@ do {
     # after login goes to the debugger's STDOUT instead of the
     # browser!
     my $fix = DEBUGGING
-      ? "\n        PerlFixupHandler Apache::OK"
+      ? "\n    PerlFixupHandler    Apache::OK"
       : '';
 
     # This URI will handle logging users in.
-    push @locs, <<"    EOF";
-      <Location /login>
-        SetHandler         perl-script
-        PerlAccessHandler  Bric::App::AccessHandler::okay
-        PerlHandler        Bric::App::Handler
-        PerlCleanupHandler Bric::App::CleanupHandler$fix
-      </Location>
-    EOF
+    push @locs,
+      "  <Location /login>\n" .
+      "    SetHandler          perl-script\n" .
+      "    PerlAccessHandler   Bric::App::AccessHandler::okay\n" .
+      "    PerlHandler         Bric::App::Handler\n" .
+      "    PerlCleanupHandler  Bric::App::CleanupHandler$fix\n" .
+      "  </Location>";
 
-    # We might need this for SSL configuration.
+    # We might need to change this for SSL configuration.
     my $loginref = \$locs[-1];
 
     # This URI will handle all non-Mason stuff that we server (graphics, etc.).
-    push @locs, <<"    EOF";
-      <Location /media>
-        SetHandler         default-handler
-        PerlAccessHandler  Apache::OK
-        PerlCleanupHandler Apache::OK$fix
-      </Location>
-    EOF
+    push @locs,
+      "  <Location /media>\n" .
+      "    SetHandler          default-handler\n" .
+      "    PerlAccessHandler   Apache::OK\n" .
+      "    PerlCleanupHandler  Apache::OK$fix\n" .
+      "  </Location>";
 
     # Force JavaScript to the proper MIME type and always use Unicode.
-    push @locs, <<"    EOF";
-      <Location /media/js>
-        ForceType          "application/x-javascript; charset=utf-8"
-      </Location>
-    EOF
+    push @locs,
+      "  <Location /media/js>\n" .
+      "    ForceType           \"application/x-javascript; charset=utf-8\"\n" .
+      "  </Location>";
 
     # This will serve media assets and previews.
-    push @locs, <<"    EOF";
-      <Location /data>
-        SetHandler         default-handler
-      </Location>
-    EOF
+    push @locs,
+      "  <Location /data>\n" .
+      "    SetHandler          default-handler\n" .
+      "  </Location>";
 
     # This will run the SOAP server.
-    push @locs, <<"    EOF";
-      <Location /soap>
-        SetHandler         perl-script
-        PerlHandler        Bric::SOAP::Handler
-        PerlAccessHandler  Apache::OK
-      </Location>
-    EOF
+    push @locs,
+      "  <Location /soap>\n" .
+      "    SetHandler          perl-script\n" .
+      "    PerlHandler         Bric::SOAP::Handler\n" .
+      "   PerlAccessHandler    Apache::OK\n" .
+      "  </Location>";
 
     if (ENABLE_DIST) {
-        push @locs, <<"        EOF";
-          <Location /dist>
-            SetHandler         perl-script
-            PerlHandler        Bric::Dist::Handler
-          </Location>
-        EOF
+        push @locs,
+          "  <Location /dist>\n" .
+          "    SetHandler          perl-script\n" .
+          "    PerlHandler         Bric::Dist::Handler\n" .
+          "  </Location>";
     }
 
     if (QA_MODE) {
         # Turn on Perl warnings and run Apache::Status.
-        push @config, 'PerlWarn            On';
-        push @locs, <<"        EOF";
-          <Location /dist>
-            SetHandler         perl-script
-            PerlHandler        Apache::Status
-            PerlAccessHandler  Apache::OK
-            PerlCleanupHandler Apache::OK$fix
-          </Location>
-        EOF
+        push @config, '  PerlWarn               On';
+        push @locs,
+          "  <Location /dist>\n" .
+          "    SetHandler          perl-script\n" .
+          "    PerlHandler         Apache::Status\n" .
+          "    PerlAccessHandler   Apache::OK\n" .
+          "    PerlCleanupHandler  Apache::OK$fix\n" .
+          "  </Location>";
     }
 
     if (PREVIEW_LOCAL) {
@@ -168,76 +161,73 @@ do {
         if (PREVIEW_MASON) {
             # We need to take some special steps to ensure that Mason properly
             # handles the request.
-            push @locs, <<"            EOF";
-              <Location $prev_loc>
-                SetHandler       perl-script
-                PerlFixupHandler Bric::App::PreviewHandler::fixup_handler
-                PerlHandler      Bric::App::Handler
-              </Location>
-            EOF
+            push @locs,
+              "  <Location $prev_loc>\n" .
+              "    SetHandler          perl-script\n" .
+              "    PerlFixupHandler    Bric::App::PreviewHandler::fixup_handler\n" .
+              "    PerlHandler         Bric::App::Handler\n" .
+              "  </Location>";
         } else {
             # This will ensure that the documents are not cached by the browser, so
             # that the preview will always serve the most recently burned file.
-            push @locs, <<"            EOF";
-              <Location $prev_loc>
-                PerlFixupHandler "sub { \$_[0]->no_cache(1); return Apache::OK; }"
-              </Location>
-            EOF
+            push @locs,
+              "  <Location $prev_loc>\n" .
+              "    PerlFixupHandler    " .
+                   qq{"sub { \$_[0]->no_cache(1); return Apache::OK; }"\n} .
+              "  </Location>";
         }
     }
 
     my @sections = (
-        "<VirtualHost "
-          . NAME_VHOST . ':' . LISTEN_PORT . ">",
-        @config, @locs,
+        "<VirtualHost " . NAME_VHOST . ':' . LISTEN_PORT . ">",
+          @config, @locs,
         '</VirtualHost>'
     );
 
     if (SSL_ENABLE) {
         push @names, 'NameVirtualHost ' . NAME_VHOST . ':' . SSL_PORT;
         push @config,
-            'SSLCertificateFile     ' . SSL_CERTIFICATE_FILE,
-            'SSLCertificateKeyFile  ' . SSL_CERTIFICATE_KEY_FILE;
+            '  SSLCertificateFile     ' . SSL_CERTIFICATE_FILE,
+            '  SSLCertificateKeyFile  ' . SSL_CERTIFICATE_KEY_FILE;
 
         # Replace the login location.
-        $loginref = <<"        EOF";
-          <Location /login>
-            SetHandler         perl-script
-            PerlAccessHandler  Bric::App::AccessHandler::okay
-            PerlHandler        Bric::App::Handler
-            PerlCleanupHandler Bric::App::CleanupHandler
-          </Location>
-        EOF
+        $loginref =
+          "<Location /login>\n" .
+          "    SetHandler         perl-script\n" .
+          "    PerlAccessHandler  Bric::App::AccessHandler::okay\n" .
+          "    PerlHandler        Bric::App::Handler\n" .
+          "    PerlCleanupHandler Bric::App::CleanupHandler\n" .
+          "  </Location>";
 
         # Apache::ReadConfig does not handle <IfModule>
         if (MANUAL_APACHE) {
             if (SSL_ENABLE eq 'apache_ssl') {
                 push @config,
-                  'SSLEnable',
-                  'SSLRequireSSL',
-                  'SSLVerifyClient   0',
-                  'SSLVerifyDepth    10';
+                  '  SSLEnable',
+                  '  SSLRequireSSL',
+                  '  SSLVerifyClient        0',
+                  '  SSLVerifyDepth         10';
             } else {
                 # is mod_ssl
-                push @config, 'SSLEngine      On';
+                push @config, '  SSLEngine              On';
             }
         } else {
-            push @config, <<"            EOF";
-              <IfModule mod_ssl.c>
-                SSLEngine On
-              </IfModule>
-              <IfModule apache_ssl.c>
-                SSLEnable
-                SSLVerifyClient 0,
-                SSLVerifyDepth  10,
-                SSLRequireSSL
-              </IfModule>
-            EOF
+            push @config,
+              "  <IfModule mod_ssl.c>\n" .
+              "    SSLEngine           On\n" .
+              "  </IfModule>\n" .
+              "  <IfModule apache_ssl.c>\n" .
+              "    SSLEnable\n" .
+              "    SSLVerifyClient     0\n" .
+              "    SSLVerifyDepth      10\n" .
+              "    SSLRequireSSL\n" .
+              "  </IfModule>";
         }
 
-        push @sections, "<VirtualHost " . NAME_VHOST . ':' . SSL_PORT . ">",
-          @config, @locs,
-      '</VirtualHost>';
+        push @sections,
+          "<VirtualHost " . NAME_VHOST . ':' . SSL_PORT . ">",
+            @config, @locs,
+          '</VirtualHost>';
     }
 
     if (MANUAL_APACHE) {
