@@ -61,6 +61,12 @@ as I had thought. Reported by Kevin Elliott. [David]
 Vastly improved the speed of the query that lists events, and added an index
 to help it along, as well. [Mark]
 
+=item *
+
+The list of categories associated with a story is now presented in
+alphabetical order by URI in the story profile. Suggested by Geoff
+Richards. [David]
+
 =back
 
 =head1 VERSION 1.6.4 (2003-08-12)

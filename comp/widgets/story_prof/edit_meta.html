@@ -198,7 +198,7 @@ my $cats = $story->get_categories;
 
 % # BEGIN FOREACH CAT
 % my $curr_cats = {};
-% foreach (@cat) {
+% foreach (sort { $a->get_uri cmp $b->get_uri } @cat) {
 %     my $cat_id = $_->get_id;
 %     $curr_cats->{$cat_id} = 1;
   <tr>
