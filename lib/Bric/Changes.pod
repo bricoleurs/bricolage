@@ -86,7 +86,7 @@ confused about the date style Bricolage is using. Suggested by Chris Riddoch.
 Users without EDIT access to the start desk in a workflow can no longer create
 assets in that workflow. Nor can they check out assets from the library, as
 there's no start desk for them to check them in to. But they can still check
-them out from other desks that they have EDIT access, to. Reported by Rachel
+them out from other desks that they have EDIT access to. Reported by Rachel
 Murray. [David]
 
 =back
