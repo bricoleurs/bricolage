@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.10.2.2 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-06-09 20:26:19 $
+$Date: 2003-08-14 21:32:38 $
 
 =head1 DESCRIPTION
 
@@ -578,7 +578,7 @@ sub _get_cats {
   return $CATS if $CATS;
 
   my ($category_id, $directory, $parent_id);
-  my $sth = prepare('SELECT id, directory, parent_id FROM Category');
+  my $sth = prepare_c('SELECT id, directory, parent_id FROM Category', undef);
   $sth->execute();
   $sth->bind_columns(\$category_id, \$directory, \$parent_id);
 
@@ -588,7 +588,7 @@ sub _get_cats {
     $CATS->{$category_id}{parent_id} = $parent_id;
 
     # build reverse mapping children->parents
-    if (defined $parent_id) {      
+    if (defined $parent_id) {
       if (exists $CATS->{children}{$parent_id}) {
         push(@{$CATS->{children}{$parent_id}}, $category_id);
       } else {
