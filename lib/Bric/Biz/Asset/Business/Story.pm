@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-23 06:57:01 $
+$Date: 2003-04-01 04:57:26 $
 
 =head1 SYNOPSIS
 
@@ -352,7 +352,8 @@ use constant PARAM_WHERE_MAP =>
       _checked_in_or_out     => 'i.checked_out = '
                               . '( SELECT max(checked_out) '
                               . 'FROM story_instance '
-                              . 'WHERE version = i.version )',
+                              . 'WHERE version = i.version '
+                              . 'AND story__id = s.id )',
       _checked_out           => 'i.checked_out = ?',
       primary_oc_id          => 'i.primary_oc__id = ?',
       category_id            => 'i.id = sc2.story_instance__id AND '
@@ -365,6 +366,7 @@ use constant PARAM_WHERE_MAP =>
                               . 'LOWER(k.name) LIKE LOWER(?)',
       _no_return_versions    => 's.current_version = i.version',
       grp_id                 => 'm2.grp__id = ? AND '
+                              . 'm2.active = 1 AND '
                               . 'sm2.member__id = m2.id AND '
                               . 's.id = sm2.object_id',
       simple                 => '( LOWER(k.name) LIKE LOWER(?) OR '
@@ -521,6 +523,8 @@ sub new {
     $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
     delete $init->{'active'};
     $init->{priority} ||= 3;
+    $init->{_queried_cats} = 1;
+    $init->{_categories} = {};
     $init->{name} = delete $init->{title} if exists $init->{title};
     $self->SUPER::new($init);
 }
@@ -1197,23 +1201,11 @@ sub get_categories {
     my ($self) = @_;
     my $cats = $self->_get_categories();
     my @all;
-    my $reset;
     foreach my $c_id (keys %$cats) {
-        next if $cats->{$c_id}->{'action'}
-          && $cats->{$c_id}->{'action'} eq 'delete';
-        if ($cats->{$c_id}->{'object'} ){
-            push @all, $cats->{$c_id}->{'object'};
-        } else {
-            my $cat = Bric::Biz::Category->lookup({ id => $c_id });
-            $cats->{$c_id}->{'object'} = $cat;
-            $reset = 1;
-            push @all, $cat;
-        }
-    }
-    if ($reset) {
-        my $dirty = $self->_get__dirty();
-        $self->_set({ '_categories' => $cats });
-        $self->_set__dirty($dirty);
+        next if $cats->{$c_id}->{action} and
+          $cats->{$c_id}->{action} eq 'delete';
+        push @all, $cats->{$c_id}->{object} ||=
+          Bric::Biz::Category->lookup({ id => $c_id });
     }
     return wantarray ? @all : \@all;
 }
@@ -1854,7 +1846,6 @@ NONE
 sub _get_categories {
     my ($self) = @_;
     my ($cats, $queried) = $self->_get('_categories', '_queried_cats');
-
     unless ($queried) {
         my $dirty = $self->_get__dirty();
         my $sql = 'SELECT category__id, main '.
@@ -1868,8 +1859,7 @@ sub _get_categories {
         }
 
         # Write this back in case it has not yet been defined.
-        $self->_set( { '_categories' => $cats,
-                       '_queried_cats' => 1 });
+        $self->_set([qw(_categories _queried_cats)] => [$cats, 1]);
         $self->_set__dirty($dirty);
     }
     return $cats;

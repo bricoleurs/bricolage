@@ -57,7 +57,8 @@ sub test_list : Test(32) {
         $self->add_del_ids($wf->get_id);
         # Save the desk group IDs for deleting.
         $self->add_del_ids([$wf->get_all_desk_grp_id,
-                            $wf->get_req_desk_grp_id], 'grp');
+                            $wf->get_req_desk_grp_id,
+                            $wf->get_asset_grp_id], 'grp');
         $grp->add_member({ obj => $wf }) if $n % 2;
     }
 
@@ -140,7 +141,8 @@ sub test_list_ids : Test(25) {
         $self->add_del_ids($wf->get_id);
         # Save the desk group IDs for deleting.
         $self->add_del_ids([$wf->get_all_desk_grp_id,
-                            $wf->get_req_desk_grp_id], 'grp');
+                            $wf->get_req_desk_grp_id,
+                            $wf->get_asset_grp_id], 'grp');
         $grp->add_member({ obj => $wf }) if $n % 2;
     }
 

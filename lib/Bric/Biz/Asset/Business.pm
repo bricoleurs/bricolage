@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-30 18:34:20 $
+$Date: 2003-04-01 04:57:26 $
 
 =head1 SYNOPSIS
 
@@ -2053,25 +2053,38 @@ sub _init {
           unless @{$self->get_output_channels};
 
         if ($self->can('get_primary_category')) {
-            my $primary = 0;
+            # It's a story asset.
+            delete $init->{_categories};
             foreach my $cat ($alias_target->get_primary_category,
                              $alias_target->get_secondary_categories) {
 
                 my $new_cat = Bric::Biz::Category->lookup
-                  ({ uri => $cat->get_uri, site_id => $init->{site_id}});
-                if(!$new_cat && !$primary) {
-                    # Nothing found and this was the primary
-                    # use the site root
-                    $new_cat = Bric::Biz::Category->site_root_category
-                      ( $init->{site_id} );
-                } elsif(!$new_cat) {
-                    # Nothing found for secondary, skip it ?
-                    next;
-                }
+                  ({ uri => $cat->get_uri, site_id => $init->{site_id}})
+                    or next;
                 $self->add_categories([$new_cat]);
-                $self->set_primary_category($new_cat) unless($primary++);
+                $self->set_primary_category($new_cat);
+                last;
+            }
+            unless ($self->get_primary_category) {
+                # No equivalent category found. So use the root category.
+                my $new_cat = Bric::Biz::Category->site_root_category
+                  ( $init->{site_id} );
+                $self->add_categories([$new_cat]);
+                $self->set_primary_category($new_cat);
+            }
+        } else {
+            # It's a media asset.
+            my $cat = $alias_target->get_category_object;
+            if (my $new_cat = Bric::Biz::Category->lookup
+                ({ uri => $cat->get_uri, site_id => $init->{site_id}})) {
+                $self->set_category__id($new_cat->get_id);
+            } else {
+                my $new_cat_id = Bric::Biz::Category->site_root_category_id
+                  ( $init->{site_id} );
+                $self->set_category__id($new_cat_id);
             }
         }
+
         $self->_set(['slug'], [$alias_target->_get('slug')])
           if $alias_target->_get('slug');
 
@@ -2082,9 +2095,6 @@ sub _init {
           if $alias_target->_get('name');
 
         $self->_set(['element__id'], [$alias_target->_get('element__id')]);
-
-        $self->_set(['category__id'], [$alias_target->_get('category__id')])
-          if $alias_target->_get('category__id');
 
         # Copy the keywords.
 #        $self->save; # HACK!
@@ -2151,6 +2161,7 @@ sub _init {
                      @{$init}{qw(user__id element__id element site_id)},
                      [$init->{site_id}, $self->INSTANCE_GROUP_ID], 0]);
     }
+
     $self->_set__dirty;
 }
 

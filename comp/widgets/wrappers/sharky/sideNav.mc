@@ -81,7 +81,7 @@ unless ($workflows) {
                             [$_->get_asset_grp, $_->get_grp_ids] ]
                         } $w->allowed_desks;
         $tmp += scalar(@desks);
-        my @gids = ($w->get_all_desk_grp_id, $w->get_grp_ids);
+        my @gids = ($w->get_asset_grp_id, $w->get_grp_ids);
 
         my $wf = { type    => $w->get_type,
                    id      => $w->get_id,
@@ -459,10 +459,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =head1 DATE
 
-$Date: 2003-03-21 04:24:51 $
+$Date: 2003-04-01 04:57:25 $
 
 </%doc>

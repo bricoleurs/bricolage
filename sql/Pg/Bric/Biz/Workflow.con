@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-13 18:52:13 $
+-- $Date: 2003-04-01 04:57:26 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 
@@ -13,6 +13,22 @@ ALTER TABLE    workflow
 ADD CONSTRAINT fk_site__workflow__site__id FOREIGN KEY (site__id)
 REFERENCES     site(id) ON DELETE CASCADE;
 
+
+-- 
+-- TABLE: workflow
+--
+
+ALTER TABLE    workflow
+ADD CONSTRAINT fk_grp__workflow__all_desk_grp_id FOREIGN KEY (all_desk_grp_id)
+REFERENCES     grp(id) ON DELETE CASCADE;
+
+ALTER TABLE    workflow
+ADD CONSTRAINT fk_grp__workflow__req_desk_grp_id FOREIGN KEY (req_desk_grp_id)
+REFERENCES     grp(id) ON DELETE CASCADE;
+
+ALTER TABLE    workflow
+ADD CONSTRAINT fk_grp__workflow__asset_grp_id FOREIGN KEY (asset_grp_id)
+REFERENCES     grp(id) ON DELETE CASCADE;
 
 -- 
 -- TABLE: workflow_member

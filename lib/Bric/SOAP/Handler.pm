@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-07 16:34:42 $
+$Date: 2003-04-01 04:57:26 $
 
 =head1 SYNOPSIS
 
@@ -103,23 +103,20 @@ my $SERVER = SOAP::Transport::HTTP::Apache->dispatch_to(@{SOAP_CLASSES()});
 # setup serializer to pretty-print XML if debugging
 $SERVER->serializer->readable(1) if DEBUG;
 
-# setup routines to serialize Bric exceptions
-sub SOAP::Serializer::as_Bric__Util__Fault__Exception__GEN {
-    [ $_[2], $_[4], escape_html($_[1]->error_info) ];
-}
-sub SOAP::Serializer::as_Bric__Util__Fault__Exception__AP {
-    [ $_[2], $_[4], escape_html($_[1]->error_info) ];
-}
-sub SOAP::Serializer::as_Bric__Util__Fault__Exception__DP {
-    [ $_[2], $_[4], escape_html($_[1]->error_info) ];
-}
-sub SOAP::Serializer::as_Bric__Util__Fault__Exception__MNI {
-    [ $_[2], $_[4], escape_html($_[1]->error_info) ];
-}
-sub SOAP::Serializer::as_Bric__Util__Fault__Exception__DA {
-    [ $_[2], $_[4], escape_html($_[1]->error_info) ];
-}
+BEGIN {
+    # Setup routines to serialize Exception::Class-based exceptions. It needs
+    # to look like this (no, I'm not kidding):
+    # sub SOAP::Serializer::as_Bric__Util__Fault__Exception__GEN {
+    #     [ $_[2], $_[4], escape_html($_[1]->error) ];
+    # }
 
+    foreach my $ec (keys %Exception::Class::CLASSES) {
+        $ec =~ s/::/__/g;
+        eval qq{sub SOAP::Serializer::as_$ec {
+            [ \$_[2], \$_[4], escape_html(\$_[1]->error) ];
+        }};
+    }
+}
 
 my $commit = 1;
 my $apreq;

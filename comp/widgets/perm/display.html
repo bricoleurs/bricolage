@@ -36,7 +36,7 @@ if ($is_user) {
              ." access assets in these workflows.","&quot;$name&quot;"));
 
     foreach my $wf ($wf_pkg->list) {
-        my $gid = $wf->get_all_desk_grp_id;
+        my $gid = $wf->get_asset_grp_id;
 	my $grp = $dsk_grp_pkg->lookup({ id => $gid });
 	$m->comp($row_comp,
 		 grp => $grp,

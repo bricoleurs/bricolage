@@ -1,20 +1,29 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-13 18:52:14 $
+-- $Date: 2003-04-01 04:57:26 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
 
-INSERT INTO workflow (id, name, description, all_desk_grp_id, req_desk_grp_id,
-                      head_desk_id, type, active, site__id)
-VALUES (101, 'Story', 'Story Workflow', 41, 42, 101, 2, 1, 100);
+INSERT INTO workflow (id, name, description, asset_grp_id, all_desk_grp_id,
+                      req_desk_grp_id, head_desk_id, type, active, site__id)
+VALUES (101, 'Story', 'Story Workflow', 49, 41, 42, 101, 2, 1, 100);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (407, 25, 44, 1);
 
 INSERT INTO workflow_member(id, object_id, member__id)
 VALUES (1, 101, 407);
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES (49, NULL, 40, 'Workflow Assets', 'Assets group for workflow permissions', 1, 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (180, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (180, 49, 180);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
 VALUES (41, NULL, 40, 'All Workflow Desks', 'All desks available to a workflow', 1, 0, 1);
@@ -77,15 +86,24 @@ INSERT INTO desk_member(id, object_id, member__id)
 VALUES (107, 104, 207);
 
 
-INSERT INTO workflow (id, name, description, all_desk_grp_id, req_desk_grp_id,
-                      head_desk_id, type, active, site__id)
-VALUES (102, 'Media', 'Media Workflow', 43, 44, 105, 3, 1, 100);
+INSERT INTO workflow (id, name, description, asset_grp_id, all_desk_grp_id,
+                      req_desk_grp_id, head_desk_id, type, active, site__id)
+VALUES (102, 'Media', 'Media Workflow', 51, 43, 44, 105, 3, 1, 100);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (408, 25, 44, 1);
 
 INSERT INTO workflow_member(id, object_id, member__id)
 VALUES (2, 102, 408);
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES (51, NULL, 40, 'Workflow Assets', 'Assets group for workflow permissions', 1, 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (181, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (181, 51, 181);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
 VALUES (43, NULL, 40, 'All Workflow Desks', 'All desks available to a workflow', 1, 0, 1);
@@ -142,15 +160,24 @@ INSERT INTO desk_member(id, object_id, member__id)
 VALUES (113, 104, 213);
 
 
-INSERT INTO workflow (id, name, description, all_desk_grp_id, req_desk_grp_id,
-                      head_desk_id, type, active, site__id)
-VALUES (103, 'Template', 'Template Workflow', 45, 46, 106, 1, 1, 100);
+INSERT INTO workflow (id, name, description, asset_grp_id, all_desk_grp_id,
+                      req_desk_grp_id, head_desk_id, type, active, site__id)
+VALUES (103, 'Template', 'Template Workflow', 52, 45, 46, 106, 1, 1, 100);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (409, 25, 44, 1);
 
 INSERT INTO workflow_member(id, object_id, member__id)
 VALUES (3, 103, 409);
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES (52, NULL, 40, 'Workflow Assets', 'Assets group for workflow permissions', 1, 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (182, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (182, 52, 182);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
 VALUES (45, NULL, 40, 'All Workflow Desks', 'All desks available to a workflow', 1, 0, 1);

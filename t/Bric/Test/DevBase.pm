@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-18 00:01:22 $
+$Date: 2003-04-01 04:57:27 $
 
 =head1 SYNOPSIS
 
@@ -136,21 +136,35 @@ sub del_ids : Test(teardown => 0) {
     # Set up extra stuff it we need to delete any sites.
     _del_sites($to_delete) if $to_delete->{site};
 
-    while (my ($table, $ids) = each %$to_delete) {
-        # Delete from the table.
-        $ids = join ', ', @$ids;
-        Bric::Util::DBI::prepare(qq{
-            DELETE FROM $table
-            WHERE  id IN ($ids)
-        })->execute;
-
-        # Do extra stuff for grps.
-        if ($table eq 'grp') {
-            Bric::Util::DBI::prepare(qq{
-                DELETE FROM member
-                WHERE  grp__id IN ($ids)
-            })->execute;
+    # Delete assets, first.
+    foreach my $table (qw(story media formatting)) {
+        if (my $ids = delete $to_delete->{$table}) {
+            _do_deletes($table, $ids);
         }
+    }
+
+    # Now delete everything else.
+    while (my ($table, $ids) = each %$to_delete) {
+        _do_deletes($table, $ids);
+    }
+}
+
+sub _do_deletes {
+    my ($table, $ids) = @_;
+
+    # Delete from the table.
+    $ids = join ', ', @$ids;
+    Bric::Util::DBI::prepare(qq{
+        DELETE FROM $table
+        WHERE  id IN ($ids)
+    })->execute;
+
+    # Do extra stuff for grps.
+    if ($table eq 'grp') {
+        Bric::Util::DBI::prepare(qq{
+            DELETE FROM member
+            WHERE  grp__id IN ($ids)
+        })->execute;
     }
 }
 

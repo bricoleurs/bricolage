@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-30 18:34:20 $
+-- $Date: 2003-04-01 04:57:27 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -25,4 +25,3 @@ REFERENCES     media_type(id) ON DELETE CASCADE;
 ALTER TABLE    media_type_member
 ADD CONSTRAINT fk_member__media_type_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
-

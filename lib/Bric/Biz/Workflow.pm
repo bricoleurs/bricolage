@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:17 $
+$Date: 2003-04-01 04:57:26 $
 
 =head1 SYNOPSIS
 
@@ -103,6 +103,7 @@ my $get_em;
 #======================================#
 
 use constant DEBUG => 1;
+use constant ASSET_GRP_PKG => 'Bric::Util::Grp::Asset';
 use constant DESK_PKG => 'Bric::Biz::Workflow::Parts::Desk';
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Workflow';
 use constant INSTANCE_GROUP_ID => 25;
@@ -126,13 +127,14 @@ use constant WORKFLOW_TYPE_MAP => { &STORY_WORKFLOW => 'Story',
 # Private Class Fields
 my $meths;
 my $table = 'workflow';
-my @cols = qw(name description all_desk_grp_id head_desk_id req_desk_grp_id
-              type active site__id);
-my @props = qw(name description all_desk_grp_id head_desk_id req_desk_grp_id
-               type _active site_id);
+my @cols = qw(name description asset_grp_id all_desk_grp_id head_desk_id
+              req_desk_grp_id type active site__id);
+my @props = qw(name description asset_grp_id all_desk_grp_id head_desk_id
+               req_desk_grp_id type _active site_id);
 
-my $sel_cols = 'a.id, a.name, a.description, a.all_desk_grp_id, ' .
-  'a.head_desk_id, a.req_desk_grp_id, a.type, a.active, a.site__id, m.grp__id';
+my $sel_cols = 'a.id, a.name, a.description, a.asset_grp_id, ' .
+  'a.all_desk_grp_id, a.head_desk_id, a.req_desk_grp_id, a.type, a.active, ' .
+  'a.site__id, m.grp__id';
 my @sel_props = ('id', @props, 'grp_ids');
 
 my @ord = qw(name description type active site_id site);
@@ -146,6 +148,7 @@ BEGIN {
                          'id'                   => Bric::FIELD_READ,
                          'name'                 => Bric::FIELD_RDWR,
                          'description'          => Bric::FIELD_RDWR,
+                         'asset_grp_id'         => Bric::FIELD_READ,
                          'all_desk_grp_id'      => Bric::FIELD_READ,
                          'req_desk_grp_id'      => Bric::FIELD_READ,
                          'head_desk_id'         => Bric::FIELD_READ,
@@ -1258,9 +1261,17 @@ sub _get_req_desk_grp {
 
 sub _insert_workflow {
     my $self = shift;
-    my $nextval = next_key($table);
+
+    # Create a new asset group.
+    my $grp = Bric::Util::Grp::Asset->new
+      ({ name => 'Workflow Assets',
+         description => 'Assets group for workflow permissions' });
+    $grp->save;
+    $self->_set(['asset_grp_id'], [$grp->get_id]);
+
 
     # Create the insert statement.
+    my $nextval = next_key($table);
     my $ins = prepare_c(qq{
         INSERT INTO $table (id, ${\join(', ', @cols)})
         VALUES ($nextval, ${\join(', ', ('?') x @cols)})

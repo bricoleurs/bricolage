@@ -1,7 +1,7 @@
 package Bric::Biz::Asset::Business::Media::DevTest;
 use strict;
 use warnings;
-use base qw(Bric::Test::DevBase);
+use base qw(Bric::Biz::Asset::Business::DevTest);
 use Test::More;
 use Test::Exception;
 use Bric::Biz::Asset::Business::Media;
@@ -44,14 +44,8 @@ sub new_args {
       source__id    => 1,
       primary_oc_id => 1,
       site_id       => 100,
+      category__id  => 1
     )
-}
-
-##############################################################################
-# Constructs a new object.
-sub construct {
-    my $self = shift;
-    $self->class->new({ $self->new_args, @_ });
 }
 
 ##############################################################################
@@ -619,175 +613,6 @@ sub test_oc : Test(35) {
     ok( @ocs = $ba->get_output_channels, "Get OCs 4" );
     is( scalar @ocs, 1, "Check for 1 OC 4" );
     is( $ocs[0]->get_name, $ocname, "Check OC name 4" );
-}
-
-##############################################################################
-# Test media aliases
-##############################################################################
-
-sub test_alias : Test(28) {
-    my $self = shift;
-    throws_ok {
-        Bric::Biz::Asset::Business::Media->new({})
-      } qr/Cannot create an asset without an element or alias ID/,
-        "Check that you cannot create empty stories";
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Media->new(
-          { alias_id => 1, element__id => 1});
-    } qr/Cannot create an asset with both an element and an alias ID/,
-      "Check that you cannot create a media with both element__id and an ".
-      "alias";
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Media->new(
-          { alias_id => 1, element => 1});
-    } qr/Cannot create an asset with both an element and an alias ID/,
-      "Check that you cannot create a media with both element and an ".
-      "alias";
-
-
-    ok( my $media = Bric::Biz::Asset::Business::Media->new(
-      { element       => $self->get_elem,
-        user__id      => $self->user_id,
-        name          => 'MediaAlias',
-        file_name     => 'test.alias',
-        source__id    => 1,
-        primary_oc_id => 1,
-        site_id       => 100,
-      }), "Construct media" );
-
-
-    $media->set_category__id($CATEGORY->get_id());
-
-    ok( $media->save, "Save media" );
-
-
-    # Save the ID for cleanup.
-    ok( my $sid = $media->get_id, "Get ID" );
-    my $key = $self->class->key_name;
-    $self->add_del_ids([$sid], $key);
-
-    ok( $media = Bric::Biz::Asset::Business::Media->lookup
-        ({id => $media->get_id }), "Reload");
-
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Media->new(
-          { alias_id => $media->get_id })
-      } qr /Cannot create an asset without a site/,
-        "Check that you need the Site parameter";
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Media->new(
-          { alias_id => $media->get_id, site_id => 100 })
-      } qr /Cannot create an alias to an asset in the same site/,
-        "Check that you cannot create alias to a media in the same site";
-
-
-    # Create extra site
-    my $site1 = Bric::Biz::Site->new( { name => __PACKAGE__ . "1",
-                                        domain_name => __PACKAGE__ . "1",
-                                      });
-
-    ok( $site1->save(), "Create first dummy site");
-    my $site1_id = $site1->get_id;
-    $self->add_del_ids($site1_id, 'site');
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Media->new(
-          { alias_id => $media->get_id, site_id => $site1_id })
-      } qr/Cannot create an alias to an asset based on an element that is not associated with this site/,
-        "Check that a element needs to be associated with a site ".
-        "for a target to aliasable";
-
-    my $element = $media->_get_element_object();
-    $element->add_sites([$site1]);
-    $element->save();
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Media->new(
-          { alias_id => $media->get_id, site_id => $site1_id })
-      } qr /Cannot create an alias to this asset because this element has no output channels associated with this site/,
-        "Check that the element associated to alias target has any output ".
-        "channels for this site";
-
-    #Lets create an output channel here
-
-    # Add a new output channel.
-    ok( my $oc = Bric::Biz::OutputChannel->new({name    => __PACKAGE__ . "1",
-                                                site_id => $site1_id}),
-        "Create OC" );
-    ok( $oc->save, "Save OC" );
-    ok( my $ocid = $oc->get_id, "Get OC ID" );
-    $self->add_del_ids($ocid, 'output_channel');
-
-    $element->add_output_channels([$ocid]);
-    $element->set_primary_oc_id($ocid, $site1_id);
-    $element->save();
-
-
-
-    ok( my $alias_media = Bric::Biz::Asset::Business::Media->new(
-      { alias_id => $media->get_id, 
-        site_id  => $site1_id,
-        user__id => $self->user_id,
-      }),
-        "Create an alias media");
-
-    isnt($alias_media->_get_element_object,
-         undef, "Check that we get a element object");
-
-    is($alias_media->_get_element_object->get_id,
-       $media->_get_element_object->get_id,
-       "Check that alias_media has a element object");
-
-    ok( $alias_media->save , "Try to save it");
-    my $alias_id = $alias_media->get_id;
-    like($alias_id, qr/^\d+$/, "alias id should be a number");
-
-    ok( $alias_media = 
-        Bric::Biz::Asset::Business::Media->lookup
-        ( { id => $alias_id }),
-        "Refetch the alias");
-    isa_ok($alias_media, "Bric::Biz::Asset::Business::Media", "Checking that ".
-          "we got $alias_id back");
-#    sleep;
-    is($alias_media->get_alias_id, $media->get_id,
-       "Does it still point to the correct media");
-
-    is($alias_media->get_file_name, $media->get_file_name, "Check file_name");
-
-
-    is_deeply($media->get_tile, $alias_media->get_tile,
-              "Should get identical tiles");
-
-    is_deeply([$alias_media->get_all_keywords],
-              [$media->get_all_keywords],
-              "Check get_all_keywords");
-
-    is_deeply([$alias_media->get_keywords],
-              [$media->get_keywords],
-              "Check get_keywords");
-
-    is_deeply([$alias_media->get_contributors],
-              [$media->get_contributors],
-              "Check get_contributors");
-
-    $element->remove_sites([$site1]);
-    $element->save();
-
-
-    Bric::Util::DBI::prepare(qq{
-        DELETE FROM element__site
-        WHERE  site__id = $site1_id
-    })->execute;
-
-    Bric::Util::DBI::prepare(qq{
-        DELETE FROM media
-        WHERE  site__id = $site1_id
-    })->execute;
-
 }
 
 1;

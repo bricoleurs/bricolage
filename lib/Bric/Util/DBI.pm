@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-23 06:57:01 $
+$Date: 2003-04-01 04:57:26 $
 
 =head1 SYNOPSIS
 
@@ -777,8 +777,14 @@ sub clean_params {
     $param->{_checked_out} = $param->{checkout} if exists $param->{checkout};
     # this is last because it's most important for defining a workspace
     $param->{_checked_out} = 1 if defined $param->{user__id};
-    # finally the default
-    $param->{_checked_in_or_out} = 1 unless defined $param->{_checked_out};
+    if (defined $param->{_checked_out}) {
+        # Make sure we have a valid checkout value -- that is, no null string!
+        $param->{_checked_out} = 0 unless $param->{_checked_out};
+    } else {
+        # finally the default
+        $param->{_checked_in_or_out} = 1 unless defined $param->{_checked_out};
+    }
+
     # trim cruft
     delete $param->{checkout};
     delete $param->{checked_out};

@@ -39,11 +39,8 @@ if ($param->{delete}) {
     elsif (@ocs == 1 && defined $oc_id
 	   && $ocs[0] != $oc_id) { $used = 1 }
 
-    if ($used) {
-        add_msg($lang->maketext("The name [_1] is already used by " .
-                                "another $disp_name.", $name));
-        return;
-    }
+    add_msg($lang->maketext("The name [_1] is already used by another " .
+                            "$disp_name.", $name)) if $used;
 
     # Set the basic properties.
     $oc->set_description( $param->{description} );
@@ -109,7 +106,7 @@ if ($param->{delete}) {
 
 	$oc->save;
 	log_event('output_channel_save', $oc);
-        add_msg($lang->maketext("$disp_name profile [_1] saved.",$name));
+        add_msg($lang->maketext("$disp_name profile [_1] saved.", $name));
 	set_redirect('/admin/manager/output_channel');
     } else {
 	$oc->save;

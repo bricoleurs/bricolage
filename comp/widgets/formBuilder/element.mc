@@ -14,16 +14,13 @@ my %meta_props = ( disp => 'fb_disp',
 		   pos => 'fb_position'
 		 );
 </%once>
-
 <%args>
 $widget
 $param
 $field
 $obj
 </%args>
-
 <%perl>;
-
 return unless $field eq "$widget|save_cb"
   || $field eq "$widget|add_cb"
   || $field eq "$widget|save_n_stay_cb"
@@ -81,7 +78,8 @@ if ($param->{delete} &&
     $comp->set_burner($param->{burner}) if defined $param->{burner};
 
     # Determine the enabled output channels.
-    my %enabled = map { $_ => 1 } @{ mk_aref($param->{enabled}) };
+    my %enabled = map { $_ ? ( $_ => 1) : () } @{ mk_aref($param->{enabled}) },
+      $comp->get_primary_oc_id;
 
     # Set the primary output channel ID per site
     if (($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb") &&
@@ -123,7 +121,6 @@ if ($param->{delete} &&
             $comp->set_primary_oc_id($param->{"$widget|add_oc_id_cb"}, $siteid);
         }
     }
-
 
     # Update existing attributes. Get them from the Parts::Data class rather than from
     # $comp->get_data so that we can be sure to check for both active and inactive
@@ -245,8 +242,6 @@ if ($param->{delete} &&
         }
     }
 
-
-
     # Enable output channels.
     foreach my $oc ($comp->get_output_channels) {
         $enabled{$oc->get_id} ? $oc->set_enabled_on : $oc->set_enabled_off;
@@ -283,12 +278,9 @@ if ($param->{delete} &&
         }
     }
 
-
     # Save the element.
     $comp->save unless $no_save;
     $param->{element_id} = $comp->get_id;
-
-    
 
     my $containers = $comp->get_containers;
     if (($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb")
@@ -324,11 +316,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =head1 DATE
 
-$Date: 2003-03-21 05:14:59 $
+$Date: 2003-04-01 04:57:24 $
 
 =head1 SYNOPSIS
 
@@ -338,5 +330,7 @@ $Date: 2003-03-21 05:14:59 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the Element Profile page.
+
+=cut
 
 </%doc>

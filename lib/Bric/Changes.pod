@@ -36,6 +36,76 @@ default value in several administrative profiles. [David]
 
 =head1 VERSION 1.5.1
 
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+The default required length for usernames and passwords has been chnaged from
+6 to 5. This is to make dealing with the default "admin" login easier.
+
+=item *
+
+It is once again possible to delete elements when they are not associated with
+any story or media asset. [David]
+
+=item *
+
+The output channel profile once again only complains that the name of an
+output channel is already in use if it happens to be true. [David]
+
+=item *
+
+Bric::Config now does its best to find a workable F<httpd.conf> file when
+tests are begin run. [David]
+
+=item *
+
+Subclasses of Bric::Biz::Asset::Business::Media work again, and can have
+keywords associated with them, too. [David]
+
+
+=item *
+
+The "Acces Denied" message is back for when someone tries to access an object
+to which they don't have adequate permission. [David]
+
+=item *
+
+Previews of assets that are not checked out work again. [David]
+
+=item *
+
+Workfow and desk permissions relative to the assets they contain are now
+restored to their previous behavior. Desks no longer simply inherit the
+permission granted on any of the workflows they're in. This issue was resolved
+by creating a new secret asset group ID for each workflow. [David]
+
+=item *
+
+The primary output channel is now always enabled by default in elements. This
+is to make it much harder to create documents without output channel
+associations, an event that can lead to database exceptions. [David]
+
+=item *
+
+The root category now lists itself as being in the "All Categories" group once
+in the category profile. [David]
+
+=item *
+
+Assets will no longer appear to randomlly dissappear from workflow. [David]
+
+=item *
+
+Added constraints to the "media_type_member" group that were inadvertantly
+left out of 1.5.1. [David]
+
+=back
+
+=head1 VERSION 1.5.1
+
 =head2 New Features
 
 =over 4

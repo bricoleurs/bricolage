@@ -6,11 +6,11 @@ done.pl - installation script to give the user some final instructions
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-03-24 02:41:15 $
+$Date: 2003-04-01 04:57:25 $
 
 =head1 DESCRIPTION
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-23 06:57:00 $
+$Date: 2003-04-01 04:57:26 $
 
 =head1 SYNOPSIS
 
@@ -287,7 +287,8 @@ use constant PARAM_WHERE_MAP =>
       _checked_in_or_out    => 'i.checked_out = '
                              . '( SELECT max(checked_out) '
                              . 'FROM formatting_instance '
-                             . 'WHERE version = i.version )',
+                             . 'WHERE version = i.version '
+                             . 'AND formatting__id = f.id )',
       _checked_out          => 'i.checked_out = ?',
       category_id           => 'f.category__id = ?',
       category_uri          => 'f.category__id = c.id AND '

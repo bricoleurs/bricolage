@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.102 $
+$Revision: 1.103 $
 
 =head1 DATE
 
-$Date: 2003-03-24 02:41:15 $
+$Date: 2003-04-01 04:57:26 $
 
 =head1 DESCRIPTION
 
@@ -41,7 +41,7 @@ In the Bricolage source directory:
 
   perl Makefile.PL
   make
-  make tests
+  make test
 
 And then as root:
 
@@ -522,8 +522,8 @@ Finally, install Apache:
 
 =item *
 
-Don't forget to install the Apache::Session and Apache::libapreq perl
-modules now (See "Perl Modules," above).
+Don't forget to install the Apache::Session and Apache::Request perl modules
+now (See "Perl Modules," above).
 
 =back
 
@@ -534,13 +534,13 @@ And you're done! You can test the installation by calling
 =head2 PostgreSQL
 
 PostgreSQL is an integral part of Bricolage: it's where all of your assets are
-stored! Its installation is pretty straight-forward and typical, but it requires
-a number of extra steps that one might not expect. 
+stored! Its installation is pretty straight-forward and typical, but it
+requires a number of extra steps that one might not expect.
 
-If you're using Redhat Linux you may already have Postgres installed.
-If so, all you need to do to get it ready for use with Bricolage is
-edit your postgresql.conf file (run C<locate postgresql.conf> to find
-it) and turn on the tcpip_socket option:
+If you're using Redhat Linux you may already have Postgres installed. If so,
+all you need to do to get it ready for use with Bricolage is edit your
+postgresql.conf file (run C<locate postgresql.conf> to find it) and turn on
+the tcpip_socket option:
 
   tcpip_socket = true
 
@@ -1191,12 +1191,12 @@ Defaults to the following string if not specified:
 =item *
 
 B<LOGIN_LENGTH:> The minimum length of login name allowed to users. Defaults to
-"6" if not specified.
+"5" if not specified.
 
 =item *
 
 B<PASSWD_LENGTH:> The minimum length of password allowed to users. Note that
-passwords can be of infinite length. Defaults to "6" if not specified.
+passwords can be of infinite length. Defaults to "5" if not specified.
 
 =back
 

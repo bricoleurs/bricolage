@@ -1,7 +1,7 @@
 package Bric::Biz::Asset::Business::Story::DevTest;
 use strict;
 use warnings;
-use base qw(Bric::Test::DevBase);
+use base qw(Bric::Biz::Asset::Business::DevTest);
 use Test::More;
 use Test::Exception;
 use Bric::Util::DBI qw(:standard);
@@ -35,37 +35,12 @@ my @REQ_DESK_GRP_IDS;
 my @EXP_GRP_IDS;
 
 ##############################################################################
-# The element object we'll use throughout.
-my $elem;
-sub get_elem {
-    ($elem) = Bric::Biz::AssetType->list({ name => 'Story' });
-    return $elem;
-}
-
-##############################################################################
-# Arguments to the new() constructor. Used by construct(). Override as
-# necessary in subclasses.
-sub new_args {
-    my $self = shift;
-    ( element       => $self->get_elem,
-      user__id      => $self->user_id,
-      source__id    => 1,
-      primary_oc_id => 1,
-      description   => 'foo',
-      site_id       => 100,
-    )
-}
-
-##############################################################################
 # Constructs a new object.
 sub construct {
-    my $self = shift;
-    my $story = $self->class->new({ $self->new_args, @_ });
-    $story->add_categories( [ $CATEGORY ] );
-    $story->set_primary_category($CATEGORY);
-    $story->save;
-    $self->add_del_ids($story->get_id) if ref $self;
-    return $story;
+    my $s = shift->SUPER::construct(@_);
+    $s->add_categories([1]);
+    $s->set_primary_category(1);
+    return $s;
 }
 
 ##############################################################################
@@ -73,20 +48,10 @@ sub construct {
 ##############################################################################
 
 sub test_clone : Test(15) {
-
     my $self = shift;
-    ok( my $story = Bric::Biz::Asset::Business::Story->new(
-      { element       => $self->get_elem,
-        user__id      => $self->user_id,
-        name          => 'Victor', 
-        slug          => 'hugo',
-        source__id    => 1,
-        site_id       => 100,
-      }), "Construct story" );
-
-    $story->add_categories( [ $CATEGORY ] );
-    $story->set_primary_category($CATEGORY);
-
+    ok( my $story = $self->construct( name => 'Flubber',
+                                      slug => 'hugo'),
+        "Construct story" );
     ok( $story->save, "Save story" );
 
     # Save the ID for cleanup.
@@ -626,272 +591,8 @@ sub test_select_methods: Test(51) {
     # test Offset
     ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'title', Offset => 1 }), 'try setting an offset of 2 for a search that just returned 3 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
-    
 }
 
-###############################################################################
-## Test primary_oc_id property.
-###############################################################################
-
-sub test_primary_oc_id : Test(8) {
-    my $self = shift;
-    my $class = $self->class;
-    ok( my $key = $class->key_name, "Get key" );
-    return "OCs tested only by subclass" if $key eq 'biz';
-
-    ok( my $ba = $self->construct( name => 'Flubberman',
-                                   slug => 'hugoman'),
-        "Construct asset" );
-    $ba->add_categories([ $CATEGORY ]);
-    $ba->set_primary_category($CATEGORY);
-    ok( $ba->save, "Save asset" );
-
-    # Save the ID for cleanup.
-    ok( my $id = $ba->get_id, "Get ID" );
-    $self->add_del_ids([$id], $key);
-
-    is( $ba->get_primary_oc_id, 1, "Check primary OC ID" );
-
-    # Try list().
-    ok( my @bas = $class->list({ primary_oc_id => 1,
-                                 user__id => $self->user_id }),
-        "Get asset list" );
-    is( scalar @bas, 1, "Check for one asset" );
-    is( $bas[0]->get_primary_oc_id, 1, "Check for OC ID 1" );
-}
-
-##############################################################################
-# Test output channel associations.
-##############################################################################
-
-sub test_oc : Test(35) {
-    my $self = shift;
-    my $class = $self->class;
-    ok( my $key = $class->key_name, "Get key" );
-     return "OCs tested only by subclass" if $key eq 'biz';
-    ok( my $ba = $self->construct, "Construct $key object" );
-    ok( my $elem = $self->get_elem, "Get element object" );
-
-    # Make sure there are the same of OCs yet as in the element.
-    ok( my @eocs = $elem->get_output_channels, "Get Element OCs" );
-    ok( my @ocs = $ba->get_output_channels, "Get $key OCs" );
-    #is( scalar @ocs, 1, "Check for 1 OC" );
-    is( scalar @eocs, scalar @ocs, "Check for same number of OCs" );
-    is( $eocs[0]->get_id, $ocs[0]->get_id, "Compare for same OC ID" );
-
-    # have to add a category
-    my $cat = Bric::Biz::Category->lookup({ id => 1 });
-    $ba->add_categories([$cat]);
-    $ba->set_primary_category($cat);
-
-    # Save the asset object.
-    ok( $ba->save, "Save ST" );
-    ok( my $baid = $ba->get_id, "Get ST ID" );
-    $self->add_del_ids($baid, $key);
-
-    # Grab the element's first OC.
-    ok( my $oc = $eocs[0], "Grab the first OC" );
-    ok( my $ocname = $oc->get_name, "Get the OC's name" );
-
-    # Try removing the OC.
-    ok( $ba->del_output_channels($oc), "Delete OC from $key" );
-    @ocs = $ba->get_output_channels;
-    is( scalar @ocs, 0, "No more OCs" );
-
-    # Add the new output channel to the asset.
-    ok( $ba->add_output_channels($oc), "Add OC" );
-    ok( @ocs = $ba->get_output_channels, "Get OCs" );
-    is( scalar @ocs, 1, "Check for 1 OC" );
-    is( $ocs[0]->get_name, $ocname, "Check OC name" );
-
-    # Save it and verify again.
-    ok( $ba->save, "Save ST" );
-    ok( @ocs = $ba->get_output_channels, "Get OCs again" );
-    is( scalar @ocs, 1, "Check for 1 OC again" );
-    is( $ocs[0]->get_name, $ocname, "Check OC name again" );
-
-    # Look up the asset in the database and check OCs again.
-    ok( $ba = $class->lookup({ id => $baid }), "Lookup $key" );
-    ok( @ocs = $ba->get_output_channels, "Get OCs 3" );
-    is( scalar @ocs, 1, "Check for 1 OC 3" );
-    is( $ocs[0]->get_name, $ocname, "Check OC name 3" );
-
-    # Now check it in and make sure that the OCs are still properly associated
-    # with the new version.
-    ok( $ba->checkin, "Checkin asset" );
-    ok( $ba->save, "Save new version" );
-    ok( $ba->checkout({ user__id => $self->user_id }), "Checkout new version" );
-    ok( $ba->save, "Save new version" );
-    ok( my $version = $ba->get_version, "Get Version number" );
-    ok( $ba = $class->lookup({ id => $baid }), "Lookup new version of $key" );
-    is( $ba->get_version, $version, "Check version number" );
-    ok( @ocs = $ba->get_output_channels, "Get OCs 4" );
-    is( scalar @ocs, 1, "Check for 1 OC 4" );
-    is( $ocs[0]->get_name, $ocname, "Check OC name 4" );
-}
-##############################################################################
-# Test output channel associations.
-##############################################################################
-
-sub test_alias : Test(28) {
-    my $self = shift;
-    throws_ok {
-        Bric::Biz::Asset::Business::Story->new({})
-      } qr/Cannot create an asset without an element or alias ID/,
-        "Check that you cannot create empty stories";
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Story->new(
-          { alias_id => 1, element__id => 1});
-    } qr/Cannot create an asset with both an element and an alias ID/,
-      "Check that you cannot create a story with both element__id and an ".
-      "alias";
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Story->new(
-          { alias_id => 1, element => 1});
-    } qr/Cannot create an asset with both an element and an alias ID/,
-      "Check that you cannot create a story with both element and an ".
-      "alias";
-
-
-    ok( my $story = Bric::Biz::Asset::Business::Story->new(
-      { element       => $self->get_elem,
-        user__id      => $self->user_id,
-        name          => 'Victor',
-        slug          => 'hugo',
-        source__id    => 1,
-        site_id       => 100,
-      }), "Construct story" );
-
-    $story->add_categories( [ $CATEGORY ] );
-    $story->set_primary_category($CATEGORY);
-
-    ok( $story->save, "Save story" );
-
-
-    # Save the ID for cleanup.
-    ok( my $sid = $story->get_id, "Get ID" );
-    my $key = $self->class->key_name;
-    $self->add_del_ids($sid, $key);
-
-    ok( $story = Bric::Biz::Asset::Business::Story->lookup
-        ({id => $story->get_id }), "Reload");
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Story->new(
-          { alias_id => $story->get_id })
-      } qr /Cannot create an asset without a site/,
-        "Check that you need the Site parameter";
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Story->new(
-          { alias_id => $story->get_id, site_id => 100 })
-      } qr /Cannot create an alias to an asset in the same site/,
-        "Check that you cannot create alias to a story in the same site";
-
-    # Create extra site
-    my $site1 = Bric::Biz::Site->new( { name => __PACKAGE__ . "1",
-                                        domain_name => __PACKAGE__ . "1",
-                                      });
-
-    ok( $site1->save(), "Create first dummy site");
-    my $site1_id = $site1->get_id;
-    $self->add_del_ids($site1_id, 'site');
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Story->new
-           ({ alias_id => $story->get_id, site_id => $site1_id })
-      } qr/Cannot create an alias to an asset based on an element that is not associated with this site/,
-        "Check that a element needs to be associated with a site ".
-        "for a target to aliasable";
-
-    my $element = $story->_get_element_object();
-    $element->add_sites([$site1]);
-    $element->save();
-
-    throws_ok {
-        Bric::Biz::Asset::Business::Story->new
-          ({ alias_id => $story->get_id, site_id => $site1_id })
-      } qr /Cannot create an alias to this asset because this element has no output channels associated with this site/,
-        "Check that the element associated to alias target has any output ".
-        "channels for this site";
-
-    #Lets create an output channel here
-
-    # Add a new output channel.
-    ok( my $oc = Bric::Biz::OutputChannel->new({name    => __PACKAGE__ . "1",
-                                                site_id => $site1_id}),
-        "Create OC" );
-    ok( $oc->save, "Save OC" );
-    ok( my $ocid = $oc->get_id, "Get OC ID" );
-    $self->add_del_ids($ocid, 'output_channel');
-
-    $element->add_output_channels([$ocid]);
-    $element->set_primary_oc_id($ocid, $site1_id);
-    $element->save();
-
-    ok( my $alias_story = Bric::Biz::Asset::Business::Story->new(
-      { alias_id => $story->get_id, 
-        site_id  => $site1_id,
-        user__id => $self->user_id,
-      }),
-        "Create an alias story");
-
-    isnt($alias_story->_get_element_object,
-         undef, "Check that we get a element object");
-
-    is($alias_story->_get_element_object->get_id,
-       $story->_get_element_object->get_id,
-       "Check that alias_story has a element object");
-
-    ok( $alias_story->save , "Try to save it");
-    my $alias_id = $alias_story->get_id;
-    like($alias_id, qr/^\d+$/, "alias id should be a number");
-
-    ok( $alias_story = 
-        Bric::Biz::Asset::Business::Story->lookup
-        ( { id => $alias_id }),
-        "Refetch the alias");
-    isa_ok($alias_story, "Bric::Biz::Asset::Business::Story", "Checking that ".
-          "we got $alias_id back");
-#    sleep;
-    is($alias_story->get_alias_id, $story->get_id,
-       "Does it still point to the correct story");
-
-
-    is($alias_story->get_slug, $story->get_slug, "Check slug");
-
-    is_deeply($story->get_tile, $alias_story->get_tile,
-              "Should get identical tiles");
-
-    is_deeply([$alias_story->get_all_keywords],
-              [$story->get_all_keywords],
-              "Check get_all_keywords");
-
-    is_deeply([$alias_story->get_keywords],
-              [$story->get_keywords],
-              "Check get_keywords");
-
-    is_deeply([$alias_story->get_contributors],
-              [$story->get_contributors],
-              "Check get_contributors");
-
-    $element->remove_sites([$site1]);
-    $element->save();
-
-
-    Bric::Util::DBI::prepare(qq{
-        DELETE FROM element__site
-        WHERE  site__id = $site1_id
-    })->execute;
-
-    Bric::Util::DBI::prepare(qq{
-        DELETE FROM story
-        WHERE  site__id = $site1_id
-    })->execute;
-
-}
 
 ##############################################################################
 # PRIVATE class methods
@@ -1030,7 +731,7 @@ sub test_get_uri: Test(1) {
                                            directory => "_test_$time.2",
                                            id => 2,
                                         });
-    # add the categories 
+    # add the categories
     $story->add_categories($cats);
     $story->set_primary_category($cats->[0]);
     # the uri should now be '/$dir/.*test'
@@ -1038,13 +739,13 @@ sub test_get_uri: Test(1) {
     # XXX then try it with a different cat
 }
 
-sub test_get_fields_from_new: Test(0) {
+sub test_get_fields_from_new: Test(+0) {
     # XXX make a new story with all of the fields
     # XXX Test: does each field have a value matching
     #           that set in the params?
 }
 
-sub test_set_get_fields: Test(0) {
+sub test_set_get_fields: Test(+0) {
     # XXX make a new story with minimal fields set
     # XXX For each field:
     # XXX set the field

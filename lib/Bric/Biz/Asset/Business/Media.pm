@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-23 06:57:01 $
+$Date: 2003-04-01 04:57:26 $
 
 =head1 SYNOPSIS
 
@@ -223,7 +223,8 @@ use constant PARAM_WHERE_MAP =>
       _checked_in_or_out    => 'i.checked_out = '
                              . '( SELECT max(checked_out) '
                              . 'FROM media_instance '
-                             . 'WHERE version = i.version )',
+                             . 'WHERE version = i.version '
+                             . 'AND media__id = mt.id)',
       _checked_out          => 'i.checked_out = ?',
       primary_oc_id         => 'i.primary_oc__id = ?',
       category__id          => 'i.category__id = ?',
@@ -902,9 +903,11 @@ sub set_category__id {
 
     my $cat = Bric::Biz::Category->lookup( { id => $cat_id });
     my $oc = $self->get_primary_oc;
-
-    my $uri = Bric::Util::Trans::FS->cat_uri
-      ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
+    my $uri;
+    if ($self->get_file_name) {
+        $uri = Bric::Util::Trans::FS->cat_uri
+          ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
+    }
 
     $self->_set({ _category_obj => $cat,
                   category__id  => $cat_id,
