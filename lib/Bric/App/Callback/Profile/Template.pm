@@ -95,6 +95,11 @@ sub save_and_stay : Callback {
     } else {
         # Check syntax.
         return unless $check_syntax->($self, $widget, $fa);
+
+        # Deploy the template to the user's sandbox.
+        my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
+        $sb->deploy($fa);
+
         # Save the template.
         $fa->save;
         log_event('formatting_save', $fa);
