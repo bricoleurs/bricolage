@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2004-03-18 00:21:52 $
+-- $Date: 2004-03-18 01:51:15 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -29,5 +29,5 @@ CREATE TABLE usr (
 -- INDEXES.
 --
 CREATE INDEX idx_usr__login ON usr(LOWER(login));
-CREATE UNIQUE INDEX udx_usr__login ON usr(LOWER(login)) WHERE active = 0;
+CREATE UNIQUE INDEX udx_usr__login ON usr(LOWER(login)) WHERE active = 1;
 

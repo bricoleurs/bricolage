@@ -12,6 +12,6 @@ exit unless test_constraint 'usr', 'ck_usr__login';
 do_sql
   'ALTER TABLE usr DROP CONSTRAINT ck_usr__login',
   'DROP FUNCTION login_avail(varchar, numeric, numeric)',
-  'CREATE UNIQUE INDEX udx_usr__login ON usr(LOWER(login)) WHERE active = 0'
+  'CREATE UNIQUE INDEX udx_usr__login ON usr(LOWER(login)) WHERE active = 1'
   ;
 
