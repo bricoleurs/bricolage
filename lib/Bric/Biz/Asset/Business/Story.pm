@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.99 $
+$Revision: 1.100 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.99 $ )[-1];
+our $VERSION = (qw$Revision: 1.100 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-26 03:43:47 $
+$Date: 2004-03-31 16:09:25 $
 
 =head1 SYNOPSIS
 
@@ -1696,7 +1696,7 @@ sub save {
                         $self->_delete_story();
                     }
                     $self->_set( {'_cancel' => undef });
-                return $self;
+                    return $self;
                 } else {
                     $self->_update_instance();
                 }
