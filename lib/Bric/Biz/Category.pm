@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-03 22:00:56 $
+$Date: 2002-07-08 23:52:14 $
 
 =head1 SYNOPSIS
 
@@ -817,8 +817,9 @@ NONE
 
 sub set_directory {
     my ($self, $dir) = @_;
+    my $id = $self->_get('id');
     die $dp->new({ msg => "Cannot change the directory of the root category" })
-      if $self->_get('id') == ROOT_CATEGORY_ID;
+      if defined $id and $id == ROOT_CATEGORY_ID;
     $self->_set(['directory', '_update_uri'], [$dir, 1]);
 }
 
@@ -846,10 +847,12 @@ NONE
 sub set_parent_id {
     my ($self, $pid) = @_;
     my $id = $self->_get('id');
-    die $dp->new({ msg => "Cannot change the parent of the root category" })
-      if $id == ROOT_CATEGORY_ID;
-    die $dp->new({ msg => "Categories cannot be their own parent" })
-      if $id == $pid;
+    if (defined $id) {
+        die $dp->new({ msg => "Cannot change the parent of the root category" })
+          if $id == ROOT_CATEGORY_ID;
+        die $dp->new({ msg => "Categories cannot be their own parent" })
+          if $id == $pid;
+    }
     $self->_set(['parent_id', '_update_uri'], [$pid, 1]);
 }
 
