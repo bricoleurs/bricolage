@@ -197,6 +197,19 @@ Auto-generated slugs (enabled via the C<AUTOGENERATE_SLUG> F<bricolage.conf>
 directive) no longer convert uppercase characters to underscores. Thanks to
 Paul Orrock for the spot! [David]
 
+=item *
+
+Changes made to story content in the story profile are no longer preserved
+when clicking the "Cancel" button. Reported by Paul Orrock. [David]
+
+=item *
+
+The story and media profiles no clear out the session cache for the story or
+media element when leaving the story or media profile. This is to prevent
+perceived caching of changes that were canceled in a profile, noticed only
+when one canceled an edit of a story or media document and immediately edited
+the same document. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)

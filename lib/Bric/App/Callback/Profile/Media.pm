@@ -134,7 +134,7 @@ sub revert : Callback {
     $media->revert($version);
     $media->save;
     add_msg('Media "[_1]" reverted to V.[_2]', $media->get_title, $version);
-    clear_state($widget);
+    $self->clear_my_state;
 }
 
 ################################################################################
@@ -163,7 +163,7 @@ sub save : Callback {
     my $return = get_state_data($widget, 'return') || '';
 
     # Clear the state and send 'em home.
-    clear_state($widget);
+    $self->clear_my_state;
 
     if ($return eq 'search') {
         my $url = $SEARCH_URL . $workflow_id . '/';
@@ -302,7 +302,7 @@ sub checkin : Callback {
     }
 
     # Clear the state out and set redirect.
-    clear_state($widget);
+    $self->clear_my_state;
     $self->set_redirect("/");
 }
 
@@ -325,7 +325,7 @@ sub save_and_stay : Callback {
         # Get out of here, since we've blown it away!
         $self->set_redirect("/");
         pop_page();
-        clear_state($widget);
+        $self->clear_my_state;
     } else {
         # Make sure the media is activated and then save it.
         $media->activate;
@@ -389,7 +389,7 @@ sub cancel : Callback {
         }
         add_msg('Media "[_1]" check out canceled.', $media->get_title);
     }
-    clear_state($self->class_key);
+    $self->clear_my_state;
     $self->set_redirect("/");
 }
 
@@ -403,7 +403,7 @@ sub return : Callback {
 
     if ($version_view) {
         my $media_id = $media->get_id();
-        clear_state($widget);
+        $self->clear_my_state;
         $self->set_redirect("/workflow/profile/media/$media_id/?checkout=1");
     } else {
         my $state = get_state_name($widget);
@@ -423,7 +423,7 @@ sub return : Callback {
         }
 
         # Clear the state and send 'em home.
-        clear_state($widget);
+        $self->clear_my_state;
         $self->set_redirect($url);
     }
 }
@@ -795,6 +795,14 @@ sub assoc_category : Callback {
 }
 
 ### end of callbacks ##########################################################
+
+sub clear_my_state {
+    my $self = shift;
+    clear_state($self->class_key);
+    clear_state('container_prof');
+}
+
+##############################################################################
 
 $handle_delete = sub {
     my ($media, $self) = @_;

@@ -78,7 +78,7 @@ sub save : Callback {
     my $return = get_state_data($widget, 'return') || '';
 
     # Clear the state and send 'em home.
-    clear_state($widget);
+    $self->clear_my_state;
 
     if ($return eq 'search') {
         my $url = $SEARCH_URL . $workflow_id . '/';
@@ -214,7 +214,7 @@ sub checkin : Callback {
     }
 
     # Clear the state out and set redirect.
-    clear_state($widget);
+    $self->clear_my_state;
     $self->set_redirect("/");
 }
 
@@ -232,7 +232,7 @@ sub save_and_stay : Callback {
         return unless $handle_delete->($story, $self);
         # Get out of here, since we've blow it away!
         $self->set_redirect("/");
-        clear_state($widget);
+        $self->clear_my_state;
     } else {
         # Make sure the story is activated and then save it.
         $story->activate;
@@ -293,7 +293,7 @@ sub cancel : Callback {
         add_msg('Story "[_1]" check out canceled.',
                 '<span class="l10n">' . $story->get_title . '</span>');
     }
-    clear_state($self->class_key);
+    $self->clear_my_state;
     $self->set_redirect("/");
 }
 
@@ -306,7 +306,7 @@ sub return : Callback {
 
     if ($version_view) {
         my $story_id = $story->get_id();
-        clear_state($widget);
+        $self->clear_my_state;
         $self->set_redirect("/workflow/profile/story/$story_id/?checkout=1");
     } else {
         my $url;
@@ -325,7 +325,7 @@ sub return : Callback {
         }
 
         # Clear the state and send 'em home.
-        clear_state($widget);
+        $self->clear_my_state;
         $self->set_redirect($url);
     }
 }
@@ -849,6 +849,14 @@ sub set_primary_category : Callback {
 }
 
 ### end of callbacks
+
+sub clear_my_state {
+    my $self = shift;
+    clear_state($self->class_key);
+    clear_state('container_prof');
+}
+
+##############################################################################
 
 $save_contrib = sub {
     my ($widget, $param, $self) = @_;

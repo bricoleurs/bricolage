@@ -189,7 +189,6 @@ sub update : Callback(priority => 1) {
 
     $self->_update_parts($self->params);
     my $tile = get_state_data($self->class_key, 'tile');
-    $tile->save();
 }
 
 sub pick_related_media : Callback {
