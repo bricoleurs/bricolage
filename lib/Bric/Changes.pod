@@ -35,6 +35,17 @@ Some assets on My Workspace were getting "Cannot checkin non checked out
 versions" errors when they were checked in using the "Check in to" select
 list. This has been fixed. [David]
 
+=item *
+
+When templates are deployed, they now get a "Template removed from Workflow"
+event logged. [David]
+
+=item *
+
+Using the "Check in to" select list on My Workspace to check assets into the
+desk they're already on will no longer remove them from all desks
+altogether. [David]
+
 =head1 VERSION 1.4.1
 
 =head2 Bug Fixes

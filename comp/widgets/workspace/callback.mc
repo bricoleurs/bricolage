@@ -20,14 +20,15 @@ if ($field eq "$widget|checkin_cb") {
 	my $curr = $desks{$from_id} ||= $dskpkg->lookup({ id => $from_id });
 	my $next = $desks{$to_id} ||= $dskpkg->lookup({ id => $to_id });
 	$curr->checkin($a);
-	$curr->transfer({ to    => $next,
-			  asset => $a });
-	$curr->save;
-	$next->save;
-
-	# Log events.
 	log_event("${key}_checkin", $a);
-	log_event("${key}_moved", $a, { Desk => $next->get_name });
+
+        if ($curr->get_id != $next->get_id) {
+            $curr->transfer({ to    => $next,
+                              asset => $a });
+            log_event("${key}_moved", $a, { Desk => $next->get_name });
+        }
+        $curr->save;
+        $next->save;
     }
 } elsif ($field eq "$widget|delete_cb") {
     my $burn = Bric::Util::Burner->new;
@@ -64,11 +65,11 @@ if ($field eq "$widget|checkin_cb") {
 
 =head1 VERSION
 
-$Revision: 1.6.2.2 $
+$Revision: 1.6.2.3 $
 
 =head1 DATE
 
-$Date: 2002-09-27 18:21:20 $
+$Date: 2002-09-27 19:39:49 $
 
 =head1 SYNOPSIS
 
