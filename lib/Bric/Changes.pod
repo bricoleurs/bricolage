@@ -32,7 +32,12 @@ is associated. Thanks to Rachel Murray for the spot. [David]
 =item *
 
 Invalid configuration directives in bricolage.conf will now be caught and keep
-Bricolage from starting. [Sam & David]
+Bricolage from starting. [Sam]
+
+=item *
+
+The view button in the element profile now works correctly. Thanks to Joao Pedro
+Goncalves for the spot. [David]
 
 =back
 
