@@ -256,7 +256,7 @@ use constant PARAM_WHERE_MAP =>
       workflow_id           => 'f.workflow__id = ?',
       _null_workflow_id     => 'f.workflow__id IS NULL',
       element__id           => 'f.element__id = ?',
-      element_key_name      => 'f.element__id = e.id AND e.key_name LIKE LOWER(?)',
+      element_key_name      => 'f.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
       output_channel_id     => 'f.output_channel__id = ?',
       output_channel__id    => 'f.output_channel__id = ?',
       priority              => 'f.priority = ?',
@@ -298,7 +298,7 @@ use constant PARAM_WHERE_MAP =>
 
 use constant PARAM_ANYWHERE_MAP => {
     element_key_name       => [ 'f.element__id = e.id',
-                                'e.key_name LIKE LOWER(?)' ],
+                                'LOWER(e.key_name) LIKE LOWER(?)' ],
     category_uri           => [ 'f.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?))' ],
     grp_id                 => [ 'm2.active = 1 AND fm2.member__id = m2.id AND f.id = fm2.object_id',

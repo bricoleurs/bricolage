@@ -70,6 +70,11 @@ the chances of a deadlock between long-running publishing transactions.
 The installer now requires PostgreSQL 7.3 or later. This is becauase 7.2
 hasn't worked properly with Bricolage since 1.8.0. [David]
 
+=item *
+
+Optimized SQL queries for key names to use indexes in the C<list()> and
+C<list_ids()> methods of the story, media, and template classes. [David]
+
 =back
 
 =head2 Bug Fixes
