@@ -346,6 +346,12 @@ IDs. This incidentally allows output channels that happen to be in groups to
 be edited, eliminating the 'name "Web" is already used by another Output
 Channel' error. Thanks to John Greene for the spot! [David]
 
+=item *
+
+The media type of media documents now defaults to "none" instead of inserting
+a C<NULL> into the database. The column has also be marked C<NOT NULL> in
+order to ensure that this remains the pattern. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
