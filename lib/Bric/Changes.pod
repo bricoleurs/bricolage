@@ -76,7 +76,8 @@ Fixed some problems with the sideNav menus under Netscape. [David]
 
 =item *
 
-Fixed broken "Preview" button in Read-only story profile. [Matt Vella]
+Fixed broken "Preview" button in Read-only story profile and in related story
+elements. [Matt Vella]
 
 =item *
 
