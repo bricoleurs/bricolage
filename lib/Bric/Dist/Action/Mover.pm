@@ -6,16 +6,16 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 21:19:09 $
+$Date: 2003-12-30 09:13:02 $
 
 =head1 SYNOPSIS
 
@@ -274,7 +274,7 @@ mover loads on startup.
 
 =item *
 
-Update your the class table of your Bricolage database, and then restart your
+Update the class table of your Bricolage database, and then restart your
 Bricolage server. Look at a Destination, and make sure that your mover is
 listed in the "Move Method" select list.
 
