@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.128 $
+$Revision: 1.129 $
 
 =head1 DATE
 
-$Date: 2003-11-04 19:27:48 $
+$Date: 2003-11-06 18:28:50 $
 
 =head1 DESCRIPTION
 
@@ -1346,10 +1346,11 @@ may distribute resources using the SFTP mover. Setting this to "On" or "Yes"
 or "1" will enable the SFTP mover. In order to use the SFTP mover, you must
 manually install the Net::SFTP module from the CPAN. Furthermore, you should
 login to the remote server as Apache user (e.g. "nobody") in order to
-initialize `~/.ssh/known_hosts' before using the SFTP mover (you might also
-need to create the directory /.ssh with write permission for "nobody", in case
-nobody's home directory is something like `/bin/false' and ssh falls back to
-`/' as the home directory). Defaults to "Off" if not specified.
+initialize F<~/.ssh/known_hosts> before using the SFTP mover (you might also
+need to create the directory F</.ssh> on the Bricolage server (and possibly on
+the destination server, too) with write permission for "nobody", in case
+nobody's home directory is something like F</bin/false> and ssh falls back to
+F</> as the home directory). Defaults to "Off" if not specified.
 
 =item *
 
