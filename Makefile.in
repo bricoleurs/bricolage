@@ -274,7 +274,7 @@ ${INST}/installed-database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/gra
 
 # This makes the grant script
 ${INST}/grants.sql: ${INST}/bricolage.sql
-	${BIN}/bric_pggrant -u ${DBI_USER} -f $< -o $@
+	${INST}/bric_pggrant -u ${DBI_USER} -f $< -o $@
 	chmod a+r $@
 
 # This makes a simple create user script
