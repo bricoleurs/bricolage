@@ -114,7 +114,9 @@ CHECK_CPAN_MODULE(MISSING_MOD, Params::Validate, 0.04)
 CHECK_CPAN_MODULE(MISSING_MOD, HTML::Mason, 1.03)
 CHECK_CPAN_MODULE(MISSING_MOD, DBD::Pg, 1.00)
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::Session, 1.53)
-CHECK_CPAN_MODULE(MISSING_MOD, Apache::libapreq, 0.31_03)
+dnl Apache::libapreq does not define $Apache::libapreq::VERSION
+dnl so we can't check for it here
+CHECK_CPAN_MODULE(MISSING_MOD, Apache::libapreq) 
 AC_CACHE_SAVE
 
 # Accept configuration details by environmental variable
