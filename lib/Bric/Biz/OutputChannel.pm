@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-18 03:20:03 $
+$Date: 2001-12-23 00:34:58 $
 
 =head1 SYNOPSIS
 
@@ -45,6 +45,8 @@ $Date: 2001-12-18 03:20:03 $
 
   my @ocs = >$oc->get_includes(@ocs);
   $oc->set_includes(@ocs);
+  $oc->add_includes(@ocs);
+  $oc->del_includes(@ocs);
 
   $oc = $oc->activate;
   $oc = $oc->deactivate;
@@ -72,6 +74,7 @@ use strict;
 use Bric::Config qw(:oc);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::OutputChannel;
+use Bric::Util::Coll::OCInclude;
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::DP;
 
@@ -83,7 +86,7 @@ use base qw(Bric);
 #=============================================================================
 ## Function Prototypes                 #
 #======================================#
-# None
+my $get_inc;
 
 #==============================================================================
 ## Constants                           #
@@ -96,6 +99,8 @@ use constant FIELDS => qw(name description pre_path post_path primary filename
                           file_ext _active);
 use constant COLS => qw(name description pre_path post_path primary_ce filename
                         file_ext active);
+use constant SEL_COLS => qw(oc.name oc.description oc.pre_path oc.post_path
+                        oc.primary_ce oc.filename oc.file_ext oc.active);
 use constant ORD => qw(name description pre_path post_path filename file_ext
                        active);
 
@@ -117,15 +122,17 @@ my $meths;
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $dp  = 'Bric::Util::Fault::Exception::DP';
 
-my %txt_map = ( name      => 'LOWER(name) LIKE ?',
-		pre_path  => 'LOWER(pre_path) LIKE ?',
-		post_path => 'LOWER(post_path) LIKE ?',
+my %txt_map = ( name      => 'LOWER(oc.name) LIKE ?',
+		pre_path  => 'LOWER(oc.pre_path) LIKE ?',
+		post_path => 'LOWER(oc.post_path) LIKE ?',
 );
-my %num_map = ( primary => 'primary = ?',
-	        active  => 'active = ?',
+my %num_map = ( primary => 'oc.primary = ?',
+	        active  => 'oc.active = ?',
+		id      => 'oc.id = ?',
 	        server_type_id => 'id in (select output_channel__id from '
 		                  . 'server_type__output_channel where '
-                                  . 'server_type__id = ?)'
+                                  . 'server_type__id = ?)',
+		include_parent_id => 'inc.output_channel__id = ?'
 );
 
 #--------------------------------------#
@@ -163,7 +170,11 @@ BEGIN {
 
        # Private Fileds
        # The active flag
-       '_active'		=> Bric::FIELD_NONE
+       '_active'		=> Bric::FIELD_NONE,
+
+       # Storage for includes list of OCs.
+       '_includes'		=> Bric::FIELD_NONE,
+       '_include_id'		=> Bric::FIELD_NONE,
       });
 }
 
@@ -275,23 +286,15 @@ B<Notes:> NONE.
 sub lookup {
     my ($class, $params) = @_;
 
-    die $gen->new( { msg => 'missing required param id'} )
-      unless $params->{'id'};
+    die $gen->new( { msg => "Missing required param 'id'" } )
+      unless $params->{id};
 
-    my $self = bless {}, $class;
-    $self->SUPER::new();
+    my $oc = $class->_do_list($params);
 
-    my $sql = 'SELECT id,'. join(',',COLS) . " FROM ". TABLE .
-      ' WHERE id=? ';
-
-    my @d;
-    my $sth = prepare_c($sql, undef, DEBUG);
-    execute($sth, $params->{'id'} );
-    bind_columns($sth, \@d[0 .. (scalar COLS)]);
-    fetch($sth);
-
-    $self->_set( ['id', FIELDS], [@d]);
-    return $self;
+    # We want @$person to have only one value.
+    die Bric::Util::Fault::Exception::DP->new({
+      msg => 'Too many Bric::Biz::OutputChannel objects found.' }) if @$oc > 1;
+    return @$oc ? $oc->[0] : undef;
 }
 
 =item ($ocs_aref || @ocs) = Bric::Biz::OutputChannel->list( $criteria )
@@ -313,6 +316,10 @@ primary
 =item *
 
 server_type_id
+
+=item *
+
+include_parent_id
 
 =item *
 
@@ -399,7 +406,7 @@ Unable to fetch row from statement handle.
 
 B<Side Effects:> NONE.
 
-B<Notes: NONE.
+B<Notes:> NONE.
 
 =cut
 
@@ -745,7 +752,7 @@ Sets the name of the Output Channel.
 
 B<Throws:> NONE.
 
-B<Side Effects: NONE.
+B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
@@ -755,7 +762,7 @@ Returns the name of the Output Channel.
 
 B<Throws:> NONE.
 
-B<Side Effects: NONE.
+B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
@@ -890,6 +897,198 @@ B<Side Effects:> NONE.
 
 B<Notes:> Only one Output channel can be the primary output channel.
 
+=item my @inc = $oc->get_includes
+
+=item my $inc_aref = $oc->get_includes
+
+Returns a list or anonymous array of Bric::Biz::OutputChannel objects that
+constitute the include list for this OutputChannel. Templates not found in this
+OutputChannel will be sought in this list of OutputChannels, looking at each one
+in the order in which it was returned from this method.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_includes {
+    my $inc = $get_inc->(shift);
+    return $inc->get_objs(@_);
+}
+
+=item $job = $job->add_includes(@ocs)
+
+Adds Output Channels to this to the include list for this Output Channel. Output
+Channels added to the include list via this method will be appended to the end
+of the include list. The order can only be changed by resetting the entire
+include list via the set_includes() method. Call save() to save the
+relationship.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> Uses Bric::Util::Coll::Server internally.
+
+=cut
+
+sub add_includes {
+    my $self = shift;
+    my $inc = &$get_inc($self);
+    $inc->add_new_objs(@_);
+    $self->_set__dirty(1);
+}
+
+################################################################################
+
+=item $self = $job->del_includes(@ocs)
+
+Deletes Output Channels from the include list. Call save() to save the
+deletes to the database.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub del_includes {
+    my $self = shift;
+    my $inc = &$get_inc($self);
+    $inc->del_objs(@_);
+    $self->_set__dirty(1);
+}
+
+=item $self = $self->set_includes(@ocs);
+
+Sets the list of Output channels to set as the include list for this Output
+Channel. Any existing Output Channels in the includes list will be removed from
+the list. To add Output Channels to the include list without deleting the
+existing ones, use add_includes().
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Output Channel cannot include itself.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_includes {
+    my $self = shift;
+    my $inc = &$get_inc($self);
+    $inc->del_objs($inc->get_objs);
+    $inc->add_new_objs(@_);
+    $self->_set__dirty(1);
+}
+
 =item $self = $oc->activate
 
 Activates the Bric::Biz::OutputChannel object. Call $oc->save to make the change
@@ -904,10 +1103,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub activate {
-    my $self = shift;
-    $self->_set({_active => 1 });
-}
+sub activate { $_[0]->_set({_active => 1 }) }
 
 =item $self = $oc->deactivate
 
@@ -922,10 +1118,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub deactivate {
-    my $self = shift;
-    $self->_set({_active => 0 });
-}
+sub deactivate { $_[0]->_set({_active => 0 }) }
 
 =item $self = $oc->is_active
 
@@ -940,11 +1133,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub is_active {
-    my $self = shift;
-    $self->_get('_active') ? $self : undef;
-}
-
+sub is_active { $_[0]->_get('_active') ? $_[0] : undef }
 
 =item $self = $oc->save
 
@@ -994,7 +1183,9 @@ B<Notes:> NONE.
 sub save {
     my ($self) = @_;
     return $self unless $self->_get__dirty();
-    defined $self->_get('id') ? $self->_do_update : $self->_do_insert;
+    my ($id, $inc) = $self->_get('id', '_includes');
+    defined $id ? $self->_do_update($id) : $self->_do_insert;
+    $inc->save($id) if $inc;
     $self->SUPER::save();
 }
 
@@ -1053,6 +1244,7 @@ B<Notes:> NONE.
 
 sub _do_list {
     my ($class, $params, $ids, $href) = @_;
+    $class = ref $class || $class;
     my (@wheres, @params);
 
     while (my ($k, $v) = each %$params) {
@@ -1072,15 +1264,24 @@ sub _do_list {
 
     local $" = ' AND ';
     my $where = @wheres ? "WHERE  @wheres" : '';
+    my ($order, $join, $fields, $qry_cols) = ('ORDER BY name', '', ['id', FIELDS]);
+    if (defined $params->{include_parent_id}) {
+	$order = '';
+	$join = ', output_channel_include inc';
+	$where .= ' AND oc.id = inc.include_oc_id';
+	$qry_cols = $ids ? ['oc.id'] : ['oc.id', SEL_COLS, 'inc.id'];
+	push @$fields, '_include_id';
+    } else {
+	$qry_cols = $ids ? ['oc.id'] : ['oc.id', SEL_COLS];
+    }
 
     # Assemble and prepare the query.
-    my $qry_cols = $ids ? [] : ['id', COLS()];
     $" = ', ';
     my $sel = prepare_c(qq{
         SELECT @$qry_cols
-        FROM   ${ \TABLE() }
+        FROM   ${ \TABLE() } oc$join
         $where
-        ORDER BY name
+        $order
     }, undef, DEBUG);
 
     if ( $ids ) {
@@ -1091,11 +1292,11 @@ sub _do_list {
 	# this must have been called from list so give objects
 	my (@d, @objs, %objs);
 	execute($sel, @params);
-	bind_columns($sel, \@d[0 .. (scalar COLS)]);
+	bind_columns($sel, \@d[0 .. (scalar $#$qry_cols)]);
 	while (my $row = fetch($sel) ) {
 	    my $self = bless {}, $class;
 	    $self->SUPER::new();
-	    $self->_set( ['id', FIELDS], \@d);
+	    $self->_set( $fields, \@d);
 	    $href ? $objs{$d[0]} = $self : push @objs, $self;
 	}
 	return \%objs if $href;
@@ -1106,7 +1307,11 @@ sub _do_list {
 
 #--------------------------------------#
 
+=back
+
 =head2 Private Instance Methods
+
+=over 4
 
 =item _do_update()
 
@@ -1153,14 +1358,14 @@ B<Notes:> NONE.
 =cut
 
 sub _do_update {
-    my ($self) = @_;
+    my ($self, $id) = @_;
     local $" = ' = ?, '; # Simple way to create placeholders with an array.
     my $upd = prepare_c(qq{
         UPDATE ${ \TABLE() }
         SET    @{ [COLS] } = ?
         WHERE  id = ?
     });
-    execute($upd, $self->_get(FIELDS, 'id'));
+    execute($upd, $self->_get(FIELDS), $id);
     return $self;
 }
 
@@ -1223,8 +1428,81 @@ sub _do_insert {
     return $self;
 }
 
+=back
+
+=head2 Private Functions
+
+=over 4
+
+=item my $inc_coll = &$get_inc($self)
+
+Returns the collection of Output Channels that costitute the includes. The
+collection a Bric::Util::Coll::OCInclude object. See Bric::Util::Coll for
+interface details.
+
+B<Throws:>
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_inc = sub {
+    my $self = shift;
+    my ($id, $inc) = $self->_get('id', '_includes');
+
+    unless ($inc) {
+	$inc = Bric::Util::Coll::OCInclude->new({ include_parent_id => $id });
+	my $dirty = $self->_get__dirty;
+	$self->_set(['_includes'], [$inc]);
+	$self->_set__dirty($dirty);
+    }
+    return $inc;
+};
+
 1;
 __END__
+
+=back
 
 =head1 NOTES
 
@@ -1233,6 +1511,8 @@ NONE.
 =head1 AUTHOR
 
 Michael Soderstrom L<lt>miraso@pacbell.netL<gt>
+
+David Wheeler L<lt>david@wheeler.netL<gt>
 
 =head1 SEE ALSO
 

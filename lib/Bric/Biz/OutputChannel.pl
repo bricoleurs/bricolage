@@ -2,7 +2,7 @@
 
 use strict;
 use Test;
-BEGIN { plan tests => 29 };
+BEGIN { plan tests => 40 };
 use Bric::Biz::OutputChannel;
 ok(1); # If we made it this far, we're ok.
 
@@ -50,10 +50,39 @@ ok( $oc->activate );
 ok( $oc->is_active );
 ok( $oc->save );
 
-
 # Okay, now get a list.
 ok( my @ocs = Bric::Biz::OutputChannel->list({ name => 'Another test!!!' }) );
 ok( $ocs[0]->get_id );
+
+# Now test the includes.
+ok( my $oc1 = Bric::Biz::OutputChannel->lookup({ id => 1 }) );
+ok( my $oc2 = Bric::Biz::OutputChannel->lookup({ id => 2 }) );
+ok( $oc->set_includes($oc1, $oc2));
+ok( my @inc = $oc->get_includes );
+ok( $inc[0]->get_id == 1);
+ok( $inc[1]->get_id == 2 );
+ok( $oc->save );
+
+# Look them up to make sure we can fetch them back from the database.
+ok( $oc = Bric::Biz::OutputChannel->lookup({ id => $id }) );
+ok( @inc = $oc->get_includes );
+ok( $inc[0]->get_id == 1 );
+ok( $inc[1]->get_id == 2 );
+
+# Now try deleting one.
+ok( $oc->del_includes($oc1));
+ok( $oc->save );
+ok( $oc = Bric::Biz::OutputChannel->lookup({ id => $id }) );
+ok( @inc = $oc->get_includes );
+ok( $inc[0]->get_id == 2 );
+
+# Now add it back.
+ok( $oc->add_includes($oc1));
+ok( $oc->save );
+ok( $oc = Bric::Biz::OutputChannel->lookup({ id => $id }) );
+ok( @inc = $oc->get_includes );
+ok( $inc[0]->get_id == 2 );
+ok( $inc[1]->get_id == 1 );
 
 # Now clean up.
 Bric::Util::DBI::prepare(qq{

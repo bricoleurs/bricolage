@@ -13,6 +13,9 @@ my $no_del = !$id || $no_edit;
 my $crumb = $oc->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
+# Assume we're going to need a "next" button.
+my $button = 'next_dkgreen';
+
 # Output the header and other necessities.
 $m->comp('/widgets/wrappers/sharky/header.mc',
 	 title => "$disp Profile",
@@ -45,9 +48,74 @@ specialCharacterFields["post_path"] = "Post";
 </script>
 });
 
+if (defined $id) {
+    $m->out('<script>
+var selectOrderNames = new Array("include_pos")
+</script>
+    ');
+    my $inc = $oc->get_includes;
+    my $opts = [ map { [ $_ => $_ + 1 ] } (0..$#$inc) ];
+    my $i = 0;
+    my $ord_sub = sub {
+        return unless $_[1] eq 'order';
+	# Output a hidden field for this included OC.
+	$m->scomp('/widgets/profile/hidden.mc',
+                            name => 'include_id',
+			    value => $_[0]->get_id
+        )
+	# And ouput the position number.
+	. $m->scomp('/widgets/profile/select.mc',
+	         name => 'include_pos',
+                 disp => '',
+		 value => $i++,
+		 options => $opts,
+		 useTable => 0,
+		 js => qq{onChange="reorder(this, 'oc_profile')"}
+        );
+    };
+
+    $button = undef;
+    # Add the include section
+    $m->comp('/widgets/listManager/listManager.mc',
+	     object => 'output_channel',
+	     userSort => 0,
+	     def_sort_field => 'order',
+	     title => 'Template Includes',
+	     objs => $inc,
+	     addition => undef,
+	     constrain => { include_parent_id => $id },
+	     fields => [qw(name description order)],
+	     field_titles => { order => 'Order' },
+	     field_values => $ord_sub,
+	     profile => undef,
+	     select =>  ['Delete', 'include_oc_id_del'],
+	     number => 2
+    );
+
+</%perl>
+<table border="1" width="580" cellpadding="0" cellspacing="0">
+<tr><td class="medHeader"><& '/widgets/select_object/select_object.mc',
+    object => 'output_channel',
+    field  => 'name',
+    exclude => [ $id, map { $_->get_id } $oc->get_includes ],
+    no_persist => 1,
+    name   => 'profile|include_oc_id_cb',
+    default => ['' => 'Add to Include'],
+    constrain => { active => 1 },
+    js => "onChange='submit()'",
+    useTable => 0,
+&></td></tr>
+</table>
+<br />
+<%perl>;
+}
 # Add the form buttons and other necessities.
-$m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
-	 no_del => $no_del, no_save => $no_edit);
+$m->comp("/widgets/profile/formButtons.mc",
+	 type => $type,
+	 section => $widget,
+	 val => $button,
+	 no_del => $no_del,
+	 no_save => $no_edit);
 $m->out("</form>\n");
 $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS );
 </%perl>
@@ -71,11 +139,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:38 $
+$Date: 2001-12-23 00:34:58 $
 
 =head1 SYNOPSIS
 

@@ -13,7 +13,8 @@ my $class = get_package_name($type);
 </%once>
 
 <%init>;
-return unless $field eq "$widget|save_cb";
+return unless $field eq "$widget|save_cb"
+  || ($field eq "$widget|include_oc_id_cb" && $param->{$field} ne '');
 # Instantiate the output channel object and grab its name.
 my $oc = $obj;
 my $name = "&quot;$param->{name}&quot;";
@@ -41,13 +42,58 @@ if ($param->{delete}) {
     $oc->set_filename( $param->{filename});
     $oc->set_file_ext( $param->{file_ext});
     $oc->activate;
-    unless ($used) {
-	$oc->set_name($param->{name});
-	log_event('output_channel_' .
-		  ( defined $param->{output_channel_id} ? 'save' : 'new'), $oc);
-	add_msg("$disp_name profile $name saved.");
+
+    return $oc if $used;
+
+    $oc->set_name($param->{name});
+
+    if ($oc_id) {
+	if ($param->{include_id}) {
+	    # Take care of deleting included OCs, if necessary.
+	    my $del = mk_aref($param->{include_oc_id_del});
+	    my %del_ids = map { $_ => 1 } @$del;
+	    $oc->del_includes(@$del) if @$del;
+
+	    # Process all existing included OCs and save the changes.
+	    my @inc_ord;
+	    my $pos = mk_aref($param->{include_pos});
+	    my $i = 0;
+	    # Put the included OC IDs in the desired order.
+	    foreach my $inc_id (@{ mk_aref($param->{include_id}) }) {
+		$inc_ord[$pos->[$i++]] = $inc_id;
+	    }
+
+	    # Cull out all the deleted OCs.
+	    @inc_ord = map { $del_ids{$_} ? () : $_ } @inc_ord
+	      if $param->{include_oc_id_del};
+
+	    # Now, compare their positions with what's currently in the OC.
+	    $i = 0;
+	    my @cur_inc = $oc->get_includes;
+	    foreach (@cur_inc) {
+		next if $_->get_id == $inc_ord[$i++];
+
+		# If we're here, we have to reorder.
+		$oc->set_includes($oc->get_includes(@inc_ord));
+		last;
+	    }
+	}
+
+	# Now append any new includes.
+	if ($field eq "$widget|include_oc_id_cb" && $param->{$field} ne '') {
+	    # Add includes.
+	    $oc->add_includes($class->lookup({ id => $param->{$field} }));
+	    $oc->save;
+	    return $oc;
+	}
+
 	$oc->save;
+	log_event('output_channel_save', $oc);
+	add_msg("$disp_name profile $name saved.");
+	set_redirect('/admin/manager/output_channel');
+    } else {
+	log_event('output_channel_new', $oc);
+	return $oc;
     }
 }
-$used ? return $oc : set_redirect('/admin/manager/output_channel');
 </%init>
