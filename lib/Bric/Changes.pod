@@ -33,6 +33,12 @@ from the target to the clone, rather than from the sources. This allows any
 changes that have been made to scripts and classes to be properly cloned.
 [David]
 
+=item *
+
+When installing Bricolage, it will now allow you to proceed if the database
+already exists by asking if you want to create the Bricolage tables in the
+existing database. Suggested by Mark Fournier and Marshall Roch. [David]
+
 =back
 
 =head2 Bug Fixes

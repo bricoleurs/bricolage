@@ -107,11 +107,14 @@ sub create_db {
                 }
                 return create_db();
             } else {
-                unlink $PGCONF;
-                hard_fail("Cannot proceed. If you want to use the existing ",
-                          "database, run 'make upgrade'\ninstead. To pick a ",
-                          "new database name, please run 'make db' again.\n");
+                unless (ask_yesno("Create tables in existing database? [yes] ", 1)) {
+                    unlink $PGCONF;
+                    hard_fail("Cannot proceed. If you want to use the existing ",
+                              "database, run 'make upgrade'\ninstead. To pick a ",
+                              "new database name, please run 'make db' again.\n");
+                }
             }
+            return 1;
         } else {
             hard_fail("Failed to create database. The database error was\n\n",
                       "$err\n");
