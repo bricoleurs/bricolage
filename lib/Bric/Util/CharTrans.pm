@@ -8,17 +8,17 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-04-02 03:33:14 $
 
 =head1 SYNOPSIS
 
@@ -300,19 +300,19 @@ sub charset {
     # also returns the validity of the conversion object right away..
 
     eval {
-		my $cvt = Text::Iconv->new($new_charset, 'UTF8');
+		my $cvt = Text::Iconv->new($new_charset, 'UTF-8');
 		$cvt->raise_error(1);
 		$self->{'_to_utf8_converter'} = $cvt;
     };
 
-   die "$!" if ($@);
+   die $@ if $@;
 
     eval {
-		my $cvt = Text::Iconv->new('UTF8', $new_charset);
+		my $cvt = Text::Iconv->new('UTF-8', $new_charset);
 		$cvt->raise_error(1);
 		$self->{'_from_utf8_converter'} = $cvt;
     };
-    die "$!" if ($@);
+    die $@ if $@;
 
     $self->{'_charset'} = $new_charset;
     
