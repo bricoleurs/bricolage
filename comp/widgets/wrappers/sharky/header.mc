@@ -156,6 +156,11 @@ if ($useSideNav) {
             <a href="/logout" title="Logout"><img src="/media/images/<% $lang_key %>/logout.gif" alt="Logout" /></a>
         </div>
 % }
+% if (defined get_user_id()) {
+        <div class="userinfo">
+            Logged in as <a href="/admin/profile/user/<% get_user_id %>" title="<% $lang->maketext("User Profile") %>"><strong><% get_user_object->format_name %></strong></a>
+        </div>
+% }
     </div>
 
 % # top message table

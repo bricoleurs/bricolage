@@ -25,9 +25,9 @@ body {
 #navFrame         { background: #666633; }
 #help             { background: white; padding: 10px; }
 
-#bricLogo { padding: 8px 8px 2px 8px; background: white; }
+#bricLogo { position: absolute; top: 0; left: 0; padding: 8px 8px 2px 8px; background: white; width: 150px; }
 #mainContainer { position: relative; margin: 0 18px 8px 8px; }
-#sideNav { position: absolute; top: 0; left: 0; width: 150px; z-index: 200; border: 0; }
+#sideNav { position: absolute; top: 35px; left: 0; width: 150px; z-index: 200; border: 0; }
 #contentContainer { padding-left: 158px; }
 #help #contentContainer { padding: 0; }
 
@@ -41,14 +41,15 @@ body {
 /***************************************************
  * PAGE HEADER
  ***************************************************/
-#headerContainer               { position: relative; width: 100%; }
+#headerContainer               { position: relative; width: 100%; padding-top: 35px; }
 #headerContainer .adminBox,
 #headerContainer .workflowBox,
 #headerContainer .loginBox,
 #headerContainer .helpBox,
 #headerContainer .errorsBox    { margin-bottom: 0; margin-right: 240px; }
-#headerContainer .buttons      { position: absolute; top: 0; right: 0; width: 240px; text-align: right; }
+#headerContainer .buttons      { position: absolute; top: 35px; right: 0; width: 240px; text-align: right; }
 #headerContainer .buttons a    { margin: 0 2px; }
+#headerContainer .userinfo     { position: absolute; bottom: 35px; right: 0; }
 #breadcrumbs                   { position: relative; width: 100%; background-color: #999966; margin-bottom: 1em; }
 #breadcrumbs p                 { margin: 0; padding: 3px 6px; }
 #breadcrumbs .siteContext      { position: absolute; top: 0; right: 0; }

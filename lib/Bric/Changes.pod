@@ -148,6 +148,12 @@ since the two pages are mostly redundant except for a few links. [Marshall]
 
 =item *
 
+The UI now shows which user is logged in and includes a link to the user's
+profile at the top of each page, above the log out button. Suggested by Philip
+Brown. [Marshall]
+
+=item *
+
 All of the old "NUMERIC" columns have been removed from the database and
 replaced with the more appropriate (and faster) "INTEGER", "SMALLINT", and
 "BOOLEAN" data types. [Neil Conway & David]
