@@ -748,5 +748,99 @@ sub test_select_b_new_objs: Test(58) {
     is( @$got, 1, '... Offset gives us #2 of 2' );
 }
 
+sub test_new_grp_ids: Test(4) {
+    my $self = shift;
+    my $all_formatting_grp_id = Bric::Util::Grp->lookup({ name => 'All Templates' })->get_id();
+    my $time = time;
+    my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
+    my $element = Bric::Biz::AssetType->new(
+        {
+             name        => "_test_$time.new",
+             burner      => 1,
+             description => 'this is a test',
+             type__id    => $att->get_id(),
+        });
+    $element->save();
+    $self->add_del_ids($element->get_id, 'element');
+    my $cat = Bric::Biz::Category->new({ 
+                                      name => "_test_$time.new", 
+                                      description => 'foo',
+                                      directory => "_test_$time.new",
+                                   });
+    $CATEGORY->add_child([$cat]);
+    $cat->save();
+    $self->add_del_ids($cat->get_id(), 'category');
+    # first we'll try it with a category_id
+    my $formatting = class->new({
+                               priority           => 1,
+                               user__id           => $self->user_id(),
+                               element            => $element, 
+                               tplat_type         => 1,
+                               output_channel__id => 1,
+                               category_id        => $cat->get_id(),
+                           });
+    my $expected = 
+        [
+            $cat->get_asset_grp_id(),
+            $all_formatting_grp_id, 
+        ];
+    my @got = $formatting->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'does template instanciated with a cat_id have the right grp ids?');
+    # first we'll try it with a category
+    undef $formatting;
+    $formatting = class->new({
+                               priority           => 1,
+                               user__id           => $self->user_id(),
+                               element            => $element, 
+                               tplat_type         => 1,
+                               output_channel__id => 1,
+                               category           => $cat
+                           });
+    $expected = 
+        [
+            $cat->get_asset_grp_id(),
+            $all_formatting_grp_id, 
+        ];
+    @got = $formatting->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'does template instanciated with a cat have the right grp ids?');
+    my $desk = Bric::Biz::Workflow::Parts::Desk->new({ 
+                                    name => "_test_$time", 
+                                    description => '',
+                                 });
+    $desk->save();
+    $self->add_del_ids($desk->get_id(), 'desk');
+    my $workflow = Bric::Biz::Workflow->new({ 
+                                    type => Bric::Biz::Workflow::TEMPLATE_WORKFLOW,
+                                    name => "_test_$time",
+                                    start_desk => $desk,
+                                    description => 'test',
+                                 });
+    $workflow->save();
+    $self->add_del_ids($workflow->get_id(), 'workflow');
+    $formatting->set_current_desk($desk);
+    $expected = 
+        [
+            $cat->get_asset_grp_id(),
+            $all_formatting_grp_id, 
+            $desk->get_asset_grp(),
+        ];
+    @got = $formatting->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'setting the current desk of a template adds the correct asset_grp_ids');
+    $formatting->set_workflow_id($workflow->get_id());
+    $expected = 
+        [
+            $cat->get_asset_grp_id(),
+            $workflow->get_asset_grp_id(),
+            $all_formatting_grp_id, 
+            $desk->get_asset_grp(),
+        ];
+    @got = $formatting->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'setting the workflow id of a template adds the correct asset_grp_ids');
+}
+
 1;
 __END__

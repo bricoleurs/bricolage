@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.10 $
+$Revision: 1.38.2.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 13:21:39 $
+$Date: 2003-04-01 19:19:53 $
 
 =head1 SYNOPSIS
 
@@ -341,6 +341,8 @@ my ($meths, @ord, $set_elem, $set_cat, $set_util);
 #--------------------------------------#
 # Instance Fields
 
+
+my $all_formatting_grp_id;
 BEGIN {
         Bric::register_fields
             ({
@@ -376,6 +378,8 @@ BEGIN {
               _category_obj       => Bric::FIELD_NONE,
               _revert_obj         => Bric::FIELD_NONE
              });
+    $all_formatting_grp_id = Bric::Util::Grp->lookup(
+      { name => 'All Templates' })->get_id();
 }
 
 #==============================================================================#
@@ -506,9 +510,9 @@ B<Notes:> NONE.
 sub new {
     my ($class, $init) = @_;
     my $self = bless {}, $class;
+    my @grp_ids = ($all_formatting_grp_id);
 
     # set active unless we we passed another value
-
     $init->{_active} = exists $init->{active} ?
       delete $init->{active} ? 1 : 0 : 1;
 
@@ -563,9 +567,11 @@ sub new {
 
     if ($init->{category}) {
         $init->{category_id} = $init->{category}->get_id;
+        push @grp_ids, $init->{category}->get_asset_grp_id();
     } elsif (defined $init->{category_id}) {
         $init->{category} =
           Bric::Biz::Category->lookup({ id => $init->{category_id} });
+        push @grp_ids, $init->{category}->get_asset_grp_id();
     } else {
         die Bric::Util::Fault::Exception::DP->new
           ({ msg => "Missing required parameter 'category' or 'category_id'"});
@@ -579,6 +585,8 @@ sub new {
     $self->_set(['file_name'],
                 [ $self->_build_file_name($init->{file_type}, $name, $cat,
                                           $init->{output_channel__id}) ]);
+    # set the starter grp_ids
+    $self->_set({ grp_ids => \@grp_ids });
     return $self;
 }
 
@@ -1364,15 +1372,19 @@ NONE
 
 sub set_category_id {
     my ($self, $id) = @_;
-
+    my @grp_ids;
     if ($id != $self->get_category_id) {
         $self->_set(['category_id','_category_obj'], [$id, undef]);
         $self->_set(['file_name'], [$self->_build_file_name]);
+        foreach ($self->get_grp_ids()) {
+            next if $_ == $self->get_category->get_asset_grp_id();
+            push @grp_ids, $_;
+        }
+        push @grp_ids,
+          Bric::Biz::Category->lookup({ id => $id })->get_asset_grp_id();
     }
-
     return $self;
 }
-
 
 ################################################################################
 

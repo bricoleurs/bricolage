@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40.2.9 $
+$Revision: 1.40.2.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40.2.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 13:21:40 $
+$Date: 2003-04-01 19:19:57 $
 
 =head1 SYNOPSIS
 
@@ -291,6 +291,7 @@ my $gen = 'Bric::Util::Fault::Exception::GEN';
 #--------------------------------------#
 # Instance Fields
 
+my $all_media_grp_id;
 BEGIN {
     Bric::register_fields(
                         {
@@ -307,6 +308,8 @@ BEGIN {
                          _file           => Bric::FIELD_NONE,
                          _media_type_obj => Bric::FIELD_NONE,
                         });
+    $all_media_grp_id = Bric::Util::Grp->lookup(
+      { name => 'All Media' })->get_id();
 }
 
 #==============================================================================#
@@ -399,6 +402,7 @@ sub new {
     delete $init->{active};
     $init->{priority} ||= 3;
     $init->{name} = delete $init->{title} if exists $init->{title};
+    $init->{grp_ids} = [ $all_media_grp_id ];
     $self->SUPER::new($init);
 }
 
@@ -893,21 +897,24 @@ B<Notes:> NONE.
 
 sub set_category__id {
     my ($self, $cat_id) = @_;
-
     my $cat = Bric::Biz::Category->lookup( { id => $cat_id });
     my $oc = $self->get_primary_oc;
-
+    my $c_cat = $self->get_category_object();
+    my @grp_ids;
+    foreach ($self->get_grp_ids) {
+        push @grp_ids, $_ unless $c_cat && $_ == $c_cat->get_asset_grp_id;
+    }
+    push @grp_ids, $cat->get_asset_grp_id();
     my $uri;
     if (defined $self->get_file_name) {
         $uri = Bric::Util::Trans::FS->cat_uri
           ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
     }
-
     $self->_set({ _category_obj => $cat,
                   category__id  => $cat_id,
-                  uri           => $uri
+                  uri           => $uri,
+                  grp_ids       => \@grp_ids,
     });
-
     return $self;
 }
 sub get_primary_uri { shift->get_uri }

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.33.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.33.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-05 21:20:46 $
+$Date: 2003-04-01 19:19:51 $
 
 =head1 SYNOPSIS
 
@@ -1968,8 +1968,9 @@ sub _init {
        });
 
     $self->_set([qw(version current_version checked_out _tile modifier
-                    element__id _element_object publish_status)],
-                [0, 0, 1, $tile, @{$init}{qw(user__id element__id element)},
+                    element__id _element_object grp_ids publish_status)],
+                [0, 0, 1, $tile, 
+                @{$init}{qw(user__id element__id element grp_ids)},
                  0]);
 
     $self->_set__dirty;

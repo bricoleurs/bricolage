@@ -14,7 +14,6 @@ use Bric::Util::Grp::Desk;
 use Bric::Util::Grp::Story;
 use Bric::Util::Grp::Workflow;
 use Bric::Util::Grp::CategorySet;
-use Data::Dumper; #FIXME
 
 sub class { 'Bric::Biz::Asset::Business::Story' }
 sub table { 'story' }
@@ -752,6 +751,118 @@ sub test_set_get_fields: Test(0) {
     # XXX Test: get the field and compare with what we set
 }
 
+sub test_new_grp_ids: Test(5) {
+    my $self = shift;
+    my $all_stories_grp_id = Bric::Util::Grp->lookup({ name => 'All Stories' })->get_id();
+    my $time = time;
+    my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
+    my $element = Bric::Biz::AssetType->new(
+        {
+             name        => "_test_$time.new",
+             burner      => 1,
+             description => 'this is a test',
+             type__id    => $att->get_id(),
+        });
+    $element->save();
+    $self->add_del_ids($element->get_id, 'element');
+    my $cat = Bric::Biz::Category->new({ 
+                                      name => "_test_$time.new", 
+                                      description => 'foo',
+                                      directory => "_test_$time.new",
+                                   });
+    $CATEGORY->add_child([$cat]);
+    $cat->save();
+    $self->add_del_ids($cat->get_id(), 'category');
+    my $cat1 = Bric::Biz::Category->new({ 
+                                      name => "_test_$time.new1", 
+                                      description => 'foo',
+                                      directory => "_test_$time.new1",
+                                   });
+    $CATEGORY->add_child([$cat1]);
+    $cat1->save();
+    $self->add_del_ids($cat1->get_id(), 'category');
+    # first we'll try it with no cats
+    my $story = class->new({
+                           name        => "_test_$time",
+                           description => 'this is a test',
+                           priority    => 1,
+                           source__id  => 1,
+                           slug        => 'test',
+                           user__id    => 0,
+                           element     => $element, 
+                       });
+    my $expected = 
+        [
+            $all_stories_grp_id, 
+        ];
+    my @got = $story->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'does a story get initialized with the right grp_id?');
+    # add the categories 
+    $story->add_categories([$cat, $cat1]);
+    $expected = 
+        [
+            $cat->get_asset_grp_id(),
+            $cat1->get_asset_grp_id(),
+            $all_stories_grp_id, 
+        ];
+    @got = $story->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'does adding cats get the right asset_grp_ids?');
+    # now remove one
+    $story->delete_categories([$cat]);
+    $expected = 
+        [
+            $cat1->get_asset_grp_id(),
+            $all_stories_grp_id, 
+        ];
+    @got = $story->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'does removing a cat remove the right asset_grp_id?');
+    undef $story;
+    $story = class->new({
+                           name        => "_test_$time",
+                           description => 'this is a test',
+                           priority    => 1,
+                           source__id  => 1,
+                           slug        => 'test',
+                           user__id    => 0,
+                           element     => $element, 
+                       });
+    my $desk = Bric::Biz::Workflow::Parts::Desk->new({ 
+                                    name => "_test_$time", 
+                                    description => '',
+                                 });
+    $desk->save();
+    $self->add_del_ids($desk->get_id(), 'desk');
+    my $workflow = Bric::Biz::Workflow->new({ 
+                                    type => Bric::Biz::Workflow::STORY_WORKFLOW,
+                                    name => "_test_$time",
+                                    start_desk => $desk,
+                                    description => 'test',
+                                 });
+    $workflow->save();
+    $self->add_del_ids($workflow->get_id(), 'workflow');
+    $story->set_current_desk($desk);
+    $expected = 
+        [
+            $all_stories_grp_id, 
+            $desk->get_asset_grp(),
+        ];
+    @got = $story->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'setting the current desk of a story adds the correct asset_grp_ids');
+    $story->set_workflow_id($workflow->get_id());
+    $expected = 
+        [
+            $workflow->get_asset_grp_id(),
+            $all_stories_grp_id, 
+            $desk->get_asset_grp(),
+        ];
+    @got = $story->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'setting the workflow id of a story adds the correct asset_grp_ids');
+}
 
 1;
 __END__

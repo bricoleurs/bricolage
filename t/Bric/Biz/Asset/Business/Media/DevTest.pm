@@ -457,7 +457,7 @@ sub test_select_methods: Test(70) {
     }
     ok(eq_set( \@got_ids, $OBJ_IDS->{media}), '... did we get the right list of ids out' );
     for (my $i = 0; $i < @got_grp_ids; $i++) {
-        ok(eq_set( $got_grp_ids[$i], $EXP_GRP_IDS[$i]), "... and did we get the right grp_ids for story $i" );
+        ok(eq_set( $got_grp_ids[$i], $EXP_GRP_IDS[$i]), "... and did we get the right grp_ids for media $i" );
     }
     undef @got_ids;
     undef @got_grp_ids;
@@ -470,7 +470,7 @@ sub test_select_methods: Test(70) {
     }
     ok(eq_set( \@got_ids, $OBJ_IDS->{media}), '... did we get the right list of ids out' );
     for (my $i = 0; $i < @got_grp_ids; $i++) {
-        ok(eq_set( $got_grp_ids[$i], $EXP_GRP_IDS[$i]), "... and did we get the right grp_ids for story $i" );
+        ok(eq_set( $got_grp_ids[$i], $EXP_GRP_IDS[$i]), "... and did we get the right grp_ids for media $i" );
     }
     undef @got_ids;
     undef @got_grp_ids;
@@ -610,6 +610,94 @@ sub test_oc : Test(35) {
     ok( @ocs = $ba->get_output_channels, "Get OCs 4" );
     is( scalar @ocs, 1, "Check for 1 OC 4" );
     is( $ocs[0]->get_name, $ocname, "Check OC name 4" );
+}
+
+sub test_new_grp_ids: Test(4) {
+    my $self = shift;
+    my $time = time;
+    my $all_media_grp_id = Bric::Util::Grp->lookup({ name => 'All Media' })->get_id();
+    my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
+    my $element = get_elem();
+    my $cat = Bric::Biz::Category->new({ 
+                                      name => "_test_$time.new", 
+                                      description => 'foo',
+                                      directory => "_test_$time.new",
+                                   });
+    $CATEGORY->add_child([$cat]);
+    $cat->save();
+    $self->add_del_ids($cat->get_id(), 'category');
+    # first we'll try it with no cats
+    my $media = class->new({
+                               name        => "_test_$time",
+                               file_name   => 'test.foo',
+                               description => 'this is a test',
+                               priority    => 1,
+                               source__id  => 1,
+                               user__id    => $self->user_id(),
+                               element     => $element, 
+                               checked_out => 1
+                           });
+    my $expected = 
+        [
+            $all_media_grp_id, 
+        ];
+    my @got = $media->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'does a media get initialized with the right grp_id?');
+    # add the categories 
+    $media->set_category__id($cat->get_id());
+    $expected = 
+        [
+            $cat->get_asset_grp_id(),
+            $all_media_grp_id, 
+        ];
+    @got = $media->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'does adding cats get the right asset_grp_ids?');
+    undef $media;
+    $media = class->new({
+                               name        => "_test_$time",
+                               file_name   => 'test.foo',
+                               description => 'this is a test',
+                               priority    => 1,
+                               source__id  => 1,
+                               user__id    => $self->user_id(),
+                               element     => $element, 
+                               checked_out => 1
+                           });
+    my $desk = Bric::Biz::Workflow::Parts::Desk->new({ 
+                                    name => "_test_$time", 
+                                    description => '',
+                                 });
+    $desk->save();
+    $self->add_del_ids($desk->get_id(), 'desk');
+    my $workflow = Bric::Biz::Workflow->new({ 
+                                    type => Bric::Biz::Workflow::MEDIA_WORKFLOW,
+                                    name => "_test_$time",
+                                    start_desk => $desk,
+                                    description => 'test',
+                                 });
+    $workflow->save();
+    $self->add_del_ids($workflow->get_id(), 'workflow');
+    $media->set_current_desk($desk);
+    $expected = 
+        [
+            $all_media_grp_id, 
+            $desk->get_asset_grp(),
+        ];
+    @got = $media->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'setting the current desk of a media adds the correct asset_grp_ids');
+    $media->set_workflow_id($workflow->get_id());
+    $expected = 
+        [
+            $workflow->get_asset_grp_id(),
+            $all_media_grp_id, 
+            $desk->get_asset_grp(),
+        ];
+    @got = $media->get_grp_ids();
+    ok( eq_set(\@got, $expected),
+      'setting the workflow id of a media adds the correct asset_grp_ids');
 }
 
 1;

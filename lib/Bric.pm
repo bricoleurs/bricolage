@@ -10,7 +10,7 @@ Release Version: 1.5.2 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.35.2.1 $
+$Revision: 1.35.2.2 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.5.2";
 
 =head1 DATE
 
-$Date: 2003-03-23 21:24:26 $
+$Date: 2003-04-01 19:19:47 $
 
 =head1 SYNOPSIS
 
@@ -570,7 +570,7 @@ sub get_grp_ids {
 
     # If this is an object and $self->{grp_ids} exists return it
     return wantarray ? @{$self->{grp_ids}} : $self->{grp_ids}
-      if defined $id && exists $self->{grp_ids};
+      if exists $self->{grp_ids};
 
     # If $id is defined, get group IDs. Otherwise, just return
     # INSTANCE_GROUP_ID.

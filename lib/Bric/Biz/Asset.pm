@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.10 $
+$Revision: 1.25.2.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-21 18:06:49 $
+$Date: 2003-04-01 19:19:49 $
 
 =head1 SYNOPSIS
 
@@ -1176,26 +1176,29 @@ sub get_desk_stamps {
 
 This method takes a desk stamp object and adds it to the asset object
 
-B<Throws:>
-
-NONE 
-
 B<Side Effects:>
 
-NONE 
-
-B<Notes:>
-
-NONE
+Adds the asset_grp_id of the desk to grp_ids (unless it was already there).
 
 =cut
 
 sub set_current_desk {
     my ($self, $desk) = @_;
-    my $desk_id     = $desk->get_id();
+    # grp_ids may change as a side effect
+    my @grp_ids;
+    my $c_desk = $self->get_current_desk();
+    foreach ($self->get_grp_ids()) {
+        next if ($c_desk && $_ == $c_desk->get_asset_grp());
+        push @grp_ids, $_;
+    }
+    push @grp_ids, $desk->get_asset_grp();
+    $self->_set({grp_ids => \@grp_ids});
+    # now set the actual value
+    my $desk_id = $desk->get_id();
     $self->_set({desk_id => $desk_id});
     return $self;
 }
+
 
 ################################################################################
 
@@ -1274,19 +1277,28 @@ NONE
 
 Sets the workflow that this asset is a member of
 
-B<Throws:>
-
-NONE
-
 B<Side Effects:>
 
-NONE
-
-B<Notes:>
-
-NONE
+Adds the asset_grp_id of the workflow to grp_ids unless it was already there.
 
 =cut
+
+sub set_workflow_id {
+    my ($self, $workflow_id) = @_;
+    # grp_ids may change as a side effect
+    my @grp_ids;
+    my $workflow = $self->get_workflow_object();
+    foreach ($self->get_grp_ids()) {
+        next if ($workflow && $_ == $workflow->get_asset_grp_id());
+        push @grp_ids, $_;
+    }
+    $workflow = Bric::Biz::Workflow->lookup({ id => $workflow_id });
+    push @grp_ids, $workflow->get_asset_grp_id();
+    $self->_set({grp_ids => \@grp_ids});
+    # now set the actual value
+    $self->_set({workflow_id => $workflow_id});
+    return $self;
+}
 
 ################################################################################
 
