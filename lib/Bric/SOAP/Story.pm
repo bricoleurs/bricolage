@@ -87,11 +87,12 @@ $LastChangedDate$
   my $xml = $soap->export(name(story_id => $story_id)->result;
 
   # create a new story from an xml document
-  my $story_ids = $soap->create(name(document => $xml_document))->result;
+  my $story_ids = $soap->create(name(document => $xml_document)
+                                ->type('base64'))->result;
 
   # update an existing story from an xml document
-  my $story_ids = $soap->create(name(document => $xml_document),
-                                name(update_ids =>xs
+  my $story_ids = $soap->update(name(document => $xml_document)->type('base64'),
+                                name(update_ids =>
                                      [ name(story_id => 1024) ]))->result;
 
 =head1 DESCRIPTION
