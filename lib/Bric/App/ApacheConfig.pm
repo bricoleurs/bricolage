@@ -116,7 +116,7 @@ do {
         (PerlFixupHandler  => 'Apache::OK') : ()),
     };
     $locs{"/media/js"} = {
-         ForceType => '"application/x-javascript; charset=' . lc $char_set . '"'
+         ForceType => '"application/x-javascript; charset=utf-8"'
     };
 
     # This will serve media assets and previews.
