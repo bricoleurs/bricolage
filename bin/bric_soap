@@ -85,6 +85,10 @@ Options:
                            publish. Use format CCYY-MM-DDThh:mm:ssZ, where
                            the "Z" stands for UTC (GMT).
 
+  --published-only       - for workflow publish, republish the published
+                           version rather than the current version; if the
+                           asset hasn't been published, don't publish anything
+
   --timeout              - specify the HTTP timeout for SOAP requests in
                            seconds.  Defaults to 30.
 
@@ -162,7 +166,7 @@ Publish all unpublished stories, in chunks of 5 to avoid timeouts
   | bric_soap workflow publish --chunks 5 -
 
 Republish all published stories.  This is useful when a template
-change needs to reflected across a site.  The C<sort -k2 -t_ -n> is a
+change needs to be reflected across a site.  The C<sort -k2 -t_ -n> is a
 crude way to make sure that newer stories overwrite older ones.
 
   bric_soap story list_ids --search publish_status=1 \
@@ -221,6 +225,7 @@ BEGIN {
     our $with_related_media   = 0;
     our $to_preview           = 0;
     our $publish_date;
+    our $published_only       = 0;
     our $timeout              = 30;
     our $chunks               = 0;
     our $continue             = 0;
@@ -246,6 +251,7 @@ BEGIN {
 						 $with_related_media   = 1; },
 	       "to-preview"             => \$to_preview,
 	       "publish-date=s"         => \$publish_date,
+               "published-only"         => \$published_only,
 	       "desk=s"                 => \$desk,
 	       "workflow=s"             => \$workflow,
                "timeout=s"              => \$timeout,
@@ -260,8 +266,8 @@ BEGIN {
     $verbose ||= 0;
 }
 our ($module, $command, %search, $with_related_stories, $with_related_media,
-     $to_preview, $publish_date, $username, $password, $server, $verbose,
-     $desk, $workflow, $timeout, $use_cookie, $save_cookie, $chunks,
+     $to_preview, $publish_date, $published_only, $username, $password, $server,
+     $verbose, $desk, $workflow, $timeout, $use_cookie, $save_cookie, $chunks,
      $continue);
 
 use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ()),
@@ -362,6 +368,10 @@ foreach my $opt (@options) {
 # make sure chunking isn't requested for a non-chunk-supporting command
 die "The --chunks option only works with the Workflow publish command.\n"
   if $chunks and $module ne 'workflow' and $command ne 'publish';
+
+# make sure published-only option is only given for workflow publish
+die "The --published-only option only works with the Workflow publish command.\n"
+  if $published_only and $module ne 'workflow' and $command ne 'publish';
 
 # setup soap object to login with
 my $soap = new SOAP::Lite
@@ -524,6 +534,7 @@ sub publish {
     push @opts, name(publish_related_media    => 1) if $with_related_media;
     push @opts, name(to_preview               => 1) if $to_preview;
     push @opts, name(publish_date => $publish_date) if $publish_date;
+    push @opts, name(published_only           => 1) if $published_only;
 
     # publish by chunks
     _foreach_chunks {

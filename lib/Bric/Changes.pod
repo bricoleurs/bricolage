@@ -77,6 +77,12 @@ The character set and language preferences have been moved into the
 database, so that these can be overridden by individual users if
 needed.  [Dave Rolsky]
 
+=item *
+
+Added --published-only option to bric_soap and bric_republish
+so that you can republish the last-published version rather than
+the current version. [Scott]
+
 =back
 
 =head2 Improvements

@@ -7,7 +7,7 @@ bric_republish - republishes stories automatically
 
 =head1 SYNOPSIS
 
-bric_publish [options]
+bric_republish [options]
 
   --help     - shows this screen
 
@@ -18,7 +18,7 @@ bric_publish [options]
                this option bric_republish is silent when successful.
 
   --server   - specifies the Bricolage server URL, defaults to
-               the BRICOLAGE_SERVER environment variable if set, 
+               the BRICOLAGE_SERVER environment variable if set,
                http://localhost otherwise.
 
   --username - the Bricolage username, defaults to the BRICOLAGE_USERNAME
@@ -29,14 +29,19 @@ bric_publish [options]
 
   --story-id - specify a single story to publish
 
-  --no-media - don't publish related media with story.  By default all 
+  --no-media - don't publish related media with story.  By default all
                related media are published with each story.
 
   --element  - only publish stories of this element (story type)
 
   --category - only publish stories in this category, specified by path
 
-  --chunks   - publish stories in chunks of this many.  Defaults to 0, 
+  --published-only - publish the published version rather than the
+               current version (which is different from published version
+               if the asset has been saved after publishing), and don't
+               published unpublished assets
+
+  --chunks   - publish stories in chunks of this many.  Defaults to 0,
                which means to process them all at once.  This option can
                be used to avoid timing out on large jobs.
 
@@ -103,12 +108,13 @@ BEGIN {
     our $server          = $ENV{BRICOLAGE_SERVER} || 'http://localhost';
     our $VERBOSE         = 0;
     our $no_media        = 0;
+    our $published_only  = 0;
     our $timeout         = 30;
     our $chunks          = 0;
     our ($element, $story_id, $category, $help, $man);
     GetOptions("help"            => \$help,
 	       "man"             => \$man,
-	       "verbose+"        => \$VERBOSE,	   
+	       "verbose+"        => \$VERBOSE,
 	       "username=s"      => \$username,
 	       "password=s"      => \$password,
 	       "server=s"        => \$server,
@@ -116,13 +122,14 @@ BEGIN {
 	       "element=s"       => \$element,
 	       "no-media"        => \$no_media,
                "story-id=s"      => \$story_id,
+               "published-only"  => \$published_only,
                "timeout=s"       => \$timeout,
 	       "chunks=s"        => \$chunks,
 	      ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
-    
+
     # check required options
     pod2usage("Missing required --username option ".
 	      "and BRICOLAGE_USERNAME environment variable unset.")
@@ -140,7 +147,7 @@ require Data::Dumper if $VERBOSE;
 
 main();
 
-sub main {    
+sub main {
     # connect to the server
     soap_connect();
 
@@ -168,27 +175,27 @@ sub get_story_ids {
 	@story_ids = ($story_id);
 	return;
     }
-       
+
     # default search
     my @search = (name(publish_status => 1),
 		  name(no_workflow    => 1));
 
     push(@search, name(element  => $element))  if $element;
     push(@search, name(category => $category)) if $category;
-    
+
     # run the search
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
-   
+
     print STDERR "Calling Bric::SOAP::Story->list_ids(",
-	join(', ', map { $_->name . " => \"" . $_->value . "\"" } @search), 
+	join(', ', map { $_->name . " => \"" . $_->value . "\"" } @search),
 	    ")\n" if $VERBOSE;
-    
+
     # run list_ids
     my $response = $soap->list_ids(@search);
-    
+
     # check fault
     _print_fault($response) if $response->fault;
-    
+
     # return result list
     my $list  = $response->result;
     @story_ids = sort { $a <=> $b } @$list if $list;
@@ -205,12 +212,12 @@ sub get_media_ids {
 
     # switch to Story module
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
-    
+
     foreach my $story_id (@story_ids) {
 	# get story document
 	print STDERR "Calling Bric::SOAP::Story->export($story_id).\n"
 	    if $VERBOSE;
-	
+
 	my $response = $soap->export(name(story_id => $story_id));
 	_print_fault($response) if $response->fault;
 
@@ -228,7 +235,8 @@ sub get_media_ids {
 
 # publish stories and media found
 sub publish_assets {
-    our ($soap, @story_ids, @media_ids, $chunks);
+    our ($soap, @story_ids, @media_ids, $chunks, $published_only);
+    my @opts;
 
     # do nothing if we've got nothing
     return unless @story_ids;
@@ -240,37 +248,39 @@ sub publish_assets {
     my @ids = ( ( map { name(story_id => $_) } @story_ids ),
 		( map { name(media_id => $_) } @media_ids ) );
 
+    push @opts, name(published_only => 1) if $published_only;
+
     if ($chunks) {
 	# step through @ids $chunks at a time
 	my ($start, $end);
 	for ($start = 0; $start <= $#ids; $start = $end + 1) {
 	    $end = $start + $chunks - 1;
 	    $end = $#ids if $end > $#ids;
-	    
+
 	    print STDERR "Calling Bric::SOAP::Workflow->publish(\n",
-		join(",\n", map { "\t". $_->name ." => ". $_->value } 
+		join(",\n", map { "\t". $_->name ." => ". $_->value }
 		     @ids[$start .. $end]), "\n)\n"
 			 if $VERBOSE > 1;
 
-	    my $r = $soap->publish(name(publish_ids =>[@ids[$start .. $end]]));
+	    my $r = $soap->publish(name(publish_ids =>[@ids[$start .. $end]]), @opts);
 	    _print_fault($r) if $r->fault;
 	}
     } else {
 	# publish everything at once
-	
+
 	print STDERR "Calling Bric::SOAP::Workflow->publish(\n",
 	    join(",\n", 
 		 map { "\t". $_->name ." => ". $_->value } @ids), "\n)\n"
 		     if $VERBOSE > 1;
-	
-	my $r = $soap->publish(name(publish_ids => \@ids));
+
+	my $r = $soap->publish(name(publish_ids => \@ids), @opts);
 	_print_fault($r) if $r->fault;
     }
 }
 
 #
 # startup dance routines
-# 
+#
 
 # connects to a specific SOAP server
 sub soap_connect {
@@ -294,7 +304,7 @@ sub soap_connect {
 				name(password => $password));
     die "Login to $server as $username failed.\n" if $response->fault;
     print STDERR "Login to $server success.\n" if $VERBOSE;
-}    
+}
 
 # prints out fault message
 sub _print_fault {

@@ -48,15 +48,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-22 03:21:16 $
+$Date: 2004-01-03 21:39:43 $
 
 =head1 SYNOPSIS
 
@@ -155,7 +155,7 @@ a module so it could be kept in one place.
 my %allowed = map { $_ => 1 } qw(story_id media_id publish_ids
                                  publish_related_stories
                                  publish_related_media
-                                 publish_date
+                                 publish_date published_only
                                  to_preview);
 
 sub publish {
@@ -181,6 +181,8 @@ sub publish {
                . "PREVIEW_LOCAL set.")
       if $preview and PREVIEW_LOCAL;
 
+    my $published_only = exists($args->{published_only}) ? $args->{published_only} : 0;
+
     my @ids = _collect_ids("publish_ids",
                            [ 'story_id', 'media_id' ],
                            $env);
@@ -199,6 +201,20 @@ sub publish {
             $type = 'story';
             $obj  = Bric::Biz::Asset::Business::Story->lookup(
                                          { id => $id->value });
+
+            if ($published_only) {
+                # Get published_version, not current_version
+                # (version zero isn't published yet)
+                my $pubversion = $obj->get_published_version || 0;
+                if ($pubversion) {
+                    # Get published version instead of current
+                    $obj = $obj->lookup({ id => $id->value, version => $pubversion });
+                } else {
+                    # Skip if --published-only and not published yet
+                    next;
+                }
+            }
+
             throw_ap(error => "Unable to find story for story_id \"$id\".")
                 unless $obj;
 
@@ -206,6 +222,20 @@ sub publish {
             $type = 'media';
             $obj  = Bric::Biz::Asset::Business::Media->lookup(
                                          { id => $id->value });
+
+            if ($published_only) {
+                # Get published_version, not current_version
+                # (version zero means it isn't published yet)
+                my $pubversion = $obj->get_published_version || 0;
+                if ($pubversion) {
+                    # Get published version instead of current
+                    $obj = $obj->lookup({ id => $id->value, version => $pubversion });
+                } else {
+                    # Skip if --published-only and not published yet
+                    next;
+                }
+            }
+
             throw_ap(error => "Unable to find media object for media_id \"$id\".")
                 unless $obj;
 
@@ -244,8 +274,10 @@ sub publish {
                 }
             }
         }
-            my $published = $preview ? $burner->preview($obj, $type, get_user_id)
-              : $burner->publish($obj, $type, get_user_id, $args->{publish_date}, 1);
+
+        my $published = $preview ? $burner->preview($obj, $type, get_user_id)
+          : $burner->publish($obj, $type, get_user_id, $args->{publish_date}, 1);
+
         # record the publish
         push(@published, name("${type}_id", $id)) if $published;
     }

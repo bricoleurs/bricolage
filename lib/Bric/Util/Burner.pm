@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.61 $
+$Revision: 1.62 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.61 $ )[-1];
+our $VERSION = (qw$Revision: 1.62 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-06 00:45:37 $
+$Date: 2004-01-03 21:39:43 $
 
 =head1 SYNOPSIS
 
@@ -923,7 +923,7 @@ sub publish {
         my $base_path = $fs->cat_dir($self->get_out_dir, 'oc_'. $ocid);
         $self->_set(['base_path'], [$base_path]);
 
-        # Get a list of server types this categroy applies to.
+        # Get a list of server types this category applies to.
         my $bat = $oc_sts->{$ocid} ||=
             Bric::Dist::ServerType->list({ can_publish       => 1,
                                            active            => 1,
@@ -1036,8 +1036,11 @@ sub publish {
 
     if ($published) {
         $ba->set_publish_status(1);
-        # Set published version
-        $ba->set_published_version($ba->get_current_version);
+        # Set published version if we've reverted
+        # (i.e. unless we're republishing published_version)
+        if ($ba->get_version > $ba->get_published_version) {
+            $ba->set_published_version($ba->get_version);
+        }
         # Now log that we've published and get it out of workflow.
         log_event($key . ($repub ? '_republish' : '_publish'), $ba);
 
