@@ -10,7 +10,7 @@ Release Version: 1.0.1
 
 File (CVS) Version:
 
-$Revision: 1.4.2.2 $
+$Revision: 1.4.2.3 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.0.1";
 
 =head1 DATE
 
-$Date: 2001-10-04 16:21:47 $
+$Date: 2001-10-09 20:18:54 $
 
 =head1 SYNOPSIS
 
@@ -713,6 +713,7 @@ sub _set {
     my $dirt = $self->{_dirty};
     # Disable warnings to prevent "Use of uninitialized value in string ne"
     # messages.
+    local $^W = undef;
     for my $i (0..$#$k) {
 	eval {
 	    if ((defined $self->{$k->[$i]} && !defined $v->[$i])
@@ -804,7 +805,10 @@ perl(1).
 =head1 REVISION HISTORY
 
 $Log: Bric.pm,v $
-Revision 1.4.2.2  2001-10-04 16:21:47  wheeler
+Revision 1.4.2.3  2001-10-09 20:18:54  wheeler
+Turning off warnings before checking values using eq.
+
+Revision 1.4.2.2  2001/10/04 16:21:47  wheeler
 Changed _set() to check for definedness vs. non-definedness because '' ne undef,
 and this was causing some problems.
 
