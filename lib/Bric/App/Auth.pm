@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 20:10:42 $
+$Date: 2003-10-03 00:21:57 $
 
 =head1 SYNOPSIS
 
@@ -94,6 +94,9 @@ my ($c, $cookie_class);
 # Instance Fields
 BEGIN {
     $cookie_class = $ENV{MOD_PERL} ? 'Apache::Cookie' : 'CGI::Cookie';
+    # XXX Turn off warnings so that we don't get CGI::Cookie's
+    # 'Ambiguous use of -time resolved as -&time()' warning.
+    local $^W;
     eval "require $cookie_class";
 }
 
