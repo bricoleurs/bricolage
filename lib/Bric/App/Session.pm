@@ -3,20 +3,19 @@ package Bric::App::Session;
 
 =head1 NAME
 
-  Bric::App::Session - A class to handle user sessions
-
+Bric::App::Session - A class to handle user sessions
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-18 23:43:19 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 SYNOPSIS
 
@@ -167,6 +166,10 @@ my $secret = 'd0 a3rQ#R9JR34$(#ffE*38fhj3#$98jfeER9\'a35T(fgn[*;|ife=ef*R#,{%@';
 
 #------------------------------------------------------------------------------#
 
+=head1 INTERFACE
+
+=head2 Functions
+
 =item setup_user_session($r)
 
 This function takes an Apache request object and sets up the persistent user 
@@ -262,7 +265,7 @@ Unable to synchronize user session.
 
 B<Side Effects:>
 
-=over
+=over 4
 
 =item *
 
@@ -298,7 +301,7 @@ Unable to expire user session.
 
 B<Side Effects:>
 
-=over
+=over 4
 
 =item *
 
@@ -473,7 +476,7 @@ NONE
 
 B<Side Effects:>
 
-=over
+=over 4
 
 =item *
 
@@ -543,7 +546,7 @@ NONE
 
 B<Side Effects:>
 
-=over
+=over 4
 
 =item *
 
@@ -603,7 +606,7 @@ NONE
 
 B<Side Effects:>
 
-=over
+=over 4
 
 =item *
 
@@ -672,7 +675,7 @@ NONE
 
 B<Side Effects:>
 
-=over
+=overn 4
 
 =item *
 
@@ -720,7 +723,7 @@ NONE
 
 B<Side Effects:>
 
-=over
+=over 4
 
 =item *
 
@@ -756,7 +759,7 @@ B<Throws:> NONE
 
 B<Side Effects:>
 
-=over
+=over 4
 
 =item *
 
@@ -813,7 +816,7 @@ sub user_is_admin {
 
 =head2 Constructors
 
-=over 4
+NONE.
 
 =cut
 
@@ -822,11 +825,15 @@ sub user_is_admin {
 
 =head2 Destructors
 
+NONE.
+
 =cut
 
 #--------------------------------------#
 
 =head2 Public Class Methods
+
+NONE.
 
 =cut
 
@@ -835,12 +842,15 @@ sub user_is_admin {
 
 =head2 Public Instance Methods
 
-=cut
+NONE.
 
+=cut
 
 #==============================================================================#
 
 =head2 Private Methods
+
+NONE.
 
 =cut
 
@@ -852,7 +862,6 @@ NONE
 
 =cut
 
-
 #--------------------------------------#
 
 =head2 Private Instance Methods
@@ -861,12 +870,8 @@ NONE
 
 =cut
 
-
-
 1;
 __END__
-
-=back
 
 =head1 NOTES
 
@@ -874,8 +879,7 @@ NONE
 
 =head1 AUTHOR
 
- "Garth Webb" <garth@perijove.com>
- Bricolage Engineering
+Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 

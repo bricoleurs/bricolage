@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 SYNOPSIS
 
@@ -283,7 +283,7 @@ sub list {
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -337,12 +337,6 @@ sub list_ids {
 }
 
 ################################################################################
-
-=back
-
-=head2 Public Class Methods
-
-=over 4
 
 =item Bric::App::Cache->clear()
 
@@ -478,7 +472,7 @@ sub set_lmu_time { set($_[0], 'lmu_time', time) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 

@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-03 19:53:54 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ $Date: 2002-09-03 19:53:54 $
 
 =head1 DESCRIPTION
 
-
+Utility functions.
 
 =cut
 
@@ -104,8 +104,6 @@ our %EXPORT_TAGS = (all     => \@EXPORT_OK,
 # Function Prototypes                  #
 #======================================#
 
-
-
 #==============================================================================#
 # Constants                            #
 #======================================#
@@ -120,21 +118,17 @@ use constant MAX_HISTORY => 10;
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-
+# Public Class Fields
 
 #--------------------------------------#
-# Private Class Fields                  
+# Private Class Fields
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $login_marker = LOGIN_MARKER .'='. LOGIN_MARKER;
 
 #------------------------------------------------------------------------------#
 
-
 #--------------------------------------#
-# Instance Fields                       
-
+# Instance Fields
 
 #==============================================================================#
 
@@ -142,17 +136,15 @@ my $login_marker = LOGIN_MARKER .'='. LOGIN_MARKER;
 
 =head2 Constructors
 
-=over 4
+NONE
 
 =cut
-
 
 #--------------------------------------#
 
 =head2 Destructors
 
 =cut
-
 
 #--------------------------------------#
 
@@ -187,11 +179,8 @@ NONE
 sub add_msg {
     my ($txt) = @_;
     my $msg = $HTML::Mason::Commands::session{'_msg'};
-    
     push @$msg, $txt;
-
     $HTML::Mason::Commands::session{'_msg'} = $msg;
-
     return 1;
 }
 
@@ -676,17 +665,21 @@ sub pop_page {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Instance Methods
 
-=cut
+NONE
 
+=cut
 
 #==============================================================================#
 
 =head2 Private Methods
 
-=cut
+NONE
 
+=cut
 
 #--------------------------------------#
 
@@ -703,13 +696,10 @@ NONE
 
 NONE
 
-
 =cut
 
 1;
 __END__
-
-=back
 
 =head1 NOTES
 
@@ -717,9 +707,8 @@ NONE
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
-"David Wheeler" <david@wheeler.net>
-Bricolage Engineering
+Garth Webb <garth@perijove.com>
+David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 

@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-03 19:53:54 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 SYNOPSIS
 
@@ -248,6 +248,8 @@ sub logout {
     return 1;
 }
 
+=back
+
 =head1 PRIVATE
 
 =head2 Private Class Methods
@@ -260,9 +262,7 @@ NONE.
 
 =head2 Private Functions
 
-=over
-
-=item 4
+=over 4
 
 =item my $cookie = &$make_cookie($r, $username)
 

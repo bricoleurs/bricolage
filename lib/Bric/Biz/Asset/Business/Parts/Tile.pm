@@ -3,23 +3,20 @@ package Bric::Biz::Asset::Business::Parts::Tile;
 
 =head1 NAME
 
- Bric::Biz::Asset::Business::Parts::Tile
-
- Tile maps a particular Asset Part Data object to a formatting Asset
+Bric::Biz::Asset::Business::Parts::Tile - Tile maps a particular Asset Part
+Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
-
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
-
+$Date: 2002-09-04 00:48:24 $
 
 =head1 SYNOPSIS
 
@@ -230,7 +227,7 @@ B<Notes:>
 NONE
 
 =cut
- 
+
 sub list {
     my $err_msg = "Method not Implemented";
     die Bric::Util::Fault::Exception::MNI->new({'msg' => $err_msg});
@@ -240,7 +237,11 @@ sub list {
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -255,9 +256,11 @@ sub DESTROY {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
 
-=cut
+=over 4
 
 =item list_ids - Method not implemented
 
@@ -288,11 +291,11 @@ sub list_ids {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Instance Methods
 
-=cut
-
-################################################################################
+=over 4
 
 =item (1 || 0) = $tile->has_name($name);
 
@@ -432,19 +435,16 @@ sub is_active {
 
 #==============================================================================#
 
+=back
+
 =head1 PRIVATE
 
-=cut
-
-#--------------------------------------#
+NON
 
 =head2 Private Class Methods
 
 NONE
 
-=cut
-
-#--------------------------------------#
 
 =head2 Private Instance Methods
 

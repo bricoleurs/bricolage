@@ -7,15 +7,15 @@ CE::App::Profile.pm
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-20 03:22:00 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 SYNOPSIS
 
@@ -84,11 +84,13 @@ BEGIN {
 
 =head2 Constructors
 
-=over 4
+NONE.
 
 =cut
 
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -102,6 +104,8 @@ sub DESTROY {
 }
 
 #--------------------------------------#
+
+=back
 
 =head2 Public Class Methods
 
@@ -250,9 +254,9 @@ sub set_profile {
 1;
 __END__
 
-=back
-
 =head1 NOTES
+
+NONE
 
 =head1 AUTHOR
 

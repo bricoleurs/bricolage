@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2002-08-18 23:50:24 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 DESCRIPTION
 
@@ -293,6 +293,33 @@ L<Bric::Dist::Action> for information on how to create actions.
 Say you need to distribute files via a protocol that Bricolage doesn't currently
 support -- say, an new variant of FTP called "FooTP." You'll need to create a
 new mover. Consult L<Bric::Dist::Action::Mover> for details on how to do that.
+
+=head1 CREATING DISTRIBUTIONS
+
+If you are a Bricolage release manager and you're getting ready to release a
+new version, here are the steps you'll need to take to create a distribution
+tarball. First, tag the release in CVS:
+
+  cvs -z3 tag Release_1_x_x
+
+If this is a major release, you'll need to create a new branch, so that it
+can be maintained for bug fixes separately:
+
+  cvs -z3 tag -b Release_1_x_x
+
+Next, export the sources into a new directory. Be sure to use the C<-kkv>
+option with C<export> so that the version numbers are all properly populated.
+
+  cd /tmp
+  cvs -z3 export -r Release_1_x_x -kkv bricolage
+  cd bricolage
+  make dist
+
+This will create a distribution tarball in the bricolage directory. Copy this
+tarbal somewhere, and do a full test with it, to make sure that Bricolage does
+indeed build and properly install itself. If you have to go back and make any
+changes, be sure to update the tag of any files you change and commit to
+CVS. Once everything appears to be working properly, release!
 
 =head1 AUTHOR
 

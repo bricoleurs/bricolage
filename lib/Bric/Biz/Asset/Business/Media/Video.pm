@@ -8,11 +8,11 @@ videos
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
@@ -210,7 +210,11 @@ NONE
 
 #----------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -227,7 +231,11 @@ sub DESTROY {
 
 #-----------------------------#
 
+=back
+
 =head2 Public Class Methods
+
+=over 4
 
 =item (@ids || $ids) = Bric::Biz::Asset::Business::Media::Video->list_ids($param)
 
@@ -326,62 +334,29 @@ NONE
 
 #-----------------------------#
 
+=back
+
 =head2 Public Instance Methods
 
-=item $video = $video->save()
-
-Saves changes made to the data base
-
-B<Throws:>
-
 NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-################################################################################
-
-
-#==============================================================================#
 
 =head1 PRIVATE
 
-=cut
-
-#--------------------------------------#
+NONE
 
 =head2 Private Class Methods
 
-# NONE
-
-################################################################################
-
-
-#==============================================================================#
-
-#--------------------------------------#
+NONE
 
 =head2 Private Instance Methods
 
+NONE
 
 =cut
-
-# NONE
-
-
-################################################################################
 
 1;
 __END__
 
-=back
 
 =head1 NOTES
 
@@ -393,7 +368,7 @@ NONE
 
 =head1 SEE ALSO
 
-L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
+L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Asset::Business::Media>
 
 =cut

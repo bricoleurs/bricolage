@@ -7,11 +7,11 @@ assets
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 BACKGROUND
 
@@ -33,14 +33,13 @@ be "Aren't Clowns Lovely?".
 
 =head1 More About Elements
 
-The first place one starts when making a new story is with an Element.  An 
-element defines the structure of a story.  It lists the data fields available to
-those creating a story.    There are two types of root element, media and story,
-and there are subelements that can be a part of other elements.   So if a
+The first place one starts when making a new story is with an Element. An
+element defines the structure of a story. It lists the data fields available
+to those creating a story. There are two types of root element, media and
+story, and there are subelements that can be a part of other elements. So if a
 story element is created, it can contain page elements, which can contain
-paragraph attributes.    The Story Element is a top level element, while the
-Page element is a subelement.   The Page element contains Paragraph 
-attributes. 
+paragraph attributes. The Story Element is a top level element, while the Page
+element is a subelement. The Page element contains Paragraph attributes.
 
 =over 4
 
@@ -48,19 +47,19 @@ attributes.
 
 A subelement of Media types, Story types, or other elements.
 
-=item Story 
+=item Story
 
-An element that represents the top level story.    This can contain other 
+An element that represents the top level story. This can contain other
 elements.
 
-=item Media 
+=item Media
 
-An element that represents the top level media.   This can contain other media
+An element that represents the top level media. This can contain other media
 elements.
 
 =back
 
-=head2 More Element Types 
+=head2 More Element Types
 
 An element type is a flag that will alter the behavior of an element.
 
@@ -72,8 +71,8 @@ This element will represent a single page on final publish.
 
 =item Fixed
 
-This element will represent a fixed url page.   A fixed url page does not have
-the coverdate or slug in the url string.   It is used for pages like covers.
+This element will represent a fixed url page. A fixed url page does not have
+the coverdate or slug in the url string. It is used for pages like covers.
 
 =item Related Story
 
@@ -88,22 +87,21 @@ This element is used to link media objects to a story.
 =head2 Elements from element types
 
 To create the framework of a story or media asset, create an element based
-upon either a story or media element type.   Associate the output channels
-that the element will be sent through.   Templates will need to be created
-for each of the output channels.
+upon either a story or media element type. Associate the output channels that
+the element will be sent through. Templates will need to be created for each
+of the output channels.
 
 An Output Channel is a group of formatting assets that can deliver the same
-content in a different format.   Examples might be a WAP version or an email
+content in a different format. Examples might be a WAP version or an email
 version of stories.
 
 See Templates.pod for more formatting info.
 
 =head2 Data Elements on Elements
 
-Each Element can contain any number of Data Elements.  These are fields that
-can be set on the element.    The admin interface provides ways of setting
-the input of these elements.   Select Menus, text, date fields can all be
-set here. 
+Each Element can contain any number of Data Elements. These are fields that
+can be set on the element. The admin interface provides ways of setting the
+input of these elements. Select Menus, text, date fields can all be set here.
 
 =head2 Rules for Data Elements
 
@@ -111,29 +109,28 @@ set here.
 
 =item Required
 
-If selected this field must be present in all story or media assets.   It will
+If selected this field must be present in all story or media assets. It will
 automatically be created when an asset is called up for editing.
 
 =item Repeatable
 
-If selected this field will be allowed to exist any number of times.   It will
+If selected this field will be allowed to exist any number of times. It will
 also be allowed to be bulk edited.
 
 =back
 
 =head2 Elements in Elements
 
-Elements can also contain other non-story/media elements.   These can then 
+Elements can also contain other non-story/media elements. These can then
 contain other elements to whatever level of complexity is needed.
 
-
 =head1 Story Editing
-
-=over 4
 
 =head2 Fields on creation
 
 When a new story is created these are the fields that can be entered.
+
+=over 4
 
 =item *
 
@@ -141,22 +138,22 @@ title - the name of the story
 
 =item *
 
-slug - a string that will appear in the url of stories that are not marked as 
+slug - a string that will appear in the url of stories that are not marked as
 fixed
 
 =item *
 
-story type - this is where one chooses which story element to base this story 
+story type - this is where one chooses which story element to base this story
 upon
 
 =item *
 
-source - the rights owner of the story.    Will be used in conjunction with
+source - the rights owner of the story. Will be used in conjunction with
 coverdate to set the expire date.
 
 =item *
 
-primary category - the main category association of this story.   When other
+primary category - the main category association of this story. When other
 stories link to this one, the primary category will be used to construct the
 url
 
@@ -168,8 +165,11 @@ priority - the importance of the story in workflow
 
 cover date - the intended date of publish
 
+=back
 
 =head2 Additional fields on Edit Screen
+
+=over 4
 
 =item *
 
@@ -207,9 +207,9 @@ Trail - a list of actions taken on this story
 
 =head1 Media Editing
 
-This is the area where files can be uploaded and properties can be set on them.
-Media elements can hold Data Elements and other Elements in the same way that
-Stories can.
+This is the area where files can be uploaded and properties can be set on
+them. Media elements can hold Data Elements and other Elements in the same way
+that Stories can.
 
 =head2 File Uploading
 
@@ -217,19 +217,18 @@ The file that represents the media object is uploaded here.
 
 =head1 Asset Versioning
 
-Every time an asset is checked out and then checked back in, a new version is 
-created.   It has the same ID as the previous asset version.   
-
+Every time an asset is checked out and then checked back in, a new version is
+created. It has the same ID as the previous asset version.
 
 =head2 Viewing Past versions
 
-The Profile screen has a section where, if there are previous versions, one can
-go back and view them.
+The Profile screen has a section where, if there are previous versions, one
+can go back and view them.
 
 =head2 Reverting to Past Versions
 
-If an asset is checked out, one can revert the data to a previous version.
-The revert will overwrite all the data in the current version and 
-replace it with the previous version's data.   It will keep the same version ID,
-and any versions that existed in between the reverted versions will still be 
+If an asset is checked out, one can revert the data to a previous version. The
+revert will overwrite all the data in the current version and replace it with
+the previous version's data. It will keep the same version ID, and any
+versions that existed in between the reverted versions will still be
 available.

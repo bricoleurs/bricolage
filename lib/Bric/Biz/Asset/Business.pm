@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-26 06:03:47 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 SYNOPSIS
 
@@ -268,12 +268,6 @@ sub lookup {
 This will return a list or list ref of Business assets that match the 
 given criteria
 
-Supported Keys:
-
-=over 4
-
-=back
-
 B<Throws:>
 
 NONE
@@ -304,7 +298,11 @@ sub list {
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -321,6 +319,8 @@ sub DESTROY {
 
 
 #--------------------------------------#
+
+=back
 
 =head2 Public Class Methods
 
@@ -445,9 +445,9 @@ Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
 
 =item text
 
@@ -478,7 +478,7 @@ SQL DDL.
 
 rows - The number of rows to format in a textarea field.
 
-=item
+=item *
 
 cols - The number of columns to format in a textarea field.
 
@@ -557,6 +557,8 @@ sub my_meths {
 =back
 
 =head2 Public Instance Methods
+
+=over 4
 
 =item $title = $asset->get_title()
 
@@ -979,23 +981,16 @@ B<Notes:>
 
 NONE
 
-=cut 
+=cut
 
 sub get_possible_containers {
-	my ($self) = @_;
-	
-	my $tile = $self->get_tile();
-
-	my $cont = $tile->get_possible_containers();
-
-	return wantarray ? @$cont : $cont;
+    my ($self) = @_;
+    my $tile = $self->get_tile();
+    my $cont = $tile->get_possible_containers();
+    return wantarray ? @$cont : $cont;
 }
-	
+
 ################################################################################
-
-=head2 Public Instance Methods
-
-=over 4
 
 =item $self = $story->set_cover_date($cover_date)
 
@@ -1105,11 +1100,13 @@ Incorrect number of args to Bric::_set().
 
 Bric::set() - Problems setting fields.
 
-B<Side Effects:> 
+=back
+
+B<Side Effects:>
 
 NONE
 
-B<Notes:> 
+B<Notes:>
 
 NONE
 
@@ -1771,6 +1768,8 @@ sub save {
 
 #=============================================================================#
 
+=back
+
 =head2 PRIVATE
 
 =cut
@@ -1779,7 +1778,7 @@ sub save {
 
 =head2 Private Class Methods
 
-=cut
+=over 4
 
 =item $self = $self->_init()
 
@@ -1855,11 +1854,11 @@ sub _init {
 
 #--------------------------------------#
 
+=back
+
 =head2 Private Instance Methods
 
-=cut
-
-###############################################################################
+=over 4
 
 =item $at_obj = $self->_construct_uri()
 
@@ -2076,7 +2075,11 @@ sub _get_category_keywords {
 
 #--------------------------------------#
 
+=back
+
 =head2 Private Functions
+
+NONE.
 
 =cut
 
@@ -2085,6 +2088,8 @@ sub _get_category_keywords {
 __END__
 
 =head1 NOTES
+
+NONE
 
 =head1 AUTHOR
 

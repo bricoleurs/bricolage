@@ -6,20 +6,24 @@ Bric::App::MediaFunc - Location for functions that query uploaded media files.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-20 03:22:00 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 SYNOPSIS
 
+TBD.
+
 =head1 DESCRIPTION
+
+TBD.
 
 =cut
 
@@ -81,6 +85,8 @@ BEGIN {
 =head1 INTERFACE
 
 =head2 Constructors
+
+=over 4
 
 =item $mediafunc = Bric::App::MediaFunc->new($init);
 
@@ -278,6 +284,8 @@ NONE.
 NONE.
 
 =head2 Private Functions
+
+=over 4
 
 =item $image_info = $self->_get_image_info_obj()
 

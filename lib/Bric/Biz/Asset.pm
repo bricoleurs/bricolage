@@ -8,15 +8,15 @@ An asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-16 19:52:31 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 SYNOPSIS
 
@@ -231,12 +231,6 @@ sub lookup {
 
 This will call list on both the inherited classes
 
-Supported Keys:
-
-=over 4
-
-=back
-
 B<Throws:>
 
 NONE
@@ -271,7 +265,11 @@ sub list {
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -285,6 +283,8 @@ sub DESTROY {
 }
 
 #--------------------------------------#
+
+=back
 
 =head2 Public Class Methods
 
@@ -435,9 +435,9 @@ Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
 
 =item text
 
@@ -468,7 +468,7 @@ SQL DDL.
 
 rows - The number of rows to format in a textarea field.
 
-=item
+=item *
 
 cols - The number of columns to format in a textarea field.
 
@@ -652,9 +652,9 @@ sub my_meths {
 
 #--------------------------------------#
 
-=head2 Public Instance Methods 
+=head2 Public Instance Methods
 
-=cut
+=over 4
 
 =item $versions = $asset->get_versions()
 
@@ -1570,9 +1570,9 @@ NONE
 
 #--------------------------------------#
 
-=head2 Private Instance Methods              
+=head2 Private Instance Methods
 
-=cut
+=over 4
 
 =item attrs = $self->_get_attr_hash()
 
@@ -1781,7 +1781,7 @@ sub _sync_attributes {
 NONE
 
 =cut
- 
+
 1;
 
 __END__
@@ -1794,7 +1794,7 @@ are desk_stamps objects or just data
 
 rewrite description to reflect current state
 
-accessor for asset_version_id (what does get_id return the asset id or the 
+accessor for asset_version_id (what does get_id return the asset id or the
 asset version group? )
 
 =head1 AUTHOR

@@ -7,20 +7,23 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-29 19:09:05 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 SYNOPSIS
 
+  use Bric::Biz::Asset::Business::Media;
+
 =head1 DESCRIPTION
 
+TBD.
 
 =cut
 
@@ -176,7 +179,7 @@ BEGIN {
 
 This will create a new media object with an optionaly defined intiial state
 
-=item Supported Keys
+Supported Keys:
 
 =over 4
 
@@ -315,7 +318,7 @@ sub lookup {
 
 returns a list or list ref of media objects that match the criteria defined
 
-=item Supported Keys
+Supported Keys:
 
 =over 4
 
@@ -458,7 +461,11 @@ sub list { _do_list($_[0], $_[1], undef) }
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -475,9 +482,11 @@ sub DESTROY {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
 
-=cut
+=over 4
 
 =item (@ids||$id_list) = Bric::Biz::Asset::Business::Media->list_ids( $criteria );
 
@@ -617,9 +626,9 @@ Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
 
 =item text
 
@@ -650,7 +659,7 @@ SQL DDL.
 
 rows - The number of rows to format in a textarea field.
 
-=item
+=item *
 
 cols - The number of columns to format in a textarea field.
 
@@ -748,7 +757,11 @@ sub get_class_id { 46 }
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Instance Methods
+
+=over 4
 
 =item $media = $media->set_category__id($id)
 
@@ -1197,16 +1210,23 @@ sub save {
 
 #==============================================================================#
 
+=back
+
 =head1 PRIVATE
 
-=cut
+NONE
 
 #--------------------------------------#
 
 =head2 Private Class Methods
 
+NONE
 
-=item = _do_list
+=head2 Private Instance Methods
+
+=over 4
+
+=item $media->_do_list($params)
 
 Called by list will return objects or ids depending on who is calling
 
@@ -1356,8 +1376,6 @@ sub _do_list {
 ################################################################################
 
 #--------------------------------------#
-
-=head2 Private Instance Methods
 
 =item $contribs = $self->_get_contributors()
 

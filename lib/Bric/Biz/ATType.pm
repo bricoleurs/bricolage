@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-09-04 00:48:23 $
 
 =head1 SYNOPSIS
 
@@ -354,7 +354,11 @@ sub list_ids {
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+NONE
 
 =cut
 
@@ -364,6 +368,10 @@ sub DESTROY {
 }
 
 #------------------------------------------------------------------------------#
+
+=head2 Public Instance Methods
+
+=over
 
 =item $success = $attype->remove;
 
@@ -397,7 +405,11 @@ sub remove {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
+
+=over 4
 
 =cut
 
@@ -579,7 +591,11 @@ sub my_meths {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Instance Methods
+
+=over 4
 
 =cut
 
@@ -860,8 +876,7 @@ NONE
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
-Bricolage Engineering
+Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 

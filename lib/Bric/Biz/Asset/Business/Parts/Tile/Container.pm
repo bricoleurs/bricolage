@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-08-30 18:06:55 $
+$Date: 2002-09-04 00:48:24 $
 
 =head1 SYNOPSIS
 
@@ -352,7 +352,7 @@ sub lookup {
 
 ################################################################################
 
-=item (@tiles||$tiles) = Bric::Biz::Assets::Parts::Tile::Container->list($param)  
+=item (@tiles||$tiles) = Bric::Biz::Assets::Parts::Tile::Container->list($param)
 
 This will return a list or list ref of tiles that match the given criteria
 
@@ -362,14 +362,13 @@ Supported Keys:
 
 =item object
 
-The object to search for containers - must be a
-Bric::Biz::Asset::Business subclass. You must specify this parameter
-or object_type.
+The object to search for containers - must be a Bric::Biz::Asset::Business
+subclass. You must specify this parameter or object_type.
 
 =item object_type
 
-The type of object to find containers for - 'story' or 'media'.  You
-must specify this parameter or object.
+The type of object to find containers for - 'story' or 'media'. You must
+specify this parameter or object.
 
 =item active
 
@@ -395,8 +394,7 @@ NONE
 B<side effects:>
 NONE
 
-B<notes:>
-NONE 
+B<notes:> NONE
 
 =cut
 
@@ -409,7 +407,11 @@ sub list {
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -424,46 +426,17 @@ sub DESTROY {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
 
-=cut
+=over 4
 
 =item (@ids||$ids) = Bric::Biz::Assets::Parts::Tile::Container->list_ids($param)
 
 This will return a list or list ref of tile ids that match the given criteria
 
-Supported Keys:
-
-=over 4
-
-=item object
-
-The object to search for containers - must be a
-Bric::Biz::Asset::Business subclass. You must specify this parameter
-or object_type.
-
-=item object_type
-
-The type of object to find containers for - 'story' or 'media'.  You
-must specify this parameter or object.
-
-=item active
-
-Find inactive stuff by setting this to 0, active with 1.
-
-=item element_id
-
-Find containers of a particular AssetType.
-
-=item name
-
-The name of the AssetType for the container
-
-=item parent_id
-
-Find containers with a given parent container.
-
-=back
+Supported Keys are the same as for C<list()>
 
 B<throws:>
 NONE
@@ -486,11 +459,11 @@ sub list_ids {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Instance Methods 
 
-=cut
-
-################################################################################
+=over 4
 
 =item $id = $container->get_related_instance_id()
 
@@ -1377,6 +1350,8 @@ sub save {
 
 #==============================================================================#
 
+=back
+
 =head1 PRIVATE
 
 =cut
@@ -1384,6 +1359,8 @@ sub save {
 #--------------------------------------#
 
 =head2 Private Class Methods
+
+=over 4
 
 =item _do_list()
 
@@ -1502,7 +1479,11 @@ sub _do_list {
 
 #--------------------------------------#
 
+=back
+
 =head2 Private Instance Methods
+
+=over 4
 
 =item $self = $self->_do_delete()
 
@@ -1834,10 +1815,8 @@ sub _sync_tiles {
 
     return $self;
 }
-	
+
 ################################################################################
-
-
 
 1;
 __END__
@@ -1855,7 +1834,7 @@ Bricolage Engineering
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
+L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Asset::Business::Parts::Tile>
 
 =cut

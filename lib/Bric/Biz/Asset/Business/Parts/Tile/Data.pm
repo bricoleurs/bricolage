@@ -8,15 +8,15 @@ contains the business data
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-23 17:06:58 $
+$Date: 2002-09-04 00:48:24 $
 
 =head1 SYNOPSIS
 
@@ -180,6 +180,8 @@ optional initial state argument
 
 Supported Keys:
 
+=over 4
+
 =item *
 
 active
@@ -190,19 +192,21 @@ obj_type (story || media)
 
 =item *
 
-obj_id 
+obj_id
 
-=item * 
+=item *
 
 place
 
-=item * 
+=item *
 
 element_data_id
 
 =item *
 
 parent_id
+
+=back
 
 B<throws:>
 
@@ -341,13 +345,15 @@ This will return a list or list ref of tiles that match the given criteria
 
 Supported Keys:
 
+=over 4
+
 =item *
 
 active
 
 =item *
 
-obj 
+obj
 
 =item *
 
@@ -377,6 +383,8 @@ element_data_id
 
 parent_id
 
+=back
+
 B<throws:>
 
 NONE
@@ -401,7 +409,11 @@ sub list {
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -416,19 +428,15 @@ sub DESTROY {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
 
-=cut
+=over 4
 
 =item (@ids || $ids) = Bric::Biz::Assets::Business::Parts::Tile::Data->list_ids($p)
 
 This will return a list or list ref of tile ids that match the given criteria
-
-Supported Keys:
-
-=over 4
-
-=back
 
 B<throws:>
 
@@ -454,7 +462,9 @@ sub list_ids {
 
 #--------------------------------------#
 
-=head2 Public Instance Methods 
+=back
+
+=head2 Public Instance Methods
 
 =over 4
 
@@ -794,6 +804,8 @@ sub save {
 # Private Methods                      #
 #======================================#
 
+=back
+
 =head1 PRIVATE
 
 =cut
@@ -801,6 +813,8 @@ sub save {
 #--------------------------------------#
 
 =head2 Private Class Methods
+
+=over 4
 
 =item _do_list($class, $param, $ids)
 
@@ -892,7 +906,11 @@ sub _do_list {
 
 #--------------------------------------#
 
+=back
+
 =head2 Private Instance Methods
+
+=over 4
 
 =item _do_insert()
 
