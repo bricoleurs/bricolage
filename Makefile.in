@@ -18,6 +18,7 @@ CTAGS = @CTAGS@
 BIN = bin
 COMP = comp
 CONF = conf
+BLIB = blib
 DATA = data
 LIB = lib
 DOC = doc
@@ -343,7 +344,7 @@ endif
 
 clean: docclean
 	${RM} -f 	Changes TODO License tags conf/bricolage.tmp.conf \
-				${INST}/bric.sql ${INST}/configuration
+				${INST}/bric.sql ${INST}/configuration ${BLIB}
 	cd ${LIB} && make clean
 
 dist-clean: 
