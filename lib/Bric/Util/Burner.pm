@@ -7,19 +7,19 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-24 21:46:09 $
+$Date: 2002-10-29 21:30:06 $
 
 =head1 SYNOPSIS
 
- use Bric::Util::Burner;
+ use Bric::Util::Burner qw(:modes);
 
  # Create a new publish object.
  $burner = new Bric::Util::Burner;
@@ -143,7 +143,11 @@ use Bric::App::Event qw(:all);
 #==============================================================================#
 # Inheritance                          #
 #======================================#
-use base qw(Bric);
+use base qw(Bric Exporter);
+
+our @EXPORT_OK = qw(PUBLISH_MODE PREVIEW_MODE SYNTAX_MODE);
+our %EXPORT_TAGS = ( all => \@EXPORT_OK,
+                     modes => \@EXPORT_OK);
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -188,6 +192,28 @@ BEGIN {
 #==============================================================================#
 
 =head1 INTERFACE
+
+In addition to the class and object methods documented below,
+Bric::Util::Burner can export a number of constants. These constants are used
+for comparing the values stored in the C<mode> property of a burner
+object. They can be imported individually, or by using the C<:modes> or
+C<:all> export tags. The supported constants are:
+
+=over
+
+=item C<PUBLISH_MODE>
+
+The burner object is in the process of publishing an asset.
+
+=item C<PREVIEW_MODE>
+
+The burner object is in the process of previewing an asset.
+
+=item C<SYNTAX_MODE>
+
+The burner object is in the process of checking the syntax of a template.
+
+=back
 
 =head2 Constructors
 
