@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
 -- Test values.
 --
@@ -14,8 +14,8 @@ DELETE FROM category_member WHERE id IN (702, 703, 704);
 -- -----------------------------------------------------------------------------
 -- Science
 
-INSERT INTO category (id,directory,category_grp_id) 
-VALUES (1, 'science', 701);
+INSERT INTO category (id,directory,uri,parent_id, category_grp_id) 
+VALUES (1, 'science', '/science/', 0, 701);
 
 INSERT INTO grp (id,class__id,name,description,secret)
 VALUES (701, 23, 'Science', 'All things sciencey', 1);
@@ -23,8 +23,8 @@ VALUES (701, 23, 'Science', 'All things sciencey', 1);
 -- -----------------------------------------------------------------------------
 -- Material
 
-INSERT INTO category (id,directory,category_grp_id) 
-VALUES (2, 'material', 702);
+INSERT INTO category (id,directory,uri,parent_id, category_grp_id) 
+VALUES (2, 'material', '/science/material', 1, 702);
 
 INSERT INTO grp (id,class__id,name,description,parent_id,secret)
 VALUES (702, 23, 'Material', 'The study of new materials', 701, 1);
@@ -38,8 +38,8 @@ VALUES (702, 2, 702);
 -- -----------------------------------------------------------------------------
 -- Physical
 
-INSERT INTO category (id,directory,category_grp_id) 
-VALUES (3, 'physical', 703);
+INSERT INTO category (id,directory,uri,parent_id, category_grp_id) 
+VALUES (3, 'physical', '/science/physical', 1, 703);
 
 INSERT INTO grp (id,class__id,name,description,parent_id,secret)
 VALUES (703, 23, 'Physical', 'General macro level science', 701, 1);
@@ -53,8 +53,8 @@ VALUES (703, 3, 703);
 -- -----------------------------------------------------------------------------
 -- Biological
 
-INSERT INTO category (id,directory,category_grp_id) 
-VALUES (4, 'biological', 704);
+INSERT INTO category (id,directory,uri,parent_id,category_grp_id) 
+VALUES (4, 'biological', '/science/biological', 1, 704);
 
 INSERT INTO grp (id,class__id,name,description,parent_id,secret)
 VALUES (704, 23, 'Biological', 'Bugs, bats and bees.', 701, 1);

@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-02 22:49:17 $
+$Date: 2002-07-03 22:00:56 $
 
 =head1 SYNOPSIS
 
@@ -90,7 +90,8 @@ use Bric::Util::Grp::Category;
 use Bric::Util::Grp::CategorySet;
 use Bric::Util::Attribute::Category;
 use Bric::Util::Trans::FS;
-
+use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault::Exception::DP;
 use Bric::Util::DBI qw(:standard col_aref);
 
 #==============================================================================#
@@ -126,17 +127,16 @@ use constant GROUP_PACKAGE => 'Bric::Util::Grp::CategorySet';
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
+# Public Class Fields
 our $METH;
 
 #--------------------------------------#
-# Private Class Fields                  
-
-
+# Private Class Fields
+my $gen = 'Bric::Util::Fault::Exception::GEN';
+my $dp = 'Bric::Util::Fault::Exception::DP';
 
 #--------------------------------------#
-# Instance Fields                       
+# Instance Fields
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
@@ -790,7 +790,8 @@ NONE
 =cut
 
 sub ancestry_dir {
-    Bric::Util::Trans::FS->cat_dir('', map { $_->get_directory } ancestry(@_));
+    Bric::Util::Trans::FS->cat_dir('', map { $_->get_directory }
+                                   shift->ancestry(@_));
 }
 
 
@@ -816,6 +817,8 @@ NONE
 
 sub set_directory {
     my ($self, $dir) = @_;
+    die $dp->new({ msg => "Cannot change the directory of the root category" })
+      if $self->_get('id') == ROOT_CATEGORY_ID;
     $self->_set(['directory', '_update_uri'], [$dir, 1]);
 }
 
@@ -842,6 +845,11 @@ NONE
 
 sub set_parent_id {
     my ($self, $pid) = @_;
+    my $id = $self->_get('id');
+    die $dp->new({ msg => "Cannot change the parent of the root category" })
+      if $id == ROOT_CATEGORY_ID;
+    die $dp->new({ msg => "Categories cannot be their own parent" })
+      if $id == $pid;
     $self->_set(['parent_id', '_update_uri'], [$pid, 1]);
 }
 
@@ -1122,21 +1130,14 @@ sub assets {
 
         # There are no assets for this category.
         return unless $ass_id;
-        
         $ass_obj = Bric::Util::Grp::Asset->lookup({'id' => $ass_id});
-    
-        unless ($ass_obj) {
-            my $msg = "Failed to instantiate asset group";
-            die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-        }
+        die $gen->new({'msg' => "Failed to instantiate asset group"})
+          unless $ass_obj;
     }
 
     my $mem = $ass_obj->get_members;
-
     return unless $mem;
-    
     my @mem_obj = map { $_->get_object } @$mem;
-
     return wantarray ? @mem_obj : \@mem_obj;
 }
 
@@ -1295,8 +1296,7 @@ sub add_keyword {
             $keyword = $k;
         } else {
             $keyword = Bric::Biz::Keyword->lookup({id => $k});
-            die Bric::Util::Fault::Exception::GEN->new(
-                        { msg => "No keyword object found for id '$k'" } )
+            die $gen->new({ msg => "No keyword object found for id '$k'" })
               unless defined $keyword;
         }
 

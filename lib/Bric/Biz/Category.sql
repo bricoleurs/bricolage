@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2002-07-02 22:49:17 $
+-- $Date: 2002-07-03 22:00:56 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -41,8 +41,8 @@ CREATE TABLE category (
     id               NUMERIC(10,0)   NOT NULL
                                      DEFAULT NEXTVAL('seq_category'),
     directory        VARCHAR(128)    NOT NULL,
-    uri              VARCHAR(256),
-    parent_id        NUMERIC(10,0),
+    uri              VARCHAR(256)    NOT NULL,
+    parent_id        NUMERIC(10,0)   NOT NULL,
     category_grp_id  NUMERIC(10,0),
     asset_grp_id     NUMERIC(10,0),
     active           NUMERIC(1,0)    NOT NULL
