@@ -56,6 +56,12 @@ Added stubs for zh-hk localization. [David]
 Added missing localizations to the Language preference. Many of these are not
 yet translated, but there they are. [David]
 
+=item *
+
+Selecting a checkbox to delete an output channel and then clicking a button
+other than the output channel "Delete" button or the "Save" or "Save and Stay"
+buttons no longer causes an error. Reported by Delfim Machado. [David]
+
 =back
 
 =head2 Bug Fixes

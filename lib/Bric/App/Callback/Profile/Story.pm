@@ -956,7 +956,7 @@ $save_data = sub {
                 add_msg("Cannot both delete and make primary a single output channel.");
                 $param->{__data_errors__} = 1;
             } else {
-                my ($oc) = $story->get_output_channels($delid);
+                my $oc = Bric::Biz::OutputChannel->lookup({ id => $delid });
                 $story->del_output_channels($delid);
                 log_event('story_del_oc', $story,
                           { 'Output Channel' => $oc->get_name });
