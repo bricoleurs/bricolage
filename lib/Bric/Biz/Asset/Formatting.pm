@@ -1822,7 +1822,6 @@ sub revert {
 
     my $revert_obj = __PACKAGE__->lookup({
         id              => $self->_get_id,
-        checked_out     => 0,
         version         => $version
     }) or throw_gen "The requested version does not exist";
 
