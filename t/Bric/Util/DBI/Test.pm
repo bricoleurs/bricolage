@@ -397,32 +397,32 @@ sub testclean_params: Test(7) {
     $exp = { 
              active => 1,
              _no_return_versions => 1,
-             _checked_out => 0,
              _not_simple => 1,
+             _checked_in_or_out => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, undef), $exp, 'correct base params added');
     $exp = { 
              active => 1,
              _no_return_versions => 1,
-             _checked_out => 0,
              _not_simple => 1,
+             _checked_in_or_out => 1,
              Order => 'slug',
            };
     is_deeply( clean_params($CLASS, { Order => 'slug' }), $exp, 'Order works right');
     $exp = { 
              active => 1,
              return_versions => 1,
-             _checked_out => 0,
              _not_simple => 1,
+             _checked_in_or_out => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { return_versions => 1 }), $exp, 'add return versions');
     $exp = { 
              active => 1,
              _no_return_versions => 1,
-             _checked_out => 0,
              simple => 1,
+             _checked_in_or_out => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, {simple => 1}), $exp, 'simple sets itself and not _not_simple');
@@ -430,9 +430,9 @@ sub testclean_params: Test(7) {
     $exp = { 
              active => 0,
              _no_return_versions => 1,
-             _checked_out => 0,
              _not_simple => 1,
              inactive => 1,
+             _checked_in_or_out => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { inactive => 1 }), $exp, 'inactive sets active 0');
@@ -448,9 +448,9 @@ sub testclean_params: Test(7) {
     $exp = { 
              active => 1,
              _no_return_versions => 1,
-             _checked_out => 0,
              _not_simple => 1,
              _null_workflow_id => 1,
+             _checked_in_or_out => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { workflow_id => undef }), $exp, 'undef workflow__id sets _null_workflow_id');

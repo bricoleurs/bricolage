@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.9 $
+$Revision: 1.25.2.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-21 01:52:37 $
+$Date: 2003-03-21 18:06:49 $
 
 =head1 SYNOPSIS
 
@@ -236,9 +236,7 @@ sub lookup {
       ({ msg => 'Must call list on Story, Media, or Formatting'})
       unless $pkg->CAN_DO_LOOKUP;
     $param = clean_params($pkg, $param);
-    # we don't care about checked out state for lookup
-    delete $param->{_checked_out};
-    # but we do want the newest version. will use order to get it
+    # we generally want the newest version. will use order to get it
     $param->{Order} = 'version';
     $param->{OrderDirection} = 'DESC';
     my $tables =  tables($pkg, $param);

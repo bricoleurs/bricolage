@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.8 $
+$Revision: 1.21.2.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.9 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-21 02:15:34 $
+$Date: 2003-03-21 18:06:56 $
 
 =head1 SYNOPSIS
 
@@ -769,20 +769,19 @@ sub clean_params {
     $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
       if exists $param->{'inactive'};
     # checked_out has some special cases
-    if (exists $param->{checked_out}) {
-        if ($param->{checked_out} eq 'all') {
-            delete $param->{_checked_out};
-        } else {
-            $param->{_checked_out} = $param->{checked_out};
-        }
-    } elsif (exists $param->{checkout}) {
-        $param->{_checked_out} = $param->{checkout};
-    } elsif (defined $param->{user_id}) {
-        $param->{_checked_out} = 1;
-    } else {
-        $param->{_checked_out} = 0;
-    }
+    # deal with the checked_out param.  The all argument is actually
+    # the default behavior.
+    $param->{_checked_out} = $param->{checked_out}
+      if exists $param->{checked_out} && $param->{checked_out} ne 'all';
+    # this will override the above
+    $param->{_checked_out} = $param->{checkout} if exists $param->{checkout};
+    # this is last because it's most important for defining a workspace
     $param->{_checked_out} = 1 if defined $param->{user__id};
+    # finally the default
+    $param->{_checked_in_or_out} = 1 unless defined $param->{_checked_out};
+    # trim cruft
+    delete $param->{checkout};
+    delete $param->{checked_out};
     # take care of the simple query, or lack thereof
     $param->{_not_simple} = 1 unless $param->{simple};
     # we can only handle the returned versions p in reverse
