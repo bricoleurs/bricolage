@@ -1,5 +1,4 @@
 package Bric::Util::Coll;
-###############################################################################
 
 =head1 NAME
 
@@ -7,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 00:04:29 $
+$Date: 2002-08-14 23:43:23 $
 
 =head1 SYNOPSIS
 
@@ -35,6 +34,10 @@ $Date: 2002-05-16 00:04:29 $
 
   # Delete an object from the collection by reference to its ID.
   $foo_coll->del_objs($foo->get_id);
+
+  # See if existing members of the collection have been looked up in the
+  # database.
+  my $bool = $foo_coll->is_populated;
 
   # Save all the changes. None will have propagated to the database until save()
   # is called.
@@ -62,59 +65,60 @@ on its own.
 
 =cut
 
-################################################################################
+##############################################################################
 # Dependencies
-################################################################################
+##############################################################################
 # Standard Dependencies
 use strict;
 
-################################################################################
+##############################################################################
 # Programmatic Dependences
 use Bric::Util::Fault::Exception::MNI;
 #use Bric::Util::Fault::Exception::GEN;
 
-################################################################################
+##############################################################################
 # Inheritance
-################################################################################
+##############################################################################
 use base qw(Bric);
 
-################################################################################
+##############################################################################
 # Function and Closure Prototypes
-################################################################################
+##############################################################################
 my ($populate);
 
-################################################################################
+##############################################################################
 # Constants
-################################################################################
+##############################################################################
 use constant DEBUG => 0;
 
-################################################################################
+##############################################################################
 # Fields
-################################################################################
+##############################################################################
 # Public Class Fields
 
-################################################################################
+##############################################################################
 # Private Class Fields
 
-################################################################################
+##############################################################################
 
-################################################################################
+##############################################################################
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 objs => Bric::FIELD_READ,
-			 new_obj => Bric::FIELD_READ,
-			 del_obj => Bric::FIELD_READ,
+                         # Public Fields
+                         objs => Bric::FIELD_READ,
+                         new_obj => Bric::FIELD_READ,
+                         del_obj => Bric::FIELD_READ,
 
-			 # Private Fields
-			 params => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         params => Bric::FIELD_NONE
+                         _pop => Bric::FIELD_NONE,
+                        });
 }
 
-################################################################################
+##############################################################################
 # Class Methods
-################################################################################
+##############################################################################
 
 =head1 INTERFACE
 
@@ -127,8 +131,8 @@ BEGIN {
 Instanticates a new collection. When data is required from the database, the
 collection object will call the href() method of the class managed by the
 collection (as defined by the class_name() method of the Bric::Util::Coll
-subclasses), passing in the $params hash reference as an argument. If
-$params is not defined, no data will be retreived from the database.
+subclasses), passing in the $params hash reference as an argument. If $params
+is not defined, no data will be retreived from the database.
 
 The class name identified by the class_name() method of Bric::Util::Coll
 subclasses must must have an href() class method that works like the list()
@@ -158,12 +162,14 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $params) = @_;
     my $self = bless {}, ref $pkg || $pkg;
-    $params ||= 'populated';
-    $self->SUPER::new({ objs => {}, params => $params,
-			new_obj => [], del_obj => [] });
+    $self->SUPER::new({ objs => {},
+                        params => $params,
+                        _pop => $params ? 0 : 1,
+                        new_obj => [],
+                        del_obj => [] });
 }
 
-################################################################################
+##############################################################################
 
 =item my $org = Bric::Util::Coll->lookup()
 
@@ -190,7 +196,7 @@ sub lookup {
       {msg => __PACKAGE__."::lookup() method not implemented."});
 }
 
-################################################################################
+##############################################################################
 
 =item Bric::Util::Coll->list()
 
@@ -217,7 +223,7 @@ sub list {
       {msg => __PACKAGE__."::list() method not implemented."});
 }
 
-################################################################################
+##############################################################################
 
 =back 4
 
@@ -241,7 +247,7 @@ B<Notes:> NONE.
 
 sub DESTROY {}
 
-################################################################################
+##############################################################################
 
 =head2 Public Class Methods
 
@@ -270,7 +276,7 @@ sub list_ids {
       {msg => __PACKAGE__."::list_ids() method not implemented."});
 }
 
-################################################################################
+##############################################################################
 
 =item Bric::Util::Coll->class_name()
 
@@ -300,7 +306,7 @@ sub class_name {
     # return 'Bric::Biz::Person::Parts::Addr';
 }
 
-################################################################################
+##############################################################################
 
 =head2 Public Instance Methods
 
@@ -365,10 +371,10 @@ sub get_objs {
     &$populate($self);
     my ($objs, $new_objs) = $self->_get('objs', 'new_obj');
     if (@ids) {
-	return wantarray ? @{$objs}{@ids} : [@{$objs}{@ids}];
+        return wantarray ? @{$objs}{@ids} : [@{$objs}{@ids}];
     } else {
-	return wantarray ? ($self->_sort_objs($objs), @$new_objs)
-	  : [($self->_sort_objs($objs), @$new_objs)];
+        return wantarray ? ($self->_sort_objs($objs), @$new_objs)
+          : [($self->_sort_objs($objs), @$new_objs)];
     }
 }
 
@@ -511,17 +517,33 @@ sub del_objs {
     &$populate($self);
     my ($objs, $del_objs) = $self->_get('objs', 'del_obj');
     if (@_) {
-	push @$del_objs, delete @{$objs}{map { ref $_ ? $_->get_id : $_ } @_};
+        push @$del_objs, delete @{$objs}{map { ref $_ ? $_->get_id : $_ } @_};
     } else {
-	push @$del_objs, values %$objs;
-	%$objs = ();
+        push @$del_objs, values %$objs;
+        %$objs = ();
     }
     return $self;
 }
 
+=item $coll = $coll->is_populated
+
+Returns true if the collection has been populated with existing objects
+from the database, and false if it has not.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub is_populated { $_[0]->_get('_pop') ? $_[0] : undef }
+
 =item $self = $coll->save
 
-Saves the changes made to all the objects in the collection. Must be overridden.
+Saves the changes made to all the objects in the collection. Must be
+overridden.
 
 B<Throws:>
 
@@ -544,7 +566,7 @@ sub save {
       {msg => __PACKAGE__."::save() method not implemented."});
 }
 
-################################################################################
+##############################################################################
 
 =back
 
@@ -557,8 +579,8 @@ sub save {
 =item Bric::Util::Coll->_sort_objs($objs_href)
 
 Sorts a list of objects into an internally-specified order. The default is to
-sort them by IDs (which are the hash keys in $objs_href), but this method may be
-overridden in subclasses to profile different sorting algorithms.
+sort them by IDs (which are the hash keys in $objs_href), but this method may
+be overridden in subclasses to profile different sorting algorithms.
 
 B<Throws:> NONE.
 
@@ -637,11 +659,11 @@ B<Notes:> NONE.
 
 $populate = sub {
     my $self = shift;
-    my ($objs, $params) = $self->_get('objs', 'params');
-    return $self if $params eq 'populated';
+    my ($objs, $params, $pop) = $self->_get(qw(objs params _pop));
+    return $self if $pop;
     my $class = $self->class_name;
     %$objs = (%$objs, %{ $class->href($params) });
-    $self->_set(['objs', 'params'], [$objs, 'populated']);
+    $self->_set(['objs', '_pop'], [$objs, 1]);
 };
 
 1;
