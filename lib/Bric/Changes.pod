@@ -105,6 +105,11 @@ In Bric::Biz::Asset::Business, the source get_meth key in my_meths() now works
 properly. Also, get_all_keywords() now also returns the category keywords as
 well as the story keywords. Thanks to Darren Graves for the patch.
 
+=item *
+
+Removed quotation marks from DEF_MEDIA_TYPE setting in bricolage.conf. Thanks to
+Darren Graves for the spot. [David]
+
 =back
 
 =head1 VERSION 1.2.0
