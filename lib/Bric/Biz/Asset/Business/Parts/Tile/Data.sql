@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2002-02-06 20:18:18 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -28,7 +28,7 @@ CREATE SEQUENCE seq_media_data_tile START 1024;
 CREATE TABLE story_data_tile (
     id                   NUMERIC(10,0)  NOT NULL
                                         DEFAULT NEXTVAL('seq_story_data_tile'),
-    name                 VARCHAR(32),
+    name                 VARCHAR(64),
     description          VARCHAR(256),
     element_data__id  NUMERIC(10,0)  NOT NULL,
     object_instance_id   NUMERIC(10,0)  NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE story_data_tile (
 CREATE TABLE media_data_tile (
     id                   NUMERIC(10,0)  NOT NULL
                                         DEFAULT NEXTVAL('seq_media_data_tile'),
-    name                 VARCHAR(32),
+    name                 VARCHAR(64),
     description          VARCHAR(256),
     element_data__id  NUMERIC(10,0)  NOT NULL,
     object_instance_id   NUMERIC(10,0)  NOT NULL,
