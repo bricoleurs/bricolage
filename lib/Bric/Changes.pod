@@ -65,13 +65,28 @@ multiple Web sites with Bricolage. Story type and media type elements may be
 shared between sites. Funded by Portugal Telecom Multimedia. [David, Arthur,
 Garth, & JoE<atilde>o Pedro]
 
-=item
+=item *
 
 Added document aliasing. Stories and media in a site may now be aliased and
 published in another site, as long as the elements on which they are based
 are shared between sites. Control over the content of aliased documents
 remains in the original site, thus ensuring the editorial integrity of the
 document for that site. Funded by Portugal Telecom Multimedia. [David]
+
+=item *
+
+Changed element attribute "name" to "key name" to emphasize its uniqueness
+within an element. Also changed the "Display Name" to "Label" [Garth]
+
+=item *
+
+Added a "key word" attribute to elements as the system-wide unique key for
+each element, rather than the name. The name is now used as a label. Note that
+the key name only allows certain characters, as it is used to name the
+template files that format the element. This makes the C<has_name()> method a
+bit simpler -- and it can in fact be ignored in favor of
+C<< $element->get_key_name eq $key_name >>. Thus there may be some warnings
+if older name values are passed to C<has_name()>. [Garth]
 
 =item *
 
