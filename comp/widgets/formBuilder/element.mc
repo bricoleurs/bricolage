@@ -77,13 +77,14 @@ if ($param->{delete} &&
     # Set the primary output channel ID.
     if ($param->{primary_oc_id}) {
         $comp->set_primary_oc_id($param->{primary_oc_id});
-    } elsif ($field eq "$widget|add_oc_id_cb" && ! $comp->get_primary_oc_id) {
+    } elsif ($param->{add_primary_oc_id} && ! $comp->get_primary_oc_id) {
         # They're adding the first one. Make it the primary.
-        $comp->set_primary_oc_id($param->{"$widget|add_oc_id_cb"});
+        $comp->set_primary_oc_id($param->{add_primary_oc_id});
+        $comp->add_output_channel($param->{add_primary_oc_id});
     } elsif (! exists $param->{element_type_id} and !$comp->get_primary_oc_id
              and Bric::Biz::ATType->lookup({ id => $comp->get_type__id })
              ->get_top_level) {
-        # They need to add an output channel.
+        # They need to add an output channel. This shouldn't happen.
         $no_save = 1;
         add_msg("Element must be associated with at least one output channel.")
     }
@@ -247,11 +248,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.22.4.1 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:17 $
+$Date: 2003-03-19 04:34:41 $
 
 =head1 SYNOPSIS
 

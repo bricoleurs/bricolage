@@ -35,134 +35,160 @@ $m->comp('/widgets/select_object/select_object.mc',
 	 reset_key => $id
 );
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+my $primid = 1;
 
 if (defined $id) {
 
     # Manage Output Channels if this is a top-level container.
     if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
-        my $primid = $comp->get_primary_oc_id;
-        my $oc_sub = sub {
-            my $ocid = $_[0]->get_id;
-            if ($_[1] eq 'primary') {
-                # Output a hidden field for this included OC.
-                $m->scomp('/widgets/profile/radio.mc',
-                          name => 'primary_oc_id',
-                          value => $ocid,
-                          checked => $ocid == $primid,
-                          useTable => 0
-                         );
-            } elsif ($_[1] eq 'enabled') {
-                $m->scomp('/widgets/profile/checkbox.mc',
-                          name => 'enabled',
-                          value => $ocid,
-                          checked => $_[0]->is_enabled,
-                          useTable => 0
-                         );
-        }
-        };
+        $primid = $comp->get_primary_oc_id;
+        if ($primid) {
+            $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+            my $oc_sub = sub {
+                my $ocid = $_[0]->get_id;
+                if ($_[1] eq 'primary') {
+                    # Output a hidden field for this included OC.
+                    $m->scomp('/widgets/profile/radio.mc',
+                              name => 'primary_oc_id',
+                              value => $ocid,
+                              checked => $ocid == $primid,
+                              useTable => 0
+                             );
+                } elsif ($_[1] eq 'enabled') {
+                    $m->scomp('/widgets/profile/checkbox.mc',
+                              name => 'enabled',
+                              value => $ocid,
+                              checked => $_[0]->is_enabled,
+                              useTable => 0
+                             );
+                }
+            };
 
-        my $sel_sub = sub {
-            return if $_[0]->get_id == $primid;
-            return ['Delete', 'rem_oc'];
-        };
+            my $sel_sub = sub {
+                return if $_[0]->get_id == $primid;
+                return ['Delete', 'rem_oc'];
+            };
+
+            $m->comp('/widgets/listManager/listManager.mc',
+                     object         => 'output_channel',
+                     userSort       => 0,
+                     def_sort_field => 'name',
+                     title          => 'Output Channels',
+                     objs           => scalar $comp->get_output_channels,
+                     addition       => undef,
+                     fields         => [qw(name description enabled primary)],
+                     field_titles   => { primary => 'Primary', enabled => 'Enabled' },
+                     field_values   => $oc_sub,
+                     profile        => undef,
+                     select         => $sel_sub,
+                     number         => ++$num
+                    );
+
+            $m->print(qq{<table border="1" cellpadding="2" cellspacing="0" },
+                      qq{width="580" bordercolor="#cccc99" },
+                      qq{style="border-style:solid; border-color:#cccc99;">\n},
+                      qq{<tr><td class="medHeader" style="border-style:solid; },
+                      qq{border-color:#cccc99;">\n});
+
+            $m->comp('/widgets/select_object/select_object.mc',
+                     object     => 'output_channel',
+                     field      => 'name',
+                     exclude    => [ map { $_->get_id } $comp->get_output_channels ],
+                     no_persist => 1,
+                     name       => 'formBuilder|add_oc_id_cb',
+                     default    => ['' => 'Add Output Channel'],
+                     constrain  => { active => 1 },
+                     js         => "onChange='submit()'",
+                     useTable   => 0,
+                    );
+
+            $m->print("</td></tr>\n</table><br />\n",
+                      qq{<img src="/media/images/spacer.gif" width="578" },
+                      qq{height="8" />});
+        } else {
+            $m->comp('/widgets/select_object/select_object.mc',
+                     object     => 'output_channel',
+                     disp       => $lang->maketext("Output Channel"),
+                     field      => 'name',
+                     no_persist => 1,
+                     req        => 1,
+                     name       => 'add_primary_oc_id',
+                     constrain  => { active => 1 },
+                     useTable   => 1,
+                    );
+            $m->print("<br />\n");
+
+            $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+        }
+    }
+
+    if ($primid) {
+        # display elements contained by this asset type
+        my $i;
+        my $label = $no_edit ? 'View' : 'Edit';
+        # Output the actions.
+        my $containers = $comp->get_containers;
 
         $m->comp('/widgets/listManager/listManager.mc',
-                 object => 'output_channel',
-                 userSort => 0,
-                 def_sort_field => 'name',
-                 title => 'Output Channels',
-                 objs => scalar $comp->get_output_channels,
-                 addition => undef,
-                 fields => [qw(name description enabled primary)],
-                 field_titles => { primary => 'Primary', enabled => 'Enabled' },
-                 field_values => $oc_sub,
-                 profile => undef,
-                 select => $sel_sub,
-                 number => ++$num
+                 object         => 'element',
+                 objs           => $containers,
+                 behavior       => 'expand',
+                 title          => "Existing Subelements",
+                 addition       => undef,
+                 fields         => [qw(name type_name description)],
+                 profile        => undef,
+                 select         => $no_del ? undef : ['Delete', 'element|delete_cb'],
+                 number         => ++$num,
                 );
-</%perl>
-<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
-<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
-    object => 'output_channel',
-    field  => 'name',
-    exclude => [ map { $_->get_id } $comp->get_output_channels ],
-    no_persist => 1,
-    name   => 'formBuilder|add_oc_id_cb',
-    default => ['' => 'Add Output Channel'],
-    constrain => { active => 1 },
-    js => "onChange='submit()'",
-    useTable => 0,
-&></td></tr>
-</table>
-<br />
-<%perl>;
-        $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
+
+        $m->comp('/widgets/profile/imageSubmit.mc',
+                 formName => "cont_profile",
+                 callback => "formBuilder|addElement_cb",
+                 image    => "add_sub_element_lgreen",
+                 vspace   => 5
+                );
+
+        $m->out(qq{<img src="/media/images/spacer.gif" width=578 height=8 />});
+
+
+        # dislay existing attributes for this asset type
+        if (defined $id) {
+
+            $m->comp("/widgets/wrappers/sharky/table_top.mc",
+                     caption => "Custom Fields",
+                     number  => ++$num);
+
+            # mangle the attrs and meta to match the existing display code.
+            my $all_data = $comp->get_data;
+            my $attrs = [];
+            foreach my $dataObj (sort { $a->get_place <=> $b->get_place } @$all_data) {
+                my $attr = $dataObj->get_name;
+                my $metas = $dataObj->get_meta('html_info');
+                my $tmp;
+                foreach my $meta (keys %$metas) {
+                    $tmp->{meta}{$meta} =  { value => $metas->{$meta} };
+                }
+                $tmp->{value} = $metas->{value};
+                $tmp->{name} = $dataObj->get_name;
+                push @$attrs, $tmp;
+            }
+
+            $num_fields = @$attrs;
+            $m->comp("/widgets/profile/displayAttrs.mc", form_name => 'cont_profile',
+                     attr => $attrs, readOnly => $no_edit);
+
+            # Close the table.
+            $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+        }
     }
-
-
-    # display elements contained by this asset type
-    my $i;
-    my $label = $no_edit ? 'View' : 'Edit';
-    # Output the actions.
-    my $containers = $comp->get_containers;
-
-    $m->comp('/widgets/listManager/listManager.mc',
-	     object         => 'element',
-	     objs           => $containers,
-	     behavior       => 'expand',
-	     title          => "Existing Subelements",
-	     addition       => undef,
-	     fields         => [qw(name type_name description)],
-	     profile        => undef,
-	     select         => $no_del ? undef : ['Delete', 'element|delete_cb'],
-	     number         => ++$num,
-	    );
-
-    $m->comp('/widgets/profile/imageSubmit.mc',
-	     formName => "cont_profile",
-	     callback => "formBuilder|addElement_cb",
-	     image    => "add_sub_element_lgreen",
-	     vspace   => 5
-	    );
-
-    $m->out(qq{<img src="/media/images/spacer.gif" width=578 height=8 />});
-}
-
-
-# dislay existing attributes for this asset type
-if (defined $id) {
-
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "Custom Fields",
-	     number  => ++$num);
-
-    # mangle the attrs and meta to match the existing display code.
-    my $all_data = $comp->get_data;
-    my $attrs = [];
-    foreach my $dataObj (sort { $a->get_place <=> $b->get_place } @$all_data) {
-	my $attr = $dataObj->get_name;
-	my $metas = $dataObj->get_meta('html_info');
-	my $tmp;
-	foreach my $meta (keys %$metas) {
-	    $tmp->{meta}{$meta} =  { value => $metas->{$meta} };
-	}
-	$tmp->{value} = $metas->{value};
-	$tmp->{name} = $dataObj->get_name;
-	push @$attrs, $tmp;
-    }
-
-    $num_fields = @$attrs;
-    $m->comp("/widgets/profile/displayAttrs.mc", form_name => 'cont_profile',
-	     attr => $attrs, readOnly => $no_edit);
-
-    # Close the table.
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+} else {
+    $m->print("<br />\n");
+    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 }
 
 #########################
 
-if (!$no_edit && defined $id) {
+if (!$no_edit && defined $id && defined $primid) {
     # Output the formBuilder.
     $m->comp('/widgets/formBuilder/formBuilder.mc',
 	     numFields => 0,
@@ -201,7 +227,7 @@ if (!$no_edit && defined $id) {
 my $class = 'Bric::Biz::AssetType';
 my $type = 'element';
 my $section = 'admin';
-my $disp = get_disp_name('element'); # HACK!
+my $disp = get_disp_name('element');
 </%once>
 
 %#-- Args Section --#
@@ -240,11 +266,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.4.1 $
 
 =head1 DATE
 
-$Date: 2003-02-03 20:38:07 $
+$Date: 2003-03-19 04:34:41 $
 
 =head1 DESCRIPTION
 
