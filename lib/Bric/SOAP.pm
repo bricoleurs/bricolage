@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -25,11 +25,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =head1 DATE
 
-$Date: 2004-01-16 19:00:39 $
+$Date: 2004-02-23 11:35:39 $
 
 =head1 SYNOPSIS
 
@@ -1115,39 +1115,43 @@ The XSD source:
 
 Here's a simple story with some keywords and no contributors:
 
- <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
- <assets xmlns="http://bricolage.sourceforge.net/assets.xsd">
-  <story id="1024" element="Story">
-   <name>Story One</name>
-   <description>a description of story one</description>
-   <slug>one</slug>
-   <primary_uri>/2002/01/29/one</primary_uri>
-   <priority>3</priority>
-   <publish_status>0</publish_status>
-   <active>1</active>
-   <source>Internal</source>
-   <cover_date>2002-01-29T20:02:00Z</cover_date>
-   <categories>
-    <category primary="1">/</category>
-   </categories>
-   <keywords>
-    <keyword>key one</keyword>
-    <keyword>key two</keyword>
-   </keywords>
-   <contributors></contributors>
-   <elements>
-    <data order="1" element="Deck">deck one</data>
-    <container order="1" element="Page">
-     <data order="1" element="Paragraph">para one</data>
-     <data order="2" element="Paragraph">para two</data>
-     <container order="1" element="Inset">
-      <data order="1" element="Copy">inset copy</data>
-     </container>
+<assets xmlns="http://bricolage.sourceforge.net/assets.xsd">
+ <story id="1024" element="Book Review">
+  <site>Default Site</site>
+  <name>Story One</name>
+  <description>a description of story one</description>
+  <slug>one</slug>
+  <primary_uri>/2004/02/22/one</primary_uri>
+  <priority>3</priority>
+  <publish_status>0</publish_status>
+  <active>1</active>
+  <source>Internal</source>
+  <cover_date>2004-02-22T22:18:00Z</cover_date>
+  <categories>
+   <category primary="1">/</category>
+  </categories>
+  <output_channels>
+   <output_channel primary="1">Web</output_channel>
+  </output_channels>
+  <keywords>
+   <keyword>key one</keyword>
+   <keyword>key two</keyword>
+  </keywords>
+  <contributors></contributors>
+  <elements>
+   <data order="2" element="deck">deck one</data>
+   <container order="3" element="page">
+    <data order="0" element="paragraph">para one</data>
+    <data order="1" element="paragraph">para two</data>
+    <container order="2" element="inset">
+     <data order="0" element="copy">inset copy</data>
     </container>
-   </elements>
-  </story>
- </assets>
+   </container>
+  </elements>
+ </story>
+</assets>
 
 =head2 Example Clients
 
