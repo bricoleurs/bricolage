@@ -41,6 +41,11 @@ Thanks to Sara Wood for catching this bug. [David]
 Fixed bug where templates often couldn't be found by the Mason burner if the
 output channel had a post_path. [David]
 
+=item *
+
+Fixed bug where templates often couldn't be found by the
+HTML::Template burner if the output channel had a post_path. [Sam]
+
 =back
 
 =head1 VERSION 1.2.0
