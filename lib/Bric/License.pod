@@ -179,6 +179,8 @@ Folks who have submitted patches include:
 
 =item Mark Kennedy
 
+=item Keith Grennan
+
 =back
 
 Friends who have spotted bugs include:

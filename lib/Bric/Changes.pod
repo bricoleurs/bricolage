@@ -122,6 +122,11 @@ The cover date select widget now works properly in the clone interface when a
 non-ISO style date preference is selected. Thanks to Susan G. for the spot!
 [David]
 
+=item *
+
+Running C<make upgrade> with PostgreSQL "ident sameuser" security now works
+properly. [Keith Grennan]
+
 =back
 
 =cut
