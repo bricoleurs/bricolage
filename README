@@ -71,21 +71,7 @@ KNOWN ISSUES
 
 * Apache 1.3.28 does not work properly with Bricolage. It causes the
   connections to the PostgreSQL server to be unexpectedly dropped in such a
-  way that Bricolage cannot reconnect. Please use Apache 1.3.27 until the
-  underlying problem has been identified and addressed. Join the
-  Bricolage-General mail list to receive updates on the status of this issue,
-  or follow the Apache bug report.
-
-    http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22805
-
-* Users who have been given the rights, via membership, to edit groups and/or
-  users effectively have complete access to the system. This is because they
-  can add themselves to any group they want, including "Global Admins."
-  Solving this problem is harder than it looks, due to the Bricolage
-  permissions architecture design. The solution is to give only those you
-  trust to have "Global Admin" access permission to edit users and/or
-  groups. Complete details are available via the Bugzilla bug report at
-  http://bugzilla.bricolage.cc/show_bug.cgi?id=93.
+  way that Bricolage cannot reconnect. Please use Apache 1.3.29, instead.
 
 Enjoy!
 
