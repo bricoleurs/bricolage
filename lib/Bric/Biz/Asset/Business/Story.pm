@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.59 $ )[-1];
+our $VERSION = (qw$Revision: 1.60 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:10 $
+$Date: 2003-08-15 12:12:18 $
 
 =head1 SYNOPSIS
 
@@ -678,7 +678,7 @@ expire_date_end - if start is left blank will return everything before the arg
 
 =item *
 
-Order - A property name to orer by.
+Order - A property name to order by.
 
 =item *
 
