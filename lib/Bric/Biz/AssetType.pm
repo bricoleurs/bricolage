@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:59 $
+$Date: 2003-03-12 17:24:49 $
 
 =head1 SYNOPSIS
 
@@ -1672,8 +1672,20 @@ sub remove_sites {
     my $site_coll = $get_site_coll->($self);
     throw_dp "Cannot remove last site from an AssetType"
       if @{$site_coll->get_objs} < 2;
+
+    #here we need to remove all corresponding output channels
+    #for this site
+
+    my $oces = $self->get_output_channels();
+    my @delete_oc;
+    for my $site (@$sites) {
+        foreach my $oce (@$oces) {
+            push @delete_oc, $oce if ((ref($site) ? $site->get_id : $site) == $oce->get_site_id);
+        }
+    }
+    $self->delete_output_channels(\@delete_oc);
     $site_coll->del_objs(@$sites);
-    
+
     return $self;
 }
 

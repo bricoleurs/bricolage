@@ -23,6 +23,7 @@ $obj
 </%args>
 
 <%perl>;
+
 return unless $field eq "$widget|save_cb"
   || $field eq "$widget|add_cb"
   || $field eq "$widget|save_n_stay_cb"
@@ -95,6 +96,16 @@ if ($param->{delete} &&
         $no_save = 1;
         add_msg("Element must be associated with at least one output channel.")
     }
+
+    # Set the primary output channel ID per site
+    if ($field eq 'save_cb') {
+        foreach my $key (keys %$param) {
+            next unless $key =~/primary_oc_site(\d+)_cb/;
+            my $siteid = $1;
+            $comp->set_primary_oc_id($param->{$field});
+        }
+    }
+
 
     # Update existing attributes. Get them from the Parts::Data class rather than from
     # $comp->get_data so that we can be sure to check for both active and inactive
@@ -284,11 +295,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2003-03-12 13:50:37 $
+$Date: 2003-03-12 17:24:48 $
 
 =head1 SYNOPSIS
 

@@ -49,7 +49,25 @@ if (defined $id) {
                           checked => $_[0]->is_active,
                           useTable => 0
                          );
+            } elsif($_[1] eq 'primary') {
+                my @oces;
+                foreach my $oce ($comp->get_output_channels) {
+                    if ($siteid == $oce->get_site_id) {
+                        push @oces, $oce;
+                    }
+                }
+
+                $m->scomp('/widgets/select_object/select_object.mc',
+                          object => 'output_channel',
+                          objs => \@oces,
+                          field  => 'name',
+                          no_persist => 1,
+                          name   => "formBuilder|primary_oc_site${siteid}_cb",
+                          useTable => 0,
+                          selected => $comp->get_primary_oc_id,
+                         );
             }
+
         };
 
         my $sel_sub = sub {
@@ -63,8 +81,8 @@ if (defined $id) {
                  title => 'Sites',
                  objs => scalar $comp->get_sites,
                  addition => undef,
-                 fields => [qw(name description)],
-                 field_titles => { primary => 'Primary', enabled => 'Enabled' },
+                 fields => [qw(name description primary)],
+                 field_titles => { primary => 'Primary Output Channel'},
                  field_values => $site_sub,
                  profile => undef,
                  select => $sel_sub,
@@ -123,17 +141,22 @@ if (defined $id) {
                  title => 'Output Channels',
                  objs => scalar $comp->get_output_channels,
                  addition => undef,
-                 fields => [qw(name description enabled primary)],
+                 fields => [qw(name description site enabled primary)],
                  field_titles => { primary => 'Primary', enabled => 'Enabled' },
                  field_values => $oc_sub,
                  profile => undef,
                  select => $sel_sub,
                  number => ++$num
                 );
+        my @available_ocs;
+        foreach my $site ($comp->get_sites) {
+            push @available_ocs, Bric::Biz::OutputChannel->list({ site_id => $site->get_id});
+        }
 </%perl>
 <table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
 <tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
     object => 'output_channel',
+    objs   => \@available_ocs, 
     field  => 'name',
     exclude => [ map { $_->get_id } $comp->get_output_channels ],
     no_persist => 1,
@@ -233,7 +256,7 @@ if (!$no_edit && defined $id) {
 	     section => $section,
 	     no_del => 1,
 	     no_save => $no_edit,
-	     widget  => "formBuilder"
+	     widget  => "formBuilder",
 	    );
 }
 
@@ -289,11 +312,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:52 $
+$Date: 2003-03-12 17:24:49 $
 
 =head1 DESCRIPTION
 
