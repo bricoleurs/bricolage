@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.67 $
+$Revision: 1.68 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.67 $ )[-1];
+our $VERSION = (qw$Revision: 1.68 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-15 22:11:26 $
+$Date: 2003-08-01 04:57:31 $
 
 =head1 SYNOPSIS
 
@@ -390,7 +390,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant LOGIN_MARKER            => 'BRIC_LOGIN_MARKER';
 
     # DBI Settings.
-    use constant DBD_TYPE                => 'Pg';
+    use constant DBD_TYPE                => $config->{DB_TYPE} || 'Pg';
     use constant DBD_PACKAGE             => 'Bric::Util::DBD::' . DBD_TYPE;
     use constant DB_NAME                 => $config->{DB_NAME} || 'sharky';
     use constant DB_HOST                 => $config->{DB_HOST};
