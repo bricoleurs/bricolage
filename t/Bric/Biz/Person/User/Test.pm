@@ -44,5 +44,26 @@ sub test_const : Test(13) {
     ok( ! $u->chk_password($pw . 'foo'), "Check bad password" );
 }
 
+##############################################################################
+# Test class methods.
+##############################################################################
+# Test my_meths().
+sub test_my_meths : Test(11) {
+    ok( my $meths = Bric::Biz::Person::User->my_meths, "Get my_meths" );
+    isa_ok($meths, 'HASH', "my_meths is a hash" );
+    is( $meths->{name}{type}, 'short', "Check name type" );
+    ok( $meths = Bric::Biz::Person::User->my_meths(1), "Get my_meths array ref" );
+    isa_ok( $meths, 'ARRAY', "my_meths(1) is an array" );
+    (is $meths->[0]->{name}, 'prefix', "Check first meth name" );
+
+    # Try the identifier methods.
+    ok( my $u = Bric::Biz::Person::User->new({ login => 'fooey' }),
+        "Create User" );
+    ok( my @meths = $u->my_meths(0, 1), "Get ident meths" );
+    is( scalar @meths, 1, "Check for 1 meth" );
+    is( $meths[0]->{name}, 'login', "Check for 'login' meth" );
+    is( $meths[0]->{get_meth}->($u), 'fooey', "Check login 'fooey'" );
+}
+
 1;
 __END__

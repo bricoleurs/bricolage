@@ -6,16 +6,16 @@ Bric::Biz::Org::Source - Manages content sources.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:03 $
+$Date: 2003-02-18 02:30:25 $
 
 =head1 SYNOPSIS
 
@@ -196,9 +196,11 @@ sub new {
 
 =item my $src = Bric::Biz::Org::Source->lookup({ id => $id })
 
+=item my $src = Bric::Biz::Org::Source->lookup({ source_name => $source_name })
+
 Looks up and instantiates a new Bric::Biz::Org::Source object based on the
-Bric::Biz::Org::Source object ID passed. If $id is not found in the database,
-lookup() returns undef.
+Bric::Biz::Org::Source object ID or name passed. If C<$id> or C<$name> is not
+found in the database, C<lookup()> returns C<undef>.
 
 B<Throws:>
 
@@ -431,10 +433,14 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 =item my (@meths || $meths_aref) = Bric::Biz::Org::Source->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Biz::Org::Source->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -561,20 +567,18 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    my ($pkg, $ord) = @_;
+    my ($pkg, $ord, $ident) = @_;
 
-    # Return 'em if we got em.
-    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}]
-      if $METHS;
+    unless ($METHS) {
+        # We don't got 'em. So get 'em!
+        foreach my $meth (Bric::Biz::Org::Source->SUPER::my_meths(1)) {
+            $METHS->{$meth->{name}} = $meth;
+            push @ORD, $meth->{name};
+        }
+        $METHS->{name}{disp} = 'Organization Name';
+        push @ORD, qw(source_name description expire), pop @ORD;
 
-    # We don't got 'em. So get 'em!
-    foreach my $meth (Bric::Biz::Org::Source->SUPER::my_meths(1)) {
-        $METHS->{$meth->{name}} = $meth;
-        push @ORD, $meth->{name};
-    }
-    $METHS->{name}{disp} = 'Organization Name';
-    push @ORD, qw(source_name description expire), pop @ORD;
-    $METHS->{description} = {
+        $METHS->{description} = {
                              get_meth => sub { shift->get_description(@_) },
                              get_args => [],
                              set_meth => sub { shift->set_description(@_) },
@@ -631,8 +635,15 @@ sub my_meths {
                                                    ]
                                          }
                             };
+    }
 
-    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
+    if ($ord) {
+        return wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
+    } elsif ($ident) {
+        return wantarray ? $METHS->{source_name} : [$METHS->{source_name}];
+    } else {
+        return $METHS;
+    }
 }
 
 ################################################################################

@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-02-02 19:00:32 $
+$Date: 2003-02-18 02:30:24 $
 
 
 =head1 SYNOPSIS
@@ -163,45 +163,45 @@ use constant COLS  => qw(
 BEGIN {
     Bric::register_fields({
                          # Public Fields
-                         
+
                          # The database id field
                          'id'                  => Bric::FIELD_READ,
-                         
+
                          # the asset type that this is associated with
                          'element__id'      => Bric::FIELD_RDWR,
-                         
+
                          # The meta object ID.
                          'map_type__id'        => Bric::FIELD_RDWR,
-                         
+
                          # The human readable name field
                          'name'                => Bric::FIELD_RDWR,
-                         
+
                          # The human readable description Field
                          'description'         => Bric::FIELD_RDWR,
-                         
+
                          # the order in which this will be in the container
                          'place'               => Bric::FIELD_RDWR,
-                         
+
                          # The max length in chars
                          'max_length'          => Bric::FIELD_RDWR,
-                         
+
                          # The required flag
                          'required'            => Bric::FIELD_RDWR,
-                         
+
                          # The type of repeatability for this field
                          'quantifier'          => Bric::FIELD_RDWR,
-                         
+
                          # The type in the data base 
                          'sql_type'            => Bric::FIELD_RDWR,
-                         
+
                          # If this field is publishable
                          'publishable'         => Bric::FIELD_RDWR,
 
                          autopopulated                  => Bric::FIELD_READ,
-                         
+
                          # The active flag
                          'active'              => Bric::FIELD_READ,
-                         
+
                          # Private Fields
 
                          # Hold attribute info until this object is saved.
@@ -454,6 +454,149 @@ sub DESTROY {
 =head2 Public Class Methods
 
 =over 4
+
+=item $meths = Bric::Biz::AssetType->my_meths
+
+=item (@meths || $meths_aref) = Bric::Biz::AssetType->my_meths(TRUE)
+
+=item my (@meths || $meths_aref) = Bric::Biz::AssetType->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
+
+Each hash key is the name of a property or attribute of the object. The value
+for a hash key is another anonymous hash containing the following keys:
+
+=over 4
+
+=item name
+
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
+
+=item disp
+
+The display name of the property or attribute.
+
+=item get_meth
+
+A reference to the method that will retrieve the value of the property or
+attribute.
+
+=item get_args
+
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
+
+=item set_meth
+
+A reference to the method that will set the value of the property or
+attribute.
+
+=item set_args
+
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
+
+=item type
+
+The type of value the property or attribute contains. There are only three
+types:
+
+=over 4
+
+=item short
+
+=item date
+
+=item blob
+
+=back
+
+=item len
+
+If the value is a 'short' value, this hash key contains the length of the
+field.
+
+=item search
+
+The property is searchable via the list() and list_ids() methods.
+
+=item req
+
+The property or attribute is required.
+
+=item props
+
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
+
+=over 4
+
+=item type
+
+The display field type. Possible values are
+
+=over 4
+
+=item text
+
+=item textarea
+
+=item password
+
+=item hidden
+
+=item radio
+
+=item checkbox
+
+=item select
+
+=back
+
+=item length
+
+The Length, in letters, to display a text or password field.
+
+=item maxlength
+
+The maximum length of the property or value - usually defined by the SQL DDL.
+
+=back
+
+=item rows
+
+The number of rows to format in a textarea field.
+
+=item cols
+
+The number of columns to format in a textarea field.
+
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> Not yet written.
+
+=cut
+
+sub my_meths {
+    # To be written.
+}
+
+##############################################################################
 
 =item ($ids || @ids) = Bric::Biz::element::Parts::Field->list_ids($params)
 

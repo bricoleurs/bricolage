@@ -11,6 +11,27 @@ sub _test_load : Test(1) {
     use_ok('Bric::Util::EventType');
 }
 
+##############################################################################
+# Test class methods.
+##############################################################################
+# Test my_meths().
+sub test_my_meths : Test(11) {
+    ok( my $meths = Bric::Util::EventType->my_meths, "Get my_meths" );
+    isa_ok($meths, 'HASH', "my_meths is a hash" );
+    is( $meths->{name}{type}, 'short', "Check name type" );
+    ok( $meths = Bric::Util::EventType->my_meths(1), "Get my_meths array ref" );
+    isa_ok( $meths, 'ARRAY', "my_meths(1) is an array" );
+    (is $meths->[0]->{name}, 'key_name', "Check first meth name" );
+
+    # Try the identifier methods.
+    ok( my $et = Bric::Util::EventType->new({ key_name => 'NewFoo' }),
+        "Create event type" );
+    ok( my @meths = $et->my_meths(0, 1), "Get ident meths" );
+    is( scalar @meths, 1, "Check for 1 meth" );
+    is( $meths[0]->{name}, 'key_name', "Check for 'key_name' meth" );
+    is( $meths[0]->{get_meth}->($et), 'NewFoo', "Check name 'NewFoo'" );
+}
+
 1;
 __END__
 

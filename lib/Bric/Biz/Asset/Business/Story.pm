@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-14 02:01:58 $
+$Date: 2003-02-18 02:30:24 $
 
 =head1 SYNOPSIS
 
@@ -841,7 +841,8 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    my ($pkg, $ord) = @_;
+    my ($pkg, $ord, $ident) = @_;
+    return if $ident;
 
     # Return 'em if we got em.
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
@@ -1031,7 +1032,7 @@ Returns name of story that has clashing URI.
 sub check_uri {
     my ($self, $uid) = @_;
     my $msg;
-    # get element type and output channel info for currnt story
+    # get element type and output channel info for current story
     my $s_eid = $self->get_element__id() ||
       die $gen->new({ msg => 'Cannot retrieve the element_id of this story' });
     my $s_el = Bric::Biz::AssetType->lookup({id => $s_eid}) ||

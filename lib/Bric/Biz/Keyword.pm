@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:03 $
+$Date: 2003-02-18 02:30:23 $
 
 =head1 SYNOPSIS
 
@@ -97,11 +97,13 @@ use constant COLS   => qw(name screen_name sort_name active);
 
 #--------------------------------------#
 # Public Class Fields
-our $METH;
+# None.
 
 #--------------------------------------#
 # Private Class Fields
 my $gen = 'Bric::Util::Fault::Exception::GEN';
+my $METHS;
+my @ORD = qw(name screen_name sort_name);
 
 #--------------------------------------#
 # Instance Fields
@@ -380,10 +382,14 @@ sub remove {
 
 =item (@meths || $meths_aref) = Bric::Biz::Keyword->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Biz::Keyword->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -510,11 +516,13 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    # Load field members.
-    return $METH if $METH;
+    my ($pkg, $ord, $ident) = @_;
 
-    $METH = {'name'        => {'get_meth' => sub {shift->get_name(@_)},
-                               'get_args' => [], 
+    # Create 'em if we haven't got 'em.
+    $METHS ||= {
+             'name'        => {'name'     => 'name',
+                               'get_meth' => sub {shift->get_name(@_)},
+                               'get_args' => [],
                                'set_meth' => sub {shift->set_name(@_)},
                                'set_args' => [],
                                'disp'     => 'Keyword Name',
@@ -525,7 +533,8 @@ sub my_meths {
                                               'length'     => 32,
                                               'max_length' => 256,}
                               },
-             'screen_name' => {'get_meth' => sub {shift->get_screen_name(@_)}, 
+             'screen_name' => {'name'     => 'screen_name',
+                               'get_meth' => sub {shift->get_screen_name(@_)},
                                'get_args' => [],
                                'set_meth' => sub {shift->set_screen_name(@_)},
                                'set_args' => [],
@@ -537,7 +546,8 @@ sub my_meths {
                                               'length'     => 64,
                                               'max_length' => 256,}
                               },
-             'sort_name'   => {'get_meth' => sub {shift->get_sort_name(@_)},
+             'sort_name'   => {'sort_name'     => 'name',
+                               'get_meth' => sub {shift->get_sort_name(@_)},
                                'get_args' => [], 
                                'set_meth' => sub {shift->set_sort_name(@_)},
                                'set_args' => [],
@@ -550,10 +560,15 @@ sub my_meths {
                                               'max_length' => 256,}
                               },
             };
-    $METH->{keyword} = $METH->{name};
-    # Load attributes.
-    # NONE
-    return $METH;
+
+    if ($ord) {
+        return wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
+    } elsif ($ident) {
+        return wantarray ? $METHS->{name} : [$METHS->{name}];
+    } else {
+        return $METHS;
+    }
+
 }
 
 #--------------------------------------#

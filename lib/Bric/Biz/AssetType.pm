@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-31 19:49:14 $
+$Date: 2003-02-18 02:30:23 $
 
 =head1 SYNOPSIS
 
@@ -148,7 +148,7 @@ use constant BURNER_TEMPLATE => 2;
 
 #--------------------------------------#
 # Public Class Fields
-our $METH;
+our $METHS;
 our @EXPORT_OK = qw(BURNER_MASON BURNER_TEMPLATE);
 our %EXPORT_TAGS = ( all => \@EXPORT_OK);
 
@@ -313,33 +313,27 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $element = Bric::Biz::AssetType->lookup($param)
+=item $element = Bric::Biz::AssetType->lookup({ id => $id })
 
-Keys for $param are:
+=item $element = Bric::Biz::AssetType->lookup({ name => $name })
+
+Looks up and instantiates a new Bric::Biz::AssetType object based on the
+Bric::Biz::AssetType object ID or name passed. If C<$id> or C<$name> is not
+found in the database, C<lookup()> returns C<undef>.
+
+B<Throws:>
 
 =over 4
 
 =item *
 
-id
-
-This is an AssetType ID that will return a single unique AssetType object.
+Too many Bric::Biz::AssetType objects found.
 
 =back
 
-This will return the asset type that matches the id that is defined
+B<Side Effects:> NONE
 
-B<Throws:>
-
-"Missing required paramter 'id'"
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
@@ -478,10 +472,14 @@ sub DESTROY {
 
 =item (@meths || $meths_aref) = Bric::Biz::AssetType->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Biz::AssetType->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -608,14 +606,10 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    my ($pkg, $ord) = @_;
+    my ($pkg, $ord, $ident) = @_;
 
-    # Return 'em if we got em.
-    return !$ord ? $METH : wantarray ? @{$METH}{&ORD} : [@{$METH}{&ORD}]
-      if $METH;
-
-    # We don't got 'em. So get 'em!
-    $METH = {
+    # Create 'em if we haven't got 'em.
+    $METHS ||= {
 	      name        => {
 			      name     => 'name',
 			      get_meth => sub { shift->get_name(@_) },
@@ -627,9 +621,9 @@ sub my_meths {
 			      len      => 64,
 			      req      => 1,
 			      type     => 'short',
-			      props    => {   type       => 'text',
-					      length     => 32,
-					      maxlength => 64
+			      props    => { type      => 'text',
+					    length    => 32,
+					    maxlength => 64
 					  }
 			     },
 	      description => {
@@ -661,7 +655,7 @@ sub my_meths {
 					    vals => [[BURNER_MASON, 'Mason'],
 						     [BURNER_TEMPLATE, 'HTML::Template']],
 					  }
-			     },	     
+			     },
 	      type_name      => {
 			     name     => 'type_name',
 			     get_meth => sub { shift->get_type_name(@_) },
@@ -691,7 +685,14 @@ sub my_meths {
 			     props    => { type => 'checkbox' }
 			    },
 	     };
-    return !$ord ? $METH : wantarray ? @{$METH}{&ORD} : [@{$METH}{&ORD}];
+
+    if ($ord) {
+        return wantarray ? @{$METHS}{&ORD} : [@{$METHS}{&ORD}];
+    } elsif ($ident) {
+        return wantarray ? $METHS->{name} : [$METHS->{name}];
+    } else {
+        return $METHS;
+    }
 }
 
 
@@ -1804,7 +1805,7 @@ B<Notes:>
 
 NONE
 
-=cut 
+=cut
 
 sub get_containers {
     my $self = shift;

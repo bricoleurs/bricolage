@@ -10,7 +10,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:02 $
+$Date: 2003-02-18 02:30:22 $
 
 =head1 SYNOPSIS
 
@@ -202,10 +202,13 @@ B<Notes:> NONE.
 sub cache_lookup {
     if (defined MOD_PERL) {
         my ($pkg, $param) = @_;
-        return unless defined $param->{id};
         my $r = Apache::Request->instance(Apache->request);
         $pkg = ref $pkg || $pkg;
-        return $r->pnotes("$pkg|$param->{id}");
+        while (my ($k, $v) = each %$param) {
+            if (my $obj = $r->pnotes("$pkg|$k|" . lc $v)) {
+                return $obj;
+            }
+        }
     }
     return;
 }
@@ -590,10 +593,16 @@ sub cache_me {
     my $self = shift;
     if (defined MOD_PERL) {
         my $pkg = ref $self or return;
-        my $id = $self->{id};
-        return unless defined $id;
+        # Skip unsaved objects.
+        return unless defined $self->{id};
         my $r = Apache::Request->instance(Apache->request);
-        $r->pnotes("$pkg|$id", $self);
+        # Cache it under its ID.
+        $r->pnotes("$pkg|id|$self->{id}", $self);
+        # Cache it under other unique identifiers.
+        warn "Object: $self\n";
+        foreach my $m ($self->my_meths(0, 1)) {
+            $r->pnotes("$pkg|$m->{name}|" . lc $m->{get_meth}->($self), $self);
+        }
     }
     return $self;
 }

@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-02-18 02:30:27 $
 
 =head1 SYNOPSIS
 
@@ -408,10 +408,14 @@ sub list_ids {
 
 =item (@meths || $meths_aref) = Bric::Util::Grp::Parts::Member->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Util::Grp->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -538,7 +542,8 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    my ( $pkg, $ord ) = @_;
+    my ($pkg, $ord, $ident) = @_;
+    return if $ident;
 
     # Return 'em if we got em.
     return !$ord ? $meths : wantarray ? @{$meths}{&ORD} : [ @{$meths}{&ORD} ]

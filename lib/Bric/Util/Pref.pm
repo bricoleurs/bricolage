@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-02-18 02:30:27 $
 
 =head1 SYNOPSIS
 
@@ -434,10 +434,14 @@ sub lookup_val {
 
 =item (@meths || $meths_aref) = Bric::Util::Pref->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Util::Pref->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -564,14 +568,10 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    my ($pkg, $ord) = @_;
+    my ($pkg, $ord, $ident) = @_;
 
-    # Return 'em if we got em.
-    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}]
-      if $METHS;
-
-    # We don't got 'em. So get 'em!
-    $METHS = {
+    # Create 'em if we haven't got 'em.
+    $METHS ||= {
               name      => {
                              name     => 'name',
                              get_meth => sub { shift->get_name(@_) },
@@ -650,7 +650,14 @@ sub my_meths {
                              req      => 0,
                             }
              };
-    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
+
+    if ($ord) {
+        return wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
+    } elsif ($ident) {
+        return wantarray ? $METHS->{name} : [$METHS->{name}];
+    } else {
+        return $METHS;
+    }
 }
 
 ################################################################################

@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-03 18:28:10 $
+$Date: 2003-02-18 02:30:24 $
 
 =head1 SYNOPSIS
 
@@ -227,9 +227,13 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item my $wf = Bric::Biz::Workflow->lookup({ id => $wf_id });
+=item my $wf = Bric::Biz::Workflow->lookup({ id => $id });
 
-Takes a workflow ID and returns the corresponding workflow object.
+=item my $wf = Bric::Biz::Workflow->lookup({ name => $name });
+
+Looks up and instantiates a new Bric::Biz::Workflow object based on an
+Bric::Biz::Workflow object ID or name. If no output channelobject is
+found in the database, C<lookup()> returns C<undef>.
 
 B<Throws:>
 
@@ -433,10 +437,14 @@ sub DESTROY {
 
 =item my (@meths || $meths_aref) = Bric::Biz::Workflow->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Biz::Workflow->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -563,14 +571,10 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    my ($pkg, $ord) = @_;
+    my ($pkg, $ord, $ident) = @_;
 
-    # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
-      if $meths;
-
-    # We don't got 'em. So get 'em!
-    $meths = {
+    # Create 'em if we haven't got 'em.
+    $meths ||= {
               name        => {
                               name     => 'name',
                               get_meth => sub { shift->get_name(@_) },
@@ -632,7 +636,14 @@ sub my_meths {
                               props    => { type => 'checkbox' }
                              }
              };
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+
+    if ($ord) {
+        return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    } elsif ($ident) {
+        return wantarray ? $meths->{name} : [$meths->{name}];
+    } else {
+        return $meths;
+    }
 }
 
 #--------------------------------------#

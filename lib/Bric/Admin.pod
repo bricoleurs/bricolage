@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.90 $
+$Revision: 1.91 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:52:48 $
+$Date: 2003-02-18 02:30:23 $
 
 =head1 DESCRIPTION
 
@@ -996,7 +996,7 @@ B<Apache::SizeLimit> for more information.
 
 B<MANUAL_APACHE:> Choose the Apache configuration method. As of mod_perl 1.27,
 Bricolage uses Apache::ReadConfig to configure the httpd daemon. If you wish
-have Bricolage generate an F<httpd.conf> include file, or if you with to
+have Bricolage generate an F<httpd.conf> include file, or if you wish to
 manually configure your Apache server for Bricolage, set this directive to a
 true value. Doing so will cause Bricolage to generate
 F<C<$TEMP_DIR>/bricolage/bric_httpd.conf> to provide a tracefile or template

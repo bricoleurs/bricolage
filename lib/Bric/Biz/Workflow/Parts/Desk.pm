@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-02-03 18:28:10 $
+$Date: 2003-02-18 02:30:26 $
 
 
 =head1 SYNOPSIS
@@ -110,7 +110,7 @@ use constant INSTANCE_GROUP_ID => 34;
 
 #--------------------------------------#
 # Private Class Fields
-my $METH;
+my $METHS;
 my $TABLE = 'desk';
 my @COLS = qw(name description pre_chk_rules post_chk_rules asset_grp publish
               active);
@@ -217,9 +217,13 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item my $wf = Bric::Biz::Workflow::Parts::Desk->lookup({ id => $desk_id });
+=item my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ id => $id });
 
-Takes a desk ID and returns a corresponding desk object.
+=item my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $name });
+
+Looks up and instantiates a new Bric::Biz::Workflow::Parts::Desk object based
+on the Bric::Biz::Workflow::Parts::Desk object ID or name passed. If C<$id> or
+C<$name> is not found in the database, C<lookup()> returns C<undef>.
 
 B<Throws:>
 
@@ -248,6 +252,10 @@ Unable to bind to columns to statement handle.
 =item *
 
 Unable to fetch row from statement handle.
+
+=item *
+
+Too many Bric::Biz::Workflow::Parts::Desk objects found.
 
 =back
 
@@ -416,10 +424,14 @@ sub DESTROY {
 
 =item my (@meths || $meths_aref) = Bric::Biz::Workflow::Parts::Desk->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Biz::Workflow::Parts::Desk->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -546,14 +558,10 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    my ($pkg, $ord) = @_;
+    my ($pkg, $ord, $ident) = @_;
 
-    # Return 'em if we got em.
-    return !$ord ? $METH : wantarray ? @{$METH}{@ORD} : [@{$METH}{@ORD}]
-      if $METH;
-
-    # We don't got 'em. So get 'em!
-    $METH = {
+    # Create 'em if we haven't got 'em.
+    $METHS ||= {
               name        => {
                               name     => 'name',
                               get_meth => sub { shift->get_name(@_) },
@@ -613,7 +621,14 @@ sub my_meths {
                              props    => { type => 'checkbox' }
                             },
              };
-    return !$ord ? $METH : wantarray ? @{$METH}{@ORD} : [@{$METH}{@ORD}];
+
+    if ($ord) {
+        return wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
+    } elsif ($ident) {
+        return wantarray ? $METHS->{name} : [$METHS->{name}];
+    } else {
+        return $METHS;
+    }
 }
 
 #--------------------------------------#

@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-02 19:00:27 $
+$Date: 2003-02-18 02:30:23 $
 
 =head1 SYNOPSIS
 
@@ -127,7 +127,7 @@ my @sel_props = qw(id directory asset_grp_id _active uri parent_id name
                    description grp_ids);
 my @cols = qw(directory asset_grp_id  active uri parent_id name description);
 my @props = qw(directory asset_grp_id _active uri parent_id name description);
-my $METH;
+my $METHS;
 
 #--------------------------------------#
 # Instance Fields
@@ -330,10 +330,14 @@ sub DESTROY {
 
 =item my (@meths || $meths_aref) = Bric::Biz::Category->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Biz::Category->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -460,14 +464,10 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    my ($pkg, $ord) = @_;
-
-    # Return 'em if we got em.
-    return !$ord ? $METH : wantarray ? @{$METH}{&ORD} : [@{$METH}{&ORD}]
-      if $METH;
+    my ($pkg, $ord, $ident) = @_;
 
     # We don't got 'em. So get 'em!
-    $METH = {
+    $METHS ||= {
               name        => {
                               name     => 'name',
                               get_meth => sub { shift->get_name(@_) },
@@ -554,7 +554,14 @@ sub my_meths {
                                           }
                              },
              };
-    return !$ord ? $METH : wantarray ? @{$METH}{&ORD} : [@{$METH}{&ORD}];
+
+    if ($ord) {
+        return wantarray ? @{$METHS}{&ORD} : [@{$METHS}{&ORD}];
+    } elsif ($ident) {
+        return wantarray ? $METHS->{uri} : [$METHS->{uri}];
+    } else {
+        return $METHS;
+    }
 }
 
 ##############################################################################

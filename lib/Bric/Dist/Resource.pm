@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-02-18 02:30:26 $
 
 =head1 SYNOPSIS
 
@@ -214,11 +214,12 @@ sub new {
 
 =item my $res = Bric::Dist::Resource->lookup({ id => $id })
 
-=item my $res = Bric::Dist::Resource->lookup({ path => $path })
+=item my $res = Bric::Dist::Resource->lookup({ path => $path, uri  => $uri })
 
 Looks up and instantiates a new Bric::Dist::Resource object based on the
-Bric::Dist::Resource object ID passed. If $id or $path is not found in the
-database, lookup() returns undef.
+Bric::Dist::Resource object ID or based on the path and uri. If a
+Bric::Dist::Resource object is not found in the database, C<lookup()> returns
+C<undef>.
 
 B<Throws:>
 
@@ -487,10 +488,14 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 =item (@meths || $meths_aref) = Bric::Dist::Resource->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Dist::Resource->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -617,6 +622,9 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
+    my ($pkg, $ord, $ident) = @_;
+    return if $ident;
+
     # Load field members.
     my $ret = { path =>      { meth => sub {shift->get_path(@_)},
                                args => [],

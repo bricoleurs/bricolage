@@ -7,15 +7,15 @@ Bric::Util::Class - A module to provide access to the class table
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-02-18 02:30:26 $
 
 =head1 SYNOPSIS
 
@@ -386,28 +386,149 @@ sub DESTROY {
 
 =over 4
 
-=item $val = my_meths->{$key}->[0]->($obj);
+=item $meths = Bric::Util::Class->my_meths
 
-Introspect this object.
+=item (@meths || $meths_aref) = Bric::Util::Class->my_meths(TRUE)
 
-B<Throws:>
+=item my (@meths || $meths_aref) = Bric::Util::Class->my_meths(0, TRUE)
 
-NONE
+Returns an anonymous hash of introspection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
-B<Side Effects:>
+Each hash key is the name of a property or attribute of the object. The value
+for a hash key is another anonymous hash containing the following keys:
 
-NONE
+=over 4
 
-B<Notes:>
+=item name
 
-NONE
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
+
+=item disp
+
+The display name of the property or attribute.
+
+=item get_meth
+
+A reference to the method that will retrieve the value of the property or
+attribute.
+
+=item get_args
+
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
+
+=item set_meth
+
+A reference to the method that will set the value of the property or
+attribute.
+
+=item set_args
+
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
+
+=item type
+
+The type of value the property or attribute contains. There are only three
+types:
+
+=over 4
+
+=item short
+
+=item date
+
+=item blob
+
+=back
+
+=item len
+
+If the value is a 'short' value, this hash key contains the length of the
+field.
+
+=item search
+
+The property is searchable via the list() and list_ids() methods.
+
+=item req
+
+The property or attribute is required.
+
+=item props
+
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
+
+=over 4
+
+=item type
+
+The display field type. Possible values are
+
+=over 4
+
+=item text
+
+=item textarea
+
+=item password
+
+=item hidden
+
+=item radio
+
+=item checkbox
+
+=item select
+
+=back
+
+=item length
+
+The Length, in letters, to display a text or password field.
+
+=item maxlength
+
+The maximum length of the property or value - usually defined by the SQL DDL.
+
+=back
+
+=item rows
+
+The number of rows to format in a textarea field.
+
+=item cols
+
+The number of columns to format in a textarea field.
+
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub my_meths {
+    my ($pkg, $ord, $ident) = @_;
+    return if $ident;
+
     # Load field members.
     return $METH if $METH;
-    
     $METH = {'key_name'    => {'get_meth' => sub {shift->get_key_name(@_)},
 			       'get_args' => [], 
 			       'set_meth' => sub {shift->set_key_name(@_)},

@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-02-18 02:30:25 $
 
 =head1 SYNOPSIS
 
@@ -229,7 +229,7 @@ sub new {
 
 Looks up and instantiates a new Bric::Biz::Person::User object based on the
 Bric::Biz::Person::User object ID or login name. If the existing object is not
-found in the database, lookup() returns undef. The two possible lookup
+found in the database, C<lookup()> returns C<undef>. The two possible lookup
 parameters are:
 
 =over 4
@@ -279,12 +279,13 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> If id or login name is found, populates the new Bric::Biz::Person
-object with data from the database before returning it.
+B<Side Effects:> If id or login name is found, populates the new
+Bric::Biz::Person object with data from the database before returning it.
 
-B<Notes:> This method is overriding the lookup() method of the Bric::Biz::Person
-object, including all of its SQL. Thus, the Bric::Biz::Person::lookup method will
-not be called here, and it's SQL queries will not be executed.
+B<Notes:> This method is overriding the lookup() method of the
+Bric::Biz::Person object, including all of its SQL. Thus, the
+Bric::Biz::Person::lookup method will not be called here, and it's SQL queries
+will not be executed.
 
 =cut
 
@@ -305,8 +306,9 @@ sub lookup {
 
 =item my (@users || $users_aref) = Bric::Biz::Person::User->list($params)
 
-Returns a list or anonymous array of Bric::Biz::Person::User objects based on the
-search criteria passed via an anonymous hash. The supported lookup keys are:
+Returns a list or anonymous array of Bric::Biz::Person::User objects based on
+the search criteria passed via an anonymous hash. The supported lookup keys
+are:
 
 =over 4
 
@@ -517,10 +519,14 @@ sub login_avail {
 
 =item (@meths || $meths_aref) = Bric::Biz::Person::User->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Biz::Person::User->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -647,50 +653,54 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    my ($pkg, $ord) = @_;
+    my ($pkg, $ord, $ident) = @_;
 
-    # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
-      if $meths;
-
-    # We don't got 'em. So get 'em!
-    foreach my $meth (Bric::Biz::Person::User->SUPER::my_meths(1)) {
-        $meths->{$meth->{name}} = $meth;
-        push @ord, $meth->{name};
+    unless ($meths) {
+        # We don't got 'em. So get 'em!
+        foreach my $meth (Bric::Biz::Person::User->SUPER::my_meths(1)) {
+            $meths->{$meth->{name}} = $meth;
+            push @ord, $meth->{name};
+        }
+        push @ord, qw(login password), pop @ord;
+        $meths->{login}    = {
+                              get_meth => sub { shift->get_login(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_login(@_) },
+                              set_args => [],
+                              name     => 'login',
+                              disp     => 'Login',
+                              len      => 128,
+                              req      => 1,
+                              type     => 'short',
+                              props    => { type      => 'text',
+                                            length    => 32,
+                                            maxlength => 128
+                                          }
+                             };
+        $meths->{password} = {
+                              get_meth => undef,
+                              get_args => undef,
+                              set_meth => sub { shift->set_password(@_) },
+                              set_args => [],
+                              name     => 'password',
+                              disp     => 'Password',
+                              len      => 1024,
+                              req      => 1,
+                              type     => 'short',
+                              props    => { type      => 'password',
+                                            length    => 32,
+                                            maxlength => 1024
+                                          }
+                             };
     }
-    push @ord, qw(login password), pop @ord;
-    $meths->{login}    = {
-                          get_meth => sub { shift->get_login(@_) },
-                          get_args => [],
-                          set_meth => sub { shift->set_login(@_) },
-                          set_args => [],
-                          name     => 'login',
-                          disp     => 'Login',
-                          len      => 128,
-                          req      => 1,
-                          type     => 'short',
-                          props    => {   type       => 'text',
-                                          length     => 32,
-                                          maxlength => 128
-                                      }
-                         };
-    $meths->{password} = {
-                          get_meth => undef,
-                          get_args => undef,
-                          set_meth => sub { shift->set_password(@_) },
-                          set_args => [],
-                          name     => 'password',
-                          disp     => 'Password',
-                          len      => 1024,
-                          req      => 1,
-                          type     => 'short',
-                          props    => {   type       => 'password',
-                                          length     => 32,
-                                          maxlength => 1024
-                                      }
-                         };
 
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    if ($ord) {
+        return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    } elsif ($ident) {
+        return wantarray ? $meths->{login} : [$meths->{login}];
+    } else {
+        return $meths;
+    }
 }
 
 ################################################################################

@@ -7,15 +7,15 @@ Bric::Biz::Org::Parts::Addr - Organizational Addresses
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-02-18 02:30:25 $
 
 =head1 SYNOPSIS
 
@@ -625,12 +625,18 @@ sub del_parts {
 
 ################################################################################
 
-=item $meths = Bric::Biz::Org::Parts::Addr->my_meths
+=item my $meths = Bric::Biz::Org::Parts::Addr->my_meths
 
-Returns an anonymous hash of instrospection data for this object. If called
+=item my (@meths || $meths_aref) = Bric::Biz:::Org::Parts::Addr->my_meths(TRUE)
+
+=item my (@meths || $meths_aref) = Bric::Biz:::Org::Parts::Addr->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
-follows:
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
@@ -757,7 +763,9 @@ B<Notes:> NONE.
 =cut
 
 sub my_meths {
-    # Load field members.
+    my ($pkg, $ord, $ident) = @_;
+    return if $ident;
+
     my $ret = { type    => { meth => sub {shift->get_type(@_)},
                              args => [],
                              disp => 'Type',
