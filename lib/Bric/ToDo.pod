@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =head1 DATE
 
-$Date: 2002-02-26 03:38:45 $
+$Date: 2002-02-26 15:50:51 $
 
 =head1 DESCRIPTION
 
@@ -153,6 +153,15 @@ Add ability to "undeploy" templates without deactivating them.
 
 Add a check that a user has selected at least one output channel when creating a
 new element. Elements without output channels cause Bricolage indigestion.
+
+=item *
+
+Add ability to select an Output Channel other than the Primary Output Channel
+for a given preview. This probably ought to be some sort of select list that
+always defaults to the Primary OC, but when chnaged, causes the preview to use
+the selected OC. Probably we'll need to change the preview link to a button so
+that the form submit works properly with the select list. I suggest that we
+should add this feature to profiles only (edit and view), and not to desks.
 
 =back
 
