@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.26.2.3 $
+$Revision: 1.26.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.26.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-28 18:11:18 $
+$Date: 2002-02-05 00:19:14 $
 
 =head1 SYNOPSIS
 
@@ -318,7 +318,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
     # the base directory that will store media assets
     use constant MEDIA_URI_ROOT => '/data/media';
-    use constant MEDIA_FILE_ROOT => catdir(MASON_COMP_ROOT, 'data', 'media');
+    use constant MEDIA_FILE_ROOT => catdir(MASON_COMP_ROOT->[0][1],
+					   'data', 'media');
 
     # The minimum login name and password lengths users can enter.
     use constant LOGIN_LENGTH            => $config->{LOGIN_LENGTH} || 6;
