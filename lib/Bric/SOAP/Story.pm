@@ -35,15 +35,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-02 00:18:26 $
+$Date: 2002-02-02 00:22:37 $
 
 =head1 SYNOPSIS
 
@@ -59,6 +59,9 @@ $Date: 2002-02-02 00:18:26 $
   # login
   $soap->login(name(username => USER), 
 	       name(password => PASSWORD));
+
+  # set uri for Story module
+  $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
 
   # get a list of story_ids for published stories w/ "foo" in their title
   my $story_ids = $soap->list_ids(name(title          => '%foo%'), 
