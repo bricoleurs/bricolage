@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-05 21:25:43 $
+$Date: 2003-03-10 19:29:22 $
 
 =head1 SYNOPSIS
 
@@ -205,11 +205,13 @@ BEGIN {
 # Constructors
 #------------------------------------------------------------------------------#
 
-=item $asset = Bric::Biz::Asset::Business::Story->lookup( { id => $id })
-=item $asset = Bric::Biz::Asset::Business::Media->lookup( { id => $id })
-=item $asset = Bric::Biz::Asset::Formatting->lookup( { id => $id })
+=item $asset = Bric::Biz::Asset::Business::Story->lookup({ id => $id })
 
-This will return a story asset that matches the id provided
+=item $asset = Bric::Biz::Asset::Business::Media->lookup({ id => $id })
+
+=item $asset = Bric::Biz::Asset::Formatting->lookup({ id => $id })
+
+This will return an asset that matches the ID provided.
 
 B<Throws:>
 
@@ -251,14 +253,22 @@ sub lookup {
 
 
 =item (@stories||$stories) = Bric::Biz::Asset::Business::Story->list($params)
+
 =item (@media_objs||$media) = Bric::Biz::Asset::Business::Media->list($params)
+
 =item (@formatting_objs||$formatting) = Bric::Biz::Asset::Business::Formatting->list($params)
 
 B<See Also:>
 
+=over 4
+
 =item Bric::Biz::Asset::Business::Story->list()
+
 =item Bric::Biz::Asset::Business::Media->list()
+
 =item Bric::Biz::Asset::Business::Formatting->list()
+
+=back
 
 =cut
 
@@ -280,14 +290,22 @@ sub list {
 }
 
 =item (@ids||$ids) = Bric::Biz::Asset::Business::Story->list_ids($params)
+
 =item (@ids||$ids) = Bric::Biz::Asset::Business::Media->list_ids($params)
+
 =item (@ids||$ids) = Bric::Biz::Asset::Business::Formatting->list_ids($params)
 
 B<See Also:>
 
+=over 4
+
 =item Bric::Biz::Asset::Business::Story->list_ids()
+
 =item Bric::Biz::Asset::Business::Media->list_ids()
+
 =item Bric::Biz::Asset::Business::Formatting->list_ids()
+
+=back
 
 =cut
 
