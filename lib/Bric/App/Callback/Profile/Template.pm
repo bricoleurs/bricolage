@@ -46,7 +46,7 @@ sub save : Callback {
         $sb->deploy($fa);
 
         log_event('formatting_save', $fa);
-        add_msg('Template "[_1]" saved.', $fa->get_name);
+        add_msg('Template "[_1]" saved.', $fa->get_file_name);
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -103,7 +103,7 @@ sub save_and_stay : Callback {
         # Save the template.
         $fa->save;
         log_event('formatting_save', $fa);
-        add_msg('Template "[_1]" saved.', $fa->get_name);
+        add_msg('Template "[_1]" saved.', $fa->get_file_name);
     }
 }
 
@@ -139,7 +139,7 @@ sub cancel : Callback {
     log_event('formatting_cancel_checkout', $fa);
     clear_state($self->class_key);
     $self->set_redirect("/");
-    add_msg('Template "[_1]" check out canceled.', $fa->get_name);
+    add_msg('Template "[_1]" check out canceled.', $fa->get_file_name);
 }
 
 sub notes : Callback {
@@ -256,7 +256,7 @@ sub recall : Callback {
             $sb->deploy($fa);
 
         } else {
-            add_msg('Permission to checkout "[_1]" denied.', $fa->get_name);
+            add_msg('Permission to checkout "[_1]" denied.', $fa->get_file_name);
         }
     }
 
@@ -357,7 +357,7 @@ $checkin = sub {
         log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
         log_event('formatting_checkin', $fa, { Version => $fa->get_version });
         log_event("formatting_rem_workflow", $fa);
-        add_msg('Template "[_1]" saved and shelved.', $fa->get_name);
+        add_msg('Template "[_1]" saved and shelved.', $fa->get_file_name);
     } elsif ($desk_id eq 'deploy') {
         # Publish the template and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -391,7 +391,8 @@ $checkin = sub {
         my $dname = $pub_desk->get_name;
         log_event('formatting_moved', $fa, { Desk => $dname })
           unless $no_log;
-        add_msg('Template "[_1]" saved and checked in to "[_2]".', $fa->get_name, $dname);
+        add_msg('Template "[_1]" saved and checked in to "[_2]".',
+                $fa->get_file_name, $dname);
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
@@ -417,7 +418,8 @@ $checkin = sub {
         log_event('formatting_checkin', $fa, { Version => $fa->get_version });
         my $dname = $desk->get_name;
         log_event('formatting_moved', $fa, { Desk => $dname }) unless $no_log;
-        add_msg('Template "[_1]" saved and moved to "[_2]".', $fa->get_name, $dname);
+        add_msg('Template "[_1]" saved and moved to "[_2]".',
+                $fa->get_file_name, $dname);
     }
 
     # Deploy the template, if necessary.
@@ -471,7 +473,7 @@ $delete_fa = sub {
     $fa->deactivate;
     $fa->save;
     log_event("formatting_deact", $fa);
-    add_msg('Template "[_1]" deleted.', $fa->get_name);
+    add_msg('Template "[_1]" deleted.', $fa->get_file_name);
 };
 
 $create_fa = sub {
@@ -548,7 +550,7 @@ $create_fa = sub {
     log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
     log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
     log_event('formatting_save', $fa);
-    add_msg('Template "[_1]" saved.', $fa->get_name);
+    add_msg('Template "[_1]" saved.', $fa->get_file_name);
 
     # Put the template into the session and clear the workflow ID.
     set_state_data($widget, 'fa', $fa);
