@@ -16,6 +16,25 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.4.0
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+Fetching objects from Bric::Biz::Asset::Business::Media has been optimized for
+greater speed.. [JoE<atilde>o Pedro]
+
+=item *
+
+PostgreSQL "NOTICE" messages are now suppressed during installation. [David]
+
+=item *
+
+Added README.MacOSX. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
@@ -70,17 +89,8 @@ Pedro]
 
 =item *
 
-Fetching objects from Bric::Biz::Asset::Business::Media has been optimized for
-greater speed.. [JoE<atilde>o Pedro]
-
-=item *
-
 All Bricolage F<.pod> files are now installed and converted to C<man> pages
 along with all of the F<.pm> files. [David]
-
-=item *
-
-PostgreSQL "NOTICE" messages are now suppressed during installation. [David]
 
 =item *
 
@@ -110,10 +120,6 @@ interface and standard API. [Sam]
 Added new C<--save-cookie-file> and C<--use-cookie-file> options to
 F<bric_soap> to allow authentication to span F<bric_soap> calls. This can
 result in significant time savings across multiple invocations. [Matt]
-
-=item *
-
-Added README.MacOSX. [David]
 
 =item *
 
