@@ -48,7 +48,7 @@ if (defined $id) {
                           field  => 'name',
                           constrain => { site_id => $siteid },
                           no_persist => 1,
-                          name   => "formBuilder|primary_oc_site${siteid}_cb",
+                          name   => "primary_oc_site_$siteid",
                           useTable => 0,
                           selected => $comp->get_primary_oc_id($siteid),
                          );
@@ -300,11 +300,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =head1 DATE
 
-$Date: 2003-07-28 11:00:51 $
+$Date: 2003-08-04 04:15:31 $
 
 =head1 DESCRIPTION
 

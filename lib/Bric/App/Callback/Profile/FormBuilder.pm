@@ -426,7 +426,7 @@ $set_primary_ocs = sub {
         @oc_ids{map { $_->get_id } $obj->get_sites} = ();
 
         foreach my $field (keys %$param) {
-            next unless $field =~ /primary_oc_site(\d+)_cb/;
+            next unless $field =~ /^primary_oc_site_(\d+)$/;
             my $siteid = $1;
             $obj->set_primary_oc_id($param->{$field}, $siteid);
             my ($oc) = $obj->get_output_channels($param->{$field});
