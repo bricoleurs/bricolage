@@ -17,7 +17,7 @@
 #
 
 # Set the location of Perl.
-PERL = /usr/local/bin/perl
+PERL = /usr/bin/perl
 
 # can't load Bric since it loads Bric::Config which has dependencies
 # that won't be solved till make install.
