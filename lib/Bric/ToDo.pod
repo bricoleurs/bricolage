@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.117 $
+$Revision: 1.118 $
 
 =head1 DATE
 
-$Date: 2003-09-16 03:47:11 $
+$Date: 2003-09-16 05:46:54 $
 
 =head1 DESCRIPTION
 
@@ -51,12 +51,6 @@ in mind as long term goals further down the line.
 
 Add Checkin & Shelve (And Checkin & Publish?) to the dropdown menu on My
 Workspace.
-
-=item *
-
-Add version number attribute to "Checked In" event for stories, media, and
-templates. This will make it easier to see who created new versions in the
-event log.
 
 =item *
 
