@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:14 $
+$Date: 2002-04-08 23:00:13 $
 
 =head1 DESCRIPTION
 
@@ -193,7 +193,9 @@ sub find_expat {
     my @paths = grep { defined and length } ( split(' ', $Config{libsdirs}), 
 					      split(' ', $Config{loclibpth}));
     foreach my $path (@paths) {
-	if (-e catfile($path, "libexpat.so")) {
+	if (-e catfile($path, "libexpat.so") or 
+	    -e catfile($path, "libexpat.so.0"),
+	    -e catfile($path, "libexpat.so.0.0.1")) {
 	    $REQ{EXPAT} = catfile($path, "libexpat.so");
 	    last;
 	}    

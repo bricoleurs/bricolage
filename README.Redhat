@@ -1,0 +1,14 @@
+Bricolage Redhat README
+-----------------------
+
+Bricolage works well on Redhat Linux, but installing components from
+RPM requires some care.  If you are installing Bricolage's
+requirements from source you can skip these notes and proceed directly
+to INSTALL.
+
+RPM notes:
+
+  - You must install the PostgreSQL server and devel RPMs in
+    order for Bricolage to find PostgreSQL.  This is because the devel
+    RPMs contain the pg_config binary that Bricolage uses to find
+    PostgreSQL.

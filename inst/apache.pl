@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:13 $
+$Date: 2002-04-08 23:00:12 $
 
 =head1 DESCRIPTION
 
@@ -189,11 +189,16 @@ sub check_modules {
 	    # mod_proxy.
 
 	    # perl and proxy use libfoo.so format filenames
-	    if (($mod eq 'perl' or $mod eq 'proxy') and
-		-e catfile($AP{HTTPD_ROOT}, "modules/lib${mod}.so")) {
-		$AP{add_modules}{"mod_$mod"} = 1;
-		$AP{load_modules}{"${mod}_module"} = "modules/lib${mod}.so";
-		next;
+	    if ($mod eq 'perl' or $mod eq 'proxy') {
+		if (-e catfile($AP{HTTPD_ROOT}, "modules/lib${mod}.so")) {
+		    $AP{add_modules}{"mod_$mod"} = 1;
+		    $AP{load_modules}{"${mod}_module"} = "modules/lib${mod}.so";
+		    next;
+		} elsif (-e catfile($AP{HTTPD_ROOT}, "libexec/lib${mod}.so")) {
+		    $AP{add_modules}{"mod_$mod"} = 1;
+		    $AP{load_modules}{"${mod}_module"} = "libexec/lib${mod}.so";
+		    next;
+		}
 	    }
 
 	    # everything else is mod_foo.so.  Not an elsif in case
@@ -204,7 +209,11 @@ sub check_modules {
 		$AP{add_modules}{"mod_$mod"} = 1;
 		$AP{load_modules}{"${mod}_module"} = "modules/mod_${mod}.so";
 		next;
-	    }   
+	    } elsif (-e catfile($AP{HTTPD_ROOT}, "libexec/mod_${mod}.so")) {
+		$AP{add_modules}{"mod_$mod"} = 1;
+		$AP{load_modules}{"${mod}_module"} = "libexec/mod_${mod}.so";
+		next;
+	    }
 	}
 
 	# missing module
@@ -221,7 +230,7 @@ sub check_modules {
     
     hard_fail("The following Apache modules are required by Bricolage and\n",
 	      "are missing from your installation:\n",
-	      map { "\tmod_$_\n" } @missing, "\n")
+	      (map { "\tmod_$_\n" } @missing), "\n")
       if @missing;
 
     print "All required modules found.\n";
