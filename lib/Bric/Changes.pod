@@ -74,6 +74,12 @@ a specific group member. [David]
 
 Aliases can now be made to documents within the same site. [Serge Sozonoff]
 
+=item *
+
+When viewing the contents of a document, the contents now have their HTML
+escaped. This prevents any broken HTML in the content from breaking the
+Bricolage UI. Suggested by Neal Sofge. [David]
+
 =back
 
 =head2 Bug Fixes
