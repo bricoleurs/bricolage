@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.3.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-17 16:19:43 $
+$Date: 2001-10-09 20:34:27 $
 
 =head1 SYNOPSIS
 
@@ -222,13 +222,10 @@ NONE
 =cut
 
 sub new {
-	my ($self, $init) = @_;
-
-	bless {}, $self unless $self;
-
-	$self->SUPER::new($init);
-
-	return $self;	
+    my ($self, $init) = @_;
+    bless {}, $self unless ref $self;
+    $self->SUPER::new($init);
+    return $self;
 }
 
 ###############################################################################
@@ -1226,20 +1223,16 @@ NONE
 =cut
 
 sub get_tile {
-	my ($self) = @_;
-
-	my $tile = $self->_get('_tile');
-
-	unless ($tile) {
-		($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list(
-						{ 	object		=> $self,
-							parent_id	=> undef,
-							active		=> 1 });
-
-		$self->_set( { '_tile' => $tile });
-	}
-
-	return $tile;
+    my ($self) = @_;
+    my $tile = $self->_get('_tile');
+    unless ($tile) {
+	($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list(
+	  { object    => $self,
+	    parent_id => undef,
+	    active    => 1 });
+	$self->_set( { '_tile' => $tile });
+    }
+    return $tile;
 }
 
 ################################################################################
@@ -1867,56 +1860,53 @@ NONE
 =cut
 
 sub _init {
-	my ($self, $init) = @_;
-
-	die Bric::Util::Fault::Exception::GEN->new(
-        {msg => "Method not implemented"}) unless ref $self;
+    my ($self, $init) = @_;
 
     die Bric::Util::Fault::Exception::GEN->new(
-        { msg => "Cannot create an asset without AssetType"})
-        unless $init->{'element__id'} || $init->{'element'};
+      {msg => "Method not implemented"}) unless ref $self;
 
-	die Bric::Util::Fault::Exception::GEN->new( {
-		msg => "Can not create asset with out Source "})
-		unless $init->{'source__id'};
+    die Bric::Util::Fault::Exception::GEN->new(
+      { msg => "Cannot create an asset without AssetType"})
+      unless $init->{'element__id'} || $init->{'element'};
 
-	if ($init->{'cover_date'}) {
-		$self->set_cover_date( $init->{'cover_date'} );
-		delete $init->{'cover_date'};
-		my $source = Bric::Biz::Org::Source->lookup({id => $init->{'source__id'}});
-		my $expire = $source->get_expire();
-		if ($expire) {
-			# add the days to the cover date and set the expire date
-			my $date = local_date($self->_get('cover_date'), 'epoch');
-			my $new_date = $date + ($expire * 24 * 60 * 60);
-			$new_date = strfdate($new_date);
-			$new_date = db_date($new_date);
-			$self->_set( { expire_date => $new_date });
-		}
+    die Bric::Util::Fault::Exception::GEN->new( {
+      msg => "Can not create asset with out Source "})
+      unless $init->{'source__id'};
+
+    if ($init->{'cover_date'}) {
+	$self->set_cover_date( $init->{'cover_date'} );
+	delete $init->{'cover_date'};
+	my $source = Bric::Biz::Org::Source->lookup({id => $init->{'source__id'}});
+	my $expire = $source->get_expire();
+	if ($expire) {
+	    # add the days to the cover date and set the expire date
+	    my $date = local_date($self->_get('cover_date'), 'epoch');
+	    my $new_date = $date + ($expire * 24 * 60 * 60);
+	    $new_date = strfdate($new_date);
+	    $new_date = db_date($new_date);
+	    $self->_set( { expire_date => $new_date });
 	}
+    }
 
-	# lets create the new tile as well
-	my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new( {
-					'object'			=> $self,
-					'element_id'		=> $init->{'element__id'},
-					'element'		=> $init->{'element'} });
+    # lets create the new tile as well
+    my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new( {
+      'object'     => $self,
+      'element_id' => $init->{'element__id'},
+      'element'	   => $init->{'element'} });
 
-	if ($init->{'element'}) {
-		$init->{'element__id'} = $init->{'element'}->get_id();
-		delete $init->{'element'};
-	}
+    if ($init->{'element'}) {
+	$init->{'element__id'} = $init->{'element'}->get_id();
+	delete $init->{'element'};
+    }
 
-    $self->_set( { 
-		version => 0, 
-		current_version => 0,
-		checked_out => 1,
-		_tile => $tile,
-		modifier => $init->{'user__id'},
-		publish_status => 0 
-	});
-
-	$self->_set__dirty();
-
+    $self->_set( { version => 0,
+		   current_version => 0,
+		   checked_out => 1,
+		   _tile => $tile,
+		   modifier => $init->{'user__id'},
+		   publish_status => 0
+		 });
+    $self->_set__dirty();
     return $self;
 }
 
@@ -2140,7 +2130,10 @@ L<Bric>, L<Bric::Biz::Asset>
 =head1 REVISION HISTORY
 
 $Log: Business.pm,v $
-Revision 1.3  2001-09-17 16:19:43  wheeler
+Revision 1.3.2.1  2001-10-09 20:34:27  wheeler
+Code style neatening.
+
+Revision 1.3  2001/09/17 16:19:43  wheeler
 Corrected spelling of "contributor" but grepping through files and fixing them,
 plus deleting some files, renaming them, and then adding them back in.
 

@@ -8,15 +8,15 @@ contains the business data
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-10-09 20:34:27 $
 
 =head1 SYNOPSIS
 
@@ -836,28 +836,20 @@ sub _do_list {
 
     ## PREPARE AND EXECUTE THE SQL ##
     my $select = prepare_ca($sql, undef, DEBUG);
-
     if ($ids) {
 	my $return = col_aref($select, @bind);
-	
 	return wantarray ? @{ $return } : $return;
     } else {
 	my @objs;
-	
 	execute($select, @bind);
-	
 	my @d;
 	bind_columns($select,\@d[0 .. scalar(COLS)]);
-	
 	while (fetch($select)) {
 	    my $self = bless {}, $class;
-
 	    $self->_set(['id', FIELDS, 'object_type'], [@d, $obj_type]);
 	    $self->_set__dirty(0);
-
 	    push @objs, $self;
 	}
-	
 	return wantarray ? @objs : \@objs;
     }
 }
@@ -1067,7 +1059,10 @@ L<Bric::Biz::Asset::Business::Parts::Tile>
 =head1 REVISION HISTORY
 
 $Log: Data.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.2.2.1  2001-10-09 20:34:27  wheeler
+Code style neatening.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:53:58  wheeler
