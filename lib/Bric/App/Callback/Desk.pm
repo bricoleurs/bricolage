@@ -283,7 +283,7 @@ sub deploy : Callback {
         }
         # Let 'em know we've done it!
         if ($c == 1) {
-            add_msg("$disp_name deployed.");
+            add_msg('Template "[_1]" deployed.', $disp_name);
         } else {
             add_msg("[quant,_1,$disp_name] deployed.", $c);
         }

@@ -716,7 +716,10 @@ any error pointers.
 
 To Translate:
 
-  'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
+  'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"',
+  'Template "[_1]" deployed.' => 'Vorlage "[_1]" ausgebracht',
+  'Story "[_1]" scheduled for publication.' => 'Beitrag "[_1]" veröffentlicht.',
+  'Media "[_1]" scheduled for publication.' => 'Medium "[_1]" veröffentlicht.',
 
 =end comment
 

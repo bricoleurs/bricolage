@@ -26,18 +26,7 @@ my $disp = get_disp_name('element');
 my $sdisp = get_disp_name('story');
 my $context = "Workflow | Profile | $sdisp | $disp |";
 </%once>
-
-%#-- Args Section --#
-<%args>
-</%args>
-
-%#-- Init Section --#
-<%init>
-
-</%init>
-
 %#-- Begin HTML --#
-
 <& "/widgets/wrappers/sharky/header.mc",
   	title => "view container",
 	context => $context . get_state_data('container_prof', 'crumb')
@@ -53,7 +42,5 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 </form>
 
 <& /widgets/wrappers/sharky/footer.mc &>
-
-%#-- End HTML --#
 
 

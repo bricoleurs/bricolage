@@ -145,7 +145,7 @@ sub publish : Callback {
         # Report publishing if the job was executed on save, otherwise
         # report scheduling
         my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
-        add_msg("Story [_1] $saved: \"" .  $s->get_title . '"')
+        add_msg(qq{Story "[_1]" $saved.},  $s->get_title)
            if $count <= 3;
         # Remove it from the desk it's on.
         if (my $d = $s->get_current_desk) {
@@ -176,7 +176,7 @@ sub publish : Callback {
         # Report publishing if the job was executed on save, otherwise
         # report scheduling
         my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
-        add_msg("Media item [_1] $saved: \"" .  $m->get_title . '"')
+        add_msg(qq{Media "[_1]" $saved.}, $m->get_title)
           if $count <= 3;
         # Remove it from the desk it's on.
         if (my $d = $m->get_current_desk) {

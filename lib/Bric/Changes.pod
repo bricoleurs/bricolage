@@ -39,6 +39,10 @@ When installing Bricolage, it will now allow you to proceed if the database
 already exists by asking if you want to create the Bricolage tables in the
 existing database. Suggested by Mark Fournier and Marshall Roch. [David]
 
+=item *
+
+Added some missing translations for English. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -72,6 +76,11 @@ of the user or contributor oject are now properly saved. [David]
 When cloning a story, the list of output channels to select from is now
 limited to the site the current workflow is in. Thanks to Serge Sonzonoff for
 the spot! [David]
+
+=item *
+
+Attempting to publish a story or media document with brackets in the title no
+longer causes an error. Reported by Serge Sozonoff. [David]
 
 =back
 

@@ -33,7 +33,15 @@ Bricolage US English dictionary.
 use constant key => 'en_us';
 
 our @ISA = qw(Bric::Util::Language);
-our %Lexicon = ( _AUTO => 1 );
+our %Lexicon = (
+  '[quant,$quant,Contributors] [_1] [quant,$quant,disassociated].' => '[quant,$quant,Contributors] [_1] [quant,$quant,disassociated].',
+  '[quant,_1,Alert] acknowledged.' => '[quant,_1,Alert,Alerts] acknowledged.',
+  '[quant,_1,Contributor] "[_2]" associated.' => '[quant,_1,Contributor,Contributors] "[_2]" assocuated.',
+  '[quant,_1,Template] deployed.' => '[quant,_1,Template,Templates] deployed.',
+  '[quant,_1,media,media] published.' => '[quant,_1,media,media] published',
+  '[quant,_1,story,stories] published.' => '[quant,_1,story,stories] published',
+ _AUTO => 1
+);
 
 1;
 __END__
