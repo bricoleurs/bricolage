@@ -89,6 +89,14 @@ Fixed problem where an attempt to add new output channels to a new element
 before saving that element cause errors. Mainly noticable when creating
 elements via SOAP. Thanks to Mark for the spot. [David]
 
+=item *
+
+Various localization fixes. [Scott]
+
+=item *
+
+Fixed event logging for element fields. [David]
+
 =back
 
 =head1 VERSION 1.6.0
