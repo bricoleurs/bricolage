@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.55 $ )[-1];
+our $VERSION = (qw$Revision: 1.56 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 15:26:24 $
+$Date: 2004-03-18 16:24:05 $
 
 =head1 SYNOPSIS
 
@@ -243,26 +243,6 @@ A keyword associated with a story.
 
 A Bricolage contributor object ID. Only stories associated with that
 contributor will have their IDs listed.
-
-=item Order
-
-Specifies that the results be ordered by a particular property.
-
-=item OrderDirection
-
-The direction in which to order the records, either "ASC" for
-ascending (the default) or "DESC" for descending.
-
-=item Limit
-
-A maximum number of objects to return. If not specified, all objects
-that match the query will be returned.
-
-=item Offset
-
-The number of objects to skip before listing the number of objects
-specified by "Limit". Not used if "Limit" is not defined, and when
-"Limit" is defined and "Offset" is not, no objects will be skipped.
 
 =back
 
