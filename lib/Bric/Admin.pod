@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.152 $
+$Revision: 1.153 $
 
 =head1 DATE
 
-$Date: 2004-03-24 03:02:52 $
+$Date: 2004-03-25 15:00:54 $
 
 =head1 DESCRIPTION
 
@@ -1438,7 +1438,7 @@ default.
 
 B<ENABLE_HTMLAREA and HTMLAREA_TOOLBAR:> These directives control the HTMLArea
 WYSIWYG editor in Bricolage. HTMLArea 3.0 must be installed in
-F<comp/media/html>. Download it from
+F<comp/media/htmlarea>. Download it from
 L<http://www.interactivetools.com/products/htmlarea/> and simply rename the
 decompressed archive file to F<comp/media/html> in your Bricolage root.
 
