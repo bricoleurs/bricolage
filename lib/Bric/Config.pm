@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.77 $
+$Revision: 1.78 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.77 $ )[-1];
+our $VERSION = (qw$Revision: 1.78 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:13 $
+$Date: 2003-10-08 14:17:28 $
 
 =head1 SYNOPSIS
 
@@ -138,6 +138,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ALLOW_WORKFLOW_TRANSFER
                     MOD_PERL
                     ALLOW_ALL_SITES_CX
+                    ALLOW_SLUGLESS_NONFIXED
                     YEAR_SPAN_BEFORE
                     YEAR_SPAN_AFTER
                     CACHE_DEBUG_MODE
@@ -204,6 +205,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      FULL_SEARCH
                                      ALLOW_WORKFLOW_TRANSFER
                                      ALLOW_ALL_SITES_CX
+                                     ALLOW_SLUGLESS_NONFIXED
                                      SERVER_WINDOW_NAME
                                      LANGUAGE
                                      YEAR_SPAN_BEFORE
@@ -310,7 +312,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
         }
         # Process boolean directives here. These default to 1.
-        foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR USE_XHTML)) {
+        foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR USE_XHTML
+                    ALLOW_SLUGLESS_NONFIXED)) {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }
@@ -495,6 +498,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant DISABLE_NAV_LAYER       => $config->{DISABLE_NAV_LAYER};
     use constant ALLOW_WORKFLOW_TRANSFER => $config->{ALLOW_WORKFLOW_TRANSFER};
     use constant ALLOW_ALL_SITES_CX      => $config->{ALLOW_ALL_SITES_CX};
+    use constant ALLOW_SLUGLESS_NONFIXED => $config->{ALLOW_SLUGLESS_NONFIXED};
     use constant FULL_SEARCH             => $config->{FULL_SEARCH};
     use constant YEAR_SPAN_BEFORE        => $config->{YEAR_SPAN_BEFORE} || 10;
     use constant YEAR_SPAN_AFTER         => $config->{YEAR_SPAN_AFTER}  || 10;

@@ -6,15 +6,15 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-10 18:39:08 $
+$Date: 2003-10-08 14:17:28 $
 
 =head1 SYNOPSIS
 
@@ -511,6 +511,8 @@ our %Lexicon = (
 =begin comment
 
 To translate:
+
+    'Slug required for non-fixed (non-cover) story type.'
 
     'No media file is associated with asset "[_1]", so none will be distributed.'
     'Cannot publish asset "[_1]" to "[_2]" because there are no Destinations associated with this output channel.'

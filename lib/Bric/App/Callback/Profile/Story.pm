@@ -16,7 +16,7 @@ use Bric::Biz::Keyword;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
-use Bric::Config qw(ISO_8601_FORMAT);
+use Bric::Config qw(:ui ISO_8601_FORMAT);
 use Bric::Util::DBI;
 use Bric::Util::Fault qw(:all);
 use Bric::Util::Grp::Parts::Member::Contrib;
@@ -52,11 +52,12 @@ sub revert : Callback {
 
 sub save : Callback {
     my $self = shift;
-    my $widget = $self->class_key;
-    my $story = get_state_data($widget, 'story');
     my $param = $self->params;
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
+
+    my $widget = $self->class_key;
+    my $story = get_state_data($widget, 'story');
 
     my $workflow_id = $story->get_workflow_id;
     if ($param->{"$widget|delete"}) {
@@ -213,11 +214,11 @@ sub checkin : Callback {
 
 sub save_and_stay : Callback {
     my $self = shift;
-    my $widget = $self->class_key;
     my $param = $self->params;
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
+    my $widget = $self->class_key;
     my $story = get_state_data($widget, 'story');
 
     if ($param->{"$widget|delete"}) {
@@ -292,11 +293,23 @@ sub create : Callback {
     my $gid = $start_desk->get_asset_grp;
     chk_authz('Bric::Biz::Asset::Business::Story', CREATE, 0, $gid);
 
-    # Make sure we have the required data. Check the story type.
+    # Make sure we have the required data.
     my $ret;
-    unless (defined $param->{"$widget|at_id"}
-            && $param->{"$widget|at_id"} ne '')
-    {
+
+    # Check the story type.
+    if (defined $param->{"$widget|at_id"} && $param->{"$widget|at_id"} ne '') {
+        unless (ALLOW_SLUGLESS_NONFIXED) {
+            # Make sure a non-Cover uses a slug
+            my $at_id = $param->{"$widget|at_id"};
+            my $element = Bric::Biz::AssetType->lookup({id => $at_id});
+            unless ($element->get_fixed_url) {
+                unless (defined $param->{slug} && $param->{slug} =~ /\S/) {
+                    add_msg('Slug required for non-fixed (non-cover) story type.');
+                    $ret = 1;
+                }
+            }
+        }
+    } else {
         add_msg("Please select a story type.");
         $ret = 1;
     }
@@ -830,11 +843,24 @@ $save_data = sub {
     $story->activate;
     my $uid = get_user_id();
 
-    eval { $story->set_slug($param->{slug}) };
-    if (my $err = $@) {
-        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-        add_msg($err->maketext);
-        $data_errors = 1;
+    unless (ALLOW_SLUGLESS_NONFIXED) {
+        # Make sure a non-Cover has a slug
+        my $at_id = $story->get_element__id;
+        my $element = Bric::Biz::AssetType->lookup({id => $at_id});
+        unless ($element->get_fixed_url) {
+            unless (defined $param->{slug} && $param->{slug} =~ /\S/) {
+                add_msg('Slug required for non-fixed (non-cover) story type.');
+                $data_errors = 1;
+            }
+        }
+    }
+    unless ($data_errors) {
+        eval { $story->set_slug($param->{slug}) };
+        if (my $err = $@) {
+            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+            add_msg($err->maketext);
+            $data_errors = 1;
+        }
     }
 
     $story->set_title($param->{title})

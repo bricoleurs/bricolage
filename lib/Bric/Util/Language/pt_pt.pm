@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-22 19:42:08 $
+$Date: 2003-10-08 14:17:28 $
 
 =head1 SYNOPSIS
 
@@ -688,6 +688,12 @@ Por favor escolha outra categoria-mãe.',
 
    '_AUTO' => 1,
   );
+
+=head2 To translate
+
+  'Slug required for non-fixed (non-cover) story type.'
+
+=cut
 
 1;
 

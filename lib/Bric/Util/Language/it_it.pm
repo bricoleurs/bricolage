@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-10 18:39:08 $
+$Date: 2003-10-08 14:17:28 $
 
 =head1 SYNOPSIS
 
@@ -465,6 +465,8 @@ our %Lexicon = (
 =begin comment
 
 To translate:
+
+  'Slug required for non-fixed (non-cover) story type.'
 
   'Cannot both delete and make primary a single output channel.'
   'Media "[_1]" saved and shelved.'

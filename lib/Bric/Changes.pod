@@ -272,6 +272,11 @@ Added the ability to test templates without having to deploy them by using
 
 Added Template Toolkit burner support. [Arthur/Fotango]
 
+=item *
+
+Added a bricolage.conf directive, ALLOW_SLUGLESS_NONFIXED, to prevent
+slugless non-fixed (non-Cover) stories. [Scott]
+
 =back
 
 =head2 Bug Fixes
