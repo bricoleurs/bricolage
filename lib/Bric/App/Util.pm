@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-22 18:34:49 $
+$Date: 2004-02-07 01:05:53 $
 
 =head1 SYNOPSIS
 
@@ -588,7 +588,6 @@ sub redirect_onload {
         my $r = $cbh->apache_req;
         $r->send_http_header unless $r->header_out("Content-type");
         $r->print($js);
-        $cbh->abort(HTTP_OK);
     } else {
         # Use the Mason request object.
         my $m = HTML::Mason::Request->instance;

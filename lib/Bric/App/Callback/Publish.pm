@@ -52,7 +52,7 @@ sub preview : Callback {
         if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id)) {
             status_msg("Redirecting to preview.");
             # redirect_onload() prevents any other callbacks from executing.
-            redirect_onload($url);
+            redirect_onload($url, $self);
         }
     } else {
         my $s = get_state_data('story_prof', 'story');
@@ -85,7 +85,7 @@ sub preview : Callback {
         if (my $url = $b->preview($s, 'story', get_user_id(), $oc_id)) {
             status_msg("Redirecting to preview.");
             # redirect_onload() prevents any other callbacks from executing.
-            redirect_onload($url);
+            redirect_onload($url, $self);
         }
     }
 }
