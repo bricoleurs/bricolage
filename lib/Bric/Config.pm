@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.59 $ )[-1];
+our $VERSION = (qw$Revision: 1.60 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:58 $
+$Date: 2003-03-14 16:44:33 $
 
 =head1 SYNOPSIS
 
@@ -136,6 +136,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ALLOW_WORKFLOW_TRANSFER
                     MOD_PERL
                     ALLOW_ALL_SITES_CX
+                    CACHE_DEBUG_MODE
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -494,6 +495,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
     # Set the MOD_PERL constant.
     use constant MOD_PERL => $ENV{MOD_PERL};
+
+    use constant CACHE_DEBUG_MODE => $ENV{BRIC_CACHE_DEBUG_MODE} || 0;
 }
 
 #==============================================================================#

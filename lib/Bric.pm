@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.0';
 
 =item Date
 
-$Date: 2003-03-12 08:59:56 $
+$Date: 2003-03-14 16:44:32 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.36 2003-03-12 08:59:56 wheeler Exp $
+$Id: Bric.pm,v 1.37 2003-03-14 16:44:32 arthurbergman Exp $
 
 =back
 
@@ -66,7 +66,7 @@ use strict;
 # Programmatic Dependencies
 use Carp ();
 use Bric::Util::Fault qw(:all);
-use Bric::Config qw(:qa :mod_perl);
+use Bric::Config qw(:qa :mod_perl CACHE_DEBUG_MODE);
 
 # Load the Apache modules if we're in mod_perl.
 if (defined MOD_PERL) {
@@ -180,6 +180,15 @@ sub cache_lookup {
         while (my ($k, $v) = each %$param) {
             if (my $obj = $r->pnotes("$pkg|$k|" . lc $v)) {
                 return $obj;
+            }
+        }
+    }
+    if(CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
+        my ($pkg, $param) = @_;
+        $pkg = ref $pkg || $pkg;
+        while (my ($k, $v) = each %$param) {
+            if (exists $Bric::DEBUG_CACHE{"$pkg|$k|" . lc $v}) {
+                return $Bric::DEBUG_CACHE{"$pkg|$k|" . lc $v};
             }
         }
     }
@@ -559,6 +568,19 @@ sub cache_me {
         # Cache it under other unique identifiers.
         foreach my $m ($self->my_meths(0, 1)) {
             $r->pnotes("$pkg|$m->{name}|" . lc $m->{get_meth}->($self), $self);
+        }
+    }
+    if(CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
+        my $pkg = ref $self or return;
+        # Skip unsaved objects.
+        return unless defined $self->{id};
+
+        # Cache it under its ID.
+        $Bric::DEBUG_CACHE{"$pkg|id|$self->{id}"} = $self;
+        # Cache it under other unique identifiers.
+        foreach my $m ($self->my_meths(0, 1)) {
+            $Bric::DEBUG_CACHE{"$pkg|$m->{name}|" . lc $m->{get_meth}->($self)}
+              = $self;
         }
     }
     return $self;

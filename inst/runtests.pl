@@ -6,11 +6,11 @@ runtests.pl - Runs Bricolage's Tests
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-03-04 21:02:14 $
+$Date: 2003-03-14 16:44:31 $
 
 =head1 SYNOPSIS
 
@@ -87,6 +87,11 @@ getopts('dV', \%opts);
 $ENV{BRIC_DEV_TEST} ||= $opts{d} if $opts{d};
 
 $ENV{BRIC_TEST_CLASSES} = join ',', @ARGV if @ARGV;
+
+#Set option to enable test cache
+#This only enables the code that checks if it should do test
+#caching
+$ENV{BRIC_CACHE_DEBUG_MODE} = 1;
 
 # Set verbosity.
 if ($opts{V}) {
