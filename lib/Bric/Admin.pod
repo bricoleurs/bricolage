@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =head1 DATE
 
-$Date: 2002-02-20 01:47:22 $
+$Date: 2002-02-20 20:51:27 $
 
 =head1 DESCRIPTION
 
@@ -32,77 +32,77 @@ Perl Modules:
 
 =over 4
 
-=item Storable 1.0.10
+=item Storable
 
-=item Time::HiRes 01.20
+=item Time::HiRes
 
-=item Unix::Syslog 0.95
+=item Unix::Syslog
 
-=item Bundle::libnet 1.0703
+=item Bundle::libnet
 
-=item Devel::Symdump 2.01
+=item Devel::Symdump
 
-=item DBI 1.19
+=item DBI
 
-=item Error 0.15
+=item Error
 
-=item Cache::Cache 0.09
+=item Cache::Cache
 
-=item Digest::MD5 2.12
+=item Digest::MD5
 
-=item MD5 2.02
+=item MD5
 
-=item URI 1.12
+=item URI
 
-=item HTML::Tagset 3.03
+=item HTML::Tagset
 
-=item HTML::Parser 3.23
+=item HTML::Parser
 
-=item MIME::Base64 2.12
+=item MIME::Base64
 
-=item XML::Writer 0.4
+=item XML::Writer
 
-=item LWP 5.50
+=item LWP
 
-=item Image::Info 1.07
+=item Image::Info
 
-=item Text::Iconv 1.1
+=item Text::Iconv
 
-=item MLDBM 2.00
+=item MLDBM
 
-=item Params::Validate 0.04
+=item Params::Validate
 
 =item HTML::Mason 1.03
 
-=item DBD::Pg 1.00
+=item DBD::Pg
 
-=item Apache::Session 1.53
+=item Apache::Session
 
-=item Apache::libapreq 0.31_03
+=item Apache::libapreq
 
-=item Test::Harness 1.26
+=item Test::Harness
 
-=item Test::Simple 0.33
+=item Test::Simple
 
-=item Parse::RecDescent 1.80
+=item Parse::RecDescent
 
-=item Text::Balanced 1.89
+=item Text::Balanced
 
-=item HTML::Template 2.4
+=item HTML::Template
 
-=item HTML::Template::Expr 0.3
+=item HTML::Template::Expr
 
-=item XML::Parser 2.23
+=item XML::Parser
 
-=item XML::Simple 1.06
+=item XML::Simple
 
-=item IO::Stringy 1.211
+=item IO::Stringy
 
-=item MIME::Parser 5.22
+=item MIME::Parser
 
-=item SOAP::Lite 0.52
+=item SOAP::Lite
 
-=item Apache::ConfigFile 0.14
+=item Apache::ConfigFile
 
 =back
 
