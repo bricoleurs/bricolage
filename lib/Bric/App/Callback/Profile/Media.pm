@@ -770,8 +770,9 @@ sub add_kw : Callback {
     $media->add_keywords($new_kw) if $new_kw;
 
     # Delete old keywords.
-    $media->delete_keywords(mk_aref($param->{del_keyword}))
+    $media->del_keywords(mk_aref($param->{del_keyword}))
       if defined $param->{del_keyword};
+    $media->save();
 
     # Save the changes
     set_state_data($self->class_key, 'media', $media);

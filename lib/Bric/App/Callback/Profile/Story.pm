@@ -627,8 +627,9 @@ sub add_kw : Callback {
     $story->add_keywords($new) if $new;
 
     # Delete old keywords.
-    $story->delete_keywords(mk_aref($param->{del_keyword}))
+    $story->del_keywords(mk_aref($param->{del_keyword}))
       if defined $param->{del_keyword};
+    $story->save();
 
     # Save the changes
     set_state_data($self->class_key, 'story', $story);
