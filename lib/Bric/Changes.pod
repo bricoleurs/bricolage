@@ -161,6 +161,10 @@ graphic is an empty note. When there are notes associated with the asset, then
 there is writing on the note. This allows editors to see at a glance if there
 are any existing notes. [David]
 
+=item *
+
+Made SSL optional (and off by default) [Sam].
+
 =back
 
 =head2 Bug Fixes

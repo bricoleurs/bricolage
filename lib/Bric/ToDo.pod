@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.30 $
+$Revision: 1.13.2.31 $
 
 =head1 DATE
 
-$Date: 2001-11-30 21:49:34 $
+$Date: 2001-12-04 00:29:53 $
 
 =head1 DESCRIPTION
 
@@ -59,10 +59,6 @@ Write distribution documentation [David].
 =item *
 
 Change the term "attribute" to "field" in the UI [Michele].
-
-=item *
-
-Make SSL optional (and off by default) [David or Sam].
 
 =back
 
