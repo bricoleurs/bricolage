@@ -280,7 +280,7 @@ my $def = {
                               title => '%n',
                               srch_field => 'name',
                               alter => { val_name => sub { escape_html($_[0]) },
-                                         can_be_overridden => sub { $_[0] ? 'Yes' : 'No' }
+                                         can_be_overridden => $yes_no,
                                        },
                               constrain => {} },
 	   element_type =>  { alter => { biz_class_id => sub {
@@ -387,11 +387,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =head1 DATE
 
-$Date: 2003-12-18 22:32:30 $
+$Date: 2003-12-20 20:23:43 $
 
 =head1 SYNOPSIS
 
