@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.7 $
+$Revision: 1.21.2.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.8 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-20 14:14:24 $
+$Date: 2003-03-21 02:15:34 $
 
 =head1 SYNOPSIS
 
@@ -731,11 +731,11 @@ sub build_query_with_unions {
     my (@queries);
     # loop through the relations building a query
     foreach my $rel ( @{$pkg->RELATIONS} ) {
-        my $rtables = "," . $pkg->RELATION_TABLES->{$rel};
+        my $rtables = ", " . $pkg->RELATION_TABLES->{$rel};
         my $rwhere_clause = $pkg->RELATION_JOINS->{$rel};
-        $rtables = "" if length($rtables) == 1;
+        $rtables = "" if length($rtables) == 2;
         push @queries, qq{ SELECT DISTINCT $cols
-                           FROM   $tables $rtables
+                           FROM   $tables$rtables
                            WHERE  $where_clause AND $rwhere_clause
                          };
     }
