@@ -16,6 +16,15 @@ sub test_setup : Test(setup => 1) {
 }
 
 ##############################################################################
+# Clean up after tests.
+##############################################################################
+sub test_teardown : Test(teardown => 1) {
+    my $self = shift;
+    my $r = Apache::FakeRequest->new;
+    ok( Bric::App::Session::sync_user_session($r), "Sync user session" );
+}
+
+##############################################################################
 # Test functions.
 ##############################################################################
 sub test_session : Test(3) {
