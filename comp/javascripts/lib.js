@@ -405,9 +405,15 @@ function formBuilderMagicSubmit(formName, action) {
 	    document[formName].submit();
 	}
     } else {
-	document[formName].elements["formBuilder|save_cb"].value = 1;
         // get the delete button value into the main form: 
-        if (document.fb_magic_buttons.elements["delete"].checked) document[formName].elements["delete"].value = 1;
+        if (document.fb_magic_buttons.elements["delete"].checked) {
+	    document[formName].elements["delete"].value = 1;
+            // Always just save when we're deleting.
+            document[formName].elements["formBuilder|save_cb"].value = 1;
+        } else {
+            // It'll either save or save and stay.
+            document[formName].elements["formBuilder|" + action + "_cb"].value = 1;
+        }
         if ( confirmChanges(document[formName]) ) document[formName].submit();	
     }
 
