@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-26 00:39:04 $
+$Date: 2002-10-28 22:14:16 $
 
 =head1 SYNOPSIS
 
@@ -254,6 +254,13 @@ sub burn_one {
           unless $interp->lookup($fs->cat_uri($tmpl_path, 'dhandler'));
     }
 
+    # Save an existing Mason request object.
+    my $curr_req;
+    {
+        no strict 'refs';
+        $curr_req = ${TEMPLATE_BURN_PKG . '::m'};
+    }
+
     while (1) {
 	# Run the biz asset through the template
 	eval { $retval = $interp->exec($template) if $template };
@@ -268,6 +275,13 @@ sub burn_one {
         # Keep burning this template if it contains more pages.
         last unless $self->_get('more_pages');
     }
+
+    # Restore any existing Mason request object.
+    if ($curr_req) {
+        no strict 'refs';
+        ${TEMPLATE_BURN_PKG . '::m'} = $curr_req;
+    }
+
 
     $self->_pop_element();
 
