@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.18.2.3 $
+$Revision: 1.18.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-28 00:24:09 $
+$Date: 2002-10-09 21:58:03 $
 
 =head1 SYNOPSIS
 
@@ -744,20 +744,17 @@ NONE
 
 sub get_contributors {
     my $self = shift;
-    my $contribs = $self->_get_contributors();
+    my $contribs = $self->_get_contributors;
 
-    my @contribs;
-    foreach my $id (sort { $contribs->{$a}->{'place'} <=>
-                           $contribs->{$b}->{'place'} }
+    my @ret;
+    foreach my $id (sort { $contribs->{$a}->{place} <=>
+                           $contribs->{$b}->{place} }
                     keys %$contribs) {
-        if (defined $contribs->{$id}->{'obj'}) {
-            push @contribs, $contribs->{$id}->{'obj'};
-        } else {
-            push @contribs, Bric::Util::Grp::Parts::Member::Contrib->lookup
-              ({ id => $id });
-        }
+        $contribs->{$id}->{obj} ||=
+          Bric::Util::Grp::Parts::Member::Contrib->lookup({ id => $id });
+        push @ret, $contribs->{$id}->{obj};
     }
-    return wantarray ? @contribs : \@contribs;
+    return wantarray ? @ret : \@ret;
 }
 
 ################################################################################
