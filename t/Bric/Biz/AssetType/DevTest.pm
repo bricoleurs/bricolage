@@ -124,7 +124,6 @@ sub test_list : Test(36) {
 # Test Output Channel methods.
 ##############################################################################
 sub test_oc : Test(39) {
-
     my $self = shift;
     ok( my $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
         "Lookup story element" );
@@ -167,28 +166,29 @@ sub test_oc : Test(39) {
     isa_ok($oces->[1], 'Bric::Biz::OutputChannel::Element');
 
     # Now try get_primary_oc_id() and set_primary_oc_id
-    is( $at->get_primary_oc_id(100), $orig_oc_id, "Check that primary_oc_id is set to default site");
-    is( $at->get_primary_oc_id(100), $orig_oc_id, "Check that primary_oc_id is second time too!");
+    is( $at->get_primary_oc_id(100), $orig_oc_id,
+        "Check that primary_oc_id is set to default site");
+    is( $at->get_primary_oc_id(100), $orig_oc_id,
+        "Check that primary_oc_id is second time too!");
 
     $at->set_primary_oc_id($ocid, 100);
-    is( $at->get_primary_oc_id(100), $ocid, "Check that it is reset after we setit");
+    is( $at->get_primary_oc_id(100), $ocid,
+        "Check that it is reset after we set it");
     $at->save();
-    is( $at->get_primary_oc_id(100), $ocid, "Check that it is reset after we save");
+    is( $at->get_primary_oc_id(100), $ocid,
+        "Check that it is reset after we save");
 
     ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
         "Lookup story element again" );
 
-    is( $at->get_primary_oc_id(100), $ocid, "Check that it is reset after we save");
-
+    is( $at->get_primary_oc_id(100), $ocid,
+        "Check that it is reset after we save");
 
     # Now try to delete the outputchannel when it is still selected
-
-
     throws_ok {
         $at->delete_output_channels([$oc]);
     } qr/You cannot delete an output channel that is marked as primary/,
       "Check that you can't delete an output channel that is primary";
-
 
     $at->set_primary_oc_id($orig_oc_id, 100);
 
@@ -220,9 +220,6 @@ sub test_oc : Test(39) {
 ##############################################################################
 # Test Site methods.
 ##############################################################################
-
-
-
 sub test_site : Test(10) {
     my $self = shift;
 
@@ -255,22 +252,22 @@ sub test_site : Test(10) {
 
     throws_ok {
         $element->add_site($site1_id);
-    } qr /You can only add sites to top level objects/,
+    } qr /Cannot add sites to non top-level elements/,
       "Check that only top_level objects can add a site";
 
     throws_ok {
         $element->add_site($site1);
-    } qr /You can only add sites to top level objects/,
+    } qr /Cannot add sites to non top-level elements/,
       "Check that only top_level objects can add a site";
 
     throws_ok {
         $top_level_element->add_site(999999999); #Large ID that doesn't exist
-    } qr /Couldn't find site/,  # ' trick 
+    } qr /No such site/,  # ' trick
       "Check if site is a real site";
 
     throws_ok {
         $top_level_element->remove_sites([$site1]);
-    } qr /Cannot remove last site from an AssetType/,
+    } qr /Cannot remove last site from an element/,
       "Check that you can't remove the last site";
 
     is($site1->get_id, $top_level_element->add_site($site1)->get_id, "Add a new site");
@@ -281,11 +278,13 @@ sub test_site : Test(10) {
 
     $top_level_element->save();
 
-    is(scalar @{$top_level_element->get_sites()}, 3, "We should have three sites now");
+    is(scalar @{$top_level_element->get_sites()}, 3,
+       "We should have three sites now");
 
     $top_level_element->remove_sites([$site1, $site2_id]);
 
-    is(scalar @{$top_level_element->get_sites()}, 1, "We should have one sites now");
+    is(scalar @{$top_level_element->get_sites()}, 1,
+       "We should have one site now");
 }
 
 sub clean_site {
