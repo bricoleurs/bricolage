@@ -135,6 +135,12 @@ checked-out assets won't be published. Thanks to Serge Sozonoff for the spot!
 
 Safari users will no longer be stuck on the login page. [David]
 
+=item *
+
+The CSS directory now has its files always served as "text/css". This should
+eliminate problems when Apache sometimes serves the CSS files as "text/html".
+[David]
+
 =back
 
 =back
