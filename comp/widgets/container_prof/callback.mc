@@ -93,14 +93,10 @@ my $pop_and_redirect = sub {
 
 my $delete_element = sub {
     my ($widget, $new_tile) = @_;
-
     my $tile = get_state_data($widget, 'tile');
     my $parent = $pop_tile_stack->($widget);
-
     $parent->delete_tiles( [ $tile ]);
-
     $parent->save();
-
     my $object_type = $parent->get_object_type;
 
     # if our tile has parents, show the regular edit screen.
@@ -118,8 +114,7 @@ my $delete_element = sub {
     }
 
     add_msg("Element &quot;" . $tile->get_name . "&quot; deleted.");
-
-	return;
+    return;
 };
 
 
@@ -372,75 +367,71 @@ my $handle_update = sub {
 };
 
 my $handle_reorder = sub {
-    my ($widget, $field, $param) = @_;
-
-	# don't do anything, handled by the update_parts code now
+    # don't do anything, handled by the update_parts code now
 };
 
 my $handle_related_up = sub {
     my ($widget, $field, $param) = @_;
-
-	my $tile = get_state_data($widget, 'tile');
+    my $tile = get_state_data($widget, 'tile');
     my $object_type = $tile->get_object_type;
-    my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-    set_redirect("$uri/edit.html");
 
+    # If our tile has parents, show the regular edit screen.
+    if ($tile->get_parent_id) {
+	my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+	my $page = get_state_name($widget) eq 'view' ? '' : 'edit';
+
+	#  Don't redirect if we're already at the right URI
+	set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
+    }
+    # If our tile doesn't have parents go to the main story edit screen.
+    else {
+	my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
+	set_redirect($uri);
+    }
     pop_page;
 };
 
 my $handle_pick_related_media = sub {
-	my ($widget, $field, $param) = @_;
-
-	my $tile = get_state_data($widget, 'tile');
-	my $object_type = $tile->get_object_type;
-	my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-
-	set_redirect("$uri/edit_related_media.html");
+    my ($widget, $field, $param) = @_;
+    my $tile = get_state_data($widget, 'tile');
+    my $object_type = $tile->get_object_type;
+    my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    set_redirect("$uri/edit_related_media.html");
 };
 
 my $handle_relate_media = sub {
     my ($widget, $field, $param) = @_;
     my $tile = get_state_data($widget, 'tile');
-
     $tile->set_related_media($param->{$field});
-
     &$handle_related_up;
 };
 
 my $handle_unrelate_media = sub {
     my ($widget, $field, $param) = @_;
     my $tile = get_state_data($widget, 'tile');
-
     $tile->set_related_media(undef);
-
     &$handle_related_up;
 };
 
 my $handle_pick_related_story = sub {
     my ($widget, $field, $param) = @_;
-
     my $tile = get_state_data($widget, 'tile');
-	my $object_type = $tile->get_object_type;
-	my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-
+    my $object_type = $tile->get_object_type;
+    my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
     set_redirect("$uri/edit_related_story.html");
 };
 
 my $handle_relate_story = sub {
     my ($widget, $field, $param) = @_;
     my $tile = get_state_data($widget, 'tile');
-
     $tile->set_related_instance_id($param->{$field});
-
     &$handle_related_up;
 };
 
 my $handle_unrelate_story = sub {
     my ($widget, $field, $param) = @_;
     my $tile = get_state_data($widget, 'tile');
-
     $tile->set_related_instance_id(undef);
-
     &$handle_related_up;
 };
 
@@ -448,7 +439,7 @@ my $handle_lock_val = sub {
     my ($widget, $field, $param) = @_;
     my $autopop = ref $param->{$field} ? $param->{$field} : [$param->{$field}];
     my $tile    = get_state_data($widget, 'tile');
-  
+
     # Map all the data tiles into a hash keyed by Tile::Data ID.
     my $data = { map { $_->get_id => $_ } 
 		 grep(not($_->is_container), $tile->get_tiles) };
@@ -459,7 +450,6 @@ my $handle_lock_val = sub {
 
 	# Skip if there is no data tile here.
 	next unless $dt;
-	
 	if ($lock_set) {
 	    $dt->lock_val;
 	} else {
