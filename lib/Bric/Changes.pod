@@ -43,6 +43,10 @@ and templates that are already in workflow. [David]
 
 Category groups can be edited again. Reported by Alexander Ling. [David]
 
+=item *
+
+Elements can be edited again. Thanks to Alexander Ling for the spot! [David]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
@@ -138,8 +142,8 @@ Changing a media item's category and then saving caused an error.
 
 =item *
 
-Changing a media document's cover date no longer causes the URI to
-disappear. Thanks to Dave Rolsky for the spot. [David]
+Changing a media document's cover date no longer causes the URI to disappear.
+Thanks to Dave Rolsky for the spot. [David]
 
 =item *
 

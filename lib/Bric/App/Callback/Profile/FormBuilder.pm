@@ -215,7 +215,7 @@ $do_element = sub {
     my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'delete_attr'})} );
     my $key_name = exists($param->{'key_name'})
       ? $param->{'key_name'}
-      : '';
+      : undef;
     my $widget = $self->class_key;
     my $cb_key = $self->cb_key;
 
@@ -223,8 +223,10 @@ $do_element = sub {
     my $no_save;
     # AssetType has been updated to take an existing but undefined 'active'
     # flag as meaning, "list both active and inactive"
-    my @cs = $class->list_ids({key_name => $param->{key_name},
-                               active   => undef});
+    my @cs = defined $key_name
+      ? $class->list_ids({key_name => $param->{key_name},
+                          active   => undef})
+      : ();
 
     # Check if we need to inhibit a save based on some special conditions
     $no_save = $check_save_element->(\@cs, $param, $key);
@@ -238,7 +240,7 @@ $do_element = sub {
     $obj->activate();
     $obj->set_name($param->{'name'});   # must come after $get_obj !
 
-    $set_key_name->($obj, $param) unless $no_save;
+    $set_key_name->($obj, $param) if defined $key_name and not $no_save;
     $obj->set_description($param->{'description'});
     $obj->set_burner($param->{burner}) if defined $param->{burner};
 
