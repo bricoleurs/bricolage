@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-16 08:17:16 $
+$Date: 2004-02-27 04:25:52 $
 
 =head1 SYNOPSIS
 
@@ -708,8 +708,6 @@ NONE
 sub fetch_objects {
     my ($pkg, $sql, $fields, $grp_col_cnt, $args) =  @_;
     my (@objs, @d, $grp_ids);
-
-    print STDERR "$$sql\n\n@$args\n\n" if $ENV{PRINT};
 
     # Prepare and execute the query
     my $select = prepare_ca($$sql, undef);
