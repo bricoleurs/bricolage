@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-14 00:36:12 $
+$Date: 2002-05-09 22:16:37 $
 
 =head1 SYNOPSIS
 
@@ -98,6 +98,23 @@ my $SERVER = SOAP::Transport::HTTP::Apache->dispatch_to(@{SOAP_CLASSES()});
 
 # setup serializer to pretty-print XML if debugging
 $SERVER->serializer->readable(1) if DEBUG;
+
+# setup routines to serialize Bric exceptions
+sub SOAP::Serializer::as_Bric__Util__Fault__Exception__GEN {
+    [ $_[2], $_[4], $_[1]->error_info ];
+}
+sub SOAP::Serializer::as_Bric__Util__Fault__Exception__AP {
+    [ $_[2], $_[4], $_[1]->error_info ];
+}
+sub SOAP::Serializer::as_Bric__Util__Fault__Exception__DP {
+    [ $_[2], $_[4], $_[1]->error_info ];
+}
+sub SOAP::Serializer::as_Bric__Util__Fault__Exception__MNI {
+    [ $_[2], $_[4], $_[1]->error_info ];
+}
+sub SOAP::Serializer::as_Bric__Util__Fault__Exception__DA {
+    [ $_[2], $_[4], $_[1]->error_info ];
+}
 
 # dispatch to $SERVER->handler()
 sub handler { 

@@ -587,9 +587,7 @@ sub call_list_ids {
     my $response = $soap->list_ids(@search);
     
     # check fault
-    die "Call to Bric::SOAP::$module->list_ids failed : \n" .
-	$response->faultstring
-	    if $response->fault;
+    _print_fault($response) if $response->fault;
     
     # return result list
     my $list = $response->result;
@@ -619,9 +617,7 @@ sub call_update {
 					  [ map { name($type, $_) } @_ ]));
 	
 	# check fault
-	die "Call to Bric::SOAP::$module->update failed : \n" .
-	    $response->faultstring
-		if $response->fault;
+	_print_fault($response) if $response->fault;
 
 	# return result list
 	my $list = $response->result;
@@ -649,9 +645,7 @@ sub call_create {
 					  $document)->type('base64'));
 	
 	# check fault
-	die "Call to Bric::SOAP::$module->create failed : \n" .
-	    $response->faultstring
-		if $response->fault;
+	_print_fault($response) if $response->fault;
 
 	# return result list
 	my $list = $response->result;
@@ -682,9 +676,7 @@ sub call_delete {
 				     $module eq 'Element' ? 
 				     name(force => 1)     :
 				     ());
-	die "Call to Bric::SOAP::$module->delete failed : \n" .
-	    $response->faultstring
-		if $response->fault;
+	_print_fault($response) if $response->fault;
     }	
 }
   
@@ -707,9 +699,7 @@ sub call_deploy {
     unless ($dry_run) {
 	my $response = $soap->deploy(name("deploy_ids" => 
 					  [ map { name($type, $_) } @_ ]));
-	die "Call to Bric::SOAP::$module->deploy failed : \n" .
-	    $response->faultstring
-		if $response->fault;
+	_print_fault($response) if $response->fault;
     }	
 }
   
@@ -727,9 +717,7 @@ sub get_documents {
 	    $soap->proxy->endpoint, "\n" if $VERBOSE;
 	
 	my $response = $soap->export(name($type, $id));
-	die "Call to Bric::SOAP::$module->export failed : \n" .
-	    $response->faultstring
-		if $response->fault;
+	_print_fault($response) if $response->fault;
 	$hash->{$id} = $response->result;
 
 	# strip off assets element and xml declaration
@@ -804,3 +792,17 @@ sub ask_yesno {
 	print "And quit screwing around.\n" if ++$tries > 3;
     }
 }    
+
+# prints out fault message
+sub _print_fault {
+    my $r = shift;
+    if ($r->faultstring eq 'Application error' and
+	ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
+	# this is a bric exception, the interesting stuff is in detail
+	die "Call to Bric::SOAP failed : \n" .
+	    join("\n", values %{$r->faultdetail});
+    } else {
+	die "Call to Bric::SOAP failed : \n" .
+	    $r->faultstring;
+    }
+}

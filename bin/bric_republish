@@ -186,9 +186,7 @@ sub get_story_ids {
     my $response = $soap->list_ids(@search);
     
     # check fault
-    die "Call to Bric::SOAP::Story->list_ids failed : \n" .
-	$response->faultstring
-	    if $response->fault;
+    _print_fault($response) if $response->fault;
     
     # return result list
     my $list  = $response->result;
@@ -213,9 +211,8 @@ sub get_media_ids {
 	    if $VERBOSE;
 	
 	my $response = $soap->export(name(story_id => $story_id));
-	die "Call to Bric::SOAP::Story->export failed : \n" .
-	    $response->faultstring
-		if $response->fault;
+	_print_fault($response) if $response->fault;
+
 	my $doc = $response->result;
 
 	# find related media ids and store into hash to unique
@@ -255,8 +252,7 @@ sub publish_assets {
 			 if $VERBOSE > 1;
 
 	    my $r = $soap->publish(name(publish_ids =>[@ids[$start .. $end]]));
-	    die "Call to Bric::SOAP::Workflow->publish failed : \n" .
-		$r->faultstring if $r->fault;	
+	    _print_fault($r) if $r->fault;
 	}
     } else {
 	# publish everything at once
@@ -267,8 +263,7 @@ sub publish_assets {
 		     if $VERBOSE > 1;
 	
 	my $r = $soap->publish(name(publish_ids => \@ids));
-	die "Call to Bric::SOAP::Workflow->publish failed : \n" .
-	    $r->faultstring if $r->fault;
+	_print_fault($r) if $r->fault;
     }
 }
 
@@ -299,3 +294,17 @@ sub soap_connect {
     die "Login to $server as $username failed.\n" if $response->fault;
     print STDERR "Login to $server success.\n" if $VERBOSE;
 }    
+
+# prints out fault message
+sub _print_fault {
+    my $r = shift;
+    if ($r->faultstring eq 'Application error' and
+	ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
+	# this is a bric exception, the interesting stuff is in detail
+	die "Call to Bric::SOAP failed : \n" .
+	    join("\n", values %{$r->faultdetail});
+    } else {
+	die "Call to Bric::SOAP failed : \n" .
+	    $r->faultstring;
+    }
+}
