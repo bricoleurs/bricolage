@@ -23,7 +23,7 @@ if ($field eq "$widget|substr_cb") {
     set_state_data($widget, 'crit_letter', '');
 }
 elsif ($field eq "$widget|alpha_cb") {
-    my $crit = $param->{$field} ? (FULL_SEARCH ? '%' : '').$param->{$field}.'%' : '';
+    my $crit = $param->{$field} ? $param->{$field}.'%' : '';
 
     # Add a '%' to create a prefix search by first letter.
     set_state_data($widget, 'criterion', $crit);
