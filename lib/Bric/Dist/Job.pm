@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-02-22 18:57:24 $
 
 =head1 SYNOPSIS
 
@@ -236,11 +236,14 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $init) = @_;
     my $self = bless {}, ref $pkg || $pkg;
+    # Add server types and resources.
     $self->add_server_types(@{ delete $init->{server_types} })
       if $init->{server_types};
-    $self->add_resources(@{ delete $init->{resources} }) if
-      $init->{resources};
+    $self->add_resources(@{ delete $init->{resources} }) if $init->{resources};
+
+    # Set the type, schedule time, and the _pending and tries defaults.
     $init->{type} = $init->{type} ? 1 : 0;
+    $init->{sched_time} = db_date($init->{sched_time}) if $init->{sched_time};
     @{$init}{qw(_pending tries)} = (0, 0);
     $self->SUPER::new($init);
 }
