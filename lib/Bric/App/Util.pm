@@ -628,9 +628,9 @@ sub status_msg {
 
 sub severe_status_msg {
     if (MOD_PERL) {
-    _send_msg('<font color="red"><b>' .
+    _send_msg('<span style="font-weight: bold; font-color: red;">' .
               escape_html(Bric::Util::Language->instance->maketext(@_)) .
-              "</b></font>");
+              "</span>");
     } else {
         print STDERR "##################################################\n\n";
         print STDERR Bric::Util::Language->instance->maketext(@_), "\n";
@@ -641,19 +641,21 @@ sub severe_status_msg {
 sub _send_msg {
     my $msg = shift;
     my $key = '_status_msg_';
-    my $space = '&nbsp;' x 20;
 
     if (my $m = HTML::Mason::Request->instance) {
         my $r = $m->apache_req;
         my $old_autoflush = $m->autoflush;   # autoflush is restored below
         $m->autoflush(1);
+        
+        $m->print(qq{<p class="statusMsg" style="margin-left: 40px;">});
+        
         unless ( $r->pnotes($key) ) {
             # We haven't called this thing yet. Throw up some initial information.
             $m->print("<br />\n" x 2);
             $r->pnotes($key, 1);
         }
 
-        $m->print(qq{$space<span class="errorMsg">$msg</span><br />\n});
+        $m->print(qq{$msg</p>\n});
 
         $m->flush_buffer;
         $m->autoflush($old_autoflush);
