@@ -6,3 +6,4 @@ configuration
 installed-database
 pguser.sql
 grants.sql
+missing_modules
