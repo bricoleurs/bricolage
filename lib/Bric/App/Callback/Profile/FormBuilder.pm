@@ -265,7 +265,17 @@ $do_element = sub {
     $obj->add_output_channel($self->value) if $cb_key eq 'add_oc_id';
 
     # Add sites
-    $obj->add_site($self->value) if $cb_key eq 'add_site_id';
+    if ($cb_key eq 'add_site_id') {
+        my $site_id = $self->value;
+        # Only add the site if it has associated output channels.
+        if (my @objs = Bric::Biz::OutputChannel->list({ site_id => $site_id })) {
+            $obj->add_site($site_id);
+        } else {
+            add_msg 'Site "[_1]" cannot be associated because it has no ' .
+              'output channels',
+              Bric::Biz::Site->lookup({ id => $site_id })->get_name;
+        }
+    }
 
     # delete any selected sub elements
     if ($param->{"$key|delete_sub"}) {   # note: not a callback
