@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2003-02-02 19:46:35 $
+$Date: 2003-02-25 16:17:47 $
 
 =head1 DESCRIPTION
 
@@ -33,7 +33,6 @@ use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 use File::Find qw(find);
-use DBI;
 
 print "\n\n==> Creating Bricolage Database <==\n\n";
 
@@ -46,27 +45,14 @@ $ENV{PGPASSWORD} = $PG->{root_pass};
 our $ERR_FILE = '.db.stderr';
 END { unlink $ERR_FILE }
 
-my $dbh;
-create_db($dbh);
-create_user($dbh);
+create_db();
+create_user();
 
 # load data.
 load_db();
 
 print "\n\n==> Finished Creating Bricolage Database <==\n\n";
 exit 0;
-
-# connect to a database
-sub db_connect {
-    my $name = shift;
-    my $dbh = DBI->connect("dbi:Pg:dbname=$name",
-                           $PG->{root_user}, $PG->{root_pass});
-    hard_fail("Unable to connect to Postgres using supplied root username ",
-              "and password: ", DBI->errstr, "\n")
-        unless $dbh;
-    $dbh->{PrintError} = 0;
-    return $dbh;
-}
 
 sub exec_sql {
     my ($sql, $file, $db, $res) = @_;
@@ -90,7 +76,6 @@ sub exec_sql {
 
 # create the database, optionally dropping an existing database
 sub create_db {
-    my $dbh = shift;
     print "Creating database named $PG->{db_name}...\n";
     my $err = exec_sql("CREATE DATABASE $PG->{db_name} WITH ENCODING = 'UNICODE'",
                        0, 'template1');
@@ -104,7 +89,7 @@ sub create_db {
                 hard_fail("Failed to drop database.  The database error ",
                           "was:\n\n$err\n")
             }
-            return create_db($dbh);
+            return create_db();
         } else {
             hard_fail("Failed to create database. The database error wase\n\n",
                       "$err\n");
@@ -115,7 +100,6 @@ sub create_db {
 
 # create SYS_USER, optionally dropping an existing syst
 sub create_user {
-    my $dbh = shift;
     my $user = $PG->{sys_user};
     my $pass = $PG->{sys_pass};
 
@@ -132,7 +116,7 @@ sub create_user {
                     hard_fail("Failed to drop user.  The database error was:\n\n",
                               "$err\n");
                 }
-                return create_user($dbh);
+                return create_user();
             } else {
                 # We'll just use the existing user.
                 return;
@@ -190,7 +174,6 @@ sub load_db {
     exec_sql('reindex');
     print "Done.\n";
 
-    # all done - disconnect and kill this processes
-    $dbh->disconnect;
+    # all done!
     exit 0;
 }
