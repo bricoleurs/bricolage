@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.9 $
+$Revision: 1.7.2.10 $
 
 =head1 DATE
 
-$Date: 2003-07-25 15:17:02 $
+$Date: 2003-08-12 17:23:52 $
 
 =head1 DESCRIPTION
 
@@ -124,6 +124,69 @@ discussions of this issue.
 This section contains questions about error messages output
 by Bricolage.
 
+=head3 If C<make cpan> fails, what can I do?
+
+Bricolage depends heavily on CPAN modules. The purpose of C<make cpan> is to
+verify that the required CPAN modules exist and, if not, fetch and install
+them from CPAN, whenever possible. In the worst case where it cannot handle
+the an error automatically, it gives instruction on how to do it manually.
+Usually, the instruction tell you to
+
+  perl -MCPAN -e shell
+  look package::module
+  perl Makefile.PL
+  make
+  make test
+  make install
+
+where C<package::module> is the name of the file to look for.
+
+Sometimes, it will exit with a error without telling you what to do. Read the
+last few lines of the output. See which C<package::module> caused the
+error. Then manually install the module using the procedure outlined
+above. If, when carrying out the procedures described above, C<make test>
+fails, you might still want to go ahead with C<make install>
+nonetheless. However, bear in mind that the module might not be installed
+properly. After this, rerun C<make cpan>.
+
+For an example, at this writing (2 August 2003), C<Apache::ConfigFile> can
+cause a permission problem. C<make cpan> will report a strings of
+
+  cannot set uid=88nnnn, gid=nnnnn
+
+Read a few line before the error message to determine the actual location of
+the download file, it is usually something like
+F</root/.cpan/sources/authors/id/N/NW/NWIGER/Apache-ConfigFile-0.14.gz>. C<cd>
+into the F</root/.cpan/sources/authors/id/N/NW/NWIGER/> directory and untar
+the F<tar.gz> file:
+
+  tar -zxvf Apache-ConfigFile-0.14.tar.gz
+
+You will get the same error messages. Note, however, that untar is successful
+and the directory F<Apache-ConfigFile-0.14> is created. C<cd> into this
+directory and run
+
+  perl Makefile.PL
+  make
+  make test
+  make install
+
+This should succeed. After this, rerun C<make cpan> again. More information
+can be founded in L<http://bugzilla.bricolage.cc/show_bug.cgi?id=435>.
+
+Sometimes, C<make cpan> reports that a CPAN module is not found. This could be
+because it is trying to get an older version of the CPAN module which CPAN no
+longer hosts because your CPAN index file is out-of-date and needs to be
+refreshed. To refresh your CPAN index file,
+
+  perl -MCPAN -e 'reload index'
+
+and repeat C<make cpan>.
+
+Sometimes you might need to update your CPAN bundle, itself:
+
+  perl -MCPAN -e 'install Bundle::CPAN'
+
 =head3 Why does C<make install> exit with the following error?
 
   Missing or empty inst/bricolage.sql!
@@ -182,6 +245,10 @@ I worked around the problem by ignoring it; in pg_hba.conf,
   host    all         all         127.0.0.1        255.0.0.0      trust
   host    all         all         0.0.0.0          0.0.0.0        reject
 
+A Short introduction to F<pg_hba.conf> can be found in L<Bric::DBA|Bric::DBA>,
+and it is more thorougly documented at
+L<http://www.postgresql.org/docs/current/interactive/client-authentication.html>.
+
 =head3 Why do I get a 404 when I connect to the Bricolage UI and get an
 error like the following in Apache's F<error_log>?
 
@@ -224,6 +291,27 @@ later told that a Mozilla setting can force the C<< <html><head></head></html>
 simply copying these two files from the Bricolage source directories to your
 installed component root will correct the problem. Holler on the
 bricolage-general mail list if it doesn't.
+
+=head3 When I try to login to Bricolage, I get redirected to F</login>, but
+the webserver reported a "500 Internal Server Error". What's wrong?
+
+Look in your Apache F<error_log> file. If you find an error along the lines of
+
+ cannot login ...
+
+Then you need to update your F<pg_hba.conf> file as described in the section
+L</"Why does C<make install> exit with the following error?">. In fact, as
+David Wheeler suggested in one of the email in the C<bricolage-general>
+mailing list, if you issue the following command on the command line:
+
+  /usr/local/pgsql/bin/pgsql -U bric bric
+
+you will get
+
+  IDENT authentication failed for user "bric"
+
+Thus demonstrating that you're dealing with a PostgreSQL configuration issue,
+rather than a Bricolage issue.
 
 =head3 I'm trying to restore a backup of the Bricolage database, but I keep
 getting an error like this: "ERROR: Function login_avail(varchar, numeric,
