@@ -23,7 +23,7 @@
       my $disp = $lang->maketext(shift @$field_disp);
 
       my ($sort_sign, $class);
-      if ($sortBy eq $f) {
+      if ($userSort == 1 && $sortBy eq $f) {
           $class = qq{ class="} . (($sortOrder =~ /^descending/) ? "sortdown" : "sortup") . qq{"};
           $sort_col = $i;
           $sort_sign = '-' if ($userSort && $sortOrder !~ /^descending$/);
