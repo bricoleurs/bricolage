@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-10 18:39:08 $
+$Date: 2003-09-10 19:16:30 $
 
 =head1 SYNOPSIS
 
@@ -68,7 +68,6 @@ use constant key => 'pt_pt';
    'Alert Type Manager' => 'Gestão de Tipos de Alerta',
    'Category Manager' => 'Gestão de Categorias',
    'Contributor Type Manager ' => 'Gestão de Tipos de Colaborador',
-   'Contributor Type Manager' => 'Gestão de Tipos de Utilizador',
    'Current Output Channels' => 'Canais de Distribuição Correntes',
    'Destination Manager' => 'Gestão de Destinos',
    'Element Manager' => 'Gestão de Elementos',
@@ -83,7 +82,7 @@ use constant key => 'pt_pt';
    'Source Manager' => 'Gestão de Fontes',
    'User Manager' => 'Gestão de Utilizadores',
    'Workflow Manager '         => 'Gestão de Workflows',
-   'Workflow Manager' => 'Getsão de Workflows',
+   'Workflow Manager' => 'Gestão de Workflows',
    'Workspace for [_1]' => 'Área de trabalho de [_1]',
 
 # Interface Objects
@@ -336,15 +335,13 @@ use constant key => 'pt_pt';
    'Active Stories' => 'Artigos Activos',
    'Active Templates' => 'Modelos Activos',
    'Add a New User' => 'Criar Novo Utilizador',
-
-   'A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' =>
+'An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' =>
      'Já existe um modelo activo para o canal de distribuição, categoria, elemento e burner que assinalou. Tem de apagar o temp+late existtente para poder adicionar um novo.',
-
    'At least one extension is required.' =>
      'Tem de indicar pelo menos uma extensão.',
    'By Source name' => 'Por nome de Fonte',
    'Cannot auto-publish related media "[_1]" because it is checked out.' =>
-     'Não é possível fazer publicação automética de media porque este elemento está reservado.',
+     'Não é possível fazer publicação automática de media porque este elemento está reservado.',
    'Cannot publish checked-out media "[_1]"' =>
      'Não é possível publicar o medium reservado "[_1]"',
    'Cannot publish checked-out story "[_1]"' =>
@@ -404,6 +401,8 @@ use constant key => 'pt_pt';
    'Job profile "[_1]" deleted.' => 'Perfil de tarefa "[_1]" apagado.',
    'Job profile "[_1]" saved.' => 'Perfil de tarefa "[_1]" guardado.',
    'Keywords saved.' => 'Plavras-chave guardadas.',
+   'Keywords' => 'Palavras-chave',
+   'Keyword' => 'Palavra-chave',
    '%n Found' => '%n Encontrados',
    'MEDIA FOUND' => 'MEDIA ENCONTRADOS',
    'Media Type profile "[_1]" deleted.' => 'Perfil de Tipo de Media "[_1]" apagado.',
@@ -614,63 +613,182 @@ use constant key => 'pt_pt';
 
    'Warning: object "[_1]" had no associated desk.  It has been assigned to the "[_2]" desk.' =>
      'Aviso: o objecto "[_1]" não tem secretária associada. Foi atribuído à secretária "[_2]".',
+   'Cannot both delete and make primary a single output channel.' =>
+   'Um Canal de Distribuição não pode ser apagado e tornado primário na mesma acção',
+
+   'Media "[_1]" saved and shelved.' =>
+   'Media "[_1] guardado e arquivado.',
+
+   'Media "[_1]" created and saved.' =>
+   'Media "[_1]" criado e guardado.',
+
+   'Un-Associate' => 'Remover associação',
+
+   'Associate' => 'Associar',
+
+   'Preview in' => 'Prever em',
+
+   'Parent cannot choose itself or its child as its parent. Try a different parent.' =>
+   'A categoria \'parent\' não pode ser \'parent\' dela própria, nem uma das suas \'childs\'.
+    Por favor escolha outra categoria \'parent\'.',
+
+   '[quant,_1,story,stories] published.'=>
+   '[quant,_1,Artigo publicado,Artigos publicados]',
+
+
+   '[quant,_1,media,media] published.'=>
+   '[quant,_1,Media publicado,Medium publicados]',
+
+    'Category URI' => 'URI da Categoria',
+
+    'Story "[_1]" saved and shelved.' =>
+    'Artigo "[_1]" guardado e arquivado.',
+
+    'Story "[_1]" created and saved.' =>
+    'Artigo "[_1]" criado e guardado.',
+
+    'Template "[_1]" saved and shelved.' =>
+    'Template "[_1]" guardado e arquivado.',
+
+    'Template "[_1]" saved and moved to "[_2]".' =>
+    'Template "[_1]" guardado e movido para "[_2]".',
+
+    'No media file is associated with asset "[_1]", so none will be distributed.' =>
+    'O objecto "[_1]" não tem ficheiros Media associados, pelo que não há distribuição',
+
+
+    'Cannot publish asset "[_1]" to "[_2]" because there are no Destinations associated with this output channel.' =>
+    'O objecto "[_1]" não será publicado em "[_2]" porque esse Canal de Distribuição não tem Destinos associados.',
+
+   'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_container\'.  Please use the element\'s \'key_name\' field instead.' => 
+   'Atenção:  A utilização do \'nome\' do elemento com o método \'get_container\' foi abandonada. Deve-se utilizar o \'key_name\'.',
+
+   'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_data\'.  Please use the element\'s \'key_name\' field instead.' =>
+   'Atenção:  A utilização do \'nome\' do elemento com o método \'get_data\' foi abandonada. Deve-se utilizar o \'key_name\'.',
+
+   'You must be an administrator to use this function.' =>
+   'Esta função necessita de privilégios de administrador para ser executada.',
+
+    'Template deployed.' =>
+    'Modelo lançado',
+
+    '[quant,_1,Template] deployed.' =>
+    '[quant,_1,Modelo,Modelos] lançad[quant,_1,o,os].',
+
+    'Cannot auto-publish related story "[_1]" because it is checked out.' =>
+   'O artigo "[_1]" não pode ser publicado enquanto estiver reservado.',
+
+          'Cannot publish media "[_1]" because it is checked out.' =>
+          'Cannot publish media "[_1]" because it is checked out.',
+
+          'Cannot publish story "[_1]" because it is checked out.' =>
+          'Cannot publish story "[_1]" because it is checked out.',
+
+          'Bad element name "[_1]". Did you mean "[_2]"?' =>
+          'O nome "[_1]" não pode ser utilizado. Talvez "[_2]"?',
+
+          'Field "[_1]" appears more than once but it is not a repeatable element.  Please remove all but one.' =>
+          'O campo "[_1]" não é repetível, mas aparece mais que uma vez. Por favor remova os campos em excesso.',
+
+          'Note: Data element "[_1]" is required and cannot be completely removed.  Will delete all but one.' =>
+          'Nota: O campo "[_1]" é obrigatório e não pode ser completamente removido. Será mantido um campo.',
+
+          'Note: Container element "[_1]" removed in bulk edit but will not be deleted.' =>
+          'Nota: o elemento "[_1]" foi removido na edição em bloco, mas não foi apagado do sistema.',
+
+          'Cannot create an alias to a media in the same site.' =>
+          'Não é possível criar uma referência a um media no mesmo site.',
+
+          'Cannot create an alias to a story in the same site.' =>
+          'Não é possível criar uma referência a um artigo no mesmo site.',
+
+          '[quant,_1,Alert] acknowledged.' =>
+          'Tomado conhecimento de [quant,_1,Alerta,Alertas].',
+
+          'Warning: object "[_1]" had no associated workflow.  It has been assigned to the "[_2]" workflow.' =>
+          'Atenção: o objecto "[_1]" não estava associado a um Workflow. Foi-lhe designado o workflow "[_2]"',
+
+          'Warning: object "[_1]" had no associated workflow.  It has been assigned to the "[_2]" workflow. This change also required that this object be moved to the "[_3]" desk.' =>
+          'Atenção: o objecto "[_1]" não estava associado a um Workflow. Foi-lhe designado o workflow "[_2]" e a Área "[_3]"',
+
+          'Action profile "[_1]" deleted.' =>
+          'Perfil de Acção "[_1]" apagado.',
+
+          'Action profile "[_1]" saved.' =>
+          'Perfil de Acção "[_1]" guardado.',
+
+          'Alert Type profile "[_1]" deleted.' =>
+          'Perfil de Tipo de Alerta "[_1]" apagado.',
+
+          'Alert Type profile "[_1]" saved.' =>
+          'Perfil de Tipo de Alerta "[_1]" guardado.',
+
+          'The name "[_1]" is already used by another Alert Type.' =>
+          'O nome "[_1]" já está a ser utilizado por outro Tipo de Alerta.',
+
+          'The name "[_1]" is already used by another Desk.' =>
+          'O nome "[_1]" já está a ser utilizado noutra Área.',
+
+          'The name "[_1]" is already used by another Destination.' =>
+          'O nome "[_1]" já está a ser utilizado por outro Destino',
+
+          'You cannot remove all Sites.' =>
+          'Não é possível remover todos os Sites.',
+
+          '[quant,_1,Contributor] "[_2]" associated.' =>
+          '[quant,_1,Associado Colaborador, Associado Colaboradores] "[_2]".',
+
+          'Extension "[_1]" ignored.' =>
+          'Extensão "[_1]" ignorada.',
+
+          'Extension "[_1]" is already used by media type "[_2]".' =>
+          'A Extensão "[_1]" já está a ser utilizada pelo Tipo de Media "[_2]".',
+
+          'The name "[_1]" is already used by another Server in this Destination.' =>
+          'O nome "[_1]" já está a ser utilizado por outro Servidor neste Destino',
+
+          'You must select an Element.' =>
+          'É necessário escolher um Elemento',
+
+          'New passwords do not match. Please try again.' =>
+          'As novas palavra-chave não coincidem. Por favor tente de novo.',
+
+          'User profile "[_1]" saved.' =>
+          'Perfil de utilizador "[_1]" guardado',
+
+          'Site profile "[_1]" deleted.' =>
+          'Perfil do Site "[_1]" apagado.',
+
+          'Site profile "[_1]" saved.' =>
+          'Perfil do Site "[_1]" guardado.',
+
+          'Site Profile' => 'Perfil de Site',
+
+          'Sites' => 'Sites',
+          'Site'  => 'Site',
+
+          'Domain Name' => 'Nome do Domínio',
+
+          'New Alias' => 'Nova Referência',
+  
+          'Text to search' => 'Texto a pesquisar',
+          'From' => 'Desde',
+          'To' => 'Até',
+          'Find a story to alias' => 'Encontrar um Artigo para referenciar',
+          'Find Story to alias' => 'Encontrar um Artigo para referenciar',
+          'Find a media to alias' => 'Encontrar um Media para referenciar',
+          'Find Media to alias' => 'Encontrar Media para referenciar',
+          'All Types' => 'Todos os Tipos',
+
+
    '_AUTO' => 1,
   );
 
 =head2 To translate
 
-          'Cannot both delete and make primary a single output channel.'
-          'Media "[_1]" saved and shelved.'
-          'Media "[_1]" created and saved.'
-          'Un-Associate'
-          'Associate'
-          'Preview in'
-          'Parent cannot choose itself or its child as its parent. Try a different parent.'
-          '[quant,_1,story,stories] published.'
-          '[quant,_1,media,media] published.'
-          'Category URI'
-          'Story "[_1]" saved and shelved.'
-          'Story "[_1]" created and saved.'
-          'Template "[_1]" saved and shelved.'
-          'Template "[_1]" saved and moved to "[_2]".'
-          'No media file is associated with asset "[_1]", so none will be distributed.'
-          'Cannot publish asset "[_1]" to "[_2]" because there are no Destinations associated with this output channel.'
-          'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_container\'.  Please use the element\'s \'key_name\' field instead.'
-          'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_data\'.  Please use the element\'s \'key_name\' field instead.'
-          'You must be an administrator to use this function.'
-          'Template deployed.'
-          '[quant,_1,Template] deployed.'
-          'Cannot auto-publish related story "[_1]" because it is checked out.'
-          # 'Cannot publish [_1]  because it is checked out' => 'Não é possível publicar [_1] enquanto está reservado.',
-          'Cannot publish media "[_1]" because it is checked out.'
-          'Cannot publish story "[_1]" because it is checked out.'
-          'Bad element name "[_1]". Did you mean "[_2]"?'
-          'Field "[_1]" appears more than once but it is not a repeatable element.  Please remove all but one.'
-          'Note: Data element "[_1]" is required and cannot be completely removed.  Will delete all but one.'
-          'Note: Container element "[_1]" removed in bulk edit but will not be deleted.'
-          'Cannot create an alias to a media in the same site.'
-          'Cannot create an alias to a story in the same site.'
-          '[quant,_1,Alert] acknowledged.'
-          'Warning: object "[_1]" had no associated workflow.  It has been assigned to the "[_2]" workflow.'
-          'Warning: object "[_1]" had no associated workflow.  It has been assigned to the "[_2]" workflow. This change also required that this object be moved to the "[_3]" desk.'
-          'Action profile "[_1]" deleted.'
-          'Action profile "[_1]" saved.'
-          'Alert Type profile "[_1]" deleted.'
-          'Alert Type profile "[_1]" saved.'
-          'The name "[_1]" is already used by another Alert Type.'
-          'The name "[_1]" is already used by another Desk.'
-          'The name "[_1]" is already used by another Destination.'
-          'You cannot remove all Sites.'
-          'The key name "[_1]" is already used by another ???.'
-          '[quant,_1,Contributor] "[_2]" associated.'
-          'Extension "[_1]" ignored.'
-          'Extension "[_1]" is already used by media type "[_2]".'
-          'The name "[_1]" is already used by another Server in this Destination.'
-          'You must select an Element.'
-          'New passwords do not match. Please try again.'
-          'User profile "[_1]" saved.'
-          'Site profile "[_1]" deleted.'
-          'Site profile "[_1]" saved.'
+
+
+
 
  = (
       'Hi [_1]!' => 'Olá [_1]!',
