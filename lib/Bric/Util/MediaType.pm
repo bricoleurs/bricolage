@@ -6,16 +6,16 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:27 $
+$Date: 2003-02-27 20:49:49 $
 
 =head1 SYNOPSIS
 
@@ -649,7 +649,7 @@ sub my_meths {
     if ($ord) {
         return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
     } elsif ($ident) {
-        return wantarray ? @{$meths}{qw(name ext)} : [@{$meths}{qw(name ext)}];
+        return wantarray ? @{$meths}{qw(name)} : [@{$meths}{qw(name)}];
     } else {
         return $meths;
     }

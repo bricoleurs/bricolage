@@ -15,7 +15,7 @@ sub _test_load : Test(1) {
 # Test class methods.
 ##############################################################################
 # Test my_meths().
-sub test_my_meths : Test(12) {
+sub test_my_meths : Test(11) {
     ok( my $meths = Bric::Util::MediaType->my_meths, "Get my_meths" );
     isa_ok($meths, 'HASH', "my_meths is a hash" );
     is( $meths->{name}{type}, 'short', "Check name type" );
@@ -28,14 +28,9 @@ sub test_my_meths : Test(12) {
                                               ext => ['foo'] }),
         "Create media type" );
     ok( my @meths = $mt->my_meths(0, 1), "Get ident meths" );
-    is( scalar @meths, 2, "Check for 2 meths" );
+    is( scalar @meths, 1, "Check for 1 meths" );
     is( $meths[0]->{name}, 'name', "Check for 'name' meth" );
     is( $meths[0]->{get_meth}->($mt), 'NewFoo', "Check name 'NewFoo'" );
-  TODO: {
-        local $TODO = "Need to add 'ext' property to my_meths";
-        is( $meths[1]->{name}, 'ext', "Check for 'ext' meth" );
-#        is( $meths[1]->{get_meth}->($mt), 'foo', "Check ext 'foo'" );
-    }
 }
 
 1;
