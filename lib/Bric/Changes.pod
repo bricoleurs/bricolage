@@ -87,6 +87,11 @@ select list. Thanks to Daniel Fisher for the spot. [David]
 
 The root category ("/") no longer returns itself as its own parent. [David]
 
+=item *
+
+Assets not in workflow are now properly logged as being checked out when
+someone checks them out. [David]
+
 =back
 
 =head1 VERSION 1.4.0

@@ -656,6 +656,7 @@ my $handle_recall = sub {
 	    $start_desk->checkout($ba, get_user_id);
 	    $start_desk->save;
 	    log_event('media_moved', $ba, { Desk => $start_desk->get_name });
+            log_event('media_checkout', $ba);
 	} else {
 	    add_msg("Permission to checkout &quot;" . $ba->get_name
 		    . "&quot; denied");

@@ -280,6 +280,7 @@ elsif ($field eq "$widget|recall_cb") {
 	    $start_desk->checkout($fa, get_user_id);
 	    $start_desk->save;
 	    log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
+            log_event('formatting_checkout', $fa);
 	} else {
 	    add_msg("Permission to checkout &quot;" . $fa->get_name
 		    . "&quot; denied");
