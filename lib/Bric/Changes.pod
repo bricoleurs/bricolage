@@ -25,6 +25,11 @@ This document lists the Changes to Bricolage introduced with each release.
 Fixed SQL bug that might in rare situations cause element output channel
 associations to become confused. [David]
 
+=item *
+
+Fixed side navigation spacer graphic to the same width as other such
+grqphics. Helps Chinese Traditional to display more nicely. [Kang-min Liu]
+
 =back
 
 =head1 VERSION 1.6.1

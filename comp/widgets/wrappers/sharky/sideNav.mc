@@ -185,7 +185,7 @@ foreach my $wf (@$workflows) {
                    <% &$printLink("/workflow/active/media/$wf->{id}", $uri, "Active $pl_disp->{media}") %>
 %               }
 % # desks
-                <img src="/media/images/spacer.gif" width=105 height=1>
+                <img src="/media/images/spacer.gif" width="150" height="1">
                 <span class=workflowHeader><% $lang->maketext('Desks') %></span><br />
                 <%perl>
                   foreach my $d (@{$wf->{desks}}) {
@@ -443,10 +443,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.26.2.2 $
+$Revision: 1.26.2.3 $
 
 =head1 DATE
 
-$Date: 2003-04-15 08:59:27 $
+$Date: 2003-06-14 02:24:33 $
 
 </%doc>
