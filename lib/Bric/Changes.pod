@@ -91,6 +91,12 @@ currently-associated contributors are displayed before searching. [David]
 The ability to select different fields by which to sort a list of objects now
 works again. [David]
 
+=item *
+
+The installer now checks to make sure that mod_perl is statically compiled
+into Apache, since weird things tend to happen when Bricolage uses a DSO
+mod_perl. [David]
+
 =back
 
 =head1 VERSION 1.4.5
