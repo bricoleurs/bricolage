@@ -35,15 +35,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-21 20:17:46 $
+$Date: 2002-02-23 00:14:20 $
 
 =head1 SYNOPSIS
 
@@ -183,7 +183,7 @@ sub publish {
 	$seen{$type}{$id} = 1;    
 
 	# check check check
-	die "Cannot publish checked-out $type : \"$id\".\n" 
+	die "Cannot publish checked-out $type : \"".$id->value."\".\n" 
 	    if $obj->get_checked_out;
 
 	# Check for EDIT permission
@@ -473,27 +473,27 @@ sub checkout {
 	    $type = 'story';
 	    $obj  = Bric::Biz::Asset::Business::Story->lookup(
                                          { id => $id->value });
-	    die "Unable to find story for story_id \"$id\".\n"
+	    die "Unable to find story for story_id \"".$id->value."\".\n"
 		unless $obj;
 
 	} elsif ($id->name eq 'media_id') {
 	    $type = 'media';
 	    $obj  = Bric::Biz::Asset::Business::Media->lookup(
                                          { id => $id->value });
-	    die "Unable to find media object for media_id \"$id\".\n"
+	    die "Unable to find media object for media_id \"".$id->value."\".\n"
 		unless $obj;
 	} elsif ($id->name eq 'template_id') {
 	    $type = 'template';
 	    $obj  = Bric::Biz::Asset::Formatting->lookup(
 					 { id => $id->value });
-	    die "Unable to find template object for template_id \"$id\".\n"
+	    die "Unable to find template object for template_id \"".$id->value."\".\n"
 		unless $obj;
 	} else {
 	    die "Unknown element found in checkout_ids list.\n";
 	}      
 
 	# check check check
-	die "Cannot check-out already checked-out $type : \"$id\".\n" 
+	die "Cannot check-out already checked-out $type : \"".$id->value."\".\n" 
 	    if $obj->get_checked_out;
 
 	# Check for EDIT permission
@@ -615,27 +615,27 @@ sub checkin {
 	    $type = 'story';
 	    $obj  = Bric::Biz::Asset::Business::Story->lookup(
                                          { id => $id->value });
-	    die "Unable to find story for story_id \"$id\".\n"
+	    die "Unable to find story for story_id \"".$id->value."\".\n"
 		unless $obj;
 
 	} elsif ($id->name eq 'media_id') {
 	    $type = 'media';
 	    $obj  = Bric::Biz::Asset::Business::Media->lookup(
                                          { id => $id->value });
-	    die "Unable to find media object for media_id \"$id\".\n"
+	    die "Unable to find media object for media_id \"".$id->value."\".\n"
 		unless $obj;
 	} elsif ($id->name eq 'template_id') {
 	    $type = 'template';
 	    $obj  = Bric::Biz::Asset::Formatting->lookup(
 					 { id => $id->value });
-	    die "Unable to find template object for template_id \"$id\".\n"
+	    die "Unable to find template object for template_id \"".$id->value."\".\n"
 		unless $obj;
 	} else {
 	    die "Unknown element found in checkin_ids list.\n";
 	}      
 
 	# check check check
-	die "Cannot check-in non checked-out $type : \"$id\".\n" 
+	die "Cannot check-in non checked-out $type : \"".$id->value."\".\n" 
 	    unless $obj->get_checked_out;
 
 	# Check for EDIT permission
@@ -647,7 +647,7 @@ sub checkin {
 
 	# check that we have a desk
 	my $curr_desk = $obj->get_current_desk;
-	die "Cannot check-in $type without a current desk: \"$id\".\n"
+	die "Cannot check-in $type without a current desk: \"".$id->value."\".\n"
 	    unless $curr_desk;
 
 	# check 'em in
@@ -769,27 +769,27 @@ sub move {
 	    $type = 'story';
 	    $obj  = Bric::Biz::Asset::Business::Story->lookup(
                                          { id => $id->value });
-	    die "Unable to find story for story_id \"$id\".\n"
+	    die "Unable to find story for story_id \"".$id->value."\".\n"
 		unless $obj;
 
 	} elsif ($id->name eq 'media_id') {
 	    $type = 'media';
 	    $obj  = Bric::Biz::Asset::Business::Media->lookup(
                                          { id => $id->value });
-	    die "Unable to find media object for media_id \"$id\".\n"
+	    die "Unable to find media object for media_id \"".$id->value."\".\n"
 		unless $obj;
 	} elsif ($id->name eq 'template_id') {
 	    $type = 'template';
 	    $obj  = Bric::Biz::Asset::Formatting->lookup(
 					 { id => $id->value });
-	    die "Unable to find template object for template_id \"$id\".\n"
+	    die "Unable to find template object for template_id \"".$id->value."\".\n"
 		unless $obj;
 	} else {
 	    die "Unknown element found in move_ids list.\n";
 	}      
 
 	# check check check
-	die "Cannot move checked-out $type : \"$id\".\n" 
+	die "Cannot move checked-out $type : \"".$id->value."\".\n" 
 	    if $obj->get_checked_out;
 
 	# Check for EDIT permission
@@ -806,7 +806,7 @@ sub move {
 	    } else {
 		$ok = 1 if $to_workflow->get_type == TEMPLATE_WORKFLOW;
 	    }
-	    die __PACKAGE__ . "::move : cannot move $type \"$id\" to " . 
+	    die __PACKAGE__ . "::move : cannot move $type \"".$id->value."\" to " . 
 		"workflow \"$args->{workflow}\" : type mismatch.\n"
 		    unless $ok;
 
@@ -835,7 +835,7 @@ sub move {
 	
 	# get origin desk
 	my $from_desk = $obj->get_current_desk;
-	die "Cannot move $type without a current desk: \"$id\".\n"
+	die "Cannot move $type without a current desk: \"".$id->value."\".\n"
 	    unless $from_desk;
 
 	# don't move if we're already here
