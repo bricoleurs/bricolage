@@ -13,6 +13,7 @@ my $pl_disp = { map { $_ => get_class_info($_)->get_plural_name }
 
 my $printLink = sub {
     my ($href, $uri, $caption) = @_;
+    $caption = $lang->maketext($caption);
     my @href = split(/\//, $href);
     my @uri = split(/\//, $uri);
     # Make sure we have something to eq to.
@@ -443,10 +444,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.26.2.4 $
+$Revision: 1.26.2.5 $
 
 =head1 DATE
 
-$Date: 2003-06-14 02:45:54 $
+$Date: 2003-07-22 15:37:15 $
 
 </%doc>
