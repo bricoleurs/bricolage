@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-22 18:57:24 $
+$Date: 2002-04-08 20:00:23 $
 
 =head1 SYNOPSIS
 
@@ -76,7 +76,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Config qw(:dist);
+use Bric::Config qw(:dist :temp);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Trans::FS;
@@ -86,7 +86,7 @@ use Bric::Util::Fault::Exception::DP;
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Grp::Job;
 use Bric::App::Event qw(log_event);
-use File::Spec::Functions qw(catdir tmpdir);
+use File::Spec::Functions qw(catdir);
 
 ################################################################################
 # Inheritance
@@ -1632,7 +1632,7 @@ sub execute_me {
 		    foreach my $res (@$resources) {
 			# Create the temporary resource path.
 			my $path = $res->get_path;
-			my $tmp_path = catdir tmpdir, $path;
+			my $tmp_path = catdir TEMP_DIR, $path;
 			# Copy the resources to the tmp location.
 			$fs->copy($path, $tmp_path);
 			# Add the temporary path to the resource.

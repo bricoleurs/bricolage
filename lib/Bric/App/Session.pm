@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:43 $
+$Date: 2002-04-08 20:00:23 $
 
 =head1 SYNOPSIS
 
@@ -62,9 +62,8 @@ use strict;
 # Programatic Dependencies              
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::AP;
-use Bric::Config qw(:sys_user :admin);
+use Bric::Config qw(:sys_user :admin :temp);
 use Apache::Session::File;
-use File::Spec::Functions qw(tmpdir);
 use Bric::Util::Trans::FS;
 
 use File::Path qw(mkpath);
@@ -127,10 +126,10 @@ use constant COOKIE   => 'BRICOLAGE';
 use constant MAX_HISTORY => 10;
 
 use constant SESS_DIR =>
-  Bric::Util::Trans::FS->cat_dir(tmpdir, 'bricolage', 'session');
+  Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage', 'session');
 
 use constant LOCK_DIR =>
-  Bric::Util::Trans::FS->cat_dir(tmpdir, 'bricolage', 'lock');
+  Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage', 'lock');
 
 use constant OPTS     => { Directory     => SESS_DIR,
 			   LockDirectory => LOCK_DIR,
@@ -141,7 +140,7 @@ use constant OPTS     => { Directory     => SESS_DIR,
 
 # Create the session and lock directories if they do not exsist.
 unless (-d SESS_DIR && -d LOCK_DIR) {
-    my $tmp_dir = Bric::Util::Trans::FS->cat_dir(tmpdir, 'bricolage');
+    my $tmp_dir = Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage');
     mkpath($tmp_dir, 0, 0777);
     mkpath(SESS_DIR, 0, 0777);
     mkpath(LOCK_DIR, 0, 0777);

@@ -50,7 +50,7 @@ directory to @INC by using Makefile.PL. Just a thought.
 package Apache::ReadConfig;
 use strict;
 use warnings;
-use Bric::Config qw(:conf :sys_user :qa);
+use Bric::Config qw(:conf :sys_user :qa :temp);
 use Bric::App::Handler;
 use Bric::App::AccessHandler;
 use Bric::App::CleanupHandler;
@@ -171,9 +171,8 @@ do {
 	# http://mathforum.org/epigone/modperl/rorphaltwin. As a quick and dirty
 	# fix, let's dump the config to a temp file and just use the include
 	# directive.
-	use File::Spec::Functions qw(tmpdir);
 	use Bric::Util::Trans::FS;
-	my $conffile = Bric::Util::Trans::FS->cat_dir(tmpdir, 'bricolage',
+	my $conffile = Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage',
 						      'bric_httpd.conf');
 	open CONF, ">$conffile" or die "Cannot open $conffile for output: $!\n";
 	select CONF;

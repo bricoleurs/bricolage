@@ -1,156 +1,110 @@
-# settings
-SHELL = /bin/sh
-
-# Programatic dependancies
-PERL = /usr/local/bin/perl
-APACHE = /usr/local/apache/bin/httpd
-POSTGRESHOME = --enable-multibyte=UNICODE
-POD2HTML = /usr/local/bin/pod2html
-POD2TEXT = /usr/local/bin/pod2text
-POD2MAN = /usr/local/bin/pod2man
-GZIP = /bin/gzip
-MKDIR = /bin/mkdir
-FIND = /usr/bin/find
-CTAGS = /usr/bin/ctags
-
-# directories
-BIN = bin
-COMP = comp
-CONF = conf
-DATA = data
-LIB = lib
-DOC = doc
-INST = install
-
-# Installation related variables
-NORMAL_INSTALL = :
-PRE_INSTALL = :
-POST_INSTALL = :
-NORMAL_UNINSTALL = :
-PRE_UNINSTALL = :
-POST_UNINSTALL = :
-prefix  = /usr/local/bricolage
-exec_prefix  = ${prefix}
-bindir  = ${exec_prefix}/bin
-datadir  = ${prefix}/share
-sysconfdir  = ${prefix}/etc
-libdir  = ${exec_prefix}/lib
-libexecdir  = ${exec_prefix}/libexec
-includedir  = ${prefix}/include
-oldincludedir  = /usr/include
-mandir  = ${prefix}/man
-infodir  = ${prefix}/info
-sbindir  = ${exec_prefix}/sbin
-localstatedir  = ${prefix}/var
-sharedstatedir  = ${prefix}/com
+#
+# Bricolage Makefile
+#
+# Supports the following targets:
+#
+#   all       - default target checks requirements and builds source
+#   install   - installs the bricolage system
+#   clean     - delete intermediate files
+#
+# See INSTALL for details.
+#
 
 
-# Bricolage configuration info
-APACHE_USER = 
-APACHE_GROUP = 
+#########################
+# build rules           #
+#########################
 
-# A list of any missing modules
-<<<<<<< Makefile
-MISSING_MODULES = XML::Writer
-=======
-MISSING_MODULES = Devel::Symdump Apache::libapreq
->>>>>>> 1.12
-MODULE_COMMAND = $(foreach mod,${MISSING_MODULES},${PERL} -MCPAN -e "install ${mod}" ;)
+all 		: required.db modules.db apache.db postgres.db config.db \
+                  build_done
 
+required.db	: inst/required.pl
+	perl inst/required.pl
 
+modules.db 	:  inst/modules.pl lib/Bric/Admin.pod
+	perl inst/modules.pl
 
-all:  doc
+apache.db	: inst/apache.pl required.db
+	perl inst/apache.pl
 
-install: dep installdirs install-bin install-comp \
-		 install-conf install-data install-lib install-doc \
-		 install-man install-html
-installdirs:
-	${INST}/mkinstalldirs 	${prefix} ${exec_prefix} \
-							${bindir} ${datadir} \
-							${sysconfdir} ${libdir} \
-							${libexecdir} ${includedir} \
-							${oldincludedir} ${mandir} \
-							${infodir} ${sbindir} \
-							${localstatedir} ${sharedstatedir} \
-							${compdir} ${docdir} \
-							${htmldir} ${mandir}
-install-bin:
-	cp -r ${BIN}/* ${bindir}/	
-	chmod -R a+x ${bindir}/*
-install-comp:
-	cp -r ${COMP}/* ${comp}/
-	chmod -R a+r ${comp}
-ifdef APACHE_USER
-	chown -R ${APACHE_USER} ${localstatedir}
-endif
-ifdef APACHE_GROUP
-	chgrp -R ${APACHE_GROUP} ${localstatedir}
-endif
-install-conf:
-	cp -r ${CONF}/* ${sysconfdir}/
-ifdef APACHE_USER
-	chown -R ${APACHE_USER} ${sysconfdir}
-endif
-install-data:
-	cp -r ${DATA}/* ${data}/
-	chmod -R a+r ${data}
-ifdef APACHE_USER
-	chown -R ${APACHE_USER} ${data}
-endif
-ifdef APACHE_GROUP
-	chgrp -R ${APACHE_GROUP} ${data}
-endif
-install-lib:
-	cp -r ${LIB} ${libdir}
-install-doc: install-man install-html
-install-man:
-	cp -r ${DOC}/man/* ${mandir}
-install-html:
-	cp -r ${DOC}/html/* ${htmldir}
+postgres.db 	:  inst/postgres.pl required.db
+	perl inst/postgres.pl
+
+config.db	: inst/config.pl required.db apache.db postgres.db
+	perl inst/config.pl
+
+build_done	: required.db modules.db apache.db postgres.db config.db
+	@echo
+	@echo ===========================================================
+	@echo ===========================================================
+	@echo 
+	@echo Bricolage Build Complete.  You may now proceed to
+	@echo \"make install\" which must be run as root.
+	@echo 
+	@echo ===========================================================
+	@echo ===========================================================
+	@echo
+	touch build_done
 
 
+###########################
+# dist rules (incomplete) #
+###########################
 
-dep: cpan
+dist            : inst/bricolage.sql INSTALL Changes
 
-cpan:
-	${INSTALL_MISSING}
-	echo Installed ${MISSING_MODULES} >>install.log
+# bricolage.sql contains the contents of all .sql, .val and .con files
+sql_files := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
+inst/bricolage.sql : $(sql_files)	
+	find lib/ -name '*.sql' -exec cat '{}' ';' >  inst/bricolage.sql
+	find lib/ -name '*.val' -exec cat '{}' ';' >> inst/bricolage.sql
+	find lib/ -name '*.con' -exec cat '{}' ';' >> inst/bricolage.sql
 
+INSTALL		: lib/Bric/Admin.pod
+	pod2text --loose lib/Bric/Admin.pod   > INSTALL
 
-
-doc: README INSTALL TODO License
-	cd ${DOC} && ${MAKE} -e
-
-INSTALL:
-	${POD2TEXT} lib/Bric/Admin.pod >$@
-
-TODO:
-	${POD2TEXT} lib/Bric/ToDo.pod >$@
-
-README:
-	${POD2TEXT} lib/Bric/Changes.pod >$@
-
-License:
-	${POD2TEXT} lib/Bric/License.pod >$@
+Changes		: lib/Bric/Changes.pod
+	pod2text --loose lib/Bric/Changes.pod > Changes
 
 
+##########################
+# installation rules     #
+##########################
+install 	: all cpan lib bin files db conf done
 
-# TODO: Make this recursively generate tags files in all directories
-tags:
-ifdef CTAGS
-	${CTAGS} -R
-endif
+cpan 		: modules.db config.db inst/cpan.pl
+	perl inst/cpan.pl
 
+lib 	: 
+	-rm -f lib/Makefile
+	cd lib; perl Makefile.PL; $(MAKE) install
 
+bin 	:
+	-rm -f bin/Makefile
+	cd bin; perl Makefile.PL; $(MAKE) install
 
-clean: docclean
-	${RM} -f README INSTALL TODO License tags
+files 		: config.db
+	perl inst/files.pl
 
+db    		: inst/db.pl postgres.db inst/bricolage.sql
+	perl inst/db.pl
 
-docclean:
-	cd $(DOC) && ${MAKE} -e clean
+conf		: inst/conf.pl files required.db config.db postgres.db \
+                  apache.db
+	perl inst/conf.pl
 
+done		: 
+	perl inst/done.pl
 
-.PHONY : clean dep clean cpan doc install installdirs \
-		 install-bin install-comp install-conf install-data \
-		 install-lib install-doc install-html install-man
+# remove working files
+clean : 
+	-rm -rf *.db
+	-rm -rf build_done
+	cd lib ; perl Makefile.PL ; $(MAKE) clean
+	-rm -rf lib/Makefile.old
+	cd bin ; perl Makefile.PL ; $(MAKE) clean
+	-rm -rf bin/Makefile.old
+
+# list of all phony targets
+.PHONY 		: all install lib bin clean uninstall dist db conf done \
+                  cpan files

@@ -3,14 +3,19 @@ use Bric;
 use File::Find;
 use File::Spec;
 use strict;
-my $mandir = '';
-my $libdir = '';
+
+# load $CONFIG if it exists
+our $CONFIG = {};
+eval { require "../config.db" }; 
+
 # find all .pm and .pod files below this directory
 my %PM;
 File::Find::find({no_chdir => 1,
 		  wanted   => sub { 
 		    return unless /\.pm$/ or /\.pod$/;
-		    $PM{$_} = File::Spec->catfile('${INST_LIBDIR}', $_);
+		    return if m!/blib/!;
+		    $PM{$_} = File::Spec->catfile('${INST_LIB}', $_) 
+		      unless /\.pod$/;
 		  }},
 		 File::Spec->curdir);
 
@@ -18,5 +23,10 @@ File::Find::find({no_chdir => 1,
 WriteMakefile(NAME           => 'Bric',
               VERSION        => $Bric::VERSION,
               PM             => \%PM,
-              INSTALLMAN3DIR => "$mandir",
-              INSTALLSITELIB  => "$libdir");
+	      MAN3PODS       => {},
+	      ( exists $CONFIG->{MODULE_DIR} ? 
+		( INSTALLSITELIB => $CONFIG->{MODULE_DIR} ) : 
+		()),
+	      ( exists $CONFIG->{MAN_DIR} ? 
+		( INSTALLMAN3DIR => "$CONFIG->{MAN_DIR}/man3" ) : 
+		()));

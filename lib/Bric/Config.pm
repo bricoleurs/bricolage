@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-04 09:46:50 $
+$Date: 2002-04-08 20:00:22 $
 
 =head1 SYNOPSIS
 
@@ -112,6 +112,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     FTP_LOG
                     FTP_DEBUG
 		    DISABLE_NAV_LAYER
+		    TEMP_DIR
 		   );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -189,6 +190,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 				     FTP_ADDRESS
 				     FTP_LOG
 				     FTP_DEBUG)],
+		    temp      => [qw(TEMP_DIR)],
 		   );
 
 #=============================================================================#
@@ -385,6 +387,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
     use constant DEFAULT_FILE_EXT => => $config->{DEFAULT_FILE_EXT} || 'html';
+
+    # Temp Dir Setting
+    use constant TEMP_DIR        => $config->{TEMP_DIR};
 
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER}) {

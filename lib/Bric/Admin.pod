@@ -4,16 +4,45 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =head1 DATE
 
-$Date: 2002-03-26 22:59:11 $
+$Date: 2002-04-08 20:00:14 $
 
 =head1 DESCRIPTION
 
 This guide is intended for the system administrator in charge of installing,
 configuring, or tuning a Bricolage system.
+
+=head1 QUICK INSTALLATION INSTRUCTIONS
+
+Follow these instructions if you are both impatient and expert.
+
+=over 4
+
+=item 1
+
+Install Perl 5.6.0 or greater.
+
+=item 2
+
+Install Apache 1.3.12 or greater with mod_perl, mod_rewrite and
+mod_proxy.  For SSL also install mod_ssl.
+
+=item 3
+
+Install PostgreSQL 7.1 or greater.
+
+=item 4
+
+In the Bricolage source directory:
+
+  make install
+
+=back
+
+If you run into problems then read below for the details.
 
 =head1 PACKAGES
 
@@ -24,7 +53,7 @@ them:
 
 =item *
 
-Perl 5.6.0 (recommend 5.6.1)
+Perl 5.6.0 (5.6.1 or later recommended)
 
 =item *
 
@@ -32,13 +61,19 @@ Perl Modules:
 
 =over 4
 
+=begin installation
+
+START MODULE LIST
+
+=end
+
 =item Storable
 
 =item Time::HiRes
 
 =item Unix::Syslog
 
-=item Bundle::libnet
+=item Net::Cmd
 
 =item Devel::Symdump
 
@@ -62,6 +97,8 @@ Perl Modules:
 
 =item LWP
 
+=item IO::String
+
 =item Image::Info
 
 =item Text::Iconv
@@ -73,6 +110,8 @@ Perl Modules:
 =item HTML::Mason 1.03
 
 =item DBD::Pg
+
+=item DB_File
 
 =item Apache::Session 1.54
 
@@ -90,7 +129,7 @@ Perl Modules:
 
 =item HTML::Template::Expr
 
-=item XML::Parser
+=item XML::Parser::Expat
 
 =item XML::Simple
 
@@ -102,7 +141,35 @@ Perl Modules:
 
 =item Apache::ConfigFile 0.14
 
+=item File::Temp
+
+=begin installation
+
+END MODULE LIST
+
+=end
+
 =back
+
+=item *
+
+Apache 1.3.12
+
+=item *
+
+mod_perl 1.25 - Apache/Perl Integration
+
+=item *
+
+PostgreSQL 7.1.3
+
+=item *
+
+Iconv
+
+=item *
+
+Expat 1.95.0
 
 =item *
 
@@ -112,54 +179,21 @@ OpenSSL 0.9.6a (optional)
 
 mod_ssl 2.8.4-1.3.20 - Apache Interface to OpenSSL (optional)
 
-=item *
-
-mod_perl 1.25 - Apache/Perl Integration
-
-=item *
-
-Apache 1.3.20
-
-=item *
-
-PostgreSQL 7.1.3
-
 =back
 
 =head1 INSTALLATION
 
-At some point, we hope to have a makefile that will automate the installation of
-all of these packages for you. Until then, the following instructions will get
-you through installing all the needed components. If you're upgrading from an
-older version of Bricolage see the UPGRADING section below.
+Follow these instructions to prepare your system for Bricolage.  If
+you're upgrading from an older version of Bricolage see the UPGRADING
+section below.
 
 =head2 Perl
 
-The standard Perl installation should apply with no problems. We do recomend the
-following Configure commands:
+The standard Perl installation should apply with no problems.  If your
+system comes with a package manager (ex. Redhat Linux RPM, FreeBSD
+ports, etc.) then you can use that to install Perl.
 
-=over 4
-
-=item -Umymalloc
-
-This Configure command will build perl without perl's malloc. This is necessary
-to prevent segfaults with XML::Parser under mod_perl.
-
-=item  -Dinstallusrbinperl
-
-This Configure command will arrange for /usr/bin/perl to be linked to the
-current version of perl. If you don't specify this command, configure will
-prompt you to find out whether to link /usr/bin/perl to the current version of
-perl. We strongly suggest that you answer "yes".
-
-=item -des
-
-This optional command tells Configure that you except all the other defaults,
-and it will therefore provide terse output during the configuration.
-
-=back
-
-Here is how to install Perl:
+Here is how to install Perl from source:
 
 =over 4
 
@@ -180,50 +214,31 @@ Change to the source directory and execute these commands:
   make test
   make install
 
-=back
-
-=head2 Perl Modules
-
-There are quite a few Perl modules required by Bricolage (see "PACKAGES" above
-for a list). The easiest way to install them all is to use CPAN.pm to download
-the latest Bundle::Bricolage package from the CPAN and use it to install all the
-required packages:
-
-  perl -MCPAN -e install Bundle::Bricolage
-
-However, manual installation of each of the required modules follows the usual
-perl module installation process:
+For the curious, the options used with Configure above are:
 
 =over 4
 
-=item *
+=item -Umymalloc
 
-Download the package sources.
+This Configure command will build perl without perl's malloc. This is
+necessary to prevent segfaults with XML::Parser under mod_perl.  This
+is the default on most systems already.
 
-=item *
+=item  -Dinstallusrbinperl
 
-Gunzip and untar the sources.
+This Configure command will arrange for /usr/bin/perl to be linked to the
+current version of perl. If you don't specify this command, configure will
+prompt you to find out whether to link /usr/bin/perl to the current version of
+perl. We strongly suggest that you answer "yes".
 
-=item *
+=item -des
 
-Change to the source directory and execute these commands:
-
-  perl Makefile.PL
-  make
-  make test
-  make install
+This optional command tells Configure that you accept all the other defaults,
+and it will therefore provide terse output during the configuration.
 
 =back
 
-You can also use the CPAN module to install the modules (perldoc CPAN for
-details), or use ActiveState PPM packages if they're available. We do recommend
-that you install all but three of the required packages immediately after
-installing Perl, and before installing the other software packages. (You must,
-of course, install them B<all> after installing Perl; otherwise, they'll be
-compiled under and associated with the extant perl on your system.) The three
-exceptions are DBD::Pg, which can only be installed after PostgreSQL has been
-installed (see below); and Apache::Session and libapreq, both of which can only
-be installed once Apache and mod_perl have been installed.
+=back
 
 =head2 OpenSSL (optional)
 
@@ -253,12 +268,12 @@ use any Configure commands, and execute these commands:
 
 =back
 
-C<make install> insn't necessary because the sources will be compiled into
+C<make install> isn't necessary because the sources will be compiled into
 Apache.
 
 =head2 Apache Interface to OpenSSL (mod_ssl) (optional)
 
-You'll need to install mod_ss if you want to use Bricolage's SSL support to run
+You'll need to install mod_ssl if you want to use Bricolage's SSL support to run
 a more secure server, otherwise you can skip this step. Installation of mod_ssl
 follows the usual conventions. Here's an example:
 
@@ -284,7 +299,7 @@ file for details). Then, execute this command:
 
   ./configure --with-apache=/usr/local/src/bricolage/apache_1.3.xx
 
-Where "apache_1.3.xx" represents ther version of Apache you will be installing
+Where "apache_1.3.xx" represents the version of Apache you will be installing
 (see the "Packages" section above for a recommended version number.
 
 =back
@@ -295,8 +310,8 @@ compiled into Apache.
 =head2 Apache/Perl (mod_perl)
 
 Installation of mod_perl follows the usual conventions for installing Perl
-modules. It does require a number of Configure commands, however. The most
-important command is <APACHE_SRC>, which points to the Apache sources. You will
+modules. It does require a number of Makefile.PL parameters, however. The most
+important parameter is <APACHE_SRC>, which points to the Apache sources. You will
 need to have already downloaded, gunzipped, and untarred the Apache sources
 before compiling mod_perl. Here's the routine:
 
@@ -304,13 +319,16 @@ before compiling mod_perl. Here's the routine:
 
 =item *
 
+Download the Apache source tarball from httpd.apache.org.  Make sure
+you choose the 1.3.x rather than the new 2.x version.
+
 =item *
 
 Download the mod_perl source tarball from perl.apache.org.
 
 =item *
 
-Gunzip and untar the sources.
+Gunzip and untar the Apache and mod_perl sources.
 
 =item *
 
@@ -319,7 +337,7 @@ use any Configure commands other than those specified below. Then execute the
 commands:
 
   perl Makefile.PL \
-    APACHE_SRC=/usr/local/src/bricolage/apache_1.3.xx/src \
+    APACHE_SRC=../apache_1.3.xx/src \
     DO_HTTPD=1 \
     USE_APACI=1 \
     PREP_HTTPD=1 \
@@ -333,7 +351,7 @@ commands:
 
 By now you've downloaded Apache and gunzipped and untarred its sources. There
 are a lot of Configure commands supported by Apache. We recommend that you use
-at least the following for Bricolage:
+the following for Bricolage:
 
 =over 4
 
@@ -343,7 +361,7 @@ This command selects the classical Apache path layout.
 
 =item --disable-rule=EXPAT
 
-This command prevents incompatabilities between Apache's implementation of the
+This command prevents incompatibilities between Apache's implementation of the
 Expat XML parser, and that used by Perl's XML::Parser module.
 
 =item --enable-module=ssl (optional)
@@ -356,17 +374,6 @@ earlier.  You only need this option if you plan to use Bricolage's SSL support.
 This command enables the mod_rewrite module that ships with the Apache sources.
 While mod_rewrite is not currently used in Bricolage, it may be in future
 versions.
-
-=item --enable-module=so
-
-This command enables the mod_so module that ships with Apache. This shared
-library is used by mod_perl.
-
-=begin comment
-
-Is this true, or did I make it up?
-
-=end comment
 
 =item --enable-module=proxy
 
@@ -385,25 +392,23 @@ mod_perl make process.
 
 The commands you'll execute, therefore, should look something like this:
 
-  ./configure \
-    "--with-layout=Apache" \
-    "--disable-rule=EXPAT" \
-    "--enable-module=rewrite" \
-    "--enable-module=so" \
-    "--enable-module=proxy" \
-    "--activate-module=src/modules/perl/libperl.a"
+  ./configure               \
+    --with-layout=Apache    \
+    --disable-rule=EXPAT    \
+    --enable-module=rewrite \
+    --enable-module=proxy   \
+    --activate-module=src/modules/perl/libperl.a
   make
 
 Or if you're planning to use SSL:
 
-  ./configure \
-    "--with-layout=Apache" \
-    "--disable-rule=EXPAT" \
-    "--enable-module=ssl" \
-    "--enable-module=rewrite" \
-    "--enable-module=so" \
-    "--enable-module=proxy" \
-    "--activate-module=src/modules/perl/libperl.a"
+  ./configure               \
+    --with-layout=Apache    \
+    --disable-rule=EXPAT    \
+    --enable-module=ssl     \
+    --enable-module=rewrite \
+    --enable-module=proxy   \
+    --activate-module=src/modules/perl/libperl.a
   make
 
 =item *
@@ -519,7 +524,7 @@ partition. This example just demonstrates the default:
 
 =item *
 
-Intitialize the PostgreSQL database. Be sure to pass the directory you just
+Initialize the PostgreSQL database. Be sure to pass the directory you just
 created to the C<-D> command.
 
   su - postgres -c "/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data"
@@ -555,9 +560,50 @@ C<POSTGRES_INCLUDE> and C<POSTGRES_LIB> environment variables, first:
 
 And now PostgreSQL is ready to go!
 
+=head2 Perl Modules
+
+There are quite a few Perl modules required by Bricolage (see
+L<PACKAGES> above for a list). The easiest way to install them all is
+to let Bricolage's installation system handle it using the CPAN.pm
+module (see below for details).
+
+Another option is to use CPAN.pm yourself to download the latest
+Bundle::Bricolage package and use it to install all the required
+packages:
+
+  perl -MCPAN -e install Bundle::Bricolage
+
+However, this is unlikely to succeed without manual intervention since
+some of the modules required by Bricolage have problems with CPAN.pm.
+
+Finally, manual installation of each of the required modules follows
+the usual perl module installation process:
+
+=over 4
+
+=item *
+
+Download the package sources.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change to the source directory and execute these commands:
+
+  perl Makefile.PL
+  make
+  make test
+  make install
+
+=back
+
 =head2 Bricolage
 
-With the 1.4.0 release, Bricolage can be installed using the new configure system:
+With the 1.4.0 release, Bricolage now can be installed using the new
+installation system.
 
 =over
 
@@ -567,31 +613,35 @@ Download the latest Bricolage sources from L<http://bricolage.sourceforge.net/>.
 
 =item *
 
-Decompress the Bricolage sources into a directory of your choice and chnage into
-that directory.
+Decompress the Bricolage sources into a directory of your choice and
+change into that directory.
 
 =item *
 
-Read the configure options and determine which you need to install Bricolage:
+Build Bricolage:
 
-  ./configure --help
-
-=item *
-
-Install Bricolage:
-
-  ./configure [options]
   make
+
+This step will check your system for all required packages.  It will
+also ask you questions regarding your installation.  In most cases the
+default answer will be correct and you can just press return.
+
+=item *
+
+Install Bricolage (as root):
+
   make install
 
 =back
 
 If you run into problem, please file a bug report at
-L<http://bricolage-bugzilla.thepirtgroup.com> and then try the manual
-installation instructions below.
+L<http://bricolage-bugzilla.thepirtgroup.com>.  Include a copy of all
+*.db files generated by the Makefile as well as a complete description
+of where the process failed.  Then, either wait for us to fix the
+problem or try the manual installation instructions below.
 
-When all of the basic software components have been installed, start PostgreSQL.
-You can use one of the scripts in startup/ if you like.
+If the installation procedure completes successfully you'll receive a
+message describing how to start the Bricolage server.
 
 =head2 Bricolage (Manual Installation)
 
@@ -615,7 +665,7 @@ Where 'dbname' is the name you want the Bricolage database to be called in
 PostgreSQL, and 'db_user' and 'db_password' are the user name and password to be
 created in the PostgreSQL database, and under which the Bricolage application
 will run. Note that the -u argument must represent a PostgreSQL user with CREATE
-DATABASE and CREATE USER permissions. The 'bric_user' user will be creaed
+DATABASE and CREATE USER permissions. The 'bric_user' user will be created
 without these permissions (the 'dbname' database will be owned by the user
 passed in via the -u argument), but will be granted full CREATE, DELETE, UPDATE,
 and SELECT permissions an all objects in the Bricolage database.
@@ -633,7 +683,7 @@ httpd.conf file (an example is provided in conf/httpd.conf):
   PerlPassEnv BRICOLAGE_ROOT
   PerlModule Bric::App::ApacheConfig
 
-But you can also configure Bricolage to run on a virutal host. See
+But you can also configure Bricolage to run on a virtual host. See
 <"Configuration"> below.
 
 =item *
@@ -641,7 +691,7 @@ But you can also configure Bricolage to run on a virutal host. See
 Start Apache. Use one of the scripts in scripts/ if you like. You can manually
 start it via the following command:
 
-  /user/local/bricolage/bin/bric_apachectl start
+  /usr/local/bricolage/bin/bric_apachectl start
 
 =item *
 
@@ -684,7 +734,7 @@ and .pl scripts with perl. For example, to upgrade from 1.0.2 to 1.2.0:
 
   perl install/upgrade/1.2.0/rm_dhandlers.pl
 
-You'll need to adjust the psql line to match your PostrgeSQL settings
+You'll need to adjust the psql line to match your PostgreSQL settings
 (postgres_user and bric_database_name). Also, you may need to edit
 oc_include.sql if you need to GRANT access to your database to a user other than
 "nobody". The GRANT statements are at the bottom of the file.
@@ -712,7 +762,7 @@ the audience of for this document.
 The Bricolage configuration file contains a number of configuration options,
 each of which falls roughly into a number of categories, described below. Edit
 this document to tweak the functionality of Bricolage. The vast majority of
-configuration issues can be resolved by editing this docuement alone.
+configuration issues can be resolved by editing this document alone.
 
 B<Note:> Bricolage uses the C<BRICOLAGE_ROOT> environment variable to determine
 where to find all of its libraries and configuration files. If this environment
@@ -813,13 +863,13 @@ specified.
 
 =item *
 
-B<DB_HOST:> The host name of the server that hosts the Bricoalge database.
+B<DB_HOST:> The host name of the server that hosts the Bricolage database.
 Defaults to the relevant value used by the DBD driver if not specified.
 
 =item *
 
 B<DB_PORT:> The port on which the server database server that hosts the
-Bricoalge database listens. Defaults to the relevant value used by the DBD
+Bricolage database listens. Defaults to the relevant value used by the DBD
 driver if not specified.
 
 =item *
@@ -848,13 +898,26 @@ This is the name and group of the system user as whom Bricolage and Apache run.
 
 B<SYS_USER:> The system user as whom Bricolage runs. Must be the same as the
 C<User> directive used in the Apache configuration file specified in the
-C<APACHE_CONF> configuration direcive. Defaults to "nobody" if not specified.
+C<APACHE_CONF> configuration directive. Defaults to "nobody" if not specified.
 
 =item *
 
 B<SYS_GROUP:> The system group of which SYS_USER is a member. Must be the same
 as the C<Group> directive used in the Apache configuration file specified in the
-C<APACHE_CONF> configuration direcive. Defaults to "nobody" if not specified.
+C<APACHE_CONF> configuration directive. Defaults to "nobody" if not specified.
+
+=back
+
+=head2 Temp Directory Configuration
+
+=over 4
+
+=item *
+
+B<TEMP_DIR:> The system will create a sub-directory below this
+directory where Bricolage will store temporary files.  Must be
+writable by SYS_USER described above.  Defaults to the return value
+from File::Spec::Unix::tempdir() if not specified.
 
 =back
 
@@ -878,7 +941,7 @@ specified.
 =item *
 
 B<MASON_DATA_ROOT:> Mason's data root. This where Mason stores the Bricolage UI
-elements once they've been compilied Defaults to C<$BRICOLAGE_ROOT/data> if not
+elements once they've been compiled Defaults to C<$BRICOLAGE_ROOT/data> if not
 specified. Make sure that SYS_USER has permission to write to this directory.
 
 =item *
@@ -898,7 +961,7 @@ B<Note>: Only the Mason burner supports XML::Writer.
 
 =item *
 
-B<XML_WRITER_ARGS:> If INCLUDE_XML_WRITER is switched on, then this direcive is
+B<XML_WRITER_ARGS:> If INCLUDE_XML_WRITER is switched on, then this directive is
 passed to the instantiation method of the XML::Writer object. All arguments to
 XML::Writer->new() are supported except the OUTPUT argument, which Bricolage
 handles internally to ensure that data is sent directly to the template's output
@@ -1092,7 +1155,7 @@ trade-off to be worth it. Defaults to "Off" if not specified.
 =head2 File Naming Configuration
 
 All files burned to the file system during publishes and previews must be named
-(of course!), and they're named for the "File Name" and "File Extenstion"
+(of course!), and they're named for the "File Name" and "File Extension"
 properties of the Output Channel they're getting burned to. You can give these
 properties whatever values you want (as long as they're legal on your file
 system!), but here you can set some defaults that all Output channels will start
@@ -1109,7 +1172,7 @@ page index number to uniquely name the file for a given story. Defaults to
 
 =item *
 
-B<DEFAULT_FILE_EXT:> Sets the default file extention that all new Output Channel
+B<DEFAULT_FILE_EXT:> Sets the default file extension that all new Output Channel
 will start with in their "File Name" property. Combined with DEFAULT_FILENAE and
 a page index number to uniquely name the file for a given story. Defaults to
 "html" if not specified.
@@ -1140,7 +1203,7 @@ B<Note>: Only the Mason burner supports PERL_LOADER.
 Bricolage includes a virtual FTP server that can be used to allow access to
 Bricolage templates. This may provide a more comfortable development environment
 for programmers working on templates. Many editors provide FTP modes that make
-editing files via FTP almost as easy as editing files localy (ange-ftp for
+editing files via FTP almost as easy as editing files locally (ange-ftp for
 Emacs, for example).
 
 There are security risks to consider - FTP sends passwords unencrypted over the
@@ -1178,7 +1241,7 @@ to. Defaults to $BRICOLAGE_ROOT/ftp.log if not set.
 
 B<FTP_DEBUG:> If you set this to 1 you'll see a lot of useful tracing
 information in the FTP logfile. This can help diagnose errors but is probably
-only of intertest to developers. Defaults to 0.
+only of interest to developers. Defaults to 0.
 
 =back
 
@@ -1273,7 +1336,7 @@ Execute the following command:
 
   make certificate TYPE=custom
 
-You will be prompted as you were during the inital installation. Follow the same
+You will be prompted as you were during the initial installation. Follow the same
 instructions, but be sure to use different values for the "Organization Unit
 Name" in the two certificates. When you're prompted to encrypt the CA and Server
 keys, enter "n" to avoid having to enter a passphrase every time you start
@@ -1298,7 +1361,7 @@ Start Apache again:
 =head1 SYSTEM ADMINISTRATION
 
 Bricolage is a big application, with big system needs. Thus it's a good idea to
-give some thought to sysem management, including disk partitioning and file
+give some thought to system management, including disk partitioning and file
 maintenance.
 
 =head2 Database
@@ -1347,26 +1410,25 @@ to put this directory on its own partition or disk, as well. And remember to
 back it up to prevent the loss of all of your media assets -- they aren't stored
 anywhere else!
 
-Bricolage also creates temporary files for caching user session data and
-application data. All of these files are stored in sub directories of the local
-system's $TMP environment variable (actually, the temp directory is determined
-by the tmpdir() method of the File::Spec library, which uses the $TMP
-environment variable and other means to determine the local OS's temporary
-directory). Session files are stored in C<$TMP/bricolage/session> and
-C<$TMP/bricolage/lock>. These directories should stay relatively free of cruft,
-as the session files are regularly deleted when users logout or their login
-sessions expire and they attempt to log back in. (However, in some cases we've
-noticed a buildup of files in the lock directory.)
+Bricolage also creates temporary files for caching user session data
+and application data.  These files are stored in sub directories of
+the directory specified by the TEMP_DIR configuration variable.
+Session files are stored in C<TEMP_DIR/bricolage/session> and
+C<TEMP_DIR/bricolage/lock>. These directories should stay relatively
+free of cruft, as the session files are regularly deleted when users
+logout or their login sessions expire and they attempt to log back
+in. (However, in some cases we've noticed a buildup of files in the
+lock directory.)
 
 Bricolage also uses a cross-process caching mechanism to shara data between
 Apache processes and applications. The data for this cache is stored in
-C<$TMP/bricolage/cache>.
+C<TEMP_DIR/bricolage/cache>.
 
 Bricolage comes with a script that cleans out old temporary files.
 You can use this by adding a line to the crontab for the web server
 user (often "nobody") like this:
 
-   0 2 * * * /usr/local/bricolage/bin/clean_tmp.pl
+   0 2 * * * /usr/local/bricolage/bin/bric_clean_tmp.pl
 
 This will run nightly at 2AM and clean out all files older than 12
 hours. See the documentation in bin/clean_tmp.pl for more details.

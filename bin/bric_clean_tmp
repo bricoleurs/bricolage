@@ -43,6 +43,7 @@ BEGIN {
 };
 
 use Bric::Util::Trans::FS;
+use Bric::Config qw(TEMP_DIR);
 use File::Find qw(find);
 use Getopt::Std;
 
@@ -55,10 +56,6 @@ getopts('s:hv');
 usage() if $opt_h;
 version() if $opt_v;
 
-my $tmpdir = File::Spec->tmpdir();
-die "Unable to find tmp dir using File::Spec::tmp_dir()!"
-  unless $tmpdir;
-
 # Get the cutoff epoch.
 $opt_s ||= 12 * 60 * 60;
 my $cutoff = time - $opt_s;
@@ -69,8 +66,8 @@ find(sub {
 	     unlink($_) or die "Unable to delete $File::Find::name: $!";
 	 }
      },
-     Bric::Util::Trans::FS->cat_dir($tmpdir, "bricolage/lock"),
-     Bric::Util::Trans::FS->cat_dir($tmpdir, "bricolage/session")
+     Bric::Util::Trans::FS->cat_dir(TEMP_DIR, "bricolage/lock"),
+     Bric::Util::Trans::FS->cat_dir(TEMP_DIR, "bricolage/session")
     );
 
 sub usage {

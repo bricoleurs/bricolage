@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-22 20:22:58 $
+$Date: 2002-04-08 20:00:23 $
 
 =head1 SYNOPSIS
 
@@ -44,9 +44,9 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Fault::Exception::DP;
 use Bric::Util::Fault::Exception::GEN;
-use File::Spec::Functions qw(tmpdir);
 use Bric::Util::Trans::FS;
 use Cache::FileCache;
+use Bric::Config qw(TEMP_DIR);
 
 ################################################################################
 # Inheritance
@@ -61,7 +61,7 @@ use Cache::FileCache;
 ################################################################################
 use constant DEBUG => 0;
 use constant CACHE_ROOT =>
-  Bric::Util::Trans::FS->cat_dir(tmpdir, 'bricolage', 'cache');
+  Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage', 'cache');
 
 ################################################################################
 # Fields
