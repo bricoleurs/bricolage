@@ -373,23 +373,6 @@ site context if the "Filter by Site Context" preference is checked. [David]
 
 ##############################################################################
 
-=head1 VERSION 1.8.0 "Portland" ()
-
-=head2 Bug Fixes
-
-=over 4
-
-=item *
-
-Bulk Publish now ensures that users have at least READ access to catgories
-they wish to publish from. [Scott]
-
-=back
-
-=cut
-
-##############################################################################
-
 =head1 VERSION 1.8.0 "Portland" (2004-05-03)
 
 =head2 Improvements
