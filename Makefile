@@ -66,7 +66,7 @@ build_done	: required.db modules.db apache.db postgres.db config.db
 # dist rules              #
 ###########################
 
-dist            : check_dist distclean inst/bricolage.sql dist_dir \
+dist            : check_dist distclean inst/Pg.sql dist_dir \
                   rm_CVS rm_tmp dist/INSTALL dist/Changes \
                   dist/License dist_tar
 
@@ -111,12 +111,12 @@ dist_tar	:
 SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
 
 # Update this later to be database-independent.
-inst/bricolage.sql : $(SQL_FILES)
-	find sql/Pg -name '*.sql' -exec grep -v '^--' '{}' ';' >  inst/Pg.sql
-	find sql/Pg -name '*.val' -exec grep -v '^--' '{}' ';' >> inst/Pg.sql
-	find sql/Pg -name '*.con' -exec grep -v '^--' '{}' ';' >> inst/Pg.sql
+inst/Pg.sql : $(SQL_FILES)
+	find sql/Pg -name '*.sql' -exec grep -v '^--' '{}' ';' >  $@;
+	find sql/Pg -name '*.val' -exec grep -v '^--' '{}' ';' >> $@;
+	find sql/Pg -name '*.con' -exec grep -v '^--' '{}' ';' >> $@;
 
-.PHONY 		: distclean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
+.PHONY 		: distclean inst/Pg.sql dist_dir rm_sql rm_use rm_CVS \
                   dist_tar check_dist
 
 ##########################
