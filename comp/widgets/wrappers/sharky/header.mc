@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2001-12-29 04:40:49 $
+$Date: 2002-01-10 18:02:43 $
 
 =head1 SYNOPSIS
 
@@ -83,7 +83,8 @@ foreach my $t (@title) {
 }
 
 # Cache the context so that help can use it.
-set_state_data('help', context => $context);
+set_state_data('help', { context => $context,
+			 page => $title });
 </%init>
 
 <html>
