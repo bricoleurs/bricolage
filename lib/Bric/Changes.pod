@@ -220,6 +220,53 @@ Updated display of existing contributors in the "Edit Contributors" screen of
 the story and media asset profiles to use listManager. This makes them look
 like they do everywhere else (and uses less code, to boot!). [David]
 
+=item *
+
+Improved error messages thrown in exceptions in Bric::Util::Trans::FTP.
+[David]
+
+=item *
+
+Removed code and documentation for PostgreSQL 7.3 compatability. With the
+release of 7.3b2, it's no longer needed. [David]
+
+=item *
+
+Fixed "make clone" to properly include database contents in clone
+distribution. [Sam]
+
+=item *
+
+Added C<< <meta http-equiv="Content-Type"> >> tag to the C<< <head> >> to
+F<header.mc> so that the browser knows to send text back to Bricolage in the
+expected character set. [Mark]
+
+=item *
+
+Changed the default character set from ISO-8859-1 to UTF-8. With this setting,
+Bricolage does no character set translation, so it's faster. Furthermore, most
+users I<should> be outputting UTF-8 in their templates, anyway. If you're not,
+then you're likely finding doing charset translation in all of your templates
+to be a big PITA. And if you're not doing charset translation, then you really
+I<are> outputting UTF-8 in your templates, and just haven't realized it.
+[David]
+
+=item *
+
+Fixed bug when reverting stories and media with no associated contributors.
+[Mark]
+
+=item *
+
+"Check In and Publish" now works again for Media assets. Thanks to Matt Vella
+for the spot. [David]
+
+=item *
+
+Deleting assets on My Workspace now prompts the user to make sure s/he really
+wants to do that. Not sure how we missed this all this time! Thanks to Andrew
+Baio for the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.3

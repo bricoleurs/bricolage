@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:43 $
+$Date: 2002-10-16 03:38:15 $
 
 =head1 SYNOPSIS
 
@@ -151,10 +151,12 @@ sub put_res {
 	  || die $gen->new({ msg => "Unable to connect to remote server '$hn'.",
 			     payload => $@ });
 	$ftp->login($s->get_login, $s->get_password)
-	  || die $gen->new({ msg => "Unable to login to remote server '$hn'." });
+	  || die $gen->new({ msg => "Unable to login to remote server '$hn'.",
+                             payload => $ftp->message });
 	$ftp->binary
-	  || die $gen->new({ msg => 'Unable to change to binary mode on remote '
-			            . "server '$hn'." });
+	  || die $gen->new({ msg => 'Unable to change to binary mode on ' .
+			            "remote server '$hn'.",
+                             payload => $ftp->message });
 	# Get the document root.
 	my $doc_root = $s->get_doc_root;
 
@@ -175,10 +177,11 @@ sub put_res {
 			# Create each one if it doesn't exist.
 			unless ($ftp->cwd($dir)) {
 			    $ftp->mkdir($dir);
-			    $ftp->cwd($dir)
-			      || die $gen->new({ msg => "Unable to create "
-						 . "directory '$dest_dir' on "
-						 . "remote server '$hn'." });
+			    $ftp->cwd($dir) || die $gen->new
+                              ({ msg => "Unable to create directory '$dir' " .
+                                        "in path '$dest_dir' on remote server " .
+                                        "'$hn'.",
+                                 payload => $ftp->message });
 			}
 		    }
 		}
@@ -188,14 +191,15 @@ sub put_res {
 		$ftp->cwd('/');
 	    }
 	    # Now, put the file on the server.
-	    $ftp->put($src, $dest)
-	      || die $gen->new({ msg => "Unable to put file '$dest' on remote "
-			                . "server '$hn'." });
+	    $ftp->put($src, $dest) || die $gen->new
+              ({ msg => "Unable to put file '$dest' on remote server '$hn'.",
+                 payload => $ftp->message });
 	}
 	# Log off.
-	$ftp->quit
-	  || die $gen->new({ msg => 'Unable to properly close connection to '
-			            . "remote server '$hn'." });
+	$ftp->quit || die $gen->new
+          ({ msg => 'Unable to properly close connection to remote server ' .
+                    "'$hn'.",
+             payload => $ftp->message });
     }
     return 1;
 }

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-21 00:41:30 $
+$Date: 2002-10-16 03:38:15 $
 
 =head1 SYNOPSIS
 
@@ -1120,7 +1120,9 @@ sub revert {
     }
 
     # Delete existing contributors.
-    $self->delete_contributors([keys %{ $self->_get_contributors }]);
+    if (my $contrib = $self->_get_contributors) {
+        $self->delete_contributors([keys %$contrib]);
+    }
 
     # Set up contributors to revert to.
     my $contrib;

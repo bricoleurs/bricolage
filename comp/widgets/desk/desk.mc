@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2002-09-26 00:17:34 $
+$Date: 2002-10-16 03:38:14 $
 
 =head1 SYNOPSIS
 
@@ -231,7 +231,7 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
             if ($can_edit) {
                 $vlabel = 'Edit';
                 $pub = $m->scomp('/widgets/profile/checkbox.mc',
-                                 name  => "${class}_del_ids",
+                                 name  => "${class}_delete_ids",
                                  value => $aid) . 'Delete';
             }
         }

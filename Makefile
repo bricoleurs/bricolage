@@ -126,7 +126,8 @@ inst/bricolage.sql : $(SQL_FILES)
 # clone rules            #
 ##########################
 
-clone           : distclean clone.db clone_dist_dir clone_files clone_sql \
+
+clone           : distclean clone.db clone_dist_dir clone_sql clone_files \
 		  rm_sql rm_use rm_CVS rm_tmp \
                   dist/INSTALL dist/Changes dist/License \
 		  clone_tar 

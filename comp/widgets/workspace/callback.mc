@@ -34,7 +34,7 @@ if ($field eq "$widget|checkin_cb") {
     my $burn = Bric::Util::Burner->new;
     # Deleting assets.
     foreach my $key (@$keys) {
-        foreach my $aid (@{ mk_aref($param->{"${key}_del_ids"}) }) {
+        foreach my $aid (@{ mk_aref($param->{"${key}_delete_ids"}) }) {
 	    my $a = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
 	    if (chk_authz($a, EDIT, 1)) {
 		my $d = $a->get_current_desk;
@@ -65,11 +65,11 @@ if ($field eq "$widget|checkin_cb") {
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-09-27 22:21:02 $
+$Date: 2002-10-16 03:38:14 $
 
 =head1 SYNOPSIS
 
