@@ -30,6 +30,10 @@ exceptions. [David]
 Updated Bric::DBA documentation to better reflect PostgreSQL standards.
 [Neil Conway]
 
+=item *
+
+Minor documentation correction in Bric::Util::Grp::Parts::Member. [Mark]
+
 =back
 
 =head1 VERSION 1.4.5

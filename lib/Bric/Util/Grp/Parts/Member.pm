@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:47 $
+$Date: 2002-11-18 22:25:37 $
 
 =head1 SYNOPSIS
 
@@ -188,7 +188,9 @@ Supported Keys:
 
 =over 4
 
-=item object
+=item object_class_id
+
+=item object_package
 
 =item grp
 
