@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.16.2.2 $
+$Revision: 1.16.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-24 19:36:58 $
+$Date: 2003-09-23 00:46:37 $
 
 =head1 SYNOPSIS
 
@@ -177,7 +177,7 @@ sub handler {
 #       $uri = "$uri?$args" if $args;
 #       set_redirect($uri);
         # Commented out the above and set the login to always redirect to "/".
-        # This is becaues the session might otherwise get screwed up. The
+        # This is because the session might otherwise get screwed up. The
         # del_redirect() function in Bric::App::Util depends on this
         # knowledge, so if we ever change this, we'll need to make sure we fix
         # that function, too.
