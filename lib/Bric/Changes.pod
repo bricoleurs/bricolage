@@ -148,6 +148,12 @@ spot. [David]
 
 The SOAP interface now properly logs events for its activities. [David]
 
+=item *
+
+Previewing a story while searching for a related story to link to an element
+no longer replaces the Bricolage UI with the preview, as was happening with
+some browsers. Instead, a separate preview window is opened. [David]
+
 =back
 
 =head1 VERSION 1.4.4

@@ -38,7 +38,7 @@ $widget
 my $field_values = sub {
     my ($o, $field) = @_;
     return unless $field eq 'title';
-    my $html = '<a href="/workflow/profile/preview/story/' . $o->get_id . '"' .
+    my $html = '<a href="/workflow/profile/preview/story/' . $o->get_id . '" ' .
       'class="blackUnderlinedLink" target="preview_' . SERVER_WINDOW_NAME . '">' .
 	$o->get_title . '</a>';
     return $html;
