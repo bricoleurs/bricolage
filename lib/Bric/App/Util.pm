@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-15 20:45:36 $
+$Date: 2003-09-18 20:03:36 $
 
 =head1 SYNOPSIS
 
@@ -40,7 +40,7 @@ use strict;
 #use CGI::Cookie;
 #use Bric::Config qw(:qa :cookies);
 use Bric::App::Session qw(:state);
-use Bric::Config qw(:cookies);
+use Bric::Config qw(:cookies :mod_perl);
 use Bric::Util::Class;
 use Bric::Util::Pref;
 use Apache;
@@ -603,14 +603,24 @@ B<Notes:> NONE.
 
 =cut
 
-sub status_msg { 
-    _send_msg(escape_html(Bric::Util::Language->instance->maketext(@_)));
+sub status_msg {
+    if (MOD_PERL) {
+        _send_msg(escape_html(Bric::Util::Language->instance->maketext(@_)));
+    } else {
+        print STDERR Bric::Util::Language->instance->maketext(@_);
+    }
  }
 
 sub severe_status_msg {
+    if (MOD_PERL) {
     _send_msg('<font color="red"><b>' .
               escape_html(Bric::Util::Language->instance->maketext(@_)) .
               "</b></font>");
+    } else {
+        print STDERR "##################################################\n\n";
+        print STDERR Bric::Util::Language->instance->maketext(@_);
+        print STDERR "##################################################\n\n";
+    }
 }
 
 sub _send_msg {
