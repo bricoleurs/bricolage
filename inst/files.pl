@@ -6,11 +6,11 @@ files.pl - installation script to create directories and copy files
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-06-11 17:54:02 $
+$Date: 2002-06-11 18:09:55 $
 
 =head1 DESCRIPTION
 
@@ -90,7 +90,8 @@ sub copy_files {
 
     # construct target by lopping off ^./foo/ and appending to $root
     my $targ;
-    ($targ = $_) =~ s!^\./\w+/!!;
+    ($targ = $_) =~ s!^\./\w+/?!!;
+    return unless length $targ;
     $targ = catdir($root, $targ);
 
     if (-d) {	

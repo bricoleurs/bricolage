@@ -41,6 +41,12 @@ Fixed bug in side navigation where an HTML table was opened but not closed.
 Fixed bug where installation system would chown all of the chosen
 TEMP_DIR to SYS_USER.  Thanks to Dave Rolsky for the report.  [Sam]
 
+=item *
+
+Fixed a bug in the installation system that was creating empty
+comp/comp and data/data directories BRICOLAGE_ROOT.  Thanks to Michael
+for the spot.  [Sam]
+
 =back
 
 =head1 VERSION 1.3.2
