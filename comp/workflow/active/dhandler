@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-12 03:25:54 $
+$Date: 2003-04-24 23:30:47 $
 
 =head1 SYNOPSIS
 
@@ -26,8 +26,25 @@ $Date: 2003-03-12 03:25:54 $
 
 <%init>
 my ($type, $work_id) = split('/', $m->dhandler_arg);
-my $fields   = [qw(id version priority name uri desk)];
-my $obj_type = $type eq 'templates' ? 'formatting' : $type;
+my ($fields, $obj_type, $previewer);
+if ($type eq 'templates') {
+    $fields = [qw(file_name version priority desk)];
+    $obj_type = 'formatting';
+} else {
+    $fields = [qw(title version priority desk)];
+    $obj_type = $type;
+    $previewer = sub {
+        my ($title, $obj) = @_;
+        my $id = $obj->get_id;
+        my $uid = $obj->get_user__id;
+        my $co = defined $uid && $uid == get_user_id;
+        return $title unless $co || $obj->get_version;
+        qq{<a href="/workflow/profile/preview/$type/$id?checkout=$co" } .
+          qq{class="blackMedUnderlinedLink" target="preview_} .
+          SERVER_WINDOW_NAME . qq{">$title</a>};
+    };
+}
+
 # Grab the workflow from the cache.
 my $wf = $c->get('__WORKFLOWS__');
 for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $work_id }
@@ -40,7 +57,6 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $work_id }
 &>
 
 <form method="post" action="<% $r->uri %>" name="theForm">
-
   <& '/widgets/listManager/listManager.mc',
      object       => $obj_type,
      title        => 'Active %n',
@@ -50,8 +66,10 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $work_id }
      addition     => undef,
      select       => $select->($type, $work_id),
      profile      => $profile->($type),
-     alter        => {'priority' => sub { $pri[$_[0]-1] }},
-     field_titles => {'desk' => 'Desk'},
+     alter        => {priority => sub { $pri[$_[0]-1] },
+                      title    => $previewer },
+     field_titles => { desk    => $lang->maketext('Desk'),
+                       version => $lang->maketext('V.'), },
      field_values => $values,
      constrain    => {'workflow__id' => $work_id},
   &>

@@ -47,6 +47,12 @@ to Eldar Kononov for the suggestion. [David]
 
 Added keyword support for media assets to SOAP interface. [David]
 
+=item *
+
+Neatened the "Find Stories," "Active Stories," "Find Media," and "Active
+Media" screens and added the ability to preview stories and media by clicking
+their titles. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -178,6 +184,16 @@ attributes. [David]
 
 Attempting to add more keywords to the root category no longer results in the
 error "Cannot change the directory of the root category." [David]
+
+=item *
+
+In lists of objects a cell with a value of "0" (zero) will now be displayed.
+[David]
+
+=item *
+
+In "Find Templates," the list of templates in the search results will now be
+sorted by the file name, instead of not at all. [David]
 
 =back
 

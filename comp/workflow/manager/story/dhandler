@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13.2.1 $
+$Revision: 1.13.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-21 01:52:37 $
+$Date: 2003-04-24 23:30:48 $
 
 =head1 SYNOPSIS
 
@@ -68,8 +68,18 @@ my $exclude = sub { ! chk_authz($_[0], READ, 1) };
 
 my $alter = { publish_status => sub {
                   my ($val, $obj) = @_;
-                  return unless $val;
+                  return unless defined $val;
                   $m->comp('/widgets/desk/publish_status.mc', asset => $obj);
+              },
+              title => sub {
+                  my ($title, $obj) = @_;
+                  my $id = $obj->get_id;
+                  my $uid = $obj->get_user__id;
+                  my $co = defined $uid && $uid == get_user_id;
+                  return $title unless $co || $obj->get_version;
+                  qq{<a href="/workflow/profile/preview/story/$id?checkout=$co" } .
+                    qq{class="blackMedUnderlinedLink" target="preview_} .
+                    SERVER_WINDOW_NAME . qq{">$title</a>};
               }
             };
 </%once>
@@ -95,7 +105,7 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
 <& '/widgets/listManager/listManager.mc',
 	object    => $object,
 	sortBy    => 'title',
-        fields    => [ qw(id title cover_date publish_status) ],
+        fields    => [ qw(title version cover_date publish_status) ],
         alter     => $alter,
         exclude   => $exclude,
 	profile   => $profile,
@@ -103,6 +113,7 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
         addition  => $addition,
 	select    => $select,
         behavior  => 'expand',
+     field_titles => { version => $lang->maketext('V.'), },
 &>
 <p></p>
 <input type="image" src="/media/images/<% $lang_key %>/checkout_red.gif" border=0 name="Checkout" value="Checkout">
