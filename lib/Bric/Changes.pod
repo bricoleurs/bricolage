@@ -124,6 +124,11 @@ Added C<get_element()> method to Bric::Biz::Asset::Business and deprecated the
 C<get_tile()> method. This will make things a bit more consistent for template
 developers, at least. [David]
 
+=item *
+
+Added C<primary_category_id> parameter to the story class' C<list()>
+method. [David]
+
 =back
 
 =head2 Bug Fixes
