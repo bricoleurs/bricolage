@@ -139,6 +139,11 @@ provided to users who had EDIT access to a the assets on a desk. Permissions
 are now properly checked and the button displayed for those who can publish
 from a desk. [David]
 
+=item *
+
+Added missing debugging statement to Bric::Util::DBI. Thanks to Mark for the
+spot. [David]
+
 =back
 
 =head1 VERSION 1.4.4
