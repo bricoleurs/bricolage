@@ -208,9 +208,11 @@ sub publish : Callback {
                     # push onto the appropriate list
                     if ($rkey eq 'story') {
                         push @rel_story, $r->get_id;
+                        push @sids, $rid if $pub_ids->{$id};
                         push(@stories, $r); # recurse through related stories
                     } else {
                         push @rel_media, $r->get_id;
+                        push @mids, $rid if $pub_ids->{$id};
                     }
                 }
             }
@@ -218,8 +220,8 @@ sub publish : Callback {
     }
 
     # Make sure we have the IDs for any assets passed in explicitly.
-    push @$story, keys %$story_pub;
-    push @$media, keys %$media_pub;
+#    push @$story, keys %$story_pub;
+#    push @$media, keys %$media_pub;
 
     # For publishing from a desk, I added two new 'publish'
     # state data: 'rel_story', 'rel_media'. This is to be

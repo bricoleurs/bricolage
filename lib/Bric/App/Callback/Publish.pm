@@ -96,12 +96,6 @@ sub select_publish : Callback(priority => 1) {  # run this before 'publish'
     my $values = mk_aref($self->value);
 
     my (@story, @media);
-    if (my $d = get_state_data($self->class_key)) {
-        # Push on the original assets
-        my ($story_pub_ids, $media_pub_ids) = @{$d}{qw(story media)};
-        push @story, @$story_pub_ids;
-        push @media, @$media_pub_ids;
-    }
     foreach my $val (@$values) {
         # Push on the related assets that were checked
         if ($val =~ s/^story=(\d+)$//) {
@@ -129,6 +123,7 @@ sub publish : Callback {
     } elsif (! defined $story_id && ! defined $media_id ) {
         return;
     }
+
 
     my $stories = mk_aref($story_pub_ids);
     my $media = mk_aref($media_pub_ids);
