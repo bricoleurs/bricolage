@@ -13,9 +13,9 @@
       <dt><% $lang->maketext('Site') %></dt>
       <dd<% $classes->{site_id} || '' %>><% $site %></dd>
       <dt><% $lang->maketext(($class eq 'formatting' ? 'Asset' : $disp ) . ' Type') %></dt>
-      <dd<% $classes->{element} || '' %>><% $type %></dd>
+      <dd<% $classes->{element} || '' %>><% $type || '&nbsp;' %></dd>
       <dt><% $lang->maketext($date_label) %></dt>
-      <dd<% $classes->{cover_date} || '' %>><% $date %></dd>
+      <dd<% $classes->{cover_date} || '' %>><% $date || '&nbsp;' %></dd>
       <dt><% $lang->maketext('Priority') %></dt>
       <dd<% $classes->{priority} || '' %>><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
     </dl>
@@ -163,11 +163,11 @@ my $elink = $user ? $user : $label ? '<a href="' . $r->uri . "?"
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =head1 DATE
 
-$Date: 2003-09-29 18:41:47 $
+$Date: 2003-10-03 02:37:13 $
 
 =head1 DESCRIPTION
 
