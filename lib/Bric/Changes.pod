@@ -159,6 +159,10 @@ references in subject or message variable substitution.
 $trig_password was removed from the Profile as it caused
 an error and was useless anyway. [Scott]
 
+=item *
+
+Fixed Template Element list, where container elements appeared twice. [Joao Pedro]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
