@@ -62,6 +62,12 @@ name. This is consistent with the display of the category elsewhere. [David]
 Elements to which no subelements can be added will no longer display an empty
 select list and "Add Element" button. [Geoff Richards]
 
+=item *
+
+C<< Bric::Biz::Asset::Business::Story->get_secondary_categories()> will no
+longer return categories deleted from the story. Thanks to Scott for the
+spot. [David]
+
 =back
 
 =head2 Bug Fixes
