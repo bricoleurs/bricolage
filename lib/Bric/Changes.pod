@@ -176,6 +176,11 @@ Created a stored proceedure to eliminate costly repeat queries on the same
 data when building a tree structure for the category URI's.  Note that this
 proceedure will have to be installed in everybody's db. [Mark]
 
+=item *
+
+Made the parent category field in the Category Profile a required field.
+[Mark]
+
 =back
 
 =head2 New Features
