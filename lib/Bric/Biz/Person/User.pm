@@ -1331,7 +1331,7 @@ B<Notes:> See also Bric::Biz::Person save() method documentation.
 
 sub save {
     my $self = shift;
-    return unless $self->_get__dirty;
+    return $self->SUPER::save unless $self->_get__dirty;
     my ($id, $act, $done) = $self->_get(qw(id _active _inserted));
 
     if ($done) {

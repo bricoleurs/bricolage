@@ -49,6 +49,11 @@ specifies for burning a story. This removes the ambiguity between a directory
 request and a file request, which in rare circumstances could cause unexpected
 problems. [David]
 
+=item *
+
+Changes made to user or contributor contacts without changing any other part
+of the user or contributor oject are now properly saved. [David]
+
 =back
 
 =cut
