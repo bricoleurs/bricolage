@@ -151,6 +151,11 @@ Filter by site context now works. [Joao Pedro]
 Alert Type rule regexp matching (=~, !~) now handles patterns
 containing slashes (important for URIs, for example). [Scott]
 
+=item *
+
+Alert Type attributes no longer show up as stringified hash
+references in subject or message variable substitution. [Scott]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
