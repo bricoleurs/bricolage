@@ -293,6 +293,10 @@ slugless non-fixed (non-Cover) stories. [Scott]
 Added support for installing and upgrading Bricolage with PostgreSQL on a
 separate host. [Thorston Biel]
 
+=item *
+
+Wrote context-sensitive help for pages that were missing it. [Scott]
+
 =back
 
 =head1 VERSION 1.6.7 (Forthcoming)

@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.122 $
+$Revision: 1.123 $
 
 =head1 DATE
 
-$Date: 2003-10-10 19:21:16 $
+$Date: 2003-10-16 14:30:47 $
 
 =head1 DESCRIPTION
 
@@ -73,10 +73,6 @@ be that the person being added is already in the system as a contributor, so the
 new user object can be based on the person object underlying the contributor
 object. Similarly, when adding a new contributor, the person being added could
 have an existing person record as an existing contributor or user.
-
-=item *
-
-Write context-sensitive help for those pages that are still missing it.
 
 =item *
 
