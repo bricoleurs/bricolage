@@ -9,7 +9,21 @@ use Bric::Util::Pref;
 use Bric::Util::Time qw(:all);
 use POSIX ();
 
-my $epoch = 315561600; # gmtime = 315532800;
+my ($USE_CORE, $epoch);
+BEGIN {
+    # Override the time function. Generally use CORE::time, but when $USE_CORE
+    # is set to a false value, always return the value of $epoch. This is to
+    # prevent those tests that test for the time *right now* from getting
+    # screwed up by the clock turning over.
+    $USE_CORE = 1;
+    $epoch = 315561600;
+    *CORE::GLOBAL::time = sub { $USE_CORE ? CORE::time : $epoch };
+}
+
+
+##############################################################################
+# Set up needed variables.
+##############################################################################
 my $format = '%m/%d/%Y at %T';
 my $pref_format = Bric::Util::Pref->lookup_val('Date/Time Format');
 
@@ -27,6 +41,15 @@ my ($local_date, $local_iso_date, $fmt_local);
     $fmt_local = POSIX::strftime($format, localtime($epoch));
 }
 
+##############################################################################
+# Setup and teardown methods.
+##############################################################################
+# Don't use the core time for any of these tests.
+sub hijack_time : Test(setup => 0) { $USE_CORE = 0 }
+sub restore_time : Test(teardown => 0) { $USE_CORE = 1 }
+
+##############################################################################
+# Test the exported functions.
 ##############################################################################
 # Test strfdate().
 sub test_strfdate : Test(4) {
@@ -57,7 +80,7 @@ sub test_local_date : Test(5) {
         $current = POSIX::strftime(ISO_8601_FORMAT, localtime);
 
     }
-    # Hope that the clock hasn't click over during this test.
+    # Check the local date with a known format argument.
     is( local_date(undef, ISO_8601_FORMAT, 1), $current,
         "Check local date is current" );
 
@@ -66,7 +89,7 @@ sub test_local_date : Test(5) {
         local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
         $current = POSIX::strftime($pref_format, localtime);
     }
-    # Hope that the clock hasn't click over during this test.
+    # Check the local date in the preferred format.
     is( local_date(undef, undef, 1), $current,
         "Check local date is current" );
 }
