@@ -18,7 +18,8 @@ bric_publish [options]
                this option bric_republish is silent when successful.
 
   --server   - specifies the Bricolage server URL, defaults to
-               http://localhost
+               the BRICOLAGE_SERVER environment variable if set, 
+               http://localhost otherwise.
 
   --username - the Bricolage username, defaults to the BRICOLAGE_USERNAME
                environment variable if set.
@@ -99,7 +100,7 @@ BEGIN {
     # detected as quick as possible - people are waiting out there!
     our $username        = $ENV{BRICOLAGE_USERNAME};
     our $password        = $ENV{BRICOLAGE_PASSWORD};
-    our $server          = "http://localhost";
+    our $server          = $ENV{BRICOLAGE_SERVER} || 'http://localhost';
     our $VERBOSE         = 0;
     our $no_media        = 0;
     our $timeout         = 30;

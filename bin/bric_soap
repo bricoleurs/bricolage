@@ -41,8 +41,9 @@ Options:
 
   --man                  - shows the full documentation
 
-  --server               - specifies the Bricolage server URL, defaults
-                           to http://localhost
+  --server               - specifies the Bricolage server URL, defaults to
+                           the BRICOLAGE_SERVER environment variable if set, 
+                           http://localhost otherwise.
 
   --username             - the Bricolage username, defaults to the
                            BRICOLAGE_USERNAME environment variable if
@@ -173,7 +174,7 @@ BEGIN {
     our $timeout              = 30;
     our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
     our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
-    our $server                 = 'http://localhost';
+    our $server                 = $ENV{BRICOLAGE_SERVER} || 'http://localhost';
     our $verbose;
     our $desk;
     our $workflow;
