@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.15.4.2 $
+$Revision: 1.15.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.15.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-29 06:03:51 $
+$Date: 2003-03-31 17:15:57 $
 
 =head1 SYNOPSIS
 
@@ -547,9 +547,9 @@ sub my_meths {
                                               'length'     => 64,
                                               'max_length' => 256,}
                              },
-            'sort_name'   => { 'sort_name'     => 'name',
+            'sort_name'   => { 'name'     => 'sort_name',
                                'get_meth' => sub {shift->get_sort_name(@_)},
-                               'get_args' => [], 
+                               'get_args' => [],
                                'set_meth' => sub {shift->set_sort_name(@_)},
                                'set_args' => [],
                                'disp'     => 'Sort order name',
@@ -561,7 +561,8 @@ sub my_meths {
                                               'max_length' => 256,}
                              },
           };
-        $METHS->{keyword} = $METHS->{name};
+        $METHS->{keyword} = { %{ $METHS->{name} } };
+        $METHS->{keyword}->{name} = 'keyword';
     }
 
     if ($ord) {
