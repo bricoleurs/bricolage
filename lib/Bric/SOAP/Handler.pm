@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 11:49:32 $
+$Date: 2004-03-19 10:41:49 $
 
 =head1 SYNOPSIS
 
@@ -75,7 +75,6 @@ L<Bric::SOAP|Bric::SOAP>
 use strict;
 use warnings;
 
-#use constant DEBUG => 1;
 use constant DEBUG => 0;
 
 # turn on tracing when debugging
@@ -203,7 +202,6 @@ sub handle_err {
     my ($code, $string, $err, $actor) = @_;
 
     # Prevent the commit in handler().
-    # XXX: should this be prevented? It isn't in Bric::App::Handler
     $commit = 0;
 
     # Create an exception object unless we already have one.
