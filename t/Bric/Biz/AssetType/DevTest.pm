@@ -6,11 +6,12 @@ use Test::More;
 use Bric::Biz::AssetType;
 use Bric::Biz::OutputChannel;
 
-my %elem = ( name => 'Test Element',
-             description => 'Testing Element API',
-             burner => Bric::Biz::AssetType::BURNER_MASON,
-             type__id => 1,
-             reference => 0,
+my %elem = ( name          => 'Test Element',
+             key_name      => 'test_element',
+             description   => 'Testing Element API',
+             burner        => Bric::Biz::AssetType::BURNER_MASON,
+             type__id      => 1,
+             reference     => 0,
              primary_oc_id => 1);
 
 my $story_elem_id = 1;
@@ -43,7 +44,8 @@ sub test_list : Test(36) {
     for my $n (1..5) {
         my %args = %elem;
         # Make sure the name is unique.
-        $args{name} .= $n;
+        $args{name}        .= $n;
+        $args{key_name}    .= $n;
         $args{description} .= $n if $n % 2;
         ok( my $elem = Bric::Biz::AssetType->new(\%args), "Create $args{name}" );
         ok( $elem->save, "Save $args{name}" );

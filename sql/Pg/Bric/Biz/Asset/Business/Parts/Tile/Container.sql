@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.2.1 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-05 18:48:11 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -27,9 +27,10 @@ CREATE SEQUENCE seq_media_container_tile START  1024;
 CREATE TABLE story_container_tile (
     id                   NUMERIC(10,0)   NOT NULL
                                          DEFAULT NEXTVAL('seq_container_tile'),
-    name                 VARCHAR(64),
+    name                 VARCHAR(64)     NOT NULL,
+    key_name             VARCHAR(64)     NOT NULL,
     description          VARCHAR(256),
-    element__id       NUMERIC(10,0)   NOT NULL,
+    element__id          NUMERIC(10,0)   NOT NULL,
     object_instance_id   NUMERIC(10,0)   NOT NULL,
     parent_id            NUMERIC(10,0),
     place                NUMERIC(10,0)   NOT NULL,
@@ -40,6 +41,7 @@ CREATE TABLE story_container_tile (
                                          DEFAULT 1
                                          CONSTRAINT ck_sc_tile__active
                                            CHECK (active IN (0,1)),
+
     CONSTRAINT pk_container_tile__id PRIMARY KEY (id)
 );
 
@@ -52,15 +54,17 @@ CREATE TABLE story_container_tile (
 --
 
 CREATE TABLE media_container_tile (
-    id                  NUMERIC(10,0)   NOT NULL
-                                        DEFAULT NEXTVAL('seq_media_container_tile'),
-    name                	VARCHAR(64),
-    description         	VARCHAR(256),
-    element__id      	NUMERIC(10,0)   NOT NULL,
-    object_instance_id  	NUMERIC(10,0)   NOT NULL,
-    parent_id           	NUMERIC(10,0),
-    place               	NUMERIC(10,0)   NOT NULL,
-    object_order        	NUMERIC(10,0)   NOT NULL,
+    id                          NUMERIC(10,0)   NOT NULL
+                                                DEFAULT NEXTVAL('seq_media_container_tile'),
+    name                        VARCHAR(64)     NOT NULL,
+    key_name                    VARCHAR(64)     NOT NULL,
+    description                 VARCHAR(256),
+    element__id      	        NUMERIC(10,0)   NOT NULL,
+    object_instance_id          NUMERIC(10,0)   NOT NULL,
+    parent_id                   NUMERIC(10,0),
+    place                       NUMERIC(10,0)   NOT NULL,
+    object_order                NUMERIC(10,0)   NOT NULL,
+
     -- Hack. These two columns never hold values, but keep this table in sync
     -- with story_container_tile, since they share the same code base.
     related_instance__id        NUMERIC(10,0), 
@@ -69,6 +73,7 @@ CREATE TABLE media_container_tile (
                                                 DEFAULT 1
                                                 CONSTRAINT ck_mc_tile__active
                                                   CHECK (active IN (0,1)),
+
     CONSTRAINT pk_media_container_tile__id PRIMARY KEY (id)
 );
 
@@ -76,13 +81,13 @@ CREATE TABLE media_container_tile (
 --
 -- INDEXES.
 --
-CREATE INDEX idx_sc_tile__name ON story_container_tile(LOWER(name));
+CREATE INDEX idx_sc_tile__key_name ON story_container_tile(LOWER(key_name));
 CREATE INDEX fkx_sc_tile__sc_tile ON story_container_tile(parent_id);
 CREATE INDEX fkx_story__sc_tile ON story_container_tile(object_instance_id);
 CREATE INDEX fkx_sc_tile__related_story ON story_container_tile(related_instance__id);
 CREATE INDEX fkx_sc_tile__related_media ON story_container_tile(related_media__id);
 
-CREATE INDEX idx_mc_tile__name ON media_container_tile(LOWER(name));
+CREATE INDEX idx_mc_tile__key_name ON media_container_tile(LOWER(key_name));
 CREATE INDEX fkx_mc_tile__mc_tile ON media_container_tile(parent_id);
 CREATE INDEX fkx_media__mc_tile ON media_container_tile(object_instance_id);
 -- These indexes aren't needed unless we decide to relate media to stories at

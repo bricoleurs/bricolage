@@ -8,15 +8,15 @@ Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.9.2.1 $
+$Revision: 1.9.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-03 01:16:44 $
+$Date: 2003-03-05 18:48:05 $
 
 =head1 SYNOPSIS
 
@@ -85,9 +85,17 @@ my ($METHS, @ORD);
 # Instance Fields
 
 BEGIN {
-        Bric::register_fields({
+    Bric::register_fields(
+               {
                 # Public Fields
+
+                # A name for this tile that can be displayed
                 'name'                          => Bric::FIELD_RDWR,
+
+                # A unique name for this tile to be used internal
+                'key_name'                      => Bric::FIELD_RDWR,
+
+                # A short description of this tile
                 'description'                   => Bric::FIELD_RDWR,
 
                 # the parent id of this tile
@@ -382,6 +390,22 @@ sub my_meths {
                                                maxlength => 256
                                              }
                                },
+
+                key_name    => { name     => 'key_name',
+                                 get_meth => sub { shift->get_name(@_) },
+                                 get_args => [],
+                                 set_meth => sub { shift->set_name(@_) },
+                                 set_args => [],
+                                 disp     => 'Key Name',
+                                 type     => 'short',
+                                 len      => 256,
+                                 req      => 1,
+                                 props    => { type      => 'text',
+                                               length    => 32,
+                                               maxlength => 256
+                                             }
+                               },
+
                 description => { name     => 'description',
                                  get_meth => sub { shift->get_description(@_) },
                                  get_args => [],
@@ -443,15 +467,12 @@ Test to see whether this tile has a name matching the argument $name.  Returns
 1 if the name is a match and 0 otherwise.
 
 B<Throws:>
-
 NONE
 
 B<Side Effects:>
-
 NONE
 
 B<Notes:>
-
 NONE
 
 =cut
@@ -459,9 +480,36 @@ NONE
 sub has_name {
     my $self = shift;
     my ($test_name) = @_;
-    my $name = $self->get_name;
+    my $name = $self->get_key_name;
 
-    return $name eq $test_name;
+    $test_name =~ y/a-z/_/cs;
+
+    return $name eq lc($test_name);
+}
+
+################################################################################
+
+=item (1 || 0) = $tile->has_key_name($key_name);
+
+Test to see whether this tile has a key name matching the argument $key_name.
+Returns 1 if the name is a match and 0 otherwise.
+
+B<Throws:>
+NONE
+
+B<Side Effects:>
+NONE
+
+B<Notes:>
+NONE
+
+=cut
+
+sub has_key_name {
+    my $self = shift;
+    my ($test_name) = @_;
+
+    return $self->get_key_name eq $test_name;
 }
 
 ################################################################################

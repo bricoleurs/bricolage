@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.36.2.1 $
+$Revision: 1.36.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.36.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-03 01:14:23 $
+$Date: 2003-03-05 18:48:04 $
 
 =head1 SYNOPSIS
 
@@ -1244,7 +1244,7 @@ sub get_element_name {
     my $self = shift;
     my $at_obj = $self->_get_element_object;
     return unless $at_obj;
-    return $at_obj->get_name;
+    return $at_obj->get_key_name;
 }
 
 ################################################################################
@@ -1408,11 +1408,11 @@ NONE
 =cut
 
 sub get_category_name {
-        my ($self) = @_;
+    my ($self) = @_;
 
-        my $cat = $self->_get_category_object || return;
+    my $cat = $self->_get_category_object || return;
 
-        return $cat->get_name;
+    return $cat->get_name;
 }
 
 ################################################################################

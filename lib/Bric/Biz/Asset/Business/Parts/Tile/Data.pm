@@ -8,15 +8,15 @@ the business data.
 
 =head1 VERSION
 
-$Revision: 1.12.2.1 $
+$Revision: 1.12.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-03 03:03:18 $
+$Date: 2003-03-05 18:48:08 $
 
 =head1 SYNOPSIS
 
@@ -77,6 +77,7 @@ use constant S_TABLE => 'story_data_tile';
 use constant M_TABLE => 'media_data_tile';
 
 use constant COLS   => qw(name
+                          key_name
                           description
                           element_data__id
                           object_instance_id
@@ -90,6 +91,7 @@ use constant COLS   => qw(name
                           active);
 
 use constant FIELDS => qw(name
+                          key_name
                           description
                           element_data_id
                           object_instance_id
@@ -119,33 +121,38 @@ use constant FIELDS => qw(name
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-        Bric::register_fields({
-                             # Public Fields
+    Bric::register_fields(
+          {
+           # Public Fields
 
-                             # association with formatting asset is inheriated
-                             # as will be the association with an asset
-                             name               => Bric::FIELD_RDWR,
-                             description        => Bric::FIELD_RDWR,
-                             # reference to the asset type data object
-                             element_data_id => Bric::FIELD_RDWR,
-                             object_instance_id => Bric::FIELD_RDWR,
-                             parent_id          => Bric::FIELD_RDWR,
-                             # This item's place in the list of tiles
-                             place              => Bric::FIELD_RDWR,
-                             # This item's sequence among items of the same name
-                             object_order       => Bric::FIELD_RDWR,
-                             object_type        => Bric::FIELD_READ,
+           # association with formatting asset is inheriated
+           # as will be the association with an asset
+           name               => Bric::FIELD_RDWR,
+           key_name           => Bric::FIELD_RDWR,
+           description        => Bric::FIELD_RDWR,
 
-                             # Private Fields
-                                _hold_val                       => Bric::FIELD_NONE,
-                             _active            => Bric::FIELD_NONE,
-                             _date_val          => Bric::FIELD_NONE,
-                             _short_val         => Bric::FIELD_NONE,
-                             _blob_val          => Bric::FIELD_NONE,
-                             _element_obj    => Bric::FIELD_NONE,
-                             _sql_type          => Bric::FIELD_NONE,
-                            });
-    }
+           # reference to the asset type data object
+           element_data_id    => Bric::FIELD_RDWR,
+           object_instance_id => Bric::FIELD_RDWR,
+           parent_id          => Bric::FIELD_RDWR,
+
+           # This item's place in the list of tiles
+           place              => Bric::FIELD_RDWR,
+
+           # This item's sequence among items of the same name
+           object_order       => Bric::FIELD_RDWR,
+           object_type        => Bric::FIELD_READ,
+
+           # Private Fields
+           _hold_val          => Bric::FIELD_NONE,
+           _active            => Bric::FIELD_NONE,
+           _date_val          => Bric::FIELD_NONE,
+           _short_val         => Bric::FIELD_NONE,
+           _blob_val          => Bric::FIELD_NONE,
+           _element_obj       => Bric::FIELD_NONE,
+           _sql_type          => Bric::FIELD_NONE,
+          });
+}
 
 #==============================================================================#
 # Interface Methods                    #
@@ -229,7 +236,8 @@ sub new {
         my $atd = delete $init->{'element_data'};
 
         $init->{'element_data_id'} = $atd->get_id();
-        $init->{'name'}            = $atd->get_key_name();
+        $init->{'name'}            = $atd->get_meta('html_info', 'disp');
+        $init->{'key_name'}        = $atd->get_key_name();
         $init->{'description'}     = $atd->get_description();
         $init->{'_element_obj'}    = $atd;
     }
@@ -479,9 +487,8 @@ NONE
 
 sub get_element_name {
     my ($self) = @_;
-    my $at = $self->_get_element_object();
-    my $name = $at->get_name();
-    return $name;
+
+    return $self->get_name;
 }
 
 ################################################################################

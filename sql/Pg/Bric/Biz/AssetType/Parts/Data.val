@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1.2.1 $
+-- VERSION: $Revision: 1.1.2.2 $
 --
--- $Date: 2003-03-03 03:06:10 $
+-- $Date: 2003-03-05 18:48:12 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -11,7 +11,7 @@
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (1, 10, 'Paragraph', 'A Paragraph of text.', 1, 0, '1', 1, 1, 0, 'blob');
+VALUES (1, 10, 'paragraph', 'A Paragraph of text.', 1, 0, '1', 1, 1, 0, 'blob');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (1, 'id_1', 'html_info', 'short', 1);
@@ -97,7 +97,7 @@ VALUES (20, 2, 'type', 'text', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (3, 10, 'Next', 'Describes next page.', 3, 0, '0', 1, 1, 256, 'short');
+VALUES (3, 10, 'next', 'Describes next page.', 3, 0, '0', 1, 1, 256, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (3, 'id_3', 'html_info', 'short', 1);
@@ -140,7 +140,7 @@ VALUES (30, 3, 'type', 'text', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (4, 7, 'Quote', 'The pull quote quotation.', 1, 1, '0', 1, 1, 1024, 'short');
+VALUES (4, 7, 'quote', 'The pull quote quotation.', 1, 1, '0', 1, 1, 1024, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (4, 'id_4', 'html_info', 'short', 1);
@@ -183,7 +183,7 @@ VALUES (40, 4, 'type', 'textarea', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (5, 6, 'Copy', 'The inset copy text.', 1, 1, '0', 1, 1, 1024, 'short');
+VALUES (5, 6, 'copy', 'The inset copy text.', 1, 1, '0', 1, 1, 1024, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (5, 'id_5', 'html_info', 'short', 1);
@@ -226,7 +226,7 @@ VALUES (50, 5, 'type', 'textarea', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (6, 9, 'Alternate Title', 'Alternate title to the story''s own', 1, 0, '0', 1, 1, 256, 'short');
+VALUES (6, 9, 'alternate_title', 'Alternate title to the story''s own', 1, 0, '0', 1, 1, 256, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (6, 'id_6', 'html_info', 'short', 1);
@@ -270,7 +270,7 @@ VALUES (60, 6, 'type', 'text', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (7, 9, 'Alternate Teaser', 'Alternate teaser to the story''s own', 2, 0, '0', 1, 1, 512, 'short');
+VALUES (7, 9, 'alternate_teaser', 'Alternate teaser to the story''s own', 2, 0, '0', 1, 1, 512, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (7, 'id_7', 'html_info', 'short', 1);
@@ -313,7 +313,7 @@ VALUES (70, 7, 'type', 'textarea', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (8, 11, 'Title', 'The book''s title.', 1, 1, '0', 1, 1, 256, 'short');
+VALUES (8, 11, 'title', 'The book''s title.', 1, 1, '0', 1, 1, 256, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (8, 'id_8', 'html_info', 'short', 1);
@@ -356,7 +356,7 @@ VALUES (80, 8, 'type', 'text', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (9, 11, 'Author', 'The author''s name.', 2, 1, '0', 1, 1, 256, 'short');
+VALUES (9, 11, 'author', 'The author''s name.', 2, 1, '0', 1, 1, 256, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (9, 'id_9', 'html_info', 'short', 1);
@@ -399,7 +399,7 @@ VALUES (90, 9, 'type', 'text', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (10, 11, 'Publisher', 'The book''s publisher.', 3, 1, '0', 1, 1, 256, 'short');
+VALUES (10, 11, 'publisher', 'The book''s publisher.', 3, 1, '0', 1, 1, 256, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (10, 'id_10', 'html_info', 'short', 1);
@@ -441,7 +441,7 @@ VALUES (100, 10, 'type', 'text', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (11, 11, 'Date', 'The date of publication.', 4, 1, '0', 1, 1, 0, 'date');
+VALUES (11, 11, 'date', 'The date of publication.', 4, 1, '0', 1, 1, 0, 'date');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (11, 'id_11', 'html_info', 'short', 1);
@@ -484,7 +484,7 @@ VALUES (110, 11, 'type', 'date', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (12, 1, 'Deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
+VALUES (12, 1, 'deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (12, 'id_12', 'html_info', 'short', 1);
@@ -527,7 +527,7 @@ VALUES (120, 12, 'type', 'textarea', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (13, 2, 'Deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
+VALUES (13, 2, 'deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (13, 'id_13', 'html_info', 'short', 1);
@@ -570,7 +570,7 @@ VALUES (130, 13, 'type', 'textarea', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (14, 3, 'Deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
+VALUES (14, 3, 'deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (14, 'id_14', 'html_info', 'short', 1);

@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.11.2.2 $
+$Revision: 1.11.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.3 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-03-03 03:04:28 $
+$Date: 2003-03-05 18:48:09 $
 
 
 =head1 SYNOPSIS
@@ -688,7 +688,8 @@ NONE
 =cut
 
 sub get_name {
-    my $msg = "WARNING: Something called the depreciated method 'get_name'";
+    my ($pkg,$file,$line) = caller;
+    my $msg = "WARNING: [$file:$line] called the depreciated method 'get_name'";
     die Bric::Util::Fault::Exception::GEN->new({msg => $msg});
 }
 

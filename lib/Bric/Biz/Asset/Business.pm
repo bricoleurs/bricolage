@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.31.2.1 $
+$Revision: 1.31.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.31.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-03 03:03:02 $
+$Date: 2003-03-05 18:48:03 $
 
 =head1 SYNOPSIS
 
@@ -1175,7 +1175,7 @@ sub get_element_name {
 
     my $tile = $self->get_tile();
 
-    my $name = $tile->get_name();
+    my $name = $tile->get_key_name();
 
     return $name;
 }

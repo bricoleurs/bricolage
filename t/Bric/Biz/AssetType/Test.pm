@@ -54,12 +54,12 @@ sub test_my_meths : Test(11) {
     (is $meths->[0]->{name}, 'name', "Check first meth name" );
 
     # Try the identifier methods.
-    ok( my $elem = Bric::Biz::AssetType->new({ name => 'NewAT' }),
+    ok( my $elem = Bric::Biz::AssetType->new({ key_name => 'new_at' }),
         "Create Element" );
     ok( my @meths = $elem->my_meths(0, 1), "Get ident meths" );
     is( scalar @meths, 1, "Check for 1 meth" );
-    is( $meths[0]->{name}, 'name', "Check for 'name' meth" );
-    is( $meths[0]->{get_meth}->($elem), 'NewAT', "Check name 'NewAT'" );
+    is( $meths[0]->{name}, 'key_name', "Check for 'key_name' meth" );
+    is( $meths[0]->{get_meth}->($elem), 'new_at', "Check name 'new_at'" );
 }
 
 1;

@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.33.2.1 $
+$Revision: 1.33.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.33.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-03 01:13:00 $
+$Date: 2003-03-05 18:48:02 $
 
 =head1 SYNOPSIS
 
@@ -2192,7 +2192,7 @@ sub _do_list {
         $tables .= ', at_data d';
 	push @wheres, 'd.element__id = a.id';
 	if (exists $params->{data_name}) {
-	    push @wheres, 'LOWER(d.name) LIKE ?';
+	    push @wheres, 'LOWER(d.key_name) LIKE ?';
 	    push @params, lc delete $params->{data_name};
 	}
 	if (exists $params->{map_type__id}) {

@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.18.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.1 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:03 $
+$Date: 2003-03-05 18:48:06 $
 
 =head1 SYNOPSIS
 
@@ -58,6 +58,7 @@ use strict;
 use Bric::Util::DBI qw(:all);
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::AssetType;
+use Bric::App::Util;
 
 #==============================================================================#
 # Inheritance                          #
@@ -83,6 +84,7 @@ use constant S_TABLE => 'story_container_tile';
 use constant M_TABLE => 'media_container_tile';
 
 use constant COLS => qw(name
+                        key_name
                         description
                         element__id
                         object_instance_id
@@ -93,15 +95,16 @@ use constant COLS => qw(name
                         related_media__id
                         active);
 use constant FIELDS => qw(name
-                        description 
-                        element_id
-                        object_instance_id
-                        parent_id
-                        place
-                        object_order
-                        related_instance_id
-                        related_media_id
-                        _active);
+                          key_name
+                          description
+                          element_id
+                          object_instance_id
+                          parent_id
+                          place
+                          object_order
+                          related_instance_id
+                          related_media_id
+                          _active);
 
 #==============================================================================#
 # Fields                               #
@@ -124,7 +127,7 @@ BEGIN {
                         # Public Fields
 
                         # reference to the asset type data object
-                        element_id          => Bric::FIELD_RDWR,
+                        element_id             => Bric::FIELD_RDWR,
                         object_order           => Bric::FIELD_RDWR,
                         object_instance_id     => Bric::FIELD_RDWR,
                         related_instance_id    => Bric::FIELD_RDWR,
@@ -214,8 +217,7 @@ sub new {
     my ($self, $init) = @_;
 
     # check active and object
-    $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
-    delete $init->{'active'};
+    $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;    delete $init->{'active'};
     $init->{'place'}  ||= 0;
     $init->{'object_order'} ||=1;
     $self = bless {}, $self unless ref $self;
@@ -244,7 +246,8 @@ sub new {
           'id' => $init->{'element_id'} });
     }
 
-    $init->{'name'} = $init->{'_element_obj'}->get_name();
+    $init->{'name'}        = $init->{'_element_obj'}->get_name();
+    $init->{'key_name'}    = $init->{'_element_obj'}->get_key_name();
     $init->{'description'} = $init->{'_element_obj'}->get_description();
     $self->SUPER::new($init);
 
@@ -281,7 +284,7 @@ Missing required Parameter 'id'.
 
 =item *
 
-Missing required Parameter 'object_type' or 'object'".
+Missing required Parameter 'object_type' or 'object'.
 
 =item *
 
@@ -313,16 +316,16 @@ sub lookup {
 
     if ($param->{'obj'}) {
         # get the package to determine the object field
-        my $obj_class = ref $param->{'object'};
+        my $obj_class = ref $param->{'obj'};
 
         if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
             # set object type to story and add the object
             $self->_set( { object_type => 'story',
-                           _object     => $param->{'object'} });
+                           _object     => $param->{'obj'} });
 
         } elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
             $self->_set( { object_type => 'media',
-                           _object     => $param->{'object'} });
+                           _object     => $param->{'obj'} });
         } else {
             die Bric::Util::Fault::Exception::GEN->new
               ({ msg => 'Improper type of object passed to lookup' });
@@ -370,6 +373,10 @@ Find containers of a particular AssetType.
 =item name
 
 The name of the AssetType for the container
+
+=item key_name
+
+The key_name of the AssetType for the container
 
 =item parent_id
 
@@ -603,7 +610,7 @@ sub get_related_media {
 
 ################################################################################
 
-=item $name = $container->get_element()
+=item $obj = $container->get_element()
 
 Returns the element object
 
@@ -648,8 +655,8 @@ NONE
 
 sub get_element_name {
     my ($self) = @_;
-    my $at = $self->_get_element_obj();
-    return $at->get_name;
+
+    return $self->get_name;
 }
 
 ################################################################################
@@ -699,7 +706,7 @@ sub get_possible_data {
 
 Returns a list of the possible containers that can be added to this
 object. This is synonymous with AssetType->get_containers() since containers
-don't support occurence constraints.
+do not support occurence constraints.
 
 B<Throws:> NONE.
 
@@ -711,8 +718,9 @@ B<Notes:> NONE.
 
 sub get_possible_containers {
     my ($self) = @_;
-    my $at = $self->_get_element_obj();
+    my $at   = $self->get_element;
     my $cont = $at->get_containers();
+
     return wantarray ? @$cont : $cont;
 }
 
@@ -722,7 +730,7 @@ sub get_possible_containers {
 
 Takes an asset type data object and the data and creates a tile and then adds
 the tile to its self. Optionally accepts an $place argument to set the place
-property. Now that's service.
+property. Now that\'s service.
 
 B<Throws:> NONE.
 
@@ -794,7 +802,7 @@ sub add_container {
 This method will search the contained tiles for one with the coresponding name
 ane object order field. It will then return the data from that data tile. Pass
 in the optional C<$date_format> argument if you expect the data returned from
-C<$name> to be of the date type, and you'd like a format other than that set
+C<$name> to be of the date type, and you\'d like a format other than that set
 in the "Date Format" preference.
 
 B<Throws:> NONE.
@@ -807,12 +815,25 @@ B<Notes:> NONE.
 
 sub get_data {
     my ($self, $name, $obj_order, $dt_fmt) = @_;
+
+    # If we find any illegal characters, warn the user to start using the key
+    # name rather than the display name.
+    if ($name =~ /[^a-z]/) {
+        ($name = lc($name)) =~ y/a-z/_/cs;
+        my $msg = "Warning:  Use of element's 'name' field is depreciated for ".
+                  "use with element method 'get_data'.  Please use the ".
+                  "element's 'key_name' field instead";
+        Bric::App::Util::add_msg($msg);
+    }
+
     $obj_order = 1 unless defined $obj_order;
 
     foreach my $t ($self->_get_tiles) {
-        return $t->get_data($dt_fmt) if not $t->is_container
-          and $t->has_name($name) and $t->get_object_order == $obj_order;
+        return $t->get_data($dt_fmt) if not $t->is_container    and
+                                        $t->has_key_name($name) and
+                                        $t->get_object_order == $obj_order;
     }
+
     # Well, I suppose that there were no matches.
     return;
 }
@@ -834,12 +855,25 @@ B<Notes:> NONE.
 
 sub get_container {
     my ($self, $name, $obj_order) = @_;
+
+    # If we find any illegal characters, warn the user to start using the key
+    # name rather than the display name.
+    if ($name =~ /[^a-z]/) {
+        ($name = lc($name)) =~ y/a-z/_/cs;
+        my $msg = "Warning:  Use of element's 'name' field is depreciated for ".
+                  "use with element method 'get_container'.  Please use the ".
+                  "element's 'key_name' field instead";
+        Bric::App::Util::add_msg($msg);
+    }
+
     $obj_order = 1 unless defined $obj_order;
 
     foreach my $t ($self->_get_tiles) {
-        return $t if $t->is_container and $t->has_name($name)
-          and $t->get_object_order == $obj_order;
+        return $t if $t->is_container        and
+                     $t->has_key_name($name) and
+                     $t->get_object_order == $obj_order;
     }
+
     # Well, I suppose that there were no matches.
     return;
 }
@@ -972,7 +1006,7 @@ B<Side Effects:> Will shift the remaining tiles to fit. So if tiles with ids
 of 2, 4, 7, 8, and 10 are contained and 4 and 8 are removed the new list of
 tiles will be 2,7, and 10
 
-B<Notes:> Doesn't actually do any deletions, just schedules them. Call
+B<Notes:> Doesn\'t actually do any deletions, just schedules them. Call
 C<save()> to complete the deletion.
 
 =cut
@@ -1305,6 +1339,10 @@ sub _do_list {
     if ($param->{'name'}) {
         push @where, ' name=? ';
         push @where_param, $param->{'name'};
+    }
+    if ($param->{'key_name'}) {
+        push @where, ' key_name=? ';
+        push @where_param, $param->{'key_name'};
     }
 
     my $sql;
