@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40.2.13 $
+$Revision: 1.40.2.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40.2.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-23 22:11:36 $
+$Date: 2003-07-18 18:22:55 $
 
 =head1 SYNOPSIS
 
@@ -1329,15 +1329,12 @@ sub revert {
     die $gen->new({ msg => "May not revert a non checked out version" })
       unless $self->_get('checked_out');
 
-    my @prior_versions = __PACKAGE__->list( {
-      id              => $self->_get_id(),
-      return_versions => 1
-    });
-
     my $revert_obj;
-    foreach (@prior_versions) {
+    foreach ($self->list({ id => $self->get_id,
+                           return_versions => 1})) {
         if ($_->get_version == $version) {
             $revert_obj = $_;
+            last;
         }
     }
 
@@ -1357,11 +1354,11 @@ sub revert {
         $contrib->{$cid} = $c;
     }
 
-    # clone information from the tables
-    $self->_set([qw(category__id media_type_id size file_name location uri
-                    _contributors _update_contributors _queried_contrib)],
-                [$revert_obj->_get(qw(category__id media_type_id size file_name
-                                      location uri), $contrib, 1, 1)]);
+    # Clone the basic properties of the media document.
+    my @attrs = qw(name description media_type_id category__id size file_name
+                   location uri);
+    $self->_set([@attrs, qw(_contributors _update_contributors _queried_contrib)],
+                [$revert_obj->_get(@attrs), $contrib, 1, 1]);
 
     # clone the tiles
     # get rid of current tiles

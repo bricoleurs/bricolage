@@ -150,6 +150,12 @@ Notes are once again saved with a document. Thanks to Scott for the spot! [David
 Fixed an issue with FTP distribution where the incorrect FTP root was used an
 invalid path. [Clive Jones]
 
+=item *
+
+The title and description of a story or media document are now properly
+reverted when the document is reverted to an earlier version. Thanks to Scott
+for the spot. [David]
+
 =back
 
 =head1 VERSION 1.6.1
