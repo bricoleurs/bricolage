@@ -722,6 +722,7 @@ To Translate:
   'Template "[_1]" deployed.' => 'Vorlage "[_1]" ausgebracht',
   'Story "[_1]" scheduled for publication.' => 'Beitrag "[_1]" veröffentlicht.',
   'Media "[_1]" scheduled for publication.' => 'Medium "[_1]" veröffentlicht.',
+  'Not defined.' => 'Not defined.',
 
 =end comment
 

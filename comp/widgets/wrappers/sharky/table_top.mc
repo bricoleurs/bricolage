@@ -23,13 +23,15 @@ generate a top table
 
 </%doc>
 <%args>
-$number  => 0
-$caption => ''
-$height  => 1
-$ghostly => 0
+$number    => 0
+$caption   => ''
+$height    => 1
+$ghostly   => 0
 $rightText => undef
-$border => 1
-$localize => 1
+$border    => 1
+$localize  => 1
+$id        => undef
+$class     => undef
 </%args>
 <%init>;
 $caption =~ s /^\s*|\s{2,}|\s*$//g;
@@ -54,6 +56,9 @@ if ($number > 0 && $number < 10) {
 } else {
     $leftGif = '<img src="/media/images/numbers/' . $numberColor . '_curve_blank.gif" width=20 height=18>';
 }
+
+my $attrs = $id ? qq{ id="$id"} : '';
+$attrs .= qq{ class="$class"} if $class;
 </%init>
 % if ($number) {
 <a name="section<% $number %>"></a>
@@ -69,8 +74,8 @@ if ($number > 0 && $number < 10) {
 <table width="580" border="0" cellpadding="0" cellspacing="0">
 <tr>
   <td width="<% $width %>' bgcolor="<% $numberColor %>"><% $leftGif %></td>
-% if ($rightText) {
-% my $remWidth = 580 - $width - 8;
+%     if ($rightText) {
+%         my $remWidth = 580 - $width - 8;
   <td width="<% $remWidth %>" class="lightHeader">
   <table border="0" cellpadding="0" cellspacing="0" width="<% 580 - $width - 8 %>">
   <tr class="lightHeader">
@@ -79,16 +84,16 @@ if ($number > 0 && $number < 10) {
   </tr>
   </table>
   </td>
-% } else {
+%     } else {
   <td class="lightHeader" width="552" style="padding-left: 4px;"><% uc( $caption ) %></td>
-% }
+%     }
   <td width="8" bgcolor="<% $numberColor %>"><% $rightGif %></td>
 </tr>
 </table>
 <!-- open box -->
-% if ($border) {
-<div style="width: 578px; margin-bottom: 10px; border-style: solid; border-color: #<% $borderColor %>; border-width: 0 1px 1px 1px;">
-% } else {
-<div style="width: 580px; margin-bottom: 10px;">
-% }
+%     if ($border) {
+<div<% $attrs %> style="width: 578px; margin-bottom: 10px; border-style: solid; border-color: #<% $borderColor %>; border-width: 0 1px 1px 1px;">
+%     } else {
+<div<% $attrs %> style="width: 580px; margin-bottom: 10px;">
+%     }
 % }

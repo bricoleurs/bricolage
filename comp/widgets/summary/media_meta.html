@@ -1,4 +1,4 @@
-% if ($frame) {
+ if ($frame) {
 <& /widgets/wrappers/sharky/table_top.mc, 
    caption => $header,
    number  => $number
@@ -17,7 +17,7 @@
 <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
     <td width="100" align="right" class="medHeader"><span class="label"><% $lang->maketext('Name') %>:&nbsp;</span></td>
-    <td width="400">&nbsp;<% $media->get_name %></td>
+    <td width="400" class="fieldcontent">&nbsp;<% $media->get_name %></td>
 </tr>
 <tr>
 <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>

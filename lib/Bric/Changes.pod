@@ -48,6 +48,17 @@ Added some missing translations for English. [David]
 The installer is now a bit smarter in how it handles loading the C<log_config>
 (or C<config_log>, as the case may be) module. [Marshall Roch]
 
+=item *
+
+Added ID attributes to story, media, and element profiles and "fieldcontent"
+class to content field values in the "View" screens so that they can be
+used as CSS selectorts. [David]
+
+=item *
+
+Added language-specific style sheets. This is especially useful for
+right-to-left languages or for languages that require special fonts. [David]
+
 =back
 
 =head2 Bug Fixes

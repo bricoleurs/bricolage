@@ -714,6 +714,7 @@ To translate:
   'Object Groups' => 'Object Groups',
   '[_1] Site Categories' => '[_1] Site Categories',
   'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
+  'Not defined.' => 'Not defined.',
 
 =end comment
 

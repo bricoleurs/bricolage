@@ -1,0 +1,19 @@
+/* Eventually there should be more selectors for rtl, but this will do    *
+ *  for a start. It lets content be displayed properly.                   */
+
+#storyinfo .textInput,
+#storyinfo textarea,
+#mediainfo .textInput,
+#mediainfo textarea,
+#containerprof .textInput,
+#containerprof textarea,
+.fieldcontent {
+    direction: rtl;
+}
+
+.desk_item .head .title,
+.desk_item .head .titlealias, 
+.desk_item .head .titlesorted {
+    right: 20px;
+    direction: rtl;
+}

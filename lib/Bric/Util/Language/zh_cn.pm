@@ -702,6 +702,7 @@ To translate:
   '[_1] Site Categories' => '[_1] 站台分类',
   'You do not have permission to override user "[_1]"' => '您不得 override 使用者 "[_1]"'
   'Please select a primary output channel' => '请选择一个主要输出频道',
+  'Not defined.' => 'Not defined.',
 
 Notice:
 
