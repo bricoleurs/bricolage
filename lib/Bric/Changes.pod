@@ -26,10 +26,6 @@ Added note to the context-sensitive help for the story, media, and template
 search pages to search on "/" to return all records, and to use SQL wildcards
 such as "%" to generalize the search. [David]
 
-=item *
-
-Removed "New Alias" link in workflows if there's only one site. [Scott]
-
 =back
 
 =head2 Bug Fixes

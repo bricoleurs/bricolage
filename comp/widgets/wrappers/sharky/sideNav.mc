@@ -52,9 +52,6 @@ my $site_id = $c->get_user_cx(get_user_id);
 # site ID.
 $site_id = $m->comp('/widgets/site_context/site_context.mc', display => 0)
   unless defined $site_id;
-# Is there more than one site?
-my $is_multisite = @{ $c->get('__SITES__') } > 1;
-
 # Figure out where we are (assume it's "My Workspace").
 my ($section, $mode, $type) = split '/', substr($ARGS{uri}, 1);
 ($section, $mode, $type) = qw(workflow profile workspace) unless $section;
@@ -184,16 +181,12 @@ foreach my $wf (@$workflows) {
                    <% &$printLink("/workflow/active/templates/$wf->{id}", $uri, "Active $pl_disp->{formatting}") %>
 %               } elsif ($wf->{type} == STORY_WORKFLOW) {
 %                     $m->print($printLink->("/workflow/profile/story/new/$wf->{id}", $uri, "New $disp->{story}")) if $can_create;
-%                  if ($is_multisite) {
                    <% &$printLink("/workflow/profile/alias/story/$wf->{id}", $uri, "New Alias") %>
-%                  }
                    <% &$printLink("/workflow/manager/story/$wf->{id}/", $uri, "Find $pl_disp->{story}") %>
                    <% &$printLink("/workflow/active/story/$wf->{id}", $uri, "Active $pl_disp->{story}") %>
 %               } elsif ($wf->{type} == MEDIA_WORKFLOW) {
 %                     $m->print($printLink->("/workflow/profile/media/new/$wf->{id}", $uri, "New $disp->{media}")) if $can_create;
-%                  if ($is_multisite) {
                    <% &$printLink("/workflow/profile/alias/media/$wf->{id}", $uri, "New Alias") %>
-%                  }
                    <% &$printLink("/workflow/manager/media/$wf->{id}/", $uri, "Find $pl_disp->{media}") %>
                    <% &$printLink("/workflow/active/media/$wf->{id}", $uri, "Active $pl_disp->{media}") %>
 %               }
