@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-06 07:40:14 $
+$Date: 2003-02-27 21:14:51 $
 
 =head1 SYNOPSIS
 
@@ -534,16 +534,8 @@ NONE
 =cut
 
 sub redirect {
-    my $loc = shift || return;
-    $HTML::Mason::Commands::m->clear_buffer;
-    # The next two lines are necessary to stop Apache from re-reading
-    # POSTed data.
-    my $r = Apache::Request->instance(Apache->request);
-    $r->method('GET');
-    $r->headers_in->unset('Content-length');
-    $r->content_type('text/html');
-    $r->header_out(Location => $loc);
-    $HTML::Mason::Commands::m->abort(302);
+    my $loc = shift or return;
+    HTML::Mason::Request->instance->redirect($loc);
 }
 
 
@@ -564,13 +556,13 @@ B<Notes:> NONE.
 =cut
 
 sub redirect_onload {
-    my $loc = shift || return;
-
-    $HTML::Mason::Commands::m->out(qq{<script>
+    my $loc = shift or return;
+    my $m = HTML::Mason::Request->instance;
+    $m->print(qq{<script>
             location.href='$loc';
         </script>
     });
-    $HTML::Mason::Commands::m->abort;
+    $m->abort;
 }
 
 
