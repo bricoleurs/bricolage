@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
--- VERSION: $Revision: 1.8 $
+-- VERSION: $Revision: 1.9 $
 --
--- $Date: 2002-04-03 21:26:56 $
+-- $Date: 2002-05-07 23:16:07 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO pref (id, name, description, value, def, manual)
@@ -1738,3 +1738,30 @@ VALUES (9, 'upper', 'Uppercase Characters [A-Z]');
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (9, 'mixed', 'URI tokens unaltered');
+
+
+-- Search Paging
+INSERT INTO pref (id, name, description, value, def, manual)
+VALUES ('10', 'Search Results / Page', 'Controls the number of records displayed per page from searches', 0, 0, 0);
+
+INSERT INTO member (id, grp__id, class__id, active) VALUES (167, 22, 48, 1);
+
+INSERT INTO pref_member (id, object_id, member__id) VALUES (10, 10, 167);
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (10, '0', 'Off');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (10, '10', '10');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (10, '20', '20');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (10, '30', '30');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (10, '40', '40');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (10, '50', '50');

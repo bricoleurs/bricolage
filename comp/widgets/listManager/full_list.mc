@@ -40,7 +40,7 @@
 
       # Only make a link if user sorting is enabled.
       if ($userSort) {
-	  $m->out("<a class=$aclass href='$url?listManager|sortBy_cb=$f'>$disp</a>");
+	  $m->out("<a class=$aclass href='$url?listManager|sortBy_cb=$f'>" . ($disp || "") . "</a>");
       } else {
 	  $m->out($disp);
       }
@@ -57,7 +57,7 @@
 
 %# Output the rows of data
 % my $first;
-% foreach my $r (0..$#{$data}) {
+% foreach my $r ($start..$end) {
 % my $o_id = shift @{$data->[$r]};
   <tr <% $featured->{$o_id} ? "bgcolor=\"$featured_color\"" : "" %>>
 <%perl>
@@ -92,6 +92,43 @@
 % }
 </table>
 
+%# Paging footer stuff
+% if( $rppg && ( $rows - 1 ) > $rppg ) {
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="50%">
+<tr>
+
+<%perl>
+my $sprint_string = qq( <a href="$url?listManager|start_page_cb=%d">%s</a> );
+
+if( $multiple_pages ) {
+    my $pages = sprintf( "%d", ( ( $rows - 1 ) / $rppg ) ) + ( ( $rows - 1 ) % $rppg ? 1 : 0 )
+	if( defined( $rppg ) );
+    my $next = sprintf( $sprint_string, $current_page + 1, 'Next' )
+	if( $current_page + 1 <= $pages );
+    my $prev = sprintf( $sprint_string, $current_page - 1, 'Previous' )
+	if( $current_page - 1 >= 1 );
+
+    $m->out( '<td align="left">' . ($prev || '') . '&nbsp;' );
+
+    for my $i( 1..$pages ) {
+	$m->out( $i != $current_page ? sprintf( $sprint_string, $i, $i ) : $i );
+    }
+
+    $m->out( '&nbsp;' . ($next || '') . '</td>' );
+
+} else {
+    $m->out( qq{ <td align="left"> } . sprintf( $sprint_string, 1, 'Paginate Records' ) . "</td>" );
+}
+</%perl>
+
+%# this is broken
+     <!-- <td align="right"><a href="<% $url %>?listManager|show_all_listings_cb=1">Show All</a></td> -->
+</tr>
+</table>
+</div>
+% }
+%# End Paging Footer Stuff
+
 %#--- END HTML ---#
 
 %#--- Arguments ---#
@@ -115,6 +152,32 @@ $pkg => undef
 %#--- Initialization ---#
 
 <%init>;
+# Setup paging vars
+my ($current_page, $end, $start);
+my $rppg = Bric::Util::Pref->lookup_val( 'Search Results / Page' ) || 0;
+my $multiple_pages = get_state_data( 'listManager', 'pages' ) || 0;
+
+if( $rppg
+|| ( $multiple_pages != 0 ) ) {
+    $multiple_pages ||= 1;
+
+    if( not ($current_page = get_state_data( $widget, 'start_page' ))
+        or $current_page eq 'x' ) {
+	set_state_data( $widget, 'start_page', 1 );
+	$current_page = 1;
+    }
+
+    $end = ( $current_page * $rppg ) - 1;
+    $end = $#{ $data } - 1
+        if( ( ( $current_page * $rppg ) - 1 ) > ( $#{ $data } - 1 ) );
+    $start = 0;
+    $start = ( $current_page - 1 ) * $rppg
+        if( $current_page - 1 > 0 );
+} else {
+    $end = $#{ $data } - 1;
+    $start = 0;
+}
+
 # Load some values.
 my $url       = $r->uri;
 my $object    = get_state_data($widget, 'object');
@@ -148,5 +211,3 @@ $addition = &$addition($pkg) if ref $addition eq 'CODE';
 </%init>
 
 %#--- Log History ---#
-
-

@@ -11,6 +11,12 @@ use Bric::Config qw(:search);
 # Set the uri for use in expiring the search criteria.
 set_state_data($widget, 'crit_set_uri', $r->uri);
 
+if( Bric::Util::Pref->lookup_val( 'Search Results / Page' ) ) {
+    set_state_data( 'listManager', 'pages', '1' )
+      unless( get_state_data( 'listManager', 'pages' ) );
+    set_state_data( 'listManager', 'start_page', 'x' );
+}
+
 if ($field eq "$widget|substr_cb") {
     my $val_fld = $widget.'|value';
     my $crit = $param->{$val_fld} ? (FULL_SEARCH ? '%' : '') .$param->{$val_fld}.'%' : '%';
@@ -21,6 +27,7 @@ if ($field eq "$widget|substr_cb") {
     # Set the value that will repopulate the search box and clear the alpha
     set_state_data($widget, 'crit_field', $param->{$val_fld});
     set_state_data($widget, 'crit_letter', '');
+
 }
 elsif ($field eq "$widget|alpha_cb") {
     my $crit = $param->{$field} ? $param->{$field}.'%' : '';

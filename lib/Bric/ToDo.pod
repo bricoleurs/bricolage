@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.57 $
+$Revision: 1.58 $
 
 =head1 DATE
 
-$Date: 2002-05-07 22:46:37 $
+$Date: 2002-05-07 23:16:07 $
 
 =head1 DESCRIPTION
 
@@ -298,10 +298,6 @@ Manager and/or the Contributor Profile).
 
 Add preferences for listManagers to indicate whethere they should default to
 expand or narrow behavior.
-
-=item *
-
-Add pagination to listManager (maybe).
 
 =item *
 

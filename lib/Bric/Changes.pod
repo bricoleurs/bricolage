@@ -144,6 +144,11 @@ debugger using Apache::DB.  [Sam]
 Added checks to make sure Story and Media URIs are unique within the
 system.  [Matt]
 
+=item *
+
+Added search paging preference to break search results into multiple
+pages.  [Adam]
+
 =back
 
 =head1 VERSION 1.3.1
