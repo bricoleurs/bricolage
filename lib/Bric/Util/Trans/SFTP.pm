@@ -6,16 +6,16 @@ Bric::Util::Trans::SFTP - SFTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.3.6.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.3.6.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 20:10:54 $
+$Date: 2003-07-07 16:22:23 $
 
 =head1 SYNOPSIS
 
@@ -138,6 +138,7 @@ sub put_res {
 	my $hn = $s->get_host_name;
 	# Instantiate a Net::SFTP object and login.
 	my $sftp = Net::SFTP->new($hn, debug => DEBUG,
+                                  ENABLE_SFTP_V2 ? (ssh_args => [ protocol => '2,1' ]) : (),
 				  user => $s->get_login,
 				  password => $s->get_password)
 	  || die $gen->new({msg => "Unable to login to remote server '$hn'." });
@@ -152,13 +153,13 @@ sub put_res {
 	    # Create the destination directory if it doesn't exist and we haven't
 	    # created it already.
 	    my $dest_dir = $fs->uri_dir_name($r->get_uri);
-	    my $status;
+	    my ($status, $dirhandle);
 	    unless ($dirs{$dest_dir}) {
-		$status = eval {
+		$dirhandle = eval {
 		    local $SIG{__WARN__} = $no_warn;
 		    $sftp->do_opendir($fs->cat_dir($doc_root, $dest_dir));
 		};
-		unless (defined $status) {
+		unless (defined $dirhandle) {
 		    # The directory doesn't exist.
 		    # Get the list of all of the directories.
 		    my $attrs = Net::SFTP::Attributes->new();
@@ -168,11 +169,11 @@ sub put_res {
 			$subdir = $fs->cat_dir($subdir, $dir);
 			# Mark that we've created it, so we don't try to do it again.
 			$dirs{$subdir} = 1;
-			$status = eval{
+			$dirhandle = eval{
 			    local $SIG{__WARN__} = $no_warn;
 			    $sftp->do_opendir($subdir);
 			};
-			unless (defined $status) {
+			unless (defined $dirhandle) {
 			    $status = eval {
 				local $SIG{__WARN__} = $no_warn;
 				$sftp->do_mkdir($subdir, $attrs);
@@ -182,9 +183,13 @@ sub put_res {
 				  . " remote server '$hn'";
 				die $gen->new({ msg => $msg });
 			    }
-			}
+			} else {
+                            $sftp->do_close($dirhandle);
+                        }
 		    }
-		}
+		} else {
+                    $sftp->do_close($dirhandle);
+                }
 	    }
 	    # Now, put the file on the server.
 	    my $dest_file = $fs->cat_dir($doc_root, $r->get_uri);
@@ -239,6 +244,7 @@ sub del_res {
 	my $hn = $s->get_host_name;
 	# Instantiate a Net::SFTP object and login.
 	my $sftp = Net::SFTP->new($hn, debug => DEBUG,
+                                  ENABLE_SFTP_V2 ? (ssh_args => [ protocol => '2,1' ]) : (),
 				  user => $s->get_login,
 				  password => $s->get_password)
 	  || die $gen->new({ msg => "Unable to login to remote server '$hn'." });

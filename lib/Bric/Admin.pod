@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.105.2.4 $
+$Revision: 1.105.2.5 $
 
 =head1 DATE
 
-$Date: 2003-07-02 08:30:21 $
+$Date: 2003-07-07 16:22:23 $
 
 =head1 DESCRIPTION
 
@@ -1322,6 +1322,15 @@ initialize `~/.ssh/known_hosts' before using the SFTP mover (you might also
 need to create the directory /.ssh with write permission for "nobody", in case
 nobody's home directory is something like `/bin/false' and ssh falls back to
 `/' as the home directory). Defaults to "Off" if not specified.
+
+=item *
+
+B<ENABLE_SFTP_V2:> Setting this directive to 'On' or 'Yes' or '1' tells the
+SFTP mover to try using version 2 of SSH before trying version 1;
+otherwise, it will try version 1 first, then version 2. Defaults to
+'Off' if not specified. The reason for this default is that the
+prerequisites for Protocol 1 in Net::SSH::Perl are much less than
+for version 2.
 
 =item *
 
