@@ -47,9 +47,13 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 # start Apache::DB if we're debugging.  This is done here so that
 # modules loaded below will get debugging symbols.
-if(Apache->define('BRICOLAGE_DEBUG')) {
-  require Apache::DB;
-  Apache::DB->init;
+our $DEBUGGING;
+BEGIN { 
+  if(Apache->define('BRICOLAGE_DEBUG')) {
+    require Apache::DB;
+    Apache::DB->init;
+    $DEBUGGING = 1;
+  }
 }
 
 package Apache::ReadConfig;
@@ -75,12 +79,12 @@ do {
 		   PerlAccessHandler  => 'Bric::App::AccessHandler',
 		   PerlCleanupHandler => 'Bric::App::CleanupHandler',
 		   RedirectMatch      =>
-		     'permanent .*\/favicon\.ico$ /media/images/favicon.ico'
-    );
+		     'permanent .*\/favicon\.ico$ /media/images/favicon.ico',
 
-    # are we debugging?  If so, insert Apache::DB fixup handler to
-    # trigger debugger.
-    $config{PerlFixupHandler} = 'Apache::DB' if Apache->define('BRICOLAGE_DEBUG');
+		   # setup Apache::DB handler if debugging
+		   ($DEBUGGING ?  
+		    (PerlFixupHandler => 'Apache::DB') : ()), 
+		 );
 
     if (PREVIEW_LOCAL) {
 	# This will slow down every request; thus we recommend that previews
@@ -92,7 +96,7 @@ do {
     # This URI will handle logging users out.
     my %locs = ("/logout"  => {
         PerlAccessHandler  => 'Bric::App::AccessHandler::logout_handler',
-        PerlCleanupHandler => 'Bric::App::CleanupHandler'
+        PerlCleanupHandler => 'Bric::App::CleanupHandler',
     });
 
     # This URI will handle logging users in.
@@ -100,14 +104,26 @@ do {
         SetHandler         => 'perl-script',
         PerlAccessHandler  => 'Bric::App::AccessHandler::okay',
         PerlHandler        => 'Bric::App::Handler',
-        PerlCleanupHandler => 'Bric::App::CleanupHandler'
+        PerlCleanupHandler => 'Bric::App::CleanupHandler',
+
+	# mask off Apache::DB handler if debugging - the debugger
+	# seems to cause problems for login for some reason.  With the
+	# Apache::DB handler in place the output from the first screen
+	# after login goes to the debugger's STDOUT instead of the
+	# browser!
+       ($DEBUGGING ?  
+        (PerlFixupHandler  => 'Apache::OK') : ()), 
     };
 
     # This URI will handle all non-Mason stuff that we server (graphics, etc.).
     $locs{"/media"} = {
         SetHandler         => 'default-handler',
         PerlAccessHandler  => 'Apache::OK',
-        PerlCleanupHandler => 'Apache::OK'
+        PerlCleanupHandler => 'Apache::OK',
+
+	# mask off Apache::DB handler if debugging
+       ($DEBUGGING ?  
+        (PerlFixupHandler  => 'Apache::OK') : ()), 
     };
 
     # This will serve media assets and previews.
@@ -135,7 +151,11 @@ do {
             SetHandler         => 'perl-script',
             PerlHandler        => 'Apache::Status',
             PerlAccessHandler  => 'Apache::OK',
-            PerlCleanupHandler => 'Apache::OK'
+            PerlCleanupHandler => 'Apache::OK',
+
+            # mask off Apache::DB handler if debugging 
+	   ($DEBUGGING ?  
+            (PerlFixupHandler  => 'Apache::OK') : ()), 
         };
     }
 
