@@ -19,11 +19,11 @@ bric_apachectl
 
 =head1 DESCRIPTION
 
-This script controls the Bricolage Apache server. The usage of the script is the
-same as the normal apache "apachectl" script but only "start", "stop" and
-"restart" are supported. Also, "restart" performs a hard stop and start since a
-SIGHUP isn't enough for mod_perl.  The "debug" command starts the server under 
-the Perl debugger - see L<Bric::Hacker|Bric::Hacker> for details.
+This script controls the Bricolage Apache server. The usage of the script is
+the same as the normal apache "apachectl" script but only "start", "stop" and
+"restart" are supported. Also, "restart" performs a hard stop and start since
+a SIGHUP isn't enough for mod_perl. The "debug" command starts the server
+under the Perl debugger - see L<Bric::Hacker|Bric::Hacker> for details.
 
 Usage information can be obtained by running the script with no arguments.
 
@@ -46,10 +46,10 @@ BEGIN {
 
     # use $BRICOLAGE_ROOT/lib if exists 
     $_ = catdir($ENV{BRICOLAGE_ROOT}, "lib");
-    unshift(@INC, 
-	    $ENV{PERL5LIB} = defined $ENV{PERL5LIB} ? "$ENV{PERL5LIB}:$_" : $_)
-	if -e $_;
-    
+    unshift(@INC, $ENV{PERL5LIB} = defined $ENV{PERL5LIB} ?
+            "$ENV{PERL5LIB}:$_" : $_)
+        if -e $_;
+
     # make sure Bric is found
     eval "use Bric";
     die <<'END' if $@;
@@ -80,7 +80,7 @@ if (-e $pid_file) {
     $pid = `cat $pid_file`;
     chomp $pid;
     if ($pid and kill(0, $pid)) {
-	$running = 1;
+        $running = 1;
     }
 }
 
@@ -91,8 +91,8 @@ my $command = shift @ARGV;
 
 if ($command eq 'start') {
     if ($running) {
-	print "bric_apachectl $command: httpd (pid $pid) already running\n";
-	exit;
+        print "bric_apachectl $command: httpd (pid $pid) already running\n";
+        exit;
     }
 
     # clear the cache before starting the server to avoid stale cache data
@@ -101,55 +101,55 @@ if ($command eq 'start') {
 
     print "bric_apachectl $command: starting httpd\n";
     unless (system($httpd)) {
-	print "bric_apachectl $command: httpd started\n";
-	exit;
+        print "bric_apachectl $command: httpd started\n";
+        exit;
     } else {
-	print "bric_apachectl $command: httpd could not be started\n";
+        print "bric_apachectl $command: httpd could not be started\n";
     exit 3;
     }
 }
 
 if ($command eq 'stop') {
     unless ($running) {
-	print "bric_apachectl $command: httpd not running\n";
-	exit;
+        print "bric_apachectl $command: httpd not running\n";
+        exit;
     }
     if (kill 15, $pid) {
-	print "bric_apachectl $command: httpd stopped\n";
-	exit;
+        print "bric_apachectl $command: httpd stopped\n";
+        exit;
     } else {
-	print "bric_apachectl $command: httpd could not be stopped\n";
-	exit 3;
+        print "bric_apachectl $command: httpd could not be stopped\n";
+        exit 3;
     }
 }
 
 if ($command eq 'restart') {
     # stop
     if ($running) {
-	if (kill 15, $pid) {
-	    print "bric_apachectl $command: waiting for httpd to stop";
-	} else {
-	    print "bric_apachectl $command: httpd could not be stopped\n";
-	    exit 3;
-	}
+        if (kill 15, $pid) {
+            print "bric_apachectl $command: waiting for httpd to stop";
+        } else {
+            print "bric_apachectl $command: httpd could not be stopped\n";
+            exit 3;
+        }
 
-	# wait for stop - check pid file for removal
-	my $stopped = 0;
-	for my $wait (0 .. MAX_RESTART_WAIT) {
-	    if (not -e $pid_file) {
-		$stopped = 1;
-		last;
-	    }
-	    print ".";
-	    sleep 1;
-	}
+        # wait for stop - check pid file for removal
+        my $stopped = 0;
+        for my $wait (0 .. MAX_RESTART_WAIT) {
+            if (not -e $pid_file) {
+                $stopped = 1;
+                last;
+            }
+            print ".";
+            sleep 1;
+        }
 
-	if ($stopped) {
-	    print "\nbric_apachectl $command: httpd stopped\n";
-	} else {
-	    print "\nbric_apachectl $command: httpd not stopped in time\n";
-	    exit;
-	}
+        if ($stopped) {
+            print "\nbric_apachectl $command: httpd stopped\n";
+        } else {
+            print "\nbric_apachectl $command: httpd not stopped in time\n";
+            exit;
+        }
 
     }
     # clear the cache before starting the server to avoid stale cache data
@@ -159,18 +159,18 @@ if ($command eq 'restart') {
     # start
     print "bric_apachectl $command: starting httpd\n";
     unless (system($httpd)) {
-	print "bric_apachectl $command: httpd started\n";
-	exit;
+        print "bric_apachectl $command: httpd started\n";
+        exit;
     } else {
-	print "bric_apachectl $command: httpd could not be started\n";
-	exit 3;
+        print "bric_apachectl $command: httpd could not be started\n";
+        exit 3;
     }
 }
 
 if ($command eq 'debug') {
     if ($running) {
-	print "bric_apachectl $command: httpd (pid $pid) already running\n";
-	exit;
+        print "bric_apachectl $command: httpd (pid $pid) already running\n";
+        exit;
     }
 
     # clear the cache before starting the server to avoid stale cache data
