@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-05-20 16:47:29 $
+$Date: 2003-05-20 17:42:45 $
 
 =head1 SYNOPSIS
 
@@ -833,15 +833,12 @@ sub _render_element {
         my $template = $self->_load_template_element($elem);
 
         # Display the element
-        {
-            no strict 'refs';
-            if ($display) {
-                ${TEMPLATE_BURN_PKG . '::m'}->comp($template, @_)
-                  if $template;
-            } else {
-                $html = ${TEMPLATE_BURN_PKG . '::m'}->scomp($template, @_)
-                  if $template;
-            }
+        if ($display) {
+            HTML::Mason::Request->instance->comp($template, @_)
+              if $template;
+        } else {
+            $html = HTML::Mason::Request->instance->scomp($template, @_)
+              if $template;
         }
 
         # Pop the element back off again.
@@ -853,8 +850,7 @@ sub _render_element {
         return $html;
     } else {
         if ($display) {
-            no strict 'refs';
-            ${TEMPLATE_BURN_PKG . '::m'}->out($elem->get_data);
+            HTML::Mason::Request->instance->out($elem->get_data);
         } else {
             return $elem->get_data();
         }
