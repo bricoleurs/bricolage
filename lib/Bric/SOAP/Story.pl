@@ -96,11 +96,13 @@ my $soap = new SOAP::Lite
     readable => DEBUG;
 isa_ok($soap, 'SOAP::Lite');
 
+my ($response, $story_ids);
+
 # try selecting every story
-my $response = $soap->list_ids();
+$response = $soap->list_ids();
 ok(!$response->fault, 'fault check');
 
-my $story_ids = $response->result;
+$story_ids = $response->result;
 isa_ok($story_ids, 'ARRAY');
 ok(@$story_ids, 'list_ids() returned some story_ids');
 
@@ -172,18 +174,30 @@ ok(@$story_ids, 'list_ids() returned some story_ids');
 my $xsd = extract_schema();
 ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
 
-# try exporting a story
-my $story_id = $story_ids->[0];
-$response = $soap->export(name(story_id => $story_id));
-if ($response->fault) {
-  fail('SOAP export() response fault check');
-} else {
-  pass('SOAP export() response fault check');  
-
-  my $document = $response->result;
-  ok($document, 'recieved first story document');
-  check_doc($document, $xsd, "first story");
+# try exporting every story
+foreach my $story_id (@$story_ids) {
+  $response = $soap->export(name(story_id => $story_id));
+  if ($response->fault) {
+    fail('SOAP export() response fault check');
+  } else {
+    pass('SOAP export() response fault check');  
+    
+    my $document = $response->result;
+    ok($document, "recieved document for story $story_id");
+    check_doc($document, $xsd, "story $story_id");
+  }
 }
+
+# try importing a story
+$response = $soap->export(name(story_id => $story_ids->[0]),
+			  name(export_related_stories => 1));
+ok(!$response->fault, 'SOAP result is not a fault');
+my $document = $response->result;
+
+$response = $soap->create(name(document => $document));
+ok(!$response->fault, 'SOAP create result is not a fault');
+my $ids = $response->result;
+isa_ok($ids, 'ARRAY');
 
 # done with schema
 unlink $xsd;

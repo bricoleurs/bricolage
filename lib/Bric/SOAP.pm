@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -15,11 +15,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-01-17 22:45:42 $
+$Date: 2002-01-23 19:52:28 $
 
 =head1 SYNOPSIS
 
@@ -266,7 +266,7 @@ SOAP::Lite clients can access this return as an array ref:
 =head3 XML Document Encoding
 
 The Bric::SOAP system uses complete XML documents as parameters and
-return values to many methods (import() and export(), for example).
+return values to many methods (create() and export(), for example).
 These documents must be encoded in Base64 for performance reasons.
 See the PERFORMANCE section of the L<SOAP::Lite|SOAP::Lite>
 documentation for a full explanation of why this is neccessary.  This

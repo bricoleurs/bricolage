@@ -9,6 +9,7 @@ use Bric::Biz::AssetType;
 use Bric::Biz::Category;
 use XML::Writer;
 use IO::Scalar;
+use XML::Simple;
 
 use SOAP::Lite;
 import SOAP::Data 'name';
@@ -25,15 +26,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-17 22:45:42 $
+$Date: 2002-01-23 19:52:28 $
 
 =head1 SYNOPSIS
 
@@ -199,8 +200,7 @@ sub list_ids {
     my $args = $env->method || {};    
     
     print STDERR __PACKAGE__ . "->list_ids() called : args : ", 
-	Data::Dumper->Dump([$args],['args'])
-		if DEBUG;
+	Data::Dumper->Dump([$args],['args']) if DEBUG;
     
     # check for bad parameters
     for (keys %$args) {
@@ -343,8 +343,7 @@ sub export {
     my $args = $env->method || {};    
     
     print STDERR __PACKAGE__ . "->export() called : args : ", 
-	Data::Dumper->Dump([$args],['args'])
-		if DEBUG;
+	Data::Dumper->Dump([$args],['args']) if DEBUG;
     
     # check for bad parameters
     for (keys %$args) {
@@ -374,14 +373,27 @@ sub export {
 		      xmlns => 'http://bricolage.sourceforge.net/assets.xsd');
 		       
 
-    # iterate through story_ids, serializing as we go
+    # iterate through story_ids, serializing stories as we go, storing
+    # media ids to serialize for later.
     my @story_ids = @{$args->{story_ids}};
+    my @media_ids;
+    my %done;
     while(my $story_id = shift @story_ids) {
-	$pkg->_serialize_story(writer   => $writer, 
-			       story_id => $story_id,
-			       args     => $args);
+      next if exists $done{$story_id}; # been here before?
+      my @related = $pkg->_serialize_story(writer   => $writer, 
+					   story_id => $story_id,
+					   args     => $args);
+      $done{$story_id} = 1;
+      
+      # queue up the related stories, story the media for later
+      foreach my $obj (@related) {
+	  push(@story_ids, $obj->[1]) if $obj->[0] eq 'story';
+	  push(@media_ids, $obj->[1]) if $obj->[0] eq 'media';
+      }
     }
-    
+
+    # FIX: call out to serialize media here...
+
     # end the assets element and end the document
     $writer->endTag("assets");
     $writer->end();
@@ -392,10 +404,17 @@ sub export {
 }
 }
 
-=item import
+=item create
 
-The import method creates new objects using the data contained in an
-XML document of the format created by export().  Returns 1 on success.
+The create method creates new objects using the data contained in an
+XML document of the format created by export().
+
+The create will fail if your story element contains non-relative
+related_story_ids or related_media_ids that do not refer to existing
+stories or media in the system.
+
+Returns a list of new ids created in the order of the assets in the
+document.
 
 Available options:
 
@@ -403,7 +422,7 @@ Available options:
 
 =item document (required)
 
-The XML document containing objects to be imported.  The document must
+The XML document containing objects to be createed.  The document must
 contain at least one story and may contain any number of related media
 objects.
 
@@ -414,6 +433,64 @@ Throws: NONE
 Side Effects: NONE
 
 Notes: NONE
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(document);
+
+sub create {
+    my $pkg = shift;
+    our $ef;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->create() called : args : ", 
+      Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::create : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # make sure we have a document
+    my $document = $args->{document};
+    die __PACKAGE__ . "::create : missing required document parameter.\n"
+      unless $document;
+
+    # parse and catch erros
+    my $data;
+    eval { $data = XMLin($document, 
+			 keyattr       => [],
+			 suppressempty => '',
+			 forcearray    => [qw( contributor category
+					       keyword element container 
+					       data story media )
+					  ]
+			);
+	 };
+
+    die __PACKAGE__ . "::create : problem parsing asset document : $@\n"
+      if $@;
+    die __PACKAGE__ . "::create : problem parsing asset document : no stories found!\n"
+      unless ref $data and ref $data eq 'HASH' and exists $data->{story};
+
+
+    print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+
+    # first create empty stories for each of the stories to import
+    foreach my $story (@{$data->{story}}) {
+      
+    }
+
+
+
+    
+    return name(ids => [ name(id => 1) ]);
+}
+}
 
 =item update
 
@@ -430,7 +507,7 @@ Takes the following options:
 
 =item document (required)
 
-The XML document where the objects to be imported can be found.  The
+The XML document where the objects to be updated can be found.  The
 document must contain at least one story and may contain any number of
 related media objects.
 
@@ -489,6 +566,7 @@ sub _serialize_story {
     my %options = @_;
     my $story_id = $options{story_id};
     my $writer   = $options{writer};
+    my @related;
 
     my $story = Bric::Biz::Asset::Business::Story->lookup({id => $story_id});
     die __PACKAGE__ . "::export : story_id \"$story_id\" not found.\n"
@@ -561,14 +639,14 @@ sub _serialize_story {
     # output contributors
     $writer->startTag("contributors");
     foreach my $c ($story->get_contributors) {
-      my $p = $c->get_person;
-      $writer->startTag("contributor");
-      $writer->dataElement(fname  => $p->get_fname);
-      $writer->dataElement(mname  => $p->get_mname);
-      $writer->dataElement(lname  => $p->get_lname);
-      $writer->dataElement(type   => $c->get_grp->get_name);
-      $writer->dataElement(role   => $story->get_contributor_role($c));
-      $writer->endTag("contributor");
+	my $p = $c->get_person;
+	$writer->startTag("contributor");
+	$writer->dataElement(fname  => $p->get_fname);
+	$writer->dataElement(mname  => $p->get_mname);
+	$writer->dataElement(lname  => $p->get_lname);
+	$writer->dataElement(type   => $c->get_grp->get_name);
+	$writer->dataElement(role   => $story->get_contributor_role($c));
+	$writer->endTag("contributor");
     }
     $writer->endTag("contributors");
 
@@ -577,15 +655,17 @@ sub _serialize_story {
     $writer->startTag("elements");
     my $element = $story->get_tile();
     foreach my $e ($element->get_elements()) {
-	$pkg->_serialize_tile(writer  => $writer,
-			      element => $e,
-			      args    => $options{args},
-			     );
+	push @related, $pkg->_serialize_tile(writer  => $writer,
+					     element => $e,
+					     args    => $options{args},
+					    );
     }
     $writer->endTag("elements");
-
+    
     # close the story
     $writer->endTag("story");    
+    
+    return @related;
 }
 
 =item @related = _serialize_tile($writer, $element)
@@ -602,12 +682,12 @@ sub _serialize_tile {
     my $element  = $options{element};
     my $writer   = $options{writer};
     my @related;
-
+    
     if ($element->is_container) {
 	my %attr  = (element => $element->get_element_name,
 		     order   => $element->get_object_order);
 	my @e = $element->get_elements();
-
+	
 	# look for related stuff and tag relative if we'll include in
 	# the assets dump.
 	my ($related_story, $related_media);
