@@ -4,11 +4,11 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2001-09-25 09:54:56 $
+$Date: 2001-09-25 10:12:33 $
 
 =head1 DESCRIPTION
 
@@ -458,47 +458,31 @@ Here is a list of the Element Types we'll need to create:
 
 =back
 
-Element Type: Covers
+Basically these Element Types cover the various categories of elements that
+we'll use. Here's a breakdown of the elements we'll need to create:
 
-Element: Cover
+=over 4
 
-Element Type: Columns
+=item Cover
 
-Elements: Column One
-Column Two
-Column Three
+This element is the Story Type for covers. Its Element Type is "Covers."
 
-Element Type: Navs
+=item Column One
 
-Element: Navigation
+This element will hold all of the subelements in the first column of cover
+stories. Its Element Type is "Columns."
 
-Element Type: Story Lists
-Element: Stories of the Day
+=item Column Two
 
-Element Type: Related Stories
+This element will hold all of the subelements in the second column of cover
+stories. Its Element Type is "Columns."
 
-Elements: Top Story
-Linked Story
+=item Column Three
 
-Element Type: Ads
+This element will hold all of the subelements in the third column of cover
+stories. Its Element Type is "Columns."
 
-Element Type: Advertisement
-
-Element Type: Content
-
-Element: Story
-   Field: Title
-   Field: Deck
-   Field: Teaser
-   Field: Coverline
-
-Element Type: Pages
-
-Element: Page
-   Field: Subtitle
-   Field: Paragraph
-   Field: Pull Quote
-
+=back
 
 =head1 ADMINISTRATION
 
@@ -591,7 +575,10 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ElementAdmin.pod,v $
-Revision 1.4  2001-09-25 09:54:56  wheeler
+Revision 1.5  2001-09-25 10:12:33  wheeler
+Checkpoint. Testing syncmail changes again (it should work now!).
+
+Revision 1.4  2001/09/25 09:54:56  wheeler
 Checkpoint -- testing changes to syncmail.
 
 Revision 1.3  2001/09/25 09:28:26  wheeler
