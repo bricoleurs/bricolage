@@ -45,6 +45,10 @@ Keyword names are now always editable in the keyword manager. [David]
 Events are now properly logged for keywords managed in the keyword profile.
 [David]
 
+=item *
+
+Added UI for managing organizations (which provide the base data for souces). [David]
+
 =back
 
 =head2 Bug Fixes
