@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.12 $
+$Revision: 1.5.2.13 $
 
 =head1 DATE
 
-$Date: 2001-11-29 00:18:37 $
+$Date: 2001-11-29 21:51:16 $
 
 =head1 DESCRIPTION
 
@@ -396,21 +396,25 @@ Before you install Apache, however, you'll need to install the SSL certificates.
 If you compiled OpenSSL with the C<--with-crt> and C<--with-key> commands, you
 can skip this step.
 
+=item *
+
+If you don't have a formal certificate from a certificate authority
+such as VeriSign then you can make a dummy certificate with the
+command:
+
+  make certificate TYPE=dummy
+
+=item *
+
+If you have a you formal certificate then can make a certificate with
+the command:
+
   make certificate TYPE=custom
 
-=item *
-
-Near the end of the installation process, you will be prompted to enter
-information for the certificate. Do so however you like - or better yet, get
-yourself a formal certificate from a certificate authority such as VeriSign. If
-you do it yourself -- that is, create a certificate and be your own certificate
-authority, make sure that you enter different values for the "Organizational
-Unit Name" for the Certificate Authority (CA) certificate and the Server
-certificate. Aparently, it breaks the certificate if you have the same value OU
-Name for both certificates. See "Building Certificate" below for more detailed
-instructions on building your SSL certificate.
-
-=item *
+Near the end of the certificate creation process, you will be prompted
+to enter information for the certificate.  Here you'll enter the
+information for your certificate.  See the OpenSSL documentation for a
+description of the certificate data.
 
 You'll be prompted to enter the certificate information twice. Afterwards,
 you'll see this prompt for each of the two new certificates:
@@ -428,8 +432,8 @@ Finally, install Apache:
 
 =item *
 
-Don't forget to install the Apache::Session and libapreq perl modules now (See
-"Perl Modules," above).
+Don't forget to install the Apache::Session and Apache::libapreq perl
+modules now (See "Perl Modules," above).
 
 =back
 
@@ -558,12 +562,13 @@ Decompress them into /usr/local/bricolage.
 
 =item *
 
-Change directories into /usr/local/bricolage/bin and run pgimport as follows:
+Change directories into /usr/local/bricolage/bin and run bric_pgimport
+as follows:
 
-  ./pgimport -u postgres -p postgres -d dbname -c -m bric_user:bric_user_password
+  ./bric_pgimport -u postgres -p postgres -d dbname -c -m db_user:db_password
 
 Where 'dbname' is the name you want the Bricolage database to be called in
-PostgreSQL, and 'bric_user' and 'bric_user_password' are the user name and
+PostgreSQL, and 'db_user' and 'db_password' are the user name and
 password to be created in the PostgreSQL database, and under which the Bricolage
 application will run. Note that the -u argument must represent a PostgreSQL user
 with CREATE DATABASE and CREATE USER permissions. The 'bric_user' user will be
