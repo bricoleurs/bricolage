@@ -407,7 +407,7 @@ table td.delete { width: 100px; text-align: center; }
 .listManager th a { font-size: .85em; color: black; text-decoration: none; }
 .listManager th.sortup a,
 .listManager th.sortdown a { color: white; }
-.listManager td { padding: 2px 5px; border: solid #cccc99 1px; height: 1.7em; }
+.listManager td { padding: 0 5px; border: solid #cccc99 1px; height: 2.3em; }
 .listManager td.selected { font-weight: bold; }
 
 .addnewitem   { padding: 7px 10px; }
