@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =head1 DATE
 
-$Date: 2002-01-12 23:49:38 $
+$Date: 2002-01-15 20:08:17 $
 
 =head1 DESCRIPTION
 
@@ -167,6 +167,11 @@ Add ability to "undeploy" templates without deactivating them.
 Add a check that a user has selected at least one output channel when
 creating a new element.  Elements without output channels cause
 Bricolage indigestion.
+
+=item *
+
+Add configuration option to set the port Bricolage runs on.  Fix the
+redirects to use this port.
 
 =back
 
