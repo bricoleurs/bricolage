@@ -59,6 +59,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 $m->out("<br />\n");
 $m->comp('/widgets/profile/formButtons.mc',
 	 type    => $type,
+         widget  => $type,
 	 section => $section,
 	 no_del  => $no_del,
 	 no_save => $no_edit,
@@ -122,11 +123,11 @@ if (defined $mt && $mt->get_name) {
 
 =head1 VERSION
 
-$Revision: 1.2.6.1 $
+$Revision: 1.2.6.2 $
 
 =head1 DATE
 
-$Date: 2003-05-29 16:13:26 $
+$Date: 2003-07-03 15:56:11 $
 
 =head1 DESCRIPTION
 

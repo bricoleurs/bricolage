@@ -152,7 +152,8 @@ if (defined $id) {
     # Output the form buttons.
     $m->out("<br />\n");
     $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
-	     no_del => $no_del, no_save => $no_edit, val => 'next_dkgreen' );
+	     no_del => $no_del, no_save => $no_edit, val => 'next_dkgreen',
+             widget => $type );
 }
 </%perl>
 </form>
@@ -295,11 +296,11 @@ $no_edit => 0
 
 =head1 VERSION
 
-$Revision: 1.6.6.2 $
+$Revision: 1.6.6.3 $
 
 =head1 DATE
 
-$Date: 2003-06-09 14:35:34 $
+$Date: 2003-07-03 15:56:10 $
 
 =head1 DESCRIPTION
 

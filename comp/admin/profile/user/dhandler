@@ -98,7 +98,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 </%perl>
 
 <& '/widgets/profile/formButtons.mc', type => $type, section => $section,
-   no_del => $no_del, no_save => $no_edit, return => $return &>
+   no_del => $no_del, no_save => $no_edit, return => $return, widget => $type &>
 
 </form>
 
@@ -166,11 +166,11 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.13.2.1 $
+$Revision: 1.13.2.2 $
 
 =head1 DATE
 
-$Date: 2003-05-29 17:02:13 $
+$Date: 2003-07-03 15:56:11 $
 
 =head1 DESCRIPTION
 

@@ -60,6 +60,7 @@ if ($mode eq "new") {
 	# Display the form buttons.
 	$m->comp('/widgets/profile/formButtons.mc',
 		 type    => $type,
+                 widget  => $type,
 		 section => $section,
 		 no_del  => $no_del,
 		 no_save => $no_edit,
@@ -311,13 +312,17 @@ my $showGroups = sub {
 	     readOnly => $ro
 	    );
 
+
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 };
 
 my $stepOneOfTwo = sub {
+    my ($type, $section) = @_;
     $m->comp('/widgets/profile/formButtons.mc',
-	     type    => shift,
-	     section => shift,
+             type    => $type,
+             section => $section,
+             # be careful that formButtons.mc doesn't depend on $widget eq 'profile'
+             widget  => $type,
 	     no_del  => 1,
 	     val     => "next_dkgreen",
 	     return  => '/admin/manager/contrib');
@@ -333,11 +338,11 @@ my $stepOneOfTwo = sub {
 
 =head1 VERSION
 
-$Revision: 1.10.6.1 $
+$Revision: 1.10.6.2 $
 
 =head1 DATE
 
-$Date: 2003-05-29 17:02:13 $
+$Date: 2003-07-03 15:56:11 $
 
 =head1 DESCRIPTION
 

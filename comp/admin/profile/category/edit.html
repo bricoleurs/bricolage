@@ -140,7 +140,7 @@ unless ($no_edit || $no_del) {
 }
 # Add the buttons.
 $m->comp('/widgets/profile/formButtons.mc', type => $type, section => $section,
-	 no_del => $no_del, no_save => $no_edit);
+	 no_del => $no_del, no_save => $no_edit, widget => $type);
 
 </%perl>
 </form>
@@ -153,7 +153,6 @@ $m->comp('/widgets/profile/formButtons.mc', type => $type, section => $section,
 my $class = 'Bric::Biz::Category';
 my $section = 'admin';
 my $type = 'category';
-my $widget = 'profile';
 my $disp = get_disp_name($type);
 </%once>
 
@@ -208,11 +207,11 @@ my $cat_excl = sub { return 1 if grep($_[0] == $_->get_id, $cat->children);
 
 =head1 VERSION
 
-$Revision: 1.7.2.1 $
+$Revision: 1.7.2.2 $
 
 =head1 DATE
 
-$Date: 2003-05-29 17:02:12 $
+$Date: 2003-07-03 15:56:10 $
 
 =head1 DESCRIPTION
 
