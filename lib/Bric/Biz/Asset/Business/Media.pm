@@ -1391,6 +1391,29 @@ sub upload_file {
     Bric::Util::Trans::FS->mk_path($dir);
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
+    if (MEDIA_UNIQUE_FILENAME) {
+        # split the uploaded filename into prefix and ext
+        (my ($prefix,$ext)) = ($name =~  m/^(.+)(\.[^\.]+)$/ );
+        # is this a new version of an existing ID ?
+        if ($old_fn) {
+            # set the prefix to the prefix of the old filename
+            ($prefix) = ($old_fn =~ m/^(.+)\.[^\.]+$/i );
+        } else {
+            # generate a new prefix and make sure it is unique
+            my $idexists = 1;
+            while ($idexists) {
+                # generate new random 8 character filename
+                $prefix = substr(Digest::MD5::md5_hex(Digest::MD5::md5_hex(time.{}.$id.rand)), 0, 8);
+                # add any required filename prefix if we need to 
+                $prefix = MEDIA_FILENAME_PREFIX . $prefix if (MEDIA_FILENAME_PREFIX);
+                # does this filename exist in DB regardless of extension ?
+                ($idexists) = Bric::Biz::Asset::Business::Media->list_ids( {file_name => "$prefix%" } );
+            }
+        }
+        # construct the new filename
+        $name = $prefix . $ext;
+    }
+    
     open FILE, ">$path"
       or throw_gen(error => "Unable to open '$path': $!");
     my $buffer;

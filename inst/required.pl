@@ -129,13 +129,13 @@ sub find_pg {
     # confirm or deny
     if ($REQ{PG_CONFIG}) {
         print "Found PostgreSQL's pg_config at '$REQ{PG_CONFIG}'.\n";
-        unless ($QUIET or ask_yesno("Is this correct? [yes] ", 1)) {
+        unless (ask_yesno("Is this correct? [yes] ", 1, $QUIET)) {
             ask_confirm("Enter path to pg_config", \$REQ{PG_CONFIG});
         }
     } else {
         print "Failed to find pg_config.\n";
-        if (!$QUIET and ask_yesno("Do you want to provide a path to pg_config? [no] ",
-                      0)) {
+        if (ask_yesno("Do you want to provide a path to pg_config? [no] ",
+                      0, $QUIET)) {
             $REQ{PG_CONFIG} = 'NONE';
             ask_confirm("Enter path to pg_config", \$REQ{PG_CONFIG});
         } else {
@@ -202,9 +202,9 @@ sub find_apache {
         }
     } else {
         print "Failed to find Apache server binary.\n";
-        if (!$QUIET and ask_yesno("Do you want to provide a path to the Apache server " .
+        if (ask_yesno("Do you want to provide a path to the Apache server " .
                       "binary? [no] ",
-                      0)) {
+                      0, $QUIET)) {
             $REQ{APACHE_EXE} = 'NONE';
             ask_confirm("Enter path to Apache server binary", 
                         \$REQ{APACHE_EXE});

@@ -76,8 +76,7 @@ probably save you the trouble.  Your choices are:
 END
 
     $CONFIG{set} = "s";
-    $CONFIG{set} = ask_choice("Your choice?",
-                              [ "s", "m" ], "s") unless $QUIET;
+    $CONFIG{set} = ask_choice("Your choice?", [ "s", "m" ], "s", $QUIET);
 
     # setup the default
     if ($CONFIG{set} eq 's') {
@@ -128,12 +127,7 @@ END
 
 sub confirm_settings {
   my $default_root = $CONFIG{BRICOLAGE_ROOT};
-  if ($QUIET) {
-    print "\bBricolage Root Directory ". $CONFIG{BRICOLAGE_ROOT} ."\n";
-  }
-  else {
-    ask_confirm("\nBricolage Root Directory", \$CONFIG{BRICOLAGE_ROOT});
-  }
+  ask_confirm("\nBricolage Root Directory", \$CONFIG{BRICOLAGE_ROOT}, $QUIET);
 
   # make sure this directory isn't the same at the source directory
   if (canonpath($CONFIG{BRICOLAGE_ROOT}) eq canonpath(cwd())) {
@@ -160,26 +154,15 @@ sub confirm_settings {
     $CONFIG{$_} = eval qq{"$CONFIG{$_}"};
   }
 
-  if ($QUIET) {
-    print "Temporary Directory ".       $CONFIG{TEMP_DIR} ."\n";
-    print "Perl Module Directory ".     $CONFIG{MODULE_DIR} ."\n";
-    print "Executable Directory ".      $CONFIG{BIN_DIR} ."\n";
-    print "Man-Page Directory ".        $CONFIG{MAN_DIR} ."\n";
-    print "Log Directory ".             $CONFIG{LOG_DIR} ."\n";
-    print "PID File Location ".         $CONFIG{PID_FILE} ."\n";
-    print "Mason Component Directory ". $CONFIG{MASON_COMP_ROOT} ."\n";
-    print "Mason Data Directory ".      $CONFIG{MASON_DATA_ROOT} ."\n";
-  }
-  else {
-    ask_confirm("Temporary Directory",       \$CONFIG{TEMP_DIR});
-    ask_confirm("Perl Module Directory",     \$CONFIG{MODULE_DIR});
-    ask_confirm("Executable Directory",      \$CONFIG{BIN_DIR});
-    ask_confirm("Man-Page Directory (! to skip)", \$CONFIG{MAN_DIR});
-    ask_confirm("Log Directory",             \$CONFIG{LOG_DIR});
-    ask_confirm("PID File Location",         \$CONFIG{PID_FILE});
-    ask_confirm("Mason Component Directory", \$CONFIG{MASON_COMP_ROOT});
-    ask_confirm("Mason Data Directory",      \$CONFIG{MASON_DATA_ROOT});
-  }
+  ask_confirm("Temporary Directory",       \$CONFIG{TEMP_DIR}, $QUIET);
+  ask_confirm("Perl Module Directory",     \$CONFIG{MODULE_DIR}, $QUIET);
+  ask_confirm("Executable Directory",      \$CONFIG{BIN_DIR}, $QUIET);
+  ask_confirm("Man-Page Directory (! to skip)", \$CONFIG{MAN_DIR}, $QUIET);
+  ask_confirm("Log Directory",             \$CONFIG{LOG_DIR}, $QUIET);
+  ask_confirm("PID File Location",         \$CONFIG{PID_FILE});
+  ask_confirm("Mason Component Directory", \$CONFIG{MASON_COMP_ROOT}, $QUIET);
+  ask_confirm("Mason Data Directory",      \$CONFIG{MASON_DATA_ROOT}, $QUIET);
+
   $CONFIG{PID_FILE} = catfile($CONFIG{PID_FILE}, 'httpd.pid')
     if -d $CONFIG{PID_FILE};
 }

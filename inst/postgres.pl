@@ -125,18 +125,13 @@ sub get_version {
 # ask the user for user settings
 sub get_users {
     print "\n";
-    if ($QUIET) {
-        print "Postgres Root Username ". $PG{root_user} ."\n";
-    }
-    else {
-        ask_confirm("Postgres Root Username", \$PG{root_user});
-    }
+    ask_confirm("Postgres Root Username", \$PG{root_user}, $QUIET);
     ask_confirm("Postgres Root Password (leave empty for no password)",
 		\$PG{root_pass});
 
     while(1) {
 	$PG{system_user} = $PG{root_user};
-        ask_confirm("Postgres System Username", \$PG{system_user}) unless $QUIET;
+        ask_confirm("Postgres System Username", \$PG{system_user}, $QUIET);
 	$PG{system_user_uid} = (getpwnam($PG{system_user}))[2];
 	last if defined $PG{system_user_uid};
 	print "User \"$PG{system_user}\" not found!  This user must exist ".

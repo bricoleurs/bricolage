@@ -52,9 +52,9 @@ extract_module_list();
 foreach my $rec (@MOD) {
     $rec->{found} = check_module($rec);
     unless ($rec->{found}) {
-        if ($rec->{optional} and ($QUIET
-                or not ask_yesno("Do you want to install the optional module " . 
-                          "$rec->{name}? [no] ", 0))) {
+        if ($rec->{optional} and 
+            not ask_yesno("Do you want to install the optional module " .
+                          "$rec->{name}? [no] ", 0, $QUIET)) {
             $rec->{found} = 1;
         } else {
             $MISSING = 1;
@@ -77,9 +77,7 @@ above before running "make" again.
 END
 
     # for some reason an "exit 1" here doesn't stop the make run.
-    if ($QUIET or not ask_yesno("Continue? [yes] ", 1)) {
-        kill(2, $$);
-    }
+    kill(2, $$) unless ask_yesno("Continue? [yes] ", 1, $QUIET);
 }
 
 

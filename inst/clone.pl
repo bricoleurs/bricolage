@@ -19,6 +19,18 @@ distribution.  Gathers configuration information from the user and
 install.db if available.  Outputs to the various .db files used by
 later stages of the install.
 
+The following configuration variables can be set using environment
+variables: C<$BRICOLAGE_ROOT>, C<$CONFIG_DIR>, C<$CLONE_NAME>,
+e.g.:
+
+  make CLONE_NAME=unattended_archive clone
+
+If the environment variable C<$INSTALL_VERBOSITY> is set to "QUIET"
+this script won't ask for confirmations so that unattended
+execution is possible:
+
+  make INSTALL_VERBOSITY=QUIET clone
+
 =head1 AUTHOR
 
 Sam Tregar <stregar@about-inc.com>
@@ -37,10 +49,13 @@ use File::Spec::Functions qw(:ALL);
 use Data::Dumper;
 use POSIX 'strftime';
 
+# determine if clone should run in quiet mode
+my $quiet_mode = (defined $ENV{INSTALL_VERBOSITY} and $ENV{INSTALL_VERBOSITY} eq 'QUIET') ? 1 : 0;
+
 # make sure we're root, otherwise uninformative errors result
 unless ($> == 0) {
     print "This process must (usually) be run as root.\n";
-    exit 1 unless ask_yesno("Continue as non-root user? [yes] ", 1);
+    exit 1 unless ask_yesno("Continue as non-root user? [yes] ", 1, $quiet_mode);
 }
 
 # setup default root
@@ -80,19 +95,25 @@ sub find_version {
 # get clone name
 sub get_clone_name {
     print "\n";
-    $CLONE{NAME} = strftime '%Y%m%d%H%M%S', localtime;
+    $CLONE{NAME} = $ENV{CLONE_NAME} || strftime '%Y%m%d%H%M%S', localtime;
+    
     ask_confirm("What would you like to name your clone ".
-                "(used to name the archive)? ", \$CLONE{NAME});
+                "(used to name the archive)? ", \$CLONE{NAME},
+                $quiet_mode);
 }
 
 # find the bricolage to update
 sub get_bricolage_root {
     ask_confirm("Bricolage Root Directory to Clone?",
-		\$CLONE{BRICOLAGE_ROOT});
+		\$CLONE{BRICOLAGE_ROOT},
+                $quiet_mode);
 
-    $CLONE{CONFIG_DIR} = catdir $CLONE{BRICOLAGE_ROOT}, 'conf';
+    $CLONE{CONFIG_DIR} = $ENV{CONFIG_DIR} || 
+        catdir $CLONE{BRICOLAGE_ROOT}, 'conf';
+        
     ask_confirm("Bricolage Config Directory",
-		\$CLONE{CONFIG_DIR});
+		\$CLONE{CONFIG_DIR},
+                $quiet_mode);
 
     # verify that we have a Bricolage install here
     hard_fail("No Bricolage installation found in $CLONE{BRICOLAGE_ROOT}.\n")
@@ -123,7 +144,7 @@ sub check_version {
 The installed version ("$VERSION") is not same as this version!  "make
 clone" is only designed to work with like versions.
 END
-        exit 1 unless ask_yesno("Continue with clone? [no] ", 0);
+        exit 1 unless ask_yesno("Continue with clone? [no] ", 0, $quiet_mode);
         @todo = ($VERSION);
 
     }
@@ -133,13 +154,17 @@ END
 sub confirm_paths {
     print "\nPlease confirm the Bricolage clone source directories.\n\n";
     ask_confirm("Bricolage Perl Module Directory",
-		\$INSTALL->{CONFIG}{MODULE_DIR});
+                \$INSTALL->{CONFIG}{MODULE_DIR},
+                $quiet_mode);
     ask_confirm("Bricolage Executable Directory",
-		\$INSTALL->{CONFIG}{BIN_DIR});
+                \$INSTALL->{CONFIG}{BIN_DIR},
+                $quiet_mode);
     ask_confirm("Mason Component Directory",
-		\$INSTALL->{CONFIG}{MASON_COMP_ROOT});
+                \$INSTALL->{CONFIG}{MASON_COMP_ROOT},
+                $quiet_mode);
     ask_confirm("Mason Data Directory",
-		\$INSTALL->{CONFIG}{MASON_DATA_ROOT});
+                \$INSTALL->{CONFIG}{MASON_DATA_ROOT},
+                $quiet_mode);
 }
 
 # output .db files used by installation steps

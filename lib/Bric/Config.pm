@@ -99,6 +99,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     SFTP_HOME
                     ENABLE_WEBDAV_MOVER
                     MEDIA_FILE_ROOT
+                    MEDIA_UNIQUE_FILENAME
+                    MEDIA_FILENAME_PREFIX
                     USE_THUMBNAILS
                     THUMBNAIL_SIZE
                     SMTP_SERVER
@@ -263,7 +265,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MANUAL_APACHE
                                      ENABLE_GZIP)],
                     media     => [qw(MEDIA_URI_ROOT
-                                     MEDIA_FILE_ROOT)],
+                                     MEDIA_FILE_ROOT
+                                     MEDIA_UNIQUE_FILENAME
+                                     MEDIA_FILENAME_PREFIX)],
                     thumb     => [qw(USE_THUMBNAILS
                                      THUMBNAIL_SIZE)],
                     ftp       => [qw(ENABLE_FTP_SERVER
@@ -373,7 +377,7 @@ require Bric; our $VERSION = Bric->VERSION;
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
                     USE_THUMBNAILS ENABLE_HTMLAREA AUTOGENERATE_SLUG
-                    RELATED_MEDIA_UPLOAD ENABLE_GZIP))
+                    RELATED_MEDIA_UPLOAD ENABLE_GZIP MEDIA_UNIQUE_FILENAME))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -548,6 +552,11 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant MEDIA_URI_ROOT => '/data/media';
     use constant MEDIA_FILE_ROOT => catdir(MASON_COMP_ROOT->[0][1],
                                            'data', 'media');
+
+    # Use Media ID as filename to ensure unique filenames across the site
+    # Prefix to append to media id if required.
+    use constant MEDIA_UNIQUE_FILENAME    => $config->{MEDIA_UNIQUE_FILENAME};
+    use constant MEDIA_FILENAME_PREFIX    => $config->{MEDIA_FILENAME_PREFIX} || '';
 
     # Are we using thumbnails and how big are they ?
     use constant USE_THUMBNAILS          => $config->{USE_THUMBNAILS};

@@ -53,8 +53,8 @@ C<preview_another_all_ocs()> in PREVIEW_MODE. [Serge Sozonoff]
 =item *
 
 Added a C<$INSTALL_VERBOSITY> makefile environment variable that, when set to
-"QUIET", eliminates many of the questions asked during installation, falling
-back on the default values. [Rod Taylor]
+"QUIET", eliminates many of the questions asked during installation and
+cloning, falling back on the default values. [Rod Taylor & Andrea Rota]
 
 =item *
 
@@ -84,6 +84,14 @@ Added "Show Alpha Search" preference that determines whether the alpha search
 ("A | B | C | ... [All]") links should be shown.  The alpha search isn't very
 useful because you can type the first letter in the textbox (or leave it blank
 for "All") for the same result.  Alpha search is off by default. [Marshall Roch]
+
+=item *
+
+Added C<MEDIA_UNIQUE_FILENAME> F<bricolage.conf> directive to allow the
+filename of media documents to be set to a unique automatically generated
+filename on upload, (Off by default). Also C<MEDIA_FILENAME_PREFIX> directive
+for setting a prefix word e.g. 'media' to be prepended to the filename if
+desired, (off by default). [Paul Orrock / Digital Craftsmen]
 
 =back
 

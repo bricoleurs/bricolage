@@ -76,20 +76,35 @@ sub hard_fail {
     exit 1;
 }
 
-=item ask_yesno($question, $default)
+=item ask_yesno($question, $default, $quiet_mode)
 
 Asks the user a yes/no question.  Default to $default if they just
 press [return].  Returns 1 for a yes answer and 0 for no.
 
+If $quiet_mode is true the default answer is returned without
+asking for user input (useful for unattended execution where
+appropriate default values can be passed to this sub).
+
+Be careful when using ask_yesno in quiet mode: if you're asking
+confirmation for a potentially dangerous task either be sure
+to set the "forget it" answer as default or don't allow
+quiet mode at all.
+
 =cut
 
 sub ask_yesno {
-    my ($question, $default) = @_;
+    my ($question, $default, $quiet_mode) = @_;
     my $tries = 1;
     local $| = 1;
     while (1) {
         print $question;
-        my $answer = <STDIN>;
+        # just print a newline after the question to keep
+        # output tidy, if we are in quiet mode
+        print "\n" if $quiet_mode;
+        
+        my $answer= '';
+        # do not wait for user input if we are in quiet mode
+        $answer = <STDIN> unless $quiet_mode;
         chomp($answer);
         return $default if not length $answer;
         return 0 if $answer and $answer =~ /^no?$/i;
@@ -100,50 +115,81 @@ sub ask_yesno {
 }
 
 
-=item ask_confirm($description, $ref_to_setting)
+=item ask_confirm($description, $ref_to_setting, $quiet_mode)
 
 Asks the user to confirm a setting.  If they enter a new value asks
 "are you sure."  Directly updates the setting and returns when done.
 
 A default setting of "NONE" will force the user to enter a value.
 
+If $quiet_mode is true the default answer is returned without
+asking for user input (useful for unattended execution where
+appropriate default values can be passed to this sub).
+
+The question is printed anyway, so that the default value appears
+in the output.
+
 =cut
 
 sub ask_confirm {
-    my ($desc, $ref) = @_;
+    my ($desc, $ref, $quiet_mode) = @_;
     my $tries = 1;
     local $| = 1;
     while (1) {
         print $desc, " [", $$ref, "] ";
-        my $answer = <STDIN>;
+        # just print a newline after the question to keep
+        # output tidy, if we are in quiet mode
+        print "\n" if $quiet_mode;
+        
+        my $answer= '';
+        # do not wait for user input if we are in quiet mode
+        $answer = <STDIN> unless $quiet_mode;
         chomp($answer);
         if (not length $answer or $answer eq $$ref) {
+            if($quiet_mode and $$ref eq 'NONE') {
+                print "No default is available for this question: ",
+                    "cannot continue quiet mode execution";
+                return;
+            }
             return unless $$ref eq 'NONE';
             print "No default is available for this question, ",
                 "please enter a value.\n";
             next;
         }
-        if (ask_yesno("Are you sure you want to use '$answer'? [yes] ", 1)) {
+        if (ask_yesno("Are you sure you want to use '$answer'? [yes] ", 1, $quiet_mode)) {
             $$ref = $answer;
             return;
         }
     }
 }
 
-=item ask_choice($question, [ "opt1", "opt2" ], "default")
+=item ask_choice($question, [ "opt1", "opt2" ], "default", $quiet_mode)
 
 Asks the user to choose from a list of options.  Returns the option
 selected.
 
+If $quiet_mode is true the default answer is returned without
+asking for user input (useful for unattended execution where
+appropriate default values can be passed to this sub).
+
+The question is printed anyway, so that the default value appears
+in the output.
+
 =cut
 
 sub ask_choice {
-    my ($desc, $choices, $default) = @_;
+    my ($desc, $choices, $default, $quiet_mode) = @_;
     my $tries = 1;
     local $| = 1;
     while (1) {
         print $desc, " [", $default, "] ";
-        my $answer = <STDIN>;
+        # just print a newline after the question to keep
+        # output tidy, if we are in quiet mode
+        print "\n" if $quiet_mode;
+        
+        my $answer= '';
+        # do not wait for user input if we are in quiet mode
+        $answer = <STDIN> unless $quiet_mode;
         chomp($answer);
         $answer = lc $answer;
         return $default if not length $answer;
