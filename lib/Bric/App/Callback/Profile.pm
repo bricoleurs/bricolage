@@ -72,10 +72,11 @@ sub manage_grps :Callback {
 
     # It could be an array of objects -- See Profile::Category.
     for my $o (ref $obj eq 'ARRAY' ? @$obj : ($obj)) {
+        my $all_grp_id = $obj->INSTANCE_GROUP_ID;
         # Assemble the new member information.
         foreach my $grp (@add_grps) {
             # Check permissions.
-            next unless $chk_grp_perms->($grp, $is_user);
+            next unless $chk_grp_perms->($grp, $all_grp_id, $is_user);
 
             # Add the object to the group.
             $grp->add_members([{ obj => $o }]);
@@ -85,7 +86,7 @@ sub manage_grps :Callback {
 
         foreach my $grp (@del_grps) {
             # Check permissions.
-            next unless $chk_grp_perms->($grp, $is_user);
+            next unless $chk_grp_perms->($grp, $all_grp_id, $is_user);
 
             # Deactivate the object's group membership.
             foreach my $mem ($grp->has_member({ obj => $o })) {
@@ -100,12 +101,13 @@ sub manage_grps :Callback {
 }
 
 $chk_grp_perms = sub {
-    my ($grp, $is_user) = @_;
+    my ($grp, $all_grp_id, $is_user) = @_;
     # If it's a user group, disallow access unless the current user is the
     # global admin or a member of the group. If it's not a user group,
     # disallow access unless the current user has EDIT access to the members
     # of the group.
-    unless (chk_authz($grp, EDIT, 1)
+    unless ($grp->get_id != $all_grp_id
+            && chk_authz($grp, EDIT, 1)
             && (($is_user
                  && (user_is_admin || $grp->has_member({ obj => get_user_object }))
                 || chk_authz(0, EDIT, 1, $grp->get_id)))) {

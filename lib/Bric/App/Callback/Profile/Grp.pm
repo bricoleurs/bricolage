@@ -148,6 +148,13 @@ $save_sub = sub {
 	my $pkg = $grp->member_class->get_pkg_name;
         if (exists $param->{members} or exists $param->{objects}) {
 
+            # Make sure it isn't an All group.
+            if ($param->{grp_id} == $pkg->INSTANCE_GROUP_ID) {
+                add_msg('Permission to manage "[_1]" group membership denied',
+                        $grp->get_name);
+                return;
+            }
+
             # Make sure they can manage group membership.
             if ($pkg eq 'Bric::Biz::Person::User') {
                 unless (user_is_admin || $grp->has_member(get_user_object)) {
