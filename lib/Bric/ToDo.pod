@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.131 $
+$Revision: 1.132 $
 
 =head1 DATE
 
-$Date: 2004-04-15 11:05:24 $
+$Date: 2004-04-18 15:32:27 $
 
 =head1 DESCRIPTION
 
@@ -140,6 +140,10 @@ or remove them from desks or workflows.
 Implement a funky hack so that we can have story components like
 /story.mc inherit based on the location to which we're publishing
 (/foo/bar/story), not the actual location of the component.
+
+=item *
+
+Add media thumbnail to desk view (is there room?).
 
 =back
 
