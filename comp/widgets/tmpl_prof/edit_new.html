@@ -1,4 +1,4 @@
-<%perl>
+<%perl>;
 my $wf = Bric::Biz::Workflow->lookup
   ({ id => get_state_data($widget, 'work_id')});
 my $site_id = $wf->get_site_id;
@@ -24,16 +24,14 @@ if ($param->{tplate_type}) {
         # It's an element template. Offer them a list of elements to
         # choose from. Get the top-level elements for this site, and then
         # all of the subelements.
-        my @objs = sort { $a->get_name cmp $b->get_name }
-          Bric::Biz::AssetType->list({ top_level => 0 }),
-          Bric::Biz::AssetType->list({ site_id => $site_id });
+
         $m->comp('/widgets/select_object/select_object.mc',
                  object    => 'element',
                  name      => $widget.'|at_id',
                  field     => 'name',
                  reset_key => $rk,
                  exclude   => $excl_media_sub,
-                 objs      => \@objs,
+                 objs      => $get_elems->($site_id),
                  disp      => 'Element');
     } elsif ($param->{tplate_type} ==
              Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE) {
@@ -130,4 +128,23 @@ my $pmeth = { %{ Bric::Biz::Asset::Formatting->my_meths->{priority} } };
 $pmeth->{value} = 3;
 my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 my $excl_media_sub = sub { $_[0]->is_media || ! chk_authz($_[0], READ, 1) };
+my $get_subs;
+$get_subs = sub {
+    my ($elem, $seen) = @_;
+    my @objs;
+    for my $e ($elem->get_containers) {
+        push @objs, ($e, $get_subs->($e, $seen)) unless $seen->{$e->get_id}++;
+    }
+    return @objs;
+};
+my $get_elems = sub {
+    my $site_id = shift;
+    my ($seen, @tops, @objs) = ({});
+    for my $e (Bric::Biz::AssetType->list({ site_id => $site_id })) {
+        push @tops, $e;
+        push @objs, $get_subs->($e, $seen);
+    }
+    unshift @objs, @tops;
+    return \@objs;
+};
 </%once>
