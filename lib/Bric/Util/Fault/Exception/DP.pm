@@ -7,15 +7,15 @@ Bric::Util::Fault::Exception::DP - Data Processing Exception
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DPTE
 
-$Date: 2001-10-11 00:34:55 $
+$Date: 2001-11-20 00:02:46 $
 
 =head1 SYNOPSIS
 

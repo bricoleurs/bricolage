@@ -8,11 +8,11 @@ images
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 

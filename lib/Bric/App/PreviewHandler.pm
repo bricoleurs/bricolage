@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:53 $
+$Date: 2001-11-20 00:02:44 $
 
 =head1 SYNOPSIS
 
@@ -75,7 +75,7 @@ use constant ERROR_FILE =>
 # Private Class Fields
 my $dp = 'Bric::Util::Fault::Exception::DP';
 my $fs = Bric::Util::Trans::FS->new;
-my $puri_re = qx/${ \$fs->cat_uri(PREVIEW_LOCAL) }/;
+#my $puri_re = qx/${ \$fs->cat_uri(PREVIEW_LOCAL) }/;
 
 ################################################################################
 # Instance Fields
@@ -159,8 +159,8 @@ B<Notes:> NONE.
 sub fixup_handler {
     my $r = shift;
     my $ret = eval {
-	# Just return if it's not in preview.
-	return OK unless $r->uri =~ /$puri_re/;
+	# Start by disabling browser caching.
+	$r->no_cache(1);
 	# Just return if it's an httpd content type.
 	my $ctype = $r->content_type;
 	return OK if $ctype =~ /^httpd/;

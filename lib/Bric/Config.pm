@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.12 $, 10, -1);
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:53 $
+$Date: 2001-11-20 00:02:44 $
 
 =head1 SYNOPSIS
 
@@ -253,10 +253,11 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 
 	    # Invent a server name, if necessary.
 	    $config->{SERVER_NAME} ||= do {
-		my $h = `hostname`;
-		my $d = `dnsdomainname`;
-		chomp ($h, $d);
-		$d ? "$h.$d" : $h;
+		my $h = `hostname -f`;
+#		my $d = `dnsdomainname`;
+		chomp $h;
+		$h;
+#		$d ? "$h.$d" : $h;
 	    };
 
 	    # Set up the server window name (because Netscape is retarted!).
@@ -430,7 +431,6 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
     use constant DEFAULT_FILE_EXT => => $config->{DEFAULT_FILE_EXT} || 'html';
-
 
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER}) {

@@ -23,8 +23,10 @@ $obj
 </%args>
 
 <%perl>;
-
-return unless $field eq "$widget|save_cb" || $field eq "$widget|add_cb" || $field eq "$widget|addElement_cb";
+return unless $field eq "$widget|save_cb"
+  || $field eq "$widget|add_cb"
+  || $field eq "$widget|save_n_stay_cb"
+  || $field eq "$widget|addElement_cb";
 return unless $param->{$field}; # prevent multiple calls to this file
 
 
@@ -162,8 +164,9 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
     $param->{element_id} = $comp->get_id;
 
     my $containers = $comp->get_containers;
-
-    if ($field eq "$widget|save_cb" && !$no_save) {
+    if (($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb")
+	&& !$no_save)
+    {
 
 	if ($param->{isNew}) {
 	    set_redirect('/admin/profile/element/' .$param->{element_id} );
@@ -172,7 +175,9 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 	    log_event($type . (defined $param->{element_id} ? '_save' : '_new'), $comp);
 	    # Record a message and redirect if we're saving.
 	    add_msg("$disp_name profile $name saved.");
-	    set_redirect('/admin/manager/element'); # return to profile if creating new object
+	    # return to profile if creating new object
+	    set_redirect('/admin/manager/element')
+	      unless $field eq "$widget|save_n_stay_cb";
 	}
 
     } elsif ($field eq "$widget|addElement_cb" && !$no_save) {
@@ -192,11 +197,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2001-11-19 21:43:08 $
+$Date: 2001-11-20 00:04:07 $
 
 =head1 SYNOPSIS
 

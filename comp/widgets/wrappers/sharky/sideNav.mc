@@ -408,13 +408,13 @@ foreach my $wf (@$workflows) {
 % # End Admin --------------------------------------
 
 % # begin debug widget
-<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
 % if (Bric::Config::QA_MODE && $debug) {
+<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
     <tr>
         <td align="center" bgcolor=#666633><br /><hr/><& /widgets/qa/qa.mc &><br /></td>
     </tr>
-% }
 </table>
+% }
 % # end debug widget
 
 % if ($agent->{os} ne "SomeNix") {
@@ -443,10 +443,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:39 $
+$Date: 2001-11-20 00:04:08 $
 
 </%doc>

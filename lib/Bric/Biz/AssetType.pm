@@ -8,16 +8,16 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2001-11-19 21:37:36 $
+$Date: 2001-11-20 00:02:44 $
 
 =head1 SYNOPSIS
 

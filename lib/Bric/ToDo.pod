@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2001-11-19 21:37:36 $
+$Date: 2001-11-20 00:02:44 $
 
 =head1 DESCRIPTION
 
@@ -37,10 +37,6 @@ significant (including the addition of new libraries).
 
 Add name of Output Channel to list of Templates in Find Templates interface
 [Michele].
-
-=item *
-
-Add a "Save and Stay" button to the Element Profile. [David]
 
 =item *
 
@@ -75,12 +71,6 @@ Write distribution documentation [David].
 
 =item *
 
-Filter categories and asset types in Asset editing screens by permission. Users
-who don't have READ permission on a category or asset type should't see it in
-the select lists [David].
-
-=item *
-
 Change the term "attribute" to "field" in the UI [Michele].
 
 =item *
@@ -89,8 +79,7 @@ Make SSL optional (and off by default) [David or Sam].
 
 =item *
 
-Add preference for Contributors to be automatically added to assets as keywords
-[David].
+Add URI to all media profile views.
 
 =back
 
@@ -151,6 +140,11 @@ Add interface for editing Contact Types [David].
 
 Add check for existing people before adding new ones in the Contributor and
 User interfaces [David].
+
+=item *
+
+Add preference for Contributors to be automatically added to assets as keywords
+[David].
 
 =item *
 
@@ -349,6 +343,11 @@ Create localization libraries for all text.
 Revamp Exceptions so that they use numbers to look themselves up -- so there's a
 central repository of possible exceptions, and they are therefore easier to
 document.
+
+=item *
+
+Add the ability to use HTML::Template Templates without breaking the use of
+Mason [Sam].
 
 =item *
 

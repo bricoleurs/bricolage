@@ -2,52 +2,47 @@
 
 <%perl>;
 $m->comp('/javascripts/profile/formValidator.js',
-	 id => $id
-	);
+	 id => $id);
 </%perl>
 
 <script language="javascript">
 function contribJump(obj) {
-    window.location.href = "/admin/profile/contrib/edit/<% $id %>/" + obj[obj.selectedIndex].value;
+    window.location.href = "/admin/profile/contrib/edit/<% $id %>/"
+                           + obj[obj.selectedIndex].value;
 }
 </script>
 
 <form method="post" action="<% $r->uri %>" name="contrib_profile" onSubmit="if(uniqueRole(this.subsys)) { return confirmChanges(this) } else { return false }">
 
 <%perl>;
-
-$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'contrib_id') if defined $id;
+$m->comp('/widgets/profile/hidden.mc',
+	 value => $id,
+	 name => 'contrib_id') if defined $id;
 
 # display person object fields
 &$defaultFields($contrib, $no_edit);
 
 # have the user select a group and role
 if ($mode eq "new") {
-
-    $m->comp('/widgets/profile/hidden.mc', value => $mode, name => 'mode');
-
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "$disp Profile",
-	     number  => 2);
+    $m->comp('/widgets/profile/hidden.mc',
+	     value => $mode,
+	     name => 'mode');
 
     # choose group
     &$showGroups($no_edit);
-
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
     &$stepOneOfTwo($type, $section);
 
 } elsif ( $mode eq "edit" ) {
-
-    if ($curSubsys || scalar(@subsys) <= 1) { # show full edit screen if role is well defined.
-
-	$m->comp('/widgets/profile/hidden.mc', value => $mode, name => 'mode');
+    if ($curSubsys || scalar(@subsys) <= 1) {
+	# show full edit screen if role is well defined.
+	$m->comp('/widgets/profile/hidden.mc',
+		 value => $mode,
+		 name => 'mode');
 
 	&$showAttrs($contrib, $id, $curSubsys, $extending, $no_edit);
 
 	# show drop down of other subsys, if any
 	if (scalar(@subsys)) {
-
 	    $m->comp("/widgets/wrappers/sharky/table_top.mc",
 		     caption => "Switch Roles",
 		     number  => 4);
@@ -62,8 +57,7 @@ if ($mode eq "new") {
 		     disp   => "Contributor Roles",
 		     name   => "cont_roles",
 		     value  => $curSubsys,
- 		     js     => " onChange='contribJump(this)'"
-		    );
+ 		     js     => " onChange='contribJump(this)'");
 
 	    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
@@ -78,50 +72,54 @@ if ($mode eq "new") {
 		 return  => '/admin/manager/contrib'
 		);
 
-    } else { # show all roles for this member so the user can choose one
+    } else {
+	# show all roles for this member so the user can choose one
+	$m->comp('/widgets/profile/hidden.mc',
+		 value => 'preEdit',
+		 name => 'mode');
 
 	$m->comp('/widgets/profile/hidden.mc', value => 'preEdit', name => 'mode');
 
 	$m->comp("/widgets/wrappers/sharky/table_top.mc",
-		 caption => "Choose a subsystem:",
+		 caption => "Roles",
 		 number  => 2);
 
 	my $roleOpts;
 	foreach my $sys (@subsys) {
 	    $roleOpts->{$sys} =($sys ne '_MEMBER_SUBSYS') ?  $sys : "Default";
 	}
-	
+
 	$m->comp("/widgets/profile/select.mc",
-		 disp    => 'Which role to edit?',
+		 disp    => 'Select Role',
 		 options => $roleOpts,
-		 name    => 'subsys'
-		);
+		 name    => 'subsys');
 
 	$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
 	&$stepOneOfTwo($type, $section);
     }
 
 } elsif ( $mode eq "extend" ) {
 
-    $m->comp('/widgets/profile/hidden.mc', value => $mode, name => 'mode');
+    $m->comp('/widgets/profile/hidden.mc',
+	     value => $mode,
+	     name => 'mode');
 
-    # display a read-only list of roles
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "Name the new role",
+	     caption => "Roles",
 	     number  => 2);
 
-    if (@subsys) {
+    # Display a read-only list of existing roles, if more than one.
+    if (@subsys > 1) {
 	$m->out("<table width=570><tr><td width=130 align=right>");
 	$m->out("<span class=label>Existing roles:</span></td><td width=440>\n");
 	foreach my $ss (@subsys) {
-	    $m->out ( "&#149;$ss<br />\n") if $ss ne '_MEMBER_SUBSYS';
+	    $m->out ( "$ss<br />\n") if $ss ne '_MEMBER_SUBSYS';
 	}
 	$m->out("</ul>\n");
 	$m->out("</td></tr></table>");
     }
 
-    # send the roles to javascript so we can check before submitting
+    # Send the roles to javascript so we can check before submitting
     $m->out('<script language="javascript">' . "\n");
     $m->out("var checkUnique = true\n");
     $m->out("var roles = new Array(");
@@ -135,43 +133,33 @@ if ($mode eq "new") {
 
     # text box for new role name
     $m->comp("/widgets/profile/text.mc",
-	     disp    => 'Name the new role',
+	     disp    => 'New Role Name',
 	     name    => 'subsys',
-	     useTable => 1
-	    );
+	     useTable => 1);
 
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
     &$stepOneOfTwo($type, $section);
-
 }
-
 </%perl>
-
 </form>
 
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
 
-
-<%args>
-
-</%args>
-
 <%init>;
 # Do any redirects first.
 do_queued_redirect();
 
-# split uri. expected url is in this format: /admin/profile/contrib/mode/id/subsys
+# split uri. expected url is in this format:
+# /admin/profile/contrib/mode/id/subsys
 my @tmp = split /\//, $r->uri;
 my $mode = $ARGS{mode} || $tmp[4] || 'new';
 
-my $id;
-$id ||= $ARGS{contrib_id};
-$id ||= $tmp[5];
+my $id = $ARGS{contrib_id} || $tmp[5];
 
-my $curSubsys = ($tmp[6]) ? $tmp[6] : undef;
+my $curSubsys = $tmp[6] ||  undef;
 my $state     = get_state_data("contrib_profile");
 my $extending = $state->{extending};
 
@@ -186,34 +174,28 @@ if (!$id) {
     $id ||= $contrib->get_id;
 }
 
-my @subsys = ($mode eq "new") ? () : $contrib->subsys_names; # gather all subsys names
-$curSubsys ||= $subsys[0] if (scalar(@subsys) == 1); # if there's just one, it must be the current one
-$curSubsys ||= "_MEMBER_SUBSYS" if (!scalar(@subsys)); # if there's none (ie, new contrib), assign the default
-
+# gather all subsys names
+my @subsys = $mode eq "new" ? () : $contrib->subsys_names;
+# if there's just one, it must be the current one
+$curSubsys ||= $subsys[0] if @subsys == 1;
+# if there's none (ie, new contrib), assign the default
+$curSubsys ||= "_MEMBER_SUBSYS" if !@subsys;
 
 # Check authorization.
 chk_authz($contrib, $id ? READ : CREATE);
-# HACK: For now, we'll probably want to allow everyone the ability to edit,
-# create, and delete contributors. Switch these commented lines around once
-# we're using real permissions.
-#my $no_edit = chk_authz($contrib, ($id ? EDIT : CREATE), 1);
-my $no_edit = undef;
-#my $no_del = !$id || $no_edit;
-my $no_del = !$id;
+my $no_edit = !chk_authz($contrib, (defined $id ? EDIT : CREATE), 1);
+my $no_del = !$id || $no_edit;
 
 # Get the name for the breadcrumb trail.
 my $crumb = $contrib->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 my $context   = "Admin | Profile | $disp | $crumb";
-$context .= " (Step 1 of 2)" if  $mode eq "new" || !$id;
 
 # print standard header
 $m->comp('/widgets/wrappers/sharky/header.mc',
 	 title   => "$disp Profile",
-	 context => $context
-	);
-
+	 context => $context);
 
 ################################################################################
 ################################################################################
@@ -226,9 +208,9 @@ my $section = 'admin';
 my $disp = get_disp_name($type);
 
 my $showAttrs = sub {
-
     my ($contrib, $id, $subsys, $extending, $ro) = @_;
-    my $preCaption = ($subsys eq '_MEMBER_SUBSYS') ? 'Default Role' : $subsys;
+    my $preCaption = '&quot;' . ($subsys eq '_MEMBER_SUBSYS' ? 'Default'
+				 : $subsys) . '&quot; Role';
     my $contacts = $contrib->get_obj->get_contacts;
 
     # Display the Contact info.
@@ -258,7 +240,7 @@ my $showAttrs = sub {
 
     # if this is a new extension, get the meta data from the default instance
     my $default = $contrib->all_for_subsys;
-    my $all = ($extending) ?  $default : $contrib->all_for_subsys($subsys);
+    my $all = ($extending) ?  $default: $contrib->all_for_subsys($subsys);
 
     # sort the attrs and build an array
     my $attr = [];
@@ -282,8 +264,7 @@ my $showAttrs = sub {
 		 form_name   => 'contrib_profile',
 		 readOnly    => $ro,
 		 usePosition => 0,
-		 useDelete   => 0
-		);
+		 useDelete   => 0);
 
 	# Close the table.
 	$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
@@ -296,16 +277,14 @@ my $defaultFields = sub {
     # Display the referential fields.
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
 	     caption => "Properties",
-	     number  => 1
-	    );
+	     number  => 1);
 
     $m->comp('/widgets/profile/dumpRemainingFields.mc',
 	     objref => $contrib, readOnly => $ro,
 	     fieldsUsed => {
 			    name   => 1,
 			    active => 1
-			   }
-	    );
+			   });
 
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
@@ -317,40 +296,32 @@ my $showGroups = sub {
     my $options;
     my $instanceGrpId = Bric::Biz::Person->INSTANCE_GROUP_ID;
     foreach my $group (@$groups) {
-	$options->{$group->get_id} = $group->get_name if ($group->get_id != $instanceGrpId);
+	$options->{$group->get_id} = $group->get_name
+	  if ($group->get_id != $instanceGrpId);
     }
+
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+	     caption => "Contributor Type",
+	     number  => 2);
 
     $m->comp("/widgets/profile/select.mc",
 	     value     => 'group',
-	     disp      => 'What type of contributor is this?',
+	     disp      => 'Contributor Type',
 	     options   => $options,
 	     name      => 'group',
 	     readOnly => $ro
 	    );
+
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 };
 
 my $stepOneOfTwo = sub {
-
-    # Display the referential fields.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "Continue to next step",
-	     number  => 3
-	    );
-    $m->out(qq{<table border=0><tr><td width=20><img src="/media/images/spacer.gif" width=20 height=1></td><td>});
-
-    $m->out("<span class=label>Step 1 of 2</span></td><td>");
-
-    # Display the form buttons.
     $m->comp('/widgets/profile/formButtons.mc',
 	     type    => shift,
 	     section => shift,
 	     no_del  => 1,
 	     val     => "next_dkgreen",
-	     return  => '/admin/manager/contrib'
-	    );
-    $m->out(qq{</td></tr></table>});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
+	     return  => '/admin/manager/contrib');
 };
 </%once>
 
@@ -363,11 +334,11 @@ my $stepOneOfTwo = sub {
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2001-10-23 19:37:41 $
+$Date: 2001-11-20 00:04:03 $
 
 =head1 DESCRIPTION
 

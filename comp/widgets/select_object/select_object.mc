@@ -8,11 +8,11 @@ select_object - Provide a select box listing all objects of a certain type.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:39 $
+$Date: 2001-11-20 00:04:08 $
 
 =head1 SYNOPSIS
 
@@ -110,8 +110,12 @@ and all the state data for this widget is cleared.
 
 exclude
 
-Exclude certain object instances from appearing in the list by passing this 
-parameter an array ref of object IDs to exclude.
+Exclude certain object instances from appearing in the list by passing this
+parameter an array ref of object IDs to exclude. You can also pass a sub ref to
+this argument. This sub ref will be called for each object to be displayed in
+the list, and be passed the object as the first arugment. If the sub ref returns
+true, that object will be excluded from the list. If it returns false the object
+will stay in the list.
 
 =item *
 
@@ -165,7 +169,7 @@ $indent     => FIELD_INDENT
 $disp       => ''
 $useTable   => 1
 $reset_key  => undef
-$exclude    => []
+$exclude    => undef
 $readOnly   => 0
 $req        => 0
 $size       => undef
@@ -180,8 +184,13 @@ $js         => undef
 # boxes to exist on the same page.
 my $sub_widget .= "$widget.$object";
 
-# Convert the exclude array into a hash
-$exclude = { map { $_ => '' } @$exclude };
+if ($exclude) {
+    # Convert the exclude array into a HASH ref and return as a sub ref.
+    if (ref $exclude eq 'ARRAY') {
+	my %h = map { $_ => '' } @$exclude;
+	$exclude = sub { exists $h{$_[0]->get_id} };
+    }
+}
 
 # Reset this widget if the reset key changes.
 reset_state($sub_widget, $reset_key);
@@ -228,10 +237,9 @@ if ($pkg) {
         my $id = $o->get_id;
 
 	# Do not add excluded IDs.
-	next if exists $exclude->{$id};
+	next if $exclude && $exclude->($o);
 
         my $val = $val_get->($o, $val_arg);
-	
         push @vals, [$id, $val];
     } 
 } else {

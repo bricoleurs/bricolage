@@ -8,18 +8,18 @@ Bric::Util::DBD::Oracle - The Bricolage Oracle Driver
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:55 $
+$Date: 2001-11-20 00:02:46 $
 
 =head1 SYNOPSIS
 

@@ -64,11 +64,11 @@ $m->comp('/widgets/listManager/listManager.mc',
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:37 $
+$Date: 2001-11-20 00:04:06 $
 
 =head1 SYNOPSIS
 

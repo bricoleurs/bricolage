@@ -74,7 +74,12 @@ sub initialize {
     $opt_d ||= $ENV{PGDATABASE};
     $opt_u ||= $ENV{PGUSER};
     $opt_p ||= $ENV{PGPASSWORD};
-    $opt_w ||= '/usr/local/bricolage/lib';
+
+    unless ($opt_w) {
+	$ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
+	require File::Spec::Functions;
+	$opt_w = File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib');
+    }
 
     # Print a usage message unless all required args are included or if -h has
     # been passed.
@@ -122,29 +127,30 @@ sub initialize {
 sub usage {
     my $prog = substr($0, rindex($0, '/')+1);
 
-    print "\nUsage: $prog [options]\n\n";
-    print "Supported Options:\n";
-    print "  -w The directory with the CVS SQL files."
-          . " Defaults to /usr/local/bricolage/lib.\n";
-    print "  -u Database user login. Defaults to PGUSER environment variable.\n";
-    print "  -p Database user password. Defaults to PGPASSWORD environment"
-          . " variable.\n";
-    print "  -d Database name. Defaults to PGDATABASE environment variable.\n";
-    print "  -H PostgreSQL server host name. Will use PGHOST environment"
-          . " variable\n     and defaults to localhost.\n";
-    print "  -o PostgreSQL server port number. Will use PGPORT environment"
-          . " variable\n     and defaults to 5432.\n";
-    print "  -c Create the database first.\n";
-    print "  -r Drop and recreate the existing database (assumes -c).\n";
-    print "  -m Make a new user. Pass in the user name and password separated"
-          . " by a\n     colon. Permissions will be granted to this user to access"
-	  . " the new\n     database (assumes -g for this user).\n";
-    print "  -g User name to which permissions should be granted on the new"
-          . " database.\n";
-    print "  -t If true, insert database test values.\n";
-    print "  -h Print this help message.\n";
-    print "  -q Quiet mode.\n";
-    print "\n";
+    print qq{
+Usage: $prog [options]
+
+Supported Options:
+  -w The directory with the CVS SQL files. Defaults to lib subdirectory of
+     BRICOLAGE_ROOT environment variable, which itself defaults to
+     /usr/local/bricolage.
+  -u Database user login. Defaults to PGUSER environment variable.
+  -p Database user password. Defaults to PGPASSWORD environment variable.
+  -d Database name. Defaults to PGDATABASE environment variable.
+  -H PostgreSQL server host name. Will use PGHOST environment variable and
+     defaults to localhost
+  -o PostgreSQL server port number. Will use PGPORT environment variable
+     and defaults to 5432.
+  -c Create the database frst.
+  -r Drop and recreate the exiting database (assumes -c).
+  -m Make a new user. Pass in the user name and password separated by a colon.
+     Permissions will be granted to this user to access the new database
+     (assumes -g for this user).
+  -g User name to which permissions should be granted on the new database.
+  -t If true, insert database test values.
+  -h Print this help message.
+  -q Quiet mode.
+};
     exit;
 }
 

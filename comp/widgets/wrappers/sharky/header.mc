@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2001-10-11 00:35:39 $
+$Date: 2001-11-20 00:04:08 $
 
 =head1 SYNOPSIS
 
@@ -102,17 +102,17 @@ function init() {
 
 }
 
-%# if ($no_toolbar && $agent->{browser} ne 'Internet Explorer') {
 % if ($no_toolbar) {
-%     # We have to strip out non-alphanumeric chars because Netscape is lame!
 if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
+    // Send the current window to a blank page.
+    document.location = 'about:blank';
     // Turn off the toolbar, back button, etc.
     window.open("<% $uri %>", 'Bricolage_<% SERVER_WINDOW_NAME %>',
-                'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1');
-    self.close();
+                'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1,width=750');
+} else {
+    history.forward(1);
 }
 % } # if
-
 </script>
 <meta http-equiv="expires" content="Wed, 20 Feb 2000 08:30:00 GMT">
 </head>
@@ -187,8 +187,9 @@ if ($useSideNav) {
 	$m->comp("/widgets/wrappers/sharky/sideNav.mc", debug => $debug);
     } else {
 	my $uri = $r->uri;
+	$uri .= "&debug=$debug" if $debug;
 	# create a unique uri to defeat browser caching attempts.
-	$uri .= "&debug=$debug&rnd=" . time;
+	$uri .= "&rnd=" . time;
 	chomp $uri;
 	$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } ) if ($agent->{browser} eq "Netscape");
 	$m->out( qq {<$layer name="sideNav" src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" $properties>} );

@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-19 21:37:36 $
+$Date: 2001-11-20 00:02:46 $
 
 =head1 SYNOPSIS
 

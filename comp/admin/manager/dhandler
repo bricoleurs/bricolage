@@ -61,7 +61,7 @@ if ($type eq 'grp') {
                            object => 'contrib_type',
                            field => 'name',
 			   disp => 'Or Pick a Type',
-                           default => ['all', 'All Contributor Types'],
+                           default => ['all', 'All Contributors'],
                            constrain => { all => 1},
                            exclude => [Bric::Biz::Person->INSTANCE_GROUP_ID],
 			   indent  => 140,
@@ -348,11 +348,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2001-10-11 00:35:39 $
+$Date: 2001-11-20 00:04:02 $
 
 =head1 SYNOPSIS
 

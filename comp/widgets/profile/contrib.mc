@@ -44,13 +44,17 @@ if ($param->{delete}) {
 	my $member = $group->add_member( { obj => $contrib } );
 	$group->save;
 	@{$param}{qw(mode contrib_id)} = ('edit', $member->get_id);
-	$member = Bric::Util::Grp::Parts::Member::Contrib->lookup({ id => $param->{contrib_id} } );
+	$member = Bric::Util::Grp::Parts::Member::Contrib->lookup(
+          { id => $param->{contrib_id} } );
+
 	# Log that we've created a new contributor.
 	log_event("${type}_new", $member);
-	set_redirect('/admin/profile/contrib/edit/' . $param->{contrib_id} . '/' . '_MEMBER_SUBSYS' );
+	set_redirect('/admin/profile/contrib/edit/' . $param->{contrib_id}
+		     . '/' . '_MEMBER_SUBSYS' );
 	return $member;
 
-    } elsif ($param->{mode} eq "edit") { # we must be dealing with an existing contributor object
+    } elsif ($param->{mode} eq "edit") {
+	# We must be dealing with an existing contributor object
 
 	# get handle to underlying person object
  	my $obj = $contrib->get_obj;
@@ -96,9 +100,10 @@ if ($param->{delete}) {
 	}
 
     } elsif ($param->{mode} eq "extend") {
-
+	# We're creating a new contributor based on an existing one.
+	# Change the mode for the next screen.
 	$param->{mode} = 'edit';
-	set_state_data("contrib_profile", { extending => 1 } );	
+	set_state_data("contrib_profile", { extending => 1 } );
 	set_redirect('/admin/profile/contrib/edit/' . $obj->get_id . '/'
 		     . escape_uri($param->{subsys}) );
 	log_event("${type}_ext", $contrib);
@@ -125,11 +130,11 @@ if ($param->{delete}) {
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2001-10-23 19:35:51 $
+$Date: 2001-11-20 00:04:07 $
 
 =head1 SYNOPSIS
 

@@ -8,15 +8,15 @@ package Bric::Util::Attribute;
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-10-23 18:22:43 $
+$Date: 2001-11-20 00:02:45 $
 
 =head1 SYNOPSIS
 

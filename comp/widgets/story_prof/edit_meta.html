@@ -168,9 +168,9 @@ my $cats = $story->get_categories;
 
 
 % # BEGIN FOREACH CAT
-% my $curr_cats = [];
+% my $curr_cats = {};
 % foreach (@cat) {
-%     push @$curr_cats, $_->get_id;
+%     $curr_cats->{$_->get_id} = 1;
   <tr>
     <td width=20><img src="/media/images/spacer.gif" width="20" height="20" /></td>
     <td colspan="2"><% $_->get_name %></td>
@@ -200,6 +200,8 @@ my $cats = $story->get_categories;
 % }
 
 </table>
+% # Create the subroutine to exclude categories.
+% my $excl_sub = sub { $curr_cats->{$_[0]->get_id} || ! chk_authz($_[0], READ, 1) };
 
 <table border=0 cellpadding=0 cellspacing=0 width=578>
 <tr class=medHeader>
@@ -215,7 +217,7 @@ my $cats = $story->get_categories;
 <& '/widgets/select_object/select_object.mc', 
         object => 'category',
 	name => "$widget|new_category_id",
-        exclude => $curr_cats,
+        exclude => $excl_sub,
 	field => 'uri',
 	useTable => 0
 &>

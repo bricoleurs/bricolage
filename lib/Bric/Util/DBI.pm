@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.7 $, 10, -1);
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:54 $
+$Date: 2001-11-20 00:02:45 $
 
 =head1 SYNOPSIS
 

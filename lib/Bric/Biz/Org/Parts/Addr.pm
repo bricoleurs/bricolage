@@ -7,15 +7,15 @@ Bric::Biz::Org::Parts::Addr - Organizational Addresses
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:54 $
+$Date: 2001-11-20 00:02:45 $
 
 =head1 SYNOPSIS
 

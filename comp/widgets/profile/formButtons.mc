@@ -8,6 +8,7 @@ $return    => undef
 $no_del    => 0
 $no_ret    => 0
 $no_save   => 0
+$stay      => ''
 $widget    => 'profile'
 $chk_label => 'Delete this Profile'
 $ret_val   => 'cancel_red'
@@ -34,12 +35,13 @@ $m->out('&nbsp;<span class=burgandyLabel>' . $chk_label . '</span>') unless $no_
 <tr>
    <td align=left>
 <%perl>;
+$stay = qq{&nbsp;<input type="image" src="/media/images/save_and_stay_lgreen.gif" border="0" name="$widget|$stay" value="save_and_stay" vspace="2" />} if $stay;
 if (!$val) {
-    $val = '' unless defined $val;
-    $m->out(qq{<input type="image" src="/media/images/save_red.gif" border=0 name="$widget|$cb" value="$val" vspace=2 />})
+    $val = '';
+    $m->out(qq{<input type="image" src="/media/images/save_red.gif" border="0" name="$widget|$cb" value="$val" vspace="2" />$stay})
       unless $no_save;
 } else {
-    $m->out(qq{<input type="image" src="/media/images/} . $val . qq{.gif" border=0 name="$widget|$cb" value="$val" />}) unless $no_save;
+    $m->out(qq{<input type="image" src="/media/images/${val}.gif" border=0 name="$widget|$cb" value="$val" />$stay}) unless $no_save;
 }
 </%perl>
    </td>
@@ -61,16 +63,16 @@ formButtons.mc
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:38 $
+$Date: 2001-11-20 00:04:07 $
 
 =head1 SYNOPSIS
 

@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - The manner of keeping track of output channels
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.10 $, 10, -1);
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:53 $
+$Date: 2001-11-20 00:02:44 $
 
 =head1 SYNOPSIS
 
@@ -755,6 +755,29 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=item $oc = $oc->set_filename($filename)
+
+Sets the filename that will be used in the names of files burned into this
+Output Channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $filename = $oc->get_filename
+
+Gets the filename that will be used in the names of files burned into this
+Output Channel. Defaults to the value of the DEFAULT_FILENAME configuration
+directive if unset.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
 =item $oc = $oc->set_file_ext($file_ext)
 
 Sets the filename extension that will be used in the names of files burned into
@@ -769,29 +792,24 @@ B<Notes:> NONE.
 =item $file_ext = $oc->get_file_ext
 
 Gets the filename extension that will be used in the names of files burned into
-this Output Channel.
+this Output Channel. Defaults to the value of the DEFAULT_FILE_EXT configuration
+directive if unset.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
-=
-item $oc = $oc->set_tile_aware( undef || 1)
+
+=item $oc = $oc->set_tile_aware( undef || 1)
 
 Set the flag for wheather this output channel is tile aware
 
-B<Throws:>
-NONE
+B<Throws:> NONE
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE
 
-B<Notes:>
-NONE
-
-=cut
-
+B<Notes:> NONE
 
 =item (undef || 1 ) = $oc->get_tile_aware()
 

@@ -5,16 +5,16 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:09 $
+$Date: 2001-11-20 00:04:07 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -41,11 +41,12 @@ The numFields value allows ordering of new meta data.  Pass in the number of
 already existing attributes on the object, and formBuilder will build a 
 select box with position numbers.  Default is no numFields select.
 
+The stay argument, when passed a true value, causes a "Save and Stay" button
+to be added, with a callback value of "save_n_stay_cb."
 
 =cut
 </%doc>
 <%args>
-
 $target                 => $r->uri
 $optionalFieldsLocation => ''
 $numFields              => -1
@@ -53,11 +54,13 @@ $formName               => "theForm"
 $addCallbackCaption     => "Add to Form"
 $addCallback            => "formBuilder|add_cb"
 $saveCallback           => "formBuilder|save_cb"
+$stayCallback           => "formBuilder|save_n_stay_cb"
 $saveCallbackCaption    => "Save"
 $num                    => 2
 $caption                => "Create new data field"
 $useRequired            => 0
 $useQuantifier          => 0
+$stay                   => undef
 </%args>
 <%init>
 
@@ -88,8 +91,7 @@ if ($agent->{browser} eq "Netscape") {
 
 # build the numFields select box
 if ($numFields != -1) {
-
-	$numFieldsTxt = '<span class=label>Position:</span><br><select name=fb_position size=1>';	
+	$numFieldsTxt = '<span class=label>Position:</span><br><select name=fb_position size=1>';
 	for my $i (1 .. $numFields+1) {
 		$numFieldsTxt .= "<option value=$i";
 		$numFieldsTxt .= " selected" if ($i == $numFields+1);
@@ -97,7 +99,6 @@ if ($numFields != -1) {
 	}
 	$numFieldsTxt .= '</select>';
 }
-
 </%init>
 
 
@@ -117,6 +118,7 @@ if ($numFields != -1) {
 <input type=hidden name=fb_allowMultiple value=''>
 <input type=hidden name=<% $addCallback %> value=0>
 <input type=hidden name=<% $saveCallback %> value=0>
+<input type=hidden name=<% $stayCallback %> value=0>
 <input type=hidden name=delete value=0>
 
 % # close the current form context
@@ -452,9 +454,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 $m->out("<br />\n");
 
 </%perl>
-<a href="#" onClick="formBuilderMagicSubmit('<% $formName %>', 'save');return false"><img src="/media/images/save_red.gif" border=0 /></a>
-&nbsp;
-<a href="#" onClick="window.location.href='<% "/$section/manager/$type/" %>'; return false;"><img src="/media/images/return_dgreen.gif" border=0 /></a>
+<a href="#" onClick="formBuilderMagicSubmit('<% $formName %>', 'save');return false"><img src="/media/images/save_red.gif" border="0" /></a>
+% $m->out(qq{<a href="#" onClick="formBuilderMagicSubmit('$formName', 'save_n_stay');return false"><img src="/media/images/save_and_stay_lgreen.gif" border="0" /></a>\n}) if $stay;
+<a href="#" onClick="window.location.href='<% "/$section/manager/$type/" %>'; return false;"><img src="/media/images/return_dgreen.gif" border="0" /></a>
 </form>
-
-

@@ -8,6 +8,8 @@ $m->comp('/widgets/select_object/select_object.mc',
 	 'name'      => $widget.'|at_id',
 	 'field'     => 'name',
 	 'reset_key' => $rk,
+         req         => 1,
+         exclude     => $excl_sub,
 	 disp        => 'Element');
 $m->out($ieSpacer);
 </%perl>
@@ -42,6 +44,7 @@ $m->comp('/widgets/select_object/select_object.mc',
 	 'name'      => $widget.'|oc_id',
 	 'field'     => 'name',
 	 'reset_key' => $rk,
+         req         => 1,
 	 'disp'      => 'Output Channel');
 $m->out($ieSpacer);
 $m->comp('/widgets/select_object/select_object.mc',
@@ -49,6 +52,8 @@ $m->comp('/widgets/select_object/select_object.mc',
          'name'      => $widget.'|cat_id',
 	 'reset_key' => $rk,
          'field'     => 'uri',
+         exclude     => $excl_sub,
+         req         => 1,
 	 'disp'      => 'Category');
 $m->out($ieSpacer);
 $m->comp('/widgets/profile/displayFormElement.mc',
@@ -84,4 +89,5 @@ my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 7 : FIELD_IN
 <%once>;
 my $pmeth = { %{ Bric::Biz::Asset::Formatting->my_meths->{priority} } };
 $pmeth->{value} = 3;
+my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 </%once>

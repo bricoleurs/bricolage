@@ -5,16 +5,16 @@
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-11-15 20:36:24 $
+$Date: 2001-11-20 00:04:07 $
 
 =head1 SYNOPSIS
 
@@ -27,7 +27,6 @@ Called by /admin/profile/user/dhandler (or any profile dhandler) to display
 fields not explicitly displayed by profile element.
 
 =cut
-
 </%doc>
 <%args>
 

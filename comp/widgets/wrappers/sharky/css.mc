@@ -72,9 +72,9 @@ $fontSizeMed   = "font-size:11pt;";
 $fontSizeLarge = "font-size:12pt;";
 
 if ($agent->{browser} eq 'Mozilla') {
-	$fontSizeSmall = "font-size:7.5pt;";
-	$fontSizeMed   = "font-size:8pt;";
-	$fontSizeLarge = "font-size:10pt;";
+	$fontSizeSmall = "font-size:9.5pt;";
+	$fontSizeMed   = "font-size:10pt;";
+	$fontSizeLarge = "font-size:11pt;";
 } elsif ($agent->{os} =~ /^Windows/) { # windows fonts one size smaller
 	$fontSizeSmall = "font-size:7.5pt;";
 	$fontSizeMed   = "font-size:8.5pt;";
@@ -212,11 +212,11 @@ TH         <% $header %>
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:39 $
+$Date: 2001-11-20 00:04:08 $
 
 =head1 SYNOPSIS
 

@@ -13,11 +13,11 @@ $url ||= last_page();
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:37 $
+$Date: 2001-11-20 00:04:05 $
 
 =head1 SYNOPSIS
 
