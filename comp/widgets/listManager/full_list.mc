@@ -67,10 +67,6 @@
 
 %# Output the rows of data
 % my $first;
-% if ($sortOrder eq 'reverse') {
-%     @$data = reverse @$data;
-% }
-
 % # here's where the rows diplayed are limited - see lines 209-18
 % foreach my $r (0..$#{$data}) {
 % my $o_id = shift @{$data->[$r]};

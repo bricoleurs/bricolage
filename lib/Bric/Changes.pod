@@ -133,6 +133,12 @@ request that does a "Check in and Publish", since we now require PostgreSQL
 
 Added missing constraint to the "type" column of the "workflow" table. [David]
 
+=item *
+
+Changing the sort order of a list of items in a search interface now properly
+reverses the entire colletion of object over the pages, rather than just the
+objects for the current page. Thanks to Marshall for the spot! [David]
+
 =back
 
 =head2 Bug Fixes
