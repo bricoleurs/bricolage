@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:13 $
+$Date: 2003-10-06 14:49:08 $
 
 
 =head1 SYNOPSIS
@@ -76,7 +76,7 @@ them back into the desk. Users may also get read only copies.
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies
+# Programmatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Asset;
 use Bric::Util::Grp::Desk;
@@ -156,7 +156,7 @@ BEGIN {
 
 =item $success = $obj = new Bric::Biz::Workflow::Parts::Desk($init);
 
-The following is a list of parameter keys and their assiociated values.
+The following is a list of parameter keys and their associated values.
 
 Keys for $init are:
 
@@ -340,7 +340,7 @@ Unable to fetch row from statement handle.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Seaches against C<name> and C<description> use the LIKE operator, so
+B<Notes:> Searches against C<name> and C<description> use the LIKE operator, so
 '%' can be used for substring searching.
 
 =cut
@@ -386,7 +386,7 @@ Unable to fetch row from statement handle.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Seaches against C<name> and C<description> use the LIKE operator, so
+B<Notes:> Searches against C<name> and C<description> use the LIKE operator, so
 '%' can be used for substring searching.
 
 =cut
@@ -544,7 +544,7 @@ The number of columns to format in a textarea field.
 
 =item vals
 
-An anonymous hash of key/value pairs reprsenting the values and display names
+An anonymous hash of key/value pairs representing the values and display names
 to use in a select list.
 
 =back
@@ -948,7 +948,9 @@ B<Notes:> NONE.
 sub get_assets_href {
     my $self = shift;
     my $ass;
-    foreach ($self->get_assets) { push @{ $ass->{$_->key_name} }, $_ }
+    foreach ($self->get_assets) {
+        push @{ $ass->{$_->key_name} }, $_;
+    }
     return $ass;
 }
 
@@ -1078,7 +1080,7 @@ sub remove {
 
 =item $desk = $desk->save;
 
-Checks the user to see if s/he has the right priviledges to checkout stories.
+Checks the user to see if s/he has the right privileges to checkout stories.
 
 B<Throws:>
 
@@ -1199,7 +1201,7 @@ sub _sync_transfer {
 
 =item $obj = $desk->_get_grp_obj($id_field, $obj_field)
 
-Retrieve the group object if its set in this object.  Otherwise, try to look it
+Retrieve the group object if it's set in this object.  Otherwise, try to look it
 up via the ID field passed.
 
 B<Throws:>
@@ -1390,7 +1392,7 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $ids) = @_;
 
-    # Make sure to set active explictly if its not passed.
+    # Make sure to set active explicitly if its not passed.
     $params->{active} = exists $params->{active} ?
       $params->{active} ? 1 : 0 : 1;
     $params->{publish} = $params->{publish} ? 1 : 0
