@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -20,11 +20,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2002-03-08 06:35:44 $
+$Date: 2002-03-08 22:58:51 $
 
 =head1 SYNOPSIS
 
@@ -176,7 +176,7 @@ Provides query, export, update, create and delete for Templates.
 
 Provides query, export, update, create and delete for Element definitions.
 
-=item Bric::SOAP::Category B<[Implementation Incomplete]>
+=item L<Bric::SOAP::Category|Bric::SOAP::Category>
 
 Provides query, export, update, create and delete for Category objects.
 

@@ -160,35 +160,37 @@ foreach my $category_id (@$category_ids) {
  	ok($document, "recieved document for category $category_id");
  	check_doc($document, $xsd, "category $category_id");	
 
-#  	# add (copy time()) to name and try to create copy
-# 	my $time = time();
-#  	$document =~ s!<name>(.*?)</name>!<name>$1 (copy $time)</name>!;
-#  	$response = $soap->create(name(document => $document)->type('base64'));
-#  	ok(!$response->fault, 'SOAP create() result is not a fault');
-#  	exit 1 if $response->fault;
-#  	my $ids = $response->result;
-#  	isa_ok($ids, 'ARRAY');
+  	# add (/copy$time) to path and try to create copy
+ 	my $time = time();
+  	$document =~ s!<path>(.*?)</path>!
+	    "<path>" . ($1 eq '/' ? "/copy$time" : "$1/copy$time") . "</path>"!e;
+	#print STDERR $document;
+  	$response = $soap->create(name(document => $document)->type('base64'));
+  	ok(!$response->fault, 'SOAP create() result is not a fault');
+  	exit 1 if $response->fault;
+  	my $ids = $response->result;
+  	isa_ok($ids, 'ARRAY');
 
-#  	# modify copy with update to add to description of first item
-#  	$document =~ s!<description>(.*?)</description>!<description>$1 (description updated)</description>!;
-#  	$document =~ s!id=".*?"!id="$ids->[0]"!;
-#  	$response = $soap->update(name(document => $document)->type('base64'),
-#  				  name(update_ids => [ name(category_id => 
-#  							    $ids->[0]) ]));
-#  	ok(!$response->fault, 'SOAP update() result is not a fault');
-#  	exit 1 if $response->fault;
-#  	my $updated_ids = $response->result;
-#  	isa_ok($ids, 'ARRAY');
-#  	is($updated_ids->[0], $ids->[0], "update() worked in place");
+  	# modify copy with update to add to description of first item
+  	$document =~ s!<description>(.*?)</description>!<description>$1 (description updated)</description>!;
+  	$document =~ s!id=".*?"!id="$ids->[0]"!;
+  	$response = $soap->update(name(document => $document)->type('base64'),
+  				  name(update_ids => [ name(category_id => 
+  							    $ids->[0]) ]));
+  	ok(!$response->fault, 'SOAP update() result is not a fault');
+  	exit 1 if $response->fault;
+  	my $updated_ids = $response->result;
+  	isa_ok($ids, 'ARRAY');
+  	is($updated_ids->[0], $ids->[0], "update() worked in place");
 
-#  	# delete copies unless debugging 
-# 	if (DELETE_TEST_CATEGORIES) {		
-#  	    my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
-#  	    $response = $soap->delete(name(category_ids => [ map { name(category_id => $_) } keys %to_delete ]));
-#  	    ok(!$response->fault, 'SOAP delete() result is not a fault');
-#  	    exit 1 if $response->fault;
-#  	    ok($response->result, "SOAP delete() result check");
-#  	}
+  	# delete copies unless debugging 
+ 	if (DELETE_TEST_CATEGORIES) {		
+  	    my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
+  	    $response = $soap->delete(name(category_ids => [ map { name(category_id => $_) } keys %to_delete ]));
+  	    ok(!$response->fault, 'SOAP delete() result is not a fault');
+  	    exit 1 if $response->fault;
+  	    ok($response->result, "SOAP delete() result check");
+  	}
     }
 }
 

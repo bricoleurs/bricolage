@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-08 06:35:43 $
+$Date: 2002-03-08 22:58:52 $
 
 =head1 SYNOPSIS
 
@@ -265,11 +265,371 @@ sub export {
 }
 }
 
+=item create
+
+The create method creates new objects using the data contained in an
+XML document of the format created by export().
+
+Returns a list of new ids created in the order of the assets in the
+document.
+
+Available options:
+
+=over 4
+
+=item document (required)
+
+The XML document containing objects to be created.  The document must
+contain at least one category object.
+
+=back 4
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(document);
+
+sub create {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->create() called : args : ", 
+      Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::create : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # make sure we have a document
+    die __PACKAGE__ . "::create : missing required document parameter.\n"
+      unless $args->{document};
+
+    # setup empty update_ids arg to indicate create state
+    $args->{update_ids} = [];
+
+    # call _load_category
+    return $pkg->_load_category($args);
+}
+}
+
+=item update
+
+The update method updates category using the data in an XML document of
+the format created by export().  A common use of update() is to
+export() a selected category object, make changes to one or more fields
+and then submit the changes with update().
+
+Returns a list of new ids created in the order of the assets in the
+document.
+
+Takes the following options:
+
+=over 4
+
+=item document (required)
+
+The XML document where the objects to be updated can be found.  The
+document must contain at least one category and may contain any number of
+related category objects.
+
+=item update_ids (required)
+
+A list of "category_id" integers for the assets to be updated.  These
+must match id attributes on category elements in the document.  If you
+include objects in the document that are not listed in update_ids then
+they will be treated as in create().  For that reason an update() with
+an empty update_ids list is equivalent to a create().
+
+=back 4
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(document update_ids);
+
+sub update {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->update() called : args : ", 
+      Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::update : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # make sure we have a document
+    die __PACKAGE__ . "::update : missing required document parameter.\n"
+      unless $args->{document};
+
+    # make sure we have an update_ids array
+    die __PACKAGE__ . "::update : missing required update_ids parameter.\n"
+      unless $args->{update_ids};
+    die __PACKAGE__ . 
+	"::update : malformed update_ids parameter - must be an array.\n"
+	    unless ref $args->{update_ids} and 
+                   ref $args->{update_ids} eq 'ARRAY';
+
+    # call _load_category
+    return $pkg->_load_category($args);
+}
+}
+
+=item delete
+
+The delete() method deletes categories.  It takes the following options:
+
+=over 4
+
+=item category_id
+
+Specifies a single category_id to be deleted.
+
+=item category_ids
+
+Specifies a list of category_ids to delete.
+
+=back 4
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=back 4
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(category_id category_ids);
+
+sub delete {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->delete() called : args : ", 
+	Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # category_id is sugar for a one-element category_ids arg
+    $args->{category_ids} = [ $args->{category_id} ] 
+	if exists $args->{category_id};
+
+    # make sure category_ids is an array
+    die __PACKAGE__ . "::delete : missing required category_id(s) setting.\n"
+	unless defined $args->{category_ids};
+    die __PACKAGE__ . "::delete : malformed category_id(s) setting.\n"
+	unless ref $args->{category_ids} and 
+	       ref $args->{category_ids} eq 'ARRAY';
+
+    # delete the category
+    foreach my $category_id (@{$args->{category_ids}}) {
+	print STDERR __PACKAGE__ . 
+	    "->delete() : deleting category_id $category_id\n"
+		if DEBUG;
+      
+	# lookup category
+	my $category = Bric::Biz::Category->lookup({ id => $category_id });
+	die __PACKAGE__ . 
+	    "::delete : no category found for id \"$category_id\"\n"
+		unless $category;
+	die __PACKAGE__ . 
+	    "::delete : access denied for category \"$category_id\".\n"
+		unless chk_authz($category, CREATE, 1);
+
+	# make sure we're not trying to delete the root category
+	die __PACKAGE__ . "::delete : cannot delete root category: ".
+	    "\"$category_id\"\n"
+		if $category->get_id == Bric::Biz::Category::root_category_id;
+	
+	# delete the category
+	$category->deactivate;
+	$category->save;
+    }
+ 
+    return name(result => 1);
+}
+}
+
+
 =back
 
 =head2 Private Class Methods
 
 =over 4
+
+=item $pkg->_load_category($args)
+
+This method provides the meat of both create() and update().  The only
+difference between the two methods is that update_ids will be empty on
+create().
+
+=cut
+
+sub _load_category {
+    my ($pkg, $args) = @_;
+    my $document     = $args->{document};
+    my $data         = $args->{data};
+    my %to_update    = map { $_ => 1 } @{$args->{update_ids}};
+
+    # parse and catch erros
+    unless ($data) {
+	eval { $data = parse_asset_document($document) };
+	die __PACKAGE__ . " : problem parsing asset document : $@\n"
+	    if $@;
+	die __PACKAGE__ . 
+	    " : problem parsing asset document : no category found!\n"
+		unless ref $data and ref $data eq 'HASH' 
+		    and exists $data->{category};
+	print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+    }
+
+    # sort categories on path length.  This is a simple way to ensure
+    # that I always have a valid, saved parent category when creating
+    # a child (or the parent can't possibly exist).  My first pass
+    # tried to use a fixup hash like the Element code but as it turns
+    # out half-creating categories is a really bad thing resulting in
+    # insane infinite loops.  Hence, this workaround.
+    @{$data->{category}} = sort {(exists $b->{path} ? length($b->{path}) : 0)
+				 <=> 
+				 (exists $b->{path} ? length($b->{path}) : 0) }
+	@{$data->{category}};
+
+    # loop over category, filling @category_ids
+    my @category_ids;
+    foreach my $cdata (@{$data->{category}}) {
+	my $id = $cdata->{id};
+
+	# are we updating?
+	my $update = exists $to_update{$id};	
+
+	# get category object
+	my $category;
+	unless ($update) {
+	    # create empty category
+	    $category = Bric::Biz::Category->new;
+	    die __PACKAGE__ . " : failed to create empty category object.\n"
+		unless $category;
+	    print STDERR __PACKAGE__ . " : created empty category object\n"
+		if DEBUG;
+	    die __PACKAGE__ . " : access denied.\n"
+		unless chk_authz($category, CREATE, 1);
+	} else {
+	    # updating - first look for a checked out version
+	    $category = Bric::Biz::Category->lookup({ id => $id });
+	    die __PACKAGE__ . "::update : no category found for \"$id\"\n"
+		unless $category;
+	    die __PACKAGE__ . " : access denied.\n"
+		unless chk_authz($category, CREATE, 1);
+	}
+
+	# set simple fields
+	$category->set_name($cdata->{name});
+	$category->set_description($cdata->{description});
+	$category->set_ad_string($cdata->{ad_string});
+	$category->set_ad_string2($cdata->{ad_string2});
+
+	# avoid complex code if path hasn't changed on update
+	if (not $update or $category->get_uri ne $cdata->{path}) {
+	    my $path = $cdata->{path};
+
+	    # build paths hash of paths to cats
+	    my %paths = map { ($_->get_uri, $_) } Bric::Biz::Category->list();
+
+	    # check that the requested path doesn't already exist.
+	    die __PACKAGE__ . " : requested path \"$cdata->{path}\" " .
+		"is already in use."
+		    if exists $paths{$path};
+
+	    # disassociate from parent if updating
+	    if ($update and $category->parent) {
+		$category->parent->del_child([$category]);
+		$category->parent->save;
+	    }
+
+	    # special-case root category
+	    if ($path eq '/') {
+		$category->set_directory("");
+	    } else {
+		# get directory and parent
+		my ($parent_path, $directory) = $path =~ m!(.*)/([^/]+)$!;
+		die __PACKAGE__ . " : failed to extract directory from path ".
+		    "\"$path\"" unless defined $directory;
+		$parent_path = '/' unless length $parent_path;
+
+		# make sure we've got a parent
+		my $parent = $paths{$parent_path};
+		die __PACKAGE__ . " : couldn't find category object for path ".
+		    "\"$parent_path\"\n" unless $parent;
+	
+		# set directory
+		$category->set_directory($directory);
+
+		# have to save here to setup parent
+		$category->save;
+
+		# setup parent
+		$parent->add_child([$category]);
+		$parent->save;
+	    }
+	}
+	
+	# remove all keywords if updating
+	$category->del_keyword([ $category->keywords ])
+	    if $update and $category->keywords;
+	
+	# add keywords, if we have any
+	if ($cdata->{keywords} and $cdata->{keywords}{keyword}) {
+
+	    # collect keyword objects
+	    my @kws;
+	    foreach (@{$cdata->{keywords}{keyword}}) {
+		my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+		$kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
+		push @kws, $kw;
+	    }
+
+	    # add keywords to the category
+	    $category->add_keyword(\@kws);
+	}	
+
+	# save category
+	$category->save();
+
+	# all done, setup the category_id
+	push(@category_ids, $category->get_id);
+    }
+
+    return name(ids => [ map { name(category_id => $_) } @category_ids ]);
+}
 
 =item $pkg->_serialize_category(writer => $writer, category_id => $category_id, args => $args)
 
