@@ -166,6 +166,22 @@ sub checkin : Callback {
         my @args = ('&quot;' . $story->get_title . '&quot;',
                     "&quot;$dname&quot;");
         add_msg($self->lang->maketext($msg, @args));
+
+        # HACK: Commit this checkin WHY?? Because Postgres does NOT like
+        # it when you insert and delete a record within the same
+        # transaction. This will be fixed in PostgreSQL 7.3. Be sure to
+        # start a new transaction!
+        Bric::Util::DBI::commit(1);
+        Bric::Util::DBI::begin(1);
+
+        # Use the desk callback to save on code duplication.
+        my $pub = Bric::App::Callback::Desk->new
+          ( ah           => $self->ah,
+            apache_req   => $self->apache_req,
+            request_args => { story_pub => { $story->get_id => $story } },
+          );
+        $pub->publish;
+
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
@@ -197,25 +213,6 @@ sub checkin : Callback {
         add_msg($self->lang->maketext($msg, @args));
     }
 
-    # Publish the story, if necessary.
-    if ($desk_id eq 'publish') {
-        # HACK: Commit this checkin WHY?? Because Postgres does NOT like
-        # it when you insert and delete a record within the same
-        # transaction. This will be fixed in PostgreSQL 7.3. Be sure to
-        # start a new transaction!
-        Bric::Util::DBI::commit(1);
-        Bric::Util::DBI::begin(1);
-
-        # Use the desk callback to save on code duplication.
-        my $pub = Bric::App::Callback::Desk->new(
-            'ah' => $self->ah,
-            'apache_req' => $self->apache_req,
-            'request_args' => {
-                'story_pub' => { $story->get_id => $story },
-            },
-        );
-        $pub->publish();
-    }
     # Clear the state out and set redirect.
     clear_state($widget);
     set_redirect("/");
