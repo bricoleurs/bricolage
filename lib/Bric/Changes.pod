@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.8.0 "Portland" ()
+=head1 VERSION 1.8.0 "Portland" (2004-05-03)
 
 =head2 Improvements
 
@@ -77,6 +77,8 @@ Login redirection now works properly with Safari. [David]
 The installation script now provides more information (and questions) when it
 attempts to create a database user that already exists. Suggested by Marshall
 Roch. [David]
+
+=back
 
 =head2 Bug Fixes
 
@@ -146,8 +148,6 @@ Safari users will no longer be stuck on the login page. [David]
 The CSS directory now has its files always served as "text/css". This should
 eliminate problems when Apache sometimes serves the CSS files as "text/html".
 [David]
-
-=back
 
 =back
 
@@ -1806,6 +1806,49 @@ writes out a new one. This is both so that deleted UI component files don't
 remain behind after an upgrade, and so that users can access any files that
 they've changed in the old component root. Most users can just delete it after
 upgrading. [David]
+
+=back
+
+=head1 VERSION 1.6.14 (2004-05-02)
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+C<make upgrade> once again correctly creates F<postgres.db> if the existing
+installation doesn't know the installed version of PostgreSQL. [David]
+
+=item *
+
+Adding notes to image, video, or audio media documents no longer causes an
+error. Reported by Christian Hauser. [David]
+
+=item *
+
+Errors in the C<PERL_LOADER> F<bricolage.conf> directive no longer silently
+fail. [David]
+
+=item *
+
+A successful login no longer redirects back to the login page, thus no longer
+forcing a second redirect in such cases. Reported by Marshall Roch. [David]
+
+=item *
+
+The C<$burner> object is now available in Mason template C<< <%once> >> blocks
+during the syntax check, although C<$story> and C<$element> are not. All three
+are in the C<< <%once> >> block during previews and publishes. This means that
+they can all be used in a C<< <%once> >> block like this:
+
+  <%once>;
+  unless ($burner->get_mode == SYNTAX_MODE) {
+      # Do stuff with $story or $template.
+  }
+  </%once>
+
+Reported by Serge Sozonoff. [David]
 
 =back
 

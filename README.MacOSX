@@ -200,6 +200,9 @@ be able to use the PostgreSQL libraries:
 
   % ranlib /usr/local/pgsql/lib/libpq.a
 
+Consult http://developer.apple.com/internet/opensource/postgres.html for more
+a detailed description of how to install and configure PostgreSQL.
+
 DURING INSTALLATION
 
 While runing "make", you'll be prompted to answer a series of
