@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 05:54:03 $
+$Date: 2003-04-01 05:59:01 $
 
 =head1 SYNOPSIS
 
@@ -2098,8 +2098,7 @@ sub _init {
         $self->_set(['element__id'], [$alias_target->_get('element__id')]);
 
         # Copy the keywords.
-#        $self->save; # HACK!
-#        $self->add_keywords(scalar $alias_target->get_keywords);
+        $self->add_keywords(scalar $alias_target->get_keywords);
 
         $self->_set
           ([qw(current_version publish_status modifier
