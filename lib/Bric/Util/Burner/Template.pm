@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.5.2.3 $
+$Revision: 1.5.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.5.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 03:43:13 $
+$Date: 2002-04-03 20:13:48 $
 
 =head1 SYNOPSIS
 
@@ -58,7 +58,8 @@ use Bric::Util::Fault::Exception::MNI;
 use Bric::Dist::Resource;
 use Bric::Config qw(:burn);
 use Data::Dumper;
-use Digest::MD5 qw(md5);
+use Digest::MD5 qw(md5 md5_hex);
+use Time::HiRes qw(time);
 
 #======================================#
 # Inheritance                          #
@@ -255,9 +256,9 @@ sub burn_one {
 
 ################################################################################
 
-=item my $bool = $burner->chk_syntax($template_code, \$err)
+=item my $bool = $burner->chk_syntax($ba, \$err)
 
-Compiles the template found in $template_data. If the compile succeeds with no
+Compiles the template found in $ba. If the compile succeeds with no
 errors, chk_syntax() returns true. Otherwise, it returns false, and the error
 will be in the $err varible passed by reference.
 
@@ -265,12 +266,52 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Not yet implemented. This is a placeholder that always returns true.
-See Bric::Util::Burner::Mason for an example of what needs to be done.
+B<Notes:> NONE.
 
 =cut
 
-sub chk_syntax { 1 }
+sub chk_syntax {
+    my ($pkg, $ba, $err) = @_;
+    my $data      = $ba->get_data;
+    my $file_name = $ba->get_file_name;
+
+    print STDERR __PACKAGE__, "::chk_syntax() called.\n"
+	if DEBUG;   
+
+    # check a .tmpl template file
+    if ($file_name =~ /.tmpl$/) {
+	eval { HTML::Template::Expr->new(scalarref => \$data) };
+	if ($@) {
+	    $$err = $@;
+	    $$err =~ s!/fake/path/for/non/file/template!$file_name!g;
+	    return 0;	
+	}
+	return 1;
+    }
+    
+    
+    # check a .pl Perl script
+    
+    # construct the code block ala run_script
+    my $time = md5_hex(time); # make sure package is unique
+    my $code = <<END;
+package Bric::Util::Burner::Template::SYNTAX$time;
+use strict;
+use vars ('\$burner', '\$element', '\$story');
+sub _run_script {
+#line 1 $file_name
+$data
+}
+1;
+END
+
+    my $result = _compile($code);
+    if (not $result and $@) {
+        $$err = $@;
+        return 0;
+    }
+    return 1;
+}
 
 =item $output = $burner->run_script($element, @args)
 

@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.7.2.3 $
+$Revision: 1.7.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 03:43:13 $
+$Date: 2002-04-03 20:13:48 $
 
 =head1 SYNOPSIS
 
@@ -277,9 +277,9 @@ sub burn_one {
 
 ################################################################################
 
-=item my $bool = $burner->chk_syntax($template_code, \$err)
+=item my $bool = $burner->chk_syntax($ba, \$err)
 
-Compiles the template found in $template_data. If the compile succeeds with no
+Compiles the template found in $ba. If the compile succeeds with no
 errors, chk_syntax() returns true. Otherwise, it returns false, and the error
 will be in the $err varible passed by reference.
 
