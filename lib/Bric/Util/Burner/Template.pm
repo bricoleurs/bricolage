@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 01:17:05 $
+$Date: 2003-09-18 21:57:52 $
 
 =head1 SYNOPSIS
 
@@ -98,7 +98,7 @@ BEGIN {
 
 __PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_TEMPLATE,
                                category_fn    => 'category',
-                               cat_fn_has_ext => 0,
+                               cat_fn_has_ext => 1,
                                exts           =>
                                  { pl   => 'HTML::Template Script (.pl)',
                                    tmpl => 'HTML::Template Template (.tmpl)'
