@@ -11,6 +11,8 @@ use Bric::Util::Grp;
 
 my $type = CLASS_KEY;
 my $disp_name = get_disp_name($type);
+my $class = get_package_name($type);
+eval "require $class";
 my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 
 
@@ -26,12 +28,13 @@ sub save : Callback {
         # Deactivate it.
         $user->deactivate;
         $user->save;
-        # Note that a user has been updated to force all users logged into the system
-        # to reload their user objects from the database.
+        # Note that a user has been updated to force all users logged into
+        # the system to reload their user objects from the database.
         $self->cache->set_lmu_time;
         log_event('user_deact', $user);
         my $name = "&quot;" . $user->get_name . "&quot;";
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$name));
+        my $msg = "$disp_name profile [_1] deleted.";
+        add_msg($self->lang->maketext($msg, $name));
         get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')
           : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user');
         return;
@@ -58,23 +61,25 @@ sub save : Callback {
     } elsif ($login ne $cur_login) {
         if (length $login < LOGIN_LENGTH ) {
             # The login isn't long enough.
-            add_msg($self->lang->maketext('Login must be at least [_1] characters.',LOGIN_LENGTH));
+            my $msg = 'Login must be at least [_1] characters.';
+            add_msg($self->lang->maketext($msg, LOGIN_LENGTH));
             $no_save = 1;
         }
         if ($login !~ /^[-\.\@\w]+$/) {
             # The login contains invalid characters
-            add_msg($self->lang->maketex("Login [_1] contains invalid characters.","'$login'"));
+            my $msg = 'Login [_1] contains invalid characters.';
+            add_msg($self->lang->maketex($msg, "'$login'"));
             $no_save = 1;
         }
-        # XXX: $class was in %args...
+
         unless ($class->login_avail($login)) {
             # The new login is already used by someone.
-            add_msg($self->lang->maketext("Login [_1] is already in use. Please try again.","&quot;$login&quot;"));
+            my $msg = 'Login [_1] is already in use. Please try again.';
+            add_msg($self->lang->maketext($msg, "&quot;$login&quot;"));
             $no_save = 1;
         }
         # Okay, go ahead and set it, even though the user might have to change it.
         $user->set_login($login);
-
     }
 
     # Take care of contact info.
@@ -99,7 +104,9 @@ sub save : Callback {
             }
             if (length $pass < PASSWD_LENGTH) {
                 # The password isn't long enough.
-                add_msg($self->lang->maketext('Passwords must be at least [_1] characters!',"'".PASSWD_LENGTH."'"));
+                my $msg = 'Passwords must be at least [_1] characters!';
+                my $arg = "'" . PASSWD_LENGTH . "'";
+                add_msg($self->lang->maketext($msg, $arg));
                 $no_save = 1;
             }
             # Change the password if we're saving.
@@ -121,7 +128,8 @@ sub save : Callback {
     $user->save;
     log_event(defined $param->{user_id} ? 'user_save' : 'user_new', $user);
     my $name = "&quot;" . $user->get_name . "&quot;";
-    add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name));
+    my $arg = "$disp_name profile [_1] saved.";
+    add_msg($self->lang->maketext($msg, $name));
 
     # Take care of group managment.
     my $id = $param->{user_id} || $user->get_id;
