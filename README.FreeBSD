@@ -37,3 +37,12 @@ Additional Notes
     number of connections: "-B16 -N8" for example.  See the PostgreSQL
     manuals for more details about shared memory usage and how to
     raise the limit under FreeBSD.
+
+  - You may need to add this configuration directive to your httpd.conf:
+
+    AcceptFilter         Off
+
+to get rid of
+
+   [info] (2)No such file or directory: make_sock: for port 8080, setsockopt:
+   (SO_ACCEPTFILTER)
