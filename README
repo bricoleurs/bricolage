@@ -1,0 +1,21 @@
+
+                       Bricolage Content Management System
+
+                                 Version 1.3.0
+                                10 January 2002
+
+Bricolage is a full-featured, enterprise-class content management system. It
+offers a browser-based interface for ease-of use, a full-fledged templating
+system with complete programming language support for flexibility, and many
+other features. It operates in an Apache/mod_perl environment, and uses the
+PostgreSQL RDBMS for its repository.
+
+For installation instructions, see INSTALL.
+
+For copying information, see License.
+
+For the latest news, see Changes.
+
+Enjoy!
+
+--The Bricolage Team
