@@ -65,7 +65,7 @@ opportunity to override these defaults but choosing wisely here will
 probably save you the trouble.  Your choices are:
 
   s - "single"   one installation for the entire system, with modules
-                 integrated into Perl's @INC directories
+                 integrated into Perl's \@INC directories
 
   m - "multi"    an installation that lives entirely in a single directory,
                  so that it can coexist with other installations on the
