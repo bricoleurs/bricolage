@@ -10,7 +10,13 @@ use Bric::App::Event  qw(log_event);
 use Bric::App::Util   qw(get_package_name);
 
 use IO::Scalar;
-use XML::Writer;
+
+BEGIN {
+    # XXX Turn off warnings so that we don't get XML::Writer's
+    # Parameterless "use IO" deprecated' waring.
+    local $^W;
+    require XML::Writer;
+}
 
 use SOAP::Lite;
 import SOAP::Data 'name';
