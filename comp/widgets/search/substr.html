@@ -1,33 +1,30 @@
-<br />
-<table width=550 cellpadding=0 cellspacing=0 border=0>
-<tr>
-  <td width=50><img src="/media/images/spacer.gif" width=50 height=1></td>
-  <td width=150 align=right valign=middle><span class=label>
-% $m->out ("By $disp_field:&nbsp;</span>") if ($disp_field);
-</td>
-  <td width=200 valign=top>
-<& '/widgets/profile/text.mc', 
-  'name'      => $widget.'|value',
-  'value'     => $crit_field,
-  'size'      => 32,
-  'maxlength' => 100,
-  'disp'      => '',
-   useTable    => 0
+<div class="row">
+% $m->out(qq{<div class="label">By $disp_field:</div>}) if $disp_field;
+    <div class="input">
+    <& '/widgets/profile/text.mc', 
+        name        => $widget.'|value',
+        value       => $crit_field,
+        size        => 32,
+        maxlength   => 100,
+        useTable    => 0
+    &>
+    
+%   # This hidden field is required to make the form submit when the user hits
+%   # the "enter" key.
+    <& '/widgets/profile/hidden.mc', 
+        name    => 'search|substr_cb',
+        value   => 'Search' &>
 
-&>
-  </td>
-  <td width=150>
-%# This hidden field is required to make the form submit when the user hits
-%# the "enter" key.
-    <input type="hidden" name="search|substr_cb" value="1" />
-    <input type="image" value="Search" src="/media/images/<% $lang_key %>/search_green.gif" name="search|substr_cb" value="1" border="0" />
-  </td>
-</tr>
-</table>
-<br />
+    <& '/widgets/profile/button.mc', 
+        disp    => $lang->maketext('Search'),
+        widget  => 'search',
+        cb      => 'substr_cb',
+        button  => 'search_red',
+        useTable => 0 &>
 
-
-
+    </div>
+</div>
+        
 %#--- END HTML ---#
 
 %#--- Arguments ---#

@@ -47,52 +47,45 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
               caption => $caption,
               search  => 1);
 </%perl>
-<table border=0 cellpadding=0 cellspacing=0 width=580>
-<tr>
-  <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
-  <td class=lightHeader>
-<% $spacerRow %>
-            <table>
 % unless ($advanced_search) {
-              <tr>
-                <td>
-                  <& /widgets/profile/text.mc, 
-                     name     => $widget.'|simple',
-                     value    => get_state_data($widget, 'simple') || '',
-                     useTable => 0 &>
-                </td>
-                <td>
-%# This hidden field is required to make the form submit when the user hits
-%# the "enter" key.
-                  <input type="hidden" name="<% $widget %>|formatting_cb" value="Search" />
-                  <input type="image" src="/media/images/<% $lang_key %>/search_red.gif" border=0 name="<% $widget %>|formatting_cb" value="Search">
-                </td>
+
+    <& '/widgets/profile/text.mc', 
+        name    => $widget.'|simple',
+        value   => get_state_data($widget, 'simple') || '',
+        useTable => 0 &>
+
+%   # This hidden field is required to make the form submit when the user hits
+%   # the "enter" key.
+    <& '/widgets/profile/hidden.mc', 
+        name    => $widget.'|formatting_cb',
+        value   => 'Search' &>
+
+    <& '/widgets/profile/button.mc', 
+        disp    => $lang->maketext('Search'),
+        widget  => $widget,
+        cb      => 'formatting_cb',
+        button  => 'search_red',
+        useTable => 0 &>
+        
 % } else {
-              <tr>
-                <td align=right><span class=label><%$lang->maketext('Name')%>:</span></td>
-                <td>
-                  <& /widgets/profile/text.mc, 
-                     name     => $widget.'|name',
-                     value    => get_state_data($widget, 'name') || '',
-                     useTable => 0 &>
-                </td>
-              </tr>             
-              <tr>
-                <td align=right><span class=label><%$lang->maketext('File Name')%>:</span></td>
-                <td>
-                  <& /widgets/profile/text.mc, 
-                     name     => $widget.'|file_name',
-                     value    => get_state_data($widget, 'file_name') || '',
-                     useTable => 0 &>
-                </td>
-              </tr>
+
+    <& /widgets/profile/text.mc,
+        disp    => $lang->maketext('Name'),
+        name    => $widget.'|name',
+        value   => get_state_data($widget, 'name') || '' &>
+        
+    <& /widgets/profile/text.mc, 
+        disp    => $lang->maketext('File Name'),
+        name    => $widget.'|file_name',
+        value   => get_state_data($widget, 'file_name') || '' &>
+        
 % my $site_id = $c->get_user_cx(get_user_id);
 % my ($one_site, $oc_name_getter);
 % if (get_pref("Filter by Site Context")) {
-%     $one_site = 1;
-<& /widgets/profile/hidden.mc,
-   name => "$widget|site_id",
-   value => $site_id &>
+%   $one_site = 1;
+    <& /widgets/profile/hidden.mc,
+        name    => "$widget|site_id",
+        value   => $site_id &>
 % } elsif (@$sites > 1) {
 <%perl>;
 my $ng = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
@@ -103,131 +96,120 @@ $oc_name_getter = sub {
 };
 </%perl>\
 %     $one_site = 
-              <tr>
-                <td align="right"><span class=label><% $lang->maketext('Site') %>:</span></td>
-                <td>
-                  <& /widgets/profile/select.mc,
-                     name     => $widget.'|site_id',
-                     value    => get_state_data($widget, 'site_id') || '',
-                     options  => [ [ '' => $lang->maketext('All Sites') ],
-                                   map { [$_->get_id => $_->get_name] } @$sites ],
-                     localize => 0,
-                     useTable => 0 &>
-                </td>
-              </tr>
+    <& /widgets/profile/select.mc,
+        disp    => $lang->maketext('Site'),
+        name    => $widget.'|site_id',
+        value   => get_state_data($widget, 'site_id') || '',
+        options => [ [ '' => $lang->maketext('All Sites') ],
+                     map { [$_->get_id => $_->get_name] } @$sites ],
+        localize => 0 &>
 % } else {
 %     $one_site = 1;
 % }
-              <tr>
-                <td align="right"><span class=label><% $lang->maketext('Output Channel') %>:</span></td>
-                <td>
-                  <& /widgets/select_object/select_object.mc,
-                     object => 'output_channel',
-                     field  => 'name',
-                     constrain => { active => 1, $one_site ? (site_id => $site_id) : () },
-                     no_persist => 1,
-                     name   => "$widget|output_channel_id",
-                     useTable => 0,
-                     default => ['', $lang->maketext('All Output Channels')],
-                     getter => $oc_name_getter,
-                  &>
-                </td>
-              </tr>
-              <tr>
-
-                <td colspan=2><span class=label><% $lang->maketext('Cover Date') %></span><br />
-                  <% $lang->maketext('From') %>:
+    <& /widgets/select_object/select_object.mc,
+        disp    => $lang->maketext('Output Channel'),
+        object  => 'output_channel',
+        field   => 'name',
+        constrain   => { active => 1, $one_site ? (site_id => $site_id) : () },
+        no_persist  => 1,
+        name    => "$widget|output_channel_id",
+        default => ['', $lang->maketext('All Output Channels')],
+        getter  => $oc_name_getter
+    &>
+    
+    <div class="row">
+        <div class="label"><% $lang->maketext('Cover Date') %>:</div>
+        <div class="input">
                   <& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|cover_date_start",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'cover_date_start')||'',,
+                     def_date   => get_state_data($widget, 'cover_date_start')||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
-                  <% $lang->maketext('To') %>:
-                  <& '/widgets/select_time/select_time.mc', 
+                  &mdash;<& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|cover_date_end",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'cover_date_end')||'',,
+                     def_date   => get_state_data($widget, 'cover_date_end')||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
-                </td>
-              </tr>
-              <tr>
-                <td colspan=2><span class=label><% $lang->maketext('Publish Date') %></span><br />
-                  <% $lang->maketext('From') %>:
+        </div>
+    </div>
+    <div class="row">
+        <div class="label"><% $lang->maketext('Publish Date') %>:</div>
+        <div class="input">
                   <& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|publish_date_start",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'publish_date_start')||'',,
+                     def_date   => get_state_data($widget, 'publish_date_start')||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
-                  <% $lang->maketext('To') %>:
-                  <& '/widgets/select_time/select_time.mc', 
+                  &mdash;<& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|publish_date_end",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'publish_date_end')||'',,
+                     def_date   => get_state_data($widget, 'publish_date_end')||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
-                </td>
-              </tr>
-              <tr>
-                <td colspan=2><span class=label><% $lang->maketext('Expire Date') %></span><br />
-                  <% $lang->maketext('From') %>:
+        </div>
+    </div>
+    <div class="row">
+        <div class="label"><% $lang->maketext('Expire Date') %>:</div>
+        <div class="input">
                   <& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|expire_date_start",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'expire_date_start')||'',,
+                     def_date   => get_state_data($widget, 'expire_date_start')||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
-                  <% $lang->maketext('To') %>:
-                  <& '/widgets/select_time/select_time.mc', 
+                  &mdash;<& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|expire_date_end",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'expire_date_end')||'',,
+                     def_date   => get_state_data($widget, 'expire_date_end')||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
-                </td>
-              </tr>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input">
+    <& /widgets/profile/button.mc,
+        disp    => $lang->maketext('Search'),
+        widget  => $widget,
+        cb      => 'formatting_cb',
+        button  => 'search_red',
+        useTable => 0 &>
+    <& /widgets/profile/button.mc,
+        disp    => $lang->maketext('Clear Values'),
+        widget  => $widget,
+        cb      => 'clear_cb',
+        button  => 'clear_values_lgreen',
+        useTable => 0 &>
+        </div>
+    </div>
 % }
-            </table>
-  </td>
-  <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
-</tr>
-<tr>
-  <td class=darkHeader width=580 colspan=2><img src="/media/images/spacer.gif" width=580 height=1></td>
-</tr>
-</table>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
-
-% if ($advanced_search) {
-<p></p>
-<input type="image" src="/media/images/<% $lang_key %>/search_lgreen.gif" border=0 name="<% $widget %>|formatting_cb" value="Search">
-<input type="image" src="/media/images/<% $lang_key %>/clear_values_lgreen.gif" border=0 name="<% $widget %>|clear_cb" value="Clear Values">
-% }
 %#--- Log History ---#
 % if ($use_form_tag) {
 </form>

@@ -22,7 +22,7 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 	 context => "Admin | Profile | $disp | $crumb"
 );
 $m->out(qq{<form method="post" name="oc_profile" action="} . $r->uri
-        . qq{" onSubmit="return confirmChanges(this)">\n});
+        . qq{" onsubmit="return confirmChanges(this)">\n});
 
 # Output a hidden field with the ID, if we have one.
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'output_channel_id')
@@ -39,13 +39,13 @@ $m->comp('/widgets/profile/dumpRemainingFields.mc',
          fieldsUsed => {active => 1});
 my @sites = site_list(EDIT);
 if ($id || $no_edit) {
-    $m->out('<input type="hidden" name="site_id" value="'.$oc->get_site_id.'">');
+    $m->comp('/widgets/profile/hidden.mc', value => $oc->get_site_id, name => 'site_id');
     $m->comp('/widgets/profile/displayFormElement.mc',
              objref   => $oc,
              key      => 'site',
              readOnly => 1) if @sites > 1;
 } elsif ((my $site_id = $oc->get_site_id) || @sites == 1) {
-    $m->out('<input type=hidden name="site_id" value="'.($site_id || $sites[0]->get_id).'">');
+    $m->comp('/widgets/profile/hidden.mc', value => ($site_id || $sites[0]->get_id), name => 'site_id');
 } else {
     # Output a list of sites to choose from.
     $m->comp('/widgets/select_object/select_object.mc',
@@ -64,14 +64,15 @@ if ($id || $no_edit) {
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Add pre/post fields to the specialCharacters array
-$m->out(q{<script language="javascript">
+$m->out(q{
+<script type="text/javascript">
 specialOCFields["pre_path"]  = "URI Prefix";
 specialOCFields["post_path"] = "URI Sufix";
 </script>
 });
 
 if (defined $id) {
-    $m->out('<script>
+    $m->out('<script type="text/javascript">
 var selectOrderNames = new Array("include_pos")
 </script>
     ');

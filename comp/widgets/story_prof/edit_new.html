@@ -7,24 +7,24 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Properties",
          id      => 'storyinfo',
          number  => 1);
-$m->out($ieSpacer);
+
 $m->comp('/widgets/profile/displayFormElement.mc',
          key => 'site',
          readOnly => 1,
          objref => $wf
         );
-$m->out($ieSpacer);
+
 $m->comp('/widgets/profile/displayFormElement.mc',
          key => "title",
          vals => $tmeth
         );
-$m->out($ieSpacer);
+
 $m->comp('/widgets/profile/displayFormElement.mc',
          key => "slug",
          id => 'slug',
          vals => $smeth
         );
-$m->out($ieSpacer);
+
 $m->comp( '/widgets/select_object/select_object.mc',
           disp       => 'Story Type',
           object     => 'element',
@@ -40,7 +40,7 @@ $m->comp( '/widgets/select_object/select_object.mc',
           localize   => 0,
           exclude  => $excl_sub,
         );
-$m->out($ieSpacer);
+
 $m->comp( '/widgets/select_object/select_object.mc',
           disp     => 'Source',
           object   => 'source',
@@ -49,7 +49,7 @@ $m->comp( '/widgets/select_object/select_object.mc',
           localize => 0,
           useTable => 1,
         );
-$m->out($ieSpacer);
+
 $m->comp( '/widgets/select_object/select_object.mc',
           object     => 'category',
           disp       => 'Primary Category',
@@ -62,23 +62,26 @@ $m->comp( '/widgets/select_object/select_object.mc',
           localize   => 0,
           useTable   => 1
         );
-$m->out($ieSpacer);
+
 $m->comp('/widgets/profile/displayFormElement.mc',
          key => "priority",
          vals => $pmeth,
         );
-$m->out($ieSpacer);
+
 $m->comp('/widgets/profile/displayFormElement.mc',
          key => "cover_date",
          vals => $cdate,
         );
 
-$m->out($ieSpacer, "<br />");
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-$m->comp('/widgets/profile/create_button.html',
-         widget => $widget);
-
+$m->comp("/widgets/profile/button.mc",
+         disp   => $lang->maketext('Create'),
+         widget => $widget,
+         cb     => 'create_cb',
+         button => 'create_red',
+         useTable => 0
+);
 </%perl>
 <%args>
 $widget
@@ -93,6 +96,4 @@ my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 </%once>
 <%init>;
 $cdate->{value} = strfdate();
-my $agent = detect_agent();
-my $ieSpacer = $agent->ie ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';
 </%init>

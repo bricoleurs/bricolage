@@ -21,7 +21,7 @@ my $sel_opts = [(1..$num_fields)];
 my $curField = 1;
 my $width = 578 - 100 * $useDelete - 100 * $usePosition;
 
-$m->out(qq{<table cellpadding="0" cellspacing="0" border="0" width="578">});
+$m->out(qq{<table>});
 
 foreach my $attr (@$attr) {
     # Assemble the properties.
@@ -44,14 +44,14 @@ foreach my $attr (@$attr) {
 		 disp  => $attr->{meta}{disp}{value},
 	       };
 
+    my $align = ($vals->{props}{type} eq 'date') ? " align=right" : '';
+    $m->out(qq{<tr><td$align>\n});
+               
     # Spit out a hidden field.
     $m->comp('/widgets/profile/hidden.mc',
 	     value => $attr->{name},
 	     name => 'attr_name'
 	    ) if (!$readOnly);
-
-    my $align = ($vals->{props}{type} eq 'date') ? " align=right" : '';
-    $m->out("<tr><td width=$width$align>\n");
 
     # Spit out the attribute.
     $m->comp('/widgets/profile/displayFormElement.mc',
@@ -63,9 +63,11 @@ foreach my $attr (@$attr) {
 	     localize => $localize,
 	     readOnly => $readOnly
 	    );
+            
+    $m->out("</td>");
 
     if ($usePosition) {
-	$m->out("</td><td width=100 align=center>\n");
+        $m->out(qq{<td class="position">\n});
 	$m->comp('/widgets/profile/select.mc',
 		 disp     => '',
 		 value    => $curField++,
@@ -79,7 +81,7 @@ foreach my $attr (@$attr) {
     }
 
     if ($useEdit) {
-        $m->out("</td><td width=100 align=center>\n");
+        $m->out(qq{<td class="edit">\n});
 
         my $url = '/admin/profile/element_data/' . $attr->{id};
         my $edit_url = sprintf('<a href="%s" class=redLink>%s</a>&nbsp;',
@@ -90,7 +92,7 @@ foreach my $attr (@$attr) {
 
     if ($useDelete) {
 	# And spit out a delete checkbox.
-	$m->out("<td width=100 align=center>\n");
+        $m->out(qq{<td class="delete">\n});
 	$m->comp('/widgets/profile/checkbox.mc',
 		 checked => 0,
 		 label_after => 1,

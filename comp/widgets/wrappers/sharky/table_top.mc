@@ -53,6 +53,7 @@ my $attrs = $id ? qq{ id="$id"} : '';
 $attrs .= qq{ class="$class"};
 </%init>
 % if ($number) {
+
 <a name="section<% $number %>"></a>
 % }
 <div class="<% $section %>Box">

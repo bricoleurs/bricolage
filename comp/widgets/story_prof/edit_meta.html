@@ -121,7 +121,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   </tr>
 </table>
 
-<% $ieSpacer %>
+
 
 <& '/widgets/select_object/select_object.mc',
   object   => 'source',
@@ -133,28 +133,20 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   disp     => "Source"
 &>
 
-<% $ieSpacer %>
-
 <& '/widgets/profile/displayFormElement.mc',
    objref => $story,
    key => 'priority',
 &>
-
-<% $ieSpacer %>
 
 <& '/widgets/profile/displayFormElement.mc',
    objref => $story,
    key => 'title',
 &>
 
-<% $ieSpacer %>
-
 <& '/widgets/profile/displayFormElement.mc',
    objref => $story,
    key => 'description',
 &>
-
-<% $ieSpacer %>
 
 <& '/widgets/profile/displayFormElement.mc',
    vals => $slug_vals,
@@ -162,24 +154,19 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
    key => 'slug',
 &>
 
-<% $ieSpacer %>
-
 <& '/widgets/profile/displayFormElement.mc',
    objref => $story,
    key => 'cover_date',
 &>
-
-<% $ieSpacer %>
 
 <& '/widgets/profile/displayFormElement.mc',
    objref => $story,
    key => 'expire_date',
 &>
 
-<% $ieSpacer %>
-<%perl>;
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
+<%perl>;
 $num = $m->comp('/widgets/container_prof/container_prof.mc',
         tile            => $tile,
         tile_type       => 'story',
@@ -188,7 +175,6 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
         num             => $num,
         start_count     => 4
 );
-
 </%perl>
 <%doc>
 

@@ -12,15 +12,12 @@ $m->comp('/widgets/profile/displayFormElement.mc',
          readOnly => 1,
          objref => $wf
         );
-$m->out($ieSpacer);
 
 $m->comp('/widgets/profile/displayFormElement.mc',
 	 key => 'title',
 	 vals => $nmeth
 	);
 </%perl>
-
-<% $ieSpacer %>
 
 <& '/widgets/select_object/select_object.mc',
 	disp => 'Media Type',
@@ -35,7 +32,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
         exclude  => $excl_sub,
 	useTable   => 1
 &>
-<% $ieSpacer %>
+
 <& '/widgets/select_object/select_object.mc',
 	disp => 'Source',
 	object => 'source',
@@ -43,7 +40,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 	field => 'source_name',
 	useTable => 1
 &>
-<% $ieSpacer %>
+
 <& '/widgets/select_object/select_object.mc',
 	object		=> 'category',
 	disp		=> 'Category',
@@ -56,25 +53,26 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 	useTable	=> 1
 &>
 		
-<% $ieSpacer %>
+
 <&'/widgets/profile/displayFormElement.mc',
 	 key => "priority",
 	 vals => $pmeth,
 &>
-<% $ieSpacer %>
+
 <&'/widgets/profile/displayFormElement.mc',
 	 key => "cover_date",
 	 vals => $cdate,
 &>
-<% $ieSpacer %><br />
 
-<%perl>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
-$m->comp('/widgets/profile/create_button.html',
-         widget => $widget);
-</%perl>
+<& '/widgets/profile/button.mc',
+         disp   => $lang->maketext('Create'),
+         widget => $widget,
+         cb     => 'create_cb',
+         button => 'create_red',
+         useTable => 0
+&>
 
 %#-- Once --#
 <%once>;

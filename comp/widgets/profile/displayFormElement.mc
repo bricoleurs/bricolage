@@ -167,7 +167,7 @@ if ($objref) {
                            $indent, $useTable, $label, $readOnly, $agent, $id)
       if $formSubs{$formType};
 
-    $m->out(qq{\n<script language="javascript">requiredFields['$key'] = }
+    $m->out(qq{\n<script type="text/javascript">requiredFields['$key'] = }
             . qq{"$methods->{$key}{disp}"</script>\n}) if $methods->{$key}{req};
 } elsif ($vals) {
     my $value     = $vals->{value};
@@ -186,7 +186,7 @@ if ($objref) {
                            $useTable, $label, $readOnly, $agent, $id)
       if $formSubs{$formType};
 
-    $m->out(qq{\n<script language="javascript">requiredFields['$key'] = }
+    $m->out(qq{\n<script type="text/javascript">requiredFields['$key'] = }
             . qq{"$vals->{disp}";\n</script>\n}) if $vals->{req};
 } else {
     # Fuhgedaboudit!
@@ -201,9 +201,9 @@ my $opt_sub = sub {
     my ($k, $v, $value) = @_;
     for ($k, $v, $value) { $_ = '' unless defined $_ }
     $v = escape_html($v) if $v;
-    my $out = qq{<option value="$k"};
+    my $out = qq{                <option value="$k"};
     # select it if there's a match
-    $out .= " selected" if (ref $value && $value->{$k}) || $k eq $value;
+    $out .= qq{ selected="selected"} if (ref $value && $value->{$k}) || $k eq $value;
     return "$out>". ($localize_opts ? $lang->maketext($v) : $v) . "</option>\n";
 };
 
@@ -235,29 +235,31 @@ my $inpt_sub = sub {
     $js = $js ? " $js" : '';
 
     if ($type ne "checkbox" && $type ne "hidden") {
-        $out = $useTable ?  qq{<table border="0" width="$width"><tr><td align="right"}
-          . qq{ width="$indent">} : '';
-        $out .= $name ? qq{<span class="$label">$name:</span>}
-          : ($useTable) ? '&nbsp;':'';
-        $out .= &$rem_sub($width, $indent) if $useTable;
+        $out  = qq{<div class="row">\n} if $useTable;
+        $out .= qq{        <div class="$label">} if $useTable;
+        $out .= $name ? qq{$name:} : ($useTable) ? '&nbsp;' : '';
+        $out .= qq{</div>\n} if $useTable;
 
+        $out .= qq{        <div class="input">} if $useTable;
 	if (!$readOnly) {
             my $idout = $id ? qq{ id="$id"} : '';
-	    $out .= qq{<input type="$type"${idout}$class} . qq{ name="$key"$src$disp_value$extra$js />};
+	    $out .= qq{<input type="$type"${idout}$class name="$key"$src$disp_value$extra$js />};
 	} else {
-	    $out .= ($type ne "password") ? " $value" : "********";
-	}
+            $out .= qq{<p>};
+	    $out .= ($type ne "password") ? $value : "********";
+            $out .= qq{</p>};
+        }
+        $out .= qq{</div>\n} if $useTable;
 
     } else {
 
-        $out = $useTable ?  qq{<table border="0" width="$width"><tr><td align="right"}
-          . qq{ width="$indent">} : '';
-        $out .= qq{<span class="$label">$name:</span>}
-          if $name && !$vals->{props}{label_after};
-        $out .= &$rem_sub($width, $indent) if $useTable;
+        $out  = qq{<div class="row">\n} if $useTable;
+        $out .= qq{        <div class="$label">$name:</div>\n} if $name && !$vals->{props}{label_after};
 
         if (!$readOnly) {
+            $out .= qq{        <div class="input">} if $useTable;
             $out .= qq{<input type="$type" name="$key"$src$disp_value$extra$js />};
+            $out .= qq{</div>\n} if $useTable;
         } else {
             if ($type eq "radio" || $type eq "checkbox") {
                 $out .= " ". $lang->maketext( ($value) ? "Yes" : "No" );
@@ -269,7 +271,7 @@ my $inpt_sub = sub {
           if $name && $vals->{props}{label_after};
     }
 
-    $out .= $useTable ? "</td></tr></table>" : '';
+    $out .= "    </div>\n" if $useTable;
 
     $m->out($out);
 };
@@ -320,13 +322,12 @@ my %formSubs = (
             $cols = ($agent->nav4 && $agent->mac) ? $cols *.8 : $cols;
 
             my $out;
-            $out .= qq{<table border="0" width="$width"><tr><td align="right"}
-              . qq{ width="$indent" valign="top">} if $useTable;
-            $out .= $name ? qq{<span class="$label">$name:</span><br />\n} : '';
-            $out .= &$rem_sub($width, $indent) if $useTable;
+            $out .= qq{<div class="row">\n} if $useTable;
+            $out .= $name ? qq{        <div class="$label">$name:</div>\n} : '';
             $value = defined $value ? escape_html($value) : '';
             $key = $key ? escape_html($key) : '';
 
+            $out .= qq{        <div class="input">\n} if $useTable;
             if (!$readOnly) {
             $js = $js ? " $js" : '';
                         # if we've set a maximum length then display the textcounter
@@ -341,18 +342,21 @@ my %formSubs = (
                   . $lang->maketext('Remaining')
                                   . qq{: <span id="textCountDown$uniquename">$dwval</span>};
                 my $functioncode = "textCount('$uniquename',$vals->{props}{maxlength})";
-                $out .= qq{$textstring\n<textarea  id="$uniquename" }
-                  . qq{onKeyUp="$functioncode"\n onKeyDown="$functioncode"\n }
+                $out .= qq{$textstring\n};
+                $out .= qq{            <textarea id="$uniquename" }
+                  . qq{onkeyup="$functioncode"\n onkeydown="$functioncode"\n }
                   . qq{name="$key" rows="$rows" cols="$cols" width="200"}
-                  . qq{ wrap="soft" class="textArea" $js>\n$value</textarea><br />\n};
+                  . qq{ wrap="soft" class="textArea" $js>\n$value</textarea>\n};
             } else {
-                $out .= qq{<textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
-                  . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
+                $out .= qq{            <textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
+                  . qq{ wrap="soft" class="textArea"$js>$value</textarea>\n};
             }
         } else {
             $out .= $value;
-            }
-        $out .= "\n</td></tr></table>\n" if $useTable;
+        }
+        
+        $out .= qq{        </div>\n} if $useTable;
+        $out .= qq{    </div>\n} if $useTable;
         $m->out($out);
     },
 
@@ -367,16 +371,15 @@ my %formSubs = (
             $cols = ($agent->nav4 && $agent->mac) ? $cols *.8 : $cols;
 
             my $out;
-            $out .= qq{<table border="0" width="$width"><tr><td align="right"}
-              . qq{ width="$indent" valign="top">} if $useTable;
-            $out .= $name ? qq{<span class="$label">$name:</span><br />\n} : '';
-            $out .= &$rem_sub($width, $indent) if $useTable;
+            $out .= qq{<div class="row">\n} if $useTable;
+            $out .= $name ? qq{        <div class="$label">$name:</div>\n} : '';
             $value = defined $value ? escape_html($value) : '';
             $key = $key ? escape_html($key) : '';
 
+            $out .= qq{        <div class="input">\n} if $useTable;
             if (!$readOnly) {
             $js = $js ? " $js" : '';
-            $out .= qq{<textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
+            $out .= qq{            <textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
                  . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
             my $htmlareatoolbar = HTMLAREA_TOOLBAR;
             $out .= qq{
@@ -389,8 +392,10 @@ my %formSubs = (
 }
         } else {
             $out .= $value;
-            }
-        $out .= "\n</td></tr></table>\n" if $useTable;
+        }
+        
+        $out .= qq{        </div>\n} if $useTable;
+        $out .= qq{    </div>\n} if $useTable;
         $m->out($out);
     },
 
@@ -398,22 +403,16 @@ my %formSubs = (
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
                 $label, $readOnly, $agent, $id) = @_;
             my $out='';
-
-            $indent -= 7 if $agent->nav4;
-            if ($useTable) {
-                $out .= qq{<table border="0" width="$width" cellpadding=0 cellspacing=0><tr>};
-                $out .= qq{<td align="right" width="$indent" valign="middle">};
-            }
-            $out .= $name ? qq{<span class="$label">$name:</span>} : '';
+            
+            $out .= qq{<div class="row">\n} if $useTable;
+            $out .= $name ? qq{        <div class="$label">$name:</div>\n} : '';
             $out .= "<br />" if (!$useTable && $name);
-            $out .= qq{</td>\n<td width=4><img src="/media/images/spacer.gif" width=4 height=1 />}
-              if ($useTable);
-            $out .= &$rem_sub($width-4, $indent) if $useTable;
-            $key = escape_html($key) if $key;
+            $out .= qq{        <div class="input">\n} if $useTable;
 
+            $key = escape_html($key) if $key;
             if (!$readOnly) {
                 $js = $js ? " $js" : '';
-                $out .= qq{<select name="$key" };
+                $out .= qq{            <select name="$key" };
                 $out .= 'size="' . ($vals->{props}{size} ||
                   ($vals->{props}{multiple} ? 5 : 1)) . '"';
                 $out .= ' multiple' if $vals->{props}{multiple};
@@ -447,9 +446,9 @@ my %formSubs = (
                 }
             }
 
-            $out .= "</select>" if (!$readOnly);
+            $out .= "            </select>\n" if (!$readOnly);
 
-            $out .= "\n</td></tr></table>\n" if $useTable;
+            $out .= "        </div>\n    </div>\n" if $useTable;
             # close select
             $m->out("$out");
         },

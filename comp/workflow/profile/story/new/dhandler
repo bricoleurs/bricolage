@@ -46,7 +46,7 @@ chk_authz('Bric::Biz::Asset::Business::Story', CREATE, 0, $gid);
   	jsInit => 'document.theForm["title"].focus();'
 &>
 
-<form action="<% $r->uri %>" method="post" name="theForm" onSubmit="return confirmChanges(this)">
+<form action="<% $r->uri %>" method="post" name="theForm" onsubmit="return confirmChanges(this)">
 <input type="hidden" name="container_prof|clear_cb" value="">
 
 <& /widgets/story_prof/story_prof.mc, section  => 'new',

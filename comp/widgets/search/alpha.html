@@ -1,25 +1,24 @@
-<table border=0 cellpadding=0 cellspacing=0 width=575>
-<tr>
-  <td width=5><img src="/media/images/spacer.gif" width=5 height=1></td>
-  <td width=570>
+<div class="alpha">
+<div class="row">
+    <div class="input">
 % for my $i ("A" .. "Z") {
 %   if ($let eq $i) {
-<b><% $i %></b> |
+<span title="Filter by '<% $i %>'"><% $i %></span> |
 %   } else {
-<a href="<% $url %>?search|alpha_cb=<% $i %>" class=blackLinkBold><% $i %></a> |
+<a href="<% $url %>?search|alpha_cb=<% $i %>" title="Filter by '<% $i %>'"><% $i %></a> |
+%   }
+%   if ($i eq "N") {
+<br />
 %   }
 % }
 % if ($let eq '%') {
-[<b><%$lang->maketext('All')%></b>]
+[<span title="Show all"><%$lang->maketext('All')%></span>]
 % } else {
-[<a href="<% $url %>?search|alpha_cb=<% '%' %>" class=blackLinkBold><%$lang->maketext('All')%></a>]
+[<a href="<% $url %>?search|alpha_cb=<% '%' %>" title="Show all"><%$lang->maketext('All')%></a>]
 % }
-  </td>
-</tr>
-<tr>
-  <td colspan=2><img src="/media/images/spacer.gif" width=575 height=5></td>
-</tr>
-</table>
+    </div>
+</div>
+</div>
 %#--- END HTML ---#
 
 %#--- Arguments ---#

@@ -49,7 +49,7 @@ chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
    context => $context,
    jsInit => 'document.theForm["title"].focus();'
 &>
-<form action="<% $r->uri %>" method="post" name="theForm" onSubmit="return confirmChanges(this)">
+<form action="<% $r->uri %>" method="post" name="theForm" onsubmit="return confirmChanges(this)">
 
 <& /widgets/media_prof/media_prof.mc, 
 	section => 'new',

@@ -34,7 +34,7 @@ body {
 .workflowBox,
 .loginBox,
 .searchBox,
-.errorsBox                     { position: relative; margin-bottom: 10px; }
+.errorsBox                     { margin-bottom: 10px; }
 
 /***************************************************
  * PAGE HEADER
@@ -103,7 +103,13 @@ body {
 .loginBox .border    { border-color: #669999; }
 .searchBox .border   { border-color: #666633; background-color: #CCCC99; padding: 5px; }
 
+/***************************************************
+ * SEARCH BOXES
+ ***************************************************/
 .switchSearch   { text-transform: none; }
+.searchBox div.alpha { margin: 10px 0;}
+.searchBox div.alpha span { font-weight: bold; }
+.searchBox div.alpha a { color: black; font-weight: bold; }
 
 .blueLink       { font-size:10px; color:#669999;}
 .blueLinkBold   { font-size:10px; color:#669999; font-weight:bold}
@@ -346,3 +352,31 @@ div.debug dt:after {
     background:#669999;
     font-weight: bold;
 }
+
+form .row {
+    position: relative;
+    margin-bottom: 4px;
+    z-index: 300;
+}
+form .row .label,
+form .row .redLabel {
+    position: absolute;
+    top: 0; left: 0;
+    width: 135px;
+    text-align: right;
+    line-height: 2;
+}
+form .row .input {
+    padding-left: 140px;
+    line-height: 2;
+}
+form .row .input p {
+    margin: 0;
+    padding: 0;
+    height: 2em;
+}
+
+table { padding: 0; border-collapse: collapse; position: relative; }
+table td.position,
+table td.edit,
+table td.delete { width: 100px; text-align: center; }

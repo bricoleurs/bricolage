@@ -1,21 +1,15 @@
-<input type="hidden" name="select_time|refresh_cb" value="<% $base_name %>">
 <%perl>;
-$m->out(q{<table border="0" cellpadding="0" cellspacing="0" width="574">
-	    <tr>}) if ($useTable);
+$m->out(qq{    <div class="row">\n}) if ($useTable);
 
 # Print out a display label if necessary
 if ($disp && !$compact) {
-    $m->out(qq{<td align="right" width="$indent">}) if ($useTable);
-    $m->out(qq{<span class="label">} . $lang->maketext($disp) . ':</span>&nbsp;');
-    $m->out(qq{<img src="/media/images/spacer.gif" width="$indent"},
-            qq{height="1" border="0" /></td>}) if $useTable;
-} else {
-    $m->out(qq{<td>
-	       <img src="/media/images/spacer.gif" width=$indent height=1 />
-	       </td>}) if ($useTable);
+    $m->out(qq{        <div class="label">} . $lang->maketext($disp) . qq{:</div>\n});
 }
 
 if (!$useTable) {$compact = 1};
+
+$m->out(qq{        <div class="input">\n}) if $useTable;
+$m->out(qq{            <input type="hidden" name="select_time|refresh_cb" value="$base_name" />\n});
 
 #-- Month Select
 if ($mon) {
@@ -54,6 +48,7 @@ if ($year) {
 
 #-- Hour Select
 if ($hour) {
+    $m->out("&nbsp;&nbsp;");
     $mk_time_field->({'base'    => $base_name.'_hour',
 		      'default' => $s->{'hour'},
 		      'label'   => 'Hour',
@@ -66,6 +61,7 @@ if ($hour) {
 
 #-- Minute Select
 if ($min) {
+    $m->out(":");
     $mk_time_field->({'base'    => $base_name.'_min',
 		      'default' => $s->{'min'},
 		      'label'   => 'Minute',
@@ -78,6 +74,7 @@ if ($min) {
 
 #-- Second Select
 if ($sec) {
+    $m->out(":");
     $mk_time_field->({base     => "$base_name\_sec",
 		      default  => $s->{sec},
 		      label    => 'Second',
@@ -92,8 +89,7 @@ if ($mil || $mic) {
     my ($key, $label, $size) = $mic
       ? qw(mic Microseconds 6)
       : qw(mil Milliseconds 3);
-    $m->print(qq{<td width="$cellWidth" valign="top">}
-              . qq{<span class="label">$label</span><br />}) unless $compact;
+    $m->out(":");
     $m->comp('/widgets/profile/text.mc',
              length    => $size,
              maxlength => $size,
@@ -101,15 +97,14 @@ if ($mil || $mic) {
              name      => "$base_name\_$key",
              value     => $s->{$key} || '0',
          );
-    $m->print('</td>') unless $compact;
     $cellsDisplayed++;
 }
 
 # End the table unless this is a compact listing.
 unless ($compact) {
     # make a cell to use the remaining space, so Netscape can do the right thing
-    $m->out("<td width=" .( 574 - $cellsDisplayed * $cw - $indent) . ">&nbsp;</td>");
-    $m->out(q{</tr></table>});
+    $m->out(qq{        </div>\n});
+    $m->out(qq{    </div>});
 }
 </%perl>
 <%args>
@@ -136,17 +131,12 @@ my $mk_time_field = sub {
     my ($p) = @_;
     $p->{label} = $lang->maketext($p->{label});
 
-    $m->print(qq{<td width="$p->{width}" valign="top">}
-              . qq{<span class="label">$p->{label}</span><br />}) unless $p->{compact};
-
     $m->comp('/widgets/profile/select.mc',
              'name'     => $p->{base},
              'value'    => $p->{default},
              'options'  => [ [ '-1' , $p->{label}], @{$p->{vals}} ],
              'useTable' => 0,
              'localize'=> $p->{localize});
-
-    $m->print('</td>') unless $p->{compact};
 };
 </%once>
 <%init>;
