@@ -24,6 +24,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 German localization started. [Gerfried Fuchs]
 
+=item *
+
 New help pages for the desstination, server, and action profiles. [Geoff
 Richards]
 
@@ -106,6 +108,12 @@ The list manager now sorts version numbers as numbers rather than strings.
 
 The media type profile again allows extensions to be added and removed.
 Reported by Tobias. [David]
+
+=item *
+
+Added the C<CHAR_SET> directive's value to Bricolage's Apache configuration
+via the F<httpd.conf> directive C<AddDefaultCharset>. Might help with some
+Unicode issues. [David]
 
 =back
 
