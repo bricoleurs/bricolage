@@ -165,10 +165,16 @@ my $id = $obj->get_id;
 # Determine the status.
 my $status;
 if ($obj->get_publish_status) {
-    my $letter = $obj->key_name eq 'formatting' ? 'D' : 'P';
+    my ($letter, $action) = $obj->key_name eq 'formatting'
+      ? ('D', 'Deployed')
+      : ('P', 'Published');
     $status = $obj->needs_publish ?
-      qq{<img src="/media/images/$lang_key/$letter\_red.gif" border=0 width="15" height="15" />} :
-      qq{<img src="/media/images/$lang_key/$letter\_green.gif" border=0 width="15" height="15" />};
+      qq{<img src="/media/images/$lang_key/$letter\_red.gif" border="0" } .
+        qq{width="15" height="15" alt="[$letter]" title="} .
+        $lang->maketext("Needs to be $action") . q{" />} :
+      qq{<img src="/media/images/$lang_key/$letter\_green.gif" border="0" } .
+        qq{width="15" height="15" alt="[$letter]" title="} .
+        $lang->maketext("$action Version") . q{"  />};
 } else {
     $status = '&nbsp;';
 }
@@ -222,11 +228,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.18.4.1 $
+$Revision: 1.18.4.2 $
 
 =head1 DATE
 
-$Date: 2003-03-19 02:58:15 $
+$Date: 2003-03-19 03:10:07 $
 
 =head1 DESCRIPTION
 

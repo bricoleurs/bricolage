@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.9.2.1 $
+$Revision: 1.9.2.2 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-03-14 21:30:13 $
+$Date: 2003-03-19 03:10:10 $
 
 =head1 SYNOPSIS
 
@@ -700,6 +700,10 @@ use constant key => 'pt_pt';
       'Clone' => 'Clone',
       'Cascade into Subcategories' => 'Cascade into Subcategories',
       'No help available for this topic.' => 'No help available for this topic.',
+      'Published Version' => 'Published Version',
+      'Deployed Version' => 'Deployed Version',
+      'Needs to be Published' => 'Needs to be Published',
+      'Needs to be Deployed' => 'Needs to be Deployed',
   );
 
 =cut
