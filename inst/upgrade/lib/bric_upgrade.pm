@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-12 01:43:25 $
+$Date: 2002-03-14 01:49:34 $
 
 =head1 SYNOPSIS
 
@@ -258,9 +258,9 @@ sub do_sql {
 	    execute($grant);
 	}
     };
-    if ($@) {
+    if (my $err = $@) {
 	rollback();
-	die "Update failed. Database was not affected. Error: $@;";
+	die "Update failed. Database was not affected. Error: $err;";
     } else {
 	commit();
     }
