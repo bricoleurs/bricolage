@@ -693,6 +693,17 @@ our %Lexicon = (
   '[quant,_1,media,media] published.' => '[quant,_1,media,media] опубликован',
   '[quant,_1,story,stories] published.' => '[quant,_1,story,stories] опубликован',
   'contains illegal characters!' => 'содержит недопустимые символы!',
+  'Element must be associated with at least one site and one output channel.' => 'Элемент должен быть связан не менее, чем с одним Сайтом (site) и одним Каналом вывода (output channel).',
+  'Permission to manage "[_1]" group membership denied' => 'Нет разрешения для управления членством в группе "[_1]"',
+  'Permission to grant permission "[_1]" to group "[_2]" denied' => 'Нет разрешения для предоставления прав "[_1]" для группы "[_2]"',
+  'This job has failed' => 'Эта задача завершилась аварийно',
+  'The error message is available below.  No further execution attempts will be made on this job.  Please leave it in the queue until your administrator has seen the error message.' => 'Сообщение об ошибке помещено ниже. Дальнейших попыток продолжить выполнение данной задачи предпринято не будет. Оставьте ее в очереди до тех пор, пока ваш администратор не увидит сообщения об ошибке.',
+  'First Published' => 'Впервые опубликовано',
+  'You do not have permission to add "[_1]" objects' => 'У вас нет прав добавлять "[_1]" объектов',
+  'Remaining' => 'Осталось',
+  'Object Groups' => 'Группы объектов',
+  '[_1] Site Categories' => '[_1] Категории сайта',
+  'You do not have permission to override user "[_1]"' => 'У вас нет прав обходить пользователя "[_1]"'
    '_AUTO' => 1,
 );
 
@@ -702,18 +713,8 @@ our %Lexicon = (
 To translate:
 
   'Slug required for non-fixed (non-cover) story type.' => 'Slug required for non-fixed (non-cover) story type.',
-  'Element must be associated with at least one site and one output channel.' => 'Элемент должен быть связан не менее, чем с одним Сайтом (site) и одним Каналом вывода (output channel).',
-  'Permission to manage "[_1]" group membership denied' => 'Нет разрешения для управления членством в группе "[_1]"',
-  'Permission to grant permission "[_1]" to group "[_2]" denied' => 'Нет разрешения для предоставления прав "[_1]" для группы "[_2]"',
-  'This job has failed' => 'Эта задача завершилась аварийно',
-  'The error message is available below.  No further execution attempts will be made on this job.  Please leave it in the queue until your administrator has seen the error message.' => 'Сообщение об ошибке помещено ниже. Дальнейших попыток продолжить выполнение данной задачи предпринято не будет. Оставьте ее в очереди до тех пор, пока ваш администратор не увидит сообщения об ошибке.',
-  'First Published' => 'Впервые опубликовано',
-  'You do not have permission to add "[_1]" objects' => 'У вас нет прав добавлять "[_1]" объектов',
-  'Remaining' => 'Осталось',
   '[_1] Site [_2] Permissions' => '[_1] Site [_2] Permissions', # Site Category Permissions
-  'Object Groups' => 'Группы объектов',
-  '[_1] Site Categories' => '[_1] Категории сайта',
-  'You do not have permission to override user "[_1]"' => 'У вас нет прав обходить пользователя "[_1]"'
+  'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.' => 'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.'
 
 =end comment
 

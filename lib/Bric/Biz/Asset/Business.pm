@@ -2598,7 +2598,7 @@ sub _update_uris {
           /Cannot insert a duplicate key into unique index udx_$key\_uri__site_id__uri/;
         my $things = $key eq 'media'
           ? 'category, or file name'
-          : 'or categories';
+          : 'slug, or categories';
         throw_not_unique
           error    => "The URI '$uri' is not unique.",
           maketext => ['The URI "[_1]" is not unique. Please change the' .

@@ -61,6 +61,11 @@ Adam Rinehart. [David]
 Fixed a bug where nothing would ever publish if you had PUBLISH_RELATED_ASSETS
 enabled in bricolage.conf. [Mark]
 
+=item *
+
+Added "slug" to the list of attributes specified in the error message for a
+non-unique URI in a story. Thanks to Rachel Murray for the spot! [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
@@ -260,8 +265,9 @@ non-ISO style date preference is selected. Thanks to Susan G. for the spot!
 
 =item *
 
-Running C<make upgrade> with PostgreSQL "ident sameuser" security now works
-properly. [Keith Grennan]
+By forcing the upgrade scripts to execute as the PostgreSQL user, running
+C<make upgrade> with PostgreSQL "ident sameuser" security now works properly.
+[Keith Grennan]
 
 =item *
 
