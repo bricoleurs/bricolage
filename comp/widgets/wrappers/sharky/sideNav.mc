@@ -49,6 +49,11 @@ my $printLink = sub {
 
 <%perl>
 my $site_id = $c->get_user_cx(get_user_id);
+# Make sure we always have a site ID. If the server has just been restarted,
+# then sit_context may not have been executed yet. So execute it to get the
+# site ID.
+$site_id = $m->comp('/widgets/site_context/site_context.mc', display => 0)
+  unless defined $site_id;
 # Figure out where we are (assume it's "My Workspace").
 my ($section, $mode, $type) = split '/', substr($ARGS{uri}, 1);
 ($section, $mode, $type) = qw(workflow profile workspace) unless $section;
@@ -148,12 +153,6 @@ foreach my $wf (@$workflows) {
     next if $site_id && $site_id != $wf->{site_id};
     # Check permissions.
     next unless chk_authz(0, READ, 1, @{ $wf->{gids} });
-
-    # Make sure we always have a site ID (0 is no site context and OK).
-    if (! defined $site_id) {
-        $site_id = $wf->{site_id};
-        $c->set_user_cx($site_id);
-    }
 
     if ( $nav->{"workflow-$wf->{id}"} ) { # show open workflow
         $m->out("<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>\n");
@@ -457,10 +456,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =head1 DATE
 
-$Date: 2003-09-10 18:39:04 $
+$Date: 2004-03-01 21:03:57 $
 
 </%doc>

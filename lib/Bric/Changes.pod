@@ -351,6 +351,11 @@ An attempt to preview a story for which no template exists now gives a
 friendly error message again. This was broken by the change in 1.7.2 that made
 the Mason burner use document templates as true dhandlers. [Dave Rolsky]
 
+=item *
+
+The workflow menus in the side navigation layer no longer disappear after a
+server restart. Reported by Ben Bangert. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)

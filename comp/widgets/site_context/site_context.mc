@@ -3,6 +3,9 @@ my $widget = 'site_context';
 my $usites_key = 'sites';
 my $cachekey = '__SITES__';
 </%once>
+<%args>
+$display => 1
+</%args>
 <%init>;
 my $uid = get_user_id;
  # This code can execute before the redirect to login screen!
@@ -62,6 +65,9 @@ unless ($user_sites) {
     }
 }
 
+# Just return the context if we don't want to display the context.
+return $cx unless $display;
+
 # Do nothing if there are fewer than two sites for this user.
 return unless @$user_sites > (ALLOW_ALL_SITES_CX ? 2 : 1);
 
@@ -87,11 +93,11 @@ $m->comp('/widgets/profile/select.mc',
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2004-02-28 23:40:01 $
+$Date: 2004-03-01 21:03:57 $
 
 =head1 SYNOPSIS
 
