@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-06 22:30:14 $
+$Date: 2002-11-04 21:11:31 $
 
 =head1 SYNOPSIS
 
@@ -30,7 +30,7 @@ $Date: 2002-09-06 22:30:14 $
  # Create a list of keyword objects.
  my $key = list Bric::Biz::Keyword($param);
 
- # Get/set the keyword name. 
+ # Get/set the keyword name.
  $name    = $key->get_name();
  $success = $key->set_name($name);
 
@@ -44,7 +44,7 @@ $Date: 2002-09-06 22:30:14 $
  # Save this asset to the database.
  $success = $key->save();
 
- # Link a keyword with a story (or media object or category) 
+ # Link a keyword with a story (or media object or category)
  $key->associate($story);
 
  # Break the link between a keyword and a story (or media object or category)a
@@ -53,9 +53,9 @@ $Date: 2002-09-06 22:30:14 $
 
 =head1 DESCRIPTION
 
-The Keyword module allows assets to be characterized by a set of
-topical keywords.  These keywords can be used to group assets or
-during a search on a particular topic.
+The Keyword module allows assets to be characterized by a set of topical
+keywords. These keywords can be used to group assets or during a search on a
+particular topic.
 
 =cut
 
@@ -64,13 +64,11 @@ during a search on a particular topic.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
- 
+# Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Keyword;
 
@@ -98,17 +96,15 @@ use constant COLS   => qw(name screen_name sort_name active);
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
+# Public Class Fields
 our $METH;
 
 #--------------------------------------#
-# Private Class Fields                  
-
+# Private Class Fields
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 #--------------------------------------#
-# Instance Fields                       
+# Instance Fields
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
@@ -133,8 +129,7 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors                          
-
+# Constructors
 #------------------------------------------------------------------------------#
 
 =item $obj = Bric::Biz::Keyword->new(\%init);
@@ -143,22 +138,20 @@ Creates a new keyword and keyword object.  Keys for %init are:
 
 =over 4
 
-=item name
+=item C<name>
 
 The name of this keyword - required.
 
-=item screen_name
+=item C<screen_name>
 
 The way this name should be displayed on screen (ie name='George',
 screen name='George Washington').  If not specified name will be used
 for screen_name.
 
-=item sort_name
+=item C<sort_name>
 
 The word used to sort keywords.  If not specified then name will be
 used for sort_name.
-
-=item *
 
 =back
 
@@ -174,8 +167,7 @@ sub new {
     my ($pkg, $init) = @_;
 
     # Map state to active since state is just overriding active's role.
-    $init->{'active'} = exists $init->{'state'} ? delete $init->{'state'} 
-                                                : 1;
+    $init->{'active'} = exists $init->{'state'} ? delete $init->{'state'} : 1;
     # construct the object
     my $self = $pkg->SUPER::new($init);
 
@@ -192,7 +184,7 @@ sub new {
 Retrieves a single existing keyword from the database.  Takes either a
 keyword ID or the keyword name.
 
-Throws: 
+Throws:
 
 =over 4
 
@@ -236,29 +228,29 @@ possible keys to $param are the following;
 
 =over 4
 
-=item name
+=item C<name>
 
 Search for keywords by name.  Matched with LIKE.
 
-=item screen_name
+=item C<screen_name>
 
 Search for keywords by screen name.  Matched with LIKE.
 
-=item sort_name
+=item C<sort_name>
 
 Search for keywords by sort name.  Matched with LIKE.
 
-=item active
+=item C<active>
 
 Search for keywords by active flag.  If you don't set this flag then
 active => 1 is implicitely used.
 
-=item synonyms
+=item C<synonyms>
 
 Returns all the synonyms for the given keyword or keyword ID.  Cannot
 be legally combined with the object param.
 
-=item object
+=item C<object>
 
 Returns all keywords for a given object - may be a
 Bric::Biz::Category, Bric::Biz::Asse::Business::Media or a
@@ -296,7 +288,7 @@ sub list {
 
     # default from clause
     $from = TABLE . ' k';
-    
+
     # Build a list of selected columns.
     @select = ('k.id', map { "k.$_" } COLS);
 
@@ -315,7 +307,7 @@ sub list {
         next unless exists $param->{$f};
         push @where, "$f = ?";
         push @bind,  lc $param->{$f};
-    }            
+    }
 
     # handle searches for object keywords
     if (exists $param->{object}) {
@@ -330,12 +322,11 @@ sub list {
         push @bind, $obj->get_id;
     }
 
- 
     # build SQL
     my $sql = "SELECT " . join(',','id',COLS) . " FROM " . $from;
     $sql   .= ' WHERE ' . join(' AND ', @where) if @where;
     $sql   .= ' ORDER BY sort_name';
-    
+
     # prepare and execute select
     my $sth = prepare_c($sql);
     execute($sth, @bind);
@@ -377,11 +368,11 @@ sub remove {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $val = my_meths->{$key}->[0]->($obj);
 
@@ -445,17 +436,16 @@ sub my_meths {
     $METH->{keyword} = $METH->{name};
     # Load attributes.
     # NONE
-    
     return $METH;
 }
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Instance Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $key->associate($obj)
 
@@ -675,6 +665,8 @@ sub save {
 
 #==============================================================================#
 
+=back
+
 =head2 Private Methods
 
 =cut
@@ -714,7 +706,7 @@ sub _select_keywords {
     my $sth = prepare_c($sql);
     execute($sth, @$bind);
     bind_columns($sth, \@d[0..(scalar COLS)]);
-    
+
     my ($keyword);
     while (fetch($sth)) {
         # create a new keyword object and push it on the return array
@@ -722,7 +714,7 @@ sub _select_keywords {
         $keyword->_set(['id', COLS], \@d);
 	push @ret, $keyword;
     }
-    
+
     finish($sth);
 
     return wantarray ? @ret : \@ret;
@@ -736,18 +728,16 @@ Updates the keyword object in the database.
 
 sub _update_keyword {
     my $self = shift;
-    
     my $sql = 'UPDATE '.TABLE.
               ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
 
 
     my $sth = prepare_c($sql);
     execute($sth, $self->_get(COLS), $self->get_id);
-    
     return 1;
 }
 
-=item $self->_update_keyword()
+=item $self->_insert_keyword()
 
 Inserts the new keyword object into the database.
 
@@ -760,10 +750,10 @@ sub _insert_keyword {
     # Create the insert statement.
     my $sql = 'INSERT INTO '.TABLE." (id,".join(',',COLS).") ".
               "VALUES ($nextval,".join(',', ('?') x COLS).')';
-    
+
     my $sth = prepare_c($sql);
     execute($sth, $self->_get(COLS));
-  
+
     # Set the ID of this object.
     $self->_set(['id'],[last_key(TABLE)]);
 
@@ -806,8 +796,7 @@ NONE
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
-Bricolage Engineering
+"Garth Webb" <garth@perijove.com> Bricolage Engineering
 
 Sam Tregar <stregar@about-inc.com>
 
