@@ -251,7 +251,8 @@ END
 sub format_sql {
     my $sql = shift;
     $sql =~ s/,([\S])/, $1/g;
-    $sql =~ s/$_/\n\n$_\t/g for qw(FROM WHERE VALUES LEFT AND OR);
+    $sql =~ s/\b$_\b/\n\n$_\t/g 
+      for qw(FROM WHERE VALUES LEFT AND OR ORDER LIMIT);
     $sql = fill(" ", " " x 8, $sql);
     $sql =~ s/\n\n/\n/;
     return $sql;
