@@ -62,6 +62,10 @@ Specifies a directory to act as the category root for the output of all the
 templates in the output channel. The directory will be created if it doesn't
 exist. Defaults to the current directory.
 
+=item C<--unix-endings>
+
+Converts the line endings in each template to Unix line endings.
+
 =item C<--help>
 
 Shows this screen.
@@ -113,7 +117,7 @@ use Pod::Usage;
 use File::Spec::Functions qw(curdir canonpath catdir splitdir catfile);
 
 my ($username, $password, $server, $output_to, $VERBOSE, $timeout, $help,
-    $man, $oc, $site, $show_ver);
+    $man, $oc, $site, $unix, $show_ver);
 
 BEGIN {
     our $VERSION = '0.12';
@@ -135,6 +139,7 @@ BEGIN {
 	       "server=s"               => \$server,
                "timeout=s"              => \$timeout,
                "output-to=s"            => \$output_to,
+               "unix-endings+"          => \$unix,
                "version+"               => \$show_ver,
 	      ) or pod2usage(2);
 
@@ -168,7 +173,7 @@ use File::Spec::Unix;
 
 # Connect to the SOAP server.
 my $soap = login($username, $password, $server, $timeout);
-fetch_templates($soap, $oc, $site, $output_to);
+fetch_templates($soap, $oc, $site, $output_to, $unix);
 print STDERR "$0 finished okay\n" if $VERBOSE;
 
 ##############################################################################
@@ -206,8 +211,10 @@ sub login {
 # the Bricolage server.
 ##############################################################################
 sub fetch_templates {
-    my ($soap, $oc, $site, $output_to) = @_;
+    my ($soap, $oc, $site, $output_to, $unix) = @_;
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Template');
+    print STDERR "Dumping templates from the $oc output channel\n"
+      if $VERBOSE;
     my $response = $soap->list_ids(name(output_channel => $oc),
                                    $site ? name(site => $site) : ());
 
@@ -226,6 +233,13 @@ sub fetch_templates {
         my $code = $xml->{template}{data}
           ? decode_base64($xml->{template}{data})
           : '';
+
+        if ($unix) {
+            # Convert line endings to Unix. This is probably a naive approach.
+            $code =~ s/\r\n/\n/g;
+            $code =~ s/\r/\n/g;
+        }
+
         my $filename = $xml->{template}{file_name};
         print STDERR "Extracted template '$filename' ($template_id): "
           . length($code) . " bytes.\n"

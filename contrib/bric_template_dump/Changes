@@ -1,6 +1,8 @@
 Revision history for activitymail.
 
 0.12
+       - Added --unix-endings option to convert all line endings to Unix-
+         style line endings.
 
 0.11   2004-03-24T01:12:43
        - Added --site option.
