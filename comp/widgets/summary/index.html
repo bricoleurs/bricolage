@@ -1,0 +1,17 @@
+<& /widgets/wrappers/sharky/header.mc, title => 'Story Summary Test' &>
+
+<p></p>
+<& /widgets/summary/summary.mc, asset => $story_id || 1024,
+                                type  => 'story'
+&>
+<p></p>
+<& /widgets/summary/summary.mc, asset => $media_id || 1024,
+                                type  => 'media'
+&>
+
+<& /widgets/wrappers/sharky/footer.mc &>
+
+<%args>
+$story_id => undef
+$media_id => undef
+</%args>

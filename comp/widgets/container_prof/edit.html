@@ -1,0 +1,475 @@
+<input type="hidden" name="container_prof|update_pc" value="1">
+
+<%perl>
+# Show the story summary if needed.
+if ($show_summary) {
+    my $type  = $tile->get_object_type;
+
+    # Nab the story from the story_prof widget.
+    my $asset = get_state_data($type.'_prof', $type);
+    $m->comp('/widgets/summary/summary.mc', asset => $asset, number => 1);
+}
+
+# COUNT FOR REORDER JAVA SCRIPT
+my $total = scalar @tiles;
+my $x=0;
+
+</%perl>
+
+% # check if we should display
+% if (@tiles || $elem_opts ) {
+
+% $m->comp("/widgets/wrappers/sharky/table_top.mc",
+%	caption => $title,
+%	number => $num++
+%	);
+
+<table border="0" width="578" cellpadding="0" cellspacing="0">
+
+% # COLUMN HEADER ROW
+% my $rowspan = scalar(@tiles) + 2;
+% $rowspan++ if ($repeatable_opts);
+% $rowspan += scalar(@tiles) if ($agent->{browser} eq "Internet Explorer");
+% if (scalar(@tiles)) { # suppress labels if no results
+<tr>
+  <td width=20 class="medHeader"><img src="/media/images/spacer.gif" width="20" height="20" /></td>
+  <td width=<% FIELD_INDENT - 20 + $shim %> class="medHeader" valign="middle"><span class="label">Name</span></td>
+  <td width=1><img src="/media/images/spacer.gif" width=1 height=20 border=0 /></td>
+  <td width=<% 578 - FIELD_INDENT - 125 %> class="medHeader" align="center"><span class="label">Content</span></td>
+  <td width=1><img src="/media/images/spacer.gif" width=1 height=20 border=0 /></td>
+  <td width=1 class="medHeader" rowspan=<% $rowspan %>><img src="/media/images/spacer.gif" width=1 height=1 /></td>
+  <td width=60 class="medHeader" align="center"><span class="label">Position</span></td>
+  <td width=1><img src="/media/images/spacer.gif" width=1 height=20 border=0 /></td>
+  <td width=1 class="medHeader" rowspan=<% $rowspan %>><img src="/media/images/spacer.gif" width=1 height=1 /></td>
+  <td width=60 class="medHeader" align="center"><span class="label">Delete</span></td>
+</tr>
+% } # END if (scalar(@tiles)) {
+
+% # BEGIN FOREACH TILES
+% foreach my $dt (@tiles) {
+% my $no_del;
+
+% # START CONTENT ROWS
+<tr>
+  <td width=20><img src="/media/images/spacer.gif" width="20" height="20" /></td>
+% if ($dt->is_container) {
+% # START IF CONTAINER
+
+  <td align="right" colspan=2><span class="label"><% $dt->get_name() %>:</span>&nbsp;</td>
+  <td align="left" colspan=3>
+  <table border=0 cellpadding=0 cellspacing=0>
+    <tr>
+      <td>
+
+
+% my $at = $dt->get_element;
+
+% if ($at->is_related_media || $at->is_related_story) {
+
+      <table border=0 cellpadding=0 cellspacing=1 width=<% 578 - FIELD_INDENT - 125 %>>
+      <tr>
+	<td width=50 class=medHeader align="right">
+	  <span class=label><% ($at->is_related_media) ? "URL:" : "Title:" %></span>
+	</td>
+<%perl>
+my $info = '';
+
+if ($at->is_related_media) {
+    my $rel = $dt->get_related_media;
+    $info = $rel->get_uri if $rel;
+} else {
+    my $rel = $dt->get_related_story;
+    $info = $rel->get_title if $rel;
+}
+</%perl>
+	<td width=<% 578 - FIELD_INDENT - 125-50 %>>&nbsp;<% $info %>
+	</td>
+      </tr>
+      <tr>
+	<td colspan=2><& '/widgets/profile/imageSubmit.mc',
+	     formName => "theForm",
+	     callback => "container_prof|edit". $dt->get_id() ."_cb",
+	     image    => "edit_lgreen",
+             vspace   => 3
+	&></td>
+      </tr>
+      </table>
+% } else {
+
+	<& '/widgets/profile/imageSubmit.mc',
+	     formName => "theForm",
+	     callback => "container_prof|edit". $dt->get_id() ."_cb",
+	     image    => "edit_lgreen",
+             vspace   => 3
+	&>
+
+% }
+
+</td>
+% # START OPTIONAL BULK EDIT PULLDOWN
+%   if (my $opts = $repeatable_elem_opts->($dt)) {
+      <td align="center" valign="middle"><span class="label"> - or - </span></td>
+      <td><& '/widgets/profile/imageSubmit.mc',
+	     formName => "theForm",
+	     callback => "container_prof|bulk_edit-" . $dt->get_id() ."_cb",
+	     image    => "bulk_edit_lgreen"
+	   &></td>
+    <td>
+    <& '/widgets/profile/select.mc',
+        name     => $widget.'|bulk_edit_tile_field-'.$dt->get_id,
+        options  => $opts,
+        useTable => 0,
+    &>
+    </td>
+
+%   } # END IF OPTIONAL BULK EDIT PULLDOWN
+    </tr>
+    </table>
+  </td>
+
+% } else {
+% # START ELSE ( DATA TILE DISPLAY )
+%    my $at_obj = $dt->get_element_data_obj();
+%    $no_del = $at_obj->get_required;
+%    my $meta = $at_obj->get_meta('html_info');
+%    my $vals = { props => { %$meta } };
+%    my $key =  $widget . '|' . $dt->get_id;
+%    $vals->{'value'} = $dt->get_data() || $vals->{props}{value};
+
+    <td align="right" colspan=2><span class="label"><% $dt->get_name() %>:&nbsp;</span></td>
+    <td colspan=3>
+    <table border=0 cellpadding=0 cellspacing=0>
+    <tr>
+      <td>
+	<& '/widgets/profile/displayFormElement.mc',
+	  key      => $key,
+	  vals     => $vals,
+	  useTable => 0
+	&>
+      </td>
+
+%     if ($dt->is_autopopulated()) {
+	  <td><input type="hidden" name="<% $widget %>|lock_val_cb" value="<% $dt->get_id %>">
+	  Lock Val: <input type="checkbox" name="<% $widget %>|lock_val_<% $dt->get_id %>"<% $dt->is_locked() ? ' CHECKED' : '' %>></td>
+%     } else {
+	<td>&nbsp;</td>
+%     }
+    </tr>
+    </table>
+    </td>
+% # END DATA AREA
+% } # END ELSE (DATA TILE DISPLAY)
+
+% # ORDER TABLE CELL
+  <td valign="middle" align="center" colspan=2>
+
+% my $f_key;
+% if ($dt->is_container) {
+%	 $f_key = "$widget|reorder_con" . $dt->get_id();
+% } else {
+%	 $f_key = "$widget|reorder_dat" . $dt->get_id();
+% }
+% my $vals = [];
+% foreach (1 .. $total) {
+%	my $val = $_ - 1;
+%	push @$vals, [$val, $_];
+%}
+
+<& '/widgets/profile/displayFormElement.mc',
+   key => $f_key,
+   vals => { value => $dt->get_place(),
+	     props => { type => 'select',
+			vals => $vals, },
+	     js    => 'onChange="reorder(this, \'theForm\')"'
+	   },
+  useTable => 0
+&>
+													
+  </td>
+
+% # DELETE TABLE CELL
+  <td valign="middle" align="center">
+%   if ($no_del) {
+         &nbsp;
+% } elsif ($dt->is_container) {
+% # START IF CONTAINER
+	<input type="checkbox" name="container_prof|delete_cont<% $dt->get_id()%>" value="1">
+% } else {
+	<input type="checkbox" name="container_prof|delete_data<% $dt->get_id()%>" value="1">
+% }
+   </td>
+</tr>
+
+<% $ieSpacer %>
+% }
+% # END FOREACH TILES
+
+<tr>
+  <td width=20><img src="/media/images/spacer.gif" width="20" height="20" /></td>
+  <td colspan=5></td>
+% if (scalar @tiles) {
+    <td align="center" colspan=2><&
+      '/widgets/profile/imageSubmit.mc',
+	formName => "theForm",
+        callback => "container_prof|reorder_cb",
+        image    => "reorder_lgreen",
+        vspace   => 3,
+	hspace   => 2
+    &></td>
+    <td align="center"><input type="image" src="/media/images/delete_red.gif" border=0 hspace=2 vspace=3 name="container_prof|delete_cb" value="delete"></td>
+% } else {
+    &nbsp;</td><td>&nbsp;</td>
+%}
+</tr>
+
+% # DISPLAY IF NO TILES
+% if (!$total)  {
+<tr>
+  <td colspan="8" height="22">&nbsp;&nbsp;&nbsp;&nbsp;No elements have been added.</td>
+</tr>
+
+% }
+
+
+% # END TILE DISPLAY
+</table>
+
+<table border=0 width="578" cellpadding="0" cellspacing="0">
+%# Begin element picker
+% if ($elem_opts) {
+<tr>
+  <td width=<% FIELD_INDENT - 10 %> align="right" class="medHeader"><& '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget ."|add_element_cb",
+  image    => "add_element_lgreen",
+  vspace   => 3,
+  hspace   => 4
+&></td>
+  <td width=180 class="medHeader">
+<& /widgets/profile/select.mc, name     => $widget.'|add_element',
+                               options  => $elem_opts,
+			       useTable => 0,
+                               multiple => 0,
+                               size     => 1,
+&>
+  </td>
+
+% if ($repeatable_opts) {
+  <td width=1><img src="/media/images/spacer.gif" width=1 height=1 /></td>
+% }
+  <td width=<% 578 - FIELD_INDENT - 181 + 10 %> class="medHeader">
+% if ($repeatable_opts) {
+
+    <table border="0" cellpadding="0" cellspacing="0">
+      <tr>
+	<td align="right"><&
+	  '/widgets/profile/imageSubmit.mc',
+	    formName => "theForm",
+	    callback => $widget ."|bulk_edit_this_cb",
+	    image    => "bulk_edit_lgreen",
+	    vspace   => 3,
+	    hspace   => 4
+	&></td>
+	<td>
+<& /widgets/profile/select.mc,
+	  name => $widget.'|bulk_edit_field',
+	  options  => $repeatable_opts,
+	  useTable => 0,
+&>
+        </td>
+	
+      </tr>
+    </table>
+
+% } else {
+    &nbsp;
+% }
+  </td>
+
+</tr>
+% }
+%# end data display
+
+</table>
+
+%$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+%# end element display
+% }
+
+%### Start Related Story Section ###
+% if ($is_related_story) {
+<& /widgets/wrappers/sharky/table_top.mc,
+  	 caption => 'Related Story',
+	 number => $num++
+&>
+
+% $related_summary->($tile, 'story', $widget);
+
+<& /widgets/wrappers/sharky/table_bottom.mc &>
+
+% }
+
+%### End Related Story Section ###
+
+
+%### Start Related Media Section ###
+% if ($is_related_media) {
+
+<& /widgets/wrappers/sharky/table_top.mc,
+  	 caption => 'Related Media  ',
+	 number => $num++
+&>
+
+% $related_summary->($tile, 'media', $widget);
+
+<& /widgets/wrappers/sharky/table_bottom.mc &>
+
+% }
+%### End Related Media Section ###
+
+
+% if ($show_summary) {
+<table border=0 width=580>
+<tr>
+  <td align="center" colspan=2 valign="middle"><input type="checkbox" name="container_prof|delete_element" value="Delete"> <span class="burgandyLabel">Delete this Element</span></td>
+</tr>
+<tr>
+  <td>
+    <input type="image" src="/media/images/save_red.gif" border=0 name="<% $widget %>|save_and_up_cb" value="Save">
+    <input type="image" src="/media/images/save_and_stay_lgreen.gif" border=0 name="<% $widget %>|save_and_stay_cb" value="Save and Stay">
+  </td>
+  <td align="right">
+<& '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget ."|up_cb",
+  image    => "cancel_red",
+&>
+  </td>
+</tr>
+</table>
+% }
+
+%# this script creates an array with the names
+%# of select boxes that need ordering
+<script language="javascript">
+<%perl>
+$m->out("var selectOrderNames = new Array(" );
+
+my $txt = '';
+foreach my $dt (@tiles) {
+	if ($dt->is_container) {
+   		$txt .= '"container_prof|reorder_con' . $dt->get_id() . '", ';
+	} else {
+		$txt .= '"container_prof|reorder_dat' . $dt->get_id() . '", ';
+	}
+}
+$m->out( substr($txt, 0, length($txt) - 2 ) );
+$m->out(")\n\n");
+$m->out("</script>");
+
+return $num;
+
+</%perl>
+
+
+<%args>
+$widget
+$num          => undef
+$title        => undef
+$show_summary => undef
+</%args>
+
+<%init>
+# the tile object
+my $tile = get_state_data($widget, 'tile');
+
+$title ||= $tile->get_name;
+my $start = get_state_data($widget, 'start');
+
+# the contained tiles
+my @tiles = $tile->get_tiles();
+
+my $elem_opts;
+my $repeatable_opts;
+
+# the possible data options
+my @pos_data = $tile->get_possible_data();
+foreach (@pos_data) {
+    my $key = 'data_' . $_->get_id();
+    $elem_opts->{$key} = $_->get_name();
+    if ($_->get_quantifier()) {
+	$repeatable_opts->{$_->get_name()} = $_->get_name();
+    }
+}
+
+# the container options
+my @pos_cont = $tile->get_possible_containers();
+foreach (@pos_cont) {
+    my $key = 'cont_' . $_->get_id();
+    $elem_opts->{$key} = $_->get_name();
+}
+
+my $at_id = $tile->get_element_id;
+my $at = Bric::Biz::AssetType->lookup({'id' => $at_id});
+
+# Uncomment this when the related_tile flag is in at_type.
+my $is_related_story = $at->is_related_story ? 1 : 0;
+my $is_related_media = $at->is_related_media ? 1 : 0;
+
+# browser spacing stuff
+my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $ieSpacer = ($agent->{browser} eq "Internet Explorer") ? qq{<tr><td colspan=10><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>} : '';
+my $shim = ($agent->{browser} eq "Netscape") ?  -4 : 4;
+</%init>
+
+<%once>
+
+my $repeatable_elem_opts = sub {
+    my ($t) = @_;
+    my $id = $t->get_id;
+    my $opts;
+
+    foreach ($t->get_possible_data()) {
+	if ($_->get_quantifier()) {
+	    # Pass the name with the tile ID as the value
+	    $opts->{$_->get_name()} = $_->get_name();
+	}
+    }
+
+    return $opts;
+};
+
+my $related_summary = sub {
+  my ($tile, $type, $widget) = @_;
+
+  my $rel = $type eq 'story' ? $tile->get_related_story 
+                             : $tile->get_related_media;
+
+  my $button = $m->scomp( '/widgets/profile/imageSubmit.mc',
+			  formName => "theForm",
+			  callback => $widget  ."|pick_related_".$type."_cb",
+			  image    => "edit_lgreen",
+			  vspace   => 4,
+			);
+
+  $m->out('<table border=0 cellpadding=0 cellspacing=0 width=578>');
+
+  if ($rel) {
+      # The summary info 
+      $m->out('<tr><td>');
+      $m->comp('/widgets/summary/summary.mc',
+                asset  => $rel,
+                type   => $type,
+                header => 'Currently Related '.ucfirst($type),
+                frame  => 0,
+	        button => $button );
+      $m->out('</td></tr>');
+  } else {
+      $m->out('<tr><td width=518>');
+      $m->out('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No related '.ucfirst($type));
+      $m->out("</td><td width=70>$button");
+  }
+  $m->out('</td></tr></table>');
+};
+
+</%once>

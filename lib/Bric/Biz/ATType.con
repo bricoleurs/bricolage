@@ -1,0 +1,35 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:53:04 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Garth Webb <garth@perijove.com>
+
+
+-- -----------------------------------------------------------------------------
+-- Table: at_type
+
+ALTER TABLE at_type ADD 
+	CONSTRAINT fk_class__at_type FOREIGN KEY (biz_class__id)
+	REFERENCES class(id) ON DELETE CASCADE;
+
+-- 
+-- TABLE: element_type_member
+--
+
+ALTER TABLE    element_type_member
+ADD CONSTRAINT fk_comp_type__comp_type_member FOREIGN KEY (object_id)
+REFERENCES     at_type(id) ON DELETE CASCADE;
+
+ALTER TABLE    element_type_member
+ADD CONSTRAINT fk_member__comp_type_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+
+/*
+Change Log:
+$Log: ATType.con,v $
+Revision 1.1  2001-09-06 21:53:04  wheeler
+Initial revision
+
+*/

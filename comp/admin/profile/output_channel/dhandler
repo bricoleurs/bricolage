@@ -1,0 +1,94 @@
+<%perl>;
+# Instantiate an object.
+my $oc = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id ||= $oc->get_id;
+
+# Check authorization.
+chk_authz($oc, $id ? READ : CREATE);
+my $no_edit = !chk_authz($oc, ($id ? EDIT : CREATE), 1);
+my $no_del = !$id || $no_edit;
+
+# Get the name for the breadcrumb trail.
+my $crumb = $oc->get_name;
+$crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
+
+# Output the header and other necessities.
+$m->comp('/widgets/wrappers/sharky/header.mc',
+	 title => "$disp Profile",
+	 context => "Admin | Profile | $disp | $crumb"
+);
+$m->out(qq{<form method="post" name="oc_profile" action="} . $r->uri
+        . qq{" onSubmit="return confirmChanges(this)">\n});
+$m->comp('/javascripts/profile/formValidator.js', id => $id);
+
+# Output a hidden field with the ID, if we have one.
+$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'output_channel_id')
+  if defined $id;
+
+# Display the Contact info.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Properties",
+	 number  => 1);
+
+# Dump out the fields for display.
+$m->comp('/widgets/profile/dumpRemainingFields.mc', readOnly => $no_edit,
+	 objref => $oc, fieldsUsed => { active => 1 } );
+
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Add pre/post fields to the specialCharacters array
+$m->out(q{<script language="javascript">
+specialCharacterFields["pre_path"]  = "Pre";
+specialCharacterFields["post_path"] = "Post";
+</script>
+});
+
+# Add the form buttons and other necessities.
+$m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
+	 no_del => $no_del, no_save => $no_edit);
+$m->out("</form>\n");
+$m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS );
+</%perl>
+
+%#-- Once Section --#
+<%once>;
+my $class = "Bric::Biz::OutputChannel";
+my $widget = 'profile';
+my $type = 'output_channel';
+my $disp = get_disp_name($type);
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:51:51 $
+
+=head1 SYNOPSIS
+
+/admin/profile/container_type/dhandler - display output channel object profile.
+
+=head1 DESCRIPTION
+
+This element displays output channel object profiles for editing.
+
+=head1 REVISION HISTORY
+
+$Log: dhandler,v $
+Revision 1.1  2001-09-06 21:51:51  wheeler
+Initial revision
+
+</%doc>

@@ -1,0 +1,50 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+in_array.mc
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=cut
+
+our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+
+
+=head1 DATE
+
+$Date: 2001-09-06 21:51:57 $
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+Determine if element $what is in array @arr. Currently works for flat arrays.  If I get smart, or really need it, it could be extended to arrays of arrays.  Ah php, you were a good friend to me.
+
+=cut
+</%doc>
+
+<%args>
+
+@ar => ()
+$what
+
+</%args>
+
+<%perl>
+
+return 1;
+
+foreach my $element (@ar) {
+
+	if ($element eq $what || $element == $what) {
+		return 1;
+	}
+}
+
+return 0;
+
+</%perl>

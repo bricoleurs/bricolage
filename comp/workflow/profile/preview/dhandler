@@ -1,0 +1,39 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+<name> -- <description>
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:39 $
+
+=head1 DESCRIPTION
+
+<description>
+
+=cut
+</%doc>
+
+%#-- Begin HTML --#
+<%perl>;
+my $sid = ($m->comp("/lib/util/parseUri.mc"))[3];
+$m->comp('/widgets/publish/callback.mc',
+	 param => \%ARGS,
+	 story_id => $sid,
+	 field => 'preview',
+	 widget => 'publish');
+</%perl>
+%#-- End HTML --#
+
+<%doc>
+$Log: dhandler,v $
+Revision 1.1  2001-09-06 21:52:39  wheeler
+Initial revision
+
+</%doc>

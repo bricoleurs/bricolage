@@ -1,0 +1,23 @@
+-- Project: Bricolage Business API
+-- File:    Source.val
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:54:08 $
+-- Author: David Wheeler <david@wheeler.net>
+
+INSERT INTO source (id, org__id, name, description, expire, active)
+VALUES (1, 1, 'Internal Source (Rename)', 'Ourselves.', 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (429, 5, 35, 1);
+
+INSERT INTO source_member (id, object_id, member__id)
+VALUES (1, 1, 429); 
+
+/*
+Change Log:
+$Log: Source.val,v $
+Revision 1.1  2001-09-06 21:54:08  wheeler
+Initial revision
+
+*/

@@ -1,0 +1,620 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:54:02 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@wheeler.net>
+--
+
+
+-- Add a paragraph element to page.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (1, 10, 'Paragraph', 'A Paragraph of text.', 1, 0, '1', 1, 1, 0, 'blob');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (1, 'id_1', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (1, 1, 1, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (1, 1, 'cols', '50', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (2, 1, 'maxlength', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (3, 1, 'length', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (4, 1, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (5, 1, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (6, 1, 'rows', '8', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (7, 1, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (8, 1, 'pos', '1', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (9, 1, 'disp', 'Paragraph', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (10, 1, 'type', 'textarea', 1);
+
+
+-- Add a 'Previous' text field to page.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (2, 10, 'Previous', 'Describes previous page.', 2, 0, '0', 1, 1, 256, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (2, 'id_2', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (2, 2, 2, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (11, 2, 'cols', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (12, 2, 'maxlength', '256', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (13, 2, 'length', '32', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (14, 2, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (15, 2, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (16, 2, 'rows', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (17, 2, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (18, 2, 'pos', '2', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (19, 2, 'disp', 'Previous', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (20, 2, 'type', 'text', 1);
+
+
+-- Add a 'Next' text field to page.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (3, 10, 'Next', 'Describes next page.', 3, 0, '0', 1, 1, 256, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (3, 'id_3', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (3, 3, 3, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (21, 3, 'cols', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (22, 3, 'maxlength', '256', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (23, 3, 'length', '32', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (24, 3, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (25, 3, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (26, 3, 'rows', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (27, 3, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (28, 3, 'pos', '3', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (29, 3, 'disp', 'Next', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (30, 3, 'type', 'text', 1);
+
+
+-- Create a 'Quote' textarea field for the 'Pull Quote' element.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (4, 7, 'Quote', 'The pull quote quotation.', 1, 1, '0', 1, 1, 1024, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (4, 'id_4', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (4, 4, 4, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (31, 4, 'cols', '40', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (32, 4, 'maxlength', '1024', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (33, 4, 'length', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (34, 4, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (35, 4, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (36, 4, 'rows', '4', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (37, 4, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (38, 4, 'pos', '1', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (39, 4, 'disp', 'Quote', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (40, 4, 'type', 'textarea', 1);
+
+
+-- Create a 'Copy' textarea field for the 'Inset' element.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (5, 6, 'Copy', 'The inset copy text.', 1, 1, '0', 1, 1, 1024, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (5, 'id_5', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (5, 5, 5, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (41, 5, 'cols', '50', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (42, 5, 'maxlength', '1024', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (43, 5, 'length', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (44, 5, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (45, 5, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (46, 5, 'rows', '8', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (47, 5, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (48, 5, 'pos', '1', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (49, 5, 'disp', 'Copy', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (50, 5, 'type', 'textarea', 1);
+
+
+-- Add an 'Alternate Title' text field for the 'Related Story' element.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (6, 9, 'Alternate Title', 'Alternate title to the story''s own', 1, 0, '0', 1, 1, 256, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (6, 'id_6', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (6, 6, 6, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (51, 6, 'cols', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (52, 6, 'maxlength', '256', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (53, 6, 'length', '32', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (54, 6, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (55, 6, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (56, 6, 'rows', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (57, 6, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (58, 6, 'pos', '1', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (59, 6, 'disp', 'Alternate Title', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (60, 6, 'type', 'text', 1);
+
+
+
+-- Create an 'Alternate Teaser' textarea field for the 'Related Story' element.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (7, 9, 'Alternate Teaser', 'Alternate teaser to the story''s own', 2, 0, '0', 1, 1, 512, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (7, 'id_7', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (7, 7, 7, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (61, 7, 'cols', '40', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (62, 7, 'maxlength', '512', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (63, 7, 'length', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (64, 7, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (65, 7, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (66, 7, 'rows', '4', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (67, 7, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (68, 7, 'pos', '2', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (69, 7, 'disp', 'Alternate Teaser', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (70, 7, 'type', 'textarea', 1);
+
+
+-- Add a 'Title' text field to the Book Profile.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (8, 11, 'Title', 'The book''s title.', 1, 1, '0', 1, 1, 256, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (8, 'id_8', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (8, 8, 8, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (71, 8, 'cols', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (72, 8, 'maxlength', '256', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (73, 8, 'length', '32', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (74, 8, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (75, 8, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (76, 8, 'rows', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (77, 8, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (78, 8, 'pos', '1', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (79, 8, 'disp', 'Title', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (80, 8, 'type', 'text', 1);
+
+
+-- Add an 'Author' text field to the Book Profile.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (9, 11, 'Author', 'The author''s name.', 2, 1, '0', 1, 1, 256, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (9, 'id_9', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (9, 9, 9, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (81, 9, 'cols', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (82, 9, 'maxlength', '256', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (83, 9, 'length', '32', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (84, 9, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (85, 9, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (86, 9, 'rows', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (87, 9, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (88, 9, 'pos', '2', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (89, 9, 'disp', 'Author', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (90, 9, 'type', 'text', 1);
+
+
+-- Add a 'Publisher' text field to the Book Profile.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (10, 11, 'Publisher', 'The book''s publisher.', 3, 1, '0', 1, 1, 256, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (10, 'id_10', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (10, 10, 10, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (91, 10, 'cols', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (92, 10, 'maxlength', '256', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (93, 10, 'length', '32', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (94, 10, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (95, 10, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (96, 10, 'rows', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (97, 10, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (98, 10, 'pos', '3', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (99, 10, 'disp', 'Publisher', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (100, 10, 'type', 'text', 1);
+
+-- Add a 'Date' field to the Book Profile.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (11, 11, 'Date', 'The date of publication.', 4, 1, '0', 1, 1, 0, 'date');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (11, 'id_11', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (11, 11, 11, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (101, 11, 'cols', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (102, 11, 'maxlength', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (103, 11, 'length', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (104, 11, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (105, 11, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (106, 11, 'rows', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (107, 11, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (108, 11, 'pos', '4', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (109, 11, 'disp', 'Date', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (110, 11, 'type', 'date', 1);
+
+
+-- Add a 'Deck' field to Story.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (12, 1, 'Deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (12, 'id_12', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (12, 12, 12, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (111, 12, 'cols', '40', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (112, 12, 'maxlength', '256', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (113, 12, 'length', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (114, 12, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (115, 12, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (116, 12, 'rows', '4', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (117, 12, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (118, 12, 'pos', '1', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (119, 12, 'disp', 'Deck', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (120, 12, 'type', 'textarea', 1);
+
+
+-- Add a 'Deck' field to Column.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (13, 2, 'Deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (13, 'id_13', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (13, 13, 13, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (121, 13, 'cols', '40', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (122, 13, 'maxlength', '256', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (123, 13, 'length', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (124, 13, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (125, 13, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (126, 13, 'rows', '4', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (127, 13, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (128, 13, 'pos', '1', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (129, 13, 'disp', 'Deck', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (130, 13, 'type', 'textarea', 1);
+
+
+-- Add a 'Deck' field to Book Review.
+
+INSERT INTO at_data (id, element__id, name, description, place, required,
+                     quantifier, active, publishable, max_length, sql_type)
+VALUES (14, 3, 'Deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
+
+INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
+VALUES (14, 'id_14', 'html_info', 'short', 1);
+
+INSERT INTO attr_at_data_val (id, object__id, attr__id, active)
+VALUES (14, 14, 14, 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (131, 14, 'cols', '40', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (132, 14, 'maxlength', '256', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (133, 14, 'length', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (134, 14, 'vals', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (135, 14, 'multiple', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (136, 14, 'rows', '4', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (137, 14, 'value', '', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (138, 14, 'pos', '1', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (139, 14, 'disp', 'Deck', 1);
+
+INSERT INTO attr_at_data_meta (id, attr__id, name, value, active)
+VALUES (140, 14, 'type', 'textarea', 1);
+
+
+
+
+/*
+Change Log:
+$Log: Data.val,v $
+Revision 1.1  2001-09-06 21:54:02  wheeler
+Initial revision
+
+*/

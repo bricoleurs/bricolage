@@ -1,0 +1,21 @@
+-- Project: Bricolage Business API
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:55:58 $
+-- Author: David Wheeler <david@wheeler.net>
+
+ALTER TABLE    source_member
+ADD CONSTRAINT fk_source__source_member FOREIGN KEY (object_id)
+REFERENCES     source(id) ON DELETE CASCADE;
+
+ALTER TABLE    source_member
+ADD CONSTRAINT fk_member__source_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+/*
+Change Log:
+$Log: Source.con,v $
+Revision 1.1  2001-09-06 21:55:58  wheeler
+Initial revision
+
+*/

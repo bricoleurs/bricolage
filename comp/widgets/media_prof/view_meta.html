@@ -1,0 +1,134 @@
+<%perl>
+my $rightText = qq{<input type="image" src="/media/images/view_notes_teal.gif" border=0 name="};
+$rightText .= $widget . qq{|notes_cb" value="View Notes">&nbsp;};
+$rightText .= qq{<input type="image" src="/media/images/view_trail_teal.gif" border=0 name="};
+$rightText .= $widget . qq{|trail_cb" value="View Trail">};
+
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Information",
+	 number  => $num++,
+	 rightText => $rightText
+
+);
+</%perl>
+
+<table border="0" width="578" cellpadding="0" cellspacing="0">
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">ID:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_id %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Asset Type:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_element_name %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Title:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_title %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+
+
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Description:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_description %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Version:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_version() %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Priority:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_priority() %></td>
+  </tr>
+</table>
+
+% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+% $m->comp("/widgets/wrappers/sharky/table_top.mc",
+%   caption => "The File",
+%   number => 2
+%   );
+<table border="0" width="578" cellpadding="0" cellspacing="0">
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Download:&nbsp;</span></td>
+  <td width="470">&nbsp;
+% if (my $uri = $media->get_local_uri()) {
+    <a href="<% $uri %>" target="download" class="darkBlueLink"><% $media->get_file_name %></a>
+% } else {
+    No file has been uploaded.
+% }
+  </td>
+  </tr>
+</table>
+
+% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+
+<& '/widgets/container_prof/container_prof.mc',
+  tile        => $tile,
+  tile_type   => 'media',
+  action      => 'view',
+  num         => 3,
+  title       => 'Content',
+  start_count => 6
+&>
+
+% $m->comp("/widgets/wrappers/sharky/table_top.mc",
+%          caption => "Contributors",
+%          number => 4);
+
+<table border=0 cellpadding=0 cellspacing=0 width=578>
+<tr>
+  <td width="121" align="right" height="25"><span class=label>Contributors:&nbsp;</span></td>
+  <td width="457">
+<%perl>
+my @existing_contribs = map { $_->get_name } $media->get_contributers;
+$m->out((scalar(@existing_contribs)) ? "&nbsp;" . join(", ", @existing_contribs) : "&nbsp;No contributors defined.");
+</%perl>
+  </td>
+</tr>
+</table>
+
+% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+<input type="image" src="/media/images/return_dgreen.gif" border=0 name="<% $widget %>|return_cb" value="Return To Desk">
+
+<%args>
+$widget
+</%args>
+
+<%init>
+my $media = get_state_data($widget, 'media');
+my $tile = $media->get_tile();
+
+set_state_data('container_prof', 'tile', $tile);
+
+my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+my $num = 1;
+</%init>

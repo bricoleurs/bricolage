@@ -1,0 +1,91 @@
+=head1 NAME
+
+Bricolage::License - The Bricolage License.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:52 $
+
+=head1 DESCRIPTION
+
+This document contains the Bricolage license and credits.
+
+=head1 LICENSE
+
+INSERT LICENSE HERE
+
+=head1 COPYRIGHT
+
+INSERT COPYRIGHT HERE
+
+=head1 CREDITS
+
+Bricolage was developed by:
+
+=over 4
+
+=item David Wheeler <david@wheeler.net>
+
+=item Garth Webb <garth@perijove.com>
+
+=item Michael Soderstrom <miraso@pacbell.net>
+
+=item David Gantenbein <fretlessbass@home.com>
+
+=back
+
+Others who contributed to its support and development:
+
+=over 4
+
+=item Kristee Rosendahl
+
+=item Sara Plath
+
+=item Sara Wood
+
+=item Chad Dickerson
+
+=item Jason Merrick
+
+=item Sam Tregar
+
+=item Tim Taschler
+
+=item John Allspaw
+
+=item Matt Lanier
+
+=item Joseph Fajen
+
+=item Lisa Ratner
+
+=item Ian Kallen
+
+=item Michele Jenkins
+
+=item Elizabeth Kairys
+
+=back
+
+=head1 AUTHOR
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+perl(1),
+Bric (2).
+
+=head1 REVISION HISTORY
+
+$Log: License.pod,v $
+Revision 1.1  2001-09-06 21:52:52  wheeler
+Initial revision
+
+=cut
+

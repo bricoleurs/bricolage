@@ -1,0 +1,314 @@
+%#-- Begin HTML --#
+<%perl>
+$m->out(qq{<form method="post" name="alert_type_profile" action="} . $r->uri
+        . qq{" onSubmit="return confirmChanges(this)">\n});
+$m->comp('/javascripts/profile/formValidator.js', id => $id);
+
+if (defined $id) {
+    # Output a hidden field with the ID.
+    $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'alert_type_id');
+
+    # Output the primary properties.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+	     caption => 'Properties', number => 1);
+
+    # Event Type.
+    $m->comp('/widgets/profile/text.mc',
+	     value => $et->get_name,
+	     disp  => 'Event Type',
+	     readOnly => 1);
+
+    # Name.
+    $m->comp('/widgets/profile/displayFormElement.mc',
+	     objref => $at,
+	     key => 'name',
+	     readOnly => $no_edit);
+
+    # Owner.
+    $m->comp('.owner', owner_id => $at->get_owner_id, no_edit => $no_edit);
+
+    # Active.
+    $m->comp('/widgets/profile/displayFormElement.mc',
+	     objref => $at,
+	     key => 'active',
+	     readOnly => $no_edit);
+
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    # Output the rules via the Add More Widget.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+	     caption => 'Rules', number => 2);
+
+    my $rules = $at->get_rules;
+
+    $m->comp('/widgets/add_more/add_more.mc', type => 'alert_type_rule',
+	     fields => [qw(attr operator value)], name => 'rule',
+	     reset_key => $id, objs => $rules, param => \%ARGS,
+	     meths => $meths, incr => 2, useTable => 0,
+	     formName => 'alert_type_profile');
+
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    # Output the content fields.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+	     caption => 'Content', number => 3);
+
+    # Subject.
+</%perl>
+    <table width=578 border=0 cellpadding=0 cellspacing=0>
+    <tr>
+      <td>
+<%perl>
+    $m->comp('/widgets/profile/displayFormElement.mc',
+	     objref => $at,
+	     key => 'subject',
+	     width => 400,
+	     readOnly => $no_edit);
+
+    $m->out("</td><td>");
+
+    # Variables to put into Subject.
+    $m->comp('/widgets/profile/select.mc',
+	     name => 'sub_sel',
+	     width => 150,
+	     options => $var_sel_vals,
+	     js => 'onChange="this.form.subject.value = this.form.subject.value '
+		   . '+ this.form.sub_sel[selectedIndex].text; '
+		   . 'this.form.subject.focus();"'
+	    ) unless $no_edit;
+
+    $m->out("</td></tr></table>");
+
+    # Variables to put into Message.
+    $m->comp('/widgets/profile/select.mc',
+	     name => 'msg_sel',
+	     width => 550,
+	     options => $var_sel_vals,
+	     js => 'onChange="this.form.message.value = this.form.message.value '
+		   . '+ this.form.msg_sel[selectedIndex].text; '
+		   . 'this.form.message.focus();"'
+	    ) unless $no_edit;
+
+    # Message
+    $m->comp('/widgets/profile/displayFormElement.mc',
+	     objref => $at,
+	     key => 'message',
+	     readOnly => $no_edit);
+
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    # Output the Recipients.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+	     caption => 'Recipients', number => 4);
+
+    $m->comp('/widgets/profile/hidden.mc', name => 'ctype');
+    $m->out(qq{<table border="1" cellpadding="2" cellspacing="0" width="578"}
+            . qq{ bordercolor="#cccc99">\n});
+    $m->out(qq{<tr class="medHeader"><th>Contact</th><th>Groups</th>}
+            . qq{<th>Users</th><th>&nbsp;</td></tr>\n});
+    foreach my $c (Bric::Biz::Contact->list_alertable_types) {
+	$m->comp(".contact", c => $c, at => $at, no_edit => $no_edit);
+    }
+    $m->out("</table>\n");
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    # Output the form buttons.
+    $m->out("<br />\n");
+    $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
+	     no_del => $no_del, no_save => $no_edit, return => "/admin/manager/$type" );
+} else {
+    if (defined $class_id) {
+       $m->comp("/widgets/wrappers/sharky/table_top.mc",
+	     caption => 'Select an Event Type');
+        $m->comp('/widgets/select_object/select_object.mc',
+		 object => 'event_type',
+		 name => 'event_type_id',
+		 field => 'name',
+		 disp => 'Event Type',
+		 constrain => { class_id => $class_id },
+		 req  => 1,
+		 useTable => 1);
+    # Name.
+    $m->comp('/widgets/profile/displayFormElement.mc',
+	     objref => $at,
+	     key => 'name',
+	     readOnly => $no_edit);
+
+    # Owner.
+    $m->comp('.owner', no_edit => $no_edit);
+
+    } else {
+       $m->comp("/widgets/wrappers/sharky/table_top.mc",
+	     caption => 'Select an Object');
+	my $classes = $et_class->list_classes;
+	$m->comp('/widgets/profile/select.mc',
+		 name => 'class_id',
+		 disp => 'Object',
+		 width => 550,
+		 options => $classes
+		);
+    }
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    # Output the form buttons.
+    $m->out("<br />\n");
+    $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
+	     no_del => $no_del, no_save => $no_edit, val => 'next_dkgreen' );
+}
+</%perl>
+</form>
+
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+%#-- End HTML --#
+
+%#-- Once Section --#
+<%once>;
+my $widget = 'profile';
+my $type = 'alert_type';
+my $class = get_package_name($type);
+my $disp = get_disp_name($type);
+my $meths = Bric::Util::AlertType::Parts::Rule->my_meths;
+$meths->{attr} = { %{ $meths->{attr} } };
+$meths->{attr}{props} = { type => 'select' };
+my $et_class = get_package_name('event_type');
+</%once>
+<%shared>;
+my $fmt = get_pref('List Name Format');
+my $hidden = 1;
+</%shared>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+$class_id => undef
+</%args>
+
+%#-- Init Section --#
+<%init>;
+$id ||= $ARGS{alert_type_id} unless defined $id;
+# Instantiate an object.
+my $at = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id = $at->get_id unless defined $id;
+
+# Get the name for the breadcrumb trail.
+my $crumb = $at->get_name;
+$crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
+
+# Output the header.
+$m->comp('/widgets/wrappers/sharky/header.mc',
+         title => "$disp Profile",
+	 context => "Admin | Profile | $disp | $crumb"
+);
+
+# Check authorization.
+chk_authz($at, $id ? READ : CREATE);
+my $no_edit = !chk_authz($at, ($id ? EDIT : CREATE), 1);
+my $no_del = ! defined $id || $no_edit;
+
+# Roll in any changes to the alert type object if we're just adding rules.
+if ($ARGS{'add_more|add_cb'}) {
+    foreach my $meth ($at->my_meths(1)) {
+	$meth->{set_meth}->($at, @{$meth->{set_args}}, $ARGS{$meth->{name}})
+	  if defined $meth->{set_meth};
+    }
+}
+
+# Set up the attribute values.
+my ($et, $var_sel_vals);
+if (defined $id) {
+    $et = $at->get_event_type;
+    $meths->{attr}{props}{vals} = $et->get_alert_props;
+
+    # Set up the variable select list values.
+    $var_sel_vals = [ map { '$' . $_->[0] } @{ $meths->{attr}{props}{vals} } ];
+    unshift @{ $meths->{attr}{props}{vals} }, ['', ''];
+}
+</%init>
+
+<%def .contact>
+<%args>
+$c
+$at
+$no_edit
+</%args>
+<tr valign="top">
+    <td><% $c %></td>
+    <td>
+% my $fill = '';
+% foreach my $g ($at->get_groups($c)) {
+%    $m->out($fill . $g->get_name);
+%    $fill = "<br />\n";
+% } # foreach
+% $m->out("&nbsp;") unless $fill; $fill = '';
+    </td>
+    <td>
+% foreach my $u ($at->get_users($c)) {
+%    $m->out($fill . $u->format_name($fmt));
+%    $fill = "<br />\n";
+% } # foreach
+% $m->out("&nbsp;") unless $fill;
+    </td>
+% if ($no_edit) {
+    <td>&nbsp;</td>
+% } else {
+    <td align="center"><& '/widgets/profile/imageSubmit.mc',
+	     formName => "alert_type_profile",
+	     callback => "$widget|recip_cb",
+	     image    => "edit_lgreen",
+             useHidden => $hidden,
+             value    => escape_html($c),
+&>
+    </td>
+% } # if
+</tr>
+% undef $hidden;
+</%def>
+
+<%def .owner>
+<%args>
+$owner_id => get_user_id()
+$no_edit => 0
+</%args>
+<%perl>;
+    my $fmt = get_pref('List Name Format');
+    my $users = [ map { [$_->get_id => $_->format_name($fmt) ] }
+		  Bric::Biz::Person::User->list ];
+
+    $m->comp('/widgets/profile/select.mc',
+	     value => $owner_id,
+	     name => 'owner_id',
+	     width => 550,
+	     req  => 1,
+	     disp => "Owner",
+	     size => @$users > 15 ? 6 : undef,
+	     options => $users,
+	     readOnly => $no_edit);
+</%perl>
+</%def>
+
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+/admin/profile/alert_type/dhandler - Manages Alert Types.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:51:47 $
+
+=head1 DESCRIPTION
+
+Simple interface for managing global preferences.
+
+=head1 REVISION HISTORY
+
+$Log: dhandler,v $
+Revision 1.1  2001-09-06 21:51:47  wheeler
+Initial revision
+
+</%doc>

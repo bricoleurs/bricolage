@@ -1,0 +1,71 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+dhandler -- Impliment the user workspace.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:41 $
+
+=head1 DESCRIPTION
+
+<description>
+
+=cut
+</%doc>
+
+%#-- Once Section --#
+<%once>
+my $widget = 'workspace';
+</%once>
+
+%#-- Init Section --#
+<%init>
+my $u = get_user_object();
+my $id = get_user_id();
+my $title = 'Workspace';
+$title .= ' for ' . $u->format_name if $u;
+</%init>
+
+%#-- Begin HTML --#
+<%perl>;
+$m->comp('/widgets/wrappers/sharky/header.mc',
+	 'title' => $title,
+	  context => 'My Workspace');
+
+$m->out(qq{<form method="post" action="} . $r->uri . qq {" name="desk" onSubmit="return confirmChanges(this)">});
+
+$m->comp('/widgets/desk/desk.mc',
+	 user_id => $id,
+	 class   => 'story',
+	 sort_by => $ARGS{story_sort_by}
+	);
+$m->comp('/widgets/desk/desk.mc',
+	 user_id => $id,
+	 class   => 'media',
+	 sort_by => $ARGS{media_sort_by}
+	);
+$m->comp('/widgets/desk/desk.mc',
+	 user_id => $id,
+	 class   => 'formatting',
+	 sort_by => $ARGS{formatting_sort_by}
+        );
+$m->comp('/widgets/desk/desk_bottom.html',
+	 widget => $widget);
+$m->out("</form>\n");
+$m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
+</%perl>
+%#-- End HTML --#
+
+<%doc>
+$Log: dhandler,v $
+Revision 1.1  2001-09-06 21:52:41  wheeler
+Initial revision
+
+</%doc>

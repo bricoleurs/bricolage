@@ -1,0 +1,16 @@
+-- Project: Bricolage Business API
+-- File:    ServerType.val
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:54:38 $
+-- Author:  David Wheeler <david@wheeler.net>
+
+-- No default values for ServerType.
+
+/*
+Change Log:
+$Log: ServerType.val,v $
+Revision 1.1  2001-09-06 21:54:38  wheeler
+Initial revision
+
+*/

@@ -1,0 +1,153 @@
+<input type="hidden" name="select_time|refresh_pc" value="<% $base_name %>">
+
+<%perl>
+
+$m->out(q{<table border=0 cellpadding=0 cellspacing=0 width=574>
+	    <tr>}) if ($useTable);
+
+# Print out a display label if necessary
+if ($disp && !$compact) {
+    $m->out(qq{<td align=right width=$indent>}) if ($useTable);
+    $m->out(qq{<span class=label>$disp:</span>&nbsp;});
+    $m->out(qq{<img src="/media/images/spacer.gif" width=} . $indent . qq{ height=1 border=0 /></td>}) if ($useTable);
+} else {
+    $m->out(qq{<td>
+	       <img src="/media/images/spacer.gif" width=$indent height=1 />
+	       </td>}) if ($useTable);
+}
+
+if (!$useTable) {$compact = 1};
+
+#-- Month Select
+if ($mon) {
+    $mk_time_field->({'base'    => $base_name.'_mon',
+		      'default' => sprintf('%02d', $s->{'mon'} || 0),
+		      'label'   => 'Month',
+		      'vals'    => \@month,
+		      'width'   => $cellWidth,
+		      'compact' => $compact});
+    $cellsDisplayed++;
+}
+
+#-- Day Select
+if ($day) {
+    $mk_time_field->({'base'    => $base_name.'_day',
+		      'default' => $s->{'day'},
+		      'label'   => 'Day',
+		      'vals'    => $day,
+		      'width'   => $cellWidth,
+		      'compact' => $compact});
+    $cellsDisplayed++;
+}
+
+#-- Year Select
+if ($year) {
+    $mk_time_field->({'base'    => $base_name.'_year',
+		      'default' => $s->{'year'},
+		      'label'   => 'Year',
+		      'vals'    => $year,
+		      'width'   => $cellWidth,
+		      'compact' => $compact});
+    $cellsDisplayed++;
+}
+
+#-- Hour Select
+if ($hour) {
+    $mk_time_field->({'base'    => $base_name.'_hour',
+		      'default' => $s->{'hour'},
+		      'label'   => 'Hour',
+		      'vals'    => $hour,
+		      'width'   => $cellWidth,
+		      'compact' => $compact});
+    $cellsDisplayed++;
+}
+
+#-- Minute Select
+if ($min) {
+    $mk_time_field->({'base'    => $base_name.'_min',
+		      'default' => $s->{'min'},
+		      'label'   => 'Minute',
+		      'vals'    => $min,
+		      'width'   => $cellWidth,
+		      'compact' => $compact});
+    $cellsDisplayed++;
+}
+
+# End the table unless this is a compact listing.
+unless ($compact) {
+    # make a cell to use the remaining space, so Netscape can do the right thing
+    $m->out("<td width=" .( 574 - $cellsDisplayed * $cw - $indent) . ">&nbsp;</td>");
+    $m->out(q{</tr></table>});
+}
+</%perl>
+
+<%args>
+$widget
+$base_name
+$default_current
+$year => ''
+$mon  => ''
+$day  => ''
+$hour => ''
+$min  => ''
+$formName => "forms[0]"
+$indent => undef
+$useTable => 0
+$compact => undef
+$disp   => ''
+</%args>
+
+<%init>
+
+# Keep this time widget with this base name distict from others on the page.
+my $sub_widget = "$widget.$base_name";
+my $s = get_state_data($sub_widget);
+my $js;
+my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $cw = 80;
+my $cellWidth = "width=$cw";
+my $cellsDisplayed = 0;
+
+if ($compact) { $useTable = 0 };
+
+$indent = $useTable ? FIELD_INDENT + 3 : 0 unless defined $indent;
+$indent -= 7 if ($agent->{browser} eq "Netscape");
+
+# Set some default values for the time if necessary.
+if ($default_current) {
+    my @t = localtime;
+    $s->{'year'} ||= $t[5] + 1900;
+    $s->{'mon'}  ||= $t[4] + 1;
+    $s->{'day'}  ||= $t[3];
+    $s->{'hour'} ||= $t[2];
+    $s->{'min'}  ||= $t[1];
+}
+
+my @mon_names = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
+my @month = map { [$_,$mon_names[$_-1]] } ('01'..'12');
+
+if ($year && $mon && $day ) {
+	$js = ' onChange="';
+	$js .= "setDays('".$base_name."_year', '".$base_name."_mon', '".$base_name."_day', this)\"";
+}
+
+</%init>
+
+<%once>
+
+my $mk_time_field = sub {
+    my ($p) = @_;
+
+    $m->out('<td '.$p->{width}.' valign=top>'.
+            '<span class=label>'.$p->{label}.'</span><br />') unless $p->{compact};
+
+    $m->comp('/widgets/profile/select.mc', 
+             'name'     => $p->{base},
+             'value'    => $p->{default},
+             'options'  => [[-1, $p->{label}], @{$p->{vals}}],
+             'useTable' => 0);
+
+    $m->out('</td>') unless $p->{compact};
+};
+
+</%once>

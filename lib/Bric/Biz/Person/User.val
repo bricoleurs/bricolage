@@ -1,0 +1,28 @@
+
+-- Project:      Bricolage Business API
+-- File:    User.val
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:54:15 $
+-- Author: David Wheeler <david@wheeler.net>
+
+-- Administrator. Password: 'c@st3l!@n'.
+
+INSERT INTO usr (id, login, password, active)
+VALUES (0, 'admin', '0a3e416ccf73bcfe645f05791f77caf6', 1);
+
+-- Add 'em to the 'All Users' Group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (1, 2, 2, 1);
+
+INSERT INTO user_member (id, object_id, member__id)
+VALUES (0, 0, 1); 
+
+-- Add 'em to the 'Administrators' Group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (2, 6, 2, 1);
+
+INSERT INTO user_member (id, object_id, member__id)
+VALUES (1, 0, 2); 
+
+

@@ -1,0 +1,66 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+edit_related.html - Edit related data for a cointainer tile.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:40 $
+
+=head1 DESCRIPTION
+
+<description>
+
+=cut
+</%doc>
+
+%#-- Once Section --#
+<%once>;
+my $type = 'element'; # Hack!
+my $disp = get_disp_name($type);
+my $sdisp = get_disp_name('story');
+my $mdisp = get_disp_name('media');
+my $context = "Workflow | Profile | $sdisp | $disp |";
+</%once>
+
+%#-- Args Section --#
+<%args>
+</%args>
+
+%#-- Init Section --#
+<%init>;
+</%init>
+
+%#-- Begin HTML --#
+
+<& /widgets/wrappers/sharky/header.mc, 
+	title => "Select Related $mdisp",
+	context => $context . get_state_data('container_prof', 'crumb') .
+                   " | Related $mdisp"
+&>
+
+<form action="<% $r->uri %>" method="post">
+
+<& /widgets/container_prof/container_prof.mc, 
+	tile_type => 'story',
+	action    => 'edit_related_media'
+&>
+
+</form>
+
+<& /widgets/wrappers/sharky/footer.mc &>
+
+%#-- End HTML --#
+
+<%doc>
+$Log: edit_related_media.html,v $
+Revision 1.1  2001-09-06 21:52:40  wheeler
+Initial revision
+
+</%doc>

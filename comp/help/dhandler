@@ -1,0 +1,4 @@
+<& '/widgets/wrappers/sharky/header.mc', title => 'Help', context => 'Help' &>
+<h1>Coming soon.</h1>
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+%#-- End HTML --#

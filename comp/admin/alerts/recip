@@ -1,0 +1,34 @@
+<%perl>;
+$m->comp('/widgets/wrappers/sharky/header.mc',
+	 title => $pldisp,
+	 context => "Admin | $disp | $aname | Recipients",
+	 no_hist => 1);
+$m->out("<p></p>");
+$m->comp('/widgets/alertList/alertList.mc',
+         mode => 'recip',
+	 alert => $a,
+         alert_id => $id,
+        );
+$m->out("<br />\n");
+$m->comp('/lib/util/back_button.mc',
+	 url => "/admin/alerts/$eid");
+$m->comp('/widgets/wrappers/sharky/footer.mc');
+</%perl>
+
+%#-- Once Section --#
+<%once>;
+my $type = 'alert';
+my $class = get_package_name($type);
+my $disp = get_disp_name($type);
+my $pldisp = get_class_info('recip')->get_plural_name;
+</%once>
+
+<%args>
+$id => undef
+</%args>
+<%init>;
+$id ||= ($m->comp("/lib/util/parseUri.mc"))[3];
+my $a = $class->lookup({ id => $id });
+my $aname = '&quot;' . $a->get_name . '&quot;';
+my $eid = $a->get_event_id;
+</%init>

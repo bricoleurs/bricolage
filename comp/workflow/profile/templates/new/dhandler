@@ -1,0 +1,64 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+<name> -- <description>
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:41 $
+
+=head1 DESCRIPTION
+
+<description>
+
+=cut
+</%doc>
+
+%#-- Once Section --#
+<%once>;
+my $disp = get_disp_name('formatting');
+my $context = "Workflow | Profile | $disp | New";
+</%once>
+
+%#-- Args Section --#
+<%args>
+</%args>
+
+%#-- Init Section --#
+<%init>
+$r->uri =~ m!/([^/]+)/?$!;
+my $w_id = $1;
+my $gid =  Bric::Biz::Workflow->lookup({ id => $w_id })->get_all_desk_grp_id;
+chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
+</%init>
+
+%#-- Begin HTML --#
+
+<& "/widgets/wrappers/sharky/header.mc",
+  	title => "Create a new template",
+	context => $context,
+ &>
+
+<& '/javascripts/profile/formValidator.js' &>
+<form action="<% $r->uri %>" method="post" name="theForm" onSubmit="return confirmChanges(this)">
+<& /widgets/tmpl_prof/tmpl_prof.mc, section => 'new',
+                                    work_id => $w_id &>
+
+</form>
+
+<& /widgets/wrappers/sharky/footer.mc &>
+
+%#-- End HTML --#
+
+<%doc>
+$Log: dhandler,v $
+Revision 1.1  2001-09-06 21:52:41  wheeler
+Initial revision
+
+</%doc>

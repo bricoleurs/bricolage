@@ -1,0 +1,48 @@
+
+<table width=550 cellpadding=0 cellspacing=0 border=0>
+<tr>
+  <td width=50><img src="/media/images/spacer.gif" width=50 height=1></td>
+  <td width=150 align=right valign=middle><span class=label>
+% $m->out ("By $disp_field: </span>") if ($disp_field);
+</td>
+  <td width=200 valign=top>
+<& '/widgets/profile/text.mc', 
+  'name'      => $widget.'|value',
+  'value'     => $crit_field,
+  'size'      => 32,
+  'maxlength' => 100,
+  'disp'      => '',
+   useTable    => 0
+  
+&>
+  </td>
+  <td width=150><INPUT TYPE="image" VALUE="Search" SRC="/media/images/search_green.gif" name="search|substr_cb" value=1 border=0 /></td>
+</tr>
+</table>
+
+
+
+%#--- END HTML ---#
+
+%#--- Arguments ---#
+
+<%args>
+$widget
+$object
+$disp_field
+</%args>
+
+%#--- Initialization ---#
+
+<%init>
+my $crit_field = get_state_data($widget, 'crit_field');
+</%init>
+
+%#--- Log History ---#
+
+<%doc>
+$Log: substr.html,v $
+Revision 1.1  2001-09-06 21:52:25  wheeler
+Initial revision
+
+</%doc>

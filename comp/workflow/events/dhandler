@@ -1,0 +1,42 @@
+<%perl>
+$m->comp('/widgets/wrappers/sharky/header.mc',
+	 title => "$disp->{$type} Events",
+	 context => "Workflow | Profile | $disp->{$type} | &quot;"
+	 . $obj->get_name . "&quot; | Events"
+);
+$m->out("<p></p>");
+$m->comp('/widgets/eventList/eventList.mc',
+	 object => $type,
+         obj_id => $id,
+	 alert_uri => "/workflow/alerts");
+$m->out("<br />\n");
+$m->comp('/lib/util/back_button.mc');
+$m->comp('/widgets/wrappers/sharky/footer.mc');
+</%perl>
+
+<%args>
+$id => undef
+</%args>
+<%init>
+# Figure out where we are.
+my ($type, $oid) = ($m->comp("/lib/util/parseUri.mc"))[2,3];
+
+# Redirect if necessary.
+$m->comp('/errors/404.mc') unless $type;
+
+# Instantiate the object and check permissions.
+$id ||= $oid;
+my $obj = $pkg->{$type}->lookup({ id => $id });
+chk_authz($obj, READ);
+</%init>
+
+<%once>;
+my $disp = { media => get_disp_name('media'),
+             story => get_disp_name('story'),
+	     formatting => => get_disp_name('formatting')
+           };
+my $pkg =  { media => get_package_name('media'),
+             story => get_package_name('story'),
+	     formatting => => get_package_name('formatting')
+           };
+</%once>

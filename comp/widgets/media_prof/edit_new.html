@@ -1,0 +1,90 @@
+<%perl>
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Properties",
+	 number  => 1);
+
+$m->comp('/widgets/profile/displayFormElement.mc',
+	 key => 'title',
+	 vals => $nmeth
+	);
+
+</%perl>
+
+<% $ieSpacer %>
+
+<& '/widgets/select_object/select_object.mc',
+	disp => 'Media Type',
+	name => "$widget|at_id",
+	object => 'element',
+	field => 'name',
+        constrain  => { top_level => 1,
+			media => 1 },
+	useTable   => 1
+&>
+<% $ieSpacer %>
+<& '/widgets/select_object/select_object.mc',
+	disp => 'Source',
+	object => 'source',
+	name => "$widget|source__id",
+	field => 'source_name',
+	useTable => 1
+&>
+<% $ieSpacer %>
+<& '/widgets/select_object/select_object.mc',
+	object		=> 'category',
+	disp		=> 'Category',
+	name		=> "$widget|category__id",
+	field		=> 'name',
+	useTable	=> 1
+&>
+		
+<% $ieSpacer %>
+<&'/widgets/profile/displayFormElement.mc',
+	 key => "priority",
+	 vals => $pmeth,
+&>
+<% $ieSpacer %>
+<&'/widgets/profile/displayFormElement.mc',
+	 key => "cover_date",
+	 vals => $cdate,
+&>
+<% $ieSpacer %>
+<%perl>
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Submit",
+	 number  => 2,
+	 ghostly => 1
+	);
+
+</%perl>
+<table width=<% FIELD_INDENT + 150 %> cellpadding=0 cellspacing=0>
+<tr>
+  <td width="<% FIELD_INDENT - 10%>"><img src="/media/images/spacer.gif" width="<% FIELD_INDENT - 10%>" height="1" /></td>
+  <td width=150><input type="image" src="/media/images/create_red.gif" border=0 name="<% $widget %>|create_cb"></td>
+</tr>
+</table>
+
+%#-- Once --#
+<%once>;
+my $pmeth = { %{ Bric::Biz::Asset::Business::Media->my_meths->{priority} } };
+$pmeth->{value} = 3;
+my $cdate = { %{ Bric::Biz::Asset::Business::Media->my_meths->{cover_date} } };
+my $nmeth = Bric::Biz::Asset::Business::Media->my_meths->{title};
+</%once>
+
+%#-- Args --#
+<%args>
+$widget
+</%args>
+
+
+%#-- Init --#%#-- Begin HTML --#
+<%init>;
+$cdate->{value} = strfdate();
+# browser spacing stuff
+my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $ieSpacer = ($agent->{browser} eq "Internet Explorer") ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';
+</%init>

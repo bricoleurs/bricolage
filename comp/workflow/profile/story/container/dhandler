@@ -1,0 +1,64 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+dhandler -- the container profile app.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:40 $
+
+=head1 DESCRIPTION
+
+<description>
+
+=cut
+</%doc>
+
+%#-- Once Section --#
+<%once>;
+my $disp = get_disp_name('element');
+my $sdisp = get_disp_name('story');
+my $context = "Workflow | Profile | $sdisp | $disp |";
+</%once>
+
+%#-- Args Section --#
+<%args>
+</%args>
+
+%#-- Init Section --#
+<%init>
+
+</%init>
+
+%#-- Begin HTML --#
+
+<& "/widgets/wrappers/sharky/header.mc",
+  	title => "view container",
+	context => $context . get_state_data('container_prof', 'crumb')
+ &>
+<form action="<% $r->uri %>" method="post">
+
+<& /widgets/container_prof/container_prof.mc,
+	action       => 'view',
+	show_summary => 1,
+  &>
+
+<input type="image" src="/media/images/return_dgreen.gif" border=0 name="container_prof|up_cb" value="Go Up a Level">
+</form>
+
+<& /widgets/wrappers/sharky/footer.mc &>
+
+%#-- End HTML --#
+
+<%doc>
+$Log: dhandler,v $
+Revision 1.1  2001-09-06 21:52:40  wheeler
+Initial revision
+
+</%doc>

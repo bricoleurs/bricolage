@@ -1,0 +1,1054 @@
+=pod
+
+=head1 NAME
+
+Bric::Templates - Producing Templates on the Bricolage System
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:57 $
+
+=head1 BACKGROUND
+
+Before taking about templates, lets take a moment to dicuss all the major 
+players in the publish process and get the terminology down.  The three 
+elements involved in publishing a story are:
+
+=over 4
+
+=item *
+
+Elements
+
+=item *
+
+Templates
+
+=item *
+
+Business Data
+
+=back
+
+A quick word about each of these elements.
+
+=head2 Elements
+
+These are a data definition.  They describe what kind of data a particular story
+will have.  For instance, a 'Editorial' element might defined that an Editorial 
+contains "An author name, a title, and one or more paragraphs".  Elements cannot
+affect the formatting or look of a story, just the data points available.
+
+=head2 Templates
+
+For a given element, a template will give a format for the display of the data
+points available in that element.  This is from where the HTML will come.
+
+=head2 Business Data
+
+This is the data itself.  Given an element to constrain the type of data, an 
+author then enters business data.  This data is then run through a template
+to produce an HTML page.
+
+=head1 TEMPLATE OVERVIEW
+
+=head2 More About Elements
+
+The first place one starts when making a new story is with an Element.  An 
+element defines the structure of a story.  It lists the data points available to
+those creating a story.  So for example, a 'Column' element might define a 
+column as having:
+
+=over 4
+
+=item *
+
+An author field
+
+=item *
+
+A column topic field
+
+=item *
+
+1 or more paragraph fields
+
+=back
+
+So given this definition someone creating a new element of type 'column' will 
+have these three types of fields available to them.  
+
+Elements can also contain other elements as part of their definition.  For 
+for example, maybe the the 'column' element above will be used for a column
+reviewing music.  A music column might want to have a short blurb about the 
+albums they review.  Additionally, say somewhere else on the site, there is 
+another type of story, "Top Music Picks", that lists blurbs about albums.  
+So we create another another element called 'music_blurb' with these fields:
+
+=over 4
+
+=item *
+
+Artist name
+
+=item *
+
+Album name
+
+=item *
+
+Label name
+
+=item *
+
+Summary
+
+=back
+
+Now in our 'column' element we can add the 'music_blurb' element:
+
+=over 4
+
+=item *
+
+An author field
+
+=item *
+
+A column topic field
+
+=item *
+
+1 or more paragraph fields
+
+=item +
+
+1 or more Music Blurbs
+
+=back
+
+(The + is just to mark the recursive relationship of these contained elements)
+
+So, now someone editing this story has the ability to add an author field, a 
+topic for the column a few paragraphs and a blurb about the album the are
+reviewing.  Elements can be nested as deeply as needed.  So an element can
+contain an element, that contains another element, etc.
+
+The most important thing to understand about elements is that they simply 
+define the set of data that the author will be asked for when creating/editing 
+a story.  The element has no bearing on the actual data itself, or the 
+formatting of that data!
+
+
+=head2  Template Basics
+
+Templates are the things that actually format data.  A template is associated
+1 to 1 with an element.  Said a different way, a template knows how to format 
+the data for one element.  So lets say we create a new template and associate it
+with the 'column' element we defined above.  Maybe we want to format a column 
+like this:
+
+
+    <html>
+        <head><title>$column_topic</title></head>
+        <body>
+            By $author<br />
+	    <br />
+
+	    <p>$para1</p>
+	    <p>$para2</p>
+	    ...
+	    display_element(music_blurb)
+	    ...
+        </body>
+    </html>
+
+
+The above doesn't represent the actual syntax for inserting values, but is just
+meant to convey a templates relationship to an element.  We'll get into the nut
+and bolts later.
+
+Note that the 'music_blurb' element is simply passed to a display function.  
+Remember, templates represent the data for only a single element; there is 
+another template that formats a music_blurb element.
+
+
+=head2 Templates And Categories
+
+While a template formats the data of a single element, there may be many 
+templates that all format the same element.  Why?  Templates also belong to a 
+single category.  Imagine that the site for which we've created the current
+element and template examples is an arts and media site.  There might be 
+different sections of the site, one for music, one for theater, and one for 
+gallery art.  This site might therefore define the following categories:
+
+=over 4
+
+=item *
+
+Music
+
+=item *
+
+Theater
+
+=item *
+
+Gallery
+
+=back
+
+Categories, (somewhat like elements) can contain other categories.  This is just
+to provide futher distinction:
+
+=over 4
+
+=item *
+
+Music
+
+=item *
+
+Music/DJ
+
+=item *
+
+Music/Clasical
+
+=item *
+
+Music/Rock
+
+=item *
+
+Theater
+
+=item *
+
+Theater/Broadway
+
+=item *
+
+Theater/Community
+
+=item *
+
+Gallery
+
+=item *
+
+Gallery/Painting
+
+=item *
+
+Gallery/Sculpture
+
+=back
+
+In addition to these categories, the Bricolage system always provides a 'root'
+category by default.  This is assumed to always be the top category if you don't
+want something to be specific to a particular category, you can assign it to the
+root category.  Root is usually shown as a '/' in the publishing tool:
+
+=over 4
+
+=item *
+
+/     
+
+=item *
+
+/Music
+
+=item *
+
+/Music/DJ
+
+=item *
+
+/Music/Clasical
+
+=item *
+
+/Music/Rock
+
+=item ...
+
+=back
+
+So, what does this all mean for templates?  By allowing many templates, each 
+associated with a different category, to format the same element, we can have a
+custom look for our data in each section of our site.  Say we want to have a 
+column run in all the major categories of our site.  That is, we want a Music
+column, a Theater column and a Gallery column.  We want to collect the same
+data for each of these columns, but we want the data to look different when
+published to each of these columns.
+
+Note that a new template for every single category is not necessary.  The 'DJ',
+'Classical' and 'Rock' sub categories will all inherit from the template
+associated with the 'Music' category.  If there is no need to change how the 
+data is displayed between any category, you can  simple create a template 
+associated with the root category.  All the categories will inherit from it.
+
+
+=head2 Templates And Output Channels
+
+There is one final parameter that a template has called an 'Output Channel'.  
+For this discussion output channels can be thought of as hidden categories.
+Basically an output channel is used mostly during distribution.  A single story
+might be published to the web site, and a co-brand site at the same time.  Both
+of these would be considered an output channel, with the web site considered
+the primary output channel.
+
+Again, this just gives the template producer the opportunity to tweak the 
+presentation of the data for display on one output channel (the web site) verses
+another (the co-brand site).
+
+
+=head2 Bringing It All Together
+
+So you might be asking, where do all my templates go, how does the system know
+what categories have tempates defined, and how are they used during a publish?
+
+Now, while there should be no need to manipulate templates on the filesystem 
+itself (and it could cause the Bricolage system considerable confusion) I'll 
+detail how the files are laid out as it will hopefully make clear a few things
+about templates and publishing.
+
+Lets start with names.  Elements are given names when they are created.  In our
+examples above, we created a 'column'.  When you create a template, and choose
+an element that it should format, it automatically assumes the name of that
+element.  So, if our element is named 'column' our template is named 'column' as
+well. 
+
+The code defined in a template is Mason code.  That is, HTML along with some 
+special Perl tags thrown in.  So when saving the code of a template to the file-
+system, we take the template name and append '.mc' or "Mason element" and use
+that as the filename.  For our 'column' template, the filename would be 
+'column.mc'.
+
+The category associated with a template is used as part of the path to the 
+template file.  So for a template in the '/Music/Rock' category, the path
+fragment would be 'music/rock/column.mc'
+
+Finally the output channel is also used as a  part of the path.  Rather than 
+take the output channels name, its ID is used.  Let just say that the ID for 
+the primary output channel is 1. So, our column template would live in 
+'oc_1/music/rock/column.mc'.
+
+If we assume that our element root is $COMP_ROOT the full path to our 
+template is '$COMP_ROOT/oc_1/music/rock/column.mc'
+
+
+=head2 Publish Examples
+
+So, lets assume that we have three column templates one associated with the root
+category, one associated with the music category and one associated with the 
+sculpture gallery category.  We would have these three files on the filesystem:
+
+    $COMP_ROOT/oc_1/column.mc
+    $COMP_ROOT/oc_1/music/column.mc
+    $COMP_ROOT/oc_1/gallery/sculpture/column.mc
+
+Now, somebody creates a new column.  When creating new business data, the author
+has the opportunity to associate it with one or more categories.  The the table
+below shows the 'column.mc' template used for a publish in a particular
+category.  Assume that all publishes are done to the same output channel with an
+ID of 1:
+
+
+    Category Story is Published	     Formatting element Used
+    ---------------------------      -------------------------
+    Music/Rock			     $COMP_ROOT/oc_1/music/column.mc
+    Theater/Broadway		     $COMP_ROOT/oc_1/column.mc
+    Gallery			     $COMP_ROOT/oc_1/column.mc
+    Gallery/Art			     $COMP_ROOT/oc_1/column.mc
+    Gallery/Sculpture		     $COMP_ROOT/oc_1/gallery/sculpture/column.mc
+
+As you can see a story published in a particular category will lookup 'up' the
+category tree to find a template to format it, if it can't find it in the 
+starting category.  
+
+Note that in the case of the story published in 'Music/Rock' and in 
+'Gallery/Sculpture' there were templates found before the root template at
+'$COMP_ROOT/oc_1/column.mc'.  Its important to realize that templates do not 
+*chain*.  That is, the story published to 'Music/Rock' will *not* get formatted 
+by both '$COMP_ROOT/oc_1/music/column.mc' AND '$COMP_ROOT/oc_1/column.mc'.  Once
+a template is found, the search stops.
+
+
+=head2 One Final Trick
+
+As said above, templates do not chain.  However, sometimes you might want 
+formatting code to be inherited rather than overridden.  Those of you familiar
+with mason might see the similarity between how templates are handled and 
+the mason concept of 'dhandler's.  While not an exact analogous, its pretty 
+close.
+	With a small change to how we create templates, we can get them to 
+behave like a Mason 'autohandler'.  In Mason an 'autohandler' is a element
+that is called before any other mason element is called.  Moreover, Mason
+autohandlers can chain.  For example, assume the following files exist:
+
+    /a/b/c/page.mc
+    /a/b/autohandler
+    /autohandler
+
+If the file 'page.mc' is called by mason, the autohandlers will be executed
+before 'page.mc' is called.  The order of execution is:
+
+    /autohandler
+    /a/b/autohandler
+    /a/b/c/page.mc
+
+Given a starting path, mason looks for the first possible 'autohandler' in that
+path, and then works its way down executing any other autohandlers until it 
+finally reaches the element that was originally called.
+
+In Bricolage, you can choose not to associate a template with an element.  That
+is, you can have a template that is only associated with a category and an
+output channel.  Any template that is not associated with an element will be
+named 'autohandler' and will behave just like a Mason autohandler.
+
+
+=head2 Autohandler Example
+
+What good are autohandlers?  Lets continue with our running example of the arts
+and media site.  Lets say that, irregardless of what kind of story was being
+used, you wanted the same basic HTML wrapper.  Whether the story was a 'column'
+or a 'review' or an 'editorial', you want the same header and footer on every
+page.  The easiest way to do this is by using an autohandler.
+       If we create a new template in the root category, for the primary 
+output channel (for this example, the 'web' output channel with ID 1) then we'll
+get the file:
+
+    $COMP_ROOT/oc_1/autohandler
+
+The code for this template might look like this:
+
+    <!-- Root Autohandler -->
+    <html>
+        <head><title>Arts n' Media</title></head>
+	<body>
+	    <!-- Header Nav -->
+	    <table><tr><td><a href="">link1</a></td>
+	               <td><a href="">link2</a></td>
+		       <td><a href="">link3</a></td></tr></table>
+
+    % $burner->chain_next;
+
+            <hr />
+	    Comments? <a href="email:foo@bar.com">foo@bar.com</a>
+	</body>
+    </html>
+
+
+Most of this should look pretty normal.  The only difference is the bit of 
+perl code in the middle.  There is a call to a method named 'chain_next'.  This 
+is where all further content in the chain will go.  So, given this autohandler
+template, if we publish a column to the 'Music/Rock' category the following
+templates will be used in this order:
+
+    $COMP_ROOT/oc_1/autohandler
+    $COMP_ROOT/oc_1/music/rock/column.mc
+
+The content that 'column.mc' outputs after being run will wrapped by the HTML
+in the autohandler template.
+
+As a last example of chaining templates, lets say that we wanted some special 
+HTML to appear just in the music section, irregardless of what type of story
+we are publishing.  We would then create a new template that was not associated
+with an element, but was associated with the 'Music' category and the primary
+output channel:
+
+    $COMP_ROOT/oc_1/music/autohandler
+
+The code for this template might look like this:
+
+    <!-- Music Category Autohandler -->
+    <h1>Music</h1>
+    <table width="570" border="0">
+        <tr><td>
+
+    % $burner->chain_next;
+
+        </td></tr>
+    </table>
+
+So, given these autohandler templates, if we again publish a column to the 
+'Music/Rock' category the following templates will be used in this order:
+
+    $COMP_ROOT/oc_1/autohandler
+    $COMP_ROOT/oc_1/music/autohandler
+    $COMP_ROOT/oc_1/music/rock/column.mc
+
+After publishing this column, the final page output will look like this (just
+assume that this column.mc outputs the story data in <p> tags):
+
+    <!-- Root Autohandler -->
+    <html>
+        <head><title>Arts n' Media</title></head>
+	<body>
+	    <!-- Header Nav -->
+	    <table><tr><td><a href="">link1</a></td>
+	               <td><a href="">link2</a></td>
+		       <td><a href="">link3</a></td></tr></table>
+
+            <!-- Music Category Autohandler -->
+	    <h1>Music</h1>
+	    <table width="570" border="0">
+	        <tr><td>
+
+		    <!-- Column Template -->
+		    <p>
+		        This is a test column
+                    </p>
+
+                </td></tr>
+            </table>
+
+            <hr />
+	    Comments? <a href="email:foo@bar.com">foo@bar.com</a>
+	</body>
+    </html>
+
+
+=head1 WRITING TEMPLATES
+
+The above sections should give you an idea of how to setup a template;  what it
+means to associate a template with an element, a category and an output channel.
+Now lets talk a little about actually writing template code.
+
+Writing template code is no different than writing Mason code.  If you've 
+written Mason code, you should have no problem writing templates.  If you have 
+not written Mason code before, I suggest you get familiar with it by reading the
+HTML::Mason::Devel manpage.  A tutorial on Mason is beyond the scope of this 
+document.
+
+=head2 Terminology
+
+Given that template code is just Mason code, the only thing you need to know is
+how to access the story data.  Again, lets take a small break to discuss 
+terminology, this time for story objects.  
+
+Stories are based on elements.  Before you can create a new story you must pick
+an element upon which your story will be based.  After picking an element, you 
+will then be given a list of available fields for which you can enter data.  If
+we use the 'column' element we defined earlier, our fields will be:
+
+=over 4
+
+=item *
+
+An author field
+
+=item *
+
+A column topic field
+
+=item *
+
+1 or more paragraph fields
+
+=item +
+
+1 or more Music Blurbs
+
+=back
+
+Now, if you remember, the author field, column topic field and paragraph fields
+are all just text fields, while the music blurb is another element contained
+within the column element.  This gives us two varieties of fields that can be in
+a story.
+
+In the interest of keeping things simple for the story authors, these two types 
+of fields are given the same name.  Early beta tests showed that authors didn't 
+want to know the difference between text fields and contained elements  It was 
+thought to be too confusing and complicated.  Unfortunately that has made your 
+job, the template producer, more confusing and complicated because the term 
+'element' is about to become wildly overloaded.
+
+In a story, text fields AND contained elements are both refered to as 
+'elements'.  So 'element' now means
+
+=over 4
+
+=item 1) 
+
+A list of allowed data points that compose a type of story
+
+=item 2)
+
+A particular text data point as defined by 1) in story
+
+=item 3)
+
+A particular instance of 1) in a story
+
+=back
+
+To make sure these concepts stay clear in the following discussions lets use 
+this convention.  When I speak of an element as defined by 1), I will refer to
+it as an Element with a capital 'E'.  After all, its the true "form" of a story;
+the definition of a particular type of story.  When I speak of elements as 
+defined by 2) and 3) I will use a lowercase 'element'. 
+	Furthermore, since a story has two types of elements, lets establish a
+way of distiguishing between them.  We'll call all text data fields of a story
+'data elements' and the contained fields that are based on an Element, 
+'container elements'.  When we don't need to distinguish them, we'll 
+collectively refer to them as 'elements'. 
+
+So our new story based on the column Element has the following elements 
+available to it:
+
+=over 4
+
+=item *
+
+An author data element
+
+=item *
+
+A topic data element
+
+=item *
+
+A paragraph data element
+
+=item +
+
+A music blurb container element
+
+=back
+
+Now that we know what a story can have and how to refer to them, lets look at 
+the methods to access them.
+
+=head2 Available Objects and Methods
+
+First, there are 3 new variable that are exported into the Mason perl-space for
+use with templates.  These are:
+
+=over 4
+
+=item $story
+
+The story object
+
+=item $element
+
+The current element object
+
+=item $burner
+
+The burn system object
+
+=back
+
+
+I<Story Object Methods>
+
+The story object is the object containing the story to be published.  It is used
+to access all the metadata of a story.  It can be used to indirectly access the
+actual data of the story, but there is a better way to do this.  We'll discuss
+how and why shortly.  A full list of methods available via the story object can
+be found by reading the POD in Bric::Biz::Asset::Business::Story.  However, I'll 
+highlight the most important/usefull ones here:
+
+=over 4
+
+=item $story->get_title
+
+Retrieve the title of this story
+
+=item $story->get_teaser
+
+Retrieve the 'teaser' for this story.  This is basically a short description.
+
+=item $story->get_cover_date
+
+Returns the date this story is tied to (not necessarily when it was published). 
+ 
+A cover date might be 'June 1, 2001' for the June issue of Seventeen magazine, 
+but it might actually be published some time before or after that exact date.
+
+=item $story->get_primary_uri
+
+This is the primary URI for this story.  This returns the URI for the primary 
+output channel in the primary category.
+
+=back
+
+
+I<Element Object Methods>
+
+The current element object contains the real data of a story.  Since a story 
+is based upon an Element, the $element object is an instance of that Element.  So
+if the Element defined an 'author', 'topic' and 'paragraph' fields you know you
+can access those data elements via $element.  Where $element really becomes 
+interesting is for contained elements.  
+
+In our example, we had a 'music_blurb' contained element.  There is no 
+'music_blurb' story;  its simply part of the larger 'column' story.  However, 
+'music_blurb', just like any other Element needs to have a template that knows 
+how to format it.  So while burning our 'column' story, we will at some point
+call out to the 'music_blurb' template to format our 'music_blurb'.  When the 
+'music_blurb' template code is run, $story will still contain our 'column' story
+object, but $element will contain an instance of our 'music_blurb' Element, and 
+will allow access to the data fields defined in that Element.
+
+Sound confusing?  Let just go over the methods available to $element and we'll get
+to an example soon enough.
+
+=over 4
+
+=item $element->get_data($name, $num)
+
+This returns the data associated with the data element given by $name.  For our 
+example in our story, $name is one of 'author', 'topic' or 'paragraph'.
+
+The $num argument is optional.  It is meant for data elements that can occur 
+more than once, such as 'paragraph's.  If $num is not given the text for the 
+first $name data element will be returned.  Note to programmers;  $num starts 
+at '1' not '0'.
+
+=item $element->get_container($name, $num)
+
+This returns a container element object.  This object is of the same type as 
+$element.  Usually you will just pass this object to a method that will call the 
+correct template for you.
+
+The $num argument is optional.  It like the $num argument in 'get_data' it is 
+used to retrieve container elements that occur more than once in a given story.
+ 
+If $num is not given, the first container element object will be returned.  
+Note to programmers;  $num starts at '1' not '0'.
+
+=item $element->get_elements
+
+Returns an array of both container element objects and data element objects.  
+Container element objects, as noted above are of the same type as $element.  Data 
+element objects are an object represntation the story data for a data element.  
+This bullet list identifies the methods you can call on a container element 
+object.  A short list of methods available for data element objects will be 
+given after this list.
+      
+=item $element->get_place
+
+Story editors have the opportunity to arrange the elements of their story in a 
+particular order.  This method returns a number giving this container element's 
+place among all other elements (both data and container).
+
+If $element is the element object for the main story (ie the 'column' element of a 
+'column' story) this will return 1.
+
+=item $element->get_object_order
+
+For container elements that can occur more than once in a story this will 
+return this elements place among like container elements.  For example a 
+'column' story might contain several 'music_blurb' container elements.  If this 
+happens to be the 2nd of 3 'music_blurb' container elements, this method will 
+return 2.
+
+If $element is the element object for the main story (ie the 'column' element of a 
+'column' story) this will return 1.
+
+=item $element->get_name
+
+Return the name of this container element.
+
+Futhermore the 'get_elements' method returns us some container element objects 
+and some data element objects.  Here is a list of methods you can call on a 
+data element object:
+
+=item $delem->get_data
+
+Returns the data associated with this data element.
+
+=item $delem->get_place
+
+Same concept as the container element 'get_place' method.
+
+=item $delem->get_object_order
+
+Same concept as the container element 'get_object_order' method.
+
+=item $delem->get_name
+
+Returns the name of this data element.
+
+Finally, to distinguish between data and container element objects you can call
+this method on any type of element:
+
+=item $element->is_container
+
+Returns 1 if this is a container element object and 0 if this is a data element 
+object.
+
+=back
+
+
+I<Burn System Object Methods>
+
+Here are the methods available via the burn system object
+
+=over 4
+
+=item $burner->chain_next
+
+From an autohandler template, this calls the next autohandler, or the specific 
+story template
+
+=item $burner->display_element($element)
+
+This takes either a data element object or a container element object.
+
+Given a container element object, this method will locate the proper template 
+and output the results of burning that template.
+
+Given a data element object, this method will simply output the data of that 
+data element.
+
+=back
+
+
+=head2 A Template Example
+
+For this template example, lets use the 'column' Element included in the
+Bricolage system as our story.  This 'column' is a little different than the one
+we've been discussing.  Here are the layout for this Element:
+
+=over 4
+
+=item Element Column
+
+=over 4
+
+=item *
+
+Data element 'deck'
+
+=item +
+
+Container element 'page'
+
+=back
+
+=item Element Page
+
+=over 4
+
+=item *
+
+Data element 'paragraph'
+
+=item *
+
+Data element 'pull quote'
+
+=item *
+
+Data element 'next'
+
+=item *
+
+Data element 'previous'
+
+=item +
+
+Container element 'inset'
+
+=back
+
+=item Element Inset
+
+=over 4
+
+=item *
+
+Data element 'copy'
+
+=back
+
+=back
+
+
+There are few things to note here.  Notice that this story structure is 3 levels
+deep rather than our two levels before.  Additionally, the 'page' Element was 
+created with a flag marking it as a paginated Element.  This means that Mason
+will automatically start a new output file for every 'page' Element burned.
+
+Here is the code for the 'column' template:
+
+    <!-- The column element -->
+    <%perl>
+        my $n = 1;
+        while (my $p = $element->get_container('page', $n++)) {
+            $burner->display_element($p);
+        }
+    </%perl>
+
+This code simply iterates through each 'page' container element in the 'column'
+story and displays it.  Remember that the page element was created with the
+'paginated' flag and will start a new output file so we'll save the real HTML
+for the 'page' element.  Note that we skip the 'deck' data element.  This 
+element is meant for when this is used in a related story context.  Using 
+related stories will be discussed later in another document.
+
+Next lets look at some example code for the 'page' element:
+
+    <!-- The page element -->
+    % my $order = $element->get_object_order;
+    
+    <html>
+        <head>
+            <title><% $story->get_title %></title>
+        </head>
+        <body>
+
+    <!-- Only display this title if we are on the first page -->
+    % if ($order == 1) {
+            <h1><% $story->get_title %></h1>
+    % }
+
+    <!-- Show the content for this element -->    
+    <%perl>
+        foreach my $e ($element->get_elements) {
+	    if ($e->has_name('paragraph')) {
+                $m->out('<p>');
+	        $burner->display_element($e);
+	        $m->out('</p>');
+	    } elsif ($e->has_name('pull_quote')) {
+	        $m->out('<p><i>');
+		$burner->display_element($e);
+	        $m->out('</i></p>');
+            } elsif ($e->has_name('inset')) {
+	        $burner->display_element($e);
+            }
+        }
+    
+        my $next = $element->get_data('next');
+        my $prev = $element->get_data('previous');
+    </%perl>
+
+    <!-- Show previous page link if it exists -->    
+    % if ($prev) {
+            [Page <% $order -1 %>]&lt;&lt;&lt;
+            <a href="index<% $order-2 || '' %>.html"><% $prev %></a>
+    % }
+
+            &nbsp;&nbsp;&nbsp;
+
+    <!-- Show next page link if it exists -->    
+    % if ($next) {
+            <a href="index<% $order %>.html"><% $next %></a>
+            &gt;&gt;&gt;[Page <% $order + 1 %>]
+    % }
+    
+        </body>
+    </html>
+
+
+This code outputs the main HTML, outputting a header if this is the first page
+of the column, followed by the data for this story.  After the data is output
+the 'previous' and 'next' links are displayed.  Note that in the foreach loop
+iterating over all elements the method 'display_element' is used to display both
+data and container elements.  For the data elements we could have used:
+
+    $m->out($e->get_data);
+
+to return the data.  Also, it is important to realize that there are no 
+restrictions against having a container and a data element with the same name.
+While this is unlikely to happen, if it were true for the 'column' element the
+above code would run fine, but may not output what is expected.
+
+Finally here is the template code for the 'inset' container element:
+
+    <!-- The inset element -->
+    <table width="570" border="2">
+        <tr><td>
+    % $element->get_data('copy');
+        </td></tr>
+    </table>
+
+
+Thats about it.  The above code for the three Elements, once used to create new
+templates and deployed, should allow you to publish 'column' stories.  Make sure
+you create your templates in the root category to ensure you can publish a story
+to any category.
+
+
+=head1 APPENDIX
+
+
+=head2 Class Names
+
+    Object Type		Associated Perl Class
+    -----------         ---------------------
+    Element		Bric::Biz::AssetType
+    Template		Bric::Biz::Asset::Formatting
+    Story		Bric::Biz::Asset::Business::Story
+    element		Bric::Biz::Asset::Business::Parts::Tile
+    Data element	Bric::Biz::Asset::Business::Parts::Tile::Data
+    Container element	Bric::Biz::Asset::Business::Parts::Tile::Container
+    Burn System		Bric::Util::Burner
+
+
+=head2 Glossary
+
+=over 4
+
+=item autohandler
+
+A mason concept.  As applied to a Bricolage it is type of variation on a 
+template that can form a line of 'chained' templates.
+
+=item Burn System
+
+The element of the Bricolage system that joins story data with existing 
+templates
+
+=item Category
+
+A way of organizing a web site in to separate sections.
+
+=item Container element
+
+An element containing structured data based on an Element.
+
+=item Data element
+
+An element that represents textual/simple data.
+
+=item dhandler
+
+A Mason concept.  Templates behave in a similar maner to dhandlers
+
+=item Element
+
+The "form" of a story or story part
+  
+=item element
+
+An instance of an Element in a story
+
+=item  Mason
+
+An apache/perl templating system. 
+
+=item Output Channel
+
+A destination for published data.
+
+=item Story
+
+The data to be published.
+
+=item Template
+
+A output format for published data.
+
+=back

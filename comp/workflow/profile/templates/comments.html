@@ -1,0 +1,18 @@
+<& "/widgets/wrappers/sharky/header.mc",
+  title => "Notes"
+ &>
+
+<& '/widgets/asset_meta/asset_meta.mc', 
+	id => $id,
+	action => 'view',
+	type => 'template',
+	section => 'notes',
+	return_url => $return_url &>
+
+<& /widgets/wrappers/sharky/footer.mc &>
+
+
+<%args>
+$id
+$return_url
+</%args>

@@ -1,0 +1,136 @@
+%#-- Begin HTML --#
+<%perl>
+$m->out(qq{<form method="post" name="alert_type_recip" action="} . $r->uri
+        . qq{" onSubmit="return confirmChanges(this)">\n});
+$m->comp('/javascripts/profile/formValidator.js', id => $id);
+
+# Output a hidden field with the ID.
+$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'alert_type_id');
+
+# Output the contact type.
+$m->comp('/widgets/profile/hidden.mc', value => $ctype, name => 'ctype');
+
+# Output the groups.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+	 caption => $ctype . ' Group Recipients', number => 1);
+
+# These will hold the values for the left and right lists.
+my ($right, $left) = ([], []);
+
+# Get the current groups.
+foreach my $g ($at->get_groups) {
+    push @$right, { value =>  $g->get_id,
+                    description => $g->get_name };
+}
+
+# Get potential groups.
+foreach my $g (Bric::Util::Grp::User->list) {
+    push @$left, { value =>  $g->get_id,
+                   description => $g->get_name };
+}
+
+my $pl_disp = get_class_info('grp')->get_plural_name;
+# Load up the double-list manager.
+$m->comp( "/widgets/doubleListManager/doubleListManager.mc",
+          rightSort => 1,
+	  leftOpts => $left,
+          rightOpts => $right,
+          formName => 'alert_type_recip',
+	  leftName => 'del_groups',
+	  rightName => 'add_groups',
+	  readOnly => $no_edit,
+	  leftCaption => $no_edit ? undef : "Available $pl_disp",
+	  showLeftList => !$no_edit || 0,
+	  rightCaption => "Current $pl_disp" );
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Output the users.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+	 caption => $ctype . ' User Recipients', number => 2);
+
+# These will hold the values for the left and right lists.
+($right, $left) = ([], []);
+# Get the List Name Format for people.
+my $fmt = get_pref('List Name Format');
+
+# Get the current users.
+foreach my $u ($at->get_users) {
+    push @$right, { value =>  $u->get_id,
+                    description => $u->format_name($fmt) };
+}
+
+# Get potential users.
+foreach my $u (Bric::Biz::Person::User->list) {
+    push @$left, { value =>  $u->get_id,
+                   description => $u->format_name($fmt) };
+}
+
+$pl_disp = get_class_info('user')->get_plural_name;
+# Load up the double-list manager.
+$m->comp( "/widgets/doubleListManager/doubleListManager.mc",
+          rightSort => 1,
+	  leftOpts => $left,
+          rightOpts => $right,
+          formName => 'alert_type_recip',
+	  leftName => 'del_users',
+	  rightName => 'add_users',
+	  readOnly => $no_edit,
+	  leftCaption => $no_edit ? undef : "Available $pl_disp",
+	  showLeftList => !$no_edit || 0,
+	  rightCaption => "Current $pl_disp" );
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Output the form buttons.
+$m->out("<br />\n");
+$m->comp("/widgets/profile/formButtons.mc",
+         type => $type,
+         section => $widget,
+         no_del => 1,
+	 return => "/admin/profile/$type/$id",
+	 cb => 'edit_recip_cb',
+         no_save => $no_edit );
+
+</%perl>
+</form>
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+%#-- End HTML --#
+
+%#-- Once Section --#
+<%once>;
+my $widget = 'profile';
+my $type = 'alert_type';
+my $class = get_package_name($type);
+my $disp = get_disp_name($type);
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+
+%#-- Init Section --#
+<%init>;
+$id ||= $ARGS{alert_type_id} unless defined $id;
+# Redirect if there's no ID.
+redirect("/admin/manager/$type") unless defined $id;
+
+# Instantiate an object.
+my $at = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id = $at->get_id unless defined $id;
+my $atname = $at->get_name;
+# Output the header.
+$m->comp('/widgets/wrappers/sharky/header.mc',
+	 context => "Admin | Profile | $disp | &quot;" . $atname . "&quot | Recipients",
+         title => "$atname Recipients");
+
+# Redirect if we haven't got the contact type.
+my $ctype = get_state_name($type) || redirect("/admin/profile/$type/$id");
+
+# Check authorization.
+chk_authz($at, $id ? READ : CREATE);
+my $no_edit = !chk_authz($at, ($id ? EDIT : CREATE), 1);
+my $no_del = ! defined $id || $no_edit;
+</%init>

@@ -1,0 +1,103 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:53:43 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+--
+
+ALTER TABLE media
+ADD CONSTRAINT fk_source__media FOREIGN KEY (source__id)
+	REFERENCES source(id) ON DELETE CASCADE;
+
+ALTER TABLE media
+ADD CONSTRAINT fk_usr__media FOREIGN KEY (usr__id)
+	REFERENCES usr(id) ON DELETE CASCADE;
+
+ALTER TABLE media
+ADD CONSTRAINT fk_kw_grp__media FOREIGN KEY (keyword_grp__id)
+	REFERENCES grp(id) ON DELETE SET NULL;
+
+ALTER TABLE media
+ADD CONSTRAINT fk_element__media FOREIGN KEY (element__id)
+	REFERENCES element(id) ON DELETE CASCADE;
+
+ALTER TABLE media
+ADD CONSTRAINT fk_workflow__media FOREIGN KEY (workflow__id)
+	REFERENCES workflow(id) ON DELETE SET NULL;
+
+-- -----------------------------------------------------------------------------
+-- Table media_instance
+
+ALTER TABLE media_instance
+ADD CONSTRAINT fk_media__media_instance FOREIGN KEY (media__id)
+	REFERENCES media(id) ON DELETE CASCADE;
+
+ALTER TABLE media_instance
+ADD CONSTRAINT fk_category__media_instance FOREIGN KEY (category__id)
+	REFERENCES category(id) ON DELETE CASCADE;
+
+ALTER TABLE media_instance
+ADD CONSTRAINT fk_media_type__media_instance FOREIGN KEY (media_type__id)
+	REFERENCES media_type(id) ON DELETE CASCADE;
+
+ALTER TABLE media_instance
+ADD CONSTRAINT fk_usr__media_instance FOREIGN KEY (usr__id)
+	REFERENCES usr(id) ON DELETE CASCADE;
+
+
+
+-- -----------------------------------------------------------------------------
+-- Table: media_member
+
+ALTER TABLE    media_member
+ADD CONSTRAINT fk_media__media_member FOREIGN KEY (object_id)
+REFERENCES     media(id) ON DELETE CASCADE;
+
+ALTER TABLE    media_member
+ADD CONSTRAINT fk_member__media_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: image_member
+
+ALTER TABLE    image_member
+ADD CONSTRAINT fk_image__image_member FOREIGN KEY (object_id)
+REFERENCES     media(id) ON DELETE CASCADE;
+
+ALTER TABLE    image_member
+ADD CONSTRAINT fk_member__image_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_media
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_media_val
+
+
+ALTER TABLE attr_media_val ADD 
+    CONSTRAINT fk_attr_media__attr_media_val FOREIGN KEY (attr__id)
+    REFERENCES attr_media(id) ON DELETE CASCADE;
+
+ALTER TABLE attr_media_val ADD
+    CONSTRAINT fk_media__attr_media_val FOREIGN KEY (object__id)
+    REFERENCES media(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_media_meta
+
+ALTER TABLE attr_media_meta ADD 
+    CONSTRAINT fk_attr_media__attr_media_meta FOREIGN KEY (attr__id)
+    REFERENCES attr_media(id) ON DELETE CASCADE;
+
+
+/*
+Change Log:
+$Log: Media.con,v $
+Revision 1.1  2001-09-06 21:53:43  wheeler
+Initial revision
+
+*/

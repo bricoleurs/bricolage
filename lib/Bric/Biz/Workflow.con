@@ -1,0 +1,28 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:53:32 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Garth Webb <garth@perijove.com>
+
+-- 
+-- TABLE: workflow_member
+--
+
+ALTER TABLE    workflow_member
+ADD CONSTRAINT fk_workflow__workflow_member FOREIGN KEY (object_id)
+REFERENCES     workflow(id) ON DELETE CASCADE;
+
+ALTER TABLE    workflow_member
+ADD CONSTRAINT fk_member__workflow_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+
+
+/*
+Change Log:
+$Log: Workflow.con,v $
+Revision 1.1  2001-09-06 21:53:32  wheeler
+Initial revision
+
+*/

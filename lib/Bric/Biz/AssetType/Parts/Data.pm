@@ -1,0 +1,1381 @@
+package Bric::BC::AssetType::Parts::Data;
+###############################################################################
+
+=head1 NAME
+
+Bric::BC::element::Parts::Data - The place where fields with in an element 
+are registered with rules to their usage
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=cut
+
+our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+
+
+=head1 DATE
+
+$Date: 2001-09-06 21:54:00 $
+
+
+=head1 SYNOPSIS
+
+ $field = Bric::BC::element::Parts::Data->new( $initial_state )
+
+ $field = Bric::BC::element::Parts::Data->lookup( { id => $id } )
+
+ ($field_list || @fields) = Bric::BC::element::Parts::Data->list($criteria)
+
+ ($ids || @ids) = Bric::BC::element::Parts::Data->list_ids($criteria)
+
+
+ $id    = $field->get_id()
+
+ # Get/Set the name of this field. 
+ $field = $field->set_name($name)
+ $name  = $field->get_name()
+
+ # Get/set the description for this field.
+ $field = $field->set_description($description)
+ $desc  = $field->get_description()
+
+ # Get/Set the publishable status of this field.
+ $field       = $field->set_publishable(undef || 1)
+ (undef || 1) = $field->is_publishable()
+
+ # Get/Set the maximum length for the data in this field.
+ $field = $field->set_max_length($max_length)
+ $max   = $field->get_max_length()
+
+ # Get/Set whether this field is required or not.
+ $field       = $field->set_required(1 || undef)
+ (1 || undef) = $field->get_required()
+
+ # Get/Set the quantifier flag.
+ $field      = $field->set_quantifier( $quantifier )
+ $quantifier = $field->get_quantifier()
+
+ # Get/Set the data type (or SQL type) of this field.
+ $field    = $field->set_sql_type();
+ $sql_type = $field->get_sql_type()
+
+ # Set the active flag for this field.
+ $field       = $field->activate()
+ $field       = $field->deactivate()
+ (undef || 1) = $field->is_active()
+
+ (undef || $self) = $field->remove()
+
+ $field = $field->save()
+
+=head1 DESCRIPTION
+
+This class holds the data about data that will eventualy populate Published
+Assets.  The name and description fields can be set as can a number of rules.
+
+The max length field.   This will allow someone to set the max length allowed
+for their field.   It will have a rule set upon it so that the max length will
+not be greater than any available storage.   The field length will map to 
+what ever storarge is available for a field just larger than the one listed
+( Thought needs to be given how to handle those that change their length
+after data has been entered as it might switch storage catagories)
+
+The quantifier field will state whether the field may be repeated indeffinatly,
+zero or more times, zero or one, one, or an arbritiary number of times.
+
+the sql type will map to a type in the DB ( varchar or date ) 
+
+=cut
+
+#==============================================================================#
+# Dependencies                         #
+#======================================#
+
+#--------------------------------------#
+# Standard Dependencies                 
+
+use strict;
+
+#--------------------------------------#
+# Programatic Dependencies              
+
+use Bric::Util::DBI qw(:all);
+
+use Bric::Util::Attribute::AssetTypeData;
+
+#==============================================================================#
+# Inheritance                          #
+#======================================#
+
+# The parent module should have a 'use' line if you need to import from it.
+# use Bric;
+use base qw(Bric);
+
+#=============================================================================#
+# Function Prototypes                  #
+#======================================#
+
+# None
+
+#==============================================================================#
+# Constants                            #
+#======================================#
+
+use constant DEBUG => 0;
+
+use constant TABLE => 'at_data';
+use constant COLS  => qw(
+			 element__id
+			 name
+			 description
+			 place
+			 required
+			 quantifier
+			 autopopulated
+			 map_type__id
+			 publishable
+			 max_length
+			 sql_type
+			 active);
+
+#==============================================================================#
+# Fields                               #
+#======================================#
+
+#--------------------------------------#
+# Public Class Fields                   
+
+# NONE
+
+#--------------------------------------#
+# Private Class Fields                  
+
+# NONE
+
+#--------------------------------------#
+# Instance Fields                       
+
+# NONE
+
+# This method of Bricolage will call 'use fields' for you and set some permissions.
+BEGIN {
+    Bric::register_fields({
+			 # Public Fields
+			 
+			 # The database id field
+			 'id'	               => Bric::FIELD_READ,
+			 
+			 # the asset type that this is associated with
+			 'element__id'      => Bric::FIELD_RDWR,
+			 
+			 # The meta object ID.
+			 'map_type__id'        => Bric::FIELD_RDWR,
+			 
+			 # The human readable name field
+			 'name'	               => Bric::FIELD_RDWR,
+			 
+			 # The human readable description Field
+			 'description'         => Bric::FIELD_RDWR,
+			 
+			 # the order in which this will be in the container
+			 'place'	       => Bric::FIELD_RDWR,
+			 
+			 # The max length in chars
+			 'max_length'          => Bric::FIELD_RDWR,
+			 
+			 # The required flag
+			 'required'            => Bric::FIELD_RDWR,
+			 
+			 # The type of repeatability for this field
+			 'quantifier'          => Bric::FIELD_RDWR,
+			 
+			 # The type in the data base 
+			 'sql_type'	       => Bric::FIELD_RDWR,
+			 
+			 # If this field is publishable
+			 'publishable'         => Bric::FIELD_RDWR,
+
+			 autopopulated			=> Bric::FIELD_READ,
+			 
+			 # The active flag
+			 'active'              => Bric::FIELD_READ,
+			 
+			 # Private Fields
+
+			 # Hold attribute info until this object is saved.
+			 '_attr'                => Bric::FIELD_NONE,
+			 '_meta'                => Bric::FIELD_NONE,
+
+			 # Holds the attribute object for this object.
+			 '_attr_obj'            => Bric::FIELD_NONE,
+			});
+}
+
+#==============================================================================#
+# Interface Methods                    #
+#======================================#
+
+=head1 INTERFACE
+
+=head2 Constructors
+
+=over 4
+
+=cut
+
+#--------------------------------------#
+# Constructors                          
+
+#------------------------------------------------------------------------------#
+
+=item  $field = Bric::BC::element::Parts::Data->new( $initial_state )
+
+creates a new element Field Part with the values associated with the 
+initial state
+
+Supported Keys:
+
+=over 4
+
+=item *
+
+element_id (required)
+
+=item *
+
+meta_object
+
+=item *
+
+name
+
+=item *
+
+description
+
+=item *
+
+place
+
+=item *
+
+required
+
+=item *
+
+quantifier
+
+=item *
+
+sql_type
+
+=item *
+
+publishable
+
+=item *
+
+active
+
+=back
+
+B<Throws:>
+NONE
+
+B<Side Effects:>
+NONE
+
+B<Notes:>
+NONE
+
+=cut
+
+sub new {
+    my $class = shift;
+    my ($init) = @_;
+
+    $init->{'active'} = exists $init->{'active'} ? $init->{'active'} : 1;
+    $init->{$_} = $init->{$_} ? 1 : 0 for qw(required publishable autopopulated);
+
+    $init->{'place'}  ||= 0;
+    delete $init->{'meta_object'};
+    my $self = bless {}, $class;
+    $self->SUPER::new($init);
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
+
+=item  $field = $field->copy($at_id);
+
+Makes a copy of itself and passes back a new object.  The only argument is an
+asset type ID.  This needs to be passed since a field of one name cannot be 
+inserted twice into the same asset type.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub copy {
+    my $self = shift;
+    my ($at_id) = @_;
+    my $self_copy;
+
+    return unless $at_id; 
+    return unless $self;
+    
+    $self_copy = bless {}, ref $self;
+    
+    my @k = keys %$self;
+    
+    # Copy the object.
+    $self_copy->_set(\@k, [$self->_get(@k)]);
+    # Clear out fields specific to the original.
+    $self_copy->_set(['id', 'element__id'], [undef, $at_id]);
+
+    $self_copy->SUPER::new();
+
+    return $self_copy;
+}
+
+#------------------------------------------------------------------------------#
+
+=item $field = Bric::BC::element::Parts::Data->lookup( { id => $id } )
+
+Returns an existing Asset type field object that has the id that was given
+as an argument
+
+B<Throws:>
+NONE
+
+B<Side Effects:>
+NONE
+
+B<Notes:>
+NONE
+
+=cut
+
+sub lookup {
+    my $class = shift;
+    my ($param) = @_;
+    my $self = bless {}, $class;
+    
+    return unless $param->{'id'};
+    
+    $self->SUPER::new();
+    
+    $self->_select_data($param->{'id'});
+    
+    # Set the attribute object.
+    my $id = $self->get_id;
+    my $a_obj = Bric::Util::Attribute::AssetTypeData->new(
+						     {'object_id' => $id,
+						      'subsys'    => "id_$id"});
+    $self->_set(['_attr_obj'], [$a_obj]);
+
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
+
+=item ($parts || @parts) = Bric::BC::element::Parts::Data->list($param)
+
+Returns a list (or list ref) of field objects that match the criteria
+listed
+
+Supported Keys:
+
+=over 4
+
+=back
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub list {
+    my $class = shift;
+    my ($param) = @_;
+    
+    
+    _do_list($class,$param);
+}
+
+#------------------------------------------------------------------------------#
+
+=item ($ids || @ids) = Bric::BC::element::Parts::Field->list_ids($param)
+
+ Returns the ids of the field objects that match the given criteria
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub list_ids {
+    my $class = shift;
+    my ($param) = @_;
+    
+    _do_list($class, $param, 1);
+}
+
+#--------------------------------------#
+
+=head2 Destructors
+
+=item $self->DESTROY
+
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
+
+=cut
+
+sub DESTROY {
+    # This method should be here even if its empty so that we don't waste time
+    # making Bricolage's autoload method try to find it.
+}
+
+#--------------------------------------#
+
+=head2 Public Class Methods
+
+NONE
+
+=cut
+
+#--------------------------------------#
+
+=head2 Public Instance Methods
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $field = $field->set_publishable( 1 || undef)
+
+Sets the flag for if this is a publishable field
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item (undef || 1) = $field->get_publishable()
+
+Returns if this is a publishable field
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $field = $field->set_name( $name )
+
+Sets the human readable field name
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $name = $field->get_name()
+
+Returns the human readable field name
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $field = $field->set_description($description)
+
+Sets the human readable descripton for this field
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $description = $field->get_description()
+
+Return the human readable description field
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $field = $field->set_max_length( $max_length)
+
+Set the max length in chars for this field
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $max_length $field->get_max_length()
+
+Return the max length that has been registered
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $field = $field->set_required(1 || undef)
+
+Set the flag to make this field required ( default is not)
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item (1 || undef) = $field->get_required()
+
+Return the required flag for this field
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $field = $field->set_quantifier( $reperatable )
+
+Set the repeatability of this field options are (*, +, (0 || 1), 1).  Might 
+want to make this more friendly
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $quantifier = $field->get_quantifier()
+
+Return the repeatablity flag
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $field = $field->set_data_type()
+
+Returns the database datatype
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $data_type = $field->set_data_type()
+
+Returns the database datatype
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $id = $field->get_id()
+
+Returns the database id of the field object
+ 
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $val = $element->set_attr($name, $value);
+
+=item $val = $element->get_attr($name);
+
+Get/Set attributes on this asset type.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub set_attr {
+    my $self = shift;
+    my ($name, $val) = @_;
+    my $attr_obj = $self->_get_attr_obj;
+    my $attr     = $self->_get('_attr', '_attr_obj');
+
+    if ($attr_obj) {
+	$attr_obj->set_attr({'name'     => $name,
+			     'sql_type' => 'short',
+			     'value'    => $val});
+    } else {
+	$attr->{$name} = $val;
+	
+	$self->_set(['_attr'], [$attr]);
+    }
+
+    return $val;
+}
+
+sub get_attr {
+    my $self = shift;
+    my ($name) = @_;
+    my $attr_obj = $self->_get_attr_obj;
+    my $attr     = $self->_get('_attr', '_attr_obj');
+
+    # If we aren't saved yet, return anything we have cached.
+    unless ($attr_obj) {
+	return $attr->{$name};
+    }
+
+    return $attr_obj->get_attr({'name' => $name});
+}
+
+sub all_attr {
+    my $self = shift;
+    my $attr_obj = $self->_get_attr_obj;
+    my $attr     = $self->_get('_attr');
+
+    unless ($attr_obj) {
+	return $attr;
+    }
+
+    return $attr_obj->get_attr_hash();
+}
+
+#------------------------------------------------------------------------------#
+
+=item $val = $element->set_meta($name, $field, $value);
+
+=item $val = $element->get_meta($name, $field);
+
+=item $val = $element->get_meta($name);
+
+Get/Set attribute metadata on this asset type.  Calling the 'get_meta' method
+without '$field' returns all metadata names and values as a hash.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub set_meta {
+    my $self = shift;
+    my ($name, $field, $val) = @_;
+    my $attr_obj = $self->_get_attr_obj;
+    my $meta     = $self->_get('_meta');
+
+    if ($attr_obj) {
+	$attr_obj->add_meta({'name'  => $name,
+			     'field' => $field,
+			     'value' => $val});
+    } else {
+	$meta->{$name}->{$field} = $val;
+	
+	$self->_set(['_meta'], [$meta]);	
+    }	
+
+    return $val;
+}
+
+sub get_meta {
+    my $self = shift;
+    my ($name, $field) = @_;
+    my $attr_obj = $self->_get_attr_obj;
+
+    unless ($attr_obj) {
+	my $meta = $self->_get('_meta');
+	if (defined $field) {
+	    return $meta->{$name}->{$field};
+	} else {
+	    return $meta->{$name};
+	}
+    }
+
+    if (defined $field) {
+	return $attr_obj->get_meta({'name'  => $name,
+				    'field' => $field});
+    } else {
+	my $meta = $attr_obj->get_meta({'name' => $name});
+
+	return { map { $_ => $meta->{$_}->{'value'} } keys %$meta };
+    }
+}
+
+#------------------------------------------------------------------------------#
+
+=item $field = $field->activate()
+
+Makes the field object active
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub activate {
+    my $self = shift;
+    
+    $self->_set( { 'active' => 1 } );
+    
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
+
+=item $field = $field->deactivate()
+ 
+Makes the object inactive
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub deactivate {
+    my $self = shift;
+    
+    $self->_set( { 'active' => undef } );
+    
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
+
+=item (undef || 1) = $field->is_active()
+
+Returns 1 if active or undef otherwise
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub is_active {
+    my $self = shift;
+    
+    return $self->_get('active') ? 1 : undef;
+}
+
+#------------------------------------------------------------------------------#
+
+=item (undef || $self) = $field->remove()
+
+Removes this object completely from the DB.  Returns 1 if active or undef 
+otherwise
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub remove {
+    my $self = shift;
+    my $id = $self->get_id;
+
+    return unless $id;
+
+    my $sql = 'DELETE FROM '.TABLE.' WHERE id=?';    
+
+    my $sth = prepare_c($sql);
+    execute($sth, $id);
+
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
+
+=item $field = $field->save()
+
+Saves the changes made to the database
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub save {
+    my $self = shift;
+    
+    if ($self->_get('id') ) {
+	$self->_update_data();
+    } else {
+	$self->_insert_data()
+    }
+    
+    # Save the attribute information.
+    $self->_save_attr;
+
+    # Call our parents save method.
+    $self->SUPER::save;
+}
+
+#==============================================================================#
+
+=head1 PRIVATE
+
+=cut
+
+#--------------------------------------#
+
+=head2 Private Class Methods
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item _do_list
+
+called by list and list ids this does the brunt of their work
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub _do_list {
+    my $class = shift;
+    my ($param, $ids) = @_;
+    my (@where, @bind);
+
+    my $sql = 'SELECT id,'.join(',',COLS).' FROM '.TABLE;
+    
+    if (exists $param->{'element__id'} ) {
+	push @where, 'element__id=?';
+	push @bind, $param->{'element__id'};
+    }
+    
+    if (exists $param->{'map_type__id'} ) {
+	push @where, 'map_type__id=?';
+	push @bind, $param->{'map_type__id'};
+    }
+    
+    if (exists $param->{'name'} ) {
+	push @where, 'name=?';
+	push @bind, $param->{'name'};
+    }
+    
+    if (exists $param->{'max_length'} ) {
+	push @where, 'max_length=?';
+	push @bind, $param->{'max_length'};
+    }
+    
+    if (exists $param->{'publishable'} ) {
+	push @where, 'publishable=?';
+	push @bind, $param->{'publishable'};
+    }
+    
+    if (exists $param->{'required'} ) {
+	push @where, 'required=?';
+	push @bind, $param->{'required'};
+    }
+    
+    if (exists $param->{'quantifier'} ) {
+	push @where, 'quantifier=?';
+	push @bind, $param->{'quantifier'};
+    }
+    
+    if (exists $param->{'sql_type'} ) {
+	push @where, 'sql_type=?';
+	push @bind, $param->{'sql_type'};
+    }
+    
+    if (exists $param->{'active'} ) {
+	push @where, 'active=?';
+	push @bind, exists $param->{'active'} ? $param->{'active'} 
+                                                       : 1;
+    }
+    
+    # Add the where clause if there is one.
+    $sql .= ' WHERE '.join(' AND ', @where) if @where;
+    
+    my $select = prepare_ca($sql, undef, DEBUG);
+    
+    if ($ids) {
+	# called from list_ids give em what they want
+	my $return = col_aref($select,@bind);
+	
+	return wantarray ? @$return : $return;
+	
+    } else {
+	# this must have been called from list so give objects
+	my (@d, @objs);
+	
+	execute($select, @bind);
+	bind_columns($select, \@d[0..(scalar COLS)]);
+
+	while ($select->fetch()) {
+	    my $self = bless {}, $class;
+
+	    $self->_set(['id', COLS], [@d]);
+
+	    my $id = $self->get_id;
+	    my $a_obj = Bric::Util::Attribute::AssetTypeData->new(
+						     {'object_id' => $id,
+						      'subsys'    => "id_$id"});
+	    $self->_set(['_attr_obj'], [$a_obj]);
+	    
+	    push @objs, $self;
+	}
+	
+	return wantarray ? @objs : \@objs;
+    }   
+}
+
+
+#--------------------------------------#
+
+=head2 Private Instance Methods
+
+NONE
+
+=cut 
+
+sub _get_attr_obj {
+    my $self = shift;
+    my $attr_obj = $self->_get('_attr_obj');
+    my $id = $self->get_id;
+
+    unless ($attr_obj || not defined($id)) {
+	$attr_obj = Bric::Util::Attribute::AssetTypeData->new(
+				     {'object_id' => $id,
+				      'subsys'    => "id_$id"});
+	$self->_set(['_attr_obj'], [$attr_obj]);
+    }
+
+    return $attr_obj;
+}
+
+sub _save_attr {
+    my $self = shift;
+    my $a_obj = $self->_get_attr_obj;
+    my ($attr, $meta) = $self->_get('_attr', '_meta');
+    my $id   = $self->get_id;
+
+    while (my ($k,$v) = each %$attr) {
+	$a_obj->set_attr({'name'     => $k,
+			  'sql_type' => 'short',
+			  'value'    => $v});
+    }
+	
+    foreach my $k (keys %$meta) {
+	while (my ($f, $v) = each %{$meta->{$k}}) {
+	    $a_obj->add_meta({'name'  => $k,
+			      'field' => $f,
+			      'value' => $v});
+	}
+    }
+
+    $a_obj->save;
+}
+
+#------------------------------------------------------------------------------#
+
+=item _select_data
+
+Select rows from the element_data table.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub _select_data {
+    my $self = shift;
+    my ($id) = @_;
+    my @d;
+
+    my $sql = 'SELECT '.join(',',COLS).' FROM '.TABLE.
+              ' WHERE id=? AND active=?';
+
+    my $sth = prepare_ca($sql);
+    execute($sth, $id, 1);
+    bind_columns($sth, \@d[0..(scalar COLS - 1)]);
+    fetch($sth);
+    finish($sth);
+
+    # Set the columns selected as well as the passed ID.
+    $self->_set([COLS, 'id'], [@d, $id]);
+}
+
+#------------------------------------------------------------------------------#
+
+=item _update_data
+
+Update the element_data table.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub _update_data {
+    my $self = shift;
+    
+    my $sql = 'UPDATE '.TABLE.
+              ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
+
+
+    my $sth = prepare_c($sql);
+    execute($sth, $self->_get(COLS), $self->get_id);
+    
+    return 1;
+}
+
+#------------------------------------------------------------------------------#
+
+=item _insert_data
+
+Insert rows into the element_data table.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub _insert_data {
+    my $self = shift;
+    my $nextval = next_key(TABLE);
+
+    # Create the insert statement.
+    my $sql = 'INSERT INTO '.TABLE.' (id,'.join(',',COLS).") ".
+              "VALUES ($nextval,".join(',', ('?') x COLS).')';
+
+    my $sth = prepare_c($sql);
+    execute($sth, $self->_get(COLS));
+
+    # Set the ID of this object.
+    $self->_set(['id'],[last_key(TABLE)]);
+
+    return 1;
+}
+
+#--------------------------------------#
+
+=head2 Private Functions
+
+NONE
+
+=cut
+
+1;
+
+__END__
+
+=back
+
+=head1 NOTES
+
+NONE
+
+=head1 AUTHOR
+
+michael soderstrom ( miraso@pacbell.net )
+
+=head1 SEE ALSO
+
+L<perl>,L<Bric>,L<Bric::BC::Asset::Business::Story>,L<Bric::BC::AssetType>,
+
+=head1 REVISION HISTORY
+
+$Log: Data.pm,v $
+Revision 1.1  2001-09-06 21:54:00  wheeler
+Initial revision
+
+=cut
+

@@ -1,0 +1,24 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:55:13 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+
+
+ALTER TABLE grp
+ADD CONSTRAINT fk_grp__grp FOREIGN KEY (parent_id)
+REFERENCES grp(id) ON DELETE CASCADE;
+
+ALTER TABLE grp
+ADD CONSTRAINT fk_class__grp FOREIGN KEY (class__id)
+REFERENCES class(id) ON DELETE CASCADE;
+
+
+/*
+Change Log:
+$Log: Grp.con,v $
+Revision 1.1  2001-09-06 21:55:13  wheeler
+Initial revision
+
+*/

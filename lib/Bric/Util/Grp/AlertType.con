@@ -1,0 +1,23 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:55:48 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@wheeler.net>
+
+
+ALTER TABLE    alert_type_member
+ADD CONSTRAINT fk_alert_type__alert_type_member FOREIGN KEY (object_id)
+REFERENCES     alert_type(id) ON DELETE CASCADE;
+
+ALTER TABLE    alert_type_member
+ADD CONSTRAINT fk_member__alert_type_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+/*
+Change Log:
+$Log: AlertType.con,v $
+Revision 1.1  2001-09-06 21:55:48  wheeler
+Initial revision
+
+*/

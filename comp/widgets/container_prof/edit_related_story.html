@@ -1,0 +1,61 @@
+<& '/widgets/search/search.mc', 
+  object       => 'story', 
+  type         => 'story', 
+  field        => 'title',
+  use_form_tag => 0 &>
+
+% my $relate_id = $tile->get_related_instance_id;
+<P></P>
+<a name="results" />
+% my $story = get_state_data('story_prof', 'story');
+<& /widgets/listManager/listManager.mc,
+   object   => 'story',
+   title    => 'Choose a Related Story',
+   sortBy   => 'name',
+   select   => undef,
+   profile  => \&related_profile,
+   featured => $relate_id ? [$relate_id] : undef,
+   exclude  => [$story->get_id],
+   fields   => [qw(id title uri cover_date)],
+	field_values => \&field_values,
+   addition => '',
+   behavior  => 'expand',
+&>
+<P></P>
+
+<input type="image" src="/media/images/return_dgreen" border=0 name="<% $widget %>|related_up_cb" value="Return">
+
+<%args>
+$widget
+</%args>
+
+<%init>
+    # the tile object
+    my $tile = get_state_data($widget, 'tile');
+</%init>
+
+<%once>
+sub field_values {
+	my ($o, $field) = @_;
+
+	if ($field eq 'title') {
+		my $html = '<a href="/workflow/profile/preview/' . $o->get_id . '"' .
+					'class="black" UnderlinedLink" target="preview">' .
+					$o->get_title . '</a>'; 
+		return $html;
+	} else {
+		return;
+	}
+
+}
+
+sub related_profile {
+    my ($o,$flags) = @_;
+    
+    unless ($flags->{'featured'}) {
+        return ['Relate', $r->uri, "container_prof|relate_story_cb=".$o->get_id];
+    } else {
+        return ['Un-relate', $r->uri, "container_prof|unrelate_story_cb=".$o->get_id];
+    }
+}
+</%once>

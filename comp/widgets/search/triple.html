@@ -1,0 +1,60 @@
+%#--- Arguments ---#
+
+<%args>
+$widget
+$object
+$disp_field
+$groupList
+</%args>
+
+%#--- Initialization ---#
+<%init>
+my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $spacerRow = ($agent->{os} ne "Internet Explorer") ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
+</%init>
+
+<FORM METHOD="post">
+<table border=0 cellpadding=0 cellspacing=0 width=580>
+<tr>
+  <td class=darkHeader valign=top width=13><img src="/media/images/666633_curve_left.gif" width=13 height=19></td>
+  <td class=darkHeader width=556>SEARCH</td>
+  <td class=darkHeader valign=top width=13 align=right><img src="/media/images/666633_curve_right.gif" width=13 height=19></td>
+</tr>
+</table>
+<table border=0 cellpadding=0 cellspacing=0 width=580>
+<tr>
+  <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
+  <td class=lightHeader>
+<% $spacerRow %>
+  <%perl>
+  $m->comp("substr.html",
+	   widget     => $widget,
+	   object     => $object,
+	   disp_field => $disp_field);
+</%perl>
+<img src="/media/images/spacer.gif" width=550 height=2>
+<%perl>
+  $m->comp("alpha.html",
+	   widget     => $widget,
+	   object     => $object,
+	   disp_field => $disp_field);
+  
+  </%perl>
+<img src="/media/images/spacer.gif" width=550 height=2>
+% $m->out($groupList);
+  
+  </td>
+  <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
+</tr>
+<tr>
+  <td class=darkHeader width=580 colspan=3><img src="/media/images/spacer.gif" width=580 height=1></td>
+</tr>
+</table>
+%#--- Log History ---#
+</form>
+<%doc>
+$Log: triple.html,v $
+Revision 1.1  2001-09-06 21:52:25  wheeler
+Initial revision
+
+</%doc>

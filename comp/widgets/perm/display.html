@@ -1,0 +1,269 @@
+%#-- Begin HTML --#
+<%perl>;
+if ($is_user) {
+    $num ||= 1;
+    # We need grant to the members of this current user group permissions to
+    # other groups.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
+             caption => "Object Group Permissions");
+
+    $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
+	     . "access the members of these $grp_pl.");
+    # Get any existing permissions.
+    my %perms;
+    foreach my $perm ($pkg->list({ usr_grp_id => $id }) ) {
+	my $gid = $perm->get_obj_grp_id;
+	next if $gid == ADMIN_GRP_ID;
+	$perms{$gid} = $perm;
+    }
+
+    foreach my $grp ($grp_pkg->list({ })) {
+        my $gid = $grp->get_id;
+	next if $gid == ADMIN_GRP_ID;
+	$m->comp($row_comp,
+		 grp => $grp,
+		 gid => $gid,
+		 type => 'obj',
+		 perm => $perms{$gid});
+    }
+    $m->out(qq{</table>\n});
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    # We need to do it for workflows and desks, too.
+    # Do the workflows, first.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
+             caption => "$wf_disp Permissions");
+
+    $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
+	     . "access asssets in these $wf_pl.");
+
+    foreach my $wf ($wf_pkg->list) {
+        my $gid = $wf->get_all_desk_grp_id;
+	my $grp = $dsk_grp_pkg->lookup({ id => $gid });
+	$m->comp($row_comp,
+		 grp => $grp,
+		 gid => $gid,
+		 type => 'obj',
+		 create => 1,
+		 perm => $perms{$gid},
+		 name => $wf->get_name);
+    }
+    $m->out(qq{</table>\n});
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    # Now do the desks.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
+             caption => "$dsk_disp Permissions");
+
+    $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
+	     . "access asssets on these $dsk_pl.");
+
+    foreach my $dsk ($dsk_pkg->list) {
+        my $gid = $dsk->get_asset_grp;
+	my $grp = $gid ? $asset_grp_pkg->lookup({ id => $gid }) : undef;
+	$m->comp($row_comp,
+		 grp => $grp,
+		 gid => $gid,
+		 type => 'obj',
+		 perm => $perms{$gid},
+		 name => $dsk->get_name);
+    }
+    $m->out(qq{</table>\n});
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+}
+
+# Now get the permissions on this group that are granted to user groups.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+	 caption => "$usr_grp_disp Permissions",
+	 number => $num);
+
+$m->comp($head_comp, "Grant the members of the following $grp_pl permission "
+	 . "to access the members of the &quot;$name&quot; $grp_disp.");
+
+# Get any existing permissions.
+my %perms;
+foreach my $perm ($pkg->list({ obj_grp_id => $id }) ) {
+    my $gid = $perm->get_usr_grp_id;
+    next if $gid == ADMIN_GRP_ID;
+    $perms{$gid} = $perm;
+}
+# Now get the rows for all user groups.
+foreach my $grp ($usr_grp_pkg->list) {
+    my $gid = $grp->get_id;
+    next if $gid == ADMIN_GRP_ID;
+    $m->comp($row_comp,
+	     grp => $grp,
+	     gid => $gid,
+	     perm => $perms{$gid});
+}
+$m->out(qq{</table>\n});
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+</%perl>
+
+%#--- Arguments ---#
+<%args>
+$grp
+$num       => undef
+$read_only => undef
+</%args>
+
+%#--- Once ---#
+<%once>;
+my $vals_aref = Bric::Util::Priv->vals_aref;
+unshift @$vals_aref, [0 => 'NONE'];
+my $vals_aref2 = [@$vals_aref];
+splice @$vals_aref2, CREATE, 1;
+my $vals_href = Bric::Util::Priv->vals_href;
+$vals_href->{0} = 'NONE';
+my $key = 'perm';
+my $pkg = get_package_name($key);
+my $usr_grp_key = 'user_grp';
+my $usr_grp_disp = get_disp_name($usr_grp_key);
+my $usr_grp_pkg = get_package_name($usr_grp_key);
+my $wf_key = 'workflow';
+my $wf_pkg = get_package_name($wf_key);
+my $wf_disp = get_disp_name($wf_key);
+my $wf_pl = lc get_class_info($wf_key)->get_plural_name;
+my $dsk_key = 'desk';
+my $dsk_pkg = get_package_name($dsk_key);
+my $dsk_disp = get_disp_name($dsk_key);
+my $dsk_pl = lc get_class_info($dsk_key)->get_plural_name;
+my $dsk_grp_key = 'desk_grp';
+my $dsk_grp_disp = get_disp_name($dsk_grp_key);
+my $dsk_grp_pkg = get_package_name($dsk_grp_key);
+my $grp_key = 'grp';
+my $grp_pkg = get_package_name($grp_key);
+my $grp_disp = lc get_disp_name($grp_key);
+my $grp_pl = lc get_class_info($grp_key)->get_plural_name;
+my $asset_grp_pkg = get_package_name('asset_grp');
+my $asset_grp_keys = { story_grp      => 1,
+	               media_grp      => 1,
+                       formatting_grp => 1 };
+</%once>
+
+%#--- Init ---#
+<%init>;
+my $style = Bric::Util::Pref->lookup_val('Permissions Widget');
+my $row_comp = ".${style}_row";
+my $head_comp = ".${style}_head";
+my $class_obj = $grp->my_class;
+my $id = $grp->get_id;
+my $name = $grp->get_name;
+$no_edit = $read_only;
+my $curr_key = $class_obj->get_key_name;
+my $is_user = $curr_key eq 'user_grp' ? 1 : 0;
+</%init>
+
+%#-- Shared Section --#
+<%shared>;
+my (%users, $no_edit);
+</%shared>
+
+
+<%def .radio_head>
+<table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99">
+% if ($_[0]) {
+    <tr>
+    <td colspan="<% @$vals_aref + 1 %>"><% $_[0] %></td>
+    </tr>
+% } # if
+    <tr class="medHeader">
+        <th>Group</th>
+% $m->out(qq{        <th>$_->[1]</th>\n}) for @$vals_aref;
+    </tr>
+</%def>
+
+<%def .radio_row>
+<%args>
+$grp
+$gid
+$create => undef
+$perm => undef
+$name => undef
+$type => 'usr'
+</%args>
+<%init>;
+$name ||= $grp->get_name;
+my ($val, $pid) = (0, '');
+if ($perm) {
+    $val = $perm->get_value;
+    $pid = $perm->get_id;
+}
+</%init>
+<tr>
+    <td width="340"><span class="label"><% $name %></span>
+        <& '/widgets/profile/hidden.mc', value => $pid, name => "${type}_perm_id" &>
+        <& '/widgets/profile/hidden.mc', value => $gid, name => "${type}_grp_id" &>
+    </td>
+% if ($no_edit) {
+%     foreach my $v (@$vals_aref) {
+    <td align="middle" height="20" width="60"><% $v->[0] == $val ? 'Yes' : '&nbsp;' %></td>
+%     } # foreach
+% } else {
+%     foreach my $v (@$vals_aref) {
+%         if ($v->[0] == CREATE && !$create && ($type eq 'usr' || !$grp->get_permanent)) {
+    <td align="middle" valign="top" height="20" width="60">&nbsp;</td>
+% } else {
+    <td align="middle" valign="top" height="20" width="60">
+        <input type="radio" value="<% $v->[0] %>" name="<% "$type|$gid" %>"<% $v->[0] == $val ? ' checked' : '' %> />
+    </td>
+%         } # if
+%     } # foreach
+% } # if
+</tr>
+</%def>
+
+<%def .select_head>
+<table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99">
+% if ($_[0]) {
+    <tr>
+    <td colspan="2"><% $_[0] %></td>
+    </tr>
+% } # if
+    <tr class="medHeader">
+        <th>Group</th>
+        <th>Permission</th>
+    </tr>
+</%def>
+
+<%def .select_row>
+<%args>
+$grp
+$gid
+$perm => undef
+$name => undef
+$create => undef
+$type => 'usr'
+</%args>
+<%init>;
+$name ||= $grp->get_name;
+my ($val, $pid) = (0, '');
+if ($perm) {
+    $val = $perm->get_value;
+    $pid = $perm->get_id;
+}
+my $opts = $create || ($type ne 'usr' && $grp->get_permanent) ?
+  $vals_aref : $vals_aref2;
+</%init>
+<tr>
+    <td width="340"><span class="label"><% $name %></span>
+        <& '/widgets/profile/hidden.mc', value => $pid, name => "${type}_perm_id" &>
+        <& '/widgets/profile/hidden.mc', value => $gid, name => "${type}_grp_id" &>
+    </td>
+% if ($no_edit) {
+    <td height="20"><% $vals_href->{$val} %></td>
+% } else {
+    <td height="20"><& '/widgets/profile/select.mc', name => "$type|$gid", value => $val,
+           options => $opts, useTable => 0 &>
+    </td>
+% } # if
+</tr>
+</%def>
+
+%#--- Log History ---#
+<%doc>
+$Log: display.html,v $
+Revision 1.1  2001-09-06 21:52:16  wheeler
+Initial revision
+
+</%doc>

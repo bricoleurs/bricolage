@@ -1,0 +1,34 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:53:21 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Garth Webb <garth@perijove.com>
+--
+
+-- -----------------------------------------------------------------------------
+-- Table: keyword
+
+ALTER TABLE keyword ADD
+	CONSTRAINT fk_keyword__grp FOREIGN KEY (synonym_grp_id)
+     	REFERENCES grp(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: keyword_member
+
+ALTER TABLE    keyword_member
+ADD CONSTRAINT fk_keyword__keyword_member FOREIGN KEY (object_id)
+REFERENCES     keyword(id) ON DELETE CASCADE;
+
+ALTER TABLE    keyword_member
+ADD CONSTRAINT fk_member__keyword_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+
+/*
+Change Log:
+$Log: Keyword.con,v $
+Revision 1.1  2001-09-06 21:53:21  wheeler
+Initial revision
+
+*/

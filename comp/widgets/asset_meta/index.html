@@ -1,0 +1,36 @@
+<html>
+<head>
+<title> Asset Meta Test Page </title>
+</head>
+
+<body>
+
+<form>
+<& '/widgets/asset_meta/asset_meta.mc', 
+	id => $id, 
+	type => $type,
+	section => $section,
+	action => $action &>
+
+</form>
+
+<& '/widgets/debug/debug.mc' &>
+
+</body>
+
+</html>
+
+<%init>
+	$id = 1027 unless $id;
+	$type = 'story' unless $type;
+	$section = 'notes' unless $section;
+	$action = 'edit' unless $action;
+
+</%init>
+
+<%args>
+$id => undef
+$type => undef
+$section => undef
+$action => undef
+</%args>

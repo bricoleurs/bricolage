@@ -1,0 +1,45 @@
+<& '/widgets/search/search.mc', 
+  object       => 'media', 
+  type         => 'media', 
+  field        => 'title',
+  use_form_tag => 0 &>
+
+% my $relate_id = $tile->get_related_media_id;
+<P></P>
+<a name="results" />
+<& /widgets/listManager/listManager.mc,
+   object   => 'media',
+   title    => 'Choose Related Media',
+   sortBy   => 'name',
+   select   => undef,
+   profile  => \&related_profile,
+   featured => $relate_id ? [$relate_id] : undef,
+   exclude  => [$tile->get_object_instance_id],
+   fields   => [qw(id name uri cover_date)],
+   addition => '',
+   behavior  => 'expand',
+&>
+<P></P>
+
+<input type="image" src="/media/images/return_dgreen" border=0 name="<% $widget %>|related_up_cb" value="Return">
+
+<%args>
+$widget
+</%args>
+
+<%init>
+    # the tile object
+    my $tile = get_state_data($widget, 'tile');
+</%init>
+
+<%once>
+sub related_profile {
+    my ($o,$flags) = @_;
+    
+    unless ($flags->{'featured'}) {
+        return ['Relate', $r->uri, "container_prof|relate_media_cb=".$o->get_id];
+    } else {
+        return ['Un-relate', $r->uri, "container_prof|unrelate_media_cb=".$o->get_id];
+    }
+}
+</%once>

@@ -1,0 +1,66 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+<name> -- <description>
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:39 $
+
+=head1 DESCRIPTION
+
+<description>
+
+=cut
+</%doc>
+
+%#-- Once Section --#
+<%once>;
+my $type = 'element'; # Hack!
+my $disp = get_disp_name('story');
+my $context = "Workflow | Profile | $disp | ";
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+
+%#-- Init Section --#
+<%init>
+# Do any redirects first.
+do_queued_redirect();
+
+# Grab the content.
+my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
+			section => 'contributers',
+			param   => \%ARGS);
+</%init>
+
+%#-- Begin HTML --#
+
+<& /widgets/wrappers/sharky/header.mc, 
+	title => 'Contributer Association',
+	context => $context . $rc->get('story_prof|title') . 'Conbributors'
+&>
+
+<form action="<% $r->uri %>" method="post" name="theForm">
+<% $content %>
+</form>
+
+<& /widgets/wrappers/sharky/footer.mc &>
+
+%#-- End HTML --#
+
+<%doc>
+$Log: contributers.html,v $
+Revision 1.1  2001-09-06 21:52:39  wheeler
+Initial revision
+
+</%doc>

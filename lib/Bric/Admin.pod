@@ -1,0 +1,1398 @@
+=head1 NAME
+
+Bric::Admin - Bricolage System Administration Guide.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:46 $
+
+=head1 DESCRIPTION
+
+This guide is intended for the system administrator in charge of installing,
+configuring, or tuning a Bricolage system.
+
+=head1 PACKAGES
+
+I've created a package that contains all the software required by Bricolage.
+Here's how to use it to configure and install all that software. The software
+includes the following packages:
+
+=over 4
+
+=item *
+
+Perl 5.6.1
+
+=item *
+
+Perl Modules:
+
+=over 4
+
+=item Storable 1.0.10
+
+=item Time::HiRes 01.20
+
+=item Syslog 0.95
+
+=item libnet 1.0703
+
+=item Devel::Symdump 2.01
+
+=item DBI 1.19
+
+=item Cache::Cache 0.08
+
+=item Digest::MD5 2.12
+
+=item URI 1.12
+
+=item HTML::Tagset 3.03
+
+=item HTML::Parser3.23
+
+=item MIME::Base64 2.12
+
+=item libwww-perl 5.50
+
+=item Image::Info 1.07
+
+=item Text::Iconv 1.1
+
+=item MLDBM 2.00
+
+=item Params::Validate 0.04
+
+=item HTML::Mason 1.03
+
+=item DBD::Pg 1.00
+
+=item Apache::Session 1.53
+
+=item libapreq 0.31_03
+
+=back
+
+=item *
+
+OpenSSL 0.9.6a
+
+=item *
+
+MM 1.1.3 - Shared Memory Library
+
+=item *
+
+mod_ssl 2.8.4-1.3.20 - Apache Interface to OpenSSL
+
+=item *
+
+mod_perl 1.25 - Apache/Perl Integration
+
+=item *
+
+Apache 1.3.20
+
+=item *
+
+PostgreSQL 7.1.2
+
+=back
+
+=head1 INSTALLATION
+
+All of the above packages may be found in bricolage.tar.gz. [Enter something
+here about where to find it once we've gone open source.] The included shell
+script will install all of the packages for you. It has been tested on RedHat
+Linux 6.2 only, unfortunately, so your milage may vary. Here are the steps for
+installing the software using that script:
+
+=over 4
+
+=item *
+
+Download bricolage.tar.gz and save it to /usr/local/src (you will need to have
+root access to your system to do this).
+
+=item *
+
+Untar and unzip bricolage.tar.gz. This should create the directory
+/usr/local/src/bricolage.
+
+=item *
+
+Change directories into bricolage, and then run the installer script:
+
+  ./install
+
+=item *
+
+The script will begin installing all the above software packages for you.
+Details on installing the individual packages may be found below.
+
+=item *
+
+Near the end of the installation process, you will be prompted to enter
+information for the certificate. Do so however you like - or better yet, get
+yourself a formal certificate from a certificate authority such as VeriSign. If
+you do it yourself, you may have to tweak the FQDN entry in order to ge the
+server to properly start up with SSL. More on that below. You'll be prompted to
+enter the certificate information twice. Afterwards, you'll see this prompt:
+
+  Encrypt the private key now? [Y/n]:
+
+Enter "n" or you'll have to type in a password every time you start Apache -
+yuck! Enter "y" if you really don't trust your system users.
+
+=item *
+
+When the install script has finished, start PostgreSQL. You can use one of the
+scripts in startup/ if you like.
+
+=item *
+
+Checkout Bricolage into /usr/local/bricolage (cvs checkout bricolage). [Change this
+later, once we've packaged up the code for actual distribution].
+
+=item *
+
+Checkout the tools repository from CVS (cvs checkout tools). It doesn't matter
+where you check this out, since these are just utilities you'll use only for the
+installation. [Change this later, once we've packaged up the code for actual
+distribution].
+
+=item *
+
+Change directories into tools/bin and run pgimport as follows:
+
+  ./pgimport -u postgres -p postgres -d dbname -c -m bric_user:bric_user_password
+
+Where 'dbname' is the name you want the Bricolage database to be called in
+PostgreSQL, and 'bric_user' and 'bric_user_password' are the user name and
+password to be created in the PostgreSQL database, and under which the Bricolage
+application will run. Note that the -u argument must represent a PostgreSQL user
+with CREATE DATABASE and CREATE USER permissions. The 'bric_user' user will be
+creaed without these permissions (the 'dbname' database will be owned by the
+user passed in via the -u argument), but will be granted full CREATE, DELETE,
+UPDATE, and SELECT permissions an all objects in the Bricolage database.
+
+=item *
+
+Start Apache. Use one of the scripts in scripts/ if you like. You can manually
+start it via the following command:
+
+  /user/local/bricolage/bin/apachectl startssl
+
+Be sure to use startssl.
+
+=item *
+
+Try to hit the web server. If you're prompted for a login, you're in! If not,
+check the Apache error log to figure out what might have gone wrong.
+
+=back
+
+=head1 CONFIGURATION
+
+Configuration of Bricolage is handled via two interfaces. The first is the user
+interface, where application administrators can set preferences such as Time
+Zone and Date Format. The second interface -- and the one of interest to us here
+-- is the Bricolage configuration file, which you'll find at
+/usr/local/bricolage/conf/bricolage.conf. This file is designed for system
+configuration, and thus to be edited by system administrators -- in other words,
+the audience of for this document.
+
+The Bricolage configuration file contains a number of configuration options,
+each of which falls roughly into a number of categories, described below. Edit
+this document to tweak the functionality of Bricolage. The vast majority of
+configuration issues can be resolved by editing this docuement alone.
+
+B<Note:> Bricolage uses the C<BRICOLAGE_ROOT> environment variable to determine
+where to find all of its libraries and configuration files. If this environment
+variable is not defined in the shell before starting Bricolage, Bricolage will
+default to '/usr/local/bricolage'. If you have installed Bricolage in any other
+location, you will need to set this environment variable before you start
+Bricolage or use any of its tools. The value of this environment variable is
+important for many of the configuration directives, as well. You will find it
+represented in this document as C<$BRICOLAGE_ROOT>.
+
+And now, on with the descriptions of the Bricolage configuration directives.
+
+=head2 Apache Configuration
+
+These settings relate the similarly-named Apache run-time configuration
+directives. (In fact, the descriptions here are largely cribbed from the Apache
+documentation.) Read the Apache documentation for more information on these and
+other Apache directives. Depending on your environment, changing some of these
+may help improve performance.
+
+B<Note:> These configuration settings are used directly in the Apache
+configuration file. Thus, advanced users can configure Apache themselves by
+editing the httpd.conf file directly. This is not recommended in most cases,
+however, as Bricolage uses Perl to configure Apache, and some of the
+configurations are used elsewhere, too. If you decide to edit the httpd.conf
+file yourself, however, be sure to also update the bricolage.conf file, so that
+the settings stay in sync.
+
+=over 4
+
+=item *
+
+B<APACHE_SERVER_ROOTL:> This directive is the equivalent of Apache's ServerRoot
+directive. It sets the directory in which the server lives. Defaults to
+'/usr/local/apache' if not specified. This isn't portable, so we recommend you
+set it!
+
+=item *
+
+B<PID_FILE:> Sets the file to which the server records the process id of the
+daemon. If the filename does not begin with a slash (/) then it is assumed to be
+relative to the ServerRoot. Defaults to "/usr/local/apache/logs/httpd.pid" if
+not specified. This isn't portable, so we recommend you set it!
+
+=item *
+
+B<SERVER_NAME:> The DNS name or IP address of the Bricolage server. If this
+configuration is not specified, Bricolage will use the unix-specific system
+tools C<hostname> and C<dnsdomainname> to try to establish the server name.
+Needless to say, these tools are not portable, so we highly recommend that you
+set this configuration directive in bricolage.conf.
+
+=item *
+
+B<SERVER_ADMIN:> The email address of the server administrator. Defaults to
+"root@SERVER_NAME".
+
+=item *
+
+B<DOCUMENT_ROOT:> Sets the directory from which Apache will serve files.
+Defaults to C<$BRICOLAGE_ROOT/comp> if not specified.
+
+=item *
+
+B<MIN_SPARE_SERVERS:> Sets the desired minimum number of idle Apache child
+server processes. An idle process is one which is not handling a request. If
+there are fewer than MinSpareServers idle, then the parent process creates new
+children at a maximum rate of 1 per second. Defaults to "2" if not specified.
+
+=item *
+
+B<MAX_SPARE_SERVERS:> Sets the desired maximum number of idle Apache child
+server processes. An idle process is one which is not handling a request. If
+there are more than MaxSpareServers idle, then the parent process will kill off
+the excess processes. Defaults to "6" if not specified.
+
+=item *
+
+B<START_SERVERS:> Sets the number of Apache child server processes created on
+startup. As the number of processes is dynamically controlled depending on the
+load, there is usually little reason to adjust this parameter. Defaults to "2"
+if not specified.
+
+=item *
+
+B<MAX_REQUESTS_PER_CHILD:> Sets the limit on the number of requests that an
+individual Apache child server process will handle. After MaxRequestsPerChild
+requests, the child process will die. If MaxRequestsPerChild is 0, then the
+process will never expire. Defaults to "0" if not specified.
+
+=item *
+
+B<MAX_CLIENTS:> Sets the limit on the number of simultaneous requests that can
+be supported; not more than this number of Apache child server processes will be
+created. Defaults to "150" if not specified.
+
+=item *
+
+B<KEEP_ALIVE:> Provides long-lived Apache HTTP sessions which allow multiple
+requests to be sent over the same TCP connection. Performance benefits to
+Bricolage in enabling this feature are unknown. Defaults to "Off" if not
+specified.
+
+=item *
+
+B<MAX_KEEP_ALIVE_REQUESTS:> Limits the number of requests allowed per connection
+when KEEP_ALIVE is on. If it is set to "0", unlimited requests will be allowed.
+Defaults to "100" if not specified.
+
+=item *
+
+B<KEEP_ALIVE_TIMEOUT:> The number of seconds Apache will wait for a subsequent
+request before closing the connection when KEEP_ALIVE is on. Defaults to "15" if
+not specified.
+
+=item *
+
+B<ERROR_LOG:> Sets the name of the file to which the server will log any errors
+it encounters. Defaults to " /usr/local/apache/logs/error_log" if not specified.
+This is not portable, so it may need to be changed. [We may want to change it to
+keep the log in the Bricolage directory space, anyway.]
+
+=item *
+
+B<LOG_LEVEL:> Adjusts the verbosity of the messages recorded in the error logs
+(see ERROR_LOG directive). The following levels are available, in order of
+decreasing significance:
+
+=over 4
+
+=item emerg
+
+=item alert
+
+=item crit
+
+=item error
+
+=item warn
+
+=item notice
+
+=item info
+
+=item debug
+
+=back
+
+Defaults to "info" if not specified.
+
+=item *
+
+B<CUSTOM_LOG:> Specifies the location of the access log. Defaults to
+"/usr/local/apache/logs/access_log combined" if not specified. Note that this
+location is not portable, so it may need to be changed. The 'custom' alias is
+used by the LOG_FORMAT directive below.
+
+=item *
+
+B<LOG_FORMAT:> The format in which all logging will be, erm, I<logged> to the
+log file specified by the ERROR_LOG directive. See the Apache documentation for
+details on how this argument may be formatted. IF unspecified, the default is
+this string:
+
+  '%h %l %u %t "%r" %>s %b "%{Referer}i "%{User-Agent}i" "%{Cookie}i" "%v:%p"' combined
+
+=item *
+
+B<SCORE_BOARD_FILE:> This directive is required on some architectures to place a
+file that the Apache server will use to communicate between its children and the
+parent. The easiest way to find out if your architecture requires a scoreboard
+file is to run Apache and see if it creates the file named by the directive. If
+your architecture requires it then you must ensure that this file is not used at
+the same time by more than one invocation of Apache. Will not be defined if not
+specified.
+
+=item *
+
+B<TYPES_CONFIG:> Sets the location of the MIME types configuration file. The
+file name value is assumed to be relative to the APACHE_SERVER_ROOT if it
+doesn't start with a "/". This file sets the default list of mappings from
+filename extensions to content type Defaults to
+"/usr/local/apache/conf/mime.types" if not specified.
+
+=item *
+
+B<USE_CANONICAL_NAME:> With USE_CANONICAL_NAME on, Apache will use the
+SERVER_NAME and PORT directives to construct a canonical name for the server.
+This name is used in all self-referential URLs, Defaults to "On" if not
+specified.
+
+With USE_CANONICAL_NAME off, Apache will form self-referential URLs using the
+hostname and port supplied by the client if any are supplied (otherwise it will
+use the canonical name).
+
+=item *
+
+B<HOST_NAME_LOOKUPS:> Enables DNS lookups so that host names can be logged. The
+available values are "On", "Off", and "Double". The value "Double" refers to
+doing double-reverse DNS. That is, after a reverse lookup is performed, a
+forward lookup is then performed on that result. At least one of the ip
+addresses in the forward lookup must match the original address. Defaults to
+"Off" if not specified.
+
+=item *
+
+B<SERVER_SIGNATURE:> Allows the configuration of a trailing footer line under
+server-generated documents. The available values are "Off", "On", and "Email".
+Defaults to "Email" if not specified.
+
+=item *
+
+B<TIMEOUT:> The TIMEOUT directive defines the amount of time Apache will wait
+for three things:
+
+=over 4
+
+=item 1.
+
+The total amount of time it takes to receive a GET request.
+
+=item 2.
+
+The amount of time between receipt of TCP packets on a POST or PUT request.
+
+=item 3.
+
+The amount of time between ACKs on transmissions of TCP packets in responses.
+
+=back
+
+Defaults to "30" if not specified.
+
+=back
+
+=head2 Apache OpenSSL (mod_ssl) Configuration
+
+The Apache OpenSSL interface (mod_ssl) is an integral part of the Bricolage
+application. Not only does it enabled secure logons to the system, but it also
+allows completely secure access to the entire application, should you need it
+(and not need to worry about the performance overhead.). The following
+directives derive from their similarly-named mod_ssl directives. See the mod_ssl
+documentation <http://www.modssl.org/docs> for more detail.
+
+=over 4
+
+=item *
+
+B<SSL_SESSION_CACHE:> Configures the storage type of the global/inter-process
+SSL Session Cache. This cache is an optional facility which speeds up parallel
+request processing. For requests to the same server process (via HTTP keep-alive
+-- see the KEEP_ALIVE directive above), OpenSSL already caches the SSL session
+information locally. But because modern clients request inlined images and other
+data via parallel requests (usually up to four parallel requests are common)
+those requests are served by different pre-forked server processes. Here an
+inter-process cache helps to avoid unneccessary session handshakes.
+
+The available values are "none", which could lead to speed penalties;
+"dbm:/path/to/datafile", which makes use of a DBM hashfile on the local disk to
+synchronize the local OpenSSL memory caches of the server processes; and
+"shm:/path/to/datafile[(size)]", which makes use of a high-performance hash
+table (approx. size bytes in size) inside a shared memory segment in RAM
+(established via /path/to/datafile) to synchronize the local OpenSSL memory
+caches of the server processes. See the mod_ssl documentation for more
+information. Defaults to "dbm:/usr/local/apache/logs/ssl_scache" if not
+specified. This default isn't portable, so we recommend you set it!
+
+=item *
+
+B<SSL_SESSION_CACHE_TIMEOUT:> Sets the timeout in seconds for the information
+stored in the global/inter-process SSL Session Cache and the OpenSSL internal
+memory cache. It can be set as low as 15 for testing, but should be set to
+higher values like 300 in real life. Defaults to "300" if not specified.
+
+=item *
+
+B<SSL_MUTEX:> Configures the SSL engine's semaphore (aka. lock) which is used
+for mutual exclusion of operations which have to be done in a synchronized way
+between the pre-forked Apache server processes. The available values are "none",
+which isn't recommended; "file:/path/to/mutex", which is the portable and (under
+Unix) always provided Mutex variant where a physical (lock-)file is used as the
+Mutex; and "sem", which is the most elegant but also most non-portable Mutex
+variant, and is only available when the underlying platform supports it.
+Defaults to "file:/usr/local/apache/logs/ssl_mutex" if not specified. This
+default isn't portable, so we recommend you set it!
+
+=item *
+
+B<SSL_LOG:> Sets the name of the dedicated SSL protocol engine logfile. Error
+type messages are additionally duplicated to the general Apache error log file
+(directive ERROR_LOG). Defaults to "/usr/local/apache/logs/ssl_engine_log" if
+not specified. This default isn't portable, so we recommend you set it!
+
+=item *
+
+B<SSL_LOG_LEVEL:> Sets the verbosity degree of the dedicated SSL protocol engine
+logfile. The level is one of the following (in ascending order where higher
+levels include lower levels):
+
+=over 4
+
+=item none
+
+=item error
+
+=item warn
+
+=item info
+
+=item trace
+
+=item debug
+
+=back
+
+Defaults to "info" if not specified.
+
+=item *
+
+B<SSL_CERTIFICATE_FILE:> Points to the PEM-encoded Certificate file for the
+server and optionally also to the corresponding RSA or DSA Private Key file for
+it (contained in the same file). If the contained Private Key is encrypted the
+Pass Phrase dialog is forced at startup time. Defaults to
+"/usr/local/apache/conf/ssl.crt/server.crt" if not specified. This default isn't
+portable, so we recommend you set it!
+
+=item *
+
+B<SSL_CERTIFICATE_KEY_FILE:> Points to the PEM-encoded Private Key file for the
+server. Defaults to "/usr/local/apache/conf/ssl.key/server.key" if not
+specified. This default isn't portable, so we recommend you set it!
+
+=item *
+
+B<SSL_CIPHER_SUITE:> This complex directive uses a colon-separated cipher-spec
+string consisting of OpenSSL cipher specifications to configure the Cipher Suite
+the client is permitted to negotiate in the SSL handshake phase. See the mod_ssl
+documentation on the "SSLCipherSuite" directive for details on how to use this
+directive. Defaults to
+"ALL:!ADH:!EXP56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL" if not
+specified.
+
+=item *
+
+B<SSL_PASS_PHRASE_DIALOG:> The mehtod for Apache to use to query the
+administrator for a pass phrase should the private key file be encrypted (see
+SSL_CERTIFICATE_KEY_FILE above and "Building Certificates" below). The available
+values are "builtin", which will prompt the administrator for the pass phrase
+upon Apache startup; and "exec:/path/to/program", which will force Apache to
+call an external program to prompt for the pass phrase and decrypt the private
+key. Use the latter option only if you know exactly what you're doing! Defaults
+to "builtin" if not specified.
+
+=back
+
+=head2 Database Configuration
+
+The database configuration directives tell Bricolage where to find its data, and
+how to get it. Specifically, you want to assign to these diretives the values
+you passed to the -d and -m arguments of C<pgimport> (see above).
+
+=over 4
+
+=item *
+
+B<DB_NAME:> The name of the Bricolage PostgreSQL database, and should be the
+same as the value passed to the -d argument to C<pgimmport> (see above).
+Defaults to "sharky" if not specified.
+
+=item *
+
+B<DBI_USER:> The name of the PostgreSQL user as whom Bricolage should connect to
+the DB_NAME database. This should be the same as the username passed to the
+first half of the -m argument to C<pgimport> (see above). Defaults to
+"castellan" if not specified.
+
+=item *
+
+B<DBI_PASS:> The password of the PostgreSQL user as whom Bricolage should connect to
+the DB_NAME database. This should be the same as the password passed to the
+second half of the -m argument to C<pgimport> (see above). Defaults to
+"nalletsac" if not specified.
+
+=back
+
+=head2 System User Configuration
+
+This is the name and group of the system user as whom Bricolage and Apache run.
+If you decide to edit httpd.conf yourself (but you wouldn't do that, right?),
+you'll want to make sure that the names set in bricolage.conf agree with the
+httpd.conf C<User> and C<Group> directives, since the user name is expected to
+be the same for other parts of the application.
+
+=over 4
+
+=item *
+
+B<SYS_USER:> The system user as whom Bricolage runs. Defaults to "nobody" if not
+specified.
+
+=item *
+
+B<SYS_GROUP:> The system group of which SYS_USER is a member. Defaults to
+"nobody" if not specified.
+
+=back
+
+=head2 Mason Configuration
+
+There are two parts to the Mason configuration. The first is for the Bricolage
+UI environment, and thus it needs to point to the Bricolage UI Mason elements.
+The second is for the Bricolage Publish environment, which is a separate
+environment from the Bricolage UI environment. The directives for the Publish
+environment will need to point to the directories where Bricolage Templates are
+stored.
+
+=over 4
+
+=item *
+
+B<MASON_COMP_ROOT:> Mason's element root. This is the directory in which all the
+Bricolage UI element sare stored. Defaults to C<$BRICOLAGE_ROOT/comp> if not
+specified.
+
+=item *
+
+B<MASON_DATA_ROOT:> Mason's data root. This where Mason stores the Bricolage UI
+elements once they've been compilied Defaults to C<$BRICOLAGE_ROOT/data> if not
+specified. Make sure that SYS_USER has permission to write to this directory.
+
+=item *
+
+B<BURN_ROOT:> The staging area directory where the burn system places content
+files upon publication or preview. Defaults to C<$BRICOLAGE_ROOT/data/burn> if not
+specified. Make sure that SYS_USER has permission to write to this directory.
+
+=item *
+
+B<BURN_COMP_ROOT:> The directory templates are deployed to. Defaults to
+C<$BRICOLAGE_ROOT/burn/comp> if not specified.
+
+=item *
+
+B<BURN_DATA_ROOT:> The directory where Mason stores Templates once it has
+compiled them. Defaults to C<$BRICOLAGE_ROOT/burn/data> if not specified. Make
+sure that SYS_USER has permission to write to this directory.
+
+=back
+
+=head2 Authentication Configuration
+
+These directives set rules for Bricolage user authentication.
+
+=over 4
+
+=item *
+
+B<AUTH_TTL:> The amount of time, in seconds, a user is allowed to be idle before
+he/she is automatically logged out. Defaults to 8 hours (28800 seconds) if not
+specified.
+
+=item *
+
+B<AUTH_SECRET:> A random string that's used to encrypt the authentication cookie
+information in a double-MD5 hashing scheme. It's a good idea to change this
+value periodically so that anyone who might have seen it before can't
+reverse-engineer the authentication cookie. If you're running the distribution
+monitor (see below) on a different machine, be sure that this directive is
+exactly the same as on the machine running the Bricolage distribution server.
+Defaults to the following string if not specified:
+
+  ^eFH5D,~3!f9o&3f_=dwePL3f:/.Oi|FG/3sd9=45oi%8GF*)4#0gn3)34tf\`3~fdIf^ N:
+
+=item *
+
+B<LOGIN_LENGTH:> The minimum length of login name allowed to users. Defaults to
+"6" if not specified.
+
+=item *
+
+B<PASSWD_LENGTH:> The minimum length of password allowed to users. Note that
+passwords can be of infinite length. Defaults to "6" if not specified.
+
+=back
+
+=head2 Character Set Configuration
+
+All character data is stored in the PostgreSQL database in Unicode (UTF-8).
+However, most browsers submit data to the Bricolage server in other character
+sets. This directive specifies what character set to expect from Bricolage
+users' browsers.
+
+=over 4
+
+=item *
+
+B<CHAR_SET:> The character set of in which data will be passed to the API.
+ISO-8859-1 should work for most Western European users. Note that this setting
+is necessary as all data is stored in the database in Unicode. Defaults to
+ISO-8859-1 if not specified. Defaults to "ISO-8859-1" if not specified.
+
+=back
+
+=head2 Distribution Configuration
+
+These directives affect the how distribution is handled by Bricolage. There are
+two basic ways to handle distribution. The first, default approach is to let the
+Bricolage application server also handle distribution. In this case, the same
+Apache processes that handle the UI will also handle distribution
+responsibilities. The second approach is to set up a separate Apache server just
+to handle distribution. That server will need access to C<$BRICOLAGE_ROOT/stage>
+in order to read the files there and distribute them elsewhere. Making
+C<$BRICOLAGE_ROOT/stage> an NFS mount will do the trick. [Will need to write a
+lot more documentation about this at some point -- and need think about saving
+media to /stage instead of /media/assets, too.]
+
+=over 4
+
+=item *
+
+B<ENABLE_DIST:> This directive indicates whether the Bricolage server will also
+handle disbribution responsibilities. If set to "On" or "Yes" or "1", the
+Bricolage server will handle distribution. If set to any other value, it will
+not. In this latter case, be sure you set up another server to do it. Note that
+this directive has no effect on previews, as those need to be immediate and will
+thus always be handled by the Bricolage server. Defaults to "1" if not
+specified.
+
+=item *
+
+B<DIST_ATTEMPTS:> This directive tells the distribution engine how many times to
+attempt to distribute a resource before giving up. This number can range from
+"1" to "10", and defaults to "3" if not specified.
+
+=item *
+
+B<PREVIEW_LOCAL:> This directive tells Bricolage to use its own Apache server to
+preview stories. If set to "On" or "Yes" or "1", Bricolage will use its own
+Apache server to serve preview pages (using a directory prefix from the root).
+If it's set to any other value, it will use a server from a destination with the
+'Preview' checkbox checked. For large Bricolage installations where performance
+is important, wwe recommend that you use a separate server for previews, as
+using the Bricolage server itself adds a fair bit of overhead to every request
+-- including requests outside of the preview directory. Defaults to "1" if not
+specified.
+
+=item *
+
+B<PREVIEW_MASON:> This directive tells Bricolage to use Mason for local story
+previews. If set to "On" or "Yes" or "1", Bricolage will use its own Apache
+server and Mason to serve preview pages. If it's set to any other value, it will
+not use Mason for local previews. For large Bricolage installations, we
+recommend that you not use Bric's builtin previewing support (see above), and
+even when you do, enabling Mason for local previews adds even more overhead to
+every request -- including requests outside of the preview directory. Defaults
+to "0" if not specified, and has no affect unless the PREVIEW_LOCAL directive
+has been activated (see above).
+
+=back
+
+=head2 Alert Configuration
+
+The Bricolage alerting system allows users to receive notifications upon the
+triggering of certain events within the system (see Bric::Util::AlertType and
+Bric::Util::Alert for the Alert API documentation). There are a few system-level
+directives that affect Bricolage Alerting.
+
+=over
+
+=item *
+
+B<SMTP_SERVER:> The DNS name of an SMTP server that the Alerting API can send
+alerts to. All alerts are sent by email, so this directive is important to fill
+out. Defaults to SERVER_NAME directive if not specified.
+
+=item *
+
+B<ALERT_FROM:> The email address that appears in the 'From' header of emailed
+alerts. Defaults to SERVER_ADMIN directive if not specified. [It might be
+worthwhile in a future version to allow Alert Type owners to set this
+themselves.]
+
+=item *
+
+B<ALERT_TO_METH:> The email header used for addressing alert recipients. Use
+"to" if you want everyone who receives the same alert to see who else received
+it. Use "bcc" if you don't want anyone to see who else got an alert, or if you
+just want to save the bandwidth. Defaults to "bcc" if not specified. [It might
+be worthwhile in a future version to allow Alert Type owners to set this
+themselves.]
+
+=back
+
+=head2 Search Configuration
+
+=over
+
+=item * 
+
+B<FULL_SEARCH:> If set to 1, the system will perform
+sub-string searches by default.  This is more expensive but generally
+what users expect.
+
+=back
+
+=head1 DIRECTORY PERMISSIONS
+
+As noted above, you need to supply the user and group names under which
+Bricolage will run. It's important that this user have permission to write to
+certain directories, as Bricolage will store some data files on the file system.
+So be sure to grant to SYS_USER and/or SYS_GROUP the necessary permissions to
+write to the directories identified by the MASON_DATA_ROOT, BURN_ROOT, and
+BURN_DATA_ROOT configuration directives. Also, Bricolage stores Media asset
+files in C<$BRICOLAGE_ROOT/data/media>, so be sure the necessary permissions are
+set on that directory as well. If you're using the default configuration
+settings, then you'll only need to ensure that the following two directories are
+fully writable by SYS_USER, since the directives point either to one of these
+directories or to a subdirectory of these directories:
+
+  $BRICOLAGE_ROOT/data
+  $BRICOLAGE_ROOT/comp/data
+
+=head1 INSTALLATION ISSUES
+
+The following address a number of installation issues you might face.
+
+=head2 Building Certificate
+
+If you choose to create your own certificate rather than use one certified by a
+certificate authority such as VeriSign, it's possible that you'll run into
+issues getting the server to start up with the certificate properly. If so,
+you'll see errors in the Apache error log that look like this one:
+
+  [Wed Jul  4 10:48:25 2001] [error] OpenSSL: error:14094412:SSL
+  routines:SSL3_READ_BYTES:sslv3 alert bad certificate [Hint: Subject CN in
+  certificate not server name or identical to CA!?]
+
+This issue seems to stem from a different between your server name and the name
+you specified when you created the certificate. The only solution I've found to
+this issue is to keep building the certificate, putting different values into
+the prompts for FQDN and other settings (and keeping them the same across the
+two different prompts) until the error goes away.
+
+If you're facing this issue, here's how to manually build a new certificate:
+
+=over 4
+
+=item 1.
+
+Change directories into /usr/local/src/bricolage/apache_build/apache_1.2.20.
+
+=item 2.
+
+Execute the following command:
+
+  make certificate TYPE=custom
+
+You will be prompted as you were during the inital installation. Follow the same
+instructions, but try different values in some of the prompts. It seems to
+matter that you include the actual server name in the "Common Name" field.
+Again, be sure to enter "n" or you'll have to type in a password every time you
+start Apache. Enter "y" if you really don't trust your system users.
+
+=item 3.
+
+Execute the following command:
+
+  make install
+
+This will install the new certificate.
+
+=item 4.
+
+Stop and Start Apache again:
+
+  /usr/local/bricolage/bin/apachectl stop
+  /usr/local/bricolage/bin/apachectl startssl
+
+=item 5.
+
+Try to connect to the server again. If you get the same error, repeat these
+steps, entering different values for the certificate prompts, until it does
+work.
+
+=back
+
+=head1 MANUAL INSTALLATION
+
+It's likely that errors will occur with the C<install> script that comes with
+the bricolage.tar.gz package, especially since it was developed and tested only
+on RedHat Linux 6.2 systems. (It certainly won't work on Windows Systems!) Or
+perhaps you are the kind of administrator who likes to do everything yourself.
+In either case, we provide these instructions for installing all the required
+packages manually.
+
+=head2 Perl 5.6.1
+
+The standard Perl installation should apply with no problems. We do recomend the
+following Configure commands:
+
+=over 4
+
+=item -Umymalloc
+
+This Configure command will build perl without perl's malloc. This is necessary
+to prevent segfaults with XML::Parser under mod_perl. [Note that XML::Parser
+isn't currently part of Bricolage, but will soon be, and users will likely
+install it, anyway.]
+
+=item  -Dinstallusrbinperl
+
+This Configure command will arrange for /usr/bin/perl to be linked to the
+current version of perl. If you don't specify this command, configure will
+prompt you to find out whether to link /usr/bin/perl to the current version of
+perl. We strongly suggest that you answer "yes".
+
+=item -des
+
+This optional command tells Configure that you except all the other defaults,
+and it will therefore provide terse output during the configuration.
+
+=back
+
+Here is how to install Perl 5.6.1:
+
+=over 4
+
+=item *
+
+Download perl-5.6.1.tar.gz from www.perl.com.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change to the source directory and execute these commands:
+
+  sh Configure -Umymalloc -Dinstallusrbinperl -des
+  make
+  make test
+  make install
+
+=back
+
+=head2 Perl Modules
+
+There are quite a few Perl modules required by Bricolage (see "PACKAGES" above for a
+list). Installation of these modules follows the usual perl module installation
+process:
+
+=over 4
+
+=item *
+
+Download the package sources.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change to the source directory and execute these commands:
+
+  perl Makefile.PL
+  make
+  make test
+  make install
+
+=back
+
+You can also use the CPAN module to install the modules (perldoc CPAN for
+details), or use ActiveState PPM packages if they're available. We do recommend
+that you install all but three of the required packages immediately after
+installing perl 5.6.1, and before installing the other software packages. (You
+must, of course, install them B<all> after installing Perl 5.6.1; otherwise,
+they'll be compiled under and associated with the extant perl on your system.)
+The three exceptions are DBD::Pg, which can only be installed after PostgreSQL
+7.1.2 has been installed (see below); and Apache::Session and libapreq, both of
+which can only be installed once Apache and mod_perl have been installed.
+
+=head2 OpenSSL
+
+Installation of OpenSSL follows the usual conventions. Here's an example:
+
+=over 4
+
+=item *
+
+Download openssl-0.9.6a.tar.gz from www.openssl.org.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change into the source directory, read the INSTALL file to see if you need to
+use any Configure commands, and execute these commands:
+
+  sh config <commands>
+  make
+  make test
+
+=back
+
+C<make install> insn't necessary because the sources will be compiled into
+Apache.
+
+=head2 MM - Shared Memory Library
+
+Installation of MM follows the usual conventions. Here's an example:
+
+=over 4
+
+=item *
+
+Download mm-1.1.3.tar.gz from www.engelschall.com.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change into the source directory, read the INSTALL file to see if you need to
+use any Configure commands (we recommend --disable-shared, to prevent building
+shared libraries), and execute these commands:
+
+  ./configure --disable-shared
+  make
+
+=back
+
+C<make install> insn't necessary because the sources will be compiled into
+Apache.
+
+=head2 Apache Interface to OpenSSL (mod_ssl)
+
+Installation of mod_ssl follows the usual conventions. Here's an example:
+
+=over 4
+
+=item *
+
+Download mod_ssl-2.8.4-1.3.20.tar.gz from www.modssl.org.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change into the source directory, read the INSTALL file to see if you need to
+use any Configure commands. The only one required here is C<--with-apache>, so
+you'll need to have already downloaded, gunzipped, and untarred the Apache
+sources (see below). If you already have a server certificate and a server key,
+use the C<--with-crt> and C<--with-key> commands to point to them. Then, execute
+this command:
+
+  ./configure --with-apache=/usr/local/src/bricolage/apache_1.3.20
+
+=back
+
+C<make> and C<make install> aren't necessary because the sources will be
+compiled into Apache.
+
+=head2 Apache/Perl (mod_perl)
+
+Installation of mod_perl follows the usual conventions for installing Perl
+modules. It does require a number of Configure commands, however. The most
+important command is <APACHE_SRC>, which points to the Apache sources. You will
+need to have already downloaded, gunzipped, and untarred the Apache sources
+before compiling mod_perl. Here's the routine:
+
+=over 4
+
+=item *
+
+=item *
+
+Download mod_perl-1.25.tar.gz from perl.apache.org.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Change into the source directory, read the INSTALL file to see if you need to
+use any Configure commands other than those specified below. Then execute the
+commands:
+
+  perl Makefile.PL \
+    APACHE_SRC=/usr/local/src/bricolage/apache_1.3.20/src \
+    DO_HTTPD=1 \
+    USE_APACI=1 \
+    PREP_HTTPD=1 \
+    EVERYTHING=1
+  make
+  make install
+
+=back
+
+=head2 Apache
+
+By now you've downloaded Apache and gunzipped and untarred its sources. There
+are a lot of Configure commands supported by Apache. We recommend that you use
+at least the following for Bricolage:
+
+=over 4
+
+=item --with-layout=Apache
+
+This command selects the classical Apache path layout.
+
+=item --disable-rule=EXPAT
+
+This command prevents incompatabilities between Apache's implementation of the
+Expat XML parser, and that used by Perl's XML::Parser module.
+
+=item --enable-module=ssl
+
+This command compiles in SSL support, using the mod_ssl sources configured
+earlier.
+
+=item --enable-module=rewrite
+
+This command enables the mod_rewrite module that ships with the Apache sources.
+While mod_rewrite is not currently used in Bricolage, it may be in future
+versions.
+
+=item --enable-module=so
+
+This command enables the mod_so module that ships with Apache. This shared
+libarary is used by mod_perl. [Is this true, or did I make it up?]
+
+=item --enable-module=proxy
+
+This command enables the mod_proxy module.
+
+=item --activate-module=src/modules/perl/libperl.a
+
+This command compiles in mod_perl. The library it points to was installed by the
+mod_perl make process.
+
+=back
+
+The commands you'll execute, therefore, should look something like this:
+
+=over 4
+
+=item *
+
+  ./configure \
+    "--with-layout=Apache" \
+    "--disable-rule=EXPAT" \
+    "--enable-module=ssl" \
+    "--enable-module=rewrite" \
+    "--enable-module=so" \
+    "--enable-module=proxy" \
+    "--activate-module=src/modules/perl/libperl.a"
+  make
+
+=item *
+
+Before you install Apache, however, you'll need to install the SSL certificates.
+If you compiled OpenSSL with the C<--with-crt> and C<--with-key> commands, you
+can skip this step.
+
+  make certificate TYPE=custom
+
+Follow the instructions in "Building Certificate" above to complete the
+certificate installation.
+
+=item *
+
+Finally, install Apache:
+
+  make install
+
+=item *
+
+Don't forget to install the Apache::Session and libapreq perl modules now (See
+"Perl Modules," above).
+
+=back
+
+And you're done! You can test the installation by calling
+
+  /usr/local/apache/bin/apachectl configtest
+
+=head2 PostgreSQL
+
+PostgreSQL is an integral part of Bricolage: it's where all of your assets are
+stored! Its installation is pretty straight-forward and typical, but it requires
+a number of extra steps that one might not expect. Here are the details:
+
+=over 4
+
+=item *
+
+Download postgresql-7.1.2.tar.gz from www.postgresql.org.
+
+=item *
+
+Gunzip and untar the sources.
+
+=item *
+
+Create a new system user named "postgres". This is the user that will start the
+PostgreSQL server. The startup scripts that come with PostgreSQL mostly seem to
+expect that the postgres user will use the tcsh shell, so you may wish to set
+that shell now. Here's an example under Linux:
+
+  /usr/sbin/useradd -d /home/postgres postgres -s /bin/tcsh
+
+=item *
+
+Change into the source directory and read the INSTALL file to see if you need to
+use any Configure commands. One Configure command is required by Bricolage:
+C<--enable-multibyte=UNICODE>. Because Bric stores all of its textual data in
+Unicode format, this command is not optional. If you require the use of a
+different character set for your installation, see the CHAR_SET configuration
+directive above to ensure that data will be translated to and from your
+character set and the Unicode stored in the database.
+
+=item *
+
+Install PostgreSQL:
+
+  ./configure --enable-multibyte=UNICODE
+  make
+  make install
+
+=item *
+
+Set and export the LD_LIBRARY_PATH environment variable (this example uses Bash
+shell):
+
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/pgsql/lib
+  export LD_LIBRARY_PATH
+
+=item *
+
+Be sure to include the PostgreSQL libraries in all LD_LIBRARY_PATH environment
+variables on the system:
+
+  echo "/usr/local/pgsql/lib" >> /etc/ld.so.conf
+  ldconfig
+
+=item *
+
+Now make a directory in which you want to keep your PostgreSQL databases,
+including the Bricolage database. Make the "postgres" user the owner of that
+directory. Think carefully about where you want this directory to be, and on
+what partition. The Bricolage database will get to be quite large, and will
+require a great deal of disk accessing, so we recommend you put it on its own
+partition. This example just demonstrates the default:
+
+  mkdir /usr/local/pgsql/data
+  chown postgres /usr/local/pgsql/data
+
+=item *
+
+Intitialize the PostgreSQL database. Be sure to pass the directory you just
+created to the C<-D> command.
+
+  su - postgres -c "/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data"
+
+=item *
+
+Start the PostgreSQL "postmaster". You can use one of the scripts in
+contrib/start-scripts.
+
+=item *
+
+Make the PostgreSQL documentation. This step is optional, if you don't need the
+docs or have them available elsewhere:
+
+  cd docs
+  make install
+
+=item *
+
+Don't forget to install the DBD::Pg perl module! You'll need to set the
+C<POSTGRES_INCLUDE> and C<POSTGRES_LIB> environment variables, first:
+
+  POSTGRES_INCLUDE=/usr/local/pgsql/include
+  POSTGRES_LIB=/usr/local/pgsql/lib
+  export POSTGRES_INCLUDE POSTGRES_LIB
+  cd /path/to/DBD-Pg-1.00
+  perl Makefile.PL
+  make
+  make test
+  make install
+
+=back
+
+And now PostgreSQL is ready to go!
+
+=head2 Bricolage [Put instructions for installing Bricolage itself here, once
+we've created a way to do it. Until then, follow the instructions above for
+checking it out of CVS.]
+
+=head1 SYSTEM ADMINISTRATION
+
+Bricolage is a big application, with big system needs. Thus it's a good idea to
+give some thought to sysem management, including disk partitioning and file
+maintenance.
+
+=head2 Database
+
+By default, the Bricolage database is stored where all PostgreSQL databases are stored
+-- that is, /usr/local/pgsql/data. Depending on the needs of your environment,
+the database can become quite large. We therefore recommend you place this
+directory on a separate partition. Better yet, place it on its own disk in order
+to optimize disk access time by preventing database access from competing with
+other disk processes.
+
+A great deal more maintenance is important for the database. See L<Bric::DBA> for
+more detail.
+
+=head2 Application
+
+Bricolage stores all of its applicatin files -- including the UI elements and
+Perl libraries -- in C<$BRICOLAGE_ROOT>. Bricolage will make a lot of disk
+accesses to be to C<$BRICOLAGE_ROOT/data>, which is where all of the UI elements
+are compiled and stored. The Perl libraries are stored in
+C<$BRICOLAGE_ROOT/lib>, although mostly they will only be read on startup.
+
+Bricolage creates a great many files on the filesystem, too, however. The
+BURN_ROOT houses the templates that are used to format stories - you'll want to
+be sure to back it up regularly. The C<$BRICOLAGE_ROOT/comp/data/preview>
+directory gets formatted story files written to it if the PREVIEW_LOCAL
+directive is set to true. This directory doesn't need backing up, as these files
+are used only for previewing purposes.
+
+The C<$BRICOLAGE_ROOT/comp/data/media> directory gets all media asset files
+written to it. This last directory is perhaps the most important, from a system
+administration perspective, because if Bricolage is used to manage large
+documents (e.g., QuickTime movies), this directory will start to use a lot of
+space - and especially if the media files themselves are versioned. Thus in
+environments where many large media assets will be managed, it might make sense
+to put this directory on its own partition or disk, as well. And remember to
+back it up to prvent the loss of all of your media assets!
+
+Bricolage also create temporary files for caching user session data and
+application data. All of these files are stored in sub directories of the local
+system's $TMP environment variable (actually, the temp directory is determined
+by the tmpdir() method of the File::Spec library, which uses the $TMP
+environment variable and other meand to determine the local OS's temporary
+directory). Session files are stored in C<$TMP/bric_sesion> and
+C<$TMP/bric_lock>. These directories should stay relatively free of cruft, as
+the session files are regularly deleted when users logout or their login
+sessions expire and they attempt to log back in. Still, it'd be good to set up a
+cron job to monitor these directories and delete fiels and subdirectories that
+haven't been accessed in a while.
+
+Bricolage also uses a cross-process caching mechanism to shara data between
+Apache processes and applications. The data for this cache is stored in
+C<$TMP/FileCache>. The files in this directory can be periodically deleted. Just
+be sure to shut down Bricolage before doing so, and then you can start it up as
+soon as they're gone. This will ensure that no one tries to access the cache
+after it has been deleted, and it will be recreated when the server starts
+again.
+
+=head1 AUTHOR
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+perl(1),
+Bric (2).
+
+=head1 REVISION HISTORY
+
+$Log: Admin.pod,v $
+Revision 1.1  2001-09-06 21:52:46  wheeler
+Initial revision
+
+=cut
+

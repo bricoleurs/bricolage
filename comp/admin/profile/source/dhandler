@@ -1,0 +1,117 @@
+%#-- Begin HTML --#
+<& '/widgets/wrappers/sharky/header.mc',
+   title => "$disp Profile",
+   context => "Admin | Profile | $disp | $crumb"
+&>
+<& '/javascripts/profile/formValidator.js', id => $id &>
+<form method="post" action="<% $r->uri %>" name="src_profile" onSubmit="return confirmChanges(this)">
+<%perl>;
+$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'source_id')
+  if defined $id;
+
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Properties",
+	 number  => 1
+	);
+if (defined $id) {
+    # It's an existing org. Spit out the org name.
+    $m->comp('/widgets/profile/displayFormElement.mc', objref => $src,
+	     key => 'name', readOnly => 1);
+} elsif (!defined $id && !$new_org) {
+    # It's a new source. Give 'em a list of available organizations to choose
+    # from.
+    $m->comp('/widgets/select_object/select_object.mc', object => 'org',
+             name => 'org', field => 'name', disp => 'Organization',
+	     useTable => 1, constrain => { personal => 0 } );
+    $m->out(qq {<table width=578 cellpadding=2 cellspacing=0 border=0><tr><td width=140>&nbsp;</td><td width=438>});
+
+    $m->comp('/widgets/profile/imageSubmit.mc',
+	     formName => "src_profile",
+	     callback => "new_org",
+	     image    => "new_organization_lgreen",
+	     js       => qq{onClick="requiredFields='';return customSubmit('src_profile', 'new_org', 1)"}
+	   );
+
+    $m->out(qq{</td></tr></table>\n});
+} elsif ($new_org) {
+    # We'll be displaying all fields except active.
+    $used = { active => 1 };
+}
+
+$m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $src,
+          fieldsUsed => $used, readOnly => $no_edit);
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+
+</%perl>
+<& '/widgets/profile/formButtons.mc', type => $type, section => $section,
+   no_del => $no_del, no_save => $no_edit &>
+</form>
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+
+%#-- End HTML --#
+
+
+%#-- Once Section --#
+<%once>;
+my $class = 'Bric::Biz::Org::Source';
+my $section = 'admin';
+my $type = 'source';
+my $disp = get_disp_name($type);
+</%once>
+
+%#-- Shared Section --#
+<%shared>;
+my $used = { active => 1, name => 1, long_name => 1 };
+</%shared>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+$new_org => undef
+</%args>
+
+%#-- Init Section --#
+<%init>;
+# Instantiate an object.
+my $src = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id ||= $src->get_id;
+
+# Check authorization.
+chk_authz($src, $id ? READ : CREATE);
+my $no_edit = !chk_authz($src, ($id ? EDIT : CREATE), 1);
+my $no_del = !$id || $no_edit;
+
+# Get the name for the breadcrumb trail.
+my $crumb = $src->get_source_name;
+$crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
+</%init>
+
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+/admin/profile/source/dhandler - Interface for managing sources.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:51:52 $
+
+=head1 DESCRIPTION
+
+This element handles the display for editing sources.
+
+=head1 REVISION HISTORY
+
+$Log: dhandler,v $
+Revision 1.1  2001-09-06 21:51:52  wheeler
+Initial revision
+
+</%doc>

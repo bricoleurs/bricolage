@@ -1,0 +1,89 @@
+%#-- Begin HTML --#
+<& '/widgets/wrappers/sharky/header.mc',
+   title => "$grp_name Permissions",
+   context => "Admin | Profile | $disp | &quot;$grp_name&quot | Permissions"
+ &>
+<& '/javascripts/profile/formValidator.js', id => $id &>
+<form method="post" action="<% $r->uri %>" name="grp_profile" onSubmit="return confirmChanges(this)">
+<%perl>;
+$m->comp('/widgets/profile/hidden.mc',
+         value => $id,
+	 name => 'grp_id'
+	) if defined $id;
+
+$m->comp('/widgets/perm/perm.mc',
+         grp => $grp,
+	 read_only => $no_edit);
+
+# Add the buttons.
+$m->comp('/widgets/profile/formButtons.mc',
+         type => $type,
+	 section => $section,
+	 widget  => $widget,
+	 return  => "/admin/profile/grp/$id",
+         no_del => 1);
+</%perl>
+</form>
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+
+%#-- End HTML --#
+
+
+%#-- Once Section --#
+<%once>;
+my $type = 'grp';
+my $class = get_package_name($type);
+my $section = 'admin';
+my $widget = 'perm';
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+
+%#-- Init Section --#
+<%init>;
+# Instantiate an object.
+my $grp = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id ||= $grp->get_id;
+
+# Disallow access to the Global Administrators group and permanent groups.
+$m->comp('/errors/403.mc', obj => $grp) if $id == ADMIN_GRP_ID
+  || $grp->get_permanent;
+
+# Check authorization.
+chk_authz($grp, READ);
+my $no_edit = !chk_authz($grp, ($id ? EDIT : CREATE), 1);
+my $class_obj = $grp->my_class;
+my $disp = $class_obj->get_disp_name;
+my $grp_name = $grp->get_name;
+</%init>
+
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+/admin/profile/grp/perm - Group profile permissions interface
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:51:51 $
+
+=head1 DESCRIPTION
+
+Diplays the permissions for a single group.
+
+=REVISION HISTORY
+
+$Log: perm,v $
+Revision 1.1  2001-09-06 21:51:51  wheeler
+Initial revision
+
+</%doc>

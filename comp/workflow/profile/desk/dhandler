@@ -1,0 +1,92 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+<name> -- <description>
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:38 $
+
+=head1 DESCRIPTION
+
+<description>
+
+=cut
+
+</%doc>
+
+%#-- Once Section --#
+<%once>
+my $widget = 'desk';
+</%once>
+
+%#-- Init Section --#
+<%init>;
+my ($w_id, $d_id) = $r->uri =~ m!/(\d+)/(\d+)/?$!;
+my $d = Bric::Biz::Workflow::Parts::Desk->lookup({'id' => $d_id});
+my $d_name = $d ? $d->get_name : 'Unknown';
+my $wf = Bric::Biz::Workflow->lookup({ id => $w_id });
+my $wfname = '&quot;' . $wf->get_name . '&quot;';
+</%init>
+
+%#-- Begin HTML --#
+
+<& '/widgets/wrappers/sharky/header.mc',
+   title => "$d_name Desk",
+   context => "Workflow | $wfname | &quot;$d_name&quot;"
+ &>
+
+<%perl>;
+# Don't display anything if the desk object could not be found.
+if ($d) {
+    $m->out(qq{<form method="post" action="} . $r->uri . qq{" name="desk" onSubmit="return confirmChanges(this)">});
+
+    $m->comp('/widgets/desk/desk.mc',
+	     desk_id => $d_id,
+	     desk    => $d,
+	     wf     => $wf,
+	     work_id => $w_id,
+	     sort_by => $ARGS{story_sort_by},
+	     class   => 'story'
+	    );
+    $m->comp('/widgets/desk/desk.mc',
+	     desk_id => $d_id,
+	     desk    => $d,
+	     wf     => $wf,
+	     sort_by => $ARGS{media_sort_by},
+	     work_id => $w_id,
+	     class   => 'media'
+	    );
+    $m->comp('/widgets/desk/desk.mc',
+	     desk    => $d,
+	     wf     => $wf,
+	     sort_by => $ARGS{formatting_sort_by},
+	     desk_id => $d_id,
+	     work_id => $w_id,
+	     class    => 'formatting'
+	    );
+    $m->comp('/widgets/desk/desk_bottom.html',
+	     widget => $widget,
+	     wf     => $wf,
+	     w_id   => $w_id,
+	     desk   => $d
+	    );
+    $m->out("</form>\n");
+}
+$m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
+</%perl>
+
+%#-- End HTML --#
+
+<%doc>
+$Log: dhandler,v $
+Revision 1.1  2001-09-06 21:52:38  wheeler
+Initial revision
+
+</%doc>

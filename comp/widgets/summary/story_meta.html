@@ -1,0 +1,55 @@
+% if ($frame) {
+<& /widgets/wrappers/sharky/table_top.mc,
+   caption => $header,
+   number  => $number
+&>
+% }
+<table border="0" width="578" cellpadding="0" cellspacing="0">
+<tr>
+    <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+    <td width="100" align="right" class="medHeader"><span class="label">ID:&nbsp;</span></td>
+    <td width="400">&nbsp;<% $story->get_id %></td>
+    <td width="70" rowspan=7 valign="bottom"><% $button %></td>
+</tr>
+<tr>
+<td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+</tr>
+<tr>
+    <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+    <td width="100" align="right" class="medHeader"><span class="label">Title:&nbsp;</span></td>
+    <td width="400">&nbsp;<% $story->get_title %></td>
+</tr>
+<tr>
+<td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+</tr>
+<tr>
+    <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+    <td width="100" align="right" class="medHeader"><span class="label">Story Type:&nbsp;</span></td>
+    <td width="400">&nbsp;<% $story->get_element_name %></td>
+</tr>
+<tr>
+<td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+</tr>
+<tr>
+    <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+    <td width="100" align="right" class="medHeader"><span class="label">URI:&nbsp;</span></td>
+    <td width="400">&nbsp;<% $story->get_primary_uri %></td>
+</tr>
+  </table>
+% if ($frame) {
+<& /widgets/wrappers/sharky/table_bottom.mc &>
+%}
+<%args>
+$widget
+$header => undef
+$number => undef
+$frame  => undef
+$button => "&nbsp;"
+</%args>
+
+<%init>;
+my $story = get_state_data($widget, 'asset');
+my $cat      = $story->get_primary_category;
+my $cat_name = $cat ? $cat->get_name : '';
+$header ||= 'Story Information';
+</%init>

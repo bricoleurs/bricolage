@@ -1,0 +1,229 @@
+%#-- Begin HTML --#
+
+<%once>
+
+# outputs a 1x1 pixel table cell. The first argument determines value of the
+# colspan tag, while the second determines the height of the image.
+my $onePixCell = sub {
+    my ($colspan, $h, $w) = @_;
+    $h ||= 1;
+    $w ||= 1;
+    $colspan = $colspan ? qq{ colspan="$colspan"} : '';
+    return qq {<td width="1"$colspan bgcolor="white">} .
+      qq{<img src="/media/images/spacer.gif" width="$w" height="$h" /></td>};
+};
+
+</%once>
+
+<table border="0" width="580" cellpadding="0" cellspacing="0">
+<tr>
+  <td><img src="/media/images/spacer.gif" width="58" height="18" /></td>
+  <td><img src="/media/images/spacer.gif" width="1" height="10" /></td>
+  <td><img src="/media/images/spacer.gif" width="38" height="10" /></td>
+  <td><img src="/media/images/spacer.gif" width="1" height="10" /></td>
+  <td><img src="/media/images/spacer.gif" width="443" height="10" /></td>
+  <td><img src="/media/images/spacer.gif" width="18" height="10" /></td>
+</tr>
+<tr class="lightHeader">
+    <td <% $classes->{id} || '' %> align="right"><span class="label"><% $id %></span>&nbsp;</td>
+    <% &$onePixCell(0, 22) %>
+    <td align="center"><span class="label">V.<% $obj->get_version %></span></td>
+    <% &$onePixCell() %>
+    <td <% $classes->{name} || $classes->{file_name} || '' %>>&nbsp;<span class="label"><% $name %></span></td>
+    <td <% $classes->{name} || $classes->{file_name} || '' %>><% $status %></td>
+</tr>
+</table>
+
+<table border="0" width="580" cellpadding="0" cellspacing="0">
+<tr>
+<% &$onePixCell(undef, 1, 100) %>
+<% &$onePixCell(2, 1, 241) %>
+<td rowspan="<% ($rowspan * 2) %>" width="1" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+<% &$onePixCell(1) %>
+<td rowspan="<% ($rowspan * 2) %>" width="1" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+</tr>
+<tr>
+    <td align="right" class="medHeader" width="100">Category: </td>
+    <td width="1"><img src="/media/images/spacer.gif" width="1" height="20" /></td>
+    <td<% $classes->{category_name} || $classes->{location} || '' %> width="240">&nbsp;<span class="subHeader"><% $cat %></span></td>
+    <td rowspan="<% ($rowspan * 2 - 1) %>" width="237">
+    <table border="0" width="237" celpadding="0" cellspacing="0">
+        <tr>
+            <% &$onePixCell(0, 20) %>
+            <td><% $elink %></td>
+        <tr>
+            <% &$onePixCell(0, 43) %>
+            <td>
+% if ($can_edit && $desk_opts) {
+                <% $mlabel %>: <& '/widgets/profile/select.mc',
+                                  name     => $widget . '|next_desk',
+                                  value    => $desk_val,
+                                  options  => $desk_opts,
+                                  useTable => 0 &>
+% } else {
+                 &nbsp;
+% }
+            </td>
+        </tr>
+        <tr>
+            <% &$onePixCell(0, 18) %>
+            <td>
+                <a href="<% $ppage %>/view_notes.html?id=<% $aid %>" class="blackUnderlinedLink">Notes</a>&nbsp;&nbsp;
+                <a href="/workflow/trail/<% $class %>/<% $aid %>" class="blackUnderlinedLink">Trail</a>&nbsp;&nbsp;
+% my $link = $ppage . '/' . $aid;
+% if ($desk_type eq 'workflow') {
+%	$link .= '?return=' . $did;	
+%	if ($vlabel eq 'Edit') {
+%		$link .= '&checkout=1';
+%	}
+% } else {
+%	if ($vlabel eq 'Edit') {
+%		$link .= '?checkout=1';
+%	}
+% }
+                <a href="<% $link %>" class="blackUnderlinedLink"><% $vlabel %></a>&nbsp;&nbsp;
+                <a href="/workflow/events/<% $class %>/<% $aid %>" class="blackUnderlinedLink">Log</a>&nbsp;&nbsp;
+                <% $pub %>
+            </td>
+        </tr>
+    </table>
+    </td>
+
+</tr>
+<tr>
+<% &$onePixCell(3) %>
+</tr>
+
+<tr>
+    <td align="right" class="medHeader"><% $class eq 'formatting' ? 'Asset' : $disp %> Type: </td>
+    <% &$onePixCell(0, 20) %>
+    <td<% $classes->{element} || '' %>>&nbsp;<span class="subHeader"><% $type %></span></td>
+</tr>
+<tr>
+<% &$onePixCell(3) %>
+</tr>
+
+<tr>
+    <td align="right" class="medHeader"><% $date_label || '&nbsp;' %>: </td>
+    <% &$onePixCell(0, 20) %>
+    <td<% $classes->{cover_date} || '' %>>&nbsp;<span class="subHeader"><% $date || '&nbsp;' %></span></td>
+</tr>
+<tr>
+<% &$onePixCell(3) %>
+</tr>
+<tr>
+    <td align="right" class="medHeader">Priority: </td>
+    <% &$onePixCell(0, 18) %>
+    <td<% $classes->{priority} || '' %>>&nbsp;<span class="subHeader"><% $priors->{$obj->get_priority} || '&nbsp;' %></span></td>
+</tr>
+<tr>
+<td colspan="6" width="1" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+
+%#-- End HTML --#
+
+%#-- Once Section --#
+<%once>;
+my $priors = Bric::Biz::Asset->list_priorities;
+</%once>
+
+%#-- Args Section --#
+<%args>
+$mlabel => 'Move to Desk'
+$widget => 'desk'
+$obj
+$highlight
+$can_edit
+$elink
+$vlabel => 'View'
+$desk_val
+$desk_opts
+$ppage
+$disp
+$type
+$pub => ''
+$aid
+$class  => 'story'
+$did
+$desk_type
+</%args>
+
+%#-- Init Section --#
+<%init>;
+# Get the ID.
+my $id = $obj->get_id;
+
+# Determine the status.
+my $status = $obj->get_publish_status ?
+  '<img src="/media/images/P_red.gif" border=0 width="15" height="15" />'
+  : '&nbsp;';
+
+my $cats = $rc->get("desk.cats") || {};
+my ($name, $date, $date_label, $cat);
+
+if ($class eq 'formatting') {
+    $date = $obj->get_deploy_date || '&nbsp';
+    $date_label = 'Deployed Date';
+    $name = $obj->get_uri;
+    my $cat_id = $obj->get_category_id;
+    if (defined $cat_id) {
+	unless ($cat = $cats->{$cat_id}) {
+	    $cat = Bric::Biz::Category->lookup({ id => $cat_id })->get_name;
+	    $cats->{$cat_id} = $cat;
+	    $rc->set("desk.cats", $cats);
+	}
+    } else {
+	$cat = '&nbsp;';
+    }
+} else {
+    $name = $obj->get_name;
+    $date = $obj->get_cover_date;
+    $date_label = 'Cover Date';
+    my $c = $highlight eq 'name' ? 'whiteMedUnderlinedLink'
+      : 'blackMedUnderlinedLink';
+    if ($class eq 'media') {
+	if (my $uri = $obj->get_local_uri) {
+	    $name = qq{<a href="$uri" class="$c" target="preview">$name</a>};
+	}
+	$cat = $cats->{$obj->get_category__id} ||= $obj->get_category_object;
+	$cat = $cat->get_name if $cat;
+    } else {
+	$name = qq{<a href="/workflow/profile/preview/$id" class="$c"}
+	  . qq{target="preview">$name</a>};
+	$cat = $obj->get_primary_category;
+	$cat = $cat->get_name if $cat;
+	$cat ||= '&nbsp;';
+    }
+}
+$cat ||= '&nbsp;';
+my $classes = $highlight ? { $highlight => ' class="tealHighlight"' } : {};
+my $rowspan = 4;
+</%init>
+
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+/widgets/desk/desk_item.html - Desk Item Presentation.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:05 $
+
+=head1 DESCRIPTION
+
+This element handles the display of individual assets on a desk or workspace.
+
+=head1 REVISION HISTORY
+
+$Log: desk_item.html,v $
+Revision 1.1  2001-09-06 21:52:05  wheeler
+Initial revision
+
+</%doc>

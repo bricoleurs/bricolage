@@ -1,0 +1,184 @@
+%#-- Begin HTML --#
+<& '/widgets/wrappers/sharky/header.mc',
+   title => "$disp Profile",
+   context => "Admin | Profile | $disp | $crumb"
+ &>
+<& '/javascripts/profile/formValidator.js', id => $id &>
+
+<form method="post" action="<% $r->uri %>" name="user_profile" onSubmit="if ( checkPasswords(this.pass_1, this.pass_2) ){ return confirmChanges(this)} else { return false}">
+
+<%perl>;
+$m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Name",
+	 number => 1);
+# Output the ID, if there is one.
+$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'user_id')
+  if $isid;
+
+# Display the major fields.
+$m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $user,
+ 	 readOnly => $no_edit,
+	 fieldsUsed => { active => 1, password => 1,
+			 login  => 1,  name    => 1 });
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Display the Contact info.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Contacts", number  => 2);
+my $contacts = $user->get_contacts;
+$m->comp('/widgets/add_more/add_more.mc', type => 'contact',
+     fields => [qw(type value)], name => 'contact', read_only => $no_edit,
+     reset_key => $id, objs => $contacts, incr => 2, useTable => 0,
+     formName => 'user_profile',
+     deleteLabelOnly => 1, param => \%ARGS);
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Get the groups listed.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+	 caption => 'Group Memberships',
+	 number  => 3);
+
+# Get user's groups for double-list manager.
+my $all_grp = Bric::Util::Grp->lookup({ id => $user->INSTANCE_GROUP_ID});
+my ($left, $right) = ([], []);
+push @$right, { value => $all_grp->get_id, description => $all_grp->get_name}
+  unless $isid;
+foreach my $grp ( $isid ? $user->get_grps : () ) {
+    push @$right, { value =>  $grp->get_id, description => $grp->get_name };
+}
+
+# Get all user groups for double-list manager.
+foreach my $grp ( Bric::Util::Grp::User->list ) {
+    push @$left, { value =>  $grp->get_id, description => $grp->get_name };
+}
+
+# Load up the double-list manager.
+$m->comp( "/widgets/doubleListManager/doubleListManager.mc",
+	  rightSort => 1,
+          leftOpts => $left, rightOpts => $right, formName => 'user_profile',
+	  leftName => 'rem_grp', rightName => 'add_grp',
+	  readOnlyRight => [$user->INSTANCE_GROUP_ID],
+	  leftCaption => 'Available Groups', showLeftList => $can_edit || 0,
+	  rightCaption => $can_edit ? 'Current Groups' : '',
+	  readOnly => $no_edit || ($is_user && !$can_edit)
+	);
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+
+$m->comp("/widgets/wrappers/sharky/table_top.mc", number  => 4,
+	 caption => "Login and Password");
+
+# Display the login and password info.
+$m->comp("/widgets/profile/displayFormElement.mc",
+	 objref => $user, key => 'login', readOnly => $no_edit);
+
+if (!$no_edit) {
+
+    # output a state variable for pw checking javascript:
+    $m->out(qq{<script language="javascript">\nvar newUser = }
+      . ($isid ? 'false' : 'true') . "\n</script>\n");
+
+    # Old password.
+    $m->comp("/widgets/profile/password.mc", name => 'old_pass',
+	     disp => 'Old password', length => $pass_len,
+	     maxlength => $pass_max) if $is_user;
+    my $req = ! $isid;
+    # New password.
+    $m->comp("/widgets/profile/password.mc", name => 'pass_1',
+	     disp => 'New password', req => $req, length => $pass_len,
+	     maxlength => $pass_max);
+    # New password again.
+    $m->comp("/widgets/profile/password.mc", name => 'pass_2',
+	     disp => 'Repeat new password', req => $req, length => $pass_len,
+	     maxlength => $pass_max);
+}
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+</%perl>
+
+<& '/widgets/profile/formButtons.mc', type => $type, section => $section,
+   no_del => $no_del, no_save => $no_edit, return => $return &>
+
+</form>
+
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+%#-- End HTML --#
+
+<%once>;
+my $class = 'Bric::Biz::Person::User';
+my $section = 'admin';
+my $type = 'user';
+my $disp = get_disp_name($type);
+# Grab the length setting for the password fields.
+my $pass_len = $class->my_meths->{password}{props}{length};
+my $pass_max = $class->my_meths->{password}{props}{maxlength};
+</%once>
+<%args>
+$id => undef
+</%args>
+
+<%init>;
+$id = $ARGS{user_id} unless defined $id;
+# Instantiate an object.
+my $user = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id = $user->get_id unless defined $id;
+my $isid = defined $id;
+
+# Check authorization - but allow a user to edit his/her own profile.
+my ($no_edit, $no_del, $is_user, $can_edit);
+if (defined $id && $id == get_user_id()) {
+    ($no_edit, $no_del, $is_user) = (0, 1, 1);
+    $can_edit = chk_authz($user, ($isid ? EDIT : CREATE), 1);
+} else {
+    chk_authz($user, $isid ? READ : CREATE);
+    $can_edit = chk_authz($user, ($isid ? EDIT : CREATE), 1);
+    $no_edit = !$can_edit;
+    $no_del = !$id || $no_edit;
+}
+
+# Get the name for the breadcrumb trail.
+my $crumb = $user->format_name;
+$crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
+
+# Roll in any changes to the user object if we're just adding contacts.
+if ($ARGS{'add_more|contact|add_cb'}) {
+    foreach my $meth ($user->my_meths(1)) {
+	$meth->{set_meth}->($user, @{$meth->{set_args}}, $ARGS{$meth->{name}})
+	  if defined $meth->{set_meth};
+    }
+}
+
+# Establish the return URI.
+my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
+      : 'http://' . $r->hostname . '/admin/manager/user';
+</%init>
+
+
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+/admin/profile/user/dhandler - User Profile.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:51:52 $
+
+=head1 DESCRIPTION
+
+This dhandler manages user profiles.
+
+=head1 REVISION HISTORY
+
+$Log: dhandler,v $
+Revision 1.1  2001-09-06 21:51:52  wheeler
+Initial revision
+
+</%doc>

@@ -1,0 +1,110 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+/workflow/manager/templates/dhandler - template search result page
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:38 $
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=cut
+
+</%doc>
+
+<%args>
+</%args>
+
+<%once>
+my $object = 'formatting';
+my $plural = get_class_info($object)->get_plural_name;
+my $w_id;
+
+my $profile = sub {
+    my $o = shift;
+    my $u = $o->get_user__id;
+    my $id = $o->get_id;
+
+    if (defined $u && $u == get_user_id && chk_authz($o, EDIT, 1)) {
+	return ['Edit', "/workflow/profile/templates/$id?return=search", ''];
+    } else {
+	return ['View', "/workflow/profile/templates/$id?return=search", ''];
+    }
+};
+
+my $select = sub {
+    my $o = shift;
+    my $u = $o->get_user__id;
+
+    if (!$u && chk_authz($o, EDIT, 1)) {
+	if ($o->get_workflow_id) {
+	    return ['Checkout', 'tmpl_prof|checkout_cb'];
+	} else {
+	    return ['Checkout', 'tmpl_prof|recall_cb', $o->get_id.'|'.$w_id];
+	}
+    }
+
+    return;
+};
+
+
+my $addition = sub {
+    if (chk_authz($_[0], CREATE, 1)) {
+        return ['Create', "/workflow/profile/templates/new/$w_id"];
+    }
+    return;
+};
+
+my $exclude = sub { ! chk_authz($_[0], READ, 1) };
+</%once>
+<%init>;
+# Get the workflow ID.
+($w_id) = $r->uri =~ m!/(\d+)/?$!;
+
+# Grab the workflow from the cache.
+my $wf = $c->get('__WORKFLOWS__');
+for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
+</%init>
+<& '/widgets/wrappers/sharky/header.mc',
+   title => "Find $plural",
+   context => "Workflow | $wf | Find $plural"
+ &>
+
+<& '/widgets/search/search.mc',
+   'object' => $object,
+   'type'   => 'formatting',
+&>
+
+<form action=<% $r->uri %> method="post">
+<& '/widgets/listManager/listManager.mc',
+   'object'   => $object,
+   title      => '%n Found',
+   'fields'   => [qw(id name file_name)],
+   'profile'  => $profile,
+   exclude    => $exclude,
+   addition   => $addition,
+   'select'   => $select,
+   behavior   => 'expand'
+&>
+<p></p>
+<input type="image" src="/media/images/checkout_red.gif" border=0 name="Checkout" value="Checkout">
+</form>
+
+<& /widgets/wrappers/sharky/footer.mc &>
+
+<%doc>
+$Log: dhandler,v $
+Revision 1.1  2001-09-06 21:52:38  wheeler
+Initial revision
+
+</%doc>
+

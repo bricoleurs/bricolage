@@ -1,0 +1,338 @@
+=head1 NAME
+
+Bric::Alert - Bricolage Alert Management Guide.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:48 $
+
+=head1 DESCRIPTION
+
+This guide describes the Bricolage alerting system -- how it works and how to use it.
+
+=head1 ARCHITECTURAL OVERVIEW
+
+The Bricolage alerting systems relies on the triggering of events. Many objects
+in Bricolage have associated events logged for them. You can see these events by
+clicking the "Log" link in many manager and desk views in Bricolage. All events
+contain the following information:
+
+=over 4
+
+=item *
+
+What event was logged.
+
+=item *
+
+What object was the subject of the event.
+
+=item *
+
+Who triggered the event.
+
+=item *
+
+Any associated attributes specific to an individual event.
+
+=back
+
+Alerts are based on events. When a user triggers an event, Bricolage checks to
+see if there are any B<alert types> associated with the type of event that was
+triggered. If there are, Bricolage will check any and all B<rules> associated
+with the alert type to determine whether the event qualifies for the sending of
+an alert. The rules constitute comparisons between data associated with the
+event (the user who triggered it, the object that is the event's subject, the
+associated event attributes) to values entered by the user. If the event's data
+follows all of the rules, then the alert will be sent.
+
+Let us take the example of the event "Story Moved to Desk." Stories are moved to
+desk all the time, and you don't want to be alerted every time any story is
+moved to any desk. Therefore, in creating a new alert type, you can define rules
+to determine when alerts will be set. For example, if you want only want to get
+alerts when stories are moved to the "Legal" desk, you can specify a rule that
+says, essentially, "Send an alert when a story is moved to a desk where the desk
+is called 'Legal'". Bricolage will then check all "Story Moved to Desk" events
+and send alerts based on your alert type definition only when the the value of
+the event attribute "Desk" is "Legal".
+
+Similarly, you may only want to get an alert when a I<particular user> -- say a
+user with the login "DrEvil" -- triggers the move to the Legal desk. Such an
+alert type definition can be articulated as, "Send an alert when a story is
+moved to a desk where the desk is called 'Legal' and where the login of the user
+who triggered the event is 'DrEvil'."
+
+Thus you can use any combination of rules to restrict the sending of alerts to
+only those events that follow those rules. Furthmore, in specifying the subject
+and message of the alert, you can use variables representing data from the event
+to tailor the content to be specific to the event. All these variables can be
+entered as part of the message, and are represented by simple strings. Their
+only differentiation from the rest of the message text is that they start with a
+dollar sign ($). When Bricolage determines that an event has met the
+requirements of all the rules of an alert type, it will evaluate the alert
+type's subject and message and substitute for these variables their
+event-specific values.
+
+To take the example of the "Story Moved to Desk" event once again, you can
+specify a subject such as "Story '$title' moved to $desk". The names of the
+variables are provided by the interface (see below). Yes, this does look a bit
+like programming, but it's really a very shallow kind of programming: a way to
+make alert messages more meaningful by providing simple placeholders for message
+content. A similar example for a message subject:
+
+  The story "$title," which has a priority "$priority" and lives at the
+  URI $uri, was moved to the $desk desk by $trig_full_name. Its debut is
+  scheduled for $cover_date.
+
+=head1 ALERT TYPE MANAGEMENT
+
+To manage an alert type, navigate to ADMIN -> SYSTEM -> Alert Types. Here you
+will find a list of existing alert types. An alert type specifies a specific
+type of alert, including what event triggers it, what rules the event must meet,
+the content of the alert, and who to send the alert to. Note also that all
+alerts have an owner associated with them (the alert type creator by default) as
+well as an "Active" status. Alert Type owners can access their own alert types
+regardless of other permission settings. The Active status indicates whether the
+alert type will be sent when its associated event is triggered. Deactivated
+alert types will not send alerts.
+
+=head2 Creating a New Alert
+
+To create a new alert type, click "Add a New Alert Type". First you will be
+prompted to select an object. The object you pick will be the subject of the
+events that will trigger your alerts. In the above examples, where we wanted to
+receive alerts when a story was moved to a desk, the type of object was "Story".
+Other objects that have events logged for them include Media, Templates, User,
+Contributors, Groups, etc. Select the object that interests you and then click
+"Next".
+
+You will now be presented with a list of Event Types to choose from. This is the
+list of events that is relative to the object you selected. For "Story" objects,
+for example, event types include "Story Created," "Story Changes Saved," "Story
+Moved to Desk," etc. It is the triggering of the type of event you choose here
+that will in turn trigger your alert. This screen also requires you to choose a
+name for your alert type, as well as an Owner. The currently logged in user
+(you) is selected by default, but you can select any other user, if you wish.
+Click "Next" to continue.
+
+The next screen contains the full Alert Type profile. This is also the screen
+that you will see when you select ot edit an existing Alert Type profile. Here
+you can set rules, edit the alert contents, and designate the alert recipients.
+Note that you can also activate and deactivate the alert type from the profile
+interface (it's deactivated by default - check the "Active" checkbox to activate
+it).
+
+=head2 Editing Alert Rules
+
+The Alert rules system allows you to create rules that must be determined to be
+true for any given event before that event causes alerts to be sent for this
+alert type. The rules perform simple comparisons between data related to the
+event (the user who triggered the event, the object for which the event was
+logged, and attributes on the event itself) to static values that you enter. The
+comparisons use a number of operators to compare the value. The comparisons are
+case-insensitive, as well. Here is a list of the comparison operators:
+
+=over 4
+
+=item =
+
+Uses Perl's C<eq> operator internally to determine if the values are
+equivalent.
+
+=item <>
+
+Uses Perl's <ne> operator internally to determine if the values are not
+equivalent.
+
+=item >
+
+Uses Perl's <gt> operator internally to determine if the event value is greater
+than the user-entered value.
+
+=item <
+
+Uses Perl's <gt> operator internally to determine if the event value is less
+than the user-entered value.
+
+=item >=
+
+Uses Perl's <gt> operator internally to determine if the event value is greater
+than or equal to the user-entered value.
+
+=item <=
+
+Uses Perl's <gt> operator internally to determine if the event value is less
+than or equal to the user-entered value.
+
+=item =~
+
+Uses the user-entered value as a case-insensitive regular expression to match
+against the event value.
+
+=item !~
+
+Uses the user-entered value as a case-insensitive regular expression to fail to
+match against the event value.
+
+=back
+
+The C<=> operator will likely be the most-frequently used operator. For example,
+to send alerts for an event where the user who triggered the event has a login
+name "DrEvil", you might enter the rule:
+
+  Trig's Login    =    DrEvil
+
+To exclude events triggered by DrEvil, you would enter:
+
+  Trig's Login    <>   DrEvil
+
+But to get fancier, say you wanted to send alerts whenever a story has a title
+with the word "Dubbya" in it, you might try a regular expression:
+
+  Story Title     =~   Dubbya
+
+Use the "Add More" button to add more rules if you need to. To delete existing
+rules, simply check the "Delete" checkbox to the right of the rule, and when you
+click "Save", the rule will be deleted.
+
+=head2 Editing Alert Content
+
+Two different bits of content can be set for alert types: The B<subject> and the
+B<message>. Currently all alerts are sent via email. In the future, they may be
+sent via Instant Message, in which case the subject may be less relevant. But in
+the case of either the subject or the message, you can include certain special
+variables to custumize the alert on a per-alert basis.
+
+The Alert Type UI "Conent" section features fields for the subject and message,
+as well as two select boxes containing lists of the variables available to the
+alert type. The variables are marked by beginning with the dollar sign ("$")
+character, and are named for the same event attributes available to the rule
+configuration. (Note that to include an actual dollar sign in your alert,
+preceed it with a backslash ["\"] and it will be interpreted as a literal dollar
+sign rather than the beginning of a variable name.)
+
+You may enter whatever you wish for the subject and the message -- variables are
+not necessary. However, by including variables, you can custommize the message
+that is sent in the alert. For example, to identify in the alert subject who
+triggered the event for which the alert is sent, select from the first select
+box the variable "$trig_name". The variable will automatically be entered into
+the "Subject" field for you. (Of course, you can enter it manually, as well, but
+the select list is provided to help prevent typing mistakes as well as to limit
+you to only the variables that are available for a specific type of event.)
+Selecing from the second list of variables will likewise automatically insert
+that variable into the "Message" field.
+
+Feel free to play around with the variables, and include as many as you wish
+to customize your alert content. To illustrate how a message might be evaluated
+and sent in an alert, take this message example:
+
+  The story "$title," which has a priority "$priority"
+  and lives at the URI $uri,
+  was moved to the $desk desk by $trig_full_name.
+  Its debut is scheduled for $cover_date.
+
+When an alert is sent with this message, the variables will be replaced with
+their values from the event, for example:
+
+  The story "Black Hole Destroys Earth," which has a priority "4"
+  and lives at the URI /sci/astro/2001/09/22/black_hole,
+  was moved to the Copy desk by Iyam Evil.
+  Its debut is scheduled for 2001-09-22 13:43:00.
+
+Thus a great deal of event- and object-specific information can be sent via
+an alert of a single Alert Type.
+
+=head2 Editing Alert Recipients
+
+Now all you have to do is determine who should get alerts of this type, and how.
+Currently all Bricolage alerts are sent via email, and rely on the contacts
+specified for individual users. While not all contacts are email types (e.g.,
+Office Phone, AIM, etc.), Bricolage knows the difference and will only offer the
+email types of contacts as options. Thus, to ensure that alerts will be sent to
+individual users, be sure that you've entered contact values for those users.
+Users who have multiple addresses entered for the same type of contact will
+receive alerts at all the addresses specified for that type of contact. Thus if
+you have two "Primary Email" addresses specified in your user profile -- and you
+have been specified as a recipient of an alert via "Prmiary Email," you will
+receive alerts at both addresses. The most common type of contact will likely be
+"Primary Email."
+
+You can specify that alerts be sent either to individal Bricolage users, or to
+groups of Bricolage users. We recommend the latter for general use, as it's
+easier to manage groups of users than individual users. The Alert Type Profile
+offers a "Recipients" section that contains a list of the various methods by
+which user can receive alerts (Primary Email, Secondary Email, etc.), and a list
+of the users and user groups that will receive alerts via those addresses. To
+change those values, click the "Edit" button for the particular type of conact.
+
+Each type of contact offers two double lists for selecting recipients. The first
+allows you to select user groups to send alerts to. This is the recommended
+method for selecting alert recipients. In fact, it might be of value to create a
+User Group soleley for the purpose of selecting that group for sending alerts of
+a particular type. Use the double list and the "Add to List" and "Remove from
+List" buttons in the normal way to add and remove user groups as recipients of
+the alerts. The second double list allows you to add and remove individual users
+as the recipients of alerts. Click "Save" when you have finished editing the
+alert recipients and you will be returned to the Alert Type Profile. Click
+"Save" again to save the alert type.
+
+=head1 ALERT MANAGEMENT
+
+Once alerts have been sent, there are a number of ways of accessing them in the
+Bricolage interface.
+
+=head2 My Alerts
+
+Any users who are recipients of an alert can access the alerts sent to them via
+the "My Alerts" button at the top of the Bricolage screen. This button takes a
+user to a list of his/her alerts, and allows him/her to acknowledge them. Alerts
+are always available via this interface as soon as they are sent. Once a user
+acknowledges his/her alerts, they will not appear in the My Alerts list. To
+acknowledge an alert, simply check the "Acknowledge" checkbox for the alert, and
+then click "Acknowledge Checked." More than one alert can be acknowledge at
+once. The "Acknowledge All" is a shortcut button that will check and submit all
+of the "Acknowledge" checkboxes at once.
+
+The purpose of this screen is to provide users a place not only to see their
+alerts, but to acknowledge them. This allows others to see when individual
+recipients of an alert acknowledged the alert.
+
+=head2 Event Log
+
+Many objects in Bricolage have an Event Log associated with them. To see a list
+of the events triggered on an object, simply click the "Log" link for an object
+on My Workspace, on a desk, or in any Manager. The fourtch column for each event
+is reserved for a link to associated events. Most events will have no associated
+alerts, but for those that do, an "Alerts" link will be listed. Click that link
+to see the associated alert or alerts.
+
+Doing so bring up the "Alerts" manager. This interface lists all the alerts for
+a given event, including the time the were sent, their subject, and their
+message. A link in the fourth column to "Recipients" brings up the Recipients
+list for a given alert. This list shows who an alert was sent to, how it was
+sent, when it was sent, and when it was acknowledged (if it has been
+acknowledged). Thus this interface can be used to check for the responsiveness
+of recipients to the alerts they receive.
+
+=head1 AUTHOR
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+perl(1),
+Bric (2),
+Bric::Util::AlertType(3),
+Bric::Util::Alert(4).
+
+=head1 REVISION HISTORY
+
+$Log: Alert.pod,v $
+Revision 1.1  2001-09-06 21:52:48  wheeler
+Initial revision
+
+=cut

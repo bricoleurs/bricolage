@@ -1,0 +1,83 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:53:38 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+--
+
+-- -----------------------------------------------------------------------------
+-- Table: formatting
+
+ALTER TABLE formatting
+    ADD CONSTRAINT fk_usr__formatting FOREIGN KEY (usr__id)
+    REFERENCES usr(id) ON DELETE CASCADE;
+
+ALTER TABLE formatting
+    ADD CONSTRAINT fk_output_channel__fromatting FOREIGN KEY (output_channel__id)
+    REFERENCES output_channel(id) ON DELETE CASCADE;
+
+ALTER TABLE formatting
+    ADD CONSTRAINT fk_element__formatting FOREIGN KEY (element__id)
+    REFERENCES element(id) ON DELETE CASCADE;
+
+ALTER TABLE formatting
+    ADD CONSTRAINT fk_category__formatting FOREIGN KEY (category__id)
+    REFERENCES category(id) ON DELETE CASCADE;
+
+ALTER TABLE formatting
+	ADD CONSTRAINT fk_workflow__formatting FOREIGN KEY (workflow__id)
+	REFERENCES workflow(id) ON DELETE SET NULL;
+
+-- -----------------------------------------------------------------------------
+-- Table: formatting_instance
+
+ALTER TABLE formatting_instance
+    ADD CONSTRAINT fk_formatting__frmt_instance FOREIGN KEY (formatting__id)
+    REFERENCES formatting(id) ON DELETE CASCADE;
+
+ALTER TABLE formatting_instance
+    ADD CONSTRAINT fk_usr__format_instance FOREIGN KEY (usr__id)
+    REFERENCES usr(id) ON DELETE SET NULL;
+
+-- -----------------------------------------------------------------------------
+-- Table: formatting_member
+
+ALTER TABLE    formatting_member
+ADD CONSTRAINT fk_frmt__frmt_member FOREIGN KEY (object_id)
+REFERENCES     formatting(id) ON DELETE CASCADE;
+
+ALTER TABLE    formatting_member
+ADD CONSTRAINT fk_member__frmt_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_person
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_person_val
+
+
+ALTER TABLE attr_formatting_val ADD 
+    CONSTRAINT fk_attr_frmt__attr_frmt_val FOREIGN KEY (attr__id)
+    REFERENCES attr_formatting(id) ON DELETE CASCADE;
+
+ALTER TABLE attr_formatting_val ADD
+    CONSTRAINT fk_frmt__attr_frmt_val FOREIGN KEY (object__id)
+    REFERENCES formatting(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_formatting_meta
+
+ALTER TABLE attr_formatting_meta ADD 
+    CONSTRAINT fk_attr_frmt__attr_frmt_meta FOREIGN KEY (attr__id)
+    REFERENCES attr_formatting(id) ON DELETE CASCADE;
+
+
+/*
+Change Log:
+$Log: Formatting.con,v $
+Revision 1.1  2001-09-06 21:53:38  wheeler
+Initial revision
+
+*/

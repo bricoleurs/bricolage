@@ -1,0 +1,225 @@
+-- Project: Bricolage Business API
+-- File:    Priv.val
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:55:33 $
+-- Author:  David Wheeler <david@wheeler.net>
+
+-- Give Contributor Administrators CREATE rights to All Contributors.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(1, 15, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(1, 1);
+
+-- Give User Administrators CREATE rights to All Users.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(2, 11, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(2, 2);
+
+-- Give Source Administrators CREATE rights to All Organizations.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(3, 18, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(3, 3);
+
+-- Give Source Administrators CREATE rights to All Sources.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(4, 18, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(4, 5);
+
+-- Give Alert Type Administrators CREATE rights to All Alert Types.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(5, 36, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(5, 4);
+
+-- Give Story Editors CREATE rights to All Stories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(6, 7, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(6, 31);
+
+-- Give Media Producers CREATE rights to All Media.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(7, 8, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(7, 32);
+
+-- Give Template Developers CREATE rights to All Templates.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(8, 9, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(8, 33);
+
+-- Give Element Administrators CREATE rights to All Elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(9, 10, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(9, 27);
+
+-- Give Preference Administrators CREATE rights to All Preference.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(10, 12, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(10, 22);
+
+-- Give Group Administrators CREATE rights to All Groups.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(11, 13, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(11, 35);
+
+-- Give Output Channel Administrators CREATE rights to All .
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(12, 14, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(12, 23);
+
+-- Give Workflow Administrators CREATE rights to All Workflows.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(13, 16, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(13, 25);
+
+-- Give Category Administrators CREATE rights to All Categories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(14, 17, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(14, 26);
+
+-- Give Distribution Administrators CREATE rights to All Destinations.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(15, 19, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(15, 29);
+
+-- Give Distribution Administrators CREATE rights to All Jobs.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(16, 19, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(16, 30);
+
+-- Give Publishing Administrators CREATE rights to All Output Channels.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(17, 20, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(17, 23);
+
+-- Give Publishing Administrators CREATE rights to All Contributors.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(18, 20, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(18, 1);
+
+-- Give Publishing Administrators CREATE rights to All Contributor Types.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(19, 20, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(19, 24);
+
+-- Give Publishing Administrators CREATE rights to All Workflows.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(20, 20, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(20, 25);
+
+-- Give Publishing Administrators CREATE rights to All Categories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(21, 20, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(21, 26);
+
+-- Give Publishing Administrators CREATE rights to All Elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(22, 20, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(22, 27);
+
+-- Give Publishing Administrators CREATE rights to All Element Types.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(23, 20, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(23, 28);
+
+-- Give Publishing Administrators CREATE rights to All Organizations.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(24, 20, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(24, 3);
+
+-- Give Publishing Administrators CREATE rights to All Sources.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(25, 20, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(25, 5);
+
+-- Give System Administrators CREATE rights to All Preferences.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(26, 21, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(26, 22);
+
+-- Give System Administrators CREATE rights to All Users.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(27, 21, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(27, 2);
+
+-- Give System Administrators CREATE rights to All Groups.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(28, 21, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(28, 35);
+
+-- Give Contributor Type Administrators CREATE rights to All Contributor Types.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(29, 37, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(29, 24);
+
+-- Give Element Type Administrators CREATE rights to All Element Types.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(30, 38, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(30, 28);
+
+
+/*
+Change Log:
+$Log: Priv.val,v $
+Revision 1.1  2001-09-06 21:55:33  wheeler
+Initial revision
+
+*/

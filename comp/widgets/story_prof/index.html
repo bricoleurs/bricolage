@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Search Widget Test</title>
+  </head>
+
+  <body>
+    <h1>Search Widget Test</h1>
+
+    <& '/widgets/search/search.mc', object => 'user', type => 'substr' &>
+    <HR>
+    <& '/widgets/search/search.mc', object => 'user', type => 'alpha' &>
+    <HR>
+    
+    <& '/widgets/debug/debug.mc' &>
+
+    <hr>
+    <address><a href="mailto:garth@redhat.com">Garth Winter Webb</a></address>
+<!-- Created: Sun Feb 25 15:24:39 PST 2001 -->
+<!-- hhmts start -->
+Last modified: Sun Feb 25 15:26:16 PST 2001
+<!-- hhmts end -->
+  </body>
+</html>

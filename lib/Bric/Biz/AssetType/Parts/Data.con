@@ -1,0 +1,46 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:53:58 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Garth Webb <garth@perijove.com>
+--
+
+-- -----------------------------------------------------------------------------
+-- Table: element_data
+
+ALTER TABLE at_data ADD 
+	CONSTRAINT fk_element__at_data FOREIGN KEY (element__id)
+	REFERENCES element(id) ON DELETE CASCADE;
+
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_at_data
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_at_data_val
+
+
+ALTER TABLE attr_at_data_val ADD 
+    CONSTRAINT fk_attr_atd__attr_atd_val FOREIGN KEY (attr__id)
+    REFERENCES attr_at_data(id) ON DELETE CASCADE;
+
+ALTER TABLE attr_at_data_val ADD
+    CONSTRAINT fk_atd__attr_atd_val FOREIGN KEY (object__id)
+    REFERENCES at_data(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_at_data_meta
+
+ALTER TABLE attr_at_data_meta ADD 
+    CONSTRAINT fk_attr_atd__attr_atd_meta FOREIGN KEY (attr__id)
+    REFERENCES attr_at_data(id) ON DELETE CASCADE;
+
+
+/*
+Change Log:
+$Log: Data.con,v $
+Revision 1.1  2001-09-06 21:53:58  wheeler
+Initial revision
+
+*/

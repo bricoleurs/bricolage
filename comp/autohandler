@@ -1,0 +1,39 @@
+<%perl>;
+# Execute any callbacks set for this request. This should be handled in
+# Bric::App::Handler::load_args(), but it doesn't work there right now. Hopefully
+# it will in the near future.
+Bric::App::Session::handle_callbacks($m, \%ARGS) unless $ARGS{__CB_DONE};
+# Execute the dhandlers.
+$m->call_next(%ARGS);
+</%perl>
+
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+autohandler - The first Mason element to execute during a request.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:51:45 $
+
+=head1 SYNOPSIS
+
+N/A
+
+=head1 DESCRIPTION
+
+This is the root autohandler. It's job is to handle callbacks.
+
+=head1 REVISION HISTORY
+$Log: autohandler,v $
+Revision 1.1  2001-09-06 21:51:45  wheeler
+Initial revision
+
+</%doc>
+

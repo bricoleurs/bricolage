@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<title>System Error</title>
+<head>
+
+<body bgcolor="blue" text="white">
+<h1>System Error</h1>
+
+% if (Bric::Config::QA_MODE) {
+<& /widgets/qa/qa.mc &>
+% }
+
+<font face="Verdana, Helvetica, Arial">
+<p><b>An exception was thrown:</b></p>
+<b>Fault Type:</b> <% ref $fault %><br />
+<b>Timestamp:</b> <% strfdate($fault->get_timestamp) %><br />
+<b>Package:</b> <% $fault->get_pkg %><br />
+<b>Filename:</b> <% $fault->get_filename %><br />
+<b>Line:</b> <% $fault->get_line %><br />
+<b>Message:</b> <% $fault->get_msg . ($more_err ? "\n\n$more_err" : '') %></p>
+</font>
+
+<font face="Verdana, Helvetica, Arial"><p><b>Payload:</b></font>
+<font size="-1"><blockquote><pre><% $fault->get_payload %></pre></blockquote></font></p>
+
+<font face="Verdana, Helvetica, Arial">
+<b>Stack:</b><br /><% join("<br />\n", map { ref $_ ? join(' - ', @{$_}[1,3,2]) : $_ } @{$fault->get_stack} ) %>
+
+<br /><br />
+
+<& '/widgets/debug/debug.mc' &>
+
+<hr>
+<address><font face="Verdana, Helvetica, Arial"><a href="mailto:bricolage-bugs@lists.sourceforge.net">Email the Bricolage Developers</a></font></address>
+</body>
+</html>
+
+<%args>
+$fault => undef
+$more_err => undef
+</%args>
+<%init>;
+# Clear out messages - they're likely irrelevant now.
+clear_msg();
+unless ($fault) {
+    my %h = $r->headers_in;
+    $fault = Bric::Util::Fault::Exception::AP->new(
+      { msg => $h{BRIC_ERR_MSG} || 'No error message found',
+        payload => $h{BRIC_ERR_PAY} });
+}
+</%init>
+
+<%doc>
+Change Log:
+$Log: error.html,v $
+Revision 1.1  2001-09-06 21:51:53  wheeler
+Initial revision
+
+</%doc>

@@ -1,0 +1,214 @@
+=head1 NAME
+
+Bric::ElementAdmin - Bricolage Element Administration Guide.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-09-06 21:52:51 $
+
+=head1 DESCRIPTION
+
+This guide covers the art and science of Element Administration in Bricolage. It
+is geared toward users who will be responsible for determining the elements of
+stories and media, figuring out their relationships, and then creating and
+editing them in the Bricolage interface.
+
+=head1 INTRODUCTION
+
+The core of Bricolage is asset editing. Most users will spend the vast majority
+of their time building and editing story assets, and to a lesser degree Media
+assets. (Template editing and management is covered in L<Bric::Templates> and
+L<Bric::AdvTemplates> and will not be addressed in this document.) How editors
+and media producers interact with Bricolage to build assets, however, is heavily
+dependent on how well thought-out and designed Element Administration has been.
+Elements are the building blocks of stories in Bricolage. Each story is based on
+a single element that defines its story type, and subelements of the story are
+available if they have been designated as available within the story type. In
+turn, each subelement can have subelemens, and the depth of the subelements can
+be arbitrarily deep.
+
+Since by default there are only a few elements available in Bricolage to get you
+started, it's important to think about how you'd like to use Bric within your
+organization, and to think about how your stories and media are constructed, to
+come up with a design for your element hierarchy. This document will assist you
+in this task with the goal of helping you to create an element infrastructure
+that matches the needs of your organization while creating an intuitive and
+easy-to-use interface for your editors and producers.
+
+=head1 PLANNING
+
+Once you have become familiar with how Bricolage works, it's important to start
+thinking about how you plan to use it within your organization. Aspects that
+deserve some thought include Workflow and Desk design, Category Administration,
+Output Channel Administration, Contributor Type Administration, and user groups
+and permissions. Each of these administrative design functions are covered in
+separate documents [or will be, eventually!], but the most important bit to
+think about, from your users' point of view, is Element Administration.
+
+The planning stage of element administration requires that you think about how
+stories (and media, though media element administration will typically be less
+complex) in your environment are constructed. Here are some of the issues that
+need to be addressed:
+
+=over 4
+
+=item Typology
+
+What kinds of stories do you have? Are there different types of stories for
+different parts of your site? For different sites managed from within Bricolage?
+At a minimum, you will likey want to consider using two different types of
+stories: B<Covers>, which include content summarizing and pointing to other
+stories, and B<Stories>, which make up the bulk of the content for your site.
+
+=item Construction
+
+For each type of story you define for your organization, think about what
+constitutes each story of that type. There are two aspects of this level of the
+design: Subelement available for each story, and data fields within each of
+those elements. Elements are the building blocks of a story, while the fields in
+an element constititute an element's data points.
+
+=item Relationships
+
+All individual elements can be associated with one other story or with one media
+object. These relationships are useful for creating links to other stories, and
+for displaying images within a story.
+
+=back
+
+Let's start with a couple of simple examples. Say that there are two basic types
+of stories on your site, cover stories and content stories. The cover stories
+might have the following features:
+
+=over
+
+=item *
+
+A Fixed URL that doesn't change and isn't linked to a date.
+
+=item *
+
+A single page.
+
+=item *
+
+Three columns of content. The columns are defined as follows:
+
+=over 4
+
+=item 1
+
+Column One Contains navigaion to other sections of the site.
+
+=item 2
+
+Column Two features a the title of the cover and link to the top story of the
+day with an image, as well as links to other stories that are related to the
+first.
+
+=item 3
+
+Column Three features a list of links to recent stories on your site and a section
+containing advertizing.
+
+=back
+
+=back
+
+The first thing you'll need to do is to edit or create a new Element Type to
+manage your cover story type. By default, Bricolage ships with the Element Type
+"Covers," and this Element Type conveniently sets a number of properties
+required in the above scenario. Let's look at the "Covers" Element Type.
+
+In the navigation bar, go to ADMIN -E<gt> PUBLISHING -E<gt> Element Types. In
+the list of Element Types, click the "Edit" link for the "Covers" entry. This
+brings up the Element Type Profile, where you'll find the name and description
+of the Element Type, and a list of its properties. You can fill in the name and
+the description however you like, but you need to be familiar with the other
+options:
+
+=over 4
+
+=item Page
+
+This checkbox indicates whether the Elements of this Element Type represent
+pages or not. If an element is a page, then if you add more than one elements of
+this type to a story, each one will trigger the generation of a new page. Since
+we want our covers to have only one page, however, you should leave this option
+unchcked.
+
+=item Fixed
+
+This checkbox indicates whether the Elements of this Element Type have fixed
+URLs. A Fixed URL is a URL that is not associated with a cover date. Most
+stories will not be fixed URLs, as you'll want to associate them with a date.
+But since covers change from day to day, but we want their locations to stay the
+same (so that readers can always come back to the same URL to see what's new),
+this option should be checked.
+
+=item Related Story
+
+=item Related Media
+
+All Elements in Bricolage can have one story and or one media object associated
+with them. By checking one or both of these options, users who add an Element of
+this Element Type will have the option to associate a story or media object. The
+purpose of this feature is to allow links to be made between assets. We'll cover
+more on this below. Since the cover we've outlined above, however, has no other
+image or story associated with it, leave these options unchecked. (For those who
+note that there is indeed an image in the description above I'll just get a bit
+ahead of myself here to point out that it's not associated with the cover story
+type, but with on of its subelements -- specifically, the first item in Column
+Two. More on that below.)
+
+=item Type
+
+This property has already been determined. There are only three types that are
+associated with Element Types: B<Story>, B<Media>, and B<Element>. A Story Type
+is an Element Type whose Elements define stories. A Media Type is an Element
+Type whose Element define Media objects. Most Element Types, however will be of
+the type B<Element>. These are Elements that can be added to stories or media or
+other elements as Subelements. Since the Cover we describe above is the
+over-arching construct for the "Cover" story, we'll want to have the type be
+"Story", which the existing "Covers" Element Type already is. Note that, had you
+created a new Element Type, you have have had to decide whether it was a Story,
+Media, or Element Type before you could edit the other options, as the other
+options are dependent on this property.
+
+=back
+
+Now thate the Element Type has been defined, we need to create an actual "Cover"
+Element. In the navigation bar, go to ADMIN -E<gt> PUBLISHING -E<gt> Elements.
+Here again you'll find a default Element that will do the trick: "Cover." Click
+the "Edit" link for this item. Here you'll find all the properties you'll need
+to configure for the "Cover" Story Type. Note that it's Type property has
+already been set for "Covers," therebye inheriting all of the properties we've
+outlined above. You can edit the Name and Description as you wish, but the
+remainder of the sections require more explanation:
+
+=head1 ELEMENT TYPES
+
+
+
+=head1 ELEMENTS
+
+=head1 AUTHOR
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+perl(1),
+Bric (2).
+
+=head1 REVISION HISTORY
+
+$Log: ElementAdmin.pod,v $
+Revision 1.1  2001-09-06 21:52:51  wheeler
+Initial revision
+
+=cut

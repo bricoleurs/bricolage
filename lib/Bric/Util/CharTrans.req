@@ -1,0 +1,108 @@
+User Stories for Bric::Util::CharTrans Module
+ as collected by Paul Lindner
+
+Customer: Garth Webb, Bricolage
+-------------------------------------------
+
+#  1: Build perl module Bric::Util::CharTrans based on Bricolage O-O framework
+
+  estimate: 2 hours
+     notes: Base off random module Events.pm
+            Object must have new() method
+            Object must have to_utf8() and from_utf8() methods
+
+done
+
+#  2: Customer specifies valid character sets to use, and can retrieve 
+      character set in use..
+
+  estimate: 30min 
+     notes: Must have method charset()
+done
+
+#  3: Support iso8859-1 (latin1) to UTF-8 translation
+#  4: Support UTF-8 to iso8859-1 (latin) translation 
+
+  estimate: 2 hours
+     notes: Use Unicode::String to do this conversion
+
+done
+
+#  5: Convert a scalar to another scalar using supported character sets
+done
+
+#  6: Convert a scalar ref "in place" using supported character sets
+done
+
+#  7: Convert scalar data in a perl hash ref using supported character sets
+#  8: Convert arbitrary perl data structures using supported character sets
+both done
+
+#  9: System throws an error in the face of unconvertable data.
+
+done -- via Iconv internal die propagation
+
+# 10: Support iso8859-2 (east european) to UTF-8
+# 11: Support UTF-8 to iso8859-2
+both done
+
+# 12: Support iso8859-3 (south european) to UTF-8
+# 13: Support UTF-8 to iso8859-3
+
+# 14: Support iso8859-4 (north european) to UTF-8
+# 15: Support UTF-8 to iso8859-4
+
+# 16: Support iso8859-5 (cyrillic) to UTF-8
+# 17: Support UTF-8 to iso8859-5
+
+# 18: Support iso8859-6 (arabic) to UTF-8
+# 19: Support UTF-8 to iso8859-6
+
+# 20: Support iso8859-7 (greek) to UTF-8
+# 21: Support UTF-8 to iso8859-7
+both work
+
+# 22: Support iso8859-8 (Hebrew) to UTF-8
+# 23: Support UTF-8 to iso8859-8
+both work
+
+# 24: Support iso8859-9 (Latin5 - Turkish) to UTF-8
+# 25: Support UTF-8 to iso8859-9
+
+# 26: Support iso8859-10 (Latin6 - Nordic) to UTF-8
+# 27: Support UTF-8 to iso8859-10
+
+# 28: Support X-EUC-JP (Japanese) to UTF-8
+# 29: Support UTF-8 to X-EUC-JP
+both done
+ 
+# 30: Support JIS (Japanese) to UTF-8 
+# 31: Support UTF-8 to JIS
+both done
+
+# 30: Support SJIS (Japanese) to UTF-8 
+# 31: Support UTF-8 to SJIS (Japanese)
+both done
+
+# 32: Support Big5 (Chinese Traditional) to UTF-8
+# 33: Support UTF-8 to Big5
+both done
+
+# 32: Support GB2312 (Chinese Simplified) to UTF-8
+# 33: Support UTF-8 to GB2312
+both done
+
+# 34: Module must be thread safe
+
+# 35: Must be able to override character set used on a call-by-call basis.
+
+# 36: Must accomodate standard HTTP charset params and map them to the
+      correct character set..
+
+Done, when using linux Iconv knows most charsets.  Added aliases for others
+
+
+# 37: Support EUC-KR (Korean) to UTF-8
+# 38: Support UTF-8 to EUC-KR
+
+both done

@@ -1,0 +1,35 @@
+--
+-- Project: Bricolage Business API
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2001-09-06 21:55:24 $
+-- Author: David Wheeler <david@wheeler.net>
+
+
+-- 
+-- TABLE: pref_opt
+--
+
+ALTER TABLE    pref_opt
+ADD CONSTRAINT fk_pref__pref_opt FOREIGN KEY (pref__id)
+REFERENCES     pref(id) ON DELETE CASCADE;
+
+-- 
+-- TABLE: pref_member
+--
+
+ALTER TABLE    pref_member
+ADD CONSTRAINT fk_pref__pref_member FOREIGN KEY (object_id)
+REFERENCES     pref(id) ON DELETE CASCADE;
+
+ALTER TABLE    pref_member
+ADD CONSTRAINT fk_member__pref_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+/*
+Change Log:
+$Log: Pref.con,v $
+Revision 1.1  2001-09-06 21:55:24  wheeler
+Initial revision
+
+*/

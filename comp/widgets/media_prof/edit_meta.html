@@ -1,0 +1,209 @@
+<input type="hidden" name="<% $widget %>|update_pc" value="1">
+
+<%perl>
+my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget . "|notes_cb",
+  image    => "view_notes_teal"
+);
+
+$rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget . "|trail_cb",
+  image    => "view_trail_teal"
+);
+
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Information",
+	 number  => $num++,
+	 rightText => $rightText
+
+);
+
+</%perl>
+
+<table border="0" width="578" cellpadding="0" cellspacing="0">
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">ID:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_id() %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Asset Type:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_element_name() %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Version:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_version() %></td>
+  </tr>
+  <tr>
+  <td class="medHeader" colspan=3><img src="/media/images/spacer.gif" height="1" width="1" /></td>
+  </tr>
+</table>
+<% $ieSpacer %>
+<& '/widgets/profile/displayFormElement.mc',
+   objref => $media,
+   key => 'title',
+&>
+
+<% $ieSpacer %>
+
+<& '/widgets/profile/displayFormElement.mc',
+   objref => $media,
+   key => 'description',
+&>
+
+<% $ieSpacer %>
+
+<& '/widgets/select_object/select_object.mc', 
+  object        => 'source',
+  name		=> "$widget|source__id",
+  field		=> 'source_name',
+  selected_id	=> $media->get_source__id,
+  indent	=> 0,
+  useTable	=> 1,
+  disp          => "Source"
+&>
+<% $ieSpacer %>
+<& '/widgets/select_object/select_object.mc',
+  object	=> 'category',
+  name 		=> "$widget|category__id",
+  field		=> "name",
+  selected_id	=> $media->get_category__id,
+  indent	=> 0,
+  useTable	=> 1,
+  disp          => "Category"
+&>
+<% $ieSpacer %>
+<& '/widgets/profile/displayFormElement.mc',
+   objref => $media,
+   key => 'priority',
+&>
+<% $ieSpacer %>
+<& '/widgets/profile/displayFormElement.mc',
+   objref => $media,
+   key => 'cover_date',
+&>
+<% $ieSpacer %>
+<& '/widgets/profile/displayFormElement.mc',
+   objref => $media,
+   key => 'expire_date',
+&>
+<% $ieSpacer %>
+
+% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+% $m->comp("/widgets/wrappers/sharky/table_top.mc",
+%	caption => "Upload a file",
+%	number => 2
+%	);
+
+<table width=578 cellpadding=2 cellspacing=0>
+<tr>
+  <td width=<% $infoIndent %> valign=top align=right><span class="label">File Path:</span></td>
+  <td width=<% 578 - $infoIndent %>>
+  <input type="file" name="<% $widget %>|file" size="30"> <br />
+  <& '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget ."|update_pc",
+  image    => "upload_red"
+  &>
+  </td>
+</tr>
+<tr>
+  <td width=150 align=right><span class="label">Download:</span></td>
+  <td>
+% if (my $uri = $media->get_local_uri()) {
+	<a href="<% $uri %>" target="download" class="darkBlueLink"><% $media->get_file_name %></a>
+% } else {
+	No file has been uploaded
+% }
+	</td>
+</tr>
+</table>
+
+<%perl>
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+$m->comp( '/widgets/container_prof/container_prof.mc',
+	tile => $tile,
+	tile_type => 'media',
+	action => 'edit',
+        num => 3,
+        title => 'Content',
+	start_count => 6
+);
+
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+         caption => "Contributors",
+         number => 4);
+</%perl>
+
+
+<table border=0 cellpadding=0 cellspacing=0 width=578>
+<tr>
+  <td width=<% $infoIndent %> align="right"><span class=label>Contributors:</span></td>
+  <td width=<% 578 - $infoIndent - 70 %>>
+<%perl>
+my @existing_contribs = map { $_->get_name } $media->get_contributers;
+$m->out((scalar(@existing_contribs)) ? "&nbsp;" . join(", ", @existing_contribs) : "&nbsp;No contributors defined.");
+</%perl>
+  </td>
+  <td width=70><& '/widgets/profile/imageSubmit.mc',
+                  formName => "theForm",
+                  callback => $widget ."|contributers_cb",
+                  image    => "edit_lgreen",
+                  vspace   => 3
+  &></td>
+</tr>
+</table>
+
+
+<%perl>
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+$m->comp("/widgets/profile/buttonBar.mc",
+         widget      => $widget,
+	 desks       => $desks,
+	 cd          => $cd,
+         obj         => $media,
+);
+
+</%perl>
+
+%#-- Args Section --#
+<%args>
+$widget
+</%args>
+
+%#-- Init Section --#
+<%init>
+
+my $media = get_state_data($widget, 'media');
+my $tile = $media->get_tile();
+
+set_state_data('container_prof', 'tile', $tile);
+
+my $wf_id = get_state_data($widget, 'work_id');
+$wf_id = $media->get_workflow_id() unless $wf_id;
+my $wf = Bric::Biz::Workflow->lookup( { id => $wf_id });
+my $desks = $wf->allowed_desks();
+my $cd = $media->get_current_desk();
+$cd = $wf->get_start_desk() unless $cd;
+
+
+# Set up a formatting variable
+my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+my $num = 1;
+my $ieSpacer = ($agent->{browser} eq "Internet Explorer") ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=578 height=5 /></td></tr></table>} : '';
+</%init>
+
