@@ -546,7 +546,7 @@ sub assoc_contrib_role : Callback {
     log_event('story_add_contrib', $story, { Name => $contrib->get_name });
 
     # Go back to the main contributor pick screen.
-    set_redirect(last_page);
+    set_redirect(last_page());
 
     # Remove this page from the stack.
     pop_page();
@@ -572,7 +572,7 @@ sub save_contrib : Callback {
 
     $save_contrib->(CLASS_KEY, $self->request_args);
     # Set a redirect for the previous page.
-    set_redirect(last_page);
+    set_redirect(last_page());
     # Pop this page off the stack.
     pop_page();
 }
@@ -587,7 +587,7 @@ sub leave_contrib : Callback {
     my $self = shift;
 
     # Set a redirect for the previous page.
-    set_redirect(last_page);
+    set_redirect(last_page());
     # Pop this page off the stack.
     pop_page();
 }
@@ -597,7 +597,7 @@ sub exit : Callback {
 
     set_state(CLASS_KEY, {});
     # Set the redirect to the page we were at before here.
-    set_redirect(last_page || "/workflow/search/story/");
+    set_redirect(last_page() || "/workflow/search/story/");
     # Remove this page from history.
     pop_page();
 }
@@ -630,7 +630,7 @@ sub add_kw : Callback {
     # Save the changes
     set_state_data(CLASS_KEY, 'story', $story);
 
-    set_redirect(last_page);
+    set_redirect(last_page());
 
     add_msg("Keywords saved.");
 
