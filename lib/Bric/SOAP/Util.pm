@@ -7,6 +7,7 @@ use warnings;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Category;
 use Bric::Util::Time qw(db_date local_date strfdate);
+use Bric::Config qw(:time);
 
 use XML::Simple qw(XMLin);
 
@@ -29,15 +30,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.11.2.1 $
+$Revision: 1.11.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-25 22:54:03 $
+$Date: 2002-11-07 22:54:48 $
 
 =head1 SYNOPSIS
 
@@ -285,10 +286,19 @@ sub _deserialize_tile {
 		    " cannot add data element $d->{element} here.\n"
 			unless $at;
 
-	    # add data to container
-	    $element->add_data($at, 
-			       exists $d->{content} ? $d->{content} : '',
-			       $d->{order});
+            if ($at->get_sql_type() eq 'date') {
+                # add date data to container
+                $element->add_data($at, 
+                                   exists $d->{content} ? 
+                                   xs_date_to_db_date($d->{content}) : '',
+                                   $d->{order});
+            } else {
+                # add data to container                
+                $element->add_data($at, 
+                                   exists $d->{content} ? $d->{content} : '',
+                                   $d->{order});
+            }
+
 	    $element->save; # I'm not sure why this is necessary after
                             # every add, but removing it causes errors
 	}
@@ -398,8 +408,16 @@ sub _serialize_tile {
 	    $writer->emptyTag("container", %attr);
 	}
     } else {
-	# data elements
-	my $data = $element->get_data;
+        my $data;
+
+        if ($element->get_element_data_obj->get_sql_type eq 'date') {
+            # get date data and format for output
+            $data = $element->get_data(ISO_8601_FORMAT);
+            $data = db_date_to_xs_date($data) if $data;
+        } else {
+            $data = $element->get_data();
+        }
+
 	if (defined $data and length $data) {
 	    $writer->dataElement("data", $data,
 				 element => $element->get_element_name,

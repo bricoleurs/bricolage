@@ -92,6 +92,14 @@ Bric::Biz::Asset::Business::Media->list(). [David]
 
 Setting permissions on the assets in a category works again. [David]
 
+=item *
+
+Fixed a bug where exporting a story via SOAP containing a date field
+would output the formatted date rather than the expected ISO 8601
+format.  Systems with a modified date format pref would then refuse to
+accept the story on import, producing an "Unable to unpack date"
+error.  [Sam]
+
 =back
 
 =head1 VERSION 1.4.4
