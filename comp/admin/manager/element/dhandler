@@ -126,9 +126,9 @@ $m->comp('/widgets/listManager/listManager.mc',
 
 # Output the form closing tag if necessary.
 if ($id) {
-    $m->out(qq{<br><input type="image" src="/media/images/<% $lang_key %>/add_elements_lgreen.gif" border=0 name="element|doRedirect_cb" value="1" />\n</form>});
+    $m->out(qq{<br /><input type="image" src="/media/images/$lang_key/add_elements_lgreen.gif" border=0 name="element|doRedirect_cb" value="1" />\n</form>});
 } elsif ($can_del) {
-    $m->out(qq{<br><input type="image" src="/media/images/<% $lang_key %>/delete_checked_red.gif" border=0 name="action"}
+    $m->out(qq{<br /><input type="image" src="/media/images/$lang_key/delete_checked_red.gif" border=0 name="action"}
 	    . qq{value="$sel_label Checked" />\n</form>});
 } else  {
     $m->out('</form>');
@@ -147,11 +147,11 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-12 03:25:06 $
+$Date: 2003-03-12 17:33:17 $
 
 =head1 SYNOPSIS
 
