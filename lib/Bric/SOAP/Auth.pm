@@ -22,15 +22,15 @@ Bric::SOAP::Auth - module to handle authentication for the SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.3.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.3.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-24 00:19:35 $
+$Date: 2002-11-08 01:34:53 $
 
 =head1 SYNOPSIS
 
@@ -38,14 +38,14 @@ $Date: 2002-01-24 00:19:35 $
   my $soap = new SOAP::Lite
       uri => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
       readable => DEBUG;
-  
+
   # setup the proxy with a cookie jar to hold the auth cookie
   $soap->proxy('http://localhost/soap',
                cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 
   # call the login method
   my $response = $soap->login(name(username => USER), 
-                      	      name(password => PASSWORD));
+                              name(password => PASSWORD));
 
   # switch uri to call methods in other Bric::SOAP classes
   $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
@@ -73,7 +73,7 @@ Throws: NONE
 
 Side Effects: NONE
 
-Notes: 
+Notes:
 
 Calls Bric::App::Auth::login to check permissions and set the cookie.
 
@@ -82,7 +82,7 @@ Calls Bric::App::Auth::login to check permissions and set the cookie.
 sub login {
   my $pkg = shift;
   my $env = pop;
-  my $args = $env->method || {};    
+  my $args = $env->method || {};
   my $r = Apache->request;
 
   # check for required args
@@ -102,14 +102,14 @@ sub login {
 
   # call out to login
   my ($bool, $msg) = Bric::App::Auth::login($r,
-					    $args->{username},
-					    $password);
+                                            $args->{username},
+                                            $password);
 
   return name(result => 1) if $bool;
   die __PACKAGE__ . "::login : login failed : $msg\n"; 
 }
 
-=back 4
+=back
 
 =head1 AUTHOR
 
