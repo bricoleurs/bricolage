@@ -8,35 +8,35 @@ use Bric::App::Authz qw(:all);
 use Bric::App::Callback::Util qw(parse_uri);
 use Bric::App::Util qw(:all);
 
-use Bric::App::Callback::Profile::Action.pm;
-use Bric::App::Callback::Profile::AlertType.pm;
-use Bric::App::Callback::Profile::Category.pm;
-use Bric::App::Callback::Profile::Contrib.pm;
-use Bric::App::Callback::Profile::Desk.pm;
-use Bric::App::Callback::Profile::Dest.pm;
-use Bric::App::Callback::Profile::ElementData.pm;
-use Bric::App::Callback::Profile::ElementType.pm;
-use Bric::App::Callback::Profile::FormBuilder.pm;
-use Bric::App::Callback::Profile::Grp.pm;
-use Bric::App::Callback::Profile::Job.pm;
-use Bric::App::Callback::Profile::Media.pm;
-use Bric::App::Callback::Profile::MediaType.pm;
-use Bric::App::Callback::Profile::OutputChannel.pm;
-use Bric::App::Callback::Profile::Pref.pm;
-use Bric::App::Callback::Profile::Server.pm;
-use Bric::App::Callback::Profile::Site.pm;
-use Bric::App::Callback::Profile::Source.pm;
-use Bric::App::Callback::Profile::Story.pm;
-use Bric::App::Callback::Profile::Template.pm;
-use Bric::App::Callback::Profile::User.pm;
-use Bric::App::Callback::Profile::Workflow.pm;
+use Bric::App::Callback::Profile::Action;
+use Bric::App::Callback::Profile::AlertType;
+use Bric::App::Callback::Profile::Category;
+use Bric::App::Callback::Profile::Contrib;
+use Bric::App::Callback::Profile::Desk;
+use Bric::App::Callback::Profile::Dest;
+use Bric::App::Callback::Profile::ElementData;
+use Bric::App::Callback::Profile::ElementType;
+use Bric::App::Callback::Profile::FormBuilder;
+use Bric::App::Callback::Profile::Grp;
+use Bric::App::Callback::Profile::Job;
+use Bric::App::Callback::Profile::Media;
+use Bric::App::Callback::Profile::MediaType;
+use Bric::App::Callback::Profile::OutputChannel;
+use Bric::App::Callback::Profile::Pref;
+use Bric::App::Callback::Profile::Server;
+use Bric::App::Callback::Profile::Site;
+use Bric::App::Callback::Profile::Source;
+use Bric::App::Callback::Profile::Story;
+use Bric::App::Callback::Profile::Template;
+use Bric::App::Callback::Profile::User;
+use Bric::App::Callback::Profile::Workflow;
 
 my $excl = {'desk' => 1, 'action' => 1, 'server' => 1};
 
 
-# each subclass of Profile inherits this constructor
+# each subclass of Profile inherits this constructor,
 # which I want to set up the common things (obj, type, class)
-# and also whether the user has permission then each callback
+# and also whether the user has permission, then each callback
 # will just return unless $self->has_perms
 sub new {
     my $pkg = shift;
@@ -67,7 +67,7 @@ sub new {
         $self->has_perms(1);
     }
 
-    # Process its data - in a subclass:
+    # Process its data in a subclass:
     # action, alert_type, category, contrib, desk, dest, element_data,
     # element_type, grp, job, media_type, output_channel, pref,
     # server, site, source, user, workflow
