@@ -132,11 +132,11 @@ $do_contrib_type = sub {
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
         next if $del_attrs{$aname};
 
-        $grp->set_member_attr({ name => $aname,
-                                sql_type => $grp->get_member_attr_sql_type
+        $obj->set_member_attr({ name => $aname,
+                                sql_type => $obj->get_member_attr_sql_type
                                             ({ name => $aname}),
                                 value => $param->{"attr|$aname"} });
-        $grp->set_member_meta({ name => $aname,
+        $obj->set_member_meta({ name => $aname,
                                 field => 'pos',
                                 value => $pos->[$i] });
         ++$i;
