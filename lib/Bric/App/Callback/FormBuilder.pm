@@ -27,7 +27,7 @@ sub process_data : Callback {
               || ($key eq 'user' && $obj->get_id == get_user_id())) {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
-        add_msg("Changes not saved: permission denied.");
+        add_msg($self->lang->maketext("Changes not saved: permission denied."));
         set_redirect(last_page());
         return;
     }
