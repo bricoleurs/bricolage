@@ -5,6 +5,7 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'container_prof';
 
 use strict;
+use Bric::Config qw(:time);
 use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:msg :aref :history :wf);
@@ -236,7 +237,7 @@ sub create_related_media : Callback {
     # Set up the parameters to create a new media document.
     my $m_param = {
         "title"                   => $param->{"media_prof|file"},
-        "cover_date"              => $asset->get_cover_date,
+        "cover_date"              => $asset->get_cover_date(ISO_8601_FORMAT),
         "priority"                => $asset->get_priority,
         "media_prof|category__id" => $asset->get_primary_category->get_id,
         "media_prof|source__id"   => $asset->get_source__id,
@@ -250,6 +251,9 @@ sub create_related_media : Callback {
         apache_req => $self->apache_req,
         params     => $m_param
     );
+
+    # Cache the container prof state.
+    my $state = get_state($widget);
 
     $media_cb->create;
     $media_cb->update;
@@ -266,11 +270,12 @@ sub create_related_media : Callback {
     );
     $desk_cb->checkin;
 
-    # Stay where we are! This cancles any redirects set up by the Media
+    # Stay where we are! This cancels any redirects set up by the Media
     # callback object.
     $self->set_redirect($self->apache_req->uri);
     $tile->set_related_media($media->get_id);
-    set_state_data($widget, 'tile' => $tile);
+    # Restore the state.
+    set_state($widget, @$state);
 }
 
 sub relate_media : Callback {
