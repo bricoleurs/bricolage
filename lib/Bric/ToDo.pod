@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.6 $
+$Revision: 1.13.2.7 $
 
 =head1 DATE
 
-$Date: 2001-10-02 08:03:05 $
+$Date: 2001-10-02 10:14:14 $
 
 =head1 DESCRIPTION
 
@@ -127,6 +127,11 @@ http://bricolage-bugzilla.about.com/show_bug.cgi?id=3).
 
 =item *
 
+Add Keyword Management interface to centrally manage keywords. Also add
+interface to select from existing keywords for associating with assets.
+
+=item *
+
 Add HTML Cleaning Action [David].
 
 =item *
@@ -194,6 +199,11 @@ Add ability to "undeploy" templates without deactivating them.
 =head2 VERSION 1.2.0
 
 =over 4
+
+=item *
+
+Add Explanation/Philosophy statement linkable from the logo (make French
+speakers more comfortable with the name) [David].
 
 =item *
 
@@ -306,6 +316,11 @@ of a deleted one without any clashes (e.g., for Elements and Element Types).
 
 =item *
 
+Update all interface elements to use localization libraries. No text that
+appears to the user should appear except in reference to a localization library.
+
+=item *
+
 Add support for Instant messaging (using Jabber server) in Alerts.
 
 =item *
@@ -411,6 +426,10 @@ Add support for concurrent checkouts, including support for conflict resolution.
 Add support for display of deltas between versions -- something like what CVSWeb
 does, in terms of allowing editors to see what has changed between versions of
 an asset.
+
+=item *
+
+Create system of interserver communication and replication.
 
 =item *
 
