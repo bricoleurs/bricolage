@@ -7,15 +7,15 @@ Bric::Util::Attribute - A module to manage attributes for various objects.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-03-04 05:06:49 $
 
 =head1 SYNOPSIS
 
@@ -1133,7 +1133,9 @@ sub get_meta {
     return unless $meta;
 
     if ($param->{'field'}) {
-        return $meta->{$param->{'field'}}->{'value'};
+        # If there was a field passed, then $meta is just the metadata for that
+        # field.
+        return $meta->{'value'};
     } else {
         # If they didn't request a specific field, return it all.
         return $meta;
