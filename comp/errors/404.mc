@@ -4,7 +4,7 @@
 <& '/widgets/wrappers/sharky/header.mc', 
    title => '404 NOT FOUND', 
    context => 'Invalid page request',
-   debug => Bric::Config::QA_MODE
+   debug => (QA_MODE)
  &>
 
 <p class="header">The URL you requested, <b><% $r->uri %></b>, was not found on

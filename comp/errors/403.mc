@@ -5,7 +5,7 @@ $m->clear_buffer;
 $m->comp('/widgets/wrappers/sharky/header.mc',
 	 title => 'Permission Denied',
 	 context => '',
-	 debug => Bric::Config::QA_MODE);
+	 debug => QA_MODE);
 my $name = ref $obj ? $obj->get_name : '';
 my $the = '';
 if ($name) {

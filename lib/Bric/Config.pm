@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-03 21:26:56 $
+$Date: 2002-04-04 09:46:50 $
 
 =head1 SYNOPSIS
 
@@ -78,6 +78,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    AUTH_TTL
 		    AUTH_SECRET
 		    QA_MODE
+		    TEMPLATE_QA_MODE
 		    ADMIN_GRP_ID
 		    PASSWD_LENGTH
 		    LOGIN_LENGTH
@@ -154,7 +155,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 				     DEF_MEDIA_TYPE
 				     DIST_ATTEMPTS
 				     PREVIEW_LOCAL)],
-		    qa        => [qw(QA_MODE)],
+		    qa        => [qw(QA_MODE 
+					 TEMPLATE_QA_MODE)],
 		    err       => [qw(ERROR_URI)],
 		    char      => [qw(CHAR_SET)],
 		    ui        => [qw(FIELD_INDENT
@@ -245,7 +247,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 	}
 	# While these default to 0.
 	foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER SSL_ENABLE
-                    DISABLE_NAV_LAYER))
+                    DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE))
 	{
 	    my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -334,6 +336,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
     # QA Mode settings.
     use constant QA_MODE                 => $config->{QA_MODE} || 0;
+    use constant TEMPLATE_QA_MODE        => $config->{TEMPLATE_QA_MODE} || 0;
 
     # Character translation settings.
     use constant CHAR_SET                => $config->{CHAR_SET} || 'ISO-8859-1';
@@ -354,7 +357,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 6;
 
     # Error Page Setting.
-    use constant ERROR_URI => QA_MODE ? '/errors/error.html' : '/errors/500.mc';
+    use constant ERROR_URI => (QA_MODE) ? '/errors/error.html' : '/errors/500.mc';
 
     # Email Settings.
     use constant SMTP_SERVER => $config->{SMTP_SERVER}
