@@ -110,6 +110,15 @@ Done! Now start testing...
 =cut
 
 #==============================================================================#
+# Inheritance                          #
+#======================================#
+use base qw(Bric Exporter);
+
+our @EXPORT_OK = qw(PUBLISH_MODE PREVIEW_MODE SYNTAX_MODE);
+our %EXPORT_TAGS = ( all => \@EXPORT_OK,
+                     modes => \@EXPORT_OK);
+
+#==============================================================================#
 # Dependencies                         #
 #======================================#
 
@@ -121,6 +130,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
+use Bric::App::Session;
 use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
                          rethrow_exception);
 use Bric::Util::Trans::FS;
@@ -130,18 +140,11 @@ use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
 use Bric::App::Session qw(:user);
 use Bric::Biz::Site;
+require Bric::Util::Job::Pub;
 use Bric::Util::Pref;
+use Bric::Util::Time qw(:all);
 use File::Basename qw(fileparse);
 use URI;
-
-#==============================================================================#
-# Inheritance                          #
-#======================================#
-use base qw(Bric Exporter);
-
-our @EXPORT_OK = qw(PUBLISH_MODE PREVIEW_MODE SYNTAX_MODE);
-our %EXPORT_TAGS = ( all => \@EXPORT_OK,
-                     modes => \@EXPORT_OK);
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -1199,11 +1202,18 @@ Designed to be called from within a template, this method publishes a document
 other than the one currently being published. This is useful when a template
 for one document type needs to trigger the publish of another document. Look
 up that document via the Bricolage API and then pass it to this method to have
-it published at the same time as the story currently being published. If the
-mode isn't PUBLISH_MODE, the publish will not actually be executed. Pass in a
-DateTime string to specify a different date and time to publish the
-document. Pass in a true value as the third argument to trigger the publish in
-any mode, including PREVIEW_MODE (not recommended).
+it published at the same time as the story currently being published.
+
+If the mode isn't C<PUBLISH_MODE>, the publish will not actually be
+executed. Pass in a DateTime string to specify a different date and time to
+publish the document. If that date is in the future, a publish job will be
+schedule at that time. Pass in a true value as the third argument to trigger
+the publish in any mode, including C<PREVIEW_MODE> (not recommended).
+
+Note that any values stored in the C<notes> attribute of the current burner
+will be copied to the new burner that burns the new document, unless the
+C<$publish_time> agrument schedules the document to be published at a future
+time.
 
 B<Throws:> NONE.
 
@@ -1228,6 +1238,18 @@ sub publish_another {
     # Figure out the publish time. Default to the same time as the story
     # that's currently being burned.
     $pub_time ||= $self->get_story->get_publish_date(ISO_8601_FORMAT);
+
+    if ($pub_time gt strfdate) {
+        # Schedule it to be published later.
+        Bric::Util::Job::Pub->new({
+            sched_time    => $pub_time,
+            user_id       => Bric::App::Session::get_user_id(),
+            name          => 'Publish "' . $ba->get_name . '"',
+            "$key\_id"    => $ba->get_id,
+            priority      => $ba->get_priority,
+        })->save;
+        return $self;
+    }
 
     # Construct a new burner object and publish the document.
     my $b2 = __PACKAGE__->new;

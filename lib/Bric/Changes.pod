@@ -104,6 +104,13 @@ distribution handler, and Bric::Dist::Handler looks up the jobs to execute
 itself. This fixes an issue with too many headers being put into the request,
 and makes the operation of Bric::Dist::Handler more efficient. [David]
 
+=item *
+
+A call to C<< $burner->burn_another >> in a template that passes in a
+date/time string in the future now causes a publish job to be scheduled for
+that time, rather than immediate burning the document and then scheduing the
+distribution to take place in the future. Reported by Ashlee Caul. [David]
+
 =back
 
 =head2 Bug Fixes

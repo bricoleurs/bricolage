@@ -285,6 +285,8 @@ Friends who have spotted bugs include:
 
 =item Ed Stevenson
 
+=item Ashlee Caul
+
 =back
 
 Bricolage's translation team:
