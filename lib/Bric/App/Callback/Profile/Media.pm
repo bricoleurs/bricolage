@@ -496,7 +496,7 @@ sub contributors : Callback {
 
 ##############################################################################
 
-sub add_oc_id : Callback {
+sub add_oc : Callback {
     my $self = shift;
     my $media = get_state_data($self->class_key, 'media');
     chk_authz($media, EDIT);
