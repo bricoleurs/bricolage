@@ -164,9 +164,9 @@ my $publish = sub {
 	    if ($path && $uri) {
 		my $r = Bric::Dist::Resource->lookup({ path => $path })
 		  || Bric::Dist::Resource->new({ path => $path,
-					       uri => $uri,
-					       media_type => Bric::Util::MediaType->get_name_by_ext($uri)
-					     });
+						 media_type => Bric::Util::MediaType->get_name_by_ext($uri)
+					       });
+		$r->set_uri($uri);
 		$r->add_media_ids($ba->get_id);
 		$r->save;
 		push @$res, $r;
