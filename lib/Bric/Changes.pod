@@ -87,6 +87,12 @@ assets burned for previewing. This will prevent someone previewing and stomping
 all over a published version of an asset before the published version is
 distributed. [David]
 
+=item *
+
+Removed hard-coding of the local preview directory in httpd.conf and
+httpd-ssl.conf. Now using the values stored in PREVIEW_LOCAL, instead, to
+determine the proper directory. [David]
+
 =back
 
 =head1 VERSION 1.0.2
