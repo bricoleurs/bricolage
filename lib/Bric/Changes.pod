@@ -98,8 +98,15 @@ desired (off by default). [Paul Orrock / Digital Craftsmen]
 =item *
 
 Added support for C<ANY()> function to pass multiple possible values for a
-given parameter to the C<list()> method in Bric::Util::Grp. More classes will
-support it soon! Sponsored by Alinghi. [David]
+given parameter to the C<list()> method in the following classes:
+
+=over
+
+=item Bric::Util::Grp
+
+=item Bric::Biz::ATType
+
+More classes will support it soon! [David]
 
 =item *
 

@@ -5,6 +5,7 @@ use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Biz::ATType;
 use Bric::Util::Grp::ElementType;
+use Bric::Util::DBI ':junction';
 
 sub table {'at_type '}
 my $story_att_id = 1;
@@ -37,13 +38,13 @@ sub test_lookup : Test(9) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(44) {
+sub test_list : Test(60) {
     my $self = shift;
 
     # Create a new element type group.
-    ok( my $grp = Bric::Util::Grp::ElementType->new
-        ({ name => 'Test ElementTypeGrp' }),
-        "Create group" );
+    ok( my $grp = Bric::Util::Grp::ElementType->new({
+        name => 'Test ElementTypeGrp'
+    }), "Create group" );
 
     # Create some test records.
     for my $n (1..5) {
@@ -77,15 +78,56 @@ sub test_list : Test(44) {
         "Look up name $et{name}%" );
     is( scalar @ets, 5, "Check for 5 element types" );
 
+    # Try ANY(name).
+    ok( @ets = Bric::Biz::ATType->list({
+        name => ANY("$et{name}1", 'Insets')
+    }), "Look up name ANY('$et{name}1', 'Insets')" );
+    is( scalar @ets, 2, "Check for 2 element types" );
+
+    # Try ANY(name + wildcard).
+    ok( @ets = Bric::Biz::ATType->list({
+        name => ANY("$et{name}%", 'Related%')
+    }), "Look up name ANY('$et{name}%', 'Related%')" );
+    is( scalar @ets, 7, "Check for 7 element types" );
+
+    # Try ANY(ID).
+    ok @ets = Bric::Biz::ATType->list({
+        id => ANY($ets[0]->get_id, $ets[1]->get_id )
+    }), "Look up ANY(\@ids)";
+    is( scalar @ets, 2, "Check for 2 element types" );
+
     # Try description.
     ok( @ets = Bric::Biz::ATType->list
         ({ description => $et{description} }),
         "Look up description '$et{description}'" );
     is( scalar @ets, 2, "Check for 2 element types" );
 
+    # Try description + wild card.
+    ok( @ets = Bric::Biz::ATType->list({
+        description => "$et{description}%"
+    }), "Look up description '$et{description}%'" );
+    is( scalar @ets, 5, "Check for 5 element types" );
+
+    # Try ANY(description).
+    ok( @ets = Bric::Biz::ATType->list({
+        description => ANY($et{description}, "$et{description}1")
+    }), "Look up description ANY('$et{description}', '$et{description}1'" );
+    is( scalar @ets, 3, "Check for 3 element types" );
+
+    # Try ANY(description + wildcard).
+    ok( @ets = Bric::Biz::ATType->list({
+        description => ANY("$et{description}%", "Related%")
+    }), "Look up description ANY('$et{description}%', 'Related%'" );
+    is( scalar @ets, 7, "Check for 7 element types" );
+
     # Try grp_id.
     ok( @ets = Bric::Biz::ATType->list({ grp_id => $grp_id }),
         "Look up grp_id $grp_id" );
+    is( scalar @ets, 3, "Check for 3 element types" );
+
+    # Try ANY(grp_id).
+    ok( @ets = Bric::Biz::ATType->list({ grp_id => ANY ($grp_id) }),
+        "Look up grp_id ANY($grp_id)" );
     is( scalar @ets, 3, "Check for 3 element types" );
 
     # Make sure we've got all the Group IDs we think we should have.
@@ -143,6 +185,13 @@ sub test_list : Test(44) {
     ok( @ets = Bric::Biz::ATType->list({ biz_class_id => $image_class_id }),
         "Look up biz_class_id $image_class_id" );
     is( scalar @ets, 1, "Check for 1 element type" );
+
+    # Try story and media class types.
+    ok( @ets = Bric::Biz::ATType->list({
+        biz_class_id => ANY($story_class_id, $media_class_id),
+    }), "Look up biz_class_id ANY($story_class_id, $media_class_id)" );
+    is( scalar @ets, 11, "Check for 11 element types" );
+
 }
 
 ##############################################################################
