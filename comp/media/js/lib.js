@@ -485,6 +485,10 @@ function confirmChanges(obj) {
     var tmp;
     var confirmed = false;
 
+    // Sometimes just an ID can be passed in.
+    if (typeof obj != "object")
+        obj = document.getElementById(obj);
+
     // Check for slug.
     if (typeof obj["slug"] != "undefined") {
     if (!validateStory(obj)) {

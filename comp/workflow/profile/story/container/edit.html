@@ -41,7 +41,7 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 	title => "$disp Profile",
 	context => $context . get_state_data('container_prof', 'crumb')
 &>
-<form method="post" action="<% $r->uri %>" name="theForm" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" onSubmit="return confirmChanges('theForm')">
 
 <& /widgets/container_prof/container_prof.mc, 
 	tile_type    => 'story',
