@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.90 $
+$Revision: 1.91 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.90 $ )[-1];
+our $VERSION = (qw$Revision: 1.91 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-11 23:17:06 $
+$Date: 2004-03-12 21:41:31 $
 
 =head1 SYNOPSIS
 
@@ -633,7 +633,7 @@ of possible values.
 =item category_uri
 
 Returns a list of stories with a given category URI. May use C<ANY> for a list
-of possible values. May use C<ANY> for a list of possible values.
+of possible values.
 
 =item story.category
 
