@@ -277,7 +277,7 @@ sub burn_one {
 
     while (1) {
         # Run the biz asset through the template
-        eval { $retval = $interp->exec($tmpl_path) };
+        eval { $retval = $interp->exec($tmpl_path . '/') };
         if (my $err = $@) {
             my $msg;
 	    if (HTML::Mason::Exceptions::isa_mason_exception(

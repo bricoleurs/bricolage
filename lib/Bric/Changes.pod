@@ -30,6 +30,13 @@ they wish to publish from. [Scott]
 Eliminated 'Bareword "ENABLE_HTMLAREA" not allowed while "strict subs" in use'
 warning that prevented startup for some installations. [Scott]
 
+=item *
+
+The Mason burner now appends a "/" to the end of the category path it
+specifies for burning a story. This removes the ambiguity between a directory
+request and a file request, which in rare circumstances could cause unexpected
+problems. [David]
+
 =back
 
 =cut
