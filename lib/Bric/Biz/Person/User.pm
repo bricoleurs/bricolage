@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-01-21 19:07:07 $
+$Date: 2003-01-21 21:32:49 $
 
 =head1 SYNOPSIS
 
@@ -291,8 +291,9 @@ not be called here, and it's SQL queries will not be executed.
 sub lookup {
     my $user = &$get_em(@_);
     # We want @$user to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Biz::User objects found.' }) if @$user > 1;
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+      if @$user > 1;
     return @$user ? $user->[0] : undef;
 }
 
