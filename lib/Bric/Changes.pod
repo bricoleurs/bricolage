@@ -111,6 +111,11 @@ Added C<output_channel_id> parameter to the C<list()> method of Bric::Biz::Site
 in order to prevent sites without output channel associations from being
 listed in the select list for story type and media type elements. [David]
 
+=item *
+
+When a document fails to publish because there are no destinations configured,
+the UI no longer displays a message saying that it was published. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)

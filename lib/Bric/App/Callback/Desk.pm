@@ -167,7 +167,8 @@ sub publish : Callback {
 
         if ($a->get_checked_out) {
             my $a_disp_name = lc(get_disp_name($a->key_name));
-            add_msg("Cannot publish $a_disp_name \"[_1]\" because it is checked out.", $a->get_name);
+            add_msg("Cannot publish $a_disp_name \"[_1]\" because it is"
+                    . " checked out.", $a->get_name);
             next;
         }
 
@@ -178,7 +179,8 @@ sub publish : Callback {
 
             if ($r->get_checked_out) {
                 my $r_disp_name = lc(get_disp_name($r->key_name));
-                add_msg("Cannot auto-publish related $r_disp_name \"[_1]\" because it is checked out.", $r->get_name);
+                add_msg("Cannot auto-publish related $r_disp_name \"[_1]\""
+                        . " because it is checked out.", $r->get_name);
                 next;
             }
 

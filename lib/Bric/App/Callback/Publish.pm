@@ -108,28 +108,34 @@ sub publish : Callback {
 
     # Iterate through each story and media object to be published.
     my $count = @$stories;
+    my $pubed;
     foreach my $sid (@$stories) {
         # Instantiate the story.
         my $s = $story_pub->{$sid} ||
           Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
-        $burner->publish($s, 'story', get_user_id(), $param->{pub_date});
-        add_msg('Story "[_1]" published.', $s->get_title)
-          if $count <= 3;
+        if ($burner->publish($s, 'story', get_user_id(), $param->{pub_date})) {
+            add_msg('Story "[_1]" published.', $s->get_title)
+              if $count <= 3;
+            $pubed++;
+        }
     }
-    add_msg("[quant,_1,story,stories] published.", $count)
-      if $count > 3;
+    add_msg("[quant,_1,story,stories] published.", $pubed)
+      if $pubed && $count > 3;
 
     $count = @$media;
+    $pubed = 0;
     foreach my $mid (@$media) {
         # Instantiate the media.
         my $ma = $media_pub->{$mid} ||
           Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
-        $burner->publish($ma, 'media', get_user_id(), $param->{pub_date});
-        add_msg('Media "[_1]" published.', $ma->get_title)
-          if $count <= 3;
+        if ($burner->publish($ma, 'media', get_user_id(), $param->{pub_date})) {
+            add_msg('Media "[_1]" published.', $ma->get_title)
+              if $count <= 3;
+            $pubed++;
+        }
     }
-    add_msg("[quant,_1,media,media] published.", $count)
-      if $count > 3;
+    add_msg("[quant,_1,media,media] published.", $pubed)
+      if $pubed && $count > 3;
 
     unless (exists($param->{'instant'}) && $param->{'instant'}) {
         redirect_onload(last_page(), $self);

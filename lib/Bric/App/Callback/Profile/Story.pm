@@ -163,7 +163,7 @@ sub checkin : Callback {
         add_msg('Story "[_1]" saved and checked in to "[_2]".',
                 $story->get_title, $dname);
 
-        # HACK: Commit this checkin WHY?? Because Postgres does NOT like
+        # HACK: Commit this checkin. WHY?? Because Postgres does NOT like
         # it when you insert and delete a record within the same
         # transaction. This will be fixed in PostgreSQL 7.3. Be sure to
         # start a new transaction!
