@@ -43,6 +43,12 @@ if ($field eq "$widget|delete_cb") {
 #} elsif ($field eq "$widget|add_cb") {
 
 } elsif ($field eq "$widget|sortBy_cb") {
+    # Leading '-' means reverse the sort
+    if ($param->{$field} =~ s/^-//) {
+        set_state_data('listManager', 'sortOrder', 'reverse');
+    } else {
+        set_state_data('listManager', 'sortOrder', '');
+    }
     set_state_data('listManager', 'sortBy', $param->{$field});
 }
 # Try to match a custom select action.

@@ -40,7 +40,16 @@
 
       # Only make a link if user sorting is enabled.
       if ($userSort) {
-	  $m->out("<a class=$aclass href='$url?listManager|sortBy_cb=$f'>" . ($disp || "") . "</a>");
+          my $sortsign = '';
+          my $sortsymbol = '';
+
+          if (($sortBy eq $f) && ($sortOrder !~ /^reverse$/)) {
+              $sortsign = '-';
+              $sortsymbol = '<img src="/media/images/listsort_down.gif">';
+          } elsif ($sortBy eq $f) {
+              $sortsymbol = '<img src="/media/images/listsort_up.gif">';
+          }
+          $m->out("<a class=$aclass href='$url?listManager|sortBy_cb=$sortsign$f'>" . $sortsymbol . ($disp || "") . "</a>");
       } else {
 	  $m->out($disp);
       }
@@ -72,6 +81,9 @@ EOF
 
 %# Output the rows of data
 % my $first;
+% if ($sortOrder eq 'reverse') {
+%     @$data = reverse @$data;
+% }
 
 % # here's where the rows diplayed are limited - see lines 209-18
 % foreach my $r (0..$#{$data}) {
@@ -164,6 +176,7 @@ my $url       = $r->uri;
 my $object    = get_state_data($widget, 'object');
 my $sortBy    = get_state_data($widget, 'sortBy')
   || get_state_data($widget, 'defaultSort');
+my $sortOrder = get_state_data($widget, 'sortOrder') || '';
 my $sort_col  = 0;
 
 # Figure out where we are.
