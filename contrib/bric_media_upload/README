@@ -1,0 +1,8 @@
+Description:
+  o Bulk Import a directory tree of media files into Bricolage as
+    Media assets.
+Usage:
+  o Run `perldoc bric_media_upload` for complete usage instructions
+    and information.
+Author:
+  o  Matt Vella <mvella@about-inc.com>

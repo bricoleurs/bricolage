@@ -28,6 +28,11 @@ in output channels where "Use Slug as File name" is enabled, since it allows
 stories to essentially have identical URIs except for the file name. Off by
 default. [David]
 
+=item *
+
+Added F<bric_media_upload>, a media file bulk import utility, into
+F<contrib>. Thanks to Matt Vella for the contribution.
+
 =back
 
 =head2 Bug Fixes

@@ -1,0 +1,420 @@
+#!/usr/local/bin/perl -w
+
+eval 'exec /usr/local/bin/perl -w -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+use strict;
+
+=head1 NAME
+
+bric_media_upload - uploads of media from directory, .zip or .tar through SOAP
+
+=head1 SYNOPSIS
+
+bric_media_upload [options] src target_url [target_url, ...]
+
+Arguments:
+
+ src      	    - the source for media files to be uploaded.  This
+                      may be a directory, a .zip file or a .tar file.
+
+ target_url         - the url for the target server(s)
+                      (example: http://bric.bar.com or just bar.com)
+
+Options:
+
+  --help            - shows this screen
+
+  --man             - shows the full documentation
+
+  --verbose         - print a running dialogue of operations.
+
+  --target-username - the Bricolage username to use on the target
+                      server(s).  Defaults to the BRICOLAGE_USERNAME
+                      environment variable if set.
+
+  --target-password - the password to use on the target server(s).
+                      Default to the BRICOLAGE_PASSWORD environment
+                      variable if set.
+
+  --timeout         - specify the HTTP timeout for SOAP requests in
+                      seconds.  Defaults to 60.
+
+  --make-categories - if media archive contains categories that do not exist,
+		      create them, otherwise place category-less media in /
+
+  --media-type	    - import as this media type.  Defaults to 'Photograph',
+                      if exists.
+
+  --content-source  - the content source for which the content will be imported.
+                      Defaults to 'Internal'.
+
+  --temp-dir        - temp dir to use for unzipping or untarring.
+                      Also used for storing authentication cookies.
+                      Defaults to a directory named
+                      bric_media_upload.$$ in your system's temp
+                      directory (as determined by File::Spec->tmpdir).
+
+=head1 DESCRIPTION
+
+This script allows you to import media objects when passed ether a
+path to a directory structure to recurse, or a tar or zip file
+containing a directory structure.
+
+All directories in the source must correspond to categories in
+Bricolage.  By default, media contained in directories that do not
+correspond with Bric categories will be written instead to the root
+category.  Using the --make-categories option, however, categories
+will be created in bric for any directory that does not correspond
+with existing category.
+
+=head1 EXAMPLES
+
+Upload media from a directory structure to localhost:
+
+  bric_media_upload /home/picperson/pics http://localhost
+
+Upload from a .tar file to a hosts named bricky and bricolat, creating
+categories as needed, and saving media as type 'Illustration'.
+
+  bric_media_upload --make-categories --media-type='Illustration' pics.tar \
+                    http://bricky http://bricolat
+
+=head1 AUTHOR
+
+Matt Vella <mvella@about-inc.com>
+
+=head1 SEE ALSO
+
+L<Bric::SOAP|Bric::SOAP>
+
+=cut
+
+use FindBin;
+use POSIX;
+use MIME::Base64;
+use File::Find;
+use File::Path;
+use File::Spec::Unix;
+use Getopt::Long;
+use Pod::Usage;
+use File::Spec::Functions qw(tmpdir catdir);
+
+BEGIN {
+    # get parameters from command line.  do this during compile so
+    # $VERBOSE can effect use options and such.  also so errors get
+    # detected as quick as possible - people are waiting out there!
+    our ($media_source);
+    our (@targ_urls);
+    our $target_username        = $ENV{BRICOLAGE_USERNAME};
+    our $target_password        = $ENV{BRICOLAGE_PASSWORD};
+    our $VERBOSE                = 0;
+    our $make_categories        = 0;
+    our $temp_dir		= catdir(tmpdir(), "bric_media_upload.$$");
+    our $media_type		= 'Photograph';
+    our $timeout                = 60;
+    our $content_source         = 'Internal';
+    our ($help, $man);
+    GetOptions("help"                   => \$help,
+               "man"                    => \$man,
+               "verbose"                => \$VERBOSE,
+               "target-username=s"      => \$target_username,
+               "target-password=s"      => \$target_password,
+	       "temp-dir=s"		=> \$temp_dir,
+               "make-categories"        => \$make_categories,
+	       "media-type=s"		=> \$media_type,
+               "timeout=s"              => \$timeout,
+               "content-source=s"       => \$content_source,
+              ) or  pod2usage(2);
+
+    pod2usage(1)             if $help;
+    pod2usage(-verbose => 2) if $man;
+
+    # check required options
+    pod2usage("Missing required --target-username option ".
+              "and BRICOLAGE_USERNAME environment variable unset.")
+        unless defined $target_username;
+    pod2usage("Missing required --target-password option ".
+              "and BRICOLAGE_PASSWORD environment variable unset.")
+        unless defined $target_password;
+
+    $temp_dir = File::Spec->canonpath( $temp_dir );
+   
+    # get media_source and targets
+    $media_source = shift @ARGV;
+    pod2usage("Missing required media source and target URL parameters")
+        unless defined $media_source;
+    @targ_urls = @ARGV;
+    pod2usage("Missing required target URL parameters")
+        unless @targ_urls;
+};
+
+our $VERBOSE;
+our $START_PATH;
+our $BRIC_SOAP = "$FindBin::Bin/bric_soap";
+our $media_list;
+
+main();
+
+sub main {
+    our $temp_dir;
+    # remove temp dir and (re)create for our use
+    File::Path::rmtree([$temp_dir]); 
+    print "Creating temp dir $temp_dir.\n" if $VERBOSE;
+    File::Path::mkpath([$temp_dir],0,0700) || 
+        die("Unable to create temp dir $temp_dir : $!");
+    
+    # create list of media paths to be uploaded
+    organize_media();
+    
+    upload_media();
+
+    # empty temp dir when done
+    File::Path::rmtree([$temp_dir]); 
+
+    print "bric_media_upload success.\n";
+    exit 0;
+}
+
+# takes media source and returns a list of hashed media
+sub organize_media {
+    our ($media_source);
+    
+    # determine media source type 
+    my $media_source_type;
+    if (-d $media_source) {
+        $media_source_type = 'dir';
+    } elsif (-f _ and $media_source =~ /.*\.tar$/) {
+	$media_source_type = 'tar';
+    } elsif (-f _ and $media_source =~ /.*\.zip$/) {
+	$media_source_type = 'zip';
+    } else {
++        die "Unrecognized media source '$media_source' - must be a directory or a .tar or .zip file.\n";
+     }
+
+  
+    # initialize start_path and set it to $media_source if media_source is dir  
+    if ($media_source_type eq 'dir') {
+	$media_source = File::Spec::Unix->canonpath( $media_source ) ;	
+	$START_PATH = $media_source;
+    }
+ 
+    # unzip/untar file to /tmp if nessecary
+    $START_PATH = open_media_source($media_source_type) if (!$START_PATH); 
+
+    File::Find::find(\&build_image_list, $START_PATH);
+
+}
+
+# unzip or untar a file into temp dir
+sub open_media_source {
+    our ($media_source, $temp_dir);
+    my $media_source_type = shift;
+     
+    # create statement to unzip or untar media source file 
+    my $source_open_statement = ($media_source_type eq 'tar') ? "tar -xf $media_source -C $temp_dir" : "unzip -oq $media_source -d $temp_dir";
+
+    # execute unzip/untar statement to temp dir
+    print "Opening media source $media_source_type file $media_source....\n" if $VERBOSE; 
+    system($source_open_statement) == 0 ||
+    die("Problems unzipping/untarring file.\n");
+
+    return $temp_dir; 
+}
+
+# used by File::Find to recursively look in temp dir for images
+sub build_image_list {
+    my $path = $File::Find::dir;
+    my $file = $_;
+    return unless -f $File::Find::name;
+    return if $file =~ /^\./;
+
+    $path =~ s/$START_PATH//;
+
+    my $temp;
+    my $full_path = "$START_PATH$path/$file";
+    print "Found Media: $full_path \n" if $VERBOSE;
+    $path = "/" if (!$path);
+    
+    $temp->{name} = $file;
+    $temp->{category} = $path;
+    $temp->{full_path} = $full_path;
+ 
+    push @$media_list, $temp;
+}
+
+sub upload_media {
+    our (@targ_urls, $target_username, $target_password, $make_categories, $timeout, $temp_dir);
+    foreach my $targ_url (@targ_urls) {
+	print "\nStarting upload to $targ_url\n" if $VERBOSE;
+	my $current_path = "";
+	my $write_to_root = 0;
+	my $first = 1;	
+	foreach my $media (@$media_list) {
+	    if ($current_path ne $media->{category}) {
+		$write_to_root = 0;
+		# check to see if category exists
+		my $category_check_command;
+		if ($first) {
+		    $category_check_command = "$BRIC_SOAP --save-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url --username $target_username --password $target_password category list_ids --search path=".$media->{category};
+		    $first = 0;
+		    print "Caching cookie in $temp_dir/logincookie\n" if $VERBOSE;
+		} else {
+		    $category_check_command = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url category list_ids --search path=".$media->{category};
+		}
+	
+		my $exec_result = `$category_check_command 2>&1`;
+		if ( ($exec_result =~ /category_\d*/) ) {
+		    print "\nCategory ".$media->{category}." found.\n" if $VERBOSE;
+		} elsif (not $exec_result) {
+		    # if cat does not exist create it
+		    if ($make_categories) {
+			print "\nCategory ".$media->{category}." needs to be created.\n" if $VERBOSE;
+			create_category($media->{category}, $targ_url);
+		    } else {
+			print "\nCategory ".$media->{category}." does not exist. Will upload media to / category.\n" if $VERBOSE;
+			$write_to_root = 1;
+		    }
+		} else {
+		    die ($exec_result); 
+		}	
+	    }
+	    $current_path = $media->{category};
+	
+	    # check to see if media exists, if so get id and update
+	    $media->{category} = "/" if $write_to_root;
+	    my $media_id = check_media_exist($media, $targ_url);
+
+	    # if media id found, update it 
+	    if ($media_id) {
+		create_or_update_media($media,$targ_url,$media_id);
+	    } else { # otherwise create a new one
+		create_or_update_media($media, $targ_url);
+	    }
+	}
+    }
+}
+
+# creates xml for category, then uses bric_soap to upload it
+sub create_category {
+    our ($timeout, $temp_dir);
+    my ($category, $targ_url) = @_;
+    
+    # put vars into xml skeleton
+    my $category_xml = <<"EOS";
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<assets xmlns="http://bricolage.sourceforge.net/assets.xsd">
+ <category id="">
+  <name>$category</name>
+  <description>$category</description>
+  <path>$category</path>
+  <active>1</active>
+  <adstring></adstring>
+  <adstring2></adstring2>
+  <keywords></keywords>
+ </category>
+</assets>
+EOS
+
+    open(FILE, ">$temp_dir/category_xml_temp.xml");
+    print FILE $category_xml;
+    close FILE;
+
+    # code to execute
+    my $exec_result = `$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url category create $temp_dir/category_xml_temp.xml 2>&1`;
+
+    if ( ($exec_result =~ /category_\d*/) ) {
+        print "Category $category created.\n" if $VERBOSE;
+    } else {
+	die ("Error creating category $category: $exec_result");
+    }
+}
+
+sub check_media_exist {
+    our ($timeout, $media_type, $temp_dir);
+    my ($media,$targ_url) = @_;
+    my $exec_code = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url media list_ids --search file_name='".$media->{name}."' --search category='".$media->{category}."' --search element='".$media_type."' ";
+    
+    my $exec_result = `$exec_code 2>&1`;
+
+    if ( ($exec_result =~ /media_\d*/) ) {
+	chomp  $exec_result;
+	print "Media ".$media->{name}." found- $exec_result.\n" if $VERBOSE;
+	$exec_result =~ s/media_//;
+        return $exec_result;
+    } elsif (not $exec_result) {
+	print "Media ".$media->{name}." not found.\n" if $VERBOSE;
+	return 0;
+    } else {
+        die ("Error looking up media: $exec_result");
+    }
+ 
+}
+
+sub create_or_update_media {
+    our ($timeout, $temp_dir, $media_type);
+    my ($media,$targ_url,$media_id) = @_;
+
+    $media_id = '' if !$media_id;
+    my $operation = $media_id ? 'update' : 'create';
+    my $media_name = $media->{name};
+    my $media_uri = $media->{category}.$media->{name};
+    my $media_category = $media->{category};
+    my $media_file = $media->{full_path};
+    my $media_size = (stat($media_file))[7];
+    my $media_cover_date = strftime("%Y-%m-%dT%H:%M:%SZ", localtime(time()));
+    # encode image to base64
+    open(RH, "<$media_file") or
+              die("Unable to read $media_file: $!");
+
+    my $buf = join('', <RH>);
+    my $media_data = encode_base64($buf, '');
+    close(RH);
+
+    # put vars into xml skeleton
+    my $media_xml = <<"EOS";
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<assets xmlns="http://bricolage.sourceforge.net/assets.xsd">
+ <media id="$media_id" element="$media_type">
+  <name>$media_name</name>
+  <description></description>
+  <uri>$media_uri</uri>
+  <priority>3</priority>
+  <publish_status>0</publish_status>
+  <active>1</active>
+  <source>$content_source</source>
+  <cover_date>$media_cover_date</cover_date>
+  <publish_date></publish_date>
+  <category>$media_category</category>
+  <contributors></contributors>
+  <elements></elements>
+  <file>
+   <name>$media_name</name>
+   <size>$media_size</size>
+   <data>$media_data</data>
+  </file>
+ </media>
+</assets>
+
+EOS
+
+    open(FILE, ">$temp_dir/media_xml_temp.xml");
+
+    print FILE $media_xml;
+    close FILE;
+
+    print "Uploading $media_name...\n" if $VERBOSE;
+    my $execute_code = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url media $operation $temp_dir/media_xml_temp.xml"; 
+
+    # code to execute
+    my $exec_result = `$execute_code 2>&1`;
+
+    if ( ($exec_result =~ /media_\d*/) ) {
+        print "Media $media_name $operation ok.\n" if $VERBOSE;
+    } else {
+        die ("Error $operation media $media_name: $exec_result");
+    }
+    
+}
+
