@@ -1,11 +1,12 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
 use Bric::SOAP::Story;
 use Bric::SOAP::Media;
+use Bric::SOAP::Template;
 
 1;
 __END__
@@ -16,11 +17,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-02-12 22:08:32 $
+$Date: 2002-02-13 00:49:55 $
 
 =head1 SYNOPSIS
 
@@ -168,18 +169,26 @@ Provides query, export, update, import and delete for Media objects.
 
 Provides query, export, update, import and delete for Templates.
 
-=item L<Bric::SOAP::Element|Bric::SOAP::Element>
+B<IMPLEMENTATION INCOMPLETE>
+
+=item Bric::SOAP::Element
 
 Provides query, export, update, import and delete for Element definitions.
 
-=item L<Bric::SOAP::Category|Bric::SOAP::Category>
+B<NOT YET IMPLEMENTED>
+
+=item Bric::SOAP::Category
 
 Provides query, export, update, import and delete for Category objects.
 
-=item L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>
+B<NOT YET IMPLEMENTED>
+
+=item Bric::SOAP::Workflow
 
 Provides the ability to move Story, Media and Formatting objects
 between desks, publish and deploy.
+
+B<NOT YET IMPLEMENTED>
 
 =back
 
@@ -692,20 +701,38 @@ A few example clients will be developed.
 
 =over 4
 
+=item Command-Line Client
+
+This script - bric_soap - will provide command-line access to all
+available SOAP methods.  For more information read the bric_soap
+manual by running:
+
+  bric_soap --man
+
+or, if Bricolage's bin directory isn't in your path:
+
+  /usr/local/bricolage/bin/bric_soap --man
+
 =item Auto-Publisher
 
 A script that publishes a set of stories based on a simple criteria
 entered on the command line.  Will be designed to be used from cron.
+
+B<NOT YET IMPLEMENTED>
 
 =item Dev Sync Tool
 
 A script that grabs the element tree and templates from a source
 server and updates a list of target servers to match.
 
+B<NOT YET IMPLEMENTED>
+
 =item Story Migration Tool
 
 A script that copies stories and all their dependencies (media, other
 stories) from one bricolage sever to another.
+
+B<NOT YET IMPLEMENTED>
 
 =back
 
@@ -716,6 +743,10 @@ L<Bric::SOAP::Handler|Bric::SOAP::Handler>
 L<Bric::SOAP::Auth|Bric::SOAP::Auth>
 
 L<Bric::SOAP::Story|Bric::SOAP::Story>
+
+L<Bric::SOAP::Story|Bric::SOAP::Media>
+
+L<Bric::SOAP::Story|Bric::SOAP::Template>
 
 =head1 AUTHOR
 
