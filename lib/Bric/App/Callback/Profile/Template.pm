@@ -493,7 +493,7 @@ $create_fa = sub {
         unless ($err->error =~ /already exists/) {
             rethrow_exception($err);
         } else {
-            add_msg("An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.");
+            add_msg("A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.");
             return;
         }
     }
