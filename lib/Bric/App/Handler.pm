@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-25 21:15:54 $
+$Date: 2003-02-25 21:31:54 $
 
 =head1 SYNOPSIS
 
@@ -237,8 +237,6 @@ sub handler {
     # Handle the request.
     my $status;
     eval {
-        # Enable smarter exceptions if in QA_MODE.
-        local $SIG{__DIE__} = \&_make_fault if QA_MODE;
 	# Start the database transactions.
 	begin(1);
 	# Handle the request.
