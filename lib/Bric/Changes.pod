@@ -61,6 +61,11 @@ An attempt to create a document with the same URI as an existing document no
 longer litters the database with broken stories. Thanks to Arthur for the
 spot. [David]
 
+=item *
+
+Redirection after some publishes and previews works again, instead of
+returning a text page to the browser. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)

@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 20:04:08 $
+$Date: 2003-10-28 00:25:55 $
 
 =head1 SYNOPSIS
 
@@ -563,7 +563,7 @@ B<Notes:> NONE.
 
 sub redirect_onload {
     my $loc = shift or return;
-    my $js = qq{<script>
+    my $js = qq{        <script>
             location.href='$loc';
         </script>
     };
@@ -571,6 +571,7 @@ sub redirect_onload {
     if (my $cbh = shift) {
         # Use the callback handler object.
         my $r = $cbh->apache_req;
+        $r->send_http_header unless $r->header_out("Content-type");
         $r->print($js);
         $cbh->abort(HTTP_OK);
     } else {
