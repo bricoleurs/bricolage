@@ -73,13 +73,15 @@ if test "$ISGROUPHERE" = "no" ;then
 ])
 fi
 
+PGPATHTOCHECK=$PGHOME/bin:/usr/local/pgsql/bin:/opt/pgsql/bin:/usr/local/postgres/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin
+
 # Checks for programs
 AC_PROG_APACHE(1.3.12)
 AC_PROG_POSTGRES(PGHOME, 7.1.3)
-AC_PATH_PROG(PSQL, psql)
-AC_PATH_PROG(DROPDB, dropdb)
-AC_PATH_PROG(DROPUSER, dropuser)
-AC_PATH_PROG(CREATEDB, createdb)
+AC_PATH_PROG(PSQL, psql, $PGPATH)
+AC_PATH_PROG(DROPDB, dropdb, $PGPATH)
+AC_PATH_PROG(DROPUSER, dropuser, $PGPATH)
+AC_PATH_PROG(CREATEDB, createdb, $PGPATH)
 AC_POSTGRES_ENCODING(UNICODE)
 AC_PROG_PERL(PERL, 5.6.1)
 AC_PATH_PROG(POD2HTML, pod2html)
