@@ -1,4 +1,4 @@
-%#-- Begin HTML --#
+s%#-- Begin HTML --#
 <& '/widgets/wrappers/sharky/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
@@ -85,7 +85,7 @@ my $no_edit = !chk_authz($ct, ($id ? EDIT : CREATE), 1);
 my $no_del = !$id || $no_edit;
 
 # Figure out its type.
-my $type = 'Element';
+my $type = 'Subelement';
 my $exclude = { active => 1, media => 1, top_level => 1, biz_class_id => 1};
 if (defined $id) {
     if ($ct->get_top_level) {
@@ -114,11 +114,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-08-30 20:13:24 $
+$Date: 2003-10-28 00:53:14 $
 
 =head1 DESCRIPTION
 

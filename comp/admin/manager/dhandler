@@ -273,23 +273,23 @@ my $def = {
 						  }
                                                   return undef; } },
 	   pref          => { list_fields => [qw(name description val_name)],
-			       select => undef,
-			       behavior => 'narrow',
-			       title => '%n',
-			       srch_field => 'name',
-			       alter => { val_name => sub { escape_html($_[0]) } },
-			       constrain => {} },
-	   element_type => { alter => { biz_class_id => sub { get_disp_name($_[0]) },
-					  paginated => $yes_no,
-					  fixed_url => $yes_no },
-#			       field_values => sub { return unless $_[1] eq 'biz_class_id';
-#						     get_disp_name($_[0]->get_biz_class_id);
-#						 },
-			       list_fields => [qw(name description biz_class_id paginated fixed_url)],
-			       behavior => 'narrow',
-			       srch_field => 'name',
-			       constrain => {},
-			       select => $sel_sub },
+                              select => undef,
+                              behavior => 'narrow',
+                              title => '%n',
+                              srch_field => 'name',
+                              alter => { val_name => sub { escape_html($_[0]) } },
+                              constrain => {} },
+	   element_type =>  { alter => { biz_class_id => sub {
+                                             return 'Subelement' unless $_[1]->get_top_level;
+                                             return get_disp_name($_[0]);
+                                         },
+                                         paginated => $yes_no,
+                                         fixed_url => $yes_no },
+                              list_fields => [qw(name description biz_class_id paginated fixed_url)],
+                              behavior => 'narrow',
+                              srch_field => 'name',
+                              constrain => {},
+                              select => $sel_sub },
            media_type     => { list_fields => [qw(name extension)],
                                field_values => sub { return unless $_[1] eq 'extension';
                                                      join(', ', $_[0]->get_exts) },
@@ -383,11 +383,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =head1 DATE
 
-$Date: 2003-10-03 02:41:27 $
+$Date: 2003-10-28 00:53:14 $
 
 =head1 SYNOPSIS
 
