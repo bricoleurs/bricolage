@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.2 $
+$Revision: 1.39.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 03:59:49 $
+$Date: 2003-03-17 16:43:13 $
 
 =head1 SYNOPSIS
 
@@ -276,13 +276,19 @@ use constant RELATION_TABLES =>
 
 use constant RELATION_JOINS =>
     {
-        story      => 'sm.object_id = s.id AND m.id = sm.member__id ' .
-                      'AND m.active = 1',
-        category   => 'sc.story_instance__id = i.id ' .
-                      'AND cm.object_id = sc.category__id ' .
-                      'AND m.id = cm.member__id',
-        desk       => 'dm.object_id = s.desk__id AND m.id = dm.member__id',
-        workflow   => 'wm.object_id = s.workflow__id AND m.id = wm.member__id',
+        story      => 'sm.object_id = s.id '
+                    . 'AND m.id = sm.member__id '
+                    . 'AND m.active = 1',
+        category   => 'sc.story_instance__id = i.id '
+                    . 'AND cm.object_id = sc.category__id '
+                    . 'AND m.id = cm.member__id '
+                    . 'AND m.active = 1',
+        desk       => 'dm.object_id = s.desk__id '
+                    . 'AND m.id = dm.member__id '
+                    . 'AND m.active = 1',
+        workflow   => 'wm.object_id = s.workflow__id '
+                    . 'AND m.id = wm.member__id '
+                    . 'AND m.active = 1',
     };
 
 # the mapping for building up the where clause based on params
@@ -312,49 +318,48 @@ use constant PARAM_FROM_MAP =>
 
 use constant PARAM_WHERE_MAP =>
     {
-      id                     => 's.id = ?',
-      active                 => 's.active = ?',
-      inactive               => 's.active = ?',
-      workflow__id           => 's.workflow__id = ?',
-      _null_workflow__id     => 's.workflow__id IS NULL',
-      primary_uri            => 'LOWER(s.primary_uri) LIKE LOWER(?)',
-      element__id            => 's.element__id = ?',
-      source__id             => 's.source__id = ?',
-      priority               => 's.priority = ?',
-      publish_status         => 's.publish_status = ?',
-      publish_date_start     => 's.publish_date >= ?',
-      publish_date_end       => 's.publish_date <= ?',
-      cover_date_start       => 's.cover_date >= ?',
-      cover_date_end         => 's.cover_date <= ?',
-      expire_date_start      => 's.expire_date >= ?',
-      expire_date_end        => 's.expire_date <= ?',
-      desk_id                => 's.desk_id = ?',
-      name                   => 'LOWER(i.name) LIKE LOWER(?)',
-      title                  => 'LOWER(i.name) LIKE LOWER(?)',
-      description            => 'LOWER(i.description) LIKE LOWER(?)',
-      version                => 'i.version = ?',
-      slug                   => 'LOWER(i.slug) LIKE LOWER(?)',
-      user__id               => 'i.usr__id = ?',
-      _checked_out           => 'i.checked_out = ?',
-      checkout               => 'i.checked_out = ?',
-      primary_oc_id          => 'i.primary_oc__id = ?',
-      category_id            => 'i.id = sc2.story_instance__id AND '
-                              . 'sc2.category__id = ?',
-      category_uri           => 'i.id = sc2.story_instance__id AND '
-                              . 'sc2.category__id = c.id AND '
-                              . 'LOWER(c.uri) LIKE LOWER(?)',
-      keyword                => 'sk.story_id = s.id AND '
-                              . 'k.id = sk.keyword_id AND '
-                              . 'LOWER(k.name) LIKE LOWER(?)',
-      _no_returned_versions  => 's.current_version = i.version',
-      grp_id                 => 's.current_version = i.version AND '
-                              . 'm2.grp__id = ? AND '
-                              . 'sm2.member__id = m2.id AND '
-                              . 's.id = sm2.object_id',
-      simple                 => '( LOWER(k.name) LIKE LOWER(?) OR '
-                              . 'LOWER(i.name) LIKE LOWER(?) OR '
-                              . 'LOWER(i.description) LIKE LOWER(?) OR '
-                              . 'LOWER(s.primary_uri) LIKE LOWER(?) )',
+      id                    => 's.id = ?',
+      active                => 's.active = ?',
+      inactive              => 's.active = ?',
+      workflow__id          => 's.workflow__id = ?',
+      _null_workflow__id    => 's.workflow__id IS NULL',
+      primary_uri           => 'LOWER(s.primary_uri) LIKE LOWER(?)',
+      element__id           => 's.element__id = ?',
+      source__id            => 's.source__id = ?',
+      priority              => 's.priority = ?',
+      publish_status        => 's.publish_status = ?',
+      publish_date_start    => 's.publish_date >= ?',
+      publish_date_end      => 's.publish_date <= ?',
+      cover_date_start      => 's.cover_date >= ?',
+      cover_date_end        => 's.cover_date <= ?',
+      expire_date_start     => 's.expire_date >= ?',
+      expire_date_end       => 's.expire_date <= ?',
+      desk_id               => 's.desk_id = ?',
+      name                  => 'LOWER(i.name) LIKE LOWER(?)',
+      title                 => 'LOWER(i.name) LIKE LOWER(?)',
+      description           => 'LOWER(i.description) LIKE LOWER(?)',
+      version               => 'i.version = ?',
+      slug                  => 'LOWER(i.slug) LIKE LOWER(?)',
+      user__id              => 'i.usr__id = ?',
+      _checked_out          => 'i.checked_out = ?',
+      checkout              => 'i.checked_out = ?',
+      primary_oc_id         => 'i.primary_oc__id = ?',
+      category_id           => 'i.id = sc2.story_instance__id AND '
+                             . 'sc2.category__id = ?',
+      category_uri          => 'i.id = sc2.story_instance__id AND '
+                             . 'sc2.category__id = c.id AND '
+                             . 'LOWER(c.uri) LIKE LOWER(?)',
+      keyword               => 'sk.story_id = s.id AND '
+                             . 'k.id = sk.keyword_id AND '
+                             . 'LOWER(k.name) LIKE LOWER(?)',
+      _no_returned_versions => 's.current_version = i.version',
+      grp_id                => 'm2.grp__id = ? AND '
+                             . 'sm2.member__id = m2.id AND '
+                             . 's.id = sm2.object_id',
+      simple                => '( LOWER(k.name) LIKE LOWER(?) OR '
+                             . 'LOWER(i.name) LIKE LOWER(?) OR '
+                             . 'LOWER(i.description) LIKE LOWER(?) OR '
+                             . 'LOWER(s.primary_uri) LIKE LOWER(?) )',
     };
 
 use constant PARAM_ORDER_MAP => 

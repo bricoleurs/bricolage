@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.2 $
+$Revision: 1.38.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 03:59:48 $
+$Date: 2003-03-17 16:43:12 $
 
 =head1 SYNOPSIS
 
@@ -222,10 +222,18 @@ use constant RELATION_TABLES =>
 
 use constant RELATION_JOINS =>
     {
-        formatting      => 'fm.object_id = f.id AND m.id = fm.member__id',
-        category        => 'cm.object_id = f.category__id AND m.id = cm.member__id',
-        desk            => 'dm.object_id = f.desk__id AND m.id = dm.member__id',
-        workflow        => 'wm.object_id = f.workflow__id AND m.id = wm.member__id',
+        formatting      => 'fm.object_id = f.id '
+                         . 'AND m.id = fm.member__id '
+                         . 'AND m.active = 1',
+        category        => 'cm.object_id = f.category__id '
+                         . 'AND m.id = cm.member__id '
+                         . 'AND m.active = 1',
+        desk            => 'dm.object_id = f.desk__id '
+                         . 'AND m.id = dm.member__id '
+                         . 'AND m.active = 1',
+        workflow        => 'wm.object_id = f.workflow__id '
+                         . 'AND m.id = wm.member__id '
+                         . 'AND m.active = 1',
     };
 
 # the mapping for building up the where clause based on params
