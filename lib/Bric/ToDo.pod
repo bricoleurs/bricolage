@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.92 $
+$Revision: 1.93 $
 
 =head1 DATE
 
-$Date: 2003-02-27 21:21:48 $
+$Date: 2003-02-28 00:34:52 $
 
 =head1 DESCRIPTION
 
@@ -143,16 +143,6 @@ returning all of the stories and media in the database. [David]
 
 Add preference to make advanced search in Find Stories and/or Find Media the
 default search form when you go to those screens.
-
-=item *
-
-Move Bric::Util::Fault::Exception objects up, so that they become subclasses
-of Bric::Util::Fault, instead.
-
-=item *
-
-Use Exception::Class to build the exception objects, rather than our own
-home-grown method. Also use Exception::Class::DBI for DBI exceptions.
 
 =item *
 
