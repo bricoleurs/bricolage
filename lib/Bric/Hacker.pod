@@ -1,0 +1,129 @@
+=head1 NAME
+
+Bric::Hacker - A guide for Bricolage hackers.
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2001-12-07 22:35:12 $
+
+=head1 DESCRIPTION
+
+This document is designed to provide information useful to Bricolage
+developers.  If you've got questions about hacking Bricolage that
+aren't answered here please post to the Bricolage developer's
+mailing-list (see below) and tell us about it.
+
+=head1 MAILING LISTS
+
+Bricolage has a number of mailing-lists that are relevant to developers:
+
+=over 4
+
+=item bricolage-general@lists.sourceforge.net
+
+This is the mailing-list for normal Bricolage users.  This is a good
+place to go with questions about how the application works and should
+work.  To subscribe go to:
+
+http://lists.sourceforge.net/lists/listinfo/bricolage-general
+
+=item bricolage-devel@lists.sourceforge.net
+
+This is the place to discuss Bricolage development, propose changes,
+post patches and penetrate markets.  To subscribe go to:
+
+http://lists.sourceforge.net/lists/listinfo/bricolage-devel
+
+=item bricolage-commits@lists.sourceforge.net
+
+This list gets an email for every commit to the CVS tree (see below
+for more about CVS).  B<DO NOT POST TO THIS LIST!> To subscribe:
+
+http://lists.sourceforge.net/lists/listinfo/bricolage-commits
+
+=item bricolage-bugs@lists.sourceforge.net
+
+This list gets an email for every bug-report submitted to Bugzilla
+(see below for Bugzilla details).  B<DO NOT POST TO THIS LIST!> To
+subscribe:
+
+http://lists.sourceforge.net/lists/listinfo/bricolage-commits
+
+=back
+
+=head1 CVS - THE CUTTING EDGE
+
+If you're developing Bricolage then you should be working with the
+latest code from CVS.  You can browse the CVS tree at:
+
+   http://sourceforge.net/cvs/?group_id=34789
+
+You'll also find information there on connecting to the repository to
+checkout a working copy.
+
+=head1 BUG TRACKING
+
+Bricolage has a Bugzilla server dedicated to it:
+
+   http://bricolage-bugzilla.about.com
+
+You should use this system to report bugs in Bricolage.  If you're
+looking for something to do you can also use the system to find open
+bug and fix them.  For more things to do see L<Bric::Todo>.
+
+=head1 SUBMITTING PATCHES
+
+Patches should be generated using the "cvs diff -u" command on each of
+the files modified.  Always create patches using the most recent CVS
+version if possible.  Send your patches to the bricolage-devel list
+mentioned above.
+
+=head1 CODING STANDARDS
+
+Try to follow the style of the existing Bricolage code.  [ David, want
+to elaborate on POD, Mason, etc? ]
+
+=head1 DEBUGGING
+
+Bricolage is a complex application and debugging can be difficult.
+Here are some tips to help you find bugs faster:
+
+=over 4
+
+=item *
+
+Turn on QA_MODE in your bricolage.conf.  This will cause the UI to
+display a bunch of useful data the bottom of every page including
+session state, cache state, cookies and CGI args.  Also, QA_MODE turns
+on PerlWarn (use warnings) and causes error messages to include more
+information.
+
+=item *
+
+Turn on DBI_DEBUG in your bricolage.conf.  DBI_DEBUG causes every
+database call made in the application to generate a subroutine call
+trace in the logs.  This generates a lot of data but it can be very
+helpful.
+
+=item *
+
+Look at the database directly using psql.  Many bugs in Bricolage can
+only be successful diagnosed by examining records being created in the
+database.
+
+=back
+
+=head1 AUTHOR
+
+Sam Tregar <stregar@about-inc.com>
+
+=head1 SEE ALSO
+
+L<Bric::Admin>, L<Bric::ToDo>
+
+=cut
+
