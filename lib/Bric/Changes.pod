@@ -14,6 +14,20 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.6.9 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Fixed installation and upgrade scripts to use the same F<perl> binary as was
+used to execute F<Makefile.PL>. This ensures that all necessary CPAN modules
+will be correctly installed and located. [Simon Wilcox]
+
+=back
+
 =head1 VERSION 1.6.8 (2003-11-29)
 
 =head2 Bug Fixes

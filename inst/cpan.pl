@@ -6,11 +6,11 @@ cpan.pl - installation script to install CPAN modules
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.4.1 $
 
 =head1 DATE
 
-$Date: 2003-03-01 19:44:51 $
+$Date: 2003-12-01 17:13:56 $
 
 =head1 DESCRIPTION
 
@@ -31,6 +31,9 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 
 our $MOD;
+my $perl;
+
+BEGIN { $perl = $ENV{PERL} || $^X }
 
 BEGIN {
     # read in list of required modules
@@ -68,7 +71,7 @@ Perl modules.  Before I can proceed with this installation you must
 configure the CPAN.pm module.  To do this, type the following command
 as root:
 
-  perl -MCPAN -e shell
+  $perl -MCPAN -e shell
 
 You will be presented with a series of questions.  At the end you will
 be at a "cpan>" prompt.  Next, you should install the latest CPAN.pm:
@@ -100,7 +103,7 @@ use CPAN;
 CPAN.pm version 1.59 or greater required.  Please update your CPAN
 installation using the command (as root):
 
-  perl -MCPAN -e 'install CPAN'
+  $perl -MCPAN -e 'install CPAN'
 
 After this step you should quit the CPAN shell and run it one more
 time to be certain it works.  You may need to re-answer the CPAN.pm
@@ -162,10 +165,10 @@ sub install_module {
 	# get a module object one way or another
 	my $m = ref $q ? $q : CPAN::Shell->expandany($q);
 	hard_fail(<<END) unless $m;
-Couldn't find $q on CPAN.  Your CPAN.pm installation 
+Couldn't find $q on CPAN.  Your CPAN.pm installation
 may be broken.  To debug manually, run:
 
-  perl -MCPAN -e 'install $q'
+  $perl -MCPAN -e 'install $q'
 END
 
 	print "Found ", $m->id, ".  Installing...\n";
@@ -184,7 +187,7 @@ END
 	    $ENV{POSTGRES_INCLUDE} = $PG->{include_dir};
 	    $ENV{POSTGRES_LIB}     = $PG->{lib_dir};
 	}
-	    
+
 	# do the install.  If prereqs are found they'll get put on the
 	# Queue and processed in turn.
 	$m->install;
@@ -203,10 +206,10 @@ END
     # try loading the module
     eval "require $name";
     hard_fail(<<END) if $@;
-Installation of $name failed.  Your CPAN.pm installation 
+Installation of $name failed.  Your CPAN.pm installation
 may be broken.  To debug manually, run (as root):
 
-  perl -MCPAN -e shell
+  $perl -MCPAN -e shell
 
 Then at the "cpan>" prompt:
 
@@ -214,7 +217,7 @@ Then at the "cpan>" prompt:
 
 You can then attempt to install the module manually with:
 
-  perl Makefile.PL
+  $perl Makefile.PL
   make test
   make install
 
@@ -223,11 +226,11 @@ END
     if (defined $req_version) {
 	eval { $name->VERSION($req_version) };
 	hard_fail(<<END) if $@;
-Installation of $name version $req_version failed.  Your 
-CPAN.pm installation may be broken.  To debug manually, 
+Installation of $name version $req_version failed.  Your
+CPAN.pm installation may be broken.  To debug manually,
 run (as root):
 
-  perl -MCPAN -e shell
+  $perl -MCPAN -e shell
 
 Then at the "cpan>" prompt:
 
@@ -235,13 +238,13 @@ Then at the "cpan>" prompt:
 
 You can then attempt to install the module manually with:
 
-  perl Makefile.PL
+  $perl Makefile.PL
   make test
   make install
 
 END
     }
-    
+
     # all done.
     print "$name installed successfully.\n";
 }

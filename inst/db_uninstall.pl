@@ -6,11 +6,11 @@ db.pl - installation script to uninstall database
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.4.1 $
 
 =head1 DATE
 
-$Date: 2002-12-12 12:09:27 $
+$Date: 2003-12-01 17:13:56 $
 
 =head1 DESCRIPTION
 
@@ -41,11 +41,12 @@ print "\n\n==> Deleting Bricolage Database <==\n\n";
 
 our $PG;
 do "./postgres.db" or die "Failed to read postgres.db : $!";
+my $perl = $ENV{PERL} || $^X;
 
 # Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
 # filter them out. This *must* happen before setting $> below, or Perl will
 # complain.
-open STDERR, "| perl -ne 'print unless /^NOTICE:  /'"
+open STDERR, "| $perl -ne 'print unless /^NOTICE:  /'"
   or die "Cannot pipe STDERR: $!\n";
 
 # Switch to postgres system user

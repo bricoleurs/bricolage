@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.8.4.2 $
+$Revision: 1.8.4.3 $
 
 =head1 DATE
 
-$Date: 2003-07-19 15:33:14 $
+$Date: 2003-12-01 17:13:56 $
 
 =head1 DESCRIPTION
 
@@ -39,7 +39,7 @@ BEGIN {
 Bricolage requires Perl version 5.6.0 or later. 5.8.0 or later is strongly
 recommended for its better Unicode support. Please upgrade your version of
 Perl before re-running make. You can find the latest versions of Perl
-at 'http://perl.com/'.
+at 'http://www.perl.com/'.
 
 END
 	exit 1;
@@ -51,7 +51,7 @@ END
 Found Bricolage 5.6.x, but Perl 5.8.0 or later is strongly recommended for its
 better Unicode support. If you need good Unicode support, please upgrade your
 version of of Perl before re-running make. You can find the latest versions of
-Perl at 'http://perl.com/'.
+Perl at 'http://www.perl.com/'.
 
 END
     }
@@ -79,7 +79,7 @@ $RESULTS{EXPAT}   = find_expat();
 $RESULTS{ICONV}   = find_iconv();
 
 # print error message and fail if something not found
-unless ($RESULTS{PG} and $RESULTS{APACHE} and 
+unless ($RESULTS{PG} and $RESULTS{APACHE} and
 	$RESULTS{EXPAT} and $RESULTS{ICONV}) {
   hard_fail("Required software not found:\n\n",
 	    $RESULTS{PG}     ? "" : 
@@ -137,7 +137,7 @@ sub find_pg {
             $REQ{PG_CONFIG} = 'NONE';
             ask_confirm("Enter path to pg_config", \$REQ{PG_CONFIG});
         } else {
-            return soft_fail("Failed to find pg_config.  Looked in:", 
+            return soft_fail("Failed to find pg_config.  Looked in:",
                              map { "\n\t$_" } @paths);
         }
     }
@@ -164,9 +164,9 @@ sub find_pg {
 # look for apache
 sub find_apache {
     print "Looking for Apache with version >= 1.3.12...\n";
-    
-    # find Apache by looking for executables called httpd, httpsd, 
-    # apache-perl or apache, in that order.  First search user's 
+
+    # find Apache by looking for executables called httpd, httpsd,
+    # apache-perl or apache, in that order.  First search user's
     # path then some standard locations.
     my @paths = (path(), qw(/usr/local/apache/bin
 			    /usr/local/bin
@@ -190,7 +190,7 @@ sub find_apache {
     if ($REQ{APACHE_EXE}) {
         print "Found Apache server binary at '$REQ{APACHE_EXE}'.\n";
         unless (ask_yesno("Is this correct? [yes] ", 1)) {
-            ask_confirm("Enter path to Apache server binary", 
+            ask_confirm("Enter path to Apache server binary",
                         \$REQ{APACHE_EXE});
         }
     } else {
@@ -199,19 +199,18 @@ sub find_apache {
                       "binary? [no] ",
                       0)) {
             $REQ{APACHE_EXE} = 'NONE';
-            ask_confirm("Enter path to Apache server binary", 
+            ask_confirm("Enter path to Apache server binary",
                         \$REQ{APACHE_EXE});
         } else {
-            return soft_fail("Failed to find Apache executable.  Looked for ", 
-                             join(', ', @exe), 
-                             " in:", 
+            return soft_fail("Failed to find Apache executable.  Looked for ",
+                             join(', ', @exe),
+                             " in:",
                              map { "\n\t$_" } @paths);
         }
     }
 
     print "Found Apache executable at $REQ{APACHE_EXE}.\n";
-    
-    
+
     # check version
     my $version = `$REQ{APACHE_EXE} -v`;
     return soft_fail("Failed to find Apache version with ",
@@ -219,15 +218,14 @@ sub find_apache {
     chomp $version;
     my ($x, $y, $z) = $version =~ /(\d+)\.(\d+).(\d+)/;
     return soft_fail("Failed to parse Apache version from string ",
-		     "\"$version\".") 
+		     "\"$version\".")
 	unless defined $x and defined $y and defined $z;
     return soft_fail("Found old version of Apache: $x.$y.$z - ",
 		     "1.3.12 or greater required.")
-	unless (($x > 1) or ($x == 1 and $y > 3) or 
+	unless (($x > 1) or ($x == 1 and $y > 3) or
 		($x == 1 and $y == 3 and $z >= 12));
     print "Found acceptable version of Apache: $x.$y.$z.\n";
     $REQ{APACHE_VERSION} = [$x,$y,$z];
-    
     return 1;
 }
 
@@ -253,7 +251,7 @@ sub find_expat {
             }
         }
     }
-    return soft_fail("Failed to find libexpat.so.  Looked in:", 
+    return soft_fail("Failed to find libexpat.so.  Looked in:",
 		     map { "\n\t$_" } @paths) unless $REQ{EXPAT};
     print "Found expat at $REQ{EXPAT}.\n";
 
@@ -265,7 +263,7 @@ sub find_expat {
 # look for iconv
 sub find_iconv {
     print "Looking for iconv...\n";
-   
+
     # find iconv by looking for the iconv binary.  First search user's
     # path then some standard locations.
     my @paths = (path(), qw(/usr/local/bin
@@ -276,7 +274,7 @@ sub find_iconv {
 	if (-e catfile($path, "iconv")) {
 	    $REQ{ICONV} = catfile($path, "iconv");
 	    last;
-	}    
+	}
     }
     return soft_fail("Failed to find iconv.  Looked in:", 
 		     map { "\n\t$_" } @paths) unless $REQ{ICONV};
