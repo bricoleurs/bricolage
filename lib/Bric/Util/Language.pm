@@ -1,21 +1,21 @@
 package Bric::Util::Language;
 ###############################################################################
 
-=head 1 NAME
+=head1 NAME
 
 Bric::Util::Language - A way of registering Languages
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.5.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.5.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:46 $
+$Date: 2002-02-12 16:53:02 $
 
 =head1 SYNOPSIS
 
