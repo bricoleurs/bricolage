@@ -95,15 +95,28 @@ sub initialize {
 	usage();
     }
 
-    # Drop the current database, if necessary.
-    if ($opt_r) {
-	print "\nDropping database '$opt_d'.\n" unless $opt_q;
-	exit if system "/usr/local/pgsql/bin/dropdb -U $opt_u -h $opt_H $opt_d -p $opt_o";
-    }
-    # Create a new database, if necessary.
+    # Set some vars.
+    $LOG = '';
+    $STOP = $opt_q ? 0 : 1;
+
     if ($opt_c || $opt_r) {
+	# Create the DSN for the template1 database.
+	my $dsn = "dbname=template1;host=$opt_H;port=$opt_o";
+
+	# Establish a databse connection.
+	$DBH = DBI->connect(join(':','dbi',DBD,$dsn), $opt_u, $opt_p, ATTR);
+
+	# Drop the current database, if necessary.
+	if ($opt_r) {
+	    print "\nDropping database '$opt_d'.\n" unless $opt_q;
+	    exec_sql("drop database $opt_d");
+	}
+	# Create a new database.
 	print "\nCreating database '$opt_d'.\n" unless $opt_q;
-	exit if system "/usr/local/pgsql/bin/createdb -U $opt_u -h $opt_H $opt_d -p $opt_o";
+	exec_sql("create database $opt_d");
+	# Close the connection to template1. We'll reconnect to the proper
+	# database below.
+	$DBH->disconnect;
     }
 
     # Create the DSN.
@@ -117,9 +130,6 @@ sub initialize {
     @CON = reverse `find $opt_w -name '*.con'`;
     @VAL = reverse `find $opt_w -name '*.val'`;
     @TST = reverse `find $opt_w -name '*.tst'` if $opt_t;
-
-    $LOG = '';
-    $STOP = $opt_q ? 0 : 1;
 }
 
 #------------------------------------------------------------------------------#

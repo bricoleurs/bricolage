@@ -13,6 +13,7 @@ MKDIR = @MKDIR@
 FIND = @FIND@
 CTAGS = @CTAGS@
 PSQL = @PSQL@
+PG_CONFIG = @PG_CONFIG@
 
 
 # directories
@@ -47,6 +48,7 @@ DROPDB = @DROPDB@
 DROPUSER = @DROPUSER@
 CREATEDB = @CREATEDB@
 CONFIG_STRING = @CONFIG_STRING@
+CPAN_WORKS = @CPAN_WORKS@
 
 
 # Installation related variables
@@ -118,7 +120,6 @@ define install-files
 @$(NORMAL_INSTALL)  # Normal commands follow.
 ${INST}/mkinstalldirs $(@D)
 cp $^ $@
-chown ${APACHE_USER}.${APACHE_GROUP} $@
 @echo $@ >>${INST}/install.log
 endef
 
@@ -164,11 +165,6 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 
-# A list of any missing modules
-CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
-
-
-
 # ****************************************************************
 # *  RULES follow
 # ****************************************************************
@@ -181,7 +177,7 @@ libs:
 
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
-		 install-man install-html chowndirs chownpg chmoddirs \
+		 install-man install-html chowndirs chmoddirs \
 		 ${INST}/installed-database
 
 installdirs:
@@ -191,25 +187,25 @@ installdirs:
                            ${confdir} ${compdir} \
                            ${htmldir} ${mandir}
 chowndirs:
-	chown -R ${APACHE_USER}.${APACHE_GROUP} ${compdir} ${datadir} 
+	chown -R ${APACHE_USER}.${APACHE_GROUP} ${compdir}/data ${datadir} 
 chmoddirs:
-	chmod -R a+r ${htmldir} ${docdir}
-chownpg:
-	chown -R ${POSTGRES_ROOT_USER} ${bindir}/bric_pgimport
-uninstall: uninstall-lib uninstallfiles uninstalldirs dist-clean
+	chmod -R a+r ${htmldir} ${docdir} ${bindir}
+	chmod -R a+x ${bindir}
+uninstall: uninstalldatabase uninstall-lib uninstallfiles uninstalldirs dist-clean
 uninstall-lib:
-	--cd ${LIB} && make uninstall
+	-cd ${LIB} && make uninstall
 uninstalldirs:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing installed dirs 
-	--@for D in ${INSTALLED_DIRS} ; do \
+	-@for D in ${INSTALLED_DIRS} ; do \
 		rmdir --ignore-fail-on-non-empty `find $$D -depth -type d`; \
 	done
 uninstallfiles:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing previously installed files
-	--@rm -f ${INSTALLED_FILES}
+	-@rm -f ${INSTALLED_FILES}
 uninstalldatabase:
+	-${BIN}/bric_apachectl stop
 	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
 	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
 
@@ -294,9 +290,22 @@ ${INST}/bricolage.sql:
 
 # obviously we depend on the cpan stuff
 dep: cpan
-cpan: ${CPAN_TARGETS} 
+
+# This now tries to install Bundle:Bricolage every time
+# provided we have net access...
+cpan: ${INST}/missing_modules
+ifeq (CPAN_WORKS,yes)
+	export POSTGRES_INCLUDE=`${PG_CONFIG} --includedir`
+	export POSTGRES_LIB=`${PG_CONFIG} --libdir`
+	${PERL} -MCPAN -e 'install Bundle::Bricolage' 
+endif
+
+${INST}/missing_modules:
+	for M in ${MISSING_MODULES} ; do echo "$$M\n" >> $@ ; done
+	
+# These targets are unused for the moment
 ${CPAN_TARGETS}:
-	${PERL} -MCPAN -e '$$m = "$(@F)" ;$$m =~ s/\./:/g ; install $$m' 
+	#${PERL} -MCPAN -e '$$m = "$(@F)" ;$$m =~ s/\./:/g ; install $$m' 
 	touch $@
 
 # This is where we do our config files
