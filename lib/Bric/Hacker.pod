@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.37.2.2 $
+$Revision: 1.37.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-23 20:19:04 $
+$Date: 2003-04-03 01:51:05 $
 
 =head1 DESCRIPTION
 
@@ -482,11 +482,19 @@ L<Creating Distributions|"CREATING DISTRIBUTIONS"> below.
 =item 4
 
 Resolve any conflicts (hopefully none, but they do happen occasionally) and
-commit the changes to the trunk.
+then rebuild the database and run all of the tests:
+
+  make devtest
+
+If there are any test failures, you'll need to fix those, too.
+
+=item 5
+
+And finally, commit the changes to the trunk.
 
   cvs -z3 -q commit
 
-=item 5
+=item 6
 
 Tag the branch with today's date, so that future merges can decide to merge
 only from this date on.
