@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =head1 DATE
 
-$Date: 2002-01-10 23:32:47 $
+$Date: 2002-01-11 00:11:30 $
 
 =head1 DESCRIPTION
 
@@ -126,7 +126,8 @@ Bricolage 1.0.2
 
 At some point, we hope to have a makefile that will automate the installation of
 all of these packages for you. Until then, the following instructions will get
-you through installing all the needed components.  If you're upgrading from an older version of Bricolage see the UPGRADING section below.
+you through installing all the needed components. If you're upgrading from an
+older version of Bricolage see the UPGRADING section below.
 
 =head2 Perl
 
@@ -621,9 +622,11 @@ directory.
 
   cp -a /path/to/new/bricolage .
 
-Run the upgrade scripts needed for upgrading to the new version.  Run
-.sql scripts with psql and .pl scripts with perl.  For example, to
-upgrade from 1.0.2 to 1.2.0:
+Run the upgrade scripts needed for upgrading to the new version. The upgrade
+scripts are in the install/upgrade/ directory. Run .sql scripts with psql
+and .pl scripts with perl. For example, to upgrade from 1.0.2 to 1.2.0:
+
+  cd install/upgrade/1.2.0/
 
   psql -U postgres_user -f upgrade/1.2.0/burner.sql bric_database_name
 
@@ -631,17 +634,16 @@ upgrade from 1.0.2 to 1.2.0:
 
   perl upgrade/1.2.0/rm_dhandlers.pl
 
-You'll need to adjust the psql line to match your Postrges settings
-(postgres_user and bric_database_name).  Also, you may need to edit
-oc_include.sql if you need to GRANT access to your database to a user
-other than "nobody".  The GRANT statements are at the bottom of the
-file.
+You'll need to adjust the psql line to match your PostrgeSQL settings
+(postgres_user and bric_database_name). Also, you may need to edit
+oc_include.sql if you need to GRANT access to your database to a user other than
+"nobody". The GRANT statements are at the bottom of the file.
 
-Now edit the new bricolage.conf file to match your old settings using
-the bricolage.conf.old settings you saved as a guide.  Don't just copy
-the old settings back into place - there may be new configuration
-variables that you'll need to set for the new version.  See the
-CONFIGURATION section below for details.
+Now edit the new bricolage.conf file to match your old settings using the
+bricolage.conf.old settings you saved as a guide. Don't just copy the old
+settings back into place - there may be new configuration variables that you'll
+need to set for the new version. See the CONFIGURATION section below for
+details.
 
 Start up Bricolage and enjoy the new features!
 
