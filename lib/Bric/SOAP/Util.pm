@@ -30,15 +30,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-27 02:50:34 $
+$Date: 2002-03-08 02:40:18 $
 
 =head1 SYNOPSIS
 
@@ -124,13 +124,16 @@ sub db_date_to_xs_date {
     return $xs;
 }
 
-=item * $data = parse_asset_document($document)
+=item * $data = parse_asset_document($document, @extra_force_array)
 
 Parses an XML asset document and returns a hash structure.  Inside the
 hash singular elements are stored as keys with scalar values.
 Potentially plural values are stored as array-ref values whether
 they're present multiple times in the document or not.  This routine
 dies on parse errors with information about the error.
+
+After the document parameter you can pass extra items for the
+force_array XML::Simple option.
 
 At some point in the future this method will be augmented with XML
 Schema validation.
@@ -145,13 +148,15 @@ Notes: NONE
 
 sub parse_asset_document {
     my $document = shift;
+    my @extra_force_array = @_;
 
     return XMLin($document, 
 		 keyattr       => [],
 		 suppressempty => '',
 		 forcearray    => [qw( contributor category
 	                               keyword element container 
-				       data story media template )
+				       data story media template ),
+				   @extra_force_array
 				  ]
 		);
 }

@@ -153,7 +153,6 @@ my $xsd = extract_schema();
 ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
 
 # try exporting and importing every element object
-my $copy_sym = 1;
 foreach my $element_id (@$element_ids) {
     $response = $soap->export(name(element_id => $element_id));
     if ($response->fault) {
@@ -165,6 +164,36 @@ foreach my $element_id (@$element_ids) {
  	my $document = $response->result;
  	ok($document, "recieved document for element $element_id");
  	check_doc($document, $xsd, "element $element_id");
+
+ 	# add (copy time()) to name and try to create copy
+	my $time = time();
+ 	$document =~ s!<name>(.*?)</name>!<name>$1 (copy $time)</name>!;
+ 	$response = $soap->create(name(document => $document)->type('base64'));
+ 	ok(!$response->fault, 'SOAP create() result is not a fault');
+ 	exit 1 if $response->fault;
+ 	my $ids = $response->result;
+ 	isa_ok($ids, 'ARRAY');
+
+ 	# modify copy with update to add to description of first item
+ 	$document =~ s!<description>(.*?)</description>!<description>$1 (description updated)</description>!;
+ 	$document =~ s!id=".*?"!id="$ids->[0]"!;
+ 	$response = $soap->update(name(document => $document)->type('base64'),
+ 				  name(update_ids => [ name(element_id => 
+ 							    $ids->[0]) ]));
+ 	ok(!$response->fault, 'SOAP update() result is not a fault');
+ 	exit 1 if $response->fault;
+ 	my $updated_ids = $response->result;
+ 	isa_ok($ids, 'ARRAY');
+ 	is($updated_ids->[0], $ids->[0], "update() worked in place");
+
+ 	# delete copies unless debugging 
+	if (DELETE_TEST_ELEMENTS) {		
+ 	    my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
+ 	    $response = $soap->delete(name(element_ids => [ map { name(element_id => $_) } keys %to_delete ]));
+ 	    ok(!$response->fault, 'SOAP delete() result is not a fault');
+ 	    exit 1 if $response->fault;
+ 	    ok($response->result, "SOAP delete() result check");
+ 	}
     }
 }
 
