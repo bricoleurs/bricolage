@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.7 $
+-- VERSION: $Revision: 1.8 $
 --
--- $Date: 2002-06-11 22:21:22 $
+-- $Date: 2002-07-19 11:29:37 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -39,10 +39,10 @@ CREATE SEQUENCE seq_attr_story_meta START 1024;
 -- Table story
 --
 -- Description: The story properties.   Versioning info might get added 
--- 				here and the rights info might get removed.
+--                              here and the rights info might get removed.
 --
--- 				It is also possible that the asset type field will need
---				a cascading delete.
+--                              It is also possible that the asset type field will need
+--                              a cascading delete.
 
 
 CREATE TABLE story (
@@ -54,14 +54,14 @@ CREATE TABLE story (
                                         CHECK (priority BETWEEN 1 AND 5),
     source__id        NUMERIC(10,0)   NOT NULL, 
     usr__id           NUMERIC(10,0),
-    element__id    NUMERIC(10,0)   NOT NULL,
+    element__id       NUMERIC(10,0)   NOT NULL,
     primary_uri       VARCHAR(128),
     publish_date      TIMESTAMP,
     expire_date       TIMESTAMP,
     cover_date        TIMESTAMP,
     current_version   NUMERIC(10, 0)  NOT NULL,
-	published_version NUMERIC(10, 0),
-	workflow__id	  NUMERIC(10,0),
+    published_version NUMERIC(10, 0),
+    workflow__id      NUMERIC(10,0),
     publish_status    NUMERIC(1,0)    NOT NULL
                                       DEFAULT 0
                                       CONSTRAINT ck_story__publish_status
@@ -95,7 +95,7 @@ CREATE TABLE story_instance (
                                    CHECK (checked_out IN (0,1)),
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
-											
+                                                                                        
 
 -- -----------------------------------------------------------------------------
 -- Table story__category
@@ -124,10 +124,10 @@ CREATE TABLE story__category (
 --
 
 CREATE TABLE story__contributor (
-    id                  NUMERIC(10,0)	NOT NULL
+    id                  NUMERIC(10,0)   NOT NULL
                                         DEFAULT NEXTVAL('seq_story__contributor'),
-    story_instance__id  NUMERIC(10,0)	NOT NULL,
-    member__id          NUMERIC(10,0)	NOT NULL,
+    story_instance__id  NUMERIC(10,0)   NOT NULL,
+    member__id          NUMERIC(10,0)   NOT NULL,
     place               NUMERIC(3,0)    NOT NULL,
     role                VARCHAR(256),
     CONSTRAINT pk_story_category_id PRIMARY KEY (id)
