@@ -149,7 +149,8 @@ push @fields, 'site'
 
 <form method="post" action="<% $r->uri %>" name="<% $type %>_manager">
 <& '/widgets/wrappers/sharky/table_top.mc', 
-    caption => $lang->maketext(get_class_info($type)->get_plural_name . ' Found')
+    caption => '%n Found',
+    object  => $type )
 &>
 <& '/widgets/listManager/listManager.mc',
     object    => $type,

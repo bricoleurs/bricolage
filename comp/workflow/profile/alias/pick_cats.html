@@ -115,7 +115,8 @@ foreach my $rel ($aliased->get_related_objects) {
 <%perl>;
 my ($key, $rels, $num) = @_;
 $m->comp('/widgets/wrappers/sharky/table_top.mc', 
-         caption => 'Related ' . get_class_info('action')->get_plural_name . ' to Alias',
+         caption => 'Related %n to Alias',
+         object  => $key,
          number => $num );
 $m->comp('/widgets/listManager/listManager.mc',
          object       => $key,

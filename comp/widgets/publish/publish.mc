@@ -89,7 +89,8 @@ foreach my $mid (@{ mk_aref($media_pub_ids) }) {
 }
 
 $m->comp('/widgets/wrappers/sharky/table_top.mc', 
-         caption => get_class_info('asset')->get_plural_name . ' to Publish' );
+         caption => '%n to Publish',
+         object  => 'asset' );
 $m->comp('/widgets/listManager/listManager.mc',
 	 object => 'asset',
 	 addition => undef,

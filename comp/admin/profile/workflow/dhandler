@@ -63,7 +63,8 @@ if (defined $id) {
     $start_id = $wf->get_head_desk_id;
     
     $m->comp('/widgets/wrappers/sharky/table_top.mc', 
-             caption => get_class_info('desk')->get_plural_name,
+             caption => '%n',
+             object  => 'desk',
              number => 2 );
     $m->comp('/widgets/listManager/listManager.mc',
 	     object => 'desk',

@@ -110,7 +110,8 @@ if ($id) {
 $m->out(qq {<input type="hidden" name="element_id" value=$id>\n} ) if ($id);
 
 $m->comp('/widgets/wrappers/sharky/table_top.mc',
-   caption => 'Existing ' . get_class_info($key)->get_plural_name
+          caption => 'Existing %n',
+          object  => $key
 );
 
 # Output the list of found objects.

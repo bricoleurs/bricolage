@@ -73,36 +73,35 @@ if (defined $id) {
     my $label = $no_edit ? 'View' : 'Edit';
     # Output the actions.
     $m->comp('/widgets/wrappers/sharky/table_top.mc', 
-             caption => get_class_info('action')->get_plural_name,
-             number => 4 );
+              caption => '%n',
+              object  => 'action',
+              number  => 4 );
     $m->comp('/widgets/listManager/listManager.mc',
-	     object => 'action',
-	     userSort => 0,
-	     title => '%n',
-	     addition => $no_edit ? undef : ['Add', "/admin/profile/action?dest_id=$id"],
-	     constrain => { server_type_id => $id },
-	     fields => [qw(ord type description)],
-	     profile => [ [$label, "/admin/profile/action"],
-			  ['Log', "/admin/events/action"] ],
-	     select =>    $no_del ? undef : ['Delete', 'action|delete_cb'],
-	    );
+              object    => 'action',
+              userSort  => 0,
+              addition  => $no_edit ? undef : ['Add', "/admin/profile/action?dest_id=$id"],
+              constrain => { server_type_id => $id },
+              fields    => [qw(ord type description)],
+              profile   => [ [$label, "/admin/profile/action"],
+                           ['Log', "/admin/events/action"] ],
+              select    => $no_del ? undef : ['Delete', 'action|delete_cb'] );
     $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
     # Output the Servers.
     $m->comp('/widgets/wrappers/sharky/table_top.mc', 
-             caption => get_class_info('server')->get_plural_name,
+             caption => '%n',
+             object  => 'server',
              number => 5 );
     $m->comp('/widgets/listManager/listManager.mc',
-	     userSort => 0,
-	     object => 'server',
-	     addition => $no_edit ? undef : ['Add', "/admin/profile/server?dest_id=$id"],
-	     constrain => { server_type_id => $id },
-	     fields => [qw(host_name os doc_root active)],
-	     profile => [ [$label, "/admin/profile/server"],
-			  ['Log', "/admin/events/server"] ],
-	     alter => { active => $yes_no },
-	     select =>    $no_del ? undef : ['Delete', 'server|delete_cb'],
-	    );
+             userSort => 0,
+             object => 'server',
+             addition => $no_edit ? undef : ['Add', "/admin/profile/server?dest_id=$id"],
+             constrain => { server_type_id => $id },
+             fields => [qw(host_name os doc_root active)],
+             profile => [ [$label, "/admin/profile/server"],
+                        ['Log', "/admin/events/server"] ],
+             alter => { active => $yes_no },
+             select =>    $no_del ? undef : ['Delete', 'server|delete_cb'] );
     $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
     
     $m->comp('/widgets/profile/formButtons.mc',

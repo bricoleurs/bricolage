@@ -59,7 +59,8 @@ $wf = $wf->get_name;
 
 <form method="post" action="<% $r->uri %>" name="theForm">
   <& '/widgets/wrappers/sharky/table_top.mc', 
-      caption => 'Active ' . get_class_info($obj_type)->get_plural_name
+      caption => 'Active %n',
+      object  => $obj_type
   &>
   <& '/widgets/listManager/listManager.mc',
      object       => $obj_type,

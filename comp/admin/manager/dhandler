@@ -95,7 +95,8 @@ if (defined $def->{$type}{select}) {
 }
 
 $m->comp('/widgets/wrappers/sharky/table_top.mc',
-   caption => $def->{$type}{title} || 'Existing ' . get_class_info($obj_key)->get_plural_name
+          caption => $def->{$type}{title} || 'Existing %n',
+          object  => $obj_key
 );
 
 # Output the list of found objects.
