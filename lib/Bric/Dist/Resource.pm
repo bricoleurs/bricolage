@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 00:04:29 $
+$Date: 2002-09-11 02:54:05 $
 
 =head1 SYNOPSIS
 
@@ -270,43 +270,50 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item path
 
-media_type The resources' MEDIA type.
+The path to the resource on the file system. Usually used in combination with
+uri.
 
-=item *
+=item uri
 
-mod_time - The resources' last modified time. If passed as an anonymous array
-of two values, those values will be used to retreive resources whose mod_times
-are between the two times.
+The URI for a resource. Usually used in combination with path.
 
-size - The size, in bytes, of the file. If passed as an anonymous array of two
-values, those values will be used to retreive resources whose sizes are between
-the two sizes.
+=item media_type
 
-=item *
+The resources' MEDIA type.
 
-uri - The URI for a resource.
+=item mod_time
 
-=item *
+The resources' last modified time. If passed as an anonymous array of two
+values, those values will be used to retreive resources whose mod_times are
+between the two times.
 
-is_dir - If true, return only those resources that are directories.
+=item size
 
-=item *
+The size, in bytes, of the file. If passed as an anonymous array of two
+values, those values will be used to retreive resources whose sizes are
+between the two sizes.
 
-story_id - Resources associated with a given story ID.
+=item is_dir
 
-=item *
+If true, return only those resources that are directories.
 
-media_id - Resources associated with a given media ID.
+=item story_id
 
-=item *
+Resources associated with a given story ID.
 
-dir_id - File resources that are associated with a directory Resource's ID.
+=item media_id
 
-=item *
+Resources associated with a given media ID.
 
-job_id - Resources associated with a given job ID.
+=item dir_id
+
+File resources that are associated with a directory Resource's ID.
+
+=item job_id
+
+Resources associated with a given job ID.
 
 =back
 
@@ -1624,8 +1631,8 @@ $get_em = sub {
 	    }
 	} elsif ($k eq 'path' || $k eq 'uri') {
 	    # A text comparison.
-	    push @wheres, "LOWER($k) LIKE ?";
-	    push @params, lc $v;
+            push @wheres, "$k LIKE ?";
+            push @params, $v;
 	} elsif ($k eq 'media_type') {
 	    # We need to do a subselect for the correct MEDIA type ID.
 	    push @params, lc $v;

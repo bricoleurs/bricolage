@@ -314,10 +314,8 @@ sub grant_permissions {
         };
 
 	exec_sql($sql);
-        print "Version $ver\n";
         if ($ver >= 7.3) {
             # We need to grant execute permission to the login_avail function.
-            print "Granting execute...\n";
             my $func_grant = qq{
                 GRANT       EXECUTE
                 ON FUNCTION login_avail(varchar, numeric(1,0), numeric(10, 0))
@@ -364,5 +362,3 @@ sub clean_up {
 
 1;
 __END__
-Change Log:
-$BricLog: pgimport,v $
