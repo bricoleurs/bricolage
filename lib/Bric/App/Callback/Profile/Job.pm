@@ -1,7 +1,7 @@
 package Bric::App::Callback::Profile::Job;
 
 use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass('class_key' => 'job');
+__PACKAGE__->register_subclass(class_key => 'job');
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);

@@ -1,7 +1,7 @@
 package Bric::App::Callback::Profile::Source;
 
 use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass('class_key' => 'source');
+__PACKAGE__->register_subclass(class_key => 'source');
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);

@@ -1,7 +1,7 @@
 package Bric::App::Callback::Profile::Category;
 
 use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass('class_key' => 'category');
+__PACKAGE__->register_subclass(class_key => 'category');
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);

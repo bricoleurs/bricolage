@@ -1,7 +1,7 @@
 package Bric::App::Callback::Profile::Server;
 
 use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass('class_key' => 'server');
+__PACKAGE__->register_subclass(class_key => 'server');
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);

@@ -1,7 +1,7 @@
 package Bric::App::Callback::Profile::Dest;
 
 use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass('class_key' => 'dest');
+__PACKAGE__->register_subclass(class_key => 'dest');
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);

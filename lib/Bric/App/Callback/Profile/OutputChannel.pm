@@ -1,7 +1,7 @@
 package Bric::App::Callback::Profile::OutputChannel;
 
 use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass('class_key' => 'output_channel');
+__PACKAGE__->register_subclass(class_key => 'output_channel');
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);

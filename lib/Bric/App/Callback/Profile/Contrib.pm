@@ -1,7 +1,7 @@
 package Bric::App::Callback::Profile::Contrib;
 
 use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass('class_key' => 'contrib');
+__PACKAGE__->register_subclass(class_key => 'contrib');
 use strict;
 use Apache::Util qw(escape_uri);
 use Bric::App::Callback::Util::Contact qw(update_contacts);

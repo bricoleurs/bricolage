@@ -1,7 +1,7 @@
 package Bric::App::Callback::Profile;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass('class_key' => 'profile');
+__PACKAGE__->register_subclass(class_key => 'profile');
 use HTML::Mason::MethodMaker('read_write' => [qw(obj type class has_perms)]);
 use strict;
 use Bric::App::Authz qw(:all);
