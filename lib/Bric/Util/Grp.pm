@@ -2841,8 +2841,8 @@ sub _do_list {
                   'm.active = 1');
     my $tables = "grp g, member m, grp_member c";
     # If an object is passed then we have to join to the member table again.
-    if (($criteria->{obj}) ||
-        ($criteria->{package} && $criteria->{obj_id}) ) {
+    if (($criteria->{obj} && defined $criteria->{obj}->get_id)
+        || ($criteria->{package} && $criteria->{obj_id})) {
         my ($pkg, $obj_id);
         if ($criteria->{obj}) {
             # Figure out what table this needs to be joined to.
