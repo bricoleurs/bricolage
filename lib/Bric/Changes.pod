@@ -266,33 +266,44 @@ mod_rewrite). [Sam]
 
 =item *
 
-Fixed installer to first ask whether SSL supprt is desired before
-asking for a specific SSL module. [Sam]
+Fixed installer to first ask whether SSL supprt is desired before asking for a
+specific SSL module. [Sam]
 
 =item *
 
-Fixed documentation bug in Bric::Admin concerning PostgreSQL paths.
-Thanks to Vicki Brown for the catch.  [Sam]
+Fixed documentation bug in Bric::Admin concerning PostgreSQL paths. Thanks to
+Vicki Brown for the catch. [Sam]
 
 =item *
 
-Fixed installation system to fail if there are errors importing the
-database.  Also added test for missing or empty bricolage.sql. [Sam]
+Fixed installation system to fail if there are errors importing the database.
+Also added test for missing or empty bricolage.sql. [Sam]
 
 =item *
 
-Fixed installation system to support optional modules and not force
-users to install them.  [Sam]
+Fixed installation system to support optional modules and not force users to
+install them. [Sam]
 
 =item *
 
 Fixed bug that prevented the contents of fields to be updated through
-Bric::SOAP.  [Sam]
+Bric::SOAP. [Sam]
 
 =item *
 
-Fixed "Checkin and Publish" button to only appear if the user has
-permissions to publish.  [Matt]
+Fixed "Checkin and Publish" button to only appear if the user has permissions
+to publish. [Matt]
+
+=item *
+
+Fixed bug where text pasted into Bulk Edit textarea box was getting words
+smooshed together. Thanks to Rachel Murray for the spot. [David]
+
+=item *
+
+Fixed bug where date field elements weren't getting properly converted between
+the local time zone and UTC, which is the time zone of all the dates in the
+database. Thanks to Matt Vella for the spot. [David]
 
 =back
 

@@ -8,15 +8,15 @@ contains the business data
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-16 21:28:30 $
+$Date: 2002-08-17 22:52:23 $
 
 =head1 SYNOPSIS
 
@@ -53,6 +53,7 @@ use strict;
 # Programatic Dependencies              
 
 use Bric::Util::DBI qw(:all);
+use Bric::Util::Time qw(:all);
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Biz::AssetType::Parts::Data;
 
@@ -541,10 +542,11 @@ NONE
 
 sub set_data {
     my ($self, $value) = @_;
-    my $element  = $self->get_element_data_obj();
+    my $element  = $self->get_element_data_obj;
 
     # OK this is just an attribute
-    my $sql_type  = $self->_get_sql_type();
+    my $sql_type  = $self->_get_sql_type;
+    $value = db_date($value) if $sql_type eq 'date';
 
     local $^W = undef;
     unless ($self->get_data eq $value) {
@@ -576,8 +578,10 @@ NONE
 
 sub get_data {
     my ($self) = @_;
-    my $sql_type = $self->_get_sql_type() || return;
-    return $self->_get('_'.$sql_type.'_val');
+    my $sql_type = $self->_get_sql_type || return;
+    return $sql_type eq 'date' ?
+      local_date($self->_get('_'.$sql_type.'_val')) :
+      $self->_get('_'.$sql_type.'_val');
 }
 
 ################################################################################
