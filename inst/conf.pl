@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-04-15 09:04:58 $
+$Date: 2003-10-10 19:51:26 $
 
 =head1 DESCRIPTION
 
@@ -91,7 +91,8 @@ sub create_bricolage_conf {
     set_bric_conf_var(\$conf, DB_NAME         => $PG->{db_name});
     set_bric_conf_var(\$conf, DBI_USER        => $PG->{sys_user});
     set_bric_conf_var(\$conf, DBI_PASS        => $PG->{sys_pass});
-
+    set_bric_conf_var(\$conf, DB_HOST         => $PG->{host_name});
+    set_bric_conf_var(\$conf, DB_PORT         => $PG->{host_port});
 
     # path settings
     my $root = $CONFIG->{BRICOLAGE_ROOT};
@@ -121,6 +122,7 @@ sub create_bricolage_conf {
 # changes the setting of a single conf var in $$conf
 sub set_bric_conf_var {
     my ($conf, $var, $val) = @_;
+    return unless defined $val and $val ne '';
     unless ($$conf =~ s/^(\s*$var\s+=\s*).*$/$1$val/mi) {
         hard_fail("Unable to set bricolage.conf variable $var to \"$val\".");
     }
