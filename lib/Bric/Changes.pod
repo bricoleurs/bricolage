@@ -111,6 +111,11 @@ date/time string in the future now causes a publish job to be scheduled for
 that time, rather than immediate burning the document and then scheduing the
 distribution to take place in the future. Reported by Ashlee Caul. [David]
 
+=item *
+
+Improved context-sensitive help for the "New Template" profile. [Paul Orrock
+and David]
+
 =back
 
 =head2 Bug Fixes
