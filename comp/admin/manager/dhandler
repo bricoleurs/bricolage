@@ -16,11 +16,14 @@ if ($type eq 'grp') {
     if ($ARGS{'search|alpha_cb'} || exists $ARGS{'search|substr_cb'}) {
 	# It's a search. Reset the group type.
 	$ARGS{grp_type} = 'all';
-    } elsif (exists $ARGS{grp_type}) {
+        set_state_data($type, 'prev_grp_type', undef);
+    } elsif (exists $ARGS{grp_type} or
+             $ARGS{grp_type} = get_state_data($type, 'prev_grp_type')) {
 	# It's just a query by group type. Set the default obj_key and
         # set the behavior to ensure that the results are listed.
 	$obj_key = $ARGS{grp_type} || 'grp';
         $behavior = 'narrow';
+        set_state_data($type, 'prev_grp_type', $ARGS{'grp_type'});
     } else {
         # It's the first time accessing.
 	$ARGS{grp} = 'all';
@@ -77,7 +80,7 @@ if ($type eq 'grp') {
 }
 
 $m->comp('/widgets/search/search.mc',
-   object    => $obj_key,
+   object    => $type,
    field     => $def->{$type}{srch_field},
    type      => $searchType,
    groupList => $groupList
@@ -90,13 +93,12 @@ if (defined $def->{$type}{select}) {
 } else {
     $m->out("<p></p>");
 }
-
 # Output the list of found objects.
 $m->comp('/widgets/listManager/listManager.mc',
 	 behavior => $behavior,
 	 object => $obj_key,
 	 profile => $prof_sub,
-	 title => $def->{$type}{title} || 'Existing %n',
+	 title => $def->{$type}{title} || $lang->maketext('Existing %n'),
 	 fields => $def->{$type}{list_fields},
 	 addition => $type eq 'pref' || $type eq 'job' ? undef : $add_sub,
 	 select => $def->{$type}{select},
@@ -198,11 +200,10 @@ $changed = $changed eq $type ? 0 : 1;
 </%init>
 <%once>;
 # We'll use this coderef below.
-my $yes_no = sub { $_[0] ? 'Yes' : 'No'};
+my $yes_no = sub { $lang->maketext( $_[0] ? 'Yes' : 'No'  ) };
 my $site_name = sub { my $s=Bric::Biz::Site->lookup({id => $_[0]});
                       return $s->get_name
                   };
-
 # And we'll use this coderef to determine whether the user can delete objects.
 my ($can_del, $users, $sel_label, $sel_widg, $ets);
 my $sel_sub = sub {
@@ -377,11 +378,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:04 $
+$Date: 2003-07-25 04:39:08 $
 
 =head1 SYNOPSIS
 

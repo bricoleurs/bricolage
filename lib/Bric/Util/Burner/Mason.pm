@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-19 00:41:19 $
+$Date: 2003-07-25 04:39:27 $
 
 =head1 SYNOPSIS
 
@@ -206,7 +206,8 @@ sub burn_one {
     # Save an existing Mason request object and Bricolage objects.
     my (%bric_objs);
     # XXX Perhaps we should use and check for a subclass, instead?
-    if (HTML::Mason::Request->instance->out_method) {
+    my $m = HTML::Mason::Request->instance;
+    if ($m and $m->out_method) {
         # If there's an out_method, assume that there's an existing burn
         # going on.
         no strict 'refs';

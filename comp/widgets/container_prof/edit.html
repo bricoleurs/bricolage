@@ -76,7 +76,7 @@ foreach my $tile ($dt->get_tiles) {
 </%perl>
 % if ($value_buf) {
     <tr>
-      <td colspan="3"><b><% $disp_buf %>:</b> <% $value_buf %></td>
+      <td colspan="3"><b><% $disp_buf %>:</b> <% escape_html($value_buf) %></td>
     </tr>
 % } # if ($value_buf)
     <tr>
@@ -434,6 +434,7 @@ push @$repeatable_opts, ['_super_bulk_edit', '- Super Bulk Edit -'];
 # the container options
 my @pos_cont = $tile->get_possible_containers();
 foreach (@pos_cont) {
+    next unless chk_authz($_, READ, 1);
     my $key = 'cont_' . $_->get_id();
     $elem_opts->{$key} = $_->get_name();
 }

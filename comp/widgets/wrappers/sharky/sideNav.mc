@@ -12,7 +12,8 @@ my $pl_disp = { map { $_ => get_class_info($_)->get_plural_name }
      workflow category element element_type media_type source dest job alert_type) };
 
 my $printLink = sub {
-    my ($href, $uri, $caption) = @_;
+    my ($href, $uri, $caption, $no_translation) = @_;
+    $caption = $no_translation ? $caption : $lang->maketext($caption);
     my @href = split(/\//, $href);
     my @uri = split(/\//, $uri);
     # Make sure we have something to eq to.
@@ -39,7 +40,7 @@ my $printLink = sub {
     if ($style =~ /Bold/ && !$isLink) {
        $out .= qq {<span class="$style">$caption</span><br />};
     } else {
-        $out .= qq {<a href="$href" class="$style" target="_parent">} . $lang->maketext($caption) .'</a><br />';
+        $out .= qq {<a href="$href" class="$style" target="_parent">$caption</a><br />};
     }
     return $out;
 };
@@ -201,7 +202,7 @@ foreach my $wf (@$workflows) {
                 <%perl>
                   foreach my $d (@{$wf->{desks}}) {
                       next unless chk_authz(0, READ, 1, @{ $d->[2] });
-                      $m->out( &$printLink("/workflow/profile/desk/$wf->{id}/$d->[0]/", $uri, $d->[1]) );
+                      $m->out( &$printLink("/workflow/profile/desk/$wf->{id}/$d->[0]/", $uri, $d->[1], 1) );
                   }
                 </%perl>
               </td>
@@ -455,10 +456,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =head1 DATE
 
-$Date: 2003-07-18 23:45:13 $
+$Date: 2003-07-25 04:39:22 $
 
 </%doc>

@@ -84,14 +84,254 @@ adding a select list to choose which type of Permission to look at. [Scott]
 
 =head1 VERSION 1.6.2
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+German localization started. [Gerfried Fuchs]
+
+=item *
+
+New help pages for the destination, server, and action profiles. [Geoff
+Richards]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
 
 =item *
 
+Fixed a bug in Bric::SOAP::Media which was causing all media files uploaded
+with that module to be placed in C<comp/data/media/$version/> rather than
+C<comp/data/media/$id/$version/>. [Mark]
+
+=item *
+
 Fixed SQL bug that might in rare situations cause element output channel
 associations to become confused. [David]
+
+=item *
+
+Fixed issue where new output channels added to a document type element were
+not always actually saved as a part of that element. [David]
+
+=item *
+
+Fixed side navigation spacer graphic to the same width as other such
+graphics. Helps Chinese Traditional to display more nicely. [Kang-min Liu]
+
+=item *
+
+The media simple search now searched by URI again. [Mark]
+
+=item *
+
+Now HTML-escaping the contents of the context content displayed for
+subelements so as to prevent HTML in fields from messing up the display.
+[Mark]
+
+=item *
+
+Fixed installer to again work with versions of PostgreSQL prior to 7.3. Thanks
+to Marc Hawson for the spot. [David]
+
+=item *
+
+Fix for 'Can't call method "out_method" on an undefined value' generated
+during a burn. [Mark]
+
+=item *
+
+Many minor HTML corrections. [Gerfried Fuchs]
+
+=item *
+
+Fix for SQL error when searching for media by file name. [David]
+
+=item *
+
+Eliminated 'Can't locate object method "redirect" via package
+"HTML::Mason::Request"' error that caused Bricolage to actually display a
+generic error page, instead of its custom error page. [David]
+
+=item *
+
+Alert types can once again be deleted from the alert type profile. [David]
+
+=item *
+
+Users can now only add subelements to a story if they have at least READ
+permission to those subelements. Thanks to Mark for the spot. [David]
+
+=item *
+
+If the installer notices that you're attempting to install Bricolage in a
+directory with an existing installation, it will suggest that you consider
+running C<make upgrade>, instead. Suggested by Bruce Albrecht. [David]
+
+=item *
+
+The list manager now sorts version numbers as numbers rather than strings.
+[JoE<atilde>o Pedro]
+
+=item *
+
+The media type profile again allows extensions to be added and removed.
+Reported by Tobias Kremer. [David]
+
+=item *
+
+Added the C<CHAR_SET> directive's value to Bricolage's Apache configuration
+via the F<httpd.conf> directive C<AddDefaultCharset>. Might help with some
+Unicode issues. [David]
+
+=item *
+
+Distribution error handling is better now, with errors passed back to the
+client and an error when F<bric_dist_mon> attempts to connect to a server or
+URL that's not a Bricolage distribution server. [David]
+
+=item *
+
+Eliminated installation error 'Failed to create database: parser: parse error
+at or near "template0"', which occurred with versions of PostgreSQL prior to
+7.3. [Scott]
+
+=item *
+
+Enabled the C<PERL_LOADER> F<bricolage.conf> configuration directive and gave
+it a default value that's actually useful. [David]
+
+=item *
+
+Perl 5.8.0 or later is now strongly recommended for better Unicode support.
+
+=item *
+
+Fixed deleting an Alert Type Rule. Also fixed Editing Alert Type Recipients.
+[Scott]
+
+=item *
+
+Notes are once again saved with a document. Thanks to Scott for the spot!
+[David]
+
+=item *
+
+Fixed an issue with FTP distribution where the incorrect FTP root was used an
+invalid path. [Clive Jones]
+
+=item *
+
+The title and description of a story or media document are now properly
+reverted when the document is reverted to an earlier version. Thanks to Scott
+for the spot. [David]
+
+=item *
+
+Pagination now works properly when searching for groups by type in the group
+manager. [Scott]
+
+=item *
+
+Pagination now works properly when searching for elements by element type in
+the element manager and when searching for contributors by contributor type in
+the contributor manager. [David]
+
+=item *
+
+Creating a new story that has a URI that conflicts with an existing story no
+longer creates an extra story. Reported by Clive Jones. [David]
+
+=item *
+
+Changed "Cannot publish asset because there are no Destinations associated
+with its output channels" to instead include the name of the output channel
+missing Destination associations so that the user can tell which output
+channels need a Destination association. [Clive Jones]
+
+=item *
+
+When an document's primary output channel has been changed to something other
+than that defined by its document type element, preview will now correctly
+use the document's primary output channel instead of the element's primary
+output channel. [David]
+
+=item *
+
+Returning to a desk from editing an asset that was selected for editing from
+that desk no longer triggers an error. Thanks to Clive Jones for the spot!
+[David]
+
+=item *
+
+An attempt to preview a story where its templates output no content no longer
+results in an error. Reported by Eldar Kononov. [David]
+
+=item *
+
+Clicking "Cancel" in an element no longer saves the changes in that element
+before going up to the parent element. Thanks to Andrew Baio for the spot!
+[David]
+
+=item *
+
+Changes made to the default values of fields in the contributor type profile
+are now properly saved. Reported by Scott. [David]
+
+=item *
+
+Adding Extensions to a Bric::Util::MediaType object when creating it via that
+class' C<new()> constructor works again. Reported by Clive Jones. [David]
+
+=item *
+
+Added Localization support to widgets that were missing it. Added pt_pt
+localized images. [JoE<atilde>o Pedro]
+
+=item *
+
+Documents are no longer distributed to deleted (deactivated) destinations.
+Reported by Mark. [David]
+
+=item *
+
+Eliminated several error log authentication message such as "No cookie found."
+Thes tended only to confuse users when they were just starting to use
+Bricolage. I've left in a few error messages, however, so that system
+administrators can see in the log when it looks like someone is trying to hack
+into Bricolage. The remaninging authentication error log messages are:
+
+=over
+
+=item *
+
+Invalid username or password. Please try again.
+
+=item *
+
+User does not exist or is disabled.
+
+=item *
+
+Malformed cookie.
+
+=item *
+
+Cookie hash mismatch from [IP address] (Hostname '[hostname]') for user
+'[username].'
+
+=back
+
+=item *
+
+Elements added with the same name as an existing, active or inactive element
+no longer trigger an SQL error to be displayed. Thanks to Clive Jones for the
+spot! [David]
 
 =back
 

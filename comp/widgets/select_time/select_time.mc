@@ -1,5 +1,3 @@
-%#--- Documentation ---#
-
 <%doc>
 
 =head1 NAME
@@ -8,11 +6,11 @@ select_time - A widget to facilitate time input.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-06-04 00:33:58 $
+$Date: 2003-07-25 04:39:20 $
 
 =head1 SYNOPSIS
 
@@ -118,9 +116,7 @@ the parameter named "$base_name-partial" will be set to 1.
 =cut
 
 </%doc>
-
 %#--- Arguments ---#
-
 <%args>
 $base_name       => 'time'
 $style           => 'inline'
@@ -142,44 +138,31 @@ $indent          => undef
 $disp            => undef
 $repopulate      => 0
 </%args>
-
 <%once>
 my $widget = 'select_time';
-
 my @mon = map { $lang->maketext($_) }
  qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
 my @day  = ('01'..'31');
 my @hour = ('00'..'23');
 my @min  = ('00'..'59');
 </%once>
-
 %#--- Initialization ---#
-
-<%init>
-
+<%init>;
 my @t;
 
 # Get the date parts if a db date value was passed for a default.
 if ($def_date) {
     # Code from Bric::Util::DBD::Pg
     eval { @t = unpack('a4 x a2 x a2 x a2 x a2 x a2', $def_date) };
-
-    if ($@) {
-	my $err_msg = "Unable to parse date '$def_date'";
-	die Bric::Util::Fault::Exception::DP->new({'msg'     => $err_msg,
-						 'payload' => $@});
-    }
+    throw_dp error => "Unable to parse date '$def_date'",
+             payload => $@ if $@;
 }
 
 # Set default values if they were passed.
-my ($s, $sub_widget);
-
-$sub_widget = "$widget.$base_name";
+my $sub_widget = "$widget.$base_name";
 
 # Only grab the old data if we are repopulating this form ourselves.
-if ($repopulate) {
-    $s = get_state_data($sub_widget);
-}
+my $s = $repopulate ? get_state_data($sub_widget) : {};
 
 $s->{'year'} ||= $t[0] || $def_year || '';
 $s->{'mon'}  ||= $t[1] || $def_mon || '';
@@ -187,10 +170,8 @@ $s->{'day'}  ||= $t[2] || $def_day || '';
 $s->{'hour'} ||= $t[3] || $def_hour || '';
 $s->{'min'}  ||= $t[4] || $def_min || '';
 
-my @time = localtime;
-my @year = $t[0] ?
- ($t[0] - YEAR_SPAN_BEFORE .. $t[0] + YEAR_SPAN_AFTER) :
- ($time[5] + 1900 - YEAR_SPAN_BEFORE .. $time[5] + 1900 + YEAR_SPAN_AFTER);
+my $y = $t[0] || strfdate(undef, '%Y');
+my @year = ($y - YEAR_SPAN_BEFORE .. $y + YEAR_SPAN_AFTER);
 
 my %fields;
 $fields{'year'} = \@year unless $no_year;
@@ -199,12 +180,11 @@ $fields{'day'}  = \@day  unless $no_day;
 $fields{'hour'} = \@hour unless $no_hour;
 $fields{'min'}  = \@min  unless $no_min;
 
-
 set_state_data($sub_widget, $s);
 
-$m->comp("$style.html", 
-	 widget          => $widget, 
-	 base_name       => $base_name, 
+$m->comp("$style.html",
+	 widget          => $widget,
+	 base_name       => $base_name,
 	 default_current => $default_current,
 	 useTable        => $useTable,
 	 indent          => $indent,
@@ -215,9 +195,5 @@ $m->comp("$style.html",
 
 # Clear the state data now that the form fields have been repopulated.
 set_state_data("$widget.$base_name", {});
-
 </%init>
-
-%#--- Log History ---#
-
 

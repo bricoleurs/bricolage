@@ -7,16 +7,16 @@ distributed.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-07-25 04:39:26 $
 
 =head1 SYNOPSIS
 
@@ -210,11 +210,12 @@ B<Notes:> NONE.
 
 sub new {
     my ($pkg, $init) = @_;
-    my $self = ref $pkg || $pkg;
+    my $class = ref $pkg || $pkg;
     $init->{host_name} = lc $init->{host_name} if $init->{host_name};
-    $init->{os} ||= $def_os;
+    my $os = delete $init->{os} || $def_os;
     $init->{_active} = 1;
-    $self->SUPER::new($init);
+    my $self = $class->SUPER::new($init);
+    $self->set_os($os);
 }
 
 ################################################################################
@@ -314,6 +315,10 @@ cookie
 =item *
 
 server_type_id
+
+=item *
+
+active
 
 =back
 

@@ -279,7 +279,7 @@ sub log_err {
 	# Log more stuff and to STDERR for debugging.
 	openlog($prog, LOG_PID | LOG_PERROR, LOG_USER);
 	if (ref $err) {
-	    syslog(LOG_ERR, "Debug: %s (%s line %d). Payload: %s",
+	    syslog(LOG_ERR, "Debug: %s (%s line %d). %s",
 		   $err->get_msg, $err->get_pkg, $err->get_line,
 		   $err->get_payload || '');
 	} else {
@@ -289,8 +289,9 @@ sub log_err {
 	# Just to regular logging.
 	openlog($prog, LOG_PID, LOG_USER);
 	if (ref $err) {
-	    syslog(LOG_ERR, "Error: %s (%s line %d)", $err->get_msg,
-		   $err->get_pkg, $err->get_line);
+	    syslog(LOG_ERR, "Error: %s: %s. Consult the Apache " .
+                   "error log for more details", $err->get_msg,
+		   $err->get_payload || '');
 	} else {
 	    syslog(LOG_ERR, "Error: %s", $err);
 	}

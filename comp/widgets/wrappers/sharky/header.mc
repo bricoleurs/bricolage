@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:11 $
+$Date: 2003-07-25 04:39:22 $
 
 =head1 SYNOPSIS
 
@@ -32,6 +32,9 @@ $no_hist => 0
 $debug => undef
 </%args>
 <%init>;
+
+$title = $lang->maketext($title);
+
 my @context =  split /\|/, $context;
 for (@context){
     s/^\s|\s$//g;

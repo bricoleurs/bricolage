@@ -7,15 +7,15 @@ Bric::Util::Coll::Rule - Interface for managing collections of alert type rules.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-07 13:58:48 $
+$Date: 2003-07-25 04:39:28 $
 
 =head1 SYNOPSIS
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$Revision: 1.51 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+our $VERSION = (qw$Revision: 1.51 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-03 21:06:20 $
+$Date: 2003-07-25 04:39:25 $
 
 =head1 SYNOPSIS
 
@@ -220,7 +220,7 @@ use constant PARAM_WHERE_MAP =>
       version               => 'i.version = ?',
       user__id              => 'i.usr__id = ?',
       uri                   => 'LOWER(i.uri) LIKE LOWER(?)',
-      file_name             => 'LOWER(i.file_name LIKE LOWER(?)',
+      file_name             => 'LOWER(i.file_name) LIKE LOWER(?)',
       location              => 'LOWER(i.location) LIKE LOWER(?)',
       _checked_in_or_out    => 'i.checked_out = '
                              . '( SELECT max(checked_out) '
@@ -243,6 +243,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'mt.id = mm2.object_id',
       simple                => '( LOWER(k.name) LIKE LOWER(?) OR '
                              . 'LOWER(i.name) LIKE LOWER(?) OR '
+                             . 'LOWER(i.uri) LIKE LOWER(?) OR '
                              . 'LOWER(i.description) LIKE LOWER(?) )',
     };
 
@@ -1341,15 +1342,12 @@ sub revert {
     die $gen->new({ msg => "May not revert a non checked out version" })
       unless $self->_get('checked_out');
 
-    my @prior_versions = __PACKAGE__->list( {
-      id              => $self->_get_id(),
-      return_versions => 1
-    });
-
     my $revert_obj;
-    foreach (@prior_versions) {
+    foreach ($self->list({ id => $self->get_id,
+                           return_versions => 1})) {
         if ($_->get_version == $version) {
             $revert_obj = $_;
+            last;
         }
     }
 
@@ -1369,11 +1367,11 @@ sub revert {
         $contrib->{$cid} = $c;
     }
 
-    # clone information from the tables
-    $self->_set([qw(category__id media_type_id size file_name location uri
-                    _contributors _update_contributors _queried_contrib)],
-                [$revert_obj->_get(qw(category__id media_type_id size file_name
-                                      location uri), $contrib, 1, 1)]);
+    # Clone the basic properties of the media document.
+    my @attrs = qw(name description media_type_id category__id size file_name
+                   location uri);
+    $self->_set([@attrs, qw(_contributors _update_contributors _queried_contrib)],
+                [$revert_obj->_get(@attrs), $contrib, 1, 1]);
 
     # clone the tiles
     # get rid of current tiles

@@ -10,6 +10,7 @@ if ($field eq "$widget|save_cb") {
     $save_object->($widget, $param);
 
     my $fa = get_state_data($widget, 'fa');
+    my $workflow_id = $fa->get_workflow_id;
 
     if ($param->{"$widget|delete"}) {
         # Delete the fa.
@@ -29,15 +30,12 @@ if ($field eq "$widget|save_cb") {
     clear_state($widget);
 
     if ($return eq 'search') {
-        my $workflow_id = $fa->get_workflow_id();
         my $url = $SEARCH_URL . $workflow_id . '/';
         set_redirect($url);
     } elsif ($return eq 'active') {
-        my $workflow_id = $fa->get_workflow_id();
         my $url = $ACTIVE_URL . $workflow_id;
         set_redirect($url);
     } elsif ($return =~ /\d+/) {
-        my $workflow_id = $fa->get_workflow_id();
         my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
         set_redirect($url);
     } else {

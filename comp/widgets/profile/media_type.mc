@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:11 $
+$Date: 2003-07-25 04:39:20 $
 
 =head1 SYNOPSIS
 
@@ -21,6 +21,8 @@ $Date: 2003-06-13 16:49:11 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the Media Types Profile page.
+
+=cut
 
 </%doc>
 <%once>;
@@ -86,9 +88,8 @@ if ($param->{delete}) {
 		    $usedext = 1;
 		    add_msg("Extension '$extension' is already used by media type '$mt_name'.");
 		} else {
-		    my @addexts = @{[$extension]};
-		    unless ($mt->add_exts(@addexts)) {
-                        add_msg($lang->maketext("Problem adding [_1]","'@addexts'"));
+		    unless ($mt->add_exts($extension)) {
+                        add_msg($lang->maketext("Problem adding [_1]","'$extension'"));
 		    }
 		}
 	    } else {
@@ -101,12 +102,7 @@ if ($param->{delete}) {
     $used_ext = 0;
     for (my $i = 0; $i < @{$param->{extension}}; $i++) {
 	if (my $ext = $mtids->[$i]) {
-	    my @delexts = @{[$ext]};
-	    unless ($mt->del_exts(@delexts)) {
-                add_msg($lang->maketext("Problem deleting [_1]","'@delexts'"));
-	    }
-	    my $extension = $param->{extension}[$i];
-	    $used_ext += $addext_sub->($mt, $extension, $name);
+            next;
 	} else {
 	    next unless $param->{extension}[$i];
 	    my $extension = $param->{extension}[$i];
@@ -116,6 +112,7 @@ if ($param->{delete}) {
     if ($param->{del_media_type_ext}) {
 	$mt->del_exts(@{ mk_aref($param->{del_media_type_ext}) });
     }
+
     @new_exts = $mt->get_exts();
     unless (@new_exts) {
 	# Revert the extensions

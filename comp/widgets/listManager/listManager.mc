@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:33 $
+$Date: 2003-07-25 04:39:19 $
 
 =head1 SYNOPSIS
 
@@ -344,7 +344,7 @@ $pkg->list({'name'        => $param->{'name_field'},
 <%args>
 $object                        # The object type to display
 $style          => 'full_list'  # The list style (full or paginated)
-$title          => 'Existing %n'# Text for the title of this list.
+$title          => $lang->maketext('Existing %n') # Text for the title of this list.
 $sortBy         => ''           # Default to sorting by ID
 $userSort       => 1            # A flag for whether the user can resort the list
 $profile        => ['Edit', ''] # URL to the profile for this object.
@@ -388,17 +388,40 @@ $fields ||= [sort keys %$meth];
 
 # Set the title
 my $name = get_class_info($object)->get_plural_name;
-$title =~ s/\%n/$name/;
+$title =~ s/\%n/$lang->maketext($name)/e;
 
 # We need a hash of featured IDs to use for later
 my %featured_lookup = map { ($_,1) } @$featured;
 
+# limit the number of results to display per page
+my $limit = Bric::Util::Pref->lookup_val( "Search Results / Page" ) || 0;
+
+#--------------------------------------#
+# Set up pagination data.
+
+my $pagination = get_state_data($widget, 'pagination');
+$pagination = $limit ? 1 : 0 unless defined $pagination;
+my $offset = $limit ? get_state_data( $widget, 'offset' ) : undef;
+set_state_data($widget, 'offset', undef);
+my $show_all = get_state_data($widget, 'show_all');
+set_state_data($widget, 'show_all', undef);
+
 #--------------------------------------#
 # Find constraint and list objects.
 
-my $list_arg = $build_constraints->($search_widget, $constrain, $meth, $sortBy,
-                                    $def_sort_field);
-my $param = {%$list_arg, %$constrain};
+my ($param, $do_list);
+if ($show_all || ($pagination && defined $offset)) {
+    # We're processing pages. Just return the last query parameters.
+    $param = get_state_data($widget, 'list_params');
+    $do_list = 1;
+} else {
+    # Construct the parameters and then save them for future pages, if necessary.
+    my $list_arg = $build_constraints->($search_widget, $constrain, $meth, $sortBy,
+                                        $def_sort_field);
+    $param = {%$list_arg, %$constrain};
+    set_state_data($widget, 'list_params', $param) if $pagination;
+    $do_list = 1 if %$list_arg;
+}
 
 # Load the user provided objects into the @objs array.
 my @objects = $objs ? @$objs : ();
@@ -406,7 +429,7 @@ my @objects = $objs ? @$objs : ();
 my $empty_search;
 
 # Only list if there are search parameters, or if our behaviour is 'narrow'.
-if (!$objs && ($behavior eq 'narrow' or %$list_arg)) {
+if (!$objs && ($behavior eq 'narrow' or $do_list)) {
     # Combine the list arguments and any passed constraints to search $pkg.
     @objects = $pkg->list($param);
 } else {
@@ -422,7 +445,7 @@ $load_featured_objs->(\@objects, $pkg, \%featured_lookup) if scalar(@$featured);
 my @sort_objs = $sort_objects->(\@objects, $meth, $exclude);
 
 # Make sure we have some results.
-my $no_results = (scalar(@sort_objs) == 0) && (scalar(keys(%$list_arg)) > 0);
+my $no_results = @sort_objs == 0 && $do_list;
 
 #--------------------------------------#
 # Build the table data array
@@ -431,31 +454,18 @@ my $no_results = (scalar(@sort_objs) == 0) && (scalar(keys(%$list_arg)) > 0);
 # number of records returned from lookup
 my $count = scalar @sort_objs;
 
-# limit the number of results to display per page
-my $limit = Bric::Util::Pref->lookup_val( "Search Results / Page" ) || 0;
-
-# tells whether we're showing all results or not
-my $pagination = get_state_data($widget, 'pagination');
-if (not defined $pagination) {
-    $pagination = $limit ? 1 : 0;
-}
-
-my ($offset, $pages, $current_page) = (0,1,1);
+my ($pages, $current_page) = (1,1);
 if ($limit) {
-    # starting at what index do we retrieve $limit records
-    $offset = get_state_data( $widget, 'offset' ) || 0;
-
     # determine the total number of pages
     $pages = int( ($count / $limit) + ($count % $limit ? 1 : 0));
-    
+
     # which page don't we link
     $current_page = $offset && $pages > 1 ?
       int($offset / $limit + ($offset % $limit >= 0 ? 1 : 0)) : 1;
 }
 
 # save persistent values
-set_state_data('listManager','pagination', $pagination);
-set_state_data('listManager','offset', $offset);
+set_state_data($widget, 'pagination', $pagination);
 
 my ($rows, $cols, $data) = $build_table_data->(\@sort_objs,
                                                $meth,
@@ -721,7 +731,7 @@ my $multisort = sub {
     my $type = $meth->{$sort_by}{props}{type};
 
     my $val;
-    if ($sort_by eq 'id') {
+    if ($sort_by eq 'id'|| $sort_by eq 'version') {
         # Do a numeric sorting.
         $val = $sort_get->($a, @$sort_arg) <=>
           $sort_get->($b, @$sort_arg);

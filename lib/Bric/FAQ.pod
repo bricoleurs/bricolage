@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-06-23 16:19:51 $
+$Date: 2003-07-25 04:39:25 $
 
 =head1 DESCRIPTION
 
@@ -88,6 +88,13 @@ L<http://kineticode.com/services/>.
 
 =back
 
+=head3 Are there any commercial support offerings for Bricolage?
+
+Yes. Kineticode, founded by Bricolage maintainer and lead developer David
+Wheeler, offers a range of technical support and templating support options,
+as well as Bricolage consulting services. Learn more at
+L<http://kineticode.com/services/>.
+
 =head2 Installation
 
 =head3 Why does mod_perl have to be statically compiled into Apache? I've been
@@ -164,6 +171,23 @@ well:
 We've also heard that you can set the LANG environment variable globally in
 the F</etc/sysconfig/i18n> file. Then you wouldn't need to worry about it
 anywhere else.
+
+=head3 Why does C<make install> exit with the following error?
+
+  IDENT authentication failed for user "postgres"
+
+I'm not sure why the IDENT fails. In inst/db_grant.pl,
+we switch EUID to that of 'postgres'. Maybe more things
+need to be set in order to convince postgresql that
+you're logging in as 'postgres' instead of 'root'?
+
+I worked around the problem by ignoring it; in pg_hba.conf,
+
+  #local   all         all                                         ident sameuser
+  #host    all         all         127.0.0.1        255.0.0.0      ident sameuser
+  local   all         all                                         trust
+  host    all         all         127.0.0.1        255.0.0.0      trust
+  host    all         all         0.0.0.0          0.0.0.0        reject
 
 =head3 Why do I get an error like the following in Apache's F<error_log>?
 

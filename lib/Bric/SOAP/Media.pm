@@ -42,15 +42,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-02 16:06:41 $
+$Date: 2003-07-25 04:39:26 $
 
 =head1 SYNOPSIS
 
@@ -792,6 +792,9 @@ sub _load_media {
                 die __PACKAGE__ . 
                   "::create : bad data found in file size element.\n"
                     unless defined $size and $size =~ /^\d+$/;
+
+                # new objects must be saved to have an id
+                $media->save;
 
                 # upload the file into the media object
                 $media->upload_file($fh, $filename);

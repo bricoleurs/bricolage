@@ -151,6 +151,7 @@ my $handle_save = sub {
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
+    my $workflow_id = $media->get_workflow_id;
     if ($param->{"$widget|delete"}) {
         # Delete the media.
         $handle_delete->($media);
@@ -168,15 +169,12 @@ my $handle_save = sub {
     clear_state($widget);
 
     if ($return eq 'search') {
-        my $workflow_id = $media->get_workflow_id();
         my $url = $SEARCH_URL . $workflow_id . '/';
         set_redirect($url);
     } elsif ($return eq 'active') {
-        my $workflow_id = $media->get_workflow_id();
         my $url = $ACTIVE_URL . $workflow_id;
         set_redirect($url);
     } elsif ($return =~ /\d+/) {
-        my $workflow_id = $media->get_workflow_id();
         my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
         set_redirect($url);
     } else {

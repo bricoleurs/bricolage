@@ -56,8 +56,8 @@ if ($param->{delete} &&
     # Check if we need to inhibit a save based on some special conditions
     if    (@cs > 1)                                   { $no_save = 1 }
     elsif (@cs == 1 && !defined $param->{element_id}) { $no_save = 1 }
-    elsif (@cs == 1 && 
-           defined $param->{element_id} && 
+    elsif (@cs == 1 &&
+           defined $param->{element_id} &&
            $cs[0] != $param->{element_id})            { $no_save = 1 }
 
     add_msg($lang->maketext('The key name [_1] is already used by another [_2].',
@@ -250,7 +250,18 @@ if ($param->{delete} &&
         }
     }
 
-    # Enable output channels.
+    # Figure out which output channels should be enabled, including the primary,
+    # of course.
+    my %enabled = map { $_ ? ( $_ => 1) : () } @{ mk_aref($param->{enabled}) },
+      $comp->get_primary_oc_id || ();
+
+    # Add a new output channel, if necessary.
+    if ($field eq "$widget|add_oc_id_cb") {
+        $comp->add_output_channel($param->{"$widget|add_oc_id_cb"});
+        $enabled{$param->{"$widget|add_oc_id_cb"}} = 1;
+    }
+
+    # Enable output channels. The primary OC should always be enabled.
     foreach my $oc ($comp->get_output_channels) {
         $enabled{$oc->get_id} ? $oc->set_enabled_on : $oc->set_enabled_off;
     }
@@ -324,11 +335,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =head1 DATE
 
-$Date: 2003-07-19 00:37:50 $
+$Date: 2003-07-25 04:39:15 $
 
 =head1 SYNOPSIS
 

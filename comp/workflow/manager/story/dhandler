@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2003-07-18 23:45:14 $
+$Date: 2003-07-25 04:39:23 $
 
 =head1 SYNOPSIS
 
@@ -108,7 +108,7 @@ my $wf = Bric::Biz::Workflow->lookup({ id => $w_id })->get_name;
         alter     => $alter,
         exclude   => $exclude,
 	profile   => $profile,
-        title     => '%n Found',
+        title     => $lang->maketext('%n Found'),
         addition  => $addition,
 	select    => $select,
         behavior  => 'expand',

@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:18 $
+$Date: 2003-07-25 04:39:28 $
 
 =head1 SYNOPSIS
 
@@ -178,8 +178,8 @@ our %Lexicon = (
     'Existing roles' => 'Ruoli Esistenti',
     'Choose Subelements' => 'Scegli i Subelementi',
     'Please check the URL and try again. If you feel you have reached this page as a result of a server error or other bug, please notify the server administrator. Be sure to include as much detail as possible, including the type of browser, operating system, and the steps leading up to your arrival here.' => 'Verificate l\'URL e riprovate. Se pensare di aver raggiunto questa pagina a causa di un baco o server error, notificatelo all\'amministratore di sistema includendo la maggior parte di dettagli possibili (browser, sistema operativo) e i passaggi che vi hanno condotto all\'errore.',
-    'Using Cyclops without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.' => 'Utilizzare Cyclops senza JavaScript può condurre a errori sui dati e instabilità. Attivate JavaScript nel browser prima di continuare.',
-    'Welcome to Cyclops.' => 'Benvenuto in Cyclops.',
+    'Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.' => 'Utilizzare Bricolage senza JavaScript può condurre a errori sui dati e instabilità. Attivate JavaScript nel browser prima di continuare.',
+    'Welcome to Bricolage.' => 'Benvenuto in Bricolage.',
     'Contributor Roles' => 'Ruoli dei Collaboratori',
     'Active' => 'Attivo',
     'Active Media' => 'Media Attivi',
@@ -342,7 +342,7 @@ our %Lexicon = (
    'Workflow profile [_1] saved.' => 'Profilo Workflow [_1] salvato.',
    'Category Permissions' => 'Permessi delle Categorie',
    'Last' => 'Ultimo',
-   'Warning! Cyclops is designed to run with JavaScript enabled.' => 'Attenzione! Cyclops è progettato per funzionare con javascript attivato.',
+   'Warning! Bricolage is designed to run with JavaScript enabled.' => 'Attenzione! Bricolage è progettato per funzionare con javascript attivato.',
    'Add to Element' => 'Aggiungere all\'Elemento',
    'Passwords must match!' => 'La Password deve corrospondere!',
    'The URI of this media conflicts with that of [_1].  Please change the category, file name, or slug.' => 'L\'URI di questo media è in conflitto con [_1]. Per favore modifica la categoria, il nome del file o lo slug.',

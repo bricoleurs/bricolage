@@ -1,25 +1,20 @@
 package Bric::Util::Language::pt_pt;
 
-
 =head1 NAME
 
 Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-Release Version: 1.5.1 -- Development Track for 1.6.0
-
-File (CVS) Version:
-
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = "1.5.1";
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:16 $
+$Date: 2003-07-25 04:39:28 $
 
 =head1 SYNOPSIS
 
@@ -89,7 +84,7 @@ use constant key => 'pt_pt';
    'User Manager' => 'Gestão de Utilizadores',
    'Workflow Manager '         => 'Gestão de Workflows',
    'Workflow Manager' => 'Getsão de Workflows',
-   'Workspace For Bricolage Administrator' => 'Área de trabalho do Gestor Bricolage',
+   'Workspace for [_1]' => 'Área de trabalho de [_1]',
 
 # Interface Objects
    'Checkbox'  => 'Checkbox',
@@ -158,9 +153,7 @@ use constant key => 'pt_pt';
    'Error' => 'Erro',
    'Event Type' => 'Tipo de evento',
    'Events' => 'Eventos',
-   'Existing Notes' => 'Anotações Existentes',
-   'Existing Subelements' => 'Subelementos Existentes',
-   'Existing roles' => 'Funções Existentes',
+   'Existing %n' => '%n Existentes',
    'Expiration' => 'Expiração',
    'Expire Date' => 'Data de Fim',
    'Extension' => 'Extensão',
@@ -301,7 +294,7 @@ use constant key => 'pt_pt';
    'Create a New Category' => 'Criar Nova Categoria',
    'Create a New Media' => 'Criar Novo Medium',
    'Create a New Story' => 'Criar Novo Artigo',
-   'Create a New Template' => 'Criar Novo Template',
+   'Create a New Template' => 'Criar Novo Modelo',
    'Delete this Desk from all Workflows' =>
      'Apagar esta Área de todos os Workflows',
    'Delete this Element' => 'apagar este Elemento',
@@ -320,7 +313,7 @@ use constant key => 'pt_pt';
    'New Media ' => 'Novo Media ',
    'New Media' => 'Novo Media',
    'New Story' => 'Novo Artigo',
-   'New Template' => 'Novo Template',
+   'New Template' => 'Novo Modelo',
    'Publish' => 'Publicar',
    'Relate' => 'Relacionar',
    'Repeat new password' => 'Repetir nova password',
@@ -345,7 +338,7 @@ use constant key => 'pt_pt';
    'Add a New User' => 'Criar Novo Utilizador',
 
    'An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' =>
-     'Já existe um template activo para o canal de distribuição, categoria, elemento e burner que assinalou. Tem de apagar o temp+late existtente para poder adicionar um novo.',
+     'Já existe um modelo activo para o canal de distribuição, categoria, elemento e burner que assinalou. Tem de apagar o temp+late existtente para poder adicionar um novo.',
 
    'At least one extension is required.' =>
      'Tem de indicar pelo menos uma extensão.',
@@ -411,8 +404,8 @@ use constant key => 'pt_pt';
    'Job profile [_1] deleted.' => 'Perfil de tarefa [_1] apagado.',
    'Job profile [_1] saved.' => 'Perfil de tarefa [_1] guardado.',
    'Keywords saved.' => 'Plavras-chave guardadas.',
+   '%n Found' => '%n Encontrados',
    'MEDIA FOUND' => 'MEDIA ENCONTRADOS',
-   'Media Found' => 'Media Encontrados',
    'Media Type profile [_1] deleted.' => 'Perfil de Tipo de Media [_1] apagado.',
    'Media Type profile [_1] saved.' => 'Perfil de Tipo de Media [_1] guardado.',
    'Media [_1]  published.' => 'Medium [_1] publicado.',
@@ -443,7 +436,7 @@ use constant key => 'pt_pt';
    'No related Stories' => 'Não há relações',
    'No sources were found' => 'Não foram encontradas fontes',
    'No stories were found' => 'Não foram encontrados artigos',
-   'No templates were found' => 'Não foram encontrados templates',
+   'No templates were found' => 'Não foram encontrados modelos',
    'No users were found' => 'Não foram encontrados utilizadores',
    'No workflows were found' => 'Não foram encontrados workflows',
    'Object Group Permissions' => 'Permissões para Tipos de Objectos',
@@ -457,8 +450,6 @@ use constant key => 'pt_pt';
    'Preference [_1] updated.' => 'Preferência [_1] actualizada.',
    'Published Version' => 'Versão Publicada',
    'Redirecting to preview.' => 'A redireccionar para previsualização.',
-   'STORIES FOUND' => 'ARTIGOS ENCONTRADOS',
-   'STORIES FOUND' => 'ARTIGOS ENCONTRADOS',
    'STORY INFORMATION' => 'INFORMAÇÃO SOBRE O ARTIGO',
    'Scheduled Time' => 'Data agendada',
    'Separator Changed.' => 'Separador Alterado.',
@@ -468,6 +459,8 @@ use constant key => 'pt_pt';
      'O identificador do URL deve seguir as regras de caracteres dos URIs.',
    'Source profile [_1] deleted.' => 'Perfil de fonte [_1] apagado.',
    'Source profile [_1] saved.' => 'Perfil de fonte [_1] guardado.',
+   'Status' => 'Estado',
+   'Stories' => 'Artigos',
    'Stories in this category' => 'Artigos nesta categoria',
    'Story [_1] check out canceled.' => 'Reserva do artigo [-1] cancelada.',
    'Story [_1] deleted.' => 'Artigo [_1] apagado.',
@@ -478,14 +471,13 @@ use constant key => 'pt_pt';
    'Story [_1] saved, checked in to [_2].' =>
      'Artigo [_1] guardado e disponibilizado para [_1].',
    'Story [_1] saved.' => 'Artigo [_1] guardado.',
-   'TEMPLATES FOUND' => 'TEMPLATES ENCONTRADOS',
-   'TEMPLATES FOUND' => 'TEMPLATES ENCONTRADOS',
+   'Templates' => 'Modelos',
    'Template Includes' => 'Inclusão de Modelos',
-   'Template [_1] check out canceled.' => 'Reserva do template [_1] cancelada.',
-   'Template [_1] deleted.' => 'Template [_1] apagado.',
-   'Template [_1] saved iand checked in to [_2].' =>
+   'Template [_1] check out canceled.' => 'Reserva do modelo [_1] cancelada.',
+   'Template [_1] deleted.' => 'Modelo [_1] apagado.',
+   'Template [_1] saved and checked in to [_2].' =>
      'Template [_1] disponibilizado para a secretária [_2].',
-   'Template [_1] saved.' => 'Template [_1] guardado.',
+   'Template [_1] saved.' => 'Modelo [_1] guardado.',
    'Templates Found' => 'Modelos Encontrados',
 
    'The category was not added, as it would have caused a URI clash with story [_1].' =>
@@ -592,7 +584,7 @@ use constant key => 'pt_pt';
    'Problem adding [_1]' => 'Problemas ao criar [_1].',
    'Problem deleting [_1]' => 'Problemas ao apagar [_1].',
    'Template compile failed: [_1]' =>
-     'Compilação do template falhou: [_1]',
+     'Compilação do modelo falhou: [_1]',
 
    'The URI of this media conflicts with that of [_1]. Please change the category, file name, or slug.' =>
      'O URI deste medium entra em conflito com o de [_1]. Por favor altere a categoria, nome de ficheiro ou identificador no URL.',

@@ -183,6 +183,7 @@ $class_id => undef
 
 %#-- Init Section --#
 <%init>;
+do_queued_redirect();
 $id ||= $ARGS{alert_type_id} unless defined $id;
 # Instantiate an object.
 my $at = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
@@ -294,11 +295,11 @@ $no_edit => 0
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:05 $
+$Date: 2003-07-25 04:39:09 $
 
 =head1 DESCRIPTION
 

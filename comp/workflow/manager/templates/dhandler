@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2003-07-18 23:45:14 $
+$Date: 2003-07-25 04:39:23 $
 
 =head1 SYNOPSIS
 
@@ -96,7 +96,7 @@ my $wf = Bric::Biz::Workflow->lookup({ id => $w_id })->get_name;
 <& '/widgets/listManager/listManager.mc',
   object   => $object,
   sortBy   => 'file_name',
-  title    => '%n Found',
+  title    => $lang->maketext('%n Found'),
   fields   => [qw(file_name version output_channel_name publish_status)],
   alter    => $alter,
   profile  => $profile,

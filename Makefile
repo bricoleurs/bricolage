@@ -124,8 +124,7 @@ inst/Pg.sql : $(SQL_FILES)
 	find sql/Pg -name '*.val' -exec grep -v '^--' '{}' ';' >> $@;
 	find sql/Pg -name '*.con' -exec grep -v '^--' '{}' ';' >> $@;
 
-.PHONY 		: distclean inst/Pg.sql dist_dir rm_sql rm_use rm_CVS \
-                  dist_tar check_dist
+.PHONY 		: distclean inst/Pg.sql dist_dir rm_CVS dist_tar check_dist
 
 ##########################
 # clone rules            #
@@ -133,7 +132,7 @@ inst/Pg.sql : $(SQL_FILES)
 
 
 clone           : distclean clone.db clone_dist_dir clone_sql clone_files \
-		  rm_sql rm_use rm_CVS rm_tmp \
+		  rm_CVS rm_tmp \
                   dist/INSTALL dist/Changes dist/License \
 		  clone_tar 
 

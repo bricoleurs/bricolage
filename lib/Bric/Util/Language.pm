@@ -7,15 +7,15 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-28 13:36:00 $
+$Date: 2003-07-25 04:39:27 $
 
 =head1 SYNOPSIS
 
@@ -78,7 +78,8 @@ phrases into your languages. Be sure to use the UTF-8 character set.
 
 =item *
 
-Document your new language key in Bric::Admin.
+Document your new language key in Bric::Admin. Add your name to
+F<comp/widgets/help/translators.html> for your language.
 
 =item *
 

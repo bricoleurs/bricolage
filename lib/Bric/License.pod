@@ -147,6 +147,8 @@ Folks who have submitted patches include:
 
 =item Kang-min Liu
 
+=item Clive Jones
+
 =back
 
 Friends who have spotted bugs include:
@@ -195,6 +197,10 @@ Friends who have spotted bugs include:
 
 =item Nathan Ollerenshaw
 
+=item Marc Hawson
+
+=item Tobias Kremer
+
 =back
 
 Bricolage's translation team:
@@ -204,6 +210,10 @@ Bricolage's translation team:
 =item ClE<aacute>udio Valente (Portuguese)
 
 =item Marco Ghezzi (Italian)
+
+=item Kang-min Liu (Traditional Chinese)
+
+=item Gerfried Fuchs (German)
 
 =back
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$Revision: 1.54 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.53 $ )[-1];
+our $VERSION = (qw$Revision: 1.54 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-02 16:06:41 $
+$Date: 2003-07-25 04:39:26 $
 
 =head1 SYNOPSIS
 
@@ -1519,21 +1519,21 @@ sub revert {
     die $gen->new({ msg => "May not revert a non checked out version" })
       unless $self->_get('checked_out');
 
-    my @prior_versions = __PACKAGE__->list({ id => $self->_get_id,
-                                               return_versions => 1 });
-
     my $revert_obj;
-    foreach (@prior_versions) {
+    foreach ($self->list({ id => $self->_get_id,
+                           return_versions => 1 })) {
         if ($_->get_version == $version) {
             $revert_obj = $_;
+            last;
         }
     }
 
     die $gen->new({ msg => "The requested version does not exist" })
       unless $revert_obj;
 
-    # clone information from the tables
-    $self->_set({ slug => $revert_obj->get_slug });
+    # Clone the basic properties of the story.
+    my @attrs = qw(name description slug);
+    $self->_set(\@attrs, [$revert_obj->_get(@attrs)]);
 
     # clone the tiles
     # get rid of current tiles

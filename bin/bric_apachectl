@@ -186,7 +186,7 @@ if ($command eq 'single') {
 
     # use exec since with -X this command won't return till the server
     # is killed.
-    system $httpd, '-X';
+    exec "$httpd -X";
 }
 
 if ($command eq 'debug') {
@@ -210,7 +210,7 @@ usage();
 
 sub usage {
   print <<END;
-usage: bric_apachectl (start|stop|restart|debug)
+usage: bric_apachectl (start|stop|restart|debug|single)
 
 start      - start httpd
 stop       - stop httpd

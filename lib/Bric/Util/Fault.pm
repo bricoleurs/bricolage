@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-15 09:05:29 $
+$Date: 2003-07-25 04:39:27 $
 
 =head1 SYNOPSIS
 
@@ -464,7 +464,8 @@ sub full_message {
 
 =item $str = $obj->as_text;
 
-Displays the exception object as text.
+Displays the exception object as text. Includes the output of
+C<trace_as_text()>.
 
 B<Throws:> NONE.
 
@@ -476,8 +477,26 @@ B<Notes:> NONE.
 
 sub as_text {
     my $self = shift;
-    my @frames = $self->_filtered_frames();
-    @frames = map {
+    return sprintf("%s\n%s\n", $self->full_message, $self->trace_as_text);
+}
+
+#------------------------------------------------------------------------------#
+
+=item $str = $obj->trace_as_text;
+
+Displays the exception object's stack trace as text.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub trace_as_text {
+    my $self = shift;
+    return join "\n", map {
         my $str = sprintf("[%s:%d]", $_->filename, $_->line);
         if (QA_MODE) {
             my $sub = $_->subroutine;
@@ -485,10 +504,7 @@ sub as_text {
             $str .= sprintf("\n  %s(%s)", $sub, join(', ', $_->args));
         }
         $str;
-    } @frames;
-    my $msg = $self->full_message();
-    my $stack = join "\n", @frames;
-    return sprintf("%s\n%s\n", $msg, $stack);
+    } $self->_filtered_frames;
 }
 
 sub _filtered_frames {

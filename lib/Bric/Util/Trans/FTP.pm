@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:16 $
+$Date: 2003-07-25 04:39:28 $
 
 =head1 SYNOPSIS
 
@@ -162,7 +162,9 @@ sub put_res {
           || die $gen->new({ msg => 'Unable to change to binary mode on ' .
                                     "remote server '$hn'.",
                              payload => $ftp->message });
-        # Get the document root.
+
+        # Get the FTP and document roots.
+        my $ftp_root = $ftp->pwd || '/';
         my $doc_root = $s->get_doc_root;
 
         # Now, put each file on the remote server.
@@ -193,7 +195,7 @@ sub put_res {
                 # Mark that we've created it, so we don't try to do it again.
                 $dirs{$dest_dir} = 1;
                 # Go back to root.
-                $ftp->cwd('/');
+                $ftp->cwd($ftp_root);
             }
 
             # Delete any existing copy of the temp file if the FTP server is

@@ -7,15 +7,15 @@ Bric::Util::Coll::Server - Interface for managing collections of servers.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 05:55:08 $
+$Date: 2003-07-25 04:39:28 $
 
 =head1 SYNOPSIS
 
@@ -175,7 +175,7 @@ B<Notes:> NONE.
 sub save {
     my ($self, $st_id) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
-    foreach my $s (%$del_objs) {
+    foreach my $s (values %$del_objs) {
 	$s->del;
 	$s->save;
     }

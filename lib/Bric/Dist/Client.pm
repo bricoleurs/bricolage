@@ -7,16 +7,16 @@ distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 06:46:47 $
+$Date: 2003-07-25 04:39:26 $
 
 =head1 SYNOPSIS
 
@@ -499,13 +499,30 @@ sub send {
     my $cookie = $self->get_cookie;
 
     eval {
-	my $req = HTTP::Request->new(HEAD => $self->_get('url'));
+	my $req = HTTP::Request->new(GET => $self->_get('url'));
 	$req->header(Execute => $exec);
 	$req->header(Cookie => $cookie) if $cookie;
 	my $res = $ua->request($req);
-	return $self if $res->is_success;
-	die $res->status_line;
+
+        # Make sure that the URL is correct, that we actually hit a
+        # Bricolage distribution server.
+        die "Failed to connect to Bricolage distribution server. " .
+          "Be sure that " . $self->_get('url') . ' is the proper URL'
+          unless $res->header('BricolageDist');
+
+        if (my $c = $res->content) {
+            # There was an error.
+            die $c;
+        } elsif (not $res->is_success) {
+            # Something else is amiss.
+            die $res->status_line;
+        }
+
+        # The request was successful, just return.
+	return $self;
+
     };
+
     die $gen->new({ msg => "Error sending jobs to distributor.",
 		    payload => $@ }) if $@;
 }

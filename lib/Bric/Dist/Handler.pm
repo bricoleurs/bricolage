@@ -6,16 +6,16 @@ Bric::Dist::Handler - Apache/mod_perl handler for executing distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-07 16:34:41 $
+$Date: 2003-07-25 04:39:26 $
 
 =head1 SYNOPSIS
 
@@ -43,9 +43,9 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::Fault qw(:all);
-use Bric::App::Event qw(log_event);
+use Bric::App::Event qw(log_event clear_events);
 use Bric::Dist::Job;
-use Apache::Constants qw(:common);
+use Apache::Constants qw(HTTP_OK);
 use Apache::Log;
 
 ################################################################################
@@ -143,8 +143,10 @@ B<Notes:> NONE.
 sub handler {
     my $r = shift;
     eval {
-	$r->content_type('text/html');
-	$r->send_http_header;
+        $r->content_type('text/plain');
+        $r->header_out(BricolageDist => 1);
+        $r->send_http_header;
+
 	my %headers = $r->headers_in;
 	# Execute all the jobs.
 	foreach my $jid (split /\s*,\s*/, $headers{Execute}) {
@@ -158,11 +160,11 @@ sub handler {
 	    log_err($r, $@, "Error executing Job $jid") if $@;
 	}
     };
+
     # Log any errors.
     log_err($r, $@, "Error processing jobs") if $@;
 
-    # Return okay.
-    return OK;
+    return HTTP_OK;
 }
 
 =item my $bool = log_err($r, $err, $msg)
@@ -180,23 +182,20 @@ B<Notes:> NONE.
 
 sub log_err {
     my ($r, $err, $msg) = @_;
-    # Get a handle on the log.
-    my $log = $r->log;
-    unless (isa_bric_exception($err)) {
-        # Just get it over with if it's not an exception object.
-        $log->crit("$msg: $err");
-        return 1;
-    }
 
-    # Otherwise, log the exception. Start by formatting the environment.
-    my $env_msg;
-    while (my ($k, $v) = each %ENV) {
-        $env_msg .= "$k => $v\n";
-    }
+    $err = Bric::Util::Fault::Exception::AP->new(
+        error   => "Error processing Mason elements.",
+        payload => $err,
+    ) unless isa_exception($err);
+
+    # Clear out events so that they won't be logged.
+    clear_events();
+
+    # Send the error to the client.
+    $r->print($err->message);
+
     # Log it!
-    $log->crit("$msg: " . $err->error . "\nContext: " . $err->package . " ("
-               . $err->file . "), Line " . $err->line . "\nPayload:\n"
-               . ($err->payload || '') . "\nEnvironment:\n$env_msg\n");
+    $r->log->crit($err->as_text);
 }
 
 1;
@@ -214,7 +213,7 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
+L<Bric|Bric>,
 L<Bric::Dist::Job|Bric::Dist::Job>
 
 =cut
