@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:40 $
+$Date: 2002-10-22 23:58:26 $
 
 =head1 SYNOPSIS
 
@@ -548,8 +548,8 @@ sub _load_category {
         # set simple fields
         $category->set_name($cdata->{name});
         $category->set_description($cdata->{description});
-        $category->set_ad_string($cdata->{ad_string});
-        $category->set_ad_string2($cdata->{ad_string2});
+        $category->set_ad_string($cdata->{adstring});
+        $category->set_ad_string2($cdata->{adstring2});
 
         # avoid complex code if path hasn't changed on update
         if (not $update or $category->get_uri ne $cdata->{path}) {

@@ -324,6 +324,19 @@ profile before attempting a syntax check. This ensures that the latest data
 you've entered gets its syntax checked before the template is checked in or
 deployed. [David]
 
+=item *
+
+Fixed a bug in Bric::Util::Class where classesn't couldn't be looked up by
+package name. This affected the "Access Denied" page. [David]
+
+=item *
+
+Made Bric::Util::Burner::Mason a little smarter handling exceptions. [David]
+
+=item *
+
+Fixed bug where Bric::SOAP::Category would fail to import ad strings. [David]
+
 =back
 
 =head1 VERSION 1.4.3

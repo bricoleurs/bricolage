@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-18 00:10:57 $
+$Date: 2002-10-22 23:58:26 $
 
 =head1 SYNOPSIS
 
@@ -255,10 +255,12 @@ sub burn_one {
     }
 
     while (1) {
-        # Run the biz asset through the template
-        eval { $retval = $interp->exec($template) if $template };
-        die $ap->new({ msg     => "Error executing template '$template'.",
-                       payload => $@ }) if $@;
+	# Run the biz asset through the template
+	eval { $retval = $interp->exec($template) if $template };
+	die ref $@ ? $@ :
+          $ap->new({ msg     => "Error executing template '$template'.",
+                     payload => $@ })
+          if $@;
 
         # End the page if there is still content in the buffer.
         $self->end_page if $outbuf !~ /^\s*$/;
