@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.13.4.2 $
+$Revision: 1.13.4.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:46 $
+$Date: 2004-02-03 06:18:02 $
 
 =head1 SYNOPSIS
 
@@ -264,7 +264,7 @@ sub new {
     my $attr = $event->get_attr || {};
     $attr = { map {
         (my $v = lc $_) =~ s/\W+/_/g;
-        lc $v => $attr->{$_}
+        lc "et_$v" => $attr->{$_}
     } keys %$attr };
 
     # Grab the message, substituting simple variables for their values. This is

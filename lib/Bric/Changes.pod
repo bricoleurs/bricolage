@@ -95,6 +95,12 @@ permission to check out. Thanks to Alexander Ling for the spot! [David]
 Bric::Biz::AssetType::Parts::Data's C<lookup()> method now returns deactivated
 objects, as it should. Thanks to Nuno Barreto for the spot. [David]
 
+=item *
+
+Events with attributes with the same name as attributes of the object the
+event was triggered on (a common occurence) no longer confuses the two. Thanks
+to Todd Tyree for the spot. [David]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)
