@@ -201,6 +201,14 @@ Architectural Energy - L<http://www.archenergy.com/>
 
 Performance Learning Systems - L<http://www.plsweb.com/>
 
+=item *
+
+POTS - L<http://www.pots.com.tw/>
+
+=item *
+
+Newzilla - L<http://www.newzilla.org/>
+
 =back
 
 =head3 Are there any commercial support offerings for Bricolage?

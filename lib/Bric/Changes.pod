@@ -16,6 +16,18 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.8.2 ()
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Added note to the context-sensitive help for the story, media, and template
+search pages to search on "/" to return all records, and to use SQL wildcards
+such as "%" to generalize the search. [David]
+
+=back
+
 =head1 VERSION 1.8.1 (2004-07-08)
 
 =head2 Improvements
