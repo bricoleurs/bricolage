@@ -8,11 +8,11 @@ select_object - Provide a select box listing all objects of a certain type.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:58 $
+$Date: 2002-10-25 20:24:25 $
 
 =head1 SYNOPSIS
 
@@ -126,6 +126,13 @@ pairs.  This argument replaces the 'crit_field' and 'crit_value' arguments.
 
 =item *
 
+objs
+
+An anonymous array of objects. If you pass these in, select_object won't
+bother to call list() to look them up.
+
+=item *
+
 js = Arbitrary JavaScript to be added to the select menu.
 
 =item *
@@ -158,6 +165,7 @@ $object
 $name       => ''
 $field
 $constrain  => {}
+$objs       => undef
 $crit_field => undef
 $crit_value => undef
 $sort_field => undef
@@ -216,14 +224,14 @@ if ($crit_field) {
 
 if ($pkg) {
     my $meth = $pkg->my_meths();
-    my @objs = $pkg->list($constrain);
+    $objs ||= $pkg->list($constrain);
 
     # Sort the items if required.
     if ($sort_field) {
         my $get = $meth->{$sort_field}->{'get_meth'};
         my $arg = $meth->{$sort_field}->{'get_args'};
 
-        @objs = sort { $get->($a, $arg) cmp $get->($b, $arg) } @objs;
+        @$objs = sort { $get->($a, $arg) cmp $get->($b, $arg) } @$objs;
     }
 
     # Put the default value at the top if it exists.
@@ -233,7 +241,7 @@ if ($pkg) {
     my $val_get = $meth->{$field}->{'get_meth'};
     my $val_arg = $meth->{$field}->{'get_args'};
 
-    foreach my $o (@objs) {
+    foreach my $o (@$objs) {
         my $id = $o->get_id;
 
         # Do not add excluded IDs.
