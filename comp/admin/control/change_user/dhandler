@@ -21,11 +21,7 @@
 
 <& '/widgets/wrappers/sharky/footer.mc' &>
 
-<%init>
-
+<%init>;
 # Whisk them away if they are not an administrator.
-unless (user_is_admin()) {
-    $m->decline;
-}
-
+$m->comp('/errors/403.mc') unless user_is_admin();
 </%init>

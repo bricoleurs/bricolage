@@ -31,6 +31,7 @@ $m->out('<p class="header">',
                         $map->{$perm}, $name, $class),
         "</p>\n");
 $m->comp('/widgets/wrappers/sharky/footer.mc');
+$m->flush_buffer;
 $m->abort;
 </%perl>
 <%args>
