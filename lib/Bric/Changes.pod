@@ -163,6 +163,17 @@ Fixed bug where workflows deleted via the Workflow Manager (rather than the
 Workflow Profile) continued to show up in the side nav. Thanks to Sam Tregar for
 the spot. [David]
 
+=item *
+
+Fixed bug where data fields deleted from Elements were deleting them from
+existing stories, too. [David]
+
+=item *
+
+Fixed bug where stories with related media associated with them were displaying
+the story as an Element rather than as a story after editing the related media.
+[David]
+
 =back
 
 =head1 VERSION 1.0.1
