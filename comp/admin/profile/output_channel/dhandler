@@ -28,7 +28,6 @@ $m->out(qq{<form method="post" name="oc_profile" action="} . $r->uri
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'output_channel_id')
   if defined $id;
 
-# Display the Contact info.
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption => "Properties",
 	 number  => 1);
@@ -64,8 +63,8 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Add pre/post fields to the specialCharacters array
 $m->out(q{<script language="javascript">
-specialCharacterFields["pre_path"]  = "URI Prefix";
-specialCharacterFields["post_path"] = "URI Sufix";
+specialOCFields["pre_path"]  = "URI Prefix";
+specialOCFields["post_path"] = "URI Sufix";
 </script>
 });
 

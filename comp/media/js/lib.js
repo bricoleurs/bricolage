@@ -149,8 +149,16 @@ function customSubmit(formName, cbNames, cbValues, optFunctions) {
 returns true if characters that would be illegal for a url are found, false otherwise.
 */
 function hasSpecialCharacters(what) {
-
     var regExp = new RegExp("[^-a-zA-Z0-9_.]");
+    return regExp.test(what);
+
+}
+
+/*
+returns true if characters that would be illegal for a URL prefix or suffix, false otherwise.
+*/
+function hasSpecialCharactersOC(what) {
+    var regExp = new RegExp("[^-a-zA-Z0-9_./]");
     return regExp.test(what);
 
 }
@@ -462,6 +470,7 @@ var confirming = false
 var submitting = false
 var requiredFields         = new Object();
 var specialCharacterFields = new Object();
+var specialOCFields = new Object();
 function confirmChanges(obj) {
     
     if (confirming || submitting) return false;
@@ -514,6 +523,22 @@ function confirmChanges(obj) {
             if (typeof tmp != "undefined") {
                 if ( hasSpecialCharacters(tmp.value) ) {
                     alert( specialCharacterFields[field] + illegal_chars_msg );
+                    tmp.focus();
+                    confirming = false
+                    return false;
+                }
+            }
+        }
+    }  
+
+
+    // examine registered special output channel fields(with slash allowed).
+    if (typeof specialOCFields != "undefined") {         
+        for (field in specialOCFields) {
+            tmp = eval("obj." + field);
+            if (typeof tmp != "undefined") {
+                if ( hasSpecialCharactersOC(tmp.value) ) {
+                    alert( specialOCFields[field] + illegal_chars_msg );
                     tmp.focus();
                     confirming = false
                     return false;
