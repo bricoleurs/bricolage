@@ -595,8 +595,8 @@ Gunzip and untar the sources.
 
 Create a new system user named "postgres". This is the user that will start the
 PostgreSQL server. The startup scripts that come with PostgreSQL mostly seem to
-expect that the postgres user will use the tcsh shell, so you may wish to set
-that shell now. Here's an example under Linux:
+expect that the postgres user will use the tcsh shell (note: I use bash with no
+problem), so you may wish to set that shell now. Here's an example under Linux:
 
   /usr/sbin/useradd -d /home/postgres postgres -s /bin/tcsh
 
@@ -741,15 +741,125 @@ Build Bricolage:
 
 This step will check your system for all required packages.  It will
 also ask you questions regarding your installation.  In most cases the
-default answer will be correct and you can just press return.
+default answer will be correct and you can just press return. Most of these
+answers can be overridden in F<conf/bricolage.conf> or F<conf/httpd.conf>.
+Here is more information on some of the questions (some obvious questions
+were skipped):
 
-[TODO: add detailed information on each of the questions here]
+=over 4
+
+=item Apache User
+
+The Apache user, set by the 'User' directive in F<conf/httpd.conf>.
+
+=item Apache Group
+
+The Apache group, set by the 'Group' directive in F<conf/httpd.conf>.
+
+=item Apache Port
+
+The Apache port, set by the 'Port' directive in F<conf/httpd.conf>.
+
+=item Apache Server Name
+
+The Apacher server name, set by the 'ServerName' directive in F<conf/httpd.conf>.
+
+=item Do you want to use SSL?
+
+If the installation program found either F<mod_ssl> or F<mod_apache_ssl>,
+it will ask this question. If you use one of these modules, your Bricolage
+will be served over a secure connection. See the L<INSTALLATION|INSTALLATION>,
+L<Apache Configuration|Apache Configuration>, and L<INSTALLATION ISSUES|INSTALLATION ISSUES>
+sections of this document for more information on SSL support.
+
+=item Postgres Root Username
+
+A postgresql user which has permissions to CREATE DATABASE, CREATE USER,
+and GRANT a user permissions in the database.
+
+=item Postgres System Username
+
+I'm not sure how this is different from the root user.
+
+=item Bricolage Postgres Username
+
+The postgresql user that you normally run Bricolage under. This user only has
+CREATE, DELETE, UPDATE, and SELECT permissions on the objects B<within> the
+bricolage database.
 
 Note that if you use 'IDENT sameuser' authentication in PostgreSQL,
 you have to 1) use the same username for 'Bricolage Postgres Username'
 as you did for 'Apache User' (so that the apache process has permission
 to access the database), and 2) enter a bogus password for 'Bricolage
 Postgres Password'.
+
+=item Bricolage Database Name
+
+Any (valid postgresql) name you want for your bricolage database.
+
+=item Postgres Database Server Hostname & Port
+
+The hostname and port of the server where your postgresql database is located.
+The default is localhost, through local (non TCP) sockets.
+
+=item Single vs. Multi Installation
+
+It has nothing to do with multi-sites.
+If you choose 's', that means that it'll be difficult to install
+more than one bricolage on the same machine because it'll put the
+libraries, perldocs, etc. in standard locations (F</usr/lib/perl5>,
+F</usr/man/man>? or something); whereas if you choose 'm', it'll put
+everything under one directory, like F</usr/local/bricolage>, so the
+second bricolage you install could be under F</usr/local/bric2> or
+whatever and they won't conflict. I'd recommend 'm' just because
+it's centralized so you know where everything is installed.
+
+=item Bricolage Root Directory
+
+What $ENV{BRICOLAGE_ROOT} will be set to.
+
+=item Temporary Directory
+
+Where temporary files, like cache files, are written.
+
+=item Perl Module Directory
+
+Where Perl modules will be installed.
+
+=item Executable Directory
+
+Where executables like bric_soap will be installed.
+
+=item Man-Page Directory
+
+Where man pages for the Perl modules will be installed. You can put '!'
+in order to not install the man pages (this is intended more for developers,
+not users, of Bricolage).
+
+=item Log Directory
+
+Where F<access_log> and F<error_log> will be written to.
+
+=item PID File Location
+
+Where Apache's PID file will be written each time Bricolage is started
+(and removed when it's not running).
+
+=item Mason Component Directory
+
+Where Mason components for the Bricolage UI are put. Also, its F<data/media>
+subdirectory is where media files are stored. See also the C<MASON_COMP_ROOT>
+directive in F<conf/bricolage.conf>. The Apache User has to have write permission
+to this directory.
+
+=item Mason Data Directory
+
+Where the Mason data directory is located. This stores things like
+cached Mason components See also the C<MASON_COMP_ROOT> directive in
+F<conf/bricolage.conf>. The Apache User has to have write permission
+to this directory.
+
+=back
 
 =item *
 
@@ -797,7 +907,7 @@ Where 'dbname' is the name you want the Bricolage database to be called in
 PostgreSQL, and 'db_user' and 'db_password' are the user name and password to be
 created in the PostgreSQL database, and under which the Bricolage application
 will run. Note that the -u argument must represent a PostgreSQL user with CREATE
-DATABASE and CREATE USER permissions. The 'bric_user' user will be created
+DATABASE and CREATE USER permissions. The 'db_user' user will be created
 without these permissions (the 'dbname' database will be owned by the user
 passed in via the -u argument), but will be granted full CREATE, DELETE, UPDATE,
 and SELECT permissions on all objects in the Bricolage database.
