@@ -46,15 +46,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.64 $
+$Revision: 1.65 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.64 $ )[-1];
+our $VERSION = (qw$Revision: 1.65 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-30 16:14:44 $
+$Date: 2004-05-05 02:27:08 $
 
 =head1 SYNOPSIS
 
@@ -236,10 +236,6 @@ fields that use the "short" storage type will be searched.
 =item output_channel
 
 The name of an ouput channel that stories must be associated with.
-
-=item keyword (M)
-
-A keyword associated with a story.
 
 =item contrib_id
 

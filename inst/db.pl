@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =head1 DATE
 
-$Date: 2004-02-29 20:02:32 $
+$Date: 2004-05-05 02:27:03 $
 
 =head1 DESCRIPTION
 
@@ -131,16 +131,27 @@ sub create_user {
 
     if ($err) {
         if ($err =~ /user( name)? "[^"]+" already exists/) {
-            if (ask_yesno("User named \"$PG->{sys_user}\" already exists.  ".
-                          "Drop user? [no] ", 0)) {
+            if (ask_yesno("User named \"$PG->{sys_user}\" already exists. "
+                          . "Continue with this user? [yes] ", 1)) {
+                # Just use the existing user.
+                return;
+            } elsif (ask_yesno("Well, shall we drop and recreate user? "
+                               . "Doing so may affect other database "
+                               . "permissions, so it's not recommended. "
+                                 . "[no] ", 0)) {
                 if ($err = exec_sql(qq{DROP USER "$PG->{sys_user}"}, 0, $PGDEFDB)) {
-                    hard_fail("Failed to drop user.  The database error was:\n\n",
+                    hard_fail("Failed to drop user. The database error was:\n\n",
                               "$err\n");
                 }
                 return create_user();
-            } else {
-                # We'll just use the existing user.
+            } elsif (ask_yesno("Okay, so do you want to continue with "
+                               . "user \"$PG->{sys_user}\" after all? "
+                               . "[yes] ", 1)) {
+                # Just use the existing user.
                 return;
+            } else {
+                hard_fail("Cannot proceed with database user "
+                          . "\"$PG->{sys_user}\"\n");
             }
         } else {
             hard_fail("Failed to create database user.  The database error was:",

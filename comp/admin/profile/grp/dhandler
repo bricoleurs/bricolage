@@ -80,8 +80,10 @@ if (defined $id) {
             my $robjs = $grp->get_objects;
             my $lobjs = $memb_pkg->list({ active => 1 });
 
-            my $has_site = 1 if ($lobjs->[0] && $lobjs->[0]->HAS_MULTISITE) ||
-                                ($robjs->[0] && $robjs->[0]->HAS_MULTISITE);
+            my $has_site;
+            $has_site = 1 if $class_name ne 'Bric::Util::Grp::Element'
+              && ($lobjs->[0] && $lobjs->[0]->HAS_MULTISITE
+                  || $robjs->[0] && $robjs->[0]->HAS_MULTISITE);
 
             # Get existing members.
             foreach my $obj ( @$robjs ) {
@@ -246,11 +248,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2004-04-10 00:27:50 $
+$Date: 2004-05-05 02:26:48 $
 
 =head1 DESCRIPTION
 

@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-07 01:05:53 $
+$Date: 2004-05-05 02:27:05 $
 
 =head1 SYNOPSIS
 
@@ -578,21 +578,21 @@ B<Notes:> NONE.
 
 sub redirect_onload {
     my $loc = shift or return;
-    my $js = qq{        <script>
-            location.href='$loc';
-        </script>
-    };
+    my $js = qq{<script>location.href='$loc';</script>\n};
 
-    if (my $cbh = shift) {
+    if (my $m = HTML::Mason::Request->instance) {
+        # Use the Mason request object.
+        $m->clear_buffer;
+        $m->print($js);
+        $m->abort;
+    } elsif (my $cbh = shift) {
         # Use the callback handler object.
         my $r = $cbh->apache_req;
         $r->send_http_header unless $r->header_out("Content-type");
         $r->print($js);
+        $cbh->abort;
     } else {
-        # Use the Mason request object.
-        my $m = HTML::Mason::Request->instance;
-        $m->print($js);
-        $m->abort;
+        throw_gen "No way to send redirect to browser";
     }
 }
 

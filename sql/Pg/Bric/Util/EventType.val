@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.12 $
+-- VERSION: $Revision: 1.13 $
 --
--- $Date: 2004-02-29 20:36:52 $
+-- $Date: 2004-05-05 02:27:09 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -842,4 +842,61 @@
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'pub_job_failed', 'Publish job failed', 'Publish job failed due to error.', 80, 1);
+
+
+/*****************************************************************************
+ * All default events must be here, since they depend on the above being
+ * run first.
+ ****************************************************************************/
+
+-- Create creation events for all default templates.
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (502, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 502, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (503, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 503, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (504, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 504, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (506, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 506, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (507, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 507, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (509, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 509, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (510, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 510, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (511, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 511, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (512, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 512, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (513, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 513, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (514, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 514, CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES (515, (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+        0, 515, CURRENT_TIMESTAMP);
+
 

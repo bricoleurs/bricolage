@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.95 $
+$Revision: 1.96 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.95 $ )[-1];
+our $VERSION = (qw$Revision: 1.96 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-06 22:53:22 $
+$Date: 2004-05-05 02:27:07 $
 
 =head1 SYNOPSIS
 
@@ -217,7 +217,7 @@ use constant PARAM_WHERE_MAP =>
       expire_date_start     => 'mt.expire_date >= ?',
       expire_date_end       => 'mt.expire_date <= ?',
       unexpired             => '(mt.expire_date IS NULL OR mt.expire_date > CURRENT_TIMESTAMP)',
-      desk_id               => 'mt.desk_id = ?',
+      desk_id               => 'mt.desk__id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name   => 'i.id = mct.object_instance_id AND mct.key_name LIKE LOWER(?)',
       data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
@@ -487,6 +487,11 @@ The media document file name. May use C<ANY> for a list of possible values.
 
 Returns the versions that are checked out by the user, otherwise returns the
 most recent version. May use C<ANY> for a list of possible values.
+
+=item checked_out
+
+A boolean value indicating whether to return only checked out or not checked
+out media.
 
 =item return_versions
 
@@ -1060,6 +1065,30 @@ sub set_category__id {
 }
 
 sub get_primary_uri { shift->get_uri }
+
+
+##############################################################################
+# Documented in Bric::Biz::Asset::Business.
+
+sub set_primary_oc_id {
+    my ($self, $id) = @_;
+    my $oldid = $self->_get('primary_oc_id');
+    if ((defined $id && ! defined $oldid) || $id != $oldid) {
+        my ($uri, $update_uri);
+        if ($self->get_file_name) {
+            my $oc = Bric::Biz::OutputChannel->lookup({ id => $id });
+            my $cat = $self->get_category_object;
+            $update_uri = 1;
+            $uri = Bric::Util::Trans::FS->cat_uri
+              ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
+        }
+        $self->_set([qw(primary_oc_id uri   _update_uri)] =>
+                    [   $id,          $uri, $update_uri]);
+    }
+    return $self;
+}
+
+
 
 ################################################################################
 

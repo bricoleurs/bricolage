@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.58 $
+$Revision: 1.59 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58 $ )[-1];
+our $VERSION = (qw$Revision: 1.59 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-19 05:12:15 $
+$Date: 2004-05-05 02:27:07 $
 
 =head1 SYNOPSIS
 
@@ -1863,7 +1863,7 @@ $get_kw_coll = sub {
     my $kw_coll = $self->_get('_kw_coll');
     return $kw_coll if $kw_coll;
     $kw_coll = Bric::Util::Coll::Keyword->new
-      (defined $self->get_id ? { object => $self } : undef);
+      (defined $self->get_id ? { object => $self, active => 1 } : undef);
     $self->_set(['_kw_coll'], [$kw_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $kw_coll;

@@ -284,6 +284,11 @@ my $def = {
 						!chk_authz($_[0], READ, 1);
 					    },
 			       select => $sel_sub },
+	   org            => { list_fields => [qw(name long_name description)],
+			       srch_field => 'name',
+			       constrain => {active => 1},
+			       behavior => 'expand',
+			       select => $sel_sub },
 	   grp            => { title => 'Group Manager',
 			       list_fields => [qw(name member_type)],
 			       srch_field => 'name',
@@ -325,6 +330,9 @@ my $def = {
                                                      join(', ', $_[0]->get_exts) },
                                field_titles => { extension => 'Extensions' },
                                sort_by => 'name',
+			       exclude => sub { return 1 if $_[0]->get_id == 0;
+						!chk_authz($_[0], READ, 1);
+					    },
                                behavior => 'expand',
                                srch_field => 'name',
                                constrain => { active => 1 },
@@ -420,11 +428,11 @@ unless (Bric::Config::ENCODE_OK) {
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =head1 DATE
 
-$Date: 2004-03-03 19:07:05 $
+$Date: 2004-05-05 02:26:46 $
 
 =head1 SYNOPSIS
 

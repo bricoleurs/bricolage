@@ -13,6 +13,8 @@ do_sql
   # Add the new column.
   q/ALTER TABLE story_data_tile ADD key_name VARCHAR(64)/,
   q/ALTER TABLE media_data_tile ADD key_name VARCHAR(64)/,
+  q/UPDATE story_data_tile SET key_name = name/,
+  q/UPDATE media_data_tile SET key_name = name/,
 ;
 
 update_all('story_data_tile');
@@ -42,6 +44,7 @@ sub update_all {
     my $select = prepare("SELECT DISTINCT name FROM $table");
     my $update = prepare("UPDATE $table SET key_name = ? WHERE name = ?");
 
+    # Get all the possible names
     my $name;
     execute($select);
     bind_columns($select, \$name);
@@ -49,7 +52,12 @@ sub update_all {
     while (fetch($select)) {
         my $key_name = lc($name);
         $key_name =~ y/a-z0-9/_/cs;
-        execute($update, $key_name, $name);
+        if ($name ne $key_name) {
+            # Update key_name if it was different than name
+            execute($update, $key_name, $name);
+        } else {
+            print "Field key_name '$name' didn't need updating\n";
+        }
     }
 }
 

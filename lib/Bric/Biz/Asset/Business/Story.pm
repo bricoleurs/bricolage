@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.101 $
+$Revision: 1.102 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.101 $ )[-1];
+our $VERSION = (qw$Revision: 1.102 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-05 14:53:32 $
+$Date: 2004-05-05 02:27:07 $
 
 =head1 SYNOPSIS
 
@@ -328,7 +328,7 @@ use constant PARAM_WHERE_MAP =>
       expire_date_start      => 's.expire_date >= ?',
       expire_date_end        => 's.expire_date <= ?',
       unexpired              => '(s.expire_date IS NULL OR s.expire_date > CURRENT_TIMESTAMP)',
-      desk_id                => 's.desk_id = ?',
+      desk_id                => 's.desk__id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name    => 'i.id = sct.object_instance_id AND sct.key_name LIKE LOWER(?)',
       data_text              => 'LOWER(sd.short_val) LIKE LOWER(?) AND sd.object_instance_id = i.id',
@@ -611,6 +611,11 @@ The story slug. May use C<ANY> for a list of possible values.
 
 Returns the versions that are checked out by the user, otherwise returns the
 most recent version. May use C<ANY> for a list of possible values.
+
+=item checked_out
+
+A boolean value indicating whether to return only checked out or not checked
+out stories.
 
 =item return_versions
 

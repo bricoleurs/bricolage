@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2004-03-02 04:12:37 $
+$Date: 2004-05-05 02:27:03 $
 
 =head1 SYNOPSIS
 
@@ -20,11 +20,7 @@ $Date: 2004-03-02 04:12:37 $
 =cut
 
 </%doc>
-
-<%args>
-</%args>
-
-<%init>
+<%init>;
 my ($type, $work_id) = split('/', $m->dhandler_arg);
 my ($fields, $obj_type, $previewer);
 if ($type eq 'templates') {
@@ -105,13 +101,11 @@ $wf = $wf->get_name;
   </form>
 </tr>
 </table>
-
-
-
 <& /widgets/wrappers/sharky/footer.mc &>
-%# Clear out the cache of user names.
-% %users = ();
-
+<%cleanup>;
+# Clear out the cache of user names.
+%users = ();
+</%cleanup>
 <%once>
 my $pl_name = { map { $_ => get_class_info($_)->get_plural_name }
 		qw(story media formatting) };
@@ -143,10 +137,14 @@ my $select = sub {
     return sub {
         my $o = shift;
         my $u = $o->get_user__id;
-        # Allow access if they have permission and have READ access to the
-        # desk the asset is on.
-        if (!defined $u && $desk_chk->{$o->get_desk_id}[0]
-            && chk_authz($o, EDIT, 1)) {
+        if (defined $u) {
+            # Show the name of the person who has the asset checked out.
+            return $users{$u} ||= Bric::Biz::Person::User->lookup({
+              id => $u
+            })->format_name;
+        } elsif ($desk_chk->{$o->get_desk_id}[0] && chk_authz($o, EDIT, 1)) {
+            # Allow access if they have permission and have READ access to the
+            # desk the asset is on.
             return ['Checkout', $widget.'|checkout_cb'];
         }
         return;
@@ -171,26 +169,6 @@ my $values = sub {
         my $name = $d->get_name;
 
         return qq{<a href="/workflow/profile/desk/$w_id/$d_id/" class=redLink>$name</a>};
-    } elsif ($f eq 'status') {
-        my $u_id = $o->get_user__id;
-	my $pkg = ref $o;
-	my $widget;
-
-	if ($pkg eq 'Bric::Biz::Asset::Business::Story') {
-	    $widget = 'story_prof';
-	} elsif ($pkg eq 'Bric::Biz::Asset::Business::Media') {
-	    $widget = 'media_prof';
-	} else {
-	    $widget = 'tmpl_prof';
-	}
-
-        if (defined $u_id) {
-            return $users{$u_id} ||= Bric::Biz::Person::User->lookup({'id' => $u_id})->format_name;
-        } else {
-            my $uri  = $r->uri;
-            my $a_id = $o->get_id;
-            return qq{<a href="$uri?$widget|checkout_cb=$a_id">Checkout</a>};
-        }
     } elsif ($f eq 'thumb') {
         # If we get a thumbnail URI, we have an image. Otherwise, simply
         # return a space to fill the column properly because we aren't an

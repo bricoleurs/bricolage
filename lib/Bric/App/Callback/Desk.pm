@@ -151,66 +151,84 @@ sub publish : Callback {
     my (@rel_story, @rel_media);
 
     # start with the objects checked for publish
-    my @objs = ((map { $mpkg->lookup({id => $_}) } @$media),
-		(map { $spkg->lookup({id => $_}) } @$story),
-                (values %$story_pub),
-                (values %$media_pub)
-               );
+    my @stories = ((map { $spkg->lookup({id => $_}) } @$story),
+                   values %$story_pub);
+    my @media = ((map { $mpkg->lookup({id => $_}) } @$media),
+                   values %$media_pub);
 
-    # Make sure we have the IDs for any assets passed in explicitly.
-    push @$story, keys %$story_pub;
-    push @$media, keys %$media_pub;
+    my (@sids, @mids);
 
     if (PUBLISH_RELATED_ASSETS) {
-        # make sure we don't get into circular loops
         my %seen;
+        for ([story => \@stories, $story_pub],
+             [media => \@media, $media_pub]) {
+            my ($key, $objs, $pub_ids) = @$_;
+            # iterate through objects looking for related and stories
+            while (@$objs) {
+                my $a = shift @$objs or next;
 
-        # iterate through objects looking for related media
-        while (@objs) {
-            my $a = shift @objs;
-            next unless $a;
+                # haven't I seen you someplace before?
+                my $id = $a->get_id;
+                next if exists $seen{"$key$id"};
+                $seen{"$key$id"} = 1;
 
-            # haven't I seen you someplace before?
-            my $key = ref($a) . '.' . $a->get_id;
-            next if exists $seen{$key};
-            $seen{$key} = 1;
-
-            if ($a->get_checked_out) {
-                my $a_disp_name = lc(get_disp_name($a->key_name));
-                add_msg("Cannot publish $a_disp_name \"[_1]\" because it is"
-                          . " checked out.", $a->get_name);
-                next;
-            }
-
-            # Examine all the related objects.
-            foreach my $r ($a->get_related_objects) {
-                # Skip assets whose current version has already been published.
-                next unless $r->needs_publish();
-
-                if ($r->get_checked_out) {
-                    my $r_disp_name = lc(get_disp_name($r->key_name));
-                    add_msg("Cannot auto-publish related $r_disp_name \"[_1]\""
-                              . " because it is checked out.", $r->get_name);
+                if ($a->get_checked_out) {
+                    my $a_disp_name = lc get_disp_name($key);
+                    add_msg("Cannot publish $a_disp_name \"[_1]\" because it is"
+                            . " checked out.", $a->get_name);
+                    delete $pub_ids->{$id};
                     next;
                 }
 
-                # push onto the appropriate list
-                if (ref $r eq $spkg) {
-                    push @rel_story, $r->get_id;
-                    push(@objs, $r); # recurse through related stories
+                # Hang on to your hat!
+                if ($key eq 'story') {
+                    push @sids, $id;
                 } else {
-                    push @rel_media, $r->get_id;
+                    push @mids, $id;
+                }
+
+                # Examine all the related objects.
+                foreach my $r ($a->get_related_objects) {
+                    # Skip assets whose current version has already been published.
+                    next unless $r->needs_publish;
+
+                    # haven't I seen you someplace before?
+                    my $rid = $r->get_id;
+                    my $rkey = $r->key_name;
+                    next if exists $seen{"$rkey$rid"};
+                    $seen{"$rkey$rid"} = 1;
+
+                    if ($r->get_checked_out) {
+                        my $r_disp_name = lc(get_disp_name($r->key_name));
+                        add_msg("Cannot auto-publish related $r_disp_name \"[_1]\""
+                                . " because it is checked out.", $r->get_name);
+                        next;
+                    }
+
+                    # push onto the appropriate list
+                    if ($rkey eq 'story') {
+                        push @rel_story, $r->get_id;
+                        push @sids, $rid if $pub_ids->{$id};
+                        push(@stories, $r); # recurse through related stories
+                    } else {
+                        push @rel_media, $r->get_id;
+                        push @mids, $rid if $pub_ids->{$id};
+                    }
                 }
             }
         }
     }
 
+    # Make sure we have the IDs for any assets passed in explicitly.
+#    push @$story, keys %$story_pub;
+#    push @$media, keys %$media_pub;
+
     # For publishing from a desk, I added two new 'publish'
     # state data: 'rel_story', 'rel_media'. This is to be
     # able to distinguish between related assets and the
     # original stories to be published.
-    set_state_data('publish', { story => $story,
-                                media => $media,
+    set_state_data('publish', { story => \@sids,
+                                media => \@mids,
                                 story_pub => $story_pub,
                                 media_pub => $media_pub,
                                 (@rel_story ? (rel_story => \@rel_story) : ()),

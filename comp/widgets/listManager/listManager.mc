@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =head1 DATE
 
-$Date: 2004-04-09 22:51:15 $
+$Date: 2004-05-05 02:27:01 $
 
 =head1 SYNOPSIS
 
@@ -566,13 +566,14 @@ my $get_my_meths = sub {
 my $output_select_controls = sub {
     my ($o, $select, $flags) = @_;
     my $vals = ref $select eq 'CODE' ? $select->($o, $flags) : $select;
-    my @cntl;
-
     return unless $vals;
+    # Just return the value if it's not a reference.
+    return $vals unless ref $vals;
 
     # Turn this value into an array of arrays if it isn't already.
-    $vals = ref($vals->[0]) eq 'ARRAY' ? $vals : [$vals];
+    $vals = ref $vals->[0] eq 'ARRAY' ? $vals : [$vals];
 
+    my @cntl;
     foreach my $v (@$vals) {
         my ($label, $name, $value, $args) = @$v;
         $value ||= $o->get_id;
@@ -582,7 +583,6 @@ my $output_select_controls = sub {
                                                               %$args)
           . $lang->maketext($label);
     }
-
     return @cntl;
 };
 

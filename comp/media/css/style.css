@@ -9,9 +9,23 @@ dt         { font-size:11px; line-height:16px; font-weight:bold; }
 dd         { font-size:11px; line-height:16px; }
 li         { font-size:11px; line-height:16px; }
 
-.textInput { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px; width:200px;}
+form       { margin: 0; padding: 0; }
+.textInput { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 .textArea  { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 .codeArea  { font-family:monospace; font-size:11px; }
+
+body {
+    margin: 0;
+    padding: 0;
+    background: white url("/media/images/nav_background.gif") 8px 0px repeat-y;
+}
+#navFrame { background: #666633; }
+#help { background: white; }
+
+#bricLogo { padding: 8px 8px 2px 8px; background: white; }
+#mainContainer { position: relative; margin: 0 8px 8px 8px; }
+#navContainer { position: absolute; top: 0; left: 0; width: 150px; }
+#contentContainer { padding-left: 158px; }
 
 .blueLink       { font-size:10px; color:#669999;}
 .blueLinkBold   { font-size:10px; color:#669999; font-weight:bold}
@@ -20,7 +34,7 @@ li         { font-size:11px; line-height:16px; }
 .darkBlueLink   { font-size:10px; color:#006666;}
 .redLink        { font-size:10px; color:#993300; font-weight:bold}
 .redLinkLight   { color:#993300; }
-.redLinkLarge   { font-size:11px;   color:#993300; font-weight:bold}
+.redLinkLarge   { font-size:11px; color:#993300; font-weight:bold}
 .whiteLink      { font-size:10px; color:#ffffff; text-decoration:none}
 .whiteUnderlinedLink      { font-size:10px; color:#ffffff;}
 .blackLink      { font-size:10px; color:#000000; text-decoration:none}
@@ -66,6 +80,7 @@ li         { font-size:11px; line-height:16px; }
 div.debug dt {
     float: left;
     margin-right: 2px;
+    padding-right: 2px;
     width: 120px;
 }
 
@@ -75,6 +90,7 @@ div.debug dt:after {
 
 /* Desk item styling. */
 #desk {
+    position: relative;
     width: 580px;
     font-size: 11px;
     line-height: 11px;
@@ -85,143 +101,81 @@ div.debug dt:after {
     clear: left;
 }
 
-.desk_item a { text-decoration:none; }
+.desk_item a { 
+    text-decoration: none;
+    color: #006666;
+    background-color: transparent;
+}
 
 .desk_item a:hover {
     text-decoration:underline;
 }
 
-.desk_item a:link {
-    color: #006666;
-    background-color: transparent;
-}
-
-.desk_item a:active {
-    color: #006666;
-    background-color: transparent;
-}
-
-.desk_item a:visited {
-    color: #006666;
-    background-color: transparent;
-}
-
-.desk_item a.ref:link {
-    color: #006666;
-    background-color: transparent;
-}
-
+.desk_item a.ref:link,
 .desk_item a.ref:visited {
     color: #006666;
     background-color: transparent;
 }
 
 .desk_item .head {
+    position: relative;
     margin: 0px;
     border: 0px;
     line-height: 20px;
     font-weight: bold;
 }
 
-.desk_item .head .idv {
-    float: left;
-    width: 97px;
-    color: black;
-    background:#cccc99;
-    border-right: solid white 1px;
-    padding-left: 3px;
-}
-
-.desk_item .head .idvsorted {
-    float: left;
-    width: 97px;
-    color: black;
-    background:#669999;
-    border-right: solid white 1px;
-    padding-left: 3px;
-}
-
+.desk_item .head .idv,
+.desk_item .head .idvsorted,
 .desk_item .head .idvalias {
-    float: left;
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
     width: 97px;
     color: black;
-    background:#99cc99; 
     border-right: solid white 1px;
     padding-left: 3px;
 }
+.desk_item .head .idv { background:#cccc99; }
+.desk_item .head .idvsorted { background:#669999; }
+.desk_item .head .idvalias { background:#99cc99; }
 
-.desk_item .head .title {
-    font-size: 11px;
-    float: left;
-    width: 456px;
-    color: black;
-    background:#cccc99;
-    padding-left: 3px;
-}
-
-.desk_item .head .titlealias {
-    float: left;
-    width: 456px;
-    color: black;
-    background:#99cc99; 
-    padding-left: 3px;
-}
-
+.desk_item .head .title,
+.desk_item .head .titlealias, 
 .desk_item .head .titlesorted {
-    float: left;
+    position: relative;
+    display: block;
+    left: 101px;
+    top: 0px;
     width: 456px;
     color: black;
+    font-size: 11px;
     padding-left: 3px;
-    color: white;
-    background:#669999;
 }
-
-.desk_item .head .need {
-    float: left;
-    clear: right;
-    width: 20px;
-    text-align: center;
-    color: white;
-    background: #993300;
-}
+.desk_item .head .title { background:#cccc99; }
+.desk_item .head .titlealias { background:#99cc99; }
+.desk_item .head .titlesorted { background:#669999; color: white; }
 
 
-.desk_item .head .pub {
-    float: left;
-    clear: right;
-    width: 20px;
-    text-align: center;
-    color: white;
-    background: #999934;
-}
-
-
-.desk_item .head .none {
-    float: left;
-    clear: right;
-    width: 20px;
-    text-align: center;
-    color: white;
-    background:#cccc99;
-}
-
-.desk_item .head .aliasnone {
-    float: left;
-    clear: right;
-    width: 20px;
-    text-align: center;
-    color: white;
-    background:#99cc99; 
-}
-
+.desk_item .head .need,
+.desk_item .head .pub,
+.desk_item .head .none,
+.desk_item .head .aliasnone,
 .desk_item .head .nonesorted {
-    float: left;
-    clear: right;
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 0;
     width: 20px;
     text-align: center;
     color: white;
-    background:#669999;
 }
+.desk_item .head .need { background: #993300; }
+.desk_item .head .pub { background: #999934; }
+.desk_item .head .none { background:#cccc99; }
+.desk_item .head .aliasnone { background:#99cc99; }
+.desk_item .head .nonesorted { background:#669999; }
 
 .desk_item .head .sorted a {
     color: white;
@@ -257,9 +211,8 @@ div.debug dt:after {
 }
 
 .desk_item .body .mover {
-    line-height: 63px;
-    height: 63px;
-    text-align: middle;
+    margin: 20px 0 21px 0;
+    height: 22px;
 }
 
 .desk_item .body ul.actions {
@@ -271,13 +224,12 @@ div.debug dt:after {
     display: inline;
     line-height: 20px;
     padding: 0 4px 0 0;
-    clear: right;
 }
 
 .desk_item .body dl {
     float: left;
     border-right: solid #999966 1px;
-    width: 62%;
+    width: 360px;
     margin-right: 3px;
 }
 
@@ -289,17 +241,18 @@ div.debug dt:after {
 .desk_item .body dt {
     font-weight: normal;
     color: black;
-    background:#999966;  
+    background:#999966;
     float: left;
-    width: 100px;
+    width: 97px;
     text-align: right;
+    padding-right: 3px;
     margin-right: 2px; /* Make three if we can't get the 1px to work in dd. */
     border-right: solid white 1px;
 }
 
 .desk_item .body dd {
-    padding: 0;
-    padding-left: 1px;
+    margin-left: 101px;
+    padding: 0 0 0 1px;
 }
 
 .desk_item .body dt:after {

@@ -123,6 +123,12 @@ do {
       "    ForceType           \"application/x-javascript; charset=utf-8\"\n" .
       "  </Location>";
 
+    # Force CSS to the proper MIME type.
+    push @locs,
+      "  <Location /media/css>\n" .
+      "    ForceType           \"text/css\"\n" .
+      "  </Location>";
+
     # Enable CGI for htmlarea spellchecker.
     if (ENABLE_HTMLAREA){
         push @locs,

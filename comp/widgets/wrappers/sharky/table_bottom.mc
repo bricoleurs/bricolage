@@ -5,51 +5,21 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:11:00 $
+$Date: 2004-05-05 02:27:02 $
 
 =head1 SYNOPSIS
 
-<& "/widgets/wrappers/sharky/table_top.mc" &>
+<& "/widgets/wrappers/sharky/table_bottom.mc" &>
 
 =head1 DESCRIPTION
 
-Generates the bottom of a table. Use the C<$border> parameter to determine
-whether to draw border lines. Defaults to true.
+Generates the bottom of a table by simply closing the appropriate <div> tag.
 
 =cut
 
 </%doc>
-
-<%args>
-$border => 1
-</%args>
-<%init>
-
-my ($section, $mode, $type) = parse_uri($r->uri);
-my $borderColor = ($section eq "admin") ? "999966" : "669999";
-
-</%init>
-% if ($border) {
-</td>
-<td valign="top" bgcolor="<% $borderColor %>" width="1">
-<img src="/media/images/spacer.gif" width="1" height="1" border="0">
-</td>
-% }
-</tr>
-</table>
-<table width="580" border="0" cellpadding="0" cellspacing="0">
-% if ($border) {
-<tr>
-  <td bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
-  <td bgcolor="<% $borderColor %>" colspan="2"><img src="/media/images/spacer.gif" width="578" height="1" border="0"></td>
-  <td bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
-</tr>
-% }
-<tr>
-  <td colspan="4"><img src="/media/images/spacer.gif" width="580" height="10" border="0"></td>
-</tr>
-</table>
+</div>

@@ -179,6 +179,7 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
                                          . '"[_1]" group.',$name));
 
     my $is_asset_grp = $chk_asset_grp->($grp);
+    my $is_perm_grp  = $grp->get_permanent ? 1 : 0;
 
     # Get any existing permissions.
     foreach my $perm ($pkg->list({ obj_grp_id => $id }) ) {
@@ -194,7 +195,7 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
                  grp          => $ugrp,
                  gid          => $gid,
                  is_asset_grp => $is_asset_grp,
-                 create       => $is_asset_grp,
+                 create       => $is_perm_grp || $is_asset_grp,
                  publish      => $is_asset_grp,
                  recall       => $is_asset_grp,
                  perm         => $perms{$gid});

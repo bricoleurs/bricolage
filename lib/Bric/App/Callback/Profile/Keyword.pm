@@ -33,17 +33,16 @@ sub save : Callback {
     } else {
         # Roll in the changes. Assume it's active.
         foreach my $meth ($keyword->my_meths(1)) {
-            next if $is_saving && $meth->{name} eq 'name';
-            $meth->{set_meth}->($keyword, @{$meth->{set_args}}, $param->{$meth->{name}})
+            $meth->{set_meth}->($keyword, @{$meth->{set_args}},
+                                $param->{$meth->{name}})
               if defined $meth->{set_meth};
         }
         $keyword->save;
 
-        log_event($widget . ($is_saving ? 'save' : 'new'), $keyword);
+        log_event($widget . ($is_saving ? '_save' : '_new'), $keyword);
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
-        $self->set_redirect("/admin/manager/$widget");
     }
-
+    $self->set_redirect("/admin/manager/$widget");
     $param->{'obj'} = $keyword;
     return;
 }

@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =head1 DATE
 
-$Date: 2004-04-26 16:16:16 $
+$Date: 2004-05-05 02:27:05 $
 
 =head1 DESCRIPTION
 
@@ -631,6 +631,26 @@ channel ID and the template's file name:
      AND file_name = '[path]'"
 
 The arguments in brackets above are:
+
+=head3 I get an compile error when I try to use C<$story> or C<$element> in a
+Mason template C<< <%once> >> block. What gives?
+
+To check the syntax of a Mason template as you develop it, Bricolage creates a
+Mason interpreter and compiles the template. Because C<< <%once> >> blocks are
+designed to execute only once, Mason actually executes them during the
+compile. Of course, there is no C<$story> or C<$element> object when you're
+editing a template, only when you're publishing or previewing a story.
+
+But since these objects are available in a C<< <%once> >> block during a
+publish or preview, and as of Bricolage 1.6.14 and 1.8.0 the C<$burner> object
+is always available, you can use the C<$story> or C<$element> object in a C<<
+<%once> >> block like this:
+
+  <%once>;
+  unless ($burner->get_mode == SYNTAX_MODE) {
+      # Do stuff with $story or $element.
+  }
+  </%once>
 
 =over 4
 

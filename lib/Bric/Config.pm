@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.103 $
+$Revision: 1.104 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.103 $ )[-1];
+our $VERSION = (qw$Revision: 1.104 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-30 00:14:02 $
+$Date: 2004-05-05 02:27:05 $
 
 =head1 SYNOPSIS
 
@@ -624,6 +624,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                 use Bric::Util::DBI qw(:junction);
                 $config->{PERL_LOADER};
         };
+        # Just die if there was an error.
+        die $@ if $@;
     }
 
     # Set the MOD_PERL constant.

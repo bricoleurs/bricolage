@@ -34,10 +34,14 @@ my $select = sub {
             ['Media',   'bulk_publish|publish_categories_cb', "media=$cat_id"]];
 };
 
-# exclude categories that aren't in the current site
 my $exclude = sub {
-    my $site_id = $c->get_user_cx(get_user_id());
     my $cat = shift;
+
+    # exclude unauthorized categories
+    return 1 unless chk_authz($cat, READ, 1);
+
+    # exclude categories that aren't in the current site
+    my $site_id = $c->get_user_cx(get_user_id());
     return $cat->get_site_id != $site_id;
 };
 </%once>

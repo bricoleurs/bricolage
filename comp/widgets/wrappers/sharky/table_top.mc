@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2004-03-02 22:57:02 $
+$Date: 2004-05-05 02:27:02 $
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,6 @@ generate a top table
 
 </%doc>
 <%args>
-
 $number  => 0
 $caption => ''
 $height  => 1
@@ -32,7 +31,7 @@ $rightText => undef
 $border => 1
 $localize => 1
 </%args>
-<%init>
+<%init>;
 $caption =~ s /^\s*|\s{2,}|\s*$//g;
 $caption = $lang->maketext($caption) if $localize;
 
@@ -55,51 +54,41 @@ if ($number > 0 && $number < 10) {
 } else {
     $leftGif = '<img src="/media/images/numbers/' . $numberColor . '_curve_blank.gif" width=20 height=18>';
 }
-
 </%init>
-
 % if ($number) {
 <a name="section<% $number %>"></a>
 % }
-
 % if ($ghostly) {
-
-<table width=580 border=0 cellpadding=0 cellspacing=0>
+<table width="580" border="0" cellpadding="0" cellspacing="0">
 <tr>
-  <td width=<% $width %> bgcolor=<% $numberColor %>><% $leftGif %></td>
-  <td width=560>&nbsp;<% uc( $caption ) %></td>
+  <td width="<% $width %>' bgcolor="<% $numberColor %>"><% $leftGif %></td>
+  <td width="560" style="padding-left: 4px;"><% uc( $caption ) %></td>
 </tr>
 </table>
-
 % } else {
-<table width=580 border=0 cellpadding=0 cellspacing=0>
+<table width="580" border="0" cellpadding="0" cellspacing="0">
 <tr>
-  <td width=<% $width %> bgcolor=<% $numberColor %>><% $leftGif %></td>
+  <td width="<% $width %>' bgcolor="<% $numberColor %>"><% $leftGif %></td>
 % if ($rightText) {
 % my $remWidth = 580 - $width - 8;
-  <td width=<% $remWidth %> class=lightHeader>
-  <table border=0 cellpadding=0 cellspacing=0 width=<% 580 - $width - 8 %>>
-  <tr class=lightHeader>
-    <td width=<% int($remWidth / 2) %> class=lightHeader>&nbsp;<% uc( $caption ) %></td>
-    <td width=<% int($remWidth / 2) %> class=lightHeader align="right"><% $rightText %></td>
+  <td width="<% $remWidth %>" class="lightHeader">
+  <table border="0" cellpadding="0" cellspacing="0" width="<% 580 - $width - 8 %>">
+  <tr class="lightHeader">
+    <td width="<% int($remWidth / 2) %>" class="lightHeader" style="padding-left: 4px;"><% uc( $caption ) %></td>
+    <td width="<% int($remWidth / 2) %>" class"=lightHeader" align="right"><% $rightText %></td>
   </tr>
   </table>
   </td>
 % } else {
-  <td class=lightHeader width=552>&nbsp;<% uc( $caption ) %></td>
+  <td class="lightHeader" width="552" style="padding-left: 4px;"><% uc( $caption ) %></td>
 % }
-  <td width=8 bgcolor=<% $numberColor %>><% $rightGif %></td>
+  <td width="8" bgcolor="<% $numberColor %>"><% $rightGif %></td>
 </tr>
 </table>
-
 <!-- open box -->
-
-<table width=580 border=0 cellpadding=0 cellspacing=0>
-<tr>
 % if ($border) {
-<td valign="top" bgcolor="<% $borderColor %>" width=1>
-<img src="/media/images/spacer.gif" width="1" height="<% $height %>" border="0">
-</td>
+<div style="width: 578px; margin-bottom: 10px; border-style: solid; border-color: #<% $borderColor %>; border-width: 0 1px 1px 1px;">
+% } else {
+<div style="width: 580px; margin-bottom: 10px;">
 % }
-<td width=578 valign=top>
 % }

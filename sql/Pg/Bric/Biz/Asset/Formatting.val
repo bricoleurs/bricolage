@@ -6,7 +6,7 @@
 --
 
 /***************************************************************************
-* Don't forget to update the event log in Bric/Util/Event.val!
+* Don't forget to update the event log in Bric/Util/EventType.val!
 ***************************************************************************/
 
 INSERT INTO formatting (id, name, description, priority, usr__id,

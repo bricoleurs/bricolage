@@ -63,10 +63,171 @@ just giving an error message. [Scott]
 
 =item *
 
+Bulk Publish now ensures that users have at least READ access to catgories
+they wish to publish from. [Scott]
+
+=back
+
+=cut
+
+##############################################################################
+
+=head1 VERSION 1.8.0 "Portland" (2004-05-03)
+
+=head2 Improvements
+
+=over 4
+
+=item *
+
+The F<inst/upgrade/1.7.0/data_tile_key_name.pl> upgrade script now skips
+upgrading "key_name" if it would be no different than "name". This can save a
+lot of time during upgrade if your database is large. [Scott]
+
+=item *
+
+For checked-out media, stories, and documents listed in the "Active" and
+"Find" interfaces, added the name of the user who has each checked out to the
+empty column that would otherwise contain a "Checkout" checkbox. [David]
+
+=item *
+
+Keyword names are now always editable in the keyword manager. [David]
+
+=item *
+
+Added UI for managing organizations, which provide the base data for souces.
+[David]
+
+=item *
+
+HTML, CSS, and JavaScript fixes that allow Bricolage to work properly with
+most browsers, including Safari 1.2.1, IE 5.2/Mac, Konqueror, Opera 7, and
+many others. [Marshall Roch]
+
+=item *
+
+Added stubs for zh-hk localization. [David]
+
+=item *
+
+Added missing localizations to the Language preference. Many of these are not
+yet translated, but there they are. [David]
+
+=item *
+
+Selecting a checkbox to delete an output channel in a story or media profile
+and then clicking a button other than the output channel "Delete" button or
+the "Save" or "Save and Stay" buttons no longer causes an error. Reported by
+Delfim Machado. [David]
+
+=item *
+
+If the "Select All" button is clicked to select all the checkboxes on a desk,
+and then is clicked again, it will uncheck all of the check boxes. [David]
+
+=item *
+
+Login redirection now works properly with Safari. [David]
+
+=item *
+
+The installation script now provides more information (and questions) when it
+attempts to create a database user that already exists. Suggested by Marshall
+Roch. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Added a missing space to the breadcrumb in the header. [Marshall Roch]
+
+=item *
+
 The new C<SFTP_MOVER_CIPHER> F<bricolage.conf> directive now actually works.
 [David]
 
+=item *
+
+The group profile works again for element groups [David]
+
+=item *
+
+"Check In To" link misalignment fixed for Konqueror, as well as some other
+miscellaneous CSS fixes. [Marshall Roch]
+
+=item *
+
+The "CREATE" permission is now displayed when granting permission to user
+groups to access the members an "All" group. [David]
+
+=item *
+
+The "none" media type is no longer editable via the UI. [David]
+
+=item *
+
+Invalid story cover and expire dates now properly trigger an error message.
+[David]
+
+=item *
+
+Deactivated keywords are no longer returned by the C<get_keywords()> methods
+of the Business asset class (from which Story and Media inherit) or the
+Category class. Reported by Paul Orrock. [David]
+
+=item *
+
+Events are now properly logged for keywords managed in the keyword profile.
+[David]
+
+=item *
+
+Media URIs are now properly updated when the primary output channel is changed.
+Reported by Ben Bangert. [David]
+
+=item *
+
+Bulk publish no longer marks checked-out stories as published when it hasn't
+published them. It also is no longer redundant when it reports that
+checked-out assets won't be published. Thanks to Serge Sozonoff for the spot!
+[David]
+
+=item *
+
+Safari users will no longer be stuck on the login page. [David]
+
+=item *
+
+The CSS directory now has its files always served as "text/css". This should
+eliminate problems when Apache sometimes serves the CSS files as "text/html".
+[David]
+
+=item *
+
+The C<desk_id> parameter to the C<list()> methods of the story, media, and
+template classes now works. [JoE<atilde>o Pedro]
+
+=item *
+
+Stories published via the "Checkin and Publish" select list in the story
+profile now correctly publish related stories and media. Reported by
+JoE<atilde>o Pedro. [David]
+
+=item *
+
+Stories and media are no longer published twice when published from a publish
+desk or via Bulk Publish. [David]
+
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.7.5 "Ashland" (2004-04-11)
 
@@ -135,8 +296,8 @@ password where it doesn't belong. [David]
 =item *
 
 When the "Filter by Site Context" preference is enabled, it no longer filters
-documents when searching for documents to alias. Reported by Patrick
-Walsh. [David]
+documents when searching for documents to alias. Reported by Patrick Walsh.
+[David]
 
 =item *
 
@@ -256,6 +417,10 @@ to deleted groups in the permissions interface. So it has been removed.
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
 
 =head2 New Features
@@ -264,8 +429,8 @@ to deleted groups in the permissions interface. So it has been removed.
 
 =item *
 
-A "Bulk Publish" link in ADMIN->PUBLISHING that lets members of the Global
-Admins group publish story and media documents by category. [Scott]
+Added "Bulk Publish" feature in ADMIN->PUBLISHING that lets members of the
+Global Admins group publish story and media documents by category. [Scott]
 
 =item *
 
@@ -356,9 +521,9 @@ and media profiles. [Scott]
 
 =item *
 
-The element admin profile now automatically adds the currently selected site
-context to new elements, thus generally saving a step when creating new
-elements. [JoE<atilde>o Pedro]
+The element administration profile now automatically adds the currently
+selected site context to new elements, thus generally saving a step when
+creating new elements. [JoE<atilde>o Pedro]
 
 =item *
 
@@ -457,7 +622,7 @@ pixels, but are left alone. [David]
 
 =item *
 
-Thumbnails are now displayed when searching media to related to an element.
+Thumbnails are now displayed when searching media to relate to an element.
 [David]
 
 =item *
@@ -589,6 +754,10 @@ Apache forks, leading to strange errors such as "message type 0x49 arrived
 from server while idle", and occaisionally a frozen server. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.7.3 (2004-03-01)
 
@@ -777,8 +946,8 @@ hasn't created them because there are no custom fields. [David]
 =item *
 
 In the formBuilder interface used by the Element and Contributor Type
-profiles, the maximum length of text and textarea fields is now "0", or
-unlimited. [David]
+profiles, the default maximum length of text and textarea fields is now "0",
+or unlimited. [David]
 
 =item *
 
@@ -947,6 +1116,10 @@ Publication of stories and media that automatically schedule expiration jobs no
 longer causes an error. Reported by Marshall Bloch. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
 
@@ -1246,6 +1419,10 @@ sites) that the user does not have at least READ permission to access. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.7.1 (2003-11-30)
 
 =head2 Improvements
@@ -1255,8 +1432,8 @@ sites) that the user does not have at least READ permission to access. [David]
 =item *
 
 The members of the "All" groups are prevented from being changed in the
-callbacks now, as well as in the interface, where JS had been preventing it.
-[David]
+callbacks now, as well as in the interface, where a JavaScript function had
+been preventing it. [David]
 
 =back
 
@@ -1413,6 +1590,10 @@ was also changed. [Dave Rolsky]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.7.0 (2003-10-22)
 
 =head2 New Features
@@ -1443,7 +1624,7 @@ within an element. Also changed the "Display Name" to "Label" [Garth]
 
 =item *
 
-Added a "key word" attribute to elements as the system-wide unique key for
+Added a "key_name" attribute to elements as the system-wide unique key for
 each element, rather than the name. The name is now used as a label. Note that
 the key name only allows certain characters, as it is used to name the
 template files that format the element. This makes the C<has_name()> method a
@@ -1533,7 +1714,7 @@ the default search when you go to those screens. [Scott]
 
 =item *
 
-Added "Check all" button to select all the checkboxes on publish desks or My
+Added "Select all" button to select all the checkboxes on publish desks or My
 Workspace. [Scott]
 
 =item *
@@ -1726,6 +1907,57 @@ upgrading. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
+=head1 VERSION 1.6.14 (2004-05-02)
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+C<make upgrade> once again correctly creates F<postgres.db> if the existing
+installation doesn't know the installed version of PostgreSQL. [David]
+
+=item *
+
+Adding notes to image, video, or audio media documents no longer causes an
+error. Reported by Christian Hauser. [David]
+
+=item *
+
+Errors in the C<PERL_LOADER> F<bricolage.conf> directive no longer silently
+fail. [David]
+
+=item *
+
+A successful login no longer redirects back to the login page, thus no longer
+forcing a second redirect in such cases. Reported by Marshall Roch. [David]
+
+=item *
+
+The C<$burner> object is now available in Mason template C<< <%once> >> blocks
+during the syntax check, although C<$story> and C<$element> are not. All three
+are in the C<< <%once> >> block during previews and publishes. This means that
+they can all be used in a C<< <%once> >> block like this:
+
+  <%once>;
+  unless ($burner->get_mode == SYNTAX_MODE) {
+      # Do stuff with $story or $element.
+  }
+  </%once>
+
+Reported by Serge Sozonoff. [David]
+
+=back
+
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.13 "Tripled" (2004-04-10)
 
 =head2 Bug Fixes
@@ -1738,6 +1970,10 @@ Deactivated groups no longer affect permission checking. Discovered thanks to
 a bug report from Serge Sozonoff. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.12 "Tov" (2004-04-09)
 
@@ -1761,6 +1997,10 @@ Alerts once again properly check the attributes of the events that trigger
 them. Reported by Patrick Walsh. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.11 "Green" (2004-03-17)
 
@@ -1796,6 +2036,10 @@ cases. Incidentally, this change also allows dynamic configuration of mod_perl
 1.26 and earlier. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.10 "Jump" (2004-02-29)
 
@@ -1890,6 +2134,10 @@ Changed the name of the event logged when templates are checked out from
 "Template Checked Out Canceled" to the correct "Template Checked Out." [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.9 (2004-02-06)
 
@@ -2001,6 +2249,10 @@ Updated Chinese Traditional localization. [Kang-min Liu]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.8 (2003-11-29)
 
 =head2 Bug Fixes
@@ -2073,6 +2325,10 @@ preview. Reported by Simon Wilcox. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.7 (2003-10-22)
 
 =head2 Bug Fixes
@@ -2137,6 +2393,10 @@ Bric::Biz::Asset::Business::Parts::Tile::Data to actually work. Reported by
 Eldar Kononov. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.6 (2003-10-03)
 
@@ -2237,6 +2497,10 @@ directories as files. [Arthur]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.5 (2003-09-10)
 
 =head2 Bug Fixes
@@ -2332,6 +2596,10 @@ type no longer causes an SQL error. Thanks to Gary Gilchrist for the spot.
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.4 (2003-08-12)
 
 =head2 Bug Fixes
@@ -2343,6 +2611,10 @@ type no longer causes an SQL error. Thanks to Gary Gilchrist for the spot.
 Preview works again. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.3 (2003-08-12)
 
@@ -2467,6 +2739,10 @@ Fixed spelling of "contributor" in the description of the contributor type
 class in the database. Noticed by Radu Greab. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.2 (2003-07-28)
 
@@ -2737,6 +3013,10 @@ the contents of F<conf/>. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.1 (2003-06-12)
 
 =head2 New Features
@@ -2909,6 +3189,10 @@ be deleted. [David]
 Made unlocalized JavaScript message localized. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.0 (2003-04-29)
 
@@ -3104,6 +3388,10 @@ C<make distclean> now properly deletes F<inst/Pg.sql>. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.5.2 (2003-04-02)
 
 =head2 New Features
@@ -3202,6 +3490,10 @@ Permissions are now once again properly checked for assets in categories,
 workflows, and on desks. [Mark]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.5.1 (2003-03-23)
 
@@ -3573,6 +3865,10 @@ so that users can administer media types. Previously, only members of the
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.5.0 (2003-01-09)
 
 =head2 New Features
@@ -3895,6 +4191,10 @@ collections, such as desks, should be more responsive. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.4.6 (2003-01-06)
 
 =head2 Bug Fixes
@@ -4026,6 +4326,10 @@ Added missing C<uri> parameter to the possible search options in
 C<< Bric::SOAP::Category->list_ids >>. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.4.5 (2002-11-13)
 
@@ -4195,6 +4499,10 @@ Added missing C<list_ids()> method to Bric::Biz::Category. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.4.4 (2002-10-27)
 
 =head2 Bug Fixes
@@ -4333,6 +4641,10 @@ Geoff Richards for the spot. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.4.3 (2002-09-28)
 
 =head2 Bug Fixes
@@ -4355,6 +4667,10 @@ The C<get_all_keywords()> method of Bric::Biz::Asset::Business works
 again. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.4.2 (2002-09-27)
 
@@ -4391,6 +4707,10 @@ desk they're already on will no longer remove them from all desks
 altogether. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.4.1 (2002-09-25)
 
@@ -4584,6 +4904,10 @@ both. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.4.0 (2002-09-02)
 
 =head2 New Features
@@ -4708,6 +5032,10 @@ HTML::Mason (>1.09). [Sam]
 The F<bric_dist_mon> program works again. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.3.3 (2002-08-24)
 
@@ -5063,6 +5391,10 @@ reverted. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.3.2 (2002-06-09)
 
 =head2 New Features
@@ -5301,6 +5633,10 @@ Fixed section numbering in the Contributor Type profile. [Scott Lanning]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.3.1 (2002-04-03)
 
 =head2 New Features
@@ -5436,6 +5772,10 @@ Implemented the chk_syntax() method in Bric::Util::Burner::Template.
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.3.0 (2002-02-10)
 
 =head2 New Features
@@ -5480,10 +5820,18 @@ All fixes in the soon-to-be-released 1.2.1 version. See below for details.
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.2.3 (2002-03-17)
 
 Functionally equivalent to 1.2.2, but includes required files missing from the
 1.2.2 distribution.
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.2.2 (2002-03-15)
 
@@ -5611,6 +5959,10 @@ The CREATE permission works properly now. Thanks to Rachel Murray for the spot.
 [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.2.1 (2002-02-25)
 
@@ -5797,6 +6149,10 @@ category. [Matt Vella]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.2.0 (2002-01-10)
 
 =head2 New Features
@@ -5897,6 +6253,10 @@ figure it out from their file extensions. This fixes a bug where Bricolage would
 choke if it couldn't figure out the MediaType itself. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.0.2 (2001-12-10)
 
@@ -6041,6 +6401,10 @@ heads-up.
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.0.1 (2001-09-28)
 
 =over 4
@@ -6050,6 +6414,10 @@ heads-up.
 Initial public release.
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 AUTHOR
 
