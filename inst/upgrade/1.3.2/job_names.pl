@@ -45,7 +45,9 @@ do_sql(
        'ALTER TABLE job RENAME name TO __name__old__',
        'ALTER TABLE job ADD name VARCHAR(256)',
        'UPDATE job SET name = __name__old__',
-       'CREATE INDEX idx_job__name ON job(LOWER(name))'
+       'ALTER TABLE job ADD CONSTRAINT chk_name_null CHECK (name IS NOT NULL)',
+       'CREATE INDEX idx_job__name ON job(LOWER(name))',
+       "ALTER TABLE job ALTER COLUMN __name__old__ SET DEFAULT ''"
 );
 
 __END__
