@@ -64,7 +64,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.4 2001-12-11 17:58:39 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.5 2001-12-12 18:07:28 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -94,7 +94,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.4 2001-12-11 17:58:39 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.5 2001-12-12 18:07:28 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -132,7 +132,7 @@ AC_DEFUN([AC_PROG_POSTGRES],[
  # If pg_config not specified by caller, search in standard places
  #
  if test -z "$PG_CONFIG" ; then
-   AC_PATH_PROG(PG_CONFIG, pg_config, , $PGHOME/bin:/usr/local/postgres/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin)
+   AC_PATH_PROG(PG_CONFIG, pg_config, , $PGHOME/bin:/usr/local/pgsql/bin:/opt/pgsql/bin:/usr/local/postgres/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin)
  fi
  AC_SUBST(PG_CONFIG)
  if test -z "$PG_CONFIG" ; then
