@@ -48,6 +48,10 @@ Added Net::FTPServer and Net::SFTP to the list of optional modules. [David]
 
 Fixed some SQL errors uncovered by the release of PostgreSQL 7.3b1. [David]
 
+=item *
+
+Added code and documentation for compatability with PostgreSQL 7.3. [David]
+
 =back
 
 =head1 VERSION 1.4.0

@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.2.1 $
 
 =head1 DATE
 
-$Date: 2002-08-30 23:31:30 $
+$Date: 2002-09-06 22:02:44 $
 
 =head1 DESCRIPTION
 
@@ -206,6 +206,23 @@ END
         my $r = $dbh->do("GRANT SELECT, UPDATE, INSERT, DELETE ".
                          "ON $obj TO $PG->{sys_user}");
         hard_fail("Database error granting permissions on $obj:\n\n",
+                  "Error was:\n\n", $dbh->errstr, "\n")
+          unless $r;
+    }
+
+    # Get the PostgreSQL version number.
+    my ($ver) = $dbh->selectrow_array('SELECT version()');
+    $ver =~ s/PostgreSQL\s+(\d+\.\d+).*/$1/;
+
+    # Grant permissions on the login_avail function, if necessary.
+    if ($ver >= 7.3) {
+        # We need to grant execute permission to the login_avail function.
+        my $r = $dbh->do(qq{
+            GRANT       EXECUTE
+            ON FUNCTION login_avail(varchar, numeric(1,0), numeric(10, 0))
+            TO $PG->{sys_user};
+        });
+        hard_fail("Database error granting permissions on login_avail:\n\n",
                   "Error was:\n\n", $dbh->errstr, "\n")
           unless $r;
     }

@@ -300,6 +300,10 @@ sub grant_permissions {
 	}
     }
 
+    # Get the major version number.
+    my ($ver) = $DBH->selectrow_array('SELECT version()');
+    $ver =~ s/PostgreSQL\s+(\d+\.\d+).*/$1/;
+
     foreach (@_) {
 	next unless $_;
 	local $" = ', ';
@@ -310,8 +314,18 @@ sub grant_permissions {
         };
 
 	exec_sql($sql);
+        print "Version $ver\n";
+        if ($ver >= 7.3) {
+            # We need to grant execute permission to the login_avail function.
+            print "Granting execute...\n";
+            my $func_grant = qq{
+                GRANT       EXECUTE
+                ON FUNCTION login_avail(varchar, numeric(1,0), numeric(10, 0))
+                TO $_;
+            };
+            exec_sql($func_grant);
+        }
     }
-    return 1;
 }
 
 #------------------------------------------------------------------------------#
