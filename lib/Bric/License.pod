@@ -145,6 +145,8 @@ Folks who have submitted patches include:
 
 =item Kevin White
 
+=item Kang-min Liu
+
 =back
 
 Friends who have spotted bugs include:

@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.98.2.10 $
+$Revision: 1.98.2.11 $
 
 =head1 DATE
 
-$Date: 2003-06-01 22:37:47 $
+$Date: 2003-06-11 23:58:41 $
 
 =head1 DESCRIPTION
 
@@ -1229,6 +1229,10 @@ Portuguese.
 =item it_it
 
 Italian.
+
+=item zh_tw
+
+Chinese (Traditional).
 
 =back
 

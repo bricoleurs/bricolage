@@ -26,6 +26,10 @@ Added F<bric_xfer_grps> and F<bric_xfer_users> to F<contrib/bric_xfer>. They
 use the Bric API to transfer users and groups between Bricolage Installations.
 [Scott]
 
+=item *
+
+Added Chinese (Traditional) localization. [Kang-min Liu]
+
 =back
 
 =head2 Bug Fixes
