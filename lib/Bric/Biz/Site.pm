@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.1 $
+$Revision: 1.1.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.2 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-04 01:26:43 $
+$Date: 2003-03-05 21:53:12 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.1 2003-03-04 01:26:43 wheeler Exp $
+$Id: Site.pm,v 1.1.2.2 2003-03-05 21:53:12 wheeler Exp $
 
 =back
 
@@ -758,19 +758,6 @@ $get_em = sub {
             $tables .= ", member m2, site_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.active = 1 AND m2.grp__id = ?";
-            push @params, $params->{$k};
-        } elsif ($k eq 'user_id') {
-            # Yes, this is hairy! Users are associated with sites by nature of
-            # being members of a user group with the appropriate permission.
-            # This query doesn't yet exclude any sites where the permission
-            # is DENY. I still have to figure that out.
-            $tables .= ", member m3, member m4, site_member c3, user_member um," .
-              "grp_priv gp, grp_priv__grp_member gm";
-            $wheres .= " AND a.id = c3.object_id AND c3.member__id = m3.id" .
-              " AND m3.active = 1 AND m3.grp__id = gm.grp__id" .
-              " AND gm.grp_priv__id = gp.id AND gp.value < 4" .
-              " AND gp.grp__id = m4.grp__id AND m4.id = um.member__id" .
-              " AND um.object_id = ?";
             push @params, $params->{$k};
         } else {
             # Simple string comparison.

@@ -55,9 +55,6 @@ sub setup_sites : Test(setup => 31) {
         my $id = $site->get_id;
         $self->add_del_ids($id);
         $self->add_del_ids($id, 'grp');
-        # Look up the new site group.
-        my %priv_args = (
-                        );
         # Create the permission and schedule it for deletion.
         ok( my $priv = Bric::Util::Priv->new({ usr_grp => $usr_grp,
                                                obj_grp => $site->get_grp,
@@ -72,7 +69,6 @@ sub setup_sites : Test(setup => 31) {
         } else {
             # Create a DENY permission. It should override the CREATE
             # permission for the two sites it's created for.
-            $priv_args{value} = DENY;
             ok( my $priv = Bric::Util::Priv->new({ usr_grp => $deny_grp,
                                                    obj_grp => $site->get_grp,
                                                    value   => DENY }),
@@ -159,7 +155,7 @@ sub test_lookup : Test(20) {
 
 ##############################################################################
 # Test list().
-sub test_list : Test(29) {
+sub test_list : Test(28) {
     my $self = shift;
 
     # Try name.
@@ -237,22 +233,13 @@ sub test_list : Test(29) {
     ok( @sites = Bric::Biz::Site->list({ active => 1}),
         "List active => 1 again" );
     is( scalar @sites, 5, "Check for 5 sites" );
-
-    # Try User ID.
-    my $uid = $self->user_id;
-    ok( @sites = Bric::Biz::Site->list({ user_id => $uid }),
-        "List user_id '$uid'" );
-  TODO: {
-        local $TODO = "Need to control for DENY permission";
-        is( scalar @sites, 3, "Check for 3 sites" );
-    }
 }
 
 ##############################################################################
 # Test class methods.
 ##############################################################################
 # Test list().
-sub test_list_ids : Test(26) {
+sub test_list_ids : Test(25) {
     my $self = shift;
 
     # Try name.
@@ -325,15 +312,6 @@ sub test_list_ids : Test(26) {
     ok( @site_ids = Bric::Biz::Site->list_ids({ active => 1}),
         "List IDs active => 1 again" );
     is( scalar @site_ids, 5, "Check for 5 site IDs" );
-
-    # Try User ID.
-    my $uid = $self->user_id;
-    ok( @site_ids = Bric::Biz::Site->list_ids({ user_id => $uid }),
-        "List IDs user_id '$uid'" );
-  TODO: {
-        local $TODO = "Need to control for DENY permission";
-        is( scalar @site_ids, 3, "Check for 3 site IDs" );
-    }
 }
 
 ##############################################################################
