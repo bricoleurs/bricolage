@@ -1735,31 +1735,20 @@ NONE
 
 
 sub revert {
-        my ($self, $version) = @_;
+    my ($self, $version) = @_;
 
-        if (!$self->_get('checked_out')) {
-            throw_gen(error => "May not revert a non checked out version");
-        }
+    unless ($self->_get('checked_out')) {
+        throw_gen "May not revert a non checked out version";
+    }
 
-        my @prior_versions = __PACKAGE__->list( {
-                        id                              => $self->_get_id(),
-                        return_versions => 1
-                });
+    my $revert_obj = __PACKAGE__->lookup({
+        id              => $self->_get_id,
+        checked_out     => 0,
+        version         => $version
+    }) or throw_gen "The requested version does not exist";
 
-        my $revert_obj; 
-        foreach (@prior_versions) {
-                if ($_->get_version == $version) {
-                        $revert_obj = $_;
-                }
-        }
-
-        unless ($revert_obj) {
-            throw_gen(error => "The requested version does not exist");
-        }
-
-        $self->_set(['data'], [$revert_obj->get_data]);
-
-        return $self;
+    $self->_set(['data'], [$revert_obj->get_data]);
+    return $self;
 }
 
 ################################################################################

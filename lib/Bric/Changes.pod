@@ -210,6 +210,12 @@ element with the appropriate key name. The user must have CREATE permission
 to All Templates or to the start desk in the first template workflow in the
 relevent site.
 
+=item *
+
+Reverting a document or template to the current version number now properly
+reverts all changes to the time the user checked out the document or
+template. Reversion is also a bit more efficient in how it looks up the
+previous version in the database. [David]
 
 =back
 
