@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.37.2.8 $
+$Revision: 1.37.2.9 $
 
 =head1 DATE
 
-$Date: 2003-06-12 20:43:16 $
+$Date: 2004-02-06 20:00:14 $
 
 =head1 DESCRIPTION
 
@@ -504,7 +504,12 @@ explanation of the whys and wheres of this approach to merging CVS branches.
 
 If you are a Bricolage release manager and you're getting ready to release a
 new version, here are the steps you'll need to take to create a distribution
-tarball. First, tag the release in CVS:
+tarball. First, add a date for the new release to Bric::Changes and commit
+it. Something like this:
+
+  =head1 VERSION 1.6.9 (2004-02-06)
+
+Next, tag the release in CVS:
 
   cvs -z3 tag rel_1_x_x
 
