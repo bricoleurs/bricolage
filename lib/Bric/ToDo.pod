@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.96 $
+$Revision: 1.96.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-12 05:59:02 $
+$Date: 2003-03-12 16:20:41 $
 
 =head1 DESCRIPTION
 
@@ -46,12 +46,6 @@ in mind as long term goals further down the line.
 =head2 High Priority Minor Items
 
 =over
-
-=item *
-
-Add an C<instance()> function/method to Bric::Util::Session so that other
-parts of the API can always get the current session, instead of grabbing
-C<%HTML::Mason::Commands::session> directly (as in Bric::App::Util).
 
 =item *
 
