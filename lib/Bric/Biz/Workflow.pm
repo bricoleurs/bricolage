@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-22 03:09:57 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -268,7 +268,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $wf = &$get_em(@_);
+    my $pkg = shift;
+    my $wf = $pkg->cache_lookup(@_);
+    return $wf if $wf;
+
+    $wf = $get_em->($pkg, @_);
     # We want @$wf to have only one value.
     die Bric::Util::Fault::Exception::DP->new
       ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
@@ -1188,7 +1192,7 @@ sub _insert_workflow {
     # Set the ID of this object.
     $self->_set(['id'],[last_key($table)]);
 
-    # And finally, register this person in the "All Workflows" group.
+    # And finally, register this workflow in the "All Workflows" group.
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
 
     return $self;
@@ -1342,7 +1346,7 @@ $get_em = sub {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@sel_props, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            push @wfs, $self
+            push @wfs, $self->cache_me;
         } else {
             push @$grp_ids, $d[$#d];
         }

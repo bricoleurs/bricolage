@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-04 21:11:31 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -109,13 +109,13 @@ my $gen = 'Bric::Util::Fault::Exception::GEN';
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 'id'             => Bric::FIELD_RDWR,
-			 'name'           => Bric::FIELD_RDWR,
-			 'screen_name'    => Bric::FIELD_RDWR,
-			 'sort_name'      => Bric::FIELD_RDWR,
-			 'active'         => Bric::FIELD_RDWR,
-			});
+                         # Public Fields
+                         'id'             => Bric::FIELD_RDWR,
+                         'name'           => Bric::FIELD_RDWR,
+                         'screen_name'    => Bric::FIELD_RDWR,
+                         'sort_name'      => Bric::FIELD_RDWR,
+                         'active'         => Bric::FIELD_RDWR,
+                        });
 }
 
 #==============================================================================#
@@ -202,20 +202,22 @@ Notes: NONE
 
 sub lookup {
     my ($pkg, $param) = @_;
+    my $self = $pkg->cache_lookup($param);
+    return $self if $self;
 
     my $ret;
     if (exists $param->{'id'}) {
-	$ret = _select_keywords('id = ?', [$param->{'id'}]);
+        $ret = _select_keywords('id = ?', [$param->{'id'}]);
     } elsif (exists $param->{'name'}) {
-	$ret = _select_keywords('LOWER(name) LIKE ?', [lc $param->{'name'}]);
+        $ret = _select_keywords('LOWER(name) LIKE ?', [lc $param->{'name'}]);
     } else {
-	die $gen->new({ msg => "Bad parameters passed to 'lookup'"});
+        die $gen->new({ msg => "Bad parameters passed to 'lookup'"});
     }
 
     # return nothing if we got nothing
     return unless @$ret;
 
-    # return the object 
+    # return the object
     return $ret->[0];
 }
 
@@ -338,7 +340,7 @@ sub list {
         # create a new keyword object and push it on the return array
         $keyword = __PACKAGE__->SUPER::new();
         $keyword->_set(['id', COLS], \@d);
-	push @ret, $keyword;
+        push @ret, $keyword->cache_me;
     }
     finish($sth);
 
@@ -374,21 +376,136 @@ sub remove {
 
 =over 4
 
-=item $val = my_meths->{$key}->[0]->($obj);
+=item $meths = Bric::Biz::Keyword->my_meths
 
-Introspect this object.
+=item (@meths || $meths_aref) = Bric::Biz::Keyword->my_meths(TRUE)
 
-B<Throws:>
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
+intrspection data. The format for each introspection item introspection is as
+follows:
 
-NONE
+Each hash key is the name of a property or attribute of the object. The value
+for a hash key is another anonymous hash containing the following keys:
 
-B<Side Effects:>
+=over 4
 
-NONE
+=item name
 
-B<Notes:>
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-NONE
+=item disp
+
+The display name of the property or attribute.
+
+=item get_meth
+
+A reference to the method that will retrieve the value of the property or
+attribute.
+
+=item get_args
+
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
+
+=item set_meth
+
+A reference to the method that will set the value of the property or
+attribute.
+
+=item set_args
+
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
+
+=item type
+
+The type of value the property or attribute contains. There are only three
+types:
+
+=over 4
+
+=item short
+
+=item date
+
+=item blob
+
+=back
+
+=item len
+
+If the value is a 'short' value, this hash key contains the length of the
+field.
+
+=item search
+
+The property is searchable via the list() and list_ids() methods.
+
+=item req
+
+The property or attribute is required.
+
+=item props
+
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
+
+=over 4
+
+=item type
+
+The display field type. Possible values are
+
+=over 4
+
+=item text
+
+=item textarea
+
+=item password
+
+=item hidden
+
+=item radio
+
+=item checkbox
+
+=item select
+
+=back
+
+=item length
+
+The Length, in letters, to display a text or password field.
+
+=item maxlength
+
+The maximum length of the property or value - usually defined by the SQL DDL.
+
+=back
+
+=item rows
+
+The number of rows to format in a textarea field.
+
+=item cols
+
+The number of columns to format in a textarea field.
+
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -397,42 +514,42 @@ sub my_meths {
     return $METH if $METH;
 
     $METH = {'name'        => {'get_meth' => sub {shift->get_name(@_)},
-			       'get_args' => [], 
-			       'set_meth' => sub {shift->set_name(@_)},
-			       'set_args' => [],
-			       'disp'     => 'Keyword Name',
-			       'search'   => 1,
-			       'len'      => 256,
-			       'type'     => 'short',
-			       'props'    => {'type'       => 'text',
-					      'length'     => 32,
-					      'max_length' => 256,}
-			      },
-	     'screen_name' => {'get_meth' => sub {shift->get_screen_name(@_)}, 
-			       'get_args' => [],
-			       'set_meth' => sub {shift->set_screen_name(@_)},
-			       'set_args' => [],
-			       'disp'     => 'Keyword screen name',
-			       'search'   => 0,
-			       'len'      => 256,
-			       'type'     => 'short',
-			       'props'    => {'type'       => 'text',
-					      'length'     => 64,
-					      'max_length' => 256,}
-			      },
-	     'sort_name'   => {'get_meth' => sub {shift->get_sort_name(@_)},
-			       'get_args' => [], 
-			       'set_meth' => sub {shift->set_sort_name(@_)},
-			       'set_args' => [],
-			       'disp'     => 'Sort order name',
-			       'search'   => 0,
-			       'len'      => 256,
-			       'type'     => 'short',
-			       'props'    => {'type'       => 'text',
-					      'length'     => 64,
-					      'max_length' => 256,}
-			      },
-	    };
+                               'get_args' => [], 
+                               'set_meth' => sub {shift->set_name(@_)},
+                               'set_args' => [],
+                               'disp'     => 'Keyword Name',
+                               'search'   => 1,
+                               'len'      => 256,
+                               'type'     => 'short',
+                               'props'    => {'type'       => 'text',
+                                              'length'     => 32,
+                                              'max_length' => 256,}
+                              },
+             'screen_name' => {'get_meth' => sub {shift->get_screen_name(@_)}, 
+                               'get_args' => [],
+                               'set_meth' => sub {shift->set_screen_name(@_)},
+                               'set_args' => [],
+                               'disp'     => 'Keyword screen name',
+                               'search'   => 0,
+                               'len'      => 256,
+                               'type'     => 'short',
+                               'props'    => {'type'       => 'text',
+                                              'length'     => 64,
+                                              'max_length' => 256,}
+                              },
+             'sort_name'   => {'get_meth' => sub {shift->get_sort_name(@_)},
+                               'get_args' => [], 
+                               'set_meth' => sub {shift->set_sort_name(@_)},
+                               'set_args' => [],
+                               'disp'     => 'Sort order name',
+                               'search'   => 0,
+                               'len'      => 256,
+                               'type'     => 'short',
+                               'props'    => {'type'       => 'text',
+                                              'length'     => 64,
+                                              'max_length' => 256,}
+                              },
+            };
     $METH->{keyword} = $METH->{name};
     # Load attributes.
     # NONE
@@ -653,9 +770,9 @@ sub save {
     $self->_set(['screen_name', 'sort_name'], [$scrn, $sort]);
 
     if ($id) {
-	$self->_update_keyword();
+        $self->_update_keyword();
     } else {
-	$self->_insert_keyword();
+        $self->_insert_keyword();
     }
 
     $self->_set__dirty(0);
@@ -712,7 +829,7 @@ sub _select_keywords {
         # create a new keyword object and push it on the return array
         $keyword = __PACKAGE__->SUPER::new();
         $keyword->_set(['id', COLS], \@d);
-	push @ret, $keyword;
+        push @ret, $keyword->cache_me;
     }
 
     finish($sth);

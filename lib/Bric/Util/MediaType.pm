@@ -6,16 +6,16 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:42 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -23,9 +23,9 @@ $Date: 2002-08-30 22:13:42 $
 
 =head1 DESCRIPTION
 
-This class may be used for managing media types (a.k.a. "MIME types"). Bricolage ships
-with a number of default media types accessible via this class. This class may
-also be used to create new media types.
+This class may be used for managing media types (a.k.a. "MIME types").
+Bricolage ships with a number of default media types accessible via this
+class. This class may also be used to create new media types.
 
 =cut
 
@@ -71,8 +71,8 @@ my @ecols = qw(id media_type__id extension);
 my @props = qw(id name description _active _exts _new_exts _del_exts);
 my @ord = qw(name description active);
 my %map = ( name => 'LOWER(name) LIKE ?',
-	    description => 'LOWER(description) LIKE ?',
-	    ext => => 'LOWER(e.extension) LIKE ?');
+            description => 'LOWER(description) LIKE ?',
+            ext => => 'LOWER(e.extension) LIKE ?');
 my $key = '__MediaType__';
 my ($meths, $cache);
 
@@ -82,17 +82,17 @@ my ($meths, $cache);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 name => Bric::FIELD_RDWR,
-			 description => Bric::FIELD_RDWR,
+                         # Public Fields
+                         id => Bric::FIELD_READ,
+                         name => Bric::FIELD_RDWR,
+                         description => Bric::FIELD_RDWR,
 
-			 # Private Fields
-			 _exts => Bric::FIELD_NONE,
-			 _new_exts => Bric::FIELD_NONE,
-			 _del_exts => Bric::FIELD_NONE,
-			 _active => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _exts => Bric::FIELD_NONE,
+                         _new_exts => Bric::FIELD_NONE,
+                         _del_exts => Bric::FIELD_NONE,
+                         _active => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -201,7 +201,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $mt = &$get_em(@_);
+    my $pkg = shift;
+    my $mt = $pkg->cache_lookup(@_);
+    return $mt if $mt;
+
+    $mt = $get_em->($pkg, @_);
     # We want @$mt to have only one value.
     die $dp->new({  msg => 'Too many Bric::Util::MediaType objects found.' })
       if @$mt > 1;
@@ -276,7 +280,7 @@ sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -456,8 +460,8 @@ sub get_id_by_ext { &$lookup_ext( $_[1] ) }
 
 =item (@meths || $meths_aref) = Bric::Util::MediaType->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -466,39 +470,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -510,29 +514,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -550,27 +556,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -592,53 +599,53 @@ sub my_meths {
 #my @ord = qw(name description active);
     # We don't got 'em. So get 'em!
     $meths = {
-	      name   => {
-			      name     => 'name',
-			      get_meth => sub { shift->get_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_name(@_) },
-			      set_args => [],
-			      disp     => 'MIME Type',
-			      search   => 1,
-			      len      => 128,
-			      req      => 0,
-			      type     => 'short',
-			      props    => {   type       => 'text',
-					      length     => 32,
-					      maxlength => 128
-					  }
-			     },
-	      description => {
-			      name     => 'description',
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_description(@_) },
-			      set_args => [],
-			      disp     => 'Description',
-			      search   => 1,
-			      len      => 256,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'textarea',
-					    cols => 40,
-					    rows => 4
-					  }
-			     },
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->activate(@_)
-						 : shift->deactivate(@_) },
-			     set_args => [],
-			     disp     => 'Active',
-			     search   => 0,
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	     };
+              name   => {
+                              name     => 'name',
+                              get_meth => sub { shift->get_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_name(@_) },
+                              set_args => [],
+                              disp     => 'MIME Type',
+                              search   => 1,
+                              len      => 128,
+                              req      => 0,
+                              type     => 'short',
+                              props    => {   type       => 'text',
+                                              length     => 32,
+                                              maxlength => 128
+                                          }
+                             },
+              description => {
+                              name     => 'description',
+                              get_meth => sub { shift->get_description(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_description(@_) },
+                              set_args => [],
+                              disp     => 'Description',
+                              search   => 1,
+                              len      => 256,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'textarea',
+                                            cols => 40,
+                                            rows => 4
+                                          }
+                             },
+              active     => {
+                             name     => 'active',
+                             get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->activate(@_)
+                                                 : shift->deactivate(@_) },
+                             set_args => [],
+                             disp     => 'Active',
+                             search   => 0,
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
@@ -856,8 +863,8 @@ sub add_exts {
     my ($self, @exts) = @_;
     my ($ex, $new) = $self->_get(qw(_exts _new_exts));
     foreach my $e (@exts) {
-	$e = lc $e;
-	$new->{$e} = 1 unless $ex->{$e};
+        $e = lc $e;
+        $new->{$e} = 1 unless $ex->{$e};
     }
     return $self;
 }
@@ -888,9 +895,9 @@ sub del_exts {
     my ($self, @exts) = @_;
     my ($ex, $new, $del) = $self->_get(qw(_exts _new_exts _del_exts));
     foreach my $e (@exts) {
-	$e = lc $e;
-	$del->{$e} = 1 if delete $ex->{$e};
-	delete $new->{$e};
+        $e = lc $e;
+        $del->{$e} = 1 if delete $ex->{$e};
+        delete $new->{$e};
     }
     return $self;
 }
@@ -1046,27 +1053,27 @@ sub save {
     my ($id, $ext, $new, $old) = $self->_get(qw(id _exts _new_exts _del_exts));
 
     if (defined $id) {
-	# It's an existing media type. Update it.
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # It's an existing media type. Update it.
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE media_type
             SET   @mcols = ?
             WHERE  id = ?
         });
-	execute($upd, $self->_get(@mprops), $id);
+        execute($upd, $self->_get(@mprops), $id);
     } else {
-	# It's a new media type. Insert it.
-	local $" = ', ';
-	my $fields = join ', ', next_key('media_type'), ('?') x $#mcols;
-	my $ins = prepare_c(qq{
+        # It's a new media type. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('media_type'), ('?') x $#mcols;
+        my $ins = prepare_c(qq{
             INSERT INTO media_type (@mcols)
             VALUES ($fields)
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@mprops[1..$#mprops]));
-	# Now grab the ID.
-	$id = last_key('media_type');
-	$self->_set(['id'], [$id]);
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@mprops[1..$#mprops]));
+        # Now grab the ID.
+        $id = last_key('media_type');
+        $self->_set(['id'], [$id]);
     }
 
     # Load the cache.
@@ -1075,33 +1082,33 @@ sub save {
 
     # Delete extensions.
     if (%$old) {
-	my $del = prepare_c(qq{
+        my $del = prepare_c(qq{
             DELETE FROM media_type_ext
             WHERE extension = ?
         }, undef, DEBUG);
-	foreach my $e (keys %$old) {
-	    execute($del, $e);
-	    delete $exts_cache->{$e};
-	}
-	%$old = ();
+        foreach my $e (keys %$old) {
+            execute($del, $e);
+            delete $exts_cache->{$e};
+        }
+        %$old = ();
     }
 
     # Save new extensions.
     if (%$new) {
-	local $" = ', ';
-	my $fields = join ', ', next_key('media_type_ext'), ('?') x $#ecols;
-	my $ins = prepare_c(qq{
+        local $" = ', ';
+        my $fields = join ', ', next_key('media_type_ext'), ('?') x $#ecols;
+        my $ins = prepare_c(qq{
             INSERT INTO media_type_ext (@ecols)
             VALUES ($fields)
         }, undef, DEBUG);
 
-	my $name = $self->_get('name');
-	foreach my $e (keys %$new) {
-	    execute($ins, $id, $e);
-	    $ext->{$e} = 1;
-	    $exts_cache->{$e} = [$id, $name] if $exts_cache->{$e};
-	}
-	%$new = ();
+        my $name = $self->_get('name');
+        foreach my $e (keys %$new) {
+            execute($ins, $id, $e);
+            $ext->{$e} = 1;
+            $exts_cache->{$e} = [$id, $name] if $exts_cache->{$e};
+        }
+        %$new = ();
     }
 
     # Save the cache.
@@ -1114,7 +1121,7 @@ sub save {
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1182,14 +1189,14 @@ $get_em = sub {
     my ($pkg, $params, $ids) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id' || $k eq 'active') {
-	    push @wheres, "m.$k = ?";
-	    push @params, $v;
-	} else {
-	    # It's a varchar field.
-	    push @wheres, $map{$k};
-	    push @params, lc $v;
-	}
+        if ($k eq 'id' || $k eq 'active') {
+            push @wheres, "m.$k = ?";
+            push @params, $v;
+        } else {
+            # It's a varchar field.
+            push @wheres, $map{$k};
+            push @params, lc $v;
+        }
     }
 
     # Assemble the WHERE statement.
@@ -1226,15 +1233,15 @@ $get_em = sub {
     bind_columns($sel, \@d[0..$#cols-1], \$ext);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	if ($d[0] != $last) {
-	    # Create a new object.
-	    push @mts, &$make_obj($pkg, \@init) unless $last == -1;
-	    # Get the new record.
-	    $last = $d[0];
-	    @init = (@d, {});
-	}
-	# Grab the MIME type.
-	$init[$#init]->{$ext} = 1;
+        if ($d[0] != $last) {
+            # Create a new object.
+            push @mts, &$make_obj($pkg, \@init) unless $last == -1;
+            # Get the new record.
+            $last = $d[0];
+            @init = (@d, {});
+        }
+        # Grab the MIME type.
+        $init[$#init]->{$ext} = 1;
     }
     # Grab the last object.
     push @mts, &$make_obj($pkg, \@init) if @init;
@@ -1282,6 +1289,8 @@ $make_obj = sub {
     $self->SUPER::new;
     push @$init, ({}, {});
     $self->_set(\@props, $init);
+    $self->_set__dirty;
+    $self->cache_me;
 };
 
 ################################################################################
@@ -1307,8 +1316,6 @@ Unable to prepare SQL statement.
 =item *
 
 Unable to select row.
-
-=item *
 
 =back
 
@@ -1385,12 +1392,12 @@ $lookup_ext = sub {
     my $exts = $cache->get($key);
 
     unless ($exts && exists $exts->{$ext}) {
-	# We haven't looked up this extension before. Do so now.
-	my $e = &$get_ext_data($ext);
-	# Don't save the extension if it doesn't actually exist.
-	$exts->{$ext} = $e if $e;
-	# Cache the extensions.
-	$cache->set($key, $exts);
+        # We haven't looked up this extension before. Do so now.
+        my $e = &$get_ext_data($ext);
+        # Don't save the extension if it doesn't actually exist.
+        $exts->{$ext} = $e if $e;
+        # Cache the extensions.
+        $cache->set($key, $exts);
     }
     return $exts->{$ext}[$name ? 1 : 0];
 };

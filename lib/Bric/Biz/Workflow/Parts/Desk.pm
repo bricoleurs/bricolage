@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-01-22 03:09:57 $
+$Date: 2003-01-29 06:46:04 $
 
 
 =head1 SYNOPSIS
@@ -125,24 +125,24 @@ my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 'id'             => Bric::FIELD_READ,
-			 'name'           => Bric::FIELD_RDWR,
-			 'description'    => Bric::FIELD_RDWR,
-			 'pre_chk_rules'  => Bric::FIELD_READ,
-			 'post_chk_rules' => Bric::FIELD_READ,
-			 'asset_grp'      => Bric::FIELD_READ,
-			 'grp_ids'        => Bric::FIELD_READ,
+                         # Public Fields
+                         'id'             => Bric::FIELD_READ,
+                         'name'           => Bric::FIELD_RDWR,
+                         'description'    => Bric::FIELD_RDWR,
+                         'pre_chk_rules'  => Bric::FIELD_READ,
+                         'post_chk_rules' => Bric::FIELD_READ,
+                         'asset_grp'      => Bric::FIELD_READ,
+                         'grp_ids'        => Bric::FIELD_READ,
 
-			 # Private Fields
-			 '_publish'       => Bric::FIELD_NONE,
-			 '_asset_grp_obj' => Bric::FIELD_NONE,
-			 '_remove'        => Bric::FIELD_NONE,
-			 '_active'        => Bric::FIELD_NONE,
-			 '_checkin'       => Bric::FIELD_NONE,
-			 '_checkout'      => Bric::FIELD_NONE,
-			 '_transfer'      => Bric::FIELD_NONE,
-			});
+                         # Private Fields
+                         '_publish'       => Bric::FIELD_NONE,
+                         '_asset_grp_obj' => Bric::FIELD_NONE,
+                         '_remove'        => Bric::FIELD_NONE,
+                         '_active'        => Bric::FIELD_NONE,
+                         '_checkin'       => Bric::FIELD_NONE,
+                         '_checkout'      => Bric::FIELD_NONE,
+                         '_transfer'      => Bric::FIELD_NONE,
+                        });
 }
 
 #==============================================================================#
@@ -257,7 +257,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $desk = &$get_em(@_);
+    my $pkg = shift;
+    my $desk = $pkg->cache_lookup(@_);
+    return $desk if $desk;
+
+    $desk = $get_em->($pkg, @_);
     # We want @$desk to have only one value.
     die Bric::Util::Fault::Exception::DP->new
       ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
@@ -549,65 +553,65 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $METH = {
-	      name        => {
-			      name     => 'name',
-			      get_meth => sub { shift->get_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_name(@_) },
-			      set_args => [],
-			      disp     => 'Name',
-			      type     => 'short',
-			      len      => 64,
-			      req      => 1,
-			      search   => 1,
-			      props    => { type       => 'text',
-					    length     => 32,
-					    maxlength => 64
-					  }
-			     },
-	      description => {
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_description(@_) },
-			      set_args => [],
-			      name     => 'description',
-			      disp     => 'Description',
-			      len      => 256,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'textarea',
-					    cols => 40,
-					    rows => 4
-					  }
-			     },
-	     publish      => {
-			      name     => 'publish',
-			      get_meth => sub { shift->can_publish(@_) ? 1 : 0 },
-			      get_args => [],
-			      set_meth => sub { $_[1] ? shift->make_publish_desk(@_)
-						  : shift->make_regular_desk(@_) },
-			      set_args => [],
-			      disp     => 'Publish Desk',
-			      search   => 0,
-			      len      => 1,
-			      req      => 1,
-			      type     => 'short',
-			      props    => { type => 'checkbox' }
-			     },
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->activate(@_)
-						 : shift->deactivate(@_) },
-			     set_args => [],
-			     disp     => 'Active',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	     };
+              name        => {
+                              name     => 'name',
+                              get_meth => sub { shift->get_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_name(@_) },
+                              set_args => [],
+                              disp     => 'Name',
+                              type     => 'short',
+                              len      => 64,
+                              req      => 1,
+                              search   => 1,
+                              props    => { type       => 'text',
+                                            length     => 32,
+                                            maxlength => 64
+                                          }
+                             },
+              description => {
+                              get_meth => sub { shift->get_description(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_description(@_) },
+                              set_args => [],
+                              name     => 'description',
+                              disp     => 'Description',
+                              len      => 256,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'textarea',
+                                            cols => 40,
+                                            rows => 4
+                                          }
+                             },
+             publish      => {
+                              name     => 'publish',
+                              get_meth => sub { shift->can_publish(@_) ? 1 : 0 },
+                              get_args => [],
+                              set_meth => sub { $_[1] ? shift->make_publish_desk(@_)
+                                                  : shift->make_regular_desk(@_) },
+                              set_args => [],
+                              disp     => 'Publish Desk',
+                              search   => 0,
+                              len      => 1,
+                              req      => 1,
+                              type     => 'short',
+                              props    => { type => 'checkbox' }
+                             },
+              active     => {
+                             name     => 'active',
+                             get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->activate(@_)
+                                                 : shift->deactivate(@_) },
+                             set_args => [],
+                             disp     => 'Active',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+             };
     return !$ord ? $METH : wantarray ? @{$METH}{@ORD} : [@{$METH}{@ORD}];
 }
 
@@ -640,7 +644,7 @@ NONE
 sub assets {
     my $self = shift;
     my $asset_grp = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp', 
-					'_asset_grp_obj');
+                                        '_asset_grp_obj');
 
     my @a = map {$_->get_object} $asset_grp->get_members;
 
@@ -673,7 +677,7 @@ sub checkin {
     my $self = shift;
     my ($a_obj) = @_;
     my $asset_grp = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp',
-					'_asset_grp_obj');
+                                        '_asset_grp_obj');
     my $chkin = $self->_get('_checkin');
 #    my $vers_grp_id = $a_obj->get_version_grp__id;
 
@@ -682,11 +686,11 @@ sub checkin {
     # version of the asset.
 #    my $found = 0;
 #    foreach my $a ($self->assets) {
-#	if ($a->get_version_grp__id == $vers_grp_id) {
-#	    $asset_grp->delete_member({ obj => $a });
-#	    $found = 1;
+#       if ($a->get_version_grp__id == $vers_grp_id) {
+#           $asset_grp->delete_member({ obj => $a });
+#           $found = 1;
  #           last;
-#	}
+#       }
 #    }
 
     # Don't do anything else if this asset wasn't found on this desk.
@@ -702,7 +706,7 @@ sub checkout {
     my $self = shift;
     my ($a_obj, $user_id) = @_;
     my $asset_grp = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp',
-					'_asset_grp_obj');
+                                        '_asset_grp_obj');
 
     # Throw an exception if this asset isn't already on the desk.
     die Bric::Util::Fault::Exception::DP->new
@@ -760,7 +764,7 @@ sub transfer {
 
     my $asset         = $param->{'asset'};
     my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp',
-					    '_asset_grp_obj');
+                                            '_asset_grp_obj');
 
     # If we don't have an asset_grp_obj there shouldn't be anything to
     # transfer!
@@ -768,7 +772,7 @@ sub transfer {
 
     # Do the pre-desk rule checks
     return unless $desk->accept({'asset' => $asset,
-				 'from'  => $self});
+                                 'from'  => $self});
 
     # If the asset was accepted and we get here, remove this asset from the
     # desk
@@ -823,24 +827,24 @@ sub accept {
 
     my $asset         = $param->{'asset'};
     my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG,
-					    'asset_grp', '_asset_grp_obj');
+                                            'asset_grp', '_asset_grp_obj');
     my $xfer = $self->_get('_transfer');
 
     # Create the asset group for this desk if one doesn't exist.
     unless ($asset_grp_obj) {
-	my $desc = 'A group for holding assets for Desk objects';
-	$asset_grp_obj = Bric::Util::Grp::Asset->new(
-					     {'name'        => 'Desk Assets',
-					      'description' => $desc});
+        my $desc = 'A group for holding assets for Desk objects';
+        $asset_grp_obj = Bric::Util::Grp::Asset->new(
+                                             {'name'        => 'Desk Assets',
+                                              'description' => $desc});
 
-	# Throw an error if we could not create the group.
-	my $err_msg = 'Could not create a new Grp object';
-	die Bric::Util::Fault::Exception::DP->new({'msg' => $err_msg})
-	  unless $asset_grp_obj;
+        # Throw an error if we could not create the group.
+        my $err_msg = 'Could not create a new Grp object';
+        die Bric::Util::Fault::Exception::DP->new({'msg' => $err_msg})
+          unless $asset_grp_obj;
 
-	$self->_set(['_asset_grp_obj'], [$asset_grp_obj]);
+        $self->_set(['_asset_grp_obj'], [$asset_grp_obj]);
 
-	$self->_set__dirty($dirty);
+        $self->_set__dirty($dirty);
     }
 
     # Add this asset.
@@ -876,8 +880,8 @@ sub remove_asset {
     my $self = shift;
     my ($asset) = @_;
     my $asset_grp_obj= $self->_get_grp_obj(ASSET_GRP_PKG,
-					   'asset_grp',
-					   '_asset_grp_obj');
+                                           'asset_grp',
+                                           '_asset_grp_obj');
 
     # If the asset was accepted and we get here, remove this asset from the desk
     $asset_grp_obj->delete_member({ obj => $asset });
@@ -908,7 +912,7 @@ NONE
 sub get_assets {
     my $self = shift;
     my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG, 
-					    'asset_grp', '_asset_grp_obj');
+                                            'asset_grp', '_asset_grp_obj');
 
     return unless $asset_grp_obj;
 
@@ -1085,48 +1089,48 @@ sub save {
     my $self = shift;
     my $id    = $self->get_id;
     my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG,
-					    'asset_grp', '_asset_grp_obj');
+                                            'asset_grp', '_asset_grp_obj');
 
     unless ($self->_get('_remove')) {
-	# Create the asset group for this desk if one doesn't exist.
-	unless ($asset_grp_obj) {
-	    my $dirty = $self->_get__dirty;
-	    my $desc = 'A group for holding assets for Desk objects';
-	    $asset_grp_obj = Bric::Util::Grp::Asset->new
+        # Create the asset group for this desk if one doesn't exist.
+        unless ($asset_grp_obj) {
+            my $dirty = $self->_get__dirty;
+            my $desc = 'A group for holding assets for Desk objects';
+            $asset_grp_obj = Bric::Util::Grp::Asset->new
               ({ name        => 'Desk Assets',
                  description => $desc});
 
-	    # Throw an error if we could not create the group.
-	    my $err_msg = 'Could not create a new Grp object';
-	    die Bric::Util::Fault::Exception::DP->new({'msg' => $err_msg})
-	      unless $asset_grp_obj;
+            # Throw an error if we could not create the group.
+            my $err_msg = 'Could not create a new Grp object';
+            die Bric::Util::Fault::Exception::DP->new({'msg' => $err_msg})
+              unless $asset_grp_obj;
 
-	    $self->_set(['_asset_grp_obj'], [$asset_grp_obj]);
-	    $self->_set__dirty($dirty);
-	}
+            $self->_set(['_asset_grp_obj'], [$asset_grp_obj]);
+            $self->_set__dirty($dirty);
+        }
 
-	$self->_sync_checkin;
-	$self->_sync_checkout;
-	$self->_sync_transfer;
+        $self->_sync_checkin;
+        $self->_sync_checkout;
+        $self->_sync_transfer;
 
-	# Save all the grouped objects.
-	$asset_grp_obj->save;
+        # Save all the grouped objects.
+        $asset_grp_obj->save;
 
-	# Save the IDs if we have them.
-	if ($self->get_asset_grp != $asset_grp_obj->get_id) {
-	    $self->_set(['asset_grp'], [$asset_grp_obj->get_id]);
-	}
+        # Save the IDs if we have them.
+        if ($self->get_asset_grp != $asset_grp_obj->get_id) {
+            $self->_set(['asset_grp'], [$asset_grp_obj->get_id]);
+        }
 
-	if ($self->_get__dirty) {
-	    if ($id) {
-		$self->_update_desk;
-	    } else {
-		$self->_insert_desk;
-	    }
-	}
+        if ($self->_get__dirty) {
+            if ($id) {
+                $self->_update_desk;
+            } else {
+                $self->_insert_desk;
+            }
+        }
     } else {
-	$asset_grp_obj->deactivate and $asset_grp_obj->save if $asset_grp_obj;
-	$self->_remove_desk;
+        $asset_grp_obj->deactivate and $asset_grp_obj->save if $asset_grp_obj;
+        $self->_remove_desk;
     }
 }
 
@@ -1155,7 +1159,7 @@ sub _sync_checkin {
     my $chkin = $self->_get('_checkin');
 
     while (my $a = shift @$chkin) {
-	$a->save;
+        $a->save;
     }
 }
 
@@ -1168,7 +1172,7 @@ sub _sync_checkout {
     my $chkout = $self->_get('_checkout');
 
     while (my $a = shift @$chkout) {
-	$a->save;
+        $a->save;
     }
 }
 
@@ -1181,7 +1185,7 @@ sub _sync_transfer {
     my $xfer = $self->_get('_transfer');
 
     while (my $a = shift @$xfer) {
-	$a->save;
+        $a->save;
     }
 }
 
@@ -1213,9 +1217,9 @@ sub _get_grp_obj {
     return unless $id;
 
     unless ($obj) {
-	$obj = $pkg->lookup({'id' => $id});
-	$self->_set([$obj_field], [$obj]);
-	$self->_set__dirty($dirty);
+        $obj = $pkg->lookup({'id' => $id});
+        $self->_set([$obj_field], [$obj]);
+        $self->_set__dirty($dirty);
     }
 
     return $obj;
@@ -1256,7 +1260,7 @@ sub _insert_desk {
     # Set the ID of this object.
     $self->_set(['id'],[last_key($TABLE)]);
 
-    # And finally, register this person in the "All Desks" group.
+    # And finally, register this desk in the "All Desks" group.
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
 
     return $self;
@@ -1430,7 +1434,7 @@ $get_em = sub {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@SEL_PROPS, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            push @desks, $self
+            push @desks, $self->cache_me;
         } else {
             push @$grp_ids, $d[$#d];
         }

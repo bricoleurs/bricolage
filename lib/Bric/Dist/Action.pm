@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-08 22:05:37 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -124,9 +124,9 @@ my @cols = qw(a.id a.ord a.server_type__id t.name t.description m.name);
 my @props = qw(id ord server_type_id type description medias_href);
 
 my %nmap = ( id => 'a.id = ?',
-	     server_type_id => 'a.server_type__id = ?');
+             server_type_id => 'a.server_type__id = ?');
 my %tmap = ( type => 'LOWER(t.name) LIKE ?',
-	     description => 'LOWER(t.description) LIKE ?' );
+             description => 'LOWER(t.description) LIKE ?' );
 
 my $mni = 'Bric::Util::Fault::Exception::MNI';
 my $dp = 'Bric::Util::Fault::Exception::DP';
@@ -151,20 +151,20 @@ while (my $l = <DATA>) {
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 ord => Bric::FIELD_READ,
-			 server_type_id => Bric::FIELD_RDWR,
-			 type => Bric::FIELD_RDWR,
-			 description => Bric::FIELD_READ,
-			 medias_href => Bric::FIELD_READ,
+                         # Public Fields
+                         id => Bric::FIELD_READ,
+                         ord => Bric::FIELD_READ,
+                         server_type_id => Bric::FIELD_RDWR,
+                         type => Bric::FIELD_RDWR,
+                         description => Bric::FIELD_READ,
+                         medias_href => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _attr => Bric::FIELD_NONE,
-			 _del => Bric::FIELD_NONE,
-			 _old_ord => Bric::FIELD_NONE,
-			 _active => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _attr => Bric::FIELD_NONE,
+                         _del => Bric::FIELD_NONE,
+                         _old_ord => Bric::FIELD_NONE,
+                         _active => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -232,8 +232,7 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $init) = @_;
     $init->{_active} = 1;
-    my $self = &$make_obj(ref $pkg || $pkg, @{$init}{@props});
-    $self->SUPER::new($init);
+    $pkg->SUPER::new($init);
 }
 
 ################################################################################
@@ -290,7 +289,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $act = &$get_em(@_);
+    my $pkg = shift;
+    my $act = $pkg->cache_lookup(@_);
+    return $act if $act;
+
+    $act = $get_em->($pkg, @_);
     # We want @$act to have only one value.
     die $dp->new({ msg => 'Too many Bric::Dist::Action objects found.' })
       if @$act > 1;
@@ -415,7 +418,7 @@ sub href { &$get_em(@_, 0, 1) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -442,8 +445,6 @@ sub DESTROY {}
 =head2 Public Class Methods
 
 =over
-
-################################################################################
 
 =item my $ord = Bric::Dist::Action->next_ord($server_type_id)
 
@@ -574,12 +575,12 @@ sub has_more { return }
 
 ################################################################################
 
-=item $meths = Bric::Dist::ServerType >my_meths
+=item $meths = Bric::Dist::Action->my_meths
 
-=item (@meths || $meths_aref) = Bric::Dist::ServerType->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Dist::Action->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -588,39 +589,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -632,29 +633,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -672,27 +675,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -713,58 +717,58 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      type   => {
-			      name     => 'type',
-			      get_meth => sub { shift->get_type(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_type(@_) },
-			      set_args => [],
-			      disp     => 'Type',
-			      len      => 128,
-			      req      => 1,
-			      type     => 'short',
-			      props    => {   type => 'select',
-					      vals => [sort keys %$acts ]
-					  }
-			     },
-	      ord   => {
-			      name     => 'ord',
-			      get_meth => sub { shift->get_ord(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_ord(@_) },
-			      set_args => [],
-			      search   => 1,
-			      disp     => 'Order',
-			      len      => 3,
-			      req      => 1,
-			      type     => 'short',
-			      props    => {   type => 'select',
-					      vals => [1..20]
-					  }
-			     },
-	      description => {
-			      name     => 'description',
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      disp     => 'Description',
-			      len      => 256,
-			      req      => 0,
-			      type     => 'short',
-			     },
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->activate(@_)
-						 : shift->deactivate(@_) },
-			     set_args => [],
-			     disp     => 'Active',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	     };
+              type   => {
+                              name     => 'type',
+                              get_meth => sub { shift->get_type(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_type(@_) },
+                              set_args => [],
+                              disp     => 'Type',
+                              len      => 128,
+                              req      => 1,
+                              type     => 'short',
+                              props    => {   type => 'select',
+                                              vals => [sort keys %$acts ]
+                                          }
+                             },
+              ord   => {
+                              name     => 'ord',
+                              get_meth => sub { shift->get_ord(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_ord(@_) },
+                              set_args => [],
+                              search   => 1,
+                              disp     => 'Order',
+                              len      => 3,
+                              req      => 1,
+                              type     => 'short',
+                              props    => {   type => 'select',
+                                              vals => [1..20]
+                                          }
+                             },
+              description => {
+                              name     => 'description',
+                              get_meth => sub { shift->get_description(@_) },
+                              get_args => [],
+                              disp     => 'Description',
+                              len      => 256,
+                              req      => 0,
+                              type     => 'short',
+                             },
+              active     => {
+                             name     => 'active',
+                             get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->activate(@_)
+                                                 : shift->deactivate(@_) },
+                             set_args => [],
+                             disp     => 'Active',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
@@ -907,7 +911,7 @@ sub set_type {
     $acts->{$type} ||= "Bric::Dist::Action::$type";
     eval "require $acts->{$type}";
     die $gen->new({ msg => "Unable to load $acts->{$type} action subclass.",
-		    payload => $@ }) if $@;
+                    payload => $@ }) if $@;
 
     # Clear out the attributes for the last type.
     $self->_clear_attr;
@@ -1305,40 +1309,40 @@ sub save {
       $self->_get(qw(id _attr _del ord _old_ord server_type_id));
 
     if (defined $id && $del) {
-	# It has been marked for deletion. So do it!
-	my $del = prepare_c(qq{
+        # It has been marked for deletion. So do it!
+        my $del = prepare_c(qq{
             DELETE FROM action
             WHERE  id = ?
         });
-	execute($del, $id);
-	&$reorder($st_id);
+        execute($del, $id);
+        &$reorder($st_id);
     } elsif (defined $id) {
-	# It's an existing record. Update it.
-	my $upd = prepare_c(qq{
+        # It's an existing record. Update it.
+        my $upd = prepare_c(qq{
             UPDATE action
             SET    server_type__id = ?,
                    action_type__id = (SELECT id FROM action_type WHERE name = ?)
             WHERE  id = ?
         });
-	execute($upd, $self->_get(qw(server_type_id type)), $id);
-	# Reorder the actions, if this one has changed.
-	&$reorder($st_id, $old_ord, $ord) if $old_ord && $old_ord != $ord;
+        execute($upd, $self->_get(qw(server_type_id type)), $id);
+        # Reorder the actions, if this one has changed.
+        &$reorder($st_id, $old_ord, $ord) if $old_ord && $old_ord != $ord;
     } else {
-	# It's a new resource. Insert it. Start by setting the order, if
-	# necessary.
-	my $next_ord = next_ord($self, $st_id);
-	my $next = next_key('action');
-	my $ins = prepare_c(qq{
+        # It's a new resource. Insert it. Start by setting the order, if
+        # necessary.
+        my $next_ord = next_ord($self, $st_id);
+        my $next = next_key('action');
+        my $ins = prepare_c(qq{
             INSERT INTO action (id, ord, server_type__id, action_type__id)
             VALUES ($next, ?, ?, (SELECT id FROM action_type WHERE name = ?))
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $next_ord, $self->_get(qw(server_type_id type)));
-	# Now grab the ID.
-	$self->_set(['id'], [last_key('action')]);
-	# Finally, reorder the actions, if necessary.
-	$ord && $ord != $next_ord ? &$reorder($st_id, $next_ord, $ord)
-	  : $self->_set(['ord'], [$next_ord]);
+        # Don't try to set ID - it will fail!
+        execute($ins, $next_ord, $self->_get(qw(server_type_id type)));
+        # Now grab the ID.
+        $self->_set(['id'], [last_key('action')]);
+        # Finally, reorder the actions, if necessary.
+        $ord && $ord != $next_ord ? &$reorder($st_id, $next_ord, $ord)
+          : $self->_set(['ord'], [$next_ord]);
     }
 
     # Okay, now save any changes to its attributes.
@@ -1404,7 +1408,7 @@ sub undo_it { return }
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1449,7 +1453,7 @@ sub _get_attr {
     my ($id, $attr) = $self->_get('id', '_attr');
     return $attr if $attr;
     $attr = Bric::Util::Attribute::Action->new({ object_id => $id,
-					       subsys => $subsys });
+                                               subsys => $subsys });
     $self->_set(['_attr'], [$attr]);
     return $attr;
 };
@@ -1533,16 +1537,16 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
-	if ($nmap{$k}) {
-	    push @wheres, $nmap{$k};
-	    push @params, $v;
-	} elsif ($tmap{$k}) {
-	    push @wheres, $tmap{$k};
-	    push @params, lc $v;
-	} else {
-	    die $gen->new({ msg =>
-	      "Invalid parameter '$k' passed to constructor method." });
-	}
+        if ($nmap{$k}) {
+            push @wheres, $nmap{$k};
+            push @params, $v;
+        } elsif ($tmap{$k}) {
+            push @wheres, $tmap{$k};
+            push @params, lc $v;
+        } else {
+            die $gen->new({ msg =>
+              "Invalid parameter '$k' passed to constructor method." });
+        }
     }
 
     # Assemble the WHERE clause.
@@ -1571,16 +1575,16 @@ $get_em = sub {
     bind_columns($sel, \@d[0..$#cols - 1], \$media);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	if ($d[0] != $last) {
-	    # Create a new object.
-	    $href ? $acts{$init[0]} = &$make_obj($pkg, \@init)
-	      : push @acts, &$make_obj($pkg, \@init) unless $last == -1;
-	    # Get the new record.
-	    $last = $d[0];
-	    @init = (@d, {});
-	}
-	# Grab the MEDIA type.
-	$init[$#init]->{$media} = 1;
+        if ($d[0] != $last) {
+            # Create a new object.
+            $href ? $acts{$init[0]} = &$make_obj($pkg, \@init)
+              : push @acts, &$make_obj($pkg, \@init) unless $last == -1;
+            # Get the new record.
+            $last = $d[0];
+            @init = (@d, {});
+        }
+        # Grab the MEDIA type.
+        $init[$#init]->{$media} = 1;
     }
     # Grab the last object.
     $href ? $acts{$init[0]} = &$make_obj($pkg, \@init)
@@ -1626,14 +1630,15 @@ B<Notes:> NONE.
 $make_obj = sub {
     my ($pkg, $init) = @_;
     if ($init->[3]) {
-	$pkg = $acts->{$init->[3]} ||= "Bric::Dist::Action::$init->[3]";
-	eval "require $acts->{$init->[3]}";
-	die $gen->new({ msg => "Unable to load $acts->{$init->[3]} action subclass.",
-			payload => $@ }) if $@;
+        $pkg = $acts->{$init->[3]} ||= "Bric::Dist::Action::$init->[3]";
+        eval "require $acts->{$init->[3]}";
+        die $gen->new({ msg => "Unable to load $acts->{$init->[3]} action subclass.",
+                        payload => $@ }) if $@;
     }
     my $self = bless {}, $pkg;
     $self->SUPER::new;
     $self->_set(\@props, $init);
+    $self->cache_me;
 };
 
 ################################################################################
@@ -1715,8 +1720,8 @@ $reorder = sub {
     my ($st_id, $from, $to) = @_;
     my @ord = list_ids(undef, { server_type_id => $st_id });
     if ($to) {
-	$from ||= 1 + (reverse sort { $a <=> $b } @ord)[0];
-	splice(@ord, $to-1, 0, splice(@ord, $from - 1, 1));
+        $from ||= 1 + (reverse sort { $a <=> $b } @ord)[0];
+        splice(@ord, $to-1, 0, splice(@ord, $from - 1, 1));
     }
 
     my $upd = prepare_c(qq{

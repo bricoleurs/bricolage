@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-25 01:56:17 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -132,24 +132,24 @@ my $meths;
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 name => Bric::FIELD_RDWR,
-			 user_id => Bric::FIELD_RDWR,
-			 sched_time => Bric::FIELD_NONE,
-			 comp_time => Bric::FIELD_NONE,
-			 type => Bric::FIELD_RDWR,
-			 tries => Bric::FIELD_READ,
-			 grp_ids => Bric::FIELD_READ,
+                         # Public Fields
+                         id => Bric::FIELD_READ,
+                         name => Bric::FIELD_RDWR,
+                         user_id => Bric::FIELD_RDWR,
+                         sched_time => Bric::FIELD_NONE,
+                         comp_time => Bric::FIELD_NONE,
+                         type => Bric::FIELD_RDWR,
+                         tries => Bric::FIELD_READ,
+                         grp_ids => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _resources => Bric::FIELD_NONE,
-			 _resource_ids => Bric::FIELD_NONE,
-			 _server_types => Bric::FIELD_NONE,
-			 _server_type_ids => Bric::FIELD_NONE,
-			 _cancel => Bric::FIELD_NONE,
-			 _pending => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _resources => Bric::FIELD_NONE,
+                         _resource_ids => Bric::FIELD_NONE,
+                         _server_types => Bric::FIELD_NONE,
+                         _server_type_ids => Bric::FIELD_NONE,
+                         _cancel => Bric::FIELD_NONE,
+                         _pending => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -296,7 +296,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $job = &$get_em(@_);
+    my $pkg = shift;
+    my $job = $pkg->cache_lookup(@_);
+    return $job if $job;
+
+    $job = $get_em->($pkg, @_);
     # We want @$job to have only one value.
     die $dp->new({ msg => 'Too many Bric::Dist::Job objects found.' })
       if @$job > 1;
@@ -468,7 +472,7 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 ################################################################################
 
-=item $meths = Bric::Dist::Job >my_meths
+=item $meths = Bric::Dist::Job->my_meths
 
 =item (@meths || $meths_aref) = Bric::Dist::Job->my_meths(TRUE)
 
@@ -610,78 +614,78 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      name        => {
-			      name     => 'name',
-			      get_meth => sub { shift->get_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_name(@_) },
-			      set_args => [],
-			      disp     => 'Name',
-			      search   => 1,
-			      len      => 64,
-			      req      => 1,
-			      type     => 'short',
-			      props    => { type      => 'text',
-					    length    => 32,
-					    maxlength => 64
-					  }
-			     },
-	      type       => {
-			      name     => 'type',
-			      get_meth => sub { shift->get_type(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_type(@_) },
-			      set_args => [],
-			      disp     => 'Type',
-			      len      => 1,
-			      req      => 1,
-			      type     => 'short',
-			      props    => { type => 'radio',
-					    vals => [ [0, 'Deliver'],
-						      [1, 'Expire'] ]
-					  }
-			     },
-	      user_id     => {
-			      name     => 'user_id',
-			      get_meth => sub { shift->get_user_id(@_) },
-			      get_args => [],
-			      disp     => 'Scheduler',
-			      len      => 1,
-			      type     => 'short',
-			     },
-	      sched_time => {
-			      name     => 'sched_time',
-			      get_meth => sub { shift->get_sched_time(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_sched_time(@_) },
-			      set_args => [],
-			      disp     => 'Scheduled Time',
-			      len      => 64,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type      => 'date' }
-			     },
-	      comp_time   => {
-			      name     => 'comp_time',
-			      get_meth => sub { shift->get_comp_time(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_comp_time(@_) },
-			      set_args => [],
-			      disp     => 'Completion Time',
-			      len      => 64,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type      => 'date' }
-			     },
-	      tries      => {
-			      name     => 'tries',
-			      get_meth => sub { shift->get_tries(@_) },
-			      get_args => [],
-			      disp     => 'Attempts',
-			      len      => 1,
-			      type     => 'short',
-			     },
-	     };
+              name        => {
+                              name     => 'name',
+                              get_meth => sub { shift->get_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_name(@_) },
+                              set_args => [],
+                              disp     => 'Name',
+                              search   => 1,
+                              len      => 64,
+                              req      => 1,
+                              type     => 'short',
+                              props    => { type      => 'text',
+                                            length    => 32,
+                                            maxlength => 64
+                                          }
+                             },
+              type       => {
+                              name     => 'type',
+                              get_meth => sub { shift->get_type(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_type(@_) },
+                              set_args => [],
+                              disp     => 'Type',
+                              len      => 1,
+                              req      => 1,
+                              type     => 'short',
+                              props    => { type => 'radio',
+                                            vals => [ [0, 'Deliver'],
+                                                      [1, 'Expire'] ]
+                                          }
+                             },
+              user_id     => {
+                              name     => 'user_id',
+                              get_meth => sub { shift->get_user_id(@_) },
+                              get_args => [],
+                              disp     => 'Scheduler',
+                              len      => 1,
+                              type     => 'short',
+                             },
+              sched_time => {
+                              name     => 'sched_time',
+                              get_meth => sub { shift->get_sched_time(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_sched_time(@_) },
+                              set_args => [],
+                              disp     => 'Scheduled Time',
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type      => 'date' }
+                             },
+              comp_time   => {
+                              name     => 'comp_time',
+                              get_meth => sub { shift->get_comp_time(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_comp_time(@_) },
+                              set_args => [],
+                              disp     => 'Completion Time',
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type      => 'date' }
+                             },
+              tries      => {
+                              name     => 'tries',
+                              get_meth => sub { shift->get_tries(@_) },
+                              get_args => [],
+                              disp     => 'Attempts',
+                              len      => 1,
+                              type     => 'short',
+                             },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ORD} : [@{$meths}{@ORD}];
 }
 
@@ -1485,44 +1489,44 @@ sub save {
       $self->_get(qw(id _cancel _resources _server_types));
 
     if (defined $id && $cancel) {
-	# It has been marked for deletion. So do it!
-	my $del = prepare_c(qq{
+        # It has been marked for deletion. So do it!
+        my $del = prepare_c(qq{
             DELETE FROM job
             WHERE  id = ?
         });
-	execute($del, $id);
+        execute($del, $id);
     } elsif (defined $id) {
-	# Existing record. Update it.
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # Existing record. Update it.
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE job
             SET    @COLS = ?
             WHERE  id = ?
         });
-	execute($upd, $self->_get(@PROPS), $id);
+        execute($upd, $self->_get(@PROPS), $id);
     } else {
-	# It's a new job. Insert it.
-	local $" = ', ';
-	my $fields = join ', ', next_key('job'), ('?') x $#COLS;
-	my $ins = prepare_c(qq{
+        # It's a new job. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('job'), ('?') x $#COLS;
+        my $ins = prepare_c(qq{
             INSERT INTO job (@COLS)
             VALUES ($fields)
         }, undef, DEBUG);
 
-	# Don't try to set ID - it will fail!
-	my @ps = $self->_get(@PROPS[1..$#PROPS]);
-	execute($ins, $self->_get(@PROPS[1..$#PROPS]));
+        # Don't try to set ID - it will fail!
+        my @ps = $self->_get(@PROPS[1..$#PROPS]);
+        execute($ins, $self->_get(@PROPS[1..$#PROPS]));
 
-	# Now grab the ID.
-	$id = last_key('job');
-	$self->_set(['id'], [$id]);
+        # Now grab the ID.
+        $id = last_key('job');
+        $self->_set(['id'], [$id]);
 
-	# Now execute the job if distribution is enabled.
-	$self->execute_me
+        # Now execute the job if distribution is enabled.
+        $self->execute_me
           if ENABLE_DIST && $self->get_sched_time('epoch') <= time;
 
-	# And finally, register this job in the "All Jobs" group.
-	$self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+        # And finally, register this job in the "All Jobs" group.
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     }
     $res->save($id) if $res;
     $sts->save($id) if $sts;
@@ -1601,68 +1605,68 @@ sub execute_me {
       $dp->new({msg => "Can't get a lock on job No. " . $self->get_id . '.' });
 
     eval {
-	# Grab all of the resources.
-	my $resources = $self->get_resources;
-	# Figure out what we're doing here.
-	if ($self->get_type) {
-	    # This is an expiration job.
-	    foreach my $st ($self->get_server_types) {
-		# Go through the actions in reverse order.
-		foreach my $a (reverse $st->get_actions) {
-		    # Undo the action.
-		    my $ret = $a->undo_it($resources, $st);
-		    if ($ret) {
-			my $type = $a->get_type;
-			next if $type eq 'Move';
-		    grep { log_event('resource_undo_action', $_,
-				     { Action => $type } ) } @$resources;
-		    }
-		}
-	    }
-	} else {
-	    # A Delivery job. Go through the server types one at a time.
-	    foreach my $st ($self->get_server_types) {
-		if ($st->can_copy) {
-		    # The resources should be copied to a temporary directory.
-		    my $fs = Bric::Util::Trans::FS->new;
-		    foreach my $res (@$resources) {
-			# Create the temporary resource path.
-			my $path = $res->get_path;
-			my $tmp_path = catdir TEMP_DIR, $path;
-			# Copy the resources to the tmp location.
-			$fs->copy($path, $tmp_path);
-			# Add the temporary path to the resource.
-			$res->set_tmp_path($tmp_path);
-		    }
-		}
-		# Okay, we know where the resources are on disk. Let's
-		# perform each of the actions in turn.
-		foreach my $a ($st->get_actions) {
-		    # Execute the action.
-		    $a->do_it($resources, $st);
-		    # Grab the action type and log the action for each resource.
-		    my $type = $a->get_type;
-		    next if $type eq 'Move';
-		    grep { log_event('resource_action', $_,
-				     { Action => $type } ) } @$resources;
-		}
-	    }
-	}
+        # Grab all of the resources.
+        my $resources = $self->get_resources;
+        # Figure out what we're doing here.
+        if ($self->get_type) {
+            # This is an expiration job.
+            foreach my $st ($self->get_server_types) {
+                # Go through the actions in reverse order.
+                foreach my $a (reverse $st->get_actions) {
+                    # Undo the action.
+                    my $ret = $a->undo_it($resources, $st);
+                    if ($ret) {
+                        my $type = $a->get_type;
+                        next if $type eq 'Move';
+                    grep { log_event('resource_undo_action', $_,
+                                     { Action => $type } ) } @$resources;
+                    }
+                }
+            }
+        } else {
+            # A Delivery job. Go through the server types one at a time.
+            foreach my $st ($self->get_server_types) {
+                if ($st->can_copy) {
+                    # The resources should be copied to a temporary directory.
+                    my $fs = Bric::Util::Trans::FS->new;
+                    foreach my $res (@$resources) {
+                        # Create the temporary resource path.
+                        my $path = $res->get_path;
+                        my $tmp_path = catdir TEMP_DIR, $path;
+                        # Copy the resources to the tmp location.
+                        $fs->copy($path, $tmp_path);
+                        # Add the temporary path to the resource.
+                        $res->set_tmp_path($tmp_path);
+                    }
+                }
+                # Okay, we know where the resources are on disk. Let's
+                # perform each of the actions in turn.
+                foreach my $a ($st->get_actions) {
+                    # Execute the action.
+                    $a->do_it($resources, $st);
+                    # Grab the action type and log the action for each resource.
+                    my $type = $a->get_type;
+                    next if $type eq 'Move';
+                    grep { log_event('resource_action', $_,
+                                     { Action => $type } ) } @$resources;
+                }
+            }
+        }
     };
 
     if (my $err = $@) {
-	# Hmmm...something went wrong.
-	if ($self->_get('tries') >= DIST_ATTEMPTS) {
-	    # We've met or exceeded the maximum number of attempts. Mark the job
-	    # completed and then log an event.
-	    $self->_set([qw(comp_time _pending)], [db_date(0, 1), 0]);
-	} else {
-	    # We're gonna try again. Unlock the job.
-	    $self->_set([qw(_pending)], [0]);
-	}
-	# Save our changes and proceed with the die.
-	$self->save;
-	die $err;
+        # Hmmm...something went wrong.
+        if ($self->_get('tries') >= DIST_ATTEMPTS) {
+            # We've met or exceeded the maximum number of attempts. Mark the job
+            # completed and then log an event.
+            $self->_set([qw(comp_time _pending)], [db_date(0, 1), 0]);
+        } else {
+            # We're gonna try again. Unlock the job.
+            $self->_set([qw(_pending)], [0]);
+        }
+        # Save our changes and proceed with the die.
+        $self->save;
+        die $err;
     }
     # Mark it complete, unlock it, and we're done!
     $self->_set([qw(comp_time _pending)], [db_date(0, 1), 0]);
@@ -1740,57 +1744,57 @@ $get_em = sub {
         if ($k eq 'id') {
             # Simple numeric comparison.
             $wheres .= " AND a.id = ?";
-	    push @params, $v;
+            push @params, $v;
         } elsif ($k eq 'user_id') {
             # Simple numeric comparison.
             $wheres .= " AND a.usr__id = ?";
-	    push @params, $v;
-	} elsif ($k eq 'name') {
+            push @params, $v;
+        } elsif ($k eq 'name') {
             # Simple string comparison.
-	    $wheres .= " AND LOWER(a.$k) LIKE ?";
-	    push @params, lc $v;
-	} elsif ($k eq 'server_type_id') {
+            $wheres .= " AND LOWER(a.$k) LIKE ?";
+            push @params, lc $v;
+        } elsif ($k eq 'server_type_id') {
             # Add job__server_type to the lists of tables and join to it.
             $tables .= ', job__server_type js';
-	    $wheres .= " AND a.id = js.job__id AND js.server_type__id = ?";
-	    push @params, $v;
-	} elsif ($k eq 'resource_id') {
+            $wheres .= " AND a.id = js.job__id AND js.server_type__id = ?";
+            push @params, $v;
+        } elsif ($k eq 'resource_id') {
             # Add job__resource to the lists of tables and join to it.
             $tables .= ', job__resource jr';
-	    $wheres .= " AND a.id = jr.job__id AND jr.resource__id = ?";
-	    push @params, $v;
+            $wheres .= " AND a.id = jr.job__id AND jr.resource__id = ?";
+            push @params, $v;
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, job_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.grp__id = ?";
             push @params, $v;
-	} else {
-	    # It's a date column.
-	    if (ref $v) {
-		# It's an arrayref of dates.
-		if (!defined $v->[0]) {
-		    # It's less than.
+        } else {
+            # It's a date column.
+            if (ref $v) {
+                # It's an arrayref of dates.
+                if (!defined $v->[0]) {
+                    # It's less than.
                     $wheres .= " AND a.$k < ?";
-		    push @params, db_date($v->[1]);
-		} elsif (!defined $v->[1]) {
-		    # It's greater than.
-		    $wheres .= " AND a.$k > ?";
-		    push @params, db_date($v->[0]);
-		} else {
-		    # It's between two sizes.
-		    $wheres .= " AND $k BETWEEN ? AND ?";
-		    push @params, (db_date($v->[0]), db_date($v->[1]));
-		}
-	    } elsif (!defined $v) {
-		# It needs to be null.
+                    push @params, db_date($v->[1]);
+                } elsif (!defined $v->[1]) {
+                    # It's greater than.
+                    $wheres .= " AND a.$k > ?";
+                    push @params, db_date($v->[0]);
+                } else {
+                    # It's between two sizes.
+                    $wheres .= " AND $k BETWEEN ? AND ?";
+                    push @params, (db_date($v->[0]), db_date($v->[1]));
+                }
+            } elsif (!defined $v) {
+                # It needs to be null.
                 $wheres .= " AND a.$k IS NULL";
-	    } else {
-		# It's a single value.
+            } else {
+                # It's a single value.
                 $wheres .= " AND a.$k = ?";
-		push @params, db_date($v);
-	    }
-	}
+                push @params, db_date($v);
+            }
+        }
     }
 
     # Assemble and prepare the query.
@@ -1964,8 +1968,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Dist::Resource|Bric::Dist::Resource>, 
+L<Bric|Bric>,
+L<Bric::Dist::Resource|Bric::Dist::Resource>,
 L<Bric::Dist::ServerType|Bric::Dist::ServerType>
 
 =cut

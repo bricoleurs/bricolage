@@ -7,15 +7,15 @@ Bric::Util::Language - A way of registering Languages
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:44 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -79,31 +79,31 @@ use constant DEBUG => 0;
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-	Bric::register_fields({
+        Bric::register_fields({
 
-		# Public Fields
+                # Public Fields
 
-		# the name of the language ( i.e. American English )
-		'name'			=> Bric::FIELD_RDWR,
+                # the name of the language ( i.e. American English )
+                'name'                  => Bric::FIELD_RDWR,
 
-		# The desc ( i.e. What we ment when we said You talk funny American,
-		# y'aint from round here no? )
-		'description'	=> Bric::FIELD_RDWR,
+                # The desc ( i.e. What we ment when we said You talk funny American,
+                # y'aint from round here no? )
+                'description'   => Bric::FIELD_RDWR,
 
-		# The character set that will be output for all instances of this
-		# language
-		'char_set'		=> Bric::FIELD_RDWR,
+                # The character set that will be output for all instances of this
+                # language
+                'char_set'              => Bric::FIELD_RDWR,
 
-		# The id from the database
-		'id'			=> Bric::FIELD_READ,
+                # The id from the database
+                'id'                    => Bric::FIELD_READ,
 
 
-		# Private Fields
+                # Private Fields
 
-		# the active Flag
-		'_active'		=> Bric::FIELD_NONE
+                # the active Flag
+                '_active'               => Bric::FIELD_NONE
 
-	});
+        });
 }
 
 #==============================================================================#
@@ -162,18 +162,18 @@ NONE
 
 
 sub new {
-	my $class = shift;
-	my ($init) = @_;
+        my $class = shift;
+        my ($init) = @_;
 
-	my $self = fields::new($class);
+        my $self = fields::new($class);
 
-	# call super and pass it the initial args
-	$self->SUPER::new($init);
+        # call super and pass it the initial args
+        $self->SUPER::new($init);
 
-	$self->_set( { _active => 1 } );
+        $self->_set( { _active => 1 } );
 
-	# return the object
-	return $self;
+        # return the object
+        return $self;
 
 }
 
@@ -197,35 +197,35 @@ NONE
 =cut
 
 sub lookup {
-	my $class = shift;
-	my ($params) = @_;
+        my $class = shift;
+        my ($params) = @_;
 
-	return if !$params->{'id'};
+        return if !$params->{'id'};
 
-	my $self = fields::new($class);
+        my $self = fields::new($class);
 
-	$self->SUPER::new();
+        $self->SUPER::new();
 
-	my $select = prepare_c(qq{
-		SELECT 
-			name, description, char_set, active
-		FROM 
-			$Bric::Cust.language 
-		WHERE
-			id = ?
-	}, undef, DEBUG);
+        my $select = prepare_c(qq{
+                SELECT 
+                        name, description, char_set, active
+                FROM 
+                        $Bric::Cust.language 
+                WHERE
+                        id = ?
+        }, undef, DEBUG);
 
-	my $row = row_aref($select, $params->{'id'});
+        my $row = row_aref($select, $params->{'id'});
 
-	# Set all of the info
-	$self->_set( { id => $params->{'id'} } );
+        # Set all of the info
+        $self->_set( { id => $params->{'id'} } );
 
-	$self->_set( { name => $row->[0] });
-	$self->_set( { description => $row->[1] } );
-	$self->_set( { char_set => $row->[2] } );
-	$self->_set( { _active => $row->[3] } );
+        $self->_set( { name => $row->[0] });
+        $self->_set( { description => $row->[1] } );
+        $self->_set( { char_set => $row->[2] } );
+        $self->_set( { _active => $row->[3] } );
 
-	return $self;
+        return $self;
 
 }
 
@@ -260,12 +260,12 @@ NONE
 
 
 sub list { 
-	my $class = shift;
-	my ($param) = @_;
+        my $class = shift;
+        my ($param) = @_;
 
-	# send the the list processor, undef states that we want objects 
-	# and not just ids
-	_do_list($class,$param, undef);
+        # send the the list processor, undef states that we want objects 
+        # and not just ids
+        _do_list($class,$param, undef);
 }
 
 #--------------------------------------#
@@ -313,11 +313,11 @@ NONE
 =cut
 
 sub list_ids {
-	my $class = shift;
-	my ($param) = @_;
+        my $class = shift;
+        my ($param) = @_;
 
-	# send to the list processor the one states that we want ids returned
-	_do_list($class,$param, 1);
+        # send to the list processor the one states that we want ids returned
+        _do_list($class,$param, 1);
 
 }
 
@@ -433,11 +433,11 @@ NONE
 =cut
 
 sub activate {
-	my Bric::Util::Language $self = shift;
+        my Bric::Util::Language $self = shift;
 
-	$self->_set( { _active => 1 });
+        $self->_set( { _active => 1 });
 
-	return $self;
+        return $self;
 }
 
 =item $lang = $lanf->deactivate()
@@ -456,11 +456,11 @@ NONE
 =cut
 
 sub deactivcate {
-	my Bric::Util::Language $self = shift;
+        my Bric::Util::Language $self = shift;
 
-	$self->_set( { _active => 0 });
+        $self->_set( { _active => 0 });
 
-	return $self;
+        return $self;
 }
 
 =item $bool = $lang->is_active()
@@ -479,9 +479,9 @@ NONE
 =cut
 
 sub is_active {
-	my Bric::Util::Language $self = shift;
+        my Bric::Util::Language $self = shift;
 
-	$self->_get('_active') ? 1 : undef;
+        $self->_get('_active') ? 1 : undef;
 }
 
 =item $id = $lang->get_id()
@@ -517,71 +517,71 @@ NONE
  
 
 sub save {
-	my Bric::Util::Language $self = shift;
+        my Bric::Util::Language $self = shift;
 
-	my $id = $self->_get('id');
+        my $id = $self->_get('id');
 
-	if ($id) {
-		# An ID exists so this is an update
+        if ($id) {
+                # An ID exists so this is an update
 
-		return unless $self->_get__dirty();
+                return unless $self->_get__dirty();
 
-		eval {
-			my $update = prepare_c(qq{
-				UPDATE
-					language
-				SET 
-					name=?,
-					description=?,
-					char_set=?,
-					active=?
-				WHERE 
-					id=?
-			}, undef, DEBUG);
-	
-			$update->execute($self->_get('name'), $self->_get('description'),
-					$self->_get('char_set'), $self->_get('_active'),
-					$self->_get_id() );
-		};
-		if ($@) {
-			die "Error Doing Update in Lang Save:\n Error: $@\n\n";
-		}
+                eval {
+                        my $update = prepare_c(qq{
+                                UPDATE
+                                        language
+                                SET 
+                                        name=?,
+                                        description=?,
+                                        char_set=?,
+                                        active=?
+                                WHERE 
+                                        id=?
+                        }, undef, DEBUG);
+        
+                        $update->execute($self->_get('name'), $self->_get('description'),
+                                        $self->_get('char_set'), $self->_get('_active'),
+                                        $self->_get_id() );
+                };
+                if ($@) {
+                        die "Error Doing Update in Lang Save:\n Error: $@\n\n";
+                }
 
-	} else {
-		# NO id so this is an insert
+        } else {
+                # NO id so this is an insert
 
-		eval {
-			my $insert = prepare_c( qq{
-				INSERT into $Bric::Cust.language
-					(id, name, description, char_set, active) 
-				VALUES
-					(${\next_key('language')},?,?,?,?)
-				}, undef, DEBUG);
+                eval {
+                        my $insert = prepare_c( qq{
+                                INSERT into $Bric::Cust.language
+                                        (id, name, description, char_set, active) 
+                                VALUES
+                                        (${\next_key('language')},?,?,?,?)
+                                }, undef, DEBUG);
 
-			$insert->execute($self->_get('name'),$self->_get('description'),
-				$self->_get('char_set'), $self->_get('_active') );
-		};
-		if ($@) {
-			die "Error doing language save insert.\n Error: $@\n\n";
-		}
+                        $insert->execute($self->_get('name'),$self->_get('description'),
+                                $self->_get('char_set'), $self->_get('_active') );
+                };
+                if ($@) {
+                        die "Error doing language save insert.\n Error: $@\n\n";
+                }
 
-		eval {
-			# FIX HERE
-			#$self->_set( { id => last_key('language') } );
+                eval {
+                        # FIX HERE
+                        #$self->_set( { id => last_key('language') } );
 
-			my $select = prepare_c( qq{ 
-					SELECT $Bric::Cust.seq_language.currval FROM dual
-				}, undef, DEBUG);
-			my $row = row_aref($select);
-			$self->_set( { id => $row->[0] });
-		};
+                        my $select = prepare_c( qq{ 
+                                        SELECT $Bric::Cust.seq_language.currval FROM dual
+                                }, undef, DEBUG);
+                        my $row = row_aref($select);
+                        $self->_set( { id => $row->[0] });
+                };
 
-		if ($@) {
-			die "Error doing language lase_key.\n Error: $@ \n\n";
-		}
+                if ($@) {
+                        die "Error doing language lase_key.\n Error: $@ \n\n";
+                }
 
-	}
-	$self->_set__dirty(0);
+        }
+        $self->_set__dirty(0);
 }
 
 #==============================================================================#
@@ -632,78 +632,78 @@ NONE
 =cut
 
 sub _do_list {
-	my $class = shift;
-	my ($params, $ids) = @_;
+        my $class = shift;
+        my ($params, $ids) = @_;
 
-	my $sql = qq{
-		SELECT 
-			id, name, description, char_set, active 
-		FROM 
-			$Bric::Cust.language
-		};
+        my $sql = qq{
+                SELECT 
+                        id, name, description, char_set, active 
+                FROM 
+                        $Bric::Cust.language
+                };
 
-	my @where;
-	my @sel_params;
-	if ($params->{'active'}) {
-		push @where, "active=? ";
-		push @sel_params, $params->{'active'};
-	}
-	if ($params->{'char_set'}) {
-		push @where, "char_set=? ";
-		push @sel_params, $params->{'char_set'}
-	}
+        my @where;
+        my @sel_params;
+        if ($params->{'active'}) {
+                push @where, "active=? ";
+                push @sel_params, $params->{'active'};
+        }
+        if ($params->{'char_set'}) {
+                push @where, "char_set=? ";
+                push @sel_params, $params->{'char_set'}
+        }
 
-	if (@where) {
-		$sql .= "WHERE " . join ' AND ', @where;
-	}
+        if (@where) {
+                $sql .= "WHERE " . join ' AND ', @where;
+        }
 
-	my $select;
-	eval {
+        my $select;
+        eval {
 
-		$select = prepare_c($sql, undef, DEBUG);
-	};
-	if ( $@) {
-		die "Error doing prepare in language _do_list.\n Error: $@\n\n";
-	}
+                $select = prepare_c($sql, undef, DEBUG);
+        };
+        if ( $@) {
+                die "Error doing prepare in language _do_list.\n Error: $@\n\n";
+        }
 
-	if ($ids) {
-		my $return;
-		eval {
-			$return = col_aref($select,@sel_params);
-		};
-		if ( $@ ) {
-			die "Error doing col_aref in language _do_list.\nError: $@ \n\n";
-		}
+        if ($ids) {
+                my $return;
+                eval {
+                        $return = col_aref($select,@sel_params);
+                };
+                if ( $@ ) {
+                        die "Error doing col_aref in language _do_list.\nError: $@ \n\n";
+                }
 
-		return wantarray ? @{ $return } : $return;
-	};
+                return wantarray ? @{ $return } : $return;
+        };
 
-	my @objs;
-	eval {
-		my $select = prepare_c($sql, undef, DEBUG);
+        my @objs;
+        eval {
+                my $select = prepare_c($sql, undef, DEBUG);
 
-		$select->execute(@sel_params);
+                $select->execute(@sel_params);
 
-		while (my $row = $select->fetch() ) {
-			
-			my $self = fields::new($class);
+                while (my $row = $select->fetch() ) {
+                        
+                        my $self = fields::new($class);
 
-			$self->SUPER::new();
+                        $self->SUPER::new();
 
-			$self->_set( { 'id' => $row->[0] } );
-			$self->_set( { 'name' => $row->[1] } );
-			$self->_set( { 'description' => $row->[2] } );
-			$self->_set( { 'char_set' => $row->[3] } );
-			$self->_set( { '_active' => $row->[4] } );
+                        $self->_set( { 'id' => $row->[0] } );
+                        $self->_set( { 'name' => $row->[1] } );
+                        $self->_set( { 'description' => $row->[2] } );
+                        $self->_set( { 'char_set' => $row->[3] } );
+                        $self->_set( { '_active' => $row->[4] } );
 
-			push @objs, $self;
-		}
-	};
-	if ( $@ ) {
-		die "Error doing fetch in language _do_list.\n Error: $@\n\n";
-	}
+                        push @objs, $self;
+                }
+        };
+        if ( $@ ) {
+                die "Error doing fetch in language _do_list.\n Error: $@\n\n";
+        }
 
-	return wantarray ? @objs : \@objs;
+        return wantarray ? @objs : \@objs;
 }
 
 =cut

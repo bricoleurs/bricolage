@@ -6,16 +6,16 @@ Bric::Util::EventType - Interface to Types of Events
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -86,7 +86,7 @@ use constant DEBUG => 0;
 ################################################################################
 # Private Class Fields
 my @cols = qw(t.id t.key_name t.name t.description c.pkg_name t.active a.id
-	      a.name);
+              a.name);
 
 my @props = qw(id key_name name description class _active attr);
 my ($meths, $trig_meths, @trig_ord, @trig_props);
@@ -98,17 +98,17 @@ my @ord = qw(key_name name description class active);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 class => Bric::FIELD_READ,
-			 key_name => Bric::FIELD_READ,
-			 name => Bric::FIELD_READ,
-			 description => Bric::FIELD_READ,
-			 attr => Bric::FIELD_READ,
+                         # Public Fields
+                         id => Bric::FIELD_READ,
+                         class => Bric::FIELD_READ,
+                         key_name => Bric::FIELD_READ,
+                         name => Bric::FIELD_READ,
+                         description => Bric::FIELD_READ,
+                         attr => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _active => Bric::FIELD_NONE,
-			});
+                         # Private Fields
+                         _active => Bric::FIELD_NONE,
+                        });
 }
 
 ################################################################################
@@ -171,7 +171,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $et = &$get_em(@_);
+    my $pkg = shift;
+    my $et = $pkg->cache_lookup(@_);
+    return $et if $et;
+
+    $et = $get_em->($pkg, @_);
     # We want @$et to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Util::EventType objects found.' }) if @$et > 1;
@@ -247,7 +251,7 @@ sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -385,8 +389,8 @@ sub list_classes {
 
 =item (@meths || $meths_aref) = Bric::Util::EventType->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -395,39 +399,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -439,29 +443,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
+An anonymous hash of properties used to display the property or attribute.
 Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -479,27 +485,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -520,54 +527,54 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      key_name      => {
-			     name     => 'key_name',
-			     get_meth => sub { shift->get_key_name(@_) },
-			     get_args => [],
-			     disp     => 'Key Name',
-			     search   => 1,
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	      name      => {
-			     name     => 'name',
-			     get_meth => sub { shift->get_name(@_) },
-			     get_args => [],
-			     disp     => 'Name',
-			     search   => 1,
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	      description      => {
-			     name     => 'description',
-			     get_meth => sub { shift->get_description(@_) },
-			     get_args => [],
-			     disp     => 'Description',
-			     len      => 256,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	      class => {
-			     name     => 'class',
-			     get_meth => sub { shift->get_event_type_id(@_) },
-			     get_args => [],
-			     disp     => 'Class',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			    },
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     disp     => 'Active',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			    },
-	     };
+              key_name      => {
+                             name     => 'key_name',
+                             get_meth => sub { shift->get_key_name(@_) },
+                             get_args => [],
+                             disp     => 'Key Name',
+                             search   => 1,
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                            },
+              name      => {
+                             name     => 'name',
+                             get_meth => sub { shift->get_name(@_) },
+                             get_args => [],
+                             disp     => 'Name',
+                             search   => 1,
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                            },
+              description      => {
+                             name     => 'description',
+                             get_meth => sub { shift->get_description(@_) },
+                             get_args => [],
+                             disp     => 'Description',
+                             len      => 256,
+                             req      => 0,
+                             type     => 'short',
+                            },
+              class => {
+                             name     => 'class',
+                             get_meth => sub { shift->get_event_type_id(@_) },
+                             get_args => [],
+                             disp     => 'Class',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                            },
+              active     => {
+                             name     => 'active',
+                             get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                             get_args => [],
+                             disp     => 'Active',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
@@ -591,12 +598,12 @@ B<Notes:> NONE.
 sub my_trig_meths {
     my ($pkg, $ord) = @_;
     unless ( $trig_meths) {
-	foreach my $m (Bric::Biz::Person::User->my_meths(1)) {
-	    my $key = "trig_$m->{name}";
-	    push @trig_ord, $key;
-	    push @trig_props, [$key => "Trig's $m->{disp}"];
-	    $trig_meths->{$key} = $m;
-	}
+        foreach my $m (Bric::Biz::Person::User->my_meths(1)) {
+            my $key = "trig_$m->{name}";
+            push @trig_ord, $key;
+            push @trig_props, [$key => "Trig's $m->{disp}"];
+            $trig_meths->{$key} = $m;
+        }
     }
     return !$ord ? $trig_meths : wantarray ? @{$trig_meths}{@trig_ord}
       : [@{$trig_meths}{@trig_ord}];
@@ -921,7 +928,7 @@ B<Notes:> NONE.
 sub log_event {
     my ($self, $user, $obj, $attr) = @_;
     Bric::Util::Event->new({ et => $self, obj => $obj, init => $attr,
-			   user => $user });
+                           user => $user });
 }
 
 ################################################################################
@@ -950,15 +957,15 @@ sub get_alert_props {
     push @props, map { [ $_->{name} => "$disp $_->{disp}" ] }
       $class->my_meths(1);
     push @props, map {
-	(my $v = lc $_) =~ s/\W+/_/g;
-	[ lc $v => $_ ]
+        (my $v = lc $_) =~ s/\W+/_/g;
+        [ lc $v => $_ ]
     } values % { $self->_get('attr') };
     return wantarray ? @props : \@props;
 }
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1022,19 +1029,19 @@ $get_em = sub {
     my ($pkg, $params, $ids) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id') {
-	    push @wheres, "t.$k = ?";
-	    push @params, $v;
-	} elsif ($k eq 'class_id') {
-	    push @wheres, "t.class__id = ?";
-	    push @params, $v;
-	} elsif ($k eq 'class') {
-	    push @wheres, "LOWER(c.pkg_name) LIKE ?";
-	    push @params, lc $v;
-	} else {
-	    push @wheres, "LOWER(t.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+        if ($k eq 'id') {
+            push @wheres, "t.$k = ?";
+            push @params, $v;
+        } elsif ($k eq 'class_id') {
+            push @wheres, "t.class__id = ?";
+            push @params, $v;
+        } elsif ($k eq 'class') {
+            push @wheres, "LOWER(c.pkg_name) LIKE ?";
+            push @params, lc $v;
+        } else {
+            push @wheres, "LOWER(t.$k) LIKE ?";
+            push @params, lc $v;
+        }
     }
 
     my $where = defined $params->{id} ? '' : 'AND t.active = 1 ';
@@ -1059,15 +1066,15 @@ $get_em = sub {
     bind_columns($sel, \@d[0..$#props - 1], \$aid, \$aname);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	if ($d[0] != $last) {
-	    # Create a new object.
-	    push @ets, &$make_obj($pkg, \@init) unless $last == -1;
-	    # Get the new record.
-	    $last = $d[0];
-	    @init = (@d, {});
-	}
-	# Grab any attributes.
-	$init[$#init]->{$aid} = $aname if $aid;
+        if ($d[0] != $last) {
+            # Create a new object.
+            push @ets, &$make_obj($pkg, \@init) unless $last == -1;
+            # Get the new record.
+            $last = $d[0];
+            @init = (@d, {});
+        }
+        # Grab any attributes.
+        $init[$#init]->{$aid} = $aname if $aid;
     }
     # Grab the last object.
     push @ets, &$make_obj($pkg, \@init) if @init;
@@ -1114,6 +1121,8 @@ $make_obj = sub {
     my $self = bless {}, $pkg;
     $self->SUPER::new;
     $self->_set(\@props, $init);
+    $self->_set__dirty;
+    $self->cache_me;
 };
 
 1;
@@ -1123,7 +1132,7 @@ __END__
 
 =head1 NOTES
 
-This is an early draft of this class, and therefore subject to change.
+NONE.
 
 =head1 AUTHOR
 
@@ -1131,9 +1140,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::Event|Bric::Util::Event>, 
-L<Bric::Util::AlertType|Bric::Util::AlertType>, 
+L<Bric|Bric>,
+L<Bric::Util::Event|Bric::Util::Event>,
+L<Bric::Util::AlertType|Bric::Util::AlertType>,
 L<Bric::Util::Alert|Bric::Util::Alert>
 
 =cut

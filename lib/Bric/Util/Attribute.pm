@@ -3,20 +3,19 @@ package Bric::Util::Attribute;
 
 =head1 NAME
 
- Bric::Util::Attribute - A module to manage attributes for various objects.
-
+Bric::Util::Attribute - A module to manage attributes for various objects.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-03 16:51:27 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -71,92 +70,98 @@ $Date: 2002-05-03 16:51:27 $
 
 =head1 DESCRIPTION
 
-The attribute module allows key/value pairs to be associated with an object.  
-Attributes apply to a specific object of a specific type.  Attributes keys can
-also have metadata associated with them.  This is data that helps define 
-additional information about an attribute key, but says nothing about the 
-attribute value.  Finally, attributes keys can be grouped into 'subsystems'.  A
-subsystem simply holds a group of related attributes.  Specifying subsystems or
-metadata is not necessary for using the attribute class.
+The attribute module allows key/value pairs to be associated with an
+object. Attributes apply to a specific object of a specific type. Attributes
+keys can also have metadata associated with them. This is data that helps
+define additional information about an attribute key, but says nothing about
+the attribute value. Finally, attributes keys can be grouped into
+'subsystems'. A subsystem simply holds a group of related
+attributes. Specifying subsystems or metadata is not necessary for using the
+attribute class.
 
-Attribute values can be one of three types, 'short', 'date' and 'blob'.  This is
-called the 'sql_type'.  Each of these types has a different storabe type in the database.  If an attribute value is a 'short' value its data is limited to a length of 1024 characters.  If an attribute value is a 'date' value, it must be in a database date format.  If an attribute value is a 'blob' value its length is limited only by disk space and database performance.
+Attribute values can be one of three types, 'short', 'date' and 'blob'. This
+is called the 'sql_type'. Each of these types has a different storabe type in
+the database. If an attribute value is a 'short' value its data is limited to
+a length of 1024 characters. If an attribute value is a 'date' value, it must
+be in a database date format. If an attribute value is a 'blob' value its
+length is limited only by disk space and database performance.
 
-Metadata on an attribute key can give more context to the attribute key, or 
-simply be a storage space for information associated with that key.  Metadata
-is a field name and a value.  For instance, an attribute for a user class might 
-be 'notify_email' with values set to 'yes' or 'no'.  A metadata field name for 
+Metadata on an attribute key can give more context to the attribute key, or
+simply be a storage space for information associated with that key. Metadata
+is a field name and a value. For instance, an attribute for a user class might
+be 'notify_email' with values set to 'yes' or 'no'. A metadata field name for
 the 'notify_email' key might be 'description' and a value might be 'Should the
-user be notified via email of new announcements'.  There is no limit to the 
+user be notified via email of new announcements'. There is no limit to the
 number of metadata fields for a given attribute.
 
-A subsystem is a way to organize attributes.  Every attribute lives within a 
-subsystem.  If an attribute is not given a subsystem explicitly, it will 
-automatically be placed inside of a default subsystem.  Most methods in the
-attribute class can be passed a subsystem name, but will use the default name if
-one is not passed.
+A subsystem is a way to organize attributes. Every attribute lives within a
+subsystem. If an attribute is not given a subsystem explicitly, it will
+automatically be placed inside of a default subsystem. Most methods in the
+attribute class can be passed a subsystem name, but will use the default name
+if one is not passed.
 
 You can think about the attribute system like a perl hash:
 
-$attribute = {'subsystem1' =>
-                 {'attr_key1' =>
-                     {'metadata' =>
-                         {'meta_field1' => 'meta_data1',
-                          'meta_field2' => 'meta_data2',
-                          ...
-                         },
-                      'value'    => 'attribute_value1'
-                     },
-                  'attr_key2' =>
-                     {'metadata' =>
-                         {...
-                         },
-                      'value'    => 'attribute_value2'
-                     },
-                  ...
-                 },
-              'subsystem2' =>
-                  {'attr_key1' => {...},
-                   'attr_key2' => {...},
-                   'attr_key3' => {...},
-                  },
-              ...
-             }
+  $attribute = {'subsystem1' =>
+                   {'attr_key1' =>
+                       {'metadata' =>
+                           {'meta_field1' => 'meta_data1',
+                            'meta_field2' => 'meta_data2',
+                            ...
+                           },
+                        'value'    => 'attribute_value1'
+                       },
+                    'attr_key2' =>
+                       {'metadata' =>
+                           {...
+                           },
+                        'value'    => 'attribute_value2'
+                       },
+                    ...
+                   },
+                'subsystem2' =>
+                    {'attr_key1' => {...},
+                     'attr_key2' => {...},
+                     'attr_key3' => {...},
+                    },
+                ...
+               }
 
-where everything ending with a number is data that you as the attribute user 
-sets, and everything else (ie 'metadata' and 'value') is there just to give you
-and idea of the relationships.  The '...' denotes possible additional values 
-following the same pattern.
+where everything ending with a number is data that you as the attribute user
+sets, and everything else (ie 'metadata' and 'value') is there just to give
+you and idea of the relationships. The '...' denotes possible additional
+values following the same pattern.
 
 So, to set value 'attribute_value1', one would call:
 
-$attr_obj->set_attr({'subsys'   => 'subsystem1',
-                     'name'     => 'attr_key1',
-                     'sql_type' => 'short',
-                     'value'    => 'attribute_value1'});
+  $attr_obj->set_attr({'subsys'   => 'subsystem1',
+                       'name'     => 'attr_key1',
+                       'sql_type' => 'short',
+                       'value'    => 'attribute_value1'});
 
 To set 'meta_data2', one would call:
 
-$attr_obj->set_meta({'subsys' => 'subsystem1',
-                     'name'   => 'attr_key1',
-                     'field'  => 'meta_field2',
-                     'value'  => 'meta_data2'});
+  $attr_obj->set_meta({'subsys' => 'subsystem1',
+                       'name'   => 'attr_key1',
+                       'field'  => 'meta_field2',
+                       'value'  => 'meta_data2'});
 
 To retrieve 'attribute_value2', one would call:
 
-$attr_obj->get_meta({'subsys' => 'subsystem1',
-                     'name'   => $attr_key2});
+  $attr_obj->get_meta({'subsys' => 'subsystem1',
+                       'name'   => $attr_key2});
 
-Note that specifying an 'sql_type' is only necessary when setting values, to let
-the module know how to store them.  When a value is retrieved, the attribute 
-module can tell what type of data is stored.
+Note that specifying an 'sql_type' is only necessary when setting values, to
+let the module know how to store them. When a value is retrieved, the
+attribute module can tell what type of data is stored.
 
-One final note.  The examples do not explicitly show this, but any metadata set 
-on a particular attribute name will be available to all objects of the same 
-type if they use the same attribute name.  For instance, if a user object with
-id = 5 sets metadata field 'cereal' on attribute name 'breakfast' to 'cracklin oat bran', then all user objects that set attribute 'breakfast' will have a 
-metadata field 'cereal' with value 'cracklin oat bran'.  This is intentional and
-is meant to promote attribute reusablility.
+One final note. The examples do not explicitly show this, but any metadata set
+on a particular attribute name will be available to all objects of the same
+type if they use the same attribute name. For instance, if a user object with
+id = 5 sets metadata field 'cereal' on attribute name 'breakfast' to 'cracklin
+oat bran', then all user objects that set attribute 'breakfast' will have a
+metadata field 'cereal' with value 'cracklin oat bran'. This is intentional
+and is meant to promote attribute reusablility.
 
 =cut
 
@@ -165,13 +170,11 @@ is meant to promote attribute reusablility.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
 use Bric::Util::DBI qw(:standard prepare_ca);
 use Bric::Util::Fault::Exception::GEN;
 
@@ -204,50 +207,47 @@ use constant META_TABLE     => sub { return 'attr_'.$_[0].'_meta' };
 # Constants for getting the list of column names
 use constant ATTR_COLS      => qw( subsys name sql_type active );
 use constant VAL_COLS       => qw( object__id attr__id date_val short_val
-				   blob_val serial active );
+                                   blob_val serial active );
 use constant META_COLS      => qw( attr__id name value active );
 
 # Tie table names to column lists
 use constant TABLES => {'attr' => {'name' => ATTR_TABLE,
-				   'abbr' => 'a',
-				   'cols' => [ATTR_COLS]},
-			'meta' => {'name' => META_TABLE,
-				   'abbr' => 'm',
-				   'cols' => [META_COLS]},
-			'val'  => {'name' => VAL_TABLE,
-				   'abbr' => 'v',
-				   'cols' => [VAL_COLS]}};
+                                   'abbr' => 'a',
+                                   'cols' => [ATTR_COLS]},
+                        'meta' => {'name' => META_TABLE,
+                                   'abbr' => 'm',
+                                   'cols' => [META_COLS]},
+                        'val'  => {'name' => VAL_TABLE,
+                                   'abbr' => 'v',
+                                   'cols' => [VAL_COLS]}};
 
 #==============================================================================#
 # Fields                               #
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
+# Public Class Fields
 my %ATTR_ID_CACHE;
 my %ATTR_NAME_CACHE;
 
 #--------------------------------------#
-# Private Class Fields                  
-
+# Private Class Fields
 
 
 #--------------------------------------#
-# Instance Fields                       
-
+# Instance Fields
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 # This is the current subsystem being used.
-			 'subsys'	 => Bric::FIELD_RDWR,
-			 # The ID of the object whos attributes we're changing.
-			 'object_id'	 => Bric::FIELD_READ,
+                         # Public Fields
+                         # This is the current subsystem being used.
+                         'subsys'        => Bric::FIELD_RDWR,
+                         # The ID of the object whos attributes we're changing.
+                         'object_id'     => Bric::FIELD_READ,
 
-			 # Private Fields
-			 '_attr'         => Bric::FIELD_NONE,
-			});
+                         # Private Fields
+                         '_attr'         => Bric::FIELD_NONE,
+                        });
 }
 
 CHECK {
@@ -268,13 +268,12 @@ CHECK {
 =cut
 
 #--------------------------------------#
-# Constructors                          
-
+# Constructors
 #------------------------------------------------------------------------------#
 
 =item $obj = new Bric::Util::Attribute($init);
 
-Creates a new attribute object for an object type with ID given by argument 
+Creates a new attribute object for an object type with ID given by argument
 'id'.
 
 Keys of $init are:
@@ -285,9 +284,9 @@ Keys of $init are:
 
 subsys
 
-The subsystem to use by default for all subsequent method calls requiring a 
-subsystem.  If this is not given the package default subsytem, DEFAULT_SUBSYS, 
-will be used.  Any method requiring a subsystem will use the value passed here
+The subsystem to use by default for all subsequent method calls requiring a
+subsystem. If this is not given the package default subsytem, DEFAULT_SUBSYS,
+will be used. Any method requiring a subsystem will use the value passed here
 by default if a subsystem is not passed to that method.
 
 This field is optional
@@ -296,7 +295,7 @@ This field is optional
 
 object_id
 
-The object ID for which this attribute applies.  Attributes values are specific
+The object ID for which this attribute applies. Attributes values are specific
 to the objects that set them.
 
 ** This is a required field **
@@ -341,28 +340,24 @@ sub new {
 #------------------------------------------------------------------------------#
 
 sub lookup {
-   my ($param) = @_;
-
-   # This is just a placeholder.  There is no obvious use for a lookup function 
+   # This is just a placeholder. There is no obvious use for a lookup function
    # here.
-
-   die "Method not implemented\n";
+   die Bric::Util::Fault::Exception::MNI->new
+     ({ msg => "lookup method not implemented" });
 }
 
 #------------------------------------------------------------------------------#
 
 sub list {
-   my ($param) = @_;
-
-   # This is just a placeholder.  There is no obvious use for a list function 
+   # This is just a placeholder. There is no obvious use for a list function
    # here.
-
-   die "Method not implemented\n";
+   die Bric::Util::Fault::Exception::MNI->new
+     ({ msg => "list method not implemented" });
 }
 
 
 #--------------------------------------#
-# Destructors                           
+# Destructors
 
 sub DESTROY {
     # This method should be here even if its empty so that we don't waste time
@@ -370,16 +365,15 @@ sub DESTROY {
 }
 
 #--------------------------------------#
-# Public Class Methods                  
-
+# Public Class Methods
 #------------------------------------------------------------------------------#
 
 =item $type = Bric::Util::Attribute::short_object_type();
 
-Returns the short object type name  used to construct the attribute table name 
-where the attributes for this class type are stored.  This should be overridden
-in all subclasses of Attribute.  Oh, did I mention that the Attribute class
-should never be used directly?  It is an abstract class and only subclasses of 
+Returns the short object type name used to construct the attribute table name
+where the attributes for this class type are stored. This should be overridden
+in all subclasses of Attribute. Oh, did I mention that the Attribute class
+should never be used directly? It is an abstract class and only subclasses of
 Attribute should be instantiated.
 
 This method is used internally by the Attribute object.
@@ -402,24 +396,24 @@ NONE
 
 B<Notes:>
 
-Values for this method look like 'grp' given a full object type of 
+Values for this method look like 'grp' given a full object type of
 'Bric::Util::Grp'
 
 =cut
 
 sub short_object_type {
-    die "Short object type not defined\n";
+   die Bric::Util::Fault::Exception::MNI->new
+     ({ msg => "Short object type not defined" });
     #return 'table name';
 }
 
 #--------------------------------------#
-# Public Instance Methods               
-
+# Public Instance Methods
 #------------------------------------------------------------------------------#
 
 =item $id = $attr_obj->get_subsys();
 
-Return the current default subsys name.  This subsys is used for any query 
+Return the current default subsys name. This subsys is used for any query
 requiring a subsys when the user has not supplied a subsys.
 
 B<Throws:>
@@ -457,8 +451,8 @@ B<Notes:>
 
 =item @names = $attr_obj->subsys_names($inactive);
 
-Returns a list of subsystem names for this object.  If argument 'inactive' is 
-true, then inactive subsystem names will be returned.  Otherwise only active
+Returns a list of subsystem names for this object. If argument 'inactive' is
+true, then inactive subsystem names will be returned. Otherwise only active
 subsys names will be returned.
 
 B<Throws:>
@@ -490,7 +484,7 @@ sub subsys_names {
     bind_columns($sth, \$d);
 
     while (fetch($sth)) {
-	push @names, $d;
+        push @names, $d;
     }
 
     return wantarray ? @names : \@names;
@@ -500,7 +494,7 @@ sub subsys_names {
 
 =item $id = $attr_obj->get_object_id();
 
-Return the object ID for this attribute object.  This is the object to which 
+Return the object ID for this attribute object. This is the object to which
 these attributes apply.
 
 B<Throws:>
@@ -545,7 +539,7 @@ The attribute type to use, given instead of a 'name'/'subsys' pair.
 
 Returns the sqltype (the datatype) for the value of this attribute.
 
-If no subsystem is given, it will use the default subsystem passed to the new 
+If no subsystem is given, it will use the default subsystem passed to the new
 constructor or via the 'set_subsys' method.
 
 B<Throws:>
@@ -599,8 +593,8 @@ The attribute type ID to use rather than use the 'name'/'subsys' combination.
 
 Returns the value of the attribute for the given attribute type.
 
-If no subsystem is given, but a name is given it will use the default subsystem 
-passed to the new constructor or via the 'set_subsys' method.
+If no subsystem is given, but a name is given it will use the default
+subsystem passed to the new constructor or via the 'set_subsys' method.
 
 B<Throws:>
 
@@ -628,7 +622,7 @@ sub get_attr {
 =item $attr_id = $attr_obj->get_attr_id($subsys, $name);
 
 Returns an ID for an attribute type which uniquely identifies a subsystem name
-pair.  This ID can be used in place of an attribute name and subsystem for 
+pair. This ID can be used in place of an attribute name and subsystem for
 methods that require those values.
 
 B<Throws:>
@@ -666,7 +660,7 @@ Keys of $param are:
 
 name
 
-The name of the attribute 
+The name of the attribute
 
 =item *
 
@@ -684,9 +678,10 @@ The type ID to use rather than use the 'name'/'subsys' combination.
 
 ret_set_only
 
-Only return attribute names when that name has a corresponding row in one of the
-value tables if set to 1.  Default is setting this to 0 and all attribute names
-will be returned, even if no value is set (undef will be returned as the value)
+Only return attribute names when that name has a corresponding row in one of
+the value tables if set to 1. Default is setting this to 0 and all attribute
+names will be returned, even if no value is set (undef will be returned as the
+value)
 
 =item *
 
@@ -698,8 +693,8 @@ If true, inactive attributes will be returned.
 
 Returns a hash of key/values for the given parameters.
 
-If no subsystem is given, but a name is given it will use the default subsystem 
-passed to the new constructor or via the 'set_subsys' method.
+If no subsystem is given, but a name is given it will use the default
+subsystem passed to the new constructor or via the 'set_subsys' method.
 
 B<Throws:>
 
@@ -726,17 +721,17 @@ sub get_attr_hash {
 
 =item $all = $attr_obj->all_for_subsys($subsys);
 
-Return all attribute/value pairs AND metadata for a given subsystem.  If 
-$subsys is not passed the default subsys will be used.  Format of the return 
+Return all attribute/value pairs AND metadata for a given subsystem. If
+$subsys is not passed the default subsys will be used. Format of the return
 value is:
 
-$all = {'attr_name' => {'value' => 'attr_value',
-			'meta'  => {'attr_meta_field1' => 'attr_meta_value1',
-				    ...,
-				   },
-		       },
-	...,
-       };
+  $all = {'attr_name' => {'value' => 'attr_value',
+                          'meta'  => {'attr_meta_field1' => 'attr_meta_value1',
+                                      ...,
+                                     },
+                         },
+          ...,
+         };
 
 B<Throws:>
 
@@ -758,11 +753,11 @@ sub all_for_subsys {
     my $val = $self->_get_val({'subsys' => $subsys});
 
     foreach my $name (keys %$val) {
-	my $meta = $self->_get_meta({'subsys' => $subsys,
-				     'name'   => $name});
-	my $m = { map { $_ => $meta->{$_}->{'value'} } keys %$meta };
-	$all->{$name} = {'value' => $val->{$name}->{'value'},
-			 'meta'  => $m};
+        my $meta = $self->_get_meta({'subsys' => $subsys,
+                                     'name'   => $name});
+        my $m = { map { $_ => $meta->{$_}->{'value'} } keys %$meta };
+        $all->{$name} = {'value' => $val->{$name}->{'value'},
+                         'meta'  => $m};
     }
 
     return $all;
@@ -792,8 +787,8 @@ The subsystem in which to search.
 
 Returns a hash of key/values for the given parameters.
 
-If no subsystem is given, but a name is given it will use the default subsystem 
-passed to the new constructor or via the 'set_subsys' method.
+If no subsystem is given, but a name is given it will use the default
+subsystem passed to the new constructor or via the 'set_subsys' method.
 
 B<Throws:>
 
@@ -813,19 +808,19 @@ sub search_attr {
     my ($attr_id) = $param->{'attr_id'};
     my (@where, @bind);
     my %ret;
-    
+
     # Set this via the default subsys if they didn't pass anything.
     $param->{'subsys'} ||= $self->get_subsys;
 
     push @where, ('a.subsys=?', 'a.name LIKE ?', 
-		  'a.id = v.attr__id', 'v.active=?');
+                  'a.id = v.attr__id', 'v.active=?');
     push @bind, (@{$param}{'subsys','name'}, not $param->{'inactive'});
-    
+
     my $d = $self->_select_table(['attr', 'val'], \@where, \@bind);
-    
+
     foreach (@$d) {
-	my $sqltype = $_->{'attr'}->{'sql_type'};
-	$ret{$_->{'attr'}->{'name'}} = $_->{'val'}->{"${sqltype}_val"};
+        my $sqltype = $_->{'attr'}->{'sql_type'};
+        $ret{$_->{'attr'}->{'name'}} = $_->{'val'}->{"${sqltype}_val"};
     }
 
     return \%ret;
@@ -843,7 +838,7 @@ Keys of $param are:
 
 name
 
-The name of the attribute 
+The name of the attribute
 
 =item *
 
@@ -867,7 +862,7 @@ The type ID to use rather than use the 'name'/'subsys' combination.
 
 Sets the value of a particular attribute.
 
-If no subsys is given, it will use the default subsystem passed to the new 
+If no subsys is given, it will use the default subsystem passed to the new
 constructor or via the 'set_subsys' method.
 
 B<Throws:>
@@ -895,8 +890,8 @@ sub set_attr {
 
 =item $success = $attr_obj->deactivate_attr($param);
 
-Deactivates an attribute value.  This means that the value is still in the 
-database, but it has been made inactive.  Inactive values will not be retrieved
+Deactivates an attribute value. This means that the value is still in the
+database, but it has been made inactive. Inactive values will not be retrieved
 unless specifically sought after.
 
 The keys of $param are:
@@ -907,7 +902,7 @@ The keys of $param are:
 
 name
 
-The name of the attribute to clear. 
+The name of the attribute to clear.
 
 =item *
 
@@ -923,7 +918,7 @@ The type of object (represents a name/subsys pair).
 
 =back
 
-If no subsys is given, it will use the default subsystem passed to the new 
+If no subsys is given, it will use the default subsystem passed to the new
 constructor or via the 'set_subsys' method.
 
 B<Throws:>
@@ -978,7 +973,7 @@ The type of object (represents a name/subsys pair).
 
 =back
 
-If no subsys is given, it will use the default subsystem passed to the new 
+If no subsys is given, it will use the default subsystem passed to the new
 constructor or via the 'set_subsys' method.
 
 B<Throws:>
@@ -1050,10 +1045,10 @@ A hash ref of field/value metadata pairs.
 
 =back
 
-Adds metadata about a particular attribute name/subsys pair.  Metadata can be 
+Adds metadata about a particular attribute name/subsys pair. Metadata can be
 things such as attribute descriptions, default values, etc.
 
-If no subsys is given, it will use the default subsystem passed to the new 
+If no subsys is given, it will use the default subsystem passed to the new
 constructor or via the 'set_subsys' method.
 
 B<Throws:>
@@ -1111,9 +1106,9 @@ The name of the metadata field.
 
 =back
 
-Either 'name' and optional 'subsys' (if not given the current default will be 
-used) must be given, or an 'attr_id' must be given.  If a field name is given, 
-the metadata associated with that field will be returned.  If no field name is 
+Either 'name' and optional 'subsys' (if not given the current default will be
+used) must be given, or an 'attr_id' must be given. If a field name is given,
+the metadata associated with that field will be returned. If no field name is
 given, then all metadata for the name/subsys or attr_id will be returned in a
 hash.
 
@@ -1138,10 +1133,10 @@ sub get_meta {
     return unless $meta;
 
     if ($param->{'field'}) {
-	return $meta->{$param->{'field'}}->{'value'};
+        return $meta->{$param->{'field'}}->{'value'};
     } else {
-	# If they didn't request a specific field, return it all.
-	return $meta;
+        # If they didn't request a specific field, return it all.
+        return $meta;
     }
 }
 
@@ -1181,10 +1176,19 @@ The name of the metadata field.
 
 These keys can be used in the following combinations:
 
-1) An 'attr_id' and a 'field'
-2) A 'subsys', 'name' and a 'field'
+=over
 
-Deletes a metadata entry for a given metadata name and attribute name/subsys 
+=item 1
+
+An 'attr_id' and a 'field'
+
+=item 2
+
+A 'subsys', 'name' and a 'field'
+
+=back
+
+Deletes a metadata entry for a given metadata name and attribute name/subsys
 pair.
 
 B<Throws:>
@@ -1227,69 +1231,69 @@ sub save {
     my $attr = $self->_get('_attr');
 
     while (my ($sub, $subval) = each %$attr) {
-	while (my ($name, $nameval) = each %$subval) {
-	    my $sql_type = $nameval->{'sql_type'};
-	    my $val_id   = $nameval->{'_val_id'};
+        while (my ($name, $nameval) = each %$subval) {
+            my $sql_type = $nameval->{'sql_type'};
+            my $val_id   = $nameval->{'_val_id'};
 
-	    # Create this attribute if it doesn't exist.
-	    unless ($nameval->{'_attr_id'}) {
-		my $id = $self->_insert_table('attr', {'subsys'   => $sub,
-						       'name'     => $name,
-						       'sql_type' => $sql_type,
-						       'active'   => 1});
-		
-		$nameval->{'_attr_id'} = $id;
-	    }
+            # Create this attribute if it doesn't exist.
+            unless ($nameval->{'_attr_id'}) {
+                my $id = $self->_insert_table('attr', {'subsys'   => $sub,
+                                                       'name'     => $name,
+                                                       'sql_type' => $sql_type,
+                                                       'active'   => 1});
+
+                $nameval->{'_attr_id'} = $id;
+            }
 
             # Delete this attribute if necessary
-	    if ($nameval->{'_delete'}) {
-		$self->_delete_from_table('val', ['id = ?'], [$val_id]);
-		next;
-	    }
+            if ($nameval->{'_delete'}) {
+                $self->_delete_from_table('val', ['id = ?'], [$val_id]);
+                next;
+            }
 
-	    # Update the attribute value if its dirty
-	    if ($nameval->{'_dirty'}) {
-		my $dat = {'object__id'     => $self->get_object_id,
-			   'attr__id'       => $nameval->{'_attr_id'},
-			   $sql_type.'_val' => $nameval->{'value'},
-			   'active'         => $nameval->{'active'}};
+            # Update the attribute value if its dirty
+            if ($nameval->{'_dirty'}) {
+                my $dat = {'object__id'     => $self->get_object_id,
+                           'attr__id'       => $nameval->{'_attr_id'},
+                           $sql_type.'_val' => $nameval->{'value'},
+                           'active'         => $nameval->{'active'}};
 
-		if ($val_id) {
-		    $dat->{'id'} = $val_id;
-		    $self->_update_table('val', ['id=?'], $dat);
-		} else {
-		    $val_id = $self->_insert_table('val', $dat);
-		    $nameval->{'_val_id'} = $val_id;
-		}
-	    }
+                if ($val_id) {
+                    $dat->{'id'} = $val_id;
+                    $self->_update_table('val', ['id=?'], $dat);
+                } else {
+                    $val_id = $self->_insert_table('val', $dat);
+                    $nameval->{'_val_id'} = $val_id;
+                }
+            }
 
-	    # Update the metadata values
-	    while (my ($meta, $metaval) = each %{$nameval->{'_meta'}}) {
-		my $meta_id =  $metaval->{'_meta_id'};
+            # Update the metadata values
+            while (my ($meta, $metaval) = each %{$nameval->{'_meta'}}) {
+                my $meta_id =  $metaval->{'_meta_id'};
 
-		# Delete this attribute if necessary
-		if ($metaval->{'_delete'}) {
-		    $self->_delete_from_table('meta', ['id = ?'], [$meta_id]);
-		    next;
-		}
+                # Delete this attribute if necessary
+                if ($metaval->{'_delete'}) {
+                    $self->_delete_from_table('meta', ['id = ?'], [$meta_id]);
+                    next;
+                }
 
-		# Only update if this metadata point is dirty.
-		if ($metaval->{'_dirty'}) {
-		    my $dat = {'attr__id' => $nameval->{'_attr_id'},
-			       'name'     => $meta,
-			       'value'    => $metaval->{'value'},
-			       'active'   => $metaval->{'active'}};
+                # Only update if this metadata point is dirty.
+                if ($metaval->{'_dirty'}) {
+                    my $dat = {'attr__id' => $nameval->{'_attr_id'},
+                               'name'     => $meta,
+                               'value'    => $metaval->{'value'},
+                               'active'   => $metaval->{'active'}};
 
-		    if ($meta_id) {
-			$dat->{'id'} = $meta_id;
-			$self->_update_table('meta', ['id=?'], $dat);
-		    } else {
-			$meta_id = $self->_insert_table('meta', $dat);
-			$metaval->{'_meta_id'} = $meta_id;
-		    }
-		}
-	    }
-	}
+                    if ($meta_id) {
+                        $dat->{'id'} = $meta_id;
+                        $self->_update_table('meta', ['id=?'], $dat);
+                    } else {
+                        $meta_id = $self->_insert_table('meta', $dat);
+                        $metaval->{'_meta_id'} = $meta_id;
+                    }
+                }
+            }
+        }
     }
 
     return $self;
@@ -1301,18 +1305,13 @@ sub save {
 # Private Methods                      #
 #======================================#
 
+=back
+
 =head2 Private Methods
 
-=cut
+=over 4
 
-#--------------------------------------#
-# Private Class Methods                 
-
-#------------------------------------------------------------------------------#
-
-=item 
-
-
+=item _table_info
 
 B<Throws:>
 
@@ -1336,13 +1335,12 @@ sub _table_info {
       unless exists TABLES->{$type};
 
     return (TABLES->{$type}->{'name'}->($name),
-	    TABLES->{$type}->{'abbr'},
-	    TABLES->{$type}->{'cols'});
+            TABLES->{$type}->{'abbr'},
+            TABLES->{$type}->{'cols'});
 }
 
 #--------------------------------------#
-# Private Instance Methods              
-
+# Private Instance Methods
 #------------------------------------------------------------------------------#
 
 =item $self = $self->_get_meta($param)
@@ -1397,11 +1395,11 @@ sub _get_meta {
                   (exists $attr->{$subsys}->{$name}->{'value'});
 
     if ($field) {
-	# Return the individual value
-	return $attr->{$subsys}->{$name}->{'_meta'}->{$field};
+        # Return the individual value
+        return $attr->{$subsys}->{$name}->{'_meta'}->{$field};
     } else {
-	# Return a hash of values.
-	return $attr->{$subsys}->{$name}->{'_meta'};
+        # Return a hash of values.
+        return $attr->{$subsys}->{$name}->{'_meta'};
     }
 }
 
@@ -1422,8 +1420,8 @@ The name of the attribute to set. (optional)
 =back
 
 If 'name' is not passed a data structure of all attributes in 'subsys' (or the
-default subsys) are returned.  If name is passed, then a data structure for that
-attribute alone is returned.
+default subsys) are returned. If name is passed, then a data structure for
+that attribute alone is returned.
 
 B<Throws:>
 
@@ -1451,16 +1449,16 @@ sub _get_val {
     $self->_load_subsys($subsys) unless exists $attr->{$subsys};
 
     if ($name) {
-	# Make sure that a value has been set.
-	return unless exists $attr->{$subsys}->{$name}->{'value'};
+        # Make sure that a value has been set.
+        return unless exists $attr->{$subsys}->{$name}->{'value'};
 
-	# Return the individual value
-	return $attr->{$subsys}->{$name};
+        # Return the individual value
+        return $attr->{$subsys}->{$name};
     } else {
-	# Return a hash of values that are set.
-	return { map { $_ => $attr->{$subsys}->{$_} }
-	             grep(exists($attr->{$subsys}->{$_}->{'value'}),
-			  keys %{$attr->{$subsys}}) };
+        # Return a hash of values that are set.
+        return { map { $_ => $attr->{$subsys}->{$_} }
+                     grep(exists($attr->{$subsys}->{$_}->{'value'}),
+                          keys %{$attr->{$subsys}}) };
     }
 }
 
@@ -1520,18 +1518,18 @@ sub _set_meta {
 
     # Setup the attribute if its not already there.
     unless ($named_attr) {
-	$named_attr = $attr->{$subsys}->{$name} = {'sql_type'  => 'short',
-						   'value'     => undef,
-						   'active'    => 1,
-						   '_dirty'    => 1}
+        $named_attr = $attr->{$subsys}->{$name} = {'sql_type'  => 'short',
+                                                   'value'     => undef,
+                                                   'active'    => 1,
+                                                   '_dirty'    => 1}
     }
 
     my $meta = $named_attr->{'_meta'}->{$field} ||= {};
 
     unless (defined($meta->{'value'}) and ($meta->{'value'} eq $value)) {
-	$meta->{'value'}  = $value;
-	$meta->{'active'} = 1;
-	$meta->{'_dirty'} = 1;
+        $meta->{'value'}  = $value;
+        $meta->{'active'} = 1;
+        $meta->{'_dirty'} = 1;
     }
 }
 
@@ -1593,11 +1591,11 @@ sub _set_val {
 
     # Only update this value if it changes.
     unless (defined($named_attr->{'value'}) and
-	    ($named_attr->{'value'} eq $value)) {
-	$named_attr->{'value'}    = $value;
-	$named_attr->{'sql_type'} = $sql_type;
-	$named_attr->{'active'}   = 1;
-	$named_attr->{'_dirty'}   = 1;
+            ($named_attr->{'value'} eq $value)) {
+        $named_attr->{'value'}    = $value;
+        $named_attr->{'sql_type'} = $sql_type;
+        $named_attr->{'active'}   = 1;
+        $named_attr->{'_dirty'}   = 1;
     }
 }
 
@@ -1634,11 +1632,11 @@ sub _load_subsys {
     my $d = $self->_select_table(['attr'], \@where, \@bind);
 
     foreach (@$d) {
-	my $a = $_->{'attr'};
+        my $a = $_->{'attr'};
 
-	$sub->{$a->{'name'}} = {'sql_type' => $a->{'sql_type'},
-				'_attr_id' => $a->{'id'},
-				'_dirty'   => 0};
+        $sub->{$a->{'name'}} = {'sql_type' => $a->{'sql_type'},
+                                '_attr_id' => $a->{'id'},
+                                '_dirty'   => 0};
     }
 
     # Next select the values
@@ -1648,14 +1646,14 @@ sub _load_subsys {
     $d = $self->_select_table(['attr', 'val'], \@where, \@bind);
 
     foreach (@$d) {
-	my ($a, $v)  = ($_->{'attr'}, $_->{'val'});
-	my $sql_type = $a->{'sql_type'};
-	my $value    = $v->{$sql_type.'_val'};
+        my ($a, $v)  = ($_->{'attr'}, $_->{'val'});
+        my $sql_type = $a->{'sql_type'};
+        my $value    = $v->{$sql_type.'_val'};
 
-	$sub->{$a->{'name'}}->{'value'}   = $value;
-	$sub->{$a->{'name'}}->{'active'}  = $v->{'active'};
-	$sub->{$a->{'name'}}->{'_val_id'} = $v->{'id'};
-	$sub->{$a->{'name'}}->{'_dirty'}  = 0;
+        $sub->{$a->{'name'}}->{'value'}   = $value;
+        $sub->{$a->{'name'}}->{'active'}  = $v->{'active'};
+        $sub->{$a->{'name'}}->{'_val_id'} = $v->{'id'};
+        $sub->{$a->{'name'}}->{'_dirty'}  = 0;
     }
 
 
@@ -1666,13 +1664,13 @@ sub _load_subsys {
     $d = $self->_select_table(['attr', 'meta'], \@where, \@bind);
 
     foreach (@$d) {
-	my ($a, $m) = ($_->{'attr'}, $_->{'meta'});
+        my ($a, $m) = ($_->{'attr'}, $_->{'meta'});
 
-	$sub->{$a->{'name'}}->{'_meta'}->{$m->{'name'}} =
+        $sub->{$a->{'name'}}->{'_meta'}->{$m->{'name'}} =
                                                {'value'    => $m->{'value'},
-						'active'   => $m->{'active'},
-						'_meta_id' => $m->{'id'},
-						'_dirty'   => 0};
+                                                'active'   => $m->{'active'},
+                                                '_meta_id' => $m->{'id'},
+                                                '_dirty'   => 0};
     }
 }
 
@@ -1705,9 +1703,9 @@ sub _select_table {
 
     # Collect all the columns and tables.
     foreach my $t (@$type) {
-	my ($table, $abbr, $cols) = _table_info($t, $name);
-	push @sel, map { "$abbr.$_" } ('id', @$cols);
-	push @from, "$table $abbr";
+        my ($table, $abbr, $cols) = _table_info($t, $name);
+        push @sel, map { "$abbr.$_" } ('id', @$cols);
+        push @from, "$table $abbr";
     }
 
     # Create the SQL statement.
@@ -1722,15 +1720,15 @@ sub _select_table {
 
     # Grab the results.
     while (fetch($sth)) {
-	my $set;
-	my @tmp = @d;
+        my $set;
+        my @tmp = @d;
 
-	foreach my $t (@$type) {
-	    my ($cols) = (_table_info($t, $name))[2];
-	    $set->{$t} = {map { ("$_" => shift @tmp) } ('id', @$cols)};
-	}
-	
-	push @ret, $set;
+        foreach my $t (@$type) {
+            my ($cols) = (_table_info($t, $name))[2];
+            $set->{$t} = {map { ("$_" => shift @tmp) } ('id', @$cols)};
+        }
+
+        push @ret, $set;
     }
 
     # Finish the query.
@@ -1862,8 +1860,7 @@ NONE
 
 =head1 AUTHOR
 
- "Garth Webb" <garth@perijove.com>
- Bricolage Engineering
+Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 

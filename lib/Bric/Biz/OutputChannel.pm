@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-24 06:50:13 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -334,6 +334,8 @@ B<Notes:> NONE.
 
 sub lookup {
     my ($class, $params) = @_;
+    my $oc = $class->cache_lookup($params);
+    return $oc if $oc;
 
     die $gen->new( { msg => "Missing required param 'id'" } )
       unless $params->{id};
@@ -1671,7 +1673,8 @@ sub _do_list {
             $grp_ids = $d[$GRP_ID_IDX] = [$d[$GRP_ID_IDX]];
             $self->_set($props, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            $href ? $ocs{$d[0]} = $self : push @ocs, $self
+            $href ? $ocs{$d[0]} = $self->cache_me :
+              push @ocs, $self->cache_me;
         } else {
             push @$grp_ids, $d[$GRP_ID_IDX];
         }

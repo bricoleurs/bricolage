@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -103,16 +103,16 @@ my $meths;
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,         # Priv ID.
-			 usr_grp_id => Bric::FIELD_READ, # Group granted the priv.
-			 obj_grp_id => Bric::FIELD_READ, # Group for which priv granted.
-			 mtime => Bric::FIELD_READ,      # Last modified time.
-			 value => Bric::FIELD_RDWR,      # The Priv granted.
+                         # Public Fields
+                         id => Bric::FIELD_READ,         # Priv ID.
+                         usr_grp_id => Bric::FIELD_READ, # Group granted the priv.
+                         obj_grp_id => Bric::FIELD_READ, # Group for which priv granted.
+                         mtime => Bric::FIELD_READ,      # Last modified time.
+                         value => Bric::FIELD_RDWR,      # The Priv granted.
 
-			 # Private Fields
-			 _del => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _del => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -168,8 +168,6 @@ DENY => 255
 
 =back
 
-=item *
-
 =back
 
 B<Throws:>
@@ -200,7 +198,7 @@ sub new {
     my ($pkg, $init) = @_;
     die Bric::Util::Fault::Exception::AP->new(
       { msg => "Must pass user group and object group to "
-	       .__PACKAGE__."::new()" })
+               .__PACKAGE__."::new()" })
       unless $init->{usr_grp} && $init->{obj_grp};
 
     # Grab the object group ID.
@@ -268,7 +266,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $priv = &$get_em(@_);
+    my $pkg = shift;
+    my $priv = $pkg->cache_lookup(@_);
+    return $priv if $priv;
+
+    $priv = $get_em->($pkg, @_);
     # We want @$priv to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Util::Priv objects found.' }) if @$priv > 1;
@@ -389,7 +391,7 @@ sub href { &$get_em(@_, 0, 1) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -524,11 +526,11 @@ sub get_acl {
     my ($gid, $priv, $mtime, $acl);
     bind_columns($sel, \$gid, \$priv, \$mtime);
     while (fetch($sel)) {
-	# Be sure to save the most recent modified time.
-	$acl->{mtime} = !$acl->{mtime} ? $mtime : $acl->{mtime} gt $mtime ?
-	  $acl->{mtime} : $mtime;
-	# Grab the priv for this group ID.
-	$acl->{$gid} = $priv;
+        # Be sure to save the most recent modified time.
+        $acl->{mtime} = !$acl->{mtime} ? $mtime : $acl->{mtime} gt $mtime ?
+          $acl->{mtime} : $mtime;
+        # Grab the priv for this group ID.
+        $acl->{$gid} = $priv;
     }
     finish($sel);
     return $acl;
@@ -620,18 +622,18 @@ B<Notes:> NONE.
 
 sub vals_href {
     return { &READ   => 'READ',
-	     &EDIT   => 'EDIT',
-	     &CREATE => 'CREATE',
-	     &DENY   => 'DENY'
-	   }
+             &EDIT   => 'EDIT',
+             &CREATE => 'CREATE',
+             &DENY   => 'DENY'
+           }
 }
 
 sub vals_aref {
     return [ [ &READ   => 'READ'   ],
-	     [ &EDIT   => 'EDIT'   ],
-	     [ &CREATE => 'CREATE' ],
-	     [ &DENY   => 'DENY'   ]
-	   ]
+             [ &EDIT   => 'EDIT'   ],
+             [ &CREATE => 'CREATE' ],
+             [ &DENY   => 'DENY'   ]
+           ]
 }
 
 ################################################################################
@@ -640,8 +642,8 @@ sub vals_aref {
 
 =item (@meths || $meths_aref) = Bric::Util::Priv->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -650,39 +652,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -694,29 +696,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -734,27 +738,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -775,71 +780,71 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      id         => {
-			      name     => 'id',
-			      get_meth => sub { shift->get_id(@_) },
-			      get_args => [],
-			      disp     => 'ID',
-			      len      => 10,
-			      type     => 'short',
-			     },
-	      usr_grp_id => {
-			     name     => 'usr_grp_id',
-			     get_meth => sub { shift->get_usr_grp_id(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_usr_grp_id(@_) },
-			     set_args => [],
-			     disp     => 'User Group ID',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 10,
-					     maxlength => 10
-					 }
-			    },
-	      obj_grp_id => {
-			     name     => 'obj_grp_id',
-			     get_meth => sub { shift->get_obj_grp_id(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_obj_grp_id(@_) },
-			     set_args => [],
-			     disp     => 'Object Group ID',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 10,
-					     maxlength => 10
-					 }
-			    },
-	      value      => {
-			     name     => 'value',
-			     get_meth => sub { shift->get_value(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_value(@_) },
-			     set_args => [],
-			     disp     => 'Value',
-			     len      => 3,
-			     req      => 1,
-			     type     => 'short',
-			     props    => {   type => 'radio',
-					     vals => vals_aref(),
-					 }
-			    },
-	      mtime      => {
-			     name     => 'mtime',
-			     get_meth => sub { shift->get_mtime(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_mtime(@_) },
-			     set_args => [],
-			     disp     => 'Modified Time',
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type      => 'date' }
-			    }
-	     };
+              id         => {
+                              name     => 'id',
+                              get_meth => sub { shift->get_id(@_) },
+                              get_args => [],
+                              disp     => 'ID',
+                              len      => 10,
+                              type     => 'short',
+                             },
+              usr_grp_id => {
+                             name     => 'usr_grp_id',
+                             get_meth => sub { shift->get_usr_grp_id(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_usr_grp_id(@_) },
+                             set_args => [],
+                             disp     => 'User Group ID',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 10,
+                                             maxlength => 10
+                                         }
+                            },
+              obj_grp_id => {
+                             name     => 'obj_grp_id',
+                             get_meth => sub { shift->get_obj_grp_id(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_obj_grp_id(@_) },
+                             set_args => [],
+                             disp     => 'Object Group ID',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 10,
+                                             maxlength => 10
+                                         }
+                            },
+              value      => {
+                             name     => 'value',
+                             get_meth => sub { shift->get_value(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_value(@_) },
+                             set_args => [],
+                             disp     => 'Value',
+                             len      => 3,
+                             req      => 1,
+                             type     => 'short',
+                             props    => {   type => 'radio',
+                                             vals => vals_aref(),
+                                         }
+                            },
+              mtime      => {
+                             name     => 'mtime',
+                             get_meth => sub { shift->get_mtime(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_mtime(@_) },
+                             set_args => [],
+                             disp     => 'Modified Time',
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type      => 'date' }
+                            }
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@props} : [@{$meths}{@props}];
 }
 
@@ -1242,50 +1247,50 @@ sub save {
     my $time = db_date(undef, 1);
     $self->_set(['mtime'], [$time]);
     if ($del && defined $id) {
-	# It's an existing privilege to be deleted.
-	my $del1 = prepare_c(qq{
+        # It's an existing privilege to be deleted.
+        my $del1 = prepare_c(qq{
             DELETE FROM grp_priv__grp_member
             WHERE  grp_priv__id = ?
         });
-	my $del2 = prepare_c(qq{
+        my $del2 = prepare_c(qq{
             DELETE FROM grp_priv
             WHERE  id = ?
         });
 
-	# Really $del2 should cover $del1 via cascading delete, but I'm playing
-	# it safe.
-	execute($del1, $id);
-	execute($del2, $id);
+        # Really $del2 should cover $del1 via cascading delete, but I'm playing
+        # it safe.
+        execute($del1, $id);
+        execute($del2, $id);
 
     } elsif (defined $id) {
-	# It's an existing privilege. Update it.
-	my $upd = prepare_c(qq{
+        # It's an existing privilege. Update it.
+        my $upd = prepare_c(qq{
             UPDATE grp_priv
             SET    value = ?,
                    mtime = ?
             WHERE  id = ?
         });
-	execute($upd, $self->_get('value'), $time, $id);
+        execute($upd, $self->_get('value'), $time, $id);
     } else {
-	# It's a new privilege. Insert it.
-	local $" = ', ';
-	my $fields = join ', ', next_key('priv'), ('?') x $#priv_cols;
-	my $ins = prepare_c(qq{
+        # It's a new privilege. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('priv'), ('?') x $#priv_cols;
+        my $ins = prepare_c(qq{
             INSERT INTO grp_priv (@priv_cols)
             VALUES ($fields)
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@priv_props[1..$#priv_props]));
-	# Now grab the ID.
-	$id = last_key('priv');
-	$self->_set({id => $id});
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@priv_props[1..$#priv_props]));
+        # Now grab the ID.
+        $id = last_key('priv');
+        $self->_set({id => $id});
 
-	# Now be create an object grp association.
-	my $ins2 = prepare_c(qq{
+        # Now be create an object grp association.
+        my $ins2 = prepare_c(qq{
             INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
             VALUES (?, ?)
         });
-	execute($ins2, $id, $self->_get('obj_grp_id'));
+        execute($ins2, $id, $self->_get('obj_grp_id'));
     }
     $self->SUPER::save;
     return $self;
@@ -1293,7 +1298,7 @@ sub save {
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1357,16 +1362,16 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'obj_grp') {
-	    push @wheres, "g.$k";
-	} elsif ($k eq 'usr_grp_id') {
-	    push @wheres, "p.grp__id";
-	} elsif ($k eq 'obj_grp_id') {
-	    push @wheres, "g.grp__id";
-	} else {
-	    push @wheres, "p.$k";
-	}
-	push @params, $v;
+        if ($k eq 'obj_grp') {
+            push @wheres, "g.$k";
+        } elsif ($k eq 'usr_grp_id') {
+            push @wheres, "p.grp__id";
+        } elsif ($k eq 'obj_grp_id') {
+            push @wheres, "g.grp__id";
+        } else {
+            push @wheres, "p.$k";
+        }
+        push @params, $v;
     }
 
     local $" = ' = ? AND ';
@@ -1389,11 +1394,12 @@ $get_em = sub {
     bind_columns($sel, \@d[0..$#cols]);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	$href ? $privs{$d[0]} = $self : push @privs, $self;
+        my $self = bless {}, $pkg;
+        $self->SUPER::new;
+        $self->_set(\@props, \@d);
+        $self->_set__dirty; # Disables dirty flag.
+        $href ? $privs{$d[0]} = $self->cache_me :
+          push @privs, $self->cache_me;
     }
     finish($sel);
     return $href ? \%privs : \@privs;
@@ -1414,9 +1420,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Biz::Person|Bric::Biz::Person>, 
-L<Bric::Biz::Person::User|Bric::Biz::Person::User>, 
+L<Bric|Bric>,
+L<Bric::Biz::Person|Bric::Biz::Person>,
+L<Bric::Biz::Person::User|Bric::Biz::Person::User>,
 L<Bric::Util::Grp::User|Bric::Util::Grp::User>
 
 =cut

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-08 23:55:38 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -239,35 +239,6 @@ sub new {
 }
 
 ###############################################################################
-
-
-=item $asset = Bric::Biz::Asset::Business->lookup( { id => $id} )
-
-This will die because only the inherited classes will be looked up
-
-B<Throws:>
-
-"Method Not Implemented"
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub lookup {
-        my ($self) = @_;
-
-        die Bric::Util::Fault::Exception::MNI->new( {
-                        msg => "Method not implemented" });
-}
-
-###############################################################################
-
 
 =item ($obj_list||@objs) = Bric::Biz::Asset::Business->list( $criteria )
 

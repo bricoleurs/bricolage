@@ -3,21 +3,21 @@ package Bric::Biz::AssetType::Parts::Data;
 
 =head1 NAME
 
-Bric::Biz::element::Parts::Data - The place where fields with in an element 
+Bric::Biz::element::Parts::Data - The place where fields with in an element
 are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:43 $
+$Date: 2003-01-29 06:46:03 $
 
 
 =head1 SYNOPSIS
@@ -33,7 +33,7 @@ $Date: 2002-02-19 23:53:43 $
 
  $id    = $field->get_id()
 
- # Get/Set the name of this field. 
+ # Get/Set the name of this field.
  $field = $field->set_name($name)
  $name  = $field->get_name()
 
@@ -127,18 +127,18 @@ use constant DEBUG => 0;
 
 use constant TABLE => 'at_data';
 use constant COLS  => qw(
-			 element__id
-			 name
-			 description
-			 place
-			 required
-			 quantifier
-			 autopopulated
-			 map_type__id
-			 publishable
-			 max_length
-			 sql_type
-			 active);
+                         element__id
+                         name
+                         description
+                         place
+                         required
+                         quantifier
+                         autopopulated
+                         map_type__id
+                         publishable
+                         max_length
+                         sql_type
+                         active);
 
 #==============================================================================#
 # Fields                               #
@@ -162,55 +162,55 @@ use constant COLS  => qw(
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 
-			 # The database id field
-			 'id'	               => Bric::FIELD_READ,
-			 
-			 # the asset type that this is associated with
-			 'element__id'      => Bric::FIELD_RDWR,
-			 
-			 # The meta object ID.
-			 'map_type__id'        => Bric::FIELD_RDWR,
-			 
-			 # The human readable name field
-			 'name'	               => Bric::FIELD_RDWR,
-			 
-			 # The human readable description Field
-			 'description'         => Bric::FIELD_RDWR,
-			 
-			 # the order in which this will be in the container
-			 'place'	       => Bric::FIELD_RDWR,
-			 
-			 # The max length in chars
-			 'max_length'          => Bric::FIELD_RDWR,
-			 
-			 # The required flag
-			 'required'            => Bric::FIELD_RDWR,
-			 
-			 # The type of repeatability for this field
-			 'quantifier'          => Bric::FIELD_RDWR,
-			 
-			 # The type in the data base 
-			 'sql_type'	       => Bric::FIELD_RDWR,
-			 
-			 # If this field is publishable
-			 'publishable'         => Bric::FIELD_RDWR,
+                         # Public Fields
+                         
+                         # The database id field
+                         'id'                  => Bric::FIELD_READ,
+                         
+                         # the asset type that this is associated with
+                         'element__id'      => Bric::FIELD_RDWR,
+                         
+                         # The meta object ID.
+                         'map_type__id'        => Bric::FIELD_RDWR,
+                         
+                         # The human readable name field
+                         'name'                => Bric::FIELD_RDWR,
+                         
+                         # The human readable description Field
+                         'description'         => Bric::FIELD_RDWR,
+                         
+                         # the order in which this will be in the container
+                         'place'               => Bric::FIELD_RDWR,
+                         
+                         # The max length in chars
+                         'max_length'          => Bric::FIELD_RDWR,
+                         
+                         # The required flag
+                         'required'            => Bric::FIELD_RDWR,
+                         
+                         # The type of repeatability for this field
+                         'quantifier'          => Bric::FIELD_RDWR,
+                         
+                         # The type in the data base 
+                         'sql_type'            => Bric::FIELD_RDWR,
+                         
+                         # If this field is publishable
+                         'publishable'         => Bric::FIELD_RDWR,
 
-			 autopopulated			=> Bric::FIELD_READ,
-			 
-			 # The active flag
-			 'active'              => Bric::FIELD_READ,
-			 
-			 # Private Fields
+                         autopopulated                  => Bric::FIELD_READ,
+                         
+                         # The active flag
+                         'active'              => Bric::FIELD_READ,
+                         
+                         # Private Fields
 
-			 # Hold attribute info until this object is saved.
-			 '_attr'                => Bric::FIELD_NONE,
-			 '_meta'                => Bric::FIELD_NONE,
+                         # Hold attribute info until this object is saved.
+                         '_attr'                => Bric::FIELD_NONE,
+                         '_meta'                => Bric::FIELD_NONE,
 
-			 # Holds the attribute object for this object.
-			 '_attr_obj'            => Bric::FIELD_NONE,
-			});
+                         # Holds the attribute object for this object.
+                         '_attr_obj'            => Bric::FIELD_NONE,
+                        });
 }
 
 #==============================================================================#
@@ -369,95 +369,78 @@ NONE
 =cut
 
 sub lookup {
-    my $class = shift;
-    my ($param) = @_;
+    my ($class, $param) = @_;
+    my $self = $class->cache_lookup($param);
+    return $self if $self;
+
     my $self = bless {}, $class;
-    
     return unless $param->{'id'};
-    
     $self->SUPER::new();
-    
     $self->_select_data($param->{'id'});
-    
+
     # Set the attribute object.
     my $id = $self->get_id;
-    my $a_obj = Bric::Util::Attribute::AssetTypeData->new(
-						     {'object_id' => $id,
-						      'subsys'    => "id_$id"});
+    my $a_obj = Bric::Util::Attribute::AssetTypeData->new
+      ({ 'object_id' => $id,
+         'subsys'    => "id_$id"});
     $self->_set(['_attr_obj'], [$a_obj]);
-
     return $self;
 }
 
 #------------------------------------------------------------------------------#
 
-=item ($parts || @parts) = Bric::Biz::element::Parts::Data->list($param)
+=item ($parts || @parts) = Bric::Biz::element::Parts::Data->list($params)
 
-Returns a list (or list ref) of field objects that match the criteria
-listed
-
-Supported Keys:
+Returns a list (or list ref) of field objects that match the criteria in the
+C<$params> hash reference. Supported criteria are:
 
 =over 4
 
+=item element__id
+
+=item map_type__id
+
+=item name
+
+=item max_length
+
+=item publishable
+
+=item required
+
+=item quantifier
+
+=item sql_type
+
+=item active
+
 =back
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub list {
     my $class = shift;
     my ($param) = @_;
-    
-    
     _do_list($class,$param);
 }
 
-#------------------------------------------------------------------------------#
-
-=item ($ids || @ids) = Bric::Biz::element::Parts::Field->list_ids($param)
-
- Returns the ids of the field objects that match the given criteria
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub list_ids {
-    my $class = shift;
-    my ($param) = @_;
-    
-    _do_list($class, $param, 1);
-}
-
-#--------------------------------------#
+=back
 
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
 Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
+
+=back
 
 =cut
 
@@ -470,17 +453,34 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-NONE
+=over 4
+
+=item ($ids || @ids) = Bric::Biz::element::Parts::Field->list_ids($params)
+
+Returns the ids of the field objects that match the given criteria in the
+C<$params> hash reference. See C<list()> for a list of supported parameters.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
-#--------------------------------------#
+sub list_ids {
+    my $class = shift;
+    my ($param) = @_;
+    _do_list($class, $param, 1);
+}
+
+##############################################################################
+
+=back
 
 =head2 Public Instance Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $field = $field->set_publishable( 1 || undef)
 
@@ -765,19 +765,13 @@ NONE
 
 =item $id = $field->get_id()
 
-Returns the database id of the field object
- 
-B<Throws:>
+Returns the database id of the field object.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -810,13 +804,13 @@ sub set_attr {
     my $attr     = $self->_get('_attr', '_attr_obj');
 
     if ($attr_obj) {
-	$attr_obj->set_attr({'name'     => $name,
-			     'sql_type' => 'short',
-			     'value'    => $val});
+        $attr_obj->set_attr({'name'     => $name,
+                             'sql_type' => 'short',
+                             'value'    => $val});
     } else {
-	$attr->{$name} = $val;
-	
-	$self->_set(['_attr'], [$attr]);
+        $attr->{$name} = $val;
+        
+        $self->_set(['_attr'], [$attr]);
     }
 
     return $val;
@@ -830,7 +824,7 @@ sub get_attr {
 
     # If we aren't saved yet, return anything we have cached.
     unless ($attr_obj) {
-	return $attr->{$name};
+        return $attr->{$name};
     }
 
     return $attr_obj->get_attr({'name' => $name});
@@ -842,7 +836,7 @@ sub all_attr {
     my $attr     = $self->_get('_attr');
 
     unless ($attr_obj) {
-	return $attr;
+        return $attr;
     }
 
     return $attr_obj->get_attr_hash();
@@ -880,14 +874,14 @@ sub set_meta {
     my $meta     = $self->_get('_meta');
 
     if ($attr_obj) {
-	$attr_obj->add_meta({'name'  => $name,
-			     'field' => $field,
-			     'value' => $val});
+        $attr_obj->add_meta({'name'  => $name,
+                             'field' => $field,
+                             'value' => $val});
     } else {
-	$meta->{$name}->{$field} = $val;
-	
-	$self->_set(['_meta'], [$meta]);	
-    }	
+        $meta->{$name}->{$field} = $val;
+        
+        $self->_set(['_meta'], [$meta]);        
+    }   
 
     return $val;
 }
@@ -898,21 +892,21 @@ sub get_meta {
     my $attr_obj = $self->_get_attr_obj;
 
     unless ($attr_obj) {
-	my $meta = $self->_get('_meta');
-	if (defined $field) {
-	    return $meta->{$name}->{$field};
-	} else {
-	    return $meta->{$name};
-	}
+        my $meta = $self->_get('_meta');
+        if (defined $field) {
+            return $meta->{$name}->{$field};
+        } else {
+            return $meta->{$name};
+        }
     }
 
     if (defined $field) {
-	return $attr_obj->get_meta({'name'  => $name,
-				    'field' => $field});
+        return $attr_obj->get_meta({'name'  => $name,
+                                    'field' => $field});
     } else {
-	my $meta = $attr_obj->get_meta({'name' => $name});
+        my $meta = $attr_obj->get_meta({'name' => $name});
 
-	return { map { $_ => $meta->{$_}->{'value'} } keys %$meta };
+        return { map { $_ => $meta->{$_}->{'value'} } keys %$meta };
     }
 }
 
@@ -1041,9 +1035,9 @@ sub save {
     my $self = shift;
     
     if ($self->_get('id') ) {
-	$self->_update_data();
+        $self->_update_data();
     } else {
-	$self->_insert_data()
+        $self->_insert_data()
     }
     
     # Save the attribute information.
@@ -1055,17 +1049,13 @@ sub save {
 
 #==============================================================================#
 
+=back
+
 =head1 PRIVATE
-
-=cut
-
-#--------------------------------------#
 
 =head2 Private Class Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item _do_list
 
@@ -1091,53 +1081,52 @@ sub _do_list {
     my (@where, @bind);
 
     my $sql = 'SELECT id,'.join(',',COLS).' FROM '.TABLE;
-    
+
     if (exists $param->{'element__id'} ) {
-	push @where, 'element__id=?';
-	push @bind, $param->{'element__id'};
+        push @where, 'element__id=?';
+        push @bind, $param->{'element__id'};
     }
-    
+
     if (exists $param->{'map_type__id'} ) {
-	push @where, 'map_type__id=?';
-	push @bind, $param->{'map_type__id'};
+        push @where, 'map_type__id=?';
+        push @bind, $param->{'map_type__id'};
     }
-    
+
     if (exists $param->{'name'} ) {
-	push @where, 'name=?';
-	push @bind, $param->{'name'};
+        push @where, 'name=?';
+        push @bind, $param->{'name'};
     }
-    
+
     if (exists $param->{'max_length'} ) {
-	push @where, 'max_length=?';
-	push @bind, $param->{'max_length'};
+        push @where, 'max_length=?';
+        push @bind, $param->{'max_length'};
     }
-    
+
     if (exists $param->{'publishable'} ) {
-	push @where, 'publishable=?';
-	push @bind, $param->{'publishable'};
+        push @where, 'publishable=?';
+        push @bind, $param->{'publishable'};
     }
-    
+
     if (exists $param->{'required'} ) {
-	push @where, 'required=?';
-	push @bind, $param->{'required'};
+        push @where, 'required=?';
+        push @bind, $param->{'required'};
     }
-    
+
     if (exists $param->{'quantifier'} ) {
-	push @where, 'quantifier=?';
-	push @bind, $param->{'quantifier'};
+        push @where, 'quantifier=?';
+        push @bind, $param->{'quantifier'};
     }
-    
+
     if (exists $param->{'sql_type'} ) {
-	push @where, 'sql_type=?';
-	push @bind, $param->{'sql_type'};
+        push @where, 'sql_type=?';
+        push @bind, $param->{'sql_type'};
     }
-    
+
     if (exists $param->{'active'} ) {
-	push @where, 'active=?';
-	push @bind, exists $param->{'active'} ? $param->{'active'} 
-                                                       : 1;
+        push @where, 'active=?';
+        push @bind, exists $param->{'active'} ? $param->{'active'} : 1;
     }
-    
+
     # Add the where clause if there is one.
     $sql .= ' WHERE '.join(' AND ', @where) if @where;
 
@@ -1145,46 +1134,47 @@ sub _do_list {
     $sql .= " ORDER BY $param->{order_by}" if $param->{order_by};
 
     my $select = prepare_ca($sql, undef, DEBUG);
-    
+
     if ($ids) {
-	# called from list_ids give em what they want
-	my $return = col_aref($select,@bind);
-	
-	return wantarray ? @$return : $return;
-	
+        # called from list_ids give em what they want
+        my $return = col_aref($select,@bind);
+        return wantarray ? @$return : $return;
+
     } else {
-	# this must have been called from list so give objects
-	my (@d, @objs);
-	
-	execute($select, @bind);
-	bind_columns($select, \@d[0..(scalar COLS)]);
+        # this must have been called from list so give objects
+        my (@d, @objs);
+        execute($select, @bind);
+        bind_columns($select, \@d[0..(scalar COLS)]);
 
-	while ($select->fetch()) {
-	    my $self = bless {}, $class;
+        while ($select->fetch()) {
+            my $self = bless {}, $class;
 
-	    $self->_set(['id', COLS], [@d]);
+            $self->_set(['id', COLS], [@d]);
 
-	    my $id = $self->get_id;
-	    my $a_obj = Bric::Util::Attribute::AssetTypeData->new(
-						     {'object_id' => $id,
-						      'subsys'    => "id_$id"});
-	    $self->_set(['_attr_obj'], [$a_obj]);
-	    
-	    push @objs, $self;
-	}
-	
-	return wantarray ? @objs : \@objs;
-    }   
+            my $id = $self->get_id;
+            my $a_obj = Bric::Util::Attribute::AssetTypeData->new
+              ({ 'object_id' => $id,
+                 'subsys'    => "id_$id"});
+            $self->_set(['_attr_obj'], [$a_obj]);
+            push @objs, $self->cache_me;
+        }
+        return wantarray ? @objs : \@objs;
+    }
 }
-
 
 #--------------------------------------#
 
+=back
+
 =head2 Private Instance Methods
 
-NONE
+Needing to be documented.
 
-=cut 
+=over
+
+=item _get_attr_obj
+
+=cut
 
 sub _get_attr_obj {
     my $self = shift;
@@ -1192,10 +1182,10 @@ sub _get_attr_obj {
     my $id = $self->get_id;
 
     unless ($attr_obj || not defined($id)) {
-	$attr_obj = Bric::Util::Attribute::AssetTypeData->new(
-				     {'object_id' => $id,
-				      'subsys'    => "id_$id"});
-	$self->_set(['_attr_obj'], [$attr_obj]);
+        $attr_obj = Bric::Util::Attribute::AssetTypeData->new(
+                                     {'object_id' => $id,
+                                      'subsys'    => "id_$id"});
+        $self->_set(['_attr_obj'], [$attr_obj]);
     }
 
     return $attr_obj;
@@ -1208,17 +1198,17 @@ sub _save_attr {
     my $id   = $self->get_id;
 
     while (my ($k,$v) = each %$attr) {
-	$a_obj->set_attr({'name'     => $k,
-			  'sql_type' => 'short',
-			  'value'    => $v});
+        $a_obj->set_attr({'name'     => $k,
+                          'sql_type' => 'short',
+                          'value'    => $v});
     }
-	
+
     foreach my $k (keys %$meta) {
-	while (my ($f, $v) = each %{$meta->{$k}}) {
-	    $a_obj->add_meta({'name'  => $k,
-			      'field' => $f,
-			      'value' => $v});
-	}
+        while (my ($f, $v) = each %{$meta->{$k}}) {
+            $a_obj->add_meta({'name'  => $k,
+                              'field' => $f,
+                              'value' => $v});
+        }
     }
 
     $a_obj->save;
@@ -1248,9 +1238,8 @@ sub _select_data {
     my $self = shift;
     my ($id) = @_;
     my @d;
-
     my $sql = 'SELECT '.join(',',COLS).' FROM '.TABLE.
-              ' WHERE id=? AND active=?';
+              ' WHERE id = ? AND active = ?';
 
     my $sth = prepare_ca($sql);
     execute($sth, $id, 1);
@@ -1260,6 +1249,7 @@ sub _select_data {
 
     # Set the columns selected as well as the passed ID.
     $self->_set([COLS, 'id'], [@d, $id]);
+    $self->cache_me;
 }
 
 #------------------------------------------------------------------------------#
@@ -1284,14 +1274,12 @@ NONE
 
 sub _update_data {
     my $self = shift;
-    
     my $sql = 'UPDATE '.TABLE.
               ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
 
 
     my $sth = prepare_c($sql);
     execute($sth, $self->_get(COLS), $self->get_id);
-    
     return 1;
 }
 
@@ -1334,6 +1322,8 @@ sub _insert_data {
 
 #--------------------------------------#
 
+=back
+
 =head2 Private Functions
 
 NONE
@@ -1343,8 +1333,6 @@ NONE
 1;
 
 __END__
-
-=back
 
 =head1 NOTES
 
@@ -1359,4 +1347,3 @@ michael soderstrom ( miraso@pacbell.net )
 L<perl>,L<Bric>,L<Bric::Biz::Asset::Business::Story>,L<Bric::Biz::AssetType>,
 
 =cut
-

@@ -6,16 +6,16 @@ Bric::Biz::Contact - Interface to Contacts
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -118,17 +118,17 @@ my @ord = qw(type description value);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id =>  Bric::FIELD_READ,
-			 type => Bric::FIELD_RDWR,
-			 description => Bric::FIELD_READ,
-			 alertable => Bric::FIELD_READ,
-			 value => Bric::FIELD_RDWR,
+                         # Public Fields
+                         id =>  Bric::FIELD_READ,
+                         type => Bric::FIELD_RDWR,
+                         description => Bric::FIELD_READ,
+                         alertable => Bric::FIELD_READ,
+                         value => Bric::FIELD_RDWR,
 
-			 # Private Fields
-			 _active => Bric::FIELD_NONE,
-			 _retyped => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _active => Bric::FIELD_NONE,
+                         _retyped => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -240,7 +240,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $contact = &$get_em(@_);
+    my $pkg = shift;
+    my $contact = $pkg->cache_lookup(@_);
+    return $contact if $contact;
+
+    $contact = $get_em->($pkg, @_);
     # We want @$contact to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Biz::Contact objects found.' }) if @$contact > 1;
@@ -267,8 +271,6 @@ value
 =item *
 
 description
-
-=item *
 
 =back
 
@@ -358,7 +360,7 @@ B<Notes:> NONE.
 
 sub href {  &$get_em(@_, 0, 1) }
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -432,12 +434,12 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 ################################################################################
 
-=item $meths = Bric::Biz::Person->my_meths
+=item $meths = Bric::Biz::Conatact->my_meths
 
-=item (@meths || $meths_aref) = Bric::Biz::Person->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::Contact->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -446,39 +448,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -490,29 +492,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -530,27 +534,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -572,54 +577,54 @@ sub my_meths {
     # We don't got 'em. So get 'em!
     my $types = list_types();
     $meths = {
-	      type        => {
-			      name     => 'type',
-			      get_meth => sub { shift->get_type(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_type(@_) },
-			      set_args => [],
-			      disp     => 'Type',
-			      type     => 'short',
-			      len      => 32,
-			      req      => 0,
-			      search   => 1,
-			      props    => {   type => 'select',
-					      vals => $types
-					  }
-			     },
-	      description => {
-			      name     => 'description',
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_description(@_) },
-			      set_args => [],
-			      disp     => 'Description',
-			      search   => 1,
-			      len      => 64,
-			      req      => 0,
-			      type     => 'short',
-			      props    => {   type => 'textarea',
-					      rows => 4,
-					      cols => 40
-					  }
-			     },
-	      value      => {
-			     name     => 'value',
-			     get_meth => sub { shift->get_value(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_value(@_) },
-			     set_args => [],
-			     disp     => 'Value',
-			     search   => 1,
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			     props    => {   type      => 'text',
-					     length    => 32,
-					     maxlength => 256
-					 }
-			    }
-	     };
+              type        => {
+                              name     => 'type',
+                              get_meth => sub { shift->get_type(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_type(@_) },
+                              set_args => [],
+                              disp     => 'Type',
+                              type     => 'short',
+                              len      => 32,
+                              req      => 0,
+                              search   => 1,
+                              props    => {   type => 'select',
+                                              vals => $types
+                                          }
+                             },
+              description => {
+                              name     => 'description',
+                              get_meth => sub { shift->get_description(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_description(@_) },
+                              set_args => [],
+                              disp     => 'Description',
+                              search   => 1,
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                              props    => {   type => 'textarea',
+                                              rows => 4,
+                                              cols => 40
+                                          }
+                             },
+              value      => {
+                             name     => 'value',
+                             get_meth => sub { shift->get_value(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_value(@_) },
+                             set_args => [],
+                             disp     => 'Value',
+                             search   => 1,
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => {   type      => 'text',
+                                             length    => 32,
+                                             maxlength => 256
+                                         }
+                            }
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
@@ -1019,7 +1024,7 @@ B<Notes:> NONE.
 sub set_type {
     my $self = shift;
     $self->_set([qw(_retyped description type)],
-		[$self->_get('type'), undef, shift]);
+                [$self->_get('type'), undef, shift]);
 }
 
 =item my $description = $c->get_description
@@ -1256,10 +1261,10 @@ sub save {
     my ($id, $retyped) = $self->_get(qw(id _retyped));
 
     if ($id) {
-	# It's an existing contact. Update it.
-	if ($retyped) {
-	    # The type has been changed. Requires a more sophisticated update.
-	    my $upd = prepare_c(qq{
+        # It's an existing contact. Update it.
+        if ($retyped) {
+            # The type has been changed. Requires a more sophisticated update.
+            my $upd = prepare_c(qq{
                 UPDATE contact_value
                 SET    value = ?, contact__id = (
                            SELECT id
@@ -1268,21 +1273,21 @@ sub save {
                        ), active = ?
                 WHERE  id = ?
             }, undef, DEBUG);
-	    execute($upd, $self->_get(qw(value type _active)), $id);
-	    $self->_set(['_retyped'], [undef]);
-	} else {
-	    local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	    my $upd = prepare_c(qq{
+            execute($upd, $self->_get(qw(value type _active)), $id);
+            $self->_set(['_retyped'], [undef]);
+        } else {
+            local $" = ' = ?, '; # Simple way to create placeholders with an array.
+            my $upd = prepare_c(qq{
                 UPDATE contact_value
                 SET    @val_cols = ?
                 WHERE  id = ?
             });
-	    execute($upd, $self->_get(@val_props), $id);
-	}
+            execute($upd, $self->_get(@val_props), $id);
+        }
     } else {
-	# It's a new contact. Insert it.
-	local $" = ', ';
-	my $ins = prepare_c(qq{
+        # It's a new contact. Insert it.
+        local $" = ', ';
+        my $ins = prepare_c(qq{
             INSERT INTO contact_value (id, value, active, contact__id)
             VALUES (${ \next_key('contact_value') }, ?, ?, (
                 SELECT id
@@ -1290,10 +1295,10 @@ sub save {
                 WHERE  type = ?)
             )
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(qw(value _active type)));
-	# Now grab the ID.
-	$self->_set({id => last_key('contact_value')});
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(qw(value _active type)));
+        # Now grab the ID.
+        $self->_set({id => last_key('contact_value')});
     }
     $self->SUPER::save;
     return $self;
@@ -1301,7 +1306,7 @@ sub save {
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1365,20 +1370,20 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id') {
-	    push @wheres, "v.$k = ?";
-	    push @params, $v;
-	} elsif ($k eq 'value') {
-	    push @wheres, "LOWER(v.$k) LIKE ?";
-	    push @params, lc $v;
-	} elsif ($k eq 'person_id') {
-	    push @wheres, "v.id in (SELECT contact_value__id from "
-	      . "person__contact_value where person__id = ?)";
-	    push @params, $v;
-	} else {
-	    push @wheres, "LOWER(c.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+        if ($k eq 'id') {
+            push @wheres, "v.$k = ?";
+            push @params, $v;
+        } elsif ($k eq 'value') {
+            push @wheres, "LOWER(v.$k) LIKE ?";
+            push @params, lc $v;
+        } elsif ($k eq 'person_id') {
+            push @wheres, "v.id in (SELECT contact_value__id from "
+              . "person__contact_value where person__id = ?)";
+            push @params, $v;
+        } else {
+            push @wheres, "LOWER(c.$k) LIKE ?";
+            push @params, lc $v;
+        }
     }
 
     my $where = defined $params->{id} ? '' : ' AND v.active = 1';
@@ -1403,11 +1408,12 @@ $get_em = sub {
     bind_columns($sel, \@d[0..$#cols]);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	$href ? $contacts{$d[0]} = $self : push @contacts, $self;
+        my $self = bless {}, $pkg;
+        $self->SUPER::new;
+        $self->_set(\@props, \@d);
+        $self->_set__dirty; # Disables dirty flag.
+        $href ? $contacts{$d[0]} = $self->cache_me :
+          push @contacts, $self->cache_me;
     }
     return $href ? \%contacts : \@contacts;
 };
@@ -1516,6 +1522,8 @@ $get_types = sub {
 
 1;
 __END__
+
+=back
 
 =head1 NOTES
 

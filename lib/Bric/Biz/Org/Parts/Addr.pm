@@ -7,15 +7,15 @@ Bric::Biz::Org::Parts::Addr - Organizational Addresses
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -113,18 +113,18 @@ my @part_cols = qw(id name value);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id =>  Bric::FIELD_READ,
-			 org__id => Bric::FIELD_READ,
-			 type => Bric::FIELD_RDWR,
-			 active => Bric::FIELD_NONE,
-			 parts => Bric::FIELD_READ,
+                         # Public Fields
+                         id =>  Bric::FIELD_READ,
+                         org__id => Bric::FIELD_READ,
+                         type => Bric::FIELD_RDWR,
+                         active => Bric::FIELD_NONE,
+                         parts => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _lines => Bric::FIELD_NONE,
-			 _part_ids => Bric::FIELD_NONE,
-			 _flags => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _lines => Bric::FIELD_NONE,
+                         _part_ids => Bric::FIELD_NONE,
+                         _flags => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -203,17 +203,17 @@ sub new {
     my $init = { org__id => $args->{org_id}, type => $args->{type} };
     # Grab lines.
     if ($args->{lines}) {
-	$init->{_flags}{__lines__} = 1;
-	$init->{_lines}{_add} = ref $args->{lines} ? $args->{lines} : [$args->{lines}];
+        $init->{_flags}{__lines__} = 1;
+        $init->{_lines}{_add} = ref $args->{lines} ? $args->{lines} : [$args->{lines}];
     }
 
     # Delete the keys we've fetched already.
     delete @{$args}{'org_id', 'type', 'lines'};
     # The remaining keys are parts, and need to be stored in proper case.
     foreach my $part (keys %$args) {
-	my $p = ucfirst $part;
-	$init->{parts}{$p} = $args->{$part};
-	push @{ $init->{_flags}{__parts__} }, $p;
+        my $p = ucfirst $part;
+        $init->{parts}{$p} = $args->{$part};
+        push @{ $init->{_flags}{__parts__} }, $p;
     }
 
     # Set the active flag and all other flags.
@@ -280,7 +280,11 @@ object, and therefore may not need to be implemented.
 =cut
 
 sub lookup {
-    my $addr = &$get_em(@_);
+    my $pkg = shift;
+    my $addr = $pkg->cache_lookup(@_);
+    return $addr if $addr;
+
+    $addr = $get_em->($pkg, @_);
     # We want @$addr to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Biz::Org::Parts::Addr objects found.' }) if @$addr > 1;
@@ -508,8 +512,6 @@ Unable to prepare SQL statement.
 
 Unable to select column into arrayref.
 
-=item *
-
 =back
 
 B<Side Effects:> NONE.
@@ -571,7 +573,7 @@ sub add_parts {
     }, undef, DEBUG);
 
     foreach my $part (@_) {
-	execute($ins, $part) if execute($upd, 1, $part) eq '0E0';
+        execute($ins, $part) if execute($upd, 1, $part) eq '0E0';
     }
     return 1;
 }
@@ -614,9 +616,9 @@ sub del_parts {
     }, undef, DEBUG);
 
     foreach my $line (@_) {
-	# Throw an error here!
-	die "Cannot delete the 'Line' address part" if $line eq 'Line';
-	execute($upd, 0, $line);
+        # Throw an error here!
+        die "Cannot delete the 'Line' address part" if $line eq 'Line';
+        execute($upd, 0, $line);
     }
     return 1;
 }
@@ -625,32 +627,49 @@ sub del_parts {
 
 =item $meths = Bric::Biz::Org::Parts::Addr->my_meths
 
-Returns an anonymous hash of instrospection data for this object. The format for
-the introspection is as follows:
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
+intrspection data. The format for each introspection item introspection is as
+follows:
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-meth - A reference to the method that will retrieve the value of the property
-or attribute.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-args - An anonymous array of arguments to pass to a call to meth in order to
+The display name of the property or attribute.
+
+=item get_meth
+
+A reference to the method that will retrieve the value of the property or
+attribute.
+
+=item get_args
+
+An anonymous array of arguments to pass to a call to get_meth in order to
 retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-disp_name - The display name of the property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-type - The type of value the property or attribute contains. There are only
-three types:
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
+
+=item type
+
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -662,10 +681,70 @@ three types:
 
 =back
 
-=item *
+=item len
 
-length - If the value is a 'short' value, this hash key contains the length of
-the field.
+If the value is a 'short' value, this hash key contains the length of the
+field.
+
+=item search
+
+The property is searchable via the list() and list_ids() methods.
+
+=item req
+
+The property or attribute is required.
+
+=item props
+
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
+
+=over 4
+
+=item type
+
+The display field type. Possible values are
+
+=over 4
+
+=item text
+
+=item textarea
+
+=item password
+
+=item hidden
+
+=item radio
+
+=item checkbox
+
+=item select
+
+=back
+
+=item length
+
+The Length, in letters, to display a text or password field.
+
+=item maxlength
+
+The maximum length of the property or value - usually defined by the SQL DDL.
+
+=back
+
+=item rows
+
+The number of rows to format in a textarea field.
+
+=item cols
+
+The number of columns to format in a textarea field.
+
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -680,30 +759,30 @@ B<Notes:> NONE.
 sub my_meths {
     # Load field members.
     my $ret = { type    => { meth => sub {shift->get_type(@_)},
-			     args => [],
-			     disp => 'Type',
-			     type => 'short',
-			     len  => 64 },
+                             args => [],
+                             disp => 'Type',
+                             type => 'short',
+                             len  => 64 },
                 city    => { meth => sub {shift->get_city(@_)},
-			     args => [],
-			     disp => 'City',
-			     type => 'short',
-			     len  => 256 },
+                             args => [],
+                             disp => 'City',
+                             type => 'short',
+                             len  => 256 },
                 state   => { meth => sub {shift->get_state(@_)},
-			     args => [],
-			     disp => 'State',
-			     type => 'short',
-			     len  => 256 },
+                             args => [],
+                             disp => 'State',
+                             type => 'short',
+                             len  => 256 },
                 code    => { meth => sub {shift->get_code(@_)},
-			     args => [],
-			     disp => 'Code',
-			     type => 'short',
-			     len  => 256 },
+                             args => [],
+                             disp => 'Code',
+                             type => 'short',
+                             len  => 256 },
                 country => { meth => sub {shift->get_country(@_)},
-			     args => [],
-			     disp => 'Country',
-			     type => 'short',
-			     len  => 256 }
+                             args => [],
+                             disp => 'Country',
+                             type => 'short',
+                             len  => 256 }
               };
     return $ret;
 }
@@ -1054,12 +1133,12 @@ sub get_lines {
     my $lines = $self->_get('_lines');
     my @lines;
     foreach my $id (sort keys %$lines) {
-	next if $id eq '_del' || $id eq '_dirty';
-	if ($id eq '_add') {
-	    push @lines, @{ $lines->{_add} };
-	} else {
-	    push @lines, $lines->{$id};
-	}
+        next if $id eq '_del' || $id eq '_dirty';
+        if ($id eq '_add') {
+            push @lines, @{ $lines->{_add} };
+        } else {
+            push @lines, $lines->{$id};
+        }
     }
     return wantarray ? @lines : \@lines;
 }
@@ -1099,18 +1178,18 @@ sub set_lines {
     my $self = shift;
     my ($lines, $flags) = $self->_get('_lines', '_flags');
     foreach my $id (sort keys %$lines) {
-	if (@_) {
-	    # Assign the line.
-	    $lines->{$id} = shift;
-	} else {
-	    # Delete the line.
-	    delete $lines->{$id};
-	    push @{ $lines->{_del} }, $id;
-	}
+        if (@_) {
+            # Assign the line.
+            $lines->{$id} = shift;
+        } else {
+            # Delete the line.
+            delete $lines->{$id};
+            push @{ $lines->{_del} }, $id;
+        }
     }
     foreach my $l (@_) {
-	# We'll need to add this line.
-	push @{ $lines->{_add} }, $l;
+        # We'll need to add this line.
+        push @{ $lines->{_add} }, $l;
     }
     # Set a flag so we know we've got work to do to save the lines!
     $flags->{__lines__} = 1;
@@ -1326,7 +1405,7 @@ sub save {
     $self->SUPER::save;
 }
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1390,30 +1469,30 @@ $get_em = sub {
     my ($pkg, $args, $ids, $href) = @_;
     my (@txt_wheres, @num_wheres, @params, @subsel, $po_where);
     while (my ($k, $v) = each %$args) {
-	if ($k eq 'id') {
-	    # We're looking for a specific ID.
-	    push @num_wheres, "a.$k";
-	    push @params, $v;
-	} elsif ($k eq 'org_id') {
-	    # We're looking for a Bric::Biz::Org object ID.
-	    push @num_wheres, "a.org__id";
-	    push @params, $v;
-	} elsif ($k eq 'type') {
-	    # We're looking for a specific type of address.
-	    push @txt_wheres, "LOWER(a.$k)";
-	    push @params, lc $v;
-	} elsif ($k eq 'po_id') {
-	    # We're looking for addresses associated with a Org::Person object.
-	    $po_where = qq{a.id in (SELECT addr__id
+        if ($k eq 'id') {
+            # We're looking for a specific ID.
+            push @num_wheres, "a.$k";
+            push @params, $v;
+        } elsif ($k eq 'org_id') {
+            # We're looking for a Bric::Biz::Org object ID.
+            push @num_wheres, "a.org__id";
+            push @params, $v;
+        } elsif ($k eq 'type') {
+            # We're looking for a specific type of address.
+            push @txt_wheres, "LOWER(a.$k)";
+            push @params, lc $v;
+        } elsif ($k eq 'po_id') {
+            # We're looking for addresses associated with a Org::Person object.
+            $po_where = qq{a.id in (SELECT addr__id
                                          FROM person_org__addr
                                          WHERE person_org__id = ?)
             };
-	    push @params, $v;
-	} else {
-	    # We're interested in some other part of the addres.
-	    push @subsel, "(LOWER(ap.value) LIKE ? AND LOWER(pt.name) LIKE ?)";
-	    push @params, lc($v), lc($k);
-	}
+            push @params, $v;
+        } else {
+            # We're interested in some other part of the addres.
+            push @subsel, "(LOWER(ap.value) LIKE ? AND LOWER(pt.name) LIKE ?)";
+            push @params, lc($v), lc($k);
+        }
     }
 
     # Make sure the records are active unless an ID is specified.
@@ -1431,8 +1510,8 @@ $get_em = sub {
     # parts.
     my $subsel = '';
     if (@subsel) {
-	local $" = ' OR ';
-	$subsel = qq{               AND a.id in (
+        local $" = ' OR ';
+        $subsel = qq{               AND a.id in (
                    SELECT ap.addr__id
                    FROM   addr_part ap, addr_part_type pt
                    WHERE  pt.id = ap.addr_part_type__id
@@ -1461,27 +1540,27 @@ $get_em = sub {
     $pkg = ref $pkg || $pkg;
 
     while (fetch($sel)) {
-	@obj{@props} = @d unless $obj{id};
-	if ( $d[0] != $obj{id} ) {
-	    # It's a new object. Save the last one.
-	    $href ? $addrs{$obj{id}} = &$make_obj($pkg, \%obj)
-	      : push @addrs, &$make_obj($pkg, \%obj);
-	    # Now grab the new object.
-	    %obj = ();
-	    @obj{@props} = @d;
-	}
+        @obj{@props} = @d unless $obj{id};
+        if ( $d[0] != $obj{id} ) {
+            # It's a new object. Save the last one.
+            $href ? $addrs{$obj{id}} = &$make_obj($pkg, \%obj)
+              : push @addrs, &$make_obj($pkg, \%obj);
+            # Now grab the new object.
+            %obj = ();
+            @obj{@props} = @d;
+        }
 
-	# Grab any parts. These will vary from row to row.
-	if ($a[0]) {
-	    if ($a[1] eq 'Line') {
-		# Lines go in their own property space.
-		$obj{_lines}->{$a[0]} = $a[2];
-	    } else {
-		# Other parts go in a separate space from lines.
-		$obj{parts}->{$a[1]} = $a[2];
-		$obj{_part_ids}->{$a[1]} = $a[0];
-	    }
-	}
+        # Grab any parts. These will vary from row to row.
+        if ($a[0]) {
+            if ($a[1] eq 'Line') {
+                # Lines go in their own property space.
+                $obj{_lines}->{$a[0]} = $a[2];
+            } else {
+                # Other parts go in a separate space from lines.
+                $obj{parts}->{$a[1]} = $a[2];
+                $obj{_part_ids}->{$a[1]} = $a[0];
+            }
+        }
     }
     # Grab the last one!
     $href ? $addrs{$obj{id}} = &$make_obj($pkg, \%obj)
@@ -1497,8 +1576,6 @@ Instantiates a new object.
 B<Throws:>
 
 =over 4
-
-=item *
 
 =item *
 
@@ -1521,7 +1598,7 @@ $make_obj = sub {
     my $self = bless {}, $pkg;
     $self->SUPER::new($init);
     $self->_set__dirty; # Disables dirty flag.
-    return $self;
+    return $self->cache_me;
 };
 
 =item $self = &$set_part($self, $part, $value)
@@ -1633,26 +1710,26 @@ $save_main = sub {
     my $self = shift;
     my $id = $self->_get('id');
     if (defined $id) {
-	# It's an existing record. Update it.
-	local $" = ' = ?, '; # Simple way to create placeholders.
-	my $upd = prepare_c(qq{
+        # It's an existing record. Update it.
+        local $" = ' = ?, '; # Simple way to create placeholders.
+        my $upd = prepare_c(qq{
             UPDATE addr
             SET    @props = ?
             WHERE  id = ?
         }, undef, DEBUG);
-	execute($upd, $self->_get(@props, 'id'));
+        execute($upd, $self->_get(@props, 'id'));
     } else {
-	# It's a new record. Insert it!
-	local $" = ', ';
-	my $fields = join ', ', next_key('addr'), ('?') x $#props;
-	my $ins = prepare_c(qq{
+        # It's a new record. Insert it!
+        local $" = ', ';
+        my $fields = join ', ', next_key('addr'), ('?') x $#props;
+        my $ins = prepare_c(qq{
             INSERT INTO addr (@props)
             VALUES ($fields)
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@props[1..$#props]));
-	# Now grab the ID.
-	$self->_set({id => last_key('addr')});
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@props[1..$#props]));
+        # Now grab the ID.
+        $self->_set({id => last_key('addr')});
     }
     return 1;
 };
@@ -1712,18 +1789,18 @@ $save_parts = sub {
       $self->_get(qw(parts _part_ids id));
 
     foreach my $part (@$parts) {
-	# Foreach part that has changed,
-	if (defined $vals->{$part} & defined $pids->{$part}) {
-	    # If it's defined and has an ID. Update it.
-	    execute($upd, $aid, $vals->{$part}, $pids->{$part});
-	} elsif (defined $vals->{$part}) {
-	    # It's defined but has no ID, so insert it.
-	    execute($ins, $aid, $part, $vals->{$part});
-	    $pids->{$part} = last_key('addr_part');
-	} else {
-	    # If it's not defined, delete it.
-	    execute($del, $pids->{$part}) if $pids->{$part};
-	}
+        # Foreach part that has changed,
+        if (defined $vals->{$part} & defined $pids->{$part}) {
+            # If it's defined and has an ID. Update it.
+            execute($upd, $aid, $vals->{$part}, $pids->{$part});
+        } elsif (defined $vals->{$part}) {
+            # It's defined but has no ID, so insert it.
+            execute($ins, $aid, $part, $vals->{$part});
+            $pids->{$part} = last_key('addr_part');
+        } else {
+            # If it's not defined, delete it.
+            execute($del, $pids->{$part}) if $pids->{$part};
+        }
     }
     $self->_set(['_part_ids'], [$pids]);
     return 1;
@@ -1782,20 +1859,20 @@ $save_lines = sub {
 
     # Delete those that need deleting.
     foreach my $lid (@{ $lines->{_del} }) {
-	execute($del, $lid);
+        execute($del, $lid);
     }
     delete $lines->{_del};
 
     # Update those that need updating.
     while (my ($lid, $val) = each %{ $lines }) {
-	next if $lid eq '_add';
-	execute($upd, $aid, $val, $lid);
+        next if $lid eq '_add';
+        execute($upd, $aid, $val, $lid);
     }
 
     # Insert those that need inserting.
     foreach my $val (@{ $lines->{_add} }) {
-	execute($ins, $aid, 'Line', $val);
-	$lines->{last_key('addr_part')} = $val;
+        execute($ins, $aid, 'Line', $val);
+        $lines->{last_key('addr_part')} = $val;
     }
     delete $lines->{_add};
     return 1;
@@ -1875,8 +1952,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Biz::Org|Bric::Biz::Org>, 
+L<Bric|Bric>,
+L<Bric::Biz::Org|Bric::Biz::Org>,
 L<Bric::Biz::Person|Bric::Biz::Person>
 
 =cut

@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-27 05:09:05 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -84,7 +84,7 @@ use base qw(Bric);
 ##############################################################################
 # Function and Closure Prototypes
 ##############################################################################
-my ($get_em, $make_obj, $save, $save_attr, $get_et);
+my ($get_em, $save, $save_attr, $get_et);
 
 ##############################################################################
 # Constants
@@ -385,7 +385,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $event = &$get_em(@_);
+    my $pkg = shift;
+    my $event = $pkg->cache_lookup(@_);
+    return $event if $event;
+
+    $event = $get_em->($pkg, @_);
     # We want @$event to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Util::Event objects found.' }) if @$event > 1;
@@ -1388,8 +1392,8 @@ $get_em = sub {
 #              " AND m2.grp__id = ?";
 #            push @params, $v;
         } else {
-	    # We're horked.
-	    die $dp->new({ msg => "Invalid property '$k'."});
+            # We're horked.
+            die $dp->new({ msg => "Invalid property '$k'."});
         }
     }
 
@@ -1425,9 +1429,11 @@ $get_em = sub {
             $attrs = $d[$#SEL_PROPS + 1] = { $key => $val };
 
             # Create a new event object.
-            my $self = &$make_obj($pkg, \@d);
-
-            push @events, $self;
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            $self->_set(\@PROPS, \@d);
+            $self->_set__dirty; # Disable the dirty flag.
+            push @events, $self->cache_me;
         } else {
             # Add the current group ID to the array unless we've seen it
             # already.
@@ -1555,47 +1561,6 @@ $save_attr = sub {
         $ret->{$name} = $attr->{$name};
     }
     return $ret;
-};
-
-##############################################################################]
-
-=item my $event = &$make_obj( $pkg, $init )
-
-Instantiates a Bric::Util::Event object. Used by &$get_em().
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Unable to load action subclass.
-
-=item *
-
-Invalid parameter passed to constructor method.
-
-=item *
-
-Incorrect number of args to Bric::_set().
-
-=item *
-
-Bric::set() - Problems setting fields.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-$make_obj = sub {
-    my ($pkg, $init) = @_;
-    my $self = bless {}, $pkg;
-    $self->SUPER::new;
-    $self->_set(\@PROPS, $init);
 };
 
 ##############################################################################

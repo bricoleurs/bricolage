@@ -25,6 +25,30 @@ sub munge {
     $self->SUPER::munge($args, $n);
 }
 
+sub test_lookup : Test(+2) {
+    my $self = shift;
+    $self->SUPER::test_lookup(@_);
+    my $class = $self->test_class;
+    my %args = $self->new_args;
+
+    # Look up the login in the database.
+    ok( my $u = $class->lookup({ login => $args{login} }),
+        "Look up $args{login}" );
+    is( $u->get_login, $args{login}, "Check that login is the same" );
+}
+
+sub test_list : Test(+2) {
+    my $self = shift;
+    $self->SUPER::test_list(@_);
+    my $class = $self->test_class;
+    my %args = $self->new_args;
+
+    # Try login.
+    ok( my @users = $class->list({ login => "$args{login}%" }),
+        "Look up login '$args{login}%" );
+    is( scalar @users, 5, "Check for 5 persons" );
+}
+
 
 1;
 __END__

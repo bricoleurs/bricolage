@@ -3,36 +3,34 @@ package Bric::Biz::Asset::Business::Parts::Tile::Data;
 
 =head1 NAME
 
-Bric::Biz::Asset::Business::Parts::Tile::Data - The tile class that 
-contains the business data
+Bric::Biz::Asset::Business::Parts::Tile::Data - The tile class that contains
+the business data.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-18 20:08:34 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
- # Creation of New Objects
- $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new( $param)
- $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->lookup( { id => $id })
- ($tile_list, @tiles) = Bric::Biz::Asset::Business::Parts::Tile::Data->list
-		( $criteria )
+  # Creation of New Objects
+  $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new($params);
+  $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->lookup({ id => $id });
+  @tiles = Bric::Biz::Asset::Business::Parts::Tile::Data->list($params);
 
- # Retrieval of Object IDs
- ($id_list || @ids) = = Bric::Biz::Asset::Business::Parts::Tile::Data->list_ids
-		( $criteria )
+  # Retrieval of Object IDs
+  @ids = = Bric::Biz::Asset::Business::Parts::Tile::Data->list_ids($params);
 
- # Manipulation of Data Field
- $tile = $tile->set_data( $data_asset )
- $data_asset = $tile->get_data()
+  # Manipulation of Data Field
+  $tile = $tile->set_data( $data_asset );
+  $data_asset = $tile->get_data;
 
 =head1 DESCRIPTION
 
@@ -45,13 +43,11 @@ This class holds the Business Asset Parts Data objects in a tile
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Fault::Exception::GEN;
@@ -81,79 +77,74 @@ use constant S_TABLE => 'story_data_tile';
 use constant M_TABLE => 'media_data_tile';
 
 use constant COLS   => qw(name
-			  description
-			  element_data__id
-			  object_instance_id
-			  parent_id
-			  place
-			  object_order
-			  hold_val
-			  date_val
-			  short_val
-			  blob_val
-			  active);
+                          description
+                          element_data__id
+                          object_instance_id
+                          parent_id
+                          place
+                          object_order
+                          hold_val
+                          date_val
+                          short_val
+                          blob_val
+                          active);
 
 use constant FIELDS => qw(name
-			  description
-			  element_data_id
-			  object_instance_id
-			  parent_id
-			  place
-			  object_order
-			  _hold_val
-			  _date_val
-			  _short_val
-			  _blob_val
-			  _active);
+                          description
+                          element_data_id
+                          object_instance_id
+                          parent_id
+                          place
+                          object_order
+                          _hold_val
+                          _date_val
+                          _short_val
+                          _blob_val
+                          _active);
 
 #==============================================================================#
 # Fields                               #
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-# Public fields should use 'vars'
-#use vars qw();
+# Public Class Fields
+# None.
 
 #--------------------------------------#
-# Private Class Fields                  
-
-# Private fields use 'my'
+# Private Class Fields
+# None.
 
 #--------------------------------------#
-# Instance Fields                       
-
-# None
+# Instance Fields
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-	Bric::register_fields({
-			     # Public Fields
+        Bric::register_fields({
+                             # Public Fields
 
-			     # association with formatting asset is inheriated
-			     # as will be the association with an asset
-			     name               => Bric::FIELD_RDWR,
-			     description        => Bric::FIELD_RDWR,
-			     # reference to the asset type data object
-			     element_data_id => Bric::FIELD_RDWR,
-			     object_instance_id => Bric::FIELD_RDWR,
-			     parent_id          => Bric::FIELD_RDWR,
-			     # This item's place in the list of tiles
-			     place              => Bric::FIELD_RDWR,
-			     # This item's sequence among items of the same name
-			     object_order       => Bric::FIELD_RDWR,
-			     object_type        => Bric::FIELD_READ,
+                             # association with formatting asset is inheriated
+                             # as will be the association with an asset
+                             name               => Bric::FIELD_RDWR,
+                             description        => Bric::FIELD_RDWR,
+                             # reference to the asset type data object
+                             element_data_id => Bric::FIELD_RDWR,
+                             object_instance_id => Bric::FIELD_RDWR,
+                             parent_id          => Bric::FIELD_RDWR,
+                             # This item's place in the list of tiles
+                             place              => Bric::FIELD_RDWR,
+                             # This item's sequence among items of the same name
+                             object_order       => Bric::FIELD_RDWR,
+                             object_type        => Bric::FIELD_READ,
 
-			     # Private Fields
-				_hold_val			=> Bric::FIELD_NONE,
-			     _active            => Bric::FIELD_NONE,
-			     _date_val          => Bric::FIELD_NONE,
-			     _short_val         => Bric::FIELD_NONE,
-			     _blob_val          => Bric::FIELD_NONE,
-			     _element_obj    => Bric::FIELD_NONE,
-			     _sql_type          => Bric::FIELD_NONE,
-			    });
+                             # Private Fields
+                                _hold_val                       => Bric::FIELD_NONE,
+                             _active            => Bric::FIELD_NONE,
+                             _date_val          => Bric::FIELD_NONE,
+                             _short_val         => Bric::FIELD_NONE,
+                             _blob_val          => Bric::FIELD_NONE,
+                             _element_obj    => Bric::FIELD_NONE,
+                             _sql_type          => Bric::FIELD_NONE,
+                            });
     }
 
 #==============================================================================#
@@ -166,16 +157,9 @@ BEGIN {
 
 =over 4
 
-=cut
-
-#--------------------------------------#
-# Constructors 
-
-#------------------------------------------------------------------------------#
-
 =item $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new($init)
 
-This will create a new tile object with the given state defined by the 
+This will create a new tile object with the given state defined by the
 optional initial state argument
 
 Supported Keys:
@@ -208,17 +192,11 @@ parent_id
 
 =back
 
-B<throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<side effects:>
-
-NONE
-
-B<notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -234,32 +212,31 @@ sub new {
 
     my $obj = delete $init->{'object'};
     if ($obj) {
-	$init->{'object_instance_id'} = $obj->get_id();
-	my $class = ref $obj;
-	
-	if ($class eq 'Bric::Biz::Asset::Business::Media') {
-	    $init->{'object_type'} = 'media';
-	} elsif ($class eq 'Bric::Biz::Asset::Business::Story') {
-	    $init->{'object_type'} = 'story';
-	} else {
-	    my $err_msg = 'Object of type $class not allowed';
-	    die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
-	}
+        $init->{'object_instance_id'} = $obj->get_id();
+        my $class = ref $obj;
+
+        if ($class eq 'Bric::Biz::Asset::Business::Media') {
+            $init->{'object_type'} = 'media';
+        } elsif ($class eq 'Bric::Biz::Asset::Business::Story') {
+            $init->{'object_type'} = 'story';
+        } else {
+            my $err_msg = 'Object of type $class not allowed';
+            die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+        }
     }
 
     if ($init->{'element_data'}) {
-	my $atd = delete $init->{'element_data'};
+        my $atd = delete $init->{'element_data'};
 
-	$init->{'element_data_id'} = $atd->get_id();
-	$init->{'name'}               = $atd->get_name();
-	$init->{'description'}        = $atd->get_description();
-	
-	$init->{'_element_obj'}    = $atd;
+        $init->{'element_data_id'} = $atd->get_id();
+        $init->{'name'}            = $atd->get_name();
+        $init->{'description'}     = $atd->get_description();
+        $init->{'_element_obj'}    = $atd;
     }
 
     unless ($init->{'object_type'}) {
-	my $err_msg = "Required parameter 'object_type' missing";
-	die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+        my $err_msg = "Required parameter 'object_type' missing";
+        die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
     }
 
     $self = bless {}, $self unless ref $self;
@@ -272,45 +249,41 @@ sub new {
 
 ################################################################################
 
-=item $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->lookup( $criteria )
+=item $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->lookup
+  ({ id => $id})
 
-This will return an existing tile object that is defined by the given 
-criteria
+This will return an existing tile object that is defined by the data tile ID.
 
-B<throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<side effects:>
-
-NONE
-
-B<notes:>
-
-NONE 
+B<Notes:> NONE.
 
 =cut
 
 sub lookup {
     my ($class, $param) = @_;
+    my $self = $class->cache_lookup($param);
+    return $self if $self;
 
     unless ($param->{'id'} && ($param->{'obj'} ||$param->{'object_type'})) {
-	my $err_msg = 'Improper criteria passed to lookup';
-	die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+        my $err_msg = 'Improper criteria passed to lookup';
+        die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
     }
 
     # Determine the short name for this object.
     my $short;
     if ($param->{'obj'}) {
-	my $obj_class = ref $param->{'obj'};
-	
-	if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
-	    $short = 'story';
-	} elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
-	    $short = 'media';
-	}
+        my $obj_class = ref $param->{'obj'};
+
+        if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
+            $short = 'story';
+        } elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
+            $short = 'media';
+        }
     } else {
-	$short = $param->{'object_type'};
+        $short = $param->{'object_type'};
     }
 
     # Determine the table name given the short name for this object.
@@ -324,22 +297,22 @@ sub lookup {
     bind_columns($select, \@d[0 .. (scalar COLS)]);
     fetch($select);
 
-    my $self = bless {}, $class;
+    $self = bless {}, $class;
 
     $self->_set(['id', FIELDS], [@d]);
-    $self->SUPER::new();
+    $self->SUPER::new;
 
     # Make sure the object type is set.
     $self->_set(['object_type'], [$short]);
 
     $self->_set__dirty(0);
 
-    return $self;
+    return $self->cache_me;
 }
 
 ################################################################################
 
-=item (@ts||$ts) = Bric::Biz::Assets::Business::Parts::Tile::Data->list($param)
+=item (@ts||$ts) = Bric::Biz::Assets::Business::Parts::Tile::Data->list($params)
 
 This will return a list or list ref of tiles that match the given criteria
 
@@ -385,29 +358,20 @@ parent_id
 
 =back
 
-B<throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<side effects:>
-
-NONE
-
-B<notes:>
-
-NONE 
+B<Notes:> NONE.
 
 =cut
 
 sub list {
     my ($class, $param) = @_;
-
     _do_list($class, $param, undef);
 }
 
 ################################################################################
-
-#--------------------------------------#
 
 =back
 
@@ -438,29 +402,20 @@ sub DESTROY {
 
 This will return a list or list ref of tile ids that match the given criteria
 
-B<throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<side effects:>
-
-NONE
-
-B<notes:>
-
-NONE 
+B<Notes:> NONE.
 
 =cut
 
 sub list_ids {
     my ($class, $param) = @_;
-
     _do_list($class, $param, 1);
 }
 
 ################################################################################
-
-#--------------------------------------#
 
 =back
 
@@ -492,11 +447,11 @@ sub get_element_data_obj {
     my $atd   = $self->_get('_element_obj');
 
     unless ($atd) {
-	my $atd_id = $self->_get('element_data_id');
-	$atd = Bric::Biz::AssetType::Parts::Data->lookup({id => $atd_id});
+        my $atd_id = $self->_get('element_data_id');
+        $atd = Bric::Biz::AssetType::Parts::Data->lookup({id => $atd_id});
 
-	$self->_set(['_element_obj'], [$atd]);
-	$self->_set__dirty($dirty);
+        $self->_set(['_element_obj'], [$atd]);
+        $self->_set__dirty($dirty);
     }
 
     return $atd;
@@ -523,30 +478,24 @@ NONE
 =cut
 
 sub get_element_name {
-	my ($self) = @_;
-	my $at = $self->_get_element_object();
-	my $name = $at->get_name();
-	return $name;
+    my ($self) = @_;
+    my $at = $self->_get_element_object();
+    my $name = $at->get_name();
+    return $name;
 }
 
 ################################################################################
 
 =item $tile = $tile->set_data($value)
 
-This will create the attribute on the business asset and store it in this 
-tile
+This will create the attribute on the business asset and store it in this
+tile.
 
-B<Throws:> 
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -560,7 +509,7 @@ sub set_data {
 
     no warnings;
     unless ($self->_get('_'.$sql_type.'_val') eq $value) {
-	$self->_set(['_'.$sql_type.'_val'], [$value]);
+        $self->_set(['_'.$sql_type.'_val'], [$value]);
     }
 
     return $self;
@@ -576,17 +525,11 @@ Returns the given business data from the tile. If the SQL type of the data
 object is "date", then $format will be used to format the date, if it is
 passed. Otherwise, the format set in the preferences will be used.
 
-B<throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<side effects:>
-
-NONE
-
-B<notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -622,9 +565,7 @@ NONE
 
 sub prepare_clone {
     my ($self) = @_;
-
     $self->_set(['id'], [undef]);
-
     return $self;
 }
 
@@ -634,23 +575,15 @@ sub prepare_clone {
 
 Returns the fact that this is not a container tile
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-sub is_container {
-    return;
-}
+sub is_container { return }
 
 ###############################################################################
 
@@ -658,24 +591,17 @@ sub is_container {
 
 Tells if this is an autopopulated tile
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub is_autopopulated {
     my ($self) = @_;
     my $at = $self->_get_element_object();
-
     return $self if $at->get_autopopulated();
 }
 
@@ -684,27 +610,19 @@ sub is_autopopulated {
 =item $tile = $tile->lock_val()
 
 For tiles that are autopopulated, this will prevent the value from being
-autopopulated 
+autopopulated.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub lock_val {
     my ($self) = @_;
-
     $self->_set(['_hold_val'], [1]);
-
     return $self;
 }
 
@@ -712,27 +630,19 @@ sub lock_val {
 
 =item $tile = $tile->unlock_val()
 
-unsets the lock val flag
+Unsets the lock val flag.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub unlock_val {
     my ($self) = @_;
-
     $self->_set(['_hold_val'], [0]);
-
     return $self;
 }
 
@@ -742,23 +652,16 @@ sub unlock_val {
 
 Returns if the tile has been locked
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub is_locked {
     my ($self) = @_;
-
     return $self if $self->_get('_hold_val');
 }
 
@@ -768,17 +671,11 @@ sub is_locked {
 
 Saves the chenges made to the database
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -788,9 +685,9 @@ sub save {
     return unless $self->_get__dirty;
 
     if ($self->_get('id')) {
-	$self->_do_update();
+        $self->_do_update();
     } else {
-	$self->_do_insert();
+        $self->_do_insert();
     }
 
     $self->_set__dirty(0);
@@ -808,32 +705,32 @@ sub save {
 
 =head1 PRIVATE
 
-=cut
-
-#--------------------------------------#
-
 =head2 Private Class Methods
 
 =over 4
 
 =item _do_list($class, $param, $ids)
 
-Called by list or list_ids this returns either a list of ids or a list 
-of objects, depending on the caller
+Called by list or list_ids this returns either a list of ids or a list of
+objects, depending on the caller.
 
 B<Throws:>
 
-"Object of type $obj_class not allowed to be tiled"
+=over 4
 
-"improper args for list"
+=item *
 
-B<Side Effects:>
+Object of type $obj_class not allowed to be tiled.
 
-NONE
+=item *
 
-B<Notes:>
+Improper args for list.
 
-NONE
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -841,25 +738,25 @@ sub _do_list {
     my ($class, $param, $ids) = @_;
 
     unless ($param->{'object'} || $param->{'object_type'}) {
-	my $err_msg = "Improper arguments for method 'list'";
-	die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+        my $err_msg = "Improper arguments for method 'list'";
+        die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
     }
 
     # Get the object type and object ID.
     my ($obj_type,$obj_id);
     if ($param->{'object'}) {
-	my $obj_class = ref $param->{'object'};
+        my $obj_class = ref $param->{'object'};
 
-	# Get the object type.
-	if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
-	    $obj_type = 'story';
-	} elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
-	    $obj_type = 'media';
-	}
+        # Get the object type.
+        if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
+            $obj_type = 'story';
+        } elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
+            $obj_type = 'media';
+        }
 
-	$param->{'object_instance_id'} = $param->{'object'}->get_version_id();
+        $param->{'object_instance_id'} = $param->{'object'}->get_version_id();
     } else {
-	$obj_type = $param->{'object_type'};
+        $obj_type = $param->{'object_type'};
     }
 
     # Get the table name
@@ -867,11 +764,11 @@ sub _do_list {
 
     # Build up a where clause if necessary.
     my (@where, @bind);
-    foreach my $f (qw(object_instance_id active 
-						element_data_id name parent_id)) {
-	next unless exists $param->{$f};
-	push @where, "$f=?";
-	push @bind, $param->{$f};
+    foreach my $f (qw(object_instance_id active element_data_id name
+                      parent_id)) {
+        next unless exists $param->{$f};
+        push @where, "$f=?";
+        push @bind, $param->{$f};
     }
 
     my $sql = 'SELECT id';
@@ -885,26 +782,24 @@ sub _do_list {
     ## PREPARE AND EXECUTE THE SQL ##
     my $select = prepare_ca($sql, undef, DEBUG);
     if ($ids) {
-	my $return = col_aref($select, @bind);
-	return wantarray ? @{ $return } : $return;
+        my $return = col_aref($select, @bind);
+        return wantarray ? @{ $return } : $return;
     } else {
-	my @objs;
-	execute($select, @bind);
-	my @d;
-	bind_columns($select,\@d[0 .. scalar(COLS)]);
-	while (fetch($select)) {
-	    my $self = bless {}, $class;
-	    $self->_set(['id', FIELDS, 'object_type'], [@d, $obj_type]);
-	    $self->_set__dirty(0);
-	    push @objs, $self;
-	}
-	return wantarray ? @objs : \@objs;
+        my @objs;
+        execute($select, @bind);
+        my @d;
+        bind_columns($select,\@d[0 .. scalar(COLS)]);
+        while (fetch($select)) {
+            my $self = bless {}, $class;
+            $self->_set(['id', FIELDS, 'object_type'], [@d, $obj_type]);
+            $self->_set__dirty(0);
+            push @objs, $self->cache_me;
+        }
+        return wantarray ? @objs : \@objs;
     }
 }
 
 ################################################################################
-
-#--------------------------------------#
 
 =back
 
@@ -918,15 +813,17 @@ inserts the row into the database
 
 B<Throws:>
 
-'Object must be a media or story to add tiles'
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Object must be a media or story to add tiles.
 
-B<Notes:>
+=back
 
-NONE
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -936,7 +833,7 @@ sub _do_insert {
     my $next_key_sql = next_key($table);
 
     my $sql = "INSERT INTO $table (id,".join(',', COLS) . ') '.
-	      "VALUES ($next_key_sql,".join(',', ('?') x COLS).')';
+              "VALUES ($next_key_sql,".join(',', ('?') x COLS).')';
 
     my $insert = prepare_c($sql, undef, DEBUG);
     execute($insert, ($self->_get(FIELDS)));
@@ -950,19 +847,21 @@ sub _do_insert {
 
 =item $self = $self->_do_update()
 
-Updates the row in the database
+Updates the row in the database.
 
 B<Throws:>
 
-'Object must be a media or story to add tiles'
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Object must be a media or story to add tiles.
 
-B<Notes:>
+=back
 
-NONE
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -984,17 +883,11 @@ sub _do_update {
 
 Returns the asset type data object
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -1004,11 +897,11 @@ sub _get_element_object {
     my $at_obj = $self->_get('_element_obj');
 
     unless ($at_obj) {
-	my $at_id = $self->_get('element_data_id');
-	$at_obj = Bric::Biz::AssetType::Parts::Data->lookup({id => $at_id});
+        my $at_id = $self->_get('element_data_id');
+        $at_obj = Bric::Biz::AssetType::Parts::Data->lookup({id => $at_id});
 
-	$self->_set(['_element_obj'], [$at_obj]);
-	$self->_set__dirty($dirty);
+        $self->_set(['_element_obj'], [$at_obj]);
+        $self->_set__dirty($dirty);
     }
 
     return $at_obj;
@@ -1020,17 +913,11 @@ sub _get_element_object {
 
 Returns the sql type for this object.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -1040,11 +927,11 @@ sub _get_sql_type {
     my $sql_type = $self->_get('_sql_type');
 
     unless ($sql_type) {
-	my $at    = $self->get_element_data_obj();
-	$sql_type = $at->get_sql_type();
+        my $at    = $self->get_element_data_obj();
+        $sql_type = $at->get_sql_type();
 
-	$self->_set(['_sql_type'], [$sql_type]);
-	$self->_set__dirty($dirty);
+        $self->_set(['_sql_type'], [$sql_type]);
+        $self->_set__dirty($dirty);
     }
 
     return $sql_type;
@@ -1059,17 +946,11 @@ sub _get_sql_type {
 Returns the name of the table this object uses.  This method can act as a class
 or instance method depending on how its called.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -1078,12 +959,12 @@ sub _get_table_name {
     my $type = ref $self ? $self->get_object_type : $self;
 
     if ($type eq 'story') {
-	return S_TABLE;
+        return S_TABLE;
     } elsif ($type eq 'media') {
-	return M_TABLE;
+        return M_TABLE;
     } else {
-	my $err_msg = "Object of type '$type' not allowed";
-	die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+        my $err_msg = "Object of type '$type' not allowed";
+        die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
     }
 }
 
@@ -1100,12 +981,11 @@ NONE
 
 =head1 AUTHOR
 
-"Michael Soderstrom" <miraso@pacbell.net>
-Bricolage Engineering
+Michael Soderstrom <miraso@pacbell.net>
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
+L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Asset::Business::Parts::Tile>
 
 =cut

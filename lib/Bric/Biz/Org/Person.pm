@@ -7,15 +7,15 @@ Bric::Biz::Org::Person - Manages Organizations Related to Persons
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-25 01:56:17 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -130,7 +130,7 @@ my $SEL_COLS = 'po.id, po.org__id, po.person__id, po.role, po.department, ' .
 my @SEL_PROPS = (@PO_PROPS, qw(name long_name _personal _org_active grp_ids));
 
 my %TXT_MAP = qw(name o.name long_name o.long_name role po.role department
-		  po.department title po.title);
+                  po.department title po.title);
 my %NUM_MAP = qw(id po.id org_id po.org__id person_id po.person__id);
 
 ################################################################################
@@ -139,20 +139,20 @@ my %NUM_MAP = qw(id po.id org_id po.org__id person_id po.person__id);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id =>  Bric::FIELD_READ,
-			 person_id => Bric::FIELD_RDWR,
-			 org_id => Bric::FIELD_RDWR,
-			 role => Bric::FIELD_RDWR,
-			 title => Bric::FIELD_RDWR,
-			 department => Bric::FIELD_RDWR,
+                         # Public Fields
+                         id =>  Bric::FIELD_READ,
+                         person_id => Bric::FIELD_RDWR,
+                         org_id => Bric::FIELD_RDWR,
+                         role => Bric::FIELD_RDWR,
+                         title => Bric::FIELD_RDWR,
+                         department => Bric::FIELD_RDWR,
 
-			 # Private Fields
-			 _personal => Bric::FIELD_NONE,
-			 _active => Bric::FIELD_NONE,
-			 _org_active => Bric::FIELD_NONE,
-			 _addr => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _personal => Bric::FIELD_NONE,
+                         _active => Bric::FIELD_NONE,
+                         _org_active => Bric::FIELD_NONE,
+                         _addr => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -304,7 +304,11 @@ Bric::Biz::Org object.
 =cut
 
 sub lookup {
-    my $org = &$get_em(@_);
+    my $pkg = shift;
+    my $org = $pkg->cache_lookup(@_);
+    return $org if $org;
+
+    $org = $get_em->($pkg, @_);
     # We want @$org to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Biz::Org::Person objects found.' }) if @$org > 1;
@@ -527,20 +531,20 @@ sub my_meths {
     # Load field members.
     my $ret = Bric::Biz::Org::Person->SUPER::my_meths();
     $ret->{role} = { meth => sub {shift->get_role(@_)},
-		     args => [],
-		     disp => 'Role',
-		     type => 'short',
-		     len  => 64 };
+                     args => [],
+                     disp => 'Role',
+                     type => 'short',
+                     len  => 64 };
     $ret->{title} = { meth => sub {shift->get_title(@_)},
-		      args => [],
-		      disp => 'Title',
-		      type => 'short',
-		      len  => 64 };
+                      args => [],
+                      disp => 'Title',
+                      type => 'short',
+                      len  => 64 };
     $ret->{department} = { meth => sub {shift->get_department(@_)},
-			   args => [],
-			   disp => 'Department',
-			   type => 'short',
-			   len  => 64 };
+                           args => [],
+                           disp => 'Department',
+                           type => 'short',
+                           len  => 64 };
     return $ret;
 }
 
@@ -1273,32 +1277,32 @@ sub save {
     return unless $self->_get__dirty;
 
     if ($id) {
-	# It's an existing porg. Update it.
-	$self->_set([qw(id _active)], [$self->_get(qw(org_id _org_active))]);
-	$self->SUPER::save;
-	$self->_set(['id', '_active'], [$id, $act]);
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # It's an existing porg. Update it.
+        $self->_set([qw(id _active)], [$self->_get(qw(org_id _org_active))]);
+        $self->SUPER::save;
+        $self->_set(['id', '_active'], [$id, $act]);
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE person_org
             SET    @PO_COLS = ?
             WHERE  id = ?
         }, undef, DEBUG);
-	execute($upd, $self->_get(@PO_PROPS), $id);
+        execute($upd, $self->_get(@PO_PROPS), $id);
     } else {
-	# It's a new porg. Insert it.
-	$self->_set(['id'], [$self->_get('org_id')]);
-	$self->SUPER::save;
-	$self->_set([qw(org_id _org_active)], [$self->_get(qw(id _active))]);
-	local $" = ', ';
-	my $fields = join ', ', next_key('org'), ('?') x $#PO_COLS;
-	my $ins = prepare_c(qq{
+        # It's a new porg. Insert it.
+        $self->_set(['id'], [$self->_get('org_id')]);
+        $self->SUPER::save;
+        $self->_set([qw(org_id _org_active)], [$self->_get(qw(id _active))]);
+        local $" = ', ';
+        my $fields = join ', ', next_key('org'), ('?') x $#PO_COLS;
+        my $ins = prepare_c(qq{
             INSERT INTO person_org (@PO_COLS)
             VALUES ($fields)
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@PO_PROPS[1..$#PO_PROPS]));
-	# Now grab the ID.
-	$self->_set({id => last_key('org')});
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@PO_PROPS[1..$#PO_PROPS]));
+        # Now grab the ID.
+        $self->_set({id => last_key('org')});
     }
     $self->SUPER::save;
     return $self;
@@ -1373,13 +1377,13 @@ $get_em = sub {
       'AND m.id = c.member__id';
     my @params;
     while (my ($k, $v) = each %$params) {
-	if ($NUM_MAP{$k}) {
+        if ($NUM_MAP{$k}) {
             $wheres .= " AND $NUM_MAP{$k} = ?";
-	    push @params, $v;
-	} elsif ($TXT_MAP{$k}) {
+            push @params, $v;
+        } elsif ($TXT_MAP{$k}) {
             $wheres .= " AND LOWER($TXT_MAP{$k}) LIKE ?";
-	    push @params, lc $v;
-	} elsif ($k eq 'grp_id') {
+            push @params, lc $v;
+        } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, org_member c2";
             $wheres .= " AND o.id = c2.object_id AND c2.member__id = m2.id" .
@@ -1418,7 +1422,7 @@ $get_em = sub {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@SEL_PROPS, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            push @orgs, $self;
+            push @orgs, $self->cache_me;
         } else {
             push @$grp_ids, $d[$#d];
         }

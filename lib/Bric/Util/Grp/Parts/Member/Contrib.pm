@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:51 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -138,10 +138,14 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $job = _do_list(@_);
+    my $pkg = shift;
+    my $job = $pkg->cache_lookup(@_);
+    return $job if $job;
+
+    $job = $pkg->_do_list(@_);
     # We want @$job to have only one value.
     die $dp->new({ msg => 'Too many Bric::Util::Grp::Parts::Member::Contrib'
-		          . ' objects found.' }) if @$job > 1;
+                          . ' objects found.' }) if @$job > 1;
     return @$job ? $job->[0] : undef;
 }
 
@@ -180,8 +184,8 @@ See Bric::Util::Grp::Parts::Member. Only my_meths() is overridden here.
 =item (@meths || $meths_aref) =
   Bric::Util::Grp::Parts::Member::Contrib->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -190,39 +194,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -234,29 +238,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
+An anonymous hash of properties used to display the property or attribute.
 Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -274,27 +280,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -315,97 +322,99 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      prefix     => {
-			     name     => 'prefix',
-			     get_meth => sub { shift->get_object->get_prefix(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->get_object->set_prefix(@_) },
-			     set_args => [],
-			     disp     => 'Prefix',
-			     type     => 'short',
-			     len      => 32,
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 32
-					 }
-			    },
-	      fname      => {
-			     name     => 'fname',
-			     get_meth => sub { shift->get_object->get_fname(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->get_object->set_fname(@_) },
-			     set_args => [],
-			     disp     => 'First',
-			     len      => 64,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      mname      => {
-			     name     => 'mname',
-			     get_meth => sub { shift->get_object->get_mname(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->get_object->set_mname(@_) },
-			     set_args => [],
-			     disp     => 'Middle',
-			     len      => 64,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      lname      => {
-			     name     => 'lname',
-			     get_meth => sub { shift->get_object->get_lname(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->get_object->set_lname(@_) },
-			     set_args => [],
-			     disp     => 'Last',
-			     search   => 1,
-			     len      => 64,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      suffix     => {
-			     name     => 'suffix',
-			     get_meth => sub { shift->get_object->get_suffix(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->get_object->set_suffix(@_) },
-			     set_args => [],
-			     disp     => 'Suffix',
-			     len      => 32,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 32
-					 }
-			    },
-	      type      => {
-			     name     => 'type',
-			     get_meth => sub { shift->get_grp->get_name(@_) },
-			     get_args => [],
-			     disp     => 'Contributor Type',
-			     len      => 64,
-			     type     => 'short',
-			    }
-	     };
+              prefix     => {
+                             name     => 'prefix',
+                             get_meth => sub { shift->get_object->get_prefix(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->get_object->set_prefix(@_) },
+                             set_args => [],
+                             disp     => 'Prefix',
+                             type     => 'short',
+                             len      => 32,
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 32
+                                         }
+                            },
+              fname      => {
+                             name     => 'fname',
+                             get_meth => sub { shift->get_object->get_fname(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->get_object->set_fname(@_) },
+                             set_args => [],
+                             disp     => 'First',
+                             len      => 64,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 64
+                                         }
+                            },
+              mname      => {
+                             name     => 'mname',
+                             get_meth => sub { shift->get_object->get_mname(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->get_object->set_mname(@_) },
+                             set_args => [],
+                             disp     => 'Middle',
+                             len      => 64,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 64
+                                         }
+                            },
+              lname      => {
+                             name     => 'lname',
+                             get_meth => sub { shift->get_object->get_lname(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->get_object->set_lname(@_) },
+                             set_args => [],
+                             disp     => 'Last',
+                             search   => 1,
+                             len      => 64,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 64
+                                         }
+                            },
+              suffix     => {
+                             name     => 'suffix',
+                             get_meth => sub { shift->get_object->get_suffix(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->get_object->set_suffix(@_) },
+                             set_args => [],
+                             disp     => 'Suffix',
+                             len      => 32,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 32
+                                         }
+                            },
+              type      => {
+                             name     => 'type',
+                             get_meth => sub { shift->get_grp->get_name(@_) },
+                             get_args => [],
+                             disp     => 'Contributor Type',
+                             len      => 64,
+                             type     => 'short',
+                            }
+             };
     foreach my $meth (__PACKAGE__->SUPER::my_meths(1)) {
         if ($meth->{name} eq 'name') {
             # Copy name property.
             $meth = { %$meth };
             delete $meth->{search};
         }
-	$meths->{$meth->{name}} = $meth;
-	push @ord, $meth->{name};
+        $meths->{$meth->{name}} = $meth;
+        push @ord, $meth->{name};
     }
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
+
+################################################################################
 
 =back
 
@@ -413,9 +422,7 @@ sub my_meths {
 
 See Also Bric::Util::Grp::Parts::Member.
 
-=cut
-
-################################################################################
+=over 4
 
 =item $roles = $contrib->get_roles
 
@@ -516,7 +523,7 @@ sub get_grp_ids {
     my $self = shift;
     return ! ref $self ? INST_GROUP_ID
       : GRP_PKG->list_ids({ package => 'Bric::Biz::Person',
-			    obj_id => $self->get_obj_id })
+                            obj_id => $self->get_obj_id })
 }
 
 sub save {
@@ -525,6 +532,8 @@ sub save {
     $_[0]->get_object->save;
     $_[0]->SUPER::save;
 }
+
+=back
 
 =head1 PRIVATE
 
@@ -617,34 +626,34 @@ sub _do_list {
     my ($pkg, $params, $ids) = @_;
     my (@wheres, @args);
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'grp') {
-	    push @wheres, "m.grp__id = ?";
-	    push @args, $params->{grp}->get_id;
-	} elsif ($k eq 'grp_id') {
-	    push @wheres, "m.grp__id = ?";
-	    push @args, $v;
-	} elsif ($k eq 'id') {
-	    push @wheres, "m.id = ?";
-	    push @args, $v;
-	} elsif ($k eq 'active') {
-	    push @wheres, "m.active = ?";
-	    push @args, $v;
-	} elsif ($k eq 'person_id') {
-	    push @wheres, "p.id = ?";
-	    push @args, $v;
-	} elsif ($k eq 'no_grp_id') {
-	    push @wheres, "m.grp__id <> ?";
-	    push @args, $v;
-	} else {
-	    push @wheres, "LOWER(p.$k) LIKE ?";
-	    push @args, lc $v;
-	}
+        if ($k eq 'grp') {
+            push @wheres, "m.grp__id = ?";
+            push @args, $params->{grp}->get_id;
+        } elsif ($k eq 'grp_id') {
+            push @wheres, "m.grp__id = ?";
+            push @args, $v;
+        } elsif ($k eq 'id') {
+            push @wheres, "m.id = ?";
+            push @args, $v;
+        } elsif ($k eq 'active') {
+            push @wheres, "m.active = ?";
+            push @args, $v;
+        } elsif ($k eq 'person_id') {
+            push @wheres, "p.id = ?";
+            push @args, $v;
+        } elsif ($k eq 'no_grp_id') {
+            push @wheres, "m.grp__id <> ?";
+            push @args, $v;
+        } else {
+            push @wheres, "LOWER(p.$k) LIKE ?";
+            push @args, lc $v;
+        }
     }
 
     # Make sure we do something with the active flag.
     unless (exists $params->{active} || exists $params->{id}) {
-	    push @wheres, "m.active = ?";
-	    push @args, 1
+            push @wheres, "m.active = ?";
+            push @args, 1
     }
 
     # Assemble the WHERE clause.
@@ -673,12 +682,12 @@ sub _do_list {
     bind_columns($sel, \@d[0..4]);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	my $grp = $grps{$d[1]} ||= Bric::Util::Grp->lookup({ id => $d[1] });
-	my $self = bless {object_package => 'Bric::Biz::Person', grp => $grp},
-	  $pkg;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	push @contribs, $self
+        my $grp = $grps{$d[1]} ||= Bric::Util::Grp->lookup({ id => $d[1] });
+        my $self = bless {object_package => 'Bric::Biz::Person', grp => $grp},
+          $pkg;
+        $self->_set(\@props, \@d);
+        $self->_set__dirty; # Disables dirty flag.
+        push @contribs, $self->cache_me;
     }
     return wantarray ? @contribs : \@contribs;
 }
@@ -702,9 +711,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::Grp|Bric::Util::Grp>, 
-L<Bric::Util::Grp::Person|Bric::Util::Grp::Person>, 
+L<Bric|Bric>,
+L<Bric::Util::Grp|Bric::Util::Grp>,
+L<Bric::Util::Grp::Person|Bric::Util::Grp::Person>,
 L<Bric::Util::Grp::Parts::Member|Bric::Util::Grp::Parts::Member>
 
 =cut

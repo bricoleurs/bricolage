@@ -6,16 +6,16 @@ Bric::Biz::Org::Source - Manages content sources.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-28 17:31:20 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -111,10 +111,10 @@ my @SEL_PROPS = qw(src_id id name long_name source_name description expire
                    _active _personal _org_active grp_ids);
 
 my %TXT_MAP = ( name        => 'o.name',
-		long_name   => 'o.long_name',
-		description => 's.description',
-		source_name => 's.name'
-	      );
+                long_name   => 'o.long_name',
+                description => 's.description',
+                source_name => 's.name'
+              );
 
 my ($METHS, @ORD);
 
@@ -124,18 +124,18 @@ my ($METHS, @ORD);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 src_id => Bric::FIELD_READ,
-			 id => Bric::FIELD_READ,
-			 source_name => Bric::FIELD_RDWR,
-			 description => Bric::FIELD_RDWR,
-			 expire => Bric::FIELD_RDWR,
-			 grp_ids => Bric::FIELD_READ,
+                         # Public Fields
+                         src_id => Bric::FIELD_READ,
+                         id => Bric::FIELD_READ,
+                         source_name => Bric::FIELD_RDWR,
+                         description => Bric::FIELD_RDWR,
+                         expire => Bric::FIELD_RDWR,
+                         grp_ids => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _org_active => Bric::FIELD_NONE,
-			 _active => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _org_active => Bric::FIELD_NONE,
+                         _active => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -250,7 +250,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $src = &$get_em(@_);
+    my $pkg = shift;
+    my $src = $pkg->cache_lookup(@_);
+    return $src if $src;
+
+    $src = $get_em->($pkg, @_);
     # We want @$src to have only one value.
     die $dp->new({  msg => 'Too many Bric::Biz::Org::Source objects found.' })
       if @$src > 1;
@@ -565,68 +569,68 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     foreach my $meth (Bric::Biz::Org::Source->SUPER::my_meths(1)) {
-	$METHS->{$meth->{name}} = $meth;
-	push @ORD, $meth->{name};
+        $METHS->{$meth->{name}} = $meth;
+        push @ORD, $meth->{name};
     }
     $METHS->{name}{disp} = 'Organization Name';
     push @ORD, qw(source_name description expire), pop @ORD;
     $METHS->{description} = {
-			     get_meth => sub { shift->get_description(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_description(@_) },
-			     set_args => [],
-			     name     => 'description',
-			     disp     => 'Description',
-			     len      => 256,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type => 'textarea',
-					   cols => 40,
-					   rows => 4
-				      }
-			    };
+                             get_meth => sub { shift->get_description(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_description(@_) },
+                             set_args => [],
+                             name     => 'description',
+                             disp     => 'Description',
+                             len      => 256,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type => 'textarea',
+                                           cols => 40,
+                                           rows => 4
+                                      }
+                            };
     $METHS->{source_name} = {
-			     get_meth => sub { shift->get_source_name(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_source_name(@_) },
-			     set_args => [],
-			     name     => 'source_name',
-			     disp     => 'Source name',
-			     search   => 1,
-			     len      => 256,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'text',
-					  length     => 32,
-					  maxlength => 64
-				      }
-			     };
+                             get_meth => sub { shift->get_source_name(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_source_name(@_) },
+                             set_args => [],
+                             name     => 'source_name',
+                             disp     => 'Source name',
+                             search   => 1,
+                             len      => 256,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'text',
+                                          length     => 32,
+                                          maxlength => 64
+                                      }
+                             };
     $METHS->{expire}  = {
-			     get_meth => sub { shift->get_expire(@_) },
-			     get_args => undef,
-			     set_meth => sub { shift->set_expire(@_) },
-			     set_args => [],
-			     name     => 'expire',
-			     disp     => 'Expiration',
-			     len      => 4,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'select',
-					   vals => [ [ 0 => 'Never' ],
-						     [ 1 => '1 Day' ],
-						     [ 3 => '3 Days' ],
-						     [ 5 => '5 Days' ],
-						     [ 10 => '10 Days' ],
-						     [ 15 => '15 Days' ],
-						     [ 20 => '20 Days' ],
-						     [ 30 => '30 Days' ],
-						     [ 45 => '45 Days' ],
-						     [ 90 => '90 Days' ],
-						     [ 180 => '180 Days' ],
-						     [ 365 => '1 Year' ]
-						   ]
-					 }
-			    };
+                             get_meth => sub { shift->get_expire(@_) },
+                             get_args => undef,
+                             set_meth => sub { shift->set_expire(@_) },
+                             set_args => [],
+                             name     => 'expire',
+                             disp     => 'Expiration',
+                             len      => 4,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'select',
+                                           vals => [ [ 0 => 'Never' ],
+                                                     [ 1 => '1 Day' ],
+                                                     [ 3 => '3 Days' ],
+                                                     [ 5 => '5 Days' ],
+                                                     [ 10 => '10 Days' ],
+                                                     [ 15 => '15 Days' ],
+                                                     [ 20 => '20 Days' ],
+                                                     [ 30 => '30 Days' ],
+                                                     [ 45 => '45 Days' ],
+                                                     [ 90 => '90 Days' ],
+                                                     [ 180 => '180 Days' ],
+                                                     [ 365 => '1 Year' ]
+                                                   ]
+                                         }
+                            };
 
     return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
 }
@@ -1021,7 +1025,7 @@ this later if we decide we need it, though.]
 #    my $id = ref $self ? $self->_get('id') : undef;
 #    push @ids, defined $id ?
 #      $class->list_ids({ package => $super,
-#			 obj_id  => $id })
+#                        obj_id  => $id })
 #      : $super->INSTANCE_GROUP_ID;
 #    return wantarray ? @ids : \@ids;
 #}
@@ -1091,24 +1095,24 @@ sub save {
             WHERE  id = ?
         }, undef, DEBUG);
         execute($upd, $self->_get(@PROPS, 'src_id'));
-	unless ($self->_get('active')) {
-	    # Deactivate all group memberships if we've deactivated the source.
-	    foreach my $grp (Bric::Util::Grp::Source->list({ obj => $self })) {
-		foreach my $mem ($grp->has_member({ obj => $self })) {
-		    next unless $mem;
-		    $mem->deactivate;
-		    $mem->save;
-		}
-	    }
-	}
+        unless ($self->_get('active')) {
+            # Deactivate all group memberships if we've deactivated the source.
+            foreach my $grp (Bric::Util::Grp::Source->list({ obj => $self })) {
+                foreach my $mem ($grp->has_member({ obj => $self })) {
+                    next unless $mem;
+                    $mem->deactivate;
+                    $mem->save;
+                }
+            }
+        }
     } else {
         # It's a new source. Insert it.
-	# HACK. I have to fake it into being Bric::Biz::Org so that it gets
-	# inserted into the proper group when Bric::Biz::Org::save() calls
-	# register_instance().
-	$self = bless $self, 'Bric::Biz::Org';
+        # HACK. I have to fake it into being Bric::Biz::Org so that it gets
+        # inserted into the proper group when Bric::Biz::Org::save() calls
+        # register_instance().
+        $self = bless $self, 'Bric::Biz::Org';
         $self->SUPER::save;
-	$self = bless $self, __PACKAGE__;
+        $self = bless $self, __PACKAGE__;
         local $" = ', ';
         my $fields = join ', ', next_key('source'), ('?') x $#SCOLS;
         my $ins = prepare_c(qq{
@@ -1118,11 +1122,11 @@ sub save {
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@PROPS[1..$#PROPS]));
         # Now grab the ID.
-	$id = last_key('source');
+        $id = last_key('source');
         $self->_set(['src_id'], [$id]);
 
         # And finally, add this source to the "All Sources" group.
-	$self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     }
     return $self;
 }
@@ -1200,15 +1204,15 @@ $get_em = sub {
       'AND m.id = c.member__id';
     my @params;
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id' or $k eq 'expire') {
+        if ($k eq 'id' or $k eq 'expire') {
             # Simple numeric comparison.
             $wheres .= " AND s.$k = ?";
-	    push @params, $v;
+            push @params, $v;
         } elsif ($k eq 'org_id') {
             # Simple numeric comparison.
             $wheres .= " AND o.id = ?";
-	    push @params, $v;
-	} elsif ($TXT_MAP{$k}) {
+            push @params, $v;
+        } elsif ($TXT_MAP{$k}) {
             # Simple string comparison.
             $wheres .= " AND LOWER($TXT_MAP{$k}) LIKE ?";
             push @params, lc $v;
@@ -1219,8 +1223,8 @@ $get_em = sub {
               " AND m2.grp__id = ?";
             push @params, $v;
         } else {
-	    # We're horked.
-	    die $dp->new({ msg => "Invalid property '$k'."});
+            # We're horked.
+            die $dp->new({ msg => "Invalid property '$k'."});
         }
     }
 
@@ -1255,7 +1259,7 @@ $get_em = sub {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@SEL_PROPS, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            push @orgs, $self;
+            push @orgs, $self->cache_me;
         } else {
             push @$grp_ids, $d[$#d];
         }

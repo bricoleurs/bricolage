@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:50 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -240,7 +240,10 @@ B<Notes:> NONE.
 
 sub lookup {
     my ( $class, $param ) = @_;
-    my $self = bless {}, ref $class || $class;
+    my $self = $class->cache_lookup($param);
+    return $self if $self;
+
+    $self = bless {}, ref $class || $class;
     my $sql =
       'SELECT id, '
       . join ( ', ', MEMBER_COLS ) . ' FROM ' . TABLE
@@ -274,8 +277,10 @@ sub lookup {
 
     # Clear the dirty bit and return.
     $self->_set__dirty(0);
-    return $self;
+    return $self->cache_me;
 }
+
+##############################################################################
 
 =item ($mbr_list||@mbrs) = Bric::Util::Grp::Parts::Member->list($params);
 
@@ -347,9 +352,23 @@ sub href {
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
 
-=item $self->DESTROY
+=over 4
+
+=item $contrib->DESTROY
+
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=back
 
 =cut
 
@@ -363,7 +382,7 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-=cut
+=over 4
 
 =item ($ids||@ids ) = Bric::Util::Grp::Parts::Member->list_ids($params);
 
@@ -385,12 +404,12 @@ sub list_ids {
 
 ################################################################################
 
-=item $meths = Bric::Biz::Person->my_meths
+=item $meths = Bric::Util::Grp::Parts::Member->my_meths
 
-=item (@meths || $meths_aref) = Bric::Biz::Person->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Util::Grp::Parts::Member->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -399,39 +418,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -443,29 +462,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
+An anonymous hash of properties used to display the property or attribute.
 Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -483,27 +504,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -604,9 +626,11 @@ sub get_all_object_ids {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Instance Methods
 
-=cut
+=over 4
 
 =item $package = $member->get_object_package();
 
@@ -1156,13 +1180,13 @@ sub save {
 
 #==============================================================================#
 
+=back
+
 =head1 PRIVATE
 
-=cut
-
-#--------------------------------------#
-
 =head2 Private Class Methods
+
+=over 4
 
 =item $results = _do_list($criteria);
 
@@ -1243,7 +1267,11 @@ sub _do_list {
                 $param->{all}, $ids );
         }
         else {
-            push @objs, _do_select( $class, $grp_id, $param->{all} );
+            # HACK. I changed "_do_select" to "_do_joined_select" because
+            # there is no "_do_select". So this probably doesn't work at all,
+            # but it most likely isn't called at all or we would have noticed
+            # it by now.
+            push @objs, _do_joined_select( $class, $grp_id, $param->{all} );
         }
     }
 
@@ -1316,7 +1344,7 @@ sub _do_joined_select {
         # Clear the dirty bit.
         $self->_set__dirty(0);
 
-        push @objs, $self;
+        push @objs, $self->cache_me;
     }
 
     finish($sth);
@@ -1326,7 +1354,11 @@ sub _do_joined_select {
 
 #--------------------------------------#
 
-=head2 Private Instance Methods              
+=back
+
+=head2 Private Instance Methods
+
+=over 4
 
 =item $class_id = $self->_get_class_id($package)
 
@@ -1986,11 +2018,11 @@ NONE
 sub _do_delete {
     my ($self) = @_;
     my $delete = prepare_c( qq{
-		DELETE FROM
-			member
-		WHERE
-			id=?
-		}, undef, DEBUG
+                DELETE FROM
+                        member
+                WHERE
+                        id=?
+                }, undef, DEBUG
     );
 
     execute( $delete, $self->_get('id') );
@@ -2081,6 +2113,7 @@ sub _do_insert {
 1;
 __END__
 
+=back
 
 =head1 NOTES
 

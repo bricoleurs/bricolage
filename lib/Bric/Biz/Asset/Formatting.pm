@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:45 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -498,7 +498,10 @@ NONE
 
 sub lookup {
     my ($class, $param) = @_;
-    my $self = bless {}, (ref $class ? ref $class : $class);
+    my $self = $class->cache_lookup($param);
+    return $self if $self;
+
+    $self = bless {}, (ref $class ? ref $class : $class);
     my $sql = 'SELECT f.id, ' . join(', ', map {"f.$_ "} COLS) .
       ', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
       ' FROM ' . TABLE . ' f, ' . VERSION_TABLE . ' i ';
@@ -535,7 +538,7 @@ sub lookup {
     $self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
     return unless $self->_get('id');
     $self->_set__dirty(0);
-    return $self;
+    return $self->cache_me;
 }
 
 ################################################################################
@@ -646,14 +649,19 @@ sub list {
         return _do_list($class, $param, undef);
 }
 
-
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $template->DESTROY
 
 Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
+
+=back
 
 =cut
 
@@ -666,19 +674,12 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-=cut
+=over 4
 
 =item ($ids || @ids) = Bric::Biz::Asset::Formatting->list_ids($param)
 
-Returns a list of ids that match the given parameters
-
-=item Supported Keys
-
-=over 4
-
-See List Method
-
-=back
+Returns a list of ids that match the given parameters. See the C<list()>
+method for supported keys in the C<$param> hash reference.
 
 B<Throws:>
 
@@ -726,12 +727,12 @@ sub key_name { 'formatting' }
 
 ################################################################################
 
-=item $meths = Bric::Biz::Asset::Business->my_meths
+=item $meths = Bric::Biz::Asset::Formatting->my_meths
 
-=item (@meths || $meths_aref) = Bric::Biz::Asset::Business->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::Asset::Formattiong->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -740,39 +741,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -784,29 +785,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -824,27 +827,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -966,11 +970,11 @@ sub my_meths {
 
 ################################################################################
 
-#--------------------------------------#
+=back
 
 =head2 Public Instance Methods
 
-=cut
+=over 4
 
 =item $template = $template->set_deploy_date($date)
 
@@ -1677,9 +1681,11 @@ sub save {
 
 #=============================================================================#
 
+=back
+
 =head2 PRIVATE
 
-=cut
+=over 4
 
 =item _do_list( $class, $param, $ids)
 
@@ -1818,7 +1824,7 @@ sub _do_list {
             $self->_set( ['id', FIELDS, 'version_id', VERSION_FIELDS] , [@d]);
             $self->_set__dirty(undef);
 
-            push @objs, $self;
+            push @objs, $self->cache_me;
         }
         return (wantarray ? @objs : \@objs) if @objs;
         return;
@@ -1827,11 +1833,11 @@ sub _do_list {
 
 ################################################################################
 
-#--------------------------------------#
+=back
 
 =head2 Private Instance Methods
 
-=cut
+=over 4
 
 =item $oc_obj = $self->_get_output_channel_object()
 
@@ -1987,12 +1993,9 @@ sub _get_attribute_object {
 
 ################################################################################
 
-=item 
-
 =item $self = $self->_insert_formatting();
 
-Inserts a row into the formatting table that represents a new 
-formatting Asset
+Inserts a row into the formatting table that represents a new formatting Asset.
 
 B<Throws:>
 
@@ -2256,7 +2259,7 @@ sub _build_file_name {
 
 =head2 Private Functions
 
-=over
+=over 4
 
 =item my $name = $set_elem->($init)
 

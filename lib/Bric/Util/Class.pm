@@ -7,15 +7,15 @@ Bric::Util::Class - A module to provide access to the class table
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:46 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -35,13 +35,11 @@ description.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
- 
+# Programatic Dependencies
 use Bric::Util::DBI qw(:standard);
 
 #==============================================================================#
@@ -69,18 +67,16 @@ use constant COLS  => qw(key_name pkg_name disp_name plural_name description
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
+# Public Class Fields
 our $METH;
 our (%BY_ID, %BY_KEY, %BY_PKG);
 
 #--------------------------------------#
-# Private Class Fields                  
-
+# Private Class Fields
 
 
 #--------------------------------------#
-# Instance Fields                       
+# Instance Fields
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
@@ -110,8 +106,7 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors                          
-
+# Constructors
 #------------------------------------------------------------------------------#
 
 =item $obj = Bric::Util::Class->new($init);
@@ -360,7 +355,23 @@ sub key_href {
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
+
+=item $p->DESTROY
+
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=back
 
 =cut
 
@@ -373,9 +384,7 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $val = my_meths->{$key}->[0]->($obj);
 
@@ -470,22 +479,19 @@ sub my_meths {
 			       'props'    => {'type'       => 'checkbox'}
 			      },
 	    };
-    
+
     # Load attributes.
     # NONE
-    
     return $METH;
 }
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Instance Methods
 
 =over 4
-
-=cut
-
-#------------------------------------------------------------------------------#
 
 =item $success = $key->save;
 
@@ -508,7 +514,7 @@ NONE
 sub save {
     my $self = shift;
     my $id = $self->get_id;
- 
+
     if ($id) {
 	$self->_update_class();
     } else {
@@ -518,25 +524,21 @@ sub save {
 
 #==============================================================================#
 
-=head2 Private Methods
+=back
 
-=cut
-
-
-#--------------------------------------#
+=head1 PRIVATE METHODS
 
 =head2 Private Class Methods
 
 NONE
 
-=cut
-
-
-#--------------------------------------#
-
 =head2 Private Instance Methods
 
-NONE
+Need documenting.
+
+=over 4
+
+=item _select_class
 
 =cut
 
@@ -551,28 +553,30 @@ sub _select_class {
     my $sth = prepare_c($sql);
     execute($sth, @$bind);
     bind_columns($sth, \@d[0..(scalar COLS)]);
-    
-    while (fetch($sth)) {
-	push @ret, [@d];
-    }
-    
-    finish($sth);
 
+    while (fetch($sth)) { push @ret, [@d] }
+    finish($sth);
     return \@ret;
 }
 
+=item _update_class
+
+=cut
+
 sub _update_class {
     my $self = shift;
-    
     my $sql = 'UPDATE '.TABLE.
               ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
 
 
     my $sth = prepare_c($sql);
     execute($sth, $self->_get(COLS), $self->get_id);
-    
     return 1;
 }
+
+=item _insert_class
+
+=cut
 
 sub _insert_class {
     my $self = shift;
@@ -581,16 +585,13 @@ sub _insert_class {
     # Create the insert statement.
     my $sql = 'INSERT INTO '.TABLE." (id,".join(',',COLS).") ".
               "VALUES ($nextval,".join(',', ('?') x COLS).')';
-    
     my $sth = prepare_c($sql);
     execute($sth, $self->_get(COLS));
-  
     # Set the ID of this object.
     $self->_set(['id'],[last_key(TABLE)]);
 
     return 1;
 }
-
 
 1;
 __END__
@@ -603,8 +604,7 @@ NONE
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
-Bricolage Engineering
+Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 

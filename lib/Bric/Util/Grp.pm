@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 18:55:06 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -261,9 +261,12 @@ If COLS var changes index of class ID must change.
 
 sub lookup {
     my ($class, $params) = @_;
-    # Make sure we don't exclude secrete groups.
+    my $grp = $class->cache_lookup($params);
+    return $grp if $grp;
+
+    # Make sure we don't exclude secret groups.
     $params->{all} = 1;
-    my $grp = _do_list($class, $params);
+    $grp = _do_list($class, $params);
     # We want @$grp to have only one value.
     die Bric::Util::Fault::Exception::DP->new
       ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
@@ -2857,7 +2860,7 @@ sub _do_list {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@sel_props, \@d);
             $self->_set__dirty; # Disable the dirty flag.
-            push @grps, $self
+            push @grps, $self->cache_me;
         } else {
             # Append the ID.
             push @$grp_ids, $d[$#d];

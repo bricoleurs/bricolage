@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-19 02:39:20 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -150,8 +150,8 @@ my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
 
 my %map = (id => 'id',
-	   event_type_id => 'event_type__id',
-	   owner_id => 'usr__id');
+           event_type_id => 'event_type__id',
+           owner_id => 'usr__id');
 my $meths;
 my @ord = qw(name event_type_id owner_id subject message active);
 
@@ -161,26 +161,26 @@ my @ord = qw(name event_type_id owner_id subject message active);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id =>  Bric::FIELD_READ,
-			 event_type_id => Bric::FIELD_RDWR,
-			 owner_id => Bric::FIELD_RDWR,
-			 name => Bric::FIELD_RDWR,
-			 subject => Bric::FIELD_RDWR,
-			 message => Bric::FIELD_RDWR,
+                         # Public Fields
+                         id =>  Bric::FIELD_READ,
+                         event_type_id => Bric::FIELD_RDWR,
+                         owner_id => Bric::FIELD_RDWR,
+                         name => Bric::FIELD_RDWR,
+                         subject => Bric::FIELD_RDWR,
+                         message => Bric::FIELD_RDWR,
 
-			 # Private Fields
-			 _rules => Bric::FIELD_NONE,
-			 _usr => Bric::FIELD_NONE,
-			 _new_usr => Bric::FIELD_NONE,
-			 _del_usr => Bric::FIELD_NONE,
-			 _grp => Bric::FIELD_NONE,
-			 _new_grp => Bric::FIELD_NONE,
-			 _del_grp => Bric::FIELD_NONE,
-			 _active => Bric::FIELD_NONE,
-			 _del => Bric::FIELD_NONE,
-			 _et => Bric::FIELD_NONE,
-			});
+                         # Private Fields
+                         _rules => Bric::FIELD_NONE,
+                         _usr => Bric::FIELD_NONE,
+                         _new_usr => Bric::FIELD_NONE,
+                         _del_usr => Bric::FIELD_NONE,
+                         _grp => Bric::FIELD_NONE,
+                         _new_grp => Bric::FIELD_NONE,
+                         _del_grp => Bric::FIELD_NONE,
+                         _active => Bric::FIELD_NONE,
+                         _del => Bric::FIELD_NONE,
+                         _et => Bric::FIELD_NONE,
+                        });
 }
 
 ################################################################################
@@ -305,7 +305,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $at = &$get_em(@_);
+    my $pkg = shift;
+    my $at = $pkg->cache_lookup(@_);
+    return $at if $at;
+
+    $at = $get_em->($pkg, @_);
     # We want @$at to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Util::AlertType objects found.' }) if @$at > 1;
@@ -384,7 +388,7 @@ sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -499,14 +503,14 @@ sub name_used {
     my @params;
     my $where = '';
     if (ref $self && !$name) {
-	my ($n, $o, $id) = $self->_get(qw(name owner_id id));
-	@params = (lc($n), $o);
-	if (defined $id) {
-	    push @params, $id;
-	    $where = 'AND id <> ?'
-	}
+        my ($n, $o, $id) = $self->_get(qw(name owner_id id));
+        @params = (lc($n), $o);
+        if (defined $id) {
+            push @params, $id;
+            $where = 'AND id <> ?'
+        }
     } else {
-	@params = (lc($name), $oid);
+        @params = (lc($name), $oid);
     }
 
     my $sel = prepare_ca(qq{
@@ -526,8 +530,8 @@ sub name_used {
 
 =item (@meths || $meths_aref) = Bric::Util::AlertType->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -536,39 +540,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -580,29 +584,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -620,27 +626,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -661,99 +668,99 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      name      => {
-			     name     => 'name',
-			     get_meth => sub { shift->get_name(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_name(@_) },
-			     set_args => [],
-			     disp     => 'Name',
-			     search   => 1,
-			     len      => 64,
-			     req      => 1,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      event_type_id => {
-			     name     => 'event_type_id',
-			     get_meth => sub { shift->get_event_type_id(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_event_type_id(@_) },
-			     set_args => [],
-			     disp     => 'Event Type',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 10,
-					     maxlength => 10
-					 }
-			    },
-	      owner_id   => {
-			     name     => 'owner_id',
-			     get_meth => sub { shift->get_owner_id(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_owner_id(@_) },
-			     set_args => [],
-			     disp     => 'Owner ID',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 10,
-					     maxlength => 10
-					 }
-			    },
-	      subject      => {
-			     name     => 'subject',
-			     get_meth => sub { shift->get_subject(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_subject(@_) },
-			     set_args => [],
-			     disp     => 'Subject',
-			     search   => 1,
-			     len      => 128,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type      => 'text',
-					   length    => 32,
-					   maxlength => 128
-					 }
-			    },
-	      message      => {
-			     name     => 'message',
-			     get_meth => sub { shift->get_message(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_message(@_) },
-			     set_args => [],
-			     disp     => 'Message',
-			     search   => 0,
-			     len      => 512,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type => 'textarea',
-					   cols => 40,
-					   rows => 4,
-					   maxlength => 512
-					 }
-			    },
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->activate(@_)
-						 : shift->deactivate(@_) },
-			     set_args => [],
-			     disp     => 'Active',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	     };
+              name      => {
+                             name     => 'name',
+                             get_meth => sub { shift->get_name(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_name(@_) },
+                             set_args => [],
+                             disp     => 'Name',
+                             search   => 1,
+                             len      => 64,
+                             req      => 1,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 64
+                                         }
+                            },
+              event_type_id => {
+                             name     => 'event_type_id',
+                             get_meth => sub { shift->get_event_type_id(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_event_type_id(@_) },
+                             set_args => [],
+                             disp     => 'Event Type',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 10,
+                                             maxlength => 10
+                                         }
+                            },
+              owner_id   => {
+                             name     => 'owner_id',
+                             get_meth => sub { shift->get_owner_id(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_owner_id(@_) },
+                             set_args => [],
+                             disp     => 'Owner ID',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 10,
+                                             maxlength => 10
+                                         }
+                            },
+              subject      => {
+                             name     => 'subject',
+                             get_meth => sub { shift->get_subject(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_subject(@_) },
+                             set_args => [],
+                             disp     => 'Subject',
+                             search   => 1,
+                             len      => 128,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type      => 'text',
+                                           length    => 32,
+                                           maxlength => 128
+                                         }
+                            },
+              message      => {
+                             name     => 'message',
+                             get_meth => sub { shift->get_message(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_message(@_) },
+                             set_args => [],
+                             disp     => 'Message',
+                             search   => 0,
+                             len      => 512,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type => 'textarea',
+                                           cols => 40,
+                                           rows => 4,
+                                           maxlength => 512
+                                         }
+                            },
+              active     => {
+                             name     => 'active',
+                             get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->activate(@_)
+                                                 : shift->deactivate(@_) },
+                             set_args => [],
+                             disp     => 'Active',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
@@ -1571,12 +1578,12 @@ sub new_rule {
     my ($self, $attr, $op, $value) = @_;
     my $rules = &$get_rules($self);
     $rules->new_obj({ attr => $attr, operator => $op, value => $value,
-		      alert_type_id => $self->_get('id') });
+                      alert_type_id => $self->_get('id') });
 }
 
 ################################################################################
 
-=head2 $self = $at->del_rules(@rule_ids)
+=item $self = $at->del_rules(@rule_ids)
 
   $at->del_rules();
   $at->save;
@@ -1775,7 +1782,7 @@ B<Notes:> Uses get_user_ids() and Bric::Biz::Person::User->lookup() internally.
 sub get_users {
     return wantarray ? map { Bric::Biz::Person::User->lookup({ id => $_}) }
       get_user_ids(@_) : [ map { Bric::Biz::Person::User->lookup({ id => $_}) }
-			  get_user_ids(@_) ];
+                          get_user_ids(@_) ];
 }
 
 ################################################################################
@@ -1841,11 +1848,11 @@ sub add_users {
     my $users = &$get_cont($_[0], '_usr');   # Get the current users.
     my $new_users = $self->_get('_new_usr'); # Get the new users.
     foreach my $u (@users) {
-	# May want to throw an exception of $u is not an ID or User object.
-	my $id = ref $u ? $u->get_id : $u;
-	next if $users->{$ctype}{$id};
-	$users->{$ctype}{$id} = 1;
-	push @{ $new_users->{$ctype} }, $id
+        # May want to throw an exception of $u is not an ID or User object.
+        my $id = ref $u ? $u->get_id : $u;
+        next if $users->{$ctype}{$id};
+        $users->{$ctype}{$id} = 1;
+        push @{ $new_users->{$ctype} }, $id
     }
     return $self;
 }
@@ -1911,11 +1918,11 @@ sub del_users {
     my $del_users = $self->_get('_del_usr'); # Get the delete users.
     @users = keys %$users unless @users;
     foreach my $u (@users) {
-	# May want to throw an exception of $u is not an ID or User object.
-	my $id = ref $u ? $u->get_id : $u;
-	next unless $users->{$ctype}{$id};
-	delete $users->{$ctype}{$id};
-	push @{ $del_users->{$ctype} }, $id
+        # May want to throw an exception of $u is not an ID or User object.
+        my $id = ref $u ? $u->get_id : $u;
+        next unless $users->{$ctype}{$id};
+        delete $users->{$ctype}{$id};
+        push @{ $del_users->{$ctype} }, $id
     }
     return $self;
 }
@@ -2053,7 +2060,7 @@ B<Notes:> Uses get_user_ids() and Bric::Biz::Person::User->lookup() internally.
 sub get_groups {
     return wantarray ? map { Bric::Util::Grp::User->lookup({ id => $_}) }
       get_group_ids(@_) : [ map { Bric::Util::Grp::User->lookup({ id => $_}) }
-			  get_group_ids(@_) ];
+                          get_group_ids(@_) ];
 }
 
 ################################################################################
@@ -2119,11 +2126,11 @@ sub add_groups {
     my $groups = &$get_cont($_[0], '_grp');   # Get the current groups.
     my $new_groups = $self->_get('_new_grp'); # Get the new groups.
     foreach my $g (@groups) {
-	# May want to throw an exception of $g is not an ID or Group object.
-	my $id = ref $g ? $g->get_id : $g;
-	next if $groups->{$ctype}{$id};
-	$groups->{$ctype}{$id} = 1;
-	push @{ $new_groups->{$ctype} }, $id
+        # May want to throw an exception of $g is not an ID or Group object.
+        my $id = ref $g ? $g->get_id : $g;
+        next if $groups->{$ctype}{$id};
+        $groups->{$ctype}{$id} = 1;
+        push @{ $new_groups->{$ctype} }, $id
     }
     return $self;
 }
@@ -2189,11 +2196,11 @@ sub del_groups {
     my $del_groups = $self->_get('_del_grp'); # Get the delete groups.
     @groups = keys %$groups unless @groups;
     foreach my $g (@groups) {
-	# May want to throw an exception of $g is not an ID or Group object.
-	my $id = ref $g ? $g->get_id : $g;
-	next unless $groups->{$ctype}{$id};
-	delete $groups->{$ctype}{$id};
-	push @{ $del_groups->{$ctype} }, $id
+        # May want to throw an exception of $g is not an ID or Group object.
+        my $id = ref $g ? $g->get_id : $g;
+        next unless $groups->{$ctype}{$id};
+        delete $groups->{$ctype}{$id};
+        push @{ $del_groups->{$ctype} }, $id
     }
     return $self;
 }
@@ -2255,48 +2262,48 @@ sub save {
     my $new_id;
 
     unless (defined $id) {
-	# It's a new alert type. Insert it.
-	local $" = ', ';
-	my $fields = join ', ', next_key('alert_type'), ('?') x $#cols;
-	my $ins = prepare_c(qq{
+        # It's a new alert type. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('alert_type'), ('?') x $#cols;
+        my $ins = prepare_c(qq{
             INSERT INTO alert_type (@cols)
             VALUES ($fields)
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@props[1..$#props]));
-	# Now grab the ID.
-	$new_id = $id = last_key('alert_type');
-	$self->_set({id => $id});
-	# Register this alert type with its mates.
-	$self->register_instance;
-	$self->SUPER::save;
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@props[1..$#props]));
+        # Now grab the ID.
+        $new_id = $id = last_key('alert_type');
+        $self->_set({id => $id});
+        # Register this alert type with its mates.
+        $self->register_instance;
+        $self->SUPER::save;
     } elsif ($dirt) {
-	# It's an existing alert type that has been changed. Update it.
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # It's an existing alert type that has been changed. Update it.
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE alert_type
             SET    @cols = ?
             WHERE  id = ?
         });
-	execute($upd, $self->_get(@props), $id);
-	$self->SUPER::save;
-	unless ($self->_get('active')) {
-	    # Deactivate all group memberships if we've deactivated the at.
-	    foreach my $grp (Bric::Util::Grp::AlertType->list({ obj => $self })) {
-		foreach my $mem ($grp->has_member({ obj => $self })) {
-		    next unless $mem;
-		    $mem->deactivate;
-		    $mem->save;
-		}
-	    }
-	}
+        execute($upd, $self->_get(@props), $id);
+        $self->SUPER::save;
+        unless ($self->_get('active')) {
+            # Deactivate all group memberships if we've deactivated the at.
+            foreach my $grp (Bric::Util::Grp::AlertType->list({ obj => $self })) {
+                foreach my $mem ($grp->has_member({ obj => $self })) {
+                    next unless $mem;
+                    $mem->deactivate;
+                    $mem->save;
+                }
+            }
+        }
     }
 
     # Now that we're sure we have an ID, save all changes to rules and contacts.
     &$upd_cont($self);
     if ($r) {
-	my $rules = $r;
-	$rules->save($new_id);
+        my $rules = $r;
+        $rules->save($new_id);
     }
 
     return $self;
@@ -2408,51 +2415,51 @@ sub send_alerts {
     # For accessing data on the oject of the alert.
     my $omeths = $obj->my_meths;
     foreach my $rule ($self->get_rules) {
-	# String naming the data to grab.
-	my $attr = $rule->get_attr;
+        # String naming the data to grab.
+        my $attr = $rule->get_attr;
 
-	# How to look it up in the Bric::Biz::User::Person object representing the
-	# user who triggered the event and alerts.
-	my ($tmeth, $targs) = $tmeths->{$attr} ?
-	  @{$tmeths->{$attr}}{'get_meth', 'get_args'} : ();
+        # How to look it up in the Bric::Biz::User::Person object representing the
+        # user who triggered the event and alerts.
+        my ($tmeth, $targs) = $tmeths->{$attr} ?
+          @{$tmeths->{$attr}}{'get_meth', 'get_args'} : ();
 
-	# How to look it oup in the object of the alert.
-	my ($ometh, $oargs) = $omeths->{$attr} ?
-	  @{$omeths->{$attr}}{'get_meth', 'get_args'} : ();
+        # How to look it oup in the object of the alert.
+        my ($ometh, $oargs) = $omeths->{$attr} ?
+          @{$omeths->{$attr}}{'get_meth', 'get_args'} : ();
 
-	# Perl-style switch statement, since the value can be in one of three
-	# different places.
-	my $value = do {
-	    if ($tmeth) {
-		# In the user who triggered the event.
-		&$tmeth($user, @$targs);
-	    } elsif ($e_attr && exists $e_attr->{$attr}) {
-		# In the event itself.
-		$e_attr->{$attr};
-	    } elsif ($ometh){
-		# Or in the object for which the event was logged.
-		&$ometh($obj, @$oargs);
-	    } else {
-		# There is no value.
-		undef;
-	    }
-	};
+        # Perl-style switch statement, since the value can be in one of three
+        # different places.
+        my $value = do {
+            if ($tmeth) {
+                # In the user who triggered the event.
+                &$tmeth($user, @$targs);
+            } elsif ($e_attr && exists $e_attr->{$attr}) {
+                # In the event itself.
+                $e_attr->{$attr};
+            } elsif ($ometh){
+                # Or in the object for which the event was logged.
+                &$ometh($obj, @$oargs);
+            } else {
+                # There is no value.
+                undef;
+            }
+        };
 
-	# Here we check to see if the rule is true. The comparison, whether
-	# direct or via a regular expression, is case-insensitive.
-	my $op = $rule->get_operator;
-	my $chk = $rule->get_value;
-	# Perform a regular expression or simple comparison.
-	return unless eval( $op eq '=~' || $op eq '!~' ? qq|\$value $op m/$chk/i|
-	  : qq|lc '$chk' $op lc '$value'| );
+        # Here we check to see if the rule is true. The comparison, whether
+        # direct or via a regular expression, is case-insensitive.
+        my $op = $rule->get_operator;
+        my $chk = $rule->get_value;
+        # Perform a regular expression or simple comparison.
+        return unless eval( $op eq '=~' || $op eq '!~' ? qq|\$value $op m/$chk/i|
+          : qq|lc '$chk' $op lc '$value'| );
     }
 
     # If we're here, send out alerts!
     Bric::Util::Alert->new({ at => $self, obj => $obj,
-			   user => $user, event => $event });
+                           user => $user, event => $event });
 }
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -2519,19 +2526,19 @@ $get_em = sub {
     push @wheres, 'a.del = 0' if defined $params->{id};
     my @params;
     while (my ($k, $v) = each %$params) {
-	if ($map{$k}) {
-	    push @wheres, "a.$map{$k} = ?";
-	    push @params, $v;
+        if ($map{$k}) {
+            push @wheres, "a.$map{$k} = ?";
+            push @params, $v;
         } elsif ($k eq 'grp_id') {
             # Fancy-schmancy second join.
             $tables .= ", $mem_table m2, $map_table c2";
             push @wheres, ('a.id = c2.object_id', 'c2.member__id = m2.id',
                            'm2.grp__id = ?');
             push @params, $v;
-	} else {
-	    push @wheres, "LOWER(a.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+        } else {
+            push @wheres, "LOWER(a.$k) LIKE ?";
+            push @params, lc $v;
+        }
     }
 
     # Create the where clause and the select columns.
@@ -2699,21 +2706,21 @@ $get_cont = sub {
     # If we get here, we need to load all the contacts.
     my $cont;
     foreach my $cat ('usr', 'grp') { # Get both contact and group data.
-	# Ensure there are at least empty hashrefs.
-	@{$cont}{"_$cat", "_new_$cat", "_del_$cat"} = ({}, {}, {});
-	my $sel = prepare_c(qq{
+        # Ensure there are at least empty hashrefs.
+        @{$cont}{"_$cat", "_new_$cat", "_del_$cat"} = ({}, {}, {});
+        my $sel = prepare_c(qq{
             SELECT c.type, a.${cat}__id
             FROM   alert_type__${cat}__contact a, contact c
             WHERE  a.contact__id = c.id
                    AND a.alert_type__id = ?
         }, undef, DEBUG);
 
-	execute($sel, $ret{__id__});
-	my ($ctype, $id);
-	bind_columns($sel, \$ctype, \$id);
-	# Associate the contact with the contact_type.
-	while (fetch($sel)) { $cont->{"_$cat"}{$ctype}{$id} = 1 }
-	finish($sel);
+        execute($sel, $ret{__id__});
+        my ($ctype, $id);
+        bind_columns($sel, \$ctype, \$id);
+        # Associate the contact with the contact_type.
+        while (fetch($sel)) { $cont->{"_$cat"}{$ctype}{$id} = 1 }
+        finish($sel);
     }
     $self->_set($cont);
     return $cont->{$get_cat} if $get_cat;
@@ -2767,10 +2774,10 @@ $upd_cont = sub {
       $self->_get(qw(_del_usr _new_usr _del_grp _new_grp id));
 
     foreach my $cat ('usr', 'grp') { # Do it for both users and groups.
-	my $key = "d$cat";
-	# Delete existing contacts, first.
-	if (my @ctypes = keys %{ $cont{$key} }) {
-	    my $del = prepare_c(qq{
+        my $key = "d$cat";
+        # Delete existing contacts, first.
+        if (my @ctypes = keys %{ $cont{$key} }) {
+            my $del = prepare_c(qq{
                 DELETE FROM alert_type__${cat}__contact
                 WHERE  alert_type__id = ?
                        AND ${cat}__id = ?
@@ -2781,16 +2788,16 @@ $upd_cont = sub {
                        )
             }, undef, DEBUG);
 
-	    foreach my $ctype (@ctypes) { # For each contact type.
-		# Delete the record.
-		execute($del, $cont{id}, $_, $ctype) for @{ $cont{$key}->{$ctype} };
-	    }
-	}
+            foreach my $ctype (@ctypes) { # For each contact type.
+                # Delete the record.
+                execute($del, $cont{id}, $_, $ctype) for @{ $cont{$key}->{$ctype} };
+            }
+        }
 
-	$key = "n$cat";
-	# Now add new contacts.
-	if (my @ctypes = keys %{ $cont{$key} }) {
-	    my $ins = prepare_c(qq{
+        $key = "n$cat";
+        # Now add new contacts.
+        if (my @ctypes = keys %{ $cont{$key} }) {
+            my $ins = prepare_c(qq{
                 INSERT INTO alert_type__${cat}__contact
                             (alert_type__id, ${cat}__id, contact__id)
                 VALUES (?, ?, (
@@ -2800,19 +2807,21 @@ $upd_cont = sub {
                         ))
             }, undef, DEBUG);
 
-	    foreach my $ctype (@ctypes) { # For each contact type.
-		# Insert the new record.
-		execute($ins, $cont{id}, $_, $ctype) for @{ $cont{$key}->{$ctype} };
-	    }
-	}
+            foreach my $ctype (@ctypes) { # For each contact type.
+                # Insert the new record.
+                execute($ins, $cont{id}, $_, $ctype) for @{ $cont{$key}->{$ctype} };
+            }
+        }
 
-	# Now reset the new and del caches.
-	$self->_set(["_del_$cat", "_new_$cat"], [undef, undef]);
+        # Now reset the new and del caches.
+        $self->_set(["_del_$cat", "_new_$cat"], [undef, undef]);
     }
 };
 
 1;
 __END__
+
+=back
 
 =head1 NOTES
 
@@ -2824,10 +2833,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::Alert|Bric::Util::Alert>, 
-L<Bric::Util::EventType|Bric::Util::EventType>, 
+L<Bric|Bric>,
+L<Bric::Util::Alert|Bric::Util::Alert>,
+L<Bric::Util::EventType|Bric::Util::EventType>,
 L<Bric::Util::Event|Bric::Util::Event>
 
 =cut
-

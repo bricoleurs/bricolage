@@ -6,16 +6,16 @@ Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -93,12 +93,13 @@ my @cols = qw(a.id a.alert__id a.usr__id a.ack_time b.subject b.message
               b.timestamp);
 my @by_cols = qw(c.type v.contact_value__value v.sent_time);
 my @by_props = qw(type value sent_time);
-my @props = qw(id alert_id user_id ack_time subject message timestamp);
+my @props = qw(id alert_id user_id ack_time subject message timestamp
+               _meths_sent);
 my %map = (alert_id => 'a.alert__id = ?',
-	   user_id => 'a.usr__id = ?');
+           user_id => 'a.usr__id = ?');
 my $meths;
 my @ord = qw(alert_id alert user_id user ack_time subject message timestamp
-	     sent);
+             sent);
 
 ################################################################################
 
@@ -106,18 +107,18 @@ my @ord = qw(alert_id alert user_id user ack_time subject message timestamp
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id =>  Bric::FIELD_READ,
-			 alert_id => Bric::FIELD_READ,
-			 user_id => Bric::FIELD_READ,
-			 ack_time => Bric::FIELD_READ,
-			 subject => Bric::FIELD_READ,
-			 message => Bric::FIELD_READ,
-			 timestamp => Bric::FIELD_READ,
+                         # Public Fields
+                         id =>  Bric::FIELD_READ,
+                         alert_id => Bric::FIELD_READ,
+                         user_id => Bric::FIELD_READ,
+                         ack_time => Bric::FIELD_READ,
+                         subject => Bric::FIELD_READ,
+                         message => Bric::FIELD_READ,
+                         timestamp => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _meths_sent=> Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _meths_sent=> Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -178,7 +179,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $alerted = &$get_em(@_);
+    my $pkg = shift;
+    my $alerted = $pkg->cache_lookup(@_);
+    return $alerted if $alerted;
+
+    $alerted = $get_em->($pkg, @_);
     # We want @$alerted to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Util::Alerted objects found.' }) if @$alerted > 1;
@@ -261,7 +266,7 @@ sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -339,8 +344,8 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 =item (@meths || $meths_aref) = Bric::Util::Alerted->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -349,39 +354,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -393,29 +398,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -433,27 +440,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -475,93 +483,93 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      alert_id   => {
-			     name     => 'alert_id',
-			     get_meth => sub { shift->get_alert_id(@_) },
-			     get_args => [],
-			     disp     => 'Alert ID',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			    },
-	      alert      => {
-			     name     => 'alert',
-			     get_meth => sub { shift->get_alert(@_) },
-			     get_args => [],
-			     disp     => 'Alert',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			    },
-	      user_id   => {
-			     name     => 'user_id',
-			     get_meth => sub { shift->get_user_id(@_) },
-			     get_args => [],
-			     disp     => 'User ID',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			    },
-	      user   => {
-			     name     => 'user',
-			     get_meth => sub { shift->get_user(@_) },
-			     get_args => [],
-			     disp     => 'User',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			    },
-	      subject      => {
-			     name     => 'subject',
-			     get_meth => sub { shift->get_subject(@_) },
-			     get_args => [],
-			     disp     => 'Subject',
-			     search   => 0,
-			     len      => 128,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	      message      => {
-			     name     => 'message',
-			     get_meth => sub { shift->get_message(@_) },
-			     get_args => [],
-			     disp     => 'Message',
-			     search   => 0,
-			     len      => 512,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	      timestamp  => {
-			     name     => 'timestamp',
-			     get_meth => sub { shift->get_timestamp(@_) },
-			     get_args => [],
-			     disp     => 'Time Sent',
-			     search   => 1,
-			     len      => 512,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	      ack_time  => {
-			     name     => 'ack_time',
-			     get_meth => sub { shift->get_ack_time(@_) },
-			     get_args => [],
-			     disp     => 'Acknowledged',
-			     search   => 0,
-			     len      => 512,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	      sent       => {
-			     name     => 'sent',
-			     get_meth => sub { shift->get_sent(@_) },
-			     get_args => [],
-			     disp     => 'Methods Sent',
-			     search   => 0,
-			     len      => 512,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	     };
+              alert_id   => {
+                             name     => 'alert_id',
+                             get_meth => sub { shift->get_alert_id(@_) },
+                             get_args => [],
+                             disp     => 'Alert ID',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                            },
+              alert      => {
+                             name     => 'alert',
+                             get_meth => sub { shift->get_alert(@_) },
+                             get_args => [],
+                             disp     => 'Alert',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                            },
+              user_id   => {
+                             name     => 'user_id',
+                             get_meth => sub { shift->get_user_id(@_) },
+                             get_args => [],
+                             disp     => 'User ID',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                            },
+              user   => {
+                             name     => 'user',
+                             get_meth => sub { shift->get_user(@_) },
+                             get_args => [],
+                             disp     => 'User',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                            },
+              subject      => {
+                             name     => 'subject',
+                             get_meth => sub { shift->get_subject(@_) },
+                             get_args => [],
+                             disp     => 'Subject',
+                             search   => 0,
+                             len      => 128,
+                             req      => 0,
+                             type     => 'short',
+                            },
+              message      => {
+                             name     => 'message',
+                             get_meth => sub { shift->get_message(@_) },
+                             get_args => [],
+                             disp     => 'Message',
+                             search   => 0,
+                             len      => 512,
+                             req      => 0,
+                             type     => 'short',
+                            },
+              timestamp  => {
+                             name     => 'timestamp',
+                             get_meth => sub { shift->get_timestamp(@_) },
+                             get_args => [],
+                             disp     => 'Time Sent',
+                             search   => 1,
+                             len      => 512,
+                             req      => 0,
+                             type     => 'short',
+                            },
+              ack_time  => {
+                             name     => 'ack_time',
+                             get_meth => sub { shift->get_ack_time(@_) },
+                             get_args => [],
+                             disp     => 'Acknowledged',
+                             search   => 0,
+                             len      => 512,
+                             req      => 0,
+                             type     => 'short',
+                            },
+              sent       => {
+                             name     => 'sent',
+                             get_meth => sub { shift->get_sent(@_) },
+                             get_args => [],
+                             disp     => 'Methods Sent',
+                             search   => 0,
+                             len      => 512,
+                             req      => 0,
+                             type     => 'short',
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
@@ -1048,7 +1056,7 @@ sub save { $_[0] }
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1112,35 +1120,35 @@ $get_em = sub {
     my ($pkg, $params, $ids) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'ack_time') {
-	    # It's a date column.
-	    if (ref $v) {
-		# It's an arrayref of dates.
-		if (!defined $v->[0]) {
-		    # It's less than.
-		    push @wheres, "a.$k < ?";
-		    push @params, db_date($v->[1]);
-		} elsif (!defined $v->[1]) {
-		    # It's greater than.
-		    push @wheres, "a.$k > ?";
-		    push @params, db_date($v->[0]);
-		} else {
-		    # It's between two sizes.
-		    push @wheres, "a.$k BETWEEN ? AND ?";
-		    push @params, (db_date($v->[0]), db_date($v->[1]));
-		}
-	    } elsif (!defined $v) {
-		# It needs to be null.
-		push @wheres, "a.$k IS NULL";
-	    } else {
-		# It's a single value.
-		push @wheres, "a.$k = ?";
-		push @params, db_date($v);
-	    }
-       	} else {
-	    push @wheres, $map{$k} || "a.$k = ?";
-	    push @params, $v;
-	}
+        if ($k eq 'ack_time') {
+            # It's a date column.
+            if (ref $v) {
+                # It's an arrayref of dates.
+                if (!defined $v->[0]) {
+                    # It's less than.
+                    push @wheres, "a.$k < ?";
+                    push @params, db_date($v->[1]);
+                } elsif (!defined $v->[1]) {
+                    # It's greater than.
+                    push @wheres, "a.$k > ?";
+                    push @params, db_date($v->[0]);
+                } else {
+                    # It's between two sizes.
+                    push @wheres, "a.$k BETWEEN ? AND ?";
+                    push @params, (db_date($v->[0]), db_date($v->[1]));
+                }
+            } elsif (!defined $v) {
+                # It needs to be null.
+                push @wheres, "a.$k IS NULL";
+            } else {
+                # It's a single value.
+                push @wheres, "a.$k = ?";
+                push @params, db_date($v);
+            }
+        } else {
+            push @wheres, $map{$k} || "a.$k = ?";
+            push @params, $v;
+        }
     }
 
     local $" = ' AND ';
@@ -1165,32 +1173,55 @@ $get_em = sub {
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
-    my (@d, @a, @alerteds, %obj, @bys);
+    my (@d, @a, @alerteds, $msent);
     bind_columns($sel, \@d[0..$#cols], \@a[0..$#by_cols]);
-
+    my $last = -1;
+    my $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	@obj{@props} = @d unless $obj{id};
-	if ( $d[0] != $obj{id} ) {
-	    # It's a new object. Save the last one.
-	    push @alerteds, &$new($pkg, \%obj);
-	    # Now grab the new object.
-	    %obj = ();
-	    @obj{@props} = @d;
-	}
-
-	# Grab any parts. These will vary from row to row.
-	if ($a[0]) {
-	    my %by;
-	    @by{@by_props} = @a;
-	    push @{ $obj{_meths_sent} },
-	      Bric::Util::Alerted::Parts::Sent->new(\%by);
-	}
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new alerted object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            if ($a[0]) {
+                my %by;
+                @by{@by_props} = @a;
+                $msent = $d[$#props] =
+                  [Bric::Util::Alerted::Parts::Sent->new(\%by)];
+            }
+            $self->_set(\@props, \@d);
+            push @alerteds, $self->cache_me;
+        } else {
+            if ($a[0]) {
+                my %by;
+                @by{@by_props} = @a;
+                push @$msent, Bric::Util::Alerted::Parts::Sent->new(\%by);
+            }
+        }
     }
-    # Grab the last one!
-    push @alerteds, &$new($pkg, \%obj) if %obj;
-    finish($sel);
     return \@alerteds;
 };
+#        @obj{@props} = @d unless $obj{id};
+#        if ( $d[0] != $obj{id} ) {
+#            # It's a new object. Save the last one.
+#            push @alerteds, &$new($pkg, \%obj);
+#            # Now grab the new object.
+#            %obj = ();
+#            @obj{@props} = @d;
+#        }
+
+        # Grab any parts. These will vary from row to row.
+#        if ($a[0]) {
+#            my %by;
+#            @by{@by_props} = @a;
+#           push @{ $obj{_meths_sent} },
+#              Bric::Util::Alerted::Parts::Sent->new(\%by);
+#        }
+#    }
+    # Grab the last one!
+#    push @alerteds, &$new($pkg, \%obj) if %obj;
+
+##############################################################################
 
 =item my $addr = &$new($pkg, $init)
 
@@ -1228,6 +1259,8 @@ $new = sub {
 1;
 __END__
 
+=back
+
 =head1 NOTES
 
 NONE.
@@ -1238,9 +1271,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::AlertType|Bric::Util::AlertType>, 
-L<Bric::Util::EventType|Bric::Util::EventType>, 
+L<Bric|Bric>,
+L<Bric::Util::AlertType|Bric::Util::AlertType>,
+L<Bric::Util::EventType|Bric::Util::EventType>,
 L<Bric::Util::Event|Bric::Util::Event>
 
 =cut

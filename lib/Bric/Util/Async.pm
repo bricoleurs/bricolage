@@ -2,20 +2,20 @@ package Bric::Util::Async;
 
 =head1 NAME
 
-Bric::Util::Async - This will handle all the async events 
+Bric::Util::Async - This will handle all the async events
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the version #
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -76,11 +76,11 @@ use constant DEBUG => 1;
 
 use constant SCRIPT => '/home/mike/test.pl';
 
-use constant TABLE	=> 'async';
+use constant TABLE      => 'async';
 
-use constant COLS	=> qw(name description file_name active);
+use constant COLS       => qw(name description file_name active);
 
-use constant FIELDS	=> qw(name description file_name _active);
+use constant FIELDS     => qw(name description file_name _active);
 
 ################################################################################
 # Fields
@@ -97,27 +97,27 @@ use constant FIELDS	=> qw(name description file_name _active);
 ################################################################################
 # Instance Fields
 BEGIN {
-	Bric::register_fields({
-			# Public Fields
-			'id'				=> Bric::FIELD_READ,
+        Bric::register_fields({
+                        # Public Fields
+                        'id'                            => Bric::FIELD_READ,
 
-			'name'				=> Bric::FIELD_RDWR,
+                        'name'                          => Bric::FIELD_RDWR,
 
-			'description'		=> Bric::FIELD_RDWR,
+                        'description'           => Bric::FIELD_RDWR,
 
-			'file_name'			=> Bric::FIELD_RDWR,
+                        'file_name'                     => Bric::FIELD_RDWR,
 
-			# Private Fields
-			'_events'			=> Bric::FIELD_NONE,
+                        # Private Fields
+                        '_events'                       => Bric::FIELD_NONE,
 
-			'_new_events'		=> Bric::FIELD_NONE,
+                        '_new_events'           => Bric::FIELD_NONE,
 
-			'_del_events'		=> Bric::FIELD_NONE,
+                        '_del_events'           => Bric::FIELD_NONE,
 
-			'_delete'			=> Bric::FIELD_NONE,
+                        '_delete'                       => Bric::FIELD_NONE,
 
-			'_active'			=> Bric::FIELD_NONE
-	});
+                        '_active'                       => Bric::FIELD_NONE
+        });
 }
 
 ################################################################################
@@ -167,18 +167,18 @@ NONE
 =cut
 
 sub new {
-	my ($class, $init) = @_;
+        my ($class, $init) = @_;
 
-	my $self = bless {}, $class;
+        my $self = bless {}, $class;
 
-	$init->{'_active'} = exists $init->{'active'} ? $init->{'active'} : 1;
-	delete $init->{'active'};
+        $init->{'_active'} = exists $init->{'active'} ? $init->{'active'} : 1;
+        delete $init->{'active'};
 
-	$self->_set({'_events' => {},'_new_events' => {},'_del_events' => {} });
+        $self->_set({'_events' => {},'_new_events' => {},'_del_events' => {} });
 
-	$self->SUPER::new($init);
+        $self->SUPER::new($init);
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -202,26 +202,28 @@ NONE
 =cut
 
 sub lookup {
-	my ($class, $param) = @_;
+        my ($class, $param) = @_;
+        my $self = $class->cache_lookup($param);
+        return $self if $self;
 
-	die Bric::Util::Fault::Exception::GEN->new(
-		{ 'msg' => "Missing required parameter 'id'" })
-			unless $param->{'id'};
+        die Bric::Util::Fault::Exception::GEN->new(
+                { 'msg' => "Missing required parameter 'id'" })
+                        unless $param->{'id'};
 
-	my $self = _select_async('id=?', $param->{'id'} );
+        $self = _select_async('id=?', $param->{'id'} );
 
-	my $parts = Bric::Util::Async::Parts::Event->list( { 
-					'async_id' => $param->{'id'}, 'active' => 1 });
+        my $parts = Bric::Util::Async::Parts::Event->list( { 
+                                        'async_id' => $param->{'id'}, 'active' => 1 });
 
-	my $ps = {};
-	foreach (@$parts) {
-		my $id = $_->get_id();
-		$ps->{$id} = $_;
-	}
+        my $ps = {};
+        foreach (@$parts) {
+                my $id = $_->get_id();
+                $ps->{$id} = $_;
+        }
 
-	$self->_set({'_events' => $ps,'_del_events' => {},'_new_events' => {} });
+        $self->_set({'_events' => $ps,'_del_events' => {},'_new_events' => {} });
 
-	return $self;
+        return $self;
 } 
 
 ################################################################################
@@ -259,14 +261,13 @@ NONE
 =cut
 
 sub list {
-	my ($class, $params) = @_;
-
-	return _do_list($class, $params, undef);
+        my ($class, $params) = @_;
+        return _do_list($class, $params, undef);
 }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 DESTRUCTORS
 
@@ -291,12 +292,16 @@ NONE
 =cut
 
 sub DESTROY { 
-	# what a fun method name, shame it will not do anything 
+        # what a fun method name, shame it will not do anything 
 }
 
 ################################################################################
 
+=back
+
 =head2 Public Class Methods
+
+=over 4
 
 =item (@a_ids || $a_ids) = Bric::Util::Async->list_ids( $param )
 
@@ -318,14 +323,18 @@ NONE
 =cut
 
 sub list_ids {
-	my ($class, $params) = @_;
+        my ($class, $params) = @_;
 
-	return _do_list( $class, $params, 1);
+        return _do_list( $class, $params, 1);
 }
 
 ################################################################################
 
+=back
+
 =head2 Public Instance methods
+
+=over 4
 
 =item $id = $a->get_id()
 
@@ -447,26 +456,26 @@ NONE
 =cut
 
 sub add_events {
-	my ($self, $parts) = @_;
+        my ($self, $parts) = @_;
 
-	my ($events, $new_events, $del_events) = $self->_get( '_events',
-									'_new_events', '_del_events');
+        my ($events, $new_events, $del_events) = $self->_get( '_events',
+                                                                        '_new_events', '_del_events');
 
-	foreach my $e (@$parts) {
-		my $e_id = $e->get_id();
+        foreach my $e (@$parts) {
+                my $e_id = $e->get_id();
 
-		next if exists $events->{$e_id};
+                next if exists $events->{$e_id};
 
-		$new_events->{$e_id} = $e;
+                $new_events->{$e_id} = $e;
 
-		delete $del_events->{$e_id};
-	}
+                delete $del_events->{$e_id};
+        }
 
-	$self->_set( { 	'_events' 		=> $events, 
-					'_new_events' 	=> $new_events,
-					'_del_events'	=> $del_events });
+        $self->_set( {  '_events'               => $events, 
+                                        '_new_events'   => $new_events,
+                                        '_del_events'   => $del_events });
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -490,13 +499,13 @@ NONE
 =cut
 
 sub get_events {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my ($events, $new_events) = $self->_get( '_events', '_new_events');
+        my ($events, $new_events) = $self->_get( '_events', '_new_events');
 
-	my @parts = (values %$events, keys %$new_events);
+        my @parts = (values %$events, keys %$new_events);
 
-	return wantarray ? @parts : \@parts;
+        return wantarray ? @parts : \@parts;
 }
 
 ################################################################################
@@ -520,28 +529,28 @@ NONE
 =cut
 
 sub delete_events {
-	my ($self, $del) = @_;
+        my ($self, $del) = @_;
 
-	my ($events, $new_events, $del_events) = $self->_get('_events', 
-					'_new_events', '_del_events');
+        my ($events, $new_events, $del_events) = $self->_get('_events', 
+                                        '_new_events', '_del_events');
 
-	foreach my $e (@$del) {
-		my $e_id = $e->get_id();
+        foreach my $e (@$del) {
+                my $e_id = $e->get_id();
 
-		if (exists $events->{$e_id}) {
-			my $obj = delete $events->{$e_id};
-			$del_events->{$e_id} = $obj;
+                if (exists $events->{$e_id}) {
+                        my $obj = delete $events->{$e_id};
+                        $del_events->{$e_id} = $obj;
 
-		} 
-		delete $new_events->{$e_id};
-	}
+                } 
+                delete $new_events->{$e_id};
+        }
 
-	$self->_set( { 	'_events' 		=> $events, 
-					'_new_events'	=> $new_events, 
-					'_del_events'	=> $del_events	});
+        $self->_set( {  '_events'               => $events, 
+                                        '_new_events'   => $new_events, 
+                                        '_del_events'   => $del_events  });
 
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -565,11 +574,11 @@ NONE
 =cut
 
 sub delete {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	$self->_set( { '_delete' => 1 });
+        $self->_set( { '_delete' => 1 });
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -594,11 +603,11 @@ NONE
 
 
 sub activate {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	$self->_set( { '_active' => 1 } );
+        $self->_set( { '_active' => 1 } );
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -622,15 +631,14 @@ NONE
 =cut
 
 sub deactivate {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	$self->_set( { '_active' => 0 });
+        $self->_set( { '_active' => 0 });
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
-
 
 =item ($a || undef) = $a->is_active()
 
@@ -651,9 +659,9 @@ NONE
 =cut
 
 sub is_active {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	return $self->_get('_active') ? $self : undef;
+        return $self->_get('_active') ? $self : undef;
 }
 
 ################################################################################
@@ -678,36 +686,34 @@ NONE
 =cut
 
 sub save {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	if ($self->_get('_delete')) {
-		$self->_do_delete();
-	} elsif ($self->_get('id')) {
-		$self->_do_update();
-	} else {
-		$self->_do_insert();
-	}
+        if ($self->_get('_delete')) {
+                $self->_do_delete();
+        } elsif ($self->_get('id')) {
+                $self->_do_update();
+        } else {
+                $self->_do_insert();
+        }
 
-	$self->_sync_parts();
+        $self->_sync_parts();
 
-	$self->_generate_file();
+        $self->_generate_file();
 
-	$self->SUPER::save();
+        $self->SUPER::save();
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
-################################################################################
+=head2 Private Class Methods
 
 =over 4
-
-=head2 Private Class Methods
 
 =item $self->_do_list()
 
@@ -728,56 +734,60 @@ NONE
 =cut
 
 sub _do_list {
-	my ($class, $param, $ids) = @_;
+        my ($class, $param, $ids) = @_;
 
-	my @where;
-	my @where_param;
+        my @where;
+        my @where_param;
 
-	my $sql = 'SELECT id ';
-	$sql .= ', ' . join( ', ', COLS) unless ($ids);
-	$sql .= ' FROM ' . TABLE;
+        my $sql = 'SELECT id ';
+        $sql .= ', ' . join( ', ', COLS) unless ($ids);
+        $sql .= ' FROM ' . TABLE;
 
 
-	if (@where) {
-		$sql .= join(' AND ', @where);
-	}
+        if (@where) {
+                $sql .= join(' AND ', @where);
+        }
 
-	my $sth = prepare_ca($sql, undef, DEBUG);
+        my $sth = prepare_ca($sql, undef, DEBUG);
 
-	if ($ids) {
-		my $return = col_aref($sth, @where_param);
+        if ($ids) {
+                my $return = col_aref($sth, @where_param);
 
-		return wantarray ? @$return : $return;
-	} else {
+                return wantarray ? @$return : $return;
+        } else {
 
-		my @objs;
-		execute($sth, @where_param);
-		while (my $row = fetch($sth)) {
-			my $self = bless {}, $class;
-			$self->SUPER::new();
-			$self->_set(['id', COLS], $row);
+                my @objs;
+                execute($sth, @where_param);
+                while (my $row = fetch($sth)) {
+                        my $self = bless {}, $class;
+                        $self->SUPER::new();
+                        $self->_set(['id', COLS], $row);
 
-			my $parts = Bric::Util::Async::Parts::Event->list( { 
-					'async_id' => $param->{'id'}, 'active' => 1 });
+                        my $parts = Bric::Util::Async::Parts::Event->list( { 
+                                        'async_id' => $param->{'id'}, 'active' => 1 });
 
-			my $ps = {};
-			foreach (@$parts) {
-				my $id = $_->get_id();
-				$ps->{$id} = $_;
-			}   
+                        my $ps = {};
+                        foreach (@$parts) {
+                                my $id = $_->get_id();
+                                $ps->{$id} = $_;
+                        }   
 
-			$self->_set({	'_events' 		=> $ps,
-							'_del_events' 	=> {},
-							'_new_events' 	=> {} });
+                        $self->_set({   '_events'               => $ps,
+                                                        '_del_events'   => {},
+                                                        '_new_events'   => {} });
 
-			push @objs, $self;
-		}
+                        push @objs, $self->cache_me;
+                }
 
-		return wantarray ? @objs : \@objs;
-	}
+                return wantarray ? @objs : \@objs;
+        }
 }
 
+=back
+
 =head2 Private Instance Methods
+
+=over 4
 
 =item $self = $self->_generate_file()
 
@@ -798,40 +808,40 @@ NONE
 =cut
 
 sub _generate_file {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my ($file, $parts) = $self->_get('file_name', '_events');
+        my ($file, $parts) = $self->_get('file_name', '_events');
 
-	rename $file, "$file.BAK"
-		or die Bric::Util::Fault::Exception::GEN->new(
-			{ msg => 'Could not Back up cron File', payload => $! });
+        rename $file, "$file.BAK"
+                or die Bric::Util::Fault::Exception::GEN->new(
+                        { msg => 'Could not Back up cron File', payload => $! });
 
-	eval {
-		open FILE, ">$file" or die $!;
-		flock FILE, 2;
-		foreach (keys %$parts) {
-			my $obj = $parts->{$_};
-			my $min = $obj->get_minutes || '*';
-			my $hour = $obj->get_hours || '*';
-			my $day = $obj->get_days || '*';
-			my $mon = $obj->get_month || '*';
-			my $dow = $obj->get_days_of_week || '*';
-			print FILE $min . ' ' . $hour . ' ' . $day . ' ' . $mon . ' ' .
-						$dow . ' ' .  SCRIPT . ' ' .
-						$obj->get_obj_type . ' ' . $obj->get_obj_id . "\n";
-		}
-		flock FILE, 8;
-		close FILE;
-	};
-	if ($@) {
-		rename "$file.BAK", $file;
-		die Bric::Util::Fault::Exception::GEN->new(
-			{ msg => "Error Writing File: $@" });
-	} else {
-		unlink "$file.BAK";
-	}
+        eval {
+                open FILE, ">$file" or die $!;
+                flock FILE, 2;
+                foreach (keys %$parts) {
+                        my $obj = $parts->{$_};
+                        my $min = $obj->get_minutes || '*';
+                        my $hour = $obj->get_hours || '*';
+                        my $day = $obj->get_days || '*';
+                        my $mon = $obj->get_month || '*';
+                        my $dow = $obj->get_days_of_week || '*';
+                        print FILE $min . ' ' . $hour . ' ' . $day . ' ' . $mon . ' ' .
+                                                $dow . ' ' .  SCRIPT . ' ' .
+                                                $obj->get_obj_type . ' ' . $obj->get_obj_id . "\n";
+                }
+                flock FILE, 8;
+                close FILE;
+        };
+        if ($@) {
+                rename "$file.BAK", $file;
+                die Bric::Util::Fault::Exception::GEN->new(
+                        { msg => "Error Writing File: $@" });
+        } else {
+                unlink "$file.BAK";
+        }
 
-	return $self;
+        return $self;
 }
 
 =item $self = $self->_sync_parts()
@@ -853,26 +863,26 @@ NONE
 =cut
 
 sub _sync_parts {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my ($events, $new_events, $del_events) = $self->_get( '_events',
-				'_new_events', '_del_events');
+        my ($events, $new_events, $del_events) = $self->_get( '_events',
+                                '_new_events', '_del_events');
 
-	foreach (keys %$new_events) {
-		$new_events->{$_}->set_async_id($self->_get('id') );
-		$new_events->{$_}->save();
-		$events->{$_} = delete $new_events->{$_};
-	}
+        foreach (keys %$new_events) {
+                $new_events->{$_}->set_async_id($self->_get('id') );
+                $new_events->{$_}->save();
+                $events->{$_} = delete $new_events->{$_};
+        }
 
-	foreach (keys %$del_events) {
-		$del_events->{$_}->deactivate();
-		$del_events->{$_}->save();
-		delete $del_events->{$_};
-	}
+        foreach (keys %$del_events) {
+                $del_events->{$_}->deactivate();
+                $del_events->{$_}->save();
+                delete $del_events->{$_};
+        }
 
-	$self->_set( { '_events' => $events, '_new_events' => $new_events,
-							'_del_events' => $del_events });
-	return $self;
+        $self->_set( { '_events' => $events, '_new_events' => $new_events,
+                                                        '_del_events' => $del_events });
+        return $self;
 }
 
 =item $self = $self->_do_insert()
@@ -894,19 +904,19 @@ NONE
 =cut
 
 sub _do_insert {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $sql = "INSERT INTO " . TABLE . " (id," . join(', ', COLS) . ") ".
-			"VALUES (${\next_key(TABLE)}," . join(',', ('?') x COLS) . ") ";
+        my $sql = "INSERT INTO " . TABLE . " (id," . join(', ', COLS) . ") ".
+                        "VALUES (${\next_key(TABLE)}," . join(',', ('?') x COLS) . ") ";
 
-	my $insert = prepare_c($sql, undef, DEBUG);
+        my $insert = prepare_c($sql, undef, DEBUG);
 
-	execute($insert, ($self->_get( FIELDS )) );
+        execute($insert, ($self->_get( FIELDS )) );
 
-	# Now get the id that was created
-	$self->_set( { 'id' => last_key(TABLE) } );
+        # Now get the id that was created
+        $self->_set( { 'id' => last_key(TABLE) } );
 
-	return $self;
+        return $self;
 }
 
 =item $self = $self->_do_update()
@@ -928,17 +938,17 @@ NONE
 =cut
 
 sub _do_update {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $sql = "UPDATE " . TABLE . 
-				'SET ' . join(', ', map { "$_=?" } COLS) .
-				' WHERE id=? ';
+        my $sql = "UPDATE " . TABLE . 
+                                'SET ' . join(', ', map { "$_=?" } COLS) .
+                                ' WHERE id=? ';
 
-	my $update = prepare_c($sql, undef, DEBUG);
+        my $update = prepare_c($sql, undef, DEBUG);
 
-	execute($update, $self->_get( FIELDS ), $self->_get('id') );
+        execute($update, $self->_get( FIELDS ), $self->_get('id') );
 
-	return $self;
+        return $self;
 }
 
 =item $self = $self->_do_delete()
@@ -960,16 +970,16 @@ NONE
 =cut
 
 sub _do_delete {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $sql = "DELETE FROM " . TABLE . 
-				" WHERE id=? ";
+        my $sql = "DELETE FROM " . TABLE . 
+                                " WHERE id=? ";
 
-	my $delete = prepare_c($sql, undef, DEBUG);
+        my $delete = prepare_c($sql, undef, DEBUG);
 
-	execute($delete, $self->_get('id') );
+        execute($delete, $self->_get('id') );
 
-	return $self;
+        return $self;
 }
 
 =item $self = $self->_select_async()
@@ -992,25 +1002,26 @@ NONE
 
 
 sub _select_async {
-	my ($self, $where, @bind) = @_;
+        my ($self, $where, @bind) = @_;
 
-	my @d;
+        my @d;
 
-	my $sql = 'SELECT id,'. join(',',COLS) . " FROM ". TABLE;
+        my $sql = 'SELECT id,'. join(',',COLS) . " FROM ". TABLE;
 
-	$sql .= " WHERE $where";
+        $sql .= " WHERE $where";
 
-	my $sth = prepare_ca($sql, undef, DEBUG);
-	execute($sth, @bind);
-	bind_columns($sth, \@d[0 .. (scalar COLS)]);
-	fetch($sth);
+        my $sth = prepare_ca($sql, undef, DEBUG);
+        execute($sth, @bind);
+        bind_columns($sth, \@d[0 .. (scalar COLS)]);
+        fetch($sth);
 
-	# set the values retrieved
-	$self->_set( [ 'id', FIELDS], [@d]);
+        # set the values retrieved
+        $self->_set( [ 'id', FIELDS], [@d]);
 
-	return $self;
+        return $self->cache_me;
 }
 
+=back
 
 =head2 Private Functions
 
@@ -1022,8 +1033,6 @@ NONE
 
 __END__
 
-=back
-
 =head1 NOTES
 
 NONE
@@ -1034,7 +1043,7 @@ Michael Soderstrom <miraso@pacbell.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
+L<Bric|Bric>,
 L<Bric::Util::Async::Parts::Event|Bric::Util::Async::Parts::Event>
 
 =cut

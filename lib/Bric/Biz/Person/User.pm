@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-01-21 21:32:49 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -121,7 +121,7 @@ my @pcols = qw(p.prefix p.fname p.mname p.lname p.suffix p.active);
 my @pprops = qw(prefix fname mname lname suffix _p_active);
 
 my $sel_cols = "u.id, u.login, u.password, u.active, " . join(', ', @pcols) .
-  ", m.grp__id";
+  ", m.grp__id, 1";
 my @props = (@uprops, @pprops, qw(grp_ids _inserted));
 
 my $secret = '$8fFidf*34;,a(o};"?i8J<*/#1qE3 $*23kf3K4;-+3f#\'Qz-4feI3rfe}%:e';
@@ -135,19 +135,19 @@ my $gen = 'Bric::Util::Fault::Exception::GEN';
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 login => Bric::FIELD_RDWR,
-			 password => Bric::FIELD_NONE,
+                         # Public Fields
+                         id => Bric::FIELD_READ,
+                         login => Bric::FIELD_RDWR,
+                         password => Bric::FIELD_NONE,
                          grp_ids => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _active => Bric::FIELD_NONE,
-			 _inserted => Bric::FIELD_NONE,
-			 _p_active => Bric::FIELD_NONE,
-			 _is_admin => Bric::FIELD_NONE,
-			 _acl => Bric::FIELD_NONE      # Stores ACL.
-			});
+                         # Private Fields
+                         _active => Bric::FIELD_NONE,
+                         _inserted => Bric::FIELD_NONE,
+                         _p_active => Bric::FIELD_NONE,
+                         _is_admin => Bric::FIELD_NONE,
+                         _acl => Bric::FIELD_NONE      # Stores ACL.
+                        });
 }
 
 ################################################################################
@@ -289,7 +289,11 @@ not be called here, and it's SQL queries will not be executed.
 =cut
 
 sub lookup {
-    my $user = &$get_em(@_);
+    my $pkg = shift;
+    my $user = $pkg->cache_lookup(@_);
+    return $user if $user;
+
+    $user = $get_em->($pkg, @_);
     # We want @$user to have only one value.
     die Bric::Util::Fault::Exception::DP->new
       ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
@@ -651,40 +655,40 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     foreach my $meth (Bric::Biz::Person::User->SUPER::my_meths(1)) {
-	$meths->{$meth->{name}} = $meth;
-	push @ord, $meth->{name};
+        $meths->{$meth->{name}} = $meth;
+        push @ord, $meth->{name};
     }
     push @ord, qw(login password), pop @ord;
     $meths->{login}    = {
-			  get_meth => sub { shift->get_login(@_) },
-			  get_args => [],
-			  set_meth => sub { shift->set_login(@_) },
-			  set_args => [],
-			  name     => 'login',
-			  disp     => 'Login',
-			  len      => 128,
-			  req      => 1,
-			  type     => 'short',
-			  props    => {   type       => 'text',
-					  length     => 32,
-					  maxlength => 128
-				      }
-			 };
+                          get_meth => sub { shift->get_login(@_) },
+                          get_args => [],
+                          set_meth => sub { shift->set_login(@_) },
+                          set_args => [],
+                          name     => 'login',
+                          disp     => 'Login',
+                          len      => 128,
+                          req      => 1,
+                          type     => 'short',
+                          props    => {   type       => 'text',
+                                          length     => 32,
+                                          maxlength => 128
+                                      }
+                         };
     $meths->{password} = {
-			  get_meth => undef,
-			  get_args => undef,
-			  set_meth => sub { shift->set_password(@_) },
-			  set_args => [],
-			  name     => 'password',
-			  disp     => 'Password',
-			  len      => 1024,
-			  req      => 1,
-			  type     => 'short',
-			  props    => {   type       => 'password',
-					  length     => 32,
-					  maxlength => 1024
-				      }
-			 };
+                          get_meth => undef,
+                          get_args => undef,
+                          set_meth => sub { shift->set_password(@_) },
+                          set_args => [],
+                          name     => 'password',
+                          disp     => 'Password',
+                          len      => 1024,
+                          req      => 1,
+                          type     => 'short',
+                          props    => {   type       => 'password',
+                                          length     => 32,
+                                          maxlength => 1024
+                                      }
+                         };
 
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
@@ -772,7 +776,7 @@ sub set_person {
     die $dp->new({msg => "Cannot change ID of existing user."})
       if $self->_get('_inserted');
     $self->_set([ qw(id lname fname mname prefix suffix) ],
-		[ $p->_get( qw(id lname fname mname prefix suffix) ) ]);
+                [ $p->_get( qw(id lname fname mname prefix suffix) ) ]);
 }
 
 =item my $login = $u->get_login
@@ -956,8 +960,8 @@ sub what_can {
 
     # Set $is_admin, if necessary.
     unless (defined $is_admin) {
-	$is_admin = grep { $_ == ADMIN_GRP_ID }  $self->get_grp_ids;
-	$self->_set(['_is_admin'], [$is_admin]);
+        $is_admin = grep { $_ == ADMIN_GRP_ID }  $self->get_grp_ids;
+        $self->_set(['_is_admin'], [$is_admin]);
     }
 
     # Administrators can do anything.
@@ -965,8 +969,8 @@ sub what_can {
 
     # Set $acl, if necessary.
     unless ($acl) {
-	$acl = Bric::Util::Priv->get_acl($id);
-	$self->_set(['_acl'], [$acl]);
+        $acl = Bric::Util::Priv->get_acl($id);
+        $self->_set(['_acl'], [$acl]);
     }
 
     # Gather up all of the group IDs.
@@ -975,8 +979,8 @@ sub what_can {
     # Get the permission.
     my $priv = 0;
     foreach my $gid (@gids) {
-	# Grab the greatest permission.
-	$priv = $priv | $acl->{$gid} if exists $acl->{$gid};
+        # Grab the greatest permission.
+        $priv = $priv | $acl->{$gid} if exists $acl->{$gid};
     }
     return $priv;
 }
@@ -1130,7 +1134,7 @@ sub activate {
     # is available.
     my $login = $self->_get('login');
     die $gen->new({msg => "Cannot activate user - login '$login' already in" .
-		   " use."}) unless $self->login_avail($login);
+                   " use."}) unless $self->login_avail($login);
 
     # If we get here, we can reactivate it.
     $self->_set(['_active'], [1]);
@@ -1206,7 +1210,7 @@ later if we decide we need it, though.]
 #    my $id = ref $self ? $self->_get('id') : undef;
 #    push @ids, defined $id ?
 #      $class->list_ids({ package => $super,
-#			 obj_id  => $id })
+#                        obj_id  => $id })
 #      : $super->INSTANCE_GROUP_ID;
 #    return wantarray ? @ids : \@ids;
 #}
@@ -1286,54 +1290,54 @@ sub save {
     my ($id, $act, $done) = $self->_get(qw(id _active _inserted));
 
     if ($done) {
-	# It's an existing user. Update it.
-	$self->_set(['_active'], [$self->_get('_p_active')]);
-	$self->SUPER::save;
-	$self->_set(['_active'], [$act]);
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # It's an existing user. Update it.
+        $self->_set(['_active'], [$self->_get('_p_active')]);
+        $self->SUPER::save;
+        $self->_set(['_active'], [$act]);
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE usr
             SET    @ucols = ?
             WHERE  id = ?
         }, undef, DEBUG);
-	execute($upd, $self->_get(@uprops, 'id'));
-	unless ($act) {
-	    # Deactivate all group memberships if we've deactivated the user.
-	    foreach my $grp (Bric::Util::Grp::User->list({ obj => $self })) {
-		foreach my $mem ($grp->has_member({ obj => $self })) {
-		    next unless $mem;
-		    $mem->deactivate;
-		    $mem->save;
-		}
-	    }
-	}
+        execute($upd, $self->_get(@uprops, 'id'));
+        unless ($act) {
+            # Deactivate all group memberships if we've deactivated the user.
+            foreach my $grp (Bric::Util::Grp::User->list({ obj => $self })) {
+                foreach my $mem ($grp->has_member({ obj => $self })) {
+                    next unless $mem;
+                    $mem->deactivate;
+                    $mem->save;
+                }
+            }
+        }
     } else {
-	# It's a new user. Insert it.
-	$self->SUPER::save;
-	my $login = $self->_get('login');
-	unless ($login) {
-	    # Make the login the same as the Primary Email Address by default.
-	    foreach my $c ($self->get_contacts) {
-		next unless $c->get_type eq 'Primary Email';
-		$login = $c->get_value;
-		last;
-	    }
-	    die Bric::Util::Fault::Exception::DP->new(
+        # It's a new user. Insert it.
+        $self->SUPER::save;
+        my $login = $self->_get('login');
+        unless ($login) {
+            # Make the login the same as the Primary Email Address by default.
+            foreach my $c ($self->get_contacts) {
+                next unless $c->get_type eq 'Primary Email';
+                $login = $c->get_value;
+                last;
+            }
+            die Bric::Util::Fault::Exception::DP->new(
               { msg => 'User must have a login or primary email address before '
                        . 'saving' }) unless $login;
-	    $self->_set(['login'], [$login]);
-	}
-	local $" = ', ';
-	my $fields = join ', ', ('?') x ($#ucols + 1);
-	my $ins = prepare_c(qq{
+            $self->_set(['login'], [$login]);
+        }
+        local $" = ', ';
+        my $fields = join ', ', ('?') x ($#ucols + 1);
+        my $ins = prepare_c(qq{
             INSERT INTO usr (@ucols)
             VALUES ($fields)
         }, undef, DEBUG);
 
-	execute($ins, $self->_get(@uprops));
+        execute($ins, $self->_get(@uprops));
 
-	# And finally, register this user in the "All Users" group.
-	$self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+        # And finally, register this user in the "All Users" group.
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     }
     return $self;
 }
@@ -1405,21 +1409,21 @@ $get_em = sub {
     my $wheres = 'p.id = u.id AND u.id = c.object_id AND c.member__id = m.id';
     my @params;
     while (my ($k, $v) = each %$args) {
-	if ($k eq 'id') {
+        if ($k eq 'id') {
             $wheres .= " AND u.$k = ?";
-	    push @params, $v;
-	} elsif ($k eq 'login') {
-	    $wheres .= " AND LOWER(u.$k) LIKE ?";
-	    push @params, lc $v;
+            push @params, $v;
+        } elsif ($k eq 'login') {
+            $wheres .= " AND LOWER(u.login) LIKE ?";
+            push @params, lc $v;
         } elsif ($k eq 'grp_id') {
             $tables .= ", member m2, user_member c2";
             $wheres .= " AND u.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.grp__id = ?";
             push @params, $v;
-	} else {
+        } else {
             $wheres .= " AND LOWER(p.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+            push @params, lc $v;
+        }
     }
 
     $wheres .= ' AND u.active = 1' unless defined $args->{id};
@@ -1439,7 +1443,7 @@ $get_em = sub {
     execute($sel, @params);
     my (@d, @users, $grp_ids);
     my $gids_idx = $#props - 1;
-    bind_columns($sel, \@d[0..$gids_idx]);
+    bind_columns($sel, \@d[0..$#props]);
     my $last = -1;
     $d[$#props] = 1; # Sets the inserted flag.
     $pkg = ref $pkg || $pkg;
@@ -1452,7 +1456,7 @@ $get_em = sub {
             $grp_ids = $d[$gids_idx] = [$d[$gids_idx]];
             $self->_set(\@props, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            push @users, $self
+            push @users, $self->cache_me;
         } else {
             push @$grp_ids, $d[$gids_idx];
         }
@@ -1496,7 +1500,7 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
+L<Bric|Bric>,
 L<Bric::Biz::Person|Bric::Biz::Person>
 
 =cut

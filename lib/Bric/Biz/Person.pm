@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-25 01:56:16 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -140,19 +140,19 @@ my $map_table = $table . "_$mem_table";
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id      => Bric::FIELD_READ,
-			 prefix  => Bric::FIELD_RDWR,
-			 lname   => Bric::FIELD_RDWR,
-			 fname   => Bric::FIELD_RDWR,
-			 mname   => Bric::FIELD_RDWR,
-			 suffix  => Bric::FIELD_RDWR,
-			 grp_ids => Bric::FIELD_READ,
+                         # Public Fields
+                         id      => Bric::FIELD_READ,
+                         prefix  => Bric::FIELD_RDWR,
+                         lname   => Bric::FIELD_RDWR,
+                         fname   => Bric::FIELD_RDWR,
+                         mname   => Bric::FIELD_RDWR,
+                         suffix  => Bric::FIELD_RDWR,
+                         grp_ids => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _active => Bric::FIELD_NONE,
-			 _cont => Bric::FIELD_NONE  # Holds Contacts.
-			});
+                         # Private Fields
+                         _active => Bric::FIELD_NONE,
+                         _cont => Bric::FIELD_NONE  # Holds Contacts.
+                        });
 }
 
 ################################################################################
@@ -277,7 +277,11 @@ method.
 =cut
 
 sub lookup {
-    my $person = &$get_em(@_);
+    my $pkg = shift;
+    my $person = $pkg->cache_lookup(@_);
+    return $person if $person;
+
+    $person = $get_em->($pkg, @_);
     # We want @$person to have only one value.
     die Bric::Util::Fault::Exception::DP->new
       ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
@@ -581,111 +585,111 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      prefix     => {
-			     name     => 'prefix',
-			     get_meth => sub { shift->get_prefix(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_prefix(@_) },
-			     set_args => [],
-			     disp     => 'Prefix',
-			     type     => 'short',
-			     len      => 32,
-			     req      => 0,
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 32
-					 }
-			    },
-	      fname      => {
-			     name     => 'fname',
-			     get_meth => sub { shift->get_fname(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_fname(@_) },
-			     set_args => [],
-			     disp     => 'First',
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      mname      => {
-			     name     => 'mname',
-			     get_meth => sub { shift->get_mname(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_mname(@_) },
-			     set_args => [],
-			     disp     => 'Middle',
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      lname      => {
-			     name     => 'lname',
-			     get_meth => sub { shift->get_lname(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_lname(@_) },
-			     set_args => [],
-			     disp     => 'Last',
-			     search   => 1,
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      suffix     => {
-			     name     => 'suffix',
-			     get_meth => sub { shift->get_suffix(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_suffix(@_) },
-			     set_args => [],
-			     disp     => 'Suffix',
-			     len      => 32,
-			     req      => 0,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 32
-					 }
-			    },
-	      name       => {
-			     name     => 'name',
-			     get_meth => sub { shift->format_name(@_) },
-			     get_args => [],
-			     set_meth => undef,
-			     set_args => undef,
-			     disp     => 'Full Name',
-			     len      => 128,
-			     req      => 0,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 128,
-					     maxlength => 256
-					 }
-			    },
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->activate(@_)
-						 : shift->deactivate(@_) },
-			     set_args => [],
-			     disp     => 'Active',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	     };
+              prefix     => {
+                             name     => 'prefix',
+                             get_meth => sub { shift->get_prefix(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_prefix(@_) },
+                             set_args => [],
+                             disp     => 'Prefix',
+                             type     => 'short',
+                             len      => 32,
+                             req      => 0,
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 32
+                                         }
+                            },
+              fname      => {
+                             name     => 'fname',
+                             get_meth => sub { shift->get_fname(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_fname(@_) },
+                             set_args => [],
+                             disp     => 'First',
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 64
+                                         }
+                            },
+              mname      => {
+                             name     => 'mname',
+                             get_meth => sub { shift->get_mname(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_mname(@_) },
+                             set_args => [],
+                             disp     => 'Middle',
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 64
+                                         }
+                            },
+              lname      => {
+                             name     => 'lname',
+                             get_meth => sub { shift->get_lname(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_lname(@_) },
+                             set_args => [],
+                             disp     => 'Last',
+                             search   => 1,
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 64
+                                         }
+                            },
+              suffix     => {
+                             name     => 'suffix',
+                             get_meth => sub { shift->get_suffix(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_suffix(@_) },
+                             set_args => [],
+                             disp     => 'Suffix',
+                             len      => 32,
+                             req      => 0,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 32
+                                         }
+                            },
+              name       => {
+                             name     => 'name',
+                             get_meth => sub { shift->format_name(@_) },
+                             get_args => [],
+                             set_meth => undef,
+                             set_args => undef,
+                             disp     => 'Full Name',
+                             len      => 128,
+                             req      => 0,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 128,
+                                             maxlength => 256
+                                         }
+                            },
+              active     => {
+                             name     => 'active',
+                             get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->activate(@_)
+                                                 : shift->deactivate(@_) },
+                             set_args => [],
+                             disp     => 'Active',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
@@ -1667,50 +1671,50 @@ sub save {
     my ($c, $id) = $self->_get(qw(_cont id));
 
     if (defined $id) {
-	# It's an existing person. Update it.
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # It's an existing person. Update it.
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE person
             SET   @cols = ?
             WHERE  id = ?
         });
-	execute($upd, $self->_get(@props), $id);
-	unless ($self->_get('_active')) {
-	    # Deactivate all group memberships if we've deactivated the person.
-	    foreach my $grp (Bric::Util::Grp::Person->list({ obj => $self })) {
-		foreach my $mem ($grp->has_member({ obj => $self })) {
-		    next unless $mem;
-		    $mem->deactivate;
-		    $mem->save;
-		}
-	    }
-	}
+        execute($upd, $self->_get(@props), $id);
+        unless ($self->_get('_active')) {
+            # Deactivate all group memberships if we've deactivated the person.
+            foreach my $grp (Bric::Util::Grp::Person->list({ obj => $self })) {
+                foreach my $mem ($grp->has_member({ obj => $self })) {
+                    next unless $mem;
+                    $mem->deactivate;
+                    $mem->save;
+                }
+            }
+        }
     } else {
-	# It's a new person. Insert it.
-	local $" = ', ';
-	my $fields = join ', ', next_key('person'), ('?') x $#cols;
-	my $ins = prepare_c(qq{
+        # It's a new person. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('person'), ('?') x $#cols;
+        my $ins = prepare_c(qq{
             INSERT INTO person (@cols)
             VALUES ($fields)
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@props[1..$#props]));
-	# Now grab the ID.
-	$id = last_key('person');
-	$self->_set(['id'], [$id]);
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@props[1..$#props]));
+        # Now grab the ID.
+        $id = last_key('person');
+        $self->_set(['id'], [$id]);
 
-	# Now be sure to create a personal org for this person.
-	my $org = Bric::Biz::Org::Person->new
+        # Now be sure to create a personal org for this person.
+        my $org = Bric::Biz::Org::Person->new
           ({ name => $self->format_name
              (Bric::Util::Pref->lookup_val('Name Format')),
              role => 'Personal',
              _personal => 1,
              person_id => $id
            });
-	$org->save;
+        $org->save;
 
-	# And finally, register this person in the "All Persons" group.
-	$self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+        # And finally, register this person in the "All Persons" group.
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     }
     # Save the contacts.
     $c->save($self, $id) if $c;
@@ -1786,19 +1790,19 @@ $get_em = sub {
     my $extra_tables = '';
     my $extra_wheres = '';
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id') {
-	    push @wheres, "p.$k = ?";
-	    push @params, $v;
+        if ($k eq 'id') {
+            push @wheres, "p.$k = ?";
+            push @params, $v;
         } elsif ($k eq 'grp_id') {
             $extra_tables = ", $mem_table m2, $map_table c2";
             $extra_wheres = "AND p.id = c2.object_id AND " .
               "c2.member__id = m2.id";
             push @wheres, "m2.grp__id = ?";
             push @params, $v;
-	} else {
-	    push @wheres, "LOWER(p.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+        } else {
+            push @wheres, "LOWER(p.$k) LIKE ?";
+            push @params, lc $v;
+        }
     }
 
     my $where = defined $params->{id} ? '' : 'p.active = 1';
@@ -1832,7 +1836,7 @@ $get_em = sub {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@sel_props, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            push @people, $self
+            push @people, $self->cache_me;
         } else {
             push @$grp_ids, $d[$#d];
         }

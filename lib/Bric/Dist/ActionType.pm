@@ -6,16 +6,16 @@ Bric::Dist::ActionType - Interface to types of actions supported by Bricolage di
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:39 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -97,15 +97,15 @@ my @props = qw(id name description _active medias_href);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 name => Bric::FIELD_READ,
-			 description => Bric::FIELD_READ,
-			 medias_href => Bric::FIELD_READ,
+                         # Public Fields
+                         id => Bric::FIELD_READ,
+                         name => Bric::FIELD_READ,
+                         description => Bric::FIELD_READ,
+                         medias_href => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _active => Bric::FIELD_NONE,
-			});
+                         # Private Fields
+                         _active => Bric::FIELD_NONE,
+                        });
 }
 
 ################################################################################
@@ -168,7 +168,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $at = &$get_em(@_);
+    my $pkg = shift;
+    my $at = $pkg->cache_lookup(@_);
+    return $at if $at;
+
+    $at = $get_em->($pkg, @_);
     # We want @$at to have only one value.
     die $dp->new({  msg => 'Too many Bric::Dist::ActionType objects found.' })
       if @$at > 1;
@@ -231,7 +235,7 @@ sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -307,32 +311,51 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 =item $meths = Bric::Dist::ActionType->my_meths
 
-Returns an anonymous hash of instrospection data for this object. The format for
-the introspection is as follows:
+=item (@meths || $meths_aref) = Bric::Dist::ActionType->my_meths(TRUE)
+
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
+intrspection data. The format for each introspection item introspection is as
+follows:
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-meth - A reference to the method that will retrieve the value of the property
-or attribute.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-args - An anonymous array of arguments to pass to a call to meth in order to
+The display name of the property or attribute.
+
+=item get_meth
+
+A reference to the method that will retrieve the value of the property or
+attribute.
+
+=item get_args
+
+An anonymous array of arguments to pass to a call to get_meth in order to
 retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-disp_name - The display name of the property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-type - The type of value the property or attribute contains. There are only
-three types:
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
+
+=item type
+
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -344,10 +367,70 @@ three types:
 
 =back
 
-=item *
+=item len
 
-length - If the value is a 'short' value, this hash key contains the length of
-the field.
+If the value is a 'short' value, this hash key contains the length of the
+field.
+
+=item search
+
+The property is searchable via the list() and list_ids() methods.
+
+=item req
+
+The property or attribute is required.
+
+=item props
+
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
+
+=over 4
+
+=item type
+
+The display field type. Possible values are
+
+=over 4
+
+=item text
+
+=item textarea
+
+=item password
+
+=item hidden
+
+=item radio
+
+=item checkbox
+
+=item select
+
+=back
+
+=item length
+
+The Length, in letters, to display a text or password field.
+
+=item maxlength
+
+The maximum length of the property or value - usually defined by the SQL DDL.
+
+=back
+
+=item rows
+
+The number of rows to format in a textarea field.
+
+=item cols
+
+The number of columns to format in a textarea field.
+
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -362,16 +445,16 @@ B<Notes:> NONE.
 sub my_meths {
     # Load field members.
     my $ret = { name        => { meth => sub {shift->get_name(@_)},
-				 args => [],
-				 disp => '',
-				 type => 'short',
-				 len  => 64 },
-		description => { meth => sub {shift->get_description(@_)},
-				 args => [],
-				 disp => '',
-				 type => 'short',
-				 len  => 256 },
-		};
+                                 args => [],
+                                 disp => '',
+                                 type => 'short',
+                                 len  => 64 },
+                description => { meth => sub {shift->get_description(@_)},
+                                 args => [],
+                                 disp => '',
+                                 type => 'short',
+                                 len  => 256 },
+                };
     # Load attributes here.
     return $ret;
 }
@@ -559,7 +642,7 @@ sub is_active { $_[0]->_get('_active') ? $_[0] : undef }
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -623,16 +706,16 @@ $get_em = sub {
     my ($pkg, $params, $ids) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id') {
-	    push @wheres, 'a.id = ?';
-	    push @params, $v;
-	} elsif ($k eq 'media_type') {
-	    push @wheres, "t.name LIKE ?";
-	    push @params, lc $v;
-	} else {
-	    push @wheres, "LOWER(a.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+        if ($k eq 'id') {
+            push @wheres, 'a.id = ?';
+            push @params, $v;
+        } elsif ($k eq 'media_type') {
+            push @wheres, "t.name LIKE ?";
+            push @params, lc $v;
+        } else {
+            push @wheres, "LOWER(a.$k) LIKE ?";
+            push @params, lc $v;
+        }
     }
 
     # Assemble the WHERE clause.
@@ -659,15 +742,15 @@ $get_em = sub {
     bind_columns($sel, \@d[0..$#cols - 1], \$media);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	if ($d[0] != $last) {
-	    # Create a new object.
-	    push @ats, &$make_obj($pkg, \@init) unless $last == -1;
-	    # Get the new record.
-	    $last = $d[0];
-	    @init = (@d, {});
-	}
-	# Grabe the MEDIA type.
-	$init[$#init]->{$media} = 1;
+        if ($d[0] != $last) {
+            # Create a new object.
+            push @ats, &$make_obj($pkg, \@init) unless $last == -1;
+            # Get the new record.
+            $last = $d[0];
+            @init = (@d, {});
+        }
+        # Grabe the MEDIA type.
+        $init[$#init]->{$media} = 1;
     }
     # Grab the last object.
     push @ats, &$make_obj($pkg, \@init);
@@ -680,6 +763,7 @@ $make_obj = sub {
     my $self = bless {}, $pkg;
     $self->SUPER::new;
     $self->_set(\@props, $init);
+    $self->cache_me;
 };
 
 1;

@@ -6,16 +6,16 @@ Bric::Util::AlertType::Parts::Rule - Interface to AlertType Rules.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:42 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -85,7 +85,7 @@ use constant DEBUG => 0;
 ################################################################################
 # Private Class Fields
 my $op = [[qw(eq =)], [qw(ne <>)], [qw(gt >)], [qw(lt <)], [qw(ge >=)],
-	  [qw(le <=)], [qw(=~ =~)], [qw(!~ !~)]];
+          [qw(le <=)], [qw(=~ =~)], [qw(!~ !~)]];
 my %op = map {$_ => 1} qw(eq ne gt lt ge le =~ !~); # Legal operators.
 my @cols = qw(id alert_type__id attr operator value);
 my @props = qw(id alert_type_id attr operator value);
@@ -98,16 +98,16 @@ my @ord = qw(alert_type_id attr operator value);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id =>  Bric::FIELD_READ,
-			 alert_type_id => Bric::FIELD_RDWR,
-			 attr => Bric::FIELD_RDWR,
-			 operator => Bric::FIELD_RDWR,
-			 value => Bric::FIELD_RDWR,
+                         # Public Fields
+                         id =>  Bric::FIELD_READ,
+                         alert_type_id => Bric::FIELD_RDWR,
+                         attr => Bric::FIELD_RDWR,
+                         operator => Bric::FIELD_RDWR,
+                         value => Bric::FIELD_RDWR,
 
-			 # Private Fields
-			 _del => Bric::FIELD_NONE # Flag for deleting rule.
-			});
+                         # Private Fields
+                         _del => Bric::FIELD_NONE # Flag for deleting rule.
+                        });
 }
 
 ################################################################################
@@ -226,10 +226,15 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $rule = &$get_em(@_);
+    my $pkg = shift;
+    my $rule = $pkg->cache_lookup(@_);
+    return $rule if $rule;
+
+    $rule = $get_em->($pkg, @_);
     # We want @$rule to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Util::AlertType::Parts::Rule objects found.' }) if @$rule > 1;
+      msg => 'Too many Bric::Util::AlertType::Parts::Rule objects found.' })
+      if @$rule > 1;
     return @$rule ? $rule->[0] : undef;
 }
 
@@ -358,8 +363,8 @@ sub href { &$get_em(@_, 0, 1) }
 
 =item (@meths || $meths_aref) = Bric::Util::AlertType::Parts::Rule->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -368,39 +373,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -412,29 +417,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -452,27 +459,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -493,74 +501,74 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      alert_type_id => {
-			     name     => 'alert_type_id',
-			     get_meth => sub { shift->get_alert_type_id(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_alert_type_id(@_) },
-			     set_args => [],
-			     disp     => 'Alert Type',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 10,
-					     maxlength => 10
-					 }
-			    },
-	      attr      => {
-			     name     => 'attr',
-			     get_meth => sub { shift->get_attr(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_attr(@_) },
-			     set_args => [],
-			     disp     => 'Attribute',
-			     search   => 1,
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type      => 'text',
-					   length    => 32,
-					   maxlength => 64
-					 }
-			    },
-	      operator      => {
-			     name     => 'operator',
-			     get_meth => sub { shift->get_operator(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_operator(@_) },
-			     set_args => [],
-			     disp     => 'Operator',
-			     len      => 3,
-			     req      => 1,
-			     type     => 'short',
-			     props    => {   type => 'select',
-					     vals => $op,
-					 }
-			    },
-	      value      => {
-			     name     => 'value',
-			     get_meth => sub { shift->get_value(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_value(@_) },
-			     set_args => [],
-			     disp     => 'Value',
-			     search   => 1,
-			     len      => 256,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type      => 'text',
-					   length    => 24,
-					   maxlength => 256
-					 }
-			    },
-	     };
+              alert_type_id => {
+                             name     => 'alert_type_id',
+                             get_meth => sub { shift->get_alert_type_id(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_alert_type_id(@_) },
+                             set_args => [],
+                             disp     => 'Alert Type',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 10,
+                                             maxlength => 10
+                                         }
+                            },
+              attr      => {
+                             name     => 'attr',
+                             get_meth => sub { shift->get_attr(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_attr(@_) },
+                             set_args => [],
+                             disp     => 'Attribute',
+                             search   => 1,
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type      => 'text',
+                                           length    => 32,
+                                           maxlength => 64
+                                         }
+                            },
+              operator      => {
+                             name     => 'operator',
+                             get_meth => sub { shift->get_operator(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_operator(@_) },
+                             set_args => [],
+                             disp     => 'Operator',
+                             len      => 3,
+                             req      => 1,
+                             type     => 'short',
+                             props    => {   type => 'select',
+                                             vals => $op,
+                                         }
+                            },
+              value      => {
+                             name     => 'value',
+                             get_meth => sub { shift->get_value(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_value(@_) },
+                             set_args => [],
+                             disp     => 'Value',
+                             search   => 1,
+                             len      => 256,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type      => 'text',
+                                           length    => 24,
+                                           maxlength => 256
+                                         }
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -977,35 +985,35 @@ sub save {
     return unless $self->_get__dirty;
     my ($id, $del) = $self->_get('id', '_del');
     if (defined $id && $del) {
-	# Delete the rule.
-	my $del = prepare_c(qq{
+        # Delete the rule.
+        my $del = prepare_c(qq{
             DELETE FROM alert_type_rule
             WHERE  id = ?
         });
-	execute($del, $id);
-	$self->_set(['id'], [undef]);
+        execute($del, $id);
+        $self->_set(['id'], [undef]);
     } elsif (defined $id) {
-	# It's an existing rule. Update it.
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # It's an existing rule. Update it.
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE alert_type_rule
             SET   @cols = ?
             WHERE  id = ?
         });
-	execute($upd, $self->_get(@props), $id);
+        execute($upd, $self->_get(@props), $id);
     } else {
-	# It's a new rule. Insert it.
-	local $" = ', ';
-	my $fields = join ', ', next_key('alert_type_rule'), ('?') x $#cols;
-	my $ins = prepare_c(qq{
+        # It's a new rule. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('alert_type_rule'), ('?') x $#cols;
+        my $ins = prepare_c(qq{
             INSERT INTO alert_type_rule (@cols)
             VALUES ($fields)
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@props[1..$#props]));
-	# Now grab the ID.
-	$id = last_key('alert_type_rule');
-	$self->_set(['id'], [$id]);
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@props[1..$#props]));
+        # Now grab the ID.
+        $id = last_key('alert_type_rule');
+        $self->_set(['id'], [$id]);
     }
     $self->SUPER::save;
     return $self;
@@ -1013,7 +1021,7 @@ sub save {
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1079,16 +1087,16 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my (@txt_wheres, @num_wheres, @params);
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id') {
-	    push @num_wheres, $k;
-	    push @params, $v;
-	} elsif ($k eq 'alert_type_id') {
-	    push @num_wheres, 'alert_type__id';
-	    push @params, $v;
-	} else {
-	    push @txt_wheres, "LOWER($k)";
-	    push @params, lc $v;
-	}
+        if ($k eq 'id') {
+            push @num_wheres, $k;
+            push @params, $v;
+        } elsif ($k eq 'alert_type_id') {
+            push @num_wheres, 'alert_type__id';
+            push @params, $v;
+        } else {
+            push @txt_wheres, "LOWER($k)";
+            push @params, lc $v;
+        }
     }
 
     local $" = ' = ? AND ';
@@ -1113,11 +1121,12 @@ $get_em = sub {
     bind_columns($sel, \@d[0..$#cols]);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	$href ? $rules{$d[0]} = $self : push @rules, $self;
+        my $self = bless {}, $pkg;
+        $self->SUPER::new;
+        $self->_set(\@props, \@d);
+        $self->_set__dirty; # Disables dirty flag.
+        $href ? $rules{$d[0]} = $self->cache_me :
+          push @rules, $self->cache_me;
     }
     finish($sel);
     return $href ? \%rules : \@rules;
@@ -1127,6 +1136,8 @@ $get_em = sub {
 
 1;
 __END__
+
+=back
 
 =head1 NOTES
 
@@ -1138,8 +1149,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::AlertType|Bric::Util::AlertType>, 
+L<Bric|Bric>,
+L<Bric::Util::AlertType|Bric::Util::AlertType>,
 L<Bric::Util::Event|Bric::Util::Event>
 
 =cut

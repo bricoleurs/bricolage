@@ -10,7 +10,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-01-12 00:29:24 $
+$Date: 2003-01-29 06:46:02 $
 
 =head1 SYNOPSIS
 
@@ -58,7 +58,13 @@ use strict;
 # Programmatic Dependencies
 use Carp;
 use Bric::Util::Fault::Exception::GEN;
-use Bric::Config qw(QA_MODE);
+use Bric::Config qw(:qa :mod_perl);
+
+# Load the Apache modules if we're in mod_perl.
+if (defined MOD_PERL) {
+    require Apache;
+    require Apache::Request;
+}
 
 #=============================================================================#
 # Inheritance                          #
@@ -100,16 +106,9 @@ sub ACCESS {
 
 ########################################
 
-=head2 Public Class Methods
+=head2 Constructors
 
 =over 4
-
-=cut
-
-#--------------------------------------#
-# Constructors
-
-#------------------------------------------------------------------------------#
 
 =item $self = Bric->new($init)
 
@@ -145,70 +144,111 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $self = Bric->lookup($obj_id)
+=item my $obj = __PACKAGE__->lookup({ id => $obj_id })
 
-This method is similar to the 'new' method except it is used only to retrieve a
-already existing object of this type from the database whereas 'new' creates a
-new, empty object. Since this operation is highly class dependent the code
-template for this function is the same as for the 'new' method.
+This method is similar to the 'new' method except it is used only to retrieve
+a already existing object of this type from the database whereas 'new' creates
+a new, empty object. All subclasses should override this method in order to
+look up their objects in the database. However, they must first call
+C<cache_lookup()> to see if it can retrieve the object from the cache. If they
+can, they should simply return the object. Otherwise, once they look up the
+object in the database, they should cache it via the C<cache_me()> method. For
+example:
+
+  sub lookup {
+      my $pkg = shift;
+      my $self = $pkg->cache_lookup(@_);
+      return $self if $self;
+      # ... Continue to look up object in the database. Then...
+      $self->cache_me;
+  }
 
 B<Throws:>
 
-NONE
+=over
 
-B<Side Effects>
+=item *
 
-NONE
+lookup method not implemented.
 
-B<Notes:>
+=back
 
-On failure, this method returns zero (0) if no records were found and undef if
-there was a failure on the lookup itself.
+B<Side Effects> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub lookup {
-    my $self = shift;
-    my ($obj_id) = @_;
+    # This is an abstract method.  All sub classes must implement this.
+    die Bric::Util::Fault::Exception::MNI->new
+      ({ msg => "lookup method not implemented" });
+}
 
-    # Instantiate object
-    $self = bless {}, $self unless ref $self;
+=item my $obj = __PACKAGE__->cache_lookup({ id => $obj_id })
 
-    # Fill in object state fields and configuration fields
-    $self->_set({'obj_id' => $obj_id}) if $obj_id;
+Looks up an object in the cache and returns it if it exists. Otherwise it
+returns an undefined value. This method is meant to be used by Bric subclasses
+in their C<lookup()> methods. See C<lookup()> for an example.
 
-    return $self;
+B<Throws:> NONE.
+
+B<Side Effects> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub cache_lookup {
+    if (defined MOD_PERL) {
+        my ($pkg, $param) = @_;
+        return unless defined $param->{id};
+        my $r = Apache::Request->instance(Apache->request);
+        $pkg = ref $pkg || $pkg;
+        return $r->pnotes("$pkg|$param->{id}");
+    }
+    return;
 }
 
 #------------------------------------------------------------------------------#
 
-=item $self = Bric->list($param)
+=item my @objs = __PACKAGE__->list($params)
 
-This is an abstract method. All derived classes should override this method.
+This is an abstract method. All derived classes should override this
+method. In the concrete implementations of this method, classes should also
+call C<cache_me()> for every object to be returned.
 
 B<Throws:>
 
-I<"list method not implemented">
+=over 4
 
-Thrown when no list method is available.
+=item *
 
-B<Side Effects>
+list method not implemented.
 
-NONE
+=back
 
-B<Notes:>
+B<Side Effects> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub list {
     # This is an abstract method.  All sub classes must implement this.
-    my $msg = "list method not implemented\n";
-    die Bric::Util::Fault::Exception::MNI->new({'msg' => $msg});
+    die Bric::Util::Fault::Exception::MNI->new
+      ({ msg => "list method not implemented" });
 }
 
 #------------------------------------------------------------------------------#
 
-=item $self = Bric->list_ids(...)
+=back
+
+=head2 Public Class Methods
+
+=over 4
+
+=item my @ids = __PACKAGE__->list_ids($params)
 
 This is an abstract method. All derived classes should override this method.
 This method returns a list of IDs rather than objects.
@@ -219,95 +259,23 @@ B<Throws:>
 
 =item *
 
-"list_ids method not implemented"
-
-=item *
-
-"Other thingy"
+list_ids method not implemented
 
 =back
 
-B<Side Effects>
+B<Side Effects> NONE.
 
-NONE
-
-B<Notes:>
+B<Notes:> NONE.
 
 =cut
 
 sub list_ids {
     # This is an abstract method.  All sub classes must implement this.
-    my $msg = "list method not implemented\n";
-    die Bric::Util::Fault::Exception::MNI->new({'msg' => $msg});
+    die Bric::Util::Fault::Exception::MNI->new
+      ({ msg => "list_ids method not implemented" });
 }
 
-
-#--------------------------------------#
-# Destructors
-
-#------------------------------------------------------------------------------#
-
-=item $self = $obj->DESTROY(...)
-
-This is the default destructor method. Even if nothing is defined within it, it
-should still be here so that Perl wont waste time trying to find it in the
-AUTOLOAD section.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects>
-
-NONE
-
-B<Notes:>
-
-=cut
-
-sub DESTROY {}
-
-#------------------------------------------------------------------------------#
-
-=item die "...";
-
-Uses confess rather than die to report errors.
-
-B<Throws:>
-
-Its a 'thrower'.
-
-B<Side Effects>
-
-Halts program execution
-
-B<Notes:>
-
-=cut
-
-$SIG{__DIE__} = sub { Carp::confess(@_) } unless $ENV{MOD_PERL};
-
-#------------------------------------------------------------------------------#
-
-=item warn "...";
-
-Uses cluck rather than warn to output warnings.
-
-B<Throws:>
-
-Its a 'thrower'.
-
-B<Side Effects>
-
-Outputs a warning message
-
-B<Notes:>
-
-=cut
-
-$SIG{__WARN__} = sub { Carp::cluck(@_) } unless $ENV{MOD_PERL};
-
-#------------------------------------------------------------------------------#
+##############################################################################
 
 =item Bric::register_fields({'field1' => Bric::FIELD_READ, ...})
 
@@ -316,13 +284,18 @@ access levels to them.
 
 B<Throws:>
 
-"Unable to register field names"
+=over 4
 
-B<Side Effects>
+=item *
 
-Defines a subroutine named C<ACCESS()> in the caller's package.
+Unable to register field names.
 
-B<Notes:>
+=back
+
+B<Side Effects>: Defines a subroutine named C<ACCESS()> in the caller's
+package.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -347,7 +320,73 @@ sub register_fields {
       if $@;
 }
 
-########################################
+#--------------------------------------#
+# Destructors
+#------------------------------------------------------------------------------#
+
+=back
+
+=head2 Destructors
+
+=over 4
+
+=item $job->DESTROY
+
+This is the default destructor method. Even if nothing is defined within it, it
+should still be here so that Perl wont waste time trying to find it in the
+AUTOLOAD section.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub DESTROY {}
+
+#------------------------------------------------------------------------------#
+
+=item die "...";
+
+Uses confess rather than die to report errors.
+
+B<Throws:>
+
+Its a 'thrower'.
+
+B<Side Effects>
+
+Halts program execution
+
+B<Notes:>
+
+=cut
+
+$SIG{__DIE__} = sub { Carp::confess(@_) } unless MOD_PERL;
+
+#------------------------------------------------------------------------------#
+
+=item warn "...";
+
+Uses cluck rather than warn to output warnings.
+
+B<Throws:>
+
+Its a 'thrower'.
+
+B<Side Effects>
+
+Outputs a warning message
+
+B<Notes:>
+
+=cut
+
+$SIG{__WARN__} = sub { Carp::cluck(@_) } unless MOD_PERL;
+
+#------------------------------------------------------------------------------#
 
 =back
 
@@ -529,6 +568,34 @@ sub get_grp_ids {
     # INSTANCE_GROUP_ID.
     return defined $id ? $grp->list_ids({ obj => $self })
       : $self->INSTANCE_GROUP_ID;
+}
+
+##############################################################################
+
+=item $obj = $obj->cache_me;
+
+Caches the object for later retrieval by the C<lookup()> class method. Should
+be called for all object retrieved from the database. That includes all
+objects to be returned by C<lookup()>, C<list()>, and C<href()> methods.
+
+B<Throws:> NONE.
+
+B<Side Effects> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub cache_me {
+    my $self = shift;
+    if (defined MOD_PERL) {
+        my $pkg = ref $self or return;
+        my $id = $self->{id};
+        return unless defined $id;
+        my $r = Apache::Request->instance(Apache->request);
+        $r->pnotes("$pkg|$id", $self);
+    }
+    return $self;
 }
 
 #------------------------------------------------------------------------------#
@@ -831,7 +898,7 @@ sub _get_ref {
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
+Garth Webb <garth@perijove.com>
 
 Sam Tregar <stregar@about-inc.com>
 

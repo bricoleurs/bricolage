@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-07 00:03:40 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -96,9 +96,9 @@ use constant DEBUG => 0;
 my @cols = qw(id event__id alert_type__id subject message timestamp);
 my @props = qw(id event_id alert_type_id subject message timestamp);
 my %map = (id => 'id',
-	   timestamp => 'timestamp',
-	   event_id => 'event__id',
-	   alert_type_id => 'alert_type__id'
+           timestamp => 'timestamp',
+           event_id => 'event__id',
+           alert_type_id => 'alert_type__id'
 );
 
 # How we know what libraries to use for sending alerts.
@@ -116,16 +116,16 @@ my @ord = qw(event_id event alert_type_id alert_type subject message timestamp);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id =>  Bric::FIELD_READ,
-			 event_id => Bric::FIELD_READ,
-			 alert_type_id => Bric::FIELD_READ,
-			 subject => Bric::FIELD_READ,
-			 message => Bric::FIELD_READ,
-			 timestamp => Bric::FIELD_READ
+                         # Public Fields
+                         id =>  Bric::FIELD_READ,
+                         event_id => Bric::FIELD_READ,
+                         alert_type_id => Bric::FIELD_READ,
+                         subject => Bric::FIELD_READ,
+                         message => Bric::FIELD_READ,
+                         timestamp => Bric::FIELD_READ
 
-			 # Private Fields
-			});
+                         # Private Fields
+                        });
 }
 
 ################################################################################
@@ -256,15 +256,15 @@ sub new {
     # Make sure we have all the parts we need.
     die Bric::Util::Fault::Exception::DP->new({
       msg => __PACKAGE__ . '::new() requires a Bricolage object, a Bric::Biz::Person::User'
-	     . ' object, a Bric::Util::AlertType object, and a Bric::Util::Event'
+             . ' object, a Bric::Util::AlertType object, and a Bric::Util::Event'
              . ' object' }) unless $event && $at && $obj && $user;
 
     # Get the attributes of this event, if any. Make sure they're lowercase and
     # have variable-specific keys.
     my $attr = $event->get_attr || {};
     $attr = { map {
-	(my $v = lc $_) =~ s/\W+/_/g;
-	lc $v => $attr->{$_}
+        (my $v = lc $_) =~ s/\W+/_/g;
+        lc $v => $attr->{$_}
     } keys %$attr };
 
     # Grab the message, substituting simple variables for their values. This is
@@ -294,7 +294,7 @@ sub new {
     my $fields = join ', ', next_key('alert'), ('?') x $#cols;
     local $" = ', ';
     my $sth = prepare_c(qq{
-	INSERT INTO alert (@cols)
+        INSERT INTO alert (@cols)
         VALUES ($fields)
         }, undef, DEBUG);
     execute($sth, @{$init}{@props[1..$#props]});
@@ -356,7 +356,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $alert = &$get_em(@_);
+    my $pkg = shift;
+    my $alert = $pkg->cache_lookup(@_);
+    return $alert if $alert;
+
+    $alert = $get_em->($pkg, @_);
     # We want @$alert to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Util::Alert objects found.' }) if @$alert > 1;
@@ -450,7 +454,7 @@ sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -528,8 +532,8 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 =item (@meths || $meths_aref) = Bric::Util::Alert->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -538,39 +542,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -582,29 +586,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -622,27 +628,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -663,72 +670,72 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      event_id   => {
-			     name     => 'event_id',
-			     get_meth => sub { shift->get_event_id(@_) },
-			     get_args => [],
-			     disp     => 'Event ID',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			    },
-	      event      => {
-			     name     => 'event',
-			     get_meth => sub { shift->get_event(@_) },
-			     get_args => [],
-			     disp     => 'Event',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			    },
-	      alert_type_id   => {
-			     name     => 'alert_type_id',
-			     get_meth => sub { shift->get_alert_type_id(@_) },
-			     get_args => [],
-			     disp     => 'Alert Type ID',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			    },
-	      alert_type   => {
-			     name     => 'alert_type',
-			     get_meth => sub { shift->get_alert_type(@_) },
-			     get_args => [],
-			     disp     => 'Alert Type',
-			     len      => 10,
-			     req      => 1,
-			     type     => 'short',
-			    },
-	      subject      => {
-			     name     => 'subject',
-			     get_meth => sub { shift->get_subject(@_) },
-			     get_args => [],
-			     disp     => 'Subject',
-			     len      => 128,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	      message      => {
-			     name     => 'message',
-			     get_meth => sub { shift->get_message(@_) },
-			     get_args => [],
-			     disp     => 'Message',
-			     search   => 0,
-			     len      => 512,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	      timestamp  => {
-			     name     => 'timestamp',
-			     get_meth => sub { shift->get_timestamp(@_) },
-			     get_args => [],
-			     disp     => 'Time',
-			     search   => 1,
-			     len      => 512,
-			     req      => 0,
-			     type     => 'short',
-			    },
-	     };
+              event_id   => {
+                             name     => 'event_id',
+                             get_meth => sub { shift->get_event_id(@_) },
+                             get_args => [],
+                             disp     => 'Event ID',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                            },
+              event      => {
+                             name     => 'event',
+                             get_meth => sub { shift->get_event(@_) },
+                             get_args => [],
+                             disp     => 'Event',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                            },
+              alert_type_id   => {
+                             name     => 'alert_type_id',
+                             get_meth => sub { shift->get_alert_type_id(@_) },
+                             get_args => [],
+                             disp     => 'Alert Type ID',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                            },
+              alert_type   => {
+                             name     => 'alert_type',
+                             get_meth => sub { shift->get_alert_type(@_) },
+                             get_args => [],
+                             disp     => 'Alert Type',
+                             len      => 10,
+                             req      => 1,
+                             type     => 'short',
+                            },
+              subject      => {
+                             name     => 'subject',
+                             get_meth => sub { shift->get_subject(@_) },
+                             get_args => [],
+                             disp     => 'Subject',
+                             len      => 128,
+                             req      => 0,
+                             type     => 'short',
+                            },
+              message      => {
+                             name     => 'message',
+                             get_meth => sub { shift->get_message(@_) },
+                             get_args => [],
+                             disp     => 'Message',
+                             search   => 0,
+                             len      => 512,
+                             req      => 0,
+                             type     => 'short',
+                            },
+              timestamp  => {
+                             name     => 'timestamp',
+                             get_meth => sub { shift->get_timestamp(@_) },
+                             get_args => [],
+                             disp     => 'Time',
+                             search   => 1,
+                             len      => 512,
+                             req      => 0,
+                             type     => 'short',
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
@@ -1132,7 +1139,7 @@ sub save { $_[0] }
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1196,17 +1203,17 @@ $get_em = sub {
     my ($pkg, $params, $ids) = @_;
     my (@txt_wheres, @num_wheres, @params);
     while (my ($k, $v) = each %$params) {
-	next if $k eq 'time_end';
-	if ($k eq 'time_start') {
-	    push @num_wheres, 'timetamp BETWEEN ? AND ?';
-	    push @params, @{$params}{qw(time_start time_end)};
-	} elsif ($k eq 'subject' || $k eq 'message') {
-	    push @txt_wheres, "LOWER($k)";
-	    push @params, lc $v;
-	} else {
-	    push @num_wheres, $map{$k};
-	    push @params, $v;
-	}
+        next if $k eq 'time_end';
+        if ($k eq 'time_start') {
+            push @num_wheres, 'timetamp BETWEEN ? AND ?';
+            push @params, @{$params}{qw(time_start time_end)};
+        } elsif ($k eq 'subject' || $k eq 'message') {
+            push @txt_wheres, "LOWER($k)";
+            push @params, lc $v;
+        } else {
+            push @num_wheres, $map{$k};
+            push @params, $v;
+        }
     }
 
     # Assemble the WHERE clause.
@@ -1236,11 +1243,12 @@ $get_em = sub {
     bind_columns($sel, \@d[0..$#cols]);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	# Create a new object for each row.
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	push @alerts, $self
+        # Create a new object for each row.
+        my $self = bless {}, $pkg;
+        $self->SUPER::new;
+        $self->_set(\@props, \@d);
+        $self->_set__dirty; # Disable the dirty flag.
+        push @alerts, $self->cache_me;
     }
     finish($sel);
     # Return the objects.
@@ -1265,9 +1273,9 @@ $replace = sub {
     my ($key, $attr, $obj, $user) = @_;
     # This hash tells us how to get trigger user data.
     if (my $tmeths = Bric::Util::EventType->my_trig_meths->{$key}) {
-	# Grab it from the Bric::Biz::Person::User object.
-	my ($meth, $args) = @{$tmeths}{'get_meth', 'get_args'};
-	return &$meth($user, @$args) || '';
+        # Grab it from the Bric::Biz::Person::User object.
+        my ($meth, $args) = @{$tmeths}{'get_meth', 'get_args'};
+        return &$meth($user, @$args) || '';
     }
 
     # If not a trigger property, then grab it from the attributes.
@@ -1318,49 +1326,51 @@ $send_em = sub {
     my %alerted;
     my %ctypes = Bric::Biz::Contact->href_alertable_type_ids;
     while (my ($ctype, $cid) = each %ctypes) {
-	# Get a list of unique User IDs in the groups.
-	my (%users, %email);
-	foreach my $uid ($at->get_user_ids($ctype),
-		 map { Bric::Util::Grp::User->get_member_ids($_) }
-			 $at->get_grp_ids($ctype) ) {
-	    foreach my $c
-	      (Bric::Biz::Person::User->lookup({ id => $uid })->get_contacts) {
-		  next unless $c->get_type eq $ctype;
-		  my $e = $c->get_value;
-		  $users{$uid}->{$e} = 1;
-		  $email{$e} = 1
-	      }
-	}
+        # Get a list of unique User IDs in the groups.
+        my (%users, %email);
+        foreach my $uid ($at->get_user_ids($ctype),
+                 map { Bric::Util::Grp::User->get_member_ids($_) }
+                         $at->get_grp_ids($ctype) ) {
+            foreach my $c
+              (Bric::Biz::Person::User->lookup({ id => $uid })->get_contacts) {
+                  next unless $c->get_type eq $ctype;
+                  my $e = $c->get_value;
+                  $users{$uid}->{$e} = 1;
+                  $email{$e} = 1
+              }
+        }
 
-	# Now send the email.
-	my $m = Bric::Util::Trans::Mail->new({ from => ALERT_FROM,
-					     &ALERT_TO_METH => [ keys %email ],
-					     subject => $self->{subject},
-					     message => $self->{message}
-					   });
-	eval { $m->send; };
-	my $time = $@ ? (warn "Alert Emailing failed: $@\n", undef)[1]
-	  : db_date(undef, 1);
+        # Now send the email.
+        my $m = Bric::Util::Trans::Mail->new({ from => ALERT_FROM,
+                                             &ALERT_TO_METH => [ keys %email ],
+                                             subject => $self->{subject},
+                                             message => $self->{message}
+                                           });
+        eval { $m->send; };
+        my $time = $@ ? (warn "Alert Emailing failed: $@\n", undef)[1]
+          : db_date(undef, 1);
 
-	while (my ($uid, $uemails) = each %users) {
-	    # Insert the user into alerted unless we already did.
-	    unless ($alerted{$uid}) {
-		execute($ins_alerted, $uid, $self->{id});
-		$alerted{$uid} = last_key('alerted');
-	    }
+        while (my ($uid, $uemails) = each %users) {
+            # Insert the user into alerted unless we already did.
+            unless ($alerted{$uid}) {
+                execute($ins_alerted, $uid, $self->{id});
+                $alerted{$uid} = last_key('alerted');
+            }
 
-	    # Now log the alert by this method. Don't include the time if the
-	    # message wasn't sent to a user.
-	    foreach my $e (keys %$uemails) {
-		execute($insert_by, $alerted{$uid}, $cid, $e, $time);
-	    }
-	}
+            # Now log the alert by this method. Don't include the time if the
+            # message wasn't sent to a user.
+            foreach my $e (keys %$uemails) {
+                execute($insert_by, $alerted{$uid}, $cid, $e, $time);
+            }
+        }
     }
     return 1;
 };
 
 1;
 __END__
+
+=back
 
 =head1 NOTES
 
@@ -1372,9 +1382,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::AlertType|Bric::Util::AlertType>, 
-L<Bric::Util::EventType|Bric::Util::EventType>, 
+L<Bric|Bric>,
+L<Bric::Util::AlertType|Bric::Util::AlertType>,
+L<Bric::Util::EventType|Bric::Util::EventType>,
 L<Bric::Util::Event|Bric::Util::Event>
 
 =cut

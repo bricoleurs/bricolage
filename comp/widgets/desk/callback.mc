@@ -45,6 +45,7 @@ elsif ($field eq "$widget|checkout_cb") {
 
     $d->checkout($a_obj, get_user_id);
     $d->save;
+    $a_obj->save;
     log_event("${a_class}_checkout", $a_obj);
 
     $a_id = $a_obj->get_id;

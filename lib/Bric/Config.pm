@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.56 $
+$Revision: 1.57 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.56 $ )[-1];
+our $VERSION = (qw$Revision: 1.57 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 07:27:09 $
+$Date: 2003-01-29 06:46:02 $
 
 =head1 SYNOPSIS
 
@@ -133,6 +133,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MAX_UNSHARED_SIZE
                     MANUAL_APACHE
                     ALLOW_WORKFLOW_TRANSFER
+                    MOD_PERL
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -231,6 +232,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      CHECK_FREQUENCY
                                      MIN_SHARE_SIZE
                                      MAX_UNSHARED_SIZE)],
+                    mod_perl  => [qw(MOD_PERL)],
                    );
 
 #=============================================================================#
@@ -484,6 +486,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         my $pkg = TEMPLATE_BURN_PKG;
         eval "package $pkg; $config->{PERL_LOADER}";
     }
+
+    # Set the MOD_PERL constant.
+    use constant MOD_PERL => $ENV{MOD_PERL};
 }
 
 #==============================================================================#

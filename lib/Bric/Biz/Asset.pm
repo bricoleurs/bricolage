@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:48 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -198,34 +198,8 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors                          
-
+# Constructors
 #------------------------------------------------------------------------------#
-
-=item $asset = Bric::Biz::Asset->lookup( { id => $id} )
-
-Method not Implemented.
-
-B<Throws:>
-
-"Method Not Implemented"
-
-B:<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub lookup {
-	die Bric::Util::Fault::Exception::MNE->new( { 
-			msg => "Method Not Implemented" } );
-}
-
-################################################################################
 
 =item ($asset_list || @assets) = Bric::Biz::Asset->list( $criteria )
 
@@ -651,6 +625,8 @@ sub my_meths {
 }
 
 #--------------------------------------#
+
+=back
 
 =head2 Public Instance Methods
 
@@ -1602,22 +1578,15 @@ sub save {
 }
 
 ################################################################################
-#==============================================================================#
+
+=back
 
 =head1 PRIVATE
 
-=cut
-
-#--------------------------------------#
 
 =head2 Private Class Methods
 
 NONE
-
-=cut
-
-
-#--------------------------------------#
 
 =head2 Private Instance Methods
 
@@ -1819,7 +1788,7 @@ sub _sync_attributes {
 
 ################################################################################
 
-#--------------------------------------#
+=back
 
 =head2 Private Functions
 

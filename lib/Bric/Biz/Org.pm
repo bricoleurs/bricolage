@@ -7,15 +7,15 @@ Bric::Biz::Org - Bricolage Interface to Organizations
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-25 01:56:16 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -114,17 +114,17 @@ my $METHS;
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id =>  Bric::FIELD_READ,
-			 name => Bric::FIELD_RDWR,
-			 long_name => Bric::FIELD_RDWR,
-			 grp_ids => Bric::FIELD_READ,
+                         # Public Fields
+                         id =>  Bric::FIELD_READ,
+                         name => Bric::FIELD_RDWR,
+                         long_name => Bric::FIELD_RDWR,
+                         grp_ids => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _personal => Bric::FIELD_NONE,
-			 _active => Bric::FIELD_NONE,
-			 _addr => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _personal => Bric::FIELD_NONE,
+                         _active => Bric::FIELD_NONE,
+                         _addr => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -238,7 +238,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $org = &$get_em(@_);
+    my $pkg = shift;
+    my $org = $pkg->cache_lookup(@_);
+    return $org if $org;
+
+    $org = $get_em->($pkg, @_);
     # We want @$org to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Biz::Org objects found.' }) if @$org > 1;
@@ -530,53 +534,53 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $METHS = {
-	      name      => {
-			    name     => 'name',
-			    get_meth => sub { shift->get_name(@_) },
-			    get_args => [],
-			    set_meth => sub { shift->set_name(@_) },
-			    set_args => [],
-			    disp     => 'Name',
-			    type     => 'short',
-			    len      => 64,
-			    req      => 1,
-			    search   => 1,
-			    props    => { type       => 'text',
-					  length     => 32,
-					  maxlength => 64
-					}
-			   },
-	      long_name => {
-			     name     => 'long_name',
-			     get_meth => sub { shift->get_description(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_description(@_) },
-			     set_args => [],
-			     disp     => 'Long name',
-			     search   => 1,
-			     len      => 128,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type => 'text',
-					   length     => 32,
-					   maxlength => 128
-					 }
-			    },
-	      active    => {
-			    name     => 'active',
-			    get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			    get_args => [],
-			    set_meth => sub { $_[1] ? shift->activate(@_)
-						: shift->deactivate(@_) },
-			    set_args => [],
-			    disp     => 'Active',
-			    search   => 0,
-			    len      => 1,
-			    req      => 1,
-			    type     => 'short',
-			    props    => { type => 'checkbox' }
-			   },
-	     };
+              name      => {
+                            name     => 'name',
+                            get_meth => sub { shift->get_name(@_) },
+                            get_args => [],
+                            set_meth => sub { shift->set_name(@_) },
+                            set_args => [],
+                            disp     => 'Name',
+                            type     => 'short',
+                            len      => 64,
+                            req      => 1,
+                            search   => 1,
+                            props    => { type       => 'text',
+                                          length     => 32,
+                                          maxlength => 64
+                                        }
+                           },
+              long_name => {
+                             name     => 'long_name',
+                             get_meth => sub { shift->get_description(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_description(@_) },
+                             set_args => [],
+                             disp     => 'Long name',
+                             search   => 1,
+                             len      => 128,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type => 'text',
+                                           length     => 32,
+                                           maxlength => 128
+                                         }
+                            },
+              active    => {
+                            name     => 'active',
+                            get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                            get_args => [],
+                            set_meth => sub { $_[1] ? shift->activate(@_)
+                                                : shift->deactivate(@_) },
+                            set_args => [],
+                            disp     => 'Active',
+                            search   => 0,
+                            len      => 1,
+                            req      => 1,
+                            type     => 'short',
+                            props    => { type => 'checkbox' }
+                           },
+             };
     return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
 }
 
@@ -1141,40 +1145,40 @@ sub save {
     return unless $self->_get__dirty;
 
     if (defined $id) {
-	# It's an existing org. Update it.
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # It's an existing org. Update it.
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE org
             SET   @COLS = ?
             WHERE  id = ?
         }, undef, DEBUG);
-	execute($upd, $self->_get(@PROPS, 'id'));
-	unless ($self->_get('active')) {
-	    # Deactivate all group memberships if we've deactivated the org.
-	    foreach my $grp (Bric::Util::Grp::Org->list({ obj => $self })) {
-		foreach my $mem ($grp->has_member({ obj => $self })) {
-		    next unless $mem;
-		    $mem->deactivate;
-		    $mem->save;
-		}
-	    }
-	}
+        execute($upd, $self->_get(@PROPS, 'id'));
+        unless ($self->_get('active')) {
+            # Deactivate all group memberships if we've deactivated the org.
+            foreach my $grp (Bric::Util::Grp::Org->list({ obj => $self })) {
+                foreach my $mem ($grp->has_member({ obj => $self })) {
+                    next unless $mem;
+                    $mem->deactivate;
+                    $mem->save;
+                }
+            }
+        }
     } else {
-	# It's a new org. Insert it.
-	local $" = ', ';
-	my $fields = join ', ', next_key('org'), ('?') x $#COLS;
-	my $ins = prepare_c(qq{
+        # It's a new org. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('org'), ('?') x $#COLS;
+        my $ins = prepare_c(qq{
             INSERT INTO org (@COLS)
             VALUES ($fields)
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@PROPS[1..$#PROPS]));
-	# Now grab the ID.
-	$id = last_key('org');
-	$self->_set(['id'], [$id]);
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@PROPS[1..$#PROPS]));
+        # Now grab the ID.
+        $id = last_key('org');
+        $self->_set(['id'], [$id]);
 
         # And finally, add this org to the "All Organizations" group.
-	$self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     }
     $self->SUPER::save;
     return $self;
@@ -1246,25 +1250,25 @@ $get_em = sub {
     my $wheres = 'a.id = c.object_id AND m.id = c.member__id';
     my @params;
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id') {
+        if ($k eq 'id') {
             # Simple numeric comparison.
             $wheres .= " AND a.id = ?";
-	    push @params, $v;
-	} elsif ($k eq 'personal') {
+            push @params, $v;
+        } elsif ($k eq 'personal') {
             # Simple boolean numeric comparison.
             $wheres .= " AND a.personal = ?";
-	    push @params, $v ? 1 : 0;
+            push @params, $v ? 1 : 0;
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, org_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.grp__id = ?";
             push @params, $v;
-	} else {
+        } else {
             # Simple string comparison.
             $wheres .= " AND LOWER(a.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+            push @params, lc $v;
+        }
     }
 
     # Make sure it's active unless and ID has been passed.
@@ -1298,7 +1302,7 @@ $get_em = sub {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@SEL_PROPS, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            push @orgs, $self;
+            push @orgs, $self->cache_me;
         } else {
             push @$grp_ids, $d[$#d];
         }

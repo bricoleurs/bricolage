@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-11 02:54:05 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -134,22 +134,22 @@ my @props = qw(id parent_id path uri size _mod_time _is_dir media_type);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 media_type => Bric::FIELD_READ,
-			 parent_id => Bric::FIELD_RDWR,
-			 path => Bric::FIELD_RDWR,
-			 uri => Bric::FIELD_RDWR,
-			 tmp_path => Bric::FIELD_RDWR,
-			 size => Bric::FIELD_RDWR,
+                         # Public Fields
+                         id => Bric::FIELD_READ,
+                         media_type => Bric::FIELD_READ,
+                         parent_id => Bric::FIELD_RDWR,
+                         path => Bric::FIELD_RDWR,
+                         uri => Bric::FIELD_RDWR,
+                         tmp_path => Bric::FIELD_RDWR,
+                         size => Bric::FIELD_RDWR,
 
-			 # Private Fields
-			 _mod_time => Bric::FIELD_NONE,
-			 _is_dir => Bric::FIELD_NONE,
-			 _file_ids => Bric::FIELD_NONE,
-			 _story_ids => Bric::FIELD_NONE,
-			 _media_ids => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _mod_time => Bric::FIELD_NONE,
+                         _is_dir => Bric::FIELD_NONE,
+                         _file_ids => Bric::FIELD_NONE,
+                         _story_ids => Bric::FIELD_NONE,
+                         _media_ids => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -254,7 +254,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $res = &$get_em(@_);
+    my $pkg = shift;
+    my $res = $pkg->cache_lookup(@_);
+    return $res if $res;
+
+    $res = $get_em->($pkg, @_);
     # We want @$res to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many Bric::Dist::Resource objects found.' }) if @$res > 1;
@@ -405,7 +409,7 @@ sub href { &$get_em(@_, 0, 1) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -481,32 +485,51 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 =item $meths = Bric::Dist::Resource->my_meths
 
-Returns an anonymous hash of instrospection data for this object. The format for
-the introspection is as follows:
+=item (@meths || $meths_aref) = Bric::Dist::Resource->my_meths(TRUE)
+
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
+intrspection data. The format for each introspection item introspection is as
+follows:
 
 Each hash key is the name of a property or attribute of the object. The value
 for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-meth - A reference to the method that will retrieve the value of the property
-or attribute.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-args - An anonymous array of arguments to pass to a call to meth in order to
+The display name of the property or attribute.
+
+=item get_meth
+
+A reference to the method that will retrieve the value of the property or
+attribute.
+
+=item get_args
+
+An anonymous array of arguments to pass to a call to get_meth in order to
 retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-disp_name - The display name of the property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-type - The type of value the property or attribute contains. There are only
-three types:
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
+
+=item type
+
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -518,10 +541,70 @@ three types:
 
 =back
 
-=item *
+=item len
 
-length - If the value is a 'short' value, this hash key contains the length of
-the field.
+If the value is a 'short' value, this hash key contains the length of the
+field.
+
+=item search
+
+The property is searchable via the list() and list_ids() methods.
+
+=item req
+
+The property or attribute is required.
+
+=item props
+
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
+
+=over 4
+
+=item type
+
+The display field type. Possible values are
+
+=over 4
+
+=item text
+
+=item textarea
+
+=item password
+
+=item hidden
+
+=item radio
+
+=item checkbox
+
+=item select
+
+=back
+
+=item length
+
+The Length, in letters, to display a text or password field.
+
+=item maxlength
+
+The maximum length of the property or value - usually defined by the SQL DDL.
+
+=back
+
+=item rows
+
+The number of rows to format in a textarea field.
+
+=item cols
+
+The number of columns to format in a textarea field.
+
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -536,25 +619,25 @@ B<Notes:> NONE.
 sub my_meths {
     # Load field members.
     my $ret = { path =>      { meth => sub {shift->get_path(@_)},
-			       args => [],
-			       disp => 'Path',
-			       type => 'short',
-			       len  => 256 },
-		media_type => { meth => sub {shift->get_media_type(@_)},
-			       args => [],
-			       disp => 'MEDIA Type',
-			       type => 'short',
-			       len  => 128 },
-		size      => { meth => sub {shift->get_size(@_)},
-			       args => [],
-			       disp => 'Size',
-			       type => 'short',
-			       len  => 10 },
-		mod_time  => { meth => sub {shift->get_mod_time(@_)},
-			       args => [],
-			       disp => 'Last Modified Time',
-			       type => 'date',
-			       len  => undef },
+                               args => [],
+                               disp => 'Path',
+                               type => 'short',
+                               len  => 256 },
+                media_type => { meth => sub {shift->get_media_type(@_)},
+                               args => [],
+                               disp => 'MEDIA Type',
+                               type => 'short',
+                               len  => 128 },
+                size      => { meth => sub {shift->get_size(@_)},
+                               args => [],
+                               disp => 'Size',
+                               type => 'short',
+                               len  => 10 },
+                mod_time  => { meth => sub {shift->get_mod_time(@_)},
+                               args => [],
+                               disp => 'Last Modified Time',
+                               type => 'date',
+                               len  => undef },
               };
     return $ret;
 }
@@ -657,7 +740,7 @@ sub set_media_type {
     my ($self, $media) = @_;
     $media ||= DEF_MEDIA_TYPE;
     $self->_set([qw(media_type _is_dir)],
-		[$media, $media eq 'none' ? 1 : 0]);
+                [$media, $media eq 'none' ? 1 : 0]);
 }
 
 ################################################################################
@@ -1501,34 +1584,34 @@ sub save {
     my $self = shift;
     return $self unless $self->_get__dirty;
     my ($id, $sids, $mids, $fids) = $self->_get(qw(id _story_ids _media_ids
-						   _file_ids));
+                                                   _file_ids));
 
     if (defined $id) {
-	# It's an existing record. Update it.
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # It's an existing record. Update it.
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE resource
             SET    @rcols = ?,
                    media_type__id = (SELECT id FROM media_type WHERE name = ?)
             WHERE  id = ?
         });
-	execute($upd, $self->_get(@props[0..$#props]), $id);
-	log_event('resource_save', $self);
+        execute($upd, $self->_get(@props[0..$#props]), $id);
+        log_event('resource_save', $self);
     } else {
-	# It's a new resource. Insert it.
-	local $" = ', ';
-	my $fields = join ', ', next_key('resource'), ('?') x $#rcols;
-	my $ins = prepare_c(qq{
+        # It's a new resource. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('resource'), ('?') x $#rcols;
+        my $ins = prepare_c(qq{
             INSERT INTO resource (@rcols, media_type__id)
             VALUES ($fields, (SELECT id FROM media_type WHERE name = ?))
         }, undef, DEBUG);
 
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@props[1..$#props]));
-	# Now grab the ID.
-	$id = last_key('resource');
-	$self->_set(['id'], [$id]);
-	log_event('resource_new', $self);
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@props[1..$#props]));
+        # Now grab the ID.
+        $id = last_key('resource');
+        $self->_set(['id'], [$id]);
+        log_event('resource_new', $self);
     }
 
     # Okay, now save any changes to associated Story, Media, and File IDs.
@@ -1542,7 +1625,7 @@ sub save {
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1609,67 +1692,67 @@ $get_em = sub {
     # statements for individual keys, since I'm checking every one of them,
     # anyway.
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'mod_time') {
-	    if (ref $v) {
-		# It's an arrayref of times.
-		push @wheres, "r.$k BETWEEN ? AND ?";
-		push @params, db_date($v->[0]), db_date($v->[1]);
-	    } else {
-		# It's a single value.
-		push @wheres, "r.$k = ?";
-		push @params, db_date($v);
-	    }
-	} elsif ($k eq 'size') {
-	    if (ref $v) {
-		# It's an arrayref of sizes.
-		push @wheres, "r.$k BETWEEN ? AND ?";
-		push @params, @$v;
-	    } else {
-		# It's a single value.
-		push @wheres, "r.$k = ?";
-		push @params, $v;
-	    }
-	} elsif ($k eq 'path' || $k eq 'uri') {
-	    # A text comparison.
+        if ($k eq 'mod_time') {
+            if (ref $v) {
+                # It's an arrayref of times.
+                push @wheres, "r.$k BETWEEN ? AND ?";
+                push @params, db_date($v->[0]), db_date($v->[1]);
+            } else {
+                # It's a single value.
+                push @wheres, "r.$k = ?";
+                push @params, db_date($v);
+            }
+        } elsif ($k eq 'size') {
+            if (ref $v) {
+                # It's an arrayref of sizes.
+                push @wheres, "r.$k BETWEEN ? AND ?";
+                push @params, @$v;
+            } else {
+                # It's a single value.
+                push @wheres, "r.$k = ?";
+                push @params, $v;
+            }
+        } elsif ($k eq 'path' || $k eq 'uri') {
+            # A text comparison.
             push @wheres, "$k LIKE ?";
             push @params, $v;
-	} elsif ($k eq 'media_type') {
-	    # We need to do a subselect for the correct MEDIA type ID.
-	    push @params, lc $v;
-	    push @wheres, "r.media_type__id IN (SELECT id FROM media_type WHERE" .
-	      " LOWER(name) LIKE ?)";
-	} elsif ($k eq 'story_id') {
-	    # We need to do a subselect for the story_id.
-	    push @params, $v;
-	    push @wheres, "r.id IN (SELECT resource__id FROM story__resource"
-	      . " WHERE story__id = ?)";
-	} elsif ($k eq 'media_id') {
-	    # We need to do a subselect for the media_id.
-	    push @params, $v;
-	    push @wheres, "r.id IN (SELECT resource__id FROM media__resource"
-	      . " WHERE media__id = ?)";
-	} elsif ($k eq 'dir_id') {
-	    # We need to do a subselect for the media_id.
-	    push @params, $v;
-	    push @wheres, "r.id IN (SELECT id FROM resource WHERE parent_id = ?)";
-	} elsif ($k eq 'job_id') {
-	    # if job_id is undef, just return no hits rather than toast the
+        } elsif ($k eq 'media_type') {
+            # We need to do a subselect for the correct MEDIA type ID.
+            push @params, lc $v;
+            push @wheres, "r.media_type__id IN (SELECT id FROM media_type WHERE" .
+              " LOWER(name) LIKE ?)";
+        } elsif ($k eq 'story_id') {
+            # We need to do a subselect for the story_id.
+            push @params, $v;
+            push @wheres, "r.id IN (SELECT resource__id FROM story__resource"
+              . " WHERE story__id = ?)";
+        } elsif ($k eq 'media_id') {
+            # We need to do a subselect for the media_id.
+            push @params, $v;
+            push @wheres, "r.id IN (SELECT resource__id FROM media__resource"
+              . " WHERE media__id = ?)";
+        } elsif ($k eq 'dir_id') {
+            # We need to do a subselect for the media_id.
+            push @params, $v;
+            push @wheres, "r.id IN (SELECT id FROM resource WHERE parent_id = ?)";
+        } elsif ($k eq 'job_id') {
+            # if job_id is undef, just return no hits rather than toast the
             # database with the index-defeating query "WHERE job__id = NULL"
-	    return ($href ? {} : []) unless defined $v;
+            return ($href ? {} : []) unless defined $v;
 
-	    # We need to do a subselect for the job_id.
-	    push @wheres, "r.id IN (SELECT resource__id FROM job__resource "
-	                  . "WHERE job__id = ?)";
-	    push @params, $v;
-	} elsif ($k eq 'is_dir') {
-	    # Check for directories or not.
-	    push @wheres, "r.$k = ?";
-	    push @params, $v ? 1 : 0;
-	} else {
-	    # It's an ID.
-	    push @wheres, "r.$k = ?";
-	    push @params, $v;
-	}
+            # We need to do a subselect for the job_id.
+            push @wheres, "r.id IN (SELECT resource__id FROM job__resource "
+                          . "WHERE job__id = ?)";
+            push @params, $v;
+        } elsif ($k eq 'is_dir') {
+            # Check for directories or not.
+            push @wheres, "r.$k = ?";
+            push @params, $v ? 1 : 0;
+        } else {
+            # It's an ID.
+            push @wheres, "r.$k = ?";
+            push @params, $v;
+        }
     }
 
     # Assemble the WHERE statement.
@@ -1695,11 +1778,11 @@ $get_em = sub {
     bind_columns($sel, \@d[0..$#cols]);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	$href ? $res{$d[0]} = $self : push @res, $self
+        my $self = bless {}, $pkg;
+        $self->SUPER::new;
+        $self->_set(\@props, \@d);
+        $self->_set__dirty; # Disables dirty flag.
+        $href ? $res{$d[0]} = $self->cache_me : push @res, $self->cache_me;
     }
     return $href ? \%res : \@res;
 };
@@ -1790,9 +1873,9 @@ $add_ids = sub {
     my ($self, $type, @ids) = @_;
     my $ids = &$load_ids;
     foreach my $id (@ids) {
-	next if $ids->{cur}{$id};
-	$ids->{new}{$id} = 1;
-	delete $ids->{del}{$id};
+        next if $ids->{cur}{$id};
+        $ids->{new}{$id} = 1;
+        delete $ids->{del}{$id};
     }
     $self->_set__dirty(1);
 };
@@ -1840,9 +1923,9 @@ $del_ids = sub {
     my ($self, $type, @ids) = @_;
     my $ids = &$load_ids;
     foreach my $id (@ids) {
-	next if $ids->{del}{$id};
-	delete $ids->{cur}{$id};
-	$ids->{del}{$id} = 1;
+        next if $ids->{del}{$id};
+        delete $ids->{cur}{$id};
+        $ids->{del}{$id} = 1;
     }
     $self->_set__dirty(1);
 };
@@ -1913,7 +1996,7 @@ $load_ids = sub {
     # Get ready to get them from the database.
     my $sel;
     if ($type eq 'file') {
-	$sel = prepare_ca(qq{
+        $sel = prepare_ca(qq{
             SELECT id
             FROM   resource
             WHERE  parent_id = ?
@@ -1980,11 +2063,11 @@ $stat = sub {
     $path = substr($path, 0, -1) if substr($path, -1) eq '/';
     my $data = [$path];
     if (-d $path) {
-	# It's a directory.
-	push @$data, 0, (stat($path))[9], 1;
+        # It's a directory.
+        push @$data, 0, (stat($path))[9], 1;
     } else {
-	# It's a file.
-	push @$data, (stat($path))[7,9], 0;
+        # It's a file.
+        push @$data, (stat($path))[7,9], 0;
     }
     $data->[2] = db_date(strfdate($data->[2]));
     $self->_set([qw(path size _mod_time _is_dir)], $data);
@@ -2027,30 +2110,30 @@ $save_ids = sub {
 
     # Prepare SQL statements.
     if ($type eq 'file') {
-	# It's for file resource IDs. Prepare the DELETE statement.
-	$del = prepare_c(qq{
+        # It's for file resource IDs. Prepare the DELETE statement.
+        $del = prepare_c(qq{
             UPDATE resource
             SET    parent_id = NULL
             WHERE  parent_id = ?
                    AND id = ?
         });
 
-	# Prepare the INSERT statement.
-	$ins = prepare_c(qq{
+        # Prepare the INSERT statement.
+        $ins = prepare_c(qq{
             UPDATE resource
             SET    parent_id = ?
             WHERE  id = ?
         });
     } else {
-	# It's for Story or Media IDs. Prepare the DELETE statement.
-	$del = prepare_c(qq{
+        # It's for Story or Media IDs. Prepare the DELETE statement.
+        $del = prepare_c(qq{
             DELETE FROM ${type}__resource
             WHERE  resource__id = ?
                    AND ${type}__id = ?
         });
 
-	# Prepare the INSERT statement.
-	$ins = prepare_c(qq{
+        # Prepare the INSERT statement.
+        $ins = prepare_c(qq{
             INSERT INTO ${type}__resource (resource__id, ${type}__id)
             VALUES (?, ?)
         });
@@ -2081,7 +2164,7 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
+L<Bric|Bric>,
 L<Bric::Dist::Job|Bric::Dist::Job>
 
 =cut

@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-23 21:06:47 $
+$Date: 2003-01-29 06:46:02 $
 
 =head1 SYNOPSIS
 
@@ -90,22 +90,22 @@ my @ORD = qw(name description top_level media paginated fixed_url
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 'id'             => Bric::FIELD_RDWR,
-			 'name'           => Bric::FIELD_RDWR,
-			 'description'    => Bric::FIELD_RDWR,
-			 'top_level'      => Bric::FIELD_RDWR,
-			 'paginated'      => Bric::FIELD_RDWR,
-			 'fixed_url'      => Bric::FIELD_RDWR,
-			 'related_story'  => Bric::FIELD_RDWR,
-			 'related_media'  => Bric::FIELD_RDWR,
-			 'media'          => Bric::FIELD_RDWR,
-			 'biz_class_id'   => Bric::FIELD_RDWR,
-			 'grp_ids'        => Bric::FIELD_READ,
+                         # Public Fields
+                         'id'             => Bric::FIELD_RDWR,
+                         'name'           => Bric::FIELD_RDWR,
+                         'description'    => Bric::FIELD_RDWR,
+                         'top_level'      => Bric::FIELD_RDWR,
+                         'paginated'      => Bric::FIELD_RDWR,
+                         'fixed_url'      => Bric::FIELD_RDWR,
+                         'related_story'  => Bric::FIELD_RDWR,
+                         'related_media'  => Bric::FIELD_RDWR,
+                         'media'          => Bric::FIELD_RDWR,
+                         'biz_class_id'   => Bric::FIELD_RDWR,
+                         'grp_ids'        => Bric::FIELD_READ,
 
-			 # Private Fields
-			 '_active'         => Bric::FIELD_NONE,
-			});
+                         # Private Fields
+                         '_active'         => Bric::FIELD_NONE,
+                        });
 }
 
 #==============================================================================#
@@ -204,7 +204,7 @@ sub new {
 
     # Set other boolean values.
     for (qw(top_level media paginated fixed_url related_story related_media)) {
-	$init->{$_} = $init->{$_} ? 1 : 0;
+        $init->{$_} = $init->{$_} ? 1 : 0;
     }
 
     # Call the parent's constructor.
@@ -265,7 +265,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $att = &$get_em(@_);
+    my $pkg = shift;
+    my $att = $pkg->cache_lookup(@_);
+    return $att if $att;
+
+    $att = $get_em->($pkg, @_);
     # We want @$att to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
@@ -589,146 +593,146 @@ sub my_meths {
     my $sel = [];
     my $classes = Bric::Util::Class->pkg_href;
     while (my ($k, $v) = each %$classes) {
-	next unless $k =~ /^bric::biz::asset::business::/;
-	my $d = [ $v->get_id, $v->get_disp_name ];
-	$d->[1] = 'Other Media' if $v->get_key_name eq 'media';
-	push @$sel, $d;
+        next unless $k =~ /^bric::biz::asset::business::/;
+        my $d = [ $v->get_id, $v->get_disp_name ];
+        $d->[1] = 'Other Media' if $v->get_key_name eq 'media';
+        push @$sel, $d;
     }
 
     $METH = {
-	      name        => {
-			      name     => 'name',
-			      get_meth => sub { shift->get_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_name(@_) },
-			      set_args => [],
-			      disp     => 'Name',
-			      type     => 'short',
-			      len      => 64,
-			      req      => 1,
-			      search   => 1,
-			      props    => { type       => 'text',
-					    length     => 32,
-					    maxlength => 64
-					  }
-			     },
-	      description => {
-			      name     => 'description',
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_description(@_) },
-			      set_args => [],
-			      disp     => 'Description',
-			      len      => 256,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'textarea',
-					    cols => 40,
-					    rows => 4
-					  }
-			     },
-	     top_level    => {
-			      name     => 'top_level',
-			      get_meth => sub {shift->get_top_level(@_)},
-			      get_args => [],
-			      set_meth => sub {shift->set_top_level(@_)},
-			      set_args => [],
-			      disp     => 'Type',
-			      len      => 1,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'radio',
-					    vals => [ [0, 'Element'], [1, 'Asset']] }
-			     },
-	     paginated    => {
-			      name     => 'paginated',
-			      get_meth => sub {shift->get_paginated(@_)},
-			      get_args => [],
-			      set_meth => sub {shift->set_paginated(@_)},
-			      set_args => [],
-			      disp     => 'Page',
-			      len      => 1,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'checkbox'}
-			     },
-	     fixed_url    => {
-			      name     => 'fixed_url',
-			      get_meth => sub {shift->get_fixed_url(@_)},
-			      get_args => [],
-			      set_meth => sub {shift->set_fixed_url(@_)},
-			      set_args => [],
-			      disp     => 'Fixed',
-			      len      => 1,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'checkbox'}
-			     },
-	     related_story    => {
-			      name     => 'related_story',
-			      get_meth => sub {shift->get_related_story(@_)},
-			      get_args => [],
-			      set_meth => sub {shift->set_related_story(@_)},
-			      set_args => [],
-			      disp     => 'Related Story',
-			      len      => 1,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'checkbox'}
-			     },
-	     related_media    => {
-			      name     => 'related_media',
-			      get_meth => sub {shift->get_related_media(@_)},
-			      get_args => [],
-			      set_meth => sub {shift->set_related_media(@_)},
-			      set_args => [],
-			      disp     => 'Related Media',
-			      len      => 1,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'checkbox'}
-			     },
-	     media        => {
-			      name     => 'media',
-			      get_meth => sub {shift->get_media(@_)},
-			      get_args => [],
-			      set_meth => sub {shift->set_media(@_)},
-			      set_args => [],
-			      disp     => 'Content',
-			      len      => 1,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'radio',
-					    vals => [ [ 0, 'Story'], [ 1, 'Media'] ]
-				      }
-			     },
-	     biz_class_id => {
-			      name     => 'biz_class_id',
-			      get_meth => sub {shift->get_biz_class_id(@_)},
-			      get_args => [],
-			      set_meth => sub {shift->set_biz_class_id(@_)},
-			      set_args => [],
-			      disp     => 'Content Type',
-			      len      => 3,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'select',
-					    vals => $sel }
-			     },
-	      active      => {
-			      name     => 'active',
-			      get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			      get_args => [],
-			      set_meth => sub { $_[1] ? shift->activate(@_)
-						  : shift->deactivate(@_) },
-			      set_args => [],
-			      disp     => 'Active',
-			      len      => 1,
-			      req      => 1,
-			      type     => 'short',
-			      props    => { type => 'checkbox' }
-			     }
-	  };
+              name        => {
+                              name     => 'name',
+                              get_meth => sub { shift->get_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_name(@_) },
+                              set_args => [],
+                              disp     => 'Name',
+                              type     => 'short',
+                              len      => 64,
+                              req      => 1,
+                              search   => 1,
+                              props    => { type       => 'text',
+                                            length     => 32,
+                                            maxlength => 64
+                                          }
+                             },
+              description => {
+                              name     => 'description',
+                              get_meth => sub { shift->get_description(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_description(@_) },
+                              set_args => [],
+                              disp     => 'Description',
+                              len      => 256,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'textarea',
+                                            cols => 40,
+                                            rows => 4
+                                          }
+                             },
+             top_level    => {
+                              name     => 'top_level',
+                              get_meth => sub {shift->get_top_level(@_)},
+                              get_args => [],
+                              set_meth => sub {shift->set_top_level(@_)},
+                              set_args => [],
+                              disp     => 'Type',
+                              len      => 1,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'radio',
+                                            vals => [ [0, 'Element'], [1, 'Asset']] }
+                             },
+             paginated    => {
+                              name     => 'paginated',
+                              get_meth => sub {shift->get_paginated(@_)},
+                              get_args => [],
+                              set_meth => sub {shift->set_paginated(@_)},
+                              set_args => [],
+                              disp     => 'Page',
+                              len      => 1,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'checkbox'}
+                             },
+             fixed_url    => {
+                              name     => 'fixed_url',
+                              get_meth => sub {shift->get_fixed_url(@_)},
+                              get_args => [],
+                              set_meth => sub {shift->set_fixed_url(@_)},
+                              set_args => [],
+                              disp     => 'Fixed',
+                              len      => 1,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'checkbox'}
+                             },
+             related_story    => {
+                              name     => 'related_story',
+                              get_meth => sub {shift->get_related_story(@_)},
+                              get_args => [],
+                              set_meth => sub {shift->set_related_story(@_)},
+                              set_args => [],
+                              disp     => 'Related Story',
+                              len      => 1,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'checkbox'}
+                             },
+             related_media    => {
+                              name     => 'related_media',
+                              get_meth => sub {shift->get_related_media(@_)},
+                              get_args => [],
+                              set_meth => sub {shift->set_related_media(@_)},
+                              set_args => [],
+                              disp     => 'Related Media',
+                              len      => 1,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'checkbox'}
+                             },
+             media        => {
+                              name     => 'media',
+                              get_meth => sub {shift->get_media(@_)},
+                              get_args => [],
+                              set_meth => sub {shift->set_media(@_)},
+                              set_args => [],
+                              disp     => 'Content',
+                              len      => 1,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'radio',
+                                            vals => [ [ 0, 'Story'], [ 1, 'Media'] ]
+                                      }
+                             },
+             biz_class_id => {
+                              name     => 'biz_class_id',
+                              get_meth => sub {shift->get_biz_class_id(@_)},
+                              get_args => [],
+                              set_meth => sub {shift->set_biz_class_id(@_)},
+                              set_args => [],
+                              disp     => 'Content Type',
+                              len      => 3,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'select',
+                                            vals => $sel }
+                             },
+              active      => {
+                              name     => 'active',
+                              get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                              get_args => [],
+                              set_meth => sub { $_[1] ? shift->activate(@_)
+                                                  : shift->deactivate(@_) },
+                              set_args => [],
+                              disp     => 'Active',
+                              len      => 1,
+                              req      => 1,
+                              type     => 'short',
+                              props    => { type => 'checkbox' }
+                             }
+          };
     return !$ord ? $METH : wantarray ? @{$METH}{@ORD} : [@{$METH}{@ORD}];
 
 }
@@ -944,9 +948,9 @@ sub save {
     return unless $self->_get__dirty;
 
     if ($self->_get('id')) {
-	$self->_update_attype;
+        $self->_update_attype;
     } else {
-	$self->_insert_attype;
+        $self->_insert_attype;
     }
 
     $self->SUPER::save;
@@ -1122,29 +1126,29 @@ $get_em = sub {
     }
 
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id') {
+        if ($k eq 'id') {
             # Simple ID lookup.
             $wheres .= " AND a.id = ?";
-	    push @params, $v;
-	} elsif ($k eq 'biz_class_id') {
+            push @params, $v;
+        } elsif ($k eq 'biz_class_id') {
             # Simple ID lookup.
             $wheres .= " AND a.biz_class__id = ?";
-	    push @params, $v;
+            push @params, $v;
         } elsif ($k eq 'name' or $k eq 'description') {
             # Simple string comparison.
-	    $wheres .= " AND LOWER(a.$k) LIKE ?";
-	    push @params, lc $v;
+            $wheres .= " AND LOWER(a.$k) LIKE ?";
+            push @params, lc $v;
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, element_type_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.grp__id = ?";
             push @params, $v;
-	} else {
+        } else {
             # It's a boolean comparison.
-	    $wheres .= " AND a.$k = ?";
-	    push @params, $v ? 1 : 0;
-	}
+            $wheres .= " AND a.$k = ?";
+            push @params, $v ? 1 : 0;
+        }
     }
 
     # Assemble and prepare the query.
@@ -1176,7 +1180,7 @@ $get_em = sub {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@SEL_PROPS, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            push @atts, $self
+            push @atts, $self->cache_me;
         } else {
             push @$grp_ids, $d[$#d];
         }

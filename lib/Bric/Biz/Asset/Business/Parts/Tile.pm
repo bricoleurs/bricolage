@@ -8,15 +8,15 @@ Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-04 00:48:24 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -171,39 +171,11 @@ NONE
 =cut
 
 sub new {
-	my ($self, $init) = @_;
-
-	$self = bless {}, $self unless ref $self;
-	$self->SUPER::new($init) if $init;
-
-	$self->_set__dirty(1);
-
-	return $self;
-}
-
-################################################################################
-
-=item lookup - Method not supported
-
-To look up a particular tile object go to it's class directly
-
-B<Throws:>
-
-"Method not implemented"
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub lookup {
-    my $err_msg = "Method not Implemented";
-    die Bric::Util::Fault::Exception::MNI->new({'msg' => $err_msg});
+    my ($self, $init) = @_;
+    $self = bless {}, $self unless ref $self;
+    $self->SUPER::new($init) if $init;
+    $self->_set__dirty(1);
+    return $self;
 }
 
 ################################################################################
@@ -211,8 +183,8 @@ sub lookup {
 =item ($tile_list, @tiles) = Bric::Biz::Asset::Business::Parts::Tile->list
 	( $criteria )
 
-This will return a list ( or list ref) of tile objects that match the 
-given criteria
+This will return a list ( or list ref) of tile objects that match the given
+criteria.
 
 B<Throws:>
 

@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-23 21:06:49 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -148,8 +148,8 @@ my @SEL_PROPS = ('id', @PROPS, qw(_mover_class grp_ids));
 
 my %BOOL_MAP = ( active      => 's.active = ?',
                  can_copy    => 's.copyable = ?',
-		 can_publish => 's.publish = ?',
-		 can_preview => 's.preview = ?');
+                 can_publish => 's.publish = ?',
+                 can_preview => 's.preview = ?');
 
 my @SCOL_ARGS = ('Bric::Util::Coll::Server', '_servers');
 my @ACOL_ARGS = ('Bric::Util::Coll::Action', '_actions');
@@ -164,22 +164,22 @@ my $meths;
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id           => Bric::FIELD_READ,
-			 name         => Bric::FIELD_RDWR,
-			 description  => Bric::FIELD_RDWR,
-			 move_method  => Bric::FIELD_RDWR,
-			 grp_ids      => Bric::FIELD_READ,
+                         # Public Fields
+                         id           => Bric::FIELD_READ,
+                         name         => Bric::FIELD_RDWR,
+                         description  => Bric::FIELD_RDWR,
+                         move_method  => Bric::FIELD_RDWR,
+                         grp_ids      => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _mover_class => Bric::FIELD_NONE,
-			 _copy        => Bric::FIELD_NONE,
-			 _active      => Bric::FIELD_NONE,
-			 _servers     => Bric::FIELD_NONE,
-			 _actions     => Bric::FIELD_NONE,
-			 _publish     => Bric::FIELD_NONE,
-			 _preview     => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _mover_class => Bric::FIELD_NONE,
+                         _copy        => Bric::FIELD_NONE,
+                         _active      => Bric::FIELD_NONE,
+                         _servers     => Bric::FIELD_NONE,
+                         _actions     => Bric::FIELD_NONE,
+                         _publish     => Bric::FIELD_NONE,
+                         _preview     => Bric::FIELD_NONE
+                        });
 }
 
 ##############################################################################
@@ -283,7 +283,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $st = &$get_em(@_);
+    my $pkg = shift;
+    my $st = $pkg->cache_lookup(@_);
+    return $st if $st;
+
+    $st = $get_em->($pkg, @_);
     # We want @$st to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
       msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
@@ -350,7 +354,7 @@ Unable to connect to database.
 
 Unable to prepare SQL statement.
 
-=Item *
+=item *
 
 Unable to select column into arrayref.
 
@@ -687,104 +691,104 @@ sub my_meths {
     my $move_methods = list_move_methods();
     # We don't got 'em. So get 'em!
     $meths = {
-	      name        => {
-			      name     => 'name',
-			      get_meth => sub { shift->get_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_name(@_) },
-			      set_args => [],
-			      disp     => 'Name',
-			      search   => 1,
-			      len      => 64,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type      => 'text',
-					    length    => 32,
-					    maxlength => 64
-					  }
-			     },
-	      description => {
-			      name     => 'description',
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_description(@_) },
-			      set_args => [],
-			      disp     => 'Description',
-			      len      => 256,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'textarea',
-					    cols => 40,
-					    rows => 4
-					  }
-			     },
-	      move_method => {
-			      name     => 'move_method',
-			      get_meth => sub { shift->get_move_method(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_move_method(@_) },
-			      set_args => [],
-			      disp     => 'Move Method',
-			      len      => 128,
-			      req      => 0,
-			      type     => 'short',
-			      props    => {   type => 'select',
-					      vals => $move_methods
-					  }
-			     },
-	      copy     =>   {
-			     name     => 'copy',
-			     get_meth => sub { shift->can_copy(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->copy(@_)
-						 : shift->no_copy(@_) },
-			     set_args => [],
-			     disp     => 'Copy Resources',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	      publish    => {
-			     name     => 'publish',
-			     get_meth => sub { shift->can_publish(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->on_publish(@_)
-						 : shift->no_publish(@_) },
-			     set_args => [],
-			     disp     => 'Publishes',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	      preview   => {
-			     name     => 'preview',
-			     get_meth => sub { shift->can_preview(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->on_preview(@_)
-						 : shift->no_preview(@_) },
-			     set_args => [],
-			     disp     => 'Previews',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->activate(@_)
-						 : shift->deactivate(@_) },
-			     set_args => [],
-			     disp     => 'Active',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	     };
+              name        => {
+                              name     => 'name',
+                              get_meth => sub { shift->get_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_name(@_) },
+                              set_args => [],
+                              disp     => 'Name',
+                              search   => 1,
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type      => 'text',
+                                            length    => 32,
+                                            maxlength => 64
+                                          }
+                             },
+              description => {
+                              name     => 'description',
+                              get_meth => sub { shift->get_description(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_description(@_) },
+                              set_args => [],
+                              disp     => 'Description',
+                              len      => 256,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'textarea',
+                                            cols => 40,
+                                            rows => 4
+                                          }
+                             },
+              move_method => {
+                              name     => 'move_method',
+                              get_meth => sub { shift->get_move_method(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_move_method(@_) },
+                              set_args => [],
+                              disp     => 'Move Method',
+                              len      => 128,
+                              req      => 0,
+                              type     => 'short',
+                              props    => {   type => 'select',
+                                              vals => $move_methods
+                                          }
+                             },
+              copy     =>   {
+                             name     => 'copy',
+                             get_meth => sub { shift->can_copy(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->copy(@_)
+                                                 : shift->no_copy(@_) },
+                             set_args => [],
+                             disp     => 'Copy Resources',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+              publish    => {
+                             name     => 'publish',
+                             get_meth => sub { shift->can_publish(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->on_publish(@_)
+                                                 : shift->no_publish(@_) },
+                             set_args => [],
+                             disp     => 'Publishes',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+              preview   => {
+                             name     => 'preview',
+                             get_meth => sub { shift->can_preview(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->on_preview(@_)
+                                                 : shift->no_preview(@_) },
+                             set_args => [],
+                             disp     => 'Previews',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+              active     => {
+                             name     => 'active',
+                             get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->activate(@_)
+                                                 : shift->deactivate(@_) },
+                             set_args => [],
+                             disp     => 'Active',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ORD} : [@{$meths}{@ORD}];
 }
 
@@ -1898,31 +1902,31 @@ sub save {
     my $dirt = $self->_get__dirty;
     my ($id, $servers, $actions, $ocs) = $self->_get(qw(id _servers _actions _ocs));
     if (defined $id && $dirt) {
-	# It's an existing record. Update it.
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # It's an existing record. Update it.
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE server_type
             SET    @COLS = ?,
                    class__id = (SELECT id FROM class WHERE LOWER(disp_name) = LOWER(?))
             WHERE  id = ?
         }, undef, DEBUG);
-	execute($upd, $self->_get('id', @PROPS), $id);
+        execute($upd, $self->_get('id', @PROPS), $id);
     } elsif ($dirt) {
-	# It's a new resource. Insert it.
-	local $" = ', ';
-	my $fields = join ', ', next_key('server_type'), ('?') x $#COLS;
-	my $ins = prepare_c(qq{
+        # It's a new resource. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('server_type'), ('?') x $#COLS;
+        my $ins = prepare_c(qq{
             INSERT INTO server_type (@COLS, class__id)
             VALUES ($fields, (SELECT id FROM class WHERE LOWER(disp_name) = LOWER(?)))
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@PROPS));
-	# Now grab the ID.
-	$id = last_key('server_type');
-	$self->_set(['id'], [$id]);
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@PROPS));
+        # Now grab the ID.
+        $id = last_key('server_type');
+        $self->_set(['id'], [$id]);
 
-	# And finally, register this person in the "All Destinations" group.
-	$self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+        # And finally, register this person in the "All Destinations" group.
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     }
 
     # Okay, now save any changes to associated servers and actions.
@@ -2031,41 +2035,41 @@ $get_em = sub {
       'sm.member__id = m.id';
     my @params;
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id') {
+        if ($k eq 'id') {
             # Simple ID lookup.
             $wheres .= " AND s.id = ?";
-	    push @params, $v;
-	} elsif ($BOOL_MAP{$k}) {
+            push @params, $v;
+        } elsif ($BOOL_MAP{$k}) {
             # Simple boolean comparison.
             $wheres .= " AND $BOOL_MAP{$k}";
-	    push @params, $v ? 1 : 0;
-	} elsif ($k eq 'move_method') {
+            push @params, $v ? 1 : 0;
+        } elsif ($k eq 'move_method') {
             # We use the class display name for the move method.
-	    $wheres .= " AND LOWER(c.disp_name) LIKE ?";
-	    push @params, lc $v;
+            $wheres .= " AND LOWER(c.disp_name) LIKE ?";
+            push @params, lc $v;
         } elsif ($k eq 'job_id') {
             # Add job__server_type to the lists of tables and join to it.
             $tables .= ', job__server_type js';
             $wheres .= ' AND s.id = js.server_type__id AND js.job__id = ?';
-	    push @params, $v;
+            push @params, $v;
         } elsif ($k eq 'output_channel_id') {
             # Add server_type__output_channel to the lists of tables and join
             # to it.
             $tables .= ', server_type__output_channel so';
             $wheres .= ' AND s.id = so.server_type__id AND ' .
               'so.output_channel__id = ?';
-	    push @params, $v;
+            push @params, $v;
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, dest_member sm2";
             $wheres .= " AND s.id = sm2.object_id AND sm2.member__id = m2.id" .
               " AND m2.grp__id = ?";
             push @params, $v;
-	} else {
+        } else {
             # It's just a string comparison.
-	    $wheres .= " AND LOWER(s.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+            $wheres .= " AND LOWER(s.$k) LIKE ?";
+            push @params, lc $v;
+        }
     }
 
     # Assemble and prepare the query.
@@ -2097,7 +2101,8 @@ $get_em = sub {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@SEL_PROPS, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            $href ? $sts{$d[0]} = $self : push @sts, $self
+            $href ? $sts{$d[0]} = $self->cache_me :
+              push @sts, $self->cache_me;
         } else {
             push @$grp_ids, $d[$#d];
         }

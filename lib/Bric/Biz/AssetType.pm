@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-25 01:21:53 $
+$Date: 2003-01-29 06:46:03 $
 
 =head1 SYNOPSIS
 
@@ -344,7 +344,11 @@ NONE
 =cut
 
 sub lookup {
-    my $elem = shift->_do_list(@_);
+    my $pkg = shift;
+    my $elem = $pkg->cache_lookup(@_);
+    return $elem if $elem;
+
+    $elem = $pkg->_do_list(@_);
     # We want @$cat to have only one value.
     die Bric::Util::Fault::Exception::DP->new
       ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
@@ -2228,7 +2232,7 @@ sub _do_list {
                          ]
                        );
             $self->_set__dirty; # Disable the dirty flag.
-            push @elems, $self
+            push @elems, $self->cache_me;
         } else {
             # Append the ID.
             push @$grp_ids, $d[$#d];

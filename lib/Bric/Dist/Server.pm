@@ -7,16 +7,16 @@ distributed.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-03 16:15:43 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -103,10 +103,10 @@ use constant DEBUG => 0;
 ################################################################################
 # Public Class Fields
 our %OS = (Mac   => 'File::Spec::Mac',
-	   OS2   => 'File::Spec::OS2',
-	   Unix  => 'File::Spec::Unix',
-	   VMS   => 'File::Spec::VMS',
-	   Win32 => 'File::Spec::Win32');
+           OS2   => 'File::Spec::OS2',
+           Unix  => 'File::Spec::Unix',
+           VMS   => 'File::Spec::VMS',
+           Win32 => 'File::Spec::Win32');
 
 ################################################################################
 # Private Class Fields
@@ -120,9 +120,9 @@ my $def_os = do {
 };
 
 my @cols = qw(id server_type__id host_name os doc_root login password cookie
-	      active);
+              active);
 my @props = qw(id server_type_id host_name os doc_root login password cookie
-	       _active);
+               _active);
 my $dp = 'Bric::Util::Fault::Exception::DP';
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my @ord = qw(host_name os doc_root login password cookie active);
@@ -134,20 +134,20 @@ my $meths;
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 server_type_id => Bric::FIELD_RDWR,
-			 host_name => Bric::FIELD_RDWR,
-			 os => Bric::FIELD_READ,
-			 doc_root => Bric::FIELD_RDWR,
-			 login => Bric::FIELD_RDWR,
-			 password => Bric::FIELD_RDWR,
-			 cookie => Bric::FIELD_RDWR,
+                         # Public Fields
+                         id => Bric::FIELD_READ,
+                         server_type_id => Bric::FIELD_RDWR,
+                         host_name => Bric::FIELD_RDWR,
+                         os => Bric::FIELD_READ,
+                         doc_root => Bric::FIELD_RDWR,
+                         login => Bric::FIELD_RDWR,
+                         password => Bric::FIELD_RDWR,
+                         cookie => Bric::FIELD_RDWR,
 
-			 # Private Fields
-			 _active => Bric::FIELD_NONE,
-			 _del => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _active => Bric::FIELD_NONE,
+                         _del => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -267,7 +267,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $server = &$get_em(@_);
+    my $pkg = shift;
+    my $server = $pkg->cache_lookup(@_);
+    return $server if $server;
+
+    $server = $get_em->($pkg, @_);
     # We want @$server to have only one value.
     die $dp->new({ msg => 'Too many Bric::Dist::Server objects found.' })
       if @$server > 1;
@@ -402,7 +406,7 @@ sub href { &$get_em(@_, 0, 1) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -476,12 +480,12 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 ################################################################################
 
-=item $meths = Bric::Dist::ServerType >my_meths
+=item $meths = Bric::Dist::Server->my_meths
 
-=item (@meths || $meths_aref) = Bric::Dist::ServerType->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Dist::Server->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -490,39 +494,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -534,29 +538,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -574,27 +580,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -615,111 +622,111 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      host_name   => {
-			      name     => 'host_name',
-			      get_meth => sub { shift->get_host_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_host_name(@_) },
-			      set_args => [],
-			      disp     => 'Host Name',
-			      search   => 1,
-			      len      => 128,
-			      req      => 1,
-			      type     => 'short',
-			      props    => {   type       => 'text',
-					      length     => 32,
-					      maxlength => 128
-					  }
-			     },
-	      os          => {
-			      get_meth => sub { shift->get_os(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_os(@_) },
-			      set_args => [],
-			      name     => 'os',
-			      disp     => 'OS',
-			      len      => 1,
-			      req      => 1,
-			      type     => 'short',
-			      props    => { type => 'select',
-					    vals => [ sort keys %OS ],
-					  }
-			     },
-	      doc_root    => {
-			      name     => 'doc_root',
-			      get_meth => sub { shift->get_doc_root(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_doc_root(@_) },
-			      set_args => [],
-			      disp     => 'Document Root',
-			      len      => 128,
-			      req      => 1,
-			      type     => 'short',
-			      props    => {   type       => 'text',
-					      length     => 32,
-					      maxlength => 128
-					  }
-			     },
-	      login       => {
-			      name     => 'login',
-			      get_meth => sub { shift->get_login(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_login(@_) },
-			      set_args => [],
-			      disp     => 'Login',
-			      len      => 64,
-			      req      => 0,
-			      type     => 'short',
-			      props    => {   type       => 'text',
-					      length     => 32,
-					      maxlength => 64
-					  }
-			     },
-	      password    => {
-			      name     => 'password',
-			      get_meth => sub { shift->get_password(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_password(@_) },
-			      set_args => [],
-			      disp     => 'Password',
-			      len      => 64,
-			      req      => 0,
-			      type     => 'short',
-			      props    => {   type       => 'password',
-					      length     => 32,
-					      maxlength => 64
-					  }
-			     },
-	      cookie      => {
-			      name     => 'cookie',
-			      get_meth => sub { shift->get_cookie(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_cookie(@_) },
-			      set_args => [],
-			      disp     => 'Cookie',
-			      len      => 512,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'textarea',
-					    cols => 40,
-					    rows => 4
-					  }
-			     },
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->activate(@_)
-						 : shift->deactivate(@_) },
-			     set_args => [],
-			     disp     => 'Active',
-			     search   => 0,
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	     };
+              host_name   => {
+                              name     => 'host_name',
+                              get_meth => sub { shift->get_host_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_host_name(@_) },
+                              set_args => [],
+                              disp     => 'Host Name',
+                              search   => 1,
+                              len      => 128,
+                              req      => 1,
+                              type     => 'short',
+                              props    => {   type       => 'text',
+                                              length     => 32,
+                                              maxlength => 128
+                                          }
+                             },
+              os          => {
+                              get_meth => sub { shift->get_os(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_os(@_) },
+                              set_args => [],
+                              name     => 'os',
+                              disp     => 'OS',
+                              len      => 1,
+                              req      => 1,
+                              type     => 'short',
+                              props    => { type => 'select',
+                                            vals => [ sort keys %OS ],
+                                          }
+                             },
+              doc_root    => {
+                              name     => 'doc_root',
+                              get_meth => sub { shift->get_doc_root(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_doc_root(@_) },
+                              set_args => [],
+                              disp     => 'Document Root',
+                              len      => 128,
+                              req      => 1,
+                              type     => 'short',
+                              props    => {   type       => 'text',
+                                              length     => 32,
+                                              maxlength => 128
+                                          }
+                             },
+              login       => {
+                              name     => 'login',
+                              get_meth => sub { shift->get_login(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_login(@_) },
+                              set_args => [],
+                              disp     => 'Login',
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                              props    => {   type       => 'text',
+                                              length     => 32,
+                                              maxlength => 64
+                                          }
+                             },
+              password    => {
+                              name     => 'password',
+                              get_meth => sub { shift->get_password(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_password(@_) },
+                              set_args => [],
+                              disp     => 'Password',
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                              props    => {   type       => 'password',
+                                              length     => 32,
+                                              maxlength => 64
+                                          }
+                             },
+              cookie      => {
+                              name     => 'cookie',
+                              get_meth => sub { shift->get_cookie(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_cookie(@_) },
+                              set_args => [],
+                              disp     => 'Cookie',
+                              len      => 512,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'textarea',
+                                            cols => 40,
+                                            rows => 4
+                                          }
+                             },
+              active     => {
+                             name     => 'active',
+                             get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->activate(@_)
+                                                 : shift->deactivate(@_) },
+                             set_args => [],
+                             disp     => 'Active',
+                             search   => 0,
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
@@ -1385,36 +1392,36 @@ sub save {
     return unless $self->_get__dirty;
     my ($id, $del) = $self->_get(qw(id _del));
     if (defined $id && $del) {
-	# It has been marked for deletion. So do it!
-	my $del = prepare_c(qq{
+        # It has been marked for deletion. So do it!
+        my $del = prepare_c(qq{
             DELETE FROM server
             WHERE  id = ?
         });
-	execute($del, $id);
+        execute($del, $id);
     } elsif (defined $id) {
-	# Existing record. Update it.
-	local $" = ' = ?, '; # Simple way to create placeholders with an array.
-	my $upd = prepare_c(qq{
+        # Existing record. Update it.
+        local $" = ' = ?, '; # Simple way to create placeholders with an array.
+        my $upd = prepare_c(qq{
             UPDATE server
             SET    @cols = ?
             WHERE  id = ?
         });
-	execute($upd, $self->_get(@props), $id);
+        execute($upd, $self->_get(@props), $id);
     } else {
-	# It's a new server. Insert it.
-	local $" = ', ';
-	my $fields = join ', ', next_key('server'), ('?') x $#cols;
-	my $ins = prepare_c(qq{
+        # It's a new server. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('server'), ('?') x $#cols;
+        my $ins = prepare_c(qq{
             INSERT INTO server (@cols)
             VALUES ($fields)
         }, undef, DEBUG);
-	# Don't try to set ID - it will fail!
+        # Don't try to set ID - it will fail!
 
-	my @ps = $self->_get(@props[1..$#props]);
-	execute($ins, $self->_get(@props[1..$#props]));
-	# Now grab the ID.
-	$id = last_key('server');
-	$self->_set(['id'], [$id]);
+        my @ps = $self->_get(@props[1..$#props]);
+        execute($ins, $self->_get(@props[1..$#props]));
+        # Now grab the ID.
+        $id = last_key('server');
+        $self->_set(['id'], [$id]);
     }
     $self->SUPER::save;
     return $self;
@@ -1422,7 +1429,7 @@ sub save {
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1490,19 +1497,19 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id' || $k eq 'os') {
-	    push @wheres, "$k = ?";
-	    push @params, $v;
-	} elsif ($k eq 'server_type_id') {
-	    push @wheres, "server_type__id = ?";
-	    push @params, $v;
-	} elsif ($k eq 'active') {
-	    push @wheres, "active = ?";
-	    push @params, $v ? 1 : 0;
-	} else {
-	    push @wheres, "LOWER($k) LIKE ?";
-	    push @params, lc $v;
-	}
+        if ($k eq 'id' || $k eq 'os') {
+            push @wheres, "$k = ?";
+            push @params, $v;
+        } elsif ($k eq 'server_type_id') {
+            push @wheres, "server_type__id = ?";
+            push @params, $v;
+        } elsif ($k eq 'active') {
+            push @wheres, "active = ?";
+            push @params, $v ? 1 : 0;
+        } else {
+            push @wheres, "LOWER($k) LIKE ?";
+            push @params, lc $v;
+        }
     }
 
     # Assemble the WHERE statement.
@@ -1527,11 +1534,12 @@ $get_em = sub {
     bind_columns($sel, \@d[0..$#cols]);
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	$href ? $servers{$d[0]} = $self : push @servers, $self;
+        my $self = bless {}, $pkg;
+        $self->SUPER::new;
+        $self->_set(\@props, \@d);
+        $self->_set__dirty; # Disables dirty flag.
+        $href ? $servers{$d[0]} = $self->cache_me :
+          push @servers, $self->cache_me;
     }
     return $href ? \%servers : \@servers;
 };
@@ -1551,7 +1559,7 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
+L<Bric|Bric>,
 L<Bric::Dist::ServerType|Bric::Dist::ServerType>
 
 =cut

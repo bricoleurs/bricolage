@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-25 18:25:24 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -200,7 +200,11 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    my $pref = &$get_em(@_);
+    my $pkg = shift;
+    my $pref = $pkg->cache_lookup(@_);
+    return $pref if $pref;
+
+    $pref = $get_em->($pkg, @_);
     # We want @$pref to have only one value.
     die $dp->new({ msg => 'Too many Bric::Util::Pref objects found.' })
       if @$pref > 1;
@@ -1229,7 +1233,7 @@ $get_em = sub {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@SEL_PROPS, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            push @prefs, $self;
+            push @prefs, $self->cache_me;
         } else {
             push @$grp_ids, $d[$#d];
         }

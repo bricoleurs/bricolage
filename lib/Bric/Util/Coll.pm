@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-23 22:16:59 $
+$Date: 2003-01-29 06:46:04 $
 
 =head1 SYNOPSIS
 
@@ -193,8 +193,8 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    die Bric::Util::Fault::Exception::MNI->new(
-      {msg => __PACKAGE__."::lookup() method not implemented."});
+    die Bric::Util::Fault::Exception::MNI->new
+      ({ msg => __PACKAGE__."::lookup() method not implemented." });
 }
 
 ##############################################################################
@@ -220,13 +220,13 @@ B<Notes:> NONE.
 =cut
 
 sub list {
-    die Bric::Util::Fault::Exception::MNI->new(
-      {msg => __PACKAGE__."::list() method not implemented."});
+    die Bric::Util::Fault::Exception::MNI->new
+      ({ msg => __PACKAGE__."::list() method not implemented." });
 }
 
 ##############################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -252,6 +252,8 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
+=over 4
+
 =item Bric::Util::Coll->list_ids()
 
 Not implemented - not needed.
@@ -273,8 +275,8 @@ B<Notes:> NONE.
 =cut
 
 sub list_ids {
-    die Bric::Util::Fault::Exception::MNI->new(
-      {msg => __PACKAGE__."::list_ids() method not implemented."});
+    die Bric::Util::Fault::Exception::MNI->new
+      ({ msg => __PACKAGE__."::list_ids() method not implemented." });
 }
 
 ##############################################################################
@@ -308,6 +310,8 @@ sub class_name {
 }
 
 ##############################################################################
+
+=back
 
 =head2 Public Instance Methods
 
