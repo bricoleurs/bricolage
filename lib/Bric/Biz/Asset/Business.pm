@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$Revision: 1.54 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.53 $ )[-1];
+our $VERSION = (qw$Revision: 1.54 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-05 23:41:50 $
+$Date: 2004-02-11 23:05:46 $
 
 =head1 SYNOPSIS
 
@@ -183,6 +183,7 @@ BEGIN {
               related_grp__id           => Bric::FIELD_READ,
               primary_uri               => Bric::FIELD_READ,
               publish_date              => Bric::FIELD_RDWR,
+              first_publish_date        => Bric::FIELD_RDWR,
               cover_date                => Bric::FIELD_RDWR,
               publish_status            => Bric::FIELD_RDWR,
               primary_oc_id             => Bric::FIELD_RDWR,
@@ -435,7 +436,7 @@ sub my_meths {
         push @ord, $meth->{name};
         push (@ord, 'title') if $meth->{name} eq 'name';
     }
-    push @ord, qw(source_id source publish_date), pop @ord;
+    push @ord, qw(source_id source first_publish_date publish_date), pop @ord;
 
     $meths->{source_id} =    {
                               name     => 'source_id',
@@ -462,7 +463,19 @@ sub my_meths {
                               get_args => [],
                               set_meth => sub { shift->set_publish_date(@_) },
                               set_args => [],
-                              disp     => 'Publish Date',
+                              disp     => 'Last Publish Date',
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'date' }
+                             };
+    $meths->{first_publish_date} = {
+                              name     => 'first_publish_date',
+                              get_meth => sub { shift->get_first_publish_date(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_first_publish_date(@_) },
+                              set_args => [],
+                              disp     => 'First Publish Date',
                               len      => 64,
                               req      => 0,
                               type     => 'short',
@@ -1336,6 +1349,38 @@ sub get_cover_date { local_date($_[0]->_get('cover_date'), $_[1]) }
 
 ################################################################################
 
+=item my $first_publish_date = $story->get_first_publish_date($format)
+
+Returns the date the business asset was first published.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to unpack date.
+
+=item *
+
+Unable to format date.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_first_publish_date { local_date($_[0]->_get('first_publish_date'), $_[1]) }
+
+################################################################################
+
 =item $self = $story->set_publish_date($publish_date)
 
 Sets the publish date.
@@ -1368,7 +1413,7 @@ Bric::set() - Problems setting fields.
 
 B<Side Effects:>
 
-NONE
+Also sets the first publish date if it hasn't been set before.
 
 B<Notes:>
 
@@ -1376,7 +1421,17 @@ NONE
 
 =cut
 
-sub set_publish_date { $_[0]->_set(['publish_date'], [db_date($_[1])]) }
+sub set_publish_date {
+    my $self = shift;
+    my $date = db_date(shift);
+    if ($self->_get('first_publish_date')) {
+        # It has been published before.
+        $self->_set(['publish_date'], [$date]);
+    } else {
+        # First publish. Set both dates.
+        $self->_set([qw(publish_date first_publish_date)], [$date, $date]);
+    }
+}
 
 ################################################################################
 

@@ -32,6 +32,22 @@
 </tr>
 <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+    <td width="100" align="right" class="medHeader"><span class="label"><% $lang->maketext('First Published') %>:&nbsp;</span></td>
+    <td width="400">&nbsp;<% $story->get_first_publish_date || '' %></td>
+</tr>
+<tr>
+<td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+</tr>
+<tr>
+    <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+    <td width="100" align="right" class="medHeader"><span class="label"><% $lang->maketext('Last Published') %>:&nbsp;</span></td>
+    <td width="400">&nbsp;<% $story->get_publish_date || '' %></td>
+</tr>
+<tr>
+<td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+</tr>
+<tr>
+    <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
     <td width="100" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
 % if ($is_related_story) {
   <td width="470">&nbsp;<% $prim_uri %></td>

@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:09 $
+$Date: 2004-02-11 23:05:47 $
 
 =head1 SYNOPSIS
 
@@ -699,6 +699,7 @@ To translate:
   'Permission to grant permission "[_1]" to group "[_2]" denied'
   'This job has failed'
   'The error message is available below.  No further execution attempts will be made on this job.  Please leave it in the queue until your administrator has seen the error message.'
+  'First Published' => 'First Published',
 
 =end comment
 

@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-07 15:23:33 $
+$Date: 2004-02-11 23:05:47 $
 
 =head1 SYNOPSIS
 
@@ -527,6 +527,7 @@ To translate:
   'No output to preview.'
   'Cannot preview asset "[_1]" because there are no Preview Destinations associated with its output channels.'
   'Element must be associated with at least one site and one output channel.'
+  'First Published' => 'First Published',
 
 =end comment
 

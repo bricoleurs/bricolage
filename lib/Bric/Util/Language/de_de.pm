@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-12 18:46:39 $
+$Date: 2004-02-11 23:05:47 $
 
 =head1 SYNOPSIS
 
@@ -697,6 +697,11 @@ Assets == Güter
 Also, I'm certain there are plenty of typos and other errors in this
 translation, which I'll gradually try to remove. I'd be very grateful for
 any error pointers.
+
+To Translate:
+
+  'First Published' => 'First Published',
+
 
 =end comment
 

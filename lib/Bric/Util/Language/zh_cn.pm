@@ -6,15 +6,15 @@ Bric::Util::Language::zh_cn - Bricolage 簡体中文翻译
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-06 20:41:17 $
+$Date: 2004-02-11 23:06:02 $
 
 =head1 SYNOPSIS
 
@@ -557,6 +557,7 @@ To translate:
     'No output to preview.'
     'Cannot preview asset "[_1]" because there are no Preview Destinations associated with its output channels.'
     'Element must be associated with at least one site and one output channel.'
+    'First Published' => 'First Published',
 
 =end comment
 

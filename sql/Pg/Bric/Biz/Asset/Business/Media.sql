@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.9 $
+-- VERSION: $Revision: 1.10 $
 --
--- $Date: 2004-02-11 06:46:27 $
+-- $Date: 2004-02-11 23:06:02 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -52,6 +52,7 @@ CREATE TABLE media (
     current_version   NUMERIC(10,0),
     published_version NUMERIC(10,0),
     usr__id           NUMERIC(10,0),
+    first_publish_date TIMESTAMP,
     publish_date      TIMESTAMP,
     expire_date       TIMESTAMP,
     cover_date        TIMESTAMP,
@@ -238,6 +239,7 @@ CREATE TABLE attr_media_meta (
 --
 
 -- media
+CREATE INDEX idx_media__first_publish_date ON media(first_publish_date);
 CREATE INDEX idx_media__publish_date ON media(publish_date);
 CREATE INDEX idx_media__cover_date ON media(cover_date);
 CREATE INDEX fkx_source__media ON media(source__id);

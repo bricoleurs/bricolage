@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.69 $
+$Revision: 1.70 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.69 $ )[-1];
+our $VERSION = (qw$Revision: 1.70 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 17:08:57 $
+$Date: 2004-02-11 23:05:46 $
 
 =head1 SYNOPSIS
 
@@ -80,6 +80,7 @@ use constant COLS           => qw( element__id
                                    current_version
                                    published_version
                                    usr__id
+                                   first_publish_date
                                    publish_date
                                    expire_date
                                    cover_date
@@ -110,6 +111,7 @@ use constant FIELDS         => qw( element__id
                                    current_version
                                    published_version
                                    user__id
+                                   first_publish_date
                                    publish_date
                                    expire_date
                                    cover_date
@@ -203,6 +205,8 @@ use constant PARAM_WHERE_MAP =>
       source__id            => 'mt.source__id = ?',
       priority              => 'mt.priority = ?',
       publish_status        => 'mt.publish_status = ?',
+      first_publish_date_start => 'mt.publish_date >= ?',
+      first_publish_date_end   => 'mt.publish_date <= ?',
       publish_date_start    => 'mt.publish_date >= ?',
       publish_date_end      => 'mt.publish_date <= ?',
       cover_date_start      => 'mt.cover_date >= ?',
@@ -260,6 +264,7 @@ use constant PARAM_ORDER_MAP =>
       source__id          => 'source__id',
       priority            => 'priority',
       publish_status      => 'publish_status',
+      first_publish_date  => 'first_publish_date',
       publish_date        => 'publish_date',
       cover_date          => 'cover_date',
       expire_date         => 'expire_date',
@@ -512,6 +517,14 @@ contrib_id
 =item *
 
 publish_status
+
+=item *
+
+first_publish_date_start - if end is left blank will return everything after the arg
+
+=item *
+
+first_publish_date_end - if start is left blank will return everything before the arg
 
 =item *
 
@@ -1401,6 +1414,7 @@ sub clone {
 
     $self->_set( { version_id           => undef,
                    id                   => undef,
+                   first_publish_date   => undef,
                    publish_date         => undef,
                    publish_status       => 0,
                    _update_contributors => 1

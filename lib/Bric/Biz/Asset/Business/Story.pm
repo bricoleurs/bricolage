@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.74 $
+$Revision: 1.75 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.74 $ )[-1];
+our $VERSION = (qw$Revision: 1.75 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 17:09:00 $
+$Date: 2004-02-11 23:05:47 $
 
 =head1 SYNOPSIS
 
@@ -202,6 +202,7 @@ use constant COLS       => qw( priority
                                source__id
                                usr__id
                                element__id
+                               first_publish_date
                                publish_date
                                expire_date
                                cover_date
@@ -228,6 +229,7 @@ use constant FIELDS =>  qw( priority
                             source__id
                             user__id
                             element__id
+                            first_publish_date
                             publish_date
                             expire_date
                             cover_date
@@ -318,6 +320,8 @@ use constant PARAM_WHERE_MAP =>
       source__id             => 's.source__id = ?',
       priority               => 's.priority = ?',
       publish_status         => 's.publish_status = ?',
+      first_publish_date_start => 's.first_publish_date >= ?',
+      first_publish_date_end   => 's.first_publish_date <= ?',
       publish_date_start     => 's.publish_date >= ?',
       publish_date_end       => 's.publish_date <= ?',
       cover_date_start       => 's.cover_date >= ?',
@@ -374,6 +378,7 @@ use constant PARAM_ORDER_MAP =>
       source__id          => 'source__id',
       priority            => 'priority',
       publish_status      => 'publish_status',
+      first_publish_date  => 'first_publish_date',
       publish_date        => 'publish_date',
       cover_date          => 'cover_date',
       expire_date         => 'expire_date',
@@ -636,6 +641,14 @@ contrib_id
 =item *
 
 publish_status - set to 1 to only return stories that have been published
+
+=item *
+
+first_publish_date_start - if end is left blank will return everything after the arg
+
+=item *
+
+first_publish_date_end - if start is left blank will return everything before the arg
 
 =item *
 
@@ -1566,8 +1579,8 @@ sub clone {
     # object other than for desks, we'll have to find a way to clone it, too.
     $self->_set([qw(version current_version version_id id publish_date
                     publish_status _update_contributors _queried_cats
-                    _attribute_object _update_uri)],
-                [0, 0, undef, undef, undef, 0, 1, 0, undef, 0]);
+                    _attribute_object _update_uri first_publish_date)],
+                [0, 0, undef, undef, undef, 0, 1, 0, undef, 0, undef]);
 
     # Prepare to be saved.
     $self->_set__dirty(1);
