@@ -26,14 +26,14 @@ The virtual FTP server now moves templates into workflow when they're uploaded
 and puts them into the user's sandbox. This behavior allows the user to test
 the template changes without imposing possible bugs upon other Bricolage
 users. This approach is much safer than the previous behavior, which simply
-checked in and deployed a template upon upload. Teamplates can still be
+checked in and deployed a template upon upload. Templates can still be
 deployed via the virtual FTP server by appending ".deploy" to their names. The
 original behavior of always deploying templates upon upload can be restored by
 enabling the C<FTP_DEPLOY_ON_UPLOAD> F<bricolage.conf> directive. [David]
 
 =item *
 
-Added C<ANY> fuction to be used with select parameters to story, media, and
+Added C<ANY> function to be used with select parameters to story, media, and
 template (formatting) list. Pass a list of values to this function to have any
 of of them match for a given parameter. This is especially useful for matching
 on, say, a list of URIs or category IDs. This function is automatically
@@ -43,11 +43,11 @@ available in templates. [David]
 
 Added a feature that counts characters used in a textarea subelement on the
 fly. It displays this figure and the number of characters left, immediately
-above the textarea. This feature is enabled when the Max size atribute for the
+above the textarea. This feature is enabled when the Max size attribute for the
 textarea is given a non zero value when adding it to the element profile
-stage. The javascript will also not allow you to have more than max size
+stage. The JavaScript will also not allow you to have more than max size
 characters in the textarea by truncating the data to that number of characters
-everytime someone adds another character beyond the maximum. [Paul
+every time someone adds another character beyond the maximum. [Paul
 Orrock/Digital Craftsmen]
 
 =item *
@@ -132,7 +132,7 @@ renaming a file to replace an existing file. [Andrea Rota]
 =item *
 
 Updated zh-cn and zh-tw localizations, translating all untranslated
-mesages and JavaScript messages. [Kang-min Liu]
+messages and JavaScript messages. [Kang-min Liu]
 
 =item *
 
@@ -194,7 +194,7 @@ Eliminated the term "Asset Type" from the UI, replacing it with "Element",
 
 The Contributor manager no longer presents a "New" link if the Contributor
 Type on which the contributor is based has no custom fields. This will prevent
-folks from creating new contributor rols in the UI only to find that Bricolage
+folks from creating new contributor roles in the UI only to find that Bricolage
 hasn't created them because there are no custom fields. [David]
 
 =item *
@@ -328,7 +328,7 @@ something other than ISO-8601. Reported by Marshall Roch. [David]
 =item *
 
 C<bric_dist_mon> now I<correctly> appends "/dist/" to the end of the server
-URL if it is not alreaded appended. Reported by Marshall Roch. [David]
+URL if it is not already appended. Reported by Marshall Roch. [David]
 
 =item *
 
