@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.2.1 $
 
 =head1 DATE
 
-$Date: 2001-12-23 03:47:27 $
+$Date: 2002-01-31 00:37:25 $
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,7 @@ my $select = sub {
     my $o = shift;
     my $u = $o->get_user__id;
 
-    if (!$u && chk_authz($o, EDIT, 1)) {
+    if ((not defined $u) && chk_authz($o, EDIT, 1)) {
 	if ($o->get_workflow_id) {
 	    return ['Checkout', 'media_prof|checkout_cb'];
 	} else {
