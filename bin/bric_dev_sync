@@ -749,7 +749,7 @@ sub soap_connect_to {
     our $timeout;
 
     # fixup url if missing http://
-    $url = "http://$url" unless $url =~ m!^http://!;
+    $url = "http://$url" unless $url =~ m!^https?://!;
 
     # setup soap object to login with
     my $soap = new SOAP::Lite

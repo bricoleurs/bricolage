@@ -835,6 +835,11 @@ C<$BRICOLAGE_ROOT>, and prompts the user to find out. [David]
 Bricolage once again works with Perl 5.6.1 (and all of its lovely bugs).
 [David]
 
+=item *
+
+Made F<bric_republish> and F<bric_dev_sync> safe to use with C<https://>.
+[Geoff Richards]
+
 =back
 
 =head1 VERSION 1.6.9 (2004-02-06)
