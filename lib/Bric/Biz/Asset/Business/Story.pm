@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.100 $
+$Revision: 1.101 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.100 $ )[-1];
+our $VERSION = (qw$Revision: 1.101 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-31 16:09:25 $
+$Date: 2004-04-05 14:53:32 $
 
 =head1 SYNOPSIS
 
@@ -489,7 +489,7 @@ title - same as name
 
 =item *
 
-name - Will be over ridden by title
+name - Will be overridden by title
 
 =item *
 
@@ -510,6 +510,10 @@ element__id - Required unless asset type object passed
 =item *
 
 element - the object required unless id is passed
+
+=item *
+
+site_id - required
 
 =item *
 

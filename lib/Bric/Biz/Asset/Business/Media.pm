@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.93 $
+$Revision: 1.94 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.93 $ )[-1];
+our $VERSION = (qw$Revision: 1.94 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-26 03:43:46 $
+$Date: 2004-04-05 14:53:32 $
 
 =head1 SYNOPSIS
 
@@ -357,7 +357,7 @@ BEGIN {
 
 =item $media = Bric::Biz::Asset::Business::Media->new( $initial_state )
 
-This will create a new media object with an optionaly defined intiial state
+This will create a new media object with an optionally defined initial state
 
 Supported Keys:
 
@@ -377,7 +377,7 @@ title - same as name
 
 =item *
 
-name - Will be over ridden by title
+name - Will be overridden by title
 
 =item *
 
@@ -394,6 +394,10 @@ element__id - Required unless asset type object passed
 =item *
 
 element - the object required unless id is passed
+
+=item *
+
+site_id - required
 
 =item *
 
