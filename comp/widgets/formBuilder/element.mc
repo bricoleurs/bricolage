@@ -202,8 +202,8 @@ if ($param->{delete} &&
         $comp->set_primary_oc_id($oc->get_id) if $oc;
     }
 
-    unless ($comp->get_primary_oc_id
-            and !Bric::Biz::ATType->lookup({ id => $comp->get_type__id })
+    if (!$comp->get_primary_oc_id
+            and Bric::Biz::ATType->lookup({ id => $comp->get_type__id })
             ->get_top_level) {
         # They need to add an output channel.
         $no_save = 1;
@@ -248,11 +248,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2002-12-05 00:16:06 $
+$Date: 2002-12-08 20:16:29 $
 
 =head1 SYNOPSIS
 
