@@ -336,6 +336,16 @@ Fixed bug where the SOAP server would throw an exception when it attempted to
 handle elements without subelements. Thanks to Sam Tregar for the report.
 [David]
 
+=item *
+
+It is no longer possible to create a story type or media type element without
+a primary output channel. [David]
+
+=item *
+
+Deleted output channels no longer show up in the list of output channels to
+associate with a destination. Thanks to Alex Epshteyn for the spot! [David]
+
 =back
 
 =head1 VERSION 1.5.0
