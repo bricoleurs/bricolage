@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-27 22:21:04 $
+$Date: 2002-09-27 22:48:57 $
 
 =head1 SYNOPSIS
 
@@ -424,7 +424,6 @@ sub lookup {
     # add the extra id field to the count
     my $col_count = (scalar COLS) + (scalar VERSION_COLS) + 1;
     my @d;
-    print $sql;
     my $sth = prepare_ca($sql, undef, DEBUG);
     local $" = ', '; #"
     execute($sth, @where);
