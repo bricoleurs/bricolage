@@ -15,6 +15,7 @@ use Bric::App::Event    qw(log_event);
 use Bric::Util::Fault   qw(throw_ap);
 use Bric::Biz::Person::User;
 use Bric::Util::Burner;
+use File::Basename qw(fileparse basename);
 
 use Bric::SOAP::Util qw(category_path_to_id
                         site_to_id
@@ -40,15 +41,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 01:17:04 $
+$Date: 2003-09-18 02:02:08 $
 
 =head1 SYNOPSIS
 
@@ -610,8 +611,8 @@ sub load_asset {
               if Bric::Util::Burner->cat_fn_has_ext($fn);
         }
 
-        # get element and name for asset type unless this generic
-        unless ($tdata->{generic}) {
+        # get element and name for asset type if this is an element template.
+        if ($tdata->{type} eq 'Element Template') {
             my ($element) = Bric::Biz::AssetType->list(
                           { name => $tdata->{element}[0] });
             throw_ap(error => __PACKAGE__ . " : no element found matching " .
@@ -619,6 +620,8 @@ sub load_asset {
               unless defined $element;
             $init{element__id} = $element->get_id;
             $init{name}        = $element->get_name;
+        } elsif ($tdata->{type} eq 'Utility Template') {
+            $init{name}        = basename($tdata->{file_name});
         }
 
         # assign catgeory_id (not category__id, for some reason...)
@@ -651,6 +654,10 @@ sub load_asset {
         # get base template object
         my $template;
         unless ($update) {
+            # Set the template type. It shouldn't be updated for an existing
+            # template, only set for a new template.
+            $init{tplate_type} =
+              Bric::Biz::Asset::Formatting->get_tplate_type_code($tdata->{type});
             # create empty template
             $template = Bric::Biz::Asset::Formatting->new(\%init);
             throw_ap(error => __PACKAGE__ .
@@ -812,15 +819,14 @@ sub serialize_asset {
     $writer->dataElement(site => $site->get_name);
 
     # write out element, known to bric as "name" and save it for later
-    my $name = $template->get_name;
-    $writer->dataElement(element => $name);
+    $writer->dataElement(element =>
+                         ($template->get_tplate_type ==
+                          Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE
+                          ? $template->get_name
+                          : ()));
 
-    # Determine if it's a category template.
-    if (Bric::Util::Burner->class_for_cat_fn($name)) {
-        $writer->dataElement(generic => 1);
-    } else {
-        $writer->dataElement(generic => 0);
-    }
+    # Determine if its template type.
+    $writer->dataElement(type => $template->get_tplate_type_string);
 
     # write out simple elements in schema order
     foreach my $e (qw(file_name description priority deploy_status)) {

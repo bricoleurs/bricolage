@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.52 $ )[-1];
+our $VERSION = (qw$Revision: 1.53 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 01:17:04 $
+$Date: 2003-09-18 02:02:07 $
 
 =head1 SYNOPSIS
 
@@ -345,7 +345,14 @@ use constant DEFAULT_ORDER => 'deploy_date';
 #--------------------------------------#
 # Private Class Fields
 my ($meths, @ord, $set_elem, $set_util);
-# None
+
+my %tplate_type_strings = ( &ELEMENT_TEMPLATE => 'Element Template',
+                            &CATEGORY_TEMPLATE => 'Category Template',
+                            &UTILITY_TEMPLATE => 'Utility Template'
+                          );
+
+my %string_tplate_types = map { $tplate_type_strings{$_} => $_ }
+  keys %tplate_type_strings;
 
 #--------------------------------------#
 # Instance Fields
@@ -810,15 +817,15 @@ Inherited from Bric::Biz::Asset.
 
 Returns the key name of this class.
 
-B<Throws:> 
+B<Throws:>
 
 NONE
 
-B<Side Effects:> 
+B<Side Effects:>
 
 NONE
 
-B<Notes:> 
+B<Notes:>
 
 NONE
 
@@ -1076,6 +1083,25 @@ sub my_meths {
 
 ################################################################################
 
+=item my $tplate_type = Bric::Biz::Asset::Formatting->get_tplate_type_code($str)
+
+Returns the template type number for a string value as returned by
+C<get_tplate_type_string()>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_tplate_type_code {
+    $string_tplate_types{$_[1]}
+}
+
+##############################################################################
+
 =back
 
 =head2 Public Instance Methods
@@ -1311,11 +1337,6 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
-
-my %tplate_type_strings = ( &ELEMENT_TEMPLATE => 'Element Template',
-                            &CATEGORY_TEMPLATE => 'Category Template',
-                            &UTILITY_TEMPLATE => 'Utility Template'
-                          );
 
 sub get_tplate_type_string {
     $tplate_type_strings{$_[0]->_get('tplate_type') }
