@@ -3,31 +3,47 @@ $m->comp('/widgets/wrappers/sharky/table_top.mc',
          'caption' => 'Properties',
          'number'  => 1);
 $m->out($ieSpacer);
-$m->comp('/widgets/select_object/select_object.mc',
-         object    => 'element',
-         name      => $widget.'|at_id',
-         field     => 'name',
-         reset_key => $rk,
-         exclude   => $excl_media_sub,
-         disp      => 'Element');
-$m->out($ieSpacer);
-</%perl>
-<table border="0" width="578" cellpadding=0 cellspacing=0>
-<tr>
-  <td align="right" width="<% $infoIndent %>"><span class=label>Generic:</span></td>
-  <td width="<% 578 - $infoIndent %>"><& '/widgets/profile/checkbox.mc', name => $widget.'|no_at', value => 1 &>
-  (not associated with any of the above elements)
-  </td>
-</tr>
-</table>
-<%perl>
+if ($param->{tplate_type}) {
+    # Output a hidden field for the template type.
+    $m->comp('/widgets/profile/hidden.mc',
+             name => 'tplate_type',
+             value => $param->{tplate_type});
+
+    if ($param->{tplate_type} ==
+        Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE) {
+        # It's an element template. Offer them a list of elements to
+        # choose from.
+        $m->comp('/widgets/select_object/select_object.mc',
+                 object    => 'element',
+                 name      => $widget.'|at_id',
+                 field     => 'name',
+                 reset_key => $rk,
+                 exclude   => $excl_media_sub,
+                 disp      => 'Element');
+    } elsif ($param->{tplate_type} ==
+             Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE) {
+        # It's a utiltiy template. Offer a name field.
+        $m->comp('/widgets/profile/text.mc',
+                 disp => 'Name',
+                 req => 1,
+                 name => "$widget|name");
+    } else {
+        # Do nothing for a category template. This should never happen.
+    }
+} else {
+    # Let them decide what type of template they want.
+    $m->comp('/widgets/profile/displayFormElement.mc',
+             vals => Bric::Biz::Asset::Formatting->my_meths->{tplate_type},
+             key => 'tplate_type'
+            );
+}
 $m->out($ieSpacer);
 $m->comp('/widgets/profile/displayFormElement.mc',
          key => "file_type",
          vals => {
                disp  => "File Type",
                value => 'mc',
-               props => { 
+               props => {
                           type => 'select',
                           vals => {
                                     'mc'   => 'Mason Component (.mc)',
@@ -43,6 +59,7 @@ $m->comp('/widgets/select_object/select_object.mc',
          'name'      => $widget.'|oc_id',
          'field'     => 'name',
          'reset_key' => $rk,
+         selected    => $param->{"$widget|oc_id"},
          constrain   => { active => 1 },
          req         => 1,
          'disp'      => 'Output Channel');
@@ -50,6 +67,7 @@ $m->out($ieSpacer);
 $m->comp('/widgets/select_object/select_object.mc',
          'object'    => 'category',
          'name'      => $widget.'|cat_id',
+         selected    => $param->{"$widget|cat_id"},
          'reset_key' => $rk,
          'field'     => 'uri',
          sort_field  => 'uri',
@@ -71,12 +89,13 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <table width=<% FIELD_INDENT + 150 %> cellpadding=0 cellspacing=0>
 <tr>
   <td width="<% FIELD_INDENT - 10%>"><img src="/media/images/spacer.gif" width="<% FIELD_INDENT - 10%>" height="1" /></td>
-  <td width=150><input type="image" src="/media/images/create_red.gif" border=0 name="<% $widget %>|create_cb"></td>
+  <td width=150><input type="image" src="/media/images/<% $button %>.gif" border=0 name="<% "$widget|$cb" %>"></td>
 </tr>
 </table>
 
 <%args>
 $widget
+$param
 </%args>
 
 <%init>;
@@ -85,6 +104,12 @@ my $rk = get_state_data($widget, 'reset_key');
 my $agent = $m->comp("/widgets/util/detectAgent.mc");
 my $ieSpacer = ($agent->{os} ne "SomeNix") ? qq{<table><tr><td colspan=2><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr></table>} : '';
 my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 7 : FIELD_INDENT;
+
+my ($button, $cb);
+($button, $cb, $pmeth->{value}) = $param->{tplate_type} ?
+  ('create_red', 'create_cb', $param->{priority}) :
+  ('next_dkgreen', 'create_next_cb', 3);
+
 </%init>
 
 <%once>;

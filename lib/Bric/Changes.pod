@@ -129,6 +129,20 @@ Bric::Util::Coll::OutputChannel class. It also automatically adds all of the
 "enabled" output channels of the element object as initial output channel
 associations for new business assets. [David]
 
+=item *
+
+Adds a new property to templates: template types. This property can have one
+of three value that correspond to different template types: "Element
+Templates" (those associated with elements); Category Templates" (autohandlers
+in Mason parlance, category templates to HTML::Template users, and until now
+"generic templates" in the UI); and "Utility Templates" (those not associated
+with anything, but can be used as includes). [David]
+
+=item *
+
+Templates are now guaranteed to have unique file name/output channel
+combintations at the API and database levels. [David]
+
 =back
 
 =head1 VERSION 1.4.1

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2002-09-26 00:04:22 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -42,20 +42,24 @@ CREATE TABLE formatting (
                                        DEFAULT NEXTVAL('seq_formatting'),
     name                VARCHAR(256),
     description         VARCHAR(1024),
-    priority          NUMERIC(1,0)     NOT NULL
+    priority            NUMERIC(1,0)   NOT NULL
                                        DEFAULT 3
                                        CONSTRAINT ck_story__priority
                                          CHECK (priority BETWEEN 1 AND 5),
-    usr__id             NUMERIC(10,0),	
+    usr__id             NUMERIC(10,0),  
     output_channel__id  NUMERIC(10,0)  NOT NULL,
-    element__id      NUMERIC(10,0),
+    tplate_type         NUMERIC(1,0)   NOT NULL
+                                       DEFAULT 1
+                                       CONSTRAINT ck_formatting___tplate_type
+                                         CHECK (tplate_type IN (1, 2, 3)),
+    element__id         NUMERIC(10,0),
     category__id        NUMERIC(10,0),
     file_name           VARCHAR(256),
     current_version     NUMERIC(10,0)  NOT NULL,
-	workflow__id		NUMERIC(10,0),
+    workflow__id        NUMERIC(10,0),
     deploy_status       NUMERIC(1,0)   NOT NULL
                                        DEFAULT 0
-                                       CONSTRAINT ck_media__deploy_status
+                                       CONSTRAINT ck_formatting__deploy_status
                                          CHECK (deploy_status IN (0,1)),
     deploy_date         TIMESTAMP,
     expire_date         TIMESTAMP,
@@ -79,13 +83,13 @@ CREATE TABLE formatting_instance (
     version         NUMERIC(10,0),
     usr__id         NUMERIC(10,0)  NOT NULL,
     data            TEXT,
-    checked_out     NUMERIC(1,0)   NOT NULL	
+    checked_out     NUMERIC(1,0)   NOT NULL     
                                    DEFAULT 0
                                    CONSTRAINT ck_formatting_instance__active
                                      CHECK (checked_out IN (0,1)),
     CONSTRAINT pk_formatting_instance__id PRIMARY KEY (id)
 );
-	
+        
 
 -- -----------------------------------------------------------------------------
 -- Table: formatting_member
@@ -164,6 +168,8 @@ CREATE TABLE attr_formatting_meta (
 --
 
 -- formatting.
+CREATE UNIQUE INDEX udx_formatting__file_name__oc
+       ON formatting(file_name, output_channel__id);
 CREATE INDEX idx_formatting__name ON formatting(LOWER(name));
 CREATE INDEX idx_formatting__file_name ON formatting(LOWER(file_name));
 CREATE INDEX idx_formatting__deploy_date ON formatting(deploy_date);

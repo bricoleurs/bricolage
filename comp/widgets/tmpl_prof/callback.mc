@@ -122,90 +122,16 @@ elsif ($field eq "$widget|trail_cb") {
     set_redirect("/workflow/trail/formatting/$id");
 }
 
+elsif ($field eq "$widget|create_next_cb") {
+    # Just create it if CATEGORY template was selected.
+    $create_fa->($widget, $param)
+      if $param->{tplate_type} ==
+      Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE;
+    # Otherwise, do nothing.
+}
+
 elsif ($field eq "$widget|create_cb") {
-    my $at_id = $param->{$widget.'|at_id'};
-    my $oc_id = $param->{$widget.'|oc_id'};
-    my $cat_id = $param->{$widget.'|cat_id'};
-    my $file_type = $param->{file_type};
-
-    my ($at, $name);
-    unless ($param->{$widget.'|no_at'}) {
-	unless (defined $at_id && $at_id ne '') {
-	    # It's no good.
-	    add_msg("You must select an Element or check the "
-		    . "&quot;Generic&quot check box.");
-	    return;
-	}
-	# Associate it with an Element.
-	$at    = Bric::Biz::AssetType->lookup({'id' => $at_id});
-	$name  = $at->get_name();
-    } # Otherwise, it'll default to an autohandler.
-
-    # Check permissions.
-    my $work_id = get_state_data($widget, 'work_id');
-    my $gid = Bric::Biz::Workflow->lookup({ id => $work_id })->get_all_desk_grp_id;
-    chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
-
-    # Create a new formatting asset.
-    my $fa = Bric::Biz::Asset::Formatting->new(
-			    {'element'     		=> $at,
-			     'file_type'                => $file_type,
-			     'output_channel__id' 	=> $oc_id,
-			     'category_id'        	=> $cat_id,
-			     'priority'           	=> $param->{priority},
-			     'name'               	=> $name,
-			     'user__id'           	=> get_user_id});
-
-
-    # check that there isn't already an active template with the same
-    # output channel and file_name (which is composed of category,
-    # file_type and element name).
-    my $found_dup = 0;
-    my $file_name  = $fa->get_file_name;
-    my @list = Bric::Biz::Asset::Formatting->list_ids(
-			  { output_channel__id => $oc_id,
-			    file_name => $file_name      });
-    if (@list) {
-	$found_dup = 1;
-    } else {
-	# Arrgh.  This is the only way to search all checked out
-	# formatting assets.  According to Garth this isn't a
-	# problem...  I'd like to show him this code sometime and see
-	# if he still thinks so!
-	my @user_ids = Bric::Biz::Person::User->list_ids({});
-	foreach my $user_id (@user_ids) {
-	    @list = Bric::Biz::Asset::Formatting->list_ids(
-			  { output_channel__id => $oc_id,
-			    file_name          => $file_name,
-			    user__id           => $user_id   });
-	    if (@list) {
-		$found_dup = 1;
-		last;
-	    }
-	}
-    }
-
-    if ($found_dup) {
-	set_redirect("/");
-	add_msg("An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.");
-	return;
-    }
-
-    # Keep the formatting asset deactivated until the user clicks save.
-    $fa->deactivate;
-    $fa->save;
-
-    # Log that a new media has been created.
-    log_event('formatting_new', $fa);
-
-    set_state_data($widget, 'fa', $fa);
-
-    # Head for the main edit screen.
-    set_redirect("/workflow/profile/templates/?checkout=1");
-
-    # As far as history is concerned, this page should be part of the template
-    # profile stuff.
-    pop_page;
+    $create_fa->($widget, $param);
 }
 
 elsif ($field eq "$widget|return_cb") {
@@ -503,6 +429,77 @@ my $delete_fa = sub {
     $fa->save;
     log_event("formatting_deact", $fa);
     add_msg("Template &quot;" . $fa->get_name . "&quot; deleted.");
+};
+
+my $create_fa = sub {
+    my ($widget, $param) = @_;
+    my $at_id = $param->{$widget.'|at_id'};
+    my $oc_id = $param->{$widget.'|oc_id'};
+    my $cat_id = $param->{$widget.'|cat_id'};
+    my $file_type = $param->{file_type};
+    my $tplate_type = $param->{tplate_type};
+
+    my ($at, $name);
+    if ($tplate_type ==
+        Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE) {
+        unless ($param->{$widget.'|no_at'}) {
+            unless (defined $at_id && $at_id ne '') {
+                # It's no good.
+                add_msg("You must select an Element.");
+                return;
+            }
+            # Associate it with an Element.
+            $at    = Bric::Biz::AssetType->lookup({'id' => $at_id});
+            $name  = $at->get_name();
+        }
+    } elsif ($tplate_type ==
+        Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE) {
+        $name = $param->{"$widget|name"};
+    } # Otherwise, it'll default to an autohandler.
+
+    # Check permissions.
+    my $work_id = get_state_data($widget, 'work_id');
+    my $gid = Bric::Biz::Workflow->lookup({ id => $work_id })->get_all_desk_grp_id;
+    chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
+
+    # Create a new formatting asset.
+    my $fa;
+    eval {
+        $fa = Bric::Biz::Asset::Formatting->new
+          ({'element'     		=> $at,
+            'file_type'                => $file_type,
+            'output_channel__id' 	=> $oc_id,
+            'category_id'        	=> $cat_id,
+            'priority'           	=> $param->{priority},
+            'name'               	=> $name,
+            'user__id'           	=> get_user_id})
+    };
+
+    if (my $err = $@) {
+        my $msg = $err->get_msg;
+        die $err unless $msg =~ /already exists/;
+        # This template already exists.
+        add_msg("An active template already exists for the selected output " .
+                "channel, category, element, and burner you selected. You " .
+                "must delete the existing template before you can add a " .
+                "new one.");
+        return;
+    }
+    # Keep the formatting asset deactivated until the user clicks save.
+    $fa->deactivate;
+    $fa->save;
+
+    # Log that a new media has been created.
+    log_event('formatting_new', $fa);
+
+    set_state_data($widget, 'fa', $fa);
+
+    # Head for the main edit screen.
+    set_redirect("/workflow/profile/templates/?checkout=1");
+
+    # As far as history is concerned, this page should be part of the template
+    # profile stuff.
+    pop_page;
 };
 
 </%once>

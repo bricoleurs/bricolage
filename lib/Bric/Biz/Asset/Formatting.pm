@@ -3,19 +3,19 @@ package Bric::Biz::Asset::Formatting;
 
 =head1 NAME
 
-Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
+Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-21 00:52:10 $
+$Date: 2002-09-26 00:04:22 $
 
 =head1 SYNOPSIS
 
@@ -36,10 +36,10 @@ $Date: 2002-09-21 00:52:10 $
  $date = $fa->get_deploy_date()
  $fa = $fa->set_deploy_date($date)
 
- # get the output channel that this is associated with  
+ # get the output channel that this is associated with
  $output_channel_id = $fa->get_output_channel__id()
 
- # get the asset type that this is associated with 
+ # get the asset type that this is associated with
  $element__id = $fa->get_element__id()
 
  # get the category that this is associated with
@@ -119,13 +119,13 @@ This has changed, it will need to be updated in a bit
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies 
+# Programatic Dependencies
 
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Grp::AssetVersion;
 use Bric::Util::Time qw(:all);
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault::Exception::DP;
 use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Formatting;
 use Bric::Biz::AssetType;
@@ -149,55 +149,56 @@ use base qw( Bric::Biz::Asset );
 #======================================#
 
 use constant DEBUG => 0;
+use constant ELEMENT_TEMPLATE => 1;
+use constant CATEGORY_TEMPLATE => 2;
+use constant UTILITY_TEMPLATE => 3;
 
 # constants for the Database
-use constant TABLE 	=> 'formatting';
+use constant TABLE      => 'formatting';
 use constant VERSION_TABLE => 'formatting_instance';
-use constant COLS 	=> qw(
-							name
-                            priority
-							description
-							usr__id
-							output_channel__id
-							element__id
-							category__id
-							file_name
-							current_version
-							deploy_status
-							deploy_date
-							expire_date
-							workflow__id
-							active);
+use constant COLS       => qw( name
+                               priority
+                               description
+                               usr__id
+                               output_channel__id
+                               tplate_type
+                               element__id
+                               category__id
+                               file_name
+                               current_version
+                               deploy_status
+                               deploy_date
+                               expire_date
+                               workflow__id
+                               active);
 
-use constant VERSION_COLS => qw(
-							formatting__id
-							version
-							usr__id
-							data
-							checked_out);
+use constant VERSION_COLS => qw( formatting__id
+                                 version
+                                 usr__id
+                                 data
+                                 checked_out);
 
-use constant FIELDS	=> qw(
-							name
-                                                        priority
-							description
-							user__id
-							output_channel__id
-							element__id
-							category_id
-							file_name
-							current_version
-							deploy_status
-							deploy_date
-							expire_date
-							workflow_id
-							_active);
+use constant FIELDS     => qw( name
+                               priority
+                               description
+                               user__id
+                               output_channel__id
+                               tplate_type
+                               element__id
+                               category_id
+                               file_name
+                               current_version
+                               deploy_status
+                               deploy_date
+                               expire_date
+                               workflow_id
+                               _active);
 
-use constant VERSION_FIELDS => qw(
-							id
-							version
-							modifier
-							data
-							checked_out);
+use constant VERSION_FIELDS => qw( id
+                                   version
+                                   modifier
+                                   data
+                                   checked_out);
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Formatting';
 use constant INSTANCE_GROUP_ID => 33;
@@ -212,46 +213,48 @@ use constant INSTANCE_GROUP_ID => 33;
 # None
 
 #--------------------------------------#
-# Private Class Fields 
-my ($meths, @ord);
+# Private Class Fields
+my ($meths, @ord, $set_elem, $set_cat, $set_util);
 # None
 
 #--------------------------------------#
 # Instance Fields
 
 BEGIN {
-	Bric::register_fields(
-	       {
-		# Public Fields
+        Bric::register_fields
+            ({
+              # Public Fields
 
-		# the output channel that this is associated with
-		output_channel__id => Bric::FIELD_READ,
+              # the output channel that this is associated with
+              output_channel__id  => Bric::FIELD_READ,
 
-		# the asset type that this formats
-		element__id	   => Bric::FIELD_READ,
+              # The type of template it is.
+              tplate_type         => Bric::FIELD_READ,
 
-		# the category that this is associated with
-		category_id    	   => Bric::FIELD_READ,
+              # the asset type that this formats
+              element__id         => Bric::FIELD_READ,
 
-		# the file name as set by the burn system when deployed
-		file_name	   => Bric::FIELD_READ,
+              # the category that this is associated with
+              category_id         => Bric::FIELD_READ,
 
-		# Users will insert data into this field and then save will
-		# populate the _data_oid field for DB insertion.
-		data	           => Bric::FIELD_RDWR,
+              # the file name as set by the burn system when deployed
+              file_name           => Bric::FIELD_READ,
 
-		deploy_status	   => Bric::FIELD_RDWR,
-		deploy_date	   => Bric::FIELD_RDWR,	
+              # Users will insert data into this field and then save will
+              # populate the _data_oid field for DB insertion.
+              data                => Bric::FIELD_RDWR,
+
+              deploy_status       => Bric::FIELD_RDWR,
+              deploy_date         => Bric::FIELD_RDWR,
 
 
-		# Private Fields
-		_active             => Bric::FIELD_NONE,
-		_output_channel_obj => Bric::FIELD_NONE,
-		_element_obj     => Bric::FIELD_NONE,
-		_category_obj       => Bric::FIELD_NONE,
-		_revert_obj			=> Bric::FIELD_NONE
-
-	});
+              # Private Fields
+              _active             => Bric::FIELD_NONE,
+              _output_channel_obj => Bric::FIELD_NONE,
+              _element_obj        => Bric::FIELD_NONE,
+              _category_obj       => Bric::FIELD_NONE,
+              _revert_obj         => Bric::FIELD_NONE
+             });
 }
 
 #==============================================================================#
@@ -266,13 +269,13 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors 
+# Constructors
 
 #------------------------------------------------------------------------------#
 
 =item $fa = Bric::Biz::Asset::Formatting->new( $initial_state )
 
-new will only be called by Bric::Biz::Asset::Formatting's inherited classes
+Constructs a new template.
 
 Supported Keys:
 
@@ -308,6 +311,15 @@ output_channel__id - Required unless output channel object passed
 
 =item *
 
+tplate_type - The type of template it is.
+
+=item *
+
+name - The name of the template. Only used if tplate_type is set to
+UTILITY_TEMPLATE.
+
+=item *
+
 element - the at object
 
 =item *
@@ -329,18 +341,44 @@ extension for the file_name derived from the element name.  Currently
 supported file_type values are 'mc', 'pl' and 'tmpl'.
 
 =back
- 
+
 B<Throws:>
 
-"Method not implemented"
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Missing required output channel parameter.
 
-B<Notes:>
+=item *
 
-NONE
+Missing required parameter 'element' or 'element__id'.
+
+=item *
+
+Invalid file_type parameter.
+
+=item *
+
+Missing required parameter 'name'
+
+=item *
+
+Invalid tplate_type parameter.
+
+=item *
+
+Missing required parameter 'category' or 'category_id'.
+
+=item *
+
+The template already exists in the output channel.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -349,7 +387,9 @@ sub new {
     my $self = bless {}, $class;
 
     # set active unless we we passed another value
-    $init->{_active} = delete $init->{active} ? 1 : 0;
+    $init->{_active} = ! exists $init->{active} ? 1 :
+      delete $init->{active} ? 1 : 0;
+
     $init->{modifier} = $init->{user__id};
     $init->{checked_out} = 1;
     $init->{deploy_status} = 0;
@@ -358,45 +398,65 @@ sub new {
     # file type defaults to 'mc'
     $init->{file_type} ||= 'mc';
 
-    # check for required output_channel__id, element__id,
-    # and category
-    die Bric::Util::Fault::Exception::GEN->new( {
-	msg =>  'missing required param output channel or asset type'})
-      unless (defined $init->{'output_channel'} ||
-	      defined $init->{'output_channel__id'});
+    # Check for required output_channel__id.
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => 'Missing required output channel parameter' })
+      unless defined $init->{'output_channel'}
+        || defined $init->{'output_channel__id'};
 
-    my $name; # used to construct file name
-    if (defined $init->{element}) {
-	$init->{element__id} = $init->{element}->get_id;
-	$name = $init->{element}->get_name;
-    } elsif (defined $init->{element__id}) {
-	my $at = Bric::Biz::AssetType->lookup({ id => $init->{element__id} });
-	$name = $at->get_name;
+    my $name;
+    if (my $t = $init->{tplate_type}) {
+        # The tplate_type parameter has been passed. Check it out.
+        if ($t == ELEMENT_TEMPLATE) {
+            # It's an element template. Get the name from the element object.
+            $name = $set_elem->($init);
+        } elsif ($t == CATEGORY_TEMPLATE) {
+            # It's a category template. Set the name based on the file type.
+            $name = $set_cat->($init);
+        } elsif ($t == UTILITY_TEMPLATE) {
+            $name = $set_util->($init);
+        } else {
+            die Bric::Util::Fault::Exception::DP->new
+              ({ msg => "Invalid tplate_type parameter '$t'"});
+        }
     } else {
-	if ($init->{file_type} eq 'mc') {
-	    $name = 'autohandler';
-	} elsif ($init->{file_type} eq 'pl' or $init->{file_type} eq 'tmpl') {
-	    $name = 'category';
-	}
+        # No tplate_type name argument. So figure it out based on context.
+        if ($init->{element} or defined $init->{element__id}) {
+            # It's an element template. Get the element info.
+            $init->{tplate_type} = ELEMENT_TEMPLATE;
+            $name = $set_elem->($init);
+        } elsif ($init->{name}) {
+            # It's a utility template. Set up the name from the name parameter.
+            $init->{tplate_type} = UTILITY_TEMPLATE;
+            $name = $set_util->($init);
+        } else {
+            # It's a category template. Get set up the file name.
+            $init->{tplate_type} = CATEGORY_TEMPLATE;
+            $name = $set_cat->($init);
+        }
     }
 
     $init->{output_channel__id} = $init->{output_channel}->get_id
       if defined $init->{output_channel};
 
-    my $cat;
-    if (defined $init->{category}) {
-	$init->{category_id} = $init->{category}->get_id;
-	$cat = $init->{category};
+    if ($init->{category}) {
+        $init->{category_id} = $init->{category}->get_id;
     } elsif (defined $init->{category_id}) {
-	$cat = Bric::Biz::Category->lookup( { id => $init->{category_id} });
+        $init->{category} =
+          Bric::Biz::Category->lookup({ id => $init->{category_id} });
+    } else {
+        die Bric::Util::Fault::Exception::DP->new
+          ({ msg => "Missing required parameter 'category' or 'category_id'"});
     }
+    my $cat = $init->{category};
 
     @{$init}{qw(version current_version name)} = (0, 0, $name);
     $self->SUPER::new($init);
 
     # construct the file name now that the object is in place
     $self->_set(['file_name'],
-		[ $self->_build_file_name($init->{file_type}, $name, $cat) ]);
+                [ $self->_build_file_name($init->{file_type}, $name, $cat,
+                                          $init->{output_channel__id}) ]);
     return $self;
 }
 
@@ -412,12 +472,12 @@ Suported Keys
 
 =item id
 
-The unique id of formatting assets
+A formatting asset ID.
 
 =item version
 
-Pass to request a specific version otherwise the most current will be 
-returned
+Pass to request a specific version otherwise the most current will be
+returned.
 
 =back
 
@@ -439,33 +499,33 @@ sub lookup {
     my ($class, $param) = @_;
     my $self = bless {}, (ref $class ? ref $class : $class);
     
-	my $sql = 'SELECT f.id, ' . join(', ', map {"f.$_ "} COLS) .
-				', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
-				' FROM ' . TABLE . ' f, ' . VERSION_TABLE . ' i ' .
-				' WHERE f.id=? AND i.formatting__id=f.id ';
+        my $sql = 'SELECT f.id, ' . join(', ', map {"f.$_ "} COLS) .
+                                ', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
+                                ' FROM ' . TABLE . ' f, ' . VERSION_TABLE . ' i ' .
+                                ' WHERE f.id=? AND i.formatting__id=f.id ';
 
-	my @where;
-	push @where, $param->{'id'};
+        my @where;
+        push @where, $param->{'id'};
 
-	if ($param->{'version'}) {
-		$sql .= ' AND i.version=? ';
-		push @where, $param->{'version'};
-	} else {
-		$sql .= ' AND f.current_version=i.version ';
-	}
+        if ($param->{'version'}) {
+                $sql .= ' AND i.version=? ';
+                push @where, $param->{'version'};
+        } else {
+                $sql .= ' AND f.current_version=i.version ';
+        }
 
-	my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
-	my @d;
-	my $sth = prepare_ca($sql, undef, DEBUG);
-	execute($sth, @where);
-	bind_columns($sth, \@d[0 .. $count ]);
-	fetch($sth);
+        my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
+        my @d;
+        my $sth = prepare_ca($sql, undef, DEBUG);
+        execute($sth, @where);
+        bind_columns($sth, \@d[0 .. $count ]);
+        fetch($sth);
 
-	$self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
+        $self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
 
-	return unless $self->_get('id');
+        return unless $self->_get('id');
 
-	$self->_set__dirty(0);
+        $self->_set__dirty(0);
 
     return $self;
 }
@@ -486,9 +546,17 @@ active - defaults to true
 
 =item *
 
-user__id - if defined will return the checked out versions that are checked out
-to the user with this id.   Otherwise it will return the most current non
-checked out versions
+user__id - if defined will return the versions checked out to the user with
+this id. Otherwise , unless C<checked_out> is passed, it will return the most
+current non-checked out versions.
+
+=item *
+
+checked_out - Indicates whether to list templates that are checked out or
+not. If "0", then only non-checked out templates will be returned. If "1",
+then only checked-out templates will be returned. If "all", then the
+checked_out attributed will be ignored (unless the C<user__id> parameter is
+passed).
 
 =item *
 
@@ -505,6 +573,10 @@ workflow__id
 =item *
 
 output_channel__id
+
+=item *
+
+tplate_type
 
 =item *
 
@@ -531,9 +603,10 @@ deploy_date_start
 deploy_date_stop
 
 =item *
+
 expire_date_start
 
-=item * 
+=item *
 
 expire_date_stop
 
@@ -559,10 +632,10 @@ NONE
 
 
 sub list {
-	my ($class, $param) = @_;
+        my ($class, $param) = @_;
 
-	# send this to do list
-	return _do_list($class, $param, undef);
+        # send this to do list
+        return _do_list($class, $param, undef);
 }
 
 
@@ -577,8 +650,8 @@ Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
 =cut
 
 sub DESTROY {
-	# This method should be here even if its empty so that we don't waste time
-	# making Bricolage's autoload method try to find it.
+        # This method should be here even if its empty so that we don't waste time
+        # making Bricolage's autoload method try to find it.
 }
 
 #--------------------------------------#
@@ -614,10 +687,10 @@ NONE
 =cut
 
 sub list_ids {
-	my ($class, $param) = @_;
+        my ($class, $param) = @_;
 
-	# call do list with the flag that states we just want ids\
-	return _do_list($class, $param, 1);
+        # call do list with the flag that states we just want ids\
+        return _do_list($class, $param, 1);
 }
 
 
@@ -784,82 +857,101 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     foreach my $meth (__PACKAGE__->SUPER::my_meths(1)) {
-	$meths->{$meth->{name}} = $meth;
-	push @ord, $meth->{name};
+        $meths->{$meth->{name}} = $meth;
+        push @ord, $meth->{name};
     }
-    push @ord, qw(file_name deploy_date output_channel output_channel
-                  category category_name), pop @ord;
+    push @ord, qw(file_name deploy_date output_channel tplate_type category
+                  category_name), pop @ord;
 
     $meths->{file_name} = {
-			      name     => 'file_name',
-			      get_meth => sub { shift->get_file_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_file_name(@_) },
-			      set_args => [],
-			      disp     => 'File Name',
-			      len      => 256,
-			      req      => 0,
-			      type     => 'short',
-			      props    => {   type       => 'text',
-					      length     => 32,
-					      maxlength => 256
-					  }
-			     };
+                              name     => 'file_name',
+                              get_meth => sub { shift->get_file_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_file_name(@_) },
+                              set_args => [],
+                              disp     => 'File Name',
+                              len      => 256,
+                              req      => 0,
+                              type     => 'short',
+                              props    => {   type       => 'text',
+                                              length     => 32,
+                                              maxlength => 256
+                                          }
+                             };
     $meths->{deploy_date} = {
-			      name     => 'deploy_date',
-			      get_meth => sub { shift->get_deploy_date(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_deploy_date(@_) },
-			      set_args => [],
-			      disp     => 'Deploy Date',
-			      len      => 64,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'date' }
-			     };
+                              name     => 'deploy_date',
+                              get_meth => sub { shift->get_deploy_date(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_deploy_date(@_) },
+                              set_args => [],
+                              disp     => 'Deploy Date',
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'date' }
+                             };
     $meths->{output_channel} =  {
-			      name     => 'output_channel',
-			      get_meth => sub { shift->get_output_channel(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_output_channel(@_) },
-			      set_args => [],
-			      disp     => 'Output Channel',
-			      len      => 64,
-			      req      => 0,
-			      type     => 'short',
-			     };
+                              name     => 'output_channel',
+                              get_meth => sub { shift->get_output_channel(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_output_channel(@_) },
+                              set_args => [],
+                              disp     => 'Output Channel',
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                             };
+
+    $meths->{tplate_type} =  {
+                            name     => 'tplate_type',
+                            get_meth => sub { shift->get_tplate_type(@_) },
+                            get_args => [],
+                            disp     => 'Template Type',
+                            len      => 1,
+                            req      => 1,
+                            type     => 'short',
+                            props    => { type => 'select',
+                                          vals => [[ &ELEMENT_TEMPLATE =>
+                                                       'Element'],
+                                                   [ &CATEGORY_TEMPLATE =>
+                                                       'Category'],
+                                                   [ &UTILITY_TEMPLATE =>
+                                                       'Utility'],
+                                                  ]
+                                        }
+                           };
 
     $meths->{output_channel_name} = {
-			  get_meth => sub { shift->get_output_channel_name(@_) },
-			  get_args => [],
-			  name     => 'output_channel_name',
-			  disp     => 'Output Channel',
-			  len      => 64,
-			  req      => 1,
-			  type     => 'short',
-			 };
+                          get_meth => sub { shift->get_output_channel_name(@_) },
+                          get_args => [],
+                          name     => 'output_channel_name',
+                          disp     => 'Output Channel',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
 
     $meths->{category} = {
-			  get_meth => sub { shift->get_category(@_) },
-			  get_args => [],
-			  set_meth => sub { shift->set_category(@_) },
-			  set_args => [],
-			  name     => 'category',
-			  disp     => 'Category',
-			  len      => 64,
-			  req      => 1,
-			  type     => 'short',
-			 };
+                          get_meth => sub { shift->get_category(@_) },
+                          get_args => [],
+                          set_meth => sub { shift->set_category(@_) },
+                          set_args => [],
+                          name     => 'category',
+                          disp     => 'Category',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
 
     $meths->{category_name} = {
-			  get_meth => sub { shift->get_category(@_)->get_name },
-			  get_args => [],
-			  name     => 'category_name',
-			  disp     => 'Category',
-			  len      => 64,
-			  req      => 1,
-			  type     => 'short',
-			 };
+                          get_meth => sub { shift->get_category(@_)->get_name },
+                          get_args => [],
+                          name     => 'category_name',
+                          disp     => 'Category',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
 
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
@@ -898,7 +990,7 @@ sub set_deploy_date {
     my $deploy_date = $self->_get('deploy_date');
 
     unless (defined $deploy_date and $date eq $deploy_date) {
-	$self->_set(['deploy_date'], [$date]);
+        $self->_set(['deploy_date'], [$date]);
     }
 
     return $self;
@@ -983,7 +1075,7 @@ sub set_publish_status {
     my ($status) = @_;
 
     if ($status ne $self->get_deploy_status) {
-	$self->set_deploy_status($status);
+        $self->set_deploy_status($status);
     }
 
     return $self;
@@ -1088,6 +1180,29 @@ sub get_output_channel {
     return $oc_obj;
 }
 
+##############################################################################
+
+=item my $tplate_type_string = $template->get_tplate_type_string
+
+Returns a the stringified name of the template type attribute.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+my %tplate_type_strings = ( &ELEMENT_TEMPLATE => 'Element Template',
+                            &CATEGORY_TEMPLATE => 'Category Template',
+                            &UTILITY_TEMPLATE => 'Utility Template'
+                          );
+
+sub get_tplate_type_string {
+    $tplate_type_strings{$_[0]->_get('tplate_type') }
+}
+
 ################################################################################
 
 =item $name = $template->get_element_name;
@@ -1151,7 +1266,13 @@ Sets the category id for this formatting asset
 
 B<Throws:>
 
-NONE
+=over 4
+
+=item *
+
+The template already exists in the output channel.
+
+=back
 
 B<Side Effects:>
 
@@ -1167,8 +1288,8 @@ sub set_category_id {
     my ($self, $id) = @_;
 
     if ($id != $self->get_category_id) {
-	$self->_set(['category_id','_category_obj'], [$id, undef]);
-	$self->_set(['file_name'], [$self->_build_file_name()]);
+        $self->_set(['category_id','_category_obj'], [$id, undef]);
+        $self->_set(['file_name'], [$self->_build_file_name]);
     }
 
     return $self;
@@ -1216,9 +1337,9 @@ NONE
 =cut
 
 sub get_category {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	return $self->_get_category_object();
+        return $self->_get_category_object();
 }
 
 ################################################################################
@@ -1242,11 +1363,11 @@ NONE
 =cut
 
 sub get_category_path {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $cat = $self->_get_category_object || return;
+        my $cat = $self->_get_category_object || return;
 
-	return $cat->ancestry_path;
+        return $cat->ancestry_path;
 }
 
 ################################################################################
@@ -1271,11 +1392,11 @@ NONE
 =cut
 
 sub get_category_name {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $cat = $self->_get_category_object || return;
+        my $cat = $self->_get_category_object || return;
 
-	return $cat->get_name;
+        return $cat->get_name;
 }
 
 ################################################################################
@@ -1340,30 +1461,30 @@ NONE
 =cut
 
 sub checkout {
-	my ($self, $param) = @_;
+        my ($self, $param) = @_;
 
-	# make sure that this version is the most current
-	unless ($self->_get('version') == $self->_get('current_version') ) {
-		die Bric::Util::Fault::Exception::GEN->new( { msg => 
-				"Unable to checkout old_versions" });
-	}
-	# Make sure that the object is not already checked out
-	if (defined $self->_get('user__id')) {
-		die Bric::Util::Fault::Exception::GEN->new( {
-			msg => "Already Checked Out" });
-	}
-	unless (defined $param->{'user__id'}) {
-		die Bric::Util::Fault::Exception::GEN->new( { msg =>
-			"Must be checked out to users" });
-	}	
+        # make sure that this version is the most current
+        unless ($self->_get('version') == $self->_get('current_version') ) {
+                die Bric::Util::Fault::Exception::GEN->new( { msg => 
+                                "Unable to checkout old_versions" });
+        }
+        # Make sure that the object is not already checked out
+        if (defined $self->_get('user__id')) {
+                die Bric::Util::Fault::Exception::GEN->new( {
+                        msg => "Already Checked Out" });
+        }
+        unless (defined $param->{'user__id'}) {
+                die Bric::Util::Fault::Exception::GEN->new( { msg =>
+                        "Must be checked out to users" });
+        }       
 
-	$self->_set({'user__id'    => $param->{'user__id'} ,
-		     'modifier'    => $param->{'user__id'},
-		     'version_id'  => undef,
-		     'checked_out' => 1
-		    });
+        $self->_set({'user__id'    => $param->{'user__id'} ,
+                     'modifier'    => $param->{'user__id'},
+                     'version_id'  => undef,
+                     'checked_out' => 1
+                    });
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1390,7 +1511,7 @@ sub is_current {
     my ($self) = @_;
 
     return ($self->_get('version') == $self->_get('current_version'))
-		? $self : undef;
+                ? $self : undef;
 }
 
 #------------------------------------------------------------------------------#
@@ -1419,9 +1540,9 @@ sub cancel {
     my $dirty = $self->_get__dirty;
 
     if (not defined $self->get_user__id) {
-	# this is not checked out, it can not be deleted
-	my $msg = 'Cannot cancel an asset that is not checked out';
-	die Bric::Util::Fault::Exception::AP->new({'msg' => $msg});
+        # this is not checked out, it can not be deleted
+        my $msg = 'Cannot cancel an asset that is not checked out';
+        die Bric::Util::Fault::Exception::AP->new({'msg' => $msg});
     }
 
     $self->_set(['_cancel'], [1]);
@@ -1453,34 +1574,34 @@ NONE
 
 
 sub revert {
-	my ($self, $version) = @_;
+        my ($self, $version) = @_;
 
-	if (!$self->_get('checked_out')) {
-		die Bric::Util::Fault::Exception::GEN->new( { 
-			msg => "May not revert a non checked out version" });
-	}
+        if (!$self->_get('checked_out')) {
+                die Bric::Util::Fault::Exception::GEN->new( { 
+                        msg => "May not revert a non checked out version" });
+        }
 
-	my @prior_versions = __PACKAGE__->list( {
-			id 				=> $self->_get_id(),
-			return_versions => 1
-		});
+        my @prior_versions = __PACKAGE__->list( {
+                        id                              => $self->_get_id(),
+                        return_versions => 1
+                });
 
-	my $revert_obj;	
-	foreach (@prior_versions) {
-		if ($_->get_version == $version) {
-			$revert_obj = $_;
-		}
-	}
+        my $revert_obj; 
+        foreach (@prior_versions) {
+                if ($_->get_version == $version) {
+                        $revert_obj = $_;
+                }
+        }
 
-	unless ($revert_obj) {
-		die Bric::Util::Fault::Exception::GEN->new( {
-			msg => "The requested version does not exist"
-		});
-	}
+        unless ($revert_obj) {
+                die Bric::Util::Fault::Exception::GEN->new( {
+                        msg => "The requested version does not exist"
+                });
+        }
 
-	$self->_set(['data'], [$revert_obj->get_data]);
+        $self->_set(['data'], [$revert_obj->get_data]);
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1512,29 +1633,29 @@ sub save {
 
     # Only update/insert this object if some of our fields are dirty.
     if ($self->_get__dirty) {
-	if ($self->get_id) {
-	    # make any necessary updates to the Main table
-	    $self->_update_formatting();
+        if ($self->get_id) {
+            # make any necessary updates to the Main table
+            $self->_update_formatting();
 
-	    # Update or insert depending on if we have an ID.
-	    if ($self->get_version_id) {
-		if ($cancel) {
-		    if (defined $id and defined $vid) {
-			$self->_delete_instance();
-			$self->_delete_formatting() if $ver == 0;
-			$self->_set(['_cancel'], [undef]);
-		    }
-		    return $self;
-		}
-		$self->_update_instance();
-	    } else {
-		$self->_insert_instance();
-	    }
-	} else {
-	    # This is Brand new insert both Tables
-	    $self->_insert_formatting();
-	    $self->_insert_instance();
-	}
+            # Update or insert depending on if we have an ID.
+            if ($self->get_version_id) {
+                if ($cancel) {
+                    if (defined $id and defined $vid) {
+                        $self->_delete_instance();
+                        $self->_delete_formatting() if $ver == 0;
+                        $self->_set(['_cancel'], [undef]);
+                    }
+                    return $self;
+                }
+                $self->_update_instance();
+            } else {
+                $self->_insert_instance();
+            }
+        } else {
+            # This is Brand new insert both Tables
+            $self->_insert_formatting();
+            $self->_insert_instance();
+        }
     }
 
     # Call the parents save method
@@ -1584,37 +1705,48 @@ sub _do_list {
     @where  = ('f.id=i.formatting__id');
 
     unless ($ids) {
-	# if we want more than ids we have to ask for them
-	push @select, (map { "f.$_ "} COLS),
-		      'i.id',
-		      (map { "i.$_ "} VERSION_COLS);
+        # if we want more than ids we have to ask for them
+        push @select, (map { "f.$_ "} COLS),
+                      'i.id',
+                      (map { "i.$_ "} VERSION_COLS);
     }
 
     # the user__id field
-    if (exists $param->{'user__id'}) {
-	push @where, 'f.usr__id=?', 'i.checked_out=?';
-	push @bind,  $param->{'user__id'}, 1;
+    if (exists $param->{user__id}) {
+        push @where, 'f.usr__id = ?', 'i.checked_out = ?';
+        push @bind,  $param->{user__id}, 1;
+    } elsif (exists $param->{checked_out}) {
+        if ($param->{checked_out} ne 'all') {
+            push @where, 'i.checked_out = ?';
+            push @bind,  $param->{checked_out} ? 1 : 0;
+        }
     } else {
-	push @where, 'i.checked_out=?';
-	push @bind,  0;
+        push @where, 'i.checked_out = ?';
+        push @bind,  0;
+    }
+
+    # The tplate_type field.
+    if ($param->{tplate_type}) {
+        push @where, 'f.tplate_type = ?';
+        push @bind, $param->{tplate_type};
     }
 
     unless ($param->{'return_versions'}) {
-	push @where, 'f.current_version=i.version';
+        push @where, 'f.current_version=i.version';
     }
 
     # Build the where clause for the trivial formatting table fields.
     foreach my $f (qw(id workflow__id output_channel__id element__id
                       category__id name file_name active)) {
-	next unless exists $param->{$f};
+        next unless exists $param->{$f};
 
-	if (($f eq 'name') || ($f eq 'file_name')) {
-	    push @where, "LOWER(f.$f) LIKE ?";
-	    push @bind,  lc($param->{$f});
-	} else {
-	    push @where, "f.$f=?";
-	    push @bind,  $param->{$f};
-	}
+        if (($f eq 'name') || ($f eq 'file_name')) {
+            push @where, "LOWER(f.$f) LIKE ?";
+            push @bind,  lc($param->{$f});
+        } else {
+            push @where, "f.$f=?";
+            push @bind,  $param->{$f};
+        }
     }
 
     if ($param->{'simple'}) {
@@ -1625,30 +1757,30 @@ sub _do_list {
 
     # Handle searches on dates
     foreach my $type (qw(deploy_date expire_date)) {
-	my ($start, $end) = ($param->{$type.'_start'},
-			     $param->{$type.'_end'});
+        my ($start, $end) = ($param->{$type.'_start'},
+                             $param->{$type.'_end'});
 
-	# Handle date ranges.
-	if ($start && $end) {
-	    push @where, "f.$type BETWEEN ? AND ?";
-	    push @bind, $start, $end;
-	} else {
-	    # Handle 'everying before' or 'everything after' $date searches.
-	    if ($start) {
-		push @where, "f.$type > ?";
-		push @bind, $start;
-	    } elsif ($end) {
-		push @where, "f.$type < ?";
-		push @bind, $end;
-	    }
-	}
+        # Handle date ranges.
+        if ($start && $end) {
+            push @where, "f.$type BETWEEN ? AND ?";
+            push @bind, $start, $end;
+        } else {
+            # Handle 'everying before' or 'everything after' $date searches.
+            if ($start) {
+                push @where, "f.$type > ?";
+                push @bind, $start;
+            } elsif ($end) {
+                push @where, "f.$type < ?";
+                push @bind, $end;
+            }
+        }
     }
 
     # Determine how to order the results.
     if ( $param->{'return_versions'}) {
-	$order = 'i.version';
+        $order = 'i.version';
     } else {
-	$order = 'f.deploy_date';
+        $order = 'f.deploy_date';
     }
 
     $sql  = 'SELECT '  .join(',',     @select).' '.
@@ -1659,29 +1791,29 @@ sub _do_list {
     $sth = prepare_ca($sql, undef, DEBUG);
 
     if ($ids) {
-	my $return = col_aref($sth, @bind);
-
-	return wantarray ? @$return : $return;
+        my $return = col_aref($sth, @bind);
+        return unless @$return;
+        return wantarray ? @$return : $return;
 
     } else {
-	my (@d, @objs);
+        my (@d, @objs);
 
-	my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
-	execute($sth, @bind);
-	bind_columns($sth, \@d[0 .. $count]);
+        my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
+        execute($sth, @bind);
+        bind_columns($sth, \@d[0 .. $count]);
 
-	while (fetch($sth)) {
-	    my $self = bless {}, $class;
+        while (fetch($sth)) {
+            my $self = bless {}, $class;
 
-	    $self->SUPER::new();
+            $self->SUPER::new();
 
-	    $self->_set( ['id', FIELDS, 'version_id', VERSION_FIELDS] , [@d]);
-	    $self->_set__dirty(undef);
+            $self->_set( ['id', FIELDS, 'version_id', VERSION_FIELDS] , [@d]);
+            $self->_set__dirty(undef);
 
-	    push @objs, $self;
-	}
-	return (wantarray ? @objs : \@objs) if @objs;
-	return;
+            push @objs, $self;
+        }
+        return (wantarray ? @objs : \@objs) if @objs;
+        return;
     }
 }
 
@@ -1715,17 +1847,17 @@ sub _get_output_channel_object {
     my $self = shift;
     my $dirty = $self->_get__dirty;
     my ($oc_id, $oc_obj) = $self->_get('output_channel__id',
-				       '_output_channel_obj');
+                                       '_output_channel_obj');
 
     return unless $oc_id;
 
     unless ($oc_obj) {
-	$oc_obj = Bric::Biz::OutputChannel->lookup({'id' => $oc_id});
-	
-	$self->_set(['_output_channel_obj'], [$oc_obj]);
+        $oc_obj = Bric::Biz::OutputChannel->lookup({'id' => $oc_id});
+        
+        $self->_set(['_output_channel_obj'], [$oc_obj]);
 
-	# Restore the original dirty value.
-	$self->_set__dirty($dirty);
+        # Restore the original dirty value.
+        $self->_set__dirty($dirty);
     }
 
     return $oc_obj;
@@ -1759,12 +1891,12 @@ sub _get_element_object {
     return unless $at_id;
 
     unless ($at_obj) {
-	$at_obj = Bric::Biz::AssetType->lookup({'id' => $at_id});
-	
-	$self->_set(['_element_obj'], [$at_obj]);
+        $at_obj = Bric::Biz::AssetType->lookup({'id' => $at_id});
+        
+        $self->_set(['_element_obj'], [$at_obj]);
 
-	# Restore the original dirty value.
-	$self->_set__dirty($dirty);
+        # Restore the original dirty value.
+        $self->_set__dirty($dirty);
     }
 
     return $at_obj;
@@ -1798,11 +1930,11 @@ sub _get_category_object {
     return unless defined $cat_id;
 
     unless ($cat_obj) {
-	$cat_obj = Bric::Biz::Category->lookup({id => $cat_id});
-	$self->_set(['_category_obj'], [$cat_obj]);
+        $cat_obj = Bric::Biz::Category->lookup({id => $cat_id});
+        $self->_set(['_category_obj'], [$cat_obj]);
 
-	# Restore the original dirty value.
-	$self->_set__dirty($dirty);
+        # Restore the original dirty value.
+        $self->_set__dirty($dirty);
     }
 
     return $cat_obj;
@@ -1834,12 +1966,12 @@ sub _get_attribute_object {
     my $attr_obj = $self->_get('_attribute_object');
 
     unless (defined $attr_obj) {
-	# Let's Create a new one if one does not exist
-	$attr_obj = Bric::Util::Attribute::Formatting->new({id => $self->get_id});
-	$self->_set(['_attribute_object'], [$attr_obj]);
+        # Let's Create a new one if one does not exist
+        $attr_obj = Bric::Util::Attribute::Formatting->new({id => $self->get_id});
+        $self->_set(['_attribute_object'], [$attr_obj]);
 
-	# Restore the original dirty value.
-	$self->_set__dirty($dirty);
+        # Restore the original dirty value.
+        $self->_set__dirty($dirty);
     }
 
     return $attr_obj;
@@ -1869,20 +2001,20 @@ NONE
 =cut
 
 sub _insert_formatting {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $sql = 'INSERT INTO '. TABLE .' (id,'.join(',', COLS).') '.
-		  "VALUES (${\next_key(TABLE)},".join(',', ('?') x COLS).')';
+        my $sql = 'INSERT INTO '. TABLE .' (id,'.join(',', COLS).') '.
+                  "VALUES (${\next_key(TABLE)},".join(',', ('?') x COLS).')';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get(FIELDS));
+        my $sth = prepare_c($sql, undef, DEBUG);
+        execute($sth, $self->_get(FIELDS));
 
-	$self->_set(['id'], [last_key(TABLE)]);
+        $self->_set(['id'], [last_key(TABLE)]);
 
-	# And finally, register this person in the "All Templates" group.
-	$self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+        # And finally, register this person in the "All Templates" group.
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1906,19 +2038,19 @@ NONE
 =cut
 
 sub _insert_instance {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $sql = 'INSERT INTO '. VERSION_TABLE . 
-				' (id, '.join(', ', VERSION_COLS) .') '.
-				"VALUES (${\next_key(VERSION_TABLE)}, " . 
-					join(',',('?') x VERSION_COLS) . ')';
+        my $sql = 'INSERT INTO '. VERSION_TABLE . 
+                                ' (id, '.join(', ', VERSION_COLS) .') '.
+                                "VALUES (${\next_key(VERSION_TABLE)}, " . 
+                                        join(',',('?') x VERSION_COLS) . ')';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get(VERSION_FIELDS));
+        my $sth = prepare_c($sql, undef, DEBUG);
+        execute($sth, $self->_get(VERSION_FIELDS));
 
-	$self->_set(['version_id'], [last_key(VERSION_TABLE)]);
+        $self->_set(['version_id'], [last_key(VERSION_TABLE)]);
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1942,17 +2074,17 @@ NONE
 =cut
 
 sub _update_formatting {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $sql = 'UPDATE ' . TABLE .
-		  ' SET ' . join(', ', map {"$_=?" } COLS) .
-		  ' WHERE id=? ';
+        my $sql = 'UPDATE ' . TABLE .
+                  ' SET ' . join(', ', map {"$_=?" } COLS) .
+                  ' WHERE id=? ';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef, DEBUG);
 
-	execute($sth, $self->_get(FIELDS), $self->_get('id'));
+        execute($sth, $self->_get(FIELDS), $self->_get('id'));
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1976,17 +2108,17 @@ NONE
 =cut
 
 sub _update_instance {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $sql = 'UPDATE ' . VERSION_TABLE .
-				' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
-				' WHERE id=? ';
+        my $sql = 'UPDATE ' . VERSION_TABLE .
+                                ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
+                                ' WHERE id=? ';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef, DEBUG);
 
-	execute($sth, $self->_get(VERSION_FIELDS), $self->get_version_id);
+        execute($sth, $self->_get(VERSION_FIELDS), $self->get_version_id);
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -2010,15 +2142,15 @@ NONE
 =cut
 
 sub _delete_formatting {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $sql = 'DELETE FROM ' . TABLE . ' WHERE id=?';
+        my $sql = 'DELETE FROM ' . TABLE . ' WHERE id=?';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef, DEBUG);
 
-	execute($sth, $self->get_id);
+        execute($sth, $self->get_id);
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -2054,7 +2186,15 @@ sub _delete_instance {
 Builds the file name for a template. If $file_type, $name, or $cat are not
 passed, they'll be fetched (or for $file_type, computed) from $self.
 
-B<Throws:> NONE.
+B<Throws:>
+
+=over 4
+
+=item *
+
+The template already exists in the output channel.
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -2063,41 +2203,155 @@ B<Notes:> NONE.
 =cut
 
 sub _build_file_name {
-    my ($self, $file_type, $name, $cat) = @_;
+    my ($self, $file_type, $name, $cat, $oc_id) = @_;
 
     # compute file_type from file_name if not set
     unless ($file_type) {
       my $old = $self->_get('file_name');
       if ($old =~ /autohandler$/) {
-	$file_type = 'mc';
+        $file_type = 'mc';
       } else {
-	($file_type) = $old =~ /\.(.+)$/;
+        ($file_type) = $old =~ /\.(.+)$/;
       }
     }
 
     # Get the name and category object.
-    $cat  ||= $self->_get_category_object;
+    $cat  ||= $self->_get_category_object
+      or die Bric::Util::Fault::Exception::DP->new
+      ({ msg => "Templates must be associated with a category" });
     $name ||= $self->_get('name');
+    $oc_id ||= $self->_get('output_channel__id');
 
     # Mangle the file name.
     my $file = lc $name;
     $file    =~ y/a-z0-9/_/cs;
     $file   .= ".$file_type" unless $name eq 'autohandler';
 
-    # Return the filename.
-    return Bric::Util::Trans::FS->cat_dir(($cat ? $cat->ancestry_path : ()), $file);
+    # Create the file name.
+    my $fn = Bric::Util::Trans::FS->cat_dir(($cat ? $cat->ancestry_path : ()),
+                                            $file);
+
+    # Make sure that the filename isn't already in use for this output channel.
+    if ($self->list_ids({ file_name => $fn, checked_out => 'all',
+                          output_channel__id => $oc_id })) {
+        # One exists already! Throw an exception.
+        die Bric::Util::Fault::Exception::DP->new
+          ({ msg => "The template '$fn' already exists in output " .
+                    "channel '" . $self->get_output_channel_name . "'" });
+    }
+
+    # If we get here, just return the file name.
+    return $fn;
 };
 
 =back
 
 =head2 Private Functions
 
-NONE
+=over
+
+=item my $name = $set_elem->($init)
+
+Sets the name of the template based on an element association.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Missing required parameter 'element' or 'element__id'.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
+$set_elem = sub {
+    my $init = shift;    if ($init->{element}) {
+        $init->{element__id} = $init->{element}->get_id;
+    } elsif (defined $init->{element__id}) {
+        $init->{element} =
+          Bric::Biz::AssetType->lookup({ id => $init->{element__id} });
+    } else {
+        die Bric::Util::Fault::Exception::DP->new
+          ({ msg => "Missing required parameter 'element' or " .
+                    "'element__id'"});
+    }
+    return $init->{element}->get_name;
+};
+
+=item my $name = $set_cat->($init)
+
+Sets the name of the template as a category template, based on the C<file_type>
+parameter.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Invalid file_type parameter.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$set_cat = sub {
+    my $init = shift;
+    if ($init->{file_type} eq 'mc') {
+        return 'autohandler';
+    } elsif ($init->{file_type} eq 'pl' or
+             $init->{file_type} eq 'tmpl') {
+        return 'category';
+    } else {
+        die Bric::Util::Fault::Exception::DP->new
+          ({ msg => "Invalid file_type parameter " .
+                    "'$init->{file_type}'"});
+    }
+};
+
+=item my $name = $set_util->($init)
+
+Sets the name of the template as a utility template, based on the C<name>
+parameter.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Missing required parameter 'name'.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$set_util = sub {
+    my $init = shift;
+    my $name = delete $init->{name}
+      or die Bric::Util::Fault::Exception::DP->new
+        ({ msg => "Missing required parameter 'name'"});
+    return $name;
+};
+
 1;
 __END__
+
+=back
 
 =head1 NOTES
 
