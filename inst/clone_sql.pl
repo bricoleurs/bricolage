@@ -6,11 +6,11 @@ clone_db.pl - installation script to clone an existing database
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2004-03-18 00:21:50 $
+$Date: 2004-03-19 05:52:51 $
 
 =head1 DESCRIPTION
 
@@ -46,6 +46,6 @@ $ENV{PGPORT} = $PG->{host_port} if $PG->{host_port};
 
 # dump out database
 system(catfile($PG->{bin_dir}, 'pg_dump') .
-       " -U$PG->{root_user} -O -x $PG->{db_name} > inst/Pg.sql.tmp");
+       " -U$PG->{root_user} -O -x $PG->{db_name} > inst/Pg.sql");
 
 exit 0;
