@@ -1,0 +1,866 @@
+package Bric::Biz::Site;
+
+=head1 NAME
+
+Bric::Biz::Site - Interface to Bricolage Site Objects
+
+=head1 VITALS
+
+=over 4
+
+=item Version
+
+$Revision: 1.1.2.1 $
+
+=cut
+
+# Grab the Version Number.
+our $VERSION = (qw$Revision: 1.1.2.1 $ )[-1];
+
+=item Date
+
+$Date: 2003-03-04 01:26:43 $
+
+=item CVS ID
+
+$Id: Site.pm,v 1.1.2.1 2003-03-04 01:26:43 wheeler Exp $
+
+=back
+
+=head1 SYNOPSIS
+
+  use Bric::Biz::Site;
+
+  # Constructors.
+  my $site = Bric::Biz::Site->new($init);
+  $site = Bric::Biz::Site->lookup({ id => $id });
+  my @sites = Bric::Biz::Site->list($params);
+
+  # Class Methods.
+  my @site_ids = Bric::Biz::Site->list_ids($params);
+  my $meths = Bric::Biz::Site->my_meths;
+
+  # Instance methods.
+  $id = $site->get_id;
+  my $name = $site->get_name;
+  $site = $site->set_name($name)
+  my $desc = $site->get_description;
+  $site = $site->set_description($desc);
+  my $domain_name = $site->get_domain_name;
+  $site = $site->set_domain_name($domain_name);
+
+  $site = $site->activate;
+  $site = $site->deactivate;
+  $site = $site->is_active;
+
+  # Save the changes to the database
+  $site = $site->save;
+
+=head1 DESCRIPTION
+
+Site are first-class Bricolage objects designed to manage different sites from
+within a single Bricolage instance.
+
+=cut
+
+##############################################################################
+# Dependencies
+##############################################################################
+# Standard Dependencies
+use strict;
+
+##############################################################################
+# Programmatic Dependences
+use Bric::Util::Grp::Site;
+use Bric::Util::DBI qw(:standard col_aref);
+use Bric::Util::Fault qw(throw_da throw_dp);
+
+##############################################################################
+# Inheritance
+##############################################################################
+use base qw(Bric);
+
+##############################################################################
+# Function and Closure Prototypes
+##############################################################################
+my ($get_em, $set_unique_attr);
+
+##############################################################################
+# Constants
+##############################################################################
+use constant DEBUG => 0;
+use constant GROUP_PACKAGE => 'Bric::Util::Grp::Site';
+use constant INSTANCE_GROUP_ID => 47;
+
+##############################################################################
+# Fields
+##############################################################################
+# Private Class Fields
+
+my $TABLE = 'site';
+my @COLS = qw(id name description domain_name active);
+my @PROPS = qw(id name description domain_name _active);
+
+my $SEL_COLS = 'a.' . join(', a.', @COLS) . ', m.grp__id';
+my @SEL_PROPS = (@PROPS, 'grp_ids');
+
+##############################################################################
+# Instance Fields
+BEGIN {
+    Bric::register_fields
+      ({
+        # Public Fields
+        id          => Bric::FIELD_READ,
+        name        => Bric::FIELD_RDWR,
+        description => Bric::FIELD_RDWR,
+        domain_name => Bric::FIELD_RDWR,
+        grp_ids     => Bric::FIELD_READ,
+
+        # Private Fields
+        _active     => Bric::FIELD_NONE,
+        _grp        => Bric::FIELD_NONE,
+       });
+}
+
+##############################################################################
+# Constructors.
+##############################################################################
+
+=head1 INTERFACE
+
+=head2 Constructors
+
+=head3 new
+
+  my $site = Bric::Biz::Site->new;
+  $site = Bric::Biz::Site->new($init);
+
+Constructs a new site object and returns it. An anonymous hash of initial
+values may be passed. The supported keys for that hash references are:
+
+=over 4
+
+=item name
+
+=item description
+
+=item domain_name
+
+=back
+
+The C<name> and C<domain_name> attributes must be globally unique or an
+exception will be thrown.
+
+B<Throws:>
+
+=over
+
+=item DA
+
+=back
+
+=cut
+
+sub new {
+    my ($invocant, $init) = @_;
+    $init->{_active} = 1;
+    $init->{grp_ids} = [INSTANCE_GROUP_ID];
+    my ($name, $domain_name) = delete @{$init}{qw(name domain_name)};
+    my $self = $invocant->SUPER::new($init);
+    $self->set_name($name) if $name;
+    $self->set_domain_name($domain_name) if $domain_name;
+    return $self;
+}
+
+################################################################################
+
+=head3 lookup
+
+  my $site = Bric::Biz::Site->lookup({ id => $id });
+  $site = Bric::Biz::Site->lookup({ name => $name });
+  $site = Bric::Biz::Site->lookup({ domain_name => $domain_name });
+
+Looks up and constructs an existing site object in the database and returns
+it. A Site ID, name, or domain name can be used as the site object unique
+identifier to look up. If no site object is found in the database, then
+C<lookup()> will return C<undef>.
+
+B<Throws:>
+
+=over 4
+
+=item DA
+
+=back
+
+=cut
+
+sub lookup {
+    my $invocant = shift;
+    # Look for the site in the cache, first.
+    my $site = $invocant->cache_lookup(@_);
+    return $site if $site;
+
+    # Look up the site in the database.
+    my $class = ref $invocant || $invocant;
+    $site = $get_em->($class, @_) or return;
+
+    # Throw an exception if we looked up more than one site.
+    throw_da "Too many $class objects found" if @$site > 1;
+
+    return $site->[0];
+}
+
+##############################################################################
+
+=head3 list
+
+  my @sites = Bric::Biz::Site->list($params);
+  my $sites_aref = Bric::Biz::Site->list($params);
+
+Returns a list or anonymous array of site objects based on the search
+parameters passed via an anonymous hash. The supported lookup keys that may
+use valid SQL wild card characters are:
+
+=over
+
+=item name
+
+=item description
+
+=item domain_name
+
+=back
+
+The supported lookup keys that must be an exact value are:
+
+=over 4
+
+=item active
+
+A boolean value indicating if the site is active.
+
+=item grp_id
+
+A Bric::Util::Grp::Site object ID.
+
+=back
+
+B<Throws:>
+
+=over 4
+
+=item DA
+
+=back
+
+=cut
+
+sub list { $get_em->(@_) }
+
+##############################################################################
+# Class Methods
+##############################################################################
+
+=head2 Class Methods
+
+=head3 list_ids
+
+  my @site_ids = Bric::Biz::Site->list_ids($params);
+  my $site_ids_aref = Bric::Biz::Site->list_ids($params);
+
+Returns a list or anonymous array of site object IDs based on the search
+parameters passed via an anonymous hash. The supported lookup keys are the
+same as for the C<list()> method.
+
+B<Throws:>
+
+=over 4
+
+=item DA
+
+=back
+
+=cut
+
+sub list_ids { $get_em->(@_, 1) }
+
+##############################################################################
+
+=head3 my_meths
+
+  my $meths = Bric::Biz::Person->my_meths
+  my @meths = Bric::Biz::Person->my_meths(1);
+  my $meths_aref = Bric::Biz::Person->my_meths(1);
+  @meths = Bric::Biz::Person->my_meths(0, 1);
+  $meths_aref = Bric::Biz::Person->my_meths(0, 1);
+
+Returns an anonymous hash of introspection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
+
+Each hash key is the name of a property or attribute of the object. The value
+for a hash key is another anonymous hash containing the following keys:
+
+=over 4
+
+=item name
+
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
+
+=item disp
+
+The display name of the property or attribute.
+
+=item get_meth
+
+A reference to the method that will retrieve the value of the property or
+attribute.
+
+=item get_args
+
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
+
+=item set_meth
+
+A reference to the method that will set the value of the property or
+attribute.
+
+=item set_args
+
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
+
+=item type
+
+The type of value the property or attribute contains. There are only three
+types:
+
+=over 4
+
+=item short
+
+=item date
+
+=item blob
+
+=back
+
+=item len
+
+If the value is a 'short' value, this hash key contains the length of the
+field.
+
+=item search
+
+The property is searchable via the list() and list_ids() methods.
+
+=item req
+
+The property or attribute is required.
+
+=item props
+
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
+
+=over 4
+
+=item type
+
+The display field type. Possible values are
+
+=over 4
+
+=item text
+
+=item textarea
+
+=item password
+
+=item hidden
+
+=item radio
+
+=item checkbox
+
+=item select
+
+=back
+
+=item length
+
+The Length, in letters, to display a text or password field.
+
+=item maxlength
+
+The maximum length of the property or value - usually defined by the SQL DDL.
+
+=back
+
+=item rows
+
+The number of rows to format in a textarea field.
+
+=item cols
+
+The number of columns to format in a textarea field.
+
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+{
+    my @ORD = qw(name domain_name description active);
+    my $METHS =
+      { name        => { name     => 'name',
+                         get_meth => sub { shift->get_name(@_) },
+                         get_args => [],
+                         set_meth => sub { shift->set_name(@_) },
+                         set_args => [],
+                         disp     => 'Name',
+                         search   => 1,
+                         req      => 1,
+                         props    => { type   => 'text',
+                                       length => 32
+                                     }
+                       },
+        domain_name => { name     => 'domain_name',
+                         get_meth => sub { shift->get_domain_name(@_) },
+                         get_args => [],
+                         set_meth => sub { shift->set_domain_name(@_) },
+                         set_args => [],
+                         disp     => 'Domain Name',
+                         req      => 1,
+                         props    => { type   => 'text',
+                                       length => 32
+                                     }
+                       },
+        description => { name     => 'description',
+                         get_meth => sub { shift->get_description(@_) },
+                         get_args => [],
+                         set_meth => sub { shift->set_description(@_) },
+                         set_args => [],
+                         disp     => 'Description',
+                         props    => { type => 'textarea',
+                                       cols => 40,
+                                       rows => 4
+                                     }
+                       },
+        active      => { name     => 'active',
+                         get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                         get_args => [],
+                         set_meth => sub { $_[1] ? shift->activate(@_)
+                                             : shift->deactivate(@_)
+                                         },
+                         set_args => [],
+                         disp     => 'Active',
+                         len      => 1,
+                         req      => 1,
+                         props    => { type => 'checkbox' }
+                       },
+      };
+
+    sub my_meths {
+        my ($invocant, $ord, $ident) = @_;
+        if ($ord) {
+            return wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
+        } elsif ($ident) {
+            return wantarray ? @{$METHS}{qw(name domain_name)} :
+              [@{$METHS}{qw(name domain_name)}];
+        } else {
+            return $METHS;
+        }
+    }
+}
+
+##############################################################################
+# Instance Methods
+##############################################################################
+
+=head2 Accessors
+
+=head3 id
+
+  my $id = $site->get_id;
+
+Returns the site object's unique database ID.
+
+=head3 name
+
+  my $name = $site->get_name;
+  $site = $site->set_name($name);
+
+Get and set the site object's unique name. The value of this attribute must be
+case-insensitively globally unique. If a non-unique value is passed to
+C<set_name()>, an exception will be thrown.
+
+B<Throws:>
+
+=over
+
+=item DP
+
+=back
+
+=cut
+
+sub set_name { $set_unique_attr->('name', @_) }
+
+=head3 description
+
+  my $description = $site->get_description;
+  $site = $site->set_description($description);
+
+Get and set the site object's description.
+
+=head3 domain_name
+
+  my $domain_name = $site->get_domain_name;
+  $site = $site->set_domain_name($domain_name);
+
+Get and set the site object's unique domain name. The value of this attribute
+must be case-insensitively globally unique. If a non-unique value is passed to
+C<set_domain_name()>, an exception will be thrown.
+
+B<Throws:>
+
+=over
+
+=item DP
+
+=back
+
+=cut
+
+sub set_domain_name { $set_unique_attr->('domain_name', @_) }
+
+=head3 active
+
+  $site = $site->activate;
+  $site = $site->deactivate;
+  $site = $site->is_active;
+
+Get and set the site object's active status. C<activate()> and C<deactivate()>
+each return the site object. C<is_active()> returns the site object when the
+site is active, and C<undef> when it is not.
+
+=cut
+
+sub activate { $_[0]->_set(['_active'], [1]) }
+sub deactivate { $_[0]->_set(['_active'], [0]) }
+sub is_active { $_[0]->_get('_active') ? $_[0] : undef }
+
+##############################################################################
+
+=head2 Instance Methods
+
+=head3 get_grp
+
+  my $site_grp = $site->get_grp;
+
+Returns the group object for this site. Used for creating permissions objects.
+
+B<Thows:>
+
+=over 4
+
+=item DA
+
+=back
+
+=cut
+
+sub get_grp {
+    my $self = shift;
+    my ($id, $grp) = $self->_get(qw(id _grp));
+    return $grp if $grp;
+    return unless $id;
+    $grp = Bric::Util::Grp::Site->lookup({ id => $id });
+    $self->_set(['_grp'], [$grp]);
+    return $grp;
+}
+
+##############################################################################
+
+=head2 save
+
+  $site = $site->save;
+
+Saves any changes to the site object to the database. Returns the site object
+on success and throws an exception on failure.
+
+B<Thows:>
+
+=over 4
+
+=item DA
+
+=back
+
+=cut
+
+sub save {
+    my $self = shift;
+    return $self unless $self->_get__dirty;
+    my $id = $self->_get('id');
+
+    if ($id) {
+        # Update the record in the database.
+        my $set_cols = join ' = ?, ', @COLS;
+        my $upd = prepare_c(qq{
+            UPDATE $TABLE
+            SET    $set_cols = ?
+            WHERE  id = ?
+        }, undef, DEBUG);
+
+        # Make it so.
+        execute($upd, $self->_get(@PROPS), $id);
+    } else {
+        # Create a new secret group for this site.
+        my $grp = Bric::Util::Grp::Site->new({ name => 'Secret Site Group',
+                                               secret => 1 });
+        $grp->save;
+        # Swipe the group's ID for our own!
+        $id = $grp->get_id;
+        $self->_set([qw(id _grp)], [$id, $grp]);
+
+        # Insert a new record into the database.
+        my $value_cols = join ', ', ('?') x @COLS;
+        my $ins_cols = join ', ', @COLS;
+        my $ins = prepare_c(qq{
+            INSERT INTO $TABLE ($ins_cols)
+            VALUES ($value_cols)
+        }, undef, DEBUG);
+
+        # Don't try to set ID - it will fail!
+        execute($ins, $self->_get(@PROPS));
+
+        # Register this site in its private group and in the "All Sites" group.
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+        $grp->add_member({ obj => $self });
+        $grp->save;
+
+        # Add the group IDs.
+        $self->_set(['grp_ids'], [[INSTANCE_GROUP_ID, $id]]);
+    }
+
+    # Finish up.
+    $self->SUPER::save;
+}
+
+##############################################################################
+
+=begin comment
+
+=head2 Private Functions
+
+=head3 $set_unique_attr
+
+  sub set_name { $set_unique_attr->('name', @_) }
+
+Used by the accessors for attributes that require a globally-unique value. The
+first argument should be the name of the attribute to be set, and the
+succeeding values.
+
+=cut
+
+$set_unique_attr = sub {
+    my ($field, $self, $value) = @_;
+
+    # Make sure we have a value.
+    throw_dp "Value of $field attribute cannot be empty"
+      unless $value;
+
+    my $old_value = $self->_get($field);
+    # Just succeed if the new value is the same as the old value.
+    return $self if $old_value and lc $value eq lc $old_value;
+
+    # Check the database for any existing sites with the new value.
+    if ($self->list_ids({ $field => $value })) {
+        throw_dp "A site with the attribute '$value' already exists";
+    }
+
+    # Success!
+    $self->_set([$field], [$value]);
+};
+
+##############################################################################
+
+=head3 $get_em
+
+  $get_em->($invocant, $params, $ids_only);
+
+Function used by C<lookup()>, C<list()>, and C<list_ids()> to retrieve
+site objects from the database. The arguments are as follows:
+
+=over
+
+=item C<$invocant>
+
+The class name or object that invoked the method call.
+
+=item C<$params>
+
+The hashref of parameters supported by the method and that can be used to
+create a SQL search query.
+
+=item C<$ids_only>
+
+A boolean indicating whether to return site objects or site IDs only.
+
+=back
+
+B<Throws:>
+
+=over 4
+
+=item DA
+
+=back
+
+=cut
+
+$get_em = sub {
+    my ($invocant, $params, $ids_only) = @_;
+    my $tables = "$TABLE a, member m, site_member c";
+    my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND ' .
+      'm.active = 1';
+    my @params;
+
+    foreach my $k (keys %$params) {
+        if ($k eq 'id') {
+            # Simple lookup by ID.
+            $wheres .= " AND a.id = ?";
+            push @params, $params->{$k};
+        } elsif ($k eq 'active') {
+            # Simple lookup by "active" boolean.
+            $wheres .= " AND a.active = ?";
+            push @params, $params->{$k} ? 1 : 0;
+        } elsif ($k eq 'grp_id') {
+            # Look up by group membership.
+            $tables .= ", member m2, site_member c2";
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.active = 1 AND m2.grp__id = ?";
+            push @params, $params->{$k};
+        } elsif ($k eq 'user_id') {
+            # Yes, this is hairy! Users are associated with sites by nature of
+            # being members of a user group with the appropriate permission.
+            # This query doesn't yet exclude any sites where the permission
+            # is DENY. I still have to figure that out.
+            $tables .= ", member m3, member m4, site_member c3, user_member um," .
+              "grp_priv gp, grp_priv__grp_member gm";
+            $wheres .= " AND a.id = c3.object_id AND c3.member__id = m3.id" .
+              " AND m3.active = 1 AND m3.grp__id = gm.grp__id" .
+              " AND gm.grp_priv__id = gp.id AND gp.value < 4" .
+              " AND gp.grp__id = m4.grp__id AND m4.id = um.member__id" .
+              " AND um.object_id = ?";
+            push @params, $params->{$k};
+        } else {
+            # Simple string comparison.
+            $wheres .= " AND LOWER(a.$k) LIKE ?";
+            push @params, lc $params->{$k};
+        }
+    }
+
+    my ($qry_cols, $order) = $ids_only ? (\'DISTINCT a.id', 'a.id') :
+      (\$SEL_COLS, 'a.name, a.id');
+
+    my $sel = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
+    }, undef, DEBUG);
+
+    # Just return the IDs, if they're what's wanted.
+    if ($ids_only) {
+        my $ids = col_aref($sel, @params);
+        return unless @$ids;
+        return wantarray ? @$ids : $ids;
+    }
+
+    execute($sel, @params);
+    my (@d, @sites, $grp_ids);
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
+    my $class = ref $invocant || $invocant;
+    while (fetch($sel)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new site object.
+            my $self = $class->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @sites, $self->cache_me;
+        } else {
+            push @$grp_ids, $d[$#d];
+        }
+    }
+
+    return unless @sites;
+    return wantarray ? @sites : \@sites;
+};
+
+1;
+__END__
+
+##############################################################################
+
+=pod
+
+=end comment
+
+=head1 AUTHOR
+
+David Wheeler <david@kineticode.com>
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<Bric::Biz::Category|Bric::Biz::Category>
+
+Each category object is associated with a site.
+
+=item L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel>
+
+Each output channel object is associated with a site.
+
+=item L<Bric::Biz::AssetType|Bric::Biz::AssetType>
+
+Each top-level element object is associated with one or more site.
+
+=item L<Bric::Biz::Workflow|Bric::Biz::Workflow>
+
+Each workflow object is associated with a site.
+
+=item L<Bric::Biz::Asset|Bric::Biz::Asset>
+
+Each asseet object is associated with a site.
+
+=item L<Bric::Dist::ServerType|Bric::Dist::ServerType>
+
+Each destination object is associated with a site.
+
+=back
+
+=cut

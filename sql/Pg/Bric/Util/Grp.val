@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Grp.val
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.2.2.1 $
 --
--- $Date: 2003-02-26 02:48:26 $
+-- $Date: 2003-03-04 01:26:47 $
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (0, NULL, 6, 'Root Group', 'The mother of all groups.', 1, 1);
@@ -405,7 +405,27 @@ INSERT INTO member (id, grp__id, class__id, active)
 VALUES (152, 24, 9, 1);
 
 INSERT INTO contrib_type_member (id, object_id, member__id)
-VALUES (2, 39, 152); 
+VALUES (2, 39, 152);
+
+-- All Sites.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (47, NULL, 76, 'All Sites', 'All sites in the system.', 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (165, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (56, 47, 165);
+
+-- Create the Default site secret group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (100, NULL, 76, 'Default Site', 'Default Site Group.', 1, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (166, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (57, 100, 166);
 
 -- Illustrators.
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
