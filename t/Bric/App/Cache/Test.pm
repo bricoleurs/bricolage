@@ -70,7 +70,7 @@ sub test_user_cx : Test(3) {
     my $c = $self->{cache};
     my $uid = $self->user_id;
     my $sid = 100;
-    ok( ! defined $c->get_user_cx, "No user_cx yet" );
+    ok( ! defined $c->get_user_cx($uid), "No user_cx yet" );
     ok( $c->set_user_cx($uid, $sid), "Set user_cx" );
     is( $c->get_user_cx($uid), $sid, "Check user_cx" );
 }
