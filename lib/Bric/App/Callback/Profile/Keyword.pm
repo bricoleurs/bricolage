@@ -41,9 +41,8 @@ sub save : Callback {
 
         log_event($widget . ($is_saving ? 'save' : 'new'), $keyword);
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
-        $self->set_redirect("/admin/manager/$widget");
     }
-
+    $self->set_redirect("/admin/manager/$widget");
     $param->{'obj'} = $keyword;
     return;
 }
