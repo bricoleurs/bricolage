@@ -151,6 +151,10 @@ the heads-up. [David]
 An overhaul of the burn system had regressed the Output Channel preview 
 functionality.  I've put it back now.  [Mark]
 
+=item *
+
+Fixed button javascript to work correctly in Mozilla.  [Matt]
+
 =back
 
 =head2 New Features

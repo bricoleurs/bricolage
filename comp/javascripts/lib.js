@@ -85,7 +85,6 @@ Output: returns false to cancel the link action.
 function customSubmit(formName, cbNames, cbValues, optFunctions) {
 
     var frm = document.forms[formName];
-
     if(typeof cbNames == "string") {
 	frm.elements[cbNames].value = cbValues;
     } else {
@@ -94,14 +93,15 @@ function customSubmit(formName, cbNames, cbValues, optFunctions) {
 	    alert(frm.elements[cbNames[i]].name);
 	}
     }
-    if (typeof optFunctions == "string") {
-	eval(optFunctions);
-    } else {
-	for (var i in optFunctions) {
-	    eval(optFunctions[i]);
+    if (optFunctions != null) {
+	if (typeof optFunctions == "string") {
+	    eval(optFunctions);
+	} else {
+	    for (var i in optFunctions) {
+		eval(optFunctions[i]);
+	    }
 	}
     }
-
     frm.submit();
     return false;
 }
