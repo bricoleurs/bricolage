@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2002-08-17 23:49:45 $
 
 =head1 SYNOPSIS
 
@@ -1784,8 +1784,6 @@ Bric::Util::Coll::Contact object. See that class and its parent, Bric::Util::Col
 for interface details.
 
 B<Throws:>
-
-=over 4
 
 =item *
 

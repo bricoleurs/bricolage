@@ -7,15 +7,15 @@ Bric::Util::Fault - base class for all Exceptions
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2002-07-18 19:04:33 $
 
 =head1 SYNOPSIS
 
@@ -375,6 +375,8 @@ NONE.
 
 1;
 __END__
+
+=back
 
 =head1 NOTES
 

@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:42 $
+$Date: 2002-03-15 22:55:02 $
 
 =head1 SYNOPSIS
 
@@ -298,7 +298,7 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
-=over 4
+=over
 
 =item my (@pref_ids || $pref_ids_aref) = Bric::Util::Pref->list_ids($params)
 
@@ -488,8 +488,6 @@ Possible keys include:
 =item *
 
 type - The display field type. Possible values are
-
-=over 4
 
 =item text
 

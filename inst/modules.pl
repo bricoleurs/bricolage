@@ -6,11 +6,11 @@ modules.pl - installation script to probe for required Perl modules
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-09-03 19:03:12 $
+$Date: 2002-08-09 18:43:35 $
 
 =head1 DESCRIPTION
 
@@ -109,13 +109,6 @@ sub check_module {
 	print "ok.\n";
     }
 
-    # HTML::Mason has a special requirement - the most recent versions
-    # break Bricolage!
-    hard_fail("HTML::Mason $HTML::Mason::VERSION not supported!\n" .
-              "You must remove this version of Mason before ".
-              "installing Bricolage.\n")
-      if ($name eq 'HTML::Mason' and $HTML::Mason::VERSION > 1.09);
-
     return 1;
 }
 
@@ -141,4 +134,3 @@ sub extract_module_list {
   }
   close ADM;
 }
-

@@ -8,15 +8,15 @@ Channels.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:43 $
+$Date: 2002-01-06 04:40:36 $
 
 =head1 SYNOPSIS
 
@@ -122,8 +122,6 @@ sub class_name { 'Bric::Biz::OutputChannel' }
 =back
 
 =head2 Public Instance Methods
-
-=over 4
 
 =item $self = $coll->save
 

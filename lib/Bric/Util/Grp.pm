@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-28 22:57:12 $
+$Date: 2002-08-21 21:58:17 $
 
 =head1 SYNOPSIS
 
@@ -1383,6 +1383,7 @@ sub delete_member {
 
     # Remove the member object and return.
     my $memb_coll = $get_memb_coll->($self);
+    $mem->remove;
     $memb_coll->del_objs($self->get_object_class_id ?
                          $mem->get_obj_id :
                          $mem->get_id);
@@ -1454,9 +1455,7 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> This method I<may> return false if a member has been added via
-C<add_member()> but the Grp object hasn't been saved. The upshot is that one
-should always call has_member() on a fully saved Grp object.
+B<Notes:> NONE.
 
 =cut
 
@@ -1487,8 +1486,7 @@ sub has_member {
             $mem = $memb_hash->{$pkg}{$id} or return;
         }
     } else {
-        # Just look it up. This will fail if a member has been added, but the
-        # group hasn't been saved.
+        # Just look it up.
         my %args = $params->{obj} ? ( object => $params->{obj} ) :
           ( object_package => $params->{package}, object_id => $params->{id});
         $args{grp} = $self;

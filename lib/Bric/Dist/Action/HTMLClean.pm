@@ -6,16 +6,16 @@ Bric::Dist::Action::HTMLClean - Class to Clean up and reformat HTML files.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:40 $
+$Date: 2002-01-06 04:40:36 $
 
 =head1 SYNOPSIS
 
@@ -117,13 +117,21 @@ See Bric::Dist::Action.
 
 See Bric::Dist::Action.
 
-=over 4
+################################################################################
 
 =item $self = $action->do_it($job, $server_type)
 
 Cleans the HTML files for a given job and server type.
 
-B<Throws:> NONE.
+B<Throws:>
+
+=over 4
+
+=item *
+
+
+
+=back
 
 B<Side Effects:> NONE.
 

@@ -34,13 +34,16 @@ $param->{obj} = $m->comp("$key.mc", %ARGS, obj => $obj, class => $class);
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-08-30 17:05:24 $
+$Date: 2001-12-04 18:17:40 $
 
 =head1 SYNOPSIS
+
+print STDERR Data::Dumper::Dumper($param);
+return;
 
   $m->comp('/widgets/formBuilder/callback.mc', %ARGS);
 

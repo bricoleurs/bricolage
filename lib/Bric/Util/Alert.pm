@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2002-07-16 19:06:54 $
 
 =head1 SYNOPSIS
 
@@ -517,6 +517,8 @@ Unable to fetch row from statement handle.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=back
 
 =cut
 

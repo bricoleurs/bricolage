@@ -10,16 +10,16 @@ package Bric::Biz::Workflow::Parts::Desk;
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-08-28 22:23:01 $
+$Date: 2002-08-17 23:49:45 $
 
 
 =head1 SYNOPSIS
@@ -722,14 +722,7 @@ sub checkout {
 					'_asset_grp_obj');
 
     # Don't do anything unless this asset is already on this desk.
-#    return unless $asset_grp->has_member({ obj => $a_obj });
-
-    # The doesn't actually work because of the recent Grp.pm
-    # refactorings. has_member() might return false if new members haven't
-    # been saved to the database. This might get fixed eventually, but in the
-    # meantime, I see no reason not to just add the asset to the desk, even if
-    # it has already been added via accept().
-    $asset_grp->add_asset([$a_obj]);
+    return unless $asset_grp->has_member({ obj => $a_obj });
 
     my $chkout = $self->_get('_checkout');
 
@@ -897,8 +890,8 @@ sub remove_asset {
 					   '_asset_grp_obj');
 
     # If the asset was accepted and we get here, remove this asset from the desk
-    $asset_grp_obj->delete_member({ package => ref $asset,
-                                    id      => $asset->get_id });
+    $asset_grp_obj->delete_members([{'package' => ref $asset,
+				     'id'      => $asset->get_id}]);
 
     return $self;
 }

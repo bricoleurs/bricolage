@@ -8,15 +8,15 @@ members
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:42 $
+$Date: 2002-08-17 23:49:46 $
 
 =head1 SYNOPSIS
 
@@ -122,8 +122,6 @@ sub class_name { 'Bric::Util::Grp::Parts::Member' }
 
 =head2 Public Instance Methods
 
-=over 4
-
 =item $self = $coll->save
 
 =item $self = $coll->save($server_type_id)
@@ -177,10 +175,7 @@ sub save {
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     # Save the deleted objects.
     foreach my $mem (@$del_objs) {
-        if ($mem->get_id) {
-            $mem->remove;
-            $mem->save;
-        }
+	$mem->save if $mem->get_id;
     }
     @$del_objs = ();
 

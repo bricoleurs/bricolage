@@ -38,8 +38,9 @@ $story->checkout({user__id => 11});
 
 $story->save();
 };
-
-die $@ if $@;
+if ($@) {
+    die Data::Dumper::Dumper($@);
+}
 
 print "Checked out story is " . $story->get_id() . "\n";
 

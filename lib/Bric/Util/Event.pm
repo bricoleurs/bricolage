@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-28 22:23:01 $
+$Date: 2002-07-16 19:06:54 $
 
 =head1 SYNOPSIS
 
@@ -294,9 +294,8 @@ sub new {
     my ($class, $et_id) = ($et->_get('class', 'id'));
     # Die if the object we're logging against isn't in the right class.
     my $obj = $init->{obj};
-    $obj->isa($class) || die Bric::Util::Fault::Exception::DP->new
-      ({ msg => "Event type '" . $et->get_key_name . "' expects an object " .
-                "of type $class" });
+    $obj->isa($class) || die Bric::Util::Fault::Exception::DP->new({
+      msg => __PACKAGE__ . "::new() expects an object of type $class" });
 
     # Die if no user has been passed.
     my $user = $init->{user};

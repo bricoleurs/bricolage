@@ -56,8 +56,8 @@ build_done	: required.db modules.db apache.db postgres.db config.db
 ###########################
 
 dist            : check_dist distclean inst/bricolage.sql dist_dir rm_sql \
-                  rm_pl rm_tst rm_use rm_CVS rm_tmp dist/INSTALL dist/Changes \
-                  dist/License dist_tar
+                  rm_use rm_CVS rm_tmp dist/INSTALL dist/Changes dist/License \
+                  dist_tar
 
 # can't load Bric since it loads Bric::Config which has dependencies
 # that won't be solved till make install.
@@ -80,15 +80,11 @@ rm_sql		:
 	find dist/lib/ -name '*.sql' -o -name '*.val' -o -name '*.con' \
         | xargs rm -rf
 
-# We can do away with this one once the test scripts are moved out of lib.
 rm_pl           :
 	find dist/lib/ -name '*.pl'    | xargs rm -rf
 
 rm_use          :
 	find dist/lib/ -name '*.use'   | xargs rm -rf
-
-rm_tst          :
-	find dist/lib/ -name '*.tst'   | xargs rm -rf
 
 rm_CVS		:
 	find dist/ -type d -name 'CVS' | xargs rm -rf

@@ -127,13 +127,13 @@ my $handle_save = sub {
 	$media->set_workflow_id($work_id);
 	$media->activate;
 
-	# Figure out what desk this media should be in.
+	# Figure out what desk this story should be in.
 	my $wf = Bric::Biz::Workflow->lookup({'id' => $work_id});
 	log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
 
 	my $start_desk = $wf->get_start_desk;
 
-	# Send this media to the first desk.
+	# Send this story to the first desk.
 	$start_desk->accept({'asset' => $media});
 	$start_desk->save;
 	log_event('media_moved', $media, { Desk => $start_desk->get_name });
@@ -242,40 +242,43 @@ my $handle_checkin_and_pub = sub {
     $media ||= get_state_data($widget, 'media');
 
     my $work_id = get_state_data($widget, 'work_id');
-    my $wf;
+	my $wf;
 
     if ($work_id) {
         $media->set_workflow_id($work_id);
+
         $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
         log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
-    } else {
-        $work_id = $media->get_workflow_id();
+    } 
+	else {
+		$work_id = $media->get_workflow_id();
         $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
        	log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
-    }
+	}
 
-    $media->checkin;
+    $media->checkin();
 
-    # get desks for workflow
+	# get desks for workflow
     my @desk = $wf->allowed_desks();
     my $gdesk;
-    # find publish desk for this workflow
+	# find publish desk for this workflow
     foreach my $desk (@desk) {
-        $gdesk = $desk if $desk->can_publish();
+         $gdesk = $desk if $desk->can_publish();
     }
 
     my $cur_desk = $media->get_current_desk();
 
-    my $no_log;
+   my $no_log;
     if ($cur_desk) {
-        if ($cur_desk->get_id() == $gdesk->get_id()) {
+                if ($cur_desk->get_id() == $gdesk->get_id()) {
             $no_log = 1;
         } else {
-            $cur_desk->transfer({ to    => $gdesk,
-                                  asset => $media
-                                });
-            $cur_desk->save();
-        }
+                        $cur_desk->transfer({
+                             to    => $gdesk,
+                             asset => $media
+                            });
+                        $cur_desk->save();
+                }
     } else {
         $gdesk->accept({'asset' => $media});
     }
@@ -284,7 +287,7 @@ my $handle_checkin_and_pub = sub {
     log_event('media_moved', $media, { Desk => $dname }) unless $no_log;
 
     # make sure that the media is active
-    $media->save;
+    $media->save();
 
     log_event('media_checkin', $media);
 
@@ -294,17 +297,17 @@ my $handle_checkin_and_pub = sub {
             . " &quot;$dname&quot;.");
 
 
-    # HACK: Commit this checkin WHY?? Because Postgres does NOT like it when
-    # you insert and delete a record within the same transaction. This will
-    # be fixed in PostgreSQL 7.3. Be sure to start a new transaction!
-    Bric::Util::DBI::commit;
-    Bric::Util::DBI::begin;
-    # Instantiate the Burner object.
-    my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
-    my $published = $b->publish($media, 'media', get_user_id);
-    add_msg("Media &quot;" . $media->get_title . "&quot; published.")
-      if $published;
+	# Commit this checkin
+	# WHY?? Because Postgres does NOT like it when you insert and
+    # delete a record within the same transaction..
+    Bric::Util::DBI->commit();
 
+	# Instantiate the Burner object.
+    my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
+	
+	my $published = $b->publish($media, 'media', get_user_id);
+	add_msg("Media &quot;" . $media->get_title . "&quot; published.") if $published;
+	
     # Set the redirect to the page we were at before here.
     set_redirect("/");
 
@@ -335,13 +338,13 @@ my $handle_save_stay = sub {
     if ($work_id) {
 	$media->set_workflow_id($work_id);
 
-	# Figure out what desk this media should be in.
+	# Figure out what desk this story should be in.
 	my $wf = Bric::Biz::Workflow->lookup({'id' => $work_id});
 	log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
 
 	my $start_desk = $wf->get_start_desk;
 
-	# Send this media to the first desk.
+	# Send this story to the first desk.
 	$start_desk->accept({'asset' => $media});
 	$start_desk->save;
 	log_event('media_moved', $media, { Desk => $start_desk->get_name });
@@ -645,7 +648,7 @@ my $handle_recall = sub {
 
 	    # Put this formatting asset into the current workflow and log it.
 	    $ba->set_workflow_id($w_id);
-	    log_event('media_add_workflow', $ba, { Workflow => $wf->get_name });
+	    log_event('story_add_workflow', $ba, { Workflow => $wf->get_name });
 
 	    # Get the start desk for this workflow.
 	    my $start_desk = $wf->get_start_desk;
@@ -654,7 +657,7 @@ my $handle_recall = sub {
 	    $start_desk->accept({'asset' => $ba});
 	    $start_desk->checkout($ba, get_user_id);
 	    $start_desk->save;
-	    log_event('media_moved', $ba, { Desk => $start_desk->get_name });
+	    log_event('story_moved', $ba, { Desk => $start_desk->get_name });
 	} else {
 	    add_msg("Permission to checkout &quot;" . $ba->get_name
 		    . "&quot; denied");

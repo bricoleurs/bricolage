@@ -276,9 +276,9 @@ my $def = {
 	   element_type => { alter => { biz_class_id => sub { get_disp_name($_[0]) },
 					  paginated => $yes_no,
 					  fixed_url => $yes_no },
-#			       field_values => sub { return unless $_[1] eq 'biz_class_id';
-#						     get_disp_name($_[0]->get_biz_class_id);
-#						 },
+			       field_values => sub { return unless $_[1] eq 'biz_class_id';
+						     get_disp_name($_[0]->get_biz_class_id);
+						 },
 			       list_fields => [qw(name description biz_class_id paginated fixed_url)],
 			       behavior => 'narrow',
 			       srch_field => 'name',
@@ -367,11 +367,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2002-08-27 16:22:09 $
+$Date: 2002-08-18 23:43:18 $
 
 =head1 SYNOPSIS
 

@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.71 $
+$Revision: 1.70 $
 
 =head1 DATE
 
-$Date: 2002-08-31 00:50:28 $
+$Date: 2002-08-26 06:41:06 $
 
 =head1 DESCRIPTION
 
@@ -41,7 +41,7 @@ in mind as long term goals further down the line.
 
 =cut
 
-##############################################################################
+################################################################################
 
 =head2 High Priority Minor Items
 
@@ -57,9 +57,9 @@ list of all categories.
 =item *
 
 When clicking "New" for an existing contributor, allow choice of Contributor
-Type, and B<then> role. Right now, if you want an existing contributor to be a
-contributor of a different type, you have to create a new person, and this
-duplication is bad.
+Type, and B<then> role. Right now, if you want an existing to be a contributor
+of a different type, you have to create a new person, and this duplication is
+bad.
 
 =item *
 
@@ -87,18 +87,7 @@ L<http://bugzilla.bricolage.cc/show_bug.cgi?id=3>).
 =item *
 
 Add Keyword Management interface to centrally manage keywords. Also add
-interface to select from existing keywords for associating with assets. Note
-that support Keyword Groups will have to be returned to the API.
-
-=item *
-
-Create a framework for unit testing using Test::Class.
-
-=item *
-
-Create backup and restore scripts that make it easy to do, especially given
-the difficulties of importing a PostgreSQL database dump from Bricolage (Sam
-has more details on this).
+interface to select from existing keywords for associating with assets.
 
 =item *
 
@@ -122,6 +111,11 @@ Add "Check In and Remove from Workflow" button to asset editing screens.
 
 =item *
 
+If a field in an Element is marked "Required," then require that it be filled
+in in the profile (via JavaScript).
+
+=item *
+
 Add "Clone Asset" button to Media and Story profiles (I think that the API and
 maybe even the callbacks are already done).
 
@@ -131,14 +125,21 @@ Add ability to "undeploy" templates without deactivating them.
 
 =item *
 
-Add a check that a user has selected at least one output channel when creating
-a new story type element or media type element. Top-level elements without
-output channels cause Bricolage indigestion.
+Add a check that a user has selected at least one output channel when creating a
+new element. Elements without output channels cause Bricolage indigestion.
 
 =item *
 
 Add option to the installation system to always use the defaults and
 never prompt the user.
+
+=item *
+
+Enhance the upgrade system to allow upgrading of installations that
+did not use the new installation system.  These installs won't have a
+conf/install.db to guide the upgrade and the upgrade system will have
+to compensate by probing bricolage.conf and asking the user questions
+about their setup.
 
 =item *
 
@@ -159,11 +160,6 @@ default search form when you go to those screens.
 
 Move Bric::Util::Fault::Exception objects up, so that they become subclasses
 of Bric::Util::Fault, instead.
-
-=item *
-
-Use Exception::Class to build the exception objects, rather than our own
-home-grown method. Also use Exception::Class::DBI for DBI exceptions.
 
 =item *
 
@@ -194,11 +190,15 @@ Merge use of IO::String and IO::Stringy.
 
 =cut
 
-##############################################################################
+################################################################################
 
 =head2 High Priority Major Items
 
 =over 4
+
+=item *
+
+Add regression test suite.
 
 =item *
 
@@ -219,53 +219,25 @@ character set.
 
 =item *
 
-Revamp the element system. See the proposed functional specification here:
-L<http://sourceforge.net/mailarchive/forum.php?thread_id=527051&forum_id=561>.
+Improve the formBuilder interface such that existing fields can be edited, and
+there is better control over how the fields are created.
 
 =item *
 
-Add support for Instant messaging (using Jabber server) in Alerts.
-
-=item *
-
-Make URI format output channel-specific. Include an option to allow the slug
-to be the file name, e.g., F<slug.html>, F<slug1.html>, etc.. Media files will
-continue to retain their own names, however.
-
-=item *
-
-Chage output channels such that, when they're associated with a story type (or
-media type), they will be output channels to which a story of that type I<may>
-be published. Each output channel has an associated checkbox indicating
-whether a story of that type is published to the given output channel by
-default. In the story profile, you see this list, and check a checkbox for
-those output channels you want the story published to.
-
-=item *
-
-Add a new preference to Bricolage to optinally allow assets to be transferred
-across workflows. The default will be for them not to.
-
-=item *
-
-Add an email mover. There should be one that will simply mail the contents of
-an output, and one that will send the contents as an attachment (or
-attachments, if there are several files).
+Simplify associating media with stories. Users should be able to associate
+media with stories just as they do contributors and keywords. However, the new
+media objects they upload should be put into the repository as normal media
+assets. New uploads of the same media file increment the version numbers.
 
 =back
 
 =cut
 
-##############################################################################
+################################################################################
 
 =head2 Low Priority Minor Items
 
 =over 4
-
-=item *
-
-Add desk paging, such that the assets on a given desk (or My Workspace) can be
-viewed across a series of pages.
 
 =item *
 
@@ -275,12 +247,11 @@ for this purpose.
 
 =item *
 
-Modify JavaScript and CSS to work outside of Mason, that is, without
+Modify JavaScript and CSS to work entirely in JavaScript, rather than rely on
 server-side client identification. This way, the script files can just be sent
-to the browser once, rather than re-executing the Mason versions of these
-files for every request. Note that this is how the CSS for the help pages
-currently works, although their reliance on a JavaScript browser sniffer can
-be removed.
+to the browser once, rather than re-executing the Mason versions of these files
+for every request. Note that this is how the CSS for the help pages currently
+works.
 
 =item *
 
@@ -295,6 +266,11 @@ page.
 =item *
 
 Dump Bric::App::ReqCache. Use $r->pnotes() instead.
+
+=item *
+
+Add ability to reverse the order of search results in the manager screens
+(especially for assets).
 
 =item *
 
@@ -332,8 +308,12 @@ Add Akamaization Action.
 
 =item *
 
-Link contributors to their assets -- provide a link in the Contributor Manager
-and/or the Contributor Profile).
+Add Net::SFTP move method.
+
+=item *
+
+Link contributors to their assets in the -- provide a link in the Contributor
+Manager and/or the Contributor Profile).
 
 =item *
 
@@ -344,11 +324,6 @@ expand or narrow behavior.
 
 Add command-line argument to bric_ftpd that will kill the currently-running
 instance.
-
-=item *
-
-Add command-line argument to bric_dist_mon that will kill the
-currently-running instance.
 
 =item *
 
@@ -364,11 +339,16 @@ you choose to accept this mission you'll need to write an upgrade script to
 correct template entries in the database and move deployed templates on the
 filesystem.
 
+=item *
+
+Add interface for editing Media Types (a.k.a. MIME types) so that new ones can
+be added.
+
 =back
 
 =cut
 
-##############################################################################
+################################################################################
 
 =head2 Low Priority Major Items
 
@@ -376,8 +356,8 @@ filesystem.
 
 =item *
 
-Add keywords to media. The underlying API and database changes are complete -
-all that is left to do is add the user-interface.
+Add keywords to media.  The underlying API and database changes are
+complete - all that is left to do is add the user-interface.
 
 =item *
 
@@ -392,21 +372,16 @@ in and exploit such a field.
 
 =item *
 
-Add option code field to custom fields. This feature will allow a select list
-to offer as options the values returned from C<eval>ed perl expression, such
-as a DBI qeury to another database. Yes, this could be a security issue (a
-serious one!), but we put the onus on the Bricolage administrator to ensure
-that the people with access can't bollocks things up. We just have to make it
-difficult for people to hack in and exploit such a field.
-
-=item *
-
 Add a Relational custom field option. This field would allow a a link to be
 made to another arbitrary object in Bricolage. The custom field form would
 have a select list of Bricolage object names (e.g., Story, User, Output
 Channel, Event, etc.). When the user wishes to make the link, she's presented
 with a manager-type search interface from which to find a pick the object she
 wants.
+
+=item *
+
+Add support for Java templates.
 
 =item *
 
@@ -469,7 +444,17 @@ appears to the user should appear except in reference to a localization library.
 
 =item *
 
+Add support for Instant messaging (using Jabber server) in Alerts.
+
+=item *
+
 Add file system-like asset browsing (especially for templates and media).
+
+=item *
+
+Revamp Exceptions so that they use numbers to look themselves up -- so there's a
+central repository of possible exceptions, and they are therefore easier to
+document.
 
 =item *
 
@@ -478,7 +463,7 @@ not, rather than relying solely on the desk name.
 
 =item *
 
-Add explicit directory (a.k.a. story index) support.
+Add directory (a.k.a. story index) support.
 
 =item *
 
@@ -487,29 +472,15 @@ checking permissions.
 
 =item *
 
-Add an option to all C<list()> methods so that they can take an array of IDs
-and return all the objects with those IDs via the C<WHERE ID IN (...)> SQL
-syntax. Such queries shouldn't be prepared via C<prepare_cached()>, only via
-C<prepare()>, since there will likely be a different number of IDs to look for
-every time.
-
-=item *
-
-When that last item is done, modify C<Grp->get_objects()> to use it! Go
-through all the code and make sure that it uses this approach, rather than
-constructing the relevant objects one-at-a-time from each Member object.
-
-=item *
-
-Add Group cloning so that a new group can start with the settings (including
+Add Group copying so that a new group can start with the settings (including
 permissions) of an existing group.
 
 =item *
 
 Allow Element Types to be subelements. This means that all elements of a
 particular type will be subelements, so that if you add or remove elements of
-that type, they will automatically be subelements of whatever element for
-which the type is defined.
+that type, they will automatically be subelements of whatever element for which
+the type is defined.
 
 =item *
 
@@ -534,16 +505,17 @@ same asset).
 
 =item *
 
-Implement keyword synonyms. This might include support for various meanings
-among keywords and/or support for a prefered keyword among a group of
-synonymous keywords. Past versions of Bricolage (pre 1.3.2) included an
-incomplete implementation that you might use as inspiration.
+Implement keyword synonyms.  This might include support for various
+meanings among keywords and/or support for a prefered keyword among a
+group of synonymous keywords.  Past versions of Bricolage (pre 1.3.2)
+included an incomplete implementation that you might use as
+inspiration. 
 
 =back
 
 =cut
 
-##############################################################################
+################################################################################
 
 =head2 Blue Sky
 
@@ -551,11 +523,7 @@ incomplete implementation that you might use as inspiration.
 
 =item *
 
-Add support for Java templates.
-
-=item *
-
-Add basic project management. Tie project tasks to workflow desks.
+Add basic project management. Tie project tasks to stops in the workflow.
 
 =item *
 
@@ -563,9 +531,13 @@ Add support for concurrent checkouts, including support for conflict resolution.
 
 =item *
 
-Add support for display of deltas between versions -- something like what
-CVSWeb does, in terms of allowing editors to see what has changed between
-versions of an asset.
+Add support for display of deltas between versions -- something like what CVSWeb
+does, in terms of allowing editors to see what has changed between versions of
+an asset.
+
+=item *
+
+Create system of interserver communication and replication.
 
 =item *
 
@@ -598,17 +570,25 @@ Add support for skins -- different colors, etc, probably via preferences.
 
 =item *
 
+Add support for creating PDFs in templates. PDF support is available from the
+CPAN: http://search.cpan.org/search?mode=module&query=PDF.
+
+=item *
+
 Allow Elements to be previewed before they're added.
 
 =item *
 
-Add permission granularity down to the user, property, field, and attribute
+Add permission granularity down to the User, property, field, and attribute
 levels.
 
 =item *
 
-Add reporting, where reports can be templated and saved for particular users,
-or to be shared between users.
+Version elements individually, separate from stories?
+
+=item *
+
+Add reporting, where reports can be templated and saved.
 
 =item *
 
@@ -618,7 +598,7 @@ Allow items to move through different workflows and/or desks in parallel.
 
 =cut
 
-##############################################################################
+################################################################################
 
 =head1 AUTHOR
 
@@ -626,6 +606,6 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, L<Bric::Changes|Bric::Changes>.
+L<Bric|Bric>
 
 =cut

@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2002-07-02 22:49:17 $
 
 =head1 SYNOPSIS
 
@@ -594,6 +594,8 @@ Throws: NONE
 Side Effects: NONE
 
 Notes: NONE
+
+=back 4
 
 =cut
 

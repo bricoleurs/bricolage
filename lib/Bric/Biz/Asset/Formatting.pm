@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:39 $
+$Date: 2002-03-15 20:43:24 $
 
 =head1 SYNOPSIS
 
@@ -2136,6 +2136,8 @@ NONE
 
 1;
 __END__
+
+=back
 
 =head1 NOTES
 

@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:43 $
+$Date: 2002-03-14 01:45:41 $
 
 =head1 SYNOPSIS
 
@@ -79,6 +79,8 @@ BEGIN { Bric::register_fields() }
 =head2 Constructors
 
 NONE.
+
+=back 4
 
 =head2 Destructors
 

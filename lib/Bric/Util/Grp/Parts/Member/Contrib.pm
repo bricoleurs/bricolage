@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:43 $
+$Date: 2002-07-10 00:48:22 $
 
 =head1 SYNOPSIS
 
@@ -421,6 +421,8 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=back
+
 =cut
 
 sub get_roles {
@@ -440,6 +442,8 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=back
 
 =cut
 
@@ -461,6 +465,8 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=back
 
 =cut
 

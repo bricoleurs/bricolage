@@ -6,16 +6,16 @@ Bric::Biz::Contact - Interface to Contacts
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2002-01-06 04:40:35 $
 
 =head1 SYNOPSIS
 
@@ -426,6 +426,8 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=back
+
 =cut
 
 sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
@@ -660,6 +662,8 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=back
+
 =cut
 
 sub list_types { &$get_types() }
@@ -701,6 +705,8 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=back
+
 =cut
 
 sub href_types { &$get_types(1) }
@@ -741,6 +747,8 @@ Unable to fetch row from statement handle.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=back
 
 =cut
 
@@ -784,6 +792,8 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=back
+
 =cut
 
 sub href_alertable_types { &$get_types(1, 1) }
@@ -826,6 +836,8 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=back
+
 =cut
 
 sub href_alertable_type_ids { &$get_types(1, 1, 1) }
@@ -858,6 +870,8 @@ Unable to execute SQL statement.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=back
 
 =cut
 
@@ -907,6 +921,8 @@ Unable to execute SQL statement.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=back
 
 =cut
 

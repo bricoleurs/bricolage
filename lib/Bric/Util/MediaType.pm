@@ -6,16 +6,16 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:42 $
+$Date: 2002-06-29 09:08:16 $
 
 =head1 SYNOPSIS
 
@@ -302,7 +302,7 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
-=over 4
+=over
 
 =item my (@foo_ids || $mt_ids_aref) = Bric::Util::MediaType->list_ids($params)
 
@@ -312,7 +312,7 @@ same as those for list().
 
 B<Throws:>
 
-=over 4
+over 4
 
 =item *
 
@@ -365,7 +365,7 @@ get_name_by_ext() will return undef.
 
 B<Throws:>
 
-=over 4
+over 4
 
 =item *
 
@@ -414,7 +414,7 @@ database, get_name_by_ext() will return undef.
 
 B<Throws:>
 
-=over 4
+over 4
 
 =item *
 

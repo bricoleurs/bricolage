@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-29 19:09:05 $
+$Date: 2002-08-26 06:03:47 $
 
 =head1 SYNOPSIS
 
@@ -65,57 +65,57 @@ use constant DEBUG => 0;
 use constant TABLE  => 'media';
 use constant VERSION_TABLE => 'media_instance';
 
-use constant COLS           => qw( element__id
-                                   priority
-                                   source__id
-                                   current_version
-                                   published_version
-                                   usr__id
-                                   publish_date
-                                   expire_date
-                                   cover_date
-                                   workflow__id
-                                   publish_status
-                                   active);
+use constant COLS	    => qw( element__id
+				   priority
+				   source__id
+				   current_version
+				   published_version
+				   usr__id
+				   publish_date
+				   expire_date
+				   cover_date
+				   workflow__id
+				   publish_status
+				   active);
 
 use constant VERSION_COLS   => qw( name
-                                   description
-                                   media__id
-                                   usr__id
-                                   version
-                                   media_type__id
-                                   category__id
-                                   file_size
-                                   file_name
-                                   location
-                                   uri
-                                   checked_out);
+				   description
+				   media__id
+				   usr__id
+				   version
+				   media_type__id
+				   category__id
+				   file_size
+				   file_name
+				   location
+				   uri
+				   checked_out);
 
-use constant FIELDS         => qw( element__id
-                                   priority
-                                   source__id
-                                   current_version
-                                   published_version
-                                   user__id
-                                   publish_date
-                                   expire_date
-                                   cover_date
-                                   workflow_id
-                                   publish_status
-                                   _active);
+use constant FIELDS	    => qw( element__id
+				   priority
+				   source__id
+				   current_version
+				   published_version
+				   user__id
+				   publish_date
+				   expire_date
+				   cover_date
+				   workflow_id
+				   publish_status
+				   _active);
 
 use constant VERSION_FIELDS => qw( name
-                                   description
-                                   id
-                                   modifier
-                                   version
-                                   media_type_id
-                                   category__id
-                                   size
-                                   file_name
-                                   location
-                                   uri
-                                   checked_out);
+				   description
+				   id
+				   modifier
+				   version
+				   media_type_id
+				   category__id
+				   size
+				   file_name
+				   location
+				   uri
+				   checked_out);
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Media';
 use constant INSTANCE_GROUP_ID => 32;
@@ -139,20 +139,20 @@ my ($meths, @ord);
 
 BEGIN {
     Bric::register_fields(
-                        {
-                         # Public Fields
-                         location        => Bric::FIELD_READ,
-                         file_name       => Bric::FIELD_READ,
-                         uri             => Bric::FIELD_READ,
-                         media_type_id   => Bric::FIELD_RDWR,
-                         category__id    => Bric::FIELD_RDWR,
-                         size            => Bric::FIELD_RDWR,
+			{
+			 # Public Fields
+			 location        => Bric::FIELD_READ,
+			 file_name       => Bric::FIELD_READ,
+			 uri             => Bric::FIELD_READ,
+			 media_type_id   => Bric::FIELD_RDWR,
+			 category__id    => Bric::FIELD_RDWR,
+			 size            => Bric::FIELD_RDWR,
 
-                         # Private Fields
-                         _category_obj   => Bric::FIELD_NONE,
-                         _file           => Bric::FIELD_NONE,
-                         _media_type_obj => Bric::FIELD_NONE,
-                        });
+			 # Private Fields
+			 _category_obj   => Bric::FIELD_NONE,
+			 _file           => Bric::FIELD_NONE,
+			 _media_type_obj => Bric::FIELD_NONE,
+			});
 }
 
 #==============================================================================#
@@ -275,13 +275,13 @@ sub lookup {
 
     my @where = ($param->{'id'});
     if ($param->{'version'}) {
-        $sql .= ' AND i.version=? ';
-        push @where, $param->{'version'};
+	$sql .= ' AND i.version=? ';
+	push @where, $param->{'version'};
     } elsif ($param->{'checkout'}) {
-        $sql .= ' AND i.checked_out=? ';
-        push @where, 1;
+	$sql .= ' AND i.checked_out=? ';
+	push @where, 1;
     } else {
-        $sql .= ' AND m.current_version=i.version ';
+	$sql .= ' AND m.current_version=i.version ';
     }
     $sql .= ' ORDER BY m.cover_date';
 
@@ -302,7 +302,7 @@ sub lookup {
     my $element = $self->_get_element_object();
     my $biz_class = $element->get_biz_class();
     if ($biz_class && $biz_class ne $self) {
-        $self = bless $self, $biz_class;
+	$self = bless $self, $biz_class;
     }
 
     $self->_set__dirty(0);
@@ -497,7 +497,7 @@ sub list_ids { _do_list($_[0], $_[1], 1) }
 ################################################################################
 
 =item ($fields || @fields) = 
-        Bric::Biz::Asset::Business::Media::autopopulated_fields()
+	Bric::Biz::Asset::Business::Media::autopopulated_fields()
 
 Returns a list of the names of fields that are registered in the database as
 being autopopulatable for a given sub class
@@ -516,7 +516,7 @@ sub autopopulated_fields {
 
     my @auto;
     foreach (keys %$fields ) {
-        push @auto, $_;
+	push @auto, $_;
     }
     return wantarray ? @auto : \@auto;
 }
@@ -678,49 +678,49 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     foreach my $meth (__PACKAGE__->SUPER::my_meths(1)) {
-        $meths->{$meth->{name}} = $meth;
-        push @ord, $meth->{name};
+	$meths->{$meth->{name}} = $meth;
+	push @ord, $meth->{name};
     }
 
     push @ord, qw(file_name category category_name), pop @ord;
     $meths->{file_name} = {
-                           get_meth => sub { shift->get_file_name(@_) },
-                           get_args => [],
-                           name     => 'file_name',
-                           disp     => 'File Name',
-                           len      => 256,
-                           req      => 1,
-                           type     => 'short',
-                           props    => { type      => 'text',
-                                         length    => 32,
-                                         maxlength => 256
-                                       }
-                          };
+			   get_meth => sub { shift->get_file_name(@_) },
+			   get_args => [],
+			   name     => 'file_name',
+			   disp     => 'File Name',
+			   len      => 256,
+			   req      => 1,
+			   type     => 'short',
+			   props    => { type      => 'text',
+					 length    => 32,
+					 maxlength => 256
+				       }
+			  };
     $meths->{category} = {
-                          get_meth => sub { shift->get_category_object(@_) },
-                          get_args => [],
-                          set_meth => sub { shift->set_category_object(@_) },
-                          set_args => [],
-                          name     => 'category',
-                          disp     => 'Category',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
-                         };
+			  get_meth => sub { shift->get_category_object(@_) },
+			  get_args => [],
+			  set_meth => sub { shift->set_category_object(@_) },
+			  set_args => [],
+			  name     => 'category',
+			  disp     => 'Category',
+			  len      => 64,
+			  req      => 1,
+			  type     => 'short',
+			 };
 
     $meths->{category_name} = {
-                          get_meth => sub { shift->get_category_object(@_)->get_name },
-                          get_args => [],
-                          name     => 'category_name',
-                          disp     => 'Category',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
-                         };
+			  get_meth => sub { shift->get_category_object(@_)->get_name },
+			  get_args => [],
+			  name     => 'category_name',
+			  disp     => 'Category',
+			  len      => 64,
+			  req      => 1,
+			  type     => 'short',
+			 };
 
-        # Copy the data for the title from name.
-        $meths->{title} = { %{ $meths->{name} } };
-        $meths->{title}{disp} = 'Title';
+	# Copy the data for the title from name.
+	$meths->{title} = { %{ $meths->{name} } };
+	$meths->{title}{disp} = 'Title';
 
     # Rename element.
     $meths->{element} = { %{ $meths->{element} } };
@@ -770,8 +770,8 @@ sub set_category__id {
           $self->_construct_uri($cat), $self->_get('file_name'));
 
     $self->_set({ _category_obj => $cat,
-                  category__id  => $cat_id,
-                  uri           => $uri
+		  category__id  => $cat_id,
+		  uri           => $uri
     });
     return $self;
 }
@@ -835,7 +835,7 @@ sub get_local_uri {
     my $self = shift;
     my $loc = $self->get_location || return;
     return Bric::Util::Trans::FS->cat_uri(MEDIA_URI_ROOT,
-                                        Bric::Util::Trans::FS->dir_to_uri($loc) );
+					Bric::Util::Trans::FS->dir_to_uri($loc) );
 }
 
 =item $uri = $media->get_path()
@@ -876,8 +876,8 @@ sub get_media_type {
     return unless $mt_id;
 
     unless ($mt_obj) {
-        $mt_obj = Bric::Util::MediaType->lookup({'id' => $mt_id});
-        $self->_set(['_media_type_obj'], [$mt_obj]);
+	$mt_obj = Bric::Util::MediaType->lookup({'id' => $mt_id});
+	$self->_set(['_media_type_obj'], [$mt_obj]);
     }
     return $mt_obj;
 }
@@ -926,22 +926,22 @@ sub upload_file {
     # itterate through all the tiles
     foreach my $dt ($tile->get_tiles()) {
 
-        # skip if this is a container
-        next if $dt->is_container();
-        # see if this is an auto populated field
-        my $name = $dt->get_name();
-        my $path = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $loc);
-        my $media_func = Bric::App::MediaFunc->new({ file_path => $path });
-        if ($auto_fields->{$name} ) {
-            # check the tile to see if we can override it
-#           next if $dt->is_locked;
-            # get the value
-            my $method = $auto_fields->{$name};
-            my $val = $media_func->$method();
-            $val = 'No Val returned' unless $val;
-            $dt->set_data($val);
-            $dt->save();
-        }
+	# skip if this is a container
+	next if $dt->is_container();
+	# see if this is an auto populated field
+	my $name = $dt->get_name();
+	my $path = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $loc);
+	my $media_func = Bric::App::MediaFunc->new({ file_path => $path });
+	if ($auto_fields->{$name} ) {
+	    # check the tile to see if we can override it
+#	    next if $dt->is_locked;
+	    # get the value
+	    my $method = $auto_fields->{$name};
+	    my $val = $media_func->$method();
+	    $val = 'No Val returned' unless $val;
+	    $dt->set_data($val);
+	    $dt->save();
+	}
     }
     return $self;
 }
@@ -1052,8 +1052,8 @@ B<Notes:> NONE.
 sub revert {
     my ($self, $version) = @_;
     if (!$self->_get('checked_out')) {
-        die Bric::Util::Fault::Exception::GEN->new( {
-          msg => "May not revert a non checked out version" });
+	die Bric::Util::Fault::Exception::GEN->new( {
+	  msg => "May not revert a non checked out version" });
     }
 
     my @prior_versions = __PACKAGE__->list( {
@@ -1063,15 +1063,15 @@ sub revert {
 
     my $revert_obj;
     foreach (@prior_versions) {
-        if ($_->get_version == $version) {
-            $revert_obj = $_;
-        }
+	if ($_->get_version == $version) {
+	    $revert_obj = $_;
+	}
     }
 
     unless ($revert_obj) {
-        die Bric::Util::Fault::Exception::GEN->new( {
+	die Bric::Util::Fault::Exception::GEN->new( {
           msg => "The requested version does not exist"
-        });
+	});
     }
 
     # Delete existing contributors.
@@ -1087,13 +1087,13 @@ sub revert {
 
     # clone information from the tables
     $self->_set( { category__id         => $revert_obj->get_category__id,
-                   media_type_id        => $revert_obj->get_media_type_id,
-                   size                 => $revert_obj->get_size,
-                   file_name            => $revert_obj->get_file_name,
+		   media_type_id        => $revert_obj->get_media_type_id,
+		   size                 => $revert_obj->get_size,
+		   file_name            => $revert_obj->get_file_name,
                    _contributors        => $contrib,
                    _update_contributors => 1,
                    _queried_contrib     => 1,
-                   uri                  => $revert_obj->get_uri
+		   uri                  => $revert_obj->get_uri
     });
 
     # Copy THE FILE HERE
@@ -1105,7 +1105,7 @@ sub revert {
     my $new_tile = $revert_obj->get_tile();
     $new_tile->prepare_clone();
     $self->_set( { _delete_tile => $tile,
-                   _tile        => $new_tile
+		   _tile        => $new_tile
     });
     return $self;
 }
@@ -1132,14 +1132,14 @@ sub clone {
     my $contribs = $self->_get_contributors();
     # clone contributors
     foreach (keys %$contribs ) {
-        $contribs->{$_}->{'action'} = 'insert';
+	$contribs->{$_}->{'action'} = 'insert';
     }
 
     $self->_set( { version_id           => undef,
-                   id                   => undef,
-                   publish_date         => undef,
-                   publish_status       => 0,
-                   _update_contributors => 1
+		   id                   => undef,
+		   publish_date         => undef,
+		   publish_status       => 0,
+		   _update_contributors => 1
     });
     return $self;
 }
@@ -1163,32 +1163,32 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
     if ($self->_get('id')) {
-        # we have the main id make sure there's a instance id
-        $self->_update_media();
+	# we have the main id make sure there's a instance id
+	$self->_update_media();
 
-        if ($self->_get('version_id')) {
-            if ($self->_get('_cancel')) {
-                $self->_delete_instance();
-                if ($self->_get('version') == 0) {
-                    $self->_delete_media();
-                }
-                $self->_set( {'_cancel' => undef });
-                return $self;
-            } else {
-                $self->_update_instance();
-            }
-        } else {
-            $self->_insert_instance();
-        }
-        } else {
-            # insert both
-            if ($self->_get('_cancel')) {
-                return $self;
-            } else {
-                $self->_insert_media();
-                $self->_insert_instance();
-            }
-        }
+	if ($self->_get('version_id')) {
+	    if ($self->_get('_cancel')) {
+		$self->_delete_instance();
+		if ($self->_get('version') == 0) {
+		    $self->_delete_media();
+		}
+		$self->_set( {'_cancel' => undef });
+		return $self;
+	    } else {
+		$self->_update_instance();
+	    }
+	} else {
+	    $self->_insert_instance();
+	}
+	} else {
+	    # insert both
+	    if ($self->_get('_cancel')) {
+		return $self;
+	    } else {
+		$self->_insert_media();
+		$self->_insert_instance();
+	    }
+	}
     $self->SUPER::save();
     return $self;
 }
@@ -1227,7 +1227,7 @@ sub _do_list {
     # Build a list of select cols
     my @select = ('m.id');
     unless ($ids) {
-        push @select, (map { "m.$_" } COLS),(map {"i.$_" } 'id', VERSION_COLS);
+	push @select, (map { "m.$_" } COLS),(map {"i.$_" } 'id', VERSION_COLS);
     }
 
     # get the tables
@@ -1244,112 +1244,107 @@ sub _do_list {
 
     # include trivial media table fields
     foreach my $f (qw(id active priority element__id
-                      workflow__id source__id)) {
-        next unless exists $param->{$f};
-        push @where, "m.$f=?";
-        push @bind, $param->{$f};
+		      workflow__id source__id)) {
+	next unless exists $param->{$f};
+	push @where, "m.$f=?";
+	push @bind, $param->{$f};
     }
 
     # do for instance table
     foreach my $f (qw(name file_name description version uri category__id)) {
-        next unless exists $param->{$f};
-        if (($f eq 'name') || ($f eq 'description') ||
+	next unless exists $param->{$f};
+	if (($f eq 'name') || ($f eq 'description') || 
             ($f eq 'uri')  || ($f eq 'file_name')) {
-            push @where, "LOWER(i.$f) LIKE ?";
-            push @bind, lc($param->{$f});
-        } else {
-            push @where, "i.$f=?";
-            push @bind, $param->{$f};
-        }
+	    push @where, "LOWER(i.$f) LIKE ?";
+	    push @bind, lc($param->{$f});
+	} else {
+	    push @where, "i.$f=?";
+	    push @bind, $param->{$f};
+	}
     }
 
     # handle the special fields
     if ($param->{'simple'}) {
-        push @where, '(LOWER(i.name) LIKE ? OR LOWER(i.description) LIKE ? '
-          . 'OR LOWER(i.uri) LIKE ?)';
-        push @bind, (lc($param->{'simple'})) x 3;
+	push @where, '(LOWER(i.name) LIKE ? OR LOWER(i.description) LIKE ? '
+	  . 'OR LOWER(i.uri) LIKE ?)';
+	push @bind, (lc($param->{'simple'})) x 3;
     }
 
     # for searching for user_id
     if (defined $param->{'user__id'}) {
-        push @where, " m.usr__id=? ";
-        push @bind, $param->{'user__id'};
-        push @where, " i.checked_out=? ";
-        push @bind, 1;
+	push @where, " m.usr__id=? ";
+	push @bind, $param->{'user__id'};
+	push @where, " i.checked_out=? ";
+	push @bind, 1;
     } else {
-        push @where, ' i.checked_out=? ';
-        push @bind, 0;
+	push @where, ' i.checked_out=? ';
+	push @bind, 0;
     }
 
     unless ($param->{'return_versions'}) {
-        push @where, " m.current_version=i.version ";
+	push @where, " m.current_version=i.version ";
     }
 
     # Handle searches on dates
     foreach my $type (qw(publish_date cover_date expire_date)) {
-        my ($start, $end) = ($param->{$type.'_start'},
-                             $param->{$type.'_end'});
+	my ($start, $end) = ($param->{$type.'_start'},
+			     $param->{$type.'_end'});
 
-        # Handle date ranges.
-        if ($start && $end) {
-            push @where, "m.$type BETWEEN ? AND ?";
-            push @bind, $start, $end;
-        } else {
-            # Handle 'everying before' or 'everything after' $date
-            # searches.
-            if ($start) {
-                push @where, "m.$type > ?";
-                push @bind, $start;
-            } elsif ($end) {
-                push @where, "m.$type < ?";
-                push @bind, $end;
-            }
-        }
+	# Handle date ranges.
+	if ($start && $end) {
+	    push @where, "m.$type BETWEEN ? AND ?";
+	    push @bind, $start, $end;
+	} else {
+	    # Handle 'everying before' or 'everything after' $date
+	    # searches.
+	    if ($start) {
+		push @where, "m.$type > ?";
+		push @bind, $start;
+	    } elsif ($end) {
+		push @where, "m.$type < ?";
+		push @bind, $end;
+	    }
+	}
     }
-
+    
     push @where, ' m.id=i.media__id ';
 
     my $sql;
-    $sql = 'SELECT DISTINCT ' . join(', ', @select) . ' FROM ' .
-      join(', ', @tables);
+    $sql = 'SELECT DISTINCT ' . join(', ', @select) . ' FROM ' . join(', ', @tables);
     $sql .= ' WHERE ' . join(' AND ', @where);
 
     if ($ids) {
-        # when doing a SELECT DISTINCT you can't ORDER BY a
-        # field outside the SELECT list.
-        $sql .= ' ORDER BY m.id';
+	# when doing a SELECT DISTINCT you can't ORDER BY a
+	# field outside the SELECT list.
+	$sql .= ' ORDER BY m.id';
     } elsif ($param->{'return_versions'}) {
-        $sql .= ' ORDER BY i.version ';
+	$sql .= ' ORDER BY i.version ';
     }
 
     my $select = prepare_ca($sql, undef, DEBUG);
 
     if ( $ids ) {
-        # called from list_ids give em what they want
-        my $return = col_aref($select,@bind);
-        return wantarray ? @{ $return } : $return;
+	# called from list_ids give em what they want
+	my $return = col_aref($select,@bind);
+	return wantarray ? @{ $return } : $return;
     } else { # end if ids
-        # this must have been called from list so give objects
-        my (@objs, @d, %biz_classes);
-        my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
-        execute($select,@bind);
-        bind_columns($select, \@d[0 .. $count ]);
-        while (my $row = fetch($select) ) {
-            # Create the new media object.
-            my $self = bless {}, $class;
-            # Set its attributes.
-            $self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
-            # Determine its class.
-            $biz_classes{$d[1]} = $self->_get_element_object->get_biz_class
-              unless defined $biz_classes{$d[1]};
-            # Change its class, if necessary.
-            $self = bless $self, $biz_classes{$d[1]} if
-              $biz_classes{$d[1]} && $biz_classes{$d[1]} ne ref $self;
-            # Keep it.
-            push @objs, $self;
-        }
-        return (wantarray ? @objs : \@objs) if @objs;
-        return;
+	# this must have been called from list so give objects
+	my (@objs, @d);
+	my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
+	execute($select,@bind);
+	bind_columns($select, \@d[0 .. $count ]);
+	while (my $row = fetch($select) ) {
+	    my $self = bless {}, $class;
+	    $self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
+	    my $element = $self->_get_element_object();
+	    my $biz_class = $element->get_biz_class();
+	    if ($biz_class && ($biz_class ne $self)) {
+		$self = bless $self, $biz_class;
+	    }
+	    push @objs, $self;
+	}
+	return (wantarray ? @objs : \@objs) if @objs;
+	return;
     }
 }
 
@@ -1377,21 +1372,21 @@ sub _get_contributors {
     my ($contrib, $queried) = $self->_get('_contributors', '_queried_contrib');
 
     unless ($contrib) {
-        my $dirty = $self->_get__dirty();
-        my $sql = 'SELECT member__id, place, role FROM media__contributor ' .
-          'WHERE media_instance__id=? ';
+	my $dirty = $self->_get__dirty();
+	my $sql = 'SELECT member__id, place, role FROM media__contributor ' .
+	  'WHERE media_instance__id=? ';
 
-        my $sth = prepare_ca($sql, undef, DEBUG);
-        execute($sth, $self->_get('version_id'));
-        while (my $row = fetch($sth)) {
-            $contrib->{$row->[0]}->{'role'} = $row->[2];
-            $contrib->{$row->[0]}->{'place'} = $row->[1];
-        }
+	my $sth = prepare_ca($sql, undef, DEBUG);
+	execute($sth, $self->_get('version_id'));
+	while (my $row = fetch($sth)) {
+	    $contrib->{$row->[0]}->{'role'} = $row->[2];
+	    $contrib->{$row->[0]}->{'place'} = $row->[1];
+	}
 
-        $self->_set( { _queried_contrib => 1,
-                       _contributors     => $contrib
-        });
-        $self->_set__dirty($dirty);
+	$self->_set( { _queried_contrib => 1,
+		       _contributors     => $contrib
+	});
+	$self->_set__dirty($dirty);
     }
     return $contrib;
 }
@@ -1415,7 +1410,7 @@ sub _insert_contributor {
 
     my $sql = 'INSERT INTO media__contributor ' .
       ' (id, media_instance__id, member__id, place, role) ' .
-        " VALUES (${\next_key('media__contributor')},?,?,?,?) ";
+	" VALUES (${\next_key('media__contributor')},?,?,?,?) ";
 
     my $sth = prepare_c($sql, undef, DEBUG);
     execute($sth, $self->_get('version_id'), $id, $place, $role);
@@ -1440,8 +1435,8 @@ sub _update_contributor {
     my ($self, $id, $role, $place) = @_;
     my $sql = 'UPDATE media__contributor ' .
       ' SET role=?, place=? ' .
-        ' WHERE media_instance__id=? ' .
-          ' AND member__id=? ';
+	' WHERE media_instance__id=? ' .
+	  ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef, DEBUG);
     execute($sth, $role, $place, $self->_get('version_id'), $id);
@@ -1467,7 +1462,7 @@ sub _delete_contributor {
 
     my $sql = 'DELETE FROM media__contributor ' .
       ' WHERE media_instance__id=? ' .
-        ' AND member__id=? ';
+	' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef, DEBUG);
     execute($sth, $self->_get('version_id'), $id);
@@ -1494,8 +1489,8 @@ sub _get_auto_fields {
 
     my $auto_fields;
     if (ref $self) {
-        $auto_fields = $self->_get('_auto_fields');
-        return $auto_fields if $auto_fields;
+	$auto_fields = $self->_get('_auto_fields');
+	return $auto_fields if $auto_fields;
     }
 
     my $sth = prepare_c(qq{
@@ -1508,7 +1503,7 @@ sub _get_auto_fields {
 
     execute($sth, ($self->get_class_id, 1));
     while (my $row = fetch($sth)) {
-        $auto_fields->{$row->[0]} = $row->[1];
+	$auto_fields->{$row->[0]} = $row->[1];
     }
 
     $self->_set( { '_auto_fields' => $auto_fields }) if ref $self;
@@ -1613,8 +1608,8 @@ sub _insert_instance {
 
     my $sql = 'INSERT INTO '. VERSION_TABLE .
       ' (id, '.join(', ', VERSION_COLS) . ')' .
-        " VALUES (${\next_key(VERSION_TABLE)}, ".
-          join(', ', ('?') x VERSION_COLS) . ')';
+	" VALUES (${\next_key(VERSION_TABLE)}, ".
+	  join(', ', ('?') x VERSION_COLS) . ')';
 
     my $sth = prepare_c($sql, undef, DEBUG);
     execute($sth, $self->_get(VERSION_FIELDS));
@@ -1641,7 +1636,7 @@ sub _update_instance {
 
     my $sql = 'UPDATE ' . VERSION_TABLE .
       ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
-        ' WHERE id=? ';
+	' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef, DEBUG);
     execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
@@ -1754,7 +1749,7 @@ sub _do_update {
 
     my $sql = 'UPDATE ' . TABLE . ' '.
       'SET ' . join(', ', map { "$_=?" } COLS) .
-                                ' WHERE id=? ';
+				' WHERE id=? ';
 
     my $update = prepare_c($sql, undef, DEBUG);
     execute($update, $self->_get( FIELDS ), $self->_get('id') );

@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2002-06-04 22:14:26 $
 
 =head1 SYNOPSIS
 
@@ -309,8 +309,6 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
-=over 4
-
 =item Bric::App::Cache->list_ids()
 
 Not implemented - not needed.
@@ -551,6 +549,10 @@ sub _write_backing_store {
                    payload => $@ });
 }
 
+=back 4
+
+=cut
+
 1;
 __END__
 
@@ -568,8 +570,8 @@ Sam Tregar <stregar@about-inc.com>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>,
-L<Bric::App::Session|Bric::App::Session>,
+L<Bric|Bric>, 
+L<Bric::App::Session|Bric::App::Session>, 
 L<Apache::Session|Apache::Session>
 
 =cut
