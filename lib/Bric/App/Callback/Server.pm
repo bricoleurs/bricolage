@@ -17,7 +17,7 @@ my $dest_class = get_package_name('dest');
 sub delete : Callback {
     my $self = shift;
 
-    my $dest = $dest_class->lookup({ id => $self->param->{dest_id} });
+    my $dest = $dest_class->lookup({ id => $self->request_args->{dest_id} });
     chk_authz($dest, EDIT);
     foreach my $id (@{ mk_aref($self->value) }) {
         my $s = $class->lookup({ id => $id }) || next;

@@ -55,7 +55,7 @@ sub make_alias : Callback {
 
 sub pick_cats : Callback {
     my $self = shift;
-    my $param = $self->param;
+    my $param = $self->request_args;
     my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->();
 
     # Grab the asset to be aliased.

@@ -11,7 +11,7 @@ use Bric::Config qw(FULL_SEARCH);
 sub substr : Callback {
     my $self = shift;
     $init_state->($self);
-    my $param = $self->param;
+    my $param = $self->request_args;
 
     my $val_fld = CLASS_KEY.'|value';
     my $crit = $param->{$val_fld} ? (FULL_SEARCH ? '%' : '')
@@ -46,10 +46,10 @@ sub story : Callback {
 
     my (@field, @crit);
 
-    $build_fields->(CLASS_KEY, $self->param, \@field, \@crit,
+    $build_fields->(CLASS_KEY, $self->request_args, \@field, \@crit,
 		    [qw(simple title primary_uri category_uri keyword)]);
 
-    $build_date_fields->(CLASS_KEY, $self->param, \@field, \@crit,
+    $build_date_fields->(CLASS_KEY, $self->request_args, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -68,10 +68,10 @@ sub media : Callback {
 
     my (@field, @crit);
 
-    $build_fields->(CLASS_KEY, $self->param, \@field, \@crit,
+    $build_fields->(CLASS_KEY, $self->request_args, \@field, \@crit,
 		    [qw(simple name uri)]);
 
-    $build_date_fields->(CLASS_KEY, $self->param, \@field, \@crit,
+    $build_date_fields->(CLASS_KEY, $self->request_args, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -90,10 +90,10 @@ sub formatting : Callback {
 
     my (@field, @crit);
 
-    $build_fields->(CLASS_KEY, $self->param, \@field, \@crit,
+    $build_fields->(CLASS_KEY, $self->request_args, \@field, \@crit,
 		    [qw(simple name file_name)]);
 
-    $build_date_fields->(CLASS_KEY, $self->param, \@field, \@crit, 
+    $build_date_fields->(CLASS_KEY, $self->request_args, \@field, \@crit, 
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -109,7 +109,7 @@ sub formatting : Callback {
 sub generic : Callback {
     my $self = shift;
     $init_state->($self);
-    my $param = $self->param;
+    my $param = $self->request_args;
 
     # Callback in 'leech' mode.  Any old page can send search criteria here
 

@@ -35,7 +35,7 @@ sub update : Callback {
     my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
-    my $param = $self->param;
+    my $param = $self->request_args;
 
     # Make sure it's active.
     $media->activate;
@@ -119,7 +119,7 @@ sub view : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
-    my $version = $self->param->{"$widget|version"};
+    my $version = $self->request_args->{"$widget|version"};
     my $id = $media->get_id();
     set_redirect("/workflow/profile/media/$id/?version=$version");
 }
@@ -130,7 +130,7 @@ sub revert : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
-    my $version = $self->param->{"$widget|version"};
+    my $version = $self->request_args->{"$widget|version"};
     $media->revert($version);
     $media->save();
     my $msg = "Media [_1] reverted to V.[_2]";
@@ -155,9 +155,9 @@ sub save : Callback {
     }
 
     # Just return if there was a problem with the update callback.
-    return if delete $self->param->{__data_errors__};
+    return if delete $self->request_args->{__data_errors__};
 
-    if ($self->param->{"$widget|delete"}) {
+    if ($self->request_args->{"$widget|delete"}) {
         # Delete the media.
         $handle_delete->($media);
     } else {
@@ -207,7 +207,7 @@ sub checkin : Callback {
     }
 
     # Just return if there was a problem with the update callback.
-    return if delete $self->param->{__data_errors__};
+    return if delete $self->request_args->{__data_errors__};
 
     my $work_id = get_state_data($widget, 'work_id');
     my $wf;
@@ -224,7 +224,7 @@ sub checkin : Callback {
     $media->checkin;
 
     # Get the desk information.
-    my $desk_id = $self->param->{"$widget|desk"};
+    my $desk_id = $self->request_args->{"$widget|desk"};
     my $cur_desk = $media->get_current_desk;
 
     # See if this media asset needs to be removed from workflow or published.
@@ -355,9 +355,9 @@ sub save_stay : Callback {
     }
 
     # Just return if there was a problem with the update callback.
-    return if delete $self->param->{__data_errors__};
+    return if delete $self->request_args->{__data_errors__};
 
-    if ($self->param->{"$widget|delete"}) {
+    if ($self->request_args->{"$widget|delete"}) {
         # Delete the media.
         $handle_delete->($media);
         # Get out of here, since we've blown it away!
@@ -435,7 +435,7 @@ sub create : Callback {
     my $widget = CLASS_KEY;
     # Get the workflow ID to use in redirects.
     my $WORK_ID = get_state_data($widget, 'work_id');
-    my $param = $self->param;
+    my $param = $self->request_args;
 
     # Check permissions.
     my $wf = Bric::Biz::Workflow->lookup({ id => $WORK_ID });
@@ -621,7 +621,7 @@ my $save_contrib = sub {
 
 sub save_contrib : Callback {
     my $self = shift;
-    $save_contrib->(CLASS_KEY, $self->param);
+    $save_contrib->(CLASS_KEY, $self->request_args);
     # Set a redirect for the previous page.
     set_redirect(last_page);
     # Pop this page off the stack.
@@ -632,7 +632,7 @@ sub save_contrib : Callback {
 
 sub save_and_stay_contrib : Callback {
     my $self = shift;
-    $save_contrib->(CLASS_KEY, $self->param);
+    $save_contrib->(CLASS_KEY, $self->request_args);
 }
 
 ###############################################################################
@@ -652,7 +652,7 @@ sub notes : Callback {
     my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
     my $id    = $media->get_id();
-    my $action = $self->param->{"$widget|notes_cb"};
+    my $action = $self->request_args->{"$widget|notes_cb"};
     set_redirect("/workflow/profile/media/${action}_notes.html?id=$id");
 }
 
@@ -669,7 +669,7 @@ sub trail : Callback {
 
 sub recall : Callback {
     my $self = shift;
-    my $ids = $self->param->{CLASS_KEY . '|recall_cb'};
+    my $ids = $self->request_args->{CLASS_KEY . '|recall_cb'};
     $ids = ref $ids ? $ids : [$ids];
     my %wfs;
 
@@ -752,7 +752,7 @@ sub keywords : Callback {
 
 sub add_kw : Callback {
     my $self = shift;
-    my $param = $self->param;
+    my $param = $self->request_args;
 
     # Grab the media.
     my $media = get_state_data(CLASS_KEY, 'media');

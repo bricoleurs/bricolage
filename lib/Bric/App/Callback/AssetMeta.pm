@@ -17,7 +17,7 @@ my %types = (
 
 sub add_note : Callback {
     my $self = shift;
-    my $param = $self->param;
+    my $param = $self->request_args;
 
     my $obj = get_state_data(CLASS_KEY, 'obj');
     my $key = CLASS_KEY . '|note';

@@ -20,7 +20,7 @@ my $not = {qw(usr obj obj usr)};
 
 sub save {
     my $self = shift;
-    my $param = $self->param;
+    my $param = $self->request_args;
 
     # Assemble the relevant IDs.
     my $grp_ids = { usr => mk_aref($param->{usr_grp_id}),

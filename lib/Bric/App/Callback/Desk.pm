@@ -41,7 +41,7 @@ sub checkin : Callback {
     my $self = shift;
 
     my $a_id    = $self->value;
-    my $a_class = $self->param->{$widget.'|asset_class'};
+    my $a_class = $self->request_args->{$widget.'|asset_class'};
     my $pkg     = get_package_name($a_class);
     my $a_obj   = $pkg->lookup({'id' => $a_id, checkout => 1});
     my $d       = $a_obj->get_current_desk;
@@ -55,7 +55,7 @@ sub checkout : Callback {
     my $self = shift;
 
     my $a_id    = $self->value;
-    my $a_class = $self->param->{$widget.'|asset_class'};
+    my $a_class = $self->request_args->{$widget.'|asset_class'};
     my $pkg     = get_package_name($a_class);
     my $a_obj   = $pkg->lookup({'id' => $a_id});
     my $d       = $a_obj->get_current_desk;
@@ -83,7 +83,7 @@ sub move : Callback {
     my $self = shift;
 
     # Accept one or more assets to be moved to another desk.
-    my $next_desk = $self->param->{$widget.'|next_desk'};
+    my $next_desk = $self->request_args->{$widget.'|next_desk'};
     my $assets    = ref $next_desk ? $next_desk : [$next_desk];
 
     my ($a_id, $a_class, $d_id, $pkg, %wfs);
@@ -139,8 +139,8 @@ sub publish : Callback {
 
     my $mpkg = 'Bric::Biz::Asset::Business::Media';
     my $spkg = 'Bric::Biz::Asset::Business::Story';
-    my $story = mk_aref($self->param->{$widget.'|story_pub_ids'});
-    my $media = mk_aref($self->param->{$widget.'|media_pub_ids'});
+    my $story = mk_aref($self->request_args->{$widget.'|story_pub_ids'});
+    my $media = mk_aref($self->request_args->{$widget.'|media_pub_ids'});
     my (@rel_story, @rel_media);
 
     # start with the objects checked for publish
@@ -226,7 +226,7 @@ sub publish : Callback {
 sub deploy : Callback {
     my $self = shift;
 
-    my $a_ids = $self->param->{$widget.'|formatting_pub_ids'};
+    my $a_ids = $self->request_args->{$widget.'|formatting_pub_ids'};
     my $b = Bric::Util::Burner->new;
 
     $a_ids = ref $a_ids ? $a_ids : [$a_ids];

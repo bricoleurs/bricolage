@@ -31,8 +31,8 @@ sub view : Callback {
     my $widget = CLASS_KEY;
     my $story = get_state_data($widget, 'story');
     # Abort this save if there were any errors.
-    return unless &$save_data($self->param, $widget, $story);
-    my $version = $self->param->{"$widget|version"};
+    return unless &$save_data($self->request_args, $widget, $story);
+    my $version = $self->request_args->{"$widget|version"};
     my $id = $story->get_id();
     set_redirect("/workflow/profile/story/$id/?version=$version");
 }
@@ -41,7 +41,7 @@ sub revert : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
     my $story = get_state_data($widget, 'story');
-    my $version = $self->param->{"$widget|version"};
+    my $version = $self->request_args->{"$widget|version"};
     $story->revert($version);
     $story->save();
     my $msg = "Story [_1] reverted to V.[_2].";
@@ -54,7 +54,7 @@ sub save : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
     my $story = get_state_data($widget, 'story');
-    my $param = $self->param;
+    my $param = $self->request_args;
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
@@ -95,7 +95,7 @@ sub checkin : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
     my $story = get_state_data($widget, 'story');
-    my $param = $self->param;
+    my $param = $self->request_args;
     # Abort this save if there were any errors.
     return unless &$save_data($param, $widget, $story);
 
@@ -223,7 +223,7 @@ sub checkin : Callback {
 sub save_stay : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
-    my $param = $self->param;
+    my $param = $self->request_args;
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
@@ -295,7 +295,7 @@ sub workspace_return : Callback {
 sub create : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
-    my $param = $self->param;
+    my $param = $self->request_args;
 
     # Check permissions.
     my $work_id = get_state_data($widget, 'work_id');
@@ -383,7 +383,7 @@ sub create : Callback {
 sub notes : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
-    my $param = $self->param;
+    my $param = $self->request_args;
     # Return if there were data errors.
     return unless &$save_data($param, $widget);
 
@@ -396,7 +396,7 @@ sub notes : Callback {
 sub delete_cat : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
-    my $cat_ids = mk_aref($self->param->{"$widget|delete_cat"});
+    my $cat_ids = mk_aref($self->request_args->{"$widget|delete_cat"});
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
     $story->delete_categories($cat_ids);
@@ -417,7 +417,7 @@ sub update_primary : Callback {
     my $widget = CLASS_KEY;
     my $story   = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
-    my $primary = $self->param->{"$widget|primary_cat"};
+    my $primary = $self->request_args->{"$widget|primary_cat"};
     $story->set_primary_category($primary);
     $story->save();
     set_state_data($widget, 'story', $story);
@@ -428,7 +428,7 @@ sub add_category : Callback {
     my $widget = CLASS_KEY;
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
-    my $cat_id = $self->param->{"$widget|new_category_id"};
+    my $cat_id = $self->request_args->{"$widget|new_category_id"};
     if (defined $cat_id) {
         $story->add_categories([ $cat_id ]);
         my $msg = $story->check_uri(get_user_id());
@@ -474,7 +474,7 @@ sub trail : Callback {
     my $self = shift;
 
     # Return if there were data errors
-    return unless &$save_data($self->param, CLASS_KEY);
+    return unless &$save_data($self->request_args, CLASS_KEY);
 
     my $story = get_state_data(CLASS_KEY, 'story');
     my $id = $story->get_id();
@@ -492,7 +492,7 @@ sub view_trail : Callback {
 sub update : Callback {
     my $self = shift;
 
-    &$save_data($self->param, CLASS_KEY);
+    &$save_data($self->request_args, CLASS_KEY);
 }
 
 sub keywords : Callback {
@@ -500,7 +500,7 @@ sub keywords : Callback {
 
 
     # Return if there were data errors
-    return unless &$save_data($self->param, CLASS_KEY);
+    return unless &$save_data($self->request_args, CLASS_KEY);
 
     my $story = get_state_data(CLASS_KEY, 'story');
     my $id = $story->get_id();
@@ -512,7 +512,7 @@ sub contributors : Callback {
 
 
     # Return if there were data errors
-    return unless &$save_data($self->param, CLASS_KEY);
+    return unless &$save_data($self->request_args, CLASS_KEY);
     set_redirect("/workflow/profile/story/contributors.html");
 }
 
@@ -539,7 +539,7 @@ sub assoc_contrib_role : Callback {
     my $story   = get_state_data(CLASS_KEY, 'story');
     chk_authz($story, EDIT);
     my $contrib = get_state_data(CLASS_KEY, 'contrib');
-    my $role    = $self->param->{CLASS_KEY.'|role'};
+    my $role    = $self->request_args->{CLASS_KEY.'|role'};
 
     # Add the contributor
     $story->add_contributor($contrib, $role);
@@ -570,7 +570,7 @@ sub unassoc_contrib : Callback {
 sub save_contrib : Callback {
     my $self = shift;
 
-    $save_contrib->(CLASS_KEY, $self->param);
+    $save_contrib->(CLASS_KEY, $self->request_args);
     # Set a redirect for the previous page.
     set_redirect(last_page);
     # Pop this page off the stack.
@@ -580,7 +580,7 @@ sub save_contrib : Callback {
 sub save_and_stay_contrib : Callback {
     my $self = shift;
 
-    $save_contrib->(CLASS_KEY, $self->param);
+    $save_contrib->(CLASS_KEY, $self->request_args);
 }
 
 sub leave_contrib : Callback {
@@ -604,7 +604,7 @@ sub exit : Callback {
 
 sub add_kw : Callback {
     my $self = shift;
-    my $param = $self->param;
+    my $param = $self->request_args;
 
     # Grab the story.
     my $story = get_state_data(CLASS_KEY, 'story');
@@ -671,7 +671,7 @@ sub checkout : Callback {
 sub recall : Callback {
     my $self = shift;
 
-    my $ids = $self->param->{CLASS_KEY.'|recall_cb'};
+    my $ids = $self->request_args->{CLASS_KEY.'|recall_cb'};
     $ids = ref $ids ? $ids : [$ids];
     my %wfs;
 

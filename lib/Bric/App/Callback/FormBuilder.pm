@@ -11,7 +11,7 @@ use Bric::App::Util qw(:all);
 # XXX: where will this be called from?
 sub process_data : Callback {
     my $self = shift;
-    my $param = $self->param;
+    my $param = $self->request_args;
 
     my ($section, $mode, $key) = $m->comp("/lib/util/parseUri.mc");
 

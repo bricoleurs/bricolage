@@ -25,7 +25,7 @@ sub clear : Callback {
     my $trigger = $self->value;
 
     # If the trigger field was submitted with a true value, clear state!
-    if ($self->param->{$trigger}) {
+    if ($self->request_args->{$trigger}) {
         my $s = \%HTML::Mason::Commands::session;
         
         # Find all the select_object widget information

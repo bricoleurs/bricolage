@@ -45,7 +45,5 @@ my $lang = Bric::Util::Language->get_handle(LANGUAGE);
 
 sub lang { $lang }
 
-sub param { $_[0]->request_args }
-
 
 1;

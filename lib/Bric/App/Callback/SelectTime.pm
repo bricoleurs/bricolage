@@ -20,7 +20,7 @@ my $defs = {
 
 sub refresh : Callback(priority => 0) {
     my $self = shift;
-    my $param = self->param;
+    my $param = self->request_args;
     return if $is_clear_state->($param);
 
     # There might be many time widgets on this page.
@@ -74,7 +74,7 @@ sub clear : Callback {
     my $self = shift;
 
     # If the trigger field was submitted with a true value then, clear state!
-    if ($is_clear_state->($self->param)) {
+    if ($is_clear_state->($self->request_args)) {
         my $s = \%HTML::Mason::Commands::session;
 
         # Find all the select_time widget information

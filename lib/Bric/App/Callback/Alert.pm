@@ -25,7 +25,7 @@ my %num = (
 
 sub ack : Callback {
     my $self = shift;
-    my $ids = mk_aref($self->param->{'recip_id'});
+    my $ids = mk_aref($self->request_args->{'recip_id'});
     $msg_redirect->($ids);
 }
 
