@@ -5,12 +5,22 @@ use File::Spec::Functions qw(catdir updir);
 use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
-use Bric::Config qw(:char);
+use Bric::Config;
 
 exit if fetch_sql 'SELECT 1 FROM class WHERE id = 78';
 
-my $char_set = CHAR_SET;
-my $lang = lc LANGUAGE;
+my ($char_set, $lang);
+if ( defined &Bric::Config::CHAR_SET ) {
+    $char_set = Bric::Config::CHAR_SET();
+    $lang = lc Bric::Config::LANGUAGE();
+} else {
+    # This really shouldn't happen.  If the user upgraded then the
+    # fetch_sql above should return true.  But you never know.
+    $char_set = 'UTF-8';
+    $lang = 'en_us';
+}
+
+
 
 do_sql
 q/
@@ -43,30 +53,11 @@ CREATE TABLE usr_pref (
 /,
 
 q/
-ALTER TABLE pref ADD COLUMN
-can_be_overridden  NUMERIC(1,0)   NOT NULL DEFAULT 0,
-                                  CONSTRAINT ck_pref__can_be_overridden
-                                    CHECK (can_be_overridden IN (0,1))
-/,
-
-q/
 CREATE UNIQUE INDEX udx_usr_pref__pref__id__usr__id ON usr_pref(pref__id, usr__id)
 /,
 
 q/
 CREATE INDEX idx_usr_pref__usr__id ON usr_pref(usr__id)
-/,
-
-q/
-ALTER TABLE    usr_pref
-ADD CONSTRAINT fk_pref__usr_pref FOREIGN KEY (pref__id)
-REFERENCES     pref(id) ON DELETE CASCADE
-/,
-
-q/
-ALTER TABLE    usr_pref
-ADD CONSTRAINT fk_usr__usr_pref FOREIGN KEY (usr__id)
-REFERENCES     usr(id) ON DELETE CASCADE
 /,
 
 qq/
@@ -82,7 +73,7 @@ VALUES (900, 22, 48, 1)
 /,
 
 q/
-INSERT INTO pref_member (id, object_id, member__id
+INSERT INTO pref_member (id, object_id, member__id)
 VALUES (14, 14, 900)
 /,
 
