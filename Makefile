@@ -8,7 +8,7 @@
 #   upgrade   - upgrades an existing installation
 #   uninstall - uninstalls an existing installation
 #   clean     - delete intermediate files
-#   dist      - prepare a distrubution from a CVS checkout
+#   dist      - prepare a distrubution from a Subversion checkout
 #   clone     - create a distribution based on an existing system
 #   test      - run non-database changing test suite
 #   devtest   - run all tests, including those that change the database
@@ -78,7 +78,7 @@ build_done	: required.db modules.db apache.db postgres.db config.db \
 ###########################
 
 dist            : check_dist distclean inst/Pg.sql dist_dir \
-                  rm_CVS rm_tmp dist/INSTALL dist/Changes \
+                  rm_svn rm_tmp dist/INSTALL dist/Changes \
                   dist/License dist_tar
 
 check_dist      :
@@ -95,9 +95,8 @@ dist_dir	:
 	mkdir dist
 	ls | grep -v dist | grep -v sql | $(PERL) -lne 'system("cp -pR $$_ dist")'
 
-rm_CVS		:
-	find dist/ -type d -name 'CVS' | xargs rm -rf
-	find dist/ -name '.cvsignore'  | xargs rm -rf
+rm_svn		:
+	find dist/ -type d -name '.svn' | xargs rm -rf
 
 rm_tmp		:
 	find dist/ -name '#*#' -o -name '*~' -o -name '.#*' | xargs rm -rf
@@ -124,7 +123,7 @@ inst/Pg.sql : $(SQL_FILES)
 	grep -vh '^--' `find sql/Pg -name '*.val' | sort` >>  $@;
 	grep -vh '^--' `find sql/Pg -name '*.con' | sort` >>  $@;
 
-.PHONY 		: distclean inst/Pg.sql dist_dir rm_CVS dist_tar check_dist
+.PHONY 		: distclean inst/Pg.sql dist_dir rm_svn dist_tar check_dist
 
 ##########################
 # clone rules            #
@@ -132,7 +131,7 @@ inst/Pg.sql : $(SQL_FILES)
 
 
 clone           : distclean clone.db clone_dist_dir clone_sql clone_files \
-		  rm_CVS rm_tmp \
+		  rm_svn rm_tmp \
                   dist/INSTALL dist/Changes dist/License \
 		  clone_tar 
 

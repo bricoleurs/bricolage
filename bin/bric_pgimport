@@ -33,7 +33,7 @@ should work if psql is in your path.
 
 =item -w
 
-The directory with the CVS SQL files. Defaults to lib subdirectory of
+The directory with the Subversion SQL files. Defaults to lib subdirectory of
 BRICOLAGE_ROOT environment variable, which itself defaults to
 F</usr/local/bricolage>.
 
@@ -250,8 +250,8 @@ Usage: $prog [options]
 Supported Options:
   -P The location of the psql program. Defaults to simply 'psql' if undefined.
      This should work if psql is in your path.
-  -w The directory with the CVS SQL files. Defaults to lib subdirectory of
-     BRICOLAGE_ROOT environment variable, which itself defaults to
+  -w The directory with the Subversion SQL files. Defaults to lib subdirectory
+     of BRICOLAGE_ROOT environment variable, which itself defaults to
      /usr/local/bricolage.
   -u Database user login. Defaults to PGUSER environment variable.
   -p Database user password. Defaults to PGPASSWORD environment variable.

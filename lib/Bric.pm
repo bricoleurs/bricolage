@@ -79,8 +79,7 @@ if (defined MOD_PERL) {
 # Public Instance Fields
 
 # All subclasses should use the RegisterFields function rather than the below
-# code. See 'Example.pm' in the CVS module 'doc/codingStandards' for an
-# example subclass.
+# code
 
 sub ACCESS {
     return {# debug  => FIELD_RDWR,  # public field

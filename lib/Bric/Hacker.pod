@@ -615,22 +615,22 @@ to add today's date to the header for the new release:
 
   =head1 VERSION 1.x.x (2003-11-29)
 
-Next, tag the release in CVS:
+Next, tag the release in Subversion:
 
-  cvs -qz3 tag rel_1_x_x
+  svn tag rel_1_x_x
 
 If this is a major release, you'll need to create a new branch, so that it can
 be maintained for bug fixes separately, and then tag the release in that
 branch.
 
-  cvs -qz3 tag -b rev_1_x
-  cvs -qz3 tag rel_1_x_x
+  svn branch rev_1_x
+  svn tag rel_1_x_x
 
 Next, export the sources into a new directory. Be sure to use the C<-kkv>
 option with C<export> so that the version numbers are all properly populated.
 
   cd /tmp
-  cvs -qz3 export -r rel_1_x_x -kkv bricolage
+  svn export -r rel_1_x_x bricolage
   cd bricolage
   make dist
 
@@ -657,9 +657,9 @@ Be sure to run C<make devtest> after everything is installed to make sure that
 it is all functioning correctly. Users won't be running these tests, as they
 muck up the database. But that's okay for our validation of the release
 tarball. Use C<make uninstall> to clean up the mess. If you have to go back
-and make any changes, be sure to update the tag of any files you change and
-commit to CVS, then do the whole thing over again. Once everything appears to
-be working properly, release!
+and make any changes, be sure to commit them to the Subversion repository and
+then to update the tag, then do the whole thing over again. Once everything
+appears to be working properly, release!
 
 =head2 Where to Send Notices
 
