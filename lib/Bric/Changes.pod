@@ -54,6 +54,13 @@ technically, they'll pass. But as soon as all existing POD errors are cleaned
 out, errors will turn into test failures. This will help us to keep all of our
 POD valid. These tests run as a part of C<make devtest>. [David]
 
+=item *
+
+Removed all old-style test scripts. Their contents have been copied into new
+unit testing classes. These classes each execute a single test, and the old
+testing contents are at the end of the file, after the __END__ symbol. Thus
+we'll be able to use the old tests to write the new tests. [David]
+
 =back
 
 =head1 VERSION 1.4.0
