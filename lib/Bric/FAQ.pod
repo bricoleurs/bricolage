@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =head1 DATE
 
-$Date: 2004-01-27 11:15:37 $
+$Date: 2004-02-02 23:44:36 $
 
 =head1 DESCRIPTION
 
@@ -417,14 +417,15 @@ able to load the database and get back to work!
 
 =head3 I keep clicking the "Click here to start" link on the very first Bricolage page I see, but it keeps just opening up a new window with "Click here to start" again. What gives?
 
-I'm going to go out on a limb here and guess that you're using Safari on Mac
-OS X. Safari has a JavaScript bug wherein it doesn't know the name of a
-window. The "Click here to start" link opens a new named window, but since
-Safari doesn't know that it's named, Bricolage's JavaScript can't tell that
-it's named, either, and so keeps trying to get you to open a window with
-the correct name. It'll never happen. Apple should be aware of this issue,
-as I've filed a bug report for it using Safari's bug reporting interface, and
-have reported it again via Apple's official bug database (Bug # 3485193).
+I'm going to go out on a limb here and guess that you're using Safari 1.1.1 or
+earlier on Mac OS X. Prior to the release of version 1.2, Safari has a
+JavaScript bug wherein it doesn't know the name of a window. The "Click here
+to start" link opens a new named window, but since Safari doesn't know that
+it's named, Bricolage's JavaScript can't tell that it's named, either, and so
+keeps trying to get you to open a window with the correct name. It'll never
+happen. Apple should be aware of this issue, as I've filed a bug report for it
+using Safari's bug reporting interface, and have reported it again via Apple's
+official bug database (Bug # 3485193).
 
 Until Apple fixes the bug, there are two ways to resolve this issue: First,
 don't use Safari. This is the preferred solution, and since there are some
