@@ -81,6 +81,13 @@ Tregar for the spot. [David]
 
 Fixed problem with Element names containing non-alphanumeric characters. [Sam]
 
+=item *
+
+Checking out media assets from "Find Media" now redirects you to the media
+profile if you've checked out one media asset, or My Workspace if you've checked
+out more than one. This puts it in line with how "Find Stories" and "Find
+Templates" work. Thanks to Sam for the report. [David]
+
 =back
 
 =head1 VERSION 1.2.0
