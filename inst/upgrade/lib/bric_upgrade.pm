@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-24 21:28:13 $
+$Date: 2003-12-24 21:28:59 $
 
 =head1 SYNOPSIS
 
@@ -64,8 +64,8 @@ succeed, then the transaction will be commited when the script exits.
 use strict;
 require Exporter;
 use base qw(Exporter);
-our @EXPORT_OK = qw(do_sql test_column test_table test_constraint test_index
-                    fetch_sql db_version);
+our @EXPORT_OK = qw(do_sql test_column test_table test_constraint test_foreign_key
+                    test_index fetch_sql db_version);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 use File::Spec::Functions qw(catdir updir);
