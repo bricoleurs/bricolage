@@ -101,7 +101,7 @@ body {
     padding: 3px 10px 0 0;
     text-align: right;
 }
-.border              { border-style: solid; border-width: 0 1px 1px 1px; padding: 1px;}
+.border              { border-style: solid; border-width: 0 1px 1px 1px; }
 .adminBox .border    { border-color: #999966; }
 .workflowBox .border { border-color: #669999; }
 .helpBox .border     { border-color: #669999; padding: 1px 10px; }
