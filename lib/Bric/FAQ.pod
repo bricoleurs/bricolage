@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.4 $
+$Revision: 1.7.2.5 $
 
 =head1 DATE
 
-$Date: 2003-04-25 00:31:52 $
+$Date: 2003-05-19 22:16:55 $
 
 =head1 DESCRIPTION
 
@@ -239,9 +239,20 @@ usage, or hacking. The project's website is
 L<http://www.bricolage.cc/>. The
 website lists information about mailing lists.
 
+=head3 I can't get my head around the idea of workflow. Is there any documentation on it?
+
+Not really, no. We'll likely write some one of these days. in the meantime,
+you might find some use in a presentation given at the 2000 OSCON by Ian
+Kallen, in which he discussed what Salon needed out of a CMS (including
+workflow) and how he came to select the tools to use the CMS that was the
+proof-of-concept for Bricolage. The article is at
+L<http://www.salon.com/contact/staff/idk/print.html>.
+
 =head1 AUTHOR
 
 Scott Lanning <slanning@theworld.com>
+
+David Wheeler <david@kineticode.com>
 
 =head1 SEE ALSO
 
