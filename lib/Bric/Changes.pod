@@ -101,6 +101,15 @@ Elements can be edited again. Thanks to Alexander Ling for the spot! [David]
 Element fields can be edited again without encountering the "called the
 removed method 'get_name'" error. Reported by Alexander Ling. [David]
 
+=item *
+
+Improved the upgrade script for converting field definitions to use key
+names, thanks to reports from Nate Perry-Thistle. [David]
+
+=item *
+
+Made in the index on field key names case-insensitively unique. [David]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)

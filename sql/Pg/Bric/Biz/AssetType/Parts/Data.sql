@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-12 09:01:02 $
+-- $Date: 2003-12-11 23:51:31 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -128,7 +128,7 @@ CREATE TABLE attr_at_data_meta (
 -- Indexes.
 --
 
-CREATE UNIQUE INDEX udx_atd__key_name__at_id ON at_data(key_name, element__id);
+CREATE UNIQUE INDEX udx_atd__key_name__at_id ON at_data(lower_text_num(key_name, element__id));
 CREATE INDEX fkx_map_type__atd on at_data(map_type__id);
 CREATE INDEX fkx_element__atd on at_data(element__id);
 
