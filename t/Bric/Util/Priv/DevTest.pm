@@ -99,7 +99,7 @@ sub test_list : Test(8) {
     my $cat_grp_id = $grps[0]->get_id;
     ok( @privs = Bric::Util::Priv->list({ obj_grp_id => $cat_grp_id }),
         "Look up by obj_grp_id '$cat_grp_id'" );
-    is( scalar @privs, 2, "Check for 1 priv" );
+    is( scalar @privs, 5, "Check for 1 priv" );
 
     # Try value.
     ok( @privs = Bric::Util::Priv->list({ value => CREATE }),
@@ -107,7 +107,7 @@ sub test_list : Test(8) {
     is( scalar @privs, 23, "Check for 3 privs" );
     ok( @privs = Bric::Util::Priv->list({ value => READ }),
         "Look up by value 'READ'" );
-    is( scalar @privs, 2, "Check for 2 privs" );
+    is( scalar @privs, 8, "Check for 2 privs" );
 }
 
 ##############################################################################

@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Priv.val
--- VERSION: $Revision: 1.2.4.2 $
+-- VERSION: $Revision: 1.2.4.3 $
 --
--- $Date: 2003-04-01 04:36:56 $
+-- $Date: 2003-04-02 06:07:17 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 /*
@@ -51,6 +51,20 @@ VALUES(6, 7, 3);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(6, 31);
 
+-- Give Story Editors READ rights to all categories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(43, 7, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(43, 26);
+
+-- Give Story Editors READ rights to all elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(44, 7, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(44, 27);
+
 -- Give Story Editors CREATE rights to the Story workflow.
 INSERT INTO grp_priv (id, grp__id, value)
 VALUES(31, 7, 3);
@@ -93,6 +107,20 @@ VALUES(7, 8, 3);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(7, 32);
 
+-- Give Media Producers READ rights to all categories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(45, 8, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(45, 26);
+
+-- Give Media Producers READ rights to all elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(46, 8, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(46, 27);
+
 -- Give Media Producers CREATE rights to the Media workflow.
 INSERT INTO grp_priv (id, grp__id, value)
 VALUES(36, 8, 3);
@@ -127,6 +155,20 @@ VALUES(8, 9, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(8, 33);
+
+-- Give Template Developers READ rights to all categories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(47, 9, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(47, 26);
+
+-- Give Template Developers READ rights to all elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(48, 9, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(48, 27);
 
 -- Give Template Developers CREATE rights to the Template workflow.
 INSERT INTO grp_priv (id, grp__id, value)

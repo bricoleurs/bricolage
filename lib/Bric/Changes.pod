@@ -87,6 +87,13 @@ left out of 1.5.1. [David]
 Permissions are now once again properly checked for asets in categories,
 workflows, and on desks. [Mark]
 
+=item *
+
+Out of the box, the Story Editors, Media Producers, and Template Develpers
+groups now have READ permission to access members of the All Categories and
+All Elements groups, which allow them create assets based on elements and
+within categories. [David]
+
 =back
 
 =head1 VERSION 1.5.1
