@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.6.4.1 $
+$Revision: 1.6.4.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-29 22:27:46 $
+$Date: 2003-05-13 19:07:37 $
 
 =head1 SYNOPSIS
 
@@ -195,14 +195,20 @@ sub put_res {
                 # Go back to root.
                 $ftp->cwd('/');
             }
-            # Now, put the file on the server.
+
+            # Delete any existing copy of the temp file if the FTP server is
+            # Windows.
             my $tmpdest = $dest . '.tmp';
+            $ftp->delete($tmpdest) if $is_win;
+
+            # Now, put the file on the server.
             $ftp->put($src, $tmpdest) || die $gen->new
               ({ msg => "Unable to put file '$tmpdest' on remote server " .
                         "'$hn'",
                  payload => $ftp->message });
 
-            # Delete any existing copy of the file if the FTP server is Windows.
+            # Delete any existing copy of the file if the FTP server is
+            # Windows.
             $ftp->delete($dest) if $is_win;
 
             # Rename the temporary file.
