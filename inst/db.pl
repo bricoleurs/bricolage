@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.20.2.5 $
+$Revision: 1.20.2.6 $
 
 =head1 DATE
 
-$Date: 2003-06-17 22:52:49 $
+$Date: 2003-08-30 20:59:58 $
 
 =head1 DESCRIPTION
 
@@ -166,7 +166,7 @@ sub load_db {
 
     # vacuum to create usable indexes
     print "Finishing database...\n";
-    foreach my $maint (qw(vacuum analyze)) {
+    foreach my $maint ('vacuum', 'vacuum analyze')) {
         my $err = exec_sql($maint);
         hard_fail("Error encountered during '$maint'. The database error ",
                   "was\n\n$err") if $err;

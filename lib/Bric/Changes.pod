@@ -71,6 +71,12 @@ Richards. [David]
 The FTP mover now properly deletes files rather than erroring out. [Clive
 Jones]
 
+=item *
+
+Now setting C<$PGDATESTYLE> environment variable so that PotgreSQL isn't
+confused about the date style Bricolage is using. Suggested by Chris Riddoch.
+[David]
+
 =back
 
 =head1 VERSION 1.6.4 (2003-08-12)

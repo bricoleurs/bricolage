@@ -8,18 +8,18 @@ Bric::Util::DBD::Pg - The Bricolage PostgreSQL Driver
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.6.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.8.6.1 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-03-09 01:41:48 $
+$Date: 2003-08-30 20:59:58 $
 
 =head1 SYNOPSIS
 
@@ -107,9 +107,8 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK);
 # Private Functions
 ################################################################################
 BEGIN {
-     $ENV{PGTZ} = 'UTC';
-#    $ENV{PGTZ} = Bric::Config::DB_TIME_ZONE; # The default timezone from Config
-#    $ENV{PGDATESTYLE} = 'ISO';          # Should default to this, anyway.
+    $ENV{PGTZ} = 'UTC';
+    $ENV{PGDATESTYLE} = 'ISO';
 #    $ENV{PGCLIENTENCODING} = 'UNICODE'; # Should default to this, anyway.
 #    $ENV{PGSERVERENCODING} = 'UNICODE'; # Should default to this, anyway.
 } # BEGIN
