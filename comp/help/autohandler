@@ -45,11 +45,44 @@ David Wheeler L<lt>david@wheeler.netL<gt>
         <tr><td class="context" height="20">&nbsp;&nbsp;<% $context %></td></tr>
       </table>
 
+%# Insert the table top.
       <table border="0" cellpadding="0" cellspacing="0" width="475">
         <tr><td height="20">&nbsp;</td></tr>
-        <tr><td><% $m->call_next %></td></tr>
+        <tr><td>
+          <table border="0" cellpadding="0" cellspacing="0" width="475">
+            <tr>
+              <td width="20" bgcolor="#669999"><img src="/media/images/numbers/669999_curve_blank.gif" width="20" height="18" border="0"></td>
+              <td class="light" width="475">&nbsp;<% uc $page %></td>
+              <td width="8" bgcolor="#cccc99"><img src="/media/images/lt_green_curve_right.gif" width="8" height="18"></td>
+            </tr>
+          </table>
+        <table border="0" cellpadding="0" cellspacing="0" width="475">
+          <tr>
+            <td valign="top" bgcolor=669999 width="1">
+              <img src="/media/images/spacer.gif" width="1" height="1" border="0">
+            </td>
+            <td width="475" valign="top">
+	      <table cellspacing="0" cellpadding="4" border="0"><tr><td>
+%# Insert the content.
+                <% $m->call_next %>
+%# Insert the table bottom.
+              </td></tr></table>
+            </td>
+            <td valign="top" bgcolor="#669999" width="1">
+              <img src="/media/images/spacer.gif" width="1" height="1" border="0">
+            </td>
+          </tr>
+        </table>
+        <table width="475" border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td valign="top" bgcolor="#669999"><img src="/media/images/spacer.gif" width="475" height="1" border="0"></td>
+          </tr>
+          <tr>
+            <td><img src="/media/images/spacer.gif" width="475" height="10" border="0"></td>
+          </tr>
+        </table>
       </table>
-
+%# Close up the document.
     </td>
   </tr>
   <tr>
@@ -66,12 +99,13 @@ my $widget = 'help';
 </%once>
 %#-- Init --#
 <%init>;
-my ($context, $title);
+my ($context, $title, $page);
 if ($r->uri =~ m:/help/about\.html:) {
     $context = 'About the Bricolage Content Management System';
     $title = "Bricolage $Bric::VERSION";
+    $page = '';
 } else {
-    $context = get_state_data($widget, 'context');
+    ($context, $page) = @{ get_state_data($widget) }{qw(context page)};
     $title = 'Bricolage Help';
 }
 </%init>
