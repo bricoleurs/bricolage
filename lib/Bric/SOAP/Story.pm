@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$Revision: 1.54 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.53 $ )[-1];
+our $VERSION = (qw$Revision: 1.54 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-17 03:26:30 $
+$Date: 2004-03-18 14:32:28 $
 
 =head1 SYNOPSIS
 
@@ -730,7 +730,7 @@ sub is_allowed_param {
                                          expire_date_start expire_date_end
                                          site alias_id element_key_name
                                          unexpired data_text output_channel
-                                         keyword contrib_id subelement_key_name
+                                         contrib_id subelement_key_name
                                          Order OrderDirection Limit Offset) },
         export   => { map { $_ => 1 } qw(story_id story_ids
                                          export_related_media
