@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:46 $
+$Date: 2003-01-10 03:32:11 $
 
 =head1 SYNOPSIS
 
@@ -1379,23 +1379,24 @@ sub delete_member {
     my ($self, $params) = @_;
 
     # See if they have passed a member object
-    my $mem;
+    my ($mem, $obj);
     if (substr(ref $params, 0, 28) eq 'Bric::Util::Grp::Parts::Memb') {
         # Member object has been passed
         $mem = $params;
+        $obj = $mem->get_object;
     } elsif (ref $params eq 'HASH') {
         # Parameters have been passed.
         $mem = $self->has_member($params) or return;
+        $obj = $params->{obj} || $mem->get_object;
     } else {
         # An object has been passed.
-        $mem = $self->has_member({ obj => $params }) or return;
+        $obj = $params;
+        $mem = $self->has_member({ obj => $obj }) or return;
     }
 
     # Remove the member object and return.
     my $memb_coll = $get_memb_coll->($self);
-    $memb_coll->del_objs($self->get_object_class_id ?
-                         $mem->get_obj_id :
-                         $mem->get_id);
+    $memb_coll->del_objs($self->get_object_class_id ? $obj : $mem);
     return $self;
 }
 
@@ -1480,8 +1481,7 @@ sub has_member {
             # Just use the set.
             if ($self->get_object_class_id) {
                 # It's in one class. Do an easy grab.
-                ($mem) = $memb_coll->get_objs($params->{id} ||
-                                              $params->{obj}->get_id);
+                ($mem) = $memb_coll->get_objs($oid);
                 last MEMCHK if $mem;
                 # Try to get it from the new members.
                 if (my $new_memb = $memb_coll->get_new_objs) {
