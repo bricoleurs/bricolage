@@ -240,10 +240,10 @@ my $split_fields = sub {
     my $re = $regex->{$sep} ||= qr/\s*\Q$sep\E\s*/;
 
     # Split 'em up.
-    @data = map { s/^\s+//;        # Strip out beginning spaces.
-		  s/\s+$//;        # Strip out ending spaces.
-		  s/[\n\t\r\f]//g; # Strip out unwanted characters.
-		  s/\s{2,}/ /g;    # Strip out double-spaces.
+    @data = map { s/^\s+//;         # Strip out beginning spaces.
+		  s/\s+$//;         # Strip out ending spaces.
+		  s/[\n\t\r\f]/ /g; # Strip out unwanted characters.
+		  s/\s{2,}/ /g;     # Strip out double-spaces.
 	          $_;
 	      } split(/$re/, $text);
 
