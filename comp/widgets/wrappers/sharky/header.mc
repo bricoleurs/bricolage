@@ -82,7 +82,9 @@ var checkboxValues = new Array();
 
 window.onload = function () {
     init();
+% if ($useSideNav) {
     installHelpButtons();
+% }
 }
 
 function init() {
@@ -106,7 +108,8 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 <p><% $lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.') %></p>
 </noscript>
 
-<!-- begin top table -->
+
+<div id="mainContainer">
 <div id="bricLogo">
 % if ($useSideNav) {
         <a href="#" title="About Bricolage" id="btnAbout"><img src="/media/images/<% $lang_key %>/bricolage.gif" /></a>
@@ -114,9 +117,6 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
         <img src="/media/images/<% $lang_key %>/bricolage.gif" alt="Bricolage" />
 % }
 </div>
-<!-- end top tab table -->
-
-<div id="mainContainer">
 <%perl>;
 # handle the various states of the side nav
 if ($useSideNav) {

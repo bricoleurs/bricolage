@@ -13,29 +13,21 @@ a img      { border: none; }
 form       { margin: 0; padding: 0; }
 input      { vertical-align: middle; }
 .textInput { font-family: Verdana, Helvetica, Arial, sans-serif; }
-.textarea,
-.codearea  { 
-    padding: 3px 5px;
-    border-left:   solid 2px #7F7F7F; 
-    border-top:    solid 2px #7F7F7F;
-    border-right:  solid 2px #F7F7F7;
-    border-bottom: solid 2px #F7F7F7;  
-}
 textarea { 
-    width: 100%; 
+    width: 99%;
     font-family: Verdana, Helvetica, Arial, sans-serif; 
     font-size: 1em;
-    border: none; 
 }
-.codearea textarea  { font-family: monospace; font-size: 1.1em; }
+.editmeta .textarea textarea { width: 50%; }
+.codearea textarea { font-family: monospace; font-size: 1.1em; }
 
 #navFrame         { background: #666633; }
 #help             { background: white; padding: 10px; }
 
-#bricLogo { padding: 8px 8px 2px 8px; background: white; }
-#mainContainer { position: relative; margin: 0 18px 8px 8px; min-width: 740px; }
-#sideNav { position: absolute; top: 0; left: 0; width: 150px; z-index: 200; border: 0; }
-#contentContainer { padding-left: 158px; }
+#bricLogo { position: absolute; top: 0; left: 0; background: white; padding-top: 8px; }
+#mainContainer { position: relative; margin: 0px 8px 8px 8px; min-width: 740px; }
+#sideNav { position: absolute; top: 33px; left: 0; width: 150px; z-index: 200; border: 0; }
+#contentContainer { padding: 8px 0 0 158px; }
 #help #contentContainer { padding: 0; }
 
 .adminBox,
@@ -124,8 +116,8 @@ textarea {
 .blackUnderlinedLink { font-size:10px; color:#006666;}
 .blackMedUnderlinedLink { font-size:11px; color:#006666;}
 
-.label       { font-size:10px; font-weight:bold}
-.redLabel    { font-size:10px; font-weight:bold; color:red}
+.label       { font-weight: bold}
+.redLabel    { font-weight: bold; color: red}
 .burgandyLabel { font-size:10px; font-weight:bold; color:#993300}
 .errorMsg    { color: red; font-weight: bold}
 .statusMsg   { display: none; } /* Status messages are sent to the browser before the */
@@ -340,14 +332,12 @@ form .row .label,
 form .row .redLabel {
     float: left;
     width: 130px;
+    padding-right: 5px;
     text-align: right;
     line-height: 2;
 }
-
 form .row .input {
-    padding-left: 140px;
-    margin-left: 0;
-    width: 50%;
+    margin-left: 140px;
     white-space: nowrap;
     line-height: 2;
 }
