@@ -39,6 +39,11 @@ roots for in Mason templates. This will allow for templates that can't be found
 in the current Output Channel to be searched for in other Output Channels.
 [David]
 
+=item *
+
+Added link to Event log to Find Story, Find Template, and Find Media screens.
+[David]
+
 =back
 
 =head2 Bug Fixes
