@@ -83,6 +83,8 @@ The original developers were:
 
 Emeritus Developers:
 
+=over
+
 =item Garth Webb <garth@perijove.com>
 
 =item Michael Soderstrom <miraso@pacbell.net>
@@ -90,8 +92,6 @@ Emeritus Developers:
 =item David Gantenbein <fretlessbass@attbi.com>
 
 =item Sam Tregar <stregar@about-inc.com>
-
-=over
 
 =back
 
@@ -222,6 +222,8 @@ Friends who have spotted bugs include:
 =item Chris Riddoch
 
 =item Gary Gilchrist
+
+=item Creighton Higgins
 
 =back
 

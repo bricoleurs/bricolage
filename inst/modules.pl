@@ -6,11 +6,11 @@ modules.pl - installation script to probe for required Perl modules
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.4.1 $
 
 =head1 DATE
 
-$Date: 2002-12-11 06:22:13 $
+$Date: 2003-10-22 05:53:30 $
 
 =head1 DESCRIPTION
 
@@ -115,7 +115,7 @@ sub check_module {
 # extract the module list from Bric::Admin
 sub extract_module_list {
   my @mod;
-  open(ADM, "$FindBin::Bin/../lib/Bric/Admin.pod") 
+  open(ADM, "$FindBin::Bin/../lib/Bric/Admin.pod")
     or die "Unable to open $FindBin::Bin/../lib/Bric/Admin.pod : $!";
   # seek to start of modules
   while (<ADM>) {

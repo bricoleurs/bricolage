@@ -6,11 +6,11 @@ Bric::Templates - Producing Templates on the Bricolage System
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.12.4.1 $
 
 =head1 DATE
 
-$Date: 2002-10-18 00:10:55 $
+$Date: 2003-10-22 05:53:30 $
 
 =head1 BACKGROUND
 
@@ -125,7 +125,7 @@ A column topic field
 
 1 or more paragraph fields
 
-=item +
+=item *
 
 1 or more Music Blurbs
 
@@ -276,7 +276,9 @@ root category. Root is usually shown as a '/' in the publishing tool:
 
 /Music/Rock
 
-=item ...
+=item *
+
+...
 
 =back
 
@@ -552,7 +554,7 @@ A column topic field
 
 1 or more paragraph fields
 
-=item +
+=item *
 
 1 or more Music Blurbs
 
@@ -575,7 +577,7 @@ In a story, text fields AND contained elements are both referred to as
 
 =over 4
 
-=item 1) 
+=item 1)
 
 A list of allowed data fields that compose a type of story
 
@@ -618,7 +620,7 @@ A topic data element
 
 A paragraph data element
 
-=item +
+=item *
 
 A music blurb container element
 
@@ -742,8 +744,8 @@ Story editors have the opportunity to arrange the elements of their story in a
 particular order. This method returns a number giving this container element's
 place among all other elements (both data and container).
 
-If $element is the element object for the main story (i.e. the 'column' element of a 
-'column' story) this will return 1.
+If $element is the element object for the main story (i.e. the 'column'
+element of a 'column' story) this will return 1.
 
 =item $element->get_object_order
 
@@ -836,7 +838,7 @@ we've been discussing. Here is the layout for this Element:
 
 Data element 'deck'
 
-=item +
+=item *
 
 Container element 'page'
 
@@ -862,7 +864,7 @@ Data element 'next'
 
 Data element 'previous'
 
-=item +
+=item *
 
 Container element 'inset'
 
