@@ -7,11 +7,11 @@ dhandler -- the container profile app.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.5.2.1 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:43 $
+$Date: 2002-03-25 16:57:57 $
 
 =head1 DESCRIPTION
 
@@ -42,7 +42,7 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
   	title => "view container",
 	context => $context . get_state_data('container_prof', 'crumb')
  &>
-<form action="<% $r->uri %>" method="post">
+<form name="theForm" action="<% $r->uri %>" method="post">
 
 <& /widgets/container_prof/container_prof.mc,
 	action       => 'view',
