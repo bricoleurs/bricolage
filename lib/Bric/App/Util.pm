@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.2.2.2 $
+$Revision: 1.2.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-06 23:18:32 $
+$Date: 2001-11-15 21:16:33 $
 
 =head1 SYNOPSIS
 
@@ -563,9 +563,9 @@ B<Notes:> NONE.
 sub redirect_onload {
     my $loc = shift || return;
 
-    $HTML::Mason::Commands::m->out(qq{<SCRIPT>
-            document.location='$loc';
-        </SCRIPT>
+    $HTML::Mason::Commands::m->out(qq{<script>
+            location.href='$loc';
+        </script>
     });
     $HTML::Mason::Commands::m->abort;
 }
