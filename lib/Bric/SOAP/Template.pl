@@ -12,7 +12,7 @@ Template.pl - a test script for Bric::SOAP::Template
 =head1 DESCRIPTION
 
 This is a Test::More test script for the Bric::SOAP::Template module.  It
-requires a mix of template in the running Bricolage instance to work
+requires a mix of templates in the running Bricolage instance to work
 properly.
 
 Bricolage requirements are:
@@ -25,7 +25,11 @@ Multiple template objects.
 
 =item *
 
-A workflow named 'Template' with template in it.
+A workflow named 'Template' with templates in it.
+
+=item *
+
+An output channel named 'Web' with templates in it.
 
 =back
 
@@ -59,7 +63,7 @@ Set this to 1 to see debugging text including the full XML for every
 SOAP method call and response.  Highly educational.  Defaults to the
 value of the DEBUG environment variable or 0.
 
-=item DELETE_TEST_TEMPLATE
+=item DELETE_TEST_TEMPLATES
 
 The test script will create new template to test create() and update().
 If you set this constant to 0 then you'll be able to examine them in
@@ -75,7 +79,7 @@ Sam Tregar <stregar@about-inc.com>
 
 use strict;
 use constant DEBUG => $ENV{DEBUG} || 0;
-use constant DELETE_TEST_TEMPLATE => 1;
+use constant DELETE_TEST_TEMPLATES => 1;
 
 use constant USER     => 'admin';
 use constant PASSWORD => 'bric';
@@ -90,6 +94,7 @@ use File::Temp qw(tempfile);
 use Bric::Biz::Asset::Formatting;
 use Bric::Biz::AssetType;
 use Bric::Biz::Workflow;
+use Bric::Biz::OutputChannel;
 use HTTP::Cookies;
 
 # check to see if we have Xerces C++ to use for Schema validation 
@@ -148,6 +153,10 @@ ok($template_element_id, "Got element id for template");
 my ($workflow_id) = Bric::Biz::Workflow->list_ids({ name => 'Template' });
 ok($workflow_id, "Got workflow id for Template");
 
+# get oc_id for use in tests
+my ($oc_id) = Bric::Biz::OutputChannel->list_ids({ name => 'Web' });
+ok($oc_id, "Got oc id for Web");
+
 # pairs of list_ids() and normal list_ids() arg hashes that must return
 # the same list of template.
 my @queries = (
@@ -158,6 +167,8 @@ my @queries = (
 		 { element__id => $template_element_id } ],
 	       [ { workflow => 'Template' },
 		 { workflow__id => $workflow_id } ],
+	       [ { output_channel => 'Web' },
+		 { output_channel__id => $oc_id } ],	   
 	      );
 
 foreach my $queries (@queries) {
@@ -186,23 +197,23 @@ foreach my $queries (@queries) {
 	    ")");
 }
 
-# # get schema ready for checking documents
-# my $xsd = extract_schema();
-# ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
+# get schema ready for checking documents
+my $xsd = extract_schema();
+ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
 
-# # try exporting and importing every template object
-# my $copy_sym = 1;
-# foreach my $template_id (@$template_ids) {
-#     $response = $soap->export(name(template_id => $template_id));
-#     if ($response->fault) {
-# 	fail('SOAP export() response fault check');
-# 	exit 1;
-#     } else {
-# 	pass('SOAP export() response fault check');  
+# try exporting and importing every template object
+my $copy_sym = 1;
+foreach my $template_id (@$template_ids) {
+    $response = $soap->export(name(template_id => $template_id));
+    if ($response->fault) {
+ 	fail('SOAP export() response fault check');
+ 	exit 1;
+    } else {
+ 	pass('SOAP export() response fault check');  
 	
-# 	my $document = $response->result;
-# 	ok($document, "recieved document for template $template_id");
-# 	check_doc($document, $xsd, "template $template_id");
+ 	my $document = $response->result;
+ 	ok($document, "recieved document for template $template_id");
+ 	check_doc($document, $xsd, "template $template_id");
 
 # 	# add (copy) to title and try to create copy
 # 	$document =~ s!<name>(.*?)</name>!<name>$1 (copy $copy_sym)</name>!;
@@ -228,70 +239,70 @@ foreach my $queries (@queries) {
 # 	is($updated_ids->[0], $ids->[0], "update() worked in place");
 
 # 	# delete copies unless debugging and NO_DELETE unset
-# 	if (DELETE_TEST_TEMPLATE) {		
+# 	if (DELETE_TEST_TEMPLATES) {		
 # 	    my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
 # 	    $response = $soap->delete(name(template_ids => [ map { name(template_id => $_) } keys %to_delete ]));
 # 	    ok(!$response->fault, 'SOAP delete() result is not a fault');
 # 	    exit 1 if $response->fault;
 # 	    ok($response->result, "SOAP delete() result check");
 # 	}
-#     }
-# }
+    }
+}
 
-# ###############################################################################
-# #
-# # utility routines
-# #
-# ###############################################################################
+###############################################################################
+#
+# utility routines
+#
+###############################################################################
 
-# # check a document against an xsd schema
-# sub check_doc {
-#   my ($doc, $xsd, $name) = @_;
-#   print "$name :\n$doc\n" if DEBUG;
-
-#   SKIP: {
-#       skip "need Xerces C++ for schema validation", 1 unless $has_xerces;
-
-#       # hocus pocus!  The document needs some extra attributes on the root
-#       # element to get validation to happen right.
-#       $doc =~ s!<assets!<assets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://bricolage.sourceforge.net/assets.xsd $xsd" !;
-      
-#       # output into a tempfile
-#       my ($fh, $filename) = tempfile("doc_XXXX", SUFFIX => '.xml');
-#       print $fh $doc;
-#       close $fh;
-      
-#       # call DOMCount and look for error lines
-#       my $results = `DOMCount -n -s -f -v=always $filename 2>&1`;
-#       print "Schema Validation Results: $results\n" if DEBUG;
-#       ok($results !~ /Error/, "$name schema validation");
-      
-#       unlink $filename;
-#   };
-# }
-
-# # extracts the assets schema from the Bric::SOAP POD, writes it to the
-# # filesystem and returns the filename
-# sub extract_schema {
-#     my $bric_root = $ENV{BRICOLAGE_ROOT} || "/usr/local/bricolage";
-
-#     # suck in spec
-#     open SPEC, "$bric_root/lib/Bric/SOAP.pm" 
-# 	or die "Unable to open $bric_root/lib/Bric/SOAP.pm : $!";
-#     my $text = join('', <SPEC>);
-#     close(SPEC);
-
-#     # find the xsd
-#     my ($xsd) = $text =~ m!(<\?xml\sversion="1\.0"\sencoding="UTF-8"\?>
-#                            .*?
-#                            <xs:schema
-#                            .*?
-#                            </xs:schema>)!xs;
-#     die "Unable to extract XSD" unless $xsd;
+# check a document against an xsd schema
+sub check_doc {
+    my ($doc, $xsd, $name) = @_;
+    print "$name :\n$doc\n" if DEBUG;
     
-#     # output xsd into a tempfile and return name
-#     my ($fh, $filename) = tempfile("asset_XXXX", SUFFIX => '.xsd');
-#     print $fh $xsd;
-#     close $fh;
-#     return $filename;
-# }
+ SKIP: {
+	skip "need Xerces C++ for schema validation", 1 unless $has_xerces;
+	
+	# hocus pocus!  The document needs some extra attributes on the root
+	# element to get validation to happen right.
+	$doc =~ s!<assets!<assets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://bricolage.sourceforge.net/assets.xsd $xsd" !;
+	
+	# output into a tempfile
+	my ($fh, $filename) = tempfile("doc_XXXX", SUFFIX => '.xml');
+	print $fh $doc;
+	close $fh;
+	
+	# call DOMCount and look for error lines
+	my $results = `DOMCount -n -s -f -v=always $filename 2>&1`;
+	print "Schema Validation Results: $results\n" if DEBUG;
+	ok($results !~ /Error/, "$name schema validation");
+	
+	unlink $filename;
+    };
+}
+
+# extracts the assets schema from the Bric::SOAP POD, writes it to the
+# filesystem and returns the filename
+sub extract_schema {
+    my $bric_root = $ENV{BRICOLAGE_ROOT} || "/usr/local/bricolage";
+    
+    # suck in spec
+    open SPEC, "$bric_root/lib/Bric/SOAP.pm" 
+ 	or die "Unable to open $bric_root/lib/Bric/SOAP.pm : $!";
+    my $text = join('', <SPEC>);
+    close(SPEC);
+    
+    # find the xsd
+    my ($xsd) = $text =~ m!(<\?xml\sversion="1\.0"\sencoding="UTF-8"\?>
+			   .*?
+			   <xs:schema
+			   .*?
+			   </xs:schema>)!xs;
+    die "Unable to extract XSD" unless $xsd;
+    
+    # output xsd into a tempfile and return name
+    my ($fh, $filename) = tempfile("asset_XXXX", SUFFIX => '.xsd');
+    print $fh $xsd;
+    close $fh;
+    return $filename;
+}
