@@ -741,9 +741,9 @@ then generate the documentation on the Web server.
 
 =item html-template-users@lists.sourceforge.net
 
-=item temlates-announce@template-toolkit.org
+=item templates-announce@template-toolkit.org
 
-=item temlates@template-toolkit.org
+=item templates@template-toolkit.org
 
 =item general@oscom.org
 
