@@ -229,11 +229,6 @@ primary URI of the media document. Reported by Serge Sozonoff. [David]
 
 =item *
 
-A checkbox that is unchecked in an element no longer reverts to checked when
-clicking "Save and Stay". Reported by Scott Lanning. [David]
-
-=item *
-
 Fixed API that was causing no elements to be returned on "Add sub-elements"
 page, when "Filter by site context" was turned on. [JoE<atilde>o Pedro]
 
@@ -256,15 +251,9 @@ C<< Bric::SOAP::Category->list_ids >> now converts site names to site IDs.
 
 =item *
 
-Date parameters to the C<list()> methods of the story, media, and template
-classes are now properly converted to UTC (and the database internal format)
-before being passed to the database. [David]
-
-=item *
-
-C<< Bric::Util::Burner->preview >> now previews to asset's primary output channel
-instead of using the element's Primary OC.
-[JoE<atilde>o Pedro]
+C<< Bric::Util::Burner->preview >> once again defaults to previewing in an
+asset's primary output channel instead of using the element's primary output
+channel. [JoE<atilde>o Pedro]
 
 =back
 
