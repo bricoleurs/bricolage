@@ -25,6 +25,10 @@ This document lists the Changes to Bricolage introduced with each release.
 Upgrading from from a version prior to 1.3.3 no longer tries to create an
 index that already exists (and that will be dropped, anyway). [David]
 
+=item *
+
+Removed documentation for intalling mod_proxy with Apache. [David]
+
 =back
 
 =head1 VERSION 1.4.0
