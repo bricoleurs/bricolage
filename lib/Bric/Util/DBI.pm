@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-05-01 02:16:36 $
+$Date: 2002-08-14 19:47:37 $
 
 =head1 SYNOPSIS
 
@@ -1272,7 +1272,7 @@ sub last_key {
     _connect();
     my ($name, $db, $debug) = @_;
     my $sth = prepare_c(last_key_sql($name, $db || $Bric::Cust), undef, $debug);
-    return @{ row_aref($sth) }->[0];
+    return row_aref($sth)->[0];
 } # last_key()
 
 =back 4
