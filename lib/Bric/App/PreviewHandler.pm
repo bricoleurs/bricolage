@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:39 $
+$Date: 2003-03-07 16:34:39 $
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,6 @@ use strict;
 # Programmatic Dependences
 use Apache::Constants qw(DECLINED OK);
 use Bric::Config qw(:prev :err);
-use Bric::Util::Fault::Exception::AP;
 use Bric::Util::Trans::FS;
 use Apache::Log;
 
@@ -73,7 +72,6 @@ use constant ERROR_FILE =>
 
 ################################################################################
 # Private Class Fields
-my $dp = 'Bric::Util::Fault::Exception::DP';
 my $fs = Bric::Util::Trans::FS->new;
 
 # We'll use this to check to seed if the referer is a preview page.

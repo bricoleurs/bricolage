@@ -6,16 +6,16 @@ Bric::Dist::Handler - Apache/mod_perl handler for executing distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2003-03-07 16:34:41 $
 
 =head1 SYNOPSIS
 
@@ -42,7 +42,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::Dist::Job;
 use Apache::Constants qw(:common);
@@ -68,7 +68,6 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 ################################################################################
 
@@ -151,8 +150,8 @@ sub handler {
 	foreach my $jid (split /\s*,\s*/, $headers{Execute}) {
 	    eval {
 		my $job = Bric::Dist::Job->lookup({ id => $jid }) ||
-		  die $gen->new({msg => "Job $jid does not exist." });
-		$job->execute_me;
+                    throw_gen(error => "Job $jid does not exist.");
+		$job->execute_me();
 		log_event("job_exec", $job);
 	    };
 	    # Log any errors.
@@ -183,20 +182,21 @@ sub log_err {
     my ($r, $err, $msg) = @_;
     # Get a handle on the log.
     my $log = $r->log;
-    unless (ref $err) {
-	# Just get it over with if it's not an exception object.
-	$log->crit("$msg: $err");
-	return 1;
+    unless (isa_bric_exception($err)) {
+        # Just get it over with if it's not an exception object.
+        $log->crit("$msg: $err");
+        return 1;
     }
 
     # Otherwise, log the exception. Start by formatting the environment.
-    my $env = $err->get_env;
     my $env_msg;
-    while (my ($k, $v) = each %$env) { $env_msg .= "$k => $v\n" }
+    while (my ($k, $v) = each %ENV) {
+        $env_msg .= "$k => $v\n";
+    }
     # Log it!
-    $log->crit("$msg: " . $err->get_msg . "\nContext: " . $err->get_pkg . " (" .
-	       $err->get_filename . "), Line " . $err->get_line . "\nPayload:\n"
-	       . ($err->get_payload || '') . "\nEnvironment:\n$env_msg\n");
+    $log->crit("$msg: " . $err->error . "\nContext: " . $err->package . " ("
+               . $err->file . "), Line " . $err->line . "\nPayload:\n"
+               . ($err->payload || '') . "\nEnvironment:\n$env_msg\n");
 }
 
 1;

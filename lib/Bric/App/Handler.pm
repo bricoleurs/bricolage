@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 00:19:20 $
+$Date: 2003-03-07 16:34:38 $
 
 =head1 SYNOPSIS
 
@@ -276,10 +276,10 @@ sub handle_err {
     clear_events();
 
     # Send the error to the apache error log.
-    $r->log->error($err->get_msg . ': ' . $err->get_payload . ($more_err ?
-		   "\n\n$more_err" : '') . "\nStack Trace:\n" .
-                   join("\n", map { ref $_ ? join(' - ', @{$_}[1,2,3]) : $_ }
-                        @{$err->get_stack}) . "\n\n");
+    $r->log->error($err->error . ': ' . $err->payload
+                   . ($more_err ? "\n\n$more_err" : '')
+                   . "\nStack Trace:\n"
+                   . join("\n", @{$err->get_stack}) . "\n\n");
 
     # Make sure we go back to translating character sets, or we'll be
     # screwed on the next request.
@@ -303,7 +303,7 @@ sub _make_fault {
     if (isa_mason_exception($err)) {
         if (QA_MODE) {
             # Make sure we're not stealing away Mason's internal exceptions.
-            die $err if isa_mason_exception($err, 'Abort') or
+            $err->rethrow() if isa_mason_exception($err, 'Abort') or
               isa_mason_exception($err, 'Compilation::IncompatibleCompiler');
         }
         my $brief = $err->as_brief;
@@ -355,9 +355,12 @@ sub filter {
     # Do error processing, if necessary.
     if (my $err = $@) {
         $no_trans = 1; # So we don't translate error.html.
-        my $msg = 'Error translating from UTF-8 to ' . $ct->charset;
-        die $err if ref $err;
-        throw_dp error => $msg, payload => $err;
+        if (isa_bric_exception($err)) {
+            $err->rethrow();
+        } else {
+            my $msg = 'Error translating from UTF-8 to ' . $ct->charset;
+            throw_dp(error => $msg, payload => $err);
+        }
     }
 
     # Dump the data.

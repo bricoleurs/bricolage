@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2003-03-07 16:34:36 $
 
 =head1 SYNOPSIS
 
@@ -81,7 +81,6 @@ use Bric::Config qw(:err :ssl :cookies);
 
 ################################################################################
 # Private Class Fields
-my $ap = 'Bric::Util::Fault::Exception::AP';
 my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 my $ssl_port = SSL_PORT == 443 ? '' : ':' . SSL_PORT;
 

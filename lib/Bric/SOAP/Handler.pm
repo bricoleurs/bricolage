@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:49 $
+$Date: 2003-03-07 16:34:42 $
 
 =head1 SYNOPSIS
 
@@ -84,7 +84,7 @@ use Bric::App::Auth;
 use Bric::App::Session;
 use Bric::Util::DBI qw(:trans);
 use Bric::App::Event qw(clear_events);
-use Bric::Util::Fault::Exception::AP;
+use Bric::Util::Fault qw(:all);
 use Apache::Constants qw(OK);
 use Apache::Util qw(escape_html);
 
@@ -180,7 +180,7 @@ END
     # Do error processing, if necessary.
     handle_err(0, 0, $@) if $@;
 
-    # Commit to the database, uless there was an error.
+    # Commit to the database, unless there was an error.
     if ($commit) {
         commit(1);
     } else {
@@ -203,22 +203,20 @@ sub handle_err {
 
     # Create an exception object unless we already have one.
     $err = Bric::Util::Fault::Exception::AP->new
-      ({ msg => "Error executing SOAP command", payload => $err || $string })
-      unless ref $err;
+        ( error => "Error executing SOAP command", payload => $err || $string )
+        unless isa_bric_exception($err);
 
     # Rollback the database transactions.
     eval { rollback(1) };
     my $more_err = $@ ? "In addition, the database rollback failed: $@" : undef;
 
-    # Clear out events to that they won't be logged.
+    # Clear out events so that they won't be logged.
     clear_events();
 
     # Send the error to the apache error log.
-    $apreq->log->error($err->get_msg . ': ' . ($err->get_payload || '') .
-                       ($more_err ? "\n\n$more_err" : '') . "\nStack Trace:\n" .
-                       join("\n", map { ref $_ ? join(' - ', @{$_}[1,2,3]) : $_ }
-                            @{$err->get_stack}) . "\n\n");
-
+    $apreq->log->error($err->error . ': ' . ($err->payload || '') .
+                       ($more_err ? "\n\n$more_err" : '') . "\nStack Trace:\n"
+                       . join("\n", @{$err->get_stack}) . "\n\n");
 }
 
 # silence warnings from SOAP::Lite

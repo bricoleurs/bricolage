@@ -6,16 +6,16 @@ Bric::App::CleanupHandler - Cleans up at the end of a request.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-30 06:23:36 $
+$Date: 2003-03-07 16:34:37 $
 
 =head1 SYNOPSIS
 
@@ -78,7 +78,6 @@ use Bric::Util::DBI qw(:trans);
 
 ################################################################################
 # Private Class Fields
-my $ap = 'Bric::Util::Fault::Exception::AP';
 
 ################################################################################
 

@@ -14,12 +14,12 @@
 % if (TEMPLATE_QA_MODE) {
 <font face="Verdana, Helvetica, Arial">
 <p><b>An exception was thrown:</b></p>
-<b>Fault Type:</b> <% ref $fault %><br />
-<b>Timestamp:</b> <% strfdate($fault->get_timestamp) %><br />
-<b>Package:</b> <% $fault->get_pkg %><br />
-<b>Filename:</b> <% $fault->get_filename %><br />
-<b>Line:</b> <% $fault->get_line %><br />
-<b>Message:</b> <% $fault->get_msg . ($more_err ? "\n\n$more_err" : '') %>
+<b>Fault Type:</b> <% $fault->description %><br />
+<b>Timestamp:</b> <% strfdate($fault->time) %><br />
+<b>Package:</b> <% $fault->package %><br />
+<b>Filename:</b> <% $fault->file %><br />
+<b>Line:</b> <% $fault->line %><br />
+<b>Message:</b> <% $fault->error . ($more_err ? "\n\n$more_err" : '') %>
 % if ($is_burner_error) {
 </p>
 % } else {
@@ -30,6 +30,16 @@
 </p>
 % }
 </font>
+
+<font face="Verdana, Helvetica, Arial"><p><b>Request args:</b></font>
+<table border="0" cellpadding="2" cellspacing="2">
+% foreach my $arg (keys %req_args) {
+    <tr>
+        <td align="right"><span class="label"><% $arg %>:</span></td>
+        <td align="left"><% $req_args{$arg} %></td>
+    </tr>
+% }
+</table>
 
 % if ($is_burner_error) {
 <font face="Verdana, Helvetica, Arial"><p><b>Payload:</b></font>
@@ -57,7 +67,7 @@
 </table>
 % }
 <font face="Verdana, Helvetica, Arial">
-<b>Stack:</b><br /><% join("<br />\n", map { ref $_ ? join(' - ', @{$_}[1,3,2]) : $_ } @{$fault->get_stack} ) %>
+<b>Stack:</b><br /><% join("<br />\n", @{$fault->get_stack} ) %>
 
 <br /><br />
 <& '/widgets/debug/debug.mc' &>
@@ -94,25 +104,6 @@
 <& '/widgets/wrappers/sharky/footer.mc' &>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-<!--
-
-% $m->comp('error.html', %ARGS);
-
--->
-
-
 <%args>
 $fault => undef
 $more_err => undef
@@ -120,21 +111,23 @@ $more_err => undef
 <%init>;
 # Clear out messages - they're likely irrelevant now.
 clear_msg();
-unless (UNIVERSAL::isa($fault, 'Bric::Util::Fault::Exception')) {
+unless (isa_bric_exception($fault)) {
     my %h = $r->headers_in;
     my $payload = isa_mason_exception($fault) ? $fault->as_brief : $h{BRIC_ERR_PAY};
-    if (UNIVERSAL::isa($payload, 'Bric::Util::Fault::Exception')) {
-        $payload = $payload->get_msg();
+    if (isa_bric_exception($payload)) {
+        $payload = $payload->error();
     }
     $fault = Bric::Util::Fault::Exception::AP->new(
-      { msg => $h{BRIC_ERR_MSG} || 'No error message found',
-        payload => $payload });
+        error => $h{BRIC_ERR_MSG} || 'No error message found',
+        payload => $payload );
 }
 
-my $msg = $fault->get_msg || '';
+my $msg = $fault->error || '';
 # Get the payload if this is a Mason-level or burn system error.
-my $pay = $fault->get_payload if $msg eq 'Error processing Mason elements.'
+my $pay = $fault->payload if $msg eq 'Error processing Mason elements.'
   ||  $msg =~ /^Unable to find template/
   ||  TEMPLATE_QA_MODE ;
 my $is_burner_error = ($msg =~ /^Unable to find template/);
+
+my %req_args = HTML::Mason::Request->instance->request_args;
 </%init>

@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-03 15:20:03 $
+$Date: 2003-03-07 16:34:33 $
 
 =head1 SYNOPSIS
 
@@ -37,11 +37,6 @@ $Date: 2003-03-03 15:20:03 $
       print "Stack:\n";
       foreach my $c (@{ $err->get_stack }) {
           print "\t", (ref $c ? join(' - ', @{$c}[1,3,2]) : $c), "\n";
-      }
-
-      print "Environment:\n";
-      while (my ($k, $v) = each %{ $err->get_env }) {
-          print "\t$k => $v\n";
       }
   }
 
@@ -68,41 +63,41 @@ use strict;
 #==============================================================================#
 # Inheritance                          #
 #======================================#
-use Exception::Class
-  ( 'Bric::Util::Fault' =>
-      { description => 'Bricolage Exception',
-        fields => [qw(payload env)],
-      },
-    'Bric::Util::Fault::Exception' =>
-      { description => 'Remove Me Exception',
+use Exception::Class (
+    'Bric::Util::Fault' => {
+        description => 'Bricolage Exception',
+        fields => [qw(payload)],
+    },
+    'Bric::Util::Fault::Exception' => {
+        description => 'Remove Me Exception',
         isa => 'Bric::Util::Fault',
-      },
-    'Bric::Util::Fault::Exception::AP' =>
-      { description => 'Application Exception',
+    },
+    'Bric::Util::Fault::Exception::AP' => {
+        description => 'Application Exception',
         isa => 'Bric::Util::Fault::Exception',
         alias => 'throw_ap',
-      },
-    'Bric::Util::Fault::Exception::DA' =>
-      { description => 'Data Access Exception',
+    },
+    'Bric::Util::Fault::Exception::DA' => {
+        description => 'Data Access Exception',
         isa => 'Bric::Util::Fault::Exception',
         alias => 'throw_da',
-      },
-    'Bric::Util::Fault::Exception::DP' =>
-      { description => 'Data Processing Exception',
+    },
+    'Bric::Util::Fault::Exception::DP' => {
+        description => 'Data Processing Exception',
         isa => 'Bric::Util::Fault::Exception',
         alias => 'throw_dp',
-      },
-    'Bric::Util::Fault::Exception::GEN' =>
-      { description => 'General Exception',
+    },
+    'Bric::Util::Fault::Exception::GEN' => {
+        description => 'General Exception',
         isa => 'Bric::Util::Fault::Exception',
         alias => 'throw_gen',
-      },
-    'Bric::Util::Fault::Exception::MNI' =>
-      { description => 'Method Not Implemented Exception',
+    },
+    'Bric::Util::Fault::Exception::MNI' => {
+        description => 'Method Not Implemented Exception',
         isa => 'Bric::Util::Fault::Exception',
         alias => 'throw_mni',
-      },
-  );
+    },
+);
 
 require Exporter;
 *import = \&Exporter::import;
@@ -184,8 +179,9 @@ instead.
 sub new {
     my $class = shift;
 
+    # handle old style which used a hashref
     my %params = ref $_[0] ? %{$_[0]} : @_ == 1 ? ( error => $_[0] ) : @_;
-    $params{'env'} = {%ENV};
+    # make any old 'msg' params into 'error'
     $params{'error'} = delete $params{'msg'} if exists $params{'msg'};
 
     return $class->SUPER::new(%params);
@@ -279,22 +275,6 @@ sub get_timestamp { shift->time }
 
 #------------------------------------------------------------------------------#
 
-=item $id = $obj->get_env;
-
-Returns a hash reference of the contents of %ENV at time of error.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub get_env { shift->env }
-
-#------------------------------------------------------------------------------#
-
 =item $id = $obj->get_filename;
 
 Returns the name of the file in which the error ocurred.
@@ -373,14 +353,25 @@ B<Notes:> NONE.
 =cut
 
 sub get_stack {
-    # this might need tweaked - can fool with full_message in Exception::Class
-    # as well as Devel::StackTrace
-    # not sure if each frame of trace can be printed
-    # as a string (without calling every accessor method),
-    # but we have to return an arrayref here,
-    # so I just returned the whole stacktrace in
-    # one element of the array
-    return [ shift->trace->as_string() ];
+    my $self = shift;
+    my (@stack, $trace, $frame_num);
+
+    # see `perldoc Devel::StackTrace`
+    $trace = $self->trace;
+
+    $frame_num = $trace->frame_count - 1;
+    while (my $f = $trace->prev_frame) {
+        my $str = "$frame_num: " . $f->package . ':' . $f->line
+            . ' -> ' . $f->subroutine . '('
+            . join(', ', map {length>32 ? substr($_,0,30).'...' : $_} $f->args)
+            . ')';
+        $str .= ', evaltext=' . $f->evaltext if defined $f->evaltext;
+
+        push @stack, $str;
+        $frame_num--;
+    }
+
+    return \@stack;
 }
 
 #------------------------------------------------------------------------------#
