@@ -41,8 +41,10 @@ sub save : Callback {
     my $dest_id = $param->{"${type}_id"};
     # Make sure the name isn't already in use.
     my $used;
-    my @dests = $class->list_ids({ name => $param->{name},
-                                   site_id => $dest->get_site_id });
+    my @dests = $class->list_ids({ name    => $param->{name},
+                                   site_id => $param->{site_id}
+                                              || $dest->get_site_id });
+    warn "Dests: @dests";
     if (@dests > 1) {
         $used = 1;
     } elsif (@dests == 1 && !defined $dest_id) {

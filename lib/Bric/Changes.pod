@@ -188,6 +188,12 @@ Fixed 1.7.0 upgrade scripts that create key names to better handle key name
 conflicts. Thanks to Nate Perry-Thistle for having an installation that
 generated such conflicts. [David]
 
+=item *
+
+Attempting to create a destination with the same name as an existing or
+deleted destination no longer causes an SQL error. Thanks to Simon Wilcox for
+the spot! [David]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
