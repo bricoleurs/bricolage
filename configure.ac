@@ -1,4 +1,4 @@
-# assuming we have perl we can get the version number
+'# assuming we have perl we can get the version number
 # if not, we know right off that something wrong
 VERSION=`perl -MBric -e 'print $Bric::VERSION'`
 
@@ -78,10 +78,10 @@ PGPATHTOCHECK=$PGHOME/bin:/usr/local/pgsql/bin:/opt/pgsql/bin:/usr/local/postgre
 # Checks for programs
 AC_PROG_APACHE(1.3.12)
 AC_PROG_POSTGRES(PGHOME, 7.1.3)
-AC_PATH_PROG(PSQL, psql, $PGPATH)
-AC_PATH_PROG(DROPDB, dropdb, $PGPATH)
-AC_PATH_PROG(DROPUSER, dropuser, $PGPATH)
-AC_PATH_PROG(CREATEDB, createdb, $PGPATH)
+AC_PATH_PROG(PSQL, psql, , $PGPATHTOCHECK)
+AC_PATH_PROG(DROPDB, dropdb, , $PGPATHTOCHECK)
+AC_PATH_PROG(DROPUSER, dropuser, , $PGPATHTOCHECK)
+AC_PATH_PROG(CREATEDB, createdb, , $PGPATHTOCHECK)
 AC_POSTGRES_ENCODING(UNICODE)
 AC_PROG_PERL(PERL, 5.6.1)
 AC_PATH_PROG(POD2HTML, pod2html)
