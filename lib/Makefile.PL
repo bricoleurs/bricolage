@@ -7,9 +7,8 @@ use strict;
 our $CONFIG = {};
 eval { require "../config.db" };
 
-# Find all .pm and .pod files below this directory. I assume that, once we get
-# rid of all the .pl files, this will no longer be necessary? Because
-# MakeMaker will find all the .pm files on its own. Is this correct?
+# Find all .pm and .pod files below this directory. Once we get rid of all the
+# .pl files, this will no longer be necessary.
 my %PM;
 find({no_chdir => 1,
       wanted   => sub {
