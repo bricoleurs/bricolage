@@ -112,6 +112,12 @@ much more intelligent for jobs and will hopefully eliminate job deadlocks.
 Reported by Mark Jaroski, Serge Sozonoff, Patrick Michael Kane, and others.
 [David]
 
+=item *
+
+The workflow, destination, and output channel profiles only display site
+information if the user had EDIT access to more than one site. Suggested by
+Scott Lanning. [David]
+
 =back
 
 =head2 Bug Fixes

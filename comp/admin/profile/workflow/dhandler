@@ -28,15 +28,15 @@ if (defined $id) {
     $blabel = 'next_dkgreen';
 }
 
-
+my @sites = site_list(EDIT);
 if ($id || $no_edit) {
     $m->out('<input type=hidden name="site_id" value="'.$wf->get_site_id.'">');
     $m->comp('/widgets/profile/displayFormElement.mc',
              objref   => $wf,
              key      => 'site',
-             readOnly => 1);
-} elsif (my $site_id = $wf->get_site_id) {
-    $m->out('<input type=hidden name="site_id" value="'.$wf->get_site_id.'">');
+             readOnly => 1) if @sites > 1;
+} elsif ((my $site_id = $wf->get_site_id) || @sites == 1) {
+    $m->out('<input type=hidden name="site_id" value="'.($site_id || $sites[0]->get_id).'">');
 } else {
     # Output a list of object types to choose from.
     $m->comp('/widgets/select_object/select_object.mc',
@@ -46,7 +46,7 @@ if ($id || $no_edit) {
              field     => 'name',
              disp      => 'Site',
              constrain => { active => 1 },
-             exclude   => sub { ! chk_authz($_[0], EDIT, 1) },
+             objs      => \@sites,
              selected  => scalar $c->get_user_cx(get_user_id),
              reset_key => $id
             );

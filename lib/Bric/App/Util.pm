@@ -39,6 +39,7 @@ use strict;
 # Programmatic Dependencies
 #use CGI::Cookie;
 #use Bric::Config qw(:qa :cookies);
+use Bric::App::Cache;
 use Bric::App::Session qw(:state :user);
 use Bric::Config qw(:cookies :mod_perl);
 use Bric::Util::Class;
@@ -94,6 +95,7 @@ our @EXPORT_OK = qw(
 
                     find_workflow
                     find_desk
+                    site_list
                    );
 
 our %EXPORT_TAGS = (all     => \@EXPORT_OK,
@@ -123,6 +125,7 @@ our %EXPORT_TAGS = (all     => \@EXPORT_OK,
                                    severe_status_msg)],
                     wf      => [qw(find_workflow
                                    find_desk)],
+                    sites   => [qw(site_list)],
                    );
 
 #=============================================================================#
@@ -883,6 +886,30 @@ sub find_desk {
 
     # Failure.
     return undef;
+}
+
+#--------------------------------------#
+
+=item my @sites = site_list($perm)
+
+Returns a list or array reference of sites to which the user has the specified
+permission.
+
+=cut
+
+sub site_list {
+    my $perm = shift;
+    my $cache = Bric::App::Cache->new;
+    my $sites = $cache->get('__SITES__');
+
+    unless ($sites) {
+        $sites = Bric::Biz::Site->list;
+        $cache->set('__SITES__', $sites);
+    }
+
+    return wantarray
+      ? grep { chk_authz($_, $perm, 1) } @$sites
+      : [ grep { chk_authz($_, $perm, 1) } @$sites ];
 }
 
 =back
