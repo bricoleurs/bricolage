@@ -105,6 +105,11 @@ Text input fields no longer impose a default maximum field length. This is so
 that element fields that have their maximum length set to 0 can truely be
 unlimited in length. Reported by Kevin Elliott. [David]
 
+=item *
+
+Template output channel associations no longer trigger an error when importing
+templates via the SOAP interface [Clive Jones]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

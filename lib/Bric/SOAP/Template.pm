@@ -39,15 +39,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.14.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:45 $
+$Date: 2003-08-11 05:41:55 $
 
 =head1 SYNOPSIS
 
@@ -611,8 +611,8 @@ sub _load_template {
         $init{user__id} = get_user_id;
 
         # handle output_channel => output_channel__id mapping
-        ($init{output_channel__id}) = Bric::Biz::OutputChannel->list_ids(
-                                      { name => $tdata->{output_channel} });
+        ($init{output_channel__id}) = Bric::Biz::OutputChannel->list_ids
+          ({ name => $tdata->{output_channel}[0] });
         die __PACKAGE__ . " : no output_channel found matching ".
             "(output_channel => \"$tdata->{output_channel}\")\n"
                 unless defined $init{output_channel__id};
