@@ -7,15 +7,15 @@ Bric::Util::Coll::Contact - Interface for managing collections of contacts.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:42 $
+$Date: 2003-01-08 23:55:39 $
 
 =head1 SYNOPSIS
 
@@ -175,18 +175,18 @@ sub save {
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
 
 
-    if (@$del_objs) {
+    if (%$del_objs) {
 	my $del = prepare_c(qq{
             DELETE FROM person__contact_value
             WHERE person__id = ?
                   AND contact_value__id = ?
         });
-	foreach my $c (@$del_objs) {
+	foreach my $c (values %$del_objs) {
 	    $c->deactivate;
 	    $c->save;
 	    execute($del, $pid, $c->get_id);
 	}
-	@$del_objs = ();
+	%$del_objs = ();
     }
 
     foreach my $c (values %$objs) { $c->save }

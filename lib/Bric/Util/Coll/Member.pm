@@ -7,15 +7,15 @@ Bric::Util::Coll::Member - Interface for managing collections of group members
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-08 20:46:14 $
+$Date: 2003-01-08 23:55:39 $
 
 =head1 SYNOPSIS
 
@@ -175,13 +175,13 @@ sub save {
     my ($self, $grp) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     # Save the deleted objects.
-    foreach my $mem (@$del_objs) {
+    foreach my $mem (values %$del_objs) {
         if ($mem->get_id) {
             $mem->remove;
             $mem->save;
         }
     }
-    @$del_objs = ();
+    %$del_objs = ();
 
     # Save the existing and new objects.
     foreach my $mem (values %$objs, @$new_objs) {

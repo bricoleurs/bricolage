@@ -8,15 +8,15 @@ Channels.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-25 22:41:59 $
+$Date: 2003-01-08 23:55:39 $
 
 =head1 SYNOPSIS
 
@@ -203,7 +203,7 @@ sub save {
     my ($self, $type, $id) = @_;
     my ($new_objs, $del_objs) = $self->_get(qw(new_obj del_obj));
 
-    if (@$del_objs) {
+    if (%$del_objs) {
         my $del;
         if ($type eq 'story') {
             $del = prepare_c(qq{
@@ -224,8 +224,8 @@ sub save {
                        AND output_channel__id = ?
             });
         }
-        execute($del, $id, $_->get_id) for @$del_objs;
-        @$del_objs = ();
+        execute($del, $id, $_->get_id) for values %$del_objs;
+        %$del_objs = ();
     }
 
     if (@$new_objs) {

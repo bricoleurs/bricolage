@@ -8,15 +8,15 @@ actions.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:42 $
+$Date: 2003-01-08 23:55:38 $
 
 =head1 SYNOPSIS
 
@@ -176,11 +176,11 @@ B<Notes:> NONE.
 sub save {
     my ($self, $st_id) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
-    foreach my $a (@$del_objs) {
+    foreach my $a (values %$del_objs) {
 	$a->del;
 	$a->save;
     }
-    @$del_objs = ();
+    %$del_objs = ();
     foreach my $a (values %$objs, @$new_objs) {
 	$a->set_server_type_id($st_id) if defined $st_id;
 	$a->save;

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-12 15:54:11 $
+$Date: 2003-01-08 23:55:38 $
 
 =head1 SYNOPSIS
 
@@ -693,7 +693,7 @@ sub set_element__id {
     my $old_eid = $self->_get('element__id');
     return $self if $eid == $old_eid;
     my $oc_coll = $get_oc_coll->($self);
-    $oc_coll->del_objs;
+    $oc_coll->del_objs($oc_coll->get_objs);
     my $elem = Bric::Biz::AssetType->lookup({ id => $eid });
     $oc_coll->add_new_objs( map { $_->is_enabled ? $_ : () }
                             $elem->get_output_channels );
@@ -1910,7 +1910,7 @@ sub checkout {
         # Clone output channels.
         my $oc_coll = $get_oc_coll->($self);
         my @ocs = $oc_coll->get_objs;
-        $oc_coll->del_objs;
+        $oc_coll->del_objs(@ocs);
         $oc_coll->add_new_objs(@ocs);
 
         $self->_set( {

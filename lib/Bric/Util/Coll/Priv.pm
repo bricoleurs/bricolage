@@ -7,15 +7,15 @@ Bric::Util::Coll::Priv - Interface for managing collections of privileges.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:43 $
+$Date: 2003-01-08 23:55:39 $
 
 =head1 SYNOPSIS
 
@@ -171,11 +171,11 @@ B<Notes:> NONE.
 sub save {
     my ($self, $usr_grp_id) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
-    foreach my $p (@$del_objs) {
+    foreach my $p (values %$del_objs) {
 	$p->del;
 	$p->save;
     }
-    @$del_objs = ();
+    %$del_objs = ();
     foreach my $p (values %$objs, @$new_objs) {
 	$p->set_usr_grp_id($usr_grp_id) if defined $usr_grp_id;
 	$p->save;

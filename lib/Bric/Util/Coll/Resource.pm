@@ -7,15 +7,15 @@ Bric::Util::Coll::Resource - Interface for managing collections of resources.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:43 $
+$Date: 2003-01-08 23:55:39 $
 
 =head1 SYNOPSIS
 
@@ -191,14 +191,14 @@ sub save {
 	@$new_objs = ();
     }
 
-    if (@$del_objs) {
+    if (%$del_objs) {
 	my $del = prepare_c(qq{
             DELETE FROM job__resource
             WHERE  job__id = ?
                    AND resource__id = ?
         });
-	execute($del, $job_id, $_->get_id) for @$del_objs;
-	@$del_objs = ();
+	execute($del, $job_id, $_->get_id) for values %$del_objs;
+	%$del_objs = ();
     }
     return $self;
 }

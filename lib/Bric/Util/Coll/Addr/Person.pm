@@ -7,15 +7,15 @@ Bric::Util::Coll::Addr - Interface for managing collections of contacts.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:43 $
+$Date: 2003-01-08 23:55:39 $
 
 =head1 SYNOPSIS
 
@@ -183,8 +183,8 @@ sub save {
         VALUES (?, ?)
     });
 
-    foreach my $a (@$del_objs) { execute($del, $oid, $a->get_id) }
-    @$del_objs = ();
+    foreach my $a (values %$del_objs) { execute($del, $oid, $a->get_id) }
+    %$del_objs = ();
 
     foreach my $a (values %$objs) { $a->save }
     foreach my $a (@$new_objs) {

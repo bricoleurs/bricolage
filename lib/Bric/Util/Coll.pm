@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-24 09:32:35 $
+$Date: 2003-01-08 23:55:38 $
 
 =head1 SYNOPSIS
 
@@ -74,7 +74,8 @@ use strict;
 ##############################################################################
 # Programmatic Dependences
 use Bric::Util::Fault::Exception::MNI;
-#use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault::Exception::DA;
+use Bric::Config qw(:qa);
 
 ##############################################################################
 # Inheritance
@@ -111,8 +112,8 @@ BEGIN {
                          del_obj => Bric::FIELD_READ,
 
                          # Private Fields
-                         params => Bric::FIELD_NONE,
-                         _pop => Bric::FIELD_NONE,
+                         params  => Bric::FIELD_NONE,
+                         _pop    => Bric::FIELD_NONE,
                         });
 }
 
@@ -166,7 +167,7 @@ sub new {
                         params => $params,
                         _pop => $params ? 0 : 1,
                         new_obj => [],
-                        del_obj => [] });
+                        del_obj => {} });
 }
 
 ##############################################################################
@@ -368,11 +369,19 @@ B<Notes:> NONE.
 
 sub get_objs {
     my $self = shift;
-    $self->_populate;
-    my ($objs, $new_objs) = $self->_get('objs', 'new_obj');
+    my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
+    unless ($self->is_populated) {
+        # Load the objects from the database, and then remove any deleted
+        # objects.
+        $self->_populate;
+        $self->del_objs(values %$del_objs) if %$del_objs;
+    }
+
     if (@_) {
+        # Return just the objects that they want.
         return wantarray ? @{$objs}{@_} : [@{$objs}{@_}];
     } else {
+        # Give 'em all of the objects.
         return wantarray ? ($self->_sort_objs($objs), @$new_objs)
           : [($self->_sort_objs($objs), @$new_objs)];
     }
@@ -482,9 +491,14 @@ sub add_new_objs {
     return $self;
 }
 
-=item $self = $coll->del_objs(@objs || @obj_ids)
+=item $self = $coll->del_objs(@objs)
 
-Deletes objects. Use either IDs or objects - but use them consistently!
+=item $self = $coll->del_objs(@obj_ids)
+
+Deletes the objects in C<@objs> or identified by the IDs in C<@obj_ids> from
+the collection, if they're a part of the collection. Objects and IDs should
+not be mixed in any call or between any calls to C<del_objs()> in the same
+collection object.
 
 B<Throws:>
 
@@ -536,16 +550,27 @@ B<Notes:> NONE.
 
 sub del_objs {
     my $self = shift;
-    $self->_populate;
+    # If we're in QA mode, populate the collection. This will help to
+    # catch bugs where someone tries to delete an object that isn't in
+    # the collection.
+    $self->populate if QA_MODE;
     my ($objs, $del_objs) = $self->_get('objs', 'del_obj');
-    if (@_) {
+    if ($self->is_populated) {
         foreach my $o (@_) {
+            # Grab the ID.
             my $id = ref $o ? $o->get_id : $o;
-            push @$del_objs, delete $objs->{$id} if $objs->{$id};
+            # Do some error checking if we're in QA_MODE.
+            die Bric::Util::Fault::Exception::DA->new
+              ({ msg => "Object '$o' not in collection"})
+              if QA_MODE && ! $objs->{$id};
+            # Add the object to be deleted to the del_obj hash.
+            $del_objs->{$id} = delete $objs->{$id} if $objs->{$id};
         }
     } else {
-        push @$del_objs, values %$objs;
-        %$objs = ();
+        foreach my $o (@_) {
+            my $id = ref $o ? $o->get_id : $o;
+            $del_objs->{$id} = $o;
+        }
     }
     return $self;
 }
