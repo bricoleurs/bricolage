@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.13 $
+$Revision: 1.5.2.14 $
 
 =head1 DATE
 
-$Date: 2001-11-29 21:51:16 $
+$Date: 2001-11-29 21:56:31 $
 
 =head1 DESCRIPTION
 
@@ -406,7 +406,7 @@ command:
 
 =item *
 
-If you have a you formal certificate then can make a certificate with
+If you do have a formal certificate then can make a certificate with
 the command:
 
   make certificate TYPE=custom
