@@ -10,7 +10,12 @@ use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
 use Bric::App::Event    qw(log_event);
 use IO::Scalar;
-use XML::Writer;
+BEGIN {
+    # XXX Turn off warnings so that we don't get XML::Writer's
+    # Parameterless "use IO" deprecated' waring.
+    local $^W;
+    require XML::Writer;
+}
 
 use Bric::SOAP::Util qw(parse_asset_document);
 
@@ -29,15 +34,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.12.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:45 $
+$Date: 2003-10-03 22:43:43 $
 
 =head1 SYNOPSIS
 

@@ -12,9 +12,15 @@ use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
 use Bric::App::Event    qw(log_event);
-use XML::Writer;
 use IO::Scalar;
 use MIME::Base64;
+
+BEGIN {
+    # XXX Turn off warnings so that we don't get XML::Writer's
+    # Parameterless "use IO" deprecated' waring.
+    local $^W;
+    require XML::Writer;
+}
 
 use Bric::SOAP::Util qw(category_path_to_id 
                         xs_date_to_db_date db_date_to_xs_date
@@ -39,15 +45,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.20.4.2 $
+$Revision: 1.20.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.20.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-18 17:27:57 $
+$Date: 2003-10-03 22:43:43 $
 
 =head1 SYNOPSIS
 

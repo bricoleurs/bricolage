@@ -12,8 +12,14 @@ use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
 use Bric::App::Event    qw(log_event);
 use IO::Scalar;
-use XML::Writer;
 use Bric::Biz::Person::User;
+
+BEGIN {
+    # XXX Turn off warnings so that we don't get XML::Writer's
+    # Parameterless "use IO" deprecated' waring.
+    local $^W;
+    require XML::Writer;
+}
 
 use Bric::SOAP::Util qw(category_path_to_id
                         xs_date_to_db_date db_date_to_xs_date
@@ -39,15 +45,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.14.4.2 $
+$Revision: 1.14.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.14.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:23:33 $
+$Date: 2003-10-03 22:43:43 $
 
 =head1 SYNOPSIS
 
