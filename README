@@ -57,15 +57,6 @@ If you'd like to contribute to Bricolage, see:
 KNOWN ISSUES
 ============
 
-* With Internet Explorer on Mac OS and Mac OS X, and with Netscape Navigator
-4.7x on Windows 95, long Bricolage pages may not render completely. The issue
-seems to be related to bugs in Internet Explorer on the Mac and Netscape on
-Windows 95 (or the Windows 95 network stack), but we've been unable to isolate
-the content that triggers it. The workaround is to use different browsers on
-those platforms -- Mozilla seems to work great on all platforms. Complete
-details are available via the Bugzilla bug report at
-http://bugzilla.bricolage.cc/show_bug.cgi?id=190.
-
 * Users who have been given the rights, via membership, to edit groups and/or
 users effectively have complete access to the system. This is because they can
 add themselves to any group they want, including "Global Admins." Solving this
