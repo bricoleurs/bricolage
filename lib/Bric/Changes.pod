@@ -270,6 +270,10 @@ it is seleccted from the database. This prevents the C<get_grp_ids()> method
 from having to query the database, which was happening for every category
 object for which permissions are checked. [Mark & David]
 
+=item *
+
+Added event logging for keywords. [David]
+
 =back
 
 =head1 VERSION 1.4.5

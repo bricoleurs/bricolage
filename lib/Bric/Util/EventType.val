@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.8 $
+-- VERSION: $Revision: 1.9 $
 --
--- $Date: 2002-10-25 23:53:18 $
+-- $Date: 2002-11-04 21:21:44 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -744,4 +744,19 @@
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'media_type_deact', 'Media Type Deactivated', 'Media Type profile was deactivated.', 72, 1);
+
+-- ********** 'keyword_new' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'keyword_new', 'Keyword Created', 'Keyword was created.', 41, 1);
+
+-- ********** 'keyword_save' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'keyword_save', 'Keyword Saved', 'Keyword profile changes were saved.', 41, 1);
+
+-- ********** 'keyword_deact' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'keyword_deact', 'Keyword Deactivated', 'Keyword was deactivated.', 41, 1);
 

@@ -103,7 +103,10 @@ if ($field eq "$widget|save_cb") {
 	foreach (@{ mk_aref($param->{keyword}) }) {
 	    next unless $_;
 	    my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
-	    $kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
+            unless ($kw) {
+                $kw = Bric::Biz::Keyword->new({ name => $_})->save;
+                log_event('keyword_new', $kw);
+            }
 	    push @$new, $kw;
 	}
 	$cat->add_keyword($new) if $new;
@@ -129,11 +132,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-08-20 04:44:05 $
+$Date: 2002-11-04 21:21:43 $
 
 =head1 SYNOPSIS
 

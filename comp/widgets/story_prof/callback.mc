@@ -851,7 +851,10 @@ my $handle_add_kw = sub {
     foreach (@{ mk_aref($param->{keyword}) }) {
         next unless $_;
         my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
-        $kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
+        unless ($kw) {
+            $kw = Bric::Biz::Keyword->new({ name => $_})->save;
+            log_event('keyword_new', $kw);
+        }
         push @$new, $kw;
     }
     $story->add_keywords($new) if $new;
