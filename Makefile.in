@@ -209,6 +209,9 @@ uninstallfiles:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing previously installed files
 	--@rm -f ${INSTALLED_FILES}
+uninstalldatabase:
+	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
+	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
 
 
 # specific install and uninstall targets including the list
@@ -259,7 +262,8 @@ ${DOC_TARGETS}: ${docdir}/%: %
 # target which timestamps a file of the same name.  This
 # will allow those of us using CVS to do installs without
 # wiping out an old db.
-${INST}/installed-database: database
+${INST}/installed-database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/grants.sql
+	perl -pi -e 's/nobody/${DBI_USER}/g' ${INST}/bricolage.sql
 	@${POST_INSTALL}
 	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
 	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
@@ -267,12 +271,6 @@ ${INST}/installed-database: database
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/pguser.sql' ${POSTGRES_SYSTEM_USER}
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/bricolage.sql' ${POSTGRES_SYSTEM_USER} 2> $@
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/grants.sql' ${POSTGRES_SYSTEM_USER} 2>> $@
-
-# this is a .PHONY target which makes sure that 
-# the sql script is using the right user and 
-# generates two additional sql scripts that we'll need
-database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/grants.sql
-	perl -pi -e 's/nobody/${DBI_USER}/g' $<
 
 # This makes the grant script
 ${INST}/grants.sql: ${INST}/bricolage.sql
