@@ -34,6 +34,20 @@ Added the ability to use HTML::Template Templates. [Sam]
 
 =back
 
+=over 4
+
+=item *
+
+Fixed a bug with local previews where a preview page could show up instead of
+the Bricoalge UI. Thanks to Sara for the spot. [David]
+
+=item *
+
+Fixed a bug where Mason component calls failed in previews when the
+PREVIEW_MASON directive was enabled. [David]
+
+=back
+
 =head1 VERSION 1.0.2
 
 =over 4
