@@ -1,0 +1,12 @@
+# http://module-build.sourceforge.net/META-spec.html
+#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
+name:         Bric-Mech
+version:      0.01
+version_from: lib/Bric/Mech.pm
+installdirs:  site
+requires:
+    HTML::TokeParser::Simple:      0
+    WWW::Mechanize:                1.10
+
+distribution_type: module
+generated_by: ExtUtils::MakeMaker version 6.25
