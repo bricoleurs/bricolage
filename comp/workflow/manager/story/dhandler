@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13.2.3 $
+$Revision: 1.13.2.4 $
 
 =head1 DATE
 
-$Date: 2003-07-24 08:48:50 $
+$Date: 2003-08-30 22:43:45 $
 
 =head1 SYNOPSIS
 
@@ -25,6 +25,7 @@ $Date: 2003-07-24 08:48:50 $
 </%args>
 
 <%once>;
+my ($start_desk_ok, $start_desk_id);
 my $object = 'story';
 my $plural = get_class_info($object)->get_plural_name;
 my $w_id;
@@ -47,18 +48,21 @@ my $select = sub {
     my $o = shift;
     my $u = $o->get_user__id;
 
-    if ((not defined $u) && chk_authz($o, EDIT, 1)) {
+    if (not defined $u && chk_authz($o, EDIT, 1)) {
 	if ($o->get_workflow_id) {
-	    return ['Checkout', 'story_prof|checkout_cb'];
+	    return ['Checkout', 'story_prof|checkout_cb']
+              if $start_desk_ok || $o->get_desk_id != $start_desk_id;
 	} else {
-	    return ['Checkout', 'story_prof|recall_cb', $o->get_id.'|'.$w_id];
+            # Allow checkout only if they have access to the start desk.
+	    return ['Checkout', 'story_prof|recall_cb', $o->get_id.'|'.$w_id]
+              if $start_desk_ok;
 	}
     }
     return;
 };
 
 my $addition = sub {
-    if (chk_authz($_[0], CREATE, 1)) {
+    if ($start_desk_ok && chk_authz($_[0], CREATE, 1)) {
         return ['Create', "/workflow/profile/story/new/$w_id"];
     }
     return;
@@ -87,9 +91,12 @@ my $alter = { publish_status => sub {
 # Get the workflow ID.
 ($w_id) = $r->uri =~ m!/(\d+)/?$!;
 
-# Grab the workflow from the cache.
+# Grab the workflow and start desk permissions from the cache.
 my $wf = $c->get('__WORKFLOWS__');
-for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
+for (@$wf) { $wf = $_, last if $_->{id} == $w_id }
+$start_desk_id = $wf->{desks}[0][0];
+$start_desk_ok = chk_authz(0, EDIT, 1, @{ $wf->{desks}[0][2] });
+$wf = "&quot;$wf->{name}&quot;";
 </%init>
 <& '/widgets/wrappers/sharky/header.mc',
    title => "Find $plural",
