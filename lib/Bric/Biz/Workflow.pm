@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-29 18:36:41 $
+$Date: 2004-01-13 09:58:06 $
 
 =head1 SYNOPSIS
 
@@ -74,6 +74,8 @@ use Bric::Util::Grp::Workflow;
 use Bric::Util::Fault qw(throw_dp throw_ap);
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Biz::Site;
+use Carp ();
+
 #==============================================================================#
 # Inheritance                          #
 #======================================#
@@ -1127,7 +1129,7 @@ NONE
 
 B<Notes:>
 
-NONE
+This method is deprecated.
 
 =cut
 
@@ -1135,8 +1137,11 @@ sub remove {
     my $self = shift;
 
     $self->_set__dirty;
-
     $self->_set(['_remove'], [1]);
+
+    my ($pkg, $file, $line) = caller;
+    my $msg = "Deprecated method \"remove\" called from $pkg, line $line.";
+    Carp::cluck($msg);
 }
 
 #------------------------------------------------------------------------------#
