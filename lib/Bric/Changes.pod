@@ -177,6 +177,10 @@ that they don't have PUBLISH access to. [David]
 Users can no longer publish related documents via the UI or SOAP that are in
 workflow but not on a publish desk. [David]
 
+=item *
+
+Added search by output channel to "Find Templates". [David]
+
 =back
 
 =head2 Bug Fixes
@@ -454,6 +458,13 @@ no longer returns an SQL error, but a more informative error.
 =item *
 
 Template sandboxes now work for the Template Toolkit burner. [David]
+
+=item *
+
+The output channel and element profiles no longer display deactivated output
+channels in their output channel select lists (for output channel includes in
+the output channel profile and for primary output channels in the element
+profile). [David]
 
 =back
 

@@ -78,7 +78,7 @@ if (defined $id) {
                 $m->scomp('/widgets/select_object/select_object.mc',
                           object => 'output_channel',
                           field  => 'name',
-                          constrain => { site_id => $siteid },
+                          constrain => { site_id => $siteid, active => 1 },
                           no_persist => 1,
                           name   => "primary_oc_site_$siteid",
                           useTable => 0,

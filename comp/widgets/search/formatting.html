@@ -78,11 +78,23 @@ $sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
                      useTable => 0 &>
                 </td>
               </tr>
+% my $site_id = $c->get_user_cx(get_user_id);
+% my ($one_site, $oc_name_getter);
 % if (get_pref("Filter by Site Context")) {
+%     $one_site = 1;
 <& /widgets/profile/hidden.mc,
    name => "$widget|site_id",
-   value => $c->get_user_cx(get_user_id) &>
+   value => $site_id &>
 % } elsif (@$sites > 1) {
+<%perl>;
+my $ng = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
+my $sg = Bric::Biz::OutputChannel->my_meths->{site}{get_meth};
+$oc_name_getter = sub {
+    my $o = shift;
+    return $ng->($o) . ' (' . $sg->($o) . ')';
+};
+</%perl>\
+%     $one_site = 
               <tr>
                 <td align="right"><span class=label><% $lang->maketext('Site') %>:</span></td>
                 <td>
@@ -95,8 +107,26 @@ $sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
                      useTable => 0 &>
                 </td>
               </tr>
+% } else {
+%     $one_site = 1;
 % }
               <tr>
+                <td align="right"><span class=label><% $lang->maketext('Output Channel') %>:</span></td>
+                <td>
+                  <& /widgets/select_object/select_object.mc,
+                     object => 'output_channel',
+                     field  => 'name',
+                     constrain => { active => 1, $one_site ? (site_id => $site_id) : () },
+                     no_persist => 1,
+                     name   => "$widget|output_channel_id",
+                     useTable => 0,
+                     default => ['', $lang->maketext('All Output Channels')],
+                     getter => $oc_name_getter,
+                  &>
+                </td>
+              </tr>
+              <tr>
+
                 <td colspan=2><span class=label><% $lang->maketext('Cover Date') %></span><br />
                   <% $lang->maketext('From') %>:
                   <& '/widgets/select_time/select_time.mc', 
