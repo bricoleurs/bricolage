@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.26.2.9 $
+$Revision: 1.26.2.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26.2.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.26.2.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-08 16:59:11 $
+$Date: 2002-03-22 19:05:18 $
 
 =head1 SYNOPSIS
 
@@ -213,8 +213,16 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 		s/^\s+//;               # no leading white
 		s/\s+$//;               # no trailing white
 		next unless length;     # anything left?
-		my ($var, $value) = split(/\s*=\s*/, $_, 2);
-		$config->{uc $var} = $value;
+
+		# Get the variable and its value.
+		my ($var, $val) = split(/\s*=\s*/, $_, 2);
+		# Check that the line is a valid config line and exit
+		# immediately if not.
+		die "Syntax error in $conf_file at line $.: '$_'\n"
+		  if ! defined $var || $var eq '' || ! defined $val || $val eq '';
+
+		# Save the configuration directive.
+		$config->{uc $var} = $val;
 	    }
 	    close CONF;
 
