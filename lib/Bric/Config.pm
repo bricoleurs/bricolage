@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-06 23:18:50 $
+$Date: 2002-07-07 00:05:31 $
 
 =head1 SYNOPSIS
 
@@ -282,7 +282,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         }
 
         # Special case for the SSL_ENABLE configuration directive.
-        if (my $ssl = $config->{SSL_ENABLE}) {
+        if (my $ssl = lc $config->{SSL_ENABLE}) {
             if ($ssl eq 'off' or $ssl eq 'no') {
                 $config->{SSL_ENABLE} = 0;
             } else {
