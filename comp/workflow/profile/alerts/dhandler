@@ -1,41 +1,53 @@
 %#-- Begin HTML --#
-<&'/widgets/wrappers/sharky/header.mc',
-  context => 'My Workspace | My Alerts',
-  title => "$pl_disp for " . $u->format_name &>
+<& '/widgets/wrappers/sharky/header.mc',
+    context => 'My Workspace | My Alerts',
+    title => "$pl_disp for " . $u->format_name 
+&>
+
 <form method="post" action="<% $r->uri %>" name="my_alerts">
-<br />
-<%perl>;
-$m->comp('/widgets/listManager/listManager.mc',
+
+<& '/widgets/listManager/listManager.mc',
 	 object => 'recip',
 	 constrain => {user_id => $u->get_id, ack_time => undef },
 	 fields => [qw(timestamp subject message)],
 	 profile => undef,
 	 addition => undef,
 	 title => "Unacknowledged $pl_disp",
-	 select => ['Acknowledge', "recip_id"]);
-</%perl>
-<br />
-<input type="image" src="/media/images/<% $lang_key %>/acknowledge_checked_red.gif"
- border="0" name="<% $type %>|ack_cb" value="Acknowledge Checked" />
-<input type="image" src="/media/images/<% $lang_key %>/acknowledge_all_red.gif"
- border="0" name="<% $type %>|ack_all_cb" value="Acknowledge All" />
-<a href="<% last_page() %>"><img src="/media/images/<% $lang_key %>/return_dgreen.gif"
- border="0" /></a>
-</form>
-<& '/widgets/wrappers/sharky/footer.mc' &>
-%#-- End HTML --#
+	 select => ['Acknowledge', "recip_id"]
+&>
+<& '/widgets/profile/button.mc',
+    disp    => 'Acknowledge Checked',
+    widget  => $type,
+    cb      => 'ack_cb',
+    button  => 'acknowledge_checked_red',
+    useTable => 0
+&>
+<& '/widgets/profile/button.mc',
+    disp    => 'Acknowledge all',
+    widget  => $type,
+    cb      => 'ack_all_cb',
+    button  => 'acknowledge_all_red',
+    useTable => 0
+&>
+<& '/widgets/profile/button.mc',
+    disp    => 'Return',
+    widget  => $type,
+    cb      => 'return_cb',
+    button  => 'return_dgreen',
+    useTable => 0
+&>
 
-%#-- Once Section --#
+</form>
+
+<& '/widgets/wrappers/sharky/footer.mc' &>
+
 <%once>;
 my $type = 'alert';
 my $pl_disp = get_class_info($type)->get_plural_name;
 </%once>
-
-%#-- Init Section --#
 <%init>;
 my $u = get_user_object();
 </%init>
-
 <%doc>
 ###############################################################################
 

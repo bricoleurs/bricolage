@@ -13,11 +13,10 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/button.mc",
-$disp      => ''
-$value     => ''
-$name     => ''
-$js        => ''
-$indent    => ''
+  disp      => '',
+  widget    => '',
+  cb        => '',
+  button    => ''
 );
 
 =head1 DESCRIPTION

@@ -25,6 +25,9 @@ sub ack_all : Callback {
     $msg_redirect->($self, $ids);
 }
 
+sub return : Callback {
+    shift->set_redirect(last_page());
+}
 
 $msg_redirect = sub {
     my ($self, $ids) = @_;
