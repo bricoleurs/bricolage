@@ -182,8 +182,7 @@ $read_only => undef
 
 %#--- Once ---#
 <%once>;
-my $vals_aref = Bric::Util::Priv->vals_aref;
-unshift @$vals_aref, [0 => 'NONE'];
+my $vals_aref = [ [0 => 'NONE'], @{ Bric::Util::Priv->vals_aref } ];
 my $vals_aref2 = [@$vals_aref];
 splice @$vals_aref2, CREATE, 1;
 my $vals_href = Bric::Util::Priv->vals_href;
@@ -221,11 +220,16 @@ my $asset_grp_keys = { story_grp      => 1,
 
 %#--- Init ---#
 <%init>;
+# Check permissions. The user must have EDIT permission to the group and
+# at least READ permission to its members.
+chk_authz($grp, EDIT);
+my $id = $grp->get_id;
+chk_authz(0, READ, 1, $id);
+
 my $style = Bric::Util::Pref->lookup_val('Permissions Widget');
 my $row_comp = ".${style}_row";
 my $head_comp = ".${style}_head";
 my $class_obj = $grp->my_class;
-my $id = $grp->get_id;
 my $name = $grp->get_name;
 $no_edit = $read_only;
 my $curr_key = $class_obj->get_key_name;
@@ -237,8 +241,6 @@ my $perm_type = $ARGS{'perm_type'} || 'usrgrp';
 <%shared>;
 my (%users, $no_edit);
 </%shared>
-
-
 <%def .radio_head>
 <table border="1" cellpadding="2" cellspacing="0" width="580" style="border-style:solid; border-color:#cccc99;">
 % if ($_[0]) {
@@ -268,6 +270,11 @@ if ($perm) {
     $val = $perm->get_value;
     $pid = $perm->get_id;
 }
+# Find out the maximum permission the current user has to the objects
+# in this group.
+my $max_perm = get_user_object->what_can(0, $gid) or return;
+return if $max_perm == DENY;
+
 </%init>
 <tr>
     <td width="340" style="border-style:solid; border-color:#cccc99;"><span class="label"><% $name %></span>
@@ -280,7 +287,9 @@ if ($perm) {
 %     } # foreach
 % } else {
 %     foreach my $v (@$vals_aref) {
-%         if ($v->[0] == CREATE && !$create && ($type eq 'usr' || !$grp->get_permanent)) {
+%         if (!$max_perm || ($v->[0] != DENY && $v->[0] > $max_perm)) { # It's read-only.
+    <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60"><% $v->[0] == $val ? 'X' : '&nbsp;' %></td>
+%         } elsif ($v->[0] == CREATE && !$create && ($type eq 'usr' || !$grp->get_permanent)) {
     <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60">&nbsp;</td>
 %         } else {
     <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60">
@@ -321,8 +330,13 @@ if ($perm) {
     $val = $perm->get_value;
     $pid = $perm->get_id;
 }
+# Find out the maximum permission the current user has to the objects
+# in this group.
+my $max_perm = get_user_object->what_can(0, $gid) or return;
+return if $max_perm == DENY;
+
 my $opts = $create || ($type ne 'usr' && $grp->get_permanent) ?
-  $vals_aref : $vals_aref2;
+  [@{$vals_aref}[0..$max_perm, 4]] : [@{$vals_aref2}[0..$max_perm, 3]];
 </%init>
 <tr>
     <td style="border-style:solid; border-color:#cccc99;" width="340"><span class="label"><% $name %></span>
@@ -333,7 +347,7 @@ my $opts = $create || ($type ne 'usr' && $grp->get_permanent) ?
     <td style="border-style:solid; border-color:#cccc99;" height="20"><% $vals_href->{$val} %></td>
 % } else {
     <td style="border-style:solid; border-color:#cccc99;" height="20"><& '/widgets/profile/select.mc', name => "$type|$gid", value => $val,
-           options => $opts, useTable => 0 &>
+           options => $opts, useTable => 0, readOnly => !$max_perm &>
     </td>
 % } # if
 </tr>

@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-23 23:30:06 $
+$Date: 2003-12-03 06:54:40 $
 
 =head1 SYNOPSIS
 
@@ -693,6 +693,8 @@ To translate:
 
   'Slug required for non-fixed (non-cover) story type.'
   'Element must be associated with at least one site and one output channel.'
+  'Permission to manage "[_1]" group membership denied'
+  'Permission to grant permission "[_1]" to group "[_2]" denied'
 
 =end comment
 

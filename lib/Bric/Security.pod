@@ -4,11 +4,11 @@ Bric::Security - Bricolage Security Guide.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:23:18 $
+$Date: 2003-12-03 06:54:40 $
 
 =head1 DESCRIPTION
 
@@ -134,10 +134,10 @@ you're having trouble.
 
 =head2 How Authorization Works
 
-In order to keep implementation as straight-forward as possible -- and therefore
-to also save processing time during authorization checking, we designed Bricolage
-to have only one kind of permission. That permission is best expressed by this
-sentence:
+In order to keep implementation as straight-forward as possible--and therefore
+to also save processing time during authorization checking--we designed
+Bricolage to have only one kind of permission. That permission is best
+expressed by this sentence:
 
 B<"Grant permission to the members of a I<group of users> to access the members
 of a I<group of objects>.">
@@ -151,14 +151,18 @@ grant the single user group permission to access the single object group.
 So the granularity can still be achieved, but without violating the elegance of
 the model.
 
-[Implementation Note: For those who want object-level permissions granularity
+=begin comment
+
+B<Implementation Note:> For those who want object-level permissions granularity
 without going to the trouble of creating groups manually, in a future version we
 may wish to consider implementing such a thing, but using the same group
 interface. That is, whenever someone wanted to set an individual permission or
 two for an object, the API would automatically create a group for that object and
 make it the only member. The drawback to this approach, however, is that we
 could end up with a I<lot> of groups. But it's worth thinking about if this
-functionality is really in demand.]
+functionality is really in demand.
+
+=end comment
 
 Bricolage supports four permission levels: READ, EDIT, CREATE, and DENY. B<READ>
 permission allows users to view the contents of objects, but not edit them.
@@ -167,23 +171,23 @@ and to delete objects, but not create them. B<CREATE> permission allows users to
 view, edit, delete, and create objects. Note that the B<CREATE> permission can
 only be granted for objects in the "All *" series of groups, as an object is
 automatically a member of its respective "All" group, but can't be added to any
-other group until they've already been created. And finally B<DENY> permission
+other group until it has already been created. And finally, B<DENY> permission
 prevents users from accessing objects at all.
 
 As you can see, the permissions cascade. EDIT assumes READ, CREATE assumes EDIT
 and READ, and DENY overrides all the rest.
 
-Naturally, users may have more than one permission granted an object due to
-their membership in multiple groups. Likewise, a particular object may be in
-more than one object group to which a user group has been granted permission,
-and there may be different permissions assigned to the different groups. This
-crossing of permissions requires permission reconciliation. The way multiple
-permissions are reconciled basically follows the cascading nature of the
-permissions themselves: the most permissive permission wins. Thus if a user has
-both READ and EDIT permission to an object, the user will have EDIT access to
-the object. Likewise, if a user is granted CREATE and EDIT permission, she will
-have CREATE access to the object. And of course, the user with no permissions at
-all will have no access to the object at all.
+Naturally, users may have more than one permission granted to access an object
+due to their membership in multiple groups. Likewise, a particular object may
+be in more than one object group to which a user group has been granted
+permission, and there may be different permissions assigned to the different
+groups. This crossing of permissions requires permission reconciliation. The
+way multiple permissions are reconciled basically follows the cascading nature
+of the permissions themselves: the most permissive permission wins. Thus if a
+user has both READ and EDIT permission to an object, the user will have EDIT
+access to the object. Likewise, if a user is granted CREATE and EDIT
+permission, she will have CREATE access to the object. And of course, the user
+with no permissions at all will have no access to the object at all.
 
 The one exception to the "most permissive wins" rule is the DENY permission.
 Bricolage assumes that if the members of a group have been assigned the DENY
@@ -192,6 +196,8 @@ other permissions they may have by nature of their memberships in other groups
 with other permissions. So remember, while in general the most permissive
 permission wins out, the DENY permission trumps all. The lesson is: use this
 permission with care.
+
+=head2 Permissions Example
 
 So let's look at a few examples. Let us assume that we're working with a system
 with 3 users, 3 user groups, 2 story groups, and 3 stories. Here's how they're
@@ -239,10 +245,10 @@ determines that CREATE is the highest-value permission, and so user Theory has
 that permission, and therefore the ability to create a new story.
 
 Another example. Let's say that user "Mcnibblet" wishes to edit the "Dubbya
-Celebrates Birthday" story. Bricolage determines that this story is a member in
+Celebrates Birthday" story. Bricolage determines that this story is a member of
 only one story group, "All Stories," to which the user groups "All Users,"
 "Story Admins," and "Evildoers" have been granted permissions. Mcnibblet, being
-the member of only one of these groups, "All Users", leaves just the one
+the member of only one of these groups, "All Users", has just the one
 permission: READ. Thus, Mcnibblet has READ permission to the "Dubbya Celebrates
 Birthday" story, and no other permission. Since Mcnibblet wishes to edit the
 story, and he does not have EDIT or CREATE permission, he is prevented from
@@ -257,7 +263,7 @@ DrEvil, in turn, is a member of all three groups. Thus, the permissions for
 DrEvil to access the "Black Hole Destroys Earth" story are READ, CREATE, EDIT,
 and DENY. Comparing these permissions, Bricolage would normally award the most
 permissive permission, CREATE (which encompasses READ and EDIT permissions, as
-well). However the DENY permission trumps all others. Thus, regardless of
+well). However, the DENY permission trumps all others. Thus, regardless of
 DrEvil's membership in the "Story Admins" group, with its CREATE permission to
 access the story, his membership in the "Evildoers" group denies him permission
 to access the story at all!
@@ -272,16 +278,17 @@ the permissions were determined.
   Second Matrix Movie Debuts   CREATE    EDIT      DENY
   Black Hole Destroys Earth    CREATE    EDIT      DENY
 
-Finally, we should discuss one special user group in the System: B<Global
-Administrators>. Members of this group automatically have CREATE rights to every
-object in Bricolage, regardless of other group memberships and permissions --
-B<including DENY!> In fact, permissions aren't even checked for members of this
-group - CREATE permission is simply always assumed and granted. The name and
-permissions of the Global Administrators group cannot be edited, either - only
-the membership. Thus membership in this group should be limited to just those
-users who are responsible for administering the whole of the Bricolage
-application. Use the other Administrator groups to parcel out the rights to
-Administer particular parts of the application.
+=head2 The Global Admins Group
+
+One Bricolage user group is special, B<Global Admins>. Members of this group
+automatically have CREATE rights to every object in Bricolage, regardless of
+other group memberships and permissions -- B<including DENY!> In fact,
+permissions aren't even checked for members of this group - CREATE permission
+is simply always assumed and granted. The name and permissions of the Global
+Admins group cannot be edited, either - only the membership. Thus membership
+in this group should be limited to just those users who are responsible for
+administering the whole of the Bricolage application. Use the other Admin
+groups to parcel out the rights to Administer particular parts of Bricolage.
 
 =head2 Permissions Management
 
@@ -296,73 +303,181 @@ are the groups to which user groups are granted permissions. Thus even user
 groups are object groups, since there need to be permissions granted to manage
 users, too.
 
-So let's browse the interface. In the side navigation bar, select ADMIN ->
-SYSTEM -> Groups. You will be presented with a list of all the groups in the
-system. Bricolage ships with only User groups, but if you look at the "Or Pick a
-Type" select list, you can see that it supports all kinds of object groups.
-(Note that the special "All *" groups are not editable.) Click "Edit" to edit
-one of the user groups, say "Alert Type Managers" (note that you must have
-permission to edit groups to do this!). The interface provides fields to edit
-the name and description of the group, plus a double list manager that allows you
-to move objects (in this case users) in and out of the group. The double list
-manager allows you to assign members to the group.
+So let's browse the interface. Make sure that you're a member of the Global
+Admins group. Then, in the side navigation bar, select ADMIN -> SYSTEM ->
+Groups. You will be presented with a list of all the groups in the
+system. Bricolage ships with only User groups, but if you look at the "Or Pick
+a Type" select list, you can see that it supports all kinds of object
+groups. (Note that the special "All *" groups are not editable.) Click "Edit"
+to edit one of the user groups, say "Distribution Admins" (note that you must
+have permission to edit groups to do this!). The interface provides fields to
+edit the name and description of the group, plus a double list manager that
+allows you to move objects (users, in this case) in and out of the group. The
+double list manager allows you to assign members to the group.
 
 Since we're most interested in permissions management, however, click the
 'Permissions" button. This interface allows you to edit all of the permissions
 granted to the the members of the group, plus the permissions granted to other
-groups to access the members of this group. If you're looking at the "Alert Type
-Managers" group, you'll be presented with four separate sections of permissions.
+groups to access the members of this group. If you're looking at the
+"Distribution Admins" group, you'll be presented with a section for managing
+permissions to grant to user groups to access the objects in the Distribution
+Admins group. The "Pick a Permissions Type" select list at the top of the page
+allows you to access three other sections of permissions. (Non-user groups
+only have the one type of permission interface, for granting permission to
+groups of users to access the members of the group you're editing.)
 
-Take a look at Number four, "User Group Permissions," first. These are the
-permissions granted to the members of user groups to access the members of the
-Alert Type Managers group. By default, none are granted, but if you were to
-click the "READ" radio button for the "Media Producers" row and then click
-"Save," for example, then all users who are members of the "Media Producers"
-user group will then have READ access to the users who are members of the Alert
-Type Managers group. (This is probably not something you want to do!)
+User Group Permissions are the permissions granted to the members of user
+groups to access the members of the Distribution Admins group. By default,
+none are granted, but if you were to click the "READ" radio button for the
+"Media Producers" row and then click "Save," for example, then all users who
+are members of the "Media Producers" user group will then have READ access to
+the users who are members of the Alert Type Managers group. (This is probably
+not something you want to do!)
 
-A note on the interface. By default, Bricolage uses radio buttons to display the
-permissions. Some may not care for this interface, however (some think it too
-cluttered), so Bricolage offers an alternative. There is a preference,
-"Permissions Widget," that can be changed from its default value "Radio Buttons"
-to the alternative, "Select List." This setting will cause Bric to offer select
-lists for each row of the Permissions page, rather than radio buttons. To change
-the preference, simply edit the "Permissions Widget" profile in the Preferences
-Manager. Be sure you have permission to edit preferences, and remember that they
-are global and will affect how I<all> users see the Permissions interface!
+A note on the interface. By default, Bricolage uses radio buttons to display
+the permissions. Some may not care for this interface, however (some think it
+too cluttered), so Bricolage offers an alternative. There is a preference,
+"Permissions Widget," that can be changed from its default value "Radio
+Buttons" to the alternative, "Select List." This setting will cause Bricolage
+to offer select lists for each row of the Permissions page, rather than radio
+buttons. To change the preference, simply edit the "Permissions Widget"
+profile in the Preferences Manager. Be sure you have permission to edit
+preferences, and remember that they are global and will affect how I<all>
+users see the Permissions interface!
 
-Now, scroll back up to the top of the Alert Type Managers Permissions page. The
-first section "Object Group Permissions," allows you to grant permission to the
-members of the Alert Type Manager group to access the members of other groups.
-Here you'll see all of the "All *" groups listed (the only groups for which you
-can grant CREATE access, incidentally) as well as all the other groups in the
-system. You can use the radio buttons or the select list interface to grant the
-permissions. Note that by default, the Alert Type Administrators have been
-granted permission only to CREATE All Alert Types.
+Now, select "Object Groups" from the select list. This selection allows you to
+grant permission to the members of the Distribution Admins group to access the
+members of other groups. Here you'll see all of the "All *" groups listed (the
+only groups, aside from start desk groups, for which you can grant CREATE
+access) as well as all the other groups in the system. You can use the radio
+buttons or the select list interface to grant the permissions. Note that by
+default, the Distribution Admins have been granted permission only to CREATE
+All Destinations and to CREATE All Jobs.
 
-The second section, "Workflow Permissions," allows you to grant permissions to
-the members of the current group (Alert Type Administrators) to access the
-assets within particular workflows. This feature is useful to allow certain
-groups of users to access assets only in certain workflows.
+The "Workflows" select list option allows you to grant permissions to the
+members of the current group (Distribution Admins) to access the documents
+within particular workflows. This feature is useful to allow certain groups of
+users to access documents only in certain workflows.
 
-The third section, "Desk Permissions," allows you to grant permissions to the
-members of the current group (Alert Type Administrators) to access the assets on
+And finally, the "Desks" option allows you to grant permission to the members
+of the current group (Distribution Admins) to access the documents on
 particular desks. This feature is useful to allow certain groups of users to
-access assets only on certain desks.
+access documents only on certain desks. It is also the means by which users
+can be granted permission to CREATE new documents, by granting the CREATE
+permission to the relevant start desk.
 
-These first three sections of permissions will likely be your most used, but
-they appear only when editing the permissions of user groups. The fourth
-section, "User Group Permissions," is the only section that appears in the
-permissions management screen for I<all> group profiles. We believe that this
-section will be most useful when creating a new group, when it makes more sense
-to associate the group with user groups all at once, rather than edit the user
-group profiles individually to grant permissions on your new group.
+These last three selections will likely be your most used, but they appear
+only when editing the permissions of user groups. The "User Groups" selection
+is the only option in the permissions management screen for non-user group
+profiles. We believe that this section will be most useful when creating a new
+group, when it makes more sense to associate the group with user groups all at
+once, rather than edit the user group profiles individually to grant
+permissions on your new group.
 
 Once you click "Save," and return to the group profile, the new permissions
-setting will have been saved. Click "Save" again to keep any changes made to the
-group profile name, description, or membership. From this point on, the
-permissions will be set and all users will be updated. They do not have to login
-again in order to gain new permissions.
+setting will have been saved. Click "Save" again to keep any changes made to
+the group profile name, description, or membership. From this point on, the
+permissions will be set and all users will be updated. They do not have to
+login again in order to gain new permissions.
+
+=head2 Group Permissions
+
+Our tour of the permissions interface in the last section assumes that you
+were logged in to Bricolage as a member of the Global Admins group. Things are
+different for members of other groups. For example, the default "System
+Admins" group grants its members create access to all of the types of objects
+in the "System" section of the Bricolage Administration menu (Preferences,
+Users, Groups, Sites, and Alert Types). So you might think that members of
+that group can create new groups, add or remove members, and set
+permissions. This is, in fact, the way Bricolage worked prior to version
+1.8.0.
+
+However, things could not remain so simple, unfortunately. This is because,
+under the old approach, a member of the System Admins group had full access to
+the Global Admins group, meaning that that user could add himself to the
+Global Admins group. But it doesn't seem like a good idea to allow any user to
+be able to give himself higher permissions; only another user with those
+higher permissions should be able to grant them to the first user.
+
+So a new approach was implemented. Now a user with EDIT permssion to a group
+cannot give himself more power than he already has. This was accomplished by
+following four simple rules:
+
+=over 4
+
+=item *
+
+A user cannot edit any group unless he has EDIT permission to the group. This
+is the same as it has always been.
+
+=item *
+
+If a user has edit permission to a user group, he cannot add or remove members
+unless he herself is a member. This prevents him from giving himself or anyone
+else more permissions than he already has. We have to disallow him from giving
+greater permissions to someone else, because otherwise that someone else might
+collude with the user to turn around and give I<him> greater permissions. Not
+a good idea.
+
+=item *
+
+If a user has permission to edit a non-user group, he cannot change its
+membership unless he has permission to EDIT the members of the group. What
+this means is that he must be a member of a user group that has at least EDIT
+permission to the members of the non-user group.
+
+=item *
+
+If a user has edit permission to I<any> group, he cannot change its
+permissions unless he has permission to access the members of the group. That
+is, he must be a member of a user group that has at least READ permission to
+the members of the group he's editing. Furthermore, the permissions he can
+grant to the group are limited to those he helself has to the members of the
+group. So if he has READ permission, he can grant only READ or DENY
+permission. If he has EDIT permission, he can grant READ, EDIT, or DENY. If he
+has CREATE permission to the members, he can grant any permission. And, of
+course, if he has no permission or DENY permission, he can grant no
+permissions at all.
+
+=back
+
+The overarching rule of thumb on which these rules were based is that a user
+can never grant any other user greater permissions than he herself has, either
+through group membership or through permission changes.
+
+The upshot of all this for you is that, while it's easy to manage permissions
+as a member of the Global Admins group, it's not so easy for members of other
+groups. If you want to enable another group of users to administer groups, a
+member of the Global Admins group must grant the following permissions to that
+other user group:
+
+=over 4
+
+=item *
+
+Ability to EDIT the group itself.
+
+=item *
+
+Ability to READ, EDIT, or CREATE members of the group (depending on how high
+a permission you want to allow them to grant to other user groups to access
+the members of the group).
+
+=item *
+
+If the group to be managed is a user group, each member of the user group
+doing the managing must also be a member of the group, so that they can then
+add and remove other members.
+
+=back
+
+This might seem limiting on the surface, but since the overall outcome is to
+enforce a strong security policy, limiting access is just the point. Good
+planning is key to a successful security policy, so once you figure out who to
+allow access to what, you can use the Bricolage security tools to quickly set
+up a configuration to maintain that policy.
+
+Have fun, and stay safe!
 
 =head1 AUTHOR
 

@@ -8,6 +8,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:aref :msg);
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 my $type = 'perm';
 my $disp_name = 'Permissions';
@@ -24,7 +25,8 @@ my ($do_save);
 sub save : Callback {
     my $self = shift;
     my $gid = $do_save->($self);
-    $self->set_redirect("/admin/profile/grp/$gid");
+    $self->set_redirect("/admin/profile/grp/$gid")
+      if defined $gid;
 }
 
 sub save_and_stay : Callback {
@@ -72,16 +74,42 @@ $do_save = sub {
                     # There's an existing permission object for this value.
                     my $perm = $perms->{$perm_ids->{$type}[$i]};
                     if ($perm->get_value != $perm_val) {
-                        # The value is different. Update it.
+                        # The value is different. Make sure the user has
+                        # permssion to change it by having permission to its
+                        # objects already.
+                        my $tgid = $type eq 'obj' ? $ugid : $gid;
+                        unless (chk_authz(0, $perm_val, 1, $tgid)
+                                || ($perm_val == DENY && chk_authz(0, READ, 1, $tgid))) {
+                            add_msg('Permission to grant permission "[_1]" to group'
+                                    . ' "[_2]" denied',
+                                    Bric::Util::Priv->vals_href->{$perm_val},
+                                    $perm->get_obj_grp->get_name);
+                            return;
+                        }
+
+                        # Update it.
                         $perm->set_value($perm_val);
                         $perm->save;
                         $chk = 1;
                     }
                 } else {
-                    # There is no existing permission object. Create one.
+                    # There is no existing permission object. Make sure the
+                    # user has permssion to create a new one by having
+                    # permission to its objects already.
+                    my $tgid = $type eq 'obj' ? $ugid : $gid;
+                    unless (chk_authz(0, $perm_val, 1, $tgid)
+                            || ($perm_val == DENY && chk_authz(0, READ, 1, $tgid))) {
+                        my $bad_grp = Bric::Util::Grp->lookup({ id => $tgid });
+                        add_msg('Permission to grant permission "[_1]" to group'
+                                . ' "[_2]" denied',
+                                Bric::Util::Priv->vals_href->{$perm_val},
+                                $bad_grp->get_name);
+                        return;
+                    }
+
                     my $perm = $class->new({ "$not->{$type}_grp" => $gid,
-                                             "${type}_grp" => $ugid,
-                                             value   => $perm_val
+                                             "${type}_grp"       => $ugid,
+                                             value               => $perm_val
                                          });
                     $perm->save;
                     $chk = 1;

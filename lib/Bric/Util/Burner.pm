@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.59 $ )[-1];
+our $VERSION = (qw$Revision: 1.60 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-30 00:16:52 $
+$Date: 2003-12-03 06:54:40 $
 
 =head1 SYNOPSIS
 
@@ -271,7 +271,7 @@ B<Notes:> NONE.
 
 sub new {
     my ($class, $init) = @_;
-    
+
     # setup defaults
     $init->{data_dir} ||= BURN_DATA_ROOT;
     $init->{comp_dir} ||= BURN_COMP_ROOT;

@@ -14,6 +14,33 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.7.2 ()
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Bricolage now has a much more robust security policy. Users with permission to
+edit various objects and groups in the administrative interface can no longer
+increase their permissions. Nor can they manage the membership of groups of
+which they are not members or do not have EDIT access to the members. All this
+is to preven users from giving themselves higher permissions. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+The "Checkout" checkbox is no longer missing in the Find interface for documents
+and templates that are already in workflow. [David]
+
+=back
+
 =head1 VERSION 1.7.1 (2003-11-30)
 
 =head2 Improvements
@@ -176,7 +203,7 @@ Improved permission checking in the virtual FTP server. [David]
 
 Uploading a new version of a media file did not change the path to the
 media file stored in the database, unless the file name of the media
-was also changed.  [Dave Rolsky]
+was also changed. [Dave Rolsky]
 
 =back
 

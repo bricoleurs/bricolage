@@ -120,35 +120,56 @@ if (defined $id) {
         }
     }
 
+    # All of these negative assertion variable names are annoying!
+    my $no_member_manage = $no_edit;
+    unless ($no_member_manage) {
+        if ($memb_pkg eq 'Bric::Biz::Person::User') {
+            # No member management only if the current user is a global admin
+            # or a member of the group.
+            $no_member_manage = !user_is_admin
+              && !$grp->has_member(get_user_object);
+        } else {
+            # No member management if the current user does not already have
+            # permisssion to edit the members of the group.
+            $no_member_manage = !chk_authz(0, EDIT, 1, $id);
+        }
+    }
+
     # Load up the double-list manager.
     $m->comp( "/widgets/doubleListManager/doubleListManager.mc", rightSort => 1,
-	      leftOpts => $left, rightOpts => $right, formName => 'grp_profile',
-	      leftName => 'objects', rightName => 'members', readOnly => $no_edit,
-	      leftCaption => $no_edit ? undef : "Available $pl_disp",
-              showLeftList => !$no_edit || 0,
+	      leftOpts     => $left,
+              rightOpts    => $right,
+              formName     => 'grp_profile',
+	      leftName     => 'objects',
+              rightName    => 'members',
+              readOnly     => $no_member_manage,
+	      leftCaption  => $no_member_manage ? undef : "Available $pl_disp",
+              showLeftList => !$no_member_manage || 0,
 	      rightCaption => "Current $pl_disp" );
-
 
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 </%perl>
-<table width=580 cellpadding=0 cellspacing=0>
+<table width="580" cellpadding="0" cellspacing="0">
 <tr>
-  <td width=265><&
+  <td width="265"><&
     '/widgets/profile/formButtons.mc', type => $type, return => '/admin/manager/grp',
 	     section => $section, no_del => $no_del, no_save => $no_edit,
              widget => $type
    &></td>
-  <td width=265 align=right valign=top>
-<%perl>
-
+  <td width="265" align="right" valign="top">
+<%perl>;
     # Add the buttons.
     $m->comp('/widgets/profile/imageSubmit.mc',
 	     formName => "grp_profile",
 	     callback => "$type|permissions_cb",
 	     image    => "permissions_dgreen",
              vspace   => 3
-	    ) unless $id == ADMIN_GRP_ID;
+	    ) if $id != ADMIN_GRP_ID && chk_authz(0, READ, 1, $id);
+    # Comment on the above line: We exclude the admin group because it has no
+    # permissions. We also exclude users who don't have permission to access
+    # the objects of this group already so as to prevent them from giving
+    # themselves greater permissions than they already have.
     $m->out('</td></tr></table>');
 
 } else {
@@ -235,11 +256,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-08-25 19:28:01 $
+$Date: 2003-12-03 06:54:40 $
 
 =head1 DESCRIPTION
 

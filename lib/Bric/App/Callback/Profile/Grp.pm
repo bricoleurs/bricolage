@@ -7,6 +7,7 @@ use constant CLASS_KEY => 'grp';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
+use Bric::App::Session qw(:user);
 use Bric::App::Util qw(:aref :msg);
 use Bric::Config qw(ADMIN_GRP_ID);
 
@@ -145,24 +146,52 @@ $save_sub = sub {
     if (defined $param->{grp_id}) {
 	# Get the name of the member package.
 	my $pkg = $grp->member_class->get_pkg_name;
-        if (exists $param->{members}) {
-	    my $ids = ref $param->{members} ? $param->{members}
-	      : [ $param->{members} ];
-	    # Assemble the new member information.
-	    my @add = map { { package => $pkg, id => $_ } } @$ids;
-	    # Add the members.
-	    $grp->add_members(\@add);
-	} if (exists $param->{objects}) {
-            # Deactivate members.
-            foreach my $id (ref $param->{objects} ? @{$param->{objects}}
-                            : $param->{objects}) {
-                foreach my $mem ($grp->has_member({ package => $pkg,
-                                                    id => $id }) ) {
-		    $mem->deactivate;
-                    $mem->save;
+        if (exists $param->{members} or exists $param->{objects}) {
+
+            # Make sure they can manage group membership.
+            if ($pkg eq 'Bric::Biz::Person::User') {
+                unless (user_is_admin || $grp->has_member(get_user_object)) {
+                    # No member management only if the current user is a global
+                    # admin or a member of the group.
+                    add_msg('Permission to manage "[_1]" group membership denied',
+                            $grp->get_name);
+                    return;
+                }
+            } else {
+                unless (chk_authz(0, EDIT, 1, $param->{grp_id})) {
+                    # No member management if the current user does not already
+                    # have permisssion to edit the members of the group.
+                    add_msg('Permission to manage "[_1]" group membership denied',
+                            $grp->get_name);
+                    return;
+                }
+            }
+
+            # Add any new members.
+            if (exists $param->{members}) {
+                  my $ids = ref $param->{members} ? $param->{members}
+                  : [ $param->{members} ];
+                # Assemble the new member information.
+                my @add = map { { package => $pkg, id => $_ } } @$ids;
+                # Add the members.
+                $grp->add_members(\@add);
+            }
+
+            # Remove any existing members.
+            if (exists $param->{objects}) {
+                # Deactivate members.
+                foreach my $id (ref $param->{objects}
+                                ? @{$param->{objects}}
+                                : $param->{objects}) {
+                    foreach my $mem ($grp->has_member({ package => $pkg,
+                                                        id      => $id }) ) {
+                        $mem->deactivate;
+                        $mem->save;
+                    }
                 }
             }
 	}
+
 	# Save the group
 	$grp->save;
         unless ($no_log) {
