@@ -7,15 +7,15 @@ Bric::Biz::Org - Bricolage Interface to Organizations
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-09-25 10:49:45 $
 
 =head1 SYNOPSIS
 
@@ -176,7 +176,7 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $init) = @_;
     my $self = bless {}, ref $pkg || $pkg;
-    $init->{_personal} = 0;
+    $init->{_personal} = $init->{_personal} ? 1 : 0;
     $init->{_active} = 1;
     $self->SUPER::new($init);
 }
@@ -1361,7 +1361,10 @@ Bric::Biz::Person(3)
 =head1 REVISION HISTORY
 
 $Log: Org.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-09-25 10:49:45  wheeler
+Fixed bug where personal organizations weren't getting flagged as such.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:53:26  wheeler

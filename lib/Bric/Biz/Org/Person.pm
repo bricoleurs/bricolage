@@ -7,15 +7,15 @@ Bric::Biz::Org::Person - Manages Organizations Related to Persons
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-09-25 10:49:45 $
 
 =head1 SYNOPSIS
 
@@ -246,10 +246,10 @@ sub new {
     my ($pkg, $init) = @_;
     my $self = bless {}, ref $pkg || $pkg;
     $init->{obj} ||= $init->{person};
+    $init->{_personal} = ! exists $init->{_personal} ? 1
+      : $init->{_personal} ? 1 : 0;
     $init->{person_id} ||= $init->{obj}->get_id if $init->{obj};
     delete @{$init}{'person', 'obj'};
-    $init->{_personal} ||= 0;
-    $init->{_active} = 1;
     $self->SUPER::new($init);
 }
 
@@ -1465,7 +1465,10 @@ Bric::Biz::Person(4)
 =head1 REVISION HISTORY
 
 $Log: Person.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-09-25 10:49:45  wheeler
+Fixed bug where personal organizations weren't getting flagged as such.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:54:05  wheeler
