@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-27 22:21:03 $
+$Date: 2002-10-09 22:29:47 $
 
 =head1 SYNOPSIS
 
@@ -774,20 +774,17 @@ NONE
 
 sub get_contributors {
     my $self = shift;
-    my $contribs = $self->_get_contributors();
+    my $contribs = $self->_get_contributors;
 
-    my @contribs;
-    foreach my $id (sort { $contribs->{$a}->{'place'} <=>
-                           $contribs->{$b}->{'place'} }
+    my @ret;
+    foreach my $id (sort { $contribs->{$a}->{place} <=>
+                           $contribs->{$b}->{place} }
                     keys %$contribs) {
-        if (defined $contribs->{$id}->{'obj'}) {
-            push @contribs, $contribs->{$id}->{'obj'};
-        } else {
-            push @contribs, Bric::Util::Grp::Parts::Member::Contrib->lookup
-              ({ id => $id });
-        }
+        $contribs->{$id}->{obj} ||=
+          Bric::Util::Grp::Parts::Member::Contrib->lookup({ id => $id });
+        push @ret, $contribs->{$id}->{obj};
     }
-    return wantarray ? @contribs : \@contribs;
+    return wantarray ? @ret : \@ret;
 }
 
 ################################################################################
@@ -1686,7 +1683,7 @@ sub get_all_keywords {
     my $self = shift;
     my %kw = map { ($_->get_id, $_) } 
       ( Bric::Biz::Keyword->list({ object => $self }), 
-        _get_category_keywords() );
+        $self->_get_category_keywords() );
     my @kw = sort { lc $a->get_sort_name cmp lc $b->get_sort_name }
       values %kw;
 

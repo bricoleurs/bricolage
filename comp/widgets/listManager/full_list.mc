@@ -7,19 +7,19 @@
 </table>
 
 % if ($addition) {
-<table border=0 cellpadding=0 cellspacing=0 width=580>
+<table border="0" cellpadding="0" cellspacing="0" width="580">
   <tr>
-    <td class=lightHeader width=1><img src="/media/images/spacer.gif" width=1 height=19></td>
-    <td width=10><img src="/media/images/spacer.gif" width=10 height=25></td>
-    <td width=568><a class=redLinkLarge href="<% $addition->[1] %>"><% $addition->[0] %> a New <% get_class_info($object)->get_disp_name %></a></td>
-    <td class=lightHeader width=1><img src="/media/images/spacer.gif" width=1 height=19></td>
+    <td class="lightHeader" width="1"><img src="/media/images/spacer.gif" width="1" height="19"></td>
+    <td width="10"><img src="/media/images/spacer.gif" width="10" height="25"></td>
+    <td width="568"><a class="redLinkLarge" href="<% $addition->[1] %>"><% $addition->[0] %> a New <% get_class_info($object)->get_disp_name %></a></td>
+    <td class="lightHeader" width="1"><img src="/media/images/spacer.gif" width="1" height="19"></td>
   </tr>
 </table>
 % }
 
 
 <!-- table header display -->
-<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
+<table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
   <tr>
 <%perl>
   my $field_disp = shift @$data;
@@ -103,7 +103,7 @@
 % # If there were no results (and thus none of the above is output) tell the user
 % if ($rows == 1) {
 %     if ($empty_search) {
-  <tr><td colspan="<% scalar @$fields %>"></td>&nbsp;</tr>
+  <tr><td style="border-style:solid; border-color:#cccc99;" colspan="<% scalar @$fields %>">&nbsp;</td></tr>
 %     } else {
   <tr><td colspan="<% scalar @$fields %>">No <% lc(get_class_info($object)->get_plural_name) %> were found</td></tr>
 %     }

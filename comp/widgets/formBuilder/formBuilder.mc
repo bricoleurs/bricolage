@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-19 09:42:30 $
+$Date: 2002-10-09 22:29:47 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -335,50 +335,50 @@ date_table     += '</td></tr></table></form>&nbsp;'
     <td width=140><img src="/media/images/spacer.gif" width=140 height=5 /></td>
   </tr>
 </table>
-<table border=1 width=140>
+<table border="1" width="140" bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;" cellpadding="0" cellspacing="0">
 
   <tr>
-    <td width=140>
-    <input type=radio name=formElement value=text onClick="showForm('text')" checked>
-    <b>Text box</b>
+    <td width="140" style="border-style:solid; border-color:#cccc99;">
+      <input type=radio name=formElement value=text onClick="showForm('text')" checked>
+        <b>Text box</b>
     </td>
   </tr>
   <tr>
-    <td width=140>
-    <input type=radio name=formElement value=radio onClick="showForm('radio')">
-    <b>Radio Buttons</b>
+    <td style="border-style:solid; border-color:#cccc99;">
+      <input type=radio name=formElement value=radio onClick="showForm('radio')">
+        <b>Radio Buttons</b>
     </td>
   </tr>
   <tr>
-	<td>
-	<input type=radio name=formElement value=checkbox onClick="showForm('checkbox')">
+    <td style="border-style:solid; border-color:#cccc99;">
+      <input type=radio name=formElement value=checkbox onClick="showForm('checkbox')">
 	<b>Checkbox</b>
-	</td>
-</tr>
-<tr>
-	<td>
-	<input type=radio name=formElement value=pulldown onClick="showForm('pulldown')">
+    </td>
+  </tr>
+  <tr>
+    <td style="border-style:solid; border-color:#cccc99;">
+      <input type=radio name=formElement value=pulldown onClick="showForm('pulldown')">
 	<b>Pulldown</b>
-	</td>
-</tr>
-<tr>
-	<td>
-	<input type=radio name=formElement value=select onClick="showForm('select')">
+    </td>
+  </tr>
+  <tr>
+    <td style="border-style:solid; border-color:#cccc99;">
+      <input type=radio name=formElement value=select onClick="showForm('select')">
 	<b>Select</b>
 	</td>
-</tr>
-<tr>
-	<td>
-	<input type=radio name=formElement value=textarea onClick="showForm('textarea')">
+  </tr>
+  <tr>
+    <td style="border-style:solid; border-color:#cccc99;">
+      <input type=radio name=formElement value=textarea onClick="showForm('textarea')">
 	<b>Text Area</b>
-	</td>
-</tr>
-<tr>
-	<td>
-	<input type=radio name=formElement value=date onClick="showForm('date')">
+    </td>
+  </tr>
+  <tr>
+    <td style="border-style:solid; border-color:#cccc99;">
+      <input type=radio name=formElement value=date onClick="showForm('date')">
 	<b>Date</b>
-	</td>
-</tr>
+    </td>
+  </tr>
 </table>
 </form>
 

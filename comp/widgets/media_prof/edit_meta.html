@@ -133,7 +133,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Upload a file",
-         number => 2
+         number => $num++
         );
 
 </%perl>
@@ -164,18 +164,18 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <%perl>
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-$m->comp( '/widgets/container_prof/container_prof.mc',
+$num = $m->comp( '/widgets/container_prof/container_prof.mc',
         tile => $tile,
         tile_type => 'media',
         action => 'edit',
-        num => 3,
+        num => $num,
         title => 'Content',
         start_count => 6
 );
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Contributors",
-         number => 4);
+         number => $num++);
 </%perl>
 
 

@@ -187,6 +187,33 @@ improved. [David]
 
 =back
 
+=head1 VERSION 1.4.4
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Empty listManager lists no longer have a gap in them. [David]
+
+=item *
+
+Made the table around the formBuilder radio buttons prettier. [David]
+
+=item *
+
+Fixed numbering of sections in Media profile so that the numbers don't
+skip. [David]
+
+=item *
+
+Updated display of existing contributors in the "Edit Contributors" screen of
+the story and media asset profiles to use listManager. This makes them look
+like they do everywhere else (and uses less code, to boot!). [David]
+
+=back
+
 =head1 VERSION 1.4.3
 
 =head2 Bug Fixes
@@ -198,6 +225,15 @@ improved. [David]
 Fixed inconsistencey between container element methods and their convenience
 accessors in Bric::Biz::Asset::Business. Thanks to Philip Fibiger for the
 spot. [David]
+
+=item *
+
+Assets can once again be recalled from the library and put on a desk. [David]
+
+=item *
+
+The C<get_all_keywords()> method of Bric::Biz::Asset::Business works
+again. [David]
 
 =back
 
