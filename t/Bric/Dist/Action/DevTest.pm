@@ -259,5 +259,20 @@ sub test_set_type : Test(8) {
     isa_ok($act, 'Bric');
 }
 
+##############################################################################
+# Test list_types. Increase the number of tests for each new action added.
+sub test_list_types : Test(7) {
+    my $self = shift;
+    ok( my @types = Bric::Dist::Action->list_types, "Get types" );
+    my $i;
+    foreach my $type (@types) {
+        ++$i;
+        ok( my $act = Bric::Dist::Action->new({ type => $type }),
+            "Create $type action" );
+        isa_ok($act, 'Bric::Dist::Action');
+    }
+    return "Remaining types not loaded" if $i < 7;
+}
+
 1;
 __END__

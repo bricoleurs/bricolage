@@ -10,9 +10,10 @@ use Bric::Util::Time qw(strfdate);
 use Bric::Util::Trans::FS;
 use Bric::Biz::Asset::Business::Story::DevTest;
 use Bric::Biz::Asset::Business::Media::DevTest;
+use File::Spec::Functions qw(catfile);
+use Cwd;
 
 sub table {'resource'}
-
 
 my $contents = '% $m->print("Hello world!\n");';
 
@@ -474,6 +475,27 @@ sub test_list_ids : Test(42) {
         "Look up not_job_id '$self->{jids}[1]'" );
     is( scalar @res_ids, 3, "Check for 2 resource IDs" );
 }
+
+##############################################################################
+# Test getting resource contents.
+##############################################################################
+sub test_content : Test(4) {
+    my $file = catfile cwd, 'Makefile.PL';
+    return "$file does not exist" unless -f $file;
+    ok( my $res = Bric::Dist::Resource->new({ path => $file }),
+        "Create resource" );
+    isa_ok($res, 'Bric::Dist::Resource');
+    isa_ok($res, 'Bric');
+
+    # Read in the contents of the file.
+    open F, $file or die "Cannot open '$file': $!\n";
+    my $contents = join '', <F>;
+    close F;
+
+    # Compare 'em.
+    is($res->get_contents, $contents, "Check the contents");
+}
+
 
 1;
 __END__

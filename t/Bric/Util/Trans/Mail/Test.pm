@@ -5,7 +5,6 @@ use base qw(Bric::Test::Base);
 use Test::More;
 use Cwd;
 use Bric::Util::Trans::Mail;
-use Bric::Dist::Resource;
 use File::Spec::Functions qw(catfile);
 
 my $skip_msg = "Set BRIC_TEST_SMTP, BRIC_TEST_TO, BRIC_TEST_CC, and " .
@@ -142,50 +141,6 @@ sub test_send_html : Test(4) {
     ok( $mail->set_message('<h3>' . $mail->get_message . '</h3>'),
         "Set HTML message" );
     ok( $mail->set_content_type('text/html'), "Set content type" );
-
-    return $skip_msg unless $ENV{BRIC_TEST_SMTP} && $ENV{BRIC_TEST_TO};
-
-    # Send it.
-    ok( $mail->send, "Send message");
-}
-
-##############################################################################
-# Attach a file.
-sub test_attach_file : Test(4) {
-    my $self = shift;
-    my $mail = $self->{mail};
-
-    return "$test_file does not exist" unless -f $test_file;
-
-    ok( $mail->set_to([$ENV{BRIC_TEST_TO}]), "Set To");
-    ok( my $res = Bric::Dist::Resource->new({ path       => $test_file,
-                                              media_type => $media_type }),
-        "Create resource" );
-    ok( $mail->set_resources([$res]), "Add resource to mail" );
-
-    return $skip_msg unless $ENV{BRIC_TEST_SMTP} && $ENV{BRIC_TEST_TO};
-
-    # Send it.
-    ok( $mail->send, "Send message");
-}
-
-##############################################################################
-# Attach a file.
-sub test_attach_file_html : Test(6) {
-    my $self = shift;
-    my $mail = $self->{mail};
-
-    ok( $mail->set_message('<h3>' . $mail->get_message . '</h3>'),
-        "Set HTML message" );
-    ok( $mail->set_content_type('text/html'), "Set content type" );
-
-    return "$test_file does not exist" unless -f $test_file;
-
-    ok( $mail->set_to([$ENV{BRIC_TEST_TO}]), "Set To");
-    ok( my $res = Bric::Dist::Resource->new({ path       => $test_file,
-                                              media_type => $media_type }),
-        "Create resource" );
-    ok( $mail->set_resources([$res]), "Add resource to mail" );
 
     return $skip_msg unless $ENV{BRIC_TEST_SMTP} && $ENV{BRIC_TEST_TO};
 

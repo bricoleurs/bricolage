@@ -469,6 +469,19 @@ sub test_list_ids : Test(43) {
 }
 
 ##############################################################################
+# Test my_meths.
+
+sub test_my_meths : Test(5) {
+    # Try the identifier methods.
+    ok( my $kw = Bric::Biz::Keyword->new({ name => 'NewFoo' }),
+        "Create Keyword" );
+    ok( my @meths = $kw->my_meths(0, 1), "Get ident meths" );
+    is( scalar @meths, 1, "Check for 1 meth" );
+    is( $meths[0]->{name}, 'name', "Check for 'name' meth" );
+    is( $meths[0]->{get_meth}->($kw), 'NewFoo', "Check name 'NewFoo'" );
+}
+
+##############################################################################
 # Test instance methods.
 ##############################################################################
 # Test save() method (and the instance methods, while we're at it!).

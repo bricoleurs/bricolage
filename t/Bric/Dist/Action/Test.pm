@@ -34,20 +34,5 @@ sub test_const : Test(11) {
     ok( $act->is_active, "Check that it's activated" );
 }
 
-##############################################################################
-# Test list_types. Increase the number of tests for each new action added.
-sub test_list_types : Test(7) {
-    my $self = shift;
-    ok( my @types = Bric::Dist::Action->list_types, "Get types" );
-    my $i;
-    foreach my $type (@types) {
-        ++$i;
-        ok( my $act = Bric::Dist::Action->new({ type => $type }),
-            "Create $type action" );
-        isa_ok($act, 'Bric::Dist::Action');
-    }
-    return "Remaining types not loaded" if $i < 7;
-}
-
 1;
 __END__
