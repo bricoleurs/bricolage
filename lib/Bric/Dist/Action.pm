@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:08 $
+$Date: 2004-03-01 13:09:27 $
 
 =head1 SYNOPSIS
 
@@ -80,7 +80,7 @@ job's resources.
 
 The types of actions available to customers are created at development time, and
 are represented both in the database and by subclasses of Bric::Dist::Action. They
-can be changed and reordered for a given servery type via the
+can be changed and reordered for a given server type via the
 Bric::Dist::ServerType interface. So Bric::Dist::Action will frequently not be
 accessed directly, but via Bric::Dist::ServerType accessors.
 
@@ -684,7 +684,7 @@ The number of columns to format in a textarea field.
 
 =item vals
 
-An anonymous hash of key/value pairs reprsenting the values and display names
+An anonymous hash of key/value pairs representing the values and display names
 to use in a select list.
 
 =back
@@ -1412,7 +1412,7 @@ sub undo_it { shift }
 =item __PACKAGE__->_register_action($key)
 
 Protected method called by action subclasses at startup time so they can
-register theselves as available actions. Some may wish to not register
+register themselves as available actions. Some may wish to not register
 themselves under certain circumstances. For example,
 Bric::Dist::Action::DTDValidate should only be registered if XML::LibXML has
 been installed. Thus that class only registers itself if XML::LibXML does not
@@ -1526,7 +1526,7 @@ sub _rebless { bless $_[1], ref $_[0] || $_[0] }
 =item my $act_ids_aref = &$get_em( $pkg, $params, 1 )
 
 Function used by lookup() and list() to return a list of Bric::Dist::Action objects
-or, if called with an optional third argument, returns a listof Bric::Dist::Action
+or, if called with an optional third argument, returns a list of Bric::Dist::Action
 object IDs (used by list_ids()).
 
 B<Throws:>
@@ -1797,7 +1797,7 @@ __END__
 
 =item *
 
-Add a new subclass for Bric::Dist::Action. Use Bric::Dist::Actcion::Email
+Add a new subclass for Bric::Dist::Action. Use Bric::Dist::Action::Email
 and Bric::Dist::Action::DTDValidate as models. Be sure to call
 C<< __PACKAGE__->_register_action($key) >> to register your action subclass.
 
@@ -1830,7 +1830,7 @@ Add a C<use> statement for your new action to Bric::App::Handler.
 =item *
 
 Follow the instructions in L<Bric::Hacker|Bric::Hacker> to create a patch and
-send it to bricolage-devel@lists.sourceforge.net>.
+send it to bricolage-devel@lists.sourceforge.net.
 
 =back
 
