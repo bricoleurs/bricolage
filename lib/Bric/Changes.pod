@@ -129,6 +129,11 @@ rather than name. [David]
 Vastly improved the speed at which categories can be imported via SOAP.
 [David]
 
+=item *
+
+Makefile now confirms location of Apache and PostgreSQL to allow for
+systems with multiple versions of each available. [Sam]
+
 =back
 
 =head2 Bug Fixes
