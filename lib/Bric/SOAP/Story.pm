@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-21 20:17:06 $
+$Date: 2002-02-22 00:38:05 $
 
 =head1 SYNOPSIS
 
@@ -277,7 +277,8 @@ sub list_ids {
 		unless defined $date;
 	$args->{$name} = $date;
     }
-    
+
+    # perform list using existing Bricolage list_ids functionality
     my @list = Bric::Biz::Asset::Business::Story->list_ids($args);
     
     print STDERR "Bric::Biz::Asset::Business::Story->list_ids() called : ",
@@ -626,7 +627,7 @@ sub delete {
 	$story->checkout({ user__id => get_user_id });
       }
 
-      # deletion dance sampled from widgets/workspace/callback.mc
+      # deletion dance sampled from comp/widgets/workspace/callback.mc
       my $desk = $story->get_current_desk;
       $desk->checkin($story);
       $desk->remove_asset($story);
