@@ -209,8 +209,7 @@ sub find_apache {
     }
 
     print "Found Apache executable at $REQ{APACHE_EXE}.\n";
-    
-    
+
     # check version
     my $version = `$REQ{APACHE_EXE} -v`;
     return soft_fail("Failed to find Apache version with ",
@@ -220,13 +219,15 @@ sub find_apache {
     return soft_fail("Failed to parse Apache version from string ",
 		     "\"$version\".") 
 	unless defined $x and defined $y and defined $z;
+    return soft_fail("Found Apache 2. Bricolage only supports Apache 1.3.\n")
+      if $x > 1;
     return soft_fail("Found old version of Apache: $x.$y.$z - ",
 		     "1.3.12 or greater required.")
-	unless (($x > 1) or ($x == 1 and $y > 3) or 
+	unless (($x == 1 and $y > 3) or
 		($x == 1 and $y == 3 and $z >= 12));
     print "Found acceptable version of Apache: $x.$y.$z.\n";
     $REQ{APACHE_VERSION} = [$x,$y,$z];
-    
+
     return 1;
 }
 
