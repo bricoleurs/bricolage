@@ -151,7 +151,6 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     CACHE_DEBUG_MODE
                     STORY_URI_WITH_FILENAME
                     ENABLE_CATEGORY_BROWSER
-                    USE_XHTML
                     LOAD_LANGUAGES
                     ENCODE_OK
                     LOAD_CHAR_SETS
@@ -234,8 +233,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      NO_TOOLBAR
                                      ENABLE_CATEGORY_BROWSER
                                      ENABLE_HTMLAREA
-                                     HTMLAREA_TOOLBAR
-                                     USE_XHTML)],
+                                     HTMLAREA_TOOLBAR)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],
                     time      => [qw(ISO_8601_FORMAT
@@ -361,7 +359,7 @@ require Bric; our $VERSION = Bric->VERSION;
               "'separator','showhelp','about']";
         }
         # Process boolean directives here. These default to 1.
-        foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR USE_XHTML
+        foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR
                     ALLOW_SLUGLESS_NONFIXED PUBLISH_RELATED_ASSETS
                     ENABLE_OC_ASSET_ASSOCIATION)) {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
@@ -628,9 +626,6 @@ require Bric; our $VERSION = Bric->VERSION;
 
     # Category browser setting
     use constant ENABLE_CATEGORY_BROWSER => $config->{ENABLE_CATEGORY_BROWSER};
-
-    # XHTML setting.
-    use constant USE_XHTML              => $config->{USE_XHTML};
 
     # L10N & Character Translation settings.
     use constant ENCODE_OK              => $] >= 5.008;

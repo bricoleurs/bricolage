@@ -76,31 +76,20 @@ $wf = $wf->get_name;
      field_values => $values,
      constrain    => {'workflow__id' => $work_id},
   &>
-<br />
-<table width=200 cellpadding=0 cellspacing=0>
-<tr>
-  <td width=80>
-
-<table border=0 cellpadding=0 cellspacing=0>
-<tr>
-  <td colspan=2>
-
-  </td>
-</tr>
-<tr>
-   <td align=left>
-<input type="image" src="/media/images/<% $lang_key %>/checkout_red.gif" border="0" name="checkout" value="checkout_red" />
-   </td>
-   <td align="right">
-<a href="#" onClick="window.location.href='/workflow/profile/workspace/'; return false;"><img src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" name="return" value="Return" vspace=2 /></a>
-
-  </td>
-</tr>
-</table>
+ 
+<& /widgets/buttons/submit.mc,
+   disp      => 'Checkout',
+   name      => 'checkout',
+   button    => 'checkout_red',
+   useTable  => 0 &>
+<& /widgets/buttons/back.mc,
+   disp      => 'Return',
+   name      => 'return',
+   uri       => '/workflow/profile/workspace/',
+   button    => 'return_dgreen',
+   useTable  => 0 &>
 
   </form>
-</tr>
-</table>
 <& /widgets/wrappers/sharky/footer.mc &>
 <%cleanup>;
 # Clear out the cache of user names.

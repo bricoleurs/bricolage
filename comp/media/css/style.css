@@ -182,12 +182,14 @@ div.debug dt:after {
 }
 
 /* Desk item styling. */
-#desk {
+.desk {
     position: relative;
     width: 580px;
     font-size: 11px;
     line-height: 11px;
 }
+
+.desk .buttonbar { text-align: right; }
 
 .desk_item {
     padding-bottom: 8px;
