@@ -423,7 +423,8 @@ my $create_fa = sub {
     # Check permissions.
     my $work_id = get_state_data($widget, 'work_id');
     my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
-    my $gid = $wf->get_asset_grp_id;
+    my $start_desk = $wf->get_start_desk;
+    my $gid = $start_desk->get_asset_grp;
     chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
 
     # Create a new formatting asset.
@@ -457,7 +458,6 @@ my $create_fa = sub {
     $fa->save;
 
     # Send this template to the first desk.
-    my $start_desk = $wf->get_start_desk;
     $start_desk->accept({ asset => $fa });
     $start_desk->save;
 

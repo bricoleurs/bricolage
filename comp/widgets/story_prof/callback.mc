@@ -44,7 +44,6 @@ my $save_data = sub {
             my $msg = $story->check_uri($uid);
             if ($msg) {
                 if ($old_slug) {
-                    
                     add_msg(lang->maketext("The slug has been reverted to [_1], as " .
                              "the slug [_2] caused this story " .
                              "to have a URI conflicting with that of story " .
@@ -419,7 +418,8 @@ my $handle_create = sub {
     # Check permissions.
     my $work_id = get_state_data($widget, 'work_id');
     my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
-    my $gid = $wf->get_asset_grp_id;
+    my $start_desk = $wf->get_start_desk;
+    my $gid = $start_desk->get_asset_grp;
     chk_authz('Bric::Biz::Asset::Business::Story', CREATE, 0, $gid);
 
     # Make sure we have the required data. Check the story type.
@@ -465,16 +465,15 @@ my $handle_create = sub {
     # Set the workflow this story should be in.
     $story->set_workflow_id($work_id);
 
-    # Save everything else unless there were data errors
-    return unless &$save_data($param, $widget, $story);
-
     # Save the story.
     $story->save;
 
     # Send this story to the first desk.
-    my $start_desk = $wf->get_start_desk;
     $start_desk->accept({ asset => $story });
     $start_desk->save;
+
+    # Save everything else unless there were data errors
+    return unless &$save_data($param, $widget, $story);
 
     # Log that a new story has been created and generally handled.
     log_event('story_new', $story);
@@ -482,7 +481,8 @@ my $handle_create = sub {
     log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
     log_event('story_moved', $story, { Desk => $start_desk->get_name });
     log_event('story_save', $story);
-    add_msg($lang->maketext("Story [_1] created and saved.", "&quot;" . $story->get_title . "&quot;"));
+    add_msg($lang->maketext("Story [_1] created and saved.", "&quot;" .
+                            $story->get_title . "&quot;"));
 
     # Put the story into the session and clear the workflow ID.
     set_state_data($widget, 'story', $story);

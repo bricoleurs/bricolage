@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6.4.1 $
+$Revision: 1.6.4.2 $
 
 =head1 DATE
 
-$Date: 2003-03-27 23:54:27 $
+$Date: 2003-04-02 08:01:48 $
 
 =head1 DESCRIPTION
 
@@ -33,7 +33,8 @@ my $context = "Workflow | Profile | $disp | New";
 <%init>
 $r->uri =~ m!/([^/]+)/?$!;
 my $w_id = $1;
-my $gid =  Bric::Biz::Workflow->lookup({ id => $w_id })->get_asset_grp_id;
+my $wf = Bric::Biz::Workflow->lookup({ id => $w_id });
+my $gid =  $wf->get_start_desk->get_asset_grp;
 chk_authz('Bric::Biz::Asset::Business::Story', CREATE, 0, $gid);
 </%init>
 
