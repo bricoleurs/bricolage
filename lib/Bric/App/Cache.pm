@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-10-03 08:51:14 $
 
 =head1 SYNOPSIS
 
@@ -44,6 +44,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Fault::Exception::DP;
 use Bric::Util::Fault::Exception::GEN;
+use File::Spec::Functions qw(tmpdir);
 use Cache::FileCache;
 
 ################################################################################
@@ -58,6 +59,7 @@ use Cache::FileCache;
 # Constants
 ################################################################################
 use constant DEBUG => 0;
+use constant CACHE_ROOT => tmpdir . '/bricolage_cache';
 
 ################################################################################
 # Fields
@@ -110,7 +112,8 @@ B<Notes:> NONE.
 
 sub new {
     my ($pkg, $init) = @_;
-    eval { $cache ||= Cache::FileCache->new({ namespace => 'Bricolage_Cache' }) };
+    eval { $cache ||= Cache::FileCache->new({ namespace => 'Bricolage_Cache',
+					      cache_root => CACHE_ROOT }) };
     die $gen->new({ msg => 'Unable to instantiate cache.', payload => $@ })
       if $@;
     return bless \$cache, ref $pkg || $pkg;
@@ -381,7 +384,11 @@ Apache::Session(4)
 =head1 REVISION HISTORY
 
 $Log: Cache.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.2.2.1  2001-10-03 08:51:14  wheeler
+Moved cache files to /tmp/bricolage_cache (or, to be more specific, to the
+"bricolage_cache" subdirectory of the local system's tmp directory).
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:52:58  wheeler
