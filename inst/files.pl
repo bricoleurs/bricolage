@@ -6,11 +6,11 @@ files.pl - installation script to create directories and copy files
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-10-16 22:57:42 $
+$Date: 2003-11-06 00:43:50 $
 
 =head1 DESCRIPTION
 
@@ -67,12 +67,24 @@ if ($UPGRADE) {
     }
 
     # Move the component directory.
-    move $CONFIG->{MASON_COMP_ROOT}, $dest;
+    move $CONFIG->{MASON_COMP_ROOT}, $dest
+      or die "Cannot move '$CONFIG->{MASON_COMP_ROOT}' to '$dest': $!\n";
+
+    # Create the new paths.
+    create_paths();
+
+    # Now move the "data" directory back.
+    move catdir($dest, 'data'), catdir($CONFIG->{MASON_COMP_ROOT}, 'data')
+      or die "Cannot move '", catdir($dest, 'data'), "' to '",
+      catdir($CONFIG->{MASON_COMP_ROOT}, 'data'), "': $!\n";
+
+    # Holler at 'em.
     print "$CONFIG->{MASON_COMP_ROOT} moved to $dest\n";
     print "Delete it if you haven't added or altered files in it.\n";
+} else {
+    # Just create the new paths.
+    create_paths();
 }
-
-create_paths();
 
 # Copy the Mason UI components.
 find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}) },

@@ -140,6 +140,12 @@ Fixed page logging so that redirects to the page before the current page can
 work correctly. It was most noticably broken when trying to associate a
 contributor with a document. [David]
 
+=item *
+
+The upgrade process no longer moves media document files to where Bricolage
+can't find them. If this happened to you, just
+C<mv $BRICOLAGE_ROOT/comp.old/data $BRICOLAGE_ROOT/comp>. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)
