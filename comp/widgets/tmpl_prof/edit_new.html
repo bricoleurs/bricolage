@@ -21,6 +21,21 @@ $m->out($ieSpacer);
 </table>
 <%perl>
 $m->out($ieSpacer);
+$m->comp('/widgets/profile/displayFormElement.mc',
+	 key => "file_type",
+	 vals => {
+               disp  => "File Type",
+               value => 'mc',
+               props => { 
+                          type => 'select',
+                          vals => {
+                                    'mc'   => 'Mason Component (.mc)',
+                                    'pl'   => 'HTML::Template Script (.pl)',
+                                    'tmpl' => 'HTML::Template Template (.tmpl)'
+                                  }
+                         }
+         });
+$m->out($ieSpacer);
 
 $m->comp('/widgets/select_object/select_object.mc',
 	 'object'    => 'output_channel',

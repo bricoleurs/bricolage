@@ -136,7 +136,8 @@ elsif ($field eq "$widget|create_cb") {
     my $at_id = $param->{$widget.'|at_id'};
     my $oc_id = $param->{$widget.'|oc_id'};
     my $cat_id = $param->{$widget.'|cat_id'};
-
+    my $file_type = $param->{file_type};
+    
     my ($at, $name);
     unless ($param->{$widget.'|no_at'}) {
 	# Associate it with an Element.
@@ -152,6 +153,7 @@ elsif ($field eq "$widget|create_cb") {
     # Create a new formatting asset.
     my $fa = Bric::Biz::Asset::Formatting->new(
 			    {'element'     		=> $at,
+			     'file_type'                => $file_type,
 			     'output_channel__id' 	=> $oc_id,
 			     'category_id'        	=> $cat_id,
 			     'priority'           	=> $param->{priority},
@@ -391,8 +393,13 @@ my $checkin = sub {
 my $check_syntax = sub {
     my ($widget) = @_;
     my $fa   = get_state_data($widget, 'fa');
-    my $code = $fa->get_data;
 
+    # only do this check for Mason components
+    my $file_name = $fa->get_file_name;
+    return 1 unless ($file_name =~ /.mc$/ or $file_name =~ /autohandler$/);
+
+    my $code = $fa->get_data;
+    
     # Syntax check the code.
     my $parser = $m->parser;
     eval {

@@ -59,6 +59,7 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
     $comp->activate;
     $comp->set_name($param->{name}) unless $no_save;
     $comp->set_description($param->{description});
+    $comp->set_burner($param->{burner}) if defined $param->{burner};
     $comp->set_primary_oc_id($param->{primary_oc_id}) if exists $param->{primary_oc_id};
 
     # Update existing attributes.
@@ -191,11 +192,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-10-23 17:13:49 $
+$Date: 2001-11-19 21:43:08 $
 
 =head1 SYNOPSIS
 
