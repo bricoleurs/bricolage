@@ -182,8 +182,9 @@ Bric::Util::EventType object ID will be instantiated internally.
 
 =item *
 
-name - A Bric::Util::EventType object name. May be passed instead of et or
-et_id. A Bric::Util::EventType object ID will be instantiated internally.
+key_name - A Bric::Util::EventType object key name. May be passed instead of
+et or et_id. A Bric::Util::EventType object ID will be instantiated
+internally.
 
 =item *
 
@@ -286,8 +287,8 @@ sub new {
         } elsif ($init->{key_name}) {
             $et = Bric::Util::EventType->lookup({ key_name => $init->{key_name} });
         } else {
-            throw_dp(error => "No Bric::Util::EventType object, ID, or name passed to "
-                     . __PACKAGE__ . '::new()');
+            throw_dp(error => "No Bric::Util::EventType object, ID, or "
+                     . "key_name passed to " .  __PACKAGE__ . '::new()');
         }
     }
 

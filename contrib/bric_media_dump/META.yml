@@ -1,0 +1,18 @@
+--- #YAML:1.0
+name: bric_media_dump
+version: 0.10
+author:
+  - David Wheeler <david@kineticode.com>.
+abstract: Dump all of the media files of a given type
+license: perl
+requires:
+  File::Path: 0
+  File::Spec: 0
+  Getopt::Long: 0
+  HTTP::Cookies: 0
+  MIME::Base64: 0
+  Pod::Usage: 0
+  SOAP::Lite: 0
+  XML::Simple: 0
+provides: {}
+generated_by: Module::Build version 0.25_01

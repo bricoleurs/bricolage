@@ -53,6 +53,10 @@ Alerts triggered to be sent to users who don't have the appropriate contact
 information will now be logged for those users so that they can see them and
 acknowledge them under "My Alerts". [David]
 
+=item *
+
+Added C<bric_media_dump> script to C<contrib/>. [David]
+
 =back
 
 =head2 Bug Fixes
