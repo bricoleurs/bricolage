@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.12.4.1 $
+$Revision: 1.12.4.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-24 19:36:58 $
+$Date: 2003-10-03 06:03:27 $
 
 =head1 SYNOPSIS
 
@@ -51,7 +51,6 @@ use strict;
 # Programmatic Dependences
 use Apache::Constants qw(:common);
 use Apache::Log;
-use Apache::Cookie;
 use Bric::Config qw(:auth :cookies);
 use Bric::App::Session qw(:user);
 use Bric::App::Cache;
