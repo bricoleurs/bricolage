@@ -75,9 +75,11 @@ unless ($workflows) {
 	# account for New/Find/Active links and whitespace
 	$tmp += 6;
 	# account for desks
-	my @desks = map { [ $_->get_id, $_->get_name ] } $w->allowed_desks;
+	my @desks = map { [ $_->get_id, $_->get_name,
+			    [$_->get_grp_ids, $_->get_asset_grp] ]
+		        } $w->allowed_desks;
 	$tmp += scalar(@desks);
-	my @gids = $w->get_grp_ids;
+	my @gids = ($w->get_grp_ids, $w->get_all_desk_grp_id);
 
 	my $wf = { type  => $w->get_type,
 		   id    => $w->get_id,
@@ -190,6 +192,7 @@ foreach my $wf (@$workflows) {
 		<span class=workflowHeader>Desks</span><br />
 		<%perl>
                   foreach my $d (@{$wf->{desks}}) {
+		      next unless chk_authz(0, READ, 1, @{ $d->[2] });
 		      $m->out( &$printLink("/workflow/profile/desk/$wf->{id}/$d->[0]/", $uri, $d->[1]) );
 		  }
 		</%perl>
@@ -442,10 +445,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.6.2.4 $
+$Revision: 1.6.2.5 $
 
 =head1 DATE
 
-$Date: 2002-02-23 01:49:14 $
+$Date: 2002-02-28 22:49:27 $
 
 </%doc>
