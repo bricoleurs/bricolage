@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2002-07-03 04:59:22 $
+$Date: 2002-08-18 21:51:52 $
 
 =head1 SYNOPSIS
 
@@ -713,16 +713,22 @@ my $load_featured_objs = sub {
     return $objs;
 };
 
-my $multisort = sub{
+my $recursivesort;
+my $multisort = sub {
     my ($meth, @sort_list) = @_;
     my $sort_by               = shift @sort_list;
     my ($sort_get, $sort_arg) = @{$meth->{$sort_by}}{'get_meth', 'get_args'};
+    my $type = $meth->{$sort_by}{props}{type};
 
     my $val;
     if ($sort_by eq 'id') {
         # Do a numeric sorting.
         $val = $sort_get->($a, @$sort_arg) <=>
           $sort_get->($b, @$sort_arg);
+    } elsif ($type eq 'date') {
+        # Pass in the ISO format so that it always sorts properl.
+        $val = $sort_get->($a, ISO_8601_FORMAT) cmp
+          $sort_get->($b, ISO_8601_FORMAT);
     } else {
         # Do the case insensitive comparison
         $val = lc($sort_get->($a, @$sort_arg)) cmp
@@ -731,11 +737,13 @@ my $multisort = sub{
 
     # See if we need to do more comparisons or not.
     if (scalar(@sort_list) > 0) {
-        return $val || multisort($meth, @sort_list);
+        return $val || $recursivesort->($meth, @sort_list);
     } else {
         return $val;
     }
 };
+# Cheat so that &$multisort can sneakily call itself. :-)
+$recursivesort = $multisort;
 
 my $sort_objects = sub {
     my ($objs, $meth, $exclude) = @_;

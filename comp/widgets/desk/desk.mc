@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-07-12 19:00:28 $
+$Date: 2002-08-18 21:51:52 $
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,7 @@ $work_id => undef
 $style   => 'standard'
 $action  => undef
 $wf      => undef
-$sort_by => undef
+$sort_by => 'cover_date'
 </%args>
 
 %#--- Initialization ---#
@@ -66,16 +66,29 @@ my $cached_assets = sub {
 	    }
 	}
     }
-
     if (my $curr_objs = $objs->{$ckey}) {
 	if ($sort_by) {
 	    # Check for READ permission and sort them.
 	    my ($sort_get, $sort_arg) = @{$meths->{$sort_by}}{'get_meth', 'get_args'};
-	    @$curr_objs = $sort_by eq 'id' ?
-	      sort { $sort_get->($a, @$sort_arg) <=> $sort_get->($b, @$sort_arg) }
-	      map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs :
-	      sort { lc($sort_get->($a, @$sort_arg)) cmp lc($sort_get->($b, @$sort_arg)) }
-	      map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
+            my $type = $meths->{$sort_by}{props}{type};
+            if ($sort_by eq 'id') {
+                # Do a numerical sort.
+                @$curr_objs = sort {
+                    $sort_get->($a, @$sort_arg) <=> $sort_get->($b, @$sort_arg)
+                } map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
+            } elsif ($type eq 'date') {
+	      @$curr_objs = sort {
+                  # Date sort. Use ISO format to ensure proper ordering.
+                  $sort_get->($a, ISO_8601_FORMAT) cmp
+                    $sort_get->($b, ISO_8601_FORMAT)
+                }map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
+            } else {
+                # Do a case-insensitive osrt.
+	      @$curr_objs = sort {
+                  lc $sort_get->($a, @$sort_arg) cmp lc $sort_get->($b, @$sort_arg)
+              }map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
+            }
+
 	} else {
 	    # Just check for READ permission.
 	    @$curr_objs = map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
@@ -113,7 +126,7 @@ elsif (defined $user_id) {
 }
 #-- Output each desk item  --#
 my $highlight = $sort_by;
-unless ($highlight) {
+unless ($highlight eq 'cover_date') {
     foreach my $f (keys %$meths) {
 	# Break out of the loop if we find the searchable field.
 	$highlight = $f and last if $meths->{$f}->{search};

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:42 $
+$Date: 2002-08-18 21:51:52 $
 
 =head1 DESCRIPTION
 
@@ -25,6 +25,13 @@ $Date: 2001-12-04 18:17:42 $
 <%once>
 my $widget = 'desk';
 </%once>
+
+%#-- Args Section --#
+<%args>
+$story_sort_by => 'cover_date'
+$media_sort_by => 'cover_date'
+$formatting_sort_by => 'cover_date'
+</%args>
 
 %#-- Init Section --#
 <%init>;
@@ -52,21 +59,21 @@ if ($d) {
 	     desk    => $d,
 	     wf     => $wf,
 	     work_id => $w_id,
-	     sort_by => $ARGS{story_sort_by},
+	     sort_by => $story_sort_by,
 	     class   => 'story'
 	    );
     $m->comp('/widgets/desk/desk.mc',
 	     desk_id => $d_id,
 	     desk    => $d,
 	     wf     => $wf,
-	     sort_by => $ARGS{media_sort_by},
+	     sort_by => $media_sort_by,
 	     work_id => $w_id,
 	     class   => 'media'
 	    );
     $m->comp('/widgets/desk/desk.mc',
 	     desk    => $d,
 	     wf     => $wf,
-	     sort_by => $ARGS{formatting_sort_by},
+	     sort_by => $formatting_sort_by,
 	     desk_id => $d_id,
 	     work_id => $w_id,
 	     class    => 'formatting'
