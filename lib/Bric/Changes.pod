@@ -22,6 +22,20 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Fixed inconsistencey between container element methods and their convenience
+accessors in Bric::Biz::Asset::Business. Thanks to Philip Fibiger for the
+spot. [David]
+
+=back
+
+=head1 VERSION 1.4.2
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
 Can once again check out multiple assets at once. Thanks to Andrew Baio for
 the spot. [David]
 
