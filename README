@@ -1,7 +1,6 @@
                        Bricolage Content Management System
 
                                  Version 1.4.0
-                                26 August  2002
 
 Bricolage is a full-featured, enterprise-class content management system. It
 offers a browser-based interface for ease-of use, a full-fledged templating
@@ -9,18 +8,40 @@ system with complete programming language support for flexibility, and many
 other features. It operates in an Apache/mod_perl environment, and uses the
 PostgreSQL RDBMS for its repository.
 
-This the release candidate for Bricolage verion 1.4.0, and is considered
-feature-complete. Nearly 50 new features have been added since the 1.2.2
-release, and over 80 bugs fixed. Barring any unforseen major bugs cropping up,
-1.4.0 will be released within a week of this release. Please feel give it a
-try, and report any issues to the Bricolage Bugzilla database, at
-http://bugzilla.bricolage.cc/.
+For installation instructions, see INSTALL. Once Bricolage has been installed,
+this file will also be available via the command "man Bric::Admin".
 
-For installation instructions, see INSTALL.
+For copying information, see License. Once Bricolage has been installed, this
+file will also be available via the command "man Bric::License".
 
-For copying information, see License.
+For the latest news, see Changes. Once Bricolage has been installed, this file
+will also be available via the command "man Bric::Changes".
 
-For the latest news, see Changes.
+After you've installed Bricolage, a number of man pages will be available to
+help get you started using it.
+
+For installation and system administration, see:
+
+  Bric::Admin
+  Bric::DBA
+  Bric::Security
+
+To get started using Bricolage see:
+
+  Bric::ElementAdmin
+  Bric::AssetEditing
+  Bric::Alert
+
+To learn how to use the Bricolage templating systems, see:
+
+  Bric::Templates
+  Bric::AdvTemplates
+  Bric::HTMLTemplate
+
+If you'd like to contribute to Bricolage, see:
+
+  Bric::Hacker
+  Bric::ToDo
 
 Enjoy!
 
