@@ -738,6 +738,7 @@ my $handle_add_kw = sub {
     # Delete old keywords.
     $media->del_keywords(mk_aref($param->{del_keyword}))
       if defined $param->{del_keyword};
+    $media->save();
 
     # Save the changes
     set_state_data($widget, 'media', $media);

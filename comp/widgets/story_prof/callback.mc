@@ -811,6 +811,7 @@ my $handle_add_kw = sub {
     # Delete old keywords.
     $story->del_keywords(mk_aref($param->{del_keyword}))
       if defined $param->{del_keyword};
+    $story->save();
 
     # Save the changes
     set_state_data($widget, 'story', $story);
