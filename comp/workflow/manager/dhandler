@@ -150,7 +150,7 @@ push @fields, 'site'
 <form method="post" action="<% $r->uri %>" name="<% $type %>_manager">
 <& '/widgets/wrappers/sharky/table_top.mc', 
     caption => '%n Found',
-    object  => $type )
+    object  => $type
 &>
 <& '/widgets/listManager/listManager.mc',
     object    => $type,
