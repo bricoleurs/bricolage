@@ -10,7 +10,9 @@ $LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
