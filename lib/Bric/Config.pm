@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-25 13:34:31 $
+$Date: 2001-09-26 10:38:56 $
 
 =head1 SYNOPSIS
 
@@ -344,7 +344,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
          . 'fdIf^ N;:';
 
     # QA Mode settings.
-    use constant QA_MODE                 => 1;
+    use constant QA_MODE                 => 0;
 
     # Character translation settings.
     use constant CHAR_SET                => $config->{CHAR_SET} || 'ISO-8859-1';
@@ -364,8 +364,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 6;
 
     # Error Page Setting.
-#    use constant ERROR_URI => '/errors/500.mc';
-    use constant ERROR_URI => '/errors/error.html';
+    use constant ERROR_URI => '/errors/500.mc';
+#    use constant ERROR_URI => '/errors/error.html';
 
     # Distribution Settings.
     use constant ENABLE_DIST => $config->{ENABLE_DIST};
@@ -476,7 +476,10 @@ L<perl>, L<DBC>
 =head1 REVISION HISTORY
 
 $Log: Config.pm,v $
-Revision 1.4  2001-09-25 13:34:31  wheeler
+Revision 1.5  2001-09-26 10:38:56  wheeler
+Unset debugging settings.
+
+Revision 1.4  2001/09/25 13:34:31  wheeler
 Changed FULL_SEARCH to allow standard setting arguments in bricolage.conf,
 and to default to 0.
 
