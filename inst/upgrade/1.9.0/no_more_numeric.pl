@@ -17,9 +17,40 @@ my (undef, $val) = `$PG->{psql} -q -c 'select active from person LIMIT 1;' -d '$
 chomp $val;
 exit if $val eq 't' || $val eq 'f';
 
-# XXX Insert ask_y_n question here.
+# Find out if they *really* want to do this.
+exit unless y_n( # __ # Hack to get cperl-mode to work properly.
+qq{
+
+    ####################################################################
+    ####################################################################
+
+    As of version 1.9.0, Bricolage has switched to much more efficient
+    data types in the database. However, in order to upgrade existing
+    installations to take advantage of the new data types, the database
+    must be dumped to a temporary file, its contents parsed for the
+    old data types, and converted to the new data types.
+
+    This upgrade script will handle this process for you. It will dump
+    the database, convert it to the new data types, delete the old
+    database, and create a new database with the converted dump file.
+    We *strongly* recommend that you back up the database before
+    allowing the upgrade to proceed. Also, there *must* be enough space
+    in this directory for two copies of the dumped database.
+
+    However, this conversion is not required to continue using
+    Bricolage. The code is written in such a way that it should continue
+    to work with the old data types in the database. You can therefore
+    decline this upgrade if you wish. However, only the new data types
+    will be supported going forward (though we will make every effort
+    to ensure that databases with the older data types continue to
+    work for the lifetime of Bricolage 1.x). And the new datatypes have
+    the potential to increase the performance of Bricolage.
+
+    Would you like to the database data types to be upgraded now?},
+  'y');
 
 # Okay, this database needs upgrading.
+print "\n\n";
 my $old_file = catfile('inst', 'upgrade.dmp');
 my $new_file = catfile('inst', 'upgrade.sql');
 my $sql_file = catfile('inst', 'Pg.sql');
@@ -85,6 +116,8 @@ while (<OLD>) {
 close OLD;
 close NEW;
 unlink $old_file;
+
+# Move things around so that db.pl can see them.
 mv $sql_file, $tmp_file;
 mv $new_file, $sql_file;
 
@@ -92,8 +125,49 @@ print "\nDropping old database...";
 system($PG->{psql}, '-d', 'template1', '-c', qq{DROP DATABASE "$PG->{db_name}"});
 my $perl = $ENV{PERL} || $^X;
 system $perl, catfile 'inst', 'db.pl';
+
+# Restore the file locations.
 mv $sql_file, $new_file;
 mv $tmp_file, $sql_file;
+
+##############################################################################
+# This stuff is copied from bric_upgrade.pm so we don't load that module and
+# therefore connect to the database.
+
+sub prompt {
+    die "prompt() called without a prompt message" unless @_;
+    my ($msg, $def) = @_;
+
+    ($def, my $dispdef) = defined $def ? ($def, "[$def] ") : ('', ' ');
+
+    do {
+        local $|=1;
+        print "$msg $dispdef";
+    };
+
+    my $ans;
+    if (-t STDIN && (-t STDOUT || !(-f STDOUT || -c STDOUT))) {
+        $ans = <STDIN>;
+        if (defined $ans) {
+            chomp $ans;
+        } else { # user hit ctrl-D
+            print $/;
+        }
+    }
+
+    return defined $ans && length $ans ? $ans : $def;
+}
+
+sub y_n {
+    die "y_n() called without a prompt message" unless @_;
+
+    while (1) {
+        my $ans = prompt(@_);
+        return 1 if $ans =~ /^y/i;
+        return 0 if $ans =~ /^n/i;
+        print "Please answer 'y' or 'n'.\n";
+    }
+}
 
 __END__
   % grep -lri 'active[[:space:]]*=[[:space:]]*[01]' lib \
