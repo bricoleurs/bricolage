@@ -128,7 +128,8 @@ sub cancel : Callback {
     my $fa = get_state_data($self->class_key, 'fa');
     $fa->cancel_checkout;
     $fa->save;
-    Bric::Util::Burner->new({user_id => get_user_id()})->undeploy($fa);
+    my $b = Bric::Util::Burner->new({user_id => get_user_id()});
+       $b->undeploy($fa);
     log_event('formatting_cancel_checkout', $fa);
     clear_state($self->class_key);
     set_redirect("/");
@@ -416,7 +417,9 @@ $checkin = sub {
         $cb->deploy;
     }
 
-    Bric::Util::Burner->new({user_id => get_user_id() })->undeploy($fa);
+    my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
+       $sb->undeploy($fa);
+
     # Clear the state out, set redirect, and return.
     clear_state($widget);
     set_redirect("/");
@@ -443,7 +446,8 @@ $delete_fa = sub {
     log_event("formatting_rem_workflow", $fa);
     my $burn = Bric::Util::Burner->new;
     $burn->undeploy($fa);
-    Bric::Util::Burner->new({user_id => get_user_id() })->undeploy($fa);
+    my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
+       $sb->undeploy($fa);
     $fa->set_workflow_id(undef);
     $fa->deactivate;
     $fa->save;

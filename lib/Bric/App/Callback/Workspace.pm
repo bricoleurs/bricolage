@@ -64,7 +64,12 @@ sub delete : Callback {
                 $a->set_workflow_id(undef);
 		$a->deactivate;
 		$a->save;
-		$burn->undeploy($a) if $key eq 'formatting';
+
+        if($key eq 'formatting') {
+   	        $burn->undeploy($a);
+            my $b = Bric::Util::Burner->new({user_id => get_user_id()});
+               $b->undeploy($a);
+        }
 		log_event("${key}_deact", $a);
 	    } else {
                 add_msg('Permission to delete "[_1]" denied.', $a->get_name);

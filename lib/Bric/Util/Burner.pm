@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.55 $ )[-1];
+our $VERSION = (qw$Revision: 1.56 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-02 17:15:03 $
+$Date: 2003-10-02 17:22:17 $
 
 =head1 SYNOPSIS
 
@@ -672,14 +672,17 @@ sub deploy {
     close(MC);
 
     # Delete older versions, if they live elsewhere.
-    my $old_version = $fa->get_published_version or return $self;
-    my $old_fa = $fa->lookup({ id          => $fa->get_id,
-                               checked_out => 0,
-                               version     => $old_version });
-    my $old_file = $old_fa->get_file_name or return $self;
-    $old_file = $fs->cat_dir($self->get_comp_dir, $oc_dir, $old_file);
-    return $self if $old_file eq $file;
-    $fs->del($old_file);
+    unless($self->get_sandbox_dir) {
+        my $old_version = $fa->get_published_version or return $self;
+        my $old_fa = $fa->lookup({ id          => $fa->get_id,
+                                   checked_out => 0,
+                                   version     => $old_version });
+        my $old_file = $old_fa->get_file_name or return $self;
+        $old_file = $fs->cat_dir($self->get_comp_dir, $oc_dir, $old_file);
+        return $self if $old_file eq $file;
+        $fs->del($old_file);
+    }
+
     return $self;
 
 }
