@@ -11,6 +11,9 @@ PostgreSQL RDBMS for its repository.
 GETTING STARTED
 ===============
 
+Before installing Bricolage, be sure to read the platform-specific README file
+relevant to your operating system, if there is one.
+
 For installation instructions, see INSTALL. Once Bricolage has been installed,
 this file will also be available via the Bric::Admin man page.
 
