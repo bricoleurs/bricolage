@@ -222,7 +222,8 @@ class' C<new()> constructor works again. Reported by Clive Jones. [David]
 
 =item *
 
-Localized caption in side navigation layer. [JoE<atilde>o Pedro]
+Added Localization support to widgets that were missing it. Added pt_pt 
+localized images. [JoE<atilde>o Pedro]
 
 =item *
 

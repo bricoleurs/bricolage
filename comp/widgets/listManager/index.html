@@ -8,7 +8,7 @@
                                                            ['Log',    '']],
                                               profile => [['Edit',     '', ''],
                                                           ['Checkout', '']],
-               alter    => {'active' => sub {$_[0] ? 'Yes'.($_[2]->{'featured'} ? '-FEATURE!' : 'Wah') : 'No'}},
+               alter    => {'active' => sub {$_[0] ? $lang->maketext('Yes').($_[2]->{'featured'} ? '-FEATURE!' : 'Wah') : $lang->maketext('No')}},
                                               featured => [11, 2],
                                               featured_color => '#669977',
                                               behavior => 'narrow',

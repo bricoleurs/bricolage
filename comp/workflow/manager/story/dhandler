@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13.2.2 $
+$Revision: 1.13.2.3 $
 
 =head1 DATE
 
-$Date: 2003-04-24 23:30:48 $
+$Date: 2003-07-24 08:48:50 $
 
 =head1 SYNOPSIS
 
@@ -109,7 +109,7 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
         alter     => $alter,
         exclude   => $exclude,
 	profile   => $profile,
-        title     => '%n Found',
+        title     => $lang->maketext('%n Found'),
         addition  => $addition,
 	select    => $select,
         behavior  => 'expand',

@@ -8,7 +8,7 @@ $m->out(q{<table border=0 cellpadding=0 cellspacing=0 width=574>
 # Print out a display label if necessary
 if ($disp && !$compact) {
     $m->out(qq{<td align=right width=$indent>}) if ($useTable);
-    $m->out(qq{<span class=label>$disp:</span>&nbsp;});
+    $m->out(qq{<span class=label>} . $lang->maketext($disp) . ':</span>&nbsp;');
     $m->out(qq{<img src="/media/images/spacer.gif" width=} . $indent . qq{ height=1 border=0 /></td>}) if ($useTable);
 } else {
     $m->out(qq{<td>
