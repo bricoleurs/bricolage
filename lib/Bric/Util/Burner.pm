@@ -8,15 +8,15 @@ Bric::Biz::Publisher - A class to manage publishing of business assets.
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.1 $
+$Revision: 1.1.1.1.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-01 10:28:57 $
+$Date: 2001-10-05 09:32:10 $
 
 =head1 SYNOPSIS
 
@@ -57,6 +57,8 @@ use Bric::Util::Fault::Exception::MNI;
 use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
 use Bric::Config qw(:burn);
+require XML::Writer if INCLUDE_XML_WRITER;
+
 
 #==============================================================================#
 # Inheritance                          #
@@ -88,6 +90,8 @@ my $mni = 'Bric::Util::Fault::Exception::MNI';
 my $ap = 'Bric::Util::Fault::Exception::AP';
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $fs = Bric::Util::Trans::FS->new;
+my $xml_fh = INCLUDE_XML_WRITER ? Bric::Util::Burner::XMLWriterHandle->new
+  : undef;
 
 #--------------------------------------#
 # Instance Fields
@@ -111,6 +115,7 @@ BEGIN {
 			 # Private Fields
 			 '_interp'         => Bric::FIELD_NONE,
 			 '_buf'            => Bric::FIELD_NONE,
+			 '_writer'         => Bric::FIELD_NONE,
 			 '_elem'           => Bric::FIELD_NONE,
 			 '_at'             => Bric::FIELD_NONE,
 			 '_files'          => Bric::FIELD_NONE,
@@ -397,18 +402,18 @@ sub burn_one {
     my ($outbuf, $retval);
 
     # Create a parser and allow some global variables.
-    my $parser = new HTML::Mason::Parser('allow_globals' => [qw($story
-								$burner
-								$element)],
-					 'in_package'    => __PACKAGE__);
+    my $parser = HTML::Mason::Parser->new('allow_globals' => [qw($story
+								 $burner
+								 $writer
+								 $element)],
+					  'in_package'    => __PACKAGE__);
     # Create the interpreter
-    my $interp = new HTML::Mason::Interp('parser'     => $parser,
-					 'comp_root'  => $self->get_comp_dir,
-					 'data_dir'   => $self->get_data_dir,
-					 'out_method' => \$outbuf);
+    my $interp = HTML::Mason::Interp->new('parser'     => $parser,
+			 		  'comp_root'  => $self->get_comp_dir,
+				 	  'data_dir'   => $self->get_data_dir,
+					  'out_method' => \$outbuf);
 
     my $element = $ba->get_tile;
-
     $self->_push_element($element);
 
     # Set some global variables to be passed in.
@@ -417,8 +422,14 @@ sub burn_one {
     $interp->set_global('$burner',  $self);
 
     # save some of the values for this burn.
-    $self->_set(['story', 'oc', 'cat', '_buf',   '_interp'],
-		[$ba,     $oc,  $cat,  \$outbuf, $interp]);
+    $self->_set([qw(story   oc   cat   _buf    _interp)],
+		[   $ba,   $oc, $cat, \$outbuf, $interp]);
+
+    if (INCLUDE_XML_WRITER) {
+	my $writer = XML::Writer->new(OUTPUT => $xml_fh, XML_WRITER_ARGS);
+	$interp->set_global('$writer',  $writer);
+	$self->_set(['_writer'], [$writer]);
+    }
 
     my $template = $self->load_template_element($element);
 
@@ -1064,6 +1075,13 @@ sub _gen_dhandler_code {
 }
 
 1;
+
+package Bric::Util::Burner::XMLWriterHandle;
+
+sub new { bless {} }
+
+sub print { $HTML::Mason::Commands::m->out(@_[1..$#_]) }
+
 __END__
 
 =back
@@ -1083,7 +1101,10 @@ L<Perl>, L<Bric>
 =head1 REVISION HISTORY
 
 $Log: Burner.pm,v $
-Revision 1.1.1.1.2.1  2001-10-01 10:28:57  wheeler
+Revision 1.1.1.1.2.2  2001-10-05 09:32:10  wheeler
+Added an XML::Writer object to templates.
+
+Revision 1.1.1.1.2.1  2001/10/01 10:28:57  wheeler
 Added support for custom file naming on a per-output channel basis. The filename
 is specified in the Output Channel profile, and used during the burn phase to
 name files on the file system. Configuration directives specifying default
