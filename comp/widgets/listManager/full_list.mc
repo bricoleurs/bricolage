@@ -45,11 +45,12 @@
 
           if (($sortBy eq $f) && ($sortOrder !~ /^reverse$/)) {
               $sortsign = '-';
-              $sortsymbol = '<img src="/media/images/listsort_down.gif">';
+              $sortsymbol = '<img src="/media/images/listsort_down.gif" border="0">';
           } elsif ($sortBy eq $f) {
-              $sortsymbol = '<img src="/media/images/listsort_up.gif">';
+              $sortsymbol = '<img src="/media/images/listsort_up.gif" border="0">';
           }
-          $m->out("<a class=$aclass href='$url?listManager|sortBy_cb=$sortsign$f'>" . $sortsymbol . ($disp || "") . "</a>");
+          $m->out(qq{<a class="$aclass" href="$url?listManager|sortBy_cb=$sortsign$f">} .
+                  ($disp || "") . "&nbsp;$sortsymbol</a>");
       } else {
 	  $m->out($disp);
       }
