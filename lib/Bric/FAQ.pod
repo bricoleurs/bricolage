@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.5 $
+$Revision: 1.7.2.6 $
 
 =head1 DATE
 
-$Date: 2003-05-19 22:16:55 $
+$Date: 2003-06-03 16:06:10 $
 
 =head1 DESCRIPTION
 
@@ -119,7 +119,7 @@ by Bricolage.
 
 =head3 Why does C<make install> exit with the following error?
 
-    Missing or empty inst/bricolage.sql!
+  Missing or empty inst/bricolage.sql!
 
 You downloaded Bricolage from CVS and didn't
 run `make dist`. Do something like this:
@@ -128,6 +128,35 @@ run `make dist`. Do something like this:
     [lots of output...]
     # cd bricolage-1.5.0
     # make install
+
+=head3 Why does C<make install> exit with the following error?
+
+  ###############################################################################
+
+  Unable to set bricolage.conf variable APACHE_BIN to "/usr/local/apache/bin/httpd".
+  ###############################################################################
+
+Most likely it's because you're installing Bricolage on Red Hat 8 or later and
+haven't got 'round to reading F<README.RedHat>. In fact, a fair number of Perl
+modules will fail to install or test properly with Perl 5.8 on Red Hat 8. This
+is because Red Hat is configured such that it defaults to a Unicode character
+set. Bricolage prefers this, of course, since all Bricolage data is stored in
+the database in Unicode. However, it does require that you set the C<LANG>
+environment variable on Red Hat 8, like this:
+
+  export LANG=en_US
+
+From what we've heard, C<LANG> must not include "utf8". Presumably you should
+set C<LANG> to a value for your local language. At any rate, you'll need to
+make sure that this is set in your shell in order to install Bricolage and all
+of its modules, and you may need to include it in your F<httpd.conf> file, as
+well:
+
+  PerlSetEnv LANG en_US
+
+We've also heard that you can set the LANG environment variable globally in
+the F</etc/sysconfig/i18n> file. Then you wouldn't need to worry about it
+anywhere else.
 
 =head3 Why do I get an error like the following in Apache's F<error_log>?
 
