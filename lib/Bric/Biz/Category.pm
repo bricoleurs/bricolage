@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-13 22:58:52 $
+$Date: 2003-01-16 00:35:11 $
 
 =head1 SYNOPSIS
 
@@ -162,12 +162,6 @@ BEGIN {
 =head2 Constructors
 
 =over 4
-
-=cut
-
-#--------------------------------------#
-# Constructors
-#------------------------------------------------------------------------------#
 
 =item $obj = new Bric::Biz::Category($init);
 
@@ -319,28 +313,21 @@ sub list { _do_list(@_) }
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $cat->DESTROY()
 
 Deletes the object.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-This method should be here even if its empty so that we don't waste time making 
-Bricolage's autoload method try to find it.
+B<Notes:> NONE.
 
 =cut
 
@@ -349,18 +336,18 @@ sub DESTROY {
     # making Bricolage's autoload method try to find it.
 }
 
-#--------------------------------------#
+=back
 
 =head2 Public Class Methods
 
-=over
+=over 4
 
-=item my $meths = Bric::Util::Grp->my_meths
+=item my $meths = Bric::Biz::Category->my_meths
 
-=item my (@meths || $meths_aref) = Bric::Util::Grp->my_meths(TRUE)
+=item my (@meths || $meths_aref) = Bric::Biz::Category->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -369,39 +356,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -413,29 +400,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -453,27 +442,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -629,7 +619,7 @@ sub ancestry {
     my $self = shift;
     my @objs;
     my $cur = $self;
-    
+
     unshift @objs, $cur;
 
     while ($cur = $cur->get_parent) {
@@ -1324,28 +1314,23 @@ sub save {
 
 #==============================================================================#
 
+=back
+
 =head2 Private Methods
 
-=cut
-
-#--------------------------------------#
+NONE.
 
 =head2 Private Class Methods
 
 NONE
 
-=cut
-
-
-# Add methods here that do not require an object be instantiated, and should not
-# be called outside this module (e.g. utility functions for class methods).
-# Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
-
 =head2 Private Instance Methods
 
-NONE
+Several that need documenting!
+
+=over
+
+=item _do_list
 
 =cut
 
@@ -1389,6 +1374,9 @@ sub _do_list {
     return wantarray ? @objs : \@objs;
 }
 
+=item _save_attr
+
+=cut
 
 sub _save_attr {
     my $self = shift;
@@ -1421,6 +1409,10 @@ sub _save_attr {
     $a_obj->save;
 }
 
+=item _load_grp
+
+=cut
+
 sub _load_grp {
     my $self = shift;
     my ($gtype, $id_field, $obj_field) = @_;
@@ -1448,6 +1440,10 @@ sub _load_grp {
 
     return $obj;
 }
+
+=item _select_category
+
+=cut
 
 sub _select_category {
     my ($where, $bind, $ids) = @_;
@@ -1503,6 +1499,10 @@ sub _select_category {
     return \@ret;
 }
 
+=item _update_category
+
+=cut
+
 sub _update_category {
     my $self = shift;
     my ($id) = $self->_get(qw(id));
@@ -1538,6 +1538,10 @@ sub _update_category {
         }
     }
 }
+
+=item _insert_category
+
+=cut
 
 sub _insert_category {
     my $self = shift;
@@ -1583,16 +1587,19 @@ __END__
 
 =head1 NOTES
 
-This class is implimented on the backend using the group structure.  The class
-Bric::Util::Grp::Category handles all the database interactions.
+NONE.
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
-Bricolage Engineering
+Garth Webb <garth@perijove.com>
+
+Jeff "japhy" Pinyan <japhy@pobox.com>
+
+David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric::Util::Grp::Category>, L<Bric>, L<Bric::Biz::Keyword>, L<Bric::Biz::Asset>
+L<perl>, L<Bric::Util::Grp::Category>, L<Bric>, L<Bric::Biz::Keyword>,
+L<Bric::Biz::Asset>
 
 =cut
