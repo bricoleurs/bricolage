@@ -7,15 +7,15 @@ Bric::Biz::Org::Person - Manages Organizations Related to Persons
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 00:29:45 $
+$Date: 2002-07-16 19:06:54 $
 
 =head1 SYNOPSIS
 
@@ -900,7 +900,8 @@ Bric::Biz::Org::Person object.
 
 =item $self = $porg->is_active
 
-Returns $self if the MPS::Org::Person object is active, and undef if it is not.
+Returns $self if the Bric::Org::Person object is active, and undef if it is
+not.
 
 B<Throws:>
 

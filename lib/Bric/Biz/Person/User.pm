@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-03-15 20:43:24 $
+$Date: 2002-07-16 19:06:54 $
 
 =head1 SYNOPSIS
 
@@ -395,11 +395,11 @@ sub DESTROY {}
 
 =over
 
-=item my (@uids || $uids_aref) = MPS::Person::User->list_ids($params)
+=item my (@uids || $uids_aref) = Bric::Biz::Person::User->list_ids($params)
 
-Returns a list or anonymous array of MPS::Person::User object IDs based on the
-search criteria passed via an anonymous hash. The supported lookup keys are the
-same as those for list().
+Returns a list or anonymous array of Bric::Biz::Person::User object IDs based
+on the search criteria passed via an anonymous hash. The supported lookup keys
+are the same as those for list().
 
 B<Throws:>
 
@@ -1153,7 +1153,8 @@ B<Notes:> See the notes for the activate() method above.
 
 =item $self = $u->is_active
 
-Returns $self if the MPS::Person::User object is active, and undef if it is not.
+Returns $self if the Bric::Biz::Person::User object is active, and undef if it
+is not.
 
 B<Throws:> NONE.
 

@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-07-16 19:06:54 $
 
 =head1 SYNOPSIS
 
@@ -1297,11 +1297,11 @@ B<Notes:> NONE.
 =cut
 
 $send_em = sub {
-    # This function could in theory create individual MPS::Alerted objects,
-    # calling new() for each one, and let each one log stuff to the database,
-    # but that seems like a waste of overhead, since this function is only
-    # called internally, and therefore doesn't need access to individual
-    # MPS::Alerted objects. So I just do it all here.
+    # This function could in theory create individual Bric:Util::Alerted
+    # objects, calling new() for each one, and let each one log stuff to the
+    # database, but that seems like a waste of overhead, since this function
+    # is only called internally, and therefore doesn't need access to
+    # individual Bric::Util::Alerted objects. So I just do it all here.
     my ($self, $at, $event) = @_;
 
     # Use this sth to insert users into alerted.

@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-07-16 19:06:54 $
 
 =head1 SYNOPSIS
 
@@ -304,7 +304,7 @@ sub new {
         msg => "No Bric::Biz::Person::User object passed to " .
                __PACKAGE__ . '::new()' });
 
-    # Inititialize the standard MPS::Event properties.
+    # Inititialize the standard Bric::Util::Event properties.
     $self->SUPER::new({event_type_id => $et_id,
 		       user_id       => $user->get_id,
 		       obj_id        => $obj->get_id,
