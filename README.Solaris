@@ -12,6 +12,7 @@ Here are a few notes to help you successfully install Bricolage on Solaris:
     binutils
     gdbm
     db3.3
+    strip
 
 - Make sure you add /usr/local/lib (or whever you installed gdbm, db, etc.) to
   your LD_LIBRARY_PATH setting before doing ANYTHING.
