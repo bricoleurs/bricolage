@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-17 21:32:18 $
+$Date: 2002-04-19 20:03:12 $
 
 =head1 SYNOPSIS
 
@@ -408,17 +408,6 @@ Specifies a single element_id to be deleted.
 
 Specifies a list of element_ids to delete.
 
-=item force
-
-By default this method just sets the Element inactive.  Unfortunately,
-Bricolage requires that Element names be unique even between active
-and inactive Elements.  Thus, if you delete an Element normally you
-won't be able to create another Element of the same name.  
-
-By setting force to true delete() will first change the name of the
-Element to something like "name [deleted 1015610648]" and then set it
-inactive.  This accomplishes a "real" delete.
-
 =back 4
 
 Throws: NONE
@@ -433,7 +422,7 @@ Notes: NONE
 
 # hash of allowed parameters
 {
-my %allowed = map { $_ => 1 } qw(element_id element_ids force);
+my %allowed = map { $_ => 1 } qw(element_id element_ids);
 
 sub delete {
     my $pkg = shift;
@@ -475,13 +464,6 @@ sub delete {
 	    "::delete : access denied for element \"$element_id\".\n"
 		unless chk_authz($element, CREATE, 1);
 
-	# force the delete by mangling name if force is set
-	if ($args->{force}) {
-	    my $new_name = "[ del ". time ." ] " . $element->get_name;
-	    $new_name = substr($new_name,0,63) if length $new_name > 64;
-	    $element->set_name($new_name);
-	}
-	    
 	# delete the element
 	$element->deactivate;
 	$element->save;
@@ -709,28 +691,6 @@ sub _load_element {
 
 	# all done
 	$element->save;
-
-	# find any references to this element in existing stories and
-	# fixup with new id.  This is necessary if the element was deleted
-	# with --force and is now being re-added.  All this will be like a
-	# long-forgotten bad dream when I rewrite the element system to
-	# allow elements to be deleted cleanly.
-	my @containers = 
-            ( Bric::Biz::Asset::Business::Parts::Tile::Container->list(
-                 { object_type => 'story', name => $element->get_name }),
-	      Bric::Biz::Asset::Business::Parts::Tile::Container->list(
-                 { object_type => 'media', name => $element->get_name })
-	    );
-	my $element_id = $element->get_id;
-	foreach my $cont (@containers) {
-	    print STDERR __PACKAGE__ . "::create : updating element_id for ", 
-		$element->get_name, " container ", $cont->get_id, " from ",
-		    $cont->_get('element_id'), " to ", $element_id, "\n"
-			if DEBUG;
-	    $cont->_set(['element_id', '_element_obj'], 
-			[$element_id, $element]);
-	    $cont->save();
-	}
 
 	# add to list of created elements
 	push(@element_ids, $element->get_id);

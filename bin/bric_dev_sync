@@ -67,10 +67,6 @@ Options:
                       templates from a category on the source that
                       does not exist in the target.
 
-  --delete-existing - delete all existing elements and templates from
-                      target resources before copying from source.
-                      Off by default.
-
   --no-elements     - only copies templates.  This may cause failure if
                       the source contains templates for elements that
                       do not exist on the target.
@@ -120,14 +116,9 @@ to localhost:
 
   bric_dev_sync http://prod http://localhost
 
-Like the above, but clears localhost of all elements and templates
-first.
-
-  bric_dev_sync --delete-existing prod localhost
-
 Like the above, but with categories copied also:
 
-  bric_dev_sync --delete-existing --copy-catgeories prod localhost
+  bric_dev_sync --copy-catgeories prod localhost
 
 Update prod with changes to the "Article" element and all sub-elements
 and associated templates:
@@ -142,11 +133,6 @@ Distribute changes to elements and templates from locahost out to
 prod1, prod2 and prod3 machines:
 
   bric_dev_sync localhost prod1 prod2 prod3
-
-Like the above, but clean prod1, prod2 and prod3 of all elements and
-templates first:
-
-  bric_dev_sync --delete-existing localhost prod1 prod2 prod3
 
 =head1 AUTHOR
 
@@ -182,7 +168,6 @@ BEGIN {
     our $no_deploy              = 0;
     our $yes                    = 0;
     our $dry_run                = 0;
-    our $delete_existing        = 0;
     our $timeout                = 30;
     our ($category, $template_name, $element_name, $template_id, $element_id);
     our ($help, $man);
@@ -205,7 +190,6 @@ BEGIN {
 	       "no-deploy"              => \$no_deploy,
 	       "yes"                    => \$yes,
 	       "dry-run"                => \$dry_run,
-	       "delete-existing"        => \$delete_existing,
                "timeout=s"              => \$timeout,
 	      ) or  pod2usage(2);
 
@@ -258,40 +242,11 @@ sub main {
 					[qw(elements    templates)]);
     }
     
-    # clear the target if --delete-existing is set
-    our $delete_existing;
-    clear_target() if $delete_existing;
-    
     # sync assets from source to targets
     sync_assets();
 
     print "bric_dev_sync success.\n";
     exit 0;
-}
-
-# target manipulation
-#
-
-# deletes all elements and templates from all targets
-sub clear_target {
-    our @targ;
-
-    # make dang sure
-    print "\nAbout to delete all templates and elements on targets:\n";
-    print join("\n", map { "\t" . $_->proxy->endpoint } @targ), "\n";
-    if (ask_yesno("Are you sure you want to continue? [yes] ")) {
-	print "\nDeleting all templates and elements...\n";
-    } else {
-	print "Aborting...\n";
-	exit 1;
-    }
-
-    # do the dirty deed
-    foreach my $module qw(Element Template) {
-	foreach my $soap (@targ) {	   
-	  call_delete($soap, $module, call_list_ids($soap, $module));
-	}
-    }
 }
 
 # syncs source assets from source to targets
@@ -304,7 +259,7 @@ sub sync_assets {
 
 # copies categories from source to target as needed
 sub sync_categories {
-    our (%categories, @targ, $delete_existing);
+    our (%categories, @targ);
 
     # loop over targs, filling in holes in the category tree
     foreach my $soap (@targ) {
@@ -345,36 +300,8 @@ sub sync_categories {
 
 # copies and updates elements from source to targets
 sub sync_elements {
-    our (%elements, @targ, $delete_existing);
+    our (%elements, @targ);
 
-    # do a simple create if delete_existing since there can't be any
-    # objects left to update.   
-    if ($delete_existing) {
-	foreach my $soap (@targ) {
-	    my $doc = '<?xml version="1.0" encoding="UTF-8"?>' . "\n". 
-		'<assets>'. join('', values %elements). '</assets>';
-
-	    print STDERR "Asset document for Element update:\n$doc\n"
-		if $VERBOSE > 2;
-	    
-	    print "\nAbout to create the following elements at ",
-		$soap->proxy->endpoint, ":\n",
-		    join("\n", map { "\t$_" } 
-			 sort map { $_ =~ m!<name>(.*?)</name>!s } 
-			 values %elements), "\n";
-	    
-	    if (ask_yesno("Are you sure? [yes] ")) {
-		print "\nCreating elements...\n";
-		call_create($soap, 'Element', $doc);		
-	    } else {
-		print "Aborting...\n";
-		exit 1;
-	    }
-	}
-	# all done
-	return;
-    }
-    
     # find an update_ids list for each targ and tweak doc to match
     foreach my $soap (@targ) {
 	my $doc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<assets>";
@@ -424,88 +351,58 @@ sub sync_elements {
 
 # create and updates templates from source to targets
 sub sync_templates {
-    our (%templates, @targ, $delete_existing, $no_deploy);
+    our (%templates, @targ, $no_deploy);
 
-    # do a simple create if delete_existing since there can't be any
-    # objects left to update.   
-    if ($delete_existing) {
-	foreach my $soap (@targ) {
-	    my @ids;
-	    my $doc = '<?xml version="1.0" encoding="UTF-8"?>' . 
-		"\n". '<assets>' .  join('', values %templates) . '</assets>';
-	    print STDERR "Asset document for Template update:\n$doc\n"
-		if $VERBOSE > 2;
-
-	    # make sure
-	    print "\nAbout to create the following templates at ",
-		$soap->proxy->endpoint, ":\n",
-		    join("\n", map { "\t$_" } 
-			 sort $doc =~ m!<file_name>(.*?)</file_name>!sg ), 
-			     "\n";
+    # find an update_ids list for each targ and tweak doc to match
+    foreach my $soap (@targ) {
+	my $doc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<assets>";
+	my @update_ids;
+	my @ids;
+	
+	# loop through templates finding update targets and
+	# fixing-up $this
+	my ($id, $asset);
+	while (($id, $asset) = each %templates) {
+	    my ($file_name) = $asset =~ m!<file_name>(.*?)</file_name>!s;
+	    my ($oc) = $asset =~ m!<output_channel>(.*?)</output_channel>!s;
+	    my ($update_id) = call_list_ids($soap, 'Template', 
+					    file_name => $file_name,
+					    output_channel => $oc);
 	    
-	    if (ask_yesno("Are you sure? [yes] ")) {
-		print "\nCreating templates...\n";
-		@ids = call_create($soap, 'Template', $doc);
+	    # found a match on targ
+	    if ($update_id) {
+		push(@update_ids, $update_id);
+		# substitute in the update id
+		$asset =~ s/id=["']\d+["']/id="$update_id"/;
 	    } else {
-		print "Aborting...\n";
-		exit 1;
+		# hide id to avoid crosstalk
+		$asset =~ s/id=["']\d+["']/id="0"/;
 	    }
-
-	    call_deploy($soap, @ids) unless $no_deploy;
+	    
+	    # collect assets
+	    $doc .= $asset;
 	}
-	    
-    } else {
-	# find an update_ids list for each targ and tweak doc to match
-	foreach my $soap (@targ) {
-	    my $doc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<assets>";
-	    my @update_ids;
-	    my @ids;
-	    
-	    # loop through templates finding update targets and
-	    # fixing-up $this
-	    my ($id, $asset);
-	    while (($id, $asset) = each %templates) {
-		my ($file_name) = $asset =~ m!<file_name>(.*?)</file_name>!s;
-		my ($oc) = $asset =~ m!<output_channel>(.*?)</output_channel>!s;
-		my ($update_id) = call_list_ids($soap, 'Template', 
-						file_name => $file_name,
-						output_channel => $oc);
-		
-		# found a match on targ
-		if ($update_id) {
-		    push(@update_ids, $update_id);
-		    # substitute in the update id
-		    $asset =~ s/id=["']\d+["']/id="$update_id"/;
-		} else {
-		    # hide id to avoid crosstalk
-		    $asset =~ s/id=["']\d+["']/id="0"/;
-		}
-		
-		# collect assets
-		$doc .= $asset;
-	    }
-	    $doc .= "</assets>\n";
-	    
-	    print STDERR "Asset document for Template update:\n$doc\n"
-		if $VERBOSE > 2;
-
-	    # make sure
-	    print "\nAbout to update/create the following templates at ",
-		$soap->proxy->endpoint, ":\n",
-		    join("\n", map { "\t$_" } 
+	$doc .= "</assets>\n";
+	
+	print STDERR "Asset document for Template update:\n$doc\n"
+	    if $VERBOSE > 2;
+	
+	# make sure
+	print "\nAbout to update/create the following templates at ",
+	    $soap->proxy->endpoint, ":\n",
+		join("\n", map { "\t$_" } 
 		     sort $doc =~ m!<file_name>(.*?)</file_name>!sg ), "\n";
-	    
-	    if (ask_yesno("Are you sure? [yes] ")) {
-		print "\nUpdating and creating templates...\n";
-		# make update call
-		@ids = call_update($soap, 'Template', $doc, @update_ids);
-	    } else {
-		print "Aborting...\n";
-		exit 1;
-	    }
-
-	    call_deploy($soap, @ids) unless $no_deploy;
+	
+	if (ask_yesno("Are you sure? [yes] ")) {
+	    print "\nUpdating and creating templates...\n";
+	    # make update call
+	    @ids = call_update($soap, 'Template', $doc, @update_ids);
+	} else {
+	    print "Aborting...\n";
+	    exit 1;
 	}
+	
+	call_deploy($soap, @ids) unless $no_deploy;
     }
 }
 

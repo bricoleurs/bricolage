@@ -71,8 +71,6 @@ Options:
                            a second --verbose and you'll get debugging
                            output too.
 
-  --force                - use force option for element delete
-
   --to-preview           - use to_preview option for workflow publish
 
 
@@ -170,7 +168,6 @@ our $command;
 our %search;
 our $with_related_stories = 0;
 our $with_related_media   = 0;
-our $force                = 0;
 our $to_preview           = 0;
 our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
 our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
@@ -190,7 +187,6 @@ GetOptions("help"                   => \$help,
 	   "with-related-media"     => \$with_related_media,
 	   "all"                    => sub { $with_related_stories = 1;
 					     $with_related_media   = 1; },
-	   "force"                  => \$force,
 	   "to-preview"             => \$to_preview,
 	   "desk=s"                 => \$desk,
 	   "workflow=s"             => \$workflow,
@@ -227,7 +223,7 @@ our %jump = (
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
-			  delete   => \&delete_with_force,
+			  delete   => \&delete,
 			 },
 	     Category => {
 			  list_ids => \&list_ids,
@@ -333,17 +329,6 @@ sub delete {
     my @ids = _read_ids(lc($module) . "_id");
 
     $response = $soap->delete(name(lc $module . '_ids', \@ids));
-    die "Call to Bric::SOAP::$module->$command failed : \n" .
-	$response->faultstring
-	    if $response->fault;
-}
-
-sub delete_with_force {
-    # collect ids
-    my @ids = _read_ids(lc($module) . "_id");
-
-    $response = $soap->delete(name(lc $module . '_ids', \@ids),
-			      $force ? name(force => 1) : ());
     die "Call to Bric::SOAP::$module->$command failed : \n" .
 	$response->faultstring
 	    if $response->fault;
