@@ -134,6 +134,11 @@ to Michael Robinton for the spot. [David]
 
 Fixed typo in Bric::Hacker spotted by Axel Beckert. [Sam]
 
+=item *
+
+The CREATE permission works properly now. Thanks to Rachel Murray for the spot.
+[David]
+
 =back
 
 =head1 VERSION 1.2.1
