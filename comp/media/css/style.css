@@ -9,6 +9,8 @@ dt         { font-size:11px; line-height:16px; font-weight:bold; }
 dd         { font-size:11px; line-height:16px; }
 li         { font-size:11px; line-height:16px; }
 
+a img      { border: none; }
+
 form       { margin: 0; padding: 0; }
 .textInput { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 .textArea  { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
