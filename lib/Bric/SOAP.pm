@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -25,11 +25,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =head1 DATE
 
-$Date: 2004-02-28 01:00:04 $
+$Date: 2004-03-16 21:43:57 $
 
 =head1 SYNOPSIS
 
@@ -389,6 +389,11 @@ The XSD source:
                <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
                  <xs:annotation>
                    <xs:documentation>omitted if no expire date</xs:documentation>
+                 </xs:annotation>
+               </xs:element>
+               <xs:element name="first_publish_date" type="xs:dateTime" minOccurs="0">
+                 <xs:annotation>
+                   <xs:documentation>omitted if not published</xs:documentation>
                  </xs:annotation>
                </xs:element>
                <xs:element name="publish_date" type="xs:dateTime" minOccurs="0">
