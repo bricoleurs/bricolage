@@ -61,10 +61,10 @@ sub test_list : Test(79) {
     my $self = shift;
     # Create a new output channel group.
     ok( my $grp = Bric::Util::Grp::OutputChannel->new
-        ({ name => 'Test OC Grp' }), "Create group" );
+        ({name => 'Test OC Grp'}), "Create group" );
 
     # Look up the default "Web" group.
-    ok( my $web_oc = Bric::Biz::OutputChannel->lookup({ id => $web_oc_id}),
+    ok( my $web_oc = Bric::Biz::OutputChannel->lookup({id => $web_oc_id}),
         "Look up web OC" );
 
     # Construct a server type.

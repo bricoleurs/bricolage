@@ -221,7 +221,8 @@ sub test_new_util : Test(23) {
 ##############################################################################
 sub make_oc {
     my $self = shift;
-    my $oc = Bric::Biz::OutputChannel->new({ name => 'Bogus'});
+    my $oc = Bric::Biz::OutputChannel->new({name    => 'Bogus',
+                                            site_id => 100});
     $oc->save;
     my $id = $oc->get_id;
     $self->add_del_ids($id, 'output_channel');

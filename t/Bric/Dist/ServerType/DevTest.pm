@@ -326,7 +326,8 @@ sub test_output_channels : Test(18) {
     is( scalar @ocs, 0, "No OCs" );
 
     # Create a new output channel.
-    ok( my $oc = Bric::Biz::OutputChannel->new({ name => 'OC Senior' }),
+    ok( my $oc = Bric::Biz::OutputChannel->new({name    => 'OC Senior',
+                                                site_id => 100}),
         "Create new OC" );
     ok( $oc->save, "Save new OC" );
     ok( my $ocid = $oc->get_id, "Get OC ID" );

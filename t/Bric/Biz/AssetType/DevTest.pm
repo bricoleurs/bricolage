@@ -135,7 +135,8 @@ sub test_oc : Test(32) {
     is( $oces->[0]->get_name, "Web", "Check name 'Web'" );
 
     # Add a new output channel.
-    ok( my $oc = Bric::Biz::OutputChannel->new({ name => 'Foober' }),
+    ok( my $oc = Bric::Biz::OutputChannel->new({name    => 'Foober',
+                                                site_id => 100}),
         "Create 'Foober' OC" );
     ok( $oc->save, "Save Foober" );
     ok( my $ocid = $oc->get_id, "Get Foober ID" );
