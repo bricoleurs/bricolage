@@ -212,7 +212,8 @@ div.debug dt:after {
 }
 
 .desk_item .body .mover {
-	margin: 20px 0 21px 0;
+    margin: 20px 0 21px 0;
+    height: 22px;
 }
 
 .desk_item .body ul.actions {
