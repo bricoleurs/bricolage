@@ -62,6 +62,7 @@ use base qw(Bric);
 # Function Prototypes
 ################################################################################
 sub _convert;
+sub _decode;
 
 ##############################################################################
 # Constants
@@ -191,7 +192,11 @@ B<Notes:>
 sub to_utf8 {
     my $self = shift;
     return $self unless defined $_[0];
-    _convert shift, $self->charset, 'utf-8';
+    if ($self->charset eq 'UTF-8') {
+        _decode shift;
+    } else {
+        _convert shift, $self->charset, 'utf-8';
+    }
     return $self;
 }
 
@@ -233,12 +238,12 @@ sub from_utf8 {
 
 =item _convert
 
-  _convert $string, $from, $to;
+  _convert $data, $from, $to;
 
-Converts C<$string> in-place from character set C<$from> to character set
-C<$to>. This is the function that does most of the work for C<to_utf8()> and
-C<from_utf8()>, in that it handles recursive conversion of all of the strings
-of a data structure.
+Converts the C<$data> string or data structure in-place from character set
+C<$from> to character set C<$to>. This is the function that does most of the
+work for C<to_utf8()> and C<from_utf8()>, in that it handles recursive
+conversion of all of the strings of a data structure.
 
 =cut
 
@@ -266,6 +271,48 @@ sub _convert {
 
     my $err = $@ or return;
     throw_gen error   => "Error converting data from $_[0] to $_[1]",
+              payload => $@;
+
+}
+
+##############################################################################
+
+=item _decode
+
+  _decode $data;
+
+Decodes C<$data> to ensure that Perl knows that it's UTF-8. Called by
+C<to_utf8()> when the data to be converted is already UTF-8.
+
+=cut
+
+# XXX If there are problems, we might have to dump the _utf8_on cheat and use
+# decode, instead.
+
+sub _decode {
+    eval {
+        if (my $ref = ref $_[0]) {
+            my $in = shift;
+            if ($ref eq 'SCALAR') {
+                return Encode::_utf8_on($$in);
+            } elsif ($ref eq 'ARRAY') {
+                # Recurse through the array elements.
+                _decode($_, @_) for @$in;
+                return;
+            } elsif ($ref eq 'HASH') {
+                # Recurse through the hash values.
+                _decode($_, @_) for values %$in;
+                return;
+            } else {
+                return;
+            }
+        } else {
+            return Encode::_utf8_on(shift);
+        }
+    };
+
+    my $err = $@ or return;
+    throw_gen error   => "Error decoding UTF-8 data",
               payload => $@;
 
 }

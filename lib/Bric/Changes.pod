@@ -309,6 +309,13 @@ desk when it should be, it is now more intelligent in trying to select the
 correct workflow and/or desk to put it on, based on current workflow context
 and user permissions. Reported by Hal Creech. [David]
 
+=item *
+
+Content submitted to Bricoalge in the UTF-8 character set is now always has
+the utf8 flag set on the Perl strings that store it. This allows fields that
+have a maximum length to be truncated to that length in characters instead of
+bytes. Thanks to Kang-min Liu for the spot! [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
