@@ -298,7 +298,8 @@ div.debug dt:after {
     margin-right: 3px;
 }
 
-.desk_item .body dt, dd {
+.desk_item .body dt, 
+.desk_item .body dd {
     line-height: 20px;
     border-top: solid white 1px;
 }
@@ -399,14 +400,14 @@ table td.delete { width: 100px; text-align: center; }
 .paginate .all { float: right; width: 25%; text-align: right; }
 
 dl.viewmeta dt,
-dl.viewmeta dd { font-size: 1em; border-bottom: solid white 1px; }
+dl.viewmeta dd { border-bottom: solid white 1px; padding: 3px 0; }
 dl.viewmeta dt {
     float: left;
     clear: both;
     width: 130px;
-    padding: 3px 5px 3px 0;
+    padding-right: 5px;
     text-align: right;
-    font-size: 1em; font-weight: bold;
+    font-weight: bold;
     background-color: #E8E8CD;
 }
 dl.viewmeta dd { margin-left: 140px; }
