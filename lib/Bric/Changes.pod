@@ -162,6 +162,11 @@ current subcategory directory. Thanks to George Harrison for the spot! [David]
 Output channel associations in story type and media type elements can now be
 deleted again. Thanks to Arthur Bergman for the spot! [David]
 
+=item *
+
+Added listing of emeritus developers. Otherwise Sam was simply listed as a
+patcher, which is hardly accurate. [David]
+
 =back
 
 =head1 VERSION 1.6.0

@@ -81,6 +81,20 @@ The original developers were:
 
 =back
 
+Emeritus Developers:
+
+=item Garth Webb <garth@perijove.com>
+
+=item Michael Soderstrom <miraso@pacbell.net>
+
+=item David Gantenbein <fretlessbass@attbi.com>
+
+=item Sam Tregar <stregar@about-inc.com>
+
+=over
+
+=back
+
 The online help was written by:
 
 =over 4
