@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-03-12 02:10:42 $
 
 =head1 SYNOPSIS
 
@@ -865,7 +865,7 @@ Unable to finish statement handle.
 
 =back
 
-B<Side Effects:> Calls $sth->bind_columns().
+B<Side Effects:> Calls $sth->finish().
 
 B<Notes:> Do B<not> confuse this function with finishing transactions. It simply
 tells a SELECT statement handle that you are done fetching records from it, so 
