@@ -34,7 +34,7 @@ sub update : Callback {
 
     return unless $self->has_perms;
 
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
     my $param = $self->request_args;
@@ -117,7 +117,7 @@ sub update : Callback {
 
 sub view : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     my $version = $self->request_args->{"$widget|version"};
     my $id = $media->get_id();
@@ -128,7 +128,7 @@ sub view : Callback {
 
 sub revert : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     my $version = $self->request_args->{"$widget|version"};
     $media->revert($version);
@@ -143,7 +143,7 @@ sub revert : Callback {
 
 sub save : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
 
@@ -196,7 +196,7 @@ sub save : Callback {
 
 sub checkin : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     my $param = $self->request_args;
 
@@ -337,7 +337,7 @@ sub checkin : Callback {
 
 sub save_stay : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
 
     chk_authz($media, EDIT);
@@ -381,11 +381,11 @@ sub save_stay : Callback {
 
 sub cancel : Callback {
     my $self = shift;
-    my $media = get_state_data(CLASS_KEY, 'media');
+    my $media = get_state_data($self->class_key, 'media');
     $media->cancel_checkout();
     $media->save();
     log_event('media_cancel_checkout', $media);
-    clear_state(CLASS_KEY);
+    clear_state($self->class_key);
     set_redirect("/");
     my $msg = "Media [_1] check out canceled.";
     my $arg = '&quot;' . $media->get_name . '&quot;';
@@ -396,7 +396,7 @@ sub cancel : Callback {
 
 sub return : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     my $version_view = get_state_data($widget, 'version_view');
     my $media = get_state_data($widget, 'media');
 
@@ -431,7 +431,7 @@ sub return : Callback {
 
 sub create : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     # Get the workflow ID to use in redirects.
     my $WORK_ID = get_state_data($widget, 'work_id');
     my $param = $self->request_args;
@@ -506,7 +506,7 @@ sub contributors : Callback {
 
 sub add_oc : Callback {
     my $self = shift;
-    my $media = get_state_data(CLASS_KEY, 'media');
+    my $media = get_state_data($self->class_key, 'media');
     chk_authz($media, EDIT);
     my $oc = Bric::Biz::OutputChannel->lookup({ id => $self->value });
     $media->add_output_channels($oc);
@@ -518,14 +518,14 @@ sub add_oc : Callback {
 
 sub assoc_contrib : Callback {
     my $self = shift;
-    my $media = get_state_data(CLASS_KEY, 'media');
+    my $media = get_state_data($self->class_key, 'media');
     chk_authz($media, EDIT);
     my $contrib_id = $self->value;
     my $contrib =
       Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
     my $roles = $contrib->get_roles;
     if (scalar(@$roles)) {
-        set_state_data(CLASS_KEY, 'contrib', $contrib);
+        set_state_data($self->class_key, 'contrib', $contrib);
         set_redirect("/workflow/profile/media/contributor_role.html");
     } else {
         $media->add_contributor($contrib);
@@ -537,7 +537,7 @@ sub assoc_contrib : Callback {
 
 sub assoc_contrib_role : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     my $param = $self->request_args;
     my $media   = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
@@ -557,7 +557,7 @@ sub assoc_contrib_role : Callback {
 
 sub unassoc_contrib : Callback {
     my $self = shift;
-    my $media = get_state_data(CLASS_KEY, 'media');
+    my $media = get_state_data($self->class_key, 'media');
     chk_authz($media, EDIT);
     my $contrib_id = $self->value;
     $media->delete_contributors([$contrib_id]);
@@ -621,7 +621,7 @@ $save_contrib = sub {
 
 sub save_contrib : Callback {
     my $self = shift;
-    $save_contrib->(CLASS_KEY, $self->request_args, $self);
+    $save_contrib->($self->class_key, $self->request_args, $self);
     # Set a redirect for the previous page.
     set_redirect(last_page);
     # Pop this page off the stack.
@@ -632,7 +632,7 @@ sub save_contrib : Callback {
 
 sub save_and_stay_contrib : Callback {
     my $self = shift;
-    $save_contrib->(CLASS_KEY, $self->request_args, $self);
+    $save_contrib->($self->class_key, $self->request_args, $self);
 }
 
 ###############################################################################
@@ -649,7 +649,7 @@ sub leave_contrib : Callback {
 
 sub notes : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     my $id    = $media->get_id();
     my $action = $self->request_args->{"$widget|notes_cb"};
@@ -660,7 +660,7 @@ sub notes : Callback {
 
 sub trail : Callback {
     my $self = shift;
-    my $media = get_state_data(CLASS_KEY, 'media');
+    my $media = get_state_data($self->class_key, 'media');
     my $id = $media->get_id();
     set_redirect("/workflow/trail/media/$id");
 }
@@ -669,7 +669,7 @@ sub trail : Callback {
 
 sub recall : Callback {
     my $self = shift;
-    my $ids = $self->request_args->{CLASS_KEY . '|recall_cb'};
+    my $ids = $self->request_args->{$self->class_key . '|recall_cb'};
     $ids = ref $ids ? $ids : [$ids];
     my %wfs;
 
@@ -744,7 +744,7 @@ sub checkout : Callback {
 
 sub keywords : Callback {
     my $self = shift;
-    my $id = get_state_data(CLASS_KEY, 'media')->get_id;
+    my $id = get_state_data($self->class_key, 'media')->get_id;
     set_redirect("/workflow/profile/media/keywords.html");
 }
 
@@ -755,7 +755,7 @@ sub add_kw : Callback {
     my $param = $self->request_args;
 
     # Grab the media.
-    my $media = get_state_data(CLASS_KEY, 'media');
+    my $media = get_state_data($self->class_key, 'media');
     chk_authz($media, EDIT);
 
     # Add new keywords.
@@ -776,7 +776,7 @@ sub add_kw : Callback {
       if defined $param->{del_keyword};
 
     # Save the changes
-    set_state_data(CLASS_KEY, 'media', $media);
+    set_state_data($self->class_key, 'media', $media);
 
     set_redirect(last_page());
 

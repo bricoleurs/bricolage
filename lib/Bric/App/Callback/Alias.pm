@@ -53,7 +53,7 @@ sub make_alias : Callback {
 
     # If we got here, we'll let 'em create the alias. But first, let's see if
     # there are any related assets that they might want to alias, as well.
-    set_state_data(CLASS_KEY, 'aliased_id', $aliased_id);
+    set_state_data($self->class_key, 'aliased_id', $aliased_id);
     set_redirect("/workflow/profile/alias/pick_cats.html");
     return;
 }
@@ -64,7 +64,7 @@ sub pick_cats : Callback {
     my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->();
 
     # Grab the asset to be aliased.
-    my $aliased_id = get_state_data(CLASS_KEY, 'aliased_id');
+    my $aliased_id = get_state_data($self->class_key, 'aliased_id');
     my $aliased = $classes{$class_key}->lookup({ id => $aliased_id });
 
     # Alias it.
@@ -102,8 +102,8 @@ sub pick_cats : Callback {
 
 
 $get_dynamic = sub {
-    my $class_key = get_state_data(CLASS_KEY, 'class_key');
-    my $wf_id = get_state_data(CLASS_KEY, 'wf_id');
+    my $class_key = get_state_data($self->class_key, 'class_key');
+    my $wf_id = get_state_data($self->class_key, 'wf_id');
     my $wf = Bric::Biz::Workflow->lookup({ id => $wf_id });
     my $gid = $wf->get_all_desk_grp_id();
     my $site_id = $wf->get_site_id();

@@ -22,11 +22,11 @@ sub add_note : Callback {
     my $self = shift;
     my $param = $self->request_args;
 
-    my $obj = get_state_data(CLASS_KEY, 'obj');
+    my $obj = get_state_data($self->class_key, 'obj');
     my $note = $param->{$key};
     $obj->add_note($note);
     add_msg('Note saved.');
-    set_state_data(CLASS_KEY, 'obj');
+    set_state_data($self->class_key, 'obj');
 
     # Cache the object in the session if it's the current object.
     my @state_vals = @{ $types{ ref $obj } };

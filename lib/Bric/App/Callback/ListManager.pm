@@ -20,7 +20,7 @@ use Bric::App::Util qw(:all);
 #     my $self = shift;
 #     my $value = $self->value;
 #     my $ids = ref $value ? $value : [$value];
-#     my $pkg = get_state_data(CLASS_KEY, 'pkg_name');
+#     my $pkg = get_state_data($self->class_key, 'pkg_name');
 
 #     foreach my $id (@$ids) {
 #         my $obj = $pkg->lookup({'id' => $id});
@@ -40,8 +40,8 @@ sub delete : Callback {
     my $self = shift;
 
     my $ids = mk_aref($self->value);
-    my $pkg = get_state_data(CLASS_KEY, 'pkg_name');
-    my $obj_key = get_state_data(CLASS_KEY, 'object');
+    my $pkg = get_state_data($self->class_key, 'pkg_name');
+    my $obj_key = get_state_data($self->class_key, 'object');
 
     foreach my $id (@$ids) {
         my $obj = $pkg->lookup({'id' => $id});
@@ -62,8 +62,8 @@ sub deactivate : Callback {
     my $self = shift;
 
     my $ids = mk_aref($self->value);
-    my $pkg = get_state_data(CLASS_KEY, 'pkg_name');
-    my $obj_key = get_state_data(CLASS_KEY, 'object');
+    my $pkg = get_state_data($self->class_key, 'pkg_name');
+    my $obj_key = get_state_data($self->class_key, 'object');
 
     foreach my $id (@$ids) {
         my $obj = $pkg->lookup({'id' => $id});
@@ -95,13 +95,13 @@ sub sortBy : Callback {
 
 # set offset from beginning record in @sort_objs at which array slice begins
 sub set_offset : Callback {
-    set_state_data(CLASS_KEY, 'pagination', 1);
-    set_state_data(CLASS_KEY, 'offset', $_[0]->value);
+    set_state_data($self->class_key, 'pagination', 1);
+    set_state_data($self->class_key, 'offset', $_[0]->value);
 }
 
 # call back to display all results
 sub show_all_records : Callback {
-    set_state_data(CLASS_KEY, 'pagination', 0);
+    set_state_data($self->class_key, 'pagination', 0);
 }
 
 

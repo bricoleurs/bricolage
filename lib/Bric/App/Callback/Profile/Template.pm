@@ -26,7 +26,7 @@ my ($save_meta, $save_code, $save_object, $checkin, $check_syntax,
 
 sub save : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
 
     $save_object->($widget, $self->request_args);
     my $fa = get_state_data($widget, 'fa');
@@ -68,7 +68,7 @@ sub save : Callback {
 
 sub checkin : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
 
     my $fa = get_state_data($widget, 'fa');
     $save_meta->($self->request_args, $widget, $fa);
@@ -78,7 +78,7 @@ sub checkin : Callback {
 
 sub save_and_stay : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
 
     $save_object->($widget, $self->request_args);
     my $fa = get_state_data($widget, 'fa');
@@ -103,7 +103,7 @@ sub save_and_stay : Callback {
 
 sub revert : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
 
     my $fa      = get_state_data($widget, 'fa');
     my $version = $self->request_args->{"$widget|version"};
@@ -114,7 +114,7 @@ sub revert : Callback {
 
 sub view : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
 
     my $fa      = get_state_data($widget, 'fa');
     my $version = $self->request_args->{"$widget|version"};
@@ -125,11 +125,11 @@ sub view : Callback {
 sub cancel : Callback {
     my $self = shift;
 
-    my $fa = get_state_data(CLASS_KEY, 'fa');
+    my $fa = get_state_data($self->class_key, 'fa');
     $fa->cancel_checkout;
     $fa->save;
     log_event('formatting_cancel_checkout', $fa);
-    clear_state(CLASS_KEY);
+    clear_state($self->class_key);
     set_redirect("/");
     my $arg = '&quot;' . $fa->get_name . '&quot;';
     add_msg($self->lang->maketext("Template [_1] check out canceled.", $arg));
@@ -137,7 +137,7 @@ sub cancel : Callback {
 
 sub notes : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
 
     my $action = $self->request_args->{$widget.'|notes_cb'};
 
@@ -156,8 +156,8 @@ sub trail : Callback {
     my $self = shift;
 
     # Save the metadata we've collected on this request.
-    my $fa  = get_state_data(CLASS_KEY, 'fa');
-    &$save_meta($self->request_args, CLASS_KEY, $fa);
+    my $fa  = get_state_data($self->class_key, 'fa');
+    &$save_meta($self->request_args, $self->class_key, $fa);
     my $id = $fa->get_id;
 
     # Set a redirection to the code page to be enacted later.
@@ -170,18 +170,18 @@ sub create_next : Callback {
     my $ttype = $self->request_args->{tplate_type};
 
     # Just create it if CATEGORY template was selected.
-    $create_fa->($self, CLASS_KEY, $self->request_args)
+    $create_fa->($self, $self->class_key, $self->request_args)
       if $ttype == Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE;
 }
 
 sub create : Callback {
     my $self = shift;
-    $create_fa->($self, CLASS_KEY, $self->request_args);
+    $create_fa->($self, $self->class_key, $self->request_args);
 }
 
 sub return : Callback {
     my $self = shift;
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
 
     my $state        = get_state_name($widget);
     my $version_view = get_state_data($widget, 'version_view');
@@ -219,7 +219,7 @@ sub return : Callback {
 sub recall : Callback {
     my $self = shift;
 
-    my $ids = $self->request_args->{CLASS_KEY.'|recall_cb'};
+    my $ids = $self->request_args->{$self->class_key.'|recall_cb'};
     my %wfs;
     $ids = ref $ids ? $ids : [$ids];
 

@@ -68,7 +68,7 @@ sub delete : Callback {
         my $act = $class->lookup({ 'id' => $id }) || next;
         $act->del();
         $act->save();
-        log_event(CLASS_KEY . '_del', $act);
+        log_event($self->class_key . '_del', $act);
     }
 }
 

@@ -9,8 +9,9 @@ use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
-my $disp_name = get_disp_name(CLASS_KEY);
-my $class = get_package_name(CLASS_KEY);
+my $type = CLASS_KEY;
+my $disp_name = get_disp_name($type);
+my $class = get_package_name($type);
 
 
 sub save : Callback {

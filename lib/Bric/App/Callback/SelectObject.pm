@@ -13,7 +13,7 @@ sub save_selected_id : Callback {
     my $param = $self->request_args;
 
     my $object = $self->value;
-    my $sub_widget = CLASS_KEY . '.' . $object;
+    my $sub_widget = $self->class_key . '.' . $object;
 
     # Handle auto-repopulation of this form.
     my $name = get_state_data($sub_widget, 'form_name');

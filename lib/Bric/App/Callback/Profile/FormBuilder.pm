@@ -214,7 +214,7 @@ $do_element = sub {
     my $key_name = exists($param->{'key_name'})
       ? sprintf('&quot;%s&quot;', $param->{'key_name'})
       : '';
-    my $widget = CLASS_KEY;
+    my $widget = $self->class_key;
     my $cb_key = $self->cb_key;
 
     # Make sure the name isn't already in use.

@@ -17,16 +17,16 @@ sub substr : Callback {
     $init_state->($self);
     my $param = $self->request_args;
 
-    my $val_fld = CLASS_KEY.'|value';
+    my $val_fld = $self->class_key.'|value';
     my $crit = $param->{$val_fld} ? (FULL_SEARCH ? '%' : '')
       . $param->{$val_fld} . '%' : '%';
 
     # Set the search criterion and append a '%' to do a prefix search.
-    set_state_data(CLASS_KEY, 'criterion', $crit);
+    set_state_data($self->class_key, 'criterion', $crit);
 
     # Set the value that will repopulate the search box and clear the alpha
-    set_state_data(CLASS_KEY, 'crit_field', $param->{$val_fld});
-    set_state_data(CLASS_KEY, 'crit_letter', '');
+    set_state_data($self->class_key, 'crit_field', $param->{$val_fld});
+    set_state_data($self->class_key, 'crit_letter', '');
 
 }
 
@@ -37,11 +37,11 @@ sub alpha : Callback {
     my $crit = $self->value ? $self->value.'%' : '';
 
     # Add a '%' to create a prefix search by first letter.
-    set_state_data(CLASS_KEY, 'criterion', $crit);
+    set_state_data($self->class_key, 'criterion', $crit);
 
     # Clear the substr search box and set the letter selector
-    set_state_data(CLASS_KEY, 'crit_letter', $self->value);
-    set_state_data(CLASS_KEY, 'crit_field', '');
+    set_state_data($self->class_key, 'crit_letter', $self->value);
+    set_state_data($self->class_key, 'crit_field', '');
 }
 
 sub story : Callback {
@@ -50,10 +50,10 @@ sub story : Callback {
 
     my (@field, @crit);
 
-    $build_fields->(CLASS_KEY, $self->request_args, \@field, \@crit,
+    $build_fields->($self->class_key, $self->request_args, \@field, \@crit,
 		    [qw(simple title primary_uri category_uri keyword)]);
 
-    $build_date_fields->(CLASS_KEY, $self->request_args, \@field, \@crit,
+    $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -62,8 +62,8 @@ sub story : Callback {
 	push @crit,  '%';
     }
 
-    set_state_data(CLASS_KEY, 'criterion', \@crit);
-    set_state_data(CLASS_KEY, 'field', \@field);
+    set_state_data($self->class_key, 'criterion', \@crit);
+    set_state_data($self->class_key, 'field', \@field);
 }
 
 sub media : Callback {
@@ -72,10 +72,10 @@ sub media : Callback {
 
     my (@field, @crit);
 
-    $build_fields->(CLASS_KEY, $self->request_args, \@field, \@crit,
+    $build_fields->($self->class_key, $self->request_args, \@field, \@crit,
 		    [qw(simple name uri)]);
 
-    $build_date_fields->(CLASS_KEY, $self->request_args, \@field, \@crit,
+    $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -84,8 +84,8 @@ sub media : Callback {
 	push @crit,  '%';
     }
 
-    set_state_data(CLASS_KEY, 'criterion', \@crit);
-    set_state_data(CLASS_KEY, 'field', \@field);
+    set_state_data($self->class_key, 'criterion', \@crit);
+    set_state_data($self->class_key, 'field', \@field);
 }
 
 sub formatting : Callback {
@@ -94,10 +94,10 @@ sub formatting : Callback {
 
     my (@field, @crit);
 
-    $build_fields->(CLASS_KEY, $self->request_args, \@field, \@crit,
+    $build_fields->($self->class_key, $self->request_args, \@field, \@crit,
 		    [qw(simple name file_name)]);
 
-    $build_date_fields->(CLASS_KEY, $self->request_args, \@field, \@crit, 
+    $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit, 
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -106,8 +106,8 @@ sub formatting : Callback {
 	push @crit,  '%';
     }
 
-    set_state_data(CLASS_KEY, 'criterion', \@crit);
-    set_state_data(CLASS_KEY, 'field', \@field);
+    set_state_data($self->class_key, 'criterion', \@crit);
+    set_state_data($self->class_key, 'field', \@field);
 }
 
 sub generic : Callback {
@@ -118,15 +118,15 @@ sub generic : Callback {
     # Callback in 'leech' mode.  Any old page can send search criteria here
 
     # A '+' separated list of object field names
-    my $flist  = $param->{CLASS_KEY . "|generic_fields"};
+    my $flist  = $param->{$self->class_key . "|generic_fields"};
 
     # A '+' separated list of form field names who's values are the criteria for
     # the object field names in $flist above
-    my $clist  = $param->{CLASS_KEY . "|generic_criteria"};
+    my $clist  = $param->{$self->class_key . "|generic_criteria"};
 
     # A '+' separated list of object fields that are meant to be substring
     # searches and thus should be wrapped in '%'
-    my $substr = $param->{CLASS_KEY . "|generic_set_substr"};
+    my $substr = $param->{$self->class_key . "|generic_set_substr"};
 
     my $fields = [split('\+', $flist)];
     my $crit   = [map { $param->{$_} } split('\+', $clist)];
@@ -149,29 +149,29 @@ sub generic : Callback {
         $i--;
     }
 
-    set_state_data(CLASS_KEY, 'criterion', $crit);
-    set_state_data(CLASS_KEY, 'field', $fields);
+    set_state_data($self->class_key, 'criterion', $crit);
+    set_state_data($self->class_key, 'field', $fields);
 }
 
 sub clear : Callback {
     my $self = shift;
     $init_state->($self);
 
-    clear_state(CLASS_KEY);
+    clear_state($self->class_key);
 }
 
 sub set_advanced : Callback {
     my $self = shift;
     $init_state->($self);
 
-    set_state_data(CLASS_KEY, 'advanced_search', 1);
+    set_state_data($self->class_key, 'advanced_search', 1);
 }
 
 sub unset_advanced : Callback {
     my $self = shift;
     $init_state->($self);
 
-    set_state_data(CLASS_KEY, 'advanced_search', 0);
+    set_state_data($self->class_key, 'advanced_search', 0);
 }
 
 ###
@@ -180,10 +180,10 @@ $build_fields = sub {
     my ($widget, $param, $field, $crit, $add) = @_;
 
     foreach my $f (@$add) {
-	my $v = $param->{CLASS_KEY."|$f"};
+	my $v = $param->{$self->class_key."|$f"};
 
 	# Save the value so we can repopulate the form.
-	set_state_data(CLASS_KEY, $f, $v);
+	set_state_data($self->class_key, $f, $v);
 
 	# Skip it if its blank
 	next unless $v;
@@ -220,7 +220,7 @@ $init_state = sub {
     my $r = $_[0]->apache_req;
 
     # Set the uri for use in expiring the search criteria.
-    set_state_data(CLASS_KEY, 'crit_set_uri', $r->uri);
+    set_state_data($self->class_key, 'crit_set_uri', $r->uri);
 
     # reset search paging offset to start at the first record
     set_state_data('listManager', 'offset', 0);

@@ -22,10 +22,10 @@ sub preview : Callback {
 
     # Grab the story and media IDs from the session.
     my ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub);
-    if (my $d = get_state_data(CLASS_KEY)) {
+    if (my $d = get_state_data($self->class_key)) {
         ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub) =
           @{$d}{qw(story media story_pub media_pub)};
-        clear_state(CLASS_KEY);
+        clear_state($self->class_key);
     } elsif (! defined $story_id && ! defined $media_id ) {
         return;
     }
@@ -81,10 +81,10 @@ sub publish : Callback {
 
     # Grab the story and media IDs from the session.
     my ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub);
-    if (my $d = get_state_data(CLASS_KEY)) {
+    if (my $d = get_state_data($self->class_key)) {
         ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub) =
           @{$d}{qw(story media story_pub media_pub)};
-        clear_state(CLASS_KEY);
+        clear_state($self->class_key);
     } elsif (! defined $story_id && ! defined $media_id ) {
         return;
     }

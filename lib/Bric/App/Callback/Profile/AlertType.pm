@@ -12,7 +12,7 @@ use Bric::App::Util qw(:all);
 
 my $type = CLASS_KEY;
 my $disp_name = get_disp_name($type);
-my $class = get_package_name(CLASS_KEY);
+my $class = get_package_name($type);
 
 my ($save);
 
@@ -88,7 +88,7 @@ sub delete : Callback {
         if (chk_authz($at, EDIT, 1)) {
             $at->remove();
             $at->save();
-            log_event(CLASS_KEY . '_del', $at);
+            log_event($self->class_key . '_del', $at);
         } else {
             my $name = '&quot;' . $at->get_name() . '&quot';
             add_msg($self->lang->maketext($msg, $name));

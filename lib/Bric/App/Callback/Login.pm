@@ -18,17 +18,17 @@ sub login : Callback {
     my $r = $self->apache_req;
     my $param = $self->request_args;
 
-    my $un = $param->{CLASS_KEY . '|username'};
-    my $pw = $param->{CLASS_KEY . '|password'};
+    my $un = $param->{$self->class_key . '|username'};
+    my $pw = $param->{$self->class_key . '|password'};
     my ($res, $msg) = Bric::App::Auth::login($r, $un, $pw);
     if ($res) {
-	if ($param->{CLASS_KEY . '|ssl'}) {
+	if ($param->{$self->class_key . '|ssl'}) {
 	    # They want to use SSL. Do a simple redirect.
-	    set_state_name(CLASS_KEY, 'ssl');
+	    set_state_name($self->class_key, 'ssl');
 	    do_queued_redirect() || redirect('/');
 	} else {
 	    # Redirect them back to port 80 if not using SSL.
-	    set_state_name(CLASS_KEY, 'nossl');
+	    set_state_name($self->class_key, 'nossl');
 	    redirect_onload('http://' . $r->hostname . $port
                               . (del_redirect() || ''), $self);
 	}

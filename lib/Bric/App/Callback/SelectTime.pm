@@ -27,7 +27,7 @@ sub refresh : Callback(priority => 0) {
 
     foreach my $b (@$base) {
         # Keep this widget with this base name distict from others on the page.
-        my $sub_widget = CLASS_KEY . ".$b";
+        my $sub_widget = $self->class_key . ".$b";
         my @vals;
         my $incomplete = 0;
         # This is complements $incomplete.  It tells whether *any* time fields
@@ -90,7 +90,7 @@ sub clear : Callback {
 
 $is_clear_state = sub {
     my ($param) = @_;
-    my $trigger = $param->{CLASS_KEY . '|clear_cb'} || return;
+    my $trigger = $param->{$self->class_key . '|clear_cb'} || return;
     return $param->{$trigger};
 };
 
