@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.13 $
+$Revision: 1.2.2.14 $
 
 =head1 DATE
 
-$Date: 2001-10-27 01:03:45 $
+$Date: 2001-10-27 01:04:14 $
 
 =head1 SYNOPSIS
 
@@ -104,7 +104,7 @@ function init() {
 
 % if ($no_toolbar) {
 if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
-    // Send the current window to the browser's home page.
+    // Send the current window to a blank page.
     document.location = 'about:blank';
     // Turn off the toolbar, back button, etc.
     window.open("<% $uri %>", 'Bricolage_<% SERVER_WINDOW_NAME %>',
