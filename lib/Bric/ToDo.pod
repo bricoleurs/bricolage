@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.124 $
+$Revision: 1.125 $
 
 =head1 DATE
 
-$Date: 2003-10-16 17:43:43 $
+$Date: 2003-10-16 18:33:28 $
 
 =head1 DESCRIPTION
 
@@ -143,9 +143,9 @@ sort items until the end of a session.
 
 =item *
 
-Add a "preview" action to the Story and Media SOAP interfaces. It will work
-just like "publish" except, of course, that it "previews" and doesn't checkin
-the assets or remove them from desks or workflows.
+Add a "preview" action to the Workflow SOAP interfaces. It will work just like
+"publish" except, of course, that it "previews" and doesn't checkin the assets
+or remove them from desks or workflows.
 
 =back
 
