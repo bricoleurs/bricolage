@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-20 20:49:22 $
+$Date: 2003-12-20 20:50:30 $
 
 =head1 SYNOPSIS
 
@@ -915,7 +915,7 @@ B<Notes:> NONE.
 
 sub set_can_be_overridden {
     my ($self, $val) = @_;
-    $self->_set(['can_be_overridden'], [$val]);
+    $self->_set(['can_be_overridden'], [$val ? 1 : 0]);
 }
 
 =item my $opt_type = $pref->get_opt_type
