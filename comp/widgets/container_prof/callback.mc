@@ -152,7 +152,8 @@ my $update_parts = sub {
             $order = $param->{"$widget|reorder_dat$id"};
             if (! $t->is_autopopulated or exists
                 $param->{"$widget|lock_val_$id"}) {
-                my $val = $param->{"$widget|$id"} || '';
+                my $val = $param->{"$widget|$id"};
+                $val = '' unless defined $val;
                 if ( $param->{"$widget|${id}-partial"} ) {
                     # The date is only partial. Send them back to to it again.
                     add_msg($lang->maketext("Invalid date value for [_1] field.","&quot;" . $_->get_name. "&quot;"));
