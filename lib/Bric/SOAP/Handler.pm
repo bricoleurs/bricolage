@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.11.2.1 $
+$Revision: 1.11.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 04:36:56 $
+$Date: 2003-04-03 22:16:37 $
 
 =head1 SYNOPSIS
 
@@ -84,6 +84,7 @@ use Bric::App::Auth;
 use Bric::App::Session;
 use Bric::Util::DBI qw(:trans);
 use Bric::App::Event qw(clear_events);
+use Exception::Class 1.12;
 use Bric::Util::Fault qw(:all);
 use Apache::Constants qw(OK);
 use Apache::Util qw(escape_html);
@@ -110,7 +111,7 @@ BEGIN {
     #     [ $_[2], $_[4], escape_html($_[1]->error) ];
     # }
 
-    foreach my $ec (keys %Exception::Class::CLASSES) {
+    foreach my $ec (Exception::Class::Base->Classes) {
         $ec =~ s/::/__/g;
         eval qq{sub SOAP::Serializer::as_$ec {
             [ \$_[2], \$_[4], escape_html(\$_[1]->error) ];
