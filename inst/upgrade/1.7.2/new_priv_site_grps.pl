@@ -10,7 +10,7 @@ use Bric::Util::Priv;
 
 BEGIN {
     eval "use Bric::Biz::Site";
-    eval "use lib catdir $FindBin::Bin, updir, updir, updir, 'lib'" if $@;
+    eval "use lib catdir \$FindBin::Bin, updir, updir, updir, 'lib'" if $@;
 }
 
 use Bric::Biz::Site;
