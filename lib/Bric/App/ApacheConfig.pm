@@ -184,7 +184,6 @@ do {
 	%VirtualHost = ();
 	close CONF;
 	select STDOUT;
-	print "Setting include\n";
 	our $Include = $conffile;
     }
 };
