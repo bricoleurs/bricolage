@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-16 19:00:41 $
+$Date: 2004-03-18 11:49:32 $
 
 =head1 SYNOPSIS
 
@@ -75,6 +75,7 @@ L<Bric::SOAP|Bric::SOAP>
 use strict;
 use warnings;
 
+#use constant DEBUG => 1;
 use constant DEBUG => 0;
 
 # turn on tracing when debugging
@@ -202,6 +203,7 @@ sub handle_err {
     my ($code, $string, $err, $actor) = @_;
 
     # Prevent the commit in handler().
+    # XXX: should this be prevented? It isn't in Bric::App::Handler
     $commit = 0;
 
     # Create an exception object unless we already have one.
@@ -216,15 +218,19 @@ sub handle_err {
     # Clear out events so that they won't be logged.
     clear_events();
 
+    # Exception::Class::Base provides as_string, but as_text is not
+    # guaranteed.
+    my $text = $err->can('as_text') ? $err->as_text : $err->as_string;
+
     # Send the error to the apache error log.
-    $apreq->log->error($err->as_text() . ($more_err ? "\n\n$more_err\n" : ''));
+    $apreq->log->error($text . ($more_err ? "\n\n$more_err\n" : ''));
 }
 
 # silence warnings from SOAP::Lite
 {
     no warnings;
     use overload;
-    sub SOAP::Serializer::gen_id { 
+    sub SOAP::Serializer::gen_id {
         overload::StrVal($_[1]) =~ /\((0x\w+)\)/o;
         $1;
     }
