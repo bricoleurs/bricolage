@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.77 $
+$Revision: 1.78 $
 
 =head1 DATE
 
-$Date: 2002-11-30 06:23:36 $
+$Date: 2002-12-05 21:07:47 $
 
 =head1 DESCRIPTION
 
@@ -161,6 +161,11 @@ will be preserved as pasted (e.g., when pasting in poetry). When it's not
 checked, the lines will be unwrapped into a single line (as happens now), so
 that they wrap inside the textarea box nicely. It will be unchecked by default
 to keep the interface basically the same as it is now.
+
+=item *
+
+The installation system should allow the PostgreSQL database to exist
+on a separarate machine.  Currently only a local database will work.
 
 =back
 

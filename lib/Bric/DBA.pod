@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:23:18 $
+$Date: 2002-12-05 21:07:46 $
 
 =head1 DESCRIPTION
 
@@ -21,7 +21,8 @@ By default, PostgreSQL has pretty lax authentication settings, at least locally.
 Client authentication is controlled by the file pg_hba.conf in the $PGDATA
 directory, e.g., /usr/local/pgsql/data/pg_hba.conf. The default settings allow
 completely trusted connections to the server by any local user using either Unix
-domain sockets or TCP/IP connections. These settings are as follows:
+domain sockets or TCP/IP connections (although by default, PostgreSQL does not
+bind to a TCP socket). These settings are as follows:
 
  local  all                                       trust
  host   all         127.0.0.1    255.255.255.255  trust
@@ -38,14 +39,14 @@ recommend that clients be required to provide a password -- and preferably that
 it be encrypted. If the Bricolage web server runs on the local box and no other
 box will need to connect, we recommend the following settings:
 
- local  all                                       crypt
- # host  all         127.0.0.1    255.255.255.255  crypt
+ local  all                                        md5
+ # host  all         127.0.0.1    255.255.255.255  md5
 
 These are similar to the defaults, except that they require a password, but the
 password is sent over the wire encrypted using a simple challenge-response
 protocol. We have commented out the B<host> entry because Bric is running
 locally and can therefore rely solely on Unix domain sockets. (In this case, you
-may also wish to remove the -i switch from the call PostgreSQL startup script.)
+may also wish to remove the -i switch from the PostgreSQL startup script.)
 Enable it if you find a need to connect locally via TCP/IP.
 
 If you're running PostgreSQL on its own box, and Bricolage (or any subset of the
@@ -53,9 +54,9 @@ Bricolage application, such as the distribution server) runs on another box, you
 will need to enable secure connections to that box. To limit the connections to
 come from that single box, use this configuration:
 
- local  all                                       crypt
- host   all           127.0.0.1    255.255.255.255  crypt
- host   bric_dbname   192.168.1.2  255.255.255.255  crypt
+ local  all                                         md5
+ host   all           127.0.0.1    255.255.255.255  md5
+ host   bric_dbname   192.168.1.2  255.255.255.255  md5
 
 Where the IP address B<192.168.1.2> is the IP address of the box running
 Bricolage, and B<255.255.255.255> is its mask. If you feel comfortable allowing
@@ -63,9 +64,9 @@ more broad access to the server -- say you have a number of database
 applications running on multiple servers in the same subnet to connect -- try
 the following configuration:
 
- local  all                                       crypt
- host   all           127.0.0.1    255.255.255.255  crypt
- host   bric_dbname   192.168.1.0  255.255.255.255  crypt
+ local  all                                         md5
+ host   all           127.0.0.1    255.255.255.255  md5
+ host   bric_dbname   192.168.1.0  255.255.255.255  md5
 
 Here the B<192.168.1.0> IP address represents the 192.168.1 subnet on which the
 multiple clients live.
@@ -153,10 +154,13 @@ WAL and recovering databases with WAL.
 
 =head1 VACUUM
 
-VACUUM is a PostgreSQL SQL command that Cleans and analyzes a Postgres
+VACUUM is a PostgreSQL SQL command that cleans and analyzes a Postgres
 database.  Its purpose is to reclaim storage and to collect
-information for the optimizer.  B<VACUUM> opens every table in the
-database to clean out records from rolled back tables. Running B<VACUUM
+information for the optimizer.  PostgreSQL uses a non-overwriting storage
+manager, which means that B<DELETE> commands don't actually remove data,
+they just mark it invalid; similarly, B<UPDATE> commands and rolled-back
+transactions will create more "old versions" of rows. These should be
+cleaned up on a periodic basis by running B<VACUUM>. Running B<VACUUM
 ANALYZE> also collects statistics representing the dispersion of the
 data in each column.  The statistics maintained include the number of
 tuples and number of pages stored in all transactions.  This

@@ -44,21 +44,27 @@ BEGIN {
     # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
     $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
 
-    # use $BRICOLAGE_ROOT/lib if exists 
-    $_ = catdir($ENV{BRICOLAGE_ROOT}, "lib");
-    unshift(@INC, $ENV{PERL5LIB} = defined $ENV{PERL5LIB} ?
-            "$ENV{PERL5LIB}:$_" : $_)
-        if -e $_;
+    # use $BRICOLAGE_ROOT/lib if exists
+    my $lib = catdir($ENV{BRICOLAGE_ROOT}, "lib");
+    if (-e $lib) {
+        $ENV{PERL5LIB} = defined $ENV{PERL5LIB} ?
+          "$ENV{PERL5LIB}:$lib" : $lib;
+        unshift @INC, $lib;
+    }
 
     # make sure Bric is found
-    eval "use Bric";
-    die <<'END' if $@;
+    eval { require Bric };
+    die <<"END" if $@;
 ######################################################################
 
-Cannot locate Bricolage libraries.  Please set the environment
-variable BRICOLAGE_ROOT to the location of your Bricolage
-installation or set the environment variable PERL5LIB to the
-directory where Bricolage's libraries are installed.
+   Cannot load Bricolage libraries. Please set the environment
+   variable BRICOLAGE_ROOT to the location of your Bricolage
+   installation or set the environment variable PERL5LIB to the
+   directory where Bricolage's libraries are installed.
+
+   The specific error encountered was as follows:
+
+   $@
 
 ######################################################################
 END

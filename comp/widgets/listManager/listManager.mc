@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2002-10-09 22:29:47 $
+$Date: 2002-12-05 21:07:44 $
 
 =head1 SYNOPSIS
 
@@ -676,7 +676,7 @@ my $build_constraints = sub {
     }
 
     # Initialize the sort column with the default search field.
-    set_state_data($widget, 'sortBy', $sortBy);
+    init_state_data($widget, 'sortBy', $sortBy);
     set_state_data($widget, 'defaultSort', $def_sort_field);
 
     my $crit = $cur eq $prev ? get_state_data($search_widget, 'criterion')

@@ -299,6 +299,91 @@ Added a preference for naming the Bricolage instance. [Scott]
 
 =back
 
+=head1 VERSION 1.4.6
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Bric::SAOP::Handler now properly logs fatal errors that are strings rather than
+exceptions. [David]
+
+=item *
+
+Updated Bric::DBA documentation to better reflect PostgreSQL standards.
+[Neil Conway]
+
+=item *
+
+Minor documentation correction in Bric::Util::Grp::Parts::Member. [Mark]
+
+=item *
+
+Fixed bug in SOAP interface where container subelements added to a story or
+media asset were logged as if the story type element or media type element was
+added instead of the appropriate subelement. [David]
+
+=item *
+
+Fixed bug in publish code that was attempting to use the Apache request object
+as a media asset. Thanks to John Greene for the spot. [David]
+
+=item *
+
+Fixed bug where an empty or non-numeric <size> element in an imported
+media object would cause an SQL error. [Sam]
+
+=item *
+
+The F<bric_apachectl>, F<bric_clean_tmp>, F<bric_dist_mon>, and F<bric_ftpd>
+scripts are now smarter about loading Bricolage libraries and reporting
+relevant errors when they can't load Bricoalge libraries. Thanks to Geoff
+Richards for the patch. [David]
+
+=item *
+
+Category permissions are now properly checked on assets when they're not in
+workflow as well as when they are in workflow. This means that if a group of
+users is granted permission to access stories in a category, they can now
+access those stories even if they're not in workflow. [David]
+
+=item *
+
+The search interface for locating media and story assets to relate to a story
+now checks the permissions of the assets found and only displays the assets
+for which the user has at least READ permission. Thanks to Sean Greathouse for
+the spot. [David]
+
+=item *
+
+Reverting a media asset now properly reverts the media file itself, as well.
+[David]
+
+=item *
+
+The "Last" field is now properly highlighted as the default order field when
+displaying a list of contributors in the Contributor Manager. [David]
+
+=item *
+
+Contributor Association now includes search options and only
+currently-associated contributors are displayed before searching. [David]
+
+=item *
+
+The ability to select different fields by which to sort a list of objects now
+works again. [David]
+
+=item *
+
+The installer now checks to make sure that mod_perl is statically compiled
+into Apache, since weird things tend to happen when Bricolage uses a DSO
+mod_perl. [David]
+
+=back
+
 =head1 VERSION 1.4.5
 
 =head2 Changes

@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-13 23:22:00 $
+$Date: 2002-12-05 21:07:49 $
 
 =head1 SYNOPSIS
 
@@ -203,7 +203,7 @@ sub handle_err {
 
     # Create an exception object unless we already have one.
     $err = Bric::Util::Fault::Exception::AP->new
-      ({ msg => "Error executing SOAP command.", payload => $err })
+      ({ msg => "Error executing SOAP command", payload => $err || $string })
       unless ref $err;
 
     # Rollback the database transactions.
@@ -214,7 +214,7 @@ sub handle_err {
     clear_events();
 
     # Send the error to the apache error log.
-    $apreq->log->error($err->get_msg . ': ' . $err->get_payload .
+    $apreq->log->error($err->get_msg . ': ' . ($err->get_payload || '') .
                        ($more_err ? "\n\n$more_err" : '') . "\nStack Trace:\n" .
                        join("\n", map { ref $_ ? join(' - ', @{$_}[1,2,3]) : $_ }
                             @{$err->get_stack}) . "\n\n");

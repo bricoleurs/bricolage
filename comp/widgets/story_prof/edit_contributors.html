@@ -44,23 +44,29 @@ var selectOrderNames = new Array(<% join ', ', @sort_array %>);
 </script>
 <p></p>
 
-
+<& /widgets/search/search.mc,
+   object       => 'contrib',
+   field        => 'lname',
+   type         => 'dual',
+   use_form_tag => 0
+&>
+<p></p>
 <& /widgets/listManager/listManager.mc,
    object    => 'contrib',
    title     => 'Choose Contributors',
-   sortBy    => 'name',
    select    => undef,
-   profile   => \&contrib_profile,
+   profile   => $contrib_profile,
    exclude  	=> \@existing_contribs,
    fields    => [qw(lname fname type)],
    constrain => { no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID },
-   addition  => ''
+   addition  => '',
+   behavior => 'expand',
 &>
 
-<P></P>
-<input type="image" src="/media/images/save_red.gif" border=0 name="<% $widget %>|save_contrib_cb" value="Save">
-<input type="image" src="/media/images/save_and_stay_lgreen.gif" border=0 name="<% $widget %>|save_and_stay_contrib_cb" value="Save and Stay">
-<input type="image" src="/media/images/return_dgreen.gif" border=0 name="<% $widget %>|leave_contrib_cb">
+<p></p>
+<input type="image" src="/media/images/save_red.gif" border="0" name="<% $widget %>|save_contrib_cb" value="Save" />
+<input type="image" src="/media/images/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_contrib_cb" value="Save and Stay" />
+<input type="image" src="/media/images/return_dgreen.gif" border="0" name="<% $widget %>|leave_contrib_cb" />
 
 <%args>
 $widget
@@ -73,28 +79,12 @@ my @contribs = $story->get_contributors();
 </%init>
 
 <%once>
-sub contrib_profile {
+my $contrib_profile = sub {
     my ($o,$flags) = @_;
-    
     unless ($flags->{'featured'}) {
         return ['Associate', $r->uri, "story_prof|assoc_contrib_cb=".$o->get_id];
     } else {
         return ['Un-Associate', $r->uri, "story_prof|unassoc_contrib_cb=".$o->get_id];
     }
-}
-
-sub contrib_alter_type {
-    my ($val, $o, $flags) = @_;
-
-    return $val unless $flags->{'featured'};
-    
-    my $story = get_state_data('story_prof', 'story');
-    my $role  = $story->get_contributor_role($o);
-
-    # Just return the value if there is no role defined for this contributor.
-    return $val unless $role;
-
-    # Show the role if there is one.
-    return $val.' (Role: <a href="'.$r->uri.'?story_prof|assoc_contrib_cb='.$o->get_id.'">'.ucfirst($role).'</a>)';
-}
+};
 </%once>

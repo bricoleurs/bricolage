@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-09-26 00:17:35 $
+$Date: 2002-12-05 21:07:44 $
 
 =head1 DESCRIPTION
 
@@ -172,7 +172,7 @@ sub get_types_config {
 sub check_modules {
     print "Checking for required Apache modules...\n";
 
-    my @missing;
+    my (@missing, $no_perl);
     # loop over required modules
  MOD:
     foreach my $mod (qw(perl log_config mime alias apache_ssl ssl)) {
@@ -182,6 +182,14 @@ sub check_modules {
             $AP{$mod} = 1 if $mod =~ /ssl$/;
             next;
         }
+
+        # Perl is special -- it can't be a DSO.
+        if ($mod eq 'perl') {
+            $no_perl = 1;
+            push @missing, $mod;
+            next;
+        }
+
         # try DSO
         if ($AP{dso}) {
             # try modules specified in AddModule/LoadModule pairs
@@ -247,7 +255,9 @@ sub check_modules {
     }
 
     hard_fail("The following Apache modules are required by Bricolage and\n",
-              "are missing from your installation:\n",
+              "are missing from your installation",
+              ( $no_perl ? " (Note that mod_perl must be\n" .
+                "statically compiled into Apache):\n" : ":\n"),
               (map { "\tmod_$_\n" } @missing), "\n")
       if @missing;
 

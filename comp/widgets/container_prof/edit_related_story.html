@@ -1,13 +1,10 @@
-<& '/widgets/search/search.mc', 
-  object       => 'story', 
-  type         => 'story', 
+<& '/widgets/search/search.mc',
+  object       => 'story',
+  type         => 'story',
   field        => 'title',
   use_form_tag => 0 &>
-
-% my $relate_id = $tile->get_related_instance_id;
-<P></P>
-<a name="results" />
-% my $story = get_state_data('story_prof', 'story');
+<p></p>
+<a name="results"></a>
 <& /widgets/listManager/listManager.mc,
    object   => 'story',
    title    => 'Choose a Related Story',
@@ -15,26 +12,28 @@
    select   => undef,
    profile  => $related_profile,
    featured => $relate_id ? [$relate_id] : undef,
-   exclude  => [$story->get_id],
+   exclude  => $excl_sub,
    fields   => [qw(id title uri cover_date)],
    field_values => $field_values,
    addition => '',
    behavior  => 'expand',
 &>
-<P></P>
-
+<p></p>
 <input type="image" src="/media/images/return_dgreen.gif" border=0 name="<% $widget %>|related_up_cb" value="Return">
-
 <%args>
 $widget
 </%args>
-
-<%init>
-    # the tile object
-    my $tile = get_state_data($widget, 'tile');
+<%init>;
+# The tile object
+my $tile = get_state_data($widget, 'tile');
+my $relate_id = $tile->get_related_instance_id;
+my $asset_id = get_state_data('story_prof', 'story')->get_id;
+my $excl_sub = sub {
+    return 1 if $_[0]->get_id == $asset_id;
+    return !chk_authz($_[0], READ, 1);
+};
 </%init>
-
-<%once>
+<%once>;
 my $field_values = sub {
     my ($o, $field) = @_;
     return unless $field eq 'title';

@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
 -- Test values.
 --
@@ -15,7 +15,7 @@ DELETE FROM category_member WHERE id IN (702, 703, 704);
 -- Science
 
 INSERT INTO category (id,directory,uri,parent_id, name, description, asset_grp_id) 
-VALUES (1, 'science', '/science/', 0, 'Science', 'All things sciencey', 53);
+VALUES (1, 'science', '/science', 0, 'Science', 'All things sciencey', 53);
 
 -- -----------------------------------------------------------------------------
 -- Material

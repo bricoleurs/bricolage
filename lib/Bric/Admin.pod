@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.83 $
+$Revision: 1.84 $
 
 =head1 DATE
 
-$Date: 2002-12-02 01:12:02 $
+$Date: 2002-12-05 21:07:45 $
 
 =head1 DESCRIPTION
 
@@ -27,8 +27,8 @@ Install Perl 5.6.0 or greater.
 
 =item 2
 
-Install Apache 1.3.12 or greater with mod_perl and mod_log_config. For SSL
-also install mod_ssl or apache-ssl.
+Install Apache 1.3.12 or greater with mod_log_config and mod_perl statically
+compiled in. For SSL also install mod_ssl or apache-ssl.
 
 =item 3
 
@@ -88,6 +88,8 @@ START MODULE LIST
 =item Cache::Cache
 
 =item Digest::MD5
+
+=item Digest::SHA1 2.01
 
 =item URI
 
@@ -410,27 +412,32 @@ the following for Bricolage:
 
 =item --with-layout=Apache
 
-This command selects the classical Apache path layout.
+This option selects the classical Apache path layout.
 
 =item --disable-rule=EXPAT
 
-This command prevents incompatibilities between Apache's implementation of the
+This option prevents incompatibilities between Apache's implementation of the
 Expat XML parser, and that used by Perl's XML::Parser module.
 
 =item --enable-module=ssl (optional)
 
-If you're including SSL support via mod_ssl, this command compiles it in.
+If you're including SSL support via mod_ssl, this option compiles it in.
 
 =item --enable-module=rewrite
 
-This command enables the mod_rewrite module that ships with the Apache sources.
-While mod_rewrite is not currently used in Bricolage, it may be in future
-versions.
+This option enables the mod_rewrite module that ships with the Apache
+sources. While mod_rewrite is not currently used in Bricolage, it may be in
+future versions.
 
 =item --activate-module=src/modules/perl/libperl.a
 
-This command compiles in mod_perl. The library it points to was installed by the
-mod_perl make process.
+This option compiles in mod_perl. The library it points to was installed by
+the mod_perl make process.
+
+=item --disable-shared=perl
+
+This option ensures that mod_perl will be statically compiled into Apache,
+rather than as a DSO.
 
 =back
 
@@ -444,7 +451,8 @@ The commands you'll execute, therefore, should look something like this:
     --with-layout=Apache    \
     --disable-rule=EXPAT    \
     --enable-module=rewrite \
-    --activate-module=src/modules/perl/libperl.a
+    --activate-module=src/modules/perl/libperl.a \
+    --disable-shared=perl
   make
 
 Or if you're planning to use mod_ssl:
@@ -454,7 +462,8 @@ Or if you're planning to use mod_ssl:
     --disable-rule=EXPAT    \
     --enable-module=ssl     \
     --enable-module=rewrite \
-    --activate-module=src/modules/perl/libperl.a
+    --activate-module=src/modules/perl/libperl.a \
+    --disable-shared=perl
   make
 
 =item *
