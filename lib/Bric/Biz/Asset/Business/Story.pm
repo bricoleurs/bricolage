@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.57 $
+$Revision: 1.58 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.57 $ )[-1];
+our $VERSION = (qw$Revision: 1.58 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:44 $
+$Date: 2003-08-12 19:30:20 $
 
 =head1 SYNOPSIS
 
@@ -311,7 +311,8 @@ use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP =>
     {
-       keyword            =>  'story_keyword sk, keyword k',
+       keyword            => 'story_keyword sk, keyword k',
+       output_channel_id  => 'story__output_channel soc',
        simple             => 'story s '
                            . 'LEFT OUTER JOIN story_keyword sk '
                            . 'LEFT OUTER JOIN keyword k '
@@ -358,6 +359,9 @@ use constant PARAM_WHERE_MAP =>
                               . 'AND story__id = s.id )',
       _checked_out           => 'i.checked_out = ?',
       primary_oc_id          => 'i.primary_oc__id = ?',
+      output_channel_id      => '(i.id = soc.story_instance__id AND '
+                              . '(soc.output_channel__id = ? OR '
+                              . 'i.primary_oc__id = ?))',
       category_id            => 'i.id = sc2.story_instance__id AND '
                               . 'sc2.category__id = ?',
       category_uri           => 'i.id = sc2.story_instance__id AND '
@@ -631,6 +635,10 @@ element__id
 =item *
 
 source__id
+
+=item *
+
+output_channel_id
 
 =item *
 

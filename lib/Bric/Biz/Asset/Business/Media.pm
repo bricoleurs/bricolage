@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$Revision: 1.54 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.53 $ )[-1];
+our $VERSION = (qw$Revision: 1.54 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:34 $
+$Date: 2003-08-12 19:30:20 $
 
 =head1 SYNOPSIS
 
@@ -185,11 +185,14 @@ use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP =>
     {
-       keyword            => 'media_keyword mk, keyword k',
-       simple             => 'media mt LEFT OUTER JOIN media_keyword mk LEFT OUTER JOIN keyword k ON (mk.keyword_id = k.id) ON (mt.id = mk.media_id)',
-       _not_simple        => TABLE . ' mt',
-       grp_id             => 'member m2, media_member mm2',
-       category_uri       => 'category c'
+     keyword            => 'media_keyword mk, keyword k',
+     output_channel_id  => 'media__output_channel moc',
+     simple             => 'media mt LEFT OUTER JOIN media_keyword mk LEFT ' .
+                           'OUTER JOIN keyword k ON (mk.keyword_id = k.id) ' .
+                           'ON (mt.id = mk.media_id)',
+     _not_simple        => TABLE . ' mt',
+     grp_id             => 'member m2, media_member mm2',
+     category_uri       => 'category c'
     };
 
 use constant PARAM_WHERE_MAP =>
@@ -228,6 +231,9 @@ use constant PARAM_WHERE_MAP =>
                              . 'AND media__id = mt.id)',
       _checked_out          => 'i.checked_out = ?',
       primary_oc_id         => 'i.primary_oc__id = ?',
+      output_channel_id     => '(i.id = moc.media_instance__id AND '
+                             . '(moc.output_channel__id = ? OR '
+                             . 'i.primary_oc__id = ?))',
       category__id          => 'i.category__id = ?',
       category_id           => 'i.category__id = ?',
       category_uri          => 'i.category__id = c.id AND '
@@ -489,6 +495,10 @@ workflow__id
 =item *
 
 element__id
+
+=item *
+
+output_channel_id
 
 =item *
 

@@ -136,6 +136,54 @@ sub test_primary_oc_id : Test(8) {
 }
 
 ##############################################################################
+# Test output_channel_id parameter.
+##############################################################################
+sub test_oc_id : Test(14) {
+    my $self = shift;
+    my $class = $self->class;
+    ok( my $key = $class->key_name, "Get key" );
+    return "OCs tested only by subclass" if $key eq 'biz';
+
+    # Construct a secondary output channel.
+    ok ( my $oc = Bric::Biz::OutputChannel->new({ name        => 'Bogus',
+                                                  description => 'Bogus OC',
+                                                  site_id     => 100,
+                                                  protocol    => 'http://',
+                                                }),
+       "Create bogus OC" );
+    ok( $oc->save, "Save bogus OC" );
+    ok( my $ocid = $oc->get_id, "Get bogus OC ID" );
+    $self->add_del_ids($ocid, 'output_channel' );
+
+    # Construct a new document.
+    ok( my $ba = $self->construct( name => 'Flubberman',
+                                   slug => 'hugoman'),
+        "Construct document" );
+    # Add the new output channel to it and save it.
+    ok( $ba->add_output_channels($oc), "Add bogus OC" );
+    ok( $ba->save, "Save docuument" );
+
+    # Save the ID for cleanup.
+    ok( my $id = $ba->get_id, "Get ID" );
+    $self->add_del_ids([$id], $key);
+
+    is( $ba->get_primary_oc_id, 1, "Check primary OC ID" );
+
+    # Try output_channel_id parameter to list with primary OC ID.
+    ok( my @bas = $class->list({ output_channel_id => 1,
+                                 user__id => $self->user_id }),
+        "Get asset list" );
+    is( scalar @bas, 1, "Check for one asset" );
+    is( $bas[0]->get_primary_oc_id, 1, "Check for OC ID 1" );
+
+    # Try output_channel_id parameter to list with secondary OC ID.
+    ok( @bas = $class->list({ output_channel_id => $ocid,
+                                 user__id => $self->user_id }),
+        "Get asset list" );
+    is( scalar @bas, 1, "Check for one asset" );
+}
+
+##############################################################################
 # Test aliasing.
 ##############################################################################
 sub test_alias : Test(30) {

@@ -86,6 +86,12 @@ affecting SOAP performance, as well as document editing in general. [David]
 Added C<instance()> class method to Bric::Util::Language, so that non-OO
 functions can get access to the current language handle. [David]
 
+=item *
+
+Added C<output_channel_id> paramter to the C<list()> methods of Story and
+Media to enable querying for documents in output channels other than the
+primary output channel. Based on a patch from Clive Jones. [David]
+
 =back
 
 =head2 Bug Fixes
