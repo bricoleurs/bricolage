@@ -369,6 +369,11 @@ a primary output channel. [David]
 Deleted output channels no longer show up in the list of output channels to
 associate with a destination. Thanks to Alex Epshteyn for the spot! [David]
 
+=item *
+
+The installer now collects Apache configuration data from any C<Include>d
+files, as well. Thanks to Alex Wheeler for the spot! [David]
+
 =back
 
 =head1 VERSION 1.5.0

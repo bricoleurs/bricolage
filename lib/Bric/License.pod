@@ -158,6 +158,8 @@ Friends who have spotted bugs include:
 
 =item Alex Epshteyn
 
+=item Alex Wheeler
+
 =back
 
 Bricolage's translation team:
