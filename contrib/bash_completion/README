@@ -1,0 +1,30 @@
+The file 'bricolage' adds bash tab-completion to bric_soap.
+That means you can type (<TAB> means hit the tab key)
+
+  $ bric_soap w<TAB>
+
+and it will expand to
+
+  $ bric_soap workflow 
+
+and it makes suggestions, like
+
+  $ bric_soap workflow <TAB>
+  checkin    create     deploy     list_ids   publish
+  checkout   delete     export     move       update
+  $ bric_soap workflow 
+
+which are context sensitive
+
+  $ bric_soap category --search <TAB>
+  active=     directory=  name=       parent=     path=       site=       uri=
+
+To use it, either:
+1) source it directly (. bricolage)
+2) add it to /etc/bash_completion
+3) copy it to /etc/bash_completion.d/ ($BASH_COMPLETION_DIR)
+
+If you have ideas for improvement, send them either to
+the bricolage-devel mailing list or to
+
+Scott Lanning <lannings@who.int>

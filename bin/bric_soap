@@ -203,6 +203,10 @@ obvious:
 If you try to use an unqualified id parameter with a command that
 requires qualified ids you will receive an error message.
 
+=head1 BASH COMPLETION
+
+There is bash tab-completion for bric_soap. See F<contrib/bash_completion>.
+
 =head1 AUTHOR
 
 Sam Tregar <stregar@about-inc.com>

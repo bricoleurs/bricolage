@@ -1,0 +1,161 @@
+_bric_soap()
+{
+    local cur prev module i
+
+    COMPREPLY=()
+    cur=${COMP_WORDS[COMP_CWORD]}
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+    module=${COMP_WORDS[1]}
+
+    # Option completion
+    if [[ "$cur" == -* ]] && [[ "$cur" != *= ]]; then
+         # These options are relevant to any command, for the most part.
+         # I wanted to limit things further, for example --all should only
+         # be allowed for export and publish, but that requires the command
+         # to have already been put before the option, but a lot of times
+         # you put the option after the module, so that wouldn't work.
+         # So I just limited based on module (namely, workflow).
+         COMPREPLY=( $( compgen -W '--server= --username= --password= \
+             --timeout= --verbose= --help --man --continue-on-errors \
+             --save-cookie-file= --use-cookie-file= \
+             --with-related-stories --with-related-media --all \
+             --workflow= --search' -- $cur ) )
+
+         # Now add options for workflow module
+         if [[ "$module" == 'workflow' ]]; then
+             COMPREPLY=( ${COMPREPLY[@]} \
+                 $( compgen -W '--chunks= --published-only --publish-date= \
+                    --to-preview --desk=' -- $cur ) )
+         fi
+
+         # Append spaces to options that don't end with '='
+         for (( i=0; i < ${#COMPREPLY[@]}; i++ )); do
+             if [[ "${COMPREPLY[i]}" != *= ]]; then
+                 COMPREPLY[i]="${COMPREPLY[i]} "
+             fi
+         done
+
+         return 0
+    fi
+
+    # Module completion
+    if [ $COMP_CWORD = 1 ]; then
+        COMPREPLY=( $( compgen -W 'story media template element category media_type \
+            site keyword user desk workflow' -- $cur ) )
+
+        # Append a space to the modules
+        for (( i=0; i < ${#COMPREPLY[@]}; i++ )); do
+            COMPREPLY[i]="${COMPREPLY[i]} "
+        done
+
+        return 0
+    fi
+
+    # list_ids --search completion based on module
+    if [[ "$prev" == '--search' ]]; then
+        case $module in
+            story)
+                COMPREPLY=( $( compgen -W \
+                                  'title description slug category keyword \
+                                   simple primary_uri priority workflow \
+                                   no_workflow publish_status element \
+                                   publish_date_start publish_date_end \
+                                   cover_date_start first_publish_date_start \
+                                   first_publish_date_end cover_date_end \
+                                   expire_date_start expire_date_end site \
+                                   alias_id element_key_name unexpired \
+                                   data_text output_channel contrib_id \
+                                   subelement_key_name Order OrderDirection \
+                                   Limit Offset' -- $cur ) )
+                ;;
+            media)
+                COMPREPLY=( $( compgen -W 'title description file_name simple uri \
+                                     priority publish_status workflow element \
+                                     category publish_date_start \
+                                     publish_date_end first_publish_date_start \
+                                     first_publish_date_end cover_date_start \
+                                     cover_date_end expire_date_start \
+                                     expire_date_end site alias_id \
+                                     element_key_name unexpired data_text \
+                                     output_channel keyword contrib_id \
+                                     subelement_key_name Order OrderDirection \
+                                     Offset Limit' -- $cur ) )
+                ;;
+            template)
+                COMPREPLY=( $( compgen -W 'element file_name output_channel category \
+                                     workflow simple priority publish_status \
+                                     element deploy_date_start deploy_date_end \
+                                     expire_date_start expire_date_end site \
+                                     Order OrderDirection Offset Limit' -- $cur ) )
+                ;;
+            element)
+                COMPREPLY=( $( compgen -W 'name description output_channel type \
+                                         top_level active' -- $cur ) )
+                ;;
+            category)
+                COMPREPLY=( $( compgen -W 'name site directory path uri parent active' \
+                    -- $cur ) )
+                ;;
+            media_type)
+                COMPREPLY=( $( compgen -W 'name description ext active' -- $cur ) )
+                ;;
+            site)
+                COMPREPLY=( $( compgen -W 'name description domain_name active' -- $cur ) )
+                ;;
+            keyword)
+                COMPREPLY=( $( compgen -W 'name screen_name sort_name active' -- $cur ) )
+                ;;
+            user)
+                COMPREPLY=( $( compgen -W 'prefix lname fname mname suffix login active' \
+                    -- $cur ) )
+                ;;
+            desk)
+                COMPREPLY=( $( compgen -W 'name description publish active' -- $cur ) )
+                ;;
+            workflow)
+                COMPREPLY=( $( compgen -W 'name description site type desk active' \
+                    -- $cur ) )
+                ;;
+        esac
+
+        # Append '=' to all the search keywords
+        for (( i=0; i < ${#COMPREPLY[@]}; i++ )); do
+            COMPREPLY[i]=${COMPREPLY[i]}=
+        done
+
+        return 0
+    fi
+
+    # If command is already given,
+    # match a filename if it's create or update,
+    # otherwise we're done.
+    for (( i=0; i < ${#COMP_WORDS[@]}; i++ )); do
+        if [[ "${COMP_WORDS[i]}" == @(list_ids|export|delete|publish|deploy|checkin|checkout|move) ]]; then
+            return 0
+        else
+            if [[ "${COMP_WORDS[i]}" == @(create|update) ]]; then
+                COMPREPLY=( $( compgen -o default ) )
+                return 0
+            fi
+        fi
+    done
+
+    # Command completion
+
+    COMPREPLY=( $( compgen -W 'list_ids export create update delete' -- $cur ) )
+
+    # Add workflow commands
+    if [[ "$module" == 'workflow' ]]; then
+        COMPREPLY=( ${COMPREPLY[@]} $( compgen -W \
+            'publish deploy checkin checkout move' -- $cur ) )
+    fi
+
+    # Append a space to the commands
+    for (( i=0; i < ${#COMPREPLY[@]}; i++ )); do
+        COMPREPLY[i]="${COMPREPLY[i]} "
+    done
+
+    return 0
+}
+
+complete -F _bric_soap -o nospace bric_soap
