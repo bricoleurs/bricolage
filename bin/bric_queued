@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 =head1 NAME
 
@@ -10,20 +10,20 @@ bric_queued - Bricolage jobs queue daemon
 
 =head1 DISCRIPTION
 
-bric_queued is normally run as a daemon which will poll a Bricolage jobs
-queue and execute any jobs found there with a sched_time in the past, but
-which have not been executed.  Normally, (see C<-s>) all of the jobs found in
-a given poll are executed in order of schedule_time, with the Distribtion
-and Publish jobs being handled by seperate sub-processes, since
-distribution is normally an order of magnitude faster than publishing.
+F<bric_queued> is normally run as a daemon that polls a Bricolage jobs queue
+and executes any unexecuted jobs with a current or past scheduled time.
+Normally, (see C<-s>) all of the jobs found in a given poll are executed in
+order of their scheduled times, with the distribtion and publish jobs being
+handled by seperate sub-processes, since distribution is normally an order of
+magnitude faster than publishing.
 
-In cases where the program finds no jobs in the queue it will wait a
-specified amount of time (defaulting to 30 seconds) and then re-poll.
+In cases where the program finds no jobs in the queue it will wait a specified
+amount of time (defaulting to 30 seconds) and then re-poll.
 
 B<Note:>
 
-Unlike bric_dist_mon, this is a stand-alone program which does not make
-http requests to the running bricolage-apache-mod-perl server.
+Unlike bric_dist_mon, this is a stand-alone program that does makes no HTTP
+requests to the Bricolage Apache/mod_perl server.
 
 =head1 OPTIONS
 
@@ -46,9 +46,9 @@ Turn on verbose mode for debugging.
 
 =head2 -l <file> | --log <file>
 
-Specifies a file to send debugging information to.  There is no need to use
-this for normal operation since Bricolage stores this information in it's
-database in much greater detail.
+Specifies a file to which to send debugging information. There is no need to
+use this option for normal operation since Bricolage stores this information
+in its database in much greater detail.
 
 =head2 -h | --help
 
@@ -56,10 +56,10 @@ Print usage information and exit.
 
 =head1 DEPENDENCIES
 
-=head2 BRICOLAGE_ROOT
+=head2 C<$BRICOLAGE_ROOT>
 
-Set this as usual to indicate where on your system the Bricolage libraries are
-stored.
+Set this environment variable as usual to indicate where to find the Bricolage
+libraries.
 
 =head2 Perl Modules
 
@@ -80,7 +80,6 @@ stored.
 use warnings;
 use strict;
 use Getopt::Long;
-use Pod::Usage;
 use POSIX 'setsid';
 use File::Spec::Functions qw(catdir);
 
@@ -122,14 +121,8 @@ use Bric::Dist::Action::Email;
 use Bric::Dist::Action::DTDValidate;
 
 ##############################################################################
-
-=begin comment
-
-=head1 CONSTANTS 
-
+# Constants.
 ##############################################################################
-
-=cut
 
 use constant DELAY      => 30; # seconds to wait after finding an empty queue
 use constant JOB_PKG    => 'Bric::Util::Job';
@@ -137,12 +130,8 @@ use constant DIST_PKG   => JOB_PKG . '::Dist';
 use constant PUB_PKG    => JOB_PKG . '::Pub';
 
 ##############################################################################
-
-=head1 FIELDS
-
+# Global Variables.
 ##############################################################################
-
-=cut
 
 my $Pidfile = undef;            # pid of *daemonized* process
 my $DistPid = undef;            # pid of Dist child process
@@ -154,39 +143,31 @@ my $HelpMode = undef;
 my $CaughtSignal = 0;         # to be set by the signal handler
 
 ##############################################################################
-
-=head1 SUBROUTINES
-
-=head2 main
-
-This is executed by a command at the bottom just before the end of the
-code.
-
-=cut
-
+# The script.
 ##############################################################################
-
-sub main {
-    # parse the command line options (using Getopt)
-    Getopt::Long::Configure ("bundling");
-    GetOptions( 
-                "pid|p=s"     => \$Pidfile,
-                "delay|d=i"   => \$Delay,
-                "single|s=s"  => \$SingleJobMode,
-                "verbose|v" => \$Verbose,
-                "log|l=s"     => \$Logfile,
-                "help|h"    => \$HelpMode,
-               );
-    # do help if we got the help flag
-    pod2usage(1) if $HelpMode; # see Pod::Usage(8)
-    if ($SingleJobMode) {
-        run_single_job();
-    } else {
-        run_as_daemon();
-    }
+# Parse the command line options.
+Getopt::Long::Configure ("bundling");
+GetOptions(
+    "pid|p=s"   => \$Pidfile,
+    "delay|d=i" => \$Delay,
+    "single|s=s"=> \$SingleJobMode,
+    "verbose|v" => \$Verbose,
+    "log|l=s"   => \$Logfile,
+    "help|h"    => \$HelpMode,
+);
+# do help if we got the help flag
+require Pod::Usage && pod2usage(1) if $HelpMode; # see Pod::Usage(8)
+if ($SingleJobMode) {
+    run_single_job();
+} else {
+    run_as_daemon();
 }
 
 ##############################################################################
+
+=begin comment
+
+=head1 SUBROUTINES
 
 =head2 run_as_daemon
 
@@ -203,9 +184,9 @@ sub run_as_daemon {
     for (;;) {
         my ($job) = $pkg->list({
             sched_time => [undef, strfdate()],
-            comp_time => undef, 
-            failed => 0,
-            executing => 0,
+            comp_time  => undef,
+            failed     => 0,
+            executing  => 0,
         });
         if ($job) {
             print 'Executing ' . $job->get_name . "\n" if $Verbose;
@@ -219,7 +200,7 @@ sub run_as_daemon {
         }
         # If we are the parent (pub) process we should check to see that
         # the child (dist) process is still running so that the user only
-        # has one to worry about. 
+        # has one to worry about.
         if ($DistPid) {
             print "Checking on Dist process, $DistPid ...";
             if (kill 0 => $DistPid) {
@@ -244,7 +225,7 @@ This is our main loop for normal daemon mode
 
 ##############################################################################
 
-sub run_single_job{
+sub run_single_job {
     $Verbose = 1;  # as promised in OPTIONS
     # get the package name from the command line type
     my $pkg;
@@ -253,22 +234,22 @@ sub run_single_job{
     } elsif (lc $SingleJobMode eq 'pub') {
         $pkg = PUB_PKG;
     } else {
+        require Pod::Usage;
         pod2usage({
-                    -message => "Invalid argument to -s or --single.\n",
-                    -verbose => 1,
-                    -exitval => 1,
-                 });
+            -message => "Invalid argument to -s or --single.\n",
+            -verbose => 1,
+            -exitval => 1,
+        });
     }
     # get the list of jobs and run the first one
-    my ($job) = $pkg->list({ 
+    my ($job) = $pkg->list({
         sched_time => [undef, strfdate()],
-        comp_time => undef, 
-        failed => 0,
-        executing => 0,
+        comp_time  => undef,
+        failed     => 0,
+        executing  => 0,
     });
     exit unless $job;
     print 'Executing ' . $job->get_name . "\n" if $Verbose;
-    use Data::Dumper;
     eval { $job->execute_me } or print $@;
 }
 
@@ -281,7 +262,7 @@ worry about keeping the parent (pub) running.
 
 Returns a package name from which we will get jobs to run.
 
-=cut 
+=cut
 
 ##############################################################################
 
@@ -301,7 +282,7 @@ sub fork_to_dist {
 
 To be run after whatever job is in progress when we catch a SIGTERM.
 
-=cut 
+=cut
 
 ##############################################################################
 
@@ -309,7 +290,7 @@ sub terminate {
     print "Received TERM signal. Shutting down.";
     if ($DistPid) {  # we are the parent if this is non-zero
         kill 15 => $DistPid;
-        del_pid(); 
+        del_pid();
     }
     print " OK\n";
     exit;
@@ -328,7 +309,7 @@ with catching signals in pre 5.7.x, even though Bricolage requires 5.8 or
 better we can never be too careful.  Besides, we want to finish what we are
 doing before we acutally exit.
 
-=cut 
+=cut
 
 ##############################################################################
 
@@ -342,7 +323,7 @@ sub handle_term {
 
 open and write the pidfile if any then close it again right away
 
-=cut 
+=cut
 
 ##############################################################################
 
@@ -407,7 +388,7 @@ sub daemonize {
     defined (my $pid = fork) or die "Can't fork: $!";
     if ($pid) {
         # only the original process gets the PID of the new running daemon
-        write_pid($pid); 
+        write_pid($pid);
         exit;
     }
     setsid                   or die "Can't start a new session: $!";
@@ -416,27 +397,10 @@ sub daemonize {
 
 ##############################################################################
 
-main(@ARGV);
-
 __END__
 
 =end comment
 
-=head1 VITALS
-
-=head2 Version
-
-$LastChangedRevision$
-
-=head2 Date
-
-$LastChangedDate$
-
-=cut
-
 =head1 AUTHOR
 
 Mark Jaroski <jaroskim@who.int>
-
-=head1 SEE ALSO
-
