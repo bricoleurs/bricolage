@@ -6,11 +6,11 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-10-16 19:36:57 $
+$Date: 2003-11-06 21:57:42 $
 
 =head1 DESCRIPTION
 
@@ -48,6 +48,7 @@ $PG{sys_pass}  = 'NONE';
 $PG{db_name}   = 'bric';
 $PG{host_name} = '';
 $PG{host_port} = '';
+$PG{version} = '';
 
 our $REQ;
 do "./required.db" or die "Failed to read required.db : $!";
@@ -58,6 +59,7 @@ get_bin_dir();
 get_psql();
 get_users();
 get_host();
+get_version();
 
 # all done, dump out apache database, announce success and exit
 open(OUT, ">postgres.db") or die "Unable to open postgres.db : $!";
@@ -104,6 +106,16 @@ sub get_psql {
     hard_fail("Unable to locate psql executable.")
 	unless -e $psql and -x $psql;
     $PG{psql} = $psql;
+}
+
+sub get_version {
+    print "Finding PostgreSQL version.\n";
+    my $data = `$REQ->{PG_CONFIG} --version`;
+    hard_fail("Unable to extract needed data from $REQ->{PG_CONFIG}.")
+      unless $data;
+    chomp $data;
+    $data =~ s/\s*PostgreSQL\s+(\d\.\d(\.\d)?).*/$1/;
+    $PG{version} = $data;
 }
 
 # ask the user for user settings

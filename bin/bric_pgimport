@@ -336,13 +336,14 @@ sub grant_permissions {
 
     # Get a list of objects to grant permissions on.
     my $sql = qq{
-       SELECT relname
-       FROM   pg_class
-       WHERE  relkind IN ('r', 'S')
-               AND relowner IN (
-                   SELECT usesysid
-                   FROM   pg_user
-                   WHERE  LOWER(usename) = ?)
+        SELECT n.nspname || '.' || c.relname
+        FROM   pg_catalog.pg_class c
+               LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner
+               LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+        WHERE  c.relkind IN ('r', 'S')
+               AND u.usename = ?
+               AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
+               AND pg_catalog.pg_table_is_visible(c.oid)
     };
 
     my $objects;
