@@ -268,6 +268,7 @@ sub burn_one {
     $self->_push_element($element);
 
     while(1) {
+        use utf8;
 	$tt->process($template) or throw_burn_error
           error   => "Error executing '$template'",
           payload => $tt->error,
@@ -277,7 +278,6 @@ sub burn_one {
           elem    => $element->get_name;
 
 	my $page = $self->_get('page') + 1;
-
 
 	if($outbuf !~ /^\s*$/) {
 	    my $file = $self->page_filepath($page);
