@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 14:28:58 $
+$Date: 2003-03-15 18:19:54 $
 
 =head1 SYNOPSIS
 
@@ -1192,7 +1192,7 @@ $get_em = sub {
       'AND p.id = c.object_id AND m.id = c.member__id AND m.active = 1';
     my @params;
     while (my ($k, $v) = each %$params) {
-        if ($k eq 'id') {
+        if ($k eq 'id' or $k eq 'manual') {
             $wheres .= " AND p.$k = ?";
             push @params, $v;
         } elsif ($k eq 'val_name') {
@@ -1203,12 +1203,6 @@ $get_em = sub {
             $tables .= ", member m2, pref_member c2";
             $wheres .= " AND p.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.active = 1 AND m2.grp__id = ?";
-            push @params, $v;
-        } elsif ($k eq 'manual') {
-            # Needs special case in pre 7.3 because you cannot
-            # do LOWER on a numeric, aside from LIKE on int is 
-            # kind of wastefull
-            $wheres .= " AND p.manual = ?";
             push @params, $v;
         } else {
             $k = 'def' if $k eq 'default';
