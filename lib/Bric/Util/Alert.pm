@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-18 11:39:28 $
+$Date: 2004-02-18 12:56:51 $
 
 =head1 SYNOPSIS
 
@@ -1033,7 +1033,7 @@ B<Notes:> NONE.
 
 Returns the time the alert was created. This differs from the times the alert
 was actually sent to various users by various means. That time can be retreived
-from individual Bric::Util::Alerted objects. get_timestmp() will take as an
+from individual Bric::Util::Alerted objects. get_timestamp() will take as an
 argument a strftime format string and return the time in that format. If not
 provided, the format returned will default to the ISO 8601 timedate format, in
 the users local time zone.
@@ -1210,7 +1210,7 @@ $get_em = sub {
     while (my ($k, $v) = each %$params) {
         next if $k eq 'time_end';
         if ($k eq 'time_start') {
-            push @num_wheres, 'timetamp BETWEEN ? AND ?';
+            push @num_wheres, 'timestamp BETWEEN ? AND ?';
             push @params, @{$params}{qw(time_start time_end)};
         } elsif ($k eq 'subject' || $k eq 'message') {
             push @txt_wheres, "LOWER($k)";
