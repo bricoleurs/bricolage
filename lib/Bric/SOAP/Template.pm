@@ -42,15 +42,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-11 17:01:56 $
+$Date: 2004-03-11 17:07:30 $
 
 =head1 SYNOPSIS
 
@@ -614,11 +614,10 @@ sub load_asset {
 
         # get element and name for asset type if this is an element template.
         if ($tdata->{type} eq 'Element Template') {
-            my ($element) = Bric::Biz::AssetType->list(
-                          { name => $tdata->{element}[0] });
-            throw_ap(error => __PACKAGE__ . " : no element found matching " .
-                       "(element => \"$tdata->{element}[0]\")")
-              unless defined $element;
+            my $element = Bric::Biz::AssetType->lookup({
+                key_name => $tdata->{element}[0]
+            }) or throw_ap __PACKAGE__ . " : no element found matching " .
+              "(element => \"$tdata->{element}[0]\")";
             $init{element__id} = $element->get_id;
             $init{name}        = $element->get_name;
         } elsif ($tdata->{type} eq 'Utility Template') {
