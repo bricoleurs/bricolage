@@ -810,24 +810,21 @@ $super_save_data = sub {
         my ($name, $text) = @$d;
 
         my $t;
-        # If we have an existing object with this name, then use it
+        # If we have an existing object with this name, then use it.
         if ($tpool->{$name} and scalar(@{$tpool->{$name}})) {
             $t = shift @{$tpool->{$name}};
-        }
-        # If there is no object then create one
-        else {
+        } else {
+            # If there is no object then create one
             my ($atc, $atd);
             if ($atd = $at->get_data($name)) {
                 $t = Bric::Biz::Asset::Business::Parts::Tile::Data->new
                   ({ 'element_data' => $atd,
                      'object_type'  => 'story' });
-        } else {
+            } else {
                 $atc = $at->get_containers($name);
-
-                $t = Bric::Biz::Asset::Business::Parts::Tile::Container->new({
-                    'element'     => $atc,
-                    'object_type' => 'story'
-                });
+                $t = Bric::Biz::Asset::Business::Parts::Tile::Container->new
+                  ({ element     => $atc,
+                     object_type => 'story' });
             }
 
             # Add this new tile.
@@ -836,7 +833,6 @@ $super_save_data = sub {
 
         # Don't update the contents of containers, just data the elements
         $t->set_data($text) unless $t->is_container;
-
         push @$dtiles, $t;
     }
 
@@ -1008,8 +1004,8 @@ $split_super_bulk = sub {
 
             # If we have any accumulated text or if we have more than two
             # blank lines in a row, then save it off
-            if ($acc or ($blanks > 1)) {
-                $type = $def_field if not $type;
+            if ($acc or $blanks > 1) {
+                $type ||= $def_field or next;
                 push @chunks, [$type, $acc];
                 $acc  = '';
                 $type = '';
