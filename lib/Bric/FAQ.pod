@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =head1 DATE
 
-$Date: 2004-03-25 05:14:44 $
+$Date: 2004-03-26 03:27:49 $
 
 =head1 DESCRIPTION
 
@@ -473,6 +473,11 @@ add this to your F<httpd.conf> and restart:
   AddDefaultCharset utf-8
 
 Consult the documentation for your Web server for more information.
+
+=head3 The Bricolage SOAP server segfaults when I try to use it. What gives?
+
+Apache inadvertantly compiled the wrong expat XML parser into itself. Rebuild
+Apache, this time using the C<--disable-rule=EXPAT> option.
 
 =head2 Element Administration
 
