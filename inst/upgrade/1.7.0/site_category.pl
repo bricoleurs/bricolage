@@ -40,10 +40,24 @@ do_sql
   q/UPDATE category SET uri = '' WHERE id = 0/,
 
   # The category entry
-  q!INSERT INTO category (id,site__id,directory, uri, parent_id,
+  q{INSERT INTO category (id,site__id,directory, uri, parent_id,
                           name, description, asset_grp_id)
     VALUES (1, 100,'', '/', 0,
-            'Default Root Category', 'Default Root Category', 68)!,
+            'Default Site Root Category', 'Default Site root category', 68)},
+
+  # Update its name and description.
+  q{UPDATE category set name = (SELECT name FROM category WHERE id = 0)
+    WHERE  id = 1},
+
+  q{UPDATE category set description = (SELECT description FROM category WHERE id = 0)
+    WHERE  id = 1},
+
+  # Rename the master root catgory.
+  q/UPDATE category
+    SET    name = 'Master Root Category',
+           description = 'Master Root Category'
+    WHERE  id = 0/,
+
 
   # Put it into the All Categories group.
   q/INSERT INTO member (id, grp__id, class__id, active)
@@ -60,6 +74,7 @@ do_sql
   q/UPDATE media_instance  SET category__id = 1 WHERE category__id = 0/,
   q/UPDATE story__category SET category__id = 1 WHERE category__id = 0/,
   q/UPDATE formatting      SET category__id = 1 WHERE category__id = 0/,
+  q/UPDATE category_member SET object_id = 1 WHERE object_id = 0 AND id <> 1/,
   ;
 
 __END__

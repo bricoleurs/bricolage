@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:00 $
+$Date: 2003-03-12 19:27:30 $
 
 =head1 SYNOPSIS
 
@@ -629,6 +629,8 @@ B<Notes:> NONE.
 
 sub list_ids { _do_list(@_, 1) }
 
+##############################################################################
+
 =item $cat = Bric::Biz::Category->site_root_category($site || $site_id)
 
 =item $cat_id = Bric::Biz::Category->site_root_category_id($site || $site_id)
@@ -645,7 +647,13 @@ Returns the category or category ID of the root category for this site.
 
 B<Throws:>
 
-'Could not determine the site ID for the current site'
+=over 4
+
+=item *
+
+Could not determine the site ID for the current site.
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -693,10 +701,12 @@ sub create_new_root_category {
     my $name = $site->get_name;
 
     $cat->_set([qw(site_id directory uri parent_id name description)],
-               [$site->get_id, '', '/', 0, "Root Category for site '$name'",
-                "The root category to be used for site '$name'"]);
+               [$site->get_id, '', '/', 0, "$name Root Category",
+                "$name root category"]);
     $cat->save;
 }
+
+##############################################################################
 
 =back
 
