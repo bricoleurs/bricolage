@@ -312,7 +312,7 @@ upgrading. [David]
 
 =back
 
-=head1 VERSION 1.6.7 (Forthcoming)
+=head1 VERSION 1.6.7 (2003-10-22)
 
 =head2 Bug Fixes
 
