@@ -22,7 +22,7 @@ sub save : Callback {
     my $param = $self->params;
     my $mt = $self->obj;
 
-    my $name = $param->{name};
+    my $name = lc $param->{name};
 
     # If 'delete' box is checked, deactivate the Media Type;
     # otherwise, save the profile.
@@ -43,6 +43,10 @@ sub save : Callback {
         unless (defined $name && $name =~ /\S/) {
             # Should $meths->{name}{req} == 1 in Bric::Util::MediaType ?
             add_msg('Name is required.');
+            $used = 1;
+        } elsif ($name !~ m|^\S+/\S+$|) {
+            add_msg(qq{Name "[_1]" is not a valid media name. The name must }
+                      . 'be of the form "type/subtype".', $name);
             $used = 1;
         } else {
             my @mts = ($class->list_ids({ name => $name }),
@@ -130,6 +134,5 @@ sub save : Callback {
         }
     }
 }
-
 
 1;

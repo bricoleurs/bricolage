@@ -731,7 +731,7 @@ To Translate:
   'You do not have permission to publish media "[_1]"' => 'You do not have permission to publish media "[_1]"',
   'You do not have permission to auto-publish story "[_1]"' => 'You do not have permission to auto-publish story "[_1]"',
   'You do not have permission to auto-publish media "[_1]"' => 'You do not have permission to auto-publish media "[_1]"',
-
+  'Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".' => 'Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".',
 
 =end comment
 

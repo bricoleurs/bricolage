@@ -52,6 +52,11 @@ Emails sent by Bricolage now set the send date, since our understanding is
 that the MUA is responsible for setting the date and some SPAM filters trigger
 on missing Date: headers. [Cameron Miller]
 
+=item *
+
+The media type manager now validates media type names to ensure that they are
+of the form "type/subtype" with no spaces. Suggested by Marshall Roch. [David]
+
 =back
 
 =head2 Bug Fixes
