@@ -52,7 +52,7 @@ if ($field eq 'preview') {
 
         # Get all the related media to be previewed as well
         foreach my $r ($s->get_related_objects) {
-            next if (ref $r eq 'Bric::Biz::Asset::Business::Story');
+            next if ref $r eq 'Bric::Biz::Asset::Business::Story';
 
             # Make sure this media object isn't checked out.
             if ($r->get_checked_out) {
@@ -61,6 +61,13 @@ if ($field eq 'preview') {
                                         '&quot;'.$r->get_title.'&quot;'));
                 next;
             }
+
+            unless ($r->get_path && $r->get_uri) {
+                $send_msg->('No file associated with media "' . $r->get_title
+                            . '". Skipping.');
+                next;
+            }
+
             $b->preview($r, 'media', get_user_id(), $m, $oc_id);
         }
         # Move out the story and then redirect to preview.
