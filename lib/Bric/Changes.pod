@@ -113,6 +113,12 @@ The Add More widget no longer throws an exception when "Add More" is clicked
 and only one field currently exists. This had affected Keywords entry in
 stories. Thanks to Sam for the spot. [David]
 
+=item *
+
+Fixed bug where a user could create two assets with the same URI as long as
+they were both checked out by that user. Thanks to Shannon Brown for the spot!
+[David]
+
 =back
 
 =head1 VERSION 1.4.5

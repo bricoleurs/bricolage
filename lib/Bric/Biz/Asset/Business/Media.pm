@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.21.2.9 $
+$Revision: 1.21.2.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21.2.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-12 16:19:38 $
+$Date: 2002-12-17 05:46:13 $
 
 =head1 SYNOPSIS
 
@@ -1063,29 +1063,37 @@ B<Notes:> NONE.
 
 ################################################################################
 
-=item $media_name = $media->check_uri()
+=item $media_name = $media->check_uri
+
+=item $media_name = $media->check_uri($uid)
 
 Returns name of media with conflicting URI, if any.
 
 =cut
 
 sub check_uri {
-    my $self = shift;
+    my ($self, $uid) = @_;
     my $media_cat = $self->get_category__id();
-    die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the category__id of this media' }) if ( not defined $media_cat);
+    die Bric::Util::Fault::Exception::GEN->new
+      ({ msg => 'Was not able to retrieve the category__id of this media' })
+      unless defined $media_cat;
 
     # get media in the same category
-    my %parm;
-    $parm{'category_id'} = $media_cat;
-    $parm{'active'} = '1';
-    my @medias = Bric::Biz::Asset::Business::Media->list(\%parm);
-    foreach my $med (@medias) {
-        # skip if current media
-        next if ($med->get_id == $self->get_id);
+    my $params = { category_id => $media_cat,
+                   active      => 1 };
 
-        if ($med->get_uri() eq $self->get_uri()) {
-            return $med->get_name();
-        }
+    my $medias = __PACKAGE__->list($params);
+    if (defined $uid) {
+        $params->{user__id} = $uid;
+        push @$medias, __PACKAGE__->list($params);
+    }
+
+    my ($id, $uri) = $self->_get(qw(id uri));
+
+    foreach my $med (@$medias) {
+        # skip if current media
+        next if $med->get_id == $id;
+        return $med->get_name if $med->get_uri eq $uri;
     }
     return 0;
 }

@@ -114,7 +114,7 @@ my $handle_save = sub {
     $media ||= get_state_data($widget, 'media');
     chk_authz($media, EDIT);
 
-    if (my $msg = $media->check_uri) {
+    if (my $msg = $media->check_uri(get_user_id)) {
         add_msg("The URI of this media conflicts with that of '$msg'. " .
                 "Please change the category, cover date, or file name.");
         return;
@@ -160,9 +160,7 @@ my $handle_checkin = sub {
     my ($widget, $field, $param, $WORK_ID, $media) = @_;
     $media ||= get_state_data($widget, 'media');
 
-    my $msg = $media->check_uri();
-
-    if ($msg) {
+    if (my $msg = $media->check_uri(get_user_id)) {
         add_msg("The URI of this media conflicts with that of '$msg'. " .
                 "Please change the category, cover date, or file name.");
         return;
@@ -308,7 +306,7 @@ my $handle_save_stay = sub {
     $media->activate();
     $media->save();
 
-    if (my $msg = $media->check_uri) {
+    if (my $msg = $media->check_uri(get_user_id)) {
         add_msg("The URI of this media conflicts with that of '$msg'. " .
                 "Please change the category, cover date, or file name.");
         return;

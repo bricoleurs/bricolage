@@ -31,6 +31,7 @@ my $save_data = sub {
 
     # Make sure the story is active.
     $story->activate;
+    my $uid = get_user_id;
 
     if (($story->get_slug() || '') ne ($param->{'slug'} || '')) {
         my $old_slug = $story->get_slug();
@@ -40,7 +41,7 @@ my $save_data = sub {
             $data_errors = 1;
         } else {
             $story->set_slug($param->{slug});
-            my $msg = $story->check_uri;
+            my $msg = $story->check_uri($uid);
             if ($msg) {
                 if ($old_slug) {
                     add_msg("The slug has been reverted to '$old_slug', as " .
@@ -70,7 +71,7 @@ my $save_data = sub {
         my $old_date = $story->get_cover_date(ISO_8601_FORMAT);
         my $fold_date = $story->get_cover_date;
         $story->set_cover_date($param->{cover_date});
-        my $msg = $story->check_uri;
+        my $msg = $story->check_uri($uid);
         if ($msg) {
             if ($old_date) {
                 add_msg("The cover date has been reverted to $fold_date, " .
@@ -601,7 +602,7 @@ my $handle_add_category = sub {
     my $cat_id = $param->{"$widget|new_category_id"};
     if (defined $cat_id) {
         $story->add_categories([ $cat_id ]);
-        my $msg = $story->check_uri();
+        my $msg = $story->check_uri(get_user_id);
         if ($msg) {
             $story->delete_categories([ $cat_id ]);
             add_msg("The category was not added, as it would have caused a " .
