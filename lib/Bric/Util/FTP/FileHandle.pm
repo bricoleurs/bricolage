@@ -256,8 +256,34 @@ sub status {
     }
     return ( 'f', $mode, 1, "nobody", "ci", $size,  $date);
   }
+}
 
+=item move()
 
+Deploys the template if the new name is the same as the template name followed by
+'.deploy'. Otherwise it's a no-op.
+
+=cut
+sub move {
+  my $self = shift;
+  my $dirh = shift;
+  my $filename  = shift;
+  my $template = $self->{template};
+  return 0 unless $filename =~ /\.deploy$/;
+  print STDERR __PACKAGE__, "\n\n::move(", $template->get_file_name,
+    ",$filename)\n"
+    if FTP_DEBUG;
+
+    $self->{deploy} = 1;
+    # create a tied scalar and return an IO::Scalar attached to it
+    my $data;
+    tie $data, 'Bric::Util::FTP::FileHandle::SCALAR',
+	$template, $self->{ftps}{user_obj}, @{$self}{qw(ftps deploy)};
+
+    $data = $template->get_data;
+#    my $handle = new IO::Scalar \$data;
+#    print $handle $template->get_data;
+    return 1;
 }
 
 =item delete()
@@ -319,7 +345,7 @@ template - if it's checked in and the user has permission.
 
 # fixed properties
 sub can_read   {  1; }
-sub can_rename {  0; }
+sub can_rename {  1; }
 sub can_delete {  1; }
 
 # check to see if template is checked out

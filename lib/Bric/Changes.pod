@@ -87,6 +87,13 @@ The SOAP interface for importing and exporting elements now properlly has
 backwards compatable with XML exported from Bricolage 1.8.0 servers, however.
 Reported by Tony Cowderoy. [David]
 
+=item *
+
+Added C<move()> method to the virtual FTP interface. This means that to deploy
+a template, rather than having to rename it locally to append ".deploy", one
+can simply move in FTP to its new name with ".deploy" on appended to the new
+name. [JoE<atilde>o Pedro]
+
 =back
 
 =head2 Bug Fixes

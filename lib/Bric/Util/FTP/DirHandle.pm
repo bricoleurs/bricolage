@@ -272,7 +272,7 @@ sub open {
   # Remove the dot.
   $file_type =~ s/^\.//;
 
-  # don't look for an asset for generic templates
+  # don't look for an asset for category templates
   my $at;
   unless ( Bric::Util::Burner->class_for_cat_fn($name)) {
       # It's not a category template. Look for an element to associate it with.

@@ -95,7 +95,8 @@ sub pre_configuration_hook {
   my $self = shift;
 
   # add to version info
-  $self->{version_string} .= " Bric::Util::FTP::Server/$VERSION";
+  $self->{version_string} .= " Bric::Util::FTP::Server/"
+    . __PACKAGE__->VERSION;
 
   print STDERR "Bricolage FTP Server Started\n" if FTP_DEBUG;
 }
