@@ -40,15 +40,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-15 13:54:45 $
 
 =head1 SYNOPSIS
 
@@ -185,7 +185,7 @@ sub parse_asset_document {
                 );
 }
 
-=item @related = seralize_elements(writer => $writer, object => $story, args => $args)
+=item @related = serialize_elements(writer => $writer, object => $story, args => $args)
 
 Creates the <elements> structure for a Story or Media object given the
 object and the args to export().  Returns a list of two-element arrays -
