@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-10 19:42:16 $
+$Date: 2003-03-10 21:03:08 $
 
 =head1 SYNOPSIS
 
@@ -204,12 +204,13 @@ use constant PARAM_WHERE_MAP =>
       location            => 'LOWER(i.location) LIKE LOWER(?)',
       _checked_out        => 'i.checked_out = ?',
       primary_oc_id       => 'i.primary_oc__id = ?',
+      category__id        => 'i.category__id = ?',
       category_id         => 'i.category__id = ?',
       category_uri        => 'i.category__id in (SELECT id FROM category WHERE LOWER(uri) LIKE LOWER(?))',
       keyword             => 'mk.media_id = mt.id AND k.id = mk.keyword_id AND LOWER(k.name) LIKE LOWER(?)',
       _no_return_versions => 'mt.current_version = i.version',
       grp_id              => 'mt.id IN ( SELECT DISTINCT mm.object_id FROM media_member mm, member m WHERE m.grp__id = ? AND mm.member__id = m.id )',
-      simple              => '(LOWER(k.name) LIKE LOWER(?) OR LOWER(i.name) LIKE LOWER(?) OR LOWER(i.description) LIKE LOWER(?)',
+      simple              => '(LOWER(k.name) LIKE LOWER(?) OR LOWER(i.name) LIKE LOWER(?) OR LOWER(i.description) LIKE LOWER(?) )',
     };
 
 use constant PARAM_ORDER_MAP => 
@@ -229,6 +230,8 @@ use constant PARAM_ORDER_MAP =>
       name                => 'name',
       file_name           => 'file_name',
       location            => 'location',
+      category_id         => 'category__id',
+      category__id        => 'category__id',
       title               => 'name',
       description         => 'description',
       version             => 'version',
@@ -236,7 +239,7 @@ use constant PARAM_ORDER_MAP =>
       user__id            => 'usr__id',
       _checked_out        => 'checked_out',
       primary_oc_id       => 'primary_oc__id',
-      category_id         => 'category_id',
+      category__id        => 'category__id',
       category_uri        => 'uri',
       keyword             => 'name',
       return_versions     => 'version',
@@ -1238,7 +1241,7 @@ sub check_uri {
     my $id = $self->_get('id') || 0;
 
     # Get the category.
-    my $media_cat = $self->get_category__id or die $gen->new
+    my $media_cat = defined $self->get_category__id or die $gen->new
       ({ msg => 'Unable to retrieve category__id of this media' });
 
     # Get the current media's output channels.
@@ -1248,7 +1251,7 @@ sub check_uri {
       if !$ocs[0];
 
     # Get all media in the same category.
-    my $params = { category_id => $media_cat,
+    my $params = { category__id => $media_cat,
                    active      => 1 };
 
     my $medias = $self->list($params);
