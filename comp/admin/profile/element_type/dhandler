@@ -1,4 +1,4 @@
-s%#-- Begin HTML --#
+%#-- Begin HTML --#
 <& '/widgets/wrappers/sharky/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
@@ -114,11 +114,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2003-10-28 00:53:14 $
+$Date: 2003-10-28 02:00:35 $
 
 =head1 DESCRIPTION
 
