@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.7.5 "Ashland" (2004-04-10)
+=head1 VERSION 1.7.5 "Ashland" (2004-04-11)
 
 =head2 New Features
 
@@ -1672,7 +1672,7 @@ upgrading. [David]
 
 =back
 
-=head1 VERSION 1.6.13 ()
+=head1 VERSION 1.6.13 "Tripled" (2004-04-10)
 
 =head2 Bug Fixes
 
