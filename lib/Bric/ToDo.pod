@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.64 $
+$Revision: 1.65 $
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:22 $
+$Date: 2002-07-06 00:25:49 $
 
 =head1 DESCRIPTION
 
@@ -91,10 +91,6 @@ interface to select from existing keywords for associating with assets.
 
 =item *
 
-Add regression test suite.
-
-=item *
-
 Write distribution documentation.
 
 =item *
@@ -149,6 +145,17 @@ about their setup.
 
 Add "make uninstall" support to installation system.
 
+=item *
+
+Add search by category and search by story/media type to the Find Stories and
+Find Media interfaces. This feature would be in the Advanced search interface,
+but for those who want to have it present all the time, see the next item.
+
+=item *
+
+Add preference to make advanced search in Find Stories and/or Find Media the
+default search form when you go to those screens.
+
 =back
 
 =cut
@@ -161,7 +168,17 @@ Add "make uninstall" support to installation system.
 
 =item *
 
-Add scheduled Burning/Syndication.
+Add regression test suite.
+
+=item *
+
+Add browser-based UI for scheduled burning/syndication.
+
+=item *
+
+Add browser-based UI for mass publication and distribution. This will
+primarily be useful for template redesigns that need to be applied to a large
+set of pages or a whole site.
 
 =item *
 
