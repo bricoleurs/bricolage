@@ -373,19 +373,6 @@ For a large database on a system with lots of memory, you can assign more. A
 value of 75000 should be more than enough for expected activity in a 1 GB
 database.
 
-=head2 Genetic Query Optimizer
-
-When planning a query with multiple joins, the PostgreSQL query optimizer
-tests every order for joins to determine the cheapest order. That can cause
-problems if there are too many tables to be joined; in such cases, the
-optimizer uses random selection to guess the optimal join order. However, with
-newer, faster processors, the default setting of 11 for C<geqo_threshold>,
-which determines the number of tables that can be in a query before the
-optimizer switches to sampling, is too low. In such cases, it can generally be
-set up to 20 or 25:
-
-  geqo_threshold = 20
-
 =head2 Where to Learn More
 
 See Josh Berkus' article, "Tuning PostgreSQL for performance" at
