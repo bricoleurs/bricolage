@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.58.4.4 $
+$Revision: 1.58.4.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58.4.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.58.4.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-10 19:24:20 $
+$Date: 2003-06-09 19:54:53 $
 
 =head1 SYNOPSIS
 
@@ -188,7 +188,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     qa        => [qw(QA_MODE 
                                      TEMPLATE_QA_MODE)],
                     err       => [qw(ERROR_URI)],
-                    char      => [qw(CHAR_SET)],
+                    char      => [qw(CHAR_SET LANGUAGE)],
                     ui        => [qw(FIELD_INDENT
                                      DISABLE_NAV_LAYER
                                      ALLOW_WORKFLOW_TRANSFER

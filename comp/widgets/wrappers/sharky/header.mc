@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.35.2.2 $
+$Revision: 1.35.2.3 $
 
 =head1 DATE
 
-$Date: 2003-06-06 16:44:26 $
+$Date: 2003-06-09 19:54:51 $
 
 =head1 SYNOPSIS
 
@@ -32,12 +32,6 @@ $no_hist => 0
 $debug => undef
 </%args>
 <%init>;
-# Prevent IE et al. from caching pages.
-$r->no_cache(1);
-# Set up the language and character set headers.
-$r->content_languages([Bric::Config::LANGUAGE]);
-$r->content_type('text/html; charset=' . lc Bric::Config::CHAR_SET);
-
 my @context =  split /\|/, $context;
 for (@context){
     s/^\s|\s$//g;

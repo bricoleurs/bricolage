@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.34.2.1 $
+$Revision: 1.34.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.34.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-08 08:33:54 $
+$Date: 2003-06-09 19:54:52 $
 
 =head1 SYNOPSIS
 
@@ -236,6 +236,12 @@ sub handler {
     # Handle the request.
     my $status;
     eval {
+        # Prevent browsers from caching pages.
+        $r->no_cache(1);
+        # Set up the language and content type headers.
+        $r->content_languages([LANGUAGE]);
+        $r->content_type('text/html; charset=' . lc CHAR_SET);
+
 	# Start the database transactions.
 	begin(1);
 	# Handle the request.
