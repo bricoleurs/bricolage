@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.125 $
+$Revision: 1.126 $
 
 =head1 DATE
 
-$Date: 2003-10-24 15:37:04 $
+$Date: 2003-10-27 17:51:57 $
 
 =head1 DESCRIPTION
 
@@ -176,7 +176,7 @@ START MODULE LIST
 
 =item MasonX::Interp::WithCallbacks 1.10
 
-=item Template
+=item Template 2.09
 
 =item Encode (optional)
 
