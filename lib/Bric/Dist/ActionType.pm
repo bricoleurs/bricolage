@@ -6,16 +6,16 @@ Bric::Dist::ActionType - Interface to types of actions supported by Bricolage di
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-08-30 22:13:39 $
 
 =head1 SYNOPSIS
 
@@ -257,7 +257,7 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
-=over
+=over 4
 
 =item my (@at_ids || $at_ids_aref) = Bric::Dist::ActionType->list_ids($params)
 
@@ -267,7 +267,7 @@ same as those for list().
 
 B<Throws:>
 
-over 4
+=over 4
 
 =item *
 

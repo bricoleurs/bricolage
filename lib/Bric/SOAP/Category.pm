@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-17 18:56:08 $
+$Date: 2002-08-30 22:13:40 $
 
 =head1 SYNOPSIS
 
@@ -415,8 +415,6 @@ Side Effects: NONE
 
 Notes: NONE
 
-=back 4
-
 =cut
 
 # hash of allowed parameters
@@ -476,8 +474,7 @@ sub delete {
 }
 }
 
-
-=back
+=back 4
 
 =head2 Private Class Methods
 

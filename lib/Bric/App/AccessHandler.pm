@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-18 23:43:19 $
+$Date: 2002-08-30 22:13:38 $
 
 =head1 SYNOPSIS
 
@@ -323,8 +323,6 @@ NONE.
 
 1;
 __END__
-
-=back
 
 =head1 NOTES
 

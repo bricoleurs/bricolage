@@ -38,15 +38,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-29 20:49:51 $
+$Date: 2002-08-30 22:13:41 $
 
 =head1 SYNOPSIS
 
@@ -486,8 +486,6 @@ Side Effects: NONE
 
 Notes: NONE
 
-=back 4
-
 =cut
 
 # hash of allowed parameters
@@ -555,7 +553,7 @@ sub delete {
 }
 }
 
-=back
+=back 4
 
 =head2 Private Class Methods
 

@@ -7,11 +7,11 @@ assets
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:23:18 $
+$Date: 2002-08-30 22:13:38 $
 
 =head1 BACKGROUND
 
@@ -233,5 +233,3 @@ The revert will overwrite all the data in the current version and
 replace it with the previous version's data.   It will keep the same version ID,
 and any versions that existed in between the reverted versions will still be 
 available.
-
-=back

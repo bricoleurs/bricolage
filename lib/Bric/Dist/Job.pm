@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-03 16:05:18 $
+$Date: 2002-08-30 22:13:40 $
 
 =head1 SYNOPSIS
 
@@ -724,6 +724,8 @@ Returns the name of the Bric::Dist::Job object.
 
 B<Throws:>
 
+=over 4
+
 =item *
 
 Bad AUTOLOAD method format.
@@ -766,6 +768,7 @@ Returns the user_id of the Bric::Dist::Job object.
 
 B<Throws:>
 
+=over 4
 
 =item *
 
@@ -1796,6 +1799,8 @@ details.
 
 B<Throws:>
 
+=over 4
+
 =item *
 
 Bric::_get() - Problems retrieving fields.
@@ -1857,6 +1862,8 @@ Sets the pending column in the database, as well as the pending property in the
 job object. Used by execute().
 
 B<Throws:>
+
+=over 4
 
 =item *
 

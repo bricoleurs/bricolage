@@ -6,16 +6,16 @@ Bric::App::CleanupHandler - Cleans up at the end of a request.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-21 20:48:24 $
+$Date: 2002-08-30 22:13:38 $
 
 =head1 SYNOPSIS
 
@@ -167,8 +167,6 @@ NONE.
 
 1;
 __END__
-
-=back
 
 =head1 NOTES
 

@@ -6,16 +6,16 @@ Bric::Util::Trans::SFTP - SFTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-03 21:57:40 $
+$Date: 2002-08-30 22:13:43 $
 
 =head1 SYNOPSIS
 
@@ -84,8 +84,6 @@ BEGIN { Bric::register_fields() }
 =head2 Constructors
 
 NONE.
-
-=back 4
 
 =head2 Destructors
 

@@ -6,16 +6,16 @@ Bric::Util::EventType - Interface to Types of Events
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-08-30 22:13:41 $
 
 =head1 SYNOPSIS
 
@@ -802,8 +802,6 @@ Unable to bind to columns to statement handle.
 
 Unable to fetch row from statement handle.
 
-=back
-
 =item *
 
 Incorrect number of args to _set.
@@ -849,12 +847,13 @@ sub is_active { $_[0]->_get('_active') ? $_[0] : undef }
 
 =item my $event =  $et->log_event($user, $obj, $ettr)
 
-A shortcut to Bric::Util::Event->new(). Pass in a Bric::Biz::Person::User object and
-an object of the type defined by get_class(), along with any attribute/value
-pairs, and a new event of this type will be logged for the object passed. Note
-that not all attributes need to be explicitly passed in order to log a new
-event. Any that can be called via a get_ accessor on $obj, where the method
-combines 'get_' with an attribute's name, will automatically call that accessor.
+A shortcut to C<< Bric::Util::Event->new >>. Pass in a Bric::Biz::Person::User
+object and an object of the type defined by get_class(), along with any
+attribute/value pairs, and a new event of this type will be logged for the
+object passed. Note that not all attributes need to be explicitly passed in
+order to log a new event. Any that can be called via a get_ accessor on $obj,
+where the method combines 'get_' with an attribute's name, will automatically
+call that accessor.
 
 See Bric::Util::Event for more information and for details on how it expects
 arugments to be passed.

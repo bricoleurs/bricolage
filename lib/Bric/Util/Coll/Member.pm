@@ -8,15 +8,15 @@ members
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-27 17:22:43 $
+$Date: 2002-08-30 22:13:42 $
 
 =head1 SYNOPSIS
 
@@ -121,6 +121,8 @@ sub class_name { 'Bric::Util::Grp::Parts::Member' }
 =back
 
 =head2 Public Instance Methods
+
+=over 4
 
 =item $self = $coll->save
 

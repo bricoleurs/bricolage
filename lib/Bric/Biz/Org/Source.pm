@@ -6,16 +6,16 @@ Bric::Biz::Org::Source - Manages content sources.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:45 $
+$Date: 2002-08-30 22:13:39 $
 
 =head1 SYNOPSIS
 
@@ -368,13 +368,13 @@ sub DESTROY {}
 
 =item my (@src_ids || $src_ids_aref) = Bric::Biz::Org::Source->list_ids($params)
 
-Returns a list or anonymous array of Bric::Biz::Org::Source object IDs based on the
-search criteria passed via an anonymous hash. The supported lookup keys are the
-same as those for list().
+Returns a list or anonymous array of Bric::Biz::Org::Source object IDs based
+on the search criteria passed via an anonymous hash. The supported lookup keys
+are the same as those for C<list()>.
 
 B<Throws:>
 
-over 4
+=over 4
 
 =item *
 

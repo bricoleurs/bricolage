@@ -7,15 +7,15 @@ Bric::Util::Coll::Rule - Interface for managing collections of alert type rules.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-08-30 22:13:43 $
 
 =head1 SYNOPSIS
 
@@ -121,6 +121,8 @@ sub class_name { 'Bric::Util::AlertType::Parts::Rule' }
 =back
 
 =head2 Public Instance Methods
+
+=over 4
 
 =item $self = $coll->save
 

@@ -6,16 +6,16 @@ Bric::App::ReqCache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-08-30 22:13:38 $
 
 =head1 SYNOPSIS
 
@@ -189,6 +189,8 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
+=over 4
+
 =item Bric::App::ReqCache->list_ids()
 
 Not implemented - not needed.
@@ -310,8 +312,6 @@ NONE.
 1;
 __END__
 
-=back
-
 =head1 NOTES
 
 NONE.
@@ -322,9 +322,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::App::Cache|Bric::App::Cache>, 
-L<Bric::App::Session|Bric::App::Session>, 
+L<Bric|Bric>,
+L<Bric::App::Cache|Bric::App::Cache>,
+L<Bric::App::Session|Bric::App::Session>,
 L<Apache::Session|Apache::Session>
 
 =cut
