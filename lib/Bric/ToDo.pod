@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.26 $
+$Revision: 1.13.2.27 $
 
 =head1 DATE
 
-$Date: 2001-11-29 00:38:04 $
+$Date: 2001-11-29 19:12:30 $
 
 =head1 DESCRIPTION
 
@@ -96,7 +96,7 @@ Add ability to change the category association in Templates [David].
 
 =head2 VERSION 1.2.0
 
-Estimated ship date: 8 December 2001.
+Estimated ship date: 28 December 2001.
 
 =over 4
 
@@ -115,22 +115,6 @@ list of all categories. [David]
 
 Allow only one template with a given name for a given category and output
 channel. [Sam]
-
-=item *
-
-Add Context-sensitive, online help. Note that this has been done, but all of the
-help files should be proof-read for accuracy and they still need some style
-applied to them. [Sam]
-
-=item *
-
-Add separate interface for editing templates (via FTP). Note that this is done,
-but needs testing. [Sam]
-
-=item *
-
-Add the ability to use HTML::Template Templates without breaking the use of
-Mason. Note that this is done, but needs testing. [Sam]
 
 =item *
 
@@ -269,6 +253,12 @@ for every request.
 =item *
 
 Add interface for editing Contact Types.
+
+=item *
+
+Add a preference to name the Bricolage instance. This name could be used in
+window titles as well as in the "Welcome to Bricolage" message on the login
+page.
 
 =item *
 
