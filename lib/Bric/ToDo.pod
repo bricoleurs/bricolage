@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.60 $
+$Revision: 1.61 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:23:18 $
+$Date: 2002-05-23 21:46:26 $
 
 =head1 DESCRIPTION
 
@@ -111,10 +111,6 @@ to the fields of the related story element itself.
 
 =item *
 
-Add "Check In and Publish/Deploy" button to asset editing screens.
-
-=item *
-
 Add "Check In and Remove from Workflow" button to asset editing screens.
 
 =item *
@@ -135,15 +131,6 @@ Add ability to "undeploy" templates without deactivating them.
 
 Add a check that a user has selected at least one output channel when creating a
 new element. Elements without output channels cause Bricolage indigestion.
-
-=item *
-
-Add ability to select an Output Channel other than the Primary Output Channel
-for a given preview. This probably ought to be some sort of select list that
-always defaults to the Primary OC, but when changed, causes the preview to use
-the selected OC. Probably we'll need to change the preview link to a button so
-that the form submit works properly with the select list. I suggest that we
-should add this feature to profiles only (edit and view), and not to desks.
 
 =item *
 
@@ -174,12 +161,6 @@ Add "make uninstall" support to installation system.
 
 =item *
 
-Add interface for exporting and importing assets and other objects via XML.
-Ideally, this should use a SOAP interface in order to facilitate other features
-such as scheduled publishing and syndication.
-
-=item *
-
 Add scheduled Burning/Syndication.
 
 =item *
@@ -200,13 +181,6 @@ Simplify associating media with stories. Users should be able to associate
 media with stories just as they do contributors and keywords. However, the new
 media objects they upload should be put into the repository as normal media
 assets. New uploads of the same media file increment the version numbers.
-
-=item *
-
-Add a method to assets to indicate whether the current version needs publishing.
-Basically, what this method will do is return false if the current version has
-been published, and true if it has not -- even if a previous version has been
-published. Suggested method name: needs_publish().
 
 =back
 
