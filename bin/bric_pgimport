@@ -32,7 +32,7 @@ our ($opt_u, $opt_p, $opt_d, $opt_w, $opt_H, $opt_t, $opt_h, $opt_r, $opt_o,
 
 getopts('u:p:d:w:H:o:m:htrcqg:');
 
-use vars qw( $DBH @SQL @CON @VAL @TST);
+use vars qw( $DBH @SQL @CON @VAL @TST @PLSQL);
 use vars qw( $LOG $STOP );
 
 #==============================================================================#
@@ -56,6 +56,9 @@ if ($opt_t) {
 
 print "\nAdding constraints...\n" unless $opt_q;
 insert_file_set(@CON);
+
+print "\nAdding stored procedures...\n" unless $opt_q;
+insert_plpgsql(@PLSQL);
 
 grant_permissions($opt_g, create_user());
 
@@ -129,6 +132,7 @@ sub initialize {
     @SQL = reverse `find $opt_w -name '*.sql'`;
     @CON = reverse `find $opt_w -name '*.con'`;
     @VAL = reverse `find $opt_w -name '*.val'`;
+    @PLSQL = reverse `find $opt_w -name '*.plsql'`;
     @TST = reverse `find $opt_w -name '*.tst'` if $opt_t;
 }
 
@@ -172,6 +176,62 @@ sub insert_file_set {
 	print "\tImporting '$file'\n" unless $opt_q;
 	exec_sql($_, $file) for grab_statements($file);
     }
+}
+
+#------------------------------------------------------------------------------#
+
+sub insert_plpgsql {
+    check_plpgsql();
+    foreach my $file (@_) {
+        chomp $file;
+	print "\tImporting '$file'\n" unless $opt_q;
+	exec_sql(grab_file($file), $file);
+    }
+}
+
+sub check_plpgsql {
+    my @row;
+    eval {
+        @row = $DBH->selectrow_array(qq{
+            SELECT 1
+            FROM   pg_language
+            WHERE  lanname = 'plpgsql'
+                   AND lanispl = TRUE
+        });
+    };
+    die "Cannot install PLPGSQL: $@" if $@;
+    return if @row;
+
+    eval {
+        my $plpgsql = find_plpgsql();
+        $DBH->do("CREATE FUNCTION plpgsql_call_handler () RETURNS OPAQUE AS " .
+                 "'$plpgsql' LANGUAGE C");
+
+        $DBH->do("CREATE TRUSTED PROCEDURAL LANGUAGE plpgsql " .
+                 "HANDLER plpgsql_call_handler");
+    };
+    die "Cannot install PLPGSQL: $@" if $@;
+    return;
+}
+
+#------------------------------------------------------------------------------#
+
+sub find_plpgsql {
+    require File::Spec::Functions;
+    my @paths = (File::Spec::Functions::path(),
+                 qw(/usr/local/pgsql/lib
+                    /usr/local/postgres/lib
+                    /opt/pgsql/lib
+                    /usr/local/lib
+                    /usr/lib
+                    /lib));
+    foreach my $path (@paths) {
+        my $plpgsql = File::Spec::Functions::catfile($path, "plpgsql");
+        return $plpgsql if -e $plpgsql . '.so';
+    }
+    # If we get here, we failed.
+    local $" = "\n\t";
+    die "Cannot locate plpgsql.so. Looked in:\n\t@paths";
 }
 
 #------------------------------------------------------------------------------#
@@ -237,6 +297,17 @@ sub grab_statements {
     close(SQL);
 
     return @stmt;
+}
+
+#------------------------------------------------------------------------------#
+
+sub grab_file {
+    my $file = shift;
+    open(SQL, $file) or die "Can't open '$file': $!\n";
+    local $/;
+    my $data = <SQL>;
+    close SQL;
+    return $data;
 }
 
 #------------------------------------------------------------------------------#
