@@ -44,9 +44,15 @@ Form validation and group management now properly work in the user profile.
 
 =item *
 
-Fixed the story__category" table to use the correct sequence the for they id
+Fixed the "story__category" table to use the correct sequence the for they id
 column's default value (although the default is never used, this is a good
 precaution). Reported by Paul Orrock. [David]
+
+=item *
+
+Stories and media documents now better pay attention to the letter case
+specification of outpout channels when returning URIs. Thanks to JosE<eacute>
+Castro. [Marshall]
 
 =back
 

@@ -2395,9 +2395,9 @@ sub _construct_uri {
 
     # Return the URI with the case adjusted as necessary.
     my $uri_case = $oc_obj->get_uri_case;
-    if( $uri_case eq LOWERCASE ) {
+    if( $uri_case == LOWERCASE ) {
         return lc Bric::Util::Trans::FS->cat_uri(@path);
-    } elsif( $uri_case eq UPPERCASE ) {
+    } elsif( $uri_case == UPPERCASE ) {
         return uc Bric::Util::Trans::FS->cat_uri(@path);
     } else {
         return Bric::Util::Trans::FS->cat_uri(@path);
