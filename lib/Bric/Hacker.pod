@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2002-08-18 23:43:19 $
+$Date: 2002-08-18 23:50:24 $
 
 =head1 DESCRIPTION
 
@@ -228,6 +228,11 @@ as root and load bin/bric_apachectl.  Give it the argument "debug" and
 run it.  When you issue a hit to the server the debugger will stop on
 the first line of Bric::App::Handler::handler().  From there you can
 set breakpoints inside Bricolage and debug normally.
+
+If you prefer to run without the debugger using only the Apache single-process
+mode, then run Bricolage using the command
+
+   bric_apachectl single
 
 =item *
 

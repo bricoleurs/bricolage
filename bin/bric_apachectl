@@ -166,6 +166,23 @@ if ($command eq 'restart') {
     }
 }
 
+if ($command eq 'single') {
+    if ($running) {
+        print "bric_apachectl $command: httpd (pid $pid) already running\n";
+        exit;
+    }
+
+    # clear the cache before starting the server to avoid stale cache data
+    require Bric::App::Cache;
+    Bric::App::Cache->clear;
+
+    print "bric_apachectl $command: starting httpd -X\n";
+
+    # use exec since with -X this command won't return till the server
+    # is killed.
+    system $httpd, '-X';
+}
+
 if ($command eq 'debug') {
     if ($running) {
         print "bric_apachectl $command: httpd (pid $pid) already running\n";
@@ -176,7 +193,7 @@ if ($command eq 'debug') {
     require Bric::App::Cache;
     Bric::App::Cache->clear();
 
-    print "bric_apachectl $command: starting httpd -X\n";    
+    print "bric_apachectl $command: starting httpd -X\n";
 
     # use exec since with -X this command won't return till the server
     # is killed.
@@ -193,6 +210,7 @@ start      - start httpd
 stop       - stop httpd
 restart    - restart httpd if running
 debug      - start httpd in the debugger
+single     - start httpd in -X mode, no debugger
 
 END
 

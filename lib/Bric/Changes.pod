@@ -156,6 +156,12 @@ https service on the standard ports with a light-weight Apache daemon. See the
 F<INSTALL> file (or L<Bric::Admin|Bric::Admin>) for full details and an
 example installation procedure. [Michael Robinton]
 
+=item *
+
+Added new F<bric_apachectl> command "single". This command will start
+Bricolage in single-process mode. This mode is principally useful for
+debugging. [Michael Robinton]
+
 =back
 
 =head2 Bug Fixes
