@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 06:15:05 $
+$Date: 2004-02-14 02:10:07 $
 
 =head1 SYNOPSIS
 
@@ -134,7 +134,7 @@ use base qw(Bric);
 
 use constant DEBUG => 0;
 sub RO_FIELDS () { return }
-sub RO_COLUMNS () { return }
+use constant RO_COLUMNS => '';
 
 use constant HAS_MULTISITE => 1;
 
@@ -253,13 +253,12 @@ sub lookup {
     my $tables =  tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
-    my $sql = build_query($pkg, $pkg->COLUMNS . ', '
-                          . join(', ', $pkg->RO_COLUMNS,$pkg->GROUP_COLS),
-                          $tables, $where, $order);
+    my $sql = build_query($pkg, $pkg->COLUMNS . $pkg->RO_COLUMNS,
+                          join(', ', $pkg->GROUP_COLS),
+                          $tables, $where, $order, @{$param}{qw(Limit Offset)});
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
                    $pkg->RO_FIELDS, 'grp_ids' ];
-    my @obj = fetch_objects( $pkg, $sql, $fields, $args, $param->{Limit},
-                             $param->{Offset});
+    my @obj = fetch_objects($pkg, $sql, $fields, scalar $pkg->GROUP_COLS, $args);
     return unless $obj[0];
     return $obj[0];
 }
@@ -295,13 +294,12 @@ sub list {
     my $tables = tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
+    my $sql = build_query($pkg, $pkg->COLUMNS . $pkg->RO_COLUMNS,
+                          join(', ', $pkg->GROUP_COLS),
+                          $tables, $where, $order, @{$param}{qw(Limit Offset)});
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
                    $pkg->RO_FIELDS, 'grp_ids' ];
-    my $sql = build_query($pkg, $pkg->COLUMNS . ', '
-                          . join(', ', $pkg->RO_COLUMNS,$pkg->GROUP_COLS),
-                          $tables, $where, $order);
-    my @objs = fetch_objects($pkg, $sql, $fields, $args, $param->{Limit},
-                             $param->{Offset});
+    my @objs = fetch_objects($pkg, $sql, $fields, scalar $pkg->GROUP_COLS, $args);
     return unless $objs[0];
     return (wantarray ? @objs : \@objs);
 }
@@ -339,7 +337,7 @@ sub list_ids {
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
     # choose the query type, without grp_ids is faster
-    my $sql = build_query($pkg, $cols, $tables, $where, $order);
+    my $sql = build_query($pkg, $cols, '', $tables, $where, $order);
     my $select = prepare_ca($sql, undef);
     my $return = col_aref($select, @$args);
     return unless $return->[0];

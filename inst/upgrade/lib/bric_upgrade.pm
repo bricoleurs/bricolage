@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-06 06:34:54 $
+$Date: 2004-02-14 02:10:06 $
 
 =head1 SYNOPSIS
 
@@ -64,8 +64,9 @@ succeed, then the transaction will be commited when the script exits.
 use strict;
 require Exporter;
 use base qw(Exporter);
-our @EXPORT_OK = qw(do_sql test_column test_table test_constraint test_foreign_key
-                    test_index fetch_sql db_version);
+our @EXPORT_OK = qw(do_sql test_column test_table test_constraint
+                    test_foreign_key test_index test_function test_aggregate
+                    fetch_sql db_version);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 use File::Spec::Functions qw(catdir updir);
@@ -307,6 +308,56 @@ sub test_index($) {
                pg_index i
         WHERE  i.indexrelid = c.oid
                and c.relname = '$index'
+    });
+}
+
+##############################################################################
+
+=head2 test_function
+
+  exit if test_function $function_name;
+
+This function returns true if the specified function exits in the Bricolage
+database, and false if it does not. This is useful in upgrade scripts that add
+a new function, and want to verify that the function has not already been
+created.
+
+=cut
+
+sub test_function($) {
+    my $function = shift;
+    return fetch_sql(qq{
+        SELECT 1
+        FROM   pg_proc p
+        WHERE  p.prorettype <> 'pg_catalog.cstring'::pg_catalog.regtype
+               AND p.proargtypes[0] <> 'pg_catalog.cstring'::pg_catalog.regtype
+               AND NOT p.proisagg
+               AND pg_catalog.pg_function_is_visible(p.oid)
+               AND p.proname = '$function
+    });
+}
+
+##############################################################################
+
+=head2 test_aggregate
+
+  exit if test_aggregate $aggregate_name;
+
+This aggregate returns true if the specified aggregate exits in the Bricolage
+database, and false if it does not. This is useful in upgrade scripts that add
+a new aggregate, and want to verify that the aggregate has not already been
+created.
+
+=cut
+
+sub test_aggregate($) {
+    my $aggregate = shift;
+    return fetch_sql(qq{
+        SELECT 1
+        FROM   pg_proc p
+        WHERE  p.proisagg
+               AND pg_catalog.pg_function_is_visible(p.oid)
+               AND p.proname = '$aggregate
     });
 }
 

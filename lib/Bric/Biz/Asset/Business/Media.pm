@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.74 $
+$Revision: 1.75 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.74 $ )[-1];
+our $VERSION = (qw$Revision: 1.75 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-14 00:12:27 $
+$Date: 2004-02-14 02:10:07 $
 
 =head1 SYNOPSIS
 
@@ -137,7 +137,7 @@ use constant VERSION_FIELDS => qw( name
                                    checked_out);
 
 use constant RO_FIELDS      => qw( class_id );
-use constant RO_COLUMNS     => qw(at.biz_class__id);
+use constant RO_COLUMNS     => ', at.biz_class__id';
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Media';
 use constant INSTANCE_GROUP_ID => 32;
@@ -148,9 +148,9 @@ use constant CAN_DO_LIST => 1;
 use constant CAN_DO_LOOKUP => 1;
 use constant HAS_CLASS_ID => 1;
 
-use constant GROUP_COLS => ('m.grp__id as grp_id',
-                            'c.asset_grp_id as cat_grp_id',
-                            'w.asset_grp_id as wf_grp_id');
+use constant GROUP_COLS => ('id_list(DISTINCT m.grp__id) AS grp_id',
+                            'id_list(DISTINCT c.asset_grp_id) AS cat_grp_id',
+                            'id_list(DISTINCT w.asset_grp_id) AS wf_grp_id');
 
 # the mapping for building up the where clause based on params
 use constant WHERE => 'mt.id = i.media__id '
@@ -564,9 +564,8 @@ that match the query will be returned.
 
 =item *
 
-Offset - The number of objects to skip before listing the number of objects
-specified by "Limit". Not used if "Limit" is not defined, and when "Limit" is
-defined and "Offset" is not, no objects will be skipped.
+Offset - The number of objects to skip before listing the remaining objcts or
+the number of objects specified by C<Limit>.
 
 =item *
 

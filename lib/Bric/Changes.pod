@@ -35,6 +35,22 @@ end of the URL. If "/dist/" is missing, F<bric_dist_mon> will append it.
 
 More story, media, and template query optimization. [David]
 
+=item *
+
+The story, media, and template queries now use aggregates to create arrays of
+group IDs, instead of returning a separate row for each individual group
+ID. Since all story, media, and template objects are now returned in single
+rows instead of potentially many rows, this greatly cuts down on the overhead
+of fetching data from the database. Suggested by Josh Berkus. [David]
+
+=item *
+
+Thanks to the aggregation of group IDs into a single row for each story, media
+and template object, the C<Offset> and C<Limit> parameters to the C<list()>
+methods of the story, media, and template (formatting) classes is now handled
+by the database back end, instead of in Perl space. This makes using these
+parameters much more efficient.
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)

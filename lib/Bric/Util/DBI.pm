@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-14 00:12:28 $
+$Date: 2004-02-14 02:10:08 $
 
 =head1 SYNOPSIS
 
@@ -721,40 +721,29 @@ NONE
 =cut
 
 sub fetch_objects {
-    my ($pkg, $sql, $fields, $args, $limit, $offset) =  @_;
+    my ($pkg, $sql, $fields, $grp_col_cnt, $args) =  @_;
     my (@objs, @d, $grp_ids);
-    # set and execute the query
-    $offset ||= 0;
 
     # Prepare and execute the query
     my $select = prepare_ca($sql, undef);
     execute($select, @$args);
-    bind_columns($select, \@d[0 .. $#$fields + 2]);
+    bind_columns($select, \@d[0 .. $#$fields + $grp_col_cnt - 1]);
 
     # loop through the list, looking for different grp__id columns in
     # matching lines.  Note: this works for all sort orders except grp__id
     my $obj_col = $pkg->OBJECT_SELECT_COLUMN_NUMBER || 0;
     my $last = -1;
-    my ($i, %seen);
+    my $i;
     while (fetch($select)) {
-        if ($d[$obj_col] != $last) {
-            last if $limit && @objs >= $limit;
-            $last = $d[$obj_col];
-            next unless $i++ >= $offset;
-            my $obj = bless {}, $pkg;
-            %seen = ();
-            # The group IDs are in the last four columns.
-            $grp_ids = $d[-3] = [grep { $_ && !$seen{$_}++ } @d[-3..-1]];
-            $obj ->_set($fields, \@d);
-            $obj->_set__dirty(0);
-            $obj = bless $obj, Bric::Util::Class->lookup({
-                id => $obj->get_class_id })->get_pkg_name
-                if $pkg->HAS_CLASS_ID;
-            push @objs, $obj->cache_me;
-        } else {
-            # Append the group IDs, excluding 0 and undef.
-            push @$grp_ids, grep { $_ && !$seen{$_}++ } @d[-3..-1];
-        }
+        my $obj = bless {}, $pkg;
+        # The group IDs are in the last four columns.
+        $grp_ids = $d[-$grp_col_cnt] = [grep {$_} map { split } @d[-$grp_col_cnt..-1]];
+        $obj ->_set($fields, \@d);
+        $obj->_set__dirty(0);
+        $obj = bless $obj, Bric::Util::Class->lookup({
+            id => $obj->get_class_id })->get_pkg_name
+            if $pkg->HAS_CLASS_ID;
+        push @objs, $obj->cache_me;
     }
     finish($select);
     # Return the objects.
@@ -763,7 +752,7 @@ sub fetch_objects {
 
 =item build_query($cols, $tables, $where_clause, $order);
 
-Builds a query.
+Builds a and returns a reference to a query.
 
 B<Throws:>
 
@@ -780,14 +769,28 @@ NONE
 =cut
 
 sub build_query {
-    my ($pkg, $cols, $tables, $where_clause, $order) = @_;
+    my ($pkg, $cols, $grp_cols, $tables, $where_clause, $order, $limit,
+        $offset) = @_;
+
+    # Strip out any AS clauses, just leaving the alias.
+    my $grp_by = '';
+    if ($grp_cols) {
+        ($grp_by = 'GROUP  BY ' . $cols) =~ s/,[^,]*AS\s+/, /g;
+        $cols .= ", $grp_cols";
+    }
 
     # get the various parts of the query
-    return qq{ SELECT $cols
-               FROM   $tables
-               WHERE  $where_clause
-               $order
-             };
+    my $sql = qq{
+      SELECT $cols
+      FROM   $tables
+      WHERE  $where_clause
+      $grp_by
+      $order\n};
+
+    $sql .= qq{      LIMIT $limit\n} if $limit;
+    $sql .= qq{      OFFSET $offset\n} if $offset;
+
+    return $sql;
 }
 
 =item $params = clean_params($params)
