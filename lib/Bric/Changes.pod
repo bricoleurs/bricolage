@@ -26,6 +26,11 @@ C<make clone> now ignores files in the source directory that start with
 "bricolage-". This should prevent copying previous clones into the new
 clone. [David]
 
+=item *
+
+Added F<contrib/thumbnails/precreate-thumbs.pl> script to pre-create
+thumbnails from Images. [Scott]
+
 =back
 
 =head2 Bug Fixes
