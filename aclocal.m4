@@ -51,36 +51,127 @@ dnl
 dnl This macro searches the installed base of CPAN modules
 dnl determine the the requested module is installed.
 dnl
-dnl If the module is found the given variable will be set to
-dnl 'yes' otherwise it will remain empty.
+dnl The first argument is the name of a variable which is to
+dnl contain a space-delimited list of missing modules.
 dnl
-dnl
-dnl @version $Id: aclocal.m4,v 1.2 2001-12-11 11:59:33 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.3 2001-12-11 15:49:58 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
- AC_MSG_CHECKING(for CPAN module $1)
- if perl -e "use $1" 2>/dev/null ;then
+ AC_MSG_CHECKING(for CPAN module $2)
+ #
+ # use perl itself to check for the module
+ #
+ if perl -e "use $2" 2>/dev/null ;then
     AC_MSG_RESULT(yes)
  else
     AC_MSG_RESULT(no)
+    if test "x${$1}" == "x" ;then
+        $1="$2" ;
+    else
+        $1="${$1} $2";
+    fi
  fi
 ])
 
 
-dnl @synopsis AC_PROG_POSTGRESQL{[version]}
+dnl @synopsis AC_PROG_POSTGRES{VARIABLE, [version]}
 dnl
 dnl This macro searches for an installation of PostgreSQL
 dnl
+dnl After the test the variable name will hold the 
+dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.2 2001-12-11 11:59:33 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.3 2001-12-11 15:49:58 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
-AC_DEFUN([AC_PROG_POSTGRESQL],[
- AC_MSG_CHECKING(for PostgreSQL)
- dnl TODO:
- AC_MSG_RESULT(maaaaybeee...) 
+AC_DEFUN([AC_PROG_POSTGRES],[
+ #
+ # If the user specifies a pg_config location things get
+ # a bit easier, might as well ask for that first
+ # 
+ AC_ARG_WITH(pg_config,
+  [  --with-pg_config=PATH absolute path name of the wonderful pg_config
+    script which can tell us so much about your postgres installation
+    (default is to search for pg_config in
+    /usr/local/postgresql/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin)],
+  [
+    #
+    # Run this if -with or specified
+    #
+    if test "$withval" != no ; then
+       PG_CONFIG="$withval"
+    fi
+  ])
+ #
+ # Or we can just take the postgres home location
+ # 
+ AC_ARG_WITH(pghome,
+  [  --with-pghome=PATH absolute path name of pg_config script(default is /usr/local/pgsql)],
+  [
+    #
+    # Run this if -with or specified
+    #
+    if test "x$withval" != "x" ; then
+       PGHOME="$withval"
+    fi
+  ])
+ #
+ # If pg_config not specified by caller, search in standard places
+ #
+ if test -z "$PG_CONFIG" ; then
+   AC_PATH_PROG(PG_CONFIG, pg_config, , $PGHOME/bin:/usr/local/postgres/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin)
+ fi
+ AC_SUBST(PG_CONFIG)
+ if test -z "$PG_CONFIG" ; then
+     AC_MSG_ERROR("pg_config executable not found");
+ fi
+ #
+ # If we don't have a pghome yet it from pg_config
+ #
+ if test -z "$PGHOME" ;then
+   changequote(<<, >>)dnl
+   PGHOME=`$PG_CONFIG --configure |sed -e 's/.*--prefix=\([^ ]*\).*/\1/'` ;
+   changequote([, ])dnl
+ fi
+ #
+ # set outbound variable to our $PGHOME
+ #
+ $1=$PGHOME ;
+ #
+ # Collect postgres version number. If for nothing else, this
+ # guaranties that httpd is a working postgres executable.
+ #
+ changequote(<<, >>)dnl
+ POSTGRES_VERSION=`$PG_CONFIG --version | grep 'PostgreSQL' | sed -e 's;.*PostgreSQL \([0-9\.][0-9\.]*\).*;\1;'`
+ changequote([, ])dnl
+ if test -z "$POSTGRES_VERSION" ; then
+     AC_MSG_ERROR("could not determine postgres version number");
+ fi
+ changequote(<<, >>)dnl
+ POSTGRES_MAJOR=`expr $POSTGRES_VERSION : '\([0-9]*\)'`
+ POSTGRES_MINOR=`expr $POSTGRES_VERSION : "$POSTGRES_MAJOR.\([0-9]*\)"`
+ POSTGRES_SUBMINOR=`expr $POSTGRES_VERSION : "$POSTGRES_MAJOR.$POSTGRES_MINOR.\([0-9]*\)"`
+ changequote([, ])dnl
+ #
+ # Check that apache version matches requested version or above
+ #
+ if test -n "$2" ; then
+   AC_MSG_CHECKING(postgres version >= $2)
+   changequote(<<, >>)dnl
+   POSTGRES_REQUEST_MAJOR=`expr $POSTGRES_VERSION : '\([0-9]*\)'`
+   POSTGRES_REQUEST_MINOR=`expr $POSTGRES_VERSION : "$POSTGRES_MAJOR.\([0-9]*\)"`
+   POSTGRES_REQUEST_SUBMINOR=`expr $POSTGRES_VERSION : "$POSTGRES_MAJOR.$POSTGRES_MINOR.\([0-9]*\)"`
+   changequote([, ])dnl
+   if test "$POSTGRES_MAJOR" -lt "$POSTGRES_REQUEST_MAJOR" -o "$POSTGRES_MINOR" -lt "$POSTGRES_REQUEST_MINOR" -o "$POSTGRES_SUBMINOR" -lt "$POSTGRES_REQUEST_SUBMINOR" ; then
+     AC_MSG_RESULT(no)
+     AC_MSG_ERROR(postgres version is $POSTGRES_VERSION)
+   else
+     AC_MSG_RESULT(yes)
+   fi
+ fi
 ])
+
 
 
 dnl @author Loic Dachary <loic@senga.org> 
