@@ -6,14 +6,15 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
+use Bric::Dist::Server;
+use Bric::Dist::ServerType;
 
 my $type = CLASS_KEY;
+my $dest_type = 'dest';
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
-my $dest_name = get_disp_name('dest');
-my $dest_class = get_package_name('dest');
-eval "require $class";
-eval "require $dest_class";
+my $dest_name = get_disp_name($dest_type);
+my $dest_class = get_package_name($dest_type);
 
 
 sub save : Callback {
