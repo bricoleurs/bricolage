@@ -167,8 +167,10 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
+                               checked_out => 1
                            });
     $media[0]->set_category__id($OBJ->{category}->[0]->get_id());
+    $media[0]->save();
     $media[0]->save();
     push @{$OBJ_IDS->{media}}, $media[0]->get_id();
     $self->add_del_ids( $media[0]->get_id() );
@@ -199,8 +201,10 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
+                               checked_out => 1
                            });
     $media[1]->set_category__id($OBJ->{category}->[1]->get_id());
+    $media[1]->save();
     $media[1]->save();
     push @{$OBJ_IDS->{media}}, $media[1]->get_id();
     $self->add_del_ids( $media[1]->get_id());
@@ -213,7 +217,7 @@ sub test_select_methods: Test(41) {
 
     # check the URI
     $exp_uri = $OBJ->{category}->[1]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category');
 
     # check the grp IDs
     $exp_grp_ids = [ $all_cats_grp_id, 
@@ -234,8 +238,10 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
+                               checked_out => 1
                            });
     $media[2]->set_category__id( $OBJ->{category}->[0]->get_id() );
+    $media[2]->save();
     $media[2]->save();
     push @{$OBJ_IDS->{media}}, $media[2]->get_id();
     $self->add_del_ids( $media[2]->get_id() );
@@ -250,7 +256,7 @@ sub test_select_methods: Test(41) {
 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category');
 
     # check the grp IDs
     $exp_grp_ids = [ $all_cats_grp_id, 
@@ -272,8 +278,10 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
+                               checked_out => 1
                            });
     $media[3]->set_category__id( $OBJ->{category}->[0]->get_id() );
+    $media[3]->save();
     $media[3]->save();
     push @{$OBJ_IDS->{media}}, $media[3]->get_id();
     $self->add_del_ids( $media[3]->get_id() );
@@ -300,7 +308,7 @@ sub test_select_methods: Test(41) {
 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category');
 
     # check the grp IDs
     $exp_grp_ids = [ $all_cats_grp_id, 
@@ -326,9 +334,11 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
+                               checked_out => 1
                            });
     $media[4]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
+    $media[4]->save();
     $media[4]->save();
     push @{$OBJ_IDS->{media}}, $media[4]->get_id();
     $self->add_del_ids( $media[4]->get_id() );
@@ -343,7 +353,7 @@ sub test_select_methods: Test(41) {
 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category');
 
     # check the grp IDs
     $exp_grp_ids = [ 
@@ -367,10 +377,12 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
+                               checked_out => 1
                            });
     $media[5]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $media[5]->set_current_desk( $OBJ->{desk}->[0] );
+    $media[5]->save();
     $media[5]->save();
     push @{$OBJ_IDS->{media}}, $media[5]->get_id();
     $self->add_del_ids( $media[5]->get_id() );
@@ -388,7 +400,7 @@ sub test_select_methods: Test(41) {
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri;
     like( $got->get_primary_uri(), qr/^$exp_uri/, 
-      '...does the uri match the category and slug');
+      '...does the uri match the category');
 
     # check the grp IDs
     $exp_grp_ids = [ 
@@ -411,8 +423,11 @@ sub test_select_methods: Test(41) {
     my @got_ids;
     my @got_grp_ids;
 
-    ok( my @got = class->list({ name => '_test%'}), 'lets do a search by name' );
-    ok( $got = class->list({ name => '_test%', Order => 'id' }), 'lets do a search by name' );
+    ok( my @got = class->list({ name => '_test%', user_id => $admin_id }),
+        'lets do a search by name' );
+    ok( $got = class->list({ name => '_test%', user_id => $admin_id,
+                             Order => 'name' }),
+        'lets do a search by name' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id();
@@ -423,7 +438,7 @@ sub test_select_methods: Test(41) {
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ title => '_test%', Order => 'id' }), 'lets do a search by title' );
+    ok( $got = class->list({ title => '_test%', Order => 'name', user_id => $admin_id }), 'lets do a search by title' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id();
@@ -435,14 +450,14 @@ sub test_select_methods: Test(41) {
     undef @got_grp_ids;
 
     # finally do this by grp_ids
-    ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'id' }), 'getting by grp_id' );
+    ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'name', user_id => $admin_id }), 'getting by grp_id' );
     my $number = @$got;
     is( $number, 2, 'there should be two media in the first grp' );
     is( $got->[0]->get_id(), $media[2]->get_id(), '... and they should be numbers 2' );
     is( $got->[1]->get_id(), $media[3]->get_id(), '... and 3' );
 
     # try listing IDs, again at least one key per table
-    ok( $got = class->list_ids({ name => '_test%', Order => 'id' }), 'lets do an IDs search by name' );
+    ok( $got = class->list_ids({ name => '_test%', Order => 'name', user_id => $admin_id }), 'lets do an IDs search by name' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_;
@@ -450,7 +465,7 @@ sub test_select_methods: Test(41) {
     eq_set( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
     undef @got_ids;
 
-    ok( $got = class->list_ids({ title => '_test%', Order => 'id' }), 'lets do an ids search by title' );
+    ok( $got = class->list_ids({ title => '_test%', Order => 'name', user_id => $admin_id }), 'lets do an ids search by title' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_;
@@ -459,7 +474,7 @@ sub test_select_methods: Test(41) {
     undef @got_ids;
 
     # finally do this by grp_ids
-    ok( $got = class->list_ids({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'id' }), 'getting by grp_id' );
+    ok( $got = class->list_ids({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'name', user_id => $admin_id }), 'getting by grp_id' );
     $number = @$got;
     is( $number, 2, 'there should be three media in the first grp' );
     is( $got->[0], $media[2]->get_id(), '... and they should be numbers 2' );
@@ -467,11 +482,11 @@ sub test_select_methods: Test(41) {
 
 
     # now let's try a limit
-    ok( $got = class->list({ Order => 'id', Limit => 3 }), 'try setting a limit of 3');
+    ok( $got = class->list({ Order => 'name', Limit => 3, user_id => $admin_id }), 'try setting a limit of 3');
     is( @$got, 3, '... did we get exactly 3 media back' );
 
     # test Offset
-    ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'id', Offset => 1 }), 'try setting an offset of 2 for a search that just returned 6 objs');
+    ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'name', Offset => 1, user_id => $admin_id }), 'try setting an offset of 2 for a search that just returned 6 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
     
 }
@@ -487,7 +502,7 @@ sub test_primary_oc_id : Test(8) {
 
     ok( my $ba = $self->construct( name      => 'Flubberman',
                                    file_name => 'fun.foo',
-                                   slug      => 'hugoman'),
+                                 ),
         "Construct asset" );
     $ba->set_category__id($CATEGORY->get_id());
     ok( $ba->save, "Save asset" );

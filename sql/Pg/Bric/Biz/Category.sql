@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-12 09:00:53 $
+-- $Date: 2003-03-15 05:16:21 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -132,8 +132,8 @@ CREATE TABLE attr_category_meta (
 -- Indexes.
 --
 CREATE INDEX idx_category__directory ON category(LOWER(directory));
-CREATE INDEX idx_category__uri ON category(uri);
 CREATE UNIQUE INDEX udx_category__site_uri ON category(site__id, uri);
+CREATE INDEX idx_category__uri ON category(uri);
 CREATE INDEX idx_category__lower_uri ON category(LOWER(uri));
 CREATE INDEX idx_category__name ON category(LOWER(name));
 CREATE INDEX idx_category__parent_id ON category(parent_id);

@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    ServerType.sql
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-12 09:01:04 $
+-- $Date: 2003-03-15 05:16:21 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -71,7 +71,9 @@ CREATE SEQUENCE seq_dest_member START 1024;
 -- 
 -- Indexes.
 --
-CREATE UNIQUE INDEX udx_server_type__name_site ON server_type(name, site__id);
+CREATE UNIQUE INDEX udx_server_type__name_site
+ON server_type(lower_text_num(name, site__id));
+
 CREATE INDEX fkx_site__server_type ON server_type(site__id);
 CREATE INDEX fkx_class__server_type ON server_type(class__id);
 

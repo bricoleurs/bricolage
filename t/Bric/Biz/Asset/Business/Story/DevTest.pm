@@ -232,6 +232,7 @@ sub test_select_methods: Test(44) {
                                                    });
     $story[0]->add_categories([ $OBJ->{category}->[0] ]);
     $story[0]->set_primary_category($OBJ->{category}->[0]);
+    $story[0]->checkin();
     $story[0]->save();
     push @{$OBJ_IDS->{story}}, $story[0]->get_id();
     $self->add_del_ids( $story[0]->get_id() );
@@ -267,6 +268,7 @@ sub test_select_methods: Test(44) {
                                                    });
     $story[1]->add_categories( $OBJ->{category} );
     $story[1]->set_primary_category( $OBJ->{category}->[1] );
+    $story[1]->checkin();
     $story[1]->save();
     push @{$OBJ_IDS->{story}}, $story[1]->get_id();
     $self->add_del_ids( $story[1]->get_id());
@@ -307,6 +309,7 @@ sub test_select_methods: Test(44) {
                                                    });
     $story[2]->add_categories([ $OBJ->{category}->[0] ]);
     $story[2]->set_primary_category( $OBJ->{category}->[0] );
+    $story[2]->checkin();
     $story[2]->save();
     push @{$OBJ_IDS->{story}}, $story[2]->get_id();
     $self->add_del_ids( $story[2]->get_id() );
@@ -346,6 +349,7 @@ sub test_select_methods: Test(44) {
                                                    });
     $story[3]->add_categories([ $OBJ->{category}->[0] ]);
     $story[3]->set_primary_category( $OBJ->{category}->[0] );
+    $story[3]->checkin();
     $story[3]->save();
     push @{$OBJ_IDS->{story}}, $story[3]->get_id();
     $self->add_del_ids( $story[3]->get_id() );
@@ -402,6 +406,7 @@ sub test_select_methods: Test(44) {
     $story[4]->add_categories([ $OBJ->{category}->[0] ]);
     $story[4]->set_primary_category($OBJ->{category}->[0]);
     $story[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
+    $story[4]->checkin();
     $story[4]->save();
     push @{$OBJ_IDS->{story}}, $story[4]->get_id();
     $self->add_del_ids( $story[4]->get_id() );
@@ -445,6 +450,7 @@ sub test_select_methods: Test(44) {
     $story[5]->set_primary_category($OBJ->{category}->[0]);
     $story[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $story[5]->set_current_desk( $OBJ->{desk}->[0] );
+    $story[5]->checkin();
     $story[5]->save();
     push @{$OBJ_IDS->{story}}, $story[5]->get_id();
     $self->add_del_ids( $story[5]->get_id() );
@@ -483,7 +489,7 @@ sub test_select_methods: Test(44) {
     my @got_grp_ids;
 
     ok( my @got = class->list({ name => '_test%'}), 'lets do a search by name' );
-    ok( $got = class->list({ name => '_test%', Order => 'id' }), 'lets do a search by name' );
+    ok( $got = class->list({ name => '_test%', Order => 'name' }), 'lets do a search by name' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id();
@@ -494,7 +500,7 @@ sub test_select_methods: Test(44) {
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ title => '_test%', Order => 'id' }), 'lets do a search by title' );
+    ok( $got = class->list({ title => '_test%', Order => 'name' }), 'lets do a search by title' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id();
@@ -505,7 +511,7 @@ sub test_select_methods: Test(44) {
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ primary_uri => '/_test%', Order => 'id' }), 
+    ok( $got = class->list({ primary_uri => '/_test%', Order => 'title' }), 
       'lets do a search by primary uri' );
     # check the ids
     foreach (@$got) {
@@ -517,7 +523,7 @@ sub test_select_methods: Test(44) {
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ category_id => $OBJ_IDS->{category}->[0], Order => 'id' }), 
+    ok( $got = class->list({ category_id => $OBJ_IDS->{category}->[0], Order => 'title' }), 
       'lets do a search by category_id' );
     # check the ids
     foreach (@$got) {
@@ -530,7 +536,7 @@ sub test_select_methods: Test(44) {
     undef @got_grp_ids;
 
     # finally do this by grp_ids
-    ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'id' }), 
+    ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'name' }), 
       'getting by grp_id' );
     my $number = @$got;
     is( $number, 2, 'there should be two stories in the first grp' );
@@ -538,7 +544,7 @@ sub test_select_methods: Test(44) {
     is( $got->[1]->get_id(), $story[3]->get_id(), '... and 3' );
 
     # try listing IDs, again at least one key per table
-    ok( $got = class->list_ids({ name => '_test%', Order => 'id' }), 
+    ok( $got = class->list_ids({ name => '_test%', Order => 'name' }), 
       'lets do an IDs search by name' );
     # check the ids
     foreach (@$got) {
@@ -547,7 +553,7 @@ sub test_select_methods: Test(44) {
     eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
     undef @got_ids;
 
-    ok( $got = class->list_ids({ title => '_test%', Order => 'id' }), 'lets do an ids search by title' );
+    ok( $got = class->list_ids({ title => '_test%', Order => 'name' }), 'lets do an ids search by title' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_;
@@ -555,7 +561,7 @@ sub test_select_methods: Test(44) {
     eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
     undef @got_ids;
 
-    ok( $got = class->list_ids({ primary_uri => '/_test%', Order => 'id' }), 'lets do an ids search by primary uri' );
+    ok( $got = class->list_ids({ primary_uri => '/_test%', Order => 'name' }), 'lets do an ids search by primary uri' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_;
@@ -564,7 +570,7 @@ sub test_select_methods: Test(44) {
     undef @got_ids;
 
     # finally do this by grp_ids
-    ok( $got = class->list_ids({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'id' }), 'getting by grp_id' );
+    ok( $got = class->list_ids({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'title' }), 'getting by grp_id' );
     $number = @$got;
     is( $number, 2, 'there should be two stories in the first grp' );
     is( $got->[0], $story[2]->get_id(), '... and they should be numbers 2' );
@@ -572,11 +578,11 @@ sub test_select_methods: Test(44) {
 
 
     # now let's try a limit
-    ok( $got = class->list({ Order => 'id', Limit => 3 }), 'try setting a limit of 3');
+    ok( $got = class->list({ Order => 'title', Limit => 3 }), 'try setting a limit of 3');
     is( @$got, 3, '... did we get exactly 3 stories back' );
 
     # test Offset
-    ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'id', Offset => 1 }), 'try setting an offset of 2 for a search that just returned 3 objs');
+    ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'title', Offset => 1 }), 'try setting an offset of 2 for a search that just returned 3 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
     
 }

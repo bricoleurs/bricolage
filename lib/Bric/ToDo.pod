@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.97 $
+$Revision: 1.98 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:58 $
+$Date: 2003-03-15 05:16:19 $
 
 =head1 DESCRIPTION
 
@@ -57,12 +57,6 @@ Category is special in that it must allow group memberships to cascade into
 subcategories. Site is probably typical of all other objects that need this
 widget, in that it doesn't include secret groups and it doesn't need to
 cascade memberships.)
-
-=item *
-
-Add an C<instance()> function/method to Bric::Util::Session so that other
-parts of the API can always get the current session, instead of grabbing
-C<%HTML::Mason::Commands::session> directly (as in Bric::App::Util).
 
 =item *
 

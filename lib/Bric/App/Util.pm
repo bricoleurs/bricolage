@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-27 21:14:51 $
+$Date: 2003-03-15 05:16:19 $
 
 =head1 SYNOPSIS
 
@@ -39,6 +39,7 @@ use strict;
 # Programmatic Dependencies
 #use CGI::Cookie;
 #use Bric::Config qw(:qa :cookies);
+use Bric::App::Session;
 use Bric::Config qw(:cookies);
 use Bric::Util::Class;
 use Bric::Util::Pref;
@@ -180,9 +181,10 @@ NONE
 
 sub add_msg {
     my ($txt) = @_;
-    my $msg = $HTML::Mason::Commands::session{'_msg'};
+    my $session = Bric::App::Session->instance();
+    my $msg = $session->{'_msg'};
     push @$msg, $txt;
-    $HTML::Mason::Commands::session{'_msg'} = $msg;
+    $session->{'_msg'} = $msg;
     return 1;
 }
 
@@ -201,13 +203,7 @@ NONE
 
 B<Side Effects:>
 
-=over
-
-=item *
-
-Sets global variable %HTML::Mason::Commands::session
-
-=back
+NONE
 
 B<Notes:>
 
@@ -217,7 +213,7 @@ NONE
 
 sub get_msg {
     my ($num) = @_;
-    my $msg = $HTML::Mason::Commands::session{'_msg'};
+    my $msg = Bric::App::Session->instance->{'_msg'};
 
     if (defined $num) {
         return $msg->[$num];
@@ -254,9 +250,10 @@ NONE
 =cut
 
 sub next_msg {
-    my $msg = $HTML::Mason::Commands::session{'_msg'};
+    my $session = Bric::App::Session->instance();
+    my $msg = $session->{'_msg'};
     my $txt = shift @$msg;
-    $HTML::Mason::Commands::session{'_msg'} = $msg;
+    $session->{'_msg'} = $msg;
     return $txt;
 }
 
@@ -272,13 +269,7 @@ NONE
 
 B<Side Effects:>
 
-=over
-
-=item *
-
-Sets global variable %HTML::Mason::Commands::session
-
-=back
+NONE
 
 B<Notes:>
 
@@ -287,7 +278,7 @@ NONE
 =cut
 
 sub num_msg {
-    my $msg = $HTML::Mason::Commands::session{'_msg'};
+    my $msg = Bric::App::Session->instance->{'_msg'};
     return scalar @$msg;
 }
 
@@ -319,7 +310,7 @@ NONE
 =cut
 
 sub clear_msg {
-    $HTML::Mason::Commands::session{'_msg'} = [];
+    Bric::App::Session->instance->{'_msg'} = [];
 }
 
 #------------------------------------------------------------------------------#
@@ -452,13 +443,18 @@ This only works with pages that use the 'header.mc' element.
 
 =cut
 
-sub set_redirect { $HTML::Mason::Commands::session{_redirect} = shift }
+sub set_redirect {
+    Bric::App::Session->instance->{_redirect} = shift;
+}
 
 # Unused as of 1.2.2
-sub get_redirect { $HTML::Mason::Commands::session{_redirect} }
+sub get_redirect {
+    Bric::App::Session->instance->{_redirect};
+}
 
 sub del_redirect {
-    my $rv = delete $HTML::Mason::Commands::session{_redirect};
+    my $session = Bric::App::Session->instance();
+    my $rv = delete $session->{_redirect};
     # Behave normally if not login
     return $rv unless defined $rv and $rv =~ /$login_marker/o;
 
@@ -481,7 +477,7 @@ sub del_redirect {
     # path is always "/", since that's what AccessHandler sets it to. If that
     # changes in the future, we'll need to change it here, too, by adding code
     # to attach the proper query string to the URI.
-    $qsv .= '&'. COOKIE .'='. $HTML::Mason::Commands::session{_session_id} .
+    $qsv .= '&'. COOKIE .'='. $session->{_session_id} .
         URI::Escape::uri_escape('; path=/');
     $rv =~ s/$login_marker/$qsv/;
     return $rv;
@@ -587,7 +583,8 @@ NONE
 =cut
 
 sub log_history {
-    my $history = $HTML::Mason::Commands::session{'_history'};
+    my $session = Bric::App::Session->instance();
+    my $history = $session->{'_history'};
 
     my $r = Apache::Request->instance(Apache->request);
     my $curr = $r->uri;
@@ -601,7 +598,7 @@ sub log_history {
         pop @$history if scalar(@$history) > MAX_HISTORY;
 
         # Save the history back.
-        $HTML::Mason::Commands::session{'_history'} = $history;
+        $session->{'_history'} = $history;
     }
 }
 
@@ -632,7 +629,7 @@ sub last_page {
     # Default to one page prior (index 0 contains the current page).
     $n = 1 unless defined $n;
 
-    return $HTML::Mason::Commands::session{'_history'}->[$n];
+    return Bric::App::Session->instance->{'_history'}->[$n];
 }
 
 #------------------------------------------------------------------------------#
@@ -657,7 +654,7 @@ NONE
 =cut
 
 sub pop_page {
-    return shift @{$HTML::Mason::Commands::session{'_history'}}
+    return shift @{Bric::App::Session->instance->{'_history'}};
 }
 
 #--------------------------------------#

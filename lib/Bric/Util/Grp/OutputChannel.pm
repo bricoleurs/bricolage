@@ -6,16 +6,16 @@ Bric::Util::Grp::OutputChannel - Interface to Bric::Biz::OutputChannel Groups
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-11 16:24:04 $
+$Date: 2003-03-15 05:16:20 $
 
 =head1 SYNOPSIS
 
@@ -125,6 +125,27 @@ sub get_supported_classes {
       'Bric::Biz::OutputChannel::Element' => 'output_channel'
     }
 }
+
+##############################################################################
+
+=item my @list_classes = Bric::Util::Grp->get_list_classes
+
+Returns a list or anonymous array of the supported classes in the group that
+can have their C<list()> methods called in succession to assemble a list of
+member objects. This data varies from that stored in the keys in the hash
+reference returned by C<get_supported_classes> in that some classes' C<list()>
+methods may inherit from others, and we don't want the same C<list()> method
+executed more than once.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_list_classes { ('Bric::Biz::OutputChannel') }
 
 ################################################################################
 

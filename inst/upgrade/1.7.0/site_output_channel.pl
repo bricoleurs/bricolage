@@ -36,7 +36,7 @@ do_sql
 
   # Add a new aggregate index.
   q/CREATE UNIQUE INDEX udx_output_channel__name_site
-      ON output_channel(name, site__id)/
+      ON output_channel(LOWER(name, site__id))/
 ;
 
 __END__

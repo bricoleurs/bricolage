@@ -255,6 +255,11 @@ approach, rather than constructing the relevant objects one-at-a-time from
 each Member object. This should provide a drammatic speedup in many
 operations.
 
+=item *
+
+Bric::App::Session now has an instance() public class method to return the
+%HTML::Mason::Commands::session hash. [Scott]
+
 =back
 
 =head2 Bug Fixes

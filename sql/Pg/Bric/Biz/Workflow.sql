@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-13 18:52:14 $
+-- $Date: 2003-03-15 05:16:21 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -55,7 +55,9 @@ CREATE TABLE workflow_member (
 --
 -- Need to drop udx_workflow__name in upgrade script XXX 
 
-CREATE UNIQUE INDEX udx_workflow__name__site__id ON workflow(site__id, name);
+CREATE UNIQUE INDEX udx_workflow__name__site__id
+ON workflow(lower_text_num(name, site__id));
+
 CREATE INDEX fkx_site__workflow__site__id ON workflow(site__id);
 CREATE INDEX fkx_workflow__workflow_member ON workflow_member(object_id);
 CREATE INDEX fkx_member__workflow_member ON workflow_member(member__id);

@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:48 $
+$Date: 2003-03-15 05:16:21 $
 
 =head1 SYNOPSIS
 
@@ -616,7 +616,7 @@ use constant key => 'pt_pt';
    'This story has not been assigned to a category.' =>
      'Este artigo não foi atribuído a uma categoria.',
 
-   'URI [_1] is already in use. Please try a different directory name or Parent.' =>
+   'URI [_1] is already in use. Please try a different directory name or parent category.' =>
      'O URI [_1] já está a ser usado. Por favor tente um nome de categoria ou \'parent\' diferente.',
 
    'Usernames must be at least 6 characters!' =>

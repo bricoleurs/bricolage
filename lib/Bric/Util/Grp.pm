@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:39 $
+$Date: 2003-03-15 05:16:20 $
 
 =head1 SYNOPSIS
 
@@ -504,6 +504,30 @@ Subclasses should override this method.
 =cut
 
 sub get_supported_classes { undef }
+
+##############################################################################
+
+=item my @list_classes = Bric::Util::Grp->get_list_classes
+
+Returns a list or anonymous array of the supported classes in the group that
+can have their C<list()> methods called in succession to assemble a list of
+member objects. This data varies from that stored in the keys in the hash
+reference returned by C<get_supported_classes> in that some classes' C<list()>
+methods may inherit from others, and we don't want the same C<list()> method
+executed more than once. A good example of such a case is the various Media
+subclasses managed by Bric::Util::Grp::Asset.
+
+B<Throws:> NONE.
+
+B<Side Effects:> This method is used internally by C<get_objects()>.
+
+B<Notes:>
+
+Subclasses should override this method.
+
+=cut
+
+sub get_list_classes { () }
 
 ##############################################################################
 
@@ -1295,7 +1319,10 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> This method gets a list of classes from C<get_list_classes()> and
+calls C<list()> on each, passing in the required C<grp_id> parameter. Thus
+this method will not reflect any changes made to group membership unless
+C<save()> has been called on the group object.
 
 =cut
 
@@ -1303,7 +1330,7 @@ sub get_objects {
     my $self = shift;
     my $id = $self->_get('id') or return;
     my @objs;
-    foreach my $class (keys %{ $self->get_supported_classes }) {
+    foreach my $class ($self->get_list_classes) {
         push @objs, $class->list({ grp_id => $id });
     }
     return wantarray ? @objs : \@objs;

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-12 09:00:55 $
+-- $Date: 2003-03-15 05:16:21 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -85,7 +85,8 @@ CREATE TABLE output_channel_member (
 -- 
 -- INDEXES.
 --
-CREATE UNIQUE INDEX udx_output_channel__name_site ON output_channel(name, site__id);
+CREATE UNIQUE INDEX udx_output_channel__name_site
+ON output_channel(lower_text_num(name, site__id));
 
 CREATE INDEX idx_output_channel__filename ON output_channel(LOWER(filename));
 CREATE INDEX idx_output_channel__file_ext ON output_channel(LOWER(file_ext));

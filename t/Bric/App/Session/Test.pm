@@ -6,8 +6,6 @@ use Test::More;
 use Apache::FakeRequest;
 use Bric::App::Session;
 
-my $sess;
-
 ##############################################################################
 # Setup for tests.
 ##############################################################################
@@ -15,18 +13,18 @@ sub test_setup : Test(setup => 1) {
     my $self = shift;
     my $r = Apache::FakeRequest->new;
     ok( Bric::App::Session::setup_user_session($r), "Setup user session" );
-    # Bric::App::Session puts the session hash into the Mason::Commands
-    # package, so let's just get a convenient handle to it, shall we?
-    $sess = \%HTML::Mason::Commands::session
 }
 
 ##############################################################################
 # Test functions.
 ##############################################################################
-sub test_session : Test(2) {
+sub test_session : Test(3) {
     my $self = shift;
+    my $sess = Bric::App::Session->instance();
     ok( $sess->{foo} = 'bar', "Set foo" );
     is( $sess->{foo}, 'bar', "Test for 'bar'" );
+    my $sess2 = Bric::App::Session->instance();
+    is( $sess2->{foo}, 'bar', "Test new instance for 'bar'" );
 }
 
 ##############################################################################

@@ -7,15 +7,15 @@ Bric::App::Session - A class to handle user sessions
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 16:07:50 $
+$Date: 2003-03-15 05:16:19 $
 
 =head1 SYNOPSIS
 
@@ -167,6 +167,39 @@ my $secret = 'd0 a3rQ#R9JR34$(#ffE*38fhj3#$98jfeER9\'a35T(fgn[*;|ife=ef*R#,{%@';
 #------------------------------------------------------------------------------#
 
 =head1 INTERFACE
+
+=head2 Public Class Methods
+
+=over
+
+=item instance()
+
+Return a reference to the %session hash so that other parts of the API
+can get the current session without using %HTML::Mason::Commands::session
+directly.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub instance {
+    return \%HTML::Mason::Commands::session;
+}
+
+=back
+
+#------------------------------------------------------------------------------#
+
 
 =head2 Functions
 
