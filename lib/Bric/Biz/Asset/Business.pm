@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-09 22:29:47 $
+$Date: 2002-10-25 01:34:22 $
 
 =head1 SYNOPSIS
 
@@ -931,8 +931,14 @@ sub reorder_contributors {
 
 =item my $ocs_aref = $biz->get_output_channels
 
+=item my @ocs = $biz->get_output_channels(@oc_ids)
+
+=item my $ocs_aref = $biz->get_output_channels(@oc_ids)
+
 Returns a list or anonymous array of the output channels the business asset
-will be output to when it is published.
+will be output to when it is published. If C<@oc_ids> is passed, then only the
+output channels with those IDs are returned, if they're associated with this
+asset.
 
 B<Throws:>
 
@@ -982,7 +988,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_output_channels { $get_oc_coll->(shift)->get_objs }
+sub get_output_channels { $get_oc_coll->(shift)->get_objs(@_) }
 
 ##############################################################################
 
