@@ -35,6 +35,9 @@ CREATE SEQUENCE seq_attr_element_val START 1024;
 -- Unique IDs for the element_meta table
 CREATE SEQUENCE seq_attr_element_meta START 1024;
 
+-- Unique IDs for the element__site table.
+CREATE SEQUENCE seq_element__site START 1024;
+
 -- -----------------------------------------------------------------------------
 -- Table: element
 --
@@ -69,13 +72,16 @@ CREATE TABLE element  (
 -- Description: A table that maps 
 
 CREATE TABLE element__site (
+    id              NUMERIC(10,0)  NOT NULL
+                                   DEFAULT NEXTVAL('seq_element__site'),
     element__id    NUMERIC(10)     NOT NULL,
     site__id       NUMERIC(10)     NOT NULL,
     active         NUMERIC(1)      DEFAULT 1
                                    NOT NULL
                                    CONSTRAINT ck_site_element__active
                                      CHECK (active IN (0,1)),
-    primary_oc__id  NUMERIC(10,0) NOT NULL
+    primary_oc__id  NUMERIC(10,0) NOT NULL,
+    CONSTRAINT pk_element__site__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------

@@ -33,6 +33,8 @@ CREATE SEQUENCE seq_attr_story_val START 1024;
 -- Unique IDs for the story_meta table
 CREATE SEQUENCE seq_attr_story_meta START 1024;
 
+-- Unique IDs for the story_uri table
+CREATE SEQUENCE seq_story_uri START 1024;
 
 
 -- -----------------------------------------------------------------------------
@@ -106,9 +108,12 @@ CREATE TABLE story_instance (
 -- Description: Tracks all URIs for stories.
 --
 CREATE TABLE story_uri (
+    id        NUMERIC(10,0)   NOT NULL
+                              DEFAULT NEXTVAL('seq_story_uri'),
     story__id NUMERIC(10)     NOT NULL,
     site__id NUMERIC(10)      NOT NULL,
-    uri       TEXT            NOT NULL
+    uri       TEXT            NOT NULL,
+    CONSTRAINT pk_story_uri__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------

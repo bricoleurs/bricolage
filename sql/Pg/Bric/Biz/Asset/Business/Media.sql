@@ -32,6 +32,9 @@ CREATE SEQUENCE seq_attr_media_val START 1024;
 -- Unique IDs for the media_meta table
 CREATE SEQUENCE seq_attr_media_meta START 1024;
 
+-- Unique IDs for the media_uri table
+CREATE SEQUENCE seq_media_uri START 1024;
+
 
 -- -----------------------------------------------------------------------------
 -- Table media
@@ -107,9 +110,12 @@ CREATE TABLE media_instance (
 -- Description: Tracks all URIs for stories.
 --
 CREATE TABLE media_uri (
+    id        NUMERIC(10,0)   NOT NULL
+                              DEFAULT NEXTVAL('seq_media_uri'),
     media__id NUMERIC(10)     NOT NULL,
     site__id  NUMERIC(10)     NOT NULL,
-    uri       TEXT            NOT NULL
+    uri       TEXT            NOT NULL,
+    CONSTRAINT pk_media_uri__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------
