@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-09 00:44:46 $
+$Date: 2002-12-10 18:45:26 $
 
 =head1 SYNOPSIS
 
@@ -46,7 +46,6 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
-use HTML::Mason::Parser;
 use HTML::Mason::Interp;
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::AP;
@@ -200,12 +199,6 @@ sub burn_one {
     my ($ba, $oc, $cat, $at) = @_;
     my ($outbuf, $retval);
 
-    # Create a parser and allow some global variables.
-    my $parser = HTML::Mason::Parser->new('allow_globals' => [qw($story
-                                                                 $burner
-                                                                 $writer
-                                                                 $element)],
-                                          'in_package'    => TEMPLATE_BURN_PKG);
     # Determine the component roots.
     my $comp_dir = $self->get_comp_dir;
     my $comp_root = [];
@@ -226,7 +219,11 @@ sub burn_one {
     }
 
     # Create the interpreter
-    my $interp = HTML::Mason::Interp->new('parser'     => $parser,
+    my $interp = HTML::Mason::Interp->new('allow_globals' => [qw($story
+                                                                 $burner
+                                                                 $writer
+                                                                 $element)],
+                                          'in_package'    => TEMPLATE_BURN_PKG,
                                           'comp_root'  => $comp_root,
                                           'data_dir'   => $self->get_data_dir,
                                           'out_method' => \$outbuf);
@@ -255,14 +252,14 @@ sub burn_one {
     my $tmpl_path = $cat->ancestry_path;
     my $tmpl_name = _fmt_name($element->get_name);
     my $template = $fs->cat_uri($tmpl_path, $tmpl_name);
-    if ( $interp->lookup($template . '.mc') ) {
+    if ( $interp->comp_exists($template . '.mc') ) {
         # The top-level .mc template exits.
         $template .= '.mc';
     } else {
         # If we're in here, there's no top-level .mc template. So create a
         # dhandler for it if there isn't one already.
         _create_dhandler($comp_root, $oc, $cat, $tmpl_name)
-          unless $interp->lookup($fs->cat_uri($tmpl_path, 'dhandler'));
+          unless $interp->comp_exists($fs->cat_uri($tmpl_path, 'dhandler'));
     }
 
     while (1) {
@@ -304,7 +301,7 @@ sub burn_one {
 
 Compiles the template found in $ba. If the compile succeeds with no
 errors, chk_syntax() returns true. Otherwise, it returns false, and the error
-will be in the $err varible passed by reference.
+will be in the $err variable passed by reference.
 
 B<Throws:> NONE.
 
@@ -317,20 +314,23 @@ B<Notes:> NONE.
 sub chk_syntax {
     my ($self, $ba, $err_ref) = @_;
 
-    # Create a parser and allow some global variables.
-    my $parser = HTML::Mason::Parser->new('allow_globals' => [qw($story
+    # Create the interpreter
+    my $interp = HTML::Mason::Interp->new('allow_globals' => [qw($story
                                                                  $burner
                                                                  $writer
                                                                  $element)],
-                                          'in_package'    => TEMPLATE_BURN_PKG);
-    # Create the interpreter
-    my $interp = HTML::Mason::Interp->new('parser'     => $parser,
+                                          'in_package'    => TEMPLATE_BURN_PKG,
                                           'comp_root'  => $self->get_comp_dir,
                                           'data_dir'   => $self->get_data_dir);
 
     # Try to create a component.
-    return $parser->make_component(script => $ba->get_data,
-                                   error  => $err_ref);
+    my $comp = eval { $interp->make_component(comp_source => $ba->get_data()) };
+    if ($@) {
+        $$err_ref = $@;   # $@->as_line()?
+        return;
+    } else {
+        return $comp;
+    }
 }
 
 #------------------------------------------------------------------------------#
@@ -355,7 +355,7 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Uses HTML::Mason::Interp->lookup() internally to determine if the
+B<Notes:> Uses HTML::Mason::Interp->comp_exists() internally to determine if the
 template exists.
 
 =cut
@@ -366,7 +366,7 @@ sub find_template {
     my @dirs = $fs->split_uri($uri);
     while (@dirs) {
         my $tmpl = $fs->cat_uri(@dirs, $name);
-        return $tmpl if $interp->lookup($tmpl);
+        return $tmpl if $interp->comp_exists($tmpl);
         # Pop off a directory.
         pop @dirs;
     }

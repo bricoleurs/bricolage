@@ -20,7 +20,7 @@
 <b>Filename:</b> <% $fault->get_filename %><br />
 <b>Line:</b> <% $fault->get_line %><br />
 <b>Message:</b> <% $fault->get_msg . ($more_err ? "\n\n$more_err" : '') %>
-% if (ref $pay) {
+% if ($is_burner_error) {
 </p>
 % } else {
 <br /><b>Payload:</b>
@@ -31,7 +31,7 @@
 % }
 </font>
 
-% if (ref $pay) {
+% if ($is_burner_error) {
 <font face="Verdana, Helvetica, Arial"><p><b>Payload:</b></font>
 <table border="0" cellpadding="2" cellspacing="2">
     <tr>
@@ -62,7 +62,7 @@
 <br /><br />
 <& '/widgets/debug/debug.mc' &>
 % } else {
-% if (ref $pay) {
+% if ($is_burner_error) {
 <table border="0" cellpadding="2" cellspacing="2">
     <tr>
         <td align="right"><span class="label">Class:</span></td>
@@ -89,7 +89,7 @@
 <p class="errorMsg"><% $pay %></p>
 % }
 <p class="header">Please report this error to your administrator.</p>
-% } 
+% }
 
 <& '/widgets/wrappers/sharky/footer.mc' &>
 
@@ -120,15 +120,21 @@ $more_err => undef
 <%init>;
 # Clear out messages - they're likely irrelevant now.
 clear_msg();
-unless ($fault) {
+unless (UNIVERSAL::isa($fault, 'Bric::Util::Fault::Exception')) {
     my %h = $r->headers_in;
+    my $payload = isa_mason_exception($fault) ? $fault->as_brief : $h{BRIC_ERR_PAY};
+    if (UNIVERSAL::isa($payload, 'Bric::Util::Fault::Exception')) {
+        $payload = $payload->get_msg();
+    }
     $fault = Bric::Util::Fault::Exception::AP->new(
       { msg => $h{BRIC_ERR_MSG} || 'No error message found',
-        payload => $h{BRIC_ERR_PAY} });
+        payload => $payload });
 }
+
 my $msg = $fault->get_msg || '';
 # Get the payload if this is a Mason-level or burn system error.
 my $pay = $fault->get_payload if $msg eq 'Error processing Mason elements.'
   ||  $msg =~ /^Unable to find template/
   ||  TEMPLATE_QA_MODE ;
+my $is_burner_error = ($msg =~ /^Unable to find template/);
 </%init>

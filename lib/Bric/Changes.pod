@@ -311,6 +311,10 @@ return the strings representing the file names or URIs of the given page in
 the curently-burning story and, in the case of the C<page_uri()> method,
 appropriate to the currently-burning Output Channel. [David]
 
+=item *
+
+Ported to HTML::Mason versions 1.15 and higher. [Scott]
+
 =back
 
 =head1 VERSION 1.4.6

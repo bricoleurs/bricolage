@@ -19,14 +19,14 @@
 <b>Filename:</b> <% $fault->get_filename %><br />
 <b>Line:</b> <% $fault->get_line %><br />
 <b>Message:</b> <% $fault->get_msg . ($more_err ? "\n\n$more_err" : '') %>
-% if (ref $pay) {
+% if ($is_burner_error) {
 </p>
 % } else {
 <br /><b>Payload:</b> <% $pay %></p>
 % }
 </font>
 
-% if (ref $pay) {
+% if ($is_burner_error) {
 <font face="Verdana, Helvetica, Arial"><p><b>Payload:</b></font>
 <table border="0" cellpadding="2" cellspacing="2">
     <tr>
@@ -70,13 +70,16 @@ $more_err => undef
 <%init>;
 # Clear out messages - they're likely irrelevant now.
 clear_msg();
-unless ($fault) {
+unless (UNIVERSAL::isa($fault, 'Bric::Util::Fault::Exception')) {
     my %h = $r->headers_in;
+    my $payload = isa_mason_exception($fault) ? $fault->as_brief : $h{BRIC_ERR_PAY};
+    if (UNIVERSAL::isa($payload, 'Bric::Util::Fault::Exception')) {
+        $payload = $payload->get_msg();
+    }
     $fault = Bric::Util::Fault::Exception::AP->new(
       { msg => $h{BRIC_ERR_MSG} || 'No error message found',
-        payload => $h{BRIC_ERR_PAY} });
+        payload => $payload });
 }
 my $pay = $fault->get_payload;
+my $is_burner_error = ($fault->get_msg =~ /^Unable to find template/);
 </%init>
-
-

@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-30 06:23:36 $
+$Date: 2002-12-10 18:45:26 $
 
 =head1 SYNOPSIS
 
@@ -58,9 +58,11 @@ use Bric::Util::Fault::Exception::AP;
 use Bric::Util::Fault::Exception::DP;
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::CharTrans;
+use Bric::App::ApacheHandler;
 use Bric::App::Event qw(clear_events);
 use Apache::Log;
 use HTML::Mason;
+use HTML::Mason::Exceptions;
 use Carp qw(croak);
 
 # Bring in ApacheHandler. Install Apache::Request and have it parse arguments.
@@ -121,6 +123,8 @@ use HTML::Mason::ApacheHandler (args_method => MASON_ARGS_METHOD);
 
     use Bric::SOAP;
 
+    use HTML::Mason::Exceptions;
+
     use vars qw($c $widget_dir);
 
     # Where our widgets live under the element root.
@@ -158,34 +162,18 @@ my $ap = 'Bric::Util::Fault::Exception::AP';
 my $ct = Bric::Util::CharTrans->new(CHAR_SET);
 my $no_trans = 0;
 
-# Create Mason parser object.
-my $parser = HTML::Mason::Parser->new;
-
-# Create the interpreter. Options we may want to add for the shipping product
-# include:
-# * use_reload_file => 1 - This forces Mason to use object files only, without
-#   checking element files to see if they've changed. 'Corse, we'll need
-#   to pre-compile all of our elements upon installation by using
-#   the Parser/make_element method.
-# * out_mode => 'stream' = This should make the serving of pages appear to
-#   be faster, as Mason will output data as it goes, rather than computing
-#   the entire page in memory (in a scalar) and then serving it all at once,
-#   which is what 'batch' mode (the default) does.
-my $interp = HTML::Mason::Interp->new(parser            => $parser,
-                                      comp_root         => MASON_COMP_ROOT,
-                                      data_dir          => MASON_DATA_ROOT,
-				      system_log_events => 'ALL',
-				      out_method => \&filter,
-				      use_reload_file => 0,
-				      die_handler => sub { $_ },
-				      out_mode => 'batch');
-
-my $ah = HTML::Mason::ApacheHandler->new(interp       => $interp,
-					 error_mode   => 'fatal',
-					 decline_dirs => 0);
-
-# Install our own ARGS handler.
-$HTML::Mason::ApacheHandler::ARGS_METHOD = \&load_args;
+my %interp_args = (
+    comp_root         => MASON_COMP_ROOT,
+    data_dir          => MASON_DATA_ROOT,
+    out_method => \&filter,
+    static_source => 0,  # was 'use_reload_file'
+    autoflush => 0,      # was 'out_mode'
+    error_mode   => 'fatal',
+);
+my $interp = HTML::Mason::Interp->new(%interp_args);
+my $ah = Bric::App::ApacheHandler->new(%interp_args,
+                                       decline_dirs => 0,
+                                       args_method => 'mod_perl');
 
 # Reset ownership of all files created by Mason at startup.
 chown SYS_USER, SYS_GROUP, $interp->files_written;
@@ -267,9 +255,23 @@ B<Notes:> NONE.
 sub handle_err {
     my ($r, $err) = @_;
     # Create an exception object unless we already have one.
-    $err = Bric::Util::Fault::Exception::AP->new(
-       { msg => "Error processing Mason elements.", payload => $err })
-       unless ref $err;
+    unless (UNIVERSAL::isa($err, 'Bric::Util::Fault::Exception')) {
+        my $payload = '';
+        if (isa_mason_exception($err)) {
+            if (UNIVERSAL::isa($err->as_brief(), 'Bric::Util::Fault::Exception')) {
+                $payload = $err->as_brief()->get_msg();
+            } else {
+                $payload = $err->as_brief();
+            }
+        } else {
+            $payload = $err;
+        }
+
+        $err = Bric::Util::Fault::Exception::AP->new({
+            msg => "Error processing Mason elements.",
+            payload => $payload,
+        });
+    }
 
     # Rollback the database transactions.
     eval { rollback(1) };
@@ -292,95 +294,6 @@ sub handle_err {
     return $interp->exec(ERROR_URI, fault => $err,
 			 __CB_DONE => 1, more_err => $more_err);
 }
-################################################################################
-
-=item my $args = load_args($ah, $rref, $m)
-
-Overrides the HTML::Mason::ApacheHandler::ARGS_METHOD method to process GET and
-POST data. By overriding it, we are able to do a couple of extra things, such as
-translate the characters to Unicode and to turn empty strings into undefs.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Error setting Bric::Util::CharTrans character set.
-
-=item *
-
-Error translating to Unicode.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> Most of this code was copied from
-HTML::Mason::ApacheRequest::_mod_perl_args(). We will have to change the Mason
-settings for triggering this in future versions of Mason, where Jonathan
-promises,
-
-  In the long term (1.2-ish), we are planning to split out
-  ApacheHandler::handle_request into several API functions, one of which will
-  be "determine the hash of args from $r". So you will be able to do your own
-  thing instead of calling the standard ApacheHandler method for this.
-
-One thing that is commented out here is callbacks. I have not been able to get
-them to work properly here yet, so they remain in /autohandler. But they are
-the Only thing left there!
-
-=cut
-
-sub load_args {
-    my ($ah, $rref, $m) = @_;
-
-    my $apr = $$rref;
-    # Switch to an Apache::Request object, if necessary.
-    unless (UNIVERSAL::isa($apr, 'Apache::Request')) {
-	$apr = Apache::Request->new($apr);
-	$$rref = $apr;
-    }
-
-    # We need to apply preferences for the character set.
-    # Commented out because we're using the setting in Bric::Config, instead, and
-    # that's set only once, at server startup time.
-#    eval { $ct->charset(Bric::App::Default::get_pref("Character Set") || $defset)};
-#    die ref $@ ? $@ : $dp->new({
-#      msg => "Error setting Bric::Util::CharTrans character set.",
-#      payload => $@ }) if $@;
-
-    return unless $apr->param;
-
-    # We'll be checking to see if the data is already Unicode below.
-    my $utf = $ct->charset eq 'UTF-8';
-    my %args;
-    foreach my $key ($apr->param) {
-	my @values = $apr->param($key);
-
-	# Translate value to Unicode, unless it's already Unicode
-        eval { $ct->to_utf8(\@values) } unless $utf;
-
-        if ($@) {
-            my $msg = 'Error translating from '.$ct->charset.' to UTF-8.';
-            die ref $@ ? $@
-                       : Bric::Util::Fault::Exception::DP->new({msg     => $msg,
-                                                                payload => $@});
-        }
-
-        # Build up our own argument hash of converted values.
-        $args{$key} = scalar @values == 1 ? $values[0] : \@values;
-    }
-
-    # Execute any callbacks set for this request.
-    # Commented out because it doesn't work right now. Jonathan says,
-    #   ...without taking a closer look I'd say you cannot depend on having
-    #   access to a full request object in the argument handler. Again, this API
-    #   is due for a revamp.
-#    Bric::App::Session::handle_callbacks($m, \%args);
-    return %args;
-}
-
 ################################################################################
 
 =item filter($output)
@@ -414,7 +327,7 @@ sub filter {
     # Do the translation.
     my $ret;
     eval { $ret = $ct->from_utf8($_[0]) };
-    
+
     # Do error processing, if necessary.
     if (my $err = $@) {
         $no_trans = 1; # So we don't translate error.html.

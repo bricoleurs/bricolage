@@ -3,7 +3,8 @@ my $key = '_status_msg_';
 my $space = '&nbsp;' x 20;
 </%once>
 <%init>;
-local $m->interp->{out_mode} = 'stream';
+my $old_autoflush = $m->autoflush;   # autoflush is restored below
+$m->autoflush(1);
 unless ( $r->pnotes($key) ) {
     # We haven't called this thing yet. Throw up some initial information.
     $m->out("<br />\n" x 2);
@@ -17,6 +18,7 @@ unless ( $r->pnotes($key) ) {
 }
 map $m->out(qq{$space<span class="errorMsg">$_</span><br />\n}), @_;
 $m->flush_buffer;
+$m->autoflush($old_autoflush);
 $r->pnotes($key, 1);
 </%init>
 <%doc>
@@ -27,11 +29,11 @@ status_msg.mc - Sends messages to the browser in real-time
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-11-30 06:23:36 $
+$Date: 2002-12-10 18:45:25 $
 
 =head1 SYNOPSIS
 
