@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-28 23:41:03 $
+$Date: 2002-03-08 02:37:25 $
 
 =head1 SYNOPSIS
 
@@ -1871,8 +1871,7 @@ sub add_containers {
     my $grp = $self->_get_asset_type_grp;
 
     # Construct the proper array to pass to 'add_members'
-    my @mem = map {ref $_ ? {obj => $_}
-                          : {id  => $_, package => __PACKAGE__}} @$at;
+    my @mem = map {ref $_ ? $_ : {id  => $_, package => __PACKAGE__}} @$at;
 
     return unless $grp->add_members(\@mem);
     return $self;
@@ -1936,8 +1935,7 @@ sub del_containers {
     my $grp = $self->_get_asset_type_grp;
 
     # Construct the proper array to pass to 'add_members'
-    my @mem = map {ref $_ ? {obj => $_}
-                          : {id  => $_, package => __PACKAGE__}} @$at;
+    my @mem = map {ref $_ ? $_ : {id  => $_, package => __PACKAGE__}} @$at;
 
     return unless $grp->delete_members(\@mem);
     return $self;
