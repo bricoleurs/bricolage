@@ -54,6 +54,11 @@ live on the Bricolage file system. The latter can still be accessed under
 way to grab media files for editing and such, as it will not incur the overhead
 of distributing the media file. [David]
 
+=item *
+
+Allow only one template with a given name for a given category,
+element, burner and output channel. [Sam]
+
 =back
 
 =head2 Bug Fixes
