@@ -302,24 +302,37 @@ sub test_column($$;$$) {
 =head2 test_constraint
 
   exit if test_constraint $table_name, $constraint_name;
+  exit if test_constraint $table_name, $constraint_name, $delete_code;
 
 This function returns true if the specified constraint exists on the specified
 table in the Bricolage database, and false if it does not. This is useful in
 upgrade scripts that add a new constraint, and want to verify that the
-constraint has not already been created.
+constraint has not already been created. The optional third argument specifies
+the code for the C<DELETE> control on the constraint. The possible values are
+as follows:
+
+  VALUE    ON DELETE...
+  -----    ------------
+    r      RESTRICT
+    c      CASCACDE
+    n      SET NULL
+    a      NO ACTION
+    d      SET DEFAULT
 
 =cut
 
-sub test_constraint($$) {
-    my ($table, $con) = @_;
-    return fetch_sql(qq{
+sub test_constraint($$;$) {
+    my ($table, $con, $delcode) = @_;
+    my $sql = qq{
         SELECT 1
         FROM   pg_class c, pg_constraint r
         WHERE  r.conrelid = c.oid
                AND c.relname = '$table'
                AND r.contype = 'c'
                AND r.conname = '$con'
-    });
+    };
+    $sql .= "           AND r.confdeltype = '$delcode'\n" if $delcode;
+    return fetch_sql($sql);
 }
 
 ##############################################################################
@@ -327,25 +340,30 @@ sub test_constraint($$) {
 =head2 test_foreign_key
 
   exit if test_foreign_key $table_name, $foreign_key_name;
+  exit if test_foreign_key $table_name, $foreign_key_name, $delete_code;
 
-This function returns true if the specified foreign key constrinat
-exists on the specified table in the Bricolage database, and false if
-it does not. This is useful in upgrade scripts that add a new foreign
-key, and want to verify that the constraint has not already been
-created.
+This function returns true if the specified foreign key constrinat exists on
+the specified table in the Bricolage database, and false if it does not. This
+is useful in upgrade scripts that add a new foreign key, and want to verify
+that the constraint has not already been created. The optional third argument
+specifies the code for the C<DELETE> control on the foreign key
+constraint. See the documentation for C<test_constraint()> for the possible
+values for this argument.
 
 =cut
 
-sub test_foreign_key($$) {
-    my ($table, $fk) = @_;
-    return fetch_sql(qq{
+sub test_foreign_key($$;$) {
+    my ($table, $fk, $delcode) = @_;
+    my $sql = qq{
         SELECT 1
         FROM   pg_class c, pg_constraint r
         WHERE  r.conrelid = c.oid
                AND c.relname = '$table'
                AND r.contype = 'f'
                AND r.conname = '$fk'
-    });
+    };
+    $sql .= "           AND r.confdeltype = '$delcode'\n" if $delcode;
+    return fetch_sql($sql);
 }
 
 ##############################################################################

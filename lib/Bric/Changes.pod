@@ -86,6 +86,16 @@ than version 1--that is, it will refuse to install under Apache 2 (for now).
 
 Added Russian localization. [Sergey Samoilenko].
 
+=item *
+
+Changed the foreign keys in the story, media, and formatting (template) tables
+so that C<DELETE>s do not cascade, but are restricted. This means that before
+deleting any source, element, site, worflow, or other related object that has
+a foreign key reference in an asset table, those rows must be deleted.
+Otherwise, PostgreSQL will throw an exception. Hopefully, this will put a stop
+to the mysterious but very rare disappearence of stories from Bricolage.
+[David]
+
 =back
 
 =head2 Bug Fixes
