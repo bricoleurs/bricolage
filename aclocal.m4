@@ -114,7 +114,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.9 2002-02-12 11:09:58 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -143,7 +143,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.9 2002-02-12 11:09:58 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -246,7 +246,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.9 2002-02-12 11:09:58 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -377,39 +377,40 @@ AC_DEFUN([AC_PROG_APACHE],
 
 dnl @author Mark Ethan Trostler <trostler@juniper.net> 
 AC_DEFUN([CHECK_SSL],
-[AC_MSG_CHECKING(if ssl is wanted)
-AC_ARG_WITH(ssl,[
-  --with-ssl              enable ssl [will check /usr/local/ssl
-                            /usr/lib/ssl /usr/ssl /usr/pkg 
-                            /usr/local /usr ]
-],
-[   AC_MSG_RESULT(yes)
-    for dir in $withval /usr/local/ssl /usr/lib/ssl /usr/ssl /usr/pkg /usr/local /usr; do
-        ssldir="$dir"
-        if test -f "$dir/include/openssl/ssl.h"; then
-            found_ssl="yes";
-            CFLAGS="$CFLAGS -I$ssldir/include/openssl -DHAVE_SSL";
-            break;
-        fi
-        if test -f "$dir/include/ssl.h"; then
-            found_ssl="yes";
-            CFLAGS="$CFLAGS -I$ssldir/include/ -DHAVE_SSL";
-            break
-        fi
-    done
-    if test x_$found_ssl != x_yes; then
-        AC_MSG_ERROR(Cannot find ssl libraries)
-    else
-        printf "OpenSSL found in $ssldir\n";
-        LIBS="$LIBS -lssl -lcrypto";
-        LDFLAGS="$LDFLAGS -L$ssldir/lib";
-        HAVE_SSL=yes
-    fi
-    AC_SUBST(HAVE_SSL)
-],
-[
-    AC_MSG_RESULT(no)
-])
+  HAVE_SSL=no
+  [AC_MSG_CHECKING(if ssl is wanted)
+  AC_ARG_WITH(ssl,[
+	--with-ssl              enable ssl [will check /usr/local/ssl
+							  /usr/lib/ssl /usr/ssl /usr/pkg 
+							  /usr/local /usr ]
+  ],
+  [   AC_MSG_RESULT(yes)
+	  for dir in $withval /usr/local/ssl /usr/lib/ssl /usr/ssl /usr/pkg /usr/local /usr; do
+		  ssldir="$dir"
+		  if test -f "$dir/include/openssl/ssl.h"; then
+			  found_ssl="yes";
+			  CFLAGS="$CFLAGS -I$ssldir/include/openssl -DHAVE_SSL";
+			  break;
+		  fi
+		  if test -f "$dir/include/ssl.h"; then
+			  found_ssl="yes";
+			  CFLAGS="$CFLAGS -I$ssldir/include/ -DHAVE_SSL";
+			  break
+		  fi
+	  done
+	  if test x_$found_ssl != x_yes; then
+		  AC_MSG_ERROR(Cannot find ssl libraries)
+	  else
+		  printf "OpenSSL found in $ssldir\n";
+		  LIBS="$LIBS -lssl -lcrypto";
+		  LDFLAGS="$LDFLAGS -L$ssldir/lib";
+		  HAVE_SSL=yes
+	  fi
+	  AC_SUBST(HAVE_SSL)
+  ],
+  [
+	  AC_MSG_RESULT(no)
+  ])
 ])
 
 
@@ -441,7 +442,7 @@ dnl DEFAULT value if the user merely hits return.  Also calls
 dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
 dnl be entered into the config.h file as well.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.9 2002-02-12 11:09:58 markjaroski Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER],
@@ -467,7 +468,7 @@ dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl there is a password, and if so what it is.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.9 2002-02-12 11:09:58 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_FOR_PGPASS],[
@@ -505,7 +506,7 @@ dnl @synopsis AC_VAR_WITH(VAR,with,default)
 dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.9 2002-02-12 11:09:58 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_VAR_WITH],[
@@ -522,7 +523,7 @@ dnl
 dnl Check to see if a user exists.  VAR will be set
 dnl to "yes" on success, "no" on failure.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.9 2002-02-12 11:09:58 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_SYS_USER],[
@@ -544,7 +545,7 @@ dnl to "yes" on success, "no" on failure.  user should
 dnl a user id which is known to exist, and should be in this 
 dnl group.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.9 2002-02-12 11:09:58 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_SYS_GROUP],[
@@ -577,7 +578,7 @@ dnl Try to figure out which pod2html we're working with
 dnl the variable will be set to Christiansen, McDougall, 
 dnl or none, depending on which pod2html is found.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.9 2002-02-12 11:09:58 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POD2HTML],[

@@ -97,6 +97,7 @@ AC_CACHE_SAVE
 
 # Checks for CPAN modules
 # TODO: make sure CPAN itself works
+CHECK_CPAN_MODULE(MISSING_MOD, Bundle::Bricolage)
 CHECK_CPAN_MODULE(MISSING_MOD, Time::HiRes, 01.20)
 CHECK_CPAN_MODULE(MISSING_MOD, Storable, 1.0.10)
 CHECK_CPAN_MODULE(MISSING_MOD, Unix::Syslog, 0.95)
