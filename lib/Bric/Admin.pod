@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-01-10 20:12:35 $
 
 =head1 DESCRIPTION
 
@@ -126,7 +126,7 @@ Bricolage 1.0.2
 
 At some point, we hope to have a makefile that will automate the installation of
 all of these packages for you. Until then, the following instructions will get
-you through installing all the needed components.
+you through installing all the needed components.  If you're upgrading from an older version of Bricolage see the UPGRADING section below.
 
 =head2 Perl
 
@@ -605,6 +605,44 @@ login to get into I<your> installation! Now use the admin login to create other
 user accounts.
 
 =back
+
+=head1 UPGRADING
+
+To upgrade Bricolage, first stop the server:
+
+  bin/bric_apachectl stop
+
+Save a copy of your bricolage.conf file, so you don't overwrite it:
+
+  cp conf/bricolage.conf conf/bricolage.conf.old
+
+Then copy in the new sources from the distribution into you bricolage
+directory.
+
+  cp -a /path/to/new/bricolage .
+
+Run the upgrade scripts needed for upgrading to the new version.  Run
+.sql scripts with psql and .pl scripts with perl.  For example, to
+upgrade from 1.0.2 to 1.2.0:
+
+  psql -U postgres_user -f upgrade/1.2.0/burner.sql bric_database_name
+
+  psql -U postgres_user -f upgrade/1.2.0/oc_include.sql bric_database_name
+
+  perl upgrade/1.2.0/rm_dhandlers.pl
+
+You'll need to adjust the psql line to match your Postrges settings
+(postgres_user and bric_database_name).
+
+Now edit the new bricolage.conf file to match your old settings using
+the bricolage.conf.old settings you saved as a guide.  Don't just copy
+the old settings back into place - there may be new configuration
+variables that you'll need to set for the new version.  See the
+CONFIGURATION section below for details.
+
+Start up Bricolage and enjoy the new features!
+
+  bin/bric_apachectl start
 
 =head1 CONFIGURATION
 
