@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:42 $
+$Date: 2001-12-29 04:40:49 $
 
 =head1 SYNOPSIS
 
@@ -81,6 +81,9 @@ $title = '';
 foreach my $t (@title) {
   $title .= uc(substr($t,0,1)) .lc( substr($t,1) ) . " " ;
 }
+
+# Cache the context so that help can use it.
+set_state_data('help', context => $context);
 </%init>
 
 <html>
