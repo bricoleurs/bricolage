@@ -47,8 +47,7 @@ When errors occur while previewing stories, the leftNav is now turned off.
 
 =item *
 
-Browser buttons and menus are now disabled for all browsers except IE. Fixes to
-get IE to leave them out, too, are welcome. [David]
+Browser buttons and menus are now disabled. [David]
 
 =item *
 
