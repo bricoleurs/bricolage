@@ -96,7 +96,7 @@ Thanks to Matt Vella for the report. [David]
 =item *
 
 Added an "About" page, linked from the logo graphic, that explains the name
-"Bricolage" and offers the license and credits.q
+"Bricolage" and offers the license and credits. [David]
 
 =back
 
