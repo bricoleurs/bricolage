@@ -10,7 +10,9 @@
 
 <p class="header"><% $lang->maketext('An error occurred while processing your request:')%></p>
 
+% if (isa_exception($fault)) {
 <p class="errorMsg"><% escape_html($fault->error) %></p>
+% }
 
 % if (isa_bric_exception($fault) and my $pay = $fault->payload) {
 <pre><% escape_html($pay) %></pre>
@@ -49,7 +51,9 @@
 
 <!-- DEBUGGING INFORMATION.
 
+%     if (isa_exception($fault)) {
 Error: <% escape_html($fault->error) %>
+%     }
 
 %     if ($is_burner_error) {
   Output Channel: <% $fault->oc || '' %>
