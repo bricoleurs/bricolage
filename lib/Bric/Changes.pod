@@ -88,6 +88,10 @@ and workflow only if they're on desks and in workflow. [David]
 Added support for the missing C<publish_status> parameter to
 Bric::Biz::Asset::Business::Media->list(). [David]
 
+=item *
+
+Setting permissions on the assets in a category works again. [David]
+
 =back
 
 =head1 VERSION 1.4.4

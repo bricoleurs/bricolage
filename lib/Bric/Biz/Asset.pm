@@ -8,15 +8,15 @@ An asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.12.2.1 $
+$Revision: 1.12.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-20 21:29:53 $
+$Date: 2002-11-07 01:43:14 $
 
 =head1 SYNOPSIS
 
@@ -1478,14 +1478,14 @@ sub get_grp_ids {
 	# Add the workflow group ID.
 	push @ids, $self->get_workflow_object->get_all_desk_grp_id;
 
-	# Add the category groud IDs. (these don't exist anymore!)
-	#if ($self->key_name eq 'story') {
-	#    # Stories can have multiple categories.
-	#    push @ids, map { $_->get_category_grp_id } $self->get_categories;
-	#} else {
-	#    # Media and Templates are in only one category.
-	#    push @ids, $self->get_category->get_category_grp_id;
-	#}
+	# Add the category groud IDs.
+	if ($self->key_name eq 'story') {
+	    # Stories can have multiple categories.
+	    push @ids, map { $_->get_asset_grp_id } $self->get_categories;
+	} else {
+	    # Media and Templates are in only one category.
+	    push @ids, $self->get_category->get_asset_grp_id;
+	}
     }
     return wantarray ? @ids : \@ids;
 }
@@ -1514,7 +1514,7 @@ NONE
 sub cancel_checkout {
 	my ($self) = @_;
 
-	$self->_set( { 
+	$self->_set( {
 		user__id => undef,
 		checked_out => 0,
 		_cancel		=> 1
