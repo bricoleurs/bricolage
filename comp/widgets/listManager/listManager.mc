@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.2 $
+$Revision: 1.1.1.1.2.3 $
 
 =head1 DATE
 
-$Date: 2001-10-10 19:23:55 $
+$Date: 2001-11-29 00:39:13 $
 
 =head1 SYNOPSIS
 
@@ -447,25 +447,35 @@ my $widget = 'listManager';
 my $get_my_meths = sub {
     my ($pkg, $field_titles, $field_values) = @_;
 
-    # If there are field titles or values to override the originals, we'll
-    # want to make a copy of my_meths. Otherwise, we can just us a reference.
-    my $meths = $field_titles || $field_values ? { %{ $pkg->my_meths } }
-      : $pkg->my_meths;
+    my $meths = $pkg->my_meths;
 
-    # Cook the display values
-    while (my ($f, $t) = each %$field_titles) {
-	$meths->{$f}->{'disp'} = $t;
-    }
+    # Just return the package meths unless there are titles or values to be
+    # replaced.
+    return $meths unless $field_titles || $field_values;
+
+    # Copy the package methods.
+    $meths = { %$meths };
 
     # Cook the value methods
-    if ($field_values) {
+    if ($field_titles && !$field_values) {
+	# Cook the display values
+	while (my ($f, $t) = each %$field_titles) {
+	    $meths->{$f} = { %{ $meths->{$f} } }; # Copy.
+	    $meths->{$f}->{disp} = $t;
+	}
+    } elsif ($field_values) {
+	$field_values ||= {};
 	foreach my $f (keys %$meths) {
-	    my $meth = $meths->{$f}->{'get_meth'};
+	    # Copy the method metadata.
+	    $meths->{$f} = { %{ $meths->{$f} } };
+	    # Install the new display name, if there is one.
+	    $meths->{$f}->{disp} = $field_titles->{$f} if $field_titles->{$f};
 
+	    my $meth = $meths->{$f}->{get_meth};
 	    # Try to return a value from $field_values first.
 	    my $cooked = sub { return ($field_values->($_[0], $f) ||
 				       $meth->(@_)) };
-	    $meths->{$f}->{'get_meth'} = $cooked;
+	    $meths->{$f}->{get_meth} = $cooked;
 	}
     }
 
