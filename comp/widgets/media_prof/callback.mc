@@ -408,7 +408,7 @@ my $handle_create = sub {
 
     # Check permissions.
     my $wf = Bric::Biz::Workflow->lookup({ id => $WORK_ID });
-    my $gid = $wf->get_all_desk_grp_id;
+    my $gid = $wf->get_asset_grp_id;
     chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
 
     # get the asset type

@@ -7,11 +7,11 @@ new.html -- The Mason for creating new Media Assets
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.4.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:12 $
+$Date: 2003-03-27 23:54:27 $
 
 =head1 DESCRIPTION
 
@@ -37,7 +37,7 @@ my $context = "Workflow | Profile | $disp | New";
 <%init>
 $r->uri =~ m!/([^/]+)/?$!;
 my $w_id = $1;
-my $gid =  Bric::Biz::Workflow->lookup({ id => $w_id })->get_all_desk_grp_id;
+my $gid =  Bric::Biz::Workflow->lookup({ id => $w_id })->get_asset_grp_id;
 chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
 </%init>
 

@@ -423,7 +423,7 @@ my $create_fa = sub {
     # Check permissions.
     my $work_id = get_state_data($widget, 'work_id');
     my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
-    my $gid = $wf->get_all_desk_grp_id;
+    my $gid = $wf->get_asset_grp_id;
     chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
 
     # Create a new formatting asset.
