@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-17 18:07:45 $
+$Date: 2002-04-17 21:32:18 $
 
 =head1 SYNOPSIS
 
@@ -709,6 +709,30 @@ sub _load_element {
 
 	# all done
 	$element->save;
+
+	# find any references to this element in existing stories and
+	# fixup with new id.  This is necessary if the element was deleted
+	# with --force and is now being re-added.  All this will be like a
+	# long-forgotten bad dream when I rewrite the element system to
+	# allow elements to be deleted cleanly.
+	my @containers = 
+            ( Bric::Biz::Asset::Business::Parts::Tile::Container->list(
+                 { object_type => 'story', name => $element->get_name }),
+	      Bric::Biz::Asset::Business::Parts::Tile::Container->list(
+                 { object_type => 'media', name => $element->get_name })
+	    );
+	my $element_id = $element->get_id;
+	foreach my $cont (@containers) {
+	    print STDERR __PACKAGE__ . "::create : updating element_id for ", 
+		$element->get_name, " container ", $cont->get_id, " from ",
+		    $cont->_get('element_id'), " to ", $element_id, "\n"
+			if DEBUG;
+	    $cont->_set(['element_id', '_element_obj'], 
+			[$element_id, $element]);
+	    $cont->save();
+	}
+
+	# add to list of created elements
 	push(@element_ids, $element->get_id);
     }
 
@@ -728,6 +752,7 @@ sub _load_element {
 	$element->add_containers(\@sub_ids);
 	$element->save;
     }
+
     return name(ids => [ map { name(element_id => $_) } @element_ids ]);
 }
 
