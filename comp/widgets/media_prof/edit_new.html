@@ -17,8 +17,10 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 	name => "$widget|at_id",
 	object => 'element',
 	field => 'name',
+        req => 1,
         constrain  => { top_level => 1,
 			media => 1 },
+        exclude  => $excl_sub,
 	useTable   => 1
 &>
 <% $ieSpacer %>
@@ -35,6 +37,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 	disp		=> 'Category',
 	name		=> "$widget|category__id",
 	field		=> 'uri',
+        exclude  => $excl_sub,
 	useTable	=> 1
 &>
 		
@@ -73,6 +76,7 @@ my $pmeth = { %{ Bric::Biz::Asset::Business::Media->my_meths->{priority} } };
 $pmeth->{value} = 3;
 my $cdate = { %{ Bric::Biz::Asset::Business::Media->my_meths->{cover_date} } };
 my $nmeth = Bric::Biz::Asset::Business::Media->my_meths->{title};
+my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 </%once>
 
 %#-- Args --#
