@@ -18,7 +18,7 @@ our $VERSION = "1.0";
 
 =head1 DATE
 
-$Date: 2001-10-02 16:23:59 $
+$Date: 2001-10-02 20:10:26 $
 
 =head1 DESCRIPTION
 
@@ -36,7 +36,10 @@ Bric::Util::FTP::Server
 =head1 REVISION HISTORY
 
 $Log: FileHandle.pm,v $
-Revision 1.1  2001-10-02 16:23:59  samtregar
+Revision 1.2  2001-10-02 20:10:26  samtregar
+Fix for templates with no deploy date crashing server
+
+Revision 1.1  2001/10/02 16:23:59  samtregar
 Added FTP interface to templates
 
 
@@ -98,7 +101,11 @@ sub status {
   print STDERR __PACKAGE__, "::status() : ", $template->get_file_name, "\n";  
   
   my $size = length($template->get_data);
-  my $date = local_date($template->get_deploy_date, 'epoch');
+  my $deploy_date = $template->get_deploy_date;
+  my $date = 0;
+  if ($deploy_date) {
+    $date = local_date($deploy_date, 'epoch');
+  }
 
   my $owner = $template->get_user__id;
   if ($owner) {
