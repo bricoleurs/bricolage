@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.126 $
+$Revision: 1.127 $
 
 =head1 DATE
 
-$Date: 2003-10-27 17:51:57 $
+$Date: 2003-10-29 16:09:15 $
 
 =head1 DESCRIPTION
 
@@ -165,8 +165,6 @@ START MODULE LIST
 =item Locale::Maketext
 
 =item Test::Class
-
-=item URI
 
 =item Exception::Class 1.12
 
