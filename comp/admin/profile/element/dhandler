@@ -120,6 +120,9 @@ if (defined $id) {
 
             $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
         }
+    } else {
+        $m->print("<br />\n");
+        $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
     }
 
     if ($primid) {
@@ -160,22 +163,28 @@ if (defined $id) {
 
             # mangle the attrs and meta to match the existing display code.
             my $all_data = $comp->get_data;
-            my $attrs = [];
-            foreach my $dataObj (sort { $a->get_place <=> $b->get_place } @$all_data) {
-                my $attr = $dataObj->get_name;
-                my $metas = $dataObj->get_meta('html_info');
-                my $tmp;
-                foreach my $meta (keys %$metas) {
-                    $tmp->{meta}{$meta} =  { value => $metas->{$meta} };
+            if (@$all_data) {
+                my $attrs = [];
+                foreach my $dataObj (sort { $a->get_place <=> $b->get_place } @$all_data) {
+                    my $attr = $dataObj->get_name;
+                    my $metas = $dataObj->get_meta('html_info');
+                    my $tmp;
+                    foreach my $meta (keys %$metas) {
+                        $tmp->{meta}{$meta} =  { value => $metas->{$meta} };
+                    }
+                    $tmp->{value} = $metas->{value};
+                    $tmp->{name} = $dataObj->get_name;
+                    push @$attrs, $tmp;
                 }
-                $tmp->{value} = $metas->{value};
-                $tmp->{name} = $dataObj->get_name;
-                push @$attrs, $tmp;
-            }
 
-            $num_fields = @$attrs;
-            $m->comp("/widgets/profile/displayAttrs.mc", form_name => 'cont_profile',
-                     attr => $attrs, readOnly => $no_edit);
+                $num_fields = @$attrs;
+                $m->comp("/widgets/profile/displayAttrs.mc", form_name => 'cont_profile',
+                         attr     => $attrs,
+                         readOnly => $no_edit);
+            } else {
+                $m->print(qq{<img src="/media/images/spacer.gif" height="18" width="5" />},
+                $lang->maketext("No fields defined"));
+            }
 
             # Close the table.
             $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
@@ -266,11 +275,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.14.4.1 $
+$Revision: 1.14.4.2 $
 
 =head1 DATE
 
-$Date: 2003-03-19 04:34:41 $
+$Date: 2003-03-19 04:54:15 $
 
 =head1 DESCRIPTION
 
