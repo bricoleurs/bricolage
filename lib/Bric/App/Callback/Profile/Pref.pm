@@ -26,6 +26,9 @@ sub save : Callback {
     $pref->save;
     log_event('pref_save', $pref);
     add_msg("$disp_name \"[_1]\" updated.", $name);
+
+    $self->cache->set_lmu_time;
+
     $self->set_redirect('/admin/manager/pref');
 }
 

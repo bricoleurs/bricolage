@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-12-22 03:21:15 $
+$Date: 2003-12-22 18:34:49 $
 
 =head1 SYNOPSIS
 
@@ -80,6 +80,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
+use Bric::App::Cache;
 use Bric::Util::DBI qw(:standard row_aref prepare_ca col_aref);
 use Bric::Util::Grp::User;
 use Bric::Config qw(:admin);
@@ -1244,6 +1245,41 @@ rather than as a person.
 =cut
 
 sub get_grps { Bric::Util::Grp::User->list({ obj => $_[0], all => 1 }) }
+
+=item my $pref_value = $u->get_pref($pref_name)
+
+Given a preference name, such as "Language" or "Time Zone", this
+method returns the corresponding value, for this user.  It first
+checks to see if the user has overridden the global value for this
+preference.  If not, the global setting is returned.
+
+Preference values are cached after the first lookup.
+
+B<Throws:> I do not have a clue
+
+=cut
+
+sub get_pref {
+    my $self = shift;
+    my $pref_name = shift;
+
+    return $self->{prefs}{$pref_name}
+        if exists $self->{prefs}{$pref_name};
+
+    my $value;
+
+    my $pref = Bric::Util::Pref->lookup({ name => $pref_name });
+    if ($pref->get_can_be_overridden) {
+        my $user_pref = Bric::Util::UserPref->lookup({ pref_id => $pref->get_id,
+                                                       user_id => $self->get_id });
+
+        $self->{prefs}{$pref_name} = $user_pref->get_value if $user_pref;
+    }
+
+    $self->{prefs}{$pref_name} = $pref->get_value unless defined $self->{prefs}{$pref_name};
+
+    $self->{prefs}{$pref_name};
+}
 
 =item $self = $u->save
 

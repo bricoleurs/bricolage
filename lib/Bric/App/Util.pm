@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-18 22:32:30 $
+$Date: 2003-12-22 18:34:49 $
 
 =head1 SYNOPSIS
 
@@ -387,20 +387,16 @@ B<Notes:> Uses Bric::Util::Pref->lookup_val() internally.
 =cut
 
 sub get_pref {
-    my $pref = Bric::Util::Pref->lookup({ name => shift });
+    my $pref_name = shift;
 
-    if ($pref->get_can_be_overridden) {
-        my $user = get_user_object;
+    my $user = get_user_object;
 
-        if ($user) {
-            my $user_pref = Bric::Util::UserPref->lookup({ pref_id => $pref->get_id,
-                                                           user_id => $user->get_id });
-
-            return $user_pref->get_value if $user_pref;
-        }
+    if ($user) {
+        return $user->get_pref($pref_name);
+    } else {
+        my $pref = Bric::Util::Pref->lookup({ name => $pref_name });
+        return $pref->get_value();
     }
-
-    return $pref->get_value();
 }
 
 #------------------------------------------------------------------------------#

@@ -36,6 +36,9 @@ sub save : Callback {
 
     log_event('user_pref_save', $user_pref);
     add_msg("$disp_name \"[_1]\" updated.", $name);
+
+    $self->cache->set_lmu_time;
+
     $self->set_redirect("/admin/profile/user/$param->{user_id}");
 }
 
@@ -63,6 +66,8 @@ sub delete : Callback {
 
         add_msg("$disp_name \"[_1]\" reset.", $name);
     }
+
+    $self->cache->set_lmu_time;
 
     $self->set_redirect("/admin/profile/user/$param->{user_id}");
 }
