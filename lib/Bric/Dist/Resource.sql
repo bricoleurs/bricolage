@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Resource.sql
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.4.4.1 $
 --
--- $Date: 2001-12-04 18:17:45 $
+-- $Date: 2002-09-11 01:50:50 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -56,8 +56,9 @@ CREATE TABLE story__resource(
 -- INDEXES. 
 --
 
-CREATE UNIQUE INDEX udx_resource__path ON resource(LOWER(path));
-CREATE INDEX idx_resource__uri ON resource(LOWER(uri));
+CREATE UNIQUE INDEX udx_resource__path__uri ON resource(path, uri);
+CREATE INDEX idx_resource__path ON resource(path);
+CREATE INDEX idx_resource__uri ON resource(uri);
 CREATE INDEX idx_resrouce__mod_time ON resource(mod_time);
 CREATE INDEX fkx_media_type__resource ON resource(media_type__id);
 CREATE INDEX fkx_resource__resource ON resource(parent_id);
