@@ -1,29 +1,23 @@
-<help page="Events Log">
+<help page="Ereignislog">
 
-<p>The &#8216;Log&#8217; for a media asset, story or template shows a
- history of events associated with it, such as when it was created, moved
- to a different desk in the workflow, or published.</p>
+<p>Das &#8216;Log&#8217; f&uuml;r ein Mediengut, Beitrag oder eine Vorlage zeigt eine GEschichte aller Eriegnisse, die damit assoziiert sind, z.B. wann es erstellt wurde, einen anderen Workflow zugeordnet, oder ver&ouml;ffentlicht wurde.</p>
 
-<p>The table of events has the following columns:</p>
+<p>Die Ereignistabelle hat folgende Spalten:</p>
 
 <dl>
  <dt>Name</dt>
- <dd>The type of event which occurred.</dd>
+ <dd>Die Art des vorgefallenenen Ereignisses.</dd>
 
- <dt>Triggered By</dt>
- <dd>The name of the user who caused the event to happen.</dd>
+ <dt>Ausgel&ouml;st durch</dt>
+ <dd>Der Name des Benutzers der das Ereignis verursachte.</dd>
 
- <dt>Timestamp</dt>
- <dd>The date and time at which the event took place.</dd>
+ <dt>Zeitstempel</dt>
+ <dd>Datum und Uhrzeit, zu denen das Ereignis stattfand.</dd>
 
- <dt>Attributes</dt>
- <dd>Any other information that was recorded about the event.  For example,
-  when the event records an asset being moved to a different desk this
-  column will give the name of the desk it was moved to.</dd>
+ <dt>Attribute</dt>
+ <dd>Weitere Informationen, die zu dem Ereignis gespeichert wurden. Wenn z.B. das Ereignis festh&auml;lt, da&szlig; ein Gut zu einem anderen Arbeitsbereich verschoben wurde, zeigt diese Spalte den Namen des Zielarbeitsbereiches an.</dd>
 </dl>
 
-<p>By default the events are shown in date order, starting with the oldest
- events.  Click on the title for one of the columns in the table to change
- the ordering.</p>
+<p>Standardm&auml;&szlig;ig werden die Ereignisse in Datumsreihenfolge angezeigt, angefangen mit den &auml;ltesten Ereignissen. Klicken Sie auf einen der Spaltentitel in der Tabelle um die Sortierreihenfolge zu &auml;ndern.</p>
 
 </help>

@@ -153,7 +153,7 @@ Folks who have submitted patches include:
 
 =item Radu Greab
 
-=item Thorston Biel
+=item Thorsten Biel
 
 =item Dave Rolsky
 

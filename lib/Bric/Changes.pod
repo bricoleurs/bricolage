@@ -670,7 +670,7 @@ slugless non-fixed (non-Cover) stories. [Scott]
 =item *
 
 Added support for installing and upgrading Bricolage with PostgreSQL on a
-separate host. [Thorston Biel]
+separate host. [Thorsten Biel]
 
 =item *
 
@@ -768,7 +768,7 @@ which is more friendly to an SSI environment. [Geoff Richards]
 =item *
 
 The PostgreSQL admin username and password arguments were reversed during
-C<make upgrade>. [Thorston Biel]
+C<make upgrade>. [Thorsten Biel]
 
 =item *
 

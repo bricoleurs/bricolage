@@ -1,53 +1,25 @@
-<help page="Output Channel Profile">
+<help page="Ausgabekanalprofil">
 
 <p><dl>
-<dt>Properties</dt>
-<dd>Enter the Output Channel's name and a brief description. With the
-    &quot;Pre&quot; and &quot;Post&quot; fields, you can tell the output
-    channel to associate a prefix directory or postfix directory to the URI of
-    all resources (stories and media) in the output channel. This feature is
-    useful if you're keeping different kinds of content on one delivery
-    server. Enter the file name and extension for the stories files created in
-    this output channel in the &quot;File Name&quot; and &quot;File
-    Extension&quot; fields.<br /><br/>
+<dt>Eigenschaften</dt>
+<dd>Tragen Sie den Namen des Ausgabekanals und eine kurze Beschreibung ein. Mit den &quot;Pre&quot; und &quot;Post&quot; Feldern k&ouml;nnen Sie dem Ausgabekanal vorgeben, ein Prefix- bzw. ein Postfix-Verzeichnis mit dem URI aller Ressourcen (Beitr&auml;ge und Medien) im Ausgabekanal zu assoziieren. Dies ist n&uuml;tzlich wenn Sie unterschiedliche Arten von Inhalt auf einem Verteilserver halten. Tragen Sie den Dateinamen und die Erweiterung f&uuml;r die Beitragsdateien, die in diesem Ausgabekanal erzeugt werden, in die Felder &quot;Dateiname&quot; und &quot;Dateierweiterung&quot;.<br /><br/>
 
-    The URI Format properties determine how the URIs of stories and media will
-    be created in this output channel. In the &quot;URI Format&quot; and
-    &quot;Fixed URI Format&quot; fields, enter the tokens that represent the
-    various parts out of which the URI should be made. Tokens must be
-    separated by &quot;/&quot; like a URI. The currently available tokens are:
-    &quot;categories&quot;, &quot;day&quot;, &quot;month&quot;,
-    &quot;slug&quot;, and &quot;year&quot;. Assuming a story in the category
-    &quot;/stories&quot;, whose slug is &quot;hello&quot;, and the date is
-    February 27, 2002, the URI Format
-    &quot;/day/month/year/categories/slug/&quot; would produce the URI
-    &quot;/27/02/2002/stories/hello&quot;.<br /><br />
+Die URI FOrmateigenschaften bestimmen wie die URIs von Beitr&auml;gen und Medien in diesem Ausgabekanal erzeugt werden. Tragen Sie in die Felder &quot;URI Format&quot; und &quot;Festes URI Format&quot; fields die Marken ein, die die verschiedenen Teile repr&auml;sentieren aus denen der URI erstellt wird. Marken m&uuml;ssen wie URIs durch &quot;/&quot; getrennt sein. Die momentan verf&uuml;gbaren Marken sind:
+&quot;kategorien&quot;, &quot;tag&quot;, &quot;monat&quot;, &quot;kurzname&quot;, und &quot;jahr&quot;. Angenommen ein Beitrag in der Kategorie &quot;/stories&quot;, dessen Kurzname &quot;hello&quot; ist und das Datum der 27. Februar, 2002 lautet, w&uuml;rde das URI Format &quot;/tag/monat/jahr/kategorien/kurzname/&quot; den URI &quot;/27/02/2002/stories/hello&quot; ergeben.<br /><br />
 
-    The &quot;URI Case&quot; select list forces URIs in this output channel to
-    be formatted in a particular case, either &quot;Mixed Case&quot; (the
-    default), &quot;Lowercase&quot;, or &quot;Uppercase&quot;.<br /><br />
+Die &quot;URI Schreibweise&quot; Auswahlliste zwingt URIs in diesem Ausgabekanal, in eine bestimmte Schreibweise formatiert zu werden, entweder &quot;gemischte Schreibweise&quot; (voreingestellter Wert), &quot;Kleinschreibung&quot;, oder &quot;Gro&szlig;schreibung&quot;.<br /><br />
 
-    The &quot;Use Slug for Filename&quot; field indicates that the names of
-    the story files created in this output channel should use the slug when
-    possible. This means that non-fixed stories will use the slug to name the
-    file, if it's available. Fixed stories will instead use the name specified
-    in the Filename field, while media will use the name of the media file
-    itself.</dd>
+Das Feld &quot;Kurzname als Dateiname verwenden&quot; zeigt an, da&szlig; die Namen der Beitragsdateien in diesem Ausgabekanal den Kurznamen verwenden sollten, wenn m&ouml;glich. Dies bedeutet da&szlig; nicht-feste Beitr&auml;ge den Kurznamen als Dateinamen nutzen werden, sofern dieser noch verf&uuml;gbar ist. Feste Beitr&auml;ge verwenden stattdessen den im Feld Dateiname spezifizierten Namen, w&auml;hrend Medien den Namen der Mediendatei selbst verwenden werden.</dd>
 
 </dl></p>
 
-<p>Click <i>Next</i> for the second page of the Profile.</p>
+<p>Klicken Sie auf <i>Weiter</i> um auf die zweite Seite des Profils zu gelangen.</p>
 
 <p><dl>
-<dt>Template Includes</dt>
-<dd>Select existing Output Channels in order to include the templates of those
-    Output Channels in this Output Channel. The idea here is that, when you
-    preview or publish assets via this Output Channel, if the Burn system can't
-    find a template, it'll look for it in the Output Channels selected here. The
-    template includes can be ordered, and they will be searched for templates in
-    that order.</dd>
+<dt>Vorlagen-Includes</dt>
+<dd>W&auml;hlen Sie existierende Ausgabekan&auml;le um Vorlagen in den Ausgabekan&auml;len in diesem Ausgabekanal mit zu verwenden (zu includen). Die Idee hierbei ist, da&szlig; wenn Sie G&uuml;ter in diesem Ausgabekanal Vorschauen oder Ver&ouml;ffentlichen und das Brennersystem eine Vorgabe nicht finden kann, es dann in den hier genannten Ausgabekan&auml;len nach ihr suchen kann. Die Template-Includes k&ouml;nnen in einer bestimmten Reihenfolge angegeben werden und werden in dieser Reihenfolge nach Vorlagen durchsucht.</dd>
 </dl></p>
 
-<p>When finished, click <i>Save</i>.</p>
+<p>Wenn Sie fertig sind, klicken Sie auf <i>Speichern</i>.</p>
 
 </help>

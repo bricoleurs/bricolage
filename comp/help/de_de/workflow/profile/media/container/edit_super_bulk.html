@@ -1,101 +1,83 @@
 <help page="Super Bulk Edit">
 
-<p>Use the Super Bulk Edit interface to edit all of the fields and subelements
-of an element at once. Fields and subelements are demarcated by an equals sign
-(=) and the key name of the field or subelement. Field tags are followed by an
-empty line, and then the text of that field. The field text is assumed to
-contain no empty lines itself. Subelement tags exist by themselves on a line,
-but <em>their</em> fields and subelements cannot be directly edited.</p>
+<p>Verwenden Sie das Super Bulk Edit Interface um all Felder und Subelemente eines Elementes gleichzeitig zu editieren. Felder und Subelemente werden durch ein Gleichheitszeichen (=) und den Schl&uuml;sselnamen des Feldes oder Subelementes abgegrenzt. Feldtags werden gefolgt von einer Leerzeile und dem Text des Feldes. Es wird angenommen, da&szlig; der Feldtext selbst keine Leerzeilen enth&auml;t. Subelementtags existieren allein auf einer Zeile, aber <em>ihre</em> Felder und Subelemente k&ouml;nnen nicht direkt editiert werden.</p>
 
-<p>For example, to edit an element containing the fields &quot;header&quot;
-and &quot;paragraph&quot; and the subelement &quot;inset&quot;, the Super Bulk
-Edit syntax might look like this:</p>
+<p>Zum Beispiel, um ein Element zu editieren, welches die Felder &quot;header&quot; und &quot;paragraph&quot; und das subelement &quot;inset&quot; enth&auml;lt, k&ouml;nnte die Super Bulk Edit syntax wie folgt aussehen:</p>
 
 <pre><code>=header
 
-This is a header
+Dies ist ein Header
 
 =paragraph
 
-First paragraph.
+Erster Absatz.
 
 =paragraph
 
-Second paragraph.
+Zweiter Absatz.
 
 =inset
 
 =paragraph
 
-Third paragraph.
+Dritter Absatz.
 </code></pre>
 
-<p>To reorder the contents of the element, simply move the contents of the
-elements and their corresponding tags to where you need them. For example, if
-you wanted to move the header in the above example to after the first
-paragraph, simply edit it to look like this:</p>
+<p>Um den Inhalt eines Elementes umzuordnen, bewegen Sie einfach den Inhalt der Elemente und ihre entsprechenden Tags dorthin, wo Sie sie ben&ouml;tigen. Wenn Sie z.B. den Header im obigen Beispiel nach dem ersten Absatz plazieren m&ouml;chten, editieren Sie es einfach wie folgt:</p>
 
 <pre><code>=paragraph
 
-First paragraph.
+Erster Absatz.
 
 =header
 
-This is a header
+Dies ist ein Header
 
 =paragraph
 
-Second paragraph.
+Zweiter Absatz.
 
 =inset
 
 =paragraph
 
-Third paragraph.
+Dritter Absatz.
 </code></pre>
 
-<p>To save space and make editing simpler, you may choose a &quot;Default
-Element&quot; for which no tag is necessary. For example, if
-&quot;paragraph&quot; was selected as the default element, the above example
-would be re-rendered like this:</p>
+<p>Um Platz zu sparen und das editieren zu vereinfachen, k&ouml;nnen Sie ein &quot;Default Element&quot; w&auml;hlen, f&uuml;r das kein Tag n&ouml;tig ist. Wenn z.B. &quot;paragraph&quot; als Default Element gew&auml;hlt wurde, wird das obige Beispiel folgenderma&szlig;en aussehen:</p>
 
-<pre><code>First paragraph.
+<pre><code>Erster Absatz.
 
 =header
 
-This is a header
+Dies ist ein Header
 
-Second paragraph.
+Zweiter Absatz.
 
 =inset
 
-Third paragraph.
+Dritter Absatz.
 </code></pre>
 
-<p>And finally, note that empty fields still need to contain a blank line
-indicating the empty field. For example, if the above sample element contained
-an &quot;link_text&quot; field that had no text in it, it would be displayed
-like so:</p>
+<p>Beachten Sie letztlich, da&szlig; leere Felder trotzdem eine Leerzeile enthalten m&uuml;ssen, welche das leere Feld anzeigt. Wenn z.B. das obige Beispielelement ein Feld &quot;link_text&quot; beinhaltet, welches kein Text enth&auml;lt, w&uuml;rde es wie folgt aussehen:</p>
 
-<pre><code>First paragraph.
+<pre><code>Erster Absatz.
 
 =header
 
-This is a header
+Dies ist ein Header
 
 =link_text
 
 
 
-Second paragraph.
+Zweiter Absatz.
 
 =inset
 
-Third paragraph.
+Dritter Absatz.
 </code></pre>
 
-<p>Note the extra empty lines after the <code>=link_text</code> tag. This
-syntax is necessary for Bricolage to recognize that the field does exist, but
-contains no data.</p>
+<p>Beachten Sie die zus&auml;tzlichen Leerzeilen nach dem <code>=link_text</code> Tag. Diese Syntax ist n&ouml;tig, damit Bricolage erkennt, da&szlig; das Feld existiert, aber keine Daten enth&auml;lt.</p>
 
 </help>

@@ -1,28 +1,27 @@
-<help page="Events Log">
+<help page="Ereignisprotokoll">
 
-<p>The &#8216;Log&#8217; for a Bricolage object shows a history of events
- associated with it, such as when it was created, saved, or deleted.</p>
+<p>Das &#8216;Protokoll&#8217; oder Log eines Bricolage-Objekts zeigt eine Geschichte der damit verbundenen Ereignisse wie z.B. wann es erstellt, gespeichert oder gel&ouml;scht wurde.</p>
 
-<p>The table of events has the following columns:</p>
+<p>Die Ereignistabelle hat folgende Spalten:</p>
 
 <dl>
  <dt>Name</dt>
- <dd>The type of event which occurred.</dd>
+ <dd>Die Art des Ereignisses.</dd>
 
- <dt>Triggered By</dt>
- <dd>The name of the user who caused the event to happen.</dd>
+ <dt>Ausgel&ouml;st durch</dt>
+ <dd>Der Name des Benutzers, der dieses Ereignis verursachte.</dd>
 
- <dt>Timestamp</dt>
- <dd>The date and time at which the event took place.</dd>
+ <dt>Zeitstempel</dt>
+ <dd>Datum und Uhrzeit zu der das Ereignis stattfand.</dd>
 
- <dt>Attributes</dt>
- <dd>Any other information that was recorded about the event.  For example,
-  when the event records an asset being moved to a different desk this
-  column will give the name of the desk it was moved to.</dd>
+ <dt>Attribute</dt>
+ <dd>Weitere Informationen zu dem Ereignis. Wenn z.B. das Ereignis die 
+ Verschiebung eines Gutes zu einem anderen Arbeitsbereich protokolliert, 
+ wird in dieser Spalte der Name des neuen Arbeitsbereiches angezeigt.</dd>
 </dl>
 
-<p>By default the events are shown in date order, starting with the oldest
- events.  Click on the title for one of the columns in the table to change
- the ordering.</p>
+<p>Standardm&auml;&szlig;ig werden die Ereignisse in Datumsreihenfolge gezeigt,
+angefangen mit den &auml;ltesten Ereignissen. Klicken Sie auf den Titel einer
+der Spalten, um die Reihenfolge zu &auml;;ndern.</p>
 
 </help>
