@@ -184,6 +184,13 @@ well as the relateds. Reported by Paul Orrock. [David]
 
 Users can now set their own values for overrideable preferences. [David]
 
+=item *
+
+The C<list()> and C<list_ids()> methods of the Story, Media, and Template
+(F<Formatting.pm>) classes no longer have the side effect of changing values
+in the hash references passed to them. This had caused problems for date/time
+parameters. Reported by Paul Orrock. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)

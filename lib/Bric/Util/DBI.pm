@@ -802,7 +802,9 @@ B<Notes:> Bric::Util::Time must be loaded before this method is called.
 =cut
 
 sub clean_params {
-    my ($class, $param) = @_;
+    my $class = shift;
+    # Copy the parameters to that we don't create any undesirable side-effects.
+    my $param = { %{+shift} };
     # Make sure to set active explictly if its not passed.
     $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
     # Map inverse alias inactive to active.
