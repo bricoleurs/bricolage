@@ -297,7 +297,7 @@ sub grant_permissions {
 	next unless $_;
 	local $" = ', ';
 	$sql = qq{
-            GRANT SELECT, UPDATE, INSERT, UPDATE
+            GRANT SELECT, UPDATE, INSERT, DELETE
             ON    @$objects
             TO    $_
         };
