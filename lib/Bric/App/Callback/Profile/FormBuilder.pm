@@ -187,7 +187,7 @@ $do_contrib_type = sub {
     # Save the group
     unless ($no_save) {
         $obj->save();
-    
+
         # Take care of group management.
         $self->manage_grps($obj) if $param->{add_grp} || $param->{rem_grp};
 
@@ -233,7 +233,6 @@ $do_element = sub {
       if $no_save;
 
     # Roll in the changes.
-
     $obj = $get_obj->($class, $param, $key, $obj);
     $obj->activate();
     $obj->set_name($param->{'name'});   # must come after $get_obj !
@@ -268,8 +267,7 @@ $do_element = sub {
     if ($cb_key eq 'add_site_id') {
         my $site_id = $self->value;
         # Only add the site if it has associated output channels.
-        if (my @objs = Bric::Biz::OutputChannel->list({ site_id => $site_id })) {
-            # XXX ^ How else to force array context??
+        if (Bric::Biz::OutputChannel->list({ site_id => $site_id })->[0]) {
             $obj->add_site($site_id);
         } else {
             add_msg 'Site "[_1]" cannot be associated because it has no ' .
@@ -284,10 +282,16 @@ $do_element = sub {
     }
 
     # If it is a new element and top level we must add a site
-    if($param->{isNew} && $obj->get_top_level) {
+    if ($param->{isNew} && $obj->get_top_level) {
         # Try to get the primary site
-        if ($self->cache->get_user_cx(get_user_id())) {
-            $obj->add_site($self->cache->get_user_cx(get_user_id()));
+        if (my $site_id = $self->cache->get_user_cx(get_user_id())) {
+            if (Bric::Biz::OutputChannel->list({ site_id => $site_id })->[0]) {
+                $obj->add_site($site_id);
+            } else {
+                add_msg 'Site "[_1]" cannot be associated because it has ' .
+                  'no output channels',
+                  Bric::Biz::Site->lookup({ id => $site_id })->get_name;
+            }
         } else {
             # Else we must do it some other way!
             my @sites = Bric::Biz::Site->list();
@@ -542,6 +546,16 @@ $save_element_etc = sub {
             if ($param->{'isNew'}) {
                 $self->set_redirect("/admin/profile/$key/" .$param->{"$key\_id"} );
             } else {
+                # If this is a top-level element, make sure it as one site and one
+                # OC associated with it.
+                if ($obj->get_top_level) {
+                    unless ($obj->get_sites->[0] and $obj->get_primary_oc ) {
+                        add_msg("Element must be associated with at least " .
+                                "one site and one output channel.");
+                        return;
+                    }
+                }
+
                 # log the event
                 my $msg = $key . (defined $param->{"$key\_id"} ? '_save' : '_new');
                 log_event($msg, $obj);

@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-08 14:17:28 $
+$Date: 2003-10-23 23:30:06 $
 
 =head1 SYNOPSIS
 
@@ -640,7 +640,9 @@ use constant key => 'de_de';
    '_AUTO' => 1,
   );
 
-=head2 To translate
+=begin comment
+
+To translate:
 
           'Slug required for non-fixed (non-cover) story type.'
 
@@ -709,7 +711,11 @@ use constant key => 'de_de';
       'Distributing files.'
       'No output to preview.'
       'Cannot preview asset "[_1]" because there are no Preview Destinations associated with its output channels.'
+      'Element must be associated with at least one site and one output channel.'
+
   );
+
+=end comment
 
 =cut
 

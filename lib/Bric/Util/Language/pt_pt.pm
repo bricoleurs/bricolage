@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-08 14:17:28 $
+$Date: 2003-10-23 23:30:06 $
 
 =head1 SYNOPSIS
 
@@ -684,14 +684,17 @@ Por favor escolha outra categoria-mãe.',
   '[quant,_1,media,media] published.' => '[quant,_1,Media publicado,Medium publicados]',
   '[quant,_1,story,stories] published.' => '[quant,_1,Artigo publicado,Artigos publicados]',
   'contains illegal characters!' => ' contém caracteres não-permitidos!',
-
-
    '_AUTO' => 1,
   );
 
-=head2 To translate
+=begin comment
+
+To translate:
 
   'Slug required for non-fixed (non-cover) story type.'
+  'Element must be associated with at least one site and one output channel.'
+
+=end comment
 
 =cut
 
