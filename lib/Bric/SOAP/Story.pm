@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-13 20:38:56 $
+$Date: 2002-03-13 23:36:30 $
 
 =head1 SYNOPSIS
 
@@ -462,7 +462,8 @@ Throws: NONE
 
 Side Effects: NONE
 
-Notes: NONE
+Notes: The setting for publish_status in the incoming story is ignored
+and always 0 for new stories.
 
 =cut
 
@@ -530,7 +531,9 @@ Throws: NONE
 
 Side Effects: NONE
 
-Notes: NONE
+Notes: The setting for publish_status in a newly created story is
+ignored and always 0 for new stories.  Updated stories do get
+publish_status set from the document setting.
 
 =cut
 
@@ -759,8 +762,11 @@ sub _load_stories {
 
 	# set simple fields
 	my @simple_fields = qw(name description slug primary_uri
-			       priority publish_status);
+			       priority);
 	$story->_set(\@simple_fields, [ @{$sdata}{@simple_fields} ]);
+
+	# avoid setting publish_status on create
+	$story->set_publish_status($sdata->{publish_status}) if $update;
 
 	# assign dates 
 	for my $name qw(cover_date expire_date publish_date) {

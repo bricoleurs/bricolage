@@ -37,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-27 02:50:34 $
+$Date: 2002-03-13 23:36:30 $
 
 =head1 SYNOPSIS
 
@@ -360,7 +360,8 @@ Throws: NONE
 
 Side Effects: NONE
 
-Notes: NONE
+Notes: The setting for publish_status in the incoming media is ignored
+and always 0 for new media.
 
 =cut
 
@@ -428,7 +429,9 @@ Throws: NONE
 
 Side Effects: NONE
 
-Notes: NONE
+NNotes: The setting for publish_status for new media is ignored and
+always 0 for new stories.  Updated media do get their publish_status
+set from the incoming document.
 
 =cut
 
@@ -679,8 +682,11 @@ sub _load_media {
 	}
 	
 	# set simple fields
-	my @simple_fields = qw(description uri publish_status);
+	my @simple_fields = qw(description uri);
 	$media->_set(\@simple_fields, [ @{$mdata}{@simple_fields} ]);
+
+	# avoid setting publish_status on create
+	$media->set_publish_status($mdata->{publish_status}) if $update;
 
 	# remove all contributors if updating
 	$media->delete_contributors([ $media->get_contributors ])
