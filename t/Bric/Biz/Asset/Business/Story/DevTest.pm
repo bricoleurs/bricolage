@@ -113,7 +113,7 @@ sub test_clone : Test(15) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(61) {
+sub test_select_methods: Test(44) {
     my $self = shift;
 
     # let's grab existing 'All' group info
@@ -226,6 +226,7 @@ sub test_select_methods: Test(61) {
                                                    });
     $story[0]->add_categories([ $OBJ->{category}->[0] ]);
     $story[0]->set_primary_category($OBJ->{category}->[0]);
+    $story[0]->checkin();
     $story[0]->save();
     push @{$OBJ_IDS->{story}}, $story[0]->get_id();
     $self->add_del_ids( $story[0]->get_id() );
@@ -261,6 +262,7 @@ sub test_select_methods: Test(61) {
                                                    });
     $story[1]->add_categories( $OBJ->{category} );
     $story[1]->set_primary_category( $OBJ->{category}->[1] );
+    $story[1]->checkin();
     $story[1]->save();
     push @{$OBJ_IDS->{story}}, $story[1]->get_id();
     $self->add_del_ids( $story[1]->get_id());
@@ -301,6 +303,7 @@ sub test_select_methods: Test(61) {
                                                    });
     $story[2]->add_categories([ $OBJ->{category}->[0] ]);
     $story[2]->set_primary_category( $OBJ->{category}->[0] );
+    $story[2]->checkin();
     $story[2]->save();
     push @{$OBJ_IDS->{story}}, $story[2]->get_id();
     $self->add_del_ids( $story[2]->get_id() );
@@ -340,6 +343,7 @@ sub test_select_methods: Test(61) {
                                                    });
     $story[3]->add_categories([ $OBJ->{category}->[0] ]);
     $story[3]->set_primary_category( $OBJ->{category}->[0] );
+    $story[3]->checkin();
     $story[3]->save();
     push @{$OBJ_IDS->{story}}, $story[3]->get_id();
     $self->add_del_ids( $story[3]->get_id() );
@@ -396,6 +400,7 @@ sub test_select_methods: Test(61) {
     $story[4]->add_categories([ $OBJ->{category}->[0] ]);
     $story[4]->set_primary_category($OBJ->{category}->[0]);
     $story[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
+    $story[4]->checkin();
     $story[4]->save();
     push @{$OBJ_IDS->{story}}, $story[4]->get_id();
     $self->add_del_ids( $story[4]->get_id() );
@@ -439,6 +444,7 @@ sub test_select_methods: Test(61) {
     $story[5]->set_primary_category($OBJ->{category}->[0]);
     $story[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $story[5]->set_current_desk( $OBJ->{desk}->[0] );
+    $story[5]->checkin();
     $story[5]->save();
     push @{$OBJ_IDS->{story}}, $story[5]->get_id();
     $self->add_del_ids( $story[5]->get_id() );

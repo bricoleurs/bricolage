@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.40.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-10 21:03:08 $
+$Date: 2003-03-14 19:43:52 $
 
 =head1 SYNOPSIS
 
@@ -165,52 +165,63 @@ use constant WHERE => 'mt.id = i.media__id';
 use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', ' 
             . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
 
+use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
 use constant FROM => VERSION_TABLE . ' i, member m';
 
 use constant PARAM_FROM_MAP =>
     {
-       keyword            =>  'media_keyword mk, keyword k',
-       simple             =>  'media mt LEFT OUTER JOIN media_keyword mk LEFT OUTER JOIN keyword k ON (mk.keyword_id = k.id) ON (mt.id = mk.media_id)',
-       _not_simple        =>  TABLE . ' mt'
+       keyword            => 'media_keyword mk, keyword k',
+       simple             => 'media mt LEFT OUTER JOIN media_keyword mk LEFT OUTER JOIN keyword k ON (mk.keyword_id = k.id) ON (mt.id = mk.media_id)',
+       _not_simple        => TABLE . ' mt',
+       grp_id             => 'member m2, media_member mm2',
+       category_uri       => 'category c'
     };
 
 use constant PARAM_WHERE_MAP =>
     {
-      id                  => 'mt.id = ?',
-      active              => 'mt.active = ?',
-      inactive            => 'mt.active = ?',
-      workflow__id        => 'mt.workflow__id = ?',
-      _null_workflow__id  => 'mt.workflow__id IS NULL',
-      element__id         => 'mt.element__id = ?',
-      source__id          => 'mt.source__id = ?',
-      priority            => 'mt.priority = ?',
-      publish_status      => 'mt.publish_status = ?',
-      publish_date_start  => 'mt.publish_date >= ?',
-      publish_date_end    => 'mt.publish_date <= ?',
-      cover_date_start    => 'mt.cover_date >= ?',
-      cover_date_end      => 'mt.cover_date <= ?',
-      expire_date_start   => 'mt.expire_date >= ?',
-      expire_date_end     => 'mt.expire_date <= ?',
-      desk_id             => 'mt.desk_id = ?',
-      name                => 'LOWER(i.name) LIKE LOWER(?)',
-      title               => 'LOWER(i.name) LIKE LOWER(?)',
-      description         => 'LOWER(i.description) LIKE LOWER(?)',
-      version             => 'i.version = ?',
-      user__id            => 'i.usr__id = ?',
-      uri                 => 'LOWER(i.uri) LIKE LOWER(?)',
-      file_name           => 'LOWER(i.file_name LIKE LOWER(?)',
-      location            => 'LOWER(i.location) LIKE LOWER(?)',
-      _checked_out        => 'i.checked_out = ?',
-      primary_oc_id       => 'i.primary_oc__id = ?',
-      category__id        => 'i.category__id = ?',
-      category_id         => 'i.category__id = ?',
-      category_uri        => 'i.category__id in (SELECT id FROM category WHERE LOWER(uri) LIKE LOWER(?))',
-      keyword             => 'mk.media_id = mt.id AND k.id = mk.keyword_id AND LOWER(k.name) LIKE LOWER(?)',
-      _no_return_versions => 'mt.current_version = i.version',
-      grp_id              => 'mt.id IN ( SELECT DISTINCT mm.object_id FROM media_member mm, member m WHERE m.grp__id = ? AND mm.member__id = m.id )',
-      simple              => '(LOWER(k.name) LIKE LOWER(?) OR LOWER(i.name) LIKE LOWER(?) OR LOWER(i.description) LIKE LOWER(?) )',
+      id                    => 'mt.id = ?',
+      active                => 'mt.active = ?',
+      inactive              => 'mt.active = ?',
+      workflow__id          => 'mt.workflow__id = ?',
+      _null_workflow__id    => 'mt.workflow__id IS NULL',
+      element__id           => 'mt.element__id = ?',
+      source__id            => 'mt.source__id = ?',
+      priority              => 'mt.priority = ?',
+      publish_status        => 'mt.publish_status = ?',
+      publish_date_start    => 'mt.publish_date >= ?',
+      publish_date_end      => 'mt.publish_date <= ?',
+      cover_date_start      => 'mt.cover_date >= ?',
+      cover_date_end        => 'mt.cover_date <= ?',
+      expire_date_start     => 'mt.expire_date >= ?',
+      expire_date_end       => 'mt.expire_date <= ?',
+      desk_id               => 'mt.desk_id = ?',
+      name                  => 'LOWER(i.name) LIKE LOWER(?)',
+      title                 => 'LOWER(i.name) LIKE LOWER(?)',
+      description           => 'LOWER(i.description) LIKE LOWER(?)',
+      version               => 'i.version = ?',
+      user__id              => 'i.usr__id = ?',
+      uri                   => 'LOWER(i.uri) LIKE LOWER(?)',
+      file_name             => 'LOWER(i.file_name LIKE LOWER(?)',
+      location              => 'LOWER(i.location) LIKE LOWER(?)',
+      _checked_out          => 'i.checked_out = ?',
+      primary_oc_id         => 'i.primary_oc__id = ?',
+      category__id          => 'i.category__id = ?',
+      category_id           => 'i.category__id = ?',
+      category_uri          => 'i.category__id = c.id AND '
+                             . 'LOWER(c.uri) LIKE LOWER(?)',
+      keyword               => 'mk.media_id = mt.id AND '
+                             . 'k.id = mk.keyword_id AND '
+                             . 'LOWER(k.name) LIKE LOWER(?)',
+      _no_returned_versions => 'mt.current_version = i.version',
+      grp_id                => 'mt.current_version = i.version AND '
+                             . 'm2.grp__id = ? AND '
+                             . 'mm2.member__id = m2.id AND '
+                             . 'mt.id = mm2.object_id',
+      simple                => '( LOWER(k.name) LIKE LOWER(?) OR '
+                             . 'LOWER(i.name) LIKE LOWER(?) OR '
+                             . 'LOWER(i.description) LIKE LOWER(?) )',
     };
 
 use constant PARAM_ORDER_MAP => 

@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.25.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-10 19:42:15 $
+$Date: 2003-03-14 19:43:50 $
 
 =head1 SYNOPSIS
 
@@ -236,6 +236,11 @@ sub lookup {
       msg => 'Must call list on Story, Media, or Formatting'}) 
       unless $pkg->CAN_DO_LOOKUP; 
     $param = clean_params($pkg, $param);
+    # we don't care about checked out state for lookup
+    delete $param->{_checked_out};
+    # but we do want the newest version. will use order to get it
+    $param->{Order} = 'version';
+    $param->{OrderDirection} = 'DESC';
     my $tables =  tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
@@ -245,10 +250,7 @@ sub lookup {
     $args = [ @$args, @$args, @$args, @$args ];
     my @obj = fetch_objects( $pkg, $sql, $fields, $args, $param->{Limit}, $param->{Offset});
     return unless $obj[0];
-    return $obj[0] if @obj == 1;
-    # oops there must be a duplicate id
-    die $gen->new({ msg => "Duplicate id found. $pkg:" . $param->{id} 
-                                . ' version: ' . $param->{version_id} });
+    return $obj[0];
 }
     
 ################################################################################

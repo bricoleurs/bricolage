@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.21.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.1 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-10 19:42:16 $
+$Date: 2003-03-14 19:43:55 $
 
 =head1 SYNOPSIS
 
@@ -654,12 +654,13 @@ sub fetch_objects {
     bind_columns($select, \@d[0 .. $count]);
     # loop through the list, looking for diferrent grp__id columns in
     # matching lines.  Note: this works for all sort orders except grp__id
+    my $obj_col = $pkg->OBJECT_SELECT_COLUMN_NUMBER || 0;
     my $last = -1;
     my $i;
     while (fetch($select)) {
-        if ($d[0] != $last) {
+        if ($d[$obj_col] != $last) {
             last if $limit && @objs >= $limit;
-            $last = $d[0];
+            $last = $d[$obj_col];
             next unless $i++ >= $offset;
             my $obj = bless {}, $pkg;
             $grp_ids = $d[$#d] = [$d[$#d]];
@@ -764,9 +765,20 @@ sub clean_params {
     # Make sure to set active explictly if its not passed.
     $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
     # Map inverse alias inactive to active.
-    $param->{'active'} = ($param->{'inactive'} ? 0 : 1) if exists $param->{'inactive'};
-    # handle the special user_id p if it's missing
-    $param->{_checked_out} = 0 unless exists $param->{user__id};
+    $param->{'active'} = ($param->{'inactive'} ? 0 : 1) 
+      if exists $param->{'inactive'};
+    # checked_out has some special cases
+    if ($param->{checked_out} = 'all') {
+        delete $param->{_checked_out};
+    } elsif (exists $param->{checked_out}) {
+        $param->{_checked_out} = $param->{checked_out};
+    } elsif (exists $param->{checkout}) {
+        $param->{_checked_out} = $param->{checkout};
+    } elsif (exists $param->{user_id}) {
+        $param->{_checked_out} = 1;
+    } else {
+        $param->{_checked_out} = 0;
+    }
     $param->{_checked_out} = 1 if defined $param->{user__id};
     # take care of the simple query, or lack thereof
     $param->{_not_simple} = 1 unless $param->{simple};
@@ -836,7 +848,7 @@ sub where_clause {
     $where = $pkg->WHERE;
     foreach (keys %$param) {
         next unless $pkg->PARAM_WHERE_MAP->{$_};
-        next unless $param->{$_};
+        next unless defined $param->{$_};
         my $sql = $pkg->PARAM_WHERE_MAP->{$_};
         $where .= ' AND ' . $sql;
         my $i;

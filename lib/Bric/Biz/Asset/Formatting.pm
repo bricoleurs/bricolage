@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.38.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-10 19:42:15 $
+$Date: 2003-03-14 19:43:51 $
 
 =head1 SYNOPSIS
 
@@ -240,39 +240,43 @@ use constant FROM => VERSION_TABLE . ' i, member m';
 
 use constant PARAM_FROM_MAP =>
     {
-       category_id        =>  'formatting__category mc',
-       category_uri       =>  'formatting__category mc',
-       _not_simple        =>  TABLE . ' f'
+       category_uri       =>  'category c',
+       _not_simple        =>  TABLE . ' f',
+       grp_id             =>  'member m2, formatting_member fm2'
     };
 
 use constant PARAM_WHERE_MAP =>
     {
-      id                  => 'f.id = ?',
-      active              => 'f.active = ?',
-      inactive            => 'f.active = ?',
-      workflow__id        => 'f.workflow__id = ?',
-      _null_workflow__id  => 'f.workflow__id IS NULL',
-      element__id         => 'f.element__id = ?',
-      output_channel__id  => 'f.output_channel__id = ?',
-      priority            => 'f.priority = ?',
-      deploy_status       => 'f.deploy_status = ?',
-      deploy_date_start   => 'f.deploy_date >= ?',
-      deploy_date_end     => 'f.deploy_date <= ?',
-      expire_date_start   => 'f.expire_date >= ?',
-      expire_date_end     => 'f.expire_date <= ?',
-      desk_id             => 'f.desk_id = ?',
-      name                => 'LOWER(f.name) LIKE LOWER(?)',
-      file_name           => 'LOWER(f.file_name) LIKE LOWER(?)',
-      title               => 'LOWER(f.name) LIKE LOWER(?)',
-      description         => 'LOWER(f.description) LIKE LOWER(?)',
-      version             => 'i.version = ?',
-      user__id            => 'i.usr__id = ?',
-      _checked_out        => 'i.checked_out = ?',
-      category_id         => 'f.category__id = ?',
-      category_uri        => 'f.category__id in (SELECT id FROM category WHERE LOWER(uri) LIKE LOWER(?))',
-      _no_return_versions => 'f.current_version = i.version',
-      grp_id              => 'f.id IN ( SELECT DISTINCT mm.object_id FROM formatting_member mm, member m WHERE m.grp__id = ? AND mm.member__id = m.id )',
-      simple              => '(LOWER(f.name) LIKE ? OR LOWER(f.file_name) LIKE ?)',
+      id                    => 'f.id = ?',
+      active                => 'f.active = ?',
+      inactive              => 'f.active = ?',
+      workflow__id          => 'f.workflow__id = ?',
+      _null_workflow__id    => 'f.workflow__id IS NULL',
+      element__id           => 'f.element__id = ?',
+      output_channel__id    => 'f.output_channel__id = ?',
+      priority              => 'f.priority = ?',
+      deploy_status         => 'f.deploy_status = ?',
+      deploy_date_start     => 'f.deploy_date >= ?',
+      deploy_date_end       => 'f.deploy_date <= ?',
+      expire_date_start     => 'f.expire_date >= ?',
+      expire_date_end       => 'f.expire_date <= ?',
+      desk_id               => 'f.desk_id = ?',
+      name                  => 'LOWER(f.name) LIKE LOWER(?)',
+      file_name             => 'LOWER(f.file_name) LIKE LOWER(?)',
+      title                 => 'LOWER(f.name) LIKE LOWER(?)',
+      description           => 'LOWER(f.description) LIKE LOWER(?)',
+      version               => 'i.version = ?',
+      user__id              => 'i.usr__id = ?',
+      _checked_out          => 'i.checked_out = ?',
+      category_id           => 'f.category__id = ?',
+      category_uri          => 'f.category__id = c.id AND '
+                             . 'LOWER(c.uri) LIKE LOWER(?))',
+      _no_returned_versions => 'f.current_version = i.version',
+      grp_id                => 'f.id = fm2.object_id AND '
+                             . 'm2.grp__id = ? AND '
+                             . 'fm2.member__id = m2.id',
+      simple                => '(LOWER(f.name) LIKE ? OR '
+                             . 'LOWER(f.file_name) LIKE ?)',
     };
 
 use constant PARAM_ORDER_MAP => 
