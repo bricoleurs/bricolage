@@ -243,7 +243,7 @@ sub deploy : Callback {
         my $action = $fa->get_deploy_status ? 'formatting_redeploy'
           : 'formatting_deploy';
         $b->deploy($fa);
-        $fa->set_deploy_date(strfdate());
+        $fa->set_deploy_date(Bric::Util::Time::strfdate());
         $fa->set_deploy_status(1);
         $fa->set_published_version($fa->get_current_version);
         $fa->save;
