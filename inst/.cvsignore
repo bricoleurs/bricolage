@@ -5,3 +5,4 @@ install.log
 configuration
 installed-database
 pguser.sql
+grants.sql

@@ -266,11 +266,18 @@ ${INST}/installed-database: database
 	su -c '${CREATEDB} -E unicode ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/pguser.sql' ${POSTGRES_SYSTEM_USER}
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/bricolage.sql' ${POSTGRES_SYSTEM_USER} 2> $@
+	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/grants.sql' ${POSTGRES_SYSTEM_USER} 2>> $@
 
 # this is a .PHONY target which makes sure that 
-# the sql script is using the right user
-database: ${INST}/bricolage.sql ${INST}/pguser.sql
-	perl -pi -e 's/nobody/${DBI_USER}/g' $^
+# the sql script is using the right user and 
+# generates two additional sql scripts that we'll need
+database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/grants.sql
+	perl -pi -e 's/nobody/${DBI_USER}/g' $<
+
+# This makes the grant script
+${INST}/grants.sql: ${INST}/bricolage.sql
+	${BIN}/bric_pggrant -u ${DBI_USER} -f $< -o $@
+	chmod a+r $@
 
 # This makes a simple create user script
 ${INST}/pguser.sql:
