@@ -146,12 +146,105 @@ div.debug dt:after {
 /* Desk item styling. */
 .desk {
     position: relative;
-    width: 580px;
     font-size: 11px;
     line-height: 11px;
 }
 
-.desk .buttonbar { text-align: right; }
+.desk .buttonbar { text-align: left; }
+
+.desk .item { margin-bottom: 10px; }
+
+.desk .item .head { 
+    position: relative;
+    background: #cccc99; 
+    line-height: 2em;
+    font-weight: bold;
+}
+.desk .item .head .status {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: .3em 0 0 .3em;
+}
+.desk .item .head .version { 
+    float: left; 
+    width: 9em; 
+    border-right: solid white 1px;
+    text-align: right;
+    padding: 0 .5em;
+}
+.desk .item .head .title {
+    float: left;
+    padding: 0 .5em;
+    font-size: 1.1em;
+}
+.desk .item .head .pubstatus {
+    float: right;
+    text-align: center;
+    padding: 0 .5em;
+    color: white; 
+    cursor: default;
+}
+.desk .item .head .need { background: #993300; }
+.desk .item .head .pub { background: #999934; }
+
+.desk .item dl { 
+    margin: 0; 
+    padding: 0; 
+    border-style: solid;
+    border-color: #CCCC99;
+    border-width: 0 1px; 
+}
+.desk .item dt, .desk .item dd {
+    line-height: 2em;
+    padding: 0 .2em;
+    border-bottom: solid #CCCC99 1px;
+}
+.desk .item dt { 
+    clear: both; 
+    float: left; 
+    width: 9.6em; /* plus 1em padding */ 
+    text-align: right;
+}
+.desk .item dd { margin-left: 10em; }
+.desk .item .even { background: #E8E8CD; }
+
+.desk .item .actions { background: #CCCC99; }
+.desk .item .actions ul { margin: 0; padding: 0; list-style: none; }
+.desk .item .actions ul li {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 0;
+    line-height: 2em;
+}
+.desk .item .actions ul li.inactive { color: #999; }
+.desk .item .actions ul.action { float: left; }
+.desk .item .actions ul.view { float: right; }
+.desk .item .actions ul.action li { padding: 3px 10px 1px 5px; }
+.desk .item .actions ul.view li   { padding: 3px 5px 1px 10px; }
+
+.desk .item .actions li,
+.desk .item .actions img,
+.desk .item .actions input,
+.desk .item .actions select,
+.desk .item .actions button { vertical-align: top; }
+.desk .item .actions select { font-size: 1em; }
+
+.desk .item .actions button {
+    font-size: 1em;
+    border-color: transparent;
+    background-color: transparent;
+    padding: 2px;
+    cursor: pointer;
+}
+.desk .item .actions button.delete {
+    background-image: url("/media/images/delete.png");
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    padding-left: 18px;
+}
+
 
 .desk_item {
     padding-bottom: 8px;
@@ -176,61 +269,106 @@ div.debug dt:after {
 
 .desk_item .head {
     position: relative;
-    margin: 0px;
+    margin: 0 0 0 0px;
     border: 0px;
-    line-height: 20px;
+    line-height: 2em;
     font-weight: bold;
+    background: #cccc99;
 }
 
-.desk_item .head .idv,
-.desk_item .head .idvsorted,
-.desk_item .head .idvalias {
-    position: absolute;
+
+.desk_item .head .select { 
+    position: absolute; 
+    height: 20px;
+    width: 20px;
+    padding: 0px;
+    left: -21px;
+    background:#cccc99; 
+    border-right: solid white 1px;
+    text-align: center;
+}
+.desk_item .head .select input {
+    width: 16px;
+    height: 16px;
     display: block;
-    top: 0;
-    left: 0;
+    position: absolute;
+    top: -1px;
+    left: -1px;
+}
+
+.desk_item .actions {
+    border-top: solid white 1px;
+    background: #E8E8CD;
+}
+
+.desk_item .actions ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.desk_item .actions ul li {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 0;
+    line-height: 2em;
+}
+.desk_item .actions ul li.inactive { color: #999; }
+.desk_item .actions ul.action { float: left; }
+.desk_item .actions ul.view { float: right; }
+.desk_item .actions ul.action li { padding: 3px 10px 3px 5px; }
+.desk_item .actions ul.view li   { padding: 3px 5px 3px 10px; }
+
+.desk_item .actions img { vertical-align: middle; }
+.desk_item .actions input { vertical-align: middle; }
+.desk_item .actions select { font-size: 1em; vertical-align: baseline; }
+
+.desk_item .head .version,
+.desk_item .head .versionsorted,
+.desk_item .head .versionalias {
+    float: left;
+    display: block;
     width: 97px;
     color: black;
     border-right: solid white 1px;
-    padding-left: 3px;
+    padding-right: 5px;
+    text-align: right;
 }
-.desk_item .head .idv { background:#cccc99; }
+
 .desk_item .head .idvsorted { background:#669999; }
-.desk_item .head .idvalias { background:#99cc99; }
 
 .desk_item .head .title,
 .desk_item .head .titlealias, 
 .desk_item .head .titlesorted {
-    position: relative;
+    float: left;
     display: block;
-    left: 101px;
-    top: 0px;
-    width: 456px;
     color: black;
-    font-size: 11px;
-    padding-left: 3px;
+    font-size: 1.1em;
+    padding-left: 5px;
 }
-.desk_item .head .title { background:#cccc99; }
-.desk_item .head .titlealias { background:#99cc99; }
 .desk_item .head .titlesorted { background:#669999; color: white; }
-
+.desk_item .head .title a {
+    font-size: 1.1em;
+}
+.desk_item .head .title .label { font-size: .8em; font-weight: normal; }
 
 .desk_item .head .need,
 .desk_item .head .pub,
 .desk_item .head .none,
 .desk_item .head .aliasnone,
 .desk_item .head .nonesorted {
-    position: absolute;
-    display: block;
-    top: 0;
-    right: 0;
+    float: right;
     width: 20px;
     text-align: center;
+    font-weight: bold;
     color: white;
+    cursor: default;
+    border-left: solid white 1px;
 }
 .desk_item .head .need { background: #993300; }
 .desk_item .head .pub { background: #999934; }
-.desk_item .head .none { background:#cccc99; }
+.desk_item .head .none { background: #cccc99; }
 .desk_item .head .aliasnone { background:#99cc99; }
 .desk_item .head .nonesorted { background:#669999; }
 
@@ -239,13 +377,24 @@ div.debug dt:after {
     background:#669999;
 }
 
-.desk_item .body {
-    border-right: solid #999966 1px;
-    border-bottom: solid #999966 1px;
-    margin: 0px;
+.desk_item .head .status {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+    padding: 3px;
+    font-weight: normal;
 }
 
-.desk_item .body p, dl {
+.desk_item .body {
+    clear: both;
+    border-right: solid #E8E8CD 1px;
+    border-bottom: solid #E8E8CD 1px;
+    margin: 0;
+}
+
+.desk_item .body p, 
+.desk_item .body dl {
     margin: 0px;
     padding: 0px;
 }
@@ -268,49 +417,32 @@ div.debug dt:after {
 }
 
 .desk_item .body .mover {
-    margin: 20px 0 21px 0;
+    padding: 20px 0 21px 0;
     height: 22px;
 }
 
-.desk_item .body ul.actions {
-    margin: 0;
-    border-top: solid white 1px;
-}
-
-.desk_item .body ul.actions li {
-    display: inline;
-    line-height: 20px;
-    padding: 0 4px 0 0;
-}
-
-.desk_item .body dl {
-    float: left;
-    border-right: solid #999966 1px;
-    width: 360px;
-    margin-right: 3px;
-}
-
-.desk_item .body dt, 
-.desk_item .body dd {
+.desk_item dt, 
+.desk_item dd {
     line-height: 20px;
     border-top: solid white 1px;
 }
 
-.desk_item .body dt {
+.desk_item dt {
     font-weight: normal;
     color: black;
-    background:#999966;
+    background:#E8E8CD;
     float: left;
     width: 97px;
     text-align: right;
-    padding-right: 3px;
+    padding-right: 5px;
     margin-right: 2px; /* Make three if we can't get the 1px to work in dd. */
     border-right: solid white 1px;
+    white-space: nowrap;
 }
 
-.desk_item .body dd {
+.desk_item dd {
     margin-left: 101px;
-    padding: 0 0 0 1px;
+    padding: 0 0 0 5px;
 }
 
 .desk_item .body dt:after {
@@ -319,9 +451,11 @@ div.debug dt:after {
 
 .desk_item .sorted {
     color: white;
-    background:#669999;
+    background: #669999;
     font-weight: bold;
 }
+
+.desk_item .advanced { display: none; }
 
 form .row {
     position: relative;
@@ -426,6 +560,9 @@ dl.viewmeta dd { margin-left: 140px; }
 
 /* Clear floats without additional HTML markup
    http://www.positioniseverything.net/easyclearing.html */
+.desk .item .head:after,
+.desk .item .actions:after,
+.desk_item .head:after,
 form .row:after,
 .paginate:after,
 .viewmeta:after {
@@ -435,13 +572,22 @@ form .row:after,
     clear: both; 
     visibility: hidden;
 }
+.desk .item .head,
+.desk .item .actions,
+.desk_item .head,
 form .row,
 .paginate,
 .viewmeta { display: inline-block;}
 /* Hides from IE-mac \*/
+* html .desk .item .head,
+* html .desk .item .actions,
+* html .desk_item .head,
 * html form .row,
 * html .paginate,
 * html .viewmeta {height: 1%;}
+.desk .item .head,
+.desk .item .actions,
+.desk_item .head,
 form .row,
 .paginate,
 .viewmeta {display: block;}

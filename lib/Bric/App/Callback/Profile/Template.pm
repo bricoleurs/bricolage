@@ -68,7 +68,13 @@ sub save : Callback(priority => 6) {
     }
 }
 
-sub checkin : Callback(priority => 6) {
+sub delete : Callback {
+    my $self = shift;
+    my $fa = Bric::Biz::Asset::Formatting->lookup({ id => $self->value });
+    $delete_fa->($self, $fa) if (chk_authz($fa, EDIT, 1));
+}
+
+sub save_and_checkin : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
 
@@ -105,6 +111,21 @@ sub save_and_stay : Callback(priority => 6) {
         log_event('formatting_save', $fa);
         add_msg('Template "[_1]" saved.', $fa->get_file_name);
     }
+}
+
+sub checkin : Callback(priority => 6) {
+    my $self = shift;
+
+    my $fa   = Bric::Biz::Asset::Formatting->lookup({'id' => $self->value, checkout => 1});
+    my $desk = $fa->get_current_desk;
+
+    $desk->checkin($fa);
+    $desk->save;
+    
+    my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
+    $sb->undeploy($fa);
+    
+    log_event("formatting_checkin", $fa, { Version => $fa->get_version });
 }
 
 sub revert : Callback(priority => 6) {

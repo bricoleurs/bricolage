@@ -94,7 +94,7 @@ sub save : Callback(priority => 6) {
     }
 }
 
-sub checkin : Callback(priority => 6) {
+sub save_and_checkin : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $story = get_state_data($widget, 'story');
@@ -234,6 +234,18 @@ sub save_and_stay : Callback(priority => 6) {
         add_msg('Story "[_1]" saved.',
                 '<span class="l10n">' . $story->get_title . '</span>');
     }
+}
+
+sub checkin : Callback(priority => 6) {
+    my $self = shift;
+
+    my $story   = Bric::Biz::Asset::Business::Story->lookup({'id' => $self->value, checkout => 1});
+    my $desk    = $story->get_current_desk;
+
+    $desk->checkin($story);
+    $desk->save;
+    
+    log_event("story_checkin", $story, { Version => $story->get_version });
 }
 
 sub cancel : Callback(priority => 6) {
@@ -817,6 +829,12 @@ sub leave_category : Callback {
     $self->set_redirect(last_page());
     # Pop this page off the stack.
     pop_page();
+}
+
+sub delete : Callback {
+    my $self = shift;
+    my $story = Bric::Biz::Asset::Business::Story->lookup({ id => $self->value });
+    $handle_delete->($story, $self) if (chk_authz($story, EDIT, 1));
 }
 
 ### end of callbacks

@@ -104,7 +104,7 @@ if ($version) {
   <td width="33%">
   <table border="0" cellpadding="0" cellspacing="3">
   <tr>
-    <td valign="middle"><input type="image" src="/media/images/<% $lang_key %>/check_in_dgreen.gif" border="0" name="<% $widget %>|checkin_cb" value="Check In"></td>
+    <td valign="middle"><input type="image" src="/media/images/<% $lang_key %>/check_in_dgreen.gif" border="0" name="<% $widget %>|save_and_checkin_cb" value="Check In"></td>
     <td valign="middle"><% $deskText %></td>
   </tr>
   </table>

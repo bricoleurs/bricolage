@@ -51,7 +51,6 @@ my $pkgs = { story      => get_package_name('story'),
              media      => get_package_name('media'),
              formatting => get_package_name('formatting')
            };
-my $item_comp = 'desk_item.html';
 
 my $others;
 my $cached_assets = sub {
@@ -199,7 +198,6 @@ my $put_onto_desk = sub {
 my $pkg   = get_package_name($class);
 my $meths = $pkg->my_meths;
 my $desk_type = 'workflow';
-my $mlabel = 'Move to';
 
 if (defined $desk_id) {
     # This is a workflow desk.
@@ -208,7 +206,6 @@ if (defined $desk_id) {
 elsif (defined $user_id) {
     # This is a user workspace
     $desk_type = 'workspace';
-    $mlabel = 'Check In to';
 }
 #-- Output each desk item  --#
 my $highlight = $sort_by;
@@ -257,6 +254,7 @@ if (defined $objs && @$objs > $obj_offset) {
         my $obj = $objs->[$i];
 
         my $can_edit = chk_authz($obj, EDIT, 1);
+        my $can_publish = $desk && $desk->can_publish && chk_authz($obj, PUBLISH, 1);
         my $aid = $obj->get_id;
         # Grab the type name.
         my $atid = $obj->get_element__id;
@@ -280,7 +278,7 @@ if (defined $objs && @$objs > $obj_offset) {
             # Figure out the checkout/edit link.
             if (defined $user_id) {
                 if (get_user_id() == $user_id) {
-                    $label = 'Check In';
+                    $label = 'Check in';
                     $action = 'checkin_cb';
                     $vlabel = 'Edit' if $can_edit;
                 } else {
@@ -357,7 +355,7 @@ if (defined $objs && @$objs > $obj_offset) {
             }
 
             $desk_id = $desk->get_id;
-            $label = $lang->maketext('Check In to [_1]', $desk->get_name);
+            $label = $lang->maketext('Check in to [_1]', $desk->get_name);
             $action = 'checkin_cb';
             if ($can_edit) {
                 $vlabel = 'Edit';
@@ -405,13 +403,13 @@ if (defined $objs && @$objs > $obj_offset) {
         }
 
         # Now display it!
-        $m->comp($item_comp,
-                 widget    => $widget,
-                 highlight => $highlight,
-                 obj       => $obj,
-                 can_edit  => $can_edit,
+        $m->comp('desk_item.html',
+                 widget      => $widget,
+                 highlight   => $highlight,
+                 obj         => $obj,
+                 can_edit    => $can_edit,
+                 can_publish => $can_publish,
                  vlabel    => $vlabel,
-                 mlabel    => $mlabel,
                  desk_val  => $value,
                  desk_opts => $desk_opts,
                  ppage     => $profile_page,

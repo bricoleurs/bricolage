@@ -33,26 +33,6 @@ my $keys = [ keys %$pkgs ];
 my $type = 'formatting';
 my $disp_name = 'Template';
 
-sub checkin : Callback {
-    my $self = shift;
-
-    my $a_id    = $self->value;
-    my $a_class = $self->params->{$self->class_key.'|asset_class'};
-    my $pkg     = get_package_name($a_class);
-    my $a_obj   = $pkg->lookup({'id' => $a_id, checkout => 1});
-    my $d       = $a_obj->get_current_desk;
-
-    $d->checkin($a_obj);
-    $d->save;
-
-    if ($a_class eq 'formatting') {
-        my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
-           $sb->undeploy($a_obj);
-    }
-
-    log_event("${a_class}_checkin", $a_obj, { Version => $a_obj->get_version });
-}
-
 sub checkout : Callback {
     my $self = shift;
 
