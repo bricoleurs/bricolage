@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2003-02-28 02:08:23 $
+$Date: 2003-02-28 03:33:05 $
 
 =head1 DESCRIPTION
 
@@ -185,9 +185,11 @@ sub load_db {
 
     # vacuum to create usable indexes
     print "Finishing database...\n";
-    exec_sql('vacuum');
-    exec_sql('analyze');
-    exec_sql('reindex');
+    foreach my $maint (qw(vacuum analyze)) {
+        my $err = exec_sql($maint);
+        hard_fail("Error encountered during '$maint'. The databaes error ",
+                  "was\n\n$err") if $err;
+    }
     print "Done.\n";
 
     # all done!
