@@ -6,16 +6,16 @@ Bric::Util::EventType - Interface to Types of Events
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-06 06:34:56 $
+$Date: 2004-02-18 13:47:28 $
 
 =head1 SYNOPSIS
 
@@ -942,7 +942,7 @@ sub log_event {
 
 =item my (@props || $props_aref) = $et->get_alert_props
 
-Returns a list or anonymous arry of anonymous arrays that define properties that
+Returns a list or anonymous array of anonymous arrays that define properties that
 a user can use to refine which events of a specific type will trigger alerts.
 Each anonymous array within the list of alert properties contains two values.
 The first is the name of the property, and the second is the display name.
