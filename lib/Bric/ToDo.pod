@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.81 $
+$Revision: 1.82 $
 
 =head1 DATE
 
-$Date: 2002-12-12 12:09:27 $
+$Date: 2003-01-21 03:29:41 $
 
 =head1 DESCRIPTION
 
@@ -46,6 +46,10 @@ in mind as long term goals further down the line.
 =head2 High Priority Minor Items
 
 =over
+
+=item *
+
+Add POD documentation to F<bric_dist_mon>, F<bric_ftpd>, and F<bric_pgimport>.
 
 =item *
 
