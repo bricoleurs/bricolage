@@ -44,6 +44,11 @@ subelements so as to prevent HTML in fields from messing up thedisplay. [Mark]
 Fix for 'Can't call method "out_method" on an undefined value' generated
 during a burn. [Mark]
 
+=item *
+
+Fixed installer to again work with versions of PostgreSQL prior to 7.3. Thanks
+to Marc Hawson for the spot. [David]
+
 =back
 
 =head1 VERSION 1.6.1

@@ -195,6 +195,8 @@ Friends who have spotted bugs include:
 
 =item Nathan Ollerenshaw
 
+=item Marc Hawson
+
 =back
 
 Bricolage's translation team:
