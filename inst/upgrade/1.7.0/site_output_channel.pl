@@ -24,12 +24,12 @@ do_sql
 
   # Add a foreign key constraint.
   q/ALTER TABLE output_channel
-      ADD CONSTRAINT fk_output_channel__site
+      ADD CONSTRAINT fk_site__output_channel
       FOREIGN KEY (site__id) REFERENCES site(id)
       ON DELETE CASCADE/,
 
   # Add an index.
-  q/CREATE INDEX fkx_output_channel__site ON output_channel(site__id)/,
+  q/CREATE INDEX fkx_site__output_channel ON output_channel(site__id)/,
 
   # Drop the old index on the name column.
   qq{DROP INDEX udx_output_channel__name},
