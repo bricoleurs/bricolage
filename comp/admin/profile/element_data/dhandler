@@ -19,7 +19,7 @@ $m->comp('/widgets/wrappers/sharky/table_top.mc',
          'caption' => 'Properties',
          'number' => ++$num);
 $m->comp('/widgets/profile/text.mc', 'disp' => 'Key Name',
-         'value' => $field->get_name(), 'readOnly' => 1);
+         'value' => $field->get_key_name(), 'readOnly' => 1);
 $m->comp('/widgets/profile/dumpRemainingFields.mc', 'objref' => $field,
          'readOnly' => $no_edit, 'fieldsUsed' => $exclude);
 $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
@@ -72,12 +72,12 @@ my $no_edit = !chk_authz($field, ($id ? EDIT : CREATE), 1);
 my $no_del = !$id || $no_edit;
 
 my $exclude = {
-    'name'   => 1,
+    'key_name'   => 1,
     'active' => 1,
 };
 
 # Get the name for the breadcrumb trail
-my $crumb = $field->get_name();
+my $crumb = $field->get_key_name();
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 </%init>
 
@@ -90,11 +90,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-04-28 13:35:50 $
+$Date: 2003-04-28 14:37:29 $
 
 =head1 DESCRIPTION
 

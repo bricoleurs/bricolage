@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-04-28 13:35:54 $
+$Date: 2003-04-28 14:37:29 $
 
 =head1 SYNOPSIS
 
@@ -22,7 +22,7 @@ $Date: 2003-04-28 13:35:54 $
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the Field Profile page.
 
-Note that this only handles existing Fields; so for example, the 'name'
+Note that this only handles existing Fields; so for example, the 'key_name'
 won't be set and a new Field won't be created.
 
 =cut
