@@ -6,16 +6,16 @@ Bric::Biz::Org::Source - Manages content sources.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-25 01:56:17 $
+$Date: 2003-01-28 17:31:20 $
 
 =head1 SYNOPSIS
 
@@ -1225,7 +1225,7 @@ $get_em = sub {
     }
 
     # Make sure it's active unless and ID has been passed.
-    $wheres .= "AND s.active = 1" unless defined $params->{id};
+    $wheres .= " AND s.active = 1" unless defined $params->{id};
 
     # Assemble and prepare the query.
     my ($qry_cols, $order) = $ids ? (\'DISTINCT s.id', 's.id') :
