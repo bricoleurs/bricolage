@@ -8,18 +8,18 @@ Bric::Util::DBD::Pg - The Bricolage PostgreSQL Driver
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.1 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:37 $
+$Date: 2002-03-08 04:01:58 $
 
 =head1 SYNOPSIS
 
@@ -83,7 +83,7 @@ use strict;
 # Programmatic Dependences
 
 use DBD::Pg;
-use Bric::Config;
+use Bric::Config qw(:dbi);
 
 ################################################################################
 # Constants
@@ -91,12 +91,16 @@ use Bric::Config;
 
 # This variable tells Bric::Util::DBI whether this driver supports transactions
 use constant TRANSACTIONAL => 1;
+use constant DSN_STRING => 'dbname=' . DB_NAME
+  . (DB_HOST ? ';host=' . DB_HOST : '')
+  . (DB_PORT ? ';port=' . DB_PORT : '');
 
 ################################################################################
 # Inheritance
 ################################################################################
 use base qw(Exporter);
-our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts TRANSACTIONAL);
+our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING
+		    TRANSACTIONAL);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ################################################################################
