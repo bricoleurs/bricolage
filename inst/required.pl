@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-06-27 04:15:58 $
 
 =head1 DESCRIPTION
 
@@ -190,15 +190,21 @@ sub find_expat {
 
     # find expat libary libexpat.so by looking in library paths that
     # Perl knows about
-    my @paths = grep { defined and length } ( split(' ', $Config{libsdirs}), 
+    my @paths = grep { defined and length } ( split(' ', $Config{libsdirs}),
 					      split(' ', $Config{loclibpth}));
-    foreach my $path (@paths) {
-	if (-e catfile($path, "libexpat.so")   or 
-	    -e catfile($path, "libexpat.so.0") or
-	    -e catfile($path, "libexpat.so.0.0.1")) {
-	    $REQ{EXPAT} = catfile($path, "libexpat.so");
-	    last;
-	}    
+    push @paths, '/sw/lib';
+
+    my @files = ("libexpat.so", "libexpat.so.0", "libexpat.so.0.0.1",
+                 "libexpat.dylib", "libexpat.0.dylib", "libexpat.0.0.1.dylib",
+                 "libexpat.a", "libexpat.la");
+
+  LOOK: foreach my $path (@paths) {
+        foreach my $file(@files) {
+            if (-e catfile($path, $file)) {
+                $REQ{EXPAT} = catfile($path, "libexpat.so");
+                last LOOK;
+            }
+        }
     }
     return soft_fail("Failed to find libexpat.so.  Looked in:", 
 		     map { "\n\t$_" } @paths) unless $REQ{EXPAT};
@@ -217,7 +223,8 @@ sub find_iconv {
     # path then some standard locations.
     my @paths = (path(), qw(/usr/local/bin
 			    /usr/bin
-			    /bin));
+			    /bin
+                            /sw/bin));
     foreach my $path (@paths) {
 	if (-e catfile($path, "iconv")) {
 	    $REQ{ICONV} = catfile($path, "iconv");
