@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-01-30 00:44:55 $
+$Date: 2002-01-31 00:29:35 $
 
 =head1 SYNOPSIS
 
@@ -790,11 +790,11 @@ sub get_possible_containers {
 
 ################################################################################
 
-=item $container = $container->add_data($atd, $data, ?$order?);
+=item $container = $container->add_data($atd, $data, ?$place?);
 
 Takes an asset type data object and the data and creates a tile and
-then adds the tile to its self.  Optionally accepts an $order argument
-to set the object_order property.  Now that's service.
+then adds the tile to its self.  Optionally accepts an $place argument
+to set the place property.  Now that's service.
 
 B<Throws:>
 
@@ -811,13 +811,13 @@ NONE
 =cut
 
 sub add_data {
-    my ($self, $atd, $data, $order) = @_;
+    my ($self, $atd, $data, $place) = @_;
     my $data_tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new(
       { active             => 1,
         object_type        => $self->_get('object_type'),
         object_instance_id => $self->_get('object_id'),
         element_data       => $atd,
-	(defined $order ? (object_order => $order) : ()),
+	(defined $place ? (place => $place) : ()),
       });
 
     $data_tile->set_data($data);
