@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$Revision: 1.54 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.53 $ )[-1];
+our $VERSION = (qw$Revision: 1.54 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-10 19:21:17 $
+$Date: 2003-10-30 03:51:28 $
 
 =head1 SYNOPSIS
 
@@ -2365,7 +2365,7 @@ sub save {
         $oc_coll->save($id) if $oc_coll;
 
         # Save the sites if object has an id
-        $site_coll->save($id) if $site_coll;
+        $site_coll->save($id, $primary_oc_site) if $site_coll;
     }
 
     # Don't do anything else unless the dirty bit is set.
@@ -2387,14 +2387,14 @@ sub save {
         $id = $self->_get('id');
 
         # Save the sites.
-        $site_coll->save($id) if $site_coll;
+        $site_coll->save($id, $primary_oc_site) if $site_coll;
 
         # Save the output channels.
         $oc_coll->save($id) if $oc_coll;
     }
 
     # Save the mapping of primary oc per site
-    if ($primary_oc_site) {
+    if ($primary_oc_site and %$primary_oc_site) {
         my $update = prepare_c(qq{
             UPDATE element__site
             SET    primary_oc__id = ?

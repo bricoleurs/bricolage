@@ -8,15 +8,15 @@ Bric::Biz::Site objects.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:44 $
+$Date: 2003-10-30 03:51:28 $
 
 =head1 SYNOPSIS
 
@@ -170,8 +170,7 @@ B<Notes:> NONE.
 =cut
 
 sub save {
-    my $self = shift;
-    my $element_id = shift;
+    my ($self, $element_id, $oc_map) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     # Save the deleted objects.
     foreach my $site (values %$del_objs) {
@@ -188,6 +187,7 @@ sub save {
     %$del_objs = ();
 
     foreach my $site (@$new_objs) {
+        my $site_id = $site->get_id;
         #insert into element__site mapping
         my $sel = prepare_c( qq {
             SELECT 1
@@ -195,21 +195,22 @@ sub save {
             WHERE  element__id = ? AND
                    site__id    = ?
         }, undef, DEBUG);
-        my $state = col_aref($sel, $element_id, $site->get_id);
+        my $state = col_aref($sel, $element_id, $site_id);
         if (@$state) {
             my $upd = prepare_c( qq {
                 UPDATE element__site
-                SET    active = 1
+                SET    active = 1,
+                       primary_oc__id = ?
                 WHERE  element__id = ? AND
                        site__id    = ?
             }, undef, DEBUG);
-            execute($upd, $element_id, $site->get_id);
+            execute($upd, delete $oc_map->{$site_id}, $element_id, $site_id);
         } else {
             my $ins = prepare_c(qq {
-                INSERT INTO element__site (element__id, site__id)
-                VALUES ( ?, ?)
+                INSERT INTO element__site (element__id, site__id, primary_oc__id)
+                VALUES (?, ?, ?)
             }, undef, DEBUG);
-            execute($ins, $element_id, $site->get_id);
+            execute($ins, $element_id, $site_id, delete $oc_map->{$site_id});
         }
     }
 

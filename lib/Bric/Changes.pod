@@ -26,10 +26,10 @@ Passwords can be changed again. [Mike Slattery]
 
 =item *
 
-It is now much harder to create media type or story type elements without site
-and output channel associations. This should eliminate errors when users try
-to create documents based on types without output channel associations.
-[David]
+It is now virtually impossible to create media type or story type elements
+without site and output channel associations. This should eliminate errors
+when users try to create documents based on types without output channel
+associations. [David]
 
 =item *
 
@@ -104,6 +104,12 @@ disappear. Thanks to Dave Rolsky for the spot. [David]
 Attempting to preview a story for which there are no associated destinations
 no longer causes the error 'Can't call method "ACCESS" without a package or
 object reference'. Thanks to Earle Martin for the spot! [David]
+
+=item *
+
+Added C<output_channel_id> parameter to the C<list()> method of Bric::Biz::Site
+in order to prevent sites without output channel associations from being
+listed in the select list for story type and media type elements. [David]
 
 =back
 

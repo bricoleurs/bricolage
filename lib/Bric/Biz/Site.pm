@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =item Date
 
-$Date: 2003-09-16 14:09:32 $
+$Date: 2003-10-30 03:51:28 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.8 2003-09-16 14:09:32 slanning Exp $
+$Id: Site.pm,v 1.9 2003-10-30 03:51:28 wheeler Exp $
 
 =back
 
@@ -257,7 +257,12 @@ A Bric::Util::Grp::Site object ID.
 
 =item element_id
 
-A Bric::Biz::AssetType element ID.
+A Bric::Biz::AssetType (element) ID.
+
+=item output_channel_id
+
+A Bric::Biz:OutputChannel ID. Pass in C<undef> to check for when it's C<NULL>,
+and "not null" to check for when it's C<NOT NULL>.
 
 =back
 
@@ -798,6 +803,18 @@ $get_em = sub {
             $tables .= ", element__site es";
             $wheres .= " AND a.id = es.site__id AND es.element__id = ? AND es.active = 1";
             push @params, $params->{$k};
+        } elsif ($k eq 'output_channel_id') {
+            # Look up by output channel association.
+            $tables .= ", output_channel oc";
+            $wheres .= " AND a.id = oc.site__id AND oc.id ";
+            if (not defined $params->{$k}) {
+                $wheres .= "IS NULL";
+            } elsif ($params->{$k} eq 'not null') {
+                $wheres .= "IS NOT NULL";
+            } else {
+                $wheres .= "= ?";
+                push @params, $params->{$k};
+            }
         } else {
             # Simple string comparison.
             $wheres .= " AND LOWER(a.$k) LIKE ?";

@@ -268,8 +268,11 @@ $do_element = sub {
     if ($cb_key eq 'add_site_id') {
         my $site_id = $self->value;
         # Only add the site if it has associated output channels.
-        if (Bric::Biz::OutputChannel->list({ site_id => $site_id })->[0]) {
+        if (my $oc_id =
+              Bric::Biz::OutputChannel->list_ids({site_id => $site_id })->[0])
+        {
             $obj->add_site($site_id);
+            $obj->set_primary_oc_id($oc_id, $site_id);
         } else {
             add_msg 'Site "[_1]" cannot be associated because it has no ' .
               'output channels',
@@ -280,24 +283,6 @@ $do_element = sub {
     # delete any selected sub elements
     if ($param->{"$key|delete_sub"}) {   # note: not a callback
         $obj->del_containers(mk_aref($param->{"$key|delete_sub"}));
-    }
-
-    # If it is a new element and top level we must add a site
-    if ($param->{isNew} && $obj->get_top_level) {
-        # Try to get the primary site
-        if (my $site_id = $self->cache->get_user_cx(get_user_id())) {
-            if (Bric::Biz::OutputChannel->list({ site_id => $site_id })->[0]) {
-                $obj->add_site($site_id);
-            } else {
-                add_msg 'Site "[_1]" cannot be associated because it has ' .
-                  'no output channels',
-                  Bric::Biz::Site->lookup({ id => $site_id })->get_name;
-            }
-        } else {
-            # Else we must do it some other way!
-            my @sites = Bric::Biz::Site->list();
-            $obj->add_site($sites[0]);
-        }
     }
 
     # Take care of group management.
@@ -316,7 +301,7 @@ $clean_param = sub {
     if ($param->{fb_vals}) {
         $param->{fb_vals} =~ s/\r/\n/g;
         $param->{fb_vals} =~ s/\n{2,}/\n/g;
-        $param->{fb_vals} =~ s/\s*,\s*/,/g;
+        $param->{fb_vals} =~ s/\s*,\s*/,/;
         my $tmp;
         foreach my $line (split /\n/, $param->{fb_vals}) {
             $tmp .= $line =~ /,/ ? "$line\n" : "$line,$line\n";

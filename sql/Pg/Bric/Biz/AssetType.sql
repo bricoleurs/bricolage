@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2003-10-13 20:51:03 $
+-- $Date: 2003-10-30 03:51:28 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -69,13 +69,13 @@ CREATE TABLE element  (
 -- Description: A table that maps 
 
 CREATE TABLE element__site (
-    element__id    NUMERIC(10)  NOT NULL,
-    site__id       NUMERIC(10)  NOT NULL,
-    active         NUMERIC(1)   DEFAULT 1
-                                NOT NULL
-                                CONSTRAINT ck_site_element__active
-                                  CHECK (active IN (0,1)),
-    primary_oc__id  NUMERIC(10,0)
+    element__id    NUMERIC(10)     NOT NULL,
+    site__id       NUMERIC(10)     NOT NULL,
+    active         NUMERIC(1)      DEFAULT 1
+                                   NOT NULL
+                                   CONSTRAINT ck_site_element__active
+                                     CHECK (active IN (0,1)),
+    primary_oc__id  NUMERIC(10,0) NOT NULL,
 );
 
 -- -----------------------------------------------------------------------------

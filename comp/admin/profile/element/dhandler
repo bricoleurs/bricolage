@@ -64,7 +64,7 @@ if (defined $id) {
                           no_persist => 1,
                           name   => "primary_oc_site_$siteid",
                           useTable => 0,
-                          selected => $comp->get_primary_oc_id($siteid),
+                          selected => $comp->get_primary_oc_id($siteid) || '',
                          );
             }
 
@@ -94,7 +94,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     no_persist => 1,
     name   => 'formBuilder|add_site_id_cb',
     default => ['' => 'Add Site'],
-    constrain => { active => 1 },
+    constrain => { active => 1, output_channel_id => 'not null' },
     js => "onChange='submit()'",
     useTable => 0,
 &></td></tr>
@@ -315,11 +315,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2003-10-22 22:49:29 $
+$Date: 2003-10-30 03:51:28 $
 
 =head1 DESCRIPTION
 
