@@ -7,15 +7,15 @@ package Bric::Util::Grp::Category;
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:47 $
+$Date: 2002-05-21 12:30:10 $
 
 =head1 SYNOPSIS
 
@@ -111,11 +111,11 @@ use constant PACKAGE => 'Bric::Biz::Category';
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
+                         # Public Fields
 
-			 # Private Fields
+                         # Private Fields
 
-			});
+                        });
 }
 
 #==============================================================================#
@@ -268,11 +268,11 @@ NONE
 
 sub get_supported_classes {
 #    { 
-#	&PACKAGE => 'keyword',
+#       &PACKAGE => 'keyword',
 #    }
 
-	{ 'Bric::Biz::Category' => 'category' }
-}	
+        { 'Bric::Biz::Category' => 'category' }
+}       
 
 #------------------------------------------------------------------------------#
 
@@ -318,11 +318,11 @@ sub get_parent {
     my $p_id = $self->get_parent_id;
     
     if ($p_id) {
-	my @c = Bric::Biz::Category->list({'category_grp_id' => $p_id,
-					'active'          => 'all'});
-	return $c[0];
+        my @c = Bric::Biz::Category->list({'category_grp_id' => $p_id,
+                                        'active'          => 'all'});
+        return $c[0];
     } else {
-	return;
+        return;
     }
 }
 
@@ -352,15 +352,15 @@ sub add_subcat {
     my $pkg = 'Bric::Biz::Category';
 
     foreach my $c (@$cat) {
-	my $c_cat = $c->_get('_category_grp_obj');
-	$c_cat->set_parent_id($self->get_id);
-	$c_cat->save;
+        my $c_cat = $c->_get('_category_grp_obj');
+        $c_cat->set_parent_id($self->get_id);
+        $c_cat->save;
     }
 
     # The $cat array can almost be passed directoy to add_members that a list
     # of IDs needs to be transformed into a hash ref of ID *and* type.
     $self->add_members([map {ref($_) ? {'obj'=>$_} 
-			             : {'type'=>PACKAGE, 'id'=>$_}} @$cat]);
+                                     : {'type'=>PACKAGE, 'id'=>$_}} @$cat]);
 }
 
 #------------------------------------------------------------------------------#
@@ -448,14 +448,14 @@ sub _select_by_name {
 
     $sql = 'SELECT c.id, c.directory, c.asset_grp_id, c.category_grp_id, c.keyword_grp_id '.
            'FROM   grp g, category c '.
-	   'WHERE  LOWER(g.name) LIKE ? AND g.id = c.category_grp_id '.
+           'WHERE  LOWER(g.name) LIKE ? AND g.id = c.category_grp_id '.
                    'AND c.active = ?';
 
     my $sth = prepare_c($sql);
     execute($sth, lc($name), $active);
     bind_columns($sth, \@d[0..4]);
     while (fetch($sth)) {
-	push @ret, [@d];
+        push @ret, [@d];
     }
     finish($sth);
 
