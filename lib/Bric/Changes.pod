@@ -33,6 +33,14 @@ PostgreSQL "NOTICE" messages are now suppressed during installation. [David]
 
 Added README.MacOSX. [David]
 
+=item *
+
+You can now pass a date format string argument to the C<get_data()> method of
+container elements in templates (and elsewhere, for that matter). This is
+useful if the data you're retrieving is of the "date" type, and you don't want
+the date to be formatted in the format specified in the "Date Format"
+preference. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -95,6 +103,12 @@ along with all of the F<.pm> files. [David]
 =item *
 
 Corrected a bunch of spelling errors in this file. [David]
+
+=item *
+
+Calling C<get_data()> on a container element in templates (or elsewhere, for
+that matter) now properly ignores container subelements. Likewise for
+C<get_container()>, whicn how properly ignores data subelements. [David]
 
 =back
 

@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-06-17 17:26:17 $
+$Date: 2002-08-30 18:06:55 $
 
 =head1 SYNOPSIS
 
@@ -867,10 +867,15 @@ sub add_container {
 
 ################################################################################
 
-=item $string = $tile->get_data( $name, $obj_order)
+=item $string = $tile->get_data($name, $obj_order)
 
-this will search the contained tiles for one with the coresponding name ane
-object order field.   It will then return the string that coresponds
+=item $string = $tile->get_data($name, $obj_order, $date_format)
+
+This method will search the contained tiles for one with the coresponding name
+ane object order field. It will then return the data from that data tile. Pass
+in the optional C<$date_format> argument if you expect the data returned from
+C<$name> to be of the date type, and you'd like a format other than that set
+in the "Date Format" preference.
 
 B<Throws:>
 
@@ -882,21 +887,19 @@ NONE
 
 B<Notes:>
 
-NONE 
+NONE
 
 =cut
 
 sub get_data {
-    my ($self, $name, $obj_order) = @_;
-    my $tiles  = $self->_get_tiles();
+    my ($self, $name, $obj_order, $dt_fmt) = @_;
     $obj_order = 1 unless defined $obj_order;
 
-    foreach (@$tiles) {
-	if ($_->has_name($name) && ($_->get_object_order == $obj_order)) {
-	    return $_->get_data()
-	}
+    foreach my $t ($self->_get_tiles) {
+        return $t->get_data($dt_fmt) if not $t->is_container
+          and $t->has_name($name) and $t->get_object_order == $obj_order;
     }
-    # well I suppose that there were no matches
+    # Well, I suppose that there were no matches.
     return;
 }
 
@@ -904,8 +907,8 @@ sub get_data {
 
 =item $contained = $container->get_container($name, $obj_order)
 
-Similar to get data this will return a container object that matches the 
-given name field and onbject order description.
+Similar to get data this will return a container object that matches the given
+name field and object order description.
 
 B<Throws:>
 
@@ -923,15 +926,13 @@ NONE
 
 sub get_container {
     my ($self, $name, $obj_order) = @_;
-    my $tiles  = $self->_get_tiles();
     $obj_order = 1 unless defined $obj_order;
 
-    foreach (@$tiles) {
-	if ($_->has_name($name) && ($_->get_object_order == $obj_order)) {
-	    return $_;
-	}
+    foreach my $t ($self->_get_tiles) {
+        return $t if $t->is_container and $t->has_name($name)
+          and $t->get_object_order == $obj_order;
     }
-    # well I suppose that there were no matches
+    # Well, I suppose that there were no matches.
     return;
 }
 
@@ -951,7 +952,7 @@ NONE
 
 B<Notes:>
 
-NONE 
+NONE
 
 =cut
 
