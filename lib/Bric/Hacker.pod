@@ -593,7 +593,8 @@ Tag the branch with the last revision, so that future merges can decide to
 merge only from thiat revision on.
 
   % svn cp http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    http://svn.bricolage.cc/bricolage/tags/rev_1_8_merge_6123
+    http://svn.bricolage.cc/bricolage/tags/rev_1_8_merge_6123 \
+    -m 'Merge tag for rev_1_8 to revision 6123.'
 
 =back
 
