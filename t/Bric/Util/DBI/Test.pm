@@ -391,7 +391,7 @@ sub test_order_by: Test(6) {
 
 }
 
-sub testclean_params: Test(7) {
+sub testclean_params: Test(8) {
     my $self = shift;
     my $exp;
     $exp = { 
@@ -445,6 +445,15 @@ sub testclean_params: Test(7) {
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { user__id => 1 }), $exp, 'set _checked_out to 1 for user__id');
+    $exp = { 
+             active => 1,
+             _no_return_versions => 1,
+             _not_simple => 1,
+             _checked_out => 0,
+             Order => 'cover_date',
+           };
+    is_deeply( clean_params($CLASS, { checked_out => '' }), $exp,
+               "set _checked_out to 0 when it's ''");
     $exp = { 
              active => 1,
              _no_return_versions => 1,
