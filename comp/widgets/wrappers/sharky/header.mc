@@ -69,19 +69,6 @@ my $curve_right = $section eq "admin"
 # if needed
 my $nav = get_state_data("nav");
 
-# define variables to output sideNav layer or iframe
-if ($agent->nav4) {
-    $layer = "layer";
-    $properties = qq { width="150" height="200%" border="0" scrolling="auto" frameborder="no" z-index="100" left="8" top="35"};
-} else {
-    $layer = "iframe";
-    $properties = $agent->mac
-      ? qq { width="150" border="0" scrolling="no" }
-        . qq{frameborder="no" marginwidth="0" style="z-index:200;" }
-      : qq{ width="150" border="0" scrolling="no" }
-	. qq{frameborder="no" marginwidth="1" style="z-index:200; visibility:visible; position: absolute; left: 8; top: 35;"};
-}
-
 my $margins = DISABLE_NAV_LAYER && $agent->gecko
   ? 'marginwidth="5" marginheight="5"'
   : '';
@@ -168,14 +155,8 @@ function doLink(link) {
 </script>
 
 <div id="mainContainer">
-<div id="navContainer">
 <%perl>;
 # handle the various states of the side nav
-# login screen: no side nav
-# Netscape (non Unix platforms): include as src of a layer
-# IE & Mozilla: include as an iframe
-# Netscape (Unix platforms): include as plain html
-
 if ($useSideNav) {
 
     if (DISABLE_NAV_LAYER || ((! $agent->gecko) && $agent->user_agent =~ /(linux|freebsd|sunos)/)) {
@@ -186,14 +167,13 @@ if ($useSideNav) {
 	# create a unique uri to defeat browser caching attempts.
 	$uri .= "&rnd=" . time;
 	chomp $uri;
-	$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } ) if $agent->nav4;
-	$m->out( qq {<$layer name="sideNav" id="sideNav" src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" $properties>} );
-	$m->out("</$layer>\n");
+        $m->out( qq{<iframe name="sideNav" id="sideNav" } .
+                 qq{        src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" } .
+                 qq{        scrolling="no" frameborder="no"></iframe>} );
     }
 }
 
 </%perl>
-</div>
 
 <!-- begin content area -->
 <div id="contentContainer">
