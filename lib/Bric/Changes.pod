@@ -184,12 +184,9 @@ to Neal Sofge for the spot! [David]
 
 =item *
 
-The German localization module (Bric::Util::Language::de_de) had the
-wrong package name, which meant that attempts to use it failed with
-the error "Can't locate class method
-'Bric::Util::Language::de_de::new' via package
-'Bric::Util::Language::de_de' at
-/usr/share/perl/5.8.2/Locale/Maketext.pm line 319".  [Dave Rolsky]
+Fixed 1.7.0 upgrade scripts that create key names to better handle key name
+conflicts. Thanks to Nate Perry-Thistle for having an installation that
+generated such conflicts. [David]
 
 =back
 
