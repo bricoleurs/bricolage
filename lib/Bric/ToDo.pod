@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.71 $
+$Revision: 1.72 $
 
 =head1 DATE
 
-$Date: 2002-08-31 00:50:28 $
+$Date: 2002-09-04 14:39:14 $
 
 =head1 DESCRIPTION
 
@@ -352,8 +352,8 @@ currently-running instance.
 
 =item *
 
-Add autopopulation of video media type properties, such as codec, bit rate, fps,
-length, etc. Use a tool such as RIFF::Info.
+Add autopopulation of video media type properties, such as codec, bit rate,
+fps, length, etc. Use a tool such as Video::Info.
 
 =item *
 
