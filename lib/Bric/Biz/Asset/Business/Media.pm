@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.72 $
+$Revision: 1.73 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.72 $ )[-1];
+our $VERSION = (qw$Revision: 1.73 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-12 07:01:08 $
+$Date: 2004-02-13 02:30:27 $
 
 =head1 SYNOPSIS
 
@@ -148,10 +148,10 @@ use constant CAN_DO_LIST => 1;
 use constant CAN_DO_LOOKUP => 1;
 use constant HAS_CLASS_ID => 1;
 
-use constant GROUP_COLS => qw(m.grp__id
-                              c.asset_grp_id
-                              d.asset_grp
-                              w.asset_grp_id);
+use constant GROUP_COLS => ('m.grp__id as grp_id',
+                            'c.asset_grp_id as cat_grp_id',
+                            'd.asset_grp as desk_grp_id',
+                            'w.asset_grp_id as wf_grp_id');
 
 # the mapping for building up the where clause based on params
 use constant WHERE => 'mt.id = i.media__id '
