@@ -2851,7 +2851,8 @@ sub _do_list {
             if ($pkg eq 'Bric::Util::DBI::ANY') {
                 # Assume they're all of the same class.
                 $pkg = ref $criteria->{obj}[0];
-                $obj_id = ANY(map { $_->get_id } @{$criteria->{obj}});
+                my @ids = grep { defined } map { $_->get_id } @{$criteria->{obj}};
+                $obj_id = ANY(@ids) if @ids;
             } else {
                 # Figure out what table this needs to be joined to.
                 $pkg = ref $criteria->{obj};
@@ -2863,20 +2864,23 @@ sub _do_list {
             $obj_id = $criteria->{obj_id};
         }
 
-        # Now construct the member table name.
-        my $motable = $class->get_supported_classes->{$pkg} . '_member';
+        # Proceed only if we have an Object ID.
+        if (defined $obj_id) {
+            # Now construct the member table name.
+            my $motable = $class->get_supported_classes->{$pkg} . '_member';
 
-        # build the query
-        $tables .= ", member mm, $motable mo";
-        push @wheres, ( 'mo.member__id = mm.id',
-                        'mm.grp__id = g.id', "mm.active = '1'");
-        push @wheres, any_where($obj_id, "mo.object_id = ?", \@params);
+            # build the query
+            $tables .= ", member mm, $motable mo";
+            push @wheres, ( 'mo.member__id = mm.id',
+                            'mm.grp__id = g.id', "mm.active = '1'");
+            push @wheres, any_where($obj_id, "mo.object_id = ?", \@params);
 
-        # If an active param has been passed in add it here remember that
-        # groups cannot be deactivated.
-        push @wheres, 'mm.active = ?';
-        push @params, exists $criteria->{active} ?
-          $criteria->{active} ? 1 : 0 : 1;
+            # If an active param has been passed in add it here remember that
+            # groups cannot be deactivated.
+            push @wheres, 'mm.active = ?';
+            push @params, exists $criteria->{active} ?
+              $criteria->{active} ? 1 : 0 : 1;
+        }
     }
 
     # Add other parameters to the query
