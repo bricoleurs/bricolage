@@ -58,7 +58,7 @@ $m->comp('/widgets/profile/displayFormElement.mc', key => 'can_be_overridden',
          readOnly => $no_edit,
          vals => { props => { type => 'checkbox',
                               chk  => $pref->get_can_be_overridden },
-                   disp => 'Can be Overridden?',
+                   disp => 'Can be Overridden',
                    value => 1 } );
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
@@ -95,11 +95,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-12-18 22:32:30 $
+$Date: 2004-02-07 23:34:15 $
 
 =head1 DESCRIPTION
 
