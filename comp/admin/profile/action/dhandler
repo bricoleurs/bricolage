@@ -64,6 +64,7 @@ my $dest_class = get_package_name($dest_key);
 $id => undef
 $next => undef
 $type => undef
+$dest_id => undef
 </%args>
 
 %#-- Init Section --#
@@ -79,7 +80,7 @@ $id ||= $act->get_id;
 
 # Get the server type (destination profile) ID and instantiage the destination
 # object.
-my $dest_id = get_state_data($widget, $dest_key) || $act->get_server_type_id;
+$dest_id ||= get_state_data($widget, $dest_key) || $act->get_server_type_id;
 my $dest = $dest_class->lookup({ id => $dest_id });
 
 # Check authorization.
@@ -108,11 +109,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:46 $
+$Date: 2001-09-25 07:44:43 $
 
 =head1 DESCRIPTION
 
@@ -121,7 +122,11 @@ This element handles the display for editing distribution actions.
 =head1 REVISION HISTORY
 
 $Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:46  wheeler
-Initial revision
+Revision 1.2  2001-09-25 07:44:43  wheeler
+Fixed bug where the destination ID was not properly grabbed for a new
+destination.
+
+Revision 1.1.1.1  2001/09/06 21:51:46  wheeler
+Upload to SourceForge.
 
 </%doc>
