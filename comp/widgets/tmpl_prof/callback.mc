@@ -136,17 +136,18 @@ elsif ($field eq "$widget|create_cb") {
     my $at_id = $param->{$widget.'|at_id'};
     my $oc_id = $param->{$widget.'|oc_id'};
     my $cat_id = $param->{$widget.'|cat_id'};
-    my $at    = Bric::Biz::AssetType->lookup({'id' => $at_id});
-    my $name  = $at->get_name();
+
+    my ($at, $name);
+    unless ($param->{$widget.'|no_at'}) {
+	# Associate it with an Element.
+	$at    = Bric::Biz::AssetType->lookup({'id' => $at_id});
+	$name  = $at->get_name();
+    } # Otherwise, it'll default to an autohandler.
 
     # Check permissions.
     my $work_id = get_state_data($widget, 'work_id');
     my $gid = Bric::Biz::Workflow->lookup({ id => $work_id })->get_all_desk_grp_id;
     chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
-
-    # Clear out the asset type ID if they choose not to associate this template
-    # with an asset type.
-    $at_id = undef if $param->{$widget.'|no_at'};
 
     # Create a new formatting asset.
     my $fa = Bric::Biz::Asset::Formatting->new(
@@ -435,7 +436,13 @@ my $delete_fa = sub {
 
 <%doc>
 $Log: callback.mc,v $
-Revision 1.4  2001-09-28 12:20:25  wheeler
+Revision 1.5  2001-10-03 19:25:18  samtregar
+Merge from Release_1_0 to HEAD
+
+Revision 1.4.2.1  2001/10/03 10:12:44  wheeler
+Fixed bug where autohandlers weren't getting created properly.
+
+Revision 1.4  2001/09/28 12:20:25  wheeler
 Added canceled checkout event logging, plus some missing template event logging.
 
 Revision 1.3  2001/09/27 10:10:16  wheeler

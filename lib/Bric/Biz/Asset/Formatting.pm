@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-28 12:19:02 $
+$Date: 2001-10-03 19:25:19 $
 
 =head1 SYNOPSIS
 
@@ -1546,13 +1546,6 @@ sub save {
     # Handle a cancel.
     my ($id, $vid, $cancel, $ver) =
       $self->_get(qw(id version_id _cancel version));
-    if ($cancel) {
-	if (defined $id and defined $vid) {
-	    $self->_delete_instance();
-	    $self->_delete_formatting() if $ver == 0;
-	}
-	return $self;
-    }
 
     # Only update/insert this object if some of our fields are dirty.
     if ($self->_get__dirty) {
@@ -1562,6 +1555,14 @@ sub save {
 
 	    # Update or insert depending on if we have an ID.
 	    if ($self->get_version_id) {
+		if ($cancel) {
+		    if (defined $id and defined $vid) {
+			$self->_delete_instance();
+			$self->_delete_formatting() if $ver == 0;
+			$self->_set(['_cancel'], [undef]);
+		    }
+		    return $self;
+		}
 		$self->_update_instance();
 	    } else {
 		$self->_insert_instance();
@@ -2113,7 +2114,14 @@ L<Bric>, L<Bric::Biz::Asset>
 =head1 REVISION HISTORY
 
 $Log: Formatting.pm,v $
-Revision 1.4  2001-09-28 12:19:02  wheeler
+Revision 1.5  2001-10-03 19:25:19  samtregar
+Merge from Release_1_0 to HEAD
+
+Revision 1.4.2.1  2001/10/03 09:43:56  wheeler
+Fixed bug where cancelled checkouts weren't fully checked out
+(http://bricolage-bugzilla.about.com/show_bug.cgi?id=8).
+
+Revision 1.4  2001/09/28 12:19:02  wheeler
 Fixed bug where checkouts weren't getting properly cancelled.
 
 Revision 1.3  2001/09/13 16:55:19  samtregar

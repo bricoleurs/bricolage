@@ -8,15 +8,15 @@ Bric::Biz::Publisher - A class to manage publishing of business assets.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:57 $
+$Date: 2001-10-03 19:25:19 $
 
 =head1 SYNOPSIS
 
@@ -116,7 +116,6 @@ BEGIN {
 			 '_files'          => Bric::FIELD_NONE,
 			 '_res'            => Bric::FIELD_NONE,
 			 '_more_pages'     => Bric::FIELD_NONE,
-			 '_wrapped_pages'  => Bric::FIELD_NONE,
 			});
 }
 
@@ -417,10 +416,7 @@ sub burn_one {
     $interp->set_global('$element', $element);
     $interp->set_global('$burner',  $self);
 
-    # Clear out the wrapped pages flag; only set in 'display_pages'.
-    $self->_set(['_wrapped_pages'], [0]);
-
-    # Save some of the values for this burn.
+    # save some of the values for this burn.
     $self->_set(['story', 'oc', 'cat', '_buf',   '_interp'],
 		[$ba,     $oc,  $cat,  \$outbuf, $interp]);
 
@@ -450,9 +446,9 @@ sub burn_one {
 
 =item $success = $b->display_pages($paginated_element_name)
 
-A method to be called from template space.  Use this method to display paginated
-elements.  If this method is used, the burn system will run once for every page
-in the story;  this is so autohandlers will be called when appropriate.
+A method to be called from template space. Use this method to display paginated
+elements. If this method is used, the burn system will run once for every page
+in the story; this is so autohandlers will be called when appropriate.
 
 B<Throws:>
 
@@ -484,9 +480,6 @@ sub display_pages {
     # Set the '_more_pages' variable if there are more pages to burn after this.
     $self->_set(['_more_pages'], [(defined($next_page) ? 1 : 0)]);
 
-    # Set the wraped page flag to false so that pages won't be ended prematurely
-    $self->_set(['_wrapped_pages'], [1]);
-
     $self->display_element($page_elem);
 }
 
@@ -494,10 +487,8 @@ sub display_pages {
 
 =item $success = $b->display_element()
 
-A method to be called from template space.  This method will find the mason
-element associated with the element passed in and call $m->comp.  Additionally
-if the element is paginated, it will end the current page (write the current
-buffer out to file) and start a new page.
+A method to be called from template space. This method will find the mason
+element associated with the element passed in and call $m->comp.
 
 B<Throws:>
 
@@ -514,33 +505,27 @@ NONE
 =cut
 
 sub display_element {
-    my $self = shift;
-    my ($elem) = @_;
-    my $interp = $self->_get('_interp');
-
+    my ($self, $elem) = @_;
     return unless $elem;
 
     # Call another element if this is a container otherwise output the data.
     if ($elem->is_container) {
+	my $interp = $self->_get('_interp');
+
 	# Set the elem global to the current element.
 	$interp->set_global('$element', $elem);
-	
+
 	# Push this element on to the stack
 	$self->_push_element($elem);
-	
+
 	my $template = $self->load_template_element($elem);
-	
+
 	# Display the element
 	$Bric::Util::Burner::m->comp($template) if $template;
-	
-	# Finish the current page if this is a paginated element.
-	my $at = $self->current_element_type;
-	$self->end_page if ($at->get_paginated and
-			    not ($self->_get('_wrapped_pages')));
-	
+
 	# Pop the element back off again.
 	$self->_pop_element();
-	
+
 	# Set the elem global to the previous element
 	$interp->set_global('$element', $self->current_element);
     } else {
@@ -574,11 +559,7 @@ better.
 
 =cut
 
-sub chain_next {
-    my $self = shift;
-
-    $Bric::Util::Burner::m->call_next;
-}
+sub chain_next { $Bric::Util::Burner::m->call_next }
 
 #------------------------------------------------------------------------------#
 
@@ -605,10 +586,12 @@ sub end_page {
     my $ba   = $self->get_story;
     my $buf  = $self->_get('_buf');
 
-    my $page       = $self->get_page || '';
-    my $filename   = "index$page.html";
-    my $base       = $self->base_path;
     my ($cat, $oc) = $self->_get('cat', 'oc');
+    my $fn = $oc->get_filename;
+    my $ext = $oc->get_file_ext;
+    my $page       = $self->get_page || '';
+    my $filename   = "$fn$page.$ext";
+    my $base       = $self->base_path;
 
     # The URI minus the page name.
     my $base_uri = $ba->get_uri($cat, $oc);
@@ -1100,7 +1083,17 @@ L<Perl>, L<Bric>
 =head1 REVISION HISTORY
 
 $Log: Burner.pm,v $
-Revision 1.1  2001-09-06 21:54:57  wheeler
-Initial revision
+Revision 1.2  2001-10-03 19:25:19  samtregar
+Merge from Release_1_0 to HEAD
+
+Revision 1.1.1.1.2.1  2001/10/01 10:28:57  wheeler
+Added support for custom file naming on a per-output channel basis. The filename
+is specified in the Output Channel profile, and used during the burn phase to
+name files on the file system. Configuration directives specifying default
+values for the filename fields have also been added and documented in
+Bric::Admin.
+
+Revision 1.1.1.1  2001/09/06 21:54:57  wheeler
+Upload to SourceForge.
 
 =cut

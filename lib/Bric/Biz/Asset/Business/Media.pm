@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-28 08:33:40 $
+$Date: 2001-10-03 19:25:19 $
 
 =head1 SYNOPSIS
 
@@ -853,6 +853,8 @@ NONE
 
 =item $category = $media->get_category_object()
 
+=item $category = $media->get_category()
+
 Returns the object of the category that this is a member of
 
 B<Throws:>
@@ -882,6 +884,8 @@ sub get_category_object {
 
 	return $cat;
 }
+
+*get_category = *get_category_object;
 
 ################################################################################
 
@@ -2041,7 +2045,14 @@ L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>
 =head1 REVISION HISTORY
 
 $Log: Media.pm,v $
-Revision 1.4  2001-09-28 08:33:40  wheeler
+Revision 1.5  2001-10-03 19:25:19  samtregar
+Merge from Release_1_0 to HEAD
+
+Revision 1.4.2.1  2001/10/02 13:07:22  wheeler
+Added get_category() as an alias for get_category_object(), to make it more in
+line with the interfaces of Formatting and Stories.
+
+Revision 1.4  2001/09/28 08:33:40  wheeler
 Added ORDER BY clause to SELECT statement.
 
 Revision 1.3  2001/09/17 16:19:43  wheeler

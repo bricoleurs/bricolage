@@ -13,11 +13,11 @@
    title    => 'Choose a Related Story',
    sortBy   => 'name',
    select   => undef,
-   profile  => \&related_profile,
+   profile  => $related_profile,
    featured => $relate_id ? [$relate_id] : undef,
    exclude  => [$story->get_id],
    fields   => [qw(id title uri cover_date)],
-	field_values => \&field_values,
+	field_values => $field_values,
    addition => '',
    behavior  => 'expand',
 &>
@@ -35,27 +35,19 @@ $widget
 </%init>
 
 <%once>
-sub field_values {
-	my ($o, $field) = @_;
+my $field_values = sub {
+    my ($o, $field) = @_;
+    return unless $field eq 'title';
+    my $html = '<a href="/workflow/profile/preview/' . $o->get_id . '"' .
+      'class="black" UnderlinedLink" target="preview">' .
+	$o->get_title . '</a>';
+    return $html;
+};
 
-	if ($field eq 'title') {
-		my $html = '<a href="/workflow/profile/preview/' . $o->get_id . '"' .
-					'class="black" UnderlinedLink" target="preview">' .
-					$o->get_title . '</a>'; 
-		return $html;
-	} else {
-		return;
-	}
-
-}
-
-sub related_profile {
-    my ($o,$flags) = @_;
-    
-    unless ($flags->{'featured'}) {
-        return ['Relate', $r->uri, "container_prof|relate_story_cb=".$o->get_id];
-    } else {
-        return ['Un-relate', $r->uri, "container_prof|unrelate_story_cb=".$o->get_id];
-    }
-}
+my $related_profile = sub {
+    my ($o, $flags) = @_;
+    return ['Relate', $r->uri, "container_prof|relate_story_cb=".$o->get_id]
+      unless $flags->{featured};
+    return ['Un-relate', $r->uri, "container_prof|unrelate_story_cb=".$o->get_id];
+};
 </%once>

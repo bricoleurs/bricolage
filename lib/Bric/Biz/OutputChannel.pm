@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - The manner of keeping track of output channels
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-27 15:54:49 $
+$Date: 2001-10-03 19:25:19 $
 
 =head1 SYNOPSIS
 
@@ -101,27 +101,29 @@ use constant FIELDS => qw(name description pre_path post_path primary filename
                           file_ext _active);
 use constant COLS => qw(name description pre_path post_path primary_ce filename
                         file_ext active);
-use constant ORD => qw(name description pre_path post_path active);
+use constant ORD => qw(name description pre_path post_path filename file_ext
+                       active);
 
 use constant INSTANCE_GROUP_ID => 23;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::OutputChannel';
 
-#==============================================================================## Fields                               #
+#==============================================================================
+## Fields                              #
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields  
+# Public Class Fields
 # Public fields should use 'vars'
 #use vars qw();
 
 #--------------------------------------#
-# Private Class Fields                  
+# Private Class Fields
 
 # Private fields use 'my'
 my $meths;
 
 #--------------------------------------#
-# Instance Fields                       
+# Instance Fields
 
 # None
 
@@ -595,6 +597,36 @@ sub my_meths {
 			     props    => {   type       => 'text',
 					     length     => 32,
 					     maxlength => 64
+					 }
+			    },
+	      filename      => {
+			     name     => 'filename',
+			     get_meth => sub { shift->get_filename(@_) },
+			     get_args => [],
+			     set_meth => sub { shift->set_filename(@_) },
+			     set_args => [],
+			     disp     => 'File Name',
+			     len      => 32,
+			     req      => 0,
+			     type     => 'short',
+			     props    => { type      => 'text',
+					   length    => 32,
+				           maxlength => 32
+					 }
+			    },
+	      file_ext      => {
+			     name     => 'file_ext',
+			     get_meth => sub { shift->get_file_ext(@_) },
+			     get_args => [],
+			     set_meth => sub { shift->set_file_ext(@_) },
+			     set_args => [],
+			     disp     => 'File Extension',
+			     len      => 32,
+			     req      => 0,
+			     type     => 'short',
+			     props    => { type      => 'text',
+					   length    => 32,
+				           maxlength => 32
 					 }
 			    },
 	      active     => {
@@ -1113,7 +1145,17 @@ NONE
 =head1 REVISION HISTORY
 
 $Log: OutputChannel.pm,v $
-Revision 1.5  2001-09-27 15:54:49  wheeler
+Revision 1.6  2001-10-03 19:25:19  samtregar
+Merge from Release_1_0 to HEAD
+
+Revision 1.5.2.1  2001/10/01 10:27:56  wheeler
+Added support for custom file naming on a per-output channel basis. The filename
+is specified in the Output Channel profile, and used during the burn phase to
+name files on the file system. Configuration directives specifying default
+values for the filename fields have also been added and documented in
+Bric::Admin.
+
+Revision 1.5  2001/09/27 15:54:49  wheeler
 Documented pre_path, post_path, filename, and file_ext.
 
 Revision 1.4  2001/09/27 15:41:46  wheeler

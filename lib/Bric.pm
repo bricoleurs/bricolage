@@ -10,7 +10,7 @@ Release Version: 1.1.0
 
 File (CVS) Version:
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.1.0";
 
 =head1 DATE
 
-$Date: 2001-09-28 16:05:32 $
+$Date: 2001-10-03 19:25:19 $
 
 =head1 SYNOPSIS
 
@@ -73,7 +73,7 @@ use base qw();
 
 #--------------------------------------#
 # Private Class Fields
-
+my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 #--------------------------------------#
 # Public Instance Fields
@@ -650,17 +650,11 @@ sub save {
 
 Get and set the _dirty field
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects> NONE.
 
-B<Side Effects>
-
-
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -688,40 +682,51 @@ references, one containing all the keys, the other containing all the values
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects>
+=item *
 
-Sets public variables..
+Incorrect number of args to _set().
 
-B<Notes:>
+=item *
+
+Error setting value in _set().
+
+=back
+
+B<Side Effects> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub _set {
     my $self = shift;
 
-    unless (@_) {
-	my $msg = "Incorrect number of args to _set";
-	die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-    }
+    # Make sure we have arguments.
+    die $gen->new({ msg => "Incorrect number of args to _set()."}) unless @_;
 
     # Load $k and $v differently if its a hash ref or two array refs.
     my ($k, $v) = @_ == 1 ? ([keys %{$_[0]}],[values %{$_[0]}]) : @_;
 
     # Set state
+    my $dirt = $self->{_dirty};
+    # Disable warnings to prevent "Use of uninitialized value in string ne"
+    # messages.
+    local $^W = undef;
     for my $i (0..$#$k) {
-	eval { $self->{$k->[$i]} = $v->[$i] };
-
-	if ($@) {
-	    my $msg = "Incorrect number of args to _set";
-	    die Bric::Util::Fault::Exception::GEN->new({'msg'     => $msg,
-						      'payload' => $@});
+	eval {
+	    if ($self->{$k->[$i]} ne $v->[$i]) {
+		$self->{$k->[$i]} = $v->[$i];
+		$dirt = 1;
+	    };
+	die $gen->new({ msg => "Error setting value for '$k->[$i]' in _set().",
+		        payload => $@ }) if $@;
 	}
     }
 
     # Set the dirty flag to show that this objects needs an update.
-    $self->{'_dirty'} = 1;
+    $self->{_dirty} = $dirt;
     return $self;
 }
 
@@ -798,21 +803,9 @@ perl(1).
 =head1 REVISION HISTORY
 
 $Log: Bric.pm,v $
-Revision 1.5  2001-09-28 16:05:32  wheeler
-Updated version number to "1.1.0" for the main branch. If anyone has any good
-ideas on how to get some sort of version number automation going, let me know.
+Revision 1.6  2001-10-03 19:25:19  samtregar
+Merge from Release_1_0 to HEAD
 
-Revision 1.4  2001/09/27 15:59:32  wheeler
-Fixed release version in the POD.
-
-Revision 1.3  2001/09/27 15:59:13  wheeler
-Incremented version to 1.0.1. Release due tomorrow morning.
-
-Revision 1.2  2001/09/19 19:33:38  wheeler
-Changed version number. Will increment to 1.0.1 upon actual release.
-
-Revision 1.1.1.1  2001/09/06 21:52:43  wheeler
-Upload to SourceForge.
 
 =cut
 

@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-10-02 16:23:59 $
+$Date: 2001-10-03 19:25:19 $
 
 =head1 SYNOPSIS
 
@@ -1354,10 +1354,8 @@ perl(1), DBI(2), Bric (3), Bric::Util::Time(4), Bric::Util::DBD::Oracle(5).
 =head1 REVISION HISTORY
 
 $Log: DBI.pm,v $
-Revision 1.2  2001-10-02 16:23:59  samtregar
-Added FTP interface to templates
+Revision 1.3  2001-10-03 19:25:19  samtregar
+Merge from Release_1_0 to HEAD
 
-Revision 1.1.1.1  2001/09/06 21:55:05  wheeler
-Upload to SourceForge.
 
 =cut

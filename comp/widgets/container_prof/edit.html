@@ -134,7 +134,12 @@ if ($at->is_related_media) {
 %    my $meta = $at_obj->get_meta('html_info');
 %    my $vals = { props => { %$meta } };
 %    my $key =  $widget . '|' . $dt->get_id;
-%    $vals->{'value'} = $dt->get_data() || $vals->{props}{value};
+%    $vals->{value} = $dt->get_data;
+%    $vals->{value} = $vals->{props}{value} unless defined $vals->{value};
+%    if ($vals->{props}{type} eq 'checkbox') {
+%        $vals->{props}{chk} = $vals->{value};
+%        $vals->{value} = 1;
+%    }
 
     <td align="right" colspan=2><span class="label"><% $dt->get_name() %>:&nbsp;</span></td>
     <td colspan=3>

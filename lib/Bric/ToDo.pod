@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2001-09-28 14:38:46 $
+$Date: 2001-10-03 19:25:19 $
 
 =head1 DESCRIPTION
 
@@ -35,13 +35,13 @@ significant (including the addition of new libraries).
 
 =item *
 
-Add filename and file_ext to the Output Channel UI. They're already in the
-Bric::Biz::OutputChannel library [David].
+Add Explanation/Philosophy statement linkable from the logo (make French
+speakers more comfortable with the name) [David].
 
 =item *
 
-Use the Output Channel filename and file_ext properties to name files in the
-burn system [David].
+Add name of Output Channel to list of Templates in Find Templates interface
+[Michele].
 
 =item *
 
@@ -90,15 +90,6 @@ Change the term "attribute" to "field" in the UI [Michele].
 
 =item *
 
-Change CE::_set() to only set if the values are different [David].
-
-=item *
-
-Check new desk names to make sure there isn't an existing desk with the same
-name [David].
-
-=item *
-
 Make SSL optional (and off by default) [David or Sam].
 
 =item *
@@ -107,13 +98,18 @@ XML::Writer (or related) support in Templates [David].
 
 =item *
 
-Have CE::Util::Class use CE::Util::Cache [David].
+Have Bric::Util::Class use Bric::Util::Cache [David].
 
 =item *
 
 Add PERL_LOADER configuration directive to bricolage.conf (and Bric::Config) so
 that system administrators can easily specify extra Perl modules they want
 loaded for use in templates [David].
+
+=item *
+
+Add preference for Contributors to be automatically added to assets as keywords
+[David].
 
 =back
 
@@ -127,17 +123,17 @@ loaded for use in templates [David].
 
 =item *
 
-Add the ability to use HTML::Template Templates without breaking the use of
-Mason [Sam].
-
-=item *
-
 Add support for Mozilla/Netscape 6 [Dave or Mark].
 
 =item *
 
 Resolve the "Adding Element and hitting Cancel" issue (See
 http://bricolage-bugzilla.about.com/show_bug.cgi?id=3).
+
+=item *
+
+Add Keyword Management interface to centrally manage keywords. Also add
+interface to select from existing keywords for associating with assets.
 
 =item *
 
@@ -195,6 +191,10 @@ in in the profile (via JavaScript).
 Add "Clone Asset" button to Media and Story profiles (I think that the API and
 maybe even the callbacks are already done).
 
+=item *
+
+Add ability to "undeploy" templates without deactivating them.
+
 =back
 
 =cut
@@ -204,6 +204,11 @@ maybe even the callbacks are already done).
 =head2 VERSION 1.2.0
 
 =over 4
+
+=item *
+
+allow only one template with a given name for a given category and output
+channel.
 
 =item *
 
@@ -276,11 +281,6 @@ groups in the Preference Manager [David].
 
 =item *
 
-Add preference for Contributors to be automatically added to assets as keywords
-[David].
-
-=item *
-
 Add preferences for listManagers to indicate whethere they should default to
 expand or narrow behavior [David].
 
@@ -315,6 +315,17 @@ Add support for LDAP authentication.
 
 =item *
 
+Change way objects are deactivated (archived?) in the database such that, where
+there are name uniqueness constraints, a new object can be created with the name
+of a deleted one without any clashes (e.g., for Elements and Element Types).
+
+=item *
+
+Update all interface elements to use localization libraries. No text that
+appears to the user should appear except in reference to a localization library.
+
+=item *
+
 Add support for Instant messaging (using Jabber server) in Alerts.
 
 =item *
@@ -328,6 +339,26 @@ Improved Attribute/Field editing and design.
 =item *
 
 Add file system-like asset browsing (especially for templates and media).
+
+=item *
+
+Create localization libraries for all text.
+
+=item *
+
+Revamp Exceptions so that they use numbers to look themselves up -- so there's a
+central repository of possible exceptions, and they are therefore easier to
+document.
+
+=item *
+
+Add the ability to use HTML::Template Templates without breaking the use of
+Mason [Sam].
+
+=item *
+
+Create a different way of distinguishing which desks are shared and which are
+not, rather than relying solely on the desk name.
 
 =item *
 
@@ -403,6 +434,10 @@ an asset.
 
 =item *
 
+Create system of interserver communication and replication.
+
+=item *
+
 Integrate with CVS and/or Subversion.
 
 =item *
@@ -458,52 +493,5 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2).
-
-=head1 REVISION HISTORY
-
-$Log: ToDo.pod,v $
-Revision 1.13  2001-09-28 14:38:46  wheeler
-Added a bunch more, and organized it all. Many of these tasks have assignments,
-and I'm going to move those onto Sourceforge, as well.
-
-Revision 1.12  2001/09/28 12:41:49  wheeler
-Added a bunch more to do items. About to go through them all and get them better
-organized.
-
-Revision 1.11  2001/09/27 15:58:04  wheeler
-Closed out To Dos for 1.0.1. Added a few more to 1.0.2. More to come.
-
-Revision 1.10  2001/09/27 15:41:46  wheeler
-Added filename and file_ext columns to OutputChannel API. Also added a
-configuration directive to CE::Config to specify the default filename and
-extension for the system. Will need to document later that these can be set, or
-move them into preferences. Will also need to use the filename and file_ext
-properties of Bric::Biz::OutputChannel in the Burn System.
-
-Revision 1.9  2001/09/26 15:12:09  wheeler
-Added quite a few more tasks. Will go over it in detail in the next few days and
-work out a more realistic road map.
-
-Revision 1.8  2001/09/25 09:59:41  wheeler
-Added new item.
-
-Revision 1.7  2001/09/25 08:34:16  wheeler
-Added new item.
-
-Revision 1.6  2001/09/20 21:31:00  wheeler
-Deleted completed task. Added new task to 1.0.2 section.
-
-Revision 1.5  2001/09/19 19:49:38  wheeler
-Created new 1.0.2 section and added and moved some items to it.. Deleted some
-completed tasks.
-
-Revision 1.4  2001/09/19 02:57:53  wheeler
-Added new task to 1.2.0 and deleted completed task from 1.0.1.
-
-Revision 1.3  2001/09/18 17:32:45  wheeler
-Corrected spelling error. Removed completed item.
-
-Revision 1.2  2001/09/18 00:01:52  wheeler
-Podified.
 
 =cut

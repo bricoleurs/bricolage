@@ -156,7 +156,7 @@ my $update_parts = sub {
 	    $order = $param->{"$widget|reorder_con$id"};
 	} else {
 	    $order = $param->{"$widget|reorder_dat$id"};
-	    my $val = $param->{"$widget|$id"};
+	    my $val = $param->{"$widget|$id"} || '';
 	    $_->set_data($val) unless $_->get_data eq $val;
 	}
 

@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-10-03 19:25:19 $
 
 =head1 SYNOPSIS
 
@@ -65,6 +65,8 @@ use Bric::Util::Fault::Exception::AP;
 use Bric::Config qw(:sys_user :admin);
 use Apache::Session::File;
 use File::Spec::Functions qw(tmpdir);
+use Bric::Util::Trans::FS;
+
 use File::Path qw(mkpath);
 use Apache::Cookie;
 
@@ -122,22 +124,28 @@ our %EXPORT_TAGS = (state => [qw(clear_state
 #======================================#
 
 use constant COOKIE   => 'BRICOLAGE';
-use constant SESS_DIR => tmpdir . '/bricolage_session';
-use constant LOCK_DIR => tmpdir . '/bricolage_lock';
-use constant OPTS     => {'Directory'     => SESS_DIR, 
-			  'LockDirectory' => LOCK_DIR,
-			  'Transaction'   => 1};
-
 use constant MAX_HISTORY => 10;
+
+use constant SESS_DIR =>
+  Bric::Util::Trans::FS->cat_dir(tmpdir, 'bricolage', 'session');
+
+use constant LOCK_DIR =>
+  Bric::Util::Trans::FS->cat_dir(tmpdir, 'bricolage', 'lock');
+
+use constant OPTS     => { Directory     => SESS_DIR,
+			   LockDirectory => LOCK_DIR,
+			   Transaction   => 1 };
 
 # Whether to cache the user object or not.
 #use constant CACHE_USER  => 1;
 
 # Create the session and lock directories if they do not exsist.
 unless (-d SESS_DIR && -d LOCK_DIR) {
+    my $tmp_dir = Bric::Util::Trans::FS->cat_dir(tmpdir, 'bricolage');
+    mkpath($tmp_dir, 0, 0777);
     mkpath(SESS_DIR, 0, 0777);
     mkpath(LOCK_DIR, 0, 0777);
-    chown SYS_USER, SYS_GROUP, SESS_DIR, LOCK_DIR;
+    chown SYS_USER, SYS_GROUP, $tmp_dir, SESS_DIR, LOCK_DIR;
 }
 
 #==============================================================================#
@@ -869,7 +877,14 @@ L<perl>, L<Bric>, L<Apache::Session::File>
 =head1 REVISION HISTORY
 
 $Log: Session.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-10-03 19:25:19  samtregar
+Merge from Release_1_0 to HEAD
+
+Revision 1.2.2.1  2001/10/03 09:18:08  wheeler
+Moved session and lock files into subdirectories of a single tmp directory,
+e.g., /tmp/bricolage/.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:53:03  wheeler

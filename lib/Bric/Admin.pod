@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-10-02 16:23:59 $
+$Date: 2001-10-03 19:25:19 $
 
 =head1 DESCRIPTION
 
@@ -777,7 +777,7 @@ triggering of certain events within the system (see Bric::Util::AlertType and
 Bric::Util::Alert for the Alert API documentation). There are a few system-level
 directives that affect Bricolage Alerting.
 
-=over
+=over 4
 
 =item *
 
@@ -805,7 +805,7 @@ themselves.]
 
 =head2 Search Configuration
 
-=over
+=over 4
 
 =item *
 
@@ -881,6 +881,33 @@ other possibilities see the documentation for Net::FTPServer.
 Once the server is up and running connect to it with an FTP client and
 start editing templates.  For more information see the documenation
 for Bric::Util::FTP::Server.
+
+=head2 File Naming Configuration
+
+All files burned to the file system during publishes and previews must be named
+(of course!), and they're named for the "File Name" and "File Extenstion"
+properties of the Output Channel they're getting burned to. You can give these
+properties whatever values you want (as long as they're legal on your file
+system!), but here you can set some defaults that all Output channels will start
+with.
+
+=over 4
+
+=item *
+
+B<DEFAULT_FILENAME:> Sets the default filename that all new Output Channel will
+start with in their "File Name" property. Combined with DEFAULT_FILE_EXT and a
+page index number to uniquely name the file for a given story. Defaults to
+"index" if not specified.
+
+=item *
+
+B<DEFAULT_FILE_EXT:> Sets the default file extention that all new Output Channel
+will start with in their "File Name" property. Combined with DEFAULT_FILENAE and
+a page index number to uniquely name the file for a given story. Defaults to
+"html" if not specified.
+
+=back
 
 =head1 DIRECTORY PERMISSIONS
 
@@ -1431,20 +1458,21 @@ application data. All of these files are stored in sub directories of the local
 system's $TMP environment variable (actually, the temp directory is determined
 by the tmpdir() method of the File::Spec library, which uses the $TMP
 environment variable and other meand to determine the local OS's temporary
-directory). Session files are stored in C<$TMP/bric_sesion> and
-C<$TMP/bric_lock>. These directories should stay relatively free of cruft, as
-the session files are regularly deleted when users logout or their login
-sessions expire and they attempt to log back in. Still, it'd be good to set up a
-cron job to monitor these directories and delete fiels and subdirectories that
+directory). Session files are stored in C<$TMP/bricolage/session> and
+C<$TMP/bricolage/lock>. These directories should stay relatively free of cruft,
+as the session files are regularly deleted when users logout or their login
+sessions expire and they attempt to log back in. (However, in some cases we've
+noticed a buildup of files in the lock directory.) Still, it'd be good to set up
+a cron job to monitor these directories and delete files and subdirectories that
 haven't been accessed in a while.
 
 Bricolage also uses a cross-process caching mechanism to shara data between
 Apache processes and applications. The data for this cache is stored in
-C<$TMP/FileCache>. The files in this directory can be periodically deleted. Just
-be sure to shut down Bricolage before doing so, and then you can start it up as
-soon as they're gone. This will ensure that no one tries to access the cache
-after it has been deleted, and it will be recreated when the server starts
-again.
+C<$TMP/bricolage/cache>. The files in this directory can be periodically
+deleted. Just be sure to shut down Bricolage before doing so, and then you can
+start it up as soon as they're gone. This will ensure that no one tries to
+access the cache after it has been deleted, and it will be recreated when the
+server starts again.
 
 =head1 AUTHOR
 
@@ -1458,23 +1486,9 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: Admin.pod,v $
-Revision 1.6  2001-10-02 16:23:59  samtregar
-Added FTP interface to templates
+Revision 1.7  2001-10-03 19:25:19  samtregar
+Merge from Release_1_0 to HEAD
 
-Revision 1.5  2001/09/25 13:45:40  wheeler
-Improved documentation for the FULL_SEARCH configureation directive.
-
-Revision 1.4  2001/09/24 12:16:03  wheeler
-Minor typos fixed and added notes about the default login, "admin."
-
-Revision 1.3  2001/09/06 22:55:31  wheeler
-Added MD5 to list of required modules (Apache::Session needs it, apparently).
-
-Revision 1.2  2001/09/06 22:38:16  wheeler
-Removed reference to old "tools" repository.
-
-Revision 1.1.1.1  2001/09/06 21:52:46  wheeler
-Upload to SourceForge.
 
 =cut
 

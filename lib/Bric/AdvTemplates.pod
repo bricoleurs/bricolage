@@ -2,21 +2,21 @@
 
 =head1 NAME
 
-Bric::AdvTemplates - Template Producing:  Advanced Topics
+Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-09-26 07:59:41 $
+$Date: 2001-10-03 19:25:19 $
 
 =head1 INTRODUCTION
 
-This document discusses some templating techniques that require existing 
-knowledge of the Bricolage publishing system.  The text and examples will assume
-the reader has already read and understood the first template document, 
+This document discusses some templating techniques that require existing
+knowledge of the Bricolage publishing system. The text and examples will assume
+the reader has already read and understood the first template document,
 'Producing Templates on the Bricolage System'.
 
 The topics discussed in this document will be:
@@ -25,7 +25,7 @@ The topics discussed in this document will be:
 
 =item *
 
-Autohandler Templates 
+Autohandler Templates
 
 =item *
 
@@ -43,26 +43,25 @@ Including related stories and media
 
 =head1 AUTOHANDLER TEMPLATES
 
-It is possible not to associate a template with an Element.  Doing so creates a
-template that will be used for every type of Story in a particular category
-and output channel.  These are called "Autohandler Templates" or just 
-"Autohandlers".
+It is possible not to associate a template with an Element. Doing so creates a
+template that will be used for every type of Story in a particular category and
+output channel. These are called "Autohandler Templates" or just "Autohandlers".
 
-Autohandlers usually provide wrapper HTML for normal Templates, such as a 
-standard site header and footer.  Unlike normal templates that display 
-particular fields of a story, autohandlers will usually just have some HTML
-along with a line of code that says "put all remaining output here".  This line
-of code is the 'chain_next' method of the $burner object passed into all 
-tempaltes.  It is called like this:
+Autohandlers usually provide wrapper HTML for normal Templates, such as a
+standard site header and footer. Unlike normal templates that display particular
+fields of a story, autohandlers will usually just have some HTML along with a
+line of code that says "put all remaining output here". This line of code is the
+'chain_next' method of the $burner object passed into all tempaltes. It is
+called like this:
 
     % $burner->chain_next;
 
-Autohandlers do have access to the $story and $element objects as well.  You 
+Autohandlers do have access to the $story and $element objects as well. You
 might use these if you want to add some customization based on the story.
 
-Autohandlers run before any normal template is run, and if there is more than 
+Autohandlers run before any normal template is run, and if there is more than
 one autohandler in a diretory tree, they will each run in order from the top of
-the directory tree down.  
+the directory tree down.
 
 For example, lets say we publish a Column story in the News/Polictics category
 and there is a Root category autohandler and a News category autohandler:
@@ -72,14 +71,14 @@ and there is a Root category autohandler and a News category autohandler:
     /News/autohandler
 
 When this Story is published, the system searches for any autohandlers, starting
-at '/' working its way down to the publish category '/News/Politics'.  In this
+at '/' working its way down to the publish category '/News/Politics'. In this
 example, the tempates will run in the following order:
 
     /autohandler
     /News/autohandler
     /News/Politics/column.mc
 
-Here is some very simple code to illustrate the above publish.  Here is the code
+Here is some very simple code to illustrate the above publish. Here is the code
 for the root level autohandler:
 
     <!-- Code for /autohandler -->
@@ -87,7 +86,7 @@ for the root level autohandler:
         <head><title>The Site</title></head>
         <body bgcolor='white'>
 
-    % $burner->chain_next;        
+    % $burner->chain_next;
 
         </body>
     </html>
@@ -102,21 +101,20 @@ Here is some code for the 'News' category autohandler:
     % $burner->chain_next;
 
     </td></tr></table>
-    
+
 Here is some code for the 'Column' template:
 
     <!-- Code for /News/Politics/column.mc -->
     <b><% $story->get_title %></b>
-    
+
     % my $n = 1;
     % while (my $p = $element->get_data('paragraph', $n++)) {
-    
+
     <p><% $p %></p>
 
     % }
 
-
-Now, if we publish a Column story that has a title 'Man Bites Dog' and contains 
+Now, if we publish a Column story that has a title 'Man Bites Dog' and contains
 two paragraphs of text, the resulting published story would look like:
 
     <!-- Code for /autohandler -->
@@ -136,7 +134,7 @@ two paragraphs of text, the resulting published story would look like:
 
             <p>The dog was unavailble for comment</p>
 
-        </td></tr></table>  
+        </td></tr></table>
 
         </body>
     </html>
@@ -144,40 +142,47 @@ two paragraphs of text, the resulting published story would look like:
 
 =head1 MULTI-PAGE STORIES
 
-Elements in the Bricolage system can be marked as 'paginated'.  Templates that
-are based on paginated Elements automatically output to a new file each time
-they are run.  All templates output to a file called 'index.html'.  Temlpates
-based on paginated Elements will simply append a number to the output file for
-each additional time they run.  So a story containing 4 paginated elements will 
-produce the files:
+Elements in the Bricolage system can be marked as "paginated". Such Elements can
+be used to re-execute templates over successive pages, automatically outputting
+a new file each time. All templates output to a file named for the "File Name"
+and "File Extention" properties of the current Output Channel. Templates based
+on paginated Elements will simply append a number to the output file for each
+additional time they run. So a story containing 4 paginated elements will
+(assuming that the "File Name" and "File Extension" properties are set to
+"index" and "html", respectively), upon publication, produce the files:
 
-    index.html
-    index1.html
-    index2.html
-    index3.html
+=over 4
 
-when published.
+=item index.html
 
-There are two ways to display templates based on paginated elements.  The first
-is the normal 'display_element' method that is used to display all elements.
-The second is by using the 'display_pages' method.
+=item index1.html
 
+=item index2.html
+
+=item index3.html
+
+=back
+
+There are two ways to display templates based on paginated elements. The first
+is the normal 'display_element' method that is used to display all elements. The
+second is by using the 'display_pages' method.
 
 =head2 Using 'display_element'
 
-When displaying a paginated element using 'display_element', all output up to 
-and including the call to 'display_element' is written to a file.  When 
-'display_element' finishes, a new file is started.  This can lead to some 
-unexpected results.  Take this example.  Lets say we have a 'column' Story that 
-contains 'page' elements.  These 'Page' elements are paginated elements.  Here
-is some template code for 'page' (assume page contains just paragraphs):
+When displaying a paginated element using 'display_element', the output of the
+page elements will B<not> trigger output of the data to a new file. Thus
+display_element() handles paginated Elements in the same way it handled all
+other Elements. Use this approach to output all pages on a single page --
+in print versions of a story, for example.
 
-    <!-- Code for 'page.mc' -->
+For example, say we have a 'Column' story that contains 'Page' elements. These
+'Page' elements are paginated elements. Here is some template code for 'Page'
+(assume page contains just paragraphs):
+
+        <!-- Code for 'page.mc' -->
     % my $n = 1;
     % while (my $p = $element->get_data('paragraph', $n++)) {
-    
-    <p><% $p %></p>
-
+        <p><% $p %></p>
     % }
 
 Here is some template code for 'column':
@@ -186,21 +191,18 @@ Here is some template code for 'column':
     <html>
         <head><title><% $story->get_title %></title></head>
         <body>
-    % my $n = 1;
-    % while (my $pg = $element->get_container('page', $n++)) {
-    
-    % $burner->display_element($pg);
 
-    % }  
+    % may $n = 1;
+    % while (my $pg = $element->get_container('page', $n++)) {
+    %     $burner->display_element($pg);
+    % }
+
         </body>
     </html>
 
-At first glance this example seems fairly intuitive.  The above code appears to
-create the HTML skeleton to be used for each page.  Each page is then output
-within the <body> tag.  This however, will not work.  If we assume that the 
-column we are publishing has three page elements, we will get three files with
-the following content:
-
+These templates will work exactly as you would expect: each page is output as
+any other element is output, and the results of all this output are included in
+a single page:
 
 index.html :
 
@@ -210,69 +212,16 @@ index.html :
         <body>
 
         <!-- Code for 'page.mc' -->
-
-        <p>page 1 para 1content</p>
-
-        <p>page 1 para 2 content</p>        
-
-
-index1.html :
+        <p>page 1 para 1 content</p>
+        <p>page 1 para 2 content</p>
 
         <!-- Code for 'page.mc' -->
-
-        <p>page 2 para 1content</p>
-
-        <p>page 2 para 2 content</p>  
-
-
-index2.html : 
+        <p>page 2 para 1 content</p>
+        <p>page 2 para 2 content</p>
 
         <!-- Code for 'page.mc' -->
-
-        <p>page 3 para 1content</p>
-
-        <p>page 3 para 2 content</p>  
-
-index3.html :
-
-        </body>
-    </html>
-
-
-So what happend?  For a 3 page story we get 4 output files and horrible 
-formatting.  The reason this happens is because every time 'display_element' is
-called all previous output and all output from the call to display_element is
-written to a file and a new file is started.  The file 'index1.html' does not
-contain any of the <html> opening tags because those were output previously, 
-outside the loop.  The file 'index2.html' is the same way.  Finally 
-'index3.html' is written because any non-whitespace output remaining after a 
-burn is written to file.  Since the last 'page' forced the start of a new file
-this output appears in a file of its own.
-
-To correctly burn this colunm all the HTML needs to go into the 'page' template
-leaving the 'column' template to just control how the pages are burned:
-
-    <!-- Code for 'column' -->
-    % my $n = 1;
-    % while (my $pg = $element->get_container('page', $n++)) {
-    
-    % $burner->display_element($pg);
-
-    % }  
-
-The new code for page:
-
-    <!-- Code for 'page.mc' -->
-    <html>
-        <head><title><% $story->get_title %></title></head>
-        <body>
-
-    % my $n = 1;
-    % while (my $p = $element->get_data('paragraph', $n++)) {
-    
-        <p><% $p %></p>
-
-    % }
+        <p>page 3 para 1 content</p>
+        <p>page 3 para 2 content</p>
 
         </body>
     </html>
@@ -280,17 +229,16 @@ The new code for page:
 
 =head2 Using 'display_pages'
 
-Using the 'display_pages' works a little more like you'd expect the first 
-example of the 'display_element' section to behave.  The 'display_pages' method
-takes the name of a paginated element:
+Use the 'display_pages' method to create new files for each page element. The
+'display_pages' method takes the name of a paginated element:
 
     % $burner->display_pages('page');
 
-When a story is published, the entire template containing the call to 
+When a story is published, the entire template containing the call to
 'display_pages' is run once for every instance of the named element passed to
-'display_pages'.  So if we have a 'column' containing 3 'page' elements, the 
-'column' template will be run 3 times.  Each time it runs, the 'display_element'
-call will run the 'page' template with each succeeding page.
+'display_pages'. So if we have a 'Column' containing 3 'Page' elements, the
+'Column' template will be run 3 times. Each time it runs, the 'display_element'
+call will run the 'Page' template with each succeeding page.
 
 So we can use our earlier example with just a minor change to produce the output
 we want:
@@ -299,65 +247,105 @@ we want:
     <html>
         <head><title><% $story->get_title %></title></head>
         <body>
-    
-    % $burner->display_element('page');
+
+    % $burner->display_pages('page');
 
         </body>
     </html>
 
 The code for the 'page' template:
 
-    <!-- Code for 'page.mc' -->
+        <!-- Code for 'page.mc' -->
     % my $n = 1;
     % while (my $p = $element->get_data('paragraph', $n++)) {
-    
-    <p><% $p %></p>
-
+        <p><% $p %></p>
     % }
+
+This approach will output the following files:
+
+index.html:
+
+    <!-- Code for 'column' -->
+    <html>
+        <head><title>Our Column Title</title></head>
+        <body>
+
+        <!-- Code for 'page.mc' -->
+        <p>page 1 para 1 content</p>
+        <p>page 1 para 2 content</p>
+
+        </body>
+    </html>
+
+index1.html:
+
+    <!-- Code for 'column' -->
+    <html>
+        <head><title>Our Column Title</title></head>
+        <body>
+
+        <!-- Code for 'page.mc' -->
+        <p>page 2 para 1 content</p>
+        <p>page 2 para 2 content</p>
+
+        </body>
+    </html>
+
+index2.html:
+
+    <!-- Code for 'column' -->
+    <html>
+        <head><title>Our Column Title</title></head>
+        <body>
+
+        <!-- Code for 'page.mc' -->
+        <p>page 3 para 1 content</p>
+        <p>page 3 para 2 content</p>
+
+        </body>
+    </html>
 
 
 =head1 MULTI-PAGE STORIES USING AUTOHANDLERS
 
-If you want to use autohandlers with a multi-paged story, you'll need to use
-the 'display_pages' method of outputting multi-page stories.  
-
+Autohandlers will work with multi-page templates using display_pages.
 
 =head1 INCLUDING RELATED STORIES AND MEDIA
 
-Certain types of elements can have other stories or media objects related to 
-them.  If an element has related stories or media you can get those objects
-using the methods:
+Certain types of elements can have other stories or media objects related to
+them. If an element has related stories or media you can get those objects using
+the methods:
 
     % my $rel_story = $element->get_related_story;
     % my $rel_media = $element->get_related_media;
 
 The $rel_story object will have all the methods that the exported $story object
-has since they are the same object.  To get the top element of the story you
-can use the method 'get_tile':
+has since they are the same object. To get the top element of the story you can
+use the method 'get_tile':
 
     % my $rel_element = $rel_story->get_tile;
 
 The $rel_element object is the same object as the exported $element object and
-has all the same methods.  
+has all the same methods.
 
 The $rel_media object has the same methods as $story does but adds a few more
-specific to media objects.  They are:
+specific to media objects. They are:
 
     % my $uri  = $rel_media->get_uri;
     % my $type = $rel_media->get_media_type;
     % my $size = $rel_media->get_size;
 
-The method 'get_uri' returns the URI of the published media object.  This can be
+The method 'get_uri' returns the URI of the published media object. This can be
 used like:
 
     <img src="<% $rel_media->get_uri %>">
 
-in your templates.  The 'get_media_type' method returns the mime type of the 
-media object.  These are text values of the form 'image/jpeg'.
+in your templates. The 'get_media_type' method returns the mime type of the
+media object. These are text values of the form 'image/jpeg'.
 
 The 'get_size' method will return the file size of the media file.
 
-=cut
+=head1 AUTHOR
 
 Garth Webb <garth@perijove.com>
 
@@ -377,7 +365,17 @@ Bric::Util::Burner(10)
 =head1 REVISION HISTORY
 
 $Log: AdvTemplates.pod,v $
-Revision 1.2  2001-09-26 07:59:41  wheeler
+Revision 1.3  2001-10-03 19:25:19  samtregar
+Merge from Release_1_0 to HEAD
+
+Revision 1.2.2.1  2001/10/01 10:31:05  wheeler
+Changed behavior of Bric::Util::Burner->display_element() such that it does
+*not* write out new files for each paginated element. Now only display_pages()
+does that. Updated the template documentation to reflect this change. Also
+updated To Do list to reflect changes, and added Bric::Changes to reflect
+changes from version to version.x
+
+Revision 1.2  2001/09/26 07:59:41  wheeler
 Made a few minor corrections.
 
 =cut

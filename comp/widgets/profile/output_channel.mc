@@ -38,6 +38,8 @@ if ($param->{delete}) {
     $oc->set_description( $param->{description} );
     $oc->set_pre_path( $param->{pre_path} );
     $oc->set_post_path( $param->{post_path});
+    $oc->set_filename( $param->{filename});
+    $oc->set_file_ext( $param->{file_ext});
     $oc->activate;
     unless ($used) {
 	$oc->set_name($param->{name});
