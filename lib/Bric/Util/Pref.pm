@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:42 $
+$Date: 2002-11-27 04:58:57 $
 
 =head1 SYNOPSIS
 
@@ -39,6 +39,7 @@ $Date: 2002-08-30 22:13:42 $
   my $name = $pref->get_name;
   my $desc = $pref->get_description;
   my $default = $pref->get_default;
+  my $opt_type = $pref->get_opt_type;
   my $val_name = $pref->get_val_name;
 
   # Get a list of available value options.
@@ -56,7 +57,7 @@ $Date: 2002-08-30 22:13:42 $
 
 This is the central interface for managing Bricolage application preferences. It should
 scale when we later decide to add user and user group preferences. Right now
-it'll just support those global application preferencest that we deem necessary
+it'll just support those global application preferences that we deem necessary
 for the application to work, such as Time Zone.
 
 =cut
@@ -100,8 +101,8 @@ use constant INSTANCE_GROUP_ID => 22;
 ################################################################################
 # Private Class Fields
 my $dp = 'Bric::Util::Fault::Exception::DP';
-my @cols = qw(p.id p.name p.description p.def p.value p.manual o.description);
-my @props = qw(id name description default value manual val_name);
+my @cols = qw(p.id p.name p.description p.def p.value p.manual p.opt_type o.description);
+my @props = qw(id name description default value manual opt_type val_name);
 my @ord = @props[1..$#props];
 my $prefkey = '__PREF__';
 my $meths;
@@ -121,6 +122,7 @@ BEGIN {
 			 value => Bric::FIELD_RDWR,
 			 default => Bric::FIELD_READ,
 			 manual => Bric::FIELD_READ,
+                         opt_type => Bric::FIELD_READ,
 			 val_name => Bric::FIELD_READ,
 
 			 # Private Fields
@@ -411,9 +413,9 @@ sub lookup_val {
 
 =item (@meths || $meths_aref) = Bric::Util::Pref->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
+Returns an anonymous hash of introspection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
+introspection data. The format for each introspection item introspection is as
 follows:
 
 Each hash key is the name of a property or attribute of the object. The value
@@ -526,7 +528,7 @@ cols - The number of columns to format in a textarea field.
 
 =item *
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
+vals - An anonymous hash of key/value pairs representing the values and display
 names to use in a select list.
 
 =back
@@ -609,6 +611,14 @@ sub my_meths {
 				           rows => 4
 					 }
 			    },
+              opt_type   => {
+                             name     => 'opt_type',
+                             get_meth => sub { shift->get_opt_type(@_) },
+                             get_args => [],
+                             disp     => 'Option Type',
+                             len      => 16,
+                             req      => 1,
+                            },
 	      val_name   => {
 			     name     => 'val_name',
 			     get_meth => sub { shift->get_val_name(@_) },
@@ -806,9 +816,39 @@ sub set_value {
     $self->_set([qw(value _val_ch)], [$val, 1]);
 }
 
+=item my $opt_type = $pref->get_opt_type
+
+Returns preference opt_type ('select', 'radio', 'text', ...).
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
+
+=item *
+
+Access denied: READ access for field 'opt_type' required.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
 =item my $val_name = $pref->get_val_name
 
-Returns preference value's desriptive name. Note that if you've set the value,
+Returns preference value's descriptive name. Note that if you've set the value,
 this method will return an incorrect value unless and until you instantiate the
 object again using lookup() or list().
 
@@ -922,7 +962,7 @@ sub get_opts { wantarray ? sort keys %{ &$get_opts($_[0]) }
 
 =item my $opts_href = $pref->get_opts_href
 
-Returns a hasref of options available for filling in the value of this
+Returns a hashref of options available for filling in the value of this
 preference. The hash keys are the options, and the values are their
 descriptions.
 
@@ -1073,7 +1113,7 @@ NONE.
 =item my $pref_ids_aref = &$get_em( $pkg, $params, 1 )
 
 Function used by lookup() and list() to return a list of Bric::Util::Pref objects
-or, if called with an optional third argument, returns a listof Bric::Util::Pref
+or, if called with an optional third argument, returns a list of Bric::Util::Pref
 object IDs (used by list_ids()).
 
 B<Throws:>

@@ -26,14 +26,31 @@ my $name = $pref->get_name;
 my $vals = $pref->get_opts_href;
 my $c = scalar keys %$vals;
 
+my $opt_type = $pref->get_opt_type;
+my ($size, $cols, $rows, $props);
+
+if ($opt_type eq 'text' || $opt_type eq 'password') {
+    $size = 128;
+} elsif ($opt_type eq 'radio' || $opt_type eq 'select') {
+    $size = ($c > 15) ? 10 : 1;
+}
+
+$props = {
+    type => $opt_type,
+    vals => $vals,
+};
+$props->{size} = $size if defined $size;
+# (these are in case textarea is implemented)
+$props->{cols} = $cols if defined $cols;
+$props->{rows} = $rows if defined $rows;
+
+
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
 	 caption => $name);
 
 $m->comp('/widgets/profile/displayFormElement.mc', key => 'value',
          readOnly => $no_edit,
-         vals => { props => { type =>  $c < 4 ? 'radio' : 'select',
-                              size => $c > 15 ? 10 : 1,
-                              vals => $vals },
+         vals => { props => $props,
                    disp => '',
                    value => $pref->get_value } );
 
@@ -71,11 +88,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:11 $
+$Date: 2002-11-27 04:58:57 $
 
 =head1 DESCRIPTION
 

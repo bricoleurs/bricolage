@@ -289,6 +289,14 @@ to the SOAP interface. [David]
 
 Removed IO::String dependence. [Scott]
 
+=item *
+
+Added a FAQ. [Scott]
+
+=item *
+
+Added a preference for naming the Bricolage instance. [Scott]
+
 =back
 
 =head1 VERSION 1.4.5

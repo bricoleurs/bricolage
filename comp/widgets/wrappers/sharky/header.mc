@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:05:20 $
+$Date: 2002-11-27 04:58:57 $
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ HTML wrapper for top and side navigation.
 </%doc>
 
 <%args>
-$title   => "Bricolage"
+$title   => get_pref('Bricolage Instance Name')
 $jsInit  => ""
 $context
 $useSideNav => 1
