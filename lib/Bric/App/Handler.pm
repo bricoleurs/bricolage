@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.36.2.6 $
+$Revision: 1.36.2.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.36.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.36.2.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-12 17:32:12 $
+$Date: 2003-06-12 18:33:13 $
 
 =head1 SYNOPSIS
 
@@ -98,13 +98,11 @@ use Carp qw(croak);
     use Bric::App::Event qw(log_event);
     use Bric::App::Session qw(:state :user);
     use Bric::App::Util qw(:msg
-                        :redir
-			:pkg
-			:history
-			mk_aref
-                        detect_agent
-                        parse_uri
-                        get_pref);
+                           :redir
+                           :pkg
+                           :history
+                           :aref
+                           :browser);
 
     use Bric::Dist::Job;
     use Bric::Dist::Resource;

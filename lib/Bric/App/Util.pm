@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.18.2.9 $
+$Revision: 1.18.2.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-12 18:27:40 $
+$Date: 2003-06-12 18:33:13 $
 
 =head1 SYNOPSIS
 
@@ -107,7 +107,10 @@ our %EXPORT_TAGS = (all     => \@EXPORT_OK,
                                    get_disp_name
                                    get_class_description
                                    get_class_info)],
-                    aref    => ['mk_aref']
+                    aref    => ['mk_aref'],
+                    browser => [qw(detect_agent
+                                   parse_uri
+                                   status_msg)],
                    );
 
 #=============================================================================#
