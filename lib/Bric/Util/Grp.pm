@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.39.2.3 $
+$Revision: 1.39.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-04 01:42:28 $
+$Date: 2003-07-21 23:14:38 $
 
 =head1 SYNOPSIS
 
@@ -1740,6 +1740,26 @@ sub get_member_attr {
     # get the value
     my $val = $self->_get_attr($param);
     return $val;
+}
+
+##############################################################################
+
+=item $attr = $grp->get_member_attr_sql_type($params)
+
+Returns the SQL type of an individual attribute.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_member_attr_sql_type {
+    my ($self, $param) = @_;
+    $param->{subsys} ||= MEMBER_SUBSYS;
+    return $self->_get_attr_obj->get_sqltype($param);
 }
 
 ##############################################################################

@@ -208,6 +208,11 @@ Clicking "Cancel" in an element no longer saves the changes in that element
 before going up to the parent element. Thanks to Andrew Baio for the spot!
 [David]
 
+=item *
+
+Changes made to the default values of fields in the contributor type profile
+are now properly saved. Reported by Scott. [David]
+
 =back
 
 =head1 VERSION 1.6.1
