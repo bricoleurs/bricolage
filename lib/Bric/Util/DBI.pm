@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2003-08-15 12:50:29 $
 
 =head1 SYNOPSIS
 
@@ -685,7 +685,7 @@ assemble the following objects:
               }, 'Bric' ),
     ]
 
-In practice this is used for the grp_ids aggrigation of Asset objects.
+In practice this is used for the grp_ids aggregation of Asset objects.
 
 
 B<Throws:>
