@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.62 $
+$Revision: 1.63 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.62 $ )[-1];
+our $VERSION = (qw$Revision: 1.63 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-28 01:06:22 $
+$Date: 2004-03-10 17:01:42 $
 
 =head1 SYNOPSIS
 
@@ -2568,7 +2568,7 @@ sub _do_list {
 
     # Multisite elements are all the top-level for the site,
     # plus all non top-level elements.
-    if($params->{site_id} && !defined $top) {
+    if($params->{site_id} && ! $top) {
         delete $params->{site_id};
         $params->{top_level} = 0;
         push @elems, _do_list($pkg, $params);
