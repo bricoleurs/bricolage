@@ -133,6 +133,11 @@ The virtual FTP server now pays proper attention to all permissions. [David]
 
 A number of upgrade script annoyances were cleared up. [David]
 
+=item *
+
+The C<simple> parameter to the Media class' C<list()> method works again. As a
+result, so does "Find Stories" in the UI. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
