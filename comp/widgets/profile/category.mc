@@ -50,25 +50,6 @@ if ($field eq "$widget|save_cb") {
 	my $par = exists $param->{parent_id} && $param->{parent_id} ne 'none'
 	  ? $class->lookup({ id => $param->{parent_id} }) : undef;
 
-	# Add new keywords.
-	my $new;
-	foreach (@{ mk_aref($param->{keyword}) }) {
-	    next unless $_;
-	    my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
-	    $kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
-	    push @$new, $kw;
-	}
-	$cat->add_keyword($new) if $new;
-
-	# Delete old keywords.
-	my $old;
-	foreach (@{ mk_aref($param->{del_keyword}) }) {
-	    next unless $_;
-	    my $kw = Bric::Biz::Keyword->lookup({ id => $_ }) || next;
-	    push @$old, $kw;
-	}
-	$cat->del_keyword($old) if $old;
-
 	# Set the directory.
 	unless (! exists $param->{directory} || (defined $id && $id == $root_id) ) {
 	    # First, check to make sure that this directory isn't already used.
@@ -92,6 +73,25 @@ if ($field eq "$widget|save_cb") {
 
 	# Save changes.
 	$cat->save;
+
+	# Add new keywords.
+	my $new;
+	foreach (@{ mk_aref($param->{keyword}) }) {
+	    next unless $_;
+	    my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+	    $kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
+	    push @$new, $kw;
+	}
+	$cat->add_keyword($new) if $new;
+
+	# Delete old keywords.
+	my $old;
+	foreach (@{ mk_aref($param->{del_keyword}) }) {
+	    next unless $_;
+	    my $kw = Bric::Biz::Keyword->lookup({ id => $_ }) || next;
+	    push @$old, $kw;
+	}
+	$cat->del_keyword($old) if $old;
 
 	# Establish the parent directory.
 	if ( defined $param->{parent_id} && (!defined $id || $id != $root_id) ) {
@@ -137,11 +137,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-02-28 23:02:45 $
+$Date: 2002-06-11 22:21:23 $
 
 =head1 SYNOPSIS
 

@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-10 21:39:29 $
+$Date: 2002-06-11 22:21:22 $
 
 =head1 SYNOPSIS
 
@@ -38,40 +38,24 @@ $Date: 2001-12-10 21:39:29 $
  $screen  = $key->get_screen_name();
  $success = $key->set_screen_name($screen);
 
- # Get/set the meaning of this keyword
- $meaning = $key->get_meaning();
- $success = $key->set_meaning($meaning);
-
- # Get/set the prefered flag 
- $bool    = $key->get_prefered();
- $success = $key->set_prefered();
-
- # Get/set the state State can be 'pending', 'rejected' or 'accepted'.
- $state = $key->get_state();
- $state = $key->set_state();
-
- # Add a keyword to a list of synonyms..
- $sets = $key->make_synonymous($keyword_id || $keyword_obj);
+ # Mark this keyword inactive
+ $success = $key->delete();
 
  # Save this asset to the database.
  $success = $key->save();
- 
- # Delete this asset from the database.
- $success = $key->delete();
+
+ # Link a keyword with a story (or media object or category) 
+ $key->associate($story);
+
+ # Break the link between a keyword and a story (or media object or category)a
+ $key->dissociate($story);
+
 
 =head1 DESCRIPTION
 
-The Keyword module allows assets to be characterized by a set of topical 
-keywords.  These keywords can be used to group assets or during a search on a 
-particular topic.
-
-Keywords can have synonyms which can be used to determine sets of assets that are
-categorically similar.  Out of a group of synonymous keywords one can be 
-marked as preferred which means that all other synonyms will behave as if they 
-were the preferred keyword.
-
-Additionally keys associated with an asset can be weighted according to 
-relevance.
+The Keyword module allows assets to be characterized by a set of
+topical keywords.  These keywords can be used to group assets or
+during a search on a particular topic.
 
 =cut
 
@@ -87,8 +71,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies              
  
-use Bric::Util::DBI qw(:standard);
-use Bric::Util::Grp::Keyword;
+use Bric::Util::DBI qw(:all);
 
 #==============================================================================#
 # Inheritance                          #
@@ -101,18 +84,13 @@ use base qw(Bric);
 #======================================#
 
 
-
 #==============================================================================#
 # Constants                            #
 #======================================#
 
-use constant PENDING  => 1;
-use constant ACCEPTED => 2;
-use constant REJECTED => 3;
-
 use constant TABLE  => 'keyword';
-use constant COLS   => qw(name screen_name sort_name meaning prefered active 
-			  synonym_grp_id);
+use constant COLS   => qw(name screen_name sort_name active);
+
 
 #==============================================================================#
 # FIELDS                               #
@@ -126,7 +104,7 @@ our $METH;
 #--------------------------------------#
 # Private Class Fields                  
 
-
+my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 #--------------------------------------#
 # Instance Fields                       
@@ -139,13 +117,7 @@ BEGIN {
 			 'name'           => Bric::FIELD_RDWR,
 			 'screen_name'    => Bric::FIELD_RDWR,
 			 'sort_name'      => Bric::FIELD_RDWR,
-			 'meaning'        => Bric::FIELD_RDWR,
-			 'prefered'       => Bric::FIELD_RDWR,
 			 'active'         => Bric::FIELD_RDWR,
-			 'synonym_grp_id' => Bric::FIELD_READ,
-			 
-			 # Private Fields
-			 '_synonym_grp_obj'   => Bric::FIELD_NONE,
 			});
 }
 
@@ -164,75 +136,47 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $obj = new Bric::Biz::Keyword($init);
+=item $obj = Bric::Biz::Keyword->new(\%init);
 
-Keys for $init are:
+Creates a new keyword and keyword object.  Keys for %init are:
 
 =over 4
 
-=item *
+=item name
 
-name
+The name of this keyword - required.
 
-The name of this keyword
+=item screen_name
 
-=item *
+The way this name should be displayed on screen (ie name='George',
+screen name='George Washington').  If not specified name will be used
+for screen_name.
 
-screen_name
+=item sort_name
 
-The way this name should be displayed on screen (ie name='George', 
-screen name='George Washington')
-
-=item *
-
-meaning
-
-The specific meaning of this keyword to differentiate it from different 
-synonyms.
+The word used to sort keywords.  If not specified then name will be
+used for sort_name.
 
 =item *
-
-prefered
-
-Whether this is the prefered synonym when this keyword has synonyms.
 
 =back
 
-Creates a new keyword and keyword object.  Takes either a keyword ID or the 
-keyword itself.
+Throws: NONE
 
-B<Throws:>
+Side Effects: NONE
 
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+Notes: NONE
 
 =cut
 
 sub new {
-    my $class = shift;
-    my ($init) = @_;
+    my ($pkg, $init) = @_;
 
-    # Create the object via fields which returns a blessed object.
-    my $self = bless {}, $class;
-    
     # Map state to active since state is just overriding active's role.
     $init->{'active'} = exists $init->{'state'} ? delete $init->{'state'} 
                                                 : 1;
-    $init->{'prefered'} = exists $init->{'prefered'} ? $init->{'prefered'} 
-                                                     : 1;
-
-    # Call the parent's constructor.
-    $self->SUPER::new($init);
-
-    # Initialize some instance variables.
-    $self->set_state(PENDING);
+    # construct the object
+    my $self = $pkg->SUPER::new($init);
 
     # Return the object.
     return $self;
@@ -240,176 +184,193 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $obj = lookup Bric::Biz::Keyword($key_id);
+=item $obj = Bric::Biz::Keyword->lookup({ id   => $key_id    });
 
-Retrieves an existing keyword from the database.  Takes either a keyword ID or 
-the keyword itself.
+=item $obj = Bric::Biz::Keyword->lookup({ name => "key name" });
 
-B<Throws:>
+Retrieves a single existing keyword from the database.  Takes either a
+keyword ID or the keyword name.
 
-NONE
+Throws: 
 
-B<Side Effects:>
+=over 4
 
-NONE
+=item *
 
-B<Notes:>
+Bad parameters passed to 'lookup'
 
-NONE
+=back
+
+Side Effects: NONE
+
+Notes: NONE
 
 =cut
 
 sub lookup {
-    my $class = shift;
-    my ($init) = @_;
-
-    # Create the object via fields which returns a blessed object.
-    my $self = bless {}, $class;
-
-    # Call the parent's constructor.
-    $self->SUPER::new();
+    my ($pkg, $param) = @_;
 
     my $ret;
-
-    if (exists $init->{'id'}) {
-	$ret = _select_keyword('id = ?', [$init->{'id'}]);
-    } elsif (exists $init->{'name'}) {
-	$ret = _select_keyword('LOWER(name) LIKE ?', [lc $init->{'name'}]);
+    if (exists $param->{'id'}) {
+	$ret = _select_keywords('id = ?', [$param->{'id'}]);
+    } elsif (exists $param->{'name'}) {
+	$ret = _select_keywords('LOWER(name) LIKE ?', [lc $param->{'name'}]);
     } else {
-	my $err_msg = 'Bad parameters passed to \'lookup\'';
-	die Bric::Util::Fault::Exception::GEN->new({'msg' => $err_msg});
+	die $gen->new({ msg => "Bad parameters passed to 'lookup'"});
     }
 
-    # Return nothing if we don't get an ID.
-    return unless defined $ret->[0];
+    # return nothing if we got nothing
+    return unless @$ret;
 
-    # Set the columns selected as well as the passed ID.
-    $self->_set(['id', COLS], $ret->[0]);
-
-    # Return the object.
-    return $self;
+    # return the object 
+    return $ret->[0];
 }
 
 #------------------------------------------------------------------------------#
 
 =item @objs = list Bric::Biz::Keyword($param);
 
-The possible keys to $param are the following;
+Searches for keywords returning matches ordered by sort_name.  The
+possible keys to $param are the following;
+
+=over 4
+
+=item name
+
+Search for keywords by name.  Matched with LIKE.
+
+=item screen_name
+
+Search for keywords by screen name.  Matched with LIKE.
+
+=item sort_name
+
+Search for keywords by sort name.  Matched with LIKE.
+
+=item active
+
+Search for keywords by active flag.  If you don't set this flag then
+active => 1 is implicitely used.
+
+=item synonyms
+
+Returns all the synonyms for the given keyword or keyword ID.  Cannot
+be legally combined with the object param.
+
+=item object
+
+Returns all keywords for a given object - may be a
+Bric::Biz::Category, Bric::Biz::Asse::Business::Media or a
+Bric::Biz::Asse::Business::Story object.  Cannot be legally combined
+with the synonyms param.
+
+=back
+
+Throws:
 
 =over 4
 
 =item *
 
-synonyms
+Unsupported object type : $ref
 
-Returns all the synonyms for the given keyword or keyword ID.
+=item *
+
+Synonyms search cannot be combined with object search.
 
 =back
 
-B<Throws:>
+Side Effects: NONE
 
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+Notes: NONE
 
 =cut
 
 sub list {
-    my $class = shift;
-    my ($param) = @_;
+    my ($pkg, $param) = @_;
+    my (@select, $from, @where, @bind);
+
+    # Make sure to set active explictly if its not passed.
+    $param->{active} = 1 unless exists $param->{active};
+
+    # default from clause
+    $from = TABLE . ' k';
     
-    if ($param->{'synonyms'}) {
-	my $kw_param = $param->{'synonyms'};
-	my $kw;
-	my $syn;
-	
-	$kw = ref $kw_param ? $kw_param 
-                            : Bric::Biz::Keyword->lookup({'id' => $kw_param});
-	# Return nothing if the lookup fails.
-	return unless $kw;
+    # Build a list of selected columns.
+    @select = ('k.id', map { "k.$_" } COLS);
 
-	$syn = $kw->_get_synonym_grp;
-	# Return nothing if there is no group object.
-	return unless $syn;
-	
-	return wantarray ? $syn->all_synonyms : scalar $syn->all_synonyms;
-    } else {
-	# Make sure to set active explictly if its not passed.
-	$param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
-       
-	my @num = grep($_ =~ /^(?:id|active)$/, keys %$param);
-	my @txt = grep($_ !~ /^(?:id|active)$/, keys %$param);
-	
-	my $where = join(' AND ', (map { "$_=?" }      @num),
-			          (map { "$_ LIKE ?" } @txt));
-
-	my $ret = _select_keyword($where, [@$param{@num,@txt}]);
-	my @all;
-
-	foreach my $d (@$ret) {
-	    # Create the object via fields which returns a blessed object.
-	    my $self = bless {}, $class;
-	    
-	    # Call the parent's constructor.
-	    $self->SUPER::new();
-	    
-	    # Set the columns selected as well as the passed ID.
-	    $self->_set(['id', COLS], $d);
-	    
-	    $self->_set__dirty(0);
-
-	    push @all, $self;
-	}
-
-	return wantarray ? @all : \@all;
+    # handle text fields
+    foreach my $f (qw(name screen_name sort_name )) {
+        next unless exists $param->{$f};
+        push @where, "LOWER(k.$f) LIKE ?";
+        push @bind,  lc $param->{$f};
     }
-}
 
+    # handle numeric fields (id is supported here because the old
+    # Bric::Biz::Keyword supported it and I can't be sure something
+    # isn't using it.  Really lookup() is a better choice for getting
+    # keywords by id.
+    foreach my $f (qw(id active)) {
+        next unless exists $param->{$f};
+        push @where, "$f = ?";
+        push @bind,  lc $param->{$f};
+    }            
 
-#--------------------------------------#
+    # handle searches for object keywords
+    if (exists $param->{object}) {
+        my $obj = $param->{object};
 
-=head2 Destructors
+        # determine table and field name for search
+        my ($table, $field) = _get_db_data_for_object($obj);
 
-=cut
+        # setup from and where clauses
+        $from = "$table x, keyword k";
+        push @where, ("x.keyword_id = k.id", "x.$field = ?");
+        push @bind, $obj->get_id;
+    }
 
-sub DESTROY {
-    # This method should be here even if its empty so that we don't waste time
-    # making Bricolage's autoload method try to find it.
+ 
+    # build SQL
+    my $sql = "SELECT " . join(',','id',COLS) . " FROM " . $from;
+    $sql   .= ' WHERE ' . join(' AND ', @where) if @where;
+    $sql   .= ' ORDER BY sort_name';
+    
+    # prepare and execute select
+    my $sth = prepare_c($sql);
+    execute($sth, @bind);
+
+    # fetch data and build result objects
+    my (@d, $keyword, @ret);
+    bind_columns($sth, \@d[0..(scalar COLS)]);
+    while (fetch($sth)) {
+        # create a new keyword object and push it on the return array
+        $keyword = __PACKAGE__->SUPER::new();
+        $keyword->_set(['id', COLS], \@d);
+	push @ret, $keyword;
+    }
+    finish($sth);
+
+    return wantarray ? @ret : \@ret;
 }
 
 #------------------------------------------------------------------------------#
 
 =item $success = $key->delete;
 
-Deletes the keyword from the database.
+Marks a keyword inactive in the database.  Equivalent to calling
+set_active(0).
 
-B<Throws:>
+Throws: NONE
 
-"Delete Failed"
+Side Effects: NONE
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+Notes: NONE
 
 =cut
 
 sub remove {
     my $self = shift;
-
-    $self->_set(['_remove'], [1]);
-
-    $self->_set__dirty(1);
-
+    $self->set_active(0);
     return $self;
 }
 
@@ -479,28 +440,6 @@ sub my_meths {
 					      'length'     => 64,
 					      'max_length' => 256,}
 			      },
-	     'meaning'     => {'get_meth' => sub {shift->get_meaning(@_)},
-			       'get_args' => [],
-			       'set_meth' => sub {shift->set_meaning(@_)},
-			       'set_args' => [],
-			       'disp'     => 'Keyword meaning',
-			       'search'   => 0,
-			       'len'      => 512,
-			       'type'     => 'short',
-			       'props'    => {'type'       => 'text',
-					      'length'     => 64,
-					      'max_length' => 256,}
-			      },
-	     'prefered'    => {'get_meth' => sub {shift->get_prefered(@_)},
-			       'get_args' => [],
-			       'set_meth' => sub {shift->set_prefered(@_)},
-			       'set_args' => [],
-			       'disp' => 'Prefered keyword status',
-			       'search'   => 0,
-			       'len'      => 1,
-			       'type'     => 'short',
-			       'props'    => {'type' => 'checkbox'}
-			      },
 	    };
     $METH->{keyword} = $METH->{name};
     # Load attributes.
@@ -517,21 +456,102 @@ sub my_meths {
 
 #------------------------------------------------------------------------------#
 
+=item $key->associate($obj)
+
+Associates a keyword with an object.  The object must by of a type
+that supports keywords - currently Bric::Biz::Asset::Business::Story,
+Bric::Biz::Asset:::Business::Media and Bric::Biz::Category.  This call
+commits the change directly to the database.  There is no need to call
+save() afterward.
+
+Returns 0 if $key is already associated with $obj, 1 if a new
+relationship was created.
+
+Throws:
+
+=over 4
+
+=item *
+
+Unsupported object type : $ref.
+
+=back
+
+Side Effects: NONE
+
+Notes: Cannot be called on an unsaved keyword.  Call save() first.
+
+=cut
+
+sub associate {
+    my ($self, $obj) = @_;
+    my $id           = $self->get_id;
+    my $obj_id       = $obj->get_id;
+
+    # determine table and field name for this relationship
+    my ($table, $field) = _get_db_data_for_object($obj);
+
+    # check if this keyword is already associated with this category
+    my ($exists) = row_array("SELECT 1 FROM $table ".
+                             "WHERE $field = ? AND keyword_id = ?",
+                             $obj_id, $id);
+    return 0 if defined $exists and $exists == 1;
+
+    # insert a new relationship
+    my $sth = prepare("INSERT INTO $table ($field, keyword_id) ".
+                      "VALUES (?, ?)");
+    execute($sth, $obj_id, $id);
+    finish($sth);
+
+    return 1;
+}
+
+=item $key->dissociate($obj)
+
+Dissociates a keyword from an object.  The object must by of a type
+that supports keywords - currently Bric::Biz::Asset::Business::Story,
+Bric::Biz::Asset:::Business::Media and Bric::Biz::Category.  This call
+commits the change directly to the database.  There is no need to call
+save() afterward.
+
+Returns 0 if $key is not associated with $obj, 1 if the relationship
+was successfully removed.
+
+Throws:
+
+Unsupported object type : $ref.
+
+Side Effects: NONE
+
+Notes: Cannot be called on an unsaved keyword.  Call save() first.
+
+=cut
+
+sub dissociate {
+    my ($self, $obj) = @_;
+    my $id           = $self->get_id;
+    my $obj_id       = $obj->get_id;
+
+    # determine table and field name for this relationship
+    my ($table, $field) = _get_db_data_for_object($obj);
+
+    # delete relationship
+    my $sth = prepare("DELETE FROM $table WHERE $field = ? AND keyword_id = ?");
+    execute($sth, $obj_id, $id);
+    finish($sth);
+
+    return 1;
+}
+
 =item $name = $key->get_name();
 
-Returns the name of this synonym
+Returns the name of this keyword
 
-B<Throws:>
+B<Throws:> NONE
 
-NONE
+B<Side Effects:> NONE
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
@@ -539,19 +559,13 @@ NONE
 
 =item $name = $key->set_name($name);
 
-Sets the name of this synonym
+Sets the name of this keyword
 
-B<Throws:>
+B<Throws:> NONE
 
-NONE
+B<Side Effects:> NONE
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
@@ -559,19 +573,15 @@ NONE
 
 =item $name = $key->get_screen_name();
 
-Returns the screen name of this synonym.  The screen name is how the synonym should be displayed on screen (i.e. name='george' screen_name='Washington, George')
+Returns the screen name of this keyword.  The screen name is how the
+synonym should be displayed on screen (i.e. name='george'
+screen_name='Washington, George')
 
-B<Throws:>
+B<Throws:> NONE
 
-NONE
+B<Side Effects:> NONE
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
@@ -579,102 +589,13 @@ NONE
 
 =item $name = $key->set_screen_name($name);
 
-Sets the screen name of this synonym.  If no meaning is given, the default 
-meaning '_default' will be used.
+Sets the screen name of this keyword.
 
-B<Throws:>
+B<Throws:> NONE
 
-NONE
+B<Side Effects:> NONE
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $meaning = $key->get_meaning();
-
-Sets the screen name of this synonym
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $meaning = $key->set_screen_name($name);
-
-Sets the screen name of this synonym
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $bool = $key->get_prefered();
-
-A keyword can be marked as preferred.  A preferred keyword is a keyword in a list 
-of synonyms that should be used in preference to any other synonymous keywords.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $success = $key->set_prefered(1 || 0);
-
-Set the preferred flag for this keyword.  See the 'is_preferred' method for more 
-information on preferred keywords.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
@@ -682,123 +603,39 @@ NONE
 
 =item $state = $key->get_state();
 
-Get the state of this keyword.  The state can be one of 'pending', 'rejected',
-'accepted' or 'active'.
+Deprecated alias for get_active().
 
-A state of 'pending' means that the keyword has been suggested, but has not yet
-been confirmed to be an accepted keyword by the asset owner.
+B<Throws:> NONE
 
-A state of 'rejected' means that the keyword has been rejected as a possible 
-keyword for this asset.  However, at any point up until the asset finishes 
-passing through the workflow, it can be promoted to 'accepted' by another owner 
-of the asset.
+B<Side Effects:> NONE
 
-A state of 'accepted' means that the keyword has been accepted as a valid 
-keyword.  At any point up until the asset finishes passing through the workflow,
-this keyword can still be marked as 'rejected' by another owner of the asset.
-
-A state of 'active' means that the keyword has been accepted and cannot be 
-marked as 'accepted' or 'rejected' during the workflow.  The state of a keyword
-becomes 'active' if its state is 'accepted' when the asset with which it was 
-associated reaches the end of the workflow.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
-sub get_state {
-    my $self = shift;
-
-    # state is just an alias for active.
-    return $self->get_active;
-}
+sub get_state { shift->get_active }
 
 #------------------------------------------------------------------------------#
 
 =item $state = $key->set_state();
 
-Sets the state of this keyword.  See method 'get_state' for list of the possible
-states and their descriptions.
+Deprecated alias for set_active().
 
-B<Throws:>
+B<Throws:> NONE
 
-NONE
+B<Side Effects:> NONE
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
-sub set_state {
-    my $self = shift;
-
-    # state is just an alias for active.
-    return $self->set_active(@_);
-}
-
-#------------------------------------------------------------------------------#
-
-=item $sets = $key->make_synonymous([$kw_id]);
-
-Make the current keyword a synonym of other keywords by passing keys:
-
-=over 4
-
-=item *
-
-keyword_id
-
-A keyword object ID
-
-=back
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub make_synonymous {
-    my $self = shift;
-    my ($kw) = @_;
-    my $syn_obj = $self->_get_synonym_grp;
-    
-    # Add the synonym.
-    $syn_obj->add_synonym($kw);
- 
-    $self->_set__dirty(1);
-   
-    return $self;
-}
+sub set_state { shift->set_active(@_) }
 
 #------------------------------------------------------------------------------#
 
 =item $success = $key->save;
 
-Save the keyword and/or all changes to the database.
+Save the keyword to the database.
 
 B<Throws:>
 
@@ -808,9 +645,7 @@ B<Side Effects:>
 
 Will give default values to screen_name and sort_name if they are not set.
 
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
@@ -820,26 +655,16 @@ sub save {
 
     return unless $self->_get__dirty;
 
-    # Save the synonym group.
-    $self->_sync_synonym_grp;
-
     # Set some defaults if these values aren't already set.
     my ($name, $scrn, $sort) = $self->_get('name', 'screen_name', 'sort_name');
-    $scrn ||= $name;
-    $sort ||= $name;
+    $scrn = $name unless defined $scrn;
+    $sort = $name unless defined $sort;
     $self->_set(['screen_name', 'sort_name'], [$scrn, $sort]);
 
     if ($id) {
 	$self->_update_keyword();
     } else {
 	$self->_insert_keyword();
-    }
-
-    # Now that we are guaranteed to have an ID add ourselves to the synonym grp.
-    my $syn_obj = $self->_get_synonym_grp;
-    unless ($syn_obj->has_member($self)) {
-	$syn_obj->add_synonym([$self]);
-	$syn_obj->save;
     }
 
     $self->_set__dirty(0);
@@ -861,20 +686,23 @@ NONE
 
 =cut
 
-
-# Add methods here that do not require an object be instantiated, and should not
-# be called outside this module (e.g. utility functions for class methods).
-# Use same POD comment style as above for 'new'.
-
 #--------------------------------------#
 
 =head2 Private Instance Methods
 
-NONE
+=over 4
+
+=item $keywords = _select_keywords($where, $bind)
+
+=item @keywords = _select_keywords($where, $bind)
+
+Selects keywords from the database given an SQL where clause and a ref
+to an array of bind parameters.  Returns fully constructed
+Bric::Biz::Keyword objects.
 
 =cut
 
-sub _select_keyword {
+sub _select_keywords {
     my ($where, $bind) = @_;
     my (@d, @ret);
 
@@ -886,14 +714,24 @@ sub _select_keyword {
     execute($sth, @$bind);
     bind_columns($sth, \@d[0..(scalar COLS)]);
     
+    my ($keyword);
     while (fetch($sth)) {
-	push @ret, [@d];
+        # create a new keyword object and push it on the return array
+        $keyword = __PACKAGE__->SUPER::new();
+        $keyword->_set(['id', COLS], \@d);
+	push @ret, $keyword;
     }
     
     finish($sth);
 
-    return \@ret;
+    return wantarray ? @ret : \@ret;
 }
+
+=item $self->_update_keyword()
+
+Updates the keyword object in the database.
+
+=cut
 
 sub _update_keyword {
     my $self = shift;
@@ -907,6 +745,12 @@ sub _update_keyword {
     
     return 1;
 }
+
+=item $self->_update_keyword()
+
+Inserts the new keyword object into the database.
+
+=cut
 
 sub _insert_keyword {
     my $self = shift;
@@ -925,42 +769,29 @@ sub _insert_keyword {
     return 1;
 }
 
-sub _get_synonym_grp {
-    my $self = shift;
-    my $syn_id  = $self->get_synonym_grp_id;
-    my $syn_obj = $self->_get('_synonym_grp_obj');
+=item ($table, $field) = _get_db_data_for_object($obj)
 
-    unless ($syn_obj) {
-	if ($syn_id) {
-	    $syn_obj = Bric::Util::Grp::Keyword->lookup({'id' => $syn_id});
-	} else {
-	    my $desc = "Synonyms for keyword";
-	    $syn_obj = Bric::Util::Grp::Keyword->new({'name'        => 'synonym',
-						    'description' => $desc});
-	}
+Returns the correct relationship table and field name for a given
+supported object.  For example, for a story object it returns
+("story_keyword", "story_id").
 
-	$self->_set(['_synonym_grp_obj'], [$syn_obj]);
+Throws:
 
-	$self->_set__dirty(0);
-    }
+Unsupported object type : $ref.
 
-    return $syn_obj;
-}
+Side Effects: NONE
 
-sub _sync_synonym_grp {
-    my $self = shift;
-    my $syn_obj = $self->_get('_synonym_grp_obj');
+Notes: NONE
 
-    # Return unless we've got an object.
-    return unless $syn_obj;
+=cut
 
-    # Save the object.
-    $syn_obj->save;
-    
-    # Save the ID.
-    $self->_set(['synonym_grp_id'], [$syn_obj->get_id]);
-
-    return $self;
+sub _get_db_data_for_object {
+    my $obj = shift;
+    my $ref = ref $obj;
+    return ("story_keyword",    "story_id")    if $ref =~ /Story$/;
+    return ("media_keyword",    "media_id")    if $ref =~ /Media$/;
+    return ("category_keyword", "category_id") if $ref =~ /Category$/;
+    die $gen->new({msg => "Unsupported object type : $ref."});
 }
 
 1;
@@ -977,8 +808,10 @@ NONE
 "Garth Webb" <garth@perijove.com>
 Bricolage Engineering
 
+Sam Tregar <stregar@about-inc.com>
+
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::Util::Grp::Keyword>, L<Bric::Biz::Category>
+L<Bric>
 
 =cut

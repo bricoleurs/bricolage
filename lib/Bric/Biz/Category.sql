@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2002-06-11 22:21:22 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -42,7 +42,6 @@ CREATE TABLE category (
                                      DEFAULT NEXTVAL('seq_category'),
     directory        VARCHAR(128)    NOT NULL,
     category_grp_id  NUMERIC(10,0),
-    keyword_grp_id   NUMERIC(10,0),
     asset_grp_id     NUMERIC(10,0),
     active           NUMERIC(1,0)    NOT NULL
                                      DEFAULT 1
@@ -130,7 +129,6 @@ CREATE TABLE attr_category_meta (
 --
 CREATE INDEX idx_category__directory ON category(LOWER(directory));
 CREATE INDEX fkx_subcat_grp__category ON category(category_grp_id);
-CREATE INDEX fkx_kw_grp__category ON category(keyword_grp_id);
 CREATE INDEX fkx_asset_grp__category ON category(asset_grp_id);
 
 

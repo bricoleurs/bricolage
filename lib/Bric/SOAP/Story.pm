@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-13 23:36:30 $
+$Date: 2002-06-11 22:21:22 $
 
 =head1 SYNOPSIS
 
@@ -808,25 +808,6 @@ sub _load_stories {
 	$story->add_categories(\@cids);	
 	$story->set_primary_category($primary_cid);
 
-	# remove all keywords if updating
-	$story->delete_keywords([ $story->get_keywords ])
-	    if $update and $story->get_keywords;
-	
-	# add keywords, if we have any
-	if ($sdata->{keywords} and $sdata->{keywords}{keyword}) {
-
-	    # collect keyword objects
-	    my @kws;
-	    foreach (@{$sdata->{keywords}{keyword}}) {
-		my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
-		$kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
-		push @kws, $kw;
-	    }
-
-	    # add keywords to the story
-	    $story->add_keywords(\@kws);
-	}
-
 	# remove all contributors if updating
 	$story->delete_contributors([ $story->get_contributors ])
 	    if $update and $story->get_contributors;
@@ -852,6 +833,25 @@ sub _load_stories {
 	# unsaved story, strangely.
 	$story->deactivate;
 	$story->save;
+
+	# remove all keywords if updating
+	$story->delete_keywords([ $story->get_keywords ])
+	    if $update and $story->get_keywords;
+	
+	# add keywords, if we have any
+	if ($sdata->{keywords} and $sdata->{keywords}{keyword}) {
+
+	    # collect keyword objects
+	    my @kws;
+	    foreach (@{$sdata->{keywords}{keyword}}) {
+		my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+		$kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
+		push @kws, $kw;
+	    }
+
+	    # add keywords to the story
+	    $story->add_keywords(\@kws);
+	}
 
 	# updates are in-place, no need to futz with workflows and desks
 	my $desk;

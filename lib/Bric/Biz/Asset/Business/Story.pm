@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-07 22:46:36 $
+$Date: 2002-06-11 22:21:22 $
 
 =head1 SYNOPSIS
 
@@ -102,11 +102,10 @@ $Date: 2002-05-07 22:46:36 $
  $biz             = $biz->delete_categories([$category, ...]);
 
  # Access keywords
- $biz               = $biz->add_keywords([{kw => $kw, weight => $weight}, ...])
+ $biz               = $biz->add_keywords(\@kws)
  ($kw_list || @kws) = $biz->get_keywords()
  ($self || undef)   = $biz->has_keyword($keyword)
  $biz               = $biz->delete_keywords([$kw, ...])
- $kw_grp_id         = $biz->get_keyword_grp__id()
 
  # Related stories
  $biz                   = $biz->add_related([$other_biz, ...])
@@ -209,7 +208,6 @@ use constant COLS	=> qw(
 						source__id
 						usr__id
 						element__id
-						keyword_grp__id
 						publish_date
 						expire_date
 						cover_date
@@ -234,7 +232,6 @@ use constant FIELDS =>  qw(
 						source__id 
 						user__id
 						element__id 
-						keyword_grp__id
 						publish_date 
 						expire_date
 						cover_date
@@ -1627,10 +1624,9 @@ sub _do_list {
     }
 
     if ($param->{'keyword'}) {
-	push @tables, 'member m', 'keyword_member km', 'keyword k';
-	push @where, ('s.keyword_grp__id=m.grp__id',
-		      'm.id=km.member__id',
-		      'km.object_id=k.id',
+	push @tables, 'story_keyword sk', 'keyword k';
+	push @where, ('sk.story_id = s.id',
+                      'k.id = sk.keyword_id',
 		      'LOWER(k.name) LIKE ?');
 	push @bind, lc($param->{'keyword'});
     }
@@ -1646,7 +1642,7 @@ sub _do_list {
      if ($param->{'simple'}) {
        # replace TABLE select with left join to select keywords if
        # there are any
-       $tables[0] = 'story s left outer join (member m left outer join (keyword_member km left outer join keyword k on (km.object_id=k.id)) on (m.id=km.member__id)) on (s.keyword_grp__id=m.grp__id)';
+       $tables[0] = 'story s left outer join story_keyword sk left outer join keyword k on (sk.keyword_id = k.id) on (s.id = sk.story_id)';
        push @where, ('(LOWER(k.name) LIKE ? OR LOWER(i.name) LIKE ? OR LOWER(i.description) LIKE ? OR LOWER(s.primary_uri) LIKE ?)');
        push @bind, (lc($param->{'simple'})) x 4;
      }

@@ -18,6 +18,12 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head2 New Features
 
+=item *
+
+Revised Bric::Biz::Keyword implementation to improve performance. The
+new implementation no longer relies on the Bric::Util::Grp system.
+Also implemented API and database support for Media keywords.  [Sam]
+
 =over 4
 
 =back

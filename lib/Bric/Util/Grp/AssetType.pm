@@ -7,15 +7,15 @@ Bric::Util::Grp::AssetType - A group of AssetTypes.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:47 $
+$Date: 2002-06-11 22:21:22 $
 
 =head1 SYNOPSIS
 
@@ -40,8 +40,6 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies              
  
-use Bric::Util::Grp::Keyword;
-
 #==============================================================================#
 # Inheritance                          #
 #======================================#
@@ -104,9 +102,9 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $obj = new Bric::Util::Grp::Keyword($init);
+=item $obj = new Bric::Util::Grp::AssetType($init);
 
-Creates a new keyword synonym group.  Uses inherited 'new' method.
+Creates a new assettype group.  Uses inherited 'new' method.
 
 B<Throws:>
 
@@ -124,7 +122,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item @objs = lookup Bric::Util::Grp::Keyword($param);
+=item @objs = lookup Bric::Util::Grp::AssetType($param);
 
 Uses inherited 'lookup' method.
 
@@ -144,7 +142,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item @objs = list Bric::Util::Grp::Keyword($param);
+=item @objs = list Bric::Util::Grp::AssetType($param);
 
 Uses inherited 'list' method.
 
@@ -309,8 +307,8 @@ __END__
 
 =head1 NOTES
 
-This module is the group implimentation of keyword synonyms.  All functionality
-needed for keyword synonyms is implimented here and used by Bric::Biz::Keyword which 
+This module is the group implimentation of assettyps.  All functionality
+needed for assettypes is implimented here and used by Bric::Biz::AssetType which 
 represents the front end interface.
 
 =head1 AUTHOR
@@ -320,6 +318,6 @@ Bricolage Engineering
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::Biz::Keyword>
+L<perl>, L<Bric>, L<Bric::Biz::AssetType>
 
 =cut

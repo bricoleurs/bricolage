@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2002-06-11 22:21:22 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -13,10 +13,6 @@
 
 -- Unique IDs for the main keyword table
 CREATE SEQUENCE seq_keyword START 1024;
-
--- Unique IDs for the keyword member table
-CREATE SEQUENCE seq_keyword_member START 1024;
-
 
 
 -- -----------------------------------------------------------------------------
@@ -30,12 +26,6 @@ CREATE TABLE keyword (
     name             VARCHAR(256)  NOT NULL,
     screen_name      VARCHAR(256)  NOT NULL,
     sort_name        VARCHAR(256)  NOT NULL,
-    meaning          VARCHAR(512),
-    prefered         NUMERIC(1)	   NOT NULL
-                                   DEFAULT 1
-                                   CONSTRAINT ck_keyword__prefered
-                                     CHECK (prefered IN (0,1)),
-    synonym_grp_id   NUMERIC(10),
     active           NUMERIC(1)	   NOT NULL
                                    DEFAULT 1
                                    CONSTRAINT ck_keyword__active
@@ -44,28 +34,48 @@ CREATE TABLE keyword (
 );
 
 -- -----------------------------------------------------------------------------
--- Table: keyword_member
+-- Table: story_keyword
 -- 
--- Description: The link between keyword objects and member objects
+-- Description: The link between stories and keywords
 --
 
-CREATE TABLE keyword_member (
-    id          NUMERIC(10,0)  NOT NULL
-                               DEFAULT NEXTVAL('seq_keyword_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
-    CONSTRAINT pk_keyword_member__id PRIMARY KEY (id)
+CREATE TABLE story_keyword (
+    story_id          NUMERIC(10,0)  NOT NULL,
+    keyword_id        NUMERIC(10,0)  NOT NULL,
+    PRIMARY KEY (story_id, keyword_id)
 );
+
+
+-- -----------------------------------------------------------------------------
+-- Table: media_keyword
+-- 
+-- Description: The link between media and keywords
+--
+
+CREATE TABLE media_keyword (
+    media_id         NUMERIC(10,0)  NOT NULL,
+    keyword_id       NUMERIC(10,0)  NOT NULL,
+    PRIMARY KEY (media_id, keyword_id)
+);
+
+-- -----------------------------------------------------------------------------
+-- Table: category_keyword
+-- 
+-- Description: The link between categories and keywords
+--
+
+CREATE TABLE category_keyword (
+    category_id       NUMERIC(10,0)  NOT NULL,
+    keyword_id        NUMERIC(10,0)  NOT NULL,
+    PRIMARY KEY (category_id, keyword_id)
+);
+
 
 -- -----------------------------------------------------------------------------
 -- Indexes
 
-CREATE UNIQUE INDEX udx_keyword__name ON keyword(LOWER(name));
-CREATE UNIQUE INDEX udx_keyword__screen_name ON keyword(LOWER(screen_name));
-CREATE INDEX idx_keyword__sort_name ON keyword(LOWER(sort_name));
-CREATE INDEX fkx_keyword__grp ON keyword(synonym_grp_id);
-
-CREATE INDEX fkx_keyword__keyword_member ON keyword_member(object_id);
-CREATE INDEX fkx_member__keyword_member ON keyword_member(member__id);
+CREATE INDEX idx_keyword__name        ON keyword(LOWER(name));
+CREATE INDEX idx_keyword__screen_name ON keyword(LOWER(screen_name));
+CREATE INDEX idx_keyword__sort_name   ON keyword(LOWER(sort_name));
 
 

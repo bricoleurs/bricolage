@@ -30,15 +30,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-22 23:01:29 $
+$Date: 2002-06-11 22:21:22 $
 
 =head1 SYNOPSIS
 
@@ -73,7 +73,16 @@ Notes: NONE
 
 sub category_path_to_id {
   my $path = shift;
-  foreach my $cat (Bric::Biz::Category->list()) {
+  my $end;
+
+  # get the directory name off the path end to limit the search
+  if ($path eq '/') {
+      $end = "";
+  } else {
+      ($end) = m!/([^/]+)$!;
+  }
+
+  foreach my $cat (Bric::Biz::Category->list({ directory => $end })) {
     return $cat->get_id if $cat->ancestry_path eq $path;
   }
   return undef;

@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-10 17:52:24 $
+$Date: 2002-06-11 22:21:22 $
 
 =head1 SYNOPSIS
 
@@ -111,9 +111,9 @@ use base qw(Bric);
 
 use constant TABLE  => 'category';
 use constant COLS   => qw(directory asset_grp_id category_grp_id 
-                          keyword_grp_id active);
+                          active);
 use constant FIELDS => qw(directory asset_grp_id category_grp_id 
-                          keyword_grp_id _active);
+                          _active);
 use constant ORD    => qw(name description uri directory ad_string ad_string2);
 
 use constant root_category_id => 0;
@@ -146,12 +146,10 @@ BEGIN {
                          'directory'       => Bric::FIELD_RDWR,
                          'asset_grp_id'    => Bric::FIELD_READ,
                          'category_grp_id' => Bric::FIELD_READ,
-                         'keyword_grp_id'  => Bric::FIELD_READ,
 
                          # Private Fields
                          '_category_grp_obj' => Bric::FIELD_NONE,
                          '_asset_grp_obj'    => Bric::FIELD_NONE,
-                         '_keyword_grp_obj'  => Bric::FIELD_NONE,
 
                          '_attr_obj'         => Bric::FIELD_NONE,
                          '_attr'             => Bric::FIELD_NONE,
@@ -297,10 +295,6 @@ Criteria keys:
 I<'children of'>
 
 Given a category object returns its children.
-
-I<'keyword'>
-
-Given a keyword, list all category objects containing that keyword.
 
 B<Throws:>
 
@@ -1033,48 +1027,17 @@ sub get_meta {
 
 Returns a list of keywords associated with this category.
 
-B<Throws:>
+B<Throws:> NONE
 
-NONE
+B<Side Effects:> NONE
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
 sub keywords {
     my $self = shift;
-    my ($kw_id, $kw_obj);
-    my ($mem, @mem_obj);
-
-    $kw_obj = $self->_load_grp('Keyword', 
-                               'keyword_grp_id', '_keyword_grp_obj');
-
-#    unless ($kw_obj) {
-#       $kw_id = $self->get_keyword_grp_id;
-
-#       # There are no keywords for this category.
-#       return unless $kw_id;
-        
-#       $kw_obj = Bric::Util::Grp::Keyword->lookup({'id' => $kw_id});
-
-#       unless ($kw_obj) {
-#           my $msg = " Failed to instantiate keyword group";
-#           die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-#       }
-#    }
-
-    $mem = $kw_obj->get_members;
-
-    return unless $mem;
-    @mem_obj = sort { lc $a->get_sort_name cmp lc $b->get_sort_name }
-      map { $_->get_object } @$mem;
-    return wantarray ? @mem_obj : \@mem_obj;
+    return Bric::Biz::Keyword->list({ object => $self });
 }
 
 #------------------------------------------------------------------------------#
@@ -1106,7 +1069,7 @@ sub assets {
     unless ($ass_obj) {
         $ass_id = $self->get_asset_grp_id;
 
-        # There are no keywords for this category.
+        # There are no assets for this category.
         return unless $ass_id;
         
         $ass_obj = Bric::Util::Grp::Asset->lookup({'id' => $ass_id});
@@ -1254,81 +1217,75 @@ sub del_child {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $cat->add_keyword($kw || $kw_id]);
+=item $success = $cat->add_keyword([$kw || $kw_id]);
 
 Associates a keyword with this category.
 
 B<Throws:>
 
-NONE
+No keyword object found for id '$k'
 
-B<Side Effects:>
+B<Side Effects:> NONE
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
 sub add_keyword {
-    my $self = shift;
-    my ($kw) = @_;
+    my ($self, $keywords) = @_;
+    my $keyword;
 
-    my $kw_obj = $self->_load_grp('Keyword', 
-                                  'keyword_grp_id', '_keyword_grp_obj');
+    foreach my $k (@$keywords) {
+        # find object for id
+        if (ref $k) {
+            $keyword = $k;
+        } else {
+            $keyword = Bric::Biz::Keyword->lookup({id => $k});
+            die Bric::Util::Fault::Exception::GEN->new(
+                        { msg => "No keyword object found for id '$k'" } )
+              unless defined $keyword;
+        }
 
-    unless ($kw_obj) {
-        $kw_obj = Bric::Util::Grp::Keyword->new({'name'        => 'Keywords',
-                                               'description' => 'A group of keywords'});
+        # associate keyword with this asset
+        $keyword->associate($self);
     }
-
-    #$self->_set(['keyword_grp_id'], [$kw_obj->get_id]);
-
-    my $t = 'Bric::Biz::Keyword';
-    # Map any IDs we are passed to a hash ref of ID and type.
-    $kw_obj->add_members([map {ref($_) ? {'obj'=>$_} 
-                                       : {'package'=>$t,'id'=>$_}} @$kw]);
 }
 
 #------------------------------------------------------------------------------#
 
-=item $success = $cat->del_keyword($kw || [$kw]);
+=item $success = $cat->del_keyword([$kw || $kw_id]);
 
-Removes a keyword association from this category.
+Removes keyword associations from this category.
 
 B<Throws:>
 
-NONE
+No keyword object found for id '$k'
 
-B<Side Effects:>
+B<Side Effects:> NONE
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
 sub del_keyword {
-    my $self = shift;
-    my ($kw) = @_;
+    my ($self, $keywords) = @_;
 
-    my $kw_obj = $self->_load_grp('Keyword',
-                                  'keyword_grp_id', '_keyword_grp_obj');
-   
-    unless ($kw_obj) {
-        my $msg = "Category has no keywords";
-        die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
+    my $keyword;    
+    foreach my $k (@$keywords) {
+        # find object for id
+        if (ref $k) {
+            $keyword = $k;
+        } else {
+            $keyword = Bric::Biz::Keyword->lookup({id => $k});
+            die Bric::Util::Fault::Exception::GEN->new(
+                 { msg => "No keyword object found for id '$k'" } )
+              unless defined $keyword;
+        }
+        
+        # dissociate keyword with this asset
+        $keyword->dissociate($self);
     }
-
-    foreach (@$kw) {
-        $kw_obj->delete_members([{'package' => 'Bric::Biz::Keyword', 
-                                  'id'      => ref $_ ? $_->get_id : $_}]);
-    }
-
+    
     return $self;
 }
 
@@ -1522,9 +1479,8 @@ sub save {
     }
 
     # Get object references.
-    ($a_obj, $cat_obj, $kw_obj) = $self->_get(qw(_asset_grp_obj
-                                                 _category_grp_obj
-                                                 _keyword_grp_obj));
+    ($a_obj, $cat_obj) = $self->_get(qw(_asset_grp_obj
+                                        _category_grp_obj));
 
     # Save changes made to these objects if they exist.
     $cat_obj->save if $cat_obj;
@@ -1534,7 +1490,6 @@ sub save {
     # Make sure the IDs are set.
     $self->_set(['category_grp_id'], [$cat_obj->get_id]) if $cat_obj;
     $self->_set(['asset_grp_id'],    [$a_obj->get_id])   if $a_obj;
-    $self->_set(['keyword_grp_id'],  [$kw_obj->get_id])  if $kw_obj;
 
     # Save our category information
     if (defined $id) {
@@ -1627,7 +1582,7 @@ sub _load_grp {
     # return unless $id;
     
     if ($id) {
-        # There are no keywords for this category.
+        # There are no items for this category in the group
         $obj = $gtype->lookup({'id' => $id});
     } else {
         $obj = $gtype->new({'name' => 'Group for Category'});

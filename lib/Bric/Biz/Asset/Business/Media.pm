@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-07 22:46:36 $
+$Date: 2002-06-11 22:21:22 $
 
 =head1 SYNOPSIS
 
@@ -71,7 +71,6 @@ use constant COLS	    => qw( element__id
 				   current_version
 				   published_version
 				   usr__id
-				   keyword_grp__id
 				   publish_date
 				   expire_date
 				   cover_date
@@ -98,7 +97,6 @@ use constant FIELDS	    => qw( element__id
 				   current_version
 				   published_version
 				   user__id
-				   keyword_grp_id
 				   publish_date
 				   expire_date
 				   cover_date

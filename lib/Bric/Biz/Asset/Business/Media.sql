@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.7 $
+-- VERSION: $Revision: 1.8 $
 --
--- $Date: 2002-04-23 23:45:42 $
+-- $Date: 2002-06-11 22:21:22 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -56,7 +56,6 @@ CREATE TABLE media (
     current_version  NUMERIC(10,0),
 	published_version	NUMERIC(10,0),
     usr__id          NUMERIC(10,0),
-    keyword_grp__id  NUMERIC(10,0),
     publish_date     TIMESTAMP,
     expire_date      TIMESTAMP,
     cover_date       TIMESTAMP,
@@ -261,7 +260,6 @@ CREATE INDEX idx_media__publish_date ON media(publish_date);
 CREATE INDEX idx_media__cover_date ON media(cover_date);
 CREATE INDEX fkx_source__media ON media(source__id);
 CREATE INDEX fkx_usr__media ON media(usr__id);
-CREATE INDEX fkx_kw__media ON media(keyword_grp__id);
 CREATE INDEX fkx_element__media ON media(element__id);
 
 -- media_instance

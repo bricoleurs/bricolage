@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2002-04-23 23:45:42 $
+-- $Date: 2002-06-11 22:21:22 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -55,7 +55,6 @@ CREATE TABLE story (
     source__id        NUMERIC(10,0)   NOT NULL, 
     usr__id           NUMERIC(10,0),
     element__id    NUMERIC(10,0)   NOT NULL,
-    keyword_grp__id   NUMERIC(10,0),
     primary_uri       VARCHAR(128),
     publish_date      TIMESTAMP,
     expire_date       TIMESTAMP,
@@ -207,7 +206,6 @@ CREATE INDEX idx_story__primary_uri ON story(LOWER(primary_uri));
 CREATE INDEX fdx_usr__story ON story(usr__id);
 CREATE INDEX fdx_source__story ON story(source__id);
 CREATE INDEX fdx_element__story ON story(element__id);
-CREATE INDEX fdx_grp__story ON story(keyword_grp__id);
 
 -- story_instance
 CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));

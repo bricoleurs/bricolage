@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-20 19:33:48 $
+$Date: 2002-06-11 22:21:22 $
 
 =head1 SYNOPSIS
 
@@ -117,7 +117,6 @@ use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Grp::AssetVersion;
 use Bric::Util::Grp::AssetLanguage;
-use Bric::Util::Grp::Keyword;
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::Asset::Business::Parts::Tile::Container;
 use Bric::Biz::Category;
@@ -171,7 +170,6 @@ BEGIN {
 	     # Public Fields
 	     source__id            	=> Bric::FIELD_RDWR,
 	     element__id        	=> Bric::FIELD_RDWR,
-	     keyword_grp__id       	=> Bric::FIELD_READ,
 	     related_grp__id       	=> Bric::FIELD_READ,
 	     primary_uri           	=> Bric::FIELD_READ,
 	     publish_date          	=> Bric::FIELD_RDWR,
@@ -184,7 +182,6 @@ BEGIN {
 		_queried_contrib		=> Bric::FIELD_NONE,
 		_del_contrib			=> Bric::FIELD_NONE,
 		_update_contributors	=> Bric::FIELD_NONE,
-	     _keyword_grp_obj      	=> Bric::FIELD_NONE,
 	     _related_grp_obj      	=> Bric::FIELD_NONE,
 	     _tile                 	=> Bric::FIELD_NONE,
 		_queried_cats			=> Bric::FIELD_NONE,
@@ -1425,94 +1422,60 @@ sub get_container {
 
 ###############################################################################
 
-=item $asset = $asset->set_keywords([ kw => $kw , weight => $weight ])
+=item $asset = $asset->add_keywords(\@keywords)
 
-Adds the given keyword object to the Asset with the given weight
+Adds the given keywords to the asset.  Accepts keyword objects or
+keyword object ids.
 
-B<Throws:>
-NONE
+B<Throws:> NONE
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE
 
-B<Notes:>
-NONE
+B<Notes:> NONE
 
 =cut
 
 
 sub add_keywords {
-	my ($self,$keywords) = @_;
+    my ($self, $keywords) = @_;
+    my $keyword;
 
-	my $dirty = $self->_get__dirty();
+    foreach my $k (@$keywords) {
+        # find object for id
+        if (ref $k) {
+            $keyword = $k;
+        } else {
+            $keyword = Bric::Biz::Keyword->lookup({id => $k});
+            die Bric::Util::Fault::Exception::GEN->new(
+                 { msg => "No keyword object found for id '$k'" } )
+              unless defined $keyword;
+        }
+        
+        # associate keyword with this asset
+        $keyword->associate($self);
+    }
 
-	my $keyword_obj =  $self->_get('_keyword_grp_obj');
-
-	unless ($keyword_obj) {
-		if ($self->_get('keyword_grp__id') ) {
-			my $kw_id = $self->_get('keyword_grp__id');
-			$keyword_obj = 
-				Bric::Util::Grp::Keyword->lookup({'id' => $kw_id});
-		} else {
-			$keyword_obj = Bric::Util::Grp::Keyword->new({
-				'name' => 'Keywords'});
-			# save it to make sure we have its id
-			$keyword_obj->save();
-		}
-
-		$self->_set( {  '_keyword_grp_obj' 	=> $keyword_obj,
-						'keyword_grp__id'	=> $keyword_obj->get_id });
-
-	}
-
-	my $t = 'Bric::Biz::Keyword';
-	$keyword_obj->add_members([map {ref($_) ? {'obj'=>$_}
-			      	                : {'type'=>$t,'id'=>$_}} @$keywords]);
-
-	$self->_set__dirty($dirty);
-
-	return $self;
+    return $self;
 }
 
 ###############################################################################
 
 =item $kw_aref || @kws = $asset->get_keywords()
 
-Returns an array ref or an array of keyword objects, assigned to this Business
-Asset.
+Returns an array ref or an array of keyword objects, assigned to this
+Business Asset.
 
-B<Throws:>
+B<Throws:> NONE
 
-'Failed to get keyword group.'
+B<Side Effects:> NONE
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
 sub get_keywords {
     my $self = shift;
-    my $keyword_obj =  $self->_get('_keyword_grp_obj');
-
-    unless ($keyword_obj) {
-	my $kw_id = $self->_get('keyword_grp__id');
-	return unless $kw_id;
-	$keyword_obj = Bric::Util::Grp::Keyword->lookup({'id' => $kw_id});
-	unless ($keyword_obj) {
-	    die Bric::Util::Fault::Exception::GEN->new({ msg =>
-						      'Failed to get keyword group.' });
-	}
-    }
-
-    my $mem = $keyword_obj->get_members;
-    my @kw = sort { lc $a->get_sort_name cmp lc $b->get_sort_name }
-      map { $_->get_object } @$mem;
-    return wantarray ? @kw : \@kw;
+    return Bric::Biz::Keyword->list({ object => $self });
 }
 
 ###############################################################################
@@ -1522,23 +1485,22 @@ sub get_keywords {
 Returns an array ref or an array of keyword objects assigned to this Business
 Asset and to its categories.
 
-B<Throws:>
+B<Throws:> NONE
 
-'Failed to get keyword grp'
+B<Side Effects:> NONE
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
 sub get_all_keywords {
     my $self = shift;
-    my @kw = (_get_category_keywords($self), get_keywords($self));
+    my %kw = map { ($_->get_id, $_) } 
+      ( Bric::Biz::Keyword->list({ object => $self }), 
+        _get_category_keywords() );
+    my @kw = sort { lc $a->get_sort_name cmp lc $b->get_sort_name }
+      values %kw;
+
     return wantarray ? @kw : \@kw;
 }
 
@@ -1547,75 +1509,51 @@ sub get_all_keywords {
 Takes a list of keywords and disassociates them from the object.
 Category keywords can not be disassociated from the asset.  
 
-B<Throws:>
+B<Throws:> NONE
 
-'Asset has no keywords'
+B<Side Effects:> NONE
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE
 
 =cut
 
 sub delete_keywords {
-	my ($self,$keywords) = @_;
+    my ($self,$keywords) = @_;
+    
+    my $keyword;
+    foreach my $k (@$keywords) {
+        # find object for id
+        if (ref $k) {
+            $keyword = $k;
+        } else {
+            $keyword = Bric::Biz::Keyword->lookup({id => $k});
+            die Bric::Util::Fault::Exception::GEN->new(
+                 { msg => "No keyword object found for id '$k'" } )
+              unless defined $keyword;
+        }
+        
+        # dissociate keyword with this asset
+        $keyword->dissociate($self);
+    }
 
-	my $dirty = $self->_get__dirty();
-
-	my $keyword_obj =  $self->_get('_keyword_grp_obj');
-
-	unless ($keyword_obj) {
-		if ($self->_get('keyword_grp__id') ) {
-			my $kw_id = $self->_get('keyword_grp__id');
-			$keyword_obj =
-				Bric::Util::Grp::Keyword->lookup({'id' => $kw_id});
-		} else {
-			die Bric::Util::Fault::Exception::GEN->new({'msg' =>
-					'Asset has no keywords' });	
-		}
-
-		$self->_set( {  '_keyword_grp_obj'  => $keyword_obj,
-			'keyword_grp_id'    => $keyword_obj->get_id });
-	}
-
-	my $t = 'Bric::Biz::Keyword';
-	my $args = [];
-	foreach (@$keywords) {
-		if (ref $_) {
-			push @$args, $_;
-		} else {
-			my $arg = { package => 'Bric::Biz::Keyword', id => $_ };
-			push @$args, $arg;
-		}
-	}
-	# Map any IDs we are passed to a hash ref of ID and type.
-	$keyword_obj->delete_members($args);
-
-	$self->_set__dirty($dirty);
-
-	return $self;
+    return $self;
 }
 
 ###############################################################################
 
 
-=item ($self || undef) = $ba->has_key_word($keyword)
+=item ($self || undef) = $ba->has_keyword($keyword)
+
+Returns true is the keyword object is associated with this asset.
 
 =cut
 
 sub has_keyword {
-	my ($self,$keyword) = @_;
-
-	my $keyword_obj =  $self->_get('_keyword_grp_obj');
-
-	my $key_mem = $keyword_obj->has_member($keyword);
-
-
-	return $key_mem ? $self : undef;
+    my ($self,$keyword) = @_;
+    my $keyword_id = $keyword->get_id;
+    my @keywords = $self->get_keywords();
+    return $self if grep { $keyword_id == $_->get_id } @keywords;
+    return;
 }
 
 ###############################################################################
@@ -1805,9 +1743,7 @@ NONE
 sub save {
 	my ($self) = @_;
 
-	my ($keyword_obj,$related_obj, $tile) = 
-		$self->_get('_keyword_grp_obj', '_related_grp_obj', 
-			'_tile');
+	my ($related_obj, $tile) = $self->_get('_related_grp_obj', '_tile');
 
 	if ($self->_get('_checkout') ) {
 		$tile->prepare_clone;
@@ -1824,7 +1760,6 @@ sub save {
 		$tile->set_object_instance_id($self->_get('version_id'));
 		$tile->save();
 	}
-	$keyword_obj->save() if $keyword_obj;
 	$related_obj->save() if $related_obj;
 
 	$self->_sync_contributors();

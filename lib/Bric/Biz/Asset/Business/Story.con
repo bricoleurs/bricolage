@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2002-06-11 22:21:22 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -17,10 +17,6 @@ ADD CONSTRAINT fk_usr__story FOREIGN KEY (usr__id)
 ALTER TABLE story
 ADD CONSTRAINT fk_element__story FOREIGN KEY (element__id)
 	REFERENCES element(id) ON DELETE CASCADE;
-
-ALTER TABLE story
-ADD CONSTRAINT fk_grp__story FOREIGN KEY (keyword_grp__id)
-	REFERENCES grp(id) ON DELETE SET NULL;
 
 ALTER TABLE story
 ADD CONSTRAINT fk_workflow__story FOREIGN KEY (workflow__id)
