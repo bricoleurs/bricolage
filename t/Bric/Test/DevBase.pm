@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:27 $
+$Date: 2003-12-18 22:00:00 $
 
 =head1 SYNOPSIS
 
@@ -113,7 +113,7 @@ This upshot is that C<make devtest> should never be run against a production
 database.
 
 It can be useful to override this method in order to delete related IDs. For
-example, Bri::Biz::Asset::DevTest overrides C<del_ids()> to delete instances
+example, Bric::Biz::Asset::DevTest overrides C<del_ids()> to delete instances
 of assets as well as the assets themselves. If you plan to override
 C<del_ids()> but still wish it to run, be aware that when it does run, it
 deletes the hash returned by C<get_del_ids()>. So if you need to get the list
