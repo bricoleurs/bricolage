@@ -7,15 +7,15 @@ Bric::Util::Grp - A Class for associating Objects
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:44 $
+$Date: 2002-05-03 14:21:25 $
 
 =head1 SYNOPSIS
 
@@ -1128,7 +1128,7 @@ sub add_member {
     if ($param->{'obj'}) {
 	$package = ref $param->{'obj'};
 	$id      = $param->{'obj'}->get_id();
-    } elsif ($param->{'id'} && $param->{'package'}) {
+    } elsif (defined $param->{'id'} && $param->{'package'}) {
 	$package = $param->{'package'};
 	$id      = $param->{'id'};
     } else {
