@@ -110,6 +110,11 @@ Calling C<get_data()> on a container element in templates (or elsewhere, for
 that matter) now properly ignores container subelements. Likewise for
 C<get_container()>, whicn how properly ignores data subelements. [David]
 
+=item *
+
+All of the F<.pl> and F<.tst> files in F<lib/> no longer clutter up the
+distribution created by C<make dist>. [David]
+
 =back
 
 =head1 VERSION 1.3.3
