@@ -69,7 +69,7 @@ do_sql
      VALUES (56, 47, 165)},
 
   ############################################################################
-  # Add the default site group.
+  # Add the default site asset group.
   qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
                       permanent)
      VALUES (100, NULL, 43, 'Secret Site Asset Group', NULL, 1, 1)},
@@ -81,7 +81,7 @@ do_sql
      VALUES (57, 100, 166)},
 
   ############################################################################
-  # Add the Default site READ secret user group.
+  # Add the Default site READ secret user group and permissions.
   qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
                       permanent)
      VALUES (200, 0, 8, 'Default Site READ Users', '__Site 100 Users__', 1,
@@ -93,8 +93,14 @@ do_sql
   qq{INSERT INTO grp_member (id, object_id, member__id)
      VALUES (700, 200, 700)},
 
+  qq{INSERT INTO grp_priv (id, grp__id, value)
+     VALUES(43, 200, 1)},
+
+  qq{INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+     VALUES(43, 100)},
+
   ############################################################################
-  # Add the Default site EDIT secret user group.
+  # Add the Default site EDIT secret user group and permissions.
   qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
                       permanent)
     VALUES (201, 0, 8, 'Default Site EDIT Users', '__Site 100 Users__', 1,
@@ -106,8 +112,14 @@ do_sql
   qq{INSERT INTO grp_member (id, object_id, member__id)
      VALUES (701, 201, 701)},
 
+  qq{INSERT INTO grp_priv (id, grp__id, value)
+     VALUES(44, 201, 2)},
+
+  qq{INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+     VALUES(44, 100)},
+
   ############################################################################
-  # Add the Default site CREATE secret user group.
+  # Add the Default site CREATE secret user group and permissions.
   qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
                       permanent)
      VALUES (202, 0, 8, 'Default Site CREATE Users', '__Site 100 Users__', 1,
@@ -119,8 +131,14 @@ do_sql
   qq{INSERT INTO grp_member (id, object_id, member__id)
      VALUES (702, 202, 702)},
 
+  qq{INSERT INTO grp_priv (id, grp__id, value)
+     VALUES(45, 202, 3)},
+
+  qq{INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+     VALUES(45, 100)},
+
   ############################################################################
-  # Add the Default site DENY secret user group.
+  # Add the Default site DENY secret user group and permissions.
   qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
                       permanent)
      VALUES (203, 0, 8, 'Default Site DENY Users', '__Site 100 Users__', 1,
@@ -131,6 +149,12 @@ do_sql
 
   qq{INSERT INTO grp_member (id, object_id, member__id)
      VALUES (703, 203, 703)},
+
+  qq{INSERT INTO grp_priv (id, grp__id, value)
+     VALUES(46, 203, 255)},
+
+  qq{INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+     VALUES(46, 100)},
 
   ############################################################################
   # Add the "Default Site" site.

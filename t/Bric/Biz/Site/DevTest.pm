@@ -348,9 +348,37 @@ sub test_save : Test(36) {
 
 ##############################################################################
 # Test permission groups.
-sub test_priv_grps : Test(31) {
+sub test_grps : Test(71) {
     my $self = shift;
     my $site = $self->{test_sites}[0];
+    # Look at a site we've created.
+    compare_grps($site);
+
+    # Look at the default site.
+    ok( $site = Bric::Biz::Site->lookup({ id => 100 }),
+        "Look up default site" );
+    compare_grps($site);
+}
+
+##############################################################################
+# Test Permissions.
+sub test_privs : Test(45) {
+    my $self = shift;
+    my $site = $self->{test_sites}[0];
+    compare_privs($site);
+
+    # Make sure the same is true for the default site.
+    ok( $site = Bric::Biz::Site->lookup({ id => 100 }),
+        "Look up default site" );
+    compare_privs($site);
+}
+
+##############################################################################
+# Private functions.
+##############################################################################
+# Used by get_grps() to look at groups for different sites.
+sub compare_grps {
+    my $site = shift;
 
     # Make sure that there are four user groups for this site.
     ok( my @grps = $site->list_priv_grps, "Get user groups" );
@@ -363,10 +391,11 @@ sub test_priv_grps : Test(31) {
         isa_ok($grp, 'Bric::Util::Grp::User');
         like( $grp->get_name, $name_regex, "Check name" );
         ok( $grp->get_permanent, "Check that it's permanent" );
+        ok( $grp->is_secret, "Check that it's secret" );
     }
 
-    # Chane the site's name.
-    ok( $site->set_name('Biggie'), "Change name" );
+    # Change the site's name.
+    ok( $site->set_name("Biggie $name"), "Change name" );
     ok( $site->save, "Save site" );
 
     # Load 'em up again.
@@ -374,7 +403,7 @@ sub test_priv_grps : Test(31) {
     is( scalar @grps, 4, "Check for four groups again" );
 
     # Check that they've been renamed.
-    $name_regex = qr/^Biggie/;
+    $name_regex = qr/^Biggie $name/;
     foreach my $grp (@grps) {
         isa_ok($grp, 'Bric::Util::Grp::User');
         like( $grp->get_name, $name_regex, "Check new name" );
@@ -388,11 +417,9 @@ sub test_priv_grps : Test(31) {
 }
 
 ##############################################################################
-# Test Permissions.
-sub test_privs : Test(18) {
-    my $self = shift;
-    my $site = $self->{test_sites}[0];
-
+# Used by test_privs() to look at the privs for different sites.
+sub compare_privs {
+    my $site = shift;
     # Grab the permissions for this sucker.
     ok( my @privs = Bric::Util::Priv->list({ obj_grp_id => $site->get_id }),
         "List the permissions" );
@@ -406,12 +433,21 @@ sub test_privs : Test(18) {
         $seen{$priv->get_id} = 1;
     }
 
+    my $name = $site->get_name;
+    my %grp_privs =
+      ( "$name READ Users"   => READ,
+        "$name EDIT Users"   => EDIT,
+        "$name CREATE Users" => CREATE,
+        "$name DENY Users"   => DENY,
+      );
+
     # Grab the permissions associated with the user groups.
     foreach my $ugrp ($site->list_priv_grps) {
         ok( my @p = Bric::Util::Priv->list({ usr_grp_id => $ugrp->get_id }),
             "List user privs" );
         is( scalar @p, 1, "Check for one priv" );
         ok( delete $seen{$p[0]->get_id}, "Check we've seen it" );
+        is( $p[0]->get_value, $grp_privs{$ugrp->get_name}, "Check value" );
     }
 }
 

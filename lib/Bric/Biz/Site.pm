@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.9 $
+$Revision: 1.1.2.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.10 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-09 01:06:19 $
+$Date: 2003-03-09 01:46:24 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.9 2003-03-09 01:06:19 wheeler Exp $
+$Id: Site.pm,v 1.1.2.10 2003-03-09 01:46:24 wheeler Exp $
 
 =back
 
@@ -655,7 +655,8 @@ $set_unique_attr = sub {
 
     my $disp = $self->my_meths->{$field}{disp};
     # Make sure we have a value.
-    throw_not_unique maketext => ["Value of [_1] cannot be empty", $disp]
+    throw_not_unique error    => "Value of $disp cannot be empty",
+                     maketext => ["Value of [_1] cannot be empty", $disp]
       unless $value;
 
     my $old_value = $self->_get($field);
@@ -664,8 +665,10 @@ $set_unique_attr = sub {
 
     # Check the database for any existing sites with the new value.
     if ($self->list_ids({ $field => $value })) {
-        throw_not_unique error => "Not unique", maketext =>
-          ["A site with the [_1] '[_2]' already exists", $disp, $value];
+        throw_not_unique
+          error    => "A site with the $disp '$value' already exists",
+          maketext => ["A site with the [_1] '[_2]' already exists",
+                       $disp, $value];
     }
 
     # Success!

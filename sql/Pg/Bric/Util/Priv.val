@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Priv.val
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.2.2.1 $
 --
--- $Date: 2003-02-26 02:48:26 $
+-- $Date: 2003-03-09 01:46:24 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 /*
@@ -310,3 +310,32 @@ INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(30, 28);
 
 */
+
+-- Give "Default Site READ Users" READ rights to the default Site's asset group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(43, 200, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(43, 100);
+
+-- Give "Default Site EDIT Users" EDIT rights to the default Site's asset group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(44, 201, 2);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(44, 100);
+
+-- Give "Default Site CREATE Users" CREATE rights to the default Site's asset
+-- group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(45, 202, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(45, 100);
+
+-- Give "Default Site DENY Users" DENY rights to the default Site's asset group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(46, 203, 255);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(46, 100);

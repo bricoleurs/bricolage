@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.36.2.1 $
+$Revision: 1.36.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.36.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-08 04:11:37 $
+$Date: 2003-03-09 01:46:24 $
 
 =head1 SYNOPSIS
 
@@ -46,7 +46,7 @@ $Date: 2003-03-08 04:11:37 $
   $grp = $grp->set_parent_id($parent_id);
   my $class_id = $grp->get_class_id;
   my $perm = $grp->get_permanent;
-  my $secret = $grp->get_secret;
+  my $secret = $grp->is_secret;
   my @parent_ids = $grp->get_all_parent_ids;
 
   $grp = $grp->activate;
@@ -174,7 +174,7 @@ BEGIN {
            description    => Bric::FIELD_RDWR,
            class_id       => Bric::FIELD_READ,
            parent_id      => Bric::FIELD_RDWR,
-           secret         => Bric::FIELD_READ,
+           secret         => Bric::FIELD_NONE, # Handled by is_secret().
            permanent      => Bric::FIELD_READ,
            grp_ids        => Bric::FIELD_READ,
 
@@ -219,6 +219,10 @@ Supported Keys:
 
 =item description
 
+=item permanent
+
+=item secret
+
 =back
 
 B<Throws:> NONE.
@@ -234,8 +238,9 @@ sub new {
     $self = bless {}, $self unless ref $self;
     $init->{_active} = exists $init->{active} ? 0 : 1;
     $init->{permanent} = exists $init->{permanent} ? 1 : 0;
-    $self->_set({ secret   => $self->get_secret,
-                  class_id => $self->get_class_id });
+    $init->{secret} = ! exists $init->{secret} ? $self->get_secret :
+      $init->{secret} ? 1 : 0;
+    $init->{class_id} = $self->get_class_id;
     # pass the defined initial state to the super's new method
     # this should set them in register fields
     $self->SUPER::new($init);
@@ -503,8 +508,10 @@ sub get_supported_classes { undef }
 
 =item (1 || undef) = Bric::Util::Grp->get_secret
 
-Returns true if this Grp class is not available for end user
+Returns true if by default groups of this class are not available for end user
 management. Secret groups are used by Bricolage only for internal purposes.
+This class method sets the default value for new group objects, unless a
+C<secret> parameter is passed to C<new()>.
 
 B<Throws:> NONE.
 
@@ -1005,9 +1012,9 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $secret = $grp->get_secret
+=item my $secret = $grp->is_secret
 
-Returns true if the group is a secrete group, and false if it's not. Secret
+Returns true if the group is a secret group, and false if it's not. Secret
 groups are used internally by the API, and are not designed to be managed by
 users via the UI.
 
@@ -1018,6 +1025,8 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
+
+sub is_secret { $_[0]->_get('secret') ? $_[0] : undef }
 
 ##############################################################################
 
