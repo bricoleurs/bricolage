@@ -35,6 +35,10 @@ bric_publish [options]
 
   --category - only publish stories in this category, specified by path
 
+  --chunks   - publish stories in chunks of this many.  Defaults to 0, 
+               which means to process them all at once.  This option can
+               be used to avoid timing out on large jobs.
+
   --timeout  - specify the HTTP timeout for SOAP requests in seconds.
                Defaults to 30.
 
@@ -99,6 +103,7 @@ BEGIN {
     our $VERBOSE         = 0;
     our $no_media        = 0;
     our $timeout         = 30;
+    our $chunks          = 0;
     our ($element, $story_id, $category, $help, $man);
     GetOptions("help"            => \$help,
 	       "man"             => \$man,
@@ -111,6 +116,7 @@ BEGIN {
 	       "no-media"        => \$no_media,
                "story-id=s"      => \$story_id,
                "timeout=s"       => \$timeout,
+	       "chunks=s"        => \$chunks,
 	      ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
@@ -224,7 +230,7 @@ sub get_media_ids {
 
 # publish stories and media found
 sub publish_assets {
-    our ($soap, @story_ids, @media_ids);
+    our ($soap, @story_ids, @media_ids, $chunks);
 
     # do nothing if we've got nothing
     return unless @story_ids;
@@ -232,16 +238,38 @@ sub publish_assets {
     # switch to Workflow module
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Workflow');
 
-    print STDERR "Calling Bric::SOAP::Workflow->publish().\n"
-	if $VERBOSE;
+    # collect ids for publish
+    my @ids = ( ( map { name(story_id => $_) } @story_ids ),
+		( map { name(media_id => $_) } @media_ids ) );
 
-    # publish stories and media
-    my $r = $soap->publish(name(publish_ids => 
-				[ map { name(story_id => $_) } @story_ids,
-				  map { name(media_id => $_) } @media_ids ]));
-    die "Call to Bric::SOAP::Workflow->publish failed : \n" .
-	$r->faultstring
-	    if $r->fault;
+    if ($chunks) {
+	# step through @ids $chunks at a time
+	my ($start, $end);
+	for ($start = 0; $start <= $#ids; $start = $end + 1) {
+	    $end = $start + $chunks - 1;
+	    $end = $#ids if $end > $#ids;
+	    
+	    print STDERR "Calling Bric::SOAP::Workflow->publish(\n",
+		join(",\n", map { "\t". $_->name ." => ". $_->value } 
+		     @ids[$start .. $end]), "\n)\n"
+			 if $VERBOSE > 1;
+
+	    my $r = $soap->publish(name(publish_ids =>[@ids[$start .. $end]]));
+	    die "Call to Bric::SOAP::Workflow->publish failed : \n" .
+		$r->faultstring if $r->fault;	
+	}
+    } else {
+	# publish everything at once
+	
+	print STDERR "Calling Bric::SOAP::Workflow->publish(\n",
+	    join(",\n", 
+		 map { "\t". $_->name ." => ". $_->value } @ids), "\n)\n"
+		     if $VERBOSE > 1;
+	
+	my $r = $soap->publish(name(publish_ids => \@ids));
+	die "Call to Bric::SOAP::Workflow->publish failed : \n" .
+	    $r->faultstring if $r->fault;
+    }
 }
 
 #

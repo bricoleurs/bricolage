@@ -26,6 +26,22 @@ Clicking "Add More" when editing contributor contacts now retains any changes
 made to the contributor profile. This matches the functionality of the user
 profile. Thanks to Joao Pedro Goncalves for the spot. [David]
 
+=item *
+
+Fixed bug in Bric::SOAP::Element where deleting an element or field
+could cause SQL errors due to overflowing the name field. [Sam]
+
+=back
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added --chunks option to bric_republish to publish stories in batches.
+This is useful to avoid timing out on long runs.
+
 =back
 
 =head1 VERSION 1.3.1
