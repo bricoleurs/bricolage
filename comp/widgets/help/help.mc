@@ -19,7 +19,12 @@ Sam Tregar <stregar@about-inc.com>
 
 =cut
 </%doc>
+<%once>;
+my $widget = 'help';
+</%once>
 <%perl>
+  
+  set_state_data($widget, \%ARGS);
   my $DEBUG = 0;
   my $uri = $r->uri();
 

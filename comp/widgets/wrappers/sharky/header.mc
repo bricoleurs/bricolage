@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2002-01-10 18:02:43 $
+$Date: 2002-01-10 19:52:37 $
 
 =head1 SYNOPSIS
 
@@ -82,9 +82,6 @@ foreach my $t (@title) {
   $title .= uc(substr($t,0,1)) .lc( substr($t,1) ) . " " ;
 }
 
-# Cache the context so that help can use it.
-set_state_data('help', { context => $context,
-			 page => $title });
 </%init>
 
 <html>
@@ -234,7 +231,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
     <td valign="top" width="11" class="<% $tab %>"><img src="<% $curve_right %>" width="11" height="22"></td>
 % if ($useSideNav) {
     <td width="10">&nbsp;</td>
-    <td width="71" align="right" valign="top"><& "/widgets/help/help.mc" &></td>
+    <td width="71" align="right" valign="top"><& "/widgets/help/help.mc", context => $context, page => $title &></td>
     <td width="77" alight="right" valign="top">
         <a href="/workflow/profile/alerts"><img src="/media/images/my_alerts_orange.gif" width="77" height="20" border="0" hspace="3" /></a>
     </td>
