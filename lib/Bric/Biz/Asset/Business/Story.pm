@@ -351,7 +351,7 @@ use constant PARAM_WHERE_MAP => {
       _not_checked_out       => 'i.checked_out = 0 AND s.id not in '
                               . '(SELECT story__id FROM story_instance '
                               . 'WHERE s.id = story_instance.story__id '
-                              . 'AND story_instance.checked_out = 1)',
+                              . "AND story_instance.checked_out = '1')",
       primary_oc_id          => 'i.primary_oc__id = ?',
       output_channel_id      => '(i.id = soc.story_instance__id AND '
                               . '(soc.output_channel__id = ? OR '
@@ -359,7 +359,7 @@ use constant PARAM_WHERE_MAP => {
       category_id            => 'i.id = sc2.story_instance__id AND '
                               . 'sc2.category__id = ?',
       primary_category_id    => 'i.id = sc2.story_instance__id AND '
-                              . 'sc2.category__id = ? AND sc2.main = 1',
+                              . "sc2.category__id = ? AND sc2.main = '1'",
       category_uri           => 'i.id = sc2.story_instance__id AND '
                               . 'sc2.category__id = c.id AND '
                               . 'LOWER(c.uri) LIKE LOWER(?)',
@@ -409,13 +409,13 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'i.primary_oc__id = ?' ],
     category_id            => [ 'i.id = sc2.story_instance__id',
                                 'sc2.category__id = ?' ],
-    primary_category_id    => [ 'i.id = sc2.story_instance__id AND sc2.main = 1',
+    primary_category_id    => [ "i.id = sc2.story_instance__id AND sc2.main = '1'",
                                 'sc2.category__id = ?' ],
     category_uri           => [ 'i.id = sc2.story_instance__id AND sc2.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'sk.story_id = s.id AND k.id = sk.keyword_id',
                                 'LOWER(k.name) LIKE LOWER(?)' ],
-    grp_id                 => [ 'm2.active = 1 AND sm2.member__id = m2.id AND s.id = sm2.object_id',
+    grp_id                 => [ "m2.active = '1' AND sm2.member__id = m2.id AND s.id = sm2.object_id",
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = sic.story_instance__id',
                                 'sic.member__id = ?' ],
