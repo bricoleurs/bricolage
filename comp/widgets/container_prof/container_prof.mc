@@ -121,8 +121,8 @@ if ($state eq 'edit_bulk') {
 }
 
 # Add a bit of error correction when users try to use the back buttons.
-$m->out("<input type='hidden' name='$widget|top_stack_tile_id' value='".$tile->get_id."'>\n");
-$m->out("<input type='hidden' name='$widget|state_name' value='".$state."'>\n");
+$m->out("<input type='hidden' name='$widget|top_stack_tile_id' value='".$tile->get_id."' />\n");
+$m->out("<input type='hidden' name='$widget|state_name' value='".$state."' />\n");
 
 return $m->comp("$action.html",
          widget       => $widget,

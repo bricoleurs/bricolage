@@ -1,32 +1,39 @@
-body       { font-family:Verdana,Helvetica,Arial,sans-serif; font-size: 65%; }
-td         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-th         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:12px;}
-pre        { padding: 1em; margin: 0; font-size: 1.1em; } 
-
-p          { font-size:11px; line-height:16px; }
-h3         { font-size:12px; line-height:17px;}
-/*dt         { font-size:11px; line-height:16px; font-weight:bold; }
-dd         { font-size:11px; line-height:16px; }
-li         { font-size:11px; line-height:16px; }*/
+body {
+    margin: 0; padding: 0;
+    background: white url("/media/images/nav_background.gif") 8px 0px repeat-y;
+    font-family: Verdana, Helvetica, Arial, sans-serif; 
+    font-size: 70%;
+}
+th         { font-size: 1.1em; }
+pre        { font-size: 1.1em; padding: 1em; margin: 0; } 
+h3         { font-size: 1.1em; }
 
 a img      { border: none; }
 
 form       { margin: 0; padding: 0; }
 input      { vertical-align: middle; }
-.textInput { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-.textArea  { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-.codeArea  { width: 99%; font-family: monospace; font-size: 1.1em; }
-
-body {
-    margin: 0;
-    padding: 0;
-    background: white url("/media/images/nav_background.gif") 8px 0px repeat-y;
+.textInput { font-family: Verdana, Helvetica, Arial, sans-serif; }
+.textarea,
+.codearea  { 
+    padding: 3px 5px;
+    border-left:   solid 2px #7F7F7F; 
+    border-top:    solid 2px #7F7F7F;
+    border-right:  solid 2px #F7F7F7;
+    border-bottom: solid 2px #F7F7F7;  
 }
+textarea { 
+    width: 100%; 
+    font-family: Verdana, Helvetica, Arial, sans-serif; 
+    font-size: 1em;
+    border: none; 
+}
+.codearea textarea  { font-family: monospace; font-size: 1.1em; }
+
 #navFrame         { background: #666633; }
 #help             { background: white; padding: 10px; }
 
 #bricLogo { padding: 8px 8px 2px 8px; background: white; }
-#mainContainer { position: relative; margin: 0 18px 8px 8px; }
+#mainContainer { position: relative; margin: 0 18px 8px 8px; min-width: 740px; }
 #sideNav { position: absolute; top: 0; left: 0; width: 150px; z-index: 200; border: 0; }
 #contentContainer { padding-left: 158px; }
 #help #contentContainer { padding: 0; }
@@ -117,7 +124,6 @@ body {
 .blackUnderlinedLink { font-size:10px; color:#006666;}
 .blackMedUnderlinedLink { font-size:11px; color:#006666;}
 
-/* .title       { font-size:12px;} */
 .label       { font-size:10px; font-weight:bold}
 .redLabel    { font-size:10px; font-weight:bold; color:red}
 .burgandyLabel { font-size:10px; font-weight:bold; color:#993300}
@@ -340,6 +346,8 @@ form .row .redLabel {
 form .row .input {
     padding-left: 140px;
     margin-left: 0;
+    width: 50%;
+    white-space: nowrap;
     line-height: 2;
 }
 form .row .input p {
@@ -348,21 +356,6 @@ form .row .input p {
     line-height: 1.9;
 }
 form .alpha .row .input { line-height: 1.3em; }
-
-/* Clear floats without additional HTML markup
-   http://www.positioniseverything.net/easyclearing.html */
-form .row:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
-    visibility: hidden;
-}
-form .row { display: inline-block;}
-/* Hides from IE-mac \*/
-* html form .row {height: 1%;}
-form .row {display: block;}
-/* End hide from IE-mac */
 
 table { padding: 0; border-collapse: collapse; position: relative; }
 table tr.odd { background: #E8E8CD; }
@@ -405,32 +398,43 @@ table td.delete { width: 100px; text-align: center; }
 .paginate .pages { float: left; width: 70%; }
 .paginate .all { float: right; width: 25%; text-align: right; }
 
+dl.viewmeta dt,
+dl.viewmeta dd { font-size: 1em; border-bottom: solid white 1px; }
+dl.viewmeta dt {
+    float: left;
+    clear: both;
+    width: 130px;
+    padding: 3px 5px 3px 0;
+    text-align: right;
+    font-size: 1em; font-weight: bold;
+    background-color: #E8E8CD;
+}
+dl.viewmeta dd { margin-left: 140px; }
+
+
+/******************************************************
+ * HACKS                                              *
+ ******************************************************/
+
 /* Clear floats without additional HTML markup
    http://www.positioniseverything.net/easyclearing.html */
-.paginate:after {
+form .row:after,
+.paginate:after,
+.viewmeta:after {
     content: "."; 
     display: block; 
     height: 0; 
     clear: both; 
     visibility: hidden;
 }
-.paginate { display: inline-block;}
+form .row,
+.paginate,
+.viewmeta { display: inline-block;}
 /* Hides from IE-mac \*/
-* html .paginate {height: 1%;}
-.paginate {display: block;}
+* html form .row,
+* html .paginate,
+* html .viewmeta {height: 1%;}
+form .row,
+.paginate,
+.viewmeta {display: block;}
 /* End hide from IE-mac */
-
-
-dl.viewmeta { margin-bottom: 3px; border-bottom: solid #999966 1px;  }
-dl.viewmeta dt,
-dl.viewmeta dd { font-size: 1em; line-height: 2em; height: 2em; }
-dl.viewmeta dt {
-    float: left;
-    clear: both;
-    width: 130px;
-    padding-right: 5px;
-    text-align: right;
-    font-weight: bold;
-    background-color: #E8E8CD;
-}
-dl.viewmeta dd { margin-left: 140px; }
