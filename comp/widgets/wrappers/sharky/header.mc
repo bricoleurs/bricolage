@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.47.2.1 $
+$Revision: 1.47.2.2 $
 
 =head1 DATE
 
-$Date: 2004-04-16 14:02:42 $
+$Date: 2004-04-29 01:59:50 $
 
 =head1 SYNOPSIS
 
@@ -32,7 +32,6 @@ $no_hist => 0
 $debug => undef
 </%args>
 <%init>;
-
 $context =~ s/\&quot\;/\"/g;
 my @context =  split /\|/, $context;
 
@@ -54,21 +53,20 @@ $section ||= 'workflow';
 
 my ($layer, $properties);
 my $agent       = detect_agent();
-my $tab         = ($section eq "admin") ? "adminTab" : "workflowTab";
-my $curve_left  = ($section eq "admin") ? "/media/images/CC6633_curve_left.gif" : "/media/images/006666_curve_left.gif";
-my $curve_right = ($section eq "admin") ? "/media/images/CC6633_curve_right.gif" : "/media/images/006666_curve_right.gif";
+my $tab         = $section eq "admin" ? "adminTab" : "workflowTab";
 my @title       = split (/ /, $title);
 my $uri         = $r->uri;
+my $curve_left  = $section eq "admin"
+  ? "/media/images/CC6633_curve_left.gif"
+  : "/media/images/006666_curve_left.gif";
+my $curve_right = $section eq "admin"
+  ? "/media/images/CC6633_curve_right.gif"
+  : "/media/images/006666_curve_right.gif";
 
-# calculate number of links displayed by side nav and pad out this table cell to make the page
-# long enough (in the browser's mind) to render a scroll bar if needed
+# calculate number of links displayed by side nav and pad out this table cell
+# to make the page long enough (in the browser's mind) to render a scroll bar
+# if needed
 my $nav = get_state_data("nav");
-
-# calculate number of links it is possible to display in the side nav
-my $numLinks = $c->get("__NUM_LINKS__");
-$numLinks ||= 50;
-
-$numLinks += 8 if $agent->mac;
 
 # define variables to output sideNav layer or iframe
 if ($agent->nav4) {
@@ -77,14 +75,15 @@ if ($agent->nav4) {
 } else {
     $layer = "iframe";
     $properties = $agent->mac
-      ? qq { width="150" height="200%" border="0" scrolling="auto" }
+      ? qq { width="150" border="0" scrolling="no" }
         . qq{frameborder="no" marginwidth="0" style="z-index:200;" }
-      : qq{ width="150" height="200%" border="0" scrolling="auto" }
+      : qq{ width="150" border="0" scrolling="no" }
 	. qq{frameborder="no" marginwidth="1" style="z-index:200; visibility:visible; position: absolute; left: 8; top: 35;"};
 }
 
-my $margins = DISABLE_NAV_LAYER && $agent->gecko ?
-  'marginwidth="5" marginheight="5"' : '';
+my $margins = DISABLE_NAV_LAYER && $agent->gecko
+  ? 'marginwidth="5" marginheight="5"'
+  : '';
 
 if(ref($title) eq 'ARRAY') {
     $title = $lang->maketext(@$title);
@@ -93,7 +92,10 @@ if(ref($title) eq 'ARRAY') {
     $title = $lang->maketext( join ' ', map { ucfirst($_) } split / /, $title);
 }
 
+# XXX Doctype is a lie...for now.
 </%init>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <title><% $title %></title>
@@ -131,25 +133,17 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 <body bgcolor="#ffffff" <% $margins %> onLoad="init()" marginwidth="8" marginheight="8" topmargin="8" leftmargin="8">
 <noscript>
 <h1><% $lang->maketext("Warning! Bricolage is designed to run with JavaScript enabled.") %></h1>
-<%$lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.')%>
+<% $lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.') %>
 </noscript>
 
-
 <!-- begin top table -->
-<table border=0 cellpadding=0 cellspacing=0 width=750>
-<tr>
-	<td width=150>
+<div id="bricLogo">
 % if ($useSideNav) {
         <a href="#" onClick="window.open('/help/<% $lang_key %>/about.html', 'About_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'); return false;"><img src="/media/images/<% $lang_key %>/bricolage.gif" width="150" height="25" border="0" /></a>
 % } else {
         <img src="/media/images/<% $lang_key %>/bricolage.gif" width="150" height="25" border="0" />
 % }
-	</td>
-	<td width=600 align=right>
-	 &nbsp;
-	</td>
-</tr>
-</table>
+</div>
 <!-- end top tab table -->
 
 % # this is the Netscape doNav function.  IE looks for it in the iframe file (ie: sideNav.mc)
@@ -171,13 +165,9 @@ function doLink(link) {
 }
 </script>
 
-<!-- begin side nav and content container table -->
-<table border=0 cellpadding=0 cellspacing=0 width=750 height="100%">
-<tr>
-  <td width=150 valign=top bgcolor="#666633" height="150%">
-
+<div id="mainContainer">
+<div id="navContainer">
 <%perl>;
-
 # handle the various states of the side nav
 # login screen: no side nav
 # Netscape (non Unix platforms): include as src of a layer
@@ -195,31 +185,16 @@ if ($useSideNav) {
 	$uri .= "&rnd=" . time;
 	chomp $uri;
 	$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } ) if $agent->nav4;
-	$m->out( qq {<$layer name="sideNav" src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" $properties>} );
+	$m->out( qq {<$layer name="sideNav" id="sideNav" src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" $properties>} );
 	$m->out("</$layer>\n");
     }
 }
 
-$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 </%perl>
-
-% # write out space so the silly browser will provide a scroll bar for the layered content
-% if (!DISABLE_NAV_LAYER && $agent->nav4 && $agent->user_agent !~ /(linux|freebsd|sunos)/) {
-
-  <script type="text/javascript">
-  for (var i=0; i < <% $numLinks %>; i++) {
-      document.write("<p>&nbsp;</p>");
-  }
-  </script>
-
-% }
-
-  </td>
-  <td rowspan=2><img src="/media/images/spacer.gif" width=20 height=1></td>
+</div>
 
 <!-- begin content area -->
-
-  <td width="580" valign="top" rowspan="2">
+<div id="contentContainer">
 % # top tab, help, logout buttons
   <table width="580" cellpadding="0" cellspacing="0" border="0">
   <tr>
@@ -252,8 +227,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
   </tr>
   <tr class="medHeader"><td colspan="2"><img src="/media/images/spacer.gif" height="2" /></td></tr>
   </table>
-
-<%perl>
+<%perl>;
 # handle error messaging
 my $firstMsg = 1;
 while (my $txt = next_msg) {

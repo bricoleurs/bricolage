@@ -45,6 +45,12 @@ Keyword names are now always editable in the keyword manager. [David]
 Added UI for managing organizations, which provide the base data for souces.
 [David]
 
+=item *
+
+HTML, style fixes that allow Bricolage to work properly with most browsers,
+including Safari 1.2.1, IE 5.2/Mac, Konqueror, Opera 7, and many others.
+[Marshall Roch]
+
 =back
 
 =head2 Bug Fixes

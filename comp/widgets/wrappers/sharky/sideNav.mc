@@ -3,7 +3,6 @@ $nav   => undef
 $uri   => undef
 $debug => undef
 </%args>
-
 <%once>;
 my $disp = { map { $_ => get_disp_name($_) }
   qw(story media formatting) };
@@ -46,8 +45,7 @@ my $printLink = sub {
     return $out;
 };
 </%once>
-
-<%perl>
+<%perl>;
 my $site_id = $c->get_user_cx(get_user_id);
 # Make sure we always have a site ID. If the server has just been restarted,
 # then sit_context may not have been executed yet. So execute it to get the
@@ -62,33 +60,27 @@ my $agent                     = detect_agent();
 my $workflowIndent            = 25;
 my $adminIndent               = 25;
 my $tabHeight                 = "height=20";
-my $numLinks                  = $c->get("__NUM_LINKS__") || 0;
-my $workflowGraphic           = $section eq 'admin' ?
-  "/media/images/$lang_key/workflow_admin.gif" :
-  "/media/images/$lang_key/workflow_workflow.gif";
-my $workspaceGraphic          = $type eq "workspace" ?
-  "/media/images/$lang_key/my_workspace_on.gif" :
-  "/media/images/$lang_key/my_workspace_off.gif";
+my $workflowGraphic           = $section eq 'admin'
+  ? "/media/images/$lang_key/workflow_admin.gif"
+  : "/media/images/$lang_key/workflow_workflow.gif";
+my $workspaceGraphic          = $type eq "workspace"
+  ? "/media/images/$lang_key/my_workspace_on.gif"
+  : "/media/images/$lang_key/my_workspace_off.gif";
 
 my $workflows = $c->get('__WORKFLOWS__'. $site_id);
 
 $uri ||= $r->uri;
 $uri = '/workflow/profile/workspace' unless $uri && $uri ne '/';
-
 $nav ||= get_state_data("nav");
 unless ($workflows) {
     # The cache hasn't been loaded yet. Load it.
     $workflows = [];
-    my $tmp = 0;
 
     foreach my $w (Bric::Biz::Workflow->list({site_id => $site_id})) {
-        # account for New/Find/Active links and whitespace
-        $tmp += 6;
         # account for desks
         my @desks = map { [ $_->get_id, $_->get_name,
                             [$_->get_asset_grp, $_->get_grp_ids] ]
                         } $w->allowed_desks;
-        $tmp += scalar(@desks);
         my @gids = ($w->get_asset_grp_id, $w->get_grp_ids);
 
         my $wf = { type    => $w->get_type,
@@ -101,39 +93,47 @@ unless ($workflows) {
         push @$workflows, $wf;
     }
     # account for open admin links
-    $tmp += 16;
-    $c->set("__NUM_LINKS__", $tmp) if $numLinks != $tmp;
     $c->set('__WORKFLOWS__'. $site_id, $workflows);
 }
 
 </%perl>
 % if (!DISABLE_NAV_LAYER && ($agent->user_agent !~ /(linux|freebsd|sunos)/ || $agent->gecko)) {
+% # XXX Doctype is a lie...for now.
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
   <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
-</head>
-
+  <script type="text/javascript">
+function resizeframe() {
+	var ifrm = parent.document.getElementById("sideNav");
+	
+	if (window.opera) {
+	    ifrm.style.height = document.body.scrollHeight + "px";
+	} else {
+	    ifrm.style.height = document.body.offsetHeight + "px";
+    }
+}
+  </script>
 % unless ($agent->nav4) {
-    <script language="javascript">
+  <script language="javascript">
     function doNav(callback) {
         document.location.href = callback;
         return false;
     }
-    </script>
+  </script>
 % }
-<body marginwidth=0 marginheight=0 leftmargin=0 topmargin=0 bgcolor="#666633">
+</head>
+<body marginwidth="0" marginheight="0" leftmargin="0" topmargin="0" id="navFrame" onload="resizeframe();">
 % }
-
 <table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=130>
 <tr>
-
   <td><img src="<% $workflowGraphic %>" width="150" height="22" /></td>
 </tr>
 <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width=1 height=2></td>
 </tr>
 </table>
-
 <table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
 <tr>
   <td class=sideNavActiveCell><a class=sideNavHeaderBold href="/workflow/profile/workspace/" target="_parent"><img src="<% $workspaceGraphic %>" width=150 height=20 border=0></a></td>
@@ -142,13 +142,9 @@ unless ($workflows) {
   <td bgcolor="white"><img src="/media/images/spacer.gif" width=1 height=2></td>
 </tr>
 </table>
-
-<%perl>
-
-
+<%perl>;
 # Begin Workflows -------------------------------------
 # iterate thru workflows
-
 foreach my $wf (@$workflows) {
     next if $site_id && $site_id != $wf->{site_id};
     # Check permissions.
@@ -170,7 +166,6 @@ foreach my $wf (@$workflows) {
         my $can_create = chk_authz(0, CREATE, 1, @{ $wf->{desks}[0][2] });
         </%perl>
         </table>
-
 % # actions
           <table border=0 cellpadding=0 cellspacing=0 bgcolor="white">
             <tr>
@@ -210,7 +205,7 @@ foreach my $wf (@$workflows) {
               <td colspan=2><img src="/media/images/spacer.gif" width=150 height=10></td>
             </tr>
             </table>
-        <%perl>
+        <%perl>;
     } else { # closed state
         $m->out("<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>\n");
         $m->out("<tr class=sideNavInactiveCell>\n");
@@ -222,20 +217,14 @@ foreach my $wf (@$workflows) {
         $m->out(qq {<a href="#" class=sideNavHeader onClick="return doNav('} . $r->uri . qq {?nav|workflow_cb=1&navwfid=$wf->{id}')">});
         $m->out( uc ( $wf->{name} )  . "</a></td>\n</tr>");
         $m->out("</table>\n");
-
     }
 }
-
+# End Workflows -------------------------------------
+# Begin Admin --------------------------------------
+# First, admin section top graphic
 </%perl>
-
-% # End Workflows -------------------------------------
-
-% # Begin Admin --------------------------------------
-
-% # First, admin section top graphic
 % if ( $nav->{admin} ) {
 % # admin always get inactive bg color, but arrow varies
-
   <table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
     <tr>
       <td bgcolor="white" colspan=2><img src="/media/images/spacer.gif" width=1 height=2></td>
@@ -248,13 +237,8 @@ foreach my $wf (@$workflows) {
         <a class=sideNavHeaderBoldWhite href="#" onClick="return doNav('<% $r->uri . "?nav|admin_cb=0" %>')"><% $lang->maketext('ADMIN') %></a>
       </td>
     </tr>
-
   </table>
-
-
 % # Begin system submenus
-
-
 % if ( $nav->{adminSystem} ) { # open system submenu
     <table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
     <tr>
@@ -264,7 +248,6 @@ foreach my $wf (@$workflows) {
         <a class=sideNavHeaderBold href="#" onClick="return doNav('<% $r->uri . "?nav|adminSystem_cb=0" %>')"><% $lang->maketext('SYSTEM') %></a>
       </td>
     </tr>
-
     <tr>
       <td colspan=2>
         <img src="/media/images/spacer.gif" width=150 height=3>
@@ -298,12 +281,8 @@ foreach my $wf (@$workflows) {
     </tr>
     </table>
 % }
-
 % # End system submenus
-
-
 % # begin publishing submenus   
-
 % if ( $nav->{adminPublishing} ) { #open publishing submenu
     <table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
     <tr>
@@ -313,7 +292,6 @@ foreach my $wf (@$workflows) {
         <a class=sideNavHeaderBold href="#"  onClick="return doNav('<% $r->uri . "?nav|adminPublishing_cb=0" %>')"><% $lang->maketext('PUBLISHING') %></a>
       </td>
     </tr>
-
     <tr>
       <td colspan=2>
         <img src="/media/images/spacer.gif" width=150 height=3>
@@ -354,12 +332,8 @@ foreach my $wf (@$workflows) {
     </tr>
     </table>
 % }
-
 % # End publishing submenus
-
-
 % # Begin distribution submenus
-
 % if ( $nav->{distSystem} ) { # open distribution submenu
     <table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
     <tr>
@@ -369,7 +343,6 @@ foreach my $wf (@$workflows) {
         <a class=sideNavHeaderBold href="#" onClick="return doNav('<% $r->uri . "?nav|distSystem_cb=0" %>')"><% $lang->maketext('DISTRIBUTION') %></a>
       </td>
     </tr>
-
     <tr>
       <td colspan=2>
         <img src="/media/images/spacer.gif" width=150 height=3>
@@ -397,12 +370,8 @@ foreach my $wf (@$workflows) {
     </tr>
     </table>
 % }
-
 % # End distribution submenus
-
-
 % } else { # closed admin state
-
   <table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
     <tr>
       <td colspan=2 bgcolor="white"><img src="/media/images/spacer.gif" width=1 height=2></td>
@@ -413,33 +382,28 @@ foreach my $wf (@$workflows) {
     </tr>
   </table>
 % }
-
 % # Bottom of admin menu white spacer
 <table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
 <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width=1 height=2></td>
 </tr>
 </table>
-
 % # End Admin --------------------------------------
-
 % # begin debug widget
 % if (Bric::Config::QA_MODE && $debug) {
-<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
+<table border=0 cellpadding=0 cellspacing=0 width=150>
     <tr>
         <td align="center" bgcolor=#666633><br /><hr/><& /widgets/qa/qa.mc &><br /></td>
     </tr>
 </table>
 % }
 % # end debug widget
-
 % if (!DISABLE_NAV_LAYER && ($agent->user_agent !~ /(linux|freebsd|sunos)/ || $agent->gecko)) {
 </body>
 </html>
 %}
-
-
 <%doc>
+
 ###############################################################################
 
 =head1 NAME
@@ -459,10 +423,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.41.2.1 $
 
 =head1 DATE
 
-$Date: 2004-03-11 23:46:07 $
+$Date: 2004-04-29 01:59:50 $
 
 </%doc>
