@@ -18,8 +18,8 @@ $LastChangedRevision$
 
 =cut
 
-# Grab the Version Number.
-our $VERSION = '1.8.1';
+# Set the Version Number.
+BEGIN { our $VERSION = '1.8.1'; }
 
 =item Date
 
