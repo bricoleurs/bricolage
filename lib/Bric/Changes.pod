@@ -102,6 +102,11 @@ lists, instead of with their names (which are really keys). [David]
 Eliminated "Use of uninitialized value in bitwise or (|)" warnings when checking
 permissions. Thanks to Sam Tregar for the spot. [David]
 
+=item *
+
+Custom fields in elements and contributor types now remember their "size"
+setting. Thanks to Sam Tregar for the spot. [David]
+
 =back
 
 =head1 VERSION 1.2.1
