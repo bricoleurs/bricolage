@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-02-21 19:06:12 $
+$Date: 2003-02-26 02:38:10 $
 
 =head1 SYNOPSIS
 
@@ -643,7 +643,7 @@ Translation to Portuguese using Lang::Maketext.
      'Aviso: o objecto [_1]\' não tem secretária associada. Foi atribuído à secretária [_2]\'.',
   );
 
-=head To translate
+=head2 To translate
 
           'Cannot both delete and make primary a single output channel.'
           'Media [_1] saved and shelved.'
