@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2004-03-25 05:48:02 $
+$Date: 2004-03-25 17:35:25 $
 
 =head1 DESCRIPTION
 
@@ -193,6 +193,10 @@ however, a very useful setup for a production database environment, since it
 severely limits the amount of shared memory that the postmaster can allocate
 for itself.
 
+The specific tuning recommendations below are for PostgreSQL versions 7.3 and
+7.4. Tuning will be slightly different for version 7.2, and very different for
+version 7.5 when it comes out. Consult the necessary documentation.
+
 To tune PostgreSQL, first determine the amount of memory you want to give to
 your running PostgreSQL server. In a production environment where PostgreSQL
 is running on a dedicated machine, this will be the entire memory minus the
@@ -209,7 +213,7 @@ several settings to make. First is the shared memory setting, which in
 PostgreSQL can be set via the C<shared_buffers> setting in the
 F<postgresql.conf> file in your PostgreSQL data directory. This setting
 controls the number of shared buffers that the database server can use. Each
-buffer is 8 Kb. (Usually. Some OSs have different shared buffer settings
+buffer is 8 KB. (Usually. Some OSs have different shared buffer settings
 compiled into their kernels. Consult your server admin for details.)
 
 It's important to remember that this is only a holding area, and I<not> the
@@ -225,11 +229,11 @@ the following example, we'll demonstrate how to set the value to 24576 (192
 MB, or 10% of 2 GB RAM).
 
 First you may need to set your kernel to allow for the shared memory
-allocation. On a Linux system, shared memory is controlled through settings in
-F</etc/sysctl.conf>. So, for our example, where we've decided to give
-PostgreSQL up to 192 MB of shared memory, here's how you would make the kernel
-setting (note that the kernel setting is in bytes, so our setting is C<192 *
-1024 * 1024 = 201326592>):
+allocation. On a Red Hat Linux system, shared memory is controlled through
+settings in F</etc/sysctl.conf>. So, for our example, where we've decided to
+give PostgreSQL up to 192 MB of shared memory, here's how you would make the
+kernel setting (note that the kernel setting is in bytes, so our setting is
+C<192 * 1024 * 1024 = 201326592>):
 
   kernel.shmmax = 201326592
   kernel.shmall = 201326592
@@ -249,10 +253,28 @@ response time to the very large queries used to look up Bricolage objects. The
 sort memory has to do with number of concurrent queries. never risk going over
 total memory, or else PostgreSQL will go into swap and things will get
 I<really> slow. Bricolage generally uses no more than three or four concurrent
-queries, so 32 MB should be okay. Like C<shared_buffers>, the C<sort_mem>
-setting is in 8 Kb buffers:
+queries, so 8 MB should be okay. Unlike C<shared_buffers>, the C<sort_mem>
+setting is in KB buffers, so setting it to 8 MB would be:
 
   sort_mem = 8192
+
+The difficult issue with C<sort_mem> is that more is needed for bigger
+queries, but C<sort_mem> is not shared, being allocated on a I<per-sort>
+basis. You do not, B<ever>, want to use more cumulative C<sort_mem> than your
+computer actually has, because it will go into swap and slow PostgreSQL down
+to glacial speed.
+
+Bricolage uses some complex queries that require 3 or even 4 sorts per
+query. This means that you have to be prepared to have C<3 * sort_mem>
+available for each concurrent query. Overall, this means (with fudge factors)
+that when you can calculate the maximum C<sort_mem> it is completely safe to set
+as: C<Available RAM / max_connections * 3>. But more than 12 MB C<sort_mem>
+should not be needed except on the largest Bricolage installations (5GB +
+database).
+
+You must remember that if your Bricolage usage forces you to increase
+C<max_connections>, then you will have to think about lowering
+C<sort_mem>...or buying more RAM.
 
 =head2 Maximum Connections
 
@@ -267,11 +289,10 @@ even on a single-user system).
 
 If you're not sure what number to assign to the C<max_connections> directive,
 watch your Bricolage server to see how many connections it holds to the
-database to determine the optimum setting. Since the amount of shared memory
-that PostgreSQL will request from the OS is the value of C<max_connections *
-shared_buffers>, lowering this number can also help you to find a middle
-ground between a healthy value for C<shared_buffers> and needing to
-reconfigure the kernel's SHMMAX (See L</"Shared Buffers">).
+database to determine the optimum setting. Since there is an inverse relation
+between C<max_connections> and C<sort_mem>, lowering this number can also help
+you to find a middle ground between a healthy value for C<sort_mem> and
+needing to reconfigure the kernel's SHMMAX (See L</"Shared Buffers">).
 
   max_connections = 50
 
@@ -279,7 +300,7 @@ reconfigure the kernel's SHMMAX (See L</"Shared Buffers">).
 
 The effective cache size is the amount of memory available to PostgreSQL for
 caching your database. This setting should be 2/3 - 3/4 the amount of
-available RAM. This setting is typically set in 8 Kb blocks. So for a system
+available RAM. This setting is typically set in 8 KB blocks. So for a system
 with 2 GB available RAM where you want to allocate 75% for the effective cache
 size, the number would be calculated C<2 * 1024 * 1024 * .75 / 8 = 196608>:
 
@@ -290,7 +311,7 @@ size, the number would be calculated C<2 * 1024 * 1024 * .75 / 8 = 196608>:
 The C<vacuum_mem> directive reserves memory for C<vacuum>ing the database. If
 your PostgreSQL server has a decent amount of RAM (say 1-2 GB), increase the
 value of C<vacuum_mem> to allow C<vacuum>s to go faster. We recommend 64 MB
-(set in Kb):
+(set in KB):
 
   vacuum_mem = 65536
 
@@ -316,7 +337,7 @@ to installation. However, if you're using C<pg_autovacuum> with a threshold of
 30%, then you can set C<max_fsm_pages> to 30% of the expected quantity of
 data pages.
 
-The number of data pages is divided into 8 Kb pages. So for a 1 GB database,
+The number of data pages is divided into 8 KB pages. So for a 1 GB database,
 the number of data pages would be C<1024 * 1024 / 8 = 131072>. For each record
 updated in the database, PostgreSQL must store a dead tuple. The C<fsm_map>
 setting determines how much space is held open so that dead tuples don't crowd
@@ -344,10 +365,8 @@ set up to 20 or 25:
 
 =head2 Where to Learn More
 
-See Bruce Momjian's article "PostgreSQL Hardware Performance Tuning" at
-L<http://www.ca.postgresql.org/docs/momjian/hw_performance/> for more on
-tuning your PostgreSQL server. Lyris has also posted a useful article on this
-topic at L<http://www.lyris.com/lm_help/6.0/tuning_postgresql.html>. You can
+See Josh Berkus' article, "Tuning PostgreSQL for performance" at
+L<http://www.varlena.com/varlena/GeneralBits/Tidbits/perf.html>. You can
 search the archives of the pgsql-performance list at
 L<http://archives.postgresql.org/pgsql-performance/> and subscribe to the list
 at
@@ -380,11 +399,13 @@ course it also saves disk space.
 Of course if you have some reason to generate reports on complete jobs you
 won't be able to do this.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 David Wheeler <david@wheeler.net>
 
 Mark Jaroski <jaroskim@who.int>
+
+With input and suggestions from Josh Berkus.
 
 =head1 SEE ALSO
 
