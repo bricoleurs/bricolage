@@ -2,11 +2,11 @@
 $m->comp('/widgets/listManager/listManager.mc',
          object    => 'category',
          userSort => 0,
-         def_sort_field => 'name',
+         def_sort_field => 'uri',
          title     => 'Current Categories',
          objs      => \@categories,
          profile   => $category_current_profile,
-         fields    => [qw(name uri)],
+         fields    => [qw(uri site name)],
          select =>  $category_select,
          addition  => ''
         );
@@ -15,7 +15,7 @@ $m->comp('/widgets/listManager/listManager.mc',
 
 <& /widgets/search/search.mc,
    object       => 'category',
-   field        => 'name',
+   field        => 'uri',
    type         => 'dual',
    use_form_tag => 0
 &>
@@ -26,7 +26,7 @@ $m->comp('/widgets/listManager/listManager.mc',
    select    => undef,
    profile   => $category_choose_profile,
    exclude  	=> \@existing_categories,
-   fields    => [qw(name uri)],
+   fields    => [qw(uri site name)],
    addition  => '',
    behavior => 'expand',
 &>
