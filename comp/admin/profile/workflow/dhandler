@@ -28,6 +28,28 @@ if (defined $id) {
     $blabel = 'next_dkgreen';
 }
 
+
+if ($id || $no_edit) {
+    $m->out('<input type=hidden name="site_id" value="'.$wf->get_site_id.'">');
+    $m->comp('/widgets/profile/displayFormElement.mc',
+             objref   => $wf,
+             key      => 'site',
+             readOnly => 1);
+} else {
+    # Output a list of object types to choose from.
+    $m->comp('/widgets/select_object/select_object.mc',
+	     readOnly  => ($no_edit || $id),
+             object    => 'site',
+             name      => 'site_id',
+             field     => 'name',
+             disp      => 'Site',
+             exclude   => sub { ! chk_authz($_[0], EDIT, 1) },
+             selected  => scalar $c->get_user_cx(get_user_id),
+             reset_key => $id
+            );
+}
+
+
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 
@@ -180,11 +202,11 @@ if ($new_desk) {
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:12 $
+$Date: 2003-03-13 21:47:13 $
 
 =head1 DESCRIPTION
 

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:53 $
+$Date: 2003-03-13 21:47:15 $
 
 =head1 SYNOPSIS
 
@@ -67,6 +67,8 @@ if ($param->{delete}) {
     $wf->set_description($param->{description});
     $wf->set_type($param->{type}) if exists $param->{type};
     if (! defined $param->{workflow_id}) {
+        $wf->set_site_id($param->{site_id});
+
 	# It's a new workflow. Set the start desk.
 	if ($param->{new_desk_name}) {
 	    # They're creating a brand new desk.
