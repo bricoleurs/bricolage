@@ -516,7 +516,7 @@ revision in the branch.
 For the latter number, you can simply use the C<HEAD> keyword, which
 represents the latest revision number in the branch.
 
-For the former number, Bricolage has implemented a standard way of recording a
+For the former number, we have implemented a standard way of recording a
 merge: we create a new tag for the branch. In Subversion, branches and tags
 are exactly the same, the difference is only in convention. So the convention
 for Bricolage is to store tags in the F<tags> subdirectory of the project
@@ -529,15 +529,15 @@ up to which the merge was made. For example, if a merge was committed to the
 trunk from the rev_1_8 branch in Subversion revision # 5694, the branch would
 be tagged "rev_1_8_merge_5694".
 
-So get the revision number of the last merge, look in the Bricolage ViewCVS
+So to get the revision number of the last merge, look in the Bricolage ViewCVS
 interface for the last merge tag created for the branch. Or use the Subversion
 C<list> command to find it:
 
   % svn list http://svn.bricolage.cc/bricolage/tags | grep rev_1_8
-  rev_1_8_merge_5694
-  rev_1_8_merge_5825
-  rev_1_8_merge_5902
-  rev_1_8_merge_5995
+  rev_1_8_merge_5694/
+  rev_1_8_merge_5825/
+  rev_1_8_merge_5902/
+  rev_1_8_merge_5995/
 
 So now we know that we want to update the trunk with all of the changes
 between revision 5995 and C<HEAD>. If no merge tag exists, then use C<svn log>
