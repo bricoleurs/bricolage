@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-06 00:29:54 $
+$Date: 2001-12-27 23:52:41 $
 
 =head1 DESCRIPTION
 
@@ -63,7 +63,7 @@ our @ISA = qw(Net::FTPServer::FileHandle);
 
 =pod
 
-=item new($ftps, $template, $category_id)
+=item new($ftps, $template, $oc_id, $category_id)
 
 Creates a new Bric::Util::FTP::FileHandle object.  Requires three
 arguments - the Bric::Util::FTP::Server object, the
@@ -73,9 +73,10 @@ Bric::Biz::Asset::Formatting object that this filehandle represents
 =cut
 
 sub new {
-  my $class = shift;
-  my $ftps = shift;
-  my $template = shift;
+  my $class       = shift;
+  my $ftps        = shift;
+  my $template    = shift;
+  my $oc_id       = shift;
   my $category_id = shift;
   
   my $filename =  $template->get_file_name;
@@ -84,9 +85,10 @@ sub new {
   # Create object.
   my $self = Net::FTPServer::FileHandle->new ($ftps, $filename);
   
-  $self->{template} = $template;
+  $self->{template}    = $template;
   $self->{category_id} = $category_id;
-  $self->{filename} = $filename;
+  $self->{oc_id}       = $oc_id;
+  $self->{filename}    = $filename;
 
   print STDERR __PACKAGE__, "::new() : ", $template->get_file_name, "\n" 
     if FTP_DEBUG;
@@ -139,7 +141,8 @@ sub open {
 
     # create a tied scalar and return an IO::Scalar attached to it
     my $data;
-    tie $data, 'Bric::Util::FTP::FileHandle::SCALAR', $template, $self->{ftps}{user_obj};
+    tie $data, 'Bric::Util::FTP::FileHandle::SCALAR', 
+	$template, $self->{ftps}{user_obj};
     my $handle = new IO::Scalar \$data;
 
     # seek if appending
@@ -159,8 +162,10 @@ in.  Calls Bric::Util::FTP::DirHandle->new().
 
 sub dir {
   my $self = shift;
+  print STDERR __PACKAGE__, "::dir() : ", $self->{template}->get_file_name, "\n" ;
   return Bric::Util::FTP::DirHandle->new ($self->{ftps},
                                           $self->dirname,
+                                          $self->{oc_id},
                                           $self->{category_id});
 }
 
@@ -248,9 +253,11 @@ sub delete {
 
   # remove from current desk
   my $desk = $template->get_current_desk;
-  $desk->checkin($template);
-  $desk->remove_asset($template);
-  $desk->save;
+  if ($desk) {
+      $desk->checkin($template);
+      $desk->remove_asset($template);
+      $desk->save;
+  }
 
   # log the removal
   Bric::Util::Event->new({ key_name  => 'formatting_rem_workflow', 
@@ -412,6 +419,10 @@ Sam Tregar (stregar@about-inc.com)
 
 =head1 SEE ALSO
 
-Net:FTPServer::FileHandle, Bric::Util::FTP::Server, Bric::Util::FTP::DirHandle
+Net:FTPServer::FileHandle
+
+L<Bric::Util::FTP::Server>
+
+L<Bric::Util::FTP::DirHandle>
 
 =cut

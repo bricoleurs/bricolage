@@ -12,7 +12,7 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =pod
 
@@ -28,11 +28,12 @@ $Date $
 =head1 DESCRIPTION
 
 This module provides an FTP interface to Bricolage templates.  The
-directory tree is the category tree created in Bricolage.  The files
-are the template files in those categories.  When a user downloads a
-template file they recieve the most recent checked-in version of the
-template.  When a file is uploaded it is automatically checked-in and
-deployed.
+directory tree is the category tree created in Bricolage.  The first
+directory level selects the output channel.  The files are the
+template files in the output channels and categories.  When a user
+downloads a template file they recieve the most recent checked-in
+version of the template.  When a file is uploaded it is automatically
+checked-in and deployed.
 
 For installation and configuration instructions see L<Bric::Admin>.
 
@@ -40,9 +41,6 @@ For installation and configuration instructions see L<Bric::Admin>.
 
 Only GET, PUT and DELETE are implemented for templates.  No
 modification of categories is supported.
-
-The FTP interface won't work right if multiple output-channels are
-defined.
 
 The system doesn't deal with the possibility of having more than one
 active template for a given filename.  This probably won't be fixed
@@ -94,6 +92,8 @@ sub pre_configuration_hook {
 
   # add to version info
   $self->{version_string} .= " Bric::Util::FTP::Server/$VERSION";
+  
+  print STDERR "Bricolage FTP Server Started\n" if FTP_DEBUG;
 }
 
 =item authenticaton_hook($user, $pass, $user_is_anon)
@@ -167,7 +167,11 @@ Sam Tregar (stregar@about-inc.com
 
 =head1 SEE ALSO
 
-Net::FTPServer, Bric::Util::FTP::DirHandler, Bric::Util::FTP::FileHandle
+Net::FTPServer
+
+L<Bric::Util::FTP::DirHandler>
+
+L<Bric::Util::FTP::FileHandle>
 
 =cut
 
