@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.2.1 $
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-02-26 01:31:08 $
 
 =head1 INTRODUCTION
 
@@ -370,6 +370,30 @@ all you need do is use $writer inside a %perl section. Here's an example:
   </%perl>
 
 For more details on how to use XML::Writer, see L<XML::Writer>.
+
+=head1 USING OTHER PERL MODULES
+
+Since Bricolage's templates are all Perl-based, it's of course possible to load
+Perl modules and use them in your templates. You might want to use DBI to pull
+data in from another database, or use XML::RSS to burn in headlines from another
+site. This is one of the great strenghts of Bricolage's templating architecture,
+and we strongly urge you to exploit this strength.
+
+However, it's not efficient to load modules directly in your templates, since
+every time they're run, the'll load the template into a separate Apache process,
+and therefor use more system resouces (memory). It would be better to load all of
+the modules you'll need at Bricolage startup time, so that they get shared across
+processes and therefor use less memory.
+
+With the PERL_LOADER configuration directive in bricolage.conf, you can do just
+that. The PERL_LOADER directive takes, on a single line, an arbitrary line of
+Perl code, and executes it in the namespace reserved for Mason templates (sorry,
+this functionality isn't availabe for HTML::Template templates at this time). So
+you can execute a whole bunch of Perl C<use> statements here, and all the modules
+will be available to you in your templates without needing to reload them there.
+Here's an example:
+
+  PERL_LOADER = use XML::RSS; use CGI qw(:standard); use Apache::DBI;
 
 =head1 AUTHOR
 
