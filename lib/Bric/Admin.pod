@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31.2.15 $
+$Revision: 1.31.2.16 $
 
 =head1 DATE
 
-$Date: 2002-02-27 03:01:33 $
+$Date: 2002-03-02 03:11:25 $
 
 =head1 DESCRIPTION
 
@@ -627,7 +627,9 @@ Save a copy of your bricolage.conf file, so you don't overwrite it:
 
   cp conf/bricolage.conf conf/bricolage.conf.old
 
-Then copy in the new sources from the distribution into you bricolage
+Install the latest Bundle::Bricolage from CPAN to make sure that you have all
+the needed modules (or read through the list of required modules above and do it
+yourself). Then copy in the new sources from the distribution into you bricolage
 directory.
 
   cp -a /path/to/new/bricolage .
