@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-13 00:50:48 $
+$Date: 2002-03-14 00:36:12 $
 
 =head1 SYNOPSIS
 
@@ -117,7 +117,7 @@ sub handler {
   my ($res, $msg) = Bric::App::Auth::auth($r);
   
   if ($res) {
-    return $SERVER->handler(@_); 
+    return $SERVER->handler(@_);
   } else {
     $r->log_reason($msg);
     $r->send_http_header('text/xml');
@@ -144,4 +144,15 @@ END
 
   return OK;
 }
+
+# silence warnings from SOAP::Lite
+{
+    no warnings;
+    use overload;
+    sub SOAP::Serializer::gen_id { 
+	overload::StrVal($_[1]) =~ /\((0x\w+)\)/o; 
+	$1;
+    }
+}
+
 1;
