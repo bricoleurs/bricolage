@@ -37,7 +37,7 @@ sub grant_permissions {
                LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner
                LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
         WHERE  c.relkind IN ('r', 'S')
-               AND u.usename = ?
+               AND u.usename = '$PG->{root_pass}'
                AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
                AND pg_catalog.pg_table_is_visible(c.oid)
       }
