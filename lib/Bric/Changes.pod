@@ -305,6 +305,13 @@ Fixed bug where date field elements weren't getting properly converted between
 the local time zone and UTC, which is the time zone of all the dates in the
 database. Thanks to Matt Vella for the spot. [David]
 
+=item *
+
+Fixed issue where Bric::Util::Grp was adding every member of a group whenever
+a new member was added. This was very wasteful, and slowed performance a great
+deal for groups with thousands of members. Thanks to Mark for the spot.
+[David]
+
 =back
 
 =head1 VERSION 1.3.2
