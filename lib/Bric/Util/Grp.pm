@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-13 03:03:19 $
+$Date: 2003-01-16 00:16:14 $
 
 =head1 SYNOPSIS
 
@@ -200,12 +200,6 @@ CHECK { use Bric::Util::Grp::Grp }
 =head2 Constructors
 
 =over 4
-
-=cut
-
-#--------------------------------------#
-# Constructors
-#------------------------------------------------------------------------------#
 
 =item $grp = Bric::Util::Grp->new($init)
 
@@ -399,6 +393,8 @@ sub list { _do_list(@_) }
 
 =head2 Destructors
 
+=over 4
+
 =item $self->DESTROY
 
 Dummy method to prevent wasting time trying to AUTOLOAD DESTROY
@@ -412,6 +408,8 @@ sub DESTROY {
 
 ##############################################################################
 
+=back
+
 =head2 Public Class Methods
 
 =over 4
@@ -420,56 +418,6 @@ sub DESTROY {
 
 Returns a list or anonymous array of Bric::Util::Grp IDs. The supported keys
 in the C<$params> hash reference are the same as for the C<list()> method.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-
-=over 4
-
-=item obj
-
-A Bricolage object. The groups returned will have member objects for this
-object.
-
-=item package
-
-A Bricolage class name. Use in combination with C<obj_id> to have
-C<_do_list()> return group objects with member objects representing a
-particular Bricolage object.
-
-=item obj_id
-
-A Bricolage object ID. Use in combination with C<package> to have
-C<_do_list()> return group objects with member objects representing a
-particular Bricolage object.
-
-=item parent_id
-
-A group parent ID.
-
-=item inactive
-
-Inactive groups will be returned if this parameter is true. Otherwise, only
-active groups will be returned.
-
-=item all
-
-Both secret and non-secret groups will be returned if this parameter is true.
-Otherwise only non-secret groups will be returned.
-
-=item name
-
-The name of a group.
-
-=item permananent
-
-A boolean to return permanent or non-permanent groups.
-
-=back
 
 B<Throws:>
 
@@ -749,39 +697,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the property
-or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -793,29 +741,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of
-the field.
+If the value is a 'short' value, this hash key contains the length of the
+field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or
+An anonymous hash of properties used to display the property or
 attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -833,27 +783,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by
-the SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -956,6 +907,8 @@ sub my_meths {
 =back
 
 =head2 Public Instance Methods
+
+=over 4
 
 =item $id = $grp->get_id
 
@@ -2070,6 +2023,8 @@ sub save {
 # Private Methods                      #
 #======================================#
 
+=back
+
 =head1 PRIVATE
 
 =head2 Private Class Methods
@@ -2081,6 +2036,8 @@ NONE.
 ##############################################################################
 
 =head2 Private Instance Methods
+
+=over 4
 
 =item $ret = _select_group( $where, [$bind] )
 
@@ -2730,6 +2687,8 @@ sub _sync_attributes {
 }
 
 ##############################################################################
+
+=back
 
 =head2 Private Functions
 
