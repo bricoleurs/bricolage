@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2001-09-28 12:41:49 $
+$Date: 2001-09-28 14:38:46 $
 
 =head1 DESCRIPTION
 
@@ -17,9 +17,17 @@ road map.
 
 =head1 OVERVIEW
 
-This is a pretty rough draft, although I've tried to include everything
-we've thought of so far. This should be the begininning of a comprehensive
-feature list. Bugs should just go into Bugzilla.
+I'm combining the concepts of the To Do list with the Road Map, since what's on
+the To To list merely has version goals. Most of the stuff up through v1.4.0
+should be doable. Other wild ideas go into the "Blue Sky" section.
+
+Bricolage versions are determined by the typs of changes required. Minor version
+numbers require no changes to the datbase (neither in terms of data or the DDL),
+and require few changes to the libraries. The idea is to try to use the existing
+tools in the libraries and the database to do more in the UI, though minor
+changes to the libraries are allowed. Major version numbers, on the other hand,
+change when the database has changed, or when the changes to the libraries are
+significant (including the addition of new libraries).
 
 =head2 VERSION 1.0.2
 
@@ -28,12 +36,12 @@ feature list. Bugs should just go into Bugzilla.
 =item *
 
 Add filename and file_ext to the Output Channel UI. They're already in the
-Bric::Biz::OutputChannel library.
+Bric::Biz::OutputChannel library [David].
 
 =item *
 
 Use the Output Channel filename and file_ext properties to name files in the
-burn system.
+burn system [David].
 
 =item *
 
@@ -46,7 +54,7 @@ Create installation makefile [Mark].
 =item *
 
 Limit rendering of Workflows and Desks in the leftNav by permissions. If a user
-doesn't have READ permission on a Desk or Workflow, don't display it [David].
+doesn't have READ permission on a Desk or Workflow, don't display it [Michele].
 
 =item *
 
@@ -59,7 +67,9 @@ bad [David].
 
 Create different "Notes" icon (different color) for when there actually B<are>
 notes in an asset. This way users won't have to go to the Notes screen just to
-find out if they have notes [David].
+find out if they have notes [Michele].
+
+=item *
 
 Add interface for navigating Catgegories hierarchically when creating a new
 asset [David].
@@ -76,42 +86,16 @@ select lists [David].
 
 =item *
 
-Change the term "attribute" to "field" [David].
+Change the term "attribute" to "field" in the UI [Michele].
 
 =item *
 
-Change CE::_set() to only set if the values are different.
-
-=item *
-
-Add keywords to media.
-
-=item *
-
-Check authorization (permissions) for displaying categories and story/media
-types when users are creating and editing story and media assets. This way, they
-can select only those categories and document types to which they have (READ)
-permission.
+Change CE::_set() to only set if the values are different [David].
 
 =item *
 
 Check new desk names to make sure there isn't an existing desk with the same
-name.
-
-=back
-
-=head2 VERSION 1.2.0
-
-=over 4
-
-=item *
-
-Context-sensitive, online help [Sam].
-
-=item *
-
-Add separate interface for editing templates (via FTP [bleh!] or SCP or
-somesuch) [Sam].
+name [David].
 
 =item *
 
@@ -123,51 +107,37 @@ XML::Writer (or related) support in Templates [David].
 
 =item *
 
-HTML::Template support in Templates [Sam].
-
-=item *
-
-Add ordering to desks, such that their position in workflow can be ordered. This
-will likely need some sort of attribute on the desks's membership in the group
-for a workflow (since desks can be in multiple workflows).
-
-=item *
-
-Add new and/or custom form fields to the formBuilder [WHO].
-
-=item *
-
-Create preference for URI format, that is, the order in which it is assembled
-(category/date/slug or /date/category/slug, etc.) [David].
-
-=item *
-
-User-created help (add a "Help Text" field to Form Builder) [David or Sam].
-
-=item *
-
-Add support for Mozilla/Netscape 6.
-
-=item *
-
-Simplify associating media with stories (ugh) [David & Sam].
-
-=item *
-
 Have CE::Util::Class use CE::Util::Cache [David].
 
 =item *
 
-Add file-naming conventions to Burn system (Bug # 748) [David].
+Add PERL_LOADER configuration directive to bricolage.conf (and Bric::Config) so
+that system administrators can easily specify extra Perl modules they want
+loaded for use in templates [David].
+
+=back
+
+=cut
+
+################################################################################
+
+=head2 VERSION 1.0.3
+
+=over 4
 
 =item *
 
-Resolve "Adding Element and hitting Cancel" issue (Bug # 723).
+Add the ability to use HTML::Template Templates without breaking the use of
+Mason [Sam].
 
 =item *
 
-Add preference for Contributors to be automatically added to assets as keywords
-(Bug # 366) [David].
+Add support for Mozilla/Netscape 6 [Dave or Mark].
+
+=item *
+
+Resolve the "Adding Element and hitting Cancel" issue (See
+http://bricolage-bugzilla.about.com/show_bug.cgi?id=3).
 
 =item *
 
@@ -183,92 +153,173 @@ Add Akamaization Action [David].
 
 =item *
 
-Add new move methods (FTP, SCP, etc.).
+Add new move methods (FTP, SCP, etc.) [Sam and David].
 
 =item *
 
-Add regression test suite.
+Add regression test suite [Mark].
 
 =item *
 
-Preferences Improvements (Bug # 282) [David].
+Add interface for editing Contact Types [David].
 
 =item *
 
-Add listManager preferences (Bug # 280) [David].
+Add check for existing people before adding new ones in the Contributor and
+User interfaces [David].
 
 =item *
 
-Add interface for editing Contact Types (Bug # 285) [David].
+Add ability to change the category association in Templates.
 
 =item *
 
-Add check for existing people before adding new ones (Bug # 325) [David].
+Add "Check In and Publish/Deploy" button to asset editing screens.
 
 =item *
 
-Add URI Case preference (Bug # 674) [David].
+Add "Check In and Remove from Workflow" button to asset editing screens.
 
 =item *
 
-Add Keyword Rules preference (Bug # 689) [David].
+Link contributors to their assets in the -- provide a link in the Contributor
+Manager and/or the Contributor Profile).
 
 =item *
 
-Add category selector to template profile (maybe - Bug # 577).
+If a field in an Element is marked "Required," then require that it be filled
+in in the profile (via JavaScript).
+
+=item *
+
+Add "Clone Asset" button to Media and Story profiles (I think that the API and
+maybe even the callbacks are already done).
 
 =back
 
-=item *
+=cut
 
-Add Group copying so that a new group can start with the settings (including
-permissions) of an existing group.
+################################################################################
 
-=item *
-
-Add support for LDAP Authentication.
-
-=item *
-
-Add PERL_LOADER configuration directive to bricolage.conf (and Bric::Config) so
-that system administrators can easily specify extra Perl modules they want
-loaded for use in templates.
-
-VERSION 1.4.0
+=head2 VERSION 1.2.0
 
 =over 4
 
 =item *
 
-Scheduled Burning/Syndication (Bug # 329).
+Add keywords to media [David].
 
 =item *
 
-Support for Instant messaging (using Jabber server) in Alerts.
+Add Context-sensitive, online help [Sam].
 
 =item *
 
-Basic project management.
+Add user-created help for user-created fields (add a "Help Text" field to Form
+Builder) [David or Sam].
 
 =item *
 
-Add pagination to listManager (maybe - Bug # 281).
+Add scheduled Burning/Syndication [David].
 
 =item *
 
-Make Session an object (Bug # 279).
+Add separate interface for editing templates (via FTP [bleh!] or SCP or
+somesuch) [Sam].
 
 =item *
 
-Add Category object flags (Bug # 288).
+Make Session an object.
 
 =item *
 
-Integrate with CVS and/or Subversion.
+Add ordering to desks, such that their position in workflow can be ordered. This
+will likely need some sort of attribute on the desks's membership in the group
+for a workflow (since desks can be in multiple workflows).
 
 =item *
 
-Integrate with WebDAV (Slide? mod_dav?).
+Add new and/or custom form fields to the formBuilder (WHO request -- need more
+information on what exactly they want).
+
+=item *
+
+Simplify associating media with stories. Users should be able to associated
+media with stories just as they do contributors and keywords. However, the new
+media objects they upload should be put into the repository as normal media
+assets. New uploads of the same media file increment the version numbers.
+
+=item *
+
+Add a flag to the category object to indicate whether or not assets can be
+associated with it, and then check that flag in the new asset profiles.
+
+=item *
+
+Add a flag to the category object to indicate whether or not the category is
+allowed to have subcategories, and then check that flag in the category profile.
+
+=item *
+
+Allow some preferences to have values typed into a text field [David].
+
+=item *
+
+Allow some preferences to get new options entered by the users (e.g., for name
+and date formats).
+
+=item *
+
+Add preference groupings (secret groups would probably work well) and present
+the grouped preferences together in a profile. Then just list the preference
+groups in the Preference Manager [David].
+
+=item *
+
+Add preference for Contributors to be automatically added to assets as keywords
+[David].
+
+=item *
+
+Add preferences for listManagers to indicate whethere they should default to
+expand or narrow behavior [David].
+
+=item *
+
+Add URI Case preference [David].
+
+=item *
+
+Create preference for URI format, that is, the order in which it is assembled
+(category/date/slug or /date/category/slug, etc.) [David].
+
+=item *
+
+Add preferences to allow admins to specify that keywords follow certain rules,
+such as being all lowercase, or to exclude certain words (e.g., About.com
+excludes the keyword "about.com") [David].
+
+=item *
+
+Add support for LDAP authentication.
+
+=back
+
+=cut
+
+################################################################################
+
+=head2 VERSION 1.4.0
+
+=over 4
+
+=item *
+
+Add support for Instant messaging (using Jabber server) in Alerts.
+
+=item *
+
+Add pagination to listManager (maybe).
 
 =item *
 
@@ -276,23 +327,11 @@ Improved Attribute/Field editing and design.
 
 =item *
 
-Improved Element editing and design (Bug # 742 & Bug # 780).
+Add file system-like asset browsing (especially for templates and media).
 
 =item *
 
-Full-text indexing (Bug # 745).
-
-=item *
-
-Add file system-like asset browsing (especially for templates
-
-=item *
-
-and media -- Bug # 746).
-
-=item *
-
-Directory Support (as in MPS).
+Add directory Support (as in MPS).
 
 =item *
 
@@ -308,11 +347,71 @@ Add support for contributor contracts [David].
 
 =item *
 
-Have objects load their group IDs when they're selected to save
+Have objects load their group IDs when they're selected in order to save time
+checking permissions [David].
 
 =item *
 
-time checking permissions.
+Add Group copying so that a new group can start with the settings (including
+permissions) of an existing group.
+
+=item *
+
+Allow Element Types to be subelements. This means that all elements of a
+particular type will be subelements, so that if you add or remove elements of
+that type, they will automatically be subelements of whatever element for which
+the type is defined.
+
+=item *
+
+Add specification for whether Elements added as Subelements of another are
+"Required" or not -- just as we currently do for fields in an Element.
+
+=item *
+
+Create separate sand box for previewing stories with templates while templates
+are under development -- that is, without deploying them.
+
+=item *
+
+Add support for individual user preferences that can override (some) global
+preferences. (Also add group-level prefs?)
+
+=back
+
+=cut
+
+################################################################################
+
+=head2 Blue Sky
+
+=over 4
+
+=item *
+
+Add basic project management.
+
+=item *
+
+Add support for concurrent checkouts, including support for conflict resolution.
+
+=item *
+
+Add support for display of deltas between versions -- something like what CVSWeb
+does, in terms of allowing editors to see what has changed between versions of
+an asset.
+
+=item *
+
+Integrate with CVS and/or Subversion.
+
+=item *
+
+Integrate with WebDAV (Slide? mod_dav?).
+
+=item *
+
+Add full-text indexing of the database.
 
 =item *
 
@@ -320,9 +419,36 @@ Add strong type checking.
 
 =item *
 
-Add previewing to Template Editing (Bug # 370).
+Add thorough directory (LDAP, NDS, ADS) integration, including group and
+permission management.
+
+=item *
+
+Add support for document translation (e.g., Word, QuarkXPress, Acrobat, etc.).
+
+=item *
+
+Add support for skins -- different colors, etc, probably via preferences.
+
+=item *
+
+Add support for creating PDFs in templates (is there something on CPAN for
+this?).
+
+=item *
+
+Allow Elements to be previewed before they're added.
+
+=item *
+
+Add permission granularity down to the User, property, field, and attribute
+levels.
 
 =back
+
+=cut
+
+################################################################################
 
 =head1 AUTHOR
 
@@ -336,7 +462,11 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ToDo.pod,v $
-Revision 1.12  2001-09-28 12:41:49  wheeler
+Revision 1.13  2001-09-28 14:38:46  wheeler
+Added a bunch more, and organized it all. Many of these tasks have assignments,
+and I'm going to move those onto Sourceforge, as well.
+
+Revision 1.12  2001/09/28 12:41:49  wheeler
 Added a bunch more to do items. About to go through them all and get them better
 organized.
 
