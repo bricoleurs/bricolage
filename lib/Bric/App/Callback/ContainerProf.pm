@@ -190,7 +190,7 @@ sub update : Callback(priority => 1) {
     my $self = shift;
     $drift_correction->($self);
     my $param = $self->request_args;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{'_inconsistent_state_'} || $param->{"$widget|up_cb"};
 
     $update_parts->($self, $self->request_args);
     my $tile = get_state_data($self->class_key, 'tile');
