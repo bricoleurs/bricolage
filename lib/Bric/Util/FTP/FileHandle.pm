@@ -8,7 +8,7 @@ Bric::Util::FTP::FileHandle - Virtual FTP Server FileHandle
 
 =head1 VERSION
 
-$Revision $
+$LastChangedRevision$
 
 =cut
 

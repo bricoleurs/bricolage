@@ -6,7 +6,7 @@ Bric::App::ApacheConfig - Bricolage httpd.conf configuration
 
 =head1 VERSION
 
-$Revision$
+$LastChangedRevision$
 
 =cut
 
@@ -17,7 +17,7 @@ INIT {
 
 =head1 DATE
 
-$Date$
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

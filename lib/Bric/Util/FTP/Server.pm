@@ -8,7 +8,7 @@ Bric::Util::FTP::Server - Virtual FTP Server
 
 =head1 VERSION
 
-$Revision $
+$LastChangedRevision$
 
 =cut
 
@@ -18,9 +18,7 @@ INIT {
 
 =pod
 
-=head1 DATE
-
-$Date $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
