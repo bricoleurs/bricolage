@@ -407,6 +407,8 @@ sub create {
 		if $verbose;
 	    $document = join('', <STDIN>);
 	} else { 
+	    print STDERR "$module $command: Reading document \"$_\"...\n"
+		if $verbose;
 	    open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
 	    $document = join('', <DOC>);
 	    close(DOC);
@@ -432,6 +434,8 @@ sub update {
 		if $verbose;
 	    $document = join('', <STDIN>);
 	} else {
+	    print STDERR "$module $command: Reading document \"$_\"...\n"
+		if $verbose;
 	    open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
 	    $document = join('', <DOC>);
 	    close(DOC);
