@@ -123,7 +123,8 @@ sub test_list : Test(36) {
 ##############################################################################
 # Test Output Channel methods.
 ##############################################################################
-sub test_oc : Test(32) {
+sub test_oc : Test(39) {
+
     my $self = shift;
     ok( my $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
         "Lookup story element" );
@@ -134,6 +135,8 @@ sub test_oc : Test(32) {
     isa_ok($oces->[0], 'Bric::Biz::OutputChannel');
     isa_ok($oces->[0], 'Bric::Biz::OutputChannel::Element');
     is( $oces->[0]->get_name, "Web", "Check name 'Web'" );
+
+    my $orig_oc_id = $oces->[0]->get_id;
 
     # Add a new output channel.
     ok( my $oc = Bric::Biz::OutputChannel->new({name    => 'Foober',
@@ -162,6 +165,32 @@ sub test_oc : Test(32) {
     is( scalar @$oces, 2, "Check for two OCs 3" );
     isa_ok($oces->[0], 'Bric::Biz::OutputChannel::Element');
     isa_ok($oces->[1], 'Bric::Biz::OutputChannel::Element');
+
+    # Now try get_primary_oc_id() and set_primary_oc_id
+    is( $at->get_primary_oc_id(100), $orig_oc_id, "Check that primary_oc_id is set to default site");
+    is( $at->get_primary_oc_id(100), $orig_oc_id, "Check that primary_oc_id is second time too!");
+
+    $at->set_primary_oc_id($ocid, 100);
+    is( $at->get_primary_oc_id(100), $ocid, "Check that it is reset after we setit");
+    $at->save();
+    is( $at->get_primary_oc_id(100), $ocid, "Check that it is reset after we save");
+
+    ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
+        "Lookup story element again" );
+
+    is( $at->get_primary_oc_id(100), $ocid, "Check that it is reset after we save");
+
+
+    # Now try to delete the outputchannel when it is still selected
+
+
+    throws_ok {
+        $at->delete_output_channels([$oc]);
+    } qr/You cannot delete an output channel that is marked as primary/,
+      "Check that you can't delete an output channel that is primary";
+
+
+    $at->set_primary_oc_id($orig_oc_id, 100);
 
     # Now delete it.
     ok( $at->delete_output_channels([$oc]), "Delete OC" );

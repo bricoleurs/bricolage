@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-12 09:00:50 $
+-- $Date: 2003-03-12 21:03:51 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 
@@ -16,10 +16,6 @@ ALTER TABLE element ADD
 ALTER TABLE element ADD 
 	CONSTRAINT fk_grp__element FOREIGN KEY (at_grp__id)
 	REFERENCES grp(id) ON DELETE CASCADE;
-
-ALTER TABLE element ADD 
-	CONSTRAINT fk_output_channel__element FOREIGN KEY (primary_oc__id)
-	REFERENCES output_channel(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Table: element__output_channel
@@ -85,12 +81,14 @@ ALTER TABLE attr_element_meta ADD
 -- Table: element__site
 
 ALTER TABLE element__site ADD 
-    CONSTRAINT site__element__site__site__id FOREIGN KEY (site__id)
+    CONSTRAINT fk_site__element__site__site__id FOREIGN KEY (site__id)
     REFERENCES site(id) ON DELETE CASCADE;
 
 ALTER TABLE element__site ADD 
-    CONSTRAINT element__element__site__element__id  FOREIGN KEY (element__id)
+    CONSTRAINT fk_element__element__site__element__id  FOREIGN KEY (element__id)
     REFERENCES element(id) ON DELETE CASCADE;
 
-
+ALTER TABLE element__site ADD 
+	CONSTRAINT fk_output_channel__element__site FOREIGN KEY (primary_oc__id)
+	REFERENCES output_channel(id) ON DELETE CASCADE;
 

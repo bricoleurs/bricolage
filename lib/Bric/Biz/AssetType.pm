@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 17:24:49 $
+$Date: 2003-03-12 21:03:44 $
 
 =head1 SYNOPSIS
 
@@ -38,8 +38,8 @@ $Date: 2003-03-12 17:24:49 $
   $description = $element->get_description()
 
   # Get/set the primary output channel ID for this asset type.
-  $element = $element->set_primary_oc_id($oc_id);
-  $oc_id = $element->get_primary_oc_id;
+  $element = $element->set_primary_oc_id($oc_id, $site_id);
+  $oc_id = $element->get_primary_oc_id($site_id);
 
   # Attribute methods.
   $val  = $element->set_attr($name, $value);
@@ -125,6 +125,8 @@ use Bric::Biz::OutputChannel::Element;
 use Bric::Util::Coll::OCElement;
 use Bric::Util::Coll::Site;
 use Bric::Util::Fault qw(throw_dp);
+use Bric::App::Cache;
+
 #==============================================================================#
 # Inheritance                          #
 #======================================#
@@ -165,11 +167,11 @@ my $table = 'element';
 my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
 my @cols = qw(name key_name description burner reference type__id at_grp__id
-              primary_oc__id active);
+              active);
 my @props = qw(name key_name description burner reference type__id at_grp__id
-               primary_oc_id _active);
+               _active);
 my $sel_cols = "a.id, a.name, a.key_name, a.description, a.burner, a.reference, " .
-  "a.type__id, a.at_grp__id, a.primary_oc__id, a.active, m.grp__id";
+  "a.type__id, a.at_grp__id, a.active, m.grp__id";
 my @sel_props = ('id', @props, 'grp_ids');
 
 #--------------------------------------#
@@ -198,9 +200,6 @@ BEGIN {
 			 # The burner to use to publish this element
                          'burner'               => Bric::FIELD_RDWR,
 
-			 # The primary output channel ID.
-			 'primary_oc_id'        => Bric::FIELD_RDWR,
-
 			 # Whether this asset type reference other data or not.
 			 'reference'            => Bric::FIELD_READ,
 
@@ -209,6 +208,9 @@ BEGIN {
 
 			 # The IDs of the groups this asset type is in.
 			 'grp_ids'             => Bric::FIELD_READ,
+
+                         # The Primary_oc/id cache
+                         '_site_primary_oc_id'  => Bric::FIELD_NONE,
 
 			 # Private Fields
 			 # The active flag
@@ -873,6 +875,29 @@ NONE
 
 =cut
 
+sub set_primary_oc_id {
+    my ( $self, $id, $site) = @_;
+
+    throw_dp "You need to specify what site you want to set the primary oc id for" unless
+      defined $site;
+
+    throw_dp "You can only set the primary oc id for top level AssetTypes"
+      unless $self->get_top_level;
+
+    $site = $site->get_id if ref $site;
+
+    my $oc_site = $self->_get('_site_primary_oc_id');
+
+    # If it is set and it is the same then don't bother
+    return $self if ref $oc_site && exists $oc_site->{$site} && $oc_site->{$site} == $id;
+
+    $oc_site = {} unless ref $oc_site;
+    $oc_site->{$site} = $id;
+    $self->_set(['_site_primary_oc_id'], [$oc_site]);
+
+    return $self;
+}
+
 #------------------------------------------------------------------------------#
 
 =item $primary_oc_id = $element->get_primary_oc_id()
@@ -889,6 +914,42 @@ B<Notes:>
 NONE
 
 =cut
+
+sub get_primary_oc_id {
+    my ($self, $site) = @_;
+
+    throw_dp "You need to specify what site you want the primary oc id for" unless
+      defined $site;
+
+    throw_dp "You can only check the primary oc id for top level AssetTypes"
+      unless $self->get_top_level;
+
+    $site = $site->get_id if ref $site;
+
+    my $oc_site = $self->_get('_site_primary_oc_id');
+    return $oc_site->{$site} if ref $oc_site && exists $oc_site->{$site};
+
+    $oc_site = {} unless ref $oc_site;
+
+    my $sel = prepare_c(qq {
+        SELECT primary_oc__id
+        FROM   element__site
+        WHERE  element__id = ? AND
+               site__id    = ?
+    }, undef, DEBUG);
+
+    execute($sel, $self->get_id, $site);
+
+    my $ret = fetch($sel);
+    finish($sel);
+    return unless $ret;
+
+    my $dirty = $self->_get__dirty();
+    $oc_site->{$site} = $ret->[0];
+    $self->_set(['_site_primary_oc_id'],[$oc_site]);
+    $self->_set__dirty($dirty);
+    return $ret->[0];
+}
 
 #------------------------------------------------------------------------------#
 
@@ -1540,6 +1601,13 @@ B<Notes:> NONE.
 sub delete_output_channels {
     my ($self, $ocs) = @_;
     my $oc_coll = $get_oc_coll->($self);
+
+    foreach my $oc (@$ocs) {
+        $oc = Bric::Biz::OutputChannel->lookup({ id => $oc }) unless ref($oc);
+        throw_dp "You cannot delete an output channel that is marked as primary"
+          if $self->get_primary_oc_id($oc->get_site_id) == $oc->get_id;
+    }
+
     $oc_coll->del_objs(@$ocs);
     return $self;
 }
@@ -2250,7 +2318,8 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($id, $oc_coll, $site_coll) = $self->_get(qw(id _oc_coll _site_coll));
+    my ($id, $oc_coll, $site_coll, $primary_oc_site) = 
+      $self->_get(qw(id _oc_coll _site_coll _site_primary_oc_id));
 
     # Save the group information.
     $self->_get_asset_type_grp->save;
@@ -2283,6 +2352,20 @@ sub save {
 
     #Otherwise save sites here when we have the id
     $site_coll->save($self->get_id) if $site_coll && !$id;
+
+    # Save the mapping of primary oc per site
+    if ($primary_oc_site) {
+        my $update = prepare_c(qq{
+            UPDATE element__site
+            SET    primary_oc__id = ?
+            WHERE  element__id    = ? AND
+                   site__id       = ?
+        },undef, DEBUG);
+        foreach my $site_id (keys %$primary_oc_site) {
+            execute($update, $primary_oc_site->{$site_id}, $self->get_id, $site_id);
+
+        }
+    }
 
     # Save the attribute information.
     $self->_save_attr;

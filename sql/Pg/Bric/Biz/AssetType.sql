@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-12 09:00:50 $
+-- $Date: 2003-03-12 21:03:51 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -56,7 +56,6 @@ CREATE TABLE element  (
                                      CHECK (reference IN (0,1)),
     type__id        NUMERIC(10,0)  NOT NULL,
     at_grp__id      NUMERIC(10,0),
-    primary_oc__id  NUMERIC(10,0),
     active          NUMERIC(1,0)   NOT NULL
                                    DEFAULT 1
                                    CONSTRAINT ck_element__active
@@ -190,7 +189,8 @@ CREATE TABLE element__site (
     site__id       NUMERIC(10)  NOT NULL,
     active         NUMERIC(1)   DEFAULT 1
                                 NOT NULL
-                                CONSTRAINT ck_site_element__active CHECK (active IN (0,1))
+                                CONSTRAINT ck_site_element__active CHECK (active IN (0,1)),
+    primary_oc__id  NUMERIC(10,0)
 );
 
 -- -----------------------------------------------------------------------------
@@ -199,7 +199,6 @@ CREATE TABLE element__site (
 CREATE UNIQUE INDEX udx_element__key_name ON element(LOWER(key_name));
 CREATE INDEX fkx_at_type__element ON element(type__id);
 CREATE INDEX fkx_grp__element ON element(type__id);
-CREATE INDEX fkx_output_channel__element ON element(primary_oc__id);
 
 
 CREATE UNIQUE INDEX udx_at_oc_id__at__oc_id ON element__output_channel(element__id, output_channel__id);
