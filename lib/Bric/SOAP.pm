@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -17,11 +17,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-02-13 03:32:48 $
+$Date: 2002-02-13 03:50:04 $
 
 =head1 SYNOPSIS
 
@@ -29,7 +29,7 @@ $Date: 2002-02-13 03:32:48 $
 
 =head1 DESCRIPTION
 
-This module serves as a root class for the Bric::SOAP::* classes.  It
+This module serves as a root class for the Bric::SOAP classes.  It
 also contains the functional and technical specifications for the
 Bricolage SOAP interface.
 
@@ -165,30 +165,22 @@ Provides query, export, update, import and delete for Story objects.
 
 Provides query, export, update, import and delete for Media objects.
 
-=item L<Bric::SOAP::Template|Bric::SOAP::Template>
+=item L<Bric::SOAP::Template|Bric::SOAP::Template> B<[Implementation Incomplete]>
 
 Provides query, export, update, import and delete for Templates.
 
-B<IMPLEMENTATION INCOMPLETE>
-
-=item Bric::SOAP::Element
+=item Bric::SOAP::Element B<[Not Yet Implemented]>
 
 Provides query, export, update, import and delete for Element definitions.
 
-B<NOT YET IMPLEMENTED>
-
-=item Bric::SOAP::Category
+=item Bric::SOAP::Category B<[Not Yet Implemented]>
 
 Provides query, export, update, import and delete for Category objects.
 
-B<NOT YET IMPLEMENTED>
-
-=item Bric::SOAP::Workflow
+=item Bric::SOAP::Workflow B<Not Yet Implemented>
 
 Provides the ability to move Story, Media and Formatting objects
 between desks, publish and deploy.
-
-B<NOT YET IMPLEMENTED>
 
 =back
 
@@ -293,10 +285,13 @@ The XML Schema for these documents is included below.
 
 =head3 Error Handling
 
-Errors are returned as SOAP faults using fault codes defined by the
-method called.  SOAP::Lite automatically generates exceptions (dies)
-when it encounters a SOAP fault so if you want to write code to deal
-with errors just wrap your SOAP call in an eval {}.
+Errors are returned as SOAP faults using fault strings produced by the
+method called.  If you use SOAP::Lite as your client library you can
+check for errors using the fault() method and access the error message
+with faultstring():
+
+  my $response = $soap->list_ids(...);
+  die "SOAP Error: " . $response->faultstring if $response->fault;
 
 =head2 XML Schema For Asset Documents
 
@@ -744,9 +739,9 @@ L<Bric::SOAP::Auth|Bric::SOAP::Auth>
 
 L<Bric::SOAP::Story|Bric::SOAP::Story>
 
-L<Bric::SOAP::Story|Bric::SOAP::Media>
+L<Bric::SOAP::Media|Bric::SOAP::Media>
 
-L<Bric::SOAP::Story|Bric::SOAP::Template>
+L<Bric::SOAP::Template|Bric::SOAP::Template>
 
 =head1 AUTHOR
 
