@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-10 03:32:11 $
+$Date: 2003-01-13 03:03:19 $
 
 =head1 SYNOPSIS
 
@@ -2915,7 +2915,7 @@ sub _do_list {
 
     my $ord = $criteria->{Order} || 'name';
     $sql .= $chk ? " ORDER BY g.$ord " : " ORDER BY $ord ";
-    $sql .= $criteria->{OrderDirection};
+    $sql .= $criteria->{OrderDirection} if $criteria->{OrderDirection};
     my $select = prepare_c($sql, undef, DEBUG);
 
     # this was a call to list ids
