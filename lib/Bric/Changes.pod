@@ -148,12 +148,12 @@ the heads-up. [David]
 
 =item *
 
-An overhaul of the burn system had regressed the Output Channel preview 
-functionality.  I've put it back now.  [Mark]
+An overhaul of the burn system had regressed the Output Channel preview
+functionality. I've put it back now. [Mark]
 
 =item *
 
-Fixed button javascript to work correctly in Mozilla.  [Matt]
+Fixed button javascript to work correctly in Mozilla. [Matt]
 
 =item *
 
@@ -162,7 +162,13 @@ working in some cases.  [Sam]
 
 =item *
 
-Numerous spelling errors were fixed by Scott Lanning.  Thanks!
+Numerous spelling errors were fixed by Scott Lanning. Thanks!
+
+=item *
+
+In the Element manager, doing a search after selecting an Element Type from
+which to display elements no longer causes an error. Thanks to Adam Robinson
+for the spot. [David]
 
 =back
 
