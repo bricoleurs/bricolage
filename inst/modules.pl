@@ -6,11 +6,11 @@ modules.pl - installation script to probe for required Perl modules
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-06-10 20:46:16 $
+$Date: 2002-08-09 18:41:38 $
 
 =head1 DESCRIPTION
 
@@ -47,7 +47,15 @@ extract_module_list();
 # loop through modules, checking existence and versions
 foreach my $rec (@MOD) {
     $rec->{found} = check_module($rec);
-    $MISSING = 1 if $rec->{found} == 0;
+    unless ($rec->{found}) {
+        if ($rec->{optional} and 
+            not ask_yesno("Do you want to install the optional module " . 
+                          "$rec->{name}? [no] ", 0)) {
+            $rec->{found} = 1;
+        } else {
+            $MISSING = 1;
+        }
+    }
 }
 
 # if we have missing, tell all about it and make sure they want to proceed
@@ -115,9 +123,11 @@ sub extract_module_list {
   }
   # read in modules
   while (<ADM>) {
-    if (/^=item\s+(\S+)(?:\s+(\S+))?/) {
+    if (/^=item\s+(\S+)(?:\s+(\S+))?(?:\s+(\(optional\)))/) {
       push @MOD, { name             => $1,
-		   req_version      => $2 };
+		   req_version      => $2,
+                   optional         => defined $3 ? 1 : 0,
+                 };
     } elsif (/END MODULE LIST/) {
       last;
     }

@@ -274,6 +274,11 @@ Thanks to Vicki Brown for the catch.  [Sam]
 Fixed installation system to fail if there are errors importing the
 database.  Also added test for missing or empty bricolage.sql. [Sam]
 
+=item *
+
+Fixed installation system to support optional modules and not force
+users to install them.  [Sam]
+
 =back
 
 =head1 VERSION 1.3.2
