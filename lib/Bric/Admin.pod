@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.5 $
+$Revision: 1.5.2.6 $
 
 =head1 DATE
 
-$Date: 2001-10-05 09:33:31 $
+$Date: 2001-10-05 10:08:40 $
 
 =head1 DESCRIPTION
 
@@ -58,6 +58,8 @@ Perl Modules:
 =item HTML::Parser3.23
 
 =item MIME::Base64 2.12
+
+=item XML::Writer 0.4
 
 =item libwww-perl 5.50
 
@@ -1454,7 +1456,10 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: Admin.pod,v $
-Revision 1.5.2.5  2001-10-05 09:33:31  wheeler
+Revision 1.5.2.6  2001-10-05 10:08:40  wheeler
+Added XML::Writer to the list of required Perl modules.
+
+Revision 1.5.2.5  2001/10/05 09:33:31  wheeler
 Documented XML::Writer configuration directives.
 
 Revision 1.5.2.4  2001/10/04 13:46:56  wheeler
