@@ -2,25 +2,48 @@
 
 Bricolage::License - The Bricolage License.
 
-=head1 VERSION
-
-$Revision: 1.1 $
-
-=head1 DATE
-
-$Date: 2001-09-06 21:52:52 $
-
-=head1 DESCRIPTION
-
-This document contains the Bricolage license and credits.
-
 =head1 LICENSE
 
-INSERT LICENSE HERE
+Copyright (c) 2001, About.com
 
-=head1 COPYRIGHT
+All rights reserved.
 
-INSERT COPYRIGHT HERE
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+=over 4
+
+=item * 
+
+Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+
+=item * 
+
+Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+=item *
+
+Neither the name of the About.com nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+=back
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =head1 CREDITS
 
@@ -71,21 +94,6 @@ Others who contributed to its support and development:
 =item Elizabeth Kairys
 
 =back
-
-=head1 AUTHOR
-
-David Wheeler <david@wheeler.net>
-
-=head1 SEE ALSO
-
-perl(1),
-Bric (2).
-
-=head1 REVISION HISTORY
-
-$Log: License.pod,v $
-Revision 1.1  2001-09-06 21:52:52  wheeler
-Initial revision
 
 =cut
 
