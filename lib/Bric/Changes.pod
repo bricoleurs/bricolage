@@ -66,6 +66,10 @@ uploaded media files will be created based on the media type element selected
 from a select list, and given the same category, cover date, and priority as
 the current document. Enabled by default. [JoE<atilde>o Pedro and David]
 
+=item *
+
+Added the element_type module to bric_soap. [Scott]
+
 =back
 
 =head2 Improvements

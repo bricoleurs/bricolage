@@ -22,11 +22,12 @@ Modules:
   user
   desk
   workflow
+  element_type
 
 Commands:
 
   Asset Commands (story, media, template, element, category,
-                  media_type, site, keyword, user, desk):
+                  media_type, site, keyword, user, desk, element_type):
 
     list_ids
     export
@@ -365,6 +366,13 @@ our %jump = (
                           update   => \&update,
                           delete   => \&delete,
 			 },
+             element_type => {
+                          list_ids => \&list_ids,
+                          export   => \&export,
+                          create   => \&create,
+                          update   => \&update,
+                          delete   => \&delete,
+                      },
 	    );
 
 # get module and verify

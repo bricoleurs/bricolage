@@ -17,6 +17,7 @@ use Bric::SOAP::Site;
 use Bric::SOAP::Keyword;
 use Bric::SOAP::User;
 use Bric::SOAP::Desk;
+use Bric::SOAP::ElementType;
 
 1;
 __END__
@@ -205,6 +206,10 @@ Provides query, export, update, create, and delete for Desk objects.
 Provides the ability to move Story, Media and Formatting objects between
 desks. Also provides checkin, checkout, publish, and deploy.
 And now list_ids, export, create, update, and delete.
+
+=item L<Bric::SOAP::ElementType|Bric::SOAP::ElementType>
+
+Provides query, export, update, create, and delete for ElementType objects.
 
 =back
 
@@ -1034,7 +1039,41 @@ The XSD source:
              <xs:attribute name="id" type="xs:int" use="required"/>
            </xs:complexType>
          </xs:element>
-
+         <xs:element name="element_type" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="top_level" type="xs:boolean"/>
+               <xs:element name="paginated" type="xs:boolean"/>
+               <xs:element name="fixed_url" type="xs:boolean"/>
+               <xs:element name="related_story" type="xs:boolean"/>
+               <xs:element name="related_media" type="xs:boolean"/>
+               <xs:element name="media" type="xs:boolean"/>
+               <xs:element name="biz_class">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="128"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="active" type="xs:boolean"/>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
          <xs:element name="workflow" minOccurs="0" maxOccurs="unbounded">
            <xs:complexType>
              <xs:sequence>
@@ -1227,6 +1266,8 @@ L<Bric::SOAP::Keyword|Bric::SOAP::Keyword>
 L<Bric::SOAP::User|Bric::SOAP::User>
 
 L<Bric::SOAP::Desk|Bric::SOAP::Desk>
+
+L<Bric::SOAP::ElementType|Bric::SOAP::ElementType>
 
 L<bric_soap|bric_soap>
 

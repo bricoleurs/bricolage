@@ -41,7 +41,7 @@ _bric_soap()
     # Module completion
     if [ $COMP_CWORD = 1 ]; then
         COMPREPLY=( $( compgen -W 'story media template element category media_type \
-            site keyword user desk workflow' -- $cur ) )
+            site keyword user desk element_type workflow' -- $cur ) )
 
         # Append a space to the modules
         for (( i=0; i < ${#COMPREPLY[@]}; i++ )); do
@@ -111,6 +111,11 @@ _bric_soap()
                 ;;
             desk)
                 COMPREPLY=( $( compgen -W 'name description publish active' -- $cur ) )
+                ;;
+            element_type)
+                COMPREPLY=( $( compgen -W 'name description top_level paginated \
+                                           fixed_url related_story related_media \
+                                           media active' -- $cur ) )
                 ;;
             workflow)
                 COMPREPLY=( $( compgen -W 'name description site type desk active' \
