@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.69 $
+$Revision: 1.70 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.69 $ )[-1];
+our $VERSION = (qw$Revision: 1.70 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-04 15:23:34 $
+$Date: 2003-08-18 13:29:55 $
 
 =head1 SYNOPSIS
 
@@ -486,7 +486,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant DISABLE_NAV_LAYER       => $config->{DISABLE_NAV_LAYER};
     use constant ALLOW_WORKFLOW_TRANSFER => $config->{ALLOW_WORKFLOW_TRANSFER};
     use constant ALLOW_ALL_SITES_CX      => $config->{ALLOW_ALL_SITES_CX};
-    use constant FULL_SEARCH =>          => $config->{FULL_SEARCH};
+    use constant FULL_SEARCH             => $config->{FULL_SEARCH};
     use constant YEAR_SPAN_BEFORE        => $config->{YEAR_SPAN_BEFORE} || 10;
     use constant YEAR_SPAN_AFTER         => $config->{YEAR_SPAN_AFTER}  || 10;
 
