@@ -1,3 +1,5 @@
+# settings
+SHELL = /bin/sh
 
 # Programatic dependancies
 PERL = @PERL@
@@ -6,26 +8,33 @@ POSTGRESHOME = @PGHOME@
 POD2HTML = @POD2HTML@
 POD2TEXT = @POD2TEXT@
 POD2MAN = @POD2MAN@
+GZIP = @GZIP@
+MKDIR = @MKDIR@
+FIND = @FIND@
 
-
+# directories
+BIN = bin
+COMP = comp
+CONF = conf
+DATA = data
+LIB = lib
+DOC = doc
 
 # Installation related variables
-BINDIR  = @bindir@
-DATADIR  = @datadir@
-EXEC_PREFIX  = @exec_prefix@
-INCLUDEDIR  = @includedir@
-INFODIR  = @infodir@
-LIBDIR  = @libdir@
-LIBEXECDIR  = @libexecdir@
-LOCALSTATEDIR  = @localstatedir@
-MANDIR  = @mandir@
-OLDINCLUDEDIR  = @oldincludedir@
-PREFIX  = @prefix@
-SBINDIR  = @sbindir@
-SHAREDSTATEDIR  = @sharedstatedir@
-SYSCONFDIR  = @sysconfdir@
-
-
+prefix  = @prefix@
+exec_prefix  = @exec_prefix@
+bindir  = @bindir@
+datadir  = @datadir@
+sysconfdir  = @sysconfdir@
+libdir  = @libdir@
+libexecdir  = @libexecdir@
+includedir  = @includedir@
+oldincludedir  = @oldincludedir@
+mandir  = @mandir@
+infodir  = @infodir@
+sbindir  = @sbindir@
+localstatedir  = @localstatedir@
+sharedstatedir  = @sharedstatedir@
 
 # Bricolage configuration info
 APACHE_USER = @APACHE_USER@
@@ -37,11 +46,13 @@ MODULE_COMMAND = $(foreach mod,${MISSING_MODULES},${PERL} -MCPAN -e "install ${m
 
 
 
-all: dep README INSTALL TODO License
+all: README INSTALL TODO License doc
 
-install:
+install: dep 
 
 dep: cpan
+
+
 
 cpan:
 	${INSTALL_MISSING}
@@ -59,10 +70,17 @@ README:
 License:
 	${POD2TEXT} lib/Bric/License.pod >$@
 
+doc:
+	cd ${DOC} && ${MAKE} -e
 
-clean:
+
+
+
+clean: docclean
 	${RM} -f README INSTALL TODO License
 
+docclean:
+	cd $(DOC) && ${MAKE} -e clean
 
 
 .PHONY : clean dep clean cpan
