@@ -44,6 +44,11 @@ like they do everywhere else (and uses less code, to boot!). [David]
 Improved error messages thrown in exceptions in Bric::Util::Trans::FTP.
 [David]
 
+=item *
+
+Removed code and documentation for PostgreSQL 7.3 compatability. With the
+release of 7.3b2, it's no longer needed. [David]
+
 =back
 
 =head1 VERSION 1.4.3
