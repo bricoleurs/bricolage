@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.2';
 
 =item Date
 
-$Date: 2003-11-30 20:08:59 $
+$Date: 2003-12-16 17:46:41 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.42 2003-11-30 20:08:59 wheeler Exp $
+$Id: Bric.pm,v 1.43 2003-12-16 17:46:41 autarch Exp $
 
 =back
 
@@ -175,7 +175,10 @@ C<lookup()> methods. See C<lookup()> for an example.
 sub cache_lookup {
     if (defined MOD_PERL) {
         my ($pkg, $param) = @_;
-        my $r = Apache::Request->instance(Apache->request);
+        my $req = Apache->request;
+        # We may be called during Apache startup
+        return unless $req;
+        my $r = Apache::Request->instance($req);
         $pkg = ref $pkg || $pkg;
         while (my ($k, $v) = each %$param) {
             if (my $obj = $r->pnotes("$pkg|$k|" . lc $v)) {
@@ -556,7 +559,10 @@ sub cache_me {
         my $pkg = ref $self or return;
         # Skip unsaved objects.
         return unless defined $self->{id};
-        my $r = Apache::Request->instance(Apache->request);
+        my $req = Apache->request;
+        # We may be called during Apache startup
+        return unless $req;
+        my $r = Apache::Request->instance($req);
         # Cache it under its ID.
         $r->pnotes("$pkg|id|$self->{id}", $self);
         # Cache it under other unique identifiers.
