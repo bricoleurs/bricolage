@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-03-20 20:02:53 $
+$Date: 2002-03-20 20:03:35 $
 
 =head1 DESCRIPTION
 
@@ -94,7 +94,7 @@ with the C<-p0> option from the root of your CVS checkout:
 
   patch -p0 < patch.txt
 
-Make sure you check the results with C<cvs diff> before commiting.
+Make sure you check the results with C<cvs diff> before committing.
 
 =head1 CODING STANDARDS
 
