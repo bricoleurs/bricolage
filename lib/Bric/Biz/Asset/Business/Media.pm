@@ -47,6 +47,7 @@ use Bric::App::MediaFunc;
 use File::Temp qw( tempfile );
 use Bric::Config qw(:media :thumb MASON_COMP_ROOT);
 use Bric::Util::Fault qw(:all);
+use Bric::Util::MediaType;
 
 #==============================================================================#
 # Inheritance                          #
