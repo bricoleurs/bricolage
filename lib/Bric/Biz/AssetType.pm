@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-25 01:32:01 $
+$Date: 2003-01-10 03:57:08 $
 
 =head1 SYNOPSIS
 
@@ -1861,7 +1861,7 @@ B<Notes:>
 
 NONE
 
-=cut 
+=cut
 
 sub del_containers {
     my $self = shift;
@@ -1869,7 +1869,9 @@ sub del_containers {
     my $grp = $self->_get_asset_type_grp;
 
     # Construct the proper array to pass to 'add_members'
-    my @mem = map {ref $_ ? $_ : {id  => $_, package => __PACKAGE__}} @$at;
+    my @mem = map {ref $_ ? { obj => $_ }
+                     : { id  => $_, package => __PACKAGE__ } }
+      @$at;
 
     return unless $grp->delete_members(\@mem);
     return $self;
@@ -1878,16 +1880,16 @@ sub del_containers {
 #------------------------------------------------------------------------------#
 
 =item ($element || 0) = $element->is_repeatable($at_container);
+
 =item $element        = $element->make_repeatable($at_container);
+
 =item $element        = $element->make_nonrepeatable($at_container);
-  
-Get/Set the repeatable flag for a contained AssetType.  Note that this 
+
+Get/Set the repeatable flag for a contained AssetType. Note that this
 repeatability only applies to this AssetTypes relation to the contained
-AssetType.  
-  
-B<Throws:>
-  
-NONE
+AssetType.
+
+B<Throws:> NONE
 
 B<Side Effects:>
 
@@ -1897,8 +1899,8 @@ B<Notes:>
 
 NONE
 
-=cut 
-  
+=cut
+
 sub is_repeatable {
     my $self = shift @_;
     my ($at) = @_;

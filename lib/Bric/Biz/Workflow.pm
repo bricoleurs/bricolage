@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-02 00:15:45 $
+$Date: 2003-01-10 03:57:08 $
 
 =head1 SYNOPSIS
 
@@ -730,12 +730,16 @@ sub del_desk {
     my $req_grp = $self->_get_req_desk_grp;
     my $vals;
 
-    foreach (@$desks) {
-	my $id = ref $_ ? $_->get_id : $_;
-	
-	push @$vals, {'package' => DESK_PKG,
-                      'id'      => $id };
-	
+    foreach my $d (@$desks) {
+        my $id;
+        if (ref $d) {
+            $id = $d->get_id;
+            push @$vals, { obj => $d };
+        } else {
+            $id = $d;
+            push @$vals, { package => DESK_PKG, id => $d };
+        }
+
 	# Clear out the head desk stuff if they delete the head desk.
 	if ($self->get_head_desk_id == $id) {
 	    $self->_set(['head_desk_id', '_head_desk_obj'], [undef, undef]);
@@ -756,7 +760,7 @@ sub del_desk {
 Returns a list of allowed desks.
 
 B<Throws:>
-  
+
 NONE
 
 B<Side Effects:>

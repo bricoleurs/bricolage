@@ -326,6 +326,14 @@ Added C<page_filepath()> method to Bric::Util::Burner. This method allows
 burner subclasses to get the name of a file to write to the file system
 without needing to figure out the file name themselves. [David]
 
+=item *
+
+Optimized behavior of collections (internal API). Now when an object is
+deleted from a collection (for example, when a member is deleted from a
+group), all the existing objects in the collection won't first be looked up in
+the database. The upshot is that certain parts of Bricolage that rely on
+collections, such as desks, should be more responsive. [David]
+
 =back
 
 =head1 VERSION 1.4.6
