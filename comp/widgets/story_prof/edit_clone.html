@@ -59,10 +59,14 @@ $m->comp('/widgets/wrappers/sharky/table_top.mc',
          ghostly => 1
      );
 
+
+# Have to use a separate hidden field as IE only sent desk_asset|clone_cb.x
+# and .y, but not desk_asset|clone_cb with value=$sid
+$m->comp('/widgets/profile/hidden.mc',
+         name => 'desk_asset|clone_cb',
+         value => $sid);
 $m->comp('/widgets/profile/create_button.html',
-         widget => 'desk_asset',   # for 'cb'
-         value => $sid,
-         cb => 'clone_cb');
+         widget => '', cb => '');
 
 # (implicit table_bottom...)
 </%perl>

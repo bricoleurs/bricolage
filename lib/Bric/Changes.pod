@@ -36,6 +36,10 @@ required module. Reported by Marshall Roch. [David]
 Bric::Util::Burner's C<preview_another()> method now actually works. Thanks to
 Serge Sozonoff for the spot. [David]
 
+=item *
+
+Fixed clone interface for IE users. Spotted by Serge. [Scott]
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
