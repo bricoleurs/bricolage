@@ -1,10 +1,10 @@
 <table width=578 cellpadding=2 cellspacing=1 border=0>
   <tr>
     <td align="right">
-      <input type="image" src="/media/images/<% $chk_cb %>_assets_<% $color1 %>.gif" border=0 name="<% "$widget|$chk_cb" %>_cb" value="<% $chk_label %>">
+      <input type="image" src="/media/images/<% "$lang_key/$chk_cb" %>_assets_<% $color1 %>.gif" border=0 name="<% "$widget|$chk_cb" %>_cb" value="<% $chk_label %>">
 % if (!$desk || ($desk && $desk->can_publish)) {
-%#      <input type="image" src="/media/images/<% $act_cb %>_<% $mod %>_<% $color2 %>.gif" border=0 name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
-      <input type="image" src="/media/images/<% $act_label %>.gif" border=0 name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
+%#      <input type="image" src="/media/images/<% "$lang_key/$act_cb" %>_<% $mod %>_<% $color2 %>.gif" border=0 name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
+      <input type="image" src="/media/images/<% "$lang_key/$act_label" %>.gif" border=0 name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
 % }
     </td>
   </tr>
