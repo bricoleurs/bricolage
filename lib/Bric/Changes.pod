@@ -63,7 +63,8 @@ to Kevin White for the spot! [David]
 
 =item *
 
-Fix issue that came up with the release of Mason 1.20. [David]
+Fix issue that came up with the release of Mason 1.20. Reported by Jeff
+Steele. [David]
 
 =back
 
