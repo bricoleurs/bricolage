@@ -18,7 +18,7 @@ use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Util::DBI;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(:all);
 use Bric::Util::Grp::Parts::Member::Contrib;
 
 my $SEARCH_URL = '/workflow/manager/story/';
@@ -683,8 +683,7 @@ sub recall : Callback {
 
             # Make sure the workflow ID is valid.
             unless ($w_id) {
-                my $msg = "Bad Workflow ID '$w_id'";
-                die Bric::Util::Fault::Exception::DP->new({'msg' => $msg});
+                throw_dp('error' => "Bad Workflow ID '$w_id'");
             }
 
             # Put this formatting asset into the current workflow and log it.
