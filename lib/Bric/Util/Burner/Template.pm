@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:45 $
+$Date: 2002-03-09 00:39:20 $
 
 =head1 SYNOPSIS
 
@@ -769,7 +769,6 @@ sub _find_file {
     my ($self, $element, $extension) = @_;
 
     my $oc   = $self->get_oc;
-    my $post = $oc->get_post_path;
     my $template_root = [ map { $fs->cat_dir($self->get_comp_dir,
 					     'oc_' . $_->get_id)
 			    } ($oc, $oc->get_includes) ];
@@ -786,17 +785,9 @@ sub _find_file {
 	foreach my $troot (@$template_root) {
 	    my $path = $fs->cat_dir($troot, @cats, $filename);
 	    return $path if -e $path;
-
-	    # try appending the post_path if set - we can remove this
-	    # when templates are no longer deployed with post_path
-	    # added.
-	    if ($post) {
-	      $path = $fs->cat_dir($troot, @cats, $post, $filename);
-	      return $path if -e $path;
-	    }
-	  }
+	}
     } while(pop(@cats));
-    
+
     # returns undef if we didn't find anything
     return undef;
 }

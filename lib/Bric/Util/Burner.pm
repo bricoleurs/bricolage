@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-27 21:50:44 $
+$Date: 2002-03-09 00:39:20 $
 
 =head1 SYNOPSIS
 
@@ -318,14 +318,13 @@ NONE
 
 sub deploy {
     my ($self, $fa) = @_;
-    my $oc  = $fa->get_output_channel;
-    my $cat = $fa->get_category;
+    my $oc_dir  = 'oc_' . $fa->get_output_channel->get_id;
 
-    # Grab the file name and create it.
-    my $comp_dir = $self->get_comp_dir;
-    my $dir = $fs->cat_dir($comp_dir, ('oc_' . $oc->get_id), $oc->get_pre_path, $cat->ancestry_path, $oc->get_post_path);
-    my $file = $fs->cat_dir($comp_dir, ('oc_' . $oc->get_id), $fa->get_file_name);
+    # Grab the file name and directory.
+    my $file = $fs->cat_dir($self->get_comp_dir, $oc_dir, $fa->get_file_name);
+    my $dir = $fs->dir_name($file);
 
+    # Create the directory path and write the file.
     $fs->mk_path($dir);
     open (MC, ">$file")
       or die $ap->new({ msg => "Could not open '$file'", payload => $! });
@@ -355,11 +354,10 @@ NONE
 
 sub undeploy {
     my ($self, $fa) = @_;
-    my $oc  = $fa->get_output_channel;
+    my $oc_dir = 'oc_' . $fa->get_output_channel->get_id;
 
     # Grab the file name.
-    my $file = $fs->cat_dir($self->get_comp_dir, ('oc_' . $oc->get_id),
-			    $fa->get_file_name);
+    my $file = $fs->cat_dir($self->get_comp_dir, $oc_dir, $fa->get_file_name);
 
     # Delete it from the file system.
     $fs->del($file) if -e $file;

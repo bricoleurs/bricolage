@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:42 $
+$Date: 2002-03-09 00:39:20 $
 
 =head1 SYNOPSIS
 
@@ -1009,7 +1009,8 @@ sub set_publish_status {
 
 =item $uri = $template->get_uri
 
-An alias for 'get_file_name'
+Returns the URI for the template. This differs from the file_name in that the
+latter uses the semantics of your local file system.w
 
 B<Throws:>
 
@@ -2104,11 +2105,10 @@ sub _delete_instance {
     return $self;
 }
 
-=item my $uri = $self->_build_file_name($file_type, $name, $cat, $oc);
+=item my $uri = $self->_build_file_name($file_type, $name, $cat);
 
-Builds the file name for a template. If $file_type, $name, $cat or $oc
-are not passed, they'll be fetched (or for $file_type, computed) from
-$self.
+Builds the file name for a template. If $file_type, $name, or $cat are not
+passed, they'll be fetched (or for $file_type, computed) from $self.
 
 B<Throws:> NONE.
 
@@ -2119,9 +2119,9 @@ B<Notes:> NONE.
 =cut
 
 sub _build_file_name {
-    my ($self, $file_type, $name, $cat, $oc) = @_;
+    my ($self, $file_type, $name, $cat) = @_;
 
-    # compute file_type from file_name if not set    
+    # compute file_type from file_name if not set
     unless ($file_type) {
       my $old = $self->_get('file_name');
       if ($old =~ /autohandler$/) {
@@ -2131,30 +2131,17 @@ sub _build_file_name {
       }
     }
 
-    # Get the name, category and Output Channel objects, if necessary.
-    $oc   ||= $self->_get_output_channel_object;
+    # Get the name and category object.
     $cat  ||= $self->_get_category_object;
     $name ||= $self->_get('name');
 
-    # Get the pre and post values.
-    my ($pre, $post) = ($oc->get_pre_path, $oc->get_post_path) if $oc;
-
-    # Add the pre value.
-    my @path = ('', defined $pre ? $pre : ());
-
-    # Add on the Category URI.
-    push @path, $cat->ancestry_path if $cat;
-
-    # Add the post value.
-    push @path, $post if $post;
-
-    # Add the name, mangling as necessary
+    # Mangle the file name.
     my $file = lc $name;
     $file    =~ y/a-z0-9/_/cs;
     $file   .= ".$file_type" unless $name eq 'autohandler';
 
     # Return the filename.
-    return Bric::Util::Trans::FS->cat_uri(@path, $file);
+    return Bric::Util::Trans::FS->cat_dir(($cat ? $cat->ancestry_path : ()), $file);
 };
 
 =back
