@@ -30,15 +30,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.11.2.2 $
+$Revision: 1.11.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-07 22:54:48 $
+$Date: 2002-11-08 19:52:13 $
 
 =head1 SYNOPSIS
 
@@ -72,20 +72,7 @@ Notes: NONE
 =cut
 
 sub category_path_to_id {
-  my $path = shift;
-  my $end;
-
-  # get the directory name off the path end to limit the search
-  if ($path eq '/') {
-      $end = "";
-  } else {
-      ($end) = $path =~ m!/([^/]+)$!;
-  }
-
-  foreach my $cat (Bric::Biz::Category->list({ directory => $end })) {
-    return $cat->get_id if $cat->ancestry_path eq $path;
-  }
-  return undef;
+    (Bric::Biz::Category->list_ids({ uri => shift }))[0]
 }
 
 =item * $db_date = xs_date_to_db_date($xs_date)
@@ -107,11 +94,11 @@ sub xs_date_to_db_date {
     # extract time-zone if present from end of ISO 8601 date
     my ($tz) = $xs =~ /([A-Za-z]+)$/;
     $tz = 'UTC' unless defined $tz and $tz ne 'Z';
-	
+
     my $db = db_date($xs, undef, $tz);
     print STDERR "xs_date_to_db_date:\n  $xs\n  $db\n\n" if DEBUG;
     return $db;
-}    
+}
 
 =item * $xs_date = db_date_to_xs_date($db_date)
 
