@@ -4,6 +4,7 @@ use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
 use Test::Exception;
+use Bric::App::Session;
 use Bric::Util::Job::Pub;
 use Bric::Util::Job::Dist;
 use Bric::Util::Grp::Job;
@@ -19,8 +20,10 @@ use Bric::Biz::AssetType;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Util::Burner;
+use Bric::Biz::Person::User;
 use Bric::Biz::Asset::Formatting;
 use Bric::Util::DBI qw(:junction);
+use Test::MockModule;
 
 sub table {'job '}
 
@@ -31,6 +34,19 @@ my %job = (
             user_id => __PACKAGE__->user_id,
             sched_time => $date
           );
+
+sub test_setup : Test(setup) {
+    my $self = shift;
+    # Turn off event logging.
+    $self->{event} = Test::MockModule->new('Bric::Util::Job');
+    $self->{event}->mock(commit_events => undef);
+}
+
+sub test_teardown : Test(teardown) {
+    my $self = shift;
+    delete($self->{event})->unmock_all;
+    return $self;
+}
 
 ##############################################################################
 # Clean out possible test values from Job.tst. We can delete this if we ever

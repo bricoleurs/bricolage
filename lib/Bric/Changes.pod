@@ -244,7 +244,7 @@ authenticate the user. This user will then be used for logging events. All
 events logged when a job is run via the UI are now also loged by
 C<bric_queued>. [Mark and David]
 
-=items *
+=item *
 
 Jobs now get a "Job Created" event logged when they are created. Reported by
 Rachel Murray. [David and Mark]

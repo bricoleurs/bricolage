@@ -14,6 +14,7 @@ use Bric::Config qw(:time TEMP_DIR QUEUE_PUBLISH_JOBS);
 use Bric::Util::Trans::FS;
 use Bric::Util::MediaType;
 use Bric::Dist::Action::Mover;
+use Test::MockModule;
 
 sub table {'job '}
 
@@ -23,6 +24,19 @@ my %job = ( name => 'Test Job',
             user_id => __PACKAGE__->user_id,
             sched_time => $date
           );
+
+sub test_setup : Test(setup) {
+    my $self = shift;
+    # Turn off event logging.
+    $self->{event} = Test::MockModule->new('Bric::Util::Job');
+    $self->{event}->mock(commit_events => undef);
+}
+
+sub test_teardown : Test(teardown) {
+    my $self = shift;
+    delete($self->{event})->unmock_all;
+    return $self;
+}
 
 ##############################################################################
 # Clean out possible test values from Job.tst. We can delete this if we ever
@@ -40,7 +54,7 @@ sub _clean_test_vals : Test(0) {
 sub test_const : Test(12) {
     my $self = shift;
     my $sched_time = local_date(undef, undef, 1);
-    my $args = { 
+    my $args = {
                  name => 'Test Job',
                  user_id => 0,
                  sched_time => $sched_time
