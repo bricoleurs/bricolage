@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =head1 DATE
 
-$Date: 2002-08-29 18:53:42 $
+$Date: 2002-09-10 22:29:48 $
 
 =head1 SYNOPSIS
 
@@ -128,7 +128,7 @@ elsif (defined $user_id) {
 }
 #-- Output each desk item  --#
 my $highlight = $sort_by;
-unless ($highlight eq 'cover_date') {
+unless ($highlight && $highlight eq 'cover_date') {
     foreach my $f (keys %$meths) {
         # Break out of the loop if we find the searchable field.
         $highlight = $f and last if $meths->{$f}->{search};
