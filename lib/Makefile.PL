@@ -23,7 +23,6 @@ File::Find::find({no_chdir => 1,
 WriteMakefile(NAME           => 'Bric',
               VERSION        => $Bric::VERSION,
               PM             => \%PM,
-	      MAN3PODS       => {},
 	      ( exists $CONFIG->{MODULE_DIR} ? 
 		( INSTALLSITELIB => $CONFIG->{MODULE_DIR} ) : 
 		()),
