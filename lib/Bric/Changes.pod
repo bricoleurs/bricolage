@@ -86,11 +86,6 @@ than version 1--that is, it will refuse to install under Apache 2 (for now).
 
 Added Russian localization. [Sergey Samoilenko].
 
-=item *
-
-Fixed double listing of the "All" group in the group membership double list
-manager. [Christian Hauser]
-
 =back
 
 =head2 Bug Fixes
@@ -202,6 +197,17 @@ unknown reason). Reported by Ed Stevenson. [David]
 
 Fixed typo in clone page that caused all output channels to be listed
 rather than only those associated with the element itself. [Scott]
+
+=item *
+
+Fixed double listing of the "All" group in the group membership double list
+manager. [Christian Hauser]
+
+=item *
+
+Mail sent for alerts and the like now has DOS and Macintosh line-endings
+converted to Unix so that they are displayed properly in most mail clients.
+[Christian Hauser and David]
 
 =back
 
