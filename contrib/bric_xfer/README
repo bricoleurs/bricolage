@@ -7,7 +7,7 @@ Description:
 Usage:
   o  Read the POD for each script
      $ bric_xfer_grps --man
-     $ bric_xfer_grps --help
+     $ bric_xfer_users --man
 Notes:
   o  You have to run the scripts as the root user when importing
      so that it can switch to the Apache user (to access cache).
