@@ -64,6 +64,13 @@ workflow as well as when they are in workflow. This means that if a group of
 users is granted permission to access stories in a category, they can now
 access those stories even if they're not in workflow. [David]
 
+=item *
+
+The search interface for locating media and story assets to relate to a story
+now checks the permissions of the assets found and only displays the assets
+for which the user has at least READ permission. Thanks to Sean Greathouse for
+the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.5
