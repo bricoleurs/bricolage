@@ -1,4 +1,8 @@
 <%perl>
+my $site_id = Bric::Biz::Workflow->lookup
+  ({ id => get_state_data($widget, 'work_id')})->
+  get_site_id;
+
 $m->comp('/widgets/wrappers/sharky/table_top.mc',
          'caption' => 'Properties',
          'number'  => 1);
@@ -19,6 +23,7 @@ if ($param->{tplate_type}) {
                  field     => 'name',
                  reset_key => $rk,
                  exclude   => $excl_media_sub,
+                 constrain => { site_id => $site_id },
                  disp      => 'Element');
     } elsif ($param->{tplate_type} ==
              Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE) {
@@ -60,7 +65,7 @@ $m->comp('/widgets/select_object/select_object.mc',
          'field'     => 'name',
          'reset_key' => $rk,
          selected    => $param->{"$widget|oc_id"},
-         constrain   => { active => 1 },
+         constrain   => { active => 1 , site_id => $site_id},
          req         => 1,
          'disp'      => 'Output Channel');
 $m->out($ieSpacer);
@@ -71,6 +76,7 @@ $m->comp('/widgets/select_object/select_object.mc',
          'reset_key' => $rk,
          'field'     => 'uri',
          sort_field  => 'uri',
+         constrain   => { site_id => $site_id },
          exclude     => $excl_sub,
          req         => 1,
          'disp'      => 'Category');

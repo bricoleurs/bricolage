@@ -402,6 +402,10 @@ my $create_fa = sub {
     my $file_type = $param->{file_type};
     my $tplate_type = $param->{tplate_type};
 
+    my $site_id = Bric::Biz::Workflow->lookup
+      ({ id => get_state_data($widget, 'work_id')})->
+        get_site_id;
+
     my ($at, $name);
     if ($tplate_type ==
         Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE) {
@@ -436,7 +440,9 @@ my $create_fa = sub {
             'category_id'        => $cat_id,
             'priority'           => $param->{priority},
             'name'               => $name,
-            'user__id'           => get_user_id})
+            'user__id'           => get_user_id,
+            'site_id'            => $site_id,
+           })
     };
 
     if (my $err = $@) {
