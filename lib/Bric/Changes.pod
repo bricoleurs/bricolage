@@ -52,6 +52,16 @@ Fixed some SQL errors uncovered by the release of PostgreSQL 7.3b1. [David]
 
 Added code and documentation for compatability with PostgreSQL 7.3. [David]
 
+=item *
+
+Media assets can now be distributed to more than one output channel at a
+time. [David]
+
+=item *
+
+Files are now distributed on a per-output channel basis, to ensure that the
+proper file is distributed to the proper destinations. [David]
+
 =back
 
 =head1 VERSION 1.4.0
