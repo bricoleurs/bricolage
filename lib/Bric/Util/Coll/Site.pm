@@ -8,15 +8,15 @@ Bric::Biz::Site objects.
 
 =head1 VERSION
 
-$Revision: 1.1.2.2 $
+$Revision: 1.1.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-11 22:50:34 $
+$Date: 2003-03-11 23:09:54 $
 
 =head1 SYNOPSIS
 
@@ -190,14 +190,13 @@ sub save {
     foreach my $site (@$new_objs) {
         #insert into element__site mapping
         my $sel = prepare_c( qq {
-            SELECT element__id, site__id 
+            SELECT 1
             FROM   element__site
             WHERE  element__id = ? AND
                    site__id    = ?
-        },undef, DEBUG);
-        execute($sel, $element_id, $site->get_id);
-        my $state = fetch($sel);
-        if ($state) {
+        }, undef, DEBUG);
+        my $state = col_aref($sel, $element_id, $site->get_id);
+        if (@$state) {
             my $upd = prepare_c( qq {
                 UPDATE element__site
                 SET    active = 1
