@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.18.2.6 $
+$Revision: 1.18.2.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-12 09:06:55 $
+$Date: 2003-06-12 18:03:23 $
 
 =head1 SYNOPSIS
 
@@ -45,6 +45,7 @@ use Bric::Util::Class;
 use Bric::Util::Pref;
 use Apache;
 use Apache::Request;
+use Apache::Constants qw(HTTP_OK);
 use HTTP::BrowserDetect;
 
 #==============================================================================#
@@ -533,9 +534,16 @@ sub redirect {
 
 =item (1 || 0) = redirect_onload()
 
-Uses a JavaScript function call to redirect the browser to a different location.
-Will not clear out the buffer, first, so stuff sent ahead will still draw in the
-browser.
+  redirect('/');
+  redirect('/', $cbh);
+
+Uses a JavaScript function call to redirect the browser to a different
+location. Will not clear out the buffer first, so stuff sent ahead will still
+draw in the browser. If a MasonX::CallbackHandler object is passed in as the
+second argument, the Apache request object will be used to send the JavaScript
+to the Browser and the callback handler object will be used to abort the
+request. Otherwise, the Mason request object will be used to send the
+JavaScript to the browser and to abort the request.
 
 B<Throws:> NONE.
 
@@ -547,12 +555,22 @@ B<Notes:> NONE.
 
 sub redirect_onload {
     my $loc = shift or return;
-    my $m = HTML::Mason::Request->instance;
-    $m->print(qq{<script>
+    my $js = qq{<script>
             location.href='$loc';
         </script>
-    });
-    $m->abort;
+    };
+
+    if (my $cbh = shift) {
+        # Use the callback handler object.
+        my $r = $cbh->apache_req;
+        $r->print($js);
+        $cbh->abort(HTTP_OK);
+    } else {
+        # Use the Mason request object.
+        my $m = HTML::Mason::Request->instance;
+        $m->print($js);
+        $m->abort;
+    }
 }
 
 
