@@ -65,9 +65,6 @@ do {
     # can require 1.27 or later and remove this crap.
     my $match = $mod_perl::VERSION < 1.27 ? '^' : '';
 
-    # Make sure that we know where Bricolage lives!
-    our $PerlPassEnv = 'BRICOLAGE_ROOT';
-
     # Set up the basic configuration.
     my %config = ( DocumentRoot       => MASON_COMP_ROOT->[0][1],
 		   ServerName         => VHOST_SERVER_NAME,
