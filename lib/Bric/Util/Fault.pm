@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 16:06:54 $
+$Date: 2003-08-11 16:35:04 $
 
 =head1 SYNOPSIS
 
@@ -224,10 +224,10 @@ instead.
 
 sub new {
     my $class = shift;
-    my %params = ref $_[0] ? %{$_[0]} : @_ == 1 ? ( error => $_[0] ) : @_;
+    my %params =  @_ == 1 ? ( error => $_[0] ) : @_;
 
-    # make any old 'msg' params into 'error'
-    $params{'error'} = delete $params{'msg'} if exists $params{'msg'};
+    # Just rethrow it if it appears to be an exception already.
+    return $params{error} if isa_exception($params{error});
 
     return $class->SUPER::new(%params);
 }
@@ -431,20 +431,12 @@ B<Notes:> NONE.
 
 sub throw {
     my $class = shift;
-    my %params = ref $_[0] ? %{$_[0]} : @_ == 1 ? ( error => $_[0] ) : @_;
-
-    # please only use 'error', not 'message', with Bric exceptions :)
-    if (isa_bric_exception($params{error})) {
-        $params{error} = $params{error}->error;
-    }
-    if (HTML::Mason::Exceptions::isa_mason_exception($params{error})) {
-        $params{error} = $params{error}->error;
-    }
-    if (HTML::Mason::Exceptions::isa_mason_exception($params{message})) {
-        $params{message} = $params{message}->error;
-    }
+    my %params =  @_ == 1 ? ( error => $_[0] ) : @_;
+    # Just rethrow it if it appears to be an exception already.
+    rethrow_exception($params{error}) if isa_exception($params{error});
     $class->SUPER::throw(%params);
 }
+
 
 #------------------------------------------------------------------------------#
 
