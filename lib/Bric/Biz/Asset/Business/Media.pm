@@ -432,6 +432,7 @@ sub new {
     $init->{_active} = (exists $init->{active}) ? $init->{active} : 1;
     delete $init->{active};
     $init->{priority} ||= 3;
+    $init->{media_type_id} ||= 0;
     $init->{name} = delete $init->{title} if exists $init->{title};
     $self->SUPER::new($init);
 }
@@ -1314,7 +1315,7 @@ B<Notes:> NONE.
 sub get_media_type {
     my $self = shift;
     my ($mt_obj, $mt_id) = $self->_get('_media_type_obj', 'media_type_id');
-    return unless $mt_id;
+    return unless defined $mt_id;
 
     unless ($mt_obj) {
         $mt_obj = Bric::Util::MediaType->lookup({'id' => $mt_id});
