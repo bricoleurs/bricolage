@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31.2.16 $
+$Revision: 1.31.2.17 $
 
 =head1 DATE
 
-$Date: 2002-03-02 03:11:25 $
+$Date: 2002-03-07 23:55:37 $
 
 =head1 DESCRIPTION
 
@@ -768,9 +768,19 @@ you passed to the -d and -m arguments of C<pgimport> (see above).
 
 =item *
 
-B<DB_NAME:> The name of the Bricolage PostgreSQL database, and should be the
-same as the value passed to the -d argument to C<pgimmport> (see above).
-Defaults to "sharky" if not specified.
+B<DB_NAME:> The name of the Bricolage database. Defaults to "sharky" if not
+specified.
+
+=item *
+
+B<DB_HOST:> The host name of the server that hosts the Bricoalge database.
+Defaults to the relevant value used by the DBD driver if not specified.
+
+=item *
+
+B<DB_PORT:> The port on which the server database server that hosts the
+Bricoalge database listens. Defaults to the relevant value used by the DBD
+driver if not specified.
 
 =item *
 

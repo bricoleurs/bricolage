@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.26.2.7 $
+$Revision: 1.26.2.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26.2.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.26.2.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-23 00:14:54 $
+$Date: 2002-03-07 23:55:36 $
 
 =head1 SYNOPSIS
 
@@ -52,8 +52,10 @@ use Apache::ConfigFile;
 use base qw(Exporter);
 
 our @EXPORT_OK = qw(DBD_PACKAGE
+		    DB_NAME
+		    DB_HOST
+		    DB_PORT
 		    DBD_TYPE
-		    DSN_STRING
 		    DBI_USER
 		    DBI_PASS
 		    DBI_DEBUG
@@ -113,8 +115,10 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 		    dbi       => [qw(DBD_PACKAGE
+				     DB_NAME
+				     DB_HOST
+				     DB_PORT
 				     DBD_TYPE
-				     DSN_STRING
 				     DBI_USER
 				     DBI_PASS
 				     DBI_DEBUG
@@ -268,7 +272,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant DBD_PACKAGE             => 'Bric::Util::DBD::Pg';
     use constant DBD_TYPE                => 'Pg';
     use constant DB_NAME                 => $config->{DB_NAME} || 'sharky';
-    use constant DSN_STRING              => 'dbname=' . DB_NAME;
+    use constant DB_HOST                 => $config->{DB_HOST};
+    use constant DB_PORT                 => $config->{DB_PORT};
     use constant DBI_USER                => $config->{DBI_USER} || 'castellan';
     use constant DBI_PASS                => $config->{DBI_PASS} || 'nalletsac';
     use constant DBI_DEBUG               => $config->{DBI_DEBUG} || 0;
