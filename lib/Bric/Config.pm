@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.85 $
+$Revision: 1.86 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.85 $ )[-1];
+our $VERSION = (qw$Revision: 1.86 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 23:36:17 $
+$Date: 2004-02-12 00:03:14 $
 
 =head1 SYNOPSIS
 
@@ -450,7 +450,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # Burner settings.
     use constant BURN_ROOT               => $config->{BURN_ROOT}
       || catdir(MASON_DATA_ROOT, 'burn');
-    use constant STAGE_ROOT              => catdir(BURN_ROOT, 'stage');
+    use constant STAGE_ROOT              => $ENV{BRIC_STAGE_ROOT}
+      || catdir(BURN_ROOT, 'stage');
     use constant PREVIEW_ROOT            => catdir(BURN_ROOT, 'preview');
     use constant BURN_COMP_ROOT          => catdir(BURN_ROOT, 'comp');
     use constant BURN_DATA_ROOT          => catdir(BURN_ROOT, 'data');
@@ -521,7 +522,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant FTP_PORT          => $config->{FTP_PORT}          || 2121;
     use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
     use constant FTP_LOG           => $config->{FTP_LOG}           ||
-      catfile(($ENV{BRICOLAGE_ROOT} || (''qw(usr local bricolage))), 'ftp.log');
+      catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'ftp.log');
 
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
