@@ -3,9 +3,11 @@ if (is_nav6up) {
     var i = 0;
     ss.insertRule("body { background:white; font-family:Verdana,Helvetica,Arial,sans-serif; }", i++);
     ss.insertRule(".tab { background:#006666; color:white; font-weight:bold; font-size:11pt; }", i++);
+    ss.insertRule(".light { background:#cccc99; font-size:9.5pt; }", i++);
     ss.insertRule(".context { background:#999966; font-size:9.5pt; line-height:12pt; }", i++);
     ss.insertRule("h3 { font-size:11pt; line-height:13pt; }", i++);
     ss.insertRule("p { font-size:10pt; line-height:13pt; }", i++);
+    ss.insertRule("td { font-size:10pt; line-height:13pt; }", i++);
     ss.insertRule("dt {  font-size:10pt; line-height:14pt; font-weight:bold; }", i++);
     ss.insertRule("dd { font-size:10pt; line-height:13pt; }", i++);
 } else if (is_nav4up) {
@@ -30,6 +32,10 @@ if (is_nav6up) {
     tags.p.fontSize = size;
     tags.p.lineHeight = height;
 
+    tags.td.fontFamily = 'Verdana,Helvetica,Arial,sans-serif';
+    tags.td.fontSize = size;
+    tags.td.lineHeight = height;
+
     tags.h3.fontFamily = 'Verdana,Helvetica,Arial,sans-serif';
     tags.h3.fontSize = lgSize;
     tags.h3.fontWeight = 'bold';
@@ -45,6 +51,10 @@ if (is_nav6up) {
     ss.tab.all.fontSize = lgSize;
     ss.tab.all.backgroundColor = '#006666';
     ss.tab.all.color = 'white';
+
+    ss.light.all.fontFamily = 'Verdana,Helvetica,Arial,sans-serif';
+    ss.light.all.fontSize = smSize;
+    ss.light.all.backgroundColor = '#cccc99';
 
     ss.context.all.fontFamily = 'Verdana,Helvetica,Arial,sans-serif';
     ss.context.all.fontSize = smSize;
