@@ -96,6 +96,8 @@ AC_CACHE_SAVE
 
 # Checks for libraries.
 
+AM_WITH_EXPAT
+
 # Check to see if apache has mod_perl compiled in
 AC_CHECK_APACHE_MOD_PERL(AMOD_PERL,APACHE)
 # If not, we're going to have to share the bad news
