@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.6.2.7 $
+$Revision: 1.6.2.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6.2.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 00:29:15 $
+$Date: 2001-12-10 21:12:24 $
 
 =head1 SYNOPSIS
 
@@ -262,7 +262,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
 	# While these default to 0.
-	foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER)) {
+	foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER SSL_ENABLE)) {
 	    my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
@@ -312,7 +312,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
       || 'On';
 
     # mod_ssl Settings.
-    use constant SSL_ENABLE              => $config->{SSL_ENABLE} || 0;
+    use constant SSL_ENABLE              => $config->{SSL_ENABLE};
     use constant SSL_SESSION_CACHE       => $config->{SSL_SESSION_CACHE}
       || 'dbm:/usr/local/apache/logs/ssl_scache';
     use constant SSL_SESSION_CACHE_TIMEOUT =>
@@ -372,7 +372,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
          . 'fdIf^ N;:';
 
     # QA Mode settings.
-    use constant QA_MODE                 => 0;
+    use constant QA_MODE                 => 1;
 
     # Character translation settings.
     use constant CHAR_SET                => $config->{CHAR_SET} || 'ISO-8859-1';
@@ -392,8 +392,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 6;
 
     # Error Page Setting.
-    use constant ERROR_URI => '/errors/500.mc';
-#    use constant ERROR_URI => '/errors/error.html';
+#    use constant ERROR_URI => '/errors/500.mc';
+    use constant ERROR_URI => '/errors/error.html';
 
     # Distribution Settings.
     use constant ENABLE_DIST => $config->{ENABLE_DIST};
