@@ -233,7 +233,8 @@ foreach my $ops (@export_ops) {
 	    check_doc($document, $xsd, "story $story_id");
 	    
 	    # add (copy) to title and try to create copy
-	    $document =~ s!<name>(.*?)</name>!<name>$1 (copy $copy_sym)</name>!g;
+            $document =~ s!<slug>(.*?)</slug>!<slug>$1$copy_sym</slug>!g;
+            $document =~ s!<primary_uri>(.*?)</primary_uri>!<primary_uri>$1$copy_sym</primary_uri>!;
 	    $copy_sym++;
 	    $response = $soap->create(name(document => $document)->type('base64'));
 	    ok(!$response->fault, 'SOAP create() result is not a fault');
