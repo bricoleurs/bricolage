@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.13.4.1 $
+$Revision: 1.13.4.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-24 14:48:07 $
+$Date: 2003-08-14 20:33:47 $
 
 =head1 SYNOPSIS
 
@@ -1410,7 +1410,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -1501,7 +1501,7 @@ $save = sub {
     my $ins = prepare_c(qq{
         INSERT INTO event (@ECOLS)
         VALUES ($fields)
-    }, undef, DEBUG);
+    }, undef);
     # Don't try to set ID - it will fail!
     execute($ins, $self->_get(@EPROPS[1..$#EPROPS]));
     # Now grab the ID.
@@ -1557,7 +1557,7 @@ $save_attr = sub {
     my $ins = prepare_c(qq{
         INSERT INTO event_attr (event__id, event_type_attr__id, value)
         VALUES (?, ?, ?)
-    }, undef, DEBUG);
+    }, undef);
 
     my $ret;
     my $et_attr = $et->get_attr;

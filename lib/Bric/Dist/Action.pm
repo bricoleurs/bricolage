@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.10.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.10.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-08-14 20:33:46 $
 
 =head1 SYNOPSIS
 
@@ -1340,7 +1340,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO action (id, ord, server_type__id, action_type__id)
             VALUES ($next, ?, ?, (SELECT id FROM action_type WHERE name = ?))
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $next_ord, $self->_get(qw(server_type_id type)));
         # Now grab the ID.
@@ -1569,7 +1569,7 @@ $get_em = sub {
                AND t.id = am.action_type__id
                AND am.media_type__id = m.id $where
         ORDER BY a.server_type__id, a.ord
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

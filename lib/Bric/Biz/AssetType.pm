@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.34.2.5 $
+$Revision: 1.34.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 22:09:50 $
+$Date: 2003-08-14 20:33:44 $
 
 =head1 SYNOPSIS
 
@@ -2176,7 +2176,7 @@ sub _do_list {
         FROM   $tables
         WHERE  $where
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return wantarray ? @{col_aref($sel, @params)} : col_aref($sel, @params)
@@ -2234,7 +2234,7 @@ sub _is_referenced {
     # Make sure this isn't referenced from an asset.
     my $table = $self->is_media ? 'media' : 'story';
     my $sql  = "SELECT COUNT(*) FROM $table WHERE element__id = ?";
-    my $sth  = prepare_c($sql, undef, DEBUG);
+    my $sth  = prepare_c($sql, undef);
     execute($sth, $self->get_id);
     bind_columns($sth, \$rows);
     fetch($sth);
@@ -2249,7 +2249,7 @@ sub _is_referenced {
                   'm.id         = atm.member__id AND '.
                   'm.grp__id    = at.at_grp__id';
 
-    $sth  = prepare_c($sql, undef, DEBUG);
+    $sth  = prepare_c($sql, undef);
     execute($sth, $self->get_id);
     bind_columns($sth, \$rows);
     fetch($sth);
@@ -2285,7 +2285,7 @@ $remove = sub {
     my $self = shift;
     my $id = $self->get_id or return;
     my $sth = prepare_c("DELETE FROM $table WHERE id = ?",
-                        undef, DEBUG);
+                        undef);
     execute($sth, $id);
     return $self;
 };
@@ -2461,7 +2461,7 @@ sub _update_asset_type {
               ' SET '.join(',', map {"$_=?"} @cols).' WHERE id=?';
 
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(@props), $self->get_id);
 
     return $self;
@@ -2495,7 +2495,7 @@ sub _insert_asset_type {
     my $sql = "INSERT INTO $table (".join(', ', 'id', @cols).') '.
               "VALUES ($nextval,".join(',', ('?') x @cols).')';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(@props));
 
     # Set the ID of this object.

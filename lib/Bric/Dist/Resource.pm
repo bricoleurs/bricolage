@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.12.4.1 $
+$Revision: 1.12.4.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-09 05:16:39 $
+$Date: 2003-08-14 20:33:46 $
 
 =head1 SYNOPSIS
 
@@ -1617,7 +1617,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO resource (@rcols, media_type__id)
             VALUES ($fields, (SELECT id FROM media_type WHERE name = ?))
-        }, undef, DEBUG);
+        }, undef);
 
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@props[1..$#props]));
@@ -1784,7 +1784,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY path
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -2017,13 +2017,13 @@ $load_ids = sub {
             SELECT id
             FROM   resource
             WHERE  parent_id = ?
-        });
+        }, undef);
     } else {
         $sel = prepare_ca(qq{
             SELECT ${type}__id
             FROM   ${type}__resource
             WHERE  resource__id = ?
-        });
+        }, undef);
     }
 
     # Grab them and build a hashref to store them.

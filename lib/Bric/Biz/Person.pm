@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.21.4.1 $
+$Revision: 1.21.4.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 20:18:34 $
+$Date: 2003-08-14 20:33:45 $
 
 =head1 SYNOPSIS
 
@@ -1702,7 +1702,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO person (@cols)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@props[1..$#props]));
         # Now grab the ID.
@@ -1823,7 +1823,7 @@ $get_em = sub {
         WHERE  p.id = c.object_id AND c.member__id = m.id and m.active = 1
                $extra_wheres AND $where
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

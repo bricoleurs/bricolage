@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.34.2.3 $
+$Revision: 1.34.2.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.34.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-29 20:46:09 $
+$Date: 2003-08-14 20:33:44 $
 
 =head1 SYNOPSIS
 
@@ -99,9 +99,9 @@ use Carp qw(croak);
     use Bric::App::Session qw(:state :user);
     use Bric::App::Util qw(:msg
                         :redir
-			:pkg
-			:history
-			mk_aref
+                        :pkg
+                        :history
+                        mk_aref
                         get_pref);
 
     use Bric::Dist::Job;
@@ -243,12 +243,12 @@ sub handler {
         $r->content_languages([LANGUAGE]);
         $r->content_type('text/html; charset=' . lc CHAR_SET);
 
-	# Start the database transactions.
-	begin(1);
-	# Handle the request.
-	$status = $ah->handle_request($r);
-	# Commit the database transactions.
-	commit(1);
+        # Start the database transactions.
+        begin(1);
+        # Handle the request.
+        $status = $ah->handle_request($r);
+        # Commit the database transactions.
+        commit(1);
     };
 
     # Do error processing, if necessary.
@@ -299,7 +299,7 @@ sub handle_err {
 
     # Process the exception for the user.
     return $interp->exec(ERROR_URI, fault => $err,
-			 __CB_DONE => 1, more_err => $more_err);
+                         __CB_DONE => 1, more_err => $more_err);
 }
 
 ################################################################################
@@ -328,8 +328,8 @@ B<Notes:> NONE.
 sub filter {
     # Just get it over with if we're not supposed to do translation.
     if ($no_trans) {
-	print STDOUT $_[0];
-	return;
+        print STDOUT $_[0];
+        return;
     }
 
     # Do the translation.

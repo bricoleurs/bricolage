@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.27.2.1 $
+$Revision: 1.27.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.27.2.2 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-08 20:18:35 $
+$Date: 2003-08-14 20:33:46 $
 
 
 =head1 SYNOPSIS
@@ -1426,7 +1426,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.24.4.2 $
+$Revision: 1.24.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 20:18:34 $
+$Date: 2003-08-14 20:33:45 $
 
 =head1 SYNOPSIS
 
@@ -1639,7 +1639,7 @@ sub _do_list {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return wantarray ? @{ col_aref($sel, @params) } : col_aref($sel, @params)
@@ -1790,7 +1790,7 @@ sub _do_insert {
     my $ins = prepare_c(qq{
         INSERT INTO output_channel (id, @COLS)
         VALUES ($fields)
-    }, undef, DEBUG);
+    }, undef);
     execute($ins, $self->_get( @PROPS ) );
     $self->_set( { 'id' => last_key($TABLE) } );
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);

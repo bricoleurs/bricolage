@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.14.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:28 $
+$Date: 2003-08-14 20:33:47 $
 
 =head1 SYNOPSIS
 
@@ -677,7 +677,7 @@ sub _do_list {
                AND g.active = 1
                AND pm.object_id = p.id$where
         ORDER BY p.lname, p.fname, p.mname
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @args) if $ids;

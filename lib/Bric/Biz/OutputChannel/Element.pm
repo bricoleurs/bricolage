@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel::Element - Maps Output Channels to Elements.
 
 =head1 VERSION
 
-$Revision: 1.2.4.3 $
+$Revision: 1.2.4.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2.4.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.4.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-27 03:40:37 $
+$Date: 2003-08-14 20:33:46 $
 
 =head1 SYNOPSIS
 
@@ -272,7 +272,7 @@ sub href {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $ord
-    }, undef, DEBUG);
+    }, undef);
 
     execute($sel, $params->{element_id});
     my (@d, %ocs, $grp_ids);

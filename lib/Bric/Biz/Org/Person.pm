@@ -7,15 +7,15 @@ Bric::Biz::Org::Person - Manages Organizations Related to Persons
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.14.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:54 $
+$Date: 2003-08-14 20:33:45 $
 
 =head1 SYNOPSIS
 
@@ -1371,7 +1371,7 @@ sub save {
             UPDATE person_org
             SET    @PO_COLS = ?
             WHERE  id = ?
-        }, undef, DEBUG);
+        }, undef);
         execute($upd, $self->_get(@PO_PROPS), $id);
     } else {
         # It's a new porg. Insert it.
@@ -1383,7 +1383,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO person_org (@PO_COLS)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@PO_PROPS[1..$#PO_PROPS]));
         # Now grab the ID.
@@ -1487,7 +1487,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY o.id
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

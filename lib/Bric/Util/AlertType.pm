@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.13.2.3 $
+$Revision: 1.13.2.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-10 16:02:53 $
+$Date: 2003-08-14 20:33:46 $
 
 =head1 SYNOPSIS
 
@@ -2279,7 +2279,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO alert_type (@cols)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@props[1..$#props]));
         # Now grab the ID.
@@ -2565,7 +2565,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $where
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -2726,7 +2726,7 @@ $get_cont = sub {
             FROM   alert_type__${cat}__contact a, contact c
             WHERE  a.contact__id = c.id
                    AND a.alert_type__id = ?
-        }, undef, DEBUG);
+        }, undef);
 
         execute($sel, $ret{__id__});
         my ($ctype, $id);
@@ -2799,7 +2799,7 @@ $upd_cont = sub {
                            FROM   contact
                            WHERE  type = ?
                        )
-            }, undef, DEBUG);
+            }, undef);
 
             foreach my $ctype (@ctypes) { # For each contact type.
                 # Delete the record.
@@ -2818,7 +2818,7 @@ $upd_cont = sub {
                            FROM   contact
                            WHERE  type = ?
                         ))
-            }, undef, DEBUG);
+            }, undef);
 
             foreach my $ctype (@ctypes) { # For each contact type.
                 # Insert the new record.

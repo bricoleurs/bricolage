@@ -6,16 +6,16 @@ Bric::Biz::Contact - Interface to Contacts
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 16:07:50 $
+$Date: 2003-08-14 20:33:45 $
 
 =head1 SYNOPSIS
 
@@ -1277,7 +1277,7 @@ sub save {
                            WHERE  type = ?
                        ), active = ?
                 WHERE  id = ?
-            }, undef, DEBUG);
+            }, undef);
             execute($upd, $self->_get(qw(value type _active)), $id);
             $self->_set(['_retyped'], [undef]);
         } else {
@@ -1299,7 +1299,7 @@ sub save {
                 FROM   contact
                 WHERE  type = ?)
             )
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(qw(value _active type)));
         # Now grab the ID.
@@ -1403,7 +1403,7 @@ $get_em = sub {
         WHERE  c.id = v.contact__id
                $where
         ORDER BY c.id
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -1508,7 +1508,7 @@ $get_types = sub {
         FROM   contact c
         WHERE  active = 1 $where
         ORDER BY c.id
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return a list of types unless an href is wanted.
     return wantarray ? @{ col_aref($sel) } : col_aref($sel) unless $href;

@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.12.2.2 $
+$Revision: 1.12.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.3 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-06-11 01:23:00 $
+$Date: 2003-08-14 20:33:45 $
 
 
 =head1 SYNOPSIS
@@ -1410,7 +1410,7 @@ sub _do_list {
     # Add the ORDER BY clause if there is one.
     $sql .= " ORDER BY $param->{order_by}" if $param->{order_by};
 
-    my $select = prepare_ca($sql, undef, DEBUG);
+    my $select = prepare_ca($sql, undef);
 
     if ($ids) {
         # called from list_ids give em what they want

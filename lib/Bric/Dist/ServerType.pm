@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.18.4.2 $
+$Revision: 1.18.4.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 20:18:35 $
+$Date: 2003-08-14 20:33:46 $
 
 =head1 SYNOPSIS
 
@@ -542,7 +542,7 @@ sub list_move_methods {
         FROM   class
         WHERE  distributor = 1 $and_sftp $and_dav
         ORDER BY disp_name
-    });
+    }, undef);
     return wantarray ? @{ col_aref($sel) } : col_aref($sel);
 }
 
@@ -1918,7 +1918,7 @@ sub save {
             SET    @COLS = ?,
                    class__id = (SELECT id FROM class WHERE LOWER(disp_name) = LOWER(?))
             WHERE  id = ?
-        }, undef, DEBUG);
+        }, undef);
         execute($upd, $self->_get('id', @PROPS), $id);
     } elsif ($dirt) {
         # It's a new resource. Insert it.
@@ -1927,7 +1927,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO server_type (@COLS, class__id)
             VALUES ($fields, (SELECT id FROM class WHERE LOWER(disp_name) = LOWER(?)))
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@PROPS));
         # Now grab the ID.
@@ -2089,7 +2089,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

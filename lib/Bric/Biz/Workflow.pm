@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.23.2.3 $
+$Revision: 1.23.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.23.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 20:18:34 $
+$Date: 2003-08-14 20:33:45 $
 
 =head1 SYNOPSIS
 
@@ -1346,7 +1346,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

@@ -6,16 +6,16 @@ Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.12.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 21:02:24 $
+$Date: 2003-08-14 20:33:47 $
 
 =head1 SYNOPSIS
 
@@ -1172,7 +1172,7 @@ $get_em = sub {
                AND v.contact__id = c.id
                $where
         ORDER BY a.id
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

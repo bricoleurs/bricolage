@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.16 $
+$Revision: 1.38.2.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 15:27:26 $
+$Date: 2003-08-14 20:33:45 $
 
 =head1 SYNOPSIS
 
@@ -1952,7 +1952,7 @@ sub _insert_formatting {
         my $sql = 'INSERT INTO '. TABLE .' (id,'.join(',', COLS).') '.
                   "VALUES (${\next_key(TABLE)},".join(',', ('?') x COLS).')';
 
-        my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef);
         execute($sth, $self->_get(FIELDS));
 
         $self->_set(['id'], [last_key(TABLE)]);
@@ -1991,7 +1991,7 @@ sub _insert_instance {
                                 "VALUES (${\next_key(VERSION_TABLE)}, " . 
                                         join(',',('?') x VERSION_COLS) . ')';
 
-        my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef);
         execute($sth, $self->_get(VERSION_FIELDS));
 
         $self->_set(['version_id'], [last_key(VERSION_TABLE)]);
@@ -2026,7 +2026,7 @@ sub _update_formatting {
                   ' SET ' . join(', ', map {"$_=?" } COLS) .
                   ' WHERE id=? ';
 
-        my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef);
 
         execute($sth, $self->_get(FIELDS), $self->_get('id'));
 
@@ -2060,7 +2060,7 @@ sub _update_instance {
                                 ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
                                 ' WHERE id=? ';
 
-        my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef);
 
         execute($sth, $self->_get(VERSION_FIELDS), $self->get_version_id);
 
@@ -2092,7 +2092,7 @@ sub _delete_formatting {
 
         my $sql = 'DELETE FROM ' . TABLE . ' WHERE id=?';
 
-        my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef);
 
         execute($sth, $self->get_id);
 
@@ -2122,7 +2122,7 @@ NONE
 sub _delete_instance {
     my ($self) = @_;
     my $sql = 'DELETE FROM ' . VERSION_TABLE . ' WHERE id=? ';
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'));
     return $self;
 }

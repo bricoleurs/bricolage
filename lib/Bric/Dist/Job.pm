@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.18.4.1 $
+$Revision: 1.18.4.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 20:18:35 $
+$Date: 2003-08-14 20:33:46 $
 
 =head1 SYNOPSIS
 
@@ -1518,7 +1518,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO job (@COLS)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
 
         # Don't try to set ID - it will fail!
         my @ps = $self->_get(@PROPS[1..$#PROPS]);
@@ -1813,7 +1813,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

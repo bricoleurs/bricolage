@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.10.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.10.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-26 02:01:14 $
+$Date: 2003-08-14 20:33:47 $
 
 =head1 SYNOPSIS
 
@@ -518,7 +518,7 @@ sub get_acl {
                AND m.id = mo.member__id
                AND m.active = 1
                AND mo.object_id = ?
-    }, undef, DEBUG);
+    }, undef);
 
     execute($sel, ref $user ? $user->get_id : $user);
     my ($gid, $priv, $mtime, $acl);
@@ -577,7 +577,7 @@ sub get_acl_mtime {
                AND m.id = mo.member__id
                AND m.active = 1
                AND mo.object_id = ?
-    }, undef, DEBUG);
+    }, undef);
     return row_aref($sel, ref $user ? $user->get_id : $user)->[0];
 }
 
@@ -1279,7 +1279,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO grp_priv (@priv_cols)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@priv_props[1..$#priv_props]));
         # Now grab the ID.
@@ -1385,7 +1385,7 @@ $get_em = sub {
         FROM   grp_priv p, grp_priv__grp_member g
         WHERE  p.id = g.grp_priv__id
                $where
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

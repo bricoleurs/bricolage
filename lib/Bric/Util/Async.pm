@@ -6,16 +6,16 @@ Bric::Util::Async - This will handle all the async events
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.4.1 $
 
 =cut
 
 # Grab the version #
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-08-14 20:33:47 $
 
 =head1 SYNOPSIS
 
@@ -748,7 +748,7 @@ sub _do_list {
                 $sql .= join(' AND ', @where);
         }
 
-        my $sth = prepare_ca($sql, undef, DEBUG);
+        my $sth = prepare_ca($sql, undef);
 
         if ($ids) {
                 my $return = col_aref($sth, @where_param);
@@ -909,7 +909,7 @@ sub _do_insert {
         my $sql = "INSERT INTO " . TABLE . " (id," . join(', ', COLS) . ") ".
                         "VALUES (${\next_key(TABLE)}," . join(',', ('?') x COLS) . ") ";
 
-        my $insert = prepare_c($sql, undef, DEBUG);
+        my $insert = prepare_c($sql, undef);
 
         execute($insert, ($self->_get( FIELDS )) );
 
@@ -944,7 +944,7 @@ sub _do_update {
                                 'SET ' . join(', ', map { "$_=?" } COLS) .
                                 ' WHERE id=? ';
 
-        my $update = prepare_c($sql, undef, DEBUG);
+        my $update = prepare_c($sql, undef);
 
         execute($update, $self->_get( FIELDS ), $self->_get('id') );
 
@@ -975,7 +975,7 @@ sub _do_delete {
         my $sql = "DELETE FROM " . TABLE . 
                                 " WHERE id=? ";
 
-        my $delete = prepare_c($sql, undef, DEBUG);
+        my $delete = prepare_c($sql, undef);
 
         execute($delete, $self->_get('id') );
 
@@ -1010,7 +1010,7 @@ sub _select_async {
 
         $sql .= " WHERE $where";
 
-        my $sth = prepare_ca($sql, undef, DEBUG);
+        my $sth = prepare_ca($sql, undef);
         execute($sth, @bind);
         bind_columns($sth, \@d[0 .. (scalar COLS)]);
         fetch($sth);

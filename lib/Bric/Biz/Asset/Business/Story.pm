@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.19 $
+$Revision: 1.39.2.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 15:27:26 $
+$Date: 2003-08-14 20:33:45 $
 
 =head1 SYNOPSIS
 
@@ -1729,7 +1729,7 @@ sub _get_contributors {
         my $sql = 'SELECT member__id, place, role FROM story__contributor ' .
           'WHERE story_instance__id=? ';
 
-        my $sth = prepare_ca($sql, undef, DEBUG);
+        my $sth = prepare_ca($sql, undef);
         execute($sth, $self->_get('version_id'));
         while (my $row = fetch($sth)) {
             $contrib->{$row->[0]}->{'role'} = $row->[2];
@@ -1770,7 +1770,7 @@ sub _insert_contributor {
       ' (id, story_instance__id, member__id, place, role) ' .
       " VALUES (${\next_key('story__contributor')},?,?,?,?) ";
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'), $id, $place, $role);
     return $self;
 }
@@ -1802,7 +1802,7 @@ sub _update_contributor {
       ' WHERE story_instance__id=? ' .
       ' AND member__id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $role, $place, $self->_get('version_id'), $id);
     return $self;
 }
@@ -1833,7 +1833,7 @@ sub _delete_contributor {
       ' WHERE story_instance__id=? ' .
       ' AND member__id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'), $id);
     return $self;
 }
@@ -1868,7 +1868,7 @@ sub _get_categories {
           "FROM story__category ".
           " WHERE story_instance__id=? ";
 
-        my $sth = prepare_ca($sql, undef, DEBUG);
+        my $sth = prepare_ca($sql, undef);
         execute($sth, $self->_get('version_id'));
         while (my $row = fetch($sth)) {
             $cats->{$row->[0]}->{'primary'} = $row->[1];
@@ -1954,7 +1954,7 @@ sub _insert_category {
       "(id, story_instance__id, category__id, main) ".
       "VALUES (${\next_key('story__category')},?,?,?)";
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'), $category_id, $primary);
     return $self;
 }
@@ -1984,7 +1984,7 @@ sub _delete_category {
     my $sql = "DELETE FROM story__category ".
       "WHERE story_instance__id=? AND category__id=? ";
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'), $category_id);
     return $self;
 }
@@ -2015,7 +2015,7 @@ sub _update_category {
       "SET main=? ".
       "WHERE story_instance__id=? AND category__id=? ";
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $primary, $self->_get('version_id'), $category_id);
     return $self;
 }
@@ -2082,7 +2082,7 @@ sub _do_delete {
     my $delete = prepare_c(qq{
         DELETE FROM ${ \TABLE() }
         WHERE  id=?
-    }, undef, DEBUG);
+    }, undef);
     execute($delete, $self->_get('id'));
 }
 
@@ -2115,7 +2115,7 @@ sub _insert_story {
     my $sql = 'INSERT INTO ' . TABLE . ' (id, ' . join(', ', COLS) . ') '.
       "VALUES (${\next_key(TABLE)}, ". join(', ',  ('?') x COLS) .')';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(FIELDS));
     $self->_set({ id => last_key(TABLE) });
 
@@ -2151,7 +2151,7 @@ sub _insert_instance {
       "VALUES (${\next_key(VERSION_TABLE)}, ".
       join(', ', ('?') x VERSION_COLS) . ')';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(VERSION_FIELDS));
     $self->_set( { version_id => last_key(VERSION_TABLE) });
     return $self;
@@ -2183,7 +2183,7 @@ sub _update_story {
     my $sql = 'UPDATE ' . TABLE . ' SET ' . join(', ', map {"$_=?" } COLS) .
       ' WHERE id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(FIELDS), $self->_get('id'));
     return $self;
 }
@@ -2215,7 +2215,7 @@ sub _update_instance {
       ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
       ' WHERE id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
     return $self;
 }
@@ -2245,7 +2245,7 @@ sub _delete_instance {
     my $sql = 'DELETE FROM ' . VERSION_TABLE .
       ' WHERE id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'));
     return $self;
 }
@@ -2275,7 +2275,7 @@ sub _delete_story {
     my $sql = 'DELETE FROM ' . TABLE .
       ' WHERE id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('id'));
     return $self;
 }

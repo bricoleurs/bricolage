@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.44.4.4 $
+$Revision: 1.44.4.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44.4.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.44.4.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 21:36:21 $
+$Date: 2003-08-14 20:33:44 $
 
 =head1 SYNOPSIS
 
@@ -1380,7 +1380,7 @@ sub _do_list {
         FROM   $tables
         WHERE  $wheres
         $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return wantarray ? @{col_aref($sel, @params)} : col_aref($sel, @params)

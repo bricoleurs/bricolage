@@ -6,16 +6,16 @@ Bric::Util::AlertType::Parts::Rule - Interface to AlertType Rules.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:27 $
+$Date: 2003-08-14 20:33:47 $
 
 =head1 SYNOPSIS
 
@@ -1013,7 +1013,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO alert_type_rule (@cols)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@props[1..$#props]));
         # Now grab the ID.
@@ -1116,7 +1116,7 @@ $get_em = sub {
         SELECT @$qry_cols
         FROM   alert_type_rule
         $where
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

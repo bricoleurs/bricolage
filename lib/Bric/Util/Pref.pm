@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.17.2.2 $
+$Revision: 1.17.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.17.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-29 14:50:22 $
+$Date: 2003-08-14 20:33:47 $
 
 =head1 SYNOPSIS
 
@@ -1221,7 +1221,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -1313,7 +1313,7 @@ $get_opts = sub {
         SELECT value, description
         FROM   pref_opt
         WHERE  pref__id = ?
-    }, undef, DEBUG);
+    }, undef);
     execute($sel, $id);
     my ($val, $desc);
     bind_columns($sel, \$val, \$desc);
@@ -1380,7 +1380,7 @@ $load_cache = sub {
     my $sel = prepare_ca(qq{
         SELECT name, value
         FROM   pref
-    }, undef, DEBUG);
+    }, undef);
     execute($sel);
 
     my ($c, $name, $val);
