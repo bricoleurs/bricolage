@@ -24,7 +24,7 @@ BEGIN {
 ##############################################################################
 my $format = '%m/%d/%Y at %T';
 my $pref_format = Bric::Util::Pref->lookup_val('Date/Time Format');
-(my $short_iso_format = ISO_8601_FORMAT) =~ s/\.%6N$//;
+(my $short_iso_format = ISO_8601_FORMAT) =~ s/\.\%6N$//;
 
 my $now = DateTime->from_epoch( epoch => $epoch, time_zone => 'UTC');
 my $db_date = $now->strftime(DB_DATE_FORMAT);
@@ -95,5 +95,24 @@ sub test_db_date : Test(3) {
         "Check db date is curent" );
 }
 
+sub test_datetime : Test(16) {
+    ok my $dt = datetime('2005-03-23T19:30:05'), "Create dt without subseconds";
+    is $dt->year, 2005, '...The year should be correct';
+    is $dt->month, 3, '...The month should be correct';
+    is $dt->day, 23, '...The day should be correct';
+    is $dt->hour, 19, '...The hour should be correct';
+    is $dt->minute, 30, '...The minute should be correct';
+    is $dt->second, 5, '...The second should be correct';
+    is $dt->microsecond, 0, "...The microsecond should be correct";
+
+    ok $dt = datetime('2005-03-23T19:30:05.1234'), "Create dt with subseconds";
+    is $dt->year, 2005, '...The year should be correct';
+    is $dt->month, 3, '...The month should be correct';
+    is $dt->day, 23, '...The day should be correct';
+    is $dt->hour, 19, '...The hour should be correct';
+    is $dt->minute, 30, '...The minute should be correct';
+    is $dt->second, 5, '...The second should be correct';
+    is $dt->microsecond, 123400, "...The microsecond should be correct";
+}
 1;
 __END__

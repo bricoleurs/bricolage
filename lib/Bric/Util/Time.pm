@@ -333,6 +333,58 @@ sub datetime {
     return $dt;
 }
 
+=begin comment
+
+The above date parsing can be done with unpack(), too. But I benchmarked them,
+and could see virtually no difference in performance. If anything, the regex
+approach is a hair faster!
+
+  #!/usr/bin/perl -w
+  use warnings;
+  use strict;
+  use DateTime;
+  use Benchmark;
+
+  my $date = '2005-03-23T19:30:05.1234';
+  my $ISO_TEMPLATE =  'a4 x a2 x a2 x a2 x a2 x a2 a*';
+
+  sub with_pack {
+      my %args;
+      @args{qw(year month day hour minute second nanosecond)}
+        = unpack $ISO_TEMPLATE, $date;
+      { no warnings; $args{nanosecond} *= 1.0E9; }
+  }
+
+  sub with_regex {
+      $date =~ m/(\d\d\d\d).(\d\d).(\d\d).(\d\d).(\d\d).(\d\d)(\.\d*)?/;
+      my %args = (
+          year       => $1,
+          month      => $2,
+          day        => $3,
+          hour       => $4,
+          minute     => $5,
+          second     => $6,
+          nanosecond => $7 ? $7 * 1.0E9 : 0
+      );
+  }
+
+  timethese(100000, {
+      pack => \&with_pack,
+      regex => \&with_regex
+  });
+
+This script yields:
+
+  Benchmark: timing 100000 iterations of pack, regex...
+        pack:  3 wallclock secs ( 2.14 usr +  0.00 sys =  2.14 CPU) @ 46728.97/s (n=100000)
+       regex:  3 wallclock secs ( 2.11 usr +  0.01 sys =  2.12 CPU) @ 47169.81/s (n=100000)
+
+So we'll just go with the rgex for now.
+
+=end comment
+
+=cut
+
 1;
 __END__
 
