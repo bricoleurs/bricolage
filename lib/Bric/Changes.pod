@@ -59,6 +59,12 @@ used as CSS selectorts. [David]
 Added language-specific style sheets. This is especially useful for
 right-to-left languages or for languages that require special fonts. [David]
 
+=item *
+
+The "New Alias" search interface now displays thumbnails when searching for
+media documents to alias and the C<USE_THUMBNAILS> F<bricolage.conf> diretive
+is enabled. Reported by Serge Sozonoff. [David]
+
 =back
 
 =head2 Bug Fixes
