@@ -6,15 +6,19 @@ Bric - The Bricolage base class.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+Release Version: 1.0.0
+
+File (CVS) Version:
+
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = "1.0.0";
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:43 $
+$Date: 2001-09-19 19:33:38 $
 
 =head1 SYNOPSIS
 
@@ -794,8 +798,11 @@ perl(1).
 =head1 REVISION HISTORY
 
 $Log: Bric.pm,v $
-Revision 1.1  2001-09-06 21:52:43  wheeler
-Initial revision
+Revision 1.2  2001-09-19 19:33:38  wheeler
+Changed version number. Will increment to 1.0.1 upon actual release.
+
+Revision 1.1.1.1  2001/09/06 21:52:43  wheeler
+Upload to SourceForge.
 
 =cut
 
