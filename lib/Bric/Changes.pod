@@ -14,6 +14,18 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 Version 1.2.4
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Fixed Bric::Util::FTP::FileHandle to create new revisions on PUT.  [Sam]
+
+=back
+
 =head1 Version 1.2.3
 
 Functionally equivalent to 1.2.2, but includes required files missing from the
