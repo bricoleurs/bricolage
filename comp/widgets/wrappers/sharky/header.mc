@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.18 $
+$Revision: 1.2.2.19 $
 
 =head1 DATE
 
-$Date: 2001-11-17 00:01:46 $
+$Date: 2001-11-22 00:12:06 $
 
 =head1 SYNOPSIS
 
@@ -67,11 +67,13 @@ $numLinks += 8 if ($agent->{os} eq "MacOS");
 # define variables to output sideNav layer or iframe
 if ($agent->{browser} eq "Netscape") {
     $layer = "layer";
-    $properties = qq { width=150 height="100%" border=0 scrolling="no" frameborder="no" z-index=10 left=8 top=35 };
+    $properties = qq { width="150" height="100%" border="0" scrolling="no" frameborder="no" z-index="10" left="8" top="35" };
 } else {
     $layer = "iframe";
-    $properties = ($agent->{os} eq "MacOS") ? qq { width=150 border=0 scrolling="no" frameborder="no" style="z-index:10;" }
-                                            : " width=150 height=" . $numLinks * 24 . qq { border=0 scrolling="no" frameborder="no" style="z-index:10;" };
+    $properties = ($agent->{os} eq "MacOS")
+      ? qq { width=150 border=0 scrolling="no" frameborder="no" style="z-index:10;" }
+      : " width=150 height=" . $numLinks * 24
+      . qq { border=0 scrolling="no" frameborder="no" style="z-index:10;" };
 }
 
 # clean up the title
@@ -94,7 +96,7 @@ var checkboxValues = new Array();
 function init() {
 
     <% $jsInit %>;
-% # the following is a hack for pc/ns because it fails to obey 
+% # the following is a hack for pc/ns because it fails to obey
 % # the style rule when it is first drawn.
 % if ($agent->{browser} eq 'Netscape' && $jsInit =~ /showForm/) {
     <% $jsInit %>;
@@ -107,8 +109,9 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
     // Send the current window to a blank page.
     document.location = 'about:blank';
     // Turn off the toolbar, back button, etc.
-    window.open("<% $uri %>", 'Bricolage_<% SERVER_WINDOW_NAME %>',
-                'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1,width=750');
+    var newWin = window.open("<% $uri %>", 'Bricolage_<% SERVER_WINDOW_NAME %>',
+      'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1,width=780');
+    newWin.focus(true);
 } else {
     history.forward(1);
 }
