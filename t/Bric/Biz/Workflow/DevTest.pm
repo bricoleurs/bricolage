@@ -23,7 +23,7 @@ my %wf = ( name => 'Test Workflow',
 # Test the lookup() method.
 sub test_lookup : Test(2) {
     my $self = shift;
-    # Look up the ID in the delemabase.
+    # Look up the ID in the database.
     ok( my $wf = Bric::Biz::Workflow->lookup({ id => $story_wf_id }),
         "Look up story workflow" );
     is( $wf->get_id, $story_wf_id, "Check that the ID is the same" );

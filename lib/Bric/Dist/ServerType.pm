@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-22 05:36:04 $
+$Date: 2003-01-23 05:43:31 $
 
 =head1 SYNOPSIS
 
@@ -35,7 +35,7 @@ $Date: 2003-01-22 05:36:04 $
 
   # Class methods.
   # Get a list of object IDs.
-  my @st_ids = Bric::Dist::ServerType->list_ids({ description => 'Preview%' });
+  my @st_ids = Bric::Dist::ServerType->list_ids({ description => 'Prev%' });
   # Get an introspection hashref.
   my $int = Bric::Dist::ServerType->my_meths;
   # Get a list of mover types.
@@ -87,11 +87,11 @@ $Date: 2003-01-22 05:36:04 $
 =head1 DESCRIPTION
 
 This class manages types of servers. A server type represents a class of
-servers on which a list of actions should be performed upon the execution of
-a job. A server type, therefore, simply describes a list of servers for which
-the actions will be performed and a list of actions to be executed on the files
-associated with a given job. The last action should be a move statement, to
-move each file to each of the servers.
+servers on which a list of actions should be performed upon the execution of a
+job. A server type, therefore, simply describes a list of servers for which
+the actions will be performed and a list of actions to be executed on the
+files associated with a given job. The last action should be a move statement,
+to move each file to each of the servers.
 
 So use this class a the central management point for figuring out what happens
 to files, and in what order, and what servers they are sent to, in the event
@@ -99,13 +99,13 @@ of a publish or preview event.
 
 =cut
 
-################################################################################
+##############################################################################
 # Dependencies
-################################################################################
+##############################################################################
 # Standard Dependencies
 use strict;
 
-################################################################################
+##############################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Coll::Server;
@@ -115,77 +115,76 @@ use Bric::Util::Fault::Exception::DP;
 use Bric::Util::Grp::Dest;
 use Bric::Config qw(:dist);
 
-################################################################################
+##############################################################################
 # Inheritance
-################################################################################
+##############################################################################
 use base qw(Bric);
 
-################################################################################
+##############################################################################
 # Function and Closure Prototypes
-################################################################################
+##############################################################################
 my ($get_em, $get_coll);
 
-################################################################################
+##############################################################################
 # Constants
-################################################################################
+##############################################################################
 use constant DEBUG => 0;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Dest';
 use constant INSTANCE_GROUP_ID => 29;
 
-################################################################################
+##############################################################################
 # Fields
-################################################################################
+##############################################################################
 # Public Class Fields
 
-################################################################################
+##############################################################################
 # Private Class Fields
-my @cols = qw(s.id s.name s.description s.copyable s.publish s.preview s.active
-	      c.disp_name c.pkg_name);
-my @props = qw(id name description _copy _publish _preview _active move_method
-	       _mover_class);
-my @scols = qw(id name description copyable publish preview active);
-my @scol_args = ('Bric::Util::Coll::Server', '_servers');
-my @acol_args = ('Bric::Util::Coll::Action', '_actions');
-my @ocol_args = ('Bric::Util::Coll::OutputChannel', '_ocs');
-my %num_map = ( id => 's.id = ?',
-		job_id => "s.id IN (SELECT server_type__id FROM "
-                          . "job__server_type WHERE job__id = ?)",
-		output_channel_id => "s.id IN (SELECT server_type__id FROM "
-	                  . "server_type__output_channel "
-		          . "WHERE output_channel__id = ?)");
+my @COLS = qw(id name description copyable publish preview active);
+my @PROPS = qw(name description _copy _publish _preview _active move_method);
 
-my %bool_map = ( can_copy => 's.copyable = ?',
+my $SEL_COLS = 's.id, s.name, s.description, s.copyable, s.publish, ' .
+  's.preview, s.active, c.disp_name, c.pkg_name, m.grp__id';
+my @SEL_PROPS = ('id', @PROPS, qw(_mover_class grp_ids));
+
+my %BOOL_MAP = ( active      => 's.active = ?',
+                 can_copy    => 's.copyable = ?',
 		 can_publish => 's.publish = ?',
 		 can_preview => 's.preview = ?');
-my @ord = qw(name description move_method copy publish preview active);
+
+my @SCOL_ARGS = ('Bric::Util::Coll::Server', '_servers');
+my @ACOL_ARGS = ('Bric::Util::Coll::Action', '_actions');
+my @OCOL_ARGS = ('Bric::Util::Coll::OutputChannel', '_ocs');
+
+my @ORD = qw(name description move_method copy publish preview active);
 my $meths;
 
-################################################################################
+##############################################################################
 
-################################################################################
+##############################################################################
 # Instance Fields
 BEGIN {
     Bric::register_fields({
 			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 name => Bric::FIELD_RDWR,
-			 description => Bric::FIELD_RDWR,
-			 move_method => Bric::FIELD_RDWR,
+			 id           => Bric::FIELD_READ,
+			 name         => Bric::FIELD_RDWR,
+			 description  => Bric::FIELD_RDWR,
+			 move_method  => Bric::FIELD_RDWR,
+			 grp_ids      => Bric::FIELD_READ,
 
 			 # Private Fields
 			 _mover_class => Bric::FIELD_NONE,
-			 _copy => Bric::FIELD_NONE,
-			 _active => Bric::FIELD_NONE,
-			 _servers => Bric::FIELD_NONE,
-			 _actions => Bric::FIELD_NONE,
-			 _publish => Bric::FIELD_NONE,
-			 _preview => Bric::FIELD_NONE
+			 _copy        => Bric::FIELD_NONE,
+			 _active      => Bric::FIELD_NONE,
+			 _servers     => Bric::FIELD_NONE,
+			 _actions     => Bric::FIELD_NONE,
+			 _publish     => Bric::FIELD_NONE,
+			 _preview     => Bric::FIELD_NONE
 			});
 }
 
-################################################################################
+##############################################################################
 # Class Methods
-################################################################################
+##############################################################################
 
 =head1 INTERFACE
 
@@ -232,7 +231,7 @@ sub new {
     $self->SUPER::new($init);
 }
 
-################################################################################
+##############################################################################
 
 =item my $st = Bric::Dist::ServerType->lookup({ id => $id })
 
@@ -291,7 +290,7 @@ sub lookup {
     return @$st ? $st->[0] : undef;
 }
 
-################################################################################
+##############################################################################
 
 =item my (@sts || $sts_aref) = Bric::Dist::ServerType->list($params)
 
@@ -330,6 +329,10 @@ can_preview
 
 =item *
 
+grp_id
+
+=item *
+
 active
 
 =back
@@ -346,7 +349,7 @@ Unable to connect to database.
 
 Unable to prepare SQL statement.
 
-=item *
+=Item *
 
 Unable to select column into arrayref.
 
@@ -373,7 +376,7 @@ B<Notes:> NONE.
 
 sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
-################################################################################
+##############################################################################
 
 =item my $sts_href = Bric::Dist::ServerType->href($params)
 
@@ -421,7 +424,7 @@ B<Notes:> NONE.
 
 sub href { &$get_em(@_, 0, 1) }
 
-################################################################################
+##############################################################################
 
 =back
 
@@ -445,7 +448,7 @@ B<Notes:> NONE.
 
 sub DESTROY {}
 
-################################################################################
+##############################################################################
 
 =head2 Public Class Methods
 
@@ -495,7 +498,7 @@ B<Notes:> NONE.
 
 sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
-################################################################################
+##############################################################################
 
 =item my (@types || $types_aref) = Bric::Dist::ServerType->list_move_methods
 
@@ -527,17 +530,18 @@ B<Notes:> NONE.
 =cut
 
 sub list_move_methods {
-    my $and_sftp = ENABLE_SFTP_MOVER ? '' : q{AND key_name != 'sftp'};
+    my $and_sftp = ENABLE_SFTP_MOVER ? '' : q{AND key_name <> 'sftp'};
+    my $and_dav = ENABLE_WEBDAV_MOVER ? '' : q{AND key_name <> 'webdav'};
     my $sel = prepare_ca(qq{
         SELECT disp_name
         FROM   class
-        WHERE  distributor = 1  $and_sftp
+        WHERE  distributor = 1 $and_sftp $and_dav
         ORDER BY disp_name
     });
     return wantarray ? @{ col_aref($sel) } : col_aref($sel);
 }
 
-################################################################################
+##############################################################################
 
 =item $meths = Bric::Dist::ServerType >my_meths
 
@@ -676,7 +680,7 @@ sub my_meths {
     my ($pkg, $ord) = @_;
 
     # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
+    return !$ord ? $meths : wantarray ? @{$meths}{@ORD} : [@{$meths}{@ORD}]
       if $meths;
 
     my $move_methods = list_move_methods();
@@ -780,10 +784,10 @@ sub my_meths {
 			     props    => { type => 'checkbox' }
 			    },
 	     };
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    return !$ord ? $meths : wantarray ? @{$meths}{@ORD} : [@{$meths}{@ORD}];
 }
 
-################################################################################
+##############################################################################
 
 =back
 
@@ -1061,11 +1065,11 @@ B<Notes:> NONE.
 =cut
 
 sub get_output_channels {
-    my $col = &$get_coll(shift, @ocol_args);
+    my $col = &$get_coll(shift, @OCOL_ARGS);
     $col->get_objs(@_);
 }
 
-################################################################################
+##############################################################################
 
 =item $st = $st->add_output_channels(@ocs)
 
@@ -1098,12 +1102,12 @@ B<Notes:> Uses Bric::Util::Coll::Server internally.
 
 sub add_output_channels {
     my $self = shift;
-    my $col = &$get_coll($self, @ocol_args);
+    my $col = &$get_coll($self, @OCOL_ARGS);
     $col->add_new_objs(@_);
     $self->_set__dirty(1);
 }
 
-################################################################################
+##############################################################################
 
 =item $self = $st->del_output_channels(@ocs)
 
@@ -1161,12 +1165,12 @@ B<Notes:> NONE.
 
 sub del_output_channels {
     my $self = shift;
-    my $col = &$get_coll($self, @ocol_args);
+    my $col = &$get_coll($self, @OCOL_ARGS);
     $col->del_objs(@_);
     $self->_set__dirty(1);
 }
 
-################################################################################
+##############################################################################
 
 =item my (@servers || $servers_aref) = $st->get_servers(@server_ids)
 
@@ -1224,7 +1228,7 @@ B<Notes:> Uses Bric::Util::Coll::Server internally.
 =cut
 
 sub get_servers {
-    my $col = &$get_coll(shift, @scol_args);
+    my $col = &$get_coll(shift, @SCOL_ARGS);
     $col->get_objs(@_);
 }
 
@@ -1286,7 +1290,7 @@ B<Notes:> Uses Bric::Util::Coll::Server internally.
 sub new_server {
     my ($self, $init) = @_;
     $init->{server_type_id} = $self->_get('id');
-    my $col = &$get_coll($self, @scol_args);
+    my $col = &$get_coll($self, @SCOL_ARGS);
     $col->new_obj($init);
 }
 
@@ -1341,11 +1345,11 @@ B<Notes:> Uses Bric::Util::Coll::Server internally.
 =cut
 
 sub del_servers {
-    my $col = &$get_coll(shift, @scol_args);
+    my $col = &$get_coll(shift, @SCOL_ARGS);
     $col->del_objs(@_);
 }
 
-################################################################################
+##############################################################################
 
 =item my (@actions || $actions_aref) = $st->get_actions(@action_ids)
 
@@ -1403,7 +1407,7 @@ B<Notes:> Uses Bric::Util::Coll::Action internally.
 =cut
 
 sub get_actions {
-    my $col = &$get_coll(shift, @acol_args);
+    my $col = &$get_coll(shift, @ACOL_ARGS);
     $col->get_objs(@_);
 }
 
@@ -1465,7 +1469,7 @@ B<Notes:> Uses Bric::Util::Coll::Action internally.
 sub new_action {
     my ($self, $init) = @_;
     $init->{server_type_id} = $self->_get('id');
-    my $col = &$get_coll($self, @acol_args);
+    my $col = &$get_coll($self, @ACOL_ARGS);
     $col->new_obj($init);
 }
 
@@ -1520,11 +1524,11 @@ B<Notes:> Uses Bric::Util::Coll::Action internally.
 =cut
 
 sub del_actions {
-    my $col = &$get_coll(shift, @acol_args);
+    my $col = &$get_coll(shift, @ACOL_ARGS);
     $col->del_objs(@_);
 }
 
-################################################################################
+##############################################################################
 
 =item $self = $st->copy
 
@@ -1606,7 +1610,7 @@ B<Notes:> NONE.
 
 sub can_copy { $_[0]->_get('_copy') ? $_[0] : undef }
 
-################################################################################
+##############################################################################
 
 =item $self = $st->on_publish
 
@@ -1684,7 +1688,7 @@ B<Notes:> NONE.
 
 sub can_publish { $_[0]->_get('_publish') ? $_[0] : undef }
 
-################################################################################
+##############################################################################
 
 =item $self = $st->on_preview
 
@@ -1762,7 +1766,7 @@ B<Notes:> NONE.
 
 sub can_preview { $_[0]->_get('_preview') ? $_[0] : undef }
 
-################################################################################
+##############################################################################
 
 =item $self = $st->activate
 
@@ -1790,10 +1794,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub activate {
-    my $self = shift;
-    $self->_set({_active => 1 });
-}
+sub activate { $_[0]->_set(['_active'] => [1]) }
 
 =item $self = $st->deactivate
 
@@ -1820,10 +1821,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub deactivate {
-    my $self = shift;
-    $self->_set({_active => 0 });
-}
+sub deactivate { $_[0]->_set(['_active'] => [0]) }
 
 =item $self = $st->is_active
 
@@ -1845,12 +1843,9 @@ B<Notes:> NONE.
 
 =cut
 
-sub is_active {
-    my $self = shift;
-    $self->_get('_active') ? $self : undef;
-}
+sub is_active { $_[0]->_get('_active') ? $_[0] : undef }
 
-################################################################################
+##############################################################################
 
 =item $self = $st->save
 
@@ -1906,21 +1901,21 @@ sub save {
 	local $" = ' = ?, '; # Simple way to create placeholders with an array.
 	my $upd = prepare_c(qq{
             UPDATE server_type
-            SET    @scols = ?,
+            SET    @COLS = ?,
                    class__id = (SELECT id FROM class WHERE LOWER(disp_name) = LOWER(?))
             WHERE  id = ?
         }, undef, DEBUG);
-	execute($upd, $self->_get(@props[0..$#props -1]), $id);
+	execute($upd, $self->_get('id', @PROPS), $id);
     } elsif ($dirt) {
 	# It's a new resource. Insert it.
 	local $" = ', ';
-	my $fields = join ', ', next_key('server_type'), ('?') x $#scols;
+	my $fields = join ', ', next_key('server_type'), ('?') x $#COLS;
 	my $ins = prepare_c(qq{
-            INSERT INTO server_type (@scols, class__id)
+            INSERT INTO server_type (@COLS, class__id)
             VALUES ($fields, (SELECT id FROM class WHERE LOWER(disp_name) = LOWER(?)))
         }, undef, DEBUG);
 	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@props[1..$#props - 1]));
+	execute($ins, $self->_get(@PROPS));
 	# Now grab the ID.
 	$id = last_key('server_type');
 	$self->_set(['id'], [$id]);
@@ -1937,7 +1932,7 @@ sub save {
     return $self;
 }
 
-################################################################################
+##############################################################################
 
 =back
 
@@ -2034,37 +2029,56 @@ B<Notes:>
 
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
-    my (@wheres, @params);
+    my $tables = 'server_type s, class c, member m, dest_member sm';
+    my $wheres = 's.class__id = c.id AND s.id = sm.object_id AND ' .
+      'sm.member__id = m.id';
+    my @params;
     while (my ($k, $v) = each %$params) {
-	if ($num_map{$k}) {
-	    push @wheres, $num_map{$k};
+	if ($k eq 'id') {
+            # Simple ID lookup.
+            $wheres .= " AND s.id = ?";
 	    push @params, $v;
-	} elsif ($bool_map{$k}) {
-	    push @wheres, $bool_map{$k};
+	} elsif ($BOOL_MAP{$k}) {
+            # Simple boolean comparison.
+            $wheres .= " AND $BOOL_MAP{$k}";
 	    push @params, $v ? 1 : 0;
 	} elsif ($k eq 'move_method') {
-	    push @wheres, "LOWER(c.disp_name) LIKE ?";
+            # We use the class display name for the move method.
+	    $wheres .= " AND LOWER(c.disp_name) LIKE ?";
 	    push @params, lc $v;
-	} elsif ($k eq 'active') {
-	    push @wheres, "s.active = ?";
-	    push @params, $v ? 1 : 0;
+        } elsif ($k eq 'job_id') {
+            # Add job__server_type to the lists of tables and join to it.
+            $tables .= ', job__server_type js';
+            $wheres .= ' AND s.id = js.server_type__id AND js.job__id = ?';
+	    push @params, $v;
+        } elsif ($k eq 'output_channel_id') {
+            # Add server_type__output_channel to the lists of tables and join
+            # to it.
+            $tables .= ', server_type__output_channel so';
+            $wheres .= ' AND s.id = so.server_type__id AND ' .
+              'so.output_channel__id = ?';
+	    push @params, $v;
+        } elsif ($k eq 'grp_id') {
+            # Add in the group tables a second time and join to them.
+            $tables .= ", member m2, dest_member sm2";
+            $wheres .= " AND s.id = sm2.object_id AND sm2.member__id = m2.id" .
+              " AND m2.grp__id = ?";
+            push @params, $v;
 	} else {
-	    push @wheres, "LOWER(s.$k) LIKE ?";
+            # It's just a string comparison.
+	    $wheres .= " AND LOWER(s.$k) LIKE ?";
 	    push @params, lc $v;
 	}
     }
 
-    # Assemble the WHERE clause.
-    my $where .= "\n               AND " . join ' AND ', @wheres if @wheres;
-
     # Assemble and prepare the query.
-    local $" = ', ';
-    my $qry_cols = $ids ? ['s.id'] : \@cols;
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT s.id', 's.id') :
+      (\$SEL_COLS, 's.name, s.id');
     my $sel = prepare_c(qq{
-        SELECT @$qry_cols
-        FROM   server_type s, class c
-        WHERE  s.class__id = c.id $where
-        ORDER BY s.name
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
@@ -2072,18 +2086,25 @@ $get_em = sub {
 
     # Grab all the records.
     execute($sel, @params);
-    my (@d, @sts, %sts);
-    bind_columns($sel, \@d[0..$#cols]);
+    my (@d, @sts, %sts, $grp_ids);
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	# Create a new object for each row.
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	$href ? $sts{$d[0]} = $self : push @sts, $self
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new server type object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            $href ? $sts{$d[0]} = $self : push @sts, $self
+        } else {
+            push @$grp_ids, $d[$#d];
+        }
     }
-    finish($sel);
     # Return the objects.
     return $href ? \%sts : \@sts;
 };

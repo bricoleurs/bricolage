@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-22 05:36:04 $
+$Date: 2003-01-23 05:43:31 $
 
 =head1 SYNOPSIS
 
@@ -112,23 +112,19 @@ use constant INSTANCE_GROUP_ID => 30;
 
 ################################################################################
 # Private Class Fields
-my @cols = qw(id name expire usr__id sched_time comp_time tries pending);
-my @props = qw(id name type user_id sched_time comp_time tries _pending);
-my @ord = @props[1..$#props - 1];
+my @COLS = qw(id name expire usr__id sched_time comp_time tries pending);
+my @PROPS = qw(id name type user_id sched_time comp_time tries _pending);
+my @ORD = @PROPS[1..$#PROPS - 1];
 
-my @scol_args = ('Bric::Util::Coll::ServerType', '_server_types');
-my @rcol_args = ('Bric::Util::Coll::Resource', '_resources');
+my $SEL_COLS = 'a.id, a.name, a.expire, a.usr__id, a.sched_time, ' .
+  'a.comp_time, a.tries, a.pending, m.grp__id';
+my @SEL_PROPS = (@PROPS, 'grp_ids');
+
+my @SCOL_ARGS = ('Bric::Util::Coll::ServerType', '_server_types');
+my @RCOL_ARGS = ('Bric::Util::Coll::Resource', '_resources');
 my $dp = 'Bric::Util::Fault::Exception::DP';
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $meths;
-
-my %num_map = ( id => 'id = ?',
-		user_id => 'user__id = ?',
-		server_type_id => "id IN (SELECT job__id from job__server_type"
-		                  . " WHERE job__id = ?)",
-		resource_id => "id IN (SELECT job__id from job__resource"
-                               . " WHERE job__id = ?)"
-);
 
 ################################################################################
 
@@ -144,6 +140,7 @@ BEGIN {
 			 comp_time => Bric::FIELD_NONE,
 			 type => Bric::FIELD_RDWR,
 			 tries => Bric::FIELD_READ,
+			 grp_ids => Bric::FIELD_READ,
 
 			 # Private Fields
 			 _resources => Bric::FIELD_NONE,
@@ -241,10 +238,12 @@ sub new {
       if $init->{server_types};
     $self->add_resources(@{ delete $init->{resources} }) if $init->{resources};
 
-    # Set the type, schedule time, and the _pending and tries defaults.
+    # Set the type and the _pending and tries defaults.
     $init->{type} = $init->{type} ? 1 : 0;
-    $init->{sched_time} = db_date($init->{sched_time}) if $init->{sched_time};
     @{$init}{qw(_pending tries)} = (0, 0);
+
+    # Default schedule time to now.
+    $init->{sched_time} = db_date($init->{sched_time}, 1);
     $self->SUPER::new($init);
 }
 
@@ -347,6 +346,10 @@ resource_id - A Bric::Dist::Resource object ID.
 =item *
 
 server_type_id - A Bric::Dist::ServerType object ID.
+
+=item *
+
+grp_id - A Bric::Util::Grp::Job object ID.
 
 =back
 
@@ -602,7 +605,7 @@ sub my_meths {
     my ($pkg, $ord) = @_;
 
     # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
+    return !$ord ? $meths : wantarray ? @{$meths}{@ORD} : [@{$meths}{@ORD}]
       if $meths;
 
     # We don't got 'em. So get 'em!
@@ -679,7 +682,7 @@ sub my_meths {
 			      type     => 'short',
 			     },
 	     };
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    return !$ord ? $meths : wantarray ? @{$meths}{@ORD} : [@{$meths}{@ORD}];
 }
 
 ################################################################################
@@ -1035,7 +1038,7 @@ B<Notes:> NONE.
 =cut
 
 sub get_resources {
-    my $col = &$get_coll(shift, @rcol_args);
+    my $col = &$get_coll(shift, @RCOL_ARGS);
     $col->get_objs(@_);
 }
 
@@ -1085,7 +1088,7 @@ sub add_resources {
       if $self->_get('comp_time');
     die $gen->new({ msg => "Cannot add resources to a pending job." })
       if $self->_get('_pending');
-    my $col = &$get_coll($self, @rcol_args);
+    my $col = &$get_coll($self, @RCOL_ARGS);
     $col->add_new_objs(@_);
     $self->_set__dirty(1);
 }
@@ -1159,7 +1162,7 @@ sub del_resources {
       if $self->_get('comp_time');
     die $gen->new({ msg => "Cannot delete resources from a pending job." })
       if $self->_get('_pending');
-    my $col = &$get_coll($self, @rcol_args);
+    my $col = &$get_coll($self, @RCOL_ARGS);
     $col->del_objs(@_);
     $self->_set__dirty(1);
 }
@@ -1223,7 +1226,7 @@ B<Notes:> NONE.
 =cut
 
 sub get_server_types {
-    my $col = &$get_coll(shift, @scol_args);
+    my $col = &$get_coll(shift, @SCOL_ARGS);
     $col->get_objs(@_);
 }
 
@@ -1273,7 +1276,7 @@ sub add_server_types {
       if $self->_get('comp_time');
     die $gen->new({ msg => "Cannot add server types to a pending job." })
       if $self->_get('_pending');
-    my $col = &$get_coll($self, @scol_args);
+    my $col = &$get_coll($self, @SCOL_ARGS);
     $col->add_new_objs(@_);
     $self->_set__dirty(1);
 }
@@ -1347,7 +1350,7 @@ sub del_server_types {
       if $self->_get('comp_time');
     die $gen->new({ msg => "Cannot delete server types from a pending job." })
       if $self->_get('_pending');
-    my $col = &$get_coll($self, @scol_args);
+    my $col = &$get_coll($self, @SCOL_ARGS);
     $col->del_objs(@_);
     $self->_set__dirty(1);
 }
@@ -1493,35 +1496,32 @@ sub save {
 	local $" = ' = ?, '; # Simple way to create placeholders with an array.
 	my $upd = prepare_c(qq{
             UPDATE job
-            SET    @cols = ?
+            SET    @COLS = ?
             WHERE  id = ?
         });
-	execute($upd, $self->_get(@props), $id);
+	execute($upd, $self->_get(@PROPS), $id);
     } else {
 	# It's a new job. Insert it.
-	# Default schedule time to now.
-	$self->_set(['sched_time'], [db_date(0, 1)])
-	  unless $self->_get('sched_time');
-
 	local $" = ', ';
-	my $fields = join ', ', next_key('job'), ('?') x $#cols;
+	my $fields = join ', ', next_key('job'), ('?') x $#COLS;
 	my $ins = prepare_c(qq{
-            INSERT INTO job (@cols)
+            INSERT INTO job (@COLS)
             VALUES ($fields)
         }, undef, DEBUG);
 
 	# Don't try to set ID - it will fail!
-	my @ps = $self->_get(@props[1..$#props]);
-	execute($ins, $self->_get(@props[1..$#props]));
+	my @ps = $self->_get(@PROPS[1..$#PROPS]);
+	execute($ins, $self->_get(@PROPS[1..$#PROPS]));
 
 	# Now grab the ID.
 	$id = last_key('job');
 	$self->_set(['id'], [$id]);
 
 	# Now execute the job if distribution is enabled.
-	$self->execute_me if ENABLE_DIST && $self->get_sched_time('epoch') <= time;
+	$self->execute_me
+          if ENABLE_DIST && $self->get_sched_time('epoch') <= time;
 
-	# And finally, register this person in the "All Jobs" group.
+	# And finally, register this job in the "All Jobs" group.
 	$self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     }
     $res->save($id) if $res;
@@ -1733,53 +1733,74 @@ B<Notes:> NONE.
 
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
-    my (@wheres, @params);
+    my $tables = 'job a, member m, job_member c';
+    my $wheres = 'a.id = c.object_id and m.id = c.member__id';
+    my @params;
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'name') {
-	    push @wheres, "LOWER($k) LIKE ?";
-	    push @params, lc $v;
-	} elsif ($num_map{$k}) {
-	    push @wheres, $num_map{$k};
+        if ($k eq 'id') {
+            # Simple numeric comparison.
+            $wheres .= " AND a.id = ?";
 	    push @params, $v;
+        } elsif ($k eq 'user_id') {
+            # Simple numeric comparison.
+            $wheres .= " AND a.usr__id = ?";
+	    push @params, $v;
+	} elsif ($k eq 'name') {
+            # Simple string comparison.
+	    $wheres .= " AND LOWER(a.$k) LIKE ?";
+	    push @params, lc $v;
+	} elsif ($k eq 'server_type_id') {
+            # Add job__server_type to the lists of tables and join to it.
+            $tables .= ', job__server_type js';
+	    $wheres .= " AND a.id = js.job__id AND js.server_type__id = ?";
+	    push @params, $v;
+	} elsif ($k eq 'resource_id') {
+            # Add job__resource to the lists of tables and join to it.
+            $tables .= ', job__resource jr';
+	    $wheres .= " AND a.id = jr.job__id AND jr.resource__id = ?";
+	    push @params, $v;
+        } elsif ($k eq 'grp_id') {
+            # Add in the group tables a second time and join to them.
+            $tables .= ", member m2, job_member c2";
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.grp__id = ?";
+            push @params, $v;
 	} else {
 	    # It's a date column.
 	    if (ref $v) {
 		# It's an arrayref of dates.
 		if (!defined $v->[0]) {
 		    # It's less than.
-		    push @wheres, "$k < ?";
+                    $wheres .= " AND a.$k < ?";
 		    push @params, db_date($v->[1]);
 		} elsif (!defined $v->[1]) {
 		    # It's greater than.
-		    push @wheres, "$k > ?";
+		    $wheres .= " AND a.$k > ?";
 		    push @params, db_date($v->[0]);
 		} else {
 		    # It's between two sizes.
-		    push @wheres, "$k BETWEEN ? AND ?";
+		    $wheres .= " AND $k BETWEEN ? AND ?";
 		    push @params, (db_date($v->[0]), db_date($v->[1]));
 		}
 	    } elsif (!defined $v) {
 		# It needs to be null.
-		push @wheres, "$k IS NULL";
+                $wheres .= " AND a.$k IS NULL";
 	    } else {
 		# It's a single value.
-		push @wheres, "$k = ?";
+                $wheres .= " AND a.$k = ?";
 		push @params, db_date($v);
 	    }
 	}
     }
 
-    # Assemble the WHERE statement.
-    my $where = @wheres ? "\n        WHERE " .
-      join "\n               AND ", @wheres : '';
-
-    # Assemble the query.
-    local $" = ', ';
-    my $qry_cols = $ids ? ['id'] : \@cols;
-    my $sel = prepare_ca(qq{
-        SELECT @$qry_cols
-        FROM   job $where
-        ORDER BY sched_time, id
+    # Assemble and prepare the query.
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :
+      (\$SEL_COLS, 'a.sched_time, a.id');
+    my $sel = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
@@ -1787,15 +1808,24 @@ $get_em = sub {
 
     $pkg = ref $pkg || $pkg;
     execute($sel, @params);
-    my (@d, @jobs);
+    my (@d, @jobs, $grp_ids);
     $pkg = ref $pkg || $pkg;
-    bind_columns($sel, \@d[0..$#cols]);
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	push @jobs, $self;
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new job object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @jobs, $self;
+        } else {
+            push @$grp_ids, $d[$#d];
+        }
     }
     return \@jobs;
 };
