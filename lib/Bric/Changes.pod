@@ -16,6 +16,27 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.6.3 ()
 
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Document and contributor type field information (label, options) is no longer
+pushed through Locale::Maketext, thus preventing errors when element and
+contributor type admins create field options with brackets in them. Reported
+by Kevin Elliott. [David]
+
+=item *
+
+Documents associated with categories that have been deleted will once again
+work properly. Even though a category may be deactivated, any documents
+previously put into that category should still work, and still treat the
+category as a working category. And so they do. Thanks to Kevin Elliott for
+the spot! [David]
+
+=back
+
 =head1 VERSION 1.6.2 (2003-07-28)
 
 =head2 New Features

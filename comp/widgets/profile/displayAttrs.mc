@@ -59,6 +59,7 @@ foreach my $attr (@$attr) {
     $m->comp('/widgets/profile/displayFormElement.mc',
 	     key => "attr|$attr->{name}",
 	     vals => $vals,
+             localize => 0,
 	     useTable => ($vals->{props}{type} eq 'date') ? 0:1,
 	     width => $width,
 	     indent => FIELD_INDENT,

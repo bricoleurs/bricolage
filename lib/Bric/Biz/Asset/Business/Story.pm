@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.13 $
+$Revision: 1.39.2.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-18 18:22:55 $
+$Date: 2003-08-04 03:34:10 $
 
 =head1 SYNOPSIS
 
@@ -1211,7 +1211,8 @@ sub get_categories {
         if ($cats->{$c_id}->{'object'} ){
             push @all, $cats->{$c_id}->{'object'};
         } else {
-            my $cat = Bric::Biz::Category->lookup({ id => $c_id });
+            my $cat = Bric::Biz::Category->lookup({ id => $c_id,
+                                                    active => 'all' });
             $cats->{$c_id}->{'object'} = $cat;
             $reset = 1;
             push @all, $cat;

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40.2.14 $
+$Revision: 1.40.2.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40.2.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-18 18:22:55 $
+$Date: 2003-08-04 03:34:10 $
 
 =head1 SYNOPSIS
 
@@ -1006,7 +1006,8 @@ sub get_category_object {
     my $self = shift;
     my $cat = $self->_get( '_category_obj' );
     return $cat if $cat;
-    $cat = Bric::Biz::Category->lookup( { id => $self->_get('category__id') });
+    $cat = Bric::Biz::Category->lookup({ id     => $self->_get('category__id'),
+                                         active => 'all' });
     $self->_set({ '_category_obj' => $cat });
     return $cat;
 }
