@@ -110,6 +110,10 @@ package name. This affected the "Access Denied" page. [David]
 
 Made Bric::Util::Burner::Mason a little smarter handling exceptions. [David]
 
+=item *
+
+Fixed bug where Bric::SOAP::Category would fail to import ad strings. [David]
+
 =back
 
 =head1 VERSION 1.4.3
