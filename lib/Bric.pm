@@ -6,11 +6,11 @@ Bric - The Bricolage base class.
 
 =head1 VERSION
 
-Release Version: 1.0.0
+Release Version: 1.0.1
 
 File (CVS) Version:
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.0.1";
 
 =head1 DATE
 
-$Date: 2001-09-27 15:59:13 $
+$Date: 2001-09-27 15:59:32 $
 
 =head1 SYNOPSIS
 
@@ -798,7 +798,10 @@ perl(1).
 =head1 REVISION HISTORY
 
 $Log: Bric.pm,v $
-Revision 1.3  2001-09-27 15:59:13  wheeler
+Revision 1.4  2001-09-27 15:59:32  wheeler
+Fixed release version in the POD.
+
+Revision 1.3  2001/09/27 15:59:13  wheeler
 Incremented version to 1.0.1. Release due tomorrow morning.
 
 Revision 1.2  2001/09/19 19:33:38  wheeler
