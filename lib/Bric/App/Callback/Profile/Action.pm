@@ -3,10 +3,13 @@ package Bric::App::Callback::Profile::Action;
 use base qw(Bric::App::Callback::Package);
 __PACKAGE__->register_subclass('class_key' => 'action');
 use strict;
+use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
 my $disp_name = get_disp_name(CLASS_KEY);
+my $class = get_package_name(CLASS_KEY)
+my $dest_class = get_package_name('dest');
 
 
 sub save : Callback {
@@ -49,6 +52,23 @@ sub save : Callback {
     log_event('action_' . (defined $param->{action_id} ? 'save' : 'new'), $act);
     add_msg("$disp_name profile $name saved.");
 }
+
+
+# strictly speaking, this is a Manager (not a Profile) callback
+
+sub delete : Callback {
+    my $self = shift;
+
+    my $dest = $dest_class->lookup({ 'id' => $param->{'dest_id'} });
+    chk_authz($dest, EDIT);
+    foreach my $id (@{ mk_aref($self->value) }) {
+        my $act = $class->lookup({ 'id' => $id }) || next;
+        $act->del();
+        $act->save();
+        log_event(CLASS_KEY . '_del', $act);
+    }
+}
+
 
 
 1;

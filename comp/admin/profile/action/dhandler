@@ -40,7 +40,7 @@ $m->comp('/widgets/profile/displayFormElement.mc', vals => $ord_vals,
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 $m->comp('/widgets/profile/formButtons.mc', type => $type, no_del => $no_del,
 	 section => $section, return => "/admin/profile/dest?id=$dest_id",
-	 val => $label, no_save => $no_edit);
+	 val => $label, no_save => $no_edit, widget => $type);
 </%perl>
 </form>
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
@@ -108,11 +108,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.6.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:09 $
+$Date: 2003-06-09 14:27:50 $
 
 =head1 DESCRIPTION
 
