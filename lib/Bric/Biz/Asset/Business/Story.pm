@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.65 $
+$Revision: 1.66 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.65 $ )[-1];
+our $VERSION = (qw$Revision: 1.66 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:13 $
+$Date: 2003-10-08 12:21:10 $
 
 =head1 SYNOPSIS
 
@@ -815,9 +815,9 @@ sub key_name { 'story' }
 
 =item (@meths || $meths_aref) = Bric::Biz::Asset::Business::Story->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called
+Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
+introspection data. The format for each introspection item introspection is as
 follows:
 
 Each hash key is the name of a property or attribute of the object. The value
