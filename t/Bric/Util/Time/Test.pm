@@ -10,22 +10,22 @@ use Bric::Util::Time qw(:all);
 use POSIX ();
 
 my $epoch = 315561600; # gmtime = 315532800;
-my $local_iso_date = '1980-01-01 00:00:00';
-my $utc_iso_date = '1980-01-01 08:00:00';
+my $format = '%m/%d/%Y at %T';
+my $pref_format = Bric::Util::Pref->lookup_val('Date/Time Format');
 
 my $db_date = POSIX::strftime(DB_DATE_FORMAT, gmtime($epoch));
 
-my $pref_format = Bric::Util::Pref->lookup_val('Date/Time Format');
 my $utc_date = POSIX::strftime($pref_format, gmtime($epoch));
-my $local_date;
+my $utc_iso_date = POSIX::strftime(ISO_8601_FORMAT, gmtime($epoch));
+my $fmt_utc = POSIX::strftime($format, gmtime($epoch));
+
+my ($local_date, $local_iso_date, $fmt_local);
 {
     local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
     $local_date = POSIX::strftime($pref_format, localtime($epoch));
+    $local_iso_date = POSIX::strftime(ISO_8601_FORMAT, localtime($epoch));
+    $fmt_local = POSIX::strftime($format, localtime($epoch));
 }
-
-my $format = '%m/%d/%Y at %T';
-my $fmt_local = '01/01/1980 at 00:00:00';
-my $fmt_utc = '01/01/1980 at 08:00:00';
 
 ##############################################################################
 # Test strfdate().
