@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2001-12-12 21:11:18 $
+$Date: 2001-12-21 05:27:24 $
 
 =head1 DESCRIPTION
 
@@ -241,6 +241,10 @@ Add interface for editing Contact Types.
 Add a preference to name the Bricolage instance. This name could be used in
 window titles as well as in the "Welcome to Bricolage" message on the login
 page.
+
+=item *
+
+Dumper Bric::App::ReqCache. Use $r->pnotes() instead.
 
 =item *
 
