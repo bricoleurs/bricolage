@@ -1,0 +1,10 @@
+<!-- Start "autohandler" -->
+<html>
+    <head>
+        <title><% $story->get_title %></title>
+    </head>
+    <body>
+% $burner->chain_next;
+    </body>
+</html>
+<!-- End "autohandler" -->

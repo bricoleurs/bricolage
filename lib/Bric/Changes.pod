@@ -72,6 +72,12 @@ Assets are now properly removed from workflow when they're deactivated
 Template syntax is now properly checked when using the "Checkin/Deploy"
 button. [JoE<atilde>o Pedro]
 
+=item *
+
+The example generic template (autohandler) included in the database is now
+included in the burn root, too, since it's marked as "Deployed" in the
+database. [David]
+
 =back
 
 =head1 VERSION 1.4.0
