@@ -45,7 +45,7 @@ Implies -verbose.
 Turn on verbose mode for debugging.
 
 =head2 -l <file> | --log <file>
- 
+
 Specifies a file to send debugging information to.  There is no need to use
 this for normal operation since Bricolage stores this information in it's
 database in much greater detail.
@@ -59,9 +59,11 @@ Print usage information and exit.
 =head2 BRICOLAGE_ROOT
 
 Set this as usual to indicate where on your system the Bricolage libraries are
-stored.  
+stored.
 
 =head2 Perl Modules
+
+=over 4
 
 =item Getopt::Long
 
@@ -70,6 +72,8 @@ stored.
 =item POSIX
 
 =item File::Spec::Functions
+
+=back
 
 =cut
 
@@ -422,11 +426,11 @@ __END__
 
 =head2 Version
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head2 Date
 
-$Date: 2004-01-13 16:39:10 $
+$Date: 2004-01-16 22:00:41 $
 
 =cut
 

@@ -6,16 +6,16 @@ Bric::Util::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-15 13:55:52 $
+$Date: 2004-01-16 22:00:41 $
 
 =head1 SYNOPSIS
 
@@ -1790,8 +1790,6 @@ sub execute_me {
 }
 
 ################################################################################
-
-=back
 
 =item $self = $job->handle_error($msg)
 
