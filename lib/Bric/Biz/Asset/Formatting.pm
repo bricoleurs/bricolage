@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 23:17:32 $
+$Date: 2001-12-04 23:24:35 $
 
 =head1 SYNOPSIS
 
@@ -811,7 +811,7 @@ sub my_meths {
 	push @ord, $meth->{name};
     }
     push @ord, qw(file_name deploy_date output_channel output_channel
-                  category, category_name), pop @ord;
+                  category category_name), pop @ord;
 
     $meths->{file_name} = {
 			      name     => 'file_name',
