@@ -39,6 +39,11 @@ Updated display of existing contributors in the "Edit Contributors" screen of
 the story and media asset profiles to use listManager. This makes them look
 like they do everywhere else (and uses less code, to boot!). [David]
 
+=item *
+
+Improved error messages thrown in exceptions in Bric::Util::Trans::FTP.
+[David]
+
 =back
 
 =head1 VERSION 1.4.3
