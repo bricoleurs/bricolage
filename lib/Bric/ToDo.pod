@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.72 $
+$Revision: 1.73 $
 
 =head1 DATE
 
-$Date: 2002-09-04 14:39:14 $
+$Date: 2002-09-18 21:51:21 $
 
 =head1 DESCRIPTION
 
@@ -92,10 +92,6 @@ that support Keyword Groups will have to be returned to the API.
 
 =item *
 
-Create a framework for unit testing using Test::Class.
-
-=item *
-
 Create backup and restore scripts that make it easy to do, especially given
 the difficulties of importing a PostgreSQL database dump from Bricolage (Sam
 has more details on this).
@@ -115,10 +111,6 @@ certain words (e.g., About.com excludes the keyword "about.com").
 Add ability to "View" a related story from within the related story Element, so
 that editors can view what's actually in a story before deciding what to fill in
 to the fields of the related story element itself.
-
-=item *
-
-Add "Check In and Remove from Workflow" button to asset editing screens.
 
 =item *
 
@@ -228,12 +220,6 @@ Add support for Instant messaging (using Jabber server) in Alerts.
 
 =item *
 
-Make URI format output channel-specific. Include an option to allow the slug
-to be the file name, e.g., F<slug.html>, F<slug1.html>, etc.. Media files will
-continue to retain their own names, however.
-
-=item *
-
 Chage output channels such that, when they're associated with a story type (or
 media type), they will be output channels to which a story of that type I<may>
 be published. Each output channel has an associated checkbox indicating
@@ -294,13 +280,7 @@ page.
 
 =item *
 
-Dump Bric::App::ReqCache. Use $r->pnotes() instead.
-
-=item *
-
-Fix search interfaces so that when a search term is entered and the user hits
-Return/Enter rather than clicking the "Search" button, the search is actually
-carried out.
+Dump Bric::App::ReqCache. Use C<< $r->pnotes() >> instead.
 
 =item *
 
@@ -435,10 +415,6 @@ allowed to have subcategories, and then check that flag in the category profile.
 
 =item *
 
-Allow some preferences to have values typed into a text field.
-
-=item *
-
 Allow some preferences to get new options entered by the users (e.g., for name
 and date formats).
 
@@ -495,7 +471,7 @@ every time.
 
 =item *
 
-When that last item is done, modify C<Grp->get_objects()> to use it! Go
+When that last item is done, modify C<< Grp->get_objects() >> to use it! Go
 through all the code and make sure that it uses this approach, rather than
 constructing the relevant objects one-at-a-time from each Member object.
 
