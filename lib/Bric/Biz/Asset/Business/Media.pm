@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-06 20:31:57 $
+$Date: 2002-11-06 21:45:50 $
 
 =head1 SYNOPSIS
 
@@ -44,6 +44,8 @@ use Bric::Util::Grp::Media;
 use Bric::App::MediaFunc;
 use File::Temp qw( tempfile );
 use Bric::Config qw(:media);
+use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault::Exception::DA;
 
 #==============================================================================#
 # Inheritance                          #
@@ -138,6 +140,8 @@ use constant INSTANCE_GROUP_ID => 32;
 #--------------------------------------#
 # Private Class Fields
 my ($meths, @ord);
+my $da = 'Bric::Util::Fault::Exception::DA';
+my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 #--------------------------------------#
 # Instance Fields
@@ -850,7 +854,15 @@ Returns the URI for the media object. If the C<$oc> output channel parameter
 is passed in, then the URI will be returned in the output channel's preferred
 format.
 
-B<Throws:> NONE.
+B<Throws:>
+
+=over 4
+
+=item *
+
+Output channel not associated with media.
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -860,7 +872,17 @@ B<Notes:> NONE.
 
 sub get_uri {
     my ($self, $oc) = @_;
+    # Just return the URI unless we need to format it according to an output
+    # channel's requirements.
     return $self->_get('uri') unless $oc;
+
+    # Make sure we have a valid output channel.
+    $oc = Bric::Biz::OutputChannel->lookup({ id =>$oc })
+      unless ref $oc;
+    die $da->new({ msg => "Output channel '" . $oc->get_name . "' not " .
+                   "associated with media '" . $self->get_name . "'" })
+      unless $self->get_output_channels($oc->get_id);
+
     return Bric::Util::Trans::FS->cat_uri
       ($self->_construct_uri($self->get_category_object, $oc),
        $oc->get_filename($self));
@@ -953,8 +975,8 @@ sub upload_file {
     Bric::Util::Trans::FS->mk_path($dir);
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
-    open FILE, ">$path" or die Bric::Util::Fault::Exception::GEN->new
-      ({ msg => "Unable to open '$path': $!" });
+    open FILE, ">$path"
+      or die $gen->new({ msg => "Unable to open '$path': $!" });
     my $buffer;
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
@@ -1026,8 +1048,7 @@ sub get_file {
     my $self = shift;
     my $path = $self->get_path || return;
     my $fh;
-    open $fh, $path or die
-      Bric::Util::Fault::Exception::GEN->new({ msg => "Cannot open '$path': $!" });
+    open $fh, $path or die $gen->new({ msg => "Cannot open '$path': $!" });
     return $fh;
 }
 
@@ -1052,7 +1073,15 @@ B<Notes:> NONE.
 
 This is the size of the media file in bytes
 
-B<Throws:> NONE.
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to retrieve category__id of this media.
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -1071,8 +1100,7 @@ Returns name of media with conflicting URI, if any.
 sub check_uri {
     my $self = shift;
     my $media_cat = $self->get_category__id();
-    die Bric::Util::Fault::Exception::GEN->new
-      ({ msg => 'Was not able to retrieve the category__id of this media' })
+    die $gen->new({ msg => 'Unable to retrieve category__id of this media' })
       unless defined $media_cat;
 
     # get media in the same category
@@ -1107,10 +1135,8 @@ B<Notes:> NONE.
 
 sub revert {
     my ($self, $version) = @_;
-    if (!$self->_get('checked_out')) {
-        die Bric::Util::Fault::Exception::GEN->new( {
-          msg => "May not revert a non checked out version" });
-    }
+    die $gen->new({ msg => "May not revert a non checked out version" })
+      unless $self->_get('checked_out');
 
     my @prior_versions = __PACKAGE__->list( {
       id              => $self->_get_id(),
@@ -1124,11 +1150,8 @@ sub revert {
         }
     }
 
-    unless ($revert_obj) {
-        die Bric::Util::Fault::Exception::GEN->new( {
-          msg => "The requested version does not exist"
-        });
-    }
+    die $gen->new({ msg => "The requested version does not exist" })
+      unless $revert_obj;
 
     # Delete existing contributors.
     if (my $contrib = $self->_get_contributors) {

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-25 23:53:18 $
+$Date: 2002-11-06 21:45:50 $
 
 =head1 SYNOPSIS
 
@@ -176,6 +176,7 @@ use Bric::Util::Attribute::Story;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Story;
 use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault::Exception::DA;
 use Bric::Biz::Keyword;
 
 #==============================================================================#
@@ -265,6 +266,7 @@ use constant INSTANCE_GROUP_ID => 31;
 # Private Class Fields
 my ($meths, @ord);
 my $gen = 'Bric::Util::Fault::Exception::GEN';
+my $da = 'Bric::Util::Fault::Exception::DA';
 
 #--------------------------------------#
 # Instance Fields
@@ -896,15 +898,21 @@ is not a fixed URL.
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Category not associated with story.
 
-B<Notes:>
+=item *
 
-NONE
+Output channel not associated with story.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -917,6 +925,10 @@ sub get_uri {
     if ($cat) {
         $cat = Bric::Biz::Category->lookup({ id => $cat})
           unless ref $cat;
+        my $cats = $self->_get_categories();
+        die $da->new({ msg => "Category '" . $cat->get_uri . "' not " .
+                       "associated with story '" . $self->get_name . "'" })
+          unless exists $cats->{$cat->get_id};
     } else {
         $cat = $self->get_primary_category;
     }
@@ -925,6 +937,9 @@ sub get_uri {
     if ($oc) {
         $oc = Bric::Biz::OutputChannel->lookup({ id =>$oc })
           unless ref $oc;
+        die $da->new({ msg => "Output channel '" . $oc->get_name . "' not " .
+                       "associated with story '" . $self->get_name . "'" })
+          unless $self->get_output_channels($oc->get_id);
     } else {
         $oc = $self->get_primary_oc;
     }
