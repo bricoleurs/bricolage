@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2003-08-12 20:10:42 $
+$Date: 2003-09-29 18:41:47 $
 
 =head1 SYNOPSIS
 
@@ -49,6 +49,8 @@ my $pkgs = { story      => get_package_name('story'),
              media      => get_package_name('media'),
              formatting => get_package_name('formatting')
            };
+my $item_comp = USE_XHTML ? 'desk_item.html' : 'desk_item_old.html';
+
 my $others;
 my $cached_assets = sub {
     my ($ckey, $desk, $user_id, $class, $meths, $sort_by) = @_;
@@ -128,7 +130,7 @@ elsif (defined $user_id) {
 }
 #-- Output each desk item  --#
 my $highlight = $sort_by;
-unless ($highlight && $highlight eq 'cover_date') {
+unless ($highlight) {
     foreach my $f (keys %$meths) {
         # Break out of the loop if we find the searchable field.
         $highlight = $f and last if $meths->{$f}->{search};
@@ -168,10 +170,14 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
         if ($desk_type eq 'workflow') {
             # Figure out publishing stuff, if necessary.
             if ($can_edit && $desk->can_publish) {
-                $pub = ($class eq 'formatting' ? 'Deploy' : 'Publish') .
-                  $m->scomp('/widgets/profile/checkbox.mc',
+                $pub = $m->scomp('/widgets/profile/checkbox.mc',
                             name  => "$widget|${class}_pub_ids",
-                            value => $aid) unless $obj->get_checked_out;
+                            id    => "$widget\_$aid",
+                            value => $aid)
+                  . qq{<label for="$widget\_$aid">}
+                  . ($class eq 'formatting' ? 'Deploy' : 'Publish')
+                  . '</label>'
+                  unless $obj->get_checked_out;
             }
             # Now figure out the checkout/edit link.
             if (defined $user_id) {
@@ -231,12 +237,12 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
                 $vlabel = 'Edit';
                 $pub = $m->scomp('/widgets/profile/checkbox.mc',
                                  name  => "${class}_delete_ids",
-                                 value => $aid) . $lang->maketext('Delete');
+                                 id    => "$widget\_$aid",
+                                 value => $aid)
+                  . qq{<label for="$widget\_$aid">}
+                  . $lang->maketext('Delete') . '</label>';
             }
         }
-        my $elink = $user ? $user : $label ? qq{<a href="} . $r->uri . "?" .
-      join('&', ("$widget|$action=$aid", "$widget|asset_class=$class"))
-      . qq{" class=blackUnderlinedLink>$label</a>} : '';
 
         # Assemble the list of desks we can move this to.
         my $a_wf = $wfs{$obj->get_workflow_id} ||= $obj->get_workflow_object;
@@ -313,7 +319,7 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
         }
 
         # Now display it!
-        $m->comp('desk_item.html',
+        $m->comp($item_comp,
                  widget    => $widget,
                  highlight => $highlight,
                  obj       => $obj,
@@ -327,10 +333,12 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
                  pub       => $pub,
                  disp      => $disp,
                  type      => $type,
-                 elink     => $elink,
                  class     => $class,
                  desk      => $desk,
                  did       => $desk_id,
+                 user      => $user,
+                 label     => $label,
+                 action    => $action,
                  desk_type => $desk_type);
     }
     $m->out("<br />\n");

@@ -19,15 +19,14 @@
 % }
     </td>
 </tr>
-</table>
-
+</table><br />
+<div id="desk">
 <%args>
 $class => 'story'
 $caption => ''
 $sort_by_val => undef
 $others => {}
 </%args>
-
 <%init>;
 $caption ||= $pl_names->{$class};
 my ($link1, $link2, $lab1, $lab2);
@@ -45,7 +44,6 @@ if ($class eq 'story') {
 
 }
 </%init>
-
 <%once>;
 my $sort_by = { story      => [ [ cover_date => 'Cover Date' ],
                                 [ priority => 'Priority' ],

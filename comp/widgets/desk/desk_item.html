@@ -1,160 +1,56 @@
-%#-- Begin HTML --#
+<div class="desk_item">
+  <div class="head">
+    <span class="<% $idv_class %>"><% "$id v." . $obj->get_version %></span>
+    <span class="<% $title_class %>"><% $name %></span>
+    <% $m->comp('publish_status_span.mc',
+                sorted => $highlight eq 'name' ? 'sorted' : '',
+                asset => $obj) %>
+  </div>
+  <div class="body">
+    <dl>
+      <dt><% $lang->maketext('Category') %></dt>
+      <dd<% $classes->{category_name} || $classes->{location} || '' %>><% $cat %></dd>
+      <dt><% $lang->maketext('Site') %></dt>
+      <dd<% $classes->{site_id} || '' %>><% $site %></dd>
+      <dt><% $lang->maketext(($class eq 'formatting' ? 'Asset' : $disp ) . ' Type') %></dt>
+      <dd<% $classes->{element} || '' %>><% $type %></dd>
+      <dt><% $lang->maketext($date_label) %></dt>
+      <dd<% $classes->{cover_date} || '' %>><% $date %></dd>
+      <dt><% $lang->maketext('Priority') %></dt>
+      <dd<% $classes->{priority} || '' %>><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
+    </dl>
+    <p><% $elink %></p>
 
-<%once>
-
-# outputs a 1x1 pixel table cell. The first argument determines value of the
-# colspan tag, while the second determines the height of the image.
-my $onePixCell = sub {
-    my ($colspan, $h, $w) = @_;
-    $h ||= 1;
-    $w ||= 1;
-    $colspan = $colspan ? qq{ colspan="$colspan"} : '';
-    return qq {<td width="1"$colspan bgcolor="white">} .
-      qq{<img src="/media/images/spacer.gif" width="$w" height="$h" /></td>};
-};
-
-</%once>
-
-<table border="0" width="580" cellpadding="0" cellspacing="0">
-<tr>
-  <td><img src="/media/images/spacer.gif" width="58" height="18" /></td>
-  <td><img src="/media/images/spacer.gif" width="1" height="10" /></td>
-  <td><img src="/media/images/spacer.gif" width="38" height="10" /></td>
-  <td><img src="/media/images/spacer.gif" width="1" height="10" /></td>
-  <td><img src="/media/images/spacer.gif" width="443" height="10" /></td>
-  <td><img src="/media/images/spacer.gif" width="18" height="10" /></td>
-</tr>
-<tr class="<% $header_class %>">
-    <td <% $classes->{id} || '' %> align="right"><span class="label"><% $id %></span>&nbsp;</td>
-    <% &$onePixCell(0, 22) %>
-    <td align="center"><span class="label">V.<% $obj->get_version %></span></td>
-    <% &$onePixCell() %>
-    <td <% $classes->{name} || $classes->{file_name} || '' %>>&nbsp;<span class="label"><% $name %></span></td>
-    <td <% $classes->{name} || $classes->{file_name} || '' %>><% $status %></td>
-</tr>
-</table>
-
-<table border="0" width="580" cellpadding="0" cellspacing="0">
-<tr>
-<% &$onePixCell(undef, 1, 100) %>
-<% &$onePixCell(2, 1, 241) %>
-<td rowspan="<% ($rowspan * 2) %>" width="1" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-<% &$onePixCell(1) %>
-<td rowspan="<% ($rowspan * 2) %>" width="1" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-</tr>
-<tr>
-    <td align="right" class="medHeader" width="100"><%$lang->maketext('Category')%>: </td>
-    <td width="1"><img src="/media/images/spacer.gif" width="1" height="20" /></td>
-    <td<% $classes->{category_name} || $classes->{location} || '' %> width="240">&nbsp;<span class="subHeader"><% $cat %></span></td>
-    <td rowspan="<% ($rowspan * 2 - 1) %>" width="237">
-    <table border="0" width="237" celpadding="0" cellspacing="0">
-        <tr>
-            <% &$onePixCell(0, 20) %>
-            <td><% $lang->maketext($elink) %></td>
-        <tr>
-            <% &$onePixCell(0, 43) %>
-            <td>
 % if ($can_edit && $desk_opts) {
-                <% $mlabel %>: <& '/widgets/profile/select.mc',
-                                  name     => $widget . '|next_desk',
-                                  value    => $desk_val,
-                                  options  => $desk_opts,
-                                  useTable => 0 &>
+    <div class="mover"><label for="move<% $id %>"><% $lang->maketext($mlabel) %></label>
+      <& '/widgets/profile/select.mc',
+         name     => "$widget|next_desk",
+         value    => $desk_val,
+         options  => $desk_opts,
+         useTable => 0,
+         id       => "move$id" &>
+    </div>
 % } else {
-                 &nbsp;
+    <div class="mover">&nbsp;</div>
 % }
-            </td>
-        </tr>
-        <tr>
-            <% &$onePixCell(0, 18) %>
-            <td>
-<%perl>;
-my $link = $ppage . '/' . $aid;
-my $item_label = 'Trail';
-my $item_url = "/workflow/trail/$class/$aid";
-if ($desk_type eq 'workflow') {
-    $link .= '?return=' . $did;
-    if ($vlabel eq 'Edit') {
-        $link .= '&checkout=1';
-    }
-} else {
-    if ($vlabel eq 'Edit') {
-        $link .= '?checkout=1';
-    }
-    if ($class eq 'story') {
-        $item_label = 'Clone';
-        $item_url = $r->uri . "?$widget|clone_cb=$aid";
-    }
-}
-</%perl>
-                <a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>" class="blackUnderlinedLink"><%$lang->maketext('Notes')%></a>&nbsp;&nbsp;
-                <a href="<% $item_url %>" class="blackUnderlinedLink"><% $lang->maketext($item_label) %></a>&nbsp;&nbsp;
-                <a href="<% $link %>" class="blackUnderlinedLink"><% $lang->maketext($vlabel) %></a>&nbsp;&nbsp;
-                <a href="/workflow/events/<% $class %>/<% $aid %>" class="blackUnderlinedLink"><%$lang->maketext('Log')%></a>&nbsp;&nbsp;
-                <% $pub %>
-            </td>
-        </tr>
-    </table>
-    </td>
-
-</tr>
-
-<tr>
-<% &$onePixCell(3) %>
-</tr>
-<tr>
-    <td align="right" class="medHeader"><%$lang->maketext('Site')%>: </td>
-    <% &$onePixCell(0, 18) %>
-    <td<% $classes->{priority} || '' %>>&nbsp;<span class="subHeader"><% $site || '&nbsp;' %></span></td>
-</tr>
-
-
-<tr>
-<% &$onePixCell(3) %>
-</tr>
-
-<tr>
-    <td align="right" class="medHeader"><% $lang->maketext(($class eq 'formatting' ? 'Asset' : $disp ).' Type') %>: </td>
-    <% &$onePixCell(0, 20) %>
-    <td<% $classes->{element} || '' %>>&nbsp;<span class="subHeader"><% $type %></span></td>
-</tr>
-<tr>
-<% &$onePixCell(3) %>
-</tr>
-
-<tr>
-    <td align="right" class="medHeader"><% $lang->maketext($date_label) || '&nbsp;' %>: </td>
-    <% &$onePixCell(0, 20) %>
-    <td<% $classes->{cover_date} || '' %>>&nbsp;<span class="subHeader"><% $date || '&nbsp;' %></span></td>
-</tr>
-<tr>
-<% &$onePixCell(3) %>
-</tr>
-<tr>
-    <td align="right" class="medHeader"><%$lang->maketext('Priority')%>: </td>
-    <% &$onePixCell(0, 18) %>
-    <td<% $classes->{priority} || '' %>>&nbsp;<span class="subHeader"><% $lang->maketext($priors->{$obj->get_priority}) || '&nbsp;' %></span></td>
-</tr>
-<tr>
-<td colspan="6" width="1" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1"></td>
-</tr>
-</table>
-
-%#-- End HTML --#
-
-%#-- Once Section --#
+    <ul class="actions">
+      <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>">Notes</a></li>
+      <li><a href="<% $item_url %>"><% $lang->maketext($item_label) %></a></li>
+      <li><a href="<% $link %>"><% $lang->maketext($vlabel) %></a></li>
+      <li><a href="/workflow/events/<% $class %>/<% $aid %>"><% $lang->maketext('Log') %></a></li>
+      <li><% $pub %></li>
+    </ul>
+  </div>
+</div>
 <%once>;
 my $priors = Bric::Biz::Asset->list_priorities;
 </%once>
-
-%#-- Args Section --#
 <%args>
 $mlabel => 'Move to Desk'
 $widget => 'desk_asset'
 $obj
 $highlight
 $can_edit
-$elink
 $vlabel => 'View'
 $desk_val
 $desk_opts
@@ -166,15 +62,13 @@ $aid
 $class  => 'story'
 $did
 $desk_type
+$user => undef
+$label => undef
+$action => undef
 </%args>
-
-%#-- Init Section --#
 <%init>;
 # Get the ID.
 my $id = $obj->get_id;
-
-# Determine the status.
-my $status = $m->comp('publish_status.mc', asset => $obj) || '&nbsp;';
 
 my $cats = $r->pnotes("desk.cats") || {};
 my ($name, $date, $date_label, $cat);
@@ -182,7 +76,9 @@ my $header_class = 'lightHeader';
 
 my $site_id = $obj->get_site_id;
 my $site = Bric::Biz::Site->lookup({id => $site_id})->get_name || '&nbsp;';
-
+my $alias = '';
+my $title_class = 'title';
+my $idv_class = 'idv';
 if ($class eq 'formatting') {
     $date = $obj->get_deploy_date || '&nbsp';
     $date_label = 'Deployed Date';
@@ -202,14 +98,22 @@ if ($class eq 'formatting') {
     $date = $obj->get_cover_date;
     $date_label = 'Cover Date';
     my $co = $vlabel eq 'Edit';
-    my $c = $highlight eq 'name' ? 'whiteMedUnderlinedLink'
-      : 'blackMedUnderlinedLink';
+    $alias = 'alias' if $obj->get_alias_id;
+    if ($highlight eq 'name') {
+        $title_class .= "sorted";
+    } elsif ($alias) {
+        $title_class .= $alias;
+    }
+    if ($highlight eq 'id') {
+        $idv_class .= "sorted";
+    } elsif ($alias) {
+        $idv_class .= $alias;
+    }
     if ($class eq 'media') {
 	$cat = $cats->{$obj->get_category__id} ||= $obj->get_category_object;
 	$cat = $cat->get_name if $cat;
         $name = $m->comp('/widgets/profile/preview_link.mc',
                          type  => $class,
-                         style => $c,
                          doc   => $obj,
                          title => $name )
           if $obj->get_file_name;
@@ -219,17 +123,37 @@ if ($class eq 'formatting') {
 	$cat ||= '&nbsp;';
         $name = $m->comp('/widgets/profile/preview_link.mc',
                          type  => $class,
-                         style => $c,
                          doc   => $obj,
                          title => $name );
     }
     $header_class = 'aliasHeader' if $obj->get_alias_id;
 }
 $cat ||= '&nbsp;';
-my $classes = $highlight ? { $highlight => ' class="tealHighlight"' } : {};
+my $classes = { $highlight => ' class="sorted"' };
 my $rowspan = 5;
-</%init>
 
+my $link = $ppage . '/' . $aid;
+my $item_label = 'Trail';
+my $item_url = "/workflow/trail/$class/$aid";
+if ($desk_type eq 'workflow') {
+    $link .= '?return=' . $did;
+    if ($vlabel eq 'Edit') {
+        $link .= '&amp;checkout=1';
+    }
+} else {
+    if ($vlabel eq 'Edit') {
+        $link .= '?checkout=1';
+    }
+    if ($class eq 'story') {
+        $item_label = 'Clone';
+        $item_url = $r->uri . "?$widget|clone_cb=$aid";
+    }
+}
+
+my $elink = $user ? $user : $label ? '<a href="' . $r->uri . "?"
+  . join('&amp;', "$widget|$action=$aid", "$widget|asset_class=$class")
+  . qq{">$label</a>} : '';
+</%init>
 <%doc>
 ###############################################################################
 
@@ -239,11 +163,11 @@ my $rowspan = 5;
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2003-09-11 22:17:52 $
+$Date: 2003-09-29 18:41:47 $
 
 =head1 DESCRIPTION
 

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:42 $
+$Date: 2003-09-29 18:41:47 $
 
 =head1 SYNOPSIS
 
@@ -130,6 +130,7 @@ $width    => undef
 $indent   => undef
 $cols     => undef
 $rows     => undef
+$id       => undef
 </%args>
 <%perl>;
 my $agent = detect_agent();
@@ -163,7 +164,7 @@ if ($objref) {
 
     # Execute the formatting code.
     $formSubs{$formType}->($key, $methods->{$key}, $value, $js, $name, $width,
-                           $indent, $useTable, $label, $readOnly, $agent)
+                           $indent, $useTable, $label, $readOnly, $agent, $id)
       if $formSubs{$formType};
 
     $m->out(qq{\n<script language="javascript">requiredFields['$key'] = }
@@ -182,7 +183,7 @@ if ($objref) {
 
     # Execute the formatting code.
     $formSubs{$formType}->($key, $vals, $value, $js, $name, $width, $indent,
-                           $useTable, $label, $readOnly, $agent)
+                           $useTable, $label, $readOnly, $agent, $id)
       if $formSubs{$formType};
 
     $m->out(qq{\n<script language="javascript">requiredFields['$key'] = }
@@ -291,13 +292,14 @@ my %formSubs = (
 
 	checkbox => sub {
 	    my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-		$label, $readOnly, $agent) = @_;
+		$label, $readOnly, $agent, $id) = @_;
 	    my $extra = '';
 	    if (exists $vals->{props}{chk}) {
-		$extra .= ' checked' if $vals->{props}{chk}
+		$extra .= ' checked="checked"' if $vals->{props}{chk}
 	    } elsif ($value) {
-		$extra .= ' checked';
+		$extra .= ' checked="checked"';
 	    }
+            $extra .= qq{ id="$id"} if defined $id;
 	    $indent -= 5 if ($useTable && !$readOnly);
 	    &$inpt_sub('checkbox', $key, $vals, $value, $js, $name, $width,
 		       $indent, $useTable, $label, $readOnly, $agent, $extra);
@@ -334,7 +336,7 @@ my %formSubs = (
 
 	select => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-		$label, $readOnly, $agent) = @_;
+		$label, $readOnly, $agent, $id) = @_;
 	    my $out='';
 
 	    $indent -= 7 if $agent->nav4;
@@ -355,6 +357,7 @@ my %formSubs = (
 		$out .= 'size="' . ($vals->{props}{size} ||
 		  ($vals->{props}{multiple} ? 5 : 1)) . '"';
 		$out .= ' multiple' if $vals->{props}{multiple};
+                $out .= qq{ id="$id"} if defined $id;
 		$out .= "$js>\n";
 	    }
 

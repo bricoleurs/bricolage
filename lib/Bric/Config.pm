@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.74 $
+$Revision: 1.75 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.74 $ )[-1];
+our $VERSION = (qw$Revision: 1.75 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-19 13:35:36 $
+$Date: 2003-09-29 18:41:48 $
 
 =head1 SYNOPSIS
 
@@ -142,6 +142,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     CACHE_DEBUG_MODE
                     STORY_URI_WITH_FILENAME
                     ENABLE_CATEGORY_BROWSER
+                    USE_XHTML
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -206,7 +207,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      YEAR_SPAN_BEFORE
                                      YEAR_SPAN_AFTER
                                      NO_TOOLBAR
-                                     ENABLE_CATEGORY_BROWSER)],
+                                     ENABLE_CATEGORY_BROWSER
+                                     USE_XHTML)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],
                     time      => [qw(ISO_8601_FORMAT)],
@@ -306,7 +308,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
         }
         # Process boolean directives here. These default to 1.
-        foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR)) {
+        foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR USE_XHTML)) {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }
@@ -524,7 +526,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant PROFILE => $config->{PROFILE} || 0;
 
     # Category browser setting
-    use constant ENABLE_CATEGORY_BROWSER => $config->{ENABLE_CATEGORY_BROWSER} || 0;
+    use constant ENABLE_CATEGORY_BROWSER => $config->{ENABLE_CATEGORY_BROWSER};
+
+    # XHTML setting.
+    use constant USE_XHTML              => $config->{USE_XHTML};
 
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER} and $ENV{MOD_PERL}) {

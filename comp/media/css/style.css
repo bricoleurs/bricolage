@@ -5,7 +5,7 @@ pre        { font-size:11px;}
 
 p          { font-size:11px; line-height:16px; }
 h3         { font-size:12px; line-height:17px;}
-dt         { font-size:11px; line-height:16px; font-weight:bold; }
+dt         { font-size:11px; line-height:16px; }
 dd         { font-size:11px; line-height:16px; }
 li         { font-size:11px; line-height:16px; }
 
@@ -70,5 +70,242 @@ div.debug dt {
 }
 
 div.debug dt:after {
-    content: ':'; // Insert a colon.
+    content: ':'; /* Insert a colon. */
+}
+
+/* Desk item styling. */
+#desk {
+    width: 580px;
+    font-size: 11px;
+    line-height: 11px;
+}
+
+.desk_item {
+    padding-bottom: 8px;
+    clear: left;
+}
+
+.desk_item a { text-decoration:none; }
+
+.desk_item a:hover {
+    text-decoration:underline;
+}
+
+.desk_item a:link {
+    color: #006666;
+    background-color: transparent;
+}
+
+.desk_item a:active {
+    color: #006666;
+    background-color: transparent;
+}
+
+.desk_item a:visited {
+    color: #006666;
+    background-color: transparent;
+}
+
+.desk_item a.ref:link {
+    color: #006666;
+    background-color: transparent;
+}
+
+.desk_item a.ref:visited {
+    color: #006666;
+    background-color: transparent;
+}
+
+.desk_item .head {
+    margin: 0px;
+    border: 0px;
+    line-height: 20px;
+    font-weight: bold;
+}
+
+.desk_item .head .idv {
+    float: left;
+    width: 97px;
+    color: black;
+    background:#cccc99;
+    border-right: solid white 1px;
+    padding-left: 3px;
+}
+
+.desk_item .head .idvsorted {
+    float: left;
+    width: 97px;
+    color: black;
+    background:#669999;
+    border-right: solid white 1px;
+    padding-left: 3px;
+}
+
+.desk_item .head .idvalias {
+    float: left;
+    width: 97px;
+    color: black;
+    background:#99cc99; 
+    border-right: solid white 1px;
+    padding-left: 3px;
+}
+
+.desk_item .head .title {
+    float: left;
+    width: 456px;
+    color: black;
+    background:#cccc99;
+    padding-left: 3px;
+}
+
+.desk_item .head .titlealias {
+    float: left;
+    width: 456px;
+    color: black;
+    background:#99cc99; 
+    padding-left: 3px;
+}
+
+.desk_item .head .titlesorted {
+    float: left;
+    width: 456px;
+    color: black;
+    padding-left: 3px;
+    color: white;
+    background:#669999;
+}
+
+.desk_item .head .need {
+    float: left;
+    clear: right;
+    width: 20px;
+    text-align: center;
+    color: white;
+    background: #993300;
+}
+
+
+.desk_item .head .pub {
+    float: left;
+    clear: right;
+    width: 20px;
+    text-align: center;
+    color: white;
+    background: #999934;
+}
+
+
+.desk_item .head .none {
+    float: left;
+    clear: right;
+    width: 20px;
+    text-align: center;
+    color: white;
+    background:#cccc99;
+}
+
+.desk_item .head .aliasnone {
+    float: left;
+    clear: right;
+    width: 20px;
+    text-align: center;
+    color: white;
+    background:#99cc99; 
+}
+
+.desk_item .head .nonesorted {
+    float: left;
+    clear: right;
+    width: 20px;
+    text-align: center;
+    color: white;
+    background:#669999;
+}
+
+.desk_item .head .sorted a {
+    color: white;
+    background:#669999;
+}
+
+.desk_item .body {
+    border-right: solid #999966 1px;
+    border-bottom: solid #999966 1px;
+    margin: 0px;
+}
+
+.desk_item .body p, dl {
+    margin: 0px;
+    padding: 0px;
+}
+
+.desk_item .body input {
+    margin: 0px;
+}
+
+.desk_item .body label {
+    padding-left: 3px;
+}
+
+.desk_item .body p {
+    border-top: solid white 1px;
+    line-height: 20px;
+}
+
+.desk_item .body select {
+    line-height: 20px;
+}
+
+.desk_item .body .mover {
+    line-height: 63px;
+    height: 63px;
+    text-align: middle;
+}
+
+.desk_item .body ul.actions {
+    margin: 0;
+    border-top: solid white 1px;
+}
+
+.desk_item .body ul.actions li {
+    display: inline;
+    line-height: 20px;
+    padding: 0 4px 0 0;
+    clear: right;
+}
+
+.desk_item .body dl {
+    float: left;
+    border-right: solid #999966 1px;
+    width: 62%;
+    margin-right: 3px;
+}
+
+.desk_item .body dt, dd {
+    line-height: 20px;
+    border-top: solid white 1px;
+}
+
+.desk_item .body dt {
+    color: black;
+    background:#999966;  
+    float: left;
+    width: 100px;
+    text-align: right;
+    margin-right: 2px; /* Make three if we can't get the 1px to work in dd. */
+    border-right: solid white 1px;
+}
+
+.desk_item .body dd {
+    padding: 0;
+    padding-left: 1px;
+}
+
+.desk_item .body dt:after {
+    content: ':'; /* Insert a colon. */
+}
+
+.desk_item .sorted {
+    color: white;
+    background:#669999;
+    font-weight: bold;
 }

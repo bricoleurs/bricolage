@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-09-16 16:52:25 $
+$Date: 2003-09-29 18:41:47 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/checkbox.mc",
@@ -38,6 +38,7 @@ $checked     => 0
 $useTable    => 0
 $readOnly    => 0
 $localize    => 1
+$id          => undef
 </%args>
 <%perl>;
 my $vals = { disp  => $disp,
@@ -54,6 +55,7 @@ $m->comp("/widgets/profile/displayFormElement.mc",
 	 vals => $vals,
 	 readOnly => $readOnly,
 	 localize => $localize,
-	 useTable => $useTable
+	 useTable => $useTable,
+         id       => $id
 );
 </%perl>
