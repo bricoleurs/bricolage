@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.8 $
+$Revision: 1.1.2.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.9 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-08 22:39:33 $
+$Date: 2003-03-09 01:06:19 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.8 2003-03-08 22:39:33 wheeler Exp $
+$Id: Site.pm,v 1.1.2.9 2003-03-09 01:06:19 wheeler Exp $
 
 =back
 
@@ -552,6 +552,7 @@ sub save {
             my $g = Bric::Util::Grp::User->new
               ({ name        => "$name $field Users",
                  description => "__Site $id Users__",
+                 secret      => 1,
                  permanent   => 1});
             $g->save;
             Bric::Util::Priv->new({ obj_grp => $grp,
@@ -654,7 +655,7 @@ $set_unique_attr = sub {
 
     my $disp = $self->my_meths->{$field}{disp};
     # Make sure we have a value.
-    throw_not_unique maketext => ["Value of cannot be empty", $disp]
+    throw_not_unique maketext => ["Value of [_1] cannot be empty", $disp]
       unless $value;
 
     my $old_value = $self->_get($field);
