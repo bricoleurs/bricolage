@@ -136,6 +136,11 @@ first time they are saved. It was inconsistent before, and some items could not
 be seen in the desk and Find views until they were checked in. Thanks to Sam for
 spotting the inconsistency. [David]
 
+=item *
+
+The bric_clean_tmp script has been changed to avoid deleting the Bricolage
+cache file.  [Sam]
+
 =back
 
 =head1 VERSION 1.2.0
