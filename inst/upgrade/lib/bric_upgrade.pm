@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-15 23:19:06 $
+$Date: 2003-10-15 23:47:36 $
 
 =head1 SYNOPSIS
 
@@ -115,13 +115,13 @@ use Bric::Config qw(DBI_USER);
 # does should be in a single transaction.
 begin();
 
-my $rolled_back;
+my ($rolled_back, $testing);
 
 # Catch all exceptions. We want to rollback any transactions before
 # exiting.
 $SIG{__DIE__} = sub {
     # For some reason, this seems to get called twice
-    unless ($rolled_back) {
+    unless ($rolled_back or $testing) {
         rollback();
         print STDERR "\n\n", ('#') x 70, "\n",
           "ERROR: DATABASE UPDATE FAILED!\n\n",
@@ -175,10 +175,12 @@ database.
 =cut
 
 sub test_sql {
+    $testing = 1;
     eval {
 	my $sth = prepare(shift);
 	execute($sth);
     };
+    $testing = 0;
     return $@ ? 0 : 1;
 }
 
