@@ -80,6 +80,16 @@ file. Reported by Kevin Elliott. [David]
 Optimized performance of Bric::Dist::Resource queries and wrote lots of tests
 for them. [David]
 
+=item *
+
+When a story or media document is published, Bricolage now looks to see if any
+files distributed for previous versions of the document are no longer
+associated with the document, and expires them if they are. It does so on a
+per-output channel basis, so note that if output channel settings have changed
+since the document was last published, the expiration may miss some stale
+files. The same goes for when destinations are changed. But this should cover
+the vast majority of cases.
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

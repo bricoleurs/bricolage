@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32.4.8 $
+$Revision: 1.32.4.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32.4.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.4.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-09 00:01:43 $
+$Date: 2003-08-09 21:50:52 $
 
 =head1 SYNOPSIS
 
@@ -193,6 +193,7 @@ BEGIN {
           output_filename => Bric::FIELD_READ,
           output_ext      => Bric::FIELD_READ,
           output_path     => Bric::FIELD_READ,
+          base_path       => Bric::FIELD_READ,
           base_uri        => Bric::FIELD_READ,
       });
 }
@@ -442,6 +443,17 @@ B<Notes:> NONE.
 Returns the filename extensionused to create the file names of all files created by
 the current burn. This will have the same value as
 C<< $b->get_oc->get_file_ext >>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $output_path = $b->get_base_path
+
+Returns the local file system path to the directory that will be used as the
+base path for all files written for documents within a given output channel.
 
 B<Throws:> NONE.
 
@@ -715,8 +727,9 @@ sub publish {
     $self->_set(['mode'], [PUBLISH_MODE]);
     my ($ats, $oc_sts) = ({}, {});
     my ($ba, $key, $user_id, $publish_date, $die_err) = @_;
-    my $published=0;
+    my $published = 0;
     $ba->set_publish_date($publish_date);
+    my $baid = $ba->get_id;
 
     # Determine if we've published before. Set the expire date if we haven't.
     my ($repub, $exp_date) = $ba->get_publish_status ?
@@ -730,6 +743,9 @@ sub publish {
 
     foreach my $oc (@$ocs) {
         my $ocid = $oc->get_id;
+        my $base_path = $fs->cat_dir($self->get_out_dir, 'oc_'. $ocid);
+        $self->_set(['base_path'], [$base_path]);
+
         # Get a list of server types this categroy applies to.
         my $bat = $oc_sts->{$ocid} ||=
             Bric::Dist::ServerType->list({ can_publish       => 1,
@@ -775,7 +791,7 @@ sub publish {
                          uri => $uri
                        });
 
-                $r->add_media_ids($ba->get_id);
+                $r->add_media_ids($baid);
                 $r->save;
                 $job->add_resources($r);
                 $published = 1;
@@ -791,7 +807,7 @@ sub publish {
         log_event('job_new', $job);
 
         # Set up an expire job, if necessary.
-        if ($exp_date) {
+        if ($exp_date and my @res = $job->get_resources) {
             # We'll need to expire it.
             my $expname = "Expire &quot;" . $ba->get_name .
               "&quot; from &quot;" . $oc->get_name . "&quot;";
@@ -800,11 +816,43 @@ sub publish {
                  user_id      => $user_id,
                  server_types => $bat,
                  name         => $expname,
-                 resources    => [$job->get_resources],
-                 type => 1
+                 resources    => \@res,
+                 type         => 1
                });
             $exp_job->save;
             log_event('job_new', $exp_job);
+        }
+
+        # Expire stale resources, if necessary.
+        if (my @stale = Bric::Dist::Resource->list
+            ({ "$key\_id" => $baid,
+               not_job_id => $job->get_id,
+               path       => "$base_path%" }))
+        {
+            # Yep, there are old resources to expire.
+            my $stale_name = "Expire stale &quot;" . $ba->get_name .
+              "&quot; from &quot;" . $oc->get_name . "&quot; files";
+            my $stale_job = Bric::Dist::Job->new
+              ({ sched_time   => $publish_date,
+                 user_id      => $user_id,
+                 server_types => $bat,
+                 name         => $stale_name,
+                 resources    => \@stale,
+                 type         => 1
+               });
+            $stale_job->save;
+            log_event('job_new', $stale_job);
+
+            # Dissociate the stale resources from this asset.
+            if ($key eq 'story') {
+                foreach my $sr (@stale) {
+                    $sr->del_story_ids($baid)->save;
+                }
+            } else {
+                foreach my $sr (@stale) {
+                    $sr->del_media_ids($baid)->save;
+                }
+            }
         }
     }
 
@@ -870,8 +918,7 @@ sub burn_one {
 
     # Figure out the base URI and output path.
     my $base_uri = $story->get_uri($cat, $oc, 1);
-    my $path = $fs->cat_dir($self->get_out_dir, 'oc_'. $oc->get_id,
-                            $fs->uri_to_dir($base_uri));
+    my $path = $fs->cat_dir($self->get_base_path, $fs->uri_to_dir($base_uri));
 
     # Create the output directory.
     $fs->mk_path($path);
