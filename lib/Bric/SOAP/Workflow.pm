@@ -1,9 +1,8 @@
-package Bric::SOAP::Story;
+package Bric::SOAP::Workflow;
 ###############################################################################
 
 use strict;
 use warnings;
-
 
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
@@ -12,7 +11,14 @@ use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow qw(STORY_WORKFLOW MEDIA_WORKFLOW TEMPLATE_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
-use Carp qw(croak);
+use Bric::Config        qw(STAGE_ROOT);
+use Bric::App::Event    qw(log_event);
+use Bric::Util::Time    qw(strfdate);
+use Bric::Util::MediaType;
+use Bric::Dist::Job;
+use Bric::Dist::ServerType;
+use Bric::Dist::Resource;
+use Bric::Biz::Workflow::Parts::Desk;
 
 use SOAP::Lite;
 import SOAP::Data 'name';
@@ -29,15 +35,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-14 21:33:39 $
+$Date: 2002-02-21 20:17:46 $
 
 =head1 SYNOPSIS
 
@@ -56,7 +62,7 @@ $Date: 2002-02-14 21:33:39 $
 
   # set uri for Workflow module
   $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Workflow');
-  
+
 =head1 DESCRIPTION
 
 This module provides a SOAP interface to manipulating Bricolage
@@ -71,13 +77,9 @@ checkin, checkout, publishing and deploying.
 
 =item publish
 
-This method handles the publishing of story and media objects.  If a
-story has related stories and media then these will also be published.
-The behavior mirrors that of the publish system in the web interface.
-
-The method returns 1 on success.
-
-The method accepts the following parameters:
+This method handles the publishing of story and media objects.
+Returns "publish_ids", an array of "story_id" and/or "media_id"
+integers published.  The method accepts the following parameters:
 
 =over 4
 
@@ -93,12 +95,18 @@ A single media object to publish.
 
 A list of "story_id" and/or "media_id" elements to be published.
 
-=item publish_date
+=item publish_related_stories
 
-If set, this must be a date in the future at which the specified
-stories will be published.  The date must be in XML Schema dataTime
-format.  If publish_date is not specified then publishing occurs
-immediately.
+If this is set to true then related stories will be published too.  In
+the web interface this happens if and only if the related stories have
+never been published before.  This option is off by default.
+
+=item publish_related_media
+
+If this is set to true then related media will be published too.  In
+the web interface this happens if and only if the related media
+objects have never been published before.  This option is false by
+default.
 
 =back
 
@@ -107,16 +115,208 @@ Throws: NONE
 Side Effects: Stories and media have their publish_status field set to
 true.
 
-Notes: NONE
+Notes: Would be nice to implement "publish_date" option for delayed
+publish here.
+
+The code for this method came mostly from
+comp/widgets/publish/callback.mc.  It would be nice to collect this
+code in a module so it could be kept in one place.
 
 =cut
 
-sub publish {}
+{
+# hash of allowed parameters
+my %allowed = map { $_ => 1 } qw(story_id media_id publish_ids
+				 publish_related_stories 
+				 publish_related_media);
+
+sub publish {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+
+    print STDERR __PACKAGE__ . "->publish() called : args : ", 
+ 	Data::Dumper->Dump([$args],['args']) if DEBUG;
+
+    # check for bad parameters
+    for (keys %$args) {
+ 	die __PACKAGE__ . "::publish : unknown parameter \"$_\".\n"
+ 	    unless exists $allowed{$_};
+    }
+    
+    my @ids = _collect_ids("publish_ids", 
+			   [ 'story_id', 'media_id' ],
+			   $env);
+
+    # Instantiate the Burner object.
+    my $burner = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
+    
+    # iterate through ids publishing shiznats
+    my %seen;
+    my @published;
+    while (my $id = shift @ids) {
+	my $obj;
+	my $type;
+	if ($id->name eq 'story_id') {
+	    $type = 'story';
+	    $obj  = Bric::Biz::Asset::Business::Story->lookup(
+                                         { id => $id->value });
+	    die "Unable to find story for story_id \"$id\".\n"
+		unless $obj;
+
+	} elsif ($id->name eq 'media_id') {
+	    $type = 'media';
+	    $obj  = Bric::Biz::Asset::Business::Media->lookup(
+                                         { id => $id->value });
+	    die "Unable to find media object for media_id \"$id\".\n"
+		unless $obj;
+
+	} else {
+	    die "Unknown element found in publish_ids list.\n";
+	}      
+
+	# don't need the object anymore
+	$id = $id->value;
+
+	# make sure we're not publishing stuff repeatedly
+	next if $seen{$type}{$id};
+	$seen{$type}{$id} = 1;    
+
+	# check check check
+	die "Cannot publish checked-out $type : \"$id\".\n" 
+	    if $obj->get_checked_out;
+
+	# Check for EDIT permission
+	die "Access denied.\n" unless chk_authz($obj, EDIT, 1);
+
+	# schedule related stuff if requested
+	if ($args->{publish_related_stories} or 
+	    $args->{publish_related_media}) {
+	    # loop through related objects, adding to the todo list as
+	    # appropriate
+	    my @rel = $obj->get_related_objects; 
+	    foreach my $rel (@rel) {
+		if ($args->{publish_related_stories} and 
+		    ref($rel) =~ /Story$/) {
+		    push(@ids, name(story_id => $rel->get_id));
+		} elsif ($args->{publish_related_media} and
+			 ref($rel) =~ /Media$/) {
+		    push(@ids, name(media_id => $rel->get_id));
+		}
+	    }
+	}
+      
+	# setup job for this publish
+	my $job = Bric::Dist::Job->new({ user_id => get_user_id,
+					 name => "publish ". $obj->get_name });
+
+	# setup expiration if never published before
+	my $exp_job;
+	if (not $obj->set_publish_status and $obj->get_expire_date) {
+	    my $exp_job = Bric::Dist::Job->new(
+				      { sched_time => $obj->get_expire_date,
+					user_id    => get_user_id,
+					type       => 1 });
+	    $exp_job->set_name("Expire " . $obj->get_name);
+	}
+      
+	# grab the asset type for this object
+	my $at  = $obj->_get_element_object;
+	my $ocs = $at->get_output_channels;
+	my @res;
+	my %servers;
+
+	# iterate through each output channel.
+	foreach my $oc (@$ocs) {
+	    my $oc_id = $oc->get_id;
+	
+	    # get a list of server types this categroy applies to.
+	    my $server_list = Bric::Dist::ServerType->list(
+					   { can_publish => 1,
+					     output_channel_id => $oc_id });
+	    die "Cannot publish ($type => $id ) " .
+		"because there are no Destinations associated with its " .
+		    "output channels.\n"
+			unless @$server_list;
+
+	    # unique server list - might have dupes.  also collect for later
+	    $servers{$_->get_id()} = $_ for (@$server_list);
+	
+	    if ($type eq 'story') {
+		# only stories get burnt
+		my @cats = $obj->get_categories;
+		foreach (@cats) {
+		    push @res, $burner->burn_one($obj, $oc, $_);
+		}
+	    } else {
+		# media gets moved around directly
+		my $path = $obj->get_path;
+		my $uri = $obj->get_uri;
+		if ($path and $uri) {
+		    my $r = Bric::Dist::Resource->lookup({ path => $path })
+			|| Bric::Dist::Resource->new(
+						     { path => $path,
+                                                       media_type => 
+                                   Bric::Util::MediaType->get_name_by_ext($uri)
+						     });
+		    $r->set_uri($uri);
+		    $r->add_media_ids($obj->get_id);
+		    $r->save;
+		    push @res, $r;
+		}
+	    }
+	}
+
+	# Save the delivery job.
+	$job->add_server_types(values %servers);
+	$job->add_resources(@res);
+	$job->save;
+	log_event('job_new', $job);
+
+	# Save the expiration job, if there is one.
+	if ($exp_job) {
+	    # Add the server types to the job.
+	    $exp_job->add_server_types(values %servers);
+	    $exp_job->add_resources(@res);
+	    $exp_job->save;
+	    log_event('job_new', $exp_job);
+	}
+
+	# get it off the desk
+	my $desk = $obj->get_current_desk;
+	$desk->remove_asset($obj);
+	$desk->save;
+
+	# Remove this asset from the workflow by setting is workflow
+	# ID to undef
+	$obj->set_workflow_id(undef);
+	log_event("${type}_rem_workflow", $obj);
+
+	# set published flag and save to object
+	$obj->set_publish_status(1);
+	$obj->save;
+
+	# log the publish
+	log_event($type . '_publish', $obj);
+
+	# record the publish
+	push(@published, name("${type}_id", $id));
+    }
+
+    print STDERR __PACKAGE__ . "->publish() finished : ",
+	join(', ', map { $_->name . " => " . $_->value } @published), "\n"
+	    if DEBUG;
+
+    # name, type and return
+    return name(publish_ids => \@published);
+}
+}
 
 =item deploy
 
-This method handles deploying templates. The method returns 1 on
-success.  The method accepts the following parameters:
+This method handles deploying templates. The method returns
+"deploy_ids", a lits of "template_id" integers deployed on success.
+The method accepts the following parameters:
 
 =over 4
 
@@ -124,7 +324,7 @@ success.  The method accepts the following parameters:
 
 A single template to publish.
 
-=item template_ids
+=item deploy_ids
 
 A list of "template_id" elements to be published.
 
@@ -134,11 +334,72 @@ Throws: NONE
 
 Side Effects: Templates have their deploy_status set to true.
 
-Notes: NONE
+Notes: Code here comes from comp/widgets/desk/callback.mc.  It might
+be cool to move this code into a module so it could be shared.  It's
+not nearly as gnarly as the publish() code though.
 
 =cut
 
-sub deploy {}
+{
+# hash of allowed parameters
+my %allowed = map { $_ => 1 } qw(template_id deploy_ids);
+
+sub deploy {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+
+    print STDERR __PACKAGE__ . "->deploy() called : args : ", 
+ 	Data::Dumper->Dump([$args],['args']) if DEBUG;
+
+    # check for bad parameters
+    for (keys %$args) {
+ 	die __PACKAGE__ . "::deploy : unknown parameter \"$_\".\n"
+ 	    unless exists $allowed{$_};
+    }
+    
+    my @ids = _collect_ids("deploy_ids", [ "template_id" ], $env);
+
+    my $burner = Bric::Util::Burner->new;
+
+    foreach my $id (map { $_->value } @ids) {
+	my $fa = Bric::Biz::Asset::Formatting->lookup({ id => $id });
+	die "Unable to find template for template_id \"$id\".\n"
+	    unless $fa;
+
+	# check check check
+	die "Cannot deloy checked-out template : \"$id\".\n" 
+	    if $fa->get_checked_out;
+
+	# Check for EDIT permission
+	die "Access denied.\n" unless chk_authz($fa, EDIT, 1);
+
+	$burner->deploy($fa);
+	log_event($fa->get_deploy_status ? 
+		  'formatting_redeploy' : 'formatting_deploy', 
+		  $fa);
+	$fa->set_deploy_date(strfdate());
+	$fa->set_deploy_status(1);
+
+	# Get the current desk and the next desk.
+	my $desk = $fa->get_current_desk;
+
+	# Transfer from the current to the next.
+	$desk->remove_asset($fa);
+	$desk->save;
+
+	# Clear the workflow ID.
+	$fa->set_workflow_id(undef);
+	$fa->save;
+    }
+
+    print STDERR __PACKAGE__ . "->deploy() finished : ",
+	join(', ', map { $_->name . " => " . $_->value } @ids), "\n"
+	    if DEBUG;
+
+    return name(deploy_ids => \@ids);
+}
+}
 
 =item checkout
 
@@ -149,7 +410,7 @@ interface and are not available for other users to edit.
 An error will result if you try to checkout an object that is not
 checked in.
 
-The method returns 1 on success.
+The method returns a list of ids checked out on success.
 
 The method accepts the following parameters:
 
@@ -182,7 +443,105 @@ Notes: NONE
 
 =cut
 
-sub checkout {}
+{
+# hash of allowed parameters
+my %allowed = map { $_ => 1 } qw(story_id media_id template_id checkout_ids);
+
+sub checkout {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+
+    print STDERR __PACKAGE__ . "->checkout() called : args : ", 
+ 	Data::Dumper->Dump([$args],['args']) if DEBUG;
+
+    # check for bad parameters
+    for (keys %$args) {
+ 	die __PACKAGE__ . "::checkout : unknown parameter \"$_\".\n"
+ 	    unless exists $allowed{$_};
+    }
+    
+    my @ids = _collect_ids("checkout_ids", 
+			   [ "story_id", "media_id", "template_id" ], 
+			   $env);
+
+    my %seen;
+    foreach my $id (@ids) {
+	my $obj;
+	my $type;
+	if ($id->name eq 'story_id') {
+	    $type = 'story';
+	    $obj  = Bric::Biz::Asset::Business::Story->lookup(
+                                         { id => $id->value });
+	    die "Unable to find story for story_id \"$id\".\n"
+		unless $obj;
+
+	} elsif ($id->name eq 'media_id') {
+	    $type = 'media';
+	    $obj  = Bric::Biz::Asset::Business::Media->lookup(
+                                         { id => $id->value });
+	    die "Unable to find media object for media_id \"$id\".\n"
+		unless $obj;
+	} elsif ($id->name eq 'template_id') {
+	    $type = 'template';
+	    $obj  = Bric::Biz::Asset::Formatting->lookup(
+					 { id => $id->value });
+	    die "Unable to find template object for template_id \"$id\".\n"
+		unless $obj;
+	} else {
+	    die "Unknown element found in checkout_ids list.\n";
+	}      
+
+	# check check check
+	die "Cannot check-out already checked-out $type : \"$id\".\n" 
+	    if $obj->get_checked_out;
+
+	# Check for EDIT permission
+	die "Access denied.\n" unless chk_authz($obj, EDIT, 1);
+
+	# make sure we're not trying to checkout stuff repeatedly
+	next if $seen{$type}{$id};
+	$seen{$type}{$id} = 1;
+
+	# might need to assign a workflow here, if this item was just
+	# published, for example.
+	unless ($obj->get_workflow_id) {
+	    foreach my $workflow (Bric::Biz::Workflow->list()) {
+		if (($type eq 'story' and 
+		     $workflow->get_type == STORY_WORKFLOW) or
+		    ($type eq 'media' and 
+		     $workflow->get_type == MEDIA_WORKFLOW) or
+		    ($type eq 'template' and 
+		     $workflow->get_type == TEMPLATE_WORKFLOW)) {
+		    $obj->set_workflow_id($workflow->get_id());
+		    my $desk = $workflow->get_start_desk;
+		    $desk->accept({'asset' => $obj});
+		    $desk->save;
+		    last;
+		}
+	    }
+	}
+
+	# check 'em out
+	$obj->checkout({user__id => get_user_id});
+	$obj->save;
+
+	# log the checkout
+	if ($type eq 'template') {
+	  log_event("formatting_checkout", $obj);
+	} else {
+	  log_event("${type}_checkout", $obj);
+	}
+    }
+
+
+    print STDERR __PACKAGE__ . "->checkout() finished : ",
+	join(', ', map { $_->name . " => " . $_->value } @ids), "\n"
+	    if DEBUG;
+
+    return name(checkout_ids => \@ids);    
+}
+}
 
 =item checkin
 
@@ -193,7 +552,7 @@ the web interface and are available for other users to edit.
 An error will result if you try to checkin an object that is not
 checked out.
 
-The method returns 1 on success.
+The method returns a list of ids checked in.
 
 The method accepts the following parameters:
 
@@ -226,9 +585,332 @@ Notes: NONE
 
 =cut
 
-sub checkin {}
+{
+# hash of allowed parameters
+my %allowed = map { $_ => 1 } qw(story_id media_id template_id checkin_ids);
+
+sub checkin {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+
+    print STDERR __PACKAGE__ . "->checkin() called : args : ", 
+ 	Data::Dumper->Dump([$args],['args']) if DEBUG;
+
+    # check for bad parameters
+    for (keys %$args) {
+ 	die __PACKAGE__ . "::checkin : unknown parameter \"$_\".\n"
+ 	    unless exists $allowed{$_};
+    }
+    
+    my @ids = _collect_ids("checkin_ids", 
+			   [ "story_id", "media_id", "template_id" ], 
+			   $env);
+
+    my %seen;
+    foreach my $id (@ids) {
+	my $obj;
+	my $type;
+	if ($id->name eq 'story_id') {
+	    $type = 'story';
+	    $obj  = Bric::Biz::Asset::Business::Story->lookup(
+                                         { id => $id->value });
+	    die "Unable to find story for story_id \"$id\".\n"
+		unless $obj;
+
+	} elsif ($id->name eq 'media_id') {
+	    $type = 'media';
+	    $obj  = Bric::Biz::Asset::Business::Media->lookup(
+                                         { id => $id->value });
+	    die "Unable to find media object for media_id \"$id\".\n"
+		unless $obj;
+	} elsif ($id->name eq 'template_id') {
+	    $type = 'template';
+	    $obj  = Bric::Biz::Asset::Formatting->lookup(
+					 { id => $id->value });
+	    die "Unable to find template object for template_id \"$id\".\n"
+		unless $obj;
+	} else {
+	    die "Unknown element found in checkin_ids list.\n";
+	}      
+
+	# check check check
+	die "Cannot check-in non checked-out $type : \"$id\".\n" 
+	    unless $obj->get_checked_out;
+
+	# Check for EDIT permission
+	die "Access denied.\n" unless chk_authz($obj, EDIT, 1);
+
+	# make sure we're not trying to checkin stuff repeatedly
+	next if $seen{$type}{$id};
+	$seen{$type}{$id} = 1;
+
+	# check that we have a desk
+	my $curr_desk = $obj->get_current_desk;
+	die "Cannot check-in $type without a current desk: \"$id\".\n"
+	    unless $curr_desk;
+
+	# check 'em in
+	$obj->checkin;
+	$obj->save;
+
+	# log the checkin
+	if ($type eq 'template') {
+	  log_event("formatting_checkin", $obj);
+	} else {
+	  log_event("${type}_checkin", $obj);
+	}
+    }
+
+
+    print STDERR __PACKAGE__ . "->checkin() finished : ",
+	join(', ', map { $_->name . " => " . $_->value } @ids), "\n"
+	    if DEBUG;
+
+    return name(checkin_ids => \@ids);    
+}
+}
+
+=item move
+
+This method moves objects between workflows and desks.  The method
+returns a list of ids moved.  The method accepts the following
+parameters:
+
+=over 4
+
+=item desk (required)
+
+The name of the desk to move to.  
+
+=item workflow
+
+The name of the workflow to move to.  If this is unspecified then desk
+must refer to a desk in the current workflow for the object.  If
+specified then only one type of object can be successfully moved since
+workflows are type-specific, I think.
+
+=item story_id
+
+A single story to move.
+
+=item media_id
+
+A single media object to move.
+
+=item template_id
+
+A single template object to move.
+
+=item move_ids
+
+A list of "story_id", "template_id" and/or "media_id" elements to be
+checked in.
 
 =back
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+{
+# hash of allowed parameters
+my %allowed = map { $_ => 1 } qw(story_id media_id template_id move_ids
+				 desk workflow);
+
+sub move {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+
+    print STDERR __PACKAGE__ . "->move() called : args : ", 
+ 	Data::Dumper->Dump([$args],['args']) if DEBUG;
+
+    # check for bad parameters
+    for (keys %$args) {
+ 	die __PACKAGE__ . "::move : unknown parameter \"$_\".\n"
+ 	    unless exists $allowed{$_};
+    }
+
+    # make sure we have a desk
+    die __PACKAGE__ . "::move : missing required parameter \"desk\".\n"
+	unless $args->{desk};
+
+    # find destination workflow if defined
+    my $to_workflow;
+    if (exists $args->{workflow}) {
+	($to_workflow) = Bric::Biz::Workflow->list(
+                   { name => $args->{workflow} });
+      die __PACKAGE__ . "::move : no workflow found matching " .
+	  "(workflow => \"$args->{workflow}\")\n"
+	      unless defined $to_workflow;
+    }
+
+    # find destination desk
+    my ($to_desk) = Bric::Biz::Workflow::Parts::Desk->list(
+			         { name => $args->{desk} });
+    die __PACKAGE__ . "::move : no desk found matching " .
+	"(desk => \"$args->{desk}\")\n"
+	    unless $to_desk;
+	  
+    
+    my @ids = _collect_ids("move_ids", 
+			   [ "story_id", "media_id", "template_id" ], 
+			   $env);
+
+    foreach my $id (@ids) {
+	my $obj;
+	my $type;
+	if ($id->name eq 'story_id') {
+	    $type = 'story';
+	    $obj  = Bric::Biz::Asset::Business::Story->lookup(
+                                         { id => $id->value });
+	    die "Unable to find story for story_id \"$id\".\n"
+		unless $obj;
+
+	} elsif ($id->name eq 'media_id') {
+	    $type = 'media';
+	    $obj  = Bric::Biz::Asset::Business::Media->lookup(
+                                         { id => $id->value });
+	    die "Unable to find media object for media_id \"$id\".\n"
+		unless $obj;
+	} elsif ($id->name eq 'template_id') {
+	    $type = 'template';
+	    $obj  = Bric::Biz::Asset::Formatting->lookup(
+					 { id => $id->value });
+	    die "Unable to find template object for template_id \"$id\".\n"
+		unless $obj;
+	} else {
+	    die "Unknown element found in move_ids list.\n";
+	}      
+
+	# check check check
+	die "Cannot move checked-out $type : \"$id\".\n" 
+	    if $obj->get_checked_out;
+
+	# Check for EDIT permission
+	die "Access denied.\n" unless chk_authz($obj, EDIT, 1);
+
+	# are we moving to a new workflow?
+	if ($to_workflow) {
+	    # check the type
+	    my $ok = 0;
+	    if ($type eq 'story') {
+		$ok = 1 if $to_workflow->get_type == STORY_WORKFLOW;
+	    } elsif ($type eq 'media') {
+		$ok = 1 if $to_workflow->get_type == MEDIA_WORKFLOW;
+	    } else {
+		$ok = 1 if $to_workflow->get_type == TEMPLATE_WORKFLOW;
+	    }
+	    die __PACKAGE__ . "::move : cannot move $type \"$id\" to " . 
+		"workflow \"$args->{workflow}\" : type mismatch.\n"
+		    unless $ok;
+
+	    # move to new workflow
+	    $obj->set_workflow_id($to_workflow->get_id);
+	} else {
+	    # might need to assign a workflow here, if this item was just
+	    # published, for example.
+	    unless ($obj->get_workflow_id) {
+		foreach my $workflow (Bric::Biz::Workflow->list()) {
+		    if (($type eq 'story' and 
+			 $workflow->get_type == STORY_WORKFLOW) or
+			($type eq 'media' and 
+			 $workflow->get_type == MEDIA_WORKFLOW) or
+			($type eq 'template' and 
+			 $workflow->get_type == TEMPLATE_WORKFLOW)) {
+			$obj->set_workflow_id($workflow->get_id());
+			my $desk = $workflow->get_start_desk;
+			$desk->accept({'asset' => $obj});
+			$desk->save;
+			last;
+		    }
+		}
+	    }
+	}
+	
+	# get origin desk
+	my $from_desk = $obj->get_current_desk;
+	die "Cannot move $type without a current desk: \"$id\".\n"
+	    unless $from_desk;
+
+	# don't move if we're already here
+	unless ($from_desk->get_id == $to_desk->get_id) {
+	    $from_desk->transfer({asset => $obj,
+				  to    => $to_desk});
+	    $from_desk->save;
+	    $to_desk->save;
+	}
+	$obj->save;
+
+	# log the move
+	if ($type eq 'template') {
+	    log_event("formatting_moved", $obj, {Desk => $to_desk->get_name});
+	} else {
+	    log_event("${type}_moved", $obj, {Desk => $to_desk->get_name});
+	}
+    }
+
+
+    print STDERR __PACKAGE__ . "->move() finished : ",
+	join(', ', map { $_->name . " => " . $_->value } @ids), "\n"
+	    if DEBUG;
+
+    return name(move_ids => \@ids);    
+}
+}
+
+=back
+
+=head2 Private Class Methods
+
+=over 4
+
+=item @ids = _collect_ids("publish_ids", [ "story_id", "media_id" ], $env);
+
+This method takes care of extracting a collating the id parameters
+accepted by the above methods.  The result is an array of SOAP::Data
+objects with name() and value() set accordingly.
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: I bet this method is inefficient.  Using XPath syntax just
+I<feels> slow...
+
+=cut
+
+sub _collect_ids {
+  my ($list, $single, $env) = @_;
+  my @ids;
+
+  # operate on the method
+  my $meth = $env->match('/Envelope/Body/[1]');
+
+  # find single params and collect their SOAP::Data representations
+  foreach (@$single) {
+    my $data = $meth->dataof($_);
+    push(@ids, $data) if $data;
+  }
+ 
+  # switch to list arg, if available
+  my $list_meth = $env->match('/Envelope/Body/[1]/' . $list);
+  if ($list_meth) {
+    # iterate through subelements collecting SOAP::Data objects
+    my ($data, $count);
+    for ($count = 1; $data = $list_meth->dataof("[${count}]"); $count++) {
+      # should I check that $data->name() is within @$single here?
+      push(@ids, $data);
+    }
+  }
+
+  return @ids;
+}
 
 =head1 AUTHOR
 
