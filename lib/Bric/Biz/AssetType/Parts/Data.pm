@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2004-02-06 06:34:55 $
+$Date: 2004-02-19 07:44:34 $
 
 
 =head1 SYNOPSIS
@@ -1299,7 +1299,7 @@ sub remove {
 
     return unless $id;
 
-    my $sql = 'DELETE FROM '.TABLE.' WHERE id=?';    
+    my $sql = 'DELETE FROM '.TABLE.' WHERE id=?';
 
     my $sth = prepare_c($sql, undef);
     execute($sth, $id);

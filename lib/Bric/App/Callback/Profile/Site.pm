@@ -14,7 +14,8 @@ use Bric::Util::Grp;
 my $type = CLASS_KEY;
 my $disp_name = 'Site';
 my $class = 'Bric::Biz::Site';
-
+my $site_cache_key = '__SITES__';
+my $wf_cache_key = '__WORKFLOWS__';
 
 sub save : Callback {
     my $self = shift;
@@ -29,8 +30,8 @@ sub save : Callback {
         $site->deactivate;
         $site->save;
         $self->cache->set_lmu_time;
-        $self->cache->set('__SITES__', 0);
-        $self->cache->set('__WORKFLOWS__' . $site->get_id, 0);
+        $self->cache->set($site_cache_key, 0);
+        $self->cache->set($wf_cache_key . $site->get_id, 0);
         log_event("${type}_deact", $site);
         $self->set_redirect('/admin/manager/site');
         add_msg("$disp_name profile \"[_1]\" deleted.", $param->{name});
@@ -42,8 +43,9 @@ sub save : Callback {
     $site->set_name($param->{name});
     $site->set_domain_name($param->{domain_name});
     $site->save;
-    $self->cache->set('__SITES__', 0);
-    $self->cache->set('__WORKFLOWS__' . $site->get_id, 0);
+    $self->cache->set_lmu_time;
+    $self->cache->set($site_cache_key, 0);
+    $self->cache->set($wf_cache_key . $site->get_id, 0);
     add_msg("$disp_name profile \"[_1]\" saved.", $param->{name});
     log_event($type . '_save', $site);
 
@@ -73,8 +75,8 @@ sub delete : Callback {
         }
     }
     if ($flag) {
-        $c->set('__SITES__', 0);
-        $c->set('__WORK_FLOWS__', 0);
+        $c->set($site_cache_key, 0);
+        $c->set($wf_cache_key, 0);
     }
 }
 

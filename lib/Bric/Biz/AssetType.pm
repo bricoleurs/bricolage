@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.59 $ )[-1];
+our $VERSION = (qw$Revision: 1.60 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-06 19:30:58 $
+$Date: 2004-02-19 07:44:32 $
 
 =head1 SYNOPSIS
 
@@ -298,28 +298,23 @@ sub new {
     my $pkg = $self->get_biz_class;
 
     # If a package was passed in then find the autopopulated field names.
-    if ($pkg) {
-	# Load the package.
-	eval "require $pkg";
-
-	# If this could die, but in that case we just skip this part.
-	my @name = eval { $pkg->autopopulated_fields };
+    if ($pkg && UNIVERSAL::isa($pkg, 'Bric::Biz::Asset::Business::Media')) {
 	my $i = 0;
-	foreach my $n (@name) {
-	    my $atd = $self->new_data({key_name    => $n,
-				       description => "Autopopulated $n field.",
+	foreach my $name ($pkg->autopopulated_fields) {
+            my $key_name = lc $name;
+            $key_name =~ y/a-z0-9/_/cs;
+	    my $atd = $self->new_data({key_name    => $key_name,
+				       description => "Autopopulated $name field.",
 				       required    => 1,
 				       sql_type    => 'short',
 				       autopopulated => 1 });
 	    $atd->set_attr('html_info', '');
-	    $atd->set_meta('html_info', 'disp', $n);
+	    $atd->set_meta('html_info', 'disp', $name);
 	    $atd->set_meta('html_info', 'type', 'text');
 	    $atd->set_meta('html_info', 'length', 32);
 	    $atd->set_meta('html_info', 'pos', ++$i);
 	}
     }
-
-    $self->activate;
 
     # Set the dirty bit for this new object.
     $self->_set__dirty(1);
@@ -1244,17 +1239,17 @@ sub clear_media {
 
 =item $at->set_biz_class('class' => '' || 'id' => '');
 
-The methods 'get_biz_class' and 'get_biz_class_id' get the business class name 
+The methods 'get_biz_class' and 'get_biz_class_id' get the business class name
 or the business class ID respectively from the class table.
 
 The 'set_biz_class' method sets the business class for this asset type given
 either a class name or an ID from the class table.
 
-This value represents the kind of bussiness object this asset type will 
-represent.  There are just two main kinds, story and media objects.  However 
-media objects have many subclasses, one for each type of supported media (image,
-audio, video, etc) increasing the number of package names this value could be 
-set to.
+This value represents the kind of bussiness object this asset type will
+represent. There are just two main kinds, story and media objects. However
+media objects have many subclasses, one for each type of supported media
+(image, audio, video, etc) increasing the number of package names this value
+could be set to.
 
 B<Throws:>
 
@@ -1272,23 +1267,15 @@ NONE
 
 sub get_biz_class {
     my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
-    my $class = Bric::Util::Class->lookup({'id' => $att_obj->get_biz_class_id});
-
-    return unless $class;
-
+    my $att_obj = $self->_get_at_type_obj or return;
+    my $class = Bric::Util::Class->lookup({'id' => $att_obj->get_biz_class_id})
+      or return;
     return $class->get_pkg_name;
 }
 
 sub get_biz_class_id {
     my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
+    my $att_obj = $self->_get_at_type_obj or return;
     return $att_obj->get_biz_class_id;
 }
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.78 $
+$Revision: 1.79 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.78 $ )[-1];
+our $VERSION = (qw$Revision: 1.79 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-16 15:50:38 $
+$Date: 2004-02-19 07:44:33 $
 
 =head1 SYNOPSIS
 
@@ -680,7 +680,7 @@ B<Notes:> Inherited from Bric::Biz::Asset.
 
 ################################################################################
 
-=item ($fields || @fields) = 
+=item ($fields || @fields) =
         Bric::Biz::Asset::Business::Media::autopopulated_fields()
 
 Returns a list of the names of fields that are registered in the database as
@@ -696,13 +696,8 @@ B<Notes:> NONE.
 
 sub autopopulated_fields {
     my $self = shift;
-    my $fields = $self->_get_auto_fields();
-
-    my @auto;
-    foreach (keys %$fields ) {
-        push @auto, $_;
-    }
-    return wantarray ? @auto : \@auto;
+    my $fields = $self->_get_auto_fields;
+    return wantarray ? keys %$fields : [keys %$fields];
 }
 
 ################################################################################
@@ -974,14 +969,15 @@ sub set_category__id {
     }
     push @grp_ids, $cat->get_asset_grp_id();
 
-    my $uri;
+    my ($uri, $update_uri);
     if ($self->get_file_name) {
+        $update_uri = 1;
         $uri = Bric::Util::Trans::FS->cat_uri
           ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
     }
 
     $self->_set([qw(_category_obj category__id uri    grp_ids   _update_uri)] =>
-                [   $cat,         $cat_id,     $uri, \@grp_ids, 1]);
+                [   $cat,         $cat_id,     $uri, \@grp_ids, $update_uri]);
 
     return $self;
 }
@@ -1048,8 +1044,9 @@ sub set_cover_date {
       || (defined $cover_date && not defined $old)
       || ($cover_date ne $old);
 
-    my $uri;
+    my ($uri, $update_uri);
     if (defined $fn) {
+        $update_uri = 1;
         $cat ||= Bric::Biz::Category->lookup({ id => $cat_id });
         my $oc = $self->get_primary_oc;
         if ($cat and $oc) {
@@ -1058,8 +1055,8 @@ sub set_cover_date {
         }
     }
 
-    $self->_set([qw(cover_date _update_uri _category_obj uri)] =>
-                [$cover_date,  1,          $cat,         $uri]);
+    $self->_set([qw(cover_date _update_uri  _category_obj uri)] =>
+                [$cover_date,  $update_uri, $cat,         $uri]);
 }
 
 ################################################################################
@@ -1238,14 +1235,17 @@ sub upload_file {
     my $new_loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
 
     # Set the location, name, and URI.
-    if (not defined $old_fn or not defined $uri or $old_fn ne $name or $loc ne $new_loc) {
+    if (not defined $old_fn
+        or not defined $uri
+        or $old_fn ne $name
+        or $loc ne $new_loc) {
         $self->_set(['file_name'], [$name]);
         $uri = Bric::Util::Trans::FS->cat_uri
           ($self->_construct_uri($self->get_category_object, $oc_obj),
            $oc_obj->get_filename($self));
 
-        $self->_set([qw(location uri   _update_uri)] =>
-                    [   $new_loc,    $uri, 1]);
+        $self->_set([qw(location  uri   _update_uri)] =>
+                    [   $new_loc, $uri, 1]);
     }
 
     if (my $auto_fields = $self->_get_auto_fields) {
@@ -1457,7 +1457,8 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
 
-    my ($id, $active, $update_uris) = $self->_get(qw(id _active _update_uri));
+    my ($id, $active, $update_uris, $fn) =
+      $self->_get(qw(id _active _update_uri file_name));
 
     # Start a transaction.
     begin();
@@ -1491,7 +1492,16 @@ sub save {
         }
 
         if ($active) {
-            $self->_update_uris if $update_uris;
+            if ($update_uris) {
+                if ($fn) {
+                    # We have a file name, so we can create URIs. So update
+                    # them.
+                    $self->_update_uris;
+                } else {
+                    # No file name, no URIs.
+                    $self->_set(['_update_uri'] => [0]);
+                }
+            }
         } else {
             $self->_delete_uris;
         }

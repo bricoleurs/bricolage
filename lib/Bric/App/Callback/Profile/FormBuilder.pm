@@ -477,7 +477,8 @@ $add_new_attrs = sub {
         # There's a new attribute. Decide what type it is.
         if ($data_href->{$key_name}) {
             # There's already an attribute by that name.
-            add_msg('An "[_1]" attribute already exists. Please try another name.', $key_name);
+            add_msg('An "[_1]" attribute already exists. Please try another name.',
+                    $key_name);
             $$no_save = 1;
         } else {
             my $sqltype = $param->{'fb_type'} eq 'date' ? 'date'

@@ -170,6 +170,34 @@ an error and was useless anyway. [Scott]
 Fixed Template Element list, where container elements appeared twice. [Joao
 Pedro]
 
+=item *
+
+The deletion of a site now properly resets the workflows to be displayed in
+the side navigation layer. [David]
+
+=item *
+
+The user object is no longer instantiated from the database every time a user
+sends a request to Bricolage. It appears that this bit of overhead has
+unfortunately been imposed on every request since Bricolage 1.0 due to a very
+stupid typo. [David]
+
+=item *
+
+Changes to site settings are now correctly reflected in the UI for all users
+as soon as they are made. [David]
+
+=item *
+
+New media documents no longer attempt to validate URI uniqueness until a file
+has been uploaded. [David]
+
+=item *
+
+Autopopulated fields in media elements can once again have their values
+fetched in templates. This problem was due to bad key names being created for
+new image elements created after upgradeing to 1.7.0. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)

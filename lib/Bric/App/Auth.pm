@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 06:02:33 $
+$Date: 2004-02-19 07:44:31 $
 
 =head1 SYNOPSIS
 
@@ -155,12 +155,16 @@ sub auth {
     }
     $c ||= Bric::App::Cache->new;
     my $u = get_user_object();
-    if ( !$u || $c->get_lmu_time || 0 > $lul) {
+    if ( !$u || ($c->get_lmu_time || 0) > $lul) {
         # There have been changes to the users. Reload this user from the
         # database.
         return &$fail($r, 'User does not exist or is disabled.') unless
           $u = Bric::Biz::Person::User->lookup({ login => $val{user} });
+
+        # Set up the user and expire the user sites from the session.
         set_user($r, $u);
+        # XXX Wish there were a better place to do this...
+        Bric::App::Session::set_state_data('site_context', 'sites' => 0);
         $lul = time;
     }
     &$make_cookie($r, $val{user}, $lul);
@@ -323,7 +327,7 @@ $make_hash = sub {
         $ip = $r->connection->remote_ip;
         $ip = substr($ip, 0, rindex($ip, '.'));
     }
-    
+
     # work around Perl bug where utf-8 strings result in different md5
     # hashes.
     $exp = "$exp";
