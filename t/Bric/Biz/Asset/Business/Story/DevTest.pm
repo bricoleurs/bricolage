@@ -35,14 +35,6 @@ my @REQ_DESK_GRP_IDS;
 my @EXP_GRP_IDS;
 
 ##############################################################################
-# The element object we'll use throughout.
-my $elem;
-sub get_elem2 {
-    ($elem) = Bric::Biz::AssetType->list({ name => 'Story' });
-    return $elem;
-}
-
-##############################################################################
 # Constructs a new object.
 sub construct {
     my $s = shift->SUPER::construct(@_);
@@ -98,9 +90,8 @@ sub test_clone : Test(15) {
 
 sub test_select_methods: Test(88) {
     my $self = shift;
-
-    # let's grab existing 'All' group info
-    my $all_stories_grp_id = Bric::Util::Grp->lookup({ name => 'All Stories' })->get_id();
+    my $class = $self->class;
+    my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
 
     # now we'll create some test objects
     my ($i);
@@ -738,13 +729,13 @@ sub test_get_uri: Test(1) {
     # XXX then try it with a different cat
 }
 
-sub test_get_fields_from_new: Test(0) {
+sub test_get_fields_from_new {
     # XXX make a new story with all of the fields
     # XXX Test: does each field have a value matching
     #           that set in the params?
 }
 
-sub test_set_get_fields: Test(0) {
+sub test_set_get_fields {
     # XXX make a new story with minimal fields set
     # XXX For each field:
     # XXX set the field
@@ -753,7 +744,8 @@ sub test_set_get_fields: Test(0) {
 
 sub test_new_grp_ids: Test(5) {
     my $self = shift;
-    my $all_stories_grp_id = Bric::Util::Grp->lookup({ name => 'All Stories' })->get_id();
+    my $class = $self->class;
+    my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
     my $time = time;
     my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
     my $element = Bric::Biz::AssetType->new(

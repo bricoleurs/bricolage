@@ -52,12 +52,13 @@ sub new_args {
 
 sub test_select_methods: Test(70) {
     my $self = shift;
+    my $class = $self->class;
 
     # let's grab existing 'All' group info
-    my $all_workflow_grp_id = Bric::Util::Grp->lookup({ name => 'All Workflows' })->get_id();
-    my $all_cats_grp_id = Bric::Util::Grp->lookup({ name => 'All Categories' })->get_id();
-    my $all_desks_grp_id = Bric::Util::Grp->lookup({ name => 'All Desks' })->get_id();
-    my $all_media_grp_id = Bric::Util::Grp->lookup({ name => 'All Media' })->get_id();
+    my $all_workflow_grp_id = Bric::Biz::Workflow->INSTANCE_GROUP_ID;
+    my $all_cats_grp_id = Bric::Biz::Category->INSTANCE_GROUP_ID;
+    my $all_desks_grp_id =  Bric::Biz::Workflow::Parts::Desk->INSTANCE_GROUP_ID;
+    my $all_media_grp_id = $class->INSTANCE_GROUP_ID;
 
     # now we'll create some test objects
     my ($i);
@@ -615,7 +616,9 @@ sub test_oc : Test(35) {
 sub test_new_grp_ids: Test(4) {
     my $self = shift;
     my $time = time;
-    my $all_media_grp_id = Bric::Util::Grp->lookup({ name => 'All Media' })->get_id();
+    my $class = $self->class;
+    my $all_media_grp_id = $class->INSTANCE_GROUP_ID;
+
     my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
     my $element = get_elem();
     my $cat = Bric::Biz::Category->new({ 
