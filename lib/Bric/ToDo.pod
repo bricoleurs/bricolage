@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =head1 DATE
 
-$Date: 2002-03-14 01:18:06 $
+$Date: 2002-03-14 02:11:40 $
 
 =head1 DESCRIPTION
 
@@ -279,7 +279,7 @@ Add Akamaization Action.
 
 =item *
 
-Add SCP move methods.
+Add Net::SFTP move method.
 
 =item *
 
