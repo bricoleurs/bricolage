@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.4.1 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-03-15 04:27:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -65,7 +65,9 @@ CREATE SEQUENCE seq_alert_type START 1024;
 --
 
 -- alert_type
-CREATE UNIQUE INDEX udx_alert_type__usr__id__name ON alert_type(usr__id, name);
+CREATE UNIQUE INDEX udx_alert_type__name__usr__id
+ON alert_type(lower_text_num(name, usr__id));
+
 CREATE INDEX idx_alert_type__name ON alert_type(LOWER(name));
 CREATE INDEX fkx_event_type__alert_type ON alert_type(event_type__id);
 CREATE INDEX fkx_usr__alert_type ON alert_type(usr__id);

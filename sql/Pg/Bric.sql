@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1.4.1 $
+-- VERSION: $Revision: 1.1.4.2 $
 --
--- $Date: 2003-03-15 03:59:50 $
+-- $Date: 2003-03-15 04:27:53 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -25,5 +25,4 @@
 -- for an example.
 CREATE   FUNCTION lower_text_num(TEXT, NUMERIC(10, 0))
 RETURNS  TEXT AS 'SELECT LOWER($1) || to_char($2, ''|FM9999999999'')'
-LANGUAGE 'sql'
-WITH     (immutable);
+LANGUAGE 'sql'IMMUTABLE;
