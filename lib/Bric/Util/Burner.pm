@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.34.2.1 $
+$Revision: 1.34.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-05-29 18:01:11 $
+$Date: 2003-06-12 18:38:35 $
 
 =head1 SYNOPSIS
 
@@ -576,6 +576,8 @@ sub preview {
                 ({ id => $oc_id ? $oc_id : $at->get_primary_oc_id($site_id) });
 
     # Burn to each output channel.
+    status_msg("Writing files to &quot;" . $oc->get_name
+               . '&quot; Output Channel.');
     my $ocid = $oc->get_id;
     # Get a list of server types this categroy applies to.
     my $bat = $oc_sts->{$ocid} ||=
@@ -584,6 +586,10 @@ sub preview {
     # Make sure we have some destinations.
     unless (@$bat) {
         if (not PREVIEW_LOCAL) {
+            status_msg("<font color=red><b>Cannot preview asset &quot;" .
+                       $ba->get_name . "&quot; because there are no " .
+                       "Preview Destinations associated with its " .
+                       "output channels.</b></font>");
             next;
         }
     }
@@ -626,6 +632,7 @@ sub preview {
     log_event('job_new', $job);
 
     # Execute the job and redirect.
+    status_msg("Distributing files.");
     # We don't need to execute the job if it has already been executed.
     $job->execute_me unless ENABLE_DIST;
     if (PREVIEW_LOCAL) {
