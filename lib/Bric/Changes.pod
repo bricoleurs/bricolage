@@ -270,6 +270,11 @@ non-alphanumeric characters in them. Thanks to Marshall Roch for the spot!
 Distribution jobs can be edited via the UI again. Thanks to Marshall Roch for
 the spot. [David]
 
+=item *
+
+Publishes once again work when the "Date/Time Format" preference is set to
+something other than ISO-8601. Reported by Marshall Roch. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)

@@ -6,16 +6,16 @@ Bric::Util::Job::Pub - Manages Bricolage publishing jobs.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 16:01:28 $
+$Date: 2004-02-23 23:37:34 $
 
 =head1 SYNOPSIS
 
@@ -76,7 +76,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Config qw(:dist :temp STAGE_ROOT);
+use Bric::Config qw(:dist :temp :time STAGE_ROOT);
 use File::Spec::Functions qw(catdir);
 use Bric::Util::Time qw(:all);
 use Bric::App::Event qw(log_event);
@@ -187,7 +187,7 @@ sub execute_me {
         my $s = Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
         eval {
             $b->publish($s, 'story', $self->get_user_id,
-                        $self->get_sched_time, 1);
+                        $self->get_sched_time(ISO_8601_FORMAT), 1);
         };
     } elsif (my $mid = $self->get_media_id) {
         my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
@@ -195,7 +195,7 @@ sub execute_me {
         my $m = Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
         eval {
             $b->publish($m, 'media', $self->get_user_id,
-                        $self->get_sched_time, 1);
+                        $self->get_sched_time(ISO_8601_FORMAT), 1);
         };
     }
 
