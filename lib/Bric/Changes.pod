@@ -22,7 +22,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Added F<README.Solaris>, with thanks to Oscar Sodani and Thorsten Biel..
+Added F<README.Solaris>, with thanks to Oscar Sodani and Thorsten Biel.
 
 =back
 
@@ -45,6 +45,12 @@ removed from workflow. [David]
 
 Fixed 1.6.5 upgrade script to look for Bric::Config in the proper location.
 [David]
+
+=item *
+
+Templates now display their output channel associations instead of their
+element associations on desks. This seems to be more useful, since the element
+association is usually obvious from the name. [David]
 
 =back
 

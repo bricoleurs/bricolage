@@ -103,7 +103,7 @@ if ($desk_type eq 'workflow') {
 </tr>
 
 <tr>
-    <td align="right" class="medHeader"><% $lang->maketext(($class eq 'formatting' ? 'Asset' : $disp ).' Type') %>: </td>
+    <td align="right" class="medHeader"><% $lang->maketext($class eq 'formatting' ? 'Output Channel' : "$disp  Type") %>: </td>
     <% &$onePixCell(0, 20) %>
     <td<% $classes->{element} || '' %>>&nbsp;<span class="subHeader"><% $type %></span></td>
 </tr>
@@ -219,11 +219,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.18.4.4 $
+$Revision: 1.18.4.5 $
 
 =head1 DATE
 
-$Date: 2003-04-30 16:08:47 $
+$Date: 2003-09-18 02:14:06 $
 
 =head1 DESCRIPTION
 

@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.18.4.1 $
+$Revision: 1.18.4.2 $
 
 =head1 DATE
 
-$Date: 2003-04-02 07:37:08 $
+$Date: 2003-09-18 02:14:06 $
 
 =head1 SYNOPSIS
 
@@ -153,8 +153,11 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
         my $aid = $obj->get_id;
         # Grab the type name.
         my $atid = $obj->get_element__id;
-        my $type = defined $atid ? $types{$atid} ||=
-          $obj->get_element_name : '';
+        my $type = $class eq 'formatting'
+          ? $obj->get_output_channel_name
+          : defined $atid
+          ? $types{$atid} ||= $obj->get_element_name
+          : '';
 
         # Grab the User ID.
         my $user_id = $obj->get_user__id;
