@@ -26,6 +26,7 @@ if ($param->{delete}) {
     log_event('output_channel_deact', $oc);
     add_msg("$disp_name profile $name deleted.");
     $oc->save;
+    set_redirect('/admin/manager/output_channel');
 } else {
     my $oc_id = $param->{"${type}_id"};
     # Make sure the name isn't already in use.
