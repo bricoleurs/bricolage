@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.23.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.23.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 05:59:02 $
+$Date: 2003-03-15 06:33:35 $
 
 =head1 SYNOPSIS
 
@@ -1296,7 +1296,7 @@ $get_em = sub {
 
     # Make sure to set active explictly if its not passed.
     $params->{active} = exists $params->{active} ?
-      $params->{active} ? 1 : 0 : 1;
+      $params->{active} ? 1 : 0 : 1 unless $params->{id};
 
     my $tables = "$table a, member m, workflow_member c";
     my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND ' .
