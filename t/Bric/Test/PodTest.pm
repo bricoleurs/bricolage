@@ -26,7 +26,7 @@ sub test_mods : Test(no_plan) {
     foreach my $module (@$mods) {
         # Set up an error file handle and a POD checker object.
         my $errstr = '';
-        my $errors = new IO::Scalar \$errstr;
+        my $errors = IO::Scalar->new(\$errstr);
         my $checker = Pod::Checker->new( -warnings => 1 );
         $checker->parse_from_file($module, $errors);
         # Delete this next statement once all errors are fixed!
@@ -34,7 +34,7 @@ sub test_mods : Test(no_plan) {
           unless $checker->num_errors == 0;
         # Fail the test if the file's POD contains errors.
         ok($checker->num_errors == 0, "Check ${module}'s POD" )
-          or diag($errstr);
+          or diag("POD errors in $module");
     }
 }
 
