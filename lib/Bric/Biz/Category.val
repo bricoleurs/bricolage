@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.7 $
+-- VERSION: $Revision: 1.8 $
 --
 -- Test values.
 --
@@ -10,7 +10,7 @@
 -- Base Group
 
 INSERT INTO category (id,directory, uri, parent_id, name, description, asset_grp_id) 
-VALUES (0, '', '/', 0, 'Root Category', '/', 68);
+VALUES (0, '', '/', 0, 'Root Category', 'Root Category', 68);
 
 -- Put it into the All Categories group.
 INSERT INTO member (id, grp__id, class__id, active)
