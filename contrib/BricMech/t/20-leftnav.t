@@ -6,13 +6,13 @@ use strict;
 require 5.006001;
 use warnings;
 
-use Test::More tests => 15;    # must match `skip' below
+use Test::More tests => 17;    # must match `skip' below
 use Bric::Mech;
 
 SKIP: {
     my $msg = "Bricolage env vars not set.\n"
       . "See 'README' for installation instructions.";
-    skip($msg, 15) unless exists $ENV{BRICOLAGE_SERVER}
+    skip($msg, 17) unless exists $ENV{BRICOLAGE_SERVER}
       && exists $ENV{BRICOLAGE_USERNAME} && exists $ENV{BRICOLAGE_PASSWORD};
 
     my $mech = Bric::Mech->new();
@@ -37,11 +37,30 @@ SKIP: {
     $mech->open_workflow_menu(id => $id);
     ok($mech->in_leftnav, 'open_workflow_menu goes in left nav');
     is($mech->get_workflow_menu, $id, 'get_workflow_menu returns correct ID');
+    # XXX: this test doesn't work in 1.8
     $link = $mech->find_link(url_regex => qr/workflow_cb=0/);
     isa_ok($link, 'WWW::Mechanize::Link');
     $link->url =~ /navwfid=(\d+)\b/;
     is($1, $id, 'workflow menu expanded');
     # XXX: add tests for 'name' and 'expand_only' args
+
+    # expand_workflow_menus
+    $mech->expand_workflow_menus();
+    ok($mech->in_leftnav, 'expand_workflow_menus in left nav');
+    # XXX: 
+
+    # follow_action_link
+    $mech->follow_action_link(action => 'find');
+    ok(!$mech->in_leftnav, 'follow_action_link');
+    # XXX: 
+
+    # follow_desk_link
+    # XXX: 
+
+    # follow_admin_link
+    $mech->follow_admin_link(manager => 'user');
+    ok(! $mech->in_leftnav, 'follow_admin_link');
+    # XXX: 
 
     # close_workflow_menu
     $mech->close_workflow_menu();
@@ -53,11 +72,6 @@ SKIP: {
     is($1, $id, 'workflow menu collapsed');
     # XXX: add test for 'id' arg
 
-    # expand_workflow_menus
-    $mech->expand_workflow_menus();
-    ok($mech->in_leftnav, 'expand_workflow_menus in left nav');
-    # XXX: 
-
     # collapse_workflow_menus
     $mech->collapse_workflow_menus();
     ok($mech->in_leftnav, 'collapse_workflow_menus in left nav');
@@ -67,14 +81,4 @@ SKIP: {
     $mech->expand_admin_menus();
     ok($mech->in_leftnav, 'expand_admin_menus in left nav');
     # XXX: 
-
-    # follow_action_link
-    # XXX: 
-
-    # follow_desk_link
-    # XXX: 
-
-    # follow_admin_link
-    # XXX: 
-
 }

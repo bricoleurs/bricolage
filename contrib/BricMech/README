@@ -3,17 +3,12 @@ Bric::Mech
 This is a subclass of WWW::Mechanize which provides convenience
 methods for navigating the Bricolage (content management system)
 browser interface. In other words, it makes it easier to write
-Bricolage scripts. In particular, I want to use it to write test
-scripts, and possibly to replace bric_soap. Although currently in
-contrib, it might get integrated into the "core".
-
-This module should be compatible with 1.8 or 1.10 versions of Bricolage.
+Bricolage scripts.
 
 
 INSTALLATION
 
-To install this module, you should already have a running Bricolage.
-Then type the following:
+To install this module, type the following:
 
    perl Makefile.PL
    make

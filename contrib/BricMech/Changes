@@ -1,3 +1,8 @@
+0.02  2005-02-28
+  - added 'base' parameter to `new', to allow switching to another
+    WWW::Mechanize-like base class (e.g. Win32::IE::Mechanize)
+  - fixed the 'manager' parameter to `follow_admin_link'
+
 0.01  2005-02-25
   - initial public release, in the contrib directory of the trunk
     branch of subversion; main features are login and left nav methods

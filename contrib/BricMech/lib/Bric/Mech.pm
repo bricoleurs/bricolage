@@ -1,13 +1,13 @@
 package Bric::Mech;
 
 require 5.006001;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use strict;
 use warnings;
-use base 'WWW::Mechanize';
 
 use Carp;
+# (can also require HTML::TokeParser::Simple)
 
 =head1 NAME
 
@@ -54,26 +54,37 @@ described in the L</ATTRIBUTE METHODS> section.
 Indicate which version of Bricolage the server you're connecting to is.
 You can either give the exact version (e.g. '1.10.2') or the "series"
 (e.g. '1.10'). Defaults to '1.10', which is nominally the earliest
-supported version (though I hope to make it work with 1.8, too).
+supported version (though I hope to make it work with 1.8, too;
+I know that currently it doesn't with some methods).
+
+=item base (optional)
+
+Set this object's base class, which should have an interface compatible
+with L<WWW::Mechanize|WWW::Mechanize>, which is the default base class.
+You might use another subclass of WWW::Mechanize or even
+L<Win32::IE::Mechanize|Win32::IE::Mechanize> (not tried yet).
 
 =back
 
-All other arguments are passed directly to WWW::Mechanize's constructor.
-
-=head3 Returns:
-
-A Bric::Mech object (isa WWW::Mechanize).
+All other arguments are passed directly to $self->SUPER::new.
 
 =cut
 
 sub new {
     my $class = shift;
     my %args = @_;
-    my $version = delete $args{version};
+
+    my $version = delete($args{version});
+    my $base = delete($args{base}) || 'WWW::Mechanize';
+
+    our @ISA = ($base);
+    eval "require $base";
+    croak("new failed: requiring base class, ERROR = $@") if $@;
     my $self = $class->SUPER::new(%args);
     bless $self, $class;
 
-    $self->{version} = $version || '1.10';
+    $self->{bric_version} = $version || '1.10';
+    $self->{_base} = $base;
 
     foreach my $attr (qw(server username password lang_key)) {
         $self->{$attr} = '';
@@ -295,6 +306,9 @@ sub enter_leftnav {
 
     $self->follow_link(tag => 'iframe') unless $self->in_leftnav;
     unless ($self->in_leftnav) {
+
+print $self->content, $/;
+
         $self->_croak("getting left nav");
     }
 
@@ -593,7 +607,8 @@ In a workflow menu, follow one of the links under 'Actions'
 ('New Media', 'New Alias', 'Find Stories', 'Active Templates'...)
 
 This expands the workflow menu internally before following a link,
-but it won't set the current open workflow menu.
+but it won't set the current open workflow menu. Since it calls
+L</open_workflow_menu>, it will also enter the left nav.
 
 =head3 Args:
 
@@ -618,6 +633,10 @@ then it will croak.
 XXX: Not implemented yet.
 
 =back
+
+=head3 Returns:
+
+$self->in_leftnav will return C<true> since this goes into the left nav.
 
 =cut
 
@@ -660,7 +679,8 @@ sub follow_action_link {
 In a workflow menu, follow one of the links under 'Desks'.
 
 This expands the workflow menu internally before following a link,
-but it won't set the current open workflow menu.
+but it won't set the current open workflow menu. Since it calls
+L</open_workflow_menu>, it will also enter the left nav.
 
 =head3 Args:
 
@@ -681,6 +701,10 @@ then it will croak.
 XXX: Not implemented yet.
 
 =back
+
+=head3 Returns:
+
+$self->in_leftnav will return C<true> since this goes into the left nav.
 
 =cut
 
@@ -768,7 +792,7 @@ sub follow_admin_link {
 
     if (exists $args{manager}) {
         my $manager = $args{manager};
-        unless ($self->follow_link(url_regex => m{^/admin/(?:manager|control)/$manager$})) {
+        unless ($self->follow_link(url_regex => qr{^/admin/(?:manager|control)/$manager$})) {
             $self->_croak("link not found (manager=$manager)");
         }
     } else {
@@ -901,10 +925,10 @@ A site name. If both 'id' and 'name' are given, 'id' takes precedence.
 =head3 Returns:
 
 If you pass an argument, the selected site is returned
-as a hash reference, e.g. {id => 1024, name => 'New Site'};
-if you pass no arguments, all sites are returned as a list of
-hash references, with the selected site having an extra
-'selected' element, e.g. {id => 1024, name => 'New Site', selected => 1}.
+as a hash reference; if you pass no arguments, all sites
+are returned as a list of hash references. In either case,
+the selected site will have an extra 'selected' element,
+e.g. {id => 1024, name => 'New Site', selected => 1}.
 
 =cut
 
@@ -930,6 +954,7 @@ sub site_context {
             $self->get($site->{url});
             $self->_croak("selecting site context ($site->{id}, $site->{name})")
               unless $self->success;
+            $site->{selected} = 1;
             return $site;
         }
     }
@@ -1001,7 +1026,14 @@ sub logged_in { $_[0]->{logged_in} }
 
 sub in_leftnav {
     my $self = shift;
-    return $self->content =~ /Frameset/;
+    # In 1.10, this shows
+    # <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+    # "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+    # but in 1.8 it's apparently showing
+    # <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    # "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    # (though I swear it wasn't before).
+    return $self->content =~ /id="navFrame"/;
 }
 
 sub get_workflow_menu { $_[0]->{workflow} }
@@ -1144,7 +1176,8 @@ sub _get_sites {
             DIV: while ($token = $p->get_token) {
                 if ($token->is_end_tag('div')) {
                     if (@sites == 0) {
-                        push @sites, {id => '100', name => 'Default Site'};
+                        push @sites, {id => '100', name => 'Default Site',
+                                      selected => 1};
                     }
                     last HTML;
                 }
