@@ -33,7 +33,6 @@ sub save : Callback {
     } else {
         $job->set_name($param->{name});
         $job->set_sched_time($param->{sched_time});
-        $job->set_type($param->{type});
         $job->set_priority($param->{priority});
         $job->save;
         log_event('job_save', $job);
