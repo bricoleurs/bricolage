@@ -10,7 +10,7 @@ Release Version: 1.6.1
 
 File (CVS) Version:
 
-$Revision: 1.35.2.6 $
+$Revision: 1.35.2.7 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.6.1";
 
 =head1 DATE
 
-$Date: 2003-04-29 21:20:04 $
+$Date: 2003-06-04 00:26:41 $
 
 =head1 SYNOPSIS
 
@@ -909,9 +909,11 @@ Garth Webb <garth@perijove.com>
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 COPYRIGHT AND LICENSE
 
-NONE
+Copyright (c) 2001 About.com. Changes Copyright (c) 2002-2003 Kineticode, Inc.
+and others. See L<Bric::License|Bric::License> for complete license terms and
+conditions.
 
 =cut
 
