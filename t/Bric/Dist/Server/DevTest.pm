@@ -67,9 +67,7 @@ sub test_lookup : Test(10) {
     ok( $server->is_active, "Check that it's activated" );
     is( $server->get_host_name, "$server{host_name}1",
         "host name is '$server{host_name}1'" );
-    # Change this to an is comparison once ChopBlanks is fixed in DBD::Pg,
-    # or once we change the os column to a TEXT column.
-    like( $server->get_os, qr/$server{os}/, "OS is '$server{os}'" );
+    is( $server->get_os, $server{os}, "OS is '$server{os}'" );
     is( $server->get_doc_root, "$server{doc_root}1",
         "Doc Root is '$server{doc_root}1'" );
     is( $server->get_login, "$server{login}1",
