@@ -1,5 +1,12 @@
 package Bric::App::Callback::AlertType;
 
+# XXX: from David msg of May 2:
+# Hrm, yes. And most of the callbacks to the profiles are in the form of
+# "profile|save_cb". They would have to be changed. If you do that, you
+# could probably merge the delete callback that's in alert_type/callback.mc
+# into Profiles::AlertType.
+
+
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'alert_type');
 use strict;
