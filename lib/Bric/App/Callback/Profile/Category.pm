@@ -13,6 +13,8 @@ use Bric::Util::Trans::FS;
 my $type = 'category';
 my $disp_name = get_disp_name($type);
 my $pl_name = get_class_info($type)->get_plural_name;
+my $class = get_package_name($type);
+eval "require $class";
 
 
 sub save : Callback {
@@ -67,7 +69,6 @@ sub save : Callback {
             and defined $param->{parent_id}) {
 
             # get and set the parent
-            # XXX: $class was in %args
             my $par = $class->lookup({id => $param->{parent_id}});
             $par->add_child([$cat]);
 
@@ -83,7 +84,6 @@ sub save : Callback {
                     return $cat;
                 }
 
-                # XXX: $class was in %args
                 if (@{ $class->list({ directory => $param->{directory},
                                       site_id   => $cat->get_site_id,
                                       parent_id => $p_id}) }) {
@@ -142,7 +142,6 @@ sub save : Callback {
             my @del_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
               @{mk_aref($param->{rem_grp})};
 
-
             foreach $cat ( $param->{grp_cascade}
                            ? Bric::Biz::Category->list
                              ({uri => $cat->get_uri . '%'})
@@ -178,7 +177,5 @@ sub save : Callback {
     return $cat;
 }
 
-
-# XXX: there's also an empty callback catcher
 
 1;
