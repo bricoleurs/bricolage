@@ -432,7 +432,7 @@ sub test_select_b_new_objs: Test(43) {
     my $exp_grp_ids = [ $all_cats_grp_id, $all_formatting_grp_id, $OBJ_IDS->{grp}->[0] ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     my $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... as a grp member
     $time = time;
@@ -474,7 +474,7 @@ sub test_select_b_new_objs: Test(43) {
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... a bunch of grps
     $time = time;
@@ -532,7 +532,7 @@ sub test_select_b_new_objs: Test(43) {
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... now try a workflow
     $time = time;
@@ -580,7 +580,7 @@ sub test_select_b_new_objs: Test(43) {
                     ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... desk
     $time = time;
@@ -633,7 +633,7 @@ sub test_select_b_new_objs: Test(43) {
                     ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, 
+    eq_set( $got_grp_ids , $exp_grp_ids, 
       '... does it have the right grp_ids' );
 
     # try listing something up by at least key in each table
@@ -691,17 +691,17 @@ sub test_select_b_new_objs: Test(43) {
     # finally do this by grp_ids
     ok( $got = class->list_ids({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'id' }), 'getting by grp_id' );
     $number = @$got;
-    is( $number, 2, 'there should be two formatting in the first grp' );
+    is( $number, 2, 'there should be two formatting objects in the first grp' );
     is( $got->[0], $formatting[1]->get_id(), '... and they should be numbers 2' );
     is( $got->[1], $formatting[2]->get_id(), '... and 3' );
 
 
     # now let's try a limit
     ok( $got = class->list({ Order => 'id', Limit => 3 }), 'try setting a limit of 3');
-    is( @$got, 3, '... did we get exactly 3 formatting back' );
+    is( @$got, 3, '... did we get exactly 3 formatting objects back' );
 
     # test Offset
-    ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'id', Offset => 3 }), 'try setting an offset of 3 for a search that just returned 6 objs');
+    ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'id', Offset => 1 }), 'try setting an offset of 2 for a search that just returned 3 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
     
 }

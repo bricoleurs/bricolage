@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-05 21:20:39 $
+$Date: 2003-03-10 19:42:16 $
 
 =head1 SYNOPSIS
 
@@ -676,7 +676,7 @@ sub fetch_objects {
     }
     finish($select);
     # Return the objects.
-    return (wantarray ? @objs : \@objs) if @objs;
+    return (wantarray ? @objs : \@objs);
 }
 
 =item = _build_query($cols, $tables, $where_clause, $order)
@@ -766,7 +766,8 @@ sub clean_params {
     # Map inverse alias inactive to active.
     $param->{'active'} = ($param->{'inactive'} ? 0 : 1) if exists $param->{'inactive'};
     # handle the special user_id p if it's missing
-    $param->{_checked_out} = 0 unless exists $param->{user_id};
+    $param->{_checked_out} = 0 unless exists $param->{user__id};
+    $param->{_checked_out} = 1 if defined $param->{user__id};
     # take care of the simple query, or lack thereof
     $param->{_not_simple} = 1 unless $param->{simple};
     # we can only handle the returned versions p in reverse

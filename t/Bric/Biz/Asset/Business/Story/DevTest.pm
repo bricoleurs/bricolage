@@ -246,7 +246,7 @@ sub test_select_methods: Test(61) {
                         $OBJ_IDS->{grp}->[0] ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     my $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... with multiple cats
     $time = time;
@@ -286,7 +286,7 @@ sub test_select_methods: Test(61) {
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... as a grp member
     $time = time;
@@ -325,7 +325,7 @@ sub test_select_methods: Test(61) {
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... a bunch of grps
     $time = time;
@@ -380,7 +380,7 @@ sub test_select_methods: Test(61) {
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... now try a workflow
     $time = time;
@@ -422,7 +422,7 @@ sub test_select_methods: Test(61) {
                     ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... desk
     $time = time;
@@ -469,7 +469,7 @@ sub test_select_methods: Test(61) {
                     ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # try listing something up by at least key in each table
     # be sure to try to get them both as a ref and a list
@@ -570,7 +570,7 @@ sub test_select_methods: Test(61) {
     is( @$got, 3, '... did we get exactly 3 stories back' );
 
     # test Offset
-    ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'id', Offset => 3 }), 'try setting an offset of 3 for a search that just returned 6 objs');
+    ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'id', Offset => 1 }), 'try setting an offset of 2 for a search that just returned 3 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
     
 }

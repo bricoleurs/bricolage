@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-10 19:29:22 $
+$Date: 2003-03-10 19:42:15 $
 
 =head1 SYNOPSIS
 
@@ -228,24 +228,26 @@ NONE
 =cut
 
 sub lookup {
-    my ($class, $param) = @_;
+    my ($pkg, $param) = @_;
+    $pkg = ref $pkg || $pkg;
     die $gen->new({ msg => "Missing Required Parameters id or version_id" })
       unless $param->{id} || $param->{version_id};
     die Bric::Util::Fault::Exception::MNI->new( { 
       msg => 'Must call list on Story, Media, or Formatting'}) 
-      unless $class->CAN_DO_LOOKUP; 
-    $param = clean_params($class, $param);
-    my $tables =  tables($class, $param);
-    my ($where, $args) = where_clause($class, $param);
-    my $order = order_by($class, $param);
-    my $sql = build_query_with_unions($class, $class->COLUMNS, $tables, $where, $order);
-    my $fields = [ 'id', $class->FIELDS, 'version_id', $class->VERSION_FIELDS, 'grp_ids' ];
+      unless $pkg->CAN_DO_LOOKUP; 
+    $param = clean_params($pkg, $param);
+    my $tables =  tables($pkg, $param);
+    my ($where, $args) = where_clause($pkg, $param);
+    my $order = order_by($pkg, $param);
+    my $sql = build_query_with_unions($pkg, $pkg->COLUMNS, $tables, $where, $order);
+    my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS, 'grp_ids' ];
     # we have to send the args 4 times for the query with grp ids
     $args = [ @$args, @$args, @$args, @$args ];
-    my @obj = fetch_objects( $class, $sql, $fields, $args, $param->{Limit}, $param->{Offset});
+    my @obj = fetch_objects( $pkg, $sql, $fields, $args, $param->{Limit}, $param->{Offset});
+    return unless $obj[0];
     return $obj[0] if @obj == 1;
     # oops there must be a duplicate id
-    die $gen->new({ msg => "Duplicate id found. $class:" . $param->{id} 
+    die $gen->new({ msg => "Duplicate id found. $pkg:" . $param->{id} 
                                 . ' version: ' . $param->{version_id} });
 }
     
@@ -273,19 +275,21 @@ B<See Also:>
 =cut
 
 sub list {
-    my ($class, $param) = @_;
+    my ($pkg, $param) = @_;
+    $pkg = ref $pkg || $pkg;
     die Bric::Util::Fault::Exception::MNI->new( { 
       msg => 'Must call list on Story, Media, or Formatting'}) 
-      unless $class->CAN_DO_LIST; 
-    $param = clean_params($class, $param);
-    my $tables = tables($class, $param);
-    my ($where, $args) = where_clause($class, $param);
-    my $order = order_by($class, $param);
-    my $fields = [ 'id', $class->FIELDS, 'version_id', $class->VERSION_FIELDS, 'grp_ids' ];
-    my $sql = build_query_with_unions($class, $class->COLUMNS, $tables, $where, $order);
+      unless $pkg->CAN_DO_LIST; 
+    $param = clean_params($pkg, $param);
+    my $tables = tables($pkg, $param);
+    my ($where, $args) = where_clause($pkg, $param);
+    my $order = order_by($pkg, $param);
+    my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS, 'grp_ids' ];
+    my $sql = build_query_with_unions($pkg, $pkg->COLUMNS, $tables, $where, $order);
     # we have to send the args 4 times for the query with grp ids
     $args = [ @$args, @$args, @$args, @$args ];
-    my @objs = fetch_objects($class, $sql, $fields, $args, $param->{Limit}, $param->{Offset});
+    my @objs = fetch_objects($pkg, $sql, $fields, $args, $param->{Limit}, $param->{Offset});
+    return unless $objs[0];
     return (wantarray ? @objs : \@objs);
 }
 
@@ -310,26 +314,28 @@ B<See Also:>
 =cut
 
 sub list_ids {
-    my ($class, $param) = @_;
+    my ($pkg, $param) = @_;
+    $pkg = ref $pkg || $pkg;
     die Bric::Util::Fault::Exception::MNI->new( { 
       msg => 'Must call list on Story, Media, or Formatting'}) 
-      unless $class->CAN_DO_LIST_IDS; 
+      unless $pkg->CAN_DO_LIST_IDS; 
     # clean the params
-    $param = clean_params($class, $param);
-    my $cols = $class->ID_COL;
-    my $tables =  tables($class, $param);
-    my ($where, $args) = where_clause($class, $param);
-    my $order = order_by($class, $param);
+    $param = clean_params($pkg, $param);
+    my $cols = $pkg->ID_COL;
+    my $tables =  tables($pkg, $param);
+    my ($where, $args) = where_clause($pkg, $param);
+    my $order = order_by($pkg, $param);
     # choose the query type, without grp_ids is faster
     my $sql;
     if ( $param->{grp_id} ) {
-        $sql = build_query_with_unions($class, $cols, $tables, $where, $order);
+        $sql = build_query_with_unions($pkg, $cols, $tables, $where, $order);
         $args = [ @$args, @$args, @$args, @$args ];
     } else {
         $sql = build_query($cols, $tables, $where, $order);
     }
     my $select = prepare_ca($sql, undef, DEBUG);
     my $return = col_aref($select, @$args);
+    return unless $return->[0];
     return wantarray ? @{ $return } : $return;
 }
 

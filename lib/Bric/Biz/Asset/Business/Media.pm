@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-05 21:20:47 $
+$Date: 2003-03-10 19:42:16 $
 
 =head1 SYNOPSIS
 
@@ -198,7 +198,7 @@ use constant PARAM_WHERE_MAP =>
       title               => 'LOWER(i.name) LIKE LOWER(?)',
       description         => 'LOWER(i.description) LIKE LOWER(?)',
       version             => 'i.version = ?',
-      user_id             => 'i.usr__id = ?',
+      user__id            => 'i.usr__id = ?',
       uri                 => 'LOWER(i.uri) LIKE LOWER(?)',
       file_name           => 'LOWER(i.file_name LIKE LOWER(?)',
       location            => 'LOWER(i.location) LIKE LOWER(?)',
@@ -233,7 +233,7 @@ use constant PARAM_ORDER_MAP =>
       description         => 'description',
       version             => 'version',
       version_id          => 'version_id',
-      user_id             => 'usr__id',
+      user__id            => 'usr__id',
       _checked_out        => 'checked_out',
       primary_oc_id       => 'primary_oc__id',
       category_id         => 'category_id',

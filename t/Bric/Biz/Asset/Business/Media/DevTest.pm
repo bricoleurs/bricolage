@@ -186,7 +186,7 @@ sub test_select_methods: Test(53) {
     my $exp_grp_ids = [ $all_cats_grp_id, $all_media_grp_id, $OBJ_IDS->{grp}->[0] ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     my $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... with multiple cats
     $time = time;
@@ -221,7 +221,7 @@ sub test_select_methods: Test(53) {
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... as a grp member
     $time = time;
@@ -259,7 +259,7 @@ sub test_select_methods: Test(53) {
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... a bunch of grps
     $time = time;
@@ -313,7 +313,7 @@ sub test_select_methods: Test(53) {
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... now try a workflow
     $time = time;
@@ -354,7 +354,7 @@ sub test_select_methods: Test(53) {
                     ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # ... desk
     $time = time;
@@ -378,13 +378,16 @@ sub test_select_methods: Test(53) {
 
     # Try doing a lookup 
     $expected = $media[5];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[5] }), 'can we call lookup on a Media' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
-
+    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[5] } ), 
+      'can we call lookup on a Media' );
+    is( $got->get_name(), $expected->get_name(), 
+      '... does it have the right name');
+    is( $got->get_description(), $expected->get_description(), 
+      '... does it have the right desc'); 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri(), qr/^$exp_uri/, 
+      '...does the uri match the category and slug');
 
     # check the grp IDs
     $exp_grp_ids = [ 
@@ -400,7 +403,7 @@ sub test_select_methods: Test(53) {
                     ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    is_deeply( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # try listing something up by at least key in each table
     # be sure to try to get them both as a ref and a list
@@ -457,7 +460,7 @@ sub test_select_methods: Test(53) {
     # finally do this by grp_ids
     ok( $got = class->list_ids({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'id' }), 'getting by grp_id' );
     $number = @$got;
-    is( $number, 2, 'there should be two media in the first grp' );
+    is( $number, 2, 'there should be three media in the first grp' );
     is( $got->[0], $media[2]->get_id(), '... and they should be numbers 2' );
     is( $got->[1], $media[3]->get_id(), '... and 3' );
 
@@ -467,7 +470,7 @@ sub test_select_methods: Test(53) {
     is( @$got, 3, '... did we get exactly 3 media back' );
 
     # test Offset
-    ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'id', Offset => 3 }), 'try setting an offset of 3 for a search that just returned 6 objs');
+    ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'id', Offset => 1 }), 'try setting an offset of 2 for a search that just returned 6 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
     
 }

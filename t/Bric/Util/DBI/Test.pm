@@ -69,7 +69,7 @@ use constant PARAM_WHERE_MAP =>
       description         => 'LOWER(i.description) LIKE LOWER(?)',
       version             => 'i.version = ?',
       slug                => 'LOWER(i.slug) LIKE LOWER(?)',
-      user_id             => 'i.usr__id = ?',
+      user__id             => 'i.usr__id = ?',
       _checked_out        => 'i.checked_out = ?',
       primary_oc_id       => 'i.primary_oc__id = ?',
       category_id         => 'i.id = c.story_instance__id AND c.category_id = ?',
@@ -100,7 +100,7 @@ use constant PARAM_ORDER_MAP =>
       version             => 'version',
       version_id          => 'version_id',
       slug                => 'slug',
-      user_id             => 'usr__id',
+      user__id             => 'usr__id',
       _checked_out        => 'checked_out',
       primary_oc_id       => 'primary_oc__id',
       category_id         => 'category_id',
@@ -247,9 +247,9 @@ sub test_where: Test(70) {
     ($cols, $args) = where_clause($CLASS, { slug => 1 });
     is( $cols, $base . ' AND LOWER(i.slug) LIKE LOWER(?)', 'check slug param');
     is_deeply( $args, [1], ' ... and the arg');
-    # user_id
-    ($cols, $args) = where_clause($CLASS, { user_id => 1 });
-    is( $cols, $base . ' AND i.usr__id = ?', 'check user_id param');
+    # user__id
+    ($cols, $args) = where_clause($CLASS, { user__id => 1 });
+    is( $cols, $base . ' AND i.usr__id = ?', 'check user__id param');
     is_deeply( $args, [1], ' ... and the arg');
     # _checked_out
     ($cols, $args) = where_clause($CLASS, { _checked_out => 1 });
@@ -304,7 +304,7 @@ sub test_where: Test(70) {
                     description         => 17,
                     version             => 18,
                     slug                => 19,
-                    user_id             => 20,
+                    user__id             => 20,
                     primary_oc_id       => 21,
                     category_id         => 22,
                     category_uri        => 23,
@@ -440,10 +440,11 @@ sub testclean_params: Test(7) {
              active => 1,
              _no_returned_versions => 1,
              _not_simple => 1,
-             user_id => 1,
+             user__id => 1,
+             _checked_out => 1,
              Order => 'cover_date',
            };
-    is_deeply( clean_params($CLASS, { user_id => 1 }), $exp, 'set _checked_out to 0 for user_id');
+    is_deeply( clean_params($CLASS, { user__id => 1 }), $exp, 'set _checked_out to 1 for user__id');
     $exp = { 
              active => 1,
              _no_returned_versions => 1,
