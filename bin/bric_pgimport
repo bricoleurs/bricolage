@@ -223,7 +223,7 @@ sub initialize {
 	# Drop the current database, if necessary.
         if ($opt_r) {
             print "\nDropping database '$opt_d'.\n" unless $opt_q;
-            exec_sql("DROP DATABASE $opt_d", 0, 'template1');
+            exec_sql(qq{DROP DATABASE "$opt_d"}, 0, 'template1');
         }
 
 	# Create a new database.
@@ -375,7 +375,7 @@ sub grant_permissions {
 	$sql = qq{
             GRANT SELECT, UPDATE, INSERT, DELETE
             ON    $objects
-            TO    $user
+            TO    "$user"
         };
         exec_sql($sql);
     }
