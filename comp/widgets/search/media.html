@@ -45,6 +45,8 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                      useTable => 0 &>
                 </td>
                 <td>
+%# This hidden field is required to make the form submit when the user hits
+%# the "enter" key.
                   <input type="hidden" name="<% $widget %>|media_cb" value="Search" />
                   <input type="image" src="/media/images/search_red.gif" border=0 name="<% $widget %>|media_cb" value="Search">
                 </td>
