@@ -168,7 +168,8 @@ use MasonX::Interp::WithCallbacks;
     use Bric::Util::Burner;
     use Bric::Util::Burner::Mason;
     require Bric::Util::Burner::Template if eval { require HTML::Template };
-    require Bric::Util::Burner::TemplateToolkit if eval { require Template };
+    require Bric::Util::Burner::TemplateToolkit
+      if eval { require Template && $Template::VERSION >= 2.14 };
     use Bric::Util::Class;
     use Bric::Util::Fault qw(:all);
     use Bric::Util::Language;
