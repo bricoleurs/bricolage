@@ -8,11 +8,11 @@ select_time - A widget to facilitate time input.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:58 $
+$Date: 2002-07-11 19:47:05 $
 
 =head1 SYNOPSIS
 
@@ -140,7 +140,7 @@ $useTable        => 0
 $compact         => 0
 $indent          => undef
 $disp            => undef
-$repopulate      => 1
+$repopulate      => 0
 </%args>
 
 <%once>

@@ -191,6 +191,11 @@ Eliminated the password field type from the formBuilder interface used for
 contributor types and elements. Its inclusion up to now may be considered a
 bug. [David]
 
+=item *
+
+Fixed cover date editing to repopulate correctly on the Story profile
+screens.  [Matt]
+
 =back
 
 =head1 VERSION 1.3.2
