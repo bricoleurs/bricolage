@@ -119,8 +119,9 @@ elsif ($field eq "$widget|publish_cb") {
 	next unless $a;
 
 	# haven't I seen you someplace before?
-	next if exists $seen{$a};
-	$seen{$a} = 1;
+	my $key = ref($a) . '.' . $a->get_id;
+	next if exists $seen{$key};
+	$seen{$key} = 1;
 
 	if ($a->get_checked_out) {
 	    add_msg("Cannot publish ".lc(get_disp_name($a->key_name))." '".
@@ -130,9 +131,6 @@ elsif ($field eq "$widget|publish_cb") {
 
 	# Examine all the related objects.
 	foreach my $r ($a->get_related_objects) {
-	    # add to list of objects to cycle through
-	    push(@objs, $r);
-
 	    # Skip assets that have already been published.
 	    next if $r->get_publish_status;
 
@@ -142,6 +140,10 @@ elsif ($field eq "$widget|publish_cb") {
                         " because it is checked out");
                 next;
 	    }
+
+	    # add related stories to list of objects to cycle through
+	    push(@objs, $r) 
+	      if ref $r eq 'Bric::Biz::Asset::Business::Story';
 
 	    # push onto the appropriate list
 	    if (ref $r eq 'Bric::Biz::Asset::Business::Story') {
