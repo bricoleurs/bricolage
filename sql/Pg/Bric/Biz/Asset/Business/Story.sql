@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
--- $Date: 2003-03-15 18:36:07 $
+-- $Date: 2003-03-16 01:33:53 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -70,6 +70,8 @@ CREATE TABLE story (
                                       CONSTRAINT ck_story__active
                                         CHECK (active IN (0,1)),
     site__id          NUMERIC(10,0)   NOT NULL,
+    alias_id          NUMERIC(10,0)   CONSTRAINT ck_story_id
+                                        CHECK (alias_id != id),  
     CONSTRAINT pk_story__id PRIMARY KEY (id)
 );
 
@@ -222,6 +224,7 @@ CREATE INDEX fdx_usr__story ON story(usr__id);
 CREATE INDEX fdx_source__story ON story(source__id);
 CREATE INDEX fdx_element__story ON story(element__id);
 CREATE INDEX fdx_site_id__story ON story(site__id);
+CREATE INDEX fdx_alias_id__story ON story(alias_id);
 
 -- story_instance
 CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));

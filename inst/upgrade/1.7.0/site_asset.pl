@@ -52,6 +52,17 @@ do_sql
   q/CREATE INDEX fkx_site__media ON media(site__id)/,
 
 
+  q/ALTER TABLE media
+      ADD alias_id NUMERIC (10,0)
+      CONSTRAINT ck_media_id
+      CHECK (alias_id != id)/,
+
+  q/ALTER TABLE media
+      ADD CONSTRAINT fk_media__media_id FOREIGN KEY (alias_id)
+      REFERENCES media(id) ON DELETE RESTRICT/,
+
+  q/CREATE INDEX fdx_alias_id__media ON media(alias_id)/,
+
   #story
   # Add the new site__id column.
   q/ALTER TABLE story ADD site__id NUMERIC(10, 0)/,
@@ -72,6 +83,17 @@ do_sql
 
   # Add the index.
   q/CREATE INDEX fkx_site__story ON story(site__id)/,
+
+  q/ALTER TABLE story
+      ADD alias_id NUMERIC (10,0)
+      CONSTRAINT ck_story_id
+      CHECK (alias_id != id)/,
+
+  q/ALTER TABLE story
+      ADD CONSTRAINT fk_story__story_id FOREIGN KEY (alias_id)
+      REFERENCES story(id) ON DELETE RESTRICT/,
+
+  q/CREATE INDEX fdx_alias_id__story ON story(alias_id)/,
 
 ;
 
