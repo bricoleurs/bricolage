@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2001-09-25 09:59:41 $
+$Date: 2001-09-26 15:12:09 $
 
 =head1 DESCRIPTION
 
@@ -58,6 +58,18 @@ Change CE::_set() to only set if the values are different.
 =item *
 
 Add keywords to media.
+
+=item *
+
+Check authorization (permissions) for displaying categories and story/media
+types when users are creating and editing story and media assets. This way, they
+can select only those categories and document types to which they have (READ)
+permission.
+
+=item *
+
+Check new desk names to make sure there isn't an existing desk with the same
+name.
 
 =back
 
@@ -165,6 +177,21 @@ Add category selector to template profile (maybe - Bug # 577).
 
 =back
 
+=item *
+
+Add Group copying so that a new group can start with the settings (including
+permissions) of an existing group.
+
+=item *
+
+Add support for LDAP Authentication.
+
+=item *
+
+Add PERL_LOADER configuration directive to bricolage.conf (and Bric::Config) so
+that system administrators can easily specify extra Perl modules they want
+loaded for use in templates.
+
 VERSION 1.4.0
 
 =over 4
@@ -267,7 +294,11 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ToDo.pod,v $
-Revision 1.8  2001-09-25 09:59:41  wheeler
+Revision 1.9  2001-09-26 15:12:09  wheeler
+Added quite a few more tasks. Will go over it in detail in the next few days and
+work out a more realistic road map.
+
+Revision 1.8  2001/09/25 09:59:41  wheeler
 Added new item.
 
 Revision 1.7  2001/09/25 08:34:16  wheeler
