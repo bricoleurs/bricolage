@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.54 $ )[-1];
+our $VERSION = (qw$Revision: 1.55 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-02 00:15:45 $
+$Date: 2003-01-12 00:29:25 $
 
 =head1 SYNOPSIS
 
@@ -463,7 +463,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant DEFAULT_FILE_EXT => => $config->{DEFAULT_FILE_EXT} || 'html';
 
     # Temp Dir Setting
-    use constant TEMP_DIR        => $config->{TEMP_DIR} || tmpdir();
+    use constant TEMP_DIR               => $ENV{BRIC_TEMP_DIR} ||
+      $config->{TEMP_DIR} || tmpdir();
 
     # Process Size Limit Settings
     use constant CHECK_PROCESS_SIZE     => $config->{CHECK_PROCESS_SIZE};

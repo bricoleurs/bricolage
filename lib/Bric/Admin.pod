@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.86 $
+$Revision: 1.87 $
 
 =head1 DATE
 
-$Date: 2003-01-07 03:32:39 $
+$Date: 2003-01-12 00:29:25 $
 
 =head1 DESCRIPTION
 
@@ -1074,10 +1074,11 @@ C<APACHE_CONF> configuration directive. Defaults to "nobody" if not specified.
 
 =item *
 
-B<TEMP_DIR:> The system will create a sub-directory below this
-directory where Bricolage will store temporary files.  Must be
-writable by SYS_USER described above.  Defaults to the return value
-from File::Spec::Unix::tempdir() if not specified.
+B<TEMP_DIR:> The system will create a sub-directory below this directory where
+Bricolage will store temporary files. Must be writable by C<SYS_USER>
+described above. May be overridden by a C<$BRIC_TEMP_DIR> environment
+variable. Defaults to the return value from C<< File::Spec->tempdir >> if not
+specified.
 
 =back
 

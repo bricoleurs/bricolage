@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-04 00:48:23 $
+$Date: 2003-01-12 00:29:25 $
 
 =head1 SYNOPSIS
 
@@ -127,6 +127,11 @@ use constant CACHE_ROOT =>
   Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage', 'cache');
 use constant CACHE_MMAP =>
   Bric::Util::Trans::FS->cat_file(CACHE_ROOT, 'mmap');
+
+unless (-d CACHE_ROOT) {
+    mkpath(CACHE_ROOT, 0, 0777);
+    chown SYS_USER, SYS_GROUP, CACHE_ROOT;
+}
 
 # these could be made into bricolage.conf directives if we decide
 # people will want to change them.  These values yeild a maximum cache
