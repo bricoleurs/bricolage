@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-07-02 19:36:16 $
+$Date: 2002-07-02 19:47:17 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -71,7 +71,7 @@ if ($versions) {
 </tr>
 <% $ieSpacer %> 
 <tr>
-  <td>
+  <td width="33%">
   <table border=0 cellpadding=0 cellspacing=0>
   <tr>
     <td valign="middle"><input type="image" src="/media/images/check_in_dgreen.gif" border=0 name="<% $widget %>|checkin_cb" value="Check In"></td>
@@ -80,18 +80,18 @@ if ($versions) {
   </tr>
   </table>
   </td>
-  <td>
+  <td width="34%" align="center">
   <table border=0 cellpadding=0 cellspacing=0>
   <tr>
 % my ($act, $cb) = $widget eq 'tmpl_prof' ?
 %   ('deploy', 'deploy') : ('publish', 'and_pub');
-    <td align="center">
+    <td>
       <input type="image" src="/media/images/checkin_and_<% $act %>_dgreen.gif" border="0" name="<% $widget %>|checkin_<% $cb %>_cb" value="Check In And Publish" />
     </td>
   </tr>
   </table>
   </td>
-  <td align="right">
+  <td align="right" widht="33%">
   <table border=0 cellpadding=0 cellspacing=0>
   <tr>
 % if ($versions && @$versions > 1) {
@@ -99,7 +99,7 @@ if ($versions) {
     <td valign="middle">&nbsp;to <% $versionText %></td>
     <td valign="middle"><input type="image" src="/media/images/view_text_dgreen.gif" border=0 hspace=5 name="<% $widget %>|view_cb" value="view"></td>
 % } else {
-  <td></td>
+  <td>&nbsp;</td>
 % }
   </tr>
   </table> 
