@@ -139,6 +139,20 @@ Also changed it so that a restart is always a hard restart. [Sam]
 Added name of Output Channel to list of Templates in Find Templates interface.
 [David]
 
+=item *
+
+Changed behavior of sideNav to Limit rendering of Workflows permissions. If a
+user doesn't have READ permission on Workflow, it won't show up in the display.
+[David]
+
+=item *
+
+Added URI to all media profile views. [David]
+
+=item *
+
+Added ability to change the category association in Templates. [David]
+
 =back
 
 =head2 Bug Fixes

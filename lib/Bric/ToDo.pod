@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.28 $
+$Revision: 1.13.2.29 $
 
 =head1 DATE
 
-$Date: 2001-11-29 23:56:05 $
+$Date: 2001-11-30 04:27:00 $
 
 =head1 DESCRIPTION
 
@@ -47,11 +47,6 @@ Estimated ship date: 11 December 2001.
 
 =item *
 
-Limit rendering of Workflows and Desks in the leftNav by permissions. If a user
-doesn't have READ permission on a Desk or Workflow, don't display it [Michele].
-
-=item *
-
 When clicking "New" for an existing contributor, allow choice of Contributor
 Type, and B<then> role. Right now, if you want an existing to be a contributor
 of a different type, you have to create a new person, and this duplication is
@@ -74,14 +69,6 @@ Change the term "attribute" to "field" in the UI [Michele].
 =item *
 
 Make SSL optional (and off by default) [David or Sam].
-
-=item *
-
-Add URI to all media profile views [Michele].
-
-=item *
-
-Add ability to change the category association in Templates [David].
 
 =back
 
