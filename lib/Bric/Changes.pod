@@ -196,11 +196,6 @@ Restored category assest group permissions in user group profiles. [David]
 
 =item *
 
-Checkout checkboxes no longer appear for assets that users don't have
-permission to check out. Thanks to Alexander Ling for the spot! [David]
-
-=item *
-
 Templates can be deleted again. Thanks to Adeola Awoyemi for the spot! [David]
 
 =item *
