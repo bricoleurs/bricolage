@@ -50,6 +50,10 @@ Added a preference to change the way URIs are formatted. [Adam]
 Added a URI case preference to force URIs to lowercase, uppercase, or
 allow mixed case URIs.  [Adam]
 
+=item *
+
+Categories are now all listed and sorted by URI in select lists. [Sam]
+
 =back
 
 =head2 Bug Fixes
