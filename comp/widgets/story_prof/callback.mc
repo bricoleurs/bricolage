@@ -604,14 +604,16 @@ my $handle_add_category = sub {
         my $msg = $story->check_uri();
         if ($msg) {
             $story->delete_categories([ $cat_id ]);
-            add_msg("The category was not added, as it would have caused a URI clash with story '$msg'.");
+            add_msg("The category was not added, as it would have caused a " .
+                    "URI clash with story '$msg'.");
             $story->save();
             set_state_data($widget, 'story', $story);
             return;
         }
         $story->save();
         my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
-        log_event('story_add_category', $story, { Category => $cat->get_name });        add_msg("Category &quot;" . $cat->get_name . "&quot; added.");
+        log_event('story_add_category', $story, { Category => $cat->get_name });
+        add_msg("Category &quot;" . $cat->get_name . "&quot; added.");
     }
     set_state_data($widget, 'story', $story);
 };
