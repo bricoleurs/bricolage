@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2001-12-10 21:39:21 $
 
 =head1 SYNOPSIS
 
@@ -464,12 +464,13 @@ my $get_my_meths = sub {
 	    $meths->{$f}->{disp} = $t;
 	}
     } elsif ($field_values) {
-	$field_values ||= {};
+	$field_titles ||= {};
 	foreach my $f (keys %$meths) {
 	    # Copy the method metadata.
 	    $meths->{$f} = { %{ $meths->{$f} } };
 	    # Install the new display name, if there is one.
-	    $meths->{$f}->{disp} = $field_titles->{$f} if $field_titles->{$f};
+	    $meths->{$f}->{disp} = delete $field_titles->{$f}
+	      if exists $field_titles->{$f};
 
 	    my $meth = $meths->{$f}->{get_meth};
 	    # Try to return a value from $field_values first.
@@ -477,8 +478,12 @@ my $get_my_meths = sub {
 				       $meth->(@_)) };
 	    $meths->{$f}->{get_meth} = $cooked;
 	}
+	# Check to see if there are some bonus fields to be added.
+	while (my ($f, $t) = each %$field_titles) {
+	    $meths->{$f}{disp} = $t;
+	    $meths->{$f}{get_meth} = sub { return $field_values->($_[0], $f) };
+	}
     }
-
     return $meths;
 };
 

@@ -33,7 +33,7 @@ my $sel_opts = [(1..$num_fields)];
 
 # display attrs
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	 caption => "Attributes",
+	 caption => "Custom Fields",
 	 number  => 3);
 
 if ($num_fields) {
@@ -45,7 +45,7 @@ if ($num_fields) {
 	    );
 } else {
     # Output a message if no attributes defined, yet.
-    $m->out(qq{<span class="label">No Attributes defined.</span>\n})
+    $m->out(qq{<span class="label">No custom fields defined.</span>\n})
       unless $num_fields;
 }
 
@@ -60,7 +60,7 @@ $m->comp('/widgets/formBuilder/formBuilder.mc',
 	 formName => 'ct_profile',
 	 numFields => $num_fields,
 	 num => 3,
-	 caption => 'Add New Attribute'
+	 caption => 'Add New Field'
 	);
 } else {
     # Add the buttons.
@@ -127,11 +127,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:38 $
+$Date: 2001-12-10 21:39:21 $
 
 =head1 DESCRIPTION
 

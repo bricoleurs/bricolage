@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:43 $
+$Date: 2001-12-10 21:39:29 $
 
 =head1 DESCRIPTION
 
@@ -38,29 +38,6 @@ are welcome.
 At the end of this document, the "Blue Sky" section features items that will
 likely never be done for the 1.x development of Bricolage, but we'd like to keep
 in mind as long term goals further down the line.
-
-=head2 VERSION 1.0.2
-
-Estimated ship date: 11 December 2001.
-
-=over 4
-
-=item *
-
-When clicking "New" for an existing contributor, allow choice of Contributor
-Type, and B<then> role. Right now, if you want an existing to be a contributor
-of a different type, you have to create a new person, and this duplication is
-bad [David].
-
-=item *
-
-Write distribution documentation [David].
-
-=item *
-
-Change the term "attribute" to "field" in the UI [Michele].
-
-=back
 
 =cut
 
@@ -93,6 +70,26 @@ channel. [Sam]
 Separate the filesystem destinations for stories burned for publication and for
 stories burned for previewing. This will prevent someone previewing and stomping
 all over a published version of a story. [David]
+
+=item *
+
+When clicking "New" for an existing contributor, allow choice of Contributor
+Type, and B<then> role. Right now, if you want an existing to be a contributor
+of a different type, you have to create a new person, and this duplication is
+bad [David].
+
+=item *
+
+When adding a new person, have user search for existing persons first to ensure
+that the person doesn't already exist. That is, when adding a new user, it could
+be that the person being added is already in the system as a contributor, so the
+new user object can be based on the person object underlying the contributor
+object. Similarly, when adding a new contributor, the person being added could
+having an existing person record as an existing contributor or user. [David]
+
+=item *
+
+Write distribution documentation. [David]
 
 =back
 
@@ -199,6 +196,13 @@ Simplify associating media with stories. Users should be able to associated
 media with stories just as they do contributors and keywords. However, the new
 media objects they upload should be put into the repository as normal media
 assets. New uploads of the same media file increment the version numbers.
+
+=item *
+
+Add a method to assets to indicate whether the current version needs publishing.
+Basically, what this method will do is return false if the current version has
+been published, and true if it has not -- even if a previous version has been
+published. Suggested method name: needs_publish().
 
 =back
 

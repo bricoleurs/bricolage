@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-07 22:35:37 $
+$Date: 2001-12-10 21:39:29 $
 
 =head1 SYNOPSIS
 
@@ -274,7 +274,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
 	# While these default to 0.
-	foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER)) {
+	foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER SSL_ENABLE)) {
 	    my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
@@ -323,7 +323,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
       || 'On';
 
     # mod_ssl Settings.
-    use constant SSL_ENABLE              => $config->{SSL_ENABLE} || 0;
+    use constant SSL_ENABLE              => $config->{SSL_ENABLE};
     use constant SSL_SESSION_CACHE       => $config->{SSL_SESSION_CACHE}
       || 'dbm:/usr/local/apache/logs/ssl_scache';
     use constant SSL_SESSION_CACHE_TIMEOUT =>
@@ -405,8 +405,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 6;
 
     # Error Page Setting.
-    use constant ERROR_URI => '/errors/500.mc';
-#    use constant ERROR_URI => '/errors/error.html';
+#    use constant ERROR_URI => '/errors/500.mc';
+    use constant ERROR_URI => '/errors/error.html';
 
     # Distribution Settings.
     use constant ENABLE_DIST => $config->{ENABLE_DIST};
