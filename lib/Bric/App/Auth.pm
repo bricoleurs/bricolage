@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.12.4.2 $
+$Revision: 1.12.4.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 06:03:27 $
+$Date: 2004-02-29 20:10:09 $
 
 =head1 SYNOPSIS
 
@@ -155,7 +155,7 @@ sub auth {
     }
     $c ||= Bric::App::Cache->new;
     my $u = get_user_object();
-    if ( !$u || $c->get_lmu_time || 0 > $lul) {
+    if ( !$u || ($c->get_lmu_time || 0) > $lul) {
         # There have been changes to the users. Reload this user from the
         # database.
         return &$fail($r, 'User does not exist or is disabled.') unless

@@ -222,12 +222,12 @@ sub initialize {
 	# Drop the current database, if necessary.
         if ($opt_r) {
             print "\nDropping database '$opt_d'.\n" unless $opt_q;
-            exec_sql("DROP DATABASE $opt_d", 0, 'template1');
+            exec_sql(qq{DROP DATABASE "$opt_d"}, 0, 'template1');
         }
 
 	# Create a new database.
 	print "\nCreating database '$opt_d'.\n" unless $opt_q;
-        exec_sql("CREATE DATABASE $opt_d WITH ENCODING = 'UNICODE'"
+        exec_sql(qq{CREATE DATABASE "$opt_d" WITH ENCODING = 'UNICODE'}
                  . " TEMPLATE template0", 0, 'template1');
     }
 
@@ -310,7 +310,7 @@ sub create_user {
     $pass =~ s/'/''/g;
     $user =~ s/'/''/g;
     my $sql = qq{
-        CREATE USER $user
+        CREATE USER "$user"
         WITH PASSWORD '$pass' NOCREATEDB NOCREATEUSER
     };
     system($PSQL, '-q', '-c', $sql, $opt_d);
@@ -374,7 +374,7 @@ sub grant_permissions {
 	$sql = qq{
             GRANT SELECT, UPDATE, INSERT, DELETE
             ON    $objects
-            TO    $user
+            TO    "$user"
         };
         exec_sql($sql);
     }

@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.20.2.9 $
+$Revision: 1.20.2.10 $
 
 =head1 DATE
 
-$Date: 2003-11-19 20:08:40 $
+$Date: 2004-02-29 20:10:07 $
 
 =head1 DESCRIPTION
 
@@ -88,7 +88,7 @@ sub exec_sql {
 # create the database, optionally dropping an existing database
 sub create_db {
     print "Creating database named $PG->{db_name}...\n";
-    my $err = exec_sql("CREATE DATABASE $PG->{db_name} WITH ENCODING = 'UNICODE'"
+    my $err = exec_sql(qq{CREATE DATABASE "$PG->{db_name}" WITH ENCODING = 'UNICODE'}
                        . " TEMPLATE = template0",
                        0, $PGDEFDB);
 
@@ -98,7 +98,7 @@ sub create_db {
             if (ask_yesno("Database named \"$PG->{db_name}\" already exists.  ".
                           "Drop database? [no] ", 0)) {
                 # Drop the database.
-                if ($err = exec_sql("DROP DATABASE $PG->{db_name}", 0,
+                if ($err = exec_sql(qq{DROP DATABASE "$PG->{db_name}"}, 0,
                                     $PGDEFDB)) {
                     hard_fail("Failed to drop database.  The database error ",
                               "was:\n\n$err\n")
@@ -124,14 +124,14 @@ sub create_user {
     my $pass = $PG->{sys_pass};
 
     print "Creating user named $PG->{sys_user}...\n";
-    my $err = exec_sql("CREATE USER $user WITH password '$pass' " .
+    my $err = exec_sql(qq{CREATE USER "$user" WITH password '$pass' } .
                        "NOCREATEDB NOCREATEUSER", 0, $PGDEFDB);
 
     if ($err) {
         if ($err =~ /user( name)? "[^"]+" already exists/) {
             if (ask_yesno("User named \"$PG->{sys_user}\" already exists.  ".
                           "Drop user? [no] ", 0)) {
-                if ($err = exec_sql("DROP USER $PG->{sys_user}", 0, $PGDEFDB)) {
+                if ($err = exec_sql(qq{DROP USER "$PG->{sys_user}"}, 0, $PGDEFDB)) {
                     hard_fail("Failed to drop user.  The database error was:\n\n",
                               "$err\n");
                 }

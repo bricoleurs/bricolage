@@ -55,7 +55,7 @@ sub grant_permissions {
     $sql = qq{
         GRANT SELECT, UPDATE, INSERT, DELETE
         ON    $objects
-        TO    $PG->{sys_user};
+        TO    "$PG->{sys_user}";
     };
     $err = exec_sql($sql);
     hard_fail("Failed to Grant privileges. The database error was\n\n$err")

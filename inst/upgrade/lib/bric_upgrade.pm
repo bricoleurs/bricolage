@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.12.6.11 $
+$Revision: 1.12.6.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.6.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.6.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-01 17:13:56 $
+$Date: 2004-02-29 20:10:07 $
 
 =head1 SYNOPSIS
 
@@ -269,7 +269,7 @@ sub do_sql {
         my $grant = prepare(qq{
                 GRANT  SELECT, UPDATE, INSERT, DELETE
                 ON     } . join(', ', @objs) . qq{
-                TO     ${ \DBI_USER() }
+                TO     "${ \DBI_USER() }"
             });
         execute($grant);
     }

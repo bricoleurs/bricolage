@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.18.4.4 $
+$Revision: 1.18.4.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.4.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.4.5 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:45 $
+$Date: 2004-02-29 20:10:09 $
 
 =head1 SYNOPSIS
 
@@ -1327,7 +1327,7 @@ sub _do_list {
         my @objs;
         execute($select, @where_param);
         my @cols;
-        $select->bind_columns($select, \@cols[0 .. scalar COLS]);
+        bind_columns($select, \@cols[0 .. scalar COLS]);
         while (fetch($select) ) {
             my $self = bless {}, $class;
             $self->_set( [ 'id', FIELDS ], [@cols] );

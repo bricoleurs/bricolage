@@ -62,6 +62,46 @@ Bricolage once again works with Perl 5.6.1 (and all of its lovely bugs).
 Made F<bric_republish> and F<bric_dev_sync> safe to use with C<https://>.
 [Geoff Richards]
 
+=item *
+
+The user object is no longer instantiated from the database every time a user
+sends a request to Bricolage. It appears that this bit of overhead has
+unfortunately been imposed on every request since Bricolage 1.0 due to a very
+stupid typo. [David]
+
+=item *
+
+The creation of the Bricolage PostgreSQL user and database during installation
+no longer complains about usernames or database names with dashes and other
+non-alphanumeric characters in them. Thanks to Marshall Roch for the spot!
+[David]
+
+=item *
+
+Fixed ancient bug revealed by the release of DBI 1.41. [David]
+
+=item *
+
+Photoshop-generated images no longer make Bricolage choke when they're
+uploaded to a Media profile that autopopulates fields. Reported by Paul
+Orrock. [David]
+
+=item *
+
+The C<lookup()> method of the story, media, and template classes will now
+correctly return inactive objects. [David]
+
+=item *
+
+Fixed typo of C<CHECK_FREQUENCY> in Bric::Config that would've made it
+always use the default of 1, since version 1.43 (2002/05). [Scott]
+
+=item *
+
+The C<lookup()> method of the story, media, and template classes once again
+attempt to retreive objects from the per-request cache before looking them up
+in the database. [David]
+
 =back
 
 =head1 VERSION 1.6.9 (2004-02-06)
