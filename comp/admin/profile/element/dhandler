@@ -171,6 +171,7 @@ if (!$no_edit && defined $id) {
     $m->out( qq {<input type="hidden" name="isNew" value="1">\n});
     $m->comp('/widgets/profile/formButtons.mc',
 	     type => $type,
+	     val => 'next_dkgreen',
 	     section => $section,
 	     no_del => 1,
 	     no_save => $no_edit,
@@ -229,11 +230,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:50 $
+$Date: 2001-09-27 14:43:32 $
 
 =head1 DESCRIPTION
 
@@ -242,7 +243,10 @@ Diplays the profile for containers.
 =REVISION HISTORY
 
 $Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:50  wheeler
-Initial revision
+Revision 1.2  2001-09-27 14:43:32  wheeler
+Changed the "Save" button to "Next" on the initial Element screen.
+
+Revision 1.1.1.1  2001/09/06 21:51:50  wheeler
+Upload to SourceForge.
 
 </%doc>
