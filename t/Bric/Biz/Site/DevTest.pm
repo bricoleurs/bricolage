@@ -443,7 +443,9 @@ sub test_save : Test(36) {
     ok( ! $site->is_active, "Check is not active" );
     is( $site->get_asset_grp->get_id, $site->get_id,
         "Check asset group ID is ID" );
-    ok( eq_set( scalar $site->get_grp_ids, $grp_ids), "Check group IDs" );
+    is_deeply( [ sort { $a <=> $b } $site->get_grp_ids],
+               [ sort { $a <=> $b } @$grp_ids],
+               "Check group IDs" );
 }
 
 

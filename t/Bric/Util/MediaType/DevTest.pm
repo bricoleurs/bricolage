@@ -91,8 +91,9 @@ sub test_list : Test(16) {
     # Make sure we've got all the Group IDs we think we should have.
     my $all_grp_id = $class->INSTANCE_GROUP_ID;
     foreach my $mt (@mts) {
-        ok(eq_set([$mt->get_grp_ids], [$all_grp_id, $grp_id]),
-          "Check for both IDs" );
+        is_deeply([sort {$a <=> $b } $mt->get_grp_ids],
+                  [$all_grp_id, $grp_id],
+                  "Check for both IDs" );
     }
 
     # Try deactivating one group membership.

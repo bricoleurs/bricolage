@@ -89,14 +89,10 @@ sub test_clone : Test(15) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(51) {
+sub test_select_methods: Test(87) {
     my $self = shift;
-
-    # let's grab existing 'All' group info
-    my $all_workflow_grp_id = Bric::Util::Grp->lookup({ name => 'All Workflows' })->get_id();
-    my $all_cats_grp_id = Bric::Util::Grp->lookup({ name => 'All Categories' })->get_id();
-    my $all_desks_grp_id = Bric::Util::Grp->lookup({ name => 'All Desks' })->get_id();
-    my $all_stories_grp_id = Bric::Util::Grp->lookup({ name => 'All Stories' })->get_id();
+    my $class = $self->class;
+    my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
 
     # now we'll create some test objects
     my ($i);
@@ -111,6 +107,7 @@ sub test_select_methods: Test(51) {
                                        });
         $CATEGORY->add_child([$cat]);
         $cat->save();
+        $self->add_del_ids([$cat->get_id()], 'category');
         push @{$OBJ_IDS->{category}}, $cat->get_id();
         push @{$OBJ->{category}}, $cat;
         # create some category groups
@@ -121,6 +118,7 @@ sub test_select_methods: Test(51) {
         $grp->add_member({obj => $cat });
         # save the group ids
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @CATEGORY_GRP_IDS, $grp->get_id();
 
@@ -130,6 +128,7 @@ sub test_select_methods: Test(51) {
                                         description => '',
                                      });
         $desk->save();
+        $self->add_del_ids([$desk->get_id()], 'desk');
         push @{$OBJ_IDS->{desk}}, $desk->get_id();
         push @{$OBJ->{desk}}, $desk;
         # create some desk groups
@@ -140,6 +139,7 @@ sub test_select_methods: Test(51) {
         # save the group ids
         $grp->add_member({ obj => $desk });
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @DESK_GRP_IDS, $grp->get_id();
 
@@ -152,6 +152,7 @@ sub test_select_methods: Test(51) {
                                         site_id => 100, #Use default site_id
                                      });
         $workflow->save();
+        $self->add_del_ids([$workflow->get_id()], 'workflow');
         push @ALL_DESK_GRP_IDS, $workflow->get_all_desk_grp_id;
         push @REQ_DESK_GRP_IDS, $workflow->get_req_desk_grp_id;
         push @{$OBJ_IDS->{workflow}}, $workflow->get_id();
@@ -164,6 +165,7 @@ sub test_select_methods: Test(51) {
         # save the group ids
         $grp->add_member({ obj => $workflow });
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @WORKFLOW_GRP_IDS, $grp->get_id();
 
@@ -171,37 +173,33 @@ sub test_select_methods: Test(51) {
         $grp = Bric::Util::Grp::Story->new({ name => "_GRP_test_$time.$i" });
         # save the group ids
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @{$OBJ->{story_grp}}, $grp;
         push @STORY_GRP_IDS, $grp->get_id();
-    }
-
-    # set up to do the deletes
-    foreach my $table (qw(grp category workflow desk)) {
-        $self->add_del_ids( $OBJ_IDS->{$table}, $table );
     }
 
     # look up a story element
     my ($element) = Bric::Biz::AssetType->list({ name => 'Story' });
 
     # and a user
-    my $admin_id = $self->user_id();
+    my $admin_id = $self->user_id;
 
     # create some stories
     my (@story,$time, $got, $expected);
 
     # A story with one category (admin user)
     $time = time;
-    $story[0] = Bric::Biz::Asset::Business::Story->new({
-                                                       name        => "_test_$time",
-                                                       description => 'this is a test',
-                                                       priority    => 1,
-                                                       source__id  => 1,
-                                                       slug        => 'test',
-                                                       user__id    => $admin_id,
-                                                       element     => $element,
-                                                       site_id     => 100,
-                                                   });
+    $story[0] = $class->new({ name        => "_test_$time",
+                              description => 'this is a test',
+                              priority    => 1,
+                              source__id  => 1,
+                              slug        => 'test',
+                              user__id    => $admin_id,
+                              element     => $element,
+                              site_id     => 100,
+                            });
+
     $story[0]->add_categories([ $OBJ->{category}->[0] ]);
     $story[0]->set_primary_category($OBJ->{category}->[0]);
     $story[0]->checkin();
@@ -231,12 +229,14 @@ sub test_select_methods: Test(51) {
           '...does the uri match the category and slug');
 
     # check the grp IDs
-    my $exp_grp_ids = [ $all_cats_grp_id, 
-                        $all_stories_grp_id, 
-                        $OBJ_IDS->{grp}->[0] ];
+    my $exp_grp_ids = [ sort { $a <=> $b }
+                        $OBJ->{category}->[0]->get_asset_grp_id,
+                        $all_stories_grp_id,
+                        100
+                      ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    my $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply([sort { $a <=> $b } $got->get_grp_ids], $exp_grp_ids,
+              '... does it have the right grp_ids' );
 
     # now find out if return_version get the right number of versions
     ok( $got = class->list({ id => $OBJ_IDS->{story}->[0],
@@ -259,16 +259,16 @@ sub test_select_methods: Test(51) {
 
     # ... with multiple cats
     $time = time;
-    $story[1] = Bric::Biz::Asset::Business::Story->new({
-                                                       name        => "_test_$time",
-                                                       description => 'this is a test',
-                                                       priority    => 1,
-                                                       source__id  => 1,
-                                                       slug        => 'test',
-                                                       user__id    => $admin_id,
-                                                       element     => $element,
-                                                       site_id     => 100,
-                                                   });
+    $story[1] = $class->new({ name        => "_test_$time",
+                              description => 'this is a test',
+                              priority    => 1,
+                              source__id  => 1,
+                              slug        => 'test',
+                              user__id    => $admin_id,
+                              element     => $element,
+                              site_id     => 100,
+                            });
+
     $story[1]->add_categories( $OBJ->{category} );
     $story[1]->set_primary_category( $OBJ->{category}->[1] );
     $story[1]->checkin();
@@ -278,39 +278,44 @@ sub test_select_methods: Test(51) {
 
     # Try doing a lookup 
     $expected = $story[1];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[1] }), 'can we call lookup on a Story with multiple categories' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[1] }),
+        'can we call lookup on a Story with multiple categories' );
+    is( $got->get_name, $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description, $expected->get_description,
+        '... does it have the right desc');
 
     # check the URI
     $exp_uri = $OBJ->{category}->[1]->get_uri . '/test';
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri, qr/^$exp_uri/,
+          '...does the uri match the category and slug');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
-                     $all_stories_grp_id, 
-                     $CATEGORY_GRP_IDS[0],
-                     $OBJ_IDS->{grp}->[4], 
-                     $OBJ_IDS->{grp}->[8], 
-                     $OBJ_IDS->{grp}->[12], 
-                     $OBJ_IDS->{grp}->[16], 
+    $exp_grp_ids = [ sort { $a <=> $b }
+                     $all_stories_grp_id,
+                     $OBJ->{category}->[0]->get_asset_grp_id(),
+                     $OBJ->{category}->[1]->get_asset_grp_id(),
+                     $OBJ->{category}->[2]->get_asset_grp_id(),
+                     $OBJ->{category}->[3]->get_asset_grp_id(),
+                     $OBJ->{category}->[4]->get_asset_grp_id(),
+                     100 # site_id
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply( [ sort { $a <=> $b } $got->get_grp_ids ], $exp_grp_ids,
+               '... does it have the right grp_ids' );
 
     # ... as a grp member
     $time = time;
-    $story[2] = Bric::Biz::Asset::Business::Story->new({
-                                                       name        => "_test_$time",
-                                                       description => 'this is a test',
-                                                       priority    => 1,
-                                                       source__id  => 1,
-                                                       slug        => 'test',
-                                                       user__id    => $admin_id,
-                                                       element     => $element,
-                                                       site_id     => 100,
-                                                   });
+    $story[2] = $class->new({ name        => "_test_$time",
+                              description => 'this is a test',
+                              priority    => 1,
+                              source__id  => 1,
+                              slug        => 'test',
+                              user__id    => $admin_id,
+                              element     => $element,
+                              site_id     => 100,
+                            });
+
     $story[2]->add_categories([ $OBJ->{category}->[0] ]);
     $story[2]->set_primary_category( $OBJ->{category}->[0] );
     $story[2]->checkin();
@@ -322,36 +327,41 @@ sub test_select_methods: Test(51) {
     $OBJ->{story_grp}->[0]->save();
 
     $expected = $story[2];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[2] }), 'can we call lookup on a Story which is itself in a grp' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[2] }),
+        'can we call lookup on a Story which is itself in a grp' );
+    is( $got->get_name(), $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description(), $expected->get_description,
+        '... does it have the right desc');
 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri . '/test';
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri, qr/^$exp_uri/,
+          '...does the uri match the category and slug');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
+    $exp_grp_ids = [ sort { $a <=> $b }
                      $all_stories_grp_id,
-                     $CATEGORY_GRP_IDS[0],
+                     $OBJ->{category}->[0]->get_asset_grp_id(),
                      $STORY_GRP_IDS[0],
+                     100, # site_id
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply( [sort { $a <=> $b } $got->get_grp_ids ], $exp_grp_ids,
+               '... does it have the right grp_ids' );
 
     # ... a bunch of grps
     $time = time;
-    $story[3] = Bric::Biz::Asset::Business::Story->new({
-                                                       name        => "_test_$time",
-                                                       description => 'this is a test',
-                                                       priority    => 1,
-                                                       source__id  => 1,
-                                                       slug        => 'test',
-                                                       user__id    => $admin_id,
-                                                       element     => $element,
-                                                       site_id     => 100,
-                                                   });
+    $story[3] = $class->new({ name        => "_test_$time",
+                              description => 'this is a test',
+                              priority    => 1,
+                              source__id  => 1,
+                              slug        => 'test',
+                              user__id    => $admin_id,
+                              element     => $element,
+                              site_id     => 100,
+                            });
+
     $story[3]->add_categories([ $OBJ->{category}->[0] ]);
     $story[3]->set_primary_category( $OBJ->{category}->[0] );
     $story[3]->checkin();
@@ -375,40 +385,44 @@ sub test_select_methods: Test(51) {
     $OBJ->{story_grp}->[4]->save();
 
     $expected = $story[3];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[3] }), 'can we call lookup on a Story which is itself in a grp' );
+    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[3] }),
+        'can we call lookup on a Story which is itself in a grp' );
     is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    is( $got->get_description(), $expected->get_description,
+        '... does it have the right desc');
 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri . '/test';
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri, qr/^$exp_uri/,
+          '...does the uri match the category and slug');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
+    $exp_grp_ids = [ sort { $a <=> $b }
                      $all_stories_grp_id,
-                     $CATEGORY_GRP_IDS[0],
+                     $OBJ->{category}->[0]->get_asset_grp_id(),
                      $STORY_GRP_IDS[0],
                      $STORY_GRP_IDS[1],
                      $STORY_GRP_IDS[2],
                      $STORY_GRP_IDS[3],
                      $STORY_GRP_IDS[4],
+                     100
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply( [ sort { $a <=> $b } $got->get_grp_ids ], $exp_grp_ids,
+               '... does it have the right grp_ids' );
 
     # ... now try a workflow
     $time = time;
-    $story[4] = Bric::Biz::Asset::Business::Story->new({
-                                                       name        => "_test_$time",
-                                                       description => 'this is a test',
-                                                       priority    => 1,
-                                                       source__id  => 1,
-                                                       slug        => 'test',
-                                                       user__id    => $admin_id,
-                                                       element     => $element,
-                                                       site_id     => 100,
-                                                   });
+    $story[4] = $class->new({ name        => "_test_$time",
+                              description => 'this is a test',
+                              priority    => 1,
+                              source__id  => 1,
+                              slug        => 'test',
+                              user__id    => $admin_id,
+                              element     => $element,
+                              site_id     => 100,
+                            });
+
     $story[4]->add_categories([ $OBJ->{category}->[0] ]);
     $story[4]->set_primary_category($OBJ->{category}->[0]);
     $story[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
@@ -421,38 +435,40 @@ sub test_select_methods: Test(51) {
 
     # Try doing a lookup 
     $expected = $story[4];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[4] }), 'can we call lookup on a Story' );
+    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[4] }),
+        'can we call lookup on a Story' );
     is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    is( $got->get_description(), $expected->get_description,
+        '... does it have the right desc');
 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri . '/test';
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri(), qr/^$exp_uri/,
+          '...does the uri match the category and slug');
 
     # check the grp IDs
-    $exp_grp_ids = [ 
-                        $all_workflow_grp_id,
-                        $all_cats_grp_id, 
-                        $all_stories_grp_id, 
-                        $CATEGORY_GRP_IDS[0],
-                        $WORKFLOW_GRP_IDS[0],
-                    ];
+    $exp_grp_ids = [ sort { $a <=> $b }
+                     $all_stories_grp_id, 
+                     $OBJ->{category}->[0]->get_asset_grp_id(),
+                     $OBJ->{workflow}->[0]->get_asset_grp_id(),
+                     100
+                   ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply( [ sort { $a <=> $b } $got->get_grp_ids ], $exp_grp_ids,
+               '... does it have the right grp_ids' );
 
     # ... desk
     $time = time;
-    $story[5] = Bric::Biz::Asset::Business::Story->new({
-                                                       name        => "_test_$time",
-                                                       description => 'this is a test',
-                                                       priority    => 1,
-                                                       source__id  => 1,
-                                                       slug        => 'test',
-                                                       user__id    => $admin_id,
-                                                       element     => $element,
-                                                       site_id     => 100,
-                                                   });
+    $story[5] = $class->new({ name        => "_test_$time",
+                              description => 'this is a test',
+                              priority    => 1,
+                              source__id  => 1,
+                              slug        => 'test',
+                              user__id    => $admin_id,
+                              element     => $element,
+                              site_id     => 100,
+                            });
+
     $story[5]->add_categories([ $OBJ->{category}->[0] ]);
     $story[5]->set_primary_category($OBJ->{category}->[0]);
     $story[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
@@ -466,118 +482,146 @@ sub test_select_methods: Test(51) {
 
     # Try doing a lookup 
     $expected = $story[5];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[5] }), 'can we call lookup on a Story' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[5] }),
+        'can we call lookup on a Story' );
+    is( $got->get_name(), $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description(), $expected->get_description,
+        '... does it have the right desc');
 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri . '/test';
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri(), qr/^$exp_uri/,
+          '...does the uri match the category and slug');
 
     # check the grp IDs
-    $exp_grp_ids = [ 
-                        $all_workflow_grp_id,
-                        $all_cats_grp_id, 
-                        $all_stories_grp_id, 
-                        $all_desks_grp_id, 
-                        $CATEGORY_GRP_IDS[0],
-                        $DESK_GRP_IDS[0],
-                        $ALL_DESK_GRP_IDS[0],
-                        $REQ_DESK_GRP_IDS[0],
-                        $WORKFLOW_GRP_IDS[0],
+    $exp_grp_ids = [ sort { $a <=> $b }
+                     $all_stories_grp_id,
+                     $OBJ->{category}->[0]->get_asset_grp_id(),
+                     $OBJ->{workflow}->[0]->get_asset_grp_id(),
+                     $OBJ->{desk}->[0]->get_asset_grp(),
+                     100, # site_id
                     ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply( [sort { $a <=> $b } $got->get_grp_ids ], $exp_grp_ids,
+               '... does it have the right grp_ids' );
 
     # try listing something up by at least key in each table
     # be sure to try to get them both as a ref and a list
     my @got_ids;
     my @got_grp_ids;
 
-    ok( my @got = class->list({ name => '_test%'}), 'lets do a search by name' );
-    ok( $got = class->list({ name => '_test%', Order => 'name' }), 'lets do a search by name' );
+    ok( $got = class->list({ name => '_test%',
+                             Order => 'name' }),
+        'lets do a search by name' );
+
     # check the ids
     foreach (@$got) {
-        push @got_ids, $_->get_id();
-        push @got_grp_ids, \@{$_->get_grp_ids()};
+        push @got_ids, $_->get_id;
+        push @got_grp_ids, [ sort { $a <=> $b } $_->get_grp_ids ];
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    $OBJ_IDS->{story} = [ sort { $a <=> $b } @{ $OBJ_IDS->{story} } ];
+
+    is_deeply( \@got_ids, $OBJ_IDS->{story},
+               '... did we get the right list of ids out' );
+
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+                   "... and did we get the right grp_ids for story $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ title => '_test%', Order => 'name' }), 'lets do a search by title' );
+    ok( $got = class->list({ title => '_test%', Order => 'name' }),
+        'lets do a search by title' );
+
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id();
-        push @got_grp_ids, \@{$_->get_grp_ids()};
+        push @got_grp_ids, [ sort { $a <=> $b } $_->get_grp_ids ];
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    is_deeply( \@got_ids, $OBJ_IDS->{story},
+               '... did we get the right list of ids out' );
+
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+          "... and did we get the right grp_ids for story $i" );
+    }
+
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ primary_uri => '/_test%', Order => 'title' }), 
-      'lets do a search by primary uri' );
+    ok( $got = class->list({ primary_uri => '/_test%', Order => 'title' }),
+        'lets do a search by primary uri' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id();
-        push @got_grp_ids, \@{$_->get_grp_ids()};
+        push @got_grp_ids, [sort { $a <=> $b } $_->get_grp_ids ];
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    is_deeply( \@got_ids, $OBJ_IDS->{story},
+               '... did we get the right list of ids out' );
+
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+                   "... and did we get the right grp_ids for story $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ category_id => $OBJ_IDS->{category}->[0], Order => 'title' }), 
-      'lets do a search by category_id' );
+    ok( $got = class->list({ category_id => $OBJ_IDS->{category}->[0],
+                             Order       => 'title' }),
+        'lets do a search by category_id' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id();
-        push @got_grp_ids, \@{$_->get_grp_ids()};
+        push @got_grp_ids, [sort { $a <=> $b } $_->get_grp_ids ];
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+
+    is_deeply( \@got_ids, $OBJ_IDS->{story},
+               '... did we get the right list of ids out' );
+
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+                   "... and did we get the right grp_ids for story $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
     # finally do this by grp_ids
-    ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'name' }), 
-      'getting by grp_id' );
+    ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id,
+                             Order => 'name' }),
+        'getting by grp_id' );
     my $number = @$got;
     is( $number, 2, 'there should be two stories in the first grp' );
-    is( $got->[0]->get_id(), $story[2]->get_id(), '... and they should be numbers 2' );
-    is( $got->[1]->get_id(), $story[3]->get_id(), '... and 3' );
+    is( $got->[0]->get_id(), $story[2]->get_id,
+        '... and they should be numbers 2' );
+    is( $got->[1]->get_id(), $story[3]->get_id, '... and 3' );
 
     # try listing IDs, again at least one key per table
-    ok( $got = class->list_ids({ name => '_test%', Order => 'name' }), 
-      'lets do an IDs search by name' );
+    ok( $got = class->list_ids({ name => '_test%', Order => 'name' }),
+        'lets do an IDs search by name' );
     # check the ids
-    foreach (@$got) {
-        push @got_ids, $_;
-    }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    undef @got_ids;
+    is_deeply( $got, $OBJ_IDS->{story},
+               '... did we get the right list of ids out' );
 
-    ok( $got = class->list_ids({ title => '_test%', Order => 'name' }), 'lets do an ids search by title' );
+    ok( $got = class->list_ids({ title => '_test%',
+                                 Order => 'name' }),
+        'lets do an ids search by title' );
     # check the ids
-    foreach (@$got) {
-        push @got_ids, $_;
-    }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    undef @got_ids;
+    is_deeply( $got, $OBJ_IDS->{story},
+               '... did we get the right list of ids out' );
 
-    ok( $got = class->list_ids({ primary_uri => '/_test%', Order => 'name' }), 'lets do an ids search by primary uri' );
+    ok( $got = class->list_ids({ primary_uri => '/_test%',
+                                 Order => 'name' }),
+        'lets do an ids search by primary uri' );
     # check the ids
-    foreach (@$got) {
-        push @got_ids, $_;
-    }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    undef @got_ids;
+    is_deeply( $got, $OBJ_IDS->{story},
+      '... did we get the right list of ids out' );
 
     # finally do this by grp_ids
-    ok( $got = class->list_ids({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'title' }), 'getting by grp_id' );
+    ok( $got = class->list_ids({ grp_id => $OBJ->{story_grp}->[0]->get_id,
+                                 Order => 'title' }),
+        'getting by grp_id' );
     $number = @$got;
     is( $number, 2, 'there should be two stories in the first grp' );
     is( $got->[0], $story[2]->get_id(), '... and they should be numbers 2' );
@@ -585,11 +629,15 @@ sub test_select_methods: Test(51) {
 
 
     # now let's try a limit
-    ok( $got = class->list({ Order => 'title', Limit => 3 }), 'try setting a limit of 3');
+    ok( $got = class->list({ Order => 'title', Limit => 3 }),
+        'try setting a limit of 3');
     is( @$got, 3, '... did we get exactly 3 stories back' );
 
     # test Offset
-    ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id(), Order => 'title', Offset => 1 }), 'try setting an offset of 2 for a search that just returned 3 objs');
+    ok( $got = class->list({ grp_id => $OBJ->{story_grp}->[0]->get_id,
+                             Order  => 'title',
+                             Offset => 1 }),
+        'try setting an offset of 2 for a search that just returned 3 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
 }
 
@@ -739,19 +787,124 @@ sub test_get_uri: Test(1) {
     # XXX then try it with a different cat
 }
 
-sub test_get_fields_from_new: Test(+0) {
+sub test_get_fields_from_new {
     # XXX make a new story with all of the fields
     # XXX Test: does each field have a value matching
     #           that set in the params?
 }
 
-sub test_set_get_fields: Test(+0) {
+sub test_set_get_fields {
     # XXX make a new story with minimal fields set
     # XXX For each field:
     # XXX set the field
     # XXX Test: get the field and compare with what we set
 }
 
+sub test_new_grp_ids: Test(5) {
+    my $self = shift;
+    my $class = $self->class;
+    my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
+    my $time = time;
+    my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
+    my $element = Bric::Biz::AssetType->new
+      ({ name        => "_test_$time.new",
+         key_name    => "_test_$time.new",
+         burner      => 1,
+         description => 'this is a test',
+         type__id    => $att->get_id,
+       });
+    $element->save;
+    $self->add_del_ids($element->get_id, 'element');
+    my $cat = Bric::Biz::Category->new({ name => "_test_$time.new",
+                                         description => 'foo',
+                                         directory => "_test_$time.new",
+                                         site_id => 100
+                                       });
+    $CATEGORY->add_child([$cat]);
+    $cat->save();
+    $self->add_del_ids($cat->get_id(), 'category');
+    my $cat1 = Bric::Biz::Category->new({ name => "_test_$time.new1",
+                                          description => 'foo',
+                                          directory => "_test_$time.new1",
+                                          site_id => 100
+                                        });
+    $CATEGORY->add_child([$cat1]);
+    $cat1->save;
+    $self->add_del_ids($cat1->get_id, 'category');
+    # first we'll try it with no cats
+    my $story = class->new({ name        => "_test_$time",
+                             description => 'this is a test',
+                             priority    => 1,
+                             source__id  => 1,
+                             slug        => 'test',
+                             user__id    => 0,
+                             site_id     => 100,
+                             element     => $element,
+                           });
+    my $expected = [ sort { $a <=> $b } $all_stories_grp_id, 100 ];
+    is_deeply([sort { $a <=> $b } $story->get_grp_ids], $expected,
+              'does a story get initialized with the right grp_id?');
+    # add the categories
+    $story->add_categories([$cat, $cat1]);
+    $expected = [ sort { $a <=> $b }
+                  $cat->get_asset_grp_id,
+                  $cat1->get_asset_grp_id,
+                  $all_stories_grp_id,
+                  100
+                ];
+    is_deeply( [sort { $a <=> $b } $story->get_grp_ids], $expected,
+               'does adding cats get the right asset_grp_ids?');
+    # now remove one
+    $story->delete_categories([$cat]);
+    $expected = [ sort { $a <=> $b }
+                  $cat1->get_asset_grp_id,
+                  $all_stories_grp_id,
+                  100,
+                ];
+    is_deeply([sort { $a <=> $b } $story->get_grp_ids], $expected,
+              'does removing a cat remove the right asset_grp_id?');
+
+    $story = class->new({ name        => "_test_$time",
+                          description => 'this is a test',
+                          priority    => 1,
+                          source__id  => 1,
+                          slug        => 'test',
+                          user__id    => 0,
+                          site_id     => 100,
+                          element     => $element,
+                        });
+    my $desk = Bric::Biz::Workflow::Parts::Desk->new({ name => "_test_$time",
+                                                       description => '',
+                                                     });
+    $desk->save();
+    $self->add_del_ids($desk->get_id(), 'desk');
+    my $workflow = Bric::Biz::Workflow->new
+      ({ type        => Bric::Biz::Workflow::STORY_WORKFLOW,
+         name        => "_test_$time",
+         start_desk  => $desk,
+         description => 'test',
+         site_id     => 100
+       });
+    $workflow->save();
+    $self->add_del_ids($workflow->get_id(), 'workflow');
+    $story->set_current_desk($desk);
+    $expected = [ sort { $a <=> $b }
+                  $all_stories_grp_id,
+                  $desk->get_asset_grp,
+                  100
+                ];
+    is_deeply([sort { $a <=> $b } $story->get_grp_ids], $expected,
+              'setting the current desk of a story adds the correct asset_grp_ids');
+    $story->set_workflow_id($workflow->get_id);
+    $expected = [ sort { $a <=> $b }
+                  $workflow->get_asset_grp_id,
+                  $all_stories_grp_id,
+                  $desk->get_asset_grp,
+                  100
+                ];
+    is_deeply([sort { $a <=> $b } $story->get_grp_ids], $expected,
+              'setting the workflow id of a story adds the correct asset_grp_ids');
+}
 
 1;
 __END__

@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:13 $
+$Date: 2003-04-03 21:05:50 $
 
 =head1 SYNOPSIS
 
@@ -289,12 +289,13 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
 
             my %seen;
             my $a_wfid = $a_wf->get_id;
-            foreach ($a_wf->allowed_desks) {
-                my $did = $_->get_id;
+            foreach my $d ($a_wf->allowed_desks) {
+                next unless chk_authz(undef, READ, 1, $d->get_asset_grp);
+                my $did = $d->get_id;
                 next if $did == $desk_id and $desk_type eq 'workflow';
                 push @$desk_opts, [join('-', $aid, $desk_id, $did, $class,
                                         $a_wfid),
-                                   $_->get_name];
+                                   $d->get_name];
                 $seen{$did} = 1;
             }
 

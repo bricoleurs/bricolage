@@ -52,14 +52,15 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(48) {
+sub test_select_methods: Test(70) {
     my $self = shift;
+    my $class = $self->class;
 
     # let's grab existing 'All' group info
-    my $all_workflow_grp_id = Bric::Util::Grp->lookup({ name => 'All Workflows' })->get_id();
-    my $all_cats_grp_id = Bric::Util::Grp->lookup({ name => 'All Categories' })->get_id();
-    my $all_desks_grp_id = Bric::Util::Grp->lookup({ name => 'All Desks' })->get_id();
-    my $all_media_grp_id = Bric::Util::Grp->lookup({ name => 'All Media' })->get_id();
+    my $all_workflow_grp_id = Bric::Biz::Workflow->INSTANCE_GROUP_ID;
+    my $all_cats_grp_id = Bric::Biz::Category->INSTANCE_GROUP_ID;
+    my $all_desks_grp_id =  Bric::Biz::Workflow::Parts::Desk->INSTANCE_GROUP_ID;
+    my $all_media_grp_id = $class->INSTANCE_GROUP_ID;
 
     # now we'll create some test objects
     my ($i);
@@ -74,6 +75,7 @@ sub test_select_methods: Test(48) {
                                        });
         $CATEGORY->add_child([$cat]);
         $cat->save();
+        $self->add_del_ids([$cat->get_id()], 'category');
         push @{$OBJ_IDS->{category}}, $cat->get_id();
         push @{$OBJ->{category}}, $cat;
         # create some category groups
@@ -84,6 +86,7 @@ sub test_select_methods: Test(48) {
         $grp->add_member({obj => $cat });
         # save the group ids
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @CATEGORY_GRP_IDS, $grp->get_id();
 
@@ -93,6 +96,7 @@ sub test_select_methods: Test(48) {
                                         description => '',
                                      });
         $desk->save();
+        $self->add_del_ids([$desk->get_id()], 'desk');
         push @{$OBJ_IDS->{desk}}, $desk->get_id();
         push @{$OBJ->{desk}}, $desk;
         # create some desk groups
@@ -103,18 +107,20 @@ sub test_select_methods: Test(48) {
         # save the group ids
         $grp->add_member({ obj => $desk });
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @DESK_GRP_IDS, $grp->get_id();
 
         # create workflows
-        $workflow = Bric::Biz::Workflow->new({
-                                        type => Bric::Biz::Workflow::MEDIA_WORKFLOW,
-                                        name => "_test_$time.$i",
-                                        start_desk => $desk,
-                                        description => 'test',
-                                        site_id => 100, #Use default site_id
-                                     });
-        $workflow->save();
+        $workflow = Bric::Biz::Workflow->new
+          ({ type        => Bric::Biz::Workflow::MEDIA_WORKFLOW,
+             name        => "_test_$time.$i",
+             start_desk  => $desk,
+             description => 'test',
+             site_id     => 100, #Use default site_id
+           });
+        $workflow->save;
+        $self->add_del_ids([$workflow->get_id()], 'workflow');
         push @ALL_DESK_GRP_IDS, $workflow->get_all_desk_grp_id;
         push @REQ_DESK_GRP_IDS, $workflow->get_req_desk_grp_id;
         push @{$OBJ_IDS->{workflow}}, $workflow->get_id();
@@ -127,21 +133,18 @@ sub test_select_methods: Test(48) {
         # save the group ids
         $grp->add_member({ obj => $workflow });
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @WORKFLOW_GRP_IDS, $grp->get_id();
-        
+
         # create some media groups
         $grp = Bric::Util::Grp::Media->new({ name => "_GRP_test_$time.$i" });
         # save the group ids
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @{$OBJ->{media_grp}}, $grp;
         push @MEDIA_GRP_IDS, $grp->get_id();
-    }
-
-    # set up to do the deletes
-    foreach my $table (qw(grp category workflow desk)) {
-        $self->add_del_ids( $OBJ_IDS->{$table}, $table );
     }
 
     # look up a media element
@@ -155,16 +158,15 @@ sub test_select_methods: Test(48) {
 
     # A media with one category (admin user)
     $time = time;
-    $media[0] = class->new({
-                               name        => "_test_$time",
-                               file_name   => 'test.foo',
-                               description => 'this is a test',
-                               priority    => 1,
-                               source__id  => 1,
-                               user__id    => $admin_id,
-                               element     => $element, 
-                               checked_out => 1,
-                               site_id     => 100,
+    $media[0] = class->new({ name        => "_test_$time",
+                             file_name   => 'test.foo',
+                             description => 'this is a test',
+                             priority    => 1,
+                             source__id  => 1,
+                             user__id    => $admin_id,
+                             element     => $element,
+                             checked_out => 1,
+                             site_id     => 100,
                            });
     $media[0]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[0]->checkin();
@@ -180,19 +182,27 @@ sub test_select_methods: Test(48) {
 
     # Try doing a lookup 
     $expected = $media[0];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[0] }), 'can we call lookup on a Media' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[0] }),
+        'can we call lookup on a Media' );
+    is( $got->get_name(), $expected->get_name(),
+        '... does it have the right name');
+    is( $got->get_description, $expected->get_description,
+        '... does it have the right desc');
 
     # check the URI
     my $exp_uri = $OBJ->{category}->[0]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category');
+    like( $got->get_primary_uri, qr/^$exp_uri/,
+          '...does the uri match the category');
 
     # check the grp IDs
-    my $exp_grp_ids = [ $all_cats_grp_id, $all_media_grp_id, $OBJ_IDS->{grp}->[0] ];
+    my $exp_grp_ids = [ sort { $a <=> $b }
+                        $OBJ->{category}->[0]->get_asset_grp_id(),
+                        $all_media_grp_id,
+                        100
+                      ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    my $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply( [sort { $a <=> $b } $got->get_grp_ids], $exp_grp_ids,
+               '... does it have the right grp_ids' );
 
     # now find out if return_version get the right number of versions
     ok( $got = class->list({ id => $OBJ_IDS->{media}->[0],
@@ -234,35 +244,39 @@ sub test_select_methods: Test(48) {
 
     # Try doing a lookup 
     $expected = $media[1];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[1] }), 'can we call lookup on a Media with multiple categories' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[1] }),
+        'can we call lookup on a Media with multiple categories' );
+    is( $got->get_name, $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description, $expected->get_description,
+        '... does it have the right desc');
 
     # check the URI
     $exp_uri = $OBJ->{category}->[1]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category');
+    like( $got->get_primary_uri, qr/^$exp_uri/,
+          '...does the uri match the category');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
-                     $all_media_grp_id, 
-                     $CATEGORY_GRP_IDS[1],
+    $exp_grp_ids = [ sort { $a <=> $b }
+                     $all_media_grp_id,
+                     $OBJ->{category}->[1]->get_asset_grp_id,
+                     100
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply( [sort { $a <=> $b } $got->get_grp_ids], $exp_grp_ids,
+               '... does it have the right grp_ids' );
 
     # ... as a grp member
     $time = time;
-    $media[2] = class->new({
-                               name        => "_test_$time",
-                               file_name   => 'test.foo',
-                               description => 'this is a test',
-                               priority    => 1,
-                               source__id  => 1,
-                               user__id    => $admin_id,
-                               element     => $element, 
-                               checked_out => 1,
-                               site_id     => 100,
+    $media[2] = class->new({ name        => "_test_$time",
+                             file_name   => 'test.foo',
+                             description => 'this is a test',
+                             priority    => 1,
+                             source__id  => 1,
+                             user__id    => $admin_id,
+                             element     => $element,
+                             checked_out => 1,
+                             site_id     => 100,
                            });
     $media[2]->set_category__id( $OBJ->{category}->[0]->get_id() );
     $media[2]->save();
@@ -274,38 +288,42 @@ sub test_select_methods: Test(48) {
     $OBJ->{media_grp}->[0]->save();
 
     $expected = $media[2];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[2] }), 'can we call lookup on a Media which is itself in a grp' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[2] }),
+        'can we call lookup on a Media which is itself in a grp' );
+    is( $got->get_name, $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description, $expected->get_description,
+        '... does it have the right desc');
 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category');
+    like( $got->get_primary_uri, qr/^$exp_uri/,
+          '...does the uri match the category');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
+    $exp_grp_ids = [ sort { $a <=> $b }
                      $all_media_grp_id,
-                     $CATEGORY_GRP_IDS[0],
+                     $OBJ->{category}->[0]->get_asset_grp_id(),
                      $MEDIA_GRP_IDS[0],
+                     100,
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply([sort { $a <=> $b } $got->get_grp_ids], $exp_grp_ids,
+              '... does it have the right grp_ids' );
 
     # ... a bunch of grps
     $time = time;
-    $media[3] = class->new({
-                               name        => "_test_$time",
-                               file_name   => 'test.foo',
-                               description => 'this is a test',
-                               priority    => 1,
-                               source__id  => 1,
-                               user__id    => $admin_id,
-                               element     => $element, 
-                               checked_out => 1,
-                               site_id     => 100,
+    $media[3] = class->new({ name        => "_test_$time",
+                             file_name   => 'test.foo',
+                             description => 'this is a test',
+                             priority    => 1,
+                             source__id  => 1,
+                             user__id    => $admin_id,
+                             element     => $element,
+                             checked_out => 1,
+                             site_id     => 100,
                            });
-    $media[3]->set_category__id( $OBJ->{category}->[0]->get_id() );
+    $media[3]->set_category__id( $OBJ->{category}->[0]->get_id );
     $media[3]->save();
     $media[3]->save();
     push @{$OBJ_IDS->{media}}, $media[3]->get_id();
@@ -327,45 +345,49 @@ sub test_select_methods: Test(48) {
     $OBJ->{media_grp}->[4]->save();
 
     $expected = $media[3];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[3] }), 'can we call lookup on a Media which is itself in a grp' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[3] }),
+        'can we call lookup on a Media which is itself in a grp' );
+    is( $got->get_name, $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description, $expected->get_description,
+        '... does it have the right desc');
 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category');
+    like( $got->get_primary_uri, qr/^$exp_uri/,
+          '...does the uri match the category');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
+    $exp_grp_ids = [ sort { $a <=> $b }
                      $all_media_grp_id,
-                     $CATEGORY_GRP_IDS[0],
                      $MEDIA_GRP_IDS[0],
                      $MEDIA_GRP_IDS[1],
                      $MEDIA_GRP_IDS[2],
                      $MEDIA_GRP_IDS[3],
                      $MEDIA_GRP_IDS[4],
+                     $OBJ->{category}->[0]->get_asset_grp_id,
+                     100
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply( [sort { $a <=> $b } $got->get_grp_ids ], $exp_grp_ids,
+               '... does it have the right grp_ids' );
 
     # ... now try a workflow
     $time = time;
-    $media[4] = class->new({
-                               name        => "_test_$time",
-                               file_name   => 'test.foo',
-                               description => 'this is a test',
-                               priority    => 1,
-                               source__id  => 1,
-                               user__id    => $admin_id,
-                               element     => $element, 
-                               checked_out => 1,
-                               site_id     => 100,
+    $media[4] = class->new({ name        => "_test_$time",
+                             file_name   => 'test.foo',
+                             description => 'this is a test',
+                             priority    => 1,
+                             source__id  => 1,
+                             user__id    => $admin_id,
+                             element     => $element,
+                             checked_out => 1,
+                             site_id     => 100,
                            });
     $media[4]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
-    $media[4]->save();
-    $media[4]->save();
+    $media[4]->save;
+    $media[4]->save;
     push @{$OBJ_IDS->{media}}, $media[4]->get_id();
     $self->add_del_ids( $media[4]->get_id() );
 
@@ -373,41 +395,43 @@ sub test_select_methods: Test(48) {
 
     # Try doing a lookup 
     $expected = $media[4];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[4] }), 'can we call lookup on a Media' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[4] }),
+        'can we call lookup on a Media' );
+    is( $got->get_name, $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description, $expected->get_description,
+        '... does it have the right desc');
 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category');
+    like( $got->get_primary_uri, qr/^$exp_uri/,
+          '...does the uri match the category');
 
     # check the grp IDs
-    $exp_grp_ids = [ 
-                        $all_workflow_grp_id,
-                        $all_cats_grp_id, 
-                        $all_media_grp_id, 
-                        $CATEGORY_GRP_IDS[0],
-                        $WORKFLOW_GRP_IDS[0],
-                    ];
+    $exp_grp_ids = [ sort { $a <=> $b }
+                     $all_media_grp_id,
+                     $OBJ->{category}->[0]->get_asset_grp_id,
+                     $OBJ->{workflow}->[0]->get_asset_grp_id,
+                     100
+                   ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply( [sort { $a <=> $b } $got->get_grp_ids], $exp_grp_ids,
+               '... does it have the right grp_ids' );
 
     # ... desk
     $time = time;
-    $media[5] = class->new({
-                               name        => "_test_$time",
-                               file_name   => 'test.foo',
-                               description => 'this is a test',
-                               priority    => 1,
-                               source__id  => 1,
-                               user__id    => $admin_id,
-                               element     => $element, 
-                               checked_out => 1,
-                               site_id     => 100,
+    $media[5] = class->new({ name        => "_test_$time",
+                             file_name   => 'test.foo',
+                             description => 'this is a test',
+                             priority    => 1,
+                             source__id  => 1,
+                             user__id    => $admin_id,
+                             element     => $element,
+                             checked_out => 1,
+                             site_id     => 100,
                            });
-    $media[5]->set_category__id($OBJ->{category}->[0]->get_id());
-    $media[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
+    $media[5]->set_category__id( $OBJ->{category}->[0]->get_id );
+    $media[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id );
     $media[5]->set_current_desk( $OBJ->{desk}->[0] );
     $media[5]->save();
     $media[5]->save();
@@ -418,32 +442,28 @@ sub test_select_methods: Test(48) {
 
     # Try doing a lookup 
     $expected = $media[5];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[5] } ), 
+    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[5] } ),
       'can we call lookup on a Media' );
-    is( $got->get_name(), $expected->get_name(), 
+    is( $got->get_name, $expected->get_name,
       '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), 
+    is( $got->get_description, $expected->get_description,
       '... does it have the right desc'); 
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri;
-    like( $got->get_primary_uri(), qr/^$exp_uri/, 
+    like( $got->get_primary_uri, qr/^$exp_uri/,
       '...does the uri match the category');
 
     # check the grp IDs
-    $exp_grp_ids = [ 
-                        $all_workflow_grp_id,
-                        $all_cats_grp_id, 
-                        $all_media_grp_id, 
-                        $all_desks_grp_id, 
-                        $CATEGORY_GRP_IDS[0],
-                        $DESK_GRP_IDS[0],
-                        $ALL_DESK_GRP_IDS[0],
-                        $REQ_DESK_GRP_IDS[0],
-                        $WORKFLOW_GRP_IDS[0],
-                    ];
+    $exp_grp_ids = [ sort { $a <=> $b }
+                     $all_media_grp_id,
+                     $OBJ->{category}->[0]->get_asset_grp_id,
+                     $OBJ->{desk}->[0]->get_asset_grp,
+                     $OBJ->{workflow}->[0]->get_asset_grp_id,
+                     100
+                   ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply([sort { $a <=> $b } $got->get_grp_ids], $exp_grp_ids,
+      '... does it have the right grp_ids' );
 
     # try listing something up by at least key in each table
     # be sure to try to get them both as a ref and a list
@@ -457,65 +477,91 @@ sub test_select_methods: Test(48) {
         'lets do a search by name' );
     # check the ids
     foreach (@$got) {
-        push @got_ids, $_->get_id();
-        push @got_grp_ids, \@{$_->get_grp_ids()};
+        push @got_ids, $_->get_id;
+        push @got_grp_ids, [ sort { $a <=> $b } $_->get_grp_ids ];
     }
-    eq_set( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    $OBJ_IDS->{media} = [ sort { $a <=> $b } @{ $OBJ_IDS->{media} } ];
+
+    is_deeply( [sort { $a <=> $b } @got_ids], $OBJ_IDS->{media},
+               '... did we get the right list of ids out' );
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+                   "... and did we get the right grp_ids for media $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ title => '_test%', Order => 'name', user_id => $admin_id }), 'lets do a search by title' );
+    ok( $got = class->list({ title   => '_test%',
+                             Order   => 'name',
+                             user_id => $admin_id }),
+        'lets do a search by title' );
     # check the ids
     foreach (@$got) {
-        push @got_ids, $_->get_id();
-        push @got_grp_ids, \@{$_->get_grp_ids()};
+        push @got_ids, $_->get_id;
+        push @got_grp_ids, [ sort { $a <=> $b } $_->get_grp_ids ];
     }
-    eq_set( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    is_deeply( [sort { $a <=> $b } @got_ids], $OBJ_IDS->{media},
+               '... did we get the right list of ids out' );
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+                   "... and did we get the right grp_ids for media $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
     # finally do this by grp_ids
-    ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'name', user_id => $admin_id }), 'getting by grp_id' );
+    ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id,
+                             Order => 'name',
+                             user_id => $admin_id }),
+        'getting by grp_id' );
     my $number = @$got;
     is( $number, 2, 'there should be two media in the first grp' );
-    is( $got->[0]->get_id(), $media[2]->get_id(), '... and they should be numbers 2' );
-    is( $got->[1]->get_id(), $media[3]->get_id(), '... and 3' );
+    is( $got->[0]->get_id, $media[2]->get_id,
+        '... and they should be numbers 2' );
+    is( $got->[1]->get_id, $media[3]->get_id, '... and 3' );
 
     # try listing IDs, again at least one key per table
-    ok( $got = class->list_ids({ name => '_test%', Order => 'name', user_id => $admin_id }), 'lets do an IDs search by name' );
+    ok( $got = class->list_ids({ name    => '_test%',
+                                 Order   => 'name',
+                                 user_id => $admin_id }),
+        'lets do an IDs search by name' );
     # check the ids
-    foreach (@$got) {
-        push @got_ids, $_;
-    }
-    eq_set( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
-    undef @got_ids;
+    is_deeply( $got, $OBJ_IDS->{media},
+               '... did we get the right list of ids out' );
 
-    ok( $got = class->list_ids({ title => '_test%', Order => 'name', user_id => $admin_id }), 'lets do an ids search by title' );
+    ok( $got = class->list_ids({ title   => '_test%',
+                                 Order   => 'name',
+                                 user_id => $admin_id }),
+        'lets do an ids search by title' );
     # check the ids
-    foreach (@$got) {
-        push @got_ids, $_;
-    }
-    eq_set( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
-    undef @got_ids;
+    is_deeply( $got, $OBJ_IDS->{media},
+               '... did we get the right list of ids out' );
 
     # finally do this by grp_ids
-    ok( $got = class->list_ids({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'name', user_id => $admin_id }), 'getting by grp_id' );
+    ok( $got = class->list_ids({ grp_id  => $OBJ->{media_grp}->[0]->get_id,
+                                 Order   => 'name',
+                                 user_id => $admin_id }),
+        'getting by grp_id' );
     $number = @$got;
     is( $number, 2, 'there should be three media in the first grp' );
-    is( $got->[0], $media[2]->get_id(), '... and they should be numbers 2' );
-    is( $got->[1], $media[3]->get_id(), '... and 3' );
+    is( $got->[0], $media[2]->get_id, '... and they should be numbers 2' );
+    is( $got->[1], $media[3]->get_id, '... and 3' );
 
 
     # now let's try a limit
-    ok( $got = class->list({ Order => 'name', Limit => 3, user_id => $admin_id }), 'try setting a limit of 3');
+    ok( $got = class->list({ Order   => 'name',
+                             Limit   => 3,
+                             user_id => $admin_id }),
+        'try setting a limit of 3');
     is( @$got, 3, '... did we get exactly 3 media back' );
 
     # test Offset
-    ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id(), Order => 'name', Offset => 1, user_id => $admin_id }), 'try setting an offset of 2 for a search that just returned 6 objs');
+    ok( $got = class->list({ grp_id  => $OBJ->{media_grp}->[0]->get_id,
+                             Order   => 'name',
+                             Offset  => 1,
+                             user_id => $admin_id }),
+        'try setting an offset of 2 for a search that just returned 6 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
-    
 }
 
 ###############################################################################
@@ -613,6 +659,97 @@ sub test_oc : Test(35) {
     ok( @ocs = $ba->get_output_channels, "Get OCs 4" );
     is( scalar @ocs, 1, "Check for 1 OC 4" );
     is( $ocs[0]->get_name, $ocname, "Check OC name 4" );
+}
+
+sub test_new_grp_ids: Test(4) {
+    my $self = shift;
+    my $time = time;
+    my $class = $self->class;
+    my $all_media_grp_id = $class->INSTANCE_GROUP_ID;
+
+    my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
+    my $element = get_elem();
+    my $cat = Bric::Biz::Category->new({ name        => "_test_$time.new",
+                                         description => 'foo',
+                                         directory   => "_test_$time.new",
+                                         site_id     => 100
+                                       });
+    $CATEGORY->add_child([$cat]);
+    $cat->save();
+    $self->add_del_ids($cat->get_id(), 'category');
+    # first we'll try it with no cats
+    my $media = class->new({ name        => "_test_$time",
+                             file_name   => 'test.foo',
+                             description => 'this is a test',
+                             priority    => 1,
+                             source__id  => 1,
+                             user__id    => $self->user_id,
+                             element     => $element,
+                             checked_out => 1,
+                             site_id     => 100,
+                           });
+    my $expected = [ sort { $a <=> $b }
+                     $all_media_grp_id,
+                     100,
+                   ];
+    is_deeply([sort { $a <=> $b } $media->get_grp_ids], $expected,
+              'does a media get initialized with the right grp_id?');
+    # add the categories
+    $media->set_category__id($cat->get_id);
+    $expected = [ sort { $a <=> $b }
+                  $cat->get_asset_grp_id,
+                  $all_media_grp_id,
+                  100
+                ];
+    is_deeply([sort { $a <=> $b } $media->get_grp_ids ], $expected,
+              'does adding cats get the right asset_grp_ids?');
+
+    $media = class->new({ name        => "_test_$time",
+                          file_name   => 'test.foo',
+                          description => 'this is a test',
+                          priority    => 1,
+                          source__id  => 1,
+                          user__id    => $self->user_id,
+                          element     => $element,
+                          site_id     => 100,
+                          checked_out => 1
+                        });
+    my $desk = Bric::Biz::Workflow::Parts::Desk->new
+      ({ name => "_test_$time",
+         description => '',
+       });
+    $desk->save;
+
+    $self->add_del_ids($desk->get_id(), 'desk');
+    my $workflow = Bric::Biz::Workflow->new
+      ({ type        => Bric::Biz::Workflow::MEDIA_WORKFLOW,
+         name        => "_test_$time",
+         start_desk  => $desk,
+         description => 'test',
+         site_id     => 100,
+       });
+    $workflow->save();
+    $self->add_del_ids($workflow->get_id, 'workflow');
+    $media->set_current_desk($desk);
+    $expected = [ sort { $a <=> $b }
+                  $all_media_grp_id,
+                  $desk->get_asset_grp,
+                  100
+                ];
+    is_deeply([sort { $a <=> $b } $media->get_grp_ids], $expected,
+              'setting the current desk of a media adds the correct ' .
+              'asset_grp_ids');
+
+    $media->set_workflow_id($workflow->get_id);
+    $expected = [ sort { $a <=> $b }
+                  $workflow->get_asset_grp_id,
+                  $all_media_grp_id,
+                  $desk->get_asset_grp,
+                  100
+                ];
+    is_deeply([sort { $a <=> $b } $media->get_grp_ids], $expected,
+              'setting the workflow id of a media adds the correct ' .
+              'asset_grp_ids');
 }
 
 1;

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:26 $
+$Date: 2003-04-03 21:06:20 $
 
 =head1 SYNOPSIS
 
@@ -147,12 +147,20 @@ use constant HAS_CLASS_ID => 1;
 # relations to loop through in the big query
 use constant RELATIONS => [qw( media category desk workflow)];
 
+use constant RELATION_COL =>
+    {
+        media     => 'm.grp__id',
+        category  => 'o.asset_grp_id AS grp__id',
+        desk      => 'o.asset_grp AS grp__id',
+        workflow  => 'o.asset_grp_id AS grp__id',
+    };
+
 use constant RELATION_TABLES =>
     {
-        media      => 'media_member mm',
-        category   => 'category_member cm',
-        desk       => 'desk_member dm',
-        workflow   => 'workflow_member wm',
+        media      => 'media_member mm, member m',
+        category   => 'category o',
+        desk       => 'desk o',
+        workflow   => 'workflow o',
     };
 
 use constant RELATION_JOINS =>
@@ -160,27 +168,21 @@ use constant RELATION_JOINS =>
         media      => 'mm.object_id = mt.id '
                     . 'AND m.id = mm.member__id '
                     . 'AND m.active = 1',
-        category   => 'cm.object_id = i.category__id '
-                    . 'AND m.id = cm.member__id '
-                    . 'AND m.active = 1',
-        desk       => 'dm.object_id = mt.desk__id '
-                    . 'AND m.id = dm.member__id '
-                    . 'AND m.active = 1',
-        workflow   => 'wm.object_id = mt.workflow__id '
-                    . 'AND m.id = wm.member__id '
-                    . 'AND m.active = 1',
+        category   => 'o.id = i.category__id ',
+        desk       => 'o.id = mt.desk__id ',
+        workflow   => 'o.id = mt.workflow__id ',
     };
 
 # the mapping for building up the where clause based on params
 use constant WHERE => 'mt.id = i.media__id';
 
 use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', ' 
-            . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
+            . join(', i.', 'i.id AS version_id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => VERSION_TABLE . ' i, member m';
+use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP =>
     {
@@ -900,20 +902,26 @@ B<Notes:> NONE.
 
 sub set_category__id {
     my ($self, $cat_id) = @_;
-
     my $cat = Bric::Biz::Category->lookup( { id => $cat_id });
     my $oc = $self->get_primary_oc;
+
+    my $c_cat = $self->get_category_object();
+    my @grp_ids;
+    foreach ($self->get_grp_ids) {
+        push @grp_ids, $_ unless $c_cat && $_ == $c_cat->get_asset_grp_id;
+    }
+    push @grp_ids, $cat->get_asset_grp_id();
+
     my $uri;
     if ($self->get_file_name) {
         $uri = Bric::Util::Trans::FS->cat_uri
           ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
     }
-
     $self->_set({ _category_obj => $cat,
                   category__id  => $cat_id,
-                  uri           => $uri
+                  uri           => $uri,
+                  grp_ids       => \@grp_ids,
     });
-
     return $self;
 }
 sub get_primary_uri { shift->get_uri }

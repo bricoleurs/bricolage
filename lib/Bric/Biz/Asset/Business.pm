@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 05:59:01 $
+$Date: 2003-04-03 21:06:16 $
 
 =head1 SYNOPSIS
 
@@ -2053,6 +2053,16 @@ sub _init {
           "has no output channels associated with this site"
           unless @{$self->get_output_channels};
 
+        $self->_set
+          ([qw(current_version publish_status modifier
+               checked_out     version site_id
+               grp_ids)
+           ] =>
+           [   0,              0,             $init->{user__id},
+               1,              0,      $init->{site_id},
+               [$init->{site_id}, $self->INSTANCE_GROUP_ID]
+           ]);
+
         if ($self->can('get_primary_category')) {
             # It's a story asset.
             delete $init->{_categories};
@@ -2099,16 +2109,6 @@ sub _init {
 
         # Copy the keywords.
         $self->add_keywords(scalar $alias_target->get_keywords);
-
-        $self->_set
-          ([qw(current_version publish_status modifier
-               checked_out     version site_id
-               grp_ids)
-           ] =>
-           [   0,              0,             $init->{user__id},
-               1,              0,      $init->{site_id},
-               [$init->{site_id}, $self->INSTANCE_GROUP_ID]
-           ]);
 
     } else {
         throw_dp "Can not create asset without a source"

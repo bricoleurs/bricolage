@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2003-04-02 21:44:29 $
+$Date: 2003-04-03 21:06:13 $
 
 =head1 DESCRIPTION
 
@@ -285,4 +285,3 @@ Mark Jaroski <jaroskim@who.int>
 L<Bric>
 
 =cut
-

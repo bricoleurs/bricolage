@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-23 06:57:00 $
+$Date: 2003-04-03 21:06:15 $
 
 =head1 SYNOPSIS
 
@@ -1208,26 +1208,29 @@ sub get_desk_stamps {
 
 This method takes a desk stamp object and adds it to the asset object
 
-B<Throws:>
-
-NONE 
-
 B<Side Effects:>
 
-NONE 
-
-B<Notes:>
-
-NONE
+Adds the asset_grp_id of the desk to grp_ids (unless it was already there).
 
 =cut
 
 sub set_current_desk {
     my ($self, $desk) = @_;
-    my $desk_id     = $desk->get_id();
+    # grp_ids may change as a side effect
+    my @grp_ids;
+    my $c_desk = $self->get_current_desk();
+    foreach ($self->get_grp_ids()) {
+        next if ($c_desk && $_ == $c_desk->get_asset_grp());
+        push @grp_ids, $_;
+    }
+    push @grp_ids, $desk->get_asset_grp();
+    $self->_set({grp_ids => \@grp_ids});
+    # now set the actual value
+    my $desk_id = $desk->get_id();
     $self->_set({desk_id => $desk_id});
     return $self;
 }
+
 
 ################################################################################
 
@@ -1306,19 +1309,28 @@ NONE
 
 Sets the workflow that this asset is a member of
 
-B<Throws:>
-
-NONE
-
 B<Side Effects:>
 
-NONE
-
-B<Notes:>
-
-NONE
+Adds the asset_grp_id of the workflow to grp_ids unless it was already there.
 
 =cut
+
+sub set_workflow_id {
+    my ($self, $workflow_id) = @_;
+    # grp_ids may change as a side effect
+    my @grp_ids;
+    my $workflow = $self->get_workflow_object();
+    foreach ($self->get_grp_ids()) {
+        next if ($workflow && $_ == $workflow->get_asset_grp_id());
+        push @grp_ids, $_;
+    }
+    $workflow = Bric::Biz::Workflow->lookup({ id => $workflow_id });
+    push @grp_ids, $workflow->get_asset_grp_id();
+    $self->_set({grp_ids => \@grp_ids});
+    # now set the actual value
+    $self->_set({workflow_id => $workflow_id});
+    return $self;
+}
 
 ################################################################################
 
@@ -1380,17 +1392,16 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> This method overrides C<Bric::get_grp_ids()> in order to add the
-site ID to the list of IDs. This works because the site ID is corresponds to a
+site ID to the list of IDs. This works because the site ID corresponds to a
 secret group ID.
 
 =cut
 
 sub get_grp_ids {
     my $self = shift;
-    return wantarray ? $self->INSTANCE_GROUP_ID : [$self->INSTANCE_GROUP_ID]
-      unless ref $self;
+    return $self->INSTANCE_GROUP_ID unless ref $self;
     my ($gids, $site_id) = $self->_get(qw(grp_ids site_id));
-    unshift @$gids, $site_id unless $gids->[0] == $site_id;
+    unshift @$gids, $site_id if $site_id and not $gids->[0] == $site_id;
     return wantarray ? @$gids : $gids;
 }
 

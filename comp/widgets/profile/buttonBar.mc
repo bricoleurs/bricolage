@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2003-03-23 06:56:54 $
+$Date: 2003-04-03 21:05:57 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -56,11 +56,13 @@ my $can_pub;
 if ($desks) {
     foreach my $d (@$desks) {
         my $id = $d->get_id;
+        my $ag_id = $d->get_asset_grp;
+        next unless chk_authz(undef, READ, 1, $ag_id);
         $deskText .= qq{<option value="$id"};
         $deskText .= " selected" if $id == $cd->get_id;
         $deskText .= ">to " .  $d->get_name . "</option>";
         $can_pub = 1 if $d->can_publish and
-          chk_authz($pkg, EDIT, 1, $d->get_asset_grp);
+          chk_authz(undef, EDIT, 1, $ag_id);
     }
 
     # Set up choice to remove from workflow.

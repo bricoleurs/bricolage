@@ -408,7 +408,8 @@ my $handle_create = sub {
 
     # Check permissions.
     my $wf = Bric::Biz::Workflow->lookup({ id => $WORK_ID });
-    my $gid = $wf->get_asset_grp_id;
+    my $start_desk = $wf->get_start_desk;
+    my $gid = $start_desk->get_asset_grp;
     chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
 
     my $site_id = $wf->get_site_id;
@@ -440,7 +441,6 @@ my $handle_create = sub {
     $media->save;
 
     # Send this media to the first desk.
-    my $start_desk = $wf->get_start_desk;
     $start_desk->accept({ asset => $media });
     $start_desk->save;
 
@@ -449,7 +449,8 @@ my $handle_create = sub {
     log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
     log_event('media_moved', $media, { Desk => $start_desk->get_name });
     log_event('media_save', $media);
-    add_msg($lang->maketext('Media [_1] created and saved.',"&quot;" . $media->get_title . "&quot;"));
+    add_msg($lang->maketext('Media [_1] created and saved.',"&quot;" .
+                            $media->get_title . "&quot;"));
 
     # Put the media asset into the session and clear the workflow ID.
     set_state_data($widget, 'media', $media);

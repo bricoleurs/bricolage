@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Priv.val
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2003-04-01 04:57:27 $
+-- $Date: 2003-04-03 21:06:28 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 /*
@@ -51,16 +51,30 @@ VALUES(6, 7, 3);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(6, 31);
 
--- Give Story Editors CREATE rights to the Story workflow.
+-- Give Story Editors READ rights to all categories.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(31, 7, 3);
+VALUES(43, 7, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(43, 26);
+
+-- Give Story Editors READ rights to all elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(44, 7, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(44, 27);
+
+-- Give Story Editors EDIT rights to the Story workflow.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(31, 7, 2);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(31, 49);
 
--- Give Story Editors EDIT rights to the Edit desk.
+-- Give Story Editors CREATE rights to the Edit desk.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(32, 7, 2);
+VALUES(32, 7, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(32, 61);
@@ -93,16 +107,30 @@ VALUES(7, 8, 3);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(7, 32);
 
--- Give Media Producers CREATE rights to the Media workflow.
+-- Give Media Producers READ rights to all categories.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(36, 8, 3);
+VALUES(45, 8, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(45, 26);
+
+-- Give Media Producers READ rights to all elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(46, 8, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(46, 27);
+
+-- Give Media Producers EDIT rights to the Media workflow.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(36, 8, 2);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(36, 51);
 
--- Give Media Producers EDIT rights to the Art desk.
+-- Give Media Producers CREATE rights to the Art desk.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(37, 8, 2);
+VALUES(37, 8, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(37, 65);
@@ -128,16 +156,30 @@ VALUES(8, 9, 3);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(8, 33);
 
--- Give Template Developers CREATE rights to the Template workflow.
+-- Give Template Developers READ rights to all categories.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(40, 9, 3);
+VALUES(47, 9, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(47, 26);
+
+-- Give Template Developers READ rights to all elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(48, 9, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(48, 27);
+
+-- Give Template Developers EDIT rights to the Template workflow.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(40, 9, 2);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(40, 52);
 
--- Give Template Developers EDIT rights to the Development desk.
+-- Give Template Developers CREATE rights to the Development desk.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(41, 9, 2);
+VALUES(41, 9, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(41, 66);
@@ -295,10 +337,10 @@ VALUES(28, 35);
 
 -- Give System Administrators CREATE rights to All Sites.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(47, 21, 3);
+VALUES(49, 21, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-VALUES(47, 47);
+VALUES(49, 47);
 
 /*
 
@@ -320,29 +362,29 @@ VALUES(30, 28);
 
 -- Give "Default Site READ Users" READ rights to the default Site's asset group.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(43, 200, 1);
+VALUES(50, 200, 1);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-VALUES(43, 100);
+VALUES(50, 100);
 
 -- Give "Default Site EDIT Users" EDIT rights to the default Site's asset group.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(44, 201, 2);
+VALUES(51, 201, 2);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-VALUES(44, 100);
+VALUES(51, 100);
 
 -- Give "Default Site CREATE Users" CREATE rights to the default Site's asset
 -- group.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(45, 202, 3);
+VALUES(52, 202, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-VALUES(45, 100);
+VALUES(52, 100);
 
 -- Give "Default Site DENY Users" DENY rights to the default Site's asset group.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(46, 203, 255);
+VALUES(53, 203, 255);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-VALUES(46, 100);
+VALUES(53, 100);

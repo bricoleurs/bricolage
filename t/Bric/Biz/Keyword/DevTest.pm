@@ -250,8 +250,9 @@ sub test_list : Test(46) {
     # Make sure we've got all the Group IDs we think we should have.
     my $all_grp_id = Bric::Biz::Keyword::INSTANCE_GROUP_ID;
     foreach my $keyword (@keywords) {
-        ok( eq_set(scalar $keyword->get_grp_ids, [$all_grp_id, $grp_id]),
-          "Check for both IDs" );
+        is_deeply( [sort { $a <=> $b } $keyword->get_grp_ids],
+                   [$all_grp_id, $grp_id],
+                   "Check for both IDs" );
     }
 
     # Try deactivating one group membership.
@@ -515,7 +516,9 @@ sub test_save : Test(33) {
     is( $keyword->get_screen_name, $screen, "Check screen name" );
     is( $keyword->get_sort_name, $sort, "Check sort name" );
     ok( ! $keyword->is_active, "Check is not active" );
-    ok( eq_set( scalar $keyword->get_grp_ids, $grp_ids), "Check group IDs" );
+    is_deeply( [ sort { $a <=> $b } $keyword->get_grp_ids],
+               [ sort { $a <=> $b } @$grp_ids],
+               "Check group IDs" );
 }
 
 1;

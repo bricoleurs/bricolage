@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.0';
 
 =item Date
 
-$Date: 2003-03-14 16:44:32 $
+$Date: 2003-04-03 21:06:08 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.37 2003-03-14 16:44:32 arthurbergman Exp $
+$Id: Bric.pm,v 1.38 2003-04-03 21:06:08 wheeler Exp $
 
 =back
 
@@ -525,23 +525,17 @@ context, and as an array reference in a scalar context.
 sub get_grp_ids {
     my $self = shift;
 
-    # Don't bother doing anything if they didn't define this constant.
+    # Don't bother doing anything if this isn't a groupable class.
     return unless defined($self->GROUP_PACKAGE);
 
-    # Get the group name.
-    my $grp = $self->GROUP_PACKAGE;
+    # If it's just a class name, just return the instance class ID.
+    return $self->INSTANCE_GROUP_ID unless ref $self;
 
-    # Get the ID. If $self is a package name, we won't be able to get an ID.
-    my $id = ref $self ? $self->get_id : undef;
+    # Just return if there are no group IDs.
+    return unless exists $self->{grp_ids};
 
-    # If this is an object and $self->{grp_ids} exists return it
-    return wantarray ? @{$self->{grp_ids}} : $self->{grp_ids}
-      if defined $id && exists $self->{grp_ids};
-
-    # If $id is defined, get group IDs. Otherwise, just return
-    # INSTANCE_GROUP_ID.
-    return defined $id ? $grp->list_ids({ obj => $self })
-      : $self->INSTANCE_GROUP_ID;
+    # Return the group IDs.
+    return wantarray ? @{$self->{grp_ids}} : $self->{grp_ids};
 }
 
 ##############################################################################

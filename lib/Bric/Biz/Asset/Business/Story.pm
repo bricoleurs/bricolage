@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:26 $
+$Date: 2003-04-03 21:06:23 $
 
 =head1 SYNOPSIS
 
@@ -271,12 +271,20 @@ use constant CAN_DO_LOOKUP => 1;
 # relations to loop through in the big query
 use constant RELATIONS => [qw( story category desk workflow)];
 
+use constant RELATION_COL =>
+    {
+        story     => 'm.grp__id',
+        category  => 'o.asset_grp_id AS grp__id',
+        desk      => 'o.asset_grp AS grp__id',
+        workflow  => 'o.asset_grp_id AS grp__id',
+    };
+
 use constant RELATION_TABLES =>
     {
-        story      => 'story_member sm',
-        category   => 'story__category sc, category_member cm',
-        desk       => 'desk_member dm',
-        workflow   => 'workflow_member wm',
+        story      => 'story_member sm, member m',
+        category   => 'story__category sc, category o',
+        desk       => 'desk o',
+        workflow   => 'workflow o',
     };
 
 use constant RELATION_JOINS =>
@@ -285,27 +293,21 @@ use constant RELATION_JOINS =>
                     . 'AND m.id = sm.member__id '
                     . 'AND m.active = 1',
         category   => 'sc.story_instance__id = i.id '
-                    . 'AND cm.object_id = sc.category__id '
-                    . 'AND m.id = cm.member__id '
-                    . 'AND m.active = 1',
-        desk       => 'dm.object_id = s.desk__id '
-                    . 'AND m.id = dm.member__id '
-                    . 'AND m.active = 1',
-        workflow   => 'wm.object_id = s.workflow__id '
-                    . 'AND m.id = wm.member__id '
-                    . 'AND m.active = 1',
+                    . 'AND o.id = sc.category__id ',
+        desk       => 'o.id = s.desk__id ',
+        workflow   => 'o.id = s.workflow__id ',
     };
 
 # the mapping for building up the where clause based on params
 use constant WHERE => 's.id = i.story__id';
 
 use constant COLUMNS => join(', s.', 's.id', COLS) . ', ' 
-            . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
+            . join(', i.', 'i.id AS version_id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => VERSION_TABLE . ' i, member m';
+use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP =>
     {
@@ -1332,39 +1334,33 @@ sub get_secondary_categories {
 This will take a list ref of category objects or ids and will associate them
 with the business asset
 
-B<Throws:>
-
-NONE
-
 B<Side Effects:>
 
-NONE
-
-B<Notes:>
-
-NONE
+Adds the asset_grp_ids of the categories to grp_ids (unless they are already there).
 
 =cut
 
 sub add_categories {
     my ($self, $categories) = @_;
     my $cats = $self->_get_categories();
-
+    my @grp_ids = $self->get_grp_ids();
     foreach my $c (@$categories) {
         # get the id
         my $cat_id = ref $c ? $c->get_id() : $c;
-
+        my $asset_grp_id = ref $c ? $c->get_asset_grp_id()
+          : Bric::Biz::Category->lookup({ id => $c })->get_asset_grp_id();
         # if it already is associated make sure it is not going to be deleted
         if (exists $cats->{$cat_id}) {
             $cats->{$cat_id}->{'action'} = undef;
         } else {
             $cats->{$cat_id}->{'action'} = 'insert';
-                        $cats->{$cat_id}->{'object'} = ref $c ? $c : undef;
+              $cats->{$cat_id}->{'object'} = ref $c ? $c : undef;
+            push @grp_ids, $asset_grp_id;
         }
     }
-
     # store the values
-    $self->_set({   '_categories' => $cats});
+    $self->_set({ grp_ids => \@grp_ids });
+    $self->_set({ _categories => $cats });
     # set the dirty flag
     $self->_set__dirty(1);
     return $self;
@@ -1393,22 +1389,28 @@ NONE
 sub delete_categories {
     my ($self, $categories) = @_;
     my ($cats) = $self->_get_categories();
-
+    my @grp_ids = $self->get_grp_ids();
     foreach my $c (@$categories) {
         # get the id if there was an object passed
         my $cat_id = ref $c ? $c->get_id() : $c;
         # remove it from the current list and add it to the delete list
-        if (exists $cats->{$cat_id} ) {
-            if ($cats->{$cat_id}->{'action'}
-                && $cats->{$cat_id}->{'action'} eq 'insert') {
-                delete $cats->{$cat_id};
-            } else {
-                $cats->{$cat_id}->{'action'} = 'delete';
-            }
+        next unless exists $cats->{$cat_id};
+        if ($cats->{$cat_id}->{'action'}
+            && $cats->{$cat_id}->{'action'} eq 'insert') {
+            delete $cats->{$cat_id};
+        } else {
+            $cats->{$cat_id}->{'action'} = 'delete';
         }
+        my $asset_grp_id = ref $c ? $c->get_asset_grp_id()
+          : Bric::Biz::Category->lookup({ id => $c })->get_asset_grp_id();
+        my @n_grp_ids;
+        foreach (@grp_ids) {
+            push @n_grp_ids, $_ unless $_ == $asset_grp_id;
+        }
+        @grp_ids = @n_grp_ids;
     }
-
     # set the values.
+    $self->_set({ grp_ids => \@grp_ids });
     $self->_set( {  '_categories' => $cats });
     $self->_set__dirty(1);
     return $self;
@@ -1679,6 +1681,7 @@ sub save {
 
 =over 4
 
+=cut
 
 ################################################################################
 

@@ -34,15 +34,15 @@ if ($is_user) {
              caption => "$wf_disp Permissions", border => 0);
     $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to"
              ." access assets in these workflows.","&quot;$name&quot;"));
-
+    my %start_desks;
     foreach my $wf ($wf_pkg->list) {
         my $gid = $wf->get_asset_grp_id;
 	my $grp = $dsk_grp_pkg->lookup({ id => $gid });
+        $start_desks{$wf->get_head_desk_id} = 1;
 	$m->comp($row_comp,
 		 grp => $grp,
 		 gid => $gid,
 		 type => 'obj',
-		 create => 1,
 		 perm => $perms{$gid},
 		 name => $wf->get_name);
     }
@@ -62,6 +62,7 @@ if ($is_user) {
 	$m->comp($row_comp,
 		 grp => $grp,
 		 gid => $gid,
+		 create => $start_desks{$dsk->get_id},
 		 type => 'obj',
 		 perm => $perms{$gid},
 		 name => $dsk->get_name);

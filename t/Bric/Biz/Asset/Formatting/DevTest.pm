@@ -7,7 +7,7 @@ use Bric::Biz::Asset::Formatting;
 use Bric::Biz::AssetType;
 use Bric::Biz::ATType;
 
-my ($CATEGORY) = Bric::Biz::Category->list();
+my $CATEGORY = Bric::Biz::Category->lookup({ id => 1 });
 
 # this will be filled during setup
 my $OBJ_IDS = {};
@@ -56,22 +56,6 @@ sub make_oc {
 
 
 ##############################################################################
-# The element object we'll use throughout. Override in subclass if necessary.
-##############################################################################
-my $elem;
-sub get_elem {
-    $elem ||= Bric::Biz::AssetType->lookup({ id => 1 });
-    $elem;
-}
-
-##############################################################################
-# Constructs a new object.
-sub construct {
-    my $self = shift;
-    $self->class->new({ $self->new_args, @_ });
-}
-
-##############################################################################
 # Test constructor.
 ##############################################################################
 # Test new() creating an element template.
@@ -81,7 +65,7 @@ sub test_new_elem : Test(17) {
     ok( my $key = $class->key_name, "Get key_name" );
 
     # Create a conflicting template.
-    eval { $class->new({ $self->new_args, element => $self->get_elem }) };
+    eval { $self->construct(element => $self->get_elem) };
     ok( my $err = $@, "Catch exception" );
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
     my $msg = "The template '/story.mc' already exists in output channel " .
@@ -296,15 +280,16 @@ sub test_select_a_default_objs: Test(12) {
     is( @$got, 12, '... there should be 12');
 }
 
-
-sub test_select_b_new_objs: Test(39) {
+##############################################################################
+sub test_select_b_new_objs: Test(57) {
     my $self = shift;
+    my $class = $self->class;
 
     # let's grab existing 'All' group info
-    my $all_workflow_grp_id = Bric::Util::Grp->lookup({ name => 'All Workflows' })->get_id();
-    my $all_cats_grp_id = Bric::Util::Grp->lookup({ name => 'All Categories' })->get_id();
-    my $all_desks_grp_id = Bric::Util::Grp->lookup({ name => 'All Desks' })->get_id();
-    my $all_formatting_grp_id = Bric::Util::Grp->lookup({ name => 'All Templates' })->get_id();
+    my $all_workflow_grp_id = Bric::Biz::Workflow->INSTANCE_GROUP_ID;
+    my $all_cats_grp_id = Bric::Biz::Category->INSTANCE_GROUP_ID;
+    my $all_desks_grp_id =  Bric::Biz::Workflow::Parts::Desk->INSTANCE_GROUP_ID;
+    my $all_formatting_grp_id = $class->INSTANCE_GROUP_ID;
 
     # now we'll create some test objects
     my ($i);
@@ -313,12 +298,13 @@ sub test_select_b_new_objs: Test(39) {
         my ($cat, $desk, $workflow, $grp);
         # create categories
         $cat = Bric::Biz::Category->new({ site_id => 100,
-                                          name => "_test_$time.$i", 
+                                          name => "_test_$time.$i",
                                           description => '',
                                           directory => "_test_$time.$i",
                                        });
         $CATEGORY->add_child([$cat]);
         $cat->save();
+        $self->add_del_ids($cat->get_id(), 'category');
         push @{$OBJ_IDS->{category}}, $cat->get_id();
         push @{$OBJ->{category}}, $cat;
         # create some category groups
@@ -329,15 +315,17 @@ sub test_select_b_new_objs: Test(39) {
         $grp->add_member({obj => $cat });
         # save the group ids
         $grp->save();
+        $self->add_del_ids($grp->get_id(), 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @CATEGORY_GRP_IDS, $grp->get_id();
 
         # create desks 
-        $desk = Bric::Biz::Workflow::Parts::Desk->new({ 
-                                        name => "_test_$time.$i", 
-                                        description => '',
-                                     });
+        $desk = Bric::Biz::Workflow::Parts::Desk->new
+          ({ name => "_test_$time.$i",
+             description => '',
+           });
         $desk->save();
+        $self->add_del_ids($desk->get_id(), 'desk');
         push @{$OBJ_IDS->{desk}}, $desk->get_id();
         push @{$OBJ->{desk}}, $desk;
         # create some desk groups
@@ -348,18 +336,20 @@ sub test_select_b_new_objs: Test(39) {
         # save the group ids
         $grp->add_member({ obj => $desk });
         $grp->save();
+        $self->add_del_ids($grp->get_id(), 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @DESK_GRP_IDS, $grp->get_id();
 
         # create workflows
-        $workflow = Bric::Biz::Workflow->new({ 
-                                        type => Bric::Biz::Workflow::TEMPLATE_WORKFLOW,
-                                        name => "_test_$time.$i",
-                                        start_desk => $desk,
-                                        description => 'test',
-                                        site_id => 100, #Use default site_id
-                                     });
+        $workflow = Bric::Biz::Workflow->new
+          ({ type => Bric::Biz::Workflow::TEMPLATE_WORKFLOW,
+             name => "_test_$time.$i",
+             start_desk => $desk,
+             description => 'test',
+             site_id => 100, #Use default site_id
+           });
         $workflow->save();
+        $self->add_del_ids($workflow->get_id(), 'workflow');
         push @ALL_DESK_GRP_IDS, $workflow->get_all_desk_grp_id;
         push @REQ_DESK_GRP_IDS, $workflow->get_req_desk_grp_id;
         push @{$OBJ_IDS->{workflow}}, $workflow->get_id();
@@ -372,13 +362,16 @@ sub test_select_b_new_objs: Test(39) {
         # save the group ids
         $grp->add_member({ obj => $workflow });
         $grp->save();
+        $self->add_del_ids($grp->get_id(), 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @WORKFLOW_GRP_IDS, $grp->get_id();
-        
+
         # create some formatting groups
-        $grp = Bric::Util::Grp::Formatting->new({ name => "_GRP_test_$time.$i" });
+        $grp = Bric::Util::Grp::Formatting->new
+          ({ name => "_GRP_test_$time.$i" });
         # save the group ids
         $grp->save();
+        $self->add_del_ids($grp->get_id(), 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @{$OBJ->{formatting_grp}}, $grp;
         push @FORMATTING_GRP_IDS, $grp->get_id();
@@ -403,27 +396,24 @@ sub test_select_b_new_objs: Test(39) {
 
     # A formatting with one category (admin user)
     $time = time;
-    $element = Bric::Biz::AssetType->new(
-        {
-             key_name    => "_test_$time",
-             name        => "_test_$time",
-             burner      => 1,
-             description => 'this is a test',
-             type__id    => $att->get_id(),
-
-        });
+    $element = Bric::Biz::AssetType->new({ key_name    => "_test_$time",
+                                           name        => "_test_$time",
+                                           burner      => 1,
+                                           description => 'this is a test',
+                                           type__id    => $att->get_id(),
+                                         });
     $element->save();
     $self->add_del_ids($element->get_id, 'element');
-    $formatting[0] = class->new({
-                               priority           => 1,
-                               user__id           => $admin_id,
-                               description        => 'test object',
-                               element            => $element, 
-                               tplat_type         => 1,
-                               output_channel__id => 1,
-                               category_id        => $OBJ->{category}->[0]->get_id(),
-                               site_id            => 100,
-                           });
+    $formatting[0] = class->new
+      ({ priority           => 1,
+         user__id           => $admin_id,
+         description        => 'test object',
+         element            => $element,
+         tplat_type         => 1,
+         output_channel__id => 1,
+         category_id        => $OBJ->{category}->[0]->get_id,
+         site_id            => 100,
+       });
     $formatting[0]->checkin();
     $formatting[0]->save();
     $formatting[0]->checkout({ user__id => $self->user_id });
@@ -438,25 +428,29 @@ sub test_select_b_new_objs: Test(39) {
 
     # Try doing a lookup 
     $expected = $formatting[0];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[0] }), 
+    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[0] }),
       'can we call lookup on a Formatting Object' );
-    is( $got->get_name(), $expected->get_name(), 
+    is( $got->get_name, $expected->get_name,
       '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), 
+    is( $got->get_description, $expected->get_description,
       '... does it have the right desc');
 
     # check the grp IDs
-    my $exp_grp_ids = [ $all_cats_grp_id, $all_formatting_grp_id, $OBJ_IDS->{grp}->[0] ];
+    my $exp_grp_ids = [ sort { $a <=> $b }
+                        $all_formatting_grp_id,
+                        $OBJ->{category}->[0]->get_asset_grp_id,
+                        100
+                      ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    my $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply([sort  { $a <=> $b } $got->get_grp_ids] , $exp_grp_ids,
+              '... does it have the right grp_ids' );
 
     # now find out if return_version get the right number of versions
     ok( $got = class->list({ id => $OBJ_IDS->{formatting}->[0],
                              return_versions => 1,
                              Order => 'version'}),
         'does return_versions work?' );
-    is( scalar @$got, 3, '... and did we get three versions of formatting[0]');
+    is( scalar @$got, 3, '...and did we get three versions of formatting[0]');
 
     # Make sure we got them back in order.
     my $n;
@@ -472,27 +466,25 @@ sub test_select_b_new_objs: Test(39) {
 
     # ... as a grp member
     $time = time;
-    $element = Bric::Biz::AssetType->new(
-        {
-             key_name    => "_test_$time.1",
-             name        => "_test_$time.1",
-             burner      => 1,
-             description => 'this is a test',
-             type__id    => $att->get_id(),
-
-        });
+    $element = Bric::Biz::AssetType->new
+      ({ key_name    => "_test_$time.1",
+         name        => "_test_$time.1",
+         burner      => 1,
+         description => 'this is a test',
+         type__id    => $att->get_id(),
+       });
     $element->save();
     $self->add_del_ids($element->get_id, 'element');
-    $formatting[1] = class->new({
-                               priority           => 1,
-                               user__id           => $admin_id,
-                               element            => $element, 
-                               tplat_type         => 1,
-                               output_channel__id => 1,
-                               category_id        => $OBJ->{category}->[0]->get_id(),
-                               site_id            => 100,
-                           });
-    $formatting[1]->save();
+    $formatting[1] = class->new
+      ({ priority           => 1,
+         user__id           => $admin_id,
+         element            => $element,
+         tplat_type         => 1,
+         output_channel__id => 1,
+         category_id        => $OBJ->{category}->[0]->get_id,
+         site_id            => 100,
+       });
+    $formatting[1]->save;
     push @{$OBJ_IDS->{formatting}}, $formatting[1]->get_id();
     $self->add_del_ids( $formatting[1]->get_id() );
 
@@ -500,42 +492,43 @@ sub test_select_b_new_objs: Test(39) {
     $OBJ->{formatting_grp}->[0]->save();
 
     $expected = $formatting[1];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[1] }), 'can we call lookup on a Formatting Object which is itself in a grp' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[1] }),
+        'can we call lookup on a template which is itself in a grp' );
+    is( $got->get_name, $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description, $expected->get_description,
+        '... does it have the right desc');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
+    $exp_grp_ids = [ sort { $a <=> $b }
                      $all_formatting_grp_id,
-                     $CATEGORY_GRP_IDS[0],
+                     $OBJ->{category}->[0]->get_asset_grp_id,
                      $FORMATTING_GRP_IDS[0],
+                     100
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply([sort { $a <=> $b } $got->get_grp_ids], $exp_grp_ids,
+              '... does it have the right grp_ids' );
 
     # ... a bunch of grps
     $time = time;
-    $element = Bric::Biz::AssetType->new(
-        {
-             key_name    => "_test_$time.2",
-             name        => "_test_$time.2",
-             burner      => 1,
-             description => 'this is a test',
-             type__id    => $att->get_id(),
-
-        });
-    $element->save();
+    $element = Bric::Biz::AssetType->new({ key_name    => "_test_$time.2",
+                                           name        => "_test_$time.2",
+                                           burner      => 1,
+                                           description => 'this is a test',
+                                           type__id    => $att->get_id,
+                                         });
+    $element->save;
     $self->add_del_ids($element->get_id, 'element');
-    $formatting[2] = class->new({
-                               priority           => 1,
-                               user__id           => $admin_id,
-                               element            => $element, 
-                               tplat_type         => 1,
-                               output_channel__id => 1,
-                               category_id        => $OBJ->{category}->[0]->get_id(),
-                               site_id            => 100,
-                           });
+    $formatting[2] = class->new
+      ({ priority           => 1,
+         user__id           => $admin_id,
+         element            => $element,
+         tplat_type         => 1,
+         output_channel__id => 1,
+         category_id        => $OBJ->{category}->[0]->get_id,
+         site_id            => 100,
+       });
     $formatting[2]->save();
     push @{$OBJ_IDS->{formatting}}, $formatting[2]->get_id();
     $self->add_del_ids( $formatting[2]->get_id() );
@@ -556,46 +549,47 @@ sub test_select_b_new_objs: Test(39) {
     $OBJ->{formatting_grp}->[4]->save();
 
     $expected = $formatting[2];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[2] }), 'can we call lookup on a Formatting Object which is itself in a grp' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[2] }),
+        'can we call lookup on a template which is itself in a grp' );
+    is( $got->get_name, $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description, $expected->get_description,
+        '... does it have the right desc');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
+    $exp_grp_ids = [ sort { $a <=> $b }
                      $all_formatting_grp_id,
-                     $CATEGORY_GRP_IDS[0],
+                     $OBJ->{category}->[0]->get_asset_grp_id,
                      $FORMATTING_GRP_IDS[0],
                      $FORMATTING_GRP_IDS[1],
                      $FORMATTING_GRP_IDS[2],
                      $FORMATTING_GRP_IDS[3],
                      $FORMATTING_GRP_IDS[4],
+                     100
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply([sort { $a <=> $b } $got->get_grp_ids], $exp_grp_ids,
+              '... does it have the right grp_ids' );
 
     # ... now try a workflow
     $time = time;
-    $element = Bric::Biz::AssetType->new(
-        {
-             key_name    => "_test_$time.3",
-             name        => "_test_$time.3",
-             burner      => 1,
-             description => 'this is a test',
-             type__id    => $att->get_id(),
-
-        });
+    $element = Bric::Biz::AssetType->new({ key_name    => "_test_$time.3",
+                                           name        => "_test_$time.3",
+                                           burner      => 1,
+                                           description => 'this is a test',
+                                           type__id    => $att->get_id(),
+                                         });
     $element->save();
     $self->add_del_ids($element->get_id, 'element');
-    $formatting[3] = class->new({
-                               priority           => 1,
-                               user__id           => $admin_id,
-                               element            => $element, 
-                               tplat_type         => 1,
-                               output_channel__id => 1,
-                               category_id        => $OBJ->{category}->[0]->get_id(),
-                               site_id            => 100,
-                           });
+    $formatting[3] = class->new
+      ({ priority           => 1,
+         user__id           => $admin_id,
+         element            => $element,
+         tplat_type         => 1,
+         output_channel__id => 1,
+         category_id        => $OBJ->{category}->[0]->get_id(),
+         site_id            => 100,
+       });
     $formatting[3]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $formatting[3]->save();
     push @{$OBJ_IDS->{formatting}}, $formatting[3]->get_id();
@@ -605,48 +599,44 @@ sub test_select_b_new_objs: Test(39) {
 
     # Try doing a lookup 
     $expected = $formatting[3];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[3] }), 
+    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[3] }),
       'can we call lookup on a Formatting Object' );
-    is( $got->get_name(), $expected->get_name(), 
+    is( $got->get_name(), $expected->get_name(),
       '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), 
+    is( $got->get_description(), $expected->get_description(),
       '... does it have the right desc');
 
     # check the grp IDs
-    $exp_grp_ids = [ 
-                        $all_workflow_grp_id,
-                        $all_cats_grp_id, 
-                        $all_formatting_grp_id, 
-                        $CATEGORY_GRP_IDS[0],
-                        $WORKFLOW_GRP_IDS[0],
-                    ];
+    $exp_grp_ids = [ sort { $a <=> $b }
+                     $all_formatting_grp_id,
+                     $OBJ->{category}->[0]->get_asset_grp_id,
+                     $OBJ->{workflow}->[0]->get_asset_grp_id,
+                     100
+                   ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    is_deeply( [sort { $a <=> $b } $got->get_grp_ids], $exp_grp_ids,
+               '... does it have the right grp_ids' );
 
     # ... desk
     $time = time;
-    $element = Bric::Biz::AssetType->new(
-        {
-             key_name    => "_test_$time.4",
-             name        => "_test_$time.4",
-             burner      => 1,
-             description => 'this is a test',
-             type__id    => $att->get_id(),
-
-        });
+    $element = Bric::Biz::AssetType->new({ key_name    => "_test_$time.4",
+                                           name        => "_test_$time.4",
+                                           burner      => 1,
+                                           description => 'this is a test',
+                                           type__id    => $att->get_id(),
+                                         });
     $element->save();
     $self->add_del_ids($element->get_id, 'element');
-    $formatting[4] = class->new({
-                               priority           => 1,
-                               user__id           => $admin_id,
-                               element            => $element, 
-                               tplat_type         => 1,
-                               output_channel__id => 1,
-                               category_id        => $OBJ->{category}->[0]->get_id(),
-                               site_id            => 100,
-                           });
-    $formatting[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
+    $formatting[4] = class->new
+      ({ priority           => 1,
+         user__id           => $admin_id,
+         element            => $element,
+         tplat_type         => 1,
+         output_channel__id => 1,
+         category_id        => $OBJ->{category}->[0]->get_id(),
+         site_id            => 100,
+       });
+    $formatting[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id );
     $formatting[4]->set_current_desk( $OBJ->{desk}->[0] );
     $formatting[4]->save();
     push @{$OBJ_IDS->{formatting}}, $formatting[4]->get_id();
@@ -656,97 +646,222 @@ sub test_select_b_new_objs: Test(39) {
 
     # Try doing a lookup 
     $expected = $formatting[4];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[4] }), 
-      'can we call lookup on a Formatting Object' );
-    is( $got->get_name(), $expected->get_name(), 
-      '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), 
-      '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[4] }),
+        'can we call lookup on a Formatting Object' );
+    is( $got->get_name, $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description, $expected->get_description,
+        '... does it have the right desc');
 
     # check the grp IDs
-    $exp_grp_ids = [ 
-                        $all_workflow_grp_id,
-                        $all_cats_grp_id, 
-                        $all_formatting_grp_id, 
-                        $all_desks_grp_id, 
-                        $CATEGORY_GRP_IDS[0],
-                        $DESK_GRP_IDS[0],
-                        $ALL_DESK_GRP_IDS[0],
-                        $REQ_DESK_GRP_IDS[0],
-                        $WORKFLOW_GRP_IDS[0],
-                    ];
+    $exp_grp_ids = [ sort { $a <=> $b }
+                     $all_formatting_grp_id,
+                     $OBJ->{category}->[0]->get_asset_grp_id,
+                     $OBJ->{workflow}->[0]->get_asset_grp_id,
+                     $OBJ->{desk}->[0]->get_asset_grp,
+                     100
+                   ];
     push @EXP_GRP_IDS, $exp_grp_ids;
-    $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, 
-      '... does it have the right grp_ids' );
+    is_deeply([sort { $a <=> $b } $got->get_grp_ids], $exp_grp_ids,
+              '... does it have the right grp_ids' );
 
     # try listing something up by at least key in each table
     # be sure to try to get them both as a ref and a list
     my @got_ids;
     my @got_grp_ids;
 
-    ok( my @got = class->list({ name => '_test%', user_id => $admin_id }), 'lets do a search by name' );
-    ok( $got = class->list({ name => '_test%', Order => 'name', user_id => $admin_id  }), 'lets do a search by name' );
+    ok( $got = class->list({ name    => '_test%',
+                             Order   => 'name',
+                             user_id => $admin_id  }),
+        'lets do a search by name' );
     # check the ids
     foreach (@$got) {
-        push @got_ids, $_->get_id();
-        push @got_grp_ids, \@{$_->get_grp_ids()};
+        push @got_ids, $_->get_id;
+        push @got_grp_ids, [sort { $a <=> $b } $_->get_grp_ids ];
     }
-    eq_set( \@got_ids, $OBJ_IDS->{formatting}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+
+    $OBJ_IDS->{formatting} = [ sort { $a <=> $b }
+                               @{ $OBJ_IDS->{formatting} } ];
+
+    is_deeply( [sort { $a <=> $b } @got_ids], $OBJ_IDS->{formatting},
+               '... did we get the right list of ids out' );
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+                   "... and did we get the right grp_ids for template $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ title => '_test%', Order => 'title', user_id => $admin_id  }), 'lets do a search by title' );
+    ok( $got = class->list({ title   => '_test%',
+                             Order   => 'title',
+                             user_id => $admin_id  }),
+        'lets do a search by title' );
+
     # check the ids
     foreach (@$got) {
-        push @got_ids, $_->get_id();
-        push @got_grp_ids, \@{$_->get_grp_ids()};
+        push @got_ids, $_->get_id;
+        push @got_grp_ids, [sort { $a <=> $b } $_->get_grp_ids];
     }
-    eq_set( \@got_ids, $OBJ_IDS->{formatting}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    is_deeply( [sort { $a <=> $b } @got_ids], $OBJ_IDS->{formatting},
+               '... did we get the right list of ids out' );
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+                   "... and did we get the right grp_ids for template $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
     # finally do this by grp_ids
-    ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'title', user_id => $admin_id  }), 'getting by grp_id' );
+    ok( $got = class->list({ grp_id  => $OBJ->{formatting_grp}->[0]->get_id,
+                             Order   => 'title',
+                             user_id => $admin_id  }),
+        'getting by grp_id' );
     my $number = @$got;
     is( $number, 2, 'there should be two formatting in the first grp' );
-    is( $got->[0]->get_id(), $formatting[1]->get_id(), '... and they should be numbers 2' );
-    is( $got->[1]->get_id(), $formatting[2]->get_id(), '... and 3' );
+    is( $got->[0]->get_id, $formatting[1]->get_id,
+        '... and they should be numbers 2' );
+    is( $got->[1]->get_id, $formatting[2]->get_id, '... and 3' );
 
     # try listing IDs, again at least one key per table
-    ok( $got = class->list_ids({ name => '_test%', Order => 'name', user_id => $admin_id  }), 'lets do an IDs search by name' );
+    ok( $got = class->list_ids({ name    => '_test%',
+                                 Order   => 'name',
+                                 user_id => $admin_id  }),
+        'lets do an IDs search by name' );
     # check the ids
-    foreach (@$got) {
-        push @got_ids, $_;
-    }
-    eq_set( \@got_ids, $OBJ_IDS->{formatting}, '... did we get the right list of ids out' );
-    undef @got_ids;
+    is_deeply( $got, $OBJ_IDS->{formatting},
+               '... did we get the right list of ids out' );
 
-    ok( $got = class->list_ids({ title => '_test%', Order => 'name', user_id => $admin_id  }), 'lets do an ids search by title' );
+    ok( $got = class->list_ids({ title   => '_test%',
+                                 Order   => 'name',
+                                 user_id => $admin_id  }),
+        'lets do an ids search by title' );
     # check the ids
-    foreach (@$got) {
-        push @got_ids, $_;
-    }
-    eq_set( \@got_ids, $OBJ_IDS->{formatting}, '... did we get the right list of ids out' );
-    undef @got_ids;
+    is_deeply($got, $OBJ_IDS->{formatting},
+              '... did we get the right list of ids out' );
 
     # finally do this by grp_ids
-    ok( $got = class->list_ids({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'title', user_id => $admin_id  }), 'getting by grp_id' );
+    ok( $got = class->list_ids({ grp_id  => $OBJ->{formatting_grp}->[0]->get_id,
+                                 Order   => 'title',
+                                 user_id => $admin_id }),
+        'getting by grp_id' );
     $number = @$got;
-    is( $number, 2, 'there should be two formatting objects in the first grp' );
-    is( $got->[0], $formatting[1]->get_id(), '... and they should be numbers 2' );
-    is( $got->[1], $formatting[2]->get_id(), '... and 3' );
+    is( $number, 2,
+        'there should be two formatting objects in the first grp' );
+    is( $got->[0], $formatting[1]->get_id,
+        '... and they should be numbers 2' );
+    is( $got->[1], $formatting[2]->get_id,
+        '... and 3' );
 
 
     # now let's try a limit
-    ok( $got = class->list({ Order => 'title', Limit => 3, user_id => $admin_id  }), 'try setting a limit of 3');
+    ok( $got = class->list({ Order   => 'title',
+                             Limit   => 3,
+                             user_id => $admin_id  }),
+        'try setting a limit of 3');
     is( @$got, 3, '... did we get exactly 3 formatting objects back' );
 
     # test Offset
-    ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'name', Offset => 1, user_id => $admin_id  }), 'try setting an offset of 2 for a search that just returned 3 objs');
+    ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id,
+                             Order => 'name',
+                             Offset => 1,
+                             user_id => $admin_id }),
+        'try setting an offset of 2 for a search that just returned 3 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
+}
+
+sub test_new_grp_ids: Test(4) {
+    my $self = shift;
+    my $class = $self->class;
+    my $all_formatting_grp_id = $class->INSTANCE_GROUP_ID;
+    my $time = time;
+    my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
+    my $element = Bric::Biz::AssetType->new({ name        => "_test_$time.new",
+                                              key_name    => "_test_$time.new",
+                                              burner      => 1,
+                                              description => 'this is a test',
+                                              type__id    => $att->get_id(),
+                                            });
+    $element->save();
+    $self->add_del_ids($element->get_id, 'element');
+    my $cat = Bric::Biz::Category->new
+      ({ name        => "_test_$time.new",
+         description => 'foo',
+         site_id     => 100,
+         directory   => "_test_$time.new",
+       });
+    $CATEGORY->add_child([$cat]);
+    $cat->save();
+    $self->add_del_ids($cat->get_id(), 'category');
+    # first we'll try it with a category_id
+    my $formatting = class->new({ priority           => 1,
+                                  user__id           => $self->user_id,
+                                  element            => $element,
+                                  tplat_type         => 1,
+                                  output_channel__id => 1,
+                                  site_id            => 100,
+                                  category_id        => $cat->get_id,
+                                });
+    my $expected = [ sort { $a <=> $b }
+                     $cat->get_asset_grp_id,
+                     $all_formatting_grp_id,
+                     100
+                   ];
+    is_deeply( [sort { $a <=> $b } $formatting->get_grp_ids], $expected,
+               'does template instanciated with a cat_id have the right ' .
+               'grp ids?');
+    # first we'll try it with a category
+    undef $formatting;
+    $formatting = class->new({ priority           => 1,
+                               user__id           => $self->user_id,
+                               element            => $element,
+                               tplat_type         => 1,
+                               output_channel__id => 1,
+                               site_id            => 100,
+                               category           => $cat
+                             });
+    $expected = [ sort { $a <=> $b }
+                  $cat->get_asset_grp_id,
+                  $all_formatting_grp_id,
+                  100
+                ];
+    is_deeply( [sort { $a <=> $b } $formatting->get_grp_ids ], $expected,
+               'does template instanciated with a cat have the right grp ids?');
+    my $desk = Bric::Biz::Workflow::Parts::Desk->new
+      ({ name => "_test_$time",
+         description => '',
+       });
+    $desk->save();
+    $self->add_del_ids($desk->get_id(), 'desk');
+    my $workflow = Bric::Biz::Workflow->new
+      ({ type        => Bric::Biz::Workflow::TEMPLATE_WORKFLOW,
+         name        => "_test_$time",
+         start_desk  => $desk,
+         description => 'test',
+         site_id     => 100,
+       });
+    $workflow->save();
+    $self->add_del_ids($workflow->get_id(), 'workflow');
+    $formatting->set_current_desk($desk);
+    $expected = [ sort { $a <=> $b }
+                  $cat->get_asset_grp_id,
+                  $all_formatting_grp_id,
+                  $desk->get_asset_grp,
+                  100
+                ];
+    is_deeply([sort { $a <=> $b } $formatting->get_grp_ids], $expected,
+              'setting the current desk of a template adds the correct ' .
+              'asset_grp_ids');
+    $formatting->set_workflow_id($workflow->get_id());
+    $expected = [ sort { $a <=> $b }
+                  $cat->get_asset_grp_id,
+                  $workflow->get_asset_grp_id,
+                  $all_formatting_grp_id,
+                  $desk->get_asset_grp,
+                  100
+                ];
+    is_deeply( [sort { $a <=> $b } $formatting->get_grp_ids], $expected,
+               'setting the workflow id of a template adds the correct ' .
+               'asset_grp_ids');
 }
 
 1;

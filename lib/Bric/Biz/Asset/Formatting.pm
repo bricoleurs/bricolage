@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:26 $
+$Date: 2003-04-03 21:06:18 $
 
 =head1 SYNOPSIS
 
@@ -216,12 +216,20 @@ use constant CAN_DO_LOOKUP => 1;
 # relations to loop through in the big query
 use constant RELATIONS => [qw( formatting category desk workflow )];
 
+use constant RELATION_COL =>
+    {
+        formatting => 'm.grp__id',
+        category   => 'o.asset_grp_id AS grp__id',
+        desk       => 'o.asset_grp AS grp__id',
+        workflow   => 'o.asset_grp_id AS grp__id',
+    };
+
 use constant RELATION_TABLES =>
     {
-        formatting => 'formatting_member fm',
-        category   => 'category_member cm',
-        desk       => 'desk_member dm',
-        workflow   => 'workflow_member wm',
+        formatting => 'formatting_member fm, member m',
+        category   => 'category o',
+        desk       => 'desk o',
+        workflow   => 'workflow o',
     };
 
 use constant RELATION_JOINS =>
@@ -229,27 +237,21 @@ use constant RELATION_JOINS =>
         formatting      => 'fm.object_id = f.id '
                          . 'AND m.id = fm.member__id '
                          . 'AND m.active = 1',
-        category        => 'cm.object_id = f.category__id '
-                         . 'AND m.id = cm.member__id '
-                         . 'AND m.active = 1',
-        desk            => 'dm.object_id = f.desk__id '
-                         . 'AND m.id = dm.member__id '
-                         . 'AND m.active = 1',
-        workflow        => 'wm.object_id = f.workflow__id '
-                         . 'AND m.id = wm.member__id '
-                         . 'AND m.active = 1',
+        category        => 'o.id = f.category__id ',
+        desk            => 'o.id = f.desk__id ',
+        workflow        => 'o.id = f.workflow__id ',
     };
 
 # the mapping for building up the where clause based on params
 use constant WHERE => 'f.id = i.formatting__id';
 
 use constant COLUMNS => join(', f.', 'f.id', COLS) . ', ' 
-            . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
+            . join(', i.', 'i.id AS version_id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => VERSION_TABLE . ' i, member m';
+use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP =>
     {
@@ -344,6 +346,7 @@ my ($meths, @ord, $set_elem, $set_cat, $set_util);
 
 #--------------------------------------#
 # Instance Fields
+
 
 BEGIN {
         Bric::register_fields
@@ -510,6 +513,7 @@ B<Notes:> NONE.
 sub new {
     my ($class, $init) = @_;
     my $self = bless {}, $class;
+    my @grp_ids = ($class->INSTANCE_GROUP_ID);
 
     # set active unless we we passed another value
     $init->{_active} = exists $init->{active} ?
@@ -570,9 +574,11 @@ sub new {
 
     if ($init->{category}) {
         $init->{category_id} = $init->{category}->get_id;
+        push @grp_ids, $init->{category}->get_asset_grp_id();
     } elsif (defined $init->{category_id}) {
         $init->{category} =
           Bric::Biz::Category->lookup({ id => $init->{category_id} });
+        push @grp_ids, $init->{category}->get_asset_grp_id();
     } else {
         die Bric::Util::Fault::Exception::DP->new
           ({ msg => "Missing required parameter 'category' or 'category_id'"});
@@ -586,6 +592,8 @@ sub new {
     $self->_set(['file_name'],
                 [ $self->_build_file_name($init->{file_type}, $name, $cat,
                                           $init->{output_channel__id}) ]);
+    # set the starter grp_ids
+    $self->_set({ grp_ids => \@grp_ids });
     return $self;
 }
 
@@ -1371,15 +1379,19 @@ NONE
 
 sub set_category_id {
     my ($self, $id) = @_;
-
+    my @grp_ids;
     if ($id != $self->get_category_id) {
         $self->_set(['category_id','_category_obj'], [$id, undef]);
         $self->_set(['file_name'], [$self->_build_file_name]);
+        foreach ($self->get_grp_ids()) {
+            next if $_ == $self->get_category->get_asset_grp_id();
+            push @grp_ids, $_;
+        }
+        push @grp_ids,
+          Bric::Biz::Category->lookup({ id => $id })->get_asset_grp_id();
     }
-
     return $self;
 }
-
 
 ################################################################################
 

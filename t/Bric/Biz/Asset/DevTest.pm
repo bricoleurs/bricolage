@@ -29,6 +29,19 @@ sub get_elem {
     $elem;
 }
 
+##############################################################################
+# Test class methods.
+##############################################################################
+# Test the class version of get_grp_ids.
+sub test_grp_ids : Test(3) {
+    my $self = shift;
+    ok( my $class = $self->class, "Get class" );
+    ok( my $key = $class->key_name, "Get key_name" );
+    return "Abstract class" if $key eq 'asset' or $key eq 'biz';
+    is_deeply( $class->get_grp_ids, $class->INSTANCE_GROUP_ID,
+               "Check for instance group ID in $key class" );
+}
+
 ###############################################################################
 ## Test basic asset persistence.
 ###############################################################################
