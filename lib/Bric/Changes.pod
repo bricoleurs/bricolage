@@ -56,16 +56,22 @@ Added ability to set permissions on assets based on the categories they're in.
 
 =item *
 
-Moved all session and session locking files into the "bricolage" subdirectory fo
-the local file system's tmp directory. You'll want to rm -rf /tmp/bricolage_*.
+Moved all session and session locking files into the "bricolage" subdirectory of
+the local file system's tmp directory. You'll want to rm -rf /tmp/bricolage_*
+upon upgrading. [David]
 
 =item *
 
 Moved the location of cache files to the "bricolage/cache" subdirectory of the
-local file system's tmp directory. You'll want to rm -rf /tmp/FileCache.
-Together with the above change, this means that all Bricolage temporary files
-are stored in the "bricolage" subdirectory of the local tmp, e.g.,
-/tmp/bricolage.
+local file system's tmp directory. You'll want to rm -rf /tmp/FileCache upon
+upgrading. Together with the above change, this means that all Bricolage
+temporary files are stored in the "bricolage" subdirectory of the local tmp,
+e.g., /tmp/bricolage. [David]
+
+=item *
+
+Added new program, clean_tmp.pl, that can be used in a cron job to delete stale
+temporary files. [Sam]
 
 =item *
 
@@ -76,7 +82,7 @@ Added an "About" page, linked from the logo graphic, that explains the name
 
 Added PERL_LOADER configuration directive. Pass a line of Perl to this
 directive, and on startup, it'll execute it in the same namespace as your
-templates execute in.
+templates execute in. [David]
 
 =item *
 
@@ -85,7 +91,7 @@ INCLUDE_XML_WRITER is turned on, then all templates will include a new global,
 $writer, that is an XML::Writer object. This object is provided as a convenience
 for creating XML in your templates. XML_WRITER_ARGS allows certain arguments to
 be passed to the XML::Writer instantiator. See Bric::AdvTemplates for more
-information.
+information. [David]
 
 =item *
 
