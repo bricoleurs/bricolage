@@ -3,13 +3,21 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption => "Properties",
 	 number  => 1);
 
+my $wf = Bric::Biz::Workflow->lookup
+  ({ id => get_state_data($widget, 'work_id')});
+my $site_id = $wf->get_site_id;
+
+$m->comp('/widgets/profile/displayFormElement.mc',
+         key => 'site',
+         readOnly => 1,
+         objref => $wf
+        );
+$m->out($ieSpacer);
+
 $m->comp('/widgets/profile/displayFormElement.mc',
 	 key => 'title',
 	 vals => $nmeth
 	);
-my $site_id = Bric::Biz::Workflow->lookup
-  ({ id => get_state_data($widget, 'work_id')})->
-  get_site_id;
 </%perl>
 
 <% $ieSpacer %>
@@ -57,7 +65,7 @@ my $site_id = Bric::Biz::Workflow->lookup
 	 key => "cover_date",
 	 vals => $cdate,
 &>
-<% $ieSpacer %>
+<% $ieSpacer %><br />
 
 <%perl>
 

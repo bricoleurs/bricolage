@@ -149,7 +149,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 $num = $m->comp('/widgets/container_prof/container_prof.mc',
         tile            => $tile,
         tile_type       => 'story',
-        action          => 'edit',
+        action          => $story->get_alias_id ? 'view' : 'edit',
         title           => 'Content',
         num             => $num,
         start_count     => 4

@@ -185,15 +185,17 @@ foreach my $wf (@$workflows) {
                    <% &$printLink("/workflow/active/templates/$wf->{id}", $uri, "Active $pl_disp->{formatting}") %>
 %               } elsif ($wf->{type} == STORY_WORKFLOW) {
                    <% &$printLink("/workflow/profile/story/new/$wf->{id}", $uri, "New $disp->{story}") %>
+                   <% &$printLink("/workflow/profile/alias/story/$wf->{id}", $uri, "New Alias") %>
                    <% &$printLink("/workflow/manager/story/$wf->{id}/", $uri, "Find $pl_disp->{story}") %>
                    <% &$printLink("/workflow/active/story/$wf->{id}", $uri, "Active $pl_disp->{story}") %>
 %               } elsif ($wf->{type} == MEDIA_WORKFLOW) {
                    <% &$printLink("/workflow/profile/media/new/$wf->{id}", $uri, "New $disp->{media}") %>
+                   <% &$printLink("/workflow/profile/alias/media/$wf->{id}", $uri, "New Alias") %>
                    <% &$printLink("/workflow/manager/media/$wf->{id}/", $uri, "Find $pl_disp->{media}") %>
                    <% &$printLink("/workflow/active/media/$wf->{id}", $uri, "Active $pl_disp->{media}") %>
 %               }
 % # desks
-                <img src="/media/images/spacer.gif" width=105 height=1>
+                <img src="/media/images/spacer.gif" width="105" height="5">
                 <span class=workflowHeader><% $lang->maketext('Desks') %></span><br />
                 <%perl>
                   foreach my $d (@{$wf->{desks}}) {
@@ -452,10 +454,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =head1 DATE
 
-$Date: 2003-03-17 21:31:27 $
+$Date: 2003-03-19 02:06:19 $
 
 </%doc>

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-18 00:01:23 $
+$Date: 2003-03-19 02:06:19 $
 
 =head1 SYNOPSIS
 
@@ -1130,8 +1130,8 @@ sub del_output_channels {
 
 =item get_element_name()
 
-Returns the name of the asset type that this is based on.   This is the same
-as the name of the top level tile.
+Returns the name of the asset type that this is based on. This is the same as
+the name of the top level tile.
 
 B<Throws:>
 
@@ -1148,13 +1148,34 @@ NONE
 =cut
 
 sub get_element_name {
-    my ($self) = @_;
+    my $self = shift;
+    $self->get_tile->get_name;
+}
 
-    my $tile = $self->get_tile();
+################################################################################
 
-    my $name = $tile->get_key_name();
+=item get_element_key_name()
 
-    return $name;
+Returns the key name of the asset type that this is based on. This is the same
+as the key name of the top level tile.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub get_element_key_name {
+    my $self = shift;
+    $self->get_tile->get_key_name;
 }
 
 ################################################################################
@@ -1450,7 +1471,7 @@ sub get_tile {
           ({ object    => $object,
              parent_id => undef,
              active    => 1 });
-        $self->_set(['_tile'] => [$tile]);
+        $object->_set(['_tile'] => [$tile]);
     }
     return $tile;
 }

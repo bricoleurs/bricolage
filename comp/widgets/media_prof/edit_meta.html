@@ -182,11 +182,11 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 $num = $m->comp( '/widgets/container_prof/container_prof.mc',
-        tile => $tile,
-        tile_type => 'media',
-        action => 'edit',
-        num => $num,
-        title => 'Content',
+        tile        => $tile,
+        tile_type   => 'media',
+        action      => $media->get_alias_id ? 'view' : 'edit',
+        num         => $num,
+        title       => 'Content',
         start_count => 6
 );
 

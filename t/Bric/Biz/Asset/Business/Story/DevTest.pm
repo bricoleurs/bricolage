@@ -741,11 +741,10 @@ sub test_alias : Test(28) {
     # Save the ID for cleanup.
     ok( my $sid = $story->get_id, "Get ID" );
     my $key = $self->class->key_name;
-    $self->add_del_ids([$sid], $key);
+    $self->add_del_ids($sid, $key);
 
     ok( $story = Bric::Biz::Asset::Business::Story->lookup
         ({id => $story->get_id }), "Reload");
-
 
     throws_ok {
         Bric::Biz::Asset::Business::Story->new(
@@ -758,7 +757,6 @@ sub test_alias : Test(28) {
           { alias_id => $story->get_id, site_id => 100 })
       } qr /Cannot create an alias to an asset in the same site/,
         "Check that you cannot create alias to a story in the same site";
-
 
     # Create extra site
     my $site1 = Bric::Biz::Site->new( { name => __PACKAGE__ . "1",
@@ -800,8 +798,6 @@ sub test_alias : Test(28) {
     $element->add_output_channels([$ocid]);
     $element->set_primary_oc_id($ocid, $site1_id);
     $element->save();
-
-
 
     ok( my $alias_story = Bric::Biz::Asset::Business::Story->new(
       { alias_id => $story->get_id, 

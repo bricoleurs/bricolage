@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-18 00:01:24 $
+$Date: 2003-03-19 02:06:19 $
 
 =head1 SYNOPSIS
 
@@ -252,7 +252,8 @@ use constant PARAM_WHERE_MAP =>
       id                    => 'f.id = ?',
       active                => 'f.active = ?',
       inactive              => 'f.active = ?',
-      site__id              => 'f.site__id = ?',
+      site_id               => 'f.site__id = ?',
+      no_site_id            => 'f.site__id <> ?',
       workflow__id          => 'f.workflow__id = ?',
       _null_workflow__id    => 'f.workflow__id IS NULL',
       element__id           => 'f.element__id = ?',
@@ -282,11 +283,11 @@ use constant PARAM_WHERE_MAP =>
                              . 'LOWER(f.file_name) LIKE ?)',
     };
 
-use constant PARAM_ORDER_MAP => 
+use constant PARAM_ORDER_MAP =>
     {
       active              => 'active',
       inactive            => 'active',
-      site__id            => 'site__id',
+      site_id             => 'site__id',
       workflow__id        => 'workflow__id',
       element__id         => 'element__id',
       output_channel__id  => 'output_channel__id',

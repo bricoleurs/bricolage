@@ -1,0 +1,59 @@
+<& '/widgets/search/search.mc',
+  object       => 'story',
+  type         => 'story',
+  field        => 'title',
+  use_form_tag => 0 &>
+<p></p>
+<a name="results"></a>
+<& /widgets/listManager/listManager.mc,
+   object   => 'story',
+   title    => $lang->maketext("Find a story to relate"),
+   sortBy   => 'name',
+   select   => undef,
+   profile  => $related_alias,
+   constrain => { no_site_id => $site_id },
+   exclude  => $excl_sub,
+   fields   => [qw(id title uri cover_date)],
+   field_values => $field_values,
+   addition => '',
+   behavior  => 'expand',
+&>
+<p></p>
+<input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif"
+       border="0" name="<% $widget %>|related_up_cb" value="Return">
+<%args>
+$widget
+$class_key
+$wf_id
+</%args>
+<%init>;
+$link_key = $class_key;
+my $site_id = Bric::Biz::Workflow->lookup({ id => $wf_id })->get_site_id;
+my %elems = map { $_ => 1 } Bric::Biz::AssetType->list_ids
+  ({ site_id => $site_id });
+# Hack: It'd be good to be able to exclude these in the SQL query, but the
+# query building interface can't currently handle that sort of thing. So'
+# we'll have to do it on a case-by-case basis for now. In general, this
+# shouldn't be a big deal, as the permissions check is already done on a
+# case-by-case bassis to limit most things.
+my $excl_sub = sub {
+    not chk_authz($_[0], READ, 1)
+      or not $elems{$_[0]->get_element__id}
+};
+</%init>
+<%once>;
+my $link_key;
+my $field_values = sub {
+    my ($o, $field) = @_;
+    return unless $field eq 'title';
+    my $html = qq{<a href="/workflow/profile/preview/$link_key} . $o->get_id .
+      '" class="blackUnderlinedLink" target="preview_' . SERVER_WINDOW_NAME .
+      '">' . $o->get_title . '</a>';
+    return $html;
+};
+
+my $related_alias = sub {
+    [$lang->maketext('Alias'), $r->uri,
+     "alias|make_alias_cb=" . $_[0]->get_id];
+};
+</%once>

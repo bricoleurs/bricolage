@@ -1,0 +1,26 @@
+<& /widgets/wrappers/sharky/header.mc,
+   title   => "Find $disp to Alias",
+   context => $context,
+   wf_id   => $wf_id
+&>
+<form action="<% $r->uri %>" method="post" name="find_alias">
+<& /widgets/alias/alias.mc,
+   class_key  => $class_key,
+   wf_id      => $wf_id
+&>
+</form>
+<& /widgets/wrappers/sharky/footer.mc &>
+
+%#-- End HTML --#
+
+
+<%once>;
+my $dispmap = { story => get_disp_name('story'),
+                media => get_disp_name('media')
+              };
+</%once>
+<%init>;
+my ($class_key, $wf_id) = ($m->comp("/lib/util/parseUri.mc"))[3,4];
+my $disp = $dispmap->{$class_key} or redirect("/");
+my $context = "Workflow | Profile | $disp | Select Alias";
+</%init>
