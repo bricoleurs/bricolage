@@ -12,7 +12,7 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =pod
 
@@ -38,13 +38,15 @@ For installation and configuration instructions see L<Bric::Admin>.
 
 =head1 LIMITATIONS
 
-Only GET, PUT and DELETE are implemented for templates.
+Only GET, PUT and DELETE are implemented for templates.  No
+modification of categories is supported.
 
-The server won't work right if multiple output-channels are defined.
+The FTP interface won't work right if multiple output-channels are
+defined.
 
 The system doesn't deal with the possibility of having more than one
-active template for a given filename.  This probably won't be fixed -
-rather, Bricolage will soon prevent this situation.
+active template for a given filename.  This probably won't be fixed
+here - rather, Bricolage will soon prevent this situation.
 
 =head1 INTERFACE
 
