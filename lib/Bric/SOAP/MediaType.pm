@@ -26,15 +26,15 @@ Bric::SOAP::MediaType - SOAP interface to Bricolage media types
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-16 19:00:41 $
+$Date: 2004-02-23 11:48:42 $
 
 =head1 SYNOPSIS
 
@@ -296,7 +296,7 @@ sub is_allowed_param {
 
 =over 4
 
-=item $pkg->_load_asset($args)
+=item $pkg->load_asset($args)
 
 This method provides the meat of both create() and update().  The only
 difference between the two methods is that update_ids will be empty on
@@ -374,9 +374,9 @@ sub load_asset {
 }
 
 
-=item $pkg->_serialize_asset( writer        => $writer,
-                              mediatype_id  => $id,
-                              args          => $args)
+=item $pkg->serialize_asset( writer        => $writer,
+                             mediatype_id  => $id,
+                             args          => $args)
 
 Serializes a single mediatype object into a <mediatype> mediatype using
 the given writer and args.

@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-20 10:11:41 $
+$Date: 2004-02-23 11:48:42 $
 
 =head1 SYNOPSIS
 
@@ -689,7 +689,7 @@ sub is_allowed_param {
 
 =over 4
 
-=item $pkg->_load_stories($args)
+=item $pkg->load_asset($args)
 
 This method provides the meat of both create() and update().  The only
 difference between the two methods is that update_ids will be empty on
@@ -1074,7 +1074,7 @@ sub load_asset {
                        ]);
 }
 
-=item @related = $pkg->_serialize_story(writer => $writer, story_id => $story_id, args => $args)
+=item @related = $pkg->serialize_asset(writer => $writer, story_id => $story_id, args => $args)
 
 Serializes a single story into a <story> element using the given
 writer and args.  Returns a list of two-element arrays - [ "media",

@@ -402,7 +402,7 @@ sub is_allowed_param {
     throw_mni error => __PACKAGE__ . " subclasses must override the 'is_allowed_param' method";
 }
 
-=item load_asset
+=item $pkg->load_asset($args)
 
 This method provides the meat of both create() and update(). It inputs XML.
 The only difference between the two methods is that update_ids will be empty
@@ -414,9 +414,9 @@ sub load_asset {
     throw_mni error => __PACKAGE__ . " subclasses must override the 'load_asset' method";
 }
 
-=item $pkg->_serialize_asset( writer    => $writer,
-                              asset_id  => $id,
-                              args      => $args)
+=item $pkg->serialize_asset( writer    => $writer,
+                             asset_id  => $id,
+                             args      => $args)
 
 Serializes a single asset into an XML element using
 the given writer and args.

@@ -42,15 +42,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-22 03:21:16 $
+$Date: 2004-02-23 11:48:42 $
 
 =head1 SYNOPSIS
 
@@ -535,7 +535,7 @@ sub is_allowed_param {
 
 =over 4
 
-=item $pkg->_load_template($args)
+=item $pkg->load_asset($args)
 
 This method provides the meat of both create() and update().  The only
 difference between the two methods is that update_ids will be empty on
@@ -790,7 +790,7 @@ sub load_asset {
     return name(ids => [ map { name(template_id => $_) } @template_ids ]);
 }
 
-=item $pkg->_serialize_template(writer => $writer, template_id => $template_id, args => $args)
+=item $pkg->serialize_asset(writer => $writer, template_id => $template_id, args => $args)
 
 Serializes a single template object into a <template> element using
 the given writer and args.
