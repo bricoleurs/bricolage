@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.2.1 $
 
 =head1 DATE
 
-$Date: 2002-07-30 19:24:51 $
+$Date: 2002-09-21 20:09:05 $
 
 =head1 SYNOPSIS
 
@@ -29,6 +29,7 @@ $caption => '&nbsp;'
 $height  => 1
 $ghostly => 0
 $rightText => undef
+$border => 1
 </%args>
 <%init>
 
@@ -92,8 +93,10 @@ if ($number > 0 && $number < 10) {
 
 <table width=580 border=0 cellpadding=0 cellspacing=0>
 <tr>
+% if ($border) {
 <td valign="top" bgcolor="<% $borderColor %>" width=1>
 <img src="/media/images/spacer.gif" width="1" height="<% $height %>" border="0">
 </td>
+% }
 <td width=578 valign=top>
 % }

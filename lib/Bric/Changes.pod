@@ -176,6 +176,12 @@ Removed the C<checkin()> method from Bric::Biz::Asset::Formatting and
 Bric::Biz::Asset::Business and put it into Bric::Biz::Asset, instead, since
 it's exactly the same for all assets. [David]
 
+=item *
+
+Fixed the display of permissions settings to be more consistent with the
+design and layout of the rest of the application. Also neatened listManager
+display a bit. [David]
+
 =back
 
 =head1 VERSION 1.4.0
