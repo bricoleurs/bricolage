@@ -40,8 +40,7 @@ sub save : Callback {
 
         # Make sure the name isn't already taken.
         my $used = 0;
-        unless (defined $name && $name =~ /\S/) {
-            # Should $meths->{name}{req} == 1 in Bric::Util::MediaType ?
+        if (!defined $name || $name !~ /\S/) {
             add_msg('Name is required.');
             $used = 1;
         } elsif ($name !~ m|^\S+/\S+$|) {

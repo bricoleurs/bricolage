@@ -615,7 +615,7 @@ sub my_meths {
                               disp     => 'MIME Type',
                               search   => 1,
                               len      => 128,
-                              req      => 0,
+                              req      => 1,
                               type     => 'short',
                               props    => {   type       => 'text',
                                               length     => 32,

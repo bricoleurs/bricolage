@@ -241,6 +241,10 @@ the nav frame, which was useless. [Marshall]
 The names of media types (a.k.a. MIME types) can now be changed without
 encountering an error. Thanks to Marshall Roch for the spot! [David]
 
+=item *
+
+Media type MIME Type names are now properly required in the UI. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
