@@ -6,11 +6,11 @@ runtests.pl - Runs Bricolage's Tests
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2003-01-13 03:10:00 $
+$Date: 2003-01-13 06:34:21 $
 
 =head1 SYNOPSIS
 
@@ -34,9 +34,11 @@ $Date: 2003-01-13 03:10:00 $
 
   # Or simply execute this script.
   perl inst/runtests.pl
-  perl inst/runtests.pl t/test_file, t/test_file ...
+  perl inst/runtests.pl Bric::TestClass Bric::TestClass2 ...
+  perl inst/runtests.pl t/Bric/TestClass, t/Bric/TestClass2 ...
   perl inst/runtests.pl -V
-  perl inst/runtests.pl -V t/test_file, t/test_file ...
+  perl inst/runtests.pl -V Bric::TestClass Bric::TestClass2 ...
+  perl inst/runtests.pl -V t/Bric/TestClass, t/Bric/TestClass2 ...
   perl inst/runtests.pl -d
   perl inst/runtests.pl -dV
 
@@ -50,8 +52,8 @@ cause the script to only run the 'Test.pm' scripts.
 If the environment variable C<TEST_VERBOSE> is set, or the C<-V> option is
 passed in, then the tests will be run in verbose mode.
 
-If a list of one or more test class files are passed in, then only those tests
-will be run.
+If a list of one or more test classes and/or test class files are passed in,
+then only the tests in those files and/or classes will be run.
 
 All tests are executed in the Bricolage distribution root directory. If you're
 writing tests that need to output test files or something, please use
