@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$Revision: 1.54 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.53 $ )[-1];
+our $VERSION = (qw$Revision: 1.54 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 02:02:07 $
+$Date: 2003-10-03 01:16:10 $
 
 =head1 SYNOPSIS
 
@@ -2191,6 +2191,11 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+                [ $self->_build_file_name( $init->{file_type}, $name, $cat,
+                                           $init->{output_channel__id},
+                                           $init->{tplate_type} ) ]);
+
+
 =cut
 
 sub _build_file_name {
@@ -2210,6 +2215,7 @@ sub _build_file_name {
       or throw_dp(error => "Templates must be associated with a category");
     $name ||= $self->_get('name');
     $oc_id ||= $self->_get('output_channel__id');
+    $tplate_type ||= $self->_get('tplate_type');
 
     # Mangle the file name.
     my $file = lc $name;
