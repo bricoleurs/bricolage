@@ -31,11 +31,16 @@ if (defined $id) {
     # Output a field for the directory.
     $m->comp('/widgets/profile/displayFormElement.mc', objref => $cat,
 	     key => 'directory');
-    # It's a new category. Output a list of parent categories to choose from.
+
+    # Output a list of parent categories to choose from.
+    # Remove any that are children of the category itself.
+    my $p_id = $cat->get_parent;
+    $p_id &&= $p_id->get_id;
+
     $m->comp('/widgets/select_object/select_object.mc', object => 'category',
 	     name => 'parent_id', field => 'uri', disp => 'Parent Category',
-	     selected => ( exists $ARGS{parent_id} ? $ARGS{parent_id} : 'none'),
-	     sort_field => 'uri', reset_key => $reset, req => 1);
+	     selected => ( defined($p_id) ? $p_id : exists $ARGS{parent_id} ? $ARGS{parent_id} : 'none'),
+	     sort_field => 'uri', reset_key => $reset, req => 1, exclude => [map($_->get_id, $cat->children), defined($id) ? $id : ()]);
 }
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
@@ -69,6 +74,7 @@ unless ($no_edit || $no_del) {
 # Add the buttons.
 $m->comp('/widgets/profile/formButtons.mc', type => $type, section => $section,
 	 no_del => $no_del, no_save => $no_edit);
+
 </%perl>
 </form>
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
@@ -82,7 +88,7 @@ my $section = 'admin';
 my $type = 'category';
 my $widget = 'profile';
 my $disp = get_disp_name($type);
-my $root_id = $class->root_category_id;
+my $root_id = $class->ROOT_CATEGORY_ID;
 </%once>
 
 %#-- Args Section --#
@@ -125,11 +131,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-05-30 18:32:08 $
+$Date: 2002-07-02 22:49:18 $
 
 =head1 DESCRIPTION
 

@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-24 22:10:25 $
+$Date: 2002-07-02 22:49:17 $
 
 =head1 SYNOPSIS
 
@@ -1019,9 +1019,12 @@ sub _serialize_story {
     foreach my $c ($story->get_contributors) {
 	my $p = $c->get_person;
 	$writer->startTag("contributor");
-	$writer->dataElement(fname  => $p->get_fname);
-	$writer->dataElement(mname  => $p->get_mname);
-	$writer->dataElement(lname  => $p->get_lname);
+	$writer->dataElement(fname  => 
+                             defined $p->get_fname ? $p->get_fname : "");
+	$writer->dataElement(mname  => 
+                             defined $p->get_mname ? $p->get_mname : "");
+	$writer->dataElement(lname  => 
+                             defined $p->get_lname ? $p->get_lname : "");
 	$writer->dataElement(type   => $c->get_grp->get_name);
 	$writer->dataElement(role   => $story->get_contributor_role($c));
 	$writer->endTag("contributor");

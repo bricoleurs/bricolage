@@ -212,7 +212,7 @@ my $sel_sub = sub {
 # This coderef will be used for category delete checkboxes.
 my $cat_sel_sub = sub {
     # Don't create a checkbox for the root category.
-    &$sel_sub if $_[0]->get_id != Bric::Biz::Category->root_category_id;
+    &$sel_sub if $_[0]->get_id != Bric::Biz::Category::ROOT_CATEGORY_ID;
 };
 
 # We'll use this coderef to make sure the user can at least READ the object.
@@ -366,11 +366,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2002-06-29 09:08:16 $
+$Date: 2002-07-02 22:49:18 $
 
 =head1 SYNOPSIS
 

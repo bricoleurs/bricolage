@@ -2,7 +2,7 @@
 my $type = 'category';
 my $disp_name = get_disp_name($type);
 my $pl_name = get_class_info($type)->get_plural_name;
-my $root_id = Bric::Biz::Category->root_category_id;
+my $root_id = Bric::Biz::Category::ROOT_CATEGORY_ID;
 </%once>
 <%args>
 $widget
@@ -46,34 +46,43 @@ if ($field eq "$widget|save_cb") {
 	$cat->set_ad_string($param->{ad_string});
 	$cat->set_ad_string2($param->{ad_string2});
 
-	# Get the parent, if necessary.
-	my $par = exists $param->{parent_id} && $param->{parent_id} ne 'none'
-	  ? $class->lookup({ id => $param->{parent_id} }) : undef;
+        # if this is not ROOT, we have work to do
+        if (((defined $id and $id != $root_id) or not defined $id)
+            and defined $param->{parent_id}) {
 
-	# Set the directory.
-	unless (! exists $param->{directory} || (defined $id && $id == $root_id) ) {
-	    # First, check to make sure that this directory isn't already used.
-	    if (my @cats = $class->list({ directory => $param->{directory} })) {
-		# There are categories that use the same directory. Let's check
-		# their paths.
-		my $uri = Bric::Util::Trans::FS->cat_uri($par->get_uri,
-							$param->{directory});
-		foreach my $c (@cats) {
-		    if ($c->get_uri eq $uri) {
-			add_msg("URI &quot;$uri&quot; is already in use. Please"
-				. " try a different directory name or Parent.");
-			return $cat;
-		    }
-		}
-		$cat->set_directory($param->{directory});
-	    } else {
-		$cat->set_directory($param->{directory});
-	    }
+            # get and set the parent
+            my $par = $class->lookup({id => $param->{parent_id}});
+            $par->add_child([$cat]);
+            
+            # make sure the directory name does not
+            # already exist as a child of the parent
+            if (exists $param->{directory}) { 
+                my $p_id = $par->get_id;
+                
+                if (
+                    defined($id) and $id == $p_id
+                    or grep $_->get_id == $p_id, $cat->children
+                   ) {
+                    add_msg("Parent cannot choose itself or its child as"
+                            . " its parent.  Try a different parent.");
+                    return $cat;
+                }
+                
+                if (@{ $class->list({
+                                     directory => $param->{directory},
+                                     parent_id => $p_id,
+                }) }) {
+                    my $uri = Bric::Util::Trans::FS->cat_uri(
+                      $par->get_uri, $param->{directory}
+                    );
+                    add_msg("URI &quot;$uri&quot; is already in use. Please"
+                            . " try a different directory name or Parent.");
+                    return $cat;
+                }
+                
+                $cat->set_directory($param->{directory});
+            }
 	}
-
-	# Save changes.
-	$cat->save;
-
 	# Add new keywords.
 	my $new;
 	foreach (@{ mk_aref($param->{keyword}) }) {
@@ -93,35 +102,15 @@ if ($field eq "$widget|save_cb") {
 	}
 	$cat->del_keyword($old) if $old;
 
-	# Establish the parent directory.
-	if ( defined $param->{parent_id} && (!defined $id || $id != $root_id) ) {
-	    # We have a parent ID.
-	    if (my $p = $cat->parent) {
-		# There's an existing parent.
-		if ($p->get_id != $param->{parent_id}) {
-		    # It's a new parent. Delete the old and add the new.
-		    if ($param->{parent_id} eq 'none') {
-			$p->del_child([$cat]);
-			$p->save;
-		    } else {
-			$p = $class->lookup({ id => $param->{parent_id} });
-			$p->add_child([$cat]);
-			$p->save;
-		    }
-		}
-	    } elsif ($param->{parent_id} ne 'none') {
-		# There is no existing parent. Add the new.
-		$par->add_child([$cat]);
-		$par->save;
-	    } else {
-		# Nothin'.
-	    }
-	}
+	# Save changes.
+	$cat->save;
+
 	log_event($type . (defined $param->{category_id} ? '_save' : '_new'),
 		  $cat);
 	add_msg("$disp_name profile $name saved.");
     }
     # Redirect back to the manager.
+
     set_redirect('/admin/manager/category');
     return $cat;
 } else {
@@ -137,11 +126,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:23 $
+$Date: 2002-07-02 22:49:18 $
 
 =head1 SYNOPSIS
 

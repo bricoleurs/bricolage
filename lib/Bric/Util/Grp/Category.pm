@@ -7,15 +7,15 @@ package Bric::Util::Grp::Category;
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:22 $
+$Date: 2002-07-02 22:49:18 $
 
 =head1 SYNOPSIS
 
@@ -295,7 +295,7 @@ sub get_secret { 1 }
 
 ################################################################################
 
-=item $parent = $cat->parent();
+=item $parent = $cat->get_parent();
 
 Get/set the parent of this category.
 
@@ -446,14 +446,15 @@ sub _select_by_name {
     my (@ret, @d);
     my $sql;
 
-    $sql = 'SELECT c.id, c.directory, c.asset_grp_id, c.category_grp_id '.
+    $sql = 'SELECT c.id, c.directory, c.asset_grp_id, c.category_grp_id, ' .
+                  'c.active, c.uri, c.parent_id '.
            'FROM   grp g, category c '.
            'WHERE  LOWER(g.name) LIKE ? AND g.id = c.category_grp_id '.
                    'AND c.active = ?';
 
     my $sth = prepare_c($sql);
     execute($sth, lc($name), $active);
-    bind_columns($sth, \@d[0..3]);
+    bind_columns($sth, \@d[0..6]);
     while (fetch($sth)) {
         push @ret, [@d];
     }

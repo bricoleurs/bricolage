@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:22 $
+$Date: 2002-07-02 22:49:17 $
 
 =head1 SYNOPSIS
 
@@ -34,9 +34,9 @@ $Date: 2002-06-11 22:21:22 $
  # Return a list of assets asscociated with this category.
  @assets = $cat->assets();
  # Return a list of child categories of this category.
- @cats   = $cat->children();
+ @cats   = $cat->get_children();
  # Return the parent of this category.
- $parent = $cat->parent();
+ $parent = $cat->get_parent();
 
  # Attribute methods.
  $val = $element->set_attr($name, $value);
@@ -91,7 +91,7 @@ use Bric::Util::Grp::CategorySet;
 use Bric::Util::Attribute::Category;
 use Bric::Util::Trans::FS;
 
-use Bric::Util::DBI qw(:standard);
+use Bric::Util::DBI qw(:standard col_aref);
 
 #==============================================================================#
 # Inheritance                          #
@@ -111,12 +111,12 @@ use base qw(Bric);
 
 use constant TABLE  => 'category';
 use constant COLS   => qw(directory asset_grp_id category_grp_id 
-                          active);
+                          active uri parent_id);
 use constant FIELDS => qw(directory asset_grp_id category_grp_id 
-                          _active);
+                          _active uri parent_id);
 use constant ORD    => qw(name description uri directory ad_string ad_string2);
 
-use constant root_category_id => 0;
+use constant ROOT_CATEGORY_ID => 0;
 
 use constant INSTANCE_GROUP_ID => 26;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::CategorySet';
@@ -146,6 +146,8 @@ BEGIN {
                          'directory'       => Bric::FIELD_RDWR,
                          'asset_grp_id'    => Bric::FIELD_READ,
                          'category_grp_id' => Bric::FIELD_READ,
+                         'uri'             => Bric::FIELD_READ,
+                         'parent_id'       => Bric::FIELD_RDWR,
 
                          # Private Fields
                          '_category_grp_obj' => Bric::FIELD_NONE,
@@ -155,6 +157,7 @@ BEGIN {
                          '_attr'             => Bric::FIELD_NONE,
                          '_meta'             => Bric::FIELD_NONE,
                          '_save_children'    => Bric::FIELD_NONE,
+                         '_update_uri'       => Bric::FIELD_RDWR,
                         });
 }
 
@@ -718,7 +721,7 @@ sub ancestry {
     
     unshift @objs, $cur;
 
-    while ($cur = $cur->parent()) {
+    while ($cur = $cur->get_parent) {
         unshift @objs, $cur;
     }
 
@@ -728,6 +731,24 @@ sub ancestry {
 #------------------------------------------------------------------------------#
 
 =item my $path = $cat->ancestry_path();
+
+An alias for get_uri().
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+=item my $uri = $cat->get_uri();
 
 Returns the list of ancestors for this category formatted into a URI.
 
@@ -745,9 +766,7 @@ NONE
 
 =cut
 
-sub ancestry_path {
-    Bric::Util::Trans::FS->cat_uri('', map { $_->get_directory } ancestry(@_));
-}
+sub ancestry_path { shift->get_uri }
 
 #------------------------------------------------------------------------------#
 
@@ -774,9 +793,10 @@ sub ancestry_dir {
     Bric::Util::Trans::FS->cat_dir('', map { $_->get_directory } ancestry(@_));
 }
 
-=item my $uri = $cat->get_uri();
 
-An alias for ancestry_path().
+=item C<my $dir = $cat->set_directory($dir);>
+
+Sets this category's directory.
 
 B<Throws:>
 
@@ -784,7 +804,9 @@ NONE
 
 B<Side Effects:>
 
-NONE
+Sets the I<_update_uri> flag, which means that when the category's information
+is saved to the database, the URI field needs to be updated for itself and all
+its children.
 
 B<Notes:>
 
@@ -792,7 +814,36 @@ NONE
 
 =cut
 
-*get_uri = *ancestry_path;
+sub set_directory {
+    my ($self, $dir) = @_;
+    $self->_set(['directory', '_update_uri'], [$dir, 1]);
+}
+
+
+=item C<my $dir = $cat->set_parent_id($parent_id);>
+
+Sets this category's parent ID, making it a child of that category.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+Sets the I<_update_uri> flag, which means that when the category's information
+is saved to the database, the URI field needs to be updated for itself and all
+its children.
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub set_parent_id {
+    my ($self, $pid) = @_;
+    $self->_set(['parent_id', '_update_uri'], [$pid, 1]);
+}
 
 #------------------------------------------------------------------------------#
 
@@ -1091,7 +1142,7 @@ sub assets {
 
 #------------------------------------------------------------------------------#
 
-=item @cats = $cat->children();
+=item C<my @cats = $cat->get_children;>
 
 Returns the children of this category.
 
@@ -1109,18 +1160,18 @@ NONE
 
 =cut
 
-sub children {
+sub get_children {
     my $self = shift;
-    my ($cat_obj);
-
-    $cat_obj = $self->_get('_category_grp_obj');
-
-    return $cat_obj->all_subcat;
+    my $id = $self->_get('id');
+    return unless defined $id;
+    return Bric::Biz::Category->list({parent_id => $id});
 }
+
+*children = \&get_children;
 
 #------------------------------------------------------------------------------#
 
-=item $parent = $cat->parent():
+=item C<my $parent = $cat->get_parent;>
 
 Returns the parent of this category or undef if it is a top level category.
 
@@ -1138,12 +1189,17 @@ NONE
 
 =cut
 
-sub parent {
+sub get_parent { 
     my $self = shift;
-    my $cat_obj = $self->_get('_category_grp_obj');
-
-    return $cat_obj->get_parent;
+    my $id   = $self->get_id;
+    my $pid  = $self->get_parent_id;
+    return if
+      defined $id and $id == ROOT_CATEGORY_ID or
+      not defined $pid;
+    return Bric::Biz::Category->lookup({id => $pid});
 }
+
+*parent = \&get_parent;  # alias that we will get rid of soon
 
 #------------------------------------------------------------------------------#
 
@@ -1166,11 +1222,9 @@ NONE
 =cut
 
 sub add_child {
-    my $self = shift;
-    my ($cat) = @_;
-    my $cat_obj = $self->_get('_category_grp_obj');
-    
-    $cat_obj->add_subcat($cat);
+    my ($self, $cat) = @_;
+    my $pid = $self->get_id;
+    $_->set_parent_id($pid) for @$cat;
 }
 
 #------------------------------------------------------------------------------#
@@ -1407,7 +1461,7 @@ sub activate {
     
     # Recursively activate children if the recurse flag is set.
     if ($recurse) {
-        my @cat = $self->children;
+        my @cat = $self->get_children;
         foreach (@cat) {
             $_->activate($param);
         }
@@ -1426,13 +1480,13 @@ sub deactivate {
     my $recurse = $param->{'recurse'};
 
     # Do not allow deactivation of the root category.
-    return if $self->get_id == root_category_id;
+    return if $self->get_id == ROOT_CATEGORY_ID;
 
     $self->_set(['_active'], [0]);
 
     # Recursively activate children if the recurse flag is set.
     if ($recurse) {
-        my @cat = $self->children;
+        my @cat = $self->get_children;
         foreach (@cat) {
             $_->deactivate($param);
         }
@@ -1470,7 +1524,7 @@ sub save {
     my $id = $self->get_id;
     my ($a_obj, $cat_obj, $kw_obj);
 
-    if (!$self->get_directory && $id != root_category_id) {
+    if (!$self->get_directory && $id != ROOT_CATEGORY_ID) {
         # Set a default directory name.
         my $dir = $self->get_name;
         $dir =~ y/[a-z]//cd if $dir;
@@ -1619,13 +1673,33 @@ sub _select_category {
 
 sub _update_category {
     my $self = shift;
+    my $id = $self->_get('id');
 
     my $sql = 'UPDATE '.TABLE.
               " SET ".join(',', map {"$_=?"} COLS)." WHERE id=?";
     
     my $sth = prepare_c($sql);
+
+    if ($self->_get('_update_uri') and $id != ROOT_CATEGORY_ID) {
+        my $new_uri = Bric::Util::Trans::FS->cat_uri(
+          $self->get_parent->get_uri,
+          $self->_get('directory'),
+        );
+
+        $self->_set(['uri'], [$new_uri]);
+    }
+
     execute($sth, $self->_get(FIELDS), $self->get_id);
-    
+
+    if ($self->_get('_update_uri')) {
+        $self->_set(['_update_uri'], [0]);
+        my $parent_uri = $self->_get('uri');
+        for my $subcat ($self->get_children) {
+            $subcat->set_directory($subcat->_get('directory'));
+            $subcat->_update_category;
+        }
+    }
+
     return 1;
 }
 
@@ -1638,6 +1712,12 @@ sub _insert_category {
               "VALUES ($nextval,".join(',', ('?') x COLS).')';
 
     my $sth = prepare_c($sql);
+
+    $self->_set(['uri'], [Bric::Util::Trans::FS->cat_uri(
+      $self->get_parent->get_uri,
+      $self->_get('directory'),
+    )]);
+
     execute($sth, $self->_get(FIELDS));
   
     # Set the ID of this object.
