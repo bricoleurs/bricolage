@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.23 $
+$Revision: 1.13.2.24 $
 
 =head1 DATE
 
-$Date: 2001-11-16 22:47:45 $
+$Date: 2001-11-21 18:45:22 $
 
 =head1 DESCRIPTION
 
@@ -333,10 +333,6 @@ Add pagination to listManager (maybe).
 =item *
 
 Add file system-like asset browsing (especially for templates and media).
-
-=item *
-
-Create localization libraries for all text.
 
 =item *
 
