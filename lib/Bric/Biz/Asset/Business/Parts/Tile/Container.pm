@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:11 $
+$Date: 2003-03-19 01:58:34 $
 
 =head1 SYNOPSIS
 
@@ -59,6 +59,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::AssetType;
 use Bric::App::Util;
+use Carp ();
 
 #==============================================================================#
 # Inheritance                          #
@@ -824,6 +825,7 @@ sub get_data {
                   "use with element method 'get_data'.  Please use the ".
                   "element's 'key_name' field instead";
         Bric::App::Util::add_msg($msg);
+        Carp::cluck($msg);
     }
 
     $obj_order = 1 unless defined $obj_order;
