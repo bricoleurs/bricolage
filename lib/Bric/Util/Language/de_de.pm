@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 22:33:37 $
+$Date: 2004-03-01 21:33:29 $
 
 =head1 SYNOPSIS
 
@@ -159,7 +159,7 @@ use constant key => 'de_de';
   'Contributors' => 'Mitarbeiter',
   'Cookie' => 'Cookie',
   'Copy' => 'Kopieren',
-  'Cover Date' => 'Datum des Deckblattes',
+  'Cover Date' => 'Titeldatum',
   'Current Groups' => 'Aktuelle Gruppen',
   'Current Note' => 'Aktuelle Notiz',
   'Current Version' => 'Aktuelle Version',
@@ -474,7 +474,7 @@ use constant key => 'de_de';
   'Contributor profile "[_1]" saved.' => 'Mitarbeiterprofil "[_1]" gespeichert.',
   'Contributors disassociated.' => 'Mitarbeiter disassoziiert.',
   'Copy Resources' => 'Ressourcen kopieren',
-  'Cover Date incomplete.' => 'Deckblattdatum unvollständig.',
+  'Cover Date incomplete.' => 'Titeldatum fehlerhaft.',
   'Delete this Category and All its Subcategories' => 'Diese Kategorie und alle Subkategorien löschen',
   'Deployed Version' => 'Ausgebrachte Version',
   'Desk profile "[_1]" deleted from all workflows.' => 'B&uuml;roprofil "[_1]" aus allen Workflows gelöscht.',
@@ -642,7 +642,7 @@ use constant key => 'de_de';
   'Templates' => 'Vorlagen',
   'Templates Found' => 'Gefundene Vorlagen',
   'Text to search' => 'Suchbegriff',
-  'The URI "[_1]" is not unique. Please change the cover date, output channels, category, or file name as necessary to make the URIs unique.' => 'Der URI "[_1]"  ist nicht eindeutig. Bitte ändern Sie das Deckblattdatum, Ausgabekanal, Kategorie oder Dateinamen wie benötigt um den URI eindeutig zu machen.',
+  'The URI "[_1]" is not unique. Please change the cover date, output channels, category, or file name as necessary to make the URIs unique.' => 'Der URI "[_1]"  ist nicht eindeutig. Bitte ändern Sie Titeldatum, Ausgabekanal, Kategorie oder Dateinamen wie benötigt um den URI eindeutig zu machen.',
   'The URL you requested, <b>[_1]</b>, was not found on this server' => 'Der von Ihnen angeforderte URL, <b>[_1]</b>, konnte auf diesem Server nicht gefunden werden',
   'The name "[_1]" is already used by another Alert Type.' => 'Der Name "[_1]" wird bereits für einen anderen Benachrichtigungstyp verwendet.',
   'The name "[_1]" is already used by another Desk.' => 'Der Name "[_1]" wird bereits von einem anderen B&uuml;ro verwendet.',
@@ -654,7 +654,7 @@ use constant key => 'de_de';
   'The name "[_1]" is already used by another Source.' => 'Der Name "[_1]" wird bereits von einen anderen Quelle verwendet.',
   'The name "[_1]" is already used by another Workflow.' => 'Der Name "[_1]" wird bereits von einem anderen Workflow verwendet.',
   'The slug can only contain alphanumeric characters (A-Z, 0-9, - or _)!' => 'Der Kurzname darf nur alphanumerische Zeichen (A-Z, 0-9, - oder _) enthalten!',
-  'The slug, category and cover date you selected would have caused this story to have a URI conflicting with that of story [_1].' => 'Die von Ihnen gewählten Werte für Kurzname, Kategorie und Deckblattdatum hätten diesem Beitrag einen URI gegeben, der mit dem des Beitrags [_1] kollidiert.',
+  'The slug, category and cover date you selected would have caused this story to have a URI conflicting with that of story [_1].' => 'Die von Ihnen gewählten Werte für Kurzname, Kategorie und Titeldatum hätten diesem Beitrag einen URI gegeben, der mit dem des Beitrags [_1] kollidiert.',
   'This day does not exist! Your day is changed to the' => 'Dieser Tag existiert nicht! Tag wurde geändert auf',
   'This story has not been assigned to a category.' => 'Dieser Beitrag wurde noch keiner Kategorie zugeordnet.',
   'To' => 'Zu',
@@ -708,8 +708,6 @@ translation, which I'll gradually try to remove. I'd be very grateful for
 any error pointers.
 
 To Translate:
-
-  'First Published' => 'First Published',
 
 
 =end comment
