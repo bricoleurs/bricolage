@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:43 $
+$Date: 2001-12-07 22:35:37 $
 
 =head1 SYNOPSIS
 
@@ -50,6 +50,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    DSN_STRING
 		    DBI_USER
 		    DBI_PASS
+		    DBI_DEBUG
 		    MASON_COMP_ROOT
 		    MASON_DATA_ROOT
 		    MASON_ARGS_METHOD
@@ -144,7 +145,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 			       DBD_TYPE
 			       DSN_STRING
 			       DBI_USER
-			       DBI_PASS)],
+			       DBI_PASS
+			       DBI_DEBUG)],
 		    mason => [qw(MASON_COMP_ROOT
 				 MASON_DATA_ROOT
 				 MASON_ARGS_METHOD)],
@@ -349,6 +351,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant DSN_STRING              => 'dbname=' . DB_NAME;
     use constant DBI_USER                => $config->{DBI_USER} || 'castellan';
     use constant DBI_PASS                => $config->{DBI_PASS} || 'nalletsac';
+    use constant DBI_DEBUG               => $config->{DBI_DEBUG} || 0;
+
 
     # Mason settings.
     use constant MASON_COMP_ROOT         => $config->{MASON_COMP_ROOT}
@@ -381,7 +385,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
          . 'fdIf^ N;:';
 
     # QA Mode settings.
-    use constant QA_MODE                 => 0;
+    use constant QA_MODE                 => $config->{QA_MODE} || 0;
 
     # Character translation settings.
     use constant CHAR_SET                => $config->{CHAR_SET} || 'ISO-8859-1';

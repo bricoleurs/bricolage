@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:46 $
+$Date: 2001-12-07 22:35:37 $
 
 =head1 SYNOPSIS
 
@@ -86,7 +86,7 @@ use DBI qw(looks_like_number);
 # Constants
 ################################################################################
 use constant TRACE => 0;
-use constant DEBUG => TRACE || 0;
+use constant DEBUG => TRACE || DBI_DEBUG || 0;
 # You can set DBI_TRACE from 0 (Disabled) through 9 (super verbose).
 use constant DBI_TRACE => 0;
 
