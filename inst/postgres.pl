@@ -6,11 +6,11 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-10-15 23:58:34 $
+$Date: 2003-10-16 19:36:57 $
 
 =head1 DESCRIPTION
 
@@ -46,7 +46,7 @@ $PG{root_pass} = '';
 $PG{sys_user}  = 'bric';
 $PG{sys_pass}  = 'NONE';
 $PG{db_name}   = 'bric';
-$PG{host_name} = 'localhost';
+$PG{host_name} = '';
 $PG{host_port} = '';
 
 our $REQ;
@@ -110,7 +110,7 @@ sub get_psql {
 sub get_users {
     print "\n";
     ask_confirm("Postgres Root Username", \$PG{root_user});
-    ask_confirm("Postgres Root Password (leave empty for no password)", 
+    ask_confirm("Postgres Root Password (leave empty for no password)",
 		\$PG{root_pass});
 
     while(1) {
@@ -138,7 +138,9 @@ sub get_users {
 # ask for host specifics
 sub get_host {
     print "\n";
-    ask_confirm("Postgres Database Server Hostname", \$PG{host_name});
-    ask_confirm("Postgres Database Server Port Number", \$PG{host_port});
+    ask_confirm("Postgres Database Server Hostname (default is 'localhost')",
+                \$PG{host_name});
+    ask_confirm("Postgres Database Server Port Number (default is '5432')",
+                \$PG{host_port});
 }
 
