@@ -40,6 +40,12 @@ the spot! [David]
 Renamed events for adding fields to elements and contributor types. They were
 mentioning "attributes," and now they mention "fields," instead. [David]
 
+=item *
+
+Updated Bric::Admin (F<INSTALL> to instruct users encountering installation
+problems to first check the list archives and post to the mailing list before
+filing a bug. [Cinly Ooi]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

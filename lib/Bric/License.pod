@@ -149,6 +149,8 @@ Folks who have submitted patches include:
 
 =item Clive Jones
 
+=item Cinly Ooi
+
 =back
 
 Friends who have spotted bugs include:
