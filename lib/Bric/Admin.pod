@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.11 $
+$Revision: 1.5.2.12 $
 
 =head1 DATE
 
-$Date: 2001-10-31 01:20:19 $
+$Date: 2001-11-29 00:18:37 $
 
 =head1 DESCRIPTION
 
@@ -36,9 +36,9 @@ Perl Modules:
 
 =item Time::HiRes 01.20
 
-=item Syslog 0.95
+=item Unix::Syslog 0.95
 
-=item libnet 1.0703
+=item Bundle::libnet 1.0703
 
 =item Devel::Symdump 2.01
 
@@ -54,13 +54,13 @@ Perl Modules:
 
 =item HTML::Tagset 3.03
 
-=item HTML::Parser3.23
+=item HTML::Parser 3.23
 
 =item MIME::Base64 2.12
 
 =item XML::Writer 0.4
 
-=item libwww-perl 5.50
+=item LWP 5.50
 
 =item Image::Info 1.07
 
@@ -76,7 +76,7 @@ Perl Modules:
 
 =item Apache::Session 1.53
 
-=item libapreq 0.31_03
+=item Apache::libapreq 0.31_03
 
 =back
 
