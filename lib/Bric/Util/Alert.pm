@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2002-11-05 18:57:59 $
 
 =head1 SYNOPSIS
 
@@ -273,11 +273,11 @@ sub new {
     # backslash), and replace it with the proper value. See &$replace() below to
     # see how it's done.
     ($init->{message} = $at->get_message) =~
-      s/(?<!\\)\$(\w+)/&$replace($1, $attr, $obj, $user)/ge;
+      s/[^\\]?\$(\w+)/$replace->($1, $attr, $obj, $user)/ge;
     ($init->{subject} = $at->get_subject) =~
-      s/(?<!\\)\$(\w+)/&$replace($1, $attr, $obj, $user)/ge;
+      s/[^\\]?\$(\w+)/$replace->($1, $attr, $obj, $user)/ge;
 
-    # Make sure any legal instances of "\$" are chanaged to '$'. and make sure
+    # Make sure any legal instances of "\$" are chanaged to '$' and make sure
     # the fields aren't too long.
     $init->{message} =~ s/\\\$/\$/g;
     $init->{subject} =~ s/\\\$/\$/g;
