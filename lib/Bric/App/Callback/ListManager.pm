@@ -95,7 +95,7 @@ sub sortBy : Callback {
 sub set_offset : Callback {
     my $self = shift;
     set_state_data($self->class_key, 'pagination', 1);
-    set_state_data($self->class_key, 'offset', $_[0]->value);
+    set_state_data($self->class_key, 'offset', $self->value);
 }
 
 # call back to display all results
