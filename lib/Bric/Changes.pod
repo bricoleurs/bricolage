@@ -99,6 +99,11 @@ necessity for including the "related_story_id" and "related_media_id" (or
 "related_story_uri" and "related_media_uri") attributes in the "elements" XML
 element, but it does the trick. [David]
 
+=item *
+
+The list of elements to select from when creating a new template is now in
+alphabetical order. [David]
+
 =back
 
 =head2 Bug Fixes
