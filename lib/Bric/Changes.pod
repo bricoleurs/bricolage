@@ -126,6 +126,11 @@ an error. Thanks to Kevin Elliott for the spot! [David]
 Searches no longer return unexpected results or all objects when pagination is
 enabled. Thanks to Kevin Elliott for the spot! [David]
 
+=item *
+
+The searches for documents by beginning and ending cover dates were not
+inclusive of the end date. Now they are! Reported by Kevin Elliott. [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

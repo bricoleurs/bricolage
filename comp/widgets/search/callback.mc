@@ -165,6 +165,10 @@ my $build_date_fields = sub {
 	my $v_start = $param->{$widget."|${f}_start"};
 	my $v_end   = $param->{$widget."|${f}_end"};
 
+        # HACK. Adjust the end date to be inclusive by bumping it up
+        # to 23:59:59.
+        $v_end =~ s/00:00:00$/23:59:59/ if $v_end;
+
 	# Save the value so we can repopulate the form.
 	set_state_data($widget, $f.'_start', $v_start);
 	set_state_data($widget, $f.'_end', $v_end);
