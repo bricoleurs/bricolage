@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2004-03-25 05:08:18 $
+$Date: 2004-03-25 05:48:02 $
 
 =head1 DESCRIPTION
 
@@ -226,17 +226,19 @@ MB, or 10% of 2 GB RAM).
 
 First you may need to set your kernel to allow for the shared memory
 allocation. On a Linux system, shared memory is controlled through settings in
-the F</proc> filesystem. So, for our example, where we've decided to give
+F</etc/sysctl.conf>. So, for our example, where we've decided to give
 PostgreSQL up to 192 MB of shared memory, here's how you would make the kernel
-setting (note that the kernel setting is in bytes, so our setting is
-C<192 * 1024 * 1024 = 201326592>):
+setting (note that the kernel setting is in bytes, so our setting is C<192 *
+1024 * 1024 = 201326592>):
 
-  $ echo 201326592 >/proc/sys/kernel/shmall
-  $ echo 201326592 >/proc/sys/kernel/shmmax
+  kernel.shmmax = 201326592
+  kernel.shmall = 201326592
 
-Consult your OS's L<sysctl> man page for details on getting and setting shared
-memory settings. Now you can update your F<postgresql.conf> file's shared
-memory buffers setting to take advantage of this shared memory:
+These settings can then be enabled by running C</sbin/sysctl -p>. See
+L<http://www.postgresql.org/docs/current/interactive/kernel-resources.html>
+for more information on shared buffers and changing your operating system's
+shared buffer settings. Now you can update your F<postgresql.conf> file's
+shared memory buffers setting to take advantage of this shared memory:
 
   shared_buffers = 24576
 
@@ -271,7 +273,7 @@ shared_buffers>, lowering this number can also help you to find a middle
 ground between a healthy value for C<shared_buffers> and needing to
 reconfigure the kernel's SHMMAX (See L</"Shared Buffers">).
 
-  max_connections = 8
+  max_connections = 50
 
 =head2 Effective Cache Size
 
