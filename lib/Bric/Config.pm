@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.6.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-27 15:41:46 $
+$Date: 2001-10-04 13:37:38 $
 
 =head1 SYNOPSIS
 
@@ -215,7 +215,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 #======================================#
 {
     # We'll store the settings loaded from the configuration file here.
-    my $config = {};
+    my $config;
 
     BEGIN {
 	# Load the configuration file, if it exists.
@@ -245,6 +245,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 	    my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
+
     }
 
     # Apache Settings.
@@ -396,6 +397,12 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
     use constant DEFAULT_FILE_EXT => => $config->{DEFAULT_FILE_EXT} || 'html';
+
+    # Okay, now load the end-user's code, if any.
+    if ($config->{PERL_LOADER}) {
+	package Bric::Util::Burner;
+	eval "$config->{PERL_LOADER}";
+    }
 }
 
 #==============================================================================#
@@ -487,7 +494,10 @@ L<perl>, L<DBC>
 =head1 REVISION HISTORY
 
 $Log: Config.pm,v $
-Revision 1.6  2001-09-27 15:41:46  wheeler
+Revision 1.6.2.1  2001-10-04 13:37:38  wheeler
+Added PERL_LOADER and fixed bug where *no* directives were getting loaded!
+
+Revision 1.6  2001/09/27 15:41:46  wheeler
 Added filename and file_ext columns to OutputChannel API. Also added a
 configuration directive to CE::Config to specify the default filename and
 extension for the system. Will need to document later that these can be set, or
