@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.34.2.2 $
+$Revision: 1.34.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-05-25 02:47:34 $
+$Date: 2003-06-11 01:22:59 $
 
 =head1 SYNOPSIS
 
@@ -1491,7 +1491,7 @@ NONE
 
 B<Notes:>
 
-The parts returned here may not have their parent IDs or order set if this 
+The parts returned here may not have their parent IDs or order set if this
 object has not been saved yet.
 
 =cut
@@ -1550,9 +1550,8 @@ NONE
 sub add_data {
     my $self = shift;
     my ($parts_arg) = @_;
-    my $parts = $self->_get_parts();
-    my ($new_parts, $del_parts) = $self->_get('_new_parts',
-				             '_del_parts');
+    my $parts = $self->_get_parts;
+    my ($new_parts, $del_parts) = $self->_get(qw(_new_parts _del_parts));
 
     foreach my $p (@$parts_arg) {
 	unless (ref $p) {
@@ -1561,14 +1560,14 @@ sub add_data {
 	}
 
 	# Get the ID if we were passed an object.
-	my $p_id = $p->get_id();
-	
+	my $p_id = $p->get_id;
+
 	# Skip adding this part if it already exists.
 	next if exists $parts->{$p_id};
 
 	# Add this to the parts list.
-	$parts->{$p_id} = $p;
-	
+	$new_parts->{$p_id} = $p;
+
 	# Remove this value from the deletion list if its there.
 	delete $del_parts->{$p_id};
     }
@@ -1615,10 +1614,10 @@ sub new_data {
     # Add all new values to a special array of new parts until they can be
     # saved and given an ID.
     push @{$new_parts->{-1}}, $part;
-    
+
     # Update $self's new and deleted parts lists.
     $self->_set(['_new_parts'], [$new_parts]);
-    
+
     # Set the dirty bit since something has changed.
     $self->_set__dirty(1);
 
@@ -1629,8 +1628,8 @@ sub new_data {
 
 =item $element = $element->copy_data($param)
 
-Copy the definition for a data field from another asset type. 
-Keys for $param are:
+Copy the definition for a data field from another asset type. Keys for $param
+are:
 
 =over 4
 
@@ -1674,25 +1673,25 @@ sub copy_data {
     my ($new_parts) = $self->_get('_new_parts');
     my $f_obj = $param->{'field_obj'};
     my ($at, $f) = @$param{'at','field_name'};
-   
+
     unless ($f_obj) {
 	unless ($at) {
 	    my $msg = 'Insufficient argurments';
 	    die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
 	}
-	
+
 	$f_obj = $at->get_data($f);
     }
-    
+
     my $part = $f_obj->copy($at->get_id);
 
     # Add all new values to a special array of new parts until they can be
     # saved and given an ID.
     push @{$new_parts->{-1}}, $part;
-    
+
     # Update $self's new and deleted parts lists.
     $self->_set(['_new_parts'], [$new_parts]);
-    
+
     # Set the dirty bit since something has changed.
     $self->_set__dirty(1);
 
@@ -1703,8 +1702,7 @@ sub copy_data {
 
 =item $element = $element->del_data( [ $field || $container ])
 
-This will take a list of parts and will disassociate them from the 
-story type
+This will take a list of parts and will disassociate them from the story type.
 
 B<Throws:>
 NONE
@@ -1740,7 +1738,7 @@ sub del_data {
 	    $del_parts->{$p_id} = $p;
 	}
 
-	# Remove this value from the addition list if its there.
+	# Remove this value from the addition list if it's there.
 	delete $new_parts->{$p_id};
     }
 
@@ -2396,15 +2394,15 @@ sub _get_asset_type_grp {
 sub _sync_parts {
     my $self = shift;
     my $parts = $self->_get_parts();
-    my ($new_parts, $del_parts) = $self->_get('_new_parts',
-					      '_del_parts');
+    my ($id, $new_parts, $del_parts) =
+      $self->_get(qw(id _new_parts _del_parts));
 
-    # Pull of the newly created parts.
+    # Pull off the newly created parts.
     my $created = delete $new_parts->{-1};
 
     # Now that we know we have an ID for $self, set element ID for
     foreach my $p_obj (@$created) {
-	$p_obj->set_element__id($self->get_id);
+	$p_obj->set_element__id($id);
 
 	# Save the parts object.
 	$p_obj->save;
@@ -2515,9 +2513,9 @@ sub _insert_asset_type {
 
 =item $self = $self->_get_parts
 
-Call the list function of Bric::Biz::AssetType::Parts::Container to return a list
-of conainer parts of this AssetType object, or return the existing parts if
-weve already loaded them.
+Call the list function of Bric::Biz::AssetType::Parts::Container to return a
+list of conainer parts of this AssetType object, or return the existing parts
+if weve already loaded them.
 
 B<Throws:>
 
@@ -2535,25 +2533,20 @@ NONE
 
 sub _get_parts {
     my $self = shift;
-
-    my $parts = $self->_get('_parts') || {};
+    my ($id, $parts) = $self->_get(qw(id _parts));
 
     # Do not attempt to get the AssetType parts if we don't yet have an ID.
-    return unless $self->get_id;
+    return unless $id;
 
-    # Do not load parts via 'list' if we've already done it.
-    return $parts if substr(%$parts, 0, index(%$parts, '/'));
+    unless ($parts) {
+        $parts = Bric::Biz::AssetType::Parts::Data->href
+          ({ element__id => $self->get_id,
+             order_by    => 'place',
+             active      => 1 });
+        $self->_set(['_parts'], [$parts]);
+    }
 
-    my $cont = Bric::Biz::AssetType::Parts::Data->list(
-				          { element__id => $self->get_id,
-					    order_by    => 'place',
-					    active      => 1 }
-							);
-    my $p_table = {map { $_->get_id => $_ } (@$cont)};
-
-    $self->_set(['_parts'], [$p_table]);
-
-    return $p_table;
+    return $parts;
 }
 
 ##############################################################################
