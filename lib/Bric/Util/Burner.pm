@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.60 $
+$Revision: 1.61 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.60 $ )[-1];
+our $VERSION = (qw$Revision: 1.61 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-03 06:54:40 $
+$Date: 2003-12-06 00:45:37 $
 
 =head1 SYNOPSIS
 
@@ -128,6 +128,7 @@ use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST);
 use Bric::Biz::AssetType qw(:all);
 use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
+use Bric::App::Session qw(:user);
 use Bric::Biz::Site;
 use File::Basename qw(fileparse);
 use URI;
@@ -1057,6 +1058,51 @@ sub publish {
 
     $self->_set(['mode'], [undef]);
     return $published;
+}
+
+=item $b->publish_another($ba);
+
+  $burner->publish_another($ba);
+  $burner->publish_another($ba, $publish_time);
+  $burner->publish_another($ba, $publish_time, $anytime);
+
+Designed to be called from within a template, this method publishes a document
+other than the one currently being published. This is useful when a template
+for one document type needs to trigger the publish of another document. Look
+up that document via the Bricolage API and then pass it to this method to have
+it published at the same time as the story currently being published. If the
+mode isn't PUBLISH_MODE, the publish will not actually be executed. Pass in a
+DateTime string to specify a different date and time to publish the
+document. Pass in a true value as the third argument to trigger the publish in
+any mode, including PREVIEW_MODE (not recommended).
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub publish_another {
+    my ($self, $ba, $pub_time, $anytime) = @_;
+    # Just return if we're in publish mode or the user wants to trigger
+    # the publish in preview mode, too (totally whacked).
+    return unless $anytime || $self->_get('mode') == PUBLISH_MODE;
+
+    # Figure out what we're publishing. (Why can't it figure that out for
+    # itself??
+    my $key = ref $ba eq 'Bric::Biz::Asset::Business::Story'
+      ? 'story'
+      : 'media';
+
+    # Figure out the publish time. Default to the same time as the story
+    # that's currently being burned.
+    $pub_time ||= $self->get_story->get_publish_date(ISO_8601_FORMAT);
+
+    # Construct a new burner object and publish the document.
+    my $b2 = __PACKAGE__->new;
+    $b2->publish($ba, $key, get_user_id, $pub_time);
 }
 
 #------------------------------------------------------------------------------#

@@ -28,6 +28,13 @@ increase their permissions. Nor can they manage the membership of groups of
 which they are not members or do not have EDIT access to the members. All this
 is to preven users from giving themselves higher permissions. [David]
 
+=item *
+
+Added C<publish_another()> method to Bric::Util::Burner. This method publishes
+a document other than the one currently being published. This is useful when a
+template for one document type needs to trigger the publish of another
+document. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -59,6 +66,12 @@ Elements can be edited again. Thanks to Alexander Ling for the spot! [David]
 
 Eliminated the need for the Apache::ConfigFile module, and thus some annoying
 problems with the CPAN indexer when trying to install it. [David]
+
+=item *
+
+The members of the "All" groups are prevented from being changed in the
+callbacks now, as well as in the interface, where JS had been preventing it.
+[David]
 
 =back
 
