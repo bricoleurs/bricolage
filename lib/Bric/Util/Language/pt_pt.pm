@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.9.2.3 $
+$Revision: 1.9.2.4 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-04-25 16:33:19 $
+$Date: 2003-05-27 16:14:37 $
 
 =head1 SYNOPSIS
 
@@ -664,6 +664,7 @@ use constant key => 'pt_pt';
           'Story [_1] created and saved.'
           'Template [_1] saved and shelved.'
           'Template [_1] saved and moved to [_2].'
+          '[_1] deployed.'
  = (
       'Hi [_1]!' => 'Olá [_1]!',
       'The URL you requested, <b>[_1]</b>, was not found on this server' => 'O endereço <b>[_1]</b> não foi encontrado no servidor',
