@@ -69,6 +69,7 @@ tarballs into /usr/local/src, e.g., with the command
   % ./configure
   % make
   % make install
+  % cd ..
 
 2. Install libiconv:
 
@@ -76,6 +77,7 @@ tarballs into /usr/local/src, e.g., with the command
   % ./configure
   % make
   % make install
+  % cd ..
 
 3. Install Perl. For Perl 5.8.0, do this:
 
@@ -87,7 +89,8 @@ tarballs into /usr/local/src, e.g., with the command
   % make
   % make test # Will be a few expected and documented failures
   % make install
-  
+  % cd ..
+
 Or, for Perl 5.6.1, do this:
 
   % cd perl-5.6.1/
@@ -99,18 +102,21 @@ Or, for Perl 5.6.1, do this:
   % make
   % make test # will be a few errors -- should be okay.
   % make install
+  % cd ..
 
 4. Patch Apache:
 
   % cd apache_1.3.xx
   % patch -p0 < /usr/local/src/apache_dbm.patch
   % patch -p0 < /usr/local/src/apreq.patch
+  % cd ..
   
 5. Configure mod_ssl (Optional -- Required for SSL support):
 
   % cd mod_ssl-VERSION/
   % patch -p0 < /usr/local/src/mod_ssl_dylib.patch
   % ./configure --with-apache=/usr/local/src/apache_1.3.xx
+  % cd ..
 
 6. Install mod_perl:
 
@@ -122,6 +128,7 @@ Or, for Perl 5.6.1, do this:
     EVERYTHING=1
   % make
   % make install
+  % cd ..
 
 7. Install Apache:
 
@@ -137,6 +144,7 @@ Or, for Perl 5.6.1, do this:
   % make
   % make certificate # Optional -- to make SSL certificate. Read messages.
   % make install
+  % cd ..
 
 8. Install apreq:
 
@@ -144,6 +152,7 @@ Or, for Perl 5.6.1, do this:
   % /usr/local/bin/perl Makefile.PL
   % make
   % make intall
+  % cd ..
 
 9. Install Text::Iconv:
 
@@ -154,6 +163,7 @@ Or, for Perl 5.6.1, do this:
   % make
   % make test
   % make install
+  % cd ..
 
 10. Install XML::Parser:
 
@@ -163,6 +173,7 @@ Or, for Perl 5.6.1, do this:
   % make
   % make test
   % make install
+  % cd ..
  
 OTHER ISSUES
 
