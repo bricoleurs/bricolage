@@ -11,12 +11,12 @@ ul {
   padding: 0;
 }
 #nav {
-  border-top: solid white 2px;
-  border-bottom: solid white 2px;
+  border-top: solid white 1px;
+  border-bottom: solid white 1px;
 }
 #nav #workflows,
 #nav #admin {
-  border-top: solid white 2px;
+  border-top: solid white 1px;
 }
 #nav li a {
   display: block;
