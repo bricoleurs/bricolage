@@ -105,6 +105,10 @@ document. This should allow people to more easily and arbitrarily expire
 content whenever necessary. Thanks to John Greene for the discussion that
 finally motivated this change. [David]
 
+=item *
+
+Improved zh-cn translation. [lgjut@sohu.com]
+
 =back
 
 =head2 Bug Fixes
