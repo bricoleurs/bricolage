@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2001-12-27 21:02:35 $
+$Date: 2001-12-27 23:42:25 $
 
 =head1 DESCRIPTION
 
@@ -106,6 +106,13 @@ Resolve the "Adding Element and hitting Cancel" issue (See
 http://bricolage-bugzilla.about.com/show_bug.cgi?id=3).
 
 =item *
+
+Add chk_syntax() methods to Bric::Util::Burner subclasses. These methods will
+take a string that contains the contents of a template relevant to the
+particular subclass, and make sure that it compiles.
+Bric::Util::Burner::chk_syntax() will attempt to delegate to the proper
+subclass. Make sure that that method gets called from
+comp/widgets/tmpl_prof/callback.mc.
 
 Add Keyword Management interface to centrally manage keywords. Also add
 interface to select from existing keywords for associating with assets.
