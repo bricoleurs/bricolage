@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.5 $
+$Revision: 1.2.2.6 $
 
 =head1 DATE
 
-$Date: 2001-10-04 12:47:48 $
+$Date: 2001-10-04 15:47:49 $
 
 =head1 SYNOPSIS
 
@@ -102,10 +102,12 @@ function init() {
 }
 
 % if ($agent->{browser} ne 'Internet Explorer') {
+%     # We have to strip out non-alphanumeric chars because Netscape is lame!
+%     (my $hostname = $r->hostname) =~ s/\W/_/g;
 if (window.toolbar.visible == true) {
     // Turn off the toolbar, back button, etc.
-    var win1 = window.open("<% $uri %>", "Bricolage", 'menubar=0,location=0,'
-                             + 'toolbar=0,personalbar=0,status=1,scrollbars=1');
+    window.open("<% $uri %>", 'Bricolage_<% $hostname %>',
+                'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1');
     self.close();
 }
 % } # if
@@ -263,7 +265,11 @@ while (my $txt = next_msg) {
 <%doc>
 
 $Log: header.mc,v $
-Revision 1.2.2.5  2001-10-04 12:47:48  wheeler
+Revision 1.2.2.6  2001-10-04 15:47:49  wheeler
+Added server host name to window name for new toolbar-less window. Resolves
+http://bricolage-bugzilla.about.com/show_bug.cgi?id=15.
+
+Revision 1.2.2.5  2001/10/04 12:47:48  wheeler
 Turned off the link to the "About" page for when the sideNav is off.
 
 Revision 1.2.2.4  2001/10/04 11:10:55  wheeler
