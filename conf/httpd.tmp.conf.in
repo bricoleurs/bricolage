@@ -1,7 +1,7 @@
 ## httpd.conf -- Bricolage Apache configuration file.
 ##
-## VERSION: $Revision: 1.2 $
-## $Date: 2002-02-12 01:01:19 $
+## VERSION: $Revision: 1.3 $
+## $Date: 2002-02-20 01:36:26 $
 
 ################################################################################
 # These are the basic, general settings to get going.
@@ -52,19 +52,7 @@ Timeout              30
 </IfDefine>
 
 ################################################################################
-# Bricolage path configuration. If the Bricolage Perl libararies are in your
-# Perl's # @INC path, you don't need this section.
-################################################################################
-PerlPassEnv BRICOLAGE_ROOT
-<Perl>
-    use File::Spec::Functions qw(catdir);
-    BEGIN {
-      $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
-      unshift(@INC, catdir($ENV{BRICOLAGE_ROOT}, 'lib'));
-    };
-</Perl>
-
-################################################################################
 # This is where Bricolage actuall gets configured.
 ################################################################################
+PerlPassEnv BRICOLAGE_ROOT
 PerlModule Bric::App::ApacheConfig
