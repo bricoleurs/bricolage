@@ -267,8 +267,8 @@ $do_element = sub {
     $obj->add_site($self->value) if $cb_key eq 'add_site_id';
 
     # delete any selected sub elements
-    if ($param->{"$key|delete_cb"}) {   # note: not a callback
-        $obj->del_containers(mk_aref($param->{"$key|delete_cb"}));
+    if ($param->{"$key|delete_sub"}) {   # note: not a callback
+        $obj->del_containers(mk_aref($param->{"$key|delete_sub"}));
     }
 
     # If it is a new element and top level we must add a site

@@ -164,7 +164,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
 	     addition       => undef,
 	     fields         => [qw(name type_name description)],
 	     profile        => undef,
-	     select         => $no_del ? undef : ['Delete', 'element|delete_cb'],
+	     select         => $no_del ? undef : ['Delete', 'element|delete_sub'],
 	     number         => ++$num,
 	    );
 
@@ -300,11 +300,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:48 $
+$Date: 2003-07-28 11:00:51 $
 
 =head1 DESCRIPTION
 
