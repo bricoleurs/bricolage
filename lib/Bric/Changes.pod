@@ -142,6 +142,10 @@ result, so does "Find Stories" in the UI. [David]
 
 The de-de localization library has been fixed so that it now works. [David]
 
+=item *
+
+Filter by site context now works. [Joao Pedro]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
