@@ -425,12 +425,12 @@ sub sync_elements {
 # create and updates templates from source to targets
 sub sync_templates {
     our (%templates, @targ, $delete_existing, $no_deploy);
-    my @ids;
 
     # do a simple create if delete_existing since there can't be any
     # objects left to update.   
     if ($delete_existing) {
 	foreach my $soap (@targ) {
+	    my @ids;
 	    my $doc = '<?xml version="1.0" encoding="UTF-8"?>' . 
 		"\n". '<assets>' .  join('', values %templates) . '</assets>';
 	    print STDERR "Asset document for Template update:\n$doc\n"
@@ -450,6 +450,8 @@ sub sync_templates {
 		print "Aborting...\n";
 		exit 1;
 	    }
+
+	    call_deploy($soap, @ids) unless $no_deploy;
 	}
 	    
     } else {
@@ -457,6 +459,7 @@ sub sync_templates {
 	foreach my $soap (@targ) {
 	    my $doc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<assets>";
 	    my @update_ids;
+	    my @ids;
 	    
 	    # loop through templates finding update targets and
 	    # fixing-up $this
@@ -501,13 +504,7 @@ sub sync_templates {
 		exit 1;
 	    }
 
-	}
-    }
-
-    # deploy created templates
-    unless ($no_deploy) {
-	foreach my $soap (@targ) {
-	    call_deploy($soap, @ids);
+	    call_deploy($soap, @ids) unless $no_deploy;
 	}
     }
 }
@@ -811,9 +808,8 @@ sub call_deploy {
 	    $soap->proxy->endpoint, "\n" if $VERBOSE;
     
     unless ($dry_run) {
-	my $response = $soap->deploy(name("${type}s" => 
-					  map { name($type, $_) } @_));
-	
+	my $response = $soap->deploy(name("deploy_ids" => 
+					  [ map { name($type, $_) } @_ ]));
 	die "Call to Bric::SOAP::$module->deploy failed : \n" .
 	    $response->faultstring
 		if $response->fault;
