@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.90 $
+$Revision: 1.91 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.90 $ )[-1];
+our $VERSION = (qw$Revision: 1.91 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-16 20:47:40 $
+$Date: 2004-03-17 03:26:29 $
 
 =head1 SYNOPSIS
 
@@ -178,13 +178,14 @@ use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP =>
     {
-     keyword            => 'media_keyword mk, keyword k',
-     output_channel_id  => 'media__output_channel moc',
-     simple             => 'media_member mm, member m, at_type at, element e, '
-                           . 'category c, workflow w,' . TABLE . ' mt ',
-     grp_id             => 'member m2, media_member mm2',
-     data_text          => 'media_data_tile md',
-     contrib_id         => 'media__contributor sic',
+     keyword              => 'media_keyword mk, keyword k',
+     output_channel_id    => 'media__output_channel moc',
+     simple               => 'media_member mm, member m, at_type at, element e, '
+                             . 'category c, workflow w,' . TABLE . ' mt ',
+     grp_id               => 'member m2, media_member mm2',
+     data_text            => 'media_data_tile md',
+     subelement_key_name  => 'media_container_tile mct',
+     contrib_id           => 'media__contributor sic',
     };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -212,9 +213,10 @@ use constant PARAM_WHERE_MAP =>
       cover_date_end        => 'mt.cover_date <= ?',
       expire_date_start     => 'mt.expire_date >= ?',
       expire_date_end       => 'mt.expire_date <= ?',
-      unexpired              => '(mt.expire_date IS NULL OR mt.expire_date > ?)',
+      unexpired             => '(mt.expire_date IS NULL OR mt.expire_date > ?)',
       desk_id               => 'mt.desk_id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
+      subelement_key_name   => 'i.id = mct.object_instance_id AND mct.key_name LIKE LOWER(?)',
       data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
@@ -582,6 +584,15 @@ Returns a list of media with a expire date on or before a given date/time.
 
 A boolean parameter. Returns a list of media without an expire date, or with
 an expire date set in the future.
+
+=item subelement_key_name
+
+The key name for a container element that's a subelement of a media document.
+
+=item data_text
+
+Text stored in the fields of the media element or any of its subelements.
+Only fields that use the "short" storage type will be searched.
 
 =item Order
 

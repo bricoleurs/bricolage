@@ -41,15 +41,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-17 03:12:47 $
+$Date: 2004-03-17 03:26:30 $
 
 =head1 SYNOPSIS
 
@@ -190,6 +190,10 @@ with the same name.
 =item unexpired
 
 Set to a true value to get a list of only unexpired stories.
+
+=item subelement_key_name (M)
+
+The key name for a container element that's a subelement of a media document.
 
 =item data_text (M)
 
@@ -604,8 +608,8 @@ sub is_allowed_param {
                                          expire_date_start expire_date_end
                                          site alias_id element_key_name
                                          unexpired data_text output_channel
-                                         keyword contrib_id Order
-                                         OrderDirection Offest Limit) },
+                                         keyword contrib_id subelement_key_name
+                                         Order OrderDirection Offest Limit) },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
         create   => { map { $_ => 1 } qw(document workflow desk) },
         update   => { map { $_ => 1 } qw(document update_ids workflow desk) },

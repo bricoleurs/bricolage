@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.52 $ )[-1];
+our $VERSION = (qw$Revision: 1.53 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-17 03:12:47 $
+$Date: 2004-03-17 03:26:30 $
 
 =head1 SYNOPSIS
 
@@ -221,6 +221,10 @@ same name.
 =item unexpired
 
 Set to a true value to get a list of only unexpired stories.
+
+=item subelement_key_name (M)
+
+The key name for a container element that's a subelement of a story.
 
 =item data_text (M)
 
@@ -726,8 +730,8 @@ sub is_allowed_param {
                                          expire_date_start expire_date_end
                                          site alias_id element_key_name
                                          unexpired data_text output_channel
-                                         keyword contrib_id Order
-                                         OrderDirection Limit Offset ) },
+                                         keyword contrib_id subelement_key_name
+                                         Order OrderDirection Limit Offset) },
         export   => { map { $_ => 1 } qw(story_id story_ids
                                          export_related_media
                                          export_related_stories) },

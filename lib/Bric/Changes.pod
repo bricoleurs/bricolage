@@ -232,12 +232,20 @@ another document. [Serge Sozonoff]
 
 =item *
 
+Added the C<subelement_key_name> parameter to the C<list()> method of the
+story and media classes. This paramter allows searches on the key name for a
+container element that's a subelement of a story or media document. [David]
+
+=item *
+
 Added the following search parameters to the Bric::SOAP::Story C<list_ids()>
 method (and therefore the SOAP interface):
 
 =over 8
 
 =item element_key_name
+
+=item subelement_key_name
 
 =item unexpired
 
@@ -251,6 +259,8 @@ method (and therefore the SOAP interface):
 
 =back
 
+[David]
+
 =item *
 
 Added the following search parameters to the Bric::SOAP::Media C<list_ids()>
@@ -259,6 +269,8 @@ method (and therefore the SOAP interface):
 =over 8
 
 =item element_key_name
+
+=item subelement_key_name
 
 =item unexpired
 
@@ -279,6 +291,8 @@ method (and therefore the SOAP interface):
 =item Limit
 
 =back
+
+[David]
 
 =back
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.95 $
+$Revision: 1.96 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.95 $ )[-1];
+our $VERSION = (qw$Revision: 1.96 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-17 03:12:47 $
+$Date: 2004-03-17 03:26:29 $
 
 =head1 SYNOPSIS
 
@@ -295,6 +295,7 @@ use constant PARAM_FROM_MAP =>
        contrib_id           => 'story__contributor sic',
        element_key_name     => 'element e',
        'story.category'     => 'story__category sc2',
+       subelement_key_name  => 'story_container_tile sct',
     };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -326,6 +327,7 @@ use constant PARAM_WHERE_MAP =>
       unexpired              => '(s.expire_date IS NULL OR s.expire_date > ?)',
       desk_id                => 's.desk_id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
+      subelement_key_name    => 'i.id = sct.object_instance_id AND sct.key_name LIKE LOWER(?)',
       data_text              => 'LOWER(sd.short_val) LIKE LOWER(?) AND sd.object_instance_id = i.id',
       title                  => 'LOWER(i.name) LIKE LOWER(?)',
       description            => 'LOWER(i.description) LIKE LOWER(?)',
@@ -715,6 +717,10 @@ Returns a list of stories with a expire date on or before a given date/time.
 
 A boolean parameter. Returns a list of stories without an expire date, or with
 an expire date set in the future.
+
+=item subelement_key_name
+
+The key name for a container element that's a subelement of a story.
 
 =item data_text
 
