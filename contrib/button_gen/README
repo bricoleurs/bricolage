@@ -1,0 +1,15 @@
+
+##############################################################################
+
+                   Bricolage Localized Button Generation
+
+##############################################################################
+
+These scripts use Gimp.pm to generate localized Bricolage buttons. Use
+bric_buttons.de_de.txt as an example input file for the localization.
+
+[This needs more documentation!]
+
+Copyright (c) 2004 Florian Rossol. Distributed under the same license as
+Bricolage.
+

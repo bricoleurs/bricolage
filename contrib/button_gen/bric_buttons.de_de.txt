@@ -1,0 +1,84 @@
+name;en_us;de_de
+
+# standard
+acknowledge_all_red;Acknowledge All;
+acknowledge_checked_red;Acknowledge Checked;
+add_category_lgreen;Add Category;Kategorie hinzufügen
+add_component_lgreen;Add Component;Komponente hinzufügen
+add_element_lgreen;Add Element;Element hinzufügen
+add_elements_lgreen;Add Elements;Elemente hinzufügen
+add_more_lgreen;Add More;
+add_notes_lgreen;Add Notes;Anmerkung hinzufügen
+add_sub_element_lgreen;Add Subelement;Unterelement hinzufügen
+add_sub_elements_lgreen;Add Subelements;Unterelemente hinzufügen
+add_template_code_lgreen;Add Template Code;Schablonencode hinzufügen
+add_to_form_lgreen;Add to Form;Dem Formular hinzufügen
+add_to_list_lgreen;Add to List;Der Liste hinzufügen
+bulk_edit_lgreen;Bulk Edit;
+cancel_checked_red;Cancel Checked;
+cancel_check_out_lgreen;Cancel Check Out;
+cancel_lgreen;Cancel;Abbrechen
+cancel_red;Cancel;Abbrechen
+change_red;Change;Ändern
+checkin_assets_red;Check In Assets
+check_in_dgreen;Check In;
+checkout_red;Checkout;
+clear_all_red;Clear All;Alles löschen
+clear_values_lgreen;Clear Values;Werte löschen
+close_dgreen;Close;Schließen
+contributors_dgreen;Contributors;
+create_red;Create;Erstellen
+delete_categories_red;Delete Categories;Kategorien löschen
+delete_checked_red;Delete Checked;Ausgewählte löschen
+delete_red;Delete;Löschen
+deploy_checked_red;Deplay Checked
+edit_lgreen;Edit;Editieren
+edit_notes_lgreen;Edit Notes;Anmerkung editieren
+edit_template_code_lgreen;Edit Template Code;Schablonencode editieren
+help_dgreen;Help;Hilfe
+keywords_dgreen;Keywords;Schlagwörter
+login_black;Log In;Einloggen
+logout_black;Log Out;Ausloggen
+media_dgreen;MEDIA;
+move_assets_lgreen;Move Asset
+my_alerts_orange;My Alters;Meine Alarme
+new_desk_red;New Desk;Neuer Schreibtisch
+new_organization_lgreen;New Organization;Neue Organisation
+next_dgreen;Next;Weiter
+permissions_dgreen;Permissions;Zugriffsrechte
+preview_lgreen;Preview;Vorschau
+publish_assets_red;Publish Assets
+publish_checked_red;Publish Checked;Ausgewählte veröffentlichen
+recount_lgreen;Recount;Zählen
+related_stories_dgreen;Related Story;
+remove_from_list_red;Remove from List;Von der Liste entfernen
+reorder_lgreen;Reorder;
+resize_lgreen;Resize;Größe ändern
+return_dgreen;Return;Zurück
+revert_dgreen;Revert;
+save_and_stay_lgreen;Save and Stay;Speichern und bleiben
+save_lgreen;Save;Speichern
+save_red;Save;Speichern
+search_dgreen;Search;Suchen
+search_lgreen;Search;Suchen
+search_red;Search;Suchen
+select_all_lgreen;Select All;Alles auswählen
+stories_dgreen;STORIES;
+templates_dgreen;TEMPLATES;
+upload_red;Upload;Heraufladen;
+use_this_role_lgreen;Use This Role;
+view_dgreen;View;
+view_notes_dgreen;View Notes;
+view_trail_dgreen;View Trail;
+
+# arrow left
+remove_from_list_red;Remove from List;Aus der Liste entfernen
+
+# arrow right
+add_to_list_lgreen;Add to List;Zur Liste hinzufügen
+
+# round
+d_lgreen;D;L
+d_red;D;L
+p_lgreen;P;V
+p_red;P;V
