@@ -14,7 +14,19 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.2.1
+=head1 VERSION 1.3.0
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Bricolage SOAP interface partially implemented.  Bric::SOAP::Story and
+Bric::SOAP::Media are fully implemented and tested.  The command-line
+client - bric_soap - is complete. [Sam]
+
+=back
 
 =head2 Bug Fixes
 
@@ -22,33 +34,31 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Turned off the PREVIW_MASON configuration directive in bricolage.conf. It should
-be off by default. [David]
+Fixed numerous cases where user_ids were being used as booleans.
+Since user_id 0 is the Adminstrator's user_id this can cause problems. [Sam]
 
 =item *
 
-Deleted Output Channels now properly don't show up in the Output Channel manager
-again. Thanks to Sara for the spot! [David]
+Fixed problem where deleting an asset would fail with the "cannot
+check-in non checked-out version" error. [Sam]
 
 =item *
 
-All previews now preview assets in the primary Output Channel only. Previously,
-the previews were in the Output Channel whose name came first alphabetically.
-Thanks to Sara Wood for catching this bug. [David]
+Fixed bug in HTML::Template burner when an element name had more than
+one space in it. [Sam]
 
 =item *
 
-Fixed bug where templates often couldn't be found by the Mason burner if the
-output channel had a post_path. [David]
+Fixed bug in database that prevented element names over 32 characters
+from working properly. [Sam]
 
 =item *
 
-Fixed bug where templates often couldn't be found by the
-HTML::Template burner if the output channel had a post_path. [Sam]
+All fixes in the soon-to-be-released 1.2.1 version.  See below for details.
 
 =back
 
-=head1 VERSION 1.2.1
+=head1 VERSION 1.2.1 (unreleased)
 
 =head2 New Features
 
@@ -101,6 +111,11 @@ Fixed some problems with the sideNav menus under Netscape. [David]
 =item *
 
 Fixed broken "Preview" button in Read-only story profile. [Matt Vella]
+
+=item *
+
+Fixed bug where templates often couldn't be found by the
+HTML::Template burner if the output channel had a post_path. [Sam]
 
 =back
 
