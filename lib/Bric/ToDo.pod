@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:53 $
+$Date: 2001-10-11 20:17:14 $
 
 =head1 DESCRIPTION
 
@@ -41,10 +41,6 @@ Add name of Output Channel to list of Templates in Find Templates interface
 =item *
 
 Add a "Save and Stay" button to the Element Profile. [David]
-
-=item *
-
-Add script for cleaning out /tmp that users can run from a cron job [Sam].
 
 =item *
 
