@@ -56,6 +56,10 @@ Story, Media, or Template really does again cause Bricolage to correctly
 return only those assets that are not in workflow. It wasn't as fixed in 1.6.3
 as I had thought. Reported by Kevin Elliott. [David]
 
+=item *
+
+Vastly improved the speed of the query that lists events. [Mark]
+
 =back
 
 =head1 VERSION 1.6.4 (2003-08-12)
