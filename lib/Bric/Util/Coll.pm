@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-14 23:54:01 $
+$Date: 2002-09-20 00:29:52 $
 
 =head1 SYNOPSIS
 
@@ -517,7 +517,10 @@ sub del_objs {
     $self->_populate;
     my ($objs, $del_objs) = $self->_get('objs', 'del_obj');
     if (@_) {
-        push @$del_objs, delete @{$objs}{map { ref $_ ? $_->get_id : $_ } @_};
+        foreach my $o (@_) {
+            my $id = ref $o ? $o->get_id : $o;
+            push @$del_objs, delete $objs->{$id} if $objs->{$id};
+        }
     } else {
         push @$del_objs, values %$objs;
         %$objs = ();
