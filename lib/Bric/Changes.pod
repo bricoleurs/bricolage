@@ -38,6 +38,12 @@ Calls to publish documents via SOAP will no longer fail if the
 C<published_version> attribute is not specified and the document to be
 published has never been published before. [David]
 
+=item *
+
+The Bricolage virtual FTP server will no longer fail to start if Template
+Toolkit is installed but its version number is less than 2.14. Reported by
+Adam Rinehart. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
