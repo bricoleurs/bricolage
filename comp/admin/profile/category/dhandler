@@ -35,7 +35,7 @@ if (defined $id) {
     $m->comp('/widgets/select_object/select_object.mc', object => 'category',
 	     name => 'parent_id', field => 'uri', disp => 'Parent Category',
 	     selected => ( exists $ARGS{parent_id} ? $ARGS{parent_id} : 'none'),
-	     sort_field => 'uri', reset_key => $reset);
+	     sort_field => 'uri', reset_key => $reset, req => 1);
 }
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
@@ -125,11 +125,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:38 $
+$Date: 2002-05-30 18:32:08 $
 
 =head1 DESCRIPTION
 
