@@ -53,7 +53,11 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('URI') %>:&nbsp;</span></td>
 % if ($media->get_file_name) {
-  <td width="470">&nbsp;<a href="/workflow/profile/preview/media/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $media->get_uri %></a></td>
+  <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
+                                    type  => 'media',
+                                    title => $media->get_primary_uri,
+                                    doc   => $media,
+                                    style => 'blackUnderlinedLink') %></td>
 % } else {
   <td width="470">&nbsp;</td>
 % }

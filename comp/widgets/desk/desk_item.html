@@ -207,17 +207,21 @@ if ($class eq 'formatting') {
     if ($class eq 'media') {
 	$cat = $cats->{$obj->get_category__id} ||= $obj->get_category_object;
 	$cat = $cat->get_name if $cat;
-        $name = qq{<a href="/workflow/profile/preview/$class/$id?checkout=$co"}
-          .  qq{class="$c" target="preview_} . SERVER_WINDOW_NAME
-          . qq{">$name</a>}
+        $name = $m->comp('/widgets/profile/preview_link.mc',
+                         type  => $class,
+                         style => $c,
+                         doc   => $obj,
+                         title => $name )
           if $obj->get_file_name;
     } else {
 	$cat = $obj->get_primary_category;
 	$cat = $cat->get_name if $cat;
 	$cat ||= '&nbsp;';
-        $name = qq{<a href="/workflow/profile/preview/$class/$id?checkout=$co"}
-          .  qq{class="$c" target="preview_} . SERVER_WINDOW_NAME
-          . qq{">$name</a>}
+        $name = $m->comp('/widgets/profile/preview_link.mc',
+                         type  => $class,
+                         style => $c,
+                         doc   => $obj,
+                         title => $name );
     }
     $header_class = 'aliasHeader' if $obj->get_alias_id;
 }
@@ -235,11 +239,11 @@ my $rowspan = 5;
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:56 $
+$Date: 2003-09-11 22:17:52 $
 
 =head1 DESCRIPTION
 

@@ -62,7 +62,11 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
 % if (my $uri = $media->get_primary_uri) {
 %     if (@ocs == 1) {
-  <td width="470">&nbsp;<a href="/workflow/profile/preview/media/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $uri %></a></td>
+  <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
+                                    type  => 'media',
+                                    title => $media->get_primary_uri,
+                                    doc   => $media,
+                                    style => 'blackUnderlinedLink') %></td>
   </tr>
 % } else {
   <td width="470">&nbsp;<% $uri %></td>

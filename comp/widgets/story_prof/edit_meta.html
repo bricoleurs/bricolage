@@ -61,8 +61,11 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
 % if (@ocs == 1) {
-  <td width="470">&nbsp;<a href="/workflow/profile/preview/story/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $story->get_primary_uri %></a></td>
-  </tr>
+  <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
+                                    type  => 'story',
+                                    title => $story->get_primary_uri,
+                                    doc   => $story,
+                                    style => 'blackUnderlinedLink') %></td>
 % } else {
   <td width="470">&nbsp;<% $story->get_primary_uri %></td>
   </tr>
@@ -72,9 +75,15 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Preview in') %>:&nbsp;</span></td>
-  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/story/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></td>
-  </tr>
+  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<%
+                           $m->comp('/widgets/profile/preview_link.mc',
+                                    type  => 'story',
+                                    title => $story->get_primary_uri,
+                                    doc   => $story,
+                                    oc_js => 'window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value',
+                                    style => 'blackUnderlinedLink') %></td>
 % }
+  </tr>
   <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
   </tr>

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-09-10 21:09:19 $
+$Date: 2003-09-11 22:17:52 $
 
 =head1 SYNOPSIS
 
@@ -34,15 +34,10 @@ if ($type eq 'templates') {
     $fields = [qw(title version priority desk)];
     $obj_type = $type;
     $previewer = sub {
-        my ($title, $obj) = @_;
-        my $id = $obj->get_id;
-        my $uid = $obj->get_user__id;
-        my $co = defined $uid && $uid == get_user_id;
-        return $title if $type eq 'media' && ! $obj->get_file_name;
-        return $title unless $co || $obj->get_version;
-        qq{<a href="/workflow/profile/preview/$type/$id?checkout=$co" } .
-          qq{class="blackMedUnderlinedLink" target="preview_} .
-          SERVER_WINDOW_NAME . qq{">$title</a>};
+        $m->comp('/widgets/profile/preview_link.mc',
+                 type  => $type,
+                 title => shift,
+                 doc   => shift)
     };
 }
 
