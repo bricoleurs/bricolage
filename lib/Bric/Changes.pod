@@ -204,6 +204,11 @@ Images with no dimension greather than the C<THUMBNAIL_SIZE> F<bricolage.conf>
 directive are no longer expanded to have one side at least C<THUMBNAIL_SIZE>
 pixels, but are left alone. [David]
 
+=item *
+
+Thumbnails are now displayed when searching media to related to an element.
+[David]
+
 =back
 
 =head2 Bug Fixes

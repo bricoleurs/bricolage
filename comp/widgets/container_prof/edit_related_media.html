@@ -13,9 +13,11 @@
    profile  => $related_profile,
    featured => $relate_id ? [$relate_id] : undef,
    exclude  => $excl_sub,
-   fields   => [qw(id name uri cover_date)],
+   fields   => [(USE_THUMBNAILS ? 'thumb' : ()), qw(id name uri cover_date)],
    addition => '',
    behavior  => 'expand',
+   field_values => $thumburi,
+   field_titles => {  thumb => $lang->maketext('Thumb')},
 &>
 <p></p>
 <input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0 name="<% $widget %>|related_up_cb" value="Return">
@@ -37,4 +39,15 @@ my $related_profile = sub {
     }
 };
 my $excl_sub = sub { return !chk_authz($_[0], READ, 1) };
+my $thumburi = sub {
+    my ($selfobj, $fieldname) = @_;
+    return unless $fieldname eq 'thumb';
+
+    # If we get a thumbnail URI, we have an image. Otherwise, simply return
+    # a space to fill the column properly because we aren't an image object
+    # but USE_THUMBNAILS is on.
+    my $thumb_uri = $selfobj->thumbnail_uri or return '&nbsp;';
+    return qq{ <img src="$thumb_uri" />};
+};
+
 </%once>
