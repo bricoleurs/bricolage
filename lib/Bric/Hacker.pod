@@ -88,7 +88,7 @@ from the Bricolage Subversion repository. You can browse the Subversion
 repository at L<http://svn.bricolage.cc/viewcvs/>.
 
 Information on connecting to the repository to checkout a working copy is at
-L<http://www.bricolage.cc/svn.html>.
+L<http://www.bricolage.cc/dev/subversion/>.
 
 =head1 BUG TRACKING
 
