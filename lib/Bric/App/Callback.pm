@@ -45,13 +45,12 @@ my $lang = Bric::Util::Language->get_handle(LANGUAGE);
 
 sub lang { $lang }
 
-sub field { shift->request_args->{'field'} }
+sub field { $_[0]->trigger_key }
 
-sub param { shift->request_args->{'param'} }
+sub param { $_[0]->request_args }
 
 sub param_value {
-    my $self = shift;
-    return $self->param->{$self->field};
+    return $_[0]->param->{$_[0]->field};
 }
 
 
