@@ -39,7 +39,7 @@ Sam Tregar <stregar@about-inc.com>
 =cut
 
 use strict;
-use constant DEBUG => 0;
+use constant DEBUG => 1;
 
 use constant USER     => 'admin';
 use constant PASSWORD => 'bric';
@@ -58,8 +58,15 @@ $soap->proxy('http://localhost/soap',
 	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 isa_ok($soap, 'SOAP::Lite');
 
-my $response = $soap->login(name(username => USER), 
-			    name(password => PASSWORD));
+# try a bad login attempt
+my $response = $soap->login(name(username => 'admin'), 
+			    name(password => rand()));
+ok($response->fault, 'bad login failed');
+like($response->faultstring(), qr/Invalid username or password/, "bad login message check");
+
+# try real login
+$response = $soap->login(name(username => USER), 
+			 name(password => PASSWORD));
 ok(!$response->fault, 'fault check');
 
 my $success = $response->result;
