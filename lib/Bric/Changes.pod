@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.8.1 ()
+=head1 VERSION 1.8.1 (2004-07-08)
 
 =head2 Improvements
 
@@ -52,7 +52,7 @@ The installer is now a bit smarter in how it handles loading the C<log_config>
 
 Added ID attributes to story, media, and element profiles and "fieldcontent"
 class to content field values in the "View" screens so that they can be
-used as CSS selectorts. [David]
+used as CSS selectors. [David]
 
 =item *
 
@@ -62,7 +62,7 @@ right-to-left languages or for languages that require special fonts. [David]
 =item *
 
 The "New Alias" search interface now displays thumbnails when searching for
-media documents to alias and the C<USE_THUMBNAILS> F<bricolage.conf> diretive
+media documents to alias and the C<USE_THUMBNAILS> F<bricolage.conf> directive
 is enabled. Reported by Serge Sozonoff. [David]
 
 =item *
@@ -82,9 +82,9 @@ Bricolage UI. Suggested by Neal Sofge. [David]
 
 =item *
 
-The SOAP interface for importing and exporting elements now properlly has
+The SOAP interface for importing and exporting elements now properly has
 "key_name" XML elements instead of "name" XML elements. The changes are
-backwards compatable with XML exported from Bricolage 1.8.0 servers, however.
+backwards compatible with XML exported from Bricolage 1.8.0 servers, however.
 Reported by Tony Cowderoy. [David]
 
 =item *
@@ -121,7 +121,7 @@ Keyword groups now properly display their members. [David]
 =item *
 
 Added ability to create and manage groups of objects for several different
-types of objects. Also added the ability manage group membship within the
+types of objects. Also added the ability manage group membership within the
 administrative profiles for those objects. This change makes it possible to
 give users permission to administer subsets of objects. The new groupable
 objects are:
@@ -164,7 +164,7 @@ documents to be published. [David]
 
 =item *
 
-Bulk Publish now ensures that users have at least READ access to catgories
+Bulk Publish now ensures that users have at least READ access to categories
 they wish to publish from. [Scott]
 
 =item *
@@ -182,12 +182,12 @@ problems. [David]
 =item *
 
 Changes made to user or contributor contacts without changing any other part
-of the user or contributor oject are now properly saved. [David]
+of the user or contributor object are now properly saved. [David]
 
 =item *
 
 When cloning a story, the list of output channels to select from is now
-limited to the site the current workflow is in. Thanks to Serge Sonzonoff for
+limited to the site the current workflow is in. Thanks to Serge Sozonoff for
 the spot! [David]
 
 =item *
@@ -270,7 +270,7 @@ creates a new template. The type of template depends on the name of the
 template being uploaded, and for element templates, on whether there is an
 element with the appropriate key name. The user must have CREATE permission
 to All Templates or to the start desk in the first template workflow in the
-relevent site.
+relevant site.
 
 =item *
 
