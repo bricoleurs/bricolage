@@ -70,13 +70,12 @@ MAN_FILES = $(filter-out CVS,$(shell cd ${MAN} && ls))
 MAN_TARGETS = $(addprefix ${mandir}/,${MAN_FILES})
 
 # the conf files have to be handled more gingerly
-ifeq (${HAVE_SSL},yes)
-	CONF_HTTPD = ${CONF}/httpd-ssl.conf
-else
-	CONF_HTTPD = ${CONF}/httpd.conf
-endif
+CONF_HTTPD = ${CONF}/httpd.conf
+CONF_HTTPSD = ${CONF}/httpd-ssl.conf
 CONF_HTTPD_TARGET = ${confdir}/httpd.conf
+CONF_HTTPSD_TARGET = ${confdir}/httpd-ssl.conf
 CONF_APACHE_TARGET = ${APACHE_CONF}/httpd.conf
+CONF_APACHES_TARGET = ${APACHE_CONF}/httpd-ssl.conf
 CONF_BRIC = ${CONF}/bricolage.tmp.conf
 CONF_BRIC_TARGET = ${confdir}/bricolage.conf
 CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_APACHE_TARGET} ${CONF_HTTPD_TARGET}
@@ -172,7 +171,7 @@ CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
 all:  doc
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
-		 install-man install-html chowndirs chownpg
+		 install-man install-html chowndirs chownpg chmoddirs
 installdirs:
 	@$(NORMAL_INSTALL)  # Normal commands follow.
 	@${INST}/mkinstalldirs ${prefix} ${exec_prefix} \
@@ -211,9 +210,14 @@ uninstallfiles:
 install-conf: ${CONF_TARGETS}
 ${CONF_BRIC_TARGET}: ${CONF_BRIC}
 	${install-files}
+${CONF_HTTPSD_TARGET}: ${CONF_HTTPSD}
+	${install-files}
 ${CONF_HTTPD_TARGET}: ${CONF_HTTPD}
 	${install-files}
 ifneq (${CONF_APACHE_TARGET},${CONF_HTTPD_TARGET})
+${CONF_APACHES_TARGET}:
+	ln ${CONF_HTTPSD_TARGET} $@
+	@echo $@ >>${INST}/install.log
 ${CONF_APACHE_TARGET}:
 	ln ${CONF_HTTPD_TARGET} $@
 	@echo $@ >>${INST}/install.log
