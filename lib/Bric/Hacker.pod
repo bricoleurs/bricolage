@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =head1 DATE
 
-$Date: 2002-09-27 21:12:15 $
+$Date: 2002-09-27 22:21:03 $
 
 =head1 DESCRIPTION
 
@@ -351,9 +351,10 @@ simply create it and add it.
 =item 3
 
 If the branch has not been merged into the trunk before, cd into a checkout
-from HEAD and do a simple merge:
+from HEAD, make sure it's fully up-to-date, and do a simple merge:
 
   cd bricolage-head-checkout/
+  cvs -z3 -q update
   cvs -z3 -q update -kk -j Release_1_4_0
 
 Otherwise, do a merge from the most recently-dated merge tag. In the above

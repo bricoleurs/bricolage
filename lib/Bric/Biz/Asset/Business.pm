@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-26 00:17:36 $
+$Date: 2002-09-27 22:21:03 $
 
 =head1 SYNOPSIS
 
@@ -1482,7 +1482,7 @@ sub get_primary_uri {
 =item ($tiles || @tiles) = $biz->get_tiles()
 
 Returns the tiles that are held with in the top level tile of this business
-asset
+asset. Convenience shortcut to C<< $ba->get_tile->get_tiles >>.
 
 B<Throws:>
 
@@ -1499,20 +1499,16 @@ NONE
 =cut
 
 sub get_tiles {
-        my ($self) = @_;
-
-        my $tile = $self->get_tile();
-
-        my $tiles = $tile->get_tiles();
-
-        return wantarray ? @$tiles : $tiles;
+    my $self = shift;
+    $self->get_tile->get_tiles;
 }
 
 ###############################################################################
 
 =item $ba = $ba->add_data( $atd_obj, $data )
 
-This will create a tile and add it to the container 
+This will create a tile and add it to the container. Convenience shortcut to
+C<< $ba->get_tile->add_data >>.
 
 B<Throws:>
 
@@ -1529,21 +1525,16 @@ NONE
 =cut
 
 sub add_data {
-        my ($self, $element_data, $data) = @_;
-
-        my $tile = $self->get_tile;
-
-        $tile->add_data($element_data,$data, $self);
-
-        return $self;
+    my $self = shift;
+    $self->get_tile->add_data(@_);
 }
 
 ###############################################################################
 
 =item $new_container = $ba->add_container( $atc_obj )
 
-This will create and return a new container tile that is added to the 
-current container
+This will create and return a new container tile that is added to the current
+container. Convenience shortcut to C<< $ba->get_tile->add_container >>.
 
 B<Throws:>
 
@@ -1560,20 +1551,18 @@ NONE
 =cut
 
 sub add_container {
-        my ($self, $element_container) = @_;
-
-        my $tile = $self->get_tile();
-
-        my $new_container = $tile->add_container($element_container, $self);
-
-        return $new_container;
+    my $self = shift;
+    $self->get_tile->add_container(@_);
 }
 
 ###############################################################################
 
 =item $data = $ba->get_data( $name, $obj_order )
 
-Returns the data of a given name and object order
+=item $data = $ba->get_data( $name, $obj_order, $format )
+
+Returns the data of a given name and object order. Convenience shortcut to
+C<< $ba->get_tile->get_data >>.
 
 B<Throws:>
 
@@ -1590,13 +1579,8 @@ NONE
 =cut
 
 sub get_data {
-        my ($self, $name, $obj_order) = @_;
-
-        my $tile = $self->get_tile();
-
-        my $data = $tile->get_data($name, $obj_order);
-
-        return $data;
+    my $self = shift;
+    $self->get_tile->get_data(@_);
 }
 
 ###############################################################################
@@ -1604,7 +1588,7 @@ sub get_data {
 =item $container = $ba->get_container( $name, $obj_order )
 
 Returns a container object of the given name that falls at the given object
-order position
+order position. Convenience shortcut to C<< $ba->get_tile->get_container >>.
 
 B<Throws:>
 
@@ -1621,13 +1605,8 @@ NONE
 =cut
 
 sub get_container {
-         my ($self, $name, $obj_order) = @_;
-
-        my $tile = $self->get_tile();
-
-        my $container = $tile->get_container($name, $obj_order);
-
-        return $container;
+    my $self = shift;
+    $self->get_tile->get_container(@_);
 }
 
 ###############################################################################

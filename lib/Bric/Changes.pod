@@ -157,6 +157,56 @@ can click a link to open the new window with the Bricolage UI. [David]
 
 =back
 
+=head1 VERSION 1.4.3
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Fixed inconsistencey between container element methods and their convenience
+accessors in Bric::Biz::Asset::Business. Thanks to Philip Fibiger for the
+spot. [David]
+
+=back
+
+=head1 VERSION 1.4.2
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Can once again check out multiple assets at once. Thanks to Andrew Baio for
+the spot. [David]
+
+=item *
+
+Templates once again behave themselves. There were some circumstances where
+they couldn't be checked in, generating "Cannot checkin non checked out
+versions" errors. These have been fixed. [David]
+
+=item *
+
+Some assets on My Workspace were getting "Cannot checkin non checked out
+versions" errors when they were checked in using the "Check in to" select
+list. This has been fixed. [David]
+
+=item *
+
+When templates are deployed, they now get a "Template removed from Workflow"
+event logged. [David]
+
+=item *
+
+Using the "Check in to" select list on My Workspace to check assets into the
+desk they're already on will no longer remove them from all desks
+altogether. [David]
+
+=back
+
 =head1 VERSION 1.4.1
 
 =head2 Bug Fixes

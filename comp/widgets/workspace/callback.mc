@@ -16,18 +16,19 @@ if ($field eq "$widget|checkin_cb") {
     foreach my $next (@{ mk_aref($param->{"desk|next_desk"})}) {
 	next unless $next;
 	my ($aid, $from_id, $to_id, $key) = split /-/, $next;
-	my $a = $pkgs->{$key}->lookup({ id => $aid });
+	my $a = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
 	my $curr = $desks{$from_id} ||= $dskpkg->lookup({ id => $from_id });
 	my $next = $desks{$to_id} ||= $dskpkg->lookup({ id => $to_id });
 	$curr->checkin($a);
-	$curr->transfer({ to    => $next,
-			  asset => $a });
-	$curr->save;
-	$next->save;
-
-	# Log events.
 	log_event("${key}_checkin", $a);
-	log_event("${key}_moved", $a, { Desk => $next->get_name });
+
+        if ($curr->get_id != $next->get_id) {
+            $curr->transfer({ to    => $next,
+                              asset => $a });
+            log_event("${key}_moved", $a, { Desk => $next->get_name });
+        }
+        $curr->save;
+        $next->save;
     }
 } elsif ($field eq "$widget|delete_cb") {
     my $burn = Bric::Util::Burner->new;
@@ -64,11 +65,11 @@ if ($field eq "$widget|checkin_cb") {
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-09-13 22:01:52 $
+$Date: 2002-09-27 22:21:02 $
 
 =head1 SYNOPSIS
 
