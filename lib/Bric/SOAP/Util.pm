@@ -26,15 +26,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-11 22:24:30 $
+$Date: 2002-02-13 22:57:47 $
 
 =head1 SYNOPSIS
 
@@ -161,7 +161,7 @@ sub parse_asset_document {
 		 suppressempty => '',
 		 forcearray    => [qw( contributor category
 	                               keyword element container 
-				       data story media )
+				       data story media template )
 				  ]
 		);
 }

@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -17,11 +17,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-02-13 03:50:04 $
+$Date: 2002-02-13 22:57:47 $
 
 =head1 SYNOPSIS
 
@@ -48,20 +48,20 @@ The Bricolage SOAP interface will support the following features:
 
 =item * Stories and Media
 
-Clients will be able to import new stories and media into the system.
+Clients will be able to create new stories and media into the system.
 Additionally, it will possible to update existing stories and media.
 Clients will be able to export existing stories and media in the
-format accepted for import.  Finally, clients may delete stories or
+format accepted for creation.  Finally, clients may delete stories or
 media.
 
 =item * Elements
 
-Clients will be able to import, update, delete and export element
+Clients will be able to create, update, delete and export element
 definitions.
 
 =item * Templates
 
-Clients will be able to import, update, delete and export templates.
+Clients will be able to create, update, delete and export templates.
 
 =item * Workflow
 
@@ -159,23 +159,23 @@ cookie to use with calls to the other SOAP interfaces.
 
 =item L<Bric::SOAP::Story|Bric::SOAP::Story>
 
-Provides query, export, update, import and delete for Story objects.
+Provides query, export, update, create and delete for Story objects.
 
 =item L<Bric::SOAP::Media|Bric::SOAP::Media>
 
-Provides query, export, update, import and delete for Media objects.
+Provides query, export, update, create and delete for Media objects.
 
-=item L<Bric::SOAP::Template|Bric::SOAP::Template> B<[Implementation Incomplete]>
+=item L<Bric::SOAP::Template|Bric::SOAP::Template>
 
-Provides query, export, update, import and delete for Templates.
+Provides query, export, update, create and delete for Templates.
 
 =item Bric::SOAP::Element B<[Not Yet Implemented]>
 
-Provides query, export, update, import and delete for Element definitions.
+Provides query, export, update, create and delete for Element definitions.
 
 =item Bric::SOAP::Category B<[Not Yet Implemented]>
 
-Provides query, export, update, import and delete for Category objects.
+Provides query, export, update, create and delete for Category objects.
 
 =item Bric::SOAP::Workflow B<Not Yet Implemented>
 
@@ -210,24 +210,24 @@ mapped to XML elements where the name is the name of the element and
 the value is the value contained inside the element.  For example, a
 Perl call like:
 
-   Bric::SOAP::Story->query(title => '%foo%', publish_status => 1);
+   Bric::SOAP::Story->list_ids(title => '%foo%', publish_status => 1);
 
 Is called through SOAP as:
 
   <SOAP-ENV:Body>
-    <namesp2:query 
+    <namesp2:list_ids 
      xmlns:namesp2="http://bricolage.sourceforge.net/Bric/SOAP/Story">
       <title xsi:type="xsd:string">%foo%</title>
       <publish_status xsi:type="xsd:int">1</publish_status>
-    </namesp2:query>
+    </namesp2:list_ids>
   </SOAP-ENV:Body>
 
 SOAP::Lite clients can generate this call using SOAP::Data::name() to
 name the parameters:
 
   import SOAP::Data 'name';
-  my $result = $soap->query(name(title          => '%foo%'), 
-                            name(publish_status => 1)       );
+  my $result = $soap->list_ids(name(title          => '%foo%'), 
+                               name(publish_status => 1)       );
 
 In most cases Perl doesn't distinguish between strings and numbers.
 When writing a SOAP client you should feel free to type your
@@ -238,10 +238,10 @@ language.
 
 All Bric::SOAP methods return a single named parameter.  If a method
 needs to return multiple values then a SOAP array is returned
-containing the values.  For example, Bric::SOAP::Story->query()
+containing the values.  For example, Bric::SOAP::Story->list_ids()
 returns a list of story ids in this structure:
 
-  <namesp2:queryResponse 
+  <namesp2:list_idsResponse 
    xmlns:namesp2="http://bricolage.sourceforge.net/Bric/SOAP/Story">
     <story_ids SOAP-ENC:arrayType="xsd:int[4]" xsi:type="SOAP-ENC:Array">
        <story_id xsi:type="xsd:int">1027</story_id>
@@ -249,14 +249,14 @@ returns a list of story ids in this structure:
        <story_id xsi:type="xsd:int">1029</story_id>
        <story_id xsi:type="xsd:int">1030</story_id>
     </story_ids>
-  </namesp2:queryResponse>
+  </namesp2:list_idsResponse>
 
 And an empty response returns an empty array:
 
-  <namesp1:queryResponse 
+  <namesp1:list_idsResponse 
    xmlns:namesp1="http://bricolage.sourceforge.net/Bric/SOAP/Story">
     <story_ids SOAP-ENC:arrayType="xsd:ur-type[0]" xsi:type="SOAP-ENC:Array"/>
-  </namesp1:queryResponse>
+  </namesp1:list_idsResponse>
 
 SOAP::Lite clients can access this return as an array ref:
 

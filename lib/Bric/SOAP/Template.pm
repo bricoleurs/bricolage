@@ -13,12 +13,12 @@ use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
 use IO::Scalar;
 use XML::Writer;
 use Carp qw(croak);
+use Bric::Biz::Person::User;
 
 use Bric::SOAP::Util qw(category_path_to_id 
 			xs_date_to_pg_date pg_date_to_xs_date
 			parse_asset_document
 		       );
-use Bric::SOAP::Media;
 
 use SOAP::Lite;
 import SOAP::Data 'name';
@@ -26,8 +26,12 @@ import SOAP::Data 'name';
 # needed to get envelope on method calls
 our @ISA = qw(SOAP::Server::Parameters);
 
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
+
+# this is needed by Template.pl so it can test create() and update()
+# without damaging the system.
+use constant ALLOW_DUPLICATE_TEMPLATES => 0;
 
 =head1 NAME
 
@@ -35,15 +39,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-13 03:34:06 $
+$Date: 2002-02-13 22:57:47 $
 
 =head1 SYNOPSIS
 
@@ -330,11 +334,448 @@ sub export {
 }
 }
 
+=item create
+
+The create method creates new objects using the data contained in an
+XML document of the format created by export().
+
+Returns a list of new ids created in the order of the assets in the
+document.
+
+Available options:
+
+=over 4
+
+=item document (required)
+
+The XML document containing objects to be created.  The document must
+contain at least one template object.
+
+=back 4
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(document);
+
+sub create {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->create() called : args : ", 
+      Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::create : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # make sure we have a document
+    die __PACKAGE__ . "::create : missing required document parameter.\n"
+      unless $args->{document};
+
+    # setup empty update_ids arg to indicate create state
+    $args->{update_ids} = [];
+
+    # call _load_template
+    return $pkg->_load_template($args);
+}
+}
+
+=item update
+
+The update method updates template using the data in an XML document of
+the format created by export().  A common use of update() is to
+export() a selected template object, make changes to one or more fields
+and then submit the changes with update().
+
+Returns a list of new ids created in the order of the assets in the
+document.
+
+Takes the following options:
+
+=over 4
+
+=item document (required)
+
+The XML document where the objects to be updated can be found.  The
+document must contain at least one template and may contain any number of
+related template objects.
+
+=item update_ids (required)
+
+A list of "template_id" integers for the assets to be updated.  These
+must match id attributes on template elements in the document.  If you
+include objects in the document that are not listed in update_ids then
+they will be treated as in create().  For that reason an update() with
+an empty update_ids list is equivalent to a create().
+
+=back 4
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: Due to the way Bric::Biz::Asset::Formatting->new() works it
+isn't possible to fully update file_name.  To change it you need to
+update it indirectly by changing category, element and the file_name
+extension.  This should be fixed.
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(document update_ids);
+
+sub update {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->update() called : args : ", 
+      Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::update : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # make sure we have a document
+    die __PACKAGE__ . "::update : missing required document parameter.\n"
+      unless $args->{document};
+
+    # make sure we have an update_ids array
+    die __PACKAGE__ . "::update : missing required update_ids parameter.\n"
+      unless $args->{update_ids};
+    die __PACKAGE__ . 
+	"::update : malformed update_ids parameter - must be an array.\n"
+	    unless ref $args->{update_ids} and 
+                   ref $args->{update_ids} eq 'ARRAY';
+
+    # call _load_template
+    return $pkg->_load_template($args);
+}
+}
+
+=item delete
+
+The delete() method deletes templates.  It takes the following options:
+
+=over 4
+
+=item template_id
+
+Specifies a single template_id to be deleted.
+
+=item template_ids
+
+Specifies a list of template_ids to delete.
+
+=back 4
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=back 4
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(template_id template_ids);
+
+sub delete {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->delete() called : args : ", 
+	Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # template_id is sugar for a one-element template_ids arg
+    $args->{template_ids} = [ $args->{template_id} ] 
+	if exists $args->{template_id};
+
+    # make sure template_ids is an array
+    die __PACKAGE__ . "::delete : missing required template_id(s) setting.\n"
+	unless defined $args->{template_ids};
+    die __PACKAGE__ . "::delete : malformed template_id(s) setting.\n"
+	unless ref $args->{template_ids} and 
+	       ref $args->{template_ids} eq 'ARRAY';
+
+    # delete the template
+    foreach my $template_id (@{$args->{template_ids}}) {
+	print STDERR __PACKAGE__ . 
+	    "->delete() : deleting template_id $template_id\n"
+		if DEBUG;
+      
+	# first look for a checked out version
+	my $template = Bric::Biz::Asset::Formatting->lookup(
+				{ id => $template_id, checkout => 1 });
+	unless ($template) {
+	    # settle for a non-checked-out version and check it out
+	    $template = Bric::Biz::Asset::Formatting->lookup(
+				           {id => $template_id});
+	    die __PACKAGE__ . 
+		"::delete : no template found for id \"$template_id\"\n"
+		    unless $template;
+	    die __PACKAGE__ . 
+		"::delete : access denied for template \"$template_id\".\n"
+		    unless chk_authz($template, CREATE, 1);
+	    
+	    $template->checkout({ user__id => get_user_id });
+	}
+	
+	# deletion dance sampled from widgets/workspace/callback.mc
+	my $desk = $template->get_current_desk;
+	$desk->checkin($template);
+	$desk->remove_asset($template);
+	$desk->save;
+	$template->deactivate;
+	$template->save;
+    }
+    
+    return name(result => 1);
+}
+}
+
 =back
 
 =head2 Private Class Methods
 
 =over 4
+
+=item $pkg->_load_template($args)
+
+This method provides the meat of both create() and update().  The only
+difference between the two methods is that update_ids will be empty on
+create().
+
+=cut
+
+sub _load_template {
+    my ($pkg, $args) = @_;
+    my $document     = $args->{document};
+    my $data         = $args->{data};
+    my %to_update    = map { $_ => 1 } @{$args->{update_ids}};
+
+    # parse and catch erros
+    unless ($data) {
+	eval { $data = parse_asset_document($document) };
+	die __PACKAGE__ . " : problem parsing asset document : $@\n"
+	    if $@;
+	die __PACKAGE__ . 
+	    " : problem parsing asset document : no template found!\n"
+		unless ref $data and ref $data eq 'HASH' 
+		    and exists $data->{template};
+	print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+    }
+
+    # loop over template, filling @template_ids
+    my @template_ids;
+    foreach my $tdata (@{$data->{template}}) {
+	my $id = $tdata->{id};
+
+	# are we updating?
+	my $update = exists $to_update{$id};	
+
+	# setup init data for create
+	my %init;
+
+	# get user__id from Bric::App::Session
+	$init{user__id} = get_user_id;
+	
+	# handle output_channel => output_channel__id mapping
+	($init{output_channel__id}) = Bric::Biz::OutputChannel->list_ids(
+				      { name => $tdata->{output_channel} });
+	die __PACKAGE__ . " : no output_channel found matching ".
+	    "(output_channel => \"$tdata->{output_channel}\")\n"
+		unless defined $init{output_channel__id};
+
+	# figure out file_type
+	my $file_type;
+	if ($tdata->{file_name} =~ /\.(\w+)$/) {
+	    $file_type = $1;
+	} elsif ($tdata->{file_name} =~ /autohandler$/) {
+	    $file_type = 'mc';
+	} else {
+	    die __PACKAGE__ . 
+		" : unable to determine file_type for file_name " .
+		    \"$tdata->{file_name}\".\n";
+	}
+
+	# get element and name for asset type unless this generic
+	unless ($tdata->{generic}) {
+	    my ($element) = Bric::Biz::AssetType->list(
+			  { name => $tdata->{element}[0] });
+	    die __PACKAGE__ . " : no element found matching " .
+		"(element => \"$tdata->{element}[0]\n"
+		    unless defined $element;
+	    $init{element__id} = $element->get_id;
+	    $init{name}        = $element->get_name;
+	}
+
+	# assign catgeory_id (not category__id, for some reason...)
+	$init{category_id} = category_path_to_id($tdata->{category}[0]);
+	die __PACKAGE__ . " : no category found matching " .
+	    "(category => \"$tdata->{category}\")\n"
+		unless defined $init{category_id};
+
+	# setup data
+	if ($tdata->{data}[0]) {
+	    $init{data}    = MIME::Base64::decode_base64($tdata->{data}[0]);
+	} else {
+	    $init{data}    = '';
+	}
+
+	# mix in dates 
+	for my $name qw(expire_date deploy_date) {
+	    my $date = $tdata->{$name};
+	    next unless $date; # skip missing date
+	    my $pg_date = xs_date_to_pg_date($date);
+	    die __PACKAGE__ . "::export : bad date format for $name : $date\n"
+		unless defined $pg_date;
+	    $init{$name} = $pg_date;
+	}
+	
+	# setup simple fields
+	$init{priority}    = $tdata->{priority};
+	$init{description} = $tdata->{description};
+
+	# get base template object
+	my $template;
+	unless ($update) {
+	    # create empty template
+	    $template = Bric::Biz::Asset::Formatting->new(\%init);
+	    die __PACKAGE__ .
+		"::create : failed to create empty template object.\n"
+		    unless $template;
+	    print STDERR __PACKAGE__ . 
+		"::create : created empty template object\n"
+		    if DEBUG;
+
+	    # is this is right way to check create access for template?
+	    die __PACKAGE__ . " : access denied.\n"
+		unless chk_authz($template, CREATE, 1);
+
+	    # check that there isn't already an active template with the same
+	    # output channel and file_name (which is composed of category,
+	    # file_type and element name).
+	    my $found_dup = 0;
+	    my $file_name  = $template->get_file_name;
+	    my @list = Bric::Biz::Asset::Formatting->list_ids(
+			      { output_channel__id => $init{output_channel__id},
+				file_name => $file_name      });
+	    if (@list) {
+		$found_dup = 1;
+	    } else {
+		# Arrgh.  This is the only way to search all checked out
+		# formatting assets.  According to Garth this isn't a
+		# problem...  I'd like to show him this code sometime and see
+		# if he still thinks so!
+		my @user_ids = Bric::Biz::Person::User->list_ids({});
+		foreach my $user_id (@user_ids) {
+		    @list = Bric::Biz::Asset::Formatting->list_ids(
+			   { output_channel__id => $init{output_channel__id},
+			     file_name          => $file_name,
+			     user__id           => $user_id   });
+		    if (@list) {
+			$found_dup = 1;
+			last;
+		    }
+		}
+	    }
+	    
+	    die __PACKAGE__ . "::create : found duplicate template for ".
+		"file_name \"$file_name\" and " .
+		    "output channel \"$tdata->{output_channel}\".\n"
+			if $found_dup and not ALLOW_DUPLICATE_TEMPLATES;
+
+	} else {
+	    # updating - first look for a checked out version
+	    $template = Bric::Biz::Asset::Formatting->lookup({ id => $id,
+                          				       checkout => 1
+							     });
+	    if ($template) {
+		# make sure it's ours
+		die __PACKAGE__ . "::update : template \"$id\" ".
+		    "is checked out to another user.\n"
+			unless $template->get_user__id == get_user_id;
+		die __PACKAGE__ . " : access denied.\n"
+		    unless chk_authz($template, CREATE, 1);
+	    } else {
+		# try a non-checked out version
+		$template = Bric::Biz::Asset::Formatting->lookup({id => $id});
+		die __PACKAGE__ . "::update : no template found for \"$id\"\n"
+		    unless $template;
+		die __PACKAGE__ . " : access denied.\n"
+		    unless chk_authz($template, CREATE, 1);
+
+	        # FIX: race condition here - between lookup and checkout 
+                #      someone else could checkout...
+
+		# check it out 
+		$template->checkout( { user__id => get_user_id });
+		$template->save();
+	    }
+
+	    # update %init fields
+	    $template->_set([keys(%init)],[values(%init)]);
+	}
+
+	# need a save here to get the desk stuff working
+	$template->deactivate;
+	$template->save;
+
+	# updates are in-place, no need to futz with workflows and desks
+	my $desk;
+	unless ($update) {
+	    # find a suitable workflow and desk for the template.  Might be
+	    # nice if Bric::Biz::Workflow->list took a type key...
+	    foreach my $workflow (Bric::Biz::Workflow->list()) {
+		if ($workflow->get_type == TEMPLATE_WORKFLOW) {
+		    $template->set_workflow_id($workflow->get_id());
+		    $desk = $workflow->get_start_desk;
+		    $desk->accept({'asset' => $template});
+		    last;
+		}
+	    }
+	}
+
+	# save the template and desk after activating if desired
+	$template->activate if $tdata->{active};
+	$desk->save unless $update;
+	$template->save;
+
+	# checkin and save again for good luck
+	$template->checkin();
+	$template->save();
+
+	# all done, setup the template_id
+	push(@template_ids, $template->get_id);
+    }
+
+    return name(ids => [ map { name(id => $_) } @template_ids ]);
+}
 
 =item $pkg->_serialize_template(writer => $writer, template_id => $template_id, args => $args)
 

@@ -15,6 +15,11 @@ This is a Test::More test script for the Bric::SOAP::Template module.  It
 requires a mix of templates in the running Bricolage instance to work
 properly.
 
+B<NOTE:> To run all its tests the test script needs to create some
+duplicate templates.  For this to work you'll need to set the
+ALLOW_DUPLIACATE_TEMPLATES constant to 1 in Bric::SOAP::Template,
+otherwise the create() and update() tests will fail.
+
 Bricolage requirements are:
 
 =over 4
@@ -215,37 +220,36 @@ foreach my $template_id (@$template_ids) {
  	ok($document, "recieved document for template $template_id");
  	check_doc($document, $xsd, "template $template_id");
 
-# 	# add (copy) to title and try to create copy
-# 	$document =~ s!<name>(.*?)</name>!<name>$1 (copy $copy_sym)</name>!;
-# 	$copy_sym++;
-# 	$response = $soap->create(name(document => $document)->type('base64'));
-# 	ok(!$response->fault, 'SOAP create() result is not a fault');
-# 	exit 1 if $response->fault;
-# 	my $ids = $response->result;
-# 	isa_ok($ids, 'ARRAY');
+ 	# add (copy) to title and try to create copy
+ 	$document =~ s!<description>(.*?)</description>!<description>$1 (copy $copy_sym)</description>!;
+ 	$copy_sym++;
+ 	$response = $soap->create(name(document => $document)->type('base64'));
+ 	ok(!$response->fault, 'SOAP create() result is not a fault');
+ 	exit 1 if $response->fault;
+ 	my $ids = $response->result;
+ 	isa_ok($ids, 'ARRAY');
 
 # 	# modify copy with update to add to description of first item
-# 	$document =~ s!<description>(.*?)</description>!<description>$1 (description updated $copy_sym)</description>!;
-# 	$document =~ s!<name>(.*?)</name>!<name>$1 (update)</name>!;
-# 	$document =~ s!id=".*?"!id="$ids->[0]"!;
-# 	$copy_sym++;
-# 	$response = $soap->update(name(document => $document)->type('base64'),
-# 				  name(update_ids => [ name(story_id => 
-# 							    $ids->[0]) ]));
-# 	ok(!$response->fault, 'SOAP update() result is not a fault');
-# 	exit 1 if $response->fault;
-# 	my $updated_ids = $response->result;
-# 	isa_ok($ids, 'ARRAY');
-# 	is($updated_ids->[0], $ids->[0], "update() worked in place");
+ 	$document =~ s!<description>(.*?)</description>!<description>$1 (description updated $copy_sym)</description>!;
+ 	$document =~ s!id=".*?"!id="$ids->[0]"!;
+ 	$copy_sym++;
+ 	$response = $soap->update(name(document => $document)->type('base64'),
+ 				  name(update_ids => [ name(story_id => 
+ 							    $ids->[0]) ]));
+ 	ok(!$response->fault, 'SOAP update() result is not a fault');
+ 	exit 1 if $response->fault;
+ 	my $updated_ids = $response->result;
+ 	isa_ok($ids, 'ARRAY');
+ 	is($updated_ids->[0], $ids->[0], "update() worked in place");
 
-# 	# delete copies unless debugging and NO_DELETE unset
-# 	if (DELETE_TEST_TEMPLATES) {		
-# 	    my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
-# 	    $response = $soap->delete(name(template_ids => [ map { name(template_id => $_) } keys %to_delete ]));
-# 	    ok(!$response->fault, 'SOAP delete() result is not a fault');
-# 	    exit 1 if $response->fault;
-# 	    ok($response->result, "SOAP delete() result check");
-# 	}
+ 	# delete copies unless debugging and NO_DELETE unset
+	if (DELETE_TEST_TEMPLATES) {		
+ 	    my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
+ 	    $response = $soap->delete(name(template_ids => [ map { name(template_id => $_) } keys %to_delete ]));
+ 	    ok(!$response->fault, 'SOAP delete() result is not a fault');
+ 	    exit 1 if $response->fault;
+ 	    ok($response->result, "SOAP delete() result check");
+ 	}
     }
 }
 

@@ -9,10 +9,11 @@ bric_soap - a command-line client for the Bricolage SOAP interface
 
 bric_soap module command [options] [ids or filenames or -]
 
-Modules (more to come):
+Modules:
 
   story
   media
+  template
 
 Commands:
 
@@ -104,7 +105,7 @@ L<Bric::SOAP>
 
 use Getopt::Long;
 use Pod::Usage;
-use SOAP::Lite;
+use SOAP::Lite ($ENV{DEBUG} ? (trace => [qw(debug)]) : ());
 import SOAP::Data 'name';
 use HTTP::Cookies;
 
@@ -148,7 +149,8 @@ pod2usage("Missing required module and command parameters.")
 $module = ucfirst lc $module;
 pod2usage("Unknown module \"$module\".")
     unless $module eq 'Story' or 
-    $module eq 'Media';
+    $module eq 'Media' or
+    $module eq 'Template';
 
 # get command
 $command = shift @ARGV;
@@ -164,7 +166,8 @@ pod2usage("Unknown command \"$command\".")
 
 # setup soap object to login with
 my $soap = new SOAP::Lite
-    uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth';
+    uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
+    readable => $ENV{DEBUG} || 0;
 $soap->proxy($server . '/soap',
 	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 
