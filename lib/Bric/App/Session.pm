@@ -7,15 +7,15 @@ Bric::App::Session - A class to handle user sessions
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-06 07:43:55 $
+$Date: 2003-02-02 18:49:11 $
 
 =head1 SYNOPSIS
 
@@ -218,7 +218,8 @@ sub setup_user_session {
 
     # Try to tie the session variable to a session file.
     eval { tie %HTML::Mason::Commands::session,
-             'Apache::Session::File', ($cookie ? $cookie->value : undef), OPTS; };
+             'Apache::Session::File', ($cookie ? $cookie->value ne 'Expired'
+                                       ? $cookie->value : undef : undef), OPTS; };
 
     # Test to see if the tie succeeded.
     if ($@) {

@@ -147,6 +147,11 @@ to change the dates pased in to list() to database dates before querying the
 database. This lead to the wrong stories being returned for everyone not using
 UTC as their local time zone. Thanks to Bill Cappel for the spot! [David]
 
+=item *
+
+Fixed bug where expired cookie resulted in a Bric::App::Session
+error. [JoE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.5.0
