@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-05-23 20:23:18 $
 
 =head1 DESCRIPTION
 
@@ -154,9 +154,9 @@ WAL and recovering databases with WAL.
 =head1 VACUUM
 
 VACUUM is a PostgreSQL SQL command that Cleans and analyzes a Postgres
-database.  It's purpose is to reclaim storage and to collect
+database.  Its purpose is to reclaim storage and to collect
 information for the optimizer.  B<VACUUM> opens every table in the
-database, cleans out records from rolled back tables. Running B<VACUUM
+database to clean out records from rolled back tables. Running B<VACUUM
 ANALYZE> also collects statistics representing the dispersion of the
 data in each column.  The statistics maintained include the number of
 tuples and number of pages stored in all transactions.  This
@@ -168,7 +168,7 @@ We recommend that you run B<VACUUM ANALYZE> on your Bricolage database
 nightly, in order to remove expired rows and keep the database running
 efficiently.
 
-There are two ways to <VACUUM ANALYZE> a database. The first is through an interactive
+There are two ways to B<VACUUM ANALYZE> a database. The first is through an interactive
 shell such as psql. We suggest, however, that you instead schedule a nightly
 cron job to do the task, and use the C<vacuumdb> utility. Here's an example:
 

@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-05-23 20:23:17 $
 
 =head1 INTRODUCTION
 
@@ -63,7 +63,7 @@ Autohandlers run before any normal template is run, and if there is more than
 one autohandler in a directory tree, they will each run in order from the top of
 the directory tree down.
 
-For example, lets say we publish a Column story in the News/Politics category
+For example, let's say we publish a Column story in the News/Politics category,
 and there is a Root category autohandler and a News category autohandler:
 
     /News/Politics/column.mc
@@ -381,9 +381,9 @@ and we strongly urge you to exploit this strength.
 
 However, it's not efficient to load modules directly in your templates, since
 every time they're run, they'll load the template into a separate Apache process,
-and therefor use more system resources (memory). It would be better to load all of
+and therefore use more system resources (memory). It would be better to load all of
 the modules you'll need at Bricolage startup time, so that they get shared across
-processes and therefor use less memory.
+processes and therefore use less memory.
 
 With the PERL_LOADER configuration directive in bricolage.conf, you can do just
 that. The PERL_LOADER directive takes, on a single line, an arbitrary line of

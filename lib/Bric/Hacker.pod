@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:20:39 $
+$Date: 2002-05-23 20:23:18 $
 
 =head1 DESCRIPTION
 
@@ -146,7 +146,7 @@ settings, as well:
        '(("miniperl" . cperl-mode))))
 
 When editing Bricolage Mason components, C<mmm-mode> can help. It's Mason mode
-will parse Mason component files and use <sgml-mode> in HTML spaces and
+will parse Mason component files and use C<sgml-mode> in HTML spaces and
 C<cperl-mode> in Mason blocks. Grab it from
 L<http://mmm-mode.sourceforge.net/>, install it, and then add the following to
 your C<~/.emacs> file to have it automatically parse your Bricolage Mason
@@ -200,7 +200,7 @@ Here are some tips to help you find bugs faster:
 =item *
 
 Turn on QA_MODE in your bricolage.conf.  This will cause the UI to
-display a bunch of useful data the bottom of every page including
+display a bunch of useful data at the bottom of every page including
 session state, cache state, cookies and CGI args.  QA_MODE turns on
 PerlWarn (use warnings) and causes error messages to include more
 information.  QA_MODE also enables Apache::Status at the URL

@@ -4,11 +4,11 @@ Bric::Security - Bricolage Security Guide.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-05-23 20:23:18 $
 
 =head1 DESCRIPTION
 
@@ -25,9 +25,9 @@ Bricolage's authentication procedure is designed to be simple yet flexible. To
 login to Bricolage, simply hit any URL on the server. If you have not already
 logged in and cached a session, you will be prompted to login. Bricolage
 remembers your URL, so that when you successfully login, it will redirect you to
-the URL you'd originally attempted to hit. To login, simply enter your Username
-and password, and then click "Login". Note that the Username is
-case-insensitive, while the password is case-sensitive. If your enter the wrong
+the URL you'd originally attempted to hit. To login, simply enter your username
+and password, and then click "Login". Note that the username is
+case-insensitive, while the password is case-sensitive. If you enter the wrong
 username and/or password, you'll be prompted to login again. Once you have
 successfully logged in, you may begin using Bricolage.
 
@@ -67,8 +67,8 @@ potentially quite long) must serve as logins. We expect that most users would
 never user more than ten characters.
 
 The other two authentication directives, B<AUTH_TTL> and B<AUTH_SECRET>, affect
-how a user's login session is maintained. AUTH_TTL the length of time, expressed
-in seconds, that an idle user remain logged in to Bricolage. That is, if a user
+how a user's login session is maintained. AUTH_TTL is the length of time, expressed
+in seconds, that an idle user remains logged in to Bricolage. That is, if a user
 is logged in, but is idle for longer than the time allowed by AUTH_TTL, when
 next the user tries to use Bric, he/she will be forced to reauthenticate. This
 feature helps prevent unauthorized access by people using a computer when a user
@@ -102,9 +102,9 @@ data!
 
 There may be times, however, when you wish to use SSL everywhere in Bricolage.
 Perhaps someone is working on a sensitive story via the Internet, rather than on
-a LAN, and the story data needs to be encrypted, Or perhaps company policy
-dictates an emphasis on high-levels of security (such as may be the case with
-patient data in health care), and therefor preventing data from ever being sent
+a LAN, and the story data needs to be encrypted. Or perhaps company policy
+dictates an emphasis on high levels of security (such as may be the case with
+patient data in health care), and therefore preventing data from ever being sent
 in the clear over the Internet. Bricolage makes it a simple process to use SSL
 for connecting to and using Bricolage at all times.
 
@@ -144,10 +144,10 @@ of a I<group of objects>.">
 
 The advantage of this approach is that all permissions are stored in one place,
 and therefore can be quickly looked up, thus saving processor time when checking
-for authorizations. The disadvantage is that one cannot simply grant permission
-to an individual user to an individual object or group. One can, however, create
+for authorizations. The disadvantage is that one cannot simply grant an individual
+user permission to an individual object or group. One can, however, create
 a user group with one member, and an object group with one member, and then
-grant the permission to the single user group to access the single object group.
+grant the single user group permission to access the single object group.
 So the granularity can still be achieved, but without violating the elegance of
 the model.
 
@@ -155,7 +155,7 @@ the model.
 without going to the trouble of creating groups manually, in a future version we
 may wish to consider implementing such a thing, but using the same group
 interface. That is, whenever someone wanted to set an individual permission or
-two an object, the API would automatically create a group for that object and
+two for an object, the API would automatically create a group for that object and
 make it the only member. The drawback to this approach, however, is that we
 could end up with a I<lot> of groups. But it's worth thinking about if this
 functionality is really in demand.]
@@ -165,8 +165,8 @@ permission allows users to view the contents of objects, but not edit them.
 B<EDIT> permission allows users to both view and edit the contents of objects
 and to delete objects, but not create them. B<CREATE> permission allows users to
 view, edit, delete, and create objects. Note that the B<CREATE> permission can
-only be granted for objects in the "All *" series of groups, as an object are
-automatically members of its respective "All" group, but can't be added to any
+only be granted for objects in the "All *" series of groups, as an object is
+automatically a member of its respective "All" group, but can't be added to any
 other group until they've already been created. And finally B<DENY> permission
 prevents users from accessing objects at all.
 
@@ -193,7 +193,7 @@ with other permissions. So remember, while in general the most permissive
 permission wins out, the DENY permission trumps all. The lesson is: use this
 permission with care.
 
-So lets look at a few examples. Let us assume that we're working with a system
+So let's look at a few examples. Let us assume that we're working with a system
 with 3 users, 3 user groups, 2 story groups, and 3 stories. Here's how they're
 organized:
 
@@ -248,7 +248,7 @@ Birthday" story, and no other permission. Since Mcnibblet wishes to edit the
 story, and he does not have EDIT or CREATE permission, he is prevented from
 editing the story. Should he choose to view it, however, he'd be able to do so.
 
-Now let's look at "DrEvil." This fine user wishes to view th story "Black Hole
+Now let's look at "DrEvil." This fine user wishes to view the story "Black Hole
 Destroys Earth," it being that it appeals to his aesthetic tastes. Bricolage
 determines that this story is a member of the "All Stories" and "Good Stories"
 story groups, and that all three user groups have been granted permissions to
@@ -355,7 +355,7 @@ they appear only when editing the permissions of user groups. The fourth
 section, "User Group Permissions," is the only section that appears in the
 permissions management screen for I<all> group profiles. We believe that this
 section will be most useful when creating a new group, when it makes more sense
-to associated the group with user groups all at once, rather than edit the user
+to associate the group with user groups all at once, rather than edit the user
 group profiles individually to grant permissions on your new group.
 
 Once you click "Save," and return to the group profile, the new permissions

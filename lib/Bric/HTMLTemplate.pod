@@ -59,7 +59,7 @@ tweak the design by category than the code.
 Bricolage decides which burner module to use - Mason or HTML::Template
 - by looking at the burner setting for the top-level story element
 being published.  To start using HTML::Template to publish a story
-type go to Admin -> Elements, find the story element and set it's
+type go to Admin -> Elements, find the story element and set its
 burner to HTML::Template.
 
 When you're creating templates you'll also see a pull-down called
@@ -818,7 +818,7 @@ first half of the solution in story.pl:
 Basically this script does the same thing that autofill does but only
 for a single loop - page_loop.  Additionally, instead of calling
 run_script() with just the element parameter it also supplies two
-arguments - $page_count and $page_total (computed from @page_count).
+arguments - $page_count and $page_total (computed from @page_loop).
 
 =head2 SCRIPT - page.pl
 
@@ -862,7 +862,7 @@ the autofilled content without having to re-invent the wheel.
 
 =item *
 
-Elements that are broken out into discreet scripts and templates can
+Elements that are broken out into discrete scripts and templates can
 be reused between element trees.
 
 =item *
@@ -1035,7 +1035,7 @@ had to move the <head> setup with the title var into the category
 template.  This is an unfortunate fact-of-life for HTML since the
 <head> section has to precede the <body> most category templates will
 have to include it.  As a result having stories setup their own <head>
-section is hard (although not impossible - cleaver use of run_script()
+section is hard (although not impossible - clever use of run_script()
 could get you there).
 
 Aside from that the only new feature is the magic "content" variable.

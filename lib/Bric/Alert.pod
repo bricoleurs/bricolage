@@ -4,11 +4,11 @@ Bric::Alert - Bricolage Alert Management Guide.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-05-23 20:23:18 $
 
 =head1 DESCRIPTION
 
@@ -145,27 +145,27 @@ equivalent.
 
 =item <>
 
-Uses Perl's <ne> operator internally to determine if the values are not
+Uses Perl's C<ne> operator internally to determine if the values are not
 equivalent.
 
 =item >
 
-Uses Perl's <gt> operator internally to determine if the event value is greater
+Uses Perl's C<gt> operator internally to determine if the event value is greater
 than the user-entered value.
 
 =item <
 
-Uses Perl's <gt> operator internally to determine if the event value is less
+Uses Perl's C<lt> operator internally to determine if the event value is less
 than the user-entered value.
 
 =item >=
 
-Uses Perl's <gt> operator internally to determine if the event value is greater
+Uses Perl's C<ge> operator internally to determine if the event value is greater
 than or equal to the user-entered value.
 
 =item <=
 
-Uses Perl's <gt> operator internally to determine if the event value is less
+Uses Perl's C<le> operator internally to determine if the event value is less
 than or equal to the user-entered value.
 
 =item =~
@@ -310,8 +310,8 @@ is reserved for a link to associated events. Most events will have no associated
 alerts, but for those that do, an "Alerts" link will be listed. Click that link
 to see the associated alert or alerts.
 
-Doing so bring up the "Alerts" manager. This interface lists all the alerts for
-a given event, including the time the were sent, their subject, and their
+Doing so brings up the "Alerts" manager. This interface lists all the alerts for
+a given event, including the time they were sent, their subject, and their
 message. A link in the fourth column to "Recipients" brings up the Recipients
 list for a given alert. This list shows who an alert was sent to, how it was
 sent, when it was sent, and when it was acknowledged (if it has been

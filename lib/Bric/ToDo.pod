@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:22:00 $
+$Date: 2002-05-23 20:23:18 $
 
 =head1 DESCRIPTION
 
@@ -31,7 +31,7 @@ next minor version and for the next major version. After that, we list other
 outstanding to do items in descending order of importance: "High Priority Minor
 Items," "High Priority Major Items," "Low Priority Minor Items," and "Low
 Priority Major Items." Developers who wish to volunteer to take on one or more
-of these tasks should contact announce their plans and version goal on the
+of these tasks should announce their plans and version goal on the
 Bricolage Developers list <bricolage-devel@lists.sourceforge.net>. Contributions
 are welcome.
 
@@ -68,7 +68,7 @@ that the person doesn't already exist. That is, when adding a new user, it could
 be that the person being added is already in the system as a contributor, so the
 new user object can be based on the person object underlying the contributor
 object. Similarly, when adding a new contributor, the person being added could
-having an existing person record as an existing contributor or user.
+have an existing person record as an existing contributor or user.
 
 =item *
 
@@ -196,7 +196,7 @@ there is better control over how the fields are created.
 
 =item *
 
-Simplify associating media with stories. Users should be able to associated
+Simplify associating media with stories. Users should be able to associate
 media with stories just as they do contributors and keywords. However, the new
 media objects they upload should be put into the repository as normal media
 assets. New uploads of the same media file increment the version numbers.

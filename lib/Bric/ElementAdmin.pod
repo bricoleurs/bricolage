@@ -4,11 +4,11 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-05-23 20:23:18 $
 
 =head1 DESCRIPTION
 
@@ -443,7 +443,7 @@ representation and that presented above is that some of the hierarchy is
 flattened out. We don't need to represent the hierarchy of Element relationships
 here because all we want is a list of all the Elements. So we list them instead
 by their Bricolage object types. Element Types come first, and Elements of each
-type are subsumed under their type. Field are in turn indented under the
+type are subsumed under their type. Fields are in turn indented under the
 Elements of which they are parts. We'll use this list in conjunction with the
 above list to actually create the Elements and Element Types in Bricolage.
 
@@ -651,7 +651,7 @@ This is the sole item we'll need to change from the the setting in the default
 "Stories" Element Type. Because our specification calls for an image to be
 associated with a story, we need to enable this option. Note that if you later
 find that you wish to associate more than one media object with a story, you'll
-need to add subelement to your Story element that can be associated with media.
+need to add subelements to your Story element that can be associated with media.
 This is because there can be only one media object associated with any one
 element. But since we only need one here for now, it should be fine to allow it
 to be associated with the story Elements themselves.
@@ -841,7 +841,7 @@ merely alter it to suit our needs here. It's even already a "Stories" Element
 Type Element (imagine that!). Click "Edit" for the "Story" Element to get into
 its profile.
 
-You'll not that this Element profile is different from the "Page" profile in
+You'll note that this Element profile is different from the "Page" profile in
 that it has an "Output Channels" section. This is because all Elements whose
 Element Types are marked as "Story" or "Media" Element Types are used to define
 Story and Media assets, and such assets need to be specifically identified with
@@ -1004,7 +1004,7 @@ for the remaining column fields:
 
   Name          Type     Subelements
   ------------  -------  -----------------------------
-  Column Two    Columns  Current Stories
+  Column Two    Columns  Current Stories, Top Story
   Column Three  Columns  Recent Stories, Advertisement
 
 =head1 CONCLUSION
@@ -1017,9 +1017,9 @@ stories.
 But the main point I hope to have highlighted here is how important it is to
 carefully analyze what you need for your site and content, and then figure out
 what Element Types, Elements, and fields you need before you ever create them.
-You might even find it useful to sketch out what you expect your site content to
-look like on your site and then using that sketch to decompose it into its basic
-parts.
+You might even find it useful to sketch out what you expect your site content
+to look like on your site and then use that sketch to decompose it into its
+basic parts.
 
 Good luck!
 

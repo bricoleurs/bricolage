@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:20:39 $
+$Date: 2002-05-23 20:23:17 $
 
 =head1 DESCRIPTION
 
@@ -317,7 +317,7 @@ compiled into Apache.
 
 Installation of mod_perl follows the usual conventions for installing Perl
 modules. It does require a number of Makefile.PL parameters, however. The most
-important parameter is <APACHE_SRC>, which points to the Apache sources. You will
+important parameter is APACHE_SRC, which points to the Apache sources. You will
 need to have already downloaded, gunzipped, and untarred the Apache sources
 before compiling mod_perl. Here's the routine:
 
@@ -674,7 +674,7 @@ will run. Note that the -u argument must represent a PostgreSQL user with CREATE
 DATABASE and CREATE USER permissions. The 'bric_user' user will be created
 without these permissions (the 'dbname' database will be owned by the user
 passed in via the -u argument), but will be granted full CREATE, DELETE, UPDATE,
-and SELECT permissions an all objects in the Bricolage database.
+and SELECT permissions on all objects in the Bricolage database.
 
 See L<Bric::DBA/> for more information on database security. You may want to
 alter the default security policy. Also, bric_import uses a TCP/IP connection so
@@ -826,7 +826,7 @@ not start if C<SSL_ENABLE> is on and C<LISTEN_PORT> is set to a value other than
 
 B<SSL_ENABLE:> Turn on this boolean directive to enable SSL support. The Apache
 OpenSSL interface (mod_ssl) is an optional part of the Bricolage application.
-Not only does it enabled secure logons to the system, but it also allows
+Not only does it enable secure logons to the system, but it also allows
 completely secure access to the entire application, should you need it (and not
 need to worry about the performance overhead). Make sure you've followed the
 installation instructions for building a mod_ssl Apache. Disabled by default.
@@ -947,7 +947,7 @@ specified.
 =item *
 
 B<MASON_DATA_ROOT:> Mason's data root. This where Mason stores the Bricolage UI
-elements once they've been compiled Defaults to C<$BRICOLAGE_ROOT/data> if not
+elements once they've been compiled. Defaults to C<$BRICOLAGE_ROOT/data> if not
 specified. Make sure that SYS_USER has permission to write to this directory.
 
 =item *
@@ -1298,7 +1298,7 @@ directories or to a subdirectory of these directories:
 
 =head1 INSTALLATION ISSUES
 
-The following address a number of installation issues you might face.
+The following addresses a number of installation issues you might face.
 
 =head2 Building SSL Certificate
 
@@ -1313,7 +1313,7 @@ like this:
   certificate not server name or identical to CA!?]
 
 This issue can be resolved by simply making sure that you enter different values
-for the "Organization Unite Name" for the certificate authority certificate and
+for the "Organization Unit Name" for the certificate authority certificate and
 the server certificate.
 
 If you're facing this issue, here's how to manually build a new certificate:
@@ -1386,7 +1386,7 @@ for more detail.
 
 Bricolage stores all of its application files -- including the UI elements and
 Perl libraries -- in C<$BRICOLAGE_ROOT>. Bricolage will make a lot of disk
-accesses to be to MASON_DATA_ROOT, which is where all of the UI elements are
+accesses to MASON_DATA_ROOT, which is where all of the UI elements are
 compiled and stored. The Perl libraries are stored in C<$BRICOLAGE_ROOT/lib>,
 although mostly they will only be read on startup.
 
@@ -1406,7 +1406,7 @@ to it from C<$BURN_ROOT/preview> if the PREVIEW_LOCAL directive is set to true.
 This directory doesn't need backing up, as these files are used only for
 previewing purposes.
 
-the C<$BRICOLAGE_ROOT/comp/data/media> directory gets all media asset files
+The C<$BRICOLAGE_ROOT/comp/data/media> directory gets all media asset files
 written to it. This last directory is perhaps the most important, from a system
 administration perspective, because if Bricolage is used to manage large
 documents (e.g., QuickTime movies), this directory will start to use a lot of
@@ -1417,7 +1417,7 @@ back it up to prevent the loss of all of your media assets -- they aren't stored
 anywhere else!
 
 Bricolage also creates temporary files for caching user session data
-and application data.  These files are stored in sub directories of
+and application data.  These files are stored in subdirectories of
 the directory specified by the TEMP_DIR configuration variable.
 Session files are stored in C<TEMP_DIR/bricolage/session> and
 C<TEMP_DIR/bricolage/lock>. These directories should stay relatively
