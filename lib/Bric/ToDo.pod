@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.104 $
+$Revision: 1.105 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:11:01 $
+$Date: 2003-07-28 22:28:37 $
 
 =head1 DESCRIPTION
 
@@ -46,6 +46,12 @@ in mind as long term goals further down the line.
 =head2 High Priority Minor Items
 
 =over
+
+=item *
+
+Add version number attribute to "Checked In" event for stories, media, and
+templates. This will make it easier to see who created new versions in the
+event log.
 
 =item *
 
