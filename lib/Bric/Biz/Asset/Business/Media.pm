@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:49 $
+$Date: 2002-12-12 16:18:57 $
 
 =head1 SYNOPSIS
 
@@ -802,6 +802,7 @@ sub set_category__id {
 
     return $self;
 }
+sub get_primary_uri { shift->get_uri }
 
 ################################################################################
 
@@ -816,6 +817,62 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
+
+=item $self = $media->set_cover_date($cover_date)
+
+Sets the cover date and updates the URI.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to unpack date.
+
+=item *
+
+Unable to format date.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_cover_date {
+    my $self = shift;
+    $self->SUPER::set_cover_date(@_);
+
+    my ($cat, $cat_id, $fn)
+      = $self->_get(qw(_category_obj category__id file_name));
+    return $self unless defined $fn;
+
+    $cat ||= Bric::Biz::Category->lookup({ id => $cat_id });
+
+    my $oc = $self->get_primary_oc;
+    return $self unless $cat and $oc;
+
+    my $uri = Bric::Util::Trans::FS->cat_uri($self->_construct_uri($cat, $oc),
+                                             $fn);
+
+    $self->_set({ _category_obj => $cat,
+                  uri           => $uri });
+}
 
 ################################################################################
 
