@@ -6,16 +6,16 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.11.4.2 $
+$Revision: 1.11.4.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-02 19:35:51 $
+$Date: 2003-07-21 23:24:21 $
 
 =head1 SYNOPSIS
 
@@ -140,10 +140,11 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $init) = @_;
     my $self = bless {}, ref $pkg || $pkg;
-    $init->{_new_exts} = { map { $_ => 1 } @{ delete $init->{ext} } }
-      if $init->{ext};
-    @{$init}{qw(_exts _del_exts _new_exts grp_ids _active)} =
-      ({}, {}, {}, [INSTANCE_GROUP_ID], 1);
+    $init->{_new_exts} = exists $init->{ext}
+      ? { map { $_ => 1 } @{ delete $init->{ext} } }
+      : {};
+    @{$init}{qw(_exts _del_exts grp_ids _active)} =
+      ({}, {}, [INSTANCE_GROUP_ID], 1);
     $self->SUPER::new($init);
 }
 

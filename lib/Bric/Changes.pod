@@ -213,6 +213,12 @@ before going up to the parent element. Thanks to Andrew Baio for the spot!
 Changes made to the default values of fields in the contributor type profile
 are now properly saved. Reported by Scott. [David]
 
+=item *
+
+Adding Extentions to a Bric::Util::MediaType object when creating it via that
+class' C<new()> constructor works again. Reported by Clive Jones. [David]
+
+
 =back
 
 =head1 VERSION 1.6.1
