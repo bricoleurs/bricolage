@@ -185,7 +185,7 @@ installdirs:
 	@${INST}/mkinstalldirs ${prefix} ${exec_prefix} \
                            ${bindir} ${datadir} \
                            ${confdir} ${compdir} \
-                           ${htmldir} ${mandir}
+                           ${htmldir} ${mandir} ${compdir}/data
 chowndirs:
 	chown -R ${APACHE_USER}.${APACHE_GROUP} ${compdir}/data ${datadir} 
 chmoddirs:
