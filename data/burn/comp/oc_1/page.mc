@@ -1,13 +1,14 @@
 <!-- Start "Page" -->
 <%perl>
 foreach my $e ($element->get_elements) {
-    if ($e->has_name('paragraph')) {
+    my $key_name = $e->get_key_name;
+    if ($key_name eq 'paragraph') {
         $m->out('<p>'.$e->get_data.'</p>');
 
-    } elsif ($e->has_name('pull_quote')) {
+    } elsif ($key_name eq 'pull_quote') {
         $burner->display_element($e);
 
-    } elsif ($e->has_name('inset')) {
+    } elsif ($key_name eq 'inset') {
         $burner->display_element($e);
 
     }
