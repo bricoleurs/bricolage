@@ -284,8 +284,7 @@ use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 # param mappings for the big select statement
 use constant FROM => VERSION_TABLE . ' i';
 
-use constant PARAM_FROM_MAP =>
-    {
+use constant PARAM_FROM_MAP => {
        keyword              => 'story_keyword sk, keyword k',
        output_channel_id    => 'story__output_channel soc',
        simple               => 'story_member sm, member m, story__category sc, '
@@ -299,12 +298,11 @@ use constant PARAM_FROM_MAP =>
        element_key_name     => 'element e',
        'story.category'     => 'story__category sc2',
        subelement_key_name  => 'story_container_tile sct',
-    };
+};
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
 
-use constant PARAM_WHERE_MAP =>
-    {
+use constant PARAM_WHERE_MAP => {
       id                     => 's.id = ?',
       active                 => 's.active = ?',
       inactive               => 's.active = ?',
@@ -395,7 +393,7 @@ use constant PARAM_WHERE_MAP =>
                               . 'JOIN keyword kk ON (kk.id = keyword_id) '
                               . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
       contrib_id             => 'i.id = sic.story_instance__id AND sic.member__id = ?',
-    };
+};
 
 use constant PARAM_ANYWHERE_MAP => {
     element_key_name       => [ 's.element__id = e.id',
@@ -420,40 +418,39 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'sic.member__id = ?' ],
 };
 
-use constant PARAM_ORDER_MAP =>
-    {
-      active              => 'active',
-      inactive            => 'active',
-      alias_id            => 'alias_id',
-      site_id             => 'site__id',
-      workflow__id        => 'workflow__id',
-      workflow_id         => 'workflow__id',
-      primary_uri         => 'primary_uri',
-      element_id          => 'element__id',
-      element__id         => 'element__id',
-      source_id           => 'source__id',
-      source__id          => 'source__id',
-      priority            => 'priority',
-      publish_status      => 'publish_status',
-      first_publish_date  => 'first_publish_date',
-      publish_date        => 'publish_date',
-      cover_date          => 'cover_date',
-      expire_date         => 'expire_date',
-      name                => 'name',
-      title               => 'name',
-      description         => 'description',
-      version             => 'version',
-      version_id          => 'i.id',
-      slug                => 'slug',
-      user_id             => 'usr__id',
-      user__id            => 'usr__id',
-      _checked_out        => 'checked_out',
-      primary_oc_id       => 'primary_oc__id',
-      category_id         => 'category_id',
-      category_uri        => 'c.uri',
-      keyword             => 'name',
-      return_versions     => 'version',
-    };
+use constant PARAM_ORDER_MAP => {
+    active              => 's.active',
+    inactive            => 's.active',
+    alias_id            => 's.alias_id',
+    site_id             => 's.site__id',
+    workflow__id        => 's.workflow__id',
+    workflow_id         => 's.workflow__id',
+    primary_uri         => 'LOWER(s.primary_uri)',
+    element_id          => 's.element__id',
+    element__id         => 's.element__id',
+    source_id           => 's.source__id',
+    source__id          => 's.source__id',
+    priority            => 's.priority',
+    publish_status      => 's.publish_status',
+    first_publish_date  => 's.first_publish_date',
+    publish_date        => 's.publish_date',
+    cover_date          => 's.cover_date',
+    expire_date         => 's.expire_date',
+    name                => 'LOWER(i.name)',
+    title               => 'LOWER(i.name)',
+    description         => 'LOWER(i.description)',
+    version             => 'i.version',
+    version_id          => 'i.id',
+    slug                => 'LOWER(i.slug)',
+    user_id             => 'i.usr__id',
+    user__id            => 'i.usr__id',
+    _checked_out        => 'i.checked_out',
+    primary_oc_id       => 'i.primary_oc__id',
+    category_id         => 'sc2.category_id',
+    category_uri        => 'LOWER(c.uri)',
+    keyword             => 'LOWER(k.name)',
+    return_versions     => 'i.version',
+};
 
 use constant DEFAULT_ORDER => 'cover_date';
 

@@ -178,8 +178,7 @@ use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 # param mappings for the big select statement
 use constant FROM => VERSION_TABLE . ' i';
 
-use constant PARAM_FROM_MAP =>
-    {
+use constant PARAM_FROM_MAP => {
      keyword              => 'media_keyword mk, keyword k',
      output_channel_id    => 'media__output_channel moc',
      simple               => 'media_member mm, member m, at_type at, element e, '
@@ -188,12 +187,11 @@ use constant PARAM_FROM_MAP =>
      data_text            => 'media_data_tile md',
      subelement_key_name  => 'media_container_tile mct',
      contrib_id           => 'media__contributor sic',
-    };
+};
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
 
-use constant PARAM_WHERE_MAP =>
-    {
+use constant PARAM_WHERE_MAP => {
       id                    => 'mt.id = ?',
       active                => 'mt.active = ?',
       inactive              => 'mt.active = ?',
@@ -268,7 +266,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'JOIN keyword kk ON (kk.id = keyword_id) '
                              . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
       contrib_id            => 'i.id = sic.media_instance__id AND sic.member__id = ?',
-    };
+};
 
 use constant PARAM_ANYWHERE_MAP => {
     element_key_name       => [ 'mt.element__id = e.id',
@@ -289,42 +287,40 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'sic.member__id = ?' ],
 };
 
-use constant PARAM_ORDER_MAP =>
-    {
-      active              => 'active',
-      inactive            => 'active',
-      alias_id            => 'alias_id',
-      site_id             => 'site__id',
-      workflow__id        => 'workflow__id',
-      workflow_id         => 'workflow__id',
-      uri                 => 'i.uri',
-      element__id         => 'element__id',
-      element_id          => 'element__id',
-      source__id          => 'source__id',
-      source_id           => 'source__id',
-      priority            => 'priority',
-      publish_status      => 'publish_status',
-      first_publish_date  => 'first_publish_date',
-      publish_date        => 'publish_date',
-      cover_date          => 'cover_date',
-      expire_date         => 'expire_date',
-      name                => 'name',
-      file_name           => 'file_name',
-      location            => 'location',
-      category_id         => 'category__id',
-      category__id        => 'category__id',
-      title               => 'name',
-      description         => 'description',
-      version             => 'version',
-      version_id          => 'i.id',
-      user__id            => 'usr__id',
-      _checked_out        => 'checked_out',
-      primary_oc_id       => 'primary_oc__id',
-      category__id        => 'category__id',
-      category_uri        => 'uri',
-      keyword             => 'name',
-      return_versions     => 'version',
-    };
+use constant PARAM_ORDER_MAP => {
+    active              => 'mt.active',
+    inactive            => 'mt.active',
+    alias_id            => 'mt.alias_id',
+    site_id             => 'mt.site__id',
+    workflow__id        => 'mt.workflow__id',
+    workflow_id         => 'mt.workflow__id',
+    uri                 => 'LOWER(i.uri)',
+    element__id         => 'mt.element__id',
+    element_id          => 'mt.element__id',
+    source__id          => 'mt.source__id',
+    source_id           => 'mt.source__id',
+    priority            => 'mt.priority',
+    publish_status      => 'mt.publish_status',
+    first_publish_date  => 'mt.first_publish_date',
+    publish_date        => 'mt.publish_date',
+    cover_date          => 'mt.cover_date',
+    expire_date         => 'mt.expire_date',
+    name                => 'LOWER(i.name)',
+    title               => 'LOWER(i.name)',
+    file_name           => 'LOWER(i.file_name)',
+    location            => 'LOWER(i.location)',
+    category_id         => 'i.category__id',
+    category__id        => 'i.category__id',
+    description         => 'LOWER(i.description)',
+    version             => 'i.version',
+    version_id          => 'i.id',
+    user__id            => 'i.usr__id',
+    _checked_out        => 'i.checked_out',
+    primary_oc_id       => 'i.primary_oc__id',
+    category_uri        => 'LOWER(i.uri)',
+    keyword             => 'LOWER(k.name)',
+    return_versions     => 'i.version',
+};
 
 use constant DEFAULT_ORDER => 'cover_date';
 
