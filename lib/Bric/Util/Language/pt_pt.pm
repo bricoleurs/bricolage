@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-10 19:16:30 $
+$Date: 2003-09-16 08:10:51 $
 
 =head1 SYNOPSIS
 
@@ -92,14 +92,18 @@ use constant key => 'pt_pt';
    'Page' => 'Página',
    'Pulldown'  => 'Selecção',
    'Radio Buttons' => 'Botões tipo Rádio',
-   'Rows' => 'Linhas',
-   'Size' => 'Tamanho',
-   'Template' => 'Modelo',
+   'Rows'      => 'Linhas',
+   'Size'      => 'Tamanho',
+   'Template'  => 'Modelo',
    'Text Area' => 'Área de Texto',
    'Workflows' => 'Workflows',
+   'Workflow'  => 'Workflow',
    '[_1] Field Text' => '[_1] Campo de Texto',
 
 # General Information
+   'Bricolage'  => 'Bricolage',
+   'Welcome to Bricolage.'  => 'Bem-vindo ao Bricolage',
+   'Welcome to [_1].'  => 'Bem-vindo ao [_1]',
    '&quot;Story&quot;' => '&quot;Artigo&quot;',
    '&quot;Template&quot;' => '&quot;Modelo&quot;',
    'ADMIN' => 'GESTÃO',
@@ -241,6 +245,7 @@ use constant key => 'pt_pt';
    'Start Desk' => 'Área Inicial',
    'Statistics' => 'Estatísticas',
    'Story Type' => 'Tipo de Artigo',
+   'Story' => 'Artigo',
    'Subelements' => 'Subelementos',
    'Teaser' => 'Teaser',
    'Template Name' => 'Nome do Template',
@@ -286,7 +291,9 @@ use constant key => 'pt_pt';
    'Check In to Publish' => 'Disponibilizar para Publicar',
    'Check In to' => 'Tornar disponível para',
    'Check In' => 'Disponibilizar',
+   'Checkin' => 'Disponibilizar',
    'Check Out' => 'Reservar',
+   'Checkout' => 'Reservar',
    'Choose Contributors' => 'Escolher Colaboradores',
    'Choose Related Media' => 'Escolher Media Relacionados',
    'Choose Subelements' => 'Escolher subelementos',
@@ -335,8 +342,10 @@ use constant key => 'pt_pt';
    'Active Stories' => 'Artigos Activos',
    'Active Templates' => 'Modelos Activos',
    'Add a New User' => 'Criar Novo Utilizador',
-'An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' =>
+
+   'An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' =>
      'Já existe um modelo activo para o canal de distribuição, categoria, elemento e burner que assinalou. Tem de apagar o temp+late existtente para poder adicionar um novo.',
+
    'At least one extension is required.' =>
      'Tem de indicar pelo menos uma extensão.',
    'By Source name' => 'Por nome de Fonte',
@@ -490,7 +499,8 @@ use constant key => 'pt_pt';
    'User profile "[_1]" deleted.' => 'Perfil de utilizador "[_1]" apagado.',
    'Welcome to [_1]' => 'Bem-vindo ao sistema [_1]',
    'Workflow profile "[_1]" deleted.' => 'Perfil de workflow "[_1]" apagado.',
-   'Workflow profile "[_1]" saved.' => 'Perfil de workflow "[_1]" guardado.',
+   'Workflow profile "[_1]" deleted.' => 'Perfil de workflow "[_1]" apagado.',
+   'Workflow Profile'  => 'Perfil de Workflow',
    'You have not been granted <b>[_1]</b> access to the <b>[_2]</b> [_3]' =>
      'Não tem acesso de <b>[_1]</b> a <b>[_3]</b> [_2]',
    'You must select an Element or check the &quot;Generic&quot; check box.' =>
@@ -544,7 +554,7 @@ use constant key => 'pt_pt';
    'Invalid password. Please try again.' =>
      'Password inválida. Por favor volte a tentar.',
    'Invalid username or password. Please try again.' =>
-     'Nome de utilizador e palavra-passe inválidos. Por favor volte a tentar.',
+     'Nome de utilizador ou palavra-passe inválidos. Por favor volte a tentar.',
    'Login "[_1]" contains invalid characters.' =>
      'O login "[_1]" contém caracteres inválidos.',
    'Login "[_1]" is already in use. Please try again.' =>
@@ -623,6 +633,7 @@ use constant key => 'pt_pt';
    'Media "[_1]" criado e guardado.',
 
    'Un-Associate' => 'Remover associação',
+   'Remove' => 'Remover',
 
    'Associate' => 'Associar',
 
@@ -770,16 +781,18 @@ use constant key => 'pt_pt';
           'Domain Name' => 'Nome do Domínio',
 
           'New Alias' => 'Nova Referência',
+          'Select Alias' => 'Escolher Referência',
+          
   
           'Text to search' => 'Texto a pesquisar',
           'From' => 'Desde',
           'To' => 'Até',
           'Find a story to alias' => 'Encontrar um Artigo para referenciar',
-          'Find Story to alias' => 'Encontrar um Artigo para referenciar',
+          'Find Story To Alias' => 'Encontrar um Artigo para referenciar',
           'Find a media to alias' => 'Encontrar um Media para referenciar',
-          'Find Media to alias' => 'Encontrar Media para referenciar',
+          'Find Media To Alias' => 'Encontrar Media para referenciar',
           'All Types' => 'Todos os Tipos',
-
+          'V.' => 'V.',
 
    '_AUTO' => 1,
   );
@@ -809,7 +822,6 @@ use constant key => 'pt_pt';
       'No categories were found' => 'Não foram encontradas categorias' ,
       'View' => 'Ver',
       'Log' => 'Registo',
-      'Checkout' => 'Checar para fora',
       'Title' => 'Titulo',
       'Cover Date' => 'Data da Capa',
       'Invalid username or password. Please try again.' => 'Utilizador ou password errada. Por favor tente de novo.',
