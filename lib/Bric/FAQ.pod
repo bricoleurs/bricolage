@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.2 $
+$Revision: 1.7.2.3 $
 
 =head1 DATE
 
-$Date: 2003-04-10 01:10:31 $
+$Date: 2003-04-25 00:29:38 $
 
 =head1 DESCRIPTION
 
@@ -66,6 +66,10 @@ DFA - L<http://dfafunds.com/>
 =item *
 
 Macworld - L<http://www.macworld.com/>
+
+=item *
+
+MacCentral - L<http://www.maccentral.com/>
 
 =item *
 
@@ -175,6 +179,29 @@ later told that a Mozilla setting can force the C<< <html><head></head></html>
 simply copying these two files from the Bricolage source directories to your
 installed component root will correct the problem. Holler on the
 bricolage-general mail list if it doesn't.
+
+=head3 I'm trying to restore a backup of the Bricolage database, but I keep
+getting an error like this: "ERROR: Function login_avail(varchar, numeric,
+numeric) does not exist". What gives?
+
+This is a known issue with PostgreSQL's C<pg_dump> utility -- it's not smart
+enough to handle circular dependencies. The PostgreSQL developers are aware of
+the issue. See this bug report for details:
+L<http://archives.postgresql.org/pgsql-bugs/2002-09/msg00278.php>.
+
+In the meantime, the workaround is to edit your SQL dump file so that the
+Bricolage database will load properly. In your SQL dump file, search for and
+remove the line containing the string 'CONSTRAINT "ck_usr__login"'. This
+should remove the creation of the constraint that uses the C<login_avail()>
+function before the function is created. Next, go to the very end of the
+SQL dump file and add these lines:
+
+  ALTER TABLE usr ADD CONSTRAINT ck_usr__login
+  CHECK (login_avail(LOWER(login), active, id));
+
+This will add the constraint at the very end of the load, when both the "usr"
+table and the C<login_avail()> function have been created. Now you should be
+able to load the database and get back to work!
 
 =head2 Element Administration
 
