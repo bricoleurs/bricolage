@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.23 $
+$Revision: 1.39.2.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 09:31:47 $
+$Date: 2003-10-10 18:13:45 $
 
 =head1 SYNOPSIS
 
@@ -297,7 +297,7 @@ use constant RELATION_JOINS =>
 # the mapping for building up the where clause based on params
 use constant WHERE => 's.id = i.story__id';
 
-use constant COLUMNS => join(', s.', 's.id', COLS) . ', ' 
+use constant COLUMNS => join(', s.', 's.id', COLS) . ', '
             . join(', i.', 'i.id AS version_id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
@@ -307,7 +307,7 @@ use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP =>
     {
-       keyword            =>  'story_keyword sk, keyword k',
+       keyword            => 'story_keyword sk, keyword k',
        simple             => 'story s '
                            . 'LEFT OUTER JOIN story_keyword sk '
                            . 'LEFT OUTER JOIN keyword k '

@@ -14,6 +14,19 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.6.7 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+The PostgreSQL admin username and password arguments were reversed during
+C<make upgrade>. [Thorston Biel]
+
+=back
+
 =head1 VERSION 1.6.6 (2003-10-03)
 
 =head2 New Features

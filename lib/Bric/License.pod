@@ -153,6 +153,8 @@ Folks who have submitted patches include:
 
 =item Radu Greab
 
+=item Thorston Biel
+
 =back
 
 Friends who have spotted bugs include:

@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.12.6.6 $
+$Revision: 1.12.6.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.6.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.6.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-30 18:16:47 $
+$Date: 2003-10-10 18:13:44 $
 
 =head1 SYNOPSIS
 
@@ -76,8 +76,8 @@ our ($opt_u, $opt_p);
 BEGIN{
     getopts('u:p:');
     # Set the db admin user and password to some reasonable defaults.
-    $ENV{BRIC_DBI_PASS} ||= $opt_u || 'postgres';
-    $ENV{BRIC_DBI_USER} ||= $opt_p || 'postgres';
+    $ENV{BRIC_DBI_PASS} ||= $opt_p || 'postgres';
+    $ENV{BRIC_DBI_USER} ||= $opt_u || 'postgres';
 }
 
 # Make sure we can load the Bricolage libraries.
