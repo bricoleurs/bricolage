@@ -1609,35 +1609,32 @@ sub is_active {
 
 ################################################################################
 
-=item $self = $self->cancel_checkout()
+=item $self = $self->cancel_checkout
 
-Cancels the checkout.   Deletes the version instance record and its associated.
-Files
+Cancels the checkout. Deletes the version instance record.
 
 B<Throws:>
 
-"Asset is Not Checked Out"
+=over 4
 
-B<Side Effects:>
+=item "Cannot cancel a non checked out asset"
 
-NONE
+=back
 
-B<Notes:>
+B<Side Effects:> NONE.
 
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub cancel_checkout {
-        my ($self) = @_;
+    my $self = shift;
 
-        $self->_set( {
-                user__id => undef,
-                checked_out => 0,
-                _cancel         => 1
-                });
+    # Make sure it's checked out.
+    throw_gen "Cannot cancel a non checked out asset"
+      unless $self->_get('checked_out');
 
-        return $self;
+    return $self->_set([qw(user__id checked_out _cancel)] => [undef, 0, 1]);
 }
 
 ##############################################################################

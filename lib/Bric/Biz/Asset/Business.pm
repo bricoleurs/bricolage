@@ -1877,6 +1877,9 @@ sub has_keyword {
 
 Called upon a checked out asset.   This unchecks it out.
 
+XXX Actually, it deletes the asset! I don't think that's what we want. Don't
+use this method!
+
 B<Throws:>
 
 "Cannot cancel a non checked out asset"
