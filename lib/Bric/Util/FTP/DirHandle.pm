@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-27 23:52:41 $
+$Date: 2001-12-28 18:36:49 $
 
 =head1 DESCRIPTION
 
@@ -72,7 +72,7 @@ is looked up from the database.
 =cut
 
 sub new {
-  my $class =     = shift;
+  my $class       = shift;
   my $ftps        = shift;       # FTP server object.
   my $pathname    = shift || "/"; 
   my $oc_id       = shift;           
