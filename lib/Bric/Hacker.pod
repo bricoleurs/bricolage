@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =head1 DATE
 
-$Date: 2004-03-18 21:33:09 $
+$Date: 2004-04-22 09:52:15 $
 
 =head1 DESCRIPTION
 
@@ -344,7 +344,7 @@ You can get a clean database without reinstalling Bricolage by doing
 Answer yes when it asks you to drop the database. Then to get useful
 debugging output, do verbose testing with something like
 
-  sudo make devtest TEST_VERBOSE=1 > test.out 2>&1
+  make devtest TEST_VERBOSE=1 > test.out 2>&1
 
 All of the tests are run by the F<inst/runtests.pl> script, which in turn
 tells L<Test::Harness|Test::Harness> to execute F<t/Bric/Test/Runner.pm>. This
