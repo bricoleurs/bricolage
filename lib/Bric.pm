@@ -6,19 +6,19 @@ Bric - The Bricolage base class.
 
 =head1 VERSION
 
-Release Version: 1.6.9
+Release Version: 1.6.11
 
 File (CVS) Version:
 
-$Revision: 1.35.2.17 $
+$Revision: 1.35.2.18 $
 
 =cut
 
-our $VERSION = "1.6.10";
+our $VERSION = "1.6.11";
 
 =head1 DATE
 
-$Date: 2004-02-10 08:50:54 $
+$Date: 2004-03-15 23:40:04 $
 
 =head1 SYNOPSIS
 
@@ -61,7 +61,6 @@ use strict;
 
 #--------------------------------------#
 # Programmatic Dependencies
-use Carp;
 use Bric::Util::Fault qw(throw_gen);
 use Bric::Config qw(:qa :mod_perl);
 
@@ -372,8 +371,6 @@ B<Notes:>
 
 =cut
 
-$SIG{__DIE__} = sub { Carp::confess(@_) } unless MOD_PERL;
-
 #------------------------------------------------------------------------------#
 
 =item warn "...";
@@ -392,7 +389,10 @@ B<Notes:>
 
 =cut
 
-$SIG{__WARN__} = sub { Carp::cluck(@_) } unless MOD_PERL;
+unless (MOD_PERL) {
+    $SIG{__DIE__} = \&throw_gen;
+    $SIG{__WARN__} = sub { print STDERR throw_gen @_ };
+}
 
 #------------------------------------------------------------------------------#
 
@@ -454,7 +454,7 @@ B<Notes:>
 sub AUTOLOAD {
     my $self = $_[0];
     my ($op, $field);
-    my $pkg = ref($self);
+    my $pkg = ref $self or $gen->("$self is not an object");
     my ($perm, $msg);
 
     # Get method name

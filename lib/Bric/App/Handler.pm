@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.34.2.4 $
+$Revision: 1.34.2.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.34.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:44 $
+$Date: 2004-03-15 23:40:05 $
 
 =head1 SYNOPSIS
 
@@ -62,7 +62,6 @@ use Bric::App::Util qw(del_redirect);
 use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
-use HTML::Mason::Exceptions;
 use Carp qw(croak);
 
 {
@@ -122,7 +121,6 @@ use Carp qw(croak);
 
     use Bric::SOAP;
 
-    use HTML::Mason::Exceptions;
     eval { require Text::Levenshtein };
     require Text::Soundex if $@;
 
