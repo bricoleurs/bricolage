@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.113 $
+$Revision: 1.114 $
 
 =head1 DATE
 
-$Date: 2003-08-28 18:11:09 $
+$Date: 2003-08-28 18:21:13 $
 
 =head1 DESCRIPTION
 
@@ -200,9 +200,14 @@ Port installation system to use Module::Build.
 =item *
 
 Add C<Limit>, C<Offset>, C<SortBy>, and C<SortDirection> parameters to
-C<list()> in all classes. C<Limit> and C<Offset> can be added by using derived
-tables (Stephan Szabo is my hero for suggesting this -- I didn't even know it
-was possible!). Here's a quick example for person objects:
+C<list()> in all classes. The C<SortBy> parameter can be either a string
+identifying a single attribute (column) to sort by, or an array of attributes
+(columns) to sort by Note that no matter what attributes are selected, the
+object id column must I<always> be the last sorted. Existing C<Order> and
+C<OrderDirection> parameters should be considered aliases to be
+deprecated. C<Limit> and C<Offset> can be added by using derived tables
+(Stephan Szabo is my hero for suggesting this -- I didn't even know it was
+possible!). Here's a quick example for person objects:
 
   select p.id, p.prefix, p.fname, p.mname, p.lname, p.suffix, p.active,
          m.grp__id
