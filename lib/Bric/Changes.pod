@@ -71,6 +71,10 @@ directories during C<make test>. [David]
 Super Bulk Edit no longer joins lines together without a space, so that words
 should now be properly separated. [David]
 
+=item *
+
+Deleting a story or media subelement no longer results in an error. [David]
+
 =back
 
 =head1 VERSION 1.5.2
