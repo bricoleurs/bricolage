@@ -46,7 +46,17 @@ dnl notice of this special exception to the GPL from your
 dnl modified version. 
 
 
-dnl @synopsis CHECK_CPAN_MODULE{VARIABLE, Module::Name [,Version ][,PathToPerl]}
+dnl @synopsis AC_PROG_PERL()
+dnl 
+dnl A cheap quickie version of a perl macro.  
+dnl
+dnl @author Mark Jaroski <mark@geekhive.net>
+AC_DEFUN([AC_PROG_PERL],[
+  AC_PATH_PROG(PERL, perl)  
+])
+
+
+dnl @synopsis CHECK_CPAN_MODULE{VARIABLE, Module::Name [,Version [,PathToPerl]]}
 dnl
 dnl This macro searches the installed base of CPAN modules
 dnl determine the the requested module is installed.
@@ -54,7 +64,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.3 2001-12-11 15:49:58 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.4 2001-12-11 17:58:39 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -67,12 +77,14 @@ AC_DEFUN([CHECK_CPAN_MODULE],[
  else
     AC_MSG_RESULT(no)
     if test "x${$1}" == "x" ;then
-        $1="$2" ;
+        NEW_LIST="$2" ;
     else
-        $1="${$1} $2";
+        NEW_LIST="${$1} $2";
     fi
+    AC_SUBST($1, $NEW_LIST)
  fi
 ])
+
 
 
 dnl @synopsis AC_PROG_POSTGRES{VARIABLE, [version]}
@@ -82,7 +94,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.3 2001-12-11 15:49:58 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.4 2001-12-11 17:58:39 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -135,10 +147,6 @@ AC_DEFUN([AC_PROG_POSTGRES],[
    changequote([, ])dnl
  fi
  #
- # set outbound variable to our $PGHOME
- #
- $1=$PGHOME ;
- #
  # Collect postgres version number. If for nothing else, this
  # guaranties that httpd is a working postgres executable.
  #
@@ -170,6 +178,10 @@ AC_DEFUN([AC_PROG_POSTGRES],[
      AC_MSG_RESULT(yes)
    fi
  fi
+ #
+ # set user specified variable to our $PGHOME
+ #
+ AC_SUBST($1,$PGHOME) 
 ])
 
 

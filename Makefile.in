@@ -1,0 +1,14 @@
+
+# Programatic dependancies
+PERL = @PERL@
+APACHE = @APACHE@
+POSTGRESHOME = @PGHOME@
+
+# Standard
+MAKE = @MAKE@
+RM = @RM@
+
+# A list of any missing modules
+MISSING_MODULES = @MISSING_MOD@
+
+

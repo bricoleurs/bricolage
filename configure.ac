@@ -3,14 +3,12 @@
 # Process this file with autoconf to produce a configure script.
 AC_INIT(FULL-PACKAGE-NAME, VERSION, BUG-REPORT-ADDRESS)
 
-# Checks for programs.
-AC_PROG_LN_S
-CHECK_GNU_MAKE
-# The big three
+# Checks for programs
 AC_PROG_APACHE(1.3.20)
 AC_PROG_POSTGRES(PGHOME, 7.1.3)
-# Perl goes here
-
+# TODO: die if bad
+AC_PROG_PERL
+# TODO: die if bad
 # Checks for libraries.
 CHECK_SSL
 
