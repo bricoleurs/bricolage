@@ -903,7 +903,7 @@ sub site_list {
     my $sites = $cache->get('__SITES__');
 
     unless ($sites) {
-        $sites = Bric::Biz::Site->list;
+        $sites = Bric::Biz::Site->list({ active => 1 });
         $cache->set('__SITES__', $sites);
     }
 

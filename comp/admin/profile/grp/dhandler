@@ -102,7 +102,7 @@ if (defined $id) {
         # Add to the description site name, if there are duplicate
         # descriptions. Only run if sites are already cached (which means
         # there is more than one site).
-        my $sites = $c->get('__SITES__') || Bric::Biz::Site->list();
+        my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
         if(@$sites > 1) {
 
             my %sites;

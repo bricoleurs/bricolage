@@ -283,6 +283,8 @@ Friends who have spotted bugs include:
 
 =item Clinton Gormley
 
+=item Ed Stevenson
+
 =back
 
 Bricolage's translation team:

@@ -135,10 +135,16 @@ properly. [Keith Grennan]
 
 =item *
 
-LoadModule and AddModule httpd.conf directives should now be generated properly
-during installation.  LoadModule will use config_log_module or mod_log_config 
-depending on the system, but AddModule will always use mod_log_config.c. 
-Spotted by Dave Jablonski. [Marshall]
+The C<LoadModule> and C<AddModule> F<httpd.conf> directives should now be
+generated properly during installation. C<LoadModule> will use
+C<config_log_module> or C<mod_log_config> depending on the system, but
+C<AddModule> will always use F<mod_log_config.c>. Spotted by Dave
+Jablonski. [Marshall]
+
+=item *
+
+Deleted sites will no longer be displayed in the site context menu in the
+UI. Reported by Ed Stevenson. [David]
 
 =back
 

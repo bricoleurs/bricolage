@@ -1075,11 +1075,11 @@ sub publish {
             if ($path && $uri) {
                 my $r = Bric::Dist::Resource->lookup({ path => $path,
                                                        uri  => $uri })
-                    || Bric::Dist::Resource->new
-                      ({ path => $path,
-                         media_type => Bric::Util::MediaType->get_name_by_ext($uri),
-                         uri => $uri
-                       });
+                    || Bric::Dist::Resource->new({
+                        path => $path,
+                        media_type => Bric::Util::MediaType->get_name_by_ext($uri),
+                        uri => $uri
+                    });
 
                 $r->add_media_ids($baid);
                 $r->save;
