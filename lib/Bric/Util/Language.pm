@@ -7,15 +7,15 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:11 $
+$Date: 2003-12-22 18:03:08 $
 
 =head1 SYNOPSIS
 
@@ -45,7 +45,6 @@ use Bric::Util::Fault qw(throw_mni);
 #======================================#
 
 use base qw(Locale::Maketext);
-#use Bric::Config qw(:char);
 
 my $INSTANCE;
 sub get_handle { $INSTANCE = shift->SUPER::get_handle(@_) }
