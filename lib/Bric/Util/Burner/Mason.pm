@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:16 $
+$Date: 2003-07-19 00:14:27 $
 
 =head1 SYNOPSIS
 
@@ -247,7 +247,7 @@ sub burn_one {
     # Get the template name. Because this is a top-level Element, we don't want
     # to look far for its corresponding template.
     my $tmpl_path = $cat->ancestry_path;
-    my $tmpl_name = _fmt_name($element->get_name);
+    my $tmpl_name = _fmt_name($element->get_key_name);
     my $template = $fs->cat_uri($tmpl_path, $tmpl_name);
     if ( $interp->comp_exists($template . '.mc') ) {
         # The top-level .mc template exits.
@@ -708,7 +708,7 @@ sub _load_template_element {
 
     # Get the path (based at comp_root) and the template name.
     my $tmpl_path = $cat->ancestry_path;
-    my $tmpl_name = _fmt_name($element->get_name) . '.mc';
+    my $tmpl_name = _fmt_name($element->get_key_name) . '.mc';
 
     # Look up the template (it may live few directories above $tmpl_path)
     my $tmpl = $self->find_template($tmpl_path, $tmpl_name)

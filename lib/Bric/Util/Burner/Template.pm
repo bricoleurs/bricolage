@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:16 $
+$Date: 2003-07-19 00:14:27 $
 
 =head1 SYNOPSIS
 
@@ -725,8 +725,7 @@ sub _build_element_vars {
     # loop over elements
     foreach my $e ($element->get_tiles()) {
 	# get a proper name
-	my $name = lc $e->get_name();
-	$name =~ s/ /_/g;
+	my $name = lc $e->get_key_name;
 
 	print STDERR __PACKAGE__ . "::_build_element_vars : saw $name (",
 	  join(', ', @$path), ")\n" if DEBUG;
@@ -821,7 +820,7 @@ sub _find_file {
 
     my $filename = _element_filename($element) . $extension;
 
-    print STDERR __PACKAGE__, "::_find_file(", $element->get_name(),
+    print STDERR __PACKAGE__, "::_find_file(", $element->get_key_name,
       ", $extension)\n" if DEBUG and ref $element;
 
     # search up category hierarchy
@@ -1019,11 +1018,7 @@ sub _element_filename {
     return "category" if $element eq 'category';
 
     # otherwise get the name from the element object
-    my $name = $element->get_name;
-
-    $name = lc $name;
-    $name =~ y/a-z0-9/_/cs;
-    return $name;
+    return $element->get_key_name;
 }
 
 =item _compile($code)
