@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-17 01:53:20 $
+$Date: 2003-01-19 01:04:36 $
 
 =head1 SYNOPSIS
 
@@ -67,23 +67,25 @@ been added to its interface.
 
 =item C<add_del_ids>
 
+  $test->add_del_ids($id);
+  $test->add_del_ids($id, $table);
   $test->add_del_ids([@ids]);
   $test->add_del_ids([@ids], $table);
 
-This method takes an array reference of object IDs and schedules them for
-deletion when a test method finishes executing, even if the method died before
-completion. It uses a private cleanup method to handle the actual deletion of
-rows from the database. It also needs to know the name of the table from which
-to delete the rows. This name can either be passed in explicitly via a second
-argument, or it can be set on a class-bases by adding a C<table()> method that
-returns the name of the relevant table.
+This method takes a single object ID or an array reference of object IDs and
+schedules them for deletion when a test method finishes executing, even if the
+method died before completion. It uses a private cleanup method to handle the
+actual deletion of rows from the database. It also needs to know the name of
+the table from which to delete the rows. This name can either be passed in
+explicitly via a second argument, or it can be set on a class-bases by adding
+a C<table()> method that returns the name of the relevant table.
 
 =cut
 
 sub add_del_ids {
     my ($self, $ids, $table) = @_;
     $table ||= $self->table;
-    push @{ $self->{_to_delete}{$table} }, @$ids;
+    push @{ $self->{_to_delete}{$table} }, ref $ids ? @$ids : $ids;
 }
 
 =item C<get_del_ids>
