@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.14.2.3 $
+$Revision: 1.14.2.4 $
 
 =head1 DATE
 
-$Date: 2003-04-02 07:37:09 $
+$Date: 2003-08-11 23:00:40 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -70,8 +70,9 @@ if ($desks) {
 
     # Set up choice to publish, if possible.
     if ($can_pub) {
-        my ($act, $cb) = $widget eq 'tmpl_prof' ?
-          ('Deploy', 'deploy') : ('Publish', 'publish');
+        my ($act, $cb) = $widget eq 'tmpl_prof'
+          ? ($lang->maketext('Deploy'), 'deploy')
+          : ($lang->maketext('Publish'), 'publish');
         $deskText .= qq{<option value="$cb">and $act</option>};
     }
     $deskText .= "</select>";
