@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:08 $
+$Date: 2004-03-25 05:08:18 $
 
 =head1 DESCRIPTION
 
@@ -199,70 +199,157 @@ is running on a dedicated machine, this will be the entire memory minus the
 amount needed to run kernel services. In other situations it will pay to
 observe the machine while running Bricolage and whatever other services are
 necessary, and make a guesstimate of the amount of memory you are willing to
-give to the database server.
+give to the database server. The amount of memory you decide on may be
+considered your "available RAM."
 
-After you have decided how much memory to allocate, there are a couple of
-settings to make. First is the shared memory setting, which in PostgreSQL can
-be set via the C<shared_buffers> setting in the F<postgresql.conf> file in
-your PostgreSQL data directory. This setting controls the number of shared
-buffers that the database server can use. Each buffer is 8Kb. It's important
-to remember that this is only a holding area, and I<not> the total memory
-available to the server. As such, resist the urge to set this number to a
-large portion of your RAM, as doing so will actually degrade performance on
-many OSs. Members of the pgsql-performance mailing list have found useful
-values in the range of 1000-6000, depending on available RAM, database size,
-and number of concurrent queries. No one has yet reported positive results for
-any number over 6000.
+=head2 Shared Buffers
 
-It's important that your shared memory settings not exceed the actual amount
-of physical RAM minus the amount of memory the kernel needs, since this would
-involve using swap, thereby erase the performance gains of granting the shared
-memory to PostgreSQL!
+After you have decided on the amount of available RAM to allocate, there are
+several settings to make. First is the shared memory setting, which in
+PostgreSQL can be set via the C<shared_buffers> setting in the
+F<postgresql.conf> file in your PostgreSQL data directory. This setting
+controls the number of shared buffers that the database server can use. Each
+buffer is 8 Kb. (Usually. Some OSs have different shared buffer settings
+compiled into their kernels. Consult your server admin for details.)
+
+It's important to remember that this is only a holding area, and I<not> the
+total memory available to the server. As such, resist the urge to set this
+number to a large portion of your RAM, as doing so will actually degrade
+performance on many OSs. Members of the pgsql-performance mailing list have
+found useful values in the range of 6% to 20% of available RAM, depending on
+database size and number of concurrent queries.
 
 Since Bricolage is a large database and we recommend the use of a server with
-lots of RAM, you will likely want to set C<shared_buffers> to a value between
-2048 and 4096. (Bricolage typically doesn't have too many concurrent
-connections.) In the following example, we'll demonstrate how to set the value
-to 4096 (32 MB).
+lots of RAM, you will likely want to set C<shared_buffers> to around 10%. In
+the following example, we'll demonstrate how to set the value to 24576 (192
+MB, or 10% of 2 GB RAM).
 
 First you may need to set your kernel to allow for the shared memory
-allocation. On a Linux 2.2.x or 2.4.x systems shared memory is controlled
-through settings in the F</proc> filesystem. So, for our example, where we've
-decided to give PostgreSQL up to 32MB of shared memory, here's how you would
-make the kernel setting (note that the kernel setting is in bytes, so our
-setting is C<32 * 1024 * 1024 = 33554432>):
+allocation. On a Linux system, shared memory is controlled through settings in
+the F</proc> filesystem. So, for our example, where we've decided to give
+PostgreSQL up to 192 MB of shared memory, here's how you would make the kernel
+setting (note that the kernel setting is in bytes, so our setting is
+C<192 * 1024 * 1024 = 201326592>):
 
-  $ echo 33554432 >/proc/sys/kernel/shmall
-  $ echo 33554432 >/proc/sys/kernel/shmmax
+  $ echo 201326592 >/proc/sys/kernel/shmall
+  $ echo 201326592 >/proc/sys/kernel/shmmax
 
-Now you can update your F<postgresql.conf> file's shared memory buffers
-setting to take advantage of this shared memory:
+Consult your OS's L<sysctl> man page for details on getting and setting shared
+memory settings. Now you can update your F<postgresql.conf> file's shared
+memory buffers setting to take advantage of this shared memory:
 
-  shared_buffers = 4096
+  shared_buffers = 24576
+
+=head2 Sort Memory
 
 Next, it's probably also a good idea to boost your sort memory to get a better
 response time to the very large queries used to look up Bricolage objects. The
-default setting is 1024 (again these are 8Kb buffers). You'll probably want
-this set to at least 8192 (32 MB).
+sort memory has to do with number of concurrent queries. never risk going over
+total memory, or else PostgreSQL will go into swap and things will get
+I<really> slow. Bricolage generally uses no more than three or four concurrent
+queries, so 32 MB should be okay. Like C<shared_buffers>, the C<sort_mem>
+setting is in 8 Kb buffers:
 
   sort_mem = 8192
 
-And finally, since Bricolage is a web application with persistent database
-connections, you can likely decrease the value of the C<max_connections>
-setting in F<postgresql.conf> from its default value of 32 to between 6 and 16
-or so. Watch your Bricolage server to see how many connections it holds to the
-database in order to determine the optimum setting. Since the amount of shared
-memory that PostgreSQL will request from the OS kernel is the value of
-C<max_connections * shared_buffers>, lowering this number can also help you to
-find a middle ground between a healthy value for C<shared_buffers> and needing
-to reconfigure the kernel's SHMMAX.
+=head2 Maximum Connections
+
+Since Bricolage is a web application with persistent database connections, you
+can likely decrease the value of the C<max_connections> setting in
+F<postgresql.conf> To the maximum number of concurrent connections you'd
+expect, plus a couple extra for good measure. In a very busy Bricolage
+environment with 100s of users, that number is probably around 50. For less
+busy installations, the number can be lower, but in any event, probably should
+not be less than 8 (since you might have that many Apache processes running,
+even on a single-user system).
+
+If you're not sure what number to assign to the C<max_connections> directive,
+watch your Bricolage server to see how many connections it holds to the
+database to determine the optimum setting. Since the amount of shared memory
+that PostgreSQL will request from the OS is the value of C<max_connections *
+shared_buffers>, lowering this number can also help you to find a middle
+ground between a healthy value for C<shared_buffers> and needing to
+reconfigure the kernel's SHMMAX (See L</"Shared Buffers">).
 
   max_connections = 8
+
+=head2 Effective Cache Size
+
+The effective cache size is the amount of memory available to PostgreSQL for
+caching your database. This setting should be 2/3 - 3/4 the amount of
+available RAM. This setting is typically set in 8 Kb blocks. So for a system
+with 2 GB available RAM where you want to allocate 75% for the effective cache
+size, the number would be calculated C<2 * 1024 * 1024 * .75 / 8 = 196608>:
+
+  effective_cache_size = 196608
+
+=head2 Vacuum Memory
+
+The C<vacuum_mem> directive reserves memory for C<vacuum>ing the database. If
+your PostgreSQL server has a decent amount of RAM (say 1-2 GB), increase the
+value of C<vacuum_mem> to allow C<vacuum>s to go faster. We recommend 64 MB
+(set in Kb):
+
+  vacuum_mem = 65536
+
+=head2 Random Page Cost
+
+For servers where the entire Bricolage database will be loaded into memory,
+the value of the C<random_page_cost> directive should be significantly
+lowered. This directive is a multiple of cost to extract single random tuple
+instead of sequential tuples. It's faster to extract a series of sequential
+rows per page from disk. But if most of your database will be cached in memory
+and you have a fast machine, then the default is too high. Lower it to 2.0.
+It might even be worth it to lower it to 1.5 if you notice that the database
+is still doing unnecessary seq scans.
+
+  random_page_cost = 2
+
+=head2 Maximum FSM Pages
+
+The C<max_fsm_pages> directive should be set relative to the amount of update
+activity. No one is really sure how much daily update activity there is in a
+typical Bricolage database, and the amount will likely vary from installation
+to installation. However, if you're using C<pg_autovacuum> with a threshold of
+30%, then you can set C<max_fsm_pages> to 30% of the expected quantity of
+data pages.
+
+The number of data pages is divided into 8 Kb pages. So for a 1 GB database,
+the number of data pages would be C<1024 * 1024 / 8 = 131072>. For each record
+updated in the database, PostgreSQL must store a dead tuple. The C<fsm_map>
+setting determines how much space is held open so that dead tuples don't crowd
+the data pages. If you estimate 50% updates, then set C<max_fsm_pages> to
+C<131072 * .3 = 65536>:
+
+  max_fsm_pages = 65536
+
+For a large database on a system with lots of memory, you can assign more. A
+value of 75000 should be more than enough for expected activity in a 1 GB
+database.
+
+=head2 Genetic Query Optimizer
+
+When planning a query with multiple joins, the PostgreSQL query optimizer
+tests every order for joins to determine the cheapest order. That can cause
+problems if there are too many tables to be joined; in such cases, the
+optimizer uses random selection to guess the optimal join order. However, with
+newer, faster processors, the default setting of 11 for C<geqo_threshold>,
+which determines the number of tables that can be in a query before the
+optimizer switches to sampling, is too low. In such cases, it can generally be
+set up to 20 or 25:
+
+  geqo_threshold = 20
+
+=head2 Where to Learn More
 
 See Bruce Momjian's article "PostgreSQL Hardware Performance Tuning" at
 L<http://www.ca.postgresql.org/docs/momjian/hw_performance/> for more on
 tuning your PostgreSQL server. Lyris has also posted a useful article on this
-topic at L<http://www.lyris.com/lm_help/6.0/tuning_postgresql.html>.
+topic at L<http://www.lyris.com/lm_help/6.0/tuning_postgresql.html>. You can
+search the archives of the pgsql-performance list at
+L<http://archives.postgresql.org/pgsql-performance/> and subscribe to the list
+at
+L<http://webmail.postgresql.org/mj/mj_wwwusr?domain=postgresql.org&func=lists-long-full&extra=pgsql-performance>.
 
 =head1 MORE PERFORMANCE TIPS
 
