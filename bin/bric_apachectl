@@ -40,10 +40,11 @@ BEGIN {
     $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
     unshift(@INC, File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib'));
 };
-use Bric::Config qw(:conf);
+use Bric::Config qw(:conf :ssl);
 
-# the httpd command
-my $httpd = APACHE_SERVER_ROOT . "/bin/httpd -f $ENV{BRICOLAGE_ROOT}/conf/httpd.conf -DSSL";
+# the httpd command - uses ssl config if SSL_ENABLE is set
+my $httpd = APACHE_SERVER_ROOT . "/bin/httpd -f $ENV{BRICOLAGE_ROOT}/conf/httpd" 
+    . (SSL_ENABLE ? "-ssl.conf -DSSL" :  ".conf");
 
 # the pid file
 my $pid_file = PID_FILE;
