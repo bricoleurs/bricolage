@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.34.2.5 $
+$Revision: 1.34.2.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.34.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-15 23:40:05 $
+$Date: 2004-03-16 00:21:03 $
 
 =head1 SYNOPSIS
 
@@ -62,7 +62,6 @@ use Bric::App::Util qw(del_redirect);
 use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
-use Carp qw(croak);
 
 {
     # Now let's set up our Mason space.

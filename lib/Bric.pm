@@ -10,7 +10,7 @@ Release Version: 1.6.11
 
 File (CVS) Version:
 
-$Revision: 1.35.2.18 $
+$Revision: 1.35.2.19 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.6.11";
 
 =head1 DATE
 
-$Date: 2004-03-15 23:40:04 $
+$Date: 2004-03-16 00:21:03 $
 
 =head1 SYNOPSIS
 
@@ -85,7 +85,6 @@ use base qw();
 
 #--------------------------------------#
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 #--------------------------------------#
 # Public Instance Fields
@@ -323,7 +322,7 @@ sub register_fields {
         *{"${pkg}::ACCESS"} = sub { \%ACCESS };
     };
 
-    die $gen->new({msg => "Unable to register field names", payload => $@})
+    throw_gen error => "Unable to register field names", payload => $@
       if $@;
 }
 
@@ -454,7 +453,7 @@ B<Notes:>
 sub AUTOLOAD {
     my $self = $_[0];
     my ($op, $field);
-    my $pkg = ref $self or $gen->("$self is not an object");
+    my $pkg = ref $self or throw_gen "$self is not an object";
     my ($perm, $msg);
 
     # Get method name
@@ -471,18 +470,15 @@ sub AUTOLOAD {
     ($op, $field) = $AUTOLOAD =~ /([^_:]+)_(\w+)$/;
 
     # Check the format and content of this AUTOLOAD request.
-    die $gen->new({msg => "Bad AUTOLOAD method format: $AUTOLOAD"})
-      unless $op and $field;
+    throw_gen "Bad AUTOLOAD method format: $AUTOLOAD" unless $op and $field;
 
-    die $gen->new({msg => "Cannot AUTOLOAD private methods: $AUTOLOAD"})
-      if $field =~ /^_/;
+    throw_gen "Cannot AUTOLOAD private methods: $AUTOLOAD" if $field =~ /^_/;
 
     # Get the permissions for this field 
     $perm = $pkg->ACCESS()->{$field} || FIELD_INVALID;
 
     # field doesn't exist!
-    die $gen->new({ msg => "Access denied: '$field' is not a valid field for ".
-                           "package $pkg." })
+    throw_gen "Access denied: '$field' is not a valid field for package $pkg."
       if $perm & FIELD_INVALID;
 
     # A get request
@@ -777,7 +773,7 @@ sub _set {
     my $self = shift;
 
     # Make sure we have arguments.
-    die $gen->new({ msg => "Incorrect number of args to _set()."}) unless @_;
+    throw_gen "Incorrect number of args to _set()." unless @_;
 
     # Load $k and $v differently if its a hash ref or two array refs.
     my ($k, $v) = @_ == 1 ? ([keys %{$_[0]}],[values %{$_[0]}]) : @_;
@@ -805,8 +801,9 @@ sub _set {
                 $self->{$key} = $new_value;
                 $dirt = 1;
             };
-            die $gen->new({ msg => "Error setting value for '$key' in _set().",
-                            payload => $@ }) if $@;
+            throw_gen error => "Error setting value for '$key' in _set().",
+              payload => $@
+              if $@;
         }
     }
 
@@ -854,8 +851,7 @@ sub _get {
 
             if ($@) {
                 my $msg = "Problems retrieving field '$_'";
-                die Bric::Util::Fault::Exception::GEN->new({'msg'     => $msg,
-                                                            'payload' => $@});
+                throw_gen error => $msg, payload => $@;
             }
         }
 
