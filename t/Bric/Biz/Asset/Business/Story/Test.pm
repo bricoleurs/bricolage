@@ -37,7 +37,8 @@ sub test_add_get_categories: Test(4) {
                            source__id  => 1,
                            slug        => 'test',
                            user__id    => 0,
-                           element     => $element, 
+                           element     => $element,
+                           site_id     => 100,
                        });
     # make a couple of categories
     my $cats = [];
@@ -79,7 +80,8 @@ sub test_set_get_primary_category: Test(8) {
                            source__id  => 1,
                            slug        => 'test',
                            user__id    => 0,
-                           element     => $element, 
+                           element     => $element,
+                           site_id     => 100,
                        });
     # Test: make sure it has no primary category
     is( $story->get_primary_category(), undef, 'a new story has no primary category' );
@@ -134,6 +136,7 @@ sub test_get_uri: Test(1) {
                            slug        => 'test',
                            user__id    => 0,
                            element     => $element, 
+                           site_id     => 100,
                        });
     # tryto get the uri before a category assigned. should catch an error
     eval { $story->get_uri };
