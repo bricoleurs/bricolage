@@ -35,15 +35,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-26 19:28:45 $
+$Date: 2002-03-26 19:37:08 $
 
 =head1 SYNOPSIS
 
@@ -225,14 +225,15 @@ sub publish {
 
 	# setup expiration if never published before
 	my $exp_job;
-	if (not $obj->set_publish_status and $obj->get_expire_date) {
+	if (not $obj->set_publish_status and $obj->get_expire_date and
+	    not $preview) {
 	    my $exp_job = Bric::Dist::Job->new(
 				      { sched_time => $obj->get_expire_date,
 					user_id    => get_user_id,
 					type       => 1 });
 	    $exp_job->set_name("Expire " . $obj->get_name);
 	}
-      
+	
 	# grab the asset type for this object
 	my $at  = $obj->_get_element_object;
 	my $ocs = $preview 
@@ -292,31 +293,35 @@ sub publish {
 	$job->save;
 	log_event('job_new', $job);
 
-	# Save the expiration job, if there is one.
-	if ($exp_job) {
-	    # Add the server types to the job.
-	    $exp_job->add_server_types(values %servers);
-	    $exp_job->add_resources(@res);
-	    $exp_job->save;
-	    log_event('job_new', $exp_job);
+	# avoid messing up asset when previewing
+	unless ($preview) {
+
+	    # Save the expiration job, if there is one.
+	    if ($exp_job) {
+		# Add the server types to the job.
+		$exp_job->add_server_types(values %servers);
+		$exp_job->add_resources(@res);
+		$exp_job->save;
+		log_event('job_new', $exp_job);
+	    }
+	    
+	    # get it off the desk
+	    my $desk = $obj->get_current_desk;
+	    $desk->remove_asset($obj);
+	    $desk->save;
+
+	    # Remove this asset from the workflow by setting is workflow
+	    # ID to undef
+	    $obj->set_workflow_id(undef);
+	    log_event("${type}_rem_workflow", $obj);
+	    
+	    # set published flag and save to object
+	    $obj->set_publish_status(1);
+	    $obj->save;
+	    
+	    # log the publish
+	    log_event($type . '_publish', $obj);
 	}
-
-	# get it off the desk
-	my $desk = $obj->get_current_desk;
-	$desk->remove_asset($obj);
-	$desk->save;
-
-	# Remove this asset from the workflow by setting is workflow
-	# ID to undef
-	$obj->set_workflow_id(undef);
-	log_event("${type}_rem_workflow", $obj);
-
-	# set published flag and save to object
-	$obj->set_publish_status(1);
-	$obj->save;
-
-	# log the publish
-	log_event($type . '_publish', $obj);
 
 	# record the publish
 	push(@published, name("${type}_id", $id));
