@@ -11,14 +11,15 @@ use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow qw(STORY_WORKFLOW MEDIA_WORKFLOW TEMPLATE_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
-use Bric::Config        qw(STAGE_ROOT PREVIEW_ROOT PREVIEW_LOCAL);
+use Bric::Config        qw(STAGE_ROOT PREVIEW_ROOT PREVIEW_LOCAL ISO_8601_FORMAT);
 use Bric::App::Event    qw(log_event);
-use Bric::Util::Time    qw(strfdate);
+use Bric::Util::Time    qw(strfdate local_date);
 use Bric::Util::MediaType;
 use Bric::Dist::Job;
 use Bric::Dist::ServerType;
 use Bric::Dist::Resource;
 use Bric::Biz::Workflow::Parts::Desk;
+use Bric::SOAP::Util qw(xs_date_to_db_date);
 
 use SOAP::Lite;
 import SOAP::Data 'name';
@@ -45,15 +46,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-18 01:08:59 $
+$Date: 2003-01-18 01:20:41 $
 
 =head1 SYNOPSIS
 
@@ -163,7 +164,8 @@ sub publish {
             unless exists $allowed{$_};
     }
 
-    $args->{publish_date} ||= strfdate();
+    my $pub_date = local_date(xs_date_to_db_date($args->{publish_date}),
+                              ISO_8601_FORMAT) || strfdate();
 
     my $preview = (exists $args->{to_preview} and $args->{to_preview}) ? 1 : 0;
     die __PACKAGE__ . "::publish : cannot publish to_preview with ".
