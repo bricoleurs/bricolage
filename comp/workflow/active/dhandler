@@ -36,7 +36,7 @@ if ($type eq 'templates') {
     $previewer = sub {
         $m->comp('/widgets/profile/preview_link.mc',
                  type  => $type,
-                 title => '<span class="l10n">' . shift() . '</span>',
+                 value => '<span class="l10n">' . shift() . '</span>',
                  doc   => shift)
     };
 }

@@ -56,7 +56,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 % if ($media->get_file_name) {
   <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
                                     type  => 'media',
-                                    title => $media->get_primary_uri,
+                                    value => $media->get_primary_uri,
                                     doc   => $media,
                                     style => 'blackUnderlinedLink') %></td>
 % } else {

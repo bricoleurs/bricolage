@@ -69,7 +69,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 % if (@ocs == 1) {
   <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
                                     type  => 'story',
-                                    title => $short_story_uri,
+                                    value => $short_story_uri,
+                                    title => $story_uri,
                                     doc   => $story,
                                     style => 'blackUnderlinedLink') %></td>
 % } else {
@@ -90,7 +91,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<%
                            $m->comp('/widgets/profile/preview_link.mc',
                                     type  => 'story',
-                                    title => $story->get_primary_uri,
+                                    value => $story->get_primary_uri,
                                     doc   => $story,
                                     oc_js => 'window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value',
                                     style => 'blackUnderlinedLink') %></td>

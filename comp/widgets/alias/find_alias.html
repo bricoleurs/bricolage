@@ -55,7 +55,7 @@ my $field_values = sub {
     if ($field eq 'title') {
         return $m->comp('/widgets/profile/preview_link.mc',
                         type  => $o->key_name,
-                        title => '<span class="l10n">' . $o->get_title . '</span>',
+                        value => '<span class="l10n">' . $o->get_title . '</span>',
                         doc   => $o);
     } elsif ($field eq 'thumb') {
         # If we get a thumbnail URI, we have an image. Otherwise, simply return

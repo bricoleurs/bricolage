@@ -43,7 +43,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 %     if (@ocs == 1) {
 <dd><% $m->comp('/widgets/profile/preview_link.mc',
                                     type  => 'media',
-                                    title => $media->get_primary_uri,
+                                    value => $media->get_primary_uri,
                                     doc   => $media,
                                     style => 'blackUnderlinedLink') %></dd>
 %     } else {
