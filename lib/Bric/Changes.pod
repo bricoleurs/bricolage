@@ -109,8 +109,12 @@ those screens. [Scott]
 
 =item *
 
-Added "Check all" button to select all the select checkboxes on
-publish desks or My Workspace. [Scott]
+Added "Check all" button to select all the checkboxes on publish
+desks or My Workspace. [Scott]
+
+=item *
+
+Added Keyword Management interface to centrally manage keywords. [Scott]
 
 =back
 

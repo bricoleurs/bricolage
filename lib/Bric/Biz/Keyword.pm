@@ -10,20 +10,20 @@ Bric::Biz::Keyword - Interface to Bricolage Keyword Objects
 
 =item Version
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =item Date
 
-$Date: 2003-06-04 00:19:02 $
+$Date: 2003-08-24 15:16:53 $
 
 =item CVS ID
 
-$Id: Keyword.pm,v 1.17 2003-06-04 00:19:02 wheeler Exp $
+$Id: Keyword.pm,v 1.18 2003-08-24 15:16:53 slanning Exp $
 
 =back
 
@@ -370,6 +370,7 @@ The keyword's active status boolean.
                          disp     => 'Keyword Name',
                          search   => 1,
                          len      => 256,
+                         req      => 1,
                          type     => 'short',
                          props    => { type       => 'text',
                                        length     => 32,
@@ -381,7 +382,7 @@ The keyword's active status boolean.
                          get_args => [],
                          set_meth => sub {shift->set_screen_name(@_)},
                          set_args => [],
-                         disp     => 'Keyword screen name',
+                         disp     => 'Keyword Screen Name',
                          search   => 0,
                          len      => 256,
                          type     => 'short',
@@ -395,7 +396,7 @@ The keyword's active status boolean.
                          get_args => [],
                          set_meth => sub {shift->set_sort_name(@_)},
                          set_args => [],
-                         disp     => 'Sort order name',
+                         disp     => 'Sort Order Name',
                          search   => 0,
                          len      => 256,
                          type     => 'short',
@@ -500,7 +501,7 @@ sub set_name {
   my $screen_name = $keyword->get_screen_name;
   $keyword = $keyword->set_screen_name($screen_name);
 
-Get and set the keywordy object's screen_name.
+Get and set the keyword object's screen_name.
 
 =head3 sort_name
 

@@ -9,7 +9,8 @@ my $disp = { map { $_ => get_disp_name($_) }
   qw(story media formatting) };
 my $pl_disp = { map { $_ => get_class_info($_)->get_plural_name }
   qw(story media formatting pref user grp output_channel contrib contrib_type site
-     workflow category element element_type media_type source dest job alert_type) };
+     workflow category element element_type media_type source dest job alert_type
+     keyword) };
 
 my $printLink = sub {
     my ($href, $uri, $caption, $no_translation) = @_;
@@ -331,6 +332,7 @@ foreach my $wf (@$workflows) {
               <% &$printLink('/admin/manager/element_type', $uri, $pl_disp->{element_type}) %>
               <% &$printLink('/admin/manager/media_type', $uri, $pl_disp->{media_type}) %>
               <% &$printLink('/admin/manager/source', $uri, $pl_disp->{source}) %>
+              <% &$printLink('/admin/manager/keyword', $uri, $pl_disp->{keyword}) %>
             </td>
           </tr>
         </table>
@@ -454,10 +456,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =head1 DATE
 
-$Date: 2003-08-18 23:05:29 $
+$Date: 2003-08-24 15:16:53 $
 
 </%doc>

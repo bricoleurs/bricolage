@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.109 $
+$Revision: 1.110 $
 
 =head1 DATE
 
-$Date: 2003-08-24 14:48:53 $
+$Date: 2003-08-24 15:16:53 $
 
 =head1 DESCRIPTION
 
@@ -104,9 +104,8 @@ L<http://bugzilla.bricolage.cc/show_bug.cgi?id=3>).
 
 =item *
 
-Add Keyword Management interface to centrally manage keywords. Also add
-interface to select from existing keywords for associating with assets. Note
-that support Keyword Groups will have to be returned to the API.
+Add interface to select from existing keywords for associating with assets.
+Note that support Keyword Groups will have to be returned to the API.
 
 =item *
 

@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-18 23:22:11 $
+$Date: 2003-08-24 15:16:53 $
 
 =head1 SYNOPSIS
 
@@ -98,6 +98,7 @@ use Bric::App::Callback::Profile::ElementType;
 use Bric::App::Callback::Profile::FormBuilder;
 use Bric::App::Callback::Profile::Grp;
 use Bric::App::Callback::Profile::Job;
+use Bric::App::Callback::Profile::Keyword;
 use Bric::App::Callback::Profile::Media;
 use Bric::App::Callback::Profile::MediaType;
 use Bric::App::Callback::Profile::OutputChannel;

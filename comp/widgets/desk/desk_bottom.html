@@ -6,6 +6,9 @@
       <a href="#" onClick="checkAll('<% $checkbox_name %>');"><img src="/media/images/<% $lang_key %>/select_all_lgreen.gif" border="0"></a>
 
 %#      <input type="image" src="/media/images/<% "$lang_key/$act_cb" %>_<% $mod %>_<% $color2 %>.gif" border=0 name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
+
+      <a href="#" onClick="checkAll('<% $checkbox_name %>');"><img src="/media/images/<% $lang_key %>/select_all_lgreen.gif" border="0"></a>
+
       <input type="image" src="/media/images/<% "$lang_key/$act_label" %>.gif" border=0 name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
 % }
     </td>
@@ -36,4 +39,6 @@ my ($chk_label, $chk_cb, $act_label, $act_cb) = $desk
 my $color1 = ($chk_cb eq 'move') ? 'lgreen' : 'red';
 my $color2 = ($act_cb) ? 'red' : 'red';
 my $mod    = ($chk_cb eq 'move') ? 'assets': 'checked';
+
+my $checkbox_name = $desk ? 'desk_asset|' : '_delete_ids';
 </%init>
