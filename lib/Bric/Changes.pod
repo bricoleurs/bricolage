@@ -227,9 +227,14 @@ when not using C<PREVIEW_LOCAL>. [Paul Orrock]
 
 =item *
 
-Clicking a link in the left-side navigation after the session has expired 
-now causes the whole window to show the login form, rather than it showing
-inside the nav frame, which was useless. [Marshall]
+Clicking a link in the left-side navigation after the session has expired now
+causes the whole window to show the login form, rather than it showing inside
+the nav frame, which was useless. [Marshall]
+
+=item *
+
+The names of media types (a.k.a. MIME types) can now be changed without
+encountering an error. Thanks to Marshall Roch for the spot! [David]
 
 =back
 

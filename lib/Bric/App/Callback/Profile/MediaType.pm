@@ -47,10 +47,11 @@ sub save : Callback {
         } else {
             my @mts = ($class->list_ids({ name => $name }),
                        $class->list_ids({ name => $name, active => 0 }) );
-            $used = 1 if (@mts > 1)
+            $used = 1 if @mts > 1
               || (@mts == 1 && !defined $mt_id)
-                || (@mts == 1 && defined $mt_id && $mts[0] != $mt_id);
-            add_msg("The name \"[_1]\" is already used by another $disp_name.", $name) if $used;
+              || (@mts == 1 && defined $mt_id && $mts[0] != $mt_id);
+            add_msg("The name \"[_1]\" is already used by another $disp_name.", $name)
+              if $used;
         }
 
         # Process add_more widget.
@@ -60,13 +61,14 @@ sub save : Callback {
         $used_ext = 0;
         $addext_sub = sub {
             my ($mt, $extension, $name) = @_;
-            my $usedext = 0;
             unless ($extension =~ /^\s*$/) {
                 if ($extension =~ /^\w{1,10}$/) {
-                    my $mt_name = Bric::Util::MediaType->get_name_by_ext($extension);
-                    if (defined $mt_name && $mt_name ne $name) {
-                        $usedext = 1;
-                        add_msg('Extension "[_1]" is already used by media type "[_2]".', $extension, $mt_name);
+                    my $mt2_id = Bric::Util::MediaType->get_id_by_ext($extension);
+                    if (defined $mt2_id && $mt2_id != $mt_id) {
+                        $used_ext ||= 1;
+                        add_msg('Extension "[_1]" is already used by media type "[_2]".',
+                                $extension,
+                                Bric::Util::MediaType->get_name_by_ext($extension));
                     } else {
                         my @addexts = @{[$extension]};
                         unless ($mt->add_exts(@addexts)) {
@@ -77,7 +79,6 @@ sub save : Callback {
                     add_msg('Extension "[_1]" ignored.', $extension);
                 }
             }
-            $param->{'obj'} = $usedext;
             return;
         };
 
@@ -113,7 +114,7 @@ sub save : Callback {
 
         # Save changes and redirect back to the manager.
         if ($used || $used_ext) {
-            $param->{'obj'} = $mt;
+            $param->{obj} = $mt;
             return;
         } else {
             $mt->activate();
