@@ -45,11 +45,11 @@ unless ($> == 0) {
 # setup default root
 our %UPGRADE = ( BRICOLAGE_ROOT => $ENV{BRICOLAGE_ROOT} ||
                                    '/usr/local/bricolage' );
-our $INSTALL; 
+our $INSTALL;
 
 # determine version being installed
 use lib './lib';
-require "lib/Bric.pm";
+require Bric;
 our $VERSION = $Bric::VERSION;
 
 print q{
