@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.93 $
+$Revision: 1.94 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.93 $ )[-1];
+our $VERSION = (qw$Revision: 1.94 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-16 19:53:16 $
+$Date: 2004-03-16 20:47:40 $
 
 =head1 SYNOPSIS
 
@@ -372,7 +372,7 @@ use constant PARAM_WHERE_MAP =>
                               . 'sm2.member__id = m2.id AND '
                               . 's.id = sm2.object_id',
       simple                 => 's.id IN ('
-                              . 'SELECT story.id FROM story ss'
+                              . 'SELECT ss.id FROM story ss '
                               . 'JOIN story_instance si2 ON story__id = ss.id '
                               . 'WHERE LOWER(si2.name) LIKE LOWER(?) '
                               . 'OR LOWER(si2.description) LIKE LOWER(?) '

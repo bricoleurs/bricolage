@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.89 $
+$Revision: 1.90 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.89 $ )[-1];
+our $VERSION = (qw$Revision: 1.90 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-16 19:53:16 $
+$Date: 2004-03-16 20:47:40 $
 
 =head1 SYNOPSIS
 
@@ -246,7 +246,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'mm2.member__id = m2.id AND '
                              . 'mt.id = mm2.object_id',
       simple                => 'mt.id IN ('
-                             . 'SELECT media.id FROM media mmt'
+                             . 'SELECT mmt.id FROM media mmt '
                              . 'JOIN media_instance mi2 ON media__id = mmt.id '
                              . 'WHERE LOWER(mi2.name) LIKE LOWER(?) '
                              . 'OR LOWER(mi2.description) LIKE LOWER(?) '
