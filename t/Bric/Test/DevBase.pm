@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-19 01:04:36 $
+$Date: 2003-03-18 00:01:22 $
 
 =head1 SYNOPSIS
 
@@ -35,10 +35,10 @@ $Date: 2003-01-19 01:04:36 $
       my $self = shift;
       ok( my $p = Bric::Biz::Person->new, "create" );
       ok( $p->save, "save" );
-      $self->add_del_ids([$p->get_id]);
+      $self->add_del_ids($p->get_id);
       ok( my $grp = Bric::Util::Grp::Person->new, "create grp" );
       ok( $grp->save, "Save grp" );
-      $self->add_del_ids([$grp->get_id], 'grp' );
+      $self->add_del_ids($grp->get_id, 'grp' );
   }
 
 =head1 DESCRIPTION
@@ -105,12 +105,12 @@ sub get_del_ids { $_[0]->{_to_delete} }
 This method is automatically called by Test::Class after every test method has
 executed. It's a tear-down method. It goes through the list of IDs that have
 been added via C<add_del_ids()> and executes a C<DELETE> statement against the
-appropriate table in the database.
+appropriate table or tables in the database.
 
-B<Note:> This method is imperfect, and you will likely end up with extra data
-in the database, particularly in the group-related and attribute-related
-tables. This upshot is that C<make devtest> should never be run against a
-production database.
+B<Note:> This method is imperfect. You will likely end up with extra data in
+the database, particularly in the group-related and attribute-related tables.
+This upshot is that C<make devtest> should never be run against a production
+database.
 
 It can be useful to override this method in order to delete related IDs. For
 example, Bri::Biz::Asset::DevTest overrides C<del_ids()> to delete instances
@@ -133,7 +133,11 @@ sub del_ids : Test(teardown => 0) {
     my $self = shift;
     my $to_delete = delete $self->{_to_delete} or return;
 
+    # Set up extra stuff it we need to delete any sites.
+    _del_sites($to_delete) if $to_delete->{site};
+
     while (my ($table, $ids) = each %$to_delete) {
+        # Delete from the table.
         $ids = join ', ', @$ids;
         Bric::Util::DBI::prepare(qq{
             DELETE FROM $table
@@ -147,6 +151,17 @@ sub del_ids : Test(teardown => 0) {
                 WHERE  grp__id IN ($ids)
             })->execute;
         }
+    }
+}
+
+sub _del_sites {
+    my $to_delete = shift;
+    # Schedule the secret asset group and user groups for deletion.
+    foreach my $id (@{$to_delete->{site}}) {
+        push @{$to_delete->{grp}}, $id,
+          Bric::Util::Grp::User->list_ids
+            ({ description => "__Site $id Users__",
+               all         => 1 });
     }
 }
 

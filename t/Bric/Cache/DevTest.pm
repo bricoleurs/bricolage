@@ -45,7 +45,7 @@ sub test_unique : Test(8) {
 
     ok( $site1->save(), "Create first dummy site");
     my $site1_id = $site1->get_id;
-    $self->clean_site($site1_id);
+    $self->add_del_ids($site1_id, 'site');
 
     my $wf1 = Bric::Biz::Workflow->new
       ({site_id     => 100,
@@ -81,26 +81,13 @@ sub test_unique : Test(8) {
 
     is($wf2->get_site_id, $site1_id, "Should get back the correct workflow" .
        "for this site");
-    
+
     is($wf2->get_id,
        Bric::Biz::Workflow->lookup({'name' => 'test',
                                    site_id => $site1_id})->get_id,
        "Test that the same workflow is returned");
 
     isnt($wf1, $wf2, "The two workflows should not be the same object");
-    
 }
 
-sub clean_site {
-    my ($self, $id) = @_;
-    # Make sure we delete the site and the secret asset group.
-    $self->add_del_ids($id, 'site');
-    $self->add_del_ids($id, 'grp');
-    # Schedule the secret user gropus for deletion.
-    $self->add_del_ids(scalar Bric::Util::Grp::User->list_ids
-                       ({ description => "__Site $id Users__",
-                          all         => 1 }), 'grp');
-
-
-}
 1;

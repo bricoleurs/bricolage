@@ -234,7 +234,7 @@ sub test_site : Test(12) {
 
     ok( $site1->save(), "Create first dummy site");
     my $site1_id = $site1->get_id;
-    $self->clean_site($site1_id);
+    $self->add_del_ids($site1_id, 'site');
 
     my $site2 = Bric::Biz::Site->new( { name => "Dummy 2",
                                         domain_name => 'www.dummy2.com',
@@ -243,7 +243,7 @@ sub test_site : Test(12) {
 
     ok( $site2->save(), "Create second dummy site");
     my $site2_id = $site2->get_id;
-    $self->clean_site($site2_id);
+    $self->add_del_ids($site2_id, 'site');
 
     my $top_level_element = Bric::Biz::AssetType->lookup({id => $top_level_element_id});
     my $element           = Bric::Biz::AssetType->lookup({id => $element_id});
@@ -296,20 +296,6 @@ sub test_site : Test(12) {
     is(scalar @{$top_level_element->get_sites()}, 1,
        "We should have one site now");
 }
-
-sub clean_site {
-    my ($self, $id) = @_;
-    # Make sure we delete the site and the secret asset group.
-    $self->add_del_ids($id, 'site');
-    $self->add_del_ids($id, 'grp');
-    # Schedule the secret user gropus for deletion.
-    $self->add_del_ids(scalar Bric::Util::Grp::User->list_ids
-                       ({ description => "__Site $id Users__",
-                          all         => 1 }), 'grp');
-
-
-}
-
 
 1;
 __END__

@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-16 14:00:48 $
+$Date: 2003-03-18 00:01:23 $
 
 =head1 SYNOPSIS
 
@@ -830,20 +830,6 @@ B<Notes:> NONE.
 
 ################################################################################
 
-=item $workflow = $workflow->set_site_id($site_id)
-
-Set the ID of the site this Workflow should be a part of
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-################################################################################
-
 =item $description = $self->get_description()
 
 This returns the description for the asset
@@ -1390,12 +1376,39 @@ NONE
 
 =cut
 
+##############################################################################
+
+=item my @grp_ids = $asset->get_grp_ids
+
+=item my $grp_ids_aref = $asset->get_grp_ids
+
+Returns the IDs for all the groups of which the asset is an active member.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> This method overrides C<Bric::get_grp_ids()> in order to add the
+site ID to the list of IDs. This works because the site ID is corresponds to a
+secret group ID.
+
+=cut
+
+sub get_grp_ids {
+    my $self = shift;
+    return wantarray ? $self->INSTANCE_GROUP_ID : [$self->INSTANCE_GROUP_ID]
+      unless ref $self;
+    my ($gids, $site_id) = $self->_get(qw(grp_ids site_id));
+    unshift @$gids, $site_id unless $gids->[0] == $site_id;
+    return wantarray ? @$gids : $gids;
+}
+
 ################################################################################
 
-=item $self = $self->cancel ();
+=item $self = $self->cancel
 
-Reverts the actions of a fork with out committing any changes.   Deletes
-row for the checked out asset
+Reverts the actions of a fork with out committing any changes. Deletes row for
+the checked out asset.
 
 B<Throws:>
 

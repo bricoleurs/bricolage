@@ -604,20 +604,20 @@ sub test_alias : Test(28) {
     my $self = shift;
     throws_ok {
         Bric::Biz::Asset::Business::Media->new({})
-      } qr/Cannot create an asset without an Element or alias_id/,
+      } qr/Cannot create an asset without an element or alias ID/,
         "Check that you cannot create empty stories";
 
     throws_ok {
         Bric::Biz::Asset::Business::Media->new(
           { alias_id => 1, element__id => 1});
-    } qr/Cannot create an asset with both Element and alias_id/,
+    } qr/Cannot create an asset with both an element and an alias ID/,
       "Check that you cannot create a media with both element__id and an ".
       "alias";
 
     throws_ok {
         Bric::Biz::Asset::Business::Media->new(
           { alias_id => 1, element => 1});
-    } qr/Cannot create an asset with both Element and alias_id/,
+    } qr/Cannot create an asset with both an element and an alias ID/,
       "Check that you cannot create a media with both element and an ".
       "alias";
 
@@ -625,8 +625,8 @@ sub test_alias : Test(28) {
     ok( my $media = Bric::Biz::Asset::Business::Media->new(
       { element       => $self->get_elem,
         user__id      => $self->user_id,
-        name          => 'MediaAlias', 
-        file_name     => 'test.alis',
+        name          => 'MediaAlias',
+        file_name     => 'test.alias',
         source__id    => 1,
         primary_oc_id => 1,
         site_id       => 100,
@@ -667,12 +667,12 @@ sub test_alias : Test(28) {
 
     ok( $site1->save(), "Create first dummy site");
     my $site1_id = $site1->get_id;
-    $self->clean_site($site1_id);
+    $self->add_del_ids($site1_id, 'site');
 
     throws_ok {
         Bric::Biz::Asset::Business::Media->new(
           { alias_id => $media->get_id, site_id => $site1_id })
-      } qr "Cannot create an alias to an asset that belongs to an element that is not associated with this site",
+      } qr/Cannot create an alias to an asset based on an element that is not associated with this site/,
         "Check that a element needs to be associated with a site ".
         "for a target to aliasable";
 
@@ -683,7 +683,7 @@ sub test_alias : Test(28) {
     throws_ok {
         Bric::Biz::Asset::Business::Media->new(
           { alias_id => $media->get_id, site_id => $site1_id })
-      } qr /Cannot create an alias to an asset because this element does not have any OutputChannels selected for this site/,
+      } qr /Cannot create an alias to this asset because this element has no output channels associated with this site/,
         "Check that the element associated to alias target has any output ".
         "channels for this site";
 
@@ -762,19 +762,6 @@ sub test_alias : Test(28) {
         DELETE FROM media
         WHERE  site__id = $site1_id
     })->execute;
-
-}
-
-sub clean_site {
-    my ($self, $id) = @_;
-    # Make sure we delete the site and the secret asset group.
-    $self->add_del_ids($id, 'site');
-    $self->add_del_ids($id, 'grp');
-    # Schedule the secret user gropus for deletion.
-    $self->add_del_ids(scalar Bric::Util::Grp::User->list_ids
-                       ({ description => "__Site $id Users__",
-                          all         => 1 }), 'grp');
-
 
 }
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-16 14:34:38 $
+$Date: 2003-03-18 00:01:25 $
 
 =head1 SYNOPSIS
 
@@ -145,7 +145,7 @@ use constant CAN_DO_LOOKUP => 1;
 use constant HAS_CLASS_ID => 1;
 
 # relations to loop through in the big query
-use constant RELATIONS => [qw( media category desk workflow alias)];
+use constant RELATIONS => [qw( media category desk workflow)];
 
 use constant RELATION_TABLES =>
     {
@@ -153,7 +153,6 @@ use constant RELATION_TABLES =>
         category   => 'category_member cm',
         desk       => 'desk_member dm',
         workflow   => 'workflow_member wm',
-        alias      => '',
     };
 
 use constant RELATION_JOINS =>
@@ -162,7 +161,6 @@ use constant RELATION_JOINS =>
         category   => 'cm.object_id = i.category__id AND m.id = cm.member__id',
         desk       => 'dm.object_id = mt.desk__id AND m.id = dm.member__id',
         workflow   => 'wm.object_id = mt.workflow__id AND m.id = wm.member__id',
-        alias      => 'mt.alias_id IS NOT NULL',
     };
 
 # the mapping for building up the where clause based on params
@@ -232,7 +230,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'LOWER(i.description) LIKE LOWER(?) )',
     };
 
-use constant PARAM_ORDER_MAP => 
+use constant PARAM_ORDER_MAP =>
     {
       active              => 'active',
       inactive            => 'active',

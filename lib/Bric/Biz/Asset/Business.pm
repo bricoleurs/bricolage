@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-16 14:34:38 $
+$Date: 2003-03-18 00:01:23 $
 
 =head1 SYNOPSIS
 
@@ -49,6 +49,8 @@ $Date: 2003-03-16 14:34:38 $
  $description = $asset->get_description()
  $priority    = $asset->get_priority()
  $asset       = $asset->set_priority($priority)
+ $alias_id    = $asset->get_alias_id()
+ $asset       = $asset->set_alias_id($alias_id)
 
  # User information
  $usr_id      = $asset->get_user__id()
@@ -120,6 +122,7 @@ use strict;
 
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
+use Bric::Util::Fault qw(:all);
 use Bric::Util::Grp::AssetVersion;
 use Bric::Util::Grp::AssetLanguage;
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
@@ -196,6 +199,7 @@ BEGIN {
               _new_categories           => Bric::FIELD_NONE,
               _element_object           => Bric::FIELD_NONE,
               _oc_coll                  => Bric::FIELD_NONE,
+              _alias_obj                => Bric::FIELD_NONE,
             });
     }
 
@@ -528,6 +532,26 @@ sub set_title { $_[0]->_set(['name'] => [$_[1]]) }
 
 ################################################################################
 
+=item $alias_id = $biz->get_alias_id()
+
+Returns the alias id from this business asset
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+################################################################################
+
 =item $biz = $biz->set_source__id($s_id)
 
 Sets the source id upon this story
@@ -739,11 +763,24 @@ NONE
 
 =cut
 
+sub _get_alias {
+    my $self = shift;
+    my ($alias_id, $alias_obj) = $self->_get(qw(alias_id _alias_obj));
+    return unless $alias_id;
+    unless ($alias_obj) {
+        $alias_obj = ref($self)->lookup({ id => $alias_id });
+        $self->_set(['_alias_obj'] => [$alias_obj]);
+    }
+    return $alias_obj;
+}
+
 sub get_contributors {
     my $self = shift;
-    if(my $alias_id = $self->_get('alias_id')) {
-        return ref($self)->lookup({id => $alias_id})->get_contributors();
+
+    if (my $alias_obj = $self->_get_alias) {
+        return $alias_obj->get_contributors;
     }
+
     my $contribs = $self->_get_contributors;
 
     my @ret;
@@ -862,37 +899,32 @@ NONE
 =cut
 
 sub reorder_contributors {
-        my $self = shift;
-        my @new_order = @_;
+    my $self = shift;
+    my @new_order = @_;
+    my $dirty = $self->_get__dirty();
+    my $existing = $self->_get_contributors();
 
-        my $dirty = $self->_get__dirty();
+    if ((scalar @new_order) != (scalar (keys %$existing))) {
+        throw_gen 'Improper Args to reorder contributors';
+    }
 
-        my $existing = $self->_get_contributors();
-
-        if ((scalar @new_order) != (scalar (keys %$existing))) {
-                die Bric::Util::Fault::Exception::GEN->new( 
-                        { 'msg' => 'Improper Args to reorder contributors' });
-        }
-
-        my $i = 0;
-        foreach (@new_order) {
-                if (exists $existing->{$_}) {
-                        unless ($existing->{$_}->{'place'} == $i) {
-                                $existing->{$_}->{'place'} = $i;
-                                $existing->{$_}->{'action'} = 'update' 
-                                        unless $existing->{$_}->{'action'} eq 'insert';
-                        }
+    my $i = 0;
+    foreach (@new_order) {
+        if (exists $existing->{$_}) {
+            unless ($existing->{$_}->{'place'} == $i) {
+                $existing->{$_}->{'place'} = $i;
+                $existing->{$_}->{'action'} = 'update' 
+                  unless $existing->{$_}->{'action'} eq 'insert';
+            }
                         $i++;
-                } else {
-                die Bric::Util::Fault::Exception::GEN->new(
-                         { 'msg' => 'Improper Args to reorder contributors' });
-                }
+        } else {
+            throw_gen 'Improper Args to reorder contributors';
         }
-        $self->_set( { '_contributors' => $existing });
+    }
 
-        $self->_set__dirty($dirty);
-
-        return $self;
+    $self->_set( { '_contributors' => $existing });
+    $self->_set__dirty($dirty);
+    return $self;
 }
 
 ################################################################################
@@ -1411,18 +1443,14 @@ NONE
 
 sub get_tile {
     my ($self) = @_;
-    my $object = $self;
-    if(my $alias_id = $self->_get('alias_id')) {
-        # use my target story if I am an alias
-        $object = ref($self)->lookup({ id => $alias_id });
-    }
+    my $object = $self->_get_alias || $self;
     my $tile = $self->_get('_tile');
     unless ($tile) {
-        ($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list(
-          { object    => $object,
-            parent_id => undef,
-            active    => 1 });
-        $self->_set( { '_tile' => $tile });
+        ($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list
+          ({ object    => $object,
+             parent_id => undef,
+             active    => 1 });
+        $self->_set(['_tile'] => [$tile]);
     }
     return $tile;
 }
@@ -1613,11 +1641,10 @@ sub add_keywords {
             $keyword = $k;
         } else {
             $keyword = Bric::Biz::Keyword->lookup({id => $k});
-            die Bric::Util::Fault::Exception::GEN->new(
-                 { msg => "No keyword object found for id '$k'" } )
+            throw_gen "No keyword object found for id '$k'"
               unless defined $keyword;
         }
-        
+
         # associate keyword with this asset
         $keyword->associate($self);
     }
@@ -1642,10 +1669,7 @@ B<Notes:> NONE
 
 sub get_keywords {
     my $self = shift;
-    my $object = $self;
-    if(my $alias_id = $self->_get('alias_id')) {
-        $object = ref($self)->lookup({id => $alias_id});
-    }
+    my $object = $self->_get_alias || $self;
     return Bric::Biz::Keyword->list({ object => $self });
 }
 
@@ -1666,11 +1690,11 @@ B<Notes:> NONE
 
 sub get_all_keywords {
     my $self = shift;
-    if(my $alias_id = $self->_get('alias_id')) {
-        return ref($self)->lookup({id => $alias_id})->get_all_keywords();
+    if (my $alias_obj = $self->_get_alias) {
+        return $alias_obj->get_all_keywords;
     }
     my %kw = map { ($_->get_id, $_) } 
-      ( Bric::Biz::Keyword->list({ object => $self }), 
+      ( Bric::Biz::Keyword->list({ object => $self }),
         $self->_get_category_keywords() );
     my @kw = sort { lc $a->get_sort_name cmp lc $b->get_sort_name }
       values %kw;
@@ -1680,8 +1704,8 @@ sub get_all_keywords {
 
 =item $asset = $asset->delete_keywords([$kw]);
 
-Takes a list of keywords and disassociates them from the object.
-Category keywords can not be disassociated from the asset.  
+Takes a list of keywords and disassociates them from the object. Category
+keywords can not be disassociated from the asset.
 
 B<Throws:> NONE
 
@@ -1693,7 +1717,7 @@ B<Notes:> NONE
 
 sub delete_keywords {
     my ($self,$keywords) = @_;
-    
+
     my $keyword;
     foreach my $k (@$keywords) {
         # find object for id
@@ -1701,11 +1725,10 @@ sub delete_keywords {
             $keyword = $k;
         } else {
             $keyword = Bric::Biz::Keyword->lookup({id => $k});
-            die Bric::Util::Fault::Exception::GEN->new(
-                 { msg => "No keyword object found for id '$k'" } )
+            throw_gen "No keyword object found for id '$k'"
               unless defined $keyword;
         }
-        
+
         # dissociate keyword with this asset
         $keyword->dissociate($self);
     }
@@ -1751,19 +1774,16 @@ NONE
 =cut
 
 sub cancel {
-        my ($self) = @_;
+    my $self = shift;
 
-        # the user has decided to uncheck this out.
-        # this will result in a delete from the data base of this 
-        # row
+    # the user has decided to uncheck this out. this will result in a delete
+    # from the data base of this row
 
-        if ( not defined $self->_get('user_id')) {
-                # this is not checked out, it can not be deleted
-                die Bric::Util::Fault::Exception::GEN->new( {
-                        msg => "Can not cancel a non checked out asset" });
-        }
-
-        $self->_set( { '_delete' => 1});
+    if ( not defined $self->_get('user_id')) {
+        # this is not checked out, it can not be deleted
+        throw_gen "Can not cancel a non checked out asset";
+    }
+    $self->_set( { '_delete' => 1});
 }
 
 ################################################################################
@@ -1814,48 +1834,36 @@ NONE
 =cut
 
 sub checkout {
-        my ($self, $param) = @_;
+    my ($self, $param) = @_;
 
-        # make sure that this version is the most current
-        unless ($self->_get('version') == $self->_get('current_version') ) {
-                die Bric::Util::Fault::Exception::GEN->new( { msg =>
-                        "Unable to checkout old_versions" });
-        }
-        # Make sure that the object is not already checked out
-        if (defined $self->_get('user__id')) {
-                die Bric::Util::Fault::Exception::GEN->new( {
-                        msg => "Already Checked Out" });
-        }
-        unless (defined $param->{'user__id'}) {
-                die Bric::Util::Fault::Exception::GEN->new( { msg =>
-                        "Must be checked out to users" });
-        }
+    # make sure that this version is the most current
+    throw_gen "Unable to checkout old_versions"
+      unless $self->_get('version') == $self->_get('current_version');
 
-        my $tile = $self->get_tile();
-        $tile->prepare_clone();
+    # Make sure that the object is not already checked out
+    throw_gen "Already Checked Out" if defined $self->_get('user__id');
 
-        my $contribs = $self->_get_contributors();
-        # clone contributors
-        foreach (keys %$contribs ) {
-                $contribs->{$_}->{'action'} = 'insert';
-        }
+    throw_gen "Must be checked out to users"
+      unless defined $param->{user__id};
 
-        # Clone output channels.
-        my $oc_coll = $get_oc_coll->($self);
-        my @ocs = $oc_coll->get_objs;
-        $oc_coll->del_objs(@ocs);
-        $oc_coll->add_new_objs(@ocs);
+    my $tile = $self->get_tile;
+    $tile->prepare_clone;
 
-        $self->_set( {
-                user__id => $param->{'user__id'} ,
-                modifier => $param->{'user__id'},
-                version_id => undef,
-                checked_out => 1
-        });
+    my $contribs = $self->_get_contributors;
+    # clone contributors
+    foreach (keys %$contribs ) {
+        $contribs->{$_}->{action} = 'insert';
+    }
 
-        $self->_set( { '_update_contributors' => 1 }) if $contribs;
+    # Clone output channels.
+    my $oc_coll = $get_oc_coll->($self);
+    my @ocs = $oc_coll->get_objs;
+    $oc_coll->del_objs(@ocs);
+    $oc_coll->add_new_objs(@ocs);
 
-        return $self;
+    $self->_set([qw(user__id modifier version_id checked_out)] =>
+                [$param->{user__id}, $param->{user__id}, undef, 1]);
+    $self->_set(['_update_contributors'] => [1]) if $contribs;
 }
 
 ################################################################################
@@ -1929,7 +1937,34 @@ Preforms functions needed to create new business assets
 
 B<Throws:>
 
-NONE
+=over 4
+
+=item *
+
+Cannot create an asset without an element or alias ID.
+
+=item *
+
+Cannot create an asset with both an element and an alias ID.
+
+=item *
+
+Cannot create an asset without a site.
+
+=item *
+
+Cannot create an alias to an asset in the same site.
+
+=item *
+
+Cannot create an alias to an alias.
+
+=item *
+
+Cannot create an alias to an asset based on an element that is not associated
+with this site.
+
+=back
 
 B<Side Effects:>
 
@@ -1943,50 +1978,40 @@ NONE
 
 sub _init {
     my ($self, $init) = @_;
+    my $class = ref $self or throw_mni "Method not implemented";
 
-    die Bric::Util::Fault::Exception::GEN->new(
-      {msg => "Method not implemented"}) unless ref $self;
-
-    die Bric::Util::Fault::Exception::GEN->new(
-      { msg => "Cannot create an asset without an Element or alias_id"})
+    throw_dp "Cannot create an asset without an element or alias ID"
       unless $init->{element__id} || $init->{element} || $init->{alias_id};
 
-    die Bric::Util::Fault::Exception::GEN->new(
-      { msg => "Cannot create an asset with both Element and alias_id"})
-      if ( ($init->{element__id} || $init->{element}) && $init->{alias_id});
+    throw_dp "Cannot create an asset with both an element and an alias ID"
+      if ($init->{element__id} || $init->{element}) && $init->{alias_id};
 
-    die Bric::Util::Fault::Exception::GEN->new(
-      { msg => "Cannot create an asset without a site" })
-      unless $init->{site_id};
+    throw_dp "Cannot create an asset without a site" unless $init->{site_id};
 
     if ($init->{alias_id}) {
-        my $alias_target = ref($self)->lookup(
-          { id => $init->{alias_id} });
+        my $alias_target = $class->lookup({ id => $init->{alias_id} });
 
-        die Bric::Util::Fault::Exception::GEN->new(
-          { msg => "Cannot create an alias to an asset in the same site" })
-          if($alias_target->get_site_id == $init->{site_id});
+        throw_dp "Cannot create an alias to an asset in the same site"
+          if $alias_target->get_site_id == $init->{site_id};
 
-        die Bric::Util::Fault::Exception::GEN->new(
-          { msg => "Cannot create an alias to an asset that is an alias" })
-          if($alias_target->get_alias_id);
+        throw_dp "Cannot create an alias to an alias"
+          if $alias_target->get_alias_id;
 
-        $self->_set(['alias_id'], [$init->{alias_id}]);
-
+        $self->_set([qw(alias_id _alias_obj)],
+                    [$init->{alias_id}, $alias_target]);
 
         my $at = $alias_target->_get_element_object;
         my $at_exists = 0;
         foreach my $site (@{$at->get_sites}) {
-            if($site->get_id == $init->{site_id}) {
+            if ($site->get_id == $init->{site_id}) {
                 $at_exists++;
                 last;
             }
         }
 
-        die Bric::Util::Fault::Exception::GEN->new(
-          { msg => "Cannot create an alias to an asset that belongs to an ".
-            "element that is not associated with this site" })
-          unless($at_exists);
+        throw_dp "Cannot create an alias to an asset based on an " .
+            "element that is not associated with this site"
+          unless $at_exists;
 
 
         $self->set_source__id( $alias_target->get_source__id );
@@ -1998,13 +2023,11 @@ sub _init {
                                    $at->get_output_channels);
 
 
-        $self->set_primary_oc_id($at->get_primary_oc_id
-                                 ($init->{site_id}));
+        $self->set_primary_oc_id($at->get_primary_oc_id($init->{site_id}));
 
-        die Bric::Util::Fault::Exception::GEN->new( 
-          { msg => "Cannot create an alias to an asset because this element ".
-          "does not have any OutputChannels selected for this site" })
-          unless(@{$self->get_output_channels});
+        throw_dp "Cannot create an alias to this asset because this element ".
+          "has no output channels associated with this site"
+          unless @{$self->get_output_channels};
 
         if ($self->can('get_primary_category')) {
             my $primary = 0;
@@ -2012,7 +2035,7 @@ sub _init {
                              $alias_target->get_secondary_categories) {
 
                 my $new_cat = Bric::Biz::Category->lookup
-                  ({ uri => $cat->get_uri , site_id => $init->{site_id}});
+                  ({ uri => $cat->get_uri, site_id => $init->{site_id}});
                 if(!$new_cat && !$primary) {
                     # Nothing found and this was the primary
                     # use the site root
@@ -2027,36 +2050,37 @@ sub _init {
             }
         }
         $self->_set(['slug'], [$alias_target->_get('slug')])
-          if($alias_target->_get('slug'));
+          if $alias_target->_get('slug');
 
         $self->_set(['file_name'], [$alias_target->_get('file_name')])
-          if($alias_target->_get('file_name'));
+          if $alias_target->_get('file_name');
 
         $self->_set(['name'], [$alias_target->_get('name')])
-          if($alias_target->_get('name'));
+          if $alias_target->_get('name');
 
         $self->_set(['element__id'], [$alias_target->_get('element__id')]);
 
         $self->_set(['category__id'], [$alias_target->_get('category__id')])
-          if($alias_target->_get('category__id'));
+          if $alias_target->_get('category__id');
 
         $self->_set
           ([qw(current_version publish_status modifier
-               checked_out     version)],
-           [          0,              0,  $init->{user__id}, 
-                      1,       0]);
+               checked_out     version site_id
+               grp_ids)
+           ] =>
+           [   0,              0,             $init->{user__id},
+               1,              0,      $init->{site_id},
+               [$init->{site_id}, $self->INSTANCE_GROUP_ID]
+           ]);
 
-                    
     } else {
-        die Bric::Util::Fault::Exception::GEN->new( {
-          msg => "Can not create asset with out Source "})
-          unless $init->{'source__id'};
+        throw_dp "Can not create asset without a source"
+          unless $init->{source__id};
 
-        if ($init->{'cover_date'}) {
-            $self->set_cover_date( $init->{'cover_date'} );
-            delete $init->{'cover_date'};
+        if ($init->{cover_date}) {
+            $self->set_cover_date( delete $init->{cover_date} );
             my $source = Bric::Biz::Org::Source->lookup
-              ({id => $init->{'source__id'}});
+              ({ id => $init->{source__id} });
             if (my $expire = $source->get_expire) {
                 # add the days to the cover date and set the expire date
                 my $date = local_date($self->_get('cover_date'), 'epoch');
@@ -2094,9 +2118,11 @@ sub _init {
            });
 
         $self->_set([qw(version current_version checked_out _tile modifier
-                    element__id _element_object publish_status)],
-                    [0, 0, 1, $tile, @{$init}{qw(user__id element__id element)},
-                     0]);
+                        element__id _element_object site_id grp_ids
+                        publish_status)],
+                    [0, 0, 1, $tile,
+                     @{$init}{qw(user__id element__id element site_id)},
+                     [$init->{site_id}, $self->INSTANCE_GROUP_ID], 0]);
     }
     $self->_set__dirty;
 }
@@ -2206,20 +2232,15 @@ sub _get_element_object {
 
     my $dirty = $self->_get__dirty();
 
-    my $at_obj = $self->_get('_element_object');
+    my ($at_id, $at_obj) = $self->_get(qw(element__id _element_object));
     return $at_obj if $at_obj;
 
-    if($self->_get('alias_id')) {
-        return ref($self)->lookup
-          ({ id => $self->_get('alias_id') })->
-            _get_element_object;
-    } else {
-        $at_obj = Bric::Biz::AssetType->lookup
-          ({ id => $self->_get('element__id')});
+    if (my $alias_obj = $self->_get_alias) {
+        return $alias_obj->_get_element_object;
     }
 
-    $self->_set(['_element_object'], [$at_obj]);
-
+    $at_obj = Bric::Biz::AssetType->lookup({ id => $at_id });
+    $self->_set(['_element_object'] => [$at_obj]);
     $self->_set__dirty($dirty);
     return $at_obj;
 }

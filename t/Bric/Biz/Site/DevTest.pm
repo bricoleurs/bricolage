@@ -40,14 +40,7 @@ sub setup_sites : Test(setup => 13) {
         # Save the ID for deleting (delete the group, too!).
         my $id = $site->get_id;
         $self->add_del_ids($id);
-        $self->add_del_ids($id, 'grp');
-
         $grp->add_member({ obj => $site }) if $n % 2;
-
-        # Schedule the secret user gropus for deletion.
-        $self->add_del_ids(scalar Bric::Util::Grp::User->list_ids
-                           ({ description => "__Site $id Users__",
-                              all         => 1 }), 'grp');
 
         # Cache the new site.
         push @sites, $site;

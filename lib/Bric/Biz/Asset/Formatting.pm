@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 18:36:05 $
+$Date: 2003-03-18 00:01:24 $
 
 =head1 SYNOPSIS
 
@@ -124,7 +124,7 @@ use strict;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::AssetVersion;
 use Bric::Util::Time qw(:all);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(:all);
 use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Formatting;
 use Bric::Biz::AssetType;
@@ -492,7 +492,6 @@ sub new {
     my $self = bless {}, $class;
 
     # set active unless we we passed another value
-
     $init->{_active} = exists $init->{active} ?
       delete $init->{active} ? 1 : 0 : 1;
 
@@ -503,6 +502,10 @@ sub new {
 
     # file type defaults to 'mc'
     $init->{file_type} ||= 'mc';
+
+    # Set the site ID and the group IDs.
+    throw_dp "Cannot create an asset without a site" unless $init->{site_id};
+    $init->{grp_ids} = [$init->{site_id}, $self->INSTANCE_GROUP_ID];
 
     # Check for required output_channel__id.
     die Bric::Util::Fault::Exception::DP->new
