@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-17 16:19:43 $
+$Date: 2001-09-28 08:33:40 $
 
 =head1 SYNOPSIS
 
@@ -1639,27 +1639,29 @@ NONE
 =cut
 
 sub _get_auto_fields {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $auto_fields;
-	if (ref $self) {
-		$auto_fields = $self->_get('_auto_fields');
+    my $auto_fields;
+    if (ref $self) {
+	$auto_fields = $self->_get('_auto_fields');
+	return $auto_fields if $auto_fields;
+    }
 
-		return $auto_fields if $auto_fields;
-	}
+    my $sth = prepare_c(qq{
+        SELECT name, function_name
+        FROM   media_fields
+        WHERE  biz_pkg = ?
+               AND active = ?
+        ORDER BY id
+    });
 
-	my $sql = 'SELECT name, function_name FROM media_fields '.
-				'WHERE biz_pkg=? AND active=? ';
+    execute($sth, ($self->get_class_id, 1));
+    while (my $row = fetch($sth)) {
+	$auto_fields->{$row->[0]} = $row->[1];
+    }
 
-	my $sth = prepare_ca($sql, undef, DEBUG);
-	execute($sth, ($self->get_class_id, 1));
-	while (my $row = fetch($sth)) {
-		$auto_fields->{$row->[0]} = $row->[1];
-	}
-
-	$self->_set( { '_auto_fields' => $auto_fields }) if ref $self;
-
-	return $auto_fields;
+    $self->_set( { '_auto_fields' => $auto_fields }) if ref $self;
+    return $auto_fields;
 }
 
 ################################################################################
@@ -2039,7 +2041,10 @@ L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>
 =head1 REVISION HISTORY
 
 $Log: Media.pm,v $
-Revision 1.3  2001-09-17 16:19:43  wheeler
+Revision 1.4  2001-09-28 08:33:40  wheeler
+Added ORDER BY clause to SELECT statement.
+
+Revision 1.3  2001/09/17 16:19:43  wheeler
 Corrected spelling of "contributor" but grepping through files and fixing them,
 plus deleting some files, renaming them, and then adding them back in.
 
