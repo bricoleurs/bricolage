@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: bric_template_dump
-version: 0.11
+version: 0.12
 author:
   - David Wheeler <david@kineticode.com>.
 abstract: |-

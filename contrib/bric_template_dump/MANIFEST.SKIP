@@ -4,6 +4,6 @@
 ~$
 \.bak$
 ^MANIFEST\.SKIP$
-^bric_template_dump-
+^bric_template_dump
 ^www
 CVS

@@ -1,4 +1,4 @@
-bric_template_dump
+bin/bric_template_dump
 Build.PL
 Changes
 Makefile.PL

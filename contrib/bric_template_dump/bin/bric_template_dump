@@ -116,7 +116,7 @@ my ($username, $password, $server, $output_to, $VERBOSE, $timeout, $help,
     $man, $oc, $site, $show_ver);
 
 BEGIN {
-    our $VERSION = '0.11';
+    our $VERSION = '0.12';
 
     # Get parameters from command line. Do so at compile time so that $VERBOSE
     # can effect use options and such.
