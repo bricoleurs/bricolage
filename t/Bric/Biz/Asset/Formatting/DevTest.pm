@@ -54,22 +54,6 @@ sub make_oc {
 
 
 ##############################################################################
-# The element object we'll use throughout. Override in subclass if necessary.
-##############################################################################
-my $elem;
-sub get_elem {
-    $elem ||= Bric::Biz::AssetType->lookup({ id => 1 });
-    $elem;
-}
-
-##############################################################################
-# Constructs a new object.
-sub construct {
-    my $self = shift;
-    $self->class->new({ $self->new_args, @_ });
-}
-
-##############################################################################
 # Test constructor.
 ##############################################################################
 # Test new() creating an element template.
@@ -297,12 +281,13 @@ sub test_select_a_default_objs: Test(12) {
 
 sub test_select_b_new_objs: Test(58) {
     my $self = shift;
+    my $class = $self->class;
 
     # let's grab existing 'All' group info
-    my $all_workflow_grp_id = Bric::Util::Grp->lookup({ name => 'All Workflows' })->get_id();
-    my $all_cats_grp_id = Bric::Util::Grp->lookup({ name => 'All Categories' })->get_id();
-    my $all_desks_grp_id = Bric::Util::Grp->lookup({ name => 'All Desks' })->get_id();
-    my $all_formatting_grp_id = Bric::Util::Grp->lookup({ name => 'All Templates' })->get_id();
+    my $all_workflow_grp_id = Bric::Biz::Workflow->INSTANCE_GROUP_ID;
+    my $all_cats_grp_id = Bric::Biz::Category->INSTANCE_GROUP_ID;
+    my $all_desks_grp_id =  Bric::Biz::Workflow::Parts::Desk->INSTANCE_GROUP_ID;
+    my $all_formatting_grp_id = $class->INSTANCE_GROUP_ID;
 
     # now we'll create some test objects
     my ($i);
@@ -750,7 +735,8 @@ sub test_select_b_new_objs: Test(58) {
 
 sub test_new_grp_ids: Test(4) {
     my $self = shift;
-    my $all_formatting_grp_id = Bric::Util::Grp->lookup({ name => 'All Templates' })->get_id();
+    my $class = $self->class;
+    my $all_formatting_grp_id = $class->INSTANCE_GROUP_ID;
     my $time = time;
     my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
     my $element = Bric::Biz::AssetType->new(
