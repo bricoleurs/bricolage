@@ -43,50 +43,68 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Manage Output Channels if this is a top-level container.
 if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
+    my $primid = $comp->get_primary_oc_id;
+    my $oc_sub = sub {
+        my $ocid = $_[0]->get_id;
+        if ($_[1] eq 'primary') {
+            # Output a hidden field for this included OC.
+            $m->scomp('/widgets/profile/radio.mc',
+                      name => 'primary_oc_id',
+                      value => $ocid,
+                      checked => $ocid == $primid,
+                      useTable => 0
+                     );
+        } elsif ($_[1] eq 'enabled') {
+            $m->scomp('/widgets/profile/checkbox.mc',
+                      name => 'enabled',
+                      value => $ocid,
+                      checked => $_[0]->is_enabled,
+                      useTable => 0
+                     );
+        }
+    };
 
-    my ($left, $right, $opt) = ([], [], []);
-
-    # Assemble the list of output channels for this instance.
-    foreach my $grp ( $id ? @{$comp->get_output_channels} : () ) {
-	push @$right, { value =>  $grp->get_id, description => $grp->get_name };
-    }
-
-    # Assemble a list of all output channels.
-    foreach my $oc ( Bric::Biz::OutputChannel->list({ active => 1 }) ) {
-	push @$left, { value =>  $oc->get_id, description => $oc->get_name };
-	push @$opt, [ $oc->get_id, $oc->get_name ];
-    }
-
-    # Load up the double-list manager.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	     caption => "Output Channels",
-	     number  => ++$num
+    $m->comp('/widgets/listManager/listManager.mc',
+	     object => 'output_channel',
+	     userSort => 0,
+	     def_sort_field => 'name',
+	     title => 'Output Channels',
+	     objs => scalar $comp->get_output_channels,
+	     addition => undef,
+	     fields => [qw(name description enabled primary)],
+	     field_titles => { primary => 'Primary', enabled => 'Enabled' },
+	     field_values => $oc_sub,
+	     profile => undef,
+	     select =>  ['Delete', 'rem_oc'],
+	     number => ++$num
 	    );
 
-    $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
-	      readOnly     => $no_edit,
-	      leftOpts     => $left,
-	      rightOpts    => $right,
-	      formName     => 'cont_profile',
-	      leftName     => 'rem_oc',
-	      rightName    => 'add_oc',
-	      leftCaption  => $no_edit ? undef : "Available Output Channels",
-              showLeftList => !$no_edit || 0,
-	      rightCaption => 'Current Output Channels',
-
-	    );
-
+</%perl>
+<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
+<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
+    object => 'output_channel',
+    field  => 'name',
+    exclude => [ $id, map { $_->get_id } $comp->get_output_channels ],
+    no_persist => 1,
+    name   => 'formBuilder|add_oc_id_cb',
+    default => ['' => 'Add Output Channel'],
+    constrain => { active => 1 },
+    js => "onChange='submit()'",
+    useTable => 0,
+&></td></tr>
+</table>
+<br />
+<%perl>;
+    $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
     # Now load a select widget so a primary output channel can be selected.
-    $m->comp('/widgets/profile/select.mc',
-	     disp => 'Primary Output Channel',
-	     name => 'primary_oc_id',
-	     options => $opt,
-	     req => 1,
-	     readOnly => $no_edit,
-	     value => $comp->get_primary_oc_id
-	    );
-
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+#    $m->comp('/widgets/profile/select.mc',
+#	     disp => 'Primary Output Channel',
+#	     name => 'primary_oc_id',
+#	     options => $opt,
+#	     req => 1,
+#	     readOnly => $no_edit,
+#	     value => $comp->get_primary_oc_id
+#	    );
 
 }
 
@@ -232,11 +250,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-07-19 09:46:07 $
+$Date: 2002-10-09 17:40:25 $
 
 =head1 DESCRIPTION
 

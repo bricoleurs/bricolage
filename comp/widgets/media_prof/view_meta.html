@@ -89,6 +89,16 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Priority:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_priority() %></td>
   </tr>
+
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Output Channels:&nbsp;</span></td>
+  <td width="470">&nbsp;<% join ', ', (map { $_->get_name } $media->get_output_channels) %></td>
+  </tr>
 </table>
 
 % $m->comp("/widgets/wrappers/sharky/table_bottom.mc");

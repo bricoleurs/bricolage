@@ -155,6 +155,36 @@ Got rid of the popup window. Now when the toolbar-less window isn't the
 current window, the browser will be redirected to a a Welcome page where users
 can click a link to open the new window with the Bricolage UI. [David]
 
+=item *
+
+Improved the interface for the assocation of output channels in Element
+Profile. It now uses a list of output channels rather than a double list, and
+a radio button to select the primary output channel. Also, each associated
+output channel can be marked as "Enabled" or not, indicating whether a new
+asset based on the element will by default be associated with that output
+channel for publishing. [David]
+
+=item *
+
+On a related note, Stories and Media can now select which output channels to
+be published to on a per-story basis, and the selection sticks with each
+version of a an asset. The list of available output channels comes from the
+output channels associated with the element on which the story or media asset
+is based. [David]
+
+=item *
+
+Bric::Util::Burner objects have a new property, C<mode>. This property
+contains an integer value indicating whether a burner object is currently
+publishing, previewing, or checking syntax. The value maps to the
+conveniently-named constants "PUBLISH_MODE", "PREVIEW_MODE", and
+"SYNTAX_MODE". [David]
+
+=item *
+
+The documentation in the Bric::Util::Burner class has been updated and
+improved. [David]
+
 =back
 
 =head1 VERSION 1.4.3

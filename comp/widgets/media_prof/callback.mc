@@ -42,6 +42,31 @@ my $handle_update = sub {
     $media->set_priority($param->{priority})
       if exists $param->{priority};
 
+    # Set output channels.
+    if (exists $param->{"$widget|do_ocs"}) {
+        # Check boxes.
+        my %ocids = map { $_ => 1 } @{ mk_aref($param->{"$widget|oc"}) };
+        # Delete unchecked output channels.
+        foreach my $oc ($media->get_output_channels) {
+            $media->del_output_channels($oc) unless delete $ocids{$oc->get_id};
+        }
+
+        # Add those that are left.
+        $media->add_output_channels
+          (map { Bric::Biz::OutputChannel->lookup({ id => $_ }) } keys %ocids )
+          if %ocids;
+    } else {
+        # Double list. Remove output channels.
+        $media->del_output_channels(@{ mk_aref($param->{rem_oc}) })
+          if defined $param->{rem_oc};
+
+        # Add new output channels.
+        $media->add_output_channels
+          (map { Bric::Biz::OutputChannel->lookup({ id => $_ }) }
+           @{ mk_aref($param->{add_oc}) } )
+           if defined $param->{add_oc};
+    }
+
     # Set the dates.
     $media->set_cover_date($param->{cover_date})
       if exists $param->{cover_date};

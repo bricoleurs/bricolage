@@ -3,11 +3,9 @@ $param
 </%args>
 <%init>;
 my ($section, $mode, $key) = $m->comp("/lib/util/parseUri.mc");
-# HACK - This should be changed in the class table at some point.
-my $type = $key eq 'element' ? 'element' : $key;
 
 # Get the class name.
-my $class = get_package_name($type);
+my $class = get_package_name($key);
 
 # Instantiate the object.
 my $id = $param->{$key . '_id'};
@@ -35,11 +33,11 @@ $param->{obj} = $m->comp("$key.mc", %ARGS, obj => $obj, class => $class);
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2002-10-09 17:40:25 $
 
 =head1 SYNOPSIS
 

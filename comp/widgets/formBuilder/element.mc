@@ -26,7 +26,8 @@ $obj
 return unless $field eq "$widget|save_cb"
   || $field eq "$widget|add_cb"
   || $field eq "$widget|save_n_stay_cb"
-  || $field eq "$widget|addElement_cb";
+  || $field eq "$widget|addElement_cb"
+  || $field eq "$widget|add_oc_id_cb";
 return unless $param->{$field}; # prevent multiple calls to this file
 
 
@@ -72,7 +73,14 @@ if ($param->{delete} &&
     $comp->set_name($param->{name}) unless $no_save;
     $comp->set_description($param->{description});
     $comp->set_burner($param->{burner}) if defined $param->{burner};
-    $comp->set_primary_oc_id($param->{primary_oc_id}) if exists $param->{primary_oc_id};
+
+    # Set the primary output channel ID.
+    if ($param->{primary_oc_id}) {
+        $comp->set_primary_oc_id($param->{primary_oc_id});
+    } elsif ($field eq "$widget|add_oc_id_cb" && ! $comp->get_primary_oc_id) {
+        # Their adding the first one. Make it the primary.
+        $comp->set_primary_oc_id($param->{"$widget|add_oc_id_cb"});
+    }
 
     # Update existing attributes. Get them from the Parts::Data class rather than from
     # $comp->get_data so that we can be sure to check for both active and inactive
@@ -164,15 +172,35 @@ if ($param->{delete} &&
 	$comp->del_data($del);
     }
 
-    # add or delete output channels
-    $comp->add_output_channels( mk_aref($param->{add_oc}) )
-      if $param->{add_oc};
-    $comp->delete_output_channels( mk_aref($param->{rem_oc}) )
-      if $param->{rem_oc};
+    # Delete output channels.
+    if ($param->{rem_oc}) {
+        my $primoc = $comp->get_primary_oc_id;
+        my $del_oc_ids = mk_aref($param->{rem_oc});
+        for (@$del_oc_ids) {
+            $comp->set_primary_oc_id(undef) and last if $_ == $primoc;
+        }
+        $comp->delete_output_channels($del_oc_ids);
+    }
+
+    # Enable output channels.
+    my %enabled = map { $_ => 1 } @{ mk_aref($param->{enabled}) };
+    foreach my $oc ($comp->get_output_channels) {
+        $enabled{$oc->get_id} ? $oc->set_enabled_on : $oc->set_enabled_off;
+    }
+
+    # Add output channels.
+    $comp->add_output_channel($param->{"$widget|add_oc_id_cb"})
+      if $field eq "$widget|add_oc_id_cb";
 
     # delete any selected sub elements
     if ($param->{"element|delete_cb"}) {
 	$comp->del_containers( mk_aref($param->{"element|delete_cb"}) );
+    }
+
+    # Force a primary output channel ID if we don't have one but we have OCs.
+    unless ($comp->get_primary_oc_id) {
+        my $oc = ($comp->get_output_channels)[0];
+        $comp->set_primary_oc_id($oc->get_id) if $oc;
     }
 
     # Save the element.
@@ -213,11 +241,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2002-03-09 00:43:01 $
+$Date: 2002-10-09 17:40:25 $
 
 =head1 SYNOPSIS
 

@@ -1,21 +1,21 @@
 package Bric::Util::Burner;
-###############################################################################
+##############################################################################
 
 =head1 NAME
 
-Bric::Util::Burner - A class to manage deploying of formatting assets and publishing of business assets.
+Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-21 00:41:30 $
+$Date: 2002-10-09 17:40:26 $
 
 =head1 SYNOPSIS
 
@@ -42,22 +42,22 @@ This module accomplishes two tasks:
 =item 1
 
 Manages the process of deploying and undeploying of formatting assets
-through deploy() and undeploy().
+through C<deploy()> and C<undeploy()>.
 
 =item 2
 
-Manages the process of publishing a asset with the burn_one() method.
-The actual work of publishing is done by one of Bric::Util::Burner's
-sub-classes depending on the burner_type of the asset being published.
-See L<Bric::Util::Burner::Mason> and L<Bric::Util::Burner::Template>
-for details.
+Manages the process of publishing and previewing business assets via the
+C<publish()> and C<preview()> methods, respectively. The actual work of
+publishing is done by one of Bric::Util::Burner's sub-classes depending on the
+C<burner_type> of the asset being published. See L<Bric::Util::Burner::Mason>
+and L<Bric::Util::Burner::Template> for details.
 
 =back
 
 =head1 ADDING A NEW BURNER
 
-It is anticipated that new Burner sub-classes will be added to the system.
-Here's a brief guide to adding a new Burner to Bricolage:
+We anticipate that new Burner sub-classes will be added to the system. Here's
+a brief guide to adding a new Burner to Bricolage:
 
 =over 4
 
@@ -66,10 +66,11 @@ Here's a brief guide to adding a new Burner to Bricolage:
 Write Bric::Util::Burner::Foo
 
 You'll need to create a new sub-class of Bric::Util::Burner that implements
-three methods - new(), chk_syntax(), and burn_one(). You can use an existing
-sub-class as a model for the interface and implementation of these methods. Make
-sure that when you execute your templates, you do it in the namespace reserved
-by the TEMPLATE_BURN_PKG directive -- get this constant by adding
+three methods - C<new()>, C<chk_syntax()>, and C<burn_one()>. You can use an
+existing sub-class as a model for the interface and implementation of these
+methods. Make sure that when you execute your templates, you do it in the
+namespace reserved by the C<TEMPLATE_BURN_PKG> directive -- get this constant
+by adding
 
   use Bric::Config qw(:burn);
 
@@ -81,17 +82,18 @@ Modify Bric::Biz::AssetType
 
 To use your Burner you'll need to be able to assign elements to it. To do this
 edit Bric::Biz::AssetType and add a constant for your burner. For example,
-Bric::Util::Burner::Template's constant is BURNER_TEMPLATE. Next, edit the
-my_meths() entry for the "burner" type to include a val entry for your constant.
+Bric::Util::Burner::Template's constant is C<BURNER_TEMPLATE>. Next, edit the
+C<my_meths()> entry for the "burner" type to include an entry for your
+constant.
 
 =item *
 
 Modify Bric::Util::Burner
 
 You'll need to make a modification to Bric::Util::Burner to make it call your
-module when it sees an element assigned to your burner. The code you're looking
-for is in the _get_subclass() method. Add the approprate C<elsif>s to assigns
-the appropriate class name for your burner.
+module when it sees an element assigned to your burner. The code you're
+looking for is in the C<_get_subclass()> method. Add the approprate C<elsif>s
+to assign the appropriate class name for your burner.
 
 =item *
 
@@ -104,14 +106,16 @@ extensions.
 
 =item *
 
-Modify comp/widgets/tmpl_prof/edit_new.html
+Modify F<comp/widgets/tmpl_prof/edit_new.html>.
 
-Add your template filename extensions to the file_type select entry so that
+Add your template filename extensions to the C<file_type> select entry so that
 users can create new template files for your burner.
 
 =item *
 
 Done! Now start testing...
+
+=back
 
 =cut
 
@@ -148,6 +152,9 @@ use base qw(Bric);
 #==============================================================================#
 # Constants                            #
 #======================================#
+use constant PUBLISH_MODE => 1;
+use constant PREVIEW_MODE => 2;
+use constant SYNTAX_MODE => 3;
 
 #==============================================================================#
 # Fields                               #
@@ -168,12 +175,14 @@ my $fs = Bric::Util::Trans::FS->new;
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-    Bric::register_fields({
-			 # Public Fields
-                         'data_dir'       => Bric::FIELD_RDWR,
-			 'comp_dir'       => Bric::FIELD_RDWR,
-			 'out_dir'        => Bric::FIELD_RDWR,
-			});
+    Bric::register_fields
+        ({
+          # Public Fields
+          data_dir => Bric::FIELD_RDWR,
+          comp_dir => Bric::FIELD_RDWR,
+          out_dir  => Bric::FIELD_RDWR,
+          mode     => Bric::FIELD_READ,
+      });
 }
 
 #==============================================================================#
@@ -193,44 +202,35 @@ BEGIN {
 
 =item $obj = new Bric::Util::Burner($init);
 
-Creates a new burn object.  Keyw to $init are:
+Creates a new burner object. The parameters that can be passed via the
+C<$init> hash reference are:
 
 =over 4
 
-=item *
+=item C<data_dir>
 
-data
+The directory where the Burner stores compiled template files. Defaults to the
+value stored in the C<BURN_DATA_ROOT> directive set in F<bricolage.conf>.
 
-The directory where the Burner stores temporary files.  Defaults to
-BURN_DATA_ROOT set in bricolage.conf.
+=item C<comp_dir>
 
-=item *
+The directory to which the burner deploys and can find templates for
+burning. Defaults to the value stored in the C<BURN_COMP_ROOT> directive set
+in F<bricolage.conf>.
 
-comp
+=item C<out_dir>
 
-The directory templates are deployed to.  Defaults to BURN_COMP_ROOT
-set in bricolage.conf.
-
-=item *
-
-out
-
-The staging area directory where the burner places content files upon
-publication or preview.  Defaults to BURN_DATA_ROOT set in
-bricolage.conf.
+The directory in which the burner writes burned content files upon publication
+or preview. Defaults to the value stored in the C<BURN_DATA_ROOT> directive
+set in F<bricolage.conf>.
 
 =back
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
+B<Notes:> NONE.
 
 =cut
 
@@ -246,34 +246,11 @@ sub new {
     return $class->SUPER::new($init);
 }
 
-#------------------------------------------------------------------------------#
-
-=item lookup()
-
-Bric::Util::Burner doesn't support lookup().
-
-=cut
-
-sub lookup {
-    die $mni->new({msg => __PACKAGE__."::lookup() method not implemented."});
-}
-
-#------------------------------------------------------------------------------#
-
-=item list()
-
-Bric::Util::Burner doesn't support list().
-
-=cut
-
-sub list {
-    die $mni->new({msg => __PACKAGE__."::list() method not implemented."});
-}
-
-
-#--------------------------------------#
+=back
 
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -285,7 +262,11 @@ sub DESTROY {}
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
+
+NONE.
 
 =cut
 
@@ -293,25 +274,88 @@ sub DESTROY {}
 
 =head2 Public Instance Methods
 
-=cut
+=over 4
 
-#------------------------------------------------------------------------------#
+=item my $data_dir = $b->get_data_dir
+
+Returns the data directory.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $b = $b->set_data_dir($data_dir)
+
+Sets the component directory.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $comp_dir = $b->get_comp_dir
+
+Returns the component directory.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $b = $b->set_comp_dir($comp_dir)
+
+Sets the data directory.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $out_dir = $b->get_out_dir
+
+Returns the output directory.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $b = $b->set_out_dir($out_dir)
+
+Sets the output directory.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $mode = $b->get_mode
+
+Returns the burn mode. The value is an integer corresponding to one of the
+following constants: "PUBLISH_MODE", "PREVIEW_MODE", and "SYNTAX_MODE".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =item $success = $b->deploy($fa);
 
 Deploys a template to the file system.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -337,17 +381,11 @@ sub deploy {
 
 Deletes a template from the file system.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -362,58 +400,46 @@ sub undeploy {
     $fs->del($file) if -e $file;
 }
 #------------------------------------------------------------------------------#
+
 =item $url = $b->preview($ba, $key, $user_id, $m);
 
 Sends story or media to preview server and returns URL. Params:
 
 =over 4
 
-=item *
+=item C<$ba>
 
-$ba
+A business asset object to preview.
 
-A business asset object to publish.
+=item C<$key>
 
-=item *
+The string "story" or "media".
 
-$key
+=item C<$user_id>
 
-story or media
+The ID of the user publishing the asset.
 
-=item *
+=item C<$m>
 
-$user_id
-
-user_id to publish as.
-
-=item *
-
-$m
-
-mason object (optional).
+A Mason request object (optional).
 
 =back
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub preview {
     my $self = shift;
+    $self->_set(['mode'], [PREVIEW_MODE]);
     my ($ats, $oc_sts) = ({}, {});
     my ($ba, $key, $user_id, $m, $oc_id) = @_;
     my $send_msg = $m ? sub { $m->comp('/lib/util/status_msg.mc', @_) } :
-	                sub { 0; };
+                        sub { 0; };
     my $comp_root = MASON_COMP_ROOT->[0][1];
 
     # Get a list of the relevant categories, put primary category first
@@ -488,72 +514,63 @@ sub preview {
     # We don't need to exeucte the job if it has already been executed.
     $job->execute_me unless ENABLE_DIST;
     if (PREVIEW_LOCAL) {
-	# Copy the files for previewing locally.
+        # Copy the files for previewing locally.
         foreach my $rsrc (@$res) {
-	    $fs->copy($rsrc->get_path,
-		      $fs->cat_dir($comp_root, PREVIEW_LOCAL,
-				   $rsrc->get_uri));
+            $fs->copy($rsrc->get_path,
+                      $fs->cat_dir($comp_root, PREVIEW_LOCAL,
+                                   $rsrc->get_uri));
         }
-	# Return the redirection URL.
+        $self->_set(['mode'], [undef]);
+        # Return the redirection URL.
         return $fs->cat_uri('/', PREVIEW_LOCAL, $res->[0]->get_uri);
     } else {
         # Return the redirection URL, if we have one
+        $self->_set(['mode'], [undef]);
         if (@$bat) {
-	    return 'http://' . ($bat->[0]->get_servers)[0]->get_host_name
-		. $res->[0]->get_uri;
-	}
+            return 'http://' . ($bat->[0]->get_servers)[0]->get_host_name
+                . $res->[0]->get_uri;
+        }
     }
 }
 #------------------------------------------------------------------------------#
 
 =item $published = $b->publish($ba, $key, $user_id, $publish_date);
 
-Publishes an asset, then remove from workflow.  Returns 1 if publish was successful, else 0.  Parameters are:
+Publishes an asset, then remove from workflow. Returns 1 if publish was
+successful, else 0. Parameters are:
 
 =over 4
 
-=item *
-
-$ba
+=item C<$ba>
 
 A business asset object to publish.
 
-=item *
+=item C<$key>
 
-$key
+The string "story" or "media".
 
-story or media
+=item C<$user_id>
 
-=item *
+The ID of the user publishing the asset.
 
-$user_id
+=item C<$publish_date>
 
-user_id to publish as.
-
-=item *
-
-$publish_date
-
-Date to set up publishing job for - if left blank, the present.
+The date to set to schedule publishing job. If not defined it will default set
+up the asset to be published immediately.
 
 =back
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub publish {
     my $self = shift;
+    $self->_set(['mode'], [PUBLISH_MODE]);
     my ($ats, $oc_sts) = ({}, {});
     my ($ba, $key, $user_id, $publish_date, $die_err) = @_;
     my $published=0;
@@ -562,7 +579,7 @@ sub publish {
     my ($repub, $exp_date);
 
     if ($ba->get_publish_status) {
-	$repub = 1;
+        $repub = 1;
     } else {
         # This puppy hasn't been published before. Mark it.
         $ba->set_publish_status(1);
@@ -579,19 +596,19 @@ sub publish {
         my $ocid = $oc->get_id;
         # Get a list of server types this categroy applies to.
         my $bat = $oc_sts->{$ocid} ||=
-	    Bric::Dist::ServerType->list({ can_publish => 1,
-					   output_channel_id => $ocid });
+            Bric::Dist::ServerType->list({ can_publish => 1,
+                                           output_channel_id => $ocid });
 
         # Make sure we have some destinations.
         unless (@$bat) {
             $die_err
-	      ? die "Cannot publish asset &quot;" . $ba->get_name
-	      . "&quot; because there are no Destinations associated with "
-	      . "its output channels."
-	      : add_msg("Cannot publish asset &quot;" . $ba->get_name
-			. "&quot; because there are no Destinations associated "
-			. "with its output channels.");
-	    next;
+              ? die "Cannot publish asset &quot;" . $ba->get_name
+              . "&quot; because there are no Destinations associated with "
+              . "its output channels."
+              : add_msg("Cannot publish asset &quot;" . $ba->get_name
+                        . "&quot; because there are no Destinations associated "
+                        . "with its output channels.");
+            next;
         }
 
         # Create a job for moving this asset in this output Channel.
@@ -602,17 +619,17 @@ sub publish {
                                          name => $name,
                                          server_types => $bat});
 
-	# Burn, baby, burn!
-	if ($key eq 'story') {
-	    foreach my $cat (@cats) {
-		$job->add_resources($self->burn_one($ba, $oc, $cat));
-	    }
-	    $published = 1;
-	} else {
-	    my $path = $ba->get_path;
-	    my $uri = $ba->get_uri($oc);
-	    if ($path && $uri) {
-		my $r = Bric::Dist::Resource->lookup({ path => $path,
+        # Burn, baby, burn!
+        if ($key eq 'story') {
+            foreach my $cat (@cats) {
+                $job->add_resources($self->burn_one($ba, $oc, $cat));
+            }
+            $published = 1;
+        } else {
+            my $path = $ba->get_path;
+            my $uri = $ba->get_uri($oc);
+            if ($path && $uri) {
+                my $r = Bric::Dist::Resource->lookup({ path => $path,
                                                        uri  => $uri })
                     || Bric::Dist::Resource->new
                       ({ path => $path,
@@ -620,16 +637,16 @@ sub publish {
                          uri => $uri
                        });
 
-		$r->add_media_ids($ba->get_id);
-		$r->save;
+                $r->add_media_ids($ba->get_id);
+                $r->save;
                 $job->add_resources($r);
-		$published = 1;
-	    } else {
+                $published = 1;
+            } else {
                 $published = 1;
                 add_msg('No media file is associated with asset &quot;' .
                         $ba->get_name . '&quot;, so none will be distributed.');
             }
-	}
+        }
 
         # Save the job.
         $job->save;
@@ -654,20 +671,21 @@ sub publish {
     }
 
     if ($published) {
-	# Set published version
-	$ba->set_published_version($ba->get_current_version());
+        # Set published version
+        $ba->set_published_version($ba->get_current_version());
         # Now log that we've published and get it out of workflow.
         log_event($key . ($repub ? '_republish' : '_publish'), $ba);
         my $d = $ba->get_current_desk;
         $d->remove_asset($ba);
         $d->save;
-	# Remove this asset from the workflow by setting is workflow ID to undef
+        # Remove this asset from the workflow by setting is workflow ID to undef
         $ba->set_workflow_id(undef);
         $ba->save;
 
         log_event("${key}_rem_workflow", $ba);
     }
 
+    $self->_set(['mode'], [undef]);
     return $published;
 }
 
@@ -675,41 +693,29 @@ sub publish {
 
 =item @resources = $b->burn_one($ba, $oc, $cat);
 
-Publishes an asset.  Returns a list of resources burned.  Parameters are:
+Publishes an asset. Returns a list of resources burned. Parameters are:
 
 =over 4
 
-=item *
-
-$ba
+=item C<$ba>
 
 A business asset object to publish.
 
-=item *
+=item C<$oc>
 
-$oc
+The output channel to which to burn the asset.
 
-An output channel object to use for the publish
+=item C<$cat>
 
-=item *
-
-cat
-
-A category in which to publish.
+A category in which to burn the asset.
 
 =back
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -736,7 +742,10 @@ B<Notes:> NONE.
 sub chk_syntax {
     my $self = shift;
     my ($burner) = $self->_get_subclass($_[0]);
-    $burner->chk_syntax(@_);
+    $self->_set(['mode'], [SYNTAX_MODE]);
+    my $ret = $burner->chk_syntax(@_);
+    $self->_set(['mode'], [undef]);
+    return $ret;
 }
 
 =back
@@ -762,34 +771,34 @@ sub _get_subclass {
     my ($self, $asset) = @_;
     my $burner_class = 'Bric::Util::Burner::';
     if (my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element__id})) {
-	# Easy to get it
-	my $b = $at->get_burner || BURNER_MASON;
-	$burner_class .=
-	    $b == BURNER_MASON ? 'Mason' :
-		$b == BURNER_TEMPLATE ? 'Template' :
-		    die $gen->new({ msg => 'Cannot determine template burner subclass.'});
+        # Easy to get it
+        my $b = $at->get_burner || BURNER_MASON;
+        $burner_class .=
+            $b == BURNER_MASON ? 'Mason' :
+                $b == BURNER_TEMPLATE ? 'Template' :
+                    die $gen->new({ msg => 'Cannot determine template burner subclass.'});
 
-	# Instantiate the proper subclass.
-	return ($burner_class->new($self), $at);
+        # Instantiate the proper subclass.
+        return ($burner_class->new($self), $at);
 
     } else {
-	# There is no asset type. It could be a template. Find out.
-	$asset->key_name eq 'formatting'
-	    || die $gen->new({msg => 'No element associated with asset.'});
-	# Okay, it's a template. Figure out the proper burner from the file name.
-	my $file_name = $asset->get_file_name;
-	if ($file_name =~ /autohandler$/ || $file_name =~ /\.mc$/) {
-	    # It's a mason component.
-	    $burner_class .= 'Mason';
-	} elsif ($file_name =~ /\.tmpl$/ || $file_name =~ /\.pl$/) {
-	    # It's an HTML::Template template.
-	    $burner_class .= 'Template';
-	} else {
-	    die $gen->new({msg => 'Cannot determine template burner subclass.'});
-	}
+        # There is no asset type. It could be a template. Find out.
+        $asset->key_name eq 'formatting'
+            || die $gen->new({msg => 'No element associated with asset.'});
+        # Okay, it's a template. Figure out the proper burner from the file name.
+        my $file_name = $asset->get_file_name;
+        if ($file_name =~ /autohandler$/ || $file_name =~ /\.mc$/) {
+            # It's a mason component.
+            $burner_class .= 'Mason';
+        } elsif ($file_name =~ /\.tmpl$/ || $file_name =~ /\.pl$/) {
+            # It's an HTML::Template template.
+            $burner_class .= 'Template';
+        } else {
+            die $gen->new({msg => 'Cannot determine template burner subclass.'});
+        }
 
-	# Instantiate the proper subclass.
-	return ($burner_class->new($self));
+        # Instantiate the proper subclass.
+        return ($burner_class->new($self));
     }
 }
 
@@ -801,12 +810,17 @@ __END__
 
 =head1 NOTES
 
+NONE.
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
+Garth Webb <garth@perijove.com>
 
 Sam Tregar <stregar@about-inc.com>
+
+Matt Vella <mvella@about-inc.com>
+
+David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 

@@ -134,12 +134,17 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
    key => 'expire_date',
 &>
 
-
-<%perl>
+<% $ieSpacer %>
+<%perl>;
+$m->comp('/widgets/profile/asset_ocs.mc',
+         asset  => $story,
+         widget => $widget,
+         ocs    => \@ocs
+        );
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-$num = $m->comp('/widgets/container_prof/container_prof.mc', 
+$num = $m->comp('/widgets/container_prof/container_prof.mc',
         tile            => $tile,
         tile_type       => 'story',
         action          => 'edit',
@@ -328,7 +333,6 @@ $m->out(scalar(@contribs) ? join(", ", @contribs) : "No contributors defined.");
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-
 $m->comp("/widgets/profile/buttonBar.mc",
          widget      => $widget,
          desks       => $desks,
@@ -337,11 +341,9 @@ $m->comp("/widgets/profile/buttonBar.mc",
 );
 
 </%perl>
-
 <%args>
 $widget
 </%args>
-
 <%init>
 my $story   = get_state_data($widget, 'story');
 my $tile    = $story->get_tile();

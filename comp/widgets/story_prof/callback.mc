@@ -66,6 +66,32 @@ my $save_data = sub {
       if exists $param->{"$widget|source_id"};
     $story->set_priority($param->{priority})
       if exists $param->{priority};
+
+    # Set output channels.
+    if (exists $param->{"$widget|do_ocs"}) {
+        # Check boxes.
+        my %ocids = map { $_ => 1 } @{ mk_aref($param->{"$widget|oc"}) };
+        # Delete unchecked output channels.
+        foreach my $oc ($story->get_output_channels) {
+            $story->del_output_channels($oc) unless delete $ocids{$oc->get_id};
+        }
+
+        # Add those that are left.
+        $story->add_output_channels
+          (map { Bric::Biz::OutputChannel->lookup({ id => $_ }) } keys %ocids )
+          if %ocids;
+    } else {
+        # Double list. Remove output channels.
+        $story->del_output_channels(@{ mk_aref($param->{rem_oc}) })
+          if defined $param->{rem_oc};
+
+        # Add new output channels.
+        $story->add_output_channels
+          (map { Bric::Biz::OutputChannel->lookup({ id => $_ }) }
+           @{ mk_aref($param->{add_oc}) } )
+           if defined $param->{add_oc};
+    }
+
     if (($param->{cover_date} || '') ne ($story->get_cover_date || '')) {
         my $old_date = $story->get_cover_date();
         $story->set_cover_date($param->{cover_date});
@@ -165,7 +191,7 @@ my $handle_save = sub {
     $story ||= get_state_data($widget, 'story');
 
     # Abort this save if there were any errors.
-    return unless &$save_data($param, $widget, $story);
+#    return unless &$save_data($param, $widget, $story);
 
     my $work_id = get_state_data($widget, 'work_id');
 
@@ -348,7 +374,7 @@ my $handle_save_stay = sub {
     $story ||= get_state_data($widget, 'story');
 
     # Abort this save if there were any errors.
-    return unless &$save_data($param, $widget, $story);
+#    return unless &$save_data($param, $widget, $story);
 
     my $work_id = get_state_data($widget, 'work_id');
 
