@@ -126,6 +126,17 @@ duration of a request for now, but can be expanded later. [David]
 
 =back
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+The publish attribute of desks can now be unset. Thanks to Sean Greathouse for
+the catch! [David]
+
+=back
+
 =head1 VERSION 1.5.0
 
 =head2 New Features

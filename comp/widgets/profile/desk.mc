@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2003-01-29 20:10:29 $
 
 =head1 SYNOPSIS
 
@@ -68,7 +68,11 @@ if ($param->{delete}) {
     # Roll in the changes.
     $desk->set_name($param->{name}) if exists $param->{name} && !$used;
     $desk->set_description($param->{description}) if exists $param->{description};
-    $desk->make_publish_desk if exists $param->{name} && exists $param->{publish};
+    if (exists $param->{name} && exists $param->{publish}) {
+        $desk->make_publish_desk;
+    } else {
+        $desk->make_regular_desk;
+    }
     unless ($used) {
 	$desk->save;
 	$c->set('__WORKFLOWS__', 0);
