@@ -1,3 +1,7 @@
+// set up global to track names of double list managers
+var doubleLists = new Array();
+var formObj = '';
+
 function validateStory(obj) {
 
     if (hasSpecialCharacters(obj["slug"].value)) {
@@ -16,17 +20,8 @@ function wordCount(obj, targetName, wordResultName, charResultName) {
     var target = obj[targetName];
     var word   = obj[wordResultName];
     var chars  = obj[charResultName];
-    var tmp    = new Array();
-    var words  = new Array();
-
-    tmp = target.value.split(" ");
-    for (i=0; i<tmp.length; i++) {
-        if ( tmp[i].length && tmp[i] != "\r" ) {
-            words[words.length] = tmp[i];
-        }
-    }
-
-    word.value  = words.length;
+   
+    word.value  = target.value.split(/\s+/g).length;
     chars.value = target.value.length
     return false;
 }
