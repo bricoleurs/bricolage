@@ -146,7 +146,7 @@ $do_contrib_type = sub {
         # There's a new attribute. Decide what type it is.
         if ($data_href->{lc $param->{fb_name}}) {
             # There's already an attribute by that name.
-            add_msg('An "[_1]" attribute already exists. Please try another name.', $param->{fb_name});
+            add_msg("An \"[_1]\" attribute already exists. Please try another name.", $param->{fb_name});
             $no_save = 1;
         } else {
             my $sqltype = $param->{fb_type} eq 'date' ? 'date'
@@ -228,7 +228,7 @@ $do_element = sub {
     # Check if we need to inhibit a save based on some special conditions
     $no_save = $check_save_element->(\@cs, $param, $key);
 
-    add_msg('The key name "[_1]" is already used by another $disp_name.',
+    add_msg("The key name \"[_1]\" is already used by another $disp_name.",
             $key_name)
       if $no_save;
 
