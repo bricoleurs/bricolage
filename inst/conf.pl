@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:13 $
+$Date: 2002-04-09 21:26:13 $
 
 =head1 DESCRIPTION
 
@@ -83,10 +83,10 @@ sub create_bricolage_conf {
     my $root = $CONFIG->{BRICOLAGE_ROOT};
     set_bric_conf_var(\$conf, APACHE_CONF     => catfile($root, "conf", 
 							 "httpd.conf"));
-    set_bric_conf_var(\$conf, MASON_COMP_ROOT => catdir($root, "comp"));
-    set_bric_conf_var(\$conf, MASON_DATA_ROOT => catdir($root, "data"));
-    set_bric_conf_var(\$conf, BURN_ROOT       => catdir($root, "data", 
-							"burn"));
+    set_bric_conf_var(\$conf, MASON_COMP_ROOT => $CONFIG->{MASON_COMP_ROOT});
+    set_bric_conf_var(\$conf, MASON_DATA_ROOT => $CONFIG->{MASON_DATA_ROOT});
+    set_bric_conf_var(\$conf, BURN_ROOT       => 
+catdir($CONFIG->{MASON_DATA_ROOT}, "burn"));
     set_bric_conf_var(\$conf, TEMP_DIR        => $CONFIG->{TEMP_DIR});
 			  
     # setup auth secret to some fairly random string
@@ -140,7 +140,7 @@ sub create_httpd_conf {
     set_httpd_var(\$httpd, ServerRoot      => $ap_root);
     set_httpd_var(\$httpd, TypesConfig     => $AP->{types_config} ||
 		  catfile($ap_root, "conf", "mime.types"));
-    set_httpd_var(\$httpd, DocumentRoot    => catdir($root, "comp"));
+    set_httpd_var(\$httpd, DocumentRoot    => $CONFIG->{MASON_COMP_ROOT});
     set_httpd_var(\$httpd, PidFile         => $CONFIG->{PID_FILE});
     set_httpd_var(\$httpd, ErrorLog        => catfile($log, "error_log"));
     set_httpd_var(\$httpd, CustomLog       => catfile($log,

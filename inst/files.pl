@@ -6,11 +6,11 @@ files.pl - installation script to create directories and copy files
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:13 $
+$Date: 2002-04-09 21:26:13 $
 
 =head1 DESCRIPTION
 
@@ -52,7 +52,11 @@ our $AP;
 do "./apache.db" or die "Failed to read apache.db : $!";
 
 create_paths();
-find({ wanted => \&copy_files, no_chdir => 1 }, './comp', './data');
+find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}) }, 
+       no_chdir => 1 }, './comp');
+find({ wanted   => sub { copy_files($CONFIG->{MASON_DATA_ROOT}) }, 
+       no_chdir => 1 }, './data');
+
 assign_permissions();
 
 
@@ -62,9 +66,8 @@ exit 0;
 
 # create paths configured by the user
 sub create_paths {
-    mkpath([catdir($CONFIG->{BRICOLAGE_ROOT}, "comp"),
-	    catdir($CONFIG->{BRICOLAGE_ROOT}, "comp", "data"),
-	    catdir($CONFIG->{BRICOLAGE_ROOT}, "data"),
+    mkpath([catdir($CONFIG->{MASON_COMP_ROOT}, "data"),
+	    $CONFIG->{MASON_DATA_ROOT},
 	    catdir($CONFIG->{BRICOLAGE_ROOT}, "conf"),
 	    $CONFIG->{TEMP_DIR},
 	    $CONFIG->{LOG_DIR}],
@@ -74,15 +77,19 @@ sub create_paths {
 
 # copy files - should be called by a find() with no_chdir set
 sub copy_files {
+    my $root = shift;
     return if /\.$/;
     return if /CVS/;
     return if /\.cvsignore$/;
+
+    # construct target by lopping off ^./foo/ and appending to $root
+    my $targ;
+    ($targ = $_) =~ s!^\./\w+/!!;
+    $targ = catdir($root, $targ);
+
     if (-d) {	
-	my $path = catdir($CONFIG->{BRICOLAGE_ROOT}, $_);
-	mkpath([$path], 1, 0755)
-	    unless -e $path;
+	mkpath([$targ], 1, 0755) unless -e $targ;
     } else {
-	my $targ = catfile($CONFIG->{BRICOLAGE_ROOT}, $_);
 	copy($_, $targ)
 	    or die "Unable to copy $_ to $targ : $!";
 	chmod((stat($_))[2], $targ)
@@ -94,9 +101,9 @@ sub copy_files {
 # and the files beneath them.
 sub assign_permissions {
     system("chown", "-R", $AP->{user} . ':' . $AP->{group},
-	   catdir($CONFIG->{BRICOLAGE_ROOT}, "comp", "data"));
+	   catdir($CONFIG->{MASON_COMP_ROOT}, "data"));
     system("chown", "-R", $AP->{user} . ':' . $AP->{group}, 
-	   catdir($CONFIG->{BRICOLAGE_ROOT}, "data"));
+	   $CONFIG->{MASON_DATA_ROOT});
     system("chown", "-R", $AP->{user} . ':' . $AP->{group}, 
 	   catdir($CONFIG->{TEMP_DIR}));
     system("chown", "-R", $AP->{user} . ':' . $AP->{group}, 

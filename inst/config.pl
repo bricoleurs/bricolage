@@ -6,11 +6,11 @@ config.pl - installation script to probe user configuration
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-04-08 23:25:26 $
+$Date: 2002-04-09 21:26:13 $
 
 =head1 DESCRIPTION
 
@@ -76,11 +76,13 @@ END
     # setup the default
     if ($CONFIG{set} eq 's') {
 	# single system defaults
-	$CONFIG{BRICOLAGE_ROOT} = '/usr/local/bricolage';
-	$CONFIG{TEMP_DIR}       = tmpdir();
-	$CONFIG{MODULE_DIR}     = $Config{sitelib};
-	$CONFIG{BIN_DIR}        = $Config{scriptdir};
-	$CONFIG{MAN_DIR}        = $Config{man3dir};
+	$CONFIG{BRICOLAGE_ROOT}  = '/usr/local/bricolage';
+	$CONFIG{TEMP_DIR}        = tmpdir();
+	$CONFIG{MODULE_DIR}      = $Config{sitelib};
+	$CONFIG{BIN_DIR}         = $Config{scriptdir};
+	$CONFIG{MAN_DIR}         = $Config{man3dir};
+	$CONFIG{MASON_COMP_ROOT} = '$CONFIG{BRICOLAGE_ROOT}/comp';
+	$CONFIG{MASON_DATA_ROOT} = '$CONFIG{BRICOLAGE_ROOT}/data';
 
 	# remove man3 trailer
 	$CONFIG{MAN_DIR} =~ s!/man3!!;
@@ -107,29 +109,32 @@ END
 	$CONFIG{BRICOLAGE_ROOT}     = "NONE"; # no default
 
 	# evaluated after BRICOLAGE_ROOT is set
-	$CONFIG{TEMP_DIR}   = '$CONFIG{BRICOLAGE_ROOT}/tmp';
-	$CONFIG{MODULE_DIR} = '$CONFIG{BRICOLAGE_ROOT}/lib';
-	$CONFIG{BIN_DIR}    = '$CONFIG{BRICOLAGE_ROOT}/bin';
-	$CONFIG{MAN_DIR}    = '$CONFIG{BRICOLAGE_ROOT}/man';
-	$CONFIG{LOG_DIR}    = '$CONFIG{BRICOLAGE_ROOT}/log';
-	$CONFIG{PID_FILE}   = '$CONFIG{BRICOLAGE_ROOT}/log/httpd.pid';
+	$CONFIG{TEMP_DIR}         = '$CONFIG{BRICOLAGE_ROOT}/tmp';
+	$CONFIG{MODULE_DIR}       = '$CONFIG{BRICOLAGE_ROOT}/lib';
+	$CONFIG{BIN_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/bin';
+	$CONFIG{MAN_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/man';
+	$CONFIG{LOG_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/log';
+	$CONFIG{PID_FILE}         = '$CONFIG{BRICOLAGE_ROOT}/log/httpd.pid';
+	$CONFIG{MASON_COMP_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/comp';
+	$CONFIG{MASON_DATA_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/data';
       }
   }
 
 sub confirm_settings {
   ask_confirm("\nBricolage Root Directory", \$CONFIG{BRICOLAGE_ROOT});
 
-  # the multi-system prefs are based on BRICOLAGE_ROOT, need to eval
-  # them now
-  foreach (qw(TEMP_DIR MODULE_DIR BIN_DIR MAN_DIR LOG_DIR PID_FILE)) {
+  # some prefs are based on BRICOLAGE_ROOT, need to eval them now
+  foreach (qw(TEMP_DIR MODULE_DIR BIN_DIR MAN_DIR LOG_DIR PID_FILE 
+	      MASON_COMP_ROOT MASON_DATA_ROOT)) {
     $CONFIG{$_} = eval qq{"$CONFIG{$_}"};
   }
 
-  ask_confirm("Temporary Directory",   \$CONFIG{TEMP_DIR});
-  ask_confirm("Perl Module Directory", \$CONFIG{MODULE_DIR});
-  ask_confirm("Executable Directory",  \$CONFIG{BIN_DIR});
-  ask_confirm("Man-Page Directory",    \$CONFIG{MAN_DIR});
-  ask_confirm("Log Directory",         \$CONFIG{LOG_DIR});
-  ask_confirm("PID File Location",     \$CONFIG{PID_FILE});
-
+  ask_confirm("Temporary Directory",       \$CONFIG{TEMP_DIR});
+  ask_confirm("Perl Module Directory",     \$CONFIG{MODULE_DIR});
+  ask_confirm("Executable Directory",      \$CONFIG{BIN_DIR});
+  ask_confirm("Man-Page Directory",        \$CONFIG{MAN_DIR});
+  ask_confirm("Log Directory",             \$CONFIG{LOG_DIR});
+  ask_confirm("PID File Location",         \$CONFIG{PID_FILE});
+  ask_confirm("Mason Component Directory", \$CONFIG{MASON_COMP_ROOT});
+  ask_confirm("Mason Data Directory",      \$CONFIG{MASON_DATA_ROOT});
 }
