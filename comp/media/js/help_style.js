@@ -34,7 +34,6 @@ if (is_nav6up) {
 
     tags.td.fontFamily = 'Verdana,Helvetica,Arial,sans-serif';
     tags.td.fontSize = size;
-    tags.td.lineHeight = height;
 
     tags.h3.fontFamily = 'Verdana,Helvetica,Arial,sans-serif';
     tags.h3.fontSize = lgSize;
