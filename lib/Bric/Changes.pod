@@ -245,6 +245,11 @@ encountering an error. Thanks to Marshall Roch for the spot! [David]
 
 Media type MIME Type names are now properly required in the UI. [David]
 
+=item *
+
+Fixed typo in the virtual FTP server which was causing an error when saving
+a template. [Keith Grennan]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
