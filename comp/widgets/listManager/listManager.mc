@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =head1 DATE
 
-$Date: 2004-03-02 18:41:51 $
+$Date: 2004-03-30 19:30:31 $
 
 =head1 SYNOPSIS
 
@@ -400,8 +400,9 @@ my %featured_lookup = map { ($_,1) } @$featured;
 
 # limit the number of results to display per page
 my $limit = Bric::Util::Pref->lookup_val( "Search Results / Page" ) || 0;
-my $site_cx = $c->get_user_cx(get_user_id) if Bric::Util::Pref->lookup_val( "Filter by Site Context" ) &&
-                                              $pkg->HAS_MULTISITE;
+my $site_cx = $c->get_user_cx(get_user_id)
+  if Bric::Util::Pref->lookup_val( "Filter by Site Context" )
+  && $pkg->HAS_MULTISITE;
 
 #--------------------------------------#
 # Set up pagination data.
