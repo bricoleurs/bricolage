@@ -8,11 +8,11 @@ videos
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
@@ -144,13 +144,9 @@ NONE
 =cut
 
 sub new {
-	my ($self, $init) = @_;
-
-	my $self = bless {}, $self unless ref $self;
-
-	$self->SUPER::new($init);
-
-	return $self;
+    my ($self, $init) = @_;
+    $self = bless {}, $self unless ref $self;
+    return $self->SUPER::new($init);
 }
 
 ################################################################################

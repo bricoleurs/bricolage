@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.50 $
+$Revision: 1.51 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.4';
 
 =item Date
 
-$Date: 2004-03-09 09:38:57 $
+$Date: 2004-03-16 18:31:02 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.50 2004-03-09 09:38:57 slanning Exp $
+$Id: Bric.pm,v 1.51 2004-03-16 18:31:02 wheeler Exp $
 
 =back
 
@@ -64,7 +64,6 @@ use strict;
 
 ##############################################################################
 # Programmatic Dependencies
-use Carp ();
 use Bric::Util::Fault qw(:all);
 use Bric::Config qw(:qa :mod_perl CACHE_DEBUG_MODE);
 
@@ -925,23 +924,20 @@ sub _get {
 
 =head3 die
 
-Bric overrides all exception handling to use C<Carp::confess()> unless it is
+Bricolage overrides all exception handling to use exceptions unless it is
 running under C<mod_perl>.
-
-=cut
-
-$SIG{__DIE__} = sub { Carp::confess(@_) } unless MOD_PERL;
-
-##############################################################################
 
 =head3 warn
 
-Bric overrides all C<warn>ings to use C<Carp::cluck()> unless it is running
-under C<mod_perl>.
+Bric overrides all C<warn>ings to use exceptions unless it is running under
+C<mod_perl>.
 
 =cut
 
-$SIG{__WARN__} = sub { Carp::cluck(@_) } unless MOD_PERL;
+unless (MOD_PERL) {
+    $SIG{__DIE__} = \&throw_gen;
+    $SIG{__WARN__} = sub { print STDERR throw_gen @_ };
+}
 
 ##############################################################################
 
