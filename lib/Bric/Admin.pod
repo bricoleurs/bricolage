@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.62 $
+$Revision: 1.63 $
 
 =head1 DATE
 
-$Date: 2002-05-30 18:43:04 $
+$Date: 2002-05-31 14:38:50 $
 
 =head1 DESCRIPTION
 
@@ -546,6 +546,14 @@ created to the C<-D> command.
 
 Start the PostgreSQL "postmaster". You can use one of the scripts in
 contrib/start-scripts.
+
+=item *
+
+Add PL/pgSQL to your installation. Certain internal functions used by
+Bricolage rely on this language, and although Bricolage will attempt to
+install it for you, it's best for you to do it at this point yourself.
+
+  su - postgres "/usr/local/pgsql/bin/createlang plpgsql template1"
 
 =item *
 
