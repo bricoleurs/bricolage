@@ -154,7 +154,7 @@ clone_tar	:
 # installation rules     #
 ##########################
 
-install 	: all cpan lib bin files db conf done
+install 	: all cpan lib bin files db db_grant conf done
 
 cpan 		: modules.db postgres.db inst/cpan.pl
 	$(PERL) inst/cpan.pl
@@ -173,6 +173,9 @@ files 		: config.db
 db    		: inst/db.pl postgres.db
 	$(PERL) inst/db.pl
 
+db_grant	: inst/db.pl postgres.db
+	$(PERL) inst/db_grant.pl
+
 conf		: inst/conf.pl files required.db config.db postgres.db \
                   apache.db
 	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
@@ -188,9 +191,9 @@ done		: conf db files bin lib cpan
 ##########################
 
 upgrade		: upgrade.db required.db cpan stop lib bin db_upgrade \
-	          upgrade_files upgrade_conf upgrade_done
+	          db_grant upgrade_files upgrade_conf upgrade_done
 
-upgrade.db	:
+upgrade.db	: 
 	$(PERL) inst/upgrade.pl
 
 db_upgrade	: upgrade.db

@@ -1,0 +1,78 @@
+#!/usr/bin/perl -w
+
+use strict;
+use FindBin;
+use lib "$FindBin::Bin/lib";
+use Bric::Inst qw(:all);
+use File::Spec::Functions qw(:ALL);
+
+our ($PG, $PGCONF, $PGDEFDB, $ERR_FILE);
+$PGCONF = './postgres.db';
+do $PGCONF or die "Failed to read $PGCONF : $!";
+# Switch to postgres system user
+print "Becoming $PG->{system_user}...\n";
+$> = $PG->{system_user_uid};
+die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
+    unless $> == $PG->{system_user_uid};
+
+# Set environment variables for psql.
+$ENV{PGUSER} = $PG->{root_user};
+$ENV{PGPASSWORD} = $PG->{root_pass};
+$ERR_FILE = catfile tmpdir, '.db.stderr';
+END { unlink $ERR_FILE }
+
+grant_permissions();
+
+sub grant_permissions {
+    # assign all permissions to SYS_USER
+    print "Granting privileges...\n";
+
+    # get a list of all tables and sequences that don't start with pg
+    my $sql = qq{
+       SELECT relname
+       FROM   pg_class
+       WHERE  relkind IN ('r', 'S')
+              AND relname NOT LIKE 'pg%';
+    };
+
+    my @objects;
+    my $err = exec_sql($sql, 0, 0, \@objects);
+    hard_fail("Failed to get list of objects. The database error was\n\n",
+              "$err\n") if $err;
+
+    my $objects = join (', ', map { chomp; $_ } @objects);
+
+    $sql = qq{
+        GRANT SELECT, UPDATE, INSERT, DELETE
+        ON    $objects
+        TO    $PG->{sys_user};
+    };
+    $err = exec_sql($sql);
+    hard_fail("Failed to Grant privileges. The database error was\n\n$err")
+      if $err;
+
+    print "Done.\n";
+}
+
+sub exec_sql {
+    my ($sql, $file, $db, $res) = @_;
+    $db ||= $PG->{db_name};
+    # System returns 0 on success, so just return if it succeeds.
+    open STDERR, ">$ERR_FILE" or die "Cannot redirect STDERR to $ERR_FILE: $!\n";
+    if ($res) {
+        my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
+        @$res = `$PG->{psql} -q @args -d $db -P format=unaligned -P pager= -P footer=`;
+        # Shift off the column headers.
+        shift @$res;
+        return unless $?;
+    } else {
+        my @args = $sql ? ('-c', $sql) : ('-f', $file);
+        system($PG->{psql}, '-q', @args, '-d', $db) or return;
+    }
+
+    # We encountered a problem.
+    open ERR, "<$ERR_FILE" or die "Cannot open $ERR_FILE: $!\n";
+    local $/;
+    return <ERR>;
+}
+

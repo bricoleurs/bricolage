@@ -14,6 +14,21 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.6.0
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Granting of permission to database objects during installation has been moved
+to its own make target. This is to allow it to be run by C<make upgrade>, too,
+thus ensuring that the Bricolage database user always has the appropriate
+permissions ot access the database. [David]
+
+=back
+
 =head1 VERSION 1.5.2
 
 =head2 New Features

@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.20.2.1 $
+$Revision: 1.20.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-21 18:53:06 $
+$Date: 2003-04-04 19:26:31 $
 
 =head1 DESCRIPTION
 
@@ -162,35 +162,6 @@ sub load_db {
     hard_fail("Error loading database. The database error was\n\n$err\n")
       if $err;
     print "\nDone.\n";
-
-    # assign all permissions to SYS_USER
-    print "Granting privileges...\n";
-
-    # get a list of all tables and sequences that don't start with pg
-    my $sql = qq{
-       SELECT relname
-       FROM   pg_class
-       WHERE  relkind IN ('r', 'S')
-              AND relname NOT LIKE 'pg%';
-    };
-
-    my @objects;
-    $err = exec_sql($sql, 0, 0, \@objects);
-    hard_fail("Failed to get list of objects. The database error was\n\n",
-              "$err\n") if $err;
-
-    my $objects = join (', ', map { chomp; $_ } @objects);
-
-    $sql = qq{
-        GRANT SELECT, UPDATE, INSERT, DELETE
-        ON    $objects
-        TO    $PG->{sys_user};
-    };
-    $err = exec_sql($sql);
-    hard_fail("Failed to Grant privileges. The database error was\n\n$err")
-      if $err;
-
-    print "Done.\n";
 
     # vacuum to create usable indexes
     print "Finishing database...\n";
