@@ -260,6 +260,11 @@ C<< Bric::Util::Burner->preview >> once again defaults to previewing in an
 asset's primary output channel instead of using the element's primary output
 channel. [JoE<atilde>o Pedro]
 
+=item *
+
+Added C<first_publish_date> attribute to the SOAP input and output for stories
+and media. [David]
+
 =back
 
 =head1 VERSION 1.7.3 (2004-03-01)

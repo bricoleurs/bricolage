@@ -41,15 +41,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-05 10:50:53 $
+$Date: 2004-03-16 20:01:23 $
 
 =head1 SYNOPSIS
 
@@ -643,7 +643,7 @@ sub load_asset {
         $init{name}     = $mdata->{name};
 
         # mix in dates
-        for my $name qw(cover_date expire_date publish_date) {
+        for my $name qw(cover_date expire_date publish_date first_publish_date) {
             my $date = $mdata->{$name};
             next unless $date; # skip missing date
             my $db_date = xs_date_to_db_date($date);
@@ -934,7 +934,7 @@ sub serialize_asset {
     $writer->dataElement(source => $src->get_source_name);
 
     # get dates and output them in dateTime format
-    for my $name qw(cover_date expire_date publish_date) {
+    for my $name qw(cover_date expire_date publish_date first_publish_date) {
         my $date = $media->_get($name);
         next unless $date; # skip missing date
         my $xs_date = db_date_to_xs_date($date);

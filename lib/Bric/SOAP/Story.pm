@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$Revision: 1.51 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+our $VERSION = (qw$Revision: 1.51 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-05 10:50:53 $
+$Date: 2004-03-16 20:01:23 $
 
 =head1 SYNOPSIS
 
@@ -853,7 +853,7 @@ sub load_asset {
         $story->set_publish_status($sdata->{publish_status}) if $update;
 
         # assign dates
-        for my $name qw(cover_date expire_date publish_date) {
+        for my $name qw(cover_date expire_date publish_date first_publish_date) {
             my $date = $sdata->{$name};
             next unless $date; # skip missing date
             my $db_date = xs_date_to_db_date($date);
@@ -1128,7 +1128,7 @@ sub serialize_asset {
     $writer->dataElement(source => $src->get_source_name);
 
     # get dates and output them in dateTime format
-    for my $name qw(cover_date expire_date publish_date) {
+    for my $name qw(cover_date expire_date publish_date first_publish_date) {
         my $date = $story->_get($name);
         next unless $date; # skip missing date
         my $xs_date = db_date_to_xs_date($date);
