@@ -48,6 +48,12 @@ Options:
   --content-source  - the content source for which the content will be imported.
                       Defaults to 'Internal'.
 
+  --site            - the site for the content.
+                      Defaults to 'Default Site'.
+
+  --bric_soap       - path to bric_soap executable.
+                      Defaults to looking in the same directory as this script.
+
   --temp-dir        - temp dir to use for unzipping or untarring.
                       Also used for storing authentication cookies.
                       Defaults to a directory named
