@@ -34,8 +34,7 @@ use base qw(Bric::Util::Language);
 
 use constant key => 'de_de';
 
-%Lexicon =
-  (
+our %Lexicon = (
 
 # Date
    'Jan' => 'Jan',

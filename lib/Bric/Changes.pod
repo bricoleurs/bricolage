@@ -30,6 +30,15 @@ clone. [David]
 
 =head2 Bug Fixes
 
+=over 4
+
+=item *
+
+The localization libraries load without error again. Added tests to ensure
+that this doesn't happen again. [David]
+
+=back
+
 =cut
 
 ##############################################################################
