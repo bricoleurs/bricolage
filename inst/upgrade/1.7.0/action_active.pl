@@ -25,7 +25,7 @@ do_sql
      ALTER COLUMN active SET DEFAULT 1},
 
   # Make sure that it isn't null.
-  qq{UPDATE action SET actve = 1},
+  qq{UPDATE action SET active = 1},
 
   # Make sure it can never be null.
   qq{ALTER TABLE    action
