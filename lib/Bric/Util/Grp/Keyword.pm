@@ -121,7 +121,9 @@ sub get_object_class_id { OBJ_CLASS_ID }
 
 ##############################################################################
 
-=item my @list_classes = Bric::Util::Grp::Keyword->get_list_classes
+=head3 get_list_classes
+
+  my @list_classes = Bric::Util::Grp::Keyword->get_list_classes;
 
 Returns a list or anonymous array of the supported classes in the group that
 can have their C<list()> methods called in succession to assemble a list of
