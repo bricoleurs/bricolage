@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -23,11 +23,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =head1 DATE
 
-$Date: 2003-09-18 02:02:07 $
+$Date: 2003-10-07 14:44:20 $
 
 =head1 SYNOPSIS
 
@@ -695,17 +695,28 @@ The XSD source:
                </xs:element>
                <xs:element name="active" type="xs:boolean"/>
                <xs:element name="top_level" type="xs:boolean"/>
+               <xs:element name="sites" minOccurs="0">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="site" maxOccurs="unbounded">
+                       <xs:complexType>
+                         <xs:simpleContent>
+                           <xs:extension base="xs:string">
+                             <xs:attribute name="primary_oc" type="xs:string" />
+                           </xs:extension>
+                         </xs:simpleContent>
+                       </xs:complexType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
                <xs:element name="output_channels" minOccurs="0">
                  <xs:complexType>
                    <xs:sequence>
                      <xs:element name="output_channel" maxOccurs="unbounded">
-                       <xs:complexType>
-                         <xs:simpleContent>
-                           <xs:extension base="xs:string">
-                             <xs:attribute name="primary" type="xs:boolean" use="optional"/>
-                           </xs:extension>
-                         </xs:simpleContent>
-                       </xs:complexType>
+                       <xs:simpleType>
+                         <xs:restriction base="xs:string"/>
+                       </xs:simpleType>
                      </xs:element>
                    </xs:sequence>
                  </xs:complexType>

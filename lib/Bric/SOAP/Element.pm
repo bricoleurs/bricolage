@@ -6,6 +6,7 @@ use warnings;
 
 use Bric::Biz::AssetType;
 use Bric::Biz::ATType;
+use Bric::Biz::OutputChannel;
 use Bric::Biz::Site;
 use Bric::App::Session qw(get_user_id);
 use Bric::App::Authz   qw(chk_authz READ);
@@ -27,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:32 $
+$Date: 2003-10-07 14:44:20 $
 
 =head1 SYNOPSIS
 
@@ -379,6 +380,7 @@ sub load_asset {
     unless ($data) {
         eval { $data = parse_asset_document($document,
                                             'output_channel',
+                                            'site',
                                             'subelement',
                                             'field',
                                            ) };
@@ -449,44 +451,56 @@ sub load_asset {
         $element->set_description($edata->{description});
         $element->set_burner($burner);
 
-        # remove all output_channels if updating
-        if ($update) {
-            $element->delete_output_channels([$element->get_output_channels]);
-
-            # save required here or we end up with an SQL error at the
-            # end.  this seems to be because oc adds are done before
-            # deletes in _sync_output_channels...
-            $element->save;
-        }
-
         if ($type->get_top_level) {
+            my (@site_ids, @ocids);
+
+            # assign sites
+            foreach my $sitedata (@{$edata->{sites}{site}}) {
+                # get site ID
+                my $name = ref $sitedata ? $sitedata->{content} : $sitedata;
+                my ($site_id) = Bric::Biz::Site->list_ids({ name => $name });
+                throw_ap(error => __PACKAGE__ ."::create : no site found"
+                           . " matching (site => \"$name\")")
+                  unless defined $site_id;
+                push(@site_ids, $site_id);
+
+                # get primary OC ID
+                my $primary_oc_name = $sitedata->{primary_oc}
+                    if ref $sitedata and $sitedata->{primary_oc};
+                throw_ap(error => __PACKAGE__ . " : no primary output_channel defined"
+                           . " for site '$name'!")
+                  unless defined $primary_oc_name;
+                my ($primary_oc_id) = Bric::Biz::OutputChannel->list_ids(
+                    { name => $primary_oc_name });
+                throw_ap(error => __PACKAGE__ ."::create : no primary output_channel found"
+                           . " matching (primary_oc => \"$name\")")
+                  unless defined $primary_oc_id;
+
+                $element->set_primary_oc_id($primary_oc_id, $site_id);
+            }
+
+            throw_ap(error => __PACKAGE__ . " : no sites defined!")
+              unless @site_ids;
 
             # assign output_channels
-            my @ocids;
-            my $primary_ocid;
             foreach my $ocdata (@{$edata->{output_channels}{output_channel}}) {
-                # get name
+                # get OC ID
                 my $name = ref $ocdata ? $ocdata->{content} : $ocdata;
-                my ($output_channel_id) = Bric::Biz::OutputChannel->list_ids(
-                                             {name => $name});
+                my ($output_channel_id) = Bric::Biz::OutputChannel->list_ids({ name => $name });
                 throw_ap(error => __PACKAGE__ ."::create : no output_channel found"
                            . " matching (output_channel => \"$name\")")
                   unless defined $output_channel_id;
 
                 push(@ocids, $output_channel_id);
-                $primary_ocid = $output_channel_id 
-                    if ref $ocdata and $ocdata->{primary};
             }
 
-            # sanity checks
             throw_ap(error => __PACKAGE__ . " : no output_channels defined!")
               unless @ocids;
-            throw_ap(error => __PACKAGE__ . " : no primary output_channel defined!")
-              unless defined $primary_ocid;
 
             # add output_channels to element
+            $element->delete_output_channels([$element->get_output_channels])
+              if $update;
             $element->add_output_channels(\@ocids);
-            $element->set_primary_oc_id($primary_ocid);
         }
 
 
@@ -692,14 +706,20 @@ sub serialize_asset {
     # set top_level stuff if top_level
     if ($element->get_top_level) {
         $writer->dataElement(top_level => 1);
-        my ($site_id) = Bric::Biz::Site->list_ids({ element_id => $element_id });
-        my $primary_oc_id = $element->get_primary_oc_id($site_id);
+
+        $writer->startTag('sites');
+        my @sites = Bric::Biz::Site->list({ element_id => $element_id });
+        foreach my $site (@sites) {
+            my $primary_oc_id = $element->get_primary_oc_id($site->get_id);
+            my $primary_oc = Bric::Biz::OutputChannel->lookup({ id => $primary_oc_id });
+            $writer->dataElement(site => $site->get_name,
+                                 primary_oc => $primary_oc->get_name);
+        }
+        $writer->endTag('sites');
+
         $writer->startTag("output_channels");
         foreach my $oc ($element->get_output_channels) {
-            $writer->dataElement(output_channel => $oc->get_name,
-                                 ($oc->get_id == $primary_oc_id and
-                                  (primary => 1))
-                                );
+            $writer->dataElement(output_channel => $oc->get_name);
         }
         $writer->endTag("output_channels");
     } else {
