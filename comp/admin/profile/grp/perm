@@ -3,7 +3,7 @@
    title => "$grp_name Permissions",
    context => "Admin | Profile | $disp | &quot;$grp_name&quot | Permissions"
  &>
-<form method="post" action="<% $r->uri %>" name="grp_profile" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="perm_profile">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc',
          value => $id,
@@ -12,15 +12,27 @@ $m->comp('/widgets/profile/hidden.mc',
 
 $m->comp('/widgets/perm/perm.mc',
          grp => $grp,
+         perm_type => $ARGS{'perm_type'},
 	 read_only => $no_edit);
 
 # Add the buttons.
-$m->comp('/widgets/profile/formButtons.mc',
-         type => $type,
-	 section => $section,
-	 widget  => $widget,
-	 return  => "/admin/profile/grp/$id",
-         no_del => 1);
+$m->comp('/widgets/profile/imageSubmit.mc',
+  formName => "perm_profile",
+  callback => "$widget|save_cb",
+  image    => 'save_red',
+);
+$m->out(' ');
+$m->comp('/widgets/profile/imageSubmit.mc',
+  formName => "perm_profile",
+  callback => "$widget|save_and_stay_cb",
+  image    => 'save_and_stay_lgreen',
+);
+$m->out(' ');
+$m->comp('/widgets/profile/imageSubmit.mc',
+  formName => "perm_profile",
+  callback => "$widget|cancel_cb",
+  image    => 'cancel_red',
+);
 </%perl>
 </form>
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
@@ -69,11 +81,11 @@ my $grp_name = $grp->get_name;
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.6.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:10 $
+$Date: 2003-06-23 12:23:57 $
 
 =head1 DESCRIPTION
 

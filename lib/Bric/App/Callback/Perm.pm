@@ -18,8 +18,27 @@ my $not = {
     'obj' => 'usr',
 };
 
+my ($do_save);
+
 
 sub save {
+    my $gid = &$do_save;
+    set_redirect("/admin/profile/grp/$gid");
+}
+
+sub save_and_stay : Callback {
+    &$do_save;
+}
+
+sub cancel : Callback {
+    my $self = shift;
+    my $gid = $self->request_args->{'grp_id'};
+    set_redirect("/admin/profile/grp/$gid");
+}
+
+###
+
+my $do_save = sub {
     my $self = shift;
     my $param = $self->request_args;
 
@@ -86,8 +105,9 @@ sub save {
 
     # Set a message and redirect!
     add_msg("$disp_name saved.");
-    set_redirect("/admin/profile/grp/$gid");
-}
+
+    return $gid;
+};
 
 
 1;
