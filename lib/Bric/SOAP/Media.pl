@@ -158,6 +158,10 @@ my @queries = (
 		 { element__id => $media_element_id } ],
 	       [ { workflow => 'Media' },
 		 { workflow__id => $workflow_id } ],
+	       [ { category => '/' },
+		 { category__id => 0 } ],
+	       [ { file_name => 'bricolage.gif' },
+		 { file_name => 'bricolage.gif' } ],
 	      );
 
 foreach my $queries (@queries) {

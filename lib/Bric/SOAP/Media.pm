@@ -37,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-17 18:21:33 $
+$Date: 2002-06-20 20:57:44 $
 
 =head1 SYNOPSIS
 
@@ -106,9 +106,18 @@ The media description.
 
 The media uri.
 
+=item file_name (M)
+
+The name of the file inside the media object.
+
 =item simple (M)
 
 A single OR search that hits title, description and uri.
+
+=item category
+
+The category containing the story, given as the complete category path
+from the root.  Example: "/news/linux".
 
 =item workflow
 
@@ -160,19 +169,18 @@ Throws: NONE
 
 Side Effects: NONE
 
-Notes: Some obvious options are missing - category, file_name and the
-SQL tweaking paramters (Order, Limit, etc.) in Bric::SOAP::Story most
-obviously.  We should add them to
-Bric::Biz::Asset::Business::Media->list() and then support them here
-too.
+Notes: Some options are missing - the SQL tweaking paramters (Order,
+Limit, etc.) in Bric::SOAP::Story most obviously.  We should add them
+to Bric::Biz::Asset::Business::Media->list() and then support them
+here too.
 
 =cut
 
 {
 # hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(title description
+my %allowed = map { $_ => 1 } qw(title description file_name
 				 simple uri priority
-				 workflow element
+				 workflow element category
 				 publish_date_start publish_date_end
 				 cover_date_start cover_date_end
 				 expire_date_start expire_date_end);
@@ -218,7 +226,7 @@ sub list_ids {
 	die __PACKAGE__ . "::list_ids : no category found matching " .
 	    "(category => \"$args->{category}\")\n"
 		unless defined $category_id;
-	$args->{category_id} = $category_id;
+	$args->{category__id} = $category_id;
 	delete $args->{category};      
     }
     

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:22 $
+$Date: 2002-06-20 20:57:44 $
 
 =head1 SYNOPSIS
 
@@ -337,6 +337,10 @@ uri
 
 =item *
 
+file_name - the name of the file uploaded into this object
+
+=item *
+
 source__id
 
 =item *
@@ -403,6 +407,10 @@ expire_date_end - if start is left blank will return everything before the arg
 =item *
 
 simple - a single OR search that hits name, description and uri.
+
+=item *
+
+category__id - the category id of the media object
 
 =back
 
@@ -766,21 +774,6 @@ sub set_category__id {
 		  uri           => $uri
     });
     return $self;
-}
-
-sub set_category__id {
-	my ($self, $cat_id) = @_;
-
-	my $cat = Bric::Biz::Category->lookup( { id => $cat_id });
-
-	my $uri = Bric::Util::Trans::FS->cat_uri(
-          $self->_construct_uri($cat), $self->_get('file_name'));
-	
-        $self->_set({ '_category_obj' => $cat,
-		      category__id    => $cat_id,
-		      uri	      => $uri     });
-
-	return $self;
 }
 
 ################################################################################
@@ -1244,9 +1237,10 @@ sub _do_list {
     }
 
     # do for instance table
-    foreach my $f (qw(name description version uri)) {
+    foreach my $f (qw(name file_name description version uri category__id)) {
 	next unless exists $param->{$f};
-	if (($f eq 'name') || ($f eq 'description') || ($f eq 'uri')) {
+	if (($f eq 'name') || ($f eq 'description') || 
+            ($f eq 'uri')  || ($f eq 'file_name')) {
 	    push @where, "LOWER(i.$f) LIKE ?";
 	    push @bind, lc($param->{$f});
 	} else {
@@ -1298,7 +1292,7 @@ sub _do_list {
 	    }
 	}
     }
-
+    
     push @where, ' m.id=i.media__id ';
 
     my $sql;
