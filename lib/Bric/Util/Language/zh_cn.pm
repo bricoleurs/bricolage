@@ -576,7 +576,7 @@ __END__
 
 =head1 AUTHOR
 
-Kang-min Liu <gugod@gugod.org>, lgjut@sohu.com
+Kang-min Liu <gugod@gugod.org>, Gang Luo <lgjut@sohu.com>
 
 =head1 SEE ALSO
 
