@@ -599,20 +599,18 @@ my $super_save_data = sub {
         my ($name, $text) = @$d;
 
         my $t;
-        # If we have an existing object with this name, then use it
+        # If we have an existing object with this name, then use it.
         if ($tpool->{$name} and scalar(@{$tpool->{$name}})) {
             $t = shift @{$tpool->{$name}};
-        }
-        # If there is no object then create one
-        else {
+        } else {
+            # If there is no object then create one
             my ($atc, $atd);
             if ($atd = $at->get_data($name)) {
                 $t = Bric::Biz::Asset::Business::Parts::Tile::Data->new
                   ({ 'element_data' => $atd,
                      'object_type'  => 'story' });
-        } else {
+            } else {
                 $atc = $at->get_containers($name);
-
                 $t = Bric::Biz::Asset::Business::Parts::Tile::Container->new
                   ({ 'element'     => $atc,
                      'object_type' => 'story' });
@@ -633,8 +631,9 @@ my $super_save_data = sub {
         next unless $p and scalar(@$p);
 
         if ($p->[0]->is_container) {
-            add_msg($lang->maketext("Note: Container element [_1] removed in bulk edit but ".
-                    "will not be deleted.","'$n'"));
+            add_msg($lang->maketext("Note: Container element [_1] removed " .
+                                    "in bulk edit but will not be deleted.",
+                                    "'$n'"));
             # Put these container tiles back in the list
             push @$dtiles, @$p;
             next;
@@ -766,7 +765,8 @@ my $split_super_bulk = sub {
     my %poss_names;
 
     # Get the default data type
-    my $def_field = get_state_data('_tmp_prefs', 'container_prof.'.$at->get_id.'.def_field');
+    my $def_field = get_state_data('_tmp_prefs', 'container_prof.' .
+                                   $at->get_id. '.def_field');
 
     # Create hash of possible names from the data elements
     foreach my $p ($at->get_data) {
@@ -799,8 +799,8 @@ my $split_super_bulk = sub {
 
             # If we have any accumulated text or if we have more than two
             # blank lines in a row, then save it off
-            if ($acc or ($blanks > 1)) {
-                $type = $def_field if not $type;
+            if ($acc or $blanks > 1) {
+                $type ||= $def_field or next;
                 push @chunks, [$type, $acc];
                 $acc  = '';
                 $type = '';
@@ -865,8 +865,7 @@ my $split_super_bulk = sub {
 
     # Add any leftover data
     if ($acc or $type) {
-        $type = $def_field if not $type;
-
+        $type ||= $def_field;
         push @chunks, [$type, $acc];
     }
 

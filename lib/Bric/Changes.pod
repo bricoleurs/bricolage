@@ -42,7 +42,7 @@ mentioning "attributes," and now they mention "fields," instead. [David]
 
 =item *
 
-Updated Bric::Admin (F<INSTALL> to instruct users encountering installation
+Updated Bric::Admin (F<INSTALL>) to instruct users encountering installation
 problems to first check the list archives and post to the mailing list before
 filing a bug. [Cinly Ooi]
 
@@ -108,13 +108,18 @@ unlimited in length. Reported by Kevin Elliott. [David]
 =item *
 
 Template output channel associations no longer trigger an error when importing
-templates via the SOAP interface [Clive Jones]
+templates via the SOAP interface. [Clive Jones]
 
 =item *
 
 Passing an undef via the C<workflow__id> parameters to the C<list()> method of
 Story, Media, or Template once again causes Bricolage to correctly return only
 those assets that are not in workflow. Reported by Kevin Elliott. [David]
+
+=item *
+
+Extra blank lines between subelement tags in super bulk edit no longer causes
+an error. Thanks to Kevin Elliott for the spot! [David]
 
 =back
 
