@@ -3,40 +3,42 @@ package Bric::Biz::Asset::Business::Parts::Tile;
 
 =head1 NAME
 
-Bric::Biz::Asset::Business::Parts::Tile - Tile maps a particular Asset Part
-Data object to a formatting Asset
+Bric::Biz::Asset::Business::Parts::Tile - Bricolage Document Element base class
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-11 08:31:29 $
+$Date: 2004-03-11 20:23:39 $
 
 =head1 SYNOPSIS
 
- ($tile_list,@tiles) = Bric::Biz::Asset::Business::Parts::Tile->list($criteria)
+ my @elements = Bric::Biz::Asset::Business::Parts::Tile->list($params)
 
- $id = $tile->get_id()
-
- $tile = $tile->activate()
-
- $tile = $tile->deactivate()
-
- (undef || 1) $tile->is_active()
-
- $tile = $tile->save()
+ $id = $element->get_id;
+ $element = $element->activate;
+ $element = $element->deactivate;
+ my $active = $element->is_active;
+ $element = $element->save;
 
 =head1 DESCRIPTION
 
-Tile maps the asset part to a particular formatting asset. There are data
-tiles which map to the particular data points and container tiles that contain
-other tiles.
+This class defins the common structure of elements, the building blocks of
+Bricolage story and media documents. There are two types of elements:
+container elements and data elements. Container elements can contain any
+number of container and data subelements. Data elements contain values, and
+corrspond to fields in the Bricolage UI. See
+L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>
+and
+L<Bric::Biz::Asset::Business::Parts::Tile::Data|Bric::Biz::Asset::Business::Parts::Tile::Data>
+for details of their interfaces and how they vary from
+Bric::Biz::Asset::Business::Parts::Tile.
 
 =cut
 
@@ -90,13 +92,13 @@ BEGIN {
                 # Public Fields
 
                 # A name for this tile that can be displayed
-                'name'                          => Bric::FIELD_RDWR,
+                'name'                          => Bric::FIELD_READ,
 
                 # A unique name for this tile to be used internal
-                'key_name'                      => Bric::FIELD_RDWR,
+                'key_name'                      => Bric::FIELD_READ,
 
                 # A short description of this tile
-                'description'                   => Bric::FIELD_RDWR,
+                'description'                   => Bric::FIELD_READ,
 
                 # the parent id of this tile
                 'parent_id'                     => Bric::FIELD_RDWR,
@@ -110,10 +112,12 @@ BEGIN {
                 # The type of object that this tile is associated with
                 # will also be used to determine what table to put the data into
                 # ( story || media )
-                'object_type'           => Bric::FIELD_RDWR,
+                'object_type'                   => Bric::FIELD_RDWR,
+
+                'object_order'                  => Bric::FIELD_RDWR,
 
                 # the id of the object that this is a tile for
-                'object_id'                     => Bric::FIELD_RDWR,
+                object_instance_id              => Bric::FIELD_RDWR,
 
                 # Private Fields
 
@@ -142,32 +146,17 @@ BEGIN {
 # Constructors
 #------------------------------------------------------------------------------#
 
-=item $tile = Bric::Biz::Asset::Business::Parts::Tile->new( {format => $fa})
+=item my $element = Bric::Biz::Asset::Business::Parts::Tile->new($init)
 
-This will return a new Tile object with the optional initial state of format
-and data
+Constructs a new element. Its attributes can be initialized via the C<$init>
+hash reference. See the subclasses for a list of parameters. Cannot be called
+directly, but must be called from a subclass.
 
-Supported Keys:
+B<Throws:> NONE.
 
-=over 4
+B<Side Effects:> NONE.
 
-=item *
-
-format
-
-=back
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -181,23 +170,22 @@ sub new {
 
 ################################################################################
 
-=item ($tile_list, @tiles) = Bric::Biz::Asset::Business::Parts::Tile->list
-        ( $criteria )
+=item my @elements = Bric::Biz::Asset::Business::Parts::Tile->list($params)
 
-This will return a list ( or list ref) of tile objects that match the given
-criteria.
+Searches for and returns a list or anonymous array of element objects. Cannot
+be called directly, but must be called from a subclass.
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item Method Not Implemented
 
-NONE
+=back
 
-B<Notes:>
+B<Side Effects:> NONE.
 
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -215,9 +203,9 @@ sub list {
 
 =over 4
 
-=item $self->DESTROY
+=item $element->DESTROY
 
-this is a dummy method to save time going through auto load
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
 
 =cut
 
@@ -236,9 +224,9 @@ sub DESTROY {
 
 =item $meths = Bric::Biz::Asset::Business::Parts::Tile->my_meths
 
-=item (@meths || $meths_aref) = Bric::Biz::Asset::BusinessParts::Tile->my_meths(TRUE)
+=item my @meths = Bric::Biz::Asset::BusinessParts::Tile->my_meths(TRUE)
 
-=item my (@meths || $meths_aref) = Bric::Biz:::Asset::BusinessParts::Tile->my_meths(0, TRUE)
+=item my @meths = Bric::Biz:::Asset::BusinessParts::Tile->my_meths(0, TRUE)
 
 Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
@@ -368,7 +356,6 @@ B<Notes:> NONE.
 
 =cut
 
-
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
     return if $ident;
@@ -425,22 +412,22 @@ sub my_meths {
 
 ##############################################################################
 
-=item list_ids - Method not implemented
+=item my @elements = Bric::Biz::Asset::Business::Parts::Tile->list($params)
 
-If you want to get a list of objects just use list, if you only want the ids
-go the the objects themselves
+Searches for and returns a list or anonymous array of element object
+IDs. Cannot be called directly, but must be called from a subclass.
 
 B<Throws:>
 
-"Method Not Implemented"
+=over 4
 
-B<Side Effects:>
+=item Method Not Implemented
 
-NONE
+=back
 
-B<Notes:>
+B<Side Effects:> NONE.
 
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -449,8 +436,6 @@ sub list_ids {
 }
 
 ################################################################################
-
-#--------------------------------------#
 
 =back
 
@@ -478,16 +463,6 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $p->set_name($name)
-
-Sets the element name.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
 =item my $key_name = $p->get_key_name
 
 Returns the element key name.
@@ -498,29 +473,9 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $p->set_key_name($key_name)
-
-Sets the element key name.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
 =item my $description = $p->get_description
 
 Returns the element description.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=item $p->set_description($description)
-
-Sets the element description.
 
 B<Throws:> NONE.
 
@@ -590,7 +545,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $object_id = $p->get_object_id
+=item my $object_instance_id = $element->get_object_instance_id
 
 Returns the ID of the document (story or media) that the element is associated
 with.
@@ -601,7 +556,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $p->set_object_id($object_id)
+=item $element->set_object_instance_id($object_instance_id)
 
 Sets the ID of the document (story or media) that the element is associated
 with.
@@ -612,10 +567,15 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item (1 || 0) = $tile->has_name($name);
+=item my $has_name = $element->has_name($name);
 
-Test to see whether this tile has a name matching the argument $name.  Returns
-1 if the name is a match and 0 otherwise.
+Returns true if an element has a name matching the C<$name> argument. Note
+that this is not a direct comparison to the C<name> attribute of the element
+object. Rather, it converts C<$name> so that it is all lowercase and its
+non-alphanumeric characters are changed to underscores. The resulting value is
+then compared to the element's C<key_name> attribute. In general, it's a
+better idea to use C<has_key_name()>, or to do direct key name comparisons
+yourself. This method is provided for backwards compatability.
 
 B<Throws:> NONE.
 
@@ -635,10 +595,9 @@ sub has_name {
 
 ################################################################################
 
-=item (1 || 0) = $tile->has_key_name($key_name);
+=item my $has_key_name = $element->has_key_name($key_name)
 
-Test to see whether this tile has a key name matching the argument $key_name.
-Returns 1 if the name is a match and 0 otherwise.
+Returns true if an element has a key name matching the C<$key_name> argument.
 
 B<Throws:> NONE.
 
@@ -656,21 +615,15 @@ sub has_key_name {
 
 ################################################################################
 
-=item $parent_element = $tile->get_parent()
+=item $parent_element = $element->get_parent
 
 Returns the parent element object.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -686,21 +639,15 @@ sub get_parent {
 
 ################################################################################
 
-=item $tile = $tile->activate()
+=item $element = $element->activate
 
-Makes the tile active if it was deactivated
+Activates the element.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -712,21 +659,15 @@ sub activate {
 
 ################################################################################
 
-=item $tile = $tile->deactivate()
+=item $element = $element->deactivate()
 
-Makes the tile inactive (deleted )
+Deactivates the element.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -738,9 +679,9 @@ sub deactivate {
 
 ################################################################################
 
-=item ($tile || undef) $tile->is_active()
+=item my $is_active $element->is_active
 
-Returns 1 if the tile is active or undef if it has been deactivated
+Returns true if the element is active, and false if it is not.
 
 B<Throws:>
 
@@ -790,13 +731,14 @@ NONE
 
 =head1 AUTHOR
 
-michael soderstrom ( miraso@pacbell.net )
+michael soderstrom <miraso@pacbell.net>
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>,
-L<Bric::Biz::Asset::Business::Story>,L<Bric::Biz::Asset_type>,
-L<Bric::Biz::Asset_type::Parts::Data>,L<Bric::Biz::Asset::Business::Media>
+L<perl>, L<Bric>, L<Bric::Biz::Asset::Business::Story>,
+L<Bric::Biz::Asset::Business::Media>, L<Bric::Biz::AssetType>,
+L<Bric::Biz::Asset::Business::Parts::Tile::Container>,
+L<Bric::Biz::Asset::Business::Parts::Tile::Tile>
 
 =cut
 

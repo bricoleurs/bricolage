@@ -3,45 +3,44 @@ package Bric::Biz::Asset::Business::Parts::Tile::Container;
 
 =head1 NAME
 
-Bric::Biz::Asset::Business::Parts::Tile::Container - The class that contains other
-tiles
+Bric::Biz::Asset::Business::Parts::Tile::Container - Container Element
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2004-03-10 23:20:45 $
+$Date: 2004-03-11 20:23:39 $
 
 =head1 SYNOPSIS
 
   # Creation of Objects
-  $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new
-    ($initial_state)
-  $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->lookup
-    ({ id => $id })
-  @tiles =
-    Bric::Biz::Asset::Business::Parts::Tile::Container->list($params)
-  @ids =
-    Bric::Biz::Asset::Business::Parts::Tile::Container->list_ids($params)
+  my $container = Bric::Biz::Asset::Business::Parts::Tile::Container->new($init);
+  my $container = Bric::Biz::Asset::Business::Parts::Tile::Container->lookup({
+    id => $id
+  });
+  my @containers = Bric::Biz::Asset::Business::Parts::Tile::Container->list($params);
+  my @ids = Bric::Biz::Asset::Business::Parts::Tile::Container->list_ids($params);
 
-  $tile = $tile->add_tile([$tiles])
-  @tiles = $tile->get_elements;
-  $tile = $tile->delete_tiles([$tiles])
-  $tile = $tile->is_container;
-  $tile = $tile->reorder->(@new_order)
-
+  $container = $container->add_element(\@containers);
+  my @elements = $container->get_elements;
+  $container = $container->delete_elements(\@containers);
+  $container = $container->is_container;
+  $container = $container->reorder->(@new_order);
 
 =head1 DESCRIPTION
 
-This is the class for tiles that contain other tiles. These can be data tiles
-and or other container tiles.
+This class contains the contents of container elements, also known as story
+type elements, media type elements, and container subelements. These objects
+can contain one or more subelements, and those subelements can be either data
+elements or other container elements. This class inherits from
+L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>.
 
 =cut
 
@@ -130,15 +129,13 @@ BEGIN {
 
                         # reference to the asset type data object
                         element_id             => Bric::FIELD_RDWR,
-                        object_order           => Bric::FIELD_RDWR,
-                        object_instance_id     => Bric::FIELD_RDWR,
                         related_instance_id    => Bric::FIELD_RDWR,
                         related_media_id       => Bric::FIELD_RDWR,
 
                         # Private Fields
-                        _del_tiles            => Bric::FIELD_NONE,
-                        _tiles                => Bric::FIELD_NONE,
-                        _update_tiles         => Bric::FIELD_NONE,
+                        _del_subelems         => Bric::FIELD_NONE,
+                        _subelems             => Bric::FIELD_NONE,
+                        _update_subelems      => Bric::FIELD_NONE,
 
                         _update_contained     => Bric::FIELD_NONE,
 
@@ -164,38 +161,52 @@ BEGIN {
 
 =over 4
 
-=item $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new($init)
+=item my $container = Bric::Biz::Asset::Business::Parts::Tile::Container->new($init)
 
-This will create a new tile object with the given state defined by the
-optional initial state argument
-
-Supported Keys:
+Construct a new container element object. The supported initial attributes are:
 
 =over 4
 
-=item *
+=item object_type
 
-obj_type
+A string identifying the type of document the new container element is
+associated with. It's value can be "story " or "media".
 
-=item *
+=item object_instance_id
 
-obj_id
+The ID of the story or media document the new container element is associated
+with.
 
-=item *
+=item place
 
-element__id
+The order of this element relative to the other subelements of the parent
+element.
 
-=item *
+=item object_order
 
-active
+The order of this element relative to the other container elements based on
+the same Bric::Biz::AsetType object that are subelements of the parent
+element.
 
-=item *
+=item parent_id
 
-parent_id
+The ID of the container element that is the parent of the new container
+element.
 
-=item *
+=item element
 
-place
+A Bric::Biz::AssetType object that defines the structure of this container
+element.
+
+=item element_id
+
+An ID for the Bric::Biz::AssetType object that defines the structure of this
+container element.
+
+=item active
+
+A boolean value indicating whether the container element is active or
+inactive.
 
 =back
 
@@ -203,9 +214,7 @@ B<Throws:>
 
 =over 4
 
-=item *
-
-Object of type $class not allowed
+=item Object of type not allowed.
 
 =back
 
@@ -219,7 +228,8 @@ sub new {
     my ($self, $init) = @_;
 
     # check active and object
-    $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;    delete $init->{'active'};
+    $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
+    delete $init->{'active'};
     $init->{'place'}  ||= 0;
     $init->{'object_order'} ||=1;
     $self = bless {}, $self unless ref $self;
@@ -270,25 +280,38 @@ sub new {
 
 ################################################################################
 
-=item $tile = Bric::Biz::Asset::Business::Parts::Tile->lookup( { id => $id } )
+=item my $container = Bric::Biz::Asset::Business::Parts::Tile->lookup($params)
 
-This method. will return an existing tile object that is defined by the given ID.
+Looks up a container element in the database by its ID and returns it. The
+lookup parameters are:
+
+=over 4
+
+=item id
+
+The ID of the conainer element to lookup. Required.
+
+=item object
+
+A story or media document object with which the conainer element is
+associated. Required unless C<object_type> is specified.
+
+=item object_type
+
+The type of document object with which the container element is associated.
+Must be either "media" or "story". Required unless C<object> is specified.
+
+=back
 
 B<Throws:>
 
 =over 4
 
-=item *
+=item Missing required Parameter 'id'.
 
-Missing required Parameter 'id'.
+=item Missing required Parameter 'object_type' or 'object'.
 
-=item *
-
-Missing required Parameter 'object_type' or 'object'.
-
-=item *
-
-Improper type of object passed to lookup
+=item Improper type of object passed to lookup.
 
 =back
 
@@ -341,43 +364,54 @@ sub lookup {
 
 ################################################################################
 
-=item (@tiles||$tiles) = Bric::Biz::Assets::Parts::Tile::Container->list($param)
+=item my @containers = Bric::Biz::Assets::Parts::Tile::Container->list($param)
 
-This will return a list or list ref of tiles that match the given criteria
-
-Supported Keys:
+Searches for and returns a list or anonymous array of container element
+objects. The supported parameters that can be searched are:
 
 =over 4
 
 =item object
 
-The object to search for containers - must be a Bric::Biz::Asset::Business
-subclass. You must specify this parameter or object_type.
+A story or media object with which the container elements are associated.
+Required unless C<object_type> is specified.
 
 =item object_type
 
-The type of object to find containers for - 'story' or 'media'. You must
-specify this parameter or object.
+The type of document with which the container elements are associated.
+Required unless C<object> is specified.
 
-=item active
+=item object_instance_id
 
-Find inactive stuff by setting this to 0, active with 1.
-
-=item element_id
-
-Find containers of a particular AssetType.
+The ID of a story or container object with wich the container elements are
+associated. Can only be used if C<object_type> is also specified and
+C<object> is not specified.
 
 =item name
 
-The name of the AssetType for the container
+The name of the container elements. Since the SQL C<LIKE> operator is used with
+this search parameter, SQL wildcards can be used.
 
 =item key_name
 
-The key_name of the AssetType for the container
+The key name of the container elements. Since the SQL C<LIKE> operator is used with
+this search parameter, SQL wildcards can be used.
 
 =item parent_id
 
-Find containers with a given parent container.
+The ID of the container element that is the parent element of the container
+elements. Pass C<undef> to this parameter to specify that the C<parent_id>
+must be C<NULL>.
+
+=item element_id
+
+The ID of the Bric::Biz::AssetType object that specifies the structure of the
+container elements.
+
+=item active
+
+A boolean value indicating whether the returned data elements are active or
+inactive.
 
 =back
 
@@ -404,7 +438,9 @@ sub list {
 
 =over 4
 
-=item $self->DESTROY
+=item $container->DESTROY
+
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
 
 =cut
 
@@ -423,11 +459,10 @@ sub DESTROY {
 
 =over 4
 
-=item (@ids||$ids) = Bric::Biz::Assets::Parts::Tile::Container->list_ids($param)
+=item my @ids = Bric::Biz::Assets::Parts::Tile::Container->list_ids($param)
 
-This will return a list or list ref of tile ids that match the given criteria
-
-Supported Keys are the same as for C<list()>
+Returns a list or anonymous array of container element IDs. The search
+parameters are the same as for C<list()>.
 
 B<Throws:> NONE.
 
@@ -448,64 +483,138 @@ sub list_ids {
 
 =head2 Public Instance Methods
 
+See also
+L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>,
+from which Bric::Biz::Asset::Business::Parts::Tile::Container inherits.
+
 =over 4
 
-=item $id = $container->get_related_instance_id()
+=item my $element_id = $container->get_element_id
 
-Returns the ID of the story instance related to this container tile
+Returns the ID of the Bric::Biz::AssetType object that defines the structure
+of this element.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
+B<Notes:> NONE.
 
-NONE
+=item $container->set_element_id($element_id)
 
-B<Notes:>
+Sets the ID of the Bric::Biz::AssetType object that defines the structure
+of this element.
 
-NONE
+B<Throws:> NONE.
 
-=cut
+B<Side Effects:> NONE.
 
-=item $container = $container->set_related_instance_id($id)
+B<Notes:> NONE.
 
-Set the ID of the story instance related to this container tile
+=item my $object_order = $container->get_object_order
 
-B<Throws:>
+Returns the order number for this object relative to other container elements
+based on the same Bric::Biz::AssetType object.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
+B<Notes:> NONE.
 
-B<Notes:>
+=item $container->set_object_order($object_order)
 
-NONE
+Sets the order number for this object relative to other container elements
+based on the same Bric::Biz::AssetType object.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $story_id = $container->get_related_instance_id
+
+Returns the ID of a story related to this container element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $container->set_related_instance_id($story_id)
+
+Sets the ID of a story related to this container element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $media_id = $container->get_related_media_id
+
+Returns the ID of a media document related to this container element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $container->set_related_media_id($media_id)
+
+Sets the ID of a media document related to this container element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 ################################################################################
 
-=item $story = $container->get_related_story()
+=item $container->set_related_story($story)
 
-Instantiate the related instance to this container tile based on the id. This
-named 'get_related_story' rather than 'get_related_instance' since that is how
-the template designer who will use this will probably expect it to work (ie,
-they probably won't think in terms of an instance'.
+Creates a relationship between the container element and a story document.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
+B<Notes:> NONE.
 
-NONE
+=cut
 
-B<Notes:>
+sub set_related_story {
+    my ($self, $story) = @_;
+    my $story_id;
 
-NONE
+    if (ref $story) {
+        $story_id = $story->get_id;
+        $self->_set(['_related_intance_obj'], [$story]);
+    } else {
+        $story_id = $story;
+    }
+
+    $self->_set(['related_instance_id'], [$story_id]);
+}
+
+################################################################################
+
+=item $story = $container->get_related_story
+
+If a story is related to this container element, this method returns that
+story object.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -532,21 +641,15 @@ sub get_related_story {
 
 ################################################################################
 
-=item $tile = $tile->set_related_media($media)
+=item $container->set_related_media($media)
 
-Sets the media object that is related to this container
+Creates a relationship between the container element and a media document.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -562,27 +665,20 @@ sub set_related_media {
     }
 
     $self->_set(['related_media_id'], [$media_id]);
-
-    return $self;
 }
 
 ################################################################################
 
-=item $media = $tile->get_related_media()
+=item $media = $container->get_related_media
 
-Returns the media object that is related to this tile
+If a media document is related to this container element, this method returns
+that media object.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -607,43 +703,43 @@ sub get_related_media {
 
 ################################################################################
 
-=item $obj = $container->get_element()
+=item $obj = $container->get_element
 
-Returns the element object
+Returns the Bric::Biz::AssetType object that defines the structure of this
+container element.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-sub get_element { $_[0]->_get_element_obj }
+sub get_element {
+    my $self = shift;
+    my $dirty = $self->_get__dirty;
+    my ($at_obj, $at_id) = $self->_get('_element_obj', 'element_id');
+
+    unless ($at_obj) {
+        $at_obj = Bric::Biz::AssetType->lookup({id => $at_id});
+        $self->_set(['_element_obj'], [$at_obj]);
+        $self->_set__dirty($dirty);
+    }
+    return $at_obj;
+}
 
 ################################################################################
 
-=item $name = $container->get_element_name()
+=item $name = $container->get_element_name
 
-Returns the name of the element
+An alias for C<< $container->get_name >>.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -651,21 +747,15 @@ sub get_element_name { $_[0]->get_name }
 
 ################################################################################
 
-=item $key_name = $container->get_element_key_name()
+=item $key_name = $container->get_element_key_name
 
-Returns the key name of the element.
+An alias for C<< $container->get_key_name >>.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -673,10 +763,13 @@ sub get_element_key_name { $_[0]->get_key_name }
 
 ################################################################################
 
-=item ($data || @data) = $container->get_possible_data()
+=item my @data = $container->get_possible_data
 
-Returns the data fields that are allowed to be added to the container at this
-moment. Takes into account the current set of data elements added.
+Returns a list or anonymous array of the Bric::Biz::AssetType::Parts::Data
+objects that define the types of data elements that can be subelements of this
+container element. This list would exclude any data elements that can only be
+added as subelements to this container element once, and have already been
+added.
 
 B<Throws:> NONE.
 
@@ -688,8 +781,8 @@ B<Notes:> NONE.
 
 sub get_possible_data {
     my ($self) = @_;
-    my $current = $self->_get_tiles();
-    my $at      = $self->_get_element_obj();
+    my $current = $self->get_elements();
+    my $at      = $self->get_element();
     my %at_info = map { $_->get_id => $_ } $at->get_data;
     my @parts;
 
@@ -714,11 +807,13 @@ sub get_possible_data {
 
 ################################################################################
 
-=item (@tiles || $tiles) = $container->get_possible_containers()
+=item my @elements = $container->get_possible_containers
 
-Returns a list of the possible containers that can be added to this
-object. This is synonymous with AssetType->get_containers() since containers
-do not support occurence constraints.
+Returns a list or anonymous array of the Bric::Biz::AssetType::Parts::Data
+objects that define the types of data elements that can be subelements of this
+container element. This is synonymous with
+C<< $container->get_element->get_containers >>, since containers do not
+support occurence constraints.
 
 B<Throws:> NONE.
 
@@ -729,20 +824,19 @@ B<Notes:> NONE.
 =cut
 
 sub get_possible_containers {
-    my ($self) = @_;
-    my $at   = $self->get_element;
-    my $cont = $at->get_containers();
-
-    return wantarray ? @$cont : $cont;
+    my $self = shift;
+    my $at = $self->get_element or return;
+    $at->get_containers;
 }
 
 ################################################################################
 
-=item $container = $container->add_data($atd, $data, ?$place?);
+=item $container = $container->add_data($atd, $value, $place);
 
-Takes an asset type data object and the data and creates a tile and then adds
-the tile to its self. Optionally accepts an $place argument to set the place
-property. Now that\'s service.
+Pass a Bric::Biz::AssetType::Parts::Data object and a value for a new data
+element, and that new data element will be added as a subelement of the
+container element. An optional third argument specifies the C<place> for that
+data element in the order of subelements of this container element.
 
 B<Throws:> NONE.
 
@@ -771,22 +865,17 @@ sub add_data {
 
 ################################################################################
 
-=item $new_container = $container->add_container()
+=item $new_container = $container->add_container($element)
 
-Given an asset type and the business asset this will create a new container
-tile and return it after adding it to this list
+Adds a new container subelement to this container element. Pass in the
+required Bric::Biz::AssetType object specifying the structure of the new
+container subelement.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -807,10 +896,12 @@ sub add_container {
 
 ################################################################################
 
-=item $string = $element->get_data_element($name, $obj_order)
+=item my $data = $element->get_data_element($key_name, $obj_order)
 
-This method will search the contained elements for one with the corresponding name
-and object order field. It will then return the data element.
+Returns a specific data subelement of this container element. Pass in the key
+name of the data element to be retreived. By default, the first data element
+with that key name will be returned. Pass in an optional second argument to
+specify the C<object_order> of the data element to be retrieved.
 
 B<Throws:> NONE.
 
@@ -823,7 +914,7 @@ B<Notes:> NONE.
 sub get_data_element {
     my ($self, $name, $obj_order) = @_;
     $obj_order = 1 unless defined $obj_order;
-    foreach my $t ($self->_get_tiles) {
+    foreach my $t ($self->get_elements) {
         return $t if not $t->is_container
           and $t->has_key_name($name)
           and $t->get_object_order == $obj_order;
@@ -833,15 +924,55 @@ sub get_data_element {
 
 ################################################################################
 
-=item $string = $element->get_data($name, $obj_order)
+=item my @data = $container->get_data_elements
 
-=item $string = $element->get_data($name, $obj_order, $date_format)
+  my @data = $element->get_data_elements;
+  @data = $element->get_data_elements(@key_names);
 
-This method will search the contained elements for one with the coresponding
-name ane object order field. It will then return the data from that data
-element. Pass in the optional C<$date_format> argument if you expect the data
-returned from C<$name> to be of the date type, and you\'d like a format other
-than that set in the "Date Format" preference.
+Returns a list or anonymous array of the data subelements of this data
+subelement. If called with no arguments, it returns all of the data
+subelements. If passed a list of key names, the only the data subelements with
+those key names will be returned.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_data_elements {
+    my $self = shift;
+
+    # Just return them all if no key names are passed.
+    return wantarray
+      ? (grep { ! $_->is_container } @{ $self->get_elements })
+      : [grep { ! $_->is_container } @{ $self->get_elements }]
+      unless @_;
+
+    # Return only those with the specified key names.
+    my %knames = map { $_ => 1} @_;
+    return wantarray
+      ? (grep { ! $_->is_container && $knames{$_->get_key_name} }
+           @{ $self->get_elements })
+      : [grep { ! $_->is_container && $knames{$_->get_key_name} }
+           @{ $self->get_elements }];
+}
+
+################################################################################
+
+=item $string = $element->get_data($key_name, $obj_order)
+
+=item $string = $element->get_data($key_name, $obj_order, $date_format)
+
+Returns the value of a specific data subelement of this container element.
+Pass in the key name of the data element to be retreived. By default, the
+first data element with that key name will be returned. Pass in an optional
+second argument to specify the C<object_order> of the data element to be
+retrieved. Pass in the optional C<$date_format> argument if you expect the
+data returned from C<$key_name> to be of the date type, and you'd like a
+format other than that set in the "Date Format" preference.
 
 B<Throws:> NONE.
 
@@ -868,10 +999,13 @@ sub get_data {
 
 ################################################################################
 
-=item $contained = $container->get_container($name, $obj_order)
+=item my $subelement = $container->get_container($key_name, $obj_order)
 
-Similar to get data this will return a container object that matches the given
-name field and object order description.
+Returns a specific conainer subelement of this container element. Pass in the
+key name of the container element to be retreived. By default, the first
+container element with that key name will be returned. Pass in an optional
+second argument to specify the C<object_order> of the container element to be
+retrieved.
 
 B<Throws:> NONE.
 
@@ -894,7 +1028,7 @@ sub get_container {
 
     $obj_order = 1 unless defined $obj_order;
 
-    foreach my $t ($self->_get_tiles) {
+    foreach my $t ($self->get_elements) {
         return $t if $t->is_container        and
                      $t->has_key_name($name) and
                      $t->get_object_order == $obj_order;
@@ -906,15 +1040,15 @@ sub get_container {
 
 ################################################################################
 
-=item (@containers || $containers) = $tile->get_containers()
+=item my @containers = $container->get_containers
 
   my @containers = $element->get_containers;
   @containers = $element->get_containers(@key_names);
 
-This method returns a list of container subelements. If called with no
-arguments, it returns all of the container subelements. If passed a list of
-key names, the only the container subelements with those key names will be
-returned.
+Returns a list or anonymous array of the container subelements of this
+container subelement. If called with no arguments, it returns all of the
+container subelements. If passed a list of key names, the only the container
+subelements with those key names will be returned.
 
 B<Throws:> NONE.
 
@@ -927,59 +1061,32 @@ B<Notes:> NONE.
 sub get_containers {
     my $self = shift;
 
-    my @containers;
-    if (@_) {
-        my %names;
-        for my $name (@_) {
-            if ($name =~ /[^a-z0-9_]/) {
-                ($name = lc($name)) =~ y/a-z0-9/_/cs;
-                my $msg = "Warning:  Use of element's 'name' field is deprecated for use with element method 'get_container'.  Please use the element's 'key_name' field instead.";
-                Bric::App::Util::add_msg($msg);
-            }
-            $names{$name} = 1;
-        }
-        @containers = grep { $_->is_container && $names{$_->get_key_name} }
-                               @{ $self->_get_tiles };
+    # Just return them all if no key names are passed.
+    return wantarray
+      ? (grep { $_->is_container } @{ $self->get_elements })
+      : [grep { $_->is_container } @{ $self->get_elements }]
+      unless @_;
 
-    } else {
-        @containers = grep { $_->is_container } @{ $self->_get_tiles };
-    }
-
-    return wantarray ? @containers : \@containers if scalar @containers;
-    return;
+    # Return only those with the specified key names.
+    my %knames = map { $_ => 1} @_;
+    return wantarray
+      ? (grep { $_->is_container && $knames{$_->get_key_name} }
+           @{ $self->get_elements })
+      : [grep { $_->is_container && $knames{$_->get_key_name} }
+           @{ $self->get_elements }];
 }
 
 ################################################################################
 
-=item (@tile_ids||$tile_ids_aref) = $tile->get_elements
+=item my @subelements = $container->get_elements
 
-Returns a list of the subelements of the container element.
+=item my @subelements = $container->get_elements(@key_names)
 
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_elements { _get_tiles(@_) }
-sub get_tiles    { _get_tiles(@_) }
-
-################################################################################
-
-
-=item $tile = $tile->add_tile($tile)
-
-Adds the given tile to this container. The tile will become a child of this
-container and will be given an order with respect to the other child tiles
-already in this container.
+Returns a list or anonymous array of all of the data and container subelements
+of this container subelement, in the order specified by their C<place>
+attributes. If called with no arguments, it returns all of the subelements. If
+passed a list of key names, the only the subelements with those key names will
+be returned.
 
 B<Throws:> NONE.
 
@@ -989,12 +1096,71 @@ B<Notes:> NONE.
 
 =cut
 
-sub add_tile {
+sub get_elements {
+    my $self = shift;
+    my $dirty = $self->_get__dirty;
+    my $subelems = $self->_get('_subelems');
+
+    # Do not attempt to get the AssetType tiles if we don't yet have an ID.
+    return [] unless $subelems || $self->get_id;
+
+    unless ($subelems) {
+        my $cont = Bric::Biz::Asset::Business::Parts::Tile::Container->list({
+            parent_id   => $self->get_id,
+            active      => 1,
+            object_type => $self->_get('object_type')
+        });
+
+        my $data = Bric::Biz::Asset::Business::Parts::Tile::Data->list({
+            parent_id   => $self->get_id,
+            active      => 1,
+            object_type => $self->_get('object_type')
+        });
+
+        $subelems = [sort { $a->get_place <=> $b->get_place } (@$cont, @$data)];
+        $self->_set(['_subelems', '_update_subelems'], [$subelems, 0]);
+        $self->_set__dirty($dirty);
+    }
+
+    # Just return them all if no key_names are specified.
+    return wantarray ? @$subelems : $subelems unless @_;
+
+    my %knames = map { $_ => 1} @_;
+    return wantarray
+      ? (grep { $knames{$_->get_key_name} } @$subelems)
+      : [grep { $knames{$_->get_key_name} } @$subelems];
+}
+
+=item my @elements = $container->get_tiles
+
+An alias for C<get_elements()>, provided for backwards compatability.
+
+=cut
+
+sub get_tiles { shift->get_elements(@_) }
+
+################################################################################
+
+=item $container->add_element($subelement)
+
+Adds an element to the current container element as a subelement. It will be
+given a C<place> attribute and an C<object_order> attribute relative to the
+other subelements of this container element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_element {
     my ($self, $tile) = @_;
     my $dirty = $self->_get__dirty;
 
     # Get the children of this object
-    my $tiles = $self->_get_tiles() || [];
+    my $tiles = $self->get_elements() || [];
 
     # Die if an ID is passed rather than an object.
     unless (ref $tile) {
@@ -1028,7 +1194,7 @@ sub add_tile {
     push @$tiles, $tile;
 
     # Update $self's new and deleted tiles lists.
-    $self->_set(['_tiles', '_update_tiles'], [$tiles, 1]);
+    $self->_set(['_subelems', '_update_subelems'], [$tiles, 1]);
 
     # We do not need to update the container object itself.
     $self->_set__dirty($dirty);
@@ -1036,24 +1202,47 @@ sub add_tile {
     return $self;
 }
 
+=item $container->add_tile($subelement)
+
+An alias for C<add_element()>, provided for backwards compatability.
+
+=cut
+
+sub add_tile { shift->add_element(@_) }
+
 ################################################################################
 
-=item $tile = $tile->delete_tiles->( [ $tile || { type => $type, id => $id } ] )
+=item $container->delete_tiles(\@subelements)
 
-Removes the tiles listed from the container
+Removes the specified subelements from the current element. The arguments that
+can be passed via the array reference can be either container or data element
+objects or hash references with the following keys:
+
+=over
+
+=item type
+
+The type of element to be deleted. The value of this parameter must be either
+"data" or "container".
+
+=item id
+
+The ID of the element to be deleted.
+
+=back
 
 B<Throws:> NONE.
 
-B<Side Effects:> Will shift the remaining tiles to fit. So if tiles with ids
-of 2, 4, 7, 8, and 10 are contained and 4 and 8 are removed the new list of
-tiles will be 2,7, and 10
+B<Side Effects:> Will shift and reorder the remaining subelements to fit. So
+if telements with IDs of 2, 4, 7, 8, and 10 are contained and 4 and 8 are
+removed the new list of tiles will be 2, 7, and 10
 
 B<Notes:> Doesn't actually do any deletions, just schedules them. Call
 C<save()> to complete the deletion.
 
 =cut
 
-sub delete_tiles {
+sub delete_elements {
     my ($self, $tiles_arg) = @_;
     my (%del_data, %del_cont, $error);
 
@@ -1080,8 +1269,8 @@ sub delete_tiles {
         }
     }
 
-    my $tiles = $self->_get('_tiles');
-    my $del_tiles = $self->_get('_del_tiles') || [];
+    my $tiles = $self->_get('_subelems');
+    my $del_tiles = $self->_get('_del_subelems') || [];
 
     my $order = 0;
     my $cont_order;
@@ -1129,17 +1318,25 @@ sub delete_tiles {
         }
     }
 
-    $self->_set(['_tiles',  '_del_tiles', '_update_tiles'],
+    $self->_set(['_subelems',  '_del_subelems', '_update_subelems'],
                 [$new_list, $del_tiles,   1]);
     return $self;
 }
 
+=item $container->delete_tiles(\@subelements)
+
+An alias for C<delete_elements()>, provided for backwards compatability.
+
+=cut
+
+sub delete_tiles { shift->delete_elements(@_) }
+
 ################################################################################
 
-=item $container = $container->prepare_clone()
+=item $container->prepare_clone
 
-When a business asset needs to clone its self. It can call this here method
-that will set the id to undef so that this here tile will clone its self.
+Prepares the conainer element to be cloned, such as when a new version of a
+document is created, or when a document itself is cloned.
 
 B<Throws:> NONE.
 
@@ -1150,24 +1347,21 @@ B<Notes:> NONE.
 =cut
 
 sub prepare_clone {
-    my ($self) = @_;
-
-    my $tiles = $self->_get_tiles();
-    foreach (@$tiles) {
-        $_->prepare_clone();
+    my $self = shift;
+    for my $e ($self->get_elements) {
+        $e->prepare_clone;
     }
 
-    $self->_set(['id',  '_update_tiles'],
+    $self->_set(['id',  '_update_subelems'],
                 [undef, 1]);
-
-    return $self;
 }
 
 ################################################################################
 
-=item $tile = $tile->reorder_tiles( @new_order )
+=item $container->reorder_elements(\@subelements)
 
-Takes a new order of tile ids as its argument and replaces the old order
+Pass in an array reference of subelements in the order they are to be placed
+relative to one another, and they will be reordered in that order.
 
 B<Throws:> NONE.
 
@@ -1177,10 +1371,10 @@ B<Notes:> NONE.
 
 =cut
 
-sub reorder_tiles {
+sub reorder_elements {
     my ($self, $new_order) = @_;
     my $dirty = $self->_get__dirty;
-    my $tiles = $self->_get_tiles();
+    my $tiles = $self->get_elements();
     my ($at_count, $data_count) = ({},{});
     my @new_list;
 
@@ -1194,7 +1388,7 @@ sub reorder_tiles {
 
         # Set this tiles place among other tiles.
         my $new_place = scalar @new_list;
-        $obj->set_place($new_place) 
+        $obj->set_place($new_place)
           unless $obj->get_place == $new_place;
         push @new_list, $obj;
 
@@ -1216,18 +1410,24 @@ sub reorder_tiles {
         $seen->{$at_id} = $n;
     }
 
-    $self->_set(['_tiles', '_update_tiles'], [\@new_list, 1]);
+    $self->_set(['_subelems', '_update_subelems'], [\@new_list, 1]);
     $self->_set__dirty($dirty);
     return $self;
 }
 
+=item $container->reorder_tiles(\@subelements)
+
+An alias for C<reorder_elements()>, provided for backwards compatability.
+
+=cut
+
+sub reorder_tiles { shift->reorder_elements(@_) }
+
 ################################################################################
 
-=item ($self || undef) $self->is_container();
+=item my $is_container $container->is_container;
 
-will return true since this is a container. You did look at the package name,
-no? This is helpfuld for people cycling through contained tiles so they can
-decide to call get_contained or get data
+Returns true, since container elements are, in fact, container elements.
 
 B<Throws:> NONE.
 
@@ -1237,13 +1437,13 @@ B<Notes:> NONE.
 
 =cut
 
-sub is_container { $_[0]; }
+sub is_container { $_[0] }
 
 ###############################################################################
 
-=item $ct = $ct->do_delete()
+=item $container->do_delete
 
-Prepares this tile and its children to be removed
+Prepares this container element and its subelements to be removed.
 
 B<Throws:> NONE.
 
@@ -1260,9 +1460,9 @@ sub do_delete {
 
 ################################################################################
 
-=item $ct = $ct->save()
+=item $container->save
 
-This will insert or update the records as is needed
+Saves the changes to the container element to the database.
 
 B<Throws:> NONE.
 
@@ -1289,7 +1489,7 @@ sub save {
         }
     }
 
-    $self->_sync_tiles();
+    $self->_sync_elements();
 
     # call the parents save method
     $self->SUPER::save();
@@ -1309,9 +1509,10 @@ sub save {
 
 =over 4
 
-=item _do_list()
+=item Bric::Biz::Asset::Business::Parts::Tile::Container->_do_list($class, $param, $ids)
 
-Called by list and list_ids, this does their dirty work
+Called by C<list()> or C<list_ids()>, this method returns either a list of ids
+or a list of objects, depending on the third argument.
 
 B<Throws:> NONE.
 
@@ -1426,9 +1627,9 @@ sub _do_list {
 
 =over 4
 
-=item $self = $self->_do_delete()
+=item $container->_do_delete
 
-Removes this record from the database
+Called by C<save()>, this method deletes the container element from the database.
 
 B<Throws:> NONE.
 
@@ -1450,9 +1651,12 @@ sub _do_delete {
     return $self;
 }
 
-=item $self = $self->_select_container($param)
+##############################################################################
 
-This will do a select and populate the object with the row
+=item $container->_select_container($param)
+
+Called by C<lookup()>, this method actually looks a container element up in
+the database.
 
 B<Throws:> NONE.
 
@@ -1495,36 +1699,10 @@ sub _select_container {
 
 ################################################################################
 
-=item $at_obj = $self->_get_element_obj()
+=item $container->_do_insert()
 
-Returns the asset type object that maps to this container tile
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _get_element_obj {
-    my ($self) = @_;
-    my $dirty = $self->_get__dirty;
-    my ($at_obj, $at_id) = $self->_get('_element_obj', 'element_id');
-
-    unless ($at_obj) {
-        $at_obj = Bric::Biz::AssetType->lookup({id => $at_id});
-        $self->_set(['_element_obj'], [$at_obj]);
-        $self->_set__dirty($dirty);
-    }
-    return $at_obj;
-}
-
-################################################################################
-
-=item _do_insert
-
-Inserts a row relating to this object into the data base
+Called by C<save()>, this method inserts the container element into the
+database.
 
 B<Throws:> NONE.
 
@@ -1561,10 +1739,10 @@ sub _do_insert {
 
 ################################################################################
 
-=item $self = $self->_do_update()
+=item $container->_do_update
 
-This will preform an update on the database.   That is why I called it
-do update
+Called by C<save()>, this method updates the container element into the
+database.
 
 B<Throws:> NONE.
 
@@ -1599,54 +1777,9 @@ sub _do_update {
 
 ################################################################################
 
-=item _get_tiles
+=item $container->_sync_elements
 
-does a list for all the active contained tiles
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _get_tiles {
-    my ($self) = @_;
-    my $dirty = $self->_get__dirty;
-    my $tiles = $self->_get('_tiles');
-
-    # Do not attempt to get the AssetType tiles if we don't yet have an ID.
-    return [] unless $tiles || $self->get_id;
-
-    unless ($tiles) {
-        my $cont = Bric::Biz::Asset::Business::Parts::Tile::Container->list
-          ({
-            parent_id   => $self->get_id,
-            active      => 1,
-            object_type => $self->_get('object_type')
-           });
-
-        my $data = Bric::Biz::Asset::Business::Parts::Tile::Data->list
-          ({
-            parent_id   => $self->get_id,
-            active      => 1,
-            object_type => $self->_get('object_type')
-           });
-
-        $tiles = [sort { $a->get_place <=> $b->get_place } (@$cont, @$data)];
-        $self->_set(['_tiles', '_update_tiles'], [$tiles, 0]);
-        $self->_set__dirty($dirty);
-    }
-
-    return wantarray ? @$tiles : $tiles;
-}
-
-################################################################################
-
-=item $self->_sync_tiles()
-
-Called by save this will preform all the operations on the contained tiles
+Called by C<save()> this method preforms all the operations on the subelements.
 
 B<Throws:> NONE.
 
@@ -1656,16 +1789,16 @@ B<Notes:> NONE.
 
 =cut
 
-sub _sync_tiles {
+sub _sync_elements {
     my ($self) = @_;
-    my ($tiles,$del_tiles) = $self->_get('_tiles', '_del_tiles');
+    my ($tiles,$del_tiles) = $self->_get('_subelems', '_del_subelems');
 
     # HACK. I don't think that this was really necessary, because each tile
-    # wil only be saved and trigger a change to the database if it was
+    # will only be saved and trigger a change to the database if it was
     # actually changed in some way. This is similar to how collections work.
     # So I'm commenting this out and just saving all the tiles every time.
     # -DW 2003-04-12.
-#    return unless $self->_get('_update_tiles');
+#    return unless $self->_get('_update_subelems');
 
     foreach (@$tiles) {
 #               if ($prep_clone) {
@@ -1694,7 +1827,7 @@ sub _sync_tiles {
         $t->save()
     }
 
-    $self->_set(['_update_tiles'], [0]);
+    $self->_set(['_update_subelems'], [0]);
     return $self;
 }
 

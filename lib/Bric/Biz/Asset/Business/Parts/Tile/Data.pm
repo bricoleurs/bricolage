@@ -3,38 +3,40 @@ package Bric::Biz::Asset::Business::Parts::Tile::Data;
 
 =head1 NAME
 
-Bric::Biz::Asset::Business::Parts::Tile::Data - The tile class that contains
-the business data.
+Bric::Biz::Asset::Business::Parts::Tile::Data - Data (Field) Element
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-05 19:32:15 $
+$Date: 2004-03-11 20:23:40 $
 
 =head1 SYNOPSIS
 
   # Creation of New Objects
-  $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new($params);
-  $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->lookup({ id => $id });
-  @tiles = Bric::Biz::Asset::Business::Parts::Tile::Data->list($params);
+  $data = Bric::Biz::Asset::Business::Parts::Tile::Data->new($params);
+  $data = Bric::Biz::Asset::Business::Parts::Tile::Data->lookup({ id => $id });
+  @data = Bric::Biz::Asset::Business::Parts::Tile::Data->list($params);
 
   # Retrieval of Object IDs
   @ids = = Bric::Biz::Asset::Business::Parts::Tile::Data->list_ids($params);
 
   # Manipulation of Data Field
-  $tile = $tile->set_data( $data_asset );
-  $data_asset = $tile->get_data;
+  $data = $data->set_data( $data_value );
+  $data_value = $data->get_data;
 
 =head1 DESCRIPTION
 
-This class holds the Business Asset Parts Data objects in a tile
+This class contains the contents of field elements, also known as data
+elements. These are the objects that hold the values of story element fields.
+This class inherits from
+L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>.
 
 =cut
 
@@ -125,23 +127,8 @@ BEGIN {
           {
            # Public Fields
 
-           # association with formatting asset is inheriated
-           # as will be the association with an asset
-           name               => Bric::FIELD_RDWR,
-           key_name           => Bric::FIELD_RDWR,
-           description        => Bric::FIELD_RDWR,
-
            # reference to the asset type data object
            element_data_id    => Bric::FIELD_RDWR,
-           object_instance_id => Bric::FIELD_RDWR,
-           parent_id          => Bric::FIELD_RDWR,
-
-           # This item's place in the list of tiles
-           place              => Bric::FIELD_RDWR,
-
-           # This item's sequence among items of the same name
-           object_order       => Bric::FIELD_RDWR,
-           object_type        => Bric::FIELD_READ,
 
            # Private Fields
            _hold_val          => Bric::FIELD_NONE,
@@ -164,38 +151,39 @@ BEGIN {
 
 =over 4
 
-=item $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new($init)
+=item my $data = Bric::Biz::Asset::Business::Parts::Tile::Data->new($init)
 
-This will create a new tile object with the given state defined by the
-optional initial state argument
-
-Supported Keys:
+Construct a new data element object. The supported initial attributes are:
 
 =over 4
 
-=item *
+=item object_type
 
-active
+A string identifying the type of document the new data element is associated
+with. It's value can be "story " or "media".
 
-=item *
+=item object_instance_id
 
-obj_type (story || media)
+The ID of the story or media document the new data element is associated with.
 
-=item *
+=item place
 
-obj_id
+The order of this element relative to the other subelements of the parent
+element.
 
-=item *
+=item element_data_id
 
-place
+The ID of the Bric::Biz::AssetType::Parts::Data object that defines the
+structure of the new data element.
 
-=item *
+=item parent_id
 
-element_data_id
+The ID of the container element that is the parent of the new data element.
 
-=item *
+=item active
 
-parent_id
+A boolean value indicating whether the container element is active or
+inactive.
 
 =back
 
@@ -257,12 +245,40 @@ sub new {
 
 ################################################################################
 
-=item $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->lookup
-  ({ id => $id})
+=item my $data = Bric::Biz::Asset::Business::Parts::Tile::Data->lookup($params)
 
-This will return an existing tile object that is defined by the data tile ID.
+Looks up a data element in the database by its ID and returns it. The lookup
+parameters are:
 
-B<Throws:> NONE.
+=over 4
+
+=item id
+
+The ID of the data element to lookup. Required.
+
+=item object
+
+A story or media document object with which the data element is
+associated. Required unless C<object_type> is specified.
+
+=item object_type
+
+The type of document object with which the data element is associated. Must
+be either "media" or "story". Required unless C<object> is specified.
+
+=back
+
+B<Throws:>
+
+=over 4
+
+=item Missing required Parameter 'id'.
+
+=item Missing required Parameter 'object_type' or 'object'.
+
+=item Improper type of object passed to lookup.
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -275,20 +291,23 @@ sub lookup {
     my $self = $class->cache_lookup($param);
     return $self if $self;
 
-    unless ($param->{'id'} && ($param->{'obj'} ||$param->{'object_type'})) {
-        my $err_msg = 'Improper criteria passed to lookup';
-        throw_gen(error => $err_msg);
-    }
+    # Check for the proper args
+    throw_gen "Missing required Parameter 'id'"
+        unless defined $param->{'id'};
+    throw_gen "Missing required Parameter 'object_type' or 'object'"
+        unless $param->{'object'} || $param->{obj} || $param->{'object_type'};
 
     # Determine the short name for this object.
     my $short;
-    if ($param->{'obj'}) {
-        my $obj_class = ref $param->{'obj'};
+    if (my $obj = $param->{'obj'} || $param->{object}) {
+        my $obj_class = ref $obj;
 
         if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
             $short = 'story';
         } elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
             $short = 'media';
+        } else {
+            throw_gen 'Improper type of object passed to lookup';
         }
     } else {
         $short = $param->{'object_type'};
@@ -320,49 +339,53 @@ sub lookup {
 
 ################################################################################
 
-=item (@ts||$ts) = Bric::Biz::Assets::Business::Parts::Tile::Data->list($params)
+=item my @data = Bric::Biz::Assets::Business::Parts::Tile::Data->list($params)
 
-This will return a list or list ref of tiles that match the given criteria
-
-Supported Keys:
+Searches for and returns a list or anonymous array of data element objects. The
+supported parameters that can be searched are:
 
 =over 4
 
-=item *
+=item object
 
-active
+A story or media object with which the data elements are associated. Required
+unless C<object_type> is specified.
 
-=item *
+=item object_type
 
-obj
+The type of document with which the data elements are associated. Required
+unless C<object> is specified.
 
-=item *
+=item object_instance_id
 
-obj_type
+The ID of a story or data object with wich the data elements are associated.
+Can only be used if C<object_type> is also specified and C<object> is not
+specified.
 
-=item *
+=item name
 
-obj_id
+The name of the data elements. Since the SQL C<LIKE> operator is used with
+this search parameter, SQL wildcards can be used.
 
-=item *
+=item key_name
 
-ref_type
+The key name of the data elements. Since the SQL C<LIKE> operator is used with
+this search parameter, SQL wildcards can be used.
 
-=item *
+=item parent_id
 
-ref_id
+The ID of the container element that is the parent element of the data
+elements.
 
-=item *
+=item element_data_id
 
-place *
+The ID of the Bric::Biz::AssetType::Parts::Data object that specifies the
+structure of the data elements.
 
-=item *
+=item active
 
-element_data_id
-
-=item *
-
-parent_id
+A boolean value indicating whether the returned data elements are active or
+inactive.
 
 =back
 
@@ -387,9 +410,9 @@ sub list {
 
 =over 4
 
-=item $self->DESTROY
+=item $data->DESTROY
 
-a dummy method to save auto load some time
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
 
 =cut
 
@@ -406,9 +429,10 @@ sub DESTROY {
 
 =over 4
 
-=item (@ids || $ids) = Bric::Biz::Assets::Business::Parts::Tile::Data->list_ids($p)
+=item my @ids = Bric::Biz::Assets::Business::Parts::Tile::Data->list_ids($params)
 
-This will return a list or list ref of tile ids that match the given criteria
+Returns a list or anonymous array of data element IDs. The search parameters
+are the same as for C<list()>.
 
 B<Throws:> NONE.
 
@@ -429,23 +453,44 @@ sub list_ids {
 
 =head2 Public Instance Methods
 
+See also
+L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>,
+from which Bric::Biz::Asset::Business::Parts::Tile::Data inherits.
+
 =over 4
 
-=item $atd = $data->get_element_data_obj()
+=item my $element_data_id = $data->get_element_data_id
 
-Returns the asset type data object associated with this data tile
+Returns the ID of the Bric::Biz::AssetType::Parts::Data object that describes
+this element.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
+B<Notes:> NONE.
 
-NONE
+=item $data->set_element_data_id($element_data_id)
 
-B<Notes:>
+Sets the ID of the Bric::Biz::AssetType::Parts::Data object that describes
+this element.
 
-NONE
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $atd = $data->get_element_data_obj
+
+Returns the Bric::Biz::AssetType::Parts::Data object that defines the
+structure of this data element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -467,21 +512,15 @@ sub get_element_data_obj {
 
 ################################################################################
 
-=item $name = $container->get_element_name()
+=item $name = $data->get_element_name
 
-Returns the name of the element
+An alias for C<< $data->get_name >>.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -489,21 +528,15 @@ sub get_element_name { $_[0]->get_name }
 
 ################################################################################
 
-=item $key_name = $container->get_element_key_name()
+=item $key_name = $data->get_element_key_name
 
-Returns the key name of the element.
+An alias for C<< $data->get_name >>.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -511,10 +544,9 @@ sub get_element_key_name { $_[0]->get_key_name }
 
 ################################################################################
 
-=item $tile = $tile->set_data($value)
+=item $data->set_data($value)
 
-This will create the attribute on the business asset and store it in this
-tile.
+Sets the value of the data element.
 
 B<Throws:> NONE.
 
@@ -542,13 +574,13 @@ sub set_data {
 
 ################################################################################
 
-=item $data = $tile->get_data
+=item my $value = $data->get_data
 
-=item $data = $tile->get_data($format)
+=item my $value = $data->get_data($format)
 
-Returns the given business data from the tile. If the SQL type of the data
-object is "date", then $format will be used to format the date, if it is
-passed. Otherwise, the format set in the preferences will be used.
+Returns the value of this data element. If the SQL type of the data object is
+"date", then C<$format>, if it is passed, will be used to format the date.
+Otherwise, the format set in the preferences will be used.
 
 B<Throws:> NONE.
 
@@ -568,23 +600,16 @@ sub get_data {
 
 ################################################################################
 
-=item $self = $self->prepare_clone()
+=item $data->prepare_clone
 
-Business Data has to clone its self from time to time.   Since tiles store
-the business data, this method prepares them to be cloned.   It will set the
-id to undef and will be updated with new info come save time
+Prepares the data element to be cloned, such as when a new version of a
+document is created, or when a document itself is cloned.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -596,9 +621,9 @@ sub prepare_clone {
 
 ################################################################################
 
-=item undef = $tile->is_container()
+=item my $is_container = $data->is_container
 
-Returns the fact that this is not a container tile
+Returns false, since data elements are not container elements.
 
 B<Throws:> NONE.
 
@@ -612,9 +637,9 @@ sub is_container { return }
 
 ###############################################################################
 
-=item ($self || $data) = $self->is_autopopulated()
+=item my $is_autopopulated = $data->is_autopopulated
 
-Tells if this is an autopopulated tile
+Returns true if this data element's value is autopopulated.
 
 B<Throws:> NONE.
 
@@ -626,15 +651,15 @@ B<Notes:> NONE.
 
 sub is_autopopulated {
     my ($self) = @_;
-    my $at = $self->_get_element_object();
-    return $self if $at->get_autopopulated();
+    my $at = $self->get_element_data_obj;
+    return $self if $at->get_autopopulated;
 }
 
 ###############################################################################
 
-=item $tile = $tile->lock_val()
+=item $data->lock_val
 
-For tiles that are autopopulated, this will prevent the value from being
+For autopopulated data elements, this method prevents the value from being
 autopopulated.
 
 B<Throws:> NONE.
@@ -648,14 +673,13 @@ B<Notes:> NONE.
 sub lock_val {
     my ($self) = @_;
     $self->_set(['_hold_val'], [1]);
-    return $self;
 }
 
 ###############################################################################
 
-=item $tile = $tile->unlock_val()
+=item $data = $data->unlock_val
 
-Unsets the lock val flag.
+Allows auotpopulated data elements to be autopopulated.
 
 B<Throws:> NONE.
 
@@ -668,14 +692,13 @@ B<Notes:> NONE.
 sub unlock_val {
     my ($self) = @_;
     $self->_set(['_hold_val'], [0]);
-    return $self;
 }
 
 ###############################################################################
 
-=item ($tile || undef) = $tile->is_locked();
+=item my $is_locked = $data->is_locked
 
-Returns if the tile has been locked
+Returns true if the tile has been locked.
 
 B<Throws:> NONE.
 
@@ -687,14 +710,15 @@ B<Notes:> NONE.
 
 sub is_locked {
     my ($self) = @_;
-    return $self if $self->_get('_hold_val');
+    return unless $self->_get('_hold_val');
+    return $self;
 }
 
 ###############################################################################
 
-=item $tile = $tile->save()
+=item $data = $data->save
 
-Saves the chenges made to the database
+Saves the changes to the data element to the database.
 
 B<Throws:> NONE.
 
@@ -716,8 +740,6 @@ sub save {
     }
 
     $self->_set__dirty(0);
-
-    return $self;
 }
 
 ################################################################################
@@ -734,10 +756,10 @@ sub save {
 
 =over 4
 
-=item _do_list($class, $param, $ids)
+=item Bric::Biz::Asset::Business::Parts::Tile::Data->_do_list($class, $param, $ids)
 
-Called by list or list_ids this returns either a list of ids or a list of
-objects, depending on the caller.
+Called by C<list()> or C<list_ids()>, this method returns either a list of ids
+or a list of objects, depending on the third argument.
 
 B<Throws:>
 
@@ -795,6 +817,12 @@ sub _do_list {
         push @bind, $param->{$f};
     }
 
+    foreach my $f (qw(name key_name)) {
+        next unless exists $param->{$f};
+        push @where, "$f LIKE ?";
+        push @bind, lc $param->{$f};
+    }
+
     if (exists $param->{element_data_id}) {
         push @where, "element_data__id = ?";
         push @bind, $param->{element_data_id};
@@ -836,9 +864,9 @@ sub _do_list {
 
 =over 4
 
-=item _do_insert()
+=item $data->_do_insert()
 
-inserts the row into the database
+Called by C<save()>, this method inserts the data element into the database.
 
 B<Throws:>
 
@@ -874,9 +902,9 @@ sub _do_insert {
 
 ################################################################################
 
-=item $self = $self->_do_update()
+=item $data->_do_update
 
-Updates the row in the database.
+Called by C<save()>, this method updates the data element into the database.
 
 B<Throws:>
 
@@ -908,39 +936,9 @@ sub _do_update {
 
 ################################################################################
 
-=item $at_obj = $self->_get_element_object()
+=item $attr_obj = $self->_get_sql_type
 
-Returns the asset type data object
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _get_element_object {
-    my ($self) = @_;
-    my $dirty = $self->_get__dirty;
-    my $at_obj = $self->_get('_element_obj');
-
-    unless ($at_obj) {
-        my $at_id = $self->_get('element_data_id');
-        $at_obj = Bric::Biz::AssetType::Parts::Data->lookup({id => $at_id});
-
-        $self->_set(['_element_obj'], [$at_obj]);
-        $self->_set__dirty($dirty);
-    }
-
-    return $at_obj;
-}
-
-################################################################################
-
-=item $attr_obj = $self->_get_sql_type()
-
-Returns the sql type for this object.
+Returns the sql type for the value of this data element.
 
 B<Throws:> NONE.
 
@@ -972,8 +970,8 @@ sub _get_sql_type {
 
 =item $name = _get_table_name($object_type);
 
-Returns the name of the table this object uses.  This method can act as a class
-or instance method depending on how its called.
+Returns the name of the table this data element uses. This method can act as a
+class or instance method depending on how it's called.
 
 B<Throws:> NONE.
 

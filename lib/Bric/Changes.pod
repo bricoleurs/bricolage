@@ -112,10 +112,27 @@ that you can't delete from a publish desk. [Scott]
 
 =item *
 
+Completely documented the document element classes:
+L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>,
+L<Bric::Biz::Asset::Business::Parts::Tile::Data|Bric::Biz::Asset::Business::Parts::Tile::Data>,
+and
+L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>.
+This should make it a bit easier on templators learning their way around the
+Bricolage API. [David]
+
+=item *
+
+Refactored quite a bit of the code in the element classes. Renamed the methods
+with "tile" in their names to use "element" instead (but kept the old ones
+around as aliases, since they're used throughout the UI). Added a few methods
+to make the interface more complete. [David]
+
+=item *
+
 Modified the C<get_containers()> method of
-Bric::Biz::Asset::Business::Parts::Tile::Container to take a list of key name
-arguments, and to return only the container subelements with those
-keynames. This is most useful in templates, where it's fairly common to get a
+Bric::Biz::Asset::Business::Parts::Tile::Container to take an optional list of
+key name arguments, and to return only the container subelements with those
+key names. This is most useful in templates, where it's fairly common to get a
 list of container subelements of only one or two particular types out all at
 once. It neatly replaces code such as this:
 
@@ -130,6 +147,22 @@ With this:
   }
 
 And is more efficient, too. [David]
+
+=item *
+
+Modified the C<get_elements()> method of
+Bric::Biz::Asset::Business::Parts::Tile::Container to take an optional list of
+key name arguments, and to return only the subelements with those key names.
+[David]
+
+=item *
+
+Added the C<get_data_elements()> method to
+Bric::Biz::Asset::Business::Parts::Tile::Container. This method functions
+exactly like C<get_containers()> except that it returns data element objects
+that are subelements of the container element. It also takes an optional list
+of key name arguments, and, if passed, will return only the subelements with
+those key names. [David]
 
 =item *
 
@@ -185,6 +218,12 @@ page, when "Filter by site context" was turned on. [JoE<atilde>o Pedro]
 When the SOAP server serializes and deserializes element templates, it now
 correctly identifies the element by its key name, rather than its name. Thanks
 to JoE<atilde>o Pedro for the spot! [David]
+
+=item *
+
+The template profile's "cheat sheet" of the subelements of an element now
+correctly display subelement key names instead of munging element names, as
+was required before version 1.7.0. [JoE<atilde>o Pedro]
 
 =back
 

@@ -105,11 +105,10 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <table border=0 cellpadding=0 cellspacing=0 width=578>
     <tr>
       <td width=1 height=20 class=medHeader><img src="/media/images/spacer.gif" width=1 height=20 /></td>
-      <td width=<% FIELD_INDENT %> align="right" class=medHeader><span class=label><% $lang->maketext('Element') %>:&nbsp;</span></td>
+      <td width=<% FIELD_INDENT %> align="right" class=medHeader><span class=label><% $lang->maketext('Key Name') %>:&nbsp;</span></td>
       <td width=5 height=20><img src="/media/images/spacer.gif" width=5 height=20 /></td>
       <td width=<% 577 - FIELD_INDENT %>>
-	<% $at->get_name %>
-        <% $show_element_flags->($at) %>
+	<% $at->get_key_name  . $show_element_flags->($at) %>
       </td>
     </tr>
     <tr><td colspan=4><img src="/media/images/spacer.gif" width=578 height=1 /></td></tr>
@@ -121,10 +120,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
       <td>
 % my $comma = '';
 % foreach my $d ($at->get_data) {
-        <% $comma %>
-        <% $fmt_name->($d->get_key_name) %>
-        <% $show_data_flags->($d) %>
-%     $comma = ', ';
+% $m->print($comma, $d->get_key_name, $show_data_flags->($d));
+%     $comma ||= ', ';
 % }
       </td>
     </tr>
@@ -138,10 +135,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
       <td>
 % my $comma = '';
 % foreach my $c ($at->get_containers) {
-        <% $comma %>
-        <% $fmt_name->($c->get_name) %>
-        <% $show_subelement_flags->($at, $c) %>
-%     $comma = ', ';
+% $m->print($comma, $c->get_key_name, $show_subelement_flags->($at, $c));
+%     $comma ||= ', ';
 % }
       </td>
     </tr>
@@ -202,14 +197,6 @@ my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 </%init>
 
 <%once>
-my $fmt_name = sub {
-    my ($name) = @_;
-
-    # Lowercase the name and replace non-alphanumeric characters
-    ($name = lc $name) =~ y/a-z0-9/_/cs;
-    return $name;
-};
-
 my $show_element_flags = sub {
     my ($at) = @_;
     my @flags;
