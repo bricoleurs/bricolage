@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2002-05-16 19:49:12 $
+$Date: 2002-05-17 22:01:26 $
 
 =head1 DESCRIPTION
 
@@ -136,11 +136,14 @@ Also, if you'd like to take advantage of the full functionality of
 C<cperl-mode> and have it automatically parse all Perl source files, add these
 settings, as well:
 
-  (autoload 'perl-mode "cperl-mode" "alternate mode for editing Perl programs" t)
-  (setq cperl-hairy t)
+  (defalias 'perl-mode 'cperl-mode)
   (setq auto-mode-alist
-  (append '(("\\.\\([pP][Llm]\\|al\\|pod\\)$" . cperl-mode))  auto-mode-alist ))
-  (setq interpreter-mode-alist (append interpreter-mode-alist '(("miniperl" . cperl-mode))))
+        (append
+         '(("\\.\\([pP]\\([Llm]\\|erl\\)\\|al\\|pod\\)\\'" . cperl-mode))
+         auto-mode-alist))
+    (setq cperl-hairy t)
+    (setq interpreter-mode-alist (append interpreter-mode-alist
+       '(("miniperl" . cperl-mode))))
 
 When editing Bricolage Mason components, C<mmm-mode> can help. It's Mason mode
 will parse Mason component files and use <sgml-mode> in HTML spaces and
