@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2001-12-28 18:29:11 $
+$Date: 2001-12-28 20:21:13 $
 
 =head1 DESCRIPTION
 
@@ -1069,6 +1069,8 @@ instantiate an XML::Writer object and to include it in all templates as a global
 variable named $writer. See the XML::Writer documentation for more information.
 Defaults to off if unspecified.
 
+B<Note>: Only the Mason burner supports XML::Writer.
+
 =item *
 
 B<XML_WRITER_ARGS:> If INCLUDE_XML_WRITER is switched on, then this direcive is
@@ -1076,6 +1078,8 @@ passed to the instantiation method of the XML::Writer object. All arguments to
 XML::Writer->new() are supported except the OUTPUT argument, which Bricolage
 handles internally to ensure that data is sent directly to the template's output
 file. Defaults to no arguments if not specified.
+
+B<Note>: Only the Mason burner supports XML::Writer.
 
 =back
 
@@ -1286,6 +1290,8 @@ and won't pause and wait for anything else, as otherwise your server will never
 start! And be warned that this code is executed at server startup time, so
 beware loading any variables that don't survive forks very well (such as
 database handles). Defaults to load nothing if not specified.
+
+B<Note>: Only the Mason burner supports PERL_LOADER.
 
 =back
 

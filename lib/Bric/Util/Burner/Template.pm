@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-23 00:34:58 $
+$Date: 2001-12-28 20:21:13 $
 
 =head1 SYNOPSIS
 
@@ -1040,3 +1040,18 @@ sub _page_link {
 
 1;
 __END__
+
+=head1 NOTES
+
+Bric::Util::Burner::Template does not support the PERL_LOADER or
+XML_WRITER options described in L<Bric::Admin>.
+
+=head1 AUTHOR
+
+Sam Tregar L<gt>stregar@about-inc.comL<lt>
+
+=head1 SEE ALSO
+
+L<Bric::Util::Burner>
+
+=cut
