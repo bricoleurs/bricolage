@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =head1 DATE
 
-$Date: 2002-02-28 23:02:45 $
+$Date: 2002-03-09 00:43:02 $
 
 =head1 DESCRIPTION
 
@@ -83,15 +83,6 @@ to only a single admin menu item.
 
 Resolve the "Adding Element and hitting Cancel" issue (See
 http://bricolage-bugzilla.thepirtgroup.com/show_bug.cgi?id=3).
-
-=item *
-
-Add chk_syntax() methods to Bric::Util::Burner subclasses. These methods will
-take a string that contains the contents of a template relevant to the
-particular subclass, and make sure that it compiles.
-Bric::Util::Burner::chk_syntax() will attempt to delegate to the proper
-subclass. Make sure that that method gets called from
-comp/widgets/tmpl_prof/callback.mc.
 
 =item *
 

@@ -5,7 +5,7 @@ my $disp_name = get_disp_name($type);
 my %meta_props = ( disp => 'fb_disp',
 		   value => 'fb_value',
 		   type => 'fb_type',
-		   length => 'fb_length',
+		   length => 'fb_size',
 		   maxlength => 'fb_maxlength',
 		   rows => 'fb_rows',
 		   cols => 'fb_cols',
@@ -141,11 +141,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2002-03-09 00:43:01 $
 
 =head1 SYNOPSIS
 

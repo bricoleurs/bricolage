@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-09 00:39:20 $
+$Date: 2002-03-09 00:43:02 $
 
 =head1 SYNOPSIS
 
@@ -273,6 +273,41 @@ sub burn_one {
     my $ret = $self->_get('_res') || return;
     $self->_set(['_res', 'page'], [[], 0]);
     return wantarray ? @$ret : $ret;
+}
+
+################################################################################
+
+=item my $bool = $burner->chk_syntax($template_code, \$err)
+
+Compiles the template found in $template_data. If the compile succeeds with no
+errors, chk_syntax() returns true. Otherwise, it returns false, and the error
+will be in the $err varible passed by reference.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub chk_syntax {
+    my ($self, $ba, $err_ref) = @_;
+
+    # Create a parser and allow some global variables.
+    my $parser = HTML::Mason::Parser->new('allow_globals' => [qw($story
+								 $burner
+								 $writer
+								 $element)],
+					  'in_package'    => TEMPLATE_BURN_PKG);
+    # Create the interpreter
+    my $interp = HTML::Mason::Interp->new('parser'     => $parser,
+			 		  'comp_root'  => $self->get_comp_dir,
+				 	  'data_dir'   => $self->get_data_dir);
+
+    # Try to create a component.
+    return $parser->make_component(script => $ba->get_data,
+				   error  => $err_ref);
 }
 
 #------------------------------------------------------------------------------#

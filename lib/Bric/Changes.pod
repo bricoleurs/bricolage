@@ -70,6 +70,18 @@ All fixes in the soon-to-be-released 1.2.2 version.  See below for details.
 
 =head1 Version 1.2.2
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added chk_syntax() methods to Bric::Util::Burner and its subclasses. This method
+will takes a tempmlate asset object and make sure that it compiles.
+Bric::Util::Burner::chk_syntax() delegates to the proper subclass.
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
@@ -145,6 +157,21 @@ category object and the URI without the media asset needing to be checked in.
 
 Eliminated "Template compile failed" errors for templates with <%init> sections.
 [David]
+
+=item *
+
+Field elements now show up with their display names in the bulk edit select
+lists, instead of with their names (which are really keys). [David]
+
+=item *
+
+Eliminated "Use of uninitialized value in bitwise or (|)" warnings when checking
+permissions. Thanks to Sam Tregar for the spot. [David]
+
+=item *
+
+Custom fields in elements and contributor types now remember their "size"
+setting. Thanks to Sam Tregar for the spot. [David]
 
 =back
 

@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-09 00:39:20 $
+$Date: 2002-03-09 00:43:02 $
 
 =head1 SYNOPSIS
 
@@ -406,7 +406,52 @@ NONE
 =cut
 
 sub burn_one {
-    my ($self, $ba, $oc, $cat) = @_;
+    my $self = shift;
+    my $burner = $self->_get_subclass($_[0]);
+    $burner->burn_one(@_);
+}
+
+=item my $bool = $burner->chk_syntax($ba, \$err)
+
+Compiles the template found in $ba. If the compile succeeds with no errors,
+chk_syntax() returns true. Otherwise, it returns false, and the error will be in
+the $err varible passed by reference.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub chk_syntax {
+    my $self = shift;
+    my $burner = $self->_get_subclass($_[0]);
+    $burner->chk_syntax(@_);
+}
+
+=back
+
+=head2 Private Instance Methods
+
+=over 4
+
+=item $burner->_get_subclass($ba)
+
+Returns the subclass of Bric::Util::Burner appropriate for handling the $ba
+template object.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _get_subclass {
+    my ($self, $ba) = @_;
     my $at = Bric::Biz::AssetType->lookup({'id' => $ba->get_element__id});
     my $which_burner = $at->get_burner() || Bric::Biz::AssetType::BURNER_MASON;
 
@@ -418,8 +463,7 @@ sub burn_one {
     }
 
     # instantiate the proper subclass and call burn_one()
-    my $burner = $burner_class->new($self);
-    return $burner->burn_one($ba, $at, $oc, $cat);
+    return $burner_class->new($self);
 }
 
 1;
