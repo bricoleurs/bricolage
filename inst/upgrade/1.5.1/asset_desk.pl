@@ -13,16 +13,16 @@ foreach my $table (qw(story formatting media)) {
       qq{
         UPDATE $table
         SET desk__id = to_number(asv.short_val, 9999999999)
-        FROM    attr_${_}_val asv, attr_$table a
+        FROM    attr_${table}_val asv, attr_$table a
         WHERE   asv.id = (
                           SELECT max(id)
-                          FROM   attr_${_}_val asv
+                          FROM   attr_${table}_val asv
                           WHERE  asv.object__id = $table.id
                        )
         AND     a.id = asv.attr__id
         AND     a.subsys = 'deskstamps'
         AND     $table.workflow__id IS NOT NULL
       },
-      qq{CREATE INDEX fdx_${_}__desk__id ON $table(desk__id)}
+      qq{CREATE INDEX fdx_${table}__desk__id ON $table(desk__id)}
 }
 
