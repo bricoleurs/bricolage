@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =head1 DATE
 
-$Date: 2004-02-02 23:44:36 $
+$Date: 2004-02-05 16:51:27 $
 
 =head1 DESCRIPTION
 
@@ -437,6 +437,13 @@ of this approach, however, is that all users of Bricolage will now be using
 Bricolage in a window with the back button, and this can potentially lead to
 problems with the state of story objects while you're editing them. However,
 if you never use the back button, it should be fine.
+
+=item Sometimes the left navigation doesn't render properly, and the interface for adding fields doesn't work at all. What gives?
+
+Most likely you're using Safari on Mac OS X to access the Bricolage
+interface. Unfortunately, that browser seems to have some bugs related to
+rendering layers. The only workaround is to use a different browser. I
+recommend Camino, Firebird, or Mozilla.
 
 =head2 Element Administration
 
