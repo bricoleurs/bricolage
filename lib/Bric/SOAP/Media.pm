@@ -41,15 +41,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 22:33:36 $
+$Date: 2004-03-05 10:50:53 $
 
 =head1 SYNOPSIS
 
@@ -136,6 +136,10 @@ The priority of the media object.
 The name of the top-level element for the media.  Also know as the
 "Media Type".  This value corresponds to the element attribute on the
 media element in the asset schema.
+
+=item site
+
+The name of the site which the story is in.
 
 =item publish_date_start
 

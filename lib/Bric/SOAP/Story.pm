@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 22:33:36 $
+$Date: 2004-03-05 10:50:53 $
 
 =head1 SYNOPSIS
 
@@ -164,9 +164,13 @@ more accurate read on a story's current status see no_workflow above.
 
 =item element
 
-The name of the top-level element for the story.  Also know as the
+The name of the top-level element for the story.  Also known as the
 "Story Type".  This value corresponds to the element attribute on the
 story element in the asset schema.
+
+=item site
+
+The name of the site which the story is in.
 
 =item publish_date_start
 
