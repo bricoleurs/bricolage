@@ -8,15 +8,15 @@ Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-11 04:56:42 $
+$Date: 2004-03-11 08:31:29 $
 
 =head1 SYNOPSIS
 
@@ -640,7 +640,7 @@ sub has_name {
 Test to see whether this tile has a key name matching the argument $key_name.
 Returns 1 if the name is a match and 0 otherwise.
 
-B<Throws: NONE.
+B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
