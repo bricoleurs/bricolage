@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel::Element - Maps Output Channels to Elements.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:15 $
+$Date: 2003-06-13 18:01:23 $
 
 =head1 SYNOPSIS
 
@@ -78,8 +78,11 @@ my $SEL_COLS = Bric::Biz::OutputChannel::SEL_COLS() .
   ', eoc.id, eoc.element__id, eoc.enabled';
 my @SEL_PROPS = (Bric::Biz::OutputChannel::SEL_PROPS(),
                  qw(_map_id element_id _enabled));
-my $SEL_TABLES = Bric::Biz::OutputChannel::SEL_TABLES() .
-  ', element__output_channel eoc';
+
+# Grabbed knowledge from parent, but the outer join depends on it. :-(
+my $SEL_TABLES = 'output_channel oc LEFT OUTER JOIN ' .
+  'element__output_channel eoc ON (oc.id = eoc.output_channel__id), ' .
+  'member m, output_channel_member sm';
 
 sub SEL_PROPS { @SEL_PROPS }
 sub SEL_COLS { $SEL_COLS }
