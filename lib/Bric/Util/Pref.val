@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2002-03-15 22:55:02 $
+-- $Date: 2002-03-20 19:33:48 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO pref (id, name, description, value, def, manual)
@@ -1719,3 +1719,22 @@ VALUES (8, 8, 165);
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (8, '/categories/', '/categories/');
+
+
+INSERT INTO pref (id, name, description, value, def, manual)
+VALUES (9, 'URI Case', 'Controls the case of the characters that make up URIs', 'mixed', 'mixed', 0);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (166, 22, 48, 1);
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES (9, 9, 166); 
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (9, 'lower', 'Lowercase Characters [a-z]');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (9, 'upper', 'Uppercase Characters [A-Z]');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (9, 'mixed', 'URI tokens unaltered');

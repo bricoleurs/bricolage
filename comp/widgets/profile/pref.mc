@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-03-15 22:55:02 $
+$Date: 2002-03-20 19:33:48 $
 
 =head1 SYNOPSIS
 
@@ -30,12 +30,10 @@ my $type = 'pref';
 my $disp_name = get_disp_name($type);
 
 my $handle_parse_format = sub {
-  my ( $value, $name ) = @_;
+  my ( $param, $name ) = shift( @_ );
   my @acceptable_tokens = qw( categories day month year slug );
-  my @bad_tokens;
-
-  # slug is not a valid token for fixed URIs
-  pop( @acceptable_tokens ) if( $name =~ /Fixed/ );
+  my ( @bad_tokens, @good_tokens );
+  my $value = $param->{ 'value' };
 
   if( $value =~ /^\s*$/ ) {
     return "No &quot;$name&quot; value specified."
@@ -43,9 +41,17 @@ my $handle_parse_format = sub {
     $value =~ s#/?(.+)/?#$1#;
     my @tokens = split( /\//, $value );
     foreach my $token ( @tokens ) {
-      my $match = grep( /$token/, @acceptable_tokens );
-      push( @bad_tokens, $token ) unless( $match );
+      my $match = grep( $token eq $_ , @acceptable_tokens );
+
+      unless( $match ) {
+	push( @bad_tokens, $token );
+      } else {
+	push( @good_tokens, $token );
+      }
     }
+
+    $param->{ 'value' } = '/' . join( '/', @good_tokens ) . '/';
+
     return "The following invalid tokens were found: " . join( ", ", @bad_tokens )
       if( scalar( @bad_tokens ) >= 1 );
   }
@@ -68,7 +74,7 @@ my $name = $pref->get_name;
 
 # Validate URI Formats...
 if( $name =~ /URI Format/ ) {
-  if( my $err = &$handle_parse_format( $param->{ 'value' }, $name ) ) {
+  if( my $err = &$handle_parse_format( $param, $name ) ) {
     add_msg( $err );
     return;
   }

@@ -45,6 +45,11 @@ a file system copy or via FTP. [David]
 
 Added a preference to change the way URIs are formatted. [Adam]
 
+=item *
+
+Added a URI case preference to force URIs to lowercase, uppercase, or
+allow mixed case URIs.  [Adam]
+
 =back
 
 =head2 Bug Fixes

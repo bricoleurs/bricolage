@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-15 22:55:02 $
+$Date: 2002-03-20 19:33:48 $
 
 =head1 SYNOPSIS
 
@@ -1989,6 +1989,15 @@ sub _construct_uri {
 
     # Add the post value.
     push @path, $post if $post;
+
+    # Adjust case of URI, if necessary
+    $pref_value = Bric::Util::Pref->lookup_val( 'URI Case' );
+
+    if( $pref_value eq 'lower' ) {
+	@path = map( lc, @path );
+    } elsif( $pref_value eq 'upper' ) {
+	@path = map( uc, @path );
+    }
 
     # Return the URL.
     return Bric::Util::Trans::FS->cat_uri(@path);
