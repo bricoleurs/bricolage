@@ -28,7 +28,7 @@ use the Bric API to transfer users and groups between Bricolage Installations.
 
 =item *
 
-Added Chinese (Traditional) localization. [Kang-min Liu]
+Added Traditional Chinese localization. [Kang-min Liu]
 
 =back
 
