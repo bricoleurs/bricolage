@@ -62,6 +62,12 @@ Module man pages are now properly installed under Perl 5.8.0. Thanks to
 Michael Schwern for helping to diagnose the problem and come up with a
 solution. [David]
 
+=item *
+
+The select list of desks to transfer an asset to on My Workspace now includes
+all possible desks, including the one for which there is a link. [JoE<atilde>o
+Pedro]
+
 =back
 
 =head1 VERSION 1.3.3
@@ -235,7 +241,7 @@ L<http://sourceforge.net/mailarchive/forum.php?thread_id=967943&forum_id=561>.
 =item *
 
 Added constraint to the group table to keep a group from having itself as a
-parent. Thanks to Joao Pedro Goncalves for the patch. [David]
+parent. Thanks to JoE<atilde>o Pedro GonE<ccedil>alves for the patch. [David]
 
 =item *
 
@@ -497,7 +503,7 @@ two-level cache with Cache:Mmap and Cache::Cache.  This results in a
 
 Clicking "Add More" when editing contributor contacts now retains any changes
 made to the contributor profile. This matches the functionality of the user
-profile. Thanks to Joao Pedro Goncalves for the spot. [David]
+profile. Thanks to JoE<atilde>o Pedro GonE<ccedil>alves for the spot. [David]
 
 =item *
 
@@ -523,7 +529,8 @@ syntax errors. [Sam]
 =item *
 
 The Bric::Biz::Category class method get_attr() now returns attributes for
-category ID 0 as well as all other categories. [Joao Pedro Goncalves]
+category ID 0 as well as all other categories. [JoE<atilde>o Pedro
+GonE<ccedil>alves]
 
 =item *
 
@@ -572,7 +579,7 @@ destinations. Thanks to Mark for the heads-up. [David]
 =item *
 
 Fixed bug where attribute metadata wasn't getting deleted when it was
-supposed to. [Joao Pedro Goncalves]
+supposed to. [JoE<atilde>o Pedro GonE<ccedil>alves]
 
 =item *
 
@@ -761,8 +768,8 @@ Bricolage from starting. [Sam]
 
 =item *
 
-The view button in the element profile now works correctly. Thanks to Joao Pedro
-Goncalves for the spot. [David]
+The view button in the element profile now works correctly. Thanks to
+JoE<atilde>o Pedro GonE<ccedil>alves for the spot. [David]
 
 =item *
 
@@ -771,9 +778,9 @@ more portable. [David]
 
 =item *
 
-Checking in a template from a template profile now performs a syntax
-check of the template just as saving the template does. [Joao Pedro
-Goncalves]
+Checking in a template from a template profile now performs a syntax check of
+the template just as saving the template does. [JoE<atilde>o Pedro
+GonE<ccedil>alves]
 
 =item *
 
