@@ -52,6 +52,11 @@ Templates now display their output channel associations instead of their
 element associations on desks. This seems to be more useful, since the element
 association is usually obvious from the name. [David]
 
+=item *
+
+The category URI is now displayed for assets on desks, rather than the
+name. This is consistent with the display of the category elsewhere. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -175,7 +175,7 @@ if ($class eq 'formatting') {
     my $cat_id = $obj->get_category_id;
     if (defined $cat_id) {
 	unless ($cat = $cats->{$cat_id}) {
-	    $cat = Bric::Biz::Category->lookup({ id => $cat_id })->get_name;
+	    $cat = Bric::Biz::Category->lookup({ id => $cat_id })->get_uri;
 	    $cats->{$cat_id} = $cat;
 	    $r->pnotes("desk.cats", $cats);
 	}
@@ -191,14 +191,14 @@ if ($class eq 'formatting') {
       : 'blackMedUnderlinedLink';
     if ($class eq 'media') {
 	$cat = $cats->{$obj->get_category__id} ||= $obj->get_category_object;
-	$cat = $cat->get_name if $cat;
+	$cat = $cat->get_uri if $cat;
         $name = qq{<a href="/workflow/profile/preview/$class/$id?checkout=$co"}
           .  qq{class="$c" target="preview_} . SERVER_WINDOW_NAME
           . qq{">$name</a>}
           if $obj->get_file_name;
     } else {
 	$cat = $obj->get_primary_category;
-	$cat = $cat->get_name if $cat;
+	$cat = $cat->get_uri if $cat;
 	$cat ||= '&nbsp;';
         $name = qq{<a href="/workflow/profile/preview/$class/$id?checkout=$co"}
           .  qq{class="$c" target="preview_} . SERVER_WINDOW_NAME
@@ -219,11 +219,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.18.4.5 $
+$Revision: 1.18.4.6 $
 
 =head1 DATE
 
-$Date: 2003-09-18 02:14:06 $
+$Date: 2003-09-18 02:19:00 $
 
 =head1 DESCRIPTION
 
