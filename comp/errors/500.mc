@@ -60,20 +60,23 @@ Error: <% escape_html($fault->error) %>
   Category:       <% $fault->cat || '' %>
   Element:        <% $fault->elem || '' %>
 %     }
+%     if (isa_exception($fault)) {
   Fault Class:    <% ref $fault %>
   Description:    <% $fault->description || '' %>
   Timestamp:      <% strfdate($fault->time) %>
   Package:        <% $fault->package || '' %>
   Filename:       <% $fault->file || '' %>
   Line:           <% $fault->line || '' %>
+%     }
 %     if (isa_bric_exception($fault)) {
   Payload:        <% $fault->payload || '' %>
 %     }
 
 STACK:
 
+%     if (isa_exception($fault)) {
 <% isa_mason_exception($fault) ? $fault->as_text : $fault->trace->as_string %>
-  
+%     }  
 END DEBUGGING INFORMATION -->
 
 % }
