@@ -463,13 +463,14 @@ $add_new_attrs = sub {
     my $param = $self->request_args;
 
     # Add in any new attributes.
-    if ($param->{'fb_name'}) {
+    if ($param->{fb_name}) {
+        (my $key_name = lc $param->{fb_name}) =~ y/a-z0-9/_/cs;
         # There's a new attribute. Decide what type it is.
-        if ($data_href->{lc $param->{'fb_name'}}) {
+        if ($data_href->{$key_name}) {
             # There's already an attribute by that name.
             my $msg = 'An [_1] attribute already exists. '
                      . 'Please try another name.';
-            my $arg = sprintf('&quot;%s&quot;', $param->{'fb_name'});
+            my $arg = sprintf('&quot;%s&quot;', $key_name);
             add_msg($self->lang->maketext($msg, $arg));
             $$no_save = 1;
         } else {
@@ -484,7 +485,7 @@ $add_new_attrs = sub {
             my $max = $param->{'fb_maxlength'} ? $param->{'fb_maxlength'}
               : ($param->{'fb_maxlength'} eq '0') ? 0 : undef;
 
-            my $atd = $obj->new_data({ key_name    => $param->{fb_name},
+            my $atd = $obj->new_data({ key_name    => $key_name,
                                        required    => $param->{fb_req} ? 1 : 0,
                                        quantifier  => $param->{fb_quant} ? 1 : 0,
                                        sql_type    => $sqltype,
@@ -506,8 +507,8 @@ $add_new_attrs = sub {
               if $param->{'fb_type'} eq 'checkbox';
 
             # Log that we've created it.
-            log_event("$key\_data_new", $atd, { Name => $param->{'fb_name'} });
-            log_event("$key\_attr_add", $obj, { Name => $param->{'fb_name'} });
+            log_event("$key\_data_new", $atd, { Name => $key_name });
+            log_event("$key\_attr_add", $obj, { Name => $key_name });
         }
     }
 };
