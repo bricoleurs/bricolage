@@ -12,6 +12,7 @@ li         { font-size:11px; line-height:16px; }
 a img      { border: none; }
 
 form       { margin: 0; padding: 0; }
+input      { vertical-align: middle; }
 .textInput { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 .textArea  { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 .codeArea  { font-family:monospace; font-size:11px; }
@@ -32,7 +33,8 @@ body {
 .adminBox,
 .workflowBox,
 .loginBox,
-.searchBox                     { position: relative; margin-bottom: 10px; }
+.searchBox,
+.errorsBox                     { position: relative; margin-bottom: 10px; }
 
 /***************************************************
  * PAGE HEADER
@@ -40,7 +42,8 @@ body {
 #headerContainer               { position: relative; width: 100%; }
 #headerContainer .adminBox,
 #headerContainer .workflowBox,
-#headerContainer .loginBox     { margin-bottom: 0; margin-right: 240px; }
+#headerContainer .loginBox,
+#headerContainer .errorsBox    { margin-bottom: 0; margin-right: 240px; }
 #headerContainer .buttons      { position: absolute; top: 0; right: 0; width: 240px; text-align: right; }
 #headerContainer .buttons a    { margin: 0 2px; }
 #breadcrumbs                   { position: relative; width: 100%; background-color: #999966; margin-bottom: 1em; }
@@ -58,6 +61,7 @@ body {
 .workflowBox .fullHeader   { background-color: #006666; }
 .loginBox .fullHeader      { background-color: #006666; }
 .searchBox .fullHeader     { background-color: #666633; }
+.errorsBox .fullHeader     { background-color: #CC0000; }
 
 .number { 
     position: absolute;
@@ -97,7 +101,7 @@ body {
 .adminBox .border    { border-color: #999966; }
 .workflowBox .border { border-color: #669999; }
 .loginBox .border    { border-color: #669999; }
-.searchBox .border   { border-color: #666633; background-color: #CCCC99; }
+.searchBox .border   { border-color: #666633; background-color: #CCCC99; padding: 5px; }
 
 .switchSearch   { text-transform: none; }
 
