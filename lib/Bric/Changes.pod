@@ -38,6 +38,11 @@ Refactored Bric::Biz::Keyword. It is now more compliant with the standard API
 as defined in other classes. Also added support for keyword groups so that we
 can create a keyword manager.
 
+=item *
+
+Added $burner->sdisplay_element method to Bric::Util::Burner.
+This is a sprintf version of $burner->display_element. [Scott]
+
 =back
 
 =head1 VERSION 1.6.0

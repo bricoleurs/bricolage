@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:17 $
+$Date: 2003-05-20 16:47:29 $
 
 =head1 SYNOPSIS
 
@@ -491,7 +491,7 @@ sub display_pages {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $b->display_element()
+=item $success = $b->display_element($element)
 
 A method to be called from template space. This method will find the mason
 element associated with the element passed in and call $m->comp.
@@ -508,33 +508,30 @@ sub display_element {
     my $self = shift;
     my $elem = shift or return;
 
-    # Call another element if this is a container otherwise output the data.
-    if ($elem->is_container) {
-        my $interp = $self->_get('_interp');
+    $self->_render_element($elem, 1);
+}
 
-        # Set the elem global to the current element.
-        $interp->set_global('$element', $elem);
+#------------------------------------------------------------------------------#
 
-        # Push this element on to the stack
-        $self->_push_element($elem);
+=item $html = $b->sdisplay_element($element)
 
-        my $template = $self->_load_template_element($elem);
+A method to be called from template space. This is a sprintf version
+of $b->display_element(), i.e. it returns as a string of HTML what
+would have been displayed with $b->display_element().
 
-        # Display the element
-        {
-            no strict 'refs';
-            ${TEMPLATE_BURN_PKG . '::m'}->comp($template, @_) if $template;
-        }
+B<Throws:> NONE.
 
-        # Pop the element back off again.
-        $self->_pop_element();
+B<Side Effects:> NONE.
 
-        # Set the elem global to the previous element
-        $interp->set_global('$element', $self->_current_element);
-    } else {
-            no strict 'refs';
-            ${TEMPLATE_BURN_PKG . '::m'}->out($elem->get_data);
-    }
+B<Notes:> NONE.
+
+=cut
+
+sub sdisplay_element {
+    my $self = shift;
+    my $elem = shift or return;
+
+    return $self->_render_element($elem, 0);
 }
 
 ##############################################################################
@@ -800,6 +797,68 @@ sub _pop_element {
 
     pop @$at_stack;
     return pop @$elem_stack;
+}
+
+#------------------------------------------------------------------------------#
+
+=item $html = $b->_render_element($element, $display)
+
+Common code used by $b->display_element and $b->sdisplay_element.
+It directly displays the HTML for display_element, while it
+returns the HTML as a string for sdisplay_element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _render_element {
+    my $self = shift;
+    my ($elem, $display) = @_;
+    my $html = '';
+
+    # Call another element if this is a container otherwise output the data.
+    if ($elem->is_container) {
+        my $interp = $self->_get('_interp');
+
+        # Set the elem global to the current element.
+        $interp->set_global('$element', $elem);
+
+        # Push this element on to the stack
+        $self->_push_element($elem);
+
+        my $template = $self->_load_template_element($elem);
+
+        # Display the element
+        {
+            no strict 'refs';
+            if ($display) {
+                ${TEMPLATE_BURN_PKG . '::m'}->comp($template, @_)
+                  if $template;
+            } else {
+                $html = ${TEMPLATE_BURN_PKG . '::m'}->scomp($template, @_)
+                  if $template;
+            }
+        }
+
+        # Pop the element back off again.
+        $self->_pop_element();
+
+        # Set the elem global to the previous element
+        $interp->set_global('$element', $self->_current_element);
+
+        return $html;
+    } else {
+        if ($display) {
+            no strict 'refs';
+            ${TEMPLATE_BURN_PKG . '::m'}->out($elem->get_data);
+        } else {
+            return $elem->get_data();
+        }
+    }
 }
 
 #--------------------------------------#

@@ -6,11 +6,11 @@ Bric::Templates - Producing Templates on the Bricolage System
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-10-18 00:10:55 $
+$Date: 2003-05-20 16:47:29 $
 
 =head1 BACKGROUND
 
@@ -817,6 +817,12 @@ and output the results of burning that template.
 
 Given a data element object, this method will simply output the data of that
 data element.
+
+=item $html = $burner->sdisplay_element($element)
+
+An sprintf version of $burner->display_element($element),
+that is it returns the HTML as a string instead of directly
+outputting it to the browser.
 
 =back
 
