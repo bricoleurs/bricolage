@@ -12,7 +12,20 @@ $use_form_tag
 my $agent = detect_agent();
 my $spacerRow = $agent->ie ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
 
-my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
+my $advanced_search = get_state_data($widget, 'advanced_search');
+my $asset_opts;
+if (! defined($advanced_search) && get_pref('Default Search') == 1) {
+    $advanced_search = 1;
+    $asset_opts = {
+        '' => 'All Types',
+        map { $_->get_id, $_->get_name }
+          Bric::Biz::AssetType->list({
+              top_level => 1,
+              media     => 1,
+              active    => 1,
+          })
+    };
+}
 </%init>
 
 % if ($use_form_tag) {
@@ -68,7 +81,17 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                      value    => get_state_data($widget, 'uri') || '',
                      useTable => 0 &>
                 </td>
-              </tr>             
+              </tr>
+              <tr>
+                <td align="right"><span class=label><% $lang->maketext('Type') %>:</span></td>
+                <td>
+                  <& /widgets/profile/select.mc, 
+                     name     => $widget.'|element__id',
+                     value    => get_state_data($widget, 'element__id') || '',
+                     options  => $asset_opts,
+                     useTable => 0 &>
+                </td>
+              </tr>
               <tr>
                 <td colspan=2><span class=label><% $lang->maketext('Cover Date') %></span><br />
                   <% $lang->maketext('From') %>:

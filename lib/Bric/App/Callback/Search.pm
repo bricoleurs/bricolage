@@ -9,7 +9,7 @@ use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
 use Bric::Config qw(FULL_SEARCH);
 
-my ($build_fields, $build_date_fields, $init_state);
+my ($build_fields, $build_id_fields, $build_date_fields, $init_state);
 
 
 sub substr : Callback {
@@ -51,8 +51,8 @@ sub story : Callback {
     my (@field, @crit);
 
     $build_fields->($self, \@field, \@crit,
-		    [qw(simple title primary_uri category_uri keyword)]);
-
+                    [qw(simple title primary_uri category_uri keyword)]);
+    $build_id_fields->($self, \@field, \@crit, [qw(element__id)]);
     $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
 
@@ -73,7 +73,7 @@ sub media : Callback {
     my (@field, @crit);
 
     $build_fields->($self, \@field, \@crit, [qw(simple name uri)]);
-
+    $build_id_fields->($self, \@field, \@crit, [qw(element__id)]);
     $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
 
@@ -185,11 +185,30 @@ $build_fields = sub {
 	# Save the value so we can repopulate the form.
 	set_state_data($self->class_key, $f, $v);
 
-	# Skip it if its blank
+	# Skip it if it's blank
 	next unless $v;
 
 	push @$field, $f;
 	push @$crit, (FULL_SEARCH ? '%' : '') . $v . '%';
+    }
+};
+
+$build_id_fields = sub {
+    my ($self, $field, $crit, $add) = @_;
+    my $widget = $self->class_key;
+    my $param = $self->request_args;
+
+    foreach my $f (@$add) {
+        my $v = $param->{$self->class_key."|$f"};
+
+        # Save the value so we can repopulate the form.
+        set_state_data($self->class_key, $f, $v);
+
+        # Skip it if it's blank
+        next unless $v =~ /^\d+$/;
+
+        push @$field, $f;
+        push @$crit, $v;
     }
 };
 

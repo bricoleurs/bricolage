@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-08-18 16:59:59 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)
@@ -1732,3 +1732,22 @@ VALUES (11, 11, 168);
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (11, 'Bricolage', 'Bricolage');
+
+
+-- Default Advanced Search
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES (12, 'Default Search',
+        'Whether Find Media and Find Stories use Simple or Advanced Search by default.',
+        '0', '0', 0, 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (169, 22, 48, 1);
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES (12, 12, 169);
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (12, '0', 'Simple');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (12, '1', 'Advanced');

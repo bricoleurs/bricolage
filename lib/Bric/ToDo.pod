@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.107 $
+$Revision: 1.108 $
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:10 $
+$Date: 2003-08-18 16:59:59 $
 
 =head1 DESCRIPTION
 
@@ -132,17 +132,6 @@ Add ability to "undeploy" templates without deactivating them.
 
 Add option to the installation system to always use the defaults and
 never prompt the user.
-
-=item *
-
-Add search story/media element type to the Find Stories and Find Media
-interfaces. This feature would be in the Advanced search interface, but for
-those who want to have it present all the time, see the next item.
-
-=item *
-
-Add preference to make advanced search in Find Stories and/or Find Media the
-default search form when you go to those screens.
 
 =item *
 

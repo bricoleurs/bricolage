@@ -11,7 +11,20 @@ $use_form_tag
 <%init>
 my $agent = detect_agent();
 my $spacerRow = $agent->ie ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
-my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
+my $advanced_search = get_state_data($widget, 'advanced_search');
+my $asset_opts;
+if (! defined($advanced_search) && get_pref('Default Search') == 1) {
+    $advanced_search = 1;
+    $asset_opts = {
+        '' => 'All Types',
+        map { $_->get_id, $_->get_name }
+          Bric::Biz::AssetType->list({
+              top_level => 1,
+              media     => 0,
+              active    => 1,
+          })
+    };
+}
 </%init>
 
 % if ($use_form_tag) {
@@ -59,7 +72,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                      value    => get_state_data($widget, 'title') || '',
                      useTable => 0 &>
                 </td>
-              </tr>             
+              </tr>
               <tr>
                 <td align="right"><span class=label><% $lang->maketext('URI') %>:</span></td>
                 <td>
@@ -68,7 +81,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                      value    => get_state_data($widget, 'primary_uri') || '',
                      useTable => 0 &>
                 </td>
-              </tr>             
+              </tr>
               <tr>
                 <td align="right"><span class=label><% $lang->maketext('Keyword') %>:</span></td>
                 <td>
@@ -86,13 +99,23 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                      value    => get_state_data($widget, 'category_uri') || '',
                      useTable => 0 &>
                 </td>
-              </tr>             
+              </tr>
               <tr>
                 <td align="right"><span class=label><% $lang->maketext('Teaser') %>:</span></td>
                 <td>
                   <& /widgets/profile/text.mc, 
                      name     => $widget.'|teaser',
                      value    => get_state_data($widget, 'teaser') || '',
+                     useTable => 0 &>
+                </td>
+              </tr>
+              <tr>
+                <td align="right"><span class=label><% $lang->maketext('Type') %>:</span></td>
+                <td>
+                  <& /widgets/profile/select.mc,
+                     name     => $widget.'|element__id',
+                     value    => get_state_data($widget, 'element__id') || '',
+                     options  => $asset_opts,
                      useTable => 0 &>
                 </td>
               </tr>
