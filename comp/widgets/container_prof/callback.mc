@@ -597,7 +597,7 @@ my $super_save_data = sub {
     # Fill the data into the objects in our tpool
     foreach my $d (@$data) {
         my ($name, $text) = @$d;
-
+        next unless $name;
         my $t;
         # If we have an existing object with this name, then use it.
         if ($tpool->{$name} and scalar(@{$tpool->{$name}})) {
@@ -638,7 +638,7 @@ my $super_save_data = sub {
             push @$dtiles, @$p;
             next;
         } else {
-            my $atd = $at->get_data($n);
+            my $atd = $at->get_data($n) or next;
 
             if ($atd->get_required) {
                 unless (grep { $_ eq $n } map {my $n = lc($_->get_name);
@@ -653,7 +653,7 @@ my $super_save_data = sub {
         $tile->delete_tiles($p) if scalar(@$p);
     }
 
-    $tile->reorder_tiles($dtiles) if $dtiles;
+    $tile->reorder_tiles($dtiles) if @$dtiles;
 
     # Save the tile
     $tile->save;
@@ -856,9 +856,8 @@ my $split_super_bulk = sub {
         }
         # Nothing special about this line, push it into the accumulator
         else {
-            $type ||= $def_field || $chunks[-1]->[0];
+            $type ||= $def_field || ($chunks[-1] ? $chunks[-1]->[0] : undef);
             $acc .= $acc ? " $l" : $l;
-
             $blanks = 0;
         }
     }
