@@ -64,12 +64,13 @@ $opt_s ||= 12 * 60 * 60;
 my $cutoff = time - $opt_s;
 
 # find and delete old files
-find(sub {
+find(sub {         
 	 if (-f and (stat(_))[8] < $cutoff) {
 	     unlink($_) or die "Unable to delete $File::Find::name: $!";
 	 }
      },
-     Bric::Util::Trans::FS->cat_dir($tmpdir, "bricolage")
+     Bric::Util::Trans::FS->cat_dir($tmpdir, "bricolage/lock"),
+     Bric::Util::Trans::FS->cat_dir($tmpdir, "bricolage/session")
     );
 
 sub usage {
