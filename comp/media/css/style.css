@@ -23,18 +23,20 @@ body {
     background: white url("/media/images/nav_background.gif") 8px 0px repeat-y;
 }
 #navFrame         { background: #666633; }
-#help             { background: white; }
+#help             { background: white; padding: 10px; }
 
 #bricLogo { padding: 8px 8px 2px 8px; background: white; }
 #mainContainer { position: relative; margin: 0 18px 8px 8px; }
 #sideNav { position: absolute; top: 0; left: 0; width: 150px; z-index: 200; border: 0; }
 #contentContainer { padding-left: 158px; }
+#help #contentContainer { padding: 0; }
 
 .adminBox,
 .workflowBox,
 .loginBox,
 .searchBox,
-.errorsBox                     { margin-bottom: 10px; }
+.errorsBox,
+.helpBox                       { margin-bottom: 10px; }
 
 /***************************************************
  * PAGE HEADER
@@ -43,6 +45,7 @@ body {
 #headerContainer .adminBox,
 #headerContainer .workflowBox,
 #headerContainer .loginBox,
+#headerContainer .helpBox,
 #headerContainer .errorsBox    { margin-bottom: 0; margin-right: 240px; }
 #headerContainer .buttons      { position: absolute; top: 0; right: 0; width: 240px; text-align: right; }
 #headerContainer .buttons a    { margin: 0 2px; }
@@ -62,6 +65,7 @@ body {
 .loginBox .fullHeader      { background-color: #006666; }
 .searchBox .fullHeader     { background-color: #666633; }
 .errorsBox .fullHeader     { background-color: #CC0000; }
+.helpBox .fullHeader       { background-color: #006666; }
 
 .number { 
     position: absolute;
@@ -97,9 +101,10 @@ body {
     padding: 3px 10px 0 0;
     text-align: right;
 }
-.border              { border-style: solid; border-width: 0 1px 1px 1px; }
+.border              { border-style: solid; border-width: 0 1px 1px 1px; padding: 1px;}
 .adminBox .border    { border-color: #999966; }
 .workflowBox .border { border-color: #669999; }
+.helpBox .border     { border-color: #669999; padding: 1px 10px; }
 .loginBox .border    { border-color: #669999; }
 .searchBox .border   { border-color: #666633; background-color: #CCCC99; padding: 5px; }
 

@@ -25,9 +25,9 @@
 描繪出Bricolage內容是建立使用的環境是有效的．</p>
 
 % $m->comp(".t_bottom");
-<br />
+
 % $m->comp(".t_top", caption => "License");
-<p>版權(c) 2001-2003, About.com 。版權所有</p>
+<p>版權&copy; 2001-2003, About.com 。版權所有</p>
 
 <p>在下列的條件下，有或沒有修改，可重新散佈或使用原始碼和二進位檔格式．</p>
 
@@ -52,7 +52,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 
 % $m->comp(".t_bottom");
-<br />
+
 % $m->comp(".t_top", caption => "Credits");
 <h3>Bricolage 的維護：</h3>
 <& /widgets/help/maintainers.html &>
@@ -88,37 +88,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <%args>
 $caption => '&nbsp;'
 </%args>
-<table border="0" cellpadding="0" cellspacing="0" width="475">
-<tr>
-  <td width="20" bgcolor="#669999"><img src="/media/images/numbers/669999_curve_blank.gif" width="20" height="18" border="0"></td>
-  <td class="lightHeader" width="475">&nbsp;<% uc $caption %></td>
-  <td width="13" bgcolor="#cccc99"><img src="/media/images/lt_green_curve_right.gif" width="13" height="18"></td>
-</tr>
-</table>
-
-<table border="0" cellpadding="0" cellspacing="0" width="475">
-<tr>
-<td valign="top" bgcolor="#669999" width="1">
-<img src="/media/images/spacer.gif" width="1" height="1" border="0">
-</td>
-<td width="475" valign="top">
-<table cellspacing="0" cellpadding="4" border="0"><tr><td>
+    <div class="helpBox">
+        <div class="fullHeader">
+            <div class="number">&nbsp;</div>
+            <div class="caption"><% $caption %></div>
+            <div class="rightText">&nbsp;</div>
+        </div>
+        <div class="border">
 </%def>
 
 <%def .t_bottom>
-</td></tr></table>
-</td>
-<td valign="top" bgcolor="#669999" width="1">
-<img src="/media/images/spacer.gif" width="1" height="1" border="0">
-</td>
-</tr>
-</table>
-<table width="475" border="0" cellpadding="0" cellspacing="0">
-<tr>
-  <td valign="top" bgcolor="#669999"><img src="/media/images/spacer.gif" width="475" height="1" border="0"></td>
-</tr>
-<tr>
-  <td><img src="/media/images/spacer.gif" width="475" height="10" border="0"></td>
-</tr>
-</table>
+        </div>
+    </div>
 </%def>

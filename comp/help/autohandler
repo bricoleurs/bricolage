@@ -28,74 +28,45 @@ David Wheeler <david@wheeler.net>
 </head>
 
 <body id="help">
-<center>
-<table border="0" cellpadding="0" cellspacing="0" width="475">
-  <tr>
-    <td width="475">
-      <table width="475" cellpadding="0" cellspacing="0" border="0">
-        <tr height="22">
-          <td class="workflowTab" valign="top" width="12"><img src="/media/images/006666_curve_left.gif" width="12" height="22"></td>
-          <td class="workflowTab" width="348"><% $title %></td>
-          <td valign="top" width="12" class="workflowTab"><img src="/media/images/006666_curve_right.gif" width="12" height="22"></td>
-          <td width="217" align="right" valign="top"><a href="javascript:self.close()"><img src="/media/images/<% $lang_key %>/close.gif" border="0" alt="Close" width="52" height="20" /></a></td>
-        </tr>
-      </table>
-      <table width="475" cellpadding="0" cellspacing="0" border="0">
-        <tr><td class="medHeader" height="20">&nbsp;&nbsp;<% $context %></td></tr>
-      </table>
+
+<div id="contentContainer">
+    <div id="headerContainer">
+        <div class="helpBox">
+            <div class="fullHeader">
+                <div class="number">&nbsp;</div>
+                <div class="caption"><% $title %></div>
+                <div class="rightText">&nbsp;</div>
+            </div>
+        </div>
+        <div class="buttons">
+            <a href="javascript:self.close()" title="Close Window"><img src="/media/images/<% $lang_key %>/close.gif" alt="Close" /></a>
+        </div>
+    </div>
+
+    <div id="breadcrumbs">
+        <p><% $context %></p>
+    </div>
 
 %# Insert the table top.
 % unless ($about) {
-      <table border="0" cellpadding="0" cellspacing="0" width="475">
-        <tr><td height="20">&nbsp;</td></tr>
-        <tr><td>
-          <table border="0" cellpadding="0" cellspacing="0" width="475">
-            <tr>
-              <td width="20" bgcolor="#669999"><img src="/media/images/numbers/669999_curve_blank.gif" width="20" height="18" border="0"></td>
-              <td class="lightHeader" width="475">&nbsp;<% uc $page %></td>
-              <td width="13" bgcolor="#cccc99"><img src="/media/images/lt_green_curve_right.gif" width="13" height="18"></td>
-            </tr>
-          </table>
-        <table border="0" cellpadding="0" cellspacing="0" width="475">
-          <tr>
-            <td valign="top" bgcolor="#669999" width="1">
-              <img src="/media/images/spacer.gif" width="1" height="1" border="0">
-            </td>
-            <td width="475" valign="top">
-	      <table cellspacing="0" cellpadding="4" border="0"><tr><td>
-%# Insert the content.
-                <% $m->call_next %>
-%# Insert the table bottom.
-              </td></tr></table>
-            </td>
-            <td valign="top" bgcolor="#669999" width="1">
-              <img src="/media/images/spacer.gif" width="1" height="1" border="0">
-            </td>
-          </tr>
-        </table>
-        <table width="475" border="0" cellpadding="0" cellspacing="0">
-          <tr>
-            <td valign="top" bgcolor="#669999"><img src="/media/images/spacer.gif" width="475" height="1" border="0"></td>
-          </tr>
-          <tr>
-            <td><img src="/media/images/spacer.gif" width="475" height="10" border="0"></td>
-          </tr>
-        </table>
-      </table>
+    <div class="helpBox">
+        <div class="fullHeader">
+            <div class="number">&nbsp;</div>
+            <div class="caption"><% $page %></div>
+            <div class="rightText">&nbsp;</div>
+        </div>
+        <div class="border">
+            <% $m->call_next %>
+        </div>
+    </div>
 % } else {
-      <table border="0" cellpadding="0" cellspacing="0" width="475">
-        <tr><td height="20">&nbsp;</td></tr>
-      </table>
-         <% $m->call_next %>
+    <% $m->call_next %>
 % }
 %# Close up the document.
-    </td>
-  </tr>
-  <tr>
-    <td align="right"><a href="javascript:self.close()"><img src="/media/images/<% $lang_key %>/close.gif" border="0" alt="Close" /></a></td>
-  </tr>
-</table>
-</center>
+    <div style="text-align: right;">
+        <a href="javascript:self.close()" title="Close Window"><img src="/media/images/<% $lang_key %>/close.gif" alt="Close" /></a>
+    </div>
+</div>
 </body>
 </html>
 %#-- End HTML --#
