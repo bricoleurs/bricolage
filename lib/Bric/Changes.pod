@@ -214,7 +214,8 @@ The de-de localization library has been fixed so that it now works. [David]
 
 =item *
 
-Filter by site context now works. [Joao Pedro]
+Filter by site context now works. 'All sites' context now returns results from
+all sites instead of none. [Joao Pedro]
 
 =item *
 
