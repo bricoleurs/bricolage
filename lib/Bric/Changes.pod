@@ -32,6 +32,13 @@ Added separate interface for editing templates (via FTP). [Sam]
 
 Added the ability to use HTML::Template Templates. [Sam]
 
+=item *
+
+Added ability for differnt Output Channels to function as different component
+roots for in Mason templates. This will allow for templates that can't be found
+in the current Output Channel to be searched for in other Output Channels.
+[David]
+
 =back
 
 =head2 Bug Fixes

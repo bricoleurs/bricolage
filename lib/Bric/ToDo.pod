@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2001-12-21 05:27:24 $
+$Date: 2001-12-23 01:57:06 $
 
 =head1 DESCRIPTION
 
@@ -86,12 +86,6 @@ be that the person being added is already in the system as a contributor, so the
 new user object can be based on the person object underlying the contributor
 object. Similarly, when adding a new contributor, the person being added could
 having an existing person record as an existing contributor or user. [David]
-
-=item *
-
-Add ability for differnt Output Channels to function as different component
-roots for in Mason templates. This will allow for templates that can't be found
-in the current Output Channel to be searched for in other Output Channels.
 
 =back
 
