@@ -118,13 +118,14 @@ AC_SUBST(SSL_COMMENT)
 AC_CACHE_SAVE
 
 # check to see if CPAN Module is working correctly
-if "${CPAN}" = "no" ; then
+if test "${CPAN}" = "no" ; then
 	CPAN_WORKS=no
-elif "${CPAN}" = "yes"
+elif test "${CPAN}" = "yes" ; then
 	CPAN_WORKS=yes
 else
 	AC_CHECK_CPAN(CPAN_WORKS)
 fi
+
 if test "${CPAN_WORKS}" != "yes"; then
   AC_MSG_WARN([
 
