@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.12.2.4 $
+$Revision: 1.12.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 04:20:20 $
+$Date: 2002-03-10 04:27:14 $
 
 =head1 SYNOPSIS
 
@@ -65,11 +65,11 @@ Here's a brief guide to adding a new Burner to Bricolage:
 
 Write Bric::Util::Burner::Foo
 
-You'll need to create a new sub-class of Bric::Util::Burner that implements two
-methods - new() and burn_one(). You can use an existing sub-class as a model for
-the interface and implementation of these methods. Make sure that when you
-execute your templates, you do it in the namespace reserved by the
-TEMPLATE_BURN_PKG directive -- get this constant by adding
+You'll need to create a new sub-class of Bric::Util::Burner that implements
+three methods - new(), chk_syntax(), and burn_one(). You can use an existing
+sub-class as a model for the interface and implementation of these methods. Make
+sure that when you execute your templates, you do it in the namespace reserved
+by the TEMPLATE_BURN_PKG directive -- get this constant by adding
 
   use Bric::Config qw(:burn);
 
@@ -90,8 +90,8 @@ Modify Bric::Util::Burner
 
 You'll need to make a modification to Bric::Util::Burner to make it call your
 module when it sees an element assigned to your burner. The code you're looking
-for is in the burn_one() method. Add an "elsif" that assigns the appropriate
-class name for your burner.
+for is in the _get_subclass() method. Add the approprate C<elsif>s to assigns
+the appropriate class name for your burner.
 
 =item *
 
