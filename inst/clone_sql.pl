@@ -6,11 +6,11 @@ clone_db.pl - installation script to clone an existing database
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:12 $
+$Date: 2004-03-03 02:20:24 $
 
 =head1 DESCRIPTION
 
@@ -40,6 +40,9 @@ print "\n\n==> Cloning Bricolage Database <==\n\n";
 
 our $PG;
 do "./postgres.db" or die "Failed to read postgres.db : $!";
+
+$ENV{PGHOST} = $PG->{host_name} if $PG->{host_name};
+$ENV{PGPORT} = $PG->{host_port} if $PG->{host_port};
 
 # dump out database (NOTE: when the installer uses psql to load
 # Pg.sql drop the -d for a speedup)

@@ -45,6 +45,27 @@ The list of workflows for which permissions can be granted in the permissions
 page now includes the parenthesized name of the site each workflow is
 associated with. [David]
 
+=item *
+
+Modified the indexes where the story, media, and formatting (template)
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+C<make clone> will now properly clone a database on a different database
+server, provided the host name (and port, if necessary) have been
+provided. Thanks to Ho Yin Au for the spot! [David]
+
+=item *
+
+Admin tool lists that include the number "9" in the corner of a table of items
+is now properly orange instead of green. Reported by Ho Yin Au. [David]
+
 =back
 
 =head1 VERSION 1.7.3 (2004-03-01)
