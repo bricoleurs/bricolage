@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-16 13:30:03 $
+$Date: 2003-03-27 22:21:46 $
 
 =head1 SYNOPSIS
 
@@ -304,7 +304,7 @@ sub new {
 	my @name = eval { $pkg->autopopulated_fields };
 	my $i = 0;
 	foreach my $n (@name) {
-	    my $atd = $self->new_data({name        => $n,
+	    my $atd = $self->new_data({key_name    => $n,
 				       description => "Autopopulated $n field.",
 				       required    => 1,
 				       sql_type    => 'short',
