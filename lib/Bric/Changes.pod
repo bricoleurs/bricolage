@@ -34,6 +34,11 @@ temporary file when connecting to Win32 servers. This is because the IIS FTP
 server doesn't seem to support renaming a file to the same name as an existing
 file. [David]
 
+=item *
+
+Creating the database during C<make install> no longer fails if someone
+is already connected to template1. [Scott]
+
 =back
 
 =head1 VERSION 1.6.0
