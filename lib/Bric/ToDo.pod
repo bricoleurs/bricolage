@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =head1 DATE
 
-$Date: 2002-03-20 20:25:39 $
+$Date: 2002-03-26 19:33:49 $
 
 =head1 DESCRIPTION
 
@@ -144,6 +144,12 @@ always defaults to the Primary OC, but when chnaged, causes the preview to use
 the selected OC. Probably we'll need to change the preview link to a button so
 that the form submit works properly with the select list. I suggest that we
 should add this feature to profiles only (edit and view), and not to desks.
+
+=item *
+
+Add check for uniqueness of URIs when Stories and Media are created.
+Also check that secondary URIs created by adding categories to Stories
+are unique.  This could be made optional but should be on by default.
 
 =back
 
