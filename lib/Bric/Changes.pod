@@ -49,13 +49,43 @@ syntax errors. [Sam]
 
 =item *
 
-Fixed bug in DBI_DEBUG and DBI_CALL_TRACE options where non-prepared
-queries (row_aref(), all_aref(), etc.) were not being logged. [Sam]
+The Bric::Biz::Category class method get_attr() now returns attributes for
+category ID 0 as well as all other categories. [Joao Pedro Goncalves]
+
+=item *
+
+Fixed bug in DBI_DEBUG and DBI_CALL_TRACE options where non-prepared queries
+(row_aref(), all_aref(), etc.) were not being logged. [Sam]
 
 =item *
 
 Fixed bug in Bric::Dist::Resource that was causing publish to run very
-slowly by executing a bad database query.  [Sam]
+slowly by executing a bad database query. [Sam]
+
+=item *
+
+Fixed bug where the root category wasn't able to be added to a category
+group. Actually, this fixes a problem where any object with an id of 0
+couldn't be added to a group. Thanks to Mark for the spot. [David]
+
+=item *
+
+Changed mover list to be sorted in alphabetical order in the Destination
+profile. This has the benefit of forcing "FTP" to be listed before "File
+System" -- Hurray for case-sensitive ordering! Thanks to Sam for the
+complaint. [David]
+
+=item *
+
+The OS for a destination server now defaults to the OS of the server on
+which Bricolage is installed instead of "Mac". Thanks to Sam for the spot.
+[David]
+
+=item *
+
+Deleted destinations will now be dissociated from output channels when
+they're deleted. This prevents stories from being published to deleted
+destinations. Thanks to Mark for the heads-up. [David]
 
 =back
 

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-05-03 16:47:21 $
 
 =head1 SYNOPSIS
 
@@ -42,7 +42,9 @@ my $dest = $obj;
 my $name = "&quot;$param->{name}&quot;";
 
 if ($param->{delete}) {
-    # Deactivate it.
+    # Dissociate output channels.
+    $dest->del_output_channels;
+    # Deactivate the destination.
     $dest->deactivate;
     $dest->save;
     log_event('dest_deact', $dest);

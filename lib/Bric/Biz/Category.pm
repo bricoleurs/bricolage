@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-05-03 16:47:21 $
 
 =head1 SYNOPSIS
 
@@ -953,7 +953,7 @@ sub get_attr {
     my $attr = $self->_get('_attr_obj');
     my $id = $self->get_id;
 
-    return unless $id;
+    return unless defined $id;
 
     unless ($attr) {
 	$attr = Bric::Util::Attribute::Category->new({'object_id' => $id,
