@@ -80,6 +80,12 @@ Fixed bug when reverting stories and media with no associated contributors.
 "Check In and Publish" now works again for Media assets. Thanks to Matt Vella
 for the spot. [David]
 
+=item *
+
+Deleting assets on My Workspace now prompts the user to make sure s/he really
+wants to do that. Not sure how we missed this all this time! Thanks to Andrew
+Baio for the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.3
