@@ -6,17 +6,17 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-14 00:34:18 $
+$Date: 2003-10-14 00:34:56 $
 
 =head1 SYNOPSIS
 
@@ -262,9 +262,9 @@ __END__
 
 None.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Paul Lindner <lindner@inuus.com>
+Paul Lindner <lindner@inuus.com>, David Wheeler <david@kineticode.com>
 
 =head1 SEE ALSO
 
