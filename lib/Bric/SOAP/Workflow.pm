@@ -50,15 +50,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflows.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 11:48:42 $
+$Date: 2004-02-24 09:52:07 $
 
 =head1 SYNOPSIS
 
@@ -288,7 +288,7 @@ sub publish {
 =item deploy
 
 This method handles deploying templates. The method returns
-"deploy_ids", a lits of "template_id" integers deployed on success.
+"deploy_ids", a list of "template_id" integers deployed on success.
 The method accepts the following parameters:
 
 =over 4

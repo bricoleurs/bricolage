@@ -134,7 +134,7 @@ sub publish : Callback {
             $d->remove_asset($s);
             $d->save;
         }
-        # Remove it from the workflow by setting is workflow ID to undef
+        # Remove it from the workflow by setting its workflow ID to undef
         if ($s->get_workflow_id) {
             $s->set_workflow_id(undef);
             log_event("story_rem_workflow", $s);
