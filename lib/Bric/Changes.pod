@@ -16,6 +16,19 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.6.2
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+German localization started. [Gerfried Fuchs]
+
+New help pages for the desstination, server, and action profiles. [Geoff
+Richards]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
@@ -54,6 +67,10 @@ to Marc Hawson for the spot. [David]
 
 Fix for 'Can't call method "out_method" on an undefined value' generated
 during a burn. [Mark]
+
+=item *
+
+Many minor HTML corrections. [Gerfried Fuchs]
 
 =back
 
