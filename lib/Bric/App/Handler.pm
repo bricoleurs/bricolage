@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.36.2.3 $
+$Revision: 1.36.2.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.36.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.36.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-11 13:41:07 $
+$Date: 2003-06-11 13:59:08 $
 
 =head1 SYNOPSIS
 
@@ -101,7 +101,6 @@ use Carp qw(croak);
 			:pkg
 			:history
 			mk_aref
-                        detect_agent
                         parse_uri
                         get_pref);
 

@@ -5,7 +5,6 @@ __PACKAGE__->register_subclass(class_key => 'media_prof');
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Callback::Desk;
-use Bric::App::Callback::Util qw(detect_agent);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:all);
@@ -19,6 +18,7 @@ use Bric::Util::DBI;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::MediaType;
 use Bric::Util::Trans::FS;
+use HTTP::BrowserDetect;
 
 my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
@@ -88,8 +88,8 @@ sub update : Callback {
     if ($param->{"$widget|file"}) {
         my $upload = $self->apache_req->upload;
         my $fh = $upload->fh;
-        my $ua = detect_agent();
-        my $filename = Bric::Util::Trans::FS->base_name($upload->filename, $ua->{'os'});
+        my $agent = new HTTP::BrowserDetect;
+        my $filename = Bric::Util::Trans::FS->base_name($upload->filename, $agent->os_string);
         $media->upload_file($fh, $filename);
         $media->set_size($upload->size);
 
