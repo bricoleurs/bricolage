@@ -39,6 +39,11 @@ file. [David]
 Creating the database during C<make install> no longer fails if someone
 is already connected to template1. [Scott]
 
+=item *
+
+A preview link is no longer in the "Find Media," "Active Media," desk, or "My
+Workspace" views for media that have no associated file. [David]
+
 =back
 
 =head1 VERSION 1.6.0

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13.2.2 $
+$Revision: 1.13.2.3 $
 
 =head1 DATE
 
-$Date: 2003-04-24 23:30:47 $
+$Date: 2003-04-30 16:08:48 $
 
 =head1 SYNOPSIS
 
@@ -75,7 +75,8 @@ my $alter = { publish_status => sub {
                   my $id = $obj->get_id;
                   my $uid = $obj->get_user__id;
                   my $co = defined $uid && $uid == get_user_id;
-                  return $title unless $co || $obj->get_version;
+                  return $title unless $obj->get_file_name &&
+                    ($co || $obj->get_version);
                   qq{<a href="/workflow/profile/preview/media/$id?checkout=$co" } .
                     qq{class="blackMedUnderlinedLink" target="preview_} .
                     SERVER_WINDOW_NAME . qq{">$title</a>};
