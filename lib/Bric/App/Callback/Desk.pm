@@ -157,7 +157,7 @@ sub publish : Callback {
     my %seen;
 
     # iterate through objects looking for related media
-    while(@objs) {
+    while (@objs) {
         my $a = shift @objs;
         next unless $a;
 

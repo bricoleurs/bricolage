@@ -1,16 +1,11 @@
 package Bric::App::Callback::MediaProf;
 
-# XXX:
-# $handle_checkin had this:
-#     my ($widget, $field, $param, $WORK_ID, $media, $new) = @_;
-# how did it ever get $media or $new??
-# It's called with this at the bottom:
-#   $cbs{$cb}->($widget, $field, $param, $WORK_ID);
-
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'media_prof');
 use strict;
 use Bric::App::Authz qw(:all);
+use Bric::App::Callback::Desk;
+use Bric::App::Callback::Util qw(detect_agent);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:all);
@@ -87,17 +82,15 @@ sub update : Callback {
       if exists $param->{expire_date};
 
     # Check for file
-    if ($param->{"$widget|file"} ) {
+    if ($param->{"$widget|file"}) {
         my $upload = $self->apache_req->upload;
         my $fh = $upload->fh;
-        my $filename = Bric::Util::Trans::FS->base_name($upload->filename,
-          # XXX: BOING!
-          $m->comp('/widgets/util/detectAgent.mc')->{os});
+        my $ua = detect_agent();
+        my $filename = Bric::Util::Trans::FS->base_name($upload->filename, $ua->{'os'});
         $media->upload_file($fh, $filename);
         $media->set_size($upload->size);
 
-        if (my ($mid) = Bric::Util::MediaType->list_ids
-            ({ name => $upload->type })) {
+        if (my ($mid) = Bric::Util::MediaType->list_ids({name => $upload->type})) {
             # Apache gave us a valid type.
             $media->set_media_type_id($mid);
         } elsif ($mid = Bric::Util::MediaType->get_id_by_ext($filename)) {
@@ -198,6 +191,7 @@ sub checkin : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
+    my $param = $self->request_args;
 
     if (my $msg = $media->check_uri(get_user_id())) {
         my $langmsg = "The URI of this media conflicts with that of [_1]. "
@@ -207,7 +201,7 @@ sub checkin : Callback {
     }
 
     # Just return if there was a problem with the update callback.
-    return if delete $self->request_args->{__data_errors__};
+    return if delete $param->{__data_errors__};
 
     my $work_id = get_state_data($widget, 'work_id');
     my $wf;
@@ -224,7 +218,7 @@ sub checkin : Callback {
     $media->checkin;
 
     # Get the desk information.
-    my $desk_id = $self->request_args->{"$widget|desk"};
+    my $desk_id = $param->{"$widget|desk"};
     my $cur_desk = $media->get_current_desk;
 
     # See if this media asset needs to be removed from workflow or published.
@@ -233,8 +227,7 @@ sub checkin : Callback {
         $cur_desk->remove_asset($media)->save if $cur_desk;
         $media->set_workflow_id(undef);
         $media->save;
-        # XXX: $new can be taken out I think
-        log_event(($new ? 'media_create' : 'media_save'), $media);
+        log_event('media_save', $media);
         log_event('media_checkout', $media) if $work_id;
         log_event('media_checkin', $media);
         log_event("media_rem_workflow", $media);
@@ -269,8 +262,7 @@ sub checkin : Callback {
 
         $media->save;
         # Log it!
-        # XXX: no more $new!
-        log_event(($new ? 'media_create' : 'media_save'), $media);
+        log_event('media_save', $media);
         log_event('media_checkin', $media);
         my $dname = $pub_desk->get_name;
         log_event('media_moved', $media, { Desk => $dname })
@@ -300,8 +292,7 @@ sub checkin : Callback {
 
         $desk->save;
         $media->save;
-        # XXX: $new who?!
-        log_event(($new ? 'media_create' : 'media_save'), $media);
+        log_event('media_save', $media);
         log_event('media_checkin', $media);
         my $dname = $desk->get_name;
         log_event('media_moved', $media, { Desk => $dname }) unless $no_log;
@@ -321,13 +312,14 @@ sub checkin : Callback {
         Bric::Util::DBI::begin(1);
 
         # Use the desk callback to save on code duplication.
-        # XXX: BOING!
-        $m->comp('/widgets/desk/callback.mc',
-                 widget => $widget,
-                 field => "$widget|publish_cb",
-                 media_pub => { $media->get_id => $media },
-                 param => {},
-                );
+        my $pub = Bric::App::Callback::Desk->new(
+            'ah' => $self->ah,
+            'apache_req' => $self->apache_req,
+            'request_args' => {
+                'media_pub' => { $media->get_id => $media },
+            },
+        );
+        $pub->publish();
     }
     # Clear the state out and set redirect.
     clear_state($widget);
@@ -759,7 +751,7 @@ sub add_kw : Callback {
     chk_authz($media, EDIT);
 
     # Add new keywords.
-    my $new;
+    my $new_kw;
     foreach (@{ mk_aref($param->{keyword}) }) {
         next unless $_;
         my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
@@ -767,9 +759,9 @@ sub add_kw : Callback {
             $kw = Bric::Biz::Keyword->new({ name => $_})->save;
             log_event('keyword_new', $kw);
         }
-        push @$new, $kw;
+        push @$new_kw, $kw;
     }
-    $media->add_keywords($new) if $new;
+    $media->add_keywords($new_kw) if $new_kw;
 
     # Delete old keywords.
     $media->delete_keywords(mk_aref($param->{del_keyword}))
@@ -778,7 +770,7 @@ sub add_kw : Callback {
     # Save the changes
     set_state_data(CLASS_KEY, 'media', $media);
 
-    set_redirect(last_page);
+    set_redirect(last_page());
 
     add_msg("Keywords saved.");
 
