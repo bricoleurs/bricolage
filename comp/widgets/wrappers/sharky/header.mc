@@ -97,7 +97,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 <body onload="init()">
 <noscript>
 <h1><% $lang->maketext("Warning! Bricolage is designed to run with JavaScript enabled.") %></h1>
-<% $lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.') %>
+<p><% $lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.') %></p>
 </noscript>
 
 <!-- begin top table -->
@@ -159,9 +159,9 @@ if ($useSideNav) {
 
 % # top message table
     <div id="breadcrumbs">
-    <p><% $context %></p>
+        <p><% $context %></p>
 % if ($useSideNav) {
-    <div class="siteContext"><& /widgets/site_context/site_context.mc &></div>
+        <div class="siteContext"><& /widgets/site_context/site_context.mc &></div>
 % }
     </div>
 <%perl>;
@@ -175,7 +175,7 @@ while (my $txt = next_msg) {
         $txt = escape_html($txt);
     }
 </%perl>
-<p class="errorBox">
-    <span class="errorMsg"><% $txt %></span>
-</p>
+    <p class="errorBox">
+        <span class="errorMsg"><% $txt %></span>
+    </p>
 % }

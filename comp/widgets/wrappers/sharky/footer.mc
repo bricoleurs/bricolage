@@ -21,19 +21,11 @@ Finish off the HTML.
 
 =cut
 </%doc>
-
-	<!-- footer -->
 % if (Bric::Config::QA_MODE) {
 <& '/widgets/debug/debug.mc', %{$ARGS{param}} &>
 % }
-	
-	</td>
-</tr>
-
-</table>
-<!-- end side nav and content table -->
-
-
+    </div> <!-- end #contentContainer -->
+</div> <!-- end #mainContainer -->
 </body>
 </html>
 
