@@ -23,14 +23,6 @@ Bricolage requirements are:
 
 Multiple element objects.
 
-=item *
-
-A workflow named 'Element' with elements in it.
-
-=item *
-
-An output channel named 'Web' with elements in it.
-
 =back
 
 Also, to get the most out of the tests you'll need to install the

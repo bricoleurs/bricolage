@@ -23,14 +23,6 @@ Bricolage requirements are:
 
 Multiple category objects.
 
-=item *
-
-A workflow named 'Category' with categories in it.
-
-=item *
-
-An output channel named 'Web' with categories in it.
-
 =back
 
 Also, to get the most out of the tests you'll need to install the
