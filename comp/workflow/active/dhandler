@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2003-09-11 22:17:52 $
+$Date: 2003-12-17 21:52:42 $
 
 =head1 SYNOPSIS
 
@@ -137,7 +137,9 @@ my $select = sub {
     return sub {
         my $o = shift;
         my $u = $o->get_user__id;
-        if (!defined $u && $desk_chk->{$o->get_desk_id}[1]
+        # Allow access if they have permission and have READ access to the
+        # desk the asset is on.
+        if (!defined $u && $desk_chk->{$o->get_desk_id}[0]
             && chk_authz($o, EDIT, 1)) {
             return ['Checkout', $widget.'|checkout_cb'];
         }
