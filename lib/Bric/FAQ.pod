@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =head1 DATE
 
-$Date: 2004-03-12 21:24:17 $
+$Date: 2004-03-12 21:32:32 $
 
 =head1 DESCRIPTION
 
@@ -467,6 +467,8 @@ that it's server Unicode characters. If you're running an Apache server, just
 add this to your F<httpd.conf> and restart:
 
   AddDefaultCharset utf-8
+
+Consult the documentation for your Web server for more information.
 
 =head2 Element Administration
 
