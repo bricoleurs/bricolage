@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-03-27 10:17:44 $
+$Date: 2003-04-02 20:21:50 $
 
 =head1 DESCRIPTION
 
@@ -185,45 +185,45 @@ Consult the PostgreSQL documentation for more information.
 
 =head1 TUNING
 
-Postgres requires a certain amount of tuning to operate at optimum
-efficiency.  The default settings for a new Postgres installation are very
-conservative, and are intended to make sure that the postmaster will be
-able to start up so that you can get started setting up your databases.  It
-is not, however a very useful setup for a production database environment,
-since it severely limits the amount of shared memory which the postmaster
-will try to allocate for itself.
+PostgreSQL requires a certain amount of tuning to operate at optimum
+efficiency. The default settings for a new PostgreSQL installation are very
+conservative, and are intended to make sure that the postmaster will be able
+to start up so that you can get started setting up your databases. It is not,
+however, a very useful setup for a production database environment, since it
+severely limits the amount of shared memory that the postmaster can allocate
+for itself.
 
-First determine the amount of memory you want to give to your running
-Postgres server.  In a production environment in which Postgres is running
-on a dedicated machine this will be the entire memory minus the amount
-needed to run kernel services.  In other situations it will pay to observe
-the machine while running Bricolage and whatever other services which are
-necessary, and making a guesstimate of the amount of memory you are willing
-to give to the database server.
+To tune PostgreSQL, first determine the amount of memory you want to give to
+your running PostgreSQL server. In a production environment where PostgreSQL
+is running on a dedicated machine, this will be the entire memory minus the
+amount needed to run kernel services. In other situations it will pay to
+observe the machine while running Bricolage and whatever other services are
+necessary, and make a guesstimate of the amount of memory you are willing to
+give to the database server.
 
 After you have decided how much memory to allocate, there are a couple of
-settings to make.  First you will need to set your kernel to allow for the
+settings to make. First you will need to set your kernel to allow for the
 shared memory allocation.
 
-On a Linux 2.2.x or 2.4.x systems shared memory is controlled through
-settings in the /proc filesystem.  If for instance you have decided to give
-PostgreSQL up to 128MB of shared memory you would do this to make the
-kernel setting:
+On a Linux 2.2.x or 2.4.x systems shared memory is controlled through settings
+in the F</proc> filesystem. If for instance you have decided to give
+PostgreSQL up to 128MB of shared memory here's how you would make the kernel
+setting:
 
     $ echo 134217728 >/proc/sys/kernel/shmall
     $ echo 134217728 >/proc/sys/kernel/shmmax
 
-Now you can update your postgresql.conf file to take advantage of this
-shared memory.  This is accomplished by setting the shared memory buffers
-setting.  Each buffer is 8Kb, so we simply divide the number above by eight
-to get 16777216.  Here's what the setting looks like in postgresql.conf:
+Now you can update your F<postgresql.conf> file's shared memory buffers
+setting to take advantage of this shared memory. Each buffer is 8Kb, so we
+simply divide the number above by eight to get C16777216. Here's what the
+setting looks like in C<postgresql.conf>:
 
     shared_buffers = 16777216
 
-It's probably also a good idea to boost your sort memory, which gives a
-better response time to the very large queries used in looking up Bricolage
-objects.  The default setting is 1024 (again these are 8Kb buffers).
-You'll probably want this set to at least 8192.
+It's probably also a good idea to boost your sort memory to get a better
+response time to the very large queries used to look up Bricolage objects. The
+default setting is 1024 (again these are 8Kb buffers). You'll probably want
+this set to at least 8192.
 
     sort_mem = 8192
 
@@ -236,44 +236,42 @@ been achieved with the following settings:
     shared_buffers = 200000
     sort_mem = 128672
 
-Note that this represents almost 3Gb of shared memory.  The machine has 4Gb
-of physical ram.  It is important that your shared memory settings not
-exceed the actual amount of physical ram minus the amount of memory the
-kernel needs, since this would involve using swap, thereby erasing the
-performance gains of granting the shared memory to Postgres!
+Note that this represents almost 3Gb of shared memory. The machine has 4Gb of
+physical RAM. It's important that your shared memory settings not exceed the
+actual amount of physical RAM minus the amount of memory the kernel needs,
+since this would involve using swap, thereby erase the performance gains of
+granting the shared memory to PostgreSQL!
 
 =head1 MORE PERFORMANCE TIPS
 
-DO THIS AT YOUR OWN RISK!!!
+Note: B<Do this at your own risk!!!>
 
-Another common cause of poor performance in a Postgres database is the
-existence of very very large tables.  Bricolage can sometimes this sort of
-problem since by design it is very conservative about eliminating old data.
-Certain tables as a result tend to grow quite large.
+Another common cause of poor performance in a PostgreSQL database is the
+existence of very very large tables. Bricolage can sometimes have this sort of
+problem since by design it is very conservative about eliminating old data. As
+a result, certain tables tend to grow quite large.
 
-For instance, in a production installation if you notice that the db has
-become quite large you might decide that it makes sense to actually delete
-some of the old data.  In particular the job table tends to grow quite
-large, with most of the data actually not being used for much of anything,
-so from time to time we do this:
+For instance, if you notice that the Bricolage database has become quite large
+you might decide that it makes sense to actually delete some of the old
+data. In particular the C<job> table tends to grow quite large, with most of
+the data actually not being used for much of anything, so from time to time we
+do this:
 
     DELETE FROM job
-    WHERE pending = 0
+    WHERE  pending = 0
+           AND comp_time IS NOT NULL
 
 This can result in significant boosts in preview and publish performance,
-since for each job related query the db will no longer have to load a very
-very large index into memory, sometimes paging it several times.  Of course
-it also saves disk space.
+since, for each job-related query, PostgreSQL will no longer have to load a
+very very large index into memory, sometimes paging it several times. Of
+course it also saves disk space.
 
 Of course if you have some reason to generate reports on complete jobs you
 won't be able to do this.
-    
 
 =head1 AUTHOR
 
 David Wheeler <david@wheeler.net>
-
-with tuning information from
 
 Mark Jaroski <jaroskim@who.int>
 
