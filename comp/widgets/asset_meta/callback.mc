@@ -16,15 +16,18 @@ if ($field eq "$widget|add_note_cb") {
     my $key = $widget . '|note';
     my $note = $param->{$key};
     $obj->add_note($note);
-    $obj->save();
+#    $obj->save();
     add_msg('Note saved.');
     set_state_data($widget, 'obj');
 
     # Cache the object in the session if it's the current object.
     my @state_vals = @{ $types{ ref $obj } };
-    my $c_obj = get_state_data(@state_vals);
-    if ($c_obj && $c_obj->get_id == $obj->get_id) {
-	set_state(@state_vals, $obj);
+    if ( my $c_obj = get_state_data(@state_vals) ) {
+        my $cid = $c_obj->get_id;
+        my $id = $obj->get_id;
+        set_state_data(@state_vals, $obj)
+          if (!defined $cid && ! defined $id) ||
+          (defined $cid && defined $id && $id == $cid);
     }
     # Use the page history to go back to the page that called us.
     set_redirect(last_page);
