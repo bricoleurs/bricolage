@@ -4,20 +4,20 @@ package Bric::Util::Grp::Parts::Member;
 
 =head1 NAME
 
-Bric::Util::Grp::Parts::Member A Class for associating Members of a Group
-with attribute with in the group
+Bric::Util::Grp::Parts::Member - A Class for associating Members of a
+Group with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:52 $
+$Date: 2004-03-12 21:15:02 $
 
 =head1 SYNOPSIS
 
