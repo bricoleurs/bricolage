@@ -155,12 +155,13 @@ This will make your SMTP server happier. [David]
 
 The version numbering issues of Bricolage modules have all been worked out
 after the confusion in 1.8.1. This incidentally allows the HTML::Template and
-Template Toolkit burners to be available again. [David]
+Template Toolkit burners to be available again (reported by Mike W.). [David]
 
 =item *
 
-Misspelling the name of a key name tag in Super Bulk Edit no longer causes all
-of the changes in that screen to be lost. [David]
+Misspelling the name of a key name tag or including a non-repeatable field
+more than once in Super Bulk Edit no longer causes all of the changes in that
+screen to be lost. [David]
 
 =item *
 
@@ -177,7 +178,7 @@ Wilcox. [David]
 
 Publishing a story or media document along with its related story or media
 documents from a publish desk again correctly publishes the original asset as
-well as the relateds. [David]
+well as the relateds. Reported by Paul Orrock. [David]
 
 =back
 
