@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2002-09-11 02:14:37 $
+$Date: 2002-09-11 02:52:59 $
 
 =head1 DESCRIPTION
 
@@ -339,6 +339,16 @@ it hadn't been merged before.
 
 =item 2
 
+If a new directory has been added to the branch since the last merge, you must
+first manually add it to the trunk. This probably won't happen often, and is
+most likely in the F<inst/upgrade> directory, where new directories are added
+for upgrade scripts. If a directory is in the branch but not in the trunk,
+simply create it and add it.
+
+  cvs -z3 -q add inst/upgrade/1.4.1
+
+=item 3
+
 If the branch has not been merged into the trunk before, cd into a checkout
 from HEAD and do a simple merge:
 
@@ -351,14 +361,20 @@ example, that would be "Release_1_4_0_merge-2002-08-31".
   cvs -z3 -q update -kk -j Release_1_4_0_merge-2002-08-31 \
     -j Release_1_4_0
 
-=item 3
+Note the use of the C<-kk> option. This option tells CVS not to evaluate
+keywords in the files. This is crucial for merges, since keywords such as
+C<$Revision $> B<will> be different. Not to worry, though; the keyword values
+are always restored before releasing a new version. See
+L<Creating Distributions|"CREATING DISTRIBUTIONS"> below.
+
+=item 4
 
 Resolve any conflicts (hopefully none, but they do happen occasionally) and
 commit the changes to the trunk.
 
   cvs -z3 -q commit
 
-=item 4
+=item 5
 
 Tag the branch with today's date, so that future merges can decide to merge
 only from this date on.
