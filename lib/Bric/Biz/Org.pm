@@ -7,15 +7,15 @@ Bric::Biz::Org - Bricolage Interface to Organizations
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-01-06 04:40:35 $
 
 =head1 SYNOPSIS
 
@@ -1354,8 +1354,7 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2),
-Bric::Biz::Person(3)
+L<Bric|Bric>, 
+L<Bric::Biz::Person|Bric::Biz::Person>
 
 =cut

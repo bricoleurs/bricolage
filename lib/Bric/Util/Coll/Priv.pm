@@ -7,15 +7,15 @@ Bric::Util::Coll::Priv - Interface for managing collections of privileges.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:46 $
+$Date: 2002-01-06 04:40:36 $
 
 =head1 SYNOPSIS
 
@@ -214,11 +214,10 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2),
-Bric::Util::Coll(3),
-Bric::Util::Priv(4)
-Bric::Biz::Person::User(5)
-Bric::Biz::Grp::User(6)
+L<Bric|Bric>, 
+L<Bric::Util::Coll|Bric::Util::Coll>, 
+L<Bric::Util::Priv|Bric::Util::Priv>, 
+L<Bric::Biz::Person::User|Bric::Biz::Person::User>, 
+L<Bric::Biz::Grp::User|Bric::Biz::Grp::User>
 
 =cut

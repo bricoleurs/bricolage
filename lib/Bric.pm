@@ -10,7 +10,7 @@ Release Version: 1.1.1
 
 File (CVS) Version:
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.1.1";
 
 =head1 DATE
 
-$Date: 2001-12-23 00:42:36 $
+$Date: 2002-01-06 04:40:34 $
 
 =head1 SYNOPSIS
 
@@ -800,7 +800,7 @@ sub _get_ref { [_get(@_)] }
 
 =head1 SEE ALSO
 
-perl(1).
+NONE
 
 =cut
 

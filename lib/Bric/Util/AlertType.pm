@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:45 $
+$Date: 2002-01-06 04:40:36 $
 
 =head1 SYNOPSIS
 
@@ -2803,11 +2803,10 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2)
-Bric::Util::Alert(3)
-Bric::Util::EventType(4)
-Bric::Util::Event(5)
+L<Bric|Bric>, 
+L<Bric::Util::Alert|Bric::Util::Alert>, 
+L<Bric::Util::EventType|Bric::Util::EventType>, 
+L<Bric::Util::Event|Bric::Util::Event>
 
 =cut
 

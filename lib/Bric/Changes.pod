@@ -410,7 +410,6 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2).
+L<Bric|Bric>
 
 =cut

@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:45 $
+$Date: 2002-01-06 04:40:36 $
 
 =head1 SYNOPSIS
 
@@ -1932,9 +1932,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2),
-Bric::Dist::Resource(3),
-Bric::Dist::ServerType(4)
+L<Bric|Bric>, 
+L<Bric::Dist::Resource|Bric::Dist::Resource>, 
+L<Bric::Dist::ServerType|Bric::Dist::ServerType>
 
 =cut

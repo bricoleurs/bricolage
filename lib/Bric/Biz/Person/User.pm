@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-28 19:13:46 $
+$Date: 2002-01-06 04:40:35 $
 
 =head1 SYNOPSIS
 
@@ -1469,8 +1469,7 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2),
-Bric::Biz::Person(3)
+L<Bric|Bric>, 
+L<Bric::Biz::Person|Bric::Biz::Person>
 
 =cut

@@ -6,16 +6,16 @@ Bric::App::ReqCache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:43 $
+$Date: 2002-01-06 04:40:35 $
 
 =head1 SYNOPSIS
 
@@ -322,10 +322,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2),
-Bric::App::Cache(3),
-Bric::App::Session(4),
-Apache::Session(5)
+L<Bric|Bric>, 
+L<Bric::App::Cache|Bric::App::Cache>, 
+L<Bric::App::Session|Bric::App::Session>, 
+L<Apache::Session|Apache::Session>
 
 =cut

@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-27 20:15:58 $
+$Date: 2002-01-06 04:40:36 $
 
 =head1 SYNOPSIS
 
@@ -1349,6 +1349,9 @@ David E. Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1), DBI(2), Bric (3), Bric::Util::Time(4), Bric::Util::DBD::Oracle(5).
+L<DBI|DBI>, 
+L<Bric|Bric>, 
+L<Bric::Util::Time|Bric::Util::Time>, 
+L<Bric::Util::DBD::Oracle|Bric::Util::DBD::Oracle>
 
 =cut

@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:43 $
+$Date: 2002-01-06 04:40:35 $
 
 =head1 INTRODUCTION
 
@@ -377,15 +377,14 @@ Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2),
-Bric::AdvTemplates(3),
-Bric::Biz::AssetType(4),
-Bric::Biz::Asset::Formatting(5),
-Bric::Biz::Asset::Business::Story(6),
-Bric::Biz::Asset::Business::Parts::Tile(7),
-Bric::Biz::Asset::Business::Parts::Tile::Data(8),
-Bric::Biz::Asset::Business::Parts::Tile::Container(9),
-Bric::Util::Burner(10)
+L<Bric|Bric>, 
+L<Bric::AdvTemplates|Bric::AdvTemplates>, 
+L<Bric::Biz::AssetType|Bric::Biz::AssetType>, 
+L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Formatting>, 
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>, 
+L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>, 
+L<Bric::Biz::Asset::Business::Parts::Tile::Data|Bric::Biz::Asset::Business::Parts::Tile::Data>, 
+L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>, 
+L<Bric::Util::Burner|Bric::Util::Burner>
 
 =cut

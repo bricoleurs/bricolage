@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-21 20:06:57 $
+$Date: 2002-01-06 04:40:37 $
 
 =head1 SYNOPSIS
 
@@ -1080,12 +1080,11 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2),
-File::Copy(3),
-File::Path(4),
-File::Basename(5),
-File::Find(6),
-File::Spec(7)
+L<Bric|Bric>, 
+L<File::Copy|File::Copy>, 
+L<File::Path|File::Path>, 
+L<File::Basename|File::Basename>, 
+L<File::Find|File::Find>, 
+L<File::Spec|File::Spec>
 
 =cut

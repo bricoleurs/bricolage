@@ -6,16 +6,16 @@ Bric::App::Event - Exports simple functions for managing events.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:43 $
+$Date: 2002-01-06 04:40:35 $
 
 =head1 SYNOPSIS
 
@@ -220,8 +220,7 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2),
-Bric::Util::Event(3)
+L<Bric|Bric>, 
+L<Bric::Util::Event|Bric::Util::Event>
 
 =cut

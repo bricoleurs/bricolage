@@ -7,15 +7,15 @@ Bric::Util::Fault::Error - base class for all Errors
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:46 $
+$Date: 2002-01-06 04:40:37 $
 
 =head1 SYNOPSIS
 
@@ -168,6 +168,6 @@ matthew d. p. k. strelchun-lanier - matt@lanier.org
 
 =head1 SEE ALSO
 
-Bric::Util::Fault.pm
+L<Bric::Util::Fault|Bric::Util::Fault>
 
 =cut

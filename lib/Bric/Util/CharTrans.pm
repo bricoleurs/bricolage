@@ -8,17 +8,17 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:45 $
+$Date: 2002-01-06 04:40:36 $
 
 =head1 SYNOPSIS
 
@@ -350,11 +350,9 @@ Paul Lindner <lindner@inuus.com>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2),
-iconv(3),
-/usr/bin/iconv
-
+L<Bric|Bric>, 
+L<iconv|iconv>, 
+L</usr/bin/iconv|/usr/bin/iconv>
 
 =cut
 

@@ -7,15 +7,15 @@ Bric::Util::Coll::Rule - Interface for managing collections of alert type rules.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:46 $
+$Date: 2002-01-06 04:40:36 $
 
 =head1 SYNOPSIS
 
@@ -234,10 +234,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-perl(1),
-Bric (2),
-Bric::Util::Coll(3),
-Bric::Util::AlertType(4)
-Bric::Util::AlertType::Parts::Rule(5)
+L<Bric|Bric>, 
+L<Bric::Util::Coll|Bric::Util::Coll>, 
+L<Bric::Util::AlertType|Bric::Util::AlertType>, 
+L<Bric::Util::AlertType::Parts::Rule|Bric::Util::AlertType::Parts::Rule>
 
 =cut
