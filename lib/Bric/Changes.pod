@@ -42,6 +42,12 @@ Gershman. [David]
 Form validation and group management now properly work in the user profile.
 [David]
 
+=item *
+
+Fixed the story__category" table to use the correct sequence the for they id
+column's default value (although the default is never used, this is a good
+precaution). Reported by Paul Orrock. [David]
+
 =back
 
 =cut
