@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.88 $
+$Revision: 1.89 $
 
 =head1 DATE
 
-$Date: 2003-02-18 18:35:23 $
+$Date: 2003-02-19 19:00:31 $
 
 =head1 DESCRIPTION
 
@@ -226,6 +226,10 @@ Add support for Instant messaging (using Jabber server) in Alerts.
 Add an email mover. There should be one that will simply mail the contents of
 an output, and one that will send the contents as an attachment (or
 attachments, if there are several files).
+
+=item *
+
+Port installation system to use Module::Build.
 
 =back
 
