@@ -57,6 +57,10 @@ Documents that the SOAP workflow publish finds in workflow but not on a desk
 The Burner object's C<encoding> attribute is now settable as well as readable.
 [David]
 
+=item *
+
+The category browser works again. [David]
+
 =back
 
 =cut
