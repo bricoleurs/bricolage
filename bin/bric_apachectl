@@ -36,11 +36,21 @@ use constant MAX_RESTART_WAIT => 10;
 $|++;
 
 BEGIN {
-  require File::Spec::Functions;
-  $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
-  my $lib =  File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib');
-  unshift @INC, $lib;
+    $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
+    eval { require Bric };
+    if ($@) {
+	# We need to set PERL5LIB.
+	require File::Spec::Functions;
+	my $lib =  File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib');
+	unshift @INC, $lib;
+	$ENV{PERL5LIB} = $lib;
+
+	# Try again.
+	eval { require Bric };
+	die "Cannot locate Bricolage libraries.\n" if $@;
+    }
 };
+
 use Bric::Config qw(:apachectl);
 
 # the httpd command - uses ssl config if SSL_ENABLE is set
