@@ -214,14 +214,14 @@ sub publish : Callback {
 
     if (%$story_pub or %$media_pub) {
         # Instant publish!
-        my $pub = Bric::App::Callback::Publish->new(
-            'ah' => $self->ah,
-            'apache_req' => $self->apache_req,
-            'request_args' => {
-                'instant' => 1,
-                'pub_date' => strfdate(),
-            },
-        );
+        my $pub = Bric::App::Callback::Publish->new
+          ( ah           => $self->ah,
+            pkg_key      => 'publish',
+            apache_req   => $self->apache_req,
+            request_args => { instant => 1,
+                              pub_date => strfdate(),
+                            },
+          );
         $pub->publish();
     } else {
         set_redirect('/workflow/profile/publish');
