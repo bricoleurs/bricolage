@@ -26,7 +26,7 @@ Commands:
     update
     delete
 
-Workflow Commands:
+  Workflow Commands:
 
     publish
     deploy
@@ -107,6 +107,23 @@ Delete all stories (gasp!):
 
   bric_soap story list_ids | bric_soap story delete -
 
+=head1 ID PARAMETERS
+
+Commands that take ids for parameters (delete, export, publish, etc.)
+always accept fully qualified ids:
+
+  bric_soap workflow publish story_1024 media_1028
+
+Conveniently, this is the format produced by commands that output ids.
+
+Some commands also accept unqualified ids when their meaning is
+obvious:
+
+  bric_soap story export 1024
+
+If you try to use an unqualified id parameter with a command that
+requires qualified ids you will recieve an error message.
+
 =head1 AUTHOR
 
 Sam Tregar <stregar@about-inc.com>
@@ -156,21 +173,21 @@ our %jump = (
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
-			  delete   => \&publish,
+			  delete   => \&delete,
 			 },
 	     Media    => {
 			  list_ids => \&list_ids,
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
-			  delete   => \&publish,
+			  delete   => \&delete,
 			 },
 	     Template => {
 			  list_ids => \&list_ids,
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
-			  delete   => \&publish,
+			  delete   => \&delete,
 			 },
 	     Workflow => {
 			  publish  => \&publish,
@@ -241,28 +258,18 @@ sub list_ids {
 	    if $response->fault;
     my $list = $response->result;
     foreach (@$list) {
-	print $_, "\n";
+	print lc $module, "_", $_, "\n";
     }
 }
 
 sub export {
     # collect ids
-    my @ids;
-    foreach (@ARGV) {
-	if ($_ eq '-') {
-	    print STDERR "$module $command: Reading ids from STDIN...\n" if $verbose;
-	    push @ids, map { chomp; $_ } <STDIN>;
-	} else { 
-	    push @ids, $_;
-	}
-    }
+    my @ids = _read_ids(lc($module) . "_id");
     die "No ids found for export.\n"
 	unless @ids;
-    die "Non-numeric ids found in id list (", join(', ', @ids), ")\n"
-	if grep { $_ !~ /^\d+$/ } @ids;
   
-    print STDERR "$module $command: Calling Bric::SOAP::$module->$command with id: ", 
-	join(', ', @ids), "\n"
+    print STDERR "$module $command: Calling $module->$command with ids: ", 
+	join(', ', map { $_->name . " => " . $_->value } @ids) , "\n"
 	    if $verbose;
 
     my @opts;
@@ -274,28 +281,18 @@ sub export {
     die "Call to Bric::SOAP::$module->$command failed : \n" .
 	$response->faultstring
 	    if $response->fault;
-
+	     	     
     print $response->result;
 }
 
 sub delete {
     # collect ids
-    my @ids;
-    foreach (@ARGV) {
-	if ($_ eq '-') {
-	    print STDERR "$module $command: Reading ids from STDIN...\n" if $verbose;
-	    push @ids, map { chomp; $_ } <STDIN>;
-	} else { 
-	    push @ids, $_;
-	}
-    }
+    my @ids = _read_ids(lc($module) . "_id");
     die "No ids found for delete.\n"
 	unless @ids;
-    die "Non-numeric ids found in id list (", join(', ', @ids), ")\n"
-	if grep { $_ !~ /^\d+$/ } @ids;
   
-    print STDERR "$module $command: Calling Bric::SOAP::$module->$command with id: ", 
-	join(', ', @ids), "\n"
+    print STDERR "$module $command: Calling $module->$command with ids: ", 
+	join(', ', map { $_->name . " => " . $_->value } @ids) , "\n"
 	    if $verbose;
 
     $response = $soap->delete(name(lc $module . '_ids', \@ids));
@@ -326,10 +323,14 @@ sub create {
 	    $response->faultstring
 		if $response->fault;
 
-	# print out ids
-	my $list = $response->result;
-	foreach (@$list) {
-	    print $_, "\n";
+	# print out ids with types
+	my ($count, $data);
+	for($count = 1; 
+	    $data = $response->dataof("/Envelope/Body/[1]/[1]/[$count]");
+	    $count++) {
+	    my $name = $data->name;
+	    $name =~ s/_id$//;
+	    print $name, "_", $data->value, "\n";
 	}
     }
 }
@@ -348,9 +349,12 @@ sub update {
 	    close(DOC);
 	}
 
-	my @update_ids = $document =~ /<story.*id="(\d+)"/g;
+	my $name = lc($module);
+	my @update_ids = $document =~ /<$name.*id="(\d+)"/g;
+	die "No $module ids found in update document.\n"
+	    unless @update_ids;
 	print STDERR "$module $command: Found ids for update: ", join(', ', @update_ids), "\n"
-	    if $verbose;
+	    if $verbose;	
        
 	print STDERR "$module $command: Calling Bric::SOAP::$module->$command with document:  ", 
 	    length($document), " bytes\n"
@@ -359,17 +363,21 @@ sub update {
 	$response = $soap->update(name(document => $document)->type('base64'),
 				  name(update_ids => 
 				       [ map 
-					 { name(story_id => $_) } 
+					 { name("${name}_id" => $_) } 
 					 @update_ids ]));
 	die "Call to Bric::SOAP::$module->$command failed : \n" .
 	    $response->faultstring
 		if $response->fault;
-	
-	# print out ids
-	my $list = $response->result;
-	foreach (@$list) {
-	    print $_, "\n";
-	}
+
+	# print out ids with types
+	my ($count, $data);
+	for($count = 1; 
+	    $data = $response->dataof("/Envelope/Body/[1]/[1]/[$count]");
+	    $count++) {
+	    my $name = $data->name;
+	    $name =~ s/_id$//;
+	    print $name, "_", $data->value, "\n";
+	}	
     }
 }
 
@@ -391,4 +399,38 @@ sub checkout {
 
 sub move {
     die "$module $command not yet implemented\n";
+}
+
+#
+# utility functions
+#
+
+# reads in ids off the command and/or STDIN if commandline contains
+# "-".  Constructs SOAP::Data named objects defaulting to
+# $default_type if not specified.
+sub _read_ids {
+  my ($default_type) = @_;
+  my @ids;
+  while ($_ = shift @ARGV) {
+      if ($_ eq '-') {
+	  print STDERR "$module $command: Reading ids from STDIN...\n"
+	      if $verbose;
+	  push @ARGV, map { chomp; $_ } <STDIN>;
+	  next;
+      }
+
+      # plain integers use default if available
+      if (/^\d+$/) {
+	  die "$module $command requires named ids ".
+	      "(story_1024, for example).\n"
+		  unless $default_type;
+	  push @ids, name($default_type, $_);
+      } elsif (/([a-zA-Z]+)_(\d+)/) {
+	  my ($name, $id) = ($1, $2);
+	  push @ids, name(lc $name, $id);
+      } else {
+	  die "$module $command : found malformed id : \"$_\".\n";
+      }
+  }
+  return @ids;
 }
