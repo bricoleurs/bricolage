@@ -473,6 +473,11 @@ incomplete implementation that you might use as inspiration.
 Keyword manager needs to be site context aware and each site needs to have its
 own list of keywords.
 
+=item *
+
+Add a max size option to media Element profiles, for setting a per-element
+size cap on uploaded media.
+
 =back
 
 =cut
