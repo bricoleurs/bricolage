@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:32 $
+$Date: 2003-12-08 20:33:55 $
 
 
 =head1 SYNOPSIS
@@ -77,7 +77,7 @@ Assets.  The name and description fields can be set as can a number of rules.
 
 The max length field.   This will allow someone to set the max length allowed
 for their field.   It will have a rule set upon it so that the max length will
-not be greater than any available storage.   The field length will map to 
+not be greater than any available storage.   The field length will map to
 what ever storarge is available for a field just larger than the one listed
 ( Thought needs to be given how to handle those that change their length
 after data has been entered as it might switch storage catagories)
@@ -85,7 +85,7 @@ after data has been entered as it might switch storage catagories)
 The quantifier field will state whether the field may be repeated indeffinatly,
 zero or more times, zero or one, one, or an arbritiary number of times.
 
-the sql type will map to a type in the DB ( varchar or date ) 
+the sql type will map to a type in the DB ( varchar or date )
 
 =cut
 
@@ -94,13 +94,11 @@ the sql type will map to a type in the DB ( varchar or date )
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Attribute::AssetTypeData;
 use Bric::Util::Fault qw(throw_gen);
@@ -151,14 +149,11 @@ use constant ORD => qw(name description max_length required quantifier active);
 our $METHS;
 
 #--------------------------------------#
-# Private Class Fields                  
-
+# Private Class Fields
 # NONE
 
 #--------------------------------------#
-# Instance Fields                       
-
-# NONE
+# Instance Fields
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
@@ -192,13 +187,13 @@ BEGIN {
                          # The type of repeatability for this field
                          'quantifier'          => Bric::FIELD_RDWR,
 
-                         # The type in the data base 
+                         # The type in the data base
                          'sql_type'            => Bric::FIELD_RDWR,
 
                          # If this field is publishable
                          'publishable'         => Bric::FIELD_RDWR,
 
-                         autopopulated                  => Bric::FIELD_READ,
+                         autopopulated         => Bric::FIELD_READ,
 
                          # The active flag
                          'active'              => Bric::FIELD_READ,
@@ -227,13 +222,12 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors                          
-
+# Constructors
 #------------------------------------------------------------------------------#
 
 =item  $field = Bric::Biz::AssetType::Parts::Data->new( $initial_state )
 
-creates a new element Field Part with the values associated with the 
+creates a new element Field Part with the values associated with the
 initial state
 
 Supported Keys:
