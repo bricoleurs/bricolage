@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -23,11 +23,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =head1 DATE
 
-$Date: 2003-10-07 14:44:20 $
+$Date: 2003-10-11 03:04:49 $
 
 =head1 SYNOPSIS
 
@@ -407,7 +407,7 @@ The XSD source:
                        <xs:complexType>
                          <xs:simpleContent>
                            <xs:extension base="xs:string">
-                             <xs:attribute name="primary" type="xs:boolean" use="optional"/>
+                             <xs:attribute name="site" type="xs:string" use="require"/>
                            </xs:extension>
                          </xs:simpleContent>
                        </xs:complexType>
