@@ -41,8 +41,8 @@ sub preview : Callback {
         }
 
         # Move out the story and then redirect to preview.
-        if (my $url = $b->preview($media, 'media', get_user_id(), $m, $oc_id)) {
-            &$send_msg("Redirecting to preview.");
+        if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id)) {
+            status_msg("Redirecting to preview.");
             redirect_onload($url);
         }
     } else {
@@ -68,8 +68,8 @@ sub preview : Callback {
             $b->preview($ra, 'media', get_user_id(), $oc_id);
         }
         # Move out the story and then redirect to preview.
-        if (my $url = $b->preview($s, 'story', get_user_id(), $m, $oc_id)) {
-            &$send_msg("Redirecting to preview.");
+        if (my $url = $b->preview($s, 'story', get_user_id(), $oc_id)) {
+            status_msg("Redirecting to preview.");
             redirect_onload($url);
         }
     }
