@@ -180,6 +180,18 @@ Berkus (under sponsorship from WHO) and Simon Myers of GBDirect, searches for
 stories in the UI are now 10-40 times faster than they were before (depending
 on the version of PostgreSQL you're running). [David]
 
+=item *
+
+Added the C<story.category> parameter to the C<list()> method of
+Bric::Biz::Asset::Business::Story. Pass in a story ID, and a list of stories
+in the same categories as the story with that ID will be returned, minus the
+story with that ID. This parameter triggers a complex join, which can slow the
+query time significantly on underpowered servers or systems with a large
+number of stories. Still, it can be very useful in templates that want to
+create a list of stories in all of the categories the current story is in. But
+be sure to use the <Limit> parameter! Thanks to Josh Berkus for his help
+figuring out the query syntax. [David]
+
 =back
 
 =head2 Bug Fixes

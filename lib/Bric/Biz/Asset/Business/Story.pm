@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.77 $
+$Revision: 1.78 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.77 $ )[-1];
+our $VERSION = (qw$Revision: 1.78 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-12 07:01:09 $
+$Date: 2004-02-12 18:17:45 $
 
 =head1 SYNOPSIS
 
@@ -285,16 +285,17 @@ use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP =>
     {
-       keyword            => 'story_keyword sk, keyword k',
-       output_channel_id  => 'story__output_channel soc',
-       simple             => 'story_member sm, member m, story__category sc, '
-                             . 'category c, desk d, workflow w, ' . TABLE . ' s ',
-       grp_id             => 'member m2, story_member sm2',
-       category_id        => 'story__category sc2',
-       category_uri       => 'story__category sc2',
-       data_text          => 'story_data_tile sd',
-       contrib_id         => 'story__contributor sic',
-       element_key_name   => 'element e'
+       keyword              => 'story_keyword sk, keyword k',
+       output_channel_id    => 'story__output_channel soc',
+       simple               => 'story_member sm, member m, story__category sc, '
+                               . 'category c, desk d, workflow w, ' . TABLE . ' s ',
+       grp_id               => 'member m2, story_member sm2',
+       category_id          => 'story__category sc2',
+       category_uri         => 'story__category sc2',
+       data_text            => 'story_data_tile sd',
+       contrib_id           => 'story__contributor sic',
+       element_key_name     => 'element e',
+       'story.category'     => 'story__category sc2',
     };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -346,6 +347,20 @@ use constant PARAM_WHERE_MAP =>
       category_uri           => 'i.id = sc2.story_instance__id AND '
                               . 'sc2.category__id = c.id AND '
                               . 'LOWER(c.uri) LIKE LOWER(?)',
+      'story.category'       => 's.id <> ? '
+                              . 'AND i.id = sc2.story_instance__id AND '
+                              . 'sc2.category__id in ('
+                              . 'SELECT sc3.category__id '
+                              . 'FROM   story__category sc3, story s2, story_instance i2 '
+                              . 'WHERE  i2.story__id = s2.id '
+                              . 'AND i2.version = s2.current_version '
+                              . 'AND i2.checked_out =('
+                              . 'SELECT MAX(checked_out) '
+                              . 'FROM story_instance '
+                              . 'WHERE version = i2.version '
+                              . 'AND story__id = s2.id ) '
+                              . 'AND sc3.story_instance__id = i2.id '
+                              . 'AND s2.id = ?)',
       keyword                => 'sk.story_id = s.id AND '
                               . 'k.id = sk.keyword_id AND '
                               . 'LOWER(k.name) LIKE LOWER(?)',
@@ -616,6 +631,16 @@ category_uri
 
 =item *
 
+story.category - Pass in a story ID, and a list of stories in the same
+categories as the story with that ID will be returned, minus the story with
+that ID. This parameter triggers a complex join, which can slow the query time
+significantly on underpowered servers or systems with a large number of
+stories. Still, it can be very useful in templates that want to create a list
+of stories in all of the categories the current story is in. But be sure to
+use the <Limit> parameter!
+
+=item *
+
 element__id
 
 =item *
@@ -691,8 +716,7 @@ that match the query will be returned.
 =item *
 
 Offset - The number of objects to skip before listing the number of objects
-specified by "Limit". Not used if "Limit" is not defined, and when "Limit" is
-defined and "Offset" is not, no objects will be skipped.
+specified by "Limit". Uses only if "Limit" is defined.
 
 =item *
 
