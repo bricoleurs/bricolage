@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-05 19:34:41 $
+$Date: 2002-08-30 17:05:25 $
 
 =head1 SYNOPSIS
 
@@ -57,7 +57,6 @@ use Bric::Util::Fault::Exception::AP;
 use Bric::Util::Fault::Exception::MNI;
 use Bric::Dist::Resource;
 use Bric::Config qw(:burn);
-use Data::Dumper;
 use Digest::MD5 qw(md5 md5_hex);
 use Time::HiRes qw(time);
 

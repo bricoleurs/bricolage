@@ -23,23 +23,22 @@ $obj
 
 <%perl>;
 
-return unless $field eq "$widget|addElement_cb" || $field eq "$widget|doRedirect_cb";
+return unless $field eq "$widget|addElement_cb" ||
+  $field eq "$widget|doRedirect_cb";
 
 my $comp = $obj;
 
 # switch on $field
 if ($field eq "$widget|addElement_cb") {
 
-    my @elements = (ref $param->{"$widget|addElement_cb"} eq "ARRAY" ) ? $param->{"$widget|addElement_cb"} : [ $param->{"$widget|addElement_cb"} ];
+    my @elements = (ref $param->{"$widget|addElement_cb"} eq "ARRAY" )
+      ? $param->{"$widget|addElement_cb"}
+      : [ $param->{"$widget|addElement_cb"} ];
     # add element to object using id(s)
     $comp->add_containers( @elements );
     $comp->save;
-#    print STDERR  Data::Dumper::Dumper($comp);
-
 } elsif ($field eq "$widget|doRedirect_cb") {
-
     set_redirect('/admin/profile/element/'. $param->{element_id} );
-
 }
 
 return $comp;
@@ -54,11 +53,11 @@ return $comp;
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2002-08-30 17:05:24 $
 
 =head1 SYNOPSIS
 
