@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2003-10-07 02:00:00 $
+$Date: 2003-10-22 15:27:23 $
 
 =head1 DESCRIPTION
 
@@ -83,6 +83,10 @@ Ad Council - L<http://www.adcouncil.org/>
 =item *
 
 Open Forum Europe - L<http://www.openforumeurope.org/>
+
+=item *
+
+The Lab School of Washington - L<http://my.labschool.org/>
 
 =back
 
