@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2003-11-30 01:06:22 $
 
 =head1 SYNOPSIS
 
@@ -1350,7 +1350,7 @@ sub get_objects {
     my $id = $self->_get('id') or return;
     my @objs;
     foreach my $class ($self->get_list_classes) {
-        push @objs, $class->list({ grp_id => $id });
+        push @objs, $class->list({ grp_id => $id, active => 1 });
     }
     return wantarray ? @objs : \@objs;
 }
