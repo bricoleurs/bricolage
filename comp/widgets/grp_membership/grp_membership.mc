@@ -6,11 +6,11 @@ grp_membership - Group membership widget
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-09-23 15:02:54 $
+$Date: 2003-12-04 22:13:16 $
 
 =head1 SYNOPSIS
 
@@ -51,24 +51,54 @@ $m->comp('/widgets/profile/hidden.mc',
 
 ##############################################################################
 # Get groups for double-list manager.
-my $all_grp = Bric::Util::Grp->lookup({ id => $obj->INSTANCE_GROUP_ID});
 my ($left, $right) = ([], []);
+my @rogroups = ($obj->INSTANCE_GROUP_ID);
+my @logroups;
 
-push @$right, { value       => $all_grp->get_id,
-                description => $all_grp->get_name}
-  unless $obj->get_id;
+unless ($obj->get_id) {
+    # Make sure the "All" group shows up in the list for new objects.
+    my $all_grp = Bric::Util::Grp->lookup({ id => $obj->INSTANCE_GROUP_ID});
+    push @$right, { value       => $all_grp->get_id,
+                    description => $all_grp->get_name };
+}
 
-foreach my $grp ( $obj->can('get_grps') ? 
+my $is_user = ref $obj eq 'Bric::Biz::Person::User';
+
+# Now get the list of current groups the group is a member of.
+foreach my $grp ( $obj->can('get_grps') ?
                   $obj->get_grps : $grp_class->list({ obj => $obj }) ) {
+    # Skip the group if they don't have READ access to it.
+    next unless chk_authz($grp, READ, 1);
 
-    push @$right, { value       => $grp->get_id,
+    my $gid = $grp->get_id;
+    push @$right, { value       => $gid,
                     description => $grp->get_name };
+
+    # Dissallow removing groups if the user doesn't have edit permission
+    # to the group, or if the user doesn't have edit permission to the
+    # members of the group.
+    unless ($no_edit or chk_authz($grp, EDIT, 1)
+            or (!$is_user && chk_authz(0, EDIT, 1, $gid))) {
+        push @rogroups, $gid;
+    }
 }
 
 # Get all groups for double-list manager.
 foreach my $grp ( $grp_class->list({all => $all}) ) {
-    push @$left, { value       => $grp->get_id,
+    # Skip the group if they don't have READ access to it.
+    next unless chk_authz($grp, READ, 1);
+
+    my $gid = $grp->get_id;
+    push @$left, { value       => $gid,
                    description => $grp->get_name };
+
+    # Dissallow adding groups if the group is a user group (users can
+    # only edit user group memberships if they're members) or if
+    # they don't have permission to edit the group and its members.
+    unless ($no_edit or !$is_user
+            or (chk_authz($grp, EDIT, 1) and chk_authz(0, EDIT, 1, $gid))) {
+        push @logroups, $gid;
+    }
 }
 
 # Load up the double-list manager.
@@ -79,7 +109,8 @@ $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
           formName      => $formName,
           leftName      => 'rem_grp',
           rightName     => 'add_grp',
-          readOnlyRight => [$obj->INSTANCE_GROUP_ID],
+          readOnlyRight => \@rogroups,
+          readOnlyLeft  => \@logroups,
           leftCaption   => 'Available Groups',
           showLeftList  => $no_edit || 1 ,
           rightCaption  => $no_edit ||'Current Groups',

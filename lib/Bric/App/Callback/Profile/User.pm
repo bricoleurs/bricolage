@@ -37,6 +37,7 @@ sub save : Callback {
         $self->cache->set_lmu_time;
         log_event('user_deact', $user);
         add_msg("$disp_name profile \"[_1]\" deleted.", $user->get_name);
+        # redirect_onload() prevents any other callbacks from executing.
         get_state_name('login') eq 'ssl' ? $self->set_redirect('/admin/manager/user')
           : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user',
                             $self);
@@ -129,28 +130,9 @@ sub save : Callback {
     log_event(defined $param->{user_id} ? 'user_save' : 'user_new', $user);
     add_msg("$disp_name profile \"[_1]\" saved.", $user->get_name);
 
-    # Take care of group managment.
-    my $id = $param->{user_id} || $user->get_id;
-    my $add_ids = mk_aref($param->{add_grp});
-    # Assemble the new member information.
-    foreach my $grp ( map { Bric::Util::Grp->lookup({ id => $_ }) }
-                        @$add_ids ) {
-        # Add the user to the group.
-        $grp->add_members([{ obj => $user }]);
-        $grp->save;
-        log_event('grp_save', $grp);
-    }
-    my $del_ids = mk_aref($param->{rem_grp});
-    foreach my $grp ( map { Bric::Util::Grp->lookup({ id => $_ }) }
-                        @$del_ids ) {
-        # Deactivate the user's group membership.
-        foreach my $mem ($grp->has_member({ obj => $user })) {
-            $mem->deactivate;
-            $mem->save;
-        }
-        $grp->save;
-        log_event('grp_save', $grp);
-    }
+    # Take care of group managment, since the use of the redirect_onload()
+    # function below will prevent it from executing as a callback.
+    $self->manage_grps;
 
     # Note that a user has been updated to force all users logged into the system
     # to reload their user objects from the database. Also note that all workflows
@@ -164,6 +146,7 @@ sub save : Callback {
     }
 
     # Redirect. Use redirect_onload because the User profile has been using SSL.
+    # But note that because it executes right away, no more callbacks will execute!
     get_state_name('login') eq 'ssl' ? $self->set_redirect('/admin/manager/user')
       : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user',
                         $self);

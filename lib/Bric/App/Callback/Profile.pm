@@ -9,10 +9,11 @@ use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Authz qw(:all);
 use Bric::App::Util qw(:aref :msg :history :pkg :browser);
+use Bric::App::Session qw(:user);
 
 my $excl = {'desk' => 1, 'action' => 1, 'server' => 1, element_data => 1};
 
-my ($get_class);
+my ($get_class, $chk_grp_perms);
 
 
 # each subclass of Profile inherits this constructor,
@@ -58,7 +59,7 @@ sub manage_grps :Callback {
     my $self   = shift;
     my $obj    = shift || $self->obj;
     my $param  = $self->params;
-    return unless $param->{add_grp} or  $param->{rem_grp};
+    return unless $param->{add_grp} or $param->{rem_grp};
 
     my @add_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
                        @{mk_aref($param->{add_grp})};
@@ -66,26 +67,54 @@ sub manage_grps :Callback {
     my @del_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
                        @{mk_aref($param->{rem_grp})};
 
-    # Assemble the new member information.
-    foreach my $grp (@add_grps) {
-        # Add the user to the group.
-        $grp->add_members([{ obj => $obj }]);
-        $grp->save;
-        log_event('grp_save', $grp);
+    my $is_user = ref $obj eq 'Bric::Biz::Person::User';
+    my $return = 1;
+
+    # It could be an array of objects -- See Profile::Category.
+    for my $o (ref $obj eq 'ARRAY' ? @$obj : ($obj)) {
+        # Assemble the new member information.
+        foreach my $grp (@add_grps) {
+            # Check permissions.
+            next unless $chk_grp_perms->($grp, $is_user);
+
+            # Add the object to the group.
+            $grp->add_members([{ obj => $o }]);
+            $grp->save;
+            log_event('grp_save', $grp);
+        }
+
+        foreach my $grp (@del_grps) {
+            # Check permissions.
+            next unless $chk_grp_perms->($grp, $is_user);
+
+            # Deactivate the object's group membership.
+            foreach my $mem ($grp->has_member({ obj => $o })) {
+                $mem->deactivate;
+                $mem->save;
+            }
+
+            $grp->save;
+            log_event('grp_save', $grp);
+        }
     }
-
-    foreach my $grp (@del_grps) {
-         # Deactivate the user's group membership.
-         foreach my $mem ($grp->has_member({ obj => $obj })) {
-             $mem->deactivate;
-             $mem->save;
-         }
-
-         $grp->save;
-         log_event('grp_save', $grp);
-     }
 }
 
+$chk_grp_perms = sub {
+    my ($grp, $is_user) = @_;
+    # If it's a user group, disallow access unless the current user is the
+    # global admin or a member of the group. If it's not a user group,
+    # disallow access unless the current user has EDIT access to the members
+    # of the group.
+    unless (chk_authz($grp, EDIT, 1)
+            && (($is_user
+                 && (user_is_admin || $grp->has_member({ obj => get_user_object }))
+                || chk_authz(0, EDIT, 1, $grp->get_id)))) {
+        add_msg('Permission to manage "[_1]" group membership denied',
+                $grp->get_name);
+        return;
+    }
+    return 1;
+};
 
 ###
 

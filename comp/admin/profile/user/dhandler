@@ -40,7 +40,8 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
          formName => 'user_profile',
          no_edit => $no_edit,
          widget  => $type,
-         all => 1
+         all => 1,
+         no_cb => 1
 );
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc", number  => 4,
@@ -143,11 +144,11 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2003-08-25 18:48:54 $
+$Date: 2003-12-04 22:13:16 $
 
 =head1 DESCRIPTION
 

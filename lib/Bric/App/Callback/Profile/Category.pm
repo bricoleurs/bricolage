@@ -131,40 +131,16 @@ sub save : Callback {
         # Save changes.
         $cat->save;
 
-        # Take care of group managment - not using set_grp_managent() since
-        # Categories memberships can be cascaded into subcategories.
+        # Take care of group managment.
         if ($param->{add_grp} or $param->{rem_grp}) {
-
-            my @add_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
-              @{mk_aref($param->{add_grp})};
-            my @del_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
-              @{mk_aref($param->{rem_grp})};
-
-            foreach $cat ( $param->{grp_cascade}
-                           ? Bric::Biz::Category->list
-                             ({uri => $cat->get_uri . '%'})
-                           : $cat
-                          ) {
-
-                # Assemble the new member information.
-                foreach my $grp (@add_grps) {
-                    # Add the user to the group.
-                    $grp->add_members([{ obj => $cat }]);
-                    $grp->save;
-                    log_event('grp_save', $grp);
-                }
-
-                foreach my $grp (@del_grps) {
-                    # Deactivate the user's group membership.
-                    foreach my $mem ($grp->has_member({ obj => $cat })) {
-                        $mem->deactivate;
-                        $mem->save;
-                    }
-
-                    $grp->save;
-                    log_event('grp_save', $grp);
-                }
-            }
+            # Set up an array of all child categories if permissions
+            # should cascade.
+            $self->obj( scalar $cat->list({uri => $cat->get_uri . '%'}) )
+              if $param->{grp_cascade};
+            # Manage the group memberships.
+            $self->manage_grps;
+            # Reset the object.
+            $self->obj($cat) if $param->{grp_cascade};
         }
 
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
