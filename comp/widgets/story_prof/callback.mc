@@ -153,35 +153,25 @@ my $handle_delete = sub {
 ################################################################################
 
 my $handle_view = sub {
-        my ($widget, $field, $param, $story, $new) = @_;
-
-        $story ||= get_state_data($widget, 'story');
-
-        # Abort this save if there were any errors.
-        return unless &$save_data($param, $widget, $story);
-
-        my $version = $param->{"$widget|version"};
-        my $id = $story->get_id();
-
-        set_redirect("/workflow/profile/story/$id/?version=$version");
+    my ($widget, $field, $param, $story, $new) = @_;
+    $story ||= get_state_data($widget, 'story');
+    # Abort this save if there were any errors.
+    return unless &$save_data($param, $widget, $story);
+    my $version = $param->{"$widget|version"};
+    my $id = $story->get_id();
+    set_redirect("/workflow/profile/story/$id/?version=$version");
 };
 
 ################################################################################
 
 my $handle_revert = sub {
-        my ($widget, $field, $param, $story, $new) = @_;
-
-        $story ||= get_state_data($widget, 'story');
-
-        my $version = $param->{"$widget|version"};
-
-        $story->revert($version);
-
-        $story->save();
-+       add_msg("Story &quot;" . $story->get_title . "&quot; reverted to V.$version.");
-
-        clear_state($widget);
-
+    my ($widget, $field, $param, $story, $new) = @_;
+    $story ||= get_state_data($widget, 'story');
+    my $version = $param->{"$widget|version"};
+    $story->revert($version);
+    $story->save();
+    add_msg("Story &quot;" . $story->get_title . "&quot; reverted to V.$version.");
+    clear_state($widget);
 };
 
 ################################################################################
@@ -193,34 +183,11 @@ my $handle_save = sub {
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
-    my $work_id = get_state_data($widget, 'work_id');
-
-    if ($work_id) {
-        # Set the workflow this story should be in.
-        $story->set_workflow_id($work_id);
-        $story->activate;
-
-#       $story->checkin();
-#       $story->save();
-#       $story->checkout( { user__id => get_user_id });
-
-        # Figure out what desk this story should be in.
-        my $wf = Bric::Biz::Workflow->lookup({'id' => $work_id});
-        log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
-
-        # Send this story to the first desk.
-        my $start_desk = $wf->get_start_desk;
-        $start_desk->accept({'asset' => $story});
-        $start_desk->save;
-        log_event('story_moved', $story, { Desk => $start_desk->get_name });
-    }
-
     if ($param->{"$widget|delete"}) {
         # Delete the story.
         $handle_delete->($story);
     } else {
-        # Make sure the story is activated and then save it.
-        $story->activate;
+        # Save the story.
         $story->save;
         log_event(($new ? 'story_create' : 'story_save'), $story);
         add_msg("Story &quot;" . $story->get_title . "&quot; saved.");
@@ -231,21 +198,21 @@ my $handle_save = sub {
     # Clear the state and send 'em home.
     clear_state($widget);
 
-        if ($return eq 'search') {
-                my $workflow_id = $story->get_workflow_id();
-                my $url = $SEARCH_URL . $workflow_id . '/';
-                set_redirect($url);
-        } elsif ($return eq 'active') {
-                my $workflow_id = $story->get_workflow_id();
-                my $url = $ACTIVE_URL . $workflow_id;
-                set_redirect($url);
-        } elsif ($return =~ /\d+/) {
-                my $workflow_id = $story->get_workflow_id();
-                my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
-                set_redirect($url);
-        } else {
+    if ($return eq 'search') {
+        my $workflow_id = $story->get_workflow_id();
+        my $url = $SEARCH_URL . $workflow_id . '/';
+        set_redirect($url);
+    } elsif ($return eq 'active') {
+        my $workflow_id = $story->get_workflow_id();
+        my $url = $ACTIVE_URL . $workflow_id;
+        set_redirect($url);
+    } elsif ($return =~ /\d+/) {
+        my $workflow_id = $story->get_workflow_id();
+        my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
+        set_redirect($url);
+    } else {
         set_redirect("/");
-        }
+    }
 };
 
 ################################################################################
@@ -383,27 +350,6 @@ my $handle_save_stay = sub {
 
     $story ||= get_state_data($widget, 'story');
 
-    my $work_id = get_state_data($widget, 'work_id');
-
-    if ($work_id) {
-        # Set the workflow this story should be in.
-        $story->set_workflow_id($work_id);
-
-        $story->checkin();
-        $story->save();
-        $story->checkout( { user__id => get_user_id });
-
-        # Figure out what desk this story should be in.
-        my $wf = Bric::Biz::Workflow->lookup({'id' => $work_id});
-        log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
-
-        # Send this story to the first desk.
-        my $start_desk = $wf->get_start_desk;
-        $start_desk->accept({'asset' => $story});
-        $start_desk->save;
-        log_event('story_moved', $story, { Desk => $start_desk->get_name });
-    }
-
     if ($param->{"$widget|delete"}) {
         # Delete the story.
         $handle_delete->($story);
@@ -416,7 +362,6 @@ my $handle_save_stay = sub {
         $story->save;
         log_event(($new ? 'story_create' : 'story_save'), $story);
         add_msg("Story &quot;" . $story->get_title . "&quot; saved.");
-        set_state_data($widget, 'work_id', '');
     }
 };
 
@@ -474,7 +419,8 @@ my $handle_create = sub {
 
     # Check permissions.
     my $work_id = get_state_data($widget, 'work_id');
-    my $gid = Bric::Biz::Workflow->lookup({ id => $work_id })->get_all_desk_grp_id;
+    my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
+    my $gid = $wf->get_all_desk_grp_id;
     chk_authz('Bric::Biz::Asset::Business::Story', CREATE, 0, $gid);
 
     # Make sure we have the required data. Check the story type.
@@ -506,34 +452,42 @@ my $handle_create = sub {
     return if $ret;
 
     # Create a new story with the initial values given.
-    my $init = {element__id => $param->{"$widget|at_id"},
-                source__id  => $param->{"$widget|source__id"},
-                user__id    => get_user_id };
+    my $init = { element__id => $param->{"$widget|at_id"},
+                 source__id  => $param->{"$widget|source__id"},
+                 user__id    => get_user_id };
 
     my $story = Bric::Biz::Asset::Business::Story->new($init);
 
     # Set the primary category
-    my $cat_event;
     $story->add_categories([$cid]);
     $story->set_primary_category($cid);
     my $cat = Bric::Biz::Category->lookup({ id => $cid });
-    $cat_event = sub {
-        log_event('story_add_category', $story,
-                  { Category => $cat->get_name })
-    };
+
+    # Set the workflow this story should be in.
+    $story->set_workflow_id($work_id);
 
     # Save everything else unless there were data errors
     return unless &$save_data($param, $widget, $story);
 
-    # Keep the story deactivated until they hit save.
-    $story->deactivate;
+    # Save the story.
     $story->save;
 
-    # Log that a new story has been created and a category added.
-    log_event('story_new', $story);
-    &$cat_event() if $cat_event;
+    # Send this story to the first desk.
+    my $start_desk = $wf->get_start_desk;
+    $start_desk->accept({ asset => $story });
+    $start_desk->save;
 
+    # Log that a new story has been created and generally handled.
+    log_event('story_new', $story);
+    log_event('story_add_category', $story, { Category => $cat->get_name });
+    log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
+    log_event('story_moved', $story, { Desk => $start_desk->get_name });
+    log_event('story_save', $story);
+    add_msg("Story &quot;" . $story->get_title . "&quot; created and saved.");
+
+    # Put the story into the session and clear the workflow ID.
     set_state_data($widget, 'story', $story);
+    set_state_data($widget, 'work_id', '');
 
     # Head for the main edit screen.
     set_redirect("/workflow/profile/story/");
@@ -600,14 +554,16 @@ my $handle_add_category = sub {
         my $msg = $story->check_uri();
         if ($msg) {
             $story->delete_categories([ $cat_id ]);
-            add_msg("The category was not added, as it would have caused a URI clash with story '$msg'.");
+            add_msg("The category was not added, as it would have caused a " .
+                    "URI clash with story '$msg'.");
             $story->save();
             set_state_data($widget, 'story', $story);
             return;
         }
         $story->save();
         my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
-        log_event('story_add_category', $story, { Category => $cat->get_name });        add_msg("Category &quot;" . $cat->get_name . "&quot; added.");
+        log_event('story_add_category', $story, { Category => $cat->get_name });
+        add_msg("Category &quot;" . $cat->get_name . "&quot; added.");
     }
     set_state_data($widget, 'story', $story);
 };
@@ -795,11 +751,9 @@ my $save_contrib = sub {
 ##############################################################################
 
 my $handle_save_contrib = sub {
-        my ($widget, $field, $param) = @_;
-
-        $save_contrib->($widget, $param);
-
-        # Set a redirect for the previous page.
+    my ($widget, $field, $param) = @_;
+    $save_contrib->($widget, $param);
+    # Set a redirect for the previous page.
     set_redirect(last_page);
     # Pop this page off the stack.
     pop_page;
@@ -808,13 +762,9 @@ my $handle_save_contrib = sub {
 ##############################################################################i
 
 my $handle_save_and_stay_contrib = sub {
-        my ($widget, $field, $param) = @_;
-
+    my ($widget, $field, $param) = @_;
     $save_contrib->($widget, $param);
-
 };
-
-
 
 ###############################################################################
 
@@ -1002,6 +952,7 @@ my ($cb) = substr($field, length($widget)+1);
 if (exists $cbs{$cb}) {
     $cbs{$cb}->($widget, $field, $param);
 } else {
-    die "No callback for $cb\n";
+    die Bric::Util::Fault::Exception::Ap->new
+      ({ msg => "No callback for $cb in story profile" })
 }
 </%init>

@@ -8,6 +8,7 @@ use Bric::Biz::Category;
 use Bric::Biz::Keyword;
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
+use Bric::App::Event    qw(log_event);
 use IO::Scalar;
 use XML::Writer;
 
@@ -28,15 +29,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-26 00:39:03 $
+$Date: 2002-11-09 01:43:45 $
 
 =head1 SYNOPSIS
 
@@ -105,7 +106,7 @@ The category's parent, complete path from the root.
 
 Set false to return deleted categories.
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -195,7 +196,7 @@ Specifies a single category_id to be retrieved.
 Specifies a list of category_ids.  The value for this option should be an
 array of interger "category_id" categories.
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -280,7 +281,7 @@ Available options:
 The XML document containing objects to be created.  The document must
 contain at least one category object.
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -348,7 +349,7 @@ include objects in the document that are not listed in update_ids then
 they will be treated as in create().  For that reason an update() with
 an empty update_ids list is equivalent to a create().
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -407,7 +408,7 @@ Specifies a single category_id to be deleted.
 
 Specifies a list of category_ids to delete.
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -469,12 +470,13 @@ sub delete {
         # delete the category
         $category->deactivate;
         $category->save;
+        log_event('category_deact', $category);
     }
     return name(result => 1);
 }
 }
 
-=back 4
+=back
 
 =head2 Private Class Methods
 
@@ -606,6 +608,7 @@ sub _load_category {
 
         # save category
         $category->save();
+        log_event('category_' . ($update? 'save' : 'new'), $category);
 
         # all done, setup the category_id and cache the category.
         push(@category_ids, $category->get_id);

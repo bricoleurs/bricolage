@@ -284,6 +284,23 @@ useful for generating tables of contents and such. [David]
 
 =head1 VERSION 1.4.5
 
+=head2 Changes
+
+=over 4
+
+=item *
+
+Categories are now displayed by their URIs instead of their names wherever
+possible. [David]
+
+=item *
+
+Added "Order" and "OrderDirection" parameters to C<< Bric::Util::Grp->list >>
+in order to be able to specify a different column and sort order for getting a
+list of groups. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
@@ -354,7 +371,56 @@ and workflow only if they're on desks and in workflow. [David]
 =item *
 
 Added support for the missing C<publish_status> parameter to
-Bric::Biz::Asset::Business::Media->list(). [David]
+C<< Bric::Biz::Asset::Business::Media->list >>. [David]
+
+=item *
+
+Setting permissions on the assets in a category works again. [David]
+
+=item *
+
+Fixed a bug where exporting a story via SOAP containing a date field
+would output the formatted date rather than the expected ISO 8601
+format.  Systems with a modified date format pref would then refuse to
+accept the story on import, producing an "Unable to unpack date"
+error. [Sam]
+
+=item *
+
+Stories, media, and templates created but not saved no longer disappear into
+the void. They are instead moved into workflow, put on a desk, and saved as
+soon as they were created. [David]
+
+=item *
+
+Permissions are now properly checked for category and workflow settings when
+new stories, media, and tempmlate assets are created. [David]
+
+=item *
+
+New templates are now active by default. [David]
+
+=item *
+
+Fixed bug where the "Checkin/Publish" (and "Checkin/Deploy") button wasn't
+provided to users who had EDIT access to a the assets on a desk. Permissions
+are now properly checked and the button displayed for those who can publish
+from a desk. [David]
+
+=item *
+
+Added missing debugging statement to Bric::Util::DBI. Thanks to Mark for the
+spot. [David]
+
+=item *
+
+The SOAP interface now properly logs events for its activities. [David]
+
+=item *
+
+Previewing a story while searching for a related story to link to an element
+no longer replaces the Bricolage UI with the preview, as was happening with
+some browsers. Instead, a separate preview window is opened. [David]
 
 =back
 

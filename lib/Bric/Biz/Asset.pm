@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-26 01:39:12 $
+$Date: 2002-11-09 01:43:45 $
 
 =head1 SYNOPSIS
 
@@ -1474,19 +1474,25 @@ sub get_grp_ids {
     my $self = shift;
     my @ids = $self->SUPER::get_grp_ids;
     if (ref $self && defined $self->get_workflow_id) {
-	# Add the desk group ID.
-	push @ids, $self->get_current_desk->get_asset_grp;
-	# Add the workflow group ID.
-	push @ids, $self->get_workflow_object->get_all_desk_grp_id;
 
-	# Add the category groud IDs. (these don't exist anymore!)
-	#if ($self->key_name eq 'story') {
-	#    # Stories can have multiple categories.
-	#    push @ids, map { $_->get_category_grp_id } $self->get_categories;
-	#} else {
-	#    # Media and Templates are in only one category.
-	#    push @ids, $self->get_category->get_category_grp_id;
-	#}
+	# Add the workflow group ID.
+        if ($self->get_workflow_id) {
+            push @ids, $self->get_workflow_object->get_all_desk_grp_id;
+        }
+
+	# Add the desk group ID.
+        if (my $d = $self->get_current_desk) {
+            push @ids, $d->get_asset_grp;
+        }
+
+	# Add the category groud IDs.
+	if ($self->key_name eq 'story') {
+	    # Stories can have multiple categories.
+	    push @ids, map { $_->get_asset_grp_id } $self->get_categories;
+	} else {
+	    # Media and Templates are in only one category.
+	    push @ids, $self->get_category->get_asset_grp_id;
+	}
     }
     return wantarray ? @ids : \@ids;
 }
@@ -1515,7 +1521,7 @@ NONE
 sub cancel_checkout {
 	my ($self) = @_;
 
-	$self->_set( { 
+	$self->_set( {
 		user__id => undef,
 		checked_out => 0,
 		_cancel		=> 1

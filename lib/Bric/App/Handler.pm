@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-13 22:01:54 $
+$Date: 2002-11-09 01:43:45 $
 
 =head1 SYNOPSIS
 
@@ -284,7 +284,9 @@ sub handle_err {
 
     # Send the error to the apache error log.
     $r->log->error($err->get_msg . ': ' . $err->get_payload . ($more_err ?
-		   "\n\n$more_err" : ''));
+		   "\n\n$more_err" : '') . "\nStack Trace:\n" .
+                   join("\n", map { ref $_ ? join(' - ', @{$_}[1,2,3]) : $_ }
+                        @{$err->get_stack}) . "\n\n");
 
     # Make sure we go back to translating character sets, or we'll be
     # screwed on the next request.

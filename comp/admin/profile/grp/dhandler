@@ -63,6 +63,17 @@ if (defined $id) {
 	    push @$left, { value =>  $obj->get_id,
 			   description => $obj->get_source_name };
 	}
+    } elsif ($class_name eq 'Bric::Util::Grp::CategorySet') {
+	foreach my $mem ( $grp->get_members ) {
+	    my $obj = $mem->get_object;
+	    push @$right, { value =>  $obj->get_id,
+			    description => $obj->get_uri };
+        }
+	# Get potential members.
+	foreach my $obj ( $memb_pkg->list ) {
+	    push @$left, { value =>  $obj->get_id,
+			   description => $obj->get_uri };
+	}
     } else {
 	foreach my $mem ( $grp->get_members ) {
 	    my $obj = $mem->get_object;
@@ -188,11 +199,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:10 $
+$Date: 2002-11-09 01:43:44 $
 
 =head1 DESCRIPTION
 

@@ -86,7 +86,7 @@ use strict;
 use constant DEBUG => $ENV{DEBUG} || 0;
 
 use constant USER     => 'admin';
-use constant PASSWORD => 'bric';
+use constant PASSWORD => 'change me now!';
 
 use Test::More qw(no_plan);
 use SOAP::Lite (DEBUG ? (trace => [qw(debug)]) : ());
@@ -231,4 +231,3 @@ $response = $soap->move(name(move_ids =>
 ok(!$response->fault,  'fault check');
 exit 1 if $response->fault;
 ok($response->result, "moved all templates to deploy");
-

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-09-26 01:39:12 $
+$Date: 2002-11-09 01:43:45 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -33,6 +33,7 @@ $obj
 <%init>;
 # browser spacing stuff
 my $agent = $m->comp("/widgets/util/detectAgent.mc");
+
 my $ieSpacer = $agent->{os} ne "SomeNix" ?
   qq{<tr><td colspan="3"><img src="/media/images/spacer.gif" } .
   qq{width="5" height="5" /></td></tr>}
@@ -98,20 +99,24 @@ if ($versions) {
 <%perl>;
 my $wf;
 my $work_id = get_state_data($widget, 'work_id');
-my $type;
+my ($type, $pkg);
 if ($widget eq 'story_prof') {
     $type = 'story';
+    $pkg = get_package_name($type);
 } elsif ($widget eq 'media_prof') {
     $type = 'media';
+    $pkg = get_package_name($type);
 } else {
     $type = 'fa';
+    $pkg = get_package_name('formatting');
 }
 
-my $story = get_state_data($widget, $type);
+my $asset = get_state_data($widget, $type);
 if ($work_id) {
    $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
 } else {
-   $work_id = $story->get_workflow_id();
+
+   $work_id = $asset->get_workflow_id();
    $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
 }
 </%perl>
@@ -127,9 +132,9 @@ if ($work_id) {
   <table border="0" cellpadding="0" cellspacing="0">
   <tr>
 % if ($versions && @$versions > 1) {
-    <td valign="middle"><input type="image" src="/media/images/revert_dgreen.gif" border=0 name="<% $widget %>|revert_cb" value="revert"></td>
+    <td valign="middle"><input type="image" src="/media/images/revert_dgreen.gif" border="0" name="<% $widget %>|revert_cb" value="revert"></td>
     <td valign="middle">&nbsp;to <% $versionText %></td>
-    <td valign="middle"><input type="image" src="/media/images/view_text_dgreen.gif" border=0 hspace=5 name="<% $widget %>|view_cb" value="view"></td>
+    <td valign="middle"><input type="image" src="/media/images/view_text_dgreen.gif" border="0" hspace="5" name="<% $widget %>|view_cb" value="view"></td>
 % } else {
   <td>&nbsp;</td>
 % }
@@ -141,19 +146,19 @@ if ($work_id) {
 </tr>
 <% $ieSpacer %> 
 <tr>
-  <td class=lightHeader colspan="3"><img src="/media/images/spacer.gif" width=580 height=1></td>
+  <td class=lightHeader colspan="3"><img src="/media/images/spacer.gif" width="580" height="1"></td>
 </tr>
 <% $ieSpacer %> 
 </table>
 
-<table width=580 cellpadding=0 cellspacing=0>
+<table width="580" cellpadding="0" cellspacing="0">
 <tr>
-  <td width=60><img src="/media/images/spacer.gif" width=60 height=1></td>
-  <td><input type="image" src="/media/images/save_red.gif" border=0 name="<% $widget %>|save_cb" value="Save"></td>
+  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
+  <td><input type="image" src="/media/images/save_red.gif" border="0" name="<% $widget %>|save_cb" value="Save"></td>
   <td><input type="image" src="/media/images/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_cb"></td>
-  <td width=60><img src="/media/images/spacer.gif" width=60 height=1></td>
-  <td><input type="image" src="/media/images/cancel_lgreen.gif" border=0 name="<% $widget %>|return_cb" value="Return To Desk"></td>
-  <td><input type="image" src="/media/images/cancel_check_out_lgreen.gif" border=0 name="<% $widget %>|cancel_cb" value="Cancel Checkout"></td>
-  <td width=60><img src="/media/images/spacer.gif" width=60 height=1></td>
+  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
+  <td><input type="image" src="/media/images/cancel_lgreen.gif" border="0" name="<% $widget %>|return_cb" value="Return To Desk"></td>
+  <td><input type="image" src="/media/images/cancel_check_out_lgreen.gif" border="0" name="<% $widget %>|cancel_cb" value="Cancel Checkout"></td>
+  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
 </tr>
 </table>

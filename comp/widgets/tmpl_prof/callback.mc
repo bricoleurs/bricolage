@@ -12,16 +12,15 @@ if ($field eq "$widget|save_cb") {
     my $fa = get_state_data($widget, 'fa');
 
     if ($param->{"$widget|delete"}) {
-	# Delete the fa.
-	$delete_fa->($fa);
+        # Delete the fa.
+        $delete_fa->($fa);
     } else {
         # Check syntax.
         return unless $check_syntax->($widget, $fa);
-	# Make sure the fa is activated and then save it.
-	$fa->activate;
-	$fa->save;
-	log_event('formatting_save', $fa);
-	add_msg("Template &quot;" . $fa->get_name . "&quot; saved.");
+        # Save it.
+        $fa->save;
+        log_event('formatting_save', $fa);
+        add_msg("Template &quot;" . $fa->get_name . "&quot; saved.");
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -30,19 +29,19 @@ if ($field eq "$widget|save_cb") {
     clear_state($widget);
 
     if ($return eq 'search') {
-	my $workflow_id = $fa->get_workflow_id();
-	my $url = $SEARCH_URL . $workflow_id . '/';
-	set_redirect($url);
+        my $workflow_id = $fa->get_workflow_id();
+        my $url = $SEARCH_URL . $workflow_id . '/';
+        set_redirect($url);
     } elsif ($return eq 'active') {
-	my $workflow_id = $fa->get_workflow_id();
-	my $url = $ACTIVE_URL . $workflow_id;
-	set_redirect($url);
+        my $workflow_id = $fa->get_workflow_id();
+        my $url = $ACTIVE_URL . $workflow_id;
+        set_redirect($url);
     } elsif ($return =~ /\d+/) {
-	my $workflow_id = $fa->get_workflow_id();
-	my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
-	set_redirect($url);
+        my $workflow_id = $fa->get_workflow_id();
+        my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
+        set_redirect($url);
     } else {
-	set_redirect("/");
+        set_redirect("/");
     }
 }
 
@@ -58,20 +57,19 @@ elsif ($field eq "$widget|save_and_stay_cb") {
     my $fa = get_state_data($widget, 'fa');
 
     if ($param->{"$widget|delete"}) {
-	# Delete the template.
-	$delete_fa->($fa);
-	# Get out of here, since we've blow it away!
-	set_redirect("/");
-	pop_page();
-	clear_state($widget);
+        # Delete the template.
+        $delete_fa->($fa);
+        # Get out of here, since we've blow it away!
+        set_redirect("/");
+        pop_page();
+        clear_state($widget);
     } else {
         # Check syntax.
         return unless $check_syntax->($widget, $fa);
-	# Make sure the template is activated and then save it.
-	$fa->activate;
-	$fa->save;
-	log_event('formatting_save', $fa);
-	add_msg("Template &quot;" . $fa->get_name . "&quot; saved.");
+        # Save the template.
+        $fa->save;
+        log_event('formatting_save', $fa);
+        add_msg("Template &quot;" . $fa->get_name . "&quot; saved.");
     }
 }
 
@@ -79,21 +77,21 @@ elsif ($field eq "$widget|revert_cb") {
     my $fa      = get_state_data($widget, 'fa');
     my $version = $param->{"$widget|version"};
     $fa->revert($version);
-    $fa->save();
+    $fa->save;
     clear_state($widget);
 }
 
 elsif ($field eq "$widget|view_cb") {
     my $fa      = get_state_data($widget, 'fa');
     my $version = $param->{"$widget|version"};
-    my $id      = $fa->get_id();
+    my $id      = $fa->get_id;
     set_redirect("/workflow/profile/templates/$id/?version=$version");
 }
 
 elsif ($field eq "$widget|cancel_cb") {
     my $fa = get_state_data($widget, 'fa');
-    $fa->cancel_checkout();
-    $fa->save();
+    $fa->cancel_checkout;
+    $fa->save;
     log_event('formatting_cancel_checkout', $fa);
     clear_state($widget);
     set_redirect("/");
@@ -139,33 +137,30 @@ elsif ($field eq "$widget|create_cb") {
 elsif ($field eq "$widget|return_cb") {
     my $state        = get_state_name($widget);
     my $version_view = get_state_data($widget, 'version_view');
-
-	my $fa = get_state_data($widget, 'fa');
+    my $fa = get_state_data($widget, 'fa');
 
     if ($version_view) {
-		my $fa_id = $fa->get_id();
-
-		clear_state($widget);
-		set_redirect("/workflow/profile/templates/$fa_id/?checkout=1");
+        my $fa_id = $fa->get_id;
+        clear_state($widget);
+        set_redirect("/workflow/profile/templates/$fa_id/?checkout=1");
     } else {
-	my $url;
-	my $return = get_state_data($widget, 'return') || '';
-	my $wid = $fa->get_workflow_id;
-	if ($return eq 'search') {
-	    $wid = get_state_data('workflow', 'work_id') || $wid;
-	    $url = $SEARCH_URL . $wid . '/';
-	} elsif ($return eq 'active') {
-	    $url = $ACTIVE_URL . $wid;
-	} elsif ($return =~ /\d+/) {
-	    $url = $DESK_URL . $wid . '/' . $return . '/';
-	} else {
-	    $url = '/';
-	}
+        my $url;
+        my $return = get_state_data($widget, 'return') || '';
+        my $wid = $fa->get_workflow_id;
+        if ($return eq 'search') {
+            $wid = get_state_data('workflow', 'work_id') || $wid;
+            $url = $SEARCH_URL . $wid . '/';
+        } elsif ($return eq 'active') {
+            $url = $ACTIVE_URL . $wid;
+        } elsif ($return =~ /\d+/) {
+            $url = $DESK_URL . $wid . '/' . $return . '/';
+        } else {
+            $url = '/';
+        }
 
-	# Clear the state and send 'em home.
-	clear_state($widget);
-	set_redirect($url);
-
+        # Clear the state and send 'em home.
+        clear_state($widget);
+        set_redirect($url);
     }
 
     # Remove this page from the stack.
@@ -179,47 +174,46 @@ elsif ($field eq "$widget|recall_cb") {
     $ids = ref $ids ? $ids : [$ids];
 
     foreach (@$ids) {
-	my ($o_id, $w_id) = split('\|', $_);
-	my $fa = Bric::Biz::Asset::Formatting->lookup({'id' => $o_id});
-	if (chk_authz($fa, EDIT, 1)) {
-	    my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
+        my ($o_id, $w_id) = split('\|', $_);
+        my $fa = Bric::Biz::Asset::Formatting->lookup({'id' => $o_id});
+        if (chk_authz($fa, EDIT, 1)) {
+            my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
 
-	    # Put this formatting asset into the current workflow
-	    $fa->set_workflow_id($w_id);
-	    log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
+            # Put this formatting asset into the current workflow
+            $fa->set_workflow_id($w_id);
+            log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
 
-	    # Get the start desk for this workflow.
-	    my $start_desk = $wf->get_start_desk;
+            # Get the start desk for this workflow.
+            my $start_desk = $wf->get_start_desk;
 
-	    # Put this formatting asset on to the start desk.
-	    $start_desk->accept({'asset' => $fa});
-	    $start_desk->checkout($fa, get_user_id);
-	    $start_desk->save;
-	    log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
+            # Put this formatting asset on to the start desk.
+            $start_desk->accept({'asset' => $fa});
+            $start_desk->checkout($fa, get_user_id);
+            $start_desk->save;
+            log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
             log_event('formatting_checkout', $fa);
-	} else {
-	    add_msg("Permission to checkout &quot;" . $fa->get_name
-		    . "&quot; denied");
-	}
+        } else {
+            add_msg("Permission to checkout &quot;" . $fa->get_name
+                    . "&quot; denied");
+        }
     }
 
     if (@$ids > 1) {
-	# Go to 'my workspace'
-	set_redirect("/");
+        # Go to 'my workspace'
+        set_redirect("/");
     } else {
-	# Go to the profile screen
+        # Go to the profile screen
         my ($o_id, $w_id) = split('\|', $ids->[0]);
-	set_redirect('/workflow/profile/templates/'.$o_id.'?checkout=1');
+        set_redirect('/workflow/profile/templates/'.$o_id.'?checkout=1');
     }
 }
 
 elsif ($field eq "$widget|checkout_cb") {
     my $ids = $param->{$field};
-
     $ids = ref $ids ? $ids : [$ids];
 
     foreach my $t_id (@$ids) {
-	my $t_obj = Bric::Biz::Asset::Formatting->lookup({'id' => $t_id});
+        my $t_obj = Bric::Biz::Asset::Formatting->lookup({'id' => $t_id});
         if (chk_authz($t_obj, EDIT, 1)) {
             $t_obj->checkout({ user__id => get_user_id });
             $t_obj->save;
@@ -231,16 +225,15 @@ elsif ($field eq "$widget|checkout_cb") {
     }
 
     if (@$ids > 1) {
-	# Go to 'my workspace'
-	set_redirect("/");
+        # Go to 'my workspace'
+        set_redirect("/");
     } else {
-	# Go to the profile screen
-	set_redirect('/workflow/profile/templates/'.$ids->[0].'?checkout=1');
+        # Go to the profile screen
+        set_redirect('/workflow/profile/templates/'.$ids->[0].'?checkout=1');
     }
 }
 
 </%init>
-
 <%once>
 
 #################
@@ -249,7 +242,6 @@ elsif ($field eq "$widget|checkout_cb") {
 my $DESK_URL = '/workflow/profile/desk/';
 my $SEARCH_URL = '/workflow/manager/templates/';
 my $ACTIVE_URL = '/workflow/active/templates/';
-
 
 my $save_meta = sub {
     my ($param, $widget, $fa) = @_;
@@ -275,45 +267,14 @@ my $save_object = sub {
     my ($widget, $param) = @_;
     my $fa = get_state_data($widget, 'fa');
     $save_meta->($param, $widget, $fa);
-
-    my $work_id = get_state_data($widget, 'work_id');
-
-    # Only update the workflow ID if they've just created the template
-    if ($work_id) {
-        $fa->set_workflow_id($work_id);
-	$fa->activate;
-
-        my $wf = Bric::Biz::Workflow->lookup({'id' => $work_id});
-        log_event('formatting_add_workflow', $fa, {Workflow => $wf->get_name});
-        my $start_desk = $wf->get_start_desk;
-
-        $start_desk->accept({'asset' => $fa});
-        $start_desk->save;
-        log_event('formatting_moved', $fa, {Desk => $start_desk->get_name});
-    }
-
-    # Make sure this formatting asset is active
-    $fa->activate;
 };
-
 
 my $checkin = sub {
     my ($widget, $param, $fa) = @_;
     my $new = defined $fa->get_id ? 0 : 1;
     $save_meta->($param, $widget, $fa);
 
-    my $work_id = get_state_data($widget, 'work_id');
-    my $wf;
-    if ($work_id) {
-        $fa->set_workflow_id($work_id);
-        my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
-        log_event('formatting_add_workflow', $fa,
-                  { Workflow => $wf->get_name });
-        $fa->checkout({ user__id => get_user_id })
-          unless $fa->get_checked_out;
-    }
     $fa->checkin;
-    $fa->activate;
 
     # Get the desk information.
     my $desk_id = $param->{"$widget|desk"};
@@ -326,7 +287,6 @@ my $checkin = sub {
         $fa->set_workflow_id(undef);
         $fa->save;
         log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
-        log_event('formatting_checkout', $fa) if $work_id;
         log_event('formatting_checkin', $fa);
         log_event("formatting_rem_workflow", $fa);
         add_msg("Template &quot;" . $fa->get_name . "&quot; saved and " .
@@ -341,7 +301,7 @@ my $checkin = sub {
             $no_log = 1;
         } else {
             # Find one in this workflow.
-            $wf ||= Bric::Biz::Workflow->lookup
+            my $wf = Bric::Biz::Workflow->lookup
               ({ id => $fa->get_workflow_id });
             foreach my $d ($wf->allowed_desks) {
                 $pub_desk = $d and last if $d->can_publish;
@@ -467,7 +427,8 @@ my $create_fa = sub {
 
     # Check permissions.
     my $work_id = get_state_data($widget, 'work_id');
-    my $gid = Bric::Biz::Workflow->lookup({ id => $work_id })->get_all_desk_grp_id;
+    my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
+    my $gid = $wf->get_all_desk_grp_id;
     chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
 
     # Create a new formatting asset.
@@ -488,19 +449,33 @@ my $create_fa = sub {
         die $err unless $msg =~ /already exists/;
         # This template already exists.
         add_msg("An active template already exists for the selected output " .
-                "channel, category, element, and burner you selected. You " .
+                 "channel, category, element, and burner you selected. You " .
                 "must delete the existing template before you can add a " .
                 "new one.");
         return;
     }
-    # Keep the formatting asset deactivated until the user clicks save.
-    $fa->deactivate;
+
+    # Set the workflow this template should be in.
+    $fa->set_workflow_id($work_id);
+
+    # Save the template.
     $fa->save;
+
+    # Send this template to the first desk.
+    my $start_desk = $wf->get_start_desk;
+    $start_desk->accept({ asset => $fa });
+    $start_desk->save;
 
     # Log that a new media has been created.
     log_event('formatting_new', $fa);
+    log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
+    log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
+    log_event('formatting_save', $fa);
+    add_msg("Template &quot;" . $fa->get_name . "&quot; created and saved.");
 
+    # Put the template into the session and clear the workflow ID.
     set_state_data($widget, 'fa', $fa);
+    set_state_data($widget, 'work_id', '');
 
     # Head for the main edit screen.
     set_redirect("/workflow/profile/templates/?checkout=1");
@@ -511,7 +486,3 @@ my $create_fa = sub {
 };
 
 </%once>
-
-%#--- Log History ---#
-
-

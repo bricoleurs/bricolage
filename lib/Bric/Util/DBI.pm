@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-08-14 19:47:37 $
+$Date: 2002-11-09 01:43:46 $
 
 =head1 SYNOPSIS
 
@@ -1362,7 +1362,8 @@ sub _debug_execute {
     print STDERR "+++++++++++++ Execute Query [$sig]\n";
     print STDERR "+++++++++++++ ARGS: ", 
 	join(', ', map { defined $_ ? $_ : 'NULL' } @{$_[0]}),
-	    "\n\n\n";
+	    "\n\n";
+    _print_call_trace() if CALL_TRACE;
 }
 
 =item _debug_prepare_and_execute(\@args, \$sql)
@@ -1419,7 +1420,7 @@ sub _print_call_trace {
   while (my @c = caller($n++)) {
     printf STDERR " %-40s => %s()\n", "$c[0] ($c[2])", $c[3];
     last if $c[0] =~ /HTML::Mason/;
-  } 
+  }
   print STDERR "\n";
 }
 
@@ -1429,6 +1430,7 @@ Starts a timer used to profile database calls.  Should be
 called before query execution when DBI_PROFILE is true.
 
 =cut
+
 {
     my $PROF_TIMER;
     sub _profile_start {
@@ -1467,9 +1469,9 @@ David E. Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<DBI|DBI>, 
-L<Bric|Bric>, 
-L<Bric::Util::Time|Bric::Util::Time>, 
+L<DBI|DBI>,
+L<Bric|Bric>,
+L<Bric::Util::Time|Bric::Util::Time>,
 L<Bric::Util::DBD::Oracle|Bric::Util::DBD::Oracle>
 
 =cut
