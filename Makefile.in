@@ -29,6 +29,22 @@ HTML = ${DOC}/html
 MAN = ${DOC}/man
 
 
+# Installation related variables
+# Most of these are standard --with-switches
+# availible for the ./configure user
+prefix  = @prefix@
+exec_prefix  = @exec_prefix@
+bindir  = @bindir@
+datadir  = @datadir@
+compdir = @compdir@
+confdir = @sysconfdir@
+htmldir = @htmldir@
+mandir  = @mandir@
+docdir  = @docdir@
+VPATH = @srcdir@
+
+
+
 # Bricolage configuration info
 APACHE_USER = @APACHE_USER@
 APACHE_GROUP = @APACHE_GROUP@
@@ -49,21 +65,6 @@ DROPUSER = @DROPUSER@
 CREATEDB = @CREATEDB@
 CONFIG_STRING = @CONFIG_STRING@
 CPAN_WORKS = @CPAN_WORKS@
-
-
-# Installation related variables
-# Most of these are standard --with-switches
-# availible for the ./configure user
-prefix  = @prefix@
-exec_prefix  = @exec_prefix@
-bindir  = @bindir@
-datadir  = @datadir@
-compdir = @compdir@
-confdir = @sysconfdir@
-htmldir = @htmldir@
-mandir  = @mandir@
-docdir  = @docdir@
-VPATH = @srcdir@
 
 
 # now we'll use some builtin 
@@ -191,7 +192,7 @@ chowndirs:
 chmoddirs:
 	chmod -R a+r ${htmldir} ${docdir} ${bindir}
 	chmod -R a+x ${bindir}
-uninstall: uninstalldatabase uninstall-lib uninstallfiles uninstalldirs dist-clean uninstall-database
+uninstall: uninstall-database uninstall-lib uninstallfiles uninstalldirs dist-clean
 uninstall-lib:
 	-cd ${LIB} && make uninstall
 uninstalldirs:
@@ -204,7 +205,7 @@ uninstallfiles:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing previously installed files
 	-@rm -f ${INSTALLED_FILES}
-uninstalldatabase:
+uninstall-database:
 	-${BIN}/bric_apachectl stop
 	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
 	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
@@ -253,11 +254,7 @@ install-doc: ${DOC_TARGETS}
 ${DOC_TARGETS}: ${docdir}/%: %
 	${install-files}
 
-# this target drops and creates the user and database
-# and then installs the datafiles.  NOTE: This is a real
-# target which timestamps a file of the same name.  This
-# will allow those of us using CVS to do installs without
-# wiping out an old db.
+# creates the user and database and then installs the datafiles.  
 ${INST}/installed-database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/grants.sql
 	perl -pi -e 's/nobody/${DBI_USER}/g' ${INST}/bricolage.sql
 	@${POST_INSTALL}
@@ -267,10 +264,6 @@ ${INST}/installed-database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/gra
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/grants.sql' ${POSTGRES_SYSTEM_USER} 2>> $@
 
 install-database: ${INST}/installed-database
-
-uninstall-database:
-	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
-	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
 
 # This makes the grant script
 ${INST}/grants.sql: ${INST}/bricolage.sql
@@ -305,7 +298,7 @@ ifeq (${CPAN_WORKS},yes)
 endif
 
 ${INST}/missing_modules:
-      for M in ${MISSING_MODULES} ; do echo "$$M\n" >> $@ ; done
+	for M in ${MISSING_MODULES} ; do echo $$M\n >> $@ ; done
 
 
 # These targets are unused for the moment
@@ -359,7 +352,7 @@ test:
 	cd ${LIB} && make test
 
 configure_options:
-	echo ${CONFIG_STRING} > $@
+	echo "${CONFIG_STRING}" > $@
 
 
 # TODO: Make this recursively generate tag files in all directories

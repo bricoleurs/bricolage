@@ -3,6 +3,8 @@ use Bric;
 use File::Find;
 use File::Spec;
 use strict;
+my $mandir = '';
+my $libdir = '';
 # find all .pm and .pod files below this directory
 my %PM;
 File::Find::find({no_chdir => 1,
@@ -11,8 +13,10 @@ File::Find::find({no_chdir => 1,
 		    $PM{$_} = File::Spec->catfile('${INST_LIBDIR}', $_);
 		  }},
 		 File::Spec->curdir);
-		 
+
 # Write out the Makefile
-WriteMakefile(NAME        => 'Bric',
-	      VERSION     => $Bric::VERSION,
-	      PM          => \%PM);
+WriteMakefile(NAME           => 'Bric',
+              VERSION        => $Bric::VERSION,
+              PM             => \%PM,
+              INSTALLMAN3DIR => "$mandir",
+              INSTALLSITELIB  => "$libdir");

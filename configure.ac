@@ -5,17 +5,24 @@ VERSION=`perl -MBric -e 'print $Bric::VERSION'`
 # Process this file with autoconf to produce a configure script.
 AC_INIT(Bricolage,${VERSION}, http://bricolage-bugzilla.thepirtgroup.com)
 AC_PREFIX_DEFAULT(/usr/local/bricolage)
+# Capture the config string early.  This will wind up stored in
+# a clear text file with open read perms, so get rid of the
+# passwords.
+CONFIG_STRING=`echo $@ | sed -e 's/ --with-dbi-pass=[^ ]*//g'`
+
 # Installation directory overrides
 # bricolage has historically used a slightly
 # different directory scheme from the GNU standard
 # we'll roll with it
 # Use braces instead of parens because sh, perl, etc. also accept them.
-datadir='${prefix}/data'
-sysconfdir='${prefix}/conf'
-# Capture the config string early.  This will wind up stored in
-# a clear text file with open read perms, so get rid of the
-# passwords.
-CONFIG_STRING=`echo $@ | sed -e 's/ --with-dbi-pass=[^ ]*//g'`
+libdir=''
+mandir=''
+if test -z "$datadir" ; then
+	datadir='${prefix}/data'
+fi
+if test -z "$sysconfdir" ; then
+	sysconfdir='${prefix}/conf'
+fi
 
 # Additional --with-switches
 # SYNTAX: AC_VAR_WITH(VARNAME,switchname,default)
@@ -34,13 +41,14 @@ AC_VAR_WITH(POSTGRES_ROOT_USER,pgroot-user,postgres)
 AC_VAR_WITH(POSTGRES_SYSTEM_USER,pgsystem-user,postgres)
 # TODO: System defaults for these can be determined from $APACHE -V
 AC_VAR_WITH(SERVER_ROOT,server_root,/usr/local/apache)
-AC_VAR_WITH(APACHE_CONF,apache-conf,'${prefix}/conf/httpd.conf')
+AC_VAR_WITH(APACHE_CONF,apache-conf,'${confdir}/httpd.conf')
 AC_VAR_WITH(LOGDIR,log_dir,${SERVER_ROOT}/logs)
 AC_VAR_WITH(ERROR_LOG,error_log,${LOGDIR}/error.log)
 AC_VAR_WITH(ACCESS_LOG,access_log,${LOGDIR}/access.log)
 AC_VAR_WITH(SSL_LOG,ssl_log,${LOGDIR}/ssl_engine_log)
 AC_VAR_WITH(PID_FILE,pid_file,${LOGDIR}/httpd.pid)
 AC_VAR_WITH(CPAN,cpan,'yes' set to 'no' to turn off the check for a working CPAN Module)
+
 
 # Warn if the specified user doesn't seem to 
 # exist
@@ -77,7 +85,7 @@ PGPATHTOCHECK=$PGHOME/bin:/usr/local/pgsql/bin:/opt/pgsql/bin:/usr/local/postgre
 
 # Checks for programs
 AC_PROG_APACHE(1.3.12)
-AC_PROG_POSTGRES(PGHOME, 7.1.3)
+AC_PROG_POSTGRES(PGHOME, 7.1)
 AC_PATH_PROG(PSQL, psql, , $PGPATHTOCHECK)
 AC_PATH_PROG(DROPDB, dropdb, , $PGPATHTOCHECK)
 AC_PATH_PROG(DROPUSER, dropuser, , $PGPATHTOCHECK)
@@ -213,5 +221,5 @@ AC_SUBST(CONFIG_STRING)
 # write out the makefiles
 # TODO: The files here that aren't makefiles should eventually
 # 		be handled by make, this is cheating in a way
-AC_CONFIG_FILES([Makefile doc/Makefile])
+AC_CONFIG_FILES([Makefile doc/Makefile lib/Makefile.PL])
 AC_OUTPUT
