@@ -38,15 +38,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:45 $
+$Date: 2002-11-13 06:02:09 $
 
 =head1 SYNOPSIS
 
@@ -882,7 +882,10 @@ sub _load_stories {
             my @kws;
             foreach (@{$sdata->{keywords}{keyword}}) {
                 my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
-                $kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
+                unless ($kw) {
+                    $kw = Bric::Biz::Keyword->new({ name => $_})->save;
+                    log_event('keyword_new', $kw);
+                }
                 push @kws, $kw;
             }
 
