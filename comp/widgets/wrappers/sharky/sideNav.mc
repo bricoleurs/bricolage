@@ -153,14 +153,14 @@ foreach my $wf (@$workflows) {
 
     $m->out("<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>\n");
 
-    if ( $nav->{"workflow:". $wf->{name}} ) { # show open workflow
+    if ( $nav->{"workflow-". $esc_name} ) { # show open workflow
 	$m->out("<tr class=sideNavInactiveCell>\n");
 	$m->out(qq{ <td><img src="/media/images/spacer.gif" width=10 height=5></td> } );
 	$m->out("<td valign=middle $tabHeight width=15>");
-	$m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow:${esc_name}_cb=0')">});
+	$m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow-${esc_name}_cb=0')">});
 	$m->out("<img src=\"/media/images/dkgreen_arrow_open.gif\" width=13 height=9 border=0 hspace=0></a></td>\n");
 	$m->out("<td valign=middle $tabHeight width=135>");
-	$m->out(qq {<a href="#" class=sideNavHeaderBold onClick="return doNav('} . $r->uri . qq {?nav|workflow:${esc_name}_cb=0')">});
+	$m->out(qq {<a href="#" class=sideNavHeaderBold onClick="return doNav('} . $r->uri . qq {?nav|workflow-${esc_name}_cb=0')">});
 	$m->out(uc ( $wf->{name} )  . "</a>");
 	$m->out("</td>\n</tr>");
 
@@ -210,10 +210,10 @@ foreach my $wf (@$workflows) {
 	$m->out("<tr class=sideNavInactiveCell>\n");
 	$m->out(qq{ <td><img src="/media/images/spacer.gif" width=10 height=5></td> } );
 	$m->out("<td valign=middle $tabHeight width=140>");
-	$m->out("<a class=sideNavHeader href=" . $r->uri . "?nav|workflow:${esc_name}_cb=1>");
-	$m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow:${esc_name}_cb=1')">});
+	$m->out("<a class=sideNavHeader href=" . $r->uri . "?nav|workflow-${esc_name}_cb=1>");
+	$m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow-${esc_name}_cb=1')">});
 	$m->out(qq{<img src="/media/images/mdgreen_arrow_closed.gif" width=8 height=13 border=0 hspace=2></a>\n});
-	$m->out(qq {<a href="#" class=sideNavHeader onClick="return doNav('} . $r->uri . qq {?nav|workflow:${esc_name}_cb=1')">});
+	$m->out(qq {<a href="#" class=sideNavHeader onClick="return doNav('} . $r->uri . qq {?nav|workflow-${esc_name}_cb=1')">});
 	$m->out( uc ( $wf->{name} )  . "</a></td>\n</tr>");
 	$m->out("</table>\n");
 
@@ -254,7 +254,7 @@ foreach my $wf (@$workflows) {
     <tr>
       <td class=sideNavInactiveCell width=9><img src="/media/images/spacer.gif" width=9 height=1></td>
       <td class=sideNavInactiveCell <% $tabHeight %> width=141><a href="#" onClick="return doNav('<% $r->uri . "?nav|adminSystem_cb=0" %>')">
-        <img src="/media/images/dkgreen_arrow_open" width=13 height=9 border=0></a>
+        <img src="/media/images/dkgreen_arrow_open.gif" width=13 height=9 border=0></a>
 	<a class=sideNavHeaderBold href="#" onClick="return doNav('<% $r->uri . "?nav|adminSystem_cb=0" %>')">SYSTEM</a>
       </td>
     </tr>
@@ -304,7 +304,7 @@ foreach my $wf (@$workflows) {
     <tr>
       <td class=sideNavInactiveCell <% $tabHeight %> width=9><img src="/media/images/spacer.gif" width=9 height=1></td>
       <td class=sideNavInactiveCell <% $tabHeight %> width=141><a href="#" onClick="return doNav('<% $r->uri . "?nav|adminPublishing_cb=0" %>')">
-        <img src="/media/images/dkgreen_arrow_open" width=13 height=9 border=0></a>
+        <img src="/media/images/dkgreen_arrow_open.gif" width=13 height=9 border=0></a>
 	<a class=sideNavHeaderBold href="#"  onClick="return doNav('<% $r->uri . "?nav|adminPublishing_cb=0" %>')">PUBLISHING</a>
       </td>
     </tr>
@@ -353,7 +353,7 @@ foreach my $wf (@$workflows) {
     <tr>
       <td class=sideNavInactiveCell <% $tabHeight %> width=9><img src="/media/images/spacer.gif" width=9 height=1></td>
       <td class=sideNavInactiveCell <% $tabHeight %> width=141><a href="#" onClick="return doNav('<% $r->uri . "?nav|distSystem_cb=0" %>')">
-        <img src="/media/images/dkgreen_arrow_open" width=13 height=9 border=0></a>
+        <img src="/media/images/dkgreen_arrow_open.gif" width=13 height=9 border=0></a>
 	<a class=sideNavHeaderBold href="#" onClick="return doNav('<% $r->uri . "?nav|distSystem_cb=0" %>')">DISTRIBUTION</a>
       </td>
     </tr>
@@ -447,10 +447,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.2.1 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:42 $
+$Date: 2002-01-23 23:16:57 $
 
 </%doc>
