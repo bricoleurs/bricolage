@@ -12,7 +12,7 @@
 -- SEQUENCES.
 --
 CREATE SEQUENCE seq_event START 1024;
-
+CREATE SEQUENCE seq_event_attr START 1024;
 
 -- 
 -- TABLE: event 
@@ -20,7 +20,7 @@ CREATE SEQUENCE seq_event START 1024;
 
 CREATE TABLE event (
     id                NUMERIC(10, 0)    NOT NULL
-                                        DEFAULT NEXTVAL('seq_attr_person'),
+                                        DEFAULT NEXTVAL('seq_event'),
     event_type__id    NUMERIC(10, 0)    NOT NULL,
     usr__id           NUMERIC(10, 0)    NOT NULL,
     obj_id            NUMERIC(10, 0)    NOT NULL,
@@ -33,9 +33,12 @@ CREATE TABLE event (
 -- TABLE: event_attr
 --
 CREATE TABLE event_attr (
+    id                   NUMERIC(10, 0)   NOT NULL
+                                          DEFAULT NEXTVAL('seq_event_attr'),
     event__id            NUMERIC(10, 0)   NOT NULL,
     event_type_attr__id  NUMERIC(10, 0)   NOT NULL,
-    value                VARCHAR(128)
+    value                VARCHAR(128),
+    CONSTRAINT pk_event_attr__id PRIMARY KEY (id)
 );
 
 --

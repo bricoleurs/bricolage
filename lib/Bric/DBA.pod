@@ -217,7 +217,7 @@ for itself.
 
 The specific tuning recommendations below are for PostgreSQL versions 7.3 and
 7.4. Tuning will be slightly different for version 7.2, and very different for
-version 7.5 when it comes out. Consult the necessary documentation.
+version 8.0 when it comes out. Consult the necessary documentation.
 
 To tune PostgreSQL, first determine the amount of memory you want to give to
 your running PostgreSQL server. In a production environment where PostgreSQL
@@ -364,7 +364,7 @@ the number of data pages would be C<1024 * 1024 / 8 = 131072>. For each record
 updated in the database, PostgreSQL must store a dead tuple. The C<fsm_map>
 setting determines how much space is held open so that dead tuples don't crowd
 the data pages. If you estimate 50% updates, then set C<max_fsm_pages> to
-C<131072 * .3 = 65536>:
+C<131072 * .5 = 65536>:
 
   max_fsm_pages = 65536
 

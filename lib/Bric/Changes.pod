@@ -31,6 +31,11 @@ clone. [David]
 Added F<contrib/thumbnails/precreate-thumbs.pl> script to pre-create
 thumbnails from images. Useful for upgraders. [Scott]
 
+=item *
+
+Added primary key to the "event_attr" table in the database. This will make it
+easier to do database replication. Reported by Kenneth Marshall. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -60,6 +65,11 @@ The Burner object's C<encoding> attribute is now settable as well as readable.
 =item *
 
 The category browser works again. [David]
+
+=item *
+
+Fixed the "event" table to use the correct sequence the id column's default
+value (although the default is never used, this is a good precaution). [David]
 
 =back
 

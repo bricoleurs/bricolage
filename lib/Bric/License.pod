@@ -275,6 +275,8 @@ Friends who have spotted bugs include:
 
 =item Patrick Michael Kane
 
+=item Kenneth Marshall
+
 =back
 
 Bricolage's translation team:
