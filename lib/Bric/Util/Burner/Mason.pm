@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-09 00:11:28 $
+$Date: 2002-12-09 00:44:46 $
 
 =head1 SYNOPSIS
 
@@ -563,6 +563,7 @@ B<Notes:> NONE.
 =item my $page_file = $b->page_file($number)
 
   % my $page = $burner->page_file($number);
+  <a href="<% $page %>">Page Number $number</a>
 
 Returns the file name for a page in a story as the story is being burned. The
 page number must be greater than 0.
@@ -632,7 +633,6 @@ sub page_uri {
     return $fs->cat_uri($base_uri, $filename);
 }
 
-
 ##############################################################################
 
 =item my $prev_page_file = $b->prev_page_file
@@ -654,14 +654,8 @@ B<Notes:> NONE.
 
 sub prev_page_file {
     my $self = shift;
-    my ($page, $story, $oc) = $self->_get(qw(page story oc));
-    # Page 0 is the first page, and there is none before it.
-    return unless $page;
-    $page--;
-    $page ||= ''; # Change "0" to ''.
-    my $fn = $oc->get_filename($story);
-    my $ext = $oc->get_file_ext;
-    return "$fn$page.$ext";
+    my $page = $self->_get(qw(page)) or return;
+    return $self->page_file($page);
 }
 
 ##############################################################################
@@ -714,13 +708,9 @@ B<Notes:> NONE.
 
 sub next_page_file {
     my $self = shift;
-    my ($page, $isnext, $story, $oc) =
-      $self->_get(qw(page more_pages story oc));
+    my ($page, $isnext) = $self->_get(qw(page more_pages));
     return unless $isnext;
-    $page++;
-    my $fn = $oc->get_filename($story);
-    my $ext = $oc->get_file_ext;
-    return "$fn$page.$ext";
+    return $self->page_file($page + 2);
 }
 
 ##############################################################################
