@@ -35,6 +35,11 @@ previously put into that category should still work, and still treat the
 category as a working category. And so they do. Thanks to Kevin Elliott for
 the spot! [David]
 
+=item *
+
+Renamed events for adding fields to elements and contributor types. They were
+mentioning "attributes," and now they mention "fields," instead. [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

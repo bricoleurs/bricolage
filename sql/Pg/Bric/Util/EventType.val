@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.1.4.1 $
+-- VERSION: $Revision: 1.1.4.2 $
 --
--- $Date: 2003-04-25 16:33:23 $
+-- $Date: 2003-08-06 17:38:38 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -488,7 +488,7 @@
 -- ********** 'contrib_type_ext' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'contrib_type_ext', 'Contributor Type Attribute Added', 'A new attribute was added to the Contributor Type profile.', 9, 1);
+    VALUES (NEXTVAL('seq_event_type'), 'contrib_type_ext', 'Contributor Type Field Added', 'A new field was added to the Contributor Type profile.', 9, 1);
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
@@ -496,7 +496,7 @@
 -- ********** 'contrib_type_unext' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'contrib_type_unext', 'Contributor Type Attribute Deleted', 'An attribute was deleted from the Contributor Type profile.', 9, 1);
+    VALUES (NEXTVAL('seq_event_type'), 'contrib_type_unext', 'Contributor Type Field Deleted', 'A field was deleted from the Contributor Type profile.', 9, 1);
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
@@ -615,7 +615,7 @@
 -- ********** 'element_attr_add' ************ --
    -- HACK: This really should be 'element_attr_add'.
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'element_attr_add', 'Attribute Added to Element', 'An attribute was added to the element profile.', 22, 1);
+    VALUES (NEXTVAL('seq_event_type'), 'element_attr_add', 'Field Added to Element', 'A field was added to the element profile.', 22, 1);
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
@@ -623,7 +623,7 @@
 -- ********** 'element_attr_del' ************ --
    -- HACK: This really should be 'element_attr_del'.
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'element_attr_del', 'Attribute Deleted from Element', 'An attribute was deleted from the element profile.', 22, 1);
+    VALUES (NEXTVAL('seq_event_type'), 'element_attr_del', 'Field Deleted from Element', 'A field was deleted from the element profile.', 22, 1);
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
