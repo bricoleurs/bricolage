@@ -47,6 +47,11 @@ Stories using that element to lose track of their field data. [Sam]
 Fixed bug in Bric::Util::Burner::Template where <tmpl_include>s caused
 syntax errors. [Sam]
 
+=item *
+
+Fixed bug in DBI_DEBUG and DBI_CALL_TRACE options where non-prepared
+queries (row_aref(), all_aref(), etc.) were not being logged. [Sam]
+
 =back
 
 =head2 New Features

@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-03-12 02:10:42 $
+$Date: 2002-04-30 20:09:51 $
 
 =head1 SYNOPSIS
 
@@ -397,15 +397,8 @@ B<Notes:> NONE.
 
 sub prepare {
     &$connect();
-    print STDERR "############# Query: $_[0]\n\n" if $_[2] || DEBUG;
-    if (CALL_TRACE) {
-	my $n = 0;
-	while (my @c = caller($n++)) {
-	    local $" = ' - ';
-	    print STDERR "------------- @c[0,2,3]\n";
-	    last if $c[0] =~ /HTML::Mason/;
-	} print STDERR "\n";
-    }
+    _print_query(\$_[0]) if $_[2] || DEBUG;
+    _print_call_trace()  if CALL_TRACE;
     my $sth;
     eval { $sth = $dbh->prepare(@_[0..1]) };
     die Bric::Util::Fault::Exception::DA->new(
@@ -453,15 +446,8 @@ B<Notes:> NONE.
 
 sub prepare_c {
     &$connect();
-    print STDERR "############# Query: $_[0]\n\n" if $_[2] || DEBUG;
-    if (CALL_TRACE) {
-	my $n = 0;
-	while (my @c = caller($n++)) {
-	    local $" = ' - ';
-	    print STDERR "------------- @c[0,2,3]\n";
-	    last if $c[0] =~ /HTML::Mason/;
-	} print STDERR "\n";
-    }
+    _print_query(\$_[0]) if $_[2] || DEBUG;
+    _print_call_trace()  if CALL_TRACE;
     my $sth;
     eval { $sth = $dbh->prepare_cached(@_[0..1]) };
     die Bric::Util::Fault::Exception::DA->new(
@@ -509,15 +495,8 @@ B<Notes:> NONE.
 
 sub prepare_ca {
     &$connect();
-    print STDERR "############# Query: $_[0]\n\n" if $_[2] || DEBUG;
-    if (CALL_TRACE) {
-	my $n = 0;
-	while (my @c = caller($n++)) {
-	    local $" = ' - ';
-	    print STDERR "------------- @c[0,2,3]\n";
-	    last if $c[0] =~ /HTML::Mason/;
-	} print STDERR "\n";
-    }
+    _print_query(\$_[0]) if $_[2] || DEBUG;
+    _print_call_trace()  if CALL_TRACE;
     my $sth;
     eval { $sth = $dbh->prepare_cached(@_[0..1], 1) };
     die Bric::Util::Fault::Exception::DA->new(
@@ -700,12 +679,9 @@ B<Notes:> NONE.
 
 sub execute {
     my $sth = shift;
-    if (DEBUG) {
-	local $" = ', ';
-	local $^W = undef;
-	print STDERR "+++++++++++++ ARGS: @_\n\n\n\n\n";
-    }
+    _print_query_args(\@_) if DEBUG;
     my $ret;
+
     eval { $ret = $sth->execute(@_) };
     die Bric::Util::Fault::Exception::DA->new(
       { msg => "Unable to execute SQL statement", payload => $@ }) if $@;
@@ -1099,6 +1075,9 @@ B<Notes:> NONE.
 sub row_aref {
     my ($qry, @params) = @_;
     &$connect();
+    _print_query(\$qry)         if DEBUG;
+    _print_call_trace()         if CALL_TRACE;
+    _print_query_args(\@params) if DEBUG;
     my $aref;
     eval { $aref = $dbh->selectrow_arrayref($qry, undef, @params) };
     die Bric::Util::Fault::Exception::DA->new(
@@ -1140,6 +1119,9 @@ B<Notes:> NONE.
 sub row_array {
     my ($qry, @params) = @_;
     &$connect();
+    _print_query(\$qry)         if DEBUG;
+    _print_call_trace()         if CALL_TRACE;
+    _print_query_args(\@params) if DEBUG;
     my @array;
     eval { @array = $dbh->selectrow_array($qry, undef, @params) };
     die Bric::Util::Fault::Exception::DA->new(
@@ -1186,6 +1168,9 @@ B<Notes:> NONE.
 sub all_aref {
     my ($qry, @params) = @_;
     &$connect();
+    _print_query(\$qry)         if DEBUG;
+    _print_call_trace()         if CALL_TRACE;
+    _print_query_args(\@params) if DEBUG;
     my $aref;
     eval { $aref = $dbh->selectall_arrayref($qry, undef, @params) };
     die Bric::Util::Fault::Exception::DA->new(
@@ -1226,6 +1211,9 @@ B<Notes:> NONE.
 sub col_aref {
     my ($qry, @params) = @_;
     &$connect();
+    _print_query(\$qry)         if DEBUG;
+    _print_call_trace()         if CALL_TRACE;
+    _print_query_args(\@params) if DEBUG;
     my $col;
     eval { $col = $dbh->selectcol_arrayref($qry, undef, @params) };
     die Bric::Util::Fault::Exception::DA->new(
@@ -1315,12 +1303,6 @@ sub last_key {
     return @{ row_aref($sth) }->[0];
 } # last_key()
 
-1;
-
-__END__
-
-=pod
-
 =back 4
 
 =head1 PRIVATE
@@ -1337,7 +1319,57 @@ NONE.
 
 =head2 Private Functions
 
-NONE.
+=over 4
+
+=item _print_query($sql)
+
+Writes a message to STDERR containing the sql query.  Should be called
+by functions that prepare statements when DEBUG (DBI_DEBUG) is true.
+
+=cut
+
+sub _print_query {
+  print STDERR "############# Query: ${$_[0]}\n\n";
+}
+
+=item _print_query_args(\@args)
+
+Writes a message to STDERR containing the sql arguments.  Should be
+called by functions that execute statements when DEBUG (DBI_DEBUG) is
+true.
+
+=cut
+
+sub _print_query_args {
+  print STDERR "+++++++++++++ ARGS: ", 
+    join(', ', map { defined $_ ? $_ : 'NULL' } @{$_[0]}),
+      "\n\n\n\n\n";
+}
+
+
+=item _print_call_trace
+
+Writes out a call trace to STDERR.  Should be called by functions that
+prepare statements when CALL_TRACE (DBI_CALL_TRACE) is true.
+
+=cut
+
+sub _print_call_trace {
+  my $n = 1;  
+  while (my @c = caller($n++)) {
+    print STDERR "------------- $c[0] - $c[2] - $c[3]\n";
+    last if $c[0] =~ /HTML::Mason/;
+  } 
+  print STDERR "\n";
+}
+
+=back
+
+=cut
+
+1;
+
+__END__
 
 =head1 NOTES
 
