@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.7.4 ()
+=head1 VERSION 1.7.4 "Sacamento" (2004-03-18)
 
 =head2 New Features
 
