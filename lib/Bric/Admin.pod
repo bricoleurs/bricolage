@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.148 $
+$Revision: 1.149 $
 
 =head1 DATE
 
-$Date: 2004-03-17 02:19:49 $
+$Date: 2004-03-17 03:34:03 $
 
 =head1 DESCRIPTION
 
@@ -198,6 +198,12 @@ START MODULE LIST
 =item Crypt::SSLeay (optional)
 
 =item Imager (optional)
+
+=item Text::Apell (optional)
+
+=item XML::DOM (optional)
+
+=item CGI (optional)
 
 =back
 
