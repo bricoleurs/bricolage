@@ -193,10 +193,8 @@ if ($ARGS{'add_more|keyword|add_cb'}) {
 my $crumb = $cat->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
-my $cat_excl = sub { my $cx = $c->get_user_cx(get_user_id);
-                     return 1 if grep($_[0] == $_->get_id, $cat->children);
+my $cat_excl = sub { return 1 if grep($_[0] == $_->get_id, $cat->children);
                      return 1 if defined $id and ($_[0] == $id);
-                     return 1 if $cx and $_[0]->get_site_id != $cx;
                      return 0;
                  };
 </%init>
@@ -210,11 +208,11 @@ my $cat_excl = sub { my $cx = $c->get_user_cx(get_user_id);
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2003-04-15 09:04:41 $
+$Date: 2003-04-24 15:37:30 $
 
 =head1 DESCRIPTION
 
