@@ -517,7 +517,13 @@ name in your templates to use the new field name.
 
 Did you add it as a subelement to a document type element, or as a subelement
 to any element that's part of a document type element hierarchy? If not, it
-won't show up in the template select list.
+won't show up in the template select list. This behavior has to do with sites;
+only story type and media type elements are associated with sites, so to
+create a new template in a workflow (which is associated with a site), it
+looks for all the story type and media type elements associated with that
+site, and then adds all subelements of those elements. So unless your new
+subelement is associated with a story type or media type element, you won't
+see it when you go to create a new template.
 
 =head2 Miscellaneous
 
