@@ -15,11 +15,11 @@ sub select-(.+) : Callback {          # XXX: callback subversion
 
     my $self = shift;
     my $value = $self->value;
-    my $id      = ref $value ? $value : [$value];
+    my $ids = ref $value ? $value : [$value];
     my $pkg = get_state_data(CLASS_KEY, 'pkg_name');
 
-    foreach (@$id) {
-        my $obj = $pkg->lookup({'id' => $_});
+    foreach my $id (@$ids) {
+        my $obj = $pkg->lookup({'id' => $id});
         if (chk_authz($obj, EDIT, 1)) {
             $obj->$method;
             $obj->save;
@@ -35,12 +35,12 @@ sub select-(.+) : Callback {          # XXX: callback subversion
 sub delete : Callback {
     my $self = shift;
 
-    my $id  = mk_aref($param->{$field});
+    my $ids = mk_aref($self->value);
     my $pkg = get_state_data(CLASS_KEY, 'pkg_name');
     my $obj_key = get_state_data(CLASS_KEY, 'object');
 
-    foreach (@$id) {
-        my $obj = $pkg->lookup({'id' => $_});
+    foreach my $id (@$ids) {
+        my $obj = $pkg->lookup({'id' => $id});
         if (chk_authz($obj, EDIT, 1)) {
             $obj->delete;
             $obj->save;
@@ -57,12 +57,12 @@ sub delete : Callback {
 sub deactivate : Callback {
     my $self = shift;
 
-    my $id  = mk_aref($param->{$field});
-    my $pkg     = get_state_data(CLASS_KEY, 'pkg_name');
+    my $ids = mk_aref($self->value);
+    my $pkg = get_state_data(CLASS_KEY, 'pkg_name');
     my $obj_key = get_state_data(CLASS_KEY, 'object');
 
-    foreach (@$id) {
-        my $obj = $pkg->lookup({'id' => $_});
+    foreach my $id (@$ids) {
+        my $obj = $pkg->lookup({'id' => $id});
         if (chk_authz($obj, EDIT, 1)) {
             $obj->deactivate;
             $obj->save;
@@ -78,6 +78,8 @@ sub deactivate : Callback {
 
 sub sortBy : Callback {
     my $self = shift;
+    my $param = $self->request_args;
+    my $field = $self->trigger_key;
 
     # Leading '-' means reverse the sort
     if ($param->{$field} =~ s/^-//) {
@@ -91,7 +93,6 @@ sub sortBy : Callback {
 # set offset from beginning record in @sort_objs at which array slice begins
 sub set_offset : Callback {
     my $self = shift;
-
     set_state_data(CLASS_KEY, 'pagination', 1);
     set_state_data(CLASS_KEY, 'offset', $self->value);
 }
