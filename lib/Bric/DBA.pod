@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.9.2.1 $
+$Revision: 1.9.2.2 $
 
 =head1 DATE
 
-$Date: 2003-04-02 22:54:51 $
+$Date: 2003-04-17 01:05:49 $
 
 =head1 DESCRIPTION
 
@@ -74,7 +74,7 @@ multiple clients live.
 Many other combinations of authentication settings are of course possible via
 the flexible pg_hba.con configuration syntax, but the above are our recommended
 settings for ensuring the security and integrity of your data. Refer to the
-PostgreSQL documentation at L<http:E<sol>E<sol>www.postgresql.orgE<sol>> for
+PostgreSQL documentation at L<http://www.postgresql.org/> for
 more details, including other levels of encryption.
 
 =head1 BACKUP AND RESTORE
@@ -139,7 +139,7 @@ Second, you can't do selective backups of databases or tables, only the whole
 database cluster.
 
 For more detail on PostgreSQL backup and restore, please consult the PostgreSQL
-documentation at L<http:E<sol>E<sol>www.postgresql.orgE<sol>>.
+documentation at L<http://www.postgresql.org/>.
 
 =head1 WRITE-AHEAD LOGGING (WAL)
 

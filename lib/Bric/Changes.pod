@@ -116,6 +116,10 @@ container element and Bricolage tries to load the field element,
 instead. Embarrassingly discovered in the middle of a presentation to the
 London Perl M[ou]ngers. [David]
 
+=item *
+
+Minor JavaScript fix for Opera users, thanks to Kevin White. [David]
+
 =back
 
 =head1 VERSION 1.5.2
@@ -1879,7 +1883,7 @@ The group API has been approximately 75% rewritten. The goal was to optimize
 its performance, since group activity proved to be a serious bottleneck to
 Bricolage performance. Those interested in the nitty-gritty details of the
 rewrite can read about them here:
-L<http:E<sol>E<sol>sourceforge.netE<sol>mailarchiveE<sol>forum.php?thread_id=967943&forum_id=561>.
+L<http://sourceforge.net/mailarchive/forum.php?thread_id=967943&forum_id=561>.
 
 =back
 
