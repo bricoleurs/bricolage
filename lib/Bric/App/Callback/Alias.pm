@@ -33,7 +33,7 @@ my ($get_dynamic, $work_it, $handle_asset);
 
 sub make_alias : Callback {
     my $self = shift;
-    my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->();
+    my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->($self);
  
     my $aliased_id = $self->value;
     my $aliased = $classes{$class_key}->lookup({ id => $aliased_id });
@@ -61,7 +61,7 @@ sub make_alias : Callback {
 sub pick_cats : Callback {
     my $self = shift;
     my $param = $self->request_args;
-    my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->();
+    my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->($self);
 
     # Grab the asset to be aliased.
     my $aliased_id = get_state_data($self->class_key, 'aliased_id');
@@ -102,6 +102,7 @@ sub pick_cats : Callback {
 
 
 $get_dynamic = sub {
+    my $self = shift;
     my $class_key = get_state_data($self->class_key, 'class_key');
     my $wf_id = get_state_data($self->class_key, 'wf_id');
     my $wf = Bric::Biz::Workflow->lookup({ id => $wf_id });
