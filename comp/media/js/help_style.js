@@ -7,6 +7,7 @@ if (is_nav6up) {
     ss.insertRule(".context { background:#999966; font-size:9.5pt; line-height:12pt; }", i++);
     ss.insertRule("h3 { font-size:11pt; line-height:13pt; }", i++);
     ss.insertRule("p { font-size:10pt; line-height:13pt; }", i++);
+    ss.insertRule(".redLink { color:#993300; }", i++);
     ss.insertRule("td { font-size:10pt; line-height:13pt; }", i++);
     ss.insertRule("dt {  font-size:10pt; line-height:14pt; font-weight:bold; }", i++);
     ss.insertRule("dd { font-size:10pt; line-height:13pt; }", i++);
@@ -55,12 +56,15 @@ if (is_nav6up) {
     ss.light.all.fontSize = smSize;
     ss.light.all.backgroundColor = '#cccc99';
 
+    ss.redLink.all.color = '#993300';
+
     ss.context.all.fontFamily = 'Verdana,Helvetica,Arial,sans-serif';
     ss.context.all.fontSize = smSize;
     ss.context.all.backgroundColor = '#999966';
 } else if (is_ie) {
     var ss = document.styleSheets[0];
     var i = 0;
+    ss.addRule(".redLink", "color:#993300;", i++);
     if (is_win) {
         ss.addRule("body", "background:white; font-family:Verdana,Helvetica,Arial,sans-serif;", i++);
         ss.addRule(".tab", "background:#006666; color:white; font-weight:bold; font-size:10pt;", i++);
