@@ -33,7 +33,7 @@ sub test_lookup : Test(13) {
 
 ##############################################################################
 # Test list().
-sub test_list : Test(39) {
+sub test_list : Test(40) {
     my $self = shift;
 
     # Create a new job group.
@@ -66,7 +66,7 @@ sub test_list : Test(39) {
     # Try grp_id.
     ok( @prefs = Bric::Util::Pref->list({ grp_id => $grp_id }),
         "Look up grp_id '$grp_id'" );
-    is( scalar @prefs, 5, "Check for 5 prefs" );
+    is( scalar @prefs, 6, "Check for 6 prefs" );
 
     # Make sure we've got all the Group IDs we think we should have.
     my $all_grp_id = Bric::Util::Pref::INSTANCE_GROUP_ID;
@@ -83,7 +83,7 @@ sub test_list : Test(39) {
     # Now there should only be three using grp_id.
     ok( @prefs = Bric::Util::Pref->list({ grp_id => $grp_id }),
         "Look up grp_id '$grp_id' again" );
-    is( scalar @prefs, 4, "Check for 4 prefs" );
+    is( scalar @prefs, 5, "Check for 5 prefs" );
 
 
     # Try val_name.
@@ -120,7 +120,7 @@ sub test_list : Test(39) {
     is( scalar @prefs, 1, "Check for 1 prefs" );
     ok( @prefs = Bric::Util::Pref->list({ manual => 0 }),
         "Look up manual => 0" );
-    is( scalar @prefs, 8, "Check for 8 prefs" );
+    is( scalar @prefs, 10, "Check for 10 prefs" );
 
     # Try opt_type.
     ok( @prefs = Bric::Util::Pref->list({ opt_type => 'radio' }),
@@ -128,6 +128,6 @@ sub test_list : Test(39) {
     is( scalar @prefs, 1, "Check for 1 prefs" );
     ok( @prefs = Bric::Util::Pref->list({ opt_type => 'select' }),
         "Look up opt_type 'select'" );
-    is( scalar @prefs, 7, "Check for 7 prefs" );
+    is( scalar @prefs, 9, "Check for 9 prefs" );
 
 }
