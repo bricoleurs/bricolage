@@ -7,15 +7,15 @@ package Bric::Util::Grp::Asset;
 
 =head1 VERSION
 
-$Revision: 1.5.2.1 $
+$Revision: 1.5.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.5.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-27 00:42:48 $
+$Date: 2002-02-27 00:50:21 $
 
 =head1 SYNOPSIS
 
@@ -275,8 +275,8 @@ sub get_supported_classes {
     return { &STORY_PKG  => 'story',
 	     &MEDIA_PKG  => 'media',
 	     &FORMAT_PKG => 'formatting',
-	     &AUDIO_PKG => 'audio'
-	     &IMAGE_PKG => 'media'
+	     &AUDIO_PKG => 'audio',
+	     &IMAGE_PKG => 'media',
 	     &VIDEO_PKG => 'video'
 	   }
 }
