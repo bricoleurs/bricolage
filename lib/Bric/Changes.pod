@@ -125,6 +125,25 @@ Bric::Biz::Asset::Formatting (the template class). Also documented a few
 parameters to the story and media class <list()> methods that were supported
 but previously undocumented. [David]
 
+=item *
+
+Variables are now properly decoded to UTF-8 when they are populated with
+data from the database. [David]
+
+=item *
+
+The strings used in translations are now all properly decoded to UTF-8.
+[David]
+
+=item *
+
+All templates now execute with UTF-8 character strings enabled. This means
+that any templates that convert content to other character sets must change
+the way they do so. For example, templates that had used C<< <%filter> >>
+blocks to convert content to another encoding using something like
+C<Encode::from_to($_, 'utf-8', $encoding)> must now use something like
+C<$_ = Encode::encode($encoding, $_)>, instead. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -382,8 +401,8 @@ to lock up with an impossible query for hours at a time. [David]
 
 =item *
 
-Restored foreign keys missing on the "job" table and related tables since
-version 1.8.0. [David]
+Restored foreign keys and constraints missing on the "job" table and related
+tables since version 1.8.0. [David]
 
 =back
 

@@ -30,9 +30,12 @@ Bricolage US English dictionary.
 
 =cut
 
+use strict;
+use utf8;
+use base qw(Bric::Util::Language);
+
 use constant key => 'en_us';
 
-our @ISA = qw(Bric::Util::Language);
 our %Lexicon = (
   '[quant,$quant,Contributors] [_1] [quant,$quant,disassociated].' => '[quant,$quant,Contributors] [_1] [quant,$quant,disassociated].',
   '[quant,_1,Alert] acknowledged.' => '[quant,_1,Alert,Alerts] acknowledged.',

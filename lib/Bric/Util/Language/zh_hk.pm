@@ -30,9 +30,11 @@ Bricolage 正體中文翻譯.
 
 =cut
 
-use constant key => 'zh_hk';
+use strict;
+use utf8;
+use base qw(Bric::Util::Language:zh_tw);
 
-our @ISA = qw(Bric::Util::Language::zh_tw);
+use constant key => 'zh_hk';
 
 our %Lexicon = (
 

@@ -30,9 +30,11 @@ Bricolage Italian translation.
 
 =cut
 
-use constant key => 'it_it';
+use strict;
+use utf8;
+use base qw(Bric::Util::Language);
 
-our @ISA = qw(Bric::Util::Language);
+use constant key => 'it_it';
 
 our %Lexicon = (
     'Jan' => 'Gen',

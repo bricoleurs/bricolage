@@ -75,6 +75,3 @@ unless (test_foreign_key 'job_member', 'fk_member__job_member') {
       ADD CONSTRAINT fk_member__job_member FOREIGN KEY (member__id)
       REFERENCES     member(id) ON DELETE CASCADE";
 }
-
-
-

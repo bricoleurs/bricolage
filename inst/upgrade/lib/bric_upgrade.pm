@@ -64,7 +64,7 @@ succeed, then the transaction will be commited when the script exits.
 use strict;
 require Exporter;
 use base qw(Exporter);
-our @EXPORT_OK = qw(do_sql test_column test_table test_constraint
+our @EXPORT_OK = qw(prompt y_n do_sql test_column test_table test_constraint
                     test_foreign_key test_index test_function test_aggregate
                     fetch_sql db_version);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
@@ -160,6 +160,65 @@ open STDERR, "| $perl -ne 'print unless /^NOTICE:  /'"
 ##############################################################################
 
 =head1 EXPORTED FUNCTIONS
+
+=head2 prompt
+
+  my $answer = prompt($question, $default);
+
+Prompts the user for some information and then returns the value entered.
+If the user provides no answer, or if there is no TTY, C<prompt()> simply
+returns the default value.
+
+=cut
+
+sub prompt {
+    die "prompt() called without a prompt message" unless @_;
+    my ($msg, $def) = @_;
+
+    ($def, my $dispdef) = defined $def ? ($def, "[$def] ") : ('', ' ');
+
+    do {
+        local $|=1;
+        print "$msg $dispdef";
+    };
+
+    my $ans;
+    if (-t STDIN && (-t STDOUT || !(-f STDOUT || -c STDOUT))) {
+        $ans = <STDIN>;
+        if (defined $ans) {
+            chomp $ans;
+        } else { # user hit ctrl-D
+            print $/;
+        }
+    }
+
+    return defined $ans && length $ans ? $ans : $def;
+}
+
+##############################################################################
+
+=head2 y_n
+
+  my $answer = y_n($prompt, $default);
+
+Prompts the user with the prompt message and returns true if the answer was
+"yes" or "y" and false if it was "no" or "n". The check for the answer is
+case-insensitive.
+
+=cut
+
+sub y_n {
+    die "y_n() called without a prompt message" unless @_;
+
+    while (1) {
+        my $ans = prompt(@_);
+        return 1 if $ans =~ /^y/i;
+        return 0 if $ans =~ /^n/i;
+        print "Please answer 'y' or 'n'.\n";
+    }
+}
+
+##############################################################################
 
 =head2 test_table
 

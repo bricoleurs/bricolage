@@ -118,7 +118,8 @@ use MasonX::Interp::WithCallbacks;
     package HTML::Mason::Commands;
 
     # Load all modules to be used from elements.
-    use Apache::Util qw(escape_html escape_uri);
+    use Apache::Util qw(escape_uri);
+    use HTML::Entities (); *escape_html = \&HTML::Entities::encode_entities;
     use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa :thumb :oc);
     use Bric::Biz::Asset::Business::Media;
     use Bric::Biz::Asset::Business::Media::Audio;
@@ -231,6 +232,7 @@ my ($ah);
                  interp_class         => 'MasonX::Interp::WithCallbacks',
                  decline_dirs         => 0,
                  args_method          => MASON_ARGS_METHOD,
+                 preamble             => "use utf8;\n",
                );
 
     $ah = HTML::Mason::ApacheHandler->new(%args);

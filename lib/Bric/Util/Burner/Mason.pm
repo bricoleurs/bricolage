@@ -935,7 +935,8 @@ sub _interp_args {
 
      $interp_args{compiler} = HTML::Mason::Compiler::ToObject->new
        ( %interp_args,
-         preprocess => \&_custom_preprocess
+         preprocess => \&_custom_preprocess,
+         preamble   => "use utf8;\n",
        );
 
      return %interp_args;

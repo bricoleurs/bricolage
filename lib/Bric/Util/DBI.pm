@@ -103,13 +103,14 @@ DBI->trace(DBI_TRACE);
 use constant DB_DATE_FORMAT => '%Y-%m-%d %T';
 
 # Package constant variables. This one is for the DB connection attributes.
-my $ATTR =  { RaiseError => 1,
-	      PrintError => 0,
-	      AutoCommit => 0,
-	      ChopBlanks => 1,
+my $ATTR =  { RaiseError         => 1,
+	      PrintError         => 0,
+	      AutoCommit         => 0,
+	      ChopBlanks         => 1,
 	      ShowErrorStatement => 1,
-	      LongReadLen => 32768,
-	      LongTruncOk => 0
+	      LongReadLen        => 32768,
+	      LongTruncOk        => 0,
+              DBH_ATTR,
 };
 my $AutoCommit = 1;
 

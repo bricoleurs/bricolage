@@ -67,12 +67,18 @@ use constant DSN_STRING => 'dbname=' . DB_NAME
   . (DB_HOST ? eval "';host=' . DB_HOST" : '')
   . (DB_PORT ? eval "';port=' . DB_PORT" : '');
 
+# This is to set up driver-specific database handle attributes.
+# XXX pg_enable_utf8 to be used only until DBI supports it itself.
+# http://www.mail-archive.com/dbi-dev@perl.org/msg03451.html
+# http://bugs.bricolage.cc/show_bug.cgi?id=802
+use constant DBH_ATTR => ( pg_enable_utf8 => 1 );
+
 ##############################################################################
 # Inheritance
 ##############################################################################
 use base qw(Exporter);
 our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING
-		    TRANSACTIONAL);
+		    DBH_ATTR TRANSACTIONAL);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ##############################################################################
