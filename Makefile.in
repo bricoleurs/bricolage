@@ -120,7 +120,6 @@ define install-files
 @$(NORMAL_INSTALL)  # Normal commands follow.
 ${INST}/mkinstalldirs $(@D)
 cp $^ $@
-chown ${APACHE_USER}.${APACHE_GROUP} $@
 @echo $@ >>${INST}/install.log
 endef
 
@@ -178,7 +177,7 @@ libs:
 
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
-		 install-man install-html chowndirs chownpg chmoddirs \
+		 install-man install-html chowndirs chmoddirs \
 		 ${INST}/installed-database
 
 installdirs:
@@ -188,11 +187,10 @@ installdirs:
                            ${confdir} ${compdir} \
                            ${htmldir} ${mandir}
 chowndirs:
-	chown -R ${APACHE_USER}.${APACHE_GROUP} ${compdir} ${datadir} 
+	chown -R ${APACHE_USER}.${APACHE_GROUP} ${compdir}/data ${datadir} 
 chmoddirs:
-	chmod -R a+r ${htmldir} ${docdir}
-chownpg:
-	chown -R ${POSTGRES_ROOT_USER} ${bindir}/bric_pgimport
+	chmod -R a+r ${htmldir} ${docdir} ${bindir}
+	chmod -R a+x ${bindir}
 uninstall: uninstalldatabase uninstall-lib uninstallfiles uninstalldirs dist-clean
 uninstall-lib:
 	-cd ${LIB} && make uninstall
