@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel::Element - Maps Output Channels to Elements.
 
 =head1 VERSION
 
-$Revision: 1.2.2.1 $
+$Revision: 1.2.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-08 20:33:50 $
+$Date: 2003-03-09 02:16:04 $
 
 =head1 SYNOPSIS
 
@@ -51,8 +51,6 @@ use strict;
 ##############################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
-
-use Bric::Util::Fault::Exception::DP;
 
 ##############################################################################
 # Inheritance
@@ -136,12 +134,6 @@ will be based. Note that all of the C<$init> parameters documented in
 L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel> will be ignored if this
 parameter is passed.
 
-=item C<site_id>
-
-Needed only if a C<oc_id> or C<oc> parameter is not given.  If neither of these
-parameters exist, this constructor will create a new Output Channel which 
-requires a site ID.
-
 =item C<element_id>
 
 The ID of the Bric::Biz::AssetType object to which this output channel is
@@ -204,11 +196,6 @@ sub new {
         # Lookup the existing output channel object.
         $self = $pkg->lookup({ id => $ocid });
     } else {
-        unless ($init->{site_id}) {
-            my $msg = "Without 'oc' or 'oc_id' arguments, you must pass ".
-                      "'site_id'";
-            die Bric::Util::Fault::Exception::DP->new({msg => $msg});
-        }
         # Construct a new output channel object.
         $self = $pkg->SUPER::new($init);
     }
