@@ -25,7 +25,7 @@
 % } else {
 <br /><b>Payload:</b>
 <font size="-1"><pre>
-<% $pay %>
+<% "$pay" %>
 </pre></font>
 </p>
 % }
@@ -96,36 +96,26 @@
     </tr>
 </table>
 % } elsif ($pay) {
-<p class="errorMsg"><% $pay %></p>
+<p class="errorMsg"><% "$pay" %></p>
 % }
 <p class="header">Please report this error to your administrator.</p>
 % }
 
 <& '/widgets/wrappers/sharky/footer.mc' &>
 
-
-<%args>
-$fault => undef
-$more_err => undef
-</%args>
 <%init>;
 # Clear out messages - they're likely irrelevant now.
 clear_msg();
 
-# If $fault is undef, the exception object MUST BE in pnotes
-# (from AccessHandler or PreviewHandler)
-unless (defined $fault) {
-    $fault = $r->pnotes('BRIC_EXCEPTION');
-}
+# exception object ($fault) and $more_args are now always
+# in pnotes, not passed in %args
+my $fault = $r->pnotes('BRIC_EXCEPTION');
 warn '$fault not an exception object' unless isa_exception($fault);
 
-# From here on, $fault MUST BE an exception object
+my $more_err = $r->pnotes('BRIC_MORE_ERR');
 
-# Get payload, stringify if payload is an exception object
 my $pay = isa_bric_exception($fault) ? ($fault->payload || '') : '';
-$pay = "$pay";
 
 my $is_burner_error = ($fault->error =~ /^Unable to find template/);
-
 my %req_args = HTML::Mason::Request->instance->request_args;
 </%init>

@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.36.2.11 $
+$Revision: 1.36.2.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.36.2.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.36.2.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-16 14:29:45 $
+$Date: 2003-06-25 17:26:57 $
 
 =head1 SYNOPSIS
 
@@ -58,7 +58,9 @@ use Bric::Config qw(:mason :char :sys_user :err);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::CharTrans;
+use Bric::Util::Trans::FS;
 use Bric::App::Event qw(clear_events);
+use Apache::Constants qw(OK);
 use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
@@ -155,6 +157,9 @@ our %EXPORT_TAGS = (err => [qw(handle_err)]);
 ################################################################################
 # Constants
 ################################################################################
+use constant ERROR_FILE =>
+  Bric::Util::Trans::FS->cat_dir(MASON_COMP_ROOT->[0][1],
+			       Bric::Util::Trans::FS->split_uri(ERROR_URI));
 
 ################################################################################
 # Fields
@@ -175,7 +180,7 @@ my %interp_args =
   );
 
 my $interp = HTML::Mason::Interp->new(%interp_args);
-my $ah;
+my ($ah, $gah);
 if (CHAR_SET eq 'UTF-8') {
     $ah = Bric::App::ApacheHandler->new(%interp_args,
                                         decline_dirs => 0,
@@ -189,6 +194,10 @@ if (CHAR_SET eq 'UTF-8') {
                                         args_method => MASON_ARGS_METHOD,
                                         out_method => \&filter);
 }
+
+$gah = HTML::Mason::ApacheHandler->new(%interp_args,
+                                       decline_dirs => 0,
+                                       args_method => MASON_ARGS_METHOD);
 
 # Reset ownership of all files created by Mason at startup.
 chown SYS_USER, SYS_GROUP, $interp->files_written;
@@ -290,8 +299,15 @@ sub handle_err {
     $no_trans = 0;
 
     # Process the exception for the user.
-    return $interp->exec(ERROR_URI, fault => $err,
-			 __CB_DONE => 1, more_err => $more_err);
+    # Instead of using $interp->exec we start over a la PreviewHandler.
+    # The 'BRIC_*' args are used in errors/500.mc
+    $r->uri(ERROR_URI);
+    $r->filename(ERROR_FILE);
+    $r->pnotes('BRIC_EXCEPTION' => $err);
+    $r->pnotes('BRIC_MORE_ERR' => $more_err);
+
+    $gah->handle_request($r);
+    return OK;
 }
 
 ################################################################################
