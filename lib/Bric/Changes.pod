@@ -73,6 +73,10 @@ associations, an event that can lead to database exceptions. [David]
 The root category now lists itself as being in the "All Categories" group once
 in the category profile. [David]
 
+=item *
+
+Assets will no longer appear to randomlly dissappear from workflow. [David]
+
 =back
 
 =head1 VERSION 1.5.1
