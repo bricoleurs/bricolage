@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:37 $
+$Date: 2003-03-12 03:25:55 $
 
 =head1 SYNOPSIS
 
@@ -99,7 +99,7 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
   behavior   => 'expand'
 &>
 <p></p>
-<input type="image" src="/media/images/checkout_red.gif" border=0 name="Checkout" value="Checkout">
+<input type="image" src="/media/images/<% $lang_key %>/checkout_red.gif" border=0 name="Checkout" value="Checkout">
 </form>
 
 <& /widgets/wrappers/sharky/footer.mc &>

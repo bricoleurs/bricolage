@@ -244,7 +244,7 @@ if ($at->is_related_media) {
         vspace   => 3,
     hspace   => 2
     &></td>
-    <td align="center"><input type="image" src="/media/images/delete_red.gif" border=0 hspace=2 vspace=3 name="container_prof|delete_cb" value="delete"></td>
+    <td align="center"><input type="image" src="/media/images/<% $lang_key %>/delete_red.gif" border=0 hspace=2 vspace=3 name="container_prof|delete_cb" value="delete"></td>
 % } else {
     &nbsp;</td><td>&nbsp;</td>
 %}
@@ -363,8 +363,8 @@ if ($at->is_related_media) {
 </tr>
 <tr>
   <td>
-    <input type="image" src="/media/images/save_red.gif" border=0 name="<% $widget %>|save_and_up_cb" value="Save">
-    <input type="image" src="/media/images/save_and_stay_lgreen.gif" border=0 name="<% $widget %>|save_and_stay_cb" value="Save and Stay">
+    <input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border=0 name="<% $widget %>|save_and_up_cb" value="Save">
+    <input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border=0 name="<% $widget %>|save_and_stay_cb" value="Save and Stay">
   </td>
   <td align="right">
 <& '/widgets/profile/imageSubmit.mc',

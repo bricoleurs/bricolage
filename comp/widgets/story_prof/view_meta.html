@@ -1,8 +1,10 @@
 <%perl>
 my $note_img = %{ $story->get_notes } ? 'note_fill' : 'note';
 my $rightText = qq{
-<a href="/workflow/profile/story/view_notes.html?id=}. $id . qq{"><img src="/media/images/$note_img.gif" border="0" alt="View Notes" /></a>
-<a href="/workflow/trail/story/}. $id . qq{"><img src="/media/images/view_trail_teal.gif" border=0 alt="View Trail" /></a>
+<a href="/workflow/profile/story/view_notes.html?id=} . $id .
+ qq{"><img src="/media/images/$note_img.gif" border="0" alt="View Notes" /></a>
+    <a href="/workflow/trail/story/}. $id . qq{"><img src="/media/images/} .
+  $lang_key  . qq{/view_trail_teal.gif" border="0" alt="View Trail" /></a>
 };
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
@@ -215,9 +217,9 @@ $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contribu
 
 <table width=160 cellpadding=0 cellspacing=0>
 <tr>
-  <td width=80><input type="image" src="/media/images/return_dgreen.gif" border=0 name="<% $widget %>|workspace_return_cb" value="Return To Desk">
+  <td width=80><input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0 name="<% $widget %>|workspace_return_cb" value="Return To Desk">
   </td>
-  <td width=80><a href="/workflow/profile/preview/story/<% $id %>" target="preview_<% SERVER_WINDOW_NAME %>"><img src="/media/images/preview_lgreen.gif" border=0 /></a></td>
+  <td width=80><a href="/workflow/profile/preview/story/<% $id %>" target="preview_<% SERVER_WINDOW_NAME %>"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" border=0 /></a></td>
 </tr>
 </table>
 

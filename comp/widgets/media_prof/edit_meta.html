@@ -72,7 +72,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Preview in') %>:&nbsp;</span></td>
-  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></td>
+  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></td>
   </tr>
 %     }
 % }
@@ -251,9 +251,13 @@ my $id = $media->get_id;
 
 # Set up a formatting variable
 my $agent = $m->comp("/widgets/util/detectAgent.mc");
-my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+my $infoIndent = $agent->{browser} eq "Netscape" ?
+  FIELD_INDENT - 5 : FIELD_INDENT + 8;
 my $num = 1;
-my $ieSpacer = ($agent->{browser} eq "Internet Explorer") ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=578 height=5 /></td></tr></table>} : '';
+my $ieSpacer = $agent->{browser} eq "Internet Explorer" ?
+  qq{<table><tr><td><img src="/media/images/spacer.gif" width="578" } .
+  qq{height="5" /></td></tr></table>}
+  : '';
 
 # get output channel info
 my $at = $media->get_element__id;

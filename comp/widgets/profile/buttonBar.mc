@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:31 $
+$Date: 2003-03-12 03:25:47 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -102,7 +102,7 @@ if ($versions) {
   <td width="33%">
   <table border="0" cellpadding="0" cellspacing="3">
   <tr>
-    <td valign="middle"><input type="image" src="/media/images/check_in_dgreen.gif" border="0" name="<% $widget %>|checkin_cb" value="Check In"></td>
+    <td valign="middle"><input type="image" src="/media/images/<% $lang_key %>/check_in_dgreen.gif" border="0" name="<% $widget %>|checkin_cb" value="Check In"></td>
     <td valign="middle"><% $deskText %></td>
   </tr>
   </table>
@@ -133,9 +133,9 @@ if ($work_id) {
   <table border="0" cellpadding="0" cellspacing="0">
   <tr>
 % if ($versions && @$versions > 1) {
-    <td valign="middle"><input type="image" src="/media/images/revert_dgreen.gif" border="0" name="<% $widget %>|revert_cb" value="revert"></td>
+    <td valign="middle"><input type="image" src="/media/images/<% $lang_key %>/revert_dgreen.gif" border="0" name="<% $widget %>|revert_cb" value="revert"></td>
     <td valign="middle">&nbsp;<% $lang->maketext('to') %> <% $versionText %></td>
-    <td valign="middle"><input type="image" src="/media/images/view_text_dgreen.gif" border="0" hspace="5" name="<% $widget %>|view_cb" value="view"></td>
+    <td valign="middle"><input type="image" src="/media/images/<% $lang_key %>/view_text_dgreen.gif" border="0" hspace="5" name="<% $widget %>|view_cb" value="view"></td>
 % } else {
   <td>&nbsp;</td>
 % }
@@ -155,11 +155,11 @@ if ($work_id) {
 <table width="580" cellpadding="0" cellspacing="0">
 <tr>
   <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
-  <td><input type="image" src="/media/images/save_red.gif" border="0" name="<% $widget %>|save_cb" value="Save"></td>
-  <td><input type="image" src="/media/images/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_cb"></td>
+  <td><input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_cb" value="Save"></td>
+  <td><input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_cb"></td>
   <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
-  <td><input type="image" src="/media/images/cancel_lgreen.gif" border="0" name="<% $widget %>|return_cb" value="Return To Desk"></td>
-  <td><input type="image" src="/media/images/cancel_check_out_lgreen.gif" border="0" name="<% $widget %>|cancel_cb" value="Cancel Checkout"></td>
-  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
+  <td><input type="image" src="/media/images/<% $lang_key %>/cancel_lgreen.gif" border="0" name="<% $widget %>|return_cb" value="Return To Desk"></td>
+  <td><input type="image" src="/media/images/<% $lang_key %>/cancel_check_out_lgreen.gif" border="0" name="<% $widget %>|cancel_cb" value="Cancel Checkout"></td>
+  <td width="60"><img src="/media/images/<% $lang_key %>/spacer.gif" width="60" height="1"></td>
 </tr>
 </table>

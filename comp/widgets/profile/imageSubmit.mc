@@ -3,7 +3,7 @@ my $imageSubmit = sub {
     my ($formName, $callback, $image, $hspace, $vspace, $js, $useHidden) = @_;
 
     $m->out(qq{<a href="#" $js>});
-    $m->out(qq{<img src=\"/media/images/$image.gif\" border="0" });
+    $m->out(qq{<img src=\"/media/images/$lang_key/$image.gif\" border="0" });
     $m->out(qq{hspace="$hspace" }) if ($hspace);
     $m->out(qq{vspace="$vspace" }) if ($vspace);
     $m->out("/></a>");

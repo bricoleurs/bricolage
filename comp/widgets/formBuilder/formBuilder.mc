@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:17 $
+$Date: 2003-03-12 03:25:45 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -426,7 +426,7 @@ date_table     += '</td></tr></table></form>&nbsp;'
   <td width=20><img src="/media/images/spacer.gif" width=20 height=1 /></td>
   <td valign=top>
   <form name=fb_magic_buttons>
-  <a href="#" onClick="formBuilderMagicSubmit('<% $formName %>', 'add'); return false"><img src="/media/images/add_to_form_lgreen.gif" border=0 vspace=5 /></a>
+  <a href="#" onClick="formBuilderMagicSubmit('<% $formName %>', 'add'); return false"><img src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" border=0 vspace=5 /></a>
   </td>
 </tr>
 </table>
@@ -446,7 +446,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 $m->out("<br />\n");
 
 </%perl>
-<a href="#" onClick="formBuilderMagicSubmit('<% $formName %>', 'save');return false"><img src="/media/images/save_red.gif" border="0" /></a>
-% $m->out(qq{<a href="#" onClick="formBuilderMagicSubmit('$formName', 'save_n_stay');return false"><img src="/media/images/save_and_stay_lgreen.gif" border="0" /></a>\n}) if $stay;
-<a href="#" onClick="window.location.href='<% "/$section/manager/$type/" %>'; return false;"><img src="/media/images/return_dgreen.gif" border="0" /></a>
+<a href="#" onClick="formBuilderMagicSubmit('<% $formName %>', 'save');return false"><img src="/media/images/<% $lang_key %>/save_red.gif" border="0" /></a>
+% $m->out(qq{<a href="#" onClick="formBuilderMagicSubmit('$formName', 'save_n_stay');return false"><img src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" /></a>\n}) if $stay;
+<a href="#" onClick="window.location.href='<% "/$section/manager/$type/" %>'; return false;"><img src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" /></a>
 </form>

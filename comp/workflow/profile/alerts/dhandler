@@ -15,9 +15,12 @@ $m->comp('/widgets/listManager/listManager.mc',
 	 select => ['Acknowledge', "recip_id"]);
 </%perl>
 <br />
-<input type="image" src="/media/images/acknowledge_checked_red.gif" border=0 name="<% $type %>|ack_cb" value="Acknowledge Checked" />
-<input type="image" src="/media/images/acknowledge_all_red.gif" border=0 name="<% $type %>|ack_all_cb" value="Acknowledge All" />
-<a href="<% last_page() %>"><img src="/media/images/return_dgreen.gif" border="0" /></a>
+<input type="image" src="/media/images/<% $lang_key %>/acknowledge_checked_red.gif"
+ border="0" name="<% $type %>|ack_cb" value="Acknowledge Checked" />
+<input type="image" src="/media/images/<% $lang_key %>/acknowledge_all_red.gif"
+ border="0" name="<% $type %>|ack_all_cb" value="Acknowledge All" />
+<a href="<% last_page() %>"><img src="/media/images/<% $lang_key %>/return_dgreen.gif"
+ border="0" /></a>
 </form>
 <& '/widgets/wrappers/sharky/footer.mc' &>
 %#-- End HTML --#
@@ -42,11 +45,11 @@ my $u = get_user_object();
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:42 $
+$Date: 2003-03-12 03:25:55 $
 
 =head1 DESCRIPTION
 

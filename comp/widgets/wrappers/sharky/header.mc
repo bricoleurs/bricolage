@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =head1 DATE
 
-$Date: 2003-03-01 19:26:00 $
+$Date: 2003-03-12 03:25:54 $
 
 =head1 SYNOPSIS
 
@@ -142,9 +142,9 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 <tr>
 	<td width=150>
 % if ($useSideNav) {
-        <a href="#" onClick="window.open('/help/about.html', 'About_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'); return false;"><img src="/media/images/bricolage.gif" width="150" height="25" border="0" /></a>
+        <a href="#" onClick="window.open('/help/about.html', 'About_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'); return false;"><img src="/media/images/<% $lang_key %>/bricolage.gif" width="150" height="25" border="0" /></a>
 % } else {
-        <img src="/media/images/bricolage.gif" width="150" height="25" border="0" />
+        <img src="/media/images/<% $lang_key %>/bricolage.gif" width="150" height="25" border="0" />
 % }
 	</td>
 	<td width=600 align=right>
@@ -232,10 +232,10 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
     <td width="10">&nbsp;</td>
     <td width="71" align="right" valign="top"><& "/widgets/help/help.mc", context => $context, page => $title &></td>
     <td width="77" alight="right" valign="top">
-        <a href="/workflow/profile/alerts"><img src="/media/images/my_alerts_orange.gif" width="77" height="20" border="0" hspace="3" /></a>
+        <a href="/workflow/profile/alerts"><img src="/media/images/<% $lang_key %>/my_alerts_orange.gif" width="77" height="20" border="0" hspace="3" /></a>
     </td>
     <td align="right" width="68">
-    <a href="/logout"><img src="/media/images/logout.gif" width="68" height="20" border="0"></a>
+    <a href="/logout"><img src="/media/images/<% $lang_key %>/logout.gif" width="68" height="20" border="0"></a>
     </td>
 % } else {
     <td width="228">&nbsp;</td>

@@ -79,7 +79,7 @@ if ($show_summary) {
         value    =>  $default_field,
         useTable => 0,
 &>
-<input type="image" src="/media/images/change_red.gif" border="0"  name="<% $widget %>|change_default_field_cb" value="Change">
+<input type="image" src="/media/images/<% $lang_key %>/change_red.gif" border="0"  name="<% $widget %>|change_default_field_cb" value="Change">
       </td>
     </tr>
 
@@ -115,7 +115,7 @@ Columns&nbsp;
 Rows 
 </td>
 <td>
-<input type="image" src="/media/images/resize_lgreen.gif" border=0 name="<% $widget %>|resize_cb" value="Resize">
+<input type="image" src="/media/images/<% $lang_key %>/resize_lgreen.gif" border=0 name="<% $widget %>|resize_cb" value="Resize">
 </td>
 </tr>
 </table>
@@ -133,14 +133,14 @@ Rows
 </td>
 <td>Words<br /><input type="text" name="words" size=5 value="<% $words %>" /></td>
 <td>Characters<br /><input type="text" name="chars" size=5 value="<% $bytes %>" /></td>
-  <td><a href="#" onClick="return wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')"><img src="/media/images/recount_lgreen.gif" border=0></a></td>
+  <td><a href="#" onClick="return wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')"><img src="/media/images/<% $lang_key %>/recount_lgreen.gif" border=0></a></td>
 </tr>
 </table>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
-<input type="image" src="/media/images/save_red.gif" border=0 name="<% $widget %>|bulk_save_and_up_cb">
-<input type="image" src="/media/images/save_and_stay_lgreen.gif" border=0 name="<% $widget %>|bulk_save_cb">
-<input type="image" src="/media/images/cancel_red.gif" border=0 name="<% $widget %>|bulk_up_cb" value="Return without Saving">
+<input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border=0 name="<% $widget %>|bulk_save_and_up_cb">
+<input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border=0 name="<% $widget %>|bulk_save_cb">
+<input type="image" src="/media/images/<% $lang_key %>/cancel_red.gif" border=0 name="<% $widget %>|bulk_up_cb" value="Return without Saving">
 
 <%args>
 $widget

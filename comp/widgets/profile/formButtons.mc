@@ -35,19 +35,19 @@ $m->out('&nbsp;<span class=burgandyLabel>' . $chk_label . '</span>') unless $no_
 <tr>
    <td align=left>
 <%perl>;
-$stay = qq{&nbsp;<input type="image" src="/media/images/save_and_stay_lgreen.gif" border="0" name="$widget|$stay" value="save_and_stay" vspace="2" />} if $stay;
+$stay = qq{&nbsp;<input type="image" src="/media/images/$lang_key/save_and_stay_lgreen.gif" border="0" name="$widget|$stay" value="save_and_stay" vspace="2" />} if $stay;
 if (!$val) {
     $val = '';
-    $m->out(qq{<input type="image" src="/media/images/save_red.gif" border="0" name="$widget|$cb" value="$val" vspace="2" />$stay})
+    $m->out(qq{<input type="image" src="/media/images/$lang_key/save_red.gif" border="0" name="$widget|$cb" value="$val" vspace="2" />$stay})
       unless $no_save;
 } else {
-    $m->out(qq{<input type="image" src="/media/images/${val}.gif" border=0 name="$widget|$cb" value="$val" />$stay}) unless $no_save;
+    $m->out(qq{<input type="image" src="/media/images/$lang_key/${val}.gif" border=0 name="$widget|$cb" value="$val" />$stay}) unless $no_save;
 }
 </%perl>
    </td>
    <td align="right">
 <%perl>;
-$m->out(qq{<a href="#" onClick="window.location.href='$return'; return false;"><img src="/media/images/$ret_val.gif" border=0 name="return" value="Return" vspace=2 /></a>}) unless $no_ret;
+$m->out(qq{<a href="#" onClick="window.location.href='$return'; return false;"><img src="/media/images/$lang_key/$ret_val.gif" border=0 name="return" value="Return" vspace=2 /></a>}) unless $no_ret;
 </%perl>
 
   </td>
@@ -63,15 +63,15 @@ formButtons.mc
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2003-03-12 03:25:48 $
 
 =head1 SYNOPSIS
 

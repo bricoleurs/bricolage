@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2003-03-08 21:46:00 $
+$Date: 2003-03-12 03:25:54 $
 
 =head1 SYNOPSIS
 
@@ -43,11 +43,6 @@ my $borderColor = ($section eq "admin") ? "999966" : "669999";
 </table>
 <table width="580" border="0" cellpadding="0" cellspacing="0">
 % if ($border) {
-<tr>
-  <td bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
-  <td colspan="2"><img src="/media/images/spacer.gif" width="578" height="6" border="0"></td>
-  <td bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
-</tr>
 <tr>
   <td bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
   <td bgcolor="<% $borderColor %>" colspan="2"><img src="/media/images/spacer.gif" width="578" height="1" border="0"></td>

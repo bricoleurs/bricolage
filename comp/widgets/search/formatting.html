@@ -48,7 +48,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
 %# This hidden field is required to make the form submit when the user hits
 %# the "enter" key.
                   <input type="hidden" name="<% $widget %>|formatting_cb" value="Search" />
-                  <input type="image" src="/media/images/search_red.gif" border=0 name="<% $widget %>|formatting_cb" value="Search">
+                  <input type="image" src="/media/images/<% $lang_key %>/search_red.gif" border=0 name="<% $widget %>|formatting_cb" value="Search">
                 </td>
 % } else {
               <tr>
@@ -160,8 +160,8 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
 </table>
 % if ($advanced_search) {
 <p></p>
-<input type="image" src="/media/images/search_lgreen.gif" border=0 name="<% $widget %>|formatting_cb" value="Search">
-<input type="image" src="/media/images/clear_values_lgreen.gif" border=0 name="<% $widget %>|clear_cb" value="Clear Values">
+<input type="image" src="/media/images/<% $lang_key %>/search_lgreen.gif" border=0 name="<% $widget %>|formatting_cb" value="Search">
+<input type="image" src="/media/images/<% $lang_key %>/clear_values_lgreen.gif" border=0 name="<% $widget %>|clear_cb" value="Clear Values">
 % }
 %#--- Log History ---#
 % if ($use_form_tag) {

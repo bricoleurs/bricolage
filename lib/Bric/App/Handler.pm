@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-07 16:34:38 $
+$Date: 2003-03-12 03:25:56 $
 
 =head1 SYNOPSIS
 
@@ -125,7 +125,7 @@ use Carp qw(croak);
     eval { require Text::Levenshtein };
     require Text::Soundex if $@;
 
-    use vars qw($c $widget_dir $lang);
+    use vars qw($c $widget_dir $lang $lang_key);
 
     # Where our widgets live under the element root.
     $widget_dir = 'widgets';
@@ -135,6 +135,7 @@ use Carp qw(croak);
 
     # A global for localization purposes
     $lang = Bric::Util::Language->get_handle(LANGUAGE);
+    $lang_key = $lang->key;
 }
 
 ################################################################################

@@ -18,6 +18,7 @@ Returns a help button with a link to a helpfile based on $r->uri().
 Sam Tregar <stregar@about-inc.com>
 
 =cut
+
 </%doc>
 <%once>;
 my $widget = 'help';
@@ -46,4 +47,4 @@ my $widget = 'help';
   $uri .= '.html' unless $uri =~ /\.html$/;
 
 #  print STDERR "HELP : help uri : $uri\n" if $DEBUG;
-</%perl><a href="#" onClick="window.open('<% $uri %>', 'Help_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505');return false;"><img src="/media/images/help.gif" border="0" width="71" height="20" alt="Help"></a>
+</%perl><a href="#" onClick="window.open('<% $uri %>', 'Help_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505');return false;"><img src="/media/images/<% $lang_key %>/help.gif" border="0" width="71" height="20" alt="Help"></a>

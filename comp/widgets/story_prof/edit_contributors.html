@@ -64,9 +64,9 @@ var selectOrderNames = new Array(<% join ', ', @sort_array %>);
 &>
 
 <p></p>
-<input type="image" src="/media/images/save_red.gif" border="0" name="<% $widget %>|save_contrib_cb" value="Save" />
-<input type="image" src="/media/images/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_contrib_cb" value="Save and Stay" />
-<input type="image" src="/media/images/return_dgreen.gif" border="0" name="<% $widget %>|leave_contrib_cb" />
+<input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_contrib_cb" value="Save" />
+<input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_contrib_cb" value="Save and Stay" />
+<input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" name="<% $widget %>|leave_contrib_cb" />
 
 <%args>
 $widget

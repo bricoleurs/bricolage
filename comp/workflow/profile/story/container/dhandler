@@ -7,11 +7,11 @@ dhandler -- the container profile app.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-03-25 16:53:00 $
+$Date: 2003-03-12 03:25:56 $
 
 =head1 DESCRIPTION
 
@@ -49,7 +49,7 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 	show_summary => 1,
   &>
 
-<input type="image" src="/media/images/return_dgreen.gif" border=0 name="container_prof|up_cb" value="Go Up a Level">
+<input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0 name="container_prof|up_cb" value="Go Up a Level">
 </form>
 
 <& /widgets/wrappers/sharky/footer.mc &>

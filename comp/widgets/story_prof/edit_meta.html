@@ -71,7 +71,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Preview in') %>:&nbsp;</span></td>
-  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/story/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></td>
+  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/story/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></td>
   </tr>
 % }
   <tr>
@@ -227,7 +227,7 @@ my $cats = $story->get_categories;
 
 <tr>
   <td align="right" colspan=8>&nbsp;</td>
-  <td align="center" valign="middle"><input type="image" src="/media/images/delete_red.gif" border=0 vspace=3 name="<% $widget %>|delete_cat_cb" value="Delete Categories"></td>
+  <td align="center" valign="middle"><input type="image" src="/media/images/<% $lang_key %>/delete_red.gif" border=0 vspace=3 name="<% $widget %>|delete_cat_cb" value="Delete Categories"></td>
 </tr>
 % }
 

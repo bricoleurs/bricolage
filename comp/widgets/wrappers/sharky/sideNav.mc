@@ -55,10 +55,12 @@ my $workflowIndent            = 25;
 my $adminIndent               = 25;
 my $tabHeight                 = "height=20";
 my $numLinks                  = $c->get("__NUM_LINKS__") || 0;
-my $workflowGraphic           = ( $section eq 'admin') ? "/media/images/workflow_admin.gif"
-                                                       : "/media/images/workflow_workflow.gif";
-my $workspaceGraphic          = $type eq "workspace"
-  ? "/media/images/my_workspace_on.gif" : "/media/images/my_workspace_off.gif";
+my $workflowGraphic           = $section eq 'admin' ?
+  "/media/images/$lang_key/workflow_admin.gif" :
+  "/media/images/$lang_key/workflow_workflow.gif";
+my $workspaceGraphic          = $type eq "workspace" ?
+  "/media/images/$lang_key/my_workspace_on.gif" :
+  "/media/images/$lang_key/my_workspace_off.gif";
 
 my $workflows = $c->get('__WORKFLOWS__');
 
@@ -446,10 +448,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2003-02-13 16:00:39 $
+$Date: 2003-03-12 03:25:54 $
 
 </%doc>

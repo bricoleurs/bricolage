@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-03-01 19:26:00 $
+$Date: 2003-03-12 03:25:59 $
 
 =head1 SYNOPSIS
 
@@ -31,8 +31,9 @@ Translation to Portuguese using Lang::Maketext.
 
 =cut
 
-
 @ISA = qw(Bric::Util::Language);
+
+use constant key => 'pt_pt';
 
 %Lexicon =
   (
@@ -344,7 +345,7 @@ Translation to Portuguese using Lang::Maketext.
    'Add a New User' => 'Criar Novo Utilizador',
 
    'An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' =>
-     'Já existe um template activo para o canal de distribuição, categoria, elemento e burner que assinalou. Tem de apagar o temp+late existtente para poder adicionar um novo.'
+     'Já existe um template activo para o canal de distribuição, categoria, elemento e burner que assinalou. Tem de apagar o temp+late existtente para poder adicionar um novo.',
 
    'At least one extension is required.' =>
      'Tem de indicar pelo menos uma extensão.',

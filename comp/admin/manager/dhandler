@@ -110,10 +110,10 @@ $m->comp('/widgets/listManager/listManager.mc',
 # Output the form closing tag if necessary.
 if (defined $def->{$type}{select} && $can_del) {
     if ($type ne "job") {
-	$m->out(qq{<br><input type="image" src="/media/images/delete_checked_red.gif" border=0 name="action"}
+	$m->out(qq{<br><input type="image" src="/media/images/$lang_key/delete_checked_red.gif" border="0" name="action"}
 		. qq{value="$sel_label Checked" />\n</form>})
     } else {
-	$m->out(qq{<br><input type="image" src="/media/images/cancel_checked_red.gif" border=0 name="action"}
+	$m->out(qq{<br><input type="image" src="/media/images/$lang_key/cancel_checked_red.gif" border="0" name="action"}
 		. qq{value="$sel_label Checked" />\n</form>})
     }
 }
@@ -367,11 +367,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2003-01-21 18:55:05 $
+$Date: 2003-03-12 03:25:05 $
 
 =head1 SYNOPSIS
 

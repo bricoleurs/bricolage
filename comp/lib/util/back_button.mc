@@ -1,4 +1,4 @@
-<a href="#" onClick="window.location.href='<% $url %>'; return false;"><img src="/media/images/return_dgreen.gif" border=0  /></a>
+<a href="#" onClick="window.location.href='<% $url %>'; return false;"><img src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0  /></a>
 <%args>
 $label => 'Back'
 $url => undef
@@ -7,17 +7,18 @@ $url => undef
 $url ||= last_page();
 </%init>
 <%doc>
+
 =head1 NAME
 
 /lib/util/bac_button.mc - Adds a self-contained back button to a page
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:57 $
+$Date: 2003-03-12 03:25:07 $
 
 =head1 SYNOPSIS
 
