@@ -6,19 +6,19 @@ Bric - The Bricolage base class.
 
 =head1 VERSION
 
-Release Version: 1.0.1
+Release Version: 1.1.0
 
 File (CVS) Version:
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = "1.0.1";
+our $VERSION = "1.1.0";
 
 =head1 DATE
 
-$Date: 2001-09-27 15:59:32 $
+$Date: 2001-09-28 16:05:32 $
 
 =head1 SYNOPSIS
 
@@ -798,7 +798,11 @@ perl(1).
 =head1 REVISION HISTORY
 
 $Log: Bric.pm,v $
-Revision 1.4  2001-09-27 15:59:32  wheeler
+Revision 1.5  2001-09-28 16:05:32  wheeler
+Updated version number to "1.1.0" for the main branch. If anyone has any good
+ideas on how to get some sort of version number automation going, let me know.
+
+Revision 1.4  2001/09/27 15:59:32  wheeler
 Fixed release version in the POD.
 
 Revision 1.3  2001/09/27 15:59:13  wheeler
