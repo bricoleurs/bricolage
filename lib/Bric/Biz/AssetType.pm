@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 21:03:44 $
+$Date: 2003-03-12 22:18:43 $
 
 =head1 SYNOPSIS
 
@@ -860,28 +860,37 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->set_primary_oc_id( $primary_oc_id )
+=item $element = $element->set_primary_oc_id( $primary_oc_id, $site )
 
 This will set the primary output channel id field for the asset type
 
 B<Throws:>
-NONE
 
-B<Side Effects:>
-NONE
+=over 4
 
-B<Notes:>
-NONE
+=item *
+
+No site parameter passed to Bric::Biz::AssetType-E<gt>set_primary_oc_id
+
+=item *
+
+No output channels associated with non top-level elements.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub set_primary_oc_id {
     my ( $self, $id, $site) = @_;
 
-    throw_dp "You need to specify what site you want to set the primary oc id for" unless
-      defined $site;
+    throw_dp "No site parameter passed to " . __PACKAGE__ .
+      "->set_primary_oc_id" unless $site;
 
-    throw_dp "You can only set the primary oc id for top level AssetTypes"
+    throw_dp "No output channels associated with non top-level elements"
       unless $self->get_top_level;
 
     $site = $site->get_id if ref $site;
@@ -889,7 +898,8 @@ sub set_primary_oc_id {
     my $oc_site = $self->_get('_site_primary_oc_id');
 
     # If it is set and it is the same then don't bother
-    return $self if ref $oc_site && exists $oc_site->{$site} && $oc_site->{$site} == $id;
+    return $self if ref $oc_site && exists $oc_site->{$site}
+      && $oc_site->{$site} == $id;
 
     $oc_site = {} unless ref $oc_site;
     $oc_site->{$site} = $id;
@@ -900,28 +910,37 @@ sub set_primary_oc_id {
 
 #------------------------------------------------------------------------------#
 
-=item $primary_oc_id = $element->get_primary_oc_id()
+=item $primary_oc_id = $element->get_primary_oc_id($site)
 
 This will return the primary output channel id field for the asset type
 
 B<Throws:>
-NONE
 
-B<Side Effects:>
-NONE
+=over 4
 
-B<Notes:>
-NONE
+=item *
+
+No site parameter passed to Bric::Biz::AssetType-E<gt>get_primary_oc_id.
+
+=item *
+
+No output channels associated with non top-level elements.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub get_primary_oc_id {
     my ($self, $site) = @_;
 
-    throw_dp "You need to specify what site you want the primary oc id for" unless
-      defined $site;
+    throw_dp "No site parameter passed to " . __PACKAGE__ .
+      "->get_primary_oc_id" unless $site;
 
-    throw_dp "You can only check the primary oc id for top level AssetTypes"
+    throw_dp "No output channels associated with non top-level elements"
       unless $self->get_top_level;
 
     $site = $site->get_id if ref $site;
@@ -1590,7 +1609,15 @@ sub add_output_channels {
 This takes an array reference of output channels and removes their association
 from the object.
 
-B<Throws:> NONE.
+B<Throws:>
+
+=over 4
+
+=item *
+
+Cannot delete a primary output channel.
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -1604,7 +1631,7 @@ sub delete_output_channels {
 
     foreach my $oc (@$ocs) {
         $oc = Bric::Biz::OutputChannel->lookup({ id => $oc }) unless ref($oc);
-        throw_dp "You cannot delete an output channel that is marked as primary"
+        throw_dp "Cannot delete a primary output channel"
           if $self->get_primary_oc_id($oc->get_site_id) == $oc->get_id;
     }
 
@@ -1654,7 +1681,11 @@ You can only add sites to top level objects
 
 =item *
 
-Couldn't find site
+Cannot add sites to non top-level elements.
+
+=item *
+
+No such site.
 
 =back
 
@@ -1667,13 +1698,13 @@ B<Notes:> NONE.
 sub add_site {
     my ($self, $site) = @_;
 
-    throw_dp "You can only add sites to top level objects" unless
-      $self->get_top_level;
+    throw_dp "Cannot add sites to non top-level elements"
+      unless $self->get_top_level;
 
     my $site_coll = $get_site_coll->($self);
     $site = Bric::Biz::Site->lookup({ id =>  $site}) unless ref $site;
 
-    throw_dp "Couldn't find site" unless ref $site;
+    throw_dp "No such site" unless ref $site;
 
     $site_coll->add_new_objs( $site );
     return $site;
@@ -1684,8 +1715,8 @@ sub add_site {
 
 =item my $site = $element->add_sites([$site_id])
 
-Adds a site to this element object and returns the Bric::Biz::AssetType object. 
-Can pass in multiple site objects or site IDs.
+Adds a site to this element object and returns the Bric::Biz::AssetType
+object. Can pass in multiple site objects or site IDs.
 
 B<Throws:>
 
@@ -1725,7 +1756,7 @@ B<Throws:>
 
 =item *
 
-Cannot remove last site from an AssetType
+Cannot remove last site from an element.
 
 =back
 
@@ -1738,7 +1769,7 @@ B<Notes:> NONE.
 sub remove_sites {
     my ($self, $sites) = @_;
     my $site_coll = $get_site_coll->($self);
-    throw_dp "Cannot remove last site from an AssetType"
+    throw_dp "Cannot remove last site from an element"
       if @{$site_coll->get_objs} < 2;
 
     #here we need to remove all corresponding output channels
@@ -1748,7 +1779,8 @@ sub remove_sites {
     my @delete_oc;
     for my $site (@$sites) {
         foreach my $oce (@$oces) {
-            push @delete_oc, $oce if ((ref($site) ? $site->get_id : $site) == $oce->get_site_id);
+            push @delete_oc, $oce
+              if ((ref($site) ? $site->get_id : $site) == $oce->get_site_id);
         }
     }
     $self->delete_output_channels(\@delete_oc);
