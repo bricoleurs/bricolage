@@ -55,6 +55,15 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
     <td width="470">&nbsp;<% $fa->get_uri %></td>
   </tr>
   <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Site') %>:&nbsp;</span></td>
+  <td width="470">&nbsp;<% Bric::Biz::Site->lookup({id => $fa->get_site_id})->
+  get_name() %></td>
+  </tr>
+  <tr>
     <td class="medHeader" colspan=3><img src="/media/images/spacer.gif" height="1" width="1" /></td>
   </tr>
   </table>

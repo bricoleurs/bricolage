@@ -123,11 +123,7 @@ elsif ($field eq "$widget|trail_cb") {
 }
 
 elsif ($field eq "$widget|create_next_cb") {
-    # Just create it if CATEGORY template was selected.
-    $create_fa->($widget, $param)
-      if $param->{tplate_type} ==
-      Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE;
-    # Otherwise, do nothing.
+    # Do nothing
 }
 
 elsif ($field eq "$widget|create_cb") {
@@ -401,6 +397,7 @@ my $create_fa = sub {
     my $cat_id = $param->{$widget.'|cat_id'};
     my $file_type = $param->{file_type};
     my $tplate_type = $param->{tplate_type};
+    my $site_id = $param->{site_id};
 
     my ($at, $name);
     if ($tplate_type ==
@@ -436,7 +433,9 @@ my $create_fa = sub {
             'category_id'        => $cat_id,
             'priority'           => $param->{priority},
             'name'               => $name,
-            'user__id'           => get_user_id})
+            'user__id'           => get_user_id,
+            'site_id'            => $site_id,
+           })
     };
 
     if (my $err = $@) {
