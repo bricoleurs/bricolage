@@ -79,7 +79,8 @@ elsif ($field eq "$widget|move_cb") {
         my $a_obj = $pkg->lookup({'id' => $a_id});
 
         unless ($a_obj->is_current) {
-            add_msg($lang->maketext("Cannot move [_1] asset '[_2]' while it is checked out",$a_class ,$a_obj->get_name));
+            my $msg = "Cannot move [_1] asset '[_2]' while it is checked out";
+            add_msg($lang->maketext($msg, $a_class, $a_obj->get_name));
             next;
         }
 
@@ -146,7 +147,10 @@ elsif ($field eq "$widget|publish_cb") {
         $seen{$key} = 1;
 
         if ($a->get_checked_out) {
-            add_msg($lang->maketext("Cannot publish [_1]  because it is checked out"),lc(get_disp_name($a->key_name))." '".$a->get_name);
+            my $msg = "Cannot publish [_1]  because it is checked out";
+            my $arg = lc(get_disp_name($a->key_name))
+              . " '" . $a->get_name . "'";
+            add_msg($lang->maketext($msg, $arg));
             next;
         }
 
@@ -156,7 +160,11 @@ elsif ($field eq "$widget|publish_cb") {
             next if not $r->needs_publish();
 
             if ($r->get_checked_out) {
-                add_msg($lang->maketext("Cannot auto-publish related [_1] because it is checked out"),lc(get_disp_name($r->key_name))." '".$r->get_name."' ");
+                my $msg = "Cannot auto-publish related [_1] because "
+                  . "it is checked out";
+                my $arg = lc(get_disp_name($r->key_name))
+                  . " '" . $r->get_name."'";
+                add_msg($lang->maketext($msg, $arg));
                 next;
             }
 
