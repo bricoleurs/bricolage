@@ -110,9 +110,9 @@ $param
 <%init>;
 my $rk = get_state_data($widget, 'reset_key');
 # browser spacing stuff
-my $agent = detect_agent();
-my $ieSpacer = ($agent->{browser} eq "MSIE") ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';
-my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 7 : FIELD_INDENT;
+my $agent = new HTTP::BrowserDetect;
+my $ieSpacer = ($agent->ie) ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';
+my $infoIndent = $agent->netscape ? FIELD_INDENT - 7 : FIELD_INDENT;
 
 my ($button, $cb);
 ($button, $cb, $pmeth->{value}) = $param->{tplate_type} ?

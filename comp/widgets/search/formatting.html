@@ -9,8 +9,8 @@ $use_form_tag
 
 %#--- Initialization ---#
 <%init>
-my $agent = detect_agent();
-my $spacerRow = ($agent->{browser} eq "MSIE") ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
+my $agent = new HTTP::BrowserDetect;
+my $spacerRow = $agent->ie ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
 
 my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
 </%init>

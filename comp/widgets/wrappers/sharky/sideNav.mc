@@ -50,7 +50,7 @@ my $printLink = sub {
 my ($section, $mode, $type) = split '/', substr($ARGS{uri}, 1);
 ($section, $mode, $type) = qw(workflow profile workspace) unless $section;
 
-my $agent                     = detect_agent();
+my $agent                     = new HTTP::BrowserDetect;
 my $workflowIndent            = 25;
 my $adminIndent               = 25;
 my $tabHeight                 = "height=20";
@@ -99,7 +99,7 @@ unless ($workflows) {
 }
 
 </%perl>
-% if (!DISABLE_NAV_LAYER && ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla')) {
+% if (!DISABLE_NAV_LAYER && ($agent->user_agent !~ /(linux|freebsd|sunos)/ || $agent->gecko)) {
 <html>
 <head>
   <meta http-equiv="Expires" content="Mon, 06, Jan 1990 00:00:01 GMT">
@@ -107,7 +107,7 @@ unless ($workflows) {
   <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
 
-% if ($agent->{browser} ne "Netscape") {
+% unless ($agent->netscape) {
     <script language="javascript">
     function doNav(callback) {
         document.location.href = callback;
@@ -428,7 +428,7 @@ foreach my $wf (@$workflows) {
 % }
 % # end debug widget
 
-% if (!DISABLE_NAV_LAYER && ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla')) {
+% if (!DISABLE_NAV_LAYER && ($agent->user_agent !~ /(linux|freebsd|sunos)/ || $agent->gecko)) {
 </body>
 </html>
 %}
@@ -454,10 +454,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.32.2.2 $
+$Revision: 1.32.2.3 $
 
 =head1 DATE
 
-$Date: 2003-06-10 15:27:25 $
+$Date: 2003-06-11 13:41:06 $
 
 </%doc>

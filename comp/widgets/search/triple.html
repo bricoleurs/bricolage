@@ -9,8 +9,8 @@ $groupList
 
 %#--- Initialization ---#
 <%init>
-my $agent = detect_agent();
-my $spacerRow = ($agent->{os} ne "MSIE") ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
+my $agent = new HTTP::BrowserDetect;
+my $spacerRow = (! $agent->ie) ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
 </%init>
 
 <FORM action="<% $r->uri %>" method="post">

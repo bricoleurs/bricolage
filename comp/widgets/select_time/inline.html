@@ -103,7 +103,7 @@ $disp   => ''
 my $sub_widget = "$widget.$base_name";
 my $s = get_state_data($sub_widget);
 my $js;
-my $agent = detect_agent();
+my $agent = new HTTP::BrowserDetect;
 my $cw = 80;
 my $cellWidth = "width=$cw";
 my $cellsDisplayed = 0;
@@ -111,7 +111,7 @@ my $cellsDisplayed = 0;
 if ($compact) { $useTable = 0 };
 
 $indent = $useTable ? FIELD_INDENT + 3 : 0 unless defined $indent;
-$indent -= 7 if ($agent->{browser} eq "Netscape");
+$indent -= 7 if $agent->netscape;
 
 # Set some default values for the time if necessary.
 if ($default_current) {

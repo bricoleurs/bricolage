@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.10.2.1 $
+$Revision: 1.10.2.2 $
 
 =head1 DATE
 
-$Date: 2003-06-10 15:27:20 $
+$Date: 2003-06-11 13:41:01 $
 
 =head1 SYNOPSIS
 
@@ -132,7 +132,7 @@ $cols     => undef
 $rows     => undef
 </%args>
 <%perl>;
-my $agent = detect_agent();
+my $agent = new HTTP::BrowserDetect;
 $vals->{props}{cols} = $cols if ($cols);
 $vals->{props}{rows} = $rows if ($rows);
 
@@ -307,8 +307,7 @@ my %formSubs = (
 
 	    # adjust defaults by platform/browser
 	    # ns displays big boxes, usually
-	    $cols = ($agent->{browser} eq "Netscape" && $agent->{os} ne "Mac")
-	      ? $cols *.8 : $cols;
+	    $cols = ($agent->netscape && $agent->mac) ? $cols *.8 : $cols;
 
 	    my $out;
 	    $out .= qq{<table border="0" width="$width"><tr><td align="right"}
@@ -334,7 +333,7 @@ my %formSubs = (
 		$label, $readOnly, $agent) = @_;
 	    my $out='';
 
-	    $indent -= 7 if ($agent->{browser} eq "Netscape");
+	    $indent -= 7 if $agent->netscape;
 	    if ($useTable) {
 		$out .= qq{<table border="0" width="$width" cellpadding=0 cellspacing=0><tr>};
 		$out .= qq{<td align="right" width="$indent" valign="middle">};

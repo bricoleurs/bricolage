@@ -31,7 +31,7 @@ my $x=0;
 % # COLUMN HEADER ROW
 % my $rowspan = scalar(@tiles) + 2;
 % $rowspan++ if ($repeatable_opts);
-% $rowspan += scalar(@tiles) if ($agent->{browser} eq "MSIE");
+% $rowspan += scalar(@tiles) if $agent->ie;
 % if (scalar(@tiles)) { # suppress labels if no results
 <tr>
   <td width=20 class="medHeader"><img src="/media/images/spacer.gif" width="20" height="20" /></td>
@@ -455,11 +455,11 @@ my $is_related_story = $at->is_related_story ? 1 : 0;
 my $is_related_media = $at->is_related_media ? 1 : 0;
 
 # browser spacing stuff
-my $agent = detect_agent();
-my $ieSpacer = ($agent->{browser} eq "MSIE")
+my $agent = new HTTP::BrowserDetect;
+my $ieSpacer = $agent->ie
   ? qq{<tr><td colspan=10><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>}
   : '';
-my $shim = ($agent->{browser} eq "Netscape") ?  -4 : 4;
+my $shim = $agent->netscape ?  -4 : 4;
 </%init>
 
 <%once>

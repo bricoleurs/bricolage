@@ -99,7 +99,7 @@ my $oc_name  = $fa->get_output_channel_name;
 my $code = $fa->get_data;
 $code =~ s/</&#60;/g;
 $code =~ s/>/&#62;/g;
-my $agent = detect_agent();
-my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+my $agent = new HTTP::BrowserDetect;
+my $infoIndent = ($agent->netscape) ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 
 </%init>

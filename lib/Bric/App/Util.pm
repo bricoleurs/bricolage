@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.18.2.3 $
+$Revision: 1.18.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-10 17:57:10 $
+$Date: 2003-06-11 13:41:08 $
 
 =head1 SYNOPSIS
 
@@ -45,7 +45,6 @@ use Bric::Util::Class;
 use Bric::Util::Pref;
 use Apache;
 use Apache::Request;
-use HTTP::BrowserDetect;
 
 #==============================================================================#
 # Inheritance                          #
@@ -652,107 +651,6 @@ sub pop_page {
 }
 
 #------------------------------------------------------------------------------#
-
-=item $href = detect_agent;
-
-Detects the agent's browser, its version, and the OS.
-
-Calling the detect_agent with no arguments will return an anonymous
-hash ref containing the following keys:
-
-=over 4
-
-=item *
-
-browser - The name of the browser.
-
-=item *
-
-version - The version of the browser.
-
-=item *
-
-os - The operating system.
-
-=item *
-
-type - One of:
-
-=over 4
-
-=item *
-
-Robot - A robot.
-
-=item *
-
-Non-robot - Not a robot, probably a browser.
-
-=back
-
-Note: these used to be Browser, Robot, and Crud, but I'm not sure
-how to do that with HTTP::BrowserDetect, and it seems that no
-code checked for the type anyway.
-
-=back
-
-In the event that a field cannot be recognized, the string "Unknown" is
-returned. This may occur in the browser, version, and os fields.
-
-Note: was comp/widgets/util/detectAgent.mc
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-Might want to just use the HTTP::BrowserDetect object
-directly in UI code.
-
-=cut
-
-sub detect_agent {
-    # Return it if we got it.
-    my $ua = Bric::App::Session::get_state_data('util', 'user-agent');
-    return $ua if $ua;
-
-    # We don't got it. So get it.
-    my $agent = new HTTP::BrowserDetect;
-    my ($browser, $os, $version, $type);
-
-    if ($agent->gecko) {
-        $browser = 'Mozilla';
-    } else {
-        $browser = $agent->browser_string;
-    }
-    if ($agent->user_agent =~ /(linux|freebsd|sunos)/) {
-        $os = 'SomeNix';
-    } else {
-        $os = $agent->os_string;        # XXX: mismatch w/ old
-    }
-    $version = $agent->version;
-    $type = $agent->robot ? 'Robot' : 'Non-robot';   # XXX: mismatch w/ old
-
-    # Create the data hash.
-    $ua = {
-        'browser' => $browser || 'Unknown',
-        'version' => $version || 'Unknown',
-        'os'      => $os      || 'Unknown',
-        'type'    => $type    || 'Browser',
-    };
-
-    # Cache it with the session data.
-    Bric::App::Session::set_state_data('util', 'user-agent', $ua);
-
-    return $ua;
-}
-
-#--------------------------------------#
 
 =item ($section, $mode, $type, ...) = parse_uri($uri);
 

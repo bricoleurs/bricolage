@@ -81,6 +81,6 @@ $num => 1
   # the contained tiles
   my @tiles = $tile->get_tiles();
 
-my $agent = detect_agent();
-my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+my $agent = new HTTP::BrowserDetect;
+my $infoIndent = $agent->netscape ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 </%init>
