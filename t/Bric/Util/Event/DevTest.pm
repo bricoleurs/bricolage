@@ -76,7 +76,7 @@ sub test_lookup : Test(24) {
 
 ##############################################################################
 # Test list().
-sub test_list : Test(30) {
+sub test_list : Test(31) {
     my $self = shift;
 
     # Create some test records.
@@ -112,6 +112,10 @@ sub test_list : Test(30) {
     ok(@events = Bric::Util::Event->list({ user_id => $uid }),
        "List user_id '$uid'" );
     is(scalar @events, 5, "Check for 5 events");
+
+    # Make sure that only three of them have attributes.
+    my @with_attr = grep { $_->get_attr } @events;
+    is(scalar @with_attr, 3, "Check for 3 events");
 
     # Try obj_id.
     ok(@events = Bric::Util::Event->list({ obj_id => $wfid }),

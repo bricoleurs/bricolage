@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.13.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-04-24 14:48:07 $
 
 =head1 SYNOPSIS
 
@@ -1431,7 +1431,7 @@ $get_em = sub {
 #            $seen{$grp_ids->[0]} = 1;
 
             # Start the attribute hash and add it to the array.
-            $attrs = $d[$#SEL_PROPS + 1] = { $key => $val } if $key;
+            $attrs = $d[$#SEL_PROPS + 1] = $key ? { $key => $val } : undef;
 
             # Create a new event object.
             my $self = bless {}, $pkg;
