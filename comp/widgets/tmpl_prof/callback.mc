@@ -161,6 +161,40 @@ elsif ($field eq "$widget|create_cb") {
 			     'user__id'           	=> get_user_id});
 
 
+    # check that there isn't already an active template with the same
+    # output channel and file_name (which is composed of category,
+    # file_type and element name).
+    my $found_dup = 0;
+    my $file_name  = $fa->get_file_name;
+    my @list = Bric::Biz::Asset::Formatting->list_ids(
+			  { output_channel__id => $oc_id,
+			    file_name => $file_name      });
+    if (@list) {
+	$found_dup = 1;
+    } else {
+	# Arrgh.  This is the only way to search all checked out
+	# formatting assets.  According to Garth this isn't a
+	# problem...  I'd like to show him this code sometime and see
+	# if he still thinks so!
+	my @user_ids = Bric::Biz::Person::User->list_ids({});
+	foreach my $user_id (@user_ids) {
+	    @list = Bric::Biz::Asset::Formatting->list_ids(
+			  { output_channel__id => $oc_id,
+			    file_name          => $file_name,
+			    user__id           => $user_id   });
+	    if (@list) {
+		$found_dup = 1;
+		last;
+	    }
+	}
+    }
+
+    if ($found_dup) {
+	set_redirect("/");
+	add_msg("An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.");
+	return;
+    }
+
     # Keep the formatting asset deactivated until the user clicks save.
     $fa->deactivate;
     $fa->save;
