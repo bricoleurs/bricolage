@@ -12,10 +12,10 @@
 -- Functions. 
 --
 
--- This funtion allows us to create UNIQUE indices that combine a lowercased
--- TEXT (or VARCHAR) column with a NUMERIC column. See Bric/Util/AlertType.sql
+-- This function allows us to create UNIQUE indices that combine a lowercased
+-- TEXT (or VARCHAR) column with a INTEGER column. See Bric/Util/AlertType.sql
 -- for an example.
-CREATE   FUNCTION lower_text_num(TEXT, NUMERIC(10, 0))
+CREATE   FUNCTION lower_text_num(TEXT, INTEGER)
 RETURNS  TEXT AS 'SELECT LOWER($1) || to_char($2, ''|FM9999999999'')'
 LANGUAGE 'sql'
 WITH     (ISCACHABLE);
@@ -24,7 +24,7 @@ WITH     (ISCACHABLE);
 -- string. It is used primarily for the id_list aggregate (below). We omit
 -- the ID 0 because it is a hidden, secret group to which permissions do not
 -- apply.
-CREATE   FUNCTION append_id(TEXT, NUMERIC(10,0))
+CREATE   FUNCTION append_id(TEXT, INTEGER)
 RETURNS  TEXT AS '
     SELECT CASE WHEN $2 = 0 THEN
                 $1
@@ -42,7 +42,17 @@ WITH     (ISCACHABLE, ISSTRICT);
 -- LIMIT.
 CREATE AGGREGATE id_list (
     SFUNC    = append_id,
-    BASETYPE = NUMERIC(10, 0),
+    BASETYPE = INTEGER,
     STYPE    = TEXT,
     INITCOND = ''
 );
+
+/*
+-- This is a temporary compatibility measure.
+CREATE FUNCTION int_to_boolean(integer) RETURNS boolean
+  AS 'select case when $1 = 0 then false else true end'
+LANGUAGE 'sql' IMMUTABLE;
+
+CREATE CAST (integer AS boolean)
+  WITH FUNCTION int_to_boolean(integer) AS IMPLICIT;
+*/

@@ -223,7 +223,7 @@ use constant GROUP_COLS => ('id_list(DISTINCT m.grp__id) AS grp_id',
 use constant WHERE => 'f.id = i.formatting__id '
   . 'AND fm.object_id = f.id '
   . 'AND m.id = fm.member__id '
-  . 'AND m.active = 1 '
+  . "AND m.active = '1' "
   . 'AND c.id = f.category__id '
   . 'AND f.workflow__id = w.id';
 
@@ -274,16 +274,17 @@ use constant PARAM_WHERE_MAP =>
       user__id              => 'i.usr__id = ?',
       user_id               => 'i.usr__id = ?',
       _checked_in_or_out    => 'i.checked_out = '
-                             . '( SELECT max(checked_out) '
+                             . '( SELECT checked_out '
                              . 'FROM formatting_instance '
                              . 'WHERE version = i.version '
-                             . 'AND formatting__id = i.formatting__id )',
+                             . 'AND formatting__id = i.formatting__id '
+                             . 'ORDER BY checked_out DESC LIMIT 1 )',
       _checked_out          => 'i.checked_out = ?',
       category_id           => 'f.category__id = ?',
       category_uri          => 'f.category__id = c.id AND '
                              . 'LOWER(c.uri) LIKE LOWER(?))',
       _no_return_versions   => 'f.current_version = i.version',
-      grp_id                => 'm2.active = 1 AND '
+      grp_id                => "m2.active = '1' AND "
                              . 'm2.grp__id = ? AND '
                              . 'f.id = fm2.object_id AND '
                              . 'fm2.member__id = m2.id',
@@ -296,7 +297,7 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'e.key_name LIKE LOWER(?)' ],
     category_uri           => [ 'f.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?))' ],
-    grp_id                 => [ 'm2.active = 1 AND fm2.member__id = m2.id AND f.id = fm2.object_id',
+    grp_id                 => [ "m2.active = '1' AND fm2.member__id = m2.id AND f.id = fm2.object_id",
                                 'm2.grp__id = ?' ],
 };
 

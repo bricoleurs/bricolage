@@ -10,16 +10,16 @@
 DELETE FROM addr_part_type;
 
 INSERT INTO addr_part_type (id, name, active)
-VALUES (1, 'Line', 1);
+VALUES ('1', 'Line', '1');
 
 INSERT INTO addr_part_type (id, name, active)
-VALUES (2, 'City', 1);
+VALUES ('2', 'City', '1');
 
 INSERT INTO addr_part_type (id, name, active)
-VALUES (3, 'State', 1);
+VALUES ('3', 'State', '1');
 
 INSERT INTO addr_part_type (id, name, active)
-VALUES (4, 'Code', 1);
+VALUES ('4', 'Code', '1');
 
 INSERT INTO addr_part_type (id, name, active)
-VALUES (5, 'Country', 1);
+VALUES ('5', 'Country', '1');

@@ -1804,7 +1804,7 @@ $get_em = sub {
         } elsif ($k eq 'grp_id') {
             $extra_tables = ", $mem_table m2, $map_table c2";
             $extra_wheres = "AND p.id = c2.object_id AND " .
-              "m2.active = 1 AND c2.member__id = m2.id";
+              "m2.active = '1' AND c2.member__id = m2.id";
             push @wheres, "m2.grp__id = ?";
             push @params, $v;
         } else {
@@ -1813,7 +1813,7 @@ $get_em = sub {
         }
     }
 
-    my $where = defined $params->{id} ? '' : 'p.active = 1';
+    my $where = defined $params->{id} ? '' : "p.active = '1'";
     $where .= ($where ? ' AND ' : '') . join(' AND ', @wheres) if @wheres;
 
     local $" = ', ';
@@ -1822,7 +1822,7 @@ $get_em = sub {
     my $sel = prepare_c(qq{
         SELECT @$qry_cols
         FROM   $table p, $mem_table m, $map_table c $extra_tables
-        WHERE  p.id = c.object_id AND c.member__id = m.id and m.active = 1
+        WHERE  p.id = c.object_id AND c.member__id = m.id and m.active = '1'
                $extra_wheres AND $where
         ORDER BY $order
     }, undef);

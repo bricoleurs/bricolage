@@ -164,7 +164,7 @@ use constant GROUP_COLS => ('id_list(DISTINCT m.grp__id) AS grp_id',
 use constant WHERE => 'mt.id = i.media__id '
   . 'AND mm.object_id = mt.id '
   . 'AND m.id = mm.member__id '
-  . 'AND m.active = 1 '
+  . "AND m.active = '1' "
   . 'AND c.id = i.category__id '
   . 'AND e.id = mt.element__id '
   . 'AND at.id = e.type__id '
@@ -232,10 +232,11 @@ use constant PARAM_WHERE_MAP =>
       file_name             => 'LOWER(i.file_name) LIKE LOWER(?)',
       location              => 'LOWER(i.location) LIKE LOWER(?)',
       _checked_in_or_out    => 'i.checked_out = '
-                             . '( SELECT max(checked_out) '
+                             . '( SELECT checked_out '
                              . 'FROM media_instance '
                              . 'WHERE version = i.version '
-                             . 'AND media__id = i.media__id)',
+                             . 'AND media__id = i.media__id '
+                             . 'ORDER BY checked_out DESC LIMIT 1 )',
       _checked_out          => 'i.checked_out = ?',
       primary_oc_id         => 'i.primary_oc__id = ?',
       output_channel_id     => '(i.id = moc.media_instance__id AND '
@@ -250,7 +251,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'LOWER(k.name) LIKE LOWER(?)',
       _no_return_versions   => 'mt.current_version = i.version',
       grp_id                => 'm2.grp__id = ? AND '
-                             . 'm2.active = 1 AND '
+                             . "m2.active = '1' AND "
                              . 'mm2.member__id = m2.id AND '
                              . 'mt.id = mm2.object_id',
       simple                => 'mt.id IN ('
@@ -278,7 +279,7 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'mk.media_id = mt.id AND k.id = mk.keyword_id',
                                 'LOWER(k.name) LIKE LOWER(?)' ],
-    grp_id                 => [ 'm2.active = 1 AND mm2.member__id = m2.id AND mt.id = mm2.object_id',
+    grp_id                 => [ "m2.active = '1' AND mm2.member__id = m2.id AND mt.id = mm2.object_id",
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = sic.media_instance__id',
                                 'sic.member__id = ?' ],

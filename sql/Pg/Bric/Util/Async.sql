@@ -18,15 +18,12 @@ CREATE SEQUENCE seq_async  START  1024;
 -- 
 
 CREATE TABLE async (
-    id           NUMERIC(10,0) NOT NULL
+    id           INTEGER       NOT NULL
                                DEFAULT NEXTVAL('seq_async'),
     name         VARCHAR(32)   NOT NULL,
     description  VARCHAR(256),
     file_name    VARCHAR(128),
-    active       NUMERIC(1,0)  NOT NULL
-                               DEFAULT 1
-                               CONSTRAINT ck_async__active
-                                          CHECK (active IN (0,1)),
+    active       BOOLEAN       NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_async__id PRIMARY KEY (id)
 );
 

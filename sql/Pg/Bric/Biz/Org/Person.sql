@@ -11,16 +11,14 @@
 -- TABLE: person_org 
 --
 CREATE TABLE person_org(
-    id            NUMERIC(10, 0)    NOT NULL
+    id            INTEGER           NOT NULL
                                     DEFAULT NEXTVAL('seq_person_org'),
-    person__id    NUMERIC(10, 0)    NOT NULL,
-    org__id       NUMERIC(10, 0)    NOT NULL,
+    person__id    INTEGER           NOT NULL,
+    org__id       INTEGER           NOT NULL,
     role          VARCHAR(64),
     department    VARCHAR(64),
     title         VARCHAR(64),
-    active        NUMERIC(1, 0)    NOT NULL 
-                                   CONSTRAINT ck_person_org__active CHECK (active IN (1,0))
-                                   DEFAULT 1,
+    active        BOOLEAN           NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_person_org__id PRIMARY KEY (id)
 );
 

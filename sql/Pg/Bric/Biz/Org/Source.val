@@ -6,11 +6,11 @@
 -- Author: David Wheeler <david@wheeler.net>
 
 INSERT INTO source (id, org__id, name, description, expire, active)
-VALUES (1, 1, 'Internal', 'Ourselves.', 0, 1);
+VALUES ('1', '1', 'Internal', 'Ourselves.', '0', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
-VALUES (429, 5, 35, 1);
+VALUES ('429', '5', '35', '1');
 
 INSERT INTO source_member (id, object_id, member__id)
-VALUES (1, 1, 429); 
+VALUES ('1', '1', '429'); 
 

@@ -139,7 +139,7 @@ my $METHS;
 my $TABLE = 'output_channel';
 my $SEL_TABLES = "$TABLE oc, member m, output_channel_member sm";
 my $SEL_WHERES = 'oc.id = sm.object_id AND sm.member__id = m.id ' .
-  'AND m.active = 1';
+  "AND m.active = '1'";
 my $SEL_ORDER = 'oc.name, oc.id';
 
 my @COLS = qw(name description protocol site__id pre_path post_path primary_ce
@@ -1691,7 +1691,7 @@ sub _do_list {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, output_channel_member c2";
             $wheres .= " AND oc.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
         } elsif ($k eq 'include_parent_id') {
             # Include the parent ID.

@@ -177,7 +177,7 @@ sub save {
         if ($site->get_id) {
             my $upd = prepare_c( qq {
                 UPDATE element__site
-                SET    active = 0
+                SET    active = '0'
                 WHERE  element__id = ? AND
                        site__id    = ?
             }, undef, DEBUG);
@@ -199,7 +199,7 @@ sub save {
         if (@$state) {
             my $upd = prepare_c( qq {
                 UPDATE element__site
-                SET    active = 1,
+                SET    active = '1',
                        primary_oc__id = ?
                 WHERE  element__id = ? AND
                        site__id    = ?

@@ -240,7 +240,7 @@ objects:
            LIMIT  2
            OFFSET 1) AS p,
           member m, user_member c
-  WHERE  p.id = c.object_id AND c.member__id = m.id and m.active = 1;
+  WHERE  p.id = c.object_id AND c.member__id = m.id and m.active = '1';
 
 Obviously, you only change the query to use a derived table if the C<Limit> or
 C<Offset> parameter is passed to C<list()>.

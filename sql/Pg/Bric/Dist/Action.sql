@@ -20,15 +20,12 @@ CREATE SEQUENCE seq_attr_action_meta START 1024;
 --
 
 CREATE TABLE action (
-    id               NUMERIC(10, 0)    NOT NULL
+    id               INTEGER           NOT NULL
                                        DEFAULT NEXTVAL('seq_action'),
-    ord              NUMERIC(3, 0)     NOT NULL,
-    server_type__id  NUMERIC(10, 0)    NOT NULL,
-    action_type__id  NUMERIC(10, 0)    NOT NULL,
-    active           NUMERIC(1, 0)     NOT NULL
-                                       DEFAULT 1
-                                       CONSTRAINT ck_action__active
-                                         CHECK (active IN (1,0)),
+    ord              INT2              NOT NULL,
+    server_type__id  INTEGER           NOT NULL,
+    action_type__id  INTEGER           NOT NULL,
+    active           BOOLEAN           NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_action__id PRIMARY KEY (id)
 );
 
@@ -38,15 +35,12 @@ CREATE TABLE action (
 --
 
 CREATE TABLE attr_action (
-    id         NUMERIC(10)   NOT NULL
+    id         INTEGER       NOT NULL
                              DEFAULT NEXTVAL('seq_attr_action'),
     subsys     VARCHAR(256)  NOT NULL,
     name       VARCHAR(256)  NOT NULL,
     sql_type   VARCHAR(30)   NOT NULL,
-    active     NUMERIC(1)    DEFAULT 1
-                             NOT NULL
-                             CONSTRAINT ck_attr_action__active
-                               CHECK (active IN (0,1)),
+    active     BOOLEAN       NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_action__id PRIMARY KEY (id)
 );
 
@@ -56,18 +50,15 @@ CREATE TABLE attr_action (
 --
 
 CREATE TABLE attr_action_val (
-    id           NUMERIC(10)     NOT NULL
+    id           INTEGER         NOT NULL
                                  DEFAULT NEXTVAL('seq_attr_action_val'),
-    object__id   NUMERIC(10)     NOT NULL,
-    attr__id     NUMERIC(10)     NOT NULL,
+    object__id   INTEGER         NOT NULL,
+    attr__id     INTEGER         NOT NULL,
     date_val     TIMESTAMP,
     short_val    VARCHAR(1024),
     blob_val     TEXT,
-    serial       NUMERIC(1)      DEFAULT 0,
-    active       NUMERIC(1)      DEFAULT 1
-                                 NOT NULL
-                                 CONSTRAINT ck_attr_action_val__active
-				   CHECK (active IN (0,1)),
+    serial       BOOLEAN         DEFAULT FALSE,
+    active       BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_attr_action_val__id PRIMARY KEY (id)
 );
 
@@ -77,14 +68,12 @@ CREATE TABLE attr_action_val (
 --
 
 CREATE TABLE attr_action_meta (
-    id        NUMERIC(10)     NOT NULL
+    id        INTEGER         NOT NULL
                               DEFAULT NEXTVAL('seq_attr_action_meta'),
-    attr__id  NUMERIC(10)     NOT NULL,
+    attr__id  INTEGER         NOT NULL,
     name      VARCHAR(256)    NOT NULL,
     value     VARCHAR(2048),
-    active    NUMERIC(1)      DEFAULT 1
-                              NOT NULL
-                              CONSTRAINT ck_attr_action_meta__active CHECK (active IN (0,1)),
+    active    BOOLEAN         NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_action_meta__id PRIMARY KEY (id)
 );
 

@@ -11,10 +11,10 @@
 --
 
 CREATE TABLE alert_type_member (
-    id          NUMERIC(10,0)  NOT NULL
+    id          INTEGER        NOT NULL
                                DEFAULT NEXTVAL('seq_alert_type_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    object_id   INTEGER        NOT NULL,
+    member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_alert_type_member__id PRIMARY KEY (id)
 );
 

@@ -1209,7 +1209,7 @@ $get_em = sub {
     my $tables = 'media_type a LEFT JOIN media_type_ext e ' .
       'ON a.id = e.media_type__id, member m, media_type_member am';
     my $wheres = 'a.id = am.object_id ' .
-      'AND am.member__id = m.id AND m.active = 1';
+      "AND am.member__id = m.id AND m.active = '1'";
     my @params;
 
     while (my ($k, $v) = each %$params) {
@@ -1221,7 +1221,7 @@ $get_em = sub {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, media_type_member am2";
             $wheres .= " AND a.id = am2.object_id AND am2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
         } else {
             # It's a varchar field.

@@ -12,9 +12,9 @@
 --
 
 CREATE TABLE alert_type_rule(
-    id                NUMERIC(10, 0)  NOT NULL
+    id                INTEGER         NOT NULL
                                       DEFAULT NEXTVAL('seq_alert_type_rule'),
-    alert_type__id    NUMERIC(10, 0)  NOT NULL,
+    alert_type__id    INTEGER         NOT NULL,
     attr              VARCHAR(64)     NOT NULL,
     operator          CHAR(2)         NOT NULL,
     value             VARCHAR(256)    NOT NULL,

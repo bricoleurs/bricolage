@@ -25,23 +25,19 @@ CREATE SEQUENCE seq_media_container_tile START  1024;
 --
 
 CREATE TABLE story_container_tile (
-    id                   NUMERIC(10,0)   NOT NULL
+    id                   INTEGER         NOT NULL
                                          DEFAULT NEXTVAL('seq_container_tile'),
     name                 VARCHAR(64)     NOT NULL,
     key_name             VARCHAR(64)     NOT NULL,
     description          VARCHAR(256),
-    element__id          NUMERIC(10,0)   NOT NULL,
-    object_instance_id   NUMERIC(10,0)   NOT NULL,
-    parent_id            NUMERIC(10,0),
-    place                NUMERIC(10,0)   NOT NULL,
-    object_order         NUMERIC(10,0)   NOT NULL,
-    related_instance__id NUMERIC(10,0),
-    related_media__id    NUMERIC(10,0),
-    active               NUMERIC(1,0)    NOT NULL
-                                         DEFAULT 1
-                                         CONSTRAINT ck_sc_tile__active
-                                           CHECK (active IN (0,1)),
-
+    element__id          INTEGER         NOT NULL,
+    object_instance_id   INTEGER         NOT NULL,
+    parent_id            INTEGER,
+    place                INTEGER         NOT NULL,
+    object_order         INTEGER         NOT NULL,
+    related_instance__id INTEGER,
+    related_media__id    INTEGER,
+    active               BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_container_tile__id PRIMARY KEY (id)
 );
 
@@ -54,26 +50,22 @@ CREATE TABLE story_container_tile (
 --
 
 CREATE TABLE media_container_tile (
-    id                          NUMERIC(10,0)   NOT NULL
+    id                          INTEGER         NOT NULL
                                                 DEFAULT NEXTVAL('seq_media_container_tile'),
     name                        VARCHAR(64)     NOT NULL,
     key_name                    VARCHAR(64)     NOT NULL,
     description                 VARCHAR(256),
-    element__id      	        NUMERIC(10,0)   NOT NULL,
-    object_instance_id          NUMERIC(10,0)   NOT NULL,
-    parent_id                   NUMERIC(10,0),
-    place                       NUMERIC(10,0)   NOT NULL,
-    object_order                NUMERIC(10,0)   NOT NULL,
+    element__id      	        INTEGER         NOT NULL,
+    object_instance_id          INTEGER         NOT NULL,
+    parent_id                   INTEGER,
+    place                       INTEGER         NOT NULL,
+    object_order                INTEGER         NOT NULL,
 
     -- Hack. These two columns never hold values, but keep this table in sync
     -- with story_container_tile, since they share the same code base.
-    related_instance__id        NUMERIC(10,0), 
-    related_media__id           NUMERIC(10,0),
-    active              	NUMERIC(1,0)    NOT NULL
-                                                DEFAULT 1
-                                                CONSTRAINT ck_mc_tile__active
-                                                  CHECK (active IN (0,1)),
-
+    related_instance__id        INTEGER, 
+    related_media__id           INTEGER,
+    active              	    BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_media_container_tile__id PRIMARY KEY (id)
 );
 

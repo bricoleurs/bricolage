@@ -33,13 +33,11 @@ CREATE SEQUENCE seq_attr_member_meta START  1024;
 --              its subsystem, its member ID and an attribute name.
 
 CREATE TABLE attr_member (
-    id         NUMERIC(10)   NOT NULL,
+    id         INTEGER       NOT NULL,
     subsys     VARCHAR(256)  NOT NULL,
     name       VARCHAR(256)  NOT NULL,
     sql_type   VARCHAR(30)   NOT NULL,
-    active     NUMERIC(1)    DEFAULT 1
-                             NOT NULL
-                             CONSTRAINT ck_attr_member__active CHECK (active IN (0,1)),
+    active     BOOLEAN       NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_member__id PRIMARY KEY (id)
 );
 
@@ -48,16 +46,14 @@ CREATE TABLE attr_member (
 -- Description: A table to hold attribute values.
 
 CREATE TABLE attr_member_val (
-    id           NUMERIC(10)     NOT NULL,
-    object__id   NUMERIC(10)     NOT NULL,
-    attr__id     NUMERIC(10)     NOT NULL,
+    id           INTEGER         NOT NULL,
+    object__id   INTEGER         NOT NULL,
+    attr__id     INTEGER         NOT NULL,
     date_val     TIMESTAMP,
     short_val    VARCHAR(1024),
     blob_val     TEXT,
-    serial       NUMERIC(1)      DEFAULT 0,
-    active       NUMERIC(1)      DEFAULT 1
-                                 NOT NULL
-                                 CONSTRAINT ck_attr_member_val__active CHECK (active IN (0,1)),
+    serial       BOOLEAN         DEFAULT FALSE,
+    active       BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_attr_member_val__id PRIMARY KEY (id)
 );
 
@@ -66,13 +62,11 @@ CREATE TABLE attr_member_val (
 -- Description: A table to represent metadata on types of attributes.
 
 CREATE TABLE attr_member_meta (
-    id        NUMERIC(10)     NOT NULL,
-    attr__id  NUMERIC(10)     NOT NULL,
+    id        INTEGER         NOT NULL,
+    attr__id  INTEGER         NOT NULL,
     name      VARCHAR(256)    NOT NULL,
     value     VARCHAR(2048),
-    active    NUMERIC(1)      DEFAULT 1
-                              NOT NULL
-                              CONSTRAINT ck_attr_member_meta__active CHECK (active IN (0,1)),
+    active    BOOLEAN         NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_member_meta__id PRIMARY KEY (id)
 );
 

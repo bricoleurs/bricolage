@@ -1293,7 +1293,7 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'pref p, pref_opt o, member m, pref_member c';
     my $wheres = 'p.id = o.pref__id AND p.value = o.value ' .
-      'AND p.id = c.object_id AND m.id = c.member__id AND m.active = 1';
+      "AND p.id = c.object_id AND m.id = c.member__id AND m.active = '1'";
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id' or $k eq 'manual') {
@@ -1306,7 +1306,7 @@ $get_em = sub {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, pref_member c2";
             $wheres .= " AND p.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
         } elsif ($k eq 'can_be_overridden') {
             $wheres .= " AND p.can_be_overridden = ?";

@@ -28,29 +28,21 @@ CREATE SEQUENCE seq_media_data_tile START 1024;
 --
 
 CREATE TABLE story_data_tile (
-    id                   NUMERIC(10,0)  NOT NULL
+    id                   INTEGER        NOT NULL
                                         DEFAULT NEXTVAL('seq_story_data_tile'),
     name                 VARCHAR(64)    NOT NULL,
     key_name             VARCHAR(64)    NOT NULL,
     description          VARCHAR(256),
-    element_data__id     NUMERIC(10,0)  NOT NULL,
-    object_instance_id   NUMERIC(10,0)  NOT NULL,
-    parent_id            NUMERIC(10,0)  NOT NULL,
-    hold_val             NUMERIC(1,0)   NOT NULL
-                                        DEFAULT 0
-                                        CONSTRAINT ck_sd_tile__hold_val
-                                          CHECK (hold_val IN (0,1)),
-
-    place                NUMERIC(10,0)  NOT NULL,
-    object_order         NUMERIC(10,0)  NOT NULL,
+    element_data__id     INTEGER        NOT NULL,
+    object_instance_id   INTEGER        NOT NULL,
+    parent_id            INTEGER        NOT NULL,
+    hold_val             BOOLEAN        NOT NULL DEFAULT FALSE,
+    place                INTEGER        NOT NULL,
+    object_order         INTEGER        NOT NULL,
     date_val             TIMESTAMP,
     short_val            TEXT,
     blob_val             TEXT,
-    active               NUMERIC(1,0)   NOT NULL
-                                        DEFAULT 1
-                                        CONSTRAINT ck_sd_tile__active
-                                          CHECK (active IN (0,1)),
-
+    active               BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_story_data_tile__id PRIMARY KEY (id)
 );
 
@@ -68,29 +60,21 @@ CREATE TABLE story_data_tile (
 --
 
 CREATE TABLE media_data_tile (
-    id                   NUMERIC(10,0)  NOT NULL
+    id                   INTEGER        NOT NULL
                                         DEFAULT NEXTVAL('seq_media_data_tile'),
     name                 VARCHAR(64)    NOT NULL,
     key_name             VARCHAR(64)    NOT NULL,
     description          VARCHAR(256),
-    element_data__id     NUMERIC(10,0)  NOT NULL,
-    object_instance_id   NUMERIC(10,0)  NOT NULL,
-    parent_id            NUMERIC(10,0)  NOT NULL,
-    place                NUMERIC(10,0)  NOT NULL,
-    hold_val             NUMERIC(1,0)   NOT NULL
-                                        DEFAULT 0
-                                        CONSTRAINT ck_md_tile__hold_val
-                                          CHECK (hold_val IN (0,1)),
-
-    object_order         NUMERIC(10,0)  NOT NULL,
+    element_data__id     INTEGER        NOT NULL,
+    object_instance_id   INTEGER        NOT NULL,
+    parent_id            INTEGER        NOT NULL,
+    place                INTEGER        NOT NULL,
+    hold_val             BOOLEAN        NOT NULL DEFAULT FALSE,
+    object_order         INTEGER        NOT NULL,
     date_val             TIMESTAMP,
     short_val            VARCHAR(1024),
     blob_val             TEXT,
-    active               NUMERIC(1,0)   NOT NULL
-                                        DEFAULT 1
-                                        CONSTRAINT ck_md_tile__active
-                                          CHECK (active IN (0,1)),
-
+    active               BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_media_data_tile__id PRIMARY KEY (id)
 );
 

@@ -12,18 +12,12 @@
 -- TABLE: org 
 --
 CREATE TABLE org (
-    id           NUMERIC(10, 0)    NOT NULL
+    id           INTEGER           NOT NULL
                                    DEFAULT NEXTVAL('seq_org'),
     name         VARCHAR(64)       NOT NULL,
     long_name    VARCHAR(128),
-    personal     NUMERIC(1, 0)     NOT NULL 
-                                   DEFAULT 0
-                                   CONSTRAINT ck_org__personal
-                                     CHECK (personal IN (1,0)),
-    active       NUMERIC(1, 0)     NOT NULL 
-                                   DEFAULT 1
-                                   CONSTRAINT ck_org__active
-                                     CHECK (active IN (1,0)),
+    personal     BOOLEAN           NOT NULL DEFAULT FALSE,
+    active       BOOLEAN           NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_org__id PRIMARY KEY (id)
 );
 

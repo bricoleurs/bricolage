@@ -467,7 +467,7 @@ sub save {
             SET    output_channel__id = ?,
                    element__id = ?,
                    enabled = ?,
-                   active = 1
+                   active = '1'
             WHERE  id = ?
         }, undef);
         execute($upd, $ocid, $eid, $en, $map_id);
@@ -478,7 +478,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO element__output_channel
                         (id, element__id, output_channel__id, enabled, active)
-            VALUES ($nextval, ?, ?, ?, 1)
+            VALUES ($nextval, ?, ?, ?, '1')
         }, undef);
         execute($ins, $eid, $ocid, $en);
         $self->_set(['_map_id'], [last_key('element__output_channel')]);

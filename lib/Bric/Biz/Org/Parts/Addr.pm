@@ -524,7 +524,7 @@ sub list_parts {
     my $sel = prepare_ca(qq{
         SELECT name
         FROM   addr_part_type
-        WHERE  active = 1
+        WHERE  active = '1'
         ORDER BY id
     }, undef);
     return wantarray ? @{ col_aref($sel) } : col_aref($sel);
@@ -1505,7 +1505,7 @@ $get_em = sub {
     }
 
     # Make sure the records are active unless an ID is specified.
-    my $where = defined $args->{id} ? '' : 'a.active = 1 ';
+    my $where = defined $args->{id} ? '' : "a.active = '1' ";
 
     # Put together the where statement.
     local $" = ' = ? AND ';

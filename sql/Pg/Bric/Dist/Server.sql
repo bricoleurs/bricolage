@@ -10,19 +10,16 @@
 -- TABLE: server 
 --
 CREATE TABLE server(
-    id                 NUMERIC(10, 0)   NOT NULL
+    id                 INTEGER          NOT NULL
                                         DEFAULT NEXTVAL('seq_server'),
-    server_type__id    NUMERIC(10, 0)   NOT NULL,
+    server_type__id    INTEGER          NOT NULL,
     host_name          VARCHAR(128)     NOT NULL,
-    os		       CHAR(5)		NOT NULL,
+    os		           CHAR(5)		    NOT NULL,
     doc_root           VARCHAR(128)     NOT NULL,
     login              VARCHAR(64),
     password           VARCHAR(64),
     cookie             VARCHAR(512),
-    active             NUMERIC(1, 0)   NOT NULL
-                                       DEFAULT 1
-                                       CONSTRAINT ck_server__active
-                                         CHECK (active IN (1,0)),
+    active             BOOLEAN          NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_server__id PRIMARY KEY (id)
 );
 

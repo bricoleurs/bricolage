@@ -11,28 +11,16 @@
 --
 
 CREATE TABLE server_type(
-    id             NUMERIC(10, 0)    NOT NULL
+    id             INTEGER           NOT NULL
                                      DEFAULT NEXTVAL('seq_server_type'),
-    class__id      NUMERIC(10, 0)    NOT NULL,
+    class__id      INTEGER           NOT NULL,
     name           VARCHAR(64)       NOT NULL,
     description    VARCHAR(256),
-    site__id       NUMERIC(10, 0)    NOT NULL,
-    copyable       NUMERIC(1, 0)     NOT NULL
-                                     DEFAULT 0
-                                     CONSTRAINT ck_server_type__copyable
-                                       CHECK (copyable IN (1,0)),
-    publish        NUMERIC(1, 0)     NOT NULL
-                                     DEFAULT 1
-                                     CONSTRAINT ck_server_type__publish
-                                       CHECK (publish IN (1,0)),
-    preview        NUMERIC(1, 0)     NOT NULL
-                                     DEFAULT 0
-                                     CONSTRAINT ck_server_type__preview
-                                       CHECK (preview IN (1,0)),
-    active         NUMERIC(1, 0)     NOT NULL
-                                     DEFAULT 1
-                                     CONSTRAINT ck_server_type__active
-                                       CHECK (active IN (1,0)),
+    site__id       INTEGER           NOT NULL,
+    copyable       BOOLEAN           NOT NULL DEFAULT FALSE,
+    publish        BOOLEAN           NOT NULL DEFAULT TRUE,
+    preview        BOOLEAN           NOT NULL DEFAULT FALSE,
+    active         BOOLEAN           NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_server_type__id PRIMARY KEY (id)
 );
 
@@ -42,8 +30,8 @@ CREATE TABLE server_type(
 --
 
 CREATE TABLE server_type__output_channel(
-    server_type__id    NUMERIC(10, 0)  NOT NULL,
-    output_channel__id NUMERIC(10, 0)  NOT NULL,
+    server_type__id    INTEGER         NOT NULL,
+    output_channel__id INTEGER         NOT NULL,
     CONSTRAINT pk_server_type__output_channel
       PRIMARY KEY (server_type__id, output_channel__id)
 );
@@ -54,10 +42,10 @@ CREATE TABLE server_type__output_channel(
 --
 
 CREATE TABLE dest_member (
-    id          NUMERIC(10,0)  NOT NULL
+    id          INTEGER        NOT NULL
                                DEFAULT NEXTVAL('seq_dest_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    object_id   INTEGER        NOT NULL,
+    member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_dest_member__id PRIMARY KEY (id)
 );
 

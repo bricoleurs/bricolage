@@ -19,11 +19,11 @@ CREATE SEQUENCE seq_event START 1024;
 --
 
 CREATE TABLE event (
-    id                NUMERIC(10, 0)    NOT NULL
+    id                INTEGER           NOT NULL
                                         DEFAULT NEXTVAL('seq_attr_person'),
-    event_type__id    NUMERIC(10, 0)    NOT NULL,
-    usr__id           NUMERIC(10, 0)    NOT NULL,
-    obj_id            NUMERIC(10, 0)    NOT NULL,
+    event_type__id    INTEGER           NOT NULL,
+    usr__id           INTEGER           NOT NULL,
+    obj_id            INTEGER           NOT NULL,
     timestamp         TIMESTAMP         NOT NULL
                                         DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_event__id PRIMARY KEY (id)
@@ -33,8 +33,8 @@ CREATE TABLE event (
 -- TABLE: event_attr
 --
 CREATE TABLE event_attr (
-    event__id            NUMERIC(10, 0)   NOT NULL,
-    event_type_attr__id  NUMERIC(10, 0)   NOT NULL,
+    event__id            INTEGER          NOT NULL,
+    event_type_attr__id  INTEGER          NOT NULL,
     value                VARCHAR(128)
 );
 

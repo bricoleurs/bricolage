@@ -2838,7 +2838,7 @@ this function must be called from a subclass.
 sub _do_list {
     my ($class, $criteria, $ids, @params) = @_;
     my @wheres = ('g.id = c.object_id', 'c.member__id = m.id',
-                  'm.active = 1');
+                  "m.active = '1'");
     my $tables = "grp g, member m, grp_member c";
     # If an object is passed then we have to join to the member table again.
     if (($criteria->{obj}) ||
@@ -2860,7 +2860,7 @@ sub _do_list {
         # build the query
         $tables .= ", member mm, $motable mo";
         push @wheres, ( "mo.object_id = ? ", 'mo.member__id = mm.id',
-                        'mm.grp__id = g.id', 'mm.active = 1');
+                        'mm.grp__id = g.id', "mm.active = '1'");
         push @params, $obj_id;
 
         # If an active param has been passed in add it here remember that
@@ -2922,7 +2922,7 @@ sub _do_list {
     if (exists $criteria->{grp_id}) {
         $tables .= ", member m2, grp_member c2";
         push @wheres, ("g.id = c2.object_id", "c2.member__id = m2.id",
-                       "m2.active = 1", "m2.grp__id = ?");
+                       "m2.active = '1'", "m2.grp__id = ?");
         push @params, $criteria->{grp_id};
     }
 

@@ -266,14 +266,18 @@ function will return true if a column has been made C<NOT NULL> by the use of
 a constraint rather than a C<NOT NULL> in the statement that created the
 column.
 
+An optional fifth argument specifies the column type. The function will return
+true if the column exists and is of the specified type. Typical examples
+include "integer", "smallint", "boolean", "text", and "character varying(64)".
+
 Of course, if both optional arguments are passed to C<test_column()>, it will
 test that the column exists, that it is at least the size specified, and that
 it is C<NOT NULL>.
 
 =cut
 
-sub test_column($$;$$) {
-    my ($table, $column, $size, $not_null) = @_;
+sub test_column($$;$$$) {
+    my ($table, $column, $size, $not_null, $type) = @_;
     my $sql = qq{
         SELECT 1
         FROM   pg_attribute a, pg_class c
@@ -292,6 +296,11 @@ sub test_column($$;$$) {
     if (defined $not_null) {
         $not_null = $not_null ? 't' : 'f';
         $sql .= "           AND a.attnotnull = '$not_null'";
+    }
+
+    if (defined $type) {
+        $sql .= "           AND format_type(a.atttypid, a.atttypmod) = '"
+          . lc $type . "'";
     }
 
     return fetch_sql($sql)

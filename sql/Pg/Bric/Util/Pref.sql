@@ -21,18 +21,15 @@ CREATE SEQUENCE seq_pref_member START 1024;
 --        Global preferences.
 
 CREATE TABLE pref (
-    id           NUMERIC(10, 0)  NOT NULL
+    id           INTEGER         NOT NULL
                                  DEFAULT NEXTVAL('seq_pref'),
     name         VARCHAR(64)     NOT NULL,
     description  VARCHAR(256),
     value        VARCHAR(256),
     def          VARCHAR(256),
-    manual	 NUMERIC(1,0) NOT NULL DEFAULT 0,
-    opt_type     VARCHAR(16)  NOT NULL,
-    can_be_overridden  NUMERIC(1,0)   NOT NULL DEFAULT 0,
-                                      CONSTRAINT ck_pref__can_be_overridden
-                                        CHECK (can_be_overridden IN (0,1)),
-    CONSTRAINT ck_pref__manual CHECK (manual IN (0,1)),
+    manual	     BOOLEAN         NOT NULL DEFAULT FALSE,
+    opt_type     VARCHAR(16)     NOT NULL,
+    can_be_overridden  BOOLEAN   NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_pref__id PRIMARY KEY (id)
 );
 
@@ -41,10 +38,10 @@ CREATE TABLE pref (
 --        Preferences overridden by a specific usr.
 
 CREATE TABLE usr_pref (
-    id           NUMERIC(10, 0)  NOT NULL
+    id           INTEGER         NOT NULL
                                  DEFAULT NEXTVAL('seq_usr_pref'),
-    pref__id     NUMERIC(10, 0)  NOT NULL,
-    usr__id      NUMERIC(10, 0)  NOT NULL,
+    pref__id     INTEGER         NOT NULL,
+    usr__id      INTEGER         NOT NULL,
     value        VARCHAR(256)    NOT NULL,
     CONSTRAINT pk_usr_pref__pref__id__value PRIMARY KEY (id)
 );
@@ -54,7 +51,7 @@ CREATE TABLE usr_pref (
 --        Preference options.
 
 CREATE TABLE pref_opt (
-    pref__id     NUMERIC(10, 0)  NOT NULL,
+    pref__id     INTEGER         NOT NULL,
     value        VARCHAR(256)    NOT NULL,
     description  VARCHAR(256),
     CONSTRAINT pk_pref_opt__pref__id__value PRIMARY KEY (pref__id, value)
@@ -66,10 +63,10 @@ CREATE TABLE pref_opt (
 --
 
 CREATE TABLE pref_member (
-    id          NUMERIC(10,0)  NOT NULL
+    id          INTEGER        NOT NULL
                                DEFAULT NEXTVAL('seq_pref_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    object_id   INTEGER        NOT NULL,
+    member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_pref_member__id PRIMARY KEY (id)
 );
 

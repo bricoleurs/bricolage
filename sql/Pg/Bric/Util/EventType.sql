@@ -22,15 +22,13 @@ CREATE SEQUENCE seq_event_type_attr START 1024;
 --
 
 CREATE TABLE event_type (
-    id              NUMERIC(10,0)   NOT NULL
+    id              INTEGER         NOT NULL
                                     DEFAULT NEXTVAL('seq_event_type'),
     key_name        VARCHAR(64)     NOT NULL,
     name            VARCHAR(64)     NOT NULL,
     description     VARCHAR(256)    NOT NULL,
-    class__id       NUMERIC(10,0)   NOT NULL,
-    active          NUMERIC(1, 0)   NOT NULL 
-                                    CONSTRAINT ck_event_type__active CHECK (active IN (1,0))
-                                    DEFAULT 1,
+    class__id       INTEGER         NOT NULL,
+    active          BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_event_type__id PRIMARY KEY (id)
 );
 
@@ -39,9 +37,9 @@ CREATE TABLE event_type (
 --
 
 CREATE TABLE event_type_attr (
-    id              NUMERIC(10, 0)  NOT NULL
+    id              INTEGER         NOT NULL
                                     DEFAULT NEXTVAL('seq_event_type_attr'),
-    event_type__id  NUMERIC(10, 0)  NOT NULL,
+    event_type__id  INTEGER         NOT NULL,
     name            VARCHAR(64)     NOT NULL,
     CONSTRAINT pk_event_type_attr__id PRIMARY KEY (id)
 );    

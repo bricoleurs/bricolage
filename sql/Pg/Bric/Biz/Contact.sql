@@ -13,18 +13,12 @@
 --
 
 CREATE TABLE contact (
-    id           NUMERIC(10, 0)    NOT NULL
+    id           INTEGER           NOT NULL
                                    DEFAULT NEXTVAL('seq_contact'),
     type         VARCHAR(64)       NOT NULL,
     description	 VARCHAR(256),
-    active       NUMERIC(1, 0)     NOT NULL 
-                                   DEFAULT 1
-                                   CONSTRAINT ck_contact__active
-                                     CHECK (active IN (1,0)),
-    alertable    NUMERIC(1, 0)     NOT NULL 
-                                   DEFAULT 0
-                                   CONSTRAINT ck_contact__alertable
-                                     CHECK (alertable IN (1,0)),
+    active       BOOLEAN           NOT NULL DEFAULT TRUE,
+    alertable    BOOLEAN           NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_contact__id PRIMARY KEY (id)
 );
 
@@ -33,14 +27,11 @@ CREATE TABLE contact (
 --
 
 CREATE TABLE contact_value (
-    id           NUMERIC(10, 0)    NOT NULL
+    id           INTEGER           NOT NULL
                                    DEFAULT NEXTVAL('seq_contact_value'),
-    contact__id  NUMERIC(10, 0)    NOT NULL,
-    value	 VARCHAR(256)	   NOT NULL,
-    active       NUMERIC(1, 0)     NOT NULL 
-                                   DEFAULT 1
-                                   CONSTRAINT ck_contact_value__active
-                                     CHECK (active IN (1,0)),
+    contact__id  INTEGER           NOT NULL,
+    value	     VARCHAR(256)	   NOT NULL,
+    active       BOOLEAN           NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_contact_value__id PRIMARY KEY (id)
 );
 
@@ -48,8 +39,8 @@ CREATE TABLE contact_value (
 -- TABLE: person__contact
 --
 CREATE TABLE person__contact_value (
-    person__id   NUMERIC(10, 0) NOT NULL,
-    contact_value__id  NUMERIC(10, 0) NOT NULL,
+    person__id          INTEGER    NOT NULL,
+    contact_value__id   INTEGER    NOT NULL,
     CONSTRAINT pk_person__contact_value PRIMARY KEY (person__id, contact_value__id)
 );
 

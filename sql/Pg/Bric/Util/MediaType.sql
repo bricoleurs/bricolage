@@ -18,14 +18,11 @@ CREATE SEQUENCE seq_media_type_member START 1024;
 --
 
 CREATE TABLE media_type (
-    id             NUMERIC(10, 0)    NOT NULL
+    id             INTEGER           NOT NULL
                                      DEFAULT NEXTVAL('seq_media_type'),
     name           VARCHAR(128)      NOT NULL,
     description    VARCHAR(256),
-    active         NUMERIC(1, 0)     NOT NULL
-                                     DEFAULT 1
-                                     CONSTRAINT ck_media_type__active
-                                       CHECK (active IN (1,0)),
+    active         BOOLEAN           NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_media_type__id PRIMARY KEY (id)
 );
 
@@ -35,9 +32,9 @@ CREATE TABLE media_type (
 --
 
 CREATE TABLE media_type_ext (
-    id                  NUMERIC(10, 0)    NOT NULL
+    id                  INTEGER           NOT NULL
                                           DEFAULT NEXTVAL('seq_media_type_ext'),
-    media_type__id      NUMERIC(10, 0)    NOT NULL,
+    media_type__id      INTEGER           NOT NULL,
     extension           VARCHAR(10)       NOT NULL,
     CONSTRAINT pk_media_type_ext__id PRIMARY KEY (id)
 );
@@ -48,10 +45,10 @@ CREATE TABLE media_type_ext (
 --
 
 CREATE TABLE media_type_member (
-    id          NUMERIC(10,0)  NOT NULL
+    id          INTEGER        NOT NULL
                                DEFAULT NEXTVAL('seq_media_type_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    object_id   INTEGER        NOT NULL,
+    member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_media_type_member__id PRIMARY KEY (id)
 );
 

@@ -1051,7 +1051,7 @@ $get_em = sub {
         }
     }
 
-    my $where = defined $params->{id} ? '' : 'AND t.active = 1 ';
+    my $where = defined $params->{id} ? '' : "AND t.active = '1' ";
     local $" = ' AND ';
     $where .= "AND @wheres" if @wheres;
 

@@ -675,7 +675,7 @@ sub _do_list {
         FROM   member m, person_member pm, person p, grp g
         WHERE  m.id = pm.member__id
                AND m.grp__id = g.id
-               AND g.active = 1
+               AND g.active = '1'
                AND pm.object_id = p.id$where
         ORDER BY p.lname, p.fname, p.mname
     }, undef);

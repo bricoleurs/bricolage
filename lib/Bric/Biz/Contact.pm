@@ -1390,7 +1390,7 @@ $get_em = sub {
         }
     }
 
-    my $where = defined $params->{id} ? '' : ' AND v.active = 1';
+    my $where = defined $params->{id} ? '' : " AND v.active = '1'";
     local $" = ' AND ';
     $where .= " AND @wheres" if @wheres;
 
@@ -1505,7 +1505,7 @@ $get_types = sub {
     my $sel = prepare_ca(qq{
         SELECT @qry_cols
         FROM   contact c
-        WHERE  active = 1 $where
+        WHERE  active = '1' $where
         ORDER BY c.id
     }, undef);
 

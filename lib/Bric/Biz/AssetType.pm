@@ -2445,7 +2445,7 @@ sub _do_list {
     my ($pkg, $params, $ids) = @_;
     my $tables = "$table a, $mem_table m, $map_table c";
     my @wheres = ('a.id = c.object_id', 'c.member__id = m.id',
-                  'm.active = 1');
+                  "m.active = '1'");
     my ($top, @params);
 
     # Set up the active parameter.
@@ -2506,12 +2506,12 @@ sub _do_list {
             # Fancy-schmancy second join.
             $tables .= ", $mem_table m2, $map_table c2";
             push @wheres, ('a.id = c2.object_id', 'c2.member__id = m2.id',
-                            'm2.active = 1', 'm2.grp__id = ?');
+                           "m2.active = '1'", 'm2.grp__id = ?');
             push @params, $v;
         } elsif ($k eq 'site_id') {
             $tables .= ", element__site es";
             push @wheres, ('es.element__id = a.id','es.site__id = ?',
-                           'es.active = 1');
+                           "es.active = '1'");
             push @params, $v;
         } else {
             # The "name" and "description" properties.

@@ -19,7 +19,7 @@ CREATE SEQUENCE seq_class START 1024;
 --        For keeping track of Perl classes.
 
 CREATE TABLE class(
-    id              NUMERIC(10, 0)  NOT NULL
+    id              INTEGER         NOT NULL
                                     DEFAULT NEXTVAL('seq_class'),
     key_name        VARCHAR(32)     NOT NULL
                                     CONSTRAINT ck_class__key_name
@@ -28,10 +28,7 @@ CREATE TABLE class(
     disp_name       VARCHAR(128)    NOT NULL,
     plural_name	    VARCHAR(128)    NOT NULL,
     description     VARCHAR(256),
-    distributor     NUMERIC(1, 0)   NOT NULL 
-                                    CONSTRAINT ck_class__distributor 
-                                        CHECK (distributor IN (1,0))
-                                    DEFAULT 0,
+    distributor     BOOLEAN         NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_class__id PRIMARY KEY (id)
 );
 

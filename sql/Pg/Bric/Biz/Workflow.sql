@@ -21,20 +21,20 @@ CREATE SEQUENCE seq_workflow_member START 1024;
 -- Description: The main workflow table.
 
 CREATE TABLE workflow (
-    id               NUMERIC(10)  NOT NULL
+    id               INTEGER      NOT NULL
                                   DEFAULT NEXTVAL('seq_workflow'),
     name             VARCHAR(64)  NOT NULL,
     description      VARCHAR(256) NOT NULL,
-    all_desk_grp_id  NUMERIC(10)  NOT NULL,
-    req_desk_grp_id  NUMERIC(10)  NOT NULL,
-    asset_grp_id     NUMERIC(10)  NOT NULL,
-    head_desk_id     NUMERIC(10)  NOT NULL,
-    type             NUMERIC(1)   NOT NULL,
-    active           NUMERIC(1)	  NOT NULL
+    all_desk_grp_id  INTEGER      NOT NULL,
+    req_desk_grp_id  INTEGER      NOT NULL,
+    asset_grp_id     INTEGER      NOT NULL,
+    head_desk_id     INTEGER      NOT NULL,
+    type             INT2         NOT NULL
                                   DEFAULT 1
-                                  CONSTRAINT ck_workflow__active
-                                    CHECK (active IN (0,1)),
-    site__id         NUMERIC(10)  NOT NULL,
+                                  CONSTRAINT ck_workflow__type
+                                    CHECK (type IN (1,2,3)),
+    active           BOOLEAN  	  NOT NULL DEFAULT TRUE,
+    site__id         INTEGER      NOT NULL,
     CONSTRAINT pk_workflow__id PRIMARY KEY (id)
 );
 
@@ -43,10 +43,10 @@ CREATE TABLE workflow (
 --
 
 CREATE TABLE workflow_member (
-    id          NUMERIC(10,0)  NOT NULL
+    id          INTEGER        NOT NULL
                                DEFAULT NEXTVAL('seq_workflow_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    object_id   INTEGER        NOT NULL,
+    member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_workflow_member__id PRIMARY KEY (id)
 );
 

@@ -521,11 +521,11 @@ sub get_acl {
         WHERE  gp.id = gm.grp_priv__id
                AND g.id = m.grp__id
                AND gp.grp__id = g.id
-               AND g.active = 1
+               AND g.active = '1'
                AND gm.grp__id = gg.id
-               AND gg.active = 1
+               AND gg.active = '1'
                AND m.id = mo.member__id
-               AND m.active = 1
+               AND m.active = '1'
                AND mo.object_id = ?
        ORDER BY gm.grp__id, gp.value
     }, undef);
@@ -583,12 +583,12 @@ sub get_acl_mtime {
                user_member mo, grp gg
         WHERE  gp.id = gm.grp_priv__id
                AND gp.grp__id = g.id
-               AND g.active = 1
+               AND g.active = '1'
                AND gm.grp__id = gg.id
-               AND gg.active = 1
+               AND gg.active = '1'
                AND g.id = m.grp__id
                AND m.id = mo.member__id
-               AND m.active = 1
+               AND m.active = '1'
                AND mo.object_id = ?
     }, undef);
     return row_aref($sel, ref $user ? $user->get_id : $user)->[0];

@@ -13,17 +13,14 @@
 --
 
 CREATE TABLE person (
-    id        NUMERIC(10, 0)    NOT NULL
+    id        INTEGER           NOT NULL
                                 DEFAULT NEXTVAL('seq_person'),
     prefix    VARCHAR(32),
     lname     VARCHAR(64),
     fname     VARCHAR(64),
     mname     VARCHAR(64),
     suffix    VARCHAR(32),
-    active    NUMERIC(1, 0)     NOT NULL 
-                                DEFAULT 1
-                                CONSTRAINT ck_person__active
-                                  CHECK (active IN (1,0)),
+    active    BOOLEAN           NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_person__id PRIMARY KEY (id)
 );
 
@@ -34,10 +31,10 @@ CREATE TABLE person (
 --
 
 CREATE TABLE person_member (
-    id          NUMERIC(10,0)  NOT NULL
-                               DEFAULT NEXTVAL('seq_person_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    id          INTEGER         NOT NULL
+                                DEFAULT NEXTVAL('seq_person_member'),
+    object_id   INTEGER         NOT NULL,
+    member__id  INTEGER         NOT NULL,
     CONSTRAINT pk_person_member__id PRIMARY KEY (id)
 );
 

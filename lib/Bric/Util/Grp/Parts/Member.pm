@@ -1350,7 +1350,7 @@ sub _do_joined_select {
         push @bind,  $object_class_id;
     }
     unless ($all) {
-        push @param, ' m.active=1 ';
+        push @param, " m.active = '1' ";
     }
     push @param, ' m.id=o.member__id ';
     $sql .= ' WHERE ' . join ( ' AND ', @param );

@@ -12,10 +12,10 @@
 --
 
 CREATE TABLE alert(
-    id                NUMERIC(10, 0)    NOT NULL
+    id                INTEGER           NOT NULL
                                         DEFAULT NEXTVAL('seq_alert'),
-    alert_type__id    NUMERIC(10, 0)    NOT NULL,
-    event__id         NUMERIC(10, 0)    NOT NULL,
+    alert_type__id    INTEGER           NOT NULL,
+    event__id         INTEGER           NOT NULL,
     subject           VARCHAR(128),
     message           VARCHAR(512),
     timestamp         TIMESTAMP         NOT NULL

@@ -35,10 +35,10 @@ CREATE SEQUENCE seq_grp_member START  1024;
 --
 
 CREATE TABLE grp_member (
-    id            NUMERIC(10,0)   NOT NULL
+    id            INTEGER         NOT NULL
                                   DEFAULT NEXTVAL('seq_grp_member'),
-    object_id     NUMERIC(10,0)   NOT NULL,
-    member__id    NUMERIC(10,0)	  NOT NULL,
+    object_id     INTEGER         NOT NULL,
+    member__id    INTEGER      	  NOT NULL,
     CONSTRAINT pk_grp_member__id PRIMARY KEY (id)
 );
 

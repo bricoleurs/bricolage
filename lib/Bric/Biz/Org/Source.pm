@@ -1213,7 +1213,7 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'source s, org o, member m, source_member c';
     my $wheres = 's.org__id = o.id AND s.id = c.object_id ' .
-      'AND m.active = 1 AND m.id = c.member__id';
+      "AND m.active = '1' AND m.id = c.member__id";
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id' or $k eq 'expire') {
@@ -1232,7 +1232,7 @@ $get_em = sub {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, source_member c2";
             $wheres .= " AND s.id = c2.object_id AND c2.member__id = m2.id " .
-              "AND m2.active = 1 AND m2.grp__id = ?";
+              "AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
         } else {
             # We're horked.
@@ -1244,7 +1244,7 @@ $get_em = sub {
     # Make sure it's active unless and ID has been passed.
     # XXX Allow all. I will never again implicitly add search parameters to
     # an API.
-    $wheres .= " AND s.active = 1" unless defined $params->{id}
+    $wheres .= " AND s.active = '1'" unless defined $params->{id}
       || $params->{all};
 
     # Assemble and prepare the query.

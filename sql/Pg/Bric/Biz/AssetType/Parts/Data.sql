@@ -40,31 +40,19 @@ CREATE SEQUENCE seq_attr_at_data_meta START 1024;
 
 
 CREATE TABLE at_data (
-    id              NUMERIC(10,0)   NOT NULL
-                                    DEFAULT NEXTVAL('seq_element'),
-    element__id     NUMERIC(10,0)   NOT NULL,
-    key_name        VARCHAR(32),
-    description     VARCHAR(256),
-    place           NUMERIC(10,0)   NOT NULL,
-    required        NUMERIC(1,0)    NOT NULL
-                                    DEFAULT 0
-                                    CONSTRAINT ck_at_data__required
-                                      CHECK (required IN (0,1)),
-    quantifier      VARCHAR(2),
-    autopopulated   NUMERIC(1,0)    NOT NULL
-                                    DEFAULT 0
-                                      CONSTRAINT ck_at_data__autopopulated
-                                      CHECK (autopopulated IN (0,1)),
-    active          NUMERIC(1,0)    NOT NULL
-                                    DEFAULT 1
-                                    CONSTRAINT ck_at_data__active
-                                      CHECK (active IN (0,1)),
-    map_type__id     NUMERIC(10,0),
-    publishable      NUMERIC(1,0)   NOT NULL
-                                    DEFAULT 0
-                                    CONSTRAINT ck_at_data__publishable
-                                      CHECK (publishable IN (0,1)),
-    max_length       NUMERIC(10,0),
+    id               INTEGER         NOT NULL
+                                     DEFAULT NEXTVAL('seq_element'),
+    element__id      INTEGER         NOT NULL,
+    key_name         VARCHAR(32),
+    description      VARCHAR(256),
+    place            INTEGER         NOT NULL,
+    required         BOOLEAN         NOT NULL DEFAULT FALSE,
+    quantifier       VARCHAR(2),
+    autopopulated    BOOLEAN         NOT NULL DEFAULT FALSE,
+    active           BOOLEAN         NOT NULL DEFAULT TRUE,
+    map_type__id     INTEGER,
+    publishable      BOOLEAN         NOT NULL DEFAULT FALSE,
+    max_length       INTEGER,
     sql_type         VARCHAR(30),
     CONSTRAINT pk_at_data__id PRIMARY KEY (id)
 );
@@ -76,14 +64,12 @@ CREATE TABLE at_data (
 --              its subsystem, its element_data ID and an attribute name.
 
 CREATE TABLE attr_at_data (
-    id         NUMERIC(10)   NOT NULL
+    id         INTEGER       NOT NULL
                              DEFAULT NEXTVAL('seq_attr_at_data'),
     subsys     VARCHAR(256)  NOT NULL,
     name       VARCHAR(256)  NOT NULL,
     sql_type   VARCHAR(30)   NOT NULL,
-    active     NUMERIC(1)    DEFAULT 1
-                             NOT NULL
-                             CONSTRAINT ck_attr_at_data__active CHECK (active IN (0,1)),
+    active     BOOLEAN       NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_at_data__id PRIMARY KEY (id)
 );
 
@@ -93,17 +79,15 @@ CREATE TABLE attr_at_data (
 -- Description: A table to hold attribute values.
 
 CREATE TABLE attr_at_data_val (
-    id           NUMERIC(10)     NOT NULL
+    id           INTEGER         NOT NULL
                                  DEFAULT NEXTVAL('seq_attr_at_data_val'),
-    object__id   NUMERIC(10)     NOT NULL,
-    attr__id     NUMERIC(10)     NOT NULL,
+    object__id   INTEGER         NOT NULL,
+    attr__id     INTEGER         NOT NULL,
     date_val     TIMESTAMP,
     short_val    VARCHAR(1024),
     blob_val     TEXT,
-    serial       NUMERIC(1)      DEFAULT 0,
-    active       NUMERIC(1)      DEFAULT 1
-                                 NOT NULL
-                                 CONSTRAINT ck_attr_at_data_val__active CHECK (active IN (0,1)),
+    serial       BOOLEAN         DEFAULT FALSE,
+    active       BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_attr_at_data_val__id PRIMARY KEY (id)
 );
 
@@ -113,14 +97,12 @@ CREATE TABLE attr_at_data_val (
 -- Description: A table to represent metadata on types of attributes.
 
 CREATE TABLE attr_at_data_meta (
-    id        NUMERIC(10)     NOT NULL
+    id        INTEGER         NOT NULL
                               DEFAULT NEXTVAL('seq_attr_at_data_meta'),
-    attr__id  NUMERIC(10)     NOT NULL,
+    attr__id  INTEGER         NOT NULL,
     name      VARCHAR(256)    NOT NULL,
     value     TEXT,
-    active    NUMERIC(1)      DEFAULT 1
-                              NOT NULL
-                              CONSTRAINT ck_attr_at_data_meta__active CHECK (active IN (0,1)),
+    active    BOOLEAN         NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_at_data_meta__id PRIMARY KEY (id)
 );
 

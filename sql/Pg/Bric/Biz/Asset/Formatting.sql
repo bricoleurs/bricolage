@@ -38,38 +38,32 @@ CREATE SEQUENCE seq_attr_formatting_meta START 1024;
 --
 --
 CREATE TABLE formatting (
-    id                  NUMERIC(10,0)  NOT NULL
+    id                  INTEGER        NOT NULL
                                        DEFAULT NEXTVAL('seq_formatting'),
     name                VARCHAR(256),
     description         VARCHAR(1024),
-    priority            NUMERIC(1,0)   NOT NULL
+    priority            INT2           NOT NULL
                                        DEFAULT 3
                                        CONSTRAINT ck_story__priority
                                          CHECK (priority BETWEEN 1 AND 5),
-    usr__id             NUMERIC(10,0),  
-    output_channel__id  NUMERIC(10,0)  NOT NULL,
-    tplate_type         NUMERIC(1,0)   NOT NULL
+    usr__id             INTEGER,  
+    output_channel__id  INTEGER        NOT NULL,
+    tplate_type         INT2           NOT NULL
                                        DEFAULT 1
                                        CONSTRAINT ck_formatting___tplate_type
                                          CHECK (tplate_type IN (1, 2, 3)),
-    element__id         NUMERIC(10,0),
-    category__id        NUMERIC(10,0),
+    element__id         INTEGER,
+    category__id        INTEGER,
     file_name           TEXT,
-    current_version     NUMERIC(10,0)  NOT NULL,
-    workflow__id        NUMERIC(10,0)  NOT NULL,
-    desk__id            NUMERIC(10,0)  NOT NULL,
-    published_version   NUMERIC(10, 0),
-    deploy_status       NUMERIC(1,0)   NOT NULL
-                                       DEFAULT 0
-                                       CONSTRAINT ck_formatting__deploy_status
-                                         CHECK (deploy_status IN (0,1)),
+    current_version     INTEGER        NOT NULL,
+    workflow__id        INTEGER        NOT NULL,
+    desk__id            INTEGER        NOT NULL,
+    published_version   INTEGER,
+    deploy_status       BOOLEAN        NOT NULL DEFAULT FALSE,
     deploy_date         TIMESTAMP,
     expire_date         TIMESTAMP,
-    active              NUMERIC(1,0)   NOT NULL
-                                       DEFAULT 1
-                                       CONSTRAINT ck_formatting__active
-                                         CHECK (active IN (0,1)),
-    site__id            NUMERIC(10,0)  NOT NULL,
+    active              BOOLEAN        NOT NULL DEFAULT TRUE,
+    site__id            INTEGER        NOT NULL,
     CONSTRAINT pk_formatting__id PRIMARY KEY (id)
 );
 
@@ -80,17 +74,14 @@ CREATE TABLE formatting (
 --
 
 CREATE TABLE formatting_instance (
-    id              NUMERIC(10,0)  NOT NULL
+    id              INTEGER        NOT NULL
                                        DEFAULT NEXTVAL('seq_formatting_instance'),
-    formatting__id  NUMERIC(10,0)  NOT NULL,
-    version         NUMERIC(10,0),
-    usr__id         NUMERIC(10,0)  NOT NULL,
+    formatting__id  INTEGER        NOT NULL,
+    version         INTEGER,
+    usr__id         INTEGER        NOT NULL,
     file_name       TEXT,
     data            TEXT,
-    checked_out     NUMERIC(1,0)   NOT NULL     
-                                   DEFAULT 0
-                                   CONSTRAINT ck_formatting_instance__active
-                                     CHECK (checked_out IN (0,1)),
+    checked_out     BOOLEAN        NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_formatting_instance__id PRIMARY KEY (id)
 );
         
@@ -102,10 +93,10 @@ CREATE TABLE formatting_instance (
 --
 
 CREATE TABLE formatting_member (
-    id          NUMERIC(10,0)  NOT NULL
+    id          INTEGER        NOT NULL
                                DEFAULT NEXTVAL('seq_formatting_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    object_id   INTEGER        NOT NULL,
+    member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_formatting_member__id PRIMARY KEY (id)
 );
 
@@ -116,14 +107,12 @@ CREATE TABLE formatting_member (
 --              its subsystem, its formatting ID and an attribute name.
 
 CREATE TABLE attr_formatting (
-    id         NUMERIC(10)   NOT NULL
+    id         INTEGER       NOT NULL
                              DEFAULT NEXTVAL('seq_attr_formatting'),
     subsys     VARCHAR(256)  NOT NULL,
     name       VARCHAR(256)  NOT NULL,
     sql_type   VARCHAR(30)   NOT NULL,
-    active     NUMERIC(1)    DEFAULT 1
-                             NOT NULL
-                             CONSTRAINT ck_attr_formatting__active CHECK (active IN (0,1)),
+    active     BOOLEAN       NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_formatting__id PRIMARY KEY (id)
 );
 
@@ -134,17 +123,15 @@ CREATE TABLE attr_formatting (
 -- Description: A table to hold attribute values.
 
 CREATE TABLE attr_formatting_val (
-    id           NUMERIC(10)     NOT NULL
+    id           INTEGER         NOT NULL
                                  DEFAULT NEXTVAL('seq_attr_formatting_val'),
-    object__id   NUMERIC(10)     NOT NULL,
-    attr__id     NUMERIC(10)     NOT NULL,
+    object__id   INTEGER         NOT NULL,
+    attr__id     INTEGER         NOT NULL,
     date_val     TIMESTAMP,
     short_val    VARCHAR(1024),
     blob_val     TEXT,
-    serial       NUMERIC(1)      DEFAULT 0,
-    active       NUMERIC(1)      DEFAULT 1
-                                 NOT NULL
-                                 CONSTRAINT ck_attr_formatting_val__active CHECK (active IN (0,1)),
+    serial       BOOLEAN         DEFAULT FALSE,
+    active       BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_attr_formatting_val__id PRIMARY KEY (id)
 );
 
@@ -155,14 +142,12 @@ CREATE TABLE attr_formatting_val (
 -- Description: A table to represent metadata on types of attributes.
 
 CREATE TABLE attr_formatting_meta (
-    id        NUMERIC(10)     NOT NULL
+    id        INTEGER         NOT NULL
                               DEFAULT NEXTVAL('seq_attr_formatting_meta'),
-    attr__id  NUMERIC(10)     NOT NULL,
+    attr__id  INTEGER         NOT NULL,
     name      VARCHAR(256)    NOT NULL,
     value     VARCHAR(2048),
-    active    NUMERIC(1)      DEFAULT 1
-                              NOT NULL
-                              CONSTRAINT ck_attr_formatting_meta__active CHECK (active IN (0,1)),
+    active    BOOLEAN         NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_formatting_meta__id PRIMARY KEY (id)
 );
 

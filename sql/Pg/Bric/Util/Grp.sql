@@ -20,25 +20,16 @@ CREATE SEQUENCE seq_grp START  1024;
 --
 
 CREATE TABLE grp (
-    id           NUMERIC(10,0)    NOT NULL
+    id           INTEGER          NOT NULL
                                   DEFAULT NEXTVAL('seq_grp'),
-    parent_id    NUMERIC(10,0)    CONSTRAINT ck_grp__parent_id_not_eq_id
+    parent_id    INTEGER          CONSTRAINT ck_grp__parent_id_not_eq_id
                                     CHECK (parent_id <> id),
-    class__id    NUMERIC(10,0)    NOT NULL,
+    class__id    INTEGER          NOT NULL,
     name         VARCHAR(64),
     description  VARCHAR(256),
-    secret       NUMERIC(1,0)     NOT NULL
-                                  DEFAULT 1
-                                  CONSTRAINT ck_grp__secret
-                                    CHECK (secret IN (0,1)),
-    permanent    NUMERIC(1,0)     NOT NULL
-                                  DEFAULT 0
-                                  CONSTRAINT ck_grp__permanent
-                                    CHECK (permanent IN (0,1)),
-    active      NUMERIC(1,0)      NOT NULL
-                                  DEFAULT 1
-                                  CONSTRAINT ck_grp__active
-                                    CHECK (active IN (0,1)),
+    secret       BOOLEAN          NOT NULL DEFAULT TRUE,
+    permanent    BOOLEAN          NOT NULL DEFAULT FALSE,
+    active       BOOLEAN          NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_grp__id PRIMARY KEY (id)
 );
 

@@ -25,14 +25,11 @@ CREATE SEQUENCE seq_language START 1024;
 --              
 
 CREATE TABLE language (
-    id           NUMERIC(10,0)	NOT NULL
+    id           INTEGER      	NOT NULL
                                 DEFAULT NEXTVAL('seq_language'),
     name         VARCHAR(64),
     description  VARCHAR(256),
-    active       NUMERIC(1)     NOT NULL
-                                DEFAULT 1
-                                CONSTRAINT ck_language__active
-                                  CHECK (active IN (0,1)),
+    active       BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_language__id PRIMARY KEY (id)
 );
 

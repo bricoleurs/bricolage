@@ -1123,7 +1123,7 @@ $get_em = sub {
       . 'ON up.pref__id = o.pref__id AND up.value = o.value, '
       . 'member m, pref_member c';
     my $wheres = 'p.id = up.pref__id AND p.id = c.object_id '
-      . 'AND m.id = c.member__id AND m.active = 1';
+      . "AND m.id = c.member__id AND m.active = '1'";
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
@@ -1139,7 +1139,7 @@ $get_em = sub {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, pref_member c2";
             $wheres .= " AND p.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
         } elsif ($k eq 'user_id') {
             $wheres .= ' AND up.usr__id = ?';

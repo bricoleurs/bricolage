@@ -17,14 +17,11 @@ CREATE SEQUENCE seq_action_type START 1024;
 --
 
 CREATE TABLE action_type (
-    id            NUMERIC(10, 0)    NOT NULL
+    id            INTEGER           NOT NULL
                                     DEFAULT NEXTVAL('seq_action_type'),
     name          VARCHAR(64)       NOT NULL,
     description   VARCHAR(256),
-    active        NUMERIC(1, 0)     NOT NULL 
-                                    DEFAULT 0
-                                    CONSTRAINT ck_action_type__active
-                                      CHECK (active IN (1,0)),
+    active        BOOLEAN           NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_action_type__id PRIMARY KEY (id)
 );
 
@@ -34,8 +31,8 @@ CREATE TABLE action_type (
 --
 
 CREATE TABLE action_type__media_type (
-    action_type__id  NUMERIC(10, 0)    NOT NULL,
-    media_type__id    NUMERIC(10, 0)    NOT NULL,
+    action_type__id   INTEGER          NOT NULL,
+    media_type__id    INTEGER          NOT NULL,
     CONSTRAINT pk_action__media_type PRIMARY KEY (action_type__id, media_type__id)
 );
 

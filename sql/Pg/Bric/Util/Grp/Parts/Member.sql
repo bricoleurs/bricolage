@@ -34,14 +34,11 @@ CREATE SEQUENCE seq_member START  1024;
 --
 
 CREATE TABLE member (
-    id         NUMERIC(10,0)  NOT NULL
+    id         INTEGER        NOT NULL
                               DEFAULT NEXTVAL('seq_member'),
-    grp__id    NUMERIC(10,0)  NOT NULL,
-    class__id  NUMERIC(10,0)  NOT NULL,
-    active     NUMERIC(1,0)   NOT NULL
-                              DEFAULT 1
-                              CONSTRAINT ck_member__active
-                                CHECK (active IN (0,1)),
+    grp__id    INTEGER        NOT NULL,
+    class__id  INTEGER        NOT NULL,
+    active     BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_member__id PRIMARY KEY (id)
 );
 
@@ -61,10 +58,10 @@ CREATE INDEX fkx_grp__class ON member(class__id);
 --
 
 CREATE TABLE story_member (
-    id          NUMERIC(10,0)  NOT NULL
+    id          INTEGER        NOT NULL
                                DEFAULT NEXTVAL('seq_story_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    object_id   INTEGER        NOT NULL,
+    member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_story_member__id PRIMARY KEY (id)
 );
 

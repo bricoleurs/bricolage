@@ -22,15 +22,12 @@ CREATE SEQUENCE seq_keyword_member START 1024;
 -- Description: The main keyword table.
 
 CREATE TABLE keyword (
-    id               NUMERIC(10)   NOT NULL
+    id               INTEGER       NOT NULL
                                    DEFAULT NEXTVAL('seq_keyword'),
     name             VARCHAR(256)  NOT NULL,
     screen_name      VARCHAR(256)  NOT NULL,
     sort_name        VARCHAR(256)  NOT NULL,
-    active           NUMERIC(1)	   NOT NULL
-                                   DEFAULT 1
-                                   CONSTRAINT ck_keyword__active
-                                     CHECK (active IN (0,1)),
+    active           BOOLEAN	   NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_keyword__id PRIMARY KEY (id)
 );
 
@@ -41,8 +38,8 @@ CREATE TABLE keyword (
 --
 
 CREATE TABLE story_keyword (
-    story_id          NUMERIC(10,0)  NOT NULL,
-    keyword_id        NUMERIC(10,0)  NOT NULL,
+    story_id          INTEGER  NOT NULL,
+    keyword_id        INTEGER  NOT NULL,
     PRIMARY KEY (story_id, keyword_id)
 );
 
@@ -54,8 +51,8 @@ CREATE TABLE story_keyword (
 --
 
 CREATE TABLE media_keyword (
-    media_id         NUMERIC(10,0)  NOT NULL,
-    keyword_id       NUMERIC(10,0)  NOT NULL,
+    media_id         INTEGER  NOT NULL,
+    keyword_id       INTEGER  NOT NULL,
     PRIMARY KEY (media_id, keyword_id)
 );
 
@@ -66,8 +63,8 @@ CREATE TABLE media_keyword (
 --
 
 CREATE TABLE category_keyword (
-    category_id       NUMERIC(10,0)  NOT NULL,
-    keyword_id        NUMERIC(10,0)  NOT NULL,
+    category_id       INTEGER  NOT NULL,
+    keyword_id        INTEGER  NOT NULL,
     PRIMARY KEY (category_id, keyword_id)
 );
 
@@ -76,10 +73,10 @@ CREATE TABLE category_keyword (
 --
 
 CREATE TABLE keyword_member (
-    id          NUMERIC(10,0)  NOT NULL
-                               DEFAULT NEXTVAL('seq_keyword_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    id          INTEGER  NOT NULL
+                         DEFAULT NEXTVAL('seq_keyword_member'),
+    object_id   INTEGER  NOT NULL,
+    member__id  INTEGER  NOT NULL,
     CONSTRAINT pk_keyword_member__id PRIMARY KEY (id)
 );
 

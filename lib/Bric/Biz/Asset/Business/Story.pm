@@ -271,7 +271,7 @@ use constant GROUP_COLS => ('id_list(DISTINCT m.grp__id) AS grp_id',
 use constant WHERE => 's.id = i.story__id '
   . 'AND sm.object_id = s.id '
   . 'AND m.id = sm.member__id '
-  . 'AND m.active = 1 '
+  . "AND m.active = '1' "
   . 'AND sc.story_instance__id = i.id '
   . 'AND c.id = sc.category__id '
   . 'AND s.workflow__id = w.id';
@@ -342,10 +342,11 @@ use constant PARAM_WHERE_MAP =>
       user__id               => 'i.usr__id = ?',
       user_id                => 'i.usr__id = ?',
       _checked_in_or_out     => 'i.checked_out = '
-                              . '( SELECT max(checked_out) '
+                             . '( SELECT checked_out '
                               . 'FROM story_instance '
                               . 'WHERE version = i.version '
-                              . 'AND story__id = i.story__id )',
+                              . 'AND story__id = i.story__id '
+                              . 'ORDER BY checked_out DESC LIMIT 1 )',
       _checked_out           => 'i.checked_out = ?',
       primary_oc_id          => 'i.primary_oc__id = ?',
       output_channel_id      => '(i.id = soc.story_instance__id AND '
@@ -366,18 +367,19 @@ use constant PARAM_WHERE_MAP =>
                               . 'WHERE  i2.story__id = s2.id '
                               . 'AND i2.version = s2.current_version '
                               . 'AND i2.checked_out =('
-                              . 'SELECT MAX(checked_out) '
+                             . '( SELECT checked_out '
                               . 'FROM story_instance '
                               . 'WHERE version = i2.version '
-                              . 'AND story__id = s2.id ) '
+                              . 'AND story__id = s2.id '
                               . 'AND sc3.story_instance__id = i2.id '
-                              . 'AND s2.id = ?)',
+                              . 'AND s2.id = ? '
+                              . 'ORDER BY checked_out DESC LIMIT 1 )',
       keyword                => 'sk.story_id = s.id AND '
                               . 'k.id = sk.keyword_id AND '
                               . 'LOWER(k.name) LIKE LOWER(?)',
       _no_return_versions    => 's.current_version = i.version',
       grp_id                 => 'm2.grp__id = ? AND '
-                              . 'm2.active = 1 AND '
+                              . "m2.active = '1' AND "
                               . 'sm2.member__id = m2.id AND '
                               . 's.id = sm2.object_id',
       simple                 => 's.id IN ('
@@ -409,7 +411,7 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'sk.story_id = s.id AND k.id = sk.keyword_id',
                                 'LOWER(k.name) LIKE LOWER(?)' ],
-    grp_id                 => [ 'm2.active = 1 AND sm2.member__id = m2.id AND s.id = sm2.object_id',
+    grp_id                 => [ "m2.active = '1' AND sm2.member__id = m2.id AND s.id = sm2.object_id",
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = sic.story_instance__id',
                                 'sic.member__id = ?' ],

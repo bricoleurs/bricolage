@@ -44,34 +44,28 @@ CREATE SEQUENCE seq_attr_story_meta START 1024;
 
 
 CREATE TABLE story (
-    id                NUMERIC(10,0)   NOT NULL
+    id                INTEGER         NOT NULL
                                       DEFAULT NEXTVAL('seq_story'),
-    priority          NUMERIC(1,0)    NOT NULL
+    priority          INT2            NOT NULL
                                       DEFAULT 3
                                       CONSTRAINT ck_story__priority
                                         CHECK (priority BETWEEN 1 AND 5),
-    source__id        NUMERIC(10,0)   NOT NULL, 
-    usr__id           NUMERIC(10,0),
-    element__id       NUMERIC(10,0)   NOT NULL,
+    source__id        INTEGER         NOT NULL, 
+    usr__id           INTEGER,
+    element__id       INTEGER         NOT NULL,
     primary_uri       VARCHAR(128),
     first_publish_date TIMESTAMP,
     publish_date      TIMESTAMP,
     expire_date       TIMESTAMP,
     cover_date        TIMESTAMP,
-    current_version   NUMERIC(10, 0)  NOT NULL,
-    published_version NUMERIC(10, 0),
-    workflow__id      NUMERIC(10,0)   NOT NULL,
-    desk__id          NUMERIC(10,0)   NOT NULL,
-    publish_status    NUMERIC(1,0)    NOT NULL
-                                      DEFAULT 0
-                                      CONSTRAINT ck_story__publish_status
-                                        CHECK (publish_status IN (0,1)),
-    active            NUMERIC(1,0)    NOT NULL
-                                      DEFAULT 1
-                                      CONSTRAINT ck_story__active
-                                        CHECK (active IN (0,1)),
-    site__id          NUMERIC(10,0)   NOT NULL,
-    alias_id          NUMERIC(10,0)   CONSTRAINT ck_story_id
+    current_version   INTEGER         NOT NULL,
+    published_version INTEGER,
+    workflow__id      INTEGER         NOT NULL,
+    desk__id          INTEGER         NOT NULL,
+    publish_status    BOOLEAN         NOT NULL DEFAULT FALSE,
+    active            BOOLEAN         NOT NULL DEFAULT TRUE,
+    site__id          INTEGER         NOT NULL,
+    alias_id          INTEGER         CONSTRAINT ck_story_id
                                         CHECK (alias_id != id),  
     CONSTRAINT pk_story__id PRIMARY KEY (id)
 );
@@ -84,19 +78,16 @@ CREATE TABLE story (
 --
 
 CREATE TABLE story_instance (
-    id             NUMERIC(10,0)   NOT NULL
-                                  DEFAULT NEXTVAL('seq_story_instance'),
+    id             INTEGER      NOT NULL
+                                DEFAULT NEXTVAL('seq_story_instance'),
     name           VARCHAR(256),
     description    VARCHAR(1024),
-    story__id      NUMERIC(10,0)   NOT NULL,
-    version        NUMERIC(10,0),
-    usr__id        NUMERIC(10,0)   NOT NULL,
+    story__id      INTEGER      NOT NULL,
+    version        INTEGER,
+    usr__id        INTEGER      NOT NULL,
     slug           VARCHAR(64),
-    primary_oc__id NUMERIC(10,0)   NOT NULL,
-    checked_out    NUMERIC(1,0)    NOT NULL
-                                   DEFAULT 0
-                                   CONSTRAINT ck_story_instance__checked_out
-                                     CHECK (checked_out IN (0,1)),
+    primary_oc__id INTEGER      NOT NULL,
+    checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
 
@@ -106,8 +97,8 @@ CREATE TABLE story_instance (
 -- Description: Tracks all URIs for stories.
 --
 CREATE TABLE story_uri (
-    story__id NUMERIC(10)     NOT NULL,
-    site__id NUMERIC(10)      NOT NULL,
+    story__id INTEGER     NOT NULL,
+    site__id INTEGER      NOT NULL,
     uri       TEXT            NOT NULL
 );
 
@@ -119,8 +110,8 @@ CREATE TABLE story_uri (
 --
 
 CREATE TABLE story__output_channel (
-    story_instance__id  NUMERIC(10, 0)  NOT NULL,
-    output_channel__id  NUMERIC(10, 0)  NOT NULL,
+    story_instance__id  INTEGER  NOT NULL,
+    output_channel__id  INTEGER  NOT NULL,
     CONSTRAINT pk_story_output_channel
       PRIMARY KEY (story_instance__id, output_channel__id)
 );
@@ -134,14 +125,11 @@ CREATE TABLE story__output_channel (
 --
 
 CREATE TABLE story__category (
-    id                  NUMERIC(10,0)  NOT NULL
+    id                  INTEGER  NOT NULL
                                        DEFAULT NEXTVAL('seq__story_category'),
-    story_instance__id  NUMERIC(10,0)  NOT NULL,
-    category__id        NUMERIC(10,0)  NOT NULL,
-    main                NUMERIC(1,0)   NOT NULL
-                                       DEFAULT 0
-                                       CONSTRAINT ck_story__category__main
-                                         CHECK (main IN (0,1)),
+    story_instance__id  INTEGER  NOT NULL,
+    category__id        INTEGER  NOT NULL,
+    main                BOOLEAN   NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_story_category__id PRIMARY KEY (id)
 );
 
@@ -153,11 +141,11 @@ CREATE TABLE story__category (
 --
 
 CREATE TABLE story__contributor (
-    id                  NUMERIC(10,0)   NOT NULL
+    id                  INTEGER   NOT NULL
                                         DEFAULT NEXTVAL('seq_story__contributor'),
-    story_instance__id  NUMERIC(10,0)   NOT NULL,
-    member__id          NUMERIC(10,0)   NOT NULL,
-    place               NUMERIC(3,0)    NOT NULL,
+    story_instance__id  INTEGER   NOT NULL,
+    member__id          INTEGER   NOT NULL,
+    place               INT2      NOT NULL,
     role                VARCHAR(256),
     CONSTRAINT pk_story_category_id PRIMARY KEY (id)
 );
@@ -169,15 +157,12 @@ CREATE TABLE story__contributor (
 --
 
 CREATE TABLE attr_story (
-    id         NUMERIC(10)   NOT NULL
+    id         INTEGER       NOT NULL
                              DEFAULT NEXTVAL('seq_attr_story'),
     subsys     VARCHAR(256)  NOT NULL,
     name       VARCHAR(256)  NOT NULL,
     sql_type   VARCHAR(30)   NOT NULL,
-    active     NUMERIC(1)    DEFAULT 1
-                             NOT NULL
-                             CONSTRAINT ck_attr_story__active
-                               CHECK (active IN (0,1)),
+    active     BOOLEAN       NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_story__id PRIMARY KEY (id)
 );
 
@@ -189,18 +174,15 @@ CREATE TABLE attr_story (
 --
 
 CREATE TABLE attr_story_val (
-    id           NUMERIC(10)     NOT NULL
+    id           INTEGER     NOT NULL
                                  DEFAULT NEXTVAL('seq_attr_story_val'),
-    object__id   NUMERIC(10)     NOT NULL,
-    attr__id     NUMERIC(10)     NOT NULL,
+    object__id   INTEGER     NOT NULL,
+    attr__id     INTEGER     NOT NULL,
     date_val     TIMESTAMP,
     short_val    VARCHAR(1024),
     blob_val     TEXT,
-    serial       NUMERIC(1)      DEFAULT 0,
-    active       NUMERIC(1)      DEFAULT 1
-                                 NOT NULL
-                                 CONSTRAINT ck_attr_story_val__active
-                                   CHECK (active IN (0,1)),
+    serial       BOOLEAN      DEFAULT FALSE,
+    active       BOOLEAN      NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_attr_story_val__id PRIMARY KEY (id)
 );
 
@@ -212,15 +194,12 @@ CREATE TABLE attr_story_val (
 --
 
 CREATE TABLE attr_story_meta (
-    id        NUMERIC(10)     NOT NULL
+    id        INTEGER     NOT NULL
                               DEFAULT NEXTVAL('seq_attr_story_meta'),
-    attr__id  NUMERIC(10)     NOT NULL,
+    attr__id  INTEGER     NOT NULL,
     name      VARCHAR(256)    NOT NULL,
     value     VARCHAR(2048),
-    active    NUMERIC(1)      DEFAULT 1
-                              NOT NULL
-                              CONSTRAINT ck_attr_story_meta__active
-                                CHECK (active IN (0,1)),
+    active    BOOLEAN      NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_story_meta__id PRIMARY KEY (id)
 );
 

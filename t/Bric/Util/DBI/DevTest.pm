@@ -19,18 +19,18 @@ sub test_fetch_objects: Test(4) {
     # to produce the same result
     Bric::Util::DBI::execute( Bric::Util::DBI::prepare(q{
          CREATE TABLE test_fetch_objects (
-                one        NUMERIC(10,0) NULL,
-                two        NUMERIC(10,0) NULL,
-                three      NUMERIC(10,0) NULL,
-                four       NUMERIC(10,0) NULL,
-                five       NUMERIC(10,0) NULL,
-                six        NUMERIC(10,0) NULL,
-                seven      NUMERIC(10,0) NULL,
-                eight      NUMERIC(10,0) NULL,
-                nine       NUMERIC(10,0) NULL,
-                ten        NUMERIC(10,0) NULL,
-                eleven     NUMERIC(10,0) NULL,
-                twelve     NUMERIC(10,0) NULL
+                one        INTEGER NULL,
+                two        INTEGER NULL,
+                three      INTEGER NULL,
+                four       INTEGER NULL,
+                five       INTEGER NULL,
+                six        INTEGER NULL,
+                seven      INTEGER NULL,
+                eight      INTEGER NULL,
+                nine       INTEGER NULL,
+                ten        INTEGER NULL,
+                eleven     INTEGER NULL,
+                twelve     INTEGER NULL
             ) }));
 
     my $sth = prepare(q{

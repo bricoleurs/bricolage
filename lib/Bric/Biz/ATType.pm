@@ -1121,7 +1121,7 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = "$TABLE a, member m, element_type_member c";
     my $wheres = 'a.id = c.object_id AND c.member__id = m.id ' .
-      'AND m.active = 1';
+      "AND m.active = '1'";
     my @params;
 
     # Set the active parameter, if necessary.
@@ -1151,7 +1151,7 @@ $get_em = sub {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, element_type_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
         } else {
             # It's a boolean comparison.

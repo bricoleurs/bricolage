@@ -553,7 +553,7 @@ sub list_move_methods {
     my $sel = prepare_ca(qq{
         SELECT disp_name
         FROM   class
-        WHERE  distributor = 1 $and_sftp $and_dav
+        WHERE  distributor = '1' $and_sftp $and_dav
         ORDER BY disp_name
     }, undef);
     return wantarray ? @{ col_aref($sel) } : col_aref($sel);
@@ -2136,7 +2136,7 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'server_type s, class c, member m, dest_member sm';
     my $wheres = 's.class__id = c.id AND s.id = sm.object_id AND ' .
-      'sm.member__id = m.id AND m.active = 1';
+      "sm.member__id = m.id AND m.active = '1'";
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
@@ -2167,7 +2167,7 @@ $get_em = sub {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, dest_member sm2";
             $wheres .= " AND s.id = sm2.object_id AND sm2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
         } elsif ($k eq 'site_id') {
             $wheres .= " AND s.site__id = ?";

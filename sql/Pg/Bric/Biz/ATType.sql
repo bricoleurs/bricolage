@@ -27,39 +27,18 @@ CREATE SEQUENCE seq_element_type_member START 1024;
 --
 
 CREATE TABLE at_type (
-    id              NUMERIC(10,0)  NOT NULL
+    id              INTEGER        NOT NULL
                                    DEFAULT NEXTVAL('seq_at_type'),
     name            VARCHAR(64)	   NOT NULL,
     description     VARCHAR(256),
-    top_level       NUMERIC(1,0)   NOT NULL
-                                   DEFAULT 0
-                                   CONSTRAINT ck_at_type__top_level
-                                     CHECK (top_level IN (0,1)),
-    paginated       NUMERIC(1,0)   NOT NULL
-                                   DEFAULT 0
-                                   CONSTRAINT ck_at_type__paginated
-                                     CHECK (paginated IN (0,1)),
-    fixed_url       NUMERIC(1,0)   NOT NULL
-                                   DEFAULT 0
-                                   CONSTRAINT ck_at_type__fixed_url
-                                     CHECK (fixed_url IN (0,1)),
-    related_story   NUMERIC(1,0)   NOT NULL
-                                   DEFAULT 0
-                                   CONSTRAINT ck_at_type__related_story
-                                     CHECK (related_story IN (0,1)),
-    related_media   NUMERIC(1,0)   NOT NULL
-                                   DEFAULT 0
-                                   CONSTRAINT ck_at_type__related_media
-                                     CHECK (related_media IN (0,1)),
-    media           NUMERIC(1,0)   NOT NULL
-                                   DEFAULT 0
-                                   CONSTRAINT ck_at_type__media
-                                     CHECK (media IN (0,1)),
-    biz_class__id   NUMERIC(10,0)  NOT NULL,
-    active          NUMERIC(1,0)   NOT NULL
-                                   DEFAULT 1
-                                   CONSTRAINT ck_at_type__active
-                                     CHECK (active IN (0,1)),
+    top_level       BOOLEAN        NOT NULL DEFAULT FALSE,
+    paginated       BOOLEAN        NOT NULL DEFAULT FALSE,
+    fixed_url       BOOLEAN        NOT NULL DEFAULT FALSE,
+    related_story   BOOLEAN        NOT NULL DEFAULT FALSE,
+    related_media   BOOLEAN        NOT NULL DEFAULT FALSE,
+    media           BOOLEAN        NOT NULL DEFAULT FALSE,
+    biz_class__id   INTEGER        NOT NULL,
+    active          BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_at_type__id PRIMARY KEY (id)
 );
 
@@ -68,10 +47,10 @@ CREATE TABLE at_type (
 --
 
 CREATE TABLE element_type_member (
-    id          NUMERIC(10,0)  NOT NULL
-                               DEFAULT NEXTVAL('seq_element_type_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    id          INTEGER  NOT NULL
+                         DEFAULT NEXTVAL('seq_element_type_member'),
+    object_id   INTEGER  NOT NULL,
+    member__id  INTEGER  NOT NULL,
     CONSTRAINT pk_element_type_member__id PRIMARY KEY (id)
 );
 

@@ -18,8 +18,8 @@ CREATE SEQUENCE seq_resource START 1024;
 --
 
 CREATE TABLE media__resource(
-    resource__id    NUMERIC(10, 0)    NOT NULL,
-    media__id       NUMERIC(10, 0)    NOT NULL,
+    resource__id    INTEGER           NOT NULL,
+    media__id       INTEGER           NOT NULL,
     CONSTRAINT pk_media__resource PRIMARY KEY (media__id, resource__id)
 );
 
@@ -29,15 +29,15 @@ CREATE TABLE media__resource(
 --
 
 CREATE TABLE resource(
-    id                  NUMERIC(10, 0)    NOT NULL
+    id                  INTEGER           NOT NULL
                                           DEFAULT NEXTVAL('seq_resource'),
-    parent_id           NUMERIC(10, 0),
-    media_type__id      NUMERIC(10, 0)    NOT NULL,
+    parent_id           INTEGER,
+    media_type__id      INTEGER           NOT NULL,
     path                VARCHAR(256)      NOT NULL,
     uri                 VARCHAR(256)      NOT NULL,
-    size                NUMERIC(10, 0)    NOT NULL,
+    size                INTEGER           NOT NULL,
     mod_time            TIMESTAMP         NOT NULL,
-    is_dir              NUMERIC(1, 0)     NOT NULL,
+    is_dir              BOOLEAN           NOT NULL,
     CONSTRAINT pk_resource__id PRIMARY KEY (id)
 );
 
@@ -47,8 +47,8 @@ CREATE TABLE resource(
 --
 
 CREATE TABLE story__resource(
-    story__id       NUMERIC(10, 0)    NOT NULL,
-    resource__id    NUMERIC(10, 0)    NOT NULL,
+    story__id       INTEGER           NOT NULL,
+    resource__id    INTEGER           NOT NULL,
     CONSTRAINT pk_story__resource PRIMARY KEY (story__id,resource__id)
 );
 

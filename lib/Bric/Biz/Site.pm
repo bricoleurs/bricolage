@@ -782,7 +782,7 @@ $get_em = sub {
     my ($invocant, $params, $ids_only, $href) = @_;
     my $tables = "$TABLE a, member m, site_member c";
     my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND ' .
-      'm.active = 1';
+      "m.active = '1'";
     my @params;
 
     foreach my $k (keys %$params) {
@@ -798,12 +798,12 @@ $get_em = sub {
             # Look up by group membership.
             $tables .= ", member m2, site_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $params->{$k};
         } elsif ($k eq 'element_id') {
             # Look up by element association.
             $tables .= ", element__site es";
-            $wheres .= " AND a.id = es.site__id AND es.element__id = ? AND es.active = 1";
+            $wheres .= " AND a.id = es.site__id AND es.element__id = ? AND es.active = '1'";
             push @params, $params->{$k};
         } elsif ($k eq 'output_channel_id') {
             # Look up by output channel association.

@@ -38,19 +38,16 @@ CREATE SEQUENCE seq_attr_category_meta START 1024;
 --
 
 CREATE TABLE category (
-    id               NUMERIC(10,0)   NOT NULL
+    id               INTEGER         NOT NULL
                                      DEFAULT NEXTVAL('seq_category'),
-    site__id         NUMERIC(10,0)   NOT NULL,
+    site__id         INTEGER         NOT NULL,
     directory        VARCHAR(128)    NOT NULL,
     uri              VARCHAR(256)    NOT NULL,
     name             VARCHAR(64),
     description      VARCHAR(256),
-    parent_id        NUMERIC(10,0)   NOT NULL,
-    asset_grp_id     NUMERIC(10,0)   NOT NULL,
-    active           NUMERIC(1,0)    NOT NULL
-                                     DEFAULT 1
-                                     CONSTRAINT ck_category__active
-                                       CHECK (active IN (0,1)),
+    parent_id        INTEGER         NOT NULL,
+    asset_grp_id     INTEGER         NOT NULL,
+    active           BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_category__id PRIMARY KEY (id)
 );
 
@@ -62,10 +59,10 @@ CREATE TABLE category (
 --
 
 CREATE TABLE category_member (
-    id          NUMERIC(10,0)  NOT NULL
-                               DEFAULT NEXTVAL('seq_category_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    id          INTEGER  NOT NULL
+                         DEFAULT NEXTVAL('seq_category_member'),
+    object_id   INTEGER  NOT NULL,
+    member__id  INTEGER  NOT NULL,
     CONSTRAINT pk_category_member__id PRIMARY KEY (id)
 );
 
@@ -76,14 +73,12 @@ CREATE TABLE category_member (
 --              its subsystem, its category ID and an attribute name.
 
 CREATE TABLE attr_category (
-    id         NUMERIC(10)   NOT NULL
+    id         INTEGER       NOT NULL
                              DEFAULT NEXTVAL('seq_attr_category'),
     subsys     VARCHAR(256)  NOT NULL,
     name       VARCHAR(256)  NOT NULL,
     sql_type   VARCHAR(30)   NOT NULL,
-    active     NUMERIC(1)    DEFAULT 1
-                             NOT NULL
-                             CONSTRAINT ck_attr_category__active CHECK (active IN (0,1)),
+    active     BOOLEAN       NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_category__id PRIMARY KEY (id)
 );
 
@@ -95,17 +90,15 @@ CREATE TABLE attr_category (
 -- Description: A table to hold attribute values.
 
 CREATE TABLE attr_category_val (
-    id           NUMERIC(10)     NOT NULL
+    id           INTEGER         NOT NULL
                                  DEFAULT NEXTVAL('seq_attr_category_val'),
-    object__id   NUMERIC(10)     NOT NULL,
-    attr__id     NUMERIC(10)     NOT NULL,
+    object__id   INTEGER         NOT NULL,
+    attr__id     INTEGER         NOT NULL,
     date_val     TIMESTAMP,
     short_val    VARCHAR(1024),
     blob_val     TEXT,
-    serial       NUMERIC(1)      DEFAULT 0,
-    active       NUMERIC(1)      DEFAULT 1
-                                 NOT NULL
-                                 CONSTRAINT ck_attr_category_val__active CHECK (active IN (0,1)),
+    serial       BOOLEAN         DEFAULT FALSE,
+    active       BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_attr_category_val__id PRIMARY KEY (id)
 );
 
@@ -116,14 +109,12 @@ CREATE TABLE attr_category_val (
 -- Description: A table to represent metadata on types of attributes.
 
 CREATE TABLE attr_category_meta (
-    id        NUMERIC(10)     NOT NULL
+    id        INTEGER         NOT NULL
                               DEFAULT NEXTVAL('seq_attr_category_meta'),
-    attr__id  NUMERIC(10)     NOT NULL,
+    attr__id  INTEGER         NOT NULL,
     name      VARCHAR(256)    NOT NULL,
     value     VARCHAR(2048),
-    active    NUMERIC(1)      DEFAULT 1
-                              NOT NULL
-                              CONSTRAINT ck_attr_category_meta__active CHECK (active IN (0,1)),
+    active    BOOLEAN         NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_category_meta__id PRIMARY KEY (id)
 );
 

@@ -15,13 +15,10 @@
 --
 
 CREATE TABLE usr (
-    id           NUMERIC(10, 0)    NOT NULL,
+    id           INTEGER           NOT NULL,
     login        VARCHAR(128)      NOT NULL,
     password     CHAR(32)          NOT NULL,
-    active       NUMERIC(1, 0)     NOT NULL 
-                                   DEFAULT 1
-                                   CONSTRAINT ck_usr__active
-                                     CHECK (active IN (1,0)),
+    active       BOOLEAN           NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_usr__id PRIMARY KEY (id)
 );
 
@@ -29,5 +26,5 @@ CREATE TABLE usr (
 -- INDEXES.
 --
 CREATE INDEX idx_usr__login ON usr(LOWER(login));
-CREATE UNIQUE INDEX udx_usr__login ON usr(LOWER(login)) WHERE active = 1;
+CREATE UNIQUE INDEX udx_usr__login ON usr(LOWER(login)) WHERE active = '1';
 

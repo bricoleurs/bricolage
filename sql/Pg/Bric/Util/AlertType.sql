@@ -12,19 +12,15 @@
 --
 
 CREATE TABLE alert_type (
-    id                NUMERIC(10, 0)    NOT NULL
+    id                INTEGER           NOT NULL
                                         DEFAULT NEXTVAL('seq_alert_type'),
-    event_type__id    NUMERIC(10, 0)    NOT NULL,
-    usr__id           NUMERIC(10, 0)    NOT NULL,
+    event_type__id    INTEGER           NOT NULL,
+    usr__id           INTEGER           NOT NULL,
     name              VARCHAR(64)       NOT NULL,
     subject           VARCHAR(128),
     message           VARCHAR(512),
-    active            NUMERIC(1, 0)     NOT NULL 
-                                        CONSTRAINT ck_alert_type__active CHECK (active IN (1,0))
-                                        DEFAULT 1,
-    del               NUMERIC(1, 0)     NOT NULL 
-                                        CONSTRAINT ck_alert_type__del CHECK (del IN (1,0))
-                                        DEFAULT 0,
+    active            BOOLEAN           NOT NULL DEFAULT TRUE,
+    del               BOOLEAN           NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_alert_type__id PRIMARY KEY (id)
 );
 
@@ -34,9 +30,9 @@ CREATE TABLE alert_type (
 --
 
 CREATE TABLE alert_type__grp__contact(
-    alert_type__id    NUMERIC(10, 0)    NOT NULL,
-    contact__id       NUMERIC(10, 0)    NOT NULL,
-    grp__id           NUMERIC(10, 0)    NOT NULL,
+    alert_type__id    INTEGER           NOT NULL,
+    contact__id       INTEGER           NOT NULL,
+    grp__id           INTEGER           NOT NULL,
     CONSTRAINT pk_alert_type__grp__contact PRIMARY KEY (alert_type__id, contact__id, grp__id)
 );
 
@@ -46,9 +42,9 @@ CREATE TABLE alert_type__grp__contact(
 --
 
 CREATE TABLE alert_type__usr__contact(
-    alert_type__id    NUMERIC(10, 0)    NOT NULL,
-    contact__id       NUMERIC(10, 0)    NOT NULL,
-    usr__id           NUMERIC(10, 0)    NOT NULL,
+    alert_type__id    INTEGER           NOT NULL,
+    contact__id       INTEGER           NOT NULL,
+    usr__id           INTEGER           NOT NULL,
     CONSTRAINT pk_alert_type__usr__contact PRIMARY KEY (alert_type__id, usr__id, contact__id)
 );
 

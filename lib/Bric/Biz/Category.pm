@@ -1541,7 +1541,7 @@ Several that need documenting!
 sub _do_list {
     my ($pkg, $params, $ids) = @_;
     my $tables = "$table a, $mem_table m, $map_table c";
-    my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND m.active = 1 '.
+    my $wheres = "a.id = c.object_id AND c.member__id = m.id AND m.active = '1' ".
                  'AND a.id <> 0';
     my @params;
 
@@ -1576,7 +1576,7 @@ sub _do_list {
             # Fancy-schmancy second join.
             $tables .= ", $mem_table m2, $map_table c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id " .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
 	} else {
             # It's a simpler string comparison.

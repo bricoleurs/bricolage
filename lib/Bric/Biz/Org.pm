@@ -1252,7 +1252,7 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'org a, member m, org_member c';
     my $wheres = 'a.id = c.object_id AND m.id = c.member__id ' .
-      'AND m.active = 1';
+      "AND m.active = '1'";
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
@@ -1267,7 +1267,7 @@ $get_em = sub {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, org_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
         } else {
             # Simple string comparison.
@@ -1277,7 +1277,7 @@ $get_em = sub {
     }
 
     # Make sure it's active unless and ID has been passed.
-    $wheres .= "AND a.active = 1" unless defined $params->{id};
+    $wheres .= "AND a.active = '1'" unless defined $params->{id};
 
     # Assemble and prepare the query.
     my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :

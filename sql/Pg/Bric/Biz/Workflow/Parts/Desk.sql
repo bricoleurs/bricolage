@@ -23,21 +23,15 @@ CREATE SEQUENCE seq_desk_member START  1024;
 -- Description: Represents a desk in the workflow
 
 CREATE TABLE desk (
-    id              NUMERIC(10)   NOT NULL
+    id              INTEGER       NOT NULL
                                   DEFAULT NEXTVAL('seq_desk'),
     name            VARCHAR(64)   NOT NULL,
     description     VARCHAR(256),
-    pre_chk_rules   NUMERIC(10),
-    post_chk_rules  NUMERIC(10),
-    asset_grp       NUMERIC(10),
-    publish         NUMERIC(1)    NOT NULL
-                                  DEFAULT 0
-                                  CONSTRAINT ck_desk__publish
-                                    CHECK (publish IN (0,1)),
-    active          NUMERIC(1)	  NOT NULL
-                                  DEFAULT 1
-                                  CONSTRAINT ck_desk__active
-                                    CHECK (active IN (0,1)),
+    pre_chk_rules   INTEGER,
+    post_chk_rules  INTEGER,
+    asset_grp       INTEGER,
+    publish         BOOLEAN       NOT NULL DEFAULT FALSE,
+    active          BOOLEAN  	  NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_desk__id PRIMARY KEY (id)
 );
 
@@ -48,10 +42,10 @@ CREATE TABLE desk (
 --
 
 CREATE TABLE desk_member (
-    id          NUMERIC(10,0)  NOT NULL
+    id          INTEGER        NOT NULL
                                DEFAULT NEXTVAL('seq_desk_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    object_id   INTEGER        NOT NULL,
+    member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_desk_member__id PRIMARY KEY (id)
 );
 

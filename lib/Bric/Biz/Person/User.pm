@@ -504,7 +504,7 @@ sub login_avail {
         SELECT 1
         FROM   usr
         WHERE  LOWER(login) = ?
-               AND active = 1
+               AND active = '1'
     }, undef);
 
     return 1 unless @{ row_aref($sel, lc $login) || [] };
@@ -1450,7 +1450,7 @@ $get_em = sub {
     my ($pkg, $args, $ids) = @_;
     my $tables = 'person p, usr u, member m, user_member c';
     my $wheres = 'p.id = u.id AND u.id = c.object_id AND ' .
-      'c.member__id = m.id AND m.active = 1';
+      "c.member__id = m.id AND m.active = '1'";
     my @params;
     while (my ($k, $v) = each %$args) {
         if ($k eq 'id') {
@@ -1462,7 +1462,7 @@ $get_em = sub {
         } elsif ($k eq 'grp_id') {
             $tables .= ", member m2, user_member c2";
             $wheres .= " AND u.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
         } elsif ($k eq 'active') {
             $wheres .= " AND u.$k = ?";
@@ -1473,7 +1473,7 @@ $get_em = sub {
         }
     }
 
-    $wheres .= ' AND u.active = 1' unless defined $args->{id}
+    $wheres .= " AND u.active = '1'" unless defined $args->{id}
       or exists $args->{active};
     my ($qry_cols, $order) = $ids ? (\'DISTINCT u.id', 'u.id') :
       (\$sel_cols, 'LOWER(p.lname), LOWER(p.fname), LOWER(p.mname), u.id');

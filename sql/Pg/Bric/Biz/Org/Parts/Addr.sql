@@ -13,14 +13,11 @@
 --
 
 CREATE TABLE addr (
-    id         NUMERIC(10, 0)      NOT NULL
+    id         INTEGER             NOT NULL
                                    DEFAULT NEXTVAL('seq_addr'),
-    org__id    NUMERIC(10, 0)      NOT NULL,
+    org__id    INTEGER             NOT NULL,
     type       VARCHAR(64),
-    active     NUMERIC(1, 0)       NOT NULL 
-                                   DEFAULT 1
-                                   CONSTRAINT ck_addr__active
-                                     CHECK (active IN (1,0)),
+    active     BOOLEAN             NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_addr__id PRIMARY KEY (id)
 );
 
@@ -30,13 +27,10 @@ CREATE TABLE addr (
 --
 
 CREATE TABLE addr_part_type (
-    id         NUMERIC(10, 0)      NOT NULL
+    id         INTEGER             NOT NULL
                                    DEFAULT NEXTVAL('seq_addr_part_type'),
     name      VARCHAR(64)          NOT NULL,
-    active     NUMERIC(1, 0)       NOT NULL 
-                                   DEFAULT 1
-                                   CONSTRAINT ck_addr_part_type__active
-                                     CHECK (active IN (1,0)),
+    active     BOOLEAN             NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_addr_part_type__id PRIMARY KEY (id)
 );
 
@@ -46,10 +40,10 @@ CREATE TABLE addr_part_type (
 --
 
 CREATE TABLE addr_part (
-    id                    NUMERIC(10, 0)  NOT NULL
-                                                 DEFAULT NEXTVAL('seq_addr_part'),
-    addr__id              NUMERIC(10, 0)  NOT NULL,
-    addr_part_type__id    NUMERIC(10, 0)  NOT NULL,
+    id                    INTEGER         NOT NULL
+                                          DEFAULT NEXTVAL('seq_addr_part'),
+    addr__id              INTEGER         NOT NULL,
+    addr_part_type__id    INTEGER         NOT NULL,
     value                 VARCHAR(256)    NOT NULL,
     CONSTRAINT pk_addr_part__id PRIMARY KEY (id)
 );
@@ -59,8 +53,8 @@ CREATE TABLE addr_part (
 --
 
 CREATE TABLE person_org__addr(
-    addr__id          NUMERIC(10, 0)    NOT NULL,
-    person_org__id    NUMERIC(10, 0)    NOT NULL,
+    addr__id          INTEGER           NOT NULL,
+    person_org__id    INTEGER           NOT NULL,
     CONSTRAINT pk_person_org__addr__all PRIMARY KEY (addr__id,person_org__id)
 );
 

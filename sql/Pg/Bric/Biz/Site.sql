@@ -13,14 +13,11 @@
 --
 
 CREATE TABLE site (
-    id          NUMERIC(10, 0)    NOT NULL,
+    id          INTEGER         NOT NULL,
     name        TEXT,
     description TEXT,
     domain_name TEXT,
-    active      NUMERIC(1, 0)     NOT NULL
-                                  DEFAULT 1
-                                  CONSTRAINT ck_site__active
-                                    CHECK (active IN (1,0)),
+    active      BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_site__id PRIMARY KEY (id)
 );
 
@@ -31,10 +28,10 @@ CREATE TABLE site (
 --
 
 CREATE TABLE site_member (
-    id          NUMERIC(10,0)  NOT NULL
-                               DEFAULT NEXTVAL('seq_site_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    id          INTEGER  NOT NULL
+                         DEFAULT NEXTVAL('seq_site_member'),
+    object_id   INTEGER  NOT NULL,
+    member__id  INTEGER  NOT NULL,
     CONSTRAINT pk_site_member__id PRIMARY KEY (id)
 );
 

@@ -1391,7 +1391,7 @@ $get_em = sub {
 
     my $tables = "$table a, member m, workflow_member c";
     my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND ' .
-      'm.active = 1';
+      "m.active = '1'";
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'name' or $k eq 'description') {
@@ -1400,7 +1400,7 @@ $get_em = sub {
         } elsif ($k eq 'grp_id') {
             $tables .= ", member m2, workflow_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $v;
         } elsif ($k eq 'desk_id') {
             # Yes, this is a hack. It requires too much knowledge of the Group
@@ -1408,7 +1408,7 @@ $get_em = sub {
             # refactored out of it.
             $tables .= ", member m3, desk_member c3";
             $wheres .= ' AND a.all_desk_grp_id = m3.grp__id AND ' .
-              'm3.id = c3.member__id AND m3.active = 1 AND ' .
+              "m3.id = c3.member__id AND m3.active = '1' AND " .
               'c3.object_id = ?';
             push @params, $v;
         } elsif($k eq 'site_id') {

@@ -17,36 +17,26 @@ CREATE SEQUENCE seq_job_member START 1024;
 --
 
 CREATE TABLE job (
-    id            NUMERIC(10, 0)    NOT NULL
+    id            INTEGER           NOT NULL
                                     DEFAULT NEXTVAL('seq_job'),
     name          TEXT              NOT NULL,
-    usr__id       NUMERIC(10, 0)    NOT NULL,
-    sched_time    TIMESTAMP	    NOT NULL
-				    DEFAULT CURRENT_TIMESTAMP,
-    priority      NUMERIC(1,0)      NOT NULL 
+    usr__id       INTEGER           NOT NULL,
+    sched_time    TIMESTAMP	        NOT NULL
+				                    DEFAULT CURRENT_TIMESTAMP,
+    priority      INT2              NOT NULL 
                                     DEFAULT 3
                                     CONSTRAINT ck_job__priority 
                                       CHECK (priority BETWEEN 1 AND 5),
     comp_time     TIMESTAMP,
-    expire        NUMERIC(1, 0)     NOT NULL
-                                    DEFAULT 0
-                                    CONSTRAINT ck_job__expire
-				      CHECK (expire IN (1,0)),
-    failed        NUMERIC(1, 0)     NOT NULL
-                                    DEFAULT 0
-                                    CONSTRAINT ck_job__failed
-				      CHECK (failed IN (1,0)),
-    tries	  NUMERIC(2, 0)	    NOT NULL
-				    DEFAULT 0
+    expire        BOOLEAN           NOT NULL DEFAULT FALSE,
+    failed        BOOLEAN           NOT NULL DEFAULT FALSE,
+    tries	      INT2              NOT NULL DEFAULT 0
                                     CONSTRAINT ck_job__tries
 				      CHECK (tries BETWEEN 0 AND 10),
-    executing     NUMERIC(1, 0)     NOT NULL 
-                                    DEFAULT 0
-                                    CONSTRAINT ck_job__executing
-				      CHECK (executing IN (1,0)),
-    class__id     NUMERIC(10,0)     NOT NULL,
-    story__id     NUMERIC(10,0),
-    media__id     NUMERIC(10,0),
+    executing     BOOLEAN           NOT NULL DEFAULT FALSE,
+    class__id     INTEGER           NOT NULL,
+    story__id     INTEGER,
+    media__id     INTEGER,
     error_message TEXT,
     CONSTRAINT pk_job__id PRIMARY KEY (id)
 );
@@ -57,8 +47,8 @@ CREATE TABLE job (
 --
 
 CREATE TABLE job__resource(
-    job__id         NUMERIC(10, 0)    NOT NULL,
-    resource__id    NUMERIC(10, 0)    NOT NULL,
+    job__id         INTEGER           NOT NULL,
+    resource__id    INTEGER           NOT NULL,
     CONSTRAINT pk_job__resource PRIMARY KEY (job__id,resource__id)
 );
 
@@ -68,8 +58,8 @@ CREATE TABLE job__resource(
 --
 
 CREATE TABLE job__server_type(
-    job__id            NUMERIC(10, 0)  NOT NULL,
-    server_type__id     NUMERIC(10, 0) NOT NULL,
+    job__id             INTEGER        NOT NULL,
+    server_type__id     INTEGER        NOT NULL,
     CONSTRAINT pk_job__server_type PRIMARY KEY (job__id,server_type__id)
 );
 
@@ -78,10 +68,10 @@ CREATE TABLE job__server_type(
 --
 
 CREATE TABLE job_member (
-    id          NUMERIC(10,0)  NOT NULL
+    id          INTEGER        NOT NULL
                                DEFAULT NEXTVAL('seq_job_member'),
-    object_id   NUMERIC(10,0)  NOT NULL,
-    member__id  NUMERIC(10,0)  NOT NULL,
+    object_id   INTEGER        NOT NULL,
+    member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_job_member__id PRIMARY KEY (id)
 );
 

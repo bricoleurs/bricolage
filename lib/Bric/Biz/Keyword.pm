@@ -688,7 +688,7 @@ $get_em = sub {
     my ($invocant, $params, $ids_only, $href) = @_;
     my $tables = "$TABLE a, member m, keyword_member c";
     my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND ' .
-      'm.active = 1';
+      "m.active = '1'";
     my @params;
 
     foreach my $k (keys %$params) {
@@ -704,7 +704,7 @@ $get_em = sub {
             # Look up by group membership.
             $tables .= ", member m2, keyword_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = 1 AND m2.grp__id = ?";
+              " AND m2.active = '1' AND m2.grp__id = ?";
             push @params, $params->{$k};
         } elsif ($k eq 'object') {
             # Look up by object association.

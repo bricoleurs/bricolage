@@ -734,7 +734,7 @@ $get_em = sub {
     }
 
     # Assemble the WHERE clause.
-    push @wheres, "a.active = 1" if $params->{id};
+    push @wheres, "a.active = '1'" if $params->{id};
     my $where = @wheres ? "\n               AND " . join ' AND ', @wheres : '';
 
     # Assemble and prepare the query.
