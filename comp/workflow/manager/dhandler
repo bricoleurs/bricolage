@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2004-02-26 23:40:38 $
+$Date: 2004-02-27 01:41:54 $
 
 =head1 SYNOPSIS
 
@@ -75,17 +75,11 @@ my $thumburi = sub {
     my ($selfobj, $fieldname) = @_;
     return unless $fieldname eq 'thumb';
 
-    # If we get a thumbnail info, we have an image. Otherwise, simply return
+    # If we get a thumbnail URI, we have an image. Otherwise, simply return
     # a space to fill the column properly because we aren't an image object
-    # but USE_THUMBNAILS is on
-    my $thumbinfo = $selfobj->thumbnail_info or return '&nbsp;';
-
-    # If there is no thumbnail, just return the error.
-    return $lang->maketext($thumbinfo) unless ref $thumbinfo;
-
-    # If we get here, just return the img tag.
-    return qq{ <img src="$thumbinfo->{uri}" height="$thumbinfo->{height}" }
-          . qq{ width="$thumbinfo->{width}" />};
+    # but USE_THUMBNAILS is on.
+    my $thumb_uri = $selfobj->thumbnail_uri or return '&nbsp;';
+    return qq{ <img src="$thumb_uri" />};
 };
 
 my $exclude = sub { ! chk_authz($_[0], READ, 1) };

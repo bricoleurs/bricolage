@@ -8,11 +8,11 @@ images
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
@@ -30,7 +30,7 @@ $Data$
 
 =head1 DESCRIPTION
 
-The Subclass of Media that pretains to Images 
+The Subclass of Media that pretains to Images
 
 =cut
 
@@ -56,6 +56,7 @@ use strict;
 use base qw( Bric::Biz::Asset::Business::Media );
 use Bric::Config qw(:media :thumb);
 use Bric::Util::Fault qw(throw_error throw_gen);
+require Imager if USE_THUMBNAILS;
 
 #==============================================================================#
 # Function Prototypes           #
@@ -298,11 +299,9 @@ sub get_class_id {
 
 ################################################################################
 
-=item my $thumbnail_info =  Bric::Biz::Asset::Business::Media::Image->thumbnail_info()
+=item my $key_name = Bric::Biz::Asset::Business::Media::Image->key_name()
 
-Returns either a reference to a hash containing the URI, width, and height for
-a correctly produced image thumbnail. On encountering an error,
-C<thumbnail_info()> returns a scalar error message.
+Returns the key name of this class.
 
 B<Throws:> NONE.
 
@@ -312,31 +311,63 @@ B<Notes:> NONE.
 
 =cut
 
-sub thumbnail_info {
+#sub key_name { 'image' }
+
+################################################################################
+
+=item my_meths()
+
+Data Dictionary for introspection of the object
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+#-----------------------------#
+
+=back
+
+=head2 Public Instance Methods
+
+=over 4
+
+=item my $thumbnail_uri = $image->thumbnail_uri
+
+If the image document has an associated thumbnail image, this method returns
+its local URI.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub thumbnail_uri {
+    return unless USE_THUMBNAILS;
     my $self = shift;
-    my $loc = $self->get_location or return;
-    my %objhash = ('uri'=>'', 'width'=>'', 'height'=>'');
-
-    # thumbnail should be in same place as orig but with _thumb in filename
-    $loc =~ s/(\..+)$/_thumb$1/g;
-    my $thumbfile = Bric::Util::Trans::FS->cat_file(MEDIA_FILE_ROOT,  $loc);
-
-    # if thumb doesn't exist then create_thumbnail and return message if fails
-    unless (-e $thumbfile) {
-        my $check = $self->create_thumbnail;
-        return "Can't make thumbnail" unless $check == 1;
-    }
-
-    # get the width and height and return them along with the uri
-    my $info = Image::Info::image_info($thumbfile);
-    ($objhash{'width'}, $objhash{'height'}) = Image::Info::dim($info);
-    $objhash{'uri'} = Bric::Util::Trans::FS->cat_uri(MEDIA_URI_ROOT,  $loc);
-    return \%objhash;
+    my $loc = $self->_thumb_location or return;
+    return unless -e $self->_thumb_file || $self->create_thumbnail;
+    return Bric::Util::Trans::FS->cat_uri(
+        MEDIA_URI_ROOT,
+        Bric::Util::Trans::FS->dir_to_uri($loc)
+    );
 }
 
 ###################################################################### ##########
 
-=item my $created_ok =  Bric::Biz::Asset::Business::Media::Image->create_thumbnail()
+=item my $created_ok = $image->create_thumbnail
 
 Creates a thumbnail image from the supplied image object. Returns 1 on
 successful completion or error string if it fails.
@@ -350,31 +381,56 @@ B<Notes:> NONE.
 =cut
 
 sub create_thumbnail {
+    return unless USE_THUMBNAILS;
     my $self = shift;
-    my $format;
-    my $img = Imager->new;
-    # this will fail if image type not supported
-    eval { $img->open(file => $self->get_path) };
-    return $@ if $@;
-    my $thumbfile = $self->get_location;
+    my $path = $self->get_path or return;
 
-    # save thumb to same place as image but append _thumb to filename
-    $thumbfile =~ s/(\..+)$/_thumb$1/g;
-    $thumbfile = Bric::Util::Trans::FS->cat_file(MEDIA_FILE_ROOT,  $thumbfile);
+    # Get the media format. Try using the MIME type, and fall back on what Imager
+    # guesses.
+    my $format;
+    if (my $mime = $self->get_media_type) {
+        (my $mt = $mime->get_name) =~ s|.*/||;
+        $format = $Imager::FORMATGUESS->(".$mt")
+    } else {
+        $format = $Imager::FORMATGUESS->($path);
+    }
+
+    # Just warn and retrun if we can't tell what format of file this is.
+    unless ($format) {
+        warn "Imager does not recognize the format file '$path'. No "
+          . "thumbnail will be created.\n";
+        return;
+    }
+
+    # Just warn and return if Imager doesn't support the format.
+    unless ($Imager::formats{$format}) {
+        warn qq{It looks like the image libraries to handle the "$format" }
+          . 'have not installed. No thumbnail will be created for file '
+          . "'$path'";
+        return;
+    }
+
+    my $img = Imager->new;
+    $img->open(file => $path, type => $format)
+      or throw_gen msg     => "Imager cannot open '$path'",
+                   payload => $img->errstr;
 
     # Create smaller version by scaling largest side to THUMBNAIL_SIZE
     my $thumb = $img->scale(xpixels => THUMBNAIL_SIZE,
                             ypixels => THUMBNAIL_SIZE,
                             type    => 'min');
 
-    # save the image or return $! if fail
-    $thumb->write(file => $thumbfile) or return $!;
-    return 1;
+    # Save the image or die.
+    my $thumbfile = $self->_thumb_file;
+    $thumb->write(file => $thumbfile)
+      or throw_gen msg     => "Imager cannot write '$thumbfile'",
+                   payload => $img->errstr;
+    return $self;
 }
 
 ################################################################################
 
-=item ($imgs || @imgs) =  Bric::Biz::Asset::Business::Media::Image->upload_file()
+=item ($imgs || @imgs) = $image->upload_file
 
 Overrides the C<upload_file()> method in the parent class and then makes a
 call to the C<create_thumbnail()> method.
@@ -396,75 +452,17 @@ NONE
 sub upload_file {
     my $self = shift;
     $self->SUPER::upload_file(@_);
-    if (USE_THUMBNAILS && $self->get_path) { # ie file saved okay
-        my $check = $self->create_thumbnail;
-        # If the required library isn't loaded then warn gracefully
-        if ($check =~ /locate auto\/Imager/) {
-            throw_error
-              msg      => "Could not create thumbnail image. It looks like "
-                        . "you have not installed the image libraries to "
-                        . qq{handle the "$check" image format.},
-              maketext => ["Could not create thumbnail image. It looks like "
-                           . "you have not installed the image libraries to "
-                           . 'handle the "[_1]" image format.', $check ];
-        } elsif ($check != 1) {
-            # otherwise throw a full on exception
-            throw_gen $check;
-        }
-    }
+    $self->create_thumbnail if USE_THUMBNAILS;
     return $self;
 }
 
-################################################################################
-
-=item my $key_name = Bric::Biz::Asset::Business::Media::Image->key_name()
-
-Returns the key name of this class.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-#sub key_name { 'image' }
-
-################################################################################
-
-
-
-=item my_meths()
-
-Data Dictionary for introspection of the object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-
-#-----------------------------#
-
 =back
 
-=head2 Public Instance Methods
+=cut
 
-NONE
+##############################################################################
 
 =head1 PRIVATE
-
-NONE
 
 =head2 Private Class Methods
 
@@ -472,7 +470,40 @@ NONE
 
 =head2 Private Instance Methods
 
-NONE
+=over 4
+
+=item _thumb_location
+
+  my $thumb_location = $self->_thumb_location;
+
+Returns the location of a thumnail image file. This method simply modifies the
+value returned by C<get_location> to generate the name of the image file. Returns
+C<undef> if the image has no location.
+
+=cut
+
+sub _thumb_location {
+    my $self = shift;
+    my $loc = $self->get_location or return;
+    $loc =~ s/(\..+)$/_thumb$1/g;
+    return $loc;
+}
+
+=item _thumb_file
+
+  my $thumb_file = $self->_thumb_file;
+
+Returns the absolute path to the thumnail image file for this image.
+
+=cut
+
+sub _thumb_file {
+    my $self = shift;
+    my $loc = $self->_thumb_location or return;
+    return Bric::Util::Trans::FS->cat_file(MEDIA_FILE_ROOT,  $loc);
+}
+
+=back
 
 =cut
 

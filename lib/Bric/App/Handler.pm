@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.60 $
+$Revision: 1.61 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.60 $ )[-1];
+our $VERSION = (qw$Revision: 1.61 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-26 23:40:39 $
+$Date: 2004-02-27 01:42:01 $
 
 =head1 SYNOPSIS
 
@@ -181,14 +181,6 @@ use MasonX::Interp::WithCallbacks;
     use HTTP::BrowserDetect;
     eval { require Text::Levenshtein };
     require Text::Soundex if $@;
-
-    if (USE_THUMBNAILS) {
-       eval "use Imager";
-       Carp::croak("\nYou have set USE_THUMBNAILS in your config but the ",
-                   "required Perl module Imager was not found.\n\n")
-         if $@;
-    }
-
 
     use vars qw($c $widget_dir $lang $lang_key $ct);
 
