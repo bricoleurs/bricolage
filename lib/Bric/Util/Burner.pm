@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32.4.4 $
+$Revision: 1.32.4.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32.4.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.4.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-21 17:40:38 $
+$Date: 2003-07-21 21:16:10 $
 
 =head1 SYNOPSIS
 
@@ -574,7 +574,7 @@ sub preview {
     # Grab the asset type and output channel.
     my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
     my $oc = Bric::Biz::OutputChannel->lookup
-                ({ id => $oc_id ? $oc_id : $at->get_primary_oc_id });
+                ({ id => $oc_id ? $oc_id : $ba->get_primary_oc_id });
 
     # Burn to each output channel.
     &$send_msg("Writing files to &quot;" . $oc->get_name

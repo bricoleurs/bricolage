@@ -184,6 +184,13 @@ with its output channels" to instead include the name of the output channel
 missing Desination associations so that the user can tell which output
 channels need a Destination association. [Clive Jones]
 
+=item *
+
+When an document's primary output channel has been changed to something other
+than that defined by its documtent type element, preview will now correctly
+use the document's primary output channel instead of the element's primary
+output channel. [David]
+
 =back
 
 =head1 VERSION 1.6.1
