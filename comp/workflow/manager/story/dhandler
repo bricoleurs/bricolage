@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:42 $
+$Date: 2001-12-23 03:47:27 $
 
 =head1 SYNOPSIS
 
@@ -33,12 +33,14 @@ my $profile = sub {
     my $o = shift;
     my $u = $o->get_user__id;
     my $id = $o->get_id;
-
+    my $ret;
     if (defined $u && $u == get_user_id && chk_authz($o, EDIT, 1)) {
-	return ['Edit', "/workflow/profile/story/$id?checkout=1&return=search", ''];
+	$ret = [['Edit', "/workflow/profile/story/$id?checkout=1&return=search", '']];
     } else {
-	return ['View', "/workflow/profile/story/$id?return=search", ''];
+	$ret = [['View', "/workflow/profile/story/$id?return=search", '']];
     }
+    push @$ret, [ 'Log', "/admin/events/story/$id", ''];
+    return $ret;
 };
 
 my $select = sub {
