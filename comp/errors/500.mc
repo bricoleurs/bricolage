@@ -1,5 +1,6 @@
 <& '/widgets/wrappers/sharky/header.mc',
 	title => 'Error',
+        useSideNav => $r->uri =~ m:workflow/profile/preview: ? 0 : 1,
 	context => 'An error occured.',
   debug => Bric::Config::QA_MODE
  &>
