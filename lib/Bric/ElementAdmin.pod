@@ -4,11 +4,11 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-09-25 10:12:33 $
+$Date: 2001-09-27 12:39:45 $
 
 =head1 DESCRIPTION
 
@@ -26,12 +26,12 @@ L<Bric::AdvTemplates> and will not be addressed in this document.) How editors
 and media producers interact with Bricolage to build assets, however, is heavily
 dependent on how well thought-out and designed Element Administration has been.
 Elements are the building blocks of stories in Bricolage. Each story is based on
-a single element that defines its story type, and subelements of the story are
+a single Element that defines its story type, and Subelements of the story are
 available if they have been designated as available within the story type. In
-turn, each subelement can have subelements, and the depth of the subelements can
+turn, each Subelement can have Subelements, and the depth of the Subelements can
 be arbitrarily deep.
 
-Since by default there are only a few elements available in Bricolage to get you
+Since by default there are only a few Elements available in Bricolage to get you
 started, it's important to think about how you'd like to use Bricolage within
 your organization and how your stories and media are constructed, and to come up
 with a design for your element hierarchy. This document will assist you in this
@@ -41,7 +41,7 @@ easy-to-use interface for your editors and producers.
 
 B<Note:> I shall be using stories in all of the examples below, but by and large
 the same concepts apply to media objects. The difference lies mainly in the
-likelihood that you'll use far fewer subelements (if any) in your media objects.
+likelihood that you'll use far fewer Subelements (if any) in your media objects.
 
 =head1 PLANNING
 
@@ -71,13 +71,13 @@ stories, and B<stories>, which make up the bulk of the content for your site.
 
 For each type of story you define for your organization, think about what
 constitutes each story of that type. There are two aspects of this level of the
-design: elements available for each story, and data fields within each of those
-elements. Elements are the building blocks of a story, while the fields in an
-element constititute an element's data points.
+design: Elements available for each story, and data fields within each of those
+Elements. Elements are the building blocks of a story, while the fields in an
+Element constititute an Element's data points.
 
 =item Relationships
 
-Individual elements can be associated with one story or with one media object.
+Individual Elements can be associated with one story or with one media object.
 These relationships are useful for creating links to other stories, and for
 displaying images within a story. Plus, stories can be associated with
 contributors -- the people who provide their content.
@@ -185,7 +185,7 @@ Once we have identified the kinds of stories you will be creating, the next step
 is to build a hierarchy of parts based on our description of covers and stories.
 Think about the hierarchies in terms of two different types of parts: items that
 contain other parts, and items that contain data. These two types translate
-roughly into the Bricolage concepts of B<elements> and B<fields>, and can be
+roughly into the Bricolage concepts of B<Elements> and B<fields>, and can be
 represented fairly well in an outline format. Here is an example of the
 hierarchies for the examples described above:
 
@@ -309,7 +309,7 @@ hierarchies for the examples described above:
 
 This hierarchical format nicely illustrates the B<construction> of covers and
 stories, as the term is used above. Items in the outline that have sub-items
-are elements, while items that have no sub-items are fields.
+are Elements, while items that have no sub-items are fields.
 
 =head2 Establishing Relationships
 
@@ -322,7 +322,7 @@ In addition to stories, objects that users will frequently use are Media and
 conributors, and these can be linked to from a given story -- a relationship can
 be created. So starting with the cover page, we see that it consists mainly of
 links to stories. The upshot is that while most of the fields can be created for
-a particular element (say, "Top Story," which has the fields "Image," "Title,"
+a particular Element (say, "Top Story," which has the fields "Image," "Title,"
 "Teaser," and "Byline"), the truth is that if a link is created to the top
 story, then all of those data fields will be available from the top story itself
 (provided they've been associated with the Story type!). Thus all you have
@@ -334,7 +334,7 @@ place in the templates that format the story, however.
 
 What this calls for, then, is a reorganization of the hierarchy of the Cover and
 Story story types. Because fields are in stories, they don't have to be included
-in the element that links to them:
+in the Element that links to them:
 
 =over
 
@@ -356,7 +356,7 @@ in the element that links to them:
 
 =item Top Story (Linked)
 
-=item Stories of the Day
+=item Current Stories
 
 =over
 
@@ -388,7 +388,7 @@ in the element that links to them:
 
 =item Story
 
-=over
+=over 4
 
 =item Title
 
@@ -419,7 +419,7 @@ in the element that links to them:
 Note that virtually all of the fields are removed from the linked stories in
 both Cover and Story, because those fields are available from the linked stories
 themselves -- that is, they've been defined in the Story story type. Similary,
-I've removed the Byline element, because all stories can have any number of
+I've removed the Byline Element, because all stories can have any number of
 contributors associated with them, and custom fields can be created for
 contributor types (see [documentation forthcoming]). Clearly, the relationships
 offer powerful specialization. Just be sure that any fields that you require in
@@ -429,64 +429,143 @@ mud!]
 
 =head2 Pulling it all Together
 
-Given the above considerations, it's time to map out the element types,
-elements, and fields that will need to be created. Fortunately, this is a
-logical step from what has already been done, with the exception of element
-types. These latter items are basically groupings of elements, where certain
-properties of all of the elements of that type are set. Based on the above
-examples, here's the breakdown of element types and elements:
+Given the above considerations, it's time to map out the Element Types,
+Elements, and fields that will need to be created. Fortunately, this is a
+logical step from what has already been done, with the exception of Element
+types. Element Types are basically groupings of Elements, where certain
+properties of all of the Elements of that type are set. Those properties are
+discussed below. For now, simply think of Element Types as a way to group
+related Elements. With our existing examples, there aren't too many related
+Elements, so we end up with a fair number of Element Types.
 
-Here is a list of the Element Types we'll need to create:
+Here is the list of objects we'll need to create. The difference between this
+representation and that presented above is that some of the hierarchy is
+flattened out. We don't need to represent the hierarchy of Element relationhips
+here because all we want is a list of all the Elements. So we list them instead
+by their Bricolage object types. Element Types come first, and Elements of each
+type are subsumed under their type. Field are in turn indented under the
+Elements of which they are parts. We'll use this list in conjunction with the
+above list to actually create the Elements and Element Types in Bricolage.
 
 =over 4
 
 =item Covers
 
-=item Columns
-
-=item Nav
-
-=item Story Lists
-
-=item Ads
-
-=item Linked Stories
-
-=item Stories
-
-=item Pages
-
-=back
-
-Basically these Element Types cover the various categories of elements that
-we'll use. Here's a breakdown of the elements we'll need to create:
-
 =over 4
 
 =item Cover
 
-This element is the Story Type for covers. Its Element Type is "Covers."
+=back
+
+=item Columns
+
+=over 4
 
 =item Column One
 
-This element will hold all of the subelements in the first column of cover
-stories. Its Element Type is "Columns."
-
 =item Column Two
-
-This element will hold all of the subelements in the second column of cover
-stories. Its Element Type is "Columns."
 
 =item Column Three
 
-This element will hold all of the subelements in the third column of cover
-stories. Its Element Type is "Columns."
+=back
+
+=item Nav
+
+=over 4
+
+=item Navigation
 
 =back
 
+=item Story Lists
+
+=over 4
+
+=item Current Stories
+
+=item Recent Stories
+
+=back
+
+=item Linked Stories
+
+=over 4
+
+=item Linked Story
+
+=item Linked Story with Teaser
+
+=item Top Story
+
+=back
+
+=item Ads
+
+=over 4
+
+=item Advertisement
+
+=back
+
+=item Stories
+
+=over 4
+
+=item Story
+
+=over 4
+
+=item Deck (single field)
+
+=item Coverline (single field)
+
+=item Teaser (single field)
+
+=back
+
+=back
+
+=item Pages
+
+=over 4
+
+=item Page
+
+=over 4
+
+=item Paragraph (multiple field)
+
+=item Pull Quote (multiple field)
+
+=item Subtitle (single)
+
+=back
+
+=back
+
+=back
+
+Notice that I've left out the "Title" field of the "Story" Element. This is
+because all stories have a "Title" field by default in Bricolage. However, this
+hard-coded field has a character limit of 256 characters, so if you expect that
+you'll need titles longer than that, go ahead and include the Title field in
+your spec.
+
+Also notice that we're missing information about contributors. This is because
+contributors are managed separately from story Elements. All stories can have
+contributors associated with them, regardless of their Element makeups. Thus all
+we'll need to do, once we've created our Elements and Element Types, is to make
+the associations when we're editing stories, and then, in the templates, grab
+the list of contributors and get their data to output onto the pages.
+
 =head1 ADMINISTRATION
 
-The first thing you'll need to do is to edit or create a new Element Type to
+So now that we have our list of Elements, Element Types, and fields, let's
+create them!
+
+=head2 Element Types
+
+The first thing we'll need to do is to edit or create a new Element Type to
 manage your cover story type. By default, Bricolage ships with the Element Type
 "Covers," and this Element Type conveniently sets a number of properties
 required in the above scenario. Let's look at the "Covers" Element Type.
@@ -502,66 +581,418 @@ options:
 
 =item Page
 
-This checkbox indicates whether the Elements of this Element Type represent
-pages or not. If an element is a page, then if you add more than one elements of
-this type to a story, each one will trigger the generation of a new page. Since
-we want our covers to have only one page, however, you should leave this option
-unchcked.
+This checkbox indicates whether Elements of this Element Type represent pages or
+not. If an Element is a page, then if you add more than one Element of this type
+to a story, each one will trigger the generation of a new page -- that is,
+literally, a separate HTML page. Since we want our covers to have only one page,
+however, you should leave this option unchcked.
 
 =item Fixed
 
 This checkbox indicates whether the Elements of this Element Type have fixed
 URLs. A Fixed URL is a URL that is not associated with a cover date. Most
 stories will not be fixed URLs, as you'll want to associate them with a date.
-But since covers change from day to day, but we want their locations to stay the
+But since covers change from day to day, we want their locations to stay the
 same (so that readers can always come back to the same URL to see what's new),
-this option should be checked.
+so this option should be checked.
 
 =item Related Story
 
 =item Related Media
 
-All Elements in Bricolage can have one story and or one media object associated
+All Elements in Bricolage can have one story and/or one media object associated
 with them. By checking one or both of these options, users who add an Element of
-this Element Type will have the option to associate a story or media object. The
-purpose of this feature is to allow links to be made between assets. We'll cover
-more on this below. Since the cover we've outlined above, however, has no other
-image or story associated with it, leave these options unchecked. (For those who
-note that there is indeed an image in the description above I'll just get a bit
-ahead of myself here to point out that it's not associated with the cover story
-type, but with on of its subelements -- specifically, the first item in Column
-Two. More on that below.)
+this Element Type will have the option to associate a single story and/or media
+object. The purpose of this feature is to allow links to be made between assets.
+We'll cover more on this below. Since the cover we've outlined above, however,
+has no other image or story associated with it (the image in the Top Story link
+is part of that story, not of the cover itself), leave these options unchecked.
 
 =item Type
 
 This property has already been determined. There are only three types that are
 associated with Element Types: B<Story>, B<Media>, and B<Element>. A Story Type
 is an Element Type whose Elements define stories. A Media Type is an Element
-Type whose Element define Media objects. Most Element Types, however will be of
+Type whose Element define Media objects. Most Element Types, however, will be of
 the type B<Element>. These are Elements that can be added to stories or media or
-other elements as Subelements. Since the Cover we describe above is the
-over-arching construct for the "Cover" story, we'll want to have the type be
-"Story", which the existing "Covers" Element Type already is. Note that, had you
-created a new Element Type, you have have had to decide whether it was a Story,
-Media, or Element Type before you could edit the other options, as the other
-options are dependent on this property.
+other Elements as Subelements. Since the Cover element is the over-arching
+construct defining how covers are built -- that is, covers are never subelements
+of any other elements, we'll want to have the type be "Story", which the
+existing "Covers" Element Type already is. Note that, had you created a new
+Element Type, you would have had to decide whether it was a Story, Media, or
+Element Type before you could edit the other options, as the other options
+depend on this property.
 
 =back
 
-Now that the Element Type has been defined, we need to create an actual "Cover"
-Element. In the navigation bar, go to ADMIN -E<gt> PUBLISHING -E<gt> Elements.
-Here again you'll find a default Element that will do the trick: "Cover." Click
-the "Edit" link for this item. Here you'll find all the properties you'll need
-to configure for the "Cover" Story Type. Note that it's Type property has
-already been set for "Covers," therebye inheriting all of the properties we've
-outlined above. You can edit the Name and Description as you wish, but the
-remainder of the sections require more explanation:
+Now the "Stories" Element Typs is defined similarly to the "Covers" Element
+Type, but with a few differences in the properties. Taking a look at the default
+"Stories" Element Type -- which is configured fine for our purposes -- note the
+properties are set as follows:
 
-=head1 ELEMENT TYPES
+=over 4
 
+=item Page: No
 
+A story is not a page. (Later we'll define the "Pages" Element Type to
+represent, well, I<pages.>
 
-=head1 ELEMENTS
+=item Fixed: No
+
+Likely we'll want stories to have their cover dates in their URIs.
+
+=item Related Story: No
+
+We won't be relating other stories to our stories.
+
+=item Related Media: Yes
+
+This is the sole item we'll need to change from the the setting in the default
+"Stories" Element Type. Because our specification calls for an image to be
+associated with a story, we need to enable this option. Note that if you later
+find that you wish to associate more than one media object with a story, you'll
+need to add subelement to your Story element that can be associated with media.
+This is because there can be only one media object associated with any one
+element. But since we only need one here for now, it should be fine to allow it
+to be associated with the story Elements themselves.
+
+=item Type: Story
+
+A story is a story. 'Nuff said.
+
+=back
+
+The remaining Elements in our specification are all subelements -- that is,
+they're all associated with either a story or a cover, or with subelements of
+stories or covers. Thus, all remaining Element Types will be of the type
+"Element."
+
+Moving through the list we created above, we see that the next Element Type is
+"Columns." There is no such Element Type installed by default in Bricolage, so
+let's create one. In the navigation bar, go to ADMIN -E<gt> PUBLISHING -E<gt>
+Element Types. Click "Add a New Element Type." This will bring up the first page
+of theh Element Type Profile. Fill in the form fields as follows:
+
+=over 4
+
+=item Name: Columns
+
+=item Description: Column Elements
+
+=item Type: Element
+
+=back
+
+Then click the "Next" button. This will bring up the main Element Type profile
+page. Since column elements are not pages, fixed, or contain related stories or
+media, leave the remaining checkboxes unchecked.
+
+Use this table to create the remaining Element Types:
+
+  Name             Type    Page  Fixed  Related Story  Related Media
+  --------------  -------  ----  -----  -------------  -------------
+  Nav             Element   No    Yes        No             No
+  Story Lists     Element   No    No         No             No
+  Linked Stories  Element   No    No         Yes            No
+  Ads             Element   No    Yes        No             No
+  Pages           Element   Yes   No         No             No
+
+Note that we've selected to allow the "Linked Stories" Element Type to relate to
+a story. Note also that we've selected to make the "Nav" and "Ads" Element Types
+"Fixed." This is on the assumption that they contain content that doesn't
+necessarily change all that often. In fact, it may be that these Elements do
+little in Bricolage (they contain no fields or relationships), but rather give a
+cue to the formatting templates that they should insert SSI or Mason code to
+point to existing pages on your delivery systems. (Actually, the "Fixed"
+property is meaningless if an element is not also a "Page" or of the type
+"Story" or "Media", but it hurts nothing to set it as such in these examples,
+and serves as a reminder of their purpose.)
+
+=head2 Elements
+
+Now that we have set up all of the Element Types we need, it's time to create
+the real meat of this thing, the Elements. Now, because Subelements can only
+be added to Elements if the Subelements already exist as elements in the system,
+it works best to start at the bottom of the list and work our way up. That way
+we ensure that these dependencies are covered in advance.
+
+=head3 Page
+
+Returning to our list, we find that the last Element listed is "Page." In the
+navigation bar, go to ADMIN -E<gt> PUBLISHING -E<gt> Elements. Click "[All] to
+see a list of all the Elements already defined in Bricolage. Here again you'll
+find a default Element that will do the trick: "Page." Click the "Edit" link for
+this item.
+
+It turns out that the default configuration for this Element is more complex
+than our plan calls for. It contains the Subelements "Inset" and "Pull Quote."
+While we do need to add pull quotes to pages, we have "Pull Quote" specked out
+as a field, rather than as a subelement. Thus, the first thing we'll want to do
+is to remove these Subelements. Check the "Delete" checkboxes for both the
+"Inset" and "Pull Quote" Subelements.
+
+Notice also that there are move fields than we need. While "Paragraph" is
+essential to our pages, neither "Previous" nor "Next" are needed by our
+specification. Check the "Delete" checkboxes for these two fields as well. Then
+scroll to the bottom of the profile and click the "Save" button. The offending
+Subelements and fields will be removed and we'll be returned to the Element
+Manager. Click the "Edit" link for the "Page" Element again to return to its
+profile.
+
+Now, since a "Paragraph" field has already been included in the "Page" Element,
+all we need to do is to add a "Pull Quote" field. To do so, scroll down to the
+"Add New Field" section. Since a pull quote may be fairly long, let's create a
+text area input field. Selec the radio button next to "Text Area". The input
+fields will change to the offer attributes relevant to a text area input field.
+Type the following values into their fields:
+
+=over 4
+
+=item Name: Pull Quote
+
+This is the name of the text area field we're creating.
+
+=item Rows: 4
+
+This is the number of rows the text area field will take up.
+
+=item Max Size: 256
+
+The maximum number of characters that can be entered into the text area field.
+Leave this field blank to allow values of unlimited length.
+
+=item Label: Pull Quote
+
+This is the label that will be displayed next to the field. You should always
+make this the same as the "Name", as one or the other of these two fields will
+likely be removed in a future version.
+
+=item Columns: 40
+
+The number of columns wide (in characters) for the text area field. Most of the
+default text area boxes in Bricolage use a 40-character width.
+
+=item Default Value: [Blank]
+
+If you wanted, you could place a default value in a field you create for
+Bricolage. Since pull quotes are specific to the story of which they're a part,
+however, we'll leave the "Default Value" field blank.
+
+=item Position: 2
+
+You can specify a position field for the field in your form. This will only be
+used if a field is required, however (see below).
+
+=item Required: Unchecked
+
+If a field were required to be in a form, you could select this checkbox. We
+don't need to require that all pages have a "Pull Quote" field, however, so we
+leave this option blank.
+
+=item Repeatable: Checked
+
+All Element fields can be placed in a form either once or more than once. That
+is, you can specify that a field appear in an Element no more than once, or
+allow an unlimited number of instances of a field to appear. Since some pages
+may wish to use multiple pull quotes, select this checkbox.
+
+=back
+
+Click "Add to Form" and voila! We have the new "Pull Quote" field included in
+the "Page" Element. Now we just need to add a "Subtitle" field and we're on our
+way. Scroll down to the "Add New Field" section once again, and select the "Text
+Box" radio button. Fill in the relevant fields as follows:
+
+=over 4
+
+=item Name: Subtitle
+
+=item Size: 32
+
+This is the number of characters wide in which the text box will be displayed.
+
+=item Label: Subtitle
+
+=item Maximum Size: 128
+
+=item Default Value: [Blank]
+
+=item Position: 3
+
+=item Required: Checked
+
+All pages should have a subtitle.
+
+=item Repeatable: No
+
+Each page needs but one subtitle.
+
+=back
+
+Once again, click "Add to Form" to add the "Subtitle" field to the "Page"
+Element. Click "Save" to save the "Page" element and return to the Element
+Manager. The "Page" Element is now complete.
+
+=head3 Story
+
+A "Story" Element is also installed by default with Bricolage, and we need
+merely alter it to suit our needs here. It's even already a "Stories" Element
+Type Element (imagine that!). Click "Edit" for the "Story" Element to get into
+its profile.
+
+You'll not that this Element profile is different from the "Page" profile in
+that it has an "Output Channels" section. This is because all Elements whose
+Element Types are marked as "Story" or "Media" Element Types are used to define
+Story and Media assets, and such assets need to be specifically identified with
+certain Output Channels -- otherwise, they won't be distributed at all! So make
+sure that your "Story" Element is associated with the Output Channels you need
+to distribute it to.
+
+Moving on to the next section, we see that two Subelements have been added to
+the "Story" Element. They are "Page" and "Pull Quote". Looking at our Element
+Specification above, we see that we do indeed need "Page" to be a Subelement
+of "Story", but not "Pull Quote". Select its "Delete" checkbox.
+
+Returning to our Element specification, we find that we need a few more fields
+in our "Story" Element. While "Deck" is already included, we need to add
+"Coverline" and "Teaser" fields. Here are some recommendations for their
+specifications:
+
+=over 4
+
+=item Coverline: Text Box
+
+=over 4
+
+=item Name: Coverline
+
+=item Size: 32
+
+=item Label: Coverline
+
+=item Maximum Size: 128
+
+=item Default Value: [Your City]
+
+If the coveline is likely to often be the same, you may indeed wish to include a
+default value.
+
+=item Position: 2
+
+=item Required: Checked
+
+=item Repeatable: Unchecked
+
+=back
+
+=item Teaser: Text Area
+
+=over 4
+
+=item Name: Teaser
+
+=item Rows: 4
+
+=item Max Size: 512
+
+=item Label: Teaser
+
+=item Columns 50
+
+=item Default Value: [Blank]
+
+=item Position: 3
+
+=item Required: Checked
+
+=item Repeatable: Unchecked
+
+=back
+
+=back
+
+Click the "Save" button and the "Story" Element is ready to roll. We now have
+all the Elements and fields you need to build stories based on our spec.
+
+=head3 Advertisement
+
+No default Element corresponds to this Element, so we'll have to create it from
+Scratch. In the Element Manager, click the "Add a New Element" link. Fill in the
+name ("Advertisement") and a description if you like.
+
+Now, the "Type" select list is very important, as it determines what type of
+Element we're creating and we won't be able to change it later. Fortunately,
+it's fairly easy to determine which you're creating: they correspond directly
+to the Element Types we've already specified and created. Thus for the "Advertisement"
+Element we're creating, we want to select the "Ads" Element Type. Click the "Next"
+button to continue creating the "Advertisement" Element.
+
+Now, because this is not a Story or Media Element, but just a plain Element (as
+defined in the "Ads" Element Type), there are no Output Channel associations.
+Futhermore, our specification above requires no subelements or fields for this
+Element. The idea is that it just gets added as a subelement of the "Column
+Three" Element, and requires no information from the story editor. Therefore,
+there's nothing more to do with this profile, so click the "Save" button to save
+it and return to the Element Manager.
+
+=head3 Linked Story, Linked Story with Teaser, Top Story, and Navigation
+
+Next up we have the "Linked Story," "Linked Story with Teaser," "Top Story", and
+"Navigation" Elements. Like the "Ad" Element, these contain no additional fields
+or subelements. Thus they can easily be created by following these criteria:
+
+  Name                      Description                  Type
+  ------------------------  ---------------------------  --------------
+  Linked Story              A linked story.              Linked Stories
+  Linked Story with Teaser  A linked story with teaser.  Linked Stories
+  Top Story                 The top story.               Linked Stories
+  Navigation                Navigation element.          Nav
+
+=head3 Column One
+
+This Element has no fields, but does contain subelements. Follow these steps to
+create it.
+
+=over 4
+
+=item *
+
+Click "Add a New Element" in the Element Manager.
+
+=item *
+
+Name: Column One
+
+=item *
+
+Description: A column.
+
+=item *
+
+Type: Columns
+
+=item *
+
+Click the "Next" button.
+
+=item *
+
+Add the "Navigation" element as a Subelement.
+
+=item *
+
+Click the "Save" button.
+
+=back
+
+That's it. Once you have the basic subelements created with their own
+Subelements and fields, it's relatively easy to create the higher-up
+Elements that simply contain subelements and no fields. Here are the specs
+for the remaining column fields:
+
+  Name          Type     Subelements
+  Column Two    Columns  Current Stories <<<<<<<<<<<<Add this!
+  Column Three  Columns  Recent Stories <<<<<<<<<<Add this!, Advertisement
 
 =head1 AUTHOR
 
@@ -575,7 +1006,11 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ElementAdmin.pod,v $
-Revision 1.5  2001-09-25 10:12:33  wheeler
+Revision 1.6  2001-09-27 12:39:45  wheeler
+I'm nearly done! Going to a meeting, but wanted to get the most recent changes
+commited. It *will* be done today.
+
+Revision 1.5  2001/09/25 10:12:33  wheeler
 Checkpoint. Testing syncmail changes again (it should work now!).
 
 Revision 1.4  2001/09/25 09:54:56  wheeler
