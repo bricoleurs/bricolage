@@ -78,21 +78,17 @@ sub test_unique : Test(8) {
 
     $wf2 = Bric::Biz::Workflow->lookup({'name' => 'test',
                                        site_id => $site1_id});
-    {
-        local($TODO) = "This breaks because name is not unique for ".
-          "Workflows and cache_lookup doesn't do the right thing";
-        is($wf2->get_id, $site1_id, "Should get back the correct workflow" .
-           "for this site");
-    }
+
+    is($wf2->get_site_id, $site1_id, "Should get back the correct workflow" .
+       "for this site");
+    
     is($wf2->get_id,
        Bric::Biz::Workflow->lookup({'name' => 'test',
                                    site_id => $site1_id})->get_id,
        "Test that the same workflow is returned");
-    {
-        local($TODO) = "Same reason here, the cache thinks they are ".
-          "the same";
-        isnt($wf1, $wf2, "The two workflows should not be the same object");
-    }
+
+    isnt($wf1, $wf2, "The two workflows should not be the same object");
+    
 }
 
 sub clean_site {

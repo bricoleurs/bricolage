@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 06:33:21 $
+$Date: 2003-03-15 15:06:55 $
 
 =head1 SYNOPSIS
 
@@ -683,7 +683,7 @@ sub my_meths {
     if ($ord) {
         return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
     } elsif ($ident) {
-        return wantarray ? $meths->{name} : [$meths->{name}];
+        return;
     } else {
         return $meths;
     }
