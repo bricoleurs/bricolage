@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.15 $
+$Revision: 1.13.2.16 $
 
 =head1 DATE
 
-$Date: 2001-10-05 09:53:07 $
+$Date: 2001-10-05 13:56:56 $
 
 =head1 DESCRIPTION
 
@@ -414,7 +414,7 @@ preferences. (Also add group-level prefs?)
 
 =item *
 
-Add basic project management.
+Add basic project management. Tie project tasks to stops in the workflow.
 
 =item *
 
@@ -472,6 +472,18 @@ Allow Elements to be previewed before they're added.
 
 Add permission granularity down to the User, property, field, and attribute
 levels.
+
+=item *
+
+Version element individually, separate from stories?
+
+=item *
+
+Add reporting, where reports can be templated and saved.
+
+=item *
+
+Allow items to move through different workflows and/or desks in parallel.
 
 =back
 
