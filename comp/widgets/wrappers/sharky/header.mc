@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.7 $
+$Revision: 1.2.2.8 $
 
 =head1 DATE
 
-$Date: 2001-10-05 08:52:15 $
+$Date: 2001-10-05 09:05:18 $
 
 =head1 SYNOPSIS
 
@@ -27,6 +27,7 @@ $title   => "Bricolage"
 $jsInit  => ""
 $context
 $useSideNav => 1
+$no_toolbar => 1
 $no_hist => 0
 $debug => undef
 </%args>
@@ -101,7 +102,7 @@ function init() {
 
 }
 
-% if ($agent->{browser} ne 'Internet Explorer') {
+% if ($no_toolbar && $agent->{browser} ne 'Internet Explorer') {
 %     # We have to strip out non-alphanumeric chars because Netscape is lame!
 if (window.toolbar.visible == true) {
     // Turn off the toolbar, back button, etc.
@@ -264,7 +265,10 @@ while (my $txt = next_msg) {
 <%doc>
 
 $Log: header.mc,v $
-Revision 1.2.2.7  2001-10-05 08:52:15  wheeler
+Revision 1.2.2.8  2001-10-05 09:05:18  wheeler
+Added no_toolbar argument.
+
+Revision 1.2.2.7  2001/10/05 08:52:15  wheeler
 Added server name to all new window names opened by window.open() or <a target>.
 
 Revision 1.2.2.6  2001/10/04 15:47:49  wheeler
