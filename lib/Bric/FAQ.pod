@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2003-11-04 19:27:48 $
+$Date: 2003-11-26 15:11:37 $
 
 =head1 DESCRIPTION
 
@@ -81,7 +81,7 @@ scalability of your Web server.
 
 =head3 Advantages of using Bricolage
 
-The separation of the content management and publishign server from the front
+The separation of the content management and publishing server from the front
 end Web server is one of the major strength of Bricolage:
 
 =over 4
