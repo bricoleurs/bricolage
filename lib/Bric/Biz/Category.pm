@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-30 16:31:29 $
+$Date: 2002-10-30 19:14:29 $
 
 =head1 SYNOPSIS
 
@@ -1484,15 +1484,14 @@ sub _select_category {
     my $table = TABLE;      # main table to select from
     my $mtable = MTABLE;    # grp member table from which we get grp__id
     my $cmtable = CMTABLE;  # relational table to get member table row
+    $where = $where ? "AND $where" : '';
     my $sql = qq{
         SELECT $columns
-        FROM $table a LEFT JOIN $cmtable b
-                ON a.id = b.object_id
-                JOIN $mtable c
-                     ON b.member__id = c.id
+        FROM   $table a, $cmtable b, $mtable c
+        WHERE  a.id = b.object_id AND b.member__id = c.id
+               $where
+        ORDER  BY uri
     };
-    $sql .= " WHERE $where" if $where;
-    $sql .= " ORDER BY uri";
 
     my $sth = prepare_c($sql);
     execute($sth, @$bind);
