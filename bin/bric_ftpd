@@ -6,11 +6,11 @@ bric_ftpd - Bricolage virtual FTP server
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2003-02-18 18:35:21 $
+$Date: 2003-02-18 20:26:40 $
 
 =head1 SYNOPSIS
 
@@ -83,7 +83,7 @@ Sam Tregar <stregar@about-inc.com>
 
 =head1 SEE ALSO
 
-L<Bric::Admin|Bric::Admin>, <LNet::FTPServer|Net::FTPServer>,
+L<Bric::Admin|Bric::Admin>, L<Net::FTPServer|Net::FTPServer>,
 L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>.
 
 =cut
