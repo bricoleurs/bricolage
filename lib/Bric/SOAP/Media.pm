@@ -11,6 +11,7 @@ use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
+use Bric::App::Event    qw(log_event);
 use XML::Writer;
 use IO::Scalar;
 use MIME::Base64;
@@ -37,15 +38,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.12.2.3 $
+$Revision: 1.12.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-31 19:56:35 $
+$Date: 2002-11-06 20:09:21 $
 
 =head1 SYNOPSIS
 
@@ -67,7 +68,7 @@ $Date: 2002-10-31 19:56:35 $
 
   # get a list of media_ids for all Illustrations (a Media Type)
   my $media_ids = $soap->list_ids(name(element => 'Illustration'));
-  
+
 =head1 DESCRIPTION
 
 This module provides a SOAP interface to manipulating Bricolage media.
@@ -179,7 +180,7 @@ here too.
 {
 # hash of allowed parameters
 my %allowed = map { $_ => 1 } qw(title description file_name
-				 simple uri priority
+				 simple uri priority publish_status
 				 workflow element category
 				 publish_date_start publish_date_end
 				 cover_date_start cover_date_end
@@ -187,17 +188,17 @@ my %allowed = map { $_ => 1 } qw(title description file_name
 sub list_ids {
     my $self = shift;
     my $env = pop;
-    my $args = $env->method || {};    
-    
-    print STDERR __PACKAGE__ . "->list_ids() called : args : ", 
+    my $args = $env->method || {};
+
+    print STDERR __PACKAGE__ . "->list_ids() called : args : ",
 	Data::Dumper->Dump([$args],['args']) if DEBUG;
-    
+
     # check for bad parameters
     for (keys %$args) {
 	die __PACKAGE__ . "::list_ids : unknown parameter \"$_\".\n"
-	    unless exists $allowed{$_};
+          unless exists $allowed{$_};
     }
-    
+
     # handle workflow => workflow__id mapping
     if (exists $args->{workflow}) {
 	my ($workflow_id) = Bric::Biz::Workflow->list_ids(
@@ -208,7 +209,7 @@ sub list_ids {
 	$args->{workflow__id} = $workflow_id;
 	delete $args->{workflow};
     }
-    
+
     # handle element => element__id conversion
     if (exists $args->{element}) {
 	my ($element_id) = Bric::Biz::AssetType->list_ids(
@@ -510,15 +511,15 @@ my %allowed = map { $_ => 1 } qw(media_id media_ids);
 sub delete {
     my $pkg = shift;
     my $env = pop;
-    my $args = $env->method || {};    
-    
-    print STDERR __PACKAGE__ . "->delete() called : args : ", 
-	Data::Dumper->Dump([$args],['args']) if DEBUG;
-    
+    my $args = $env->method || {};
+
+    print STDERR __PACKAGE__ . "->delete() called : args : ",
+      Data::Dumper->Dump([$args],['args']) if DEBUG;
+
     # check for bad parameters
     for (keys %$args) {
 	die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
-	    unless exists $allowed{$_};
+          unless exists $allowed{$_};
     }
 
     # media_id is sugar for a one-element media_ids arg
@@ -526,35 +527,46 @@ sub delete {
 
     # make sure media_ids is an array
     die __PACKAGE__ . "::delete : missing required media_id(s) setting.\n"
-	unless defined $args->{media_ids};
+      unless defined $args->{media_ids};
     die __PACKAGE__ . "::delete : malformed media_id(s) setting.\n"
-	unless ref $args->{media_ids} and ref $args->{media_ids} eq 'ARRAY';
+      unless ref $args->{media_ids} and ref $args->{media_ids} eq 'ARRAY';
 
     # delete the media
     foreach my $media_id (@{$args->{media_ids}}) {
-      print STDERR __PACKAGE__ . "->delete() : deleting media_id $media_id\n"
-	if DEBUG;
-      
-      # first look for a checked out version
-      my $media = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id, checkout => 1 });
-      unless ($media) {
-	# settle for a non-checked-out version and check it out
-	$media = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id });
-	die __PACKAGE__ . "::delete : no media found for id \"$media_id\"\n"
-	  unless $media;
-	die __PACKAGE__ . "::deleye : access denied for media \"$media_id\".\n"
-	    unless chk_authz($media, CREATE, 1);
+        print STDERR __PACKAGE__ . "->delete() : deleting media_id $media_id\n"
+          if DEBUG;
 
-	$media->checkout({ user__id => get_user_id });
-      }
+        # first look for a checked out version
+        my $media = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id,
+                                                                checkout => 1 });
+        unless ($media) {
+            # settle for a non-checked-out version and check it out
+            $media = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id });
+            die __PACKAGE__ . "::delete : no media found for id \"$media_id\"\n"
+              unless $media;
+            die __PACKAGE__ . "::delete : access denied for media \"$media_id\".\n"
+              unless chk_authz($media, CREATE, 1);
+            $media->checkout({ user__id => get_user_id });
+            log_event("media_checkout", $media);
+        }
 
-      # deletion dance sampled from widgets/workspace/callback.mc
-      my $desk = $media->get_current_desk;
-      $desk->checkin($media);
-      $desk->remove_asset($media);
-      $desk->save;
-      $media->deactivate;
-      $media->save;
+        # Remove the media from any desk it's on.
+        if (my $desk = $media->get_current_desk) {
+            $desk->checkin($media);
+            $desk->remove_asset($media);
+            $desk->save;
+        }
+
+        # Remove the media from workflow.
+        if ($media->get_workflow_id) {
+            $media->set_workflow_id(undef);
+            log_event("media_rem_workflow", $media);
+        }
+
+        # Deactivate the media and save it.
+        $media->deactivate;
+        $media->save;
+        log_event("media_deact", $media);
     }
 
     return name(result => 1);
@@ -742,7 +754,7 @@ sub _load_media {
 	    $media->set_media_type_id(0);
 	}
 
-        # make sure this story won't create a duplicate URI
+        # make sure this media won't create a duplicate URI
         die __PACKAGE__ . "::create : unable to create media, URI '"
           . $media->get_uri . "' is already taken.\n"
             if $media->check_uri;

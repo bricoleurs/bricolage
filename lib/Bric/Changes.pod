@@ -78,6 +78,16 @@ causes an installation error when you decline drop the user. [David]
 The burner no longer fails when it publishes an asset that's not on a
 desk. [David]
 
+=item *
+
+SOAP now does the proper thing when deleting assets, removing them from desks
+and workflow only if they're on desks and in workflow. [David]
+
+=item *
+
+Added support for the missing C<publish_status> parameter to
+Bric::Biz::Asset::Business::Media->list(). [David]
+
 =back
 
 =head1 VERSION 1.4.4

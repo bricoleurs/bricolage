@@ -11,6 +11,7 @@ use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Biz::Workflow qw(STORY_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
+use Bric::App::Event    qw(log_event);
 use XML::Writer;
 use IO::Scalar;
 
@@ -37,15 +38,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.28.2.3 $
+$Revision: 1.28.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.28.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-31 19:56:35 $
+$Date: 2002-11-06 20:09:21 $
 
 =head1 SYNOPSIS
 
@@ -604,15 +605,15 @@ my %allowed = map { $_ => 1 } qw(story_id story_ids);
 sub delete {
     my $pkg = shift;
     my $env = pop;
-    my $args = $env->method || {};    
-    
-    print STDERR __PACKAGE__ . "->delete() called : args : ", 
-	Data::Dumper->Dump([$args],['args']) if DEBUG;
-    
+    my $args = $env->method || {};
+
+    print STDERR __PACKAGE__ . "->delete() called : args : ",
+      Data::Dumper->Dump([$args],['args']) if DEBUG;
+
     # check for bad parameters
     for (keys %$args) {
 	die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
-	    unless exists $allowed{$_};
+          unless exists $allowed{$_};
     }
 
     # story_id is sugar for a one-element story_ids arg
@@ -620,35 +621,46 @@ sub delete {
 
     # make sure story_ids is an array
     die __PACKAGE__ . "::delete : missing required story_id(s) setting.\n"
-	unless defined $args->{story_ids};
+      unless defined $args->{story_ids};
     die __PACKAGE__ . "::delete : malformed story_id(s) setting.\n"
-	unless ref $args->{story_ids} and ref $args->{story_ids} eq 'ARRAY';
+      unless ref $args->{story_ids} and ref $args->{story_ids} eq 'ARRAY';
 
     # delete the stories
     foreach my $story_id (@{$args->{story_ids}}) {
-      print STDERR __PACKAGE__ . "->delete() : deleting story_id $story_id\n"
-	if DEBUG;
-      
-      # first look for a checked out version
-      my $story = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id, checkout => 1 });
-      unless ($story) {
-	# settle for a non-checked-out version and check it out
-	$story = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
-	die __PACKAGE__ . "::delete : no story found for id \"$story_id\"\n"
-	  unless $story;
-	die __PACKAGE__ . "::deleye : access denied for story \"$story_id\".\n"
-	    unless chk_authz($story, CREATE, 1);
+        print STDERR __PACKAGE__ . "->delete() : deleting story_id $story_id\n"
+          if DEBUG;
 
-	$story->checkout({ user__id => get_user_id });
-      }
+        # first look for a checked out version
+        my $story = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id,
+                                                                checkout => 1 });
+        unless ($story) {
+            # settle for a non-checked-out version and check it out
+            $story = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
+            die __PACKAGE__ . "::delete : no story found for id \"$story_id\"\n"
+              unless $story;
+            die __PACKAGE__ . "::delete : access denied for story \"$story_id\".\n"
+              unless chk_authz($story, CREATE, 1);
+            $story->checkout({ user__id => get_user_id });
+            log_event("story_checkout", $story);
+        }
 
-      # deletion dance sampled from comp/widgets/workspace/callback.mc
-      my $desk = $story->get_current_desk;
-      $desk->checkin($story);
-      $desk->remove_asset($story);
-      $desk->save;
-      $story->deactivate;
-      $story->save;
+        # Remove the story from any desk it's on.
+        if (my $desk = $story->get_current_desk) {
+            $desk->checkin($story);
+            $desk->remove_asset($story);
+            $desk->save;
+        }
+
+        # Remove the story from workflow.
+        if ($story->get_workflow_id) {
+            $story->set_workflow_id(undef);
+            log_event("story_rem_workflow", $story);
+        }
+
+        # Deactivate the story and save it.
+        $story->deactivate;
+        $story->save;
+        log_event("story_deact", $story);
     }
 
     return name(result => 1);
