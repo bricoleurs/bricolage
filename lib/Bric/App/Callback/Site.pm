@@ -4,18 +4,17 @@ use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'site');
 use strict;
 use Bric::App::Authz qw(:all);
-use Bric::App::Cache;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
 my $type = 'site';
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
-my $c = Bric::App::Cache->new();    # singleton
 
 
 sub delete : Callback {
     my $self = shift;
+    my $c = $self->cache;
 
     my $flag;
     foreach my $id (@{ mk_aref($self->value) }) {

@@ -4,6 +4,7 @@ use strict;
 use base qw(MasonX::CallbackHandler);
 use constant CLASS_KEY => 'Callback';
 
+use Bric::App::Cache;
 use Bric::Config qw(:ui);
 use Bric::Util::Language;
 
@@ -40,10 +41,12 @@ use Bric::App::Callback::Workflow;
 use Bric::App::Callback::Workspace;
 
 
+my $cache = Bric::App::Cache->new();
 my $lang = Bric::Util::Language->get_handle(LANGUAGE);
 
 
 sub lang { $lang }
+sub cache { $cache }
 
 
 1;

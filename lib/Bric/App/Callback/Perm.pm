@@ -4,11 +4,8 @@ use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'perm');
 use strict;
 use Bric::App::Authz qw(:all);
-use Bric::App::Cache;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
-
-my $c = Bric::App::Cache->new();   # singleton
 
 my $type = 'perm';
 my $disp_name = get_class_info($type)->get_plural_name;
@@ -78,7 +75,7 @@ sub save {
 
     if ($chk) {
         # Make sure all users update.
-        $c->set_lmu_time;
+        $self->cache->set_lmu_time;
         # Log an event.
         log_event('grp_perm_save', $grp);
     }

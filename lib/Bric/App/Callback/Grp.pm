@@ -4,7 +4,6 @@ use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'grp');
 use strict;
 use Bric::App::Authz qw(:all);
-use Bric::App::Cache;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
@@ -12,7 +11,6 @@ use Bric::App::Util qw(:all);
 my $type = 'grp';
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
-my $c = Bric::App::Cache->new();   # singleton
 
 
 sub deactivate : Callback {
@@ -32,7 +30,7 @@ sub deactivate : Callback {
                 # Note that a user has been updated to force all
                 # users logged into the system to reload their
                 # user objects from the database.
-                $c->set_lmu_time if $grp->isa('Bric::Util::Grp::User');
+                $self->cache->set_lmu_time if $grp->isa('Bric::Util::Grp::User');
             }
             $grp->save;
             log_event('grp_deact', $grp);
