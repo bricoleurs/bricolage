@@ -25,7 +25,11 @@
 PIDFILE=/usr/local/apache/logs/httpd.pid
 #
 # the path to your httpd binary, including options if necessary
-HTTPD="/usr/local/apache/bin/httpd -f /usr/local/bricolage/conf/httpd.conf"
+if [ -z "$BRICOLAGE_ROOT" ] ; then
+    BRICOLAGE_ROOT='/usr/local/bricolage';
+fi
+
+HTTPD="/usr/local/apache/bin/httpd -f $BRICOLAGE_ROOT/conf/httpd.conf"
 #
 # Use this to start httpd in single-process mode.
 #HTTPD="/usr/local/apache/bin/httpd -X -f /usr/local/bricolage/conf/httpd.conf"
