@@ -477,7 +477,7 @@ $create_fa = sub {
             }
             # Associate it with an Element.
             $at    = Bric::Biz::AssetType->lookup({'id' => $at_id});
-            $name  = $at->get_name();
+            $name  = $at->get_key_name;
         }
     } elsif ($tplate_type == Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE) {
         $name = $param->{"$widget|name"};

@@ -7,15 +7,15 @@ Bric::Util::Burner::TemplateToolkit - Bric::Util::Burner subclass to publish bus
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 01:40:35 $
+$Date: 2003-11-26 03:10:01 $
 
 =head1 SYNOPSIS
 
@@ -249,7 +249,7 @@ sub burn_one {
     my $template;
     {
 	my @cats = map { $_->get_directory } $self->get_cat->ancestry;
-	my $tmpl_name = _fmt_name($element->get_name) . '.tt';
+	my $tmpl_name = $element->get_key_name . '.tt';
         do {
 	    # if the file exists, return it
 #	    print STDERR "Trying: ", join('/',@cats),"\n";
@@ -640,23 +640,7 @@ sub end_page {
 
 =head2 Private Class Methods
 
-=over 4
-
-=item _fmt_name
-
-Needs documenting.
-
-=cut
-
-sub _fmt_name {
-    # Lowercase the name.
-    my $name = lc $_[0];
-    # Replace non-alphanumeric characters with underscores.
-    $name =~ y/a-z0-9/_/cs;
-    return $name;
-}
-
-#--------------------------------------#
+NONE.
 
 =back
 
@@ -716,7 +700,7 @@ sub _load_template_element {
 
     # Get the path (based at comp_root) and the template name.
     my $tmpl_path = $cat->ancestry_path;
-    my $tmpl_name = _fmt_name($element->get_name) . '.tt';
+    my $tmpl_name = $element->get_key_name . '.tt';
     # Look up the template (it may live few directories above $tmpl_path)
     my $tmpl = $self->find_template($tmpl_path, $tmpl_name)
       or throw_burn_error error => "Unable to find template '$tmpl_name'",

@@ -16,9 +16,15 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption => "Properties",
 	 number  => ++$num);
 
+$m->comp('/widgets/profile/displayFormElement.mc',
+         objref => $comp,
+         readOnly => $no_edit || defined $id,
+         key    => 'key_name');
+
 $m->comp('/widgets/profile/dumpRemainingFields.mc',
 	 objref => $comp, readOnly => $no_edit,
 	 fieldsUsed => {
+                        key_name => 1,
 			active => 1,
 			type_name => 1
 		       }
@@ -315,11 +321,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =head1 DATE
 
-$Date: 2003-10-30 03:51:28 $
+$Date: 2003-11-26 03:10:00 $
 
 =head1 DESCRIPTION
 

@@ -136,6 +136,17 @@ and return all contributors or categories. This could be a pain for
 organizations with 1000s of contributors or categories. Thanks to Scott for
 the report! [David]
 
+=item *
+
+The Key Name field in the element profile is no longer editable. Only new
+elements can type in the key name field. Thanks to Arthur for the spot!
+[David]
+
+=item *
+
+The Template toolkit burner now correctly uses element key names instead of
+names to find corresponding templates. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)
