@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-17 15:18:39 $
+$Date: 2004-02-18 15:04:19 $
 
 =head1 SYNOPSIS
 
@@ -2435,7 +2435,7 @@ sub send_alerts {
         my ($tmeth, $targs) = $tmeths->{$attr} ?
           @{$tmeths->{$attr}}{'get_meth', 'get_args'} : ();
 
-        # How to look it oup in the object of the alert.
+        # How to look it up in the object of the alert.
         my ($ometh, $oargs) = $omeths->{$attr} ?
           @{$omeths->{$attr}}{'get_meth', 'get_args'} : ();
 
