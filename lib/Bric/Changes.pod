@@ -89,8 +89,13 @@ longer causes an error. Reported by Serge Sozonoff. [David]
 
 =item *
 
-Fixed a bric_soap list_ids bug [712] with the no_workflow option. Reported by
-Clive Jones.
+Fixed a F<bric_soap> C<list_ids> bug [712] with the C<no_workflow> option.
+Reported by Clive Jones. [Scott]
+
+=item *
+
+The upgrade to 1.8.0 now correctly updates story URIs that use the URI Suffix
+of an output channel instead of using the URI Prefix twice. [John Greene]
 
 =back
 
