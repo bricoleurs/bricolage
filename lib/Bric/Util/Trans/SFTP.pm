@@ -6,16 +6,16 @@ Bric::Util::Trans::SFTP - SFTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:52 $
+$Date: 2004-03-25 18:36:22 $
 
 =head1 SYNOPSIS
 
@@ -135,10 +135,19 @@ sub put_res {
 	# Skip inactive servers.
 	next unless $s->is_active;
 	my $hn = $s->get_host_name;
+
+        # Set up the SSH arguments.
+        my @ssh_args;
+        if (ENABLE_SFTP_V2 || SSH_MOVER_CIPHER) {
+            my @args;
+            push @args, protocol => '2,1' if ENABLE_SFTP_V2;
+            push @args, cipher   => SSH_MOVER_CIPHER if SSH_MOVER_CIPHER;
+            @ssh_args = (ssh_args => \@args);
+        }
+
 	# Instantiate a Net::SFTP object and login.
 	my $sftp = eval{
-            Net::SFTP->new($hn, debug => DEBUG,
-                           ENABLE_SFTP_V2 ? (ssh_args => [ protocol => '2,1' ]) : (),
+            Net::SFTP->new($hn, debug => DEBUG, @ssh_args,
                            user => $s->get_login,
                            password => $s->get_password)
         };

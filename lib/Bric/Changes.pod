@@ -25,6 +25,11 @@ This document lists the Changes to Bricolage introduced with each release.
 Added F<bric_template_dump> to F<contrib>. This script uses the Bricolage SOAP
 server to export all of the templates in a single output channel. [David]
 
+=item *
+
+Added C<SFTP_MOVER_CIPHER> F<bricolage.conf> directive to tune the SFTP mover
+(if enabled) to the best cipher for good performance on the wire. [David]
+
 =back
 
 =head2 Improvements

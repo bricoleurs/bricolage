@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.154 $
+$Revision: 1.155 $
 
 =head1 DATE
 
-$Date: 2004-03-25 16:40:19 $
+$Date: 2004-03-25 18:36:21 $
 
 =head1 DESCRIPTION
 
@@ -1337,6 +1337,25 @@ specified.
 
 =item *
 
+B<ENABLE_SFTP_V2:> Set this directive to "On" or "Yes" or "1" to enable the
+SFTP mover to try to use the SSH protocol 2 before protocol 1; otherwise, it
+first tries protocol 1. Enable this directive if you've installed the
+necessary CPAN modules for SSH-2 support in Net::SFTP. Disabled if not
+specified.
+
+=item *
+
+B<SFTP_MOVER_CIPHER:> This directive forces the SFTP mover (if enabled by the
+C<ENABLE_SFTP_MOVER> directive) to use a particular encryption cipher. This
+can be useful for tuning SFTP distribution for speed. The default is 0, which
+allows the default cipher to be used. Consult the Net::SSH::Perl documentation
+for a complete list of supported ciphers for SSH-1 and SSH-2. As of this
+writing, the suppported ciphers are "IDEA", "DES", "DES3", and "Blowfish" for
+SSH-1; and "arcfour", "blowfish-cbc", and "3des-cbc" for SSH-2. The default
+SSH-1 cipher is "IDEA"; the default SSH-2 cipher is "3des-cbc".
+
+=item *
+
 B<ENABLE_WEBDAV_MOVER:> Bricolage also supports resource distribution through
 the WebDAV protocol. Set this directive to "On" or "Yes" or "1" to enable
 it. You need to have installed HTTP::DAV from the CPAN, in order to use WebDAV
@@ -1563,7 +1582,7 @@ its use of Language resources.
 
 =item *
 
-B<LOAD_LANGUAGES and B<LOAD_CHAR_SETS:> Tell Bricolage which languages and
+B<LOAD_LANGUAGES> and B<LOAD_CHAR_SETS:> Tell Bricolage which languages and
 character sets to pre-load. If you plan on using multiple languages and/or
 character sets, you can save some memory by pre-loading them at server
 startup. Otherwise, they will be loaded on demand. Multiple entries should be

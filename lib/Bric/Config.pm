@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.99 $
+$Revision: 1.100 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.99 $ )[-1];
+our $VERSION = (qw$Revision: 1.100 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 03:02:53 $
+$Date: 2004-03-25 18:36:22 $
 
 =head1 SYNOPSIS
 
@@ -99,6 +99,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     DEF_MEDIA_TYPE
                     ENABLE_SFTP_MOVER
                     ENABLE_SFTP_V2
+                    SFTP_MOVER_CIPHER
                     ENABLE_WEBDAV_MOVER
                     MEDIA_FILE_ROOT
                     USE_THUMBNAILS
@@ -205,6 +206,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      FTP_UNLINK_BEFORE_MOVE
                                      ENABLE_SFTP_MOVER
                                      ENABLE_SFTP_V2
+                                     SFTP_MOVER_CIPHER
                                      ENABLE_WEBDAV_MOVER
                                      DEF_MEDIA_TYPE
                                      DIST_ATTEMPTS
@@ -463,16 +465,17 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                             $config->{DBI_PROFILE}    || 0;
 
     # Distribution Settings.
-    use constant ENABLE_DIST => $config->{ENABLE_DIST};
-    use constant QUEUE_PUBLISH_JOBS => $config->{QUEUE_PUBLISH_JOBS};
-    use constant FTP_UNLINK_BEFORE_MOVE => $config->{FTP_UNLINK_BEFORE_MOVE} || 0;
-    use constant DIST_ATTEMPTS => $config->{DIST_ATTEMPTS} || 3;
-    use constant PREVIEW_LOCAL => $config->{PREVIEW_LOCAL} ? qw(data preview) : 0;
-    use constant PREVIEW_MASON => $config->{PREVIEW_MASON};
-    use constant DEF_MEDIA_TYPE => $config->{DEF_MEDIA_TYPE} || 'text/html';
-    use constant ENABLE_SFTP_MOVER => $config->{ENABLE_SFTP_MOVER};
-    use constant ENABLE_SFTP_V2 => $config->{ENABLE_SFTP_V2};
-    use constant ENABLE_WEBDAV_MOVER => $config->{ENABLE_WEBDAV_MOVER};
+    use constant ENABLE_DIST             => $config->{ENABLE_DIST};
+    use constant QUEUE_PUBLISH_JOBS      => $config->{QUEUE_PUBLISH_JOBS};
+    use constant FTP_UNLINK_BEFORE_MOVE  => $config->{FTP_UNLINK_BEFORE_MOVE} || 0;
+    use constant DIST_ATTEMPTS           => $config->{DIST_ATTEMPTS} || 3;
+    use constant PREVIEW_LOCAL           => $config->{PREVIEW_LOCAL} ? qw(data preview) : 0;
+    use constant PREVIEW_MASON           => $config->{PREVIEW_MASON};
+    use constant DEF_MEDIA_TYPE          => $config->{DEF_MEDIA_TYPE} || 'text/html';
+    use constant ENABLE_SFTP_MOVER       => $config->{ENABLE_SFTP_MOVER};
+    use constant ENABLE_SFTP_V2          => $config->{ENABLE_SFTP_V2};
+    use constant SFTP_MOVER_CIPHER       => $config->{SFTP_MOVER_CIPHER} || 0;
+    use constant ENABLE_WEBDAV_MOVER     => $config->{ENABLE_WEBDAV_MOVER};
 
     # Publishing Settings.
     use constant PUBLISH_RELATED_ASSETS => $config->{PUBLISH_RELATED_ASSETS};
