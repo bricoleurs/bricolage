@@ -131,6 +131,12 @@ Added Group Membership sections to most of the profiles.
 
 Some optimizations to Bric::SOAP::(Media|Story|Template) classes. [Scott]
 
+=item *
+
+Added HTML::Mason Custom tags support, allowing template developers
+to write code blocks that are context sensitive.
+See L<Bric::AdvTemplates> for documentation on this. [JoE<atilde>o Pedro]
+
 =back
 
 =head2 Bug Fixes

@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-13 14:05:33 $
+$Date: 2003-08-26 16:17:39 $
 
 =head1 SYNOPSIS
 
@@ -51,6 +51,7 @@ use Bric::Util::Fault qw(throw_gen throw_ap rethrow_exception);
 use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
 use Bric::Config qw(:burn);
+use Bric::Util::Burner qw(:modes);
 require XML::Writer if INCLUDE_XML_WRITER;
 
 
@@ -211,15 +212,14 @@ sub burn_one {
         }
     }
 
+
+
     # Create the interpreter
-    my $interp = HTML::Mason::Interp->new('allow_globals' => [qw($story
-                                                                 $burner
-                                                                 $writer
-                                                                 $element)],
-                                          'in_package'    => TEMPLATE_BURN_PKG,
+    my $interp = HTML::Mason::Interp->new($self->_interp_args,
                                           'comp_root'  => $comp_root,
                                           'data_dir'   => $self->get_data_dir,
-                                          'out_method' => \$outbuf);
+                                          'out_method' => \$outbuf,
+                                         );
 
     my $element = $ba->get_tile;
     $self->_push_element($element);
@@ -311,14 +311,12 @@ sub chk_syntax {
     # Just succeed if there is no template source code.
     my $data = $ba->get_data or return $self;
 
+
     # Create the interpreter
-    my $interp = HTML::Mason::Interp->new('allow_globals' => [qw($story
-                                                                 $burner
-                                                                 $writer
-                                                                 $element)],
-                                          'in_package'    => TEMPLATE_BURN_PKG,
+    my $interp = HTML::Mason::Interp->new( $self->_interp_args,
                                           'comp_root'  => $self->get_comp_dir,
-                                          'data_dir'   => $self->get_data_dir);
+                                          'data_dir'   => $self->get_data_dir,
+                                          );
 
     # Try to create a component.
     my $comp = eval { $interp->make_component(comp_source => $data) };
@@ -894,6 +892,131 @@ $m->comp($template);
 };
         close(DH);
 }
+
+
+=item _interp_args()
+
+Returns HTML::Mason->Interp arguments, with custom tags set.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _interp_args {
+    my $self = shift;
+    # Mason Interp args
+
+    my %interp_args = ( 
+          'allow_globals' => [qw($story
+                                 $burner
+                                 $writer
+                                 $element)],
+          'in_package'    => TEMPLATE_BURN_PKG
+     );
+
+     $interp_args{compiler} = HTML::Mason::Compiler::ToObject->new( %interp_args,
+                              'preprocess'       => sub { _custom_preprocess(shift, $self) }
+                              ); 
+     return %interp_args;
+}
+
+
+=item _custom_preprocess($component, $burner)
+
+HTML::Mason::Compiler pre-process filter, to allow custom mason tags.
+
+Pre-processor checks the tagset for the context, which can be
+PREVIEW_MODE, BURN_MODE or SYNTAX_MODE, and processes the tags
+according to the context.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _custom_preprocess {
+    my ($s, $burner) = @_;
+
+    my $s_tags = _get_tagset($burner);
+
+    for my $t (@{$s_tags->{remove}}) {
+        $$s =~ s/<(\/)?\%$t>/<$1\%doc>/gi;
+    }
+
+    for my $t (@{$s_tags->{keep}}) {
+        $$s =~ s/<(\/)?\%$t>/<$1\%text>/gi;
+    }
+
+    for my $t (@{$s_tags->{run}}) {
+        $$s =~ s/<(\/)?\%$t>//gi;
+    }
+}
+
+=item _get_tagset()
+
+ Returns which tags should be run, kept or removed, according to
+ server context.
+
+ Define the set according to each Bricolage run mode.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _get_tagset {
+
+    my $burner = shift;
+
+    # If there's no burner object available,
+    # it's a frontend server so realtime mode tags
+    # are used, where all code is removed except realtime, which is processed.
+    #
+
+
+    return { remove => ['publish','realtime','chk_syntax','preview'] ,
+             run    => ['realtime']
+           } unless ref($burner);
+
+    # Remove debugging and preview code, run publish code,
+    # keep realtime code.
+
+    if ( $burner->get_mode == PUBLISH_MODE ) {
+         return { run    => ['publish'],
+                  keep   => ['realtime'],
+                  remove => ['chk_syntax', 'preview']
+         };
+    }
+
+
+
+    # In preview, we run every code, except chk_syntax.
+    if ( $burner->get_mode == PREVIEW_MODE) {
+         return { run    => ['publish','realtime', 'preview'],
+                  remove => ['chk_syntax']
+         };
+    }
+
+    # In syntax checking mode, every tag is run, so that
+    # it can be checked for errors.
+
+    if ( $burner->get_mode == SYNTAX_MODE ) {
+         return { run    => ['publish','realtime','chk_syntax','preview'] };
+    }
+
+}
+
+
 
 1;
 

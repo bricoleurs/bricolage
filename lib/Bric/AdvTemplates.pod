@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2002-10-26 00:39:02 $
+$Date: 2003-08-26 16:17:39 $
 
 =head1 INTRODUCTION
 
@@ -324,6 +324,57 @@ in your templates. The 'get_media_type' method returns the mime type of the
 media object. These are text values of the form 'image/jpeg'.
 
 The 'get_size' method will return the file size of the media file.
+
+=head1 Bricolage HTML::Mason Custom Tags
+
+Bricolage extends HTML::Mason tags so that template developers can write blocks
+of code that only run in certain contexts.
+
+There are four contexts in which a template is run and in each context, code
+can be executed:
+
+=item Syntax checking
+
+=item Preview
+
+=item Publish
+
+=item Frontend serving the page
+
+A template developer would like that all code will be syntax checked, 
+have some special debug messages to appear to the story editor previewing
+the article; have some special code that only runs at publish time; have
+some cookie handling code that only runs in realtime, when an actual
+user is requesting the page. 
+
+With HTML::Mason a developer could use C<< <%text> >> tags, but they would
+not get syntax checked by Bricolage, and could only run in the frontend
+servers.
+
+With Bricolage Custom Tags, tags are processed according to the context.
+
+Bricolage supports the following Mason Custom tags:
+
+=item C<< <%chk_syntax> >>
+
+Only runs in syntax checking. Useful to comment out codes that you still
+want to check as valid Perl code, but not to be used in any other context.
+
+=item C<< <%preview> >>
+
+Code inside a C<< <%preview> >> tag gets removed when published, but gets
+executed when a preview is done.
+
+=item C<< <%publish> >>
+
+This is equivalent to the default Bricolage behaviour, since the code
+is run in preview and publish mode. Can be quite useful in complex templates
+where a developer wants to explicitly tell the context.
+
+
+=item C<< <%realtime> >>
+
+Code kept during the publish process, runs in preview mode.
 
 =head1 USING XML
 
