@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 07:30:37 $
+$Date: 2003-02-18 18:42:37 $
 
 =head1 SYNOPSIS
 
@@ -60,7 +60,6 @@ sub test_mods : Test(no_plan) {
         my $errors = IO::Scalar->new(\$errstr);
         my $checker = Pod::Checker->new( -warnings => 1 );
         $checker->parse_from_file($module, $errors);
-        # Delete this next statement once all errors are fixed!
         ok( $checker->num_errors == 0, "Check ${module}'s POD" );
         diag("POD errors in $module: $errstr") if $errstr;
     }
