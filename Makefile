@@ -6,10 +6,12 @@
 #   all       - default target checks requirements and builds source
 #   install   - installs the bricolage system
 #   clean     - delete intermediate files
+#   dist      - prepare a distrubution from a CVS checkout
 #
 # See INSTALL for details.
 #
 
+SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
 
 #########################
 # build rules           #
@@ -48,23 +50,50 @@ build_done	: required.db modules.db apache.db postgres.db config.db
 
 
 ###########################
-# dist rules (incomplete) #
+# dist rules              #
 ###########################
 
-dist            : inst/bricolage.sql INSTALL Changes
+dist            : clean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
+                  INSTALL Changes License dist_tar
 
-# bricolage.sql contains the contents of all .sql, .val and .con files
-sql_files := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
-inst/bricolage.sql : $(sql_files)	
-	find lib/ -name '*.sql' -exec cat '{}' ';' >  inst/bricolage.sql
-	find lib/ -name '*.val' -exec cat '{}' ';' >> inst/bricolage.sql
-	find lib/ -name '*.con' -exec cat '{}' ';' >> inst/bricolage.sql
+dist_dir	:
+	-rm -rf dist
+	mkdir dist
+	ls | grep -v dist | xargs cp -a --target-directory=dist
 
-INSTALL		: lib/Bric/Admin.pod
-	pod2text --loose lib/Bric/Admin.pod   > INSTALL
+rm_sql		:
+	find dist/lib/ -name '*.sql' -o -name '*.val' -o -name '*.con' \
+        | xargs rm -rf
 
-Changes		: lib/Bric/Changes.pod
-	pod2text --loose lib/Bric/Changes.pod > Changes
+rm_pl           :
+	find dist/lib/ -name '*.pl'    | xargs rm -rf
+
+rm_use          :
+	find dist/lib/ -name '*.use'   | xargs rm -rf
+
+rm_CVS		:
+	find dist/ -type d -name 'CVS' | xargs rm -rf
+	find dist/ -name '.cvsignore'  | xargs rm -rf
+
+rm_empty	:
+	find dist/ -type d 
+
+dist/INSTALL		: lib/Bric/Admin.pod
+	pod2text --loose lib/Bric/Admin.pod   > dist/INSTALL
+
+dist/Changes		: lib/Bric/Changes.pod
+	pod2text --loose lib/Bric/Changes.pod > dist/Changes
+
+dist/License		: lib/Bric/License.pod
+	pod2text --loose lib/Bric/License.pod > dist/License
+
+BRIC_VERSION := $(shell perl -Ilib -MBric -e 'print $$Bric::VERSION')
+
+dist_tar		:
+	-rm -rf bricolage-$(BRIC_VERSION)
+	mv dist bricolage-$(BRIC_VERSION)
+	tar cvf bricolage-$(BRIC_VERSION).tar bricolage-$(BRIC_VERSION)
+	gzip --best bricolage-$(BRIC_VERSION).tar
 
 
 ##########################
@@ -88,6 +117,11 @@ files 		: config.db
 
 db    		: inst/db.pl postgres.db inst/bricolage.sql
 	perl inst/db.pl
+
+inst/bricolage.sql : $(SQL_FILES)	
+	find lib/ -name '*.sql' -exec cat '{}' ';' >  inst/bricolage.sql
+	find lib/ -name '*.val' -exec cat '{}' ';' >> inst/bricolage.sql
+	find lib/ -name '*.con' -exec cat '{}' ';' >> inst/bricolage.sql
 
 conf		: inst/conf.pl files required.db config.db postgres.db \
                   apache.db
