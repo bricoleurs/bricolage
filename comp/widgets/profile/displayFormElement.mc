@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2003-09-29 18:41:47 $
+$Date: 2003-10-03 22:18:49 $
 
 =head1 SYNOPSIS
 
@@ -222,9 +222,8 @@ my $len_sub = sub {
 };
 
 my $inpt_sub = sub {
-
     my ($type, $key, $vals, $value, $js, $name, $width, $indent,
-        $useTable, $label, $readOnly, $agent, $extra) = @_;
+        $useTable, $label, $readOnly, $agent, $id, $extra) = @_;
     my $class = ($type eq "text" || $type eq "password")
       ? qq{ class="textInput"} : "";
     $extra ||= '';
@@ -437,7 +436,7 @@ my %formSubs = (
 				   keys %$values) {
 			&$inpt_sub('radio', $key, {}, $k, $js, $values->{$k},
 				   $width, $indent, $useTable, $label, $readOnly, $agent,
-				   $value eq $k ? ' checked' : '');
+				   $value eq $k ? ' checked="checked"' : '');
 			$m->out("<br />\n") if (!$useTable);
 		    }
 		} elsif ($ref eq 'ARRAY') {
@@ -445,7 +444,7 @@ my %formSubs = (
 			$k = [$k, $k] unless ref $k;
 			&$inpt_sub('radio', $key, $k->[0], $k->[0], $js, $k->[1],
 				   $width, $indent, $useTable, $label, $readOnly, $agent,
-				   $value eq $k->[0] ? ' checked' : '');
+				   $value eq $k->[0] ? ' checked="checked"' : '');
 			$m->out("<br />\n") if (!$useTable);
 		    }
 		}
@@ -454,9 +453,9 @@ my %formSubs = (
 	single_rad => sub {
             my ($key, $vals, $value, $js, $name) = @_;
 	    if (exists $vals->{props}{chk}) {
-		push @_, ' checked' if $vals->{props}{chk}
+		push @_, ' checked="checked"' if $vals->{props}{chk}
 	    } elsif ($value) {
-		push @_, ' checked';
+		push @_, ' checked="checked"';
 	    }
 	    &$inpt_sub('radio', @_);
 	}
