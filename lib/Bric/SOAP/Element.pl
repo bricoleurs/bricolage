@@ -15,11 +15,6 @@ This is a Test::More test script for the Bric::SOAP::Element module.  It
 requires a mix of elements in the running Bricolage instance to work
 properly.
 
-B<NOTE:> To run all its tests the test script needs to create some
-duplicate elements.  For this to work you'll need to set the
-ALLOW_DUPLIACATE_ELEMENTS constant to 1 in Bric::SOAP::Element,
-otherwise the create() and update() tests will fail.
-
 Bricolage requirements are:
 
 =over 4
