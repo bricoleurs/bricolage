@@ -283,7 +283,7 @@ sub test_select_a_default_objs: Test(12) {
 }
 
 ##############################################################################
-sub test_select_b_new_objs: Test(64) {
+sub test_select_b_new_objs: Test(76) {
     my $self = shift;
     my $class = $self->class;
 
@@ -406,16 +406,16 @@ sub test_select_b_new_objs: Test(64) {
                                          });
     $element->save();
     $self->add_del_ids($element->get_id, 'element');
-    $formatting[0] = class->new
-      ({ priority           => 1,
-         user__id           => $admin_id,
-         description        => 'test object',
-         element            => $element,
-         tplat_type         => 1,
-         output_channel__id => 1,
-         category_id        => $OBJ->{category}->[0]->get_id,
-         site_id            => 100,
-       });
+    $formatting[0] = class->new({
+        priority           => 1,
+        user__id           => $admin_id,
+        description        => 'test object',
+        element            => $element,
+        tplat_type         => 1,
+        output_channel__id => 1,
+        category_id        => $OBJ->{category}->[0]->get_id,
+        site_id            => 100,
+    });
     $formatting[0]->checkin();
     $formatting[0]->save();
     $formatting[0]->checkout({ user__id => $self->user_id });
@@ -522,16 +522,22 @@ sub test_select_b_new_objs: Test(64) {
                                          });
     $element->save;
     $self->add_del_ids($element->get_id, 'element');
-    $formatting[2] = class->new
-      ({ priority           => 1,
+
+    $formatting[2] = class->new({
+        priority           => 1,
          user__id           => $admin_id,
          element            => $element,
          tplat_type         => 1,
          output_channel__id => 1,
          category_id        => $OBJ->{category}->[0]->get_id,
          site_id            => 100,
-       });
+    });
+
+    $formatting[2]->checkin();
     $formatting[2]->save();
+    $formatting[2]->checkout({ user__id => $self->user_id });
+    $formatting[2]->save();
+
     push @{$OBJ_IDS->{formatting}}, $formatting[2]->get_id();
     $self->add_del_ids( $formatting[2]->get_id() );
 
@@ -678,8 +684,7 @@ sub test_select_b_new_objs: Test(64) {
     my @got_grp_ids;
 
     ok( $got = class->list({ name    => '_test%',
-                             Order   => 'name',
-                             user_id => $admin_id  }),
+                             Order   => 'name' }),
         'lets do a search by name' );
     # check the ids
     foreach (@$got) {
@@ -701,8 +706,7 @@ sub test_select_b_new_objs: Test(64) {
 
     # Try a search by element_key_name.
     ok( $got = class->list({ element_key_name => '_test_%',
-                             Order            => 'name',
-                             user_id          => $admin_id  }),
+                             Order            => 'name' }),
         'lets do a search by element_key_name' );
     # check the ids
     foreach (@$got) {
@@ -722,10 +726,9 @@ sub test_select_b_new_objs: Test(64) {
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ title   => '_test%',
-                             Order   => 'title',
-                             user_id => $admin_id  }),
-        'lets do a search by title' );
+    ok( $got = class->list({ name   => '_test%',
+                             Order   => 'name' }),
+        'lets do a search by name' );
 
     # check the ids
     foreach (@$got) {
@@ -743,8 +746,7 @@ sub test_select_b_new_objs: Test(64) {
 
     # finally do this by grp_ids
     ok( $got = class->list({ grp_id  => $OBJ->{formatting_grp}->[0]->get_id,
-                             Order   => 'title',
-                             user_id => $admin_id  }),
+                             Order   => 'name' }),
         'getting by grp_id' );
     my $number = @$got;
     is( $number, 2, 'there should be two formatting in the first grp' );
@@ -754,25 +756,23 @@ sub test_select_b_new_objs: Test(64) {
 
     # try listing IDs, again at least one key per table
     ok( $got = class->list_ids({ name    => '_test%',
-                                 Order   => 'name',
-                                 user_id => $admin_id  }),
+                                 Order   => 'name' }),
         'lets do an IDs search by name' );
     # check the ids
     is_deeply( $got, $OBJ_IDS->{formatting},
                '... did we get the right list of ids out' );
 
-    ok( $got = class->list_ids({ title   => '_test%',
-                                 Order   => 'name',
-                                 user_id => $admin_id  }),
-        'lets do an ids search by title' );
+    ok( $got = class->list_ids({ name   => '_test%',
+                                 Order   => 'name' }),
+        'lets do an ids search by name' );
+
     # check the ids
     is_deeply($got, $OBJ_IDS->{formatting},
               '... did we get the right list of ids out' );
 
     # finally do this by grp_ids
     ok( $got = class->list_ids({ grp_id  => $OBJ->{formatting_grp}->[0]->get_id,
-                                 Order   => 'title',
-                                 user_id => $admin_id }),
+                                 Order   => 'name' }),
         'getting by grp_id' );
     $number = @$got;
     is( $number, 2,
@@ -784,19 +784,67 @@ sub test_select_b_new_objs: Test(64) {
 
 
     # now let's try a limit
-    ok( $got = class->list({ Order   => 'title',
-                             Limit   => 3,
-                             user_id => $admin_id  }),
+    ok( $got = class->list({ Order   => 'name',
+                             Limit   => 3 }),
         'try setting a limit of 3');
     is( @$got, 3, '... did we get exactly 3 formatting objects back' );
 
     # test Offset
     ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id,
                              Order => 'name',
-                             Offset => 1,
-                             user_id => $admin_id }),
+                             Offset => 1 }),
         'try setting an offset of 2 for a search that just returned 3 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
+
+    # User ID should return only assets checked out to the user.
+    ok $got = class->list({
+        name   => '_test%',
+        Order   => 'name',
+        user_id => $admin_id,
+    }), 'Get templates for user';
+    is @$got, 3, 'Should have three templates checked out to user';
+
+    # Now try the checked_out parameter. Three templates should be checked out.
+    ok $got = class->list({
+        name       => '_test%',
+        Order       => 'name',
+        checked_out => 1,
+    }), 'Get checked out templates';
+    is @$got, 3, 'Should have three checked out templates';
+
+    # With checked_out => 0, we should get the other two templates.
+    ok $got = class->list({
+        name       => '_test%',
+        Order       => 'name',
+        checked_out => 0,
+    }), 'Get non-checked out templates';
+    is @$got, 2, 'Should have two non-checked out templates';
+
+    # Try the checked_in parameter, which should return all five templates.
+    ok $got = class->list({
+        name       => '_test%',
+        Order       => 'name',
+        checked_in  => 1,
+    }), 'Get checked in templates';
+    is @$got, 5, 'Should have five checked in templates';
+
+    # And even the checked-out template should return us the checked-in
+    # version.
+    is_deeply [ map { $_->get_checked_out } @$got ], [0, 1, 0, 1, 0],
+      "We should get the checked-in copy of the checked-out template";
+
+    # Without checked_in parameter we should get the the checked-out
+    # templates.
+    ok $got = class->list({
+        name       => '_test%',
+        Order       => 'name',
+    }), 'Get all templates';
+    is @$got, 5, 'Should have five templates';
+
+    # And now the checked-out template should return us the checked-in
+    # version.
+    is_deeply [ map { $_->get_checked_out } @$got ], [0, 1, 1, 1, 0],
+      "We should get the checked-out templates where available";
 }
 
 sub test_new_grp_ids: Test(4) {

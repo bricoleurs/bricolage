@@ -249,15 +249,6 @@ sub lookup {
     my $obj = $pkg->cache_lookup($param);
     return $obj if $obj;
 
-    # If checked_out is false, make sure that they get the current version
-    # that's not checked out, rather than the current version that's checked
-    # out and may have changes made by the user who has it checked out. Yes
-    # this is unfortunate.
-    $param->{_checked_out} = 1
-      if !$param->{published_version}
-      && ((exists $param->{checked_out} && !delete $param->{checked_out})
-      || (exists $param->{checkout} && !delete $param->{checkout}));
-
     $param = clean_params($pkg, $param);
     # Lookup can return active and inactive assets.
     delete $param->{active};

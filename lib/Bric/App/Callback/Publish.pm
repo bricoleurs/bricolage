@@ -41,12 +41,13 @@ sub preview : Callback {
     if (defined $media_id) {
         my $media = get_state_data('media_prof', 'media');
         unless ($media && (defined $media_id) && ($media->get_id == $media_id)) {
-            $media = Bric::Biz::Asset::Business::Media->lookup
-              ({ id => $media_id,
-                 checkout => $param->{checkout} });
+            $media = Bric::Biz::Asset::Business::Media->lookup({
+                id => $media_id,
+                $param->{checkout} ? () : (checked_in => 1),
+            });
         }
 
-        # Move out the story and then redirect to preview.
+        # Move out the media document and then redirect to preview.
         if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id)) {
             status_msg("Redirecting to preview.");
             # redirect_onload() prevents any other callbacks from executing.
@@ -55,9 +56,10 @@ sub preview : Callback {
     } else {
         my $s = get_state_data('story_prof', 'story');
         unless ($s && defined $story_id && $s->get_id == $story_id) {
-            $s = Bric::Biz::Asset::Business::Story->lookup
-              ({ id => $story_id,
-                 checkout => $param->{checkout} });
+            $s = Bric::Biz::Asset::Business::Story->lookup({
+                id => $story_id,
+                $param->{checkout} ? () : (checked_in => 1),
+             });
         }
 
         # Get all the related media to be previewed as well

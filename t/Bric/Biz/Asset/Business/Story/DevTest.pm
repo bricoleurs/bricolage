@@ -95,7 +95,7 @@ sub test_clone : Test(17) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(122) {
+sub test_select_methods: Test(132) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -224,21 +224,14 @@ sub test_select_methods: Test(122) {
     ok my $st = class->lookup({
         id => $OBJ_IDS->{story}->[0]
     }), "Look up the checked out story.";
-    is $st->get_version, 2, "Story is at version 1";
+    is $st->get_version, 2, "Story is at version 2";
 
-    # Test checked_out => 0 to make sure that it works.
+    # Test checked_in => 1 to make sure that it works.
     ok $st = class->lookup({
         id => $OBJ_IDS->{story}->[0],
-        checked_out => 0,
+        checked_in => 1,
     }), "Look up the checked out story.";
-    is $st->get_version, 2, "Story is at version 1";
-
-    # Test checked_out => 0 to make sure that it works.
-    ok $st = class->lookup({
-        id => $OBJ_IDS->{story}->[0],
-        checkout => 0,
-    }), "Look up the checked out story.";
-    is $st->get_version, 2, "Story is at version 1";
+    is $st->get_version, 2, "Story is at version 2";
 
     # Check in the story and move on.
     $story[0]->checkin();
@@ -350,6 +343,8 @@ sub test_select_methods: Test(122) {
     $story[2]->set_primary_category( $OBJ->{category}->[0] );
     $story[2]->add_contributor($self->contrib, 'DEFAULT');
     $story[2]->checkin();
+    $story[2]->save();
+    $story[2]->checkout({ user__id => $self->user_id });
     $story[2]->save();
     push @{$OBJ_IDS->{story}}, $story[2]->get_id();
     $self->add_del_ids( $story[2]->get_id() );
@@ -746,11 +741,61 @@ sub test_select_methods: Test(122) {
     ok( $story[2]->save, 'Save future expire story');
     ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
     is( scalar @$got, 5, 'Check for five stories now');
+
+    # User ID should return only assets checked out to the user.
+    ok $got = class->list({
+        title   => '_test%',
+        Order   => 'title',
+        user_id => $admin_id,
+    }), 'Get stories for user';
+    is @$got, 1, 'Should have one stories checked out to user';
+
+    # Now try the checked_out parameter. One story should be checked out.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'title',
+        checked_out => 1,
+    }), 'Get checked out stories';
+    is @$got, 1, 'Should have one checked out story';
+
+    # With checked_out => 0, we should get the other five stories.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'title',
+        checked_out => 0,
+    }), 'Get non-checked out stories';
+    is @$got, 5, 'Should have five non-checked out stories';
+
+    # Try the checked_in parameter, which should return all six stories.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'name',
+        checked_in  => 1,
+    }), 'Get checked in stories';
+    is @$got, 6, 'Should have six checked in stories';
+
+    # And even the checked-out story should return us the checked-in
+    # version.
+    is_deeply [ map { $_->get_checked_out } @$got ], [0, 0, 0, 0, 0, 0],
+      "We should get the checked-in copy of the checked-out story";
+
+    # Without checked_in parameter we should get the the checked-out
+    # story.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'name',
+    }), 'Get all stories';
+    is @$got, 6, 'Should have six stories';
+
+    # And now the checked-out story should return us the checked-in
+    # version.
+    is_deeply [ map { $_->get_checked_out } @$got ], [0, 0, 1, 0, 0, 0],
+      "We should get the checked-out story where available";
 }
 
 
 ##############################################################################
-# PRIVATE class methods
+# Private class methods
 ##############################################################################
 sub test_add_get_categories: Test(4) {
     # make a story

@@ -236,6 +236,11 @@ use constant PARAM_WHERE_MAP => {
                              . 'FROM media_instance '
                              . 'WHERE version = i.version '
                              . 'AND media__id = i.media__id)',
+      checked_in            => 'i.checked_out = '
+                             . '( SELECT min(checked_out) '
+                             . 'FROM media_instance '
+                             . 'WHERE version = i.version '
+                             . 'AND media__id = i.media__id)',
       _checked_out          => 'i.checked_out = ?',
       checked_out           => 'i.checked_out = ?',
       _not_checked_out       => 'i.checked_out = 0 AND mt.id not in '
@@ -528,6 +533,19 @@ Indicates whether to list media that are checked out or not. If "0", then
 only non-checked out media will be returned. If "1", then only checked-out
 media will be returned. If "all", then the checked_out attributed will be
 ignored (unless the C<user__id> parameter is passed).
+
+=item checked_in
+
+If passed a true value, this parameter causes the checked in version of the
+most current version of the media document to be returned. When a media
+document is checked out, there are two instances of the current version: the
+one checked in last, and the one currently being edited. When the
+C<checked_in> parameter is a true value, then the instance last checked in is
+returned, rather than the instance currently checked out. This is useful for
+users who do not currently have a media document checked out and wish to see
+the media document as of the last check in, rather than as currently being
+worked on in the current checkout. If a media document is not currently
+checked out, this parameter has no effect.
 
 =item published_version
 
