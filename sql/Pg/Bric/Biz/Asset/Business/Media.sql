@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.10 $
+-- VERSION: $Revision: 1.11 $
 --
--- $Date: 2004-02-11 23:06:02 $
+-- $Date: 2004-03-02 23:21:27 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -295,5 +295,5 @@ CREATE INDEX idx_attr_media_meta__name ON attr_media_meta(LOWER(name));
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_media__attr_media_meta ON attr_media_meta(attr__id);
 
-CREATE INDEX fdx_media__desk__id ON media(desk__id);
-CREATE INDEX fdx_media__workflow__id ON media(workflow__id);
+CREATE INDEX fdx_media__desk__id ON media(desk__id) WHERE desk__id > 0;
+CREATE INDEX fdx_media__workflow__id ON media(workflow__id) WHERE workflow__id > 0;

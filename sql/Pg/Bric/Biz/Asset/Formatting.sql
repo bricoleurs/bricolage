@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.7 $
+-- VERSION: $Revision: 1.8 $
 --
--- $Date: 2004-02-11 06:46:27 $
+-- $Date: 2004-03-02 23:21:27 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -182,8 +182,8 @@ CREATE INDEX fkx_usr__formatting ON formatting(usr__id);
 CREATE INDEX fkx_output_channel__formatting ON formatting(output_channel__id);
 CREATE INDEX fkx_element__formatting ON formatting(element__id);
 CREATE INDEX fkx_category__formatting ON formatting(category__id);
-CREATE INDEX fdx_formatting__desk__id ON formatting(desk__id);
-CREATE INDEX fdx_formatting__workflow__id ON formatting(workflow__id);
+CREATE INDEX fdx_formatting__desk__id ON formatting(desk__id) WHERE desk__id > 0;
+CREATE INDEX fdx_formatting__workflow__id ON formatting(workflow__id) WHERE workflow__id > 0;
 CREATE INDEX fkx_site__formatting ON formatting(site__id);
 
 -- formatting_instance.
