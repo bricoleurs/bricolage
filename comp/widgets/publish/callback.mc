@@ -148,11 +148,20 @@ my $publish = sub {
 	  Bric::Dist::ServerType->list({ "can_$field" => 1,
 				       output_channel_id => $ocid });
 	# Make sure we have some destinations.
-	unless (@$bat || ($field eq 'preview' && PREVIEW_LOCAL)) {
-	    add_msg("Cannot publish asset &quot;" . $ba->get_name . "&quot; "
-		    . "because there are no Destinations associated with its "
-		    . "output channels.");
-	    next;
+	unless (@$bat) {
+	    if ($field eq 'publish') {
+		add_msg("Cannot publish asset &quot;" . $ba->get_name . 
+			"&quot; because there are no Destinations " .
+			"associated with its output channels.");
+		next;
+	    } elsif ($field eq 'preview' and not PREVIEW_LOCAL) {
+		# can't use add_msg here because we're already in a new window
+		&$send_msg("<font color=red><b>Cannot preview asset &quot;" .
+			   $ba->get_name . "&quot; because there are no " .
+			   "Preview Destinations associated with its " .
+			   "output channels.</b></font>");
+		next;
+	    }	    
 	}
 	# Force the list of server types into a hash so that they're unique
 	# (they can repeat between asset channels).
@@ -221,9 +230,11 @@ my $publish = sub {
 	    # Return the redirection URL.
 	    return $fs->cat_uri('/', PREVIEW_LOCAL, $res->[0]->get_uri);
 	} else {
-	    # Return the redirection URL.
-	    return 'http://' . ($bats->[0]->get_servers)[0]->get_host_name
-	      . $ba->get_uri;
+	    # Return the redirection URL, if we have one
+	    if (@$bats) {
+		return 'http://' . ($bats->[0]->get_servers)[0]->get_host_name
+		    . $ba->get_uri;
+	    }
 	}
     }
 };

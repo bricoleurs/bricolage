@@ -59,7 +59,6 @@ The cache is now cleared when the Apache server is started or
 restarted.  This avoids potential problems with stale data in the
 cache. [Sam]
 
-
 =back
 
 =head2 Bug Fixes
@@ -85,6 +84,11 @@ one space in it. [Sam]
 
 Fixed bug in database that prevented element names over 32 characters
 from working properly. [Sam]
+
+=item *
+
+Fixed bug where trying to preview a story without a Preview
+destination and PREVIEW_LOCAL off would result in a Mason error. [Sam]
 
 =item *
 
