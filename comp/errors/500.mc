@@ -1,6 +1,5 @@
 % # Check to see if this is a preview screen.
-% my $prev = $is_burner_error
-%   && $fault->mode == Bric::Util::Burner::PREVIEW_MODE;
+% my $prev = $r->notes('burner.preview');
 <& /widgets/wrappers/sharky/header.mc,
 	title      => 'Error',
         useSideNav => !$prev,

@@ -41,7 +41,8 @@ sub preview : Callback {
         }
 
         # Move out the story and then redirect to preview.
-        if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id)) {
+        if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id,
+                                  $self->apache_req)) {
             status_msg("Redirecting to preview.");
             redirect_onload($url);
         }
@@ -54,6 +55,7 @@ sub preview : Callback {
         }
 
         # Get all the related media to be previewed as well
+        my $apache_req = $self->apache_req;
         foreach my $ra ($s->get_related_objects) {
             next if (ref $ra eq 'Bric::Biz::Asset::Business::Story');
 
@@ -70,10 +72,11 @@ sub preview : Callback {
                 next;
             }
 
-            $b->preview($ra, 'media', get_user_id(), $oc_id);
+            $b->preview($ra, 'media', get_user_id(), $oc_id, $apache_req);
         }
         # Move out the story and then redirect to preview.
-        if (my $url = $b->preview($s, 'story', get_user_id(), $oc_id)) {
+        if (my $url = $b->preview($s, 'story', get_user_id(), $oc_id,
+                                  $apache_req)) {
             status_msg("Redirecting to preview.");
             redirect_onload($url);
         }

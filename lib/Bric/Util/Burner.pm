@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 12:35:52 $
+$Date: 2003-09-18 14:31:03 $
 
 =head1 SYNOPSIS
 
@@ -732,7 +732,7 @@ B<Notes:> NONE.
 sub preview {
     my $self = shift;
     my ($ats, $oc_sts) = ({}, {});
-    my ($ba, $key, $user_id, $oc_id) = @_;
+    my ($ba, $key, $user_id, $oc_id, $apache_req) = @_;
     my $comp_root = MASON_COMP_ROOT->[0][1];
     my $site_id = $ba->get_site_id;
 
@@ -748,7 +748,7 @@ sub preview {
 
     # Setup.
     $self->_set(['mode'], [PREVIEW_MODE]);
-    my $cat;
+    $apache_req->notes("burner.preview" => 1) if $apache_req;
 
     # Burn to each output channel.
     my $ret = eval {
@@ -784,7 +784,7 @@ sub preview {
         my $res = [];
         # Burn, baby, burn!
         if ($key eq 'story') {
-            foreach $cat (@cats) {
+            foreach my $cat (@cats) {
                 push @$res, $self->burn_one($ba, $oc, $cat);
             }
         } else {
@@ -841,21 +841,9 @@ sub preview {
     # Reset and bail.
     $self->_set(['mode'], [undef]);
     return $ret unless $err;
-
-    # Handle any exceptions. We must throw a burner exception in order for
-    # it to be displayed properly in the error component. So pass the real
-    # exception as the payload.
-    rethrow_exception $err if isa_bric_exception $err, 'Exception::Burner';
-    my $pay = isa_bric_exception($err)
-      ? $err->payload
-      : undef;
-    throw_burn_error error   => (isa_exception($err) ? $err->error : $err),
-                     payload => $pay,
-                     cat     => ($cat ? $cat->get_uri : ''),
-                     mode    => PREVIEW_MODE,
-                     oc      => $oc->get_name,
-                     elem    => $at->get_name;
+    rethrow_exception $err;
 }
+
 #------------------------------------------------------------------------------#
 
 =item $published = $b->publish($ba, $key, $user_id, $publish_date);
