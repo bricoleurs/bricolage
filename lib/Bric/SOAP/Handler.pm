@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-19 10:41:49 $
+$Date: 2004-03-26 03:04:27 $
 
 =head1 SYNOPSIS
 
@@ -78,14 +78,19 @@ use warnings;
 use constant DEBUG => 0;
 
 # turn on tracing when debugging
-use SOAP::Lite +trace => [ (DEBUG ? ('all') : ()), fault => \&handle_err ];
+use SOAP::Lite +trace => [
+    (DEBUG ? ('all') : ()),
+    fault => sub { print STDERR Bric::Util::Fault::Exception->new(@_) }
+];
 use SOAP::Transport::HTTP;
 use Bric::App::Auth;
 use Bric::App::Session;
 use Bric::Util::DBI qw(:trans);
+use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(clear_events);
 use Exception::Class 1.12;
-use Bric::Util::Fault qw(:all);
+use Apache;
+use Apache::Request;
 use Apache::Constants qw(OK);
 use Apache::Util qw(escape_html);
 
@@ -125,12 +130,10 @@ BEGIN {
 }
 
 my $commit = 1;
-my $apreq;
 
 # dispatch to $SERVER->handler()
 sub handler {
     my ($r) = @_;
-    $apreq = $r;
     my $status;
 
     eval {
@@ -191,9 +194,6 @@ END
         $commit = 1;
     }
 
-    # Free up the apache request object.
-    undef $apreq;
-
     # Boogie!
     return $status;
 }
@@ -221,7 +221,8 @@ sub handle_err {
     my $text = $err->can('as_text') ? $err->as_text : $err->as_string;
 
     # Send the error to the apache error log.
-    $apreq->log->error($text . ($more_err ? "\n\n$more_err\n" : ''));
+    my $log = Apache->server->log;
+    $log->error($text . ($more_err ? "\n\n$more_err\n" : ''));
 }
 
 # silence warnings from SOAP::Lite
