@@ -327,7 +327,7 @@ my $def = {
 			       constrain => {no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID},
 			       select => $sel_sub },
 	   category       => { list_fields => [qw(name uri)],
-			       behavior => 'narrow',
+			       behavior => 'expand',
 			       srch_field => 'name',
 			       constrain => {},
 			       select => $cat_sel_sub },
@@ -366,11 +366,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2002-07-02 22:49:18 $
+$Date: 2002-07-16 14:17:14 $
 
 =head1 SYNOPSIS
 

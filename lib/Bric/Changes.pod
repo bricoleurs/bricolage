@@ -193,14 +193,13 @@ bug. [David]
 
 =item *
 
-Fixed cover date editing to repopulate correctly on the Story profile
-screens.  [Matt]
+Fixed cover date editing to repopulate correctly on the Story profile screens.
+[Matt]
 
 =item *
 
-Fixed bug where previewing a story assigned to multiple categories
-would preview to a random category.  Now the primary category is
-always chosen. [Sam]
+Fixed bug where previewing a story assigned to multiple categories would
+preview to a random category. Now the primary category is always chosen. [Sam]
 
 =item *
 
@@ -208,8 +207,14 @@ Fixed display and editing of dates more than one year in the past. [Matt]
 
 =item *
 
-Fixed bug where setting CHAR_SET to UTF-8 in bricolage.conf would
-result in blank output. [Sam]
+Fixed bug where setting CHAR_SET to UTF-8 in bricolage.conf would result in
+blank output. [Sam]
+
+=item *
+
+Changed Category manager to display no categories by default, only display
+them after a search. This is because some folks have a I<lot> of categories.
+[David]
 
 =back
 
