@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.3 $
+$Revision: 1.2.2.4 $
 
 =head1 DATE
 
-$Date: 2001-10-02 14:24:57 $
+$Date: 2001-10-04 11:10:55 $
 
 =head1 SYNOPSIS
 
@@ -126,7 +126,7 @@ Please activate JavaScript in your browser before continuing.
 <table border=0 cellpadding=0 cellspacing=0 width=750>
 <tr>
 	<td width=150>
-        <img src="/media/images/bricolage.gif" width=150 height=25>
+        <a href="#" onClick="window.open('/help/about.html', 'About', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=620'); return false;"><img src="/media/images/bricolage.gif" width="150" height="25" border="0" /></a>
 	</td>
 	<td width=600 align=right>
 	 &nbsp;
@@ -259,7 +259,10 @@ while (my $txt = next_msg) {
 <%doc>
 
 $Log: header.mc,v $
-Revision 1.2.2.3  2001-10-02 14:24:57  wheeler
+Revision 1.2.2.4  2001-10-04 11:10:55  wheeler
+Added a link from the Logo graphic to the "About" page.
+
+Revision 1.2.2.3  2001/10/02 14:24:57  wheeler
 Fixed hiding of toolbars, etc., to leave the scrollbars and to work properly
 with Netscape et al., but to ignore IE.
 
