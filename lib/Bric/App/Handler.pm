@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.34.2.2 $
+$Revision: 1.34.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.34.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-09 19:54:52 $
+$Date: 2003-06-29 20:46:09 $
 
 =head1 SYNOPSIS
 
@@ -58,6 +58,7 @@ use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::CharTrans;
 use Bric::App::Event qw(clear_events);
+use Bric::App::Util qw(del_redirect);
 use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
@@ -285,6 +286,9 @@ sub handle_err {
 
     # Clear out events so that they won't be logged.
     clear_events();
+
+    # Clear out redirects so that they won't be triggered.
+    del_redirect();
 
     # Send the error to the apache error log.
     $r->log->error($err->as_text() . ($more_err ? "\n$more_err\n" : ''));
