@@ -120,7 +120,7 @@ sub test_list : Test(40) {
     is( scalar @prefs, 1, "Check for 1 prefs" );
     ok( @prefs = Bric::Util::Pref->list({ manual => 0 }),
         "Look up manual => 0" );
-    is( scalar @prefs, 10, "Check for 10 prefs" );
+    is( scalar @prefs, 11, "Check for 10 prefs" );
 
     # Try opt_type.
     ok( @prefs = Bric::Util::Pref->list({ opt_type => 'radio' }),
@@ -128,6 +128,6 @@ sub test_list : Test(40) {
     is( scalar @prefs, 1, "Check for 1 prefs" );
     ok( @prefs = Bric::Util::Pref->list({ opt_type => 'select' }),
         "Look up opt_type 'select'" );
-    is( scalar @prefs, 9, "Check for 9 prefs" );
+    is( scalar @prefs, 10, "Check for 9 prefs" );
 
 }
