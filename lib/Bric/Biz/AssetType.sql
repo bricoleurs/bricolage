@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
--- $Date: 2001-10-11 00:34:53 $
+-- $Date: 2001-11-19 21:37:36 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -48,6 +48,7 @@ CREATE TABLE element  (
                                    DEFAULT NEXTVAL('seq_element'),
     name            VARCHAR(64)    NOT NULL,
     description     VARCHAR(256),
+    burner          INT            NOT NULL DEFAULT 1,
     reference       NUMERIC(1,0)   NOT NULL
                                    DEFAULT 0
                                    CONSTRAINT ck_element__reference

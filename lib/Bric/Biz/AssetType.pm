@@ -8,16 +8,16 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:53 $
+$Date: 2001-11-19 21:37:36 $
 
 =head1 SYNOPSIS
 
@@ -139,16 +139,19 @@ use constant DEBUG => 0;
 
 # Constants for DB access.
 use constant TABLE  => 'element';
-use constant COLS   => qw(name description reference 
+use constant COLS   => qw(name description burner reference 
 			  type__id at_grp__id primary_oc__id active);
-use constant FIELDS => qw(name description reference 
+use constant FIELDS => qw(name description burner reference 
 			  type__id at_grp__id primary_oc_id _active);
 
-use constant ORD => qw(name description type_name active);
+use constant ORD => qw(name description type_name  burner active);
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Element';
 use constant INSTANCE_GROUP_ID => 27;
 
+# possible values for burner
+use constant BURNER_MASON    => 1;
+use constant BURNER_TEMPLATE => 2;
 
 #==============================================================================#
 # Fields                               #
@@ -185,6 +188,9 @@ BEGIN {
 
 			 # The human readable name for the description
 			 'description'	        => Bric::FIELD_RDWR,
+
+			 # The burner to use to publish this element
+                         'burner'               => Bric::FIELD_RDWR,
 
 			 # The primary output channel ID.
 			 'primary_oc_id'        => Bric::FIELD_RDWR,
@@ -651,6 +657,21 @@ sub my_meths {
 					    rows => 4
 					  }
 			     },
+	      burner      => {
+			      get_meth => sub { shift->get_burner(@_) },
+			      get_args => [],
+			      set_meth => sub { shift->set_burner(@_) },
+			      set_args => [],
+			      name     => 'burner',
+			      disp     => 'Burner',
+			      len      => 80,
+			      req      => 1,
+			      type     => 'short',
+			      props    => { type => 'select',
+					    vals => [[BURNER_MASON, 'Mason'],
+						     [BURNER_TEMPLATE, 'HTML::Template']],
+					  }
+			     },	     
 	      type_name      => {
 			     name     => 'type_name',
 			     get_meth => sub { shift->get_type_name(@_) },
@@ -825,6 +846,43 @@ B<Notes:>
 NONE
 
 =cut
+
+#------------------------------------------------------------------------------#
+
+=item $burner = $at->get_burner
+
+Get the burner associated with the asset type.  Possible values are
+the constants BURNER_MASON and BURNER_TEMPLATE defined in this package.
+
+B<Throws:>
+NONE
+
+B<Side Effects:>
+NONE
+
+B<Notes:>
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $at->set_burner(Bric::Biz::AssetType::BURNER_MASON);
+
+Get the burner associated with the asset type.  Possible values are
+the constants BURNER_MASON and BURNER_TEMPLATE defined in this package.
+
+B<Throws:>
+NONE
+
+B<Side Effects:>
+NONE
+
+B<Notes:>
+NONE
+
+=cut
+
 
 sub get_type_name {
     my $self = shift;

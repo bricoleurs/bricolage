@@ -4,19 +4,19 @@ package Bric::Util::Trans::FS;
 
 =head1 NAME
 
-Bric::Util::Trans::FS - Utility class for sending email.
+Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:56 $
+$Date: 2001-11-19 21:37:36 $
 
 =head1 SYNOPSIS
 
@@ -34,16 +34,18 @@ $Date: 2001-10-11 00:34:56 $
   $fs->move($src, $loc);
   $fs->mk_path($path);
   $fs->del(@files);
-  my $dir = $fs->cat_dir(@dir_parts);
-  my $dir = $fs->trunc_dir($dir);
-  my $uri = $fs->cat_uri(@uri_parts);
-  my $uri = $fs->trunc_uri($dir);
-  my $uri = $fs->dir_to_uri($dir);
+  my $dir  = $fs->cat_dir(@dir_parts);
+  my $file = $fs->cat_file(@file_parts);
+  my $dir  = $fs->trunc_dir($dir);
+  my $uri  = $fs->cat_uri(@uri_parts);
+  my $uri  = $fs->trunc_uri($dir);
+  my $uri  = $fs->dir_to_uri($dir);
 
 =head1 DESCRIPTION
 
-This class provides a thin abstraction to the File::Copy module. Use it to copy,
-move, and delete files on the file system.
+This class provides a thin abstraction around a number of File::*
+modules (Copy, Spec, Basename, Find, etc.).  Use it for all your
+portable file-system access needs.
 
 =cut
 
@@ -627,6 +629,24 @@ B<Notes:> Uses File::Spec::Functions::catdir() internally.
 =cut
 
 sub cat_dir { shift; return File::Spec::Functions::catdir(@_) }
+
+################################################################################
+
+=item my $file = $fs->cat_file(@file_parts)
+
+Takes a list of directory parts and a filename and concatenates them
+for the local file system.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> Uses File::Spec::Functions::catfile() internally.
+
+=cut
+
+sub cat_file { shift; return File::Spec::Functions::catfile(@_) }
+
 
 ################################################################################
 

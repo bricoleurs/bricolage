@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.10 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.11 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-16 22:40:47 $
+$Date: 2001-11-19 21:37:36 $
 
 =head1 SYNOPSIS
 
@@ -323,6 +323,12 @@ category - the category object
 
 category__id - the category id
 
+=item *
+
+file_type - the type of the template file - this will be used as the
+extension for the file_name derived from the element name.  Currently
+supported file_type values are 'mc', 'pl' and 'tmpl'.
+
 =back
  
 B<Throws:>
@@ -353,6 +359,9 @@ sub new {
 	$init->{'deploy_status'} = 0;
 	$init->{priority} ||= 3;
 
+	# file type defaults to 'mc'
+	$init->{file_type} ||= 'mc';
+
 	# check for required output_channel__id, element__id, 
 	# and category
 	die Bric::Util::Fault::Exception::GEN->new( {
@@ -368,7 +377,11 @@ sub new {
 	    my $at = Bric::Biz::AssetType->lookup({id => $init->{'element__id'}});
 	    $name = $at->get_name();
 	} else {
-	    $name = 'autohandler';
+	    if ($init->{file_type} eq 'mc') {
+		$name = 'autohandler';
+	    } elsif ($init->{file_type} eq 'pl' or $init->{file_type} eq 'tmpl') {
+		$name = 'category';
+	    }
 	}
 
 	my ($pre, $post);
@@ -397,8 +410,9 @@ sub new {
 	# construct File Path for FA
 	(my $file = $name) =~ s/\W+/_/g;
 	
-	# Don't put the '.mc' extension on if this is an autohandler.
-	$file .= '.mc' unless $name eq 'autohandler';
+	# Don't put the file_type extension on if this is an
+	# autohandler.
+	$file .= '.' . $init->{file_type} unless $name eq 'autohandler';
 
 	$init->{file_name} =
 	  lc Bric::Util::Trans::FS->cat_dir('', $pre, $cat_path, $post, $file);

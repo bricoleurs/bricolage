@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =head1 DATE
 
-$Date: 2001-10-11 20:17:14 $
+$Date: 2001-11-19 21:37:36 $
 
 =head1 DESCRIPTION
 
@@ -210,21 +210,12 @@ Add keywords to media [David].
 
 =item *
 
-Add Context-sensitive, online help [Sam].
-
-=item *
-
 Add user-created help for user-created fields (add a "Help Text" field to Form
 Builder) [David or Sam].
 
 =item *
 
 Add scheduled Burning/Syndication [David].
-
-=item *
-
-Add separate interface for editing templates (via FTP [bleh!] or SCP or
-somesuch) [Sam].
 
 =item *
 
@@ -307,6 +298,15 @@ excludes the keyword "about.com") [David].
 
 Add support for LDAP authentication.
 
+=item *
+
+Add second screen to New Template to get file fype with only choices
+valid for the chosen element type's burner. [Sam]
+
+=item *
+
+Add configuration option for selecting a subset of available Burners. [Sam]
+
 =back
 
 =cut
@@ -349,11 +349,6 @@ Create localization libraries for all text.
 Revamp Exceptions so that they use numbers to look themselves up -- so there's a
 central repository of possible exceptions, and they are therefore easier to
 document.
-
-=item *
-
-Add the ability to use HTML::Template Templates without breaking the use of
-Mason [Sam].
 
 =item *
 
