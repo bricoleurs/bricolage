@@ -10,7 +10,7 @@ Release Version: 1.6.12
 
 File (CVS) Version:
 
-$Revision: 1.35.2.20 $
+$Revision: 1.35.2.21 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.6.12";
 
 =head1 DATE
 
-$Date: 2004-03-19 00:07:18 $
+$Date: 2004-03-19 00:09:00 $
 
 =head1 SYNOPSIS
 
@@ -391,7 +391,7 @@ B<Notes:>
 unless (MOD_PERL) {
     $SIG{__DIE__} = \&throw_gen;
     $SIG{__WARN__} = sub {
-        print STDERR Bric::Util::Fault::GEN->new(error => shift)
+        print STDERR Bric::Util::Fault::Exception::GEN->new(error => shift)
     };
 }
 
