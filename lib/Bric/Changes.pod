@@ -97,6 +97,11 @@ Eliminated "Template compile failed" errors for templates with <%init> sections.
 Field elements now show up with their display names in the bulk edit select
 lists, instead of with their names (which are really keys). [David]
 
+=item *
+
+Eliminated "Use of uninitialized value in bitwise or (|)" warnings when checking
+permissions. Thanks to Sam Tregar for the spot. [David]
+
 =back
 
 =head1 VERSION 1.2.1
