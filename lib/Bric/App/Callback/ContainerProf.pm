@@ -71,7 +71,7 @@ sub bulk_edit : Callback {
 #    my $field = $self->trigger_key;
 
     my $tile = get_state_data($self->class_key, 'tile');
-    my $tile_id = $param->{'edit_view_bulk_tile_id'};
+    my $tile_id = $self->value;
     # Update the existing fields and get the child tile matching ID $tile_id
     my $edit_tile = $self->_update_parts($param);
 

@@ -45,6 +45,7 @@ if (@tiles || @$elem_opts ) {
 % } # END if (scalar(@tiles)) {
 
 % # BEGIN FOREACH TILES
+% my $no_hide;
 % foreach my $dt (@tiles) {
 % my $no_del;
 
@@ -133,7 +134,7 @@ if ($at->is_related_media) {
          callback  => 'container_prof|bulk_edit_cb',
          image     => 'bulk_edit_lgreen',
          value     => $dt->get_id,
-         useHidden => 0
+         useHidden => !$no_hide++
        &></td>
     <td>
     <& '/widgets/profile/select.mc',

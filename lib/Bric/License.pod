@@ -235,6 +235,8 @@ Friends who have spotted bugs include:
 
 =item Adeola Awoyemi
 
+=item Neal Sofge
+
 =back
 
 Bricolage's translation team:

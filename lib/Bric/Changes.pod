@@ -151,6 +151,11 @@ Adding users to any of the default site user permission groups no longer
 incorrectly allow those users to select that site for their context. Reported
 by Alexander Ling. [David]
 
+=item *
+
+The inline "Bulk Edit" feature in story and media profiles works again. Thanks
+to Neal Sofge for the spot! [David]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
