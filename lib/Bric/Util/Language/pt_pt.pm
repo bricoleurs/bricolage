@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-03-26 06:33:07 $
+$Date: 2003-04-25 17:15:57 $
 
 =head1 SYNOPSIS
 
@@ -721,6 +721,8 @@ use constant key => 'pt_pt';
       'Alias in Category' => 'Alias in Category',
       'No Alias' => 'No Alias',
       'Alias to [_1] created and saved.' => 'Alias to [_1] created and saved.',
+      'Field profile [_1] deleted.' => 'Field profile [_1] deleted.',
+      'Field profile [_1] saved.' => 'Field profile [_1] saved.',
   );
 
 =cut
