@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-25 18:58:15 $
+$Date: 2002-08-26 03:13:35 $
 
 =head1 SYNOPSIS
 
@@ -699,7 +699,6 @@ sub add_contributor {
     # get the contributor id
     my $c_id = ref $contrib ? $contrib->get_id() : $contrib;
     my $place = scalar keys %$contribs;
-
     if (exists $contribs->{$c_id}) {
 	# already a contrib, update role if need be
 	$contribs->{$c_id}->{'role'} = $role;
@@ -708,12 +707,12 @@ sub add_contributor {
 		$contribs->{$c_id}->{'action'} eq 'insert') {
 	    $contribs->{$c_id}->{'action'} = 'update';
 	}
-	} else {
-	    $contribs->{$c_id}->{'role'} = $role;
-	    $contribs->{$c_id}->{'obj'} = ref $contrib ? $contrib : undef;
-	    $contribs->{$c_id}->{'place'} = $place;
-	    $contribs->{$c_id}->{'action'} = 'insert';
-	}
+    } else {
+        $contribs->{$c_id}->{'role'} = $role;
+        $contribs->{$c_id}->{'obj'} = ref $contrib ? $contrib : undef;
+        $contribs->{$c_id}->{'place'} = $place;
+        $contribs->{$c_id}->{'action'} = 'insert';
+    }
 
     $self->_set({
 		 '_contributors' => $contribs,
@@ -744,25 +743,21 @@ NONE
 =cut
 
 sub get_contributors {
-	my ($self) = @_;
+    my $self = shift;
+    my $contribs = $self->_get_contributors();
 
-	my $contribs = $self->_get_contributors();
-
-	my @contribs;
-	foreach my $id (sort {
-		$contribs->{$a}->{'place'} <=> $contribs->{$b}->{'place'} }
-			(keys %$contribs)) {
-		next if $contribs->{$id}->{'action'}
-		  && $contribs->{$id}->{'action'} eq 'delete';
-		if (defined $contribs->{$id}->{'obj'}) {
-			push @contribs, $contribs->{$id}->{'obj'};
-		} else {
-			push @contribs, Bric::Util::Grp::Parts::Member::Contrib->lookup(
-					{ id => $id });
-		}
-	}
-
-	return wantarray ? @contribs : \@contribs;
+    my @contribs;
+    foreach my $id (sort { $contribs->{$a}->{'place'} <=>
+                           $contribs->{$b}->{'place'} }
+                    keys %$contribs) {
+        if (defined $contribs->{$id}->{'obj'}) {
+            push @contribs, $contribs->{$id}->{'obj'};
+        } else {
+            push @contribs, Bric::Util::Grp::Parts::Member::Contrib->lookup
+              ({ id => $id });
+        }
+    }
+    return wantarray ? @contribs : \@contribs;
 }
 
 ################################################################################
@@ -835,11 +830,8 @@ sub delete_contributors {
     my $i = 0;
     foreach (keys %$contribs) {
 	if ($contribs->{$_}->{'place'} != $i) {
-	    unless ($contribs->{'action'}
-		    && $contribs->{'action'} eq 'insert') {
-		$contribs->{$_}->{'action'} = 'update';
-	    }
 	    $contribs->{$_}->{'place'} = $i;
+            $contribs->{$_}->{action} ||= 'update';
 	}
 	$i++;
     }
@@ -1687,7 +1679,13 @@ Checks the asset in
 
 B<Throws:>
 
-NONE
+=over 4
+
+=item *
+
+Cannot checkin non checked out versions.
+
+=back
 
 B<Side Effects:>
 
@@ -1703,7 +1701,7 @@ sub checkin {
 	my ($self) = @_;
 
 	die Bric::Util::Fault::Exception::GEN->new( 
-		{ msg => "Can not checkin non checked out versions"
+		{ msg => "Cannot checkin non checked out versions"
 		}) unless $self->_get('checked_out');
 
 	my $version = $self->_get('version');
@@ -1999,7 +1997,7 @@ sub _sync_contributors {
 
 	my $contribs = $self->_get_contributors();
 	my $del_contribs = $self->_get('_del_contrib');
-
+        my $vid = $self->_get('version_id');
 	foreach my $id (keys %$contribs) {
 		my $role = $contribs->{$id}->{'role'};
 		my $place = $contribs->{$id}->{'place'};

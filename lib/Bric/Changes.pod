@@ -168,12 +168,6 @@ The size of the database column that stores custom field options (such as for
 select lists) has been changed to the TEXT PostgreSQL type, so that the number
 of options isn't arbitrarily limited. [Matt Vella]
 
-=item *
-
-Clicking "Cancel" when editing keywords in a new story now properly returns to
-the story profile, rather than to the last screen before the story was
-created. [David]
-
 =back
 
 =head2 Bug Fixes
@@ -351,6 +345,17 @@ deal for groups with thousands of members. Thanks to Mark for the spot.
 
 Added check for Category "Directory" string to make sure that no non-URL
 characters are added. [Matt Vella]
+
+=item *
+
+Clicking "Cancel" when editing keywords in a new story now properly returns to
+the story profile, rather than to the last screen before the story was
+created. [David]
+
+=item *
+
+Deleting a a contributor immediately after adding one no longer causes all of
+the contributors to be deleted on check-in. [David]
 
 =back
 
