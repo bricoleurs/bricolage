@@ -85,7 +85,7 @@ sub test_list : Test(40) {
         "Check 'All Users' class" );
     ok( @grps = Bric::Util::Grp->list({ permanent => 1, all => 1 }),
         "get all permanent groups" );
-    is( scalar @grps, 28, "Check number of permanent groups" );
+    is( scalar @grps, 30, "Check number of permanent groups" );
     ok( @grps = Bric::Util::Grp::Pref->list({ obj_id => 1,
                                               package => 'Bric::Util::Pref' }),
         "get all groups with pref 1 in them" );
@@ -166,7 +166,7 @@ sub test_list_ids : Test(10) {
     is( $grp_ids[0], 2, "Check 'All Users' ID" );
     ok( @grp_ids = Bric::Util::Grp->list_ids({ permanent => 1, all => 1 }),
         "get all permanent group IDs" );
-    is( scalar @grp_ids, 28, "Check number of permanent group IDs" );
+    is( scalar @grp_ids, 30, "Check number of permanent group IDs" );
     ok( @grp_ids = Bric::Util::Grp::Pref->list_ids
         ({ obj_id => 1,
            package => 'Bric::Util::Pref' }),
