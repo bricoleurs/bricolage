@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.58.4.1 $
+$Revision: 1.58.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.58.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-24 21:26:54 $
+$Date: 2003-03-26 02:13:29 $
 
 =head1 SYNOPSIS
 
@@ -43,7 +43,7 @@ use Carp;
 
 #--------------------------------------#
 # Programmatic Dependencies
-use File::Spec::Functions qw(catdir tmpdir);
+use File::Spec::Functions qw(catdir tmpdir catfile);
 use Apache::ConfigFile;
 
 #==============================================================================#
@@ -319,10 +319,21 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
         # Grab the Apache configuration file.
         $config->{APACHE_CONF} ||= '/usr/local/apache/conf/httpd.conf';
+        if (not -e $config->{APACHE_CONF} and $ENV{BRIC_TEMP_DIR}) {
+            # We're testing and can't find the httpd.conf. Try to find one
+            # in our root directory.
+            $config->{APACHE_CONF} = catfile $ENV{BRICOLAGE_ROOT},
+              'httpd.conf';
+            # And try just a local directory if all else fails. This would
+            # most likely be used during `make test`.
+            $config->{APACHE_CONF} = catfile 'conf', 'httpd.conf'
+              unless -e $config->{APACHE_CONF};
+        }
+
         {
             # Apache::ConfigFile can be very noisy in the presence of
             # <Perl> blocks.
-            local $^W = 0;
+            local $^W;
             $aconf = Apache::ConfigFile->new(file => $config->{APACHE_CONF},
                                              ignore_case => 1);
         }
