@@ -40,6 +40,10 @@ identify the problems. [David]
 Added C<use Bric::Util::Grp::Keyword;> back into Bric::Biz::Keyword. This
 prevents some upgraded Bricolage installations from breaking. [David]
 
+=item *
+
+Added Net::FTPServer and Net::SFTP to the list of optional modules. [David]
+
 =back
 
 =head1 VERSION 1.4.0
