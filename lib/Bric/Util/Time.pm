@@ -8,25 +8,25 @@ Bric::Util::Time - Bricolage Time & Date Functions
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-02-27 02:47:42 $
 
 =head1 SYNOPSIS
 
   use Bric::Util::Time ':all';
   my $formatted_date = strfdate($epoch_time, $format, $utc);
   my $local_date = local_date($db_date, $format);
-  my $db_date = $db_date($iso_local_date);
+  my $db_date = db_date($iso_local_date);
 
 =head1 DESCRIPTION
 
@@ -51,7 +51,7 @@ use Bric::Util::Pref;
 use constant DEBUG => 0;
 my $fsub; # Will be used in BEGIN.
 
-# ISO 8601 Date Settings.
+# ISO 8601 Date Settings. (almost, see NOTES below)
 my $ISO_TEMPLATE =  'a4 x a2 x a2 x a2 x a2 x a2';
 
 ################################################################################
@@ -106,9 +106,10 @@ BEGIN {
 
 ################################################################################
 my $iso_parts = sub {
-    # Takes an ISO 8601-formatted date string and returns its parts in the order
-    # and format expected by strftime. A similar function, db_date_parts(), is
-    # imported from the database driver module.
+    # Takes an ISO 8601-formatted (almost, see NOTES below) date
+    # string and returns its parts in the order and format expected by
+    # strftime. A similar function, db_date_parts(), is imported from
+    # the database driver module.
     my @t;
     eval { @t = unpack($ISO_TEMPLATE, shift) };
     die Bric::Util::Fault::Exception::AP->new(
@@ -179,7 +180,7 @@ Unable to format date.
 =cut
 
 sub strfdate {
-    $ENV{TZ} = $_[2] ? 'UTC' : Bric::Util::Pref->lookup_val('Time Zone');
+    local $ENV{TZ} = $_[2] ? 'UTC' : Bric::Util::Pref->lookup_val('Time Zone');
     return &$fsub(@_[0..1]);
 }
 
@@ -235,7 +236,7 @@ sub local_date {
     return unless $db_date || $bool;
     $format ||= Bric::Util::Pref->lookup_val('Date/Time Format');
     # Set the time zone.
-    $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
+    local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
     return $db_date ? timegm(db_date_parts($db_date)) : time
       if $format eq 'epoch';
     &$fsub($db_date ? timegm(db_date_parts($db_date)) : undef, $format);
@@ -249,10 +250,14 @@ sub local_date {
 
 =item db_date($local_date, $now)
 
-Takes an ISO 8601 formatted date/time string in the local time zone, converts it
-to UTC, and returns it in the format required by the database. If $iso_date is
-not provided, it returns undef, unless $now is true, in which case it provides
-the current UTC time.
+=item db_date($local_date, undef, $tz)
+
+Takes an ISO 8601 formatted date/time string (almost, see NOTES below)
+in the local time zone, converts it to UTC, and returns it in the
+format required by the database. If $iso_date is not provided, it
+returns undef, unless $now is true, in which case it provides the
+current UTC time.  If $tz is set db_date() uses the supplied time-zone
+instead of using the local time-zone.
 
 Use this function to convert a date/time string provided by your object's
 consumer into the format required by the database.
@@ -280,13 +285,20 @@ B<Notes:> NONE.
 =cut
 
 sub db_date {
+    my ($date, $now, $tz) = @_;
+
     # Return if there's no date and they don't want the current date.
-    return unless $_[0] || $_[1];
-    # Set the time zone.
-    $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
-    my $local_date = $_[0] ? timelocal(&$iso_parts($_[0])) : time;
-    # Set the time zone again.
+    return unless $date || $now;
+
+    # Set the time zone, default to Time Zone preference if none supplied.
+    local $ENV{TZ} = $tz ? $tz : Bric::Util::Pref->lookup_val('Time Zone');
+
+    # get the local date or now
+    my $local_date = $date ? timelocal(&$iso_parts($date)) : time;
+
+    # Set the time zone to UTC to get db date
     $ENV{TZ} = 'UTC';
+
     # Format the date and return it.
     &$fsub($local_date, DB_DATE_FORMAT);
 } # db_date_format()
@@ -316,7 +328,9 @@ NONE.
 
 =head1 NOTES
 
-NONE.
+ISO 8601 date support is incomplete.  Currently, time-zone information
+in the date string is ignored.  Also, date and time parts (CCYY, MM,
+DD, hh, mm and ss) must be separated by a single character.
 
 =head1 AUTHOR
 
