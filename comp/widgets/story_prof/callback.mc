@@ -354,7 +354,8 @@ my $handle_checkin_and_pub = sub {
     # HACK: Commit this checkin
     # WHY?? Because Postgres does NOT like it when you insert and
     # delete a record within the same transaction.
-    Bric::Util::DBI->commit();
+    Bric::Util::DBI::commit(1);
+    Bric::Util::DBI::begin(1);
 
     # add story to object list
     push(@objs, $story);
