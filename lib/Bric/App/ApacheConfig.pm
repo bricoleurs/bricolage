@@ -107,7 +107,20 @@ do {
 
     # set up profiling with Devel::Profiler - this installs a
     # ChildInitHandler
-    require Devel::Profiler::Apache if PROFILE;
+    if (PROFILE) {
+        require Devel::Profiler::Apache;
+
+        # exclude upper-case subs, which are mostly constants in Bric anyway
+        Devel::Profiler::Apache->import(
+              sub_filter     => sub { $_[1] =~ /^[A-Z_]+$/          ? 0 : 1; },
+              package_filter => sub { $_[0] =~ /^Bric::Util::Fault/ ? 0 : 1; }
+                                       );
+
+        # profiling with QA_MODE on is inadvisable
+        print STDERR "WARNING: Both PROFILE and QA_MODE options activated.\n",
+                     "         PROFILE results will be skewed.\n\n"
+            if QA_MODE;
+    }
 
     if (PREVIEW_LOCAL) {
 	# This will slow down every request; thus we recommend that previews
