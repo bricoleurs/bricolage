@@ -220,7 +220,7 @@ sub test_oc : Test(39) {
 ##############################################################################
 # Test Site methods.
 ##############################################################################
-sub test_site : Test(10) {
+sub test_site : Test(12) {
     my $self = shift;
 
     #dependant on intial values
@@ -281,7 +281,17 @@ sub test_site : Test(10) {
     is(scalar @{$top_level_element->get_sites()}, 3,
        "We should have three sites now");
 
+    #Try to list elements based on site
+
+    is(scalar @{Bric::Biz::AssetType->list({site_id => $site1_id})}, 1,
+       "Check that list works with site_id as argument");
+
     $top_level_element->remove_sites([$site1, $site2_id]);
+
+    $top_level_element->save();
+
+    is(scalar @{Bric::Biz::AssetType->list({site_id => $site1_id})}, 0,
+       "Check that list works with site_id as argument");
 
     is(scalar @{$top_level_element->get_sites()}, 1,
        "We should have one site now");

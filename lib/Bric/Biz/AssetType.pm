@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-13 11:34:10 $
+$Date: 2003-03-13 13:43:31 $
 
 =head1 SYNOPSIS
 
@@ -416,6 +416,10 @@ set to 1 to return only top-level elements
 =item media
 
 match against a particular media asset type (att.media)
+
+=item site_id
+
+match against the given site_id
 
 =back
 
@@ -2507,6 +2511,11 @@ sub _do_list {
             $tables .= ", $mem_table m2, $map_table c2";
             push @wheres, ('a.id = c2.object_id', 'c2.member__id = m2.id',
                             'm2.active = 1', 'm2.grp__id = ?');
+            push @params, $v;
+        } elsif ($k eq 'site_id') {
+            $tables .= ", element__site es";
+            push @wheres, ('es.element__id = a.id','es.site__id = ?',
+                           'es.active = 1');
             push @params, $v;
         } else {
             # The "name" and "description" properties.
