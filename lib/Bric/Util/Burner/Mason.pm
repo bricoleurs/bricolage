@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-23 01:06:51 $
+$Date: 2001-12-23 01:15:22 $
 
 =head1 SYNOPSIS
 
@@ -366,6 +366,8 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> See also find_template() above.
+
+=cut
 
 sub find_first_template {
     my $self = shift;
