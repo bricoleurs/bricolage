@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-12 09:00:04 $
+$Date: 2003-03-13 19:27:28 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.2 2003-03-12 09:00:04 wheeler Exp $
+$Id: Site.pm,v 1.3 2003-03-13 19:27:28 arthurbergman Exp $
 
 =back
 
@@ -78,6 +78,7 @@ use Bric::Util::DBI qw(:standard col_aref);
 use Bric::Util::Fault qw(throw_da throw_not_unique);
 use Bric::Util::Priv;
 use Bric::Config qw(:qa);
+use Bric::Biz::Category;
 
 ##############################################################################
 # Inheritance
