@@ -1,0 +1,62 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+category.html -- associates a category to a media asset
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2003-09-19 13:35:35 $
+
+=head1 DESCRIPTION
+
+Top-level component to associate a category to a media asset.
+(I think this, keywords.html, and contributors.html should be
+factored out into an association.html component.)
+
+=cut
+</%doc>
+
+%#-- Once Section --#
+<%once>;
+my $type = 'element'; # Hack!
+my $disp = get_disp_name('media');
+my $context = "Workflow | Profile | $disp | ";
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+
+%#-- Init Section --#
+<%init>
+# Do any redirects first.
+do_queued_redirect();
+
+my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
+			id      => $id,
+			section => 'category',
+			param => \%ARGS);
+</%init>
+
+%#-- Begin HTML --#
+
+<& /widgets/wrappers/sharky/header.mc,
+	title => 'Edit Category',
+	context => $context . $r->pnotes('media_prof|title') . ' | Category'
+&>
+<form action="<% $r->uri %>" method="post" name="theForm">
+<% $content %>
+</form>
+
+<& /widgets/wrappers/sharky/footer.mc &>
+
+%#-- End HTML --#
+
+

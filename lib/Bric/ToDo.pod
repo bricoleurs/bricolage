@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.119 $
+$Revision: 1.120 $
 
 =head1 DATE
 
-$Date: 2003-09-18 21:37:53 $
+$Date: 2003-09-19 13:35:36 $
 
 =head1 DESCRIPTION
 
@@ -57,13 +57,6 @@ Workspace.
 Give users the option to reactivate deleted templates when they try to create
 a template that already exists in the database as a deactivated template.
 [David]
-
-=item *
-
-Create category browser so that, in interfaces where users have to navigate
-categories (e.g., when creating subcategories, or when assigning an asset to a
-category), they can do it hierarchically, rather than have to look at a long-ass
-list of all categories.
 
 =item *
 

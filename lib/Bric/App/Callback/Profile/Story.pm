@@ -25,7 +25,7 @@ my $SEARCH_URL = '/workflow/manager/story/';
 my $ACTIVE_URL = '/workflow/active/story/';
 my $DESK_URL = '/workflow/profile/desk/';
 
-my ($save_contrib, $unique_msgs, $save_data, $handle_delete);
+my ($save_contrib, $save_category, $unique_msgs, $save_data, $handle_delete);
 
 
 sub view : Callback {
@@ -463,7 +463,6 @@ sub update : Callback(priority => 1) {
 sub keywords : Callback {
     my $self = shift;
 
-
     # Return if there were data errors
     return unless &$save_data($self, $self->params, $self->class_key);
 
@@ -671,6 +670,66 @@ sub recall : Callback {
     }
 }
 
+sub categories : Callback {
+    my $self = shift;
+    # Return if there were data errors
+    return unless &$save_data($self, $self->params, $self->class_key);
+    set_redirect("/workflow/profile/story/categories.html");
+}
+
+sub assoc_category : Callback {
+    my $self = shift;
+
+    my $story = get_state_data($self->class_key, 'story');
+    chk_authz($story, EDIT);
+
+    my $cat_id = $self->value;
+    my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
+    $story->add_categories([$cat]);
+    log_event('story_add_category', $story, { Name => $cat->get_name });
+}
+
+sub save_category : Callback {
+    my $self = shift;
+
+    $save_category->($self->class_key, $self->params, $self);
+    # Set a redirect for the previous page.
+    set_redirect(last_page());
+    # Pop this page off the stack.
+    pop_page();
+}
+
+sub save_and_stay_category : Callback {
+    my $self = shift;
+    $save_category->($self->class_key, $self->params, $self);
+}
+
+sub leave_category : Callback {
+    my $self = shift;
+
+    # Set a redirect for the previous page.
+    set_redirect(last_page());
+    # Pop this page off the stack.
+    pop_page();
+}
+
+sub set_primary_category : Callback {
+    my $self = shift;
+
+    my $story = get_state_data($self->class_key, 'story');
+    chk_authz($story, EDIT);
+
+    my $primary_cat_id = $self->value;
+    my $primary_cat = Bric::Biz::Category->lookup({ id => $primary_cat_id });
+    $story->set_primary_category($primary_cat);
+
+    # set this so that we don't have to $story->save
+    # (used in widgets/story_prof/edit_categories.html)
+#    set_state_data($self->class_key, 'primary_cat', $primary_cat);
+}
+
+### end of callbacks
+
 $save_contrib = sub {
     my ($widget, $param, $self) = @_;
 
@@ -712,6 +771,37 @@ $save_contrib = sub {
     }
     my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
     $story->reorder_contributors(@no);
+};
+
+$save_category = sub {
+    my ($widget, $param, $self) = @_;
+
+    # get the contribs to delete
+    my $story = get_state_data($widget, 'story');
+
+    my $existing = { map { $_->get_id => 1 } $story->get_categories };
+
+    chk_authz($story, EDIT);
+    my $cat_id = $param->{$widget.'|delete_id'};
+    my $msg;
+    if ($cat_id) {
+        if (ref $cat_id) {  # delete more than one category
+            $story->delete_categories($cat_id);
+            foreach (@$cat_id) {
+                my $cat = Bric::Biz::Category->lookup({ id => $_ });
+                delete $existing->{$_};
+                log_event('story_del_category', $story, { Name => $cat->get_name });
+            }
+            add_msg('Categories disassociated.');
+        } else {            # delete one category
+            $story->delete_categories([$cat_id]);
+            my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
+            delete $existing->{$cat_id};
+            my $name = $cat->get_name;
+            log_event('story_del_category', $story, { Name => $name });
+            add_msg('Category "[_1]" disassociated.', $name);
+        }
+    }
 };
 
 # removes repeated error messages

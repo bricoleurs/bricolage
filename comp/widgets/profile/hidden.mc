@@ -7,18 +7,18 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:20 $
+$Date: 2003-09-19 13:35:35 $
 
 =head1 SYNOPSIS
 
 $m->comp("/widgets/profile/hidden.mc",
-         $name      => 'my_hidden_field'
-         $value     => 'foo'
-         $js        => 'onClick="alert('Drop dead!)');
+         name      => 'my_hidden_field'
+         value     => 'foo'
+         js        => 'onClick="alert('Drop dead!)');
 
 =head1 DESCRIPTION
 

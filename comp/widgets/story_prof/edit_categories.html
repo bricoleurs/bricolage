@@ -1,0 +1,79 @@
+<%perl>;
+$m->comp('/widgets/listManager/listManager.mc',
+         object    => 'category',
+         userSort => 0,
+         def_sort_field => 'name',
+         title     => 'Current Categories',
+         objs      => \@categories,
+         profile   => $category_current_profile,
+         fields    => [qw(name uri)],
+         select =>  $category_select,
+         addition  => ''
+        );
+</%perl>
+<p></p>
+
+<& /widgets/search/search.mc,
+   object       => 'category',
+   field        => 'name',
+   type         => 'dual',
+   use_form_tag => 0
+&>
+<p></p>
+<& /widgets/listManager/listManager.mc,
+   object    => 'category',
+   title     => 'Choose Categories',
+   select    => undef,
+   profile   => $category_choose_profile,
+   exclude  	=> \@existing_categories,
+   fields    => [qw(name uri)],
+   addition  => '',
+   behavior => 'expand',
+&>
+
+<p></p>
+<input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_category_cb" value="Save" />
+<input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_category_cb" value="Save and Stay" />
+<input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" name="<% $widget %>|leave_category_cb" />
+
+<%args>
+$widget
+</%args>
+
+<%init>
+my $story = get_state_data($widget, 'story');
+my @existing_categories = map { $_->get_id } $story->get_categories;
+my @categories = $story->get_categories();
+</%init>
+
+<%once>
+my $category_current_profile = sub {
+    my $cat = shift;
+    my $widget = 'story_prof';
+    my $story = get_state_data($widget, 'story');
+    my $primary_cat = $story->get_primary_category;
+
+    if ($cat->get_name eq $primary_cat->get_name) {
+        return;
+    } else {
+        return ['Primary', $r->uri, "$widget|set_primary_category_cb=" . $cat->get_id];
+    }
+};
+my $category_choose_profile = sub {
+    my $cat = shift;
+    my $widget = 'story_prof';
+    return ['Associate', $r->uri, "$widget|assoc_category_cb=" . $cat->get_id];
+};
+my $category_select = sub {
+    my $cat = shift;
+    my $widget = 'story_prof';
+    my $story = get_state_data($widget, 'story');
+    my $primary_cat = $story->get_primary_category;
+
+    if ($cat->get_name eq $primary_cat->get_name) {
+        return;
+    } else {
+        return ['Delete', "$widget|delete_id"];
+    }
+};
+</%once>

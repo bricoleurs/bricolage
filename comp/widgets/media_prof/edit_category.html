@@ -1,0 +1,66 @@
+<%perl>;
+$m->comp('/widgets/listManager/listManager.mc',
+         object    => 'category',
+         userSort => 0,
+#         def_sort_field => 'order',
+         def_sort_field => 'name',
+         title     => 'Current Category',
+         objs      => [ $category ],
+         profile   => undef,
+         fields    => [qw(name uri)],
+#         select =>  ['Delete', "$widget|delete_id"],
+         select => '',
+         addition  => '',
+        );
+$m->comp('/widgets/profile/hidden.mc',
+         name => 'category_id',
+         value => $existing_category);
+</%perl>
+<script language="javascript">
+var selectOrderNames = new Array(<% join ', ', @sort_array %>);
+</script>
+<p></p>
+
+<& /widgets/search/search.mc,
+   object       => 'category',
+   field        => 'name',
+   type         => 'dual',
+   use_form_tag => 0
+&>
+<p></p>
+<& /widgets/listManager/listManager.mc,
+   object    => 'category',
+   title     => 'Choose Categories',
+   select    => undef,
+   profile   => $category_profile,
+   exclude   => [ $existing_category ],
+   fields    => [qw(name uri)],
+   addition  => '',
+   behavior => 'expand',
+&>
+
+<p></p>
+<input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_category_cb" value="Save" />
+<input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_category_cb" value="Save and Stay" />
+<input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" name="<% $widget %>|leave_category_cb" />
+
+<%args>
+$widget
+</%args>
+
+<%init>
+my $media = get_state_data($widget, 'media');
+my $category = $media->get_category;
+my $existing_category = $category->get_id;
+</%init>
+
+<%once>
+my $category_profile = sub {
+    my ($o,$flags) = @_;
+    unless ($flags->{'featured'}) {
+        return ['Associate', $r->uri, "media_prof|assoc_category_cb=".$o->get_id];
+    } else {
+        return ['Un-Associate', $r->uri, "media_prof|unassoc_category_cb=".$o->get_id];
+    }
+};
+</%once>

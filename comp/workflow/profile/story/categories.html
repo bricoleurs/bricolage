@@ -1,0 +1,61 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+categories.html -- associates a category to a story asset
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2003-09-19 13:35:36 $
+
+=head1 DESCRIPTION
+
+Top-level component to associate a category to a story asset.
+(I think this, keywords.html, and contributors.html should be
+factored out into an association.html component.)
+
+=cut
+</%doc>
+
+%#-- Once Section --#
+<%once>;
+my $type = 'element'; # Hack!
+my $disp = get_disp_name('story');
+my $context = "Workflow | Profile | $disp | ";
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+
+%#-- Init Section --#
+<%init>
+# Do any redirects first.
+do_queued_redirect();
+
+my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
+			id      => $id,
+			section => 'categories',
+			param => \%ARGS);
+</%init>
+
+%#-- Begin HTML --#
+
+<& /widgets/wrappers/sharky/header.mc,
+	title => 'Edit Categories',
+	context => $context . $r->pnotes('story_prof|title') . ' | Categories'
+&>
+<form action="<% $r->uri %>" method="post" name="theForm">
+<% $content %>
+</form>
+
+<& /widgets/wrappers/sharky/footer.mc &>
+
+%#-- End HTML --#
+

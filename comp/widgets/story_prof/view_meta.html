@@ -101,6 +101,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
   </tr>
 
+% unless (ENABLE_CATEGORY_BROWSER) {
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" valign="top" class="medHeader"><span class="label"><% $lang->maketext('Categories') %>:&nbsp;</span></td>
@@ -113,6 +114,7 @@ $m->print(join '<br />&nbsp;', sort { $a cmp $b }
   <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
   </tr>
+% }   # unless ENABLE_CATEGORY_BROWSER
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
@@ -191,6 +193,26 @@ $m->print(join '<br />&nbsp;', sort { $a cmp $b }
   <td width=458 class="medHeader"><span class="label">&nbsp;<% $lang->maketext('Values') %></span></td>
 </tr>
 </table>
+
+<table border=0 width=578 cellpadding=0 cellspacing=0>
+<tr>
+  <td width=121 align=right valign=top><span class=label><% $lang->maketext('Categories') %>:&nbsp;</span></td>
+  <td width=457 valign=top height="25">
+<%perl>
+my @cats;
+foreach my $cat ($story->get_categories) {
+    push @cats, $cat->get_name;
+}
+
+$m->out(scalar(@cats) ? join(", ", @cats) : $lang->maketext("No categories defined."));
+</%perl>
+</tr>
+</table>
+
+<table border=0 cellpadding=0 cellspacing=0 width=578>
+<tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
+</table>
+
 <table border=0 width=578 cellpadding=0 cellspacing=0>
 <tr>
   <td width=121 align=right valign=top><span class=label><% $lang->maketext('Keywords') %>:&nbsp;</span></td>
@@ -202,13 +224,14 @@ foreach my $kw ($story->get_keywords) {
 }
 
 $m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords defined."));
-
 </%perl>
 </tr>
 </table>
+
 <table border=0 cellpadding=0 cellspacing=0 width=578>
 <tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
 </table>
+
 <table border=0 cellpadding=0 cellspacing=0 width=578>
 <tr>
   <td align=right width=121 valign=top><span class=label><% $lang->maketext('Contributors') %>:&nbsp;</span></td>

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.63 $
+$Revision: 1.64 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.63 $ )[-1];
+our $VERSION = (qw$Revision: 1.64 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-17 01:59:03 $
+$Date: 2003-09-19 13:35:36 $
 
 =head1 SYNOPSIS
 
@@ -1288,6 +1288,8 @@ sub get_secondary_categories {
     my @seconds;
     foreach my $c_id (keys %$cats) {
         next if $cats->{$c_id}->{'primary'};
+        next if $cats->{$c_id}->{'action'}
+          && $cats->{$c_id}->{'action'} eq 'delete';
         if ($cats->{$c_id}->{'object'} ) {
             push @seconds, $cats->{$c_id}->{'object'};
         } else {

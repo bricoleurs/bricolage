@@ -26,7 +26,7 @@ my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
 my $DESK_URL = '/workflow/profile/desk/';
 
-my ($save_contrib, $handle_delete);
+my ($save_contrib, $save_category, $handle_delete);
 
 
 sub update : Callback(priority => 1) {
@@ -526,49 +526,6 @@ sub unassoc_contrib : Callback {
 
 ################################################################################
 
-$save_contrib = sub {
-    my ($widget, $param, $self) = @_;
-    # get the contribs to delete
-    my $media = get_state_data($widget, 'media');
-    my $existing;
-    foreach ($media->get_contributors) {
-        my $id = $_->get_id();
-        $existing->{$id} = 1;
-    }
-
-    chk_authz($media, EDIT);
-    my $contrib_id = $param->{$widget . '|delete_id'};
-    my $contrib_number;
-    my @contrib_strings;
-    if ($contrib_id) {
-        my $contrib_id_list = ref $contrib_id ? $contrib_id : [ $contrib_id ];
-        $media->delete_contributors($contrib_id_list);
-        foreach (@$contrib_id_list) {
-            my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
-                ({ id => $_ });
-            push @contrib_strings, $contrib->get_name;
-            $contrib_number++;
-            delete $existing->{$_};
-        }
-    }
-    add_msg("[quant,_1,Contributor] \"[_2]\" associated.",
-            $contrib_number, join(", ", @contrib_strings))
-      if $contrib_number;
-
-    # get the remaining
-    # and reorder
-    foreach (keys %$existing) {
-        my $key = $widget . '|reorder_' . $_;
-        my $place = $param->{$key};
-        $existing->{$_} = $place;
-    }
-
-    my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
-    $media->reorder_contributors(@no);
-};
-
-################################################################################
-
 sub save_contrib : Callback {
     my $self = shift;
     $save_contrib->($self->class_key, $self->params, $self);
@@ -733,8 +690,56 @@ sub add_kw : Callback {
     pop_page();
 }
 
+################################################################################
 
-### end of callbacks ###
+sub category : Callback {
+    my $self = shift;
+    my $id = get_state_data($self->class_key, 'media')->get_id;
+    set_redirect("/workflow/profile/media/category.html");
+}
+
+################################################################################
+
+sub save_category : Callback {
+    my $self = shift;
+    $save_category->($self->class_key, $self->request_args, $self);
+    # Set a redirect for the previous page.
+    set_redirect(last_page);
+    # Pop this page off the stack.
+    pop_page();
+}
+
+##############################################################################i
+
+sub save_and_stay_category : Callback {
+    my $self = shift;
+    $save_category->($self->class_key, $self->request_args, $self);
+}
+
+###############################################################################
+
+sub leave_category : Callback {
+    my $self = shift;
+    # Set a redirect for the previous page.
+    set_redirect(last_page);
+    # Pop this page off the stack.
+    pop_page();
+}
+
+###############################################################################
+
+sub assoc_category : Callback {
+    my $self = shift;
+    my $media = get_state_data($self->class_key, 'media');
+    chk_authz($media, EDIT);
+    my $cat_id = $self->value;
+
+    $media->set_category__id($cat_id);
+    # XXX: should probably be a media_assoc_category event or something
+    # but it doesn't exist (and I'm lazy (programmer virtue?))
+}
+
+### end of callbacks ##########################################################
 
 $handle_delete = sub {
     my ($media, $self) = @_;
@@ -748,6 +753,61 @@ $handle_delete = sub {
     $media->save;
     log_event("media_deact", $media);
     add_msg('Media "[_1]" deleted.', $media->get_title);
+};
+
+
+$save_contrib = sub {
+    my ($widget, $param, $self) = @_;
+    # get the contribs to delete
+    my $media = get_state_data($widget, 'media');
+    my $existing;
+    foreach ($media->get_contributors) {
+        my $id = $_->get_id();
+        $existing->{$id} = 1;
+    }
+
+    chk_authz($media, EDIT);
+    my $contrib_id = $param->{$widget . '|delete_id'};
+    my $contrib_number;
+    my @contrib_strings;
+    if ($contrib_id) {
+        my $contrib_id_list = ref $contrib_id ? $contrib_id : [ $contrib_id ];
+        $media->delete_contributors($contrib_id_list);
+        foreach (@$contrib_id_list) {
+            my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
+                ({ id => $_ });
+            push @contrib_strings, $contrib->get_name;
+            $contrib_number++;
+            delete $existing->{$_};
+        }
+    }
+    add_msg("[quant,_1,Contributor] \"[_2]\" associated.",
+            $contrib_number, join(", ", @contrib_strings))
+      if $contrib_number;
+
+    # get the remaining
+    # and reorder
+    foreach (keys %$existing) {
+        my $key = $widget . '|reorder_' . $_;
+        my $place = $param->{$key};
+        $existing->{$_} = $place;
+    }
+
+    my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
+    $media->reorder_contributors(@no);
+};
+
+$save_category = sub {
+    my ($widget, $param, $self) = @_;
+    # get the contribs to delete
+    my $media = get_state_data($widget, 'media');
+    chk_authz($media, EDIT);
+
+    my $cat_id = $param->{category_id};
+    $media->set_category__id($cat_id);
+
+    my $cat = Bric::Biz::Category->lookup({id => $cat_id});
+    add_msg("Category \"[_1]\" associated.", $cat->get_name);
 };
 
 

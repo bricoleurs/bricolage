@@ -119,6 +119,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   disp     => "Source"
 &>
 
+% unless (ENABLE_CATEGORY_BROWSER) {
 <% $ieSpacer %>
 <& '/widgets/select_object/select_object.mc',
   object        => 'category',
@@ -133,6 +134,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   exclude       => sub { ! chk_authz($_[0], READ, 1) },
   disp          => "Category"
 &>
+% }  # unless ENABLE_CATEGORY_BROWSER
+
 <% $ieSpacer %>
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
@@ -184,6 +187,28 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
 <table border=0 width=578 cellpadding=0 cellspacing=0>
 <tr>
+  <td width=120 align=right valign=top><span class=label><% $lang->maketext('Category') %>:&nbsp;</span></td>
+  <td width=378 valign=top>
+<%perl>
+my $cat = $media->get_category;
+$m->out($cat->get_name);
+</%perl>
+  </td>
+  <td width=80 align="center" valign=top><& '/widgets/profile/imageSubmit.mc',
+             formName => "theForm",
+             callback => "$widget|category_cb",
+             image    => "edit_lgreen",
+             vspace   => 4
+&></td>
+</tr>
+</table>
+
+<table border=0 cellpadding=0 cellspacing=0 width=578>
+<tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
+</table>
+
+<table border=0 width=578 cellpadding=0 cellspacing=0>
+<tr>
   <td width=120 align=right valign=top><span class=label><% $lang->maketext('Keywords') %>:&nbsp;</span></td>
   <td width=378 valign=top>
 <%perl>
@@ -204,9 +229,11 @@ $m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords
 &></td>
 </tr>
 </table>
+
 <table border=0 cellpadding=0 cellspacing=0 width=578>
 <tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
 </table>
+
 <table border=0 cellpadding=0 cellspacing=0 width=578>
 <tr>
   <td align=right width=120 valign=top><span class=label><% $lang->maketext('Contributors') %>:&nbsp;</span></td>
