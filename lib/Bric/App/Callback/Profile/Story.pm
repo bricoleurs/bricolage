@@ -1,4 +1,4 @@
-package Bric::App::Callback::StoryProf;
+package Bric::App::Callback::Profile::Story;
 
 # XXX: this has the same deal as MediaProf where
 # some callbacks have extra parameters ($story, $new)

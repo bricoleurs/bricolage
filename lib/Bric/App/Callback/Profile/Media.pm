@@ -1,4 +1,4 @@
-package Bric::App::Callback::MediaProf;
+package Bric::App::Callback::Profile::Media;
 
 # XXX: david msg
 # BTW, are you naming the new callback classes for these three callbacks

@@ -1,4 +1,4 @@
-package Bric::App::Callback::TmplProf;
+package Bric::App::Callback::Profile::Template;
 
 # XXX: david msg
 # BTW, are you naming the new callback classes for these three callbacks
