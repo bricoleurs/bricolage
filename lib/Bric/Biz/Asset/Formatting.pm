@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-13 16:55:19 $
+$Date: 2001-09-28 12:19:02 $
 
 =head1 SYNOPSIS
 
@@ -1544,12 +1544,13 @@ sub save {
     my ($self) = @_;
 
     # Handle a cancel.
-    if ($self->_get('_cancel')) {
-	if ($self->get_id and $self->get_version_id) {
+    my ($id, $vid, $cancel, $ver) =
+      $self->_get(qw(id version_id _cancel version));
+    if ($cancel) {
+	if (defined $id and defined $vid) {
 	    $self->_delete_instance();
-	    $self->_delete_formatting() if $self->get_version == 0;
+	    $self->_delete_formatting() if $ver == 0;
 	}
-	
 	return $self;
     }
 
@@ -2077,15 +2078,11 @@ NONE
 =cut
 
 sub _delete_instance {
-	my ($self) = @_;
-
-	my $sql = 'DELETE FROM ' . VERSION_TABLE . ' WHERE id=? ';
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-
-	execute($sth, $self->get_id);
-
-	return $self;
+    my ($self) = @_;
+    my $sql = 'DELETE FROM ' . VERSION_TABLE . ' WHERE id=? ';
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('version_id'));
+    return $self;
 }
 
 ################################################################################
@@ -2116,7 +2113,10 @@ L<Bric>, L<Bric::Biz::Asset>
 =head1 REVISION HISTORY
 
 $Log: Formatting.pm,v $
-Revision 1.3  2001-09-13 16:55:19  samtregar
+Revision 1.4  2001-09-28 12:19:02  wheeler
+Fixed bug where checkouts weren't getting properly cancelled.
+
+Revision 1.3  2001/09/13 16:55:19  samtregar
 Fixed two bugs - category_id is really category__id and user__id can be 0
 
 Revision 1.2  2001/09/06 22:30:06  samtregar
