@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.24.2.2 $
+$Revision: 1.24.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-09 02:05:52 $
+$Date: 2003-03-09 02:17:05 $
 
 =head1 SYNOPSIS
 
@@ -248,6 +248,10 @@ values may be passed. The supported initial value keys are:
 =item *
 
 name
+
+=item *
+
+site_id
 
 =item *
 

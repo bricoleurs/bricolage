@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.44.2.6 $
+$Revision: 1.44.2.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.44.2.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-09 02:05:51 $
+$Date: 2003-03-09 02:17:05 $
 
 =head1 SYNOPSIS
 
@@ -184,6 +184,12 @@ Keys for $init are:
 name
 
 The name for this category.
+
+=item *
+
+site_id
+
+The ID for the site this category is in.
 
 =item *
 
