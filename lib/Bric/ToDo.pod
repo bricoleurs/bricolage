@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.24 $
+$Revision: 1.13.2.25 $
 
 =head1 DATE
 
-$Date: 2001-11-21 18:45:22 $
+$Date: 2001-11-21 18:58:25 $
 
 =head1 DESCRIPTION
 
@@ -59,11 +59,6 @@ bad [David].
 Create different "Notes" icon (different color) for when there actually B<are>
 notes in an asset. This way users won't have to go to the Notes screen just to
 find out if they have notes [Michele].
-
-=item *
-
-Add interface for navigating Catgegories hierarchically when creating a new
-asset [David].
 
 =item *
 
