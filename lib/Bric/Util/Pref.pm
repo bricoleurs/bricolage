@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-22 05:36:04 $
+$Date: 2003-01-25 18:25:24 $
 
 =head1 SYNOPSIS
 
@@ -55,10 +55,10 @@ $Date: 2003-01-22 05:36:04 $
 
 =head1 DESCRIPTION
 
-This is the central interface for managing Bricolage application preferences. It should
-scale when we later decide to add user and user group preferences. Right now
-it'll just support those global application preferences that we deem necessary
-for the application to work, such as Time Zone.
+This is the central interface for managing Bricolage application
+preferences. It should scale when we later decide to add user and user group
+preferences. Right now it'll just support those global application preferences
+that we deem necessary for the application to work, such as Time Zone.
 
 =cut
 
@@ -101,11 +101,15 @@ use constant INSTANCE_GROUP_ID => 22;
 ################################################################################
 # Private Class Fields
 my $dp = 'Bric::Util::Fault::Exception::DP';
-my @cols = qw(p.id p.name p.description p.def p.value p.manual p.opt_type o.description);
-my @props = qw(id name description default value manual opt_type val_name);
-my @ord = @props[1..$#props];
+
+my $SEL_COLS = 'p.id, p.name, p.description, p.def, p.value, p.manual, ' .
+  'p.opt_type, o.description, m.grp__id';
+my @SEL_PROPS = qw(id name description default value manual opt_type val_name
+                   grp_ids);
+
+my @ORD = @SEL_PROPS[1..$#SEL_PROPS-1];
 my $prefkey = '__PREF__';
-my $meths;
+my $METHS;
 my $cache;
 
 ################################################################################
@@ -115,20 +119,21 @@ my $cache;
 use Bric::Util::Grp;
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 name => Bric::FIELD_READ,
-			 description => Bric::FIELD_READ,
-			 value => Bric::FIELD_RDWR,
-			 default => Bric::FIELD_READ,
-			 manual => Bric::FIELD_READ,
+                         # Public Fields
+                         id => Bric::FIELD_READ,
+                         name => Bric::FIELD_READ,
+                         description => Bric::FIELD_READ,
+                         value => Bric::FIELD_RDWR,
+                         default => Bric::FIELD_READ,
+                         manual => Bric::FIELD_READ,
                          opt_type => Bric::FIELD_READ,
-			 val_name => Bric::FIELD_READ,
+                         opt_type => Bric::FIELD_READ,
+                         grp_ids => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _opts => Bric::FIELD_NONE,
-			 _val_ch => Bric::FIELD_NONE
-			});
+                         # Private Fields
+                         _opts => Bric::FIELD_NONE,
+                         _val_ch => Bric::FIELD_NONE
+                        });
 }
 
 ################################################################################
@@ -226,6 +231,18 @@ value
 =item *
 
 val_name
+
+=item *
+
+manual
+
+=item *
+
+opt_type
+
+=item *
+
+grp_id
 
 =back
 
@@ -546,72 +563,72 @@ sub my_meths {
     my ($pkg, $ord) = @_;
 
     # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
-      if $meths;
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}]
+      if $METHS;
 
     # We don't got 'em. So get 'em!
-    $meths = {
-	      name      => {
-			     name     => 'name',
-			     get_meth => sub { shift->get_name(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_name(@_) },
-			     set_args => [],
-			     disp     => 'Name',
-			     search   => 1,
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      description      => {
-			     name     => 'description',
-			     get_meth => sub { shift->get_description(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_description(@_) },
-			     set_args => [],
-			     disp     => 'Description',
-			     len      => 256,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type => 'textarea',
-					   cols => 40,
-				           rows => 4
-					 }
-			    },
-	      default      => {
-			     name     => 'default',
-			     get_meth => sub { shift->get_default(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_default(@_) },
-			     set_args => [],
-			     disp     => 'Default',
-			     len      => 256,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type => 'textarea',
-					   cols => 40,
-				           rows => 4
-					 }
-			    },
-	      value      => {
-			     name     => 'value',
-			     get_meth => sub { shift->get_value(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_value(@_) },
-			     set_args => [],
-			     disp     => 'Value',
-			     len      => 256,
-			     req      => 0,
-			     type     => 'short',
-			     props    => { type => 'textarea',
-					   cols => 40,
-				           rows => 4
-					 }
-			    },
+    $METHS = {
+              name      => {
+                             name     => 'name',
+                             get_meth => sub { shift->get_name(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_name(@_) },
+                             set_args => [],
+                             disp     => 'Name',
+                             search   => 1,
+                             len      => 64,
+                             req      => 0,
+                             type     => 'short',
+                             props    => {   type       => 'text',
+                                             length     => 32,
+                                             maxlength => 64
+                                         }
+                            },
+              description      => {
+                             name     => 'description',
+                             get_meth => sub { shift->get_description(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_description(@_) },
+                             set_args => [],
+                             disp     => 'Description',
+                             len      => 256,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type => 'textarea',
+                                           cols => 40,
+                                           rows => 4
+                                         }
+                            },
+              default      => {
+                             name     => 'default',
+                             get_meth => sub { shift->get_default(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_default(@_) },
+                             set_args => [],
+                             disp     => 'Default',
+                             len      => 256,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type => 'textarea',
+                                           cols => 40,
+                                           rows => 4
+                                         }
+                            },
+              value      => {
+                             name     => 'value',
+                             get_meth => sub { shift->get_value(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_value(@_) },
+                             set_args => [],
+                             disp     => 'Value',
+                             len      => 256,
+                             req      => 0,
+                             type     => 'short',
+                             props    => { type => 'textarea',
+                                           cols => 40,
+                                           rows => 4
+                                         }
+                            },
               opt_type   => {
                              name     => 'opt_type',
                              get_meth => sub { shift->get_opt_type(@_) },
@@ -620,16 +637,16 @@ sub my_meths {
                              len      => 16,
                              req      => 1,
                             },
-	      val_name   => {
-			     name     => 'val_name',
-			     get_meth => sub { shift->get_val_name(@_) },
-			     get_args => [],
-			     disp     => 'Value Name',
-			     len      => 256,
-			     req      => 0,
-			    }
-	     };
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+              val_name   => {
+                             name     => 'val_name',
+                             get_meth => sub { shift->get_val_name(@_) },
+                             get_args => [],
+                             disp     => 'Value Name',
+                             len      => 256,
+                             req      => 0,
+                            }
+             };
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
 }
 
 ################################################################################
@@ -956,7 +973,7 @@ B<Notes:> NONE.
 =cut
 
 sub get_opts { wantarray ? sort keys %{ &$get_opts($_[0]) }
-		 : [ sort keys %{ &$get_opts($_[0]) } ];
+                 : [ sort keys %{ &$get_opts($_[0]) } ];
 }
 
 ################################################################################
@@ -1158,49 +1175,64 @@ B<Notes:> NONE.
 =cut
 
 $get_em = sub {
-    my ($pkg, $params, $ids) = @_;
-    my (@wheres, @params);
+    my ($pkg, $params, $ids, $href) = @_;
+    my $tables = 'pref p, pref_opt o, member m, pref_member c';
+    my $wheres = 'p.id = o.pref__id AND p.id = c.object_id ' .
+      'AND m.id = c.member__id';
+    my @params;
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id') {
-	    push @wheres, "p.$k = ?";
-	    push @params, $v;
-	} elsif ($k eq 'val_name') {
-	    push @wheres, "LOWER(o.description) LIKE ?";
-	    push @params, lc $v;
-	} else {
-	    # It's a varchar field.
-	    push @wheres, "LOWER(p.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+        if ($k eq 'id') {
+            $wheres .= " AND p.$k = ?";
+            push @params, $v;
+        } elsif ($k eq 'val_name') {
+            $wheres .= " AND LOWER(o.description) LIKE ?";
+            push @params, lc $v;
+        } elsif ($k eq 'grp_id') {
+            # Add in the group tables a second time and join to them.
+            $tables .= ", member m2, pref_member c2";
+            $wheres .= " AND p.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.grp__id = ?";
+            push @params, $v;
+        } else {
+            $k = 'def' if $k eq 'default';
+            # It's a varchar field.
+            $wheres .= " AND LOWER(p.$k) LIKE ?";
+            push @params, lc $v;
+        }
     }
 
-    # Assemble the WHERE statement.
-    my $where = @wheres ? join("\n               AND ", ('', @wheres)) : '';
-
-    # Assemble the query.
-    local $" = ', ';
-    my $qry_cols = $ids ? ['p.id'] : \@cols;
-    my $sel = prepare_ca(qq{
-        SELECT @$qry_cols
-        FROM   pref p, pref_opt o
-        WHERE  p.value = o.value
-               AND p.id = o.pref__id $where
-        ORDER BY p.name
+    # Assemble and prepare the query.
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT p.id', 'p.id') :
+      (\$SEL_COLS, 'p.name, p.id');
+    my $sel = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
-    my (@d, @prefs);
-    bind_columns($sel, \@d[0..$#cols]);
+    my (@d, @prefs, $grp_ids);
     $pkg = ref $pkg || $pkg;
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	push @prefs, $self
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new pref object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @prefs, $self;
+        } else {
+            push @$grp_ids, $d[$#d];
+        }
     }
     return \@prefs;
 };
