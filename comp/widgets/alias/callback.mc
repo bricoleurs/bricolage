@@ -16,7 +16,7 @@ my $work_it = sub {
     $start_desk->save;
 
     # Log that we've created this new alias and moved it into workflow.
-    my $origin_site = Bric::Biz::Site->lookup({ id => $ba->get_site_id });
+    my $origin_site = Bric::Biz::Site->lookup({ id => $aliased->get_site_id });
     log_event("$class_key\_alias_new", $ba, { 'From Site' => $origin_site->get_name });
     log_event("story_add_category", $ba, { Category => $cat->get_name })
       if $class_key eq 'story';
