@@ -1,0 +1,398 @@
+#!/usr/bin/perl -w
+use strict;
+
+=head1 NAME
+
+bric_template_patch - apply a patch to a set of templates
+
+=head1 SYNOPSIS
+
+Apply changes in make_it_red.diff to old_bric.some.com:
+
+  $ bric_template_patch old_bric.some.com < make_it_red.diff
+
+Make a diff of changes from old_bric to new_bric and apply them to
+old_bric:
+
+  $ bric_template_diff old_bric new_bric | bric_template_patch old_bric
+
+=head1 OPTIONS
+
+bric_template_patch [options] target_url
+
+Arguments:
+
+  target_url        - the url of the bricolage instance to recieve the changes
+                      (example: http://bric.bar.com or just bar.com)
+
+Options:
+
+  --username        - the Bricolage username to use on the server.
+                      Defaults to the BRICOLAGE_USERNAME
+                      environment variable if set.
+
+  --password        - the password to use on server.
+                      Default to the BRICOLAGE_PASSWORD environment
+                      variable if set.
+
+  --patch-options   - options to pass to patch, defaults to "-p1",
+                      which is a good setting for patches produced by
+                      bric_template_diff.
+
+  --no-deploy       - normally templates are re-deployed after being
+                      patched.
+
+  --dry-run         - go through the motions but skip the final step where
+                      new templates are uploaded to the target server.
+
+  --force           - complete the patch operation even if patch returns a
+                      non-0 result code.  Defaults off.
+
+  --help            - shows this screen
+
+  --man             - shows the full documentation
+
+  --verbose         - print a running dialogue of operations.  Repeat
+                      up to three times of successively larger amounts
+                      of debugging information.  If verbose isn't turned
+                      on then the -s option is passed to patch to supress
+                      extraneous output.
+
+  --timeout         - specify the HTTP timeout for SOAP requests in
+                      seconds.  Defaults to 60.
+
+=head1 DESCRIPTION
+
+This program applies a patch produced by C<bric_template_diff> to the
+templates on the target server.  This is useful in a situation where
+you need to distribute a limited change across a number of Bricolage
+instance which have slightly different templates.
+
+=head1 CAVEATS
+
+=over 4
+
+=item *
+
+This program requires GNU C<patch> to be installed and in your path.
+
+=item *
+
+This program will neither create new templates nor delete existing
+ones.  See C<bric_dev_sync> if you need that functionality.
+
+=item *
+
+This program does not yet support output channels, so if you have more than
+one output channel on one or both of your Bricolage servers, you might get
+strange results.
+
+=item *
+
+The patched template is automatically redeployed after it is patched. A future
+option may be added to simply save it to My Workspace, instead.
+
+=back
+
+=head1 AUTHOR
+
+Sam Tregar <stregar@thepirtgroup.com>
+
+=cut
+
+use Getopt::Long;
+use Pod::Usage;
+
+use constant PATCH_BIN => 'patch';
+
+BEGIN {
+    # get parameters from command line.  do this during compile so
+    # $VERBOSE can effect use options and such.  also so errors get
+    # detected as quick as possible - people are waiting out there!
+    our $url;
+    our $username        = $ENV{BRICOLAGE_USERNAME};
+    our $password        = $ENV{BRICOLAGE_PASSWORD};
+    our $VERBOSE              = 0;
+    our $timeout              = 60;
+    our ($help, $man);
+    our $patch_options        = '-p1';
+    our $dry_run              = 0;
+    our $force                = 0;
+    our $no_deploy            = 0;
+    GetOptions("help"                   => \$help,
+	       "man"                    => \$man,
+	       "verbose+"               => \$VERBOSE,
+	       "username=s"             => \$username,
+	       "password=s"             => \$password,
+               "timeout=s"              => \$timeout,
+               "dry-run"                => \$dry_run,
+               "patch-options=s"        => \$patch_options,
+               "force"                  => \$force,
+               "no_deploy"              => \$no_deploy,
+	      ) or  pod2usage(2);
+
+    pod2usage(1)             if $help;
+    pod2usage(-verbose => 2) if $man;
+
+    # check required options
+    pod2usage("Missing required --username option ".
+	      "and BRICOLAGE_USERNAME environment variable unset.")
+	unless defined $username;
+    pod2usage("Missing required --password option ".
+	      "and BRICOLAGE_PASSWORD environment variable unset.")
+	unless defined $password;
+
+    # get url
+    $url = shift @ARGV;
+    pod2usage("Missing required url parameter")
+      unless defined $url;
+};
+
+our $VERBOSE;
+use SOAP::Lite ($VERBOSE > 2 ? (trace => [qw(debug)]) : ());
+import SOAP::Data 'name';
+use HTTP::Cookies;
+require Data::Dumper if $VERBOSE;
+use File::Temp qw(tempdir);
+use File::Spec::Functions qw(catdir splitdir catfile);
+use File::Path qw(mkpath);
+use MIME::Base64 qw(decode_base64 encode_base64);
+use Cwd qw(cwd);
+use XML::Simple qw(XMLin);
+
+main();
+
+# main is where it's at
+sub main {
+    # connect and login to SOAP server
+    soap_connect();
+
+    # read in the diff from STDIN
+    read_diff();
+
+    # fetch templates mentioned in the diff and put em in temp
+    my $temp = tempdir(CLEANUP => 1);
+    fetch_templates($temp);
+
+    # perform patch operation in temp
+    do_patch($temp);
+
+    # upload the results
+    upload_templates($temp);
+
+    print "bric_template_patch finished OK\n";
+
+    exit 0;
+}
+
+# upload the results from the patch to the server
+sub upload_templates {
+    my $dir = shift;
+    our ($url, $soap, @filenames, $no_deploy, $dry_run, %templates);
+
+    # loop through patched files
+  FILE:
+    foreach my $filename (@filenames) {
+        my ($template_id, $xml) = @{$templates{$filename}};
+
+        # get new data section
+        open(FILE, "<", catfile($dir, $filename))
+          or die "Unable to open $dir/$filename: $!";
+        my $new_data = encode_base64(join('',<FILE>));
+        close FILE or die $!;
+
+        # insert new data into old xml
+        $xml =~ s!<data>.*?</data>!<data>$new_data</data>!;
+
+        # a dry-run stops here
+        if ($dry_run) {
+            print STDERR "Skipping update and deploy, --dry-run in effect.\n"
+              if $VERBOSE;
+            next FILE;
+        }
+
+        # do the update
+        print STDERR "Sending updated $filename to server.\n"
+          if $VERBOSE;
+        $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Template');
+        my $response = $soap->update(name(document => $xml)->type('base64'),
+                                     name(update_ids => 
+                                          [name(template_id => $template_id)])
+                                    );
+        _print_fault($response) if $response->fault;
+
+        # deploy the template
+        unless ($no_deploy) {
+            print STDERR "Deploying updated $filename to server.\n"
+              if $VERBOSE;
+            $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Workflow');
+            $response = $soap->deploy(name("deploy_ids" => 
+                                           [name(template_id => $template_id)])
+                                     );
+            _print_fault($response) if $response->fault;
+        }
+    }
+}
+
+# perform the patch
+sub do_patch {
+    my $dir = shift;
+    our $diff;
+    our $patch_options;
+    our $force;
+
+    my $old_dir = cwd;
+    chdir($dir) or die "Can't change to $dir: $!";
+
+    # tell patch to be quiet?
+    unless ($VERBOSE or $patch_options =~ /\b-s\b/) {
+        $patch_options .= " -s";
+    }
+
+    print STDERR "Running 'patch $patch_options' in $dir.\n"
+      if $VERBOSE;
+    open(PATCH, "| " . PATCH_BIN . " $patch_options > .patch.out.$$ 2>&1")
+      or die "Unable to start patch: $!";
+    print PATCH $diff;
+    close PATCH;
+    my $err = $?;
+
+    # read in output and print it
+    open(OUT, "<", ".patch.out.$$") or die "Unable to read .patch.out.$$ : $!";
+    while (<OUT>) {
+        print "patch: $_";
+    }
+    close OUT;
+
+    # gotta get back
+    chdir($old_dir) or die "Can't get back to $old_dir: $!";
+
+    # evaluate patch status
+    if (($err >> 8) != 0) {
+        # copy reject files to currect directory
+        system("cp $dir/*.rej .");
+
+        die "\nPatch didn't complete 100% successfully.  Try again with --force if you want to ignore the problems described above.\n"
+          unless $force;
+        print STDERR "Patch found problems, but --force is set.  Continuing.\n"
+          if $VERBOSE;
+    }
+}
+
+# read the diff from STDIN
+sub read_diff {
+    our ($diff, @filenames);
+
+    while(<STDIN>) {
+        $diff .= $_;
+
+        # collect filenames in the diff
+        if (m!^\+\+\+ to(/\S+)!) {
+            my $filename = $1;
+            push(@filenames, $filename);
+        }
+    }
+
+    die "Failed to read diff from STDIN!\n"
+      unless length($diff);
+    die "Didn't find any filenames in diff read from STDIN!  Maybe that wasn't a unified diff?\n"
+      unless @filenames;
+
+    print STDERR "Read filenames from diff: " . join(', ', @filenames) . "\n"
+      if $VERBOSE;
+}
+
+# get all templates from a server
+sub fetch_templates {
+    my ($dir) = @_;
+    our ($url, $soap, @filenames);
+    our %templates;
+
+    $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Template');
+
+    # fetch each filename in turn
+    foreach my $filename (@filenames) {
+
+        # find template ID for this filename
+        my $response = $soap->list_ids(name(file_name => $filename));
+        _print_fault($response) if $response->fault;
+        my $template_id = $response->result->[0];
+        next unless $template_id;
+
+        print STDERR "Found template ID $template_id for $filename.\n"
+          if $VERBOSE;
+
+        # pull the template XML
+        $response = $soap->export(name(template_id => $template_id));
+        _print_fault($response) if $response->fault;
+        my $raw_xml = $response->result;
+
+        # remember ID and XML for update operation later
+        $templates{$filename} = [$template_id, $raw_xml];
+
+        # parse file and extract filename and data
+        my $xml = XMLin($raw_xml);
+        my $data = $xml->{template}{data};
+        my $decoded_data = $data ? decode_base64($data) : '';
+        my $filename = $xml->{template}{file_name};
+        print STDERR "Extracted template $filename ($template_id) from $url : "
+          . length($decoded_data) . " bytes.\n"
+            if $VERBOSE;
+
+        # construct target location
+        my $path = catdir($dir, $filename);
+
+        # make directory if needed
+        my @parts = splitdir($path);
+        my $loc = catdir(@parts[0..$#parts-1]);
+        mkpath([$loc]) unless -d $loc;
+
+        # write out template
+        open(TEMPLATE, ">$path") or die "Unable to open $path : $!";
+        print TEMPLATE $decoded_data;
+        close TEMPLATE or die $!;
+    }
+}
+
+#
+# startup dance routines
+#
+
+# connect source and target soap handles
+sub soap_connect {
+    our ($url, $username, $password, $soap);
+    our $timeout;
+
+    # fixup url if missing http://
+    $url = "http://$url" unless $url =~ m!^https?://!;
+
+    # setup soap object to login with
+    $soap = new SOAP::Lite
+	uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
+        readable => $VERBOSE >= 2 ? 1 : 0;
+    $soap->proxy($url . '/soap',
+		 cookie_jar => HTTP::Cookies->new(ignore_discard => 1),
+		 timeout => $timeout,
+		);
+
+    # login
+    print STDERR "Logging in to $url as $username...\n" if $VERBOSE;
+    my $response = $soap->login(name(username => $username), 
+				name(password => $password));
+    die "Login to $url as $username failed.\n" if $response->fault;
+    print STDERR "Login to $url success.\n" if $VERBOSE;
+}
+
+# prints out fault message
+sub _print_fault {
+    my $r = shift;
+    if ($r->faultstring eq 'Application error' and
+	ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
+	# this is a bric exception, the interesting stuff is in detail
+	die "Call to Bric::SOAP failed : \n" .
+	    join("\n", values %{$r->faultdetail});
+    } else {
+	die "Call to Bric::SOAP failed : \n" .
+	    $r->faultstring;
+    }
+}

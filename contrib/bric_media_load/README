@@ -1,0 +1,19 @@
+NAME
+    bric_media_load
+
+DESCRIPTION
+    This program exists to copy media into Bricolage while accounting for
+    the new to update existing media. This is analgous to the way
+    "bric_dev_sync" handles copying elements and templates, and varies
+    from "bric_media_upload", which uploads actual media files on the
+    local file system.
+
+    perldoc bric_media_load for more information.
+
+AUTHOR
+    Sam Tregar <stregar@thepirtgroup.com>
+
+COPYRIGHT AND LICENSE
+    Copyright (c) 2003 About.com, Inc. See Bric::License for complete
+    license terms and conditions.
+

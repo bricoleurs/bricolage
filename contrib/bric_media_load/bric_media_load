@@ -1,0 +1,236 @@
+#!/usr/bin/perl -w
+use strict;
+
+=head1 NAME
+
+bric_media_load - copy media into Bricolage, safely
+
+=head1 SYNOPSIS
+
+First export the media on the source system:
+
+  bric_soap --server source.bric.com media export 1024 > media.xml
+
+Then copy the media into the target system:
+
+  bric_media_load --server target.bric.com media.xml
+
+Alternately, operate in a pipe:
+
+  bric_soap --server source.bric.com media export 1024 |\
+  bric_media_load --server target.bric.com -
+
+Since this script prints out the media IDs it updates or creates, you
+can pipe the results to other operations, like publishing:
+
+  bric_soap --server source.bric.com media export 1024 |\
+  bric_media_load --server target.bric.com |\
+  bric_soap --server target.bric.com workflow publish -
+
+=head1 OPTIONS
+
+bric_media_load [source.xml|-]
+
+Options:
+
+  --help                 - shows this screen
+
+  --man                  - shows the full documentation
+
+  --server               - specifies the Bricolage server URL, defaults to
+                           the BRICOLAGE_SERVER environment variable if set,
+                           http://localhost otherwise.
+
+  --username             - the Bricolage username, defaults to the
+                           BRICOLAGE_USERNAME environment variable if
+                           set, 'admin' otherwise
+
+  --password             - the password for the Bricolage user.
+                           Default to the BRICOLAGE_PASSWORD
+                           environment variable if set.
+
+  --verbose              - print a running description to STDERR.  Add
+                           a second --verbose and you'll get debugging
+                           output too.  Add a third and you'll see a full
+                           XML trace.
+
+  --timeout              - specify the HTTP timeout for SOAP requests in
+                           seconds.  Defaults to 30.
+
+=head1 DESCRIPTION
+
+This program exists to copy media into Bricolage while accounting for
+the new to update existing media.  This is analgous to the way
+C<bric_dev_sync> handles copying elements and templates, and varies
+from C<bric_media_upload, which uploads actual media files on the
+local file system.
+
+=head1 AUTHOR
+
+Sam Tregar <stregar@thepirtgroup.com>
+
+=cut
+
+use Pod::Usage;
+use Getopt::Long;
+
+BEGIN {
+    our $timeout              = 30;
+    our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
+    our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
+    our $server                 = $ENV{BRICOLAGE_SERVER} || 'http://localhost';
+    our $verbose;
+    our ($help, $man);
+    GetOptions("help"                   => \$help,
+	       "man"                    => \$man,
+	       "verbose+"               => \$verbose,
+               "timeout=s"              => \$timeout,
+	       "username=s"             => \$username,
+	       "password=s"             => \$password,
+	       "server=s"               => \$server,
+	      ) or  pod2usage(2);
+
+    pod2usage(1)             if $help;
+    pod2usage(-verbose => 2) if $man;
+    $verbose ||= 0;
+}
+our ($username, $password, $server, $verbose, $timeout);
+
+use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ()),
+  on_fault => \&_handle_fault;
+import SOAP::Data 'name';
+use HTTP::Cookies;
+
+# read in media file
+pod2usage("Missing required input file.") unless @ARGV;
+pod2usage("Too many args.") if @ARGV != 1;
+my $file = $ARGV[0];
+my $xml;
+if ($file eq '-') {
+    local $/;
+    $xml = <STDIN>;
+} else {
+    open FILE, $file or die "Unable to open '$file': $!";
+    local $/;
+    $xml = <FILE>;
+    close FILE or die $!;
+}
+
+# check that it looks reasonable
+die "Input file '$file' is not a valid Bricolage media export.\n"
+  unless $xml =~ /<assets/ and $xml =~ /<media/;
+
+# get a list of URIs in the input file
+my @uris = $xml =~ m!<uri>(.*?)</uri>!g;
+die "Did not find any media URIs in input file.\n"
+  unless @uris;
+print STDERR "Parsed list of media URIs:\n\t", join("\n\t", @uris), "\n"
+  if $verbose;
+
+# get ID foreach URI if it exists in the target
+my $soap = _soap();
+my @ids;
+foreach my $uri (@uris) {
+    my $response = $soap->list_ids(name(uri => $uri));
+    my $list = $response->result;
+    if ($list and @$list) {
+        my ($id) = @$list;
+        print STDERR "Found ID $id for $uri.\n" if $verbose;
+        push @ids, $id;
+    } else {
+        print STDERR "Found no ID for $uri.\n" if $verbose;
+        push @ids, undef;
+    }
+}
+
+# update IDs to prepare for import
+my $x = -1;
+$xml =~ s!<(media[^>]+)id="(\d+)"!
+    $x++;
+    my $id = $ids[$x];
+    if (defined $id) {
+       print "Subsituted ID $id for ID $2.\n" if $verbose > 1;
+       qq{<${1}id="$id"};
+    } else {
+       qq{<${1}id="$2"};
+    }
+!ge;
+
+# run the update
+@ids = grep { defined } @ids;
+print STDERR "Calling Media update with update_ids ", join(', ',@ids), "\n"
+  if $verbose;
+my $response = $soap->update(name(document => $xml)->type('base64'),
+                             name(update_ids => 
+                                  [ map { name("media_id" => $_) } @ids ]));
+# print out ids
+_print_ids($response);
+
+#
+# Utility functions
+#
+
+# get a SOAP object connected to the target system
+sub _soap {
+    # setup soap object to login with
+    my $soap = new SOAP::Lite
+      uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
+        readable => $verbose > 2 || 0;
+    $server = "http://$server" unless $server =~ m!^https?://!;
+    my $cookie_string;
+    $soap->proxy($server . '/soap',
+                 cookie_jar => HTTP::Cookies->new(ignore_discard => 1, file => $cookie_string, autosave=>1),
+                 timeout    => $timeout,
+                );
+
+    # login
+    print STDERR "Authenticating to Bricolage...\n" if $verbose;
+    my $response = $soap->login(name(username => $username), 
+                                name(password => $password));
+    die "Login failed.\n" if $response->fault;
+    print STDERR "Login success.\n" if $verbose;
+
+    # switch to Media module
+    $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Media');
+
+    return $soap;
+}
+
+# handle faults from SOAP::Lite's on_fault event
+sub _handle_fault {
+    my ($soap, $r) = @_;
+
+    # print out the error as appropriate
+    if (ref $r) {
+        if ($r->faultstring eq 'Application error' and
+            ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
+            # this is a bric exception, the interesting stuff is in detail
+            print STDERR "Call to Bric::SOAP failed : \n" .
+              join("\n", values %{$r->faultdetail});
+        } else {
+            print STDERR "Call to Bric::SOAP failed : \n" .
+              $r->faultstring;
+        }
+        print STDERR "Check the Apache error log for more detail.\n";
+    } else {
+        print STDERR "TRANSPORT ERROR:", $soap->transport->status, "\n";
+        print STDERR "Check the Apache error log for more information.\n";
+    }
+
+    # exit 
+    exit 1;
+}
+
+# prints out ids from a SOAP response
+sub _print_ids {
+    my $response = shift;
+    # print out ids with types
+    my ($count, $data);
+    for($count = 1; 
+	$data = $response->dataof("/Envelope/Body/[1]/[1]/[$count]");
+	$count++) {
+	my $name = $data->name;
+	$name =~ s/_id$//;
+	print $name, "_", $data->value, "\n";
+    }
+}

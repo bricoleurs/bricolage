@@ -1,0 +1,312 @@
+#!/usr/bin/perl -w
+use strict;
+
+=head1 NAME
+
+bric_template_diff - describe differences between template sets
+
+=head1 SYNOPSIS
+
+Produce a diff of all changes from old_bric to new_bric:
+
+  $ bric_template_diff old_bric.some.com new_bric.some.com > diff.txt
+
+Produce a diff of the changes to /cover.tmpl:
+
+  $ bric_template_diff --template /cover.tmpl old_bric new_bric > diff.txt
+
+Same thing, ignoring changes in whitespace
+
+  $ bric_template_diff --diff-options -urbB --template /cover.tmpl \
+    old_bric new_bric > diff.txt
+
+=head1 OPTIONS
+
+bric_template_diff [options] from_url to_url
+
+Arguments:
+
+  from_url          - the url for the base template set
+                      (example: http://localhost or just localhost)
+
+  to_url            - the url for the changed template set
+                      (example: http://bric.bar.com or just bar.com)
+
+Options:
+
+  --from-username   - the Bricolage username to use on the from_url
+                      server.  Defaults to the BRICOLAGE_USERNAME
+                      environment variable if set.
+
+  --from-password   - the password to use on the from_url server.
+                      Default to the BRICOLAGE_PASSWORD environment
+                      variable if set.
+
+  --to-username     - the Bricolage username to use on the to_url
+                      server(s).  Defaults to the BRICOLAGE_USERNAME
+                      environment variable if set.
+
+  --to-password     - the password to use on the to_url server(s).
+                      Default to the BRICOLAGE_PASSWORD environment
+                      variable if set.
+
+  --template        - pass the name of a template here and only this template
+                      file will be included in the diff.
+
+  --diff-options    - options to pass to diff, defaults to "-ur".  Note
+                      that bric_template_patch requires '-ur' and won't
+                      work with '-N'.
+
+  --help            - shows this screen
+
+  --man             - shows the full documentation
+
+  --verbose         - print a running dialogue of operations.  Repeat
+                      up to three times of successively larger amounts
+                      of debugging information.
+
+  --timeout         - specify the HTTP timeout for SOAP requests in
+                      seconds.  Defaults to 60.
+
+=head1 DESCRIPTION
+
+This program produces a standard diff file describing the differences
+between the templates on two Bricolage servers.  This file may be used
+with C<bric_template_patch> to effect the changes described in the
+diff.
+
+=head1 CAVEATS
+
+=over 4
+
+=item *
+
+This program requires GNU C<diff> to be installed and in your path.
+
+=item *
+
+This program does not yet support output channels, so if you have more than
+one output channel on one or both of your Bricolage servers, you might get
+strange results.
+
+=back
+
+=head1 AUTHOR
+
+Sam Tregar <stregar@thepirtgroup.com>
+
+=cut
+
+use Getopt::Long;
+use Pod::Usage;
+
+BEGIN {
+    # get parameters from command line.  do this during compile so
+    # $VERBOSE can effect use options and such.  also so errors get
+    # detected as quick as possible - people are waiting out there!
+    our ($from_url, $to_url);
+    our $from_username        = $ENV{BRICOLAGE_USERNAME};
+    our $from_password        = $ENV{BRICOLAGE_PASSWORD};
+    our $to_username          = $ENV{BRICOLAGE_USERNAME};
+    our $to_password          = $ENV{BRICOLAGE_PASSWORD};
+    our $VERBOSE              = 0;
+    our $timeout              = 60;
+    our ($help, $man);
+    our $template_name;
+    our $diff_options         = '-ur';
+    GetOptions("help"                   => \$help,
+	       "man"                    => \$man,
+	       "verbose+"               => \$VERBOSE,
+	       "from-username=s"        => \$from_username,
+	       "from-password=s"        => \$from_password,
+	       "to-username=s"          => \$to_username,
+	       "to-password=s"          => \$to_password,
+               "timeout=s"              => \$timeout,
+               "template=s"             => \$template_name,
+               "diff-options=s"         => \$diff_options,
+	      ) or  pod2usage(2);
+
+    pod2usage(1)             if $help;
+    pod2usage(-verbose => 2) if $man;
+
+    # check required options
+    pod2usage("Missing required --from-username option ".
+	      "and BRICOLAGE_USERNAME environment variable unset.")
+	unless defined $from_username;
+    pod2usage("Missing required --from-password option ".
+	      "and BRICOLAGE_PASSWORD environment variable unset.")
+	unless defined $from_password;
+    pod2usage("Missing required --to-username option ".
+	      "and BRICOLAGE_USERNAME environment variable unset.")
+	unless defined $to_username;
+    pod2usage("Missing required --to-password option ".
+	      "and BRICOLAGE_PASSWORD environment variable unset.")
+	unless defined $to_password;
+
+    # get from and tos
+    $from_url = shift @ARGV;
+    pod2usage("Missing required from_url and to_url parameters")
+      unless defined $from_url;
+    $to_url = shift @ARGV;
+    pod2usage("Missing required to_url parameter")
+	unless $to_url;
+};
+
+our $VERBOSE;
+use SOAP::Lite ($VERBOSE > 2 ? (trace => [qw(debug)]) : ());
+import SOAP::Data 'name';
+use HTTP::Cookies;
+require Data::Dumper if $VERBOSE;
+use File::Temp qw(tempdir);
+use File::Spec::Functions qw(catdir splitdir);
+use File::Path qw(mkpath);
+use XML::Simple qw(XMLin);
+use MIME::Base64 qw(decode_base64);
+use Cwd qw(cwd);
+
+main();
+
+# main is where it's at
+sub main {
+    our ($from, $from_url, $to, $to_url);
+
+    # connect and login to SOAP servers
+    soap_connect();
+
+    # fetch templates from from and to
+    my $temp = tempdir(CLEANUP => 1);
+    fetch_templates($from_url, $from, catdir($temp, 'from'));
+    fetch_templates($to_url, $to, catdir($temp, 'to'));
+
+    # make'um diff'um
+    make_diff($temp);
+    exit 0;
+}
+
+# make a diff of the templates
+sub make_diff {
+    my $dir = shift;
+    our $diff_options;
+
+    my $old_dir = cwd;
+    chdir($dir) or die "Can't change to $dir: $!";
+
+    my $cmd = "diff $diff_options from to |";
+    print STDERR "Running '$cmd' in $dir.\n"
+      if $VERBOSE;
+    open(DIFF, $cmd) 
+      or die "Unable to start diff: $!";
+    while(<DIFF>) {
+        print;
+    }
+    close DIFF;
+
+    # gotta get back
+    chdir($old_dir) or die "Can't get back to $old_dir: $!";
+}
+
+# get all templates from a server
+sub fetch_templates {
+    my ($url, $soap, $dir) = @_;
+    our $template_name;
+    mkpath([$dir]) unless -d $dir;
+
+    my @search;
+    if ($template_name) {
+        push(@search, name(file_name => $template_name));
+    }
+
+    # get list of template IDs
+    $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Template');
+    my $response = $soap->list_ids(@search);
+    _print_fault($response) if $response->fault;
+    my @template_ids = @{ $response->result };
+    print STDERR "Found template IDs: ", join(',', @template_ids), "\n"
+      if $VERBOSE;
+
+    # pull templates and decode into $dir
+    foreach my $template_id (@template_ids) {
+        $response = $soap->export(name('template_id', $template_id));
+        _print_fault($response) if $response->fault;
+
+        # parse file and extract filename and data
+        my $xml = XMLin($response->result);
+        my $data = $xml->{template}{data};
+        my $decoded_data = $data ? decode_base64($data) : '';
+        my $filename = $xml->{template}{file_name};
+        print STDERR "Extracted template $filename ($template_id) from $url : "
+          . length($decoded_data) . " bytes.\n"
+            if $VERBOSE;
+
+        # construct target location
+        my $path = catdir($dir, $filename);
+
+        # make directory if needed
+        my @parts = splitdir($path);
+        my $loc = catdir(@parts[0..$#parts-1]);
+        mkpath([$loc]) unless -d $loc;
+
+        # write out template
+        open(TEMPLATE, ">$path") or die "Unable to open $path : $!";
+        print TEMPLATE $decoded_data;
+        close TEMPLATE or die $!;
+    }
+}
+
+#
+# startup dance routines
+#
+
+# connect source and target soap handles
+sub soap_connect {
+    our ($from_url, $from_username, $from_password);
+    our ($to_url,  $to_username, $to_password);
+    our ($from, $to);
+
+    # connect to from
+    $from = soap_connect_to($from_url, $from_username, $from_password);
+
+    # connect to to
+    $to = soap_connect_to($to_url, $to_username, $to_password);
+}
+
+# connects to a specific SOAP server given url, username and password
+sub soap_connect_to {
+    my ($url, $username, $password) = @_;
+    our $timeout;
+
+    # fixup url if missing http://
+    $url = "http://$url" unless $url =~ m!^https?://!;
+
+    # setup soap object to login with
+    my $soap = new SOAP::Lite
+	uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
+        readable => $VERBOSE >= 2 ? 1 : 0;
+    $soap->proxy($url . '/soap',
+		 cookie_jar => HTTP::Cookies->new(ignore_discard => 1),
+		 timeout => $timeout,
+		);
+
+    # login
+    print STDERR "Logging in to $url as $username...\n" if $VERBOSE;
+    my $response = $soap->login(name(username => $username), 
+				name(password => $password));
+    die "Login to $url as $username failed.\n" if $response->fault;
+    print STDERR "Login to $url success.\n" if $VERBOSE;
+
+    return $soap;
+}
+
+# prints out fault message
+sub _print_fault {
+    my $r = shift;
+    if ($r->faultstring eq 'Application error' and
+	ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
+	# this is a bric exception, the interesting stuff is in detail
+	die "Call to Bric::SOAP failed : \n" .
+	    join("\n", values %{$r->faultdetail});
+    } else {
+	die "Call to Bric::SOAP failed : \n" .
+	    $r->faultstring;
+    }
+}

@@ -53,6 +53,17 @@ file exists for the MIME type of the media file. Administrators are free to
 add their own icons, and the C<copy_gnome_icons> script in F<contrib> makes it
 easy to use GNOME icons. [David]
 
+=item *
+
+Added C<bric_template_diff> and C<bric_template_patch> scripts in
+F<contrib/bric_template_diff>. These scripts can be used to sync templates
+between two Bricolage servers. [Sam]
+
+=item *
+
+added C<bric_media_load> to C<contrib/>. This script copies media into
+Bricolage while accounting for the new to update existing media. [Sam]
+
 =back
 
 =head2 Improvements
@@ -174,6 +185,13 @@ to it. Suggested by Dave Rolsky. [David]
 Added the C<unexpired> parameter to the C<list()> method of the story and
 media classes. It selects for stories without an expire date, or with an
 expire date set in the future. [David]
+
+=item *
+
+The "User Override" admin tool is now available to all users. But a user can
+only override another user if she has EDIT permission to that other user. This
+makes it easier for user administrators to masquerade as other users without
+having to change passwords. [David]
 
 =back
 
