@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-25 19:42:42 $
+$Date: 2002-10-28 20:48:03 $
 
 =head1 SYNOPSIS
 
@@ -1478,11 +1478,17 @@ sub _select_category {
 
     # The left join in here is allows us to return all of the group IDs with
     # the categories in a single query
-    my $sql = 'SELECT '. join ',', 'a.id', COLS;
-    $sql .= ' FROM ' . TABLE . ' a LEFT JOIN (';
-    $sql .= CMTABLE . ' b JOIN ' . MTABLE . ' c';
-    $sql .= ' ON b.member__id = c.id)';
-    $sql .= ' ON a.id = b.object_id ';
+    my $colums = join ',', 'a.id', COLS;  # list of columns to return
+    my $table = TABLE;      # main table to select from
+    my $mtable = MTABLE;    # grp member table from which we get grp__id
+    my $cmtable = CMTABLE;  # relational table to get member table row
+    my $sql = qq{
+        SELECT $columns
+        FROM $table a LEFT JOIN (
+                $cmtable b JOIN $mtable c
+                ON b.member__id = c.id
+            ) ON a.id = b.object_id
+    };
     $sql .= " WHERE $where" if $where;
     $sql .= " ORDER BY uri";
 
