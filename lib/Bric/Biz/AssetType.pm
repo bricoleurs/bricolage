@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.9.2.3 $
+$Revision: 1.9.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-14 20:00:21 $
+$Date: 2002-02-19 21:42:54 $
 
 =head1 SYNOPSIS
 
@@ -2322,8 +2322,9 @@ sub _is_referenced {
     my $self = shift;
     my $rows;
 
-    # Make sure this isn't referenced from a story
-    my $sql  = 'SELECT COUNT(*) FROM story WHERE element__id = ?';
+    # Make sure this isn't referenced from an asset.
+    my $table = $self->is_media ? 'media' : 'story';
+    my $sql  = "SELECT COUNT(*) FROM $table WHERE element__id = ?";
     my $sth  = prepare_c($sql, undef, DEBUG);
     execute($sth, $self->get_id);
     bind_columns($sth, \$rows);
