@@ -145,6 +145,11 @@ cache file.  [Sam]
 
 Fixed typo that broke Bric::Dist::Client. [Mike Slattery]
 
+=item *
+
+Fixed multiple select custom fields for Elements and Contributors. Thanks to
+Mike Slattery for the spot. [David]
+
 =back
 
 =head1 VERSION 1.2.0
