@@ -60,11 +60,6 @@ sub test_new : Test(10) {
     ok (grep($_->get_id == $cont->get_id, @$list), 'Container is listed');
 }
 
-sub test_oc            : Test(0) {}
-sub test_persist       : Test(0) {}
-sub test_primary_oc_id : Test(0) {}
-
-
 1;
 
 __END__

@@ -82,10 +82,6 @@ sub test_new : Test(9) {
     ok (grep($_->get_id == $dtile->get_id, @$list), 'Data Tile is Listed');
 }
 
-sub test_oc            : Test(0) {}
-sub test_persist       : Test(0) {}
-sub test_primary_oc_id : Test(0) {}
-
 1;
 
 __END__

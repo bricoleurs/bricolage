@@ -3,10 +3,8 @@ package Bric::Biz::Asset::Business::Parts::Tile::DevTest;
 
 use strict;
 use warnings;
-use base qw(Bric::Biz::Asset::Business::DevTest);
-
+use base qw(Bric::Test::DevBase);
 use Test::More;
-
 use Bric::Biz::Asset::Business::Story;
 
 ##############################################################################
@@ -18,30 +16,28 @@ sub class { 'Bric::Biz::Asset::Business::Parts::Tile' }
 ################################################################################
 # A sample story to use
 
-my $story;
 sub get_story {
    my $self = shift;
    my $story_pkg = 'Bric::Biz::Asset::Business::Story';
 
-   unless ($story) {
-       $story = $story_pkg->new({name          => 'Fruits',
+   my $story = $story_pkg->new({ name          => 'Fruits',
                                  slug          => 'Cranberry',
                                  element       => $self->get_elem,
                                  user__id      => $self->user_id,
                                  source__id    => 1,
-                                 primary_oc_id => 1});
-       $story->save;
-
-       $self->add_del_ids([$story->get_id], $story->key_name);
-   }
-
+                                 primary_oc_id => 1
+                               });
+   $story->save;
+   $self->add_del_ids([$story->get_id], $story->key_name);
    return $story;
 }
 
-sub del_ids : Test(teardown => 0) {
-    my $self = shift;
-    # Do the main objects, first.
-    $self->Bric::Test::DevBase::del_ids(@_);
+##############################################################################
+# The element object we'll use throughout. Override in subclass if necessary.
+my $elem;
+sub get_elem {
+    $elem ||= Bric::Biz::AssetType->lookup({ id => 1 });
+    $elem;
 }
 
 1;
