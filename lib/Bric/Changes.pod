@@ -40,7 +40,7 @@ Improved error message in Bric::Util::Trans::SFTP. [David]
 
 =item *
 
-Its possible to create new stories again without running into errors saying
+It's possible to create new stories again without running into errors saying
 that a URI is not unique because the cover date and slug were accidentally
 excluded from the URI. [David]
 
