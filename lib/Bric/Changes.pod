@@ -64,6 +64,14 @@ user as the Bricolage Apache server. This should prevent malicious users of
 the virtual FTP server from being able to do things as the root user that they
 shouldn't. [Keith Grennan]
 
+=item *
+
+SQL errors encountered when building the database are now fatal, meaning that
+they will cause the entire installation to fail, rather than continuing to
+execute SQL statements and build an incomplete database. This prevents the
+creation broken databases when people didn't notice errors in the past.
+[David]
+
 =back
 
 =head2 Bug Fixes

@@ -73,13 +73,14 @@ sub exec_sql {
     open STDERR, ">$ERR_FILE" or die "Cannot redirect STDERR to $ERR_FILE: $!\n";
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
-        @$res = `$PG->{psql} -q @args -d $db -P format=unaligned -P pager= -P footer=`;
+        @$res = `$PG->{psql} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
         # Shift off the column headers.
         shift @$res;
         return unless $?;
     } else {
         my @args = $sql ? ('-c', $sql) : ('-f', $file);
-        system($PG->{psql}, '-q', @args, '-d', $db) or return;
+        system($PG->{psql}, '--variable', 'ON_ERROR_STOP=1', '-q', @args, '-d', $db)
+          or return;
     }
 
     # We encountered a problem.
