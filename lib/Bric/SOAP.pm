@@ -1,12 +1,13 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
 use Bric::SOAP::Story;
 use Bric::SOAP::Media;
 use Bric::SOAP::Template;
+use Bric::SOAP::Workflow;
 
 1;
 __END__
@@ -17,11 +18,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2002-02-14 21:33:39 $
+$Date: 2002-02-22 20:18:13 $
 
 =head1 SYNOPSIS
 
