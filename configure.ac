@@ -1,11 +1,11 @@
 
-
 # Process this file with autoconf to produce a configure script.
-AC_INIT(FULL-PACKAGE-NAME, VERSION, BUG-REPORT-ADDRESS)
+AC_INIT(Bricolage, 1.1.2, bugs@bricolage.sourceforge.net)
 
 # Checks for programs
 AC_PROG_APACHE(1.3.20)
 AC_PROG_POSTGRES(PGHOME, 7.1.3)
+AC_POSTGRES_ENCODING(UNICODE)
 AC_PROG_PERL(PERL, 5.6.1)
 AC_PATH_PROG(POD2HTML, pod2html)
 AC_PATH_PROG(POD2TEXT, pod2text)
@@ -48,9 +48,12 @@ CHECK_CPAN_MODULE(MISSING_MOD, Apache::libapreq, 0.31_03)
 # Accept configuration details on the command line
 AC_ARG_VAR(APACHE_USER)
 AC_ARG_VAR(APACHE_GROUP)
+
 AC_ARG_VAR(DB_NAME)
 AC_ARG_VAR(DBI_USER)
 AC_ARG_VAR(DBI_PASS)
+AC_ARG_VAR(POSTGRES_ROOT_USER)
+AC_ARG_VAR(POSTGRES_ROOT_PASS)
 
 AC_CONFIG_FILES([Makefile doc/Makefile])
 AC_OUTPUT

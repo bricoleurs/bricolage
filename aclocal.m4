@@ -97,7 +97,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.7 2001-12-21 11:38:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.8 2001-12-21 16:11:28 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -126,7 +126,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.7 2001-12-21 11:38:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.8 2001-12-21 16:11:28 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -216,6 +216,28 @@ AC_DEFUN([AC_PROG_POSTGRES],[
  AC_SUBST($1,$PGHOME) 
 ])
 
+dnl @synopsis AC_POSTGRES_ENCODING(ENCODING[,PATH_TO_PGCONFIG])
+dnl
+dnl This macro checks to see that postgres has been 
+dnl compiled to allow the desired encoding
+dnl
+dnl @version $Id: aclocal.m4,v 1.8 2001-12-21 16:11:28 markjaroski Exp $
+dnl @author Mark Jaroski <mark@geekhive.net>
+dnl
+AC_DEFUN([AC_POSTGRES_ENCODING], [
+	AC_MSG_CHECKING(if postgres was compiled with $1 support)
+	if test "$2" ; then
+		PG_CONFIG=$2
+	elif test -z "$PG_CONFIG" ;then
+  	AC_PATH_PROG(PG_CONFIG, pg_config, , $PGHOME/bin:/usr/local/pgsql/bin:/opt/pgsql/bin:/usr/local/postgres/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin)
+	fi
+	if $PG_CONFIG --configure | grep multibyte >/dev/null ;then
+		AC_MSG_RESULT(yes)
+	else
+		AC_MSG_RESULT(no)
+		AC_MSG_ERROR(Bricolage requires that Postgres be compiled with multibyte charager support)
+	fi
+])
 
 
 dnl @author Loic Dachary <loic@senga.org> 
