@@ -21,7 +21,7 @@ if (!$useTable) {$compact = 1};
 #-- Month Select
 if ($mon) {
     $mk_time_field->({'base'    => $base_name.'_mon',
-		      'default' => sprintf('%02d', $s->{'mon'} || 0),
+		      'default' => $s->{'mon'},
 		      'label'   => 'Month',
 		      'vals'    => \@month,
 		      'width'   => $cellWidth,
@@ -115,12 +115,11 @@ $indent -= 7 if ($agent->{browser} eq "Netscape");
 
 # Set some default values for the time if necessary.
 if ($default_current) {
-    my @t = localtime;
-    $s->{'year'} ||= $t[5] + 1900;
-    $s->{'mon'}  ||= $t[4] + 1;
-    $s->{'day'}  ||= $t[3];
-    $s->{'hour'} ||= $t[2];
-    $s->{'min'}  ||= $t[1];
+    $s->{year} ||= strfdate(undef, '%Y');
+    $s->{mon}  ||= strfdate(undef, '%m');
+    $s->{day}  ||= strfdate(undef, '%d');
+    $s->{hour} ||= strfdate(undef, '%H');
+    $s->{min}  ||= strfdate(undef, '%M');
 }
 
 my @mon_names = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);

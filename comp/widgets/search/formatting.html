@@ -69,8 +69,6 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                      useTable => 0 &>
                 </td>
               </tr>
-% my @cur   = localtime; $cur[5] += 1900; $cur[4]++;
-% my $today = sprintf('%04d-%02d-%02d %02d:%02d:%02d', @cur[5,4,3,2,1,0]);
               <tr>
                 <td colspan=2><span class=label><% $lang->maketext('Cover Date') %></span><br />
                   <% $lang->maketext('From') %>:
