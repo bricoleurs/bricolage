@@ -98,24 +98,24 @@ eliminate the code that picks up on this and corrects it. [David]
 =item *
 
 The distribution monitor, F<bric_dist_mon>, now prints error information to
-STDERR when there is an error, instead of just printing it to the system log.
-[David]
+C<STDERR> when there is an error, instead of just printing it to the system
+log. [David]
 
 =item *
 
 Existing jobs are now executed within their own transactions, as opposed to no
-transaction specification. This means that each must succeed or fail
+transaction specification. This means that each job must succeed or fail
 independent of any other jobs. New jobs are executed before being inserted
 into the database so as to keep them atomic within their surrounding
 transaction (generally a UI request). All this means that transactionality is
-much more intelligent for jobs and will hopefully eliminate job deadlocks.
-Reported by Mark Jaroski, Serge Sozonoff, Patrick Michael Kane, and others.
-[David]
+much more intelligent for jobs and will hopefully eliminate job table
+deadlocks. Reported by Mark Jaroski, Serge Sozonoff, Patrick Michael Kane, and
+others. [David]
 
 =item *
 
 The workflow, destination, and output channel profiles only display site
-information if the user had EDIT access to more than one site. The "Find
+information if the user has EDIT access to more than one site. The "Find
 Stories" and "Find Media" managers only display the site information for the
 listed documents if there is more than one site in Bricolage. Suggested by
 Scott Lanning. [David]
@@ -129,8 +129,8 @@ but previously undocumented. [David]
 
 =item *
 
-Variables are now properly decoded to UTF-8 when they are populated with
-data from the database. [David]
+Variables are now properly decoded to UTF-8 when they are populated from the
+database. [David]
 
 =item *
 
@@ -140,18 +140,19 @@ The strings used in translations are now all properly decoded to UTF-8.
 =item *
 
 All templates now execute with UTF-8 character strings enabled. This means
-that any templates that convert content to other character sets must change
-the way they do so. For example, templates that had used C<< <%filter> >>
-blocks to convert content to another encoding using something like
-C<Encode::from_to($_, 'utf-8', $encoding)> must now use something like
-C<$_ = Encode::encode($encoding, $_)>, instead. [David]
+that any templates that convert content to other character sets might need to
+change the way they do so. For example, templates that had used
+C<< <%filter> >> blocks to convert content to another encoding using something
+like C<Encode::from_to($_, 'utf-8', $encoding)> must now use something like
+C<$_ = Encode::encode($encoding, $_)>, instead. Bric::Util::CharTrans should
+continue to do the right thing. [David]
 
 =item *
 
 Added C<encoding> attribute to Bric::Util::Burner so that, if templates are
-outputting something other than Perl utf8 decoded data, they can specify what
-they're outputting, and the file opened for output will from the templates
-will be set to the proper mode. Applies to Perl 5.8.0 only. [David]
+outputting something other than Perl C<utf8> decoded data, they can specify
+what they're outputting, and the file opened for output from the templates
+will be set to the proper mode. Applies to Perl 5.8.0 and later only. [David]
 
 =item *
 
@@ -197,7 +198,7 @@ the Mason burner. [David]
 
 The C<list()> and C<list_ids()> methods of the story, media, and template
 classes no longer return C<undef> in a scalar context when there are no
-objects to be returned. It returns an empty array reference, instead. [David]
+objects to be returned. They return an empty array reference, instead. [David]
 
 =item *
 
@@ -206,7 +207,7 @@ Reported by Marshall Roch. [David]
 
 =item *
 
-C<make clone> once again properly copies the F<lib/Makefile.PL>
+C<make clone> once again properly copies the F<lib/Makefile.PL> and
 F<bin/Makefile.PL> files from the source directory. [David]
 
 =item *
@@ -397,9 +398,9 @@ and user permissions. Reported by Hal Creech. [David]
 =item *
 
 Content submitted to Bricolage in the UTF-8 character set is now always has
-the utf8 flag set on the Perl strings that store it. This allows fields that
-have a maximum length to be truncated to that length in characters instead of
-bytes. Thanks to Kang-min Liu for the spot! [David]
+the C<utf8> flag set on the Perl strings that store it. This allows fields
+that have a maximum length to be truncated to that length in characters
+instead of bytes. Thanks to Kang-min Liu for the spot! [David]
 
 =item *
 
@@ -418,9 +419,7 @@ order to ensure that this remains the pattern. [David]
 
 Changed the "name" and "error_message" columns in the "job" table in the
 database from C<VARCHAR> to <TEXT>. This is so that we don't have to truncate
-them before inserting them, as doing so can truncate in the middle of
-multibyte characters and lead to 'invalid byte sequence for encoding
-"UNICODE"' database errors. [David]
+them before inserting them. [David]
 
 =item *
 
@@ -432,8 +431,9 @@ created via the SOAP interface. Reported by Todd Tyree. [David]
 Fixed a number of the parameters to the C<list()> method of the Story, Media,
 and Template classes to properly handle an argument using the C<ANY>
 operator. These include the C<keyword> and C<category_uri> parameters. Passing
-an C<ANY> argument to these parameters could cause a well-populated database
-to lock up with an impossible query for hours at a time. [David]
+an C<ANY> argument to these parameters before this release could cause a
+well-populated database to lock up with an impossible query for hours at a
+time. [David]
 
 =item *
 
@@ -464,6 +464,8 @@ The output channel and element profiles no longer display deactivated output
 channels in their output channel select lists (for output channel includes in
 the output channel profile and for primary output channels in the element
 profile). [David]
+
+=item *
 
 The side navigation layer now works correctly with Internet Explorer 5.5 for
 Windows. [Marshall]
