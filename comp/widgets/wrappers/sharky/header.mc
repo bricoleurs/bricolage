@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:22 $
+$Date: 2003-07-25 18:10:59 $
 
 =head1 SYNOPSIS
 
@@ -52,11 +52,11 @@ if ($useSideNav) {
 }
 
 # Figure out where we are (assume workflow).
-my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
+my ($section, $mode, $type) = parse_uri($r->uri);
 $section ||= 'workflow';
 
 my ($layer, $properties);
-my $agent       = $m->comp('/widgets/util/detectAgent.mc');
+my $agent       = detect_agent();
 my $tab         = ($section eq "admin") ? "adminTab" : "workflowTab";
 my $curve_left  = ($section eq "admin") ? "/media/images/CC6633_curve_left.gif" : "/media/images/006666_curve_left.gif";
 my $curve_right = ($section eq "admin") ? "/media/images/CC6633_curve_right.gif" : "/media/images/006666_curve_right.gif";
@@ -71,22 +71,22 @@ my $nav = get_state_data("nav");
 my $numLinks = $c->get("__NUM_LINKS__");
 $numLinks ||= 50;
 
-$numLinks += 8 if ($agent->{os} eq "MacOS");
+$numLinks += 8 if $agent->mac;
 
 # define variables to output sideNav layer or iframe
-if ($agent->{browser} eq "Netscape") {
+if ($agent->nav4) {
     $layer = "layer";
     $properties = qq { width="150" height="200%" border="0" scrolling="auto" frameborder="no" z-index="100" left="8" top="35"};
 } else {
     $layer = "iframe";
-    $properties = ($agent->{os} eq "MacOS")
+    $properties = $agent->mac
       ? qq { width="150" height="200%" border="0" scrolling="auto" }
         . qq{frameborder="no" marginwidth="0" style="z-index:200;" }
       : qq{ width="150" height="200%" border="0" scrolling="auto" }
 	. qq{frameborder="no" marginwidth="1" style="z-index:200; visibility:visible; position: absolute; left: 8; top: 35;"};
 }
 
-my $margins = DISABLE_NAV_LAYER && $agent->{browser} eq 'Mozilla' ?
+my $margins = DISABLE_NAV_LAYER && $agent->gecko ?
   'marginwidth="5" marginheight="5"' : '';
 
 # clean up the title
@@ -112,7 +112,7 @@ function init() {
     <% $jsInit %>;
 % # the following is a hack for pc/ns because it fails to obey
 % # the style rule when it is first drawn.
-% if ($agent->{browser} eq 'Netscape' && $jsInit =~ /showForm/) {
+% if ($agent->nav4 && $jsInit =~ /showForm/) {
     <% $jsInit %>;
 % }
 
@@ -157,7 +157,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 % # this is the Netscape doNav function.  IE looks for it in the iframe file (ie: sideNav.mc)
 <script type="text/javascript">
 function doNav(callback) {
-% if (DISABLE_NAV_LAYER || ($agent->{browser} ne 'Mozilla' && $agent->{os} eq "SomeNix")) {
+% if (DISABLE_NAV_LAYER || ((! $agent->gecko) && $agent->user_agent =~ /(linux|freebsd|sunos)/)) {
     window.location.href = callback;
     return false;
 % } else {
@@ -188,7 +188,7 @@ function doLink(link) {
 
 if ($useSideNav) {
 
-    if (DISABLE_NAV_LAYER || ($agent->{browser} ne 'Mozilla' && $agent->{os} eq "SomeNix")) {
+    if (DISABLE_NAV_LAYER || ((! $agent->gecko) && $agent->user_agent =~ /(linux|freebsd|sunos)/)) {
 	$m->comp("/widgets/wrappers/sharky/sideNav.mc", debug => $debug);
     } else {
 	my $uri = $r->uri;
@@ -196,7 +196,7 @@ if ($useSideNav) {
 	# create a unique uri to defeat browser caching attempts.
 	$uri .= "&rnd=" . time;
 	chomp $uri;
-	$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } ) if ($agent->{browser} eq "Netscape");
+	$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } ) if $agent->nav4;
 	$m->out( qq {<$layer name="sideNav" src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" $properties>} );
 	$m->out("</$layer>\n");
     }
@@ -206,7 +206,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 </%perl>
 
 % # write out space so the silly browser will provide a scroll bar for the layered content
-% if (!DISABLE_NAV_LAYER && $agent->{browser} eq "Netscape" && !$agent->{os} eq "SomeNix") {
+% if (!DISABLE_NAV_LAYER && $agent->nav4 && $agent->user_agent !~ /(linux|freebsd|sunos)/) {
 
   <script type="text/javascript">
   for (var i=0; i < <% $numLinks %>; i++) {

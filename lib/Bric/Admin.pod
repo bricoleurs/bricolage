@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.110 $
+$Revision: 1.111 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:24 $
+$Date: 2003-07-25 18:11:00 $
 
 =head1 DESCRIPTION
 
@@ -168,6 +168,10 @@ START MODULE LIST
 =item URI
 
 =item Exception::Class 1.12
+
+=item HTTP::BrowserDetect
+
+=item MasonX::ApacheHandler::WithCallbacks 0.99
 
 =item Pod::Simple (optional)
 

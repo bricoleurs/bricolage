@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-21 05:03:26 $
+$Date: 2003-07-25 18:11:01 $
 
 =head1 SYNOPSIS
 
@@ -39,12 +39,15 @@ use strict;
 # Programmatic Dependencies
 #use CGI::Cookie;
 #use Bric::Config qw(:qa :cookies);
-use Bric::App::Session;
+use Bric::App::Session qw(:state);
 use Bric::Config qw(:cookies);
 use Bric::Util::Class;
 use Bric::Util::Pref;
 use Apache;
 use Apache::Request;
+use HTML::Mason::Request;
+use Apache::Constants qw(HTTP_OK);
+use HTTP::BrowserDetect;
 
 #==============================================================================#
 # Inheritance                          #
@@ -78,6 +81,10 @@ our @EXPORT_OK = qw(
                     pop_page
 
                     mk_aref
+
+                    detect_agent
+                    parse_uri
+                    status_msg
                    );
 
 our %EXPORT_TAGS = (all     => \@EXPORT_OK,
@@ -100,7 +107,10 @@ our %EXPORT_TAGS = (all     => \@EXPORT_OK,
                                    get_disp_name
                                    get_class_description
                                    get_class_info)],
-                    aref    => ['mk_aref']
+                    aref    => ['mk_aref'],
+                    browser => [qw(detect_agent
+                                   parse_uri
+                                   status_msg)],
                    );
 
 #=============================================================================#
@@ -155,7 +165,7 @@ NONE
 
 =over 4
 
-=item (1 || undef) = add_msg(@txt)
+=item (1 || undef) = add_msg($txt)
 
 Add a new warning message to the current list of messages.
 
@@ -529,9 +539,16 @@ sub redirect {
 
 =item (1 || 0) = redirect_onload()
 
-Uses a JavaScript function call to redirect the browser to a different location.
-Will not clear out the buffer, first, so stuff sent ahead will still draw in the
-browser.
+  redirect('/');
+  redirect('/', $cbh);
+
+Uses a JavaScript function call to redirect the browser to a different
+location. Will not clear out the buffer first, so stuff sent ahead will still
+draw in the browser. If a MasonX::CallbackHandler object is passed in as the
+second argument, the Apache request object will be used to send the JavaScript
+to the Browser and the callback handler object will be used to abort the
+request. Otherwise, the Mason request object will be used to send the
+JavaScript to the browser and to abort the request.
 
 B<Throws:> NONE.
 
@@ -543,14 +560,60 @@ B<Notes:> NONE.
 
 sub redirect_onload {
     my $loc = shift or return;
-    my $m = HTML::Mason::Request->instance;
-    $m->print(qq{<script>
+    my $js = qq{<script>
             location.href='$loc';
         </script>
-    });
-    $m->abort;
+    };
+
+    if (my $cbh = shift) {
+        # Use the callback handler object.
+        my $r = $cbh->apache_req;
+        $r->print($js);
+        $cbh->abort(HTTP_OK);
+    } else {
+        # Use the Mason request object.
+        my $m = HTML::Mason::Request->instance;
+        $m->print($js);
+        $m->abort;
+    }
 }
 
+=item status_msg(@msgs)
+
+Sometimes there's a long process executing, and you want to send status
+messages to the browser so that the user knows what's happening. This function
+will do this for you. Call it each time you want to send one or more status
+messages, and it'll take care of the rest for you. When you're done, you can
+either redirect to another page, or simply finish drawing the current page. It
+will draw in below the status messages. This function will work both in
+callbacks and in Mason UI code.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub status_msg {
+    my $key = '_status_msg_';
+    my $space = '&nbsp;' x 20;
+
+    if (my $m = HTML::Mason::Request->instance) {
+        my $r = $m->apache_req;
+        my $old_autoflush = $m->autoflush;   # autoflush is restored below
+        $m->autoflush(1);
+        unless ( $r->pnotes($key) ) {
+            # We haven't called this thing yet. Throw up some initial information.
+            $m->print("<br />\n" x 2);
+            $r->pnotes($key, 1);
+        }
+        map $m->print(qq{$space<span class="errorMsg">$_</span><br />\n}), @_;
+        $m->flush_buffer;
+        $m->autoflush($old_autoflush);
+    }
+}
 
 #------------------------------------------------------------------------------#
 
@@ -645,6 +708,65 @@ NONE
 
 sub pop_page {
     return shift @{Bric::App::Session->instance->{'_history'}};
+}
+
+#------------------------------------------------------------------------------#
+
+=item ($section, $mode, $type, ...) = parse_uri($uri);
+
+Returns $section (e.g. admin), $mode (e.g. manager, profile)
+and $type (e.g. user, media, etc). This is centralized here in case
+it becomes a complicated thing to do. And, centralizing is nice.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+Was comp/lib/util/parseUri.mc.
+
+=cut
+
+sub parse_uri {
+    my $uri = shift;
+    return split /\//, substr($uri, 1);
+}
+
+#--------------------------------------#
+
+=item $href = detect_agent;
+
+Returns an HTTP::BrowserDetect object. The object is cached
+for efficiency.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+Was comp/widgets/util/detectAgent.mc
+
+=cut
+
+sub detect_agent {
+    my $ua = get_state_data('util', 'user-agent');
+    if ($ua) {
+        return $ua;
+    } else {
+        $ua = HTTP::BrowserDetect->new;
+        set_state_data('util', 'user-agent', $ua);
+        return $ua;
+    }
 }
 
 #--------------------------------------#

@@ -140,7 +140,7 @@ unless ($no_edit || $no_del) {
 }
 # Add the buttons.
 $m->comp('/widgets/profile/formButtons.mc', type => $type, section => $section,
-	 no_del => $no_del, no_save => $no_edit);
+	 no_del => $no_del, no_save => $no_edit, widget => $type);
 
 </%perl>
 </form>
@@ -153,7 +153,6 @@ $m->comp('/widgets/profile/formButtons.mc', type => $type, section => $section,
 my $class = 'Bric::Biz::Category';
 my $section = 'admin';
 my $type = 'category';
-my $widget = 'profile';
 my $disp = get_disp_name($type);
 </%once>
 
@@ -182,7 +181,7 @@ my $no_edit = !chk_authz($cat, ($id ? EDIT : CREATE), 1);
 my $no_del  = ! defined $id || $no_edit || $id == $root_id;
 
 # Roll in any changes to the category object if we're just adding keywords.
-if ($ARGS{'add_more|keyword|add_cb'}) {
+if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'keyword') {
     foreach my $meth ($cat->my_meths(1)) {
 	$meth->{set_meth}->($cat, @{$meth->{set_args}}, $ARGS{$meth->{name}})
 	  if defined $meth->{set_meth} and exists $ARGS{$meth->{name}};
@@ -208,11 +207,11 @@ my $cat_excl = sub { return 1 if grep($_[0] == $_->get_id, $cat->children);
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:31 $
+$Date: 2003-07-25 18:10:47 $
 
 =head1 DESCRIPTION
 

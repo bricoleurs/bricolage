@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2003-03-12 03:25:54 $
+$Date: 2003-07-25 18:11:00 $
 
 =head1 SYNOPSIS
 
@@ -29,7 +29,7 @@ $border => 1
 </%args>
 <%init>
 
-my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
+my ($section, $mode, $type) = parse_uri($r->uri);
 my $borderColor = ($section eq "admin") ? "999966" : "669999";
 
 </%init>

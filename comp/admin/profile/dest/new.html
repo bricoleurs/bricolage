@@ -30,7 +30,8 @@ $m->comp('/widgets/profile/formButtons.mc', type     => $type,
                                             cb       => '',
                                             section  => $section,
 	                                    no_del   => 1,
-                                            no_save  => 0);
+                                            no_save  => 0,
+                                            widget => $type);
 
 </%perl>
 </form>

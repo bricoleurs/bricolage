@@ -52,7 +52,7 @@ my $site_id = $c->get_user_cx(get_user_id);
 my ($section, $mode, $type) = split '/', substr($ARGS{uri}, 1);
 ($section, $mode, $type) = qw(workflow profile workspace) unless $section;
 
-my $agent                     = $m->comp("/widgets/util/detectAgent.mc");
+my $agent                     = detect_agent();
 my $workflowIndent            = 25;
 my $adminIndent               = 25;
 my $tabHeight                 = "height=20";
@@ -101,7 +101,7 @@ unless ($workflows) {
 }
 
 </%perl>
-% if (!DISABLE_NAV_LAYER && ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla')) {
+% if (!DISABLE_NAV_LAYER && ($agent->user_agent !~ /(linux|freebsd|sunos)/ || $agent->gecko)) {
 <html>
 <head>
   <meta http-equiv="Expires" content="Mon, 06, Jan 1990 00:00:01 GMT">
@@ -109,7 +109,7 @@ unless ($workflows) {
   <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
 
-% if ($agent->{browser} ne "Netscape") {
+% unless ($agent->nav4) {
     <script language="javascript">
     function doNav(callback) {
         document.location.href = callback;
@@ -161,10 +161,10 @@ foreach my $wf (@$workflows) {
         $m->out("<tr class=sideNavInactiveCell>\n");
         $m->out(qq{ <td><img src="/media/images/spacer.gif" width=10 height=5></td> } );
         $m->out("<td valign=middle $tabHeight width=15>");
-        $m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=0')">});
+        $m->out(qq{<a href="#" onClick="return doNav('} . $r->uri . qq{?nav|workflow_cb=0&navwfid=$wf->{id}')">});
         $m->out("<img src=\"/media/images/dkgreen_arrow_open.gif\" width=13 height=9 border=0 hspace=0></a></td>\n");
         $m->out("<td valign=middle $tabHeight width=135>");
-        $m->out(qq {<a href="#" class=sideNavHeaderBold onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=0')">});
+        $m->out(qq{<a href="#" class=sideNavHeaderBold onClick="return doNav('} . $r->uri . qq{?nav|workflow_cb=0&navwfid=$wf->{id}')">});
         $m->out(uc ( $wf->{name} )  . "</a>");
         $m->out("</td>\n</tr>");
 
@@ -217,10 +217,10 @@ foreach my $wf (@$workflows) {
         $m->out("<tr class=sideNavInactiveCell>\n");
         $m->out(qq{ <td><img src="/media/images/spacer.gif" width=10 height=5></td> } );
         $m->out("<td valign=middle $tabHeight width=140>");
-        $m->out("<a class=sideNavHeader href=" . $r->uri . "?nav|workflow-$wf->{id}_cb=1>");
-        $m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=1')">});
+        $m->out("<a class=sideNavHeader href=" . $r->uri . "?nav|workflow_cb=1&navwfid=$wf->{id}>");
+        $m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow_cb=1&navwfid=$wf->{id}')">});
         $m->out(qq{<img src="/media/images/mdgreen_arrow_closed.gif" width=8 height=13 border=0 hspace=2></a>\n});
-        $m->out(qq {<a href="#" class=sideNavHeader onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=1')">});
+        $m->out(qq {<a href="#" class=sideNavHeader onClick="return doNav('} . $r->uri . qq {?nav|workflow_cb=1&navwfid=$wf->{id}')">});
         $m->out( uc ( $wf->{name} )  . "</a></td>\n</tr>");
         $m->out("</table>\n");
 
@@ -430,7 +430,7 @@ foreach my $wf (@$workflows) {
 % }
 % # end debug widget
 
-% if (!DISABLE_NAV_LAYER && ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla')) {
+% if (!DISABLE_NAV_LAYER && ($agent->user_agent !~ /(linux|freebsd|sunos)/ || $agent->gecko)) {
 </body>
 </html>
 %}
@@ -456,10 +456,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:22 $
+$Date: 2003-07-25 18:11:00 $
 
 </%doc>

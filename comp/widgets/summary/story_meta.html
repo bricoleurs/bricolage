@@ -77,8 +77,8 @@ my $is_related_story = $number != 1;
 
 my $id = $story->get_id();
 my $prim_uri = $story->get_primary_uri();
-my $agent = $m->comp("/widgets/util/detectAgent.mc");
-my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+my $agent = detect_agent();
+my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 
 # get output channel info
 my $at = $story->get_element__id();

@@ -19,13 +19,16 @@ $d_id => undef
 </%args>
 
 <%init>
-my $d = $r->pnotes("desk.objs");
+# desk_asset matches Callback/Desk.pm class_key
+my $d = $r->pnotes("desk_asset.objs");
 return unless $d->{story} || $d->{media} || $d->{formatting};
 $wf ||= Bric::Biz::Workflow->lookup({ id => $w_id }) if defined $w_id;
 $desk ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $d_id }) if defined $d_id;
-my ($chk_label, $chk_cb, $act_label, $act_cb) = $desk ?
-  ('Move Assets', 'move', $wf && $wf->get_type == TEMPLATE_WORKFLOW ? ('deploy_checked_red', 'deploy')
-   : ('publish_checked_red', 'publish'))
+my ($chk_label, $chk_cb, $act_label, $act_cb) = $desk
+  ? ('Move Assets', 'move',
+     $wf && $wf->get_type == TEMPLATE_WORKFLOW
+       ? ('deploy_checked_red', 'deploy')
+       : ('publish_checked_red', 'publish'))
   : ('Check In Assets', 'checkin', 'delete_checked_red', 'delete');
 
 my $color1 = ($chk_cb eq 'move') ? 'lgreen' : 'red';

@@ -93,11 +93,11 @@ unless ($read_only) {
 </%perl>
 <& '/widgets/profile/imageSubmit.mc',
   formName => $formName,
-  callback => $widget."|".$type."|add_cb",
+  callback => "$widget|add_cb",
   image    => "add_more_lgreen"
 &>
+<& '/widgets/profile/hidden.mc', 'name' => 'addmore_type', 'value' => $type &>
 % }
-
 </table>
 <%args>
 $no_edit   => []
@@ -183,11 +183,11 @@ my $no_ed = { map { $_ => 1 } @$no_edit };
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:06 $
+$Date: 2003-07-25 18:10:50 $
 
 =head1 SYNOPSIS
 

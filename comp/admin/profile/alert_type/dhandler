@@ -114,7 +114,8 @@ if (defined $id) {
     # Output the form buttons.
     $m->out("<br />\n");
     $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
-	     no_del => $no_del, no_save => $no_edit, return => "/admin/manager/$type" );
+	     no_del => $no_del, no_save => $no_edit, return => "/admin/manager/$type",
+             widget => $type );
 } else {
     if (defined $class_id) {
        $m->comp("/widgets/wrappers/sharky/table_top.mc",
@@ -151,7 +152,8 @@ if (defined $id) {
     # Output the form buttons.
     $m->out("<br />\n");
     $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
-	     no_del => $no_del, no_save => $no_edit, val => 'next_dkgreen' );
+	     no_del => $no_del, no_save => $no_edit, val => 'next_dkgreen',
+             widget => $type );
 }
 </%perl>
 </form>
@@ -206,7 +208,7 @@ my $no_edit = !chk_authz($at, ($id ? EDIT : CREATE), 1);
 my $no_del = ! defined $id || $no_edit;
 
 # Roll in any changes to the alert type object if we're just adding rules.
-if ($ARGS{'add_more|alert_type_rules|add_cb'}) {
+if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'alert_type_rules') {
     foreach my $meth ($at->my_meths(1)) {
 	$meth->{set_meth}->($at, @{$meth->{set_args}}, $ARGS{$meth->{name}})
 	  if defined $meth->{set_meth};
@@ -253,7 +255,7 @@ $no_edit
 % } else {
     <td align="center"><& '/widgets/profile/imageSubmit.mc',
 	     formName => "alert_type_profile",
-	     callback => "$widget|recip_cb",
+	     callback => "$type|recip_cb",
 	     image    => "edit_lgreen",
              useHidden => $hidden,
              value    => escape_html($c),
@@ -295,11 +297,11 @@ $no_edit => 0
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:09 $
+$Date: 2003-07-25 18:10:47 $
 
 =head1 DESCRIPTION
 

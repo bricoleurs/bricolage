@@ -53,12 +53,13 @@ $m->comp('/widgets/profile/displayFormElement.mc', vals => $ord_vals,
 # Close 'er up!
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 $m->comp('/widgets/profile/formButtons.mc',
-         type    => $type,
-         no_del  => $no_del,
-	 section => $section,
-         return  => "/admin/profile/dest?id=$dest_id",
-	 val     => $label,
-         no_save => $no_edit);
+         type => $type,
+         no_del => $no_del,
+         section => $section,
+         return => "/admin/profile/dest?id=$dest_id",
+         val => $label,
+         no_save => $no_edit,
+         widget => 'action');
 </%perl>
 </form>
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
@@ -126,11 +127,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-07-10 09:27:46 $
+$Date: 2003-07-25 18:10:47 $
 
 =head1 DESCRIPTION
 

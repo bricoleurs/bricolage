@@ -374,9 +374,9 @@ my $wf = Bric::Biz::Workflow->lookup( { id => $wf_id });
 my $desks = $wf->allowed_desks();
 my $cd = $story->get_current_desk();
 $cd = $wf->get_start_desk() unless $cd;
-my $agent = $m->comp("/widgets/util/detectAgent.mc");
-my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
-my $ieSpacer = ($agent->{browser} eq "Internet Explorer") ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=578 height=5 /></td></tr></table>} : '';
+my $agent = detect_agent();
+my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+my $ieSpacer = $agent->ie ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=578 height=5 /></td></tr></table>} : '';
 my $num = 1;
 
 # get output channel info

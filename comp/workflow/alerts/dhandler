@@ -28,7 +28,7 @@ $id => undef
 </%args>
 
 <%init>;
-$id ||= ($m->comp("/lib/util/parseUri.mc"))[2];
+$id ||= (parse_uri($r->uri))[2];
 my $e = $pkg->lookup({ id => $id });
 my $ename = '&quot;' . $e->get_name . '&quot;';
 my $class = get_class_info($e->get_class);

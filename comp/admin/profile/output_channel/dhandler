@@ -119,7 +119,7 @@ var selectOrderNames = new Array("include_pos")
     field  => 'name',
     exclude => [ $id, map { $_->get_id } $oc->get_includes ],
     no_persist => 1,
-    name   => 'profile|include_oc_id_cb',
+    name   => 'output_channel|include_oc_id_cb',
     default => ['' => 'Add to Include'],
     constrain => { active => 1 },
     js => "onChange='submit()'",
@@ -133,6 +133,7 @@ var selectOrderNames = new Array("include_pos")
 $m->comp("/widgets/profile/formButtons.mc",
 	 type => $type,
 	 section => $widget,
+         widget => $type,
 	 val => $button,
 	 no_del => $no_del,
 	 no_save => $no_edit);
@@ -159,11 +160,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2003-03-15 18:35:11 $
+$Date: 2003-07-25 18:10:48 $
 
 =head1 SYNOPSIS
 

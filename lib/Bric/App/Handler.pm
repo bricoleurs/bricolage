@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:25 $
+$Date: 2003-07-25 18:11:01 $
 
 =head1 SYNOPSIS
 
@@ -53,12 +53,15 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
+use Bric::App::ApacheHandler;
 use Bric::Config qw(:mason :char :sys_user :err);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::CharTrans;
+use Bric::Util::Trans::FS;
 use Bric::App::Event qw(clear_events);
 use Bric::App::Util qw(del_redirect);
+use Apache::Constants qw(OK);
 use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
@@ -98,11 +101,12 @@ use Carp qw(croak);
     use Bric::App::Event qw(log_event);
     use Bric::App::Session qw(:state :user);
     use Bric::App::Util qw(:msg
-                        :redir
-			:pkg
-			:history
-			mk_aref
-                        get_pref);
+                           :redir
+                           :pkg
+                           :history
+                           :pref
+                           :aref
+                           :browser);
 
     use Bric::Dist::Job;
     use Bric::Dist::Resource;
@@ -123,6 +127,7 @@ use Carp qw(croak);
     use Bric::SOAP;
 
     use HTML::Mason::Exceptions;
+    use HTTP::BrowserDetect;
     eval { require Text::Levenshtein };
     require Text::Soundex if $@;
 
@@ -153,6 +158,9 @@ our %EXPORT_TAGS = (err => [qw(handle_err)]);
 ################################################################################
 # Constants
 ################################################################################
+use constant ERROR_FILE =>
+  Bric::Util::Trans::FS->cat_dir(MASON_COMP_ROOT->[0][1],
+			       Bric::Util::Trans::FS->split_uri(ERROR_URI));
 
 ################################################################################
 # Fields
@@ -173,21 +181,24 @@ my %interp_args =
   );
 
 my $interp = HTML::Mason::Interp->new(%interp_args);
-my $ah;
-if (CHAR_SET ne 'UTF-8') {
-    require Bric::App::ApacheHandler;
+my ($ah, $gah);
+if (CHAR_SET eq 'UTF-8') {
     $ah = Bric::App::ApacheHandler->new(%interp_args,
                                         decline_dirs => 0,
-                                        out_method   => \&filter,
-                                        args_method  => MASON_ARGS_METHOD
-                                       );
-    $ct = Bric::Util::CharTrans->new(CHAR_SET);
+                                        args_method => MASON_ARGS_METHOD);
 } else {
-    $ah = HTML::Mason::ApacheHandler->new(%interp_args,
+    require Bric::Util::CharTrans;
+    $ct = Bric::Util::CharTrans->new(CHAR_SET);
+
+    $ah = Bric::App::ApacheHandler->new(%interp_args,
                                         decline_dirs => 0,
-                                        args_method  => MASON_ARGS_METHOD
-                                       );
+                                        args_method => MASON_ARGS_METHOD,
+                                        out_method => \&filter);
 }
+
+$gah = HTML::Mason::ApacheHandler->new(%interp_args,
+                                       decline_dirs => 0,
+                                       args_method => MASON_ARGS_METHOD);
 
 # Reset ownership of all files created by Mason at startup.
 chown SYS_USER, SYS_GROUP, $interp->files_written;
@@ -298,8 +309,15 @@ sub handle_err {
     $no_trans = 0;
 
     # Process the exception for the user.
-    return $interp->exec(ERROR_URI, fault => $err,
-			 __CB_DONE => 1, more_err => $more_err);
+    # Instead of using $interp->exec we start over a la PreviewHandler.
+    # The 'BRIC_*' args are used in errors/500.mc
+    $r->uri(ERROR_URI);
+    $r->filename(ERROR_FILE);
+    $r->pnotes('BRIC_EXCEPTION' => $err);
+    $r->pnotes('BRIC_MORE_ERR' => $more_err);
+
+    $gah->handle_request($r);
+    return OK;
 }
 
 ################################################################################

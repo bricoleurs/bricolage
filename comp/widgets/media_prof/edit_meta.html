@@ -1,4 +1,4 @@
-<input type="hidden" name="<% $widget %>|update_pc" value="1">
+<input type="hidden" name="<% $widget %>|update_cb" value="1">
 
 <%perl>
 my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
@@ -265,11 +265,10 @@ $cd = $wf->get_start_desk() unless $cd;
 my $id = $media->get_id;
 
 # Set up a formatting variable
-my $agent = $m->comp("/widgets/util/detectAgent.mc");
-my $infoIndent = $agent->{browser} eq "Netscape" ?
-  FIELD_INDENT - 5 : FIELD_INDENT + 8;
+my $agent = detect_agent();
+my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 my $num = 1;
-my $ieSpacer = $agent->{browser} eq "Internet Explorer" ?
+my $ieSpacer = $agent->ie ?
   qq{<table><tr><td><img src="/media/images/spacer.gif" width="578" } .
   qq{height="5" /></td></tr></table>}
   : '';

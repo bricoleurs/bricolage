@@ -95,7 +95,8 @@ if (defined $id) {
 	     section => $section,
 	     no_del => $no_del,
 	     return => "/admin/manager/dest",
-	     no_save => $no_edit);
+	     no_save => $no_edit,
+             widget => $type);
 } else {
     $m->comp('/widgets/profile/formButtons.mc',
 	     type => $type,
@@ -103,7 +104,8 @@ if (defined $id) {
 	     section => $section,
 	     no_del => $no_del,
 	     return => "/admin/manager/dest",
-	     no_save => $no_edit);
+	     no_save => $no_edit,
+             widget => $type);
 }
 </%perl>
 <br />
@@ -157,11 +159,11 @@ $dest->set_site_id($ARGS{site_id}) if $ARGS{site_id};
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:15 $
+$Date: 2003-07-25 18:10:48 $
 
 =head1 DESCRIPTION
 

@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.103 $
+$Revision: 1.104 $
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:14 $
+$Date: 2003-07-25 18:11:01 $
 
 =head1 DESCRIPTION
 
@@ -191,10 +191,6 @@ two columns in it, one for story IDs and one for URIs, and put all of the URIs
 in it. Then we could just query against that table to compare URIs. All the
 possible URIs for a story would have to be included in the table, for all
 combinations of category and output channel Do the same for media.
-
-=item *
-
-Move callbacks to modules that subclass MasonX::CallbackHandler.
 
 =item *
 

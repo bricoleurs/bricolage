@@ -19,7 +19,7 @@ $value     => 1
 $image
 $vspace    => undef
 $hspace    => undef
-$js        => "onClick=\"return customSubmit('".join("', '", $formName, $callback, $value)."')\""
+$js        => qq{onClick="return customSubmit('$formName', '$callback', '$value')"}
 $useHidden => 1
 $useGlobalImage => 0
 </%args>

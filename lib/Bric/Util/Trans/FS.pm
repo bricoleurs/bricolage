@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 20:10:52 $
+$Date: 2003-07-25 18:11:02 $
 
 =head1 SYNOPSIS
 
@@ -99,12 +99,17 @@ my $osen = { mac => 'MacOS',
              'windows 98' => 'MSWin32',
              'windows xp' => 'MSWin32',
              'windows me' => 'MSWin32',
+             win95 => 'MSWin32',
+             win98 => 'MSWin32',
+             winnt => 'MSWin32',
+             win3x => 'MSWin32',
              dos => 'MSDOS',
              msdos => 'MSDOS',
              amiga => 'AmigaOS',
              amigaos => 'AmigaOS',
              somenix => 'unix',
-             unix => 'unix'
+             unix => 'unix',
+             linux => 'unix',
            };
 my $escape_uri;
 

@@ -26,6 +26,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Add the buttons.
 $m->comp('/widgets/profile/formButtons.mc', type     => $type,
+                                            widget   => $type,
                                             val      => 'next_dkgreen',
                                             cb       => '',
                                             section  => $section,
@@ -38,7 +39,6 @@ $m->comp('/widgets/profile/formButtons.mc', type     => $type,
 <%once>;
 my $section = 'admin';
 my $type    = 'category';
-my $widget  = 'profile';
 my $disp    = get_disp_name($type);
 </%once>
 <%args>

@@ -2,20 +2,20 @@ package Bric::App::ApacheHandler;
 
 =head1 NAME
 
-Bric::App::ApacheHandler - subclass of HTML::Mason::ApacheHandler
+Bric::App::ApacheHandler - subclass of MasonX::ApacheHandler::WithCallbacks
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-07 03:31:43 $
+$Date: 2003-07-25 18:11:01 $
 
 =head1 DESCRIPTION
 
@@ -33,15 +33,15 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use HTML::Mason::ApacheHandler;
-use Bric::Util::Fault::Exception::DP;
+use Bric::App::Callback;
+use Bric::Util::Fault qw(:all);
 use Bric::Config qw(:char);
 use Bric::Util::CharTrans;
 
 ################################################################################
 # Inheritance
 ################################################################################
-use base qw(HTML::Mason::ApacheHandler);
+use base qw(MasonX::ApacheHandler::WithCallbacks);
 
 ################################################################################
 # Function and Closure Prototypes
@@ -72,7 +72,14 @@ my $ct = Bric::Util::CharTrans->new(CHAR_SET);
 
 =head2 Constructors
 
-Inherited.
+=cut
+
+sub new {
+    my $class = shift;
+    my $self = $class->SUPER::new(@_, cb_classes => 'ALL',
+                                  exec_null_cb_values => 0);
+    return $self;
+}
 
 =head2 Destructors
 
@@ -112,13 +119,20 @@ B<NOTES:> NONE.
 sub request_args {
     my $self = shift;
     my ($args, $r, $q) = $self->SUPER::request_args(@_);
-    eval { $ct->to_utf8($args) };
-    if ($@) {
-        # assumes $@ isa Bric::Util::Fault::Exception
-        die ref $@ ? $@ : Bric::Util::Fault::Exception::DP->new
-          ({msg => 'Error translating from ' . CHAR_SET . ' to UTF-8.',
-            payload => $@});
+
+    # Translate chars if non-UTF8 (see also Handler.pm)
+    unless (CHAR_SET eq 'UTF-8') {
+        eval { $ct->to_utf8($args) };
+        if ($@) {
+            if (isa_bric_exception($@)) {
+                rethrow_exception($@);
+            } else {
+                throw_dp(error => 'Error translating from ' . CHAR_SET . ' to UTF-8.',
+                         payload => $@);
+            }
+        }
     }
+
     return ($args, $r, $q);
 }
 

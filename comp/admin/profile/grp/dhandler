@@ -101,7 +101,8 @@ if (defined $id) {
 <tr>
   <td width=265><&
     '/widgets/profile/formButtons.mc', type => $type, return => '/admin/manager/grp',
-	     section => $section, no_del => $no_del, no_save => $no_edit
+	     section => $section, no_del => $no_del, no_save => $no_edit,
+             widget => $type
    &></td>
   <td width=265 align=right valign=top>
 <%perl>
@@ -109,7 +110,7 @@ if (defined $id) {
     # Add the buttons.
     $m->comp('/widgets/profile/imageSubmit.mc',
 	     formName => "grp_profile",
-	     callback => "$widget|permissions_cb",
+	     callback => "$type|permissions_cb",
 	     image    => "permissions_dgreen",
              vspace   => 3
 	    ) unless $id == ADMIN_GRP_ID;
@@ -130,7 +131,8 @@ if (defined $id) {
 
     # Add the buttons.
     $m->comp('/widgets/profile/formButtons.mc', type => $type,
-	     section => $section, no_del => $no_del, val => 'next_dkgreen');
+	     section => $section, no_del => $no_del, val => 'next_dkgreen',
+             widget => $type);
 }
 </%perl>
 </form>
@@ -198,11 +200,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:52 $
+$Date: 2003-07-25 18:10:48 $
 
 =head1 DESCRIPTION
 

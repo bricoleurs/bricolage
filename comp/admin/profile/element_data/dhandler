@@ -34,6 +34,7 @@ $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
 $m->comp('/widgets/profile/formButtons.mc',
 	 type => $type,
+         widget => $type,
 	 section => $section,
 	 no_del => $no_del,
 	 val => defined $id ? undef : 'next_dkgreen',
@@ -90,11 +91,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2003-04-29 18:16:47 $
+$Date: 2003-07-25 18:10:48 $
 
 =head1 DESCRIPTION
 

@@ -1,4 +1,4 @@
-<input type="hidden" name="container_prof|update_pc" value="1">
+<input type="hidden" name="container_prof|update_cb" value="1">
 
 <%perl>
 # Show the story summary if needed.
@@ -31,7 +31,7 @@ my $x=0;
 % # COLUMN HEADER ROW
 % my $rowspan = scalar(@tiles) + 2;
 % $rowspan++ if ($repeatable_opts);
-% $rowspan += scalar(@tiles) if ($agent->{browser} eq "Internet Explorer");
+% $rowspan += scalar(@tiles) if $agent->ie;
 % if (scalar(@tiles)) { # suppress labels if no results
 <tr>
   <td width=20 class="medHeader"><img src="/media/images/spacer.gif" width="20" height="20" /></td>
@@ -103,23 +103,29 @@ if ($at->is_related_media) {
     </td>
       </tr>
       <tr>
-    <td colspan=2><& '/widgets/profile/imageSubmit.mc',
-         formName => "theForm",
-         callback => "container_prof|edit". $dt->get_id() ."_cb",
-         image    => "edit_lgreen",
-             vspace   => 3
-    &></td>
+      <td colspan=2><& '/widgets/profile/imageSubmit.mc',
+         formName => 'theForm',
+         callback => 'container_prof|edit_cb',
+         image    => 'edit_lgreen',
+         vspace   => 3
+      &><& '/widgets/profile/hidden.mc',
+         'name' => 'edit_view_bulk_tile_id',
+         'value' => $dt->get_id()
+      &></td>
       </tr>
       </table>
 % } else {
 
     <& '/widgets/profile/imageSubmit.mc',
-         formName => "theForm",
-         callback => "container_prof|edit". $dt->get_id() ."_cb",
-         image    => "edit_lgreen",
-             vspace   => 3
+         formName => 'theForm',
+         callback => 'container_prof|edit_cb',
+         image    => 'edit_lgreen',
+         vspace   => 3
     &>
-
+    <& '/widgets/profile/hidden.mc',
+         'name' => 'edit_view_bulk_tile_id',
+         'value' => $dt->get_id()
+    &>
 % }
 
 </td>
@@ -129,9 +135,12 @@ if ($at->is_related_media) {
 % if (scalar(@{$dt->get_possible_data()}) or scalar(@{$dt->get_possible_containers()})) {
       <td align="center" valign="middle"><span class="label"> - or - </span></td>
       <td><& '/widgets/profile/imageSubmit.mc',
-         formName => "theForm",
-         callback => "container_prof|bulk_edit-" . $dt->get_id() ."_cb",
-         image    => "bulk_edit_lgreen"
+         formName => 'theForm',
+         callback => 'container_prof|bulk_edit_cb',
+         image    => 'bulk_edit_lgreen'
+       &><& '/widgets/profile/hidden.mc',
+         'name' => 'edit_view_bulk_tile_id',
+         'value' => $dt->get_id()
        &></td>
     <td>
     <& '/widgets/profile/select.mc',
@@ -238,11 +247,11 @@ if ($at->is_related_media) {
 % if (scalar @tiles) {
     <td align="center" colspan=2><&
       '/widgets/profile/imageSubmit.mc',
-    formName => "theForm",
+        formName => "theForm",
         callback => "container_prof|reorder_cb",
         image    => "reorder_lgreen",
         vspace   => 3,
-    hspace   => 2
+        hspace   => 2
     &></td>
     <td align="center"><input type="image" src="/media/images/<% $lang_key %>/delete_red.gif" border=0 hspace=2 vspace=3 name="container_prof|delete_cb" value="delete"></td>
 % } else {
@@ -447,11 +456,11 @@ my $is_related_story = $at->is_related_story ? 1 : 0;
 my $is_related_media = $at->is_related_media ? 1 : 0;
 
 # browser spacing stuff
-my $agent = $m->comp("/widgets/util/detectAgent.mc");
-my $ieSpacer = ($agent->{browser} eq "Internet Explorer")
+my $agent = detect_agent();
+my $ieSpacer = $agent->ie
   ? qq{<tr><td colspan=10><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>}
   : '';
-my $shim = ($agent->{browser} eq "Netscape") ?  -4 : 4;
+my $shim = $agent->nav4 ? -4 : 4;
 </%init>
 
 <%once>

@@ -26,7 +26,7 @@ my $add_sub = sub {
 
 <%init>;
 # Figure out where we are.
-my ($section, $mode, undef, $id) = $m->comp("/lib/util/parseUri.mc");
+my ($section, $mode, undef, $id) = parse_uri($r->uri);
 undef $id if $id && $id eq '';
 my ($can_del, $sel_label, $sel_widg, $title, $context);
 my ($constrain, $behavior) = ({}, 'expand');
@@ -145,11 +145,11 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =head1 DATE
 
-$Date: 2003-03-23 06:56:49 $
+$Date: 2003-07-25 18:10:47 $
 
 =head1 SYNOPSIS
 

@@ -98,7 +98,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 </%perl>
 
 <& '/widgets/profile/formButtons.mc', type => $type, section => $section,
-   no_del => $no_del, no_save => $no_edit, return => $return &>
+   no_del => $no_del, no_save => $no_edit, return => $return, widget => $type &>
 
 </form>
 
@@ -144,7 +144,7 @@ my $crumb = $user->format_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 # Roll in any changes to the user object if we're just adding contacts.
-if ($ARGS{'add_more|contact|add_cb'}) {
+if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'contact') {
     foreach my $meth ($user->my_meths(1)) {
 	$meth->{set_meth}->($user, @{$meth->{set_args}}, $ARGS{$meth->{name}})
 	  if defined $meth->{set_meth};
@@ -166,11 +166,11 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:52 $
+$Date: 2003-07-25 18:10:49 $
 
 =head1 DESCRIPTION
 

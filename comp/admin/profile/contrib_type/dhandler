@@ -66,6 +66,7 @@ $m->comp('/widgets/formBuilder/formBuilder.mc',
     $m->comp('/widgets/profile/formButtons.mc',
 	     type => $type,
 	     section => $section,
+             widget => $type,    # XXX: there isn't a Profile/ContribType...
 	     no_del => 1,
 	     no_save => 1
 	    );
@@ -126,11 +127,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:09 $
+$Date: 2003-07-25 18:10:48 $
 
 =head1 DESCRIPTION
 

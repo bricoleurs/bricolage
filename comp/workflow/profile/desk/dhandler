@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-08-18 21:51:52 $
+$Date: 2003-07-25 18:11:00 $
 
 =head1 DESCRIPTION
 
@@ -23,7 +23,7 @@ $Date: 2002-08-18 21:51:52 $
 
 %#-- Once Section --#
 <%once>
-my $widget = 'desk';
+my $widget = 'desk_asset';
 </%once>
 
 %#-- Args Section --#

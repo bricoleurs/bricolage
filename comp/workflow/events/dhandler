@@ -19,7 +19,7 @@ $id => undef
 </%args>
 <%init>
 # Figure out where we are.
-my ($type, $oid) = ($m->comp("/lib/util/parseUri.mc"))[2,3];
+my ($type, $oid) = (parse_uri($r->uri))[2,3];
 
 # Redirect if necessary.
 $m->comp('/errors/404.mc') unless $type;

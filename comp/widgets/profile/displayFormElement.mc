@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-04-15 09:04:54 $
+$Date: 2003-07-25 18:10:57 $
 
 =head1 SYNOPSIS
 
@@ -132,7 +132,7 @@ $cols     => undef
 $rows     => undef
 </%args>
 <%perl>;
-my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $agent = detect_agent();
 $vals->{props}{cols} = $cols if ($cols);
 $vals->{props}{rows} = $rows if ($rows);
 
@@ -307,8 +307,7 @@ my %formSubs = (
 
 	    # adjust defaults by platform/browser
 	    # ns displays big boxes, usually
-	    $cols = ($agent->{browser} eq "Netscape" && $agent->{os} ne "MacOS")
-	      ? $cols *.8 : $cols;
+	    $cols = ($agent->nav4 && $agent->mac) ? $cols *.8 : $cols;
 
 	    my $out;
 	    $out .= qq{<table border="0" width="$width"><tr><td align="right"}
@@ -334,8 +333,7 @@ my %formSubs = (
 		$label, $readOnly, $agent) = @_;
 	    my $out='';
 
-	    $indent -= 7 if ($agent->{browser} eq "Netscape");
-#	    $width += 4 if (!$readOnly && $agent->{browser} eq "Netscape");
+	    $indent -= 7 if $agent->nav4;
 	    if ($useTable) {
 		$out .= qq{<table border="0" width="$width" cellpadding=0 cellspacing=0><tr>};
 		$out .= qq{<td align="right" width="$indent" valign="middle">};
@@ -343,7 +341,7 @@ my %formSubs = (
             $out .= $name ? qq{<span class="$label">} . $lang->maketext($name) . ':</span>' : '';
 	    $out .= "<br />" if (!$useTable && $name);
 	    $out .= qq{</td>\n<td width=4><img src="/media/images/spacer.gif" width=4 height=1 />}
-	      if ($useTable); # && $agent->{browser} eq "Netscape");
+	      if ($useTable);
 	    $out .= &$rem_sub($width-4, $indent) if $useTable;
 	    $key = escape_html($key) if $key;
 

@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:16 $
+$Date: 2003-07-25 18:10:56 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -63,8 +63,8 @@ $stay                   => undef
 </%args>
 <%init>
 
-my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
-my $agent        = $m->comp('/widgets/util/detectAgent.mc');
+my ($section, $mode, $type) = parse_uri($r->uri);
+my $agent        = detect_agent();
 my $div          = 'div';
 my $name         = "id";
 my $closeDiv     = "div";
@@ -74,14 +74,14 @@ my $textStyle    = 'style="width:120px"';
 my $textareaRows = 5;
 my $textareaCols = 20;
 
-if ($agent->{browser} ne "Netscape") {
+unless ($agent->nav4) {
     $textareaRows = 5;
     $textareaCols = 25;
 }
 
 # hack.  why wouldn't the div tag work in NS for this case? a mystery to solve when
 # there is time.
-if ($agent->{browser} eq "Netscape") {
+if ($agent->nav4) {
 	$div = "layer position=\"relative\"";
 	$closeDiv = "layer";
 	$name = "name";
@@ -338,7 +338,7 @@ date_table     += '</td></tr></table></form>&nbsp;'
 
 </script>
 
-% if ($agent->{browser} eq "Netscape") {
+% if ($agent->nav4) {
 
 <<% $div %> <% $position %> <% $name %>="fbDiv" visibility=show width=300 height=400 z-index=5 style="font-family:sans-serif; font-weight:bold; font-size:10pt; width:380; height:400">
 
@@ -412,7 +412,7 @@ date_table     += '</td></tr></table></form>&nbsp;'
 
   </td>
   <td width=400 height=230 valign=top rowspan=2>
-% if ($agent->{browser} ne "Netscape") {
+% unless ($agent->nav4) {
 
 <<% $div %> <% $position %> id="fbDiv">
 

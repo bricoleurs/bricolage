@@ -59,6 +59,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 $m->out("<br />\n");
 $m->comp('/widgets/profile/formButtons.mc',
 	 type    => $type,
+         widget  => $type,
 	 section => $section,
 	 no_del  => $no_del,
 	 no_save => $no_edit,
@@ -111,10 +112,6 @@ if (defined $mt && $mt->get_name) {
 } else {
     $crumb = 'New';
 }
-
-# if ($ARGS{'add_more|media_type_ext|add_cb'}) {
-#     # if adding slots for new extensions
-# }
 </%init>
 
 <%doc>
@@ -126,11 +123,11 @@ if (defined $mt && $mt->get_name) {
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:11 $
+$Date: 2003-07-25 18:10:48 $
 
 =head1 DESCRIPTION
 
