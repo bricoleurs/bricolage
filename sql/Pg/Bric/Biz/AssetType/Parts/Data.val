@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.2.1 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-03 03:06:10 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -9,7 +9,7 @@
 
 -- Add a paragraph element to page.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (1, 10, 'Paragraph', 'A Paragraph of text.', 1, 0, '1', 1, 1, 0, 'blob');
 
@@ -52,7 +52,7 @@ VALUES (10, 1, 'type', 'textarea', 1);
 
 -- Add a 'Previous' text field to page.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (2, 10, 'Previous', 'Describes previous page.', 2, 0, '0', 1, 1, 256, 'short');
 
@@ -95,7 +95,7 @@ VALUES (20, 2, 'type', 'text', 1);
 
 -- Add a 'Next' text field to page.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (3, 10, 'Next', 'Describes next page.', 3, 0, '0', 1, 1, 256, 'short');
 
@@ -138,7 +138,7 @@ VALUES (30, 3, 'type', 'text', 1);
 
 -- Create a 'Quote' textarea field for the 'Pull Quote' element.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (4, 7, 'Quote', 'The pull quote quotation.', 1, 1, '0', 1, 1, 1024, 'short');
 
@@ -181,7 +181,7 @@ VALUES (40, 4, 'type', 'textarea', 1);
 
 -- Create a 'Copy' textarea field for the 'Inset' element.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (5, 6, 'Copy', 'The inset copy text.', 1, 1, '0', 1, 1, 1024, 'short');
 
@@ -224,7 +224,7 @@ VALUES (50, 5, 'type', 'textarea', 1);
 
 -- Add an 'Alternate Title' text field for the 'Related Story' element.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (6, 9, 'Alternate Title', 'Alternate title to the story''s own', 1, 0, '0', 1, 1, 256, 'short');
 
@@ -268,7 +268,7 @@ VALUES (60, 6, 'type', 'text', 1);
 
 -- Create an 'Alternate Teaser' textarea field for the 'Related Story' element.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (7, 9, 'Alternate Teaser', 'Alternate teaser to the story''s own', 2, 0, '0', 1, 1, 512, 'short');
 
@@ -311,7 +311,7 @@ VALUES (70, 7, 'type', 'textarea', 1);
 
 -- Add a 'Title' text field to the Book Profile.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (8, 11, 'Title', 'The book''s title.', 1, 1, '0', 1, 1, 256, 'short');
 
@@ -354,7 +354,7 @@ VALUES (80, 8, 'type', 'text', 1);
 
 -- Add an 'Author' text field to the Book Profile.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (9, 11, 'Author', 'The author''s name.', 2, 1, '0', 1, 1, 256, 'short');
 
@@ -397,7 +397,7 @@ VALUES (90, 9, 'type', 'text', 1);
 
 -- Add a 'Publisher' text field to the Book Profile.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (10, 11, 'Publisher', 'The book''s publisher.', 3, 1, '0', 1, 1, 256, 'short');
 
@@ -439,7 +439,7 @@ VALUES (100, 10, 'type', 'text', 1);
 
 -- Add a 'Date' field to the Book Profile.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (11, 11, 'Date', 'The date of publication.', 4, 1, '0', 1, 1, 0, 'date');
 
@@ -482,7 +482,7 @@ VALUES (110, 11, 'type', 'date', 1);
 
 -- Add a 'Deck' field to Story.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (12, 1, 'Deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
 
@@ -525,7 +525,7 @@ VALUES (120, 12, 'type', 'textarea', 1);
 
 -- Add a 'Deck' field to Column.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (13, 2, 'Deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
 
@@ -568,7 +568,7 @@ VALUES (130, 13, 'type', 'textarea', 1);
 
 -- Add a 'Deck' field to Book Review.
 
-INSERT INTO at_data (id, element__id, name, description, place, required,
+INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
 VALUES (14, 3, 'Deck', 'A one-sentence teaser or subhead.', 1, 1, '0', 1, 1, 256, 'short');
 
