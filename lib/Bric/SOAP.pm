@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -20,11 +20,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =head1 DATE
 
-$Date: 2002-03-13 23:39:55 $
+$Date: 2002-04-01 21:46:12 $
 
 =head1 SYNOPSIS
 
@@ -192,7 +192,9 @@ between desks.  Also provides checkin, checkout, publish and deploy.
 All the Bric::SOAP::* modules share a common SOAP serialization strategy
 described here.
 
-=head3 Namespace
+=over 4
+
+=item Namespace
 
 The namespace for all Bric::SOAP calls is:
 
@@ -206,7 +208,7 @@ namespace:
 
 For the SOAP::Lite users in the audience, this is the "uri" setting.
 
-=head3 Parameters
+=item Parameters
 
 All Bric::SOAP::* methods use a named-parameter style call.  This is
 mapped to XML elements where the name is the name of the element and
@@ -237,7 +239,7 @@ When writing a SOAP client you should feel free to type your
 parameters in whatever way makes most sense in your implementation
 language.
 
-=head3 Return Values
+=item Return Values
 
 All Bric::SOAP methods return a single named parameter.  If a method
 needs to return multiple values then a SOAP array is returned
@@ -268,7 +270,7 @@ SOAP::Lite clients can access this return as an array ref:
     frobnicate($id);
   }
 
-=head3 XML Document Encoding
+=item XML Document Encoding
 
 The Bric::SOAP system uses complete XML documents as parameters and
 return values to many methods (create() and export(), for example).
@@ -286,7 +288,7 @@ And on decoding returned base64 will be done automatically.
 
 The XML Schema for these documents is included below.
 
-=head3 Error Handling
+=item Error Handling
 
 Errors are returned as SOAP faults using fault strings produced by the
 method called.  If you use SOAP::Lite as your client library you can
@@ -296,7 +298,7 @@ with faultstring():
   my $response = $soap->list_ids(...);
   die "SOAP Error: " . $response->faultstring if $response->fault;
 
-=head2 XML Schema For Asset Documents
+=item XML Schema For Asset Documents
 
 This is the XML Schema for asset documents used in the Bricolage SOAP
 interface.  A pretty-printed version complete with colorful graphs
@@ -820,6 +822,7 @@ Here's a simple story with some keywords and no contributors:
   </story>
  </assets>
 
+=back
  
 =head2 Example Clients
 
