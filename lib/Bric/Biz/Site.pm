@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =item Date
 
-$Date: 2003-06-04 00:19:02 $
+$Date: 2003-08-08 19:45:27 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.5 2003-06-04 00:19:02 wheeler Exp $
+$Id: Site.pm,v 1.6 2003-08-08 19:45:27 wheeler Exp $
 
 =back
 
@@ -175,7 +175,7 @@ sub new {
     my ($invocant, $init) = @_;
     my $class = ref $invocant || $invocant;
     $init->{_active} = 1;
-    $init->{grp_ids} = [INSTANCE_GROUP_ID];
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     my ($name, $domain_name) = delete @{$init}{qw(name domain_name)};
     my $self = $class->SUPER::new($init);
     $self->set_name($name) if defined $name;
