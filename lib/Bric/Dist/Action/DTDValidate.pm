@@ -10,20 +10,20 @@ Bric::Dist::Action::DTDValidate - Validates XML against a DTD
 
 =item Version
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =item Date
 
-$Date: 2003-09-18 21:19:09 $
+$Date: 2004-03-02 00:57:56 $
 
 =item CVS ID
 
-$Id: DTDValidate.pm,v 1.1 2003-09-18 21:19:09 wheeler Exp $
+$Id: DTDValidate.pm,v 1.2 2004-03-02 00:57:56 wheeler Exp $
 
 =back
 
@@ -223,7 +223,7 @@ Defines the interface for Bricolage distribution destinations, including a
 list of actions to be performed before distributing to a given destination, as
 well as a list of servers for that destination.
 
-=item L<Bric::Dist::Job|Bric::Dist::Job>
+=item L<Bric::Util::Job::Dist|Bric::Util::Job::Dist>
 
 Manages distribution jobs, including processing all the actions required for
 each destination for which resources are to be distributed.

@@ -362,6 +362,11 @@ The Mason burner's special C<< <%publish> >>, C<< <%preview> >>, and
 C<< <%chk_syntax> >> tags now work as advertised. Reported by Ben Bangert.
 [David]
 
+=item *
+
+Publication of stories and media the automatically schedule expiration jobs no
+longer cause an error. Reported by Marshall Bloch. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)

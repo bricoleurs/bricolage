@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.65 $
+$Revision: 1.66 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.65 $ )[-1];
+our $VERSION = (qw$Revision: 1.66 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-06 06:34:56 $
+$Date: 2004-03-02 00:57:56 $
 
 =head1 SYNOPSIS
 
@@ -795,14 +795,13 @@ sub preview {
         my $name = 'Preview "' . $ba->get_name . '" in "' .
           $oc->get_name . '"';
 
-        my $job = Bric::Util::Job::Dist->new(
-            { 
-                sched_time => '',
-                user_id => $user_id,
-                name => $name,
-                server_types => $bat,
-                priority => $ba->get_priority,
-            });
+        my $job = Bric::Util::Job::Dist->new({
+            sched_time   => '',
+            user_id      => $user_id,
+            name         => $name,
+            server_types => $bat,
+            priority     => $ba->get_priority,
+        });
         my $res = [];
         # Burn, baby, burn!
         if ($key eq 'story') {
@@ -949,14 +948,13 @@ sub publish {
         # Create a job for moving this asset in this output Channel.
         my $name = 'Distribute "' . $ba->get_name . '" to "' .
           $oc->get_name . '"';
-        my $job = Bric::Util::Job::Dist->new(
-            { 
-                sched_time => $publish_date,
-                user_id => $user_id,
-                name => $name,
-                server_types => $bat,
-                priority => $ba->get_priority,
-            });
+        my $job = Bric::Util::Job::Dist->new({
+            sched_time   => $publish_date,
+            user_id      => $user_id,
+            name         => $name,
+            server_types => $bat,
+            priority     => $ba->get_priority,
+        });
 
         # Burn, baby, burn!
         if ($key eq 'story') {
@@ -1018,7 +1016,7 @@ sub publish {
             # Yep, there are old resources to expire.
             my $stale_name = 'Expire stale "' . $ba->get_name .
               '" from "' . $oc->get_name . '" files';
-            my $stale_job = Bric::Dist::Job->new
+            my $stale_job = Bric::Util::Job::Dist->new
               ({ sched_time   => $publish_date,
                  user_id      => $user_id,
                  server_types => $bat,
