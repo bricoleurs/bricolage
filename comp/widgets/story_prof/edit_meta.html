@@ -137,17 +137,10 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <%perl>;
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-<<<<<<< edit_meta.html
 $num = $m->comp('/widgets/container_prof/container_prof.mc',
         tile            => $tile,
         tile_type       => 'story',
         action          => 'edit',
-=======
-$num = $m->comp('/widgets/container_prof/container_prof.mc', 
-        tile            => $tile,
-        tile_type       => 'story',
-        action          => 'edit',
->>>>>>> 1.12.2.1
         title           => 'Content',
         num             => $num,
         start_count     => 4
@@ -278,16 +271,10 @@ $m->comp('/widgets/profile/asset_ocs.mc',
 
 $m->out("$ieSpacer<br />\n");
 
-<<<<<<< edit_meta.html
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
        caption => "Associations",
        number  => $num++);
 </%perl>
-=======
-% $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%        caption => "Associations",
-%        number  => $num++);
->>>>>>> 1.12.2.1
 <table border=0 width=578 cellpadding=0 cellspacing=0>
 <tr>
   <td width=20 class="medHeader"><img src="/media/images/spacer.gif" width="20" height="20" /></td>
