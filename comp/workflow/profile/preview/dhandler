@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-09-15 20:45:34 $
+$Date: 2003-09-16 21:07:59 $
 
 =head1 DESCRIPTION
 
@@ -24,7 +24,7 @@ $Date: 2003-09-15 20:45:34 $
 <%perl>;
 my ($class, $id, $oc_id) = split('/', $m->dhandler_arg);
 my $pub = Bric::App::Callback::Publish->new
-  ( cb_request  => $m->intperp->cb_request,
+  ( cb_request  => $m->interp->cb_request,
     apache_req  => $r,
     params      => { %ARGS,
                      'oc_id' => $oc_id,
