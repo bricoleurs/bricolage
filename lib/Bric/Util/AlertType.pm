@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.13.2.6 $
+$Revision: 1.13.2.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.2.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-07 21:16:15 $
+$Date: 2004-04-07 23:05:07 $
 
 =head1 SYNOPSIS
 
@@ -2429,9 +2429,11 @@ sub send_alerts {
     my $omeths = $obj->my_meths;
 
     # For accessing data on the event itself.
-    for my $k (keys %$e_attr) {
-        (my $v = lc $k) =~ s/\W+/_/g;
-        $e_attr->{lc "et_$v"} = delete $e_attr->{$k};
+    if ($e_attr) {
+        for my $k (keys %$e_attr) {
+            (my $v = lc $k) =~ s/\W+/_/g;
+            $e_attr->{lc "et_$v"} = delete $e_attr->{$k};
+        }
     }
 
     foreach my $rule ($self->get_rules) {
