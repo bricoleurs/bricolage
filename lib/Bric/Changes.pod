@@ -14,6 +14,19 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.6.8 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Custom select fields now correctly pay attention to the size attribute.
+Reported by Dave Rolsky. [David]
+
+=back
+
 =head1 VERSION 1.6.7 (2003-10-22)
 
 =head2 Bug Fixes

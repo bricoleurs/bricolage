@@ -6,6 +6,7 @@ my %meta_props = ( disp      => 'fb_disp',
 		   value     => 'fb_value',
 		   type      => 'fb_type',
 		   length    => 'fb_size',
+                   size      => 'fb_size',
 		   maxlength => 'fb_maxlength',
 		   rows      => 'fb_rows',
 		   cols      => 'fb_cols',
@@ -252,11 +253,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22.4.10 $
+$Revision: 1.22.4.11 $
 
 =head1 DATE
 
-$Date: 2003-07-25 09:13:44 $
+$Date: 2003-10-28 01:55:53 $
 
 =head1 SYNOPSIS
 
