@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-19 02:15:55 $
+$Date: 2003-01-25 01:21:53 $
 
 =head1 SYNOPSIS
 
@@ -2191,16 +2191,15 @@ sub _do_list {
         }
     }
 
-    # Create the where clause and the select columns.
+    # Assemble and prepare the query.
     my $where = join ' AND ', @wheres;
-    my $qry_cols = $ids ? \'DISTINCT a.id' : \$sel_cols;
-
-    # Prepare the statement.
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :
+      (\$sel_cols, 'a.name, a.id');
     my $sel = prepare_c(qq{
         SELECT $$qry_cols
         FROM   $tables
         WHERE  $where
-        ORDER BY a.name
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
