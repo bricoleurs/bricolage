@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:46 $
+$Date: 2001-09-06 22:38:16 $
 
 =head1 DESCRIPTION
 
@@ -160,14 +160,7 @@ later, once we've packaged up the code for actual distribution].
 
 =item *
 
-Checkout the tools repository from CVS (cvs checkout tools). It doesn't matter
-where you check this out, since these are just utilities you'll use only for the
-installation. [Change this later, once we've packaged up the code for actual
-distribution].
-
-=item *
-
-Change directories into tools/bin and run pgimport as follows:
+Change directories into bin and run pgimport as follows:
 
   ./pgimport -u postgres -p postgres -d dbname -c -m bric_user:bric_user_password
 
@@ -1391,8 +1384,11 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: Admin.pod,v $
-Revision 1.1  2001-09-06 21:52:46  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:38:16  wheeler
+Removed reference to old "tools" repository.
+
+Revision 1.1.1.1  2001/09/06 21:52:46  wheeler
+Upload to SourceForge.
 
 =cut
 
