@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40.2.21 $
+$Revision: 1.40.2.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40.2.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-22 03:26:19 $
+$Date: 2004-02-06 06:10:17 $
 
 =head1 SYNOPSIS
 
@@ -131,6 +131,8 @@ use constant VERSION_FIELDS => qw( name
                                    uri
                                    checked_out);
 
+use constant RO_FIELDS      => qw( class_id );
+
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Media';
 use constant INSTANCE_GROUP_ID => 32;
 
@@ -141,32 +143,40 @@ use constant CAN_DO_LOOKUP => 1;
 use constant HAS_CLASS_ID => 1;
 
 # relations to loop through in the big query
-use constant RELATIONS => [qw( media category desk workflow )];
+use constant RELATIONS => [qw( media category desk workflow)];
 
 use constant RELATION_COL =>
     {
-        media     => 'm.grp__id',
-        category  => 'o.asset_grp_id AS grp__id',
-        desk      => 'o.asset_grp AS grp__id',
-        workflow  => 'o.asset_grp_id AS grp__id',
+        media     => 'at.biz_class__id, m.grp__id',
+        category  => 'at.biz_class__id, o.asset_grp_id AS grp__id',
+        desk      => 'at.biz_class__id, o.asset_grp AS grp__id',
+        workflow  => 'at.biz_class__id, o.asset_grp_id AS grp__id',
     };
 
 use constant RELATION_TABLES =>
     {
-        media      => 'media_member mm, member m',
-        category   => 'category o',
-        desk       => 'desk o',
-        workflow   => 'workflow o',
+        media      => 'media_member mm, member m, at_type at, element e',
+        category   => 'category o, at_type at, element e',
+        desk       => 'desk o, at_type at, element e',
+        workflow   => 'workflow o, at_type at, element e',
     };
 
 use constant RELATION_JOINS =>
     {
         media      => 'mm.object_id = mt.id '
                     . 'AND m.id = mm.member__id '
-                    . 'AND m.active = 1',
-        category   => 'o.id = i.category__id ',
-        desk       => 'o.id = mt.desk__id ',
-        workflow   => 'o.id = mt.workflow__id ',
+                    . 'AND m.active = 1 '
+                    . 'AND e.id = mt.element__id '
+                    . 'AND at.id = e.type__id ',
+        category   => 'o.id = i.category__id '
+                    . 'AND e.id = mt.element__id '
+                    . 'AND at.id = e.type__id ',
+        desk       => 'o.id = mt.desk__id '
+                    . 'AND e.id = mt.element__id '
+                    . 'AND at.id = e.type__id ',
+        workflow   => 'o.id = mt.workflow__id '
+                    . 'AND e.id = mt.element__id '
+                    . 'AND at.id = e.type__id ',
     };
 
 # the mapping for building up the where clause based on params
@@ -302,6 +312,7 @@ BEGIN {
                          media_type_id   => Bric::FIELD_RDWR,
                          category__id    => Bric::FIELD_RDWR,
                          size            => Bric::FIELD_RDWR,
+                         class_id        => Bric::FIELD_READ,
 
                          # Private Fields
                          _category_obj   => Bric::FIELD_NONE,
@@ -861,7 +872,7 @@ sub my_meths {
 
 =item $class_id = Bric::Biz::Asset::Business::Media->get_class_id()
 
-Returns the class id of the Media class
+Returns the class id of the Media object or class.
 
 B<Throws:> NONE.
 
@@ -871,7 +882,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_class_id { 46 }
+sub get_class_id { ref $_[0] ? shift->_get('class_id') : 46 }
 
 ################################################################################
 
@@ -1825,11 +1836,11 @@ sub _select_media {
 
     my $sth = prepare_ca($sql, undef);
     execute($sth, @bind);
-    bind_columns($sth, \@d[0 .. (scalar COLS)]);
+    bind_columns($sth, \@d[0 .. (scalar COLS + 1)]);
     fetch($sth);
 
     # set the values retrieved
-    $self->_set( [ 'id', FIELDS], [@d]);
+    $self->_set( [ 'id', FIELDS, RO_FIELDS], [@d]);
 
     my $v_grp = Bric::Util::Grp::AssetVersion->lookup(
       { id => $self->_get('version_grp__id') } );

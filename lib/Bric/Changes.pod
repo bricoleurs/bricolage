@@ -105,12 +105,18 @@ to Todd Tyree for the spot. [David]
 
 Users granted permission to access the members of a group via two user group
 associations now always get the highest priority permission, as it should
-be. Thanks to Patrick Walsh for the stot. [David]
+be. Thanks to Patrick Walsh for the spot. [David]
 
 =item *
 
 Textarea fields in elements no longer lose some of their default data after
 editing the field in the element manager. Reported by Todd Tyree. [David]
+
+=item *
+
+Media assets now properly remember their class, which means that autopopulated
+fields (such as "height" and "width" for images) are autopulated when a new
+image file is uploaded. Thanks to Patrick Walsh for the spot! [David]
 
 =back
 
