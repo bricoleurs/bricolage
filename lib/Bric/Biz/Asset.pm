@@ -8,15 +8,15 @@ An asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.12.2.2 $
+$Revision: 1.12.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-07 01:43:14 $
+$Date: 2002-11-07 16:46:30 $
 
 =head1 SYNOPSIS
 
@@ -1473,10 +1473,16 @@ sub get_grp_ids {
     my $self = shift;
     my @ids = $self->SUPER::get_grp_ids;
     if (ref $self && defined $self->get_workflow_id) {
-	# Add the desk group ID.
-	push @ids, $self->get_current_desk->get_asset_grp;
+
 	# Add the workflow group ID.
-	push @ids, $self->get_workflow_object->get_all_desk_grp_id;
+        if ($self->get_workflow_id) {
+            push @ids, $self->get_workflow_object->get_all_desk_grp_id;
+        }
+
+	# Add the desk group ID.
+        if (my $d = $self->get_current_desk) {
+            push @ids, $d->get_asset_grp;
+        }
 
 	# Add the category groud IDs.
 	if ($self->key_name eq 'story') {
