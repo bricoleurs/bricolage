@@ -957,9 +957,9 @@ $handle_delete = sub {
     my $desk = $story->get_current_desk();
     $desk->checkin($story);
     $desk->remove_asset($story);
-    $desk->save;
     $story->set_workflow_id(undef);
     $story->deactivate;
+    $desk->save;
     $story->save;
     log_event("story_rem_workflow", $story);
     log_event("story_deact", $story);

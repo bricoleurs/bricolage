@@ -315,9 +315,6 @@ sub save_and_stay : Callback {
     chk_authz($media, EDIT);
     my $work_id = get_state_data($widget, 'work_id');
 
-    $media->activate;
-    $media->save;
-
     # Just return if there was a problem with the update callback.
     return if delete $self->params->{__data_errors__};
 
@@ -761,11 +758,11 @@ $handle_delete = sub {
     my $desk = $media->get_current_desk;
     $desk->checkin($media);
     $desk->remove_asset($media);
-    $desk->save;
-    log_event("media_rem_workflow", $media);
     $media->set_workflow_id(undef);
     $media->deactivate;
+    $desk->save;
     $media->save;
+    log_event("media_rem_workflow", $media);
     log_event("media_deact", $media);
     add_msg('Media "[_1]" deleted.', $media->get_title);
 };
