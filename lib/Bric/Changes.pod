@@ -230,6 +230,35 @@ localized images. [JoE<atilde>o Pedro]
 Documents are no longer distributed to deleted (deactivated) destinations.
 Reported by Mark. [David]
 
+=item *
+
+Eliminated several error log authentication message such as "No cookie found."
+Thes tended only to confuse users when they were just starting to use
+Bricolage. I've left in a few error messages, however, so that system
+administrators can see in the log when it looks like someone is trying to hack
+into Bricolage. The remaninging authentication error log messages are:
+
+=over
+
+=item *
+
+Invalid username or password. Please try again.
+
+=item *
+
+User does not exist or is disabled.
+
+=item *
+
+Malformed cookie.
+
+=item *
+
+Cookie hash mismatch from [IP address] (Hostname '[hostname]') for user
+'[username].'
+
+=back
+
 =back
 
 =head1 VERSION 1.6.1

@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.16.2.1 $
+$Revision: 1.16.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-08 08:33:54 $
+$Date: 2003-07-24 19:36:58 $
 
 =head1 SYNOPSIS
 
@@ -171,7 +171,7 @@ sub handler {
 
         # If we're here, the user needs to authenticate. Figure out where they
         # wanted to go so we can redirect them there after they've logged in.
-        $r->log_reason($msg);
+        $r->log_reason($msg) if $msg;
 #       my $uri = $r->uri;
 #       my $args = $r->args;
 #       $uri = "$uri?$args" if $args;

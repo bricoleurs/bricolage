@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.12.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-04 00:48:23 $
+$Date: 2003-07-24 19:36:58 $
 
 =head1 SYNOPSIS
 
@@ -135,10 +135,10 @@ B<Notes:> NONE.
 
 sub auth {
     my $r = shift;
-    return &$fail($r, 'No cookies found.') unless my %cookies = $cookie_class->fetch;
-    return &$fail($r, 'No cookie found.') unless my $cookie = $cookies{&AUTH_COOKIE};
+    return &$fail($r) unless my %cookies = $cookie_class->fetch;
+    return &$fail($r) unless my $cookie = $cookies{&AUTH_COOKIE};
     my %val = $cookie->value;
-     return &$fail($r, 'Login expired.') unless $val{exp} > time;
+     return &$fail($r) unless $val{exp} > time;
     return &$fail($r, 'Malformed cookie.')
       unless $val{ip} && $val{hash} && $val{user} && $val{exp} && $val{lmu};
 
