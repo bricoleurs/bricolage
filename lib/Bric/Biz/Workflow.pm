@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-27 11:15:38 $
+$Date: 2004-02-27 21:39:45 $
 
 =head1 SYNOPSIS
 
@@ -651,7 +651,7 @@ sub my_meths {
                               set_meth => sub { shift->set_site_id(@_) },
                               set_args => [],
                               name     => 'site_id',
-                              disp     => 'Site',
+                              disp     => 'Site ID',
                               len      => 10,
                               req      => 1,
                               type     => 'short',

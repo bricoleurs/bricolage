@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 04:33:39 $
+$Date: 2004-02-27 21:39:45 $
 
 =head1 SYNOPSIS
 
@@ -571,7 +571,7 @@ sub my_meths {
                               name     => 'needs_publish',
                               get_meth => sub { shift->needs_publish(@_) },
                               get_args => [],
-                              disp     => 'Status',
+                              disp     => 'Needs Publish',
                              },
               name        => {
                               name     => 'name',
@@ -713,7 +713,7 @@ sub my_meths {
                               set_meth => sub { shift->set_site_id(@_) },
                               set_args => [],
                               name     => 'site_id',
-                              disp     => 'Site',
+                              disp     => 'Site ID',
                               len      => 10,
                               req      => 1,
                               type     => 'short',

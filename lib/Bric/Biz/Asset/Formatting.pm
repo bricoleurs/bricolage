@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.64 $
+$Revision: 1.65 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.64 $ )[-1];
+our $VERSION = (qw$Revision: 1.65 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-20 15:26:28 $
+$Date: 2004-02-27 21:39:45 $
 
 =head1 SYNOPSIS
 
@@ -1053,7 +1053,7 @@ sub my_meths {
                           get_meth => sub { shift->get_category(@_)->get_name },
                           get_args => [],
                           name     => 'category_name',
-                          disp     => 'Category',
+                          disp     => 'Category Name',
                           len      => 64,
                           req      => 1,
                           type     => 'short',

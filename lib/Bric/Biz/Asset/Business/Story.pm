@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.86 $
+$Revision: 1.87 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.86 $ )[-1];
+our $VERSION = (qw$Revision: 1.87 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 14:09:41 $
+$Date: 2004-02-27 21:39:46 $
 
 =head1 SYNOPSIS
 
@@ -1017,7 +1017,7 @@ sub my_meths {
                           get_meth => sub { shift->get_primary_category(@_)->get_name },
                           get_args => [],
                           name     => 'category_name',
-                          disp     => 'Category',
+                          disp     => 'Category Name',
                           len      => 64,
                           req      => 1,
                           type     => 'short',

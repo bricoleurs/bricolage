@@ -219,12 +219,13 @@ all sites instead of none. [Joao Pedro]
 
 =item *
 
-Several Alert Type fixes. Rule regexp matching (=~, !~) now handles
-patterns containing slashes (important for URIs, for example).
-Attributes no longer show up as stringified hash
-references in subject or message variable substitution.
-$trig_password was removed from the Profile as it caused
-an error and was useless anyway. [Scott]
+Several Alert Type fixes. Rule regular expression matching (=~, !~) now
+handles patterns containing slashes (important for URIs, for example).
+Attributes no longer show up as stringified hash references in subject or
+message variable substitution. C<$trig_password> was removed from the Profile
+as it caused an error and was useless anyway. And finally, duplicate and
+spurious attributes were removed from the rules and message variable
+lists. [Scott & David]
 
 =item *
 

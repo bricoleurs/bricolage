@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.81 $
+$Revision: 1.82 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.81 $ )[-1];
+our $VERSION = (qw$Revision: 1.82 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-26 23:40:40 $
+$Date: 2004-02-27 21:39:45 $
 
 =head1 SYNOPSIS
 
@@ -916,7 +916,7 @@ sub my_meths {
                           get_meth => sub { shift->get_category_object(@_)->get_name },
                           get_args => [],
                           name     => 'category_name',
-                          disp     => 'Category',
+                          disp     => 'Category Name',
                           len      => 64,
                           req      => 1,
                           type     => 'short',
