@@ -276,6 +276,11 @@ for the spot! [David]
 Adding a server to a new destination before saving the destination or adding
 an action no longer causes an SQL error. [David]
 
+=item *
+
+C<make clone> now properly clones F<bricolage.conf>, C<httpd.conf>, and all of
+the contents of F<conf/>. [David]
+
 =back
 
 =head1 VERSION 1.6.1
