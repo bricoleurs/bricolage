@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2001-09-25 08:34:16 $
+$Date: 2001-09-25 09:59:41 $
 
 =head1 DESCRIPTION
 
@@ -175,6 +175,10 @@ Scheduled Burning/Syndication (Bug # 329).
 
 =item *
 
+Support for Instant messaging (using Jabber server) in Alerts.
+
+=item *
+
 Basic project management.
 
 =item *
@@ -263,7 +267,10 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ToDo.pod,v $
-Revision 1.7  2001-09-25 08:34:16  wheeler
+Revision 1.8  2001-09-25 09:59:41  wheeler
+Added new item.
+
+Revision 1.7  2001/09/25 08:34:16  wheeler
 Added new item.
 
 Revision 1.6  2001/09/20 21:31:00  wheeler
