@@ -8,17 +8,17 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-02 03:33:14 $
+$Date: 2002-04-03 21:26:56 $
 
 =head1 SYNOPSIS
 
@@ -68,7 +68,7 @@ use base qw(Bric);
 # Constants
 ##############################################################################
 #use constant DEBUG => 0;
-#use constant UTF8 => 'UTF8';
+#use constant UTF8 => 'UTF-8';
 
 # This hash contains aliases for common character sets..
 # Useful for mapping 

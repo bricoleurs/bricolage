@@ -146,7 +146,8 @@ my $publish = sub {
 	# Get a list of server types this categroy applies to.
 	my $bat = $oc_sts->{$ocid} ||=
 	  Bric::Dist::ServerType->list({ "can_$field" => 1,
-				       output_channel_id => $ocid });
+					 active => 1,
+					 output_channel_id => $ocid });
 	# Make sure we have some destinations.
 	unless (@$bat) {
 	    if ($field eq 'publish') {

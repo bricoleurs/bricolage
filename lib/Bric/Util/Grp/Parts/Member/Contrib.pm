@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-26 03:38:45 $
+$Date: 2002-04-03 21:26:56 $
 
 =head1 SYNOPSIS
 
@@ -629,7 +629,7 @@ sub _do_list {
     }
 
     # Make sure we do something with the active flag.
-    unless (exists $params->{active}) {
+    unless (exists $params->{active} || exists $params->{id}) {
 	    push @wheres, "m.active = ?";
 	    push @args, 1
     }

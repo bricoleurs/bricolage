@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-09 00:43:02 $
+$Date: 2002-04-03 21:26:56 $
 
 =head1 SYNOPSIS
 
@@ -213,8 +213,20 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 		s/^\s+//;               # no leading white
 		s/\s+$//;               # no trailing white
 		next unless length;     # anything left?
-		my ($var, $value) = split(/\s*=\s*/, $_, 2);
-		$config->{uc $var} = $value;
+
+		# Get the variable and its value.
+		my ($var, $val) = split(/\s*=\s*/, $_, 2);
+
+		# Check that the line is a valid config line and exit
+		# immediately if not.
+		unless (defined $var and length $var and 
+			defined $val and length $val) {
+		  print STDERR "Syntax error in $conf_file at line $.: '$_'\n";
+		  exit 1;
+		}
+
+		# Save the configuration directive.
+		$config->{uc $var} = $val;
 	    }
 	    close CONF;
 
@@ -327,7 +339,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant CHAR_SET                => $config->{CHAR_SET} || 'ISO-8859-1';
 
     # Time constants.
-    use constant ISO_8601_FORMAT         => "%G-%m-%d %T";
+    use constant ISO_8601_FORMAT         => "%Y-%m-%d %T";
 
     # Admin group ID. This will go away once permissions are implemented.
     use constant ADMIN_GRP_ID            => 6;

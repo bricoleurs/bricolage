@@ -101,9 +101,57 @@ Fixed bug in HTML::Template burner where templates in non-root categories could 
 
 =item *
 
-All fixes in the soon-to-be-released 1.2.2 version.  See below for details.
+Fixed Bric::Util::FTP::FileHandle to create new revisions on PUT.  [Sam]
+
+=item *
+
+Deleting a contributor will no longer break stories with which the contributor
+is associated. Thanks to Rachel Murray for the spot. [David]
+
+=item *
+
+Invalid configuration directives in bricolage.conf will now be caught and keep
+Bricolage from starting. [Sam]
+
+=item *
+
+The view button in the element profile now works correctly. Thanks to Joao Pedro
+Goncalves for the spot. [David]
+
+=item *
+
+Changed all strttime instances of '%G' to '%Y', as this seems to be
+more portable. [David]
+
+=item *
+
+Checking in a template from a template profile now performs a syntax
+check of the temlate just as saving the template does. [Joao Pedro
+Goncalves]
+
+=item *
+
+Notes attached to stories and media are now once again editable from
+the desk and profile views if they're checked out to the current user,
+and only viewable otherwise. Thanks to Tracey Largay for the
+spot. [David]
+
+=item *
+
+Fixed a few poorly-named timezones in the time zone preference. More
+still needs to be done here, actually. [David]
+
+=item *
+
+Implemented the chk_syntax() method in Bric::Util::Burner::Template.
+[Sam]
 
 =back
+
+=head1 Version 1.2.3
+
+Functionally equivalent to 1.2.2, but includes required files missing from the
+1.2.2 distribution.
 
 =head1 Version 1.2.2
 

@@ -68,8 +68,6 @@ my $onePixCell = sub {
         <tr>
             <% &$onePixCell(0, 18) %>
             <td>
-                <a href="<% $ppage %>/view_notes.html?id=<% $aid %>" class="blackUnderlinedLink">Notes</a>&nbsp;&nbsp;
-                <a href="/workflow/trail/<% $class %>/<% $aid %>" class="blackUnderlinedLink">Trail</a>&nbsp;&nbsp;
 % my $link = $ppage . '/' . $aid;
 % if ($desk_type eq 'workflow') {
 %	$link .= '?return=' . $did;	
@@ -81,6 +79,8 @@ my $onePixCell = sub {
 %		$link .= '?checkout=1';
 %	}
 % }
+                <a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>" class="blackUnderlinedLink">Notes</a>&nbsp;&nbsp;
+                <a href="/workflow/trail/<% $class %>/<% $aid %>" class="blackUnderlinedLink">Trail</a>&nbsp;&nbsp;
                 <a href="<% $link %>" class="blackUnderlinedLink"><% $vlabel %></a>&nbsp;&nbsp;
                 <a href="/workflow/events/<% $class %>/<% $aid %>" class="blackUnderlinedLink">Log</a>&nbsp;&nbsp;
                 <% $pub %>
@@ -207,11 +207,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:36 $
+$Date: 2002-04-03 21:26:55 $
 
 =head1 DESCRIPTION
 
