@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2003-03-13 13:51:06 $
+-- $Date: 2003-03-14 21:33:00 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -61,6 +61,21 @@ CREATE TABLE element  (
                                    CONSTRAINT ck_element__active
                                     CHECK (active IN (0,1)),
     CONSTRAINT pk_element__id PRIMARY KEY (id)
+);
+
+-- -----------------------------------------------------------------------------
+-- Table: element__site
+--
+-- Description: A table that maps 
+
+CREATE TABLE element__site (
+    element__id    NUMERIC(10)  NOT NULL,
+    site__id       NUMERIC(10)  NOT NULL,
+    active         NUMERIC(1)   DEFAULT 1
+                                NOT NULL
+                                CONSTRAINT ck_site_element__active
+                                  CHECK (active IN (0,1)),
+    primary_oc__id  NUMERIC(10,0)
 );
 
 -- -----------------------------------------------------------------------------
@@ -177,20 +192,6 @@ CREATE TABLE attr_element_meta (
                               NOT NULL
                               CONSTRAINT ck_attr_element_meta__active CHECK (active IN (0,1)),
    CONSTRAINT pk_attr_element_meta__id PRIMARY KEY (id)
-);
-
--- -----------------------------------------------------------------------------
--- Table: element__site
---
--- Description: A table that maps 
-
-CREATE TABLE element__site (
-    element__id    NUMERIC(10)  NOT NULL,
-    site__id       NUMERIC(10)  NOT NULL,
-    active         NUMERIC(1)   DEFAULT 1
-                                NOT NULL
-                                CONSTRAINT ck_site_element__active CHECK (active IN (0,1)),
-    primary_oc__id  NUMERIC(10,0)
 );
 
 -- -----------------------------------------------------------------------------

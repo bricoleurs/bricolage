@@ -23,14 +23,16 @@ if ($field eq "$widget|save_cb") {
     if ($param->{delete} || $param->{delete_cascade}) {
         if ($id == $root_id) {
             # You can't deactivate the root category!
-            add_msg($lang->maketext("$disp_name [_1] cannot be deleted.",$name));
+            add_msg($lang->maketext("$disp_name [_1] cannot be deleted.",
+                                    $name));
             return $cat;
         }
         my ($arg, $msg, $key);
         if ($param->{delete_cascade}) {
             # We're going to delete all subcategories, too.
             $arg = { recurse => 1 };
-            $msg = $lang->maketext("$disp_name profile [_1] and all its $pl_name deleted.",$name);
+            $msg = $lang->maketext("$disp_name profile [_1] and all its " .
+                                   "$pl_name deleted.", $name);
             $key = '_deact_cascade';
         } else {
             # We'll just be deleting this category.
@@ -48,7 +50,8 @@ if ($field eq "$widget|save_cb") {
         $cat->set_description($param->{description});
         $cat->set_ad_string($param->{ad_string});
         $cat->set_ad_string2($param->{ad_string2});
-        $cat->set_site_id($param->{site_id});
+        $cat->set_site_id($param->{site_id})
+          if exists $param->{site_id};
 
         # if this is not ROOT, we have work to do
         if (((defined $id and $id != $root_id) or not defined $id)
@@ -71,13 +74,14 @@ if ($field eq "$widget|save_cb") {
                 }
 
                 if (@{ $class->list({ directory => $param->{directory},
+                                      site_id   => $cat->get_site_id,
                                       parent_id => $p_id}) }) {
-                    my $uri = Bric::Util::Trans::FS->cat_uri(
-                      $par->get_uri, $param->{directory}
-                    );
-                    add_msg($lang->maketext("Directory name [_1] contains "
-                            . "invalid characters. Please try a different "
-                            . "directory name.","'$param->{directory}'"));
+                    my $uri = Bric::Util::Trans::FS->cat_uri
+                      ($par->get_uri, $param->{directory});
+                    add_msg($lang->maketext
+                            ('URI [_1] is already in use. Please ' .
+                             'try a different directory name or ' .
+                             'parent category.', $uri ));
                     return $cat;
                 }
                 if ($param->{directory} =~ /[^\w.-]+/) {
@@ -174,11 +178,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:53 $
+$Date: 2003-03-14 21:32:58 $
 
 =head1 SYNOPSIS
 

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:53 $
+$Date: 2003-03-14 21:32:59 $
 
 =head1 SYNOPSIS
 
@@ -58,12 +58,13 @@ if ($param->{delete}) {
 my $dest_id = $param->{"${type}_id"};
 # Make sure the name isn't already in use.
 my $used;
-my @dests = $class->list_ids({ name => $param->{name} });
+my @dests = $class->list_ids({ name => $param->{name},
+                               site_id => $dest->get_site_id });
 if (@dests > 1) { $used = 1 }
 elsif (@dests == 1 && !defined $dest_id) { $used = 1 }
 elsif (@dests == 1 && defined $dest_id
        && $dests[0] != $dest_id) { $used = 1 }
-add_msg($lang->maketext("The name [_2] is already used by another [_2].",
+add_msg($lang->maketext("The name [_1] is already used by another [_2].",
                         $name, $disp_name))
   if $used;
 

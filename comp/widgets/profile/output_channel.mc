@@ -29,21 +29,24 @@ if ($param->{delete}) {
     set_redirect('/admin/manager/output_channel');
 } else {
     my $oc_id = $param->{"${type}_id"};
+    $oc->set_site_id($param->{site_id})
+      if $param->{site_id};
     # Make sure the name isn't already in use.
-    my @ocs = $class->list_ids({ name => $param->{name} });
+    my @ocs = $class->list_ids({ name    => $param->{name},
+                                 site_id => $oc->get_site_id });
     if (@ocs > 1) { $used = 1 }
     elsif (@ocs == 1 && !defined $oc_id) { $used = 1 }
     elsif (@ocs == 1 && defined $oc_id
 	   && $ocs[0] != $oc_id) { $used = 1 }
 
     if ($used) {
-        add_msg($lang->maketext("The name [_1] is already used by another $disp_name.",$name));
+        add_msg($lang->maketext("The name [_1] is already used by " .
+                                "another $disp_name.", $name));
         return;
     }
 
     # Set the basic properties.
     $oc->set_description( $param->{description} );
-    $oc->set_site_id($param->{site_id});
     $oc->set_protocol($param->{protocol});
     $oc->set_pre_path( $param->{pre_path} );
     $oc->set_post_path( $param->{post_path});
