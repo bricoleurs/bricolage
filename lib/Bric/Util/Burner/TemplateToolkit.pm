@@ -7,15 +7,15 @@ Bric::Util::Burner::TemplateToolkit - Bric::Util::Burner subclass to publish bus
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 17:39:12 $
+$Date: 2003-10-03 01:40:35 $
 
 =head1 SYNOPSIS
 
@@ -47,9 +47,7 @@ use strict;
 # Programatic Dependencies
 
 use Template;
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::AP;
-use Bric::Util::Fault::Exception::MNI;
+use Bric::Util::Fault qw(throw_gen throw_burn_error);
 use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
 use Bric::Config qw(:burn);
@@ -80,9 +78,6 @@ use base qw(Bric::Util::Burner);
 
 #--------------------------------------#
 # Private Class Fields
-my $mni = 'Bric::Util::Fault::Exception::MNI';
-my $ap = 'Bric::Util::Fault::Exception::AP';
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $fs = Bric::Util::Trans::FS->new;
 
 #--------------------------------------#
@@ -202,15 +197,9 @@ sub burn_one {
     my $element = $story->get_tile();
 
     my($ba);  #gone
-
-    print STDERR __PACKAGE__, "::burn_one() called.\n"
-	if DEBUG;
-
     my ($outbuf, $retval);
 
     # Determine the component roots.
-    my $comp_dir = $self->get_comp_dir;
-
     my $comp_dir = $self->get_comp_dir;
     my $template_roots = [ map { $fs->cat_dir($comp_dir, "oc_" . $_->get_id) }
                            ($oc, $oc->get_includes) ];
@@ -283,9 +272,14 @@ sub burn_one {
     $self->_push_element($element);
 
     while(1) {
+	$tt->process($template) or throw_burn_error
+          error   => "Error executing '$template'",
+          payload => $tt->error,
+          mode    => $self->get_mode,
+          oc      => $self->get_oc->get_name,
+          cat     => $self->get_cat->get_uri,
+          elem    => $element->get_name;
 
-        # XXX Throw an exception. Use throw_burn_error().
-	$tt->process($template) || die $tt->error(), "; trying to burn '$template'\n";
 	my $page = $self->_get('page') + 1;
 
 
@@ -295,8 +289,8 @@ sub burn_one {
 
 	    # Save the page we've created so far.
 	    open(OUT, ">$file")
-		|| die $gen->new({ msg => "Unable to open '$file' for writing",
-				   payload => $! });
+              or throw_gen error => "Unable to open '$file' for writing",
+                           payload => $!;
 	    print OUT $outbuf;
 	    close(OUT);
 	    $outbuf = '';
@@ -309,87 +303,6 @@ sub burn_one {
     $self->_pop_element;
 
     $self->_set(['_tt','_comp_root'],[undef,undef]);
-    my $ret = $self->_get('_res') || return;
-    $self->_set(['_res', 'page'], [[], 0]);
-    return wantarray ? @$ret : $ret;
-
-    # XXX DELETE FROM HERE TO THE END OF THE METHOD?
-   # XXX Perhaps we should use and check for a subclass, instead?
-    my $m = HTML::TemplateToolkit::Request->instance;
-    if ($m and $m->out_method) {
-        # If there's an out_method, assume that there's an existing burn
-        # going on.
-        no strict 'refs';
-        for (qw(m story burner element writer)) {
-            $bric_objs{$_} = ${TEMPLATE_BURN_PKG . "::$_"};
-        }
-    }
-
-    # Create the interpreter
-    my $interp = HTML::TemplateToolkit::Interp->new('allow_globals' => [qw($story
-                                                                 $burner
-                                                                 $writer
-                                                                 $element)],
-                                          'in_package'    => TEMPLATE_BURN_PKG,
-                                          'data_dir'   => $self->get_data_dir,
-                                          'out_method' => \$outbuf);
-
-
-
-    my $element = $ba->get_tile;
-    $self->_push_element($element);
-
-    # Set some global variables to be passed in.
-    $interp->set_global('$story',   $ba);
-    $interp->set_global('$element', $element);
-    $interp->set_global('$burner',  $self);
-
-    # save some of the values for this burn.
-#    $self->_set([qw(_buf     _interp  _comp_root)],
-#                [  \$outbuf, $interp, $comp_root]);
-
-
-    # Get the template name. Because this is a top-level Element, we don't want
-    # to look far for its corresponding template.
-    my $tmpl_path = $cat->ancestry_path;
-    my $tmpl_name = _fmt_name($element->get_name);
-    my $template = $fs->cat_uri($tmpl_path, $tmpl_name);
-    if ( $interp->comp_exists($template . '.mc') ) {
-        # The top-level .mc template exits.
-        $template .= '.mc';
-    } else {
-        # If we're in here, there's no top-level .mc template. So create a
-        # dhandler for it if there isn't one already.
-#        _create_dhandler($comp_root, $oc, $cat, $tmpl_name)
-#          unless $interp->comp_exists($fs->cat_uri($tmpl_path, 'dhandler'));
-    }
-
-    while (1) {
-        # Run the biz asset through the template
-        eval { $retval = $interp->exec($template) if $template };
-        die ref $@ ? $@ :
-          $ap->new({ msg     => "Error executing template '$template'.",
-                     payload => $@ })
-          if $@;
-
-        # End the page if there is still content in the buffer.
-        $self->end_page if $outbuf !~ /^\s*$/;
-
-        # Keep burning this template if it contains more pages.
-        last unless $self->_get('more_pages');
-    }
-
-    # Restore any existing Mason request object and Bricolage objects.
-    if ($bric_objs{story}) {
-        no strict 'refs';
-        for (qw(m story burner element writer)) {
-            ${TEMPLATE_BURN_PKG . "::$_"} = $bric_objs{$_};
-        }
-    }
-
-    $self->_pop_element;
-
-    # Return a list of the resources we just burned.
     my $ret = $self->_get('_res') || return;
     $self->_set(['_res', 'page'], [[], 0]);
     return wantarray ? @$ret : $ret;
@@ -705,8 +618,8 @@ sub end_page {
 
     # Save the page we've created so far.
     open(OUT, ">$file")
-      || die $gen->new({ msg => "Unable to open '$file' for writing",
-                         payload => $! });
+      or throw_gen error => "Unable to open '$file' for writing",
+                   payload => $!;
     print OUT $$buf;
     close(OUT);
 
@@ -806,15 +719,11 @@ sub _load_template_element {
     my $tmpl_name = _fmt_name($element->get_name) . '.tt';
     # Look up the template (it may live few directories above $tmpl_path)
     my $tmpl = $self->find_template($tmpl_path, $tmpl_name)
-      || die $ap->new({ msg     => "Unable to find template '$tmpl_name'",
-                        payload => { class   => __PACKAGE__,
-                                     action  => 'load template',
-                                     context => { oc   => $self->get_oc,
-                                                  cat  => $self->get_cat,
-                                                  elem => $element
-                                                }
-                                   }
-                      });
+      or throw_burn_error error => "Unable to find template '$tmpl_name'",
+                          mode  => $self->get_mode,
+                          oc    => $self->get_oc->get_name,
+                          cat   => $self->get_cat->get_uri,
+                          elem  => $element->get_name;
     return $tmpl;
 }
 
@@ -893,64 +802,13 @@ sub _pop_element {
 
 =head2 Private Functions
 
-=over 4
-
-=item _create_dhandler($comp_root, $oc, $cat, $tmpl_name)
-
-Creates a top-level dhandler. This dhandler, when executed, will find the proper
-template in its URI hierarchy. The reason we create this dhandler is to ensure
-that a mason component gets executed at the end of the URI hierarchy, so that
-all the corresponding autohandlers will also be executed properly.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
+None.
 
 =cut
-
-sub _create_dhandler {
-    my ($comp_root, $oc, $cat, $tmpl_name) = @_;
-    # The complete path on the file system sans the filename.
-    my $path = $fs->cat_dir($comp_root->[0][1],
-                            $fs->uri_to_dir($cat->ancestry_path));
-
-    # The complete path on the file system including the filename.
-    my $file = $fs->cat_dir($path, 'dhandler');
-
-    # Create the necessary directories
-    $fs->mk_path($path);
-
-    # Now just write it out to the file system.
-    open(DH, ">$file")
-      || die $gen->new({ msg => "Unable to open '$file' for writing",
-                         payload => $! });
-        print DH q{<%once>;
-my $ap = 'Bric::Util::Fault::Exception::AP';
-</%once>
-<%init>;
-my $template = $burner->find_template($m->current_comp->dir_path,
-                                      $m->dhandler_arg . '.mc')
-  || die $ap->new({ msg     => "Unable to find template '"
-                               . $m->dhandler_arg . "\.mc'",
-                    payload => { class   => __PACKAGE__,
-                                 action  => 'load template',
-                                 context => { oc   => $burner->get_oc,
-                                              cat  => $burner->get_cat,
-                                              elem => $element }}
-                   });
-$m->comp($template);
-</%init>
-};
-        close(DH);
-}
 
 1;
 
 __END__
-
-=back
 
 =head1 NOTES
 
