@@ -37,7 +37,7 @@ sub checkin : Callback {
     my $self = shift;
 
     my $a_id    = $self->value;
-    my $a_class = $self->request_args->{$widget.'|asset_class'};
+    my $a_class = $self->request_args->{CLASS_KEY.'|asset_class'};
     my $pkg     = get_package_name($a_class);
     my $a_obj   = $pkg->lookup({'id' => $a_id, checkout => 1});
     my $d       = $a_obj->get_current_desk;
@@ -51,7 +51,7 @@ sub checkout : Callback {
     my $self = shift;
 
     my $a_id    = $self->value;
-    my $a_class = $self->request_args->{$widget.'|asset_class'};
+    my $a_class = $self->request_args->{CLASS_KEY.'|asset_class'};
     my $pkg     = get_package_name($a_class);
     my $a_obj   = $pkg->lookup({'id' => $a_id});
     my $d       = $a_obj->get_current_desk;
@@ -79,7 +79,7 @@ sub move : Callback {
     my $self = shift;
 
     # Accept one or more assets to be moved to another desk.
-    my $next_desk = $self->request_args->{$widget.'|next_desk'};
+    my $next_desk = $self->request_args->{CLASS_KEY.'|next_desk'};
     my $assets    = ref $next_desk ? $next_desk : [$next_desk];
 
     my ($a_id, $a_class, $d_id, $pkg, %wfs);
@@ -95,7 +95,7 @@ sub move : Callback {
 
         unless ($a_obj->is_current) {
             my $msg = "Cannot move [_1] asset '[_2]' while it is checked out";
-            add_msg($lang->maketext($msg, $a_class, $a_obj->get_name));
+            add_msg($self->lang->maketext($msg, $a_class, $a_obj->get_name));
             next;
         }
 
@@ -138,8 +138,8 @@ sub publish : Callback {
 
     my $mpkg = 'Bric::Biz::Asset::Business::Media';
     my $spkg = 'Bric::Biz::Asset::Business::Story';
-    my $story = mk_aref($param->{$widget.'|story_pub_ids'});
-    my $media = mk_aref($param->{$widget.'|media_pub_ids'});
+    my $story = mk_aref($param->{CLASS_KEY.'|story_pub_ids'});
+    my $media = mk_aref($param->{CLASS_KEY.'|media_pub_ids'});
     my (@rel_story, @rel_media);
 
     # start with the objects checked for publish
@@ -170,7 +170,7 @@ sub publish : Callback {
             my $msg = "Cannot publish [_1]  because it is checked out";
             my $arg = lc(get_disp_name($a->key_name))
               . " '" . $a->get_name . "'";
-            add_msg($lang->maketext($msg, $arg));
+            add_msg($self->lang->maketext($msg, $arg));
             next;
         }
 
@@ -184,7 +184,7 @@ sub publish : Callback {
                   . "it is checked out";
                 my $arg = lc(get_disp_name($r->key_name))
                   . " '" . $r->get_name."'";
-                add_msg($lang->maketext($msg, $arg));
+                add_msg($self->lang->maketext($msg, $arg));
                 next;
             }
 
@@ -227,7 +227,7 @@ sub publish : Callback {
 sub deploy : Callback {
     my $self = shift;
 
-    my $a_ids = $self->request_args->{$widget.'|formatting_pub_ids'};
+    my $a_ids = $self->request_args->{CLASS_KEY.'|formatting_pub_ids'};
     my $b = Bric::Util::Burner->new;
 
     $a_ids = ref $a_ids ? $a_ids : [$a_ids];
@@ -261,7 +261,7 @@ sub deploy : Callback {
     # Let 'em know we've done it!
     my $msg = '[_1] deployed.';
     my $arg = $name ? $disp_name : ($num{$c} || $c) . " $pl_name";
-    add_msg($lang->maketext($msg, $arg));
+    add_msg($self->lang->maketext($msg, $arg));
 }
 
 sub clone : Callback {
