@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 08:23:56 $
+$Date: 2002-06-24 18:02:45 $
 
 =head1 SYNOPSIS
 
@@ -500,7 +500,7 @@ sub preview {
         # Return the redirection URL, if we have one
         if (@$bats) {
 	    return 'http://' . ($bats->[0]->get_servers)[0]->get_host_name
-		. $ba->get_uri;
+		. $res->[0]->get_uri;
 	}
     }
 }
