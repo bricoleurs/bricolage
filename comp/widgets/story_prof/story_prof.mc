@@ -93,7 +93,6 @@ if ($id) {
 
 	$param->{checkout} = $checkout if defined($checkout);
 	$param->{version}  = $version  if defined($version);
-
 	$story = Bric::Biz::Asset::Business::Story->lookup($param);
 
 	# Clear the story state data

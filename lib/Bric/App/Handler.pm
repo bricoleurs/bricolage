@@ -291,7 +291,6 @@ sub handler {
     my ($r) = @_;
     # Handle the request.
     my $status;
-
     my $lang_name = get_pref('Language');
 
     # A global for localization purposes

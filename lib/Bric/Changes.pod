@@ -243,6 +243,12 @@ to a group profile will persist when you click the "Permissions" button.
 
 Media type groups now properly display their members.
 
+=item *
+
+The "Edit" link that showed up for categories associated with a story when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive has been removed. It
+didn't belong there in the first place.
+
 =back
 
 =cut
