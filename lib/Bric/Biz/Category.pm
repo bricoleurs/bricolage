@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-28 20:48:03 $
+$Date: 2002-10-29 00:08:02 $
 
 =head1 SYNOPSIS
 
@@ -1478,7 +1478,7 @@ sub _select_category {
 
     # The left join in here is allows us to return all of the group IDs with
     # the categories in a single query
-    my $colums = join ',', 'a.id', COLS;  # list of columns to return
+    my $columns = join ',', 'a.id', COLS;  # list of columns to return
     my $table = TABLE;      # main table to select from
     my $mtable = MTABLE;    # grp member table from which we get grp__id
     my $cmtable = CMTABLE;  # relational table to get member table row
