@@ -205,6 +205,8 @@ Friends who have spotted bugs include:
 
 =item Kevin Elliott
 
+=item Michael G. Kaiser
+
 =back
 
 Bricolage's translation team:

@@ -878,7 +878,9 @@ my $split_super_bulk = sub {
 
 my $handle_resize = sub {
     my ($widget, $field, $param) = @_;
-    $split_fields->($widget, $param->{$widget.'|text'});
+    my $splitter = get_state_name($widget) eq 'edit_bulk'
+      ? $split_fields : $split_super_bulk;
+    $splitter->($widget, $param->{$widget.'|text'});
     set_state_data($widget, 'rows', $param->{$widget.'|rows'});
     set_state_data($widget, 'cols', $param->{$widget.'|cols'});
 };

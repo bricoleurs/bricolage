@@ -51,6 +51,11 @@ filing a bug. [Cinly Ooi]
 Permissions granted on the "All" groups work again. Reported by Kevin Elliott.
 [David]
 
+=item *
+
+Resize now works in super bulk edit. Thanks to Michael G. Kaiser for the spot.
+[David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)
