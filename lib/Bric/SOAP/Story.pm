@@ -35,30 +35,46 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-02 00:12:53 $
+$Date: 2002-02-02 00:18:26 $
 
 =head1 SYNOPSIS
 
   use SOAP::Lite;
   import SOAP::Data 'name';
 
-  # FIX: add connection details
+  # setup soap object to login with
+  my $soap = new SOAP::Lite
+    uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
+    readable => DEBUG;
+  $soap->proxy('http://localhost/soap',
+               cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
+  # login
+  $soap->login(name(username => USER), 
+	       name(password => PASSWORD));
 
-  # get a list of story_ids for published stories with "foo" in their
-  # title
+  # get a list of story_ids for published stories w/ "foo" in their title
   my $story_ids = $soap->list_ids(name(title          => '%foo%'), 
                                   name(publish_status => 1)     )->result;
 
-  # FIX: add more examples  
+  # export a story
+  my $xml = $soap->export(name(story_id => $story_id)->result;
 
+  # create a new story from an xml document
+  my $story_ids = $soap->create(name(document => $xml_document))->result;
+
+  # update an existing story from an xml document
+  my $story_ids = $soap->create(name(document => $xml_document),
+                                name(update_ids => 
+                                     [ name(story_id => 1024) ]))->result;
+  
 =head1 DESCRIPTION
 
 This module provides a SOAP interface to manipulating Bricolage stories.
