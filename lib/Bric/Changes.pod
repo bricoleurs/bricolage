@@ -360,6 +360,11 @@ them before inserting them, as doing so can truncate in the middle of
 multibyte characters and lead to 'invalid byte sequence for encoding
 "UNICODE"' database errors. [David]
 
+=item *
+
+Elements with autopopulated fields (e.g., for image documents) can now be
+created via the SOAP interface. Reported by Todd Tyree. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)

@@ -1609,8 +1609,6 @@ sub _insert_data {
     my $sql = 'INSERT INTO '.TABLE.' (id,'.join(',',COLS).") ".
               "VALUES ($nextval,".join(',', ('?') x COLS).')';
 
-    warn "Inserting $self->{element__id} => $self->{key_name}\n";
-
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(COLS));
 

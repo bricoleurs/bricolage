@@ -1871,10 +1871,8 @@ sub add_data {
     my ($new_parts, $del_parts) = $self->_get(qw(_new_parts _del_parts));
 
     foreach my $p (@$parts_arg) {
-	unless (ref $p) {
-	    my $msg = 'Must pass AssetType field or container objects, not IDs';
-	    throw_gen(error => $msg);
-	}
+        throw_gen 'Must pass AssetType field or container objects, not IDs'
+          unless ref $p;
 
 	# Get the ID if we were passed an object.
 	my $p_id = $p->get_id;
@@ -2774,7 +2772,7 @@ sub _sync_parts {
 	$parts->{$p_obj->get_id} = $p_obj;
     }
 
-    # Add parts that already existed when they were added..
+    # Add parts that already existed when they were added.
     foreach my $p_id (keys %$new_parts) {
 	# Delete this from the new list and grab the object.
 	my $p_obj = delete $new_parts->{$p_id};
