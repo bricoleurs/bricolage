@@ -184,7 +184,7 @@ BEGIN {
         oc                    => Bric::FIELD_READ,
         cat                   => Bric::FIELD_READ,
         page                  => Bric::FIELD_READ,
-        encoding              => Bric::FIELD_READ,
+        encoding              => Bric::FIELD_RDWR,
         output_filename       => Bric::FIELD_READ,
         output_ext            => Bric::FIELD_READ,
         output_path           => Bric::FIELD_READ,

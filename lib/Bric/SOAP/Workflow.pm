@@ -253,14 +253,18 @@ sub publish {
         throw_ap(error => "Cannot publish checked-out $types{$type}: \"".$id."\".")
             if $obj->get_checked_out and not $preview;
 
-        if (not $preview && $obj->get_workflow_id) {
+        if (! $preview && $obj->get_workflow_id) {
             # It must be on a publish desk.
             my $did = $obj->get_desk_id;
             my $desk = $desks{$did}
               ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $did });
+            # XXX There should always be a desk when there's a workflow, but
+            # sometimes there isn't. Hence the "$desk &&" just lets it publish
+            # if that's the case. It will be removed from workflow by the
+            # publish.
             throw_ap qq{Cannot publish $types{$type} "$id" because it }
               . "is not on a publish desk"
-                unless $desk->can_publish;
+                unless $desk && $desk->can_publish;
         }
 
         # Check for PUBLISH permission, or READ if previewing

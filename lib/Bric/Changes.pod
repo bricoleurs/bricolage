@@ -29,7 +29,7 @@ clone. [David]
 =item *
 
 Added F<contrib/thumbnails/precreate-thumbs.pl> script to pre-create
-thumbnails from Images. [Scott]
+thumbnails from images. Useful for upgraders. [Scott]
 
 =back
 
@@ -41,6 +41,21 @@ thumbnails from Images. [Scott]
 
 The localization libraries load without error again. Added tests to ensure
 that this doesn't happen again. [David]
+
+=item *
+
+Publishing stories not in workflow via the SOAP server works again. [David]
+
+=item *
+
+Documents that the SOAP workflow publish finds in workflow but not on a desk
+(which shouldn't happen, but sometimes does) are now just published anyway.
+[David]
+
+=item *
+
+The Burner object's C<encoding> attribute is now settable as well as readable.
+[David]
 
 =back
 
@@ -179,7 +194,8 @@ change the way they do so. For example, templates that had used
 C<< <%filter> >> blocks to convert content to another encoding using something
 like C<Encode::from_to($_, 'utf-8', $encoding)> must now use something like
 C<$_ = Encode::encode($encoding, $_)>, instead. Bric::Util::CharTrans should
-continue to do the right thing. [David]
+continue to do the right thing. In either case, you'll also need to set
+the new C<encoding> attribute, as well, (see next item). [David]
 
 =item *
 
