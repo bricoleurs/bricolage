@@ -29,17 +29,16 @@ David Wheeler L<lt>david@wheeler.netL<gt>
 </head>
 
 <body>
-
-<table border="0" cellpadding="0" cellspacing="0" width="475" align="center">
+<center>
+<table border="0" cellpadding="0" cellspacing="0" width="475">
   <tr>
     <td width="475">
       <table width="475" cellpadding="0" cellspacing="0" border="0">
         <tr height="22">
           <td class="tab" valign="top" width="11"><img src="/media/images/006666_curve_left.gif" width="11" height="22"></td>
           <td class="tab" width="348"><% $title %></td>
-          <td valign=top width="11" class="tab"><img src="/media/images/006666_curve_right.gif" width="11" height="22"></td>
-          <td width="217" align="right"><a href="javascript:self.close()"><img src="/media/images/close.gif" border="0"
- alt="Close" /></a></td>
+          <td valign="top" width="11" class="tab"><img src="/media/images/006666_curve_right.gif" width="11" height="22"></td>
+          <td width="217" align="right" valign="top"><a href="javascript:self.close()"><img src="/media/images/close.gif" border="0" alt="Close" width="52" height="20" /></a></td>
         </tr>
       </table>
       <table width="475" cellpadding="0" cellspacing="0" border="0">
@@ -57,7 +56,7 @@ David Wheeler L<lt>david@wheeler.netL<gt>
     <td align="right"><a href="javascript:self.close()"><img src="/media/images/close.gif" border="0" alt="Close" /></a></td>
   </tr>
 </table>
-
+</center>
 </body>
 </html>
 %#-- End HTML --#
