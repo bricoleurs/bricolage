@@ -151,7 +151,8 @@ use MasonX::Interp::WithCallbacks;
                            :history
                            :pref
                            :aref
-                           :browser);
+                           :browser
+                           :wf);
 
     use Bric::Dist::Action;
     use Bric::Dist::Action::Mover;

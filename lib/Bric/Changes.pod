@@ -87,6 +87,14 @@ Added a warning to the story and media profiles for when related stories and
 media have been deactivated and a different story or media document should be
 related.
 
+=item *
+
+Added output the the Apache log consisting of the 20 most recent events on an
+asset that has lost track of what workflow and/or desk it is on. This is to
+provide debugging information that might help us to track down when an asset
+forgets its workflow and/or desk, so that we might eventually be able to
+eliminate the code that picks up on this and corrects it. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -284,6 +292,22 @@ header to the browser. Thanks to Marshall Roch for the spot! [David]
 
 The Output Channel URI Prefix and URI Suffix fields are once again allowed to
 include a slash ("/"). Reported by Kevin Elliott. [David]
+
+=item *
+
+An attempt to create a new template with the proper extension as part of the
+name (e.g., "foo.mc" fora Mason template) now keeps the extension instead of
+changing the dot to an underscore and adding the extension (e.g., it stays
+"foo.mc" instead of becoming "foo_mc.mc"). This is especially useful when
+creating utility templates and for users of C<bric_dev_sync>. Thanks to Paul
+Orrock for the spot! [David]
+
+=item *
+
+When Bricolage notices that a document or template is not in workflow or on a
+desk when it should be, it is now more intelligent in trying to select the
+correct workflow and/or desk to put it on, based on current workflow context
+and user permissions. Reported by Hal Creech. [David]
 
 =back
 

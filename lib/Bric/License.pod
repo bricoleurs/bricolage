@@ -269,6 +269,8 @@ Friends who have spotted bugs include:
 
 =item Adam Rinehart
 
+=item Hal Creech
+
 =back
 
 Bricolage's translation team:

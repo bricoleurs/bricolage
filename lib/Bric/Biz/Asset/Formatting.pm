@@ -120,7 +120,7 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
-
+use Bric::Biz::Workflow qw(TEMPLATE_WORKFLOW);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::AssetVersion;
 use Bric::Util::Time qw(:all);
@@ -1092,6 +1092,16 @@ B<Notes:> NONE.
 sub get_tplate_type_code {
     $string_tplate_types{$_[1]}
 }
+
+################################################################################
+
+=item my $wf_type = Bric::Biz::Asset::Formatting->workflow_type
+
+Returns the value of the Bric::Biz::Workflow C<TEMPLATE_WORKFLOW> constant.
+
+=cut
+
+sub workflow_type { TEMPLATE_WORKFLOW }
 
 ##############################################################################
 
@@ -2221,6 +2231,8 @@ sub _build_file_name {
 
     # Mangle the file name.
     my $file = lc $name;
+    my $kn   = $self->get_element_key_name;
+    $file    =~ s/\Q$file_type\E$// unless defined $kn && $kn eq $file;
     $file    =~ y/a-z0-9/_/cs;
     $file   .= $file_type if $tplate_type != CATEGORY_TEMPLATE
       or Bric::Util::Burner->cat_fn_has_ext($name);

@@ -37,6 +37,7 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
+use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Attribute::Media;
 use Bric::Util::Trans::FS;
@@ -1011,6 +1012,16 @@ B<Notes:> NONE.
 =cut
 
 sub get_class_id { ref $_[0] ? shift->_get('class_id') : 46 }
+
+################################################################################
+
+=item my $wf_type = Bric::Biz::Asset::Business::Media->workflow_type
+
+Returns the value of the Bric::Biz::Workflow C<MEDIA_WORKFLOW> constant.
+
+=cut
+
+sub workflow_type { MEDIA_WORKFLOW }
 
 ################################################################################
 

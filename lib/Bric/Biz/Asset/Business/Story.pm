@@ -27,6 +27,8 @@ $LastChangedDate$
  # list of object ids
  ($ids || @ids) = Bric::Biz::Asset::Business::Story->list_ids($param)
 
+ # Type of workflow.
+ my $wf_type = Bric::Biz::Asset::Business::Story->workflow_type;
 
  ## METHODS INHERITED FROM Bric::Biz::Asset ##
 
@@ -160,6 +162,7 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
+use Bric::Biz::Workflow qw(STORY_WORKFLOW);
 use Bric::Config qw(:uri);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
@@ -1063,6 +1066,16 @@ sub my_meths {
 
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
+
+################################################################################
+
+=item my $wf_type = Bric::Biz::Asset::Business::Story->workflow_type
+
+Returns the value of the Bric::Biz::Workflow C<STORY_WORKFLOW> constant.
+
+=cut
+
+sub workflow_type { STORY_WORKFLOW }
 
 ################################################################################
 
