@@ -662,7 +662,7 @@ Now export the branch and create the distribution tarball.
   % cd rev_1_8
   % make dist
 
-This will create a distribution tarball in the bricolage directory. Copy this
+This will create a distribution tarball in the F<rev_1_8> directory. Copy this
 tarball somewhere, and do a full test with it, to make sure that Bricolage
 does indeed build and properly install itself.
 
