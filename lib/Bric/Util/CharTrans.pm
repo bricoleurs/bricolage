@@ -62,7 +62,7 @@ use base qw(Bric);
 # Function Prototypes
 ################################################################################
 sub _convert;
-sub _decode;
+sub _utf8_on;
 
 ##############################################################################
 # Constants
@@ -192,15 +192,15 @@ B<Notes:>
 sub to_utf8 {
     my $self = shift;
     return $self unless defined $_[0];
-    if ($self->charset eq 'UTF-8') {
-        _decode shift;
+    my $encoding = $self->charset;
+    if ($encoding eq 'UTF-8') {
+        _utf8_on shift;
     } else {
-        _convert shift, $self->charset, 'utf-8';
+        # Just use this line and not the conditional if there are problems.
+        _convert \&Encode::decode, $encoding, shift;
     }
     return $self;
 }
-
-
 
 ##############################################################################
 
@@ -227,7 +227,7 @@ B<Notes:> NONE.
 sub from_utf8 {
     my $self = shift;
     return $self unless defined $_[0];
-    _convert shift, 'utf-8', $self->charset;
+    _convert \&Encode::encode, $self->charset, shift;
     return $self;
 }
 
@@ -238,58 +238,64 @@ sub from_utf8 {
 
 =item _convert
 
-  _convert $data, $from, $to;
+  _convert $coderef, $encoding, $data;
 
-Converts the C<$data> string or data structure in-place from character set
-C<$from> to character set C<$to>. This is the function that does most of the
-work for C<to_utf8()> and C<from_utf8()>, in that it handles recursive
-conversion of all of the strings of a data structure.
+Converts the C<$data> string or data structure in-place to or from Perl's
+internal UTF-8 data structure. The first argument must be a reference to
+either C<Encode::encode()> or to C<Encode::decode()>, depending on whether the
+data is being converted to UTF-8 (C<decode()> or from UTF-8 (C<encode()>. This
+is the function that does most of the work for C<to_utf8()> and
+C<from_utf8()>, in that it handles recursive conversion of all of the strings
+of a data structure.
 
 =cut
 
 sub _convert {
+    my $code = shift;
+    my $encoding = shift;
     eval {
         if (my $ref = ref $_[0]) {
             my $in = shift;
             if ($ref eq 'SCALAR') {
-                return from_to($$in, $_[0], $_[1]);
+                $$in = $code->($encoding, $$in);
+                return;
             } elsif ($ref eq 'ARRAY') {
                 # Recurse through the array elements.
-                _convert($_, @_) for @$in;
+                _convert($code, $encoding, $_) for @$in;
                 return;
             } elsif ($ref eq 'HASH') {
                 # Recurse through the hash values.
-                _convert($_, @_) for values %$in;
+                _convert($code, $encoding, $_) for values %$in;
                 return;
             } else {
                 return;
             }
         } else {
-            return from_to(shift, $_[0], $_[1]);
+            $_[0] = $code->($encoding, $_[0]);
         }
     };
 
     my $err = $@ or return;
-    throw_gen error   => "Error converting data from $_[0] to $_[1]",
+    throw_gen error   => "Error converting data from $encoding to UTF-8",
               payload => $@;
-
 }
 
 ##############################################################################
 
-=item _decode
+=item _utf8_on
 
-  _decode $data;
+  _utf8_on $data;
 
-Decodes C<$data> to ensure that Perl knows that it's UTF-8. Called by
-C<to_utf8()> when the data to be converted is already UTF-8.
+Sets the Perl C<utf8> flag on the data structure in C<$data> to ensure that
+Perl knows that it's UTF-8. Called by C<to_utf8()> when the data to be
+converted is already UTF-8.
 
 =cut
 
-# XXX If there are problems, we might have to dump the _utf8_on cheat and use
-# decode, instead.
+# XXX If there are problems, we might have to dump the Encode::_utf8_on cheat
+# and just use _convert, instead.
 
-sub _decode {
+sub _utf8_on {
     eval {
         if (my $ref = ref $_[0]) {
             my $in = shift;
@@ -297,11 +303,11 @@ sub _decode {
                 return Encode::_utf8_on($$in);
             } elsif ($ref eq 'ARRAY') {
                 # Recurse through the array elements.
-                _decode($_, @_) for @$in;
+                _utf8_on($_, @_) for @$in;
                 return;
             } elsif ($ref eq 'HASH') {
                 # Recurse through the hash values.
-                _decode($_, @_) for values %$in;
+                _utf8_on($_, @_) for values %$in;
                 return;
             } else {
                 return;

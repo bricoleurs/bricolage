@@ -45,7 +45,9 @@ sub test_strings : Test(1612) {
             "Create new CT for '$charset' charset" );
         isa_ok($ct, 'Bric::Util::CharTrans');
         open ENC, $files->[0] or die "Unable to open $files->[0]: $!\n";
-        open UTF, $files->[1] or die "Unable to open $files->[1]: $!\n";
+        # Make sure the utf8 flag is on by opening the file in that mode.
+        open UTF, "<:utf8", $files->[1]
+          or die "Unable to open $files->[1]: $!\n";
         my $i;
         while (my $enc_line = <ENC>) {
             my $utf_line = <UTF>;
@@ -57,6 +59,23 @@ sub test_strings : Test(1612) {
             ok( $ct->from_utf8($cp), "Convert line $i to $charset" );
             is( $cp, $enc_line, "Compare to $charset");
         }
+    }
+}
+
+sub utf8_on : Test(20) {
+    my $self = shift;
+    return "Encode not installed" unless HAVE_ENCODE;
+    while (my ($charset, $files) = each %test_files) {
+        ok( my $ct = Bric::Util::CharTrans->new($charset),
+            "Create new CT for '$charset' charset" );
+        isa_ok($ct, 'Bric::Util::CharTrans');
+        # Open the file in raw mode.
+        open UTF, "<:raw", $files->[1] or die "Unable to open $files->[1]: $!\n";
+        # Just need to test one line, really.
+        my $utf_line = <UTF>;
+        ok( !Encode::is_utf8($utf_line), "utf8 not on yet.");
+        ok( $ct->to_utf8($utf_line), "Turn on utf8" );
+        ok( Encode::is_utf8($utf_line), "utf8 is on.");
     }
 }
 
@@ -72,7 +91,9 @@ sub test_structs : Test(24) {
             "Create new CT for '$charset' charset" );
         isa_ok($ct, 'Bric::Util::CharTrans');
         open ENC, $files->[0] or die "Unable to open $files->[0]: $!\n";
-        open UTF, $files->[1] or die "Unable to open $files->[1]: $!\n";
+        # Make sure the utf8 flag is on by opening the file in that mode.
+        open UTF, "<:utf8", $files->[1]
+          or die "Unable to open $files->[1]: $!\n";
 
         # Create a hash of arrays of hashes, with a scalarref for good
         # measure.
