@@ -22,7 +22,7 @@ sub table { 'keyword' }
 # Setup methods.
 ##############################################################################
 # Setup some keywords to play with.
-sub setup_keywords : Test(setup => 15) {
+sub setup_keywords : Test(setup => 19) {
     my $self = shift;
     # Create a new keyword group.
     ok( my $grp = Bric::Util::Grp::Keyword->new
@@ -34,10 +34,10 @@ sub setup_keywords : Test(setup => 15) {
         "Look up default site's root category object." );
 
     # Create test story and media objects.
-#    ok( my $story = Bric::Biz::Asset::Business::Story::DevTest->construct,
-#        "Construct story object" );
-#    ok( my $media = Bric::Biz::Asset::Business::Media::DevTest->construct,
-#        "Construct media object" );
+    ok( my $story = Bric::Biz::Asset::Business::Story::DevTest->construct,
+        "Construct story object" );
+    ok( my $media = Bric::Biz::Asset::Business::Media::DevTest->construct,
+        "Construct media object" );
 
     # Create some test records.
     my @keywords;
@@ -59,29 +59,32 @@ sub setup_keywords : Test(setup => 15) {
         # Add it to some objects.
         if ($n % 2) {
             $cat->add_keywords($keyword);
-#            $story->add_keywords($keyword);
-#            $media->add_keywords($keyword);
+            $story->add_keywords($keyword);
+            $media->add_keywords($keyword);
         }
 
         # Cache the new keyword.
         push @keywords, $keyword;
     }
 
+    # Save the keywords
+    $self->{test_keywords} = \@keywords;
+
     # Save the groups.
     ok( $grp->save, "Save group" );
     ok( my $grp_id = $grp->get_id, "Get group ID" );
     $self->add_del_ids($grp_id, 'grp');
+    $self->{test_grp} = $grp;
 
     # Save the objects.
     ok( $cat->save, "Save category" );
-#    ok( $story->save, "Save story" );
-#    $self->add_del_ids($story->get_id, 'story');
-#    ok( $media->save, "Save media" );
-#    $self->add_del_ids($media->get_id, 'media');
-
-    $self->{test_keywords} = \@keywords;
-    $self->{test_grp} = $grp;
-    $self->{cat} = $cat;
+    $self->{category} = $cat;
+    ok( $story->save, "Save story" );
+    $self->add_del_ids($story->get_id, 'story');
+    $self->{story} = $story;
+    ok( $media->save, "Save media" );
+    $self->add_del_ids($media->get_id, 'media');
+    $self->{media} = $media;
 }
 
 ##############################################################################
@@ -176,7 +179,7 @@ sub test_lookup : Test(10) {
 
 ##############################################################################
 # Test list().
-sub test_list : Test(34) {
+sub test_list : Test(46) {
     my $self = shift;
 
     # Try name.
@@ -223,18 +226,20 @@ sub test_list : Test(34) {
     ok( ! Bric::Biz::Keyword->list({ sort_name => -1 }),
         "List bogus sort name" );
 
-    # Try a category object.
-    my $cat = $self->{cat};
-    ok( @keywords = Bric::Biz::Keyword->list({ object => $cat }),
-        "List by category object" );
-    is( scalar @keywords, 3, "Check for 3 keywords" );
+    # Try the objects we've used to create associations.
+    foreach my $key (qw(category story media)) {
+        my $obj = $self->{$key};
+        ok( @keywords = Bric::Biz::Keyword->list({ object => $obj }),
+            "List by $key object" );
+        is( scalar @keywords, 3, "Check for 3 keywords" );
 
-    # Try removing a keyword from the category object.
-    ok( $cat->del_keywords($keywords[0]), "Delete keyword from category" );
-    ok( $cat->save, "Save category" );
-    ok( @keywords = Bric::Biz::Keyword->list({ object => $cat }),
-        "List by category object" );
-    is( scalar @keywords, 2, "Check for 2 keywords" );
+        # Try removing a keyword from the object.
+        ok( $obj->del_keywords($keywords[0]), "Delete keyword from $key" );
+        ok( $obj->save, "Save $key" );
+        ok( @keywords = Bric::Biz::Keyword->list({ object => $obj }),
+            "List by $key object" );
+        is( scalar @keywords, 2, "Check for 2 keywords" );
+    }
 
     # Try grp_id.
     my $grp = $self->{test_grp};
@@ -272,7 +277,7 @@ sub test_list : Test(34) {
 
 ##############################################################################
 # Test href().
-sub test_href : Test(32) {
+sub test_href : Test(44) {
     my $self = shift;
 
     # Try name.
@@ -290,7 +295,8 @@ sub test_href : Test(32) {
     }
 
     # Try a bogus name.
-    is_deeply(Bric::Biz::Keyword->href({ name => -1 }) , {}, "List bogus name" );
+    is_deeply(Bric::Biz::Keyword->href({ name => -1 }) , {},
+              "List bogus name" );
 
     # Try screen_name.
     ok( $keywords = Bric::Biz::Keyword->href
@@ -326,19 +332,21 @@ sub test_href : Test(32) {
     is_deeply( Bric::Biz::Keyword->href({ sort_name => -1 }), {},
         "List bogus sort name" );
 
-    # Try a category object.
-    my $cat = $self->{cat};
-    ok( $keywords = Bric::Biz::Keyword->href({ object => $cat }),
-        "List by category object" );
-    is( scalar keys %$keywords, 3, "Check for 3 keywords" );
+    # Try the objects we've used to create associations.
+    foreach my $key (qw(category story media)) {
+        my $obj = $self->{$key};
+        ok( $keywords = Bric::Biz::Keyword->href({ object => $obj }),
+            "List by $key object" );
+        is( scalar keys %$keywords, 3, "Check for 3 keywords" );
 
-    # Try removing a keyword from the category object.
-    my ($kw) = values %$keywords;
-    ok( $cat->del_keywords($kw), "Delete keyword from category" );
-    ok( $cat->save, "Save category" );
-    ok( $keywords = Bric::Biz::Keyword->href({ object => $cat }),
-        "List by category object" );
-    is( scalar keys %$keywords, 2, "Check for 2 keywords" );
+        # Try removing a keyword from the object.
+        my ($kw) = values %$keywords;
+        ok( $obj->del_keywords($kw), "Delete keyword from $key" );
+        ok( $obj->save, "Save $key" );
+        ok( $keywords = Bric::Biz::Keyword->href({ object => $obj }),
+            "List by $key object" );
+        is( scalar keys %$keywords, 2, "Check for 2 keywords" );
+    }
 
     # Try grp_id.
     my $grp = $self->{test_grp};
@@ -348,7 +356,8 @@ sub test_href : Test(32) {
     is( scalar keys %$keywords, 3, "Check for 3 keywords" );
 
     # Try active.
-    ok( $keywords = Bric::Biz::Keyword->href({ active => 1}), "List active => 1" );
+    ok( $keywords = Bric::Biz::Keyword->href({ active => 1}),
+         "List active => 1" );
     is( scalar keys %$keywords, 5, "Check for 5 keywords" );
 
     # Deactivate one and make sure it doesn't come back.
@@ -363,7 +372,7 @@ sub test_href : Test(32) {
 # Test class methods.
 ##############################################################################
 # Test list().
-sub test_list_ids : Test(31) {
+sub test_list_ids : Test(43) {
     my $self = shift;
 
     # Try name.
@@ -376,7 +385,8 @@ sub test_list_ids : Test(31) {
     is( scalar @keyword_ids, 5, "Check for 5 keyword IDs" );
 
     # Try a bogus name.
-    ok( ! Bric::Biz::Keyword->list_ids({ name => -1 }), "List IDs bogus name" );
+    ok( ! Bric::Biz::Keyword->list_ids({ name => -1 }),
+        "List IDs bogus name" );
 
     # Try screen_name.
     ok( @keyword_ids = Bric::Biz::Keyword->list_ids
@@ -412,18 +422,20 @@ sub test_list_ids : Test(31) {
     ok( ! Bric::Biz::Keyword->list_ids({ sort_name => -1 }),
         "List IDs bogus sort name" );
 
-    # Try a category object.
-    my $cat = $self->{cat};
-    ok( @keyword_ids = Bric::Biz::Keyword->list_ids({ object => $cat }),
-        "List IDs by category object" );
-    is( scalar @keyword_ids, 3, "Check for 3 keyword IDs" );
+    # Try the objects we've used to create associations.
+    foreach my $key (qw(category story media)) {
+        my $obj = $self->{$key};
+        ok( @keyword_ids = Bric::Biz::Keyword->list_ids({ object => $obj }),
+            "List IDs by $key object" );
+        is( scalar @keyword_ids, 3, "Check for 3 keyword IDs" );
 
-    # Try removing a keyword from the category object.
-    ok( $cat->del_keywords($keyword_ids[0]), "Delete keyword from category" );
-    ok( $cat->save, "Save category" );
-    ok( @keyword_ids = Bric::Biz::Keyword->list_ids({ object => $cat }),
-        "List by category object" );
-    is( scalar @keyword_ids, 2, "Check for 2 keyword IDs" );
+        # Try removing a keyword from the object.
+        ok( $obj->del_keywords($keyword_ids[0]), "Delete keyword from $key" );
+        ok( $obj->save, "Save $key" );
+        ok( @keyword_ids = Bric::Biz::Keyword->list({ object => $obj }),
+            "List by $key object" );
+        is( scalar @keyword_ids, 2, "Check for 2 keyword IDs" );
+    }
 
     # Try grp_id.
     my $grp = $self->{test_grp};

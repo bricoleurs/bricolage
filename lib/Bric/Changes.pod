@@ -32,6 +32,12 @@ Added site context menu to all pages in the UI. This menu will be used to
 select a which site from which to show workflows, as well as to provide a
 default value in several administrative profiles. [David]
 
+=item *
+
+Refactored Bric::Biz::Keyword. It is now more compliant with the standard API
+as defined in other classes. Also added support for keyword groups so that we
+can create a keyword manager.
+
 =back
 
 =head1 VERSION 1.5.1

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:26 $
+$Date: 2003-04-01 05:54:03 $
 
 =head1 SYNOPSIS
 
@@ -1912,9 +1912,9 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($related_obj, $tile, $oc_coll, $ci, $co, $vid) =
+    my ($related_obj, $tile, $oc_coll, $ci, $co, $vid, $kw_coll) =
       $self->_get(qw(_related_grp_obj _tile _oc_coll _checkin _checkout
-                     version_id));
+                     version_id _kw_coll));
 
     if ($co) {
         $tile->prepare_clone;
@@ -1934,6 +1934,7 @@ sub save {
     $related_obj->save if $related_obj;
     $self->_sync_contributors;
     $oc_coll->save($self->key_name => $vid) if $oc_coll;
+    $kw_coll->save($self) if $kw_coll;
     $self->SUPER::save;
     $self->_set__dirty(0);
 }
