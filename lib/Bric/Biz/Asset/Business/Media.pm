@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-03-05 02:44:02 $
 
 =head1 SYNOPSIS
 
@@ -65,58 +65,57 @@ use constant DEBUG => 0;
 use constant TABLE  => 'media';
 use constant VERSION_TABLE => 'media_instance';
 
-use constant COLS	=> qw(
-						element__id
-						priority
-						source__id
-						current_version
-						usr__id
-						keyword_grp__id
-						publish_date
-						expire_date
-						cover_date
-						workflow__id
-						publish_status
-						active);
-use constant VERSION_COLS => qw(
-						name
-						description
-						media__id
-						usr__id
-						version
-		                media_type__id
-						category__id
-						file_size
-						file_name
-						location
-						uri
-						checked_out);
-use constant FIELDS	=> qw(
-						element__id
-						priority
-						source__id
-						current_version
-						user__id
-						keyword_grp_id
-						publish_date
-						expire_date
-						cover_date
-						workflow_id
-						publish_status
-						_active);
-use constant VERSION_FIELDS => qw(
-						name
-						description
-						id
-						modifier
-						version
-				        media_type_id
-						category__id
-						size
-						file_name
-						location
-						uri
-						checked_out);
+use constant COLS	    => qw( element__id
+				   priority
+				   source__id
+				   current_version
+				   usr__id
+				   keyword_grp__id
+				   publish_date
+				   expire_date
+				   cover_date
+				   workflow__id
+				   publish_status
+				   active);
+
+use constant VERSION_COLS   => qw( name
+				   description
+				   media__id
+				   usr__id
+				   version
+				   media_type__id
+				   category__id
+				   file_size
+				   file_name
+				   location
+				   uri
+				   checked_out);
+
+use constant FIELDS	    => qw( element__id
+				   priority
+				   source__id
+				   current_version
+				   user__id
+				   keyword_grp_id
+				   publish_date
+				   expire_date
+				   cover_date
+				   workflow_id
+				   publish_status
+				   _active);
+
+use constant VERSION_FIELDS => qw( name
+				   description
+				   id
+				   modifier
+				   version
+				   media_type_id
+				   category__id
+				   size
+				   file_name
+				   location
+				   uri
+				   checked_out);
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Media';
 use constant INSTANCE_GROUP_ID => 32;
@@ -126,21 +125,17 @@ use constant INSTANCE_GROUP_ID => 32;
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
+# Public Class Fields
 
 # Public fields should use 'vars'
 #use vars qw();
 
 #--------------------------------------#
-# Private Class Fields                  
+# Private Class Fields
 my ($meths, @ord);
 
 #--------------------------------------#
-# Instance Fields                       
-
-# None
-
-# This method of Bricolage will call 'use fields' for you and set some permissions.
+# Instance Fields
 
 BEGIN {
     Bric::register_fields(
@@ -173,7 +168,7 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors  
+# Constructors
 
 #------------------------------------------------------------------------------#
 
@@ -231,41 +226,29 @@ media_type_id
 
 =item *
 
-category__id  
+category__id
 
 =back
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE 
+B<Notes:> NONE.
 
 =cut
 
 sub new {
-	my ($self, $init) = @_;
-
-	# default to active unless passed otherwise
-	$init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
-	delete $init->{'active'};
-	$init->{priority} ||= 3;
-	$init->{name} = delete $init->{title} if exists $init->{title};
-
-
-	$self = bless {}, $self unless ref $self;
-
-	$self->_init($init);
-
-	$self->SUPER::new($init);
-
-	return $self;
+    my ($self, $init) = @_;
+    # default to active unless passed otherwise
+    $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
+    delete $init->{'active'};
+    $init->{priority} ||= 3;
+    $init->{name} = delete $init->{title} if exists $init->{title};
+    $self = bless {}, $self unless ref $self;
+    $self->_init($init);
+    $self->SUPER::new($init);
+    return $self;
 }
 
 ################################################################################
@@ -274,66 +257,56 @@ sub new {
 
 This will return a media asset that matches the criteria defined
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE 
+B<Notes:> NONE.
 
 =cut
 
 sub lookup {
-	my ($self, $param) = @_;
+    my ($self, $param) = @_;
 
-	my $sql = 'SELECT m.id, ' . join(', ', map {"m.$_ "} COLS) .
-				', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
-				' FROM ' . TABLE . ' m, ' . VERSION_TABLE . ' i ' .
-				' WHERE m.id=? AND i.media__id=m.id ';
+    my $sql = 'SELECT m.id, ' . join(', ', map {"m.$_ "} COLS) .
+      ', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
+      ' FROM ' . TABLE . ' m, ' . VERSION_TABLE . ' i ' .
+      ' WHERE m.id=? AND i.media__id=m.id ';
 
-	my @where;
-	push @where, $param->{'id'};
+    my @where = ($param->{'id'});
+    if ($param->{'version'}) {
+	$sql .= ' AND i.version=? ';
+	push @where, $param->{'version'};
+    } elsif ($param->{'checkout'}) {
+	$sql .= ' AND i.checked_out=? ';
+	push @where, 1;
+    } else {
+	$sql .= ' AND m.current_version=i.version ';
+    }
+    $sql .= ' ORDER BY m.cover_date';
 
-	if ($param->{'version'}) {
-		$sql .= ' AND i.version=? ';
-		push @where, $param->{'version'};
-	} elsif ($param->{'checkout'}) {
-		$sql .= ' AND i.checked_out=? ';
-		push @where, 1;
-	} else {
-		$sql .= ' AND m.current_version=i.version ';
-	}
-	$sql .= ' ORDER BY m.cover_date';
+    my @d;
+    my $cols = (scalar COLS + scalar VERSION_COLS) + 1;
+    my $sth = prepare_ca($sql, undef, DEBUG);
+    execute($sth, @where);
+    bind_columns($sth, \@d[0 .. $cols ]);
+    fetch($sth);
 
-	my @d;
-	my $cols = (scalar COLS + scalar VERSION_COLS) + 1;
-	my $sth = prepare_ca($sql, undef, DEBUG);
-	execute($sth, @where);
-	bind_columns($sth, \@d[0 .. $cols ]);
-	fetch($sth);
+    # get the asset type and from that the biz package
+    # to bless the proper object
+    $self = bless {}, $self unless ref $self;
+    $self->_set([ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
 
-	# get the asset type and from that the biz package
-	# to bless the proper object
-	$self = bless {}, $self unless ref $self;
-	$self->_set([ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
+    return unless $self->_get('id');
 
-	return unless $self->_get('id');
+    my $element = $self->_get_element_object();
+    my $biz_class = $element->get_biz_class();
+    if ($biz_class && $biz_class ne $self) {
+	$self = bless $self, $biz_class;
+    }
 
-	my $element = $self->_get_element_object();
-
-	my $biz_class = $element->get_biz_class();
-	if ($biz_class && ($biz_class ne $self)) {
-		$self = bless $self, $biz_class;
-	}
-
-	$self->_set__dirty(0);
-
-	return $self;
+    $self->_set__dirty(0);
+    return $self;
 }
 
 ################################################################################
@@ -467,21 +440,11 @@ B<Side Effects:>
 
 NONE
 
-B<Notes:>
-
-NONE
-
-
+B<Notes:> NONE.
 
 =cut
 
-sub list {
-	my ($class, $param) = @_;
-
-	# Send to _do_list function which will return objects
-	_do_list($class,$param,undef);
-
-}
+sub list { _do_list($_[0], $_[1], undef) }
 
 ################################################################################
 
@@ -507,73 +470,47 @@ sub DESTROY {
 =head2 Public Class Methods
 
 =cut
-                  
+
 =item (@ids||$id_list) = Bric::Biz::Asset::Business::Media->list_ids( $criteria );
 
-returns a list or list ref of media object ids that match the criteria defined
+Returns a list or list ref of media object IDs that match the criteria defined.
+The criteria are the same as those for the list() method.
 
-Supported Keys:
+B<Throws:> NONE.
 
-=over 4
+B<Side Effects:> NONE.
 
-See List method
-
-=back
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE 
+B<Notes:> NONE.
 
 =cut
 
-sub list_ids {
-	my ($class, $param) = @_;
-
-	# Send to _do_list function which will return objects
-	_do_list($class,$param,1);
-}
+sub list_ids { _do_list($_[0], $_[1], 1) }
 
 ################################################################################
 
 =item ($fields || @fields) = 
 	Bric::Biz::Asset::Business::Media::autopopulated_fields()
 
-Returns a list of the names of fields that are registered in the database as 
+Returns a list of the names of fields that are registered in the database as
 being autopopulatable for a given sub class
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub autopopulated_fields {
-	my ($self) = @_;
+    my $self = shift;
+    my $fields = $self->_get_auto_fields();
 
-	my $fields = $self->_get_auto_fields();
-
-	my @auto;
-	foreach (keys %$fields ) {
-		push @auto, $_;
-	}
-
-	return wantarray ? @auto : \@auto;
+    my @auto;
+    foreach (keys %$fields ) {
+	push @auto, $_;
+    }
+    return wantarray ? @auto : \@auto;
 }
 
 ################################################################################
@@ -789,17 +726,11 @@ sub my_meths {
 
 Returns the class id of the Media class
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -815,19 +746,27 @@ sub get_class_id { 46 }
 
 Associates this media asset with the given category
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
+
+sub set_category__id {
+    my ($self, $cat_id) = @_;
+
+    my $cat = Bric::Biz::Category->lookup( { id => $cat_id });
+    my $uri = Bric::Util::Trans::FS->cat_uri(
+          $self->_construct_uri($cat), $self->_get('file_name'));
+
+    $self->_set({ _category_obj => $cat,
+		  category__id  => $cat_id,
+		  uri           => $uri
+    });
+    return $self;
+}
 
 ################################################################################
 
@@ -835,17 +774,11 @@ NONE
 
 Returns the category id that has been associated with this media object
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -857,32 +790,21 @@ NONE
 
 Returns the object of the category that this is a member of
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub get_category_object {
-	my ($self) = @_;
-
-	my $cat = $self->_get( '_category_obj' );
-
-	return $cat if $cat;
-
-	$cat = Bric::Biz::Category->lookup( { id => $self->_get('category__id') });
-
-	$self->_set({ '_category_obj' => $cat });
-
-	return $cat;
+    my $self = shift;
+    my $cat = $self->_get( '_category_obj' );
+    return $cat if $cat;
+    $cat = Bric::Biz::Category->lookup( { id => $self->_get('category__id') });
+    $self->_set({ '_category_obj' => $cat });
+    return $cat;
 }
 
 *get_category = *get_category_object;
@@ -893,24 +815,18 @@ sub get_category_object {
 
 Returns the uri of the media object for the Bricolage application server.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub get_local_uri {
     my $self = shift;
     my $loc = $self->get_location || return;
-    return Bric::Util::Trans::FS->cat_uri(MEDIA_URI_ROOT, 
+    return Bric::Util::Trans::FS->cat_uri(MEDIA_URI_ROOT,
 					Bric::Util::Trans::FS->dir_to_uri($loc) );
 }
 
@@ -918,17 +834,11 @@ sub get_local_uri {
 
 Returns the path of the media object on the Bricolage file system.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -944,31 +854,23 @@ sub get_path {
 
 Returns the media type object associated with this object.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub get_media_type {
     my $self = shift;
     my ($mt_obj, $mt_id) = $self->_get('_media_type_obj', 'media_type_id');
-
     return unless $mt_id;
 
     unless ($mt_obj) {
 	$mt_obj = Bric::Util::MediaType->lookup({'id' => $mt_id});
 	$self->_set(['_media_type_obj'], [$mt_obj]);
     }
-
     return $mt_obj;
 }
 
@@ -976,76 +878,64 @@ sub get_media_type {
 
 =item $media = $media->upload_file($file_handle, $file_name)
 
-Will get a file handle from apache and a name that is associated
-will store it in a versioned manner
+Will get a file handle from apache and a name that is associated will store it
+in a versioned manner
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub upload_file {
-	my ($self, $fh, $name) = @_;
+    my ($self, $fh, $name) = @_;
+    my ($id, $v) = $self->_get(qw(id version));
+    my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $id, $v);
+    Bric::Util::Trans::FS->mk_path($dir);
+    my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
-	my ($id, $v) = $self->_get(qw(id version));
-	my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $id, $v);
-	Bric::Util::Trans::FS->mk_path($dir);
-	my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
+    open FILE, ">$path" or die
+      Bric::Util::Fault::Exception::GEN->new({ msg => "Unable to open '$path': $!" });
+    # fix for binary files
+    while (<$fh>) { print FILE $_ }
+    close $fh;
+    close FILE;
 
-	open FILE, ">$path" or die
-	  Bric::Util::Fault::Exception::GEN->new({ msg => "Unable to open '$path': $!" });
-	# fix for binary files
-	while (<$fh>) { print FILE $_ }
-	close $fh;
-	close FILE;
+    # Set the location, name, and URI.
+    my $uri = Bric::Util::Trans::FS->cat_uri(
+      $self->_construct_uri($self->get_category_object), $name);
+    my $loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
+    $self->_set([qw(location file_name uri)], [$loc, $name, $uri]);
 
-	# Set the location, name, and URI.
-	my $uri = Bric::Util::Trans::FS->cat_uri(
-          $self->_construct_uri($self->get_category_object), $name);
-	my $loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
-	$self->_set([qw(location file_name uri)], [$loc, $name, $uri]);
+    # determine what needs to get autopopulated
+    my $auto_fields = $self->_get_auto_fields();
 
-	# determine what needs to get autopopulated
-	my $auto_fields = $self->_get_auto_fields();
+    # get the top level tile
+    my $tile = $self->get_tile();
 
-	# get the top level tile
-	my $tile = $self->get_tile();
+    # itterate through all the tiles
+    foreach my $dt ($tile->get_tiles()) {
 
-	# itterate through all the tiles
-	foreach my $dt ($tile->get_tiles()) {
-
-		# skip if this is a container
-		next if $dt->is_container();
-		# see if this is an auto populated field
-		my $name = $dt->get_name();
-
-		my $path = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $loc);
-
-		my $media_func = Bric::App::MediaFunc->new({ file_path => $path });
-
-		if ($auto_fields->{$name} ) {
-			# check the tile to see if we can override it
-#			next if $dt->is_locked;
-			# get the value
-			my $method = $auto_fields->{$name};
-			my $val = $media_func->$method();
-			$val = 'No Val returned' unless $val;
-			$dt->set_data($val);
-			$dt->save();
-
-		}
+	# skip if this is a container
+	next if $dt->is_container();
+	# see if this is an auto populated field
+	my $name = $dt->get_name();
+	my $path = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $loc);
+	my $media_func = Bric::App::MediaFunc->new({ file_path => $path });
+	if ($auto_fields->{$name} ) {
+	    # check the tile to see if we can override it
+#	    next if $dt->is_locked;
+	    # get the value
+	    my $method = $auto_fields->{$name};
+	    my $val = $media_func->$method();
+	    $val = 'No Val returned' unless $val;
+	    $dt->set_data($val);
+	    $dt->save();
 	}
-
-	return $self;
+    }
+    return $self;
 }
 
 ################################################################################
@@ -1056,15 +946,17 @@ Returns the file handle for this given media object
 
 B<Throws:>
 
-"Error getting File"
+=over
 
-B<Side Effects:>
+=item *
 
-NONE
+Error getting File.
 
-B<Notes:>
+=back
 
-NONE
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -1084,17 +976,11 @@ sub get_file {
 The will return the location of the file on the file system, relative to
 MEDIA_FILE_ROOT.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -1104,17 +990,11 @@ NONE
 
 This is the size of the media file in bytes
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE 
+B<Notes:> NONE.
 
 =cut
 
@@ -1124,73 +1004,59 @@ NONE
 
 Reverts the current version to a prior version
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub revert {
-	my ($self, $version) = @_;
+    my ($self, $version) = @_;
+    if (!$self->_get('checked_out')) {
+	die Bric::Util::Fault::Exception::GEN->new( {
+	  msg => "May not revert a non checked out version" });
+    }
 
-	if (!$self->_get('checked_out')) {
-		die Bric::Util::Fault::Exception::GEN->new( {
-			msg => "May not revert a non checked out version" });
+    my @prior_versions = __PACKAGE__->list( {
+      id              => $self->_get_id(),
+      return_versions => 1
+    });
+
+    my $revert_obj;
+    foreach (@prior_versions) {
+	if ($_->get_version == $version) {
+	    $revert_obj = $_;
 	}
+    }
 
-	my @prior_versions = __PACKAGE__->list( {
-			id              => $self->_get_id(),
-			return_versions => 1
-		});
-
-	my $revert_obj;
-	foreach (@prior_versions) {
-		if ($_->get_version == $version) {
-			$revert_obj = $_;
-		}
-	}
-
-	unless ($revert_obj) {
-		die Bric::Util::Fault::Exception::GEN->new( {
-			msg => "The requested version does not exist"
-		});
-	}
-
-	# clone information from the tables
-	$self->_set( {
-			category__id 	=> $revert_obj->get_category__id(),
-			media_type_id	=> $revert_obj->get_media_type_id(),
-			size			=> $revert_obj->get_size(),
-			file_name		=> $revert_obj->get_file_name(),
-			uri				=> $revert_obj->get_uri() 
-		});
-
-	# COPY THE FILE HERE
-
-	# clone the tiles
-	# get rid of current tiles
-	my $tile = $self->get_tile();
-	$tile->do_delete();
-
-	my $new_tile = $revert_obj->get_tile();
-	
-	$new_tile->prepare_clone();
-
-	$self->_set( { 
-			_delete_tile 	=> $tile,
-			_tile			=> $new_tile
+    unless ($revert_obj) {
+	die Bric::Util::Fault::Exception::GEN->new( {
+          msg => "The requested version does not exist"
 	});
+    }
 
-	return $self;
+    # clone information from the tables
+    $self->_set( { category__id  => $revert_obj->get_category__id(),
+		   media_type_id => $revert_obj->get_media_type_id(),
+		   size          => $revert_obj->get_size(),
+		   file_name     => $revert_obj->get_file_name(),
+		   uri           => $revert_obj->get_uri()
+    });
 
+    # Copy THE FILE HERE
+
+    # clone the tiles
+    # get rid of current tiles
+    my $tile = $self->get_tile();
+    $tile->do_delete();
+    my $new_tile = $revert_obj->get_tile();
+    $new_tile->prepare_clone();
+    $self->_set( { _delete_tile => $tile,
+		   _tile        => $new_tile
+    });
+    return $self;
 }
 
 ################################################################################
@@ -1199,41 +1065,32 @@ sub revert {
 
 Clones the media object
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub clone {
-	my ($self) = @_;
+    my $self = shift;
+    my $tile = $self->get_tile();
+    $tile->prepare_clone();
 
-	my $tile = $self->get_tile();
-	$tile->prepare_clone();
+    my $contribs = $self->_get_contributors();
+    # clone contributors
+    foreach (keys %$contribs ) {
+	$contribs->{$_}->{'action'} = 'insert';
+    }
 
-	my $contribs = $self->_get_contributors();
-	# clone contributors
-	foreach (keys %$contribs ) {
-		$contribs->{$_}->{'action'} = 'insert';
-	}
-
-	$self->_set( {
-			version_id              => undef,
-			id                      => undef,
-			publish_date            => undef,
-			publish_status          => 0,
-			_update_contributors    => 1
-		});
-
-	return $self;
+    $self->_set( { version_id           => undef,
+		   id                   => undef,
+		   publish_date         => undef,
+		   publish_status       => 0,
+		   _update_contributors => 1
+    });
+    return $self;
 }
 
 
@@ -1244,56 +1101,45 @@ sub clone {
 Saves the object to the database doing either an insert or
 an update
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub save {
-	my ($self) = @_; 
+    my $self = shift;
+    if ($self->_get('id')) {
+	# we have the main id make sure there's a instance id
+	$self->_update_media();
 
-
-	if ($self->_get('id')) {
-		# we have the main id make sure there's a instance id
-		$self->_update_media();
-
-		if ($self->_get('version_id')) {
-			if ($self->_get('_cancel')) {
-				$self->_delete_instance();
-				if ($self->_get('version') == 0) {
-					$self->_delete_media();
-				}
-				$self->_set( {'_cancel' => undef });
-				return $self;
-			} else {
-				$self->_update_instance();
-			}
-		} else {
-			$self->_insert_instance();
+	if ($self->_get('version_id')) {
+	    if ($self->_get('_cancel')) {
+		$self->_delete_instance();
+		if ($self->_get('version') == 0) {
+		    $self->_delete_media();
 		}
+		$self->_set( {'_cancel' => undef });
+		return $self;
+	    } else {
+		$self->_update_instance();
+	    }
 	} else {
-		# insert both
-		if ($self->_get('_cancel')) {
-			return $self;
-		} else {
-			$self->_insert_media();
-			$self->_insert_instance();
-		}
+	    $self->_insert_instance();
 	}
-
-
-	$self->SUPER::save();
-
-	return $self;
+	} else {
+	    # insert both
+	    if ($self->_get('_cancel')) {
+		return $self;
+	    } else {
+		$self->_insert_media();
+		$self->_insert_instance();
+	    }
+	}
+    $self->SUPER::save();
+    return $self;
 }
 
 ################################################################################
@@ -1313,17 +1159,11 @@ sub save {
 
 Called by list will return objects or ids depending on who is calling
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE 
+B<Notes:> NONE.
 
 =cut
 
@@ -1333,136 +1173,121 @@ sub _do_list {
     # Make sure to set active explictly if its not passed.
     $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
 
-	# Build a list of select cols
-	my @select;
+    # Build a list of select cols
+    my @select = ('m.id');
+    unless ($ids) {
+	push @select, (map { "m.$_" } COLS),(map {"i.$_" } 'id', VERSION_COLS);
+    }
 
-	push @select, 'm.id';
-	unless ($ids) {
-		push @select, (map { "m.$_" } COLS),(map {"i.$_" } 'id', VERSION_COLS);
-	}
+    # get the tables
+    my @tables = (TABLE . ' m', VERSION_TABLE . ' i');
 
-	# get the tables
-	my @tables;
-	push @tables, TABLE . ' m', VERSION_TABLE . ' i';
+    # map name to title if passed
+    $param->{'name'} = $param->{'title'} if exists $param->{'title'};
+    # Map inverse alias inactive to active.
+    $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
+      if exists $param->{'inactive'};
 
-	# map name to title if passed
-	$param->{'name'} = $param->{'title'} if exists $param->{'title'};
-	# Map inverse alias inactive to active.
-	$param->{'active'} = ($param->{'inactive'} ? 0 : 1)
-		if exists $param->{'inactive'};
+    # build the where clause
+    my (@where, @bind);
 
-	# build the where clause
-	my (@where, @bind);
+    # include trivial media table fields
+    foreach my $f (qw(id active priority element__id
+		      workflow__id source__id)) {
+	next unless exists $param->{$f};
+	push @where, "m.$f=?";
+	push @bind, $param->{$f};
+    }
 
-	# include trivial media table fields
-	foreach my $f (qw(id active priority element__id
-			  workflow__id source__id)) {
-		next unless exists $param->{$f};
-
-		push @where, "m.$f=?";
-		push @bind, $param->{$f};
-	}
-
-	# do for instance table
-	foreach my $f (qw(name description version uri)) {
-		next unless exists $param->{$f};
-
-		if (($f eq 'name') || ($f eq 'description') || ($f eq 'uri')) {
-			push @where, "LOWER(i.$f) LIKE ?";
-			push @bind, lc($param->{$f});
-		} else {
-			push @where, "i.$f=?";
-			push @bind, $param->{$f};
-		}
-	}
-
-	# handle the special fields
-        if ($param->{'simple'}) {
-          push @where, ('(LOWER(i.name) LIKE ? OR LOWER(i.description) LIKE ? OR LOWER(i.uri) LIKE ?)');
-            push @bind, (lc($param->{'simple'})) x 3;
-        }
-
-	# for searching for user_id
-	if (defined $param->{'user__id'}) {
-		push @where, " m.usr__id=? ";
-		push @bind, $param->{'user__id'};
-		push @where, " i.checked_out=? ";
-		push @bind, 1;
+    # do for instance table
+    foreach my $f (qw(name description version uri)) {
+	next unless exists $param->{$f};
+	if (($f eq 'name') || ($f eq 'description') || ($f eq 'uri')) {
+	    push @where, "LOWER(i.$f) LIKE ?";
+	    push @bind, lc($param->{$f});
 	} else {
-		push @where, ' i.checked_out=? ';
-		push @bind, 0;
+	    push @where, "i.$f=?";
+	    push @bind, $param->{$f};
 	}
+    }
 
-	unless ($param->{'return_versions'}) {
-		push @where, " m.current_version=i.version ";
-	}
+    # handle the special fields
+    if ($param->{'simple'}) {
+	push @where, '(LOWER(i.name) LIKE ? OR LOWER(i.description) LIKE ? '
+	  . 'OR LOWER(i.uri) LIKE ?)';
+	push @bind, (lc($param->{'simple'})) x 3;
+    }
 
-	# Handle searches on dates
-	foreach my $type (qw(publish_date cover_date expire_date)) {
-		my ($start, $end) = ($param->{$type.'_start'},
-			$param->{$type.'_end'});
+    # for searching for user_id
+    if (defined $param->{'user__id'}) {
+	push @where, " m.usr__id=? ";
+	push @bind, $param->{'user__id'};
+	push @where, " i.checked_out=? ";
+	push @bind, 1;
+    } else {
+	push @where, ' i.checked_out=? ';
+	push @bind, 0;
+    }
 
-		# Handle date ranges.
-		if ($start && $end) {
-			push @where, "m.$type BETWEEN ? AND ?";
-			push @bind, $start, $end;
-		} else {
-			# Handle 'everying before' or 'everything after' $date searches.
-			if ($start) {
-				push @where, "m.$type > ?";
-				push @bind, $start;
-			} elsif ($end) {
-				push @where, "m.$type < ?";
-				push @bind, $end;
-			}
-		}
-	}
+    unless ($param->{'return_versions'}) {
+	push @where, " m.current_version=i.version ";
+    }
 
-	push @where, ' m.id=i.media__id ';
+    # Handle searches on dates
+    foreach my $type (qw(publish_date cover_date expire_date)) {
+	my ($start, $end) = ($param->{$type.'_start'},
+			     $param->{$type.'_end'});
 
-	my $sql;
-	$sql = 'SELECT DISTINCT ' . join(', ', @select) . ' FROM ' . join(', ', @tables);
-	$sql .= ' WHERE ' . join(' AND ', @where);
-
-	if ($param->{'return_versions'}) {
-		$sql .= ' ORDER BY i.version ';
+	# Handle date ranges.
+	if ($start && $end) {
+	    push @where, "m.$type BETWEEN ? AND ?";
+	    push @bind, $start, $end;
 	} else {
-		$sql .= ' ORDER BY m.cover_date';
+	    # Handle 'everying before' or 'everything after' $date
+	    # searches.
+	    if ($start) {
+		push @where, "m.$type > ?";
+		push @bind, $start;
+	    } elsif ($end) {
+		push @where, "m.$type < ?";
+		push @bind, $end;
+	    }
 	}
+    }
 
-	my $select = prepare_ca($sql, undef, DEBUG);
+    push @where, ' m.id=i.media__id ';
 
-	if ( $ids ) {
-		# called from list_ids give em what they want
-		my $return = col_aref($select,@bind);
+    my $sql;
+    $sql = 'SELECT DISTINCT ' . join(', ', @select) . ' FROM ' . join(', ', @tables);
+    $sql .= ' WHERE ' . join(' AND ', @where);
+    $sql .= $param->{return_versions} ? ' ORDER BY i.version '
+      : ' ORDER BY m.cover_date';
 
-		return wantarray ? @{ $return } : $return;
+    my $select = prepare_ca($sql, undef, DEBUG);
 
-	} else { # end if ids 
-		# this must have been called from list so give objects
-		my (@objs, @d);
-    
-		my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
-		execute($select,@bind);
-		bind_columns($select, \@d[0 .. $count ]);
-    
-		while (my $row = fetch($select) ) {
-
-			my $self = bless {}, $class;
-            
-			$self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
-
-			my $element = $self->_get_element_object();
-			my $biz_class = $element->get_biz_class();
-			if ($biz_class && ($biz_class ne $self)) {
-				$self = bless $self, $biz_class;
-			}
-			push @objs, $self;
-		}
-
-		return (wantarray ? @objs : \@objs) if @objs;
-		return;
+    if ( $ids ) {
+	# called from list_ids give em what they want
+	my $return = col_aref($select,@bind);
+	return wantarray ? @{ $return } : $return;
+    } else { # end if ids
+	# this must have been called from list so give objects
+	my (@objs, @d);
+	my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
+	execute($select,@bind);
+	bind_columns($select, \@d[0 .. $count ]);
+	while (my $row = fetch($select) ) {
+	    my $self = bless {}, $class;
+	    $self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
+	    my $element = $self->_get_element_object();
+	    my $biz_class = $element->get_biz_class();
+	    if ($biz_class && ($biz_class ne $self)) {
+		$self = bless $self, $biz_class;
+	    }
+	    push @objs, $self;
 	}
+	return (wantarray ? @objs : \@objs) if @objs;
+	return;
+    }
 }
 
 ################################################################################
@@ -1475,81 +1300,63 @@ sub _do_list {
 
 Returns the contributors from a cache or looks em up
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _get_contributors {
-	my ($self) = @_;
+    my $self = shift;
 
-	my ($contrib, $queried) = 
-		$self->_get('_contributors', '_queried_contrib');
+    my ($contrib, $queried) = $self->_get('_contributors', '_queried_contrib');
 
-	unless ($contrib) {
+    unless ($contrib) {
+	my $dirty = $self->_get__dirty();
+	my $sql = 'SELECT member__id, place, role FROM media__contributor ' .
+	  'WHERE media_instance__id=? ';
 
-		my $dirty = $self->_get__dirty();
-
-		my $sql = 'SELECT member__id, place, role FROM media__contributor ' .
-					'WHERE media_instance__id=? ';
-
-		my $sth = prepare_ca($sql, undef, DEBUG);
-		execute($sth, $self->_get('version_id'));
-		while (my $row = fetch($sth)) {
-			$contrib->{$row->[0]}->{'role'} = $row->[2];
-			$contrib->{$row->[0]}->{'place'} = $row->[1];
-		}
-
-		$self->_set( { 
-				'_queried_contrib' 	=> 1,
-				'_contributors' => $contrib 
-			});
-		$self->_set__dirty($dirty);
+	my $sth = prepare_ca($sql, undef, DEBUG);
+	execute($sth, $self->_get('version_id'));
+	while (my $row = fetch($sth)) {
+	    $contrib->{$row->[0]}->{'role'} = $row->[2];
+	    $contrib->{$row->[0]}->{'place'} = $row->[1];
 	}
 
-	return $contrib;
+	$self->_set( { _queried_contrib => 1,
+		       _contributors     => $contrib
+	});
+	$self->_set__dirty($dirty);
+    }
+    return $contrib;
 }
 
 ################################################################################
 
-=item $self = $self->_insert_contributor( $id, $role) 
+=item $self = $self->_insert_contributor( $id, $role)
 
-Inserts a row into the mapping table for contributors
+Inserts a row into the mapping table for contributors.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _insert_contributor {
-	my ($self, $id, $role, $place) = @_;
+    my ($self, $id, $role, $place) = @_;
 
-	my $sql = 'INSERT INTO media__contributor ' .
-				' (id, media_instance__id, member__id, place, role) ' .
-				" VALUES (${\next_key('media__contributor')},?,?,?,?) ";
+    my $sql = 'INSERT INTO media__contributor ' .
+      ' (id, media_instance__id, member__id, place, role) ' .
+	" VALUES (${\next_key('media__contributor')},?,?,?,?) ";
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get('version_id'), $id, $place, $role);
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('version_id'), $id, $place, $role);
+    return $self;
 }
 
 ################################################################################
@@ -1558,33 +1365,24 @@ sub _insert_contributor {
 
 Updates the contributor mapping table
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _update_contributor {
-	my ($self, $id, $role, $place) = @_;
+    my ($self, $id, $role, $place) = @_;
+    my $sql = 'UPDATE media__contributor ' .
+      ' SET role=?, place=? ' .
+	' WHERE media_instance__id=? ' .
+	  ' AND member__id=? ';
 
-	my $sql = 'UPDATE media__contributor ' .
-				' SET role=?, place=? ' .
-				' WHERE media_instance__id=? ' .
-				' AND member__id=? ';
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-
-	execute($sth, $role, $place, $self->_get('version_id'), $id);
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $role, $place, $self->_get('version_id'), $id);
+    return $self;
 }
 
 ################################################################################
@@ -1593,32 +1391,24 @@ sub _update_contributor {
 
 Deletes the rows from these mapping tables
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _delete_contributor {
-	my ($self, $id) = @_;
+    my ($self, $id) = @_;
 
-	my $sql = 'DELETE FROM media__contributor ' .
-				' WHERE media_instance__id=? ' .
-				' AND member__id=? ';
+    my $sql = 'DELETE FROM media__contributor ' .
+      ' WHERE media_instance__id=? ' .
+	' AND member__id=? ';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-
-	execute($sth, $self->_get('version_id'), $id);
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('version_id'), $id);
+    return $self;
 }
 
 ################################################################################
@@ -1628,17 +1418,11 @@ sub _delete_contributor {
 returns a hash ref of the fields that are to be autopopulated from this 
 type of media object.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -1674,34 +1458,23 @@ sub _get_auto_fields {
 
 Returns the attribute object from a cache or creates a new record
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _get_attribute_object {
-	my ($self) = @_;
+    my $self = shift;
+    my ($attr_obj, $id) = $self->_get('_attribute_object', 'id');
+    return $attr_obj if $attr_obj;
 
-	my $attr_obj = $self->_get('_attribute_object');
-
-	return $attr_obj if $attr_obj;
-
-	# Let's Create a new one if one does not exist
-	$attr_obj = Bric::Util::Attribute::Media->new(
-		{id => $self->_get('id')});
-
-	$self->_set( {'_attribute_object' => $attr_obj} );
-
-	return $attr_obj;
+    # Let's Create a new one if one does not exist
+    $attr_obj = Bric::Util::Attribute::Media->new({ id => $id });
+    $self->_set( {'_attribute_object' => $attr_obj} );
+    return $attr_obj;
 }
 
 ################################################################################
@@ -1710,35 +1483,27 @@ sub _get_attribute_object {
 
 Inserts a media record into the database
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _insert_media {
-	my ($self) = @_;
+    my $self = shift;
 
-	my $sql = 'INSERT INTO ' . TABLE . ' (id, ' . join(', ', COLS) . ') '.
-				"VALUES (${\next_key(TABLE)}, ". join(', ',('?') x COLS).')';
+    my $sql = 'INSERT INTO ' . TABLE . ' (id, ' . join(', ', COLS) . ') '.
+      "VALUES (${\next_key(TABLE)}, ". join(', ',('?') x COLS).')';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get(FIELDS));
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get(FIELDS));
+    $self->_set( { id => last_key(TABLE) });
 
-	$self->_set( { id => last_key(TABLE) });
-
-	# And finally, register this person in the "All Media" group.
-	$self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
-
-	return $self;
+    # And finally, register this person in the "All Media" group.
+    $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+    return $self;
 }
 
 ################################################################################
@@ -1747,30 +1512,23 @@ sub _insert_media {
 
 Preforms the SQL that updates the media table
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _update_media {
-	my ($self) = @_;
+    my $self = shift;
 
-	my $sql = 'UPDATE ' . TABLE . ' SET '. join(', ', map {"$_=?"} COLS) .
-				' WHERE id=? ';
+    my $sql = 'UPDATE ' . TABLE . ' SET '. join(', ', map {"$_=?"} COLS) .
+      ' WHERE id=? ';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get(FIELDS), $self->_get('id'));
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get(FIELDS), $self->_get('id'));
+    return $self;
 }
 
 ################################################################################
@@ -1779,34 +1537,26 @@ sub _update_media {
 
 Preforms the sql that inserts a record into the media instance table
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _insert_instance {
-	my ($self) = @_;
+    my $self = shift;
 
-	my $sql = 'INSERT INTO '. VERSION_TABLE .
-				' (id, '.join(', ', VERSION_COLS) . ')' .
-				" VALUES (${\next_key(VERSION_TABLE)}, ".
-				join(', ', ('?') x VERSION_COLS) . ')';
+    my $sql = 'INSERT INTO '. VERSION_TABLE .
+      ' (id, '.join(', ', VERSION_COLS) . ')' .
+	" VALUES (${\next_key(VERSION_TABLE)}, ".
+	  join(', ', ('?') x VERSION_COLS) . ')';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get(VERSION_FIELDS));
-
-	$self->_set( { version_id => last_key(VERSION_TABLE) });
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get(VERSION_FIELDS));
+    $self->_set( { version_id => last_key(VERSION_TABLE) });
+    return $self;
 }
 
 ################################################################################
@@ -1815,31 +1565,24 @@ sub _insert_instance {
 
 Preforms the sql that updates the media_instance table
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _update_instance {
-	my ($self) = @_;
+    my $self = shift;
 
-	my $sql = 'UPDATE ' . VERSION_TABLE .
-				' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
-				' WHERE id=? ';
+    my $sql = 'UPDATE ' . VERSION_TABLE .
+      ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
+	' WHERE id=? ';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
+    return $self;
 }
 
 ################################################################################
@@ -1848,29 +1591,23 @@ sub _update_instance {
 
 Removes the media row from the database
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _delete_media {
-	my ($self) = @_;
+    my $self = shift;
 
-	my $sql = 'DELETE FROM ' . TABLE .
-				' WHERE id=? ';
+    my $sql = 'DELETE FROM ' . TABLE .
+      ' WHERE id=? ';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-
-	execute($sth, $self->_get('id'));
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('id'));
+    return $self;
 }
 
 ################################################################################
@@ -1879,30 +1616,23 @@ sub _delete_media {
 
 Removes the instance row from the database
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _delete_instance {
-	my ($self) = @_;
+    my $self = shift;
 
-	my $sql = 'DELETE FROM ' . VERSION_TABLE .
-				' WHERE id=? ';
+    my $sql = 'DELETE FROM ' . VERSION_TABLE .
+      ' WHERE id=? ';
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get('version_id'));
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('version_id'));
+    return $self;
 }
 
 ################################################################################
@@ -1911,44 +1641,35 @@ sub _delete_instance {
 
 Populates the object from a database row
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _select_media {
-	my ($self,$where,@bind) = @_;
+    my ($self, $where, @bind) = @_;
+    my @d;
 
-	my @d;
+    my $sql = 'SELECT id,'. join(',',COLS) . " FROM ". TABLE;
 
-	my $sql = 'SELECT id,'. join(',',COLS) . " FROM ". TABLE;
+    # add the where Clause
+    $sql .= " WHERE $where";
 
-	# add the where Clause
-	$sql .= " WHERE $where";
+    my $sth = prepare_ca($sql, undef, DEBUG);
+    execute($sth, @bind);
+    bind_columns($sth, \@d[0 .. (scalar COLS)]);
+    fetch($sth);
 
-	my $sth = prepare_ca($sql, undef, DEBUG);
-	execute($sth, @bind);
-	bind_columns($sth, \@d[0 .. (scalar COLS)]);
-	fetch($sth);
+    # set the values retrieved
+    $self->_set( [ 'id', FIELDS], [@d]);
 
-	# set the values retrieved
-	$self->_set( [ 'id', FIELDS], [@d]);
-
-	my $v_grp = Bric::Util::Grp::AssetVersion->lookup(
-		{ id => $self->_get('version_grp__id') } );
-
-	$self->_set( { '_version_grp' => $v_grp });
-
-	return $self;
+    my $v_grp = Bric::Util::Grp::AssetVersion->lookup(
+      { id => $self->_get('version_grp__id') } );
+    $self->_set( { '_version_grp' => $v_grp });
+    return $self;
 }
 
 ################################################################################
@@ -1957,32 +1678,24 @@ sub _select_media {
 
 Updates the row in the data base
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Note:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-
 sub _do_update {
-	my ($self) = @_;
+    my $self = shift;
 
-	my $sql = 'UPDATE ' . TABLE . ' '.
-				'SET ' . join(', ', map { "$_=?" } COLS) .
+    my $sql = 'UPDATE ' . TABLE . ' '.
+      'SET ' . join(', ', map { "$_=?" } COLS) .
 				' WHERE id=? ';
-	my $update = prepare_c($sql, undef, DEBUG);
 
-	execute($update, $self->_get( FIELDS ), $self->_get('id') );
-
-	return $self;
+    my $update = prepare_c($sql, undef, DEBUG);
+    execute($update, $self->_get( FIELDS ), $self->_get('id') );
+    return $self;
 }
 
 ################################################################################
@@ -1991,34 +1704,23 @@ sub _do_update {
 
 returns the attribute object for this story
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-
 sub _get_attr_obj {
-	my ($self) = @_;
+    my $self = shift;
+    my $attr_obj = $self->_get('_attr_obj');
+    return $attr_obj if ($attr_obj);
 
-	my $attr_obj = $self->_get('_attr_obj');
-
-	return $attr_obj if ($attr_obj);
-
-	$attr_obj = Bric::Util::Attribute::Media->new(
-		{ object_id => $self->_get('id')});
-
-	$self->_set( { '_attr_obj' => $attr_obj });
-
-	return $attr_obj;
+    $attr_obj = Bric::Util::Attribute::Media->new(
+      { object_id => $self->_get('id')});
+    $self->_set( { '_attr_obj' => $attr_obj });
+    return $attr_obj;
 }
 
 ################################################################################
@@ -2030,13 +1732,12 @@ __END__
 
 =head1 NOTES
 
-Some additional fields may be needed here such as a field for what kind of 
+Some additional fields may be needed here such as a field for what kind of
 object this represents etc.
 
 =head1 AUTHOR
 
-"Michael Soderstrom" <miraso@pacbell.net>
-Bricolage Engineering
+"Michael Soderstrom" E<lt>miraso@pacbell.netE<gt>
 
 =head1 SEE ALSO
 

@@ -30,8 +30,8 @@ my $handle_update = sub {
     $media->set_source__id($param->{"$widget|source__id"})
       if $param->{"$widget|source__id"};
 
-	$media->set_category__id($param->{"$widget|category__id"})
-		if $param->{"$widget|category__id"};
+    $media->set_category__id($param->{"$widget|category__id"})
+      if defined $param->{"$widget|category__id"};
 
     # set the name
     $media->set_title($param->{title})

@@ -81,6 +81,12 @@ submenus in the left navigation bar. Thanks to the WHO for the spot [David]
 Fixed bug where the wrong story might be previewed when clicking the title of a
 story in My Workspace or on a desk. [David]
 
+=item *
+
+Changing the category a media asset is in now correctly updates the underlying
+category object and the URI without the media asset needing to be checked in.
+[Matt Vella]
+
 =back
 
 =head1 VERSION 1.2.1
