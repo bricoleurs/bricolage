@@ -116,6 +116,13 @@ Sorting assets by ID in "Find X" and Workspace/Desk view now properly does a
 numeric sort rather than an alphanumeric sort. Thanks to Sam Tregar for the
 spot. [David]
 
+=item *
+
+Fixed an obscure bug where, for files uploaded as part of a Media file,
+Bricolage attempted to create a path on its own file system using path
+delimiters for another file system. Thanks to Mike Slattery for the spot.
+[David]
+
 =back
 
 =head1 VERSION 1.2.0
