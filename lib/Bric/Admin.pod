@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2002-01-11 02:03:50 $
+$Date: 2002-01-11 22:55:18 $
 
 =head1 DESCRIPTION
 
@@ -89,6 +89,8 @@ Perl Modules:
 =item HTML::Template 2.4
 
 =item HTML::Template::Expr 0.3
+
+=item SOAP::Lite 0.52
 
 =back
 
