@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =head1 DATE
 
-$Date: 2001-12-27 23:42:25 $
+$Date: 2001-12-27 23:43:34 $
 
 =head1 DESCRIPTION
 
@@ -113,6 +113,8 @@ particular subclass, and make sure that it compiles.
 Bric::Util::Burner::chk_syntax() will attempt to delegate to the proper
 subclass. Make sure that that method gets called from
 comp/widgets/tmpl_prof/callback.mc.
+
+=item *
 
 Add Keyword Management interface to centrally manage keywords. Also add
 interface to select from existing keywords for associating with assets.
