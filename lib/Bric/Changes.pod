@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.6.14 ()
+=head1 VERSION 1.6.14 (2004-05-02)
 
 =head2 Bug Fixes
 
@@ -27,18 +27,18 @@ installation doesn't know the installed version of PostgreSQL. [David]
 
 =item *
 
-Adding notes to image, video, or audio media documents no longer causes na
+Adding notes to image, video, or audio media documents no longer causes an
 error. Reported by Christian Hauser. [David]
 
 =item *
 
 Errors in the C<PERL_LOADER> F<bricolage.conf> directive no longer silently
-fails. [David]
+fail. [David]
 
 =item *
 
 A successful login no longer redirects back to the login page, thus no longer
-forcing a second redirect in such cases. Reportec by Marshall Roch. [David]
+forcing a second redirect in such cases. Reported by Marshall Roch. [David]
 
 =item *
 
