@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.65 $
+$Revision: 1.66 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.65 $ )[-1];
+our $VERSION = (qw$Revision: 1.66 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 21:39:45 $
+$Date: 2004-02-27 22:33:36 $
 
 =head1 SYNOPSIS
 
@@ -1327,7 +1327,7 @@ sub get_tplate_type_string {
 
 =item $name = $template->get_element_name;
 
-Return the name of the AssetType associated with this object.
+Return the name of the element associated with this object.
 
 B<Throws:>
 
@@ -1346,8 +1346,34 @@ NONE
 
 sub get_element_name {
     my $self = shift;
-    my $at_obj = $self->_get_element_object;
-    return unless $at_obj;
+    my $at_obj = $self->_get_element_object or return;
+    return $at_obj->get_name;
+}
+
+################################################################################
+
+=item $key_name = $template->get_element_key_name;
+
+Return the key name of the element associated with this object.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+
+sub get_element_key_ame {
+    my $self = shift;
+    my $at_obj = $self->_get_element_object or return;
     return $at_obj->get_key_name;
 }
 

@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-19 12:35:18 $
+$Date: 2004-02-27 22:33:37 $
 
 =head1 SYNOPSIS
 
@@ -135,7 +135,6 @@ use constant key => 'de_de';
   'All Contributors' => 'Alle Mitarbeiter',
   'All Elements' => 'Alle Elemente',
   'All Groups' => 'Alle Gruppen',
-  'Asset Type' => 'Gütertypen',
   'Available Groups' => 'Verfügbare Gruppen',
   'Available Output Channels' => 'Verfügbare Ausgabekanäle',
   'Bricolage' => 'Bricolage',
@@ -230,6 +229,7 @@ use constant key => 'de_de';
   'Media' => 'Medien',
   'Media Profile' => 'Medienprofil',
   'Media Type' => 'Medientyp',
+  'Media Type Element' => 'Medientyp',
   'Media Type Profile' => 'Medientypenprofil',
   'Media Types' => 'Medientypen',
   'Member Type  ' => 'Mitgliedstyp',
@@ -304,6 +304,7 @@ use constant key => 'de_de';
   'STORY' => 'BEITRAG',
   'Story' => 'Beitrag',
   'Story Type' => 'Beitragstyp',
+  'Story Type Element' => 'Beitragstyp',
   'Subelements' => 'Subelemente',
   'Teaser' => 'Kurzumschreibung',
   'TEMPLATE' => 'VORLAGE',

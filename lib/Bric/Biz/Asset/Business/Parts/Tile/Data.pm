@@ -8,15 +8,15 @@ the business data.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:51 $
+$Date: 2004-02-27 22:33:36 $
 
 =head1 SYNOPSIS
 
@@ -467,7 +467,7 @@ sub get_element_data_obj {
 
 ################################################################################
 
-=item $name = $data->get_element_name()
+=item $name = $container->get_element_name()
 
 Returns the name of the element
 
@@ -485,11 +485,29 @@ NONE
 
 =cut
 
-sub get_element_name {
-    my ($self) = @_;
+sub get_element_name { $_[0]->get_name }
 
-    return $self->get_name;
-}
+################################################################################
+
+=item $key_name = $container->get_element_key_name()
+
+Returns the key name of the element.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub get_element_key_name { $_[0]->get_key_name }
 
 ################################################################################
 

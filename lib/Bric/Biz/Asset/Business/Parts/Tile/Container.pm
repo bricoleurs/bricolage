@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2004-02-24 21:35:01 $
+$Date: 2004-02-27 22:33:36 $
 
 =head1 SYNOPSIS
 
@@ -625,10 +625,7 @@ NONE
 
 =cut
 
-sub get_element {
-    my ($self) = @_;
-    return $self->_get_element_obj();
-}
+sub get_element { $_[0]->_get_element_obj }
 
 ################################################################################
 
@@ -650,11 +647,29 @@ NONE
 
 =cut
 
-sub get_element_name {
-    my ($self) = @_;
+sub get_element_name { $_[0]->get_name }
 
-    return $self->get_name;
-}
+################################################################################
+
+=item $key_name = $container->get_element_key_name()
+
+Returns the key name of the element.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub get_element_key_name { $_[0]->get_key_name }
 
 ################################################################################
 

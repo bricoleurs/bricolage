@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 23:05:47 $
+$Date: 2004-02-27 22:33:37 $
 
 =head1 SYNOPSIS
 
@@ -257,7 +257,6 @@ our %Lexicon = (
    'Contributor profile "[_1]" saved.' => 'Profilo di Collaboratore "[_1]" salvato.',
    'Alert Types' => 'Tipi di Avvisi',
    'No destinations were found' => 'Nessuna Destinazione trovata',
-   'Asset Type' => 'Tipo di Materiale',
    'Add a New Group' => 'Creare un Nuovo Gruppo',
    'Properties' => 'Propriet‚Ã‚ ',
    'Create a New Template' => 'Creare un Nuovo Template',
@@ -265,6 +264,7 @@ our %Lexicon = (
    'Contributor "[_1]" disassociated.' => 'Collaboratori "[_1]" Disassociati.',
    'Workflow' => 'Workflow',
    'Media Type' => 'Tipo di Media',
+   'Media Type Element' => 'Tipo di Media',
    'Select Desk' => 'Seleziona il Desk',
    'Download' => 'Download',
    'Fields' => 'Campi',
@@ -316,6 +316,7 @@ our %Lexicon = (
    'You have not been granted <b>[_1]</b> access to the <b>[_2]</b> [_3]' => 'Accesso Negato di <b>[_1]</b> a <b>[_2]</b> [_3]',
    'Group Manager' => 'Group Manager',
    'Story Type' => 'Tipo di Storia',
+   'Story Type Element' => 'Tipo di Storia',
    'Separator Changed.' => 'Separatore Modificato.',
    'The slug, category and cover date you selected would have caused this story to have a URI conflicting with that of story [_1].' => 'L\'identificatore di URL (slug), categoria e data di pubblicazione selezionati per la Storia sono in conflitto con l\'URI della storia [_1].',
    'All Elements' => 'Tutti gli Elementi',

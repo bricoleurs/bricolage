@@ -6,15 +6,15 @@ Bric::Util::Language::zh_cn - Bricolage 簡体中文翻译
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-16 13:10:17 $
+$Date: 2004-02-27 22:33:38 $
 
 =head1 SYNOPSIS
 
@@ -78,7 +78,6 @@ our %Lexicon =
     'An error occurred while processing your request:' => '在处理您的要求时，发生了一个错误；',
     'An error occurred.' => '错误突然出现。',
     'Apr' => '四月',
-    'Asset Type' => '资产型别',
     'At least one extension is required.' => '至少需要一个延伸.',
     'Attributes' => '属性',
     'Aug' => '八月',
@@ -287,6 +286,7 @@ our %Lexicon =
     'Media Type profile "[_1]" deleted.' => '媒体型别设定 [_1] 已经储存。',
     'Media Type profile "[_1]" saved.' => '媒体型别 [_1] 已储存。',
     'Media Type' => '媒体型别',
+    'Media Type Element' => '媒体型别',
     'Media Types' => '媒体型别',
     'Medium High' => '较高',
     'Medium Low' => '较低 ',
@@ -459,6 +459,7 @@ our %Lexicon =
     'Story "[_1]" saved and shelved.' => '稿件 [_1] 已储存且上架了。',
     'Story "[_1]" saved.' => '稿件 [_1] 已储存。',
     'Story Type' => '稿件型别',
+    'Story Type Element' => '稿件型别',
     'Subelements' => '子元素',
     'Switch Roles' => '变换角色',
     'TEMPLATE' => '样板',

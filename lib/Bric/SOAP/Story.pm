@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 11:48:42 $
+$Date: 2004-02-27 22:33:36 $
 
 =head1 SYNOPSIS
 
@@ -1102,7 +1102,7 @@ sub serialize_asset {
     $writer->startTag("story",
                       id => $story_id,
                       ( $alias_id ? (alias_id => $alias_id) :
-                        (element => $story->get_element_name)));
+                        (element => $story->get_element_key_name)));
 
     # Write out the name of the site.
     my $site = Bric::Biz::Site->lookup({ id => $story->get_site_id });

@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 21:39:45 $
+$Date: 2004-02-27 22:33:35 $
 
 =head1 SYNOPSIS
 
@@ -657,7 +657,7 @@ sub my_meths {
                               get_args => [],
                               set_meth => sub { shift->set_element__id(@_) },
                               set_args => [],
-                              disp     => 'Asset Type ID',
+                              disp     => 'Element ID',
                               len      => 10,
                               req      => 0,
                               type     => 'short',
@@ -669,7 +669,7 @@ sub my_meths {
                                   my $a = Bric::Biz::AssetType->lookup({ id => $a_id });
                                   $a->get_name(); },
                               get_args => [],
-                              disp     => 'Asset Type',
+                              disp     => 'Element',
                               len      => 256,
                               type     => 'short',
                              },

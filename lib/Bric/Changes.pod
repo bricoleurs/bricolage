@@ -184,6 +184,11 @@ Changed the default value of the C<SMTP_SERVER> F<bricolage.conf> directive to
 localhost. This has a much greater chance of working than defaulting to the
 value of the C<VHOST_SERVER_NAME> directive. [David]
 
+=item *
+
+Eliminated the term "Asset Type" from the UI, replacing it with "Element",
+"Story Type Element", or "Media Type Element", as context demands. [David]
+
 =back
 
 =head2 Bug Fixes

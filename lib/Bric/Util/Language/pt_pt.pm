@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 01:42:01 $
+$Date: 2004-02-27 22:33:37 $
 
 =head1 SYNOPSIS
 
@@ -229,6 +229,7 @@ use constant key => 'pt_pt';
   'Media' => 'Media',
   'Media Profile' => 'Perfil de Media',
   'Media Type' => 'Tipo de Media',
+  'Media Type Element' => 'Tipo de Media',
   'Media Type Profile' => 'Perfil de Tipo de Media',
   'Media Types' => 'Tipos de Media',
   'Member Type  ' => 'Tipo de Membro',
@@ -301,6 +302,7 @@ use constant key => 'pt_pt';
   'Statistics' => 'Estatísticas',
   'Story' => 'Artigo',
   'Story Type' => 'Tipo de Artigo',
+  'Story Type Element' => 'Tipo de Artigo',
   'Subelements' => 'Subelementos',
   'Teaser' => 'Teaser',
   'Template Name' => 'Nome do Template',

@@ -41,15 +41,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 11:48:41 $
+$Date: 2004-02-27 22:33:36 $
 
 =head1 SYNOPSIS
 
@@ -908,7 +908,7 @@ sub serialize_asset {
     $writer->startTag("media",
                       id => $media_id,
                       ( $alias_id ? (alias_id => $alias_id) :
-                        (element => $media->get_element_name)));
+                        (element => $media->get_element_key_name)));
 
     # Write out the name of the site.
     my $site = Bric::Biz::Site->lookup({ id => $media->get_site_id });
