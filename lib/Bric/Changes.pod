@@ -34,6 +34,11 @@ C<make upgrade>. [Thorston Biel]
 
 Fixed broken foreign key index on element table. [Dave Rolsky]
 
+=item *
+
+Added partial index to speed queries against the job table, and thus to speed
+distribution. [Mark]
+
 =back
 
 =head1 VERSION 1.6.6 (2003-10-03)

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.4.1 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-10-13 21:54:30 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -80,6 +80,7 @@ CREATE TABLE job_member (
 CREATE INDEX idx_job__name ON job(LOWER(name));
 CREATE INDEX idx_job__sched_time ON job(sched_time);
 CREATE INDEX idx_job__comp_time ON job(comp_time);
+CREATE INDEX idx_job__comp_time__is_null ON job(comp_time) WHERE comp_time is NULL;
 
 CREATE INDEX fkx_job__job__resource ON job__resource(job__id);
 CREATE INDEX fkx_usr__job ON job (usr__id);
