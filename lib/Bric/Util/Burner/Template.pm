@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 03:48:16 $
+$Date: 2002-03-27 19:24:21 $
 
 =head1 SYNOPSIS
 
@@ -540,6 +540,10 @@ sub new_template {
 		       . _element_filename($element) . ".tmpl)" })
 	    unless defined $file;
 
+	print STDERR __PACKAGE__, "::new_template() : found template file ",
+	  "$file for element $element.\n"
+	    if DEBUG;
+
 	# set filename arg
 	$args{filename} = $file;
     }
@@ -798,7 +802,7 @@ sub _find_file {
       ", $extension)\n" if DEBUG and ref $element;
 
     # search up category hierarchy
-    my @cats = $self->get_cat->ancestry;
+    my @cats = map { $_->get_directory } $self->get_cat->ancestry;
     do {
 	# if the file exists, return it
 	foreach my $troot (@$template_root) {
