@@ -128,7 +128,7 @@ do {
     # XXX Currently doesn't seem to work...
     if (ENABLE_HTMLAREA){
         push @locs,
-          "  <Location /media/htmlarea/plugins/SpellChecker/cgi-bin>\n" .
+          "  <Location /media/htmlarea/plugins/SpellChecker>\n" .
           "    SetHandler      cgi-script\n" .
           "  </Location>";
     }
