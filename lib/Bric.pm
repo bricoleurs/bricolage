@@ -6,19 +6,19 @@ Bric - The Bricolage base class.
 
 =head1 VERSION
 
-Release Version: 1.6.3
+Release Version: 1.6.4
 
 File (CVS) Version:
 
-$Revision: 1.35.2.9 $
+$Revision: 1.35.2.10 $
 
 =cut
 
-our $VERSION = "1.6.3";
+our $VERSION = "1.6.4";
 
 =head1 DATE
 
-$Date: 2003-07-28 16:37:17 $
+$Date: 2003-08-13 00:25:54 $
 
 =head1 SYNOPSIS
 
