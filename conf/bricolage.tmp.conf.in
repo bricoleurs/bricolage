@@ -1,79 +1,21 @@
-#
-# vim: set nowrap:
-# Apache Settings. These settings relate the similarly-named Apache
-# configurations. Read the Apache documentation for more information on these
-# configurations. Depending on your environment, changing some of these may help
-# improve performance. The defaults are as follows:
-#
-# SERVER_NAME             Bricolage uses Unix shell programs to try to determine. This
-#                         is not portable, so we suggest you specify this one.
-# SERVER_ADMIN            root@SERVER_NAME
-# APACHE_SERVER_ROOT      /usr/local/apache # ( Not portable)
-# PID_FILE                /usr/local/apache/logs/httpd.pid # (Not portable)
-# DOCUMENT_ROOT           $BRICOLAGE_ROOT/comp
-# MIN_SPARE_SERVERS       2
-# MAX_SPARE_SERVERS       6
-# START_SERVERS           2
-# MAX_REQUESTS_PER_CHILD  0
-# MAX_CLIENTS             150
-# KEEP_ALIVE              Off
-# MAX_KEEP_ALIVE_REQUESTS 100
-# KEEP_ALIVE_TIMEOUT      15
-# ERROR_LOG               /usr/local/apache/logs/error_log # (Not portable)
-# LOG_LEVEL               info
-# LOG_FORMAT              '%h %l %u %t "%r" %>s %b "%{Referer}i "%{User-Agent}i" "%{Cookie}i" "%v:%p"' combined
-# CUSTOM_LOG              /usr/local/apache/logs/access_log combined # (Not portable)
-# SCORE_BOARD_FILE        # Not defined.
-# TYPES_CONFIG            /usr/local/apache/conf/mime.types # (Not portable)
-# HOST_NAME_LOOKUPS       Off
-# SERVER_SIGNATURE        Email
-# TIMEOUT                 30
-# USE_CANONICAL_NAME      On
-# LISTEN_PORT             80
-# SSL_ENABLE              off
-
-APACHE_SERVER_ROOT      = @SERVER_ROOT@ 
-PID_FILE                = @PID_FILE@
-SERVER_NAME             = @HOSTNAME@
-SERVER_ADMIN            = @ADMINISTRATOR@@@HOSTNAME@
-DOCUMENT_ROOT           = @compdir@
-MIN_SPARE_SERVERS       = 2
-MAX_SPARE_SERVERS       = 6
-START_SERVERS           = 2
-MAX_REQUESTS_PER_CHILD  = 0
-MAX_CLIENTS             = 150
-KEEP_ALIVE              = Off
-MAX_KEEP_ALIVE_REQUESTS = 100
-KEEP_ALIVE_TIMEOUT      = 15
-ERROR_LOG               = @ERROR_LOG@
-LOG_LEVEL               = info
-LOG_FORMAT              = '%h %l %u %t "%r" %>s %b "%{Referer}i "%{User-Agent}i" "%{Cookie}i" "%v:%p"' combined
-CUSTOM_LOG              = @ACCESS_LOG@ combined
-# SCORE_BOARD_FILE
-TYPES_CONFIG            = @SERVER_ROOT@/conf/mime.types
-HOST_NAME_LOOKUPS       = Off
-SERVER_SIGNATURE        = Email
-TIMEOUT                 = 30
-USE_CANONICAL_NAME      = On
+# Apache Settings. APACHE_BIN is the location of the Apache server executable,
+# and APACHE_CONF is the location of the Apache configuration file. LISTEN_PORT
+# is equivalent to the Apache Listen directive, and must agree with the Listen
+# setting in the Apache configuration file specified in APACHE_CONF. SSL_ENABLE
+# turns on SSL support. Note that if SSL_ENABLE is turned on, then LISTEN_PORT
+# *must* be 80, or else Bricolage will not start. VHOST is the Virtual host name
+# under which Bricolage should run.
+APACHE_BIN              = /usr/local/apache/bin/httpd
+APACHE_CONF             = /usr/local/bricolage/conf/httpd.conf
 LISTEN_PORT             = 80
+SSL_ENABLE              = Off
+NAME_VHOST              = *
+VHOST_SERVER_NAME       = @HOSTNAME@
 
-# set this to 1 if you want to use SSL
-SSL_ENABLE              = off
-
-# mod_ssl settings. These settings relate the similarly-named mod_ssl
-# configurations. Read the mod_ssl documentation for more information on these
-# configurations. Depending on your environment, changing some of these may help
-# improve performance. The defaults are as follows:
-@SSL_COMMENT@SSL_SESSION_CACHE       = dbm:@LOGDIR@/ssl_scache # Not portable
-@SSL_COMMENT@SSL_SESSION_CACHE_TIMEOUT = 300
-@SSL_COMMENT@SSL_MUTEX               = file:@LOGDIR@/ssl_mutex # Not portable
-@SSL_COMMENT@SSL_LOG                 = @SSL_LOG@
-@SSL_COMMENT@SSL_LOG_LEVEL           = info
-@SSL_COMMENT@SSL_CERTIFICATE_FILE    = @SERVER_ROOT@/conf/ssl.crt/server.crt
-@SSL_COMMENT@SSL_CERTIFICATE_KEY_FILE = @SERVER_ROOT@/conf//ssl.key/server.key
-@SSL_COMMENT@SSL_CIPHER_SUITE        = ALL:!ADH:!EXP56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
-@SSL_COMMENT@SSL_PASS_PHRASE_DIALOG  = builtin
-@SSL_COMMENT@SSL_PORT				= 443
+# System User settings. These are the names of the system user and group under
+# which Apache and Mason run. Default to 'nobody' and 'nobody' if not specified.
+SYS_USER                = @APACHE_USER@
+SYS_GROUP               = @APACHE_GROUP@
 
 # Database settings. These are simply the name of the database in which all
 # Bricolage data will be stored, as well as the username and password the
@@ -82,11 +24,6 @@ SSL_ENABLE              = off
 DB_NAME                 = @DB_NAME@
 DBI_USER                = @DBI_USER@
 DBI_PASS                = @DBI_PASS@
-
-# System User settings. These are the names of the system user and group under
-# which Apache and Mason run. Default to 'nobody' and 'nobody' if not specified.
-SYS_USER                = @APACHE_USER@
-SYS_GROUP               = @APACHE_GROUP@
 
 # Mason settings. These specify the location of the Bricolage UI Mason
 # components. The defaults are the $BRICOLAGE_ROOT/comp for MASON_COMP_ROOT and
@@ -165,12 +102,12 @@ DEF_MEDIA_TYPE          = 'text/html'
 # receives the same alert to see who else received it. Use 'bcc' if you don't
 # want anyone to see who else got an alert, or if you just want to save the
 # bandwidth. Defaults to 'bcc'.
-#ALERT_FROM              = webmaster@@someserver.foo.com
+ALERT_FROM              = webmaster@someserver.foo.com
 ALERT_TO_METH           = bcc # Can also be 'to'
 
 # SMTP setting. This is just the address for an SMTP server through which alerts
 # can be sent.
-#SMTP_SERVER             = smtpapps.someserver.foo.com
+#SMTP_SERVER             = smtp.someserver.foo.com
 
 # Full search setting. By default, Bricolage looks for search strings in the
 # database only at the beginning of the fields. The reason for this is that, if
@@ -198,7 +135,7 @@ DEFAULT_FILE_EXT         = html
 #PERL_LOADER              = use CGI; use Apache::DBI;
 
 # FTP settings - see Bric::Admin for details
-ENABLE_FTP_SERVER       = 0
+ENABLE_FTP_SERVER         = Off
 # FTP_ADDRESS             = 127.0.0.1
 # FTP_PORT                = 2121
 # FTP_DEBUG               = 1
