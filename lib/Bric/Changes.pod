@@ -35,6 +35,11 @@ any story or media asset. [David]
 The output channel profile once again only complains that the name of an
 output channel is already in use if it happens to be true. [David]
 
+=item *
+
+Bric::Config now does its best to find a workable F<httpd.conf> file when
+tests are begin run. [David]
+
 =back
 
 =head1 VERSION 1.5.1
