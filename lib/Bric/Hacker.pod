@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =head1 DATE
 
-$Date: 2003-11-30 02:19:42 $
+$Date: 2004-01-13 09:36:25 $
 
 =head1 DESCRIPTION
 
@@ -140,6 +140,10 @@ place the following in your C<~/.emacs> file:
    '(cperl-continued-statement-offset 2)
    '(cperl-tab-always-indent t)
    '(indent-tabs-mode nil))
+   ;; let hashes indent normally; I think this requires
+   ;; at least version 4.32 of cperl-mode.el
+   '(cperl-indent-parens-as-block t)
+   '(cperl-close-paren-offset -4)
 
 Also, if you'd like to take advantage of the full functionality of
 C<cperl-mode> and have it automatically parse all Perl source files, add these
