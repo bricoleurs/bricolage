@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-27 11:15:39 $
+$Date: 2004-02-06 06:34:55 $
 
 =head1 SYNOPSIS
 
@@ -133,6 +133,7 @@ use base qw(Bric);
 #======================================#
 
 use constant DEBUG => 0;
+use constant RO_FIELDS => ();
 
 use constant HAS_MULTISITE => 1;
 
@@ -249,7 +250,7 @@ sub lookup {
     my $sql = build_query_with_unions($pkg, $pkg->COLUMNS, $tables, $where,
                                       $order);
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
-                   'grp_ids' ];
+                   $pkg->RO_FIELDS, 'grp_ids' ];
     # Send so many arguments as we have relations
     $args = [ (@$args) x @{$pkg->RELATIONS} ];
     my @obj = fetch_objects( $pkg, $sql, $fields, $args, $param->{Limit},
@@ -290,7 +291,7 @@ sub list {
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
-                   'grp_ids' ];
+                   $pkg->RO_FIELDS, 'grp_ids' ];
     my $sql = build_query_with_unions($pkg, $pkg->COLUMNS, $tables, $where,
                                       $order);
     # Send so many arguments as we have relations

@@ -11,10 +11,10 @@ bric_dev_sync [options] source_url target_url [target_url, ...]
 
 Arguments:
 
-  source_url        - the url for the source server 
+  source_url        - the url for the source server
                       (example: http://localhost or just localhost)
 
-  target_url        - the url for the target server(s) 
+  target_url        - the url for the target server(s)
                       (example: http://bric.bar.com or just bar.com)
 
 Options:
@@ -23,8 +23,8 @@ Options:
 
   --man             - shows the full documentation
 
-  --verbose         - print a running dialogue of operations.  Repeat 
-                      up to three times of successively larger amounts 
+  --verbose         - print a running dialogue of operations.  Repeat
+                      up to three times of successively larger amounts
                       of debugging information.
 
   --source-username - the Bricolage username to use on the source
@@ -46,11 +46,11 @@ Options:
   --category        - set to a particular category path to only copy
                       templates in this category.
 
-  --template        - set to the name of a template to copy.  Also 
-                      accepts SQL match variables to specify groups 
+  --template        - set to the name of a template to copy.  Also
+                      accepts SQL match variables to specify groups
                       of templates (ex. "%.pl", "story.%").
 
-  --element         - set to the name of an element to copy.  Also 
+  --element         - set to the name of an element to copy.  Also
                       copies templates for just this element unless
                       --no-templates is set.
 
@@ -59,7 +59,7 @@ Options:
   --element-id      - set to the ID of a single element to copy.
 
   --with-sub        - also selects sub-elements of the selected element.
-                      Useful in combination with --element or 
+                      Useful in combination with --element or
                       --element-id.
 
   --copy-categories - copy categories from source to target.  Off by
@@ -73,17 +73,17 @@ Options:
 
   --no-templates    - only copy elements.
 
-  --no-deploy       - by default templates are deployed after being 
+  --no-deploy       - by default templates are deployed after being
                       copied.
 
-  --yes             - don't ask questions, assume the answer is yes and 
+  --yes             - don't ask questions, assume the answer is yes and
                       proceed.
 
-  --dry-run         - don't actually perform potentially destructive 
-                      operations (delete, update, create, deploy).  
+  --dry-run         - don't actually perform potentially destructive
+                      operations (delete, update, create, deploy).
                       Combine with --verbose for maximum utility.
 
-  --timeout         - specify the HTTP timeout for SOAP requests in 
+  --timeout         - specify the HTTP timeout for SOAP requests in
                       seconds.  Defaults to 30.
 
 =head1 DESCRIPTION
@@ -173,7 +173,7 @@ BEGIN {
     our ($help, $man);
     GetOptions("help"                   => \$help,
 	       "man"                    => \$man,
-	       "verbose+"               => \$VERBOSE,	   
+	       "verbose+"               => \$VERBOSE,
 	       "source-username=s"      => \$source_username,
 	       "source-password=s"      => \$source_password,
 	       "target-username=s"      => \$target_username,
@@ -195,7 +195,7 @@ BEGIN {
 
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
-    
+
     # check required options
     pod2usage("Missing required --source-username option ".
 	      "and BRICOLAGE_USERNAME environment variable unset.")
@@ -209,7 +209,7 @@ BEGIN {
     pod2usage("Missing required --target-password option ".
 	      "and BRICOLAGE_PASSWORD environment variable unset.")
 	unless defined $target_password;
-    
+
     # get source and targets
     $source_url = shift @ARGV;
     pod2usage("Missing required source URL and target URL parameters")
@@ -231,17 +231,17 @@ main();
 sub main {
     # connect and login to SOAP servers
     soap_connect();
-    
+
     # get elements and templates from source
     get_source_assets();
-    
+
     # dump a big pile of asset data if triple-verbosed
     if ($VERBOSE > 2) {
 	our (%elements, %templates);
 	print STDERR Data::Dumper->Dump([ \%elements, \%templates],
 					[qw(elements    templates)]);
     }
-    
+
     # sync assets from source to targets
     sync_assets();
 
@@ -263,7 +263,7 @@ sub sync_categories {
 
     # loop over targs, filling in holes in the category tree
     foreach my $soap (@targ) {
-	my $doc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<assets>";    
+	my $doc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<assets>";
 	my $found = 0;
 
 	my ($id, $asset);
@@ -306,14 +306,14 @@ sub sync_elements {
     foreach my $soap (@targ) {
 	my $doc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<assets>";
 	my @update_ids;
-	
+
 	# loop through elements finding update targets and
 	# fixing-up $this
 	my ($id, $asset);
 	while (($id, $asset) = each %elements) {
 	    my ($name) = $asset =~ m!<name>(.*?)</name>!s;
 	    my ($update_id) = call_list_ids($soap, 'Element', name => $name);
-	    
+
 	    # found a match on targ
 	    if ($update_id) {
 		push(@update_ids, $update_id);
@@ -336,12 +336,12 @@ sub sync_elements {
 	print "\nAbout to update/create the following elements at ",
 	    $soap->proxy->endpoint, ":\n",
 		join("\n", map { "\t$_" } 
-		     sort map { $_ =~ m!<name>(.*?)</name>!s } 
+		     sort map { $_ =~ m!<name>(.*?)</name>!s }
 		     values %elements), "\n";
-	
+
 	if (ask_yesno("Are you sure? [yes] ")) {
 	    print "\nUpdating and creating elements...\n";
-	    call_update($soap, 'Element', $doc, @update_ids);	    
+	    call_update($soap, 'Element', $doc, @update_ids);
 	} else {
 	    print "Aborting...\n";
 	    exit 1;
@@ -358,7 +358,7 @@ sub sync_templates {
 	my $doc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<assets>";
 	my @update_ids;
 	my @ids;
-	
+
 	# loop through templates finding update targets and
 	# fixing-up $this
 	my ($id, $asset);
@@ -368,7 +368,7 @@ sub sync_templates {
 	    my ($update_id) = call_list_ids($soap, 'Template', 
 					    file_name => $file_name,
 					    output_channel => $oc);
-	    
+
 	    # found a match on targ
 	    if ($update_id) {
 		push(@update_ids, $update_id);
@@ -378,21 +378,21 @@ sub sync_templates {
 		# hide id to avoid crosstalk
 		$asset =~ s/id=["']\d+["']/id="0"/;
 	    }
-	    
+
 	    # collect assets
 	    $doc .= $asset;
 	}
 	$doc .= "</assets>\n";
-	
+
 	print STDERR "Asset document for Template update:\n$doc\n"
 	    if $VERBOSE > 2;
-	
+
 	# make sure
 	print "\nAbout to update/create the following templates at ",
 	    $soap->proxy->endpoint, ":\n",
-		join("\n", map { "\t$_" } 
+		join("\n", map { "\t$_" }
 		     sort $doc =~ m!<file_name>(.*?)</file_name>!sg ), "\n";
-	
+
 	if (ask_yesno("Are you sure? [yes] ")) {
 	    print "\nUpdating and creating templates...\n";
 	    # make update call
@@ -401,7 +401,7 @@ sub sync_templates {
 	    print "Aborting...\n";
 	    exit 1;
 	}
-	
+
 	call_deploy($soap, @ids) unless $no_deploy;
     }
 }
@@ -419,7 +419,7 @@ sub get_source_assets {
 	print "Gathering source categories...\n";
 	get_source_categories();
     }
-    
+
     unless($no_elements) {
 	print "Gathering source elements...\n";
 	get_source_elements();
@@ -441,19 +441,19 @@ sub get_source_elements {
     if ($element_id) {
 	$element_ids[0] = $element_id;
     } elsif ($element_name) {
-	@element_ids = call_list_ids($source, 'Element', 
+	@element_ids = call_list_ids($source, 'Element',
 				     name => $element_name);
     } else {
 	@element_ids = call_list_ids($source, 'Element');
     }
 
-    print STDERR "Received element ids from source: (", 
+    print STDERR "Received element ids from source: (",
 	join(',', @element_ids), ")\n"
 	    if $VERBOSE > 1;
 
     # get asset documents for source elements into %elements
     get_documents($source, 'Element', \%elements, @element_ids);
-    
+
     # add sub-elements if --with-sub
     if ($with_sub) {
 	# get starting list of documents to look through
@@ -465,9 +465,9 @@ sub get_source_elements {
 		my $sub_name = $1;
 
 		# find id for subelement
-		my ($sub_id) = call_list_ids($source, 'Element', 
+		my ($sub_id) = call_list_ids($source, 'Element',
 					     name => $sub_name);
-		
+
 		# if new, load document
 		unless (exists $elements{$sub_id}) {
 		    push(@element_ids, $sub_id);
@@ -476,7 +476,7 @@ sub get_source_elements {
 		}
 	    }
 	}
-	
+
 	print STDERR "Element id list after --with-sub processing: (",
 	    join(',', @element_ids), ")\n"
 		if $VERBOSE > 1;
@@ -488,7 +488,7 @@ sub get_source_elements {
 
 # gets source templates
 sub get_source_templates {
-    our ($source, $category, $template_name, $template_id, $element_name, 
+    our ($source, $category, $template_name, $template_id, $element_name,
 	 $with_sub);
     our (%elements, %templates);
 
@@ -502,7 +502,7 @@ sub get_source_templates {
 	push(@search, name => $template_name)
 	    if $template_name;
 	push(@search, category => $category)
-	    if $category;	
+	    if $category;
 	push(@search, element => $element_name)
 	    if $element_name;
 
@@ -510,7 +510,7 @@ sub get_source_templates {
 	@template_ids = call_list_ids($source, 'Template', @search);
     }
 
-    print STDERR "Received template_ids from source: (", 
+    print STDERR "Received template_ids from source: (",
 	join(',', @template_ids), ")\n"
 	    if $VERBOSE > 1;
 
@@ -537,10 +537,9 @@ sub get_source_templates {
 
 	print STDERR "Template id list after --with-sub processing: (",
 	    join(',', @template_ids), ")\n"
-		if $VERBOSE > 1;	
+		if $VERBOSE > 1;
     }
 
-    
     die "No templates found on source server matching specified criteria.\n"
 	unless @template_ids;
 }
@@ -552,7 +551,7 @@ sub get_source_categories {
     # get all category ids
     my @category_ids = call_list_ids($source, 'Category');
 
-    print STDERR "Received category ids from source: (", 
+    print STDERR "Received category ids from source: (",
 	join(',', @category_ids), ")\n"
 	    if $VERBOSE > 1;
 
@@ -579,16 +578,16 @@ sub call_list_ids {
     }
 
     print STDERR "Calling Bric::SOAP::$module->list_ids(",
-	join(', ', map { $_->name . " => \"" . $_->value . "\"" } @search), 
-	    ") on ", $soap->proxy->endpoint, "\n" 
+	join(', ', map { $_->name . " => \"" . $_->value . "\"" } @search),
+	    ") on ", $soap->proxy->endpoint, "\n"
 		if $VERBOSE;
-   
+
     # run list_ids
     my $response = $soap->list_ids(@search);
-    
+
     # check fault
     _print_fault($response) if $response->fault;
-    
+
     # return result list
     my $list = $response->result;
     return sort { $a <=> $b } @$list if $list;
@@ -604,18 +603,18 @@ sub call_update {
     # switch to module
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $module);
 
-    print STDERR "Calling Bric::SOAP::$module->update(", 
-	length($document) . " bytes, ", join(', ', @_), ") on ",  
-	    $soap->proxy->endpoint, "\n" 
+    print STDERR "Calling Bric::SOAP::$module->update(",
+	length($document) . " bytes, ", join(', ', @_), ") on ",
+	    $soap->proxy->endpoint, "\n"
 		if $VERBOSE;
 
     # run create
     unless ($dry_run) {
-	my $response = $soap->update(name(document => 
+	my $response = $soap->update(name(document =>
 					  $document)->type('base64'),
-				     name(update_ids => 
+				     name(update_ids =>
 					  [ map { name($type, $_) } @_ ]));
-	
+
 	# check fault
 	_print_fault($response) if $response->fault;
 
@@ -635,15 +634,15 @@ sub call_create {
     # switch to module
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $module);
 
-    print STDERR "Calling Bric::SOAP::$module->create(", 
-	length($document) . " bytes) on ",  $soap->proxy->endpoint, "\n" 
+    print STDERR "Calling Bric::SOAP::$module->create(",
+	length($document) . " bytes) on ",  $soap->proxy->endpoint, "\n"
 	    if $VERBOSE;
 
     # run create
     unless ($dry_run) {
-	my $response = $soap->create(name(document => 
+	my $response = $soap->create(name(document =>
 					  $document)->type('base64'));
-	
+
 	# check fault
 	_print_fault($response) if $response->fault;
 
@@ -666,20 +665,20 @@ sub call_delete {
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $module);
 
     # loop over ids exporting
-    print STDERR "Calling Bric::SOAP::$module->delete(", 
+    print STDERR "Calling Bric::SOAP::$module->delete(",
 	join (', ', @_), ") on ",
 	    $soap->proxy->endpoint, "\n" if $VERBOSE;
-    
+
     unless ($dry_run) {
-	my $response = $soap->delete(name("${type}s" => 
+	my $response = $soap->delete(name("${type}s" =>
 					  [ map { name($type, $_) } @_ ]),
-				     $module eq 'Element' ? 
+				     $module eq 'Element' ?
 				     name(force => 1)     :
 				     ());
 	_print_fault($response) if $response->fault;
-    }	
+    }
 }
-  
+
 # deploy specified ids
 sub call_deploy {
     my $soap = shift;
@@ -692,17 +691,17 @@ sub call_deploy {
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $module);
 
     # loop over ids exporting
-    print STDERR "Calling Bric::SOAP::$module->deploy(", 
+    print STDERR "Calling Bric::SOAP::$module->deploy(",
 	join (', ', @_), ") on ",
 	    $soap->proxy->endpoint, "\n" if $VERBOSE;
-    
+
     unless ($dry_run) {
-	my $response = $soap->deploy(name("deploy_ids" => 
+	my $response = $soap->deploy(name("deploy_ids" =>
 					  [ map { name($type, $_) } @_ ]));
 	_print_fault($response) if $response->fault;
-    }	
+    }
 }
-  
+
 # gets asset documents from source and places them in %$hash by id
 sub get_documents {
     my ($soap, $module, $hash) = (shift, shift, shift);
@@ -713,28 +712,28 @@ sub get_documents {
 
     # loop over ids exporting
     foreach my $id (@_) {
-	print STDERR "Calling Bric::SOAP::$module->export($type => $id) on ", 
+	print STDERR "Calling Bric::SOAP::$module->export($type => $id) on ",
 	    $soap->proxy->endpoint, "\n" if $VERBOSE;
-	
+
 	my $response = $soap->export(name($type, $id));
 	_print_fault($response) if $response->fault;
 	$hash->{$id} = $response->result;
 
 	# strip off assets element and xml declaration
 	$hash->{$id} =~ s!<\?xml[^>]+>\s*<assets[^>]*>\s*(.*)</assets>!$1!s;
-    }	
+    }
 }
 
 #
 # startup dance routines
-# 
+#
 
 # connect source and target soap handles
 sub soap_connect {
     our ($source_url, $source_username, $source_password);
     our (@targ_urls,  $target_username, $target_password);
     our ($source, @targ);
-    
+
     # connect to source
     $source = soap_connect_to($source_url, $source_username, $source_password);
 
@@ -763,17 +762,17 @@ sub soap_connect_to {
 
     # login
     print STDERR "Logging in to $url as $username...\n" if $VERBOSE;
-    my $response = $soap->login(name(username => $username), 
+    my $response = $soap->login(name(username => $username),
 				name(password => $password));
     die "Login to $url as $username failed.\n" if $response->fault;
     print STDERR "Login to $url success.\n" if $VERBOSE;
 
     return $soap;
-}    
+}
 
 #
 # UI functions
-# 
+#
 
 # asks the user a yes/no question.  returns 1 for yes, 0 for no.
 sub ask_yesno {
@@ -781,7 +780,7 @@ sub ask_yesno {
     our $yes;
     my $tries = 1;
     local $| = 1;
-    while (1) {	    
+    while (1) {
 	print $question;
 	if ($yes) { print "\n"; return 1 }
 	my $answer = <STDIN>;
@@ -791,7 +790,7 @@ sub ask_yesno {
 	print "Please answer \"yes\" or \"no\".\n";
 	print "And quit screwing around.\n" if ++$tries > 3;
     }
-}    
+}
 
 # prints out fault message
 sub _print_fault {

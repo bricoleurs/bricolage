@@ -6,11 +6,11 @@ db_upgrade.pl - installation script to run db upgrade scripts
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2003-12-25 18:11:52 $
+$Date: 2004-02-06 06:34:53 $
 
 =head1 DESCRIPTION
 
@@ -48,6 +48,7 @@ print "\n\n==> Starting Database Upgrade <==\n\n";
 
 # setup environment to ensure scripts run correctly
 $ENV{BRICOLAGE_ROOT} = $UPGRADE->{BRICOLAGE_ROOT};
+my $perl = $ENV{PERL} || $^X;
 
 # run the upgrade scripts
 foreach my $v (@{$UPGRADE->{TODO}}) {
@@ -60,8 +61,8 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
     closedir DIR;
 
     foreach my $script (@scripts) {
-	print "Running 'perl $script'.\n";
-	my $ret = system("perl", "-I$CONFIG->{MODULE_DIR}", $script, '-u',
+	print "Running '$perl $script'.\n";
+	my $ret = system("$perl", "-I$CONFIG->{MODULE_DIR}", $script, '-u',
                          $PG->{root_user}, '-p', $PG->{root_pass});
         # Pass through abnormal exits so that `make` will be halted.
         exit $ret / 256 if $ret;

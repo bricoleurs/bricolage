@@ -734,6 +734,112 @@ upgrading. [David]
 
 =back
 
+=head1 VERSION 1.6.9 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Fixed installation and upgrade scripts to use the same F<perl> binary as was
+used to execute F<Makefile.PL>. This ensures that all necessary CPAN modules
+will be correctly installed and located. [Simon Wilcox]
+
+=item *
+
+Story profile JavaScript validation works again. Thanks to Simon Wilcox for
+the spot! [David]
+
+=item *
+
+Eliminated the need for the Apache::ConfigFile module, and thus some annoying
+problems with the CPAN indexer when trying to install it. [David]
+
+=item *
+
+Fixed order of SQL statement execution upon installation so that dependencies
+are properly handled. [Mark]
+
+=item *
+
+New file resources created for distribution are now created with the proper
+media type. [Mark]
+
+=item *
+
+The German localization module (Bric::Util::Language::de_de) had the wrong
+package name, which meant that attempts to use it failed with the error "Can't
+locate class method 'Bric::Util::Language::de_de::new' via package
+'Bric::Util::Language::de_de'". [Dave Rolsky]
+
+=item *
+
+Added new path to find PostgreSQL installed by some Debian packages. [Cinly
+Ooi]
+
+=item *
+
+Workflows with special characters such as "+" and "&" now work properly in the
+side navigation. Thanks to Patrick Walsh for the spot! [David]
+
+=item *
+
+Start desks can no longer be removed from workflows. This prevents workflows
+from having no desks, thus avoiding problems adding desks to such
+workflows. Reported by Patrick Walsh. [David]
+
+=item *
+
+Pushing the cancel button in a desk profile and then in a workflow profile
+no longer redirects back to the desk profile. [David]
+
+=item *
+
+Made publish_date not be empty when publish is done through
+the SOAP API and no publish_date argument is passed. [Scott]
+
+=item *
+
+Fixed CPAN installer to correctly update the list of modules to be installed
+after a module hass been successfully installed. Reported by Perrin Harkins.
+[David]
+
+=item *
+
+Checkout checkboxes no longer appear for assets that users don't have
+permission to check out. Thanks to Alexander Ling for the spot! [David]
+
+=item *
+
+Bric::Biz::AssetType::Parts::Data's C<lookup()> method now returns deactivated
+objects, as it should. Thanks to Nuno Barreto for the spot. [David]
+
+=item *
+
+Events with attributes with the same name as attributes of the object the
+event was triggered on (a common occurence) no longer confuses the two. Thanks
+to Todd Tyree for the spot. [David]
+
+=item *
+
+Users granted permission to access the members of a group via two user group
+associations now always get the highest priority permission, as it should
+be. Thanks to Patrick Walsh for the spot. [David]
+
+=item *
+
+Textarea fields in elements no longer lose some of their default data after
+editing the field in the element manager. Reported by Todd Tyree. [David]
+
+=item *
+
+Media assets now properly remember their class, which means that autopopulated
+fields (such as "height" and "width" for images) are autopulated when a new
+image file is uploaded. Thanks to Patrick Walsh for the spot! [David]
+
+=back
+
 =head1 VERSION 1.6.8 (2003-11-29)
 
 =head2 Bug Fixes
@@ -798,6 +904,11 @@ Assets with the same IDs but in different classes (media vs. stories vs.
 templates) no longer prevent each other from being added to a desk that can
 contain different classes of assets. Thanks to Scott for the spot and doing
 the research that lead to the replication of the problem. [David]
+
+=item *
+
+The Log page no longer improperly redirects to the preview page after a
+preview. Reported by Simon Wilcox. [David]
 
 =back
 

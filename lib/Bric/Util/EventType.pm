@@ -6,16 +6,16 @@ Bric::Util::EventType - Interface to Types of Events
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2004-02-06 06:34:56 $
 
 =head1 SYNOPSIS
 
@@ -965,7 +965,7 @@ sub get_alert_props {
       $class->my_meths(1);
     push @props, map {
         (my $v = lc $_) =~ s/\W+/_/g;
-        [ lc $v => $_ ]
+        [ lc "et_$v" => $_ ]
     } values % { $self->_get('attr') };
     return wantarray ? @props : \@props;
 }

@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.64 $
+$Revision: 1.65 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.64 $ )[-1];
+our $VERSION = (qw$Revision: 1.65 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:08 $
+$Date: 2004-02-06 06:34:56 $
 
 =head1 SYNOPSIS
 
@@ -517,8 +517,8 @@ B<Notes:> NONE.
 
 =item my $output_ext = $b->get_output_ext
 
-Returns the filename extensionused to create the file names of all files created by
-the current burn. This will have the same value as
+Returns the filename extension used to create the file names of all files
+created by the current burn. This will have the same value as
 C<< $b->get_oc->get_file_ext >>.
 
 B<Throws:> NONE.

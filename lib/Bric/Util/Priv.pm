@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-08 16:24:11 $
+$Date: 2004-02-06 06:34:56 $
 
 =head1 SYNOPSIS
 
@@ -524,6 +524,7 @@ sub get_acl {
                AND m.id = mo.member__id
                AND m.active = 1
                AND mo.object_id = ?
+       ORDER BY gm.grp__id, gp.value
     }, undef);
 
     execute($sel, ref $user ? $user->get_id : $user);

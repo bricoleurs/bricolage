@@ -6,16 +6,16 @@ Bric::App::Authz - Exports functions for checking user authorization.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-06 07:43:55 $
+$Date: 2004-02-06 06:34:55 $
 
 =head1 SYNOPSIS
 
@@ -137,10 +137,7 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Will use the Bric::Biz::Person::User object's can_do() method internally
-once Permissions have been implemented. Meanwhile, it ignores $obj and
-$permission and just returns true if the current user is a member of the
-Administrators group.
+B<Notes:> NONE.
 
 =cut
 

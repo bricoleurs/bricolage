@@ -120,9 +120,9 @@ SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
 
 # Update this later to be database-independent.
 inst/Pg.sql : $(SQL_FILES)
-	find sql/Pg -name '*.sql' -exec grep -v '^--' '{}' ';' >  $@;
-	find sql/Pg -name '*.val' -exec grep -v '^--' '{}' ';' >> $@;
-	find sql/Pg -name '*.con' -exec grep -v '^--' '{}' ';' >> $@;
+	grep -vh '^--' `find sql/Pg -name '*.sql' | sort` >  $@;
+	grep -vh '^--' `find sql/Pg -name '*.val' | sort` >>  $@;
+	grep -vh '^--' `find sql/Pg -name '*.con' | sort` >>  $@;
 
 .PHONY 		: distclean inst/Pg.sql dist_dir rm_CVS dist_tar check_dist
 

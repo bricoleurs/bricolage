@@ -458,7 +458,7 @@ function confirmChanges(obj) {
     var tmp;
     var confirmed = false;
 
-    // Check f r slug.
+    // Check for slug.
     if (typeof obj["slug"] != "undefined") {
     if (!validateStory(obj)) {
             // The slug isn't valid! Return false.
