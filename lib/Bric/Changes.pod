@@ -289,6 +289,12 @@ the "Delete this profile" checkbox was checked.
 Fixed a bug where, for Story and Media assets, editors were given Edit access to
 notes, even when they didn't have the asset checked out. [David]
 
+=item *
+
+Changed the misleading and inaccurate "Two blank lines" label in the Bulk Edit
+interface to the more accurate "One blank line". Thanks to Sam Tregar for the
+heads-up.
+
 =back
 
 =head1 VERSION 1.0.1
