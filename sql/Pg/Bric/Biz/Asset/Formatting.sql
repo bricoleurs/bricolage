@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2.2.1 $
+-- VERSION: $Revision: 1.2.2.2 $
 --
--- $Date: 2003-03-22 23:57:28 $
+-- $Date: 2003-08-09 00:01:44 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -54,7 +54,7 @@ CREATE TABLE formatting (
                                          CHECK (tplate_type IN (1, 2, 3)),
     element__id         NUMERIC(10,0),
     category__id        NUMERIC(10,0),
-    file_name           VARCHAR(256),
+    file_name           TEXT,
     current_version     NUMERIC(10,0)  NOT NULL,
     workflow__id        NUMERIC(10,0),
     desk__id            NUMERIC(10,0),
@@ -84,6 +84,7 @@ CREATE TABLE formatting_instance (
     formatting__id  NUMERIC(10,0)  NOT NULL,
     version         NUMERIC(10,0),
     usr__id         NUMERIC(10,0)  NOT NULL,
+    file_name       TEXT,
     data            TEXT,
     checked_out     NUMERIC(1,0)   NOT NULL     
                                    DEFAULT 0

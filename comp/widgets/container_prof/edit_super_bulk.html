@@ -156,16 +156,15 @@ my $dtiles        = get_state_data($widget, 'dtiles');
 my $data          = get_state_data($widget, 'data');
 my $cols          = get_state_data($widget, 'cols');
 my $rows          = get_state_data($widget, 'rows');
-my $default_field = get_state_data('_tmp_prefs', 'container_prof.'.$at->get_id.'.def_field');
+my $default_field = get_state_data('_tmp_prefs', 'container_prof.' .
+                                   $at->get_id . '.def_field');
 
 # Create the text blob
 my $text = '';
 
 foreach my $t (@$data) {
     my ($name, $data) = @$t;
-
     $name = $simple_name->($name);
-
     $text .= "=$name\n\n" unless $name eq $default_field;
     $text .= "$data\n" if $data;
     $text .= "\n" unless $tile->get_container($name);

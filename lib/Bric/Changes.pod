@@ -69,6 +69,12 @@ that can be added in the order specified in the element profile, and then the
 subelements that can be added, instead of mixing up fields and subelements in
 alphabetical order. Thanks to JoE<atilde>o Pedro for the spot! [David]
 
+=item *
+
+When a template is deployed, Bricolage now checks to see if its file name has
+changed since it was last deployed, and if it has, it deletes the old
+file. Reported by Kevin Elliott. [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

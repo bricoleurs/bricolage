@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.14 $
+$Revision: 1.38.2.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 20:49:35 $
+$Date: 2003-08-09 00:01:42 $
 
 =head1 SYNOPSIS
 
@@ -178,6 +178,7 @@ use constant VERSION_COLS => qw( formatting__id
                                  version
                                  usr__id
                                  data
+                                 file_name
                                  checked_out);
 
 use constant FIELDS     => qw( name
@@ -202,6 +203,7 @@ use constant VERSION_FIELDS => qw( id
                                    version
                                    modifier
                                    data
+                                   file_name
                                    checked_out);
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Formatting';

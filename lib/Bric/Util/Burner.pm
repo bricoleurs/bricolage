@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32.4.7 $
+$Revision: 1.32.4.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32.4.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.4.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-22 22:25:27 $
+$Date: 2003-08-09 00:01:43 $
 
 =head1 SYNOPSIS
 
@@ -497,6 +497,18 @@ sub deploy {
       or die $ap->new({ msg => "Could not open '$file'", payload => $! });
     print MC $fa->get_data;
     close(MC);
+
+    # Delete older versions, if they live elsewhere.
+    my $old_version = $fa->get_published_version or return $self;
+    my $old_fa = $fa->lookup({ id          => $fa->get_id,
+                               checked_out => 0,
+                               version     => $old_version });
+    my $old_file = $old_fa->get_file_name or return $self;
+    $old_file = $fs->cat_dir($self->get_comp_dir, $oc_dir, $old_file);
+    return $self if $old_file eq $file;
+    $fs->del($old_file);
+    return $self;
+
 }
 
 #------------------------------------------------------------------------------#
