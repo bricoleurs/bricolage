@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2002-06-27 22:37:43 $
+$Date: 2002-07-02 20:03:41 $
 
 =head1 SYNOPSIS
 
@@ -396,8 +396,8 @@ my %featured_lookup = map { ($_,1) } @$featured;
 #--------------------------------------#
 # Find constraint and list objects.
 
-my $list_arg = build_constraints($search_widget, $constrain, $meth, $sortBy,
-				 $def_sort_field);
+my $list_arg = $build_constraints->($search_widget, $constrain, $meth, $sortBy,
+                                    $def_sort_field);
 my $param = {%$list_arg, %$constrain};
 
 # Load the user provided objects into the @objs array.
@@ -415,12 +415,12 @@ if (!$objs && (scalar keys %$param or $behavior eq 'narrow')) {
 }
 
 # Make sure our featured arguments are in the list
-load_featured_objs(\@objects, $pkg, \%featured_lookup) if scalar(@$featured);
+$load_featured_objs->(\@objects, $pkg, \%featured_lookup) if scalar(@$featured);
 
 #--------------------------------------#
 # Sort the objects.
 
-my @sort_objs = sort_objects(\@objects, $meth, $exclude);
+my @sort_objs = $sort_objects->(\@objects, $meth, $exclude);
 
 # Make sure we have some results.
 my $no_results = (scalar(@sort_objs) == 0) && (scalar(keys(%$list_arg)) > 0);
@@ -458,17 +458,17 @@ if ($limit) {
 set_state_data('listManager','pagination', $pagination);
 set_state_data('listManager','offset', $offset);
 
-my ($rows, $cols, $data) = build_table_data(\@sort_objs,
-					    $meth,
-					    $fields,
-					    $select,
-					    $profile,
-					    $alter,
-					    \%featured_lookup,
-                                            $count,
-                                            $limit,
-                                            $offset,
-                                            $pagination);
+my ($rows, $cols, $data) = $build_table_data->(\@sort_objs,
+                                               $meth,
+                                               $fields,
+                                               $select,
+                                               $profile,
+                                               $alter,
+                                               \%featured_lookup,
+                                               $count,
+                                               $limit,
+                                               $offset,
+                                               $pagination);
 
 # Call the element to show this list
 $m->comp("$style.mc", widget          => $widget,
@@ -583,7 +583,55 @@ EOF
     $m->out(qq{</tr></table>});
 };
 
-sub build_table_data {
+my $output_select_controls = sub {
+    my ($o, $select, $flags) = @_;
+    my $vals = ref $select eq 'CODE' ? $select->($o, $flags) : $select;
+    my @cntl;
+
+    return unless $vals;
+
+    # Turn this value into an array of arrays if it isn't already.
+    $vals = ref($vals->[0]) eq 'ARRAY' ? $vals : [$vals];
+
+    foreach my $v (@$vals) {
+	my ($label, $name, $value) = @$v;
+	$value ||= $o->get_id;
+
+	push @cntl, $m->scomp('/widgets/profile/checkbox.mc', name  => $name,
+	      	                                              value => $value).
+		    $label;
+    }
+
+    return @cntl;
+};
+
+my $output_profile_controls = sub {
+    my ($o, $profile, $flags) = @_;
+    my $vals = ref $profile eq 'CODE'  ? $profile->($o, $flags) : $profile;
+    my @cntl;
+
+    return unless $vals;
+
+    # Turn this value into an array of arrays if it isn't already.
+    $vals = ref($vals->[0]) eq 'ARRAY' ? $vals : [$vals];
+
+    foreach my $v (@$vals) {
+	my ($label, $url, $value) = @$v;
+
+	# Don't set a default value if they passed the empty string.
+	if ((not defined $value) or (length($value) > 0)) {
+	    $value ||= 'id='.$o->get_id;
+	    # Add the query string '?' if its not there already.
+	    $value = "?$value" unless substr($value, 0, 1) eq '?';
+	}
+
+	push @cntl, "<a href='$url$value' class=redLink>$label</a>&nbsp;";
+    }
+
+    return @cntl;
+};
+
+my $build_table_data = sub {
     my ($sort_objs, $meth, $fields, $select, $profile, $alter, $featured, $count, $limit, $offset, $pagination) = @_;
     my $data = [[map { $meth->{$_}->{'disp'} } @$fields]];
     my $cols = scalar @$fields;
@@ -629,8 +677,8 @@ sub build_table_data {
 	    push @{$data->[$r]}, ($val || '&nbsp');
 	}
 
-	my @sel = output_select_controls($o, $select, \%flags);
-	my @prf = output_profile_controls($o, $profile, \%flags);
+	my @sel = $output_select_controls->($o, $select, \%flags);
+	my @prf = $output_profile_controls->($o, $profile, \%flags);
 
 	## Add the profile controls if any
 	# MAX function
@@ -650,57 +698,9 @@ sub build_table_data {
     $cols += $sel_cols + $prf_cols;
 
     return ($rows, $cols, $data);
-}
+};
 
-sub output_select_controls {
-    my ($o, $select, $flags) = @_;
-    my $vals = ref $select eq 'CODE' ? $select->($o, $flags) : $select;
-    my @cntl;
-
-    return unless $vals;
-
-    # Turn this value into an array of arrays if it isn't already.
-    $vals = ref($vals->[0]) eq 'ARRAY' ? $vals : [$vals];
-
-    foreach my $v (@$vals) {
-	my ($label, $name, $value) = @$v;
-	$value ||= $o->get_id;
-
-	push @cntl, $m->scomp('/widgets/profile/checkbox.mc', name  => $name,
-	      	                                              value => $value).
-		    $label;
-    }
-
-    return @cntl;
-}
-
-sub output_profile_controls {
-    my ($o, $profile, $flags) = @_;
-    my $vals = ref $profile eq 'CODE'  ? $profile->($o, $flags) : $profile;
-    my @cntl;
-
-    return unless $vals;
-
-    # Turn this value into an array of arrays if it isn't already.
-    $vals = ref($vals->[0]) eq 'ARRAY' ? $vals : [$vals];
-
-    foreach my $v (@$vals) {
-	my ($label, $url, $value) = @$v;
-
-	# Don't set a default value if they passed the empty string.
-	if ((not defined $value) or (length($value) > 0)) {
-	    $value ||= 'id='.$o->get_id;
-	    # Add the query string '?' if its not there already.
-	    $value = "?$value" unless substr($value, 0, 1) eq '?';
-	}
-
-	push @cntl, "<a href='$url$value' class=redLink>$label</a>&nbsp;";
-    }
-
-    return @cntl;
-}
-
-sub build_constraints {
+my $build_constraints = sub {
     my ($search_widget, $constrain, $meth, $sortBy, $def_sort_field) = @_;
 
     # Only get the criterion if we are still on the same page where it was set.
@@ -742,9 +742,9 @@ sub build_constraints {
     }
 
     return $list_arg;
-}
+};
 
-sub load_featured_objs {
+my $load_featured_objs = sub {
     my ($objs, $pkg, $featured) = @_;
     # Find all loaded feature objects
     my %loaded = map { ($_->get_id, 1) } grep($featured->{$_->get_id}, @$objs);
@@ -756,38 +756,9 @@ sub load_featured_objs {
     }
 
     return $objs;
-}
+};
 
-sub sort_objects {
-    my ($objs, $meth, $exclude) = @_;
-    my @sort_objs;
-
-    # Find which column to sort on.
-    my $sort_by = get_state_data($widget, 'sortBy');
-
-    # Only sort if the sort by was set in the state data.
-    if ($sort_by) {
-	# Make sure we pass an array ref to the sort arguments
-	$sort_by = ref $sort_by ? $sort_by : [$sort_by];
-	@sort_objs = sort { multisort($meth, @$sort_by) } @$objs;
-    } else {
-	@sort_objs = @$objs;
-    }
-
-    # Exclude objects with certain IDs.
-    if ($exclude) {
-	# Convert the exclude array into a HASH ref and return as a sub ref.
-	if (ref $exclude eq 'ARRAY') {
-	    my %h = map { $_ => '' } @$exclude;
-	    $exclude = sub { exists $h{$_[0]->get_id} };
-	}
-	@sort_objs = grep(not($exclude->($_)), @sort_objs);
-    }
-
-    return @sort_objs;
-}
-
-sub multisort {
+my $multisort = sub{
     my ($meth, @sort_list) = @_;
     my $sort_by               = shift @sort_list;
     my ($sort_get, $sort_arg) = @{$meth->{$sort_by}}{'get_meth', 'get_args'};
@@ -809,8 +780,36 @@ sub multisort {
     } else {
 	return $val;
     }
-}
+};
 
+my $sort_objects = sub {
+    my ($objs, $meth, $exclude) = @_;
+    my @sort_objs;
+
+    # Find which column to sort on.
+    my $sort_by = get_state_data($widget, 'sortBy');
+
+    # Only sort if the sort by was set in the state data.
+    if ($sort_by) {
+	# Make sure we pass an array ref to the sort arguments
+	$sort_by = ref $sort_by ? $sort_by : [$sort_by];
+	@sort_objs = sort { $multisort->($meth, @$sort_by) } @$objs;
+    } else {
+	@sort_objs = @$objs;
+    }
+
+    # Exclude objects with certain IDs.
+    if ($exclude) {
+	# Convert the exclude array into a HASH ref and return as a sub ref.
+	if (ref $exclude eq 'ARRAY') {
+	    my %h = map { $_ => '' } @$exclude;
+	    $exclude = sub { exists $h{$_[0]->get_id} };
+	}
+	@sort_objs = grep(not($exclude->($_)), @sort_objs);
+    }
+
+    return @sort_objs;
+};
 </%once>
 
 
