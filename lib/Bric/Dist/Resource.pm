@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:45 $
+$Date: 2001-12-27 22:54:53 $
 
 =head1 SYNOPSIS
 
@@ -93,6 +93,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
+use Bric::Config qw(:dist);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::MediaType;
@@ -204,7 +205,7 @@ sub new {
     my ($pkg, $init) = @_;
     my $self = bless {}, ref $pkg || $pkg;
     $self->set_path(delete $init->{path}) if $init->{path};
-    $self->set_media_type(delete $init->{media_type}) if $init->{media_type};
+    $self->set_media_type(delete $init->{media_type});
     $self->set_mod_time(delete $init->{mod_time}) if $init->{mod_time};
     $self->SUPER::new($init);
 }
@@ -591,7 +592,7 @@ B<Notes:> If the Bric::Dist::Resource object has been instantiated via the new()
 constructor and has not yet been C<save>d, the object will not yet have an ID,
 so this method call will return undef.
 
-=item my $media_type = $res->get_media_type($format)
+=item my $media_type = $res->get_media_type
 
 Returns the MEDIA type of the resource. Returns undef in the resource is a
 directory.
@@ -647,6 +648,7 @@ B<Notes:> NONE.
 
 sub set_media_type {
     my ($self, $media) = @_;
+    $media ||= DEF_MEDIA_TYPE;
     $self->_set([qw(media_type _is_dir)],
 		[$media, $media eq 'none' ? 1 : 0]);
 }
@@ -1925,7 +1927,7 @@ $load_ids = sub {
 =item $self = &$stat($self, $path)
 
 Finds $path on the file system and loads the properties size, mod_time, and
-media_type.
+media_type (if $path is a directory).
 
 B<Throws:>
 
