@@ -186,6 +186,13 @@ access as appropriate. For new installations of Bricolage, the default "Story
 Editors" and "User Producers" groups have READ permission to all sources.
 Suggested by Simon Wilcox. [David]
 
+=item *
+
+There is now a "Preserve Formatting" (disabled by default) option in Bulk Edit
+that retains leading spaces, trailing spaces, and line breaks.  With this option
+set, you can, for example, paste in poetry without it all ending up on one line.
+[Marshall]
+
 =back
 
 ##############################################################################

@@ -51,7 +51,7 @@ if ($show_summary) {
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
 <& '/widgets/wrappers/sharky/table_top.mc',
-   caption => 'Separator String',
+   caption => 'Formatting Options',
    number  => ++$i,
 &>
 
@@ -60,6 +60,7 @@ if ($show_summary) {
 <td>
 <img src="/media/images/spacer.gif" width=10 height=1>
   </td>
+<th style="text-align: right;">Separator String:</th>
 <td>
 <& '/widgets/profile/radio.mc', 'name'    => $widget.'|separator',
                                 'value'   => "\n",
@@ -87,7 +88,22 @@ if ($show_summary) {
 </td>
 <td>
 <input type="image" src="/media/images/<% $lang_key %>/change_red.gif" border=0  name="<% $widget %>|change_sep_cb" value="Change">
-</td></tr></table>
+</td></tr>
+<tr>
+<td>
+<img src="/media/images/spacer.gif" width=10 height=1>
+  </td>
+<th style="text-align: right;">Preserve formatting:</th>
+<td colspan="4"><& "/widgets/profile/checkbox.mc",
+         checked     => $preserve,
+         value       => 1,
+         name        => $widget.'|preserve' &>
+</td>
+<td>
+<input type="image" src="/media/images/<% $lang_key %>/change_red.gif" border=0  name="<% $widget %>|change_preserve_cb" value="Change">
+</td>
+</tr>
+</table>
 
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
@@ -123,6 +139,7 @@ my $field      = get_state_data($widget, 'field');
 my $data       = get_state_data($widget, 'data');
 my $sep        = get_state_data($widget, 'separator');
 my $custom_sep = get_state_data($widget, 'custom_sep');
+my $preserve   = get_state_data($widget, 'preserve');
 my $cols       = get_state_data($widget, 'cols');
 my $rows       = get_state_data($widget, 'rows');
 

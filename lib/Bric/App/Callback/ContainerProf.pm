@@ -490,6 +490,16 @@ sub change_sep : Callback {
     add_msg("Separator Changed.");
 }
 
+sub change_preserve : Callback {
+    my $self = shift;
+    $self->_drift_correction;
+    my $param = $self->params;
+    return if $param->{'_inconsistent_state_'};
+    my $widget = $self->class_key;
+
+    set_state_data($widget, 'preserve', $param->{$widget . '|preserve'});
+}
+
 sub recount : Callback {
     my $self = shift;
     $self->_drift_correction;
@@ -944,6 +954,7 @@ sub _split_fields {
     my ($self, $text) = @_;
     my $widget = $self->class_key;
     my $sep = get_state_data($widget, 'separator');
+    my $preserve = get_state_data($widget, 'preserve');
     my @data;
 
     # Change Windows newlines to Unix newlines.
@@ -953,13 +964,17 @@ sub _split_fields {
     my $re = $regex->{$sep} ||= qr/\s*\Q$sep\E\s*/;
 
     # Split 'em up.
-    @data = map { s/^\s+//;         # Strip out beginning spaces.
-                  s/\s+$//;         # Strip out ending spaces.
-                  s/[\n\t\r\f]/ /g; # Strip out unwanted characters.
-                  s/\s{2,}/ /g;     # Strip out double-spaces.
-                  $_;
-              } split(/$re/, $text);
-
+    if ($preserve) {
+        @data = split(/$re/, $text);
+    } else {  
+        @data = map { s/^\s+//;         # Strip out beginning spaces.
+                      s/\s+$//;         # Strip out ending spaces.
+                      s/[\n\t\r\f]/ /g; # Strip out unwanted characters.
+                      s/\s{2,}/ /g;     # Strip out double-spaces.
+                      $_;
+                    } split(/$re/, $text);
+    }
+                    
     # Save 'em.
     set_state_data($widget, 'data', \@data);
 }
