@@ -71,7 +71,11 @@ AC_DEFUN([AC_PROG_PERL],[
   # guaranties that perl is a working perl executable.
   #
   changequote(<<, >>)dnl
-  PERL_VERSION=`${$1} -v | grep 'This is perl' | sed -e 's;.* v\([0-9\.][0-9\.]*\).*;\1;'`
+  # this will work with older perls
+  #PERL_VERSION=`${$1} -v | grep 'This is perl' | sed -e 's;.* v\([0-9\.][0-9\.]*\).*;\1;'`
+  # David Wheeler suggests using this if we already know we have perl 5.6
+  # or better.
+  PERL_VERSION=`${PERL} -e 'printf "%vd", $^V'`
   changequote([, ])dnl
   if test -z "$PERL_VERSION" ; then
       AC_MSG_ERROR("could not determine perl version number");
@@ -110,7 +114,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -139,7 +143,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -242,7 +246,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -437,7 +441,7 @@ dnl DEFAULT value if the user merely hits return.  Also calls
 dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
 dnl be entered into the config.h file as well.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER],
@@ -463,7 +467,7 @@ dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl there is a password, and if so what it is.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_FOR_PGPASS],[
@@ -501,7 +505,7 @@ dnl @synopsis AC_VAR_WITH(VAR,with,default)
 dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_VAR_WITH],[
@@ -518,7 +522,7 @@ dnl
 dnl Check to see if a user exists.  VAR will be set
 dnl to "yes" on success, "no" on failure.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_SYS_USER],[
@@ -540,7 +544,7 @@ dnl to "yes" on success, "no" on failure.  user should
 dnl a user id which is known to exist, and should be in this 
 dnl group.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_SYS_GROUP],[
@@ -573,7 +577,7 @@ dnl Try to figure out which pod2html we're working with
 dnl the variable will be set to Christiansen, McDougall, 
 dnl or none, depending on which pod2html is found.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.8 2002-02-07 09:16:40 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POD2HTML],[

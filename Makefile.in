@@ -40,6 +40,7 @@ HAVE_SSL = @HAVE_SSL@
 HOSTNAME = @HOSTNAME@
 PID_FILE = @PID_FILE@
 PGHOME = @PGHOME@
+CONFIG_STRING = @CONFIG_STRING@
 
 
 # Installation related variables
@@ -275,10 +276,13 @@ ${CPAN_TARGETS}:
 
 # This is where we do our config files
 
-config: inst/bric.sql ${CONF_BRIC} ${CONF_HTTPD} lib/Makefile
+config: inst/bric.sql ${CONF_BRIC} ${CONF_HTTPD} \
+		lib/Makefile ${INST}/configuration
 
+${INST}/configuration:
+	echo ${CONFIG_STRING} > $@
 
-inst/bric.sql: inst/bric.sql.in
+${INST}/bric.sql: inst/bric.sql.in
 	cp $^ $@
 	perl -pi -e 's/%DBI_USER%/${DBI_USER}/g' $@
 
@@ -333,7 +337,8 @@ endif
 
 
 clean: docclean
-	${RM} -f Changes TODO License tags conf/bricolage.tmp.conf inst/bric.sql
+	${RM} -f 	Changes TODO License tags conf/bricolage.tmp.conf \
+				${INST}/bric.sql ${INST}/configuration
 	cd ${LIB} && make clean
 
 dist-clean: 

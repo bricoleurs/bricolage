@@ -12,6 +12,8 @@ AC_PREFIX_DEFAULT(/usr/local/bricolage)
 # Use braces instead of parens because sh, perl, etc. also accept them.
 datadir='${prefix}/data'
 sysconfdir='${prefix}/conf'
+# Capture the config string early
+CONFIG_STRING="$@"
 
 # Additional --with-switches
 # SYNTAX: AC_VAR_WITH(VARNAME,switchname,default)
@@ -25,7 +27,7 @@ AC_VAR_WITH(HOSTNAME,hostname,`hostname --fqdn || true`)
 AC_VAR_WITH(ADMINISTRATOR,administrator,root)
 AC_VAR_WITH(DB_NAME,db-name,wwwdata)
 AC_VAR_WITH(DBI_USER,dbi-user,nobody)
-AC_VAR_WITH(DBI_PASS,dbi-pass,c@st3l!@n)
+AC_VAR_WITH(DBI_PASS,dbi-pass,ChangeMeNow)
 AC_VAR_WITH(POSTGRES_ROOT_USER,pgroot-user,postgres)
 AC_VAR_WITH(POSTGRES_SYSTEM_USER,pgsystem-user,postgres)
 # TODO: System defaults for these can be determined from $APACHE -V
@@ -131,6 +133,7 @@ CHECK_FOR_PGPASS
 
 # predefined
 AC_SUBST(VERSION)
+AC_SUBST(CONFIG_STRING)
 
 # write out the makefiles
 # TODO: The files here that aren't makefiles should eventually
