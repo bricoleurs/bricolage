@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =head1 DATE
 
-$Date: 2003-03-09 19:38:12 $
+$Date: 2003-03-12 08:59:58 $
 
 =head1 DESCRIPTION
 
@@ -74,6 +74,15 @@ Bricolage has a Bugzilla server dedicated to it:
 You should use this system to report bugs in Bricolage.  If you're
 looking for something to do you can also use the system to find open
 bug and fix them.  For more things to do see L<Bric::ToDo|Bric::ToDo>.
+
+=begin comment
+
+To generate documentation that features private method documentation, use
+Pod::Perldoc from CPAN to generate HTML files:
+
+  perldoc -MPod::Simple::HTML -w accept_targets:private lib/Bric.pm
+
+=end comment
 
 =head1 SUBMITTING PATCHES
 

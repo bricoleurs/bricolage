@@ -4,25 +4,36 @@ package Bric;
 
 Bric - The Bricolage base class.
 
-=head1 VERSION
+=head1 VITALS
 
-Release Version: 1.5.1 -- Development Track for 1.6.0
+=over 4
 
-File (CVS) Version:
+=item Version
 
-$Revision: 1.35 $
+$Revision: 1.36 $
+
+=item Release Version
+
+1.7.0 -- Development Track for 1.8.0
 
 =cut
 
-our $VERSION = "1.5.1";
+# Grab the Version Number.
+our $VERSION = '1.7.0';
 
-=head1 DATE
+=item Date
 
-$Date: 2003-03-05 21:25:42 $
+$Date: 2003-03-12 08:59:56 $
+
+=item CVS ID
+
+$Id: Bric.pm,v 1.36 2003-03-12 08:59:56 wheeler Exp $
+
+=back
 
 =head1 SYNOPSIS
 
-  use base qw( Bric );
+  use base qw(Bric);
 
 =head1 DESCRIPTION
 
@@ -31,15 +42,9 @@ classes should be derived from it.
 
 =cut
 
-#=============================================================================#
-# Function Prototypes and Closures     #
-#======================================#
-
-
-#=============================================================================#
-# Constants                            #
-#======================================#
-
+##############################################################################
+# Constants
+##############################################################################
 use constant FIELD_INVALID => 0x00;
 use constant FIELD_NONE    => 0x01;
 use constant FIELD_READ    => 0x02;
@@ -51,18 +56,16 @@ use constant CAN_DO_LIST => 0;
 use constant CAN_DO_LOOKUP => 0;
 use constant HAS_CLASS_ID => 0;
 
-#=============================================================================#
-# Dependencies                         #
-#======================================#
-
-#--------------------------------------#
+##############################################################################
+# Dependencies
+##############################################################################
 # Standard Dependencies
 use strict;
 
-#--------------------------------------#
+##############################################################################
 # Programmatic Dependencies
-use Carp;
-use Bric::Util::Fault::Exception::GEN;
+use Carp ();
+use Bric::Util::Fault qw(:all);
 use Bric::Config qw(:qa :mod_perl);
 
 # Load the Apache modules if we're in mod_perl.
@@ -71,24 +74,7 @@ if (defined MOD_PERL) {
     require Apache::Request;
 }
 
-#=============================================================================#
-# Inheritance                          #
-#======================================#
-use base qw();
-
-#=============================================================================#
-# Fields                               #
-#======================================#
-
-#--------------------------------------#
-# Public Class Fields
-
-
-#--------------------------------------#
-# Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::GEN';
-
-#--------------------------------------#
+##############################################################################
 # Public Instance Fields
 
 # All subclasses should use the RegisterFields function rather than the below
@@ -96,41 +82,33 @@ my $gen = 'Bric::Util::Fault::Exception::GEN';
 # example subclass.
 
 sub ACCESS {
-    return { debug  => FIELD_RDWR,  # public field
+    return {# debug  => FIELD_RDWR,  # public field
              _dirty => FIELD_NONE,  # private field
            };
 }
 
-#==============================================================================#
-# Methods                              #
-#======================================#
+##############################################################################
+# Interface
+##############################################################################
 
-=head1 METHODS
-
-=cut
-
-########################################
+=head1 INTERFACE
 
 =head2 Constructors
 
-=over 4
+=head3 new
 
-=item $self = Bric->new($init)
+  my $obj = Bric->new($init);
 
 Call this constructor from all derived classes. This sets up some basic fields
 and methods.
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects>
+=item Exception::Gen
 
-NONE
-
-B<Notes:>
-
-NONE
+=back
 
 =cut
 
@@ -147,14 +125,16 @@ sub new {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item my $obj = __PACKAGE__->lookup({ id => $obj_id })
+=head3 lookup
 
-This method is similar to the 'new' method except it is used only to retrieve
-a already existing object of this type from the database whereas 'new' creates
-a new, empty object. All subclasses should override this method in order to
-look up their objects in the database. However, they must first call
+  my $obj = Bric->lookup({ id => $obj_id });
+
+This method is similar to C<new()> except it is used only to retrieve a
+already existing object of this type from the database whereas C<new()>
+creates a new, empty object. All subclasses should override this method in
+order to look up their objects in the database. However, they must first call
 C<cache_lookup()> to see if it can retrieve the object from the cache. If they
 can, they should simply return the object. Otherwise, once they look up the
 object in the database, they should cache it via the C<cache_me()> method. For
@@ -172,35 +152,23 @@ B<Throws:>
 
 =over
 
-=item *
-
-lookup method not implemented.
+=item Exception::MNI
 
 =back
 
-B<Side Effects> NONE.
-
-B<Notes:> NONE.
-
 =cut
 
-sub lookup {
-    # This is an abstract method.  All sub classes must implement this.
-    die Bric::Util::Fault::Exception::MNI->new
-      ({ msg => "lookup method not implemented" });
-}
+sub lookup { throw_mni "lookup() method not implemented" }
 
-=item my $obj = __PACKAGE__->cache_lookup({ id => $obj_id })
+##############################################################################
+
+=head3 cache_lookup
+
+  my $obj = Bric->cache_lookup({ id => $obj_id });
 
 Looks up an object in the cache and returns it if it exists. Otherwise it
-returns an undefined value. This method is meant to be used by Bric subclasses
-in their C<lookup()> methods. See C<lookup()> for an example.
-
-B<Throws:> NONE.
-
-B<Side Effects> NONE.
-
-B<Notes:> NONE.
+returns C<undef>. This method is meant to be used by Bric subclasses in their
+C<lookup()> methods. See C<lookup()> for an example.
 
 =cut
 
@@ -218,240 +186,238 @@ sub cache_lookup {
     return;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item my @objs = __PACKAGE__->list($params)
+=head3 list
+
+  my @objs = Bric->list($params);
+  my $objs_aref = Bric->list($params);
 
 This is an abstract method. All derived classes should override this
-method. In the concrete implementations of this method, classes should also
-call C<cache_me()> for every object to be returned.
+method. It takes a list of parameters and searches the database for objects
+that meet the parameter serach criteria. It returns a list of objects in an
+array context, and an array reference of objects in a scalar context. In the
+concrete implementations of this method, classes should also call
+C<cache_me()> for every object to be returned.
 
 B<Throws:>
 
 =over 4
 
-=item *
-
-list method not implemented.
+=item Exception::MNI
 
 =back
-
-B<Side Effects> NONE.
-
-B<Notes:> NONE.
 
 =cut
 
-sub list {
-    # This is an abstract method.  All sub classes must implement this.
-    die Bric::Util::Fault::Exception::MNI->new
-      ({ msg => "list method not implemented" });
-}
-
-#------------------------------------------------------------------------------#
-
-=back
-
-=head2 Public Class Methods
-
-=over 4
-
-=item my @ids = __PACKAGE__->list_ids($params)
-
-This is an abstract method. All derived classes should override this method.
-This method returns a list of IDs rather than objects.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-list_ids method not implemented
-
-=back
-
-B<Side Effects> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub list_ids {
-    # This is an abstract method.  All sub classes must implement this.
-    die Bric::Util::Fault::Exception::MNI->new
-      ({ msg => "list_ids method not implemented" });
-}
+sub list { throw_mni "list() method not implemented" }
 
 ##############################################################################
 
-=item Bric::register_fields({'field1' => Bric::FIELD_READ, ...})
+=head2 Class Methods
 
-This function is used by sub classes to register their field names and assign
-access levels to them.
+=head3 list_ids
+
+  my @ids = Bric->list_ids($params);
+  my $ids_aref = Bric->list_ids($params);
+
+This is an abstract method. It takes a list of parameters and searches the
+database for objects that meet the parameter serach criteria. It returns a
+list of object IDs in an array context, and an array reference of object IDs
+in a scalar context.
 
 B<Throws:>
 
 =over 4
 
-=item *
-
-Unable to register field names.
+=item Exception::MNI
 
 =back
-
-B<Side Effects>: Defines a subroutine named C<ACCESS()> in the caller's
-package.
-
-B<Notes:> NONE.
 
 =cut
 
-sub register_fields {
-    my $fields = shift || {};
-    my $pkg    = caller();
-    my $root   = __PACKAGE__;
+sub list_ids { throw_mni "list_ids ()method not implemented" }
 
-    # need symbolic refs to access the symbol table and install subroutines
-    no strict 'refs';
+##############################################################################
 
-    # find parent class (only handle single inheritence)
-    my ($parent) = grep { /^$root/ } (@{"${pkg}::ISA"});
+=head3 my_meths
 
-    # setup ACCESS sub for this package
-    eval {
-        my %ACCESS = ( %{$parent->ACCESS()}, %$fields );
-        *{"${pkg}::ACCESS"} = sub { \%ACCESS };
-    };
+  my $meths = Bric->my_meths
+  my @meths = Bric->my_meths(1);
+  my $meths_aref = Bric->my_meths(1);
+  @meths = Bric->my_meths(0, 1);
+  $meths_aref = Bric->my_meths(0, 1);
 
-    die $gen->new({msg => "Unable to register field names", payload => $@})
-      if $@;
-}
+Returns an anonymous hash of introspection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
 
-#--------------------------------------#
-# Destructors
-#------------------------------------------------------------------------------#
-
-=back
-
-=head2 Destructors
+Each hash key is the name of a property or attribute of the object. See each
+subclass for a list of the properties included in the hash. The value for a
+hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item $job->DESTROY
+=item name
 
-This is the default destructor method. Even if nothing is defined within it, it
-should still be here so that Perl wont waste time trying to find it in the
-AUTOLOAD section.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-B<Throws:> NONE.
+=item disp
 
-B<Side Effects:> NONE.
+The display name of the property or attribute.
 
-B<Notes:> NONE.
+=item get_meth
+
+A reference to the method that will retrieve the value of the property or
+attribute.
+
+=item get_args
+
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
+
+=item set_meth
+
+A reference to the method that will set the value of the property or
+attribute.
+
+=item set_args
+
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
+
+=item type
+
+The type of value the property or attribute contains. There are only three
+types:
+
+=over 4
+
+=item short
+
+=item date
+
+=item blob
+
+=back
+
+=item len
+
+If the value is a 'short' value, this hash key contains the length of the
+field.
+
+=item search
+
+The property is searchable via the list() and list_ids() methods.
+
+=item req
+
+The property or attribute is required.
+
+=item props
+
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
+
+=over 4
+
+=item type
+
+The display field type. Possible values are
+
+=over 4
+
+=item text
+
+=item textarea
+
+=item password
+
+=item hidden
+
+=item radio
+
+=item checkbox
+
+=item select
+
+=back
+
+=item length
+
+The Length, in letters, to display a text or password field.
+
+=item maxlength
+
+The maximum length of the property or value - usually defined by the SQL DDL.
+
+=back
+
+=item rows
+
+The number of rows to format in a textarea field.
+
+=item cols
+
+The number of columns to format in a textarea field.
+
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
+
+=back
+
+B<Notes:> The method is a no-op here in the Bric base class. See the
+subclasses for implementations and detail regarding the properties they
+return.
+
+=cut
+
+sub my_meths {}
+
+##############################################################################
+
+=begin private
+
+=head2 Destructors
+
+=head3 DESTROY
+
+This is the default destructor method. Even if nothing is defined within it,
+it should still be here so that Perl wont waste time trying to find it in the
+C<AUTOLOAD()> method.
+
+=end private
 
 =cut
 
 sub DESTROY {}
 
-#------------------------------------------------------------------------------#
+=head2 Instance Methods
 
-=item die "...";
+=head3 get/set
 
-Uses confess rather than die to report errors.
-
-B<Throws:>
-
-Its a 'thrower'.
-
-B<Side Effects>
-
-Halts program execution
-
-B<Notes:>
-
-=cut
-
-$SIG{__DIE__} = sub { Carp::confess(@_) } unless MOD_PERL;
-
-#------------------------------------------------------------------------------#
-
-=item warn "...";
-
-Uses cluck rather than warn to output warnings.
-
-B<Throws:>
-
-Its a 'thrower'.
-
-B<Side Effects>
-
-Outputs a warning message
-
-B<Notes:>
-
-=cut
-
-$SIG{__WARN__} = sub { Carp::cluck(@_) } unless MOD_PERL;
-
-#------------------------------------------------------------------------------#
-
-=back
-
-=head2 Private Class Methods
-
-NONE.
-
-=head2 Public Instance Methods
-
-=over 4
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $val = $obj->get_B<field>
-
-=item $obj = $obj->set_B<field>
+ my $val = $obj->get_field1;
+ $obj = $obj->set_field1($val);
 
 This is the AUTOLOAD handler. It translates all set and get operations into
 subroutines acting upon the fields in derived classes.
 
+B<Side Effects:> Creates a custom subroutine reference in the object package's
+namespace.
+
 B<Throws:>
 
 =over 4
 
-=item *
-
-Bad AUTOLOAD method format.
-
-=item *
-
-Cannot AUTOLOAD private methods.
-
-=item *
-
-No AUTOLOAD method.
-
-=item *
-
-Access denied: '$field' is not a valid field for package '$package'
-
-=item *
-
-Access denied:  READ access for field '$field' required
-
-=item *
-
-Access denied:  WRITE access for field '$field' required
+=item Exception::GEN
 
 =back
-
-B<Side Effects>
-
-Creates a custom subroutine reference in the calling packages namespace
-
-B<Notes:>
 
 =cut
 
@@ -475,25 +441,23 @@ sub AUTOLOAD {
     ($op, $field) = $AUTOLOAD =~ /([^_:]+)_(\w+)$/;
 
     # Check the format and content of this AUTOLOAD request.
-    die $gen->new({msg => "Bad AUTOLOAD method format: $AUTOLOAD"})
+    throw_gen "Bad AUTOLOAD method format: $AUTOLOAD"
       unless $op and $field;
 
-    die $gen->new({msg => "Cannot AUTOLOAD private methods: $AUTOLOAD"})
+    throw_gen "Cannot AUTOLOAD private methods: $AUTOLOAD"
       if $field =~ /^_/;
 
     # Get the permissions for this field 
     $perm = $pkg->ACCESS()->{$field} || FIELD_INVALID;
 
     # field doesn't exist!
-    die $gen->new({ msg => "Access denied: '$field' is not a valid field for ".
-                           "package $pkg." })
+    throw_gen "Access denied: '$field' is not a valid field for package $pkg."
       if $perm & FIELD_INVALID;
 
     # A get request
     if ($op eq 'get') {
         # check permissions
-        die $gen->new({msg => "Access denied:  READ access for field " .
-                              "'$field' required"})
+        throw_gen "Access denied: READ access for field '$field' required"
           unless $perm & FIELD_READ;
 
         # setup get method
@@ -505,8 +469,7 @@ sub AUTOLOAD {
     # A set request
     elsif ($op eq 'set') {
         # check permissions
-        die $gen->new({msg => "Access denied:  WRITE access for field " .
-                              "'$field' required"})
+        throw_gen "Access denied: WRITE access for field '$field' required"
           unless $perm & FIELD_WRITE;
 
         # setup set method
@@ -527,32 +490,26 @@ sub AUTOLOAD {
 
     # otherwise, fail
     else {
-	die $gen->new({msg => "No AUTOLOAD method: $AUTOLOAD"});
+        throw_gen "No AUTOLOAD method: $AUTOLOAD"
     }
 
     # call the darn method - all the parameters are still in @_
     &$AUTOLOAD;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $ids = $obj->get_grp_ids || $pkg->get_grp_ids;
+=head3 get_grp_ids
+
+  my @grp_ids = $obj->get_grp_ids;
+  my $grp_ids_aref = $obj->get_grp_ids;
+  my @grp_ids = Bric->get_grp_ids;
+  my $grp_ids_aref = Bric->get_grp_ids;
 
 Return a list of IDs for the Bric::Util::Grp objects to which the object
 belongs. When called as a class method, return the value of the class'
-C<INSTANCE_GROUP_ID> constant.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+C<INSTANCE_GROUP_ID> constant. Values are returned as a list in an array
+context, and as an array reference in a scalar context.
 
 =cut
 
@@ -580,17 +537,13 @@ sub get_grp_ids {
 
 ##############################################################################
 
-=item $obj = $obj->cache_me;
+=head3 cache_me
+
+  $obj = $obj->cache_me;
 
 Caches the object for later retrieval by the C<lookup()> class method. Should
-be called for all object retrieved from the database. That includes all
-objects to be returned by C<lookup()>, C<list()>, and C<href()> methods.
-
-B<Throws:> NONE.
-
-B<Side Effects> NONE.
-
-B<Notes:> NONE.
+be called for all objecta retrieved from the database, including all objects
+to be returned by C<lookup()>, C<list()>, and C<href()> methods.
 
 =cut
 
@@ -611,24 +564,22 @@ sub cache_me {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $success = $obj->register_instance();
+=head3 register_instance
 
-Add the current object to the appropriate group in the database.  These are
-groups that contain every instance of a particular type of object.
+  $obj = $obj->register_instance;
+
+Add the current object to the appropriate "All" group in the database. These
+are groups that contain every instance of a particular type of object.
 
 B<Throws:>
 
-NONE
+=over
 
-B<Side Effects:>
+=item Exception::DA
 
-NONE
-
-B<Notes:>
-
-NONE
+=back
 
 =cut
 
@@ -645,24 +596,22 @@ sub register_instance {
     return $self if $grp->save;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $success = $obj->unregister_instance();
+=head3 unregister_instance
 
-Add the current object to the appropriate group in the database. These are
-groups that contain every instance of a particular type of object.
+  $obj = $obj->unregister_instance;
+
+Remove the current object from the appropriate "All" group in the database.
+These are groups that contain every instance of a particular type of object.
 
 B<Throws:>
 
-NONE
+=over
 
-B<Side Effects:>
+=item Exception::DA
 
-NONE
-
-B<Notes:>
-
-NONE
+=back
 
 =cut
 
@@ -675,11 +624,9 @@ sub unregister_instance {
 
     my $grp_id  = $self->INSTANCE_GROUP_ID;
     my $grp_pkg = $self->GROUP_PACKAGE;
-    my $grp     = $grp_pkg->lookup({'id' => $grp_id});
+    my $grp     = $grp_pkg->lookup({ id => $grp_id }) or return;
 
-    return unless $grp;
-
-    my @mbs = $grp->get_members();
+    my @mbs = $grp->get_members;
 
     my ($mem) = grep($_->get_object->get_id eq $self->get_id, @mbs);
 
@@ -688,58 +635,86 @@ sub unregister_instance {
     return $self if $grp->save;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $success = $obj->save();
+=head3 save
 
-Save the current object to the database.
+  $obj = $obj->save;
 
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+Save the current object by setting an internal flag indicating that it has
+been saved. Subclasses should override this method to save object data to the
+database.
 
 =cut
 
 sub save {
     my $self = shift;
-    $self->{'_dirty'} = 0;
+    $self->{_dirty} = 0;
     return $self;
 }
 
-########################################
+##############################################################################
 
-=back
+=head2 Functions
 
-=head2 Private Instance Methods
+=head3 register_fields
+
+  Bric::register_fields({ field1  => Bric::FIELD_READ,
+                          field2  => Bric::FIELD::RDWR
+                        });
+
+This function is used by sub classes to register their field names and assign
+access levels to them.
+
+B<Side Effects>: Defines a subroutine named C<ACCESS()> in the caller's
+package.
+
+B<Throws:>
 
 =over 4
 
+=item Exception::GEN
+
+=back
+
 =cut
 
-# NOTE: most of these will be through AUTOLOAD only explicitly put methods here
-# that need non-generic processing
+sub register_fields {
+    my $fields = shift || {};
+    my $pkg    = caller();
+    my $root   = __PACKAGE__;
 
-#------------------------------------------------------------------------------#
+    # need symbolic refs to access the symbol table and install subroutines
+    no strict 'refs';
 
-=item $obj->_get__dirty()
+    # find parent class (only handle single inheritence)
+    my ($parent) = grep { /^$root/ } (@{"${pkg}::ISA"});
 
-=item $obj->_set__dirty()
+    # setup ACCESS sub for this package
+    eval {
+        my %ACCESS = ( %{$parent->ACCESS()}, %$fields );
+        *{"${pkg}::ACCESS"} = sub { \%ACCESS };
+    };
 
-Get and set the _dirty field
+    throw_gen error => "Unable to register field names", payload => $@
+      if $@;
+}
 
-B<Throws:> NONE.
+##############################################################################
 
-B<Side Effects> NONE.
+=begin private
 
-B<Notes:> NONE.
+=head2 Private Instance Methods
+
+These methods are designed to be used by subclasses.
+
+=head3 _get__dirty
+
+  my $dirty = $obj->_get__dirty;
+
+Gets the value of the dirty boolean. This attribute indicates whether data in
+the object has changed since it was instantiated or last saved, so that the
+C<save()> method can determine whether to save data to the database again.
 
 =cut
 
@@ -748,40 +723,44 @@ sub _get__dirty {
     return $self->{'_dirty'};
 }
 
+=head3 _set__dirty
+
+  $ojb = $obj->_set__dirty($dirty);
+
+Sets the value of the dirty boolean. This attribute indicates whether data in
+the object has changed since it was instantiated or last saved, so that the
+C<save()> method can determine whether to save data to the database again.
+
+=cut
+
 sub _set__dirty {
     my $self = shift;
     $self->{'_dirty'} = shift;
     return $self;
 }
 
+##############################################################################
 
-#------------------------------------------------------------------------------#
+=head3 _set
 
-=item $obj = $obj->_set(\%keyvals);
+  $obj = $obj->_set(\%values);
+  $obj = $obj->_set(\@fields, \@values);
 
-=item $obj = $obj->_set(\@keys, \@values);
+Sets field values. Can be called with either a hash reference of field name
+keys and their corresponding values, or as two array references, one
+containing all the field names, the other containing the values for those
+keys, in order.
 
-The internal function used to set field values.  Can be called with either a
-hash reference of keys and their corresponding values, or as two array 
-references, one containing all the keys, the other containing all the values
+B<Notes:> For performance reasons, certain error checking only occurrs in
+C<QA_MODE>.
 
 B<Throws:>
 
 =over 4
 
-=item *
-
-Incorrect number of args to _set().
-
-=item *
-
-Error setting value in _set().
+=item Exception::GEN
 
 =back
-
-B<Side Effects> NONE.
-
-B<Notes:> NONE.
 
 =cut
 
@@ -789,7 +768,7 @@ sub _set {
     my $self = shift;
 
     # Make sure we have arguments.
-    die $gen->new({ msg => "Incorrect number of args to _set()."}) unless @_;
+    throw_gen "Incorrect number of args to _set()." unless @_;
 
     # Load $k and $v differently if its a hash ref or two array refs.
     my ($k, $v) = @_ == 1 ? ([keys %{$_[0]}],[values %{$_[0]}]) : @_;
@@ -817,8 +796,8 @@ sub _set {
                 $self->{$key} = $new_value;
                 $dirt = 1;
             };
-            die $gen->new({ msg => "Error setting value for '$key' in _set().",
-                            payload => $@ }) if $@;
+            throw_gen error =>  "Error setting value for '$key' in _set().",
+              payload => $@ if $@;
         }
     }
 
@@ -827,25 +806,27 @@ sub _set {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item @vals || $val = $obj->_get(@keys);
+=head3 _get
 
-The internal function used to get field values. It accepts a list of key values
-to retrieve from the object.
+  my @vals = $obj->_get(@fields);
+  my $val = $obj->_get($field);
+
+Retrieves field values. If passed a list of field names, it will return a list
+of values for those fields. If passed a single field name, it will return a
+single value for that field.
+
+B<Notes:> Error checking and exception throwing is only performed in QA_MODE
+for performance reasons.
 
 B<Throws:>
 
-Problems retrieving field 'foo'
+=over 4
 
-B<Side Effects>
+=item Exception::GEN
 
-NONE
-
-B<Notes:>
-
-Error checking and exception throwing is only performed in QA_MODE for
-performance reasons.
+=back
 
 =cut
 
@@ -863,12 +844,7 @@ sub _get {
         for (@_) {
             # If this is a private field, we need to access it differently.
             eval { push @return, $self->{$_}};
-
-            if ($@) {
-                my $msg = "Problems retrieving field '$_'";
-                die Bric::Util::Fault::Exception::GEN->new({'msg'     => $msg,
-                                                            'payload' => $@});
-            }
+            throw_gen "Problems retrieving field '$_': $@" if $@;
         }
 
         # Syntax sugar. Let the user say $n = get_foo rather than ($n) =
@@ -878,36 +854,33 @@ sub _get {
 
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $vals = $obj->_get_ref(@keys);
+=head2 Private Functions
 
-The internal function used to get field values and return them as an arrayref.
-It accepts a list of key values to retrieve from the object.
+=head3 die
 
-B<Throws:>
-
-NONE
-
-B<Side Effects>
-
-NONE
-
-B<Notes:>
+Bric overrides all exception handling to use C<Carp::confess()> unless it is
+running under C<mod_perl>.
 
 =cut
 
-sub _get_ref {
-    my $self = shift;
-    # a faster version for production use
-    return [ @{$self}{@_} ] unless QA_MODE;
+$SIG{__DIE__} = sub { Carp::confess(@_) } unless MOD_PERL;
 
-    # slower version calls _get which includes extra debugging
-    # code in QA_MODE
-    return [$self->_get(@_)] if QA_MODE;
-}
+##############################################################################
 
-=back
+=head3 warn
+
+Bric overrides all C<warn>ings to use C<Carp::cluck()> unless it is running
+under C<mod_perl>.
+
+=cut
+
+$SIG{__WARN__} = sub { Carp::cluck(@_) } unless MOD_PERL;
+
+##############################################################################
+
+=end private
 
 =head1 AUTHOR
 

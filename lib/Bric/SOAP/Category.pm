@@ -29,15 +29,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-07 01:38:26 $
+$Date: 2003-03-12 09:00:31 $
 
 =head1 SYNOPSIS
 
@@ -469,7 +469,7 @@ sub delete {
         # make sure we're not trying to delete the root category
         die __PACKAGE__ . "::delete : cannot delete root category: ".
             "\"$category_id\"\n"
-                if $category->get_id == Bric::Biz::Category::ROOT_CATEGORY_ID;
+                if $category->is_root_category;
 
         # delete the category
         $category->deactivate;

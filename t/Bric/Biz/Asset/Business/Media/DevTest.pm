@@ -56,7 +56,7 @@ sub construct {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(53) {
+sub test_select_methods: Test(41) {
     my $self = shift;
 
     # let's grab existing 'All' group info
@@ -71,8 +71,8 @@ sub test_select_methods: Test(53) {
         my $time = time;
         my ($cat, $desk, $workflow, $grp);
         # create categories
-        $cat = Bric::Biz::Category->new({ 
-                                          name => "_test_$time.$i", 
+        $cat = Bric::Biz::Category->new({ site_id => 100,
+                                          name => "_test_$time.$i",
                                           description => '',
                                           directory => "_test_$time.$i",
                                        });
@@ -111,7 +111,7 @@ sub test_select_methods: Test(53) {
         push @DESK_GRP_IDS, $grp->get_id();
 
         # create workflows
-        $workflow = Bric::Biz::Workflow->new({ 
+        $workflow = Bric::Biz::Workflow->new({
                                         type => Bric::Biz::Workflow::MEDIA_WORKFLOW,
                                         name => "_test_$time.$i",
                                         start_desk => $desk,

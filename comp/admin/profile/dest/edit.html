@@ -1,0 +1,169 @@
+%#-- Begin HTML --#
+<& '/widgets/wrappers/sharky/header.mc',
+   title => "$disp Profile",
+   context => "Admin | Profile | $disp | $crumb"
+&>
+<form method="post" action="<% $r->uri %>" name="dest_profile" onSubmit="return confirmChanges(this)">
+<%perl>;
+if (defined $id) {
+    $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'dest_id');
+}
+
+# Output the key properties.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+         caption => "Properties",
+	 number  => 1);
+$m->comp('/widgets/profile/dumpRemainingFields.mc', 
+         objref     => $dest,
+         fieldsUsed => { active => 1, site_id => 1 },
+         readOnly   => $no_edit);
+
+$m->comp('/widgets/profile/hidden.mc', name  => 'site_id',
+                                       value => $dest->get_site_id);
+$m->comp('/widgets/profile/displayFormElement.mc',
+         objref   => $dest,
+         key      => 'site',
+         readOnly => 1);
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Get a list of all the Output Channels associated with this Destination
+# Profile.
+my ($left, $right) = ([], []);
+foreach my $oc ( $id ? $dest->get_output_channels : () ) {
+    push @$right, { value =>  $oc->get_id, description => $oc->get_name };
+}
+
+# Get all Output Channels for double-list manager.
+my $site_id = $dest->get_site_id;
+foreach my $oc (Bric::Biz::OutputChannel->list({site_id => $site_id})) {
+    push @$left, { value =>  $oc->get_id, description => $oc->get_name };
+}
+
+$m->comp("/widgets/wrappers/sharky/table_top.mc", number => 2,
+	 caption => "Output Channels");
+# Load up the double-list manager.
+$m->comp("/widgets/doubleListManager/doubleListManager.mc",
+         readOnly     => $no_edit,
+         leftOpts     => $left,
+         rightOpts    => $right,
+         formName     => 'dest_profile',
+	 leftName     => 'rem_oc',
+         rightName    => 'add_oc',
+	 leftCaption  => $no_edit ? undef : "Available Output Channels",
+	 showLeftList => !$no_edit || 0,
+	 rightCaption => 'Current Output Channels'
+	);
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+if (defined $id) {
+    my $i;
+    my $label = $no_edit ? 'View' : 'Edit';
+    # Output the actions.
+    $m->comp('/widgets/listManager/listManager.mc',
+	     object => 'action',
+	     userSort => 0,
+	     title => '%n',
+	     addition => $no_edit ? undef : ['Add', "/admin/profile/action?dest_id=$id"],
+	     constrain => { server_type_id => $id },
+	     fields => [qw(ord type description)],
+	     profile => [ [$label, "/admin/profile/action"],
+			  ['Log', "/admin/events/action"] ],
+	     select =>    $no_del ? undef : ['Delete', 'action|delete_cb'],
+	     number => 3
+	    );
+
+    $m->out("<br />\n");
+
+    # Output the Servers.
+    $m->comp('/widgets/listManager/listManager.mc',
+	     userSort => 0,
+	     object => 'server',
+	     title => '%n',
+	     addition => $no_edit ? undef : ['Add', "/admin/profile/server?dest_id=$id"],
+	     constrain => { server_type_id => $id },
+	     fields => [qw(host_name os doc_root active)],
+	     profile => [ [$label, "/admin/profile/server"],
+			  ['Log', "/admin/events/server"] ],
+	     alter => { active => $yes_no },
+	     select =>    $no_del ? undef : ['Delete', 'server|delete_cb'],
+	     number => 4
+	    );
+    $m->comp('/widgets/profile/formButtons.mc',
+	     type => $type,
+	     section => $section,
+	     no_del => $no_del,
+	     return => "/admin/manager/dest",
+	     no_save => $no_edit);
+} else {
+    $m->comp('/widgets/profile/formButtons.mc',
+	     type => $type,
+	     val => 'next_dkgreen',
+	     section => $section,
+	     no_del => $no_del,
+	     return => "/admin/manager/dest",
+	     no_save => $no_edit);
+}
+</%perl>
+<br />
+</form>
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+
+%#-- End HTML --#
+
+
+%#-- Once Section --#
+<%once>;
+my $class = 'Bric::Dist::ServerType';
+my $section = 'admin';
+my $type = 'dest';
+my $disp = get_disp_name($type);
+my $yes_no = sub { $_[0] ? 'Yes' : 'No'};
+my ($no_edit, $no_del);
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+
+%#-- Init Section --#
+<%init>;
+$id ||= $ARGS{dest_id};
+# Instantiate an object.
+my $dest = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id ||= $dest->get_id;
+
+# Check authorization.
+chk_authz($dest, $id ? READ : CREATE);
+$no_edit = !chk_authz($dest, ($id ? EDIT : CREATE), 1);
+$no_del = !$id || $no_edit;
+
+# Get the name for the breadcrumb trail.
+my $crumb = $dest->get_name;
+$crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
+
+$dest->set_site_id($ARGS{site_id}) if $ARGS{site_id};
+</%init>
+
+<%doc>
+################################################################################
+
+=head1 NAME
+
+/admin/profile/workflow/dhandler - Interface for managing destination profiles.
+
+=head1 VERSION
+
+$Revision: 1.2 $
+
+=head1 DATE
+
+$Date: 2003-03-12 08:59:52 $
+
+=head1 DESCRIPTION
+
+This element handles the display for editing destination profiles.
+
+</%doc>

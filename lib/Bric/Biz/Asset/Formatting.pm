@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-10 19:42:15 $
+$Date: 2003-03-12 09:00:05 $
 
 =head1 SYNOPSIS
 
@@ -1283,7 +1283,7 @@ sub get_element_name {
     my $self = shift;
     my $at_obj = $self->_get_element_object;
     return unless $at_obj;
-    return $at_obj->get_name;
+    return $at_obj->get_key_name;
 }
 
 ################################################################################
@@ -1447,11 +1447,11 @@ NONE
 =cut
 
 sub get_category_name {
-        my ($self) = @_;
+    my ($self) = @_;
 
-        my $cat = $self->_get_category_object || return;
+    my $cat = $self->_get_category_object || return;
 
-        return $cat->get_name;
+    return $cat->get_name;
 }
 
 ################################################################################
@@ -2192,7 +2192,9 @@ B<Notes:> NONE.
 =cut
 
 $set_elem = sub {
-    my $init = shift;    if ($init->{element}) {
+    my $init = shift;
+
+    if ($init->{element}) {
         $init->{element__id} = $init->{element}->get_id;
     } elsif (defined $init->{element__id}) {
         $init->{element} =
@@ -2200,9 +2202,10 @@ $set_elem = sub {
     } else {
         die Bric::Util::Fault::Exception::DP->new
           ({ msg => "Missing required parameter 'element' or " .
-                    "'element__id'"});
+             "'element__id'"});
     }
-    return $init->{element}->get_name;
+
+    return $init->{element}->get_key_name;
 };
 
 =item my $name = $set_cat->($init)

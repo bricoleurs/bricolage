@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =head1 DATE
 
-$Date: 2003-03-12 04:57:40 $
+$Date: 2003-03-12 08:59:54 $
 
 =head1 SYNOPSIS
 
@@ -244,10 +244,12 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 
 % # top message table
   <table width=580 cellpadding=0 cellspacing=0 border=0>
-  <tr>
-    <td class=medHeader height=20>&nbsp;&nbsp;<% $context %></td>
+  <tr class="medHeader"><td colspan="2"><img src="/media/images/spacer.gif" height="2" /></td></tr>
+  <tr class="medHeader" height="16">
+    <td>&nbsp;&nbsp;<% $context %></td>
+    <td align="right"><& /widgets/site_context/site_context.mc &>&nbsp;</td>
   </tr>
-
+  <tr class="medHeader"><td colspan="2"><img src="/media/images/spacer.gif" height="2" /></td></tr>
   </table>
 
 <%perl>

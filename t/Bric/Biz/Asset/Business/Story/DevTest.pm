@@ -18,7 +18,7 @@ use Bric::Util::Grp::CategorySet;
 sub class { 'Bric::Biz::Asset::Business::Story' }
 sub table { 'story' }
 
-my ($CATEGORY) = Bric::Biz::Category->list();
+my $CATEGORY = Bric::Biz::Category->lookup({ id => 1 });
 
 # this will be filled during setup
 my $OBJ_IDS = {};
@@ -56,7 +56,12 @@ sub new_args {
 # Constructs a new object.
 sub construct {
     my $self = shift;
-    $self->class->new({ $self->new_args, @_ });
+    my $story = $self->class->new({ $self->new_args, @_ });
+    $story->add_categories( [ $CATEGORY ] );
+    $story->set_primary_category($CATEGORY);
+    $story->save;
+    $self->add_del_ids($story->get_id);
+    return $story;
 }
 
 ##############################################################################
@@ -65,7 +70,7 @@ sub construct {
 sub test_clone : Test(15) {
 
     my $self = shift;
-    ok( my $story = Bric::Biz::Asset::Business::Story->new( 
+    ok( my $story = Bric::Biz::Asset::Business::Story->new(
       { element       => $self->get_elem,
         user__id      => $self->user_id,
         name          => 'Victor', 
@@ -113,7 +118,7 @@ sub test_clone : Test(15) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(61) {
+sub test_select_methods: Test(44) {
     my $self = shift;
 
     # let's grab existing 'All' group info
@@ -128,7 +133,7 @@ sub test_select_methods: Test(61) {
         my $time = time;
         my ($cat, $desk, $workflow, $story, $grp);
         # create categories
-        $cat = Bric::Biz::Category->new({ 
+        $cat = Bric::Biz::Category->new({ site_id => 100,
                                           name => "_test_$time.$i", 
                                           description => '',
                                           directory => "_test_$time.$i",
@@ -624,7 +629,7 @@ sub test_oc : Test(35) {
     is( $eocs[0]->get_id, $ocs[0]->get_id, "Compare for same OC ID" );
 
     # have to add a category
-    my $cat = Bric::Biz::Category->lookup({ id => 0 });
+    my $cat = Bric::Biz::Category->lookup({ id => 1 });
     $ba->add_categories([$cat]);
     $ba->set_primary_category($cat);
 

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:35 $
+$Date: 2003-03-12 08:59:53 $
 
 =head1 SYNOPSIS
 
@@ -22,11 +22,37 @@ $Date: 2003-02-12 15:53:35 $
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the User Profile page.
 
+=cut
+
 </%doc>
 
 <%once>;
 my $type = 'grp';
 my $disp_name = get_disp_name($type);
+
+my $reset_cache = sub {
+    my $class = shift;
+    if ($class eq 'Bric::Util::Grp::User') {
+        # Note that a user has been updated to force all users logged
+        # into the system to reload their user objects from the
+        # database.
+        $c->set_lmu_time;
+        # Also, clear out the site and workflow caches, since they
+        # may have been affected by permission changes.
+        $c->set('__WORKFLOWS__', 0);
+        $c->set('__SITES__', 0);
+    } elsif ($class eq 'Bric::Util::Grp::Workflow') {
+        # There may have been permission and member changes. Reset
+        # the cache.
+        $c->set('__WORKFLOWS__', 0);
+    } elsif ($class eq 'Bric::Util::Grp::Site') {
+        # There may have been permission and member changes. Reset
+        # the cache.
+        $c->set('__SITES__', 0);
+    } else {
+        # Do nothing!
+    }
+};
 
 my $save_sub = sub {
     my ($widget, $param, $field, $grp, $class, $name, $redir, $no_log) = @_;
@@ -39,11 +65,9 @@ my $save_sub = sub {
             $grp->deactivate;
             $grp->save;
 	    log_event('grp_deact', $grp);
-	    # Note that a user has been updated to force all users logged into the system
-	    # to reload their user objects from the database.
-	    $c->set_lmu_time if $class eq 'Bric::Util::Grp::User';
-	    $c->set('__WORKFLOWS__', 0) if $class eq 'Bric::Util::Grp::Workflow';
-            add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
+            # Reset the cache.
+            $reset_cache->($class);
+            add_msg($lang->maketext("$disp_name profile [_1] deleted.", $name));
         }
         # Set redirection back to the manager.
         set_redirect($redir);
@@ -83,12 +107,8 @@ my $save_sub = sub {
         }
 	# Redirect back to the manager.
 	set_redirect($redir);
-	# If a user group has been changed, set the lmu_time so that we know
-	# to reload all logged-in users on their next request, as their
-	# permissions may have changed. Similarly, delete the Workflows, as
-	# permissions may have changed there, as well.
-	$c->set_lmu_time if $class eq 'Bric::Util::Grp::User';
-	$c->set('__WORKFLOWS__', 0) if $class eq 'Bric::Util::Grp::Workflow';
+        # Reset the cache.
+        $reset_cache->($class);
 	return;
     } else {
 	# Save the group.

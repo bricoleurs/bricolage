@@ -37,7 +37,7 @@ if ($show_summary) {
 % my $comma = '';
 % foreach my $d ($at->get_data) {
         <% $comma %>
-        <% $fmt_name->($d->get_name) %>
+        <% $fmt_name->($d->get_key_name) %>
         <% $show_data_flags->($d) %>
 %     $comma = ', ';
 % }
@@ -71,7 +71,10 @@ if ($show_summary) {
       <td align="right" class=medHeader><span class=label>Default Element:&nbsp;</span></td>
       <td width=5 height=20><img src="/media/images/spacer.gif" width=5 height=20 /></td>
       <td>
-% my $opts = [map {my $n=lc($_->get_name);$n=~y/a-z0-9/_/cs;[$n, $_->get_name]} grep {$_->get_quantifier} $tile->get_possible_data()];
+% my $opts = [map { my $n = lc($_->get_key_name);
+%                   $n=~y/a-z0-9/_/cs;
+%                   [$n, $_->get_key_name]
+%                 } grep {$_->get_quantifier} $tile->get_possible_data()];
 % unshift @$opts, ['', '- None -'];
 <& '/widgets/profile/select.mc',
         name     => $widget.'|default_field',

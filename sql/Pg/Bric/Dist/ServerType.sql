@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    ServerType.sql
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-03-12 09:01:04 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -16,6 +16,7 @@ CREATE TABLE server_type(
     class__id      NUMERIC(10, 0)    NOT NULL,
     name           VARCHAR(64)       NOT NULL,
     description    VARCHAR(256),
+    site__id       NUMERIC(10, 0)    NOT NULL,
     copyable       NUMERIC(1, 0)     NOT NULL
                                      DEFAULT 0
                                      CONSTRAINT ck_server_type__copyable
@@ -70,7 +71,8 @@ CREATE SEQUENCE seq_dest_member START 1024;
 -- 
 -- Indexes.
 --
-CREATE UNIQUE INDEX udx_server_type__name ON server_type(LOWER(name));
+CREATE UNIQUE INDEX udx_server_type__name_site ON server_type(name, site__id);
+CREATE INDEX fkx_site__server_type ON server_type(site__id);
 CREATE INDEX fkx_class__server_type ON server_type(class__id);
 
 CREATE INDEX fkx_server_type__st_oc ON server_type__output_channel(server_type__id);

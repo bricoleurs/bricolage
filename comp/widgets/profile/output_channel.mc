@@ -35,10 +35,16 @@ if ($param->{delete}) {
     elsif (@ocs == 1 && !defined $oc_id) { $used = 1 }
     elsif (@ocs == 1 && defined $oc_id
 	   && $ocs[0] != $oc_id) { $used = 1 }
-    add_msg($lang->maketext("The name [_1] is already used by another $disp_name.",$name));
+
+    if ($used) {
+        add_msg($lang->maketext("The name [_1] is already used by another $disp_name.",$name));
+        return;
+    }
 
     # Set the basic properties.
     $oc->set_description( $param->{description} );
+    $oc->set_site_id($param->{site_id});
+    $oc->set_protocol($param->{protocol});
     $oc->set_pre_path( $param->{pre_path} );
     $oc->set_post_path( $param->{post_path});
     $oc->set_filename( $param->{filename});

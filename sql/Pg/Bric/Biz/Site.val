@@ -1,0 +1,27 @@
+
+-- Project:      Bricolage Business API
+-- File:    Site.val
+-- VERSION: $Revision: 1.2 $
+--
+-- $Date: 2003-03-12 09:00:58 $
+-- Author: David Wheeler <david@wheeler.net>
+
+-- Default site.
+
+INSERT INTO site (id, name, description, domain_name, active)
+VALUES (100, 'Default Site', 'The default site', 'www.example.com', 1);
+
+-- Add it to the 'All Sites' Group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (59, 47, 75, 1);
+
+INSERT INTO site_member (id, object_id, member__id)
+VALUES (1, 100, 59);
+
+-- Add it to the default site secret group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (60, 100, 75, 1);
+
+INSERT INTO site_member (id, object_id, member__id)
+VALUES (2, 100, 60);
+

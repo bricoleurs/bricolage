@@ -35,21 +35,24 @@ sub test_href : Test(12) {
 sub test_new : Test(10) {
     my $self = shift;
     # Try creating one from an OC ID.
-    ok( my $oce = Bric::Biz::OutputChannel::Element->new({ oc_id => 1 }),
+    ok( my $oce = Bric::Biz::OutputChannel::Element->new({oc_id => 1}),
         "Create OCE from OC ID 1" );
     isa_ok($oce, 'Bric::Biz::OutputChannel::Element');
     isa_ok($oce, 'Bric::Biz::OutputChannel');
     is( $oce->get_name, "Web", "Check name 'Web'" );
 
-    ok( $oce = Bric::Biz::OutputChannel::Element->new({ enabled => 1 }),
+    ok( $oce = Bric::Biz::OutputChannel::Element->new({enabled => 1,
+                                                       site_id => 100}),
         "Create enabled OC" );
     ok( $oce->is_enabled, "OC is enabled" );
 
-    ok( $oce = Bric::Biz::OutputChannel::Element->new({ enabled => 1 }),
+    ok( $oce = Bric::Biz::OutputChannel::Element->new({enabled => 1,
+                                                       site_id => 100}),
         "Create enabled OC" );
     ok( $oce->is_enabled, "Enabled OC is enabled" );
 
-    ok( $oce = Bric::Biz::OutputChannel::Element->new({ enabled => 0 }),
+    ok( $oce = Bric::Biz::OutputChannel::Element->new({enabled => 0,
+                                                       site_id => 100}),
         "Create disabled OC" );
     ok( ! $oce->is_enabled, "disabled OC is not enabled" );
 }
@@ -92,9 +95,10 @@ sub test_update : Test(13) {
 sub test_insert : Test(11) {
     my $self = shift;
     # Create a new output channel.
-    ok( my $oce = Bric::Biz::OutputChannel::Element->new({ name => "Foober",
-                                                           element_id => 1
-                                                         }),
+    ok(my $oce = Bric::Biz::OutputChannel::Element->new({name       => "Foober",
+                                                         element_id => 1,
+                                                         site_id    => 100,
+                                                        }),
       "Create a brand new OCE" );
 
     # Now save it. It should be inserted as both an OC and as an OCE.

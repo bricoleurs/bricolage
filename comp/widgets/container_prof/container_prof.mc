@@ -8,11 +8,11 @@ container_prof - The container profile editor.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-02-02 21:51:20 $
+$Date: 2003-03-12 08:59:52 $
 
 =head1 SYNOPSIS
 
@@ -76,7 +76,7 @@ if ($state eq 'edit_bulk') {
         my $field = get_state_data($widget, 'field');
 
         # Grab only the tiles that have the name $field
-        my @dtiles = grep($_->get_name eq $field, $tile->get_tiles());
+        my @dtiles = grep($_->get_key_name eq $field, $tile->get_tiles());
 
         # Load the data into an array which will be used until they finish.
         my @data = map { $_->get_data } @dtiles;
@@ -104,11 +104,11 @@ if ($state eq 'edit_bulk') {
             unless ($dt->is_container) {
                 my $atd = $dt->get_element_data_obj();
                 if (!defined($def_fld) and $atd->get_quantifier) {
-                    $def_fld = lc($atd->get_name);
+                    $def_fld = lc($atd->get_key_name);
                     $def_fld =~ y/a-z0-9/_/cs;
                 }
             }
-            push @data, [$dt->get_name, $dt->get_data];
+            push @data, [$dt->get_key_name, $dt->get_data];
         }
 
         # Initialize the state data.

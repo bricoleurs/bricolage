@@ -15,15 +15,16 @@ sub _test_load : Test(2) {
 ##############################################################################
 # Test the constructor.
 ##############################################################################
-sub test_const : Test(9) {
+sub test_const : Test(10) {
     my $self = shift;
 
-    my %elem = ( name => 'Test Element',
-                 description => 'Testing Element API',
-                 burner => Bric::Biz::AssetType->BURNER_MASON,
-                 type__id => 1,
-                 reference => 0,
-                 primary_oc_id => 1);
+    my %elem = (name          => 'Test Element',
+                key_name      => 'test_element_uniq',
+                description   => 'Testing Element API',
+                burner        => Bric::Biz::AssetType->BURNER_MASON,
+                type__id      => 1,
+                reference     => 0,
+                primary_oc_id => 1);
 
     ok( my $elem = Bric::Biz::AssetType->new, "Create empty element" );
     isa_ok($elem, 'Bric::Biz::AssetType');
@@ -32,6 +33,7 @@ sub test_const : Test(9) {
     ok( $elem = Bric::Biz::AssetType->new(\%elem), "Create a new element");
     # Check a few of the attributes.
     is( $elem->get_name, $elem{name}, "Check name" );
+    is( $elem->get_key_name, $elem{key_name}, "Check key name" );
     is( $elem->get_description, $elem{description}, "Check description" );
     is( $elem->get_burner, $elem{burner}, "Check burner" );
     is( $elem->get_type__id, $elem{type__id}, "Check type__id" );
@@ -52,12 +54,12 @@ sub test_my_meths : Test(11) {
     (is $meths->[0]->{name}, 'name', "Check first meth name" );
 
     # Try the identifier methods.
-    ok( my $elem = Bric::Biz::AssetType->new({ name => 'NewAT' }),
+    ok( my $elem = Bric::Biz::AssetType->new({ key_name => 'new_at' }),
         "Create Element" );
     ok( my @meths = $elem->my_meths(0, 1), "Get ident meths" );
     is( scalar @meths, 1, "Check for 1 meth" );
-    is( $meths[0]->{name}, 'name', "Check for 'name' meth" );
-    is( $meths[0]->{get_meth}->($elem), 'NewAT', "Check name 'NewAT'" );
+    is( $meths[0]->{name}, 'key_name', "Check for 'key_name' meth" );
+    is( $meths[0]->{get_meth}->($elem), 'new_at', "Check name 'new_at'" );
 }
 
 1;

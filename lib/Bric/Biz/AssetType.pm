@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 05:59:02 $
+$Date: 2003-03-12 08:59:59 $
 
 =head1 SYNOPSIS
 
@@ -54,6 +54,11 @@ $Date: 2003-03-12 05:59:02 $
   $element        = $element->add_output_channels([$output_channel])
   ($oc_list || @ocs) = $element->get_output_channels()
   $element        = $element->delete_output_channels([$output_channel])
+
+  # Manage sites
+  $element               = $element->add_sites([$site])
+  ($site_list || @sites) = $element->get_sites()
+  $element               = $element->remove_sites([$site])
 
   # Manage the parts of an asset type.
   $element            = $element->add_data($field);
@@ -115,9 +120,11 @@ use Bric::Biz::AssetType::Parts::Data;
 use Bric::Util::Attribute::AssetType;
 use Bric::Biz::ATType;
 use Bric::Util::Class;
+use Bric::Biz::Site;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Util::Coll::OCElement;
-
+use Bric::Util::Coll::Site;
+use Bric::Util::Fault qw(throw_dp);
 #==============================================================================#
 # Inheritance                          #
 #======================================#
@@ -127,7 +134,7 @@ use base qw( Bric Exporter );
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-my ($get_oc_coll, $make_key_name);
+my ($get_oc_coll, $get_site_coll, $make_key_name);
 
 #==============================================================================#
 # Constants                            #
@@ -136,7 +143,7 @@ my ($get_oc_coll, $make_key_name);
 use constant DEBUG => 0;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Element';
 use constant INSTANCE_GROUP_ID => 27;
-use constant ORD => qw(name description type_name  burner active);
+use constant ORD => qw(name key_name description type_name  burner active);
 
 # possible values for burner
 use constant BURNER_MASON    => 1;
@@ -157,11 +164,11 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK);
 my $table = 'element';
 my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
-my @cols = qw(name description burner reference type__id at_grp__id
+my @cols = qw(name key_name description burner reference type__id at_grp__id
               primary_oc__id active);
-my @props = qw(name description burner reference type__id at_grp__id
+my @props = qw(name key_name description burner reference type__id at_grp__id
                primary_oc_id _active);
-my $sel_cols = "a.id, a.name, a.description, a.burner, a.reference, " .
+my $sel_cols = "a.id, a.name, a.key_name, a.description, a.burner, a.reference, " .
   "a.type__id, a.at_grp__id, a.primary_oc__id, a.active, m.grp__id";
 my @sel_props = ('id', @props, 'grp_ids');
 
@@ -172,13 +179,15 @@ my @sel_props = ('id', @props, 'grp_ids');
 # permissions.
 BEGIN {
     Bric::register_fields({
-
 			 # Public Fields
 			 # The database id of the Asset Type
 			 'id'		        => Bric::FIELD_READ,
 
 			 # A group for holding AssetTypes that are children.
 			 'at_grp__id'           => Bric::FIELD_READ,
+
+                         # A unique name for the story type
+                         'key_name'             => Bric::FIELD_RDWR,
 
 			 # The human readable name for the story type
 			 'name'		        => Bric::FIELD_RDWR,
@@ -207,6 +216,9 @@ BEGIN {
 
 			 # Stores the collection of output channels
                          '_oc_coll'             => Bric::FIELD_NONE,
+
+			 # Stores the collection of sites
+                         '_site_coll'             => Bric::FIELD_NONE,
 
 			 # A list of contained parts
 			 '_parts'	        => Bric::FIELD_NONE,
@@ -251,6 +263,8 @@ Supported Keys:
 
 =item name
 
+=item key_name
+
 =item description
 
 =item primary_oc_id
@@ -290,10 +304,10 @@ sub new {
 	my @name = eval { $pkg->autopopulated_fields };
 	my $i = 0;
 	foreach my $n (@name) {
-	    my $atd = $self->new_data({'name'        => $n,
-				       'description' => "Autopopulated $n field.",
-				       'required'    => 1,
-				       'sql_type'    => 'short',
+	    my $atd = $self->new_data({name        => $n,
+				       description => "Autopopulated $n field.",
+				       required    => 1,
+				       sql_type    => 'short',
 				       autopopulated => 1 });
 	    $atd->set_attr('html_info', '');
 	    $atd->set_meta('html_info', 'disp', $n);
@@ -313,12 +327,12 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $element = Bric::Biz::AssetType->lookup({ id => $id })
+=item $element = Bric::Biz::AssetType->lookup({id => $id})
 
-=item $element = Bric::Biz::AssetType->lookup({ name => $name })
+=item $element = Bric::Biz::AssetType->lookup({key_name => $key_name})
 
 Looks up and instantiates a new Bric::Biz::AssetType object based on the
-Bric::Biz::AssetType object ID or name passed. If C<$id> or C<$name> is not
+Bric::Biz::AssetType object ID or name passed. If C<$id> or C<$key_name> is not
 found in the database, C<lookup()> returns C<undef>.
 
 B<Throws:>
@@ -363,6 +377,10 @@ Supported Keys:
 =item name
 
 The name of the asset type.  Matched with case-insentive LIKE.
+
+=item key_name
+
+The unique key name of the asset type.  Matched with case insensitive LIKE
 
 =item description
 
@@ -625,6 +643,24 @@ sub my_meths {
 					    maxlength => 64
 					  }
 			     },
+
+              key_name    => {
+                              name     => 'key_name',
+			      get_meth => sub { shift->get_key_name(@_) },
+			      get_args => [],
+			      set_meth => sub { shift->set_key_name(@_) },
+			      set_args => [],
+			      disp     => 'Key Name',
+			      search   => 1,
+			      len      => 64,
+			      req      => 1,
+			      type     => 'short',
+			      props    => {type      => 'text',
+                                           length    => 32,
+                                           maxlength => 64
+					  }
+                             },
+
 	      description => {
 			      get_meth => sub { shift->get_description(@_) },
 			      get_args => [],
@@ -688,7 +724,7 @@ sub my_meths {
     if ($ord) {
         return wantarray ? @{$METHS}{&ORD} : [@{$METHS}{&ORD}];
     } elsif ($ident) {
-        return wantarray ? $METHS->{name} : [$METHS->{name}];
+        return wantarray ? $METHS->{key_name} : [$METHS->{key_name}];
     } else {
         return $METHS;
     }
@@ -740,6 +776,40 @@ NONE
 =item $name = $element->get_name()
 
 This will return the name field for the asset type
+
+B<Throws:>
+NONE
+
+B<Side Effects:>
+NONE
+
+B<Notes:>
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $element = $element->set_key_name($key_name)
+
+This will set the unique key name field for the asset type
+
+B<Throws:>
+NONE
+
+B<Side Effects:>
+NONE
+
+B<Notes:>
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $name = $element->get_key_name()
+
+This will return the unique key name field for the asset type
 
 B<Throws:>
 NONE
@@ -1190,10 +1260,10 @@ NONE
 sub get_fixed_url {
     my $self = shift;
     my $att_obj = $self->_get_at_type_obj;
-    
+
     return unless $att_obj;
 
-    return $att_obj->get_fixed_url;     
+    return $att_obj->get_fixed_url;
 }
 
 #------------------------------------------------------------------------------#
@@ -1216,8 +1286,8 @@ NONE
 sub get_at_type {
     my $self = shift;
     my $att_obj = $self->_get_at_type_obj;
-    
-    return $att_obj; 
+
+    return $att_obj;
 }
 
 #------------------------------------------------------------------------------#
@@ -1336,7 +1406,7 @@ NONE
 
 =cut
 
-sub set_meta { 
+sub set_meta {
     my $self = shift;
     my ($name, $field, $val) = @_;
     my $attr_obj = $self->_get_attr_obj;
@@ -1476,6 +1546,139 @@ sub delete_output_channels {
 
 #------------------------------------------------------------------------------#
 
+=item ($site_list || @site_list) = $element->get_sites;
+
+=item ($site_list || @site_list) = $element->get_sites(@site_ids);
+
+This returns a list of output channels that have been associated with this
+asset type. If C<@site_ids> is passed, then only the site with those
+IDs are returned, if they're associated with this asset type.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> The objects returned will be Bric::Biz::Site
+objects, and these objects contain extra information relevant to the
+assocation between each output channel and this element object.
+
+=cut
+
+sub get_sites { $get_site_coll->(shift)->get_objs(@_) 
+}
+
+#------------------------------------------------------------------------------#
+
+=item my $site = $element->add_site($site)
+
+=item my $site = $element->add_site($site_id)
+
+Adds a site to this element object and returns the resulting
+Bric::Biz::Site object. Can pass in either an site object or a site ID.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+You can only add sites to top level objects
+
+=item *
+
+Couldn't find site
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_site {
+    my ($self, $site) = @_;
+
+    throw_dp "You can only add sites to top level objects" unless
+      $self->get_top_level;
+
+    my $site_coll = $get_site_coll->($self);
+    $site = Bric::Biz::Site->lookup({ id =>  $site}) unless ref $site;
+
+    throw_dp "Couldn't find site" unless ref $site;
+
+    $site_coll->add_new_objs( $site );
+    return $site;
+}
+#------------------------------------------------------------------------------#
+
+=item my $site = $element->add_sites([$site])
+
+=item my $site = $element->add_sites([$site_id])
+
+Adds a site to this element object and returns the Bric::Biz::AssetType object. 
+Can pass in multiple site objects or site IDs.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+You can only add sites to top level objects
+
+=item *
+
+Couldn't find site
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_sites {
+    my ($self, $sites) = @_;
+    $self->add_site($_) for @$sites;
+}
+
+#------------------------------------------------------------------------------#
+
+=item $element = $element->remove_sites([$sites])
+
+This takes an array reference of output channels and removes their association
+from the object.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Cannot remove last site from an AssetType
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub remove_sites {
+    my ($self, $sites) = @_;
+    my $site_coll = $get_site_coll->($self);
+    throw_dp "Cannot remove last site from an AssetType"
+      if @{$site_coll->get_objs} < 2;
+    $site_coll->del_objs(@$sites);
+    
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
+
 =item ($part_list || @part_list) = $element->get_data()
 
 This will return a list of the fields and containers that make up
@@ -1517,7 +1720,7 @@ sub get_data {
     if ($field) {
 	# Return just the field they asked for.
 	$field = $make_key_name->($field);
-	my ($val) = grep($make_key_name->($_->get_name) eq $field, @all);
+	my ($val) = grep($_->get_key_name eq $field, @all);
 	return unless $val;
 	return $val;
     } else {
@@ -1615,10 +1818,10 @@ sub new_data {
     # Add all new values to a special array of new parts until they can be
     # saved and given an ID.
     push @{$new_parts->{-1}}, $part;
-    
+
     # Update $self's new and deleted parts lists.
     $self->_set(['_new_parts'], [$new_parts]);
-    
+
     # Set the dirty bit since something has changed.
     $self->_set__dirty(1);
 
@@ -1674,7 +1877,7 @@ sub copy_data {
     my ($new_parts) = $self->_get('_new_parts');
     my $f_obj = $param->{'field_obj'};
     my ($at, $f) = @$param{'at','field_name'};
-   
+
     unless ($f_obj) {
 	unless ($at) {
 	    my $msg = 'Insufficient argurments';
@@ -1683,16 +1886,16 @@ sub copy_data {
 	
 	$f_obj = $at->get_data($f);
     }
-    
+
     my $part = $f_obj->copy($at->get_id);
 
     # Add all new values to a special array of new parts until they can be
     # saved and given an ID.
     push @{$new_parts->{-1}}, $part;
-    
+
     # Update $self's new and deleted parts lists.
     $self->_set(['_new_parts'], [$new_parts]);
-    
+
     # Set the dirty bit since something has changed.
     $self->_set__dirty(1);
 
@@ -1771,7 +1974,7 @@ B<Notes:>
 
 NONE
 
-=cut 
+=cut
 
 sub add_containers {
     my $self = shift;
@@ -1779,7 +1982,7 @@ sub add_containers {
     my $grp = $self->_get_asset_type_grp;
 
     # Construct the proper array to pass to 'add_members'
-    my @mem = map {ref $_ ? {obj => $_} : 
+    my @mem = map {ref $_ ? {obj => $_} :
 		            {id  => $_, package => __PACKAGE__}} @$at;
 
     return unless $grp->add_members(\@mem);
@@ -1813,7 +2016,7 @@ sub get_containers {
     my @at = $grp->get_objects;
 
     if ($field) {
-	my ($val) = grep($make_key_name->($_->get_name) eq $field, @at);
+	my ($val) = grep($_->get_key_name eq $field, @at);
 	return unless $val;
 	return $val;
     } else {
@@ -1893,7 +2096,7 @@ sub make_repeatable {
     my $self = shift @_;
     my ($at) = @_;
     my $c_id = $at->get_id;
-    
+
     $self->set_attr("_child_${c_id}_repeatable", 1);
 
     return $self;
@@ -1931,9 +2134,9 @@ NONE
 
 sub is_active {
     my $self = shift;
-    
+
     return $self->_get('_active') ? $self : undef;
-} 
+}
 
 #------------------------------------------------------------------------------#
 
@@ -2035,7 +2238,7 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($id, $oc_coll) = $self->_get(qw(id _oc_coll));
+    my ($id, $oc_coll, $site_coll) = $self->_get(qw(id _oc_coll _site_coll));
 
     # Save the group information.
     $self->_get_asset_type_grp->save;
@@ -2043,19 +2246,31 @@ sub save {
     # Save the parts and the output channels.
     $oc_coll->save if $oc_coll;
 
+    # Save the sites if object has an id
+    $site_coll->save($id) if $site_coll && $id;
+
     # Don't do anything else unless the dirty bit is set.
     return $self unless $self->_get__dirty;
 
     unless ($self->is_active) {
 	# Check to see if this AT is reference anywhere. If not, delete it.
-	unless ($self->_is_referenced) {
-	    $self->remove;
-	    return $self;
-	}
+
+        # This is broken because AssetType does not define a 'remove' method.
+        # David said he did a sweep to remove things that do a 'delete from...'
+        # because he suspected they were causing lost elements.  Leaving this
+        # commented out until a way to handle permanently removing things can
+        # be decided.
+	#unless ($self->_is_referenced) {
+	#    $self->remove;
+	#    return $self;
+	#}
     }
 
     # First save the main object information
     $id ? $self->_update_asset_type : $self->_insert_asset_type;
+
+    #Otherwise save sites here when we have the id
+    $site_coll->save($self->get_id) if $site_coll && !$id;
 
     # Save the attribute information.
     $self->_save_attr;
@@ -2105,8 +2320,12 @@ sub _do_list {
 
     # Set up the active parameter.
     if (exists $params->{active}) {
-        push @wheres, "a.active = ?";
-        push @params, delete $params->{active} ? 1 : 0;
+        my $val = delete $params->{active};
+        # Only set the active flag if they've passed a specific value.
+        if (defined $val) {
+            push @wheres, "a.active = ?";
+            push @params, $val ? 1 : 0;
+        }
     } elsif (! exists $params->{id}) {
         push @wheres, "a.active = ?";
         push @params, 1;
@@ -2120,7 +2339,7 @@ sub _do_list {
         $tables .= ', at_data d';
 	push @wheres, 'd.element__id = a.id';
 	if (exists $params->{data_name}) {
-	    push @wheres, 'LOWER(d.name) LIKE ?';
+	    push @wheres, 'LOWER(d.key_name) LIKE ?';
 	    push @params, lc delete $params->{data_name};
 	}
 	if (exists $params->{map_type__id}) {
@@ -2594,6 +2813,74 @@ $get_oc_coll = sub {
     $self->_set(['_oc_coll'], [$oc_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $oc_coll;
+};
+
+
+=item my $site_coll = $get_site_coll->($self)
+
+Returns the collection of sites for this element. The collection is
+a L<Bric::Util::Coll::Site|Bric::Util::Coll::Site> object. See that
+class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface
+details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_site_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my ($id, $site_coll) = $self->_get('id', '_site_coll');
+    return $site_coll if $site_coll;
+    $site_coll = Bric::Util::Coll::Site->new
+      (defined $id ? {element_id => $id} : undef);
+    $self->_set(['_site_coll'], [$site_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $site_coll;
 };
 
 =item my $key_name = $make_key_name->($name)

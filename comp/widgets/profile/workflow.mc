@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:37 $
+$Date: 2003-03-12 08:59:53 $
 
 =head1 SYNOPSIS
 
@@ -21,6 +21,8 @@ $Date: 2003-02-12 15:53:37 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the Workflow Profile page.
+
+=cut
 
 </%doc>
 <%once>;

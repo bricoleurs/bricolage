@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-10 19:42:16 $
+$Date: 2003-03-12 09:00:05 $
 
 =head1 SYNOPSIS
 
@@ -1241,12 +1241,14 @@ sub set_primary_category {
         if ($cats->{$c_id}->{'primary'}) {
             $cats->{$c_id}->{'primary'} = 0;
             $cats->{$c_id}->{'action'} = 'update'
-                    unless $cats->{$c_id}->{'action'} eq 'insert';
+              unless $cats->{$c_id}->{action}
+              and $cats->{$c_id}->{action} eq 'insert';
         }
         if ($cat_id == $c_id) {
             $cats->{$c_id}->{'primary'} = 1;
             $cats->{$c_id}->{'action'} = 'update'
-                    unless $cats->{$c_id}->{'action'} eq 'insert';
+              unless $cats->{$c_id}->{action}
+              and $cats->{$c_id}->{action} eq 'insert';
         }
 
     }

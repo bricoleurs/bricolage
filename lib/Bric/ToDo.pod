@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.96 $
+$Revision: 1.97 $
 
 =head1 DATE
 
-$Date: 2003-03-12 05:59:02 $
+$Date: 2003-03-12 08:59:58 $
 
 =head1 DESCRIPTION
 
@@ -46,6 +46,17 @@ in mind as long term goals further down the line.
 =head2 High Priority Minor Items
 
 =over
+
+=item *
+
+Take the "Group Membership" sections of the User, Category, and Site profiles
+and abstract them into a single widget. Use the widget to add a "Group
+Permissions" section to all relevant profiles. (Implementation notes: User is
+special in that it must include I<all> groups, including secret groups.
+Category is special in that it must allow group memberships to cascade into
+subcategories. Site is probably typical of all other objects that need this
+widget, in that it doesn't include secret groups and it doesn't need to
+cascade memberships.)
 
 =item *
 
@@ -162,6 +173,12 @@ on a separarate machine.  Currently only a local database will work.
 =item *
 
 Replace use of Text::Iconv with Encode?
+
+=item *
+
+Bric::Util::FTP::DirHandle has code to specifically recoginze templates ending
+in F<.mc>, F<.tmpl>, and F<.pl>. This needs to be made more flexible, so that
+it recognizes any other burners tha may be added to the system.
 
 =back
 

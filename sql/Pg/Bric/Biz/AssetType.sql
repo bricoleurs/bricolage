@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:45 $
+-- $Date: 2003-03-12 09:00:50 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -47,6 +47,7 @@ CREATE TABLE element  (
     id              NUMERIC(10,0)  NOT NULL
                                    DEFAULT NEXTVAL('seq_element'),
     name            VARCHAR(64)    NOT NULL,
+    key_name        VARCHAR(64)    NOT NULL,
     description     VARCHAR(256),
     burner          NUMERIC(2,0)   NOT NULL DEFAULT 1,
     reference       NUMERIC(1,0)   NOT NULL
@@ -179,11 +180,23 @@ CREATE TABLE attr_element_meta (
    CONSTRAINT pk_attr_element_meta__id PRIMARY KEY (id)
 );
 
+-- -----------------------------------------------------------------------------
+-- Table: element__site
+--
+-- Description: A table that maps 
+
+CREATE TABLE element__site (
+    element__id    NUMERIC(10)  NOT NULL,
+    site__id       NUMERIC(10)  NOT NULL,
+    active         NUMERIC(1)   DEFAULT 1
+                                NOT NULL
+                                CONSTRAINT ck_site_element__active CHECK (active IN (0,1))
+);
 
 -- -----------------------------------------------------------------------------
 -- Indexes.
 --
-CREATE UNIQUE INDEX udx_element__name ON element(LOWER(name));
+CREATE UNIQUE INDEX udx_element__key_name ON element(LOWER(key_name));
 CREATE INDEX fkx_at_type__element ON element(type__id);
 CREATE INDEX fkx_grp__element ON element(type__id);
 CREATE INDEX fkx_output_channel__element ON element(primary_oc__id);
@@ -198,7 +211,7 @@ CREATE INDEX fkx_element__at_oc ON element__output_channel(element__id);
 CREATE INDEX fkx_element__at_member ON element_member(object_id);
 CREATE INDEX fkx_member__at_member ON element_member(member__id);
 
-
+CREATE UNIQUE INDEX udx_element__site on element__site(element__id, site__id);
 
 
 -- Unique index on subsystem/name pair

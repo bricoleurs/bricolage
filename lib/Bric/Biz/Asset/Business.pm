@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-05 21:20:46 $
+$Date: 2003-03-12 09:00:04 $
 
 =head1 SYNOPSIS
 
@@ -1105,13 +1105,13 @@ NONE
 =cut
 
 sub get_element_name {
-        my ($self) = @_;
+    my ($self) = @_;
 
-        my $tile = $self->get_tile();
+    my $tile = $self->get_tile();
 
-        my $name = $tile->get_name();
+    my $name = $tile->get_key_name();
 
-        return $name;
+    return $name;
 }
 
 ################################################################################
@@ -1417,7 +1417,7 @@ sub get_tile {
 
 Returns the primary URL for this business asset. The primary URL is determined
 by the pre- and post- directory strings of the primary output channel, the
-URI of the business object's asset type, and the cover date if the asset type
+URI of the business object\'s asset type, and the cover date if the asset type
 is not a fixed URL.
 
 B<Throws:> NONE.

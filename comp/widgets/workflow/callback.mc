@@ -22,6 +22,8 @@ $Date$
 This element is called by submits from the Workflow Manager, where one or more
 Workflows have been marked for deletion.
 
+=cut
+
 </%doc>
 
 <%once>;
@@ -51,6 +53,9 @@ foreach my $id (@{ mk_aref($param->{$field}) }) {
         add_msg($lang->maketext("Permission to delete [_1] denied.",$name));
     }
 }
-$c->set('__WORKFLOWS__', 0) if $flag;
+if ($flag) {
+    $c->set('__SITES__', 0);
+    $c->set('__WORK_FLOWS__', 0);
+}
 return;
 </%init>

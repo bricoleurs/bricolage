@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-12 09:01:02 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -42,8 +42,8 @@ CREATE SEQUENCE seq_attr_at_data_meta START 1024;
 CREATE TABLE at_data (
     id              NUMERIC(10,0)   NOT NULL
                                     DEFAULT NEXTVAL('seq_element'),
-    element__id  NUMERIC(10,0)   NOT NULL,
-    name            VARCHAR(32),
+    element__id     NUMERIC(10,0)   NOT NULL,
+    key_name        VARCHAR(32),
     description     VARCHAR(256),
     place           NUMERIC(10,0)   NOT NULL,
     required        NUMERIC(1,0)    NOT NULL
@@ -128,7 +128,7 @@ CREATE TABLE attr_at_data_meta (
 -- Indexes.
 --
 
-CREATE UNIQUE INDEX udx_atd__name__at_id ON at_data(name, element__id);
+CREATE UNIQUE INDEX udx_atd__key_name__at_id ON at_data(key_name, element__id);
 CREATE INDEX fkx_map_type__atd on at_data(map_type__id);
 CREATE INDEX fkx_element__atd on at_data(element__id);
 

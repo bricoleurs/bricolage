@@ -18,7 +18,7 @@ sub _test_load : Test(1) {
 # Test constructors.
 ##############################################################################
 # Test the new() method.
-sub test_new : Test(16) {
+sub test_new : Test(18) {
     ok( my $oc = Bric::Biz::OutputChannel->new, "Create new OC" );
     isa_ok($oc, 'Bric::Biz::OutputChannel');
     isa_ok($oc, 'Bric');
@@ -31,6 +31,8 @@ sub test_new : Test(16) {
                   filename    => 'home',
                   pre_path    => 'foo',
                   post_path   => 'en',
+                  protocol    => 'http://',
+                  site_id     => 100,
                   uri_format  => '/categories/year/month/',
                   active      => 1
                 };
@@ -43,6 +45,9 @@ sub test_new : Test(16) {
     is( $oc->get_post_path, 'en', "Check post_path" );
     is( $oc->get_filename, 'home', "Check filename" );
     is( $oc->get_file_ext, 'html', "Check file_ext" );
+    is( $oc->get_site_id, 100, "Check site ID" );
+    is( $oc->get_protocol, 'http://', "Check protocol" );
+
     is( $oc->get_uri_format, '/categories/year/month/',
           "Check uri_format" );
     is( $oc->get_fixed_uri_format, '/categories/',

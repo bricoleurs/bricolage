@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:22:01 $
+$Date: 2003-03-12 09:00:22 $
 
 =head1 SYNOPSIS
 
@@ -49,16 +49,17 @@ $Date: 2003-02-28 20:22:01 $
   $st = $st->set_description($description);
   my $move_method = $st->get_move_method;
   $st = $st->set_move_method($move_method);
-
+  my $site_id = $st->get_site_id;
+  $st = $st->set_site_id($site_id);
   print "ST is ", $st->can_copy ? '' : 'not ', "copyable.\n";
   $st->copy;
   $st->no_copy;
 
-  print "ST ", $st->can_publish ? 'publishes' : 'does not publish.\n";
+  print "ST ", $st->can_publish ? 'publishes' : "does not publish.\n";
   $st = $st->on_publish; # Used for publish event.
   $st = $st->no_publish; # Not used for publish event.
 
-  print "ST ", $st->can_preview ? 'previews' : 'does not preview.\n";
+  print "ST ", $st->can_preview ? 'previews' : "does not preview.\n";
   $st = $st->on_preview; # Used for preview event.
   $st = $st->no_preview; # Not used for preview event.
 
@@ -139,11 +140,13 @@ use constant INSTANCE_GROUP_ID => 29;
 
 ##############################################################################
 # Private Class Fields
-my @COLS = qw(id name description copyable publish preview active);
-my @PROPS = qw(name description _copy _publish _preview _active move_method);
+my @COLS = qw(id name description site__id copyable publish preview active);
+my @PROPS = qw(name description site_id _copy _publish _preview _active
+               move_method);
 
-my $SEL_COLS = 's.id, s.name, s.description, s.copyable, s.publish, ' .
-  's.preview, s.active, c.disp_name, c.pkg_name, m.grp__id';
+my $SEL_COLS = 's.id, s.name, s.description, s.site__id, s.copyable, '.
+               's.publish, s.preview, s.active, c.disp_name, c.pkg_name, '.
+               'm.grp__id';
 my @SEL_PROPS = ('id', @PROPS, qw(_mover_class grp_ids));
 
 my %BOOL_MAP = ( active      => 's.active = ?',
@@ -155,7 +158,7 @@ my @SCOL_ARGS = ('Bric::Util::Coll::Server', '_servers');
 my @ACOL_ARGS = ('Bric::Util::Coll::Action', '_actions');
 my @OCOL_ARGS = ('Bric::Util::Coll::OutputChannel', '_ocs');
 
-my @ORD = qw(name description move_method copy publish preview active);
+my @ORD = qw(name description site_id move_method copy publish preview active);
 my $meths;
 
 ##############################################################################
@@ -168,6 +171,7 @@ BEGIN {
                          id           => Bric::FIELD_READ,
                          name         => Bric::FIELD_RDWR,
                          description  => Bric::FIELD_RDWR,
+                         site_id      => Bric::FIELD_RDWR,
                          move_method  => Bric::FIELD_RDWR,
                          grp_ids      => Bric::FIELD_READ,
 
@@ -209,6 +213,10 @@ description
 
 =item *
 
+site_id
+
+=item *
+
 move_method
 
 =back
@@ -235,11 +243,12 @@ sub new {
 
 =item my $st = Bric::Dist::ServerType->lookup({ id => $id })
 
-=item my $st = Bric::Dist::ServerType->lookup({ name => $name })
+=item my $st = Bric::Dist::ServerType->lookup({ name => $name, site_id => $site_id })
 
 Looks up and instantiates a new Bric::Dist::ServerType object based on the
-Bric::Dist::ServerType object ID or name passed. If C<$id> or C<$name> is not
-found in the database, C<lookup()> returns C<undef>.
+Bric::Dist::ServerType object ID or name and site ID passed. If C<$id> or
+C<$name> and C<$site_id> is not found in the database, C<lookup()> returns
+C<undef>.
 
 B<Throws:>
 
@@ -311,6 +320,10 @@ move_method
 =item *
 
 description
+
+=item *
+
+site_id
 
 =item *
 
@@ -723,6 +736,36 @@ sub my_meths {
                                             rows => 4
                                           }
                              },
+
+              site_id     => {
+                              name     => 'site_id',
+                              get_meth => sub { shift->get_site_id(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_site_id(@_) },
+                              set_args => [],
+                              disp     => 'Site',
+                              len      => 256,
+                              req      => 0,
+                              type     => 'short',
+                              props    => {}
+                             },
+
+              site        => {
+                              name     => 'site',
+                              get_meth => sub { my $s = Bric::Biz::Site->lookup
+                                                  ({ id => shift->get_site_id })
+                                                  or return;
+                                                $s->get_name;
+                                            },
+                              disp     => 'Site',
+                              type     => 'short',
+                              req      => 0,
+                              props    => { type       => 'text',
+                                            length     => 10,
+                                            maxlength  => 10
+                                          }
+                             },
+
               move_method => {
                               name     => 'move_method',
                               get_meth => sub { shift->get_move_method(@_) },
@@ -950,6 +993,58 @@ Cannot AUTOLOAD private methods.
 =item *
 
 Access denied: WRITE access for field 'description' required.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $description = $st->get_site_id
+
+Returns the site ID with which this ServerType is associated.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $self = $st->set_site_id($site_id)
+
+Associate this ServerType with a site.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
 
 =item *
 
@@ -2073,6 +2168,9 @@ $get_em = sub {
             $tables .= ", member m2, dest_member sm2";
             $wheres .= " AND s.id = sm2.object_id AND sm2.member__id = m2.id" .
               " AND m2.active = 1 AND m2.grp__id = ?";
+            push @params, $v;
+        } elsif ($k eq 'site_id') {
+            $wheres .= " AND s.site__id = ?";
             push @params, $v;
         } else {
             # It's just a string comparison.

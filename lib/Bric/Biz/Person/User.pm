@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:56 $
+$Date: 2003-03-12 09:00:18 $
 
 =head1 SYNOPSIS
 
@@ -1246,7 +1246,7 @@ rather than as a person.
 
 =cut
 
-sub get_grps { Bric::Util::Grp::User->list({ obj => $_[0] }) }
+sub get_grps { Bric::Util::Grp::User->list({ obj => $_[0], all => 1 }) }
 
 =item $self = $u->save
 

@@ -11,8 +11,9 @@ sub table {'server_type '}
 
 my $web_oc_id = 1;
 
-my %dest = ( name => 'Bogus',
+my %dest = ( name        => 'Bogus',
              description => 'Bogus ServerType',
+             site_id     => 100,
              move_method => 'File System'
            );
 
@@ -40,7 +41,7 @@ sub test_lookup : Test(9) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(42) {
+sub test_list : Test(45) {
     my $self = shift;
 
     # Create a new destination group.
@@ -118,6 +119,14 @@ sub test_list : Test(42) {
         "Look up grp_id '$grp_id' again" );
     is( scalar @dests, 2, "Check for 2 destinations" );
 
+    # Try site_id.
+    ok( @dests = Bric::Dist::ServerType->list({ site_id => $dest{site_id} }),
+        "Look up site_id '$dest{site_id}'" );
+    is( scalar @dests, 5, "Check for 5 destinations" );
+
+    # Try a bogus site_id.
+    @dests = Bric::Dist::ServerType->list({ site_id => -1 });
+    is( scalar @dests, 0, "Check for 0 destinations" );
 
     # Try move_method.
     ok( @dests = Bric::Dist::ServerType->list
@@ -159,7 +168,7 @@ sub test_list : Test(42) {
 
 ##############################################################################
 # Test the href() method.
-sub test_href : Test(22) {
+sub test_href : Test(25) {
     my $self = shift;
 
     # Create a new destination group.
@@ -195,6 +204,15 @@ sub test_href : Test(22) {
         "Look up description '$dest{description}'" );
     is( scalar keys %$dests, 2, "Check for 2 destinations" );
 
+    # Try site_id.
+    ok( $dests = Bric::Dist::ServerType->href({ site_id => $dest{site_id} }),
+        "Look up site_id '$dest{site_id}'" );
+    is( scalar keys %$dests, 5, "Check for 5 destinations" );
+
+    # Try a bogus site_id.
+    $dests = Bric::Dist::ServerType->href({ site_id => -1 });
+    is( scalar keys %$dests, 0, "Check for 0 destinations" );
+
     # Try grp_id.
     ok( $dests = Bric::Dist::ServerType->href({ grp_id => $grp_id }),
         "Look up grp_id $grp_id" );
@@ -213,7 +231,7 @@ sub test_href : Test(22) {
 # Test class methods.
 ##############################################################################
 # Test the list_ids() method.
-sub test_list_ids : Test(35) {
+sub test_list_ids : Test(38) {
     my $self = shift;
 
     # Create a new destination group.
@@ -270,6 +288,16 @@ sub test_list_ids : Test(35) {
         "Look up description '$dest{description}'" );
     is( scalar @dest_ids, 2, "Check for 2 destination IDs" );
 
+    # Try site_id.
+    ok( @dest_ids = Bric::Dist::ServerType->list_ids
+        ({ site_id => $dest{site_id} }),
+        "Look up site_id '$dest{site_id}'" );
+    is( scalar @dest_ids, 5, "Check for 5 destinations" );
+
+    # Try a bogus site_id.
+    @dest_ids = Bric::Dist::ServerType->list_ids({ site_id => -1 });
+    is( scalar @dest_ids, 0, "Check for 0 destinations" );
+
     # Try grp_id.
     ok( @dest_ids = Bric::Dist::ServerType->list_ids({ grp_id => $grp_id }),
         "Look up grp_id $grp_id" );
@@ -319,14 +347,16 @@ sub test_list_ids : Test(35) {
 ##############################################################################
 sub test_output_channels : Test(18) {
     my $self = shift;
-    ok( my $dest = Bric::Dist::ServerType->new({ name => 'MyServerMan',
-                                               move_method => 'FTP'}),
+    ok( my $dest = Bric::Dist::ServerType->new({name        => 'MyServerMan',
+                                                move_method => 'FTP',
+                                                site_id     => 100}),
         "Create new ST" );
     my @ocs = $dest->get_output_channels;
     is( scalar @ocs, 0, "No OCs" );
 
     # Create a new output channel.
-    ok( my $oc = Bric::Biz::OutputChannel->new({ name => 'OC Senior' }),
+    ok( my $oc = Bric::Biz::OutputChannel->new({name    => 'OC Senior',
+                                                site_id => 100}),
         "Create new OC" );
     ok( $oc->save, "Save new OC" );
     ok( my $ocid = $oc->get_id, "Get OC ID" );

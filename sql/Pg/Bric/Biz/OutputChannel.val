@@ -1,16 +1,16 @@
 -- -----------------------------------------------------------------------------
 -- OutputChannel.val
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
 -- Create Output Channels.
 --
 
 INSERT INTO output_channel (id, name, description, pre_path, post_path,
 	                    filename, file_ext, uri_format, fixed_uri_format,
-                            uri_case, use_slug, primary_ce)
+                            uri_case, use_slug, primary_ce, site__id)
 VALUES (1, 'Web', 'Output to the web', '', '', 'index', 'html',
-        '/categories/year/month/day/slug/', '/categories/', 1, 0, 1);
+        '/categories/year/month/day/slug/', '/categories/', 1, 0, 1, 100);
 
 
 -- Add 'em to the 'All Output Channels' Group.

@@ -27,13 +27,15 @@ return unless $field eq "$widget|save_cb"
   || $field eq "$widget|add_cb"
   || $field eq "$widget|save_n_stay_cb"
   || $field eq "$widget|addElement_cb"
-  || $field eq "$widget|add_oc_id_cb";
+  || $field eq "$widget|add_oc_id_cb"
+  || $field eq "$widget|add_site_id_cb";
 return unless $param->{$field}; # prevent multiple calls to this file
 
 
 # Instantiate the element object and grab its name.
-my $comp = $obj;
-my $name = "&quot;$param->{name}&quot;";
+my $comp     = $obj;
+my $name     = "&quot;$param->{name}&quot;";
+my $key_name = "&quot;$param->{key_name}&quot;";
 
 my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{del_attr})} );
 
@@ -49,28 +51,34 @@ if ($param->{delete} &&
 }  else {
     # Make sure the name isn't already in use.
     my $no_save;
-    #### Bug. I'm passing active => 0 here because Bric::Biz::AssetType has a bug
-    # where it ignores the active argument if passed a false value. Really, it should
-    # check for when active is set to 0. However, since what I want to do is ignore
-    # the active column, this will work for now. Eventually, AssetType should be
-    # fixed, and then this call will have to be changed to do a call with active => 1
-    # and active => 0, and the resulting list grepped to get rid of duplicate IDs.
-    # I would do it now, but I don't want to break anything else that may be relying
-    # on the bug in AssetType.
-    my @cs = $class->list_ids({ name => $param->{name}, active => 0 });
-    if (@cs > 1) { $no_save = 1 }
+    # AssetType has been updated to take an existing but undefined 'active'
+    # flag as meaning, "list both active and inactive"
+    my @cs = $class->list_ids({key_name => $param->{key_name},
+                               active   => undef});
+
+    # Check if we need to inhibit a save based on some special conditions
+    if    (@cs > 1)                                   { $no_save = 1 }
     elsif (@cs == 1 && !defined $param->{element_id}) { $no_save = 1 }
-    elsif (@cs == 1 && defined $param->{element_id}
-	   && $cs[0] != $param->{element_id}) {
-	$no_save = 1 }
-    add_msg($lang->maketext('The name [_1] is already used by another [_2].',$name ,$disp_name)) if $no_save;
+    elsif (@cs == 1 && 
+           defined $param->{element_id} && 
+           $cs[0] != $param->{element_id})            { $no_save = 1 }
+
+    add_msg($lang->maketext('The key name [_1] is already used by another [_2].',$key_name ,$disp_name)) if $no_save;
 
     # Roll in the changes. Create a new object if we need to pass in an Element
     # Type ID.
     $comp = $class->new({ type__id => $param->{element_type_id} })
       if exists $param->{element_type_id} && !defined $param->{element_id};
     $comp->activate;
-    $comp->set_name($param->{name}) unless $no_save;
+    $comp->set_name($param->{name});
+        
+
+
+    # Normalize the key name
+    my $kn = lc($param->{key_name});
+    $kn =~ y/a-z0-9/_/cs;
+
+    $comp->set_key_name($kn) unless $no_save;
     $comp->set_description($param->{description});
     $comp->set_burner($param->{burner}) if defined $param->{burner};
 
@@ -94,7 +102,7 @@ if ($param->{delete} &&
     my $all_data = Bric::Biz::AssetType::Parts::Data->list(
       { element__id => $param->{element_id} });
 #    my $all_data = $comp->get_data;
-    my $data_href = { map { lc ($_->get_name) => $_ } @$all_data };
+    my $data_href = { map { lc ($_->get_key_name) => $_ } @$all_data };
     my $pos = mk_aref($param->{attr_pos});
     my $i = 0;
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
@@ -139,7 +147,7 @@ if ($param->{delete} &&
 	    my $max = $param->{fb_maxlength} ? $param->{fb_maxlength}
 	      : $param->{fb_maxlength} eq '0' ? 0 : undef;
 
-	    my $atd = $comp->new_data({ name        => $param->{fb_name},
+	    my $atd = $comp->new_data({ key_name    => $param->{fb_name},
 					required    => $param->{fb_req} ? 1 : 0,
 					quantifier  => $param->{fb_quant} ? 1 : 0,
 					sql_type    => $sqltype,
@@ -188,6 +196,16 @@ if ($param->{delete} &&
         $comp->delete_output_channels($del_oc_ids);
     }
 
+    # Delete sites.
+    if ($param->{rem_site}) {
+        my $del_site_ids = mk_aref($param->{rem_site});
+        if(@$del_site_ids >= @{$comp->get_sites}) {
+            add_msg($lang->maketext("You cannot remove all Sites"));
+        } else {
+            $comp->remove_sites($del_site_ids);
+        }
+    }
+
     # Enable output channels.
     my %enabled = map { $_ => 1 } @{ mk_aref($param->{enabled}) };
     foreach my $oc ($comp->get_output_channels) {
@@ -197,6 +215,10 @@ if ($param->{delete} &&
     # Add output channels.
     $comp->add_output_channel($param->{"$widget|add_oc_id_cb"})
       if $field eq "$widget|add_oc_id_cb";
+
+    # Add sites
+    $comp->add_site($param->{"$widget|add_site_id_cb"})
+      if $field eq "$widget|add_site_id_cb";
 
     # delete any selected sub elements
     if ($param->{"element|delete_cb"}) {
@@ -209,9 +231,15 @@ if ($param->{delete} &&
         $comp->set_primary_oc_id($oc->get_id) if $oc;
     }
 
+
+    $comp->add_site($c->get_user_cx(get_user_id)) 
+        if $param->{isNew} && $comp->get_top_level;
+
     # Save the element.
     $comp->save unless $no_save;
     $param->{element_id} = $comp->get_id;
+
+    
 
     my $containers = $comp->get_containers;
     if (($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb")
@@ -247,11 +275,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:17 $
+$Date: 2003-03-12 08:59:52 $
 
 =head1 SYNOPSIS
 

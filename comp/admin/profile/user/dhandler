@@ -46,8 +46,9 @@ foreach my $grp ( $isid ? $user->get_grps : () ) {
     push @$right, { value =>  $grp->get_id, description => $grp->get_name };
 }
 
-# Get all user groups for double-list manager.
-foreach my $grp ( Bric::Util::Grp::User->list ) {
+# Get all user groups (including secret groups used by Bric::Biz::Site) for
+# the double-list manager.
+foreach my $grp ( Bric::Util::Grp::User->list({ all => 1 }) ) {
     push @$left, { value =>  $grp->get_id, description => $grp->get_name };
 }
 
@@ -165,11 +166,11 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-03-12 04:57:40 $
+$Date: 2003-03-12 08:59:52 $
 
 =head1 DESCRIPTION
 

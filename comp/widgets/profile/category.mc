@@ -2,7 +2,6 @@
 my $type = 'category';
 my $disp_name = get_disp_name($type);
 my $pl_name = get_class_info($type)->get_plural_name;
-my $root_id = Bric::Biz::Category::ROOT_CATEGORY_ID;
 </%once>
 <%args>
 $widget
@@ -16,7 +15,11 @@ $class
 my $cat = $obj;
 my $id = $param->{"${type}_id"};
 my $name = "&quot;$param->{name}&quot;";
+
 if ($field eq "$widget|save_cb") {
+    # This will fail if for some bad reason site_id has not yet been set on $cat
+    my $root_id = Bric::Biz::Category->site_root_category_id($param->{site_id});
+
     if ($param->{delete} || $param->{delete_cascade}) {
         if ($id == $root_id) {
             # You can't deactivate the root category!
@@ -45,6 +48,7 @@ if ($field eq "$widget|save_cb") {
         $cat->set_description($param->{description});
         $cat->set_ad_string($param->{ad_string});
         $cat->set_ad_string2($param->{ad_string2});
+        $cat->set_site_id($param->{site_id});
 
         # if this is not ROOT, we have work to do
         if (((defined $id and $id != $root_id) or not defined $id)
@@ -80,7 +84,7 @@ if ($field eq "$widget|save_cb") {
                     add_msg($lang->maketext("Directory name [_1] contains "
                             . "invalid characters. Please try a different "
                             . "directory name.","'$param->{directory}'"));
-                    return $cat; 
+                    return $cat;
                 } else {
                     $cat->set_directory($param->{directory});
                 }
@@ -170,11 +174,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-03-01 19:25:59 $
+$Date: 2003-03-12 08:59:53 $
 
 =head1 SYNOPSIS
 

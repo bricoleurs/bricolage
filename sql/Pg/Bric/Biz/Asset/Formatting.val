@@ -11,7 +11,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('502', 'Book Profile', 'A default book profile', '3', NULL,
         '1', '1', '11',
-        '0', '/book_profile.mc', '1', NULL,
+        '1', '/book_profile.mc', '1', NULL,
         '1', '2001-07-30 13:34:21-07', NULL, '1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -20,7 +20,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('503', 'Book Review', 'A default book review', '3', NULL,
         '1', '1', '3',
-        '0', '/book_review.mc', '1', NULL,
+        '1', '/book_review.mc', '1', NULL,
         '1','2001-07-30 13:34:22-07',NULL,'1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -29,7 +29,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('504', 'Column', 'A default column', '3', NULL,
         '1', '1', '2',
-        '0', '/column.mc', '1', NULL,
+        '1', '/column.mc', '1', NULL,
         '1', '2001-07-30 13:34:22-07', NULL, '1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -38,7 +38,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('506', 'Inset', 'A generic inset', '3', NULL,
         '1', '1', '6',
-        '0', '/inset.mc', '1', NULL,
+        '1', '/inset.mc', '1', NULL,
         '1', '2001-07-30 13:34:23-07', NULL, '1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -47,7 +47,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ( '507', 'Page', 'A generic page', '3', NULL,
        '1', '1', '10',
-       '0', '/page.mc', '1', NULL,
+       '1', '/page.mc', '1', NULL,
        '1', '2001-07-30 13:34:20-07', NULL, '1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -56,7 +56,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('509', 'Pull Quote', 'A generic pull quote', '3', NULL,
        '1', '1', '7',
-       '0', '/pull_quote.mc', '1', NULL,
+       '1', '/pull_quote.mc', '1', NULL,
        '1', '2001-07-30 13:34:20-07', NULL, '1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -65,7 +65,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('510', 'Related Stories', 'A generic related stories template', '3', NULL,
         '1', '1', '8',
-        '0', '/related_stories.mc', '1', NULL,
+        '1', '/related_stories.mc', '1', NULL,
         '1', '2001-07-30 13:34:21-07', NULL, '1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -74,7 +74,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('511', 'Related Story', 'A generic related story', '3', NULL,
         '1', '1', '9',
-        '0', '/related_story.mc', '1', NULL,
+        '1', '/related_story.mc', '1', NULL,
         '1', '2001-07-30 13:34:21-07', NULL, '1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -83,7 +83,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('512', 'Story', 'A generic story template', '3', NULL,
         '1', '1', '1',
-        '0', '/story.mc', '1', NULL,
+        '1', '/story.mc', '1', NULL,
         '1', '2001-07-30 13:34:22-07', NULL, '1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -92,7 +92,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('513', 'autohandler', 'A generic root level category template', '3', NULL,
         '1', '2', NULL,
-        '0', '/autohandler', '1',NULL,
+        '1', '/autohandler', '1',NULL,
         '1', '2001-07-30 13:34:22-07', NULL, '1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -101,7 +101,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('514', 'Related Media', 'A default related media template', '3', NULL,
         '1', '1', '12',
-        '0', '/related_media.mc', '1', NULL,
+        '1', '/related_media.mc', '1', NULL,
         '1', '2001-08-01 14:51:34-07', NULL, '1');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
@@ -110,7 +110,7 @@ INSERT INTO formatting (id, name, description, priority, usr__id,
                         deploy_status, deploy_date, expire_date, active)
 VALUES ('515', 'Cover', 'A default cover template', '3', NULL,
         '1', '1', '13',
-        '0', '/cover.mc', '1', NULL,
+        '1', '/cover.mc', '1', NULL,
         '1', '2001-08-01 14:51:34-07', NULL, '1');
 
 --
@@ -125,7 +125,7 @@ INSERT INTO "formatting_instance" VALUES ('501','502','1','0','\015\012<!-- Star
 INSERT INTO "formatting_instance" VALUES ('502','503','1','0','<!-- Start "Book Review" -->\015\012\015\012%# Only show this if we are on the first page\015\012% unless ($burner->get_page) {\015\012<h1><% $story->get_title %></h1>\015\012<% $element->get_data(''deck'') %>\015\012<hr />\015\012% }\015\012\015\012%# Display all the pages of this story\015\012% $burner->display_pages(''page'');\015\012\015\012<br>\015\012Page <% $burner->get_page + 1 %>\015\012<!-- End "Book Review" -->\015\012','0');
 INSERT INTO "formatting_instance" VALUES ('503','504','1','0','\015\012<!-- Start "Column" -->\015\012\015\012%# Only show this if we are on the first page\015\012% unless ($burner->get_page) {\015\012<h1><% $story->get_title %></h1>\015\012<% $element->get_data(''deck'') %>\015\012<hr />\015\012% }\015\012\015\012%# Display all the pages of this story\015\012% $burner->display_pages(''page'');\015\012\015\012<br>\015\012Page <% $burner->get_page + 1 %>\015\012<!-- End "Column" -->\015\012','0');
 INSERT INTO "formatting_instance" VALUES ('505','506','1','0','\015\012<!-- Start ''Inset'' -->\015\012<table>\015\012<tr><td>\015\012<% $element->get_data(''copy'') %>\015\012</td></tr>\015\012</table>\015\012<!-- End ''Inset'' -->\015\012','0');
-INSERT INTO "formatting_instance" VALUES ('506','507','1','0','<!-- Start "Page" -->\015\012<%perl>\015\012foreach my $e ($element->get_elements) {\015\012    if ($e->has_name(''paragraph'')) {\015\012        $m->out(''<p>''.$e->get_data.''</p>'');\015\012\015\012    } elsif ($e->has_name(''pull_quote'')) {\015\012        $burner->display_element($e);\015\012\015\012    } elsif ($e->has_name(''inset'')) {\015\012        $burner->display_element($e);\015\012\015\012    }\015\012}\015\012</%perl>\015\012\015\012<hr />\015\012\015\012%# $burner numbers pages from ''0'' not ''1''.\015\012% my $pnum = $burner->get_page + 1;\015\012\015\012%# Show ''previous'' link\015\012% my $prev = $element->get_data(''previous'');\015\012% if ($prev) {\015\012<a href="index<% $pnum-2 != 0 ? $pnum-2 : '''' %>.html">\015\012&lt;&lt;&lt; Page <% $pnum - 1 %> : </a>\015\012<% $prev %>\015\012% }\015\012\015\012&nbsp;&nbsp;&nbsp;\015\012\015\012%# Show ''next'' link\015\012% my $next = $element->get_data(''next'');\015\012% if ($next) {\015\012<% $next %>\015\012<a href="index<% $pnum %>.html">\015\012 : Page <% $pnum + 1 %> &gt;&gt;&gt;\015\012</a>\015\012% }\015\012\015\012<!-- End "Page" -->\015\012','0');
+INSERT INTO "formatting_instance" VALUES ('506','507','1','0','<!-- Start "Page" -->\015\012<%perl>\015\012foreach my $e ($element->get_elements) {\015\012    my $key_name = $e->get_key_name;\015\012    if ($key_name eq ''paragraph'') {\015\012        $m->out(''<p>''.$e->get_data.''</p>'');\015\012\015\012    } elsif ($key_name eq ''pull_quote'') {\015\012        $burner->display_element($e);\015\012\015\012    } elsif ($key_name eq ''inset'') {\015\012        $burner->display_element($e);\015\012\015\012    }\015\012}\015\012</%perl>\015\012\015\012<hr />\015\012\015\012%# $burner numbers pages from ''0'' not ''1''.\015\012% my $pnum = $burner->get_page + 1;\015\012\015\012%# Show ''previous'' link\015\012% my $prev = $element->get_data(''previous'');\015\012% if ($prev) {\015\012<a href="index<% $pnum-2 != 0 ? $pnum-2 : '''' %>.html">\015\012&lt;&lt;&lt; Page <% $pnum - 1 %> : </a>\015\012<% $prev %>\015\012% }\015\012\015\012&nbsp;&nbsp;&nbsp;\015\012\015\012%# Show ''next'' link\015\012% my $next = $element->get_data(''next'');\015\012% if ($next) {\015\012<% $next %>\015\012<a href="index<% $pnum %>.html">\015\012 : Page <% $pnum + 1 %> &gt;&gt;&gt;\015\012</a>\015\012% }\015\012\015\012<!-- End "Page" -->\015\012','0');
 
 INSERT INTO "formatting_instance" VALUES ('508','509','1','0','\015\012<!-- Start "Pull Quote" -->\015\012&quot;<% $element->get_data(''quote'') %>&quot;\015\012<!-- End "Pull Quote" -->','0');
 INSERT INTO "formatting_instance" VALUES ('509','510','1','0','\015\012<!-- Start "Related Stories" -->\015\012% my @rel = $element->get_elements;\015\012\015\012% if (@rel > 0) {\015\012<table>\015\012\015\012% foreach my $rs (@rel) {\015\012<tr><td>\015\012% $burner->display_element($rs);\015\012</td></tr>\015\012% }\015\012\015\012</table>\015\012% }\015\012<!-- End "Related Stories" -->\015\012','0');

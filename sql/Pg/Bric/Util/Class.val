@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -235,3 +235,9 @@ VALUES (73, 'sftp', 'Bric::Util::Trans::SFTP', 'SFTP', 'SFTP Transport', 'Class 
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (74, 'webdav', 'Bric::Util::Trans::WebDAV', 'WebDAV', 'WebDAV Transport', 'Class with methods to move files via WebDAV', 1);
+
+INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
+VALUES (75, 'site', 'Bric::Biz::Site', 'Site', 'Sites', 'Site class', 0);
+
+INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
+VALUES (76, 'site_grp', 'Bric::Util::Grp::Site', 'Site Group','Site Groups', 'Group of sites', 0);

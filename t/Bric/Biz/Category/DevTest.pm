@@ -6,10 +6,11 @@ use Test::More;
 use Bric::Biz::Category;
 use Bric::Util::Grp::CategorySet;
 
-my %cat = ( name => 'Testing',
+my %cat = ( name        => 'Testing',
+            site_id     => 100,
             description => 'Description',
-            parent_id => 0,
-            directory => 'testing',
+            parent_id   => 1,
+            directory   => 'testing',
           );
 
 sub table { 'category' }
@@ -18,26 +19,34 @@ sub table { 'category' }
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(7) {
+sub test_lookup : Test(9) {
     my $self = shift;
-    ok( my $cat = Bric::Biz::Category->new(\%cat), "Create $cat{name}" );
-    ok( $cat->set_ad_string('foo'), "Set the ad string" );
-    ok( $cat->save, "Save $cat{name}" );
-    ok( my $id = $cat->get_id, "Check for ID" );
+
+    ok (my $cat = Bric::Biz::Category->new(\%cat), "Create $cat{name}");
+    ok ($cat->set_ad_string('foo'),                'Set the ad string');
+    ok ($cat->save,                                "Save $cat{name}");
+    ok (my $id = $cat->get_id,                     "Check for ID" );
+
     # Save the ID for deleting.
     $self->add_del_ids([$id]);
     $self->add_del_ids([$cat->get_asset_grp_id], 'grp');
+
     # Look up the ID in the database.
-    ok( $cat = Bric::Biz::Category->lookup({ id => $id }),
-        "Look up $cat{name}" );
-    is( $cat->get_id, $id, "Check that ID is the same" );
+    ok ($cat = Bric::Biz::Category->lookup({id => $id}), "Look up $cat{name}");
+    is ($cat->get_id, $id,                        'Check that ID is the same');
+
+    # Look up on site and uri
+    ok ($cat = Bric::Biz::Category->lookup({uri => '/testing', site_id => 100}),
+        "Look up $cat{name} on URI and Site");
+    is ($cat->get_id, $id,                        'Check that ID is the same');
+
     # Make sure we've got the ad string.
-    is( $cat->get_ad_string, 'foo', "Check adstring" );
+    is ($cat->get_ad_string, 'foo', 'Check adstring');
 }
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(28) {
+sub test_list : Test(31) {
     my $self = shift;
 
     # Create a new category group.
@@ -73,10 +82,21 @@ sub test_list : Test(28) {
         "Look up name $cat{name}%" );
     is( scalar @cats, 5, "Check for 5 categories" );
 
+    # Try site_id
+    ok( @cats = Bric::Biz::Category->list({site_id => 100}),
+        'Look up site with ID 100');
+    # We get 6 because of the default category
+    is( scalar @cats, 6, "Check for 6 categories" );
+
+    # Try a bogus site_id.
+    @cats = Bric::Biz::Category->list({site_id => -1});
+    is( scalar @cats, 0, "Check for 0 categories" );
+
     # Try grp_id.
     ok( @cats = Bric::Biz::Category->list({ grp_id => $grp_id }),
         "Look up grp_id '$grp_id'" );
     is( scalar @cats, 3, "Check for 3 categories" );
+
     # Make sure we've got all the Group IDs we think we should have.
     my $all_grp_id = Bric::Biz::Category::INSTANCE_GROUP_ID;
     foreach my $cat (@cats) {
@@ -97,10 +117,28 @@ sub test_list : Test(28) {
 
     # Try parent_id. The root category shouldn't return itself, but should
     # return all of its children, of course.
-    ok( @cats = Bric::Biz::Category->list({ parent_id => 0 }),
-        "Look up parent_id 0" );
+    ok( @cats = Bric::Biz::Category->list({ parent_id => 1 }),
+        "Look up parent_id 1" );
     is( scalar @cats, 5, "Check for 5 categories" );
 
+}
+
+sub test_root_changes : Test(7) {
+    my $cat = Bric::Biz::Category->new(\%cat);
+    my @cats;
+
+    is($cat->site_root_category_id, 1, "Correct Root Category");
+    ok(@cats = Bric::Biz::Category->list({parent_id => 0}), "List on parent_id of 0");
+
+    # Make sure this isn't returning the master root category
+    is(scalar @cats, 1, "Check for 1 category");
+
+    is($cat->is_root_category ? 1 : 0, 0, "Check root on non-root category");
+    is($cats[0]->is_root_category ? 1: 0, 1, "Check root on root category");
+
+    is($cat->site_root_category_id, 1, "Check this category knows its root");
+    is(Bric::Biz::Category->site_root_category_id(100), 1,
+       "Check class method for default category of a site");
 }
 
 1;

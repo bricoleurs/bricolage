@@ -1,0 +1,222 @@
+%#-- Begin HTML --#
+<& '/widgets/wrappers/sharky/header.mc',
+    title => "$disp Profile",
+    context => "Admin | Profile | $disp | $crumb"
+&>
+<form method="post" action="<% $r->uri %>" name="cat_profile" onSubmit="return confirmChanges(this)">
+<%perl>;
+my $reset;
+if (defined $id) {
+    $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'category_id');
+    $reset = $id;
+} else {
+    $reset = $ARGS{reset} || time;
+    $m->comp('/widgets/profile/hidden.mc', value => $reset, name => 'reset');
+}
+
+# Output the crucial fields.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Properties", number  => 1);
+$m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $cat,
+	 readOnly => $no_edit,
+	 fieldsUsed => { uri => 1, ad_string => 1, site_id => 1,
+			 ad_string2 => 1, directory => 1 });
+
+$m->out('<input type=hidden name="site_id" value="'.$cat->get_site_id.'">');
+$m->comp('/widgets/profile/displayFormElement.mc',
+         objref   => $cat,
+         key      => 'site',
+         readOnly => 1);
+
+if (defined $id) {
+    # It's an existing category. Just show them the URI.
+
+    $m->comp('/widgets/profile/displayFormElement.mc',
+             objref => $cat,
+	     key => 'uri',
+             readOnly => 1);
+
+} else {
+    # Output a field for the directory.
+    $m->comp('/widgets/profile/displayFormElement.mc', objref => $cat,
+	     key => 'directory');
+
+    # Output a list of parent categories to choose from.
+    # Remove any that are children of the category itself.
+    my $p_id = $cat->get_parent;
+    $p_id &&= $p_id->get_id;
+
+    $m->comp('/widgets/select_object/select_object.mc',
+             object     => 'category',
+	     name       => 'parent_id',
+             field      => 'uri',
+             disp       => 'Parent Category',
+	     selected   => (defined($p_id) ? $p_id : exists $ARGS{parent_id} ? $ARGS{parent_id} : undef),
+	     sort_field => 'uri',
+             reset_key  => $reset,
+             req        => 1,
+             exclude    => $cat_excl,
+            );
+}
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Output the keywords.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Keywords", number  => 2);
+my $kws = $cat->keywords;
+$m->comp('/widgets/add_more/add_more.mc', type => 'keyword', param => \%ARGS,
+	 fields => [qw(keyword)], name => 'keyword', deleteLabelOnly => 1,
+	 reset_key => $reset, objs => $kws, incr => 4, no_edit => [qw(keyword)],
+	 num => @$kws >= 4 ? @$kws + 2 : 4, read_only => $no_edit,
+	 formName => 'cat_profile');
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Output the ad strings.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Ad Strings", number  => 3);
+$m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $cat,
+	 readOnly => $no_edit,
+	 fieldsUsed => { uri => 1, name => 1, description => 1,
+			 directory => 1, site_id => 1 });
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Get the groups listed.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+         caption => 'Group Memberships',
+         number  => 3);
+
+# Get user's groups for double-list manager.
+my $all_grp = Bric::Util::Grp->lookup({ id => $cat->INSTANCE_GROUP_ID});
+my ($left, $right) = ([], []);
+
+push @$right, { value => $all_grp->get_id, description => $all_grp->get_name}
+  unless $cat->get_id;
+
+foreach my $grp ( Bric::Util::Grp::CategorySet->list({obj => $cat}) ) {
+    push @$right, { value =>  $grp->get_id, description => $grp->get_name };
+}
+
+# Get all user groups for double-list manager.
+foreach my $grp ( Bric::Util::Grp::CategorySet->list ) {
+    push @$left, { value =>  $grp->get_id, description => $grp->get_name };
+}
+
+# Load up the double-list manager.
+$m->comp( "/widgets/doubleListManager/doubleListManager.mc",
+          rightSort     => 1,
+          leftOpts      => $left,
+          rightOpts     => $right,
+          formName      => 'cat_profile',
+          leftName      => 'rem_grp',
+          rightName     => 'add_grp',
+          readOnlyRight => [$cat->INSTANCE_GROUP_ID],
+          leftCaption   => 'Available Groups',
+          showLeftList  => $no_edit || 1 ,
+          rightCaption  => $no_edit ||'Current Groups',
+          readOnly      => $no_edit
+        );
+
+$m->comp('/widgets/profile/checkbox.mc',
+         name        => 'grp_cascade',
+         label_after => 1,
+         value       => 1,
+         disp        => "<span class=burgandyLabel>" .
+                        $lang->maketext('Cascade into Subcategories') .
+                        "</span>"
+        );
+$m->out("<br />\n");
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Add a checkbox to cascade delete.
+unless ($no_edit || $no_del) {
+    $m->comp('/widgets/profile/checkbox.mc', name => 'delete_cascade',
+	     label_after => 1, value => 1,
+             disp => "<span class=burgandyLabel>".$lang->maketext('Delete this Category and All its Subcategories')."</span>");
+    $m->out("<br />\n");
+}
+# Add the buttons.
+$m->comp('/widgets/profile/formButtons.mc', type => $type, section => $section,
+	 no_del => $no_del, no_save => $no_edit);
+
+</%perl>
+</form>
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+%#-- End HTML --#
+
+
+%#-- Once Section --#
+<%once>;
+my $class = 'Bric::Biz::Category';
+my $section = 'admin';
+my $type = 'category';
+my $widget = 'profile';
+my $disp = get_disp_name($type);
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+
+%#-- Init Section --#
+<%init>;
+$id ||= $ARGS{category_id} unless defined $id;
+# Instantiate an object.
+my $cat = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id = $cat->get_id unless defined $id;
+
+# Make sure to set the site ID if we have it.
+$cat->set_site_id($ARGS{site_id}) if $ARGS{site_id};
+
+# This will fail if for some bad reason site_id has not been set on $cat
+my $root_id = $cat->site_root_category_id;
+
+# Check authorization.
+chk_authz($cat, $id ? READ : CREATE);
+my $no_edit = !chk_authz($cat, ($id ? EDIT : CREATE), 1);
+my $no_del  = ! defined $id || $no_edit || $id == $root_id;
+
+# Roll in any changes to the category object if we're just adding keywords.
+if ($ARGS{'add_more|keyword|add_cb'}) {
+    foreach my $meth ($cat->my_meths(1)) {
+	$meth->{set_meth}->($cat, @{$meth->{set_args}}, $ARGS{$meth->{name}})
+	  if defined $meth->{set_meth};
+    }
+}
+
+# Get the name for the breadcrumb trail.
+my $crumb = $cat->get_name;
+$crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
+
+my $cat_excl = sub { my $cx = $c->get_user_cx(get_user_id);
+                     return 1 if grep($_[0] == $_->get_id, $cat->children);
+                     return 1 if defined $id and ($_[0] == $id);
+                     return 1 if $cx and $_[0]->get_site_id != $cx;
+                     return 0;
+                 };
+</%init>
+
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+/admin/profile/category/dhandler - Interface for managing categories.
+
+=head1 VERSION
+
+$Revision: 1.2 $
+
+=head1 DATE
+
+$Date: 2003-03-12 08:59:51 $
+
+=head1 DESCRIPTION
+
+This element handles the display for editing categories.
+
+=cut
+
+</%doc>

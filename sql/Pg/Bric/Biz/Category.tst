@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
 -- Test values.
 --
@@ -14,28 +14,32 @@ DELETE FROM category_member WHERE id IN (702, 703, 704);
 -- -----------------------------------------------------------------------------
 -- Science
 
-INSERT INTO category (id,directory,uri,parent_id, name, description, asset_grp_id) 
-VALUES (1, 'science', '/science', 0, 'Science', 'All things sciencey', 53);
+INSERT INTO category (id, directory, uri, site__id, parent_id, name,
+                      description, asset_grp_id)
+VALUES (1, 'science', '/science', 100, 0, 'Science', 'All things sciencey', 53);
 
 -- -----------------------------------------------------------------------------
 -- Material
 
-INSERT INTO category (id,directory,uri,parent_id, name, description, asset_grp_id) 
-VALUES (2, 'material', '/science/material', 1, 'Material',
+INSERT INTO category (id, directory, uri, site__id, parent_id, name,
+                      description, asset_grp_id)
+VALUES (2, 'material', '/science/material', 100, 1, 'Material',
         'The study of new materials', 54);
 
 -- -----------------------------------------------------------------------------
 -- Physical
 
-INSERT INTO category (id,directory,uri,parent_id, name, description, asset_grp_id) 
-VALUES (3, 'physical', '/science/physical', 1, 'Physical',
+INSERT INTO category (id, directory, uri, site__id, parent_id, name,
+                      description, asset_grp_id)
+VALUES (3, 'physical', '/science/physical', 100, 1, 'Physical',
         'General macro level science', 55);
 
 -- -----------------------------------------------------------------------------
 -- Biological
 
-INSERT INTO category (id, directory, uri,parent_id, name, description, asset_grp_id)
-VALUES (4, 'biological', '/science/biological', 1, 'Biological',
+INSERT INTO category (id, directory, uri, site__id, parent_id, name,
+                      description, asset_grp_id)
+VALUES (4, 'biological', '/science/biological', 100, 1, 'Biological',
         'Bugs, bats and bees.', 56);
 
 -- -----------------------------------------------------------------------------

@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-03-12 04:03:38 $
+$Date: 2003-03-12 09:00:48 $
 
 =head1 SYNOPSIS
 
@@ -700,6 +700,10 @@ use constant key => 'pt_pt';
       'Clone' => 'Clone',
       'Cascade into Subcategories' => 'Cascade into Subcategories',
       'No help available for this topic.' => 'No help available for this topic.',
+      'All Sites' => 'All Sites',
+      'Value of [_1] cannot be empty' => 'Value of [_1] cannot be empty',
+      'A site with the [_1] '[_2]' already exists' =>
+        'A site with the [_1] '[_2]' already exists'
   );
 
 =cut

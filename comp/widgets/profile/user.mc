@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:37 $
+$Date: 2003-03-12 08:59:53 $
 
 =head1 SYNOPSIS
 
@@ -21,6 +21,8 @@ $Date: 2003-02-12 15:53:37 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the User Profile page.
+
+=cut
 
 </%doc>
 <%once>;
@@ -164,9 +166,11 @@ foreach my $grp ( map { Bric::Util::Grp->lookup({ id => $_ }) }
 
 # Note that a user has been updated to force all users logged into the system
 # to reload their user objects from the database. Also note that all workflows
-# must be reloaded in the sideNav, as permissions may have changed.
+# and sites must be reloaded in the sideNav and header, as permissions may
+# have changed.
 $c->set_lmu_time;
 $c->set('__WORKFLOWS__', 0);
+$c->set('__SITES__', 0);
 
 # Redirect. Use redirect_onload because the User profile has been using SSL.
 get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')

@@ -33,9 +33,9 @@ sub table { 'formatting' }
 sub new_args {
     my $self = shift;
     ( output_channel__id => 1,
-      user__id   => $self->user_id,
-      category_id => 0,
-      name => 'foodoo'
+      user__id           => $self->user_id,
+      category_id        => 1,
+      name               => 'foodoo'
     )
 }
 
@@ -45,7 +45,8 @@ sub new_args {
 sub make_oc {
     my $self = shift;
     my $time = time;
-    my $oc = Bric::Biz::OutputChannel->new({ name => "_test_$time"});
+    my $oc = Bric::Biz::OutputChannel->new({ name    => "_test_$time",
+                                             site_id => 100 });
     $oc->save;
     my $id = $oc->get_id;
     $self->add_del_ids($id, 'output_channel');
@@ -295,7 +296,7 @@ sub test_select_a_default_objs: Test(12) {
 }
 
 
-sub test_select_b_new_objs: Test(43) {
+sub test_select_b_new_objs: Test(32) {
     my $self = shift;
 
     # let's grab existing 'All' group info
@@ -310,7 +311,7 @@ sub test_select_b_new_objs: Test(43) {
         my $time = time;
         my ($cat, $desk, $workflow, $grp);
         # create categories
-        $cat = Bric::Biz::Category->new({ 
+        $cat = Bric::Biz::Category->new({ site_id => 100,
                                           name => "_test_$time.$i", 
                                           description => '',
                                           directory => "_test_$time.$i",
@@ -402,6 +403,7 @@ sub test_select_b_new_objs: Test(43) {
     $time = time;
     $element = Bric::Biz::AssetType->new(
         {
+             key_name    => "_test_$time",
              name        => "_test_$time",
              burner      => 1,
              description => 'this is a test',
@@ -438,6 +440,7 @@ sub test_select_b_new_objs: Test(43) {
     $time = time;
     $element = Bric::Biz::AssetType->new(
         {
+             key_name    => "_test_$time.1",
              name        => "_test_$time.1",
              burner      => 1,
              description => 'this is a test',
@@ -480,6 +483,7 @@ sub test_select_b_new_objs: Test(43) {
     $time = time;
     $element = Bric::Biz::AssetType->new(
         {
+             key_name    => "_test_$time.2",
              name        => "_test_$time.2",
              burner      => 1,
              description => 'this is a test',
@@ -538,6 +542,7 @@ sub test_select_b_new_objs: Test(43) {
     $time = time;
     $element = Bric::Biz::AssetType->new(
         {
+             key_name    => "_test_$time.3",
              name        => "_test_$time.3",
              burner      => 1,
              description => 'this is a test',
@@ -586,6 +591,7 @@ sub test_select_b_new_objs: Test(43) {
     $time = time;
     $element = Bric::Biz::AssetType->new(
         {
+             key_name    => "_test_$time.4",
              name        => "_test_$time.4",
              burner      => 1,
              description => 'this is a test',
@@ -703,7 +709,6 @@ sub test_select_b_new_objs: Test(43) {
     # test Offset
     ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'id', Offset => 1 }), 'try setting an offset of 2 for a search that just returned 3 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
-    
 }
 
 1;
