@@ -52,6 +52,7 @@ elsif ($field eq "$widget|checkin_cb") {
 }
 
 elsif ($field eq "$widget|checkin_deploy_cb") {
+    return unless $check_syntax->($widget);
     my $fa = $checkin->($widget, $param);
     $param->{'desk|formatting_pub_ids'} = $fa->get_id;
 

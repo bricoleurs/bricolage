@@ -67,6 +67,11 @@ proper file is distributed to the proper destinations. [David]
 Assets are now properly removed from workflow when they're deactivated
 (deleted in the UI). [David]
 
+=item *
+
+Template syntax is now properly checked when using the "Checkin/Deploy"
+button. [JoE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.4.0
