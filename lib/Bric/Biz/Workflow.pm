@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:43 $
+$Date: 2003-08-14 23:24:10 $
 
 =head1 SYNOPSIS
 
@@ -1274,7 +1274,7 @@ sub _insert_workflow {
     my $ins = prepare_c(qq{
         INSERT INTO $table (id, ${\join(', ', @cols)})
         VALUES ($nextval, ${\join(', ', ('?') x @cols)})
-    });
+    }, undef);
 
     execute($ins, $self->_get(@props));
 
@@ -1291,7 +1291,7 @@ sub _update_workflow {
     my $self = shift;
     my $sql = "UPDATE $table SET " .
       join(',', map { "$_ = ?" } @cols) . " WHERE id = ?";
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(@props), $self->get_id);
     return 1;
 }
@@ -1318,7 +1318,7 @@ NONE
 
 sub _remove_workflow {
     my $self = shift;
-    my $sth = prepare_c("DELETE FROM $table WHERE id = ?");
+    my $sth = prepare_c("DELETE FROM $table WHERE id = ?", undef);
     execute($sth, $self->get_id);
 
     return $self;
@@ -1420,7 +1420,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

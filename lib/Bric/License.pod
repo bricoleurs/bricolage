@@ -211,6 +211,10 @@ Friends who have spotted bugs include:
 
 =item Radu Greab
 
+=item Rudy Lippan
+
+=item Perrin Harkins
+
 =back
 
 Bricolage's translation team:

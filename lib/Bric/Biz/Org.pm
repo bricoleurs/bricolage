@@ -7,15 +7,15 @@ Bric::Biz::Org - Bricolage Interface to Organizations
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:43 $
+$Date: 2003-08-14 23:24:10 $
 
 =head1 SYNOPSIS
 
@@ -1154,7 +1154,7 @@ sub save {
             UPDATE org
             SET   @COLS = ?
             WHERE  id = ?
-        }, undef, DEBUG);
+        }, undef);
         execute($upd, $self->_get(@PROPS, 'id'));
         unless ($self->_get('_active')) {
             # Deactivate all group memberships if we've deactivated the org.
@@ -1174,7 +1174,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO org (@COLS)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@PROPS[1..$#PROPS]));
         # Now grab the ID.
@@ -1287,7 +1287,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

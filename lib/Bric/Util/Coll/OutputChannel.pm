@@ -8,15 +8,15 @@ Channels.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -210,19 +210,19 @@ sub save {
                 DELETE FROM story__output_channel
                 WHERE  story_instance__id = ?
                        AND output_channel__id = ?
-            });
+            }, undef);
         } elsif ($type eq 'media') {
             $del = prepare_c(qq{
                 DELETE FROM media__output_channel
                 WHERE  media_instance__id = ?
                        AND output_channel__id = ?
-            });
+            }, undef);
         } elsif ($type eq 'server_type') {
             $del = prepare_c(qq{
                 DELETE FROM server_type__output_channel
                 WHERE  server_type__id = ?
                        AND output_channel__id = ?
-            });
+            }, undef);
         }
         execute($del, $id, $_->get_id) for values %$del_objs;
         %$del_objs = ();
@@ -235,19 +235,19 @@ sub save {
                 INSERT INTO story__output_channel
                             (story_instance__id, output_channel__id)
                 VALUES (?, ?)
-            });
+            }, undef);
         } elsif ($type eq 'media') {
             $ins = prepare_c(qq{
                 INSERT INTO media__output_channel
                             (media_instance__id, output_channel__id)
                 VALUES (?, ?)
-            });
+            }, undef);
         } elsif ($type eq 'server_type') {
             $ins = prepare_c(qq{
                 INSERT INTO server_type__output_channel
                             (server_type__id, output_channel__id)
                 VALUES (?, ?)
-            });
+            }, undef);
         } else {
             throw_dp(error => "Invalid key '$type'");
         }

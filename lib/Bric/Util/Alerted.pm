@@ -6,16 +6,16 @@ Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -620,7 +620,7 @@ sub ack_by_id {
         UPDATE alerted
         SET    ack_time = ?
         WHERE  id = ?
-    });
+    }, undef);
 
     # Acknowledge each Bric::Util::Alerted object by its ID.
     execute($upd, $date, $_) for @_;
@@ -1172,7 +1172,7 @@ $get_em = sub {
                AND v.contact__id = c.id
                $where
         ORDER BY a.id
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

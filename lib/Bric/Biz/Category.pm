@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$Revision: 1.51 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+our $VERSION = (qw$Revision: 1.51 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:43 $
+$Date: 2003-08-14 23:24:10 $
 
 =head1 SYNOPSIS
 
@@ -1571,7 +1571,7 @@ sub _do_list {
         FROM   $tables
         WHERE  $wheres
         $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return wantarray ? @{col_aref($sel, @params)} : col_aref($sel, @params)
@@ -1687,7 +1687,7 @@ sub _update_category {
         UPDATE $table
         SET    ${\join(',', map {"$_=?"} @cols)}
         WHERE  id = ?
-    });
+    }, undef);
     my $new_uri;
 
     if ($self->_get('_update_uri') and not $self->is_root_category) {
@@ -1728,7 +1728,7 @@ sub _insert_category {
     my $sql = "INSERT INTO $table (id,".join(',',@cols).") ".
               "VALUES ($nextval,".join(',', ('?') x @cols).')';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
 
     # Make sure we can use this code to insert new root categories for newly
     # created sites.  These root categories will set their own uri.

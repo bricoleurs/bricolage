@@ -6,16 +6,16 @@ Bric::Biz::Org::Source - Manages content sources.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:44 $
+$Date: 2003-08-14 23:24:11 $
 
 =head1 SYNOPSIS
 
@@ -1104,7 +1104,7 @@ sub save {
             UPDATE source
             SET    @SCOLS = ?
             WHERE  id = ?
-        }, undef, DEBUG);
+        }, undef);
         execute($upd, $self->_get(@PROPS, 'src_id'));
         unless ($act) {
             # Deactivate all group memberships if we've deactivated the source.
@@ -1130,7 +1130,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO source (@SCOLS)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@PROPS[1..$#PROPS]));
         # Now grab the ID.
@@ -1251,7 +1251,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

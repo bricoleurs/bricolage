@@ -7,16 +7,16 @@ distributed.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-14 23:24:11 $
 
 =head1 SYNOPSIS
 
@@ -1403,7 +1403,7 @@ sub save {
         my $del = prepare_c(qq{
             DELETE FROM server
             WHERE  id = ?
-        });
+        }, undef);
         execute($del, $id);
     } elsif (defined $id) {
         # Existing record. Update it.
@@ -1412,7 +1412,7 @@ sub save {
             UPDATE server
             SET    @cols = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(@props), $id);
     } else {
         # It's a new server. Insert it.
@@ -1421,7 +1421,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO server (@cols)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
 
         my @ps = $self->_get(@props[1..$#props]);
@@ -1530,7 +1530,7 @@ $get_em = sub {
         SELECT @$qry_cols
         FROM   server $where
         ORDER BY server_type__id, host_name
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

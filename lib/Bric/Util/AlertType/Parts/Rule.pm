@@ -6,16 +6,16 @@ Bric::Util::AlertType::Parts::Rule - Interface to AlertType Rules.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -993,7 +993,7 @@ sub save {
         my $del = prepare_c(qq{
             DELETE FROM alert_type_rule
             WHERE  id = ?
-        });
+        }, undef);
         execute($del, $id);
         $self->_set(['id'], [undef]);
     } elsif (defined $id) {
@@ -1003,7 +1003,7 @@ sub save {
             UPDATE alert_type_rule
             SET   @cols = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(@props), $id);
     } else {
         # It's a new rule. Insert it.
@@ -1012,7 +1012,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO alert_type_rule (@cols)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@props[1..$#props]));
         # Now grab the ID.
@@ -1115,7 +1115,7 @@ $get_em = sub {
         SELECT @$qry_cols
         FROM   alert_type_rule
         $where
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

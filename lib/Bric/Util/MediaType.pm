@@ -6,16 +6,16 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:45 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -1073,7 +1073,7 @@ sub save {
             UPDATE media_type
             SET   @mcols = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(@mprops), $id);
     } else {
         # It's a new media type. Insert it.
@@ -1082,7 +1082,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO media_type (@mcols)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@mprops[1..$#mprops]));
         # Now grab the ID.
@@ -1102,7 +1102,7 @@ sub save {
         my $del = prepare_c(qq{
             DELETE FROM media_type_ext
             WHERE extension = ?
-        }, undef, DEBUG);
+        }, undef);
         foreach my $e (keys %$old) {
             execute($del, $e);
             delete $exts_cache->{$e};
@@ -1117,7 +1117,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO media_type_ext (@ecols)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
 
         my $name = $self->_get('name');
         foreach my $e (keys %$new) {
@@ -1238,7 +1238,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -1315,7 +1315,7 @@ $get_ext_data = sub {
         WHERE  id in ( SELECT media_type__id
                        FROM   media_type_ext
                        WHERE  extension = ? )
-    });
+    }, undef);
     row_aref($sel, $ext);
 };
 

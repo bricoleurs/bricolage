@@ -7,15 +7,15 @@ Bric::Biz::Org::Parts::Addr - Organizational Addresses
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:34 $
+$Date: 2003-08-14 23:24:11 $
 
 =head1 SYNOPSIS
 
@@ -526,7 +526,7 @@ sub list_parts {
         FROM   addr_part_type
         WHERE  active = 1
         ORDER BY id
-    }, undef, DEBUG);
+    }, undef);
     return wantarray ? @{ col_aref($sel) } : col_aref($sel);
 }
 
@@ -565,12 +565,12 @@ sub add_parts {
         UPDATE addr_part_type
         SET    active = ?
         WHERE  name = ?
-    }, undef, DEBUG);
+    }, undef);
 
     my $ins = prepare_c(qq{
         INSERT INTO addr_part_type (id, name, active)
         VALUES (${ \next_key('addr_part_type') }, ?, 1)
-    }, undef, DEBUG);
+    }, undef);
 
     foreach my $part (@_) {
         execute($ins, $part) if execute($upd, 1, $part) eq '0E0';
@@ -613,7 +613,7 @@ sub del_parts {
         UPDATE addr_part_type
         SET    active = ?
         WHERE  name = ?
-    }, undef, DEBUG);
+    }, undef);
 
     foreach my $line (@_) {
         # Throw an error here!
@@ -1538,7 +1538,7 @@ $get_em = sub {
                AND t.id = p.addr_part_type__id
                AND $where $subsel
         ORDER BY a.id, p.id
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -1725,7 +1725,7 @@ $save_main = sub {
             UPDATE addr
             SET    @props = ?
             WHERE  id = ?
-        }, undef, DEBUG);
+        }, undef);
         execute($upd, $self->_get(@props, 'id'));
     } else {
         # It's a new record. Insert it!
@@ -1734,7 +1734,7 @@ $save_main = sub {
         my $ins = prepare_c(qq{
             INSERT INTO addr (@props)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@props[1..$#props]));
         # Now grab the ID.
@@ -1927,7 +1927,7 @@ $part_sql = sub {
                 FROM   addr_part_type
                 WHERE  name = ?),
                 ?)
-    }, undef, DEBUG);
+    }, undef);
 
     # Prepare an update query.
     local $" = ' = ?, '; # Simple way to create placeholders.
@@ -1936,13 +1936,13 @@ $part_sql = sub {
         SET    addr__id = ?,
                value = ?
         WHERE  id = ?
-    }, undef, DEBUG);
+    }, undef);
 
     # Prepare a delete query.
     my $del = prepare_c(qq{
         DELETE FROM addr_part
         WHERE  id = ?
-    });
+    }, undef);
     return ($ins, $upd, $del);
 };
 

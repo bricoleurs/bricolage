@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -516,7 +516,7 @@ sub get_acl {
                AND m.id = mo.member__id
                AND m.active = 1
                AND mo.object_id = ?
-    }, undef, DEBUG);
+    }, undef);
 
     execute($sel, ref $user ? $user->get_id : $user);
     my ($gid, $priv, $mtime, $acl);
@@ -575,7 +575,7 @@ sub get_acl_mtime {
                AND m.id = mo.member__id
                AND m.active = 1
                AND mo.object_id = ?
-    }, undef, DEBUG);
+    }, undef);
     return row_aref($sel, ref $user ? $user->get_id : $user)->[0];
 }
 
@@ -1250,11 +1250,11 @@ sub save {
         my $del1 = prepare_c(qq{
             DELETE FROM grp_priv__grp_member
             WHERE  grp_priv__id = ?
-        });
+        }, undef);
         my $del2 = prepare_c(qq{
             DELETE FROM grp_priv
             WHERE  id = ?
-        });
+        }, undef);
 
         # Really $del2 should cover $del1 via cascading delete, but I'm playing
         # it safe.
@@ -1268,7 +1268,7 @@ sub save {
             SET    value = ?,
                    mtime = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get('value'), $time, $id);
     } else {
         # It's a new privilege. Insert it.
@@ -1277,7 +1277,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO grp_priv (@priv_cols)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@priv_props[1..$#priv_props]));
         # Now grab the ID.
@@ -1288,7 +1288,7 @@ sub save {
         my $ins2 = prepare_c(qq{
             INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
             VALUES (?, ?)
-        });
+        }, undef);
         execute($ins2, $id, $self->_get('obj_grp_id'));
     }
     $self->SUPER::save;
@@ -1383,7 +1383,7 @@ $get_em = sub {
         FROM   grp_priv p, grp_priv__grp_member g
         WHERE  p.id = g.grp_priv__id
                $where
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

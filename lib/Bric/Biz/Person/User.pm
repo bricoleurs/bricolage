@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:44 $
+$Date: 2003-08-14 23:24:11 $
 
 =head1 SYNOPSIS
 
@@ -504,7 +504,7 @@ sub login_avail {
         FROM   usr
         WHERE  LOWER(login) = ?
                AND active = 1
-    });
+    }, undef);
 
     return 1 unless @{ row_aref($sel, lc $login) || [] };
     return;
@@ -1306,7 +1306,7 @@ sub save {
             UPDATE usr
             SET    @ucols = ?
             WHERE  id = ?
-        }, undef, DEBUG);
+        }, undef);
         execute($upd, $self->_get(@uprops, 'id'));
         unless ($act) {
             # Deactivate all group memberships if we've deactivated the user.
@@ -1339,7 +1339,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO usr (@ucols)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
 
         execute($ins, $self->_get(@uprops));
 
@@ -1443,7 +1443,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

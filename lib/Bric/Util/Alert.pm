@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -296,7 +296,7 @@ sub new {
     my $sth = prepare_c(qq{
         INSERT INTO alert (@cols)
         VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
     execute($sth, @{$init}{@props[1..$#props]});
     # Grab its new ID.
     $init->{id} = last_key('alert');
@@ -1237,7 +1237,7 @@ $get_em = sub {
         FROM   alert
         $where
         ORDER BY timestamp
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -1319,14 +1319,14 @@ $send_em = sub {
     my $ins_alerted = prepare_c(qq{
         INSERT INTO alerted (id, usr__id, alert__id)
         VALUES (${\next_key('alerted')}, ?, ?)
-    }, undef, DEBUG);
+    }, undef);
 
     # Use this sth to insert each contact by which a user was alerted.
     my $insert_by = prepare_c(qq{
         INSERT INTO alerted__contact_value
                (alerted__id, contact__id, contact_value__value, sent_time)
         VALUES (?, ?, ?, ?)
-    }, undef, DEBUG);
+    }, undef);
 
     my %alerted;
     my %ctypes = Bric::Biz::Contact->href_alertable_type_ids;

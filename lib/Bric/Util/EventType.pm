@@ -6,16 +6,16 @@ Bric::Util::EventType - Interface to Types of Events
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -373,7 +373,7 @@ sub list_classes {
                    FROM   event_type
                )
         ORDER BY disp_name
-    });
+    }, undef);
 
     execute($sel);
     my ($id, $dis, @ret);
@@ -1063,7 +1063,7 @@ $get_em = sub {
                class c
         WHERE  c.id = t.class__id
                $where
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:44 $
+$Date: 2003-08-14 23:24:11 $
 
 =head1 SYNOPSIS
 
@@ -1497,7 +1497,7 @@ sub save {
         my $del = prepare_c(qq{
             DELETE FROM job
             WHERE  id = ?
-        });
+        },undef);
         execute($del, $id);
     } elsif (defined $id) {
         # Existing record. Update it.
@@ -1506,7 +1506,7 @@ sub save {
             UPDATE job
             SET    @COLS = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(@PROPS), $id);
     } else {
         # It's a new job. Insert it.
@@ -1515,7 +1515,7 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO job (@COLS)
             VALUES ($fields)
-        }, undef, DEBUG);
+        }, undef);
 
         # Don't try to set ID - it will fail!
         my @ps = $self->_get(@PROPS[1..$#PROPS]);
@@ -1810,7 +1810,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -1951,7 +1951,7 @@ $set_pend = sub {
                tries = ?
         WHERE  id = ?
                AND pending <> ?
-    });
+    }, undef);
     my $ret = execute($upd, $value, $exec, $id, $value);
     return if $ret eq '0E0';
     $self->_set([qw(_pending tries)], [$value, $exec]);

@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:44 $
+$Date: 2003-08-14 23:24:11 $
 
 
 =head1 SYNOPSIS
@@ -1261,7 +1261,7 @@ sub _insert_desk {
     my $ins = prepare_c(qq{
         INSERT INTO $TABLE (id, ${\join(', ', @COLS)})
         VALUES ($nextval, ${\join(', ', ('?') x @COLS)})
-    });
+    }, undef);
 
     execute($ins, $self->_get(@PROPS));
 
@@ -1301,7 +1301,7 @@ sub _update_desk {
         UPDATE $TABLE
         SET    ${\join(', ', map {"$_ = ?"} @COLS)}
         WHERE  id = ?
-    });
+    }, undef);
 
     execute($upd, $self->_get(@PROPS, 'id'));
     return $self;
@@ -1329,7 +1329,7 @@ NONE
 
 sub _remove_desk {
     my $self = shift;
-    my $sth = prepare_c("DELETE FROM $TABLE WHERE id = ?");
+    my $sth = prepare_c("DELETE FROM $TABLE WHERE id = ?", undef);
     execute($sth, $self->_get('id'));
     return $self;
 }
@@ -1423,7 +1423,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

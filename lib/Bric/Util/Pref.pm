@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:45 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -923,7 +923,7 @@ sub get_val_name {
         FROM   pref_opt
         WHERE  pref__id = ?
                AND value = ?
-    });
+    }, undef);
     $name = col_aref($sel, $id, $value)->[0];
     $self->_set([qw(val_name _val_ch)], [$name, undef]);
     return $name;
@@ -1101,7 +1101,7 @@ sub save {
         UPDATE pref
         SET    value = ?
         WHERE  id = ?
-    });
+    }, undef);
     # Update the database.
     execute($upd, $value, $id);
 
@@ -1111,7 +1111,7 @@ sub save {
        SET    value = ?,
               description = ?
        WHERE  pref__id = ?
-    } );
+    }, undef);
     execute( $upd2, $value, $value, $id );
   }
     # Update the cache.
@@ -1220,7 +1220,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -1312,7 +1312,7 @@ $get_opts = sub {
         SELECT value, description
         FROM   pref_opt
         WHERE  pref__id = ?
-    }, undef, DEBUG);
+    }, undef);
     execute($sel, $id);
     my ($val, $desc);
     bind_columns($sel, \$val, \$desc);
@@ -1379,7 +1379,7 @@ $load_cache = sub {
     my $sel = prepare_ca(qq{
         SELECT name, value
         FROM   pref
-    }, undef, DEBUG);
+    }, undef);
     execute($sel);
 
     my ($c, $name, $val);

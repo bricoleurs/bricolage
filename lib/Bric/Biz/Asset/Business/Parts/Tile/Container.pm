@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-12 20:10:43 $
+$Date: 2003-08-14 23:24:11 $
 
 =head1 SYNOPSIS
 
@@ -1364,7 +1364,7 @@ sub _do_list {
         $sql .= ' WHERE ';
         $sql .= join ' AND ', @where;
     }
-    my $select = prepare_ca( $sql, undef, DEBUG);
+    my $select = prepare_ca( $sql, undef);
 
     if ($ids) {
         my $return = col_aref($select,@where_param);
@@ -1414,7 +1414,7 @@ sub _do_delete {
     $sql .= ($self->_get('object_type') eq 'media') ? M_TABLE : S_TABLE;
     $sql .= ' WHERE id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('id'));
     return $self;
 }
@@ -1522,7 +1522,7 @@ sub _do_insert {
       "VALUES (${\next_key($table)}, " .
       join(',', ('?') x COLS) . ") ";
 
-    my $insert = prepare_c($sql, undef, DEBUG);
+    my $insert = prepare_c($sql, undef);
     execute($insert, ($self->_get( FIELDS )) ); 
     $self->_set( { 'id' => last_key($table) });
     return $self;
@@ -1561,7 +1561,7 @@ sub _do_update {
       " SET " . join(', ', map { "$_=?" } COLS) .
       ' WHERE id=? ';
 
-    my $update = prepare_c($sql, undef, DEBUG);
+    my $update = prepare_c($sql, undef);
     execute($update, ($self->_get( FIELDS )), $self->_get('id') );
     return $self;
 }

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:43 $
+$Date: 2003-08-14 23:24:10 $
 
 =head1 SYNOPSIS
 
@@ -272,7 +272,7 @@ use constant PARAM_WHERE_MAP =>
       site_id               => 'f.site__id = ?',
       no_site_id            => 'f.site__id <> ?',
       workflow__id          => 'f.workflow__id = ?',
-      _null_workflow__id    => 'f.workflow__id IS NULL',
+      _null_workflow_id     => 'f.workflow__id IS NULL',
       element__id           => 'f.element__id = ?',
       output_channel__id    => 'f.output_channel__id = ?',
       priority              => 'f.priority = ?',
@@ -1953,7 +1953,7 @@ sub _insert_formatting {
         my $sql = 'INSERT INTO '. TABLE .' (id,'.join(',', COLS).') '.
                   "VALUES (${\next_key(TABLE)},".join(',', ('?') x COLS).')';
 
-        my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef);
         execute($sth, $self->_get(FIELDS));
 
         $self->_set(['id'], [last_key(TABLE)]);
@@ -1992,7 +1992,7 @@ sub _insert_instance {
                                 "VALUES (${\next_key(VERSION_TABLE)}, " . 
                                         join(',',('?') x VERSION_COLS) . ')';
 
-        my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef);
         execute($sth, $self->_get(VERSION_FIELDS));
 
         $self->_set(['version_id'], [last_key(VERSION_TABLE)]);
@@ -2027,7 +2027,7 @@ sub _update_formatting {
                   ' SET ' . join(', ', map {"$_=?" } COLS) .
                   ' WHERE id=? ';
 
-        my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef);
 
         execute($sth, $self->_get(FIELDS), $self->_get('id'));
 
@@ -2061,7 +2061,7 @@ sub _update_instance {
                                 ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
                                 ' WHERE id=? ';
 
-        my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef);
 
         execute($sth, $self->_get(VERSION_FIELDS), $self->get_version_id);
 
@@ -2093,7 +2093,7 @@ sub _delete_formatting {
 
         my $sql = 'DELETE FROM ' . TABLE . ' WHERE id=?';
 
-        my $sth = prepare_c($sql, undef, DEBUG);
+        my $sth = prepare_c($sql, undef);
 
         execute($sth, $self->get_id);
 
@@ -2123,7 +2123,7 @@ NONE
 sub _delete_instance {
     my ($self) = @_;
     my $sql = 'DELETE FROM ' . VERSION_TABLE . ' WHERE id=? ';
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'));
     return $self;
 }

@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:33 $
+$Date: 2003-08-14 23:24:10 $
 
 =head1 SYNOPSIS
 
@@ -339,7 +339,7 @@ sub list_ids {
     } else {
         $sql = build_query($cols, $tables, $where, $order);
     }
-    my $select = prepare_ca($sql, undef, DEBUG);
+    my $select = prepare_ca($sql, undef);
     my $return = col_aref($select, @$args);
     return unless $return->[0];
     return wantarray ? @{ $return } : $return;

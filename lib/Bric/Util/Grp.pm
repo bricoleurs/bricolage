@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:45 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -618,7 +618,7 @@ B<Notes:> NONE.
                            SELECT DISTINCT class__id
                            FROM   grp
                        )
-            });
+            }, undef);
             execute($sel);
             my ($key, $name, $pkg_name);
             bind_columns($sel, \$key, \$name, \$pkg_name);
@@ -2582,13 +2582,13 @@ sub _get_all_parent_ids {
     my ($self, $parent, $child) = @_;
     my @ids;
 
-    my $sth = prepare(q{
+    my $sth = prepare_c(q{
         SELECT p.parent_id, p.id
         FROM   grp p, grp c
         WHERE  c.parent_id = ?
                AND c.id = ?
                AND p.id = c.parent_id
-    }, undef, DEBUG);
+    }, undef);
 
     execute($sth, $parent, $child);
     while (my $row = fetch($sth)) {
@@ -2624,7 +2624,7 @@ sub _do_insert {
       "VALUES (${\next_key(TABLE)}," .
       join(',',('?') x COLS) .") ";
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get( FIELDS ) );
 
     # Now get the id that was created
@@ -2655,7 +2655,7 @@ sub _do_update {
       ' SET ' . join(', ', map { "$_=?" } COLS) .
       ' WHERE id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth,($self->_get( FIELDS )), $self->_get('id'));
     return $self;
 }
@@ -2926,7 +2926,7 @@ sub _do_list {
         FROM   $tables
         WHERE  $where
         ORDER BY $ord $direction
-    }, undef , DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return wantarray ? @{col_aref($select, @params)} :

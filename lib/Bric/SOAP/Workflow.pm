@@ -47,15 +47,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -165,8 +165,9 @@ sub publish {
             unless exists $allowed{$_};
     }
 
-    my $pub_date = local_date(xs_date_to_db_date($args->{publish_date}),
-                              ISO_8601_FORMAT) || strfdate();
+    my $pub_date = exists $args->{publish_date}
+      ? local_date(xs_date_to_db_date($args->{publish_date}), ISO_8601_FORMAT)
+      : strfdate();
 
     my $preview = (exists $args->{to_preview} and $args->{to_preview}) ? 1 : 0;
     throw_ap(error => __PACKAGE__ . "::publish : cannot publish to_preview with "

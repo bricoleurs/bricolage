@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 15:33:23 $
+$Date: 2003-08-14 23:24:11 $
 
 =head1 SYNOPSIS
 
@@ -1310,7 +1310,7 @@ sub save {
         my $del = prepare_c(qq{
             DELETE FROM action
             WHERE  id = ?
-        });
+        }, undef);
         execute($del, $id);
         &$reorder($st_id);
     } elsif (defined $id) {
@@ -1321,7 +1321,7 @@ sub save {
                    active = ?,
                    action_type__id = (SELECT id FROM action_type WHERE name = ?)
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(qw(server_type_id _active type)), $id);
         # Reorder the actions, if this one has changed.
         &$reorder($st_id, $old_ord, $ord) if $old_ord && $old_ord != $ord;
@@ -1333,7 +1333,8 @@ sub save {
         my $ins = prepare_c(qq{
             INSERT INTO action (id, ord, server_type__id, active, action_type__id)
             VALUES ($next, ?, ?, ?, (SELECT id FROM action_type WHERE name = ?))
-        }, undef, DEBUG);
+        }, undef);
+
         # Don't try to set ID - it will fail!
         execute($ins, $next_ord, $self->_get(qw(server_type_id _active type)));
         # Now grab the ID.
@@ -1588,7 +1589,7 @@ $get_em = sub {
                AND t.id = am.action_type__id
                AND am.media_type__id = m.id $where
         ORDER BY a.server_type__id, a.ord
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -1753,7 +1754,7 @@ $reorder = sub {
         UPDATE action
         SET    ord = ?
         WHERE  id = ?
-    });
+    }, undef);
 
     my $i = 0;
     begin();

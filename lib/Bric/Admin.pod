@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.115 $
+$Revision: 1.116 $
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:42 $
+$Date: 2003-08-14 23:24:10 $
 
 =head1 DESCRIPTION
 
@@ -85,7 +85,7 @@ START MODULE LIST
 
 =item Devel::Symdump
 
-=item DBI 1.15
+=item DBI 1.18
 
 =item Error
 

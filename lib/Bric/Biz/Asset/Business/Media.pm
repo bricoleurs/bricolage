@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.54 $ )[-1];
+our $VERSION = (qw$Revision: 1.55 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:30:20 $
+$Date: 2003-08-14 23:24:10 $
 
 =head1 SYNOPSIS
 
@@ -204,7 +204,7 @@ use constant PARAM_WHERE_MAP =>
       site_id               => 'mt.site__id = ?',
       no_site_id            => 'mt.site__id <> ?',
       workflow__id          => 'mt.workflow__id = ?',
-      _null_workflow__id    => 'mt.workflow__id IS NULL',
+      _null_workflow_id     => 'mt.workflow__id IS NULL',
       element__id           => 'mt.element__id = ?',
       source__id            => 'mt.source__id = ?',
       priority              => 'mt.priority = ?',
@@ -1481,7 +1481,7 @@ sub _get_contributors {
         my $sql = 'SELECT member__id, place, role FROM media__contributor ' .
           'WHERE media_instance__id=? ';
 
-        my $sth = prepare_ca($sql, undef, DEBUG);
+        my $sth = prepare_ca($sql, undef);
         execute($sth, $self->_get('version_id'));
         while (my $row = fetch($sth)) {
             $contrib->{$row->[0]}->{'role'} = $row->[2];
@@ -1517,7 +1517,7 @@ sub _insert_contributor {
       ' (id, media_instance__id, member__id, place, role) ' .
         " VALUES (${\next_key('media__contributor')},?,?,?,?) ";
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'), $id, $place, $role);
     return $self;
 }
@@ -1543,7 +1543,7 @@ sub _update_contributor {
         ' WHERE media_instance__id=? ' .
           ' AND member__id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $role, $place, $self->_get('version_id'), $id);
     return $self;
 }
@@ -1569,7 +1569,7 @@ sub _delete_contributor {
       ' WHERE media_instance__id=? ' .
         ' AND member__id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'), $id);
     return $self;
 }
@@ -1660,7 +1660,7 @@ sub _insert_media {
     my $sql = 'INSERT INTO ' . TABLE . ' (id, ' . join(', ', COLS) . ') '.
       "VALUES (${\next_key(TABLE)}, ". join(', ',('?') x COLS).')';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(FIELDS));
     $self->_set( { id => last_key(TABLE) });
 
@@ -1689,7 +1689,7 @@ sub _update_media {
     my $sql = 'UPDATE ' . TABLE . ' SET '. join(', ', map {"$_=?"} COLS) .
       ' WHERE id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(FIELDS), $self->_get('id'));
     return $self;
 }
@@ -1716,7 +1716,7 @@ sub _insert_instance {
         " VALUES (${\next_key(VERSION_TABLE)}, ".
           join(', ', ('?') x VERSION_COLS) . ')';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(VERSION_FIELDS));
     $self->_set( { version_id => last_key(VERSION_TABLE) });
     return $self;
@@ -1743,7 +1743,7 @@ sub _update_instance {
       ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
         ' WHERE id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
     return $self;
 }
@@ -1768,7 +1768,7 @@ sub _delete_media {
     my $sql = 'DELETE FROM ' . TABLE .
       ' WHERE id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('id'));
     return $self;
 }
@@ -1793,7 +1793,7 @@ sub _delete_instance {
     my $sql = 'DELETE FROM ' . VERSION_TABLE .
       ' WHERE id=? ';
 
-    my $sth = prepare_c($sql, undef, DEBUG);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'));
     return $self;
 }
@@ -1821,7 +1821,7 @@ sub _select_media {
     # add the where Clause
     $sql .= " WHERE $where";
 
-    my $sth = prepare_ca($sql, undef, DEBUG);
+    my $sth = prepare_ca($sql, undef);
     execute($sth, @bind);
     bind_columns($sth, \@d[0 .. (scalar COLS)]);
     fetch($sth);
@@ -1856,7 +1856,7 @@ sub _do_update {
       'SET ' . join(', ', map { "$_=?" } COLS) .
                                 ' WHERE id=? ';
 
-    my $update = prepare_c($sql, undef, DEBUG);
+    my $update = prepare_c($sql, undef);
     execute($update, $self->_get( FIELDS ), $self->_get('id') );
     return $self;
 }

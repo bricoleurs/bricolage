@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2003-08-14 23:24:13 $
 
 =head1 SYNOPSIS
 
@@ -249,7 +249,7 @@ sub lookup {
       . ' WHERE id=? ';
 
     my @d;
-    my $sth = prepare_c( $sql, undef, DEBUG );
+    my $sth = prepare_c( $sql, undef );
     my $rows = execute( $sth, $param->{'id'} );
     bind_columns( $sth, \@d[ 0 .. ( scalar MEMBER_COLS ) ] );
     fetch($sth);
@@ -266,7 +266,7 @@ sub lookup {
       . ' WHERE member__id=? ';
 
     my @d2;
-    $sth = prepare_c( $sql, undef, DEBUG );
+    $sth = prepare_c( $sql, undef );
     $rows = execute( $sth, $self->_get('id') );
     bind_columns( $sth, \@d2[ 0 .. ( scalar OBJECT_MEMBER_COLS ) ] );
     fetch($sth);
@@ -623,7 +623,7 @@ sub get_all_object_ids {
       . " WHERE m.grp__id=? AND "
       . " o.member__id = m.id ";
 
-    my $sth = prepare_c( $sql, undef, DEBUG );
+    my $sth = prepare_c( $sql, undef );
     my $return = col_aref( $sth, $grp_id );
     return wantarray ? @$return : $return;
 }
@@ -1343,7 +1343,7 @@ sub _do_joined_select {
     push @param, ' m.id=o.member__id ';
     $sql .= ' WHERE ' . join ( ' AND ', @param );
 
-    my $sth = prepare_c( $sql, undef, DEBUG );
+    my $sth = prepare_c( $sql, undef );
 
     # Just return the IDs, if they're what's wanted.
     return @{ col_aref($sth, @bind) } if $ids;
@@ -2043,7 +2043,7 @@ sub _do_delete {
                         member
                 WHERE
                         id=?
-                }, undef, DEBUG
+                }, undef
     );
 
     execute( $delete, $self->_get('id') );
@@ -2077,7 +2077,7 @@ sub _do_update {
       . join ( ', ', map { "$_=?" } MEMBER_COLS )
       . ' WHERE id=? ';
 
-    my $sth = prepare_c( $sql, undef, DEBUG );
+    my $sth = prepare_c( $sql, undef );
     execute( $sth, ( $self->_get( MEMBER_FIELDS, 'id' ) ) );
     return $self;
 }
@@ -2110,7 +2110,7 @@ sub _do_insert {
       . " VALUES (${\next_key(TABLE)},"
       . join ( ',', ('?') x MEMBER_COLS ) . ")";
 
-    my $sth = prepare_c( $sql, undef, DEBUG );
+    my $sth = prepare_c( $sql, undef );
     execute( $sth, $self->_get(MEMBER_FIELDS) );
 
     # Get the id that was created
@@ -2126,7 +2126,7 @@ sub _do_insert {
       . " VALUES (${\next_key($map_table)}, "
       . join ( ',', ('?') x OBJECT_MEMBER_COLS ) . ")";
 
-    $sth = prepare_c( $sql, undef, DEBUG );
+    $sth = prepare_c( $sql, undef );
     execute( $sth, $self->_get(OBJECT_MEMBER_FIELDS) );
     return $self;
 }

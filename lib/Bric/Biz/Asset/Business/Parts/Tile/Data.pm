@@ -8,15 +8,15 @@ the business data.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:34 $
+$Date: 2003-08-14 23:24:11 $
 
 =head1 SYNOPSIS
 
@@ -299,7 +299,7 @@ sub lookup {
 
     my @d;
     my $sql    = 'SELECT '.join(', ', 'id', COLS)." FROM $table WHERE id=?";
-    my $select = prepare_ca($sql, undef, DEBUG);
+    my $select = prepare_ca($sql, undef);
 
     execute($select, $param->{'id'});
     bind_columns($select, \@d[0 .. (scalar COLS)]);
@@ -787,7 +787,7 @@ sub _do_list {
     $sql .= ' WHERE '.join(' AND ', @where) if @where;
 
     ## PREPARE AND EXECUTE THE SQL ##
-    my $select = prepare_ca($sql, undef, DEBUG);
+    my $select = prepare_ca($sql, undef);
     if ($ids) {
         my $return = col_aref($select, @bind);
         return wantarray ? @{ $return } : $return;
@@ -842,7 +842,7 @@ sub _do_insert {
     my $sql = "INSERT INTO $table (id,".join(',', COLS) . ') '.
               "VALUES ($next_key_sql,".join(',', ('?') x COLS).')';
 
-    my $insert = prepare_c($sql, undef, DEBUG);
+    my $insert = prepare_c($sql, undef);
     execute($insert, ($self->_get(FIELDS)));
 
     $self->_set(['id'], [last_key($table)]);
@@ -877,7 +877,7 @@ sub _do_update {
     my $table = $self->_get_table_name;
 
     my $sql = "UPDATE $table SET ".join(',', map {"$_=?"} COLS).' WHERE id=?';
-    my $update = prepare_c($sql, undef, DEBUG);
+    my $update = prepare_c($sql, undef);
 
     execute($update, ($self->_get( FIELDS )), $self->_get('id') );
 

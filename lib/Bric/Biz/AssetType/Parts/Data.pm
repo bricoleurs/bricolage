@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:34 $
+$Date: 2003-08-14 23:24:11 $
 
 
 =head1 SYNOPSIS
@@ -1289,7 +1289,7 @@ sub remove {
 
     my $sql = 'DELETE FROM '.TABLE.' WHERE id=?';    
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $id);
 
     return $self;
@@ -1417,7 +1417,7 @@ sub _do_list {
     # Add the ORDER BY clause if there is one.
     $sql .= " ORDER BY $param->{order_by}" if $param->{order_by};
 
-    my $select = prepare_ca($sql, undef, DEBUG);
+    my $select = prepare_ca($sql, undef);
 
     if ($ids) {
         # called from list_ids give em what they want
@@ -1527,7 +1527,7 @@ sub _select_data {
     my $sql = 'SELECT '.join(',',COLS).' FROM '.TABLE.
               ' WHERE id = ? AND active = ?';
 
-    my $sth = prepare_ca($sql);
+    my $sth = prepare_ca($sql, undef);
     execute($sth, $id, 1);
     bind_columns($sth, \@d[0..(scalar COLS - 1)]);
     fetch($sth);
@@ -1564,7 +1564,7 @@ sub _update_data {
               ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
 
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(COLS), $self->get_id);
     return 1;
 }
@@ -1597,7 +1597,7 @@ sub _insert_data {
     my $sql = 'INSERT INTO '.TABLE.' (id,'.join(',',COLS).") ".
               "VALUES ($nextval,".join(',', ('?') x COLS).')';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(COLS));
 
     # Set the ID of this object.

@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:43 $
+$Date: 2003-08-14 23:24:10 $
 
 =head1 SYNOPSIS
 
@@ -916,7 +916,7 @@ sub remove {
     my $self = shift;
     my $id   = $self->get_id;
     return unless defined $id;
-    my $sth = prepare_c("DELETE FROM $TABLE WHERE id = ?");
+    my $sth = prepare_c("DELETE FROM $TABLE WHERE id = ?", undef);
     execute($sth, $id);
     return 1;
 }
@@ -1010,7 +1010,7 @@ sub _update_attype {
     my $sql = "UPDATE $TABLE SET " . join(',', map {"$_ = ?"} @COLS) .
       ' WHERE id = ?';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(@PROPS), $self->get_id);
     return 1;
 }
@@ -1053,7 +1053,7 @@ sub _insert_attype {
     my $sql = "INSERT INTO $TABLE (id," . join(', ', @COLS) . ") " .
               "VALUES ($nextval, " . join(', ', ('?') x @COLS) . ')';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(@PROPS));
 
     # Set the ID of this object.
@@ -1168,7 +1168,7 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

@@ -6,16 +6,16 @@ Bric::Biz::Contact - Interface to Contacts
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:33 $
+$Date: 2003-08-14 23:24:10 $
 
 =head1 SYNOPSIS
 
@@ -877,13 +877,13 @@ sub edit_type {
         SET    description = ?,
                active = ?
         WHERE  type = ?
-    });
+    }, undef);
     return 1 if execute($upd, $desc, 1, $type) > 0;
 
     my $ins = prepare_c(qq{
         INSERT INTO contact (id, type, description, active, alertable)
         VALUES (${\next_key('contact')}, ?, ?, ?, 0)
-    });
+    }, undef);
     execute($ins, $type, $desc, 1);
 }
 
@@ -925,7 +925,7 @@ sub deactivate_type {
         UPDATE contact
         SET    active = ?
         WHERE  type = ?
-    });
+    }, undef);
     execute($upd, 0, $type);
     return 1;
 }
@@ -1276,7 +1276,7 @@ sub save {
                            WHERE  type = ?
                        ), active = ?
                 WHERE  id = ?
-            }, undef, DEBUG);
+            }, undef);
             execute($upd, $self->_get(qw(value type _active)), $id);
             $self->_set(['_retyped'], [undef]);
         } else {
@@ -1285,7 +1285,7 @@ sub save {
                 UPDATE contact_value
                 SET    @val_cols = ?
                 WHERE  id = ?
-            });
+            }, undef);
             execute($upd, $self->_get(@val_props), $id);
         }
     } else {
@@ -1298,7 +1298,7 @@ sub save {
                 FROM   contact
                 WHERE  type = ?)
             )
-        }, undef, DEBUG);
+        }, undef);
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(qw(value _active type)));
         # Now grab the ID.
@@ -1402,7 +1402,7 @@ $get_em = sub {
         WHERE  c.id = v.contact__id
                $where
         ORDER BY c.id
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
@@ -1507,7 +1507,7 @@ $get_types = sub {
         FROM   contact c
         WHERE  active = 1 $where
         ORDER BY c.id
-    }, undef, DEBUG);
+    }, undef);
 
     # Just return a list of types unless an href is wanted.
     return wantarray ? @{ col_aref($sel) } : col_aref($sel) unless $href;

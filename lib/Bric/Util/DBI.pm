@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:45 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -31,7 +31,7 @@ $Date: 2003-08-12 19:04:45 $
       SELECT @cols
       FROM   person
       WHERE  person_id = ?
-  });
+  }, undef);
 
   $self->_set(\@cols, row_aref($select, $id));
 
@@ -45,38 +45,40 @@ necessary to provide database-independent functions for getting and setting
 primary keys and dates in the format required by the database (but see
 Bric::Util::Time for the time formatting functions).
 
-Bric::Util::DBI also provides the principal avenue to querying the database. No
-other Bricolage module should C<use DBI>. The advantage to this approach (other than
-some level of database independence) is that the $dbh is stored in only one
-place in the entire application. It will not be generated in every module, or
-stored in every object. Indeed, objects themselves should have no knowledge of
-the database at all, but should rely on their methods to query, insert, update,
-and delete from the database using the functions exported by Bric::Util::DBI.
+Bric::Util::DBI also provides the principal avenue to querying the
+database. No other Bricolage module should C<use DBI>. The advantage to this
+approach (other than some level of database independence) is that the $dbh is
+stored in only one place in the entire application. It will not be generated
+in every module, or stored in every object. Indeed, objects themselves should
+have no knowledge of the database at all, but should rely on their methods to
+query, insert, update, and delete from the database using the functions
+exported by Bric::Util::DBI.
 
 Bric::Util::DBI is not a complete database-independent solution, however. In
 particular, it does nothing to translate between the SQL syntaxes supported by
 different database platforms. As a result, you are encouraged to write your
-queries in as generic a way as possible, and to comment your code copiously when
-you must use proprietary or not-widely supported SQL syntax (such as outer
-joins).
+queries in as generic a way as possible, and to comment your code copiously
+when you must use proprietary or not-widely supported SQL syntax (such as
+outer joins).
 
-B<NOTE:> Bric::Util::DBI is intended only for internal use by Bricolage modules. It must
-not be C<use>d anywhere else in the application (e.g., in an Apache startup
-file) or users of the application may be able to gain access to our database.
+B<NOTE:> Bric::Util::DBI is intended only for internal use by Bricolage
+modules. It must not be C<use>d anywhere else in the application (e.g., in an
+Apache startup file) or users of the application may be able to gain access to
+our database.
 
 =cut
 
-################################################################################
+##############################################################################
 # Dependencies
-################################################################################
+##############################################################################
 # Standard Dependencies
 use strict;
 
-################################################################################
+##############################################################################
 # Programmatic Dependences
-################################################################################
+##############################################################################
 # DBI Error Handling.
-################################################################################
+##############################################################################
 use Bric::Config qw(:dbi);
 use Bric::Util::DBD::Pg qw(:all); # Required for our DB platform.
 use Bric::Util::Fault qw(throw_da);
@@ -84,17 +86,15 @@ use DBI qw(looks_like_number);
 use Time::HiRes qw(gettimeofday);
 use Digest::MD5 qw(md5_hex);
 
-################################################################################
+##############################################################################
 # Constants
-################################################################################
+##############################################################################
 use constant CALL_TRACE => DBI_CALL_TRACE || 0;
 use constant DEBUG => DBI_DEBUG || 0;
 # You can set DBI_TRACE from 0 (Disabled) through 9 (super verbose).
 use constant DBI_TRACE => 0;
 
 DBI->trace(DBI_TRACE);
-
-our $dbh;
 
 # The strftime format for DB dates. Used by Bric::Util::Time::db_date().
 use constant DB_DATE_FORMAT => '%Y-%m-%d %T';
@@ -109,32 +109,34 @@ my $ATTR =  { RaiseError => 1,
 	      LongTruncOk => 0
 };
 
-################################################################################
+##############################################################################
 # Inheritance
-################################################################################
+##############################################################################
 use base qw(Exporter);
 
 # You can explicitly import any of the functions in this class. The last two
 # should only ever be imported by Bric::Util::Time, however.
-our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref col_aref
-		    last_key next_key db_date_parts DB_DATE_FORMAT clean_params
-		    bind_columns bind_col bind_param begin commit rollback
-		    finish is_num row_array all_aref fetch_objects order_by
-                    build_query_with_unions build_query where_clause tables);
+our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref
+		    col_aref last_key next_key db_date_parts DB_DATE_FORMAT
+		    clean_params bind_columns bind_col bind_param begin commit
+		    rollback finish is_num row_array all_aref fetch_objects
+		    order_by build_query_with_unions build_query where_clause
+		    tables);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
-our %EXPORT_TAGS = (standard => [qw(prepare_c row_aref fetch fetch_objects execute 
-                                    next_key last_key bind_columns finish)],
+our %EXPORT_TAGS = (standard => [qw(prepare_c row_aref fetch fetch_objects
+                                    execute next_key last_key bind_columns
+                                    finish)],
 		    trans => [qw(begin commit rollback)],
 		    all => \@EXPORT_OK);
 
 # Disconnect! Will be ignored by Apache::DBI.
 END { _disconnect(); }
 
-################################################################################
+##############################################################################
 # Exportable Functions
-################################################################################
+##############################################################################
 
 =pod
 
@@ -142,18 +144,25 @@ END { _disconnect(); }
 
 There are several ways to C<use Bric::Util::DBI>. Some options include:
 
-  use Bric::Util::DBI qw(:standard);            # Get the standard db functions.
-  use Bric::Util::DBI qw(:standard :trans);     # Get standard and transactional functions.
-  use Bric::Util::DBI qw(:all);                 # Get all the functions.
-  use Bric::Util::DBI qw(prepare_c); # Get specific functions.
+  # Get the standard db functions.
+  use Bric::Util::DBI qw(:standard);
 
-The first example imports all the functions you are likely to need in the normal
-course of writing a Bricolage class. The second example imports the standard functions
-plus functions needed for managing transactions. The third example imports all
-the functions and variables provided by Bric::Util::DBI. These should cover all of
-your database needs. The last example imports only a few key functions and
-variables. You may explicitly import as many functions and variables as you wish
-in this way. Specifying no parameters, e.g.,
+  # Get standard and transactional functions.
+  use Bric::Util::DBI qw(:standard :trans);
+
+  # Get all the functions.
+  use Bric::Util::DBI qw(:all);
+
+  # Get specific functions.
+  use Bric::Util::DBI qw(prepare_c execute fetch);
+
+The first example imports all the functions you are likely to need in the
+normal course of writing a Bricolage class. The second example imports the
+standard functions plus functions needed for managing transactions. The third
+example imports all the functions and variables provided by Bric::Util::DBI.
+These should cover all of your database needs. The last example imports only a
+few key functions and variables. You may explicitly import as many functions
+and variables as you wish in this way. Specifying no parameters, e.g.,
 
   use Bric::Util::DBI;
 
@@ -248,9 +257,9 @@ bind_param()
 
 =item *
 
-DB_DATE_FORMAT - the strftime format for the date format used by the databse.
-Used by Bric::Util::Time; you should not need this - use the functions exported
-by Bric::Util::Time instead.
+DB_DATE_FORMAT - the strftime format for the date format used by the
+databse. Used by Bric::Util::Time; you should not need this - use the
+functions exported by Bric::Util::Time instead.
 
 =back
 
@@ -258,9 +267,10 @@ by Bric::Util::Time instead.
 
 Each of the functions below that will directly access the database will first
 check for a connection to the database and establish the connection if it does
-not exist. There is no need to worry about accessing or storing a $dbh in any Bricolage module. Plus, each function handles all aspects of database exception handling
-so tht you do not have to. The exception is with the transactional functions; 
-see Begin() below for more information.
+not exist. There is no need to worry about accessing or storing a $dbh in any
+Bricolage module. Plus, each function handles all aspects of database
+exception handling so tht you do not have to. The exception is with the
+transactional functions; see Begin() below for more information.
 
 =head2 Constructors
 
@@ -284,9 +294,10 @@ NONE.
 
 =item my $bool = is_num(@values)
 
-Alias for DBI::looks_like_number() to determine whether or not the values passed
-are numbers. Returns true for each value that looks like a number, and false for
-each that does not. Returns undef for each element that is undefined or empty.
+Alias for DBI::looks_like_number() to determine whether or not the values
+passed are numbers. Returns true for each value that looks like a number, and
+false for each that does not. Returns undef for each element that is undefined
+or empty.
 
 B<Throws:> NONE.
 
@@ -296,19 +307,19 @@ B<Notes:> NONE.
 
 =cut
 
-*is_num = *DBI::looks_like_number;
+{ no warnings;
+  *is_num = *DBI::looks_like_number;
+}
 
-################################################################################
+##############################################################################
 
 =item $sth = prepare($sql)
 
 =item $sth = prepare($sql, $attr)
 
-=item $sth = prepare($sql, $attr, $DEBUG)
-
 Returns an $sth from $dbh->prepare. Pass any attributes you want associated
-with your $sth via the $attr hashref. If $DEBUG is true, it will also issue a
-warning that prints $sql. In general, use prepare_c() instead of prepare().
+with your $sth via the $attr hashref. In general, use prepare_c() instead of
+prepare().
 
 B<IMPORTANT:> We strongly encourage only very specific uses of statement
 handles. It is easy to use them inefficiently, but the following guidelines
@@ -337,14 +348,15 @@ DBI quote() method (which, you will notice, is not exported by this module).
 
 When fetching values back from the statement handle, always bind variables to
 columns (using bind_col($select) or bind_columns($select)), and fetch each row
-with the fetch($select) function (see below). Do not use statement handle 
-methods yourself; avoid using the $select->fetchrow_array() method, and 
-I<especially> the $select->fetchrow_hashref() methods, as they are much slower 
-than fetch($select) with bound columns. If you need to use one of these methods 
-let me know and we will see about adding them as functions to Bric::Util::DBI. 
-But it should not be necessary. Better yet, anytime you find yourself wanting 
-to use $select->fetchrow_hashref(), take it as a cue to go back, look at your 
-code design, and decide whether you are making the best design decisions.
+with the fetch($select) function (see below). Do not use statement handle
+methods yourself; avoid using the $select->fetchrow_array() method, and
+I<especially> the $select->fetchrow_hashref() methods, as they are much slower
+than fetch($select) with bound columns. If you need to use one of these
+methods let me know and we will see about adding them as functions to
+Bric::Util::DBI. But it should not be necessary. Better yet, anytime you find
+yourself wanting to use $select->fetchrow_hashref(), take it as a cue to go
+back, look at your code design, and decide whether you are making the best
+design decisions.
 
 =back
 
@@ -369,29 +381,24 @@ B<Notes:> NONE.
 =cut
 
 sub prepare {
-    _connect();
-    my $sth;
-    eval { $sth = $dbh->prepare(@_[0..1]) };
-    throw_da(error => "Unable to prepare SQL statement\n\n$_[0]", payload => $@)
+    my $dbh = _connect();
+    my $sth = eval { $dbh->prepare(@_) };
+    throw_da error   => "Unable to prepare SQL statement\n\n$_[0]",
+             payload => $@
       if $@;
     _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
 } # prepare()
 
-################################################################################
+##############################################################################
 
 =pod
 
-=item my $sth = prepare_c($sql)
-
 =item my $sth = prepare_c($sql, $attr)
 
-=item my $sth = prepare_c($sql, $attr, $DEBUG)
-
 Returns an $sth from $dbh->prepare_cached. Pass any attributes you want
-associated with your $sth via the $attr hashref. If $DEBUG is true, it will also
-issue a warning that prints $sql. A warning will also be issued if the $sth
-returned is already active.
+associated with your $sth via the $attr hashref. A warning will also be issued
+if the $sth returned is already active.
 
 See also the important note in the prepare() documentation above.
 
@@ -416,29 +423,24 @@ B<Notes:> NONE.
 =cut
 
 sub prepare_c {
-    _connect();
-    my $sth;
-    eval { $sth = $dbh->prepare_cached(@_[0..1]) };
-    throw_da(error => "Unable to prepare SQL statement\n\n$_[0]", payload => $@)
+    my $dbh = _connect();
+    my $sth = eval { $dbh->prepare_cached(@_) };
+    throw_da error   => "Unable to prepare SQL statement\n\n$_[0]",
+             payload => $@
       if $@;
     _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
 } # prepare_c()
 
-################################################################################
+##############################################################################
 
 =pod
 
-=item my $sth = prepare_ca($sql)
-
 =item my $sth = prepare_ca($sql, $attr)
-
-=item my $sth = prepare_ca($sql, $attr, $DEBUG)
 
 Returns an $sth from $dbh->prepare_cached, and will not issue a warning if the
 $sth returned is already active. Pass any attributes you want associated with
-your $sth via the $ATTR hashref. If $DEBUG is true, it will also issue a warning
-that prints $sql.
+your $sth via the $ATTR hashref.
 
 See also the important note in the prepare() documentation above.
 
@@ -456,23 +458,24 @@ Unable to prepare SQL statement.
 
 =back
 
-B<Side Effects:> Calls $dbh->prepare_cached() with the active flag set to true.
+B<Side Effects:> Calls $dbh->prepare_cached() with the active flag set to
+true.
 
 B<Notes:> NONE.
 
 =cut
 
 sub prepare_ca {
-    _connect();
-    my $sth;
-    eval { $sth = $dbh->prepare_cached(@_[0..1], 1) };
-    throw_da(error => "Unable to prepare SQL statement\n\n$_[0]", payload => $@)
+    my $dbh = _connect();
+    my $sth = eval { $dbh->prepare_cached(@_[0, 1], 1) };
+    throw_da error   => "Unable to prepare SQL statement\n\n$_[0]",
+             payload => $@
       if $@;
     _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
-} # prepare_ca
+} # prepare_ca()
 
-################################################################################
+##############################################################################
 
 =item my $ret = begin()
 
@@ -483,9 +486,9 @@ sub prepare_ca {
       execute($upd);
       commit();
   };
-  if ($@) {
+  if (my $err = $@) {
       rollback();
-      rethrow_exception($@);
+      rethrow_exception($err);
   }
 
 Sets $dbh->{AutoCommit} = 0. Use before a series of database transactions so
@@ -520,15 +523,22 @@ B<Notes:> NONE.
 sub begin {
     return 1 unless TRANSACTIONAL;
     return 1 if $ENV{MOD_PERL} && !$_[0];
-    _connect();
-    my $ret;
-    eval { $ret = $dbh->{AutoCommit} = 0 };
-    throw_da(error => "Unable to turn AutoCommit off", payload => $@)
-      if $@;
-    return $ret;
-}
+    my $dbh = _connect();
 
-################################################################################
+    # Turn off AutoCommit. We can switch to begin_work() once DBD::Pg supports
+    # it.
+    my $ret = eval { $dbh->{AutoCommit} = 0 };
+    throw_da error   => "Unable to turn AutoCommit off",
+             payload => $@
+      if $@;
+
+    # Set our default attributes to have AutoCommit off for all new
+    # connections.
+    $ATTR->{AutoCommit} = 0;
+    return $ret;
+} # begin()
+
+##############################################################################
 
 =item my $ret = commit()
 
@@ -563,26 +573,94 @@ B<Notes:> NONE.
 sub commit {
     return 1 unless TRANSACTIONAL;
     return 1 if $ENV{MOD_PERL} && !$_[0];
-    _connect();
-    my $ret;
-    eval { $ret = $dbh->commit };
-    throw_da(error => "Unable to commit transactions", payload => $@)
-      if $@;
-    eval { $ret = $dbh->{AutoCommit} = 1 };
-    throw_da(error => "Unable to turn AutoCommit on", payload => $@)
-      if $@;
-    return $ret;
-}
+    my $dbh = _connect();
 
-################################################################################
+    # Commit the transaction.
+    my $ret = eval { $dbh->commit };
+    throw_da error   => "Unable to commit transaction",
+             payload => $@
+      if $@;
+
+    # Turn AutoCommit back on. When DBD::Pg adds support for begin_work(),
+    # we can eliminate this step.
+    eval { $ret = $dbh->{AutoCommit} = 1 };
+    throw_da error   => "Unable to turn AutoCommit on",
+             payload => $@
+      if $@;
+
+    # Set our default attributes to have AutoCommit on for all new
+    # connections.
+    $ATTR->{AutoCommit} = 1;
+
+    return $ret;
+} # commit()
+
+##############################################################################
+
+=item my $ret = rollback()
+
+Call this function after calling begin() and executing a series of database
+transactions, where one or more of the transactions fails and they all need to
+be rolled back. See begin() for an example.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to rollback transactions.
+
+=item *
+
+Unable to turn on AutoCommit.
+
+=back
+
+B<Side Effects:> Calls $dbh->commit.
+
+B<Notes:> NONE.
+
+=cut
+
+sub rollback {
+    return 1 unless TRANSACTIONAL;
+    return 1 if $ENV{MOD_PERL} && !$_[0];
+    my $dbh = _connect();
+
+    # Rollback the transaction.
+    my $ret = eval { $dbh->rollback };
+    throw_da error   => "Unable to rollback transaction",
+             payload => $@
+      if $@;
+
+    # Turn AutoCommit back on. When DBD::Pg adds support for begin_work(),
+    # we can eliminate this step.
+    eval { $ret = $dbh->{AutoCommit} = 1 };
+    throw_da error   => "Unable to turn AutoCommit on",
+             payload => $@
+      if $@;
+
+    # Set our default attributes to have AutoCommit on for all new
+    # connections.
+    $ATTR->{AutoCommit} = 1;
+
+    return $ret;
+} # rollback()
+
+##############################################################################
 
 =item = fetch_objects( $pkg, $sql, $fields, $args )
 
 fetch_objects takes a package name, a sql statement, an arrayref of fields,
-and a list of arguments.  It uses the results from the sql statement to
+and a list of arguments. It uses the results from the sql statement to
 construct objects of the specified package, in which the final column is
-variable over a number of lines in which the other columns are the same.
-Like this:
+variable over a number of lines in which the other columns are the same. Like
+this:
 
     1 1 1
     1 1 2
@@ -591,10 +669,10 @@ Like this:
     2 2 2
     2 2 3
 
-which would, given the package name of Bric, and fields [ qw( one two three) ] 
+which would, given the package name of Bric, and fields [ qw( one two three) ]
 assemble the following objects:
 
-    [ 
+    [
         bless ( {
                 one   => 1,
                 two   => 1,
@@ -646,7 +724,7 @@ sub fetch_objects {
     # figure out the fields we need to fill
     my $count = @$fields - 1;
     # set and execute the query
-    my $select = prepare_ca($sql, undef, DEBUG);
+    my $select = prepare_ca($sql, undef);
     execute($select, @$args);
     bind_columns($select, \@d[0 .. $count]);
     # loop through the list, looking for diferrent grp__id columns in
@@ -742,8 +820,8 @@ sub build_query_with_unions {
 
 =item = $params = clean_params($params)
 
-Parameters for Asset objects should be run through this before sending them
-to the query building functions.
+Parameters for Asset objects should be run through this before sending them to
+the query building functions.
 
 B<Throws:>
 
@@ -894,15 +972,15 @@ sub order_by {
 
         # Make sure it's legit.
         my $ord = $map->{$param->{Order}}
-          or throw_da(error => "Bad Order parameter '$param->{Order}'");
+          or throw_da "Bad Order parameter '$param->{Order}'";
 
         # Set up the order direction.
         my $dir = 'ASC';
         if ($param->{OrderDirection}) {
             # Make sure it's legit.
-            throw_da(error => 'OrderDirection parameter must either ASC or DESC.')
-                if $param->{OrderDirection} ne 'ASC'
-                  and $param->{OrderDirection} ne 'DESC';
+            throw_da 'OrderDirection parameter must either ASC or DESC.'
+              if $param->{OrderDirection} ne 'ASC'
+              and $param->{OrderDirection} ne 'DESC';
             # Grab it.
             $dir = $param->{OrderDirection};
         }
@@ -915,59 +993,13 @@ sub order_by {
 }
 
 
-################################################################################
-
-=item my $ret = rollback()
-
-Call this function after calling begin() and executing a series of database
-transactions, where one or more of the transactions fails and they all need to
-be rolled back. See begin() for an example.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Unable to connect to database.
-
-=item *
-
-Unable to rollback transactions.
-
-=item *
-
-Unable to turn on AutoCommit.
-
-=back
-
-B<Side Effects:> Calls $dbh->commit.
-
-B<Notes:> NONE.
-
-=cut
-
-sub rollback {
-    return 1 unless TRANSACTIONAL;
-    return 1 if $ENV{MOD_PERL} && !$_[0];
-    _connect();
-    my $ret;
-    eval { $ret = $dbh->rollback };
-    throw_da(error => "Unable to rollback transactions", payload => $@)
-      if $@;
-    eval { $ret = $dbh->{AutoCommit} = 1 };
-    throw_da(error => "Unable to turn AutoCommit on", payload => $@)
-      if $@;
-    return $ret;
-}
-
-################################################################################
+##############################################################################
 
 =item my $ret = execute($sth, @params)
 
-Executes the prepared statement. Use this instead of $sth->execute(@params) and
-it will take care of exception handling for you. Returns the value returned by
-$sth->execute().
+Executes the prepared statement. Use this instead of $sth->execute(@params)
+and it will take care of exception handling for you. Returns the value
+returned by $sth->execute().
 
 B<Throws:>
 
@@ -989,22 +1021,22 @@ sub execute {
     my $sth = shift;
     _debug_execute(\@_, $sth) if DEBUG;
     _profile_start()          if DBI_PROFILE;
-    my $ret;
 
-    eval { $ret = $sth->execute(@_) };
-    throw_da(error => "Unable to execute SQL statement", payload => $@)
+    my $ret = eval { $sth->execute(@_) };
+    throw_da error   => "Unable to execute SQL statement",
+             payload => $@
       if $@;
     _profile_stop()           if DBI_PROFILE;
     return $ret;
 }
 
-################################################################################
+##############################################################################
 
 =item my $ret = bind_columns($sth, @args)
 
 Binds variables to the columns in the statement handle. Functions exactly the
-same as $sth->bind_columns, only it handles the exception handling for you.
-Returns the value returned by $sth->bind_columns.
+same as $sth->bind_columns, only it handles the exception handling for
+you. Returns the value returned by $sth->bind_columns.
 
 B<Throws:>
 
@@ -1024,21 +1056,20 @@ B<Notes:> NONE.
 
 sub bind_columns {
     my $sth = shift;
-    my $ret;
-    eval { $ret = $sth->bind_columns(@_) };
-    throw_da(error => "Unable to bind to columns to statement handle",
-             payload => $@)
+    my $ret = eval { $sth->bind_columns(@_) };
+    throw_da error   => "Unable to bind to columns to statement handle",
+             payload => $@
       if $@;
     return $ret;
 }
 
-################################################################################
+##############################################################################
 
 =item my $ret = bind_col($sth, @args)
 
 Binds a variable to a columns in the statement handle. Functions exactly the
-same as $sth->bind_col, only it handles the exception handling for you. Returns
-the value returned by $sth->bind_col.
+same as $sth->bind_col, only it handles the exception handling for
+you. Returns the value returned by $sth->bind_col.
 
 B<Throws:>
 
@@ -1058,21 +1089,20 @@ B<Notes:> NONE.
 
 sub bind_col {
     my $sth = shift;
-    my $ret;
-    eval { $ret = $sth->bind_col(@_) };
-    throw_da(error => "Unable to bind to column to statement handle",
-             payload => $@)
+    my $ret = eval { $sth->bind_col(@_) };
+    throw_da error   => "Unable to bind to column to statement handle",
+             payload => $@
       if $@;
     return $ret;
 }
 
-################################################################################
+##############################################################################
 
 =item my $ret = bind_param($sth, @args)
 
 Binds parameter to the columns in the statement handle. Functions exactly the
-same as $sth->bind_param, only it handles the exception handling for you.
-Returns the value returned by $sth->bind_param.
+same as $sth->bind_param, only it handles the exception handling for
+you. Returns the value returned by $sth->bind_param.
 
 B<Throws:>
 
@@ -1092,15 +1122,14 @@ B<Notes:> NONE.
 
 sub bind_param {
     my $sth = shift;
-    my $ret;
-    eval { $ret = $sth->bind_param(@_) };
-    throw_da(error => "Unable to bind parameters to columns in statement handle",
-             payload => $@)
+    my $ret = eval { $sth->bind_param(@_) };
+    throw_da error   => "Unable to bind parameters to columns in statement handle",
+             payload => $@
       if $@;
     return $ret;
 }
 
-################################################################################
+##############################################################################
 
 =item my $ret = fetch($sth)
 
@@ -1125,15 +1154,14 @@ B<Notes:> NONE.
 
 sub fetch {
     my $sth = shift;
-    my $ret;
-    eval { $ret = $sth->fetch(@_) };
-    throw_da(error => "Unable to fetch row from statement handle",
-             payload => $@)
+    my $ret = eval { $sth->fetch(@_) };
+    throw_da error   => "Unable to fetch row from statement handle",
+             payload => $@
       if $@;
     return $ret;
 }
 
-################################################################################
+##############################################################################
 
 =item my $ret = finish($sth)
 
@@ -1152,29 +1180,29 @@ Unable to finish statement handle.
 
 B<Side Effects:> Calls $sth->finish().
 
-B<Notes:> Do B<not> confuse this function with finishing transactions. It simply
-tells a SELECT statement handle that you are done fetching records from it, so 
-it can free up resources in the database. If you have started a series of 
-transactions with begin(), finish() will not commit them; only commit() will 
-commit them, and rollback() will roll them back.
+B<Notes:> Do B<not> confuse this function with finishing transactions. It
+simply tells a SELECT statement handle that you are done fetching records from
+it, so it can free up resources in the database. If you have started a series
+of transactions with begin(), finish() will not commit them; only commit()
+will commit them, and rollback() will roll them back.
 
 =cut
 
 sub finish {
     my $sth = shift;
-    my $ret;
-    eval { $ret = $sth->finish(@_) };
-    throw_da(error => "Unable to finish statement handle", payload => $@)
+    my $ret = eval { $sth->finish(@_) };
+    throw_da error   => "Unable to finish statement handle",
+             payload => $@
       if $@;
     return $ret;
 }
 
-################################################################################
+##############################################################################
 
 =begin comment
 
-This was an experimental fetch_em method. Might return to it at some point, but
-for now, neither I nor anyone else is using it.
+This was an experimental fetch_em method. Might return to it at some point,
+but for now, neither I nor anyone else is using it.
 
 =pod
 
@@ -1199,9 +1227,9 @@ The prepared SQL SELECT statement handle. Required.
 
 =item $props
 
-An anonymous array of the names of the properties to be loaded into each object.
-These should be in the same order as the columns selected from the database.
-Required.
+An anonymous array of the names of the properties to be loaded into each
+object. These should be in the same order as the columns selected from the
+database. Required.
 
 =item $args
 
@@ -1216,14 +1244,14 @@ object. Optional. The supported keys are:
 
 =item props
 
-An anonymous array of the names of the properties to be loaded into each joined
-data subset. These should be in the same order as the columns selected from the
-database, following the columns selected for $props above. Required.
+An anonymous array of the names of the properties to be loaded into each
+joined data subset. These should be in the same order as the columns selected
+from the database, following the columns selected for $props above. Required.
 
 =item id
 
-The name of the field that stores the objects unique ID. This will be used
-to determine when a C<fetch_em>ed row represents a new object. Required.
+The name of the field that stores the objects unique ID. This will be used to
+determine when a C<fetch_em>ed row represents a new object. Required.
 
 =item obj_key
 
@@ -1232,13 +1260,14 @@ The name of the object property that will hold the joined data. Required.
 =item key
 
 The name of the field that holds a unique identifier for an individual joined
-row so that the joined data subset can be stored in an anonymous hash. Optional.
-If not defined, the joined data will be stored in an anonymous array.
+row so that the joined data subset can be stored in an anonymous
+hash. Optional. If not defined, the joined data will be stored in an anonymous
+array.
 
 =item class
 
-The class against which to call _new() to instantiate each joined data set as an
-object. Optional. If not defined, each joined data set will be stored as an
+The class against which to call _new() to instantiate each joined data set as
+an object. Optional. If not defined, each joined data set will be stored as an
 anonymous hash.
 
 =back
@@ -1257,7 +1286,7 @@ Examples:
       SELECT @cols
       FROM   person
       WHERE  person_id = ?
-  });
+  }, undef);
   # Using row_aref() is faster than using fetch_em() when we're just fetching
   # one row.
   $self->_set(\@cols, row_aref($select, undef, $id));
@@ -1269,7 +1298,7 @@ Examples:
       SELECT @cols
       FROM   person
       WHERE  lname like 'W%'
-  });
+  }, undef);
   # This will fill @people with 'Bric::Biz::Person' objects.
   my @people = fetch_em('Bric::Biz::Person', $select, \@cols);
 
@@ -1282,9 +1311,9 @@ Examples:
       WHERE  p.id = pmg.person_id
              AND pmg.group_id = g.id
              AND p.id = ?
-  });
-  # This will fill @people with 'Bric::Biz::Person' objects and an anonymous hash of
-  # groups keyed by group ID.
+  }, undef);
+  # This will fill @people with 'Bric::Biz::Person' objects and an anonymous
+  # hash of groups keyed by group ID.
   my @people = fetch_em('Bric::Biz::Person', $select, \@cols, [$id],
                      {props   => [qw(id name)],
                       id      => 'id',
@@ -1303,7 +1332,8 @@ sub fetch_em {
 	# primary properties of an object, and attributes of that object.
 	my (@d, @a, %obj, $last);
 	# By binding @d and @a, we automatically have nice arrays of the two
-	# categories of data we need to load - basic properties and attributes.
+	# categories of data we need to load - basic properties and
+        # attributes.
 	$select->bind_columns(\@d[0..$#$props], \@a[0..$#{$join->{props}}]);
 	while ($select->fetch) {
 	    if ( $last != $obj{ $join->{id} } ) {
@@ -1349,19 +1379,19 @@ sub fetch_em {
 
 =cut
 
-################################################################################
+##############################################################################
 
 =pod
 
 =item my $row = row_aref($select, @params)
 
-Executes the SELECT statement in $select and returns the first row of values in
-an array reference. Preferred for use fetching just one row, but if passed a
-multi-row query, will return the first row only. If placeholders have been used
-in $select, pass the parameters that map to them. This function B<will>
+Executes the SELECT statement in $select and returns the first row of values
+in an array reference. Preferred for use fetching just one row, but if passed
+a multi-row query, will return the first row only. If placeholders have been
+used in $select, pass the parameters that map to them. This function B<will>
 prepare() the query in $select, but it will not prepare_c() it. Thus it is
-generally prefered to prepare_c($select) yourself and then pass it to row_aref()
-as an $sth. See the Synopsis above for an example.
+generally prefered to prepare_c($select) yourself and then pass it to
+row_aref() as an $sth. See the Synopsis above for an example.
 
 B<Throws:>
 
@@ -1385,27 +1415,31 @@ B<Notes:> NONE.
 
 sub row_aref {
     my ($qry, @params) = @_;
-    _connect();
+    my $dbh = _connect();
     _debug_prepare_and_execute(\@params, \$qry) if DEBUG;
     _profile_start() if DBI_PROFILE;
-    my $aref;
-    eval { $aref = $dbh->selectrow_arrayref($qry, undef, @params) };
-    throw_da(error => "Unable to select row", payload => $@)
+
+    my $aref = eval { $dbh->selectrow_arrayref($qry, undef, @params) };
+    throw_da error   => "Unable to select row",
+             payload => $@
       if $@;
+
     _profile_stop() if DBI_PROFILE;
     return $aref;
 } # row_aref()
 
-=pod
+##############################################################################
 
 =item my @row = row_array($select, @params)
 
-Executes the SELECT statement in $select and returns the first row of values in
-an array. Preferred for use fetching just one row, but if passed a multi-row
-query, will return the first row only. If placeholders have been used in
-$select, pass the parameters that map to them. This function B<will> prepare()
-the query in $select, but it will not prepare_c() it. Thus it is generally 
-prefered to prepare_c($select) yourself and then pass it to row_array() as an $sth. For an example, see how the Synopsis above does this for row_aref().
+Executes the SELECT statement in $select and returns the first row of values
+in an array. Preferred for use fetching just one row, but if passed a
+multi-row query, will return the first row only. If placeholders have been
+used in $select, pass the parameters that map to them. This function B<will>
+prepare() the query in $select, but it will not prepare_c() it. Thus it is
+generally prefered to prepare_c($select) yourself and then pass it to
+row_array() as an $sth. For an example, see how the Synopsis above does this
+for row_aref().
 
 B<Throws:>
 
@@ -1429,31 +1463,35 @@ B<Notes:> NONE.
 
 sub row_array {
     my ($qry, @params) = @_;
-    _connect();
+    my $dbh = _connect();
     _debug_prepare_and_execute(\@params, \$qry) if DEBUG;
     _profile_start() if DBI_PROFILE;
+
     my @array;
     eval { @array = $dbh->selectrow_array($qry, undef, @params) };
-    throw_da(error => "Unable to select row", payload => $@)
+    throw_da error   => "Unable to select row",
+             payload => $@
       if $@;
+
     _profile_stop() if DBI_PROFILE;
     return @array;
 } # row_array()
 
-=pod
+##############################################################################
 
 =item my $data = all_aref($select, @params)
 
 Executes $dbh->selectall_arrayref($select) and returns the data structure
 returned by that DBI method. See DBI(2) for details on the data structure. If
-placeholders have been used in $select, pass the parameters that map to them.
-This function B<will> prepare() the query in $select, but it will not 
-prepare_c() it. Thus it is generally prefered to prepare_c($select) yourself 
-and then pass it to all_aref() as an $sth. For an example, see how the Synopsis above does this for row_aref().
+placeholders have been used in $select, pass the parameters that map to
+them. This function B<will> prepare() the query in $select, but it will not
+prepare_c() it. Thus it is generally prefered to prepare_c($select) yourself
+and then pass it to all_aref() as an $sth. For an example, see how the
+Synopsis above does this for row_aref().
 
 This function is not generally recommended for use except for grabbing a very
-few, simple rows and you do not need to change the data structure. If you do 
-need to change the data structure, it would probably be faster to 
+few, simple rows and you do not need to change the data structure. If you do
+need to change the data structure, it would probably be faster to
 fetch($select) with bound variables and construct the data structure yourself.
 
 B<Throws:>
@@ -1478,18 +1516,20 @@ B<Notes:> NONE.
 
 sub all_aref {
     my ($qry, @params) = @_;
-    _connect();
+    my $dbh = _connect();
     _debug_prepare_and_execute(\@params, \$qry) if DEBUG;
     _profile_start() if DBI_PROFILE;
-    my $aref;
-    eval { $aref = $dbh->selectall_arrayref($qry, undef, @params) };
-    throw_da(error => "Unable to select all", payload => $@)
+
+    my $aref = eval { $dbh->selectall_arrayref($qry, undef, @params) };
+    throw_da error   => "Unable to select all",
+             payload => $@
       if $@;
+
     _profile_stop() if DBI_PROFILE;
     return $aref;
 } # all_aref()
 
-=pod
+##############################################################################
 
 =item my $col = col_aref($select, @params)
 
@@ -1523,20 +1563,20 @@ B<Notes:> NONE.
 
 sub col_aref {
     my ($qry, @params) = @_;
-    _connect();
+    my $dbh = _connect();
     _debug_prepare_and_execute(\@params, \$qry) if DEBUG;
     _profile_start() if DBI_PROFILE;
-    my $col;
-    eval { $col = $dbh->selectcol_arrayref($qry, undef, @params) };
-    throw_da(error => "Unable to select column into arrayref", payload => $@)
+
+    my $col = eval { $dbh->selectcol_arrayref($qry, undef, @params) };
+    throw_da error   => "Unable to select column into arrayref",
+             payload => $@
       if $@;
+
     _profile_stop() if DBI_PROFILE;
     return $col;
 } # col_aref()
 
-################################################################################
-
-=pod
+##############################################################################
 
 =item my $id = next_key($table_name)
 
@@ -1552,7 +1592,7 @@ $db_name is not passed, it defaults to the value stored in $Bric::Cust.
   my $insert = prepare_c(qq{
       INSERT INTO person (@cols)
       VALUES (${\next_key('person')}, ${\join ', ', map '?', @cols[1..$#cols]})
-  });
+  }, undef);
 
   # Don't try to set ID - it will fail!
   execute($insert, $self->_get(@cols[1..$#cols));
@@ -1570,19 +1610,17 @@ B<Notes:> NONE.
 
 sub next_key { next_key_sql(@_, $Bric::Cust); } # next_key()
 
-=pod
+##############################################################################
 
 =item last_key($table_name)
 
 =item last_key($table_name, $db_name)
 
-=item last_key($table_name, $db_name, $DEBUG)
-
 Returns the last sequence number inserted into $db_name.$table_name by the
 current process. If $db_name is not passed, it defaults to the value stored in
-$Bric::Cust. Will return undef if this process has not yet inserted anything into
-$table_name. Use for retreiving an object ID immediately after executing an
-INSERT statement. See next_key() above for an example.
+$Bric::Cust. Will return undef if this process has not yet inserted anything
+into $table_name. Use for retreiving an object ID immediately after executing
+an INSERT statement. See next_key() above for an example.
 
 B<Throws:>
 
@@ -1611,8 +1649,8 @@ B<Notes:> NONE.
 
 sub last_key {
     _connect();
-    my ($name, $db, $debug) = @_;
-    my $sth = prepare_c(last_key_sql($name, $db || $Bric::Cust), undef, $debug);
+    my ($name, $db) = @_;
+    my $sth = prepare_c(last_key_sql($name, $db || $Bric::Cust), undef);
     return row_aref($sth)->[0];
 } # last_key()
 
@@ -1630,54 +1668,61 @@ NONE.
 
 NONE.
 
+=cut
+
+##############################################################################
+
 =head2 Private Functions
 
 =over 4
 
 =item _connect()
 
-Connects to the database and stores the connection in $dbh.  Will
-re-connect if $dbh->ping fails.  Should be called at the start of
-every function that does database access.
+Returns a connection to the database using C<< DBI->connect_cached()
+>>. Should be called at the start of every function that does database access.
 
-B<Notes:> We may need to override $dbh->ping. If so, do it in the
-Bric::DBI::DBD::* driver class.
+B<Notes:> NONE.
 
 =cut
 
 sub _connect {
-    eval {
-	unless ($dbh && $dbh->ping) {
-	    $dbh = DBI->connect(join(':', 'DBI', DBD_TYPE, DSN_STRING),
-				DBI_USER, DBI_PASS, $ATTR);
-	}
+    my $dbh = eval {
+        DBI->connect_cached(join(':', 'DBI', DBD_TYPE, DSN_STRING),
+                            DBI_USER, DBI_PASS, $ATTR);
     };
-    throw_da(error => "Unable to connect to database", payload => $@)
+
+    throw_da error   => "Unable to connect to database",
+             payload => $@
       if $@;
+    return $dbh;
 }
+
+##############################################################################
 
 =item _disconnect()
 
-Disconnects from the database.  Called by an END block installed by
-this package.
+Disconnects from the database. Called by an END block installed by this
+package.
 
 =cut
 
 sub _disconnect {
     eval {
-	if ($dbh && $dbh->ping) {
-	    # Don't commit, in case we're ending unexpectedly.
-	    $dbh->rollback unless $dbh->{AutoCommit};
-	    $dbh->disconnect;
-	}
+        my $dbh = _connect();
+        # Don't commit, in case we're ending unexpectedly.
+        $dbh->rollback unless $dbh->{AutoCommit};
+        $dbh->disconnect;
     };
-    throw_da(error => "Unable to disconnect from database", payload => $@)
+    throw_da error   => "Unable to disconnect from database",
+             payload => $@
       if $@;
 }
 
+##############################################################################
+
 =item _debug_prepare(\$sql)
 
-Prints out debugging messages for a prepare call.  Should be called by
+Prints out debugging messages for a prepare call. Should be called by
 functions that prepare statements when DEBUG (DBI_DEBUG) is true.
 
 =cut
@@ -1685,15 +1730,17 @@ functions that prepare statements when DEBUG (DBI_DEBUG) is true.
 sub _debug_prepare {
     my $sql_ref = shift;
     my $sig = _statement_signature($sql_ref);
-    print STDERR "############# Prepare Query [$sig]:\n$$sql_ref\n", 
+    print STDERR "############# Prepare Query [$sig]:\n$$sql_ref\n",
 	         "#############\n\n";
     _print_call_trace() if CALL_TRACE;
 }
 
+##############################################################################
+
 =item _debug_execute(\@args, $sth)
 
-Prints out debugging messages for an execute call.  Should be called
-by functions that execute statements when DEBUG (DBI_DEBUG) is true.
+Prints out debugging messages for an execute call. Should be called by
+functions that execute statements when DEBUG (DBI_DEBUG) is true.
 
 =cut
 
@@ -1707,13 +1754,15 @@ sub _debug_execute {
     _print_call_trace() if CALL_TRACE;
 }
 
+##############################################################################
+
 =item _debug_prepare_and_execute(\@args, \$sql)
 
 =item _debug_prepare_and_execute(\@args, \$sth)
 
-Prints out debugging messages for a call that prepares and executes in
-one call.  Should be called by functions that prepare and execute when
-DEBUG (DBI_DEBUG) is true.
+Prints out debugging messages for a call that prepares and executes in one
+call. Should be called by functions that prepare and execute when DEBUG
+(DBI_DEBUG) is true.
 
 =cut
 
@@ -1727,17 +1776,19 @@ sub _debug_prepare_and_execute {
 	_print_call_trace() if CALL_TRACE;
     }
     print STDERR "+++++++++++++ Execute Query [$sig]:\n";
-    print STDERR "+++++++++++++ ARGS: ", 
+    print STDERR "+++++++++++++ ARGS: ",
 	join(', ', map { defined $_ ? $_ : 'NULL' } @$args),
 	     "\n\n\n";
 }
+
+##############################################################################
 
 =item _statement_signature(\$sql)
 
 =item _statement_signature(\$sth)
 
-Returns a fingerprint for an sql statement or statement handle.  Used
-in debug output to match prepares to executes.
+Returns a fingerprint for an sql statement or statement handle. Used in debug
+output to match prepares to executes.
 
 =cut
 
@@ -1748,10 +1799,12 @@ sub _statement_signature {
     return $sig;
 }
 
+##############################################################################
+
 =item _print_call_trace
 
-Writes out a call trace to STDERR.  Should be called by functions that
-prepare statements when CALL_TRACE (DBI_CALL_TRACE) is true.
+Writes out a call trace to STDERR. Should be called by functions that prepare
+statements when CALL_TRACE (DBI_CALL_TRACE) is true.
 
 =cut
 
@@ -1765,10 +1818,12 @@ sub _print_call_trace {
   print STDERR "\n";
 }
 
+##############################################################################
+
 =item _profile_start()
 
-Starts a timer used to profile database calls.  Should be
-called before query execution when DBI_PROFILE is true.
+Starts a timer used to profile database calls. Should be called before query
+execution when DBI_PROFILE is true.
 
 =cut
 
@@ -1778,11 +1833,12 @@ called before query execution when DBI_PROFILE is true.
 	$PROF_TIMER = gettimeofday();
     }
 
+##############################################################################
+
 =item _profile_stop()
 
-Stops the profile timer and writes out the timing results to STDERR.
-Should be called immediately after query execution when DBI_PROFILE is
-true.
+Stops the profile timer and writes out the timing results to STDERR. Should be
+called immediately after query execution when DBI_PROFILE is true.
 
 =cut
 

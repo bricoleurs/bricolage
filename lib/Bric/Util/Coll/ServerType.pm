@@ -8,15 +8,15 @@ types.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 05:55:08 $
+$Date: 2003-08-14 23:24:12 $
 
 =head1 SYNOPSIS
 
@@ -182,7 +182,7 @@ sub save {
 	my $ins = prepare_c(qq{
             INSERT INTO job__server_type (job__id, server_type__id)
             VALUES (?, ?)
-        });
+        }, undef);
 
 	foreach my $r (@$new_objs) {
 	    $r->save;
@@ -197,7 +197,7 @@ sub save {
             DELETE FROM job__server_type
             WHERE  job__id = ?
                    AND server_type__id = ?
-        });
+        }, undef);
 	execute($del, $job_id, $_->get_id) for values %$del_objs;
 	%$del_objs = ();
     }
