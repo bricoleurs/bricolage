@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.62 $
+$Revision: 1.63 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.62 $ )[-1];
+our $VERSION = (qw$Revision: 1.63 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-01 20:37:06 $
+$Date: 2004-01-09 14:58:53 $
 
 =head1 SYNOPSIS
 
@@ -1255,7 +1255,7 @@ sub upload_file {
 
 ################################################################################
 
-=item $file_handle = $madia->get_file()
+=item $file_handle = $media->get_file()
 
 Returns the file handle for this given media object
 
