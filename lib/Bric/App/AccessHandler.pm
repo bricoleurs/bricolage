@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:25 $
+$Date: 2003-08-20 19:15:06 $
 
 =head1 SYNOPSIS
 
@@ -181,7 +181,7 @@ sub handler {
         # del_redirect() function in Bric::App::Util depends on this
         # knowledge, so if we ever change this, we'll need to make sure we fix
         # that function, too.
-        set_redirect('/');
+#        set_redirect('/');
         my $hostname = $r->hostname;
         if (SSL_ENABLE) {
             $r->custom_response(FORBIDDEN, "https://$hostname$ssl_port/login");
