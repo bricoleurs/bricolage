@@ -66,6 +66,11 @@ enabled in bricolage.conf. [Mark]
 Added "slug" to the list of attributes specified in the error message for a
 non-unique URI in a story. Thanks to Rachel Murray for the spot! [David]
 
+=item *
+
+Fixed C<has_keyword> for stories and media, which was always returning
+C<undef>. Spotted by Clare Parkinson. [Scott]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)

@@ -289,6 +289,8 @@ Friends who have spotted bugs include:
 
 =item Ashlee Caul
 
+=item Clare Parkinson
+
 =back
 
 Bricolage's translation team:
