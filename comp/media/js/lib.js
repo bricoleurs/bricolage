@@ -1,5 +1,10 @@
+window.onload = function () {
+    document.getElementById("btnAbout").onclick = openAbout;
+    document.getElementById("btnHelp").onclick = openHelp;
+}
+
 // set up global to track names of double list managers
- var doubleLists = new Array();
+var doubleLists = new Array();
 var formObj = '';
 
 function validateStory(obj) {
@@ -766,4 +771,22 @@ function resizeframe() {
       // Everyone else
       ifrm.style.height = document.body.offsetHeight + "px";
     }
+}
+
+/*
+Open popup window
+*/
+function openWindow(page) {
+    window.open('/help/' + lang_key + '/' + page + '.html', 
+                                'Help_<% SERVER_WINDOW_NAME %>', 
+                                'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'
+                                );
+    return false;
+}
+
+function openAbout() { return openWindow("about"); }
+function openHelp()  { 
+    var uri = window.location.pathname.replace(/\/?\d*\/?$/g, "");
+    if (uri.length == 0) { uri = "/workflow/profile/workspace"; }
+    return openWindow(uri);
 }

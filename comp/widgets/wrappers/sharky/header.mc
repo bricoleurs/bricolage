@@ -77,6 +77,7 @@ if(ref($title) eq 'ARRAY') {
 % }
 <script type="text/javascript">
 
+var lang_key = "<% $lang_key %>";
 var checkboxValues = new Array();
 
 function init() {
@@ -103,13 +104,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 <!-- begin top table -->
 <div id="bricLogo">
 % if ($useSideNav) {
-        <a href="#" title="About Bricolage"
-           onclick="window.open('/help/<% $lang_key %>/about.html', 
-                                'About_<% SERVER_WINDOW_NAME %>', 
-                                'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'
-                                ); return false;">
-            <img src="/media/images/<% $lang_key %>/bricolage.gif" />
-        </a>
+        <a href="#" title="About Bricolage" id="btnAbout"><img src="/media/images/<% $lang_key %>/bricolage.gif" /></a>
 % } else {
         <img src="/media/images/<% $lang_key %>/bricolage.gif" alt="Bricolage" />
 % }
@@ -150,7 +145,7 @@ if ($useSideNav) {
         </div>
 % if ($useSideNav) {
         <div class="buttons">
-            <& "/widgets/help/help.mc", context => $context, page => $title &>
+            <& "/widgets/buttons/help.mc", context => $context, page => $title &>
             <a href="/workflow/profile/alerts" title="My Alerts"><img src="/media/images/<% $lang_key %>/my_alerts_orange.gif" alt="My Alerts" /></a>
             <a href="/logout" title="Logout"><img src="/media/images/<% $lang_key %>/logout.gif" alt="Logout" /></a>
         </div>
