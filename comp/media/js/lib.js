@@ -653,12 +653,10 @@ Check all the checkboxes whose name matches "str"
 */
 var all_checked = false;
 function checkAll(str) {
-    for (var i=0; i < document.forms.length; i++) {
-        var tmp = document.forms[i];
-        for (var j=0; j < tmp.elements.length; j++) {
-            if (tmp.elements[j].type == "checkbox" && tmp.elements[j].name.indexOf(str) != -1) {
-                tmp.elements[j].checked = all_checked ? false : true
-            }
+    var checkboxes = document.getElementsByTagName("input");
+    for (var i=0; i < checkboxes.length; i++) {
+        if (checkboxes[i].name.indexOf(str) != -1) {
+            checkboxes[i].checked = all_checked ? false : true
         }
     }
     all_checked = all_checked ? false : true;
