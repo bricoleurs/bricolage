@@ -303,7 +303,7 @@ my $handle_add_element = sub {
 
 my $handle_update = sub {
     my ($widget, $field, $param) = @_;
-
+    return if $param->{"$widget|up_cb"};
     # Update the tile state data based on the parameter data.
     $update_parts->($widget, $param);
     my $tile = get_state_data($widget, 'tile');

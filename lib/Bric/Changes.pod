@@ -202,6 +202,12 @@ that desk no longer triggers an error. Thanks to Clive Jones for the spot!
 An attempt to preview a story where its templates output no content no longer
 results in an error. Reported by Eldar Kononov. [David]
 
+=item *
+
+Clicking "Cancel" in an element no longer saves the changes in that element
+before going up to the parent element. Thanks to Andrew Baio for the spot!
+[David]
+
 =back
 
 =head1 VERSION 1.6.1
