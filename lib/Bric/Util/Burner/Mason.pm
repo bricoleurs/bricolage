@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-17 18:26:31 $
+$Date: 2004-01-09 21:12:08 $
 
 =head1 SYNOPSIS
 
@@ -47,6 +47,7 @@ use strict;
 # Programatic Dependencies
 
 use HTML::Mason::Interp;
+use HTML::Mason::Compiler::ToObject;
 use Bric::Util::Fault qw(throw_gen rethrow_exception isa_exception
                          throw_burn_error);
 use Bric::Util::Trans::FS;
