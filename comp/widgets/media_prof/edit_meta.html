@@ -15,9 +15,9 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
 );
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Information",
-	 number  => $num++,
-	 rightText => $rightText
+         caption => "Information",
+         number  => $num++,
+         rightText => $rightText
 
 );
 
@@ -80,25 +80,25 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
 <% $ieSpacer %>
 
-<& '/widgets/select_object/select_object.mc', 
-  object        => 'source',
-  name		=> "$widget|source__id",
-  field		=> 'source_name',
-  selected_id	=> $media->get_source__id,
-  indent	=> 0,
-  useTable	=> 1,
-  disp          => "Source"
+<& '/widgets/select_object/select_object.mc',
+  object   => 'source',
+  name     => "$widget|source__id",
+  field    => 'source_name',
+  selected => $media->get_source__id,
+  indent   => 0,
+  useTable => 1,
+  disp     => "Source"
 &>
 <% $ieSpacer %>
 <& '/widgets/select_object/select_object.mc',
-  object	=> 'category',
-  name 		=> "$widget|category__id",
-  field		=> "uri",
+  object        => 'category',
+  name          => "$widget|category__id",
+  field         => "uri",
   sort_field    => "uri",
-  selected	=> $media->get_category__id,
-  indent	=> 0,
+  selected      => $media->get_category__id,
+  indent        => 0,
   req           => 1,
-  useTable	=> 1,
+  useTable      => 1,
   exclude       => sub { ! chk_authz($_[0], READ, 1) },
   disp          => "Category"
 &>
@@ -122,9 +122,9 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 % $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 % $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%	caption => "Upload a file",
-%	number => $num++
-%	);
+%       caption => "Upload a file",
+%       number => $num++
+%       );
 
 <table width=578 cellpadding=2 cellspacing=0>
 <tr>
@@ -142,11 +142,11 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td width=150 align=right><span class="label">Download:</span></td>
   <td>
 % if (my $uri = $media->get_local_uri()) {
-	<a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>" class="darkBlueLink"><% $media->get_file_name %></a>
+        <a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>" class="darkBlueLink"><% $media->get_file_name %></a>
 % } else {
-	No file has been uploaded
+        No file has been uploaded
 % }
-	</td>
+        </td>
 </tr>
 </table>
 
@@ -154,12 +154,12 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 $num = $m->comp( '/widgets/container_prof/container_prof.mc',
-	tile => $tile,
-	tile_type => 'media',
-	action => 'edit',
+        tile => $tile,
+        tile_type => 'media',
+        action => 'edit',
         num => $num,
         title => 'Content',
-	start_count => 6
+        start_count => 6
 );
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
@@ -192,8 +192,8 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 $m->comp("/widgets/profile/buttonBar.mc",
          widget      => $widget,
-	 desks       => $desks,
-	 cd          => $cd,
+         desks       => $desks,
+         cd          => $cd,
          obj         => $media,
 );
 

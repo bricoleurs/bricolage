@@ -60,8 +60,13 @@ spot! [David]
 
 =item *
 
-Display of the source was missing from the View screen for stories and media, but
+Display of the source was missing from the view Story and Media profiles, but
 no longer. [David]
+
+=item *
+
+The correct source is now displayed in the Story and Media edit profiles.
+[David]
 
 =back
 
