@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:50 $
+$Date: 2004-02-24 21:56:39 $
 
 =head1 SYNOPSIS
 
@@ -322,17 +322,36 @@ my %formSubs = (
 	    $out .= &$rem_sub($width, $indent) if $useTable;
 	    $value = defined $value ? escape_html($value) : '';
 	    $key = $key ? escape_html($key) : '';
+             
 
 	    if (!$readOnly) {
-		$js = $js ? " $js" : '';
-		$out .= qq{<textarea name="$key" rows="$rows" cols="$cols" width="200"}
-		  . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
-	    } else {
-		$out .= $value;
+            $js = $js ? " $js" : '';
+			# if we've set a maximum length then display the textcounter
+            if ($vals->{props}{maxlength}) {
+                # use a 'nice' unique name for js call, IE doesn't like | or _
+                my $uniquename = $key;
+                $uniquename =~ s/[\||_]//g;
+ 				my $upval = length($value);
+				my $dwval = $vals->{props}{maxlength} - $upval;
+                my $textstring = $lang->maketext('Characters') 
+				  . qq {: <span id="textCountUp$uniquename">$upval</span> }
+                  . $lang->maketext('Remaining') 
+				  . qq{: <span id="textCountDown$uniquename">$dwval</span>};
+                my $functioncode = "textCount('$uniquename',$vals->{props}{maxlength})";
+                $out .= qq{$textstring\n<textarea  id="$uniquename" }
+                  . qq{onKeyUp="$functioncode"\n onKeyDown="$functioncode"\n }
+                  . qq{name="$key" rows="$rows" cols="$cols" width="200"}
+                  . qq{ wrap="soft" class="textArea" $js>\n$value</textarea><br />\n};
+            } else {
+                $out .= qq{<textarea name="$key" rows="$rows" cols="$cols" width="200"}
+	                . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
+            }
+        } else {
+            $out .= $value;
 	    }
-	    $out .= "\n</td></tr></table>\n" if $useTable;
-	    $m->out($out);
-	},
+        $out .= "\n</td></tr></table>\n" if $useTable;
+        $m->out($out);
+    },
 
 	select => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,

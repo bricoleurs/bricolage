@@ -167,6 +167,10 @@ Folks who have submitted patches include:
 
 =item Serge Sozonoff
 
+=item Marshall Roch
+
+=item Paul Orrock
+
 =back
 
 Friends who have spotted bugs include:
@@ -244,8 +248,6 @@ Friends who have spotted bugs include:
 =item Neal Sofge
 
 =item Patrick Walsh
-
-=item Marshall Roch
 
 =back
 

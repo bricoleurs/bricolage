@@ -39,6 +39,17 @@ of of them match for a given parameter. This is especially useful for matching
 on, say, a list of URIs or category IDs. This function is automatically
 available in templates. [David]
 
+=item *
+
+Added a feature that counts characters used in a textarea subelement on the
+fly. It displays this figure and the number of characters left, immediately
+above the textarea. This feature is enabled when the Max size atribute for the
+textarea is given a non zero value when adding it to the element profile
+stage. The javascript will also not allow you to have more than max size
+characters in the textarea by truncating the data to that number of characters
+everytime someone adds another character beyond the maximum. [Paul
+Orrick/Digital Craftsmen]
+
 =back
 
 =head2 Improvements
@@ -145,6 +156,12 @@ The list of output channels available to be included in an output channel now
 has the name of the site with which each is affiliated listed as well. This is
 to prevent confusion between output channels with the same names in different
 sites. [David]
+
+=item *
+
+Changed the vertical alignment of the labels for textarea fields in the story
+profile to be consistent with the labels on the element profile. i.e. top
+aligned. [Paul Orrick/Digital Craftsmen]
 
 =back
 
@@ -279,6 +296,10 @@ something other than ISO-8601. Reported by Marshall Roch. [David]
 
 C<bric_dist_mon> now I<correctly> appends "/dist/" to the end of the server
 URL if it is not alreaded appended. Reported by Marshall Roch. [David]
+
+=item *
+
+Fixed ancient bug revealed by the release of DBI 1.41. [David]
 
 =back
 

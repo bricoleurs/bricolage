@@ -688,3 +688,14 @@ function checkAll(str) {
         }
     }
 }
+
+
+/*
+Real time character counter for text areas
+*/
+function textCount(which, maxLength) {
+    var myObj= document.getElementById(which);
+    if (myObj.value.length>maxLength) myObj.value=myObj.value.substring(0,maxLength); 
+    writeDiv("textCountUp" + which,myObj.value.length);
+    writeDiv("textCountDown" + which,maxLength-myObj.value.length);
+}
