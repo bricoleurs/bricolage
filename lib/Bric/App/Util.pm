@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 20:03:36 $
+$Date: 2003-09-18 20:04:08 $
 
 =head1 SYNOPSIS
 
@@ -618,7 +618,7 @@ sub severe_status_msg {
               "</b></font>");
     } else {
         print STDERR "##################################################\n\n";
-        print STDERR Bric::Util::Language->instance->maketext(@_);
+        print STDERR Bric::Util::Language->instance->maketext(@_), "\n";
         print STDERR "##################################################\n\n";
     }
 }
