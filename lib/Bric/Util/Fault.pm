@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.10.2.1 $
+$Revision: 1.10.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.10.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-07 07:42:20 $
+$Date: 2003-03-11 21:43:23 $
 
 =head1 SYNOPSIS
 
@@ -80,7 +80,7 @@ use strict;
 #==============================================================================#
 # Inheritance                          #
 #======================================#
-use Exception::Class
+use Exception::Class 1.10
   ( 'Bric::Util::Fault' =>
       { description => 'Bricolage Exception',
         fields => [qw(payload env)],
