@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.14 $
+$Revision: 1.5.2.15 $
 
 =head1 DATE
 
-$Date: 2001-11-29 21:56:31 $
+$Date: 2001-11-29 23:25:07 $
 
 =head1 DESCRIPTION
 
@@ -483,22 +483,6 @@ Install PostgreSQL:
   ./configure --enable-multibyte=UNICODE
   make
   make install
-
-=item *
-
-Set and export the LD_LIBRARY_PATH environment variable (this example uses Bash
-shell):
-
-  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/pgsql/lib
-  export LD_LIBRARY_PATH
-
-=item *
-
-Be sure to include the PostgreSQL libraries in all LD_LIBRARY_PATH environment
-variables on the system:
-
-  echo "/usr/local/pgsql/lib" >> /etc/ld.so.conf
-  ldconfig
 
 =item *
 
