@@ -5,7 +5,7 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'login';
 
 use strict;
-use Bric::App::Auth qw(login);
+use Bric::App::Auth ();
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
 
@@ -20,7 +20,7 @@ sub login : Callback {
 
     my $un = $param->{CLASS_KEY . '|username'};
     my $pw = $param->{CLASS_KEY . '|password'};
-    my ($res, $msg) = login($r, $un, $pw);
+    my ($res, $msg) = Bric::App::Auth::login($r, $un, $pw);
     if ($res) {
 	if ($param->{CLASS_KEY . '|ssl'}) {
 	    # They want to use SSL. Do a simple redirect.
