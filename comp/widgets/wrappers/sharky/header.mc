@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2002-01-10 19:52:37 $
+$Date: 2002-01-11 01:58:37 $
 
 =head1 SYNOPSIS
 
@@ -135,7 +135,7 @@ Please activate JavaScript in your browser before continuing.
 <tr>
 	<td width=150>
 % if ($useSideNav) {
-        <a href="#" onClick="window.open('/help/about.html', 'About_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=620'); return false;"><img src="/media/images/bricolage.gif" width="150" height="25" border="0" /></a>
+        <a href="#" onClick="window.open('/help/about.html', 'About_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'); return false;"><img src="/media/images/bricolage.gif" width="150" height="25" border="0" /></a>
 % } else {
         <img src="/media/images/bricolage.gif" width="150" height="25" border="0" />
 % }
