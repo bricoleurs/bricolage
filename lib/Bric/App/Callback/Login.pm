@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'login';
 use strict;
 use Bric::App::Auth ();
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:all);
+use Bric::App::Util qw(del_redirect redirect_onload);
 
 use Bric::Config qw(LISTEN_PORT);
 
@@ -25,7 +25,7 @@ sub login : Callback {
 	if ($param->{$self->class_key . '|ssl'}) {
 	    # They want to use SSL. Do a simple redirect.
 	    set_state_name($self->class_key, 'ssl');
-	    do_queued_redirect() || redirect('/');
+            $self->redirect(del_redirect() || '');
 	} else {
 	    # Redirect them back to port 80 if not using SSL.
 	    set_state_name($self->class_key, 'nossl');
