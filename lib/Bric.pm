@@ -10,15 +10,15 @@ Release Version: 1.0.0
 
 File (CVS) Version:
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = "1.0.0";
+our $VERSION = "1.0.1";
 
 =head1 DATE
 
-$Date: 2001-09-19 19:33:38 $
+$Date: 2001-09-27 15:59:13 $
 
 =head1 SYNOPSIS
 
@@ -798,7 +798,10 @@ perl(1).
 =head1 REVISION HISTORY
 
 $Log: Bric.pm,v $
-Revision 1.2  2001-09-19 19:33:38  wheeler
+Revision 1.3  2001-09-27 15:59:13  wheeler
+Incremented version to 1.0.1. Release due tomorrow morning.
+
+Revision 1.2  2001/09/19 19:33:38  wheeler
 Changed version number. Will increment to 1.0.1 upon actual release.
 
 Revision 1.1.1.1  2001/09/06 21:52:43  wheeler
