@@ -59,7 +59,7 @@ $soap->proxy('http://localhost/soap',
 isa_ok($soap, 'SOAP::Lite');
 
 # try a bad login attempt
-my $response = $soap->login(name(username => 'admin'), 
+my $response = $soap->login(name(username => USER), 
 			    name(password => rand()));
 ok($response->fault, 'bad login failed');
 like($response->faultstring(), qr/Invalid username or password/, "bad login message check");
