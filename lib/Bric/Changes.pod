@@ -101,6 +101,12 @@ Non-existent methods no longer throw "permission denied" exceptions, but the
 standard Perl "Can't locate object method" exception. This is to eliminate
 confusion with permission to access Bricolage objects. [David]
 
+=item *
+
+Adding a new element type with the same name as an existing or deleted element
+type no longer causes an SQL error. Thanks to Gary Gilchrist for the spot.
+[David]
+
 =back
 
 =head1 VERSION 1.6.4 (2003-08-12)

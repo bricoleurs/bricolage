@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.15.4.3 $
+$Revision: 1.15.4.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15.4.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.15.4.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 22:04:06 $
+$Date: 2003-09-08 19:58:25 $
 
 =head1 SYNOPSIS
 
@@ -309,7 +309,7 @@ Boolean; return all fixed URL ATTypes.
 
 =item active
 
-Boolean; return all active ATTypes.
+Boolean; return all active ATTypes. If passed as "all", returns all ATTypes.
 
 =item related_story
 
@@ -1126,7 +1126,7 @@ $get_em = sub {
     my @params;
 
     # Set the active parameter, if necessary.
-    if ($params->{id} or delete $params->{all}) {
+    if ($params->{id} or $params->{active} eq 'all') {
         # Disregard any active parameter.
         delete $params->{active};
     } else {
