@@ -287,7 +287,7 @@ my $def = {
 	   output_channel => { list_fields => [qw(name description)],
 			       srch_field => 'name',
 			       behavior => 'narrow',
-	                       constrain => {},
+	                       constrain => {active => 1},
 			       select => $sel_sub },
 	   source         => { list_fields => [qw(source_name description expire)],
 			       srch_field => 'source_name',
@@ -357,11 +357,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.6.2.2 $
+$Revision: 1.6.2.3 $
 
 =head1 DATE
 
-$Date: 2002-01-18 00:36:55 $
+$Date: 2002-01-21 18:42:38 $
 
 =head1 SYNOPSIS
 
