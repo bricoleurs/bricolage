@@ -1601,7 +1601,7 @@ The group API has been approximately 75% rewritten. The goal was to optimize
 its performance, since group activity proved to be a serious bottleneck to
 Bricolage performance. Those interested in the nitty-gritty details of the
 rewrite can read about them here:
-L<http://sourceforge.net/mailarchive/forum.php?thread_id=967943&forum_id=561>.
+L<http:E<sol>E<sol>sourceforge.netE<sol>mailarchiveE<sol>forum.php?thread_id=967943&forum_id=561>.
 
 =back
 

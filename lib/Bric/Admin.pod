@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.97 $
+$Revision: 1.98 $
 
 =head1 DATE
 
-$Date: 2003-03-04 17:13:07 $
+$Date: 2003-03-07 16:38:10 $
 
 =head1 DESCRIPTION
 
@@ -320,7 +320,7 @@ Installation of mod_ssl follows the usual conventions. Here's an example:
 
 =item *
 
-Download the mod_ssl source tarball from L<http://www.modssl.org/>.
+Download the mod_ssl source tarball from L<http:E<sol>E<sol>www.modssl.orgE<sol>>.
 
 =item *
 
@@ -352,7 +352,8 @@ compiled into Apache.
 
 =item *
 
-Download the apache_ssl source tarball from L<http://www.apache-ssl.org/>.
+Download the apache_ssl source tarball from
+L<http:E<sol>E<sol>www.apache-ssl.orgE<sol>>.
 
 =item *
 
@@ -685,7 +686,7 @@ installation system.
 
 =item *
 
-Download the latest Bricolage sources from L<http://bricolage.cc/>.
+Download the latest Bricolage sources from L<http:E<sol>E<sol>bricolage.ccE<sol>>.
 
 =item *
 
@@ -711,7 +712,8 @@ Install Bricolage (as root):
 =back
 
 If you run into problem, please file a bug report at
-L<http://bugzilla.bricolage.cc>. Include a copy of all F<*.db> files generated
+L<http:E<sol>E<sol>bugzilla.bricolage.ccE<sol>>. Include a copy of all
+F<*.db> files generated
 by the Makefile as well as a complete description of where the process
 failed. Then, either wait for us to fix the problem or try the manual
 installation instructions below.
@@ -727,8 +729,8 @@ Here's how to install Bricolage manually.
 
 =item *
 
-Download the latest Bricolage sources from L<http://bricolage.cc/>. Decompress
-them into /usr/local/bricolage.
+Download the latest Bricolage sources from L<http:E<sol>E<sol>bricolage.ccE<sol>>.
+Decompress them into /usr/local/bricolage.
 
 =item *
 
@@ -746,7 +748,7 @@ without these permissions (the 'dbname' database will be owned by the user
 passed in via the -u argument), but will be granted full CREATE, DELETE, UPDATE,
 and SELECT permissions on all objects in the Bricolage database.
 
-See L<Bric::DBA/> for more information on database security. You may want to
+See L<Bric::DBA> for more information on database security. You may want to
 alter the default security policy. Also, bric_import uses a TCP/IP connection so
 you may need to run postmaster with the I<-i> option.
 
@@ -781,7 +783,7 @@ F<bricolage.conf> via the C<APACHE_CONF> direcive will be passed to the httpd
 daemon.
 
 You can also configure Bricolage to run on a virtual host. See
-L<"Configuration"> below.
+L<"CONFIGURATION"> below.
 
 =item *
 
@@ -1330,7 +1332,7 @@ from Bricolage. Please note that currently due to restrictions in the perl www
 client library (LWP), a resource must be fully loaded into memory before being
 uploaded to the WebDAV server. It's recommended not to use the WebDAV
 transport to transfer large files, such as movies. Check
-L<http://www.webdav.org/> for information on the WebDAV protocol.
+L<http:E<sol>E<sol>www.webdav.orgE<sol>> for information on the WebDAV protocol.
 
 =back
 

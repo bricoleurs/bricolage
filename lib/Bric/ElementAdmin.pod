@@ -4,11 +4,11 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2002-08-18 23:43:19 $
+$Date: 2003-03-07 16:38:12 $
 
 =head1 DESCRIPTION
 
@@ -219,7 +219,7 @@ hierarchies for the examples described above:
 
 =item Byline
 
-=back 4
+=back
 
 =item Current Stories
 
@@ -266,8 +266,6 @@ hierarchies for the examples described above:
 =back
 
 =back
-
-=item
 
 =item Story
 
@@ -348,7 +346,7 @@ in the Element that links to them:
 
 =item Navigation
 
-=back 4
+=back
 
 =item Column Two
 
@@ -383,8 +381,6 @@ in the Element that links to them:
 =back
 
 =back
-
-=item
 
 =item Story
 
