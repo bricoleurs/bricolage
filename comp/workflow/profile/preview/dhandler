@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-09-16 21:07:59 $
+$Date: 2003-12-16 05:10:38 $
 
 =head1 DESCRIPTION
 
@@ -23,6 +23,8 @@ $Date: 2003-09-16 21:07:59 $
 %#-- Begin HTML --#
 <%perl>;
 my ($class, $id, $oc_id) = split('/', $m->dhandler_arg);
+# Avoid redirects to the preview page.
+pop_page;
 my $pub = Bric::App::Callback::Publish->new
   ( cb_request  => $m->interp->cb_request,
     apache_req  => $r,
