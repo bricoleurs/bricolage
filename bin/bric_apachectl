@@ -5,7 +5,7 @@ use strict;
 
 =head1 NAME
 
-bric_apachectl
+bric_apachectl - Bricolage Apache controller
 
 =head1 SYNOPSIS
 

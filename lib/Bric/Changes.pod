@@ -151,6 +151,10 @@ database. [ClE<aacute>udio Valente]
 
 Added Italian translation. [Marco Ghezzi]
 
+=item *
+
+Documented F<bric_dist_mon> and F<bric_ftpd>. [David]
+
 =back
 
 =head2 Bug Fixes

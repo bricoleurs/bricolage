@@ -1,4 +1,93 @@
 #!/usr/bin/perl -w
+
+=head1 NAME
+
+bric_ftpd - Bricolage virtual FTP server
+
+=head1 VERSION
+
+$Revision: 1.6 $
+
+=head1 DATE
+
+$Date: 2003-02-18 18:35:21 $
+
+=head1 SYNOPSIS
+
+  su nobody -c "bric_ftpd -S"
+
+=head1 DESCRIPTION
+
+This program controls the Bricolage vitual FTP server, which can be used to
+allow access to Bricolage templates. This may provide a more comfortable
+development environment for programmers working on templates. Many editors
+provide FTP modes that make editing files via FTP almost as easy as editing
+files locally (ange-ftp for Emacs, for example).
+
+There are security risks to consider - FTP sends passwords unencrypted over
+the network. If you are running Bricolage behind a firewall this might not be
+a problem.
+
+To enable the FTP server you'll need to install the Net::FTPServer Perl
+module. After that you can configure the FTP server with the following
+F<bricolage.conf> directives:
+
+=over
+
+=item *
+
+B<ENABLE_FTP_SERVER:> Set this to 1 if you want to use the FTP
+server. Defaults to 0.
+
+=item *
+
+B<FTP_PORT:> The port that the FTP server will run on. Users will need to know
+this port to connect to the FTP server. Since you won't be running the server
+as root you'll need to choose a port above 1024. Defaults to 2121.
+
+=item *
+
+B<FTP_ADDRESS:> Normally the FTP server will bind to all the available IP
+addresses for your machine. If you set this variable then the server will only
+bind to the specified address.
+
+=item *
+
+B<FTP_LOG:> Set this to the file where you want to FTP logs written
+to. Defaults to $BRICOLAGE_ROOT/ftp.log if not set.
+
+=item *
+
+B<FTP_DEBUG:> If you set this to 1 you'll see a lot of useful tracing
+information in the FTP logfile. This can help diagnose errors but is probably
+only of interest to developers. Defaults to 0.
+
+=back
+
+Next you'll need to start the FTP server as the same user that Apache runs as.
+For example, if you run Apache as "nobody" you would use this command to start
+the FTP server:
+
+  su nobody -c "bric_ftpd -S"
+
+The C<-S> option to ftpd runs the FTP server in the background. For other
+possibilities see the documentation for Net::FTPServer.
+
+Once the server is up and running connect to it with an FTP client and start
+editing templates. For more information see
+L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>.
+
+=head1 AUTHOR
+
+Sam Tregar <stregar@about-inc.com>
+
+=head1 SEE ALSO
+
+L<Bric::Admin|Bric::Admin>, <LNet::FTPServer|Net::FTPServer>,
+L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>.
+
+=cut
+
 use strict;
 
 use File::Spec::Functions qw(catdir);
@@ -36,9 +125,10 @@ END
 use Bric::Config qw(:ftp);
 
 # make sure FTP is enabled
-BEGIN {  
+BEGIN {
   unless (ENABLE_FTP_SERVER) {
-    print "\nENABLE_FTP_SERVER is off!  Please read Bric::Admin for instructions on how to setup the FTP server.\n";
+    print "\nENABLE_FTP_SERVER is off!  Please read Bric::Admin " .
+      "for instructions on how to setup the FTP server.\n";
     exit 1;
   }
 }

@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.87 $
+$Revision: 1.88 $
 
 =head1 DATE
 
-$Date: 2003-02-18 02:16:06 $
+$Date: 2003-02-18 18:35:23 $
 
 =head1 DESCRIPTION
 
@@ -52,10 +52,6 @@ in mind as long term goals further down the line.
 Give users the option to reactivate deleted templates when they try to create
 a template that already exists in the database as a deactivated template.
 [David]
-
-=item *
-
-Add POD documentation to F<bric_dist_mon> and F<bric_ftpd>.
 
 =item *
 

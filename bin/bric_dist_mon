@@ -1,5 +1,122 @@
 #!/usr/bin/perl -w
 
+=head1 NAME
+
+bric_dist_mon - Bricolage distribution monitor
+
+=head1 VERSION
+
+$Revision$
+
+=head1 DATE
+
+$Date$
+
+=head1 SYNOPSIS
+
+  bric_dist_mon -u username -p password
+
+  bric_dist_mon -u username -p password -i 15
+
+  bric_dist_mon -u username -p password -c
+
+  bric_dist_mon -u username -p password
+
+=head1 DESCRIPTION
+
+This program monitors the Bricolage distribution jobs queue, and triggers the
+execution of distribution jobs when they're due. It does this by connecting to
+the Bricolage server on a regular basis, getting a list of jobs that are due
+to be executed, and then sending that list to the Bricolage server to be
+executed.
+
+F<bric_dist_mon> works in one of two ways. The first is as a cron job. Use the
+C<-c> option in a crontab and F<bric_dist_mon> will always execute once and
+then exit. Using F<bric_dist_mon> in a cron job allows the interval for its
+execution to be managed by cron, but limits it to the intervals supported by
+cron. For example, cron typically allows jobs to be scheduled to run as
+frequently as every minute. This will be fine for most applications. However,
+in a busy Bricolage environment with highly time-critical content, it may be
+important to have F<bric_dist_mon> check for and trigger new distribution jobs
+more frequently than cron will allow.
+
+For those environments, F<bric_dist_mon> can be used as a persistent, forking
+program. This is the default way to run F<bric_dist_mon>, and the interval can
+be set via the C<-i> option. For example, if a busy environment needed
+distribution jobs checked for and executed every 15 seconds, C<-i 15> will
+cause F<bric_dist_mon> to fork a new process every fifteen seconds, and that
+process will check for and trigger new jobs.
+
+Note that, to run F<bric_dist_mon> as a persistent forking application, some
+method of ensuring that it remains running and gets restarted if it exits will
+need to be put in place. But since most environments will be well served by
+the 1-minute intervals allowed by cron, we expect that approach to be the
+main way of running F<bric_dist_mon>, thus avoiding the persistence issues.
+
+=head1 OPTIONS
+
+=over 4
+
+=item -u
+
+Bricolage user login. All distribution jobs will be executed by this
+user. B<Required.>
+
+=item -p
+
+Bricolage user password. B<Required.>
+
+=item -i
+
+Interval (in seconds) between checks for jobs to execute and expire. Defaults
+to 30 seconds.
+
+=item -U
+
+The distribution server URL, including the protocol. Defaults to
+"http://localhost/dist/".
+
+=item -a
+
+IP Address from which the distribution requests will be sent to the
+distribution server. If not provided, F<bric_dist_mon> will do its best to
+figure out what the IP address is.
+
+=item -c
+
+Cron mode. Will run only once and then exit.
+
+=item -f
+
+An integer representing the number of times the script should fork. Useful for
+testing. Does not apply with C<-c>.
+
+=item -d
+
+Print and log debugging data to the system logs. This can be very verbose and
+fill up your logs, so use with care.
+
+=item -h
+
+Print a usage statement.
+
+=item -v
+
+Print the version number.
+
+=back
+
+=head1 AUTHOR
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+L<Bric::Dist::Client|Bric::Dist::Client>,
+L<Bric::Dist::Handler|Bric::Dist::Handler>.
+
+=cut
+
 use strict;
 use File::Spec::Functions qw(catdir);
 
@@ -190,15 +307,15 @@ sub usage {
     my $err = shift;
     print "\nERROR: $err\n" if $err;
     print qq{
-Usage: $prog -f <secs>
+Usage: $prog -u username -p password [options]
 
 Supported Options:
+  -u User login. All distribution jobs will be executed by this user. Required.
+  -p User password. Required.
   -i Interval (in seconds) between checks for jobs to execute and expire.
      Default is 30 seconds.
   -U The distribution server URL including the protocol. Defaults is
      'http://localhost/dist/'.
-  -u User login. All distribution jobs will be executed by this user. Required.
-  -p User password. Required.
   -a IP Address from which the distribution requests will be sent to the
      distribution server. If not provided, $prog will do its best to figure
      out what the IP address is.
