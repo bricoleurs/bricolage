@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.1 $
+$Revision: 1.1.1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:03 $
+$Date: 2001-11-30 03:57:14 $
 
 =head1 SYNOPSIS
 
@@ -162,8 +162,10 @@ foreach my $grp ( map { Bric::Util::Grp->lookup({ id => $_ }) }
 }
 
 # Note that a user has been updated to force all users logged into the system
-# to reload their user objects from the database.
+# to reload their user objects from the database. Also note that all workflows
+# must be reloaded in the sideNav, as permissions may have changed.
 $c->set_lmu_time;
+$c->set('__WORKFLOWS__', 0);
 
 # Redirect. Use redirect_onload because the User profile has been using SSL.
 get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')

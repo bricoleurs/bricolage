@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.1 $
+$Revision: 1.1.1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:03 $
+$Date: 2001-11-30 03:57:14 $
 
 =head1 SYNOPSIS
 
@@ -41,6 +41,7 @@ my $save_sub = sub {
 	    # Note that a user has been updated to force all users logged into the system
 	    # to reload their user objects from the database.
 	    $c->set_lmu_time if $class eq 'Bric::Util::Grp::User';
+	    $c->set('__WORKFLOWS__', 0) if $class eq 'Bric::Util::Grp::Workflow';
             add_msg("$disp_name profile $name deleted.");
         }
         # Set redirection back to the manager.
@@ -80,7 +81,12 @@ my $save_sub = sub {
         }
 	# Redirect back to the manager.
 	set_redirect($redir);
+	# If a user group has been changed, set the lmu_time so that we know
+	# to reload all logged-in users on their next request, as their
+	# permissions may have changed. Similarly, delete the Workflows, as
+	# permissions may have changed there, as well.
 	$c->set_lmu_time if $class eq 'Bric::Util::Grp::User';
+	$c->set('__WORKFLOWS__', 0) if $class eq 'Bric::Util::Grp::Workflow';
 	return;
     } else {
 	# Save the group.
