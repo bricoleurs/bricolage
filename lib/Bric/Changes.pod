@@ -22,7 +22,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Added F<README.Solaris>, with thanks to Oscar Sodani.
+Added F<README.Solaris>, with thanks to Oscar Sodani and Thorsten Biel..
 
 =back
 
