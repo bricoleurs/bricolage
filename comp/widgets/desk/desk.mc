@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:36 $
+$Date: 2002-07-12 19:00:28 $
 
 =head1 SYNOPSIS
 
@@ -172,6 +172,43 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths, $sort_by
 	} else {
 	    # It's 'My Workspace'.
 	    $desk = $obj->get_current_desk;
+
+            # HACK: sometimes objects don't have a current desk.  I don't
+            # know why, but it happens and then a fatal error occurs
+            # when $desk->get_id is called on an undef desk.  Instead,
+            # find the default desk for this object and put it there
+            # with a warning for the user.
+            if (not defined $desk) {
+                my $wf = $obj->get_workflow_object;
+
+                # no workflow either!  Find one appropriate for the
+                # object.
+                if (not defined $wf) {
+                    if (ref($obj) =~ /Story$/) {
+                        ($wf) = Bric::Biz::Workflow->list({'type' => 2});
+                    } elsif (ref($obj) =~ /Media/) {
+                        ($wf) = Bric::Biz::Workflow->list({'type' => 3});
+                    } elsif (ref($obj) =~ /Formatting$/) {
+                        ($wf) = Bric::Biz::Workflow->list({'type' => 1});
+                    }
+                    
+                    # assign to workflow
+                    $obj->set_workflow_id($wf->get_id());
+                }
+
+                # assign to start desk of workflow
+                $desk = $wf->get_start_desk;
+                $desk->accept({'asset' => $obj});
+                $desk->save();
+
+                # tell the user this object was baked
+		add_msg("Warning: object '".$obj->get_name.
+                        "' had no associated desk.  It has been ".
+                        "assigned to the '".$desk->get_name."' desk.");
+            }
+
+
+
 	    $desk_id = $desk->get_id;	   	    
 	    $label = 'Check In to ' . $desk->get_name;
 	    $action = 'checkin_cb';
