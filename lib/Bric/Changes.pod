@@ -27,6 +27,11 @@ associations to become confused. [David]
 
 =item *
 
+Fixed side navigation spacer graphic to the same width as other such
+graphics. Helps Chinese Traditional to display more nicely. [Kang-min Liu]
+
+=item *
+
 The media simple search now searched by URI again. [Mark]
 
 =item *
