@@ -16,16 +16,6 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.7.1 ()
 
-=head2 Improvements
-
-=over 4
-
-=item *
-
-Updated to work with PostgreSQL 7.4. [David]
-
-=back
-
 =head2 Bug Fixes
 
 =over 4
