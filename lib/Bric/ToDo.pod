@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.120 $
+$Revision: 1.121 $
 
 =head1 DATE
 
-$Date: 2003-09-19 13:35:36 $
+$Date: 2003-09-30 08:53:26 $
 
 =head1 DESCRIPTION
 
@@ -233,11 +233,6 @@ created.
 =head2 Low Priority Minor Items
 
 =over 4
-
-=item *
-
-Add desk paging, such that the assets on a given desk (or My Workspace) can be
-viewed across a series of pages.
 
 =item *
 

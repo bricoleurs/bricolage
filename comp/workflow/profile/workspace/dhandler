@@ -7,11 +7,11 @@ dhandler -- Implement the user workspace.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-09-16 16:52:26 $
+$Date: 2003-09-30 08:53:26 $
 
 =head1 DESCRIPTION
 
@@ -39,23 +39,21 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 $m->out(qq{<form method="post" action="} . $r->uri .
  qq {" name="desk" onSubmit="return confirmChanges(this)">});
 
-$m->comp('/widgets/desk/desk.mc',
-	 user_id => $id,
-	 class   => 'story',
-	 sort_by => $ARGS{story_sort_by}
-	);
-$m->comp('/widgets/desk/desk.mc',
-	 user_id => $id,
-	 class   => 'media',
-	 sort_by => $ARGS{media_sort_by}
-	);
-$m->comp('/widgets/desk/desk.mc',
-	 user_id => $id,
-	 class   => 'formatting',
-	 sort_by => $ARGS{formatting_sort_by}
-        );
+foreach my $class (qw(story media formatting)) {
+    $m->comp('/widgets/desk/desk.mc',
+             user_id => $id,
+             class   => $class,
+             sort_by => $ARGS{"$class\_sort_by"},
+             offset   => $ARGS{offset} || 0,
+             show_all => $ARGS{show_all},
+    );
+}
+
 $m->comp('/widgets/desk/desk_bottom.html',
-	 widget => $widget);
+	 widget => $widget,
+         offset   => $ARGS{offset} || 0,
+         show_all => $ARGS{show_all},
+);
 $m->out("</form>\n");
 $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 </%perl>

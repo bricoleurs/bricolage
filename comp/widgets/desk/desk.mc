@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2003-09-29 18:41:47 $
+$Date: 2003-09-30 08:53:26 $
 
 =head1 SYNOPSIS
 
@@ -39,6 +39,8 @@ $style   => 'standard'
 $action  => undef
 $wf      => undef
 $sort_by => 'cover_date'
+$offset  => 0
+$show_all => undef
 </%args>
 
 %#--- Initialization ---#
@@ -53,7 +55,8 @@ my $item_comp = USE_XHTML ? 'desk_item.html' : 'desk_item_old.html';
 
 my $others;
 my $cached_assets = sub {
-    my ($ckey, $desk, $user_id, $class, $meths, $sort_by) = @_;
+    my ($ckey, $desk, $user_id, $meths, $sort_by) = @_;
+
     my $objs = $r->pnotes("$widget.objs");
     unless ($objs) {
         # We have no objects. So get 'em!
@@ -68,6 +71,7 @@ my $cached_assets = sub {
             }
         }
     }
+
     if (my $curr_objs = $objs->{$ckey}) {
         if ($sort_by) {
             # Check for READ permission and sort them.
@@ -84,7 +88,7 @@ my $cached_assets = sub {
                   # Date sort. Use ISO format to ensure proper ordering.
                   $sort_get->($a, ISO_8601_FORMAT) cmp
                     $sort_get->($b, ISO_8601_FORMAT)
-                }map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
+                } map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
             } else {
                 # Do a case-insensitive sort.
               @$curr_objs = sort {
@@ -137,9 +141,27 @@ unless ($highlight) {
     }
 }
 
-if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
-                               $sort_by)) {
+# Paging limit
+my $num_displayed = $r->pnotes('num_displayed') || 0;
+my $limit = $show_all ? 0 : get_pref('Search Results / Page');
+my $objs = [];
+if (!$limit || ($limit && $num_displayed < $limit)) {
+    $objs = &$cached_assets($class, $desk, $user_id, $meths, $sort_by)
+}
 
+# Paging offset
+my $obj_offset = $offset;
+my $d = $r->pnotes('desk_asset.objs');
+if ($class =~ /^(media|formatting)$/) {
+    my $num_stories = defined($d->{story}) ? @{$d->{story}} : 0;
+    $obj_offset -= $num_stories if $offset;
+}
+if ($class eq 'formatting') {
+    my $num_media = defined($d->{media}) ? @{$d->{media}} : 0;
+    $obj_offset -= $num_media if $offset;
+}
+
+if (defined $objs && @$objs > $obj_offset) {
     $m->comp("/widgets/desk/desk_top.html",
              class => $class,
              others => $others,
@@ -150,7 +172,12 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
     my $profile_page = '/workflow/profile/' .
       ($class eq 'formatting' ? 'templates' : $class);
 
-    foreach my $obj ( @$objs ) {
+    for (my $i = 0; $i < @$objs; $i++) {
+        if ($limit) {
+            next unless $i >= $obj_offset;
+        }
+        my $obj = $objs->[$i];
+
         my $can_edit = chk_authz($obj, EDIT, 1);
         my $aid = $obj->get_id;
         # Grab the type name.
@@ -340,7 +367,12 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
                  label     => $label,
                  action    => $action,
                  desk_type => $desk_type);
+
+        $num_displayed++;
+        last if $limit && $num_displayed == $limit;
     }
+    $r->pnotes('num_displayed', $num_displayed);
+
     $m->out("<br />\n");
 }
 </%init>

@@ -1,11 +1,27 @@
 </div>
 <table width="578" cellpadding="2" cellspacing="1" border="0">
+% # Do paging
+% if ($num_pages) {
+  <tr class="lightHeader">
+    <td align="left" <% $style %> <% $colspan %>>
+      <% $prev_link %>
+%     foreach my $page (0 .. $num_pages) {
+%         my $off = $page * $limit;
+      <a href="<% $url %>?offset=<% $off %>" class="redLinkLarge"><span class="subHeader"><% $page + 1 %></span></a>
+%     }
+      <% $next_link %>
+    </td>
+%     unless ($show_all) {
+    <td align="right" <% $style %>><a href="<% $url %>?show_all=1" class="redLinkLarge">Show All</a></td>
+%     }
+  </tr>
+% }  # if $num_pages
   <tr>
-    <td align="right">
-      <input type="image" src="/media/images/<% "$lang_key/$chk_cb" %>_assets_<% $color1 %>.gif" border=0 name="<% "$widget|$chk_cb" %>_cb" value="<% $chk_label %>">
+    <td align="right" colspan="2">
+      <input type="image" src="/media/images/<% "$lang_key/$chk_cb" %>_assets_<% $color1 %>.gif" border="0" name="<% "$widget|$chk_cb" %>_cb" value="<% $chk_label %>">
 % if (!$desk or $desk->can_publish) {
       <a href="#" onClick="checkAll('<% $checkbox_name %>');"><img src="/media/images/<% $lang_key %>/select_all_lgreen.gif" border="0"></a>
-      <input type="image" src="/media/images/<% "$lang_key/$act_label" %>.gif" border=0 name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
+      <input type="image" src="/media/images/<% "$lang_key/$act_label" %>.gif" border="0" name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
 % }
     </td>
   </tr>
@@ -16,11 +32,15 @@ $wf   => undef
 $desk => undef
 $w_id => undef
 $d_id => undef
+$offset => 0
+$show_all => undef
 </%args>
 <%init>
 # desk_asset matches Callback/Desk.pm class_key
-my $d = $r->pnotes("desk_asset.objs");
-return unless $d->{story} || $d->{media} || $d->{formatting};
+my $d = $r->pnotes('desk_asset.objs');    # from desk.mc
+$d->{story} ||= [];  $d->{media} ||= [];  $d->{formatting} ||= [];
+my $num_objs = @{$d->{story}} + @{$d->{media}} + @{$d->{formatting}};
+return unless $num_objs;
 $wf ||= Bric::Biz::Workflow->lookup({ id => $w_id }) if defined $w_id;
 $desk ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $d_id }) if defined $d_id;
 my ($chk_label, $chk_cb, $act_label, $act_cb) = $desk
@@ -33,6 +53,28 @@ my ($chk_label, $chk_cb, $act_label, $act_cb) = $desk
 my $color1 = ($chk_cb eq 'move') ? 'lgreen' : 'red';
 my $color2 = ($act_cb) ? 'red' : 'red';
 my $mod    = ($chk_cb eq 'move') ? 'assets': 'checked';
-
 my $checkbox_name = $desk ? 'desk_asset|' : '_delete_ids';
+
+# Paging
+my $limit = get_pref('Search Results / Page');
+my $num_pages = ($num_objs <= $limit)
+  ? 0
+  : $limit
+    ? int($num_objs / $limit)
+    : 0;
+
+my $style = q{style="border-style:solid; border-color:#cccc99;"};
+my $colspan = $show_all ? '' : 'colspan="2"';
+my $url = $r->uri;
+
+my $prev_offset = $offset ? $offset - $limit : 0;
+my $next_offset = $offset + $limit;
+$next_offset = $num_pages * $limit if $next_offset > $num_objs;
+my ($prev_link, $next_link) = ('', '');
+if ($offset) {
+    $prev_link = qq{<a href="$url?offset=$prev_offset" class="redLinkLarge"><span class="subHeader">&laquo;</span></a>};
+}
+unless ($offset == $num_pages * $limit) {
+    $next_link = qq{<a href="$url?offset=$next_offset" class="redLinkLarge"><span class="subHeader">&raquo;</span></a>};
+}
 </%init>

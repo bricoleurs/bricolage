@@ -242,7 +242,11 @@ own separate components so that organizations with 2000+ categories
 don't have to load them into a dropdown list every time an asset is
 edited. The category "browser" uses an interface similar to
 'Associate Contributors', which has the advantage of being searchable
-rather than looking through a "long-ass list of all categories".
+rather than looking through a "long-ass list of all categories". [Scott]
+
+=item *
+
+Added list paging to Desks and My Workspace. [Scott]
 
 =item *
 
