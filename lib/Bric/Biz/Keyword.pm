@@ -10,20 +10,20 @@ Bric::Biz::Keyword - Interface to Bricolage Keyword Objects
 
 =item Version
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =item Date
 
-$Date: 2003-08-24 15:16:53 $
+$Date: 2003-09-16 04:29:49 $
 
 =item CVS ID
 
-$Id: Keyword.pm,v 1.18 2003-08-24 15:16:53 slanning Exp $
+$Id: Keyword.pm,v 1.19 2003-09-16 04:29:49 wheeler Exp $
 
 =back
 
@@ -367,7 +367,7 @@ The keyword's active status boolean.
                          get_args => [],
                          set_meth => sub {shift->set_name(@_)},
                          set_args => [],
-                         disp     => 'Keyword Name',
+                         disp     => 'Name',
                          search   => 1,
                          len      => 256,
                          req      => 1,
@@ -382,7 +382,7 @@ The keyword's active status boolean.
                          get_args => [],
                          set_meth => sub {shift->set_screen_name(@_)},
                          set_args => [],
-                         disp     => 'Keyword Screen Name',
+                         disp     => 'Display Name',
                          search   => 0,
                          len      => 256,
                          type     => 'short',
@@ -396,7 +396,7 @@ The keyword's active status boolean.
                          get_args => [],
                          set_meth => sub {shift->set_sort_name(@_)},
                          set_args => [],
-                         disp     => 'Sort Order Name',
+                         disp     => 'Sort Name',
                          search   => 0,
                          len      => 256,
                          type     => 'short',
