@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:46 $
+$Date: 2003-01-19 02:39:20 $
 
 =head1 SYNOPSIS
 
@@ -142,6 +142,13 @@ use constant INSTANCE_GROUP_ID => 4;
 # Private Class Fields
 my @cols = qw(id event_type__id usr__id name subject message active del);
 my @props = qw(id event_type_id owner_id name subject message _active _del);
+my $sel_cols = "a.id, a.event_type__id, a.usr__id, a.name, a.subject, " .
+  "a.message, a.active, a.del, m.grp__id";
+my @sel_props = (@props, 'grp_ids');
+my $table = 'alert_type';
+my $mem_table = 'member';
+my $map_table = $table . "_$mem_table";
+
 my %map = (id => 'id',
 	   event_type_id => 'event_type__id',
 	   owner_id => 'usr__id');
@@ -243,7 +250,7 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $init) = @_;
     my $self = bless {}, ref $pkg || $pkg;
-    $init->{_active} = 0;
+    $init->{_active} = 1;
     $init->{_del} = 0;
     $self->SUPER::new($init);
 }
@@ -2507,49 +2514,62 @@ B<Notes:> NONE.
 
 $get_em = sub {
     my ($pkg, $params, $ids) = @_;
-    my (@txt_wheres, @num_wheres, @params);
+    my $tables = "$table a, $mem_table m, $map_table c";
+    my @wheres = ('a.id = c.object_id','c.member__id = m.id');
+    push @wheres, 'a.del = 0' if defined $params->{id};
+    my @params;
     while (my ($k, $v) = each %$params) {
 	if ($map{$k}) {
-	    push @num_wheres, $map{$k};
+	    push @wheres, "a.$map{$k} = ?";
 	    push @params, $v;
+        } elsif ($k eq 'grp_id') {
+            # Fancy-schmancy second join.
+            $tables .= ", $mem_table m2, $map_table c2";
+            push @wheres, ('a.id = c2.object_id', 'c2.member__id = m2.id',
+                           'm2.grp__id = ?');
+            push @params, $v;
 	} else {
-	    push @txt_wheres, "LOWER($k)";
+	    push @wheres, "LOWER(a.$k) LIKE ?";
 	    push @params, lc $v;
 	}
     }
 
-    local $" = ' = ? AND ';
-    my $where = defined $params->{id} ? '' : 'del = 0';
-    $where .= $where ? " AND @num_wheres = ?" : "@num_wheres = ?" if @num_wheres;
-    $" = ' LIKE ? AND ';
-    $where .= $where ? " AND @txt_wheres LIKE ?" : "@txt_wheres LIKE ?"
-      if @txt_wheres;
-    $where = "WHERE  $where" if $where;
+    # Create the where clause and the select columns.
+    my $where = join ' AND ', @wheres;
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :
+      (\$sel_cols, 'a.name, a.usr__id, a.event_type__id');
 
-    local $" = ', ';
-    my $qry_cols = $ids ? ['id'] : \@cols;
+    my $qry_cols = $ids ? \'a.id' : \$sel_cols;
     my $sel = prepare_c(qq{
-        SELECT @$qry_cols
-        FROM   alert_type
-        $where
-        ORDER BY usr__id, event_type__id
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $where
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
-    my (@d, @ats);
-    bind_columns($sel, \@d[0..$#cols]);
+    my (@d, @ats, $grp_ids);
+    bind_columns($sel, \@d[0..$#sel_props]);
     $pkg = ref $pkg || $pkg;
+    my $last = -1;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	push @ats, $self;
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new alert type object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@sel_props, \@d);
+            $self->_set__dirty; # Disable the dirty flag.
+            push @ats, $self
+        } else {
+            # Append the ID.
+            push @$grp_ids, $d[$#d];
+        }
     }
-    finish($sel);
     return \@ats;
 };
 
