@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.84 $
+$Revision: 1.85 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.84 $ )[-1];
+our $VERSION = (qw$Revision: 1.85 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-15 02:03:59 $
+$Date: 2004-02-11 23:36:17 $
 
 =head1 SYNOPSIS
 
@@ -521,7 +521,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant FTP_PORT          => $config->{FTP_PORT}          || 2121;
     use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
     use constant FTP_LOG           => $config->{FTP_LOG}           ||
-      catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'ftp.log');
+      catfile(($ENV{BRICOLAGE_ROOT} || (''qw(usr local bricolage))), 'ftp.log');
 
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
