@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.119 $
+$Revision: 1.120 $
 
 =head1 DATE
 
-$Date: 2003-09-16 03:47:11 $
+$Date: 2003-09-16 18:26:03 $
 
 =head1 DESCRIPTION
 
@@ -24,7 +24,8 @@ Follow these instructions if you are both impatient and expert.
 =item 1
 
 Install Perl 5.6.0 or greater (5.8.0 or later strongly recommended for better
-Unicode support).
+Unicode support, and required if you're using a L<character set|"L10N & I18N
+Configuration"> other than UTF-8).
 
 =item 2
 
