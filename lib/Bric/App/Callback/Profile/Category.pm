@@ -14,7 +14,6 @@ my $type = 'category';
 my $disp_name = get_disp_name($type);
 my $pl_name = get_class_info($type)->get_plural_name;
 my $class = get_package_name($type);
-eval "require $class";
 
 
 sub save : Callback {

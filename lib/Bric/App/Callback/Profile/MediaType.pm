@@ -10,7 +10,6 @@ use Bric::Util::MediaType;
 my $type = 'media_type';
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
-eval "require $class";
 
 
 sub save : Callback {
