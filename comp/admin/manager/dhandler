@@ -6,9 +6,9 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 
 # Output the search widget.
 my $obj_key = $type;
-my $groupList;
+my ($groupList, $constrain);
+my $behavior = $def->{$type}{behavior};
 my $searchType = "dual";
-my $constrain;
 # Offer a list of groups to choose from, if this is a group manager.
 if ($type eq 'grp') {
     # Set the constraint.
@@ -17,12 +17,12 @@ if ($type eq 'grp') {
 	# It's a search. Reset the group type.
 	$ARGS{grp_type} = 'all';
     } elsif (exists $ARGS{grp_type}) {
-	# It's just a query by group type.
+	# It's just a query by group type. Set the default obj_key and
+        # set the behavior to ensure that the results are listed.
 	$obj_key = $ARGS{grp_type} || 'grp';
+        $behavior = 'narrow';
     } else {
-        # It's the first time accessing. Set an empty constraint to support the
-        # 'expand' behavior.
-        $constrain = {} if $changed;
+        # It's the first time accessing.
 	$ARGS{grp} = 'all';
     }
 
@@ -48,12 +48,12 @@ if ($type eq 'grp') {
         # They're doing a search. Use default constraints.
 	$ctype = 'all';
     } elsif ($ctype) {
-        # They're limiting it to a contributor type. Add it to the constraint.
+        # They're limiting it to a contributor type. Add it to the constraint
+        # and set the behavior to ensure that the results are listed.
         $constrain->{grp_id} = $ctype unless $ctype eq 'all';
+        $behavior = 'narrow';
     } else {
-        # It's the first time accessing. Set an empty constraint to support the
-        # 'expand' behavior.
-        $constrain = {} if $changed;
+        # It's the first time accessing.
 	$ctype = 'all';
     }
 
@@ -93,7 +93,7 @@ if (defined $def->{$type}{select}) {
 
 # Output the list of found objects.
 $m->comp('/widgets/listManager/listManager.mc',
-	 behavior => $def->{$type}{behavior},
+	 behavior => $behavior,
 	 object => $obj_key,
 	 profile => $prof_sub,
 	 title => $def->{$type}{title} || 'Existing %n',
@@ -367,11 +367,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.19.2.1 $
 
 =head1 DATE
 
-$Date: 2002-08-27 16:22:09 $
+$Date: 2002-09-13 19:33:19 $
 
 =head1 SYNOPSIS
 

@@ -92,6 +92,11 @@ The root category ("/") no longer returns itself as its own parent. [David]
 Assets not in workflow are now properly logged as being checked out when
 someone checks them out. [David]
 
+=item *
+
+The "Or Pick a Type" menus in the Group manager, the Contributor manager, and
+the Element manager all work again. [David]
+
 =back
 
 =head1 VERSION 1.4.0
