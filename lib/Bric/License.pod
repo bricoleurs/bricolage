@@ -300,6 +300,8 @@ Friends who have spotted bugs include:
 
 =item Curtis Poe
 
+=item =item JosE<eacute> Castro
+
 =back
 
 Bricolage's translation team:
@@ -349,8 +351,6 @@ Others who contributed to its support and development:
 =item Michele Jenkins
 
 =item Elizabeth Kairys
-
-=item JosE<eacute> Castro
 
 =back
 
