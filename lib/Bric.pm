@@ -10,7 +10,7 @@ Release Version: 1.5.2 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.35.2.2 $
+$Revision: 1.35.2.3 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.5.2";
 
 =head1 DATE
 
-$Date: 2003-04-01 19:19:47 $
+$Date: 2003-04-02 05:34:12 $
 
 =head1 SYNOPSIS
 
@@ -559,23 +559,17 @@ NONE
 sub get_grp_ids {
     my $self = shift;
 
-    # Don't bother doing anything if they didn't define this constant.
+    # Don't bother doing anything if this isn't a groupable class.
     return unless defined($self->GROUP_PACKAGE);
 
-    # Get the group name.
-    my $grp = $self->GROUP_PACKAGE;
+    # If it's just a class name, just return the instance class ID.
+    return $self->INSTANCE_GROUP_ID unless ref $self;
 
-    # Get the ID. If $self is a package name, we won't be able to get an ID.
-    my $id = ref $self ? $self->get_id : undef;
+    # Just return if there are no group IDs.
+    return unless exists $self->{grp_ids};
 
-    # If this is an object and $self->{grp_ids} exists return it
-    return wantarray ? @{$self->{grp_ids}} : $self->{grp_ids}
-      if exists $self->{grp_ids};
-
-    # If $id is defined, get group IDs. Otherwise, just return
-    # INSTANCE_GROUP_ID.
-    return defined $id ? $grp->list_ids({ obj => $self })
-      : $self->INSTANCE_GROUP_ID;
+    # Return the group IDs.
+    return wantarray ? @{$self->{grp_ids}} : $self->{grp_ids};
 }
 
 ##############################################################################
