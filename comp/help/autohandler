@@ -20,31 +20,33 @@ Sam Tregar <stregar@about-inc.com>
 <html>
 <head>
 <title>Bricolage Help</title>
-
 <& "/widgets/wrappers/sharky/css.mc" &>
+</head>
 
 <body bgcolor="#ffffff">
 
-<table border=0 cellpadding=0 cellspacing=0 width=750>
+<table border="0" cellpadding="0" cellspacing="0" width="475" align="center">
+  <tr>
+    <td width="475">
+      <table width="475" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="workflowTab" valign="top" width="11"><img src="/media/images/006666_curve_left.gif" width="11" height="22"></td>
+          <td class="workflowTab" width="348">Help </td>
+          <td valign=top width="11" class="workflowTab"><img src="/media/images/006666_curve_right.gif" width="11" height="22"></td>
+          <td width="217" align="right">[ <a href="#" onClick="window.close();" class="blackMedUnderlinedLink">close</a> ]</td>
+        </tr>
+      </table>
+      <table width="475" cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="medHeader" height="20">&nbsp;</td></tr>
+      </table>
 
-  <td width=580 valign=top rowspan=2>
-  <table width=580 cellpadding=0 cellspacing=0 border=0>
-  <tr>
-    <td class=workflowTab valign=top width=11><img src="/media/images/006666_curve_left.gif" width=11 height=22></td>
-    <td class=workflowTab width=348>Help </td>
-    <td valign=top width=11 class=workflowTab><img src="/media/images/006666_curve_right.gif" width=11 height=22></td>
-    <td width="217" align=right>[ <a href="#" onClick="window.close();" class="blackMedUnderlinedLink">close</a> ]</td>
+      <table border="0" cellpadding="0" cellspacing="0" width="475">
+        <tr><td><% $m->call_next %></td></tr>
+      </table>
+
+    </td>
   </tr>
-  </table>
-  <table width=580 cellpadding=0 cellspacing=0 border=0>
-  <tr>
-    <td class=medHeader height=20>&nbsp;</td>
-  </tr>
-  </table>
 </table>
-
-<p>
-
-<% $m->call_next %>
-
+</body>
+</html>
 %#-- End HTML --#
