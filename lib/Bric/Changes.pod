@@ -48,6 +48,11 @@ associations to become confused. [David]
 
 =item *
 
+Fixed issue where new output channels added to a document type element were
+not always actually saved as a part of that element. [David]
+
+=item *
+
 Fixed side navigation spacer graphic to the same width as other such
 graphics. Helps Chinese Traditional to display more nicely. [Kang-min Liu]
 
