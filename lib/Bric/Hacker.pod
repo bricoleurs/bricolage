@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =head1 DATE
 
-$Date: 2004-02-18 15:20:34 $
+$Date: 2004-03-17 15:51:52 $
 
 =head1 DESCRIPTION
 
@@ -91,19 +91,19 @@ Pod::Perldoc from CPAN to generate HTML files:
 
 =head1 SUBMITTING PATCHES
 
-Patches should be generated using a C<cvs diff -u> command on each of the
+Patches should be generated using a C<cvs -z3 diff -u> command on each of the
 files modified, from the root directory. For example, if you made changes to
 F<lib/Bric/Changes.pod> and F<comp/foo.mc>, you would generate a diff by
 running this command from the root of your CVS checkout:
 
-  cvs diff -u lib/Bric/Changes.pod comp/foo.mc > patch.txt
+  cvs -qz3 diff -u lib/Bric/Changes.pod comp/foo.mc > patch.txt
 
 If you created one or more new files in your changes then you'll have to add
 them to the patch separately using normal C<diff> against C</dev/null>. For
 example, if you created the file C<inst/upgrade/1.9.1/solve_fermat.pl> then
 you would add this to patch.txt with:
 
-  diff -u /dev/null inst/upgrade/1.9.1/solve_fermat.pl >> patch.txt
+  diff -qz3 -u /dev/null inst/upgrade/1.9.1/solve_fermat.pl >> patch.txt
 
 Always create patches using the most recent CVS version if possible. Send your
 patches to the bricolage-devel list mentioned above.
@@ -115,7 +115,7 @@ C<-p0> option from the root of your CVS checkout:
 
   patch -p0 < patch.txt
 
-Make sure you check the results with C<cvs diff> before committing.
+Make sure you check the results with C<cvs -qz3 diff> before committing.
 
 =head1 CODING STANDARDS
 
@@ -491,7 +491,7 @@ Determine if the branch checkout has been merged before. To do so, execute
 this cvs command in the branch checkout:
 
   cd bricolage-branch-checkout/
-  cvs -z3 -q status -v README
+  cvs -qz3 status -v README
 
 This command will output the status of the F<README> file, something like
 this:
@@ -525,15 +525,15 @@ If the branch has not been merged into the trunk before, C<cd> into a checkout
 from HEAD, make sure it's fully up-to-date, and do a simple merge:
 
   cd bricolage-head-checkout/
-  cvs -z3 -q update
-  cvs -z3 -q update -d -kk -j rev_1_4
+  cvs -qz3 update
+  cvs -qz3 update -d -kk -j rev_1_4
 
 Otherwise, do a merge from the most recently-dated merge tag. In the above
 example, that would be "rev_1_4_merge-2002-08-31".
 
   cd bricolage-head-checkout/
-  cvs -z3 -q update
-  cvs -z3 -q update -d -kk -j rev_1_4_merge-2002-08-31 -j rev_1_4
+  cvs -qz3 update
+  cvs -qz3 update -d -kk -j rev_1_4_merge-2002-08-31 -j rev_1_4
 
 The C<-d> option will allow new directories and their contents added to the
 branch to be merged into HEAD. Note also the use of the C<-kk> option. This
@@ -555,7 +555,7 @@ If there are any test failures, you'll need to fix those, too.
 
 And finally, commit the changes to the trunk.
 
-  cvs -z3 -q commit
+  cvs -qz3 commit
 
 =item 5
 
@@ -563,7 +563,7 @@ Tag the branch with today's date, so that future merges can decide to merge
 only from this date on.
 
   cd bricolage-branch-checkout/
-  cvs -z3 -q tag rev_1_4_merge-CCYY-MM-DD
+  cvs -qz3 tag rev_1_4_merge-CCYY-MM-DD
 
 =back
 
@@ -583,20 +583,20 @@ to add today's date to the header for the new release:
 
 Next, tag the release in CVS:
 
-  cvs -z3 tag rel_1_x_x
+  cvs -qz3 tag rel_1_x_x
 
 If this is a major release, you'll need to create a new branch, so that it can
 be maintained for bug fixes separately, and then tag the release in that
 branch.
 
-  cvs -z3 tag -b rev_1_x
-  cvs -z3 tag rel_1_x_x
+  cvs -qz3 tag -b rev_1_x
+  cvs -qz3 tag rel_1_x_x
 
 Next, export the sources into a new directory. Be sure to use the C<-kkv>
 option with C<export> so that the version numbers are all properly populated.
 
   cd /tmp
-  cvs -z3 export -r rel_1_x_x -kkv bricolage
+  cvs -qz3 export -r rel_1_x_x -kkv bricolage
   cd bricolage
   make dist
 
