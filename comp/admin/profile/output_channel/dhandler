@@ -40,6 +40,7 @@ $m->comp('/widgets/profile/dumpRemainingFields.mc',
          fieldsUsed => {active => 1});
 
 if ($id || $no_edit) {
+    $m->out('<input type=hidden name="site_id" value="'.$oc->get_site_id.'">');
     $m->comp('/widgets/profile/displayFormElement.mc',
              objref   => $oc,
              key      => 'site',
@@ -158,11 +159,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.8.2.2 $
+$Revision: 1.8.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-09 04:03:37 $
+$Date: 2003-03-10 02:01:46 $
 
 =head1 SYNOPSIS
 
