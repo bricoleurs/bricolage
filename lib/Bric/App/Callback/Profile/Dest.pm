@@ -12,8 +12,8 @@ use Bric::Biz::OutputChannel;
 use Bric::Dist::ServerType;
 
 my $type = CLASS_KEY;
-my $disp_name = get_disp_name($type);
-my $class = get_package_name($type);
+my $disp_name = 'Destination';
+my $class = 'Bric::Dist::ServerType';
 
 
 sub save : Callback {

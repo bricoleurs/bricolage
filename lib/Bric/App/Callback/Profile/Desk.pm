@@ -11,16 +11,11 @@ use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 
 my $type = 'desk';
-my $disp_name = get_disp_name($type);
-my $class = get_package_name($type);
+my $disp_name = 'Desk';
+my $class = 'Bric::Biz::Workflow::Parts::Desk';
 
-my $expire_wf_cache = sub {
-    my ($self, $did) = @_;
-    # Expire the cache for all workflows that contain this desk.
-    foreach my $wf (Bric::Biz::Workflow->list({ desk_id => $did })) {
-        $self->cache->set('__WORKFLOWS__' . $wf->get_site_id, 0);
-    }
-};
+my ($expire_wf_cache);
+
 
 sub save : Callback {
     my $self = shift;
@@ -90,6 +85,16 @@ sub save : Callback {
         }
     }
 }
+
+###
+
+$expire_wf_cache = sub {
+    my ($self, $did) = @_;
+    # Expire the cache for all workflows that contain this desk.
+    foreach my $wf (Bric::Biz::Workflow->list({ desk_id => $did })) {
+        $self->cache->set('__WORKFLOWS__' . $wf->get_site_id, 0);
+    }
+};
 
 
 1;

@@ -10,9 +10,9 @@ use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
 my $type = 'perm';
-my $disp_name = get_class_info($type)->get_plural_name;
-my $class = get_package_name($type);
-my $grp_class = get_package_name('grp');
+my $disp_name = 'Permissions';
+my $class = 'Bric::Util::Priv';
+my $grp_class = 'Bric::Util::Grp';
 my $not = {
     'usr' => 'obj',
     'obj' => 'usr',

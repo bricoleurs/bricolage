@@ -10,9 +10,9 @@ use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 use Bric::Util::Fault qw(rethrow_exception);
 
-my $disp_name = get_disp_name(CLASS_KEY);
-my $class = get_package_name(CLASS_KEY);
-my $dest_class = get_package_name('dest');
+my $disp_name = 'Action';
+my $class = 'Bric::Dist::Action';
+my $dest_class = 'Bric::Dist::ServerType';
 
 
 sub save : Callback {

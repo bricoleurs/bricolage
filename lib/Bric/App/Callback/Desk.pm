@@ -21,7 +21,7 @@ use Bric::Util::Burner;
 use Bric::Util::Time qw(strfdate);
 
 my $type = 'formatting';
-my $disp_name = get_disp_name($type);
+my $disp_name = 'Template';
 
 
 sub checkin : Callback {

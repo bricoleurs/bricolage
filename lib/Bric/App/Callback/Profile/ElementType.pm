@@ -10,10 +10,8 @@ use Bric::App::Util qw(:all);
 use Bric::Biz::ATType;
 
 my $type = CLASS_KEY;
-my $class = get_package_name($type);
-my $disp_name = get_disp_name($type);
-my $story_pkg_id = get_class_info('story')->get_id;
-my $media_pkg_id = get_class_info('media')->get_id;
+my $class = 'Bric::Biz::ATType';
+my $disp_name = 'Element Type';
 
 
 sub save : Callback {
@@ -23,6 +21,9 @@ sub save : Callback {
 
     my $param = $self->request_args;
     my $ct = $self->obj;
+
+    my $story_pkg_id = get_class_info('story')->get_id;
+    my $media_pkg_id = get_class_info('media')->get_id;
 
     my $name = $param->{name};
     my $used;

@@ -10,7 +10,7 @@ use Bric::App::Util qw(:all);
 use Bric::Biz::AssetType;
 
 my $type = 'element';
-my $class = get_package_name($type);
+my $class = 'Bric::Biz::AssetType';
 
 
 sub addElement : Callback {

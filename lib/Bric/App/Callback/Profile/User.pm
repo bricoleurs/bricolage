@@ -14,8 +14,8 @@ use Bric::Config qw(:auth_len LISTEN_PORT);
 use Bric::Util::Grp;
 
 my $type = CLASS_KEY;
-my $disp_name = get_disp_name($type);
-my $class = get_package_name($type);
+my $disp_name = 'User';
+my $class = 'Bric::Biz::Person::User';
 my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 
 

@@ -11,8 +11,8 @@ use Bric::App::Util qw(:all);
 use Bric::Config qw(ADMIN_GRP_ID);
 
 my $type = CLASS_KEY;
-my $disp_name = get_disp_name($type);
-my $class = get_package_name($type);
+my $disp_name = 'Group';
+my $class = 'Bric::Util::Grp';
 
 my ($reset_cache, $save_sub);
 

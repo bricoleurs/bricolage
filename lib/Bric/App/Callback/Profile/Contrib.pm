@@ -15,7 +15,7 @@ use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Person;
 
 my $type = CLASS_KEY;
-my $disp_name = get_disp_name($type);
+my $disp_name = 'Contributor';
 
 sub save : Callback {
     my $self = shift;

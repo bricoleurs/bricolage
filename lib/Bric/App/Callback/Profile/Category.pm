@@ -13,9 +13,9 @@ use Bric::Util::Grp;
 use Bric::Util::Trans::FS;
 
 my $type = 'category';
-my $disp_name = get_disp_name($type);
-my $pl_name = lc(get_class_info($type)->get_plural_name);
-my $class = get_package_name($type);
+my $disp_name = 'Category';
+my $pl_name = 'categories';
+my $class = 'Bric::Biz::Category';
 
 
 sub save : Callback {

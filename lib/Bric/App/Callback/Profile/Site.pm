@@ -12,8 +12,8 @@ use Bric::Util::Fault qw(rethrow_exception isa_bric_exception);
 use Bric::Util::Grp;
 
 my $type = CLASS_KEY;
-my $disp_name = get_disp_name($type);
-my $class = get_package_name($type);
+my $disp_name = 'Site';
+my $class = 'Bric::Biz::Site';
 
 
 sub save : Callback {

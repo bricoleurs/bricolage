@@ -12,11 +12,11 @@ use Bric::Dist::Server;
 use Bric::Dist::ServerType;
 
 my $type = CLASS_KEY;
+my $disp_name = 'Server';
+my $class = 'Bric::Dist::Server';
 my $dest_type = 'dest';
-my $disp_name = get_disp_name($type);
-my $class = get_package_name($type);
-my $dest_name = get_disp_name($dest_type);
-my $dest_class = get_package_name($dest_type);
+my $dest_name = 'Destination';
+my $dest_class = 'Bric::Dist::ServerType';
 
 
 sub save : Callback {

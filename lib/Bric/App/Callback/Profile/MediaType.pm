@@ -10,8 +10,8 @@ use Bric::App::Util qw(:all);
 use Bric::Util::MediaType;
 
 my $type = 'media_type';
-my $disp_name = get_disp_name($type);
-my $class = get_package_name($type);
+my $disp_name = 'Media Type';
+my $class = 'Bric::Util::MediaType';
 
 
 sub save : Callback {

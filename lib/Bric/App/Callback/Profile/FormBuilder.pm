@@ -29,10 +29,10 @@ my %meta_props = (
 
 my %conf = (
     'contrib_type' => {
-        'disp_name' => get_disp_name('contrib_type'),
+        'disp_name' => 'Contributor Type',
     },
     'element' => {
-        'disp_name' => get_disp_name('element'),
+        'disp_name' => 'Element',
     },
 );
 

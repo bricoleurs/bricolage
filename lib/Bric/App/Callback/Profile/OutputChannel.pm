@@ -10,8 +10,8 @@ use Bric::App::Util qw(:all);
 use Bric::Biz::OutputChannel;
 
 my $type = CLASS_KEY;
-my $disp_name = get_disp_name($type);
-my $class = get_package_name($type);
+my $disp_name = 'Output Channel';
+my $class = 'Bric::Biz::OutputChannel';
 
 my ($do_callback);
 

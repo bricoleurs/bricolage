@@ -19,13 +19,13 @@ use Bric::Util::Fault qw(:all);
 use Bric::Util::Priv::Parts::Const qw(READ CREATE);
 
 my %classes = (
-    'story' => get_package_name('story'),
-    'media' => get_package_name('media'),
+    story => 'Bric::Biz::Asset::Business::Story',
+    media => 'Bric::Biz::Asset::Business::Media',
 );
 
 my %dispmap = (
-    'story' => get_disp_name('story'),
-    'media' => get_disp_name('media'),
+    story => 'Story',
+    media => 'Media',
 );
 
 my ($get_dynamic, $work_it, $handle_asset);

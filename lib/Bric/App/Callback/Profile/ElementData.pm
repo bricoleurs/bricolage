@@ -10,7 +10,7 @@ use Bric::App::Util qw(:all);
 
 
 my $type = CLASS_KEY;
-my $disp_name = get_disp_name($type);
+my $disp_name = 'Field';
 
 
 sub save : Callback {

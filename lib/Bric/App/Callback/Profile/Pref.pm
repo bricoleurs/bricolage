@@ -8,7 +8,7 @@ use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
-my $disp_name = get_disp_name(CLASS_KEY);
+my $disp_name = 'Preference';
 
 
 sub save : Callback {

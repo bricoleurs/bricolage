@@ -12,8 +12,8 @@ use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 
 my $type = CLASS_KEY;
-my $disp_name = get_disp_name($type);
-my $class = get_package_name($type);
+my $disp_name = 'Workflow';
+my $class = 'Bric::Biz::Workflow';
 
 
 sub save : Callback {

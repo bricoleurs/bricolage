@@ -28,8 +28,8 @@ my $regex = {
 };
 
 my %pkgs = (
-    story => get_package_name('story'),
-    media => get_package_name('media'),
+    story => 'Bric::Biz::Asset::Business::Story',
+    media => 'Bric::Biz::Asset::Business::Media',
 );
 
 my ($push_tile_stack, $pop_tile_stack, $pop_and_redirect,

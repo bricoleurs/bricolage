@@ -14,8 +14,12 @@ use Bric::Biz::Asset::Formatting;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Util::Burner;
 
-my $keys = [qw(story media formatting)];
-my $pkgs = { map { $_ => get_package_name($_) } @$keys };
+my $pkgs = {
+    story => 'Bric::Biz::Asset::Business::Story',
+    media => 'Bric::Biz::Asset::Business::Media',
+    formatting => 'Bric::Biz::Asset::Formatting',
+};
+my $keys = [ keys %$pkgs ];
 my $dskpkg = 'Bric::Biz::Workflow::Parts::Desk';
 
 

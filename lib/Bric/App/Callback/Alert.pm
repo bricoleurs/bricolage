@@ -9,8 +9,8 @@ use Bric::App::Session qw(:user);
 use Bric::App::Util qw(:all);
 use Bric::Util::Alerted;
 
-my $class = get_package_name('recip');
-my $disp_name = get_disp_name(CLASS_KEY);
+my $class = 'Bric::Util::Alerted';
+my $disp_name = 'Alert';
 my $msg_redirect;
 
 sub ack : Callback {
