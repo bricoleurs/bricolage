@@ -1,9 +1,16 @@
 body       { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 td         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 th         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:12px;}
+
+p          { font-size:11px; line-height:16px; }
+h3         { font-size:12px; line-height:17px;}
+dt         { font-size:11px; line-height:16px; font-weight:bold; }
+dd         { font-size:11px; line-height:16px; }
+li         { font-size:11px; line-height:16px; }
+
 .textInput { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px; width:200px;}
 .textArea  { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-.codeArea { font-family:monospace; font-size:11px; }
+.codeArea  { font-family:monospace; font-size:11px; }
 
 .blueLink       { font-size:10px; color:#669999;}
 .blueLinkBold   { font-size:10px; color:#669999; font-weight:bold}
@@ -11,6 +18,7 @@ th         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:12px;}
 .orangeLinkBold { font-size:10px; font-weight:bold; color:#CC6633;}
 .darkBlueLink   { font-size:10px; color:#006666;}
 .redLink        { font-size:10px; color:#993300; font-weight:bold}
+.redLinkLight   { color:#993300; }
 .redLinkLarge   { font-size:11px;   color:#993300; font-weight:bold}
 .whiteLink      { font-size:10px; color:#ffffff; text-decoration:none}
 .whiteUnderlinedLink      { font-size:10px; color:#ffffff;}

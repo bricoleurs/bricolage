@@ -13,9 +13,9 @@ styles.
 
 =head1 AUTHORS
 
-Sam Tregar L<lt>stregar@about-inc.comL<gt>
+Sam Tregar <stregar@about-inc.com>
 
-David Wheeler L<lt>david@wheeler.netL<gt>
+David Wheeler <david@wheeler.net>
 
 =cut
 
@@ -23,9 +23,7 @@ David Wheeler L<lt>david@wheeler.netL<gt>
 <html>
 <head>
 <title><% $title %></title>
-<style type="text/css" id="BricolageHelpCSS"></style>
-<script language="JavaScript" src="/media/js/detect.js"></script>
-<script language="JavaScript" src="/media/js/help_style.js"></script>
+<link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
 
 <body>
@@ -35,14 +33,14 @@ David Wheeler L<lt>david@wheeler.netL<gt>
     <td width="475">
       <table width="475" cellpadding="0" cellspacing="0" border="0">
         <tr height="22">
-          <td class="tab" valign="top" width="11"><img src="/media/images/006666_curve_left.gif" width="11" height="22"></td>
-          <td class="tab" width="348"><% $title %></td>
-          <td valign="top" width="11" class="tab"><img src="/media/images/006666_curve_right.gif" width="11" height="22"></td>
+          <td class="workflowTab" valign="top" width="11"><img src="/media/images/006666_curve_left.gif" width="11" height="22"></td>
+          <td class="workflowTab" width="348"><% $title %></td>
+          <td valign="top" width="11" class="workflowTab"><img src="/media/images/006666_curve_right.gif" width="11" height="22"></td>
           <td width="217" align="right" valign="top"><a href="javascript:self.close()"><img src="/media/images/close.gif" border="0" alt="Close" width="52" height="20" /></a></td>
         </tr>
       </table>
       <table width="475" cellpadding="0" cellspacing="0" border="0">
-        <tr><td class="context" height="20">&nbsp;&nbsp;<% $context %></td></tr>
+        <tr><td class="medHeader" height="20">&nbsp;&nbsp;<% $context %></td></tr>
       </table>
 
 %# Insert the table top.
@@ -53,7 +51,7 @@ David Wheeler L<lt>david@wheeler.netL<gt>
           <table border="0" cellpadding="0" cellspacing="0" width="475">
             <tr>
               <td width="20" bgcolor="#669999"><img src="/media/images/numbers/669999_curve_blank.gif" width="20" height="18" border="0"></td>
-              <td class="light" width="475">&nbsp;<% uc $page %></td>
+              <td class="lightHeader" width="475">&nbsp;<% uc $page %></td>
               <td width="8" bgcolor="#cccc99"><img src="/media/images/lt_green_curve_right.gif" width="8" height="18"></td>
             </tr>
           </table>
