@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:27 $
+$Date: 2003-02-27 20:35:38 $
 
 =head1 SYNOPSIS
 
@@ -1425,7 +1425,8 @@ sub has_member {
     my $memb_coll = $get_memb_coll->($self);
     my $mem;
   MEMCHK: {
-        my $oid = $params->{id} || $params->{obj}->get_id;
+        my $oid = defined $params->{id} ? $params->{id} :
+          $params->{obj}->get_id;
         if ($memb_coll->is_populated) {
             # Just use the set.
             if ($self->get_object_class_id) {

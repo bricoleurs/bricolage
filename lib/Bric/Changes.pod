@@ -170,6 +170,11 @@ Added preview link to every element profile of a story profile. [David]
 Pared down number of default User groups by eliminating those that relate to
 only a single admin menu item. [David]
 
+=item *
+
+Fixed code in Bric::Util::Grp where the C<has_member()> method would fail to
+look up an object with an ID of 0. [JoE<atilde>o Pedro]
+
 =back
 
 =head2 Bug Fixes
