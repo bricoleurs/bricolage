@@ -123,6 +123,10 @@ template with an unknown name is uploaded. [David]
 
 The virtual FTP server now pays proper attention to all permissions. [David]
 
+=item *
+
+A number of upgrade script annoyances were cleared up. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
