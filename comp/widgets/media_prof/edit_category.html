@@ -28,7 +28,7 @@ $m->comp('/widgets/profile/hidden.mc',
    title     => 'Choose Categories',
    select    => undef,
    profile   => $category_profile,
-   exclude   => [ $existing_category ],
+   exclude   => $exclude_cats,
    fields    => [qw(uri site name)],
    addition  => '',
    behavior => 'expand',
@@ -47,6 +47,17 @@ $widget
 my $media = get_state_data($widget, 'media');
 my $category = $media->get_category;
 my $existing_category = $category->get_id;
+my $exclude_cats = sub {
+    my $cat = shift;
+
+    # exclude unauthorized categories
+    return 1 unless chk_authz($cat, READ, 1);
+
+    # exclude already-associated category
+    return 1 if $cat->get_id == $existing_category;
+
+    return 0;
+};
 </%init>
 
 <%once>

@@ -25,7 +25,7 @@ $m->comp('/widgets/listManager/listManager.mc',
    title     => 'Choose Categories',
    select    => undef,
    profile   => $category_choose_profile,
-   exclude  	=> \@existing_categories,
+   exclude   => $exclude_cats,
    fields    => [qw(uri site name)],
    addition  => '',
    behavior => 'expand',
@@ -42,8 +42,21 @@ $widget
 
 <%init>
 my $story = get_state_data($widget, 'story');
-my @existing_categories = map { $_->get_id } $story->get_categories;
 my @categories = $story->get_categories();
+my $exclude_cats = sub {
+    my $cat = shift;
+
+    # exclude unauthorized categories
+    return 1 unless chk_authz($cat, READ, 1);
+
+    # exclude already-associated categories
+    my $cid = $cat->get_id;
+    foreach my $ex (@categories) {
+        return 1 if $cid == $ex->get_id;
+    }
+
+    return 0;
+};
 </%init>
 
 <%once>
