@@ -1,3 +1,5 @@
+<!-- Bricolage DTD validation testing DTD. Designed purely for testing
+     purposes. -->
 <!ELEMENT html (head, body)>
 <!ELEMENT head (title)>
 <!ELEMENT title (#PCDATA)*>
