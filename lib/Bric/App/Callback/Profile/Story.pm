@@ -53,7 +53,7 @@ sub revert : Callback {
     set_state_data($widget, 'story');
 }
 
-sub save : Callback {
+sub save : Callback(priority => 6) {
     my $self = shift;
     my $param = $self->params;
     # Just return if there was a problem with the update callback.
@@ -94,7 +94,7 @@ sub save : Callback {
     }
 }
 
-sub checkin : Callback {
+sub checkin : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $story = get_state_data($widget, 'story');
@@ -218,7 +218,7 @@ sub checkin : Callback {
     $self->set_redirect("/");
 }
 
-sub save_and_stay : Callback {
+sub save_and_stay : Callback(priority => 6) {
     my $self = shift;
     my $param = $self->params;
     # Just return if there was a problem with the update callback.
@@ -243,7 +243,7 @@ sub save_and_stay : Callback {
     }
 }
 
-sub cancel : Callback {
+sub cancel : Callback(priority => 6) {
     my $self = shift;
 
     my $story = get_state_data($self->class_key, 'story');
@@ -299,7 +299,7 @@ sub cancel : Callback {
     $self->set_redirect("/");
 }
 
-sub return : Callback {
+sub return : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $version_view = get_state_data($widget, 'version_view');

@@ -25,7 +25,7 @@ my ($save_meta, $save_code, $save_object, $checkin, $check_syntax,
     $delete_fa, $create_fa);
 
 
-sub save : Callback {
+sub save : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
 
@@ -68,7 +68,7 @@ sub save : Callback {
     }
 }
 
-sub checkin : Callback {
+sub checkin : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
 
@@ -78,7 +78,7 @@ sub checkin : Callback {
     $checkin->($self, $widget, $self->params, $fa);
 }
 
-sub save_and_stay : Callback {
+sub save_and_stay : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
 
@@ -107,7 +107,7 @@ sub save_and_stay : Callback {
     }
 }
 
-sub revert : Callback {
+sub revert : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
 
@@ -128,7 +128,7 @@ sub view : Callback {
     $self->set_redirect("/workflow/profile/templates/$id/?version=$version");
 }
 
-sub cancel : Callback {
+sub cancel : Callback(priority => 6) {
     my $self = shift;
 
     my $fa = get_state_data($self->class_key, 'fa');
@@ -228,7 +228,7 @@ sub create : Callback {
     $create_fa->($self, $self->class_key, $self->params);
 }
 
-sub return : Callback {
+sub return : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
 
