@@ -74,8 +74,7 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $mailer = "Bricolage " . Bric->VERSION . ' (' . __PACKAGE__ . " "
-  . __PACKAGE__->VERSION . ")";
+my $mailer = "Bricolage " . Bric->VERSION;
 
 ################################################################################
 

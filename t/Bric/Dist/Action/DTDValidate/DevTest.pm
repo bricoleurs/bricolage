@@ -12,7 +12,7 @@ sub class { 'Bric::Dist::Action::DTDValidate' }
 ##############################################################################
 # Test the do_it method.
 ##############################################################################
-sub test_do_it : Test(31) {
+sub test_do_it : Test(35) {
     return "XML::LibXML not installed"
       unless Bric::Dist::Action::DTDValidate->HAVE_LIB_XML;
 
@@ -76,9 +76,12 @@ sub test_do_it : Test(31) {
         "Check for status message" );
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
     is( $err->error, 'Error parsing XML', "Check invalid XML message" );
-    like( $err->payload,
-          qr|/foo/invalid\.html:0: validity error ?:|,
-         "Check validation payload");
+    like( $err->payload, qr|/foo/invalid\.html|,
+          "Check validation payload for file name");
+    like( $err->payload, qr/element foo/i,
+          "Check validation payload for element");
+    like( $err->payload, qr/validity error/i,
+          "Check validation payload for validity error");
 
     # Make sure that a valid file, um, validates.
     ok( $act->do_it([$valid]), "Validate valid XHTML" );
@@ -105,9 +108,12 @@ sub test_do_it : Test(31) {
         "Check for status message" );
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
     is( $err->error, 'Error parsing XML', "Check invalid XML message" );
-    like( $err->payload,
-          qr|/foo/invalid\.html:0: validity error ?:|,
-         "Check validation payload");
+    like( $err->payload, qr|/foo/invalid\.html|,
+          "Check validation payload for file name");
+    like( $err->payload, qr/element foo/i,
+          "Check validation payload for element");
+    like( $err->payload, qr/validity error/i,
+          "Check validation payload for validity error");
 }
 
 1;
