@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:54 $
+$Date: 2003-04-25 00:03:57 $
 
 =head1 SYNOPSIS
 
@@ -247,7 +247,9 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
   <tr class="medHeader"><td colspan="2"><img src="/media/images/spacer.gif" height="2" /></td></tr>
   <tr class="medHeader" height="16">
     <td>&nbsp;&nbsp;<% $context %></td>
+% if ($useSideNav) {
     <td align="right"><& /widgets/site_context/site_context.mc &>&nbsp;</td>
+% }
   </tr>
   <tr class="medHeader"><td colspan="2"><img src="/media/images/spacer.gif" height="2" /></td></tr>
   </table>
