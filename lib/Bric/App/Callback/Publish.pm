@@ -92,7 +92,7 @@ sub publish : Callback {
     }
 
     # Instantiate the Burner object.
-    my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
+    my $burner = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
     my $stories = mk_aref($story_pub_ids);
     my $media = mk_aref($media_pub_ids);
 
@@ -102,7 +102,7 @@ sub publish : Callback {
         # Instantiate the story.
         my $s = $story_pub->{$sid} ||
           Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
-        $b->publish($s, 'story', get_user_id(), $param->{pub_date});
+        $burner->publish($s, 'story', get_user_id(), $param->{pub_date});
         my $arg = '&quot;' . $s->get_title . '&quot;';
         add_msg($self->lang->maketext("Story [_1] published.", $arg))
           if $count <= 3;
@@ -115,7 +115,7 @@ sub publish : Callback {
         # Instantiate the media.
         my $ma = $media_pub->{$mid} ||
           Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
-        $b->publish($ma, 'media', get_user_id(), $param->{pub_date});
+        $burner->publish($ma, 'media', get_user_id(), $param->{pub_date});
         my $arg = '&quot;' . $ma->get_title . '&quot;';
         add_msg($self->lang->maketext("Media [_1] published.", $arg))
           if $count <= 3;
