@@ -6,11 +6,11 @@ cpan.pl - installation script to install CPAN modules
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-12-13 00:50:33 $
+$Date: 2003-03-01 19:44:51 $
 
 =head1 DESCRIPTION
 
@@ -30,7 +30,23 @@ L<Bric::Admin>
 use strict;
 use File::Spec::Functions qw(:ALL);
 
+our $MOD;
+
 BEGIN {
+    # read in list of required modules
+    do "./modules.db" or die "Failed to read modules.db : $!";
+    # See if we need to install any modules.
+    my $need;
+    for my $i (0 .. $#$MOD) {
+        next if $MOD->[$i]{found};
+        $need = 1;
+        last;
+    }
+    unless ($need) {
+        # Don't need to install any, no need to run CPAN.pm.
+        print "All modules installed. No need to install from CPAN.\n";
+        exit;
+    }
 
     # try to figure out if CPAN.pm has been configured.  This mimics
     # the logic in CPAN.pm.  If this turns out not to be reliable
@@ -43,7 +59,7 @@ BEGIN {
     eval { require CPAN::MyConfig };
     $found_config = 1 unless $@;
     shift(@INC);
-	
+
     unless ($found_config) {
 	print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
 This installation system uses CPAN.pm to automatically install CPAN
@@ -114,10 +130,6 @@ our %flags = (
 	      'Cache::Cache'     => FORCE,
 	      'HTML::Mason'      => FORCE,
 	     );
-
-# read in list of required modules
-our $MOD;
-do "./modules.db" or die "Failed to read modules.db : $!";
 
 our $PG;
 do "./postgres.db" or die "Failed to read postgres.db : $!";

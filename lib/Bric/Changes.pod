@@ -190,6 +190,11 @@ existing database and the user doesn't want to drop that existing database.
 Added category group association, including ability to cascade membership
 assignments into subcategories, to category profile. [JoE<atilde>o Pedro]
 
+=item *
+
+The installer will no longer try to load CPAN.pm if all modules are already
+installed. Thanks to Ilia Chipitsine for the prodding. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -154,6 +154,8 @@ Friends who have spotted bugs include:
 
 =item Todd Tyree
 
+=item Ilia Chipitsine
+
 =back
 
 Bricolage's translation team:
