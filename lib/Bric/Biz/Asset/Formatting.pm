@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.13 $
+$Revision: 1.38.2.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 20:18:34 $
+$Date: 2003-08-08 20:49:35 $
 
 =head1 SYNOPSIS
 
@@ -751,8 +751,9 @@ sub DESTROY {
 
 =item ($ids || @ids) = Bric::Biz::Asset::Formatting->list_ids($param)
 
-Returns a list of ids that match the given parameters. See the C<list()>
-method for supported keys in the C<$param> hash reference.
+Returns an unordered list or array reference of template object IDs that match
+the criteria defined. The criteria are the same as those for the C<list()>
+method except for C<Order> and C<OrderDirection>, which C<list_ids()> ignore.
 
 B<Throws:>
 

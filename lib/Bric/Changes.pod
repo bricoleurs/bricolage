@@ -56,6 +56,12 @@ Permissions granted on the "All" groups work again. Reported by Kevin Elliott.
 Resize now works in super bulk edit. Thanks to Michael G. Kaiser for the spot.
 [David]
 
+=item *
+
+Documented that the C<list_ids()> methods in Bric::Biz::Asset's subclasses
+ignore the C<Order> and C<OrderDiretion> parameters and return an unordered
+list of IDs. Reported by Clive Jones. [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

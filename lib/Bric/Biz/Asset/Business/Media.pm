@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40.2.16 $
+$Revision: 1.40.2.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40.2.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 20:18:34 $
+$Date: 2003-08-08 20:49:36 $
 
 =head1 SYNOPSIS
 
@@ -602,8 +602,9 @@ sub DESTROY {
 
 =item (@ids||$id_list) = Bric::Biz::Asset::Business::Media->list_ids( $criteria );
 
-Returns a list or list ref of media object IDs that match the criteria defined.
-The criteria are the same as those for the list() method.
+Returns an unordered list or array reference of media object IDs that match
+the criteria defined. The criteria are the same as those for the C<list()>
+method except for C<Order> and C<OrderDirection>, which C<list_ids()> ignore.
 
 B<Throws:> NONE.
 

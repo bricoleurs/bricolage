@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.16 $
+$Revision: 1.39.2.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 20:18:34 $
+$Date: 2003-08-08 20:49:36 $
 
 =head1 SYNOPSIS
 
@@ -760,20 +760,17 @@ sub DESTROY {
 
 =item ($ids || @ids) = Bric::Biz::Asset::Business::Story->list_ids( $criteria )
 
-Returns a list of Story IDs that match the given criteria.
+Returns an unordered list or array reference of story object IDs that match
+the criteria defined. The criteria are the same as those for the C<list()>
+method except for C<Order> and C<OrderDirection>, which C<list_ids()> ignore.
 
 See the C<list()> method for the list of supported Keys.
 
+B<Throws:> NONE.
 
-B<Throws:>
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-NONE
-
-B<Notes:>
-
-Inherited from Bric::Biz::Asset
+B<Notes:> Inherited from Bric::Biz::Asset.
 
 =cut
 
