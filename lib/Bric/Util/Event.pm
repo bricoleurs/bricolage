@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-02-22 06:01:22 $
 
 =head1 SYNOPSIS
 
@@ -124,6 +124,7 @@ my %txt_map = (key_name => 'LOWER(t.key_name) = ?',
 	       class => 'LOWER(c.name) = ?'
 	      );
 
+my $dp = 'Bric::Util::Fault::Exception::DP';
 
 ################################################################################
 
@@ -281,9 +282,15 @@ sub new {
     my $et = $init->{et};
     unless ($et) {
 	if (defined $init->{et_id}) {
-	    $et = Bric::Util::EventType->lookup({ id => $init->{et_id} });
+	    $et = Bric::Util::EventType->lookup({ id => $init->{et_id} })
+	      or die $dp->new({ msg => "Invalid Bric::Util::EventType ID "
+				       . "'$init->{et_id}' argument passed to "
+			               . __PACKAGE__ . '::new()'});
 	} elsif ($init->{key_name}) {
-	    $et = Bric::Util::EventType->lookup({ key_name => $init->{key_name} });
+	    $et = Bric::Util::EventType->lookup({ key_name => $init->{key_name} })
+	      or die $dp->new({ msg => "Invalid Bric::Util::EventType key name "
+				       . "'$init->{key_name}' argument passed to "
+			               . __PACKAGE__ . '::new()'});
 	} else {
 	    die Bric::Util::Fault::Exception::DP->new({
               msg => "No Bric::Util::EventType object, ID, or name passed to " .
