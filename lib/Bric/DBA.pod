@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2003-04-02 20:21:50 $
+$Date: 2003-04-02 20:47:20 $
 
 =head1 DESCRIPTION
 
@@ -241,6 +241,11 @@ physical RAM. It's important that your shared memory settings not exceed the
 actual amount of physical RAM minus the amount of memory the kernel needs,
 since this would involve using swap, thereby erase the performance gains of
 granting the shared memory to PostgreSQL!
+
+See Bruce Momjian's article "PostgreSQL Hardware Performance Tuning" at
+L<http://www.ca.postgresql.org/docs/momjian/hw_performance/> for more on
+tuning your PostgreSQL server. Lyris has also posted a useful article on this
+topic at L<http://www.lyris.com/lm_help/6.0/tuning_postgresql.html>.
 
 =head1 MORE PERFORMANCE TIPS
 
