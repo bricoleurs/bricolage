@@ -7,48 +7,72 @@ help/autohandler
 
 =head1 DESCRIPTION
 
-This autohandler provides a wrapper around the help documents in the
-help hierachy.  It provides the header and close button as well as
-pulling in the CSS styles.
+This autohandler provides a wrapper around the help documents in the help
+hierachy. It provides the header and close button as well as pulling in the CSS
+styles.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Sam Tregar <stregar@about-inc.com>
+Sam Tregar L<lt>stregar@about-inc.comL<gt>
+
+David Wheeler L<lt>david@wheeler.netL<gt>
 
 =cut
+
 </%doc>
 <html>
 <head>
-<title>Bricolage Help</title>
-<& "/widgets/wrappers/sharky/css.mc" &>
+<title><% $title %></title>
+<style type="text/css" id="BricolageHelpCSS"></style>
+<script language="JavaScript" src="/media/js/detect.js"></script>
+<script language="JavaScript" src="/media/js/help_style.js"></script>
 </head>
 
-<body bgcolor="#ffffff">
+<body>
 
 <table border="0" cellpadding="0" cellspacing="0" width="475" align="center">
   <tr>
     <td width="475">
       <table width="475" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="workflowTab" valign="top" width="11"><img src="/media/images/006666_curve_left.gif" width="11" height="22"></td>
-          <td class="workflowTab" width="348">Help </td>
-          <td valign=top width="11" class="workflowTab"><img src="/media/images/006666_curve_right.gif" width="11" height="22"></td>
-          <td width="217" align="right">[ <a href="#" onClick="window.close();" class="blackMedUnderlinedLink">close</a> ]</td>
+          <td class="tab" valign="top" width="11"><img src="/media/images/006666_curve_left.gif" width="11" height="22"></td>
+          <td class="tab" width="348"><% $title %></td>
+          <td valign=top width="11" class="tab"><img src="/media/images/006666_curve_right.gif" width="11" height="22"></td>
+          <td width="217" align="right"><a href="javascript:self.close()"><img src="/media/images/close.gif" border="0"
+ alt="Close" /></a></td>
         </tr>
       </table>
       <table width="475" cellpadding="0" cellspacing="0" border="0">
-        <tr><td class="medHeader" height="20">&nbsp;</td></tr>
+        <tr><td class="context" height="20">&nbsp;&nbsp;<% $context %></td></tr>
       </table>
 
-      <table border="0" cellpadding="0" cellspacing="0" width="475">        
-        <tr><td>
-          <% $m->call_next %>
-        </td></tr>
+      <table border="0" cellpadding="0" cellspacing="0" width="475">
+        <tr><td height="20">&nbsp;</td></tr>
+        <tr><td><% $m->call_next %></td></tr>
       </table>
 
     </td>
   </tr>
+  <tr>
+    <td align="right"><a href="javascript:self.close()"><img src="/media/images/close.gif" border="0" alt="Close" /></a></td>
+  </tr>
 </table>
+
 </body>
 </html>
 %#-- End HTML --#
+%#-- Once --#
+<%once>;
+my $widget = 'help';
+</%once>
+%#-- Init --#
+<%init>;
+my ($context, $title);
+if ($r->uri =~ m:/help/about\.html:) {
+    $context = 'About the Bricolage Content Management System';
+    $title = "Bricolage $Bric::VERSION";
+} else {
+    $context = get_state_data($widget, 'context');
+    $title = 'Bricolage Help';
+}
+</%init>
