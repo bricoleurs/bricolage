@@ -20,7 +20,7 @@ my ($is_clear_state);
 sub refresh : Callback(priority => 0) {
     my $self = shift;
     my $param = self->request_args;
-    return if $is_clear_state->($param);
+    return if $is_clear_state->($self);
 
     # There might be many time widgets on this page.
     my $base = mk_aref($self->value);
@@ -73,7 +73,7 @@ sub clear : Callback {
     my $self = shift;
 
     # If the trigger field was submitted with a true value then, clear state!
-    if ($is_clear_state->($self->request_args)) {
+    if ($is_clear_state->($self)) {
         my $s = Bric::App::Session->instance;
 
         # Find all the select_time widget information
@@ -89,7 +89,8 @@ sub clear : Callback {
 ###
 
 $is_clear_state = sub {
-    my ($param) = @_;
+    my $self = shift;
+    my $param = $self->request_args;
     my $trigger = $param->{$self->class_key . '|clear_cb'} || return;
     return $param->{$trigger};
 };

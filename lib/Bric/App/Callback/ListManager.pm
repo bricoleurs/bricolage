@@ -95,12 +95,14 @@ sub sortBy : Callback {
 
 # set offset from beginning record in @sort_objs at which array slice begins
 sub set_offset : Callback {
+    my $self = shift;
     set_state_data($self->class_key, 'pagination', 1);
     set_state_data($self->class_key, 'offset', $_[0]->value);
 }
 
 # call back to display all results
 sub show_all_records : Callback {
+    my $self = shift;
     set_state_data($self->class_key, 'pagination', 0);
 }
 

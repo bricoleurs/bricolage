@@ -50,7 +50,7 @@ sub story : Callback {
 
     my (@field, @crit);
 
-    $build_fields->($self->class_key, $self->request_args, \@field, \@crit,
+    $build_fields->($self, \@field, \@crit,
 		    [qw(simple title primary_uri category_uri keyword)]);
 
     $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit,
@@ -72,8 +72,7 @@ sub media : Callback {
 
     my (@field, @crit);
 
-    $build_fields->($self->class_key, $self->request_args, \@field, \@crit,
-		    [qw(simple name uri)]);
+    $build_fields->($self, \@field, \@crit, [qw(simple name uri)]);
 
     $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
@@ -94,8 +93,7 @@ sub formatting : Callback {
 
     my (@field, @crit);
 
-    $build_fields->($self->class_key, $self->request_args, \@field, \@crit,
-		    [qw(simple name file_name)]);
+    $build_fields->($self, \@field, \@crit, [qw(simple name file_name)]);
 
     $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit, 
 			 [qw(cover_date publish_date expire_date)]);
@@ -177,7 +175,9 @@ sub unset_advanced : Callback {
 ###
 
 $build_fields = sub {
-    my ($widget, $param, $field, $crit, $add) = @_;
+    my ($self, $field, $crit, $add) = @_;
+    my $widget = $self->class_key;
+    my $param = $self->request_args;
 
     foreach my $f (@$add) {
 	my $v = $param->{$self->class_key."|$f"};
@@ -217,7 +217,8 @@ $build_date_fields = sub {
 };
 
 $init_state = sub {
-    my $r = $_[0]->apache_req;
+    my $self = shift;
+    my $r = $self->apache_req;
 
     # Set the uri for use in expiring the search criteria.
     set_state_data($self->class_key, 'crit_set_uri', $r->uri);
