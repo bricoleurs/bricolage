@@ -173,6 +173,8 @@ Folks who have submitted patches include:
 
 =item Florian Rossol
 
+=item Eric Sellers
+
 =back
 
 Friends who have spotted bugs include:

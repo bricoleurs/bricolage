@@ -1,4 +1,8 @@
 <input type="hidden" name="container_prof|update_cb" value="1">
+% if (ENABLE_HTMLAREA) {
+% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
+<& /widgets/htmlarea/load.mc &>
+% }
 <%perl>;
 # Show the story summary if needed.
 if ($show_summary) {
@@ -22,7 +26,6 @@ if (@tiles || @$elem_opts ) {
              number  => $num++
             );
 </%perl>
-
 <table border="0" width="578" cellpadding="0" cellspacing="0">
 % # COLUMN HEADER ROW
 % my $rowspan = scalar(@tiles) + 2;
@@ -360,7 +363,6 @@ if ($at->is_related_media) {
 % }
 %### End Related Media Section ###
 
-
 % if ($show_summary) {
 <table border=0 width=580>
 <tr>
@@ -381,7 +383,10 @@ if ($at->is_related_media) {
 </tr>
 </table>
 % }
-
+% if (ENABLE_HTMLAREA) {
+% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
+<& /widgets/htmlarea/timeout.mc &>
+% }
 %# this script creates an array with the names
 %# of select boxes that need ordering
 <script language="javascript">

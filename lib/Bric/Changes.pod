@@ -64,6 +64,15 @@ between two Bricolage servers. [Sam]
 added C<bric_media_load> to C<contrib/>. This script copies media into
 Bricolage while accounting for the new to update existing media. [Sam]
 
+=item *
+
+Added HTMLArea support. This adds a new type of field to be added to elements
+and contributor types, "WYSIWYG". Such fields are then displayed in the UI
+using HTMLArea, a WYSIWYG HTML editor. This can be useful in particular for
+sipmle fields that often need emphasis added or links. It is not currently
+available in Bulk Edit or Super Bulk edit. See L<Bric::Admin|Bric::Admin> for
+installation and configuration details. [Eric Sellers]
+
 =back
 
 =head2 Improvements

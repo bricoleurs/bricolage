@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-28 01:56:41 $
+$Date: 2004-03-17 02:19:48 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -307,6 +307,33 @@ textarea_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:
 %}
 textarea_table     += '</td></tr></table></form>&nbsp;'
 
+% if (ENABLE_HTMLAREA) {
+var wysiwyg_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=wysiwyg>"
+wysiwyg_table      += '<input type=hidden name=fb_allowMultiple value=1>'
+wysiwyg_table 	   += '<table width=340 cellpadding=3><tr><td valign=top><span class=label><%$lang->maketext('Key Name')%>:</span><br>'
+wysiwyg_table     += '<input type=text name=fb_name></td>'
+wysiwyg_table 	   += '<td valign=top colspan="2"><span class=label><%$lang->maketext('Rows')%>:</span><br>'
+wysiwyg_table     += '<input type=text name=fb_rows value=8 size=3 onChange="if (this.value < 8) {this.value=8;}"></td></tr>'
+wysiwyg_table     += '<tr><td valign=top><span class=label><% $lang->maketext('Label') %>:</span><br>'
+wysiwyg_table     += '<input type=text name=fb_disp></td>'
+wysiwyg_table     += '<td valign=top><span class=label><% $lang->maketext('Columns') %>:</span><br>'
+wysiwyg_table     += '<input type=text name=fb_cols value=67 size=3 onChange="if (this.value < 67) {this.value=67;}"></td></tr>'
+wysiwyg_table     += '<tr><td colspan=3><span class=label><% $lang->maketext('Default Value') %>:</span><br>'
+wysiwyg_table     += '<input type=text name=fb_value></td>'
+wysiwyg_table     += "</tr>"
+wysiwyg_table     += '</table><table width=340 cellpadding=3>'
+wysiwyg_table     += "    <tr><td>"
+wysiwyg_table     += '<% $numFieldsTxt %>'
+wysiwyg_table     += '    </td><td>'
+%     if ($useRequired){
+wysiwyg_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
+%     }
+wysiwyg_table    += '    </td><td>'
+%if ($useQuantifier){
+wysiwyg_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:</span><input type=checkbox name=fb_quant>'
+% }
+wysiwyg_table     += '</td></tr></table></form>&nbsp;'
+% }
 
 var date_table 	= "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=date>"
 date_table     += "<table width=340 cellpadding=3><tr>"
@@ -401,6 +428,14 @@ date_table     += '</td></tr></table></form>&nbsp;'
         <b><% $lang->maketext('Text Area') %></b>
     </td>
   </tr>
+% if (ENABLE_HTMLAREA){
+  <tr>
+    <td style="border-style:solid; border-color:#cccc99;">
+      <input type=radio name=formElement value=wysiwyg onClick="showForm('wysiwyg')">
+        <b><% $lang->maketext('WYSIWYG') %></b>
+    </td>
+  </tr>
+% }
   <tr>
     <td style="border-style:solid; border-color:#cccc99;">
       <input type=radio name=formElement value=date onClick="showForm('date')">

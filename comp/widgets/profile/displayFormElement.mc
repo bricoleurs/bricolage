@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2004-02-24 22:01:56 $
+$Date: 2004-03-17 02:19:49 $
 
 =head1 SYNOPSIS
 
@@ -342,9 +342,47 @@ my %formSubs = (
                   . qq{name="$key" rows="$rows" cols="$cols" width="200"}
                   . qq{ wrap="soft" class="textArea" $js>\n$value</textarea><br />\n};
             } else {
-                $out .= qq{<textarea name="$key" rows="$rows" cols="$cols" width="200"}
-	                . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
+                $out .= qq{<textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
+                  . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
             }
+        } else {
+            $out .= $value;
+	    }
+        $out .= "\n</td></tr></table>\n" if $useTable;
+        $m->out($out);
+    },
+
+	wysiwyg => sub {
+            my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
+		$label, $readOnly, $agent) = @_;
+	    my $rows =  $vals->{props}{rows} || 5;
+	    my $cols = $vals->{props}{cols}  || 30;
+
+	    # adjust defaults by platform/browser
+	    # ns displays big boxes, usually
+	    $cols = ($agent->nav4 && $agent->mac) ? $cols *.8 : $cols;
+
+	    my $out;
+	    $out .= qq{<table border="0" width="$width"><tr><td align="right"}
+	      . qq{ width="$indent" valign="top">} if $useTable;
+	    $out .= $name ? qq{<span class="$label">$name:</span><br />\n} : '';
+	    $out .= &$rem_sub($width, $indent) if $useTable;
+	    $value = defined $value ? escape_html($value) : '';
+	    $key = $key ? escape_html($key) : '';
+
+	    if (!$readOnly) {
+            $js = $js ? " $js" : '';
+            $out .= qq{<textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
+	         . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
+            my $htmlareatoolbar = HTMLAREA_TOOLBAR;
+            $out .= qq{
+ <script language="javascript">
+   var editor = new HTMLArea("$key");
+   editor.config.toolbar = [$htmlareatoolbar];
+   editor.registerPlugin(SpellChecker);
+   editors.push(editor);
+ </script>
+}
         } else {
             $out .= $value;
 	    }

@@ -4,6 +4,10 @@
     context => "Admin | Profile | $disp | $crumb",
   jsInit => (defined $id) ? "showForm('text')" : ""
 &>
+% if (ENABLE_HTMLAREA) {
+% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
+<& /widgets/htmlarea/load.mc &>
+% }
 <form method="post" action="<% $r->uri %>" name="cont_profile" onSubmit="return confirmChanges(this)">
 <%perl>;
 if (defined $id) {
@@ -52,7 +56,6 @@ $m->comp('/widgets/select_object/select_object.mc',
 );
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
 
 # Get the group's membership listed
 $m->comp("/widgets/grp_membership/grp_membership.mc",
@@ -277,7 +280,10 @@ if (!$no_edit && defined $id) {
 
 </%perl>
 </form>
-
+% if (ENABLE_HTMLAREA) {
+% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
+<& /widgets/htmlarea/timeout.mc &>
+% }
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
@@ -331,11 +337,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =head1 DATE
 
-$Date: 2004-03-09 17:01:09 $
+$Date: 2004-03-17 02:19:48 $
 
 =head1 DESCRIPTION
 

@@ -5,7 +5,10 @@ function contribJump(obj) {
                            + obj[obj.selectedIndex].value;
 }
 </script>
-
+% if (ENABLE_HTMLAREA) {
+% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
+<& /widgets/htmlarea/load.mc &>
+% }
 <form method="post" action="<% $r->uri %>" name="contrib_profile" onSubmit="if(uniqueRole(this.subsys)) { return confirmChanges(this) } else { return false }">
 
 <%perl>;
@@ -134,7 +137,10 @@ if ($mode eq "new") {
 }
 </%perl>
 </form>
-
+% if (ENABLE_HTMLAREA) {
+% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
+<& /widgets/htmlarea/timeout.mc &>
+% }
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
@@ -338,11 +344,11 @@ my $stepOneOfTwo = sub {
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:48 $
+$Date: 2004-03-17 02:19:48 $
 
 =head1 DESCRIPTION
 

@@ -124,6 +124,15 @@ do {
       "    ForceType           \"application/x-javascript; charset=utf-8\"\n" .
       "  </Location>";
 
+    # Enable CGI for htmlarea spellchecker.
+    # XXX Currently doesn't seem to work...
+    if (ENABLE_HTMLAREA){
+        push @locs,
+          "  <Location /media/htmlarea/plugins/SpellChecker/cgi-bin>\n" .
+          "    SetHandler      cgi-script\n" .
+          "  </Location>";
+    }
+
     # This will serve media assets and previews.
     push @locs,
       "  <Location /data>\n" .

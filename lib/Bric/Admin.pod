@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.147 $
+$Revision: 1.148 $
 
 =head1 DATE
 
-$Date: 2004-03-04 21:17:45 $
+$Date: 2004-03-17 02:19:49 $
 
 =head1 DESCRIPTION
 
@@ -234,6 +234,10 @@ mod_ssl 2.8.4-1.3.20 - Apache Interface to OpenSSL (optional)
 =item *
 
 apache_ssl 1.3.22+ssl_1.47 Apache SSL (optional)
+
+=item *
+
+HTMLArea 3.0 or later (optional)
 
 =back
 
@@ -845,6 +849,15 @@ create other user accounts.
 
 =back
 
+=head2 HTMLArea (Optional)
+
+To install HTMLArea, an optional application that offers WYSIWYG editing in
+the Bricolage UI, simply download it from
+L<http://www.interactivetools.com/products/htmlarea/>, decompress the files,
+and move them to the F<comp/media/htmlarea> directory in your Bricolage root.
+You will also need to enable the C<ENABLE_HTMLAREA> F<bricolage.conf> directive
+(see L<UI Configuration|/"UI Configuration">).
+
 =head1 UPGRADING
 
 If you're upgrading an installation of Bricolage that was previously installed
@@ -1401,6 +1414,123 @@ control how many years before and after the current year to display in the
 list of years in the date and time select widget. The default values are 10
 for each, meaning that if the current year is 2003, then the date span will be
 from 1993 to 2013.
+
+=item *
+
+B<ENABLE_HTMLAREA and HTMLAREA_TOOLBAR:> These directives control the HTMLArea
+WYSIWYG editor in Bricolage. HTMLArea 3.0 must be installed in
+F<comp/media/html>. Download it from
+L<http://www.interactivetools.com/products/htmlarea/> and simply rename the
+decompressed archive file to F<comp/media/html> in your Bricolage root.
+
+Once it's installed and C<ENABLE_HTMLAREA> has been enabled, you can specify
+exactly what shows up in your HTMLArea toolbar and how it is displayed. This
+is useful for ensuring that content remains separate from presentation. For
+example, you usually won't want to include the font control buttons, as these
+are generally best managed in templates. Here is a complete list of the
+available buttons:
+
+=over 8
+
+=item fontname
+
+=item fontsize
+
+=item formatblock
+
+=item bold
+
+=item italic
+
+=item underline
+
+=item strikethrough
+
+=item subscript
+
+=item superscript
+
+=item copy
+
+=item cut
+
+=item paste
+
+=item undo
+
+=item redo
+
+=item linebreak
+
+=item justifyleft
+
+=item justifycenter
+
+=item justifyright
+
+=item justifyfull
+
+=item lefttoright
+
+=item righttoleft
+
+=item insertorderedlist
+
+=item insertunorderedlist
+
+=item outdent
+
+=item indent
+
+=item forecolor
+
+=item hilitecolor
+
+=item inserthorizontalrule
+
+=item createlink
+
+=item insertimage
+
+=item inserttable
+
+=item htmlmode
+
+=item popupeditor
+
+=item showhelp
+
+=item about
+
+=back
+
+In addition to the button specifications, HTMLArea configuration supports a
+few other toolbar configuration options:
+
+=over 8
+
+=item space
+
+Inserts a space of 5 pixels (the width is configurable by external CSS) at the
+current position in the toolbar.
+
+=item separator
+
+Inserts a small vertical separator, for visually grouping related buttons.
+
+=item linebreak
+
+Starts a new line in the toolbar. Subsequent controls will be inserted on the
+new line.
+
+=back
+
+The default value for C<HTMLAREA_TOOLBAR> is:
+
+  ['bold', 'italic', 'underline', 'strikethrough', 'separator', 'subscript',
+   'superscript', 'separator', 'copy', 'cut', 'paste', 'space', 'undo',
+   'redo', 'createlink', 'htmlmode', 'separator', 'popupeditor', 'separator',
+   'showhelp', 'about']
 
 =back
 

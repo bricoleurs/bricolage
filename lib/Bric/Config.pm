@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.95 $
+$Revision: 1.96 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.95 $ )[-1];
+our $VERSION = (qw$Revision: 1.96 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-05 09:40:45 $
+$Date: 2004-03-17 02:19:50 $
 
 =head1 SYNOPSIS
 
@@ -153,6 +153,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     LOAD_LANGUAGES
                     ENCODE_OK
                     LOAD_CHAR_SETS
+                    ENABLE_HTMLAREA
+                    HTMLAREA_TOOLBAR
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -222,6 +224,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      YEAR_SPAN_AFTER
                                      NO_TOOLBAR
                                      ENABLE_CATEGORY_BROWSER
+                                     ENABLE_HTMLAREA
+                                     HTMLAREA_TOOLBAR
                                      USE_XHTML)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],
@@ -328,6 +332,12 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
             ($config->{SERVER_WINDOW_NAME} =
              $config->{VHOST_SERVER_NAME} || '_default_') =~ s/\W+/_/g;
 
+            # Set default toolbar for HtmlArea
+            $config->{HTMLAREA_TOOLBAR} ||= "['bold','italic','underline'," .
+              "'strikethrough','separator','subscript','superscript'," .
+              "'separator','copy','cut','paste','space','undo','redo'," .
+              "'createlink','htmlmode','separator','popupeditor'," .
+              "'separator','showhelp','about']";
         }
         # Process boolean directives here. These default to 1.
         foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR USE_XHTML
@@ -345,7 +355,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
-                    USE_THUMBNAILS))
+                    USE_THUMBNAILS ENABLE_HTMLAREA))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -515,8 +525,12 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                            'data', 'media');
 
     # Are we using thumbnails and how big are they ?
-    use constant USE_THUMBNAILS => $config->{USE_THUMBNAILS};
-    use constant THUMBNAIL_SIZE => $config->{THUMBNAIL_SIZE} || 75;
+    use constant USE_THUMBNAILS          => $config->{USE_THUMBNAILS};
+    use constant THUMBNAIL_SIZE          => $config->{THUMBNAIL_SIZE} || 75;
+
+    # Enable HTMLAREA WYSIWYG Editor ?
+    use constant ENABLE_HTMLAREA         => $config->{ENABLE_HTMLAREA};
+    use constant HTMLAREA_TOOLBAR        => $config->{HTMLAREA_TOOLBAR};
 
     # The minimum login name and password lengths users can enter.
     use constant LOGIN_LENGTH            => $config->{LOGIN_LENGTH} || 5;

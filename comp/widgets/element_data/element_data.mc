@@ -76,8 +76,15 @@ $meta = $field->get_meta('html_info');
         ['rows' => 'Rows', '.number'],
         ['cols' => 'Columns', '.number'],
     ],
+    'wysiwyg' => [
+        ['disp' => 'Label', '.text'],
+        ['value' => 'Default Value', '.textarea'],
+        ['rows' => 'Rows', '.number'],
+        ['cols' => 'Columns', '.number'],
+    ],
     'date' => [
         ['disp' => 'Caption', '.text'],
     ],
 );
+
 </%init>
