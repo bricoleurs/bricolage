@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 11:19:55 $
+$Date: 2003-10-03 02:43:36 $
 
 =head1 SYNOPSIS
 
@@ -986,7 +986,7 @@ sub _write_pages {
             last if $page == $#pages and $pages[$page] =~ /^\s*$/;
 
             # compute filename
-            my $filename = $self->file_filepath($page + 1);
+            my $filename = $self->page_filepath($page + 1);
 
             print STDERR __PACKAGE__, "::_write_pages() : opening multi page $filename\n"
                 if DEBUG;
