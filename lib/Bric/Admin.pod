@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.123 $
+$Revision: 1.124 $
 
 =head1 DATE
 
-$Date: 2003-10-16 18:34:21 $
+$Date: 2003-10-22 06:01:15 $
 
 =head1 DESCRIPTION
 
@@ -68,13 +68,13 @@ Perl 5.6.0 (5.6.1 or later recommended)
 
 Perl Modules:
 
-=over 4
-
 =begin installation
 
 START MODULE LIST
 
 =end installation
+
+=over 4
 
 =item Storable
 
@@ -198,13 +198,13 @@ START MODULE LIST
 
 =item Crypt::SSLeay (optional)
 
+=back
+
 =begin installation
 
 END MODULE LIST
 
 =end installation
-
-=back
 
 =item *
 
@@ -1657,7 +1657,7 @@ Execute the following command:
 
 This will install Apache and the new certificate.
 
-=item 4.
+=item 6.
 
 Start Apache again:
 

@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2003-08-26 16:17:39 $
+$Date: 2003-10-22 06:01:15 $
 
 =head1 INTRODUCTION
 
@@ -333,6 +333,8 @@ of code that only run in certain contexts.
 There are four contexts in which a template is run and in each context, code
 can be executed:
 
+=over 4
+
 =item Syntax checking
 
 =item Preview
@@ -341,11 +343,13 @@ can be executed:
 
 =item Frontend serving the page
 
-A template developer would like that all code will be syntax checked, 
-have some special debug messages to appear to the story editor previewing
-the article; have some special code that only runs at publish time; have
-some cookie handling code that only runs in realtime, when an actual
-user is requesting the page. 
+=back
+
+A template developer would like that all code will be syntax checked, have
+some special debug messages to appear to the story editor previewing the
+article; have some special code that only runs at publish time; have some
+cookie handling code that only runs in realtime, when an actual user is
+requesting the page.
 
 With HTML::Mason a developer could use C<< <%text> >> tags, but they would
 not get syntax checked by Bricolage, and could only run in the frontend
@@ -354,6 +358,8 @@ servers.
 With Bricolage Custom Tags, tags are processed according to the context.
 
 Bricolage supports the following Mason Custom tags:
+
+=over 4
 
 =item C<< <%chk_syntax> >>
 
@@ -371,10 +377,11 @@ This is equivalent to the default Bricolage behaviour, since the code
 is run in preview and publish mode. Can be quite useful in complex templates
 where a developer wants to explicitly tell the context.
 
-
 =item C<< <%realtime> >>
 
 Code kept during the publish process, runs in preview mode.
+
+=back
 
 =head1 USING XML
 
