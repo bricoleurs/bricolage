@@ -315,11 +315,12 @@ getting lost. Thanks to Mike Slattery for the spot. [Sam]
 
 =item *
 
-Fixed bug in HTML::Template burner where templates in non-root categories could not be found.  Thanks to Marlon Bermas for the spot.  [Sam]
+Fixed bug in HTML::Template burner where templates in non-root categories
+could not be found. Thanks to Marlon Bermas for the spot. [Sam]
 
 =item *
 
-Fixed Bric::Util::FTP::FileHandle to create new revisions on PUT.  [Sam]
+Fixed Bric::Util::FTP::FileHandle to create new revisions on PUT. [Sam]
 
 =item *
 
@@ -416,7 +417,7 @@ Fixed broken image autopopulation fields (compression, height, width, etc.)
 
 Fixed broken support for audio and video files. These can be set up by the Media
 Type menu in Element Types. Eventually these should arrange for some fields to
-be auto-populated (e.g., bit rate, frame size, length, encoding, etc.).
+be auto-populated (e.g., bit rate, frame size, length, encoding, etc.). [David]
 
 =item *
 
@@ -576,7 +577,150 @@ Fixed some problems with the sideNav menus under Netscape. [David]
 Fixed broken "Preview" button in Read-only story profile and in related story
 elements. [Matt Vella]
 
-=item
+=item *
+
+Updated debugging code to accommodate new syntax in Cache::Cache. Thanks to Sam
+Tregar for the spot. [David]
+
+=item *
+
+Fixed problem with Element names containing non-alphanumeric characters. [Sam]
+
+=item *
+
+Checking out media assets from "Find Media" now redirects you to the media
+profile if you've checked out one media asset, or My Workspace if you've checked
+out more than one. This puts it in line with how "Find Stories" and "Find
+Templates" work. Thanks to Sam for the report. [David]
+
+=item *
+
+Fixed bulk edit functionality for Media assets. Thanks to Sam for the spot.
+[David]
+
+=item *
+
+In Bric::Biz::Asset::Business, the source get_meth key in my_meths() now works
+properly. Also, get_all_keywords() now also returns the category keywords as
+well as the story keywords. Thanks to Darren Graves for the patch.
+
+=item *
+
+Removed quotation marks from DEF_MEDIA_TYPE setting in bricolage.conf. Thanks to
+Darren Graves for the spot. [David]
+
+=item *
+
+Sorting assets by ID in "Find X" and Workspace/Desk view now properly does a
+numeric sort rather than an alphanumeric sort. Thanks to Sam Tregar for the
+spot. [David]
+
+=item *
+
+Fixed an obscure bug where, for files uploaded as part of a Media file,
+Bricolage attempted to create a path on its own file system using path
+delimiters for another file system. Thanks to Mike Slattery for the spot.
+[David]
+
+=item *
+
+Required content fields in stories and elements are now displayed in the order
+specified in the Element profile. Thanks to Sam Tregar for the spot. [David]
+
+=item *
+
+All assets now start with the version number 0 until the first time they are
+checked in. Also, they will show up on desks and in the Find views after the
+first time they are saved. It was inconsistent before, and some items could not
+be seen in the desk and Find views until they were checked in. Thanks to Sam for
+spotting the inconsistency. [David]
+
+=item *
+
+The bric_clean_tmp script has been changed to avoid deleting the Bricolage
+cache file.  [Sam]
+
+=item *
+
+Fixed typo that broke Bric::Dist::Client. [Mike Slattery]
+
+=item *
+
+Fixed multiple select custom fields for Elements and Contributors. Thanks to
+Mike Slattery for the spot. [David]
+
+=item *
+
+Fixed ugly bug where deleting a "Media Type" Element would delete all the media
+objects of that type. Thanks to Sam for the spot (though not for the bug!).
+[David]
+
+=item *
+
+Fixed bric_pgimport so that it uses DBI to drop and create the database, rather
+than relying on a hard-coded location for pgsql binaries. [David]
+
+=item *
+
+Fixed permission granting in bric_pgimport so that the Bricolage database use
+has DELETE permissions on all objects in the Bricolage database. It looks like
+this permission was ignored in PosgreSQL 7.1 and earlier, or problems would have
+shown up a long time ago! [David]
+
+=item *
+
+Fixed a bug where the time a distribution job is scheduled was not properly
+converted to UTC for storage in the database. Thanks to Mike Slattery for the
+great code archaeology! [David]
+
+=item *
+
+Fixed the spelling of "contributor" in several spots. [Andrew Baio]
+
+=item *
+
+Fixed bug where changing a story's primary category left it with B<no> primary
+category. [Matt Vella]
+
+=back
+
+=head1 VERSION 1.2.0
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added Context-sensitive, online help. [Sam]
+
+=item *
+
+Added separate interface for editing templates (via FTP). [Sam]
+
+=item *
+
+Added the ability to use HTML::Template Templates. [Sam]
+
+=item *
+
+Added ability for differnt Output Channels to function as different component
+roots for in Mason templates. This will allow for templates that can't be found
+in the current Output Channel to be searched for in other Output Channels.
+[David]
+
+=item *
+
+Added link to Event log to Find Story, Find Template, and Find Media screens.
+[David]
+
+=item *
+
+Added true previewing for media assets. Now, when you click their URIs to
+preview them, they will be distributed to the preview server(s) before
+redirecting the user to them, rather than just serving them up from where they
+live on the Bricolage file system. The latter can still be accessed under
+"Download" in the Media Asset profile. This will continue to be the preferred
 way to grab media files for editing and such, as it will not incur the overhead
 of distributing the media file. [David]
 
@@ -717,7 +861,7 @@ Added INCLUDE_XML_WRITER and XML_WRITER_ARGS configuration parameters. If
 INCLUDE_XML_WRITER is turned on, then all templates will include a new global,
 $writer, that is an XML::Writer object. This object is provided as a convenience
 for creating XML in your templates. XML_WRITER_ARGS allows certain arguments to
-be passed to the XML::Writer.
+be passed to the XML::Writer. [David]
 
 =item *
 
