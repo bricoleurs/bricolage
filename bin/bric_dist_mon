@@ -37,7 +37,7 @@ our ($opt_i, $opt_U, $opt_h, $opt_d, $opt_c, $opt_f, $opt_v, $opt_u, $opt_p,
 getopts('i:u:p:hdcvf:U:P:a:');
 
 # Get the version number.
-our $VERSION = substr(q$Revision$, 10, -1);
+our $VERSION = (qw$Revision$ )[-1];
 
 # Get the program name.
 my $prog = Bric::Util::Trans::FS->base_name($0);
