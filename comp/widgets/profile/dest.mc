@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.8.4.1 $
+$Revision: 1.8.4.2 $
 
 =head1 DATE
 
-$Date: 2003-03-14 21:30:10 $
+$Date: 2003-07-27 15:01:21 $
 
 =head1 SYNOPSIS
 
@@ -21,6 +21,8 @@ $Date: 2003-03-14 21:30:10 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the Destination Profile page.
+
+=cut
 
 </%doc>
 
@@ -61,7 +63,8 @@ if (@dests > 1) { $used = 1 }
 elsif (@dests == 1 && !defined $dest_id) { $used = 1 }
 elsif (@dests == 1 && defined $dest_id
        && $dests[0] != $dest_id) { $used = 1 }
-add_msg($lang->maketext("The name [_1] is already used by another [_2].",$name,$disp_name)) if $used;
+add_msg($lang->maketext("The name [_1] is already used by another [_2].",
+                        $name,$disp_name)) if $used;
 
 # If they're editing it, assume it's active.
 $param->{active} = 1;
