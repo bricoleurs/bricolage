@@ -226,6 +226,11 @@ Rinehart for the spot! [David]
 Adding an existing publish desk to a workflow no longer unsets its publish
 attribute. [David]
 
+=item *
+
+Deleted output channels no longer show up in the select list for story type
+and media type elements. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
