@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -16,11 +16,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-02-06 00:12:20 $
+$Date: 2002-02-08 01:05:30 $
 
 =head1 SYNOPSIS
 
@@ -466,8 +466,8 @@ The XSD source:
 		   </xs:restriction>
 		 </xs:simpleType>
 	       </xs:element>
-	       <xs:element name="active" type="xs:boolean"/>
 	       <xs:element name="publish_status" type="xs:boolean"/>
+	       <xs:element name="active" type="xs:boolean"/>
 	       <xs:element name="source">
 		 <xs:simpleType>
 		   <xs:restriction base="xs:string">
@@ -486,21 +486,7 @@ The XSD source:
 		   <xs:documentation>ommited if not published</xs:documentation>
 		 </xs:annotation>
 	       </xs:element>
-	       <xs:element name="categories">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="category" maxOccurs="unbounded">
-		       <xs:complexType>
-			 <xs:simpleContent>
-			   <xs:extension base="xs:string">
-			     <xs:attribute name="primary" type="xs:boolean" use="optional"/>
-			   </xs:extension>
-			 </xs:simpleContent>
-		       </xs:complexType>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
+               <xs:element name="category" type="xs:string"/>
 	       <xs:element name="contributors">
 		 <xs:complexType>
 		   <xs:sequence>

@@ -18,6 +18,7 @@ use Carp qw(croak);
 use Bric::SOAP::Util qw(category_path_to_id 
 			xs_date_to_pg_date pg_date_to_xs_date
 			parse_asset_document
+                        serialize_elements
 		       );
 
 use SOAP::Lite;
@@ -35,15 +36,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-02 00:22:37 $
+$Date: 2002-02-08 01:05:30 $
 
 =head1 SYNOPSIS
 
@@ -635,6 +636,7 @@ sub delete {
 }
 }
 
+=back
 
 =head2 Private Class Methods
 
@@ -1072,118 +1074,16 @@ sub _serialize_story {
     }
     $writer->endTag("contributors");
 
-
-    # output element data
-    $writer->startTag("elements");
-    my $element = $story->get_tile();
-    my @e = $element->get_elements;
-
-    # first serialize all data elements
-    foreach my $e (@e) {
-	next if $e->is_container;
-	push(@related, $pkg->_serialize_tile(writer  => $writer,
-					     element => $e,
-					     args    => $options{args},
-					    ));	  
-    }
-
-    # then all containers
-    foreach my $e (@e) {
-	next unless $e->is_container;
-	push(@related, $pkg->_serialize_tile(writer  => $writer,
-					     element => $e,
-					     args    => $options{args},
-					    ));	  
-    }
-    $writer->endTag("elements");
+    # output elements
+    @related = serialize_elements(writer => $writer, 
+				  args   => \%options,
+				  object => $story);
     
     # close the story
     $writer->endTag("story");    
     
     return @related;
 }
-
-=item @related = $pkg->_serialize_tile(writer => $writer, element => $element, args => $args)
-
-Serializes a single tile, called recursively on containers.  Returns a
-list of two-element arrays - [ "media", $id ] or [ "story", $id ].
-These are the related media objects serialized.
-
-=cut
-
-sub _serialize_tile {
-    my $pkg      = shift;
-    my %options  = @_;
-    my $element  = $options{element};
-    my $writer   = $options{writer};
-    my @related;
-    
-    if ($element->is_container) {
-	my %attr  = (element => $element->get_element_name,
-		     order   => $element->get_place);
-	my @e = $element->get_elements();
-	
-	# look for related stuff and tag relative if we'll include in
-	# the assets dump.
-	my ($related_story, $related_media);
-	if ($related_story = $element->get_related_story) {
-	    $attr{related_story_id} = $related_story->get_id;
-	    if ($options{args}{export_related_stories}) {
-		$attr{relative} = 1;
-		push(@related, [ story => $attr{related_story_id} ]);
-	    }
-	} elsif ($related_media = $element->get_related_media) {
-	    $attr{related_media_id} = $related_media->get_id;
-	    if ($options{args}{export_related_media}) {
-		$attr{relative} = 1;
-		push(@related, [ media => $attr{related_story_id} ]);
-	    }
-	}
-	
-	if (@e) {
-	    # recurse over contained elements
-	    $writer->startTag("container", %attr);
-
-	    # first serialize all data elements
-	    foreach my $e (@e) {
-		next if $e->is_container;
-		push(@related, $pkg->_serialize_tile(writer  => $writer,
-						     element => $e,
-						     args    => $options{args},
-						    ));	  
-	    }
-
-	    # then all containers
-	    foreach my $e (@e) {
-		next unless $e->is_container;
-		push(@related, $pkg->_serialize_tile(writer  => $writer,
-						     element => $e,
-						     args    => $options{args},
-						    ));	  
-	    }
-
-	    $writer->endTag("container");
-	} else {
-	    # produce clean empty tag
-	    $writer->emptyTag("container", %attr);
-	}
-    } else {
-	# data elements
-	my $data = $element->get_data;
-	if (defined $data and length $data) {
-	    $writer->dataElement("data", $data,
-				 element => $element->get_element_name,
-				 order   => $element->get_place);
-	} else {
-	    $writer->emptyTag("data", 
-			      element => $element->get_element_name,
-			      order   => $element->get_place);
-	}
-    }
-
-    return @related;
-}
-
 
 =back
 

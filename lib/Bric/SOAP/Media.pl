@@ -185,7 +185,24 @@ foreach my $queries (@queries) {
 	    ")");
 }
 
+# get schema ready for checking documents
+my $xsd = extract_schema();
+ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
 
+# try exporting and importing every media object
+foreach my $media_id (@$media_ids) {
+    $response = $soap->export(name(media_id => $media_id));
+    if ($response->fault) {
+	fail('SOAP export() response fault check');
+	exit 1;
+    } else {
+	pass('SOAP export() response fault check');  
+	
+	my $document = $response->result;
+	ok($document, "recieved document for media $media_id");
+	check_doc($document, $xsd, "media $media_id");
+    }
+}
 
 ###############################################################################
 #

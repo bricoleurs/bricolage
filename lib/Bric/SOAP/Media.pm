@@ -14,10 +14,12 @@ use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
 use XML::Writer;
 use IO::Scalar;
 use Carp qw(croak);
+use MIME::Base64;
 
 use Bric::SOAP::Util qw(category_path_to_id 
 			xs_date_to_pg_date pg_date_to_xs_date
 			parse_asset_document
+			serialize_elements
 		       );
 
 use SOAP::Lite;
@@ -35,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-05 23:43:37 $
+$Date: 2002-02-08 01:05:30 $
 
 =head1 SYNOPSIS
 
@@ -241,6 +243,199 @@ sub list_ids {
     # name the array and return
     return name(media_ids => \@result);
 }
+}
+
+=item export
+
+The export method retrieves a set of media from the database,
+serializes them and returns them as a single XML document.  See
+L<Bric::SOAP|Bric::SOAP> for the schema of the returned
+document.
+
+Accepted paramters are:
+
+=over 4
+
+=item media_id
+
+Specifies a single media_id to be retrieved.
+
+=item media_ids
+
+Specifies a list of media_ids.  The value for this option should be an
+array of interger "media_id" elements.
+
+=back 4
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: Bric::SOAP::Media->export doesn't provide equivalents to the
+export_related_stories and export_related_media options in
+Bric::SOAP::Story->export.  Related media and related stories will
+always be returned with absolute id references.  If
+you're... creative...  enough to be using related media and stories in
+your Media types then you'll have to manually fetch the relations.
+
+=cut
+
+{
+  # hash of allowed parameters
+  my %allowed = map { $_ => 1 } qw(media_id media_ids);
+
+sub export {
+    my $pkg = shift;
+    our $ef;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->export() called : args : ", 
+ 	Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+ 	die __PACKAGE__ . "::export : unknown parameter \"$_\".\n"
+ 	    unless exists $allowed{$_};
+    }
+    
+    # media_id is sugar for a one-element media_ids arg
+    $args->{media_ids} = [ $args->{media_id} ] if exists $args->{media_id};
+    
+    # make sure media_ids is an array
+    die __PACKAGE__ . "::export : missing required media_id(s) setting.\n"
+ 	unless defined $args->{media_ids};
+    die __PACKAGE__ . "::export : malformed media_id(s) setting.\n"
+ 	unless ref $args->{media_ids} and ref $args->{media_ids} eq 'ARRAY';
+    
+    # setup XML::Writer
+    my $document        = "";
+    my $document_handle = new IO::Scalar \$document;
+    my $writer          = XML::Writer->new(OUTPUT      => $document_handle,
+ 					   DATA_MODE   => 1,
+ 					   DATA_INDENT => 1);
+    
+    # open up an assets document, specifying the schema namespace
+    $writer->xmlDecl("UTF-8", 1);
+    $writer->startTag("assets", 
+ 		      xmlns => 'http://bricolage.sourceforge.net/assets.xsd');
+    
+    
+    # iterate through media_ids, serializing media objects as we go
+    foreach my $media_id (@{$args->{media_ids}}) {	
+	$pkg->_serialize_media(writer   => $writer, 
+			       media_id => $media_id,
+			       args     => $args);
+    }
+    
+    # end the assets element and end the document
+    $writer->endTag("assets");
+    $writer->end();
+    $document_handle->close();
+    
+    # name, type and return
+    return name(document => $document)->type('base64');   
+}
+}
+
+=back
+
+=head2 Private Class Methods
+
+=over 4
+
+=item $pkg->_serialize_media(writer => $writer, media_id => $media_id, args => $args)
+
+Serializes a single media object into a <media> element using the given
+writer and args. 
+
+=cut
+
+sub _serialize_media {
+    my $pkg      = shift;
+    my %options  = @_;
+    my $media_id = $options{media_id};
+    my $writer   = $options{writer};
+
+    my $media = Bric::Biz::Asset::Business::Media->lookup({id => $media_id});
+    die __PACKAGE__ . "::export : media_id \"$media_id\" not found.\n"
+	unless $media;
+
+    die __PACKAGE__ . "::export : access denied for media \"$media_id\".\n"
+	unless chk_authz($media, READ, 1);
+    
+    # open a media element
+    $writer->startTag("media", 
+		      id => $media_id, 
+		      element => $media->get_element_name);
+    
+    # write out simple elements in schema order
+    foreach my $e (qw(name description uri
+		      priority publish_status )) {
+	$writer->dataElement($e => $media->_get($e));
+    }
+    
+    # set active flag
+    $writer->dataElement(active => ($media->is_active ? 1 : 0));
+    
+    # get source name
+    my $src = Bric::Biz::Org::Source->lookup({
+					      id => $media->get_source__id });
+    die __PACKAGE__ . "::export : unable to find source\n"
+	unless $src;
+    $writer->dataElement(source => $src->get_source_name);
+    
+    # get dates and output them in dateTime format
+    for my $name qw(cover_date expire_date publish_date) {
+	my $date = $media->_get($name);
+	next unless $date; # skip missing date
+	my $xs_date = pg_date_to_xs_date($date);
+	die __PACKAGE__ . "::export : bad date format for $name : $date\n"
+	    unless defined $xs_date;
+	$writer->dataElement($name, $xs_date);
+    }
+    
+    # output categories
+    $writer->dataElement(category => $media->get_category->ancestry_path);
+
+    # output contributors
+    $writer->startTag("contributors");
+    foreach my $c ($media->get_contributors) {
+	my $p = $c->get_person;
+	$writer->startTag("contributor");
+	$writer->dataElement(fname  => $p->get_fname);
+	$writer->dataElement(mname  => $p->get_mname);
+	$writer->dataElement(lname  => $p->get_lname);
+	$writer->dataElement(type   => $c->get_grp->get_name);
+	$writer->dataElement(role   => $media->get_contributor_role($c));
+	$writer->endTag("contributor");
+    }
+    $writer->endTag("contributors");
+
+    # output elements, ignore related media
+    serialize_elements(writer => $writer, 
+		       args   => \%options,
+		       object => $media);
+    
+    # output file if we've got one
+    my $file_name = $media->get_file_name;    
+    if ($file_name) {
+	$writer->startTag("file");
+	$writer->dataElement(name => $file_name);
+	$writer->dataElement(size => $media->get_size);
+	
+	# read in file data
+	my $fh   = $media->get_file;
+	my $data = join('',<$fh>);
+	$writer->dataElement(data => MIME::Base64::encode_base64($data,''));
+	close $fh;
+
+	$writer->endTag("file");
+    }
+    
+
+    # close the media
+    $writer->endTag("media");    
 }
 
 
