@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.17.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.17.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-05 19:06:15 $
+$Date: 2003-03-15 18:22:16 $
 
 =head1 SYNOPSIS
 
@@ -1192,7 +1192,7 @@ $get_em = sub {
       'AND p.id = c.object_id AND m.id = c.member__id AND m.active = 1';
     my @params;
     while (my ($k, $v) = each %$params) {
-        if ($k eq 'id') {
+        if ($k eq 'id' or $k eq 'manual') {
             $wheres .= " AND p.$k = ?";
             push @params, $v;
         } elsif ($k eq 'val_name') {
