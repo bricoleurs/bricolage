@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-13 22:58:52 $
+$Date: 2002-11-13 23:22:00 $
 
 =head1 SYNOPSIS
 
@@ -78,7 +78,7 @@ use warnings;
 use constant DEBUG => 0;
 
 # turn on tracing when debugging
-use SOAP::Lite +trace => [ (DEBUG ? ('trace') : ()), fault => \&handle_err ];
+use SOAP::Lite +trace => [ (DEBUG ? ('all') : ()), fault => \&handle_err ];
 use SOAP::Transport::HTTP;
 use Bric::App::Auth;
 use Bric::App::Session;
