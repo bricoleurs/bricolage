@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.54 $ )[-1];
+our $VERSION = (qw$Revision: 1.55 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-10 08:23:17 $
+$Date: 2004-02-24 06:13:44 $
 
 =head1 SYNOPSIS
 
@@ -321,11 +321,11 @@ sub burn_one {
 
 ################################################################################
 
-=item my $bool = $burner->chk_syntax($ba, \$err)
+=item my $bool = $burner->chk_syntax($template, \$err)
 
-Compiles the template found in $ba. If the compile succeeds with no
-errors, chk_syntax() returns true. Otherwise, it returns false, and the error
-will be in the $err variable passed by reference.
+Compiles the template found in C<$template>. If the compile succeeds with no
+errors, C<chk_syntax()> returns true. Otherwise, it returns false, and the
+error will be in the C<$err> variable passed by reference.
 
 B<Throws:> NONE.
 
@@ -336,9 +336,9 @@ B<Notes:> NONE.
 =cut
 
 sub chk_syntax {
-    my ($self, $ba, $err_ref) = @_;
+    my ($self, $tmpl, $err_ref) = @_;
     # Just succeed if there is no template source code.
-    my $data = $ba->get_data or return $self;
+    my $data = $tmpl->get_data or return $self;
 
     # Create the interpreter
     my $interp = HTML::Mason::Interp->new( $self->_interp_args,
