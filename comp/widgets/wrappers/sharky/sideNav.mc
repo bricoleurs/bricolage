@@ -67,7 +67,7 @@ my $workflows = $c->get('__WORKFLOWS__');
 $uri ||= $r->uri;
 $uri = '/workflow/profile/workspace' unless $uri && $uri ne '/';
 
-$nav = get_state_data("nav") if (!$nav);
+$nav ||= get_state_data("nav");
 unless ($workflows) {
     # The cache hasn't been loaded yet. Load it.
     $workflows = [];
@@ -147,22 +147,27 @@ unless ($workflows) {
 
 # Begin Workflows -------------------------------------
 # iterate thru workflows
-my $site_id = $c->get_user_cx(get_user_id) || 0;
+my $site_id = $c->get_user_cx(get_user_id);
 foreach my $wf (@$workflows) {
-    next if($site_id && $site_id != $wf->{site_id});
+    next if $site_id && $site_id != $wf->{site_id};
     # Check permissions.
     next unless chk_authz(0, READ, 1, @{ $wf->{gids} });
-    my $esc_name = escape_html($wf->{name});
 
-    if ( $nav->{"workflow-". $esc_name} ) { # show open workflow
+    # Make sure we always have a site ID (0 is no site context and OK).
+    if (! defined $site_id) {
+        $site_id = $wf->{site_id};
+        $c->set_user_cx($site_id);
+    }
+
+    if ( $nav->{"workflow-$wf->{id}"} ) { # show open workflow
         $m->out("<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>\n");
         $m->out("<tr class=sideNavInactiveCell>\n");
         $m->out(qq{ <td><img src="/media/images/spacer.gif" width=10 height=5></td> } );
         $m->out("<td valign=middle $tabHeight width=15>");
-        $m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow-${esc_name}_cb=0')">});
+        $m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=0')">});
         $m->out("<img src=\"/media/images/dkgreen_arrow_open.gif\" width=13 height=9 border=0 hspace=0></a></td>\n");
         $m->out("<td valign=middle $tabHeight width=135>");
-        $m->out(qq {<a href="#" class=sideNavHeaderBold onClick="return doNav('} . $r->uri . qq {?nav|workflow-${esc_name}_cb=0')">});
+        $m->out(qq {<a href="#" class=sideNavHeaderBold onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=0')">});
         $m->out(uc ( $wf->{name} )  . "</a>");
         $m->out("</td>\n</tr>");
 
@@ -215,10 +220,10 @@ foreach my $wf (@$workflows) {
         $m->out("<tr class=sideNavInactiveCell>\n");
         $m->out(qq{ <td><img src="/media/images/spacer.gif" width=10 height=5></td> } );
         $m->out("<td valign=middle $tabHeight width=140>");
-        $m->out("<a class=sideNavHeader href=" . $r->uri . "?nav|workflow-${esc_name}_cb=1>");
-        $m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow-${esc_name}_cb=1')">});
+        $m->out("<a class=sideNavHeader href=" . $r->uri . "?nav|workflow-$wf->{id}_cb=1>");
+        $m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=1')">});
         $m->out(qq{<img src="/media/images/mdgreen_arrow_closed.gif" width=8 height=13 border=0 hspace=2></a>\n});
-        $m->out(qq {<a href="#" class=sideNavHeader onClick="return doNav('} . $r->uri . qq {?nav|workflow-${esc_name}_cb=1')">});
+        $m->out(qq {<a href="#" class=sideNavHeader onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=1')">});
         $m->out( uc ( $wf->{name} )  . "</a></td>\n</tr>");
         $m->out("</table>\n");
 
@@ -454,10 +459,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =head1 DATE
 
-$Date: 2003-03-19 02:06:19 $
+$Date: 2003-03-21 04:24:51 $
 
 </%doc>
