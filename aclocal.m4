@@ -52,6 +52,7 @@ dnl "blessed" by AC_ARG_VAR
 dnl
 dnl @author Mark Jaroski <mark@geekhive.net>
 AC_DEFUN([AC_ARG_VAR_DEFAULT],[
+	AC_HELP_STRING($1,[Defaults to: $2])
 	AC_ARG_VAR($1)
 	if test -z "${$1}" ;then
 		$1=$2 ;
@@ -109,7 +110,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.10 2002-01-08 18:18:48 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -138,7 +139,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.10 2002-01-08 18:18:48 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -170,7 +171,7 @@ AC_DEFUN([AC_PROG_POSTGRES],[
  # 
  AC_ARG_WITH(pghome,
   [
-  --with-pghome=PATH      absolute path name of pg_config script
+  --with-pghome=PATH      absolute path name of the postgres binary
                           (default is /usr/local/pgsql)],
   [
     #
@@ -241,7 +242,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.10 2002-01-08 18:18:48 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -436,7 +437,7 @@ dnl DEFAULT value if the user merely hits return.  Also calls
 dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
 dnl be entered into the config.h file as well.
 dnl
-dnl @version $Id: aclocal.m4,v 1.10 2002-01-08 18:18:48 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER],
@@ -457,3 +458,57 @@ if test "$ac_cv_user_prompt_$1" != "none"; then
 fi
 ]) dnl
 
+dnl @synopsis CHECK_FOR_PGPASS
+dnl
+dnl when installing a PostgreSQL db we'll need to know if 
+dnl there is a password, and if so what it is.
+dnl
+dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @author Mark Jaroski <mark@geekhive.net>
+dnl
+AC_DEFUN([CHECK_FOR_PGPASS],[
+  AC_MSG_CHECKING([whether we will wave the PG_ROOT_PASS requirement])
+  AC_ARG_WITH(no-pgroot-pass,[
+  --with-no-pgroot-pass   Use this flag to specify that you want 
+                          the db installer to su $PG_SYSTEM_USER and
+                          try to log into psql with no password.
+                          (Some systems are set up this way for security)],[
+      if test "$withval" = "yes" ;then
+		PG_NO_PASS="true"
+		AC_MSG_RESULT(yes)
+	  else 
+		PG_NO_PASS="false"
+		AC_MSG_RESULT(no)
+	  fi
+	],[
+	  PG_NO_PASS="false"
+	  AC_MSG_RESULT(no)
+	])
+
+  if test "${PG_NO_PASS}" = "false" ;then
+	AC_MSG_ERROR([
+
+    You must define PG_ROOT_PASS
+
+    -or- 
+
+    use the switch --with-no-pgroot-pass
+  ])
+  fi
+])
+
+dnl @synopsis AC_VAR_WITH(VAR,with,default)
+dnl
+dnl when installing a PostgreSQL db we'll need to know if 
+dnl
+dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @author Mark Jaroski <mark@geekhive.net>
+dnl
+AC_DEFUN([AC_VAR_WITH],[
+AC_ARG_WITH($2,AC_HELP_STRING([
+  --with-$2],[defaults to '$3']),
+  $1=${withval},
+  $1=$3)
+AC_SUBST($1)
+
+])

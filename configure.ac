@@ -1,6 +1,9 @@
 
+# assuming we have perl we can get the version number
+# if not, we know right off that something wrong
+VERSION=`perl -MBric -e 'print $Bric::VERSION'`
 # Process this file with autoconf to produce a configure script.
-AC_INIT(Bricolage, 1.1.2, bugs@bricolage.sourceforge.net)
+AC_INIT(Bricolage,${VERSION}, http://bricolage-bugzilla.thepirtgroup.com)
 AC_PREFIX_DEFAULT(/usr/local/bricolage)
 
 # Checks for programs
@@ -15,12 +18,15 @@ AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(MKDIR, mkdir)
 AC_PATH_PROG(FIND, find)
 AC_PATH_PROG(CTAGS, ctags)
+AC_CACHE_SAVE
+
 
 # Checks for libraries.
 CHECK_SSL
+AC_CACHE_SAVE
 
 # Checks for CPAN modules
-# TODO: make sure CPAN works
+# TODO: make sure CPAN itself works
 CHECK_CPAN_MODULE(MISSING_MOD, Time::HiRes, 01.20)
 CHECK_CPAN_MODULE(MISSING_MOD, Storable, 1.0.10)
 CHECK_CPAN_MODULE(MISSING_MOD, Unix::Syslog, 0.95)
@@ -45,43 +51,32 @@ CHECK_CPAN_MODULE(MISSING_MOD, HTML::Mason, 1.03)
 CHECK_CPAN_MODULE(MISSING_MOD, DBD::Pg, 1.00)
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::Session, 1.53)
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::libapreq, 0.31_03)
+AC_CACHE_SAVE
 
-# Accept configuration details on the command line
-AC_ARG_VAR_DEFAULT(APACHE_USER, nobody)
-AC_ARG_VAR_DEFAULT(APACHE_GROUP, nogroup)
-AC_ARG_VAR_DEFAULT(DB_NAME, www-data)
-AC_ARG_VAR_DEFAULT(DBI_USER, nobody)
-AC_ARG_VAR_DEFAULT(DBI_PASS, c@st3l!@n)
-AC_ARG_VAR_DEFAULT(POSTGRES_ROOT_USER, postgres)
-AC_ARG_VAR_DEFAULT(PG_SYSTEM_USER, postgres)
+
+# Accept configuration details by environmental variable
+# on the command line or otherwise
 AC_ARG_VAR(PG_ROOT_PASS)
+AC_CACHE_SAVE
+CHECK_FOR_PGPASS
 
+# Additional --with-switches
+AC_VAR_WITH(compdir,compdir,$prefix/comp)
+AC_VAR_WITH(APACHE_USER,apache_user,nobody)
+AC_VAR_WITH(APACHE_GROUP,apache_group,nobody)
+AC_VAR_WITH(HOSTNAME,hostname,`hostname --fqdn || true`)
 
-AC_MSG_CHECKING([whether we will wave the PG_ROOT_PASS requirement])
-AC_ARG_WITH(no-pgroot-pass,[
-  --with-no-pgroot-pass   Use this flag to specify that you want 
-                          the db installer to su $PG_SYSTEM_USER and
-                          try to log into psql with no password.
-                          (Some systems are set up this way for security)],[
-    if test "$withval" = "yes" ;then
-	  PG_NO_PASS="true"
-	  AC_MSG_RESULT(yes)
-	else 
-      PG_NO_PASS="false"
-	  AC_MSG_RESULT(no)
-	fi
-  ],[
-    PG_NO_PASS="false"
-	AC_MSG_RESULT(no)
-  ])
+AC_VAR_WITH(ADMINISTRATOR,administrator,root)
+AC_VAR_WITH(DB_NAME,db-name,wwwdata)
+AC_VAR_WITH(DBI_USER,dbi-user,nobody)
+AC_VAR_WITH(DBI_PASS,dbi-pass,c@st3l!@n)
 
-if test "${PG_NO_PASS}" = "false" ;then
-  AC_MSG_ERROR([You must define PG_ROOT_PASS
-    -or- use the flag --with-no-pgroot-pass
-])
-fi
+AC_VAR_WITH(POSTGRES_ROOT_USER,pgroot-user,postgres)
+AC_VAR_WITH(POSTGRES_SYSTEM_USER,pgsystem-user,postgres)
 
+# predefined
+AC_SUBST(VERSION)
 
 # write out the makefiles
-AC_CONFIG_FILES([Makefile doc/Makefile install/bric.sql])
+AC_CONFIG_FILES([Makefile doc/Makefile install/bric.sql conf/bricolage.tmp.conf])
 AC_OUTPUT

@@ -23,28 +23,46 @@ DOC = doc
 INST = install
 
 # Installation related variables
+# Most of these are standard --with-switches
+# availible for the ./configure user
 prefix  = @prefix@
 exec_prefix  = @exec_prefix@
 bindir  = @bindir@
 datadir  = @datadir@
+compdir = @compdir@
 sysconfdir  = @sysconfdir@
 libdir  = @libdir@
 libexecdir  = @libexecdir@
-includedir  = @includedir@
-oldincludedir  = @oldincludedir@
 mandir  = @mandir@
 infodir  = @infodir@
 sbindir  = @sbindir@
 localstatedir  = @localstatedir@
 sharedstatedir  = @sharedstatedir@
 VPATH = @srcdir@
+
+
+# now we'll use some perl and some builtin 
+# regex to get a list of targets
+# and sources
 BIN_FILES = $(shell cd ${BIN} && ls | sed -e 's/CVS//')
-BIN_TARGETS = $(addprefix ${bindir},${BIN_FILES})
-CONF_TARGETS = 
-COMP_TARGETS = 
-DATA_TARGETS = 
-LIB_TARGETS = 
-DOC_TARGETS = 
+BIN_TARGETS = $(addprefix ${bindir}/,${BIN_FILES})
+CONF_FILES = $(shell cd ${CONF} && ls | sed -e 's/CVS//')
+CONF_TARGETS = $(addprefix ${confdir}/,${CONF_FILES})
+COMP_FILES = $(shell cd ${COMP} && ls | sed -e 's/CVS//')
+COMP_TARGETS = $(addprefix ${compdir}/,${COMP_FILES})
+DATA_FILES = $(shell cd ${DATA} && ls | sed -e 's/CVS//')
+DATA_TARGETS = $(addprefix ${datadir}/,${DATA_FILES})
+LIB_FILES = $(shell cd ${LIB} && ls | sed -e 's/CVS//')
+LIB_TARGETS = $(addprefix ${libdir}/,${LIB_FILES})
+LIB_FILES = $(shell cd ${LIB} && ls | sed -e 's/CVS//')
+LIB_TARGETS = $(addprefix ${libdir}/,${LIB_FILES})
+DOC_FILES = $(shell cd ${DOC} && ls | sed -e 's/CVS//')
+DOC_TARGETS = $(addprefix ${libdir}/,${DOC_FILES})
+
+# these are standard variable that a lot of people 
+# use in automagical build routines.  Bascially they
+# allow an admin to define what is going to get done by the 
+# standard targets below
 NORMAL_INSTALL = ${BIN_TARGETS} ${COMP_TARGETS} \
 				 ${CONF_TARGETS} ${DATA_TARGETS} \
 				 ${LIB_TARGETS} ${DOC_TARGETS}
@@ -61,12 +79,15 @@ DB_NAME = @DB_NAME@
 DBI_USER = @DBI_USER@
 DBI_PASS = @DBI_PASS@
 POSTGRES_ROOT_USER = @POSTGRES_ROOT_USER@
-POSTGRES_ROOT_PASS = @POSTGRES_ROOT_PASS@
+POSTGRES_SYSTEM_USER = @POSTGRES_SYSTEM_USER@
+POSTGRES_ROOT_PASS = @PG_ROOT_PASS@
 
 # A list of any missing modules
 MISSING_MODULES = @MISSING_MOD@
 MODULE_COMMAND = $(foreach mod,${MISSING_MODULES},${PERL} -MCPAN -e "install ${mod}" ;)
 
+# Standard targets follow.  These are discussed at length
+# in the GNU Make manual: http://www.gnu.org/manuals/make
 all:  doc
 
 install: dep installdirs install-bin install-comp \
@@ -82,10 +103,15 @@ installdirs:
 							${localstatedir} ${sharedstatedir} \
 							${compdir} ${docdir} \
 							${htmldir} ${mandir}
+
+# specific install targets including the list
+# determined by find/perl/etc up above
 install-bin: ${BIN_TARGETS}
-${BIN_TARGETS}: ORIG = $(filter ${BIN_FILES})
-${BIN_TARGETS}: ${ORIG}
-	cp ${BIN}/${ORIG} ${bindir}
+${BIN_TARGETS}: 
+	@echo $@
+#${BIN_TARGETS}: ${ORIG}
+#	echo ${BIN}${ORIG} ${dindir}/
+#	cp ${BIN}/${ORIG} ${bindir}/
 install-comp:
 install-conf:
 install-data:
@@ -94,13 +120,11 @@ install-doc:
 install-man:
 install-html:
 
-
-
+# obviously we depend on the cpan stuff
 dep: cpan
-
 cpan:
 	${INSTALL_MISSING}
-	echo Installed ${MISSING_MODULES} >>install.log
+	echo Installed ${MISSING_MODULES} >>${INST}install.log
 
 
 
@@ -139,4 +163,5 @@ docclean:
 
 .PHONY : clean dep clean cpan doc install installdirs \
 		 install-bin install-comp install-conf install-data \
-		 install-lib install-doc install-html install-man
+		 install-lib install-doc install-html install-man \
+		 ${BIN_TARGETS}
