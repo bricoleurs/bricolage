@@ -110,6 +110,27 @@ that are identical to the stories they were cloned from. [Scott & David]
 Added the ability to Delete from desks (same as My Workspace). Note however,
 that you can't delete from a publish desk. [Scott]
 
+=item *
+
+Modified the C<get_containers()> method of
+Bric::Biz::Asset::Business::Parts::Tile::Container to take a list of key name
+arguments, and to return only the container subelements with those
+keynames. This is most useful in templates, where it's fairly common to get a
+list of container subelements of only one or two particular types out all at
+once. It neatly replaces code such as this:
+
+  for ( my $x = 1; my $quote = $element->get_container('quote', $x); $x++ ) {
+      $burner->display_element($quote);
+  }
+
+With this:
+
+  for my $x ($element->get_containers('quote')) {
+      $burner->display_element($quote);
+  }
+
+And is more efficient, too. [David]
+
 =back
 
 =head2 Bug Fixes

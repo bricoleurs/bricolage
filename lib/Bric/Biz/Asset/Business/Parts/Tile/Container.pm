@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2004-03-10 14:01:38 $
+$Date: 2004-03-10 23:20:45 $
 
 =head1 SYNOPSIS
 
@@ -31,9 +31,9 @@ $Date: 2004-03-10 14:01:38 $
   @ids =
     Bric::Biz::Asset::Business::Parts::Tile::Container->list_ids($params)
 
-  $tile = $tile->add_contained([$tiles])
-  @tiles = $tile->get_contained;
-  $tile = $tile->delete_contained([$tiles])
+  $tile = $tile->add_tile([$tiles])
+  @tiles = $tile->get_elements;
+  $tile = $tile->delete_tiles([$tiles])
   $tile = $tile->is_container;
   $tile = $tile->reorder->(@new_order)
 
@@ -908,7 +908,13 @@ sub get_container {
 
 =item (@containers || $containers) = $tile->get_containers()
 
-returns a list of the sub contained tiles
+  my @containers = $element->get_containers;
+  @containers = $element->get_containers(@key_names);
+
+This method returns a list of container subelements. If called with no
+arguments, it returns all of the container subelements. If passed a list of
+key names, the only the container subelements with those key names will be
+returned.
 
 B<Throws:> NONE.
 
@@ -919,9 +925,25 @@ B<Notes:> NONE.
 =cut
 
 sub get_containers {
-    my ($self) = @_;
+    my $self = shift;
 
-    my @containers = grep($_->is_container, @{$self->_get_tiles()});
+    my @containers;
+    if (@_) {
+        my %names;
+        for my $name (@_) {
+            if ($name =~ /[^a-z0-9_]/) {
+                ($name = lc($name)) =~ y/a-z0-9/_/cs;
+                my $msg = "Warning:  Use of element's 'name' field is deprecated for use with element method 'get_container'.  Please use the element's 'key_name' field instead.";
+                Bric::App::Util::add_msg($msg);
+            }
+            $names{$name} = 1;
+        }
+        @containers = grep { $_->is_container && $names{$_->get_key_name} }
+                               @{ $self->_get_tiles };
+
+    } else {
+        @containers = grep { $_->is_container } @{ $self->_get_tiles };
+    }
 
     return wantarray ? @containers : \@containers if scalar @containers;
     return;
@@ -929,10 +951,9 @@ sub get_containers {
 
 ################################################################################
 
-=item (@tile_ids||$tile_ids_aref) = $tile->get_tiles()
+=item (@tile_ids||$tile_ids_aref) = $tile->get_elements
 
-Returns a list of the tiles that are contained with in the 
-container tile
+Returns a list of the subelements of the container element.
 
 B<Throws:>
 
@@ -948,13 +969,8 @@ NONE
 
 =cut
 
-sub get_elements { get_tiles(@_) }
-
-sub get_tiles {
-    my ($self) = @_;
-    my $tiles = $self->_get_tiles();
-    return wantarray ? @$tiles : $tiles;
-}
+sub get_elements { _get_tiles(@_) }
+sub get_tiles    { _get_tiles(@_) }
 
 ################################################################################
 
@@ -1583,7 +1599,7 @@ sub _do_update {
 
 ################################################################################
 
-=item _get_contained
+=item _get_tiles
 
 does a list for all the active contained tiles
 
