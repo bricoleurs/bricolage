@@ -76,6 +76,12 @@ Many minor HTML corrections. [Gerfried Fuchs]
 
 Fix for SQL error when searching for media by file name. [David]
 
+=item *
+
+Eliminated 'Can't locate object method "redirect" via package
+"HTML::Mason::Request"' error that caused Bricolage to actually display a
+generic error page, instead of its custom error page. [David]
+
 =back
 
 =head1 VERSION 1.6.1
