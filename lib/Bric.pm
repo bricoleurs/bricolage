@@ -10,7 +10,7 @@ Release Version: 1.3.2 -- Development Track for 1.4.0
 
 File (CVS) Version:
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.3.2";
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-06-04 00:09:25 $
 
 =head1 SYNOPSIS
 
@@ -40,10 +40,11 @@ classes should be derived from it.
 # Constants                            #
 #======================================#
 
-use constant FIELD_NONE  => 0x00;
-use constant FIELD_READ  => 0x01;
-use constant FIELD_WRITE => 0x02;
-use constant FIELD_RDWR  => FIELD_READ | FIELD_WRITE;
+use constant FIELD_INVALID => 0x00;
+use constant FIELD_NONE    => 0x01;
+use constant FIELD_READ    => 0x02;
+use constant FIELD_WRITE   => 0x04;
+use constant FIELD_RDWR    => FIELD_READ | FIELD_WRITE;
 
 #=============================================================================#
 # Dependencies                         #
@@ -57,6 +58,7 @@ use strict;
 # Programmatic Dependencies
 use Carp;
 use Bric::Util::Fault::Exception::GEN;
+use Bric::Config qw(QA_MODE);
 
 #=============================================================================#
 # Inheritance                          #
@@ -82,19 +84,14 @@ my $gen = 'Bric::Util::Fault::Exception::GEN';
 # code. See 'Example.pm' in the CVS module 'doc/codingStandards' for an example
 # subclass.
 
-BEGIN {
-    sub ACCESS {
-	return {
-		# Public Fields
-		'debug'        => FIELD_RDWR,
-
-		# Private Fields
-		'_dirty'       => FIELD_NONE,
-	       };
-    }
-
-    my @fields = keys %{ACCESS()};
+sub ACCESS { 
+    return { 
+            debug  => FIELD_RDWR,  # public field
+            _dirty => FIELD_NONE,  # private field
+           };
 }
+
+
 
 #==============================================================================#
 # Methods                              #
@@ -315,7 +312,7 @@ $SIG{__WARN__} = sub { Carp::cluck(@_) } unless $ENV{MOD_PERL};
 
 #------------------------------------------------------------------------------#
 
-=item Bric::register_fields({'field1' => ACCESS, ...})
+=item Bric::register_fields({'field1' => Bric::FIELD_READ, ...})
 
 This function is used by sub classes to register their field names and assign
 access levels to them.
@@ -326,48 +323,31 @@ B<Throws:>
 
 B<Side Effects>
 
-Does a 'use fields' and defines a function named 'ACCESS' in the class in which 
-this function is called.
+Defines a subroutine named C<ACCESS()> in the caller's package.
 
 B<Notes:>
 
 =cut
 
 sub register_fields {
-    my ($fields) = @_;
-    my $pkg = caller();
-    my $names = join(' ', keys %$fields);
-    my $root = __PACKAGE__;
+    my $fields = shift || {};
+    my $pkg    = caller();
+    my $root   = __PACKAGE__;
 
-    # Eval this so that the appropriate package is set, and to scope that 
-    # package label.
-    eval qq{
-	package $pkg;
+    # need symbolic refs to access the symbol table and install subroutines
+    no strict 'refs';
 
-	use vars qw(\@ISA);
-	my \$parent;
+    # find parent class (only handle single inheritence)
+    my ($parent) = grep { /^$root/ } (@{"${pkg}::ISA"});
 
-	foreach (\@ISA) {
-	    next unless /^$root/;
-	    \$parent = \$_;
-	    last;
-	}
-
-	my %PARENT = %{\$parent->ACCESS()};
-	my %CHILD  = %\$fields;
-
-	sub ACCESS {
-	    return {\%PARENT,
-                    \%CHILD,
-		   };
-	}
+    # setup ACCESS sub for this package
+    eval {
+        my %ACCESS = ( %{$parent->ACCESS()}, %$fields );
+        *{"${pkg}::ACCESS"} = sub { \%ACCESS };
     };
-
-    if ($@) {
-	my $msg = "Unable to register field names";
-	die Bric::Util::Fault::Exception::GEN->new({'msg'     => $msg,
-						  'payload' => $@});
-    }
+    
+    die $gen->new({msg => "Unable to register field names", payload => $@})
+      if $@;
 }
 
 ########################################
@@ -407,6 +387,18 @@ Cannot AUTOLOAD private methods.
 
 No AUTOLOAD method.
 
+=item *
+
+Access denied: '$field' is not a valid field for package '$package'
+
+=item *
+
+Access denied:  READ access for field '$field' required
+
+=item *
+
+Access denied:  WRITE access for field '$field' required
+
 =back
 
 B<Side Effects>
@@ -418,8 +410,7 @@ B<Notes:>
 =cut
 
 sub AUTOLOAD {
-    my $self = shift;
-    my (@params) = @_;
+    my $self = $_[0];
     my ($op, $field);
     my $pkg = ref($self);
     my ($perm, $msg);
@@ -427,68 +418,74 @@ sub AUTOLOAD {
     # Get method name
     our $AUTOLOAD;
 
+    # need symbolic refs to access the symbol table and call
+    # subroutine through $AUTOLOAD
     no strict 'refs';
 
     # Skip DESTROY and other ALL CAPs methods
-    return if $AUTOLOAD =~ /[A-Z]+$/;
+    return if $AUTOLOAD =~ /::[A-Z_]+$/;
 
     # Make sure the function was called in the correct form.
     ($op, $field) = $AUTOLOAD =~ /([^_:]+)_(\w+)$/;
 
     # Check the format and content of this AUTOLOAD request.
-    unless ($op && $field) {
-	$msg = "Bad AUTOLOAD method format: $AUTOLOAD";
-	die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-    }
-    if ($field =~ /^_/) {
-	$msg = "Cannot AUTOLOAD private methods: $AUTOLOAD";
-	die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-    }
+    die $gen->new({msg => "Bad AUTOLOAD method format: $AUTOLOAD"})
+      unless $op and $field;
 
-    # Get the permissions for this field or set it to none if it doesn't exist.
-    eval "\$perm = $pkg".'::ACCESS->{$field}';
-    $perm ||= FIELD_NONE;
+    die $gen->new({msg => "Cannot AUTOLOAD private methods: $AUTOLOAD"})
+      if $field =~ /^_/;
 
+    # Get the permissions for this field 
+    $perm = $pkg->ACCESS()->{$field} || FIELD_INVALID;
+    
+    # field doesn't exist!
+    die $gen->new({ msg => "Access denied: '$field' is not a valid field for ".
+                           "package $pkg." })
+      if $perm & FIELD_INVALID;
+ 
     # A get request
     if ($op eq 'get') {
-	if ($perm & FIELD_READ) {
-	    *{$AUTOLOAD} = sub {
-		my $self = shift;
-		return $self->_get($field);
-	    };
-	} else {
-	    $msg = "Access denied:  READ access for field '$field' required";
-	    die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-	}
+        # check permissions
+        die $gen->new({msg => "Access denied:  READ access for field " .
+                              "'$field' required"})
+          unless $perm & FIELD_READ;
+
+        # setup get method
+        *{$AUTOLOAD} = QA_MODE ? 
+          sub { return $_[0]->{$field} } :    # take a shortcut
+          sub { return $_[0]->_get($field) }; # go directly to jail
     }
+
     # A set request
     elsif ($op eq 'set') {
-	if ($perm & FIELD_WRITE) {
-	    *{$AUTOLOAD} = sub {
-		my ($self, $val) = @_;
-		return $self->_set({$field => $val});
-	    };
-	} else {
-	    $msg = "Access denied:  WRITE access for field '$field' required";
-	    die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-	}
+        # check permissions
+        die $gen->new({msg => "Access denied:  WRITE access for field " .
+                              "'$field' required"})
+          unless $perm & FIELD_WRITE;
+
+        # setup set method
+        *{$AUTOLOAD} = sub { return $_[0]->_set([$field],[$_[1]]) }
     }
+
     # A read permission check
     elsif ($op eq 'readable') {
-
-	*{$AUTOLOAD} = sub { $perm & FIELD_READ; }
+        my $val = $perm & FIELD_READ;
+	*{$AUTOLOAD} = sub () { $val };
     }
+
     # A write permission check
     elsif ($op eq 'writable') {
-
-	*{$AUTOLOAD} = sub { $perm & FIELD_WRITE; }
-    } else {
-	$msg = "No AUTOLOAD method: $AUTOLOAD";
-	die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
+        my $val = $perm & FIELD_WRITE;
+	*{$AUTOLOAD} = sub () { $val };
     }
 
-    # Call the darn method
-    &$AUTOLOAD($self, @params);
+    # otherwise, fail
+    else {	
+	die $gen->new({msg => "No AUTOLOAD method: $AUTOLOAD"});
+    }
+
+    # call the darn method - all the parameters are still in @_
+    &$AUTOLOAD;
 }
 
 #------------------------------------------------------------------------------#
@@ -709,26 +706,36 @@ sub _set {
     # Load $k and $v differently if its a hash ref or two array refs.
     my ($k, $v) = @_ == 1 ? ([keys %{$_[0]}],[values %{$_[0]}]) : @_;
 
-    # Set state
-    my $dirt = $self->{_dirty};
-    # Disable warnings to prevent "Use of uninitialized value in string ne"
-    # messages.
-    local $^W = undef;
-    for my $i (0..$#$k) {
-	eval {
-	    if ((defined $self->{$k->[$i]} && !defined $v->[$i])
-		|| (!defined $self->{$k->[$i]} && defined $v->[$i])
-		|| $self->{$k->[$i]} ne $v->[$i]) {
-		$self->{$k->[$i]} = $v->[$i];
-		$dirt = 1;
-	    };
-	die $gen->new({ msg => "Error setting value for '$k->[$i]' in _set().",
-		        payload => $@ }) if $@;
-	}
+    my ($key, $old_value, $new_value, $dirt);
+    for (0 .. $#$k) {
+        $key       = $k->[$_];
+        $new_value = $v->[$_];
+        $old_value = $self->{$key};
+
+        # skip unless new_value is different from old_value
+        next if (not defined $new_value and not defined $old_value) or
+          (defined $new_value and defined $old_value and 
+           $old_value eq $new_value);
+
+        # a change was found, mark for later
+        $dirt = 1;
+
+        # fast version, no check for errors
+        $self->{$key} = $new_value unless QA_MODE;
+
+        # in QA_MODE check for (impossible?) failures
+        if (QA_MODE) {
+            eval {
+                $self->{$key} = $new_value;
+                $dirt = 1;
+            };
+            die $gen->new({ msg => "Error setting value for '$key' in _set().",
+                            payload => $@ }) if $@;
+        }	
     }
 
     # Set the dirty flag to show that this objects needs an update.
-    $self->{_dirty} = $dirt;
+    $self->{_dirty} = 1 if $dirt;
     return $self;
 }
 
@@ -741,7 +748,7 @@ to retrieve from the object.
 
 B<Throws:>
 
-NONE
+Problems retrieving field 'foo'
 
 B<Side Effects>
 
@@ -749,27 +756,37 @@ NONE
 
 B<Notes:>
 
-=cut
+Error checking and exception throwing is only performed in QA_MODE for
+performance reasons.
 
+=cut
 sub _get {
     my $self = shift;
-    my (@keys) = @_;
-    my @return;
 
-    # Iterate through the keys and build up a return array.
-    for my $i (0..$#keys) {
-	# If this is a private field, we need to access it differently.
-	eval { push @return, $self->{$keys[$i]}};
+    # producton code - no check for errors
+    return wantarray ? @{$self}{@_} : $self->{$_[0]} unless QA_MODE;
 
-	if ($@) {
-	    my $msg = "Problems retrieving fields";
-	    die Bric::Util::Fault::Exception::GEN->new({'msg'     => $msg,
-						      'payload' => $@});
-	}
+    # debugging code
+    if (QA_MODE) {
+        my @return;
+        
+        # Iterate through the keys and build up a return array.
+        for (@_) {
+            # If this is a private field, we need to access it differently.
+            eval { push @return, $self->{$_}};
+            
+            if ($@) {
+                my $msg = "Problems retrieving field '$_'";
+                die Bric::Util::Fault::Exception::GEN->new({'msg'     => $msg,
+                                                            'payload' => $@});
+            }
+        }
+        
+        # Syntax sugar.  Let the user say $n = get_foo rather than 
+        # ($n) = get_foo
+        return wantarray ? @return : $return[0];
     }
 
-    # Syntax sugar.  Let the user say $n = get_foo rather than ($n) = get_foo
-    return wantarray ? @return : $return[0];
 }
 
 #------------------------------------------------------------------------------#
@@ -791,12 +808,22 @@ B<Notes:>
 
 =cut
 
-sub _get_ref { [_get(@_)] }
+sub _get_ref { 
+    my $self = shift;
+    # a faster version for production use
+    return [ @{$self}{@_} ] unless QA_MODE;
+
+    # slower version calls _get which includes extra debugging
+    # code in QA_MODE
+    return [$self->_get(@_)] if QA_MODE;
+}
 
 
 =head1 AUTHOR
 
 "Garth Webb" <garth@perijove.com>
+
+Sam Tregar <stregar@about-inc.com>
 
 =head1 SEE ALSO
 
