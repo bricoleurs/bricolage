@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.114 $
+$Revision: 1.115 $
 
 =head1 DATE
 
-$Date: 2003-08-28 18:21:13 $
+$Date: 2003-08-29 14:58:33 $
 
 =head1 DESCRIPTION
 
@@ -46,6 +46,11 @@ in mind as long term goals further down the line.
 =head2 High Priority Minor Items
 
 =over
+
+=item *
+
+Add Checkin & Shelve (And Checkin & Publish?) to the dropdown menu on My
+Workspace.
 
 =item *
 
