@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-04-02 20:47:20 $
+$Date: 2003-04-02 21:44:29 $
 
 =head1 DESCRIPTION
 
@@ -215,15 +215,15 @@ setting:
 
 Now you can update your F<postgresql.conf> file's shared memory buffers
 setting to take advantage of this shared memory. Each buffer is 8Kb, so we
-simply divide the number above by eight to get C16777216. Here's what the
-setting looks like in C<postgresql.conf>:
+simply divide the number above by 8192 (8 * 1024) to get C16777216. Here's
+what the setting looks like in C<postgresql.conf>:
 
-    shared_buffers = 16777216
+    shared_buffers = 16384
 
 It's probably also a good idea to boost your sort memory to get a better
 response time to the very large queries used to look up Bricolage objects. The
 default setting is 1024 (again these are 8Kb buffers). You'll probably want
-this set to at least 8192.
+this set to at least 8192 (32 MB).
 
     sort_mem = 8192
 
