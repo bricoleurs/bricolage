@@ -7,15 +7,15 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.5.10.1 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2003-06-10 15:27:20 $
 
 =head1 SYNOPSIS
 
-  $m->comp('/widgets/profile/actions.mc', %ARGS);
+  $m->comp('/widgets/profile/action.mc', %ARGS);
 
 =head1 DESCRIPTION
 

@@ -103,7 +103,7 @@ $disp   => ''
 my $sub_widget = "$widget.$base_name";
 my $s = get_state_data($sub_widget);
 my $js;
-my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $agent = detect_agent();
 my $cw = 80;
 my $cellWidth = "width=$cw";
 my $cellsDisplayed = 0;

@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.19.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.19.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:16 $
+$Date: 2003-06-10 15:27:19 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -64,7 +64,7 @@ $stay                   => undef
 <%init>
 
 my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
-my $agent        = $m->comp('/widgets/util/detectAgent.mc');
+my $agent        = detect_agent();
 my $div          = 'div';
 my $name         = "id";
 my $closeDiv     = "div";

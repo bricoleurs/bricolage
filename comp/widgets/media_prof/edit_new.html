@@ -100,6 +100,6 @@ $widget
 <%init>;
 $cdate->{value} = strfdate();
 # browser spacing stuff
-my $agent = $m->comp("/widgets/util/detectAgent.mc");
-my $ieSpacer = ($agent->{browser} eq "Internet Explorer") ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';
+my $agent = detect_agent();
+my $ieSpacer = ($agent->{browser} eq "MSIE") ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';
 </%init>

@@ -9,5 +9,5 @@
 <br />
 
 <%init>;
-my $agent = $m->comp('/widgets/util/detectAgent.mc');
+my $agent = detect_agent();
 </%init>

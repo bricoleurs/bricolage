@@ -50,7 +50,7 @@ my $printLink = sub {
 my ($section, $mode, $type) = split '/', substr($ARGS{uri}, 1);
 ($section, $mode, $type) = qw(workflow profile workspace) unless $section;
 
-my $agent                     = $m->comp("/widgets/util/detectAgent.mc");
+my $agent                     = detect_agent();
 my $workflowIndent            = 25;
 my $adminIndent               = 25;
 my $tabHeight                 = "height=20";
@@ -454,10 +454,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.32.2.1 $
+$Revision: 1.32.2.2 $
 
 =head1 DATE
 
-$Date: 2003-06-03 13:17:18 $
+$Date: 2003-06-10 15:27:25 $
 
 </%doc>

@@ -232,6 +232,6 @@ $widget
 my $story = get_state_data($widget, 'story');
 my $id = $story->get_id;
 my $tile  = $story->get_tile();
-my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $agent = detect_agent();
 my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 </%init>

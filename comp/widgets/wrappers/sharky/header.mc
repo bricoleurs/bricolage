@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.37.2.1 $
 
 =head1 DATE
 
-$Date: 2003-04-25 00:03:57 $
+$Date: 2003-06-10 15:27:24 $
 
 =head1 SYNOPSIS
 
@@ -53,7 +53,7 @@ my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
 $section ||= 'workflow';
 
 my ($layer, $properties);
-my $agent       = $m->comp('/widgets/util/detectAgent.mc');
+my $agent       = detect_agent();
 my $tab         = ($section eq "admin") ? "adminTab" : "workflowTab";
 my $curve_left  = ($section eq "admin") ? "/media/images/CC6633_curve_left.gif" : "/media/images/006666_curve_left.gif";
 my $curve_right = ($section eq "admin") ? "/media/images/CC6633_curve_right.gif" : "/media/images/006666_curve_right.gif";
@@ -68,7 +68,7 @@ my $nav = get_state_data("nav");
 my $numLinks = $c->get("__NUM_LINKS__");
 $numLinks ||= 50;
 
-$numLinks += 8 if ($agent->{os} eq "MacOS");
+$numLinks += 8 if ($agent->{os} eq "Mac");
 
 # define variables to output sideNav layer or iframe
 if ($agent->{browser} eq "Netscape") {
@@ -76,7 +76,7 @@ if ($agent->{browser} eq "Netscape") {
     $properties = qq { width="150" height="200%" border="0" scrolling="auto" frameborder="no" z-index="100" left="8" top="35"};
 } else {
     $layer = "iframe";
-    $properties = ($agent->{os} eq "MacOS")
+    $properties = ($agent->{os} eq "Mac")
       ? qq { width="150" height="200%" border="0" scrolling="auto" }
         . qq{frameborder="no" marginwidth="0" style="z-index:200;" }
       : qq{ width="150" height="200%" border="0" scrolling="auto" }
@@ -205,7 +205,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 </%perl>
 
 % # write out space so the silly browser will provide a scroll bar for the layered content
-% if (!DISABLE_NAV_LAYER && $agent->{browser} eq "Netscape" && !$agent->{browser} eq "SomeNix") {
+% if (!DISABLE_NAV_LAYER && $agent->{browser} eq "Netscape" && !$agent->{os} eq "SomeNix") {
 
   <script type="text/javascript">
   for (var i=0; i < <% $numLinks %>; i++) {

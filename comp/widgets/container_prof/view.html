@@ -32,9 +32,13 @@
       <td width="<% 578 - $infoIndent - 24 %>" colspan="2">
 <&
     '/widgets/profile/imageSubmit.mc',
-      formName => "theForm",
-      callback => "container_prof|view". $dt->get_id() ."_cb",
-      image    => "view_dgreen"
+      formName => 'theForm',
+      callback => 'container_prof|view_cb',
+      image    => 'view_dgreen'
+&>
+<&  '/widgets/profile/hidden.mc',
+      'name' => 'edit_view_bulk_tile_id',
+      'value' => $dt->get_id()
 &>
       </td>
 %   } else {
@@ -77,6 +81,6 @@ $num => 1
   # the contained tiles
   my @tiles = $tile->get_tiles();
 
-my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $agent = detect_agent();
 my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 </%init>
