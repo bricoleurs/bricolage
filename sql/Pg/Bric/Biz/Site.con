@@ -1,10 +1,17 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1.2.1 $
+-- VERSION: $Revision: 1.1.2.2 $
 --
--- $Date: 2003-03-04 01:26:46 $
+-- $Date: 2003-03-08 23:24:00 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
+/* The site's ID is a FK ref to the grp ID because Bric::Biz::Site uses
+ * a Bric::Util::Grp::Asset ID as its own.
+*/
+
+ALTER TABLE    site
+ADD CONSTRAINT fk_grp__site FOREIGN KEY (id)
+REFERENCES     grp(id) ON DELETE CASCADE;
 
 ALTER TABLE    site_member
 ADD CONSTRAINT fk_site__site_member FOREIGN KEY (object_id)

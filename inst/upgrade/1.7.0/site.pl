@@ -153,6 +153,10 @@ do_sql
 
   ############################################################################
   # And finally, add the constraints.
+  qq{ALTER TABLE    site
+     ADD CONSTRAINT fk_grp__site FOREIGN KEY (id)
+     REFERENCES     grp(id) ON DELETE CASCADE},
+
   qq{ALTER TABLE    site_member
     ADD CONSTRAINT fk_site__site_member FOREIGN KEY (object_id)
     REFERENCES     site(id) ON DELETE CASCADE},
