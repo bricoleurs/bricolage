@@ -231,6 +231,11 @@ story. [David]
 Removed debugging information from URLs for when debugging is turned off --
 which should be always in production code (e.g., releases). [David]
 
+=item *
+
+Elements are now displayed with their display names rather than their attribute
+names. Thanks to Sam Tregar for the spot. [David]
+
 =back
 
 =head1 VERSION 1.0.1
