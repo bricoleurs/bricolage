@@ -106,11 +106,21 @@ elsif ($field eq "$widget|publish_cb") {
     my $media = mk_aref($param->{$widget.'|media_pub_ids'});
     my (@rel_story, @rel_media);
 
-    # Instantiate each assset to be published and check for dependancies.
-    foreach my $a ((map { $mpkg->lookup({id => $_}) } @$media),
-		   (map { $spkg->lookup({id => $_}) } @$story)) {
-	# Skip if the lookup failed for some reason.
+    # start with the objects checked for publish
+    my @objs = ((map { $mpkg->lookup({id => $_}) } @$media),
+		(map { $spkg->lookup({id => $_}) } @$story));
+
+    # make sure we don't get into circular loops
+    my %seen;
+
+    # iterate through objects looking for related media
+    while(@objs) {
+	my $a = shift @objs;
 	next unless $a;
+
+	# haven't I seen you someplace before?
+	next if exists $seen{$a};
+	$seen{$a} = 1;
 
 	if ($a->get_checked_out) {
 	    add_msg("Cannot publish ".lc(get_disp_name($a->key_name))." '".
@@ -120,6 +130,9 @@ elsif ($field eq "$widget|publish_cb") {
 
 	# Examine all the related objects.
 	foreach my $r ($a->get_related_objects) {
+	    # add to list of objects to cycle through
+	    push(@objs, $r);
+
 	    # Skip assets that have already been published.
 	    next if $r->get_publish_status;
 
@@ -130,8 +143,9 @@ elsif ($field eq "$widget|publish_cb") {
                 next;
 	    }
 
+	    # push onto the appropriate list
 	    if (ref $r eq 'Bric::Biz::Asset::Business::Story') {
-		push @rel_story, $r->get_id;
+		push @rel_story, $r->get_id;		
 	    } else {
 		push @rel_media, $r->get_id;
 	    }
