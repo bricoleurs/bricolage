@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.4.1 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:35 $
+$Date: 2003-12-01 23:55:37 $
 
 =head1 SYNOPSIS
 
@@ -21,6 +21,8 @@ $Date: 2003-02-12 15:53:35 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the User Profile page.
+
+=cut
 
 </%doc>
 
