@@ -7,15 +7,15 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-04 00:39:32 $
+$Date: 2004-03-04 16:01:48 $
 
 =head1 SYNOPSIS
 
@@ -95,9 +95,12 @@ F<comp/widgets/help/translators.html> for your language.
 
 =item *
 
-Create a new subdirectory in F<comp/media/images> named for your language
-key. Copy all of the files from the F<comp/media/images/en_us> directory to
-your new language directory and sipmly edit or recreate them in your language.
+Copy F<contrib/button_gen/bric_buttons.de_de.txt> to a new file named with
+your language key substituted for "de_de". Translate the button labels in your
+new text file. Make sure that the character set you use is supported by the
+Gimp. Then run the scripts to generate the buttons (or ask someone on
+bricolage-devel to do so) and put them into a new subdirectory in
+F<comp/media/images> named for your language key.
 
 =item *
 
@@ -111,13 +114,6 @@ character set.
 Copy F<comp/media/js/en_us_messages.js> to a new JavaScript file named with
 your language key substituted for "en_us". Translate the JavaScript messages
 in your new JavaScript file. Be sure to use the UTF-8 character set.
-
-=item *
-
-Copy F<contrib/button_gen/bric_buttons.de_de.txt> to a new file named with
-your language key substituted for "de_de". Translate the button labels in your
-new text file. Make sure that the character set you use is supported by the
-Gimp.
 
 =back
 
