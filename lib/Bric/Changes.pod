@@ -25,6 +25,16 @@ This document lists the Changes to Bricolage introduced with each release.
 The default required length for usernames and passwords has been chnaged from
 6 to 5. This is to make dealing with the default "admin" login easier.
 
+=item *
+
+It is once again possible to delete elements when they are not associated with
+any story or media asset. [David]
+
+=item *
+
+The output channel profile once again only complains that the name of an
+output channel is already in use if it happens to be true. [David]
+
 =back
 
 =head1 VERSION 1.5.1
