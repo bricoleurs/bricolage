@@ -99,7 +99,6 @@ use Getopt::Long;
 use Pod::Usage;
 use File::Spec::Functions qw(tmpdir catdir);
 
-our $content_source;
 BEGIN {
     # get parameters from command line.  do this during compile so
     # $VERBOSE can effect use options and such.  also so errors get
@@ -113,7 +112,7 @@ BEGIN {
     our $temp_dir		= catdir(tmpdir(), "bric_media_upload.$$");
     our $media_type		= 'Photograph';
     our $timeout                = 60;
-    $content_source         = 'Internal';
+    our $content_source         = 'Internal';
     our ($help, $man);
     GetOptions("help"                   => \$help,
                "man"                    => \$man,
@@ -348,7 +347,7 @@ sub check_media_exist {
 }
 
 sub create_or_update_media {
-    our ($timeout, $temp_dir, $media_type);
+    our ($timeout, $temp_dir, $media_type, $content_source);
     my ($media,$targ_url,$media_id) = @_;
 
     $media_id = '' if !$media_id;
