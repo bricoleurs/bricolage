@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13.2.5 $
+$Revision: 1.13.2.6 $
 
 =head1 DATE
 
-$Date: 2003-08-30 22:43:45 $
+$Date: 2003-08-31 00:13:12 $
 
 =head1 SYNOPSIS
 
@@ -25,7 +25,7 @@ $Date: 2003-08-30 22:43:45 $
 </%args>
 
 <%once>;
-my ($start_desk_ok, $start_desk_id);
+my ($start_desk_ok, $desk_chk);
 my $object = 'media';
 my $plural = get_class_info($object)->get_plural_name;
 my $w_id;
@@ -51,7 +51,7 @@ my $select = sub {
     if (not defined $u && chk_authz($o, EDIT, 1)) {
 	if ($o->get_workflow_id) {
 	    return ['Checkout', 'media_prof|checkout_cb']
-              if $start_desk_ok || $o->get_desk_id != $start_desk_id;
+              if $desk_chk->{$o->get_desk_id}[1];
 	} else {
 	    return ['Checkout', 'media_prof|recall_cb', $o->get_id.'|'.$w_id]
               if $start_desk_ok;
@@ -96,8 +96,10 @@ my $exclude = sub { ! chk_authz($_[0], READ, 1) };
 # Grab the workflow and start desk permissions from the cache.
 my $wf = $c->get('__WORKFLOWS__');
 for (@$wf) { $wf = $_, last if $_->{id} == $w_id }
-$start_desk_id = $wf->{desks}[0][0];
-$start_desk_ok = chk_authz(0, EDIT, 1, @{ $wf->{desks}[0][2] });
+$desk_chk = { map { $_->[0] => [chk_authz(0, READ, 1, @{ $_->[2] }),
+                                   chk_authz(0, EDIT, 1, @{ $_->[2] }) ] }
+                 @{ $wf->{desks} } };
+$start_desk_ok = $desk_chk->{$wf->{desks}[0][1]};
 $wf = "&quot;$wf->{name}&quot;";
 </%init>
 <& '/widgets/wrappers/sharky/header.mc',

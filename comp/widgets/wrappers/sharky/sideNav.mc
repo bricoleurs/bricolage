@@ -160,7 +160,7 @@ foreach my $wf (@$workflows) {
         $m->out("</td>\n</tr>");
 
         # actions/desks/publish items for this workflow
-        my $can_create = chk_authz(0, EDIT, 1, @{ $wf->{desks}[0][2] });
+        my $can_create = chk_authz(0, CREATE, 1, @{ $wf->{desks}[0][2] });
         </%perl>
         </table>
 
@@ -445,10 +445,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.26.2.7 $
+$Revision: 1.26.2.8 $
 
 =head1 DATE
 
-$Date: 2003-08-30 22:43:45 $
+$Date: 2003-08-31 00:13:11 $
 
 </%doc>
