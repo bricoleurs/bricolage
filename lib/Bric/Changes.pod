@@ -93,6 +93,11 @@ not. Thanks to Matt Vella for the spot. [David]
 Fixed bug where element select lists weren't populate with their list of values.
 Thanks to Matt Vella for the report. [David]
 
+=item *
+
+Added an "About" page, linked from the logo graphic, that explains the name
+"Bricolage" and offers the license and credits.q
+
 =back
 
 =head1 VERSION 1.0.1
