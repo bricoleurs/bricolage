@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-10 18:45:26 $
+$Date: 2003-01-07 03:31:43 $
 
 =head1 SYNOPSIS
 
@@ -58,15 +58,12 @@ use Bric::Util::Fault::Exception::AP;
 use Bric::Util::Fault::Exception::DP;
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::CharTrans;
-use Bric::App::ApacheHandler;
 use Bric::App::Event qw(clear_events);
 use Apache::Log;
-use HTML::Mason;
+use HTML::Mason '1.16';
+use HTML::Mason::ApacheHandler;
 use HTML::Mason::Exceptions;
 use Carp qw(croak);
-
-# Bring in ApacheHandler. Install Apache::Request and have it parse arguments.
-use HTML::Mason::ApacheHandler (args_method => MASON_ARGS_METHOD);
 
 {
     # Now let's set up our Mason space.
@@ -170,10 +167,21 @@ my %interp_args = (
     autoflush => 0,      # was 'out_mode'
     error_mode   => 'fatal',
 );
+
 my $interp = HTML::Mason::Interp->new(%interp_args);
-my $ah = Bric::App::ApacheHandler->new(%interp_args,
-                                       decline_dirs => 0,
-                                       args_method => 'mod_perl');
+my $ah;
+if (CHAR_SET ne 'UTF-8') {
+    require Bric::App::ApacheHandler;
+    $ah = Bric::App::ApacheHandler->new(%interp_args,
+                                        decline_dirs => 0,
+                                        args_method => MASON_ARGS_METHOD
+                                       );
+} else {
+    $ah = HTML::Mason::ApacheHandler->new(%interp_args,
+                                        decline_dirs => 0,
+                                        args_method => MASON_ARGS_METHOD
+                                       );
+}
 
 # Reset ownership of all files created by Mason at startup.
 chown SYS_USER, SYS_GROUP, $interp->files_written;
@@ -255,23 +263,26 @@ B<Notes:> NONE.
 sub handle_err {
     my ($r, $err) = @_;
     # Create an exception object unless we already have one.
-    unless (UNIVERSAL::isa($err, 'Bric::Util::Fault::Exception')) {
-        my $payload = '';
-        if (isa_mason_exception($err)) {
-            if (UNIVERSAL::isa($err->as_brief(), 'Bric::Util::Fault::Exception')) {
-                $payload = $err->as_brief()->get_msg();
+  ERRCHK: {
+        unless (UNIVERSAL::isa($err, 'Bric::Util::Fault::Exception')) {
+            my $payload = '';
+            if (isa_mason_exception($err)) {
+                my $brief = $err->as_brief;
+                if (UNIVERSAL::isa($brief, 'Bric::Util::Fault::Exception')) {
+                    $err = $brief;
+                    last ERRCHK;
+                } else {
+                    $payload = $brief;
+                }
             } else {
-                $payload = $err->as_brief();
+                $payload = $err;
             }
-        } else {
-            $payload = $err;
-        }
 
-        $err = Bric::Util::Fault::Exception::AP->new({
-            msg => "Error processing Mason elements.",
-            payload => $payload,
-        });
-    }
+            $err = Bric::Util::Fault::Exception::AP->new
+              ({ msg => "Error processing Mason elements.",
+                 payload => $payload });
+        }
+    };
 
     # Rollback the database transactions.
     eval { rollback(1) };

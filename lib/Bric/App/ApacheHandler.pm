@@ -6,16 +6,16 @@ Bric::App::ApacheHandler - subclass of HTML::Mason::ApacheHandler
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-10 18:45:26 $
+$Date: 2003-01-07 03:31:43 $
 
 =head1 DESCRIPTION
 
@@ -88,11 +88,10 @@ Inherited.
 
 =item my $ah = Bric::App::ApacheHandler->new( ... );
 
-Overrides the HTML::Mason::ApacheHandler::request_args method to process GET and
-POST data. By overriding it, we are able to do a couple of extra things, such as
-translate the characters to Unicode and to turn empty strings into undefs.
-Basically this is the old Bric::App::Handler::load_args method minus what
-was already in HTML::Mason::ApacheHander::_mod_perl_args.
+Overrides the HTML::Mason::ApacheHandler::request_args method to process GET
+and POST data. By overriding it, we are able to translate the characters to
+Unicode. Basically this is the old Bric::App::Handler::load_args method minus
+what was already in HTML::Mason::ApacheHander::_mod_perl_args.
 
 B<Throws:>
 
@@ -113,32 +112,13 @@ B<NOTES:> NONE.
 sub request_args {
     my $self = shift;
     my ($args, $r, $q) = $self->SUPER::request_args(@_);
-
-    # We'll be checking to see if the data is already Unicode below.
-    my $utf = $ct->charset eq 'UTF-8';
-
-    # Note: a lot of this is redundant with $self->SUPER::request_args.
-    # It would be more efficient to replace the parent's functionality
-    # directly here, but I'm not sure how wise it is to do that.
-    foreach my $key ($r->param()) {
-        my @values = $r->param($key);
-
-	# Translate value to Unicode, unless it's already Unicode
-        eval { $ct->to_utf8(\@values) } unless $utf;
-
-        if ($@) {
-            my $msg = 'Error translating from '.$ct->charset.' to UTF-8.';
-            # assumes $@ isa Bric::Util::Fault::Exception
-            die ref $@ ? $@
-                       : Bric::Util::Fault::Exception::DP->new({msg     => $msg,
-                                                                payload => $@});
-        }
-
-        # XXX: maybe only one of these is necessary?
-        $r->param($key => scalar @values == 1 ? $values[0] : \@values);
-        $args->{$key} = @values == 1 ? $values[0] : \@values;
+    eval { $ct->to_utf8($args) };
+    if ($@) {
+        # assumes $@ isa Bric::Util::Fault::Exception
+        die ref $@ ? $@ : Bric::Util::Fault::Exception::DP->new
+          ({msg => 'Error translating from ' . CHAR_SET . ' to UTF-8.',
+            payload => $@});
     }
-
     return ($args, $r, $q);
 }
 
