@@ -539,6 +539,16 @@ C<list> command to find it:
   rev_1_8_merge_5902/
   rev_1_8_merge_5995/
 
+If the branch has never been merged into the trunk you can get the revision
+number at the time the branch was created usinsing C<svn log> command:
+
+  % svn log --verbose --stop-on-copy \
+    http://svn.bricolage.cc/bricolage/branches/rev_1_8
+  ------------------------------------------------------------------------
+  r5525 | theory | 2004-05-10 19:16:48 -0700 (Mon, 10 May 2004) | 1 line
+  Changed paths:
+     A /bricolage/branches/rev_1_8 (from /bricolage/trunk:5524)
+
 So now we know that we want to update the trunk with all of the changes
 between revision 5995 and C<HEAD>. If no merge tag exists, then use C<svn log>
 to find out at what revision number the branch was created and use that
