@@ -42,15 +42,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 11:48:42 $
+$Date: 2004-03-11 17:01:56 $
 
 =head1 SYNOPSIS
 
@@ -823,7 +823,7 @@ sub serialize_asset {
     $writer->dataElement(element =>
                          ($template->get_tplate_type ==
                           Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE
-                          ? $template->get_name
+                          ? $template->get_element_key_name
                           : ()));
 
     # Determine if its template type.

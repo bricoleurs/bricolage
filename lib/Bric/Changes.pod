@@ -177,8 +177,14 @@ clicking "Save and Stay". Reported by Scott Lanning. [David]
 
 =item *
 
-Fixed API that was causing no elements to be returned on "Add sub-elements" 
+Fixed API that was causing no elements to be returned on "Add sub-elements"
 page, when "Filter by site context" was turned on. [JoE<atilde>o Pedro]
+
+=item *
+
+When the SOAP server serializes element templates, it now correctly identifies
+the element by its key name, rather than its name. Thanks to JoE<atilde>o
+Pedro for the spot! [David]
 
 =back
 
