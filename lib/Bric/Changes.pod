@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.6.9 ()
+=head1 VERSION 1.6.9 (2004-02-06)
 
 =head2 Bug Fixes
 
@@ -82,7 +82,7 @@ the SOAP API and no publish_date argument is passed. [Scott]
 =item *
 
 Fixed CPAN installer to correctly update the list of modules to be installed
-after a module hass been successfully installed. Reported by Perrin Harkins.
+after a module has been successfully installed. Reported by Perrin Harkins.
 [David]
 
 =item *
@@ -98,7 +98,7 @@ objects, as it should. Thanks to Nuno Barreto for the spot. [David]
 =item *
 
 Events with attributes with the same name as attributes of the object the
-event was triggered on (a common occurence) no longer confuses the two. Thanks
+event was triggered on (a common occurrence) no longer confuses the two. Thanks
 to Todd Tyree for the spot. [David]
 
 =item *
@@ -115,7 +115,7 @@ editing the field in the element manager. Reported by Todd Tyree. [David]
 =item *
 
 Media assets now properly remember their class, which means that autopopulated
-fields (such as "height" and "width" for images) are autopulated when a new
+fields (such as "height" and "width" for images) are autopopulated when a new
 image file is uploaded. Thanks to Patrick Walsh for the spot! [David]
 
 =item *
