@@ -144,6 +144,12 @@ Added code to installation scripts to delete existing Mason object files when
 upgrading. This hasn't been a problem thus far, but this step will help to
 ensure that users are always running the latest UI components. [David]
 
+=item *
+
+Fixed bug where deactivated element types weren't checked before creating a
+new element type with the same name as a deactivated element type. Thanks to
+Geoff Richards for the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.3

@@ -126,6 +126,8 @@ Friends who have spotted bugs include:
 
 =item Evan Prodromou
 
+=item Geoff Richards
+
 =back
 
 Others who contributed to its support and development:
