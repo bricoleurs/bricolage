@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.12.2.3 $
+$Revision: 1.12.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 03:43:13 $
+$Date: 2002-03-10 04:20:20 $
 
 =head1 SYNOPSIS
 
@@ -455,11 +455,17 @@ B<Notes:> NONE.
 sub _get_subclass {
     my ($self, $asset) = @_;
     my $burner_class = 'Bric::Util::Burner::';
-    my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element__id});
-    if ($at) {
+    if (my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element__id})) {
 	# Easy to get it
 	my $b = $at->get_burner || BURNER_MASON;
-	$burner_class .= $b == BURNER_MASON ? 'Mason' : 'Template';
+	$burner_class .=
+	  $b == BURNER_MASON ? 'Mason' :
+	  $b == BURNER_TEMPLATE ? 'Template' :
+	  die $gen->new({ msg => 'Cannot determine template burner subclass.'});
+
+    # Instantiate the proper subclass.
+    return ($burner_class->new($self), $at);
+
     } else {
 	 # There is no asset type. It could be a template. Find out.
 	$asset->key_name eq 'formatting'
@@ -475,9 +481,10 @@ sub _get_subclass {
 	} else {
 	    die $gen->new({msg => 'Cannot determine template burner subclass.'});
 	}
+
+	# Instantiate the proper subclass.
+	return ($burner_class->new($self));
     }
-    # instantiate the proper subclass and call burn_one()
-    return ($burner_class->new($self), $at);
 }
 
 
