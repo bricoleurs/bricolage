@@ -98,8 +98,8 @@ Susan for the spot! [David]
 
 =item *
 
-Eliminated encoding errors when using the SOAP interface to output stories or
-media with wide characters. Reported by Scott Lanning. [David]
+Eliminated encoding errors when using the SOAP interface to output stories,
+media, or templates with wide characters. Reported by Scott Lanning. [David]
 
 =item *
 

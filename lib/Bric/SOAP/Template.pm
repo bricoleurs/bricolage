@@ -17,6 +17,7 @@ use Bric::Biz::Person::User;
 use Bric::Util::Burner;
 use File::Basename qw(fileparse basename);
 use Bric::Util::Priv::Parts::Const qw(:all);
+use Bric::Config qw(:l10n);
 
 use Bric::SOAP::Util qw(category_path_to_id
                         output_channel_name_to_id
@@ -857,6 +858,7 @@ sub serialize_asset {
 
     # output data
     my $data = $template->get_data;
+    Encode::_utf8_off($data) if ENCODE_OK;
     $writer->dataElement(data => MIME::Base64::encode_base64($data,''))
         if $data;
 
