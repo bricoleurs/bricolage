@@ -1,5 +1,7 @@
 package Bric::Util::Language::vi_vn;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::vi_vn - Bricolage Vietnamese translation

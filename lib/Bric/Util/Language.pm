@@ -1,6 +1,8 @@
 package Bric::Util::Language;
 ###############################################################################
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language - Bricolage Localization

@@ -1,5 +1,7 @@
 package Bric::Util::Language::lo;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::lo - Bricolage Lao translation

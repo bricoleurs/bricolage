@@ -1,5 +1,7 @@
 package Bric::Util::Language::zh_cn;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::zh_cn - Bricolage 簡体中文翻译

@@ -1,5 +1,7 @@
 package Bric::Util::Language::km;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::km - Bricolage Khmer translation

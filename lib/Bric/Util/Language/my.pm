@@ -1,5 +1,7 @@
 package Bric::Util::Language::my;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::my - Bricolage Burmese translation

@@ -1,5 +1,7 @@
 package Bric::Util::Language::de_de;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::de_de - Bricolage German translation

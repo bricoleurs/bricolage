@@ -1,5 +1,7 @@
 package Bric::Util::Language::it_it;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::it_it - Bricolage Italian translation
