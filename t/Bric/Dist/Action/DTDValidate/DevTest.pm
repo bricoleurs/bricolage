@@ -74,7 +74,7 @@ sub test_do_it : Test(31) {
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
     is( $err->error, 'Error parsing XML', "Check invalid XML message" );
     like( $err->payload,
-          qr|/foo/invalid\.html:0: validity error: Element body content does not follow the DTD|,
+          qr|/foo/invalid\.html:0: validity error:|,
          "Check validation payload");
 
     # Make sure that a valid file, um, validates.
@@ -103,7 +103,7 @@ sub test_do_it : Test(31) {
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
     is( $err->error, 'Error parsing XML', "Check invalid XML message" );
     like( $err->payload,
-          qr|/foo/invalid\.html:0: validity error: Element body content does not follow the DTD|,
+          qr|/foo/invalid\.html:0: validity error:|,
          "Check validation payload");
 }
 

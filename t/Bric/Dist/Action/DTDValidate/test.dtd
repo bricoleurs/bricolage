@@ -1,0 +1,8 @@
+<!ELEMENT html (head, body)>
+<!ELEMENT head (title)>
+<!ELEMENT title (#PCDATA)*>
+<!ELEMENT body (#PCDATA | p)*>
+<!ELEMENT p (#PCDATA | em | strong | br)*>
+<!ELEMENT em (#PCDATA)*>
+<!ELEMENT strong (#PCDATA)*>
+<!ELEMENT br EMPTY>
