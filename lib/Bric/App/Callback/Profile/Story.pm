@@ -20,13 +20,13 @@ use Bric::Config qw(:ui ISO_8601_FORMAT);
 use Bric::Util::DBI;
 use Bric::Util::Fault qw(:all);
 use Bric::Util::Grp::Parts::Member::Contrib;
+use Bric::App::Callback::Search;
 
 my $SEARCH_URL = '/workflow/manager/story/';
 my $ACTIVE_URL = '/workflow/active/story/';
 my $DESK_URL = '/workflow/profile/desk/';
 
 my ($save_contrib, $save_category, $unique_msgs, $save_data, $handle_delete);
-
 
 sub view : Callback {
     my $self = shift;
@@ -522,6 +522,8 @@ sub assoc_contrib : Callback {
         $story->add_contributor($contrib);
         log_event('story_add_contrib', $story, { Name => $contrib->get_name });
     }
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
 }
 
 sub assoc_contrib_role : Callback {
@@ -716,6 +718,8 @@ sub assoc_category : Callback {
     my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
     $story->add_categories([$cat]);
     log_event('story_add_category', $story, { Name => $cat->get_name });
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
 }
 
 sub save_category : Callback {
@@ -755,6 +759,8 @@ sub set_primary_category : Callback {
     # set this so that we don't have to $story->save
     # (used in widgets/story_prof/edit_categories.html)
 #    set_state_data($self->class_key, 'primary_cat', $primary_cat);
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
 }
 
 ### end of callbacks
@@ -799,6 +805,9 @@ $save_contrib = sub {
     }
     my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
     $story->reorder_contributors(@no);
+
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
 };
 
 $save_category = sub {
@@ -830,6 +839,8 @@ $save_category = sub {
             add_msg('Category "[_1]" disassociated.', $name);
         }
     }
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
 };
 
 # removes repeated error messages

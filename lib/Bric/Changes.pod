@@ -128,6 +128,14 @@ The upgrade process no longer moves media document files to where Bricolage
 can't find them. If this happened to you, just
 C<mv $BRICOLAGE_ROOT/comp.old/data $BRICOLAGE_ROOT/comp>. [David]
 
+=item *
+
+Performing an action in the contributor and category association interfaces in
+the story and media profiles no longer causes an empty search to be performed
+and return all contributors or categories. This could be a pain for
+organizations with 1000s of contributors or categories. Thanks to Scott for
+the report! [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)

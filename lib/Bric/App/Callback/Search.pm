@@ -9,9 +9,15 @@ use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
 use Bric::Config qw(FULL_SEARCH);
 
+sub no_new_search {
+    my $r = Apache::Request->instance(Apache->request);
+    $r->pnotes(CLASS_KEY . '.no_new_search' => 1);
+}
 
-sub substr : Callback {
+sub substr : Callback( priority => 7 ) {
     my $self = shift;
+    return if $self->apache_req->pnotes(CLASS_KEY . '.no_new_search');
+
     $self->_init_state;
     my $param = $self->params;
 

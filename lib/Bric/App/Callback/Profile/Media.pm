@@ -21,6 +21,7 @@ use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::MediaType;
 use Bric::Util::Trans::FS;
 use HTTP::BrowserDetect;
+use Bric::App::Callback::Search;
 
 my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
@@ -489,6 +490,8 @@ sub assoc_contrib : Callback {
         $media->add_contributor($contrib);
         log_event('media_add_contrib', $media, { Name => $contrib->get_name });
     }
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
 }
 
 ################################################################################
@@ -737,6 +740,9 @@ sub assoc_category : Callback {
     $media->set_category__id($cat_id);
     # XXX: should probably be a media_assoc_category event or something
     # but it doesn't exist (and I'm lazy (programmer virtue?))
+
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
 }
 
 ### end of callbacks ##########################################################
@@ -794,6 +800,9 @@ $save_contrib = sub {
 
     my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
     $media->reorder_contributors(@no);
+
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
 };
 
 $save_category = sub {
@@ -807,6 +816,9 @@ $save_category = sub {
 
     my $cat = Bric::Biz::Category->lookup({id => $cat_id});
     add_msg("Category \"[_1]\" associated.", $cat->get_name);
+
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
 };
 
 
