@@ -1,0 +1,44 @@
+
+
+# Process this file with autoconf to produce a configure script.
+AC_INIT(FULL-PACKAGE-NAME, VERSION, BUG-REPORT-ADDRESS)
+
+# Checks for programs.
+AC_PROG_LN_S
+CHECK_GNU_MAKE
+# The big three
+AC_PROG_APACHE(1.3.20)
+AC_PROG_POSTGRESQL(7.1.3)
+# Perl goes here
+
+# Checks for libraries.
+CHECK_SSL
+
+# Checks for CPAN modules
+CHECK_CPAN_MODULE(Time::HiRes, 01.20)
+CHECK_CPAN_MODULE(Storable, 1.0.10)
+CHECK_CPAN_MODULE(Unix::Syslog, 0.95)
+CHECK_CPAN_MODULE(Bundle::libnet, 1.0703)
+CHECK_CPAN_MODULE(Devel::Symdump, 2.01)
+CHECK_CPAN_MODULE(DBI, 1.19)
+CHECK_CPAN_MODULE(Cache::Cache, 0.09)
+CHECK_CPAN_MODULE(Digest::MD5, 2.12)
+CHECK_CPAN_MODULE(MD5, 2.02)
+CHECK_CPAN_MODULE(URI, 1.12)
+CHECK_CPAN_MODULE(HTML::Tagset, 3.03)
+CHECK_CPAN_MODULE(HTML::Parser, 3.23)
+CHECK_CPAN_MODULE(MIME::Base64, 2.12)
+CHECK_CPAN_MODULE(XML::Writer, 0.4)
+CHECK_CPAN_MODULE(LWP, 5.50)
+CHECK_CPAN_MODULE(Image::Info, 1.07)
+CHECK_CPAN_MODULE(Text::Iconv, 1.1)
+CHECK_CPAN_MODULE(MLDBM, 2.00)
+CHECK_CPAN_MODULE(Params::Validate, 0.04)
+CHECK_CPAN_MODULE(HTML::Mason, 1.03)
+CHECK_CPAN_MODULE(DBD::Pg, 1.00)
+CHECK_CPAN_MODULE(Apache::Session, 1.53)
+CHECK_CPAN_MODULE(Apache::libapreq, 0.31_03)
+
+
+AC_CONFIG_FILES([Makefile doc/Makefile])
+AC_OUTPUT
