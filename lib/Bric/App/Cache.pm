@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.16.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-12 00:29:25 $
+$Date: 2003-03-05 22:10:56 $
 
 =head1 SYNOPSIS
 
@@ -27,34 +27,36 @@ $Date: 2003-01-12 00:29:25 $
   my $time = $c->get_lmu_time;
   $c = $c->set_lmu_time;
 
+  my $site_id = $c->get_user_cx($user_id);
+  $c = $c->set_user_cx($user_id, $site_id);
+
 =head1 DESCRIPTION
 
-This module provides a cache object to cache data that needs to
-persist across all processes and across all requests, through time and
-space.  The cache is cleared on server restart - for more permenant
-storage see L<Bric::Util::DBI|Bric::Util::DBI>.
+This module provides a cache object to cache data that needs to persist across
+all processes and across all requests, through time and space. The cache is
+cleared on server restart - for more permenant storage see
+L<Bric::Util::DBI|Bric::Util::DBI>.
 
-A Bric::App::Cache object is available from Mason components in the
-global variable $c.
+A Bric::App::Cache object is available from Mason components in the global
+variable C<$c>.
 
 =head1 IMPLEMENTATION
 
-This module is implemented as a two-level cache in order to provide
-the best possible performance.
+This module is implemented as a two-level cache in order to provide the best
+possible performance.
 
-The first level is provided by Cache::Mmap.  Cache::Mmap is a very
-fast, shared, file-based cache.  However, it is also a fixed-size
-cache that will drop items from the cache when the cache becomes full
-or the item to be stored is too large.
+The first level is provided by Cache::Mmap. Cache::Mmap is a very fast,
+shared, file-based cache. However, it is also a fixed-size cache that will
+drop items from the cache when the cache becomes full or the item to be stored
+is too large.
 
-When an object cannot be stored in the first-level cache it is passed
-to the second-level.  The second-level cache (also known as a backing
-store) is provided by Cache::Cache.  Cache::Cache is quite a bit
-slower than Cache::Mmap but has the advantage of being variable-sized.
-As such it grows dynamically and won't refuse to store an object
-unless it runs out of disk space.
+When an object cannot be stored in the first-level cache it is passed to the
+second-level. The second-level cache (also known as a backing store) is
+provided by Cache::Cache. Cache::Cache is quite a bit slower than Cache::Mmap
+but has the advantage of being variable-sized. As such it grows dynamically
+and won't refuse to store an object unless it runs out of disk space.
 
-The get() procedure is:
+The C<get()> procedure is:
 
 =over 4
 
@@ -68,43 +70,42 @@ Look in second-level cache for item.  If found, return it and finish.
 
 =item *
 
-Note in first-level cache that item is not in second-level cache.
-This will prevent a look in the second-level cache on the next request
-for this item.
+Note in first-level cache that item is not in second-level cache. This will
+prevent a look in the second-level cache on the next request for this item.
 
 =back
 
-And the set() prodedure is:
+And the C<set()> prodedure is:
 
 =over 4
 
 =item *
 
-Try to set the item in the first-level cache.  If success, finish.  If
-fail, delete old item if it exists.
+Try to set the item in the first-level cache. If success, finish. If fail,
+delete old item if it exists.
 
 =item *
 
-Set the item in the second-level cache.  This must succeed or a fatal
-error will result.
+Set the item in the second-level cache. This must succeed or a fatal error
+will result.
 
 =back
 
-NOTE: Under QA_MODE all set()s are sent to the secondary-cache to
-allow the cache to be debugged.  Cache::Mmap lacks the ability to list
-all keys in the cache which is used by the QA_MODE code.
+NOTE: Under C<QA_MODE> all C<set()>s are sent to the secondary-cache to allow
+the cache to be debugged. Cache::Mmap lacks the ability to list all keys in
+the cache which is used by the C<QA_MODE> code.
 
 =cut
 
-################################################################################
+##############################################################################
 # Dependencies
-################################################################################
+##############################################################################
 # Standard Dependencies
 use strict;
 
-################################################################################
+##############################################################################
 # Programmatic Dependences
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp throw_gen throw_da throw_mni);
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Trans::FS;
 use Cache::Mmap;
@@ -112,17 +113,17 @@ use Cache::FileCache;
 use Bric::Config qw(TEMP_DIR SYS_USER SYS_GROUP QA_MODE);
 use File::Path qw(mkpath rmtree);
 
-################################################################################
+##############################################################################
 # Inheritance
-################################################################################
+##############################################################################
 
-################################################################################
+##############################################################################
 # Function and Closure Prototypes
-################################################################################
+##############################################################################
 
-################################################################################
+##############################################################################
 # Constants
-################################################################################
+##############################################################################
 use constant CACHE_ROOT =>
   Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage', 'cache');
 use constant CACHE_MMAP =>
@@ -133,22 +134,20 @@ unless (-d CACHE_ROOT) {
     chown SYS_USER, SYS_GROUP, CACHE_ROOT;
 }
 
-# these could be made into bricolage.conf directives if we decide
-# people will want to change them.  These values yeild a maximum cache
-# size of 40MB.  See the Cache::Mmap docs for details.
+# these could be made into bricolage.conf directives if we decide people will
+# want to change them.  These values yeild a maximum cache size of 40MB. See
+# the Cache::Mmap docs for details.
 use constant CACHE_MMAP_BUCKETS      => 10 * 1024;
 use constant CACHE_MMAP_BUCKET_SIZE  => 4  * 1024;
 use constant CACHE_MMAP_PAGE_SIZE    => 4  * 1024;
 
-################################################################################
+##############################################################################
 # Fields
-################################################################################
+##############################################################################
 # Public Class Fields
 
-################################################################################
+##############################################################################
 # Private Class Fields
-my $dp = 'Bric::Util::Fault::Exception::DP';
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 # We store the cache object in a package-wide lexical so that this
 # class can function as a singleton. new() will always return the same
@@ -159,14 +158,14 @@ my $cache;
 # code in debug.mc can get at it
 our $STORE;
 
-################################################################################
+##############################################################################
 
-################################################################################
+##############################################################################
 # Instance Fields
 
-################################################################################
+##############################################################################
 # Class Methods
-################################################################################
+##############################################################################
 
 =head1 INTERFACE
 
@@ -204,7 +203,7 @@ sub new {
     # creating a new cache?
     my $exists = -e CACHE_MMAP;
 
-    eval { 
+    eval {
         # initialize Cache::Cache backing store
         $STORE = Cache::FileCache->new({ namespace => 'Bricolage_Cache',
                                          cache_root => CACHE_ROOT });
@@ -221,10 +220,9 @@ sub new {
                                     cachenegative => 1,
                                   });
     };
-    die $gen->new({ msg => 'Unable to instantiate cache.', payload => $@ })
+    throw_gen error => 'Unable to instantiate cache.', payload => $@
       if $@;
 
-        
     # chown if creating cache file
     chown(SYS_USER, SYS_GROUP, CACHE_MMAP) unless $exists;
 
@@ -232,7 +230,7 @@ sub new {
     return $cache = bless \$mmap, $pkg;
 }
 
-################################################################################
+##############################################################################
 
 =item my $org = Bric::App::Cache->lookup()
 
@@ -254,12 +252,9 @@ B<Notes:> NONE.
 
 =cut
 
-sub lookup {
-    die Bric::Util::Fault::Exception::MNI->new(
-      {msg => __PACKAGE__."::lookup() method not implemented."});
-}
+sub lookup { throw_mni __PACKAGE__."::lookup() method not implemented." }
 
-################################################################################
+##############################################################################
 
 =item Bric::App::Cache->list()
 
@@ -281,12 +276,9 @@ B<Notes:> NONE.
 
 =cut
 
-sub list {
-    die Bric::Util::Fault::Exception::MNI->new(
-      {msg => __PACKAGE__."::list() method not implemented."});
-}
+sub list { throw_mni __PACKAGE__."::list() method not implemented." }
 
-################################################################################
+##############################################################################
 
 =back
 
@@ -310,7 +302,7 @@ B<Notes:> NONE.
 
 sub DESTROY {}
 
-################################################################################
+##############################################################################
 
 =head2 Public Class Methods
 
@@ -336,12 +328,9 @@ B<Notes:> NONE.
 
 =cut
 
-sub list_ids {
-    die Bric::Util::Fault::Exception::MNI->new(
-      {msg => __PACKAGE__."::list_ids() method not implemented."});
-}
+sub list_ids { throw_mni __PACKAGE__."::list_ids() method not implemented." }
 
-################################################################################
+##############################################################################
 
 =item Bric::App::Cache->clear()
 
@@ -359,6 +348,8 @@ sub clear {
     rmtree(CACHE_ROOT);
     mkpath(CACHE_ROOT, 0, 0777);
     chown(SYS_USER, SYS_GROUP, CACHE_ROOT);
+    undef $cache;
+    return 1;
 }
 
 =back
@@ -394,11 +385,10 @@ sub get {
     eval { $ret = $$self->read($key) };
     return if not defined $ret;
     return $$ret unless $@;
-    die $dp->new( { msg => "Unable to fetch value from the cache.",
-                    payload => $@ });
+    throw_da error => "Unable to fetch value from the cache.", payload => $@;
 }
 
-################################################################################
+##############################################################################
 
 =item $self = $c->set($key, $value);
 
@@ -424,10 +414,10 @@ sub set {
     my ($self, $key, $val) = @_;
     eval { $$self->write($key, \$val) };
     return $self unless $@;
-    die $dp->new({ msg => "Unable to cache value.", payload => $@ });
+    throw_dp error => "Unable to cache value.", payload => $@;
 }
 
-################################################################################
+##############################################################################
 
 =item my $lmu_time = $c->get_lmu_time
 
@@ -451,7 +441,7 @@ B<Notes:> NONE.
 
 sub get_lmu_time { get($_[0], 'lmu_time') }
 
-################################################################################
+##############################################################################
 
 =item $self = $c->set_lmu_time($lmu_time)
 
@@ -475,7 +465,46 @@ B<Notes:> NONE.
 
 sub set_lmu_time { set($_[0], 'lmu_time', time) }
 
-################################################################################
+##############################################################################
+
+=item my $site_id = $c->get_user_cx($user_id)
+
+Returns the current site context for the user with the C<$user_id> ID. A value
+of 0 (zero) means that there is no context, in which case the user can see all
+the workflows from all the sites to which she has access. If the value is
+undefined, then the context isn't set.
+
+=cut
+
+sub get_user_cx {
+    if (QA_MODE) {
+        throw_da "Must pass in a valid user ID"
+          unless $_[1] and $_[1] =~ /^\d+$/;
+    }
+    $_[0]->get('CX_' . $_[1])
+}
+
+=item $c = $c->set_user_cx($user_id, $site_id)
+
+Sets the site context for the user with the C<$user_id> ID. Pass in C<undef>
+to indicate an unknown context. Pass in 0 (zero) to indicate that the user has
+no context, and so can access all of the workflows in all of the sites to
+which she has access. Otherwise, simply pass in the site ID the user has
+selected.
+
+=cut
+
+sub set_user_cx {
+    if (QA_MODE) {
+        throw_dp "Must pass in a valid user ID"
+          unless $_[1] and $_[1] =~ /^\d+$/;
+        throw_dp "Must pass in a valid site ID"
+          unless ! defined $_[2] or $_[2] =~ /^\d+$/;
+    }
+    $_[0]->set('CX_' . $_[1], $_[2])
+}
+
+##############################################################################
 
 =back
 
@@ -518,8 +547,8 @@ sub _read_backing_store {
     my $ret;
     eval { $ret = $STORE->get($_[0]) };
     return $ret unless $@;
-    die $dp->new( { msg => "Unable to fetch value from the backing cache.",
-                    payload => $@ });
+    throw_da error => "Unable to fetch value from the backing cache.",
+      payload => $@; 
 }
 
 =item _write_backing_store($key, $val)
@@ -546,8 +575,8 @@ B<Notes:> NONE.
 sub _write_backing_store {
     eval { $STORE->set($_[0], $_[1]) };
     return unless $@;
-    die $dp->new({ msg => "Unable to cache value in the backing cache.", 
-                   payload => $@ });
+    throw_dp error => "Unable to cache value in the backing cache.",
+      payload => $@;
 }
 
 1;

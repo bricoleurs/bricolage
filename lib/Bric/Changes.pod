@@ -26,6 +26,12 @@ Added Bric::Biz::Site. This class will be worked into the rest of the API and
 the UI over the next few weeks in order to add true multisite capabilities to
 Bricolage. [David]
 
+=item *
+
+Added site context menu to all pages in the UI. This menu will be used to
+select a which site from which to show workflows, as well as to provide a
+default value in several administrative profiles. [David]
+
 =back
 
 =head1 VERSION 1.5.1
