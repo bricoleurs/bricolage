@@ -8,11 +8,11 @@ select_time - A widget to facilitate time input.
 
 =head1 VERSION
 
-$Revision: 1.9.4.2 $
+$Revision: 1.9.4.3 $
 
 =head1 DATE
 
-$Date: 2003-07-23 01:36:43 $
+$Date: 2003-07-25 03:53:33 $
 
 =head1 SYNOPSIS
 
@@ -165,8 +165,8 @@ if ($def_date) {
 
     if ($@) {
 	my $err_msg = "Unable to parse date '$def_date'";
-	die Bric::Util::Fault::Exception::DP->new({'msg'     => $err_msg,
-						 'payload' => $@});
+	die Bric::Util::Fault::Exception::DP->new({ msg     => $err_msg,
+						    payload => $@});
     }
 }
 
@@ -186,8 +186,8 @@ $s->{'day'}  ||= $t[2] || $def_day || '';
 $s->{'hour'} ||= $t[3] || $def_hour || '';
 $s->{'min'}  ||= $t[4] || $def_min || '';
 
-my $y = strfdate(undef, '%Y');
-my @year = $t[0] ? ($t[0]-10..$t[0]+10) :  ($y-10..$y+10);
+my $y = $t[0] || strfdate(undef, '%Y');
+my @year = ($y-10..$y+10);
 
 my %fields;
 $fields{'year'} = \@year unless $no_year;
@@ -199,9 +199,9 @@ $fields{'min'}  = \@min  unless $no_min;
 
 set_state_data($sub_widget, $s);
 
-$m->comp("$style.html", 
-	 widget          => $widget, 
-	 base_name       => $base_name, 
+$m->comp("$style.html",
+	 widget          => $widget,
+	 base_name       => $base_name,
 	 default_current => $default_current,
 	 useTable        => $useTable,
 	 indent          => $indent,
