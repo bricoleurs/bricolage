@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.55 $ )[-1];
+our $VERSION = (qw$Revision: 1.56 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-16 08:17:04 $
+$Date: 2004-03-02 22:57:13 $
 
 =head1 SYNOPSIS
 
@@ -1739,6 +1739,7 @@ sub _update_category {
 
 sub _insert_category {
     my $self = shift;
+    my $site_id = $self->_get('site_id');
 
     # Prepare the insert statement.
     my $nextval = next_key($table);
@@ -1757,11 +1758,16 @@ sub _insert_category {
     }
 
     # Set up a group. This isn't used anywhere or for anything other than
-    # to have a way to get a group ID from a category to track assets. The
-    # assets will pretend they're in the group, even though they're really not.
-    # See Bric::Biz::Asset->get_grp_ids to see it at work.
-    my $ag_obj = Bric::Util::Grp::Asset->new({name        => 'Category Assets',
-                                              description => $self->get_uri});
+    # to have a way to get a group ID from a category to track assets and
+    # permissions. The assets will pretend they're in the group, even though
+    # they're really not. See Bric::Biz::Asset->get_grp_ids to see it at work.
+    # XXX Yes, it's ugly that we're abusing name this way, but it does the
+    # trick.
+    my $ag_obj = Bric::Util::Grp::Asset->new({
+        name        => "Site $site_id Category Assets",
+        description => $self->get_uri
+    });
+
     $ag_obj->save;
     $self->_set(['asset_grp_id'], [$ag_obj->get_id]);
 

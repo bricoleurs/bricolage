@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:11:00 $
+$Date: 2004-03-02 22:57:02 $
 
 =head1 SYNOPSIS
 
@@ -30,10 +30,11 @@ $height  => 1
 $ghostly => 0
 $rightText => undef
 $border => 1
+$localize => 1
 </%args>
 <%init>
 $caption =~ s /^\s*|\s{2,}|\s*$//g;
-$caption = $lang->maketext($caption);
+$caption = $lang->maketext($caption) if $localize;
 
 my ($section, $mode, $type) = parse_uri($r->uri);
 my $borderColor = ($section eq "admin") ? "999966" : "669999";

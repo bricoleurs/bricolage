@@ -27,6 +27,20 @@ Admins group publish story and media documents by category. [Scott]
 
 =back
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+The list of categories for which permissions can be granted to user groups to
+access the documents and templates in the category now displays the categories
+for each site separately, so that categories with same URIs (such as for the
+root category in each site) can be easily told apart. Reported by Ho Yin Au.
+[David]
+
+=back
+
 =head1 VERSION 1.7.3 (2004-03-01)
 
 =head2 New Features

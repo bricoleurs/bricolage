@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 22:33:37 $
+$Date: 2004-03-02 22:57:14 $
 
 =head1 SYNOPSIS
 
@@ -97,7 +97,7 @@ our %Lexicon = (
     'Media Type Manager' => 'Media Type Manager',
     'Alert Type Manager' => 'Alert Type Manager',
     'Story "[_1]" reverted to V.[_2].' => 'Storia "[_1]" ritornato a V. [_2].',
-    'Grant the members of the following groups permission to access the members of the [_1] group.' => 'Consenti ai membri dei seguenti gruppi permessi di accesso ai membri del gruppo [_1].',
+    'Grant the members of the following groups permission to access the members of the "[_1]" group.' => 'Consenti ai membri dei seguenti gruppi permessi di accesso ai membri del gruppo [_1].',
     'Error' => 'Errore',
     'Previews' => 'Preview',
     'Add a New Element' => 'Aggiungi un nuovo elemento',
@@ -235,7 +235,7 @@ our %Lexicon = (
     'Add a New Workflow' => 'Crea un nuovo Workflow',
     'No categories were found' => 'Nessuna categoria presente',
     'Cannot publish checked-out story "[_1]"' => 'Non ‚Ã‚¨ possibile pubblicare la Storia in check out "[_1]"',
-    'Grant [_1] members permission to access assets in these workflows.' =>
+    'Grant "[_1]" members permission to access assets in these workflows.' =>
       'Consenti ai membri del gruppo [_1] l\'accesso agli asset di questo workflow.',
    'Choose Related Media' => 'Scegli i Media Correlati',
    'Output Channels' => 'Canali di distribuzione',
@@ -252,6 +252,7 @@ our %Lexicon = (
    'Login and Password' => 'Login e Password',
    'No media types were found' => 'Nessun Tipo di Media trovato',
    'All Contributors' => 'Tutti i Collaboratori',
+   'All Categories' => 'Tutti i Categorie',
    'Element Type profile "[_1]" deleted.' => 'Profilo di Tipo di Elemento "[_1]" salvato.',
    'User Manager' => 'User Manager',
    'Contributor profile "[_1]" saved.' => 'Profilo di Collaboratore "[_1]" salvato.',
@@ -285,14 +286,14 @@ our %Lexicon = (
    'Default Value' => 'Valore predefinito',
    'Desk Permissions' => 'Permessi del Desk',
    'STORY INFORMATION' => 'INFORMAZIONI SULLA STORIA',
-   'Grant [_1] members permission to access assets on these desks.' => 'Consenti ai membri del gruppo [_1] accesso ai materiali di questo desk.',
+   'Grant "[_1]" members permission to access assets on these desks.' => 'Consenti ai membri del gruppo [_1] accesso ai materiali di questo desk.',
    'Manage' => 'Gestire',
    'A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' => 'Esiste giÃ  un template attivo per questo canale di distribuzione, categoria, elemento e burner selezionato. Cancellate il template esistente per poterne aggiungere uno nuovo.',
    'Select' => 'Selezionare',
    'Separator String' => 'Separatore',
    'Position' => 'Posizione',
    'Options, Label' => 'Opzioni, Etichetta',
-   'Grant [_1] members permission to access assets in these categories.' => 'Consenti ai membri del gruppo [_1] accesso ai materiali di queste categorie.',
+   'Grant "[_1]" members permission to access assets in these categories.' => 'Consenti ai membri del gruppo [_1] accesso ai materiali di queste categorie.',
    'Scheduled Time' => 'Data Prefissata',
    'At least one extension is required.' => 'Devi indicare almeno un estensione.',
    'My Alerts' => 'Avvisi personali',
@@ -358,7 +359,7 @@ our %Lexicon = (
    'Add a New Media Type' => 'Creare un Nuovo Tipo di Media',
    'Contacts' => 'Contatti',
    'Warning! State inconsistent: Please use the buttons provided by the application rather than the \'Back\'/\'Forward\' buttons.' => 'Attenzione! Stato inconsistente: Per favore usate i pulsanti presenti nell\'applicazione e non quelli del browser \'Back\'/\'Forward\'.',
-   'Grant [_1] members permission to access the members of these groups.' => 'Consenti ai membri del gruppo [_1] l\'accesso ai membri di questi gruppi.',
+   'Grant "[_1]" members permission to access the members of these groups.' => 'Consenti ai membri del gruppo [_1] l\'accesso ai membri di questi gruppi.',
    'Check In Assets' => 'Rendere disponibili i Materiali',
    'No contributors defined.' => 'Nessun collaboratore definito',
    'No media were found' => 'Nessun media trovato',
@@ -529,6 +530,9 @@ To translate:
   'Cannot preview asset "[_1]" because there are no Preview Destinations associated with its output channels.'
   'Element must be associated with at least one site and one output channel.'
   'First Published' => 'First Published',
+  '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
+  'Object Groups' => 'Object Groups',
+  '[_1] Site Categories' => '[_1] Site Categories',
 
 =end comment
 

@@ -6,15 +6,15 @@ Bric::Util::Language::zh_cn - Bricolage 簡体中文翻译
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 22:33:38 $
+$Date: 2004-03-02 22:57:14 $
 
 =head1 SYNOPSIS
 
@@ -224,11 +224,11 @@ our %Lexicon =
     'First' => '第一',
     'Fixed' => '固定的',
     'Generic' => '通用的',
-    'Grant [_1] members permission to access assets in these categories.' => '允许 [_1] 成员权限得以存取这些分类里面的资产。',
-    'Grant [_1] members permission to access assets in these workflows.' => '允许 [_1] 成员权限能够存取这些流程里面的资产。',
-    'Grant [_1] members permission to access assets on these desks.' => '允许 [_1] 成员权限得以存取这些桌面的资产。',
-    'Grant [_1] members permission to access the members of these groups.' => '允许 [_1] 成员之权限得以存取这些群组里面之成员',
-    'Grant the members of the following groups permission to access the members of the [_1] group.' => '允许以下群组的成员得以存取 [_1] 群组的成员。',
+    'Grant "[_1]" members permission to access assets in these categories.' => '允许 [_1] 成员权限得以存取这些分类里面的资产。',
+    'Grant "[_1]" members permission to access assets in these workflows.' => '允许 [_1] 成员权限能够存取这些流程里面的资产。',
+    'Grant "[_1]" members permission to access assets on these desks.' => '允许 [_1] 成员权限得以存取这些桌面的资产。',
+    'Grant "[_1]" members permission to access the members of these groups.' => '允许 [_1] 成员之权限得以存取这些群组里面之成员',
+    'Grant the members of the following groups permission to access the members of the "[_1]" group.' => '允许以下群组的成员得以存取 [_1] 群组的成员。',
     'Group Label' => '群组标记',
     'Group Manager' => '群组管理',
     'Group Memberships' => '群组成员',
@@ -557,6 +557,11 @@ our %Lexicon =
 =begin comment
 
 To translate:
+  '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
+  'All Categories' => 'All Categories',
+  'All' => 'All',
+  'Object Groups' => 'Object Groups',
+  '[_1] Site Categories' => '[_1] Site Categories',
 
 =end comment
 

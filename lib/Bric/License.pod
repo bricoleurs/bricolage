@@ -251,6 +251,8 @@ Friends who have spotted bugs include:
 
 =item Ben Bangert
 
+=item Ho Yin Au
+
 =back
 
 Bricolage's translation team:
@@ -263,7 +265,7 @@ Bricolage's translation team:
 
 =item Kang-min Liu (Traditional Chinese)
 
-=item Gerfried Fuchs (German)
+=item Gerfried Fuchs, Thorsten Biel, Florian Rossol (German)
 
 =back
 

@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 22:33:37 $
+$Date: 2004-03-02 22:57:14 $
 
 =head1 SYNOPSIS
 
@@ -137,6 +137,7 @@ use constant key => 'pt_pt';
   'All Contributors' => 'Todos os Colaboradores',
   'All Elements' => 'Todos os Elementos',
   'All Groups' => 'Todos os Grupos',
+  'All Categories' => 'Todos os Categorias',
   'Asset Type' => 'Tipo de Material',
   'Available Groups' => 'Grupos Disponíveis',
   'Available Output Channels' => 'Canais de Distribuição Disponíveis',
@@ -406,15 +407,15 @@ use constant key => 'pt_pt';
    'User Override' => 'Entrar como',
    'View' => 'Ver',
    'Workflow Profile' => 'Perfil de Workflow',
-   'Grant [_1] members permission to access assets in these categories.' =>
+   'Grant "[_1]" members permission to access assets in these categories.' =>
      'Dar aos membros do grupo [_1] permissão para aceder aos materiais destas categorias.',
-   'Grant [_1] members permission to access assets in these workflows.' =>
+   'Grant "[_1]" members permission to access assets in these workflows.' =>
      'Dar aos membros do grupo [_1] permissões para aceder aos materiais destes workflows.',
-   'Grant [_1] members permission to access assets on these desks.' =>
+   'Grant "[_1]" members permission to access assets on these desks.' =>
      'Dar aos membros do grupo [_1] acesso aos materiais nestas secretárias.',
-   'Grant [_1] members permission to access the members of these groups.' =>
+   'Grant "[_1]" members permission to access the members of these groups.' =>
      'Dar aos membros do grupo [_1] permissões para aceder aos membros destes grupos.',
-   'Grant the members of the following groups permission to access the members of the [_1] group.' =>
+   'Grant the members of the following groups permission to access the members of the "[_1]" group.' =>
      'Dar aos membros dos seguintes grupos permissão para aceder aos membros do grupo [_1].',
 
 
@@ -704,6 +705,9 @@ To translate:
   'First Published' => 'First Published',
   'You do not have permission to add "[_1]" objects'
   'Remaining' => 'Remaining',
+  '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
+  'Object Groups' => 'Object Groups',
+  '[_1] Site Categories' => '[_1] Site Categories',
 
 =end comment
 
@@ -723,4 +727,3 @@ Joao Pedro Goncalves <joaop@co.sapo.pt>
 NONE
 
 =cut
-

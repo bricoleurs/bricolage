@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Grp.val
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2003-12-22 17:28:25 $
+-- $Date: 2004-03-02 22:57:15 $
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (0, NULL, 6, 'Root Group', 'The mother of all groups.', 1, 1);
@@ -594,7 +594,7 @@ VALUES (48, 67, 163);
 
 -- Root category asset group.
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES (68, NULL, 43, 'Category Assets', '/', 1, 0);
+VALUES (68, NULL, 43, 'Site 100 Category Assets', '/', 1, 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (164, 35, 6, 1);

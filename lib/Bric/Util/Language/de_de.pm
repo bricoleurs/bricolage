@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-01 21:33:29 $
+$Date: 2004-03-02 22:57:13 $
 
 =head1 SYNOPSIS
 
@@ -135,6 +135,7 @@ use constant key => 'de_de';
   'All Contributors' => 'Alle Mitarbeiter',
   'All Elements' => 'Alle Elemente',
   'All Groups' => 'Alle Gruppen',
+  'All Categories' => 'Alle Kategorien',
   'Available Groups' => 'Verfügbare Gruppen',
   'Available Output Channels' => 'Verfügbare Ausgabekanäle',
   'Bricolage' => 'Bricolage',
@@ -411,15 +412,15 @@ use constant key => 'de_de';
    'User Override' => 'Benutzer übergehen',
    'View' => 'Ansehen',
    'Workflow Profile' => 'Workflowprofil',
-   'Grant [_1] members permission to access assets in these categories.' =>
+   'Grant "[_1]" members permission to access assets in these categories.' =>
      '[_1] Mitgliedern den Zugriff auf Güter dieser Kategorien gewähren.',
-   'Grant [_1] members permission to access assets in these workflows.' =>
+   'Grant "[_1]" members permission to access assets in these workflows.' =>
      '[_1] Mitgliedern den Zugriff auf Güter dieser Workflows gewähren.',
-   'Grant [_1] members permission to access assets on these desks.' =>
+   'Grant "[_1]" members permission to access assets on these desks.' =>
      '[_1] Mitgliedern den Zugriff auf Güter dieser B&uuml;ros gewähren.',
-   'Grant [_1] members permission to access the members of these groups.' =>
+   'Grant "[_1]" members permission to access the members of these groups.' =>
      '[_1] Mitgliedern den Zugriff auf Mitglieder dieser Gruppen gewähren.',
-   'Grant the members of the following groups permission to access the members of the [_1] group.' =>
+   'Grant the members of the following groups permission to access the members of the "[_1]" group.' =>
      'Mitgliedern der folgenden Gruppen den Zugriff auf Mitglieder der Gruppe [_1] gewähren.',
 
 
@@ -708,7 +709,9 @@ translation, which I'll gradually try to remove. I'd be very grateful for
 any error pointers.
 
 To Translate:
-
+  '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
+  'Object Groups' => 'Object Groups',
+  '[_1] Site Categories' => '[_1] Site Categories',
 
 =end comment
 
@@ -727,4 +730,3 @@ Thorsten Biel <T.Biel@ITadmin.com>
 NONE
 
 =cut
-

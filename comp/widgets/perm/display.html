@@ -1,15 +1,18 @@
 %#-- Begin HTML --#
 <%perl>;
-my $perm_sel = {
-    'usrgrp'   => $usr_grp_pl,
+my $perm_sel = [
+    ['usrgrp'   => $usr_grp_pl],
     $is_user ? (
-        'all'      => 'All',
-        'object'   => 'Object Groups',
-        'workflow' => ucfirst($wf_pl),
-        'desk'     => ucfirst($dsk_pl),
-        'category' => ucfirst($cat_pl),
+        ['all'            => $lang->maketext('All')],
+        ['object'         => $lang->maketext('Object Groups')],
+        ['workflow'       => $lang->maketext(ucfirst $wf_pl)],
+        ['desk'           => $lang->maketext(ucfirst $dsk_pl)],
+        (map { ['cat_site_' . $_->get_id =>
+                $lang->maketext('[_1] Site Categories', $_->get_name)  ]
+            } Bric::Biz::Site->list({ active => 1 })),
+        ['all_categories' => $lang->maketext("All " . ucfirst $cat_pl)],
     ) : (),
-};
+];
 
 my (%perms, %start_desks);
 
@@ -38,9 +41,9 @@ if ($is_user) {
     # object, workflow, desk, (category)
 
     foreach my $perm ($pkg->list({ usr_grp_id => $id }) ) {
-	my $gid = $perm->get_obj_grp_id;
-	next if $gid == ADMIN_GRP_ID;
-	$perms{$gid} = $perm;
+        my $gid = $perm->get_obj_grp_id;
+        next if $gid == ADMIN_GRP_ID;
+        $perms{$gid} = $perm;
     }
 
     unless ($perm_type eq 'object') {
@@ -65,27 +68,27 @@ if ($perm_type eq 'object' || $perm_type eq 'all') {
              caption => "Object Group Permissions", border => 0);
 
     $m->comp($head_comp,
-             $lang->maketext("Grant [_1] members permission to access the members of these groups.",
-                             "&quot;$name&quot;"));
+             $lang->maketext('Grant "[_1]" members permission to access the '
+                             . "members of these groups.", $name));
     # Get any existing permissions.
     foreach my $perm ($pkg->list({ usr_grp_id => $id }) ) {
-	my $gid = $perm->get_obj_grp_id;
-	next if $gid == ADMIN_GRP_ID;
-	$perms{$gid} = $perm;
+        my $gid = $perm->get_obj_grp_id;
+        next if $gid == ADMIN_GRP_ID;
+        $perms{$gid} = $perm;
     }
 
     foreach my $grp ($grp_pkg->list({ })) {
         my $gid = $grp->get_id;
-	next if $gid == ADMIN_GRP_ID;
+        next if $gid == ADMIN_GRP_ID;
 
-	$m->comp($row_comp,
-		 grp => $grp,
-		 gid => $gid,
-		 type => 'obj',
+        $m->comp($row_comp,
+                 grp => $grp,
+                 gid => $gid,
+                 type => 'obj',
                  is_asset_grp => $chk_asset_grp->($grp),
                  publish => 1,
                  recall => 1,
-		 perm => $perms{$gid});
+                 perm => $perms{$gid});
     }
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
@@ -96,20 +99,20 @@ if ($perm_type eq 'workflow' || $perm_type eq 'all') {
     # Do the workflows, first.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
              caption => "$wf_disp Permissions", border => 0);
-    $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to"
-             ." access assets in these workflows.","&quot;$name&quot;"));
+    $m->comp($head_comp, $lang->maketext('Grant "[_1]" members permission to'
+             ." access assets in these workflows.", $name));
     foreach my $wf ($wf_pkg->list) {
         my $gid = $wf->get_asset_grp_id;
-	my $grp = $asset_grp_pkg->lookup({ id => $gid });
-        # XXX We say it isn't an asset group because no higher than EDIT
-        # allowed, even though it is actually an asset group.
-	$m->comp($row_comp,
-		 grp => $grp,
-		 gid => $gid,
-		 type => 'obj',
+        my $grp = $asset_grp_pkg->lookup({ id => $gid });
+        # XXX We say it isn't an asset group because no higher than EDIT is
+        # allowed for a workflow, even though it is actually an asset group.
+        $m->comp($row_comp,
+                 grp => $grp,
+                 gid => $gid,
+                 type => 'obj',
                  is_asset_grp => 0,
-		 perm => $perms{$gid},
-		 name => $wf->get_name);
+                 perm => $perms{$gid},
+                 name => $wf->get_name);
     }
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
@@ -120,65 +123,65 @@ if ($perm_type eq 'desk' || $perm_type eq 'all') {
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
              caption => "$dsk_disp Permissions", border => 0);
 
-    $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to access assets"
-             ." on these desks.","&quot;$name&quot;"));
+    $m->comp($head_comp, $lang->maketext('Grant "[_1]" members permission to '
+                                         . "access assets on these desks.",
+                                         $name));
 
     foreach my $dsk ($dsk_pkg->list) {
         my $gid = $dsk->get_asset_grp;
-	my $grp = $gid ? $asset_grp_pkg->lookup({ id => $gid }) : undef;
-	$m->comp($row_comp,
-		 grp => $grp,
-		 gid => $gid,
-		 create  => $start_desks{$dsk->get_id},
-		 recall  => $start_desks{$dsk->get_id},
+        my $grp = $gid ? $asset_grp_pkg->lookup({ id => $gid }) : undef;
+        $m->comp($row_comp,
+                 grp => $grp,
+                 gid => $gid,
+                 create  => $start_desks{$dsk->get_id},
+                 recall  => $start_desks{$dsk->get_id},
                  publish => $dsk->can_publish,
-		 type => 'obj',
-		 perm => $perms{$gid},
+                 type => 'obj',
+                 perm => $perms{$gid},
                  is_asset_grp => 1,
-		 name => $dsk->get_name);
+                 name => $dsk->get_name);
     }
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
 }
 
-if ($perm_type eq 'category' || $perm_type eq 'all') {
-    # And finally, do it for categories.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
-             caption => "$cat_disp Permissions", border => 0);
-    $m->comp($head_comp,
-             $lang->maketext("Grant [_1] members permission to access assets in these"
-                               ." categories.","&quot;$name&quot;"));
-
-    foreach my $cat_grp ($cat_grp_pkg->list({ name => 'Category Assets',
-                                              Order => 'description',
-                                              active => ($show_inactive ? undef : 1),
-                                              all  => 1 })) {
-	my $gid = $cat_grp->get_id;
-	$m->comp($row_comp,
-		 grp => $cat_grp,
-		 gid => $gid,
-                 publish => 1,
-                 recall => 1,
-		 type => 'obj',
-                 is_asset_grp => 1,
-		 perm => $perms{$gid},
-		 name => $cat_grp->get_description
-             );
+if ($perm_type eq 'all_categories' || $perm_type eq 'all') {
+    # And finally, do it for all the categories in each site.
+    for my $site (Bric::Biz::Site->list({ active => 1 })) {
+        $m->comp('.site_categories',
+                 num           => $num++,
+                 head_comp     => $head_comp,
+                 row_comp      => $row_comp,
+                 grp_name      => $name,
+                 show_inactive => $show_inactive,
+                 perms         => \%perms,
+                 site          => $site);
     }
-    $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
 }
+
+if ($perm_type =~ /^cat_site_(\d+)$/) {
+    $m->comp('.site_categories',
+             num           => $num++,
+             head_comp         => $head_comp,
+             row_comp      => $row_comp,
+             grp_name      => $name,
+             show_inactive => $show_inactive,
+             perms         => \%perms,
+             site          => Bric::Biz::Site->lookup({ id => $1 })
+    );
+}
+
 
 if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
     # Now get the permissions on this group that are granted to user groups.
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
              caption => "$usr_grp_disp Permissions",
-	     number => $num,
+             number => $num,
              border => 0);
 
     $m->comp($head_comp, $lang->maketext("Grant the members of the following groups "
                                          . "permission to access the members of the "
-                                         . "[_1] group.","&quot;$name&quot;"));
+                                         . '"[_1]" group.',$name));
 
     my $is_asset_grp = $chk_asset_grp->($grp);
 
@@ -245,7 +248,7 @@ my $grp_disp = lc get_disp_name($grp_key);
 my $grp_pl = lc get_class_info($grp_key)->get_plural_name;
 my $asset_grp_pkg = get_package_name('asset_grp');
 my $asset_grp_keys = { story_grp      => 1,
-	               media_grp      => 1,
+                       media_grp      => 1,
                        formatting_grp => 1 };
 # Check to see if it's an asset group.
 my $chk_asset_grp = sub {
@@ -424,6 +427,49 @@ splice @$opts, RECALL, 1 unless $max_perm < RECALL || ($recall && $is_asset_grp)
 % } # if
 </tr>
 </%def>
+<%def .site_categories>
+<%args>
+$site
+$num
+$row_comp
+$head_comp
+$grp_name
+$show_inactive
+$perms
+</%args>
+<%perl>;
+        $m->comp("/widgets/wrappers/sharky/table_top.mc",
+                 number   => $num,
+                 caption  => $lang->maketext('[_1] Site [_2] Permissions',
+                                             $site->get_name, $cat_disp),
+                 localize => 0,
+                 border   => 0);
+        $m->comp($head_comp,
+                 $lang->maketext('Grant "[_1]" members permission to access '
+                                 . "assets in these categories.", $grp_name));
 
+        my $site_id = $site->get_id;
+        foreach my $cat_grp ($cat_grp_pkg->list({
+                             name   => "Site $site_id Category Assets",
+                             Order  => 'description',
+                             active => ($show_inactive ? undef : 1),
+                             all    => 1 }))
+        {
+            my $gid = $cat_grp->get_id;
+            $m->comp($row_comp,
+                     grp => $cat_grp,
+                     gid => $gid,
+                     publish => 1,
+                     recall => 1,
+                     type => 'obj',
+                     is_asset_grp => 1,
+                     perm => $perms->{$gid},
+                     name => $cat_grp->get_description
+                 );
+        }
+        $m->out(qq{</table>\n});
+        $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+</%perl>
+</%def>
 %#--- Log History ---#
 
