@@ -2,7 +2,7 @@
 my $widget = 'workflow';
 </%once>
 <%init>;
-if (my $wid = $m->dhandler_arg) {
+if (my $wid = (split '/', $m->dhandler_arg)[-1]) {
     set_state_data($widget, 'work_id', $wid);
 }
 $m->call_next;
