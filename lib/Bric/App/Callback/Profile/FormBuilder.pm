@@ -104,10 +104,10 @@ $base_handler = sub {
             $obj->set_name($param->{'name'});
             $obj->set_description($param->{'description'});
 
-            NO_STRICT: {
-                no strict 'refs';
-                # $do_contrib_type or $do_element
-                $param->{'obj'} = ${"do_$key"}->($self, $obj, $key, $class);
+            if ($key eq 'contrib_type') {
+                $param->{'obj'} = $do_contrib_type->($self, $obj, $key, $class);
+            } elsif ($key eq 'element') {
+                $param->{'obj'} = $do_element->($self, $obj, $key, $class);
             }
         }
     }
