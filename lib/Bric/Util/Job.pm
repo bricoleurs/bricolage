@@ -1816,13 +1816,7 @@ sub handle_error {
             # executing.
             $self->_set([qw(_executing error_message _failed)], [0, "$err", 1]);
             # log the event
-            my $et = Bric::Util::EventType->lookup({
-                key_name => $self->KEY_NAME . '_failed'
-            });
-            my $user = Bric::Biz::Person::User->lookup({
-                id => $self->get_user_id
-            });
-            $et->log_event($user, $self);
+            log_event( $self->KEY_NAME . '_failed', $self);
         } else {
             # We're gonna try again. Unlock the job.
             $self->_set([qw(_executing error_message)], [0, "$err"]);
