@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-04-23 23:45:43 $
+$Date: 2002-06-28 00:48:48 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -34,7 +34,7 @@ $obj
 # browser spacing stuff
 my $agent = $m->comp("/widgets/util/detectAgent.mc");
 my $ieSpacer = ($agent->{os} ne "SomeNix") ?
-  qq{<tr><td colspan=2><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>}
+  qq{<tr><td colspan="3"><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>}
   : '';
 
 my $deskText = qq{<select name="$widget|desk">};
@@ -64,10 +64,10 @@ if ($versions) {
 
 <table width=580 border=0 cellpadding=0 cellspacing=0>
 <tr>
-  <td align="center" colspan=2 valign="middle"><input type="checkbox" name="<% $widget %>|delete" value="Delete"> <span class="burgandyLabel">Delete this Profile</span></td>
+  <td align="center" colspan="3" valign="middle"><input type="checkbox" name="<% $widget %>|delete" value="Delete"> <span class="burgandyLabel">Delete this Profile</span></td>
 </tr>
 <tr>
-  <td class=lightHeader colspan=2><img src="/media/images/spacer.gif" width=580 height=1></td>
+  <td class=lightHeader colspan="3"><img src="/media/images/spacer.gif" width=580 height=1></td>
 </tr>
 <% $ieSpacer %> 
 <tr>
@@ -80,34 +80,35 @@ if ($versions) {
   </tr>
   </table>
   </td>
+  <td>
+  <table border=0 cellpadding=0 cellspacing=0>
+  <tr>
+% my $act = $widget eq 'tmpl_prof' ? 'deploy' : 'publish';
+    <td align="center">
+      <input type="image" src="/media/images/checkin_and_<% $act %>_dgreen.gif" border="0" name="<% $widget %>|checkin_and_pub_cb" value="Check In And Publish" />
+    </td>
+  </tr>
+  </table>
+  </td>
   <td align="right">
   <table border=0 cellpadding=0 cellspacing=0>
   <tr>
-% if ($versions) {
-% if ((scalar @$versions) > 1) {
+% if ($versions && @$versions > 1) {
     <td valign="middle"><input type="image" src="/media/images/revert_dgreen.gif" border=0 name="<% $widget %>|revert_cb" value="revert"></td>
     <td valign="middle">&nbsp;to <% $versionText %></td>
     <td valign="middle"><input type="image" src="/media/images/view_text_dgreen.gif" border=0 hspace=5 name="<% $widget %>|view_cb" value="view"></td>
-% }
+% } else {
+  <td></td>
 % }
   </tr>
   </table> 
   </td>
 </tr>
 <tr>
-    <td colspan=3 align="center" valign="middle"><input type="image" src="
-% if ($widget eq 'tmpl_prof') {
-/media/images/checkin_and_deploy_dgreen.gif" border=0 name="
-<% $widget %>|checkin_deploy_cb
-%  } else {
-/media/images/checkin_and_publish_dgreen.gif" border=0 name="
-<% $widget %>|checkin_and_pub_cb
-% }
-" value="Check In And Publish"><br><br></td>
 </tr>
 <% $ieSpacer %> 
 <tr>
-  <td class=lightHeader colspan=2><img src="/media/images/spacer.gif" width=580 height=1></td>
+  <td class=lightHeader colspan="3"><img src="/media/images/spacer.gif" width=580 height=1></td>
 </tr>
 <% $ieSpacer %> 
 </table>
