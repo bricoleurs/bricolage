@@ -83,53 +83,27 @@ $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $cat,
 			 directory => 1, site_id => 1 });
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-# Get the groups listed.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-         caption => 'Group Memberships',
-         number  => 3);
 
-# Get category's groups for double-list manager.
-my $all_grp = Bric::Util::Grp->lookup({ id => $cat->INSTANCE_GROUP_ID});
-my ($left, $right) = ([], []);
+# Get the group's membership listed
+$m->comp("/widgets/grp_membership/grp_membership.mc", 
+         grp_class => 'Bric::Util::Grp::CategorySet', 
+         obj => $cat, 
+         formName => 'cat_profile',
+         no_edit => $no_edit,
+         widget  => $type,
+         no_cb   => 1,
+         extra_code => $m->scomp('/widgets/profile/checkbox.mc',
+                        name        => 'grp_cascade',
+                        label_after => 1,
+                        value       => 1,
+                        disp        => "<span class=burgandyLabel>" .
+                                       $lang->maketext('Cascade into Subcategories') .
+                                       "</span>"
+                        ) . '<br />'
 
-push @$right, { value => $all_grp->get_id, description => $all_grp->get_name}
-  unless defined $cat->get_id;
 
-foreach my $grp ( Bric::Util::Grp::CategorySet->list({obj => $cat}) ) {
-    push @$right, { value =>  $grp->get_id, description => $grp->get_name };
-}
 
-# Get all category groups for double-list manager.
-foreach my $grp ( Bric::Util::Grp::CategorySet->list ) {
-    push @$left, { value =>  $grp->get_id, description => $grp->get_name };
-}
-
-# Load up the double-list manager.
-$m->comp( "/widgets/doubleListManager/doubleListManager.mc",
-          rightSort     => 1,
-          leftOpts      => $left,
-          rightOpts     => $right,
-          formName      => 'cat_profile',
-          leftName      => 'rem_grp',
-          rightName     => 'add_grp',
-          readOnlyRight => [$cat->INSTANCE_GROUP_ID],
-          leftCaption   => 'Available Groups',
-          showLeftList  => $no_edit || 1 ,
-          rightCaption  => $no_edit ||'Current Groups',
-          readOnly      => $no_edit
-        );
-
-$m->comp('/widgets/profile/checkbox.mc',
-         name        => 'grp_cascade',
-         label_after => 1,
-         value       => 1,
-         disp        => "<span class=burgandyLabel>" .
-                        $lang->maketext('Cascade into Subcategories') .
-                        "</span>"
-        );
-$m->out("<br />\n");
-
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+);
 
 # Add a checkbox to cascade delete.
 unless ($no_edit || $no_del) {
@@ -207,11 +181,11 @@ my $cat_excl = sub { return 1 if grep($_[0] == $_->get_id, $cat->children);
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:47 $
+$Date: 2003-08-25 18:48:54 $
 
 =head1 DESCRIPTION
 

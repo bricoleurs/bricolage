@@ -112,6 +112,7 @@ var selectOrderNames = new Array("include_pos")
 	     number => 2
     );
 
+
 </%perl>
 <table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
 <tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
@@ -128,7 +129,19 @@ var selectOrderNames = new Array("include_pos")
 </table>
 <br />
 <%perl>;
+
 }
+
+# Get the group's membership listed
+$m->comp("/widgets/grp_membership/grp_membership.mc",
+         grp_class => 'Bric::Util::Grp::OutputChannel',
+         obj => $oc,
+         formName => 'oc_profile',
+         no_edit => $no_edit,
+         widget  => $type,
+         num => 3
+);
+
 # Add the form buttons and other necessities.
 $m->comp("/widgets/profile/formButtons.mc",
 	 type => $type,
@@ -160,11 +173,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:48 $
+$Date: 2003-08-25 18:48:54 $
 
 =head1 SYNOPSIS
 

@@ -32,39 +32,16 @@ $m->comp('/widgets/add_more/add_more.mc', type => 'contact',
      deleteLabelOnly => 1, param => \%ARGS);
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-# Get the groups listed.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-	 caption => 'Group Memberships',
-	 number  => 3);
 
-# Get user's groups for double-list manager.
-my $all_grp = Bric::Util::Grp->lookup({ id => $user->INSTANCE_GROUP_ID});
-my ($left, $right) = ([], []);
-push @$right, { value => $all_grp->get_id, description => $all_grp->get_name}
-  unless $isid;
-foreach my $grp ( $isid ? $user->get_grps : () ) {
-    push @$right, { value =>  $grp->get_id, description => $grp->get_name };
-}
-
-# Get all user groups (including secret groups used by Bric::Biz::Site) for
-# the double-list manager.
-foreach my $grp ( Bric::Util::Grp::User->list({ all => 1 }) ) {
-    push @$left, { value =>  $grp->get_id, description => $grp->get_name };
-}
-
-# Load up the double-list manager.
-$m->comp( "/widgets/doubleListManager/doubleListManager.mc",
-	  rightSort => 1,
-          leftOpts => $left, rightOpts => $right, formName => 'user_profile',
-	  leftName => 'rem_grp', rightName => 'add_grp',
-	  readOnlyRight => [$user->INSTANCE_GROUP_ID],
-	  leftCaption => 'Available Groups', showLeftList => $can_edit || 0,
-	  rightCaption => $can_edit ? 'Current Groups' : '',
-	  readOnly => $no_edit || ($is_user && !$can_edit)
-	);
-
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
+# Get the group's membership listed
+$m->comp("/widgets/grp_membership/grp_membership.mc",
+         grp_class => 'Bric::Util::Grp::User',
+         obj => $user,
+         formName => 'user_profile',
+         no_edit => $no_edit,
+         widget  => $type,
+         all => 1
+);
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc", number  => 4,
 	 caption => "Login and Password");
@@ -166,11 +143,11 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:49 $
+$Date: 2003-08-25 18:48:54 $
 
 =head1 DESCRIPTION
 

@@ -47,32 +47,6 @@ sub save : Callback {
     add_msg("$disp_name profile \"[_1]\" saved.", $param->{name});
     log_event($type . '_save', $site);
 
-    # Take care of group managment.
-    if ($param->{add_grp} or $param->{rem_grp}) {
-        my @add_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
-          @{mk_aref($param->{add_grp})};
-        my @del_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
-          @{mk_aref($param->{rem_grp})};
-
-        # Assemble the new member information.
-        foreach my $grp (@add_grps) {
-            # Add the user to the group.
-            $grp->add_members([{ obj => $site }]);
-            $grp->save;
-            log_event('grp_save', $grp);
-        }
-
-        foreach my $grp (@del_grps) {
-            # Deactivate the user's group membership.
-            foreach my $mem ($grp->has_member({ obj => $site })) {
-                $mem->deactivate;
-                $mem->save;
-            }
-            $grp->save;
-            log_event('grp_save', $grp);
-        }
-    }
-
     $param->{obj} = $site;
     set_redirect('/admin/manager/site');
     return;

@@ -6,6 +6,7 @@ use constant CLASS_KEY => 'profile';
 
 use HTML::Mason::MethodMaker('read_write' => [qw(obj type class has_perms)]);
 use strict;
+use Bric::App::Event qw(log_event);
 use Bric::App::Authz qw(:all);
 use Bric::App::Util qw(:all);
 
@@ -48,6 +49,42 @@ sub new {
     }
 
     return $self;
+}
+
+# Group membership is handled the same way through all callbacks,
+# so this method gets inherited to all profiles.
+
+sub manage_grps :Callback {
+    my $self   = shift;
+    my $obj    = shift || $self->obj;
+    my $param  = $self->request_args;
+  
+    return unless $param->{add_grp} or  $param->{rem_grp};
+
+    my @add_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
+                       @{mk_aref($param->{add_grp})};
+
+    my @del_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
+                       @{mk_aref($param->{rem_grp})};
+
+    # Assemble the new member information.
+    foreach my $grp (@add_grps) {
+        # Add the user to the group.
+        $grp->add_members([{ obj => $obj }]);
+        $grp->save;
+        log_event('grp_save', $grp);
+    }
+
+    foreach my $grp (@del_grps) {
+         # Deactivate the user's group membership.
+         foreach my $mem ($grp->has_member({ obj => $obj })) {
+             $mem->deactivate;
+             $mem->save;
+         }
+
+         $grp->save;
+         log_event('grp_save', $grp);
+     }
 }
 
 

@@ -57,6 +57,17 @@ $m->comp("/widgets/doubleListManager/doubleListManager.mc",
 	);
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
+# Get the group's membership listed
+$m->comp("/widgets/grp_membership/grp_membership.mc",
+         grp_class => 'Bric::Util::Grp::Dest',
+         obj => $dest,
+         formName => 'dest_profile',
+         no_edit => $no_edit,
+         widget  => $type,
+         num => 4
+);
+
+
 if (defined $id) {
     my $i;
     my $label = $no_edit ? 'View' : 'Edit';
@@ -88,7 +99,7 @@ if (defined $id) {
 			  ['Log', "/admin/events/server"] ],
 	     alter => { active => $yes_no },
 	     select =>    $no_del ? undef : ['Delete', 'server|delete_cb'],
-	     number => 4
+	     number => 5
 	    );
     $m->comp('/widgets/profile/formButtons.mc',
 	     type => $type,
@@ -159,11 +170,11 @@ $dest->set_site_id($ARGS{site_id}) if $ARGS{site_id};
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:48 $
+$Date: 2003-08-25 18:48:54 $
 
 =head1 DESCRIPTION
 

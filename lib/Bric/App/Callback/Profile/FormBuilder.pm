@@ -1,6 +1,6 @@
 package Bric::App::Callback::Profile::FormBuilder;
 
-use base qw(Bric::App::Callback);   # not subclassing Profile
+use base qw(Bric::App::Callback Bric::App::Callback::Profile );
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'formBuilder';
 
@@ -187,6 +187,9 @@ $do_contrib_type = sub {
     # Save the group
     unless ($no_save) {
         $obj->save();
+    
+        # Take care of group management.
+        $self->manage_grps($obj) if $param->{add_grp} || $param->{rem_grp};
 
         if ($self->cb_key eq 'save') {
             # Record a message and redirect if we're saving.
@@ -280,6 +283,9 @@ $do_element = sub {
             $obj->add_site($sites[0]);
         }
     }
+
+    # Take care of group management.
+    $self->manage_grps($obj) if $param->{add_grp} || $param->{rem_grp};
 
     $save_element_etc->($self, $obj, $key, $no_save, $disp_name, $name);
 

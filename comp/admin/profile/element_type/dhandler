@@ -8,7 +8,7 @@
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'element_type_id')
   if defined $id;
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Properties");
+$m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Properties", number => 1);
 # Dump the basic fields.
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $ct,
 	 readOnly => $no_edit, fieldsUsed => $exclude);
@@ -25,6 +25,18 @@ if (defined $id && $ct->get_media) {
     $m->comp('/widgets/profile/text.mc', disp => 'Type', value => $type, readOnly => 1);
 }
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Get the group's membership listed
+#$m->comp("/widgets/grp_membership/grp_membership.mc",
+#         grp_class => 'Bric::Util::Grp::ElementType',
+#         obj => $ct,
+#         formName => 'ct_profile',
+#         no_edit => $no_edit,
+#         num => 2
+#);
+
+
+
 $m->comp('/widgets/profile/formButtons.mc',
 	 type => $type,
          widget => $type,
@@ -104,11 +116,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:48 $
+$Date: 2003-08-25 18:48:54 $
 
 =head1 DESCRIPTION
 

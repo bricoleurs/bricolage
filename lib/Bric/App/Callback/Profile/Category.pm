@@ -131,7 +131,8 @@ sub save : Callback {
         # Save changes.
         $cat->save;
 
-        # Take care of group managment.
+        # Take care of group managment - not using set_grp_managent() since
+        # Categories memberships can be cascaded into subcategories.
         if ($param->{add_grp} or $param->{rem_grp}) {
 
             my @add_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }

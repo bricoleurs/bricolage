@@ -30,10 +30,23 @@ foreach my $key (@sortedAttrs ) {
 my $num_fields = @$attr;
 my $sel_opts = [(1..$num_fields)];
 
+# Get the group's membership listed
+$m->comp("/widgets/grp_membership/grp_membership.mc",
+         grp_class => 'Bric::Util::Grp::ContribType',
+         obj => $grp,
+         formName => 'ct_profile',
+         no_edit => $no_edit,
+         no_cb   => 1,
+         widget => $type,
+         num => 2 
+);
+
+
+
 # display attrs
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
 	 caption => "Custom Fields",
-	 number  => 2);
+	 number  => 3);
 
 if ($num_fields) {
     $m->comp("/widgets/profile/displayAttrs.mc",
@@ -58,19 +71,24 @@ $m->comp('/widgets/formBuilder/formBuilder.mc',
 	 widget => 1,
 	 formName => 'ct_profile',
 	 numFields => $num_fields,
-	 num => 3,
+	 num => 4,
 	 caption => 'Add New Field'
 	);
+
 } else {
+
+
     # Add the buttons.
     $m->comp('/widgets/profile/formButtons.mc',
 	     type => $type,
 	     section => $section,
-             widget => $type,    # XXX: there isn't a Profile/ContribType...
+         widget => $type,    # XXX: there isn't a Profile/ContribType...
 	     no_del => 1,
 	     no_save => 1
 	    );
 }
+
+
 </%perl>
 
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
@@ -127,11 +145,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:48 $
+$Date: 2003-08-25 18:48:54 $
 
 =head1 DESCRIPTION
 

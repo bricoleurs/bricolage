@@ -19,47 +19,13 @@ $m->comp('/widgets/profile/dumpRemainingFields.mc',
          readOnly   => $no_edit);
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-# Get the groups listed.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-         caption => 'Group Memberships',
-         number  => 2);
-
-##############################################################################
-# Get site's groups for double-list manager.
-my $all_grp = Bric::Util::Grp->lookup({ id => $site->INSTANCE_GROUP_ID});
-my ($left, $right) = ([], []);
-
-push @$right, { value       => $all_grp->get_id,
-                description => $all_grp->get_name}
-  unless $site->get_id;
-
-foreach my $grp ( Bric::Util::Grp::Site->list({ obj => $site }) ) {
-    push @$right, { value       => $grp->get_id,
-                    description => $grp->get_name };
-}
-
-# Get all site groups for double-list manager.
-foreach my $grp ( Bric::Util::Grp::Site->list ) {
-    push @$left, { value       => $grp->get_id,
-                   description => $grp->get_name };
-}
-
-# Load up the double-list manager.
-$m->comp( "/widgets/doubleListManager/doubleListManager.mc",
-          rightSort     => 1,
-          leftOpts      => $left,
-          rightOpts     => $right,
-          formName      => 'site_profile',
-          leftName      => 'rem_grp',
-          rightName     => 'add_grp',
-          readOnlyRight => [$site->INSTANCE_GROUP_ID],
-          leftCaption   => 'Available Groups',
-          showLeftList  => $no_edit || 1 ,
-          rightCaption  => $no_edit ||'Current Groups',
-          readOnly      => $no_edit
-        );
-
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/grp_membership/grp_membership.mc", 
+         grp_class => 'Bric::Util::Grp::Site', 
+         obj => $site, 
+         no_edit => $no_edit, 
+         formName=> 'site_profile', 
+         num => 2,
+         widget => $type);
 
 ##############################################################################
 # Output the special user groups configuration. To be added later. Probably
@@ -131,11 +97,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:49 $
+$Date: 2003-08-25 18:48:54 $
 
 =head1 DESCRIPTION
 
