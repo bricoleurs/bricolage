@@ -118,12 +118,6 @@ the UI no longer displays a message saying that it was published. [David]
 
 =item *
 
-Its possible to create new stories again without running into errors saying
-that a URI is not unique because the cover date and slug were accidentally
-exclued from the URI. [David]
-
-=item *
-
 Fixed page logging so that redirects to the page before the current page can
 work correctly. It was most noticably broken when trying to associate a
 contributor with a document. [David]
