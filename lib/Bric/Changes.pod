@@ -244,6 +244,17 @@ edited. The category "browser" uses an interface similar to
 'Associate Contributors', which has the advantage of being searchable
 rather than looking through a "long-ass list of all categories".
 
+=item *
+
+XHTML/CSS-ized desk items. This approach is the future of the Bricolage
+interface: purely structural HTML, with CSS to create the presentation.
+Eventually, we'll be able to have UI preferences to change font sizes or the
+entire look and feel just by switching style sheets. But for now, this change
+should help with the display of desks with many items on them, and it should
+also speed the display of such desks. Turn of the C<USE_XHTML>
+F<bricolage.conf> directive to get the old desk views back (useful for older
+browsers). [David]
+
 =back
 
 =head1 VERSION 1.6.5 ()
