@@ -136,7 +136,7 @@ my $update_parts = sub {
 
         # Grab the tile we're looking for
         local $^W = undef;
-        $locate_tile = $t if $id == $locate_id;
+        $locate_tile = $t if $id == $locate_id and $t->is_container;
         if ($do_delete && ($param->{"$widget|delete_cont$id"} ||
                            $param->{"$widget|delete_data$id"})) {
             add_msg($lang->maketext("Element [_1] deleted.","&quot;" .
@@ -156,7 +156,8 @@ my $update_parts = sub {
                 $val = '' unless defined $val;
                 if ( $param->{"$widget|${id}-partial"} ) {
                     # The date is only partial. Send them back to to it again.
-                    add_msg($lang->maketext("Invalid date value for [_1] field.","&quot;" . $_->get_name. "&quot;"));
+                    add_msg($lang->maketext("Invalid date value for [_1] field.",
+                                            "&quot;" . $_->get_name. "&quot;"));
                     set_state_data($widget, '__NO_SAVE__', 1);
                 } else {
                     # Truncate the value, if necessary, then set it.

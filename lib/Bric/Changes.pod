@@ -108,6 +108,14 @@ data. This is another bug that has been in the code since the beginning of
 time, and was only recently identifyed. Thanks to Rachel Murray for the spot!
 [David]
 
+=item *
+
+Fixed an obscure bug where an element with a field element and a container
+element with the same ID could cause an error when one tries to edit the
+container element and Bricolage tries to load the field element,
+instead. Embarrassingly discovered in the middle of a presentation to the
+London Perl M[ou]ngers. [David]
+
 =back
 
 =head1 VERSION 1.5.2
