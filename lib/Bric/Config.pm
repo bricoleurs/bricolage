@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.6.2.8 $
+$Revision: 1.6.2.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6.2.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-10 21:12:24 $
+$Date: 2001-12-10 21:51:46 $
 
 =head1 SYNOPSIS
 
@@ -372,7 +372,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
          . 'fdIf^ N;:';
 
     # QA Mode settings.
-    use constant QA_MODE                 => 1;
+    use constant QA_MODE                 => 0;
 
     # Character translation settings.
     use constant CHAR_SET                => $config->{CHAR_SET} || 'ISO-8859-1';
@@ -392,8 +392,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 6;
 
     # Error Page Setting.
-#    use constant ERROR_URI => '/errors/500.mc';
-    use constant ERROR_URI => '/errors/error.html';
+    use constant ERROR_URI => '/errors/500.mc';
+#    use constant ERROR_URI => '/errors/error.html';
 
     # Distribution Settings.
     use constant ENABLE_DIST => $config->{ENABLE_DIST};
