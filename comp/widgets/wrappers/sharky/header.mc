@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.14 $
+$Revision: 1.2.2.15 $
 
 =head1 DATE
 
-$Date: 2001-10-27 01:04:14 $
+$Date: 2001-10-27 01:14:11 $
 
 =head1 SYNOPSIS
 
@@ -103,6 +103,7 @@ function init() {
 }
 
 % if ($no_toolbar) {
+history.forward(1);
 if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
     // Send the current window to a blank page.
     document.location = 'about:blank';
