@@ -147,6 +147,10 @@ replaced with calls to the proper localization method. Still to be done are
 references to button images with text on them and strings fetched from the
 database. [ClE<aacute>udio Valente]
 
+=item *
+
+Added Italian translation. [Marco Ghezzi]
+
 =back
 
 =head2 Bug Fixes

@@ -6,27 +6,25 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-Release Version: 1.5.1 -- Development Track for 1.6.0
-
-File (CVS) Version:
-
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = "1.5.1";
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-12 21:34:07 $
+$Date: 2003-02-13 16:12:04 $
 
 =head1 SYNOPSIS
 
-  use base qw( Bric );
+In F<bricoalage.conf>:
+
+  LANGUAGE = pt_pt
 
 =head1 DESCRIPTION
 
-Translation to Portuguese using Lang::Maketext.
+Bricolage Portuguese translation.
 
 =cut
 
@@ -522,7 +520,7 @@ ClE<aacute>udio Valente <cvalente@co.sapo.pt>
 
 =head1 SEE ALSO
 
-NONE
+L<Bric::Util::Language|Bric::Util::Language>
 
 =cut
 
