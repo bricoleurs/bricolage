@@ -63,6 +63,10 @@ body {
 .whiteLabel  { font-size:10px; font-weight:bold; color:white}
 .description { font-size:10px; color:blue}
 .errorMsg    { font-size:12px; color:red; font-weight:bold}
+.statusMsg   { display: none; } /* Status messages are sent to the browser before the */
+                                /* stylesheet.  If this style ever gets applied, that */
+                                /* means there was an error and these messages should */
+                                /* be hidden. (See bug 751) */
 .radioLabel  { font-size:12px; font-weight:bold;}
 
 .adminTab       {background:#cc6633;  font-size:12px; color:white; font-weight:bold;}
