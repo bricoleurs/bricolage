@@ -109,6 +109,12 @@ Documented the support for passing C<%ARGS> to C<< $burner->display_element()
 >> in templates. It was added to Bric::Util::Burner::Mason a while ago, but I
 forgot to document it! Thanks to Mike Slattery for the spot. [David]
 
+=item *
+
+Added Crypt::SSLeay to the list of optional modules to be installed. This
+module is required for SOAP communications over SSL. So if you use SSL and you
+use the SOAP server, you'll want to install it. [David]
+
 =back
 
 =head1 VERSION 1.6.0
