@@ -232,11 +232,7 @@ div.debug dt:after {
     border-right: solid #999966 1px;
     border-bottom: solid #999966 1px;
     margin: 0px;
-}
-
-.desk_item .body p, dl {
-    margin: 0px;
-    padding: 0px;
+    clear: left;
 }
 
 .desk_item .body input {
@@ -248,6 +244,8 @@ div.debug dt:after {
 }
 
 .desk_item .body p {
+    margin: 0;
+    padding: 0;
     border-top: solid white 1px;
     line-height: 20px;
 }
@@ -264,6 +262,8 @@ div.debug dt:after {
 
 .desk_item .body ul.actions {
     margin: 0;
+    padding: 0;
+    list-style: none;
     border-top: solid white 1px;
 }
 
@@ -278,7 +278,8 @@ div.debug dt:after {
     float: left;
     border-right: solid #999966 1px;
     width: 62%;
-    margin-right: 3px;
+    margin: 0 3px 0 0;
+    padding: 0;
 }
 
 .desk_item .body dt, dd {

@@ -22,7 +22,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Added a missing space to the breadcrumb in the header. [Marshall Roch].
+Added a missing space to the breadcrumb in the header. [Marshall Roch]
 
 =item *
 
@@ -50,6 +50,11 @@ The new C<SFTP_MOVER_CIPHER> F<bricolage.conf> directive now actually works.
 =item *
 
 The group profile works again for element groups [David]
+
+=item *
+
+"Check In To" link misalignment fixed for Konqueror, as well as some other
+miscellaneous CSS fixes. [Marshall Roch]
 
 =back
 
