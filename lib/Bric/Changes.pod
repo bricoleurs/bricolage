@@ -87,7 +87,8 @@ The story, media, and template queries now use aggregates to create arrays of
 group IDs, instead of returning a separate row for each individual group
 ID. Since all story, media, and template objects are now returned in single
 rows instead of potentially many rows, this greatly cuts down on the overhead
-of fetching data from the database. Suggested by Josh Berkus. [David]
+of fetching data from the database. Suggested by Josh Berkus; implementation
+help from David Fetter. [David]
 
 =item *
 
