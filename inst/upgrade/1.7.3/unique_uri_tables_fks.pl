@@ -108,7 +108,7 @@ sub insert_story_uris {
                 $uri = Bric::Util::Trans::FS->cat_uri($uri, $fname);
             }
         }
-#        next if $seen{$uri}++;
+        next if $seen{$uri}++;
         execute($ins, $aid, $site_id, $uri);
     }
 }
