@@ -10,20 +10,20 @@ Bric::Util::DBD::mysql - Bricolage MySQL database adaptor
 
 =item Version
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =item Date
 
-$Date: 2003-08-01 04:49:54 $
+$Date: 2003-08-01 04:51:13 $
 
 =item CVS ID
 
-$Id: mysql.pm,v 1.1 2003-08-01 04:49:54 wheeler Exp $
+$Id: mysql.pm,v 1.2 2003-08-01 04:51:13 wheeler Exp $
 
 =back
 
@@ -53,7 +53,7 @@ use strict;
 # Programmatic Dependences
 use DBD::mysql;
 use Bric::Config qw(:dbi);
-use Bric::Util::Fault qw(throw_dp)
+use Bric::Util::Fault qw(throw_dp);
 
 ##############################################################################
 # Constants
