@@ -7,16 +7,16 @@ distributed.
 
 =head1 VERSION
 
-$Revision: 1.6.2.1 $
+$Revision: 1.6.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-01 03:49:53 $
+$Date: 2002-03-22 18:50:38 $
 
 =head1 SYNOPSIS
 
@@ -1487,7 +1487,7 @@ $get_em = sub {
 	    push @wheres, "server_type__id = ?";
 	    push @params, $v;
 	} elsif ($k eq 'active') {
-	    push @wheres, "s.active = ?";
+	    push @wheres, "active = ?";
 	    push @params, $v ? 1 : 0;
 	} else {
 	    push @wheres, "LOWER($k) LIKE ?";
