@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.14 $
+$Revision: 1.13.2.15 $
 
 =head1 DATE
 
-$Date: 2001-10-05 09:42:07 $
+$Date: 2001-10-05 09:53:07 $
 
 =head1 DESCRIPTION
 
@@ -232,8 +232,18 @@ for a workflow (since desks can be in multiple workflows).
 
 =item *
 
+Improve the formBuilder interface such that existing fields can be edited, and
+there is in general more control over how the fields are created [David].
+
+=item *
+
 Add new and/or custom form fields to the formBuilder (WHO request -- need more
-information on what exactly they want).
+information on what exactly they want). One important example is a "Relational"
+option, where the user can specify a link to another object in Bricolage, pick a
+field name for that object, and have it appear in a select list. For some
+objects, they may wish to narrow the field some (such as with categories -- only
+list subcategories of a given category). Perhaps we can somehow allow them to
+pass in arguments to list()? [David]
 
 =item *
 
@@ -319,10 +329,6 @@ Add support for Instant messaging (using Jabber server) in Alerts.
 =item *
 
 Add pagination to listManager (maybe).
-
-=item *
-
-Improved Attribute/Field editing and design.
 
 =item *
 
