@@ -247,7 +247,12 @@ Media type groups now properly display their members.
 
 The "Edit" link that showed up for categories associated with a story when the
 C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive has been removed. It
-didn't belong there in the first place.
+didn't belong there in the first place. Reported by Ho Yin Au. [David]
+
+=item *
+
+Simple search now works when it is selected when the "Default Search"
+preference is set to "Advanced". Reported by Marshall Roch. [David]
 
 =back
 

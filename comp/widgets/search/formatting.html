@@ -12,8 +12,9 @@ $use_form_tag
 my $agent = detect_agent();
 my $spacerRow = $agent->ie ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
 
-my $advanced_search = get_state_data($widget, 'advanced_search')
-  || get_pref('Default Search');
+my $advanced_search = get_state_data($widget, 'advanced_search');
+$advanced_search = get_pref('Default Search')
+  unless defined $advanced_search;
 my $sites = $c->get('__SITES__');
 
 unless ($sites) {
