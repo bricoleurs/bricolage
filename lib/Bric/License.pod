@@ -163,6 +163,8 @@ Folks who have submitted patches include:
 
 =item Josh Berkus
 
+=item Simon Myers
+
 =back
 
 Friends who have spotted bugs include:

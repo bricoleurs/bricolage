@@ -176,8 +176,9 @@ report from Patrick Walsh. [David]
 
 Queries for stories, media, and templates have been greatly optimized. Thanks
 to a large database from I<The Register> and query optimization from Josh
-Berkus (under sponsorship from WHO), searches for stories are now up to ten
-times faster than they were before. [David]
+Berkus (under sponsorship from WHO) and Simon Myers of GBDirect, searches for
+stories in the UI are now 10-40 times faster than they were before (depending
+on the version of PostgreSQL you're running). [David]
 
 =back
 
