@@ -414,7 +414,7 @@ B<Notes:> NONE.
 
 =item $b = $burner->set_comp_dir($comp_dir)
 
-Sets the data directory.
+Sets the component directory.
 
 B<Throws:> NONE.
 
