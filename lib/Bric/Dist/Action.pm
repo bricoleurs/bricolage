@@ -12,7 +12,7 @@ $Revision: 1.18 $
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 

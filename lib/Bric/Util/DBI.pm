@@ -13,7 +13,7 @@ $Revision: 1.50 $
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+use Bric; our $VERSION = Bric->VERSION;
 
 =pod
 

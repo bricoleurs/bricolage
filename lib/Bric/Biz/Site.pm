@@ -15,7 +15,7 @@ $Revision: 1.10 $
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+use Bric; our $VERSION = Bric->VERSION;
 
 =item Date
 

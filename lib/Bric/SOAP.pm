@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+use Bric; our $VERSION = Bric->VERSION;
 
 # load em' up
 use Bric::SOAP::Handler;

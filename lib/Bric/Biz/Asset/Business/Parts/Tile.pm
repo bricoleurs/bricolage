@@ -11,7 +11,7 @@ $Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
