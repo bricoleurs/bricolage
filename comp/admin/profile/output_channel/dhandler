@@ -58,7 +58,6 @@ if ($id || $no_edit) {
             );
 }
 
-
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Add pre/post fields to the specialCharacters array
@@ -159,11 +158,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.8.2.1 $
+$Revision: 1.8.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-07 23:52:09 $
+$Date: 2003-03-09 04:03:37 $
 
 =head1 SYNOPSIS
 
@@ -172,5 +171,7 @@ $Date: 2003-03-07 23:52:09 $
 =head1 DESCRIPTION
 
 This element displays output channel object profiles for editing.
+
+=cut
 
 </%doc>

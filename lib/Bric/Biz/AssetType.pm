@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.33.2.2 $
+$Revision: 1.33.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.33.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-05 18:48:02 $
+$Date: 2003-03-09 04:03:36 $
 
 =head1 SYNOPSIS
 
@@ -1577,7 +1577,7 @@ sub get_data {
     if ($field) {
 	# Return just the field they asked for.
 	$field = $make_key_name->($field);
-	my ($val) = grep($make_key_name->($_->get_name) eq $field, @all);
+	my ($val) = grep($_->get_key_name eq $field, @all);
 	return unless $val;
 	return $val;
     } else {
@@ -1831,7 +1831,7 @@ B<Notes:>
 
 NONE
 
-=cut 
+=cut
 
 sub add_containers {
     my $self = shift;
@@ -1839,7 +1839,7 @@ sub add_containers {
     my $grp = $self->_get_asset_type_grp;
 
     # Construct the proper array to pass to 'add_members'
-    my @mem = map {ref $_ ? {obj => $_} : 
+    my @mem = map {ref $_ ? {obj => $_} :
 		            {id  => $_, package => __PACKAGE__}} @$at;
 
     return unless $grp->add_members(\@mem);
@@ -1875,7 +1875,7 @@ sub get_containers {
     my @at = map { $_->get_object } @$mbs;
 
     if ($field) {
-	my ($val) = grep($make_key_name->($_->get_name) eq $field, @at);
+	my ($val) = grep($_->get_key_name eq $field, @at);
 	return unless $val;
 	return $val;
     } else {

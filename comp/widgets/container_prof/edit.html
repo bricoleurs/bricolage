@@ -411,7 +411,7 @@ foreach (@pos_data) {
     my $disp = $_->get_meta('html_info')->{disp};
     $elem_opts->{$key} = $disp;
     if ($_->get_quantifier()) {
-        push @$repeatable_opts, [$_->get_name(), $disp];
+        push @$repeatable_opts, [$_->get_key_name, $disp];
     }
 }
 push @$repeatable_opts, ['_super_bulk_edit', '- Super Bulk Edit -'];
@@ -448,7 +448,7 @@ my $repeatable_elem_opts = sub {
     foreach ($t->get_possible_data()) {
     if ($_->get_quantifier()) {
         # Pass the name with the tile ID as the value
-            push @opts, [$_->get_name(), $_->get_meta('html_info')->{disp}];
+            push @opts, [$_->get_key_name, $_->get_meta('html_info')->{disp}];
     }
     }
 

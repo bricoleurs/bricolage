@@ -558,7 +558,7 @@ my $save_data = sub {
     $tile->save;
 
     # Grab only the tiles that have the name $field
-    my @dtiles = grep($_->get_name eq $field, $tile->get_tiles());
+    my @dtiles = grep($_->get_key_name eq $field, $tile->get_tiles());
 
     set_state_data($widget, 'dtiles', \@dtiles);
 };
@@ -585,10 +585,7 @@ my $super_save_data = sub {
     # Arrange these tiles by type
     my $tpool;
     while (my $t = shift @$dtiles) {
-        my $name = lc($t->get_name);
-        $name =~ y/a-z0-9/_/cs;
-
-        push @{$tpool->{$name}}, $t;
+        push @{$tpool->{$t->get_key_name}}, $t;
     }
 
     # Fill the data into the objects in our tpool
@@ -639,9 +636,7 @@ my $super_save_data = sub {
             my $atd = $at->get_data($n);
 
             if ($atd->get_required) {
-                unless (grep { $_ eq $n } map {my $n = lc($_->get_name);
-                                               $n =~ y/a-z0-9/_/cs;
-                                               $n} @$dtiles) {
+                unless (grep { $_->get_key_name eq $n } @$dtiles) {
                     add_msg($lang->maketext("Note: Data element [_1] is required and cannot ".
                             "be completely removed.  Will delete all but one","'$n'"));
                     push @$dtiles, shift @$p;
@@ -767,16 +762,12 @@ my $split_super_bulk = sub {
 
     # Create hash of possible names from the data elements
     foreach my $p ($at->get_data) {
-        my $name = lc($p->get_name);
-        $name =~ y/a-z0-9/_/cs;
-        $poss_names{$name} = 'd';
+        $poss_names{$p->get_key_name} = 'd';
     }
 
     # Add to the hash of possible names with container elements
     foreach my $p ($at->get_containers) {
-        my $name = lc($p->get_name);
-        $name =~ y/a-z0-9/_/cs;
-        $poss_names{$name} = 'c';
+        $poss_names{$p->get_key_name} = 'c';
     }
 
     # A checked text accumulator, and the element type for that text
@@ -931,7 +922,7 @@ my $handle_bulk_edit_this = sub {
     # Save the bulk edit field name
     set_state_data($widget, 'field', $be_field);
     # Note that we are just 'flipping' the current view of this tile.  That is,
-    # its the same tile, same data, but different view of it.
+    # it's the same tile, same data, but different view of it.
     set_state_data($widget, 'view_flip', 1);
 
     my $state_name = $be_field eq '_super_bulk_edit' ? 'edit_super_bulk'
