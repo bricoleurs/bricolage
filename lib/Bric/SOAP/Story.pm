@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.59 $ )[-1];
+our $VERSION = (qw$Revision: 1.60 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-23 18:24:07 $
+$Date: 2004-03-23 18:27:35 $
 
 =head1 SYNOPSIS
 
@@ -795,7 +795,7 @@ sub load_asset {
             # It's a normal story.
             unless ($selems{$sdata->{element}}) {
                 my $e = (Bric::Biz::AssetType->list
-                         ({ name => $sdata->{element}, media => 0 }))[0]
+                         ({ key_name => $sdata->{element}, media => 0 }))[0]
                            or throw_ap(error => __PACKAGE__ . "::create : no story"
                                          . " element found matching (element => "
                                          . "\"$sdata->{element}\")");
