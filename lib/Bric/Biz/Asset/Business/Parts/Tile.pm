@@ -8,15 +8,15 @@ Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-15 16:39:54 $
+$Date: 2004-01-15 17:33:30 $
 
 =head1 SYNOPSIS
 
@@ -549,8 +549,12 @@ NONE
 
 sub get_parent {
     my $self = shift;
-    my $pid = $self->_get('parent_id') or return;
-    Bric::Biz::Asset::Business::Parts::Tile::Container->lookup({ id => $pid });
+    my ($pid, $ot) = $self->_get(qw(parent_id object_type));
+    return unless $pid && $ot;
+    Bric::Biz::Asset::Business::Parts::Tile::Container->lookup({
+        id          => $pid,
+        object_type => $ot,
+    });
 }
 
 ################################################################################
