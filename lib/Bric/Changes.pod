@@ -22,10 +22,6 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Added a missing space to the breadcrumb in the header. [Marshall Roch]
-
-=item *
-
 The F<inst/upgrade/1.7.0/data_tile_key_name.pl> upgrade script now skips
 upgrading "key_name" if it would be no different than "name". This can save a
 lot of time during upgrade if your database is large. [Scott]
@@ -51,11 +47,24 @@ HTML, CSS, and JavaScript fixes that allow Bricolage to work properly with
 most browsers, including Safari 1.2.1, IE 5.2/Mac, Konqueror, Opera 7, and
 many others. [Marshall Roch]
 
+=item *
+
+Added stubs for zh-hk localization. [David]
+
+=item *
+
+Added missing localizations to the Language preference. Many of these are not
+yet translated, but there they are. [David]
+
 =back
 
 =head2 Bug Fixes
 
 =over 4
+
+=item *
+
+Added a missing space to the breadcrumb in the header. [Marshall Roch]
 
 =item *
 

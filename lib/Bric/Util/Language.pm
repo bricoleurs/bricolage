@@ -7,15 +7,15 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.22.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.22.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-04 16:01:48 $
+$Date: 2004-04-30 00:45:39 $
 
 =head1 SYNOPSIS
 
@@ -84,9 +84,9 @@ constant C<key> to your new subclass and have it return the key.
 
 =item *
 
-Copy the localization messages from Bric::Util::Language::pt_pt into your new
-subclass and change the Portuguese translations of the English words and
-phrases into your languages. Be sure to use the UTF-8 character set.
+Copy the localization messages from Bric::Util::Language::de_de into your new
+subclass and change the German translations of the English words and phrases
+into your language. Be sure to use the UTF-8 character set.
 
 =item *
 

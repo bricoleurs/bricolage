@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
--- VERSION: $Revision: 1.7 $
+-- VERSION: $Revision: 1.7.2.1 $
 --
--- $Date: 2004-01-27 11:15:37 $
+-- $Date: 2004-04-30 00:45:40 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)
@@ -1573,6 +1573,33 @@ VALUES (15, 'pt_pt', 'pt_pt');
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (15, 'zh_tw', 'zh_tw');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'zh_cn', 'zh_cn');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'zh_hk', 'zh_hk');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'bo', 'bo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'km', 'km');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'ko_ko', 'ko_ko');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'lo', 'lo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'my', 'my');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'ug', 'ug');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'vi_vn', 'vi_vn');
 
 -- Filter search results by site
 
