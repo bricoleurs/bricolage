@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.2.2.3 $
+$Revision: 1.2.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-15 21:16:33 $
+$Date: 2001-12-10 19:31:33 $
 
 =head1 SYNOPSIS
 
@@ -153,8 +153,6 @@ my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 =head2 Public Class Methods
 
-=cut
-
 sub set_debug_cookie {
     my ($val) = @_;
 
@@ -175,6 +173,8 @@ sub get_debug_cookie {
 	return;
     }
 }
+
+=cut
 
 #------------------------------------------------------------------------------#
 
