@@ -691,8 +691,8 @@ you've just released 1.10.0, then you'll need to create a new "1.10" section
 and add a link to it on the documentation page of the Web site.
 
 The documentation is generated with the F<pod_browser> script, which is in the
-"distutils" directory in Subversion. Read its instructions carefully, and then
-generate the documentation on the Web server.
+F<distutils/PodBrowser> in Subversion. Read its instructions carefully, and
+then generate the documentation on the Web server.
 
 =head2 Where to Send Notices
 
