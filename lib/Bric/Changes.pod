@@ -22,6 +22,10 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Slight fix to handle bad FTP clients that try and use directories and files. [Arthur]
+
+=item *
+
 Added Template Toolkit burner support. [Arthur / Fotango]
 
 =item *

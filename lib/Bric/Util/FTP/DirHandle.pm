@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-09-18 01:17:06 $
+$Date: 2003-10-01 16:50:58 $
 
 =head1 DESCRIPTION
 
@@ -600,6 +600,11 @@ used to forget stale values.
 sub _forget_cats {
   our $CATS;
   undef($CATS);
+}
+
+sub dir {
+    my $self = shift;
+    return $self;
 }
 
 
