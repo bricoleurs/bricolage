@@ -7,15 +7,15 @@ Bric::Util::Burner::TemplateToolkit - Bric::Util::Burner subclass to publish bus
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:52 $
+$Date: 2004-01-14 20:01:22 $
 
 =head1 SYNOPSIS
 
@@ -251,12 +251,8 @@ sub burn_one {
 	my @cats = map { $_->get_directory } $self->get_cat->ancestry;
 	my $tmpl_name = $element->get_key_name . '.tt';
         do {
-	    # if the file exists, return it
-#	    print STDERR "Trying: ", join('/',@cats),"\n";
-
 	    foreach my $troot (@$template_roots) {
 		my $path = $fs->cat_dir($troot, @cats, $tmpl_name);
-#		print STDERR "\t$path\n";
 		if(-e $path) {
 		    $template = $path;
 		    goto LABEL;
@@ -320,7 +316,8 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> This method has not yet been implemented for Template Toolkit
+templates. For the time being, it always returns success.
 
 =cut
 
@@ -518,7 +515,6 @@ sub display_element {
     my $data = '';
     # Call another element if this is a container otherwise output the data.
 
-
     if ($elem->is_container) {
         my $tt = $self->_get('_tt');
 
@@ -527,7 +523,6 @@ sub display_element {
         $self->_push_element($elem);
 
         my $template = $self->_load_template_element($elem);
-	print STDERR "Including $template\n";
 	$data .= $tt->context->include($template, {
 	    'element' => $elem,
 	});
@@ -561,76 +556,6 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
-
-#------------------------------------------------------------------------------#
-
-=item $success = $b->chain_next()
-
-This method can be used in an autohandler template. It calls the next template
-in the chain, whether its the next autohandler down the line or the template
-itself.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:>
-
-This is a wrapper around masons 'call_next' method. We wrap it here to make sure
-we have control over the burn process at this level if we need it. It also gives
-us the opportunity to tailor the verbiage to suit our application better.
-
-=cut
-
-sub chain_next {
-    my $self = shift;
-    HTML::Mason::Request->instance->call_next(@_);
-}
-
-#------------------------------------------------------------------------------#
-
-=item $success = $b->end_page;
-
-Writes out the current page and starts a new one.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Unable to open file for writing.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub end_page {
-    my $self = shift;
-
-    my ($page, $buf) = $self->_get(qw(page _buf));
-    my $file = $self->page_filepath(++$page);
-    my $uri  = $self->page_uri($page);
-
-    # Save the page we've created so far.
-    open(OUT, ">$file")
-      or throw_gen error => "Unable to open '$file' for writing",
-                   payload => $!;
-    print OUT $$buf;
-    close(OUT);
-
-    # Add a resource to the job object.
-    $self->_add_resource($file, $uri);
-
-    # Clear the output buffer.
-    $$buf = '';
-    # Increment the page number
-    $self->_set(['page'], [$page]);
-}
 
 #==============================================================================#
 
