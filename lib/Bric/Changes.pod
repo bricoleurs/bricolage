@@ -95,6 +95,10 @@ the vast majority of cases.
 Fixed error looking up alert types in the dataase, which affected the alert
 type manager on some platforms. Reported by Radu Greab. [David]
 
+=item *
+
+Deactivated alert types are once again available via the UI. [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

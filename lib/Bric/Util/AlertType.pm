@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.13.2.2 $
+$Revision: 1.13.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-09 22:10:15 $
+$Date: 2003-08-10 16:02:53 $
 
 =head1 SYNOPSIS
 
@@ -151,7 +151,6 @@ my $map_table = $table . "_$mem_table";
 
 my %map = (id            => 'id',
            active        => 'active',
-           del           => 'del',
            event_type_id => 'event_type__id',
            owner_id      => 'usr__id');
 my $meths;
@@ -351,10 +350,6 @@ message
 =item *
 
 active
-
-=item *
-
-del
 
 =back
 
@@ -2541,6 +2536,8 @@ $get_em = sub {
     my $tables = "$table a, $mem_table m, $map_table c";
     my @wheres = ('a.id = c.object_id','c.member__id = m.id',
                   'm.active = 1');
+    push @wheres, "a.del = 0" unless exists $params->{id};
+
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($map{$k}) {
