@@ -6,8 +6,17 @@
 &>
 <form method="post" action="<% $r->uri %>" name="cont_profile" onSubmit="return confirmChanges(this)">
 <%perl>;
-
-$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'element_id')  if defined $id;
+if (defined $id) {
+    $m->comp('/widgets/profile/hidden.mc',
+             value => $id,
+             name  => 'element_id');
+} else {
+    if (my $site_cx_id = $c->get_user_cx(get_user_id)) {
+        $m->comp('/widgets/profile/hidden.mc',
+                 value => $site_cx_id,
+                 name  => 'formBuilder|add_site_id_cb');
+    }
+}
 
 my ($num_fields, $meta, $all, $num);
 
@@ -322,11 +331,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =head1 DATE
 
-$Date: 2004-01-27 02:52:22 $
+$Date: 2004-03-09 17:01:09 $
 
 =head1 DESCRIPTION
 

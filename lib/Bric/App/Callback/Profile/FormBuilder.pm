@@ -266,8 +266,8 @@ $do_element = sub {
     # Add output channels.
     $obj->add_output_channel($self->value) if $cb_key eq 'add_oc_id';
 
-    # Add sites
-    if ($cb_key eq 'add_site_id') {
+    # Add sites, if it's a top-level element.
+    if ($cb_key eq 'add_site_id' && $obj->get_top_level) {
         my $site_id = $self->value;
         # Only add the site if it has associated output channels.
         if (my $oc_id =

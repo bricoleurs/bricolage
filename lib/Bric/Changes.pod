@@ -89,6 +89,12 @@ Added the C<ENABLE_OC_ASSET_ASSOCIATION> F<bricolage.conf> directive
 to remove the ability to associate output channels from the story
 and media profiles. [Scott]
 
+=item *
+
+The element admin profile now automatically addes the currently selected site
+context to new elements, thus generally saving a step when creating new
+elements. [JoE<atilde>o Pedro]
+
 =back
 
 =head2 Bug Fixes
@@ -357,7 +363,7 @@ The de-de localization library has been fixed so that it now works. [David]
 =item *
 
 Filter by site context now works. 'All sites' context now returns results from
-all sites instead of none. [Joao Pedro]
+all sites instead of none. [JoE<atilde>o Pedro]
 
 =item *
 
@@ -371,8 +377,8 @@ lists. [Scott & David]
 
 =item *
 
-Fixed Template Element list, where container elements appeared twice. [Joao
-Pedro]
+Fixed Template Element list, where container elements appeared twice.
+[JoE<atilde>o Pedro]
 
 =item *
 
