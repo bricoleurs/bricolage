@@ -103,7 +103,15 @@ The element's type.
 
 =item top_level
 
-set to 1 to return only top-level elements
+Set to 1 to return only top-level elements.
+
+=item site
+
+NOT YET IMPLEMENTED. COMING SOON.
+
+=item active
+
+Set to 0 to return inactive as well as active elements.
 
 =back
 
@@ -345,7 +353,8 @@ sub is_allowed_param {
     my $module = $pkg->module;
 
     my $allowed = {
-        list_ids => { map { $_ => 1 } qw(name description output_channel type top_level) },
+        list_ids => { map { $_ => 1 } qw(name description output_channel type
+                                         top_level active) },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
         create   => { map { $_ => 1 } qw(document) },
         update   => { map { $_ => 1 } qw(document update_ids) },
