@@ -165,6 +165,8 @@ Folks who have submitted patches include:
 
 =item Simon Myers
 
+=item Serge Sozonoff
+
 =back
 
 Friends who have spotted bugs include:

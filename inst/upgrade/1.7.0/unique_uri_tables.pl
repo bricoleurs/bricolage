@@ -15,7 +15,7 @@ my ($aid, $uri, $ocname, $type, $rolled_back);
 for $type (qw(story media)) {
     next if test_table "$type\_uri";
 
-    # Create the table, indices, and constraints.
+    # Create the table.
     do_sql
       qq{CREATE TABLE $type\_uri (
            $type\__id NUMERIC(10)    NOT NULL,

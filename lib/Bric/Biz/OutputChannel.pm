@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-27 11:15:38 $
+$Date: 2004-02-18 12:28:04 $
 
 =head1 SYNOPSIS
 
@@ -814,7 +814,7 @@ sub my_meths {
                              get_args => [],
                              set_meth => sub { shift->set_pre_path(@_) },
                              set_args => [],
-                             disp     => 'Pre',
+                             disp     => 'URI Prefix',
                              len      => 64,
                              req      => 0,
                              type     => 'short',
@@ -829,7 +829,7 @@ sub my_meths {
                              get_args => [],
                              set_meth => sub { shift->set_post_path(@_) },
                              set_args => [],
-                             disp     => 'Post',
+                             disp     => 'URI Suffix',
                              len      => 64,
                              req      => 0,
                              type     => 'short',

@@ -64,8 +64,8 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Add pre/post fields to the specialCharacters array
 $m->out(q{<script language="javascript">
-specialCharacterFields["pre_path"]  = "Pre";
-specialCharacterFields["post_path"] = "Post";
+specialCharacterFields["pre_path"]  = "URI Prefix";
+specialCharacterFields["post_path"] = "URI Sufix";
 </script>
 });
 
@@ -174,11 +174,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2003-10-30 02:12:22 $
+$Date: 2004-02-18 12:28:03 $
 
 =head1 SYNOPSIS
 
