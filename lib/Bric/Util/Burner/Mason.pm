@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-25 23:25:59 $
+$Date: 2003-11-04 01:02:04 $
 
 =head1 SYNOPSIS
 
@@ -206,8 +206,9 @@ sub burn_one {
     foreach my $inc ($oc, $oc->get_includes) {
         my $inc_dir = "oc_" . $inc->get_id;
 
-        push @$comp_root, [ 'sandbox' . $inc_dir => $fs->cat_dir($self->get_sandbox_dir, $inc_dir ) ] 
-            if $self->get_sandbox_dir;
+        push @$comp_root, [ 'sandbox' . $inc_dir => $fs->cat_dir(
+            $self->get_sandbox_dir, $inc_dir ) ]
+          if $self->get_sandbox_dir;
 
         push @$comp_root, [ $inc_dir => $fs->cat_dir($comp_dir, $inc_dir) ];
     }
@@ -225,17 +226,20 @@ sub burn_one {
         }
     }
 
+    my $element = $ba->get_tile;
+    $self->_push_element($element);
 
+    # Get the template name. Because this is a top-level Element, it functions
+    # as the dhandler, as far as Mason is concerned.
+    my $tmpl_name = $element->get_key_name . '.mc';
 
     # Create the interpreter
     my $interp = HTML::Mason::Interp->new($self->_interp_args,
-                                          'comp_root'  => $comp_root,
-                                          'data_dir'   => $self->get_data_dir,
-                                          'out_method' => \$outbuf,
+                                          comp_root     => $comp_root,
+                                          data_dir      => $self->get_data_dir,
+                                          out_method    => \$outbuf,
+                                          dhandler_name => $tmpl_name
                                          );
-
-    my $element = $ba->get_tile;
-    $self->_push_element($element);
 
     # Set some global variables to be passed in.
     $interp->set_global('$story',   $ba);
@@ -253,27 +257,13 @@ sub burn_one {
         $self->_set(['_writer'], [$writer]);
     }
 
-    # Get the template name. Because this is a top-level Element, we don't want
-    # to look far for its corresponding template.
-    my $tmpl_path = $cat->ancestry_path;
-    my $tmpl_name = $element->get_key_name;
-    my $template = $fs->cat_uri($tmpl_path, $tmpl_name);
-    if ( $interp->comp_exists($template . '.mc') ) {
-        # The top-level .mc template exits.
-        $template .= '.mc';
-    } else {
-        # If we're in here, there's no top-level .mc template. So create a
-        # dhandler for it if there isn't one already.
-        _create_dhandler($comp_root, $oc, $cat, $tmpl_name)
-          unless $interp->comp_exists($fs->cat_uri($tmpl_path, 'dhandler'));
-    }
-
     while (1) {
         # Run the biz asset through the template
-        eval { $retval = $interp->exec($template) if $template };
+        eval { $retval = $interp->exec($cat->get_uri) };
         if (my $err = $@) {
             rethrow_exception($err) if isa_exception($err);
-            throw_burn_error error   => "Error executing '$template'",
+            throw_burn_error error   => "Error executing '$tmpl_name' in "
+                                        . $cat->get_uri,
                              payload => $err,
                              mode    => $self->get_mode,
                              oc      => $self->get_oc->get_name,
@@ -847,50 +837,6 @@ sub _render_element {
 =head2 Private Functions
 
 =over 4
-
-=item _create_dhandler($comp_root, $oc, $cat, $tmpl_name)
-
-Creates a top-level dhandler. This dhandler, when executed, will find the proper
-template in its URI hierarchy. The reason we create this dhandler is to ensure
-that a mason component gets executed at the end of the URI hierarchy, so that
-all the corresponding autohandlers will also be executed properly.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _create_dhandler {
-    my ($comp_root, $oc, $cat, $tmpl_name) = @_;
-    # The complete path on the file system sans the filename.
-    my $path = $fs->cat_dir($comp_root->[0][1],
-                            $fs->uri_to_dir($cat->ancestry_path));
-
-    # The complete path on the file system including the filename.
-    my $file = $fs->cat_dir($path, 'dhandler');
-
-    # Create the necessary directories
-    $fs->mk_path($path);
-
-    # Now just write it out to the file system.
-    open(DH, ">$file")
-      or throw_gen error => "Unable to open '$file' for writing",
-                   payload => $!;
-    print DH q{<%init>;
-my $template = $burner->find_template($m->current_comp->dir_path,
-                                      $m->dhandler_arg . '.mc')
-  or $burner->throw_error("Unable to find template '"
-                          . $m->dhandler_arg . "\.mc'");
-$m->comp($template);
-</%init>
-};
-        close(DH);
-}
-
-##############################################################################
 
 =item _interp_args()
 
