@@ -131,6 +131,11 @@ With this:
 
 And is more efficient, too. [David]
 
+=item *
+
+The C<ANY()> subroutine will now throw an exception if no arguments are passed
+to it. Suggested by Dave Rolsky. [David]
+
 =back
 
 =head2 Bug Fixes

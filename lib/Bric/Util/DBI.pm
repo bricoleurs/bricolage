@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-27 04:25:52 $
+$Date: 2004-03-10 23:59:12 $
 
 =head1 SYNOPSIS
 
@@ -304,9 +304,24 @@ NONE.
 Use this function when you want to perform a query comparing more than one
 value, and you want objects returned that match any of the values passed.
 
+B<Throws:>
+
+=over 4
+
+=item No parameters passed to ANY()"
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
 =cut
 
-sub ANY { bless \@_, 'Bric::Util::DBI::ANY' }
+sub ANY {
+    throw_da "No parameters passed to ANY()" unless @_;
+    bless \@_, 'Bric::Util::DBI::ANY';
+}
 
 =item my $bool = is_num(@values)
 
