@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -18,11 +18,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2002-02-22 23:54:13 $
+$Date: 2002-02-28 19:37:37 $
 
 =head1 SYNOPSIS
 
@@ -616,9 +616,87 @@ The XSD source:
 	   </xs:complexType>
 	 </xs:element>
 	 <xs:element name="element" minOccurs="0" maxOccurs="unbounded">
-	   <xs:annotation>
-	     <xs:documentation>TODO</xs:documentation>
-	   </xs:annotation>
+	   <xs:complexType>
+	     <xs:sequence>
+	       <xs:element name="name">
+		 <xs:simpleType>
+		   <xs:restriction base="xs:string">
+		     <xs:maxLength value="64"/>
+		   </xs:restriction>
+		 </xs:simpleType>
+	       </xs:element>
+	       <xs:element name="description">
+		 <xs:simpleType>
+		   <xs:restriction base="xs:string">
+		     <xs:maxLength value="256"/>
+		   </xs:restriction>
+		 </xs:simpleType>
+	       </xs:element>
+	       <xs:element name="burner">
+		 <xs:simpleType>
+		   <xs:restriction base="xs:string"/>
+		 </xs:simpleType>
+	       </xs:element>
+	       <xs:element name="type">
+		 <xs:simpleType>
+		   <xs:restriction base="xs:string"/>
+		 </xs:simpleType>
+	       </xs:element>
+	       <xs:element name="output_channels" minOccurs="0">
+		 <xs:complexType>
+		   <xs:sequence>
+		     <xs:element name="output_channel" maxOccurs="unbounded">
+		       <xs:complexType>
+			 <xs:simpleContent>
+			   <xs:extension base="xs:string">
+			     <xs:attribute name="primary" type="xs:boolean" use="optional"/>
+			   </xs:extension>
+			 </xs:simpleContent>
+		       </xs:complexType>
+		     </xs:element>
+		   </xs:sequence>
+		 </xs:complexType>
+	       </xs:element>
+	       <xs:element name="subelements">
+		 <xs:complexType>
+		   <xs:sequence>
+		     <xs:element name="subelement" minOccurs="0" maxOccurs="unbounded">
+		       <xs:simpleType>
+			 <xs:restriction base="xs:string">
+			   <xs:maxLength value="64"/>
+			 </xs:restriction>
+		       </xs:simpleType>
+		     </xs:element>
+		   </xs:sequence>
+		 </xs:complexType>
+	       </xs:element>
+	       <xs:element name="fields">
+		 <xs:complexType>
+		   <xs:sequence>
+		     <xs:element name="field" minOccurs="0" maxOccurs="unbounded">
+		       <xs:complexType>
+			 <xs:sequence>
+			   <xs:element name="type" type="xs:string"/>
+			   <xs:element name="name" type="xs:string"/>
+			   <xs:element name="label" type="xs:string"/>
+			   <xs:element name="required" type="xs:boolean"/>
+			   <xs:element name="repeatable" type="xs:boolean"/>
+			   <xs:element name="default" type="xs:string" minOccurs="0"/>
+			   <xs:element name="options" type="xs:string" minOccurs="0"/>
+			   <xs:element name="multiple" type="xs:boolean" minOccurs="0"/>
+			   <xs:element name="size" type="xs:int" minOccurs="0"/>
+			   <xs:element name="max_size" type="xs:int" minOccurs="0"/>
+			   <xs:element name="rows" type="xs:int" minOccurs="0"/>
+			   <xs:element name="cols" type="xs:int" minOccurs="0"/>
+			 </xs:sequence>
+		       </xs:complexType>
+		     </xs:element>
+		   </xs:sequence>
+		 </xs:complexType>
+	       </xs:element>
+	     </xs:sequence>
+	     <xs:attribute name="id" type="xs:integer" use="required"/>
+	   </xs:complexType>
 	 </xs:element>
        </xs:sequence>
      </xs:complexType>
@@ -653,6 +731,7 @@ The XSD source:
      <xs:attribute name="relative" type="xs:boolean" use="optional"/>
    </xs:complexType>
  </xs:schema>
+
 
 =head2 Example Asset Documents
 
@@ -690,7 +769,7 @@ Here's a simple story with some keywords and no contributors:
     </container>
    </elements>
   </story>
-
+ 
 =head2 Example Clients
 
 A few example clients will be developed.
