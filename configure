@@ -2554,16 +2554,36 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2557: checking for CPAN module Apache::Session 1.53" >&5
+ echo "$as_me:2557: checking for CPAN module Net::FTPServer " >&5
+echo $ECHO_N "checking for CPAN module Net::FTPServer ... $ECHO_C" >&6
+ #
+ # use perl itself to check for the module
+ #
+ if perl -e "use Net::FTPServer " 2>/dev/null ;then
+    echo "$as_me:2563: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:2566: result: no" >&5
+echo "${ECHO_T}no" >&6
+    if test -z "${MISSING_MOD}" ; then
+        NEW_LIST="Net::FTPServer" ;
+    else
+        NEW_LIST="${MISSING_MOD} Net::FTPServer";
+    fi
+    MISSING_MOD=$NEW_LIST
+
+ fi
+
+ echo "$as_me:2577: checking for CPAN module Apache::Session 1.53" >&5
 echo $ECHO_N "checking for CPAN module Apache::Session 1.53... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Apache::Session 1.53" 2>/dev/null ;then
-    echo "$as_me:2563: result: yes" >&5
+    echo "$as_me:2583: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2566: result: no" >&5
+    echo "$as_me:2586: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Apache::Session" ;
@@ -2574,16 +2594,19 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2577: checking for CPAN module Apache::libapreq " >&5
+# Apache::libapreq does not define $Apache::libapreq::VERSION
+# so we can't check for it here
+
+ echo "$as_me:2600: checking for CPAN module Apache::libapreq " >&5
 echo $ECHO_N "checking for CPAN module Apache::libapreq ... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Apache::libapreq " 2>/dev/null ;then
-    echo "$as_me:2583: result: yes" >&5
+    echo "$as_me:2606: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2586: result: no" >&5
+    echo "$as_me:2609: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Apache::libapreq" ;
@@ -2707,7 +2730,7 @@ if cmp -s $cache_file confcache; then :; else
 fi
 rm -f confcache
 
-  echo "$as_me:2710: checking whether we will wave the PG_ROOT_PASS requirement" >&5
+  echo "$as_me:2733: checking whether we will wave the PG_ROOT_PASS requirement" >&5
 echo $ECHO_N "checking whether we will wave the PG_ROOT_PASS requirement... $ECHO_C" >&6
 
 # Check whether --with-no-pgroot-pass or --without-no-pgroot-pass was given.
@@ -2716,24 +2739,24 @@ if test "${with_no_pgroot_pass+set}" = set; then
 
       if test "$withval" = "yes" ;then
 		PG_NO_PASS="true"
-		echo "$as_me:2719: result: yes" >&5
+		echo "$as_me:2742: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 	  else
 		PG_NO_PASS="false"
-		echo "$as_me:2723: result: no" >&5
+		echo "$as_me:2746: result: no" >&5
 echo "${ECHO_T}no" >&6
 	  fi
 
 else
 
 	  PG_NO_PASS="false"
-	  echo "$as_me:2730: result: no" >&5
+	  echo "$as_me:2753: result: no" >&5
 echo "${ECHO_T}no" >&6
 
 fi;
 
   if test "${PG_NO_PASS}" = "false" ;then
-	{ { echo "$as_me:2736: error:
+	{ { echo "$as_me:2759: error:
 
     You must define PG_ROOT_PASS
 
@@ -2757,7 +2780,7 @@ echo "$as_me: error:
 # write out the makefiles
 # TODO: The files here that aren't makefiles should eventually
 # 		be handled by make, this is cheating in a way
-ac_config_files="$ac_config_files Makefile doc/Makefile install/bric.sql conf/bricolage.tmp.conf"
+ac_config_files="$ac_config_files Makefile doc/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -2868,7 +2891,7 @@ rm -f confdef2opt.sed
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:2871: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:2894: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -3035,7 +3058,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:3038: error: ambiguous option: $1
+    { { echo "$as_me:3061: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -3054,7 +3077,7 @@ Try \`$0 --help' for more information." >&2;}
     ac_need_defaults=false;;
 
   # This is an error.
-  -*) { { echo "$as_me:3057: error: unrecognized option: $1
+  -*) { { echo "$as_me:3080: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -3091,9 +3114,7 @@ do
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
-  "install/bric.sql" ) CONFIG_FILES="$CONFIG_FILES install/bric.sql" ;;
-  "conf/bricolage.tmp.conf" ) CONFIG_FILES="$CONFIG_FILES conf/bricolage.tmp.conf" ;;
-  *) { { echo "$as_me:3096: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:3117: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -3319,7 +3340,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:3322: creating $ac_file" >&5
+    { echo "$as_me:3343: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -3337,7 +3358,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:3340: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:3361: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -3350,7 +3371,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:3353: error: cannot find input file: $f" >&5
+           { { echo "$as_me:3374: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;

@@ -113,9 +113,10 @@ CHECK_CPAN_MODULE(MISSING_MOD, MLDBM, 2.00)
 CHECK_CPAN_MODULE(MISSING_MOD, Params::Validate, 0.04)
 CHECK_CPAN_MODULE(MISSING_MOD, HTML::Mason, 1.03)
 CHECK_CPAN_MODULE(MISSING_MOD, DBD::Pg, 1.00)
+CHECK_CPAN_MODULE(MISSING_MOD, Net::FTPServer)
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::Session, 1.53)
-dnl Apache::libapreq does not define $Apache::libapreq::VERSION
-dnl so we can't check for it here
+# Apache::libapreq does not define $Apache::libapreq::VERSION
+# so we can't check for it here
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::libapreq) 
 AC_CACHE_SAVE
 
@@ -131,5 +132,5 @@ AC_SUBST(VERSION)
 # write out the makefiles
 # TODO: The files here that aren't makefiles should eventually
 # 		be handled by make, this is cheating in a way
-AC_CONFIG_FILES([Makefile doc/Makefile inst/bric.sql conf/bricolage.tmp.conf])
+AC_CONFIG_FILES([Makefile doc/Makefile])
 AC_OUTPUT
