@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-30 19:14:29 $
+$Date: 2002-11-05 18:52:19 $
 
 =head1 SYNOPSIS
 
@@ -817,7 +817,9 @@ NONE
 # converted to carry their group Ids around with them it will be possible
 # to remove Bric->get_grp_ids() so this will no longer be necessary.
 sub get_grp_ids {
-    wantarray ? @{ $_[0]->_get('grp_ids') } : $_[0]->_get('grp_ids')
+    my $self = shift;
+    return INSTANCE_GROUP_ID unless ref $self and $self->_get('id');
+    wantarray ? @{ $self->_get('grp_ids') } : $self->_get('grp_ids')
 }
 
 #------------------------------------------------------------------------------#
