@@ -5,16 +5,16 @@
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.1 $
+$Revision: 1.1.1.1.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-11-05 19:50:47 $
+$Date: 2001-11-05 20:02:50 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -54,6 +54,7 @@ $formName               => "theForm"
 $addCallbackCaption     => "Add to Form"
 $addCallback            => "formBuilder|add_cb"
 $saveCallback           => "formBuilder|save_cb"
+$stayCallback           => "formBuilder|save_n_stay_cb"
 $saveCallbackCaption    => "Save"
 $num                    => 2
 $caption                => "Create new data field"
@@ -117,6 +118,7 @@ if ($numFields != -1) {
 <input type=hidden name=fb_allowMultiple value=''>
 <input type=hidden name=<% $addCallback %> value=0>
 <input type=hidden name=<% $saveCallback %> value=0>
+<input type=hidden name=<% $stayCallback %> value=0>
 <input type=hidden name=delete value=0>
 
 % # close the current form context
