@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.58 $
+$Revision: 1.58.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58 $ )[-1];
+our $VERSION = (qw$Revision: 1.58.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-12 15:52:53 $
+$Date: 2003-03-24 21:26:54 $
 
 =head1 SYNOPSIS
 
@@ -436,8 +436,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                            'data', 'media');
 
     # The minimum login name and password lengths users can enter.
-    use constant LOGIN_LENGTH            => $config->{LOGIN_LENGTH} || 6;
-    use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 6;
+    use constant LOGIN_LENGTH            => $config->{LOGIN_LENGTH} || 5;
+    use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 5;
 
     # Error Page Setting.
     use constant ERROR_URI => (QA_MODE) ? '/errors/error.html' : '/errors/500.mc';

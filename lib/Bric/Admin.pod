@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.98.2.2 $
+$Revision: 1.98.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-23 19:39:03 $
+$Date: 2003-03-24 21:26:54 $
 
 =head1 DESCRIPTION
 
@@ -1183,12 +1183,12 @@ Defaults to the following string if not specified:
 =item *
 
 B<LOGIN_LENGTH:> The minimum length of login name allowed to users. Defaults to
-"6" if not specified.
+"5" if not specified.
 
 =item *
 
 B<PASSWD_LENGTH:> The minimum length of password allowed to users. Note that
-passwords can be of infinite length. Defaults to "6" if not specified.
+passwords can be of infinite length. Defaults to "5" if not specified.
 
 =back
 

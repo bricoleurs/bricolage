@@ -16,6 +16,19 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.5.1
 
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+The default required length for usernames and passwords has been chnaged from
+6 to 5. This is to make dealing with the default "admin" login easier.
+
+=back
+
+=head1 VERSION 1.5.1
+
 =head2 New Features
 
 =over 4
