@@ -258,6 +258,11 @@ checkout no longer incorectly removes the story from workflow. Reported by .
 
 The source of a story can now be changed. [David]
 
+=item *
+
+Status messages sent to the browser during previews are now hidden if an error
+is triggered. [Marshall]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
