@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-17 01:37:30 $
+$Date: 2003-01-17 01:53:20 $
 
 =head1 SYNOPSIS
 
@@ -105,6 +105,11 @@ executed. It's a tear-down method. It goes through the list of IDs that have
 been added via C<add_del_ids()> and executes a C<DELETE> statement against the
 appropriate table in the database.
 
+B<Note:> This method is imperfect, and you will likely end up with extra data
+in the database, particularly in the group-related and attribute-related
+tables. This upshot is that C<make devtest> should never be run against a
+production database.
+
 It can be useful to override this method in order to delete related IDs. For
 example, Bri::Biz::Asset::DevTest overrides C<del_ids()> to delete instances
 of assets as well as the assets themselves. If you plan to override
@@ -132,6 +137,14 @@ sub del_ids : Test(teardown => 0) {
             DELETE FROM $table
             WHERE  id IN ($ids)
         })->execute;
+
+        # Do extra stuff for grps.
+        if ($table eq 'grp') {
+            Bric::Util::DBI::prepare(qq{
+                DELETE FROM member
+                WHERE  grp__id IN ($ids)
+            })->execute;
+        }
     }
 }
 

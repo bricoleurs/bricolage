@@ -49,11 +49,11 @@ sub test_list : Test(32) {
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids([$elem->get_id]);
+        $self->add_del_ids([$elem->get_at_grp__id], 'grp');
         $grp->add_member({ obj => $elem }) if $n % 2;
     }
 
     ok( $grp->save, "Save group" );
-    $self->add_del_ids([$grp->get_id], 'grp');
     ok( my $grp_id = $grp->get_id, "Get group ID" );
     $self->add_del_ids([$grp_id], 'grp');
 
