@@ -278,6 +278,11 @@ Publishing stories or media via SOAP with the C<published_only> parameter
 published versions of documents even if the current version is in workflow.
 Reported by Adam Rinehart. [David]
 
+=item *
+
+Added upgrade script to clean out old records left in the "member" table if
+users elected to delete old jobs during the 1.8.2 upgrade. [David]
+
 =back
 
 =cut

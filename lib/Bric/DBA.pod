@@ -398,14 +398,14 @@ the data actually not being used for much of anything, so from time to time we
 do this:
 
   DELETE FROM member
-  WHERE  id IN (
+  WHERE  class__id IN (54, 79, 80)
+         AND id NOT IN (
            SELECT member__id
            FROM   job_member, job
            WHERE  job.id = job_member.object_id
-                  AND executing = 0
                   AND (
-                    comp_time IS NOT NULL
-                    OR failed = 1
+                     executing = 1
+                     OR comp_time IS NULL
                   )
            );
 
