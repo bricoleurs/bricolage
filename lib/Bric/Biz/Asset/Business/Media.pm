@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.77 $
+$Revision: 1.78 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.77 $ )[-1];
+our $VERSION = (qw$Revision: 1.78 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-16 15:49:19 $
+$Date: 2004-02-16 15:50:38 $
 
 =head1 SYNOPSIS
 
@@ -243,7 +243,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'JOIN media_instance ON media__id = media.id '
                              . 'WHERE LOWER(name) LIKE LOWER(?) '
                              . 'OR LOWER(description) LIKE LOWER(?) '
-                             . 'OR LOWER(mt.uri) LIKE LOWER(?) '
+                             . 'OR LOWER(i.uri) LIKE LOWER(?) '
                              . 'UNION SELECT media_id FROM media_keyword '
                              . 'JOIN keyword ON (keyword.id = keyword_id) '
                              . 'WHERE LOWER(name) LIKE LOWER(?))',
@@ -257,7 +257,7 @@ use constant PARAM_ORDER_MAP =>
       alias_id            => 'alias_id',
       site_id             => 'site__id',
       workflow__id        => 'workflow__id',
-      uri                 => 'mt.uri',
+      uri                 => 'i.uri',
       element__id         => 'element__id',
       source__id          => 'source__id',
       priority            => 'priority',
