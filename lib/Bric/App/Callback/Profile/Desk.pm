@@ -30,7 +30,7 @@ sub save : Callback {
         # Deactivate it.
         $desk->deactivate;
         $desk->save;
-        $self->$expire_wf_cache($self, $param->{"${type}_id"});
+        $self->$expire_wf_cache($param->{"${type}_id"});
         log_event("${type}_deact", $desk);
         add_msg("$disp_name profile \"[_1]\" deleted from all workflows.", $name);
         set_redirect(defined $param->{workflow_id} ?
@@ -65,7 +65,7 @@ sub save : Callback {
         }
         unless ($used) {
             $desk->save;
-            $self->$expire_wf_cache($self, $desk_id);
+            $self->$expire_wf_cache($desk_id);
             log_event($type . (defined $param->{desk_id} ? '_save' : '_new'), $desk);
         } else {
             $param->{new_desk} = 1;
