@@ -10,20 +10,20 @@ Bric::Biz::Keyword - Interface to Bricolage Keyword Objects
 
 =item Version
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =item Date
 
-$Date: 2003-09-16 04:44:46 $
+$Date: 2004-03-19 05:12:15 $
 
 =item CVS ID
 
-$Id: Keyword.pm,v 1.20 2003-09-16 04:44:46 wheeler Exp $
+$Id: Keyword.pm,v 1.21 2004-03-19 05:12:15 wheeler Exp $
 
 =back
 
@@ -76,7 +76,6 @@ use strict;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Keyword;
 use Bric::Util::Fault qw(:all);
-use Carp ();
 
 ##############################################################################
 # Inheritance
@@ -530,46 +529,46 @@ sub activate   { $_[0]->_set(['_active'], [1]) }
 sub deactivate { $_[0]->_set(['_active'], [0]) }
 sub is_active  { $_[0]->_get('_active') ? $_[0] : undef }
 sub remove     {
-    Carp::cluck(__PACKAGE__ . "->remove has been deprecated.\n" .
-                "Use ", __PACKAGE__, "->deactivate instead");
+    warn __PACKAGE__ . "->remove has been deprecated.\n" .
+      "Use ", __PACKAGE__, "->deactivate instead";
     $_[0]->deactivate;
 }
 
 sub get_state {
-    Carp::cluck(__PACKAGE__ . "->get_state has been deprecated.\n" .
-                "Use ", __PACKAGE__, "->is_active instead");
+    warn __PACKAGE__ . "->get_state has been deprecated.\n" .
+      "Use ", __PACKAGE__, "->is_active instead";
     $_[0]->is_active;
 }
 
 sub set_state {
-    Carp::cluck(__PACKAGE__ . "->set_state has been deprecated.\n" .
-                "Use activate() and deactivate() instead");
+    warn __PACKAGE__ . "->set_state has been deprecated.\n" .
+      "Use activate() and deactivate() instead";
     $_[1] ? $_[0]->activate : $_[0]->deactivate;
 }
 
 sub get_active {
-    Carp::cluck(__PACKAGE__ . "->get_active has been deprecated.\n" .
-                "Use ", __PACKAGE__, "->is_active instead");
+    warn __PACKAGE__ . "->get_active has been deprecated.\n" .
+      "Use ", __PACKAGE__, "->is_active instead";
     $_[0]->is_active;
 }
 
 sub set_active {
-    Carp::cluck(__PACKAGE__ . "->set_active has been deprecated.\n" .
-                "Use activate() and deactivate() instead");
+    warn __PACKAGE__ . "->set_active has been deprecated.\n" .
+      "Use activate() and deactivate() instead";
     $_[1] ? $_[0]->activate : $_[0]->deactivate;
 }
 
 sub associate {
     my ($self, $obj) = @_;
-    Carp::cluck(__PACKAGE__ . "->associate has been deprecated.\n" .
-                "Use the keyword accessors on the asset or category instead");
+    warn __PACKAGE__ . "->associate has been deprecated.\n" .
+      "Use the keyword accessors on the asset or category instead";
     $obj->add_keywords($obj);
 }
 
 sub dissociate {
     my ($self, $obj) = @_;
-    Carp::cluck(__PACKAGE__ . "->dissociate has been deprecated.\n" .
-                "Use the keyword accessors on the asset or category instead");
+    warn __PACKAGE__ . "->dissociate has been deprecated.\n" .
+      "Use the keyword accessors on the asset or category instead";
     $obj->del_keywords($obj);
 }
 

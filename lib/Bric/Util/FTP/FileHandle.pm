@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-16 08:17:18 $
+$Date: 2004-03-19 05:12:16 $
 
 =head1 DESCRIPTION
 
@@ -40,7 +40,6 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Carp qw(croak confess);
 use Bric::Config qw(:ftp);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);

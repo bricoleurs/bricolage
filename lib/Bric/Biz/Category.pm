@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.57 $
+$Revision: 1.58 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.57 $ )[-1];
+our $VERSION = (qw$Revision: 1.58 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-14 18:13:16 $
+$Date: 2004-03-19 05:12:15 $
 
 =head1 SYNOPSIS
 
@@ -91,7 +91,6 @@ use Bric::Util::Fault qw(throw_gen throw_dp);
 use Bric::Util::DBI qw(:standard col_aref);
 use Bric::Util::Grp::Asset;
 use Bric::Util::Coll::Keyword;
-use Carp ();
 
 #==============================================================================#
 # Inheritance                          #
@@ -1197,8 +1196,8 @@ sub get_keywords {
 }
 
 sub keywords {
-    Carp::cluck(__PACKAGE__ . "->keywords has been deprecated.\n" .
-                "Use ", __PACKAGE__, "->get_keywords instead");
+    warn __PACKAGE__ . "->keywords has been deprecated.\n" .
+      "Use ", __PACKAGE__, "->get_keywords instead";
     $_[0]->get_keywords;
 }
 
@@ -1318,8 +1317,8 @@ sub add_keywords {
 }
 
 sub add_keyword {
-    Carp::cluck(__PACKAGE__ . "->add_keyword has been deprecated.\n" .
-                "Use ", __PACKAGE__, "->add_keywords instead");
+    warn __PACKAGE__ . "->add_keyword has been deprecated.\n" .
+      "Use ", __PACKAGE__, "->add_keywords instead";
     $_[0]->add_keywords(@{$_[1]});
 }
 
@@ -1353,8 +1352,8 @@ sub del_keywords {
 }
 
 sub del_keyword {
-    Carp::cluck(__PACKAGE__ . "->del_keyword has been deprecated.\n" .
-                "Use ", __PACKAGE__, "->del_keywords instead");
+    warn __PACKAGE__ . "->del_keyword has been deprecated.\n" .
+      "Use ", __PACKAGE__, "->del_keywords instead";
     $_[0]->del_keywords(@{$_[1]});
 }
 

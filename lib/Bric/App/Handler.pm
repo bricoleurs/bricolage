@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.64 $
+$Revision: 1.65 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.64 $ )[-1];
+our $VERSION = (qw$Revision: 1.65 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-05 09:40:46 $
+$Date: 2004-03-19 05:12:15 $
 
 =head1 SYNOPSIS
 
@@ -63,7 +63,6 @@ use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
 use HTML::Mason::Exceptions;
-use Carp qw(croak);
 
 use Bric::App::Callback::AddMore;
 use Bric::App::Callback::Alert;

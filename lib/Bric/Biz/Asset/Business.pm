@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.58 $
+$Revision: 1.59 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58 $ )[-1];
+our $VERSION = (qw$Revision: 1.59 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-03 17:05:41 $
+$Date: 2004-03-19 05:12:16 $
 
 =head1 SYNOPSIS
 
@@ -2048,9 +2048,8 @@ sub check_uri {
     my $self = shift;
 
     # Warn 'em.
-    require Carp;
-    Carp::carp(__PACKAGE__ . "->check_uri has been deprecated and will be" .
-               " removed in a future version of Bricolage");
+    warn __PACKAGE__ . "->check_uri has been deprecated and will be" .
+      " removed in a future version of Bricolage";
 
     my $id = $self->_get('id');
     my $key = $self->key_name;

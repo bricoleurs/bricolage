@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.97 $
+$Revision: 1.98 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.97 $ )[-1];
+our $VERSION = (qw$Revision: 1.98 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 20:00:04 $
+$Date: 2004-03-19 05:12:15 $
 
 =head1 SYNOPSIS
 
@@ -39,7 +39,6 @@ and their use.
 #--------------------------------------#
 # Standard Dependencies
 use strict;
-use Carp;
 
 #--------------------------------------#
 # Programmatic Dependencies
@@ -300,7 +299,11 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         }
 
         if (-e $conf_file) {
-            open CONF, $conf_file or croak "Cannot open $conf_file: $!\n";
+            unless (open CONF, $conf_file) {
+                require Carp;
+                Carp::croak "Cannot open $conf_file: $!\n";
+            }
+
             while (<CONF>) {
                 # Get each configuration line into $config.
                 chomp;                  # no newline
@@ -371,7 +374,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
             if ($ssl eq 'off' or $ssl eq 'no') {
                 $config->{SSL_ENABLE} = 0;
             } else {
-                croak "Invalid SSL_ENABLE directive: '$ssl'"
+                require Carp;
+                Carp::croak "Invalid SSL_ENABLE directive: '$ssl'"
                   unless $ssl eq 'mod_ssl' or $ssl eq 'apache_ssl';
             }
         } else {

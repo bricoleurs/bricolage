@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-16 08:17:18 $
+$Date: 2004-03-19 05:12:16 $
 
 =head1 DESCRIPTION
 
@@ -50,7 +50,6 @@ use Bric::Biz::OutputChannel;
 use Bric::Biz::Asset::Formatting;
 use Bric::Config qw(:ftp);
 use Bric::Biz::AssetType;
-use Carp qw(confess croak);
 use Net::FTPServer::DirHandle;
 use Bric::Util::FTP::FileHandle;
 use Bric::Util::Priv::Parts::Const qw(:all);

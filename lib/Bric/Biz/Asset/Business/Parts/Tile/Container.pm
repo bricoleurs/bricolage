@@ -7,16 +7,16 @@ Bric::Biz::Asset::Business::Parts::Tile::Container - Container Element
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2004-03-11 20:23:39 $
+$Date: 2004-03-19 05:12:16 $
 
 =head1 SYNOPSIS
 
@@ -59,7 +59,6 @@ use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::AssetType;
 use Bric::App::Util;
 use Bric::Util::Fault qw(throw_gen);
-use Carp ();
 
 #==============================================================================#
 # Inheritance                          #
@@ -991,7 +990,7 @@ sub get_data {
         ($name = lc($name)) =~ y/a-z0-9/_/cs;
         my $msg = "Warning:  Use of element's 'name' field is deprecated for use with element method 'get_data'.  Please use the element's 'key_name' field instead.";
         Bric::App::Util::add_msg($msg);
-        Carp::cluck($msg);
+        warn $msg;
     }
     my $delem = $self->get_data_element($name, $obj_order) or return;
     return $delem->get_data($dt_fmt);
