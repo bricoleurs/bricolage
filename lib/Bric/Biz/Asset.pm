@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.1 $
+$Revision: 1.25.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-14 19:43:50 $
+$Date: 2003-03-14 20:10:24 $
 
 =head1 SYNOPSIS
 
@@ -323,6 +323,7 @@ sub list_ids {
       unless $pkg->CAN_DO_LIST_IDS; 
     # clean the params
     $param = clean_params($pkg, $param);
+    $param->{Order} = 'id';
     my $cols = $pkg->ID_COL;
     my $tables =  tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
