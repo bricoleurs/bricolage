@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-18 22:00:00 $
+$Date: 2004-01-16 22:13:59 $
 
 =head1 SYNOPSIS
 
@@ -147,6 +147,9 @@ sub del_ids : Test(teardown => 0) {
     while (my ($table, $ids) = each %$to_delete) {
         _do_deletes($table, $ids);
     }
+
+    # Finally, delete any events.
+    Bric::Util::DBI::prepare(qq{DELETE FROM event})->execute;
 }
 
 sub _do_deletes {
