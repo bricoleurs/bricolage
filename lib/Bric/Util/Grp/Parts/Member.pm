@@ -9,42 +9,43 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-18 13:04:23 $
+$Date: 2002-08-14 21:08:46 $
 
 =head1 SYNOPSIS
 
- $member = Bric::Util::Grp::Parts::Member->new( $initial_state );
+  # Constructors.
+  my $member = Bric::Util::Grp::Parts::Member->new( $initial_state );
+  $member = Bric::Util::Grp::Parts::Member->lookup( { id => $id} );
+  my ($member_list||@members) = Bric::Util::Grp::Parts::Member->list($params);
+  my $member_href = Bric::Util::Grp::Parts::Member->href($params);
 
- $member = Bric::Util::Grp::Parts::Member->lookup( { id => $id} );
+  # Class methods.
+  ($ids || @ids ) = Bric::Util::Grp::Parts::Member->list_ids({grp => $grp })
 
- ($member_list||@members) = Bric::Util::Grp::Parts::Member->list({grp => $grp })
+  # Instances methods.
+  my $id = $member->get_id;
+  $member = $member->activate;
+  $member = $member->deactivate;
 
- ($ids || @ids ) = Bric::Util::Grp::Parts::Member->list_ids({grp => $grp })
+  # Attribute methods.
+  $member = $member->set_attrs( [name=> $name,subsys=> $subsys,val => $val}]);
+  ($val_list||@vals) = $member->get_attrs([ {name=> $name,subsys=> $subsys}]);
 
- $id = $member->get_id()
-
- $member = $member->activate()
-
- $member = $member->deactivate()
-
- $member = $member->set_attrs( [name=> $name,subsys=> $subsys,val => $val}])
-
- ($val_list||@vals) = $member->get_attrs([ {name=> $name,subsys=> $subsys}])
-
- $object = $member->get_object()
+  # Retrieve the underlying Bric object.
+  $object = $member->get_object;
 
 =head1 DESCRIPTION
 
-A Member is a container for an object and any properties that it may have 
-with in the group it is associated with that it would not have by its self.
+A Member is a container for an object and any properties that it may have with
+in the group it is associated with that it would not have by its self.
 
 =cut
 
@@ -53,19 +54,14 @@ with in the group it is associated with that it would not have by its self.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
 use Bric::Util::Class;
-
 use Bric::Util::DBI qw(:all);
-
 use Bric::Util::Attribute::Member;
-
 use Data::Dumper;
 
 #==============================================================================#
@@ -79,24 +75,18 @@ use base qw(Bric);
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
 # None
 
 #==============================================================================#
 # Constants                            #
 #======================================#
 
-use constant DEBUG => 0;
-
-use constant MEMBER_SUBSYS => '_MEMBER_SUBSYS';
-
-use constant ORD => qw(id name obj_id active);
-
-use constant TABLE => 'member';
-
-use constant MEMBER_COLS   => qw(grp__id class__id active);
-use constant MEMBER_FIELDS => qw(grp_id _object_class_id _active);
-
+use constant DEBUG                => 0;
+use constant MEMBER_SUBSYS        => '_MEMBER_SUBSYS';
+use constant ORD                  => qw(id name obj_id active);
+use constant TABLE                => 'member';
+use constant MEMBER_COLS          => qw(grp__id class__id active);
+use constant MEMBER_FIELDS        => qw(grp_id _object_class_id _active);
 use constant OBJECT_MEMBER_COLS   => qw(object_id member__id);
 use constant OBJECT_MEMBER_FIELDS => qw(obj_id id);
 
@@ -111,20 +101,15 @@ use constant GROUP => 2;
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-# Public fields should use 'vars'
-#use vars qw();
+# Public Class Fields
+# None.
 
 #--------------------------------------#
-# Private Class Fields                  
-
-# Private fields use 'my'
+# Private Class Fields
 my $meths;
 
 #--------------------------------------#
-# Instance Fields                       
-
+# Instance Fields
 # None
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
@@ -190,7 +175,7 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors                          
+# Constructors
 
 #------------------------------------------------------------------------------#
 
@@ -202,28 +187,19 @@ Supported Keys:
 
 =over 4
 
-=item *
+=item object
 
-object
+=item grp
 
-=item *
-
-grp
-
-=item *
-
-active
+=item active
 
 =back
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -233,50 +209,36 @@ sub new {
     # bless the object
     my $self = bless {}, $class;
 
-    if ( $init->{'object_class_id'} ) {
-        $init->{'_object_class_id'} = delete $init->{'object_class_id'};
-    }
-    else {
-
+    if ( $init->{object_class_id} ) {
+        $init->{_object_class_id} = delete $init->{object_class_id};
+    } else {
         # figure out the class id
-        $init->{'_object_class_id'} =
-          $self->_get_class_id( $init->{'object_package'} );
+        $init->{_object_class_id} =
+          $self->_get_class_id( $init->{object_package} );
     }
 
-    $init->{'_active'} = 1;
-
+    $init->{_active} = 1;
     $self->SUPER::new($init);
-
-    $self->set_attrs( $init->{'attr'} ) if $init->{'attr'};
-
+    $self->set_attrs( $init->{attr} ) if $init->{attr};
     $self->_set__dirty(1);
-
     return $self;
 }
 
-=item $member = Bric::Util::Grp::Parts::Member->lookup( { id => $id} );
+=item $member = Bric::Util::Grp::Parts::Member->lookup({ id => $id });
 
-Looks up a member object for a given id
+Looks up a member object for a given ID.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub lookup {
     my ( $class, $param ) = @_;
-
-    my $self = bless {}, $class;
-
+    my $self = bless {}, ref $class || $class;
     my $sql =
       'SELECT id, '
       . join ( ', ', MEMBER_COLS ) . ' FROM ' . TABLE
@@ -290,9 +252,7 @@ sub lookup {
     finish($sth);
 
     $self->_set( [ 'id', MEMBER_FIELDS ], [@d] );
-
     return if $rows eq 'OEO';
-
     my $member_table = $self->_get_map_table_name();
 
     $sql =
@@ -310,53 +270,76 @@ sub lookup {
 
     $self->_set( [ 'id', OBJECT_MEMBER_FIELDS ], [@d2] );
 
-    # Clear the dirty bit.
+    # Clear the dirty bit and return.
     $self->_set__dirty(0);
-
     return $self;
 }
 
-=item ($mbr_list||@mbrs) = Bric::Util::Grp::Parts::Member->list({grp=>$grp})
+=item ($mbr_list||@mbrs) = Bric::Util::Grp::Parts::Member->list($params);
 
-This will return a list or list ref of blessed Member objects that are a 
-member of said group
-
-Should support, lookup keys of: 
-group id
-object 
-active
-Supported Keys:
+This will return a list or list ref of blessed Member objects that are a
+member of said a group. The C<$params> hash reference supports the following
+keys:
 
 =over 4
 
-=item *
+=item grp
 
-grp
+A Bric::Util::Grp object, the members of which are to be returned.
 
-=item * 
+=item grp_package
 
-active
+The package name of a Bric::Util::Grp subclass, the members of which are to be
+returned.
+
+=item object
+
+A Bric object for which a list of group memberships will be returned.
+
+=item object_package
+
+The package name of a Bric object for which a list of group memberships will
+be returned. Use in combination with the C<object_id> parameter.
+
+=item object_id
+
+The ID of a Bric object for which a list of group memberships will
+be returned. Use in combination with the C<object_package> parameter.
 
 =back
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub list {
-    my ( $class, $criteria ) = @_;
+    my ($class, $params) = @_;
+    $class->_do_list($params);
+}
 
-    $class->_do_list( $criteria, undef );
+=item my $memb_href = Bric::Util::Grp::Parts::Member->href($params);
+
+Returns an anonymous hash of group members. The keys to the hash are Bric
+package names, and the values are anonymous hashes. The keys in these
+second-level anonymous hashes are Bric::Util::Grp::Parts::Member IDs, and the
+values are the corresponding Bric::Util::Grp::Parts::Member objects. Takes
+the same arguments as the C<list()> method.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub href {
+    my ($class, $params) = @_;
+    $class->_do_list($params, undef, 1);
 }
 
 #--------------------------------------#
@@ -375,44 +358,26 @@ sub DESTROY {
 
 #--------------------------------------#
 
-=head2 Public Class Methods                  
+=head2 Public Class Methods
 
 =cut
 
-=item ($ids||@ids ) = Bric::Util::Grp::Parts::Member->list_ids({grp => $grp})
+=item ($ids||@ids ) = Bric::Util::Grp::Parts::Member->list_ids($params);
 
-This will return a list or list ref of Member object ids that are a 
-member of said group
+Return a list or anonymous array of Member object ids. The supported keys
+in the C<$params> hash reference are the same as for the C<list()> method.
 
-Supported Keys:
+B<Throws:> NONE.
 
-=over 4
+B<Side Effects:> NONE.
 
-=item *
-
-group
-
-=item * 
-
-obj
-
-=back
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub list_ids {
-    my ( $class, $criteria ) = @_;
-
-    $class->_do_list( $criteria, 1 );
+    my ($class, $params) = @_;
+    $class->_do_list($params, 1);
 }
 
 ################################################################################
@@ -1213,7 +1178,7 @@ NONE
 =cut
 
 sub _do_list {
-    my ( $class, $param, $ids ) = @_;
+    my ( $class, $param, $ids, $href ) = @_;
 
     # set up the supported param
     # process Grp info
@@ -1236,23 +1201,20 @@ sub _do_list {
         $package   = ref $param->{'object'};
         $object_id = $param->{'object'}->get_id();
     }
-    elsif ( $param->{'object_id'} || $param->{'package'} ) {
+    elsif ( $param->{'object_id'} && $param->{'object_package'} ) {
         $object_id = $param->{'object_id'};
         $package   = $param->{'object_package'};
     }
 
     my @objs;
     if ($supported) {
-
         # we can create a joined query!
         if ($force) {
-
             # All members are in one member table
             my $member_table = _get_member_table( { id => $force } );
-
             push @objs,
               _do_joined_select( $class, $member_table, $grp_id, $object_id,
-                $param->{'all'} );
+                $param->{all}, $ids );
         }
         else {
             foreach ( keys %$supported ) {
@@ -1261,7 +1223,7 @@ sub _do_list {
                 push @objs,
                   _do_joined_select(
                     $class,     $member_table, $grp_id,
-                    $object_id, $param->{'all'}
+                    $object_id, $param->{all}, $ids
                 );
             }
         }
@@ -1273,11 +1235,18 @@ sub _do_list {
 
             push @objs,
               _do_joined_select( $class, $member_table, $grp_id, $object_id,
-                $param->{'all'} );
+                $param->{all}, $ids );
         }
         else {
-            push @objs, _do_select( $class, $grp_id, $param->{'all'} );
+            push @objs, _do_select( $class, $grp_id, $param->{all} );
         }
+    }
+    if ($href) {
+        my %objs;
+        foreach my $m (@objs) {
+            $objs{$m->get_object_package}->{$m->get_id} = $m;
+        }
+        return \%objs;
     }
 
     return wantarray ? @objs : \@objs;
@@ -1288,12 +1257,11 @@ sub _get_member_table {
 }
 
 sub _do_joined_select {
-    my ( $class, $member_table, $grp_id, $object_id, $all ) = @_;
-
+    my ( $class, $member_table, $grp_id, $object_id, $all, $ids ) = @_;
+    my $cols = $ids ? 'm.id' :
+      'm.id, m.grp__id, m.class__id, m.active, o.id, o.object_id, o.member__id';
     my $sql =
-      ' SELECT m.id, m.grp__id, m.class__id, m.active, '
-      . 'o.id, o.object_id, o.member__id ' . ' FROM ' . TABLE
-      . " m, $member_table o ";
+      " SELECT $cols FROM " . TABLE . " m, $member_table o ";
 
     my ( @param, @bind );
     if ($grp_id) {
@@ -1311,6 +1279,11 @@ sub _do_joined_select {
     $sql .= ' WHERE ' . join ( ' AND ', @param );
 
     my $sth = prepare_c( $sql, undef, DEBUG );
+
+    # Just return the IDs, if they're what's wanted.
+    return @{ col_aref($sth, @bind) } if $ids;
+
+    # Otherwise, execute and process.
     execute( $sth, @bind );
 
     my @objs;
