@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-11 20:53:03 $
+$Date: 2002-08-28 20:36:42 $
 
 =head1 SYNOPSIS
 
@@ -631,8 +631,12 @@ sub publish {
 		$r->add_media_ids($ba->get_id);
 		$r->save;
 		push @$res, $r;
-		$published=1;
-	    }
+		$published = 1;
+	    } else {
+                $published = 1;
+                add_msg('No media file is associated with asset &quot;' .
+                        $ba->get_name . '&quot;, so none will be distributed.');
+            }
 	}
     }
 

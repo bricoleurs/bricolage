@@ -35,6 +35,12 @@ from a group, it will be properly removed. [David]
 Media profile now display the proper category in the Category select
 list. [David]
 
+=item *
+
+Media assets with no associated media file now generate a message indicating
+that no file will be distributed, and are properly removed from workflow when
+published. [David]
+
 =back
 
 =head1 VERSION 1.3.3
