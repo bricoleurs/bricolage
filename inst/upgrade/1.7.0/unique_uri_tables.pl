@@ -11,7 +11,9 @@ use Bric::Biz::Asset::Business::Media;
 # Just bail if the story_uri table exists and therefore doesn't cause an error.
 exit if test_sql "SELECT 1 FROM story_uri WHERE story__id = -1";
 
-for my $type (qw(story media)) {
+my ($aid, $uri, $ocname, $type, $rolled_back);
+
+for $type (qw(story media)) {
 
     # Create the table, indices, and constraints.
     do_sql
@@ -34,6 +36,9 @@ for my $type (qw(story media)) {
              REFERENCES site(id) ON DELETE CASCADE},
       ;
 
+    # Use our own DIE.
+    local $SIG{__DIE__}= \&error;
+
     # Get a list of the IDs and use them to add all the required records to
     # the table.
     my $ids = col_aref("SELECT id FROM $type WHERE active = 1");
@@ -46,34 +51,30 @@ sub add_story_uris {
     my $ins = prepare q{INSERT INTO story_uri (story__id, site__id, uri)
                         VALUES (?, ?, ?)};
 
-    for my $sid (@$ids) {
-        my ($uri, $ocname);
-        eval {
-            begin();
-            my $story = Bric::Biz::Asset::Business::Story->lookup
-              ({ id => $sid });
-            # Get all the associated output channels. Skip it if there are none.
-            my @ocs = $story->get_output_channels or next;
-            my $site_id = $story->get_site_id;
+    for $aid (@$ids) {
+        my $story = Bric::Biz::Asset::Business::Story->lookup({
+            id => $aid
+        });
 
-            # Fore every combination of category and output channel, insert the
-            # URI. Some may be the same as previous ones, but only for this one
-            # story.
-            my %seen;
-            for my $cat ($story->get_categories) {
-                for my $oc (@ocs) {
-                    $ocname = $oc->get_name;
-                    $uri = lc $story->get_uri($cat, $oc);
-                    # Skip it if we've seen it before.
-                    next if $seen{$uri};
-                    # Make it so.
-                    execute($ins, $sid, $site_id, $uri);
-                    $seen{$uri} = 1;
-                }
+        # Get all the associated output channels. Skip it if there are none.
+        my @ocs = $story->get_output_channels or next;
+        my $site_id = $story->get_site_id;
+
+        # Fore every combination of category and output channel, insert the
+        # URI. Some may be the same as previous ones, but only for this one
+        # story.
+        my %seen;
+        for my $cat ($story->get_categories) {
+            for my $oc (@ocs) {
+                $ocname = $oc->get_name;
+                $uri = lc $story->get_uri($cat, $oc);
+                # Skip it if we've seen it before.
+                next if $seen{$uri};
+                # Make it so.
+                execute($ins, $aid, $site_id, $uri);
+                $seen{$uri} = 1;
             }
-            commit();
-        };
-        error($@, $sid, $uri, $ocname, 'story') if $@;
+        }
     }
 }
 
@@ -84,36 +85,36 @@ sub add_media_uris {
 
     for my $mid (@$ids) {
         my ($uri, $ocname);
-        eval {
-            begin();
-            my $media = Bric::Biz::Asset::Business::Media->lookup
-              ({ id => $mid });
-            # Get all the associated output channels. Skip it if there are none.
-            my @ocs = $media->get_output_channels or next;
-            my $site_id = $media->get_site_id;
+        my $media = Bric::Biz::Asset::Business::Media->lookup({
+            id => $mid
+        });
 
-            # Skip it if there's no category.
-            next unless $media->get_category__id;
-            my %seen;
-            foreach my $oc (@ocs) {
-                $ocname = $oc->get_name;
-                $uri = lc $media->get_uri($oc);
-                # Skip it if we've seen it before.
-                next if $seen{$uri};
-                # Make it so.
+        # Get all the associated output channels. Skip it if there are none.
+        my @ocs = $media->get_output_channels or next;
+        my $site_id = $media->get_site_id;
+
+        # Skip it if there's no category.
+        next unless $media->get_category__id;
+        my %seen;
+        foreach my $oc (@ocs) {
+            $ocname = $oc->get_name;
+            $uri = lc $media->get_uri($oc);
+            # Skip it if we've seen it before.
+            next if $seen{$uri};
+            # Make it so.
                 execute($ins, $mid, $site_id, $uri);
-                $seen{$uri} = 1;
-            }
-            commit();
-        };
-        error($@, $mid, $uri, $ocname, 'media') if $@;
+            $seen{$uri} = 1;
+        }
     }
 }
 
 sub error {
-    my ($err, $aid, $uri, $ocname, $type) = @_;
+    my $err = shift;
+    $uri ||= '';
+    $ocname ||= '';
     rollback();
     $err = ref $err ? $err->as_text : $err;
+    $|++;
     print qq{
 
     !!!!!!!!!!!!! ERROR ERROR ERROR ERROR !!!!!!!!!!!!!!!!!
@@ -125,7 +126,7 @@ sub error {
       $uri
 
     Non-unique URIs can be created by cloning a document
-    and then neglecting to change its slugh, cover date,
+    and then neglecting to change its slug, cover date,
     and category associations sufficiently to differentiate
     the clone's URI from the original's.
 
@@ -140,7 +141,7 @@ sub error {
     $err
 
     !!!!!!!!!!!!! ERROR ERROR ERROR ERROR !!!!!!!!!!!!!!!!!
-};
+} unless $rolled_back;
+    $rolled_back = 1;
     exit(1);
-
 }
