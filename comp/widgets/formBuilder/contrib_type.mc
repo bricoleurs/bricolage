@@ -49,16 +49,17 @@ if ($param->{delete}) { # Deactivate it.
     my $i = 0;
     my $pos = mk_aref($param->{attr_pos});
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
-	if (!$del_attrs{$aname}) {
-	    $grp->set_member_attr({ name => $aname,
-				    value => $param->{"attr|$aname"} }
-				 );
-	    $grp->set_member_meta({ name => $aname,
-				    field => 'pos',
-				    value => $pos->[$i] }
-				 );
-	    ++$i;
-	}
+        next if $del_attrs{$aname};
+
+        $grp->set_member_attr({ name => $aname,
+                                sql_type => $grp->get_member_attr_sql_type
+                                            ({ name => $aname}),
+                                value => $param->{"attr|$aname"} });
+        $grp->set_member_meta({ name => $aname,
+                                field => 'pos',
+                                value => $pos->[$i] }
+                             );
+        ++$i;
     }
     my $no_save;
     # Add in any new attributes.
@@ -66,7 +67,9 @@ if ($param->{delete}) { # Deactivate it.
 	# There's a new attribute. Decide what type it is.
 	if ($data_href->{lc $param->{fb_name}}) {
 	    # There's already an attribute by that name.
-            add_msg($lang->maketext('An [_1] attribute already exists. Please try another name.',"&quot;$param->{fb_name}&quot;"));
+            add_msg($lang->maketext('An [_1] attribute already exists. ' .
+                                    'Please try another name.',
+                                    "&quot;$param->{fb_name}&quot;"));
 	    $no_save = 1;
 	} else {
 	    my $sqltype = $param->{fb_type} eq 'date' ? 'date'
@@ -140,11 +143,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.9.4.1 $
+$Revision: 1.9.4.2 $
 
 =head1 DATE
 
-$Date: 2003-06-11 01:24:54 $
+$Date: 2003-07-21 23:25:53 $
 
 =head1 SYNOPSIS
 
