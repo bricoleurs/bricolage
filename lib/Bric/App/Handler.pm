@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.36.2.10 $
+$Revision: 1.36.2.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.36.2.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.36.2.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-16 14:15:48 $
+$Date: 2003-06-16 14:29:45 $
 
 =head1 SYNOPSIS
 
@@ -54,7 +54,6 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::App::ApacheHandler;
-use Bric::App::ApacheHandler::CharTrans;
 use Bric::Config qw(:mason :char :sys_user :err);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
