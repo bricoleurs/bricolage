@@ -6,16 +6,16 @@ Bric::Util::UserPref - Interface to Bricolage per-user preferences.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-18 22:32:31 $
+$Date: 2003-12-22 04:07:29 $
 
 =head1 SYNOPSIS
 
@@ -329,7 +329,7 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
-################################################################################
+=over 4
 
 =item $meths = Bric::Util::Pref->my_meths
 
@@ -550,6 +550,8 @@ sub my_meths {
 }
 
 ################################################################################
+
+=back
 
 =head2 Public Instance Methods
 
