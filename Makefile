@@ -52,7 +52,9 @@ build_done	: required.db modules.db apache.db postgres.db config.db
 	@echo ===========================================================
 	@echo 
 	@echo Bricolage Build Complete.  You may now proceed to
-	@echo \"make test\" to run some basic tests of the API, then to
+	@echo \"make cpan\", which must be run as root, to install any
+        @echo needed Perl modules; then to
+	@echo \"make test\" to run some basic tests of the API; then to
 	@echo \"make install\", which must be run as root.
 	@echo 
 	@echo ===========================================================
