@@ -100,6 +100,24 @@ the name, in line with how Story and Media work. [David]
 
 Added "Save and Stay" button to the Element Profile. [David]
 
+=item *
+
+Story Type, Media Type, and Element select lists are now filtered for READ
+permission in the Story, Media, and Template profiles, respectively. [David]
+
+=item *
+
+Category select lists are filtered for READ permission in the Story, Media, and
+Template profiles. [David]
+
+=item *
+
+Category and Story Type, Media Type, and Element select lists are now required
+fields where appropriate in the Story, Media, and Template profiles. This change
+was introduced because, with the introduction of permission checking on these
+select lists, it's possible for them to show up empty where it wasn't possible
+before. [David]
+
 =back
 
 =head2 Bug Fixes
