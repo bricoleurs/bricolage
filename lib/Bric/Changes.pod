@@ -157,6 +157,11 @@ The version numbering issues of Bricolage modules have all been worked out
 after the confusion in 1.8.1. This incidentally allows the HTML::Template and
 Template Toolkit burners to be available again. [David]
 
+=item *
+
+Misspelling the name of a key name tag in Super Bulk Edit no longer causes all
+of the changes in that screen to be lost. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
