@@ -56,7 +56,7 @@ my $category_current_profile = sub {
     if ($cat->get_name eq $primary_cat->get_name) {
         return;
     } else {
-        return ['Make Primary', $r->uri, "$widget|set_primary_category_cb=" . $cat->get_id];
+        return ['Primary', $r->uri, "$widget|set_primary_category_cb=" . $cat->get_id];
     }
 };
 my $category_choose_profile = sub {
