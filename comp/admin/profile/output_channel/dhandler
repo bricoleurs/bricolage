@@ -45,7 +45,7 @@ if ($id || $no_edit) {
              objref   => $oc,
              key      => 'site',
              readOnly => 1);
-} else {
+} elsif {
     # Output a list of object types to choose from.
     $m->comp('/widgets/select_object/select_object.mc',
 	     readOnly  => ($no_edit || $id),
@@ -159,11 +159,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:52 $
+$Date: 2003-03-15 18:14:22 $
 
 =head1 SYNOPSIS
 

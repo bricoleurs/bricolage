@@ -12,7 +12,7 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'workflow_id')
 $m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Properties",
 	 number => 1);
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $wf,
-	 readOnly => $no_edit, fieldsUsed => { active => 1, type => 1 });
+	 readOnly => $no_edit, fieldsUsed => { active => 1, type => 1, site => 1 });
 # Output the Workflow type.
 if (defined $id) {
     $m->comp('/widgets/profile/displayFormElement.mc', readOnly => 1,
@@ -35,6 +35,8 @@ if ($id || $no_edit) {
              objref   => $wf,
              key      => 'site',
              readOnly => 1);
+} elsif (my $site_id = $wf->get_site_id) {
+    $m->out('<input type=hidden name="site_id" value="'.$wf->get_site_id.'">');
 } else {
     # Output a list of object types to choose from.
     $m->comp('/widgets/select_object/select_object.mc',
@@ -202,11 +204,11 @@ if ($new_desk) {
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-03-13 21:47:13 $
+$Date: 2003-03-15 18:14:22 $
 
 =head1 DESCRIPTION
 

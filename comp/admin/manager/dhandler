@@ -337,7 +337,7 @@ my $def = {
 			       srch_field => 'uri',
 			       constrain => {},
 			       select => $cat_sel_sub },
-	   workflow       => { list_fields => [qw(name type description)],
+	   workflow       => { list_fields => [qw(name type site)],
 			       behavior => 'narrow',
 			       srch_field => 'name',
 			       field_values => sub { return unless $_[1] eq 'type';
@@ -377,11 +377,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:51 $
+$Date: 2003-03-15 18:14:21 $
 
 =head1 SYNOPSIS
 
