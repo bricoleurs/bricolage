@@ -10,15 +10,15 @@ Release Version: 1.3.2 -- Development Track for 1.4.0
 
 File (CVS) Version:
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = "1.3.2";
+our $VERSION = "1.3.3";
 
 =head1 DATE
 
-$Date: 2002-06-04 00:09:25 $
+$Date: 2002-06-10 22:20:08 $
 
 =head1 SYNOPSIS
 

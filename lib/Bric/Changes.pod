@@ -14,7 +14,91 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.3.3
+
+=head2 New Features
+
+=over 4
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Added constraint to the group table to keep a group from having itself as a
+parent. Thanks to Joao Pedro Goncalves for the patch. [David]
+
+=back
+
 =head1 VERSION 1.3.2
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added --chunks option to bric_republish to publish stories in batches.
+This is useful to avoid timing out on long runs. [Sam]
+
+=item *
+
+Added [Check In / Publish] button to Story Profile to checkin and
+publish in one step. [Matt]
+
+=item *
+
+Added needs_publish() method and associated published_version database
+field to Bric::Biz::Asset.  This method is now used by the publisher
+to determine if something needs republishing.  Added new graphics to
+display this information on the desks.  [Matt]
+
+=item *
+
+Moved repeated publish and preview functionality into
+Bric::Util::Burner.  Updated Mason code and Bric::SOAP::Workflow
+accordingly.  [Matt]
+
+=item *
+
+Added C<DBI_PROFILE> bricolage.conf option and C<bric_dbprof> script
+to allow profiling of Bricolage database performance.  [Sam]
+
+=item *
+
+Added C<bric_apachectl debug> command to run Bricolage under the Perl
+debugger using Apache::DB.  [Sam]
+
+=item *
+
+Added checks to make sure Story and Media URIs are unique within the
+system.  [Matt]
+
+=item *
+
+Added search paging preference to break search results into multiple
+pages.  [Adam]
+
+=item *
+
+Added support for running Bricolage under Devel::Profiler with the new
+PROFILE configuration option.  [Sam]
+
+=item *
+
+Added support for Apache::SizeLimit to keep Apache process size under
+control.  [Adam]
+
+=item *
+
+Revised Bric::App::Cache to improve performance.  The new system is a
+two-level cache with Cache:Mmap and Cache::Cache.  This results in a
+2x speedup on some cache-sensitive operations.  [Sam]
+
+=back
 
 =head2 Bug Fixes
 
@@ -183,71 +267,6 @@ preference. [Matt]
 =item *
 
 Fixed section numbering in the Contributor Type profile. [Scott Lanning]
-
-=back
-
-=head2 New Features
-
-=over 4
-
-=item *
-
-Added --chunks option to bric_republish to publish stories in batches.
-This is useful to avoid timing out on long runs. [Sam]
-
-=item *
-
-Added [Check In / Publish] button to Story Profile to checkin and
-publish in one step. [Matt]
-
-=item *
-
-Added needs_publish() method and associated published_version database
-field to Bric::Biz::Asset.  This method is now used by the publisher
-to determine if something needs republishing.  Added new graphics to
-display this information on the desks.  [Matt]
-
-=item *
-
-Moved repeated publish and preview functionality into
-Bric::Util::Burner.  Updated Mason code and Bric::SOAP::Workflow
-accordingly.  [Matt]
-
-=item *
-
-Added C<DBI_PROFILE> bricolage.conf option and C<bric_dbprof> script
-to allow profiling of Bricolage database performance.  [Sam]
-
-=item *
-
-Added C<bric_apachectl debug> command to run Bricolage under the Perl
-debugger using Apache::DB.  [Sam]
-
-=item *
-
-Added checks to make sure Story and Media URIs are unique within the
-system.  [Matt]
-
-=item *
-
-Added search paging preference to break search results into multiple
-pages.  [Adam]
-
-=item *
-
-Added support for running Bricolage under Devel::Profiler with the new
-PROFILE configuration option.  [Sam]
-
-=item *
-
-Added support for Apache::SizeLimit to keep Apache process size under
-control.  [Adam]
-
-=item *
-
-Revised Bric::App::Cache to improve performance.  The new system is a
-two-level cache with Cache:Mmap and Cache::Cache.  This results in a
-2x speedup on some cache-sensitive operations.  [Sam]
 
 =back
 

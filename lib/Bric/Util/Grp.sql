@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:46 $
+-- $Date: 2002-06-10 22:20:09 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -22,7 +22,8 @@ CREATE SEQUENCE seq_grp START  1024;
 CREATE TABLE grp (
     id           NUMERIC(10,0)    NOT NULL
                                   DEFAULT NEXTVAL('seq_grp'),
-    parent_id    NUMERIC(10,0),
+    parent_id    NUMERIC(10,0)    CONSTRAINT ck_grp__parent_id_not_eq_id
+                                    CHECK (parent_id <> id),
     class__id    NUMERIC(10,0)    NOT NULL,
     name         VARCHAR(64),
     description  VARCHAR(256),
