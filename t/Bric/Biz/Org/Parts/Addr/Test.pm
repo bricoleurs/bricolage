@@ -4,17 +4,14 @@ use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
 ##############################################################################
 # Test class loading.
 ##############################################################################
-sub test_load : Test(1) {
+sub _test_load : Test(1) {
     use_ok('Bric::Biz::Org::Parts::Addr');
 }
 
-
+1;
 __END__
 
 # Here is the original test script for reference. If there's something usable

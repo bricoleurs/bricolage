@@ -5,9 +5,6 @@ use base qw(Bric::Test::Base);
 use Test::More;
 use Bric::Biz::OutputChannel::Element;
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
 ##############################################################################
 # Test instance methods.
 ##############################################################################
@@ -77,3 +74,6 @@ sub test_insert : Test(11) {
         WHERE  id = $ocid
     })->execute;
 }
+
+1;
+__END__

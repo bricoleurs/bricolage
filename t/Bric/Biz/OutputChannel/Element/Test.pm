@@ -4,9 +4,6 @@ use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
 ##############################################################################
 # Test class loading.
 ##############################################################################
@@ -75,3 +72,6 @@ sub test_new : Test(19) {
         "Create disabled OC" );
     ok( ! $oce->is_enabled, "disabled OC is not enabled" );
 }
+
+1;
+__END__

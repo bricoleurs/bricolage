@@ -4,9 +4,6 @@ use warnings;
 use base qw(Bric::Biz::Asset::Test);
 use Test::More;
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
 ##############################################################################
 # Test class loading.
 ##############################################################################

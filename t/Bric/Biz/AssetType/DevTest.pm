@@ -6,9 +6,6 @@ use Test::More;
 use Bric::Biz::AssetType;
 use Bric::Biz::OutputChannel;
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
 ##############################################################################
 # Test Output Channel methods.
 ##############################################################################
@@ -74,3 +71,5 @@ sub test_oc : Test(32) {
 
 }
 
+1;
+__END__

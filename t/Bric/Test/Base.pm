@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-09 01:51:13 $
+$Date: 2003-01-13 03:10:28 $
 
 =head1 SYNOPSIS
 
@@ -25,9 +25,6 @@ $Date: 2003-01-09 01:51:13 $
   use warnings;
   use base qw(Bric::Test::Base);
   use Test::More;
-
-  # Register this class for testing.
-  BEGIN { __PACKAGE__->test_class }
 
   # Write some tests.
   sub test_me : Test(3) {
@@ -44,30 +41,12 @@ This class is the base class for all of the Bricolage testing classes. It uses
 the L<Test::Class|Test::Class> module as I<its> base class, and thus all of
 its subclasses get all of its benefits.
 
-Bric::Test::Base offers a single class method, C<test_class()> that none of
-its subclasses should override, but that they all should call in a BEGIN
-block, B<after> all other classes and modules have been loaded. This approach
-allows each test class to run as a single Perl script, and thus work very
-nicely with L<Test::Harness|Test::Harness>.
-
 =head1 INTERFACE
 
 Bric::Test::Base inherits from L<Test::Class|Test::Class>, and therefore the
 entire interface of that class is available to Bric::Test::Base and its
-subclasses. Only one class method has been added.
-
-=over 4
-
-=item C<test_class>
-
-  BEGIN { __PACKAGE__->test_class }
-
-This method must be called in a C<BEGIN> block by all Bric::Test::Base
-subclasses so that they can be run as independent scripts. It must be called
-only after all other classes have been C<use>d, so that the proper package
-name is registered.
-
-=back
+subclasses. No methods have been added, but they might be later -- the soft of
+thing that might be desireable to do with every test class.
 
 =head1 AUTHOR
 
@@ -84,11 +63,23 @@ use strict;
 use warnings;
 require 5.006;
 use base qw(Test::Class);
+use File::Spec;
+use File::Path;
 
-my $class;
-sub test_class { $class = shift }
+# Set up the temporary directory. This must be readable and writable
+# by the person running the tests, and so must be different from the
+# default in bricolage.conf, since there may be data owned by another
+# user in that directory.
+BEGIN {
+    $ENV{BRIC_TEMP_DIR} = File::Spec->catdir
+      (File::Spec->tmpdir, 'bricolage', 'test');
+    File::Path::mkpath($ENV{BRIC_TEMP_DIR}, 0, 0777);
+}
 
-# Defer execution until everything else has compiled and run.
-END { Test::Class->runtests($class) if $class }
+# Remove the temp directory. END blocks run in LIFO, so this block will run
+# after the one below that actually runs the tests.
+END { File::Path::rmtree($ENV{BRIC_TEMP_DIR}) }
+
 
 1;
+__END__

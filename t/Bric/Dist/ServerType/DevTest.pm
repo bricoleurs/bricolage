@@ -5,9 +5,6 @@ use base qw(Bric::Test::Base);
 use Test::More;
 use Bric::Dist::ServerType;
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
 ##############################################################################
 # Test output channel association.
 ##############################################################################

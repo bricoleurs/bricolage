@@ -9,8 +9,6 @@ use Pod::Checker;
 use IO::Scalar;
 use Test::More;
 
-BEGIN {__PACKAGE__->test_class }
-
 sub new {
     my $self = shift->SUPER::new(@_);
     # Find all the modules and scripts.
@@ -61,3 +59,6 @@ sub find_mods {
     find( sub { push @mods, $File::Find::name if -f and -x }, 'bin' );
     return \@mods;
 }
+
+1;
+__END__

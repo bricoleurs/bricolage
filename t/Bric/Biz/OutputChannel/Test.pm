@@ -5,10 +5,6 @@ use base qw(Bric::Test::Base);
 use Test::More;
 use Bric::Config qw(:oc);
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
-
 ##############################################################################
 # Test class loading.
 ##############################################################################
@@ -391,7 +387,7 @@ sub test_filename : Test(20) {
     is( $oc->get_filename, 'foo', "Check for 'foo'" );
 
     # Create a mock story object.
-    ok( my $s = Bric::Biz::Asset::Business::Story->new('bar'),
+    ok( my $s = Bric::Biz::Asset::Business::Story->newish('bar'),
         "Create story" );
 
     # Test it with the story object.
@@ -401,7 +397,7 @@ sub test_filename : Test(20) {
     ok( $oc->use_slug_on, "Turn on use_slug" );
     is( $oc->get_filename($s), 'bar', "Check for 'bar'" );
     # Now try it with a mock story object that has no slug.
-    ok( $s = Bric::Biz::Asset::Business::Story->new,
+    ok( $s = Bric::Biz::Asset::Business::Story->newish,
         "Create slugless story" );
     is( $oc->get_filename($s), 'foo', "Check for 'foo' again" );
 
@@ -409,12 +405,12 @@ sub test_filename : Test(20) {
     ok( $oc->set_uri_case(Bric::Biz::OutputChannel::UPPERCASE()),
         "Set for uppercase" );
     is( $oc->get_filename, 'FOO', "Check for 'FOO'" );
-    ok( $s = Bric::Biz::Asset::Business::Story->new('bar'),
+    ok( $s = Bric::Biz::Asset::Business::Story->newish('bar'),
         "Create story" );
     is( $oc->get_filename($s), 'BAR', "Check for 'BAR'" );
 
     # Now try it with a media object.
-    ok( my $m = Bric::Biz::Asset::Business::Media->new('Foo.gif'),
+    ok( my $m = Bric::Biz::Asset::Business::Media->newish('Foo.gif'),
         "Create media" );
     is( $oc->get_filename($m), 'FOO.GIF', "Check for 'FOO.GIF'" );
 
@@ -445,16 +441,18 @@ sub test_file_ext : Test(6) {
 
 
 ##############################################################################
-# Create bogus story class used by test_filename().
+# Create bogus story constructor used by test_filename(). This is a bit fishy,
+# so we may want to change it to use a real Story object constructed by new(),
+# later.
 package Bric::Biz::Asset::Business::Story;
-sub new { bless { slug => $_[1] } }
-sub get_slug { shift->{slug} }
+sub newish { bless { slug => $_[1] } }
 
 ##############################################################################
-# Create bogus media class used by test_filename().
+# Create bogus media constructor used by test_filename(). This is a bit fishy,
+# so we may want to change it to use a real Media object constructed by new(),
+# later.
 package Bric::Biz::Asset::Business::Media;
-sub new { bless { filename => $_[1] } }
-sub get_file_name { shift->{filename} }
+sub newish { bless { file_name => $_[1] } }
 
 1;
 __END__

@@ -5,9 +5,6 @@ use base qw(Bric::Test::Base);
 use Test::More;
 use Bric::Util::Class;
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
 sub class { 'Bric::Util::Class' }
 
 ##############################################################################

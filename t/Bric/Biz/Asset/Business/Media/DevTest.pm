@@ -5,9 +5,6 @@ use base qw(Bric::Biz::Asset::Business::DevTest);
 use Test::More;
 use Bric::Biz::Asset::Business::Media;
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
 sub class { 'Bric::Biz::Asset::Business::Media' }
 
 ##############################################################################

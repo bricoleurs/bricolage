@@ -7,10 +7,6 @@ use Test::More; # tests => 5;
 use Bric::Util::Grp::Org;
 use Bric::Biz::Org;
 
-BEGIN {
-    __PACKAGE__->test_class;
-}
-
 ##############################################################################
 # Persistence tests. These tests assume that the test data is in the database.
 # They will make changes to the database. You must have a frech install of the

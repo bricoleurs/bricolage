@@ -5,9 +5,6 @@ use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
 my $base_coll = 'Bric::Util::Coll';
 my $coll_class = 'Bric::Test::Coll::Fake';
 my $obj_class = 'Bric::Test::Coll::FakeClass';
@@ -137,7 +134,7 @@ sub test_is_populated : Test(18) {
     ok( my $coll = $self->construct, "Construct new collection" );
     # No method except get_objs() should populate the collection.
     ok( ! $coll->is_populated, "Not populated one" );
-    ok( my $obj = $coll->new_obj({}), "New object" );
+    ok( my $obj = $coll->new_obj({ id => 1 }), "New object" );
     ok( ! $coll->is_populated, "Not populated two" );
     ok( $coll->add_objs($obj), "Add object" );
     ok( ! $coll->is_populated, "Not populated three" );

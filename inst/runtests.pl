@@ -6,11 +6,11 @@ runtests.pl - Runs Bricolage's Tests
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-09-19 17:08:46 $
+$Date: 2003-01-13 03:10:00 $
 
 =head1 SYNOPSIS
 
@@ -69,7 +69,6 @@ L<Test::Class|Test::Class>, L<Test::More|Test::More>.
 
 use strict;
 use warnings;
-use File::Find;
 use File::Spec;
 use Test::Harness qw(runtests $verbose);
 use Getopt::Std;
@@ -81,13 +80,11 @@ unshift @INC, 'lib', File::Spec->catdir('t');
 my %opts;
 getopts('dV', \%opts);
 
-# Set up how to check the test names.
-my $chk = $opts{d} ? sub { m/Test.pm$/ } : sub { $_ eq 'Test.pm' };
+# Prepare for 'make devtest'. The test runner will check this environment
+# variable.
+$ENV{BRIC_DEV_TEST} ||= $opts{d} if $opts{d};
 
-# Find the tests.
-my @tests = @ARGV;
-find(sub { push @tests, $File::Find::name if $chk->() }, 't')
-  unless @tests;
+$ENV{BRIC_TEST_CLASSES} = join ',', @ARGV if @ARGV;
 
 # Set verbosity.
 if ($opts{V}) {
@@ -102,6 +99,6 @@ if ($opts{V}) {
 }
 
 # Run the tests!
-runtests(@tests);
+runtests(File::Spec->catfile(qw(t Bric Test Runner.pm)));
 
 

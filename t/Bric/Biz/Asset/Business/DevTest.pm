@@ -6,10 +6,6 @@ use Test::More;
 use Bric::Biz::Asset::Business;
 use Bric::Biz::AssetType;
 
-# Register this class for testing.
-BEGIN { __PACKAGE__->test_class }
-
-
 ##############################################################################
 # Utility methods
 ##############################################################################
