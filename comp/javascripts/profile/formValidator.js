@@ -1,12 +1,4 @@
-<%args>
-
-$id => undef
-
-</%args>
-
-<script language="javascript">
-
+<script type="text/javascript">
 var requiredFields         = new Object();
 var specialCharacterFields = new Object();
-
 </script>

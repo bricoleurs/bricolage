@@ -7,15 +7,15 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-08 04:13:25 $
+$Date: 2002-10-23 01:03:05 $
 
 =head1 SYNOPSIS
 
@@ -94,12 +94,6 @@ foreach my $opt ($leftSort ? sort { lc $a->{description} cmp lc $b->{description
 </%init>
 
 <%perl>
-
-unless ($rc->get("$widget.script")) {
-    $m->out( qq {<script src="/javascripts/twoxlm.js"></script>\n});
-    $rc->set("$widget.script", 1);
-}
-
 # if there are elements in the read only arrays, put them
 # on the page in a javascript array
 
