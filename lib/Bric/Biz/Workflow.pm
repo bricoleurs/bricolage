@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-13 18:52:11 $
+$Date: 2003-03-13 19:28:43 $
 
 =head1 SYNOPSIS
 
@@ -25,6 +25,10 @@ $Date: 2003-03-13 18:52:11 $
 
   $name  = $flow->get_name;
   $flow  = $flow->set_name($name);
+
+  $site    = $flow->get_site;
+  $site_id = $flow->get_site_id;
+  $flow    = $flow->set_site_id($site_id);
 
   $desc  = $flow->get_description;
   $flow  = $flow->set_description($desc);
@@ -71,7 +75,7 @@ use Bric::Util::Grp::Workflow;
 use Bric::Util::Fault::Exception::DP;
 use Bric::Util::Fault::Exception::AP;
 use Bric::Biz::Workflow::Parts::Desk;
-
+use Bric::Biz::Site;
 #==============================================================================#
 # Inheritance                          #
 #======================================#
@@ -132,7 +136,7 @@ my $sel_cols = 'a.id, a.name, a.description, a.all_desk_grp_id, ' .
   'a.head_desk_id, a.req_desk_grp_id, a.type, a.active, a.site__id, m.grp__id';
 my @sel_props = ('id', @props, 'grp_ids');
 
-my @ord = qw(name description type active);
+my @ord = qw(name description type active site_id site);
 
 
 #--------------------------------------#
@@ -151,7 +155,7 @@ BEGIN {
 
                          #Which site is this Workflow associated with
                          'site_id'              => Bric::FIELD_RDWR,
-
+                         'site'                 => Bric::FIELD_READ ,
                          # Private Fields
                          '_all_desk_grp_obj'    => Bric::FIELD_NONE,
                          '_req_desk_grp_obj'    => Bric::FIELD_NONE,
@@ -180,6 +184,12 @@ Keys for $param are:
 name
 
 The name for this workflow
+
+=item *
+
+site_id
+
+The site this workflow belongs to
 
 =item *
 
@@ -299,6 +309,10 @@ are:
 =item C<name>
 
 Return all workflows matching a certain name.
+
+=item C<site_id>
+
+Return all workflows matching a certain site id
 
 =item C<description>
 
@@ -683,6 +697,26 @@ sub my_meths {
 =head2 Public Instance Methods
 
 =over 4
+
+=item $id = $workflow->get_site_id()
+
+Returns the ID of the site this Workflow is a part of
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $workflow = $workflow->set_site_id($id)
+
+Set the ID of the site this Workflow should be a part of
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =item $flow->add_desk($param);
 

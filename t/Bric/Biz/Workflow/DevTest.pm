@@ -193,7 +193,7 @@ sub test_list_ids : Test(25) {
 # Test instance methods.
 ##############################################################################
 # Test save()
-sub test_save : Test(8) {
+sub test_save : Test(18) {
     my $test = shift;
     ok( my $wf = Bric::Biz::Workflow->lookup({ id => $story_wf_id }),
         "Look up story workflow" );
@@ -206,7 +206,63 @@ sub test_save : Test(8) {
     is( $wf->get_name, $new_name, "Check name is '$new_name'" );
     # Restore the original name!
     ok( $wf->set_name($old_name), "Set its name back to '$old_name'" );
+
+
+    #test site_id
+
+    my $site1 = Bric::Biz::Site->new( { name => "Dummy 1",
+                                        domain_name => 'www.dummy1.com',
+                                      });
+
+    ok( $site1->save(), "Create first dummy site");
+    my $site1_id = $site1->get_id;
+    $test->clean_site($site1_id);
+
+
+    my $wf2 = $wf->set_site_id('100'); #set to default
+    is($wf2, $wf, "Check that set_site_id returns the object as specified ".
+       "in the API");
+    is($wf->get_site_id, 100, "Check that the site_id is correct");
     ok( $wf->save, "Save it again" );
+    is($wf->get_site_id, 100, "Check that the site_id is correct after save");
+#    isa_ok($wf->get_site, "Bric::Biz::Site");
+#    is($wf->get_site->get_id, 100 , "Check site has correct id");
+
+    #now set it
+    ok($wf->set_site_id($site1_id), "Set the site id to something else");
+    is($wf->get_site_id, $site1_id, "Check that new value is returned");
+#    isa_ok($wf->get_site, "Bric::Biz::Site", "Check that you get a site ".
+#           "object");
+#    is($wf->get_site->get_id, $site1_id , "Check site has correct id");
+    #and save it
+    ok( $wf->save,  "Save it with new value");
+    is($wf->get_site_id, $site1_id, "Check that new value is returned");
+#    isa_ok($wf->get_site, "Bric::Biz::Site", "Check that you get a site ".
+#           "object");
+#    is($wf->get_site->get_id, $site1_id , "Check site has correct id");
+    #reload it
+    ok( $wf = Bric::Biz::Workflow->lookup({ id => $story_wf_id }),
+        "Look it up again" );
+     is($wf->get_site_id, $site1_id, "Check that new value is returned");
+#    isa_ok($wf->get_site, "Bric::Biz::Site", "Check that you get a site ".
+#           "object");
+#    is($wf->get_site->get_id, $site1_id , "Check site has correct id");
+    #reset
+    $wf->set_site_id('100'); #set to default
+    $wf->save();
+}
+
+sub clean_site {
+    my ($self, $id) = @_;
+    # Make sure we delete the site and the secret asset group.
+    $self->add_del_ids($id, 'site');
+    $self->add_del_ids($id, 'grp');
+    # Schedule the secret user gropus for deletion.
+    $self->add_del_ids(scalar Bric::Util::Grp::User->list_ids
+                       ({ description => "__Site $id Users__",
+                          all         => 1 }), 'grp');
+
+
 }
 
 1;
