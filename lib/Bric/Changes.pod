@@ -163,7 +163,11 @@ are any existing notes. [David]
 
 =item *
 
-Made SSL optional (and off by default) [Sam].
+Made SSL optional (and off by default). [Sam]
+
+=item *
+
+Change the term "attribute" to "field" in the UI. [David].
 
 =back
 
