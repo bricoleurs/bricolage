@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-23 03:47:27 $
+$Date: 2001-12-23 05:02:59 $
 
 =head1 SYNOPSIS
 
@@ -87,7 +87,7 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
 <form method="post" action="<% $r->uri %>" name="story_manager">
 <& '/widgets/listManager/listManager.mc',
 	object    => $object,
-	sortBy    => 'name',
+	sortBy    => 'title',
         fields    => [ qw(id title cover_date)],
         exclude   => $exclude,
 	profile   => $profile,
