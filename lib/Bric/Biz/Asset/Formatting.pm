@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-31 00:24:32 $
+$Date: 2002-02-06 21:16:12 $
 
 =head1 SYNOPSIS
 
@@ -2150,7 +2150,7 @@ sub _build_file_name {
 
     # Add the name, mangling as necessary
     my $file = lc $name;
-    $file    =~ s/\W+/_/g;
+    $file    =~ y/a-z0-9/_/cs;
     $file   .= ".$file_type" unless $name eq 'autohandler';
 
     # Return the filename.
