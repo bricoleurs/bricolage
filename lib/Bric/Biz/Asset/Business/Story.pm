@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.73 $
+$Revision: 1.74 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.73 $ )[-1];
+our $VERSION = (qw$Revision: 1.74 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 06:15:05 $
+$Date: 2004-02-11 17:09:00 $
 
 =head1 SYNOPSIS
 
@@ -289,7 +289,7 @@ use constant PARAM_FROM_MAP =>
                              . 'category c, desk d, workflow w, ' . TABLE . ' s ',
        grp_id             => 'member m2, story_member sm2',
        category_id        => 'story__category sc2',
-       category_uri       => 'story__category sc2, category c',
+       category_uri       => 'story__category sc2',
        data_text          => 'story_data_tile sd',
        contrib_id         => 'story__contributor sic',
        element_key_name   => 'element e'
