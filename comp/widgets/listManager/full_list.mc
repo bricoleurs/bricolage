@@ -59,22 +59,7 @@
 
   # Adjust the table size.
   if (scalar @$fields < $cols) {
-      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;">' );
-
-      # insert 'Check All' link if necessary. see &$insert_check_all below or
-      # check_all in lib.js for more info...
-      my $form_name = lc(get_disp_name($pkg));
-      if (&$insert_check_all($form_name, $form_names, $url)) {
-          $m->out(<<EOF);
-<script language="JavaScript">
-// checkbox field name suffixes to search
-var args = new Array('recall_cb','checkout_cb','deactivate_cb','delete_cb');
-</script>
-<a class="blackLink" href="javascript:check_all( '$form_name\_manager', args )">Check All</a>
-EOF
-      }
-
-      $m->out('</th>');
+      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;"></th>');
   }
 </%perl>
 
@@ -127,26 +112,6 @@ EOF
 %#--- END HTML ---#
 
 <%once>;
-# determines whether to insert the 'Check All' link based on
-# the package name of the items being listed, the list of
-# packages that should have the link inserted (@$form_names)
-# and the url of the current screen.
-# if we return 1 then the link is inserted and a click on
-# the last column heading of the list_manager results in a
-# call to function check_all in lib.js
-my $insert_check_all = sub {
-    my ($form_name, $forms, $url) = @_;
-    my $bool = 0;
-    $form_name =~ s| |_|g;
-    $form_name =~ s|utor||;
-    $form_name = $form_name eq 'group' ? 'grp' : $form_name;
-
-    my $names = join("|",@$forms);
-    $bool = 1 if $form_name =~ /^(?:$names)$/ && $url !~ /change_user/;
-
-    return $bool;
-};
-
 # Returns a link to the page specified with the given label. Used by .footer.
 my $page_link = sub {
     my ($page_num, $label, $limit, $url, $class) = @_;
@@ -179,11 +144,6 @@ $pagination => {}
 %#--- Initialization ---#
 
 <%init>;
-# Forms on which to display the 'Check All' table header
-my $form_names = [qw(alert_type category contrib contrib_type destination
-element element_type grp media source story output_channel template
-user workflow)];
-
 my $url       = $r->uri;
 my $object    = get_state_data($widget, 'object');
 my $sortBy    = get_state_data($widget, 'sortBy')
