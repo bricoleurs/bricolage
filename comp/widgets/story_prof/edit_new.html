@@ -21,6 +21,7 @@ $m->comp( '/widgets/select_object/select_object.mc',
 	  constrain  => { top_level => 1,
 			  media => 0 },
 	  useTable   => 1,
+	  exclude  => $excl_sub,
 	);
 $m->out($ieSpacer);
 $m->comp( '/widgets/select_object/select_object.mc',
@@ -35,6 +36,7 @@ $m->comp( '/widgets/select_object/select_object.mc',
 	  object   => 'category',
 	  disp     => 'Primary Category',
 	  name     => "$widget|new_category_id",
+	  exclude  => $excl_sub,
 	  field    => 'uri',
 	  useTable => 1
 	);
@@ -61,7 +63,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <table width=<% FIELD_INDENT + 150 %> cellpadding=0 cellspacing=0>
 <tr>
   <td width="<% FIELD_INDENT - 10%>"><img src="/media/images/spacer.gif" width="<% FIELD_INDENT - 10%>" height="1" /></td>
-  <td width=150><input type="image" src="/media/images/create_red.gif" border="0" name="story_prof|create_cb"></td>
+  <td><input type="image" src="/media/images/create_red.gif" border="0" name="story_prof|create_cb"></td>
 </tr>
 </table>
 	
@@ -76,6 +78,7 @@ $pmeth->{value} = 3;
 my $cdate = { %{ Bric::Biz::Asset::Business::Story->my_meths->{cover_date} } };
 my ($tmeth, $smeth) =
   @{ Bric::Biz::Asset::Business::Story->my_meths }{qw(title slug)};
+my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 </%once>
 <%init>;
 $cdate->{value} = strfdate();
