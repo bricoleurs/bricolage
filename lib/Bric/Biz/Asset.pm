@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-16 08:17:04 $
+$Date: 2004-02-26 01:37:52 $
 
 =head1 SYNOPSIS
 
@@ -247,6 +247,8 @@ sub lookup {
     throw_mni(error => 'Must call list on Story, Media, or Formatting')
       unless $pkg->CAN_DO_LOOKUP;
     $param = clean_params($pkg, $param);
+    # Lookup can return active and inactive assets.
+    delete $param->{active};
     # we generally want the newest version. will use order to get it
     $param->{Order} = 'version';
     $param->{OrderDirection} = 'DESC';

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.55 $ )[-1];
+our $VERSION = (qw$Revision: 1.56 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-18 17:47:45 $
+$Date: 2004-02-26 01:37:54 $
 
 =head1 SYNOPSIS
 
@@ -1540,8 +1540,7 @@ sub get_element {
     unless ($tile) {
         ($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list
           ({ object    => $object,
-             parent_id => undef,
-             active    => 1 });
+             parent_id => undef });
         $object->_set(['_tile'] => [$tile]);
     }
     return $tile;
