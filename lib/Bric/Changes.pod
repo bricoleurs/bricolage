@@ -48,7 +48,7 @@ excluded from the URI. [David]
 
 Mason story templates now inherit from all category templates, thus enabling
 the access of C<< <%attr> >>s and calling of C<< <%method> >>s in category
-templates from story templates.
+templates from story templates. [David]
 
 =item *
 
