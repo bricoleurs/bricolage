@@ -140,6 +140,13 @@ included in libapreq 1.1. [David]
 The publish attribute of desks can now be unset. Thanks to Sean Greathouse for
 the catch! [David]
 
+=item *
+
+Fixed asset class date parameters to list(). The asset classes were neglecting
+to change the dates pased in to list() to database dates before querying the
+database. This lead to the wrong stories being returned for everyone not using
+UTC as their local time zone. Thanks to Bill Cappel for the spot! [David]
+
 =back
 
 =head1 VERSION 1.5.0
