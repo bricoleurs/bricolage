@@ -66,11 +66,11 @@ sub delete : Callback {
 		$a->deactivate;
 		$a->save;
 
-        if($key eq 'formatting') {
-   	        $burn->undeploy($a);
-            my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
-               $sb->undeploy($a);
-        }
+                if($key eq 'formatting') {
+                    $burn->undeploy($a);
+                    my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
+                    $sb->undeploy($a);
+                }
 		log_event("${key}_deact", $a);
 	    } else {
                 add_msg('Permission to delete "[_1]" denied.', $a->get_name);
