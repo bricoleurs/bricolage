@@ -50,7 +50,7 @@ postgres.db 	: inst/postgres.pl required.db
 config.db	: inst/config.pl required.db apache.db postgres.db
 	$(PERL) inst/config.pl
 
-bconf/bricolage.conf	:  required.db config.db postgres.db apache.db inst/conf.pl
+bconf/bricolage.conf	:  required.db inst/conf.pl
 	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
 
 build_done	: required.db modules.db apache.db postgres.db config.db \
@@ -193,8 +193,9 @@ done		: bconf/bricolage.conf db files bin lib cpan
 # upgrade rules          #
 ##########################
 
-upgrade		: upgrade.db required.db is_root cpan stop lib bin db_upgrade \
-	          db_grant upgrade_files upgrade_conf upgrade_done
+upgrade		: upgrade.db required.db bconf/bricolage.conf is_root cpan \
+	          stop db_upgrade lib bin  db_grant upgrade_files \
+	          upgrade_conf upgrade_done
 
 upgrade.db	: 
 	$(PERL) inst/upgrade.pl

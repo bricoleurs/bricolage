@@ -34,13 +34,14 @@ manifypods:
 WriteMakefile(NAME           => 'bric_bin',
 	      EXE_FILES      => \@EXE,
 	      ( exists $CONFIG->{MODULE_DIR} ? 
-		( INSTALLSITELIB => $CONFIG->{MODULE_DIR} ) : 
+		( INSTALLSITELIB => $CONFIG->{MODULE_DIR} ) :
 		()),
 	      ( exists $CONFIG->{BIN_DIR} ? 
 		( INSTALLSCRIPT => $CONFIG->{BIN_DIR},
                   INSTALLSITEBIN => $CONFIG->{BIN_DIR} ) :
 		()),
 	      ( exists $CONFIG->{MAN_DIR} ? 
-		( INSTALLMAN1DIR => "$CONFIG->{MAN_DIR}/man1" ) : 
+		( INSTALLMAN1DIR => "$CONFIG->{MAN_DIR}/man1",
+                  INSTALLSITEMAN1DIR => "$CONFIG->{MAN_DIR}/man1") :
 		()));
 
