@@ -1,22 +1,47 @@
-Bricolage Redhat README
------------------------
+Bricolage Red Hat README
+========================
 
-Bricolage works well on Redhat Linux, but installing components from
-RPM requires some care.  If you are installing Bricolage's
-requirements from source you can skip these notes and proceed directly
-to INSTALL.
+Bricolage works well on Red Hat Linux, but installing components from RPM
+requires some care. If you are installing Bricolage's requirements from source
+you can skip these notes and proceed directly to INSTALL.
 
-RPM notes:
+RPM Notes
+---------
 
-  - The RPMs for Apache and mod_perl will not work with Bricolage,
-    because they use mod_perl as a DSO.  You must install Apache from
-    source.  See Bric::Admin for details.
+  - The RPMs for Apache and mod_perl will not work with Bricolage, because
+    they use mod_perl as a DSO. You must install Apache from source. See
+    Bric::Admin for details.
 
-  - You must install the PostgreSQL server and devel RPMs in
-    order for Bricolage to find PostgreSQL.  This is because the devel
-    RPMs contain the pg_config binary that Bricolage uses to find
-    PostgreSQL.  For example, for PostgreSQL version 7.1.3 you would
-    install these RPMs:
+  - You must install the PostgreSQL server and devel RPMs in order for
+    Bricolage to find PostgreSQL. This is because the devel RPMs contain the
+    pg_config binary that Bricolage uses to find PostgreSQL. For example, for
+    PostgreSQL version 7.1.3 you would install these RPMs:
 
       postgresql-server-7.1.3-2.i386.rpm
       postgresql-devel-7.1.3-2.i386.rpm
+
+Red Hat 8.0 Notes
+-----------------
+
+You may find that you get an error message such as this when you attmpt to
+install Bricolage on Red Hat 8:
+
+###############################################################################
+
+Unable to set bricolage.conf variable APACHE_BIN to "/usr/local/apache/bin/httpd".
+###############################################################################
+
+In fact, a fair number of Perl modules will fail to install or test properly
+with Perl 5.8 on Red Hat 8. This is because Red Hat is configured such that it
+defaults to a Unicode character set. Bricolage prefers this, of course, since
+all Bricolage data is stored in the database in Unicode. However, it does
+require that you set the LANG environment variable on Red Hat 8, like this:
+
+  export LANG=en_US
+
+From what we've heard, LANG must not include "utf8". Presumably you should set
+LANG to a value for your local language. At any rate, you'll need to make sure
+that this is set in your shell in order to install Bricolage and all of its
+modules, and you may need to include it in your httpd.conf file, as well:
+
+  PerlSetEnv LANG en_US
