@@ -172,6 +172,12 @@ the site group's profile. Thanks to Alexander Ling for the spot. [David]
 
 Improved permission checking in the virtual FTP server. [David]
 
+=item *
+
+Uploading a new version of a media file did not change the path to the
+media file stored in the database, unless the file name of the media
+was also changed.  [Dave Rolsky]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)
