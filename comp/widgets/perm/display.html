@@ -270,9 +270,11 @@ if ($perm) {
     $val = $perm->get_value;
     $pid = $perm->get_id;
 }
-# Find out the maximum permission the current user has to the objects
-# in this group.
-my $max_perm = get_user_object->what_can(0, $gid) or return;
+# Make sure the current user has at least READ permission to the group, and
+# find out the maximum permission the current user has to the group  and to
+# the objects in the group.
+chk_authz($grp, READ, 1) or return;
+my $max_perm = get_user_object->what_can(0, $gid);
 return if $max_perm == DENY;
 
 </%init>
@@ -330,9 +332,11 @@ if ($perm) {
     $val = $perm->get_value;
     $pid = $perm->get_id;
 }
-# Find out the maximum permission the current user has to the objects
-# in this group.
-my $max_perm = get_user_object->what_can(0, $gid) or return;
+# Make sure the current user has at least READ permission to the group, and
+# find out the maximum permission the current user has to the group  and to
+# the objects in the group.
+chk_authz($grp, READ, 1) or return;
+my $max_perm = get_user_object->what_can(0, $gid);
 return if $max_perm == DENY;
 
 my $opts = $create || ($type ne 'usr' && $grp->get_permanent) ?
