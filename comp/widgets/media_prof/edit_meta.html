@@ -37,6 +37,22 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Asset Type:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_element_name() %></td>
   </tr>
+<tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Current Version:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_current_version() %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Published Version:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_published_version() %></td>
+  </tr>
   <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
   </tr>
@@ -44,14 +60,6 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">URI:&nbsp;</span></td>
   <td width="470">&nbsp;<a href="/workflow/profile/preview/media/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $media->get_uri %></a></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Version:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_version() %></td>
   </tr>
   <tr>
   <td class="medHeader" colspan=3><img src="/media/images/spacer.gif" height="1" width="1" /></td>

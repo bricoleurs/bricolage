@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-15 20:43:25 $
+$Date: 2002-04-23 23:45:43 $
 
 =head1 SYNOPSIS
 
@@ -131,9 +131,10 @@ use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::AP;
 use Bric::Util::Fault::Exception::MNI;
 use Bric::Util::Trans::FS;
-use Bric::Config qw(:burn);
+use Bric::Config qw(:burn PREVIEW_LOCAL ENABLE_DIST);
 use Bric::Biz::AssetType qw(:all);
-
+use Bric::App::Util qw(:all);
+use Bric::App::Event qw(:all);
 
 #==============================================================================#
 # Inheritance                          #
@@ -359,6 +360,301 @@ sub undeploy {
 
     # Delete it from the file system.
     $fs->del($file) if -e $file;
+}
+#------------------------------------------------------------------------------#
+=item $url = $b->preview($ba, $key, $user_id, $m);
+
+Sends story or media to preview server and returns URL. Params:
+
+=over 4
+
+=item *
+
+$ba
+
+A business asset object to publish.
+
+=item *
+
+$key
+
+story or media
+
+=item *
+
+$user_id
+
+user_id to publish as.
+
+=item *
+
+$m
+
+media state_data.
+
+=back
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub preview {
+	my $self = shift;
+    my ($ats, $oc_sts) = ({}, {});
+    my ($ba, $key, $user_id, $m) = @_;
+	my $send_msg = sub { $m->comp('/lib/util/status_msg.mc', @_) } if $m;
+	my $comp_root = $m->interp->comp_root->[0][1];
+
+	$ba->set_publish_date();
+	# Create a job for moving this asset.
+    my $job = Bric::Dist::Job->new( { sched_time => '',
+                    user_id => $user_id,
+                    name => 'Preview' . " &quot;" .
+                            $ba->get_name . "&quot;" });
+	# Get a list of the relevant categories.
+    my @cats = $key eq 'story' ? $ba->get_categories : ();
+    # Grab the asset type.
+    my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
+    my $bats = {};
+    my $res = [];
+	my $ocs = [ Bric::Biz::OutputChannel->lookup({ id => $at->get_primary_oc_id }) ];
+	
+	# Iterate through each output channel.
+    foreach my $oc (@$ocs) {
+    	&$send_msg("Writing files to &quot;" . $oc->get_name
+           . '&quot; Output Channel.') if $m;
+    	my $ocid = $oc->get_id;
+    	# Get a list of server types this categroy applies to.
+    	my $bat = $oc_sts->{$ocid} ||=
+      		Bric::Dist::ServerType->list({ "can_preview" => 1,
+                       output_channel_id => $ocid });
+    	# Make sure we have some destinations.
+    	unless (@$bat) {
+			if (not PREVIEW_LOCAL) {
+			# can't use add_msg here because we're already in a new window
+   		     &$send_msg("<font color=red><b>Cannot preview asset &quot;" .
+               $ba->get_name . "&quot; because there are no " .
+               "Preview Destinations associated with its " .
+               "output channels.</b></font>") if $m;
+        	next;
+        }
+	}
+    # Force the list of server types into a hash so that they're unique
+    # (they can repeat between asset channels).
+    grep { $bats->{ $_->get_id } = $_ } @$bat;
+
+    # Burn, baby, burn!
+    if ($key eq 'story') {
+        foreach my $cat (@cats) { push @$res, $self->burn_one($ba, $oc, $cat) }
+    	} else {
+        	my $path = $ba->get_path;
+        	my $uri = $ba->get_uri;
+        	if ($path && $uri) {
+	        	my $r = Bric::Dist::Resource->lookup({ path => $path })
+    	      	|| Bric::Dist::Resource->new({ path => $path,
+                         media_type => Bric::Util::MediaType->get_name_by_ext($uri)
+                           });
+        		$r->set_uri($uri);
+        		$r->add_media_ids($ba->get_id);
+        		$r->save;
+        		push @$res, $r;
+        	}
+    	}
+	}
+    # Turn the hash of server types into an array.
+    $bats = [ values %$bats ];
+
+    # Save the delivery job.
+    $job->add_server_types(@$bats);
+    $job->add_resources(@$res);
+    $job->save;
+    log_event('job_new', $job);
+
+	# Execute the job and redirect.
+    &$send_msg("Distributing files.") if $m;
+    # We don't need to exeucte the job if it has already been executed.
+    $job->execute_me unless ENABLE_DIST;
+    if (PREVIEW_LOCAL) {
+		# Copy the files for previewing locally.
+        foreach my $rsrc (@$res) {
+   		    $fs->copy($rsrc->get_path,
+            $fs->cat_dir($comp_root, PREVIEW_LOCAL,
+                       $rsrc->get_uri));
+        }
+		# Return the redirection URL.
+        return $fs->cat_uri('/', PREVIEW_LOCAL, $res->[0]->get_uri);
+	} else {
+        # Return the redirection URL, if we have one
+        if (@$bats) {
+			return 'http://' . ($bats->[0]->get_servers)[0]->get_host_name
+            . $ba->get_uri;
+		}
+    }
+}
+#------------------------------------------------------------------------------#
+
+=item $published = $b->publish($ba, $key, $user_id, $publish_date);
+
+Publishes an asset, then remove from workflow.  Returns 1 if publish was successful, else 0.  Parameters are:
+
+=over 4
+
+=item *
+
+$ba
+
+A business asset object to publish.
+
+=item *
+
+$key
+
+story or media
+
+=item *
+
+$user_id
+
+user_id to publish as.
+
+=item *
+
+$publish_date
+
+Date to set up publishing job for - if left blank, the present.
+
+=back
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub publish {
+    my $self = shift;
+	my ($ats, $oc_sts) = ({}, {});
+    my ($ba, $key, $user_id, $publish_date, $die_err) = @_;
+	my $published=0;
+    $ba->set_publish_date($publish_date);
+    # Create a job for moving this asset.
+    my $job = Bric::Dist::Job->new( { sched_time => $publish_date,
+                                      user_id => $user_id,
+                                      name => ucfirst('publish') . " &quot;" .                                            $ba->get_name . "&quot;" });
+
+    my $exp_job;
+    my $repub;
+
+    if (!$ba->get_publish_status) {
+        # This puppy hasn't been published before. Mark it.
+        $ba->set_publish_status(1);
+        if (my $exp_date = $ba->get_expire_date) {
+            # We'll need to expire it.
+            $exp_job = Bric::Dist::Job->new( { sched_time => $exp_date,
+                                          user_id => $user_id,
+                                         type => 1 });
+            $exp_job->set_name("Expire &quot;" . $ba->get_name . "&quot;");
+        }
+    } else {
+		$repub = 1;
+	}
+
+    # Get a list of the relevant categories.
+    my @cats = $key eq 'story' ? $ba->get_categories : ();
+    # Grab the asset type.
+    my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
+    my $bats = {};
+    my $res = [];
+    my $ocs = $at->get_output_channels;
+
+    foreach my $oc (@$ocs) {
+        my $ocid = $oc->get_id;
+        # Get a list of server types this categroy applies to.
+        my $bat = $oc_sts->{$ocid} ||=
+        Bric::Dist::ServerType->list({ "can_publish" => 1,
+                                   output_channel_id => $ocid });
+        # Make sure we have some destinations.
+        unless (@$bat) {
+            $die_err ? die "Cannot publish asset &quot;" . $ba->get_name . "&quot; because there are no Destinations associated with its output channels." : add_msg("Cannot publish asset &quot;" . $ba->get_name . "&quot; because there are no Destinations associated with its output channels.");
+                    next;
+        }
+    # Force the list of server types into a hash so that they're unique
+            # (they can repeat between asset channels).
+            grep { $bats->{ $_->get_id } = $_ } @$bat;
+
+	# Burn, baby, burn!
+    if ($key eq 'story') {
+        foreach my $cat (@cats) { push @$res, $self->burn_one($ba, $oc, $cat) }
+ 		$published=1;
+    } else {
+        my $path = $ba->get_path;
+        my $uri = $ba->get_uri;
+        if ($path && $uri) {
+            my $r = Bric::Dist::Resource->lookup({ path => $path })
+                    || Bric::Dist::Resource->new({ path => $path,
+                                             media_type => Bric::Util::MediaType->get_name_by_ext($uri)
+                                  });
+            $r->set_uri($uri);
+            $r->add_media_ids($ba->get_id);
+            $r->save;
+            push @$res, $r;
+			$published=1;
+        }
+    }
+	}
+
+    # Turn the hash of server types into an array.
+    $bats = [ values %$bats ];
+
+    # Save the delivery job.
+    $job->add_server_types(@$bats);
+    $job->add_resources(@$res);
+    $job->save;
+    log_event('job_new', $job);
+
+    # Save the expiration job, if there is one.
+    if ($exp_job) {
+        # Add the server types to the job.
+        $exp_job->add_server_types(@$bats);
+        $exp_job->add_resources(@$res);
+        $exp_job->save;
+        log_event('job_new', $exp_job);
+    }
+
+	if ($published) {
+		# Set published version
+		$ba->set_published_version($ba->get_current_version());
+        # Now log that we've published and get it out of workflow.
+        log_event($key . ($repub ? '_republish' : '_publish'), $ba);
+        my $d = $ba->get_current_desk;
+        $d->remove_asset($ba);
+        $d->save;
+		# Remove this asset from the workflow by setting is workflow ID to undef
+        $ba->set_workflow_id(undef);
+        $ba->save;
+
+        log_event("${key}_rem_workflow", $ba);
+	}
+
+	return $published;
 }
 
 #------------------------------------------------------------------------------#

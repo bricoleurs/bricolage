@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:17 $
+$Date: 2002-04-23 23:45:43 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -93,6 +93,17 @@ if ($versions) {
   </tr>
   </table> 
   </td>
+</tr>
+<tr>
+    <td colspan=3 align="center" valign="middle"><input type="image" src="
+% if ($widget eq 'tmpl_prof') {
+/media/images/checkin_and_deploy_dgreen.gif" border=0 name="
+<% $widget %>|checkin_deploy_cb
+%  } else {
+/media/images/checkin_and_publish_dgreen.gif" border=0 name="
+<% $widget %>|checkin_and_pub_cb
+% }
+" value="Check In And Publish"><br><br></td>
 </tr>
 <% $ieSpacer %> 
 <tr>

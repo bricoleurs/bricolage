@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2002-04-23 23:45:42 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -61,6 +61,7 @@ CREATE TABLE story (
     expire_date       TIMESTAMP,
     cover_date        TIMESTAMP,
     current_version   NUMERIC(10, 0)  NOT NULL,
+	published_version NUMERIC(10, 0),
 	workflow__id	  NUMERIC(10,0),
     publish_status    NUMERIC(1,0)    NOT NULL
                                       DEFAULT 0

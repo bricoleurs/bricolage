@@ -31,7 +31,7 @@ my $handle_update = sub {
       if $param->{"$widget|source__id"};
 
     $media->set_category__id($param->{"$widget|category__id"})
-      if defined $param->{"$widget|category__id"};
+      if (defined($param->{"$widget|category__id"}) && ($media->get_category__id ne $param->{"$widget|category__id"}));
 
     # set the name
     $media->set_title($param->{title})
@@ -218,6 +218,87 @@ my $handle_checkin = sub {
 
     # Remove this page from history.
     pop_page;
+};
+################################################################################
+
+my $handle_checkin_and_pub = sub {
+
+    my ($widget, $field, $param, $WORK_ID, $media) = @_;
+    $media ||= get_state_data($widget, 'media');
+
+    my $work_id = get_state_data($widget, 'work_id');
+	my $wf;
+
+    if ($work_id) {
+        $media->set_workflow_id($work_id);
+
+        $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
+        log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
+    } 
+	else {
+		$work_id = $media->get_workflow_id();
+        $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
+       	log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
+	}
+
+    $media->checkin();
+
+	# get desks for workflow
+    my @desk = $wf->allowed_desks();
+    my $gdesk;
+	# find publish desk for this workflow
+    foreach my $desk (@desk) {
+         $gdesk = $desk if $desk->can_publish();
+    }
+
+    my $cur_desk = $media->get_current_desk();
+
+   my $no_log;
+    if ($cur_desk) {
+                if ($cur_desk->get_id() == $gdesk->get_id()) {
+            $no_log = 1;
+        } else {
+                        $cur_desk->transfer({
+                             to    => $gdesk,
+                             asset => $media
+                            });
+                        $cur_desk->save();
+                }
+    } else {
+        $gdesk->accept({'asset' => $media});
+    }
+    $gdesk->save;
+    my $dname = $gdesk->get_name;
+    log_event('media_moved', $media, { Desk => $dname }) unless $no_log;
+
+    # make sure that the media is active
+    $media->save();
+
+    log_event('media_checkin', $media);
+
+    # Clear the state out.
+    clear_state($widget);
+    add_msg("Media &quot;" . $media->get_title . "&quot; saved and checked in to"
+            . " &quot;$dname&quot;.");
+
+
+	# Commit this checkin
+	# WHY?? Because Postgres does NOT like it when you insert and
+    # delete a record within the same transaction..
+    Bric::Util::DBI->commit();
+
+	# Instantiate the Burner object.
+    my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
+	
+	my $published = $b->publish($media, 'media', get_user_id);
+	add_msg("Media &quot;" . $media->get_title . "&quot; published.") if $published;
+	
+    # Set the redirect to the page we were at before here.
+    set_redirect("/");
+
+    # Remove this page from history.
+    pop_page;
+
 };
 
 ################################################################################
@@ -630,6 +711,7 @@ my %cbs = (
 	   revert_cb		 => $handle_revert,
 	   save_and_stay_cb	 => $handle_save_stay,
 	   checkin_cb		 		=> $handle_checkin,
+	   checkin_and_pub_cb	 => $handle_checkin_and_pub,
 	   save_contrib_cb 		=> $handle_save_contrib,
 	   save_and_stay_contrib_cb => $handle_save_and_stay_contrib
 

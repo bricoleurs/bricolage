@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:37 $
+$Date: 2002-04-23 23:45:43 $
 
 =head1 SYNOPSIS
 
@@ -88,7 +88,7 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
 <& '/widgets/listManager/listManager.mc',
 	object    => $object,
 	sortBy    => 'title',
-        fields    => [ qw(id title cover_date)],
+        fields    => [ qw(id title needs_publish cover_date)],
         exclude   => $exclude,
 	profile   => $profile,
         title     => '%n Found',

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-13 20:20:41 $
+$Date: 2002-04-23 23:45:42 $
 
 =head1 SYNOPSIS
 
@@ -66,6 +66,8 @@ $Date: 2002-03-13 20:20:41 $
  $asset            = $asset->activate()
  ($asset || undef) = $asset->is_active()
 
+ # Publish info
+ $needs_publish = $asset->needs_publish();
 
  ## METHODS INHERITED FROM Bric::Biz::Asset::Business ##
 
@@ -212,6 +214,7 @@ use constant COLS	=> qw(
 						expire_date
 						cover_date
 						current_version
+						published_version
 						workflow__id
 						publish_status
                         primary_uri
@@ -236,6 +239,7 @@ use constant FIELDS =>  qw(
 						expire_date
 						cover_date
 						current_version
+						published_version
 						workflow_id
 						publish_status
                         primary_uri
@@ -1118,7 +1122,7 @@ sub set_primary_category {
 	    if ($cat == $c_id) {
 		$cats->{$c_id}->{'primary'} = 1;
 		unless ($cats->{$c_id}->{'action'}
-			&& ($cats->{$c_id}->{'action'} eq 'insert')) {
+		    && ($cats->{$c_id}->{'action'} eq 'insert')) {
 		    $cats->{$c_id}->{'action'} = 'update';
 		}
 	    }

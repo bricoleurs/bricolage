@@ -155,9 +155,12 @@ $desk_type
 my $id = $obj->get_id;
 
 # Determine the status.
-my $status = $obj->get_publish_status ?
-  '<img src="/media/images/P_red.gif" border=0 width="15" height="15" />'
-  : '&nbsp;';
+my $status;
+if ($obj->get_publish_status) {
+	$status = $obj->needs_publish ? '<img src="/media/images/P_red.gif" border=0 width="15" height="15" />' : '<img src="/media/images/P_green.gif" border=0 width="15" height="15" />';	
+} else {
+	$status = '&nbsp;';
+}
 
 my $cats = $rc->get("desk.cats") || {};
 my ($name, $date, $date_label, $cat);
@@ -207,11 +210,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-04-03 21:26:55 $
+$Date: 2002-04-23 23:45:43 $
 
 =head1 DESCRIPTION
 

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:37 $
+$Date: 2002-04-23 23:45:43 $
 
 =head1 SYNOPSIS
 
@@ -93,7 +93,7 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
   title    => '%n Found',
   sortBy   => 'name',
   profile  => $profile,
-  fields   => [ qw(id name cover_date) ],
+  fields   => [ qw(id name needs_publish cover_date) ],
   addition => $addition,
   select   => $select,
   exclude  => $exclude,

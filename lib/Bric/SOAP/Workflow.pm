@@ -35,15 +35,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-26 19:37:08 $
+$Date: 2002-04-23 23:45:42 $
 
 =head1 SYNOPSIS
 
@@ -218,113 +218,9 @@ sub publish {
 		}
 	    }
 	}
-      
-	# setup job for this publish
-	my $job = Bric::Dist::Job->new({ user_id => get_user_id,
-					 name => "publish ". $obj->get_name });
-
-	# setup expiration if never published before
-	my $exp_job;
-	if (not $obj->set_publish_status and $obj->get_expire_date and
-	    not $preview) {
-	    my $exp_job = Bric::Dist::Job->new(
-				      { sched_time => $obj->get_expire_date,
-					user_id    => get_user_id,
-					type       => 1 });
-	    $exp_job->set_name("Expire " . $obj->get_name);
-	}
-	
-	# grab the asset type for this object
-	my $at  = $obj->_get_element_object;
-	my $ocs = $preview 
-	    ? [ Bric::Biz::OutputChannel->lookup(
-                                        { id => $at->get_primary_oc_id }) ] 
-	    : $at->get_output_channels;
-	my @res;
-	my %servers;
-
-	# iterate through each output channel.
-	foreach my $oc (@$ocs) {
-	    my $oc_id = $oc->get_id;
-	
-	    # get a list of server types this categroy applies to.
-	    my $server_list = Bric::Dist::ServerType->list(
-		       { ($preview ? (can_preview => 1) : (can_publish => 1)),
-			 output_channel_id => $oc_id });
-	    die "Cannot publish ($type => $id) " .
-		"because there are no Destinations associated with its " .
-		    "output channels.\n"
-			unless @$server_list;
-
-	    # unique server list - might have dupes.  also collect for later
-	    $servers{$_->get_id()} = $_ for (@$server_list);
-	
-	    if ($type eq 'story') {
-		# only stories get burnt
-		my @cats = $obj->get_categories;
-		foreach (@cats) {		  
-		    eval { push @res, $burner->burn_one($obj, $oc, $_) };
-		    die __PACKAGE__ . "::publish : problem publishing " .
-			"($type => $id) : $@\n"
-			    if $@;
-		}
-	    } else {
-		# media gets moved around directly
-		my $path = $obj->get_path;
-		my $uri = $obj->get_uri;
-		if ($path and $uri) {
-		    my $r = Bric::Dist::Resource->lookup({ path => $path })
-			|| Bric::Dist::Resource->new(
-						     { path => $path,
-                                                       media_type => 
-                                   Bric::Util::MediaType->get_name_by_ext($uri)
-						     });
-		    $r->set_uri($uri);
-		    $r->add_media_ids($obj->get_id);
-		    $r->save;
-		    push @res, $r;
-		}
-	    }
-	}
-
-	# Save the delivery job.
-	$job->add_server_types(values %servers);
-	$job->add_resources(@res);
-	$job->save;
-	log_event('job_new', $job);
-
-	# avoid messing up asset when previewing
-	unless ($preview) {
-
-	    # Save the expiration job, if there is one.
-	    if ($exp_job) {
-		# Add the server types to the job.
-		$exp_job->add_server_types(values %servers);
-		$exp_job->add_resources(@res);
-		$exp_job->save;
-		log_event('job_new', $exp_job);
-	    }
-	    
-	    # get it off the desk
-	    my $desk = $obj->get_current_desk;
-	    $desk->remove_asset($obj);
-	    $desk->save;
-
-	    # Remove this asset from the workflow by setting is workflow
-	    # ID to undef
-	    $obj->set_workflow_id(undef);
-	    log_event("${type}_rem_workflow", $obj);
-	    
-	    # set published flag and save to object
-	    $obj->set_publish_status(1);
-	    $obj->save;
-	    
-	    # log the publish
-	    log_event($type . '_publish', $obj);
-	}
-
+	    my $published = $preview ? $burner->preview($obj, $type, get_user_id) : $burner->publish($obj, $type, get_user_id, '', 1);
 	# record the publish
-	push(@published, name("${type}_id", $id));
+	push(@published, name("${type}_id", $id)) if $published;
     }
 
     print STDERR __PACKAGE__ . "->publish() finished : ",

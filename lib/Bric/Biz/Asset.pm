@@ -8,15 +8,15 @@ An asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-04-23 23:45:42 $
 
 =head1 SYNOPSIS
 
@@ -46,6 +46,9 @@ $Date: 2001-12-04 18:17:44 $
  $vers_id     = $asset->get_version_id();
  $current 	  = $asset->get_current_version();
  $checked_out = $asset->get_checked_out()
+
+ # Publish info
+ $needs_publish = $asset->needs_publish();
 
  # Expire Data Information
  $asset 	  = $asset->set_expire_date($date)
@@ -141,8 +144,7 @@ use base qw(Bric);
 #--------------------------------------#
 # Private Class Fields
 my $meths;
-my @ord = qw(id name description priority uri cover_date  version element
-	     publish_status expire_date active);
+my @ord = qw(id name description priority uri cover_date  version element needs_publish publish_status expire_date active);
 
 #--------------------------------------#
 # Instance Fields                       
@@ -160,6 +162,7 @@ BEGIN {
 			id					=> Bric::FIELD_READ,
 			version_id			=> Bric::FIELD_READ,
 			current_version		=> Bric::FIELD_READ,
+			published_version	=> Bric::FIELD_RDWR,
 			priority			=> Bric::FIELD_RDWR,
 			modifer				=> Bric::FIELD_READ,
 			expire_date			=> Bric::FIELD_RDWR,
@@ -495,12 +498,20 @@ sub my_meths {
     $meths = {
 	      id         => {
 			      name     => 'id',
-			      get_meth => sub { shift->get_id(@_) },
+			      get_meth => sub { shift->get_id(@_) }, 
 			      get_args => [],
 			      disp     => 'ID',
 			      len      => 10,
 			      type     => 'short',
 			     },
+		  needs_publish => {
+                  name     => 'needs_publish',
+                  get_meth => sub { my $a=shift;
+									if ($a->get_publish_status(@_)) {
+										return $a->needs_publish(@_) ? '<img src="/media/images/P_red.gif" border=0 width="15" height="15" />' : '<img src="/media/images/P_green.gif" border=0 width="15" height="15" />';
+									} }, 
+                  get_args => [],
+                 },
 	      name        => {
 			      name     => 'name',
 			      get_meth => sub { shift->get_name(@_) },
@@ -943,6 +954,31 @@ B<Notes:>
 NONE
 
 =cut
+
+################################################################################
+
+=item $needs_publish = $asset->needs_publish()
+
+Compares current_version and published_version from asset table.  If the same, needs_publish returns 0.  If different, returns 1.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub needs_publish {
+    my $self = shift;
+    return $self->get_current_version == $self->get_published_version ? 0 : 1;
+}
 
 ################################################################################
 

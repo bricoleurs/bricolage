@@ -131,8 +131,8 @@ elsif ($field eq "$widget|publish_cb") {
 
 	# Examine all the related objects.
 	foreach my $r ($a->get_related_objects) {
-	    # Skip assets that have already been published.
-	    next if $r->get_publish_status;
+	    # Skip assets whose current version has already been published.
+	    next if not $r->needs_publish();
 
 	    if ($r->get_checked_out) {
 		add_msg("Cannot auto-publish related ".

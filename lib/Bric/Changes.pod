@@ -56,7 +56,25 @@ syntax errors. [Sam]
 =item *
 
 Added --chunks option to bric_republish to publish stories in batches.
-This is useful to avoid timing out on long runs.
+This is useful to avoid timing out on long runs. [Sam]
+
+=item *
+
+Added [Check In / Publish] button to Story Profile to checkin and
+publish in one step. [Matt]
+
+=item *
+
+Added needs_publish() method and associated published_version database
+field to Bric::Biz::Asset.  This method is now used by the publisher
+to determine if something needs republishing.  Added new graphics to
+display this information on the desks.  [Matt]
+
+=item *
+
+Moved repeated publish and preview functionality into
+Bric::Util::Burner.  Updated Mason code and Bric::SOAP::Workflow
+accordingly.  [Matt]
 
 =back
 

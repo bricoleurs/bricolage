@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2002-02-27 03:04:40 $
+-- $Date: 2002-04-23 23:45:42 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -54,6 +54,7 @@ CREATE TABLE media (
                                        CHECK (priority BETWEEN 1 AND 5),
     source__id       NUMERIC(10,0)   NOT NULL,
     current_version  NUMERIC(10,0),
+	published_version	NUMERIC(10,0),
     usr__id          NUMERIC(10,0),
     keyword_grp__id  NUMERIC(10,0),
     publish_date     TIMESTAMP,

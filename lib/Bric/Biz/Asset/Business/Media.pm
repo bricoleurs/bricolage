@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-07 01:37:44 $
+$Date: 2002-04-23 23:45:42 $
 
 =head1 SYNOPSIS
 
@@ -69,6 +69,7 @@ use constant COLS	    => qw( element__id
 				   priority
 				   source__id
 				   current_version
+				   published_version
 				   usr__id
 				   keyword_grp__id
 				   publish_date
@@ -95,6 +96,7 @@ use constant FIELDS	    => qw( element__id
 				   priority
 				   source__id
 				   current_version
+				   published_version
 				   user__id
 				   keyword_grp_id
 				   publish_date
@@ -766,6 +768,21 @@ sub set_category__id {
 		  uri           => $uri
     });
     return $self;
+}
+
+sub set_category__id {
+	my ($self, $cat_id) = @_;
+
+	my $cat = Bric::Biz::Category->lookup( { id => $cat_id });
+
+	my $uri = Bric::Util::Trans::FS->cat_uri(
+          $self->_construct_uri($cat), $self->_get('file_name'));
+	
+        $self->_set({ '_category_obj' => $cat,
+		      category__id    => $cat_id,
+		      uri	      => $uri     });
+
+	return $self;
 }
 
 ################################################################################
