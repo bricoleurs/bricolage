@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =head1 DATE
 
-$Date: 2001-12-10 21:39:29 $
+$Date: 2001-12-12 21:11:18 $
 
 =head1 DESCRIPTION
 
@@ -89,7 +89,9 @@ having an existing person record as an existing contributor or user. [David]
 
 =item *
 
-Write distribution documentation. [David]
+Add ability for differnt Output Channels to function as different component
+roots for in Mason templates. This will allow for templates that can't be found
+in the current Output Channel to be searched for in other Output Channels.
 
 =back
 
@@ -118,6 +120,10 @@ Add regression test suite.
 =item *
 
 Add URI Case preference.
+
+=item *
+
+Write distribution documentation.
 
 =item *
 
@@ -239,6 +245,10 @@ page.
 =item *
 
 Add preference for Contributors to be automatically added to assets as keywords.
+
+=item *
+
+Create makefile for distribution engine only.
 
 =item *
 
