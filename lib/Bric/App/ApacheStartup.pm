@@ -83,7 +83,7 @@ BEGIN {
     }
 }
 
-use Bric::Config qw(:conf :sys_user :qa :temp :profile :proc_size);
+use Bric::Config qw(:conf :sys_user :qa :temp :profile :proc_size :ui);
 use Bric::App::Handler;
 use Bric::App::AccessHandler;
 use Bric::App::CleanupHandler;
