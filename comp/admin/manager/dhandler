@@ -319,7 +319,7 @@ my $def = {
 			       exclude => sub { return if $_[0]->get_owner_id == get_user_id;
 						!chk_authz($_[0], READ, 1);
 					    },
-			       constrain => {},
+	                       constrain => {active => 1},
 			       alter => { active => $yes_no },
 			       select => $sel_sub },
 	   contrib        => { list_fields => [qw(lname fname type)],
@@ -367,11 +367,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.23.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-12 03:25:05 $
+$Date: 2003-06-04 01:42:28 $
 
 =head1 SYNOPSIS
 

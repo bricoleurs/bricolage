@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.39.2.2 $
+$Revision: 1.39.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-05-25 19:13:15 $
+$Date: 2003-06-04 01:42:28 $
 
 =head1 SYNOPSIS
 
@@ -698,7 +698,8 @@ sub get_member_ids {
     my ($class, $grp_id) = @_;
     my $short;
     if (my $cid = $class->get_object_class_id) {
-        $short = Bric::Util::Class->lookup({ id => $cid })->get_key_name;
+        my $pkg = Bric::Util::Class->lookup({ id => $cid })->get_pkg_name;
+        $short = $class->get_supported_classes->{$pkg};
     } else {
         # Assuming that there is only one class here because otherwise
         # allowing this method would be daft!

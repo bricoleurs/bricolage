@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.13.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-06-04 01:42:28 $
 
 =head1 SYNOPSIS
 
@@ -1333,14 +1333,12 @@ $send_em = sub {
     while (my ($ctype, $cid) = each %ctypes) {
         # Get a list of unique User IDs in the groups.
         my (%users, %email);
-        foreach my $uid ($at->get_user_ids($ctype),
-                 map { Bric::Util::Grp::User->get_member_ids($_) }
-                         $at->get_grp_ids($ctype) ) {
-            foreach my $c
-              (Bric::Biz::Person::User->lookup({ id => $uid })->get_contacts) {
+        foreach my $user ($at->get_users($ctype),
+                 map { $_->get_objects } $at->get_groups($ctype) ) {
+            foreach my $c ($user->get_contacts) {
                   next unless $c->get_type eq $ctype;
                   my $e = $c->get_value;
-                  $users{$uid}->{$e} = 1;
+                  $users{$user->get_id}->{$e} = 1;
                   $email{$e} = 1
               }
         }
