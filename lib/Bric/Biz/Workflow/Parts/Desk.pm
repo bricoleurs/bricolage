@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-02-02 18:38:49 $
+$Date: 2003-02-03 18:07:51 $
 
 
 =head1 SYNOPSIS
@@ -79,6 +79,7 @@ use strict;
 # Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Asset;
+use Bric::Util::Grp::Desk;
 use Bric::Util::Fault::Exception::DP;
 
 #==============================================================================#
