@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:08 $
+$Date: 2004-02-19 14:31:27 $
 
 =head1 SYNOPSIS
 
@@ -108,7 +108,7 @@ use base qw(Bric);
 ################################################################################
 # Function and Closure Prototypes
 ################################################################################
-my ($get_em, $get_ids, $load_ids, $add_ids, $del_ids, $stat, $save_ids);
+my ($get_em, $get_ids, $load_ids, $add_ids, $del_ids, $stat, $save_ids, $METHS);
 
 ################################################################################
 # Constants
@@ -627,30 +627,59 @@ B<Notes:> NONE.
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
     return if $ident;
+                         id => Bric::FIELD_READ,
+                         media_type => Bric::FIELD_READ,
+                         parent_id => Bric::FIELD_RDWR,
+                         path => Bric::FIELD_RDWR,
+                         uri => Bric::FIELD_RDWR,
+                         tmp_path => Bric::FIELD_RDWR,
+                         size => Bric::FIELD_RDWR,
 
     # Load field members.
-    my $ret = { path =>      { meth => sub {shift->get_path(@_)},
-                               args => [],
-                               disp => 'Path',
-                               type => 'short',
-                               len  => 256 },
-                media_type => { meth => sub {shift->get_media_type(@_)},
-                               args => [],
-                               disp => 'MEDIA Type',
-                               type => 'short',
-                               len  => 128 },
-                size      => { meth => sub {shift->get_size(@_)},
-                               args => [],
-                               disp => 'Size',
-                               type => 'short',
-                               len  => 10 },
-                mod_time  => { meth => sub {shift->get_mod_time(@_)},
-                               args => [],
-                               disp => 'Last Modified Time',
-                               type => 'date',
-                               len  => undef },
+    $METHS ||= { path       => { name     => 'path',
+                                 get_meth => sub { shift->get_path(@_) },
+                                 get_args => [],
+                                 set_meth => sub { shift->set_path(@_) },
+                                 set_args => [],
+                                 disp     => 'Path',
+                                 search   => 1,
+                                 len      => 256,
+                                 req      => 1,
+                                 type     => 'short',
+                                 props    => { type      => 'text',
+                                               length    => 64,
+                                               maxlength => 256
+                                             }
+                               },
+                 media_type => { name     => 'media_type',
+                                 get_meth => sub { shift->get_media_type(@_) },
+                                 get_args => [],
+                                 disp     => 'Media Type',
+                                 len      => 128,
+                                 req      => 1,
+                               },
+                 size       => { name     => 'size',
+                                 get_meth => sub { shift->get_size(@_) },
+                                 get_args => [],
+                                 set_meth => sub { shift->set_size(@_) },
+                                 set_args => [],
+                                 disp     => 'Size',
+                                 len      => 10,
+                                 req      => 1,
+                                 type     => 'short',
+                                 props    => { type      => 'text',
+                                               length    => 32,
+                                               maxlength => 10
+                                             }
+                               },
+                 mod_time   => { name     => 'mod_time',
+                                 get_meth => sub { shift->get_mod_time(@_) },
+                                 get_args => [],
+                                 disp     => 'Last Modified Time',
+                                 req      => 1,
+                               },
               };
-    return $ret;
+    return $METHS;
 }
 
 ################################################################################
