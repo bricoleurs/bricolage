@@ -208,6 +208,7 @@ div.debug dt:after {
 .desk_item .body p {
     border-top: solid white 1px;
     line-height: 20px;
+    height: 20px;
 }
 
 .desk_item .body select {
