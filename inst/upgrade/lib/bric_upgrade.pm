@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 01:43:48 $
+$Date: 2003-08-03 23:13:11 $
 
 =head1 SYNOPSIS
 
@@ -221,6 +221,8 @@ sub do_sql {
 	# Execute each SQL statement.
 	foreach my $sql (@_) {
 	    my $sth = prepare($sql);
+            # Suppress annoying PostgreSQL NOTICEs and execute.
+            local $SIG{__WARN__} = sub {};
 	    execute($sth);
 	    if ($sql =~ /CREATE\s+TABLE\s+([^\s]*)/i
 		|| $sql =~ /CREATE\s+SEQUENCE\s+([^\s]*)/i)
