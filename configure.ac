@@ -87,6 +87,22 @@ AC_CACHE_SAVE
 
 
 # Checks for libraries.
+
+# Check to see if apache has mod_perl compiled in
+AC_CHECK_APACHE_MOD_PERL(AMOD_PERL,APACHE)
+# If not, we're going to have to share the bad news
+# and fail.  Bricolage requires a compiled in mod_perl
+if test "${AMOD_PERL}" != "yes" ; then
+	AC_MSG_ERROR([
+
+	It appears that your apache binary was compiled without
+	mod_perl support.  Bricolage will not run correctly 
+	without mod_perl compiled into the Apache.
+
+	])
+fi
+
+# Check for ssl option, and find ssl if yes
 CHECK_SSL
 SSL_COMMENT=
 if test "${HAVE_SSL}" != "yes" ;then
@@ -94,6 +110,8 @@ if test "${HAVE_SSL}" != "yes" ;then
 fi
 AC_SUBST(SSL_COMMENT)
 AC_CACHE_SAVE
+
+
 
 # Checks for CPAN modules
 # TODO: make sure CPAN itself works
