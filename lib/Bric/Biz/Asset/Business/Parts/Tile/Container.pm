@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-03-22 23:01:29 $
+$Date: 2002-06-17 17:26:17 $
 
 =head1 SYNOPSIS
 
@@ -1447,8 +1447,12 @@ sub _do_list {
 	push @where_param, $param->{'active'};
     }
     if (exists $param->{'parent_id'}) {
-	push @where, '(parent_id=? OR (? IS NULL AND parent_id IS NULL))';
-	push @where_param, $param->{'parent_id'}, $param->{'parent_id'};
+        if (defined $param->{'parent_id'}) {
+            push @where, 'parent_id=?';
+            push @where_param, $param->{'parent_id'};
+        } else {
+            push @where, 'parent_id IS NULL';
+        }
     }
     if ($param->{'element_id'} ) {
 	push @where, ' element__id=? ';
