@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =head1 DATE
 
-$Date: 2003-03-01 19:56:55 $
+$Date: 2003-03-01 20:02:39 $
 
 =head1 DESCRIPTION
 
@@ -378,23 +378,23 @@ this:
 
      Working revision:    1.16.2.1
      Repository revision: 1.16.2.1        /cvsroot/bricolage/bricolage/README,v
-     Sticky Tag:          rev_1_4_0 (branch: 1.16.2)
+     Sticky Tag:          rev_1_4 (branch: 1.16.2)
      Sticky Date:         (none)
      Sticky Options:      (none)
 
      Existing Tags:
-          rev_1_4_0                   (branch: 1.16.2)
-          rev_1_4_0_merge-2002-08-31  (revision: 1.16.2.1)
-          Dev-rev_1_3_3               (revision: 1.10)
-          rev_1_2_merge-2002-04-03    (revision: 1.2.2.4)
-          rev_1_2_3                   (revision: 1.2.2.4)
+          rev_1_4                   (branch: 1.16.2)
+          rev_1_4_merge-2002-08-31  (revision: 1.16.2.1)
+          dev_1_3_3                 (revision: 1.10)
+          rev_1_2_merge-2002-04-03  (revision: 1.2.2.4)
+          rel_1_2_3                 (revision: 1.2.2.4)
 
 
-From this output, you can see that, for this branch (rev_1_4_0), the file
-was tagged with the merge tag "rev_1_4_0_merge-2002-08-31". Thus we can
-tell that the branch was last merged on August 31, 2002. If there had not been
-a tag with the same version number as the branch, then we could determine that
-it hadn't been merged before.
+From this output, you can see that, for this branch (rev_1_4), the file was
+tagged with the merge tag "rev_1_4_merge-2002-08-31". Thus we can tell that
+the branch was last merged on August 31, 2002. If there had not been a tag
+with the same version number as the branch, then we could determine that it
+hadn't been merged before.
 
 =item 2
 
@@ -414,15 +414,15 @@ from HEAD, make sure it's fully up-to-date, and do a simple merge:
 
   cd bricolage-head-checkout/
   cvs -z3 -q update
-  cvs -z3 -q update -kk -j rev_1_4_0
+  cvs -z3 -q update -kk -j rev_1_4
 
 Otherwise, do a merge from the most recently-dated merge tag. In the above
-example, that would be "rev_1_4_0_merge-2002-08-31".
+example, that would be "rev_1_4_merge-2002-08-31".
 
   cd bricolage-head-checkout/
   cvs -z3 -q update
-  cvs -z3 -q update -kk -j rev_1_4_0_merge-2002-08-31 \
-    -j rev_1_4_0
+  cvs -z3 -q update -kk -j rev_1_4_merge-2002-08-31 \
+    -j rev_1_4
 
 Note the use of the C<-kk> option. This option tells CVS not to evaluate
 keywords in the files. This is crucial for merges, since keywords such as
@@ -443,7 +443,7 @@ Tag the branch with today's date, so that future merges can decide to merge
 only from this date on.
 
   cd bricolage-branch-checkout/
-  cvs -z3 -q tag rev_1_4_0_merge-CCYY-MM-DD
+  cvs -z3 -q tag rev_1_4_merge-CCYY-MM-DD
 
 =back
 
@@ -458,18 +458,20 @@ If you are a Bricolage release manager and you're getting ready to release a
 new version, here are the steps you'll need to take to create a distribution
 tarball. First, tag the release in CVS:
 
-  cvs -z3 tag rev_1_x_x
+  cvs -z3 tag rel_1_x_x
 
-If this is a major release, you'll need to create a new branch, so that it
-can be maintained for bug fixes separately:
+If this is a major release, you'll need to create a new branch, so that it can
+be maintained for bug fixes separately, and then tag the relase in that
+branch.
 
   cvs -z3 tag -b rev_1_x
+  cvs -z3 tag rel_1_x_x
 
 Next, export the sources into a new directory. Be sure to use the C<-kkv>
 option with C<export> so that the version numbers are all properly populated.
 
   cd /tmp
-  cvs -z3 export -r rev_1_x_x -kkv bricolage
+  cvs -z3 export -r rel_1_x_x -kkv bricolage
   cd bricolage
   make dist
 
