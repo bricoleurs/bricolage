@@ -16,6 +16,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.7.4 ()
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+A "Bulk Publish" link in ADMIN->PUBLISHING that lets members of the Global
+Admins group publish story and media documents by category. [Scott]
+
+=back
+
 =head1 VERSION 1.7.3 (2004-03-01)
 
 =head2 New Features
@@ -61,11 +72,6 @@ want to display. It can be turned on or off using the C<USE_THUMBNAILS>
 F<bricolage.conf> directive. See
 L<Bric::Biz::Asset::Business::Media::Image|Bric::Biz::Asset::Business::Media::Image>
 for more information. [Paul Orrock/ Digital Craftsmen]
-
-=item *
-
-A 'Bulk Publish' link in ADMIN->PUBLISHING lets you publish assets
-by category. [Scott]
 
 =back
 
