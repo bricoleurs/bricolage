@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.2.2.2 $
+$Revision: 1.2.2.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2.2.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-04 11:30:34 $
+$Date: 2001-10-09 20:20:47 $
 
 =head1 SYNOPSIS
 
@@ -387,7 +387,7 @@ form field) parameters:
 sub handle_callbacks {
     my ($m, $param) = @_;
     my $w_dir = $HTML::Mason::Commands::widget_dir;
-    my @delay_cb;
+    my (@delay_cb, @priority);
 
     eval {
 	foreach my $field (keys %$param) {
@@ -416,7 +416,8 @@ sub handle_callbacks {
 		}
 	    }
 	    # Call priority callbacks first.
-	    elsif ($ext eq '_pc') {
+	    elsif ($ext eq '_pc' || $ext eq '_p0') {
+		my $stack = $ext eq '_pc' ? \@delay_cb : \@priority;
 		$param->{$key} = $param->{$field} unless $key eq $field;
 		# Skip callbacks that aren't given a value.
 		next if $param->{$key} eq '';
@@ -426,7 +427,7 @@ sub handle_callbacks {
 		if ($m->comp_exists($cb)) {
 		    # Save these callbacks, first - ensures that all the '_cb.x'
 		    # fields will be properly named '_cb' instead.
-		    unshift @delay_cb, sub {
+		    unshift @$stack, sub {
 			$m->comp($cb, 'widget' => $widget, 'field'  => $key,
 				 'param'  => $param, __CB_DONE => 1);
 		    };
@@ -435,7 +436,7 @@ sub handle_callbacks {
 	}
 
 	# Execute the callbacks.
-	foreach my $cb (@delay_cb) { &$cb }
+	foreach my $cb (@priority, @delay_cb) { &$cb }
     };
 
     # Do error processing, if necessary.
@@ -877,7 +878,15 @@ L<perl>, L<Bric>, L<Apache::Session::File>
 =head1 REVISION HISTORY
 
 $Log: Session.pm,v $
-Revision 1.2.2.2  2001-10-04 11:30:34  wheeler
+Revision 1.2.2.3  2001-10-09 20:20:47  wheeler
+Added new layer of callback priority, _p0, which will execute before any _pc or
+_cb callbacks. Needed this because there were places where the value entered for
+the select_time widget needed to be evaluated before the _pc callback in
+container_prof (and elsewhere, no doubt). In some future version, I think it'd
+be cool to figure out how to create a more hierarchically-defined way to set up
+callbacks.
+
+Revision 1.2.2.2  2001/10/04 11:30:34  wheeler
 Fixed bug where wrong arguments were getting passed to tie() when creating the
 session.
 
