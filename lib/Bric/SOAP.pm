@@ -476,6 +476,12 @@ The XSD source:
                      </xs:element>
                      <xs:element name="container" type="container_type" minOccurs="0" maxOccurs="unbounded"/>
                    </xs:sequence>
+                   <xs:attribute name="related_story_id" type="xs:int" use="optional"/>
+                   <xs:attribute name="related_story_uri" type="xs:int" use="optional"/>
+                   <xs:attribute name="related_media_id" type="xs:int" use="optional"/>
+                   <xs:attribute name="related_media_uri" type="xs:int" use="optional"/>
+                   <xs:attribute name="related_site_id" type="xs:int" use="optional"/>
+                   <xs:attribute name="relative" type="xs:boolean" use="optional"/>
                  </xs:complexType>
                </xs:element>
              </xs:sequence>

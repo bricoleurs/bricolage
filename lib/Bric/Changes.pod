@@ -91,6 +91,14 @@ The SOAP media interface now supports creating relationships between the media
 documents elements and other story and media documents, just like the SOAP
 story interface does. [David]
 
+=item *
+
+The SOAP interface now supports Related stories and media on story type and
+media type elements just as in the UI. This involved the somewhat hackish
+necessity for including the "related_story_id" and "related_media_id" (or
+"related_story_uri" and "related_media_uri") attributes in the "elements" XML
+element, but it does the trick. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -270,8 +270,24 @@ sub serialize_elements {
     my @related;
 
     # output element data
-    $writer->startTag("elements");
     my $element = $object->get_tile;
+    my %attr;
+    if (my $related_story = $element->get_related_story) {
+        $attr{related_story_id} = $related_story->get_id;
+        if ($options{args}{export_related_stories}) {
+            $attr{relative} = 1;
+            push(@related, [ story => $attr{related_story_id} ]);
+        }
+    }
+    if (my $related_media = $element->get_related_media) {
+        $attr{related_media_id} = $related_media->get_id;
+        if ($options{args}{export_related_media}) {
+            $attr{relative} = 1;
+            push(@related, [ media => $attr{related_media_id} ]);
+        }
+    }
+
+    $writer->startTag("elements", %attr);
     my $elems = $element->get_elements;
 
     if (@$elems) {
@@ -400,7 +416,8 @@ sub deserialize_elements {
     my %options = @_;
     $options{element} = $options{object}->get_tile;
     $options{site_id} = $options{object}->get_site_id;
-    return _deserialize_tile(%options);
+    return _load_relateds(@options{qw(element data site_id)}),
+      _deserialize_tile(%options);
 }
 
 =back
@@ -491,32 +508,7 @@ sub _deserialize_tile {
                             # every add, but removing it causes errors
 
             # Deal with related media
-            if ($c->{related_media_id}) {
-                # store fixup information - the object to be updated
-                # and the external id
-                push(@relations, { container => $container,
-                                   media_id  => $c->{related_media_id},
-                                   relative  => $c->{relative} || 0 });
-            } elsif ($c->{related_media_uri}) {
-                push @relations, {
-                    container => $container,
-                    media_uri => $c->{related_media_uri},
-                    site_id   => $c->{related_site_id} || $site_id,
-                };
-            }
-
-            # Deal with realted story.
-            if ($c->{related_story_id}) {
-                push(@relations, { container => $container,
-                                   story_id  => $c->{related_story_id},
-                                   relative  => $c->{relative} || 0 });
-            } elsif ($c->{related_story_uri}) {
-                push @relations, {
-                    container => $container,
-                    story_uri => $c->{related_story_uri},
-                    site_id   => $c->{related_site_id} || $site_id,
-                };
-            }
+            push @relations, _load_relateds($container, $c, $site_id);
 
             # recurse
             push @relations, _deserialize_tile(element   => $container,
@@ -532,6 +524,42 @@ sub _deserialize_tile {
     return @relations;
 }
 
+
+sub _load_relateds {
+    my ($container, $cdata, $site_id) = @_;
+    my @relations;
+    if ($cdata->{related_media_id}) {
+        # store fixup information - the object to be updated
+        # and the external id
+        push(@relations, {
+            container => $container,
+            media_id  => $cdata->{related_media_id},
+            relative  => $cdata->{relative} || 0
+        });
+    } elsif ($cdata->{related_media_uri}) {
+        push @relations, {
+            container => $container,
+            media_uri => $cdata->{related_media_uri},
+            site_id   => $cdata->{related_site_id} || $site_id,
+        };
+    }
+
+    # Deal with realted story.
+    if ($cdata->{related_story_id}) {
+        push(@relations, {
+            container => $container,
+            story_id  => $cdata->{related_story_id},
+            relative  => $cdata->{relative} || 0
+        });
+    } elsif ($cdata->{related_story_uri}) {
+        push @relations, {
+            container => $container,
+            story_uri => $cdata->{related_story_uri},
+            site_id   => $cdata->{related_site_id} || $site_id,
+        };
+    }
+    return @relations;
+}
 
 
 =item @related = _serialize_tile(writer => $writer, element => $element, args => $args)
@@ -564,7 +592,8 @@ sub _serialize_tile {
                 $attr{relative} = 1;
                 push(@related, [ story => $attr{related_story_id} ]);
             }
-        } elsif ($related_media = $element->get_related_media) {
+        }
+        if ($related_media = $element->get_related_media) {
             $attr{related_media_id} = $related_media->get_id;
             if ($options{args}{export_related_media}) {
                 $attr{relative} = 1;
