@@ -148,7 +148,7 @@ push @fields, 'site'
 &>
 
 
-<form method="post" action="<% $r->uri %>" name="$type\_manager">
+<form method="post" action="<% $r->uri %>" name="<% $type %>_manager">
 <& '/widgets/listManager/listManager.mc',
     object    => $type,
     sortBy    => $sort_by->{$type},
