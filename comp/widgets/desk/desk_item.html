@@ -157,9 +157,12 @@ my $id = $obj->get_id;
 # Determine the status.
 my $status;
 if ($obj->get_publish_status) {
-	$status = $obj->needs_publish ? '<img src="/media/images/P_red.gif" border=0 width="15" height="15" />' : '<img src="/media/images/P_green.gif" border=0 width="15" height="15" />';	
+    my $letter = $obj->key_name eq 'formatting' ? 'D' : 'P';
+    $status = $obj->needs_publish ?
+      qq{<img src="/media/images/${letter}_red.gif" border=0 width="15" height="15" />} :
+      qq{<img src="/media/images/${letter}_green.gif" border=0 width="15" height="15" />};
 } else {
-	$status = '&nbsp;';
+    $status = '&nbsp;';
 }
 
 my $cats = $rc->get("desk.cats") || {};
@@ -210,11 +213,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-04-23 23:45:43 $
+$Date: 2002-06-29 01:55:44 $
 
 =head1 DESCRIPTION
 
