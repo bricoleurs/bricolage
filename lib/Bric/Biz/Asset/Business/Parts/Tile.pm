@@ -8,15 +8,15 @@ Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 18:37:40 $
+$Date: 2004-01-15 16:39:54 $
 
 =head1 SYNOPSIS
 
@@ -526,6 +526,32 @@ B<Notes:>
 NONE
 
 =cut
+
+################################################################################
+
+=item $parent_element = $tile->get_parent()
+
+Returns the parent element object.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub get_parent {
+    my $self = shift;
+    my $pid = $self->_get('parent_id') or return;
+    Bric::Biz::Asset::Business::Parts::Tile::Container->lookup({ id => $pid });
+}
 
 ################################################################################
 
