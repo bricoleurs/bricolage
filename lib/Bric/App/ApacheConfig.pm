@@ -105,7 +105,7 @@ do {
         (PerlFixupHandler  => 'Apache::OK') : ()),
     };
 
-    # This URI will handle all non-Mason stuff that we server (graphics, etc.).
+    # This URI will handle all non-Mason stuff that we serve (graphics, etc.).
     $locs{"/media"} = {
         SetHandler         => 'default-handler',
         PerlAccessHandler  => 'Apache::OK',
