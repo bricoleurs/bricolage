@@ -187,13 +187,15 @@ $num = $m->comp( '/widgets/container_prof/container_prof.mc',
         start_count => 6
 );
 
-$m->comp('/widgets/profile/asset_ocs.mc',
-         asset  => $media,
-         widget => $widget,
-         ocs    => \@ocs,
-         num    => $num++,
-         at_ocs => \@aocs
-        );
+if (ENABLE_OC_ASSET_ASSOCIATION) {
+    $m->comp('/widgets/profile/asset_ocs.mc',
+             asset  => $media,
+             widget => $widget,
+             ocs    => \@ocs,
+             num    => $num++,
+             at_ocs => \@aocs
+         );
+}
 
 $m->out("$ieSpacer<br />\n");
 

@@ -83,6 +83,12 @@ Added a method C<is_fixed> to story and media objects, to determine whether
 a business asset has a fixed URL (for example, a Cover page). Refer to
 L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business>. [Scott]
 
+=item *
+
+Added the C<ENABLE_OC_ASSET_ASSOCIATION> F<bricolage.conf> directive
+to remove the ability to associate output channels from the story
+and media profiles. [Scott]
+
 =back
 
 =head2 Bug Fixes

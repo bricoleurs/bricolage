@@ -299,13 +299,15 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 }   # unless ENABLE_CATEGORY_BROWSER
 
-$m->comp('/widgets/profile/asset_ocs.mc',
-         asset  => $story,
-         widget => $widget,
-         ocs    => \@ocs,
-         num    => $num++,
-         at_ocs => \@aocs
-        );
+if (ENABLE_OC_ASSET_ASSOCIATION) {
+    $m->comp('/widgets/profile/asset_ocs.mc',
+             asset  => $story,
+             widget => $widget,
+             ocs    => \@ocs,
+             num    => $num++,
+             at_ocs => \@aocs
+         );
+}
 
 $m->out("$ieSpacer<br />\n");
 

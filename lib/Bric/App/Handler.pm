@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.63 $
+$Revision: 1.64 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.63 $ )[-1];
+our $VERSION = (qw$Revision: 1.64 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-03 19:07:09 $
+$Date: 2004-03-05 09:40:46 $
 
 =head1 SYNOPSIS
 
@@ -120,7 +120,7 @@ use MasonX::Interp::WithCallbacks;
 
     # Load all modules to be used from elements.
     use Apache::Util qw(escape_html escape_uri);
-    use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa :thumb);
+    use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa :thumb :oc);
     use Bric::Biz::Asset::Business::Media;
     use Bric::Biz::Asset::Business::Media::Audio;
     use Bric::Biz::Asset::Business::Media::Image;

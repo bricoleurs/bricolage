@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.94 $
+$Revision: 1.95 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.94 $ )[-1];
+our $VERSION = (qw$Revision: 1.95 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-03 19:07:08 $
+$Date: 2004-03-05 09:40:45 $
 
 =head1 SYNOPSIS
 
@@ -123,6 +123,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     FULL_SEARCH
                     DEFAULT_FILENAME
                     DEFAULT_FILE_EXT
+                    ENABLE_OC_ASSET_ASSOCIATION
                     ENABLE_FTP_SERVER
                     FTP_DEPLOY_ON_UPLOAD
                     FTP_PORT
@@ -184,7 +185,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      DEFAULT_FILE_EXT
                                      BURN_ARGS_METHOD)],
                     oc        => [qw(DEFAULT_FILENAME
-                                     DEFAULT_FILE_EXT)],
+                                     DEFAULT_FILE_EXT
+                                     ENABLE_OC_ASSET_ASSOCIATION)],
                     sys_user  => [qw(SYS_USER
                                      SYS_GROUP)],
                     auth      => [qw(AUTH_TTL
@@ -329,7 +331,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         }
         # Process boolean directives here. These default to 1.
         foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR USE_XHTML
-                    ALLOW_SLUGLESS_NONFIXED PUBLISH_RELATED_ASSETS)) {
+                    ALLOW_SLUGLESS_NONFIXED PUBLISH_RELATED_ASSETS
+                    ENABLE_OC_ASSET_ASSOCIATION)) {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }
@@ -557,6 +560,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => $config->{DEFAULT_FILENAME} || 'index';
     use constant DEFAULT_FILE_EXT => $config->{DEFAULT_FILE_EXT} || 'html';
+    use constant ENABLE_OC_ASSET_ASSOCIATION => $config->{ENABLE_OC_ASSET_ASSOCIATION};
 
     # Temp Dir Setting
     use constant TEMP_DIR               => $ENV{BRIC_TEMP_DIR} ||
