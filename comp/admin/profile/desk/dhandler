@@ -49,7 +49,8 @@ $m->comp('/widgets/profile/formButtons.mc',
 	 no_del => $no_del,
 	 chk_label => "Delete this $disp from all Workflows",
 	 return => defined $wid ? "/admin/profile/workflow/$wid" : undef,
-	 no_save => $no_edit);
+	 no_save => $no_edit,
+         widget => $type);
 </%perl>
 </form>
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
@@ -104,11 +105,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.6.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:10 $
+$Date: 2003-06-09 15:10:41 $
 
 =head1 DESCRIPTION
 

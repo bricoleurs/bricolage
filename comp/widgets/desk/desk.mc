@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.19.2.1 $
 
 =head1 DATE
 
-$Date: 2003-04-03 21:05:50 $
+$Date: 2003-06-09 15:10:41 $
 
 =head1 SYNOPSIS
 
@@ -44,7 +44,7 @@ $sort_by => 'cover_date'
 %#--- Initialization ---#
 
 <%once>;
-my $widget = 'desk';
+my $widget = 'desk_asset';
 my $pkgs = { story      => get_package_name('story'),
              media      => get_package_name('media'),
              formatting => get_package_name('formatting')
