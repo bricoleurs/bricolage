@@ -53,6 +53,9 @@ use Bric::Biz::Asset::Formatting;
 use Bric::Config qw(:ftp);
 use Bric::Biz::AssetType;
 use Net::FTPServer::DirHandle;
+use Bric::Util::Burner::Mason;
+require Bric::Util::Burner::Template if eval { require HTML::Template };
+require Bric::Util::Burner::TemplateToolkit if eval { require Template };
 use Bric::Util::FTP::FileHandle;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use File::Basename qw(fileparse);
@@ -201,123 +204,140 @@ sub get {
 
 =item open($filename, $mode)
 
-This method is called to open a file in the current directory.  Right
-now this is equivalent to get($filename)->open($mode) since it doesn't
-support creating new files.  The possible modes are 'r', 'w' and 'a'.
-The method returns a Bric::Util::FTP::FileHandle or undef on failure.
+This method is called to open a file in the current directory. The possible
+modes are 'r', 'w' and 'a'. It will return a Bric::Util::FTP::FileHandle
+object if the file exists and the user has permission to it. If they don't
+have permission, it returns C<undef>. If the file does not exist, it will be
+created (provided the user has CREATE permission) and the
+Bric::Util::FTP::FileHandle object returned.
 
 =cut
 
 sub open {
-  my $self        = shift;
-  my $filename    = shift;
-  my $mode        = shift;
-  my $site_id     = $self->{site_id};
-  my $oc_id       = $self->{oc_id};
-  my $category_id = $self->{category_id};
+    my $self        = shift;
+    my $filename    = shift;
+    my $mode        = shift;
+    my $site_id     = $self->{site_id};
+    my $oc_id       = $self->{oc_id};
+    my $category_id = $self->{category_id};
 
-  print STDERR __PACKAGE__, "::open($filename, $mode)\n" if FTP_DEBUG;
+    print STDERR __PACKAGE__, "::open($filename, $mode)\n" if FTP_DEBUG;
 
-  if ($site_id == -1) {
-      print STDERR __PACKAGE__, "::open() called without site_id!\n"
+    if ($site_id == -1) {
+        print STDERR __PACKAGE__, "::open() called without site_id!\n"
           if FTP_DEBUG;
-      return undef;
+        return undef;
   }
 
-  if ($oc_id == -1) {
-      print STDERR __PACKAGE__, "::open() called without oc_id!\n"
+    if ($oc_id == -1) {
+        print STDERR __PACKAGE__, "::open() called without oc_id!\n"
           if FTP_DEBUG;
-      return undef;
-  }
+        return undef;
+    }
 
-  if ($category_id == -1) {
-      print STDERR __PACKAGE__, "::open() called without category_id!\n"
+    if ($category_id == -1) {
+        print STDERR __PACKAGE__, "::open() called without category_id!\n"
           if FTP_DEBUG;
-      return undef;
-  }
+        return undef;
+    }
 
-  my $deploy = $filename =~ s/\.deploy$//i;
+    my $deploy = $filename =~ s/\.deploy$//i;
 
-  # find filename
-  my $list = Bric::Biz::Asset::Formatting->list({
-      site_id            => $site_id,
-      output_channel__id => $oc_id,
-      category_id        => $category_id,
-      file_name          => "%/$filename"
-  });
+    # find filename
+    my $list = Bric::Biz::Asset::Formatting->list({
+        site_id            => $site_id,
+        output_channel__id => $oc_id,
+        category_id        => $category_id,
+        file_name          => "%/$filename"
+    });
 
-  if ($list) {
-    # warn on multiple templates
-    warn("Multiple template files called $filename in category $category_id!")
-      if @$list > 1;
+    if ($list) {
+        # warn on multiple templates
+        warn("Multiple template files called $filename in category $category_id!")
+          if @$list > 1;
 
-    # file exists, return it
-    my $template = $list->[0];
-    # Allow access only to template if the user has READ access to it.
+        # file exists, return it
+        my $template = $list->[0];
+
+        # Make sure they have permission.
+        return undef unless $self->{ftps}{user_obj}->can_do($template, READ);
+
+        # Let 'em have it.
+        return Bric::Util::FTP::FileHandle->new($self->{ftps},
+                                                $template,
+                                                $site_id,
+                                                $oc_id,
+                                                $category_id,
+                                                $deploy,
+                                            )->open($mode);
+    }
+
+    # Perhaps they want to create a new template. Just return unless they're
+    # requesting write mode.
+    return undef unless $mode eq 'w';
+
+    print STDERR __PACKAGE__, "::open($filename, $mode) : creating new template\n"
+      if FTP_DEBUG;
+
+    # Figure out if they have permission to create a new template.
+    my $wf = $self->{ftps}->find_workflow($site_id);
+    my $start_desk = $wf->get_start_desk;
+    my $gid = $start_desk->get_asset_grp;
+    return undef
+      unless $self->{ftps}{user_obj}->can_do('Bric::Biz::Asset::Formatting',
+                                             CREATE, 0, $gid);
+    # create the new template
+    my ($name, $dir, $file_type) = fileparse($filename, qr/\..*$/);
+    # Remove the dot.
+    $file_type =~ s/^\.//;
+    my $tplate_type = Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE;
+
+    # don't look for an element for category templates
+    my $at;
+    if ( Bric::Util::Burner->class_for_cat_fn($name)) {
+        # It's a category template.
+        $tplate_type = Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE;
+        print STDERR __PACKAGE__, "::open($filename, $mode): will create a "
+          . "category template\n" if FTP_DEBUG;
+    } else {
+        # Look for an element to associate it with.
+        if ($at = Bric::Biz::AssetType->lookup({ key_name => $name })) {
+            # It's an element template!
+            $tplate_type = Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE;
+            print STDERR __PACKAGE__, "::open($filename, $mode): creating for",
+              " asset type: ", $at->get_name, "\n" if FTP_DEBUG;
+        } else {
+            # Leave it as a utiility template.
+            print STDERR __PACKAGE__, "::open($filename, $mode): creating ",
+              "utility template\n" if FTP_DEBUG;
+        }
+    }
+
+    ## create the new template object
+    my $template = Bric::Biz::Asset::Formatting->new({
+        'element'            => $at,
+        'site_id'            => $site_id,
+        'file_type'          => $file_type,
+        'output_channel__id' => $oc_id,
+        'category_id'        => $category_id,
+        'tplate_type'        => $tplate_type,
+        'priority'           => 3,
+        'name'               => ($at ? $at->get_key_name : $name),
+        'user__id'           => $self->{ftps}{user_obj}->get_id,
+    });
+
+    $self->{ftps}->move_into_workflow($template, $wf);
+
+    # send to the database
+    $template->save;
+
+    # now pass off to FileHandle
     return Bric::Util::FTP::FileHandle->new($self->{ftps},
                                             $template,
                                             $site_id,
                                             $oc_id,
                                             $category_id,
-                                            $deploy,
-                                           )->open($mode)
-      if $self->{ftps}{user_obj}->can_do($template, READ);
-  }
-
-  print STDERR __PACKAGE__, "::open($filename, $mode) : creating new template\n"
-    if FTP_DEBUG;
-
-  # create a new template
-  my ($name, $dir, $file_type) = fileparse($filename, qr/\..*$/);
-  # Remove the dot.
-  $file_type =~ s/^\.//;
-
-  # don't look for an asset for category templates
-  my $at;
-  unless ( Bric::Util::Burner->class_for_cat_fn($name)) {
-      # It's not a category template. Look for an element to associate it with.
-      $at = Bric::Biz::AssetType->lookup({ key_name => $name });
-
-      # If we didn't find an element then Formatting.pm will assume it's a
-      # utility template.
-      if (FTP_DEBUG) {
-          if ($at) {
-              print STDERR __PACKAGE__, "::open($filename, $mode) : matched",
-                " asset type : ", $at->get_name, "\n";
-          } else {
-              print STDERR __PACKAGE__, "::open($filename, $mode) : failed",
-                " to find matching asset type\n";
-          }
-      }
-  }
-
-  print STDERR __PACKAGE__, "::open($filename, $mode) : creating : ",
-    $self->pathname, $filename, "\n" if FTP_DEBUG;
-
-  ## create the new template object
-  my $template = Bric::Biz::Asset::Formatting->new({
-       'element'            => $at,
-       'site_id'            => $site_id,
-       'file_type'          => $file_type,
-       'output_channel__id' => $oc_id,
-       'category_id'        => $category_id,
-       'priority'           => 3,
-       'name'               => ($at ? lc $at->get_key_name : $name),
-       'user__id'           => $self->{ftps}{user_obj}->get_id,
-   });
-
-  $self->{ftps}->move_into_workflow($template);
-
-  # send to the database
-  $template->save;
-
-  # now pass off to FileHandle
-  return Bric::Util::FTP::FileHandle->new($self->{ftps},
-                                          $template,
-                                          $site_id,
-                                          $oc_id,
-                                          $category_id,
-                                         )->open($mode);
+                                        )->open($mode);
 }
 
 =item list($wildcard)

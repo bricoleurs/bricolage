@@ -196,6 +196,21 @@ Sozonoff. [David]
 Contributor fields for roles other than the default role now properly store
 and retain their values. [David]
 
+=item *
+
+The virtual FTP server now properly checks out templates when a template is
+uploaded and is already in workflow.
+
+=item *
+
+Uploading a non-existent template via the virtual FTP server now correctly
+creates a new template. The type of template depends on the name of the
+template being uploaded, and for element templates, on whether there is an
+element with the appropriate key name. The user must have CREATE permission
+to All Templates or to the start desk in the first template workflow in the
+relevent site.
+
+
 =back
 
 =cut

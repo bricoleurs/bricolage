@@ -162,35 +162,42 @@ sub system_error_hook {
   return "Unknown error occurred.";
 }
 
-sub move_into_workflow {
-    my ($self, $template) = @_;
+sub find_workflow {
+    my ($self, $site_id) = @_;
     my $user = $self->{user_obj};
-    my $site_id = $template->get_site_id;
     for my $wf (Bric::Biz::Workflow->list({ site_id => $site_id,
                                             type => TEMPLATE_WORKFLOW })) {
+        return $wf if $user->can_do($wf, READ)
+          && $user->can_do($wf->get_start_desk, READ);
+    }
+    # No dice.
+    return;
+}
 
-        next unless $user->can_do($wf, READ);
-        my $desk = $wf->get_start_desk;
-        next unless $user->can_do($desk, READ);
-
-        # We have a workflow and desk.
-        $template->set_workflow_id($wf->get_id);
-        # Save it if we need to.
-        $template->save unless $template->get_id;
-
-        # Log it.
-        Bric::Util::Event->new({ key_name => 'formatting_add_workflow',
-                                 obj      => $template,
-                                 user     => $user
-                             });
-
-        $self->move_onto_desk($template, $desk);
+sub move_into_workflow {
+    my ($self, $template, $wf) = @_;
+    my $user = $self->{user_obj};
+    my $site_id = $template->get_site_id;
+    $wf ||= $self->find_workflow($site_id);
+    unless ($wf) {
+        # Make sure we got it.
+        warn "No workflow available to checkout template";
+        return $template;
     }
 
-    # Make sure we got it.
-    warn "No workflow available to checkout template"
-      unless $template->get_workflow_id;
-    return $template;
+    my $desk = $wf->get_start_desk;
+
+    $template->set_workflow_id($wf->get_id);
+    # Save it if we need to.
+    $template->save unless $template->get_id;
+
+    # Log it.
+    Bric::Util::Event->new({ key_name => 'formatting_add_workflow',
+                             obj      => $template,
+                             user     => $user
+                           });
+
+    $self->move_onto_desk($template, $desk);
 }
 
 sub move_onto_desk {
@@ -208,13 +215,26 @@ sub move_onto_desk {
 
     # Put this template on the start desk.
     $desk->accept({ asset => $template});
-    $desk->checkout($template, $user->get_id);
-    $desk->save;
     Bric::Util::Event->new({ key_name => 'formatting_moved',
                              obj      => $template,
                              user     => $user,
                              attr     => { Desk => $desk->get_name }
-                         });
+                           });
+
+    if ($template->get_checked_out) {
+        $desk->save;
+    } else {
+        $self->check_out($template, $desk);
+    }
+    return $template;
+}
+
+sub check_out {
+    my ($self, $template, $desk) = @_;
+    $desk ||= $template->get_current_desk;
+    my $user = $self->{user_obj};
+    $desk->checkout($template, $user->get_id);
+    $desk->save;
     Bric::Util::Event->new({ key_name => 'formatting_checkout',
                              obj      => $template,
                              user     => $user

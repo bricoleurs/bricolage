@@ -317,8 +317,8 @@ sub DESTROY {}
 =item my $burner_class = Bric::Util::Burner->class_for_ext($ext);
 
 Returns the name of the burner class that handles templates with the extension
-passed in. The extension must be the full extension name, starting with the
-".", such as ".mc" or ".tmpl".
+passed in. The extension must be the full extension name without with the ".",
+such as "mc" or "tmpl".
 
 B<Throws:> NONE.
 
@@ -354,7 +354,7 @@ B<Notes:> NONE.
 
 =item my $file_types = Bric::Util::Burner->list_file_types
 
-Returns an array reference of array references of burner file name extesions
+Returns an array reference of array references of burner file name extensions
 mapped to labels for each. Suitable for use in select widgets.
 
 B<Throws:> NONE.
@@ -1682,8 +1682,8 @@ sub throw_error {
   __PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_TEMPLATE,
                                  category_fn => 'category',
                                  exts        =>
-                                   { '.pl'   => 'HTML::Template Script (.pl)',
-                                     '.tmpl' => 'HTML::Template Template (.tmpl)'
+                                   { 'pl'   => 'HTML::Template Script (.pl)',
+                                     'tmpl' => 'HTML::Template Template (.tmpl)'
                                    }
                                );
 
@@ -1705,7 +1705,7 @@ sub _register_burner {
     my $class = shift;
     my $burner = shift;
 
-    # Register the class with the constant.
+    # Register the class with the constant.a
     $classes->{$burner} = $class;
 
     # Save the file name specs.
