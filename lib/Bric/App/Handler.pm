@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-25 21:06:07 $
+$Date: 2003-02-25 21:07:44 $
 
 =head1 SYNOPSIS
 
@@ -239,9 +239,10 @@ sub handler {
     eval {
         # Enable smarter exceptions if in QA_MODE.
         local $SIG_{__DIE__} = sub {
-            Bric::Util::Fault::Exception::AP->new
-                ({ msg => "Error processing Mason elements.",
-                   payload => join '', @_ });
+            die ref $_[0] ? $_[0] :
+              Bric::Util::Fault::Exception::AP->new
+                  ({ msg => "Error processing Mason elements.",
+                     payload => join '', @_ });
         } if QA_MODE;
 	# Start the database transactions.
 	begin(1);
