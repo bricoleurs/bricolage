@@ -94,6 +94,9 @@ removed from workflow and shelved in the library. Otherwise, clicking the
 "Cancel Checkout" button will leave the asset in workflow. Requested by Sara
 Wood, Rachel Murray, and others. [David]
 
+C<make clone> now provides the current date and time for the default name for
+the cloned package. Suggested by Marshall Roch. [David]
+
 =back
 
 =head2 Bug Fixes

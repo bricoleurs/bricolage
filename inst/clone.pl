@@ -6,11 +6,11 @@ clone.pl - installation script to gather clone information
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2004-02-11 06:46:26 $
+$Date: 2004-04-11 02:57:38 $
 
 =head1 DESCRIPTION
 
@@ -35,6 +35,7 @@ use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 use Data::Dumper;
+use POSIX 'strftime';
 
 # make sure we're root, otherwise uninformative errors result
 unless ($> == 0) {
@@ -79,7 +80,7 @@ sub find_version {
 # get clone name
 sub get_clone_name {
     print "\n";
-    $CLONE{NAME} = "NONE";
+    $CLONE{NAME} = strftime '%Y%m%d%H%M%S', localtime;
     ask_confirm("What would you like to name your clone ".
                 "(used to name the archive)? ", \$CLONE{NAME});
 }
