@@ -1,12 +1,14 @@
 #!/usr/bin/perl -w
 
 use strict;
+use File::Spec::Functions qw(catdir updir);
 use FindBin;
-use lib "$FindBin::Bin/../lib";
-use bric_upgrade qw(:all);
+use lib catdir $FindBin::Bin, updir, updir, updir, 'lib';
 use Bric::Util::DBI qw(:all);
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
+use lib catdir $FindBin::Bin, updir, 'lib';
+use bric_upgrade qw(:all);
 
 # Just bail if the story_uri table exists and therefore doesn't cause an error.
 exit if test_sql "SELECT 1 FROM story_uri WHERE story__id = -1";
@@ -41,7 +43,7 @@ for $type (qw(story media)) {
 
     # Get a list of the IDs and use them to add all the required records to
     # the table.
-    my $ids = all_aref("SELECT id, site__id FROM $type WHERE active = 1");
+    my $ids = col_aref("SELECT id FROM $type WHERE active = 1");
     $type eq 'story' ? add_story_uris($ids) : add_media_uris($ids);
 }
 
@@ -51,14 +53,14 @@ sub add_story_uris {
     my $ins = prepare q{INSERT INTO story_uri (story__id, site__id, uri)
                         VALUES (?, ?, ?)};
 
-    for my $aref (@$ids) {
-        ($aid, my $site_id) = @$aref;
+    for $aid (@$ids) {
         my $story = Bric::Biz::Asset::Business::Story->lookup({
             id => $aid
         });
 
         # Get all the associated output channels. Skip it if there are none.
         my @ocs = $story->get_output_channels or next;
+        my $site_id = $story->get_site_id;
 
         # Fore every combination of category and output channel, insert the
         # URI. Some may be the same as previous ones, but only for this one
@@ -83,14 +85,15 @@ sub add_media_uris {
     my $ins = prepare q{INSERT INTO media_uri (media__id, site__id, uri)
                         VALUES (?, ?, ?)};
 
-    for my $aref (@$ids) {
-        ($aid, my $site_id) = @$aref;
+    for my $mid (@$ids) {
+        my ($uri, $ocname);
         my $media = Bric::Biz::Asset::Business::Media->lookup({
-            id => $aid
+            id => $mid
         });
 
         # Get all the associated output channels. Skip it if there are none.
         my @ocs = $media->get_output_channels or next;
+        my $site_id = $media->get_site_id;
 
         # Skip it if there's no category.
         next unless $media->get_category__id;
@@ -101,7 +104,7 @@ sub add_media_uris {
             # Skip it if we've seen it before.
             next if $seen{$uri};
             # Make it so.
-            execute($ins, $aid, $site_id, $uri);
+                execute($ins, $mid, $site_id, $uri);
             $seen{$uri} = 1;
         }
     }
