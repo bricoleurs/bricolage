@@ -17,7 +17,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 my ($right, $left) = ([], []);
 
 # Get the current groups.
-foreach my $g ($at->get_groups) {
+foreach my $g ($at->get_groups($ctype)) {
     push @$right, { value =>  $g->get_id,
                     description => $g->get_name };
 }
@@ -54,7 +54,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 my $fmt = get_pref('List Name Format');
 
 # Get the current users.
-foreach my $u ($at->get_users) {
+foreach my $u ($at->get_users($ctype)) {
     push @$right, { value =>  $u->get_id,
                     description => $u->format_name($fmt) };
 }
