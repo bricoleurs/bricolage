@@ -6,11 +6,11 @@ cpan.pl - installation script to install CPAN modules
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-05-10 19:44:54 $
+$Date: 2002-05-10 22:38:23 $
 
 =head1 DESCRIPTION
 
@@ -127,7 +127,7 @@ for my $i (0 .. $#$MOD) {
     next if $MOD->[$i]{found};
 
     install_module($MOD->[$i]{name}, $MOD->[$i]{req_version});
-    $MOD->[$_]{found} = 1;
+    $MOD->[$i]{found} = 1;
 
     # make sure we don't redo this work, even if we're run twice in a
     # row after a failure.
