@@ -22,17 +22,6 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Made the bric_media_upload contrib script work with the 1.7.0 DTD.
-Also fixed a bug in its use of File::Find and added a couple options.
-See the script's usage info for details.  [Dave Rolsky]
-
-=item *
-
-Changing a media item's category and then saving caused an error.
-[Dave Rolsky]
-
-=item *
-
 Passwords can be changed again. [Mike Slattery]
 
 =item *
@@ -81,6 +70,17 @@ returning a text page to the browser. [David]
 
 Now displaying the name of the site each story and media document is in in
 Find Stories and Find Media. Suggested by Arthur. [David]
+
+=item *
+
+Made the C<bric_media_upload> contrib script work with the 1.7.0 DTD.
+Also fixed a bug in its use of File::Find and added a couple options.
+See the script's usage info for details. [Dave Rolsky]
+
+=item *
+
+Changing a media item's category and then saving caused an error.
+[Dave Rolsky]
 
 =back
 
