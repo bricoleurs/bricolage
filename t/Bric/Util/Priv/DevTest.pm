@@ -116,12 +116,12 @@ sub test_list : Test(8) {
 # Test get_acl.
 sub test_get_acl : Test(3) {
     my $self = shift;
-    my $test_acl = { 22 => 3,
-                     1  => 3,
+    my $test_acl = { 22 => CREATE,
+                     1  => CREATE,
 #                     'mtime' => '2003-02-22 02:43:35',
-                     23 => 1,
-                     26 => 3,
-                     29 => 1
+                     23 => READ,
+                     26 => CREATE,
+                     29 => READ
                    };
 
     my $uid = $self->user_id; # Admin user is in "All Users" group.
@@ -176,7 +176,7 @@ sub test_inactive_groups : Test(37) {
 
     # Make sure that the user has the new group in its ACL.
     ok( my $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
-    is( $acl->{$mgid}, 3, "Check for MT group in ACL" );
+    is( $acl->{$mgid}, CREATE, "Check for MT group in ACL" );
 
     # Now, remove the user from the user group.
     ok( $ug->delete_member({ package => 'Bric::Biz::Person::User',
@@ -196,7 +196,7 @@ sub test_inactive_groups : Test(37) {
 
     # Make sure that the user again has the new group in its ACL.
     ok( $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
-    is( $acl->{$mgid}, 3, "Check for MT group in ACL again" );
+    is( $acl->{$mgid}, CREATE, "Check for MT group in ACL again" );
 
     # Now, deactivate the new user group!
     ok( $ug->deactivate, "Deactivate user group" );
@@ -212,7 +212,7 @@ sub test_inactive_groups : Test(37) {
 
     # So the MT group should back in the ACL again.
     ok( $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
-    is( $acl->{$mgid}, 3, "Check for MT group in ACL again" );
+    is( $acl->{$mgid}, CREATE, "Check for MT group in ACL again" );
 
     # Now deactivate the MT group.
     ok( $mg->deactivate, "Deactivate MT group" );
@@ -228,7 +228,7 @@ sub test_inactive_groups : Test(37) {
 
     # So the MT group should back in the ACL again.
     ok( $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
-    is( $acl->{$mgid}, 3, "Back and better than ever!" );
+    is( $acl->{$mgid}, CREATE, "Back and better than ever!" );
 }
 
 1;
