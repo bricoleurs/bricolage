@@ -57,22 +57,15 @@ sub save : Callback {
             }
         };
 
-        my $f = 'size';
-        $set_meta_number->($ed, $f, $param);
-        $f = 'disp';
-        $set_meta_string->($ed, $f, $param);
-        $f = 'maxlength';
-        $set_meta_number->($ed, $f, $param);
-        $f = 'value';
-        $set_meta_string->($ed, $f, $param);
-        $f = 'vals';
-        $set_meta_string->($ed, $f, $param);
-        $f = 'multiple';
-        $set_meta_boolean->($ed, $f, $param);
-        $f = 'rows';
-        $set_meta_number->($ed, $f, $param);
-        $f = 'cols';
-        $set_meta_number->($ed, $f, $param);
+        for my $f (qw(size maxlength rows cols)) {
+            $set_meta_number->($ed, $f, $param);
+        }
+
+        for my $f (qw(disp value vals)) {
+            $set_meta_string->($ed, $f, $param);
+        }
+
+        $set_meta_boolean->($ed, 'multiple', $param);
 
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
         log_event("$type\_save", $ed);
