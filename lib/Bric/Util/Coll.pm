@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-08 23:55:38 $
+$Date: 2003-01-09 01:45:24 $
 
 =head1 SYNOPSIS
 
@@ -717,6 +717,8 @@ sub _populate {
 =head2 Private Functions
 
 NONE.
+
+=cut
 
 1;
 __END__
