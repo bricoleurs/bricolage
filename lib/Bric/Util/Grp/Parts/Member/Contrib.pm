@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.11.2.1 $
+$Revision: 1.11.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-04 19:38:42 $
+$Date: 2002-12-04 20:39:48 $
 
 =head1 SYNOPSIS
 
@@ -395,7 +395,12 @@ sub my_meths {
 			     type     => 'short',
 			    }
 	     };
-    foreach my $meth (Bric::Util::Grp::Parts::Member::Contrib->SUPER::my_meths(1)) {
+    foreach my $meth (__PACKAGE__->SUPER::my_meths(1)) {
+        if ($meth->{name} eq 'name') {
+            # Copy name property.
+            $meth = { %$meth };
+            delete $meth->{search};
+        }
 	$meths->{$meth->{name}} = $meth;
 	push @ord, $meth->{name};
     }

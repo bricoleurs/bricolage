@@ -71,6 +71,26 @@ now checks the permissions of the assets found and only displays the assets
 for which the user has at least READ permission. Thanks to Sean Greathouse for
 the spot. [David]
 
+=item *
+
+Reverting a media asset now properly reverts the media file itself, as well.
+[David]
+
+=item *
+
+The "Last" field is now properly highlighted as the default order field when
+displaying a list of contributors in the Contributor Manager. [David]
+
+=item *
+
+Contributor Association now includes search options and only
+currently-associated contributors are displayed before searching. [David]
+
+=item *
+
+The ability to select different fields by which to sort a list of objects now
+works again. [David]
+
 =back
 
 =head1 VERSION 1.4.5

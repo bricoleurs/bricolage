@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.21.2.3 $
+$Revision: 1.21.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-06 19:19:34 $
+$Date: 2002-12-04 20:39:45 $
 
 =head1 SYNOPSIS
 
@@ -1090,27 +1090,19 @@ sub revert {
     }
 
     # clone information from the tables
-    $self->_set( { category__id         => $revert_obj->get_category__id,
-                   media_type_id        => $revert_obj->get_media_type_id,
-                   size                 => $revert_obj->get_size,
-                   file_name            => $revert_obj->get_file_name,
-                   _contributors        => $contrib,
-                   _update_contributors => 1,
-                   _queried_contrib     => 1,
-                   uri                  => $revert_obj->get_uri
-    });
-
-    # Copy THE FILE HERE
+    $self->_set([qw(category__id media_type_id size file_name location uri
+                    _contributors _update_contributors _queried_contrib)],
+                [$revert_obj->_get(qw(category__id media_type_id size file_name
+                                      location uri), $contrib, 1, 1)]);
 
     # clone the tiles
     # get rid of current tiles
-    my $tile = $self->get_tile();
-    $tile->do_delete();
-    my $new_tile = $revert_obj->get_tile();
-    $new_tile->prepare_clone();
-    $self->_set( { _delete_tile => $tile,
-                   _tile        => $new_tile
-    });
+    my $tile = $self->get_tile;
+    $tile->do_delete;
+    my $new_tile = $revert_obj->get_tile;
+    $new_tile->prepare_clone;
+    $self->_set({ _delete_tile => $tile,
+                  _tile        => $new_tile});
     return $self;
 }
 
