@@ -1,4 +1,7 @@
 Revision history for activitymail.
 
-0.10
+0.11
+       - Added --site option.
+
+0.10   2004-03-23T22:34:14
        - Initial release.

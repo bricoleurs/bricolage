@@ -50,6 +50,12 @@ variable if set.
 
 The URL to the Bricolage server. Defaults to "http://localhost/".
 
+=item C<--site>
+
+Name of the site the output channel is in. This is useful if there is more
+than one output channel with the same name, where each will be in a different
+site.
+
 =item C<--output-to>
 
 Specifies a directory to act as the category root for the output of all the
@@ -107,10 +113,10 @@ use Pod::Usage;
 use File::Spec::Functions qw(curdir canonpath catdir splitdir catfile);
 
 my ($username, $password, $server, $output_to, $VERBOSE, $timeout, $help,
-    $man, $oc, $show_ver);
+    $man, $oc, $site, $show_ver);
 
 BEGIN {
-    our $VERSION = '0.10';
+    our $VERSION = '0.11';
 
     # Get parameters from command line. Do so at compile time so that $VERBOSE
     # can effect use options and such.
@@ -125,6 +131,7 @@ BEGIN {
 	       "verbose+"               => \$VERBOSE,
 	       "username=s"             => \$username,
 	       "password=s"             => \$password,
+	       "site=s"                 => \$site,
 	       "server=s"               => \$server,
                "timeout=s"              => \$timeout,
                "output-to=s"            => \$output_to,
@@ -161,7 +168,7 @@ use File::Spec::Unix;
 
 # Connect to the SOAP server.
 my $soap = login($username, $password, $server, $timeout);
-fetch_templates($soap, $oc, $output_to);
+fetch_templates($soap, $oc, $site, $output_to);
 print STDERR "$0 finished okay\n" if $VERBOSE;
 
 ##############################################################################
@@ -199,9 +206,10 @@ sub login {
 # the Bricolage server.
 ##############################################################################
 sub fetch_templates {
-    my ($soap, $oc, $output_to) = @_;
+    my ($soap, $oc, $site, $output_to) = @_;
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Template');
-    my $response = $soap->list_ids(name(output_channel => $oc));
+    my $response = $soap->list_ids(name(output_channel => $oc),
+                                   $site ? name(site => $site) : ());
 
     _print_fault($response) if $response->fault;
     my @template_ids = @{ $response->result };
