@@ -80,6 +80,9 @@ if ($param->{delete} &&
     $comp->set_description($param->{description});
     $comp->set_burner($param->{burner}) if defined $param->{burner};
 
+    # Determine the enabled output channels.
+    my %enabled = map { $_ => 1 } @{ mk_aref($param->{enabled}) };
+
     # Set the primary output channel ID per site
     if (($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb") &&
          $comp->get_top_level) {
@@ -90,9 +93,16 @@ if ($param->{delete} &&
             next unless $key =~/primary_oc_site(\d+)_cb/;
             my $siteid = $1;
             $comp->set_primary_oc_id($param->{$key}, $siteid);
-            $comp->add_output_channel($param->{$key})
-              unless @{ $comp->get_output_channels($param->{$key}) };
+            my ($oc) = $comp->get_output_channels($param->{$key});
+            unless ($oc) {
+                $comp->add_output_channel($param->{$key});
+                $oc = Bric::Biz::OutputChannel->lookup
+                  ({ id => $param->{$key} });
+            }
+
+            # Associate it with the site and make sure it's enabled.
             $oc_ids{$siteid} = $param->{$key};
+            $enabled{$oc->get_id} = 1;
         }
 
         foreach my $siteid (keys %oc_ids) {
@@ -215,9 +225,12 @@ if ($param->{delete} &&
         # between OutputChannel and OutputChannel::Element
         # seems like the object gets loaded by lookup
         # this forces them to be loaded first by the
-        # href function, seems like O::E needs a _do_list 
+        # href function, seems like O::E needs a _do_list
         # /Arthur
-        $comp->get_output_channels();
+        # This is now done above, anyway, so it's not necessary
+        # here any more.
+        # /David
+        # $comp->get_output_channels;
 
         $comp->delete_output_channels($del_oc_ids);
     }
@@ -235,7 +248,6 @@ if ($param->{delete} &&
 
 
     # Enable output channels.
-    my %enabled = map { $_ => 1 } @{ mk_aref($param->{enabled}) };
     foreach my $oc ($comp->get_output_channels) {
         $enabled{$oc->get_id} ? $oc->set_enabled_on : $oc->set_enabled_off;
     }
@@ -312,11 +324,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =head1 DATE
 
-$Date: 2003-03-21 05:03:25 $
+$Date: 2003-03-21 05:14:59 $
 
 =head1 SYNOPSIS
 
