@@ -50,7 +50,7 @@ sub test_list : Test(45) {
         "Create group" );
 
     # Create a new distribution job.
-    ok( my $job = Bric::Dist::Job->new({ name => 'Test Job',
+    ok( my $job = Bric::Util::Job->new({ name => 'Test Job',
                                          user_id => $self->user_id }),
         "Create job" );
 
@@ -240,7 +240,7 @@ sub test_list_ids : Test(38) {
         "Create group" );
 
     # Create a new distribution job.
-    ok( my $job = Bric::Dist::Job->new({ name => 'Test Job',
+    ok( my $job = Bric::Util::Job->new({ name => 'Test Job',
                                          user_id => 0 }),
         "Create job" );
 
