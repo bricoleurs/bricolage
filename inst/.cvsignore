@@ -1,5 +1,7 @@
 Makefile
-bric.sql
+bricolage.sql
 cpan.install.log
 install.log
 configuration
+installed-database
+pguser.sql

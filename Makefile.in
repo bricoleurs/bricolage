@@ -12,6 +12,7 @@ GZIP = @GZIP@
 MKDIR = @MKDIR@
 FIND = @FIND@
 CTAGS = @CTAGS@
+PSQL = @PSQL@
 
 
 # directories
@@ -41,8 +42,11 @@ HAVE_SSL = @HAVE_SSL@
 HOSTNAME = @HOSTNAME@
 PID_FILE = @PID_FILE@
 PGHOME = @PGHOME@
-CONFIG_STRING = @CONFIG_STRING@
 MISSING_MODULES = @MISSING_MOD@
+DROPDB = @DROPDB@
+DROPUSER = @DROPUSER@
+CREATEDB = @CREATEDB@
+CONFIG_STRING = @CONFIG_STRING@
 
 
 # Installation related variables
@@ -80,11 +84,9 @@ CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_HTTPD_TARGET} ${CONF_HTTPSD_TARGET}
 
 
 # And the various doc files in text form
-CONF_OPTIONS = configure_options
-CONF_OPTIONS_TARGET = ${docdir}/configure_options
 DOC_TARGETS = ${docdir}/Changes \
 			  ${docdir}/License ${docdir}/TODO \
-			  ${CONF_OPTIONS_TARGET}
+			  ${docdir}/configure_options
 
 
 # now the heart of the matter.  We are just copying
@@ -123,13 +125,14 @@ endef
 
 # Set up the option string for the database
 # Documenation in bin/bric_importdb --help
-PGIMPORT_OPTIONS := -w .
-PGIMPORT_OPTIONS += -u ${POSTGRES_ROOT_USER}
-PGIMPORT_OPTIONS += -p ${POSTGRES_ROOT_PASS}
-PGIMPORT_OPTIONS += -d ${DB_NAME}
-PGIMPORT_OPTIONS += -c
-PGIMPORT_OPTIONS += -m '${DBI_USER}:${DBI_PASS}'
-PGIMPORT_OPTIONS += -g ${DBI_USER}
+PSQL_OPTIONS :=
+ifneq (${POSTGRES_ROOT_USER},${POSTGRES_SYSTEM_USER})
+PSQL_OPTIONS += -U ${POSTGRES_ROOT_USER}
+endif
+ifneq (${POSTGRES_ROOT_PASS},none)
+PSQL_OPTIONS += -p ${POSTGRES_ROOT_PASS}
+endif
+PSQL_OPTIONS += -d ${DB_NAME}
 
 
 # Now we'll define the installed files according to our log
@@ -171,14 +174,16 @@ CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
 # ****************************************************************
 # Standard targets follow.  These are discussed at length
 # in the GNU Make manual: http://www.gnu.org/manual/
-all:  doc config libs
+all:  doc config libs database
 
 libs:
 	cd ${LIB} &&  make
 
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
-		 install-man install-html chowndirs chownpg chmoddirs
+		 install-man install-html chowndirs chownpg chmoddirs \
+		 ${INST}/installed-database
+
 installdirs:
 	@$(NORMAL_INSTALL)  # Normal commands follow.
 	@${INST}/mkinstalldirs ${prefix} ${exec_prefix} \
@@ -193,17 +198,17 @@ chownpg:
 	chown -R ${POSTGRES_ROOT_USER} ${bindir}/bric_pgimport
 uninstall: uninstall-lib uninstallfiles uninstalldirs dist-clean
 uninstall-lib:
-	cd ${LIB} && make uninstall
+	--cd ${LIB} && make uninstall
 uninstalldirs:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing installed dirs 
-	@for D in ${INSTALLED_DIRS} ; do \
+	--@for D in ${INSTALLED_DIRS} ; do \
 		rmdir --ignore-fail-on-non-empty `find $$D -depth -type d`; \
 	done
 uninstallfiles:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing previously installed files
-	@rm -f ${INSTALLED_FILES}
+	--@rm -f ${INSTALLED_FILES}
 
 
 # specific install and uninstall targets including the list
@@ -249,13 +254,37 @@ install-doc: ${DOC_TARGETS}
 ${DOC_TARGETS}: ${docdir}/%: %
 	${install-files}
 
-
-install-database:
+# this target drops and creates the user and database
+# and then installs the datafiles.  NOTE: This is a real
+# target which timestamps a file of the same name.  This
+# will allow those of us using CVS to do installs without
+# wiping out an old db.
+${INST}/installed-database: database
 	@${POST_INSTALL}
-ifdef PGHOME
-	su --command="bin/bric_pgimport ${PGIMPORT_OPTIONS}" ${POSTGRES_ROOT_USER}
-endif
+	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
+	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
+	su -c '${CREATEDB} -E unicode ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
+	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/pguser.sql' ${POSTGRES_SYSTEM_USER}
+	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/bricolage.sql' ${POSTGRES_SYSTEM_USER} 2> $@
 
+# this is a .PHONY target which makes sure that 
+# the sql script is using the right user
+database: ${INST}/bricolage.sql ${INST}/pguser.sql
+	perl -pi -e 's/nobody/${DBI_USER}/g' $^
+
+# This makes a simple create user script
+${INST}/pguser.sql:
+	echo "create user ${DBI_USER} with password '${DBI_PASS}';" > $@
+	chmod a+r $@
+
+# This is here for those of us running from CVS.  The 
+# distributed version will have this done by the distutils
+# script, and therefor there will be "nothing to do for" this target
+${INST}/bricolage.sql:
+	find ${LIB} -name '*.sql' | xargs cat | cat >> ${INST}/bricolage.sql
+	find ${LIB} -name '*.val' | xargs cat | cat >> ${INST}/bricolage.sql
+	find ${LIB} -name '*.con' | xargs cat | cat >> ${INST}/bricolage.sql
+	chmod a+r $@
 
 
 # obviously we depend on the cpan stuff
@@ -267,12 +296,7 @@ ${CPAN_TARGETS}:
 
 # This is where we do our config files
 
-config: inst/bric.sql ${CONF_BRIC} ${CONF_HTTPD} \
-		lib/Makefile 
-
-${INST}/bric.sql: inst/bric.sql.in
-	cp $^ $@
-	perl -pi -e 's/%DBI_USER%/${DBI_USER}/g' $@
+config: ${CONF_BRIC} ${CONF_HTTPD} lib/Makefile 
 
 ${CONF_BRIC}: ${CONF_BRIC}.in
 	cp $^ $@
@@ -300,7 +324,7 @@ lib/Makefile:
 
 
 # and here are our document files.
-doc: Changes TODO License ${CONF_OPTIONS}
+doc: Changes TODO License configure_options
 	cd ${DOC} && ${MAKE} -e
 
 TODO:
@@ -315,11 +339,8 @@ License:
 test:
 	cd ${LIB} && make test
 
-${CONF_OPTIONS}:
+configure_options:
 	echo ${CONFIG_STRING} > $@
-
-${CONF_OPTIONS_TARGET}: ${CONF_OPTIONS}
-	${install-files}
 
 
 # TODO: Make this recursively generate tag files in all directories
@@ -330,12 +351,12 @@ endif
 
 
 clean: docclean
-	${RM} -f 	Changes TODO License tags conf/bricolage.tmp.conf \
-				${INST}/bric.sql ${INST}/configuration ${BLIB}
-	cd ${LIB} && make clean
+	--${RM} -f 	Changes TODO License tags conf/bricolage.tmp.conf \
+				${INST}/bric.sql ${INST}/configuration
+	--cd ${LIB} && make clean
 
 dist-clean: 
-	${RM} -f ${INST}/install.log 
+	--${RM} -rf ${INST}/install.log ${INST}/installed-database ${INST}/pguser.sql ${BLIB}
 
 docclean:
 	cd $(DOC) && ${MAKE} -e clean
@@ -345,7 +366,7 @@ docclean:
 .PHONY : clean dep clean cpan doc libs install installdirs \
 		 install-bin install-comp install-conf install-data \
 		 install-lib install-doc install-html install-man \
-		 uninstall uninstalldirs config \
+		 uninstall uninstalldirs config database \
 		 uninstall-bin uninstall-comp uninstall-conf uninstall-data \
 		 uninstall-lib uninstall-doc uninstall-html uninstall-man 
 
