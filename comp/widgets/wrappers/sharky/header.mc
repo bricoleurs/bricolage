@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.10 $
+$Revision: 1.2.2.11 $
 
 =head1 DATE
 
-$Date: 2001-10-09 23:17:10 $
+$Date: 2001-10-19 23:52:50 $
 
 =head1 SYNOPSIS
 
@@ -108,7 +108,7 @@ function init() {
 if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
     // Turn off the toolbar, back button, etc.
     window.open("<% $uri %>", 'Bricolage_<% SERVER_WINDOW_NAME %>',
-                'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1');
+                'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1');
     self.close();
 }
 % } # if
