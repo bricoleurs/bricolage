@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-17 00:42:28 $
+$Date: 2002-07-17 10:29:13 $
 
 =head1 SYNOPSIS
 
@@ -385,11 +385,7 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
+=over
 
 =item my $meths = Bric::Util::Grp->my_meths
 
@@ -619,13 +615,13 @@ sub my_meths {
     return !$ord ? $METH : wantarray ? @{$METH}{&ORD} : [@{$METH}{&ORD}];
 }
 
-#--------------------------------------#
+##############################################################################
+
+=back
 
 =head2 Public Instance Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over
 
 =item @objs = $cat->ancestry();
 
