@@ -131,7 +131,7 @@ Templates can be deleted again. Thanks to Adeola Awoyemi for the spot! [David]
 =item *
 
 Stories and media with non-unique URIs can now be deleted. Reported by Simon
-Wilcox. [David]]
+Wilcox. [David]
 
 =back
 
