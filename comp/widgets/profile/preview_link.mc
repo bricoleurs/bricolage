@@ -22,5 +22,5 @@ return qq{<a href="$uri" } .
   unless $oc_js;
 
 # If we got here, We need to actually load the link based on an oc ID.
-return qq{<a href="$uri" onClick="window.open('/workflow/profile/preview/$type/$id/' + $oc_js, 'preview_} . SERVER_WINDOW_NAME . qq{'); return false;" title="$uri"><img src="/media/images/$lang_key/preview_lgreen.gif" alt="Preview" title="Preview $uri" border="0" width="74" height="20"></a>};
+return qq{<a href="$uri" onclick="window.open('/workflow/profile/preview/$type/$id/' + $oc_js, 'preview_} . SERVER_WINDOW_NAME . qq{'); return false;" title="$uri"><img src="/media/images/$lang_key/preview_lgreen.gif" alt="Preview" title="Preview $uri" border="0" width="74" height="20"></a>};
 </%init>
