@@ -1,7 +1,7 @@
 package Bric::App::Callback::Workspace;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'workspace');
+__PACKAGE__->register_subclass('class_key' => 'workspace');
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
@@ -12,7 +12,9 @@ use Bric::Util::Burner;
 my $keys = [qw(story media formatting)];
 my $pkgs = { map { $_ => get_package_name($_) } @$keys };
 my $dskpkg = 'Bric::Biz::Workflow::Parts::Desk';
-
+foreach my $pkg (@$pkgs, $dskpkg) {
+    eval "require $pkg";
+}
 
 sub checkin : Callback {
     my $self = shift;
@@ -58,7 +60,7 @@ sub delete : Callback {
 		$burn->undeploy($a) if $key eq 'formatting';
 		log_event("${key}_deact", $a);
 	    } else {
-                my $msg = "Permission to delete [_1] denied.";
+                my $msg = 'Permission to delete [_1] denied.';
                 my $arg = '&quot;' . $a->get_name. '&quot;';
                 add_msg($self->lang->maketext($msg, $arg));
 	    }
