@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.24 $
+$Revision: 1.39.2.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-10 18:13:45 $
+$Date: 2003-10-17 14:58:58 $
 
 =head1 SYNOPSIS
 
@@ -1096,7 +1096,7 @@ NONE
 sub set_slug {
     my ($self, $slug) = @_;
 #    my $dirty = $self->_get__dirty();
-    if ($slug =~ m/\W/) {
+    if ($slug =~ m/[^\w.-_]/) {
         die $gen->new({ msg => 'Slug Must conform to URL character rules' });
     } else {
         $self->_set( { slug => $slug });

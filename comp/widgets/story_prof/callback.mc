@@ -36,7 +36,7 @@ my $save_data = sub {
     if (($story->get_slug() || '') ne ($param->{'slug'} || '')) {
         my $old_slug = $story->get_slug();
         # check the form of the slug
-        if ($param->{'slug'} =~ m/\W/) {
+        if ($param->{'slug'} =~ m/[^\w.-_]/) {
             add_msg('Slug must conform to URI character rules.');
             $data_errors = 1;
         } else {
