@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-03 02:14:42 $
+$Date: 2003-03-03 15:20:03 $
 
 =head1 SYNOPSIS
 
@@ -502,33 +502,7 @@ sub rethrow_exception {
 
 =head2 Private Class Methods
 
-=over 4
-
-=item use Bric::Util::Fault;
-
-Imports isa_bric_exception and rethrow_exception into the calling class.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> Overloads the double-quoted string operator.
-
-=cut
-
-#sub import {
-#    my $caller = caller;
-#    NOREFS: {
-#        no strict 'refs';
-#        *{"${caller}::isa_bric_exception"} = \&isa_bric_exception;
-        # XXX: I think it's okay to leave the same name (rethrow_exception)
-        # as in HTML::Mason because there is no overlap in calling classes
-        # which might use both HTML::Mason::Exceptions and Bric::Util::Fault.
-#        *{"${caller}::rethrow_exception"} = \&rethrow_exception;
-#    }
-#}
-
-=back
+NONE.
 
 =head2 Private Instance Methods
 
