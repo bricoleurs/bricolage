@@ -181,14 +181,14 @@ Provides query, export, update, create, and delete for Element definitions.
 Provides query, export, update, create, and delete for Category objects.
 
 =item L<Bric::SOAP::MediaType|Bric::SOAP::MediaType>
-
+n
 Provides query, export, update, create, and delete for MediaType objects.
 
-=item L<Bric::SOAP::MediaType|Bric::SOAP::Site>
+=item L<Bric::SOAP::Site|Bric::SOAP::Site>
 
 Provides query, export, update, create, and delete for Site objects.
 
-=item L<Bric::SOAP::MediaType|Bric::SOAP::Keyword>
+=item L<Bric::SOAP::Keyword|Bric::SOAP::Keyword>
 
 Provides query, export, update, create, and delete for Keyword objects.
 
@@ -196,7 +196,7 @@ Provides query, export, update, create, and delete for Keyword objects.
 
 Provides query, export, update, create, and delete for User objects.
 
-=item L<Bric::SOAP::User|Bric::SOAP::User>
+=item L<Bric::SOAP::Desk|Bric::SOAP::Desk>
 
 Provides query, export, update, create, and delete for Desk objects.
 
