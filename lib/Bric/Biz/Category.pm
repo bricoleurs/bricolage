@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.44.2.8 $
+$Revision: 1.44.2.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44.2.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.44.2.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-10 19:23:10 $
+$Date: 2003-03-11 23:43:51 $
 
 =head1 SYNOPSIS
 
@@ -108,7 +108,6 @@ use constant DEBUG => 0;
 use constant ORD => qw(name description site_id uri directory ad_string
                        ad_string2);
 
-use constant ROOT_CATEGORY_ID   => 0;
 use constant INSTANCE_GROUP_ID => 26;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::CategorySet';
 
@@ -630,6 +629,75 @@ B<Notes:> NONE.
 
 sub list_ids { _do_list(@_, 1) }
 
+=item $cat = Bric::Biz::Category->site_root_category($site || $site_id)
+
+=item $cat_id = Bric::Biz::Category->site_root_category_id($site || $site_id)
+
+=item $cat = $cat->site_root_category()
+
+=item $cat_id = $cat->site_root_category_id()
+
+Return the root category and the root category ID for a particular site.  If
+called as an instance method the site or site ID is not necessary;  that
+information will be pulled from $cat->get_site_id.
+
+Returns the category or category ID of the root category for this site.
+
+B<Throws:>
+
+'Could not determine the site ID for the current site'
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub site_root_category {
+    my $class = shift;
+    my ($site) = @_;
+
+    # Handle being called as a class or instance method.
+    my $self = ref $class ? $class : undef;
+    $site = $self->get_site_id if $self;
+
+    # Get the site ID whether $site is an object or the ID itself
+    my $site_id = ref $site ? $site->get_id : $site;
+
+    unless ($site_id) {
+        my $msg = 'Could not determine the site ID for the current site';
+        die $dp->new({msg => $msg});
+    }
+
+    my $sr = $class->list({parent_id => 0,
+                           site_id   => $site_id});
+
+    return $sr->[0];
+}
+
+sub site_root_category_id {
+    my $class = shift;
+    my ($site) = @_;
+
+    my $c_obj = $class->site_root_category($site);
+
+    return unless $c_obj;
+    return $c_obj->get_id;
+}
+
+sub create_new_root_category {
+    my $class = shift;
+    my ($site) = @_;
+    my $cat = Bric::Biz::Category->new;
+
+    my $name = $site->get_name;
+
+    $cat->_set([qw(site_id directory uri parent_id name description)],
+               [$site->get_id, '', '/', 0, "Root Category for site '$name'",
+                "The root category to be used for site '$name'"]);
+    $cat->save;
+}
+
 =back
 
 =head2 Public Instance Methods
@@ -759,7 +827,7 @@ sub set_directory {
     my ($self, $dir) = @_;
     my $id = $self->_get('id');
     die $dp->new({ msg => "Cannot change the directory of the root category" })
-      if defined $id and $id == ROOT_CATEGORY_ID;
+      if $self->is_root_category;
     $self->_set(['directory', '_update_uri'], [$dir, 1]);
 }
 
@@ -789,7 +857,7 @@ sub set_parent_id {
     my $id = $self->_get('id');
     if (defined $id) {
         die $dp->new({ msg => "Cannot change the parent of the root category" })
-          if $id == ROOT_CATEGORY_ID;
+          if $self->is_root_category;
         die $dp->new({ msg => "Categories cannot be their own parent" })
           if $id == $pid;
     }
@@ -975,25 +1043,25 @@ NONE
 
 =cut
 
-sub set_attr { 
+sub set_attr {
     my $self = shift;
     my ($name, $val) = @_;
     my ($attr, $attr_obj) = $self->_get('_attr', '_attr_obj');
-    
+
     if ($attr_obj) {
         $attr_obj->set_attr({'name'     => $name,
                              'sql_type' => 'short',
                              'value'    => $val});
     } else {
         $attr->{$name} = $val;
-        
+
         $self->_set(['_attr'], [$attr]);
     }
 
     return $val;
 }
 
-sub get_attr { 
+sub get_attr {
     my $self = shift;
     my ($name) = @_;
     my $attr = $self->_get('_attr_obj');
@@ -1037,7 +1105,7 @@ NONE
 
 =cut
 
-sub set_meta { 
+sub set_meta {
     my $self = shift;
     my ($name, $field, $val) = @_;
     my ($meta, $attr_obj) = $self->_get('_meta', '_attr_obj');
@@ -1048,14 +1116,14 @@ sub set_meta {
                              'value' => $val});
     } else {
         push @{$meta->{$name}}, [$field, $val];
-        
+
         $self->_set(['_meta'], [$meta]);
     }
 
     return $val;
 }
 
-sub get_meta { 
+sub get_meta {
     my $self = shift;
     my ($name, $field) = @_;
     my $attr = $self->_get('_attr_obj');
@@ -1145,9 +1213,8 @@ sub get_parent {
     my $self = shift;
     my $id   = $self->get_id;
     my $pid  = $self->get_parent_id;
-    return if
-      defined $id and $id == ROOT_CATEGORY_ID or
-      not defined $pid;
+
+    return if $self->is_root_category;
     return Bric::Biz::Category->lookup({id => $pid});
 }
 
@@ -1233,7 +1300,7 @@ B<Notes:> NONE
 sub del_keyword {
     my ($self, $keywords) = @_;
 
-    my $keyword;    
+    my $keyword;
     foreach my $k (@$keywords) {
         # find object for id
         if (ref $k) {
@@ -1244,12 +1311,34 @@ sub del_keyword {
                  { msg => "No keyword object found for id '$k'" } )
               unless defined $keyword;
         }
-        
+
         # dissociate keyword with this category.
         $keyword->dissociate($self);
     }
-    
+
     return $self;
+}
+
+#------------------------------------------------------------------------------#
+
+=item $att = $att->is_root_category;
+
+Return whether this is a root category or not
+
+B<Throws:>
+NONE
+
+B<Side Effects:>
+NONE
+
+B<Notes:>
+NONE
+
+=cut
+
+sub is_root_category {
+    my $self = shift;
+    return ($self->get_parent_id == 0) ? $self : undef;
 }
 
 #------------------------------------------------------------------------------#
@@ -1311,7 +1400,7 @@ sub deactivate {
 
     # Do not allow deactivation of the root category.
     my $id = $self->get_id;
-    return if !defined $id || $id == ROOT_CATEGORY_ID;
+    return if not defined $id || $self->is_root_category;
 
     $self->_set(['_active'], [0]);
 
@@ -1356,8 +1445,8 @@ sub save {
 
     my $dir = $self->_get(qw(directory));
 
-    unless (defined $dir && $dir ne '' ||
-            (defined $id && $id == ROOT_CATEGORY_ID)) {
+    # Set the directory unless its set ('' counts) and its not the root category
+    unless ((defined $dir && $dir ne '') || $self->is_root_category) {
         # Set a default directory name.
         my $dir = lc $self->get_name;
         $dir =~ y/[a-z]//cd if $dir;
@@ -1408,7 +1497,8 @@ Several that need documenting!
 sub _do_list {
     my ($pkg, $params, $ids) = @_;
     my $tables = "$table a, $mem_table m, $map_table c";
-    my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND m.active = 1';
+    my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND m.active = 1 '.
+                 'AND a.id <> 0';
     my @params;
 
     # Set up the active property.
@@ -1430,10 +1520,10 @@ sub _do_list {
             # It's a simple numeric comparison.
             $wheres .= " AND a.$k = ?";
 	    push @params, $v;
-            if ($k eq 'parent_id' and $v == ROOT_CATEGORY_ID) {
-                # We want to prevent the root category from returning itself
+            # Keep us from returning the super root category
+            if ($k eq 'parent_id' and $v == 0) {
                 $wheres .= " AND a.id <> ?";
-                push @params, ROOT_CATEGORY_ID;
+                push @params, 0;
             }
         } elsif ($k eq 'site_id') {
             $wheres .= " AND a.site__id = ?";
@@ -1541,19 +1631,19 @@ sub _load_grp {
     my $self = shift;
     my ($gtype, $id_field, $obj_field) = @_;
     my ($id, $obj) = $self->_get($id_field, $obj_field);
-    
+
     $gtype = "Bric::Util::Grp::$gtype";
 
     # Return if we don't even have an ID
     # return unless $id;
-    
+
     if ($id) {
         # There are no items for this category in the group
         $obj = $gtype->lookup({'id' => $id});
     } else {
         $obj = $gtype->new({'name' => 'Group for Category'});
     }
-    
+
     # HACK: This should throw an error object.
     unless ($obj) {
         my $err_msg = 'Failed to instantiate group';
@@ -1580,7 +1670,7 @@ sub _update_category {
     });
     my $new_uri;
 
-    if ($self->_get('_update_uri') and $id != ROOT_CATEGORY_ID) {
+    if ($self->_get('_update_uri') and not $self->is_root_category) {
         $self->_set(['_update_uri'], [0]);
         $new_uri = Bric::Util::Trans::FS->cat_uri
           ( $self->get_parent->get_uri,
@@ -1620,19 +1710,21 @@ sub _insert_category {
 
     my $sth = prepare_c($sql);
 
-    # Set the URI.
-    my $uri = Bric::Util::Trans::FS->cat_uri( $self->get_parent->get_uri,
-                                              $self->_get('directory') );
-
-    $self->_set(['uri'], [$uri]);
+    # Make sure we can use this code to insert new root categories for newly
+    # created sites.  These root categories will set their own uri.
+    unless ($self->is_root_category) {
+        # Set the URI
+        my $uri = Bric::Util::Trans::FS->cat_uri($self->get_parent->get_uri,
+                                                 $self->_get('directory'));
+        $self->_set(['uri'], [$uri]);
+    }
 
     # Set up a group. This isn't used anywhere or for anything other than
     # to have a way to get a group ID from a category to track assets. The
     # assets will pretend they're in the group, even though they're really not.
     # See Bric::Biz::Asset->get_grp_ids to see it at work.
-    my $ag_obj = Bric::Util::Grp::Asset->new
-      ({ name => 'Category Assets',
-         description => $uri });
+    my $ag_obj = Bric::Util::Grp::Asset->new({name        => 'Category Assets',
+                                              description => $self->get_uri});
     $ag_obj->save;
     $self->_set(['asset_grp_id'], [$ag_obj->get_id]);
 

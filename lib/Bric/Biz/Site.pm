@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.12 $
+$Revision: 1.1.2.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.13 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-11 17:48:32 $
+$Date: 2003-03-11 23:43:52 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.12 2003-03-11 17:48:32 arthurbergman Exp $
+$Id: Site.pm,v 1.1.2.13 2003-03-11 23:43:52 garthwebb Exp $
 
 =back
 
@@ -582,6 +582,9 @@ sub save {
                                     usr_grp => $g,
                                     value   => $priv })->save;
         }
+
+        # Create a new root category with this site.
+        Bric::Biz::Category->create_new_root_category($self);
     }
 
     # Finish up.

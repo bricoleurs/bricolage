@@ -18,9 +18,9 @@ sub class { 'Bric::Biz::Asset::Formatting' }
 sub new_args {
     my $self = shift;
     ( output_channel__id => 1,
-      user__id   => $self->user_id,
-      category_id => 0,
-      name => 'foodoo'
+      user__id           => $self->user_id,
+      category_id        => 1,
+      name               => 'foodoo'
     )
 }
 

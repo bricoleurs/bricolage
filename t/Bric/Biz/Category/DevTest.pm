@@ -9,7 +9,7 @@ use Bric::Util::Grp::CategorySet;
 my %cat = ( name        => 'Testing',
             site_id     => 100,
             description => 'Description',
-            parent_id   => 0,
+            parent_id   => 1,
             directory   => 'testing',
           );
 
@@ -117,10 +117,28 @@ sub test_list : Test(31) {
 
     # Try parent_id. The root category shouldn't return itself, but should
     # return all of its children, of course.
-    ok( @cats = Bric::Biz::Category->list({ parent_id => 0 }),
-        "Look up parent_id 0" );
+    ok( @cats = Bric::Biz::Category->list({ parent_id => 1 }),
+        "Look up parent_id 1" );
     is( scalar @cats, 5, "Check for 5 categories" );
 
+}
+
+sub test_root_changes : Test(7) {
+    my $cat = Bric::Biz::Category->new(\%cat);
+    my @cats;
+
+    is($cat->site_root_category_id, 1, "Correct Root Category");
+    ok(@cats = Bric::Biz::Category->list({parent_id => 0}), "List on parent_id of 0");
+
+    # Make sure this isn't returning the master root category
+    is(scalar @cats, 1, "Check for 1 category");
+
+    is($cat->is_root_category ? 1 : 0, 0, "Check root on non-root category");
+    is($cats[0]->is_root_category ? 1: 0, 1, "Check root on root category");
+
+    is($cat->site_root_category_id, 1, "Check this category knows its root");
+    is(Bric::Biz::Category->site_root_category_id(100), 1,
+       "Check class method for default category of a site");
 }
 
 1;

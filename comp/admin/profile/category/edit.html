@@ -152,7 +152,6 @@ my $section = 'admin';
 my $type = 'category';
 my $widget = 'profile';
 my $disp = get_disp_name($type);
-my $root_id = $class->ROOT_CATEGORY_ID;
 </%once>
 
 %#-- Args Section --#
@@ -171,10 +170,13 @@ $id = $cat->get_id unless defined $id;
 # Make sure to set the site ID if we have it.
 $cat->set_site_id($ARGS{site_id}) if $ARGS{site_id};
 
+# This will fail if for some bad reason site_id has not been set on $cat
+my $root_id = $cat->site_root_category_id;
+
 # Check authorization.
 chk_authz($cat, $id ? READ : CREATE);
 my $no_edit = !chk_authz($cat, ($id ? EDIT : CREATE), 1);
-my $no_del = ! defined $id || $no_edit || $id == $root_id;
+my $no_del  = ! defined $id || $no_edit || $id == $root_id;
 
 # Roll in any changes to the category object if we're just adding keywords.
 if ($ARGS{'add_more|keyword|add_cb'}) {
@@ -205,11 +207,11 @@ my $cat_excl = sub { my $cx = $c->get_user_cx(get_user_id);
 
 =head1 VERSION
 
-$Revision: 1.1.2.3 $
+$Revision: 1.1.2.4 $
 
 =head1 DATE
 
-$Date: 2003-03-10 02:01:46 $
+$Date: 2003-03-11 23:43:50 $
 
 =head1 DESCRIPTION
 

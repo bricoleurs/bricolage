@@ -2,7 +2,6 @@
 my $type = 'category';
 my $disp_name = get_disp_name($type);
 my $pl_name = get_class_info($type)->get_plural_name;
-my $root_id = Bric::Biz::Category::ROOT_CATEGORY_ID;
 </%once>
 <%args>
 $widget
@@ -16,7 +15,11 @@ $class
 my $cat = $obj;
 my $id = $param->{"${type}_id"};
 my $name = "&quot;$param->{name}&quot;";
+
 if ($field eq "$widget|save_cb") {
+    # This will fail if for some bad reason site_id has not yet been set on $cat
+    my $root_id = Bric::Biz::Category->site_root_category_id($param->{site_id});
+
     if ($param->{delete} || $param->{delete_cascade}) {
         if ($id == $root_id) {
             # You can't deactivate the root category!
@@ -171,11 +174,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.14.2.2 $
+$Revision: 1.14.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-10 19:23:04 $
+$Date: 2003-03-11 23:43:51 $
 
 =head1 SYNOPSIS
 
