@@ -16,17 +16,17 @@ ul {
   border-bottom: solid white 2px;
 }
 ul.workflows li.open {
-  background: #CCCC99 url("../images/dkgreen_arrow_open.gif") 5px 5px no-repeat;
+  background: #CCCC99 url("../images/dkgreen_arrow_open.gif") 5px 6px no-repeat;
   font-weight: bold;
 }
 ul.workflows li.closed {
-  background: #CCCC99 url("../images/mdgreen_arrow_closed.gif") 8px 4px no-repeat;
+  background: #CCCC99 url("../images/mdgreen_arrow_closed.gif") 8px 5px no-repeat;
   font-weight: normal;
 }
 ul.workflows li a { 
   display: block;
   width: 100%;
-  padding: 2px 0 2px 23px;
+  padding: 4px 0 4px 23px;
   color: #000000;
   text-decoration: none;
   text-transform: uppercase;
@@ -55,15 +55,14 @@ ul.admin li.closed {
 ul.admin li a { 
   display: block;
   width: 100%;
-  padding: 2px 0 2px 23px;
+  padding: 4px 0 4px 23px;
   color: white;
   text-decoration: none;
   text-transform: uppercase;
-  border-bottom: solid white 2px;
 }
 
 ul.admin ul.submenu li.open {
-  background: #CCCC99 url("../images/dkgreen_arrow_open.gif") 5px 5px no-repeat;
+  background: #CCCC99 url("../images/dkgreen_arrow_open.gif") 5px 6px no-repeat;
 }
 ul.admin ul.submenu li.closed {
   background: #CCCC99 url("../images/mdgreen_arrow_closed.gif") 8px 4px no-repeat;
