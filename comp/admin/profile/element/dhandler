@@ -181,6 +181,7 @@ if (!$no_edit && defined $id) {
 }
 
 </%perl>
+</form>
 
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
 
@@ -231,11 +232,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-06-29 00:34:54 $
+$Date: 2002-07-19 09:46:07 $
 
 =head1 DESCRIPTION
 
