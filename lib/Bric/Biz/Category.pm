@@ -7,25 +7,29 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.56 $
+$Revision: 1.57 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.56 $ )[-1];
+our $VERSION = (qw$Revision: 1.57 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-02 22:57:13 $
+$Date: 2004-03-14 18:13:16 $
 
 =head1 SYNOPSIS
 
  # Return a new category object.
  my $cat = Bric::Biz::Category->new($init);
 
+ # Look up an existing category object.
  my $cat = Bric::Biz::Category->lookup({'id' => $cat_id});
 
- my $cat = Bric::Biz::Category->list($crit);
+ # Search for a list of categories.
+ my @cats = Bric::Biz::Category->list($crit);
 
+ # Attribute accessors.
+ my $id = $cat->get_id;
  my $name = $cat->get_name;
  $cat = $cat->set_name($name);
  my $desc = $cat->get_description;
@@ -933,6 +937,22 @@ sub get_ad_string2 {
 
 
 ### these functions are automatic
+
+=item $name = $cat->get_id;
+
+Return the ID of this category.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
 
 =item $name = $cat->get_name;
 
