@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.32.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 00:19:20 $
+$Date: 2003-03-04 06:45:46 $
 
 =head1 SYNOPSIS
 
@@ -79,6 +79,7 @@ use Carp qw(croak);
     use Bric::Biz::Asset::Business::Parts::Tile::Container;
     use Bric::Biz::Asset::Business::Story;
     use Bric::Biz::Asset::Formatting;
+    use Bric::Biz::Site;
     use Bric::Biz::AssetType;
     use Bric::Biz::Category;
     use Bric::Biz::Contact;
