@@ -77,8 +77,8 @@ Removed Bric::FAQ, since it is now maintained on the Website, instead. [David]
 =item *
 
 Updated Bric::Admin to suggest that PostgreSQL's C<initdb> be run with
-C<--locale=C> so as to avoid collation issues with non-Western characters. See
-this discussion for more information:
+C<--no-locale> so as to avoid collation issues with non-Western characters.
+See this discussion for more information:
 L<http://archives.postgresql.org/pgsql-general/2004-08/threads.php#01079>
 
 =item *

@@ -637,14 +637,14 @@ locale, since the collation of many other locales can be quite broken
 L<http://archives.postgresql.org/pgsql-general/2004-08/threads.php#01079> for
 details).
 
-  su - postgres -c "/usr/local/pgsql/bin/initdb --locale=C \
+  su - postgres -c "/usr/local/pgsql/bin/initdb --no-locale \
     -D /usr/local/pgsql/data"
 
 You might find it easier to set PostgreSQL default encoding for new databases
 to UNICODE when initializing the database cluster, using the following
 command instead of the former one:
 
-  su - postgres -c "/usr/local/pgsql/bin/initdb --locale=C \
+  su - postgres -c "/usr/local/pgsql/bin/initdb --no-locale \
     --encoding UNICODE -D /usr/local/pgsql/data"
 
 =item *
