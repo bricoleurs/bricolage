@@ -116,6 +116,14 @@ displayed as "Not defined" when viewing a story. [David]
 Reverting (stories, media, templates) no longer gives an error. Reported by
 Simon Wilcox, Rachel Murray, and others. [David]
 
+=item *
+
+Publishing a published verson of a document that has a later version in
+workflow will no longer cause that later version to be mysteriously removed
+from workflow. This could be caused by passing a document looked up using the
+C<published_version> to C<list()> to C<< $burner->publish_another >> in a
+template. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
