@@ -10,7 +10,7 @@ Release Version: 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.35.2.4 $
+$Revision: 1.35.2.5 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.6.0";
 
 =head1 DATE
 
-$Date: 2003-04-03 22:11:08 $
+$Date: 2003-04-10 19:20:59 $
 
 =head1 SYNOPSIS
 
@@ -563,8 +563,7 @@ sub get_grp_ids {
     return unless defined($self->GROUP_PACKAGE);
 
     # If it's just a class name, just return the instance class ID.
-    return wantarray ? $self->INSTANCE_GROUP_ID : [$self->INSTANCE_GROUP_ID]
-      unless ref $self;
+    return $self->INSTANCE_GROUP_ID unless ref $self;
 
     # Just return if there are no group IDs.
     return unless exists $self->{grp_ids};
