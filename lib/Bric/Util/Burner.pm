@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32.4.9 $
+$Revision: 1.32.4.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32.4.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.4.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-09 21:50:52 $
+$Date: 2003-08-12 22:39:25 $
 
 =head1 SYNOPSIS
 
@@ -604,6 +604,9 @@ sub preview {
     &$send_msg("Writing files to &quot;" . $oc->get_name
                . '&quot; Output Channel.');
     my $ocid = $oc->get_id;
+    $self->_set(['base_path'], [$fs->cat_dir($self->get_out_dir,
+                                             'oc_'. $ocid)]);
+
     # Get a list of server types this categroy applies to.
     my $bat = $oc_sts->{$ocid} ||=
       Bric::Dist::ServerType->list({ can_preview       => 1,
