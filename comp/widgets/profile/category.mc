@@ -53,25 +53,21 @@ if ($field eq "$widget|save_cb") {
             # get and set the parent
             my $par = $class->lookup({id => $param->{parent_id}});
             $par->add_child([$cat]);
-            
+
             # make sure the directory name does not
             # already exist as a child of the parent
-            if (exists $param->{directory}) { 
+            if (exists $param->{directory}) {
                 my $p_id = $par->get_id;
-                
-                if (
-                    defined($id) and $id == $p_id
-                    or grep $_->get_id == $p_id, $cat->children
-                   ) {
+
+                if (defined($id) and $id == $p_id
+                    or grep $_->get_id == $p_id, $cat->children) {
                     add_msg("Parent cannot choose itself or its child as"
                             . " its parent.  Try a different parent.");
                     return $cat;
                 }
-                
-                if (@{ $class->list({
-                                     directory => $param->{directory},
-                                     parent_id => $p_id,
-                }) }) {
+
+                if (@{ $class->list({ directory => $param->{directory},
+                                      parent_id => $p_id}) }) {
                     my $uri = Bric::Util::Trans::FS->cat_uri(
                       $par->get_uri, $param->{directory}
                     );
@@ -79,8 +75,10 @@ if ($field eq "$widget|save_cb") {
                             . " try a different directory name or Parent.");
                     return $cat;
                 }
-		if ($param->{directory} =~ /[^a-zA-Z0-9\_]+/) {
-		    add_msg("Directory name '".$param->{directory}."' contains invalid characters. Please try a different directory name.");
+		if ($param->{directory} =~ /[^\w.-]+/) {
+		    add_msg("Directory name '$param->{directory}' contains " .
+                            "invalid characters. Please try a different " .
+                            "directory name.");
                     return $cat; 
 		} else {
 		    $cat->set_directory($param->{directory});
@@ -131,11 +129,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-08-18 23:55:58 $
+$Date: 2002-08-20 04:44:05 $
 
 =head1 SYNOPSIS
 
