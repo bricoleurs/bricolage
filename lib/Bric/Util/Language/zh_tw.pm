@@ -6,15 +6,15 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.1.2.2 $
+$Revision: 1.1.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-18 15:35:40 $
+$Date: 2004-02-06 19:51:16 $
 
 =head1 SYNOPSIS
 
@@ -38,9 +38,9 @@ our %Lexicon = (
     'ADMIN' => '管理',
     'ADVANCED SEARCH' => '進階搜尋',
     'Actions' => '行動',
-    'Active Media' => '起用媒體',
-    'Active Stories' => '起用稿件',
-    'Active Templates' => '起用模板',
+    'Active Media' => '編修中的媒體',
+    'Active Stories' => '編修中的稿件',
+    'Active Templates' => '編修中的模板',
     'Active' => '起用',
     'Add New Field' => '增加一個新欄位',
     'Add a New Alert Type' => '增加新的警告型別',
@@ -70,7 +70,7 @@ our %Lexicon = (
     'An [_1] attribute already exists. Please try another name.' => '[_1] 屬性已然存在，請用別的名稱。',
     'A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' => '所選之輸出頻道、分類、元素、與burner已有對應之起用的模板，在增加新的模板之前，你必須先刪除目前存在的模板。',
     'An error occurred while processing your request:' => '在處理您的要求時，發生了一個錯誤；',
-    'An error occurred.' => '一個錯誤突然在這裡出現，把你嚇得半死。',
+    'An error occurred.' => '錯誤突然出現。',
     'Apr' => '四月',
     'Asset Type' => '資產型別',
     'At least one extension is required.' => '至少需要一個延伸.',
@@ -127,8 +127,8 @@ our %Lexicon = (
     'Contributor profile [_1] saved.' => '供稿者設定 [_1] 已儲存。',
     'Contributors disassociated.' => '已斷絕供稿者的關係',
     'Contributors' => '供稿者',
-    'Cover Date incomplete.' => '封面日期不完整。',
-    'Cover Date' => '封面日期',
+    'Cover Date incomplete.' => '見報日期不完整。',
+    'Cover Date' => '見報日期',
     'Create a New Category' => '建立新的分類',
     'Create a New Media' => '建立一個新的媒體',
     'Create a New Story' => '增加一份新的稿件',
@@ -342,7 +342,7 @@ our %Lexicon = (
     'Passwords do not match!  Please re-enter.' => '密碼不匹配！請重新輸入。',
     'Passwords must be at least [_1] characters!' => '密碼至少要有 [_1] 個字元！',
     'Passwords must match!' => '密碼一定要匹配',
-    'Pending ' => 'Sospesa',
+    'Pending ' => '待辦',
     'Permission Denied' => '權限慘遭拒絕',
     'Permission to checkout [_1] denied' => '取出 [_1] 的權限慘遭拒絕',
     'Permission to delete [_1] denied.' => '刪除 [_1] 權限慘遭拒絕',
@@ -351,7 +351,7 @@ our %Lexicon = (
     'Please select a primary category.' => '請選擇一個主要的分類',
     'Please select a story type.' => '請選擇一個稿件型別',
     'Position' => '位置',
-    'Post' => '貼',
+    'Post' => 'Post',
     'Pre' => 'Pre', # XXX 不曉得出現在什麼地方
     'Preference Manager' => '偏好設定管理',
     'Preference [_1] updated.' => '偏好設定 [_1] 已更新。',
@@ -372,7 +372,7 @@ our %Lexicon = (
     'Publishes' => '出版品',
     'Recipients' => '收件者',
     'Redirecting to preview.' => '重導到御覽',
-    'Relate' => '相關',
+    'Relate' => '加入關係',
     'Related Media' => '相關的媒體',
     'Related Story' => '相關的稿件',
     'Repeat new password' => '新密碼確認',
@@ -381,7 +381,7 @@ our %Lexicon = (
     'Resources' => '資源',
     'Role' => '角色',
     'Roles' => '角色',
-    'Rows' => 'Righe',
+    'Rows' => '列',
     'SEARCH' => '尋找',
     'STORIES FOUND' => '找到的稿件',
     'STORIES' => '稿件',
@@ -439,7 +439,7 @@ our %Lexicon = (
     'The URI of this media conflicts with that of [_1].  Please change the category, file name, or slug.' => '此媒體的 URI 與 [_1] 的 URI 相同，請調整分類、檔案名稱、或者 slug。',
     'The URL you requested, <b>[_1]</b>, was not found on this server' => '在這台伺服器上，並沒有找到所求之 URL <b>[_1]</b> ',
     'The category was not added, as it would have caused a URI clash with story [_1].' => '分類並沒有加入，因為會造成與稿件「[_1]」相同的URI。',
-    'The cover date has been reverted to [_1], as it caused this story to have a URI conflicting with that of story \'[_2].' => '封面日期已經回復到 [_1] ，因為原本這篇稿子的 URI 與 \'[_2]\' 這篇稿子相同。 ',
+    'The cover date has been reverted to [_1], as it caused this story to have a URI conflicting with that of story \'[_2].' => '見報日期已經回復到 [_1] ，因為原本這篇稿子的 URI 與 \'[_2]\' 這篇稿子相同。 ',
     'The name [_1] is already used by another Element Type.' => '[_1] 這名稱已經被其他的元素型別使用。',
     'The name [_1] is already used by another Media Type.' => '[_1] 這個名稱已被其他的媒體型別佔用。',
     'The name [_1] is already used by another Output Channel.' => '[_1] 這個名字已經被其他的輸出頻道使用了',
@@ -448,18 +448,18 @@ our %Lexicon = (
     'The name [_1] is already used by another [_2].' => '[_1] 這個名字已經被 [_2] 先用去了。',
     'The slug can only contain alphanumeric characters (A-Z, 0-9, - or _)!' => 'Slug 裡面只能用英文字母、阿拉伯數字、短線、與底線字元！',
     'The slug has been reverted to [_1], as the slug [_2] caused this story to have a URI conflicting with that of story [_3].' => '此 Slug 已被回復到 [_1]，因為 Slug [_2] 使得這篇稿件的 URI 與「[_3]」這篇稿件的 URI 相同。',
-    'The slug, category and cover date you selected would have caused this story to have a URI conflicting with that of story [_1].' => '這篇稿件所選的的 slug、分類、以及封面日期，將使其 URI 與「[_1]」這篇稿件相同',
+    'The slug, category and cover date you selected would have caused this story to have a URI conflicting with that of story [_1].' => '這篇稿件所選的的 slug、分類、以及見報日期，將使其 URI 與「[_1]」這篇稿件相同',
     'This day does not exist! Your day is changed to the' => '這一天根本不存在啊！它已經被改為',
     'This story has not been assigned to a category.' => '這份稿件目前尚未被分類',
     'Timestamp'   => '時間',
     'Title' => '標題',
-    'Trail'  => '更改紀錄',
+    'Trail'  => '移動紀錄',
     'Triggered By' => '觸發者',
     'Type' => '型別',
     'URI [_1] is already in use. Please try a different directory name or parent category.' => 'URI [_1] 已被使用，請調整目錄名稱或者是分類。',
     'URI' => 'URI',
     'URL' => 'URL',
-    'Un-relate' => 'Annulla collegamento',
+    'Un-relate' => '解除關係',
     'User Manager' => '使用者管理',
     'User Override' => '變身為別的使用者',
     'User profile [_1] deleted.' => '使用者設定 [_1] 已刪除。',

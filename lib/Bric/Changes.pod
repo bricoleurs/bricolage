@@ -118,6 +118,10 @@ Media assets now properly remember their class, which means that autopopulated
 fields (such as "height" and "width" for images) are autopulated when a new
 image file is uploaded. Thanks to Patrick Walsh for the spot! [David]
 
+=item *
+
+Updated Chinese Traditional localization. [Kang-min Liu]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)
