@@ -3,20 +3,19 @@ package Bric::Util::Coll::Member;
 
 =head1 NAME
 
-Bric::Util::Coll::OutputChannel - Interface for managing collections of group
-members
+Bric::Util::Coll::Member - Interface for managing collections of group members
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:42 $
+$Date: 2002-10-08 20:46:14 $
 
 =head1 SYNOPSIS
 
