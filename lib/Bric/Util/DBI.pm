@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-04-30 20:09:51 $
+$Date: 2002-04-30 20:21:54 $
 
 =head1 SYNOPSIS
 
@@ -126,37 +126,8 @@ our %EXPORT_TAGS = (standard => [qw(prepare_c row_aref fetch execute next_key
 		    trans => [qw(begin commit rollback)],
 		    all => \@EXPORT_OK);
 
-################################################################################
-# Private Functions
-################################################################################
-my $connect = sub {
-    # Connects to the database and stores the connection in $dbh. We may need to
-    # override $dbh->ping. If so, do it in the Bric::DBI::DBD::* driver class.
-
-    eval {
-	unless ($dbh && $dbh->ping) {
-	    $dbh = DBI->connect(join(':', 'DBI', DBD_TYPE, DSN_STRING),
-				DBI_USER, DBI_PASS, $ATTR);
-	}
-    };
-
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to connect to database", payload => $@ }) if $@;
-}; # &$connect()
-
-################################################################################
 # Disconnect! Will be ignored by Apache::DBI.
-END {
-    eval {
-	if ($dbh && $dbh->ping) {
-	    # Don't commit, in case we're ending unexpectedly.
-	    $dbh->rollback unless $dbh->{AutoCommit};
-	    $dbh->disconnect;
-	}
-    };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to disconnect from database", payload => $@ }) if $@;
-}
+END { _disconnect(); }
 
 ################################################################################
 # Exportable Functions
@@ -396,7 +367,7 @@ B<Notes:> NONE.
 =cut
 
 sub prepare {
-    &$connect();
+    _connect();
     _print_query(\$_[0]) if $_[2] || DEBUG;
     _print_call_trace()  if CALL_TRACE;
     my $sth;
@@ -445,7 +416,7 @@ B<Notes:> NONE.
 =cut
 
 sub prepare_c {
-    &$connect();
+    _connect();
     _print_query(\$_[0]) if $_[2] || DEBUG;
     _print_call_trace()  if CALL_TRACE;
     my $sth;
@@ -494,7 +465,7 @@ B<Notes:> NONE.
 =cut
 
 sub prepare_ca {
-    &$connect();
+    _connect();
     _print_query(\$_[0]) if $_[2] || DEBUG;
     _print_call_trace()  if CALL_TRACE;
     my $sth;
@@ -553,7 +524,7 @@ B<Notes:> NONE.
 sub begin {
     return 1 unless TRANSACTIONAL;
     return 1 if $ENV{MOD_PERL} && !$_[0];
-    &$connect();
+    _connect();
     my $ret;
     eval { $ret = $dbh->{AutoCommit} = 0 };
     die Bric::Util::Fault::Exception::DA->new(
@@ -596,7 +567,7 @@ B<Notes:> NONE.
 sub commit {
     return 1 unless TRANSACTIONAL;
     return 1 if $ENV{MOD_PERL} && !$_[0];
-    &$connect();
+    _connect();
     my $ret;
     eval { $ret = $dbh->commit };
     die Bric::Util::Fault::Exception::DA->new(
@@ -642,7 +613,7 @@ B<Notes:> NONE.
 sub rollback {
     return 1 unless TRANSACTIONAL;
     return 1 if $ENV{MOD_PERL} && !$_[0];
-    &$connect();
+    _connect();
     my $ret;
     eval { $ret = $dbh->rollback };
     die Bric::Util::Fault::Exception::DA->new(
@@ -1074,7 +1045,7 @@ B<Notes:> NONE.
 
 sub row_aref {
     my ($qry, @params) = @_;
-    &$connect();
+    _connect();
     _print_query(\$qry)         if DEBUG;
     _print_call_trace()         if CALL_TRACE;
     _print_query_args(\@params) if DEBUG;
@@ -1118,7 +1089,7 @@ B<Notes:> NONE.
 
 sub row_array {
     my ($qry, @params) = @_;
-    &$connect();
+    _connect();
     _print_query(\$qry)         if DEBUG;
     _print_call_trace()         if CALL_TRACE;
     _print_query_args(\@params) if DEBUG;
@@ -1167,7 +1138,7 @@ B<Notes:> NONE.
 
 sub all_aref {
     my ($qry, @params) = @_;
-    &$connect();
+    _connect();
     _print_query(\$qry)         if DEBUG;
     _print_call_trace()         if CALL_TRACE;
     _print_query_args(\@params) if DEBUG;
@@ -1210,7 +1181,7 @@ B<Notes:> NONE.
 
 sub col_aref {
     my ($qry, @params) = @_;
-    &$connect();
+    _connect();
     _print_query(\$qry)         if DEBUG;
     _print_call_trace()         if CALL_TRACE;
     _print_query_args(\@params) if DEBUG;
@@ -1297,7 +1268,7 @@ B<Notes:> NONE.
 =cut
 
 sub last_key {
-    &$connect();
+    _connect();
     my ($name, $db, $debug) = @_;
     my $sth = prepare_c(last_key_sql($name, $db || $Bric::Cust), undef, $debug);
     return @{ row_aref($sth) }->[0];
@@ -1320,6 +1291,47 @@ NONE.
 =head2 Private Functions
 
 =over 4
+
+=item _connect()
+
+Connects to the database and stores the connection in $dbh.  Will
+re-connect if $dbh->ping fails.  Should be called at the start of
+every function that does database access.
+
+B<Notes:> We may need to override $dbh->ping. If so, do it in the
+Bric::DBI::DBD::* driver class.
+
+=cut
+
+sub _connect {
+    eval {
+	unless ($dbh && $dbh->ping) {
+	    $dbh = DBI->connect(join(':', 'DBI', DBD_TYPE, DSN_STRING),
+				DBI_USER, DBI_PASS, $ATTR);
+	}
+    };
+    die Bric::Util::Fault::Exception::DA->new(
+        { msg => "Unable to connect to database", payload => $@ }) if $@;
+}
+
+=item _disconnect()
+
+Disconnects from the database.  Called by an END block installed by
+this package.
+
+=cut
+
+sub _disconnect {
+    eval {
+	if ($dbh && $dbh->ping) {
+	    # Don't commit, in case we're ending unexpectedly.
+	    $dbh->rollback unless $dbh->{AutoCommit};
+	    $dbh->disconnect;
+	}
+    };
+    die Bric::Util::Fault::Exception::DA->new(
+      { msg => "Unable to disconnect from database", payload => $@ }) if $@;
+}
 
 =item _print_query($sql)
 
