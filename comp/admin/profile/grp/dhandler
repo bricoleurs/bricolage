@@ -56,7 +56,7 @@ if (defined $id) {
 	foreach my $obj ( $grp->get_objects ) {
 	    push @$right, { value =>  $obj->get_id,
 			    description => $obj->get_source_name };
-    }
+        }
 	# Get potential members.
 	foreach my $obj ( $memb_pkg->list ) {
 	    push @$left, { value =>  $obj->get_id,
@@ -196,11 +196,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-12 05:59:01 $
+$Date: 2003-11-29 23:52:42 $
 
 =head1 DESCRIPTION
 
