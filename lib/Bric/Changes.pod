@@ -62,6 +62,68 @@ servers. [JoE<atilde>o Pedro]
 Added "All Desks" group for managing the permission to access all desks.
 [David]
 
+=item *
+
+Refactored and optimized the code used in the C<lookup()>, C<list()>,
+C<list_ids()>, and, where pertinent, C<href()> methods in the following
+classes:
+
+=over 4
+
+=item Bric::Biz::AssetType
+
+=item Bric::Biz::ATType
+
+=item Bric::Biz::Category
+
+=item Bric::Biz::Org
+
+=item Bric::Biz::Org::Person
+
+=item Bric::Biz::Org::Source
+
+=item Bric::Biz::OutputChannel
+
+=item Bric::Biz::OutputChannel::Element
+
+=item Bric::Biz::Person
+
+=item Bric::Biz::Person::User
+
+=item Bric::Biz::Workflow
+
+=item Bric::Biz::Workflow::Parts::Desk
+
+=item Bric::Dist::Job
+
+=item Bric::Dist::ServerType
+
+=item Bric::Util::AlertType
+
+=item Bric::Util::Event
+
+=item Bric::Util::Grp
+
+=item Bric::Util::Pref
+
+=back
+
+This work will allow permission checking to be much faster for objects of
+these classes, as the relevant group IDs are now looked up for each object
+when the object is looked up, rather than by a separate select for each
+object, one-at-a-time. The changes also include support for a C<grp_id>
+parameter to be passed to the C<list()> method of these classes as a way of
+allowing a group to return a list of the objects in the group en masse, rather
+than one-at-a-time from the member objects of each group. Once similar
+optimizations have been made to the Bric::Biz::Assest classes, the necessary
+change will be made to Bric::Util::Grp to allow this functionality. [David]
+
+=item *
+
+Added object caching to the base class, and calls to it from all classes with
+a C<lookup()> method to take advantage of it. The caching is only for the
+duration of a request for now, but can be expanded later. [David]
+
 =back
 
 =head1 VERSION 1.5.0
