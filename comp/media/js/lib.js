@@ -738,3 +738,21 @@ function textCount(which, maxLength) {
     writeDiv("textCountUp" + which,myObj.value.length);
     writeDiv("textCountDown" + which,maxLength-myObj.value.length);
 }
+
+
+
+/*
+Resize navigation iframe
+*/
+function resizeframe() {
+    var ifrm = parent.document.getElementById("sideNav");
+    var agt = navigator.userAgent.toLowerCase();
+    var is_mac = (agt.indexOf("mac")!=-1);
+    if (window.opera || (document.all && !is_mac)) {
+      // Opera and IE5 only
+      ifrm.style.height = document.body.scrollHeight + "px";
+    } else {
+      // Everyone else
+      ifrm.style.height = document.body.offsetHeight + "px";
+    }
+}
