@@ -11,7 +11,9 @@ $Revision$
 =cut
 
 # Grab the Version Number.
-use Bric; our $VERSION = Bric->VERSION;
+INIT {
+    require Bric; our $VERSION = Bric->VERSION;
+}
 
 =head1 DATE
 
@@ -47,7 +49,7 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 use strict;
 use Bric::App::ApacheStartup;
-use Bric::Constant qw(:ui);
+use Bric::Config qw(:ui);
 use constant DEBUGGING => 0;
 
 do {

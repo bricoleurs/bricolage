@@ -1,6 +1,8 @@
 package Bric::SOAP;
 
-use Bric; our $VERSION = Bric->VERSION;
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 # load em' up
 use Bric::SOAP::Handler;

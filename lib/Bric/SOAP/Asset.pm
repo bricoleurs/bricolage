@@ -38,7 +38,9 @@ $LastChangedRevision$
 
 =cut
 
-use Bric; our $VERSION = Bric->VERSION;
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
