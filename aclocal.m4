@@ -45,6 +45,18 @@ dnl your modification has such potential, you must delete any
 dnl notice of this special exception to the GPL from your
 dnl modified version. 
 
+dnl @synopsis AC_ARG_VAR_DEFAULT(VAR, DEFAULT_VALUE)
+dnl 
+dnl Places a default value into an environmental variable which is then
+dnl "blessed" by AC_ARG_VAR
+dnl
+dnl @author Mark Jaroski <mark@geekhive.net>
+AC_DEFUN([AC_ARG_VAR_DEFAULT],[
+	AC_ARG_VAR($1)
+	if test -z "${$1}" ;then
+		$1=$2 ;
+	fi
+])
 
 dnl @synopsis AC_PROG_PERL(VAR[, VERSION]])
 dnl 
@@ -97,7 +109,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.8 2001-12-21 16:11:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.9 2002-01-07 17:38:51 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -126,7 +138,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.8 2001-12-21 16:11:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.9 2002-01-07 17:38:51 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -221,7 +233,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.8 2001-12-21 16:11:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.9 2002-01-07 17:38:51 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -401,4 +413,32 @@ dnl If there was a GNU version, then set @ifGNUmake@ to the empty string, '#' ot
         fi
         AC_SUBST(ifGNUmake)
 ] )
+
+dnl @synopsis AC_PROMPT_USER(VARIABLENAME,QUESTION,[DEFAULT])
+dnl
+dnl Asks a QUESTION and puts the results in VARIABLENAME with an optional
+dnl DEFAULT value if the user merely hits return.  Also calls
+dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
+dnl be entered into the config.h file as well.
+dnl
+dnl @version $Id: aclocal.m4,v 1.9 2002-01-07 17:38:51 markjaroski Exp $
+dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
+dnl
+AC_DEFUN([AC_PROMPT_USER],
+[
+MSG_CHECK=`echo "$2" | tail -1`
+AC_CACHE_CHECK($MSG_CHECK, ac_cv_user_prompt_$1,
+[echo "" >&AC_FD_MSG
+AC_PROMPT_USER_NO_DEFINE($1,[$2],$3)
+eval ac_cv_user_prompt_$1=\$$1
+echo $ac_n "setting $MSG_CHECK to...  $ac_c" >&AC_FD_MSG
+])
+if test "$ac_cv_user_prompt_$1" != "none"; then
+  if test "$4" != ""; then
+    AC_DEFINE_UNQUOTED($1,"$ac_cv_user_prompt_$1")
+  else
+    AC_DEFINE_UNQUOTED($1,$ac_cv_user_prompt_$1)
+  fi
+fi
+]) dnl
 

@@ -47,14 +47,34 @@ CHECK_CPAN_MODULE(MISSING_MOD, Apache::Session, 1.53)
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::libapreq, 0.31_03)
 
 # Accept configuration details on the command line
-AC_ARG_VAR(APACHE_USER)
-AC_ARG_VAR(APACHE_GROUP)
-AC_ARG_VAR(DB_NAME)
-AC_ARG_VAR(DBI_USER)
-AC_ARG_VAR(DBI_PASS)
-AC_ARG_VAR(POSTGRES_ROOT_USER)
+AC_ARG_VAR_DEFAULT(APACHE_USER, nobody)
+AC_ARG_VAR_DEFAULT(APACHE_GROUP, nogroup)
+AC_ARG_VAR_DEFAULT(DB_NAME, www-data)
+AC_ARG_VAR_DEFAULT(DBI_USER, nobody)
+AC_ARG_VAR_DEFAULT(DBI_PASS, c@st3l!@n)
+AC_ARG_VAR_DEFAULT(POSTGRES_ROOT_USER, postgres)
+AC_ARG_VAR(POSTGRES_ROOT_USER_PASS)
 AC_ARG_VAR(POSTGRES_ROOT_PASS)
 
+if test -z "${POSTGRES_ROOT_USER_PASS}" -a -z "$POSTGRES_ROOT_PASS" ;then
+  AC_MSG_ERROR([You must define one of the following:
+
+    POSTGRES_ROOT_PASS
+    the Postgres password for the Postgres root user
+
+    -or-
+
+    POSTGRES_ROOT_USER_PASS
+    the system password for the Postgres root user
+
+    You may do so in the shell or while issuing the 
+    ./configure command like so:
+
+	  ./configure POSTGRES_ROOT_USER_PASS=poiu0987
+
+])
+fi
+
 # write out the makefiles
-AC_CONFIG_FILES([Makefile doc/Makefile])
+AC_CONFIG_FILES([Makefile doc/Makefile install/bric.sql])
 AC_OUTPUT

@@ -20,7 +20,7 @@ CREATE SEQUENCE "seq_grp" start 1024 increment 1 maxvalue 2147483647 minvalue 1 
 
 REVOKE ALL on "seq_grp" from PUBLIC;
 GRANT ALL on "seq_grp" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_grp" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_grp" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 302 (OID 57440)
@@ -53,7 +53,7 @@ CREATE TABLE "grp" (
 
 REVOKE ALL on "grp" from PUBLIC;
 GRANT ALL on "grp" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "grp" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "grp" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 5 (OID 57476)
@@ -73,7 +73,7 @@ CREATE SEQUENCE "seq_media_type" start 1024 increment 1 maxvalue 2147483647 minv
 
 REVOKE ALL on "seq_media_type" from PUBLIC;
 GRANT ALL on "seq_media_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 8 (OID 57495)
@@ -93,7 +93,7 @@ CREATE SEQUENCE "seq_media_type_ext" start 1024 increment 1 maxvalue 2147483647 
 
 REVOKE ALL on "seq_media_type_ext" from PUBLIC;
 GRANT ALL on "seq_media_type_ext" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_type_ext" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_type_ext" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 304 (OID 57514)
@@ -120,7 +120,7 @@ CREATE TABLE "media_type" (
 
 REVOKE ALL on "media_type" from PUBLIC;
 GRANT ALL on "media_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "media_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "media_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 306 (OID 57533)
@@ -145,7 +145,7 @@ CREATE TABLE "media_type_ext" (
 
 REVOKE ALL on "media_type_ext" from PUBLIC;
 GRANT ALL on "media_type_ext" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "media_type_ext" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "media_type_ext" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 308 (OID 57558)
@@ -171,7 +171,7 @@ CREATE TABLE "alerted" (
 
 REVOKE ALL on "alerted" from PUBLIC;
 GRANT ALL on "alerted" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "alerted" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "alerted" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 310 (OID 57575)
@@ -197,7 +197,7 @@ CREATE TABLE "alerted__contact_value" (
 
 REVOKE ALL on "alerted__contact_value" from PUBLIC;
 GRANT ALL on "alerted__contact_value" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "alerted__contact_value" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "alerted__contact_value" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 11 (OID 57591)
@@ -217,7 +217,7 @@ CREATE SEQUENCE "seq_alerted" start 1024 increment 1 maxvalue 2147483647 minvalu
 
 REVOKE ALL on "seq_alerted" from PUBLIC;
 GRANT ALL on "seq_alerted" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_alerted" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_alerted" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 312 (OID 57631)
@@ -244,7 +244,7 @@ CREATE TABLE "alert_type_rule" (
 
 REVOKE ALL on "alert_type_rule" from PUBLIC;
 GRANT ALL on "alert_type_rule" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "alert_type_rule" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "alert_type_rule" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 14 (OID 57649)
@@ -264,7 +264,7 @@ CREATE SEQUENCE "seq_alert_type_rule" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_alert_type_rule" from PUBLIC;
 GRANT ALL on "seq_alert_type_rule" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_alert_type_rule" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_alert_type_rule" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 314 (OID 57677)
@@ -292,7 +292,7 @@ CREATE TABLE "alert" (
 
 REVOKE ALL on "alert" from PUBLIC;
 GRANT ALL on "alert" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "alert" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "alert" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 17 (OID 57697)
@@ -312,7 +312,7 @@ CREATE SEQUENCE "seq_alert" start 1024 increment 1 maxvalue 2147483647 minvalue 
 
 REVOKE ALL on "seq_alert" from PUBLIC;
 GRANT ALL on "seq_alert" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_alert" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_alert" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 316 (OID 57725)
@@ -344,7 +344,7 @@ CREATE TABLE "alert_type" (
 
 REVOKE ALL on "alert_type" from PUBLIC;
 GRANT ALL on "alert_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "alert_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "alert_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 318 (OID 57750)
@@ -369,7 +369,7 @@ CREATE TABLE "alert_type__grp__contact" (
 
 REVOKE ALL on "alert_type__grp__contact" from PUBLIC;
 GRANT ALL on "alert_type__grp__contact" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "alert_type__grp__contact" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "alert_type__grp__contact" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 320 (OID 57765)
@@ -394,7 +394,7 @@ CREATE TABLE "alert_type__usr__contact" (
 
 REVOKE ALL on "alert_type__usr__contact" from PUBLIC;
 GRANT ALL on "alert_type__usr__contact" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "alert_type__usr__contact" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "alert_type__usr__contact" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 20 (OID 57780)
@@ -414,7 +414,7 @@ CREATE SEQUENCE "seq_alert_type" start 1024 increment 1 maxvalue 2147483647 minv
 
 REVOKE ALL on "seq_alert_type" from PUBLIC;
 GRANT ALL on "seq_alert_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_alert_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_alert_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 23 (OID 57829)
@@ -434,7 +434,7 @@ CREATE SEQUENCE "seq_attr_grp" start 1024 increment 1 maxvalue 2147483647 minval
 
 REVOKE ALL on "seq_attr_grp" from PUBLIC;
 GRANT ALL on "seq_attr_grp" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_grp" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_grp" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 26 (OID 57848)
@@ -454,7 +454,7 @@ CREATE SEQUENCE "seq_attr_grp_val" start 1024 increment 1 maxvalue 2147483647 mi
 
 REVOKE ALL on "seq_attr_grp_val" from PUBLIC;
 GRANT ALL on "seq_attr_grp_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_grp_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_grp_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 29 (OID 57867)
@@ -474,7 +474,7 @@ CREATE SEQUENCE "seq_attr_grp_meta" start 1024 increment 1 maxvalue 2147483647 m
 
 REVOKE ALL on "seq_attr_grp_meta" from PUBLIC;
 GRANT ALL on "seq_attr_grp_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_grp_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_grp_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 322 (OID 57886)
@@ -502,7 +502,7 @@ CREATE TABLE "attr_grp" (
 
 REVOKE ALL on "attr_grp" from PUBLIC;
 GRANT ALL on "attr_grp" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_grp" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_grp" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 324 (OID 57906)
@@ -533,7 +533,7 @@ CREATE TABLE "attr_grp_val" (
 
 REVOKE ALL on "attr_grp_val" from PUBLIC;
 GRANT ALL on "attr_grp_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_grp_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_grp_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 326 (OID 57945)
@@ -561,7 +561,7 @@ CREATE TABLE "attr_grp_meta" (
 
 REVOKE ALL on "attr_grp_meta" from PUBLIC;
 GRANT ALL on "attr_grp_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_grp_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_grp_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 328 (OID 58007)
@@ -588,7 +588,7 @@ CREATE TABLE "grp_priv" (
 
 REVOKE ALL on "grp_priv" from PUBLIC;
 GRANT ALL on "grp_priv" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "grp_priv" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "grp_priv" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 330 (OID 58026)
@@ -612,7 +612,7 @@ CREATE TABLE "grp_priv__grp_member" (
 
 REVOKE ALL on "grp_priv__grp_member" from PUBLIC;
 GRANT ALL on "grp_priv__grp_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "grp_priv__grp_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "grp_priv__grp_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 32 (OID 58040)
@@ -632,7 +632,7 @@ CREATE SEQUENCE "seq_priv" start 1024 increment 1 maxvalue 2147483647 minvalue 1
 
 REVOKE ALL on "seq_priv" from PUBLIC;
 GRANT ALL on "seq_priv" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_priv" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_priv" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 35 (OID 58068)
@@ -652,7 +652,7 @@ CREATE SEQUENCE "seq_pref" start 1024 increment 1 maxvalue 2147483647 minvalue 1
 
 REVOKE ALL on "seq_pref" from PUBLIC;
 GRANT ALL on "seq_pref" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_pref" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_pref" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 38 (OID 58087)
@@ -672,7 +672,7 @@ CREATE SEQUENCE "seq_pref_member" start 1024 increment 1 maxvalue 2147483647 min
 
 REVOKE ALL on "seq_pref_member" from PUBLIC;
 GRANT ALL on "seq_pref_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_pref_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_pref_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 332 (OID 58106)
@@ -699,7 +699,7 @@ CREATE TABLE "pref" (
 
 REVOKE ALL on "pref" from PUBLIC;
 GRANT ALL on "pref" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "pref" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "pref" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 334 (OID 58124)
@@ -724,7 +724,7 @@ CREATE TABLE "pref_opt" (
 
 REVOKE ALL on "pref_opt" from PUBLIC;
 GRANT ALL on "pref_opt" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "pref_opt" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "pref_opt" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 336 (OID 58139)
@@ -749,7 +749,7 @@ CREATE TABLE "pref_member" (
 
 REVOKE ALL on "pref_member" from PUBLIC;
 GRANT ALL on "pref_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "pref_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "pref_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 41 (OID 58167)
@@ -769,7 +769,7 @@ CREATE SEQUENCE "seq_class" start 1024 increment 1 maxvalue 2147483647 minvalue 
 
 REVOKE ALL on "seq_class" from PUBLIC;
 GRANT ALL on "seq_class" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_class" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_class" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 338 (OID 58186)
@@ -800,7 +800,7 @@ CREATE TABLE "class" (
 
 REVOKE ALL on "class" from PUBLIC;
 GRANT ALL on "class" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "class" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "class" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 44 (OID 58218)
@@ -820,7 +820,7 @@ CREATE SEQUENCE "seq_event_type" start 1 increment 1 maxvalue 2147483647 minvalu
 
 REVOKE ALL on "seq_event_type" from PUBLIC;
 GRANT ALL on "seq_event_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_event_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_event_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 47 (OID 58237)
@@ -840,7 +840,7 @@ CREATE SEQUENCE "seq_event_type_attr" start 1 increment 1 maxvalue 2147483647 mi
 
 REVOKE ALL on "seq_event_type_attr" from PUBLIC;
 GRANT ALL on "seq_event_type_attr" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_event_type_attr" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_event_type_attr" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 340 (OID 58256)
@@ -869,7 +869,7 @@ CREATE TABLE "event_type" (
 
 REVOKE ALL on "event_type" from PUBLIC;
 GRANT ALL on "event_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "event_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "event_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 342 (OID 58277)
@@ -894,7 +894,7 @@ CREATE TABLE "event_type_attr" (
 
 REVOKE ALL on "event_type_attr" from PUBLIC;
 GRANT ALL on "event_type_attr" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "event_type_attr" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "event_type_attr" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 50 (OID 58305)
@@ -914,7 +914,7 @@ CREATE SEQUENCE "seq_event" start 1024 increment 1 maxvalue 2147483647 minvalue 
 
 REVOKE ALL on "seq_event" from PUBLIC;
 GRANT ALL on "seq_event" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_event" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_event" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 344 (OID 58324)
@@ -941,7 +941,7 @@ CREATE TABLE "event" (
 
 REVOKE ALL on "event" from PUBLIC;
 GRANT ALL on "event" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "event" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "event" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 346 (OID 58343)
@@ -965,7 +965,7 @@ CREATE TABLE "event_attr" (
 
 REVOKE ALL on "event_attr" from PUBLIC;
 GRANT ALL on "event_attr" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "event_attr" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "event_attr" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 53 (OID 58370)
@@ -985,7 +985,7 @@ CREATE SEQUENCE "seq_contrib_type_member" start 1024 increment 1 maxvalue 214748
 
 REVOKE ALL on "seq_contrib_type_member" from PUBLIC;
 GRANT ALL on "seq_contrib_type_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_contrib_type_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_contrib_type_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 348 (OID 58389)
@@ -1010,7 +1010,7 @@ CREATE TABLE "contrib_type_member" (
 
 REVOKE ALL on "contrib_type_member" from PUBLIC;
 GRANT ALL on "contrib_type_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "contrib_type_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "contrib_type_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 350 (OID 58411)
@@ -1035,7 +1035,7 @@ CREATE TABLE "alert_type_member" (
 
 REVOKE ALL on "alert_type_member" from PUBLIC;
 GRANT ALL on "alert_type_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "alert_type_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "alert_type_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 56 (OID 58427)
@@ -1055,7 +1055,7 @@ CREATE SEQUENCE "seq_alert_type_member" start 1024 increment 1 maxvalue 21474836
 
 REVOKE ALL on "seq_alert_type_member" from PUBLIC;
 GRANT ALL on "seq_alert_type_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_alert_type_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_alert_type_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 352 (OID 58452)
@@ -1080,7 +1080,7 @@ CREATE TABLE "user_member" (
 
 REVOKE ALL on "user_member" from PUBLIC;
 GRANT ALL on "user_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "user_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "user_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 59 (OID 58468)
@@ -1100,7 +1100,7 @@ CREATE SEQUENCE "seq_user_member" start 1024 increment 1 maxvalue 2147483647 min
 
 REVOKE ALL on "seq_user_member" from PUBLIC;
 GRANT ALL on "seq_user_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_user_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_user_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 354 (OID 58493)
@@ -1125,7 +1125,7 @@ CREATE TABLE "source_member" (
 
 REVOKE ALL on "source_member" from PUBLIC;
 GRANT ALL on "source_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "source_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "source_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 62 (OID 58509)
@@ -1145,7 +1145,7 @@ CREATE SEQUENCE "seq_source_member" start 1024 increment 1 maxvalue 2147483647 m
 
 REVOKE ALL on "seq_source_member" from PUBLIC;
 GRANT ALL on "seq_source_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_source_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_source_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 356 (OID 58534)
@@ -1170,7 +1170,7 @@ CREATE TABLE "org_member" (
 
 REVOKE ALL on "org_member" from PUBLIC;
 GRANT ALL on "org_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "org_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "org_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 65 (OID 58550)
@@ -1190,7 +1190,7 @@ CREATE SEQUENCE "seq_org_member" start 1024 increment 1 maxvalue 2147483647 minv
 
 REVOKE ALL on "seq_org_member" from PUBLIC;
 GRANT ALL on "seq_org_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_org_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_org_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 68 (OID 58575)
@@ -1210,7 +1210,7 @@ CREATE SEQUENCE "seq_member" start 1024 increment 1 maxvalue 2147483647 minvalue
 
 REVOKE ALL on "seq_member" from PUBLIC;
 GRANT ALL on "seq_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 358 (OID 58594)
@@ -1237,7 +1237,7 @@ CREATE TABLE "member" (
 
 REVOKE ALL on "member" from PUBLIC;
 GRANT ALL on "member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 360 (OID 58619)
@@ -1262,7 +1262,7 @@ CREATE TABLE "story_member" (
 
 REVOKE ALL on "story_member" from PUBLIC;
 GRANT ALL on "story_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "story_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "story_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 71 (OID 58635)
@@ -1282,7 +1282,7 @@ CREATE SEQUENCE "seq_story_member" start 1024 increment 1 maxvalue 2147483647 mi
 
 REVOKE ALL on "seq_story_member" from PUBLIC;
 GRANT ALL on "seq_story_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 74 (OID 58660)
@@ -1302,7 +1302,7 @@ CREATE SEQUENCE "seq_grp_member" start 1024 increment 1 maxvalue 2147483647 minv
 
 REVOKE ALL on "seq_grp_member" from PUBLIC;
 GRANT ALL on "seq_grp_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_grp_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_grp_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 362 (OID 58679)
@@ -1327,7 +1327,7 @@ CREATE TABLE "grp_member" (
 
 REVOKE ALL on "grp_member" from PUBLIC;
 GRANT ALL on "grp_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "grp_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "grp_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 77 (OID 58701)
@@ -1347,7 +1347,7 @@ CREATE SEQUENCE "seq_attr_member" start 1024 increment 1 maxvalue 2147483647 min
 
 REVOKE ALL on "seq_attr_member" from PUBLIC;
 GRANT ALL on "seq_attr_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 80 (OID 58720)
@@ -1367,7 +1367,7 @@ CREATE SEQUENCE "seq_attr_member_val" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_attr_member_val" from PUBLIC;
 GRANT ALL on "seq_attr_member_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_member_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_member_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 83 (OID 58739)
@@ -1387,7 +1387,7 @@ CREATE SEQUENCE "seq_attr_member_meta" start 1024 increment 1 maxvalue 214748364
 
 REVOKE ALL on "seq_attr_member_meta" from PUBLIC;
 GRANT ALL on "seq_attr_member_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_member_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_member_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 364 (OID 58758)
@@ -1415,7 +1415,7 @@ CREATE TABLE "attr_member" (
 
 REVOKE ALL on "attr_member" from PUBLIC;
 GRANT ALL on "attr_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 366 (OID 58777)
@@ -1446,7 +1446,7 @@ CREATE TABLE "attr_member_val" (
 
 REVOKE ALL on "attr_member_val" from PUBLIC;
 GRANT ALL on "attr_member_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_member_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_member_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 368 (OID 58815)
@@ -1474,7 +1474,7 @@ CREATE TABLE "attr_member_meta" (
 
 REVOKE ALL on "attr_member_meta" from PUBLIC;
 GRANT ALL on "attr_member_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_member_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_member_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 86 (OID 58876)
@@ -1494,7 +1494,7 @@ CREATE SEQUENCE "seq_resource" start 1024 increment 1 maxvalue 2147483647 minval
 
 REVOKE ALL on "seq_resource" from PUBLIC;
 GRANT ALL on "seq_resource" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_resource" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_resource" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 370 (OID 58895)
@@ -1518,7 +1518,7 @@ CREATE TABLE "media__resource" (
 
 REVOKE ALL on "media__resource" from PUBLIC;
 GRANT ALL on "media__resource" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "media__resource" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "media__resource" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 372 (OID 58909)
@@ -1548,7 +1548,7 @@ CREATE TABLE "resource" (
 
 REVOKE ALL on "resource" from PUBLIC;
 GRANT ALL on "resource" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "resource" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "resource" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 374 (OID 58930)
@@ -1572,7 +1572,7 @@ CREATE TABLE "story__resource" (
 
 REVOKE ALL on "story__resource" from PUBLIC;
 GRANT ALL on "story__resource" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "story__resource" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "story__resource" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 376 (OID 58971)
@@ -1604,7 +1604,7 @@ CREATE TABLE "server" (
 
 REVOKE ALL on "server" from PUBLIC;
 GRANT ALL on "server" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "server" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "server" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 89 (OID 58995)
@@ -1624,7 +1624,7 @@ CREATE SEQUENCE "seq_server" start 1024 increment 1 maxvalue 2147483647 minvalue
 
 REVOKE ALL on "seq_server" from PUBLIC;
 GRANT ALL on "seq_server" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_server" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_server" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 92 (OID 59023)
@@ -1644,7 +1644,7 @@ CREATE SEQUENCE "seq_action_type" start 1024 increment 1 maxvalue 2147483647 min
 
 REVOKE ALL on "seq_action_type" from PUBLIC;
 GRANT ALL on "seq_action_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_action_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_action_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 378 (OID 59042)
@@ -1671,7 +1671,7 @@ CREATE TABLE "action_type" (
 
 REVOKE ALL on "action_type" from PUBLIC;
 GRANT ALL on "action_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "action_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "action_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 380 (OID 59061)
@@ -1695,7 +1695,7 @@ CREATE TABLE "action_type__media_type" (
 
 REVOKE ALL on "action_type__media_type" from PUBLIC;
 GRANT ALL on "action_type__media_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "action_type__media_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "action_type__media_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 95 (OID 59084)
@@ -1715,7 +1715,7 @@ CREATE SEQUENCE "seq_job" start 1024 increment 1 maxvalue 2147483647 minvalue 1 
 
 REVOKE ALL on "seq_job" from PUBLIC;
 GRANT ALL on "seq_job" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_job" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_job" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 98 (OID 59103)
@@ -1735,7 +1735,7 @@ CREATE SEQUENCE "seq_job_member" start 1024 increment 1 maxvalue 2147483647 minv
 
 REVOKE ALL on "seq_job_member" from PUBLIC;
 GRANT ALL on "seq_job_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_job_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_job_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 382 (OID 59122)
@@ -1768,7 +1768,7 @@ CREATE TABLE "job" (
 
 REVOKE ALL on "job" from PUBLIC;
 GRANT ALL on "job" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "job" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "job" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 384 (OID 59150)
@@ -1792,7 +1792,7 @@ CREATE TABLE "job__resource" (
 
 REVOKE ALL on "job__resource" from PUBLIC;
 GRANT ALL on "job__resource" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "job__resource" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "job__resource" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 386 (OID 59164)
@@ -1816,7 +1816,7 @@ CREATE TABLE "job__server_type" (
 
 REVOKE ALL on "job__server_type" from PUBLIC;
 GRANT ALL on "job__server_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "job__server_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "job__server_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 388 (OID 59178)
@@ -1841,7 +1841,7 @@ CREATE TABLE "job_member" (
 
 REVOKE ALL on "job_member" from PUBLIC;
 GRANT ALL on "job_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "job_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "job_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 101 (OID 59224)
@@ -1861,7 +1861,7 @@ CREATE SEQUENCE "seq_action" start 1024 increment 1 maxvalue 2147483647 minvalue
 
 REVOKE ALL on "seq_action" from PUBLIC;
 GRANT ALL on "seq_action" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_action" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_action" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 104 (OID 59243)
@@ -1881,7 +1881,7 @@ CREATE SEQUENCE "seq_attr_action" start 1024 increment 1 maxvalue 2147483647 min
 
 REVOKE ALL on "seq_attr_action" from PUBLIC;
 GRANT ALL on "seq_attr_action" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_action" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_action" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 107 (OID 59262)
@@ -1901,7 +1901,7 @@ CREATE SEQUENCE "seq_attr_action_val" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_attr_action_val" from PUBLIC;
 GRANT ALL on "seq_attr_action_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_action_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_action_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 110 (OID 59281)
@@ -1921,7 +1921,7 @@ CREATE SEQUENCE "seq_attr_action_meta" start 1024 increment 1 maxvalue 214748364
 
 REVOKE ALL on "seq_attr_action_meta" from PUBLIC;
 GRANT ALL on "seq_attr_action_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_action_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_action_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 390 (OID 59300)
@@ -1947,7 +1947,7 @@ CREATE TABLE "action" (
 
 REVOKE ALL on "action" from PUBLIC;
 GRANT ALL on "action" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "action" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "action" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 392 (OID 59317)
@@ -1975,7 +1975,7 @@ CREATE TABLE "attr_action" (
 
 REVOKE ALL on "attr_action" from PUBLIC;
 GRANT ALL on "attr_action" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_action" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_action" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 394 (OID 59337)
@@ -2006,7 +2006,7 @@ CREATE TABLE "attr_action_val" (
 
 REVOKE ALL on "attr_action_val" from PUBLIC;
 GRANT ALL on "attr_action_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_action_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_action_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 396 (OID 59376)
@@ -2034,7 +2034,7 @@ CREATE TABLE "attr_action_meta" (
 
 REVOKE ALL on "attr_action_meta" from PUBLIC;
 GRANT ALL on "attr_action_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_action_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_action_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 398 (OID 59444)
@@ -2068,7 +2068,7 @@ CREATE TABLE "server_type" (
 
 REVOKE ALL on "server_type" from PUBLIC;
 GRANT ALL on "server_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "server_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "server_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 400 (OID 59473)
@@ -2092,7 +2092,7 @@ CREATE TABLE "server_type__output_channel" (
 
 REVOKE ALL on "server_type__output_channel" from PUBLIC;
 GRANT ALL on "server_type__output_channel" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "server_type__output_channel" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "server_type__output_channel" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 402 (OID 59487)
@@ -2117,7 +2117,7 @@ CREATE TABLE "dest_member" (
 
 REVOKE ALL on "dest_member" from PUBLIC;
 GRANT ALL on "dest_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "dest_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "dest_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 113 (OID 59503)
@@ -2137,7 +2137,7 @@ CREATE SEQUENCE "seq_server_type" start 1024 increment 1 maxvalue 2147483647 min
 
 REVOKE ALL on "seq_server_type" from PUBLIC;
 GRANT ALL on "seq_server_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_server_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_server_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 116 (OID 59522)
@@ -2157,7 +2157,7 @@ CREATE SEQUENCE "seq_dest_member" start 1024 increment 1 maxvalue 2147483647 min
 
 REVOKE ALL on "seq_dest_member" from PUBLIC;
 GRANT ALL on "seq_dest_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_dest_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_dest_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 119 (OID 59559)
@@ -2177,7 +2177,7 @@ CREATE SEQUENCE "seq_at_data" start 1024 increment 1 maxvalue 2147483647 minvalu
 
 REVOKE ALL on "seq_at_data" from PUBLIC;
 GRANT ALL on "seq_at_data" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_at_data" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_at_data" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 122 (OID 59578)
@@ -2197,7 +2197,7 @@ CREATE SEQUENCE "seq_attr_at_data" start 1024 increment 1 maxvalue 2147483647 mi
 
 REVOKE ALL on "seq_attr_at_data" from PUBLIC;
 GRANT ALL on "seq_attr_at_data" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_at_data" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_at_data" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 125 (OID 59597)
@@ -2217,7 +2217,7 @@ CREATE SEQUENCE "seq_attr_at_data_val" start 1024 increment 1 maxvalue 214748364
 
 REVOKE ALL on "seq_attr_at_data_val" from PUBLIC;
 GRANT ALL on "seq_attr_at_data_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_at_data_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_at_data_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 128 (OID 59616)
@@ -2237,7 +2237,7 @@ CREATE SEQUENCE "seq_attr_at_data_meta" start 1024 increment 1 maxvalue 21474836
 
 REVOKE ALL on "seq_attr_at_data_meta" from PUBLIC;
 GRANT ALL on "seq_attr_at_data_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_at_data_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_at_data_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 404 (OID 59635)
@@ -2276,7 +2276,7 @@ CREATE TABLE "at_data" (
 
 REVOKE ALL on "at_data" from PUBLIC;
 GRANT ALL on "at_data" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "at_data" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "at_data" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 406 (OID 59669)
@@ -2304,7 +2304,7 @@ CREATE TABLE "attr_at_data" (
 
 REVOKE ALL on "attr_at_data" from PUBLIC;
 GRANT ALL on "attr_at_data" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_at_data" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_at_data" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 408 (OID 59689)
@@ -2335,7 +2335,7 @@ CREATE TABLE "attr_at_data_val" (
 
 REVOKE ALL on "attr_at_data_val" from PUBLIC;
 GRANT ALL on "attr_at_data_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_at_data_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_at_data_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 410 (OID 59728)
@@ -2363,7 +2363,7 @@ CREATE TABLE "attr_at_data_meta" (
 
 REVOKE ALL on "attr_at_data_meta" from PUBLIC;
 GRANT ALL on "attr_at_data_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_at_data_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_at_data_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 131 (OID 59799)
@@ -2383,7 +2383,7 @@ CREATE SEQUENCE "seq_element" start 1024 increment 1 maxvalue 2147483647 minvalu
 
 REVOKE ALL on "seq_element" from PUBLIC;
 GRANT ALL on "seq_element" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_element" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_element" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 134 (OID 59818)
@@ -2403,7 +2403,7 @@ CREATE SEQUENCE "seq_element__output_channel" start 1024 increment 1 maxvalue 21
 
 REVOKE ALL on "seq_element__output_channel" from PUBLIC;
 GRANT ALL on "seq_element__output_channel" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_element__output_channel" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_element__output_channel" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 137 (OID 59837)
@@ -2423,7 +2423,7 @@ CREATE SEQUENCE "seq_element_member" start 1024 increment 1 maxvalue 2147483647 
 
 REVOKE ALL on "seq_element_member" from PUBLIC;
 GRANT ALL on "seq_element_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_element_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_element_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 140 (OID 59856)
@@ -2443,7 +2443,7 @@ CREATE SEQUENCE "seq_attr_element" start 1024 increment 1 maxvalue 2147483647 mi
 
 REVOKE ALL on "seq_attr_element" from PUBLIC;
 GRANT ALL on "seq_attr_element" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_element" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_element" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 143 (OID 59875)
@@ -2463,7 +2463,7 @@ CREATE SEQUENCE "seq_attr_element_val" start 1024 increment 1 maxvalue 214748364
 
 REVOKE ALL on "seq_attr_element_val" from PUBLIC;
 GRANT ALL on "seq_attr_element_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_element_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_element_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 146 (OID 59894)
@@ -2483,7 +2483,7 @@ CREATE SEQUENCE "seq_attr_element_meta" start 1024 increment 1 maxvalue 21474836
 
 REVOKE ALL on "seq_attr_element_meta" from PUBLIC;
 GRANT ALL on "seq_attr_element_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_element_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_element_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 412 (OID 59913)
@@ -2516,7 +2516,7 @@ CREATE TABLE "element" (
 
 REVOKE ALL on "element" from PUBLIC;
 GRANT ALL on "element" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "element" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "element" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 414 (OID 59940)
@@ -2543,7 +2543,7 @@ CREATE TABLE "element__output_channel" (
 
 REVOKE ALL on "element__output_channel" from PUBLIC;
 GRANT ALL on "element__output_channel" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "element__output_channel" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "element__output_channel" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 416 (OID 59959)
@@ -2568,7 +2568,7 @@ CREATE TABLE "element_member" (
 
 REVOKE ALL on "element_member" from PUBLIC;
 GRANT ALL on "element_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "element_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "element_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 418 (OID 59975)
@@ -2596,7 +2596,7 @@ CREATE TABLE "attr_element" (
 
 REVOKE ALL on "attr_element" from PUBLIC;
 GRANT ALL on "attr_element" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_element" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_element" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 420 (OID 59995)
@@ -2627,7 +2627,7 @@ CREATE TABLE "attr_element_val" (
 
 REVOKE ALL on "attr_element_val" from PUBLIC;
 GRANT ALL on "attr_element_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_element_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_element_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 422 (OID 60034)
@@ -2655,7 +2655,7 @@ CREATE TABLE "attr_element_meta" (
 
 REVOKE ALL on "attr_element_meta" from PUBLIC;
 GRANT ALL on "attr_element_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_element_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_element_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 149 (OID 60123)
@@ -2675,7 +2675,7 @@ CREATE SEQUENCE "seq_at_type" start 1024 increment 1 maxvalue 2147483647 minvalu
 
 REVOKE ALL on "seq_at_type" from PUBLIC;
 GRANT ALL on "seq_at_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_at_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_at_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 152 (OID 60142)
@@ -2695,7 +2695,7 @@ CREATE SEQUENCE "seq_element_type_member" start 1024 increment 1 maxvalue 214748
 
 REVOKE ALL on "seq_element_type_member" from PUBLIC;
 GRANT ALL on "seq_element_type_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_element_type_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_element_type_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 424 (OID 60161)
@@ -2735,7 +2735,7 @@ CREATE TABLE "at_type" (
 
 REVOKE ALL on "at_type" from PUBLIC;
 GRANT ALL on "at_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "at_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "at_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 426 (OID 60199)
@@ -2760,7 +2760,7 @@ CREATE TABLE "element_type_member" (
 
 REVOKE ALL on "element_type_member" from PUBLIC;
 GRANT ALL on "element_type_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "element_type_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "element_type_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 428 (OID 60227)
@@ -2789,7 +2789,7 @@ CREATE TABLE "contact" (
 
 REVOKE ALL on "contact" from PUBLIC;
 GRANT ALL on "contact" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "contact" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "contact" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 430 (OID 60249)
@@ -2816,7 +2816,7 @@ CREATE TABLE "contact_value" (
 
 REVOKE ALL on "contact_value" from PUBLIC;
 GRANT ALL on "contact_value" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "contact_value" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "contact_value" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 432 (OID 60268)
@@ -2840,7 +2840,7 @@ CREATE TABLE "person__contact_value" (
 
 REVOKE ALL on "person__contact_value" from PUBLIC;
 GRANT ALL on "person__contact_value" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "person__contact_value" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "person__contact_value" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 155 (OID 60297)
@@ -2860,7 +2860,7 @@ CREATE SEQUENCE "seq_contact" start 1024 increment 1 maxvalue 2147483647 minvalu
 
 REVOKE ALL on "seq_contact" from PUBLIC;
 GRANT ALL on "seq_contact" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_contact" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_contact" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 158 (OID 60316)
@@ -2880,7 +2880,7 @@ CREATE SEQUENCE "seq_contact_value" start 1024 increment 1 maxvalue 2147483647 m
 
 REVOKE ALL on "seq_contact_value" from PUBLIC;
 GRANT ALL on "seq_contact_value" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_contact_value" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_contact_value" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 434 (OID 60335)
@@ -2910,7 +2910,7 @@ CREATE TABLE "person" (
 
 REVOKE ALL on "person" from PUBLIC;
 GRANT ALL on "person" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "person" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "person" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 436 (OID 60357)
@@ -2935,7 +2935,7 @@ CREATE TABLE "person_member" (
 
 REVOKE ALL on "person_member" from PUBLIC;
 GRANT ALL on "person_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "person_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "person_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 161 (OID 60388)
@@ -2955,7 +2955,7 @@ CREATE SEQUENCE "seq_person" start 1024 increment 1 maxvalue 2147483647 minvalue
 
 REVOKE ALL on "seq_person" from PUBLIC;
 GRANT ALL on "seq_person" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_person" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_person" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 164 (OID 60407)
@@ -2975,7 +2975,7 @@ CREATE SEQUENCE "seq_person_member" start 1024 increment 1 maxvalue 2147483647 m
 
 REVOKE ALL on "seq_person_member" from PUBLIC;
 GRANT ALL on "seq_person_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_person_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_person_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 167 (OID 60426)
@@ -2995,7 +2995,7 @@ CREATE SEQUENCE "seq_category" start 1024 increment 1 maxvalue 2147483647 minval
 
 REVOKE ALL on "seq_category" from PUBLIC;
 GRANT ALL on "seq_category" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_category" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_category" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 170 (OID 60445)
@@ -3015,7 +3015,7 @@ CREATE SEQUENCE "seq_category_member" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_category_member" from PUBLIC;
 GRANT ALL on "seq_category_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_category_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_category_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 173 (OID 60464)
@@ -3035,7 +3035,7 @@ CREATE SEQUENCE "seq_attr_category" start 1024 increment 1 maxvalue 2147483647 m
 
 REVOKE ALL on "seq_attr_category" from PUBLIC;
 GRANT ALL on "seq_attr_category" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_category" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_category" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 176 (OID 60483)
@@ -3055,7 +3055,7 @@ CREATE SEQUENCE "seq_attr_category_val" start 1024 increment 1 maxvalue 21474836
 
 REVOKE ALL on "seq_attr_category_val" from PUBLIC;
 GRANT ALL on "seq_attr_category_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_category_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_category_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 179 (OID 60502)
@@ -3075,7 +3075,7 @@ CREATE SEQUENCE "seq_attr_category_meta" start 1024 increment 1 maxvalue 2147483
 
 REVOKE ALL on "seq_attr_category_meta" from PUBLIC;
 GRANT ALL on "seq_attr_category_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_category_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_category_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 438 (OID 60521)
@@ -3104,7 +3104,7 @@ CREATE TABLE "category" (
 
 REVOKE ALL on "category" from PUBLIC;
 GRANT ALL on "category" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "category" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "category" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 440 (OID 60542)
@@ -3129,7 +3129,7 @@ CREATE TABLE "category_member" (
 
 REVOKE ALL on "category_member" from PUBLIC;
 GRANT ALL on "category_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "category_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "category_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 442 (OID 60558)
@@ -3157,7 +3157,7 @@ CREATE TABLE "attr_category" (
 
 REVOKE ALL on "attr_category" from PUBLIC;
 GRANT ALL on "attr_category" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_category" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_category" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 444 (OID 60578)
@@ -3188,7 +3188,7 @@ CREATE TABLE "attr_category_val" (
 
 REVOKE ALL on "attr_category_val" from PUBLIC;
 GRANT ALL on "attr_category_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_category_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_category_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 446 (OID 60617)
@@ -3216,7 +3216,7 @@ CREATE TABLE "attr_category_meta" (
 
 REVOKE ALL on "attr_category_meta" from PUBLIC;
 GRANT ALL on "attr_category_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_category_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_category_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 182 (OID 60697)
@@ -3236,7 +3236,7 @@ CREATE SEQUENCE "seq_keyword" start 1024 increment 1 maxvalue 2147483647 minvalu
 
 REVOKE ALL on "seq_keyword" from PUBLIC;
 GRANT ALL on "seq_keyword" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_keyword" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_keyword" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 185 (OID 60716)
@@ -3256,7 +3256,7 @@ CREATE SEQUENCE "seq_keyword_member" start 1024 increment 1 maxvalue 2147483647 
 
 REVOKE ALL on "seq_keyword_member" from PUBLIC;
 GRANT ALL on "seq_keyword_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_keyword_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_keyword_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 448 (OID 60735)
@@ -3288,7 +3288,7 @@ CREATE TABLE "keyword" (
 
 REVOKE ALL on "keyword" from PUBLIC;
 GRANT ALL on "keyword" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "keyword" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "keyword" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 450 (OID 60760)
@@ -3313,7 +3313,7 @@ CREATE TABLE "keyword_member" (
 
 REVOKE ALL on "keyword_member" from PUBLIC;
 GRANT ALL on "keyword_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "keyword_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "keyword_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 188 (OID 60794)
@@ -3333,7 +3333,7 @@ CREATE SEQUENCE "seq_workflow" start 1024 increment 1 maxvalue 2147483647 minval
 
 REVOKE ALL on "seq_workflow" from PUBLIC;
 GRANT ALL on "seq_workflow" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_workflow" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_workflow" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 191 (OID 60813)
@@ -3353,7 +3353,7 @@ CREATE SEQUENCE "seq_workflow_member" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_workflow_member" from PUBLIC;
 GRANT ALL on "seq_workflow_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_workflow_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_workflow_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 452 (OID 60832)
@@ -3384,7 +3384,7 @@ CREATE TABLE "workflow" (
 
 REVOKE ALL on "workflow" from PUBLIC;
 GRANT ALL on "workflow" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "workflow" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "workflow" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 454 (OID 60855)
@@ -3409,7 +3409,7 @@ CREATE TABLE "workflow_member" (
 
 REVOKE ALL on "workflow_member" from PUBLIC;
 GRANT ALL on "workflow_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "workflow_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "workflow_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 194 (OID 60880)
@@ -3429,7 +3429,7 @@ CREATE SEQUENCE "seq_desk" start 1024 increment 1 maxvalue 2147483647 minvalue 1
 
 REVOKE ALL on "seq_desk" from PUBLIC;
 GRANT ALL on "seq_desk" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_desk" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_desk" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 197 (OID 60899)
@@ -3449,7 +3449,7 @@ CREATE SEQUENCE "seq_desk_member" start 1024 increment 1 maxvalue 2147483647 min
 
 REVOKE ALL on "seq_desk_member" from PUBLIC;
 GRANT ALL on "seq_desk_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_desk_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_desk_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 456 (OID 60918)
@@ -3481,7 +3481,7 @@ CREATE TABLE "desk" (
 
 REVOKE ALL on "desk" from PUBLIC;
 GRANT ALL on "desk" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "desk" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "desk" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 458 (OID 60943)
@@ -3506,7 +3506,7 @@ CREATE TABLE "desk_member" (
 
 REVOKE ALL on "desk_member" from PUBLIC;
 GRANT ALL on "desk_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "desk_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "desk_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 460 (OID 60977)
@@ -3533,7 +3533,7 @@ CREATE TABLE "usr" (
 
 REVOKE ALL on "usr" from PUBLIC;
 GRANT ALL on "usr" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "usr" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "usr" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 838 (OID 60995)
@@ -3587,7 +3587,7 @@ CREATE TABLE "org" (
 
 REVOKE ALL on "org" from PUBLIC;
 GRANT ALL on "org" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "org" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "org" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 200 (OID 61025)
@@ -3607,7 +3607,7 @@ CREATE SEQUENCE "seq_org" start 1024 increment 1 maxvalue 2147483647 minvalue 1 
 
 REVOKE ALL on "seq_org" from PUBLIC;
 GRANT ALL on "seq_org" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_org" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_org" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 203 (OID 61044)
@@ -3627,7 +3627,7 @@ CREATE SEQUENCE "seq_formatting" start 1024 increment 1 maxvalue 2147483647 minv
 
 REVOKE ALL on "seq_formatting" from PUBLIC;
 GRANT ALL on "seq_formatting" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_formatting" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_formatting" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 206 (OID 61063)
@@ -3647,7 +3647,7 @@ CREATE SEQUENCE "seq_formatting_instance" start 1024 increment 1 maxvalue 214748
 
 REVOKE ALL on "seq_formatting_instance" from PUBLIC;
 GRANT ALL on "seq_formatting_instance" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_formatting_instance" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_formatting_instance" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 209 (OID 61082)
@@ -3667,7 +3667,7 @@ CREATE SEQUENCE "seq_formatting_member" start 1024 increment 1 maxvalue 21474836
 
 REVOKE ALL on "seq_formatting_member" from PUBLIC;
 GRANT ALL on "seq_formatting_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_formatting_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_formatting_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 212 (OID 61101)
@@ -3687,7 +3687,7 @@ CREATE SEQUENCE "seq_attr_formatting" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_attr_formatting" from PUBLIC;
 GRANT ALL on "seq_attr_formatting" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_formatting" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_formatting" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 215 (OID 61120)
@@ -3707,7 +3707,7 @@ CREATE SEQUENCE "seq_attr_formatting_val" start 1024 increment 1 maxvalue 214748
 
 REVOKE ALL on "seq_attr_formatting_val" from PUBLIC;
 GRANT ALL on "seq_attr_formatting_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_formatting_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_formatting_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 218 (OID 61139)
@@ -3727,7 +3727,7 @@ CREATE SEQUENCE "seq_attr_formatting_meta" start 1024 increment 1 maxvalue 21474
 
 REVOKE ALL on "seq_attr_formatting_meta" from PUBLIC;
 GRANT ALL on "seq_attr_formatting_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_formatting_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_formatting_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 464 (OID 61158)
@@ -3767,7 +3767,7 @@ CREATE TABLE "formatting" (
 
 REVOKE ALL on "formatting" from PUBLIC;
 GRANT ALL on "formatting" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "formatting" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "formatting" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 466 (OID 61192)
@@ -3796,7 +3796,7 @@ CREATE TABLE "formatting_instance" (
 
 REVOKE ALL on "formatting_instance" from PUBLIC;
 GRANT ALL on "formatting_instance" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "formatting_instance" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "formatting_instance" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 468 (OID 61228)
@@ -3821,7 +3821,7 @@ CREATE TABLE "formatting_member" (
 
 REVOKE ALL on "formatting_member" from PUBLIC;
 GRANT ALL on "formatting_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "formatting_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "formatting_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 470 (OID 61244)
@@ -3849,7 +3849,7 @@ CREATE TABLE "attr_formatting" (
 
 REVOKE ALL on "attr_formatting" from PUBLIC;
 GRANT ALL on "attr_formatting" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_formatting" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_formatting" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 472 (OID 61264)
@@ -3880,7 +3880,7 @@ CREATE TABLE "attr_formatting_val" (
 
 REVOKE ALL on "attr_formatting_val" from PUBLIC;
 GRANT ALL on "attr_formatting_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_formatting_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_formatting_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 474 (OID 61303)
@@ -3908,7 +3908,7 @@ CREATE TABLE "attr_formatting_meta" (
 
 REVOKE ALL on "attr_formatting_meta" from PUBLIC;
 GRANT ALL on "attr_formatting_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_formatting_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_formatting_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 221 (OID 61398)
@@ -3928,7 +3928,7 @@ CREATE SEQUENCE "seq_story" start 1024 increment 1 maxvalue 2147483647 minvalue 
 
 REVOKE ALL on "seq_story" from PUBLIC;
 GRANT ALL on "seq_story" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 224 (OID 61417)
@@ -3948,7 +3948,7 @@ CREATE SEQUENCE "seq_story_instance" start 1024 increment 1 maxvalue 2147483647 
 
 REVOKE ALL on "seq_story_instance" from PUBLIC;
 GRANT ALL on "seq_story_instance" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story_instance" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story_instance" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 227 (OID 61436)
@@ -3968,7 +3968,7 @@ CREATE SEQUENCE "seq_story__category" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_story__category" from PUBLIC;
 GRANT ALL on "seq_story__category" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story__category" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story__category" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 230 (OID 61455)
@@ -3988,7 +3988,7 @@ CREATE SEQUENCE "seq_story__contributor" start 1024 increment 1 maxvalue 2147483
 
 REVOKE ALL on "seq_story__contributor" from PUBLIC;
 GRANT ALL on "seq_story__contributor" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story__contributor" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story__contributor" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 233 (OID 61474)
@@ -4008,7 +4008,7 @@ CREATE SEQUENCE "seq_attr_story" start 1024 increment 1 maxvalue 2147483647 minv
 
 REVOKE ALL on "seq_attr_story" from PUBLIC;
 GRANT ALL on "seq_attr_story" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_story" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_story" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 236 (OID 61493)
@@ -4028,7 +4028,7 @@ CREATE SEQUENCE "seq_attr_story_val" start 1024 increment 1 maxvalue 2147483647 
 
 REVOKE ALL on "seq_attr_story_val" from PUBLIC;
 GRANT ALL on "seq_attr_story_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_story_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_story_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 239 (OID 61512)
@@ -4048,7 +4048,7 @@ CREATE SEQUENCE "seq_attr_story_meta" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_attr_story_meta" from PUBLIC;
 GRANT ALL on "seq_attr_story_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_story_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_story_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 476 (OID 61531)
@@ -4087,7 +4087,7 @@ CREATE TABLE "story" (
 
 REVOKE ALL on "story" from PUBLIC;
 GRANT ALL on "story" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "story" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "story" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 478 (OID 61564)
@@ -4118,7 +4118,7 @@ CREATE TABLE "story_instance" (
 
 REVOKE ALL on "story_instance" from PUBLIC;
 GRANT ALL on "story_instance" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "story_instance" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "story_instance" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 480 (OID 61587)
@@ -4145,7 +4145,7 @@ CREATE TABLE "story__category" (
 
 REVOKE ALL on "story__category" from PUBLIC;
 GRANT ALL on "story__category" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "story__category" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "story__category" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 482 (OID 61606)
@@ -4172,7 +4172,7 @@ CREATE TABLE "story__contributor" (
 
 REVOKE ALL on "story__contributor" from PUBLIC;
 GRANT ALL on "story__contributor" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "story__contributor" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "story__contributor" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 484 (OID 61624)
@@ -4200,7 +4200,7 @@ CREATE TABLE "attr_story" (
 
 REVOKE ALL on "attr_story" from PUBLIC;
 GRANT ALL on "attr_story" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_story" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_story" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 486 (OID 61644)
@@ -4231,7 +4231,7 @@ CREATE TABLE "attr_story_val" (
 
 REVOKE ALL on "attr_story_val" from PUBLIC;
 GRANT ALL on "attr_story_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_story_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_story_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 488 (OID 61683)
@@ -4259,7 +4259,7 @@ CREATE TABLE "attr_story_meta" (
 
 REVOKE ALL on "attr_story_meta" from PUBLIC;
 GRANT ALL on "attr_story_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_story_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_story_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 242 (OID 61787)
@@ -4279,7 +4279,7 @@ CREATE SEQUENCE "seq_media" start 1024 increment 1 maxvalue 2147483647 minvalue 
 
 REVOKE ALL on "seq_media" from PUBLIC;
 GRANT ALL on "seq_media" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 245 (OID 61806)
@@ -4299,7 +4299,7 @@ CREATE SEQUENCE "seq_media_instance" start 1024 increment 1 maxvalue 2147483647 
 
 REVOKE ALL on "seq_media_instance" from PUBLIC;
 GRANT ALL on "seq_media_instance" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_instance" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_instance" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 248 (OID 61825)
@@ -4319,7 +4319,7 @@ CREATE SEQUENCE "seq_media__contributor" start 1024 increment 1 maxvalue 2147483
 
 REVOKE ALL on "seq_media__contributor" from PUBLIC;
 GRANT ALL on "seq_media__contributor" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media__contributor" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media__contributor" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 251 (OID 61844)
@@ -4339,7 +4339,7 @@ CREATE SEQUENCE "seq_media_member" start 1024 increment 1 maxvalue 2147483647 mi
 
 REVOKE ALL on "seq_media_member" from PUBLIC;
 GRANT ALL on "seq_media_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 254 (OID 61863)
@@ -4359,7 +4359,7 @@ CREATE SEQUENCE "seq_image_member" start 1024 increment 1 maxvalue 2147483647 mi
 
 REVOKE ALL on "seq_image_member" from PUBLIC;
 GRANT ALL on "seq_image_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_image_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_image_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 257 (OID 61882)
@@ -4379,7 +4379,7 @@ CREATE SEQUENCE "seq_media_fields" start 1024 increment 1 maxvalue 2147483647 mi
 
 REVOKE ALL on "seq_media_fields" from PUBLIC;
 GRANT ALL on "seq_media_fields" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_fields" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_fields" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 260 (OID 61901)
@@ -4399,7 +4399,7 @@ CREATE SEQUENCE "seq_attr_media" start 1024 increment 1 maxvalue 2147483647 minv
 
 REVOKE ALL on "seq_attr_media" from PUBLIC;
 GRANT ALL on "seq_attr_media" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_media" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_media" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 263 (OID 61920)
@@ -4419,7 +4419,7 @@ CREATE SEQUENCE "seq_attr_media_val" start 1024 increment 1 maxvalue 2147483647 
 
 REVOKE ALL on "seq_attr_media_val" from PUBLIC;
 GRANT ALL on "seq_attr_media_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_media_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_media_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 266 (OID 61939)
@@ -4439,7 +4439,7 @@ CREATE SEQUENCE "seq_attr_media_meta" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_attr_media_meta" from PUBLIC;
 GRANT ALL on "seq_attr_media_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_media_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_attr_media_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 490 (OID 61958)
@@ -4477,7 +4477,7 @@ CREATE TABLE "media" (
 
 REVOKE ALL on "media" from PUBLIC;
 GRANT ALL on "media" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "media" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "media" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 492 (OID 61990)
@@ -4513,7 +4513,7 @@ CREATE TABLE "media_instance" (
 
 REVOKE ALL on "media_instance" from PUBLIC;
 GRANT ALL on "media_instance" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "media_instance" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "media_instance" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 494 (OID 62033)
@@ -4541,7 +4541,7 @@ CREATE TABLE "media_fields" (
 
 REVOKE ALL on "media_fields" from PUBLIC;
 GRANT ALL on "media_fields" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "media_fields" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "media_fields" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 496 (OID 62053)
@@ -4568,7 +4568,7 @@ CREATE TABLE "media__contributor" (
 
 REVOKE ALL on "media__contributor" from PUBLIC;
 GRANT ALL on "media__contributor" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "media__contributor" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "media__contributor" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 498 (OID 62071)
@@ -4593,7 +4593,7 @@ CREATE TABLE "media_member" (
 
 REVOKE ALL on "media_member" from PUBLIC;
 GRANT ALL on "media_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "media_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "media_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 500 (OID 62087)
@@ -4618,7 +4618,7 @@ CREATE TABLE "image_member" (
 
 REVOKE ALL on "image_member" from PUBLIC;
 GRANT ALL on "image_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "image_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "image_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 502 (OID 62103)
@@ -4646,7 +4646,7 @@ CREATE TABLE "attr_media" (
 
 REVOKE ALL on "attr_media" from PUBLIC;
 GRANT ALL on "attr_media" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_media" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_media" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 504 (OID 62123)
@@ -4677,7 +4677,7 @@ CREATE TABLE "attr_media_val" (
 
 REVOKE ALL on "attr_media_val" from PUBLIC;
 GRANT ALL on "attr_media_val" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_media_val" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_media_val" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 506 (OID 62162)
@@ -4705,7 +4705,7 @@ CREATE TABLE "attr_media_meta" (
 
 REVOKE ALL on "attr_media_meta" from PUBLIC;
 GRANT ALL on "attr_media_meta" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "attr_media_meta" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "attr_media_meta" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 269 (OID 62275)
@@ -4725,7 +4725,7 @@ CREATE SEQUENCE "seq_story_data_tile" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_story_data_tile" from PUBLIC;
 GRANT ALL on "seq_story_data_tile" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story_data_tile" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story_data_tile" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 272 (OID 62294)
@@ -4745,7 +4745,7 @@ CREATE SEQUENCE "seq_media_data_tile" start 1024 increment 1 maxvalue 2147483647
 
 REVOKE ALL on "seq_media_data_tile" from PUBLIC;
 GRANT ALL on "seq_media_data_tile" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_data_tile" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_data_tile" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 508 (OID 62313)
@@ -4782,7 +4782,7 @@ CREATE TABLE "story_data_tile" (
 
 REVOKE ALL on "story_data_tile" from PUBLIC;
 GRANT ALL on "story_data_tile" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "story_data_tile" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "story_data_tile" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 510 (OID 62358)
@@ -4819,7 +4819,7 @@ CREATE TABLE "media_data_tile" (
 
 REVOKE ALL on "media_data_tile" from PUBLIC;
 GRANT ALL on "media_data_tile" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "media_data_tile" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "media_data_tile" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 275 (OID 62427)
@@ -4839,7 +4839,7 @@ CREATE SEQUENCE "seq_story_container_tile" start 1024 increment 1 maxvalue 21474
 
 REVOKE ALL on "seq_story_container_tile" from PUBLIC;
 GRANT ALL on "seq_story_container_tile" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story_container_tile" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_story_container_tile" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 278 (OID 62446)
@@ -4859,7 +4859,7 @@ CREATE SEQUENCE "seq_media_container_tile" start 1024 increment 1 maxvalue 21474
 
 REVOKE ALL on "seq_media_container_tile" from PUBLIC;
 GRANT ALL on "seq_media_container_tile" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_container_tile" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_media_container_tile" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 512 (OID 62465)
@@ -4893,7 +4893,7 @@ CREATE TABLE "story_container_tile" (
 
 REVOKE ALL on "story_container_tile" from PUBLIC;
 GRANT ALL on "story_container_tile" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "story_container_tile" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "story_container_tile" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 514 (OID 62491)
@@ -4927,7 +4927,7 @@ CREATE TABLE "media_container_tile" (
 
 REVOKE ALL on "media_container_tile" from PUBLIC;
 GRANT ALL on "media_container_tile" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "media_container_tile" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "media_container_tile" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 281 (OID 62541)
@@ -4947,7 +4947,7 @@ CREATE SEQUENCE "seq_output_channel" start 1024 increment 1 maxvalue 2147483647 
 
 REVOKE ALL on "seq_output_channel" from PUBLIC;
 GRANT ALL on "seq_output_channel" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_output_channel" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_output_channel" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 284 (OID 62560)
@@ -4967,7 +4967,7 @@ CREATE SEQUENCE "seq_output_channel_member" start 1024 increment 1 maxvalue 2147
 
 REVOKE ALL on "seq_output_channel_member" from PUBLIC;
 GRANT ALL on "seq_output_channel_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_output_channel_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_output_channel_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 516 (OID 62579)
@@ -4999,7 +4999,7 @@ CREATE TABLE "output_channel" (
 
 REVOKE ALL on "output_channel" from PUBLIC;
 GRANT ALL on "output_channel" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "output_channel" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "output_channel" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 518 (OID 62603)
@@ -5024,7 +5024,7 @@ CREATE TABLE "output_channel_member" (
 
 REVOKE ALL on "output_channel_member" from PUBLIC;
 GRANT ALL on "output_channel_member" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "output_channel_member" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "output_channel_member" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 520 (OID 62634)
@@ -5054,7 +5054,7 @@ CREATE TABLE "person_org" (
 
 REVOKE ALL on "person_org" from PUBLIC;
 GRANT ALL on "person_org" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "person_org" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "person_org" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 287 (OID 62668)
@@ -5074,7 +5074,7 @@ CREATE SEQUENCE "seq_person_org" start 1024 increment 1 maxvalue 2147483647 minv
 
 REVOKE ALL on "seq_person_org" from PUBLIC;
 GRANT ALL on "seq_person_org" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_person_org" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_person_org" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 290 (OID 62687)
@@ -5094,7 +5094,7 @@ CREATE SEQUENCE "seq_source" start 1024 increment 1 maxvalue 2147483647 minvalue
 
 REVOKE ALL on "seq_source" from PUBLIC;
 GRANT ALL on "seq_source" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_source" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_source" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 522 (OID 62706)
@@ -5123,7 +5123,7 @@ CREATE TABLE "source" (
 
 REVOKE ALL on "source" from PUBLIC;
 GRANT ALL on "source" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "source" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "source" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 524 (OID 62734)
@@ -5150,7 +5150,7 @@ CREATE TABLE "addr" (
 
 REVOKE ALL on "addr" from PUBLIC;
 GRANT ALL on "addr" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "addr" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "addr" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 526 (OID 62753)
@@ -5176,7 +5176,7 @@ CREATE TABLE "addr_part_type" (
 
 REVOKE ALL on "addr_part_type" from PUBLIC;
 GRANT ALL on "addr_part_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "addr_part_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "addr_part_type" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 528 (OID 62771)
@@ -5202,7 +5202,7 @@ CREATE TABLE "addr_part" (
 
 REVOKE ALL on "addr_part" from PUBLIC;
 GRANT ALL on "addr_part" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "addr_part" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "addr_part" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 530 (OID 62788)
@@ -5226,7 +5226,7 @@ CREATE TABLE "person_org__addr" (
 
 REVOKE ALL on "person_org__addr" from PUBLIC;
 GRANT ALL on "person_org__addr" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "person_org__addr" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "person_org__addr" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 293 (OID 62826)
@@ -5246,7 +5246,7 @@ CREATE SEQUENCE "seq_addr" start 1024 increment 1 maxvalue 2147483647 minvalue 1
 
 REVOKE ALL on "seq_addr" from PUBLIC;
 GRANT ALL on "seq_addr" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_addr" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_addr" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 296 (OID 62845)
@@ -5266,7 +5266,7 @@ CREATE SEQUENCE "seq_addr_part" start 1024 increment 1 maxvalue 2147483647 minva
 
 REVOKE ALL on "seq_addr_part" from PUBLIC;
 GRANT ALL on "seq_addr_part" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_addr_part" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_addr_part" to "@DBI_USER@";
 
 --
 -- TOC Entry ID 299 (OID 62864)
@@ -5286,7 +5286,7 @@ CREATE SEQUENCE "seq_addr_part_type" start 1024 increment 1 maxvalue 2147483647 
 
 REVOKE ALL on "seq_addr_part_type" from PUBLIC;
 GRANT ALL on "seq_addr_part_type" to "postgres";
-GRANT INSERT,UPDATE,DELETE,SELECT on "seq_addr_part_type" to "nobody";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_addr_part_type" to "@DBI_USER@";
 
 --
 -- Data for TOC Entry ID 839 (OID 57440)

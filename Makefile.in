@@ -57,6 +57,11 @@ POST_UNINSTALL = :
 # Bricolage configuration info
 APACHE_USER = @APACHE_USER@
 APACHE_GROUP = @APACHE_GROUP@
+DB_NAME = @DB_NAME@
+DBI_USER = @DBI_USER@
+DBI_PASS = @DBI_PASS@
+POSTGRES_ROOT_USER = @POSTGRES_ROOT_USER@
+POSTGRES_ROOT_PASS = @POSTGRES_ROOT_PASS@
 
 # A list of any missing modules
 MISSING_MODULES = @MISSING_MOD@
@@ -99,7 +104,7 @@ cpan:
 
 
 
-doc: README INSTALL TODO License
+doc: Changes INSTALL TODO License
 	cd ${DOC} && ${MAKE} -e
 
 INSTALL:
@@ -108,7 +113,7 @@ INSTALL:
 TODO:
 	${POD2TEXT} lib/Bric/ToDo.pod >$@
 
-README:
+Changes:
 	${POD2TEXT} lib/Bric/Changes.pod >$@
 
 License:
@@ -125,7 +130,7 @@ endif
 
 
 clean: docclean
-	${RM} -f README INSTALL TODO License tags
+	${RM} -f Changes INSTALL TODO License tags
 
 
 docclean:
