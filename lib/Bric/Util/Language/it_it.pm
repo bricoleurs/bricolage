@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 20:10:44 $
+$Date: 2003-08-13 03:10:14 $
 
 =head1 SYNOPSIS
 
@@ -519,6 +519,12 @@ To translate:
   'Site profile "[_1]" saved.'
 
   'Workspace for [_1]' => 'Translate me!'
+  'No file associated with media "[_1]". Skipping.'
+  'Writing files to "[_1]" Output Channel.'
+  'Distributing files.'
+  'No output to preview.'
+  'Cannot preview asset "[_1]" because there are no Preview Destinations associated with its output channels.'
+
 
 =end comment
 

@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:33 $
+$Date: 2003-08-13 03:10:08 $
 
 =head1 SYNOPSIS
 
@@ -47,6 +47,7 @@ use Apache;
 use Apache::Request;
 use HTML::Mason::Request;
 use Apache::Constants qw(HTTP_OK);
+use Apache::Util qw(escape_html);
 use HTTP::BrowserDetect;
 use Bric::Util::Language;
 use Bric::Util::Fault qw(throw_gen);
@@ -580,15 +581,19 @@ sub redirect_onload {
     }
 }
 
-=item status_msg(@msgs)
+=item status_msg($msg)
+
+=item severe_status_msg($msg)
 
 Sometimes there's a long process executing, and you want to send status
-messages to the browser so that the user knows what's happening. This function
-will do this for you. Call it each time you want to send one or more status
-messages, and it'll take care of the rest for you. When you're done, you can
-either redirect to another page, or simply finish drawing the current page. It
-will draw in below the status messages. This function will work both in
-callbacks and in Mason UI code.
+messages to the browser so that the user knows what's happening. These
+functions will do this for you. Call C<status_msg()> each time you want to
+send a status messages, and it'll take care of the rest for you. The
+C<severe_status_msg()> will do the same, but convert the message into a red,
+bold-fased message before sending it to the browser. When you're done sending
+status messages, you can either redirect to another page, or simply finish
+drawing the current page. It will draw in below the status messages. This
+function will work both in callbacks and in Mason UI code.
 
 B<Throws:> NONE.
 
@@ -598,7 +603,18 @@ B<Notes:> NONE.
 
 =cut
 
-sub status_msg {
+sub status_msg { 
+    _send_msg(escape_html(Bric::Util::Language->instance->maketext(@_)));
+ }
+
+sub severe_status_msg {
+    _send_msg('<font color="red"><b>' .
+              escape_html(Bric::Util::Language->instance->maketext(@_)) .
+              "</b></font>");
+}
+
+sub _send_msg {
+    my $msg = shift;
     my $key = '_status_msg_';
     my $space = '&nbsp;' x 20;
 
@@ -611,7 +627,9 @@ sub status_msg {
             $m->print("<br />\n" x 2);
             $r->pnotes($key, 1);
         }
-        map $m->print(qq{$space<span class="errorMsg">$_</span><br />\n}), @_;
+
+        $m->print(qq{$space<span class="errorMsg">$msg</span><br />\n});
+
         $m->flush_buffer;
         $m->autoflush($old_autoflush);
     }

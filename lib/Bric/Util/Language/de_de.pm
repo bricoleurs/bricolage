@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 17:49:48 $
+$Date: 2003-08-13 03:10:11 $
 
 =head1 SYNOPSIS
 
@@ -702,6 +702,11 @@ use constant key => 'de_de';
       'Needs to be Deployed' => 'Needs to be Deployed',
       'Field profile [_1] deleted.' => 'Field profile [_1] deleted.',
       'Field profile [_1] saved.' => 'Field profile [_1] saved.',
+      'No file associated with media "[_1]". Skipping.',
+      'Writing files to "[_1]" Output Channel.'
+      'Distributing files.'
+      'No output to preview.'
+      'Cannot preview asset "[_1]" because there are no Preview Destinations associated with its output channels.'
   );
 
 =cut

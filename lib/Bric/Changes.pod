@@ -94,7 +94,11 @@ primary output channel. Based on a patch from Clive Jones. [David]
 
 =item *
 
-Lots of localization string fixes. [Radu Greab]
+Lots of notification message localization fixes. [Radu Greab]
+
+=item *
+
+Status message localization fixes [David]
 
 =back
 

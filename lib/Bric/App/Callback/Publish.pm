@@ -59,9 +59,17 @@ sub preview : Callback {
 
             # Make sure this media object isn't checked out.
             if ($ra->get_checked_out) {
-                add_msg('Cannot auto-publish related media "[_1]" because it is checked out.', $ra->get_title);
+                add_msg('Cannot auto-publish related media "[_1]" because ' .
+                        'it is checked out.', $ra->get_title);
                 next;
             }
+
+            unless ($ra->get_path) {
+                status_msg('No file associated with media "[_1]". Skipping.',
+                           $ra->get_title);
+                next;
+            }
+
             $b->preview($ra, 'media', get_user_id(), $oc_id);
         }
         # Move out the story and then redirect to preview.

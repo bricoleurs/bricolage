@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 20:10:44 $
+$Date: 2003-08-13 03:10:09 $
 
 =head1 SYNOPSIS
 
@@ -596,8 +596,7 @@ sub preview {
                 ({ id => $oc_id ? $oc_id : $at->get_primary_oc_id($site_id) });
 
     # Burn to each output channel.
-    status_msg("Writing files to &quot;" . $oc->get_name
-               . '&quot; Output Channel.');
+    status_msg('Writing files to "[_1]" Output Channel.', $oc->get_name);
     my $ocid = $oc->get_id;
     # Get a list of server types this categroy applies to.
     my $bat = $oc_sts->{$ocid} ||=
@@ -607,10 +606,9 @@ sub preview {
     # Make sure we have some destinations.
     unless (@$bat) {
         if (not PREVIEW_LOCAL) {
-            status_msg("<font color=red><b>Cannot preview asset &quot;" .
-                       $ba->get_name . "&quot; because there are no " .
-                       "Preview Destinations associated with its " .
-                       "output channels.</b></font>");
+            status_msg_severe('Cannot preview asset "[_1]" because there ' .
+                              'are no Preview Destinations associated with ' .
+                              'its output channels.', $ba->get_name);
             next;
         }
     }

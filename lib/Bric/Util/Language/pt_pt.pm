@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 20:10:44 $
+$Date: 2003-08-13 03:10:14 $
 
 =head1 SYNOPSIS
 
@@ -732,7 +732,12 @@ use constant key => 'pt_pt';
       'Field profile "[_1]" deleted.' => 'Field profile "[_1]" deleted.',
       'Field profile "[_1]" saved.' => 'Field profile "[_1]" saved.',
       'The URI "[_1]" is not unique. Please change the cover date, output channels, category, or file name as necessary to make the URIs unique.'
-      'The URI "[_1]" is not unique. Please change the cover date, output channels, or categories as necessary to make the URIs unique.'
+      'The URI "[_1]" is not unique. Please change the cover date, output channels, or categories as necessary to make the URIs unique.',
+      'No file associated with media "[_1]". Skipping.'
+      'Writing files to "[_1]" Output Channel.'
+      'Distributing files.'
+      'No output to preview.'
+      'Cannot preview asset "[_1]" because there are no Preview Destinations associated with its output channels.'
   );
 
 =cut

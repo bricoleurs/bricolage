@@ -6,15 +6,15 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 20:10:44 $
+$Date: 2003-08-13 03:10:17 $
 
 =head1 SYNOPSIS
 
@@ -549,6 +549,11 @@ To translate:
     'User profile "[_1]" saved.'
     'Site profile "[_1]" deleted.'
     'Site profile "[_1]" saved.'
+    'No file associated with media "[_1]". Skipping.'
+    'Writing files to "[_1]" Output Channel.'
+    'Distributing files.'
+    'No output to preview.'
+    'Cannot preview asset "[_1]" because there are no Preview Destinations associated with its output channels.'
 
 =end comment
 
