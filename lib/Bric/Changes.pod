@@ -356,6 +356,13 @@ version 1.7.0. Found by David during a demo. [Scott]
 Fixed typo of CHECK_FREQUENCY in Bric::Config that would've made it
 always use the default of 1, since version 1.43 (2002/05). [Scott]
 
+=item *
+
+An attempt to preview a story for which no template exists now gives a
+friendly error message again.  This was broken by the change in 1.7.2
+that made the Mason burner use document templates as true dhandlers.
+[Dave Rolsky]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
