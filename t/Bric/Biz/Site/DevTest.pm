@@ -210,6 +210,77 @@ sub test_list : Test(27) {
 }
 
 ##############################################################################
+# Test href().
+sub test_href : Test(25) {
+    my $self = shift;
+
+    # Try name.
+    my $sites = Bric::Biz::Site->href({ name => $init{name} });
+    is( scalar keys %$sites, 0, "Check for 0 sites" );
+
+    # Try name + wildcard.
+    ok( $sites = Bric::Biz::Site->href({ name => "$init{name}%" }),
+        "List name '$init{name}%'" );
+    is( scalar keys %$sites, 5, "Check for 5 sites" );
+
+    # Check the hash keys.
+    while (my ($id, $site) = each %$sites) {
+        is($id, $site->get_id, "Check site ID '$id'" );
+    }
+
+    # Try a bogus name.
+    ok( ! Bric::Biz::Site->href({ name => -1 }), "List bogus name" );
+
+    # Try description.
+    ok( $sites = Bric::Biz::Site->href({ description => $init{description} }),
+        "List description '$init{description}'" );
+
+    is( scalar keys %$sites, 2, "Check for 2 sites" );
+
+    # Try description + wildcard.
+    ok( $sites = Bric::Biz::Site->list
+        ({ description => "$init{description}%" }),
+        "List description '$init{description}%'" );
+    is( scalar keys %$sites, 5, "Check for 5 sites" );
+
+    # Try a bogus description.
+    ok( ! Bric::Biz::Site->href({ description => -1 }),
+        "List bogus description" );
+
+    # Try domain_name.
+    $sites = Bric::Biz::Site->href({ domain_name => $init{domain_name} });
+    is( scalar keys %$sites, 0, "Check for 0 sites" );
+
+    # Try domain_name + wildcard.
+    ok( $sites = Bric::Biz::Site->href({ domain_name => "ww%" }),
+        "List domain_name 'ww%'" );
+    # There are 6 because the default site is 'www.example.com'.
+    is( scalar keys %$sites, 6, "Check for 6 sites" );
+
+    # Try a bogus domain_name.
+    ok( ! Bric::Biz::Site->href({ domain_name => -1 }),
+        "List bogus domain name" );
+
+    # Try grp_id.
+    my $grp = $self->{test_grp};
+    my $grp_id = $grp->get_id;
+    ok( $sites = Bric::Biz::Site->href({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id'" );
+    is( scalar keys %$sites, 3, "Check for 3 sites" );
+
+    # Try active.
+    ok( $sites = Bric::Biz::Site->href({ active => 1}), "List active => 1" );
+    is( scalar keys %$sites, 6, "Check for 6 sites" );
+
+    # Deactivate one and make sure it doesn't come back.
+    ok( $self->{test_sites}[0]->deactivate->save,
+        "Deactivate and save a site" );
+    ok( $sites = Bric::Biz::Site->href({ active => 1}),
+        "List active => 1 again" );
+    is( scalar keys %$sites, 5, "Check for 5 sites" );
+}
+
+##############################################################################
 # Test class methods.
 ##############################################################################
 # Test list().

@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.10 $
+$Revision: 1.1.2.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.11 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-09 01:46:24 $
+$Date: 2003-03-11 01:17:42 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.10 2003-03-09 01:46:24 wheeler Exp $
+$Id: Site.pm,v 1.1.2.11 2003-03-11 01:17:42 wheeler Exp $
 
 =back
 
@@ -264,6 +264,29 @@ B<Throws:>
 =cut
 
 sub list { $get_em->(@_) }
+
+##############################################################################
+
+=head3 href
+
+  my $sites_href = Bric::Biz::Site->href($params);
+
+Returns an anonymous hash of site objects based on the search parameters
+passed via an anonymous hash. The hash keys will be the site IDs, and the
+values will be the corresponding sites. The supported lookup keys are the
+same as those for C<list()>.
+
+B<Throws:>
+
+=over 4
+
+=item Exception::DA
+
+=back
+
+=cut
+
+sub href { $get_em->(@_, undef, 1) }
 
 ##############################################################################
 # Class Methods
@@ -712,7 +735,7 @@ B<Throws:>
 =cut
 
 $get_em = sub {
-    my ($invocant, $params, $ids_only) = @_;
+    my ($invocant, $params, $ids_only, $href) = @_;
     my $tables = "$TABLE a, member m, site_member c";
     my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND ' .
       'm.active = 1';
@@ -758,7 +781,7 @@ $get_em = sub {
     }
 
     execute($sel, @params);
-    my (@d, @sites, $grp_ids);
+    my (@d, @sites, %sites, $grp_ids);
     bind_columns($sel, \@d[0..$#SEL_PROPS]);
     my $last = -1;
     my $class = ref $invocant || $invocant;
@@ -771,12 +794,14 @@ $get_em = sub {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@SEL_PROPS, \@d);
             $self->_set__dirty; # Disables dirty flag.
-            push @sites, $self->cache_me;
+            $href ? $sites{$d[0]} = $self->cache_me :
+              push @sites, $self->cache_me;
         } else {
             push @$grp_ids, $d[$#d];
         }
     }
 
+    return \%sites if $href;
     return unless @sites;
     return wantarray ? @sites : \@sites;
 };
