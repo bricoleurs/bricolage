@@ -274,22 +274,13 @@ Added Template Toolkit burner support. [Arthur/Fotango]
 
 =item *
 
-Added a bricolage.conf directive, ALLOW_SLUGLESS_NONFIXED, to prevent
+Added a F<bricolage.conf> directive, C<ALLOW_SLUGLESS_NONFIXED>, to prevent
 slugless non-fixed (non-Cover) stories. [Scott]
 
-=back
-
-=head2 Bug Fixes
-
-=over 4
-
 =item *
 
-Made Bric::SOAP::Element work with multi-sites. [Scott + David]
-
-=item *
-
-Allowed --server=https:// in bric_soap to work. [Geoff Richards]
+Added support for installing and upgrading Bricolage with PostgreSQL on a
+separate host. [Thorston Biel]
 
 =back
 

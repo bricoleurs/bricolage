@@ -6,11 +6,11 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2003-02-02 19:46:35 $
+$Date: 2003-10-10 19:21:16 $
 
 =head1 DESCRIPTION
 
@@ -46,6 +46,8 @@ $PG{root_pass} = '';
 $PG{sys_user}  = 'bric';
 $PG{sys_pass}  = 'NONE';
 $PG{db_name}   = 'bric';
+$PG{host_name} = 'localhost';
+$PG{host_port} = '';
 
 our $REQ;
 do "./required.db" or die "Failed to read required.db : $!";
@@ -55,6 +57,7 @@ get_lib_dir();
 get_bin_dir();
 get_psql();
 get_users();
+get_host();
 
 # all done, dump out apache database, announce success and exit
 open(OUT, ">postgres.db") or die "Unable to open postgres.db : $!";
@@ -131,3 +134,11 @@ sub get_users {
     ask_confirm("Bricolage Postgres Password", \$PG{sys_pass});
     ask_confirm("Bricolage Database Name", \$PG{db_name});
 }
+
+# ask for host specifics
+sub get_host {
+    print "\n";
+    ask_confirm("Postgres Database Server Hostname", \$PG{host_name});
+    ask_confirm("Postgres Database Server Port Number", \$PG{host_port});
+}
+

@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.52 $ )[-1];
+our $VERSION = (qw$Revision: 1.53 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 09:20:36 $
+$Date: 2003-10-10 19:21:17 $
 
 =head1 SYNOPSIS
 
@@ -1664,8 +1664,7 @@ assocation between each output channel and this element object.
 
 =cut
 
-sub get_sites { $get_site_coll->(shift)->get_objs(@_) 
-}
+sub get_sites { $get_site_coll->(shift)->get_objs(@_) }
 
 #------------------------------------------------------------------------------#
 

@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =head1 DATE
 
-$Date: 2003-09-10 18:39:05 $
+$Date: 2003-10-10 19:21:16 $
 
 =head1 DESCRIPTION
 
@@ -50,6 +50,8 @@ die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
 # Set environment variables for psql.
 $ENV{PGUSER} = $PG->{root_user};
 $ENV{PGPASSWORD} = $PG->{root_pass};
+$ENV{PGHOST} = $PG->{host_name} if ( $PG->{host_name} ne "localhost" );
+$ENV{PGPORT} = $PG->{host_port} if ( $PG->{host_port} ne "" );
 $ERR_FILE = catfile tmpdir, '.db.stderr';
 END { unlink $ERR_FILE }
 

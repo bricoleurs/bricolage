@@ -18,6 +18,8 @@ die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
 # Set environment variables for psql.
 $ENV{PGUSER} = $PG->{root_user};
 $ENV{PGPASSWORD} = $PG->{root_pass};
+$ENV{PGHOST} = $PG->{host_name} if ( $PG->{host_name} ne "localhost" );
+$ENV{PGPORT} = $PG->{host_port} if ( $PG->{host_port} ne "" );
 $ERR_FILE = catfile tmpdir, '.db.stderr';
 END { unlink $ERR_FILE }
 

@@ -6,11 +6,11 @@ db.pl - installation script to uninstall database
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-12-12 12:09:27 $
+$Date: 2003-10-10 19:21:16 $
 
 =head1 DESCRIPTION
 
@@ -53,6 +53,14 @@ print "Becoming $PG->{system_user}...\n";
 $> = $PG->{system_user_uid};
 die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
     unless $> == $PG->{system_user_uid};
+
+# set environment variables for dbi:Pg
+$ENV{PGHOST} = $PG->{host_name} if ( $PG->{host_name} ne "localhost" );
+$ENV{PGPORT} = $PG->{host_port} if ( $PG->{host_port} ne "" );
+
+# set environment variables for dbi:Pg
+$ENV{PGHOST} = $PG->{host_name};
+$ENV{PGPORT} = $PG->{host_port};
 
 # setup database and user while connected to dummy template1
 my $dbh = db_connect('template1');
