@@ -520,7 +520,8 @@ my $related_summary = sub {
                                        formName => "theForm",
                                        site_id  => $asset->get_site_id,
                                       )) {
-              $m->out(qq{<tr><td colspan="2">\n$uploader\n</td></tr>\n});
+              $m->out(qq{<tr><td colspan="2">\n$uploader\n</td></tr>\n})
+                if $uploader;
           }
       }
   }

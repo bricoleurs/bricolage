@@ -832,17 +832,19 @@ sub detect_agent {
 =item my $wf = find_workflow($site_id, $type, $perm);
 
 Returns a workflow of a particular type in a given site for which the user has
-a given permission. Returns C<undef> if no workflow is found.
+a given permission to the documents and/or templates in that workflow. Returns
+C<undef> if no workflow is found.
 
 =cut
 
-# Could this be optimized to use the cache that sideNav.mc uses?
+# XXX Could this be optimized to use the cache that sideNav.mc uses?
 
 sub find_workflow {
     my ($site_id, $type, $perm) = @_;
     for my $wf (Bric::Biz::Workflow->list({ type    => $type,
                                             site_id => $site_id })) {
-        return $wf if chk_authz($wf, $perm, 1);
+        return $wf if chk_authz(0, $perm, 1, $wf->get_asset_grp_id,
+                                $wf->get_grp_ids);
     }
     return undef;
 }
@@ -852,7 +854,8 @@ sub find_workflow {
 =item my $desk = find_desk($wf, $doc_perm)
 
 Returns the desk in the given workflow for which the user has the permission
-to access its documents. Returns C<undef> if no desk is found.
+to access its documents and/or templates. Returns C<undef> if no desk is
+found.
 
 =cut
 

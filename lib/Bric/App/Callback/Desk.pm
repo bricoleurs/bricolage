@@ -143,7 +143,6 @@ sub publish : Callback {
     my $param = $self->params;
     my $story_pub = $param->{'story_pub'};
     my $media_pub = $param->{'media_pub'};
-
     my $mpkg = 'Bric::Biz::Asset::Business::Media';
     my $spkg = 'Bric::Biz::Asset::Business::Story';
     my $story = mk_aref($param->{$self->class_key.'|story_pub_ids'});

@@ -64,7 +64,7 @@ to create media and to access a media workflow. This makes it a much simpler
 process for editors to quickly associate media with story documents. The
 uploaded media files will be created based on the media type element selected
 from a select list, and given the same category, cover date, and priority as
-the current document. [JoE<atilde>o Pedro and David]
+the current document. Enabled by default. [JoE<atilde>o Pedro and David]
 
 =back
 
