@@ -48,7 +48,14 @@ as a media asset. Thanks to John Greene for the spot. [David]
 =item *
 
 Fixed bug where an empty or non-numeric <size> element in an imported
-media object would cause an SQL error.  [Sam]
+media object would cause an SQL error. [Sam]
+
+=item *
+
+The F<bric_apachectl>, F<bric_clean_tmp>, F<bric_dist_mon>, and F<bric_ftpd>
+scripts are now smarter about loading Bricolage libraries and reporting
+relevant errors when they can't load Bricoalge libraries. Thanks to Geoff
+Richards for the patch. [David]
 
 =back
 

@@ -31,15 +31,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.11.2.6 $
+$Revision: 1.11.2.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-13 22:29:12 $
+$Date: 2002-11-21 20:38:11 $
 
 =head1 SYNOPSIS
 
@@ -320,13 +320,13 @@ sub _deserialize_tile {
             # recurse
             push @relations, _deserialize_tile(element   => $container,
                                                data      => $c);
+            # Log it.
+            log_event("${type}_add_element", $object,
+                      { Element => $container->get_name })
+              if $type && $object;
+
         }
     }
-
-    # Log it.
-    log_event("${type}_add_element", $object,
-              { Element => $element->get_name }) if $type && $object;
-
     return @relations;
 }
 

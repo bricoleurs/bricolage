@@ -108,6 +108,8 @@ Folks who have submitted patches include:
 
 =item Neil Conway
 
+=item Geoff Richards
+
 =back
 
 Friends who have spotted bugs include:
@@ -130,7 +132,7 @@ Friends who have spotted bugs include:
 
 =item Evan Prodromou
 
-=item Geoff Richards
+=item John Greene
 
 =back
 
