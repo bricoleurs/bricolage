@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-17 10:29:13 $
+$Date: 2002-07-17 12:40:37 $
 
 =head1 SYNOPSIS
 
@@ -232,13 +232,21 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item @objs = lookup Bric::Biz::Category($cat_id);
+=item @objs = Bric::Biz::Category->lookup({ id => $cat_id });
 
-Return an object given an ID.
+=item @objs = Bric::Biz::Category->lookup({ uri => $uri });
+
+Return an object given an ID or URI, both of which are unique across URIs.
 
 B<Throws:>
 
-NONE
+=over 4
+
+=item *
+
+Too many category objects found.
+
+=back
 
 B<Side Effects:>
 
@@ -251,15 +259,25 @@ NONE
 =cut
 
 sub lookup {
-    my $self = shift;
-    my ($init) = @_;
-    my $cat_id = $init->{'id'};
+    my ($pkg, $init) = @_;
+    my $ret;
+    my $cat_id = $init->{id};
+    if (defined $cat_id) {
+        $ret = _select_category('id = ?', [$cat_id]);
+    } elsif (my $uri = $init->{uri}) {
+        $ret = _select_category('uri = ?', [$uri]);
+    } else {
+        $dp->new({ msg => "Only 'id' or 'uri' parameter allowed to new" });
+    }
 
-    # Instantiate object
-    $self = bless {}, $self unless ref $self;
+    # Check the data.
+    return unless $ret->[0];
+    die $dp->new({ msg => "Too many category objects found" })
+      if @$ret > 1;
 
-    my $ret = _select_category('id=?', [$cat_id]);
-    
+    # Construct the object.
+    my $self = bless {}, ref $pkg || $pkg;
+
     # Set the columns selected as well as the passed ID.
     $self->_set(['id', FIELDS], $ret->[0]);
 
@@ -1136,7 +1154,7 @@ NONE
 
 =cut
 
-sub get_parent { 
+sub get_parent {
     my $self = shift;
     my $id   = $self->get_id;
     my $pid  = $self->get_parent_id;
