@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.105 $
+$Revision: 1.106 $
 
 =head1 DATE
 
-$Date: 2003-07-28 22:28:37 $
+$Date: 2003-07-30 05:49:12 $
 
 =head1 DESCRIPTION
 
@@ -223,12 +223,6 @@ L<http://bricolage.cc/docs/design/ElementRevision.html>.
 =item *
 
 Add support for Instant messaging (using Jabber server) in Alerts.
-
-=item *
-
-Add an email mover. There should be one that will simply mail the contents of
-an output, and one that will send the contents as an attachment (or
-attachments, if there are several files).
 
 =item *
 
