@@ -130,6 +130,10 @@ Removed old XML::Writer stuff from Bric::Util::Burner, since I moved it to
 Bric::Util::Burner::Mason a while ago and it was causing some problems. Thanks
 to Michael Robinton for the spot. [David]
 
+=item *
+
+Fixed typo in Bric::Hacker spotted by Axel Beckert. [Sam]
+
 =back
 
 =head1 VERSION 1.2.1
