@@ -7,16 +7,16 @@ distributed.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-03 15:58:58 $
+$Date: 2002-05-03 16:15:43 $
 
 =head1 SYNOPSIS
 
@@ -110,9 +110,14 @@ our %OS = (Mac   => 'File::Spec::Mac',
 
 ################################################################################
 # Private Class Fields
-my %osmap = ( MacOS => 'Mac',
-	      MSWin32 => 'Win32',
-	      os2     => 'OS2' );
+my $def_os = do {
+    my $o = lc $^O;
+    $OS{$^O} && $^O
+      || $o eq 'macos' && 'Mac'
+      || $o eq 'mswin32' && 'Win32'
+      || $o eq 'os2' && 'OS2'
+      || 'Unix';
+};
 
 my @cols = qw(id server_type__id host_name os doc_root login password cookie
 	      active);
@@ -207,7 +212,7 @@ sub new {
     my ($pkg, $init) = @_;
     my $self = ref $pkg || $pkg;
     $init->{host_name} = lc $init->{host_name} if $init->{host_name};
-    $init->{os} ||= $OS{$^O} ? $^O : $osmap{$^O} ? $osmap{$^O} : 'Unix';
+    $init->{os} ||= $def_os;
     $init->{_active} = 1;
     $self->SUPER::new($init);
 }
