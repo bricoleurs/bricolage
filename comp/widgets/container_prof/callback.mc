@@ -71,7 +71,7 @@ my $pop_and_redirect = sub {
     my $tile;
 
     # Get the tile stack and pop off the current tile.
-    $tile = $flip ? get_state_data($widget, 'tile') 
+    $tile = $flip ? get_state_data($widget, 'tile')
                   : $pop_tile_stack->($widget);
 
     my $object_type = $tile->get_object_type;
@@ -87,7 +87,6 @@ my $pop_and_redirect = sub {
     # If our tile doesn't have parents go to the main story edit screen.
     else {
 	my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
-
 	set_redirect($uri);
     }
 };
@@ -143,7 +142,6 @@ my $update_parts = sub {
 	# Grab the tile we're looking for
 	local $^W = undef;
 	$locate_tile = $_ if $id == $locate_id;
-	
 	if ($do_delete && ($param->{"$widget|delete_cont$id"} ||
 			   $param->{"$widget|delete_data$id"})) {
 	    add_msg("Element &quot;" . $_->get_name . "&quot; deleted.");
@@ -151,13 +149,20 @@ my $update_parts = sub {
 	    next;
 	}
 
-	my $order;
+	my ($order, $redir);
 	if ($_->is_container) {
 	    $order = $param->{"$widget|reorder_con$id"};
 	} else {
 	    $order = $param->{"$widget|reorder_dat$id"};
 	    my $val = $param->{"$widget|$id"} || '';
-	    $_->set_data($val) unless $_->get_data eq $val;
+	    if ( $param->{"$widget|${id}-partial"} ) {
+		# The date is only partial. Send them back to to it again.
+		add_msg("Invalid date value for &quot;" . $_->get_name
+			. "&quot; field.");
+		set_state_data($widget, '__NO_SAVE__', 1);
+	    } else {
+		$_->set_data($val);
+	    }
 	}
 
 	$curr_tiles[$order] = $_;
@@ -363,9 +368,7 @@ my $handle_update = sub {
 
     # Update the tile state data based on the parameter data.
     $update_parts->($widget, $param);
-
     my $tile = get_state_data($widget, 'tile');
-
     $tile->save();
 };
 
@@ -468,9 +471,7 @@ my $handle_lock_val = sub {
 
 my $handle_delete = sub {
     my ($widget, $field, $param) = @_;
-
-	# don't do anything Handled by the update parts code
-
+    # don't do anything Handled by the update parts code
 };
 
 my $handle_save_and_up = sub {
@@ -481,33 +482,38 @@ my $handle_save_and_up = sub {
 	return;
     }
 
-    # Save the tile we are working on
-    my $tile = get_state_data($widget, 'tile');
-    $tile->save();
-
-    add_msg("Element &quot;" . $tile->get_name . "&quot; saved.");
-
-    $pop_and_redirect->($widget);
+    if (get_state_data($widget, '__NO_SAVE__')) {
+	# Do nothing.
+	set_state_data($widget, '__NO_SAVE__', undef);
+    } else {
+	# Save the tile we are working on.
+	my $tile = get_state_data($widget, 'tile');
+	$tile->save();
+	add_msg("Element &quot;" . $tile->get_name . "&quot; saved.");
+	$pop_and_redirect->($widget);
+    }
 };
 
 my $handle_save_and_stay = sub {
-	my ($widget, $field, $param) = @_;
+    my ($widget, $field, $param) = @_;
+    if ($param->{"$widget|delete_element"}) {
+	$delete_element->($widget);
+	return;
+    }
 
-	if ($param->{"$widget|delete_element"}) {
-		$delete_element->($widget);
-		return;
-	}
-
-
+    if (get_state_data($widget, '__NO_SAVE__')) {
+	# Do nothing.
+	set_state_data($widget, '__NO_SAVE__', undef);
+    } else {
 	# Save the tile we are working on
 	my $tile = get_state_data($widget, 'tile');
 	$tile->save();
 	add_msg("Element &quot;" . $tile->get_name . "&quot; saved.");
+    }
 };
 
 my $handle_up = sub {
     my ($widget, $field, $param) = @_;
-
     $pop_and_redirect->($widget);
 };
 
@@ -518,10 +524,10 @@ my $handle_default = sub {
     if ($field =~ /^container_prof\|edit(\d+)_cb/ ) {
 	# Update the existing fields and get the child tile matching ID $1
 	my $edit_tile = $update_parts->($widget, $param, $1);
-	
+
 	# Push this child tile on top of the stack
 	$push_tile_stack->($widget, $edit_tile);
-	
+
 	# Don't redirect if we're already on the right page.
 	if ($tile->get_object_type eq 'media') {
 	    unless ($r->uri eq "$MEDIA_CONT/edit.html") {
@@ -532,7 +538,7 @@ my $handle_default = sub {
 		set_redirect("$CONT_URL/edit.html");
 	    }
 	}
-	
+
     } elsif ($field =~ /^container_prof\|view(\d+)_cb/ ) {
 	my ($view_tile) = grep(($_->get_id == $1), $tile->get_containers);
 
@@ -554,12 +560,12 @@ my $handle_default = sub {
 
 	# Get the name of the field to bulk edit
 	my $field = $param->{$widget.'|bulk_edit_tile_field-'.$tile_id};
-	
+
 	# Save the bulk edit field name
 	set_state_data($widget, 'field', $field);
 	set_state_data($widget, 'view_flip', 0);
 	set_state_name($widget, 'edit_bulk');
-		
+
 	if ($tile->get_object_type eq 'media') {
 	    set_redirect("$MEDIA_CONT/edit_bulk.html");
 	} else {
@@ -572,9 +578,7 @@ my $handle_default = sub {
 
 my $handle_resize = sub {
     my ($widget, $field, $param) = @_;
-
     $split_fields->($widget, $param->{$widget.'|text'});
-
     set_state_data($widget, 'rows', $param->{$widget.'|rows'});
     set_state_data($widget, 'cols', $param->{$widget.'|cols'});
 };
@@ -594,9 +598,8 @@ my $handle_change_sep = sub {
 
     if ($sep ne 'custom') {
 	set_state_data($widget, 'separator', $sep);
-	
 	set_state_data($widget, 'use_custom_sep', 0);
-    } else { 
+    } else {
 	set_state_data($widget, 'separator', $param->{$widget.'|custom_sep'});
 	set_state_data($widget, 'use_custom_sep', 1);
     }
@@ -605,13 +608,11 @@ my $handle_change_sep = sub {
     $data = get_state_data($widget, 'data');
     $sep  = get_state_data($widget, 'separator');
     $split_fields->($widget, join("\n$sep\n", @$data));
-
     add_msg("Seperator Changed.");
 };
 
 my $handle_recount = sub {
     my ($widget, $field, $param) = @_;
-
     $split_fields->($widget, $param->{$widget.'|text'});
 };
 
@@ -626,12 +627,9 @@ my $handle_bulk_edit_this = sub {
     set_state_data($widget, 'view_flip', 1);
 
     set_state_name($widget, 'edit_bulk');
-
-	my $tile = get_state_data($widget, 'tile');
-	my $object_type = $tile->get_object_type();
-
-	my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-
+    my $tile = get_state_data($widget, 'tile');
+    my $object_type = $tile->get_object_type();
+    my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
     set_redirect("$uri/edit_bulk.html");
 };
 
@@ -666,11 +664,9 @@ my $handle_bulk_up = sub {
 
 my $handle_bulk_save_and_up = sub {
     my ($widget, $field, $param) = @_;
-
     $split_fields->($widget, $param->{$widget.'|text'});
     my $data_field = get_state_data($widget, 'field');
     $save_data->($widget);
-
     $handle_bulk_up->($widget, $field, $param);
     add_msg("&quot;$data_field&quot; Elements saved.");
 };

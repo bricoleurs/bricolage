@@ -389,7 +389,6 @@ return $num;
 
 </%perl>
 
-
 <%args>
 $widget
 $num          => undef
@@ -436,7 +435,9 @@ my $is_related_media = $at->is_related_media ? 1 : 0;
 
 # browser spacing stuff
 my $agent = $m->comp("/widgets/util/detectAgent.mc");
-my $ieSpacer = ($agent->{browser} eq "Internet Explorer") ? qq{<tr><td colspan=10><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>} : '';
+my $ieSpacer = ($agent->{browser} eq "Internet Explorer")
+  ? qq{<tr><td colspan=10><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>}
+  : '';
 my $shim = ($agent->{browser} eq "Netscape") ?  -4 : 4;
 </%init>
 
