@@ -4,18 +4,18 @@ package Bric::Util::Pref;
 
 Bric::Util::Pref - Interface to Bricolage preferences.
 
-=Head1 VERSION
+=head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-02-14 21:59:40 $
 
 =head1 SYNOPSIS
 

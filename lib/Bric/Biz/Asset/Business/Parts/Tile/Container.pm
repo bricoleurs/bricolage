@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-01-31 00:29:35 $
+$Date: 2002-02-14 21:59:40 $
 
 =head1 SYNOPSIS
 

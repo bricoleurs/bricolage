@@ -616,45 +616,65 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
 
-  --with-compdir       defaults to '${prefix}/comp'
+  --with-compdir=VALUE
+                          defaults to '${prefix}/comp'
 
-  --with-docdir        defaults to '${prefix}/doc'
+  --with-docdir=VALUE
+                          defaults to '${prefix}/doc'
 
-  --with-htmldir       defaults to '${docdir}/html'
+  --with-htmldir=VALUE
+                          defaults to '${docdir}/html'
 
-  --with-blibdir       defaults to '${prefix}/blib'
+  --with-blibdir=VALUE
+                          defaults to '${prefix}/blib'
 
-  --with-apache-user   defaults to nobody
+  --with-apache-user=VALUE
+                          defaults to nobody
 
-  --with-apache-group  defaults to nobody
+  --with-apache-group=VALUE
+                          defaults to nobody
 
-  --with-hostname      defaults to `hostname --fqdn || true`
+  --with-hostname=VALUE
+                          defaults to `hostname --fqdn || true`
 
-  --with-administrator defaults to root
+  --with-administrator=VALUE
+                          defaults to root
 
-  --with-db-name       defaults to wwwdata
+  --with-db-name=VALUE
+                          defaults to wwwdata
 
-  --with-dbi-user      defaults to nobody
+  --with-dbi-user=VALUE
+                          defaults to nobody
 
-  --with-dbi-pass      defaults to ChangeMeNow
+  --with-dbi-pass=VALUE
+                          defaults to
 
-  --with-pgroot-user   defaults to postgres
+  --with-pgroot-user=VALUE
+                          defaults to postgres
 
-  --with-pgsystem-user defaults to postgres
+  --with-pgsystem-user=VALUE
+                          defaults to postgres
 
-  --with-server_root   defaults to /usr/local/apache
+  --with-server_root=VALUE
+                          defaults to /usr/local/apache
 
-  --with-apache-conf   defaults to '${prefix}/conf/httpd.conf'
+  --with-apache-conf=VALUE
+                          defaults to '${prefix}/conf/httpd.conf'
 
-  --with-lod_dir       defaults to ${SERVER_ROOT}/logs
+  --with-log_dir=VALUE
+                          defaults to ${SERVER_ROOT}/logs
 
-  --with-error_log     defaults to ${LOGDIR}/error.log
+  --with-error_log=VALUE
+                          defaults to ${LOGDIR}/error.log
 
-  --with-access_log    defaults to ${LOGDIR}/access.log
+  --with-access_log=VALUE
+                          defaults to ${LOGDIR}/access.log
 
-  --with-ssl_log       defaults to ${LOGDIR}/ssl_engine_log
+  --with-ssl_log=VALUE
+                          defaults to ${LOGDIR}/ssl_engine_log
 
-  --with-pid_file      defaults to ${LOGDIR}/httpd.pid
+  --with-pid_file=VALUE
+                          defaults to ${LOGDIR}/httpd.pid
 
   --with-apache=PATH      absolute path name of apache server (default is
                           to search httpd in:
@@ -678,9 +698,9 @@ Optional Packages:
   --with-pghome=PATH      absolute path name of the postgres binary
                           (default is /usr/local/pgsql)
 
-  --with-ssl              enable ssl will check /usr/local/ssl
-                            /usr/lib/ssl /usr/ssl /usr/pkg
-                            /usr/local /usr
+	--with-ssl              enable ssl will check /usr/local/ssl
+							  /usr/lib/ssl /usr/ssl /usr/pkg
+							  /usr/local /usr
 
   --with-no-pgroot-pass   Use this flag to specify that you want
                           the db installer to su $PG_SYSTEM_USER and
@@ -876,7 +896,7 @@ if test -z "$CONFIG_SITE"; then
 fi
 for ac_site_file in $CONFIG_SITE; do
   if test -r "$ac_site_file"; then
-    { echo "$as_me:879: loading site script $ac_site_file" >&5
+    { echo "$as_me:899: loading site script $ac_site_file" >&5
 echo "$as_me: loading site script $ac_site_file" >&6;}
     cat "$ac_site_file" >&5
     . "$ac_site_file"
@@ -887,7 +907,7 @@ if test -r "$cache_file"; then
   # Some versions of bash will fail to source /dev/null (special
   # files actually), so we avoid doing that.
   if test -f "$cache_file"; then
-    { echo "$as_me:890: loading cache $cache_file" >&5
+    { echo "$as_me:910: loading cache $cache_file" >&5
 echo "$as_me: loading cache $cache_file" >&6;}
     case $cache_file in
       [\\/]* | ?:[\\/]* ) . $cache_file;;
@@ -895,7 +915,7 @@ echo "$as_me: loading cache $cache_file" >&6;}
     esac
   fi
 else
-  { echo "$as_me:898: creating cache $cache_file" >&5
+  { echo "$as_me:918: creating cache $cache_file" >&5
 echo "$as_me: creating cache $cache_file" >&6;}
   >$cache_file
 fi
@@ -911,21 +931,21 @@ for ac_var in `(set) 2>&1 |
   eval ac_new_val="\$ac_env_${ac_var}_value"
   case $ac_old_set,$ac_new_set in
     set,)
-      { echo "$as_me:914: error: \`$ac_var' was set to \`$ac_old_val' in the previous run" >&5
+      { echo "$as_me:934: error: \`$ac_var' was set to \`$ac_old_val' in the previous run" >&5
 echo "$as_me: error: \`$ac_var' was set to \`$ac_old_val' in the previous run" >&2;}
       ac_cache_corrupted=: ;;
     ,set)
-      { echo "$as_me:918: error: \`$ac_var' was not set in the previous run" >&5
+      { echo "$as_me:938: error: \`$ac_var' was not set in the previous run" >&5
 echo "$as_me: error: \`$ac_var' was not set in the previous run" >&2;}
       ac_cache_corrupted=: ;;
     ,);;
     *)
       if test "x$ac_old_val" != "x$ac_new_val"; then
-        { echo "$as_me:924: error: \`$ac_var' has changed since the previous run:" >&5
+        { echo "$as_me:944: error: \`$ac_var' has changed since the previous run:" >&5
 echo "$as_me: error: \`$ac_var' has changed since the previous run:" >&2;}
-        { echo "$as_me:926:   former value:  $ac_old_val" >&5
+        { echo "$as_me:946:   former value:  $ac_old_val" >&5
 echo "$as_me:   former value:  $ac_old_val" >&2;}
-        { echo "$as_me:928:   current value: $ac_new_val" >&5
+        { echo "$as_me:948:   current value: $ac_new_val" >&5
 echo "$as_me:   current value: $ac_new_val" >&2;}
         ac_cache_corrupted=:
       fi;;
@@ -944,9 +964,9 @@ echo "$as_me:   current value: $ac_new_val" >&2;}
   fi
 done
 if $ac_cache_corrupted; then
-  { echo "$as_me:947: error: changes in the environment can compromise the build" >&5
+  { echo "$as_me:967: error: changes in the environment can compromise the build" >&5
 echo "$as_me: error: changes in the environment can compromise the build" >&2;}
-  { { echo "$as_me:949: error: run \`make distclean' and/or \`rm $cache_file' and start over" >&5
+  { { echo "$as_me:969: error: run \`make distclean' and/or \`rm $cache_file' and start over" >&5
 echo "$as_me: error: run \`make distclean' and/or \`rm $cache_file' and start over" >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -966,10 +986,10 @@ esac
 echo "#! $SHELL" >conftest.sh
 echo  "exit 0"   >>conftest.sh
 chmod +x conftest.sh
-if { (echo "$as_me:969: PATH=\".;.\"; conftest.sh") >&5
+if { (echo "$as_me:989: PATH=\".;.\"; conftest.sh") >&5
   (PATH=".;."; conftest.sh) 2>&5
   ac_status=$?
-  echo "$as_me:972: \$? = $ac_status" >&5
+  echo "$as_me:992: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   ac_path_separator=';'
 else
@@ -985,8 +1005,10 @@ rm -f conftest.sh
 # Use braces instead of parens because sh, perl, etc. also accept them.
 datadir='${prefix}/data'
 sysconfdir='${prefix}/conf'
-# Capture the config string early
-CONFIG_STRING="$@"
+# Capture the config string early.  This will wind up stored in
+# a clear text file with open read perms, so get rid of the
+# passwords.
+CONFIG_STRING=`echo $@ | sed -e 's/ --with-dbi-pass=^ *//g'`
 
 # Additional --with-switches
 # SYNTAX: AC_VAR_WITH(VARNAME,switchname,default)
@@ -1076,7 +1098,7 @@ if test "${with_dbi_pass+set}" = set; then
   withval="$with_dbi_pass"
   DBI_PASS=${withval}
 else
-  DBI_PASS=ChangeMeNow
+  DBI_PASS=
 fi;
 
 # Check whether --with-pgroot-user or --without-pgroot-user was given.
@@ -1113,9 +1135,9 @@ else
   APACHE_CONF='${prefix}/conf/httpd.conf'
 fi;
 
-# Check whether --with-lod_dir or --without-lod_dir was given.
-if test "${with_lod_dir+set}" = set; then
-  withval="$with_lod_dir"
+# Check whether --with-log_dir or --without-log_dir was given.
+if test "${with_log_dir+set}" = set; then
+  withval="$with_log_dir"
   LOGDIR=${withval}
 else
   LOGDIR=${SERVER_ROOT}/logs
@@ -1156,20 +1178,20 @@ fi;
 # Warn if the specified user doesn't seem to
 # exist
 
-	echo "$as_me:1159: checking for user \"${APACHE_USER}\"" >&5
+	echo "$as_me:1181: checking for user \"${APACHE_USER}\"" >&5
 echo $ECHO_N "checking for user \"${APACHE_USER}\"... $ECHO_C" >&6
 	if id ${APACHE_USER} >/dev/null ; then
 		ISUSERHERE='yes'
-		echo "$as_me:1163: result: yes" >&5
+		echo "$as_me:1185: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 	else
 		ISUSERHERE='no'
-    echo "$as_me:1167: result: no" >&5
+    echo "$as_me:1189: result: no" >&5
 echo "${ECHO_T}no" >&6
 	fi
 
 if test "$ISUSERHERE" = "no" ;then
-	{ { echo "$as_me:1172: error:
+	{ { echo "$as_me:1194: error:
 
   There is no such user \"${APACHE_USER}\" in the system
   database.  Please add this user or run
@@ -1194,35 +1216,35 @@ fi
 
 # Warn if the specified group doesn't seem to exist
 
-	echo "$as_me:1197: checking for group \"${APACHE_GROUP}\"" >&5
+	echo "$as_me:1219: checking for group \"${APACHE_GROUP}\"" >&5
 echo $ECHO_N "checking for group \"${APACHE_GROUP}\"... $ECHO_C" >&6
 	touch /tmp/ac_group_test
 	# if we are able to change the group of our file then
 	# we must have a valid group
 	if chgrp ${APACHE_GROUP} /tmp/ac_group_test 2>/dev/null ; then
 		ISGROUPHERE='yes'
-		echo "$as_me:1204: result: yes" >&5
+		echo "$as_me:1226: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 	# or if we have a match when we look at the user ID
 	elif id ${APACHE_USER} |grep ${APACHE_GROUP} 2>&1 >/dev/null ; then
 		ISGROUPHERE='yes'
-		echo "$as_me:1209: result: yes" >&5
+		echo "$as_me:1231: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 	# or if we try to change our file and are told that
 	# we haven't got permission then the group exists,
 	# otherwise we would be told that the group is invalid
 	elif chgrp ${APACHE_GROUP} /tmp/ac_group_test 2>&1 | grep 'not permitted' >/dev/null ; then
 		ISGROUPHERE='yes'
-    	echo "$as_me:1216: result: yes" >&5
+    	echo "$as_me:1238: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 	else
 		ISGROUPHERE='no'
-		echo "$as_me:1220: result: no" >&5
+		echo "$as_me:1242: result: no" >&5
 echo "${ECHO_T}no" >&6
 	fi
 
 if test "$ISGROUPHERE" = "no" ;then
-	{ { echo "$as_me:1225: error:
+	{ { echo "$as_me:1247: error:
 
   There is no such group \"${APACHE_GROUP}\" in the system
   database.  Please add this group or run
@@ -1250,7 +1272,7 @@ fi
 # Handle user hints
 #
 
- echo "$as_me:1253: checking if apache is wanted" >&5
+ echo "$as_me:1275: checking if apache is wanted" >&5
 echo $ECHO_N "checking if apache is wanted... $ECHO_C" >&6
 
 # Check whether --with-apache or --without-apache was given.
@@ -1261,7 +1283,7 @@ if test "${with_apache+set}" = set; then
     # Run this if -with or -without was specified
     #
     if test "$withval" != no ; then
-       echo "$as_me:1264: result: yes" >&5
+       echo "$as_me:1286: result: yes" >&5
 echo "${ECHO_T}yes" >&6
        APACHE_WANTED=yes
        if test "$withval" != yes ; then
@@ -1269,7 +1291,7 @@ echo "${ECHO_T}yes" >&6
        fi
     else
        APACHE_WANTED=no
-       echo "$as_me:1272: result: no" >&5
+       echo "$as_me:1294: result: no" >&5
 echo "${ECHO_T}no" >&6
     fi
 
@@ -1279,7 +1301,7 @@ else
     # Run this if nothing was said
     #
     APACHE_WANTED=yes
-    echo "$as_me:1282: result: yes" >&5
+    echo "$as_me:1304: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 
 fi;
@@ -1295,7 +1317,7 @@ fi;
       # original for non-Debian systems
       # Extract the first word of "httpd", so it can be a program name with args.
 set dummy httpd; ac_word=$2
-echo "$as_me:1298: checking for $ac_word" >&5
+echo "$as_me:1320: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_APACHE+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1312,7 +1334,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_APACHE="$ac_dir/$ac_word"
-   echo "$as_me:1315: found $ac_dir/$ac_word" >&5
+   echo "$as_me:1337: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1323,17 +1345,17 @@ fi
 APACHE=$ac_cv_path_APACHE
 
 if test -n "$APACHE"; then
-  echo "$as_me:1326: result: $APACHE" >&5
+  echo "$as_me:1348: result: $APACHE" >&5
 echo "${ECHO_T}$APACHE" >&6
 else
-  echo "$as_me:1329: result: no" >&5
+  echo "$as_me:1351: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
       # added for Debian compatibility
       # Extract the first word of "apache-perl", so it can be a program name with args.
 set dummy apache-perl; ac_word=$2
-echo "$as_me:1336: checking for $ac_word" >&5
+echo "$as_me:1358: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_APACHE+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1350,7 +1372,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_APACHE="$ac_dir/$ac_word"
-   echo "$as_me:1353: found $ac_dir/$ac_word" >&5
+   echo "$as_me:1375: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1361,16 +1383,16 @@ fi
 APACHE=$ac_cv_path_APACHE
 
 if test -n "$APACHE"; then
-  echo "$as_me:1364: result: $APACHE" >&5
+  echo "$as_me:1386: result: $APACHE" >&5
 echo "${ECHO_T}$APACHE" >&6
 else
-  echo "$as_me:1367: result: no" >&5
+  echo "$as_me:1389: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
       # Extract the first word of "apache", so it can be a program name with args.
 set dummy apache; ac_word=$2
-echo "$as_me:1373: checking for $ac_word" >&5
+echo "$as_me:1395: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_APACHE+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1387,7 +1409,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_APACHE="$ac_dir/$ac_word"
-   echo "$as_me:1390: found $ac_dir/$ac_word" >&5
+   echo "$as_me:1412: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1398,17 +1420,17 @@ fi
 APACHE=$ac_cv_path_APACHE
 
 if test -n "$APACHE"; then
-  echo "$as_me:1401: result: $APACHE" >&5
+  echo "$as_me:1423: result: $APACHE" >&5
 echo "${ECHO_T}$APACHE" >&6
 else
-  echo "$as_me:1404: result: no" >&5
+  echo "$as_me:1426: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
     fi
 
     if test -z "$APACHE" ; then
-        { { echo "$as_me:1411: error: \"apache server executable not found\"" >&5
+        { { echo "$as_me:1433: error: \"apache server executable not found\"" >&5
 echo "$as_me: error: \"apache server executable not found\"" >&2;}
    { (exit 1); exit 1; }; };
     fi
@@ -1419,7 +1441,7 @@ echo "$as_me: error: \"apache server executable not found\"" >&2;}
         APACHE_READABLE_VERSION=`$APACHE -v | grep 'Server version' | sed -e 's;.*Apache/\([0-9\.][0-9\.]*\).*;\1;'`
         APACHE_VERSION=`echo $APACHE_READABLE_VERSION | sed -e 's/\.//g'`
     if test -z "$APACHE_VERSION" ; then
-        { { echo "$as_me:1422: error: \"could not determine apache version number\"" >&5
+        { { echo "$as_me:1444: error: \"could not determine apache version number\"" >&5
 echo "$as_me: error: \"could not determine apache version number\"" >&2;}
    { (exit 1); exit 1; }; };
     fi
@@ -1429,19 +1451,19 @@ echo "$as_me: error: \"could not determine apache version number\"" >&2;}
     # Check that apache version matches requested version or above
     #
     if test -n "1.3.12" ; then
-      echo "$as_me:1432: checking apache version >= 1.3.12" >&5
+      echo "$as_me:1454: checking apache version >= 1.3.12" >&5
 echo $ECHO_N "checking apache version >= 1.3.12... $ECHO_C" >&6
       APACHE_REQUEST=`echo 1.3.12 | sed -e 's/\.//g'`
       APACHE_REQUEST_MAJOR=`expr $APACHE_REQUEST : '\(..\)'`
       APACHE_REQUEST_MINOR=`expr $APACHE_REQUEST : '..\(.*\)'`
       if test "$APACHE_MAJOR" -lt "$APACHE_REQUEST_MAJOR" -o "$APACHE_MINOR" -lt "$APACHE_REQUEST_MINOR" ; then
-        echo "$as_me:1438: result: no" >&5
+        echo "$as_me:1460: result: no" >&5
 echo "${ECHO_T}no" >&6
-        { { echo "$as_me:1440: error: apache version is $APACHE_READABLE_VERSION" >&5
+        { { echo "$as_me:1462: error: apache version is $APACHE_READABLE_VERSION" >&5
 echo "$as_me: error: apache version is $APACHE_READABLE_VERSION" >&2;}
    { (exit 1); exit 1; }; }
       else
-        echo "$as_me:1444: result: yes" >&5
+        echo "$as_me:1466: result: yes" >&5
 echo "${ECHO_T}yes" >&6
       fi
     fi
@@ -1449,7 +1471,7 @@ echo "${ECHO_T}yes" >&6
     # Find out if .so modules are in libexec/module.so or modules/module.so
     #
     HTTP_ROOT=`$APACHE -V | grep HTTPD_ROOT | sed -e 's/.*"\(.*\)"/\1/'`
-    echo "$as_me:1452: checking apache modules" >&5
+    echo "$as_me:1474: checking apache modules" >&5
 echo $ECHO_N "checking apache modules... $ECHO_C" >&6
     for dir in libexec modules
     do
@@ -1460,10 +1482,10 @@ echo $ECHO_N "checking apache modules... $ECHO_C" >&6
     done
     if test -z "$APACHE_MODULES"
     then
-      echo "$as_me:1463: result: not found" >&5
+      echo "$as_me:1485: result: not found" >&5
 echo "${ECHO_T}not found" >&6
     else
-      echo "$as_me:1466: result: in $HTTP_ROOT/$APACHE_MODULES" >&5
+      echo "$as_me:1488: result: in $HTTP_ROOT/$APACHE_MODULES" >&5
 echo "${ECHO_T}in $HTTP_ROOT/$APACHE_MODULES" >&6
     fi
 
@@ -1508,7 +1530,7 @@ fi;
  if test -z "$PG_CONFIG" ; then
    # Extract the first word of "pg_config", so it can be a program name with args.
 set dummy pg_config; ac_word=$2
-echo "$as_me:1511: checking for $ac_word" >&5
+echo "$as_me:1533: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_PG_CONFIG+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1525,7 +1547,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_PG_CONFIG="$ac_dir/$ac_word"
-   echo "$as_me:1528: found $ac_dir/$ac_word" >&5
+   echo "$as_me:1550: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1536,17 +1558,17 @@ fi
 PG_CONFIG=$ac_cv_path_PG_CONFIG
 
 if test -n "$PG_CONFIG"; then
-  echo "$as_me:1539: result: $PG_CONFIG" >&5
+  echo "$as_me:1561: result: $PG_CONFIG" >&5
 echo "${ECHO_T}$PG_CONFIG" >&6
 else
-  echo "$as_me:1542: result: no" >&5
+  echo "$as_me:1564: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
  fi
 
  if test -z "$PG_CONFIG" ; then
-     { { echo "$as_me:1549: error: \"pg_config executable not found\"" >&5
+     { { echo "$as_me:1571: error: \"pg_config executable not found\"" >&5
 echo "$as_me: error: \"pg_config executable not found\"" >&2;}
    { (exit 1); exit 1; }; };
  fi
@@ -1562,7 +1584,7 @@ echo "$as_me: error: \"pg_config executable not found\"" >&2;}
  #
   POSTGRES_VERSION=`$PG_CONFIG --version | grep 'PostgreSQL' | sed -e 's;.*PostgreSQL \([0-9\.][0-9\.]*\).*;\1;'`
   if test -z "$POSTGRES_VERSION" ; then
-     { { echo "$as_me:1565: error: \"could not determine postgres version number\"" >&5
+     { { echo "$as_me:1587: error: \"could not determine postgres version number\"" >&5
 echo "$as_me: error: \"could not determine postgres version number\"" >&2;}
    { (exit 1); exit 1; }; };
  fi
@@ -1573,19 +1595,19 @@ echo "$as_me: error: \"could not determine postgres version number\"" >&2;}
  # Check that postgres version matches requested version or above
  #
  if test -n "7.1.3" ; then
-   echo "$as_me:1576: checking postgres version >= 7.1.3" >&5
+   echo "$as_me:1598: checking postgres version >= 7.1.3" >&5
 echo $ECHO_N "checking postgres version >= 7.1.3... $ECHO_C" >&6
       POSTGRES_REQUEST_MAJOR=`expr 7.1.3 : '\([0-9]*\)'`
    POSTGRES_REQUEST_MINOR=`expr 7.1.3 : "$POSTGRES_REQUEST_MAJOR.\([0-9]*\)"`
    POSTGRES_REQUEST_SUBMINOR=`expr 7.1.3 : "$POSTGRES_REQUEST_MAJOR.$POSTGRES_REQUEST_MINOR.\([0-9]*\)"`
       if test "$POSTGRES_MAJOR" -lt "$POSTGRES_REQUEST_MAJOR" -o "$POSTGRES_MINOR" -lt "$POSTGRES_REQUEST_MINOR" -o "$POSTGRES_SUBMINOR" -lt "$POSTGRES_REQUEST_SUBMINOR" ; then
-     echo "$as_me:1582: result: no" >&5
+     echo "$as_me:1604: result: no" >&5
 echo "${ECHO_T}no" >&6
-     { { echo "$as_me:1584: error: postgres version is $POSTGRES_VERSION" >&5
+     { { echo "$as_me:1606: error: postgres version is $POSTGRES_VERSION" >&5
 echo "$as_me: error: postgres version is $POSTGRES_VERSION" >&2;}
    { (exit 1); exit 1; }; }
    else
-     echo "$as_me:1588: result: yes" >&5
+     echo "$as_me:1610: result: yes" >&5
 echo "${ECHO_T}yes" >&6
    fi
  fi
@@ -1594,14 +1616,162 @@ echo "${ECHO_T}yes" >&6
  #
  PGHOME=$PGHOME
 
-	echo "$as_me:1597: checking if postgres was compiled with UNICODE support" >&5
+# Extract the first word of "psql", so it can be a program name with args.
+set dummy psql; ac_word=$2
+echo "$as_me:1621: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_PSQL+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $PSQL in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PSQL="$PSQL" # Let the user override the test with a path.
+  ;;
+  *)
+  ac_save_IFS=$IFS; IFS=$ac_path_separator
+ac_dummy="$PATH"
+for ac_dir in $ac_dummy; do
+  IFS=$ac_save_IFS
+  test -z "$ac_dir" && ac_dir=.
+  if $as_executable_p "$ac_dir/$ac_word"; then
+   ac_cv_path_PSQL="$ac_dir/$ac_word"
+   echo "$as_me:1638: found $ac_dir/$ac_word" >&5
+   break
+fi
+done
+
+  ;;
+esac
+fi
+PSQL=$ac_cv_path_PSQL
+
+if test -n "$PSQL"; then
+  echo "$as_me:1649: result: $PSQL" >&5
+echo "${ECHO_T}$PSQL" >&6
+else
+  echo "$as_me:1652: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+# Extract the first word of "dropdb", so it can be a program name with args.
+set dummy dropdb; ac_word=$2
+echo "$as_me:1658: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_DROPDB+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $DROPDB in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_DROPDB="$DROPDB" # Let the user override the test with a path.
+  ;;
+  *)
+  ac_save_IFS=$IFS; IFS=$ac_path_separator
+ac_dummy="$PATH"
+for ac_dir in $ac_dummy; do
+  IFS=$ac_save_IFS
+  test -z "$ac_dir" && ac_dir=.
+  if $as_executable_p "$ac_dir/$ac_word"; then
+   ac_cv_path_DROPDB="$ac_dir/$ac_word"
+   echo "$as_me:1675: found $ac_dir/$ac_word" >&5
+   break
+fi
+done
+
+  ;;
+esac
+fi
+DROPDB=$ac_cv_path_DROPDB
+
+if test -n "$DROPDB"; then
+  echo "$as_me:1686: result: $DROPDB" >&5
+echo "${ECHO_T}$DROPDB" >&6
+else
+  echo "$as_me:1689: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+# Extract the first word of "dropuser", so it can be a program name with args.
+set dummy dropuser; ac_word=$2
+echo "$as_me:1695: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_DROPUSER+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $DROPUSER in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_DROPUSER="$DROPUSER" # Let the user override the test with a path.
+  ;;
+  *)
+  ac_save_IFS=$IFS; IFS=$ac_path_separator
+ac_dummy="$PATH"
+for ac_dir in $ac_dummy; do
+  IFS=$ac_save_IFS
+  test -z "$ac_dir" && ac_dir=.
+  if $as_executable_p "$ac_dir/$ac_word"; then
+   ac_cv_path_DROPUSER="$ac_dir/$ac_word"
+   echo "$as_me:1712: found $ac_dir/$ac_word" >&5
+   break
+fi
+done
+
+  ;;
+esac
+fi
+DROPUSER=$ac_cv_path_DROPUSER
+
+if test -n "$DROPUSER"; then
+  echo "$as_me:1723: result: $DROPUSER" >&5
+echo "${ECHO_T}$DROPUSER" >&6
+else
+  echo "$as_me:1726: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+# Extract the first word of "createdb", so it can be a program name with args.
+set dummy createdb; ac_word=$2
+echo "$as_me:1732: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_CREATEDB+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $CREATEDB in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_CREATEDB="$CREATEDB" # Let the user override the test with a path.
+  ;;
+  *)
+  ac_save_IFS=$IFS; IFS=$ac_path_separator
+ac_dummy="$PATH"
+for ac_dir in $ac_dummy; do
+  IFS=$ac_save_IFS
+  test -z "$ac_dir" && ac_dir=.
+  if $as_executable_p "$ac_dir/$ac_word"; then
+   ac_cv_path_CREATEDB="$ac_dir/$ac_word"
+   echo "$as_me:1749: found $ac_dir/$ac_word" >&5
+   break
+fi
+done
+
+  ;;
+esac
+fi
+CREATEDB=$ac_cv_path_CREATEDB
+
+if test -n "$CREATEDB"; then
+  echo "$as_me:1760: result: $CREATEDB" >&5
+echo "${ECHO_T}$CREATEDB" >&6
+else
+  echo "$as_me:1763: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+	echo "$as_me:1767: checking if postgres was compiled with UNICODE support" >&5
 echo $ECHO_N "checking if postgres was compiled with UNICODE support... $ECHO_C" >&6
 	if test "" ; then
 		PG_CONFIG=
 	elif test -z "$PG_CONFIG" ;then
   	# Extract the first word of "pg_config", so it can be a program name with args.
 set dummy pg_config; ac_word=$2
-echo "$as_me:1604: checking for $ac_word" >&5
+echo "$as_me:1774: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_PG_CONFIG+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1618,7 +1788,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_PG_CONFIG="$ac_dir/$ac_word"
-   echo "$as_me:1621: found $ac_dir/$ac_word" >&5
+   echo "$as_me:1791: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1629,28 +1799,28 @@ fi
 PG_CONFIG=$ac_cv_path_PG_CONFIG
 
 if test -n "$PG_CONFIG"; then
-  echo "$as_me:1632: result: $PG_CONFIG" >&5
+  echo "$as_me:1802: result: $PG_CONFIG" >&5
 echo "${ECHO_T}$PG_CONFIG" >&6
 else
-  echo "$as_me:1635: result: no" >&5
+  echo "$as_me:1805: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
 	fi
 	if $PG_CONFIG --configure | grep multibyte >/dev/null ;then
-		echo "$as_me:1641: result: yes" >&5
+		echo "$as_me:1811: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 	else
-		echo "$as_me:1644: result: no" >&5
+		echo "$as_me:1814: result: no" >&5
 echo "${ECHO_T}no" >&6
-		{ { echo "$as_me:1646: error: Bricolage requires that Postgres be compiled with multibyte charager support" >&5
+		{ { echo "$as_me:1816: error: Bricolage requires that Postgres be compiled with multibyte charager support" >&5
 echo "$as_me: error: Bricolage requires that Postgres be compiled with multibyte charager support" >&2;}
    { (exit 1); exit 1; }; }
 	fi
 
   # Extract the first word of "perl", so it can be a program name with args.
 set dummy perl; ac_word=$2
-echo "$as_me:1653: checking for $ac_word" >&5
+echo "$as_me:1823: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_PERL+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1667,7 +1837,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_PERL="$ac_dir/$ac_word"
-   echo "$as_me:1670: found $ac_dir/$ac_word" >&5
+   echo "$as_me:1840: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1678,10 +1848,10 @@ fi
 PERL=$ac_cv_path_PERL
 
 if test -n "$PERL"; then
-  echo "$as_me:1681: result: $PERL" >&5
+  echo "$as_me:1851: result: $PERL" >&5
 echo "${ECHO_T}$PERL" >&6
 else
-  echo "$as_me:1684: result: no" >&5
+  echo "$as_me:1854: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -1695,7 +1865,7 @@ fi
   # or better.
   PERL_VERSION=`${PERL} -e 'printf "%vd", $^V'`
     if test -z "$PERL_VERSION" ; then
-      { { echo "$as_me:1698: error: \"could not determine perl version number\"" >&5
+      { { echo "$as_me:1868: error: \"could not determine perl version number\"" >&5
 echo "$as_me: error: \"could not determine perl version number\"" >&2;}
    { (exit 1); exit 1; }; };
   fi
@@ -1706,26 +1876,26 @@ echo "$as_me: error: \"could not determine perl version number\"" >&2;}
   # Check that perl version matches requested version or above
   #
   if test -n "5.6.1" ; then
-    echo "$as_me:1709: checking perl version >= 5.6.1" >&5
+    echo "$as_me:1879: checking perl version >= 5.6.1" >&5
 echo $ECHO_N "checking perl version >= 5.6.1... $ECHO_C" >&6
         PERL_REQUEST_MAJOR=`expr 5.6.1 : '\([0-9]*\)'`
     PERL_REQUEST_MINOR=`expr 5.6.1 : "$PERL_REQUEST_MAJOR.\([0-9]*\)"`
     PERL_REQUEST_SUBMINOR=`expr 5.6.1 : "$PERL_REQUEST_MAJOR.$PERL_REQUEST_MINOR.\([0-9]*\)"`
         if test "$PERL_MAJOR" -lt "$PERL_REQUEST_MAJOR" -o "$PERL_MINOR" -lt "$PERL_REQUEST_MINOR" -o "$PERL_SUBMINOR" -lt "$PERL_REQUEST_SUBMINOR" ; then
-      echo "$as_me:1715: result: no" >&5
+      echo "$as_me:1885: result: no" >&5
 echo "${ECHO_T}no" >&6
-      { { echo "$as_me:1717: error: perl version is $PERL_VERSION" >&5
+      { { echo "$as_me:1887: error: perl version is $PERL_VERSION" >&5
 echo "$as_me: error: perl version is $PERL_VERSION" >&2;}
    { (exit 1); exit 1; }; }
     else
-      echo "$as_me:1721: result: yes" >&5
+      echo "$as_me:1891: result: yes" >&5
 echo "${ECHO_T}yes" >&6
     fi
   fi
 
 # Extract the first word of "pod2html", so it can be a program name with args.
 set dummy pod2html; ac_word=$2
-echo "$as_me:1728: checking for $ac_word" >&5
+echo "$as_me:1898: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_POD2HTML+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1742,7 +1912,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_POD2HTML="$ac_dir/$ac_word"
-   echo "$as_me:1745: found $ac_dir/$ac_word" >&5
+   echo "$as_me:1915: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1753,14 +1923,14 @@ fi
 POD2HTML=$ac_cv_path_POD2HTML
 
 if test -n "$POD2HTML"; then
-  echo "$as_me:1756: result: $POD2HTML" >&5
+  echo "$as_me:1926: result: $POD2HTML" >&5
 echo "${ECHO_T}$POD2HTML" >&6
 else
-  echo "$as_me:1759: result: no" >&5
+  echo "$as_me:1929: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
-	echo "$as_me:1763: checking which pod2html we have" >&5
+	echo "$as_me:1933: checking which pod2html we have" >&5
 echo $ECHO_N "checking which pod2html we have... $ECHO_C" >&6
 	if pod2html --help 2>&1 | grep "\-\-libpods" >/dev/null ; then
 		POD2HTML_TYPE='Christiansen'
@@ -1770,12 +1940,12 @@ echo $ECHO_N "checking which pod2html we have... $ECHO_C" >&6
 		POD2HTML_TYPE='none'
 	fi
 
-	echo "$as_me:1773: result: ${POD2HTML_TYPE}" >&5
+	echo "$as_me:1943: result: ${POD2HTML_TYPE}" >&5
 echo "${ECHO_T}${POD2HTML_TYPE}" >&6
 
 # Extract the first word of "pod2text", so it can be a program name with args.
 set dummy pod2text; ac_word=$2
-echo "$as_me:1778: checking for $ac_word" >&5
+echo "$as_me:1948: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_POD2TEXT+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1792,7 +1962,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_POD2TEXT="$ac_dir/$ac_word"
-   echo "$as_me:1795: found $ac_dir/$ac_word" >&5
+   echo "$as_me:1965: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1803,16 +1973,16 @@ fi
 POD2TEXT=$ac_cv_path_POD2TEXT
 
 if test -n "$POD2TEXT"; then
-  echo "$as_me:1806: result: $POD2TEXT" >&5
+  echo "$as_me:1976: result: $POD2TEXT" >&5
 echo "${ECHO_T}$POD2TEXT" >&6
 else
-  echo "$as_me:1809: result: no" >&5
+  echo "$as_me:1979: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
 # Extract the first word of "pod2man", so it can be a program name with args.
 set dummy pod2man; ac_word=$2
-echo "$as_me:1815: checking for $ac_word" >&5
+echo "$as_me:1985: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_POD2MAN+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1829,7 +1999,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_POD2MAN="$ac_dir/$ac_word"
-   echo "$as_me:1832: found $ac_dir/$ac_word" >&5
+   echo "$as_me:2002: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1840,16 +2010,16 @@ fi
 POD2MAN=$ac_cv_path_POD2MAN
 
 if test -n "$POD2MAN"; then
-  echo "$as_me:1843: result: $POD2MAN" >&5
+  echo "$as_me:2013: result: $POD2MAN" >&5
 echo "${ECHO_T}$POD2MAN" >&6
 else
-  echo "$as_me:1846: result: no" >&5
+  echo "$as_me:2016: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
 # Extract the first word of "gzip", so it can be a program name with args.
 set dummy gzip; ac_word=$2
-echo "$as_me:1852: checking for $ac_word" >&5
+echo "$as_me:2022: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_GZIP+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1866,7 +2036,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_GZIP="$ac_dir/$ac_word"
-   echo "$as_me:1869: found $ac_dir/$ac_word" >&5
+   echo "$as_me:2039: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1877,16 +2047,16 @@ fi
 GZIP=$ac_cv_path_GZIP
 
 if test -n "$GZIP"; then
-  echo "$as_me:1880: result: $GZIP" >&5
+  echo "$as_me:2050: result: $GZIP" >&5
 echo "${ECHO_T}$GZIP" >&6
 else
-  echo "$as_me:1883: result: no" >&5
+  echo "$as_me:2053: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
 # Extract the first word of "mkdir", so it can be a program name with args.
 set dummy mkdir; ac_word=$2
-echo "$as_me:1889: checking for $ac_word" >&5
+echo "$as_me:2059: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_MKDIR+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1903,7 +2073,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_MKDIR="$ac_dir/$ac_word"
-   echo "$as_me:1906: found $ac_dir/$ac_word" >&5
+   echo "$as_me:2076: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1914,16 +2084,16 @@ fi
 MKDIR=$ac_cv_path_MKDIR
 
 if test -n "$MKDIR"; then
-  echo "$as_me:1917: result: $MKDIR" >&5
+  echo "$as_me:2087: result: $MKDIR" >&5
 echo "${ECHO_T}$MKDIR" >&6
 else
-  echo "$as_me:1920: result: no" >&5
+  echo "$as_me:2090: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
 # Extract the first word of "find", so it can be a program name with args.
 set dummy find; ac_word=$2
-echo "$as_me:1926: checking for $ac_word" >&5
+echo "$as_me:2096: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_FIND+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1940,7 +2110,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_FIND="$ac_dir/$ac_word"
-   echo "$as_me:1943: found $ac_dir/$ac_word" >&5
+   echo "$as_me:2113: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1951,16 +2121,16 @@ fi
 FIND=$ac_cv_path_FIND
 
 if test -n "$FIND"; then
-  echo "$as_me:1954: result: $FIND" >&5
+  echo "$as_me:2124: result: $FIND" >&5
 echo "${ECHO_T}$FIND" >&6
 else
-  echo "$as_me:1957: result: no" >&5
+  echo "$as_me:2127: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
 # Extract the first word of "ctags", so it can be a program name with args.
 set dummy ctags; ac_word=$2
-echo "$as_me:1963: checking for $ac_word" >&5
+echo "$as_me:2133: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_CTAGS+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1977,7 +2147,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_CTAGS="$ac_dir/$ac_word"
-   echo "$as_me:1980: found $ac_dir/$ac_word" >&5
+   echo "$as_me:2150: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -1988,10 +2158,10 @@ fi
 CTAGS=$ac_cv_path_CTAGS
 
 if test -n "$CTAGS"; then
-  echo "$as_me:1991: result: $CTAGS" >&5
+  echo "$as_me:2161: result: $CTAGS" >&5
 echo "${ECHO_T}$CTAGS" >&6
 else
-  echo "$as_me:1994: result: no" >&5
+  echo "$as_me:2164: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -2051,41 +2221,78 @@ fi
 rm -f confcache
 
 # Checks for libraries.
-echo "$as_me:2054: checking if ssl is wanted" >&5
+
+# Check to see if apache has mod_perl compiled in
+
+	echo "$as_me:2227: checking if apache was compiled with modperl" >&5
+echo $ECHO_N "checking if apache was compiled with modperl... $ECHO_C" >&6
+	if ${APACHE} -l | grep -q mod_perl.c ; then
+		echo "$as_me:2230: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+		AMOD_PERL=yes
+	else
+		echo "$as_me:2234: result: no" >&5
+echo "${ECHO_T}no" >&6
+		AMOD_PERL=no
+	fi
+
+# If not, we're going to have to share the bad news
+# and fail.  Bricolage requires a compiled in mod_perl
+if test "${AMOD_PERL}" != "yes" ; then
+	{ { echo "$as_me:2242: error:
+
+	It appears that your apache binary was compiled without
+	mod_perl support.  Bricolage will not run correctly
+	without mod_perl compiled into the Apache.
+
+	" >&5
+echo "$as_me: error:
+
+	It appears that your apache binary was compiled without
+	mod_perl support.  Bricolage will not run correctly
+	without mod_perl compiled into the Apache.
+
+	" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+# Check for ssl option, and find ssl if yes
+HAVE_SSL=no
+  echo "$as_me:2261: checking if ssl is wanted" >&5
 echo $ECHO_N "checking if ssl is wanted... $ECHO_C" >&6
 
 # Check whether --with-ssl or --without-ssl was given.
 if test "${with_ssl+set}" = set; then
   withval="$with_ssl"
-     echo "$as_me:2060: result: yes" >&5
+     echo "$as_me:2267: result: yes" >&5
 echo "${ECHO_T}yes" >&6
-    for dir in $withval /usr/local/ssl /usr/lib/ssl /usr/ssl /usr/pkg /usr/local /usr; do
-        ssldir="$dir"
-        if test -f "$dir/include/openssl/ssl.h"; then
-            found_ssl="yes";
-            CFLAGS="$CFLAGS -I$ssldir/include/openssl -DHAVE_SSL";
-            break;
-        fi
-        if test -f "$dir/include/ssl.h"; then
-            found_ssl="yes";
-            CFLAGS="$CFLAGS -I$ssldir/include/ -DHAVE_SSL";
-            break
-        fi
-    done
-    if test x_$found_ssl != x_yes; then
-        { { echo "$as_me:2076: error: Cannot find ssl libraries" >&5
+	  for dir in $withval /usr/local/ssl /usr/lib/ssl /usr/ssl /usr/pkg /usr/local /usr; do
+		  ssldir="$dir"
+		  if test -f "$dir/include/openssl/ssl.h"; then
+			  found_ssl="yes";
+			  CFLAGS="$CFLAGS -I$ssldir/include/openssl -DHAVE_SSL";
+			  break;
+		  fi
+		  if test -f "$dir/include/ssl.h"; then
+			  found_ssl="yes";
+			  CFLAGS="$CFLAGS -I$ssldir/include/ -DHAVE_SSL";
+			  break
+		  fi
+	  done
+	  if test x_$found_ssl != x_yes; then
+		  { { echo "$as_me:2283: error: Cannot find ssl libraries" >&5
 echo "$as_me: error: Cannot find ssl libraries" >&2;}
    { (exit 1); exit 1; }; }
-    else
-        printf "OpenSSL found in $ssldir\n";
-        LIBS="$LIBS -lssl -lcrypto";
-        LDFLAGS="$LDFLAGS -L$ssldir/lib";
-        HAVE_SSL=yes
-    fi
+	  else
+		  printf "OpenSSL found in $ssldir\n";
+		  LIBS="$LIBS -lssl -lcrypto";
+		  LDFLAGS="$LDFLAGS -L$ssldir/lib";
+		  HAVE_SSL=yes
+	  fi
 
 else
 
-    echo "$as_me:2088: result: no" >&5
+	  echo "$as_me:2295: result: no" >&5
 echo "${ECHO_T}no" >&6
 
 fi;
@@ -2153,16 +2360,36 @@ rm -f confcache
 # Checks for CPAN modules
 # TODO: make sure CPAN itself works
 
- echo "$as_me:2156: checking for CPAN module Time::HiRes 01.20" >&5
+ echo "$as_me:2363: checking for CPAN module Bundle::Bricolage " >&5
+echo $ECHO_N "checking for CPAN module Bundle::Bricolage ... $ECHO_C" >&6
+ #
+ # use perl itself to check for the module
+ #
+ if perl -e "use Bundle::Bricolage " 2>/dev/null ;then
+    echo "$as_me:2369: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:2372: result: no" >&5
+echo "${ECHO_T}no" >&6
+    if test -z "${MISSING_MOD}" ; then
+        NEW_LIST="Bundle::Bricolage" ;
+    else
+        NEW_LIST="${MISSING_MOD} Bundle::Bricolage";
+    fi
+    MISSING_MOD=$NEW_LIST
+
+ fi
+
+ echo "$as_me:2383: checking for CPAN module Time::HiRes 01.20" >&5
 echo $ECHO_N "checking for CPAN module Time::HiRes 01.20... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Time::HiRes 01.20" 2>/dev/null ;then
-    echo "$as_me:2162: result: yes" >&5
+    echo "$as_me:2389: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2165: result: no" >&5
+    echo "$as_me:2392: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Time::HiRes" ;
@@ -2173,16 +2400,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2176: checking for CPAN module Storable 1.0.10" >&5
+ echo "$as_me:2403: checking for CPAN module Storable 1.0.10" >&5
 echo $ECHO_N "checking for CPAN module Storable 1.0.10... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Storable 1.0.10" 2>/dev/null ;then
-    echo "$as_me:2182: result: yes" >&5
+    echo "$as_me:2409: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2185: result: no" >&5
+    echo "$as_me:2412: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Storable" ;
@@ -2193,16 +2420,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2196: checking for CPAN module Unix::Syslog 0.95" >&5
+ echo "$as_me:2423: checking for CPAN module Unix::Syslog 0.95" >&5
 echo $ECHO_N "checking for CPAN module Unix::Syslog 0.95... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Unix::Syslog 0.95" 2>/dev/null ;then
-    echo "$as_me:2202: result: yes" >&5
+    echo "$as_me:2429: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2205: result: no" >&5
+    echo "$as_me:2432: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Unix::Syslog" ;
@@ -2213,16 +2440,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2216: checking for CPAN module Data::Dumper 1.0703" >&5
+ echo "$as_me:2443: checking for CPAN module Data::Dumper 1.0703" >&5
 echo $ECHO_N "checking for CPAN module Data::Dumper 1.0703... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Data::Dumper 1.0703" 2>/dev/null ;then
-    echo "$as_me:2222: result: yes" >&5
+    echo "$as_me:2449: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2225: result: no" >&5
+    echo "$as_me:2452: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Data::Dumper" ;
@@ -2233,16 +2460,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2236: checking for CPAN module Net::Cmd 1.0703" >&5
+ echo "$as_me:2463: checking for CPAN module Net::Cmd 1.0703" >&5
 echo $ECHO_N "checking for CPAN module Net::Cmd 1.0703... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Net::Cmd 1.0703" 2>/dev/null ;then
-    echo "$as_me:2242: result: yes" >&5
+    echo "$as_me:2469: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2245: result: no" >&5
+    echo "$as_me:2472: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Net::Cmd" ;
@@ -2253,16 +2480,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2256: checking for CPAN module Devel::Symdump 2.01" >&5
+ echo "$as_me:2483: checking for CPAN module Devel::Symdump 2.01" >&5
 echo $ECHO_N "checking for CPAN module Devel::Symdump 2.01... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Devel::Symdump 2.01" 2>/dev/null ;then
-    echo "$as_me:2262: result: yes" >&5
+    echo "$as_me:2489: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2265: result: no" >&5
+    echo "$as_me:2492: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Devel::Symdump" ;
@@ -2273,16 +2500,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2276: checking for CPAN module DBI 1.19" >&5
+ echo "$as_me:2503: checking for CPAN module DBI 1.19" >&5
 echo $ECHO_N "checking for CPAN module DBI 1.19... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use DBI 1.19" 2>/dev/null ;then
-    echo "$as_me:2282: result: yes" >&5
+    echo "$as_me:2509: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2285: result: no" >&5
+    echo "$as_me:2512: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="DBI" ;
@@ -2293,16 +2520,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2296: checking for CPAN module Cache::Cache 0.09" >&5
+ echo "$as_me:2523: checking for CPAN module Cache::Cache 0.09" >&5
 echo $ECHO_N "checking for CPAN module Cache::Cache 0.09... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Cache::Cache 0.09" 2>/dev/null ;then
-    echo "$as_me:2302: result: yes" >&5
+    echo "$as_me:2529: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2305: result: no" >&5
+    echo "$as_me:2532: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Cache::Cache" ;
@@ -2313,16 +2540,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2316: checking for CPAN module Digest::MD5 2.12" >&5
+ echo "$as_me:2543: checking for CPAN module Digest::MD5 2.12" >&5
 echo $ECHO_N "checking for CPAN module Digest::MD5 2.12... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Digest::MD5 2.12" 2>/dev/null ;then
-    echo "$as_me:2322: result: yes" >&5
+    echo "$as_me:2549: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2325: result: no" >&5
+    echo "$as_me:2552: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Digest::MD5" ;
@@ -2333,16 +2560,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2336: checking for CPAN module MD5 2.02" >&5
+ echo "$as_me:2563: checking for CPAN module MD5 2.02" >&5
 echo $ECHO_N "checking for CPAN module MD5 2.02... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use MD5 2.02" 2>/dev/null ;then
-    echo "$as_me:2342: result: yes" >&5
+    echo "$as_me:2569: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2345: result: no" >&5
+    echo "$as_me:2572: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="MD5" ;
@@ -2353,16 +2580,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2356: checking for CPAN module URI 1.12" >&5
+ echo "$as_me:2583: checking for CPAN module URI 1.12" >&5
 echo $ECHO_N "checking for CPAN module URI 1.12... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use URI 1.12" 2>/dev/null ;then
-    echo "$as_me:2362: result: yes" >&5
+    echo "$as_me:2589: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2365: result: no" >&5
+    echo "$as_me:2592: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="URI" ;
@@ -2373,16 +2600,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2376: checking for CPAN module HTML::Tagset 3.03" >&5
+ echo "$as_me:2603: checking for CPAN module HTML::Tagset 3.03" >&5
 echo $ECHO_N "checking for CPAN module HTML::Tagset 3.03... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use HTML::Tagset 3.03" 2>/dev/null ;then
-    echo "$as_me:2382: result: yes" >&5
+    echo "$as_me:2609: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2385: result: no" >&5
+    echo "$as_me:2612: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="HTML::Tagset" ;
@@ -2393,16 +2620,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2396: checking for CPAN module HTML::Parser 3.23" >&5
+ echo "$as_me:2623: checking for CPAN module HTML::Parser 3.23" >&5
 echo $ECHO_N "checking for CPAN module HTML::Parser 3.23... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use HTML::Parser 3.23" 2>/dev/null ;then
-    echo "$as_me:2402: result: yes" >&5
+    echo "$as_me:2629: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2405: result: no" >&5
+    echo "$as_me:2632: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="HTML::Parser" ;
@@ -2413,16 +2640,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2416: checking for CPAN module MIME::Base64 2.12" >&5
+ echo "$as_me:2643: checking for CPAN module MIME::Base64 2.12" >&5
 echo $ECHO_N "checking for CPAN module MIME::Base64 2.12... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use MIME::Base64 2.12" 2>/dev/null ;then
-    echo "$as_me:2422: result: yes" >&5
+    echo "$as_me:2649: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2425: result: no" >&5
+    echo "$as_me:2652: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="MIME::Base64" ;
@@ -2433,16 +2660,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2436: checking for CPAN module XML::Writer 0.4" >&5
+ echo "$as_me:2663: checking for CPAN module XML::Writer 0.4" >&5
 echo $ECHO_N "checking for CPAN module XML::Writer 0.4... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use XML::Writer 0.4" 2>/dev/null ;then
-    echo "$as_me:2442: result: yes" >&5
+    echo "$as_me:2669: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2445: result: no" >&5
+    echo "$as_me:2672: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="XML::Writer" ;
@@ -2453,16 +2680,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2456: checking for CPAN module LWP 5.50" >&5
+ echo "$as_me:2683: checking for CPAN module LWP 5.50" >&5
 echo $ECHO_N "checking for CPAN module LWP 5.50... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use LWP 5.50" 2>/dev/null ;then
-    echo "$as_me:2462: result: yes" >&5
+    echo "$as_me:2689: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2465: result: no" >&5
+    echo "$as_me:2692: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="LWP" ;
@@ -2473,16 +2700,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2476: checking for CPAN module Image::Info 1.07" >&5
+ echo "$as_me:2703: checking for CPAN module Image::Info 1.07" >&5
 echo $ECHO_N "checking for CPAN module Image::Info 1.07... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Image::Info 1.07" 2>/dev/null ;then
-    echo "$as_me:2482: result: yes" >&5
+    echo "$as_me:2709: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2485: result: no" >&5
+    echo "$as_me:2712: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Image::Info" ;
@@ -2493,16 +2720,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2496: checking for CPAN module Text::Iconv 1.1" >&5
+ echo "$as_me:2723: checking for CPAN module Text::Iconv 1.1" >&5
 echo $ECHO_N "checking for CPAN module Text::Iconv 1.1... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Text::Iconv 1.1" 2>/dev/null ;then
-    echo "$as_me:2502: result: yes" >&5
+    echo "$as_me:2729: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2505: result: no" >&5
+    echo "$as_me:2732: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Text::Iconv" ;
@@ -2513,16 +2740,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2516: checking for CPAN module MLDBM 2.00" >&5
+ echo "$as_me:2743: checking for CPAN module MLDBM 2.00" >&5
 echo $ECHO_N "checking for CPAN module MLDBM 2.00... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use MLDBM 2.00" 2>/dev/null ;then
-    echo "$as_me:2522: result: yes" >&5
+    echo "$as_me:2749: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2525: result: no" >&5
+    echo "$as_me:2752: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="MLDBM" ;
@@ -2533,16 +2760,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2536: checking for CPAN module Params::Validate 0.04" >&5
+ echo "$as_me:2763: checking for CPAN module Params::Validate 0.04" >&5
 echo $ECHO_N "checking for CPAN module Params::Validate 0.04... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Params::Validate 0.04" 2>/dev/null ;then
-    echo "$as_me:2542: result: yes" >&5
+    echo "$as_me:2769: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2545: result: no" >&5
+    echo "$as_me:2772: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Params::Validate" ;
@@ -2553,16 +2780,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2556: checking for CPAN module HTML::Mason 1.03" >&5
+ echo "$as_me:2783: checking for CPAN module HTML::Mason 1.03" >&5
 echo $ECHO_N "checking for CPAN module HTML::Mason 1.03... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use HTML::Mason 1.03" 2>/dev/null ;then
-    echo "$as_me:2562: result: yes" >&5
+    echo "$as_me:2789: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2565: result: no" >&5
+    echo "$as_me:2792: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="HTML::Mason" ;
@@ -2573,16 +2800,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2576: checking for CPAN module DBD::Pg 1.00" >&5
+ echo "$as_me:2803: checking for CPAN module DBD::Pg 1.00" >&5
 echo $ECHO_N "checking for CPAN module DBD::Pg 1.00... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use DBD::Pg 1.00" 2>/dev/null ;then
-    echo "$as_me:2582: result: yes" >&5
+    echo "$as_me:2809: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2585: result: no" >&5
+    echo "$as_me:2812: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="DBD::Pg" ;
@@ -2593,16 +2820,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2596: checking for CPAN module Net::FTPServer " >&5
+ echo "$as_me:2823: checking for CPAN module Net::FTPServer " >&5
 echo $ECHO_N "checking for CPAN module Net::FTPServer ... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Net::FTPServer " 2>/dev/null ;then
-    echo "$as_me:2602: result: yes" >&5
+    echo "$as_me:2829: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2605: result: no" >&5
+    echo "$as_me:2832: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Net::FTPServer" ;
@@ -2613,16 +2840,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2616: checking for CPAN module Apache::Session 1.53" >&5
+ echo "$as_me:2843: checking for CPAN module Apache::Session 1.53" >&5
 echo $ECHO_N "checking for CPAN module Apache::Session 1.53... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Apache::Session 1.53" 2>/dev/null ;then
-    echo "$as_me:2622: result: yes" >&5
+    echo "$as_me:2849: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2625: result: no" >&5
+    echo "$as_me:2852: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Apache::Session" ;
@@ -2633,16 +2860,16 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2636: checking for CPAN module Apache::ConfigFile " >&5
+ echo "$as_me:2863: checking for CPAN module Apache::ConfigFile " >&5
 echo $ECHO_N "checking for CPAN module Apache::ConfigFile ... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Apache::ConfigFile " 2>/dev/null ;then
-    echo "$as_me:2642: result: yes" >&5
+    echo "$as_me:2869: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2645: result: no" >&5
+    echo "$as_me:2872: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Apache::ConfigFile" ;
@@ -2655,16 +2882,16 @@ echo "${ECHO_T}no" >&6
 
 # FIXME: if there's a version requirement please note it here
 
- echo "$as_me:2658: checking for CPAN module HTML::Template " >&5
+ echo "$as_me:2885: checking for CPAN module HTML::Template " >&5
 echo $ECHO_N "checking for CPAN module HTML::Template ... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use HTML::Template " 2>/dev/null ;then
-    echo "$as_me:2664: result: yes" >&5
+    echo "$as_me:2891: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2667: result: no" >&5
+    echo "$as_me:2894: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="HTML::Template" ;
@@ -2678,16 +2905,16 @@ echo "${ECHO_T}no" >&6
 # Apache::libapreq does not define $Apache::libapreq::VERSION
 # so we can't check for it here
 
- echo "$as_me:2681: checking for CPAN module Apache::libapreq " >&5
+ echo "$as_me:2908: checking for CPAN module Apache::libapreq " >&5
 echo $ECHO_N "checking for CPAN module Apache::libapreq ... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
  if perl -e "use Apache::libapreq " 2>/dev/null ;then
-    echo "$as_me:2687: result: yes" >&5
+    echo "$as_me:2914: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else
-    echo "$as_me:2690: result: no" >&5
+    echo "$as_me:2917: result: no" >&5
 echo "${ECHO_T}no" >&6
     if test -z "${MISSING_MOD}" ; then
         NEW_LIST="Apache::libapreq" ;
@@ -2811,7 +3038,7 @@ if cmp -s $cache_file confcache; then :; else
 fi
 rm -f confcache
 
-  echo "$as_me:2814: checking whether we will wave the PG_ROOT_PASS requirement" >&5
+  echo "$as_me:3041: checking whether we will wave the PG_ROOT_PASS requirement" >&5
 echo $ECHO_N "checking whether we will wave the PG_ROOT_PASS requirement... $ECHO_C" >&6
 
 # Check whether --with-no-pgroot-pass or --without-no-pgroot-pass was given.
@@ -2820,24 +3047,25 @@ if test "${with_no_pgroot_pass+set}" = set; then
 
       if test "$withval" = "yes" ;then
 		PG_NO_PASS="true"
-		echo "$as_me:2823: result: yes" >&5
+		PG_ROOT_PASS="none"
+		echo "$as_me:3051: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 	  else
 		PG_NO_PASS="false"
-		echo "$as_me:2827: result: no" >&5
+		echo "$as_me:3055: result: no" >&5
 echo "${ECHO_T}no" >&6
 	  fi
 
 else
 
 	  PG_NO_PASS="false"
-	  echo "$as_me:2834: result: no" >&5
+	  echo "$as_me:3062: result: no" >&5
 echo "${ECHO_T}no" >&6
 
 fi;
 
   if test "${PG_NO_PASS}" = "false" ;then
-	{ { echo "$as_me:2840: error:
+	{ { echo "$as_me:3068: error:
 
     You must define PG_ROOT_PASS
 
@@ -2855,6 +3083,31 @@ echo "$as_me: error:
   " >&2;}
    { (exit 1); exit 1; }; }
   fi
+
+if test "x${DBI_PASS}" = "x" ; then
+	defaults=no
+
+if test "x$defaults" = "xno"; then
+echo $ac_n "
+We will be creating a new database user: ${DBI_USER}.
+Please enter a password for this user. (): $ac_c"
+read tmpinput
+if test "$tmpinput" = "" -a "" != ""; then
+  tmpinput=""
+fi
+eval DBI_PASS=\"$tmpinput\"
+else
+tmpinput=""
+eval DBI_PASS=\"$tmpinput\"
+fi
+
+fi
+
+if test "x${DBI_PASS}" = "x" ; then
+	{ { echo "$as_me:3107: error: No database user password defined" >&5
+echo "$as_me: error: No database user password defined" >&2;}
+   { (exit 1); exit 1; }; }
+fi
 
 # predefined
 
@@ -2972,7 +3225,7 @@ rm -f confdef2opt.sed
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:2975: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:3228: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -3139,7 +3392,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:3142: error: ambiguous option: $1
+    { { echo "$as_me:3395: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -3158,7 +3411,7 @@ Try \`$0 --help' for more information." >&2;}
     ac_need_defaults=false;;
 
   # This is an error.
-  -*) { { echo "$as_me:3161: error: unrecognized option: $1
+  -*) { { echo "$as_me:3414: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -3195,7 +3448,7 @@ do
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
-  *) { { echo "$as_me:3198: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:3451: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -3299,6 +3552,10 @@ s,@APACHE@,$APACHE,;t t
 s,@APACHE_MODULES@,$APACHE_MODULES,;t t
 s,@PG_CONFIG@,$PG_CONFIG,;t t
 s,@PGHOME@,$PGHOME,;t t
+s,@PSQL@,$PSQL,;t t
+s,@DROPDB@,$DROPDB,;t t
+s,@DROPUSER@,$DROPUSER,;t t
+s,@CREATEDB@,$CREATEDB,;t t
 s,@PERL@,$PERL,;t t
 s,@POD2HTML@,$POD2HTML,;t t
 s,@POD2HTML_TYPE@,$POD2HTML_TYPE,;t t
@@ -3423,7 +3680,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:3426: creating $ac_file" >&5
+    { echo "$as_me:3683: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -3441,7 +3698,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:3444: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:3701: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -3454,7 +3711,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:3457: error: cannot find input file: $f" >&5
+           { { echo "$as_me:3714: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;

@@ -149,6 +149,42 @@ In Bric::Biz::Asset::Business, the source get_meth key in my_meths() now works
 properly. Also, get_all_keywords() now also returns the category keywords as
 well as the story keywords. Thanks to Darren Graves for the patch.
 
+=item *
+
+Removed quotation marks from DEF_MEDIA_TYPE setting in bricolage.conf. Thanks to
+Darren Graves for the spot. [David]
+
+=item *
+
+Sorting assets by ID in "Find X" and Workspace/Desk view now properly does a
+numeric sort rather than an alphanumeric sort. Thanks to Sam Tregar for the
+spot. [David]
+
+=item *
+
+Fixed an obscure bug where, for files uploaded as part of a Media file,
+Bricolage attempted to create a path on its own file system using path
+delimiters for another file system. Thanks to Mike Slattery for the spot.
+[David]
+
+=item *
+
+Required content fields in stories and elements are now displayed in the order
+specified in the Element profile. Thanks to Sam Tregar for the spot. [David]
+
+=item *
+
+All assets now start with the version number 0 until the first time they are
+checked in. Also, they will show up on desks and in the Find views after the
+first time they are saved. It was inconsistent before, and some items could not
+be seen in the desk and Find views until they were checked in. Thanks to Sam for
+spotting the inconsistency. [David]
+
+=item *
+
+The bric_clean_tmp script has been changed to avoid deleting the Bricolage
+cache file.  [Sam]
+
 =back
 
 =head1 VERSION 1.2.0

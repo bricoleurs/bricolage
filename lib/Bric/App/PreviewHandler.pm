@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-12 00:58:52 $
+$Date: 2002-02-14 21:59:39 $
 
 =head1 SYNOPSIS
 

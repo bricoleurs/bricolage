@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-12 00:58:52 $
+$Date: 2002-02-14 21:59:40 $
 
 =head1 SYNOPSIS
 
@@ -424,7 +424,7 @@ Returns an object that matches the parameters
 
 Suported Keys
 
-=over4
+=over 4
 
 =item id
 

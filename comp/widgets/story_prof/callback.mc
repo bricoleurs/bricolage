@@ -125,10 +125,11 @@ my $handle_save = sub {
     if ($work_id) {
 	# Set the workflow this story should be in.
 	$story->set_workflow_id($work_id);
+	$story->activate;
 
-	$story->checkin();
-	$story->save();
-	$story->checkout( { user__id => get_user_id });
+#	$story->checkin();
+#	$story->save();
+#	$story->checkout( { user__id => get_user_id });
 
 	# Figure out what desk this story should be in.
 	my $wf = Bric::Biz::Workflow->lookup({'id' => $work_id});
@@ -222,7 +223,6 @@ my $handle_checkin = sub {
 	log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
 
 	# make sure that the story is active
-	$story->activate();
 	$story->save();
 
 	log_event(($new ? 'story_create' : 'story_save'), $story);

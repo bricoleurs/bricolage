@@ -12,15 +12,17 @@ GZIP = @GZIP@
 MKDIR = @MKDIR@
 FIND = @FIND@
 CTAGS = @CTAGS@
+PSQL = @PSQL@
+
 
 
 # directories
 BIN = bin
 COMP = comp
 CONF = conf
+BLIB = blib
 DATA = data
 LIB = lib
-BLIB = blib
 DOC = doc
 INST = inst
 HTML = ${DOC}/html
@@ -39,6 +41,13 @@ POSTGRES_SYSTEM_USER = @POSTGRES_SYSTEM_USER@
 POSTGRES_ROOT_PASS = @PG_ROOT_PASS@
 HAVE_SSL = @HAVE_SSL@
 HOSTNAME = @HOSTNAME@
+PID_FILE = @PID_FILE@
+PGHOME = @PGHOME@
+MISSING_MODULES = @MISSING_MOD@
+DROPDB = @DROPDB@
+DROPUSER = @DROPUSER@
+CREATEDB = @CREATEDB@
+CONFIG_STRING = @CONFIG_STRING@
 
 
 # Installation related variables
@@ -50,13 +59,10 @@ bindir  = @bindir@
 datadir  = @datadir@
 compdir = @compdir@
 confdir = @sysconfdir@
-blibdir = @blibdir@
-libdir = @libdir@
 htmldir = @htmldir@
 mandir  = @mandir@
 docdir  = @docdir@
 VPATH = @srcdir@
-
 
 
 # now we'll use some builtin 
@@ -71,19 +77,17 @@ MAN_FILES = $(filter-out CVS,$(shell cd ${MAN} && ls))
 MAN_TARGETS = $(addprefix ${mandir}/,${MAN_FILES})
 
 # the conf files have to be handled more gingerly
-CONF_HTTPD = ${CONF}/httpd.conf
-CONF_HTTPSD = ${CONF}/httpd-ssl.conf
-CONF_HTTPD_TARGET = ${confdir}/httpd.conf
-CONF_HTTPSD_TARGET = ${confdir}/httpd-ssl.conf
-CONF_APACHE_TARGET = ${APACHE_CONF}/httpd.conf
-CONF_APACHES_TARGET = ${APACHE_CONF}/httpd-ssl.conf
 CONF_BRIC = ${CONF}/bricolage.tmp.conf
 CONF_BRIC_TARGET = ${confdir}/bricolage.conf
-CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_APACHE_TARGET} ${CONF_HTTPD_TARGET} ${CONF_APACHES_TARGET} ${CONF_HTTPSD_TARGET}
+CONF_HTTPD = ${CONF}/httpd.tmp.conf
+CONF_HTTPD_TARGET = ${confdir}/httpd.conf
+CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_HTTPD_TARGET} ${CONF_HTTPSD_TARGET}
+
 
 # And the various doc files in text form
 DOC_TARGETS = ${docdir}/Changes \
-			  ${docdir}/License ${docdir}/TODO
+			  ${docdir}/License ${docdir}/TODO \
+			  ${docdir}/configure_options
 
 
 # now the heart of the matter.  We are just copying
@@ -92,14 +96,6 @@ DOC_TARGETS = ${docdir}/Changes \
 # the originals, so we can check timestamps...
 # TODO: I should be able to define these as functions
 # 		to minimise the repetition...
-LIB_SUBDIRS = $(subst ./,, \
-					$(shell cd ${LIB} && \
-						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
-LIB_FILES = $(foreach dir, \
-				${LIB_SUBDIRS} ., \
-					$(shell cd ${LIB} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
-LIB_TARGETS = $(addprefix ${libdir}/,${LIB_FILES})
-# same thing we did with LIB
 COMP_SUBDIRS = $(subst ./,, \
 					$(shell cd ${COMP} && \
 						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
@@ -116,6 +112,7 @@ DATA_FILES = $(foreach dir, \
 					$(shell cd ${DATA} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
 DATA_TARGETS = $(addprefix ${datadir}/,${DATA_FILES})
 
+
 # Canned sequence for installation
 
 define install-files
@@ -126,6 +123,17 @@ chown ${APACHE_USER}.${APACHE_GROUP} $@
 @echo $@ >>${INST}/install.log
 endef
 
+
+# Set up the option string for the database
+# Documenation in bin/bric_importdb --help
+PSQL_OPTIONS :=
+ifneq (${POSTGRES_ROOT_USER},${POSTGRES_SYSTEM_USER})
+PSQL_OPTIONS += -U ${POSTGRES_ROOT_USER}
+endif
+ifneq (${POSTGRES_ROOT_PASS},none)
+PSQL_OPTIONS += -p ${POSTGRES_ROOT_PASS}
+endif
+PSQL_OPTIONS += -d ${DB_NAME}
 
 
 # Now we'll define the installed files according to our log
@@ -140,7 +148,6 @@ INSTALLED_FILES = $(shell cat ${INST}/install.log | sort -u)
 # the same.
 INSTALLED_DIRS = ${bindir} ${datadir} \
                  ${compdir} ${confdir} \
-                 ${blibdir} ${libdir} \
                  ${htmldir} ${mandir} \
 				 $(sort ${execprefix} ${prefix})
 
@@ -159,7 +166,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 
 # A list of any missing modules
-MISSING_MODULES = Devel::Symdump Apache::libapreq
 CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
 
 
@@ -169,34 +175,44 @@ CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
 # ****************************************************************
 # Standard targets follow.  These are discussed at length
 # in the GNU Make manual: http://www.gnu.org/manual/
-all:  doc config
+all:  doc config libs database
+
+libs:
+	cd ${LIB} &&  make
+
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
-		 install-man install-html chowndirs chownpg chmoddirs
+		 install-man install-html chowndirs chownpg chmoddirs \
+		 ${INST}/installed-database
+
 installdirs:
 	@$(NORMAL_INSTALL)  # Normal commands follow.
 	@${INST}/mkinstalldirs ${prefix} ${exec_prefix} \
                            ${bindir} ${datadir} \
-                           ${confdir} ${libdir} \
-                           ${compdir} ${blibdir} \
+                           ${confdir} ${compdir} \
                            ${htmldir} ${mandir}
 chowndirs:
-	chown -R ${APACHE_USER}.${APACHE_GROUP} ${blibdir} ${compdir} ${datadir} 
+	chown -R ${APACHE_USER}.${APACHE_GROUP} ${compdir} ${datadir} 
 chmoddirs:
-	chmod -R a+r ${htmldir}
+	chmod -R a+r ${htmldir} ${docdir}
 chownpg:
 	chown -R ${POSTGRES_ROOT_USER} ${bindir}/bric_pgimport
-uninstall: uninstallfiles uninstalldirs dist-clean
+uninstall: uninstall-lib uninstallfiles uninstalldirs dist-clean
+uninstall-lib:
+	--cd ${LIB} && make uninstall
 uninstalldirs:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing installed dirs 
-	@for D in ${INSTALLED_DIRS} ; do \
+	--@for D in ${INSTALLED_DIRS} ; do \
 		rmdir --ignore-fail-on-non-empty `find $$D -depth -type d`; \
 	done
 uninstallfiles:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing previously installed files
-	@rm -f ${INSTALLED_FILES}
+	--@rm -f ${INSTALLED_FILES}
+uninstalldatabase:
+	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
+	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
 
 
 # specific install and uninstall targets including the list
@@ -211,26 +227,18 @@ uninstallfiles:
 install-conf: ${CONF_TARGETS}
 ${CONF_BRIC_TARGET}: ${CONF_BRIC}
 	${install-files}
-${CONF_HTTPSD_TARGET}: ${CONF_HTTPSD}
-	${install-files}
 ${CONF_HTTPD_TARGET}: ${CONF_HTTPD}
 	${install-files}
-ifneq (${CONF_APACHE_TARGET},${CONF_HTTPD_TARGET})
-${CONF_APACHES_TARGET}:
-	ln ${CONF_HTTPSD_TARGET} $@
-	@echo $@ >>${INST}/install.log
-${CONF_APACHE_TARGET}:
-	ln ${CONF_HTTPD_TARGET} $@
-	@echo $@ >>${INST}/install.log
-endif
 
-# From lib on down we're going to do them basically the
+
+# MakeMaker handles this stuff for us
+install-lib: 
+	cd ${LIB} && make install
+
+# From here on down we're going to do them basically the
 # same way.  It's pretty simple really. Just a matter of
 # finding the original file for every target in the 
 # target list, and giving that to make as the dependency.
-install-lib: ${LIB_TARGETS}
-${LIB_TARGETS}: ${libdir}%: ${LIB}%
-	${install-files}
 install-comp: ${COMP_TARGETS}
 ${COMP_TARGETS}: ${compdir}%: ${COMP}% 
 	${install-files}
@@ -250,6 +258,40 @@ install-doc: ${DOC_TARGETS}
 ${DOC_TARGETS}: ${docdir}/%: %
 	${install-files}
 
+# this target drops and creates the user and database
+# and then installs the datafiles.  NOTE: This is a real
+# target which timestamps a file of the same name.  This
+# will allow those of us using CVS to do installs without
+# wiping out an old db.
+${INST}/installed-database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/grants.sql
+	perl -pi -e 's/nobody/${DBI_USER}/g' ${INST}/bricolage.sql
+	@${POST_INSTALL}
+	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
+	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
+	su -c '${CREATEDB} -E unicode ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
+	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/pguser.sql' ${POSTGRES_SYSTEM_USER}
+	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/bricolage.sql' ${POSTGRES_SYSTEM_USER} 2> $@
+	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/grants.sql' ${POSTGRES_SYSTEM_USER} 2>> $@
+
+# This makes the grant script
+${INST}/grants.sql: ${INST}/bricolage.sql
+	${BIN}/bric_pggrant -u ${DBI_USER} -f $< -o $@
+	chmod a+r $@
+
+# This makes a simple create user script
+${INST}/pguser.sql:
+	echo "create user ${DBI_USER} with password '${DBI_PASS}';" > $@
+	chmod a+r $@
+
+# This is here for those of us running from CVS.  The 
+# distributed version will have this done by the distutils
+# script, and therefor there will be "nothing to do for" this target
+${INST}/bricolage.sql:
+	find ${LIB} -name '*.sql' | xargs cat | cat >> ${INST}/bricolage.sql
+	find ${LIB} -name '*.val' | xargs cat | cat >> ${INST}/bricolage.sql
+	find ${LIB} -name '*.con' | xargs cat | cat >> ${INST}/bricolage.sql
+	chmod a+r $@
+
 
 # obviously we depend on the cpan stuff
 dep: cpan
@@ -259,29 +301,36 @@ ${CPAN_TARGETS}:
 	touch $@
 
 # This is where we do our config files
-config: inst/bric.sql conf/bricolage.tmp.conf
 
-inst/bric.sql: inst/bric.sql.in
-	cp $^ $@
-	perl -pi -e 's/%DBI_USER%/${DBI_USER}/g' $@
+config: ${CONF_BRIC} ${CONF_HTTPD} lib/Makefile 
 
-conf/bricolage.tmp.conf: conf/bricolage.tmp.conf.in
+${CONF_BRIC}: ${CONF_BRIC}.in
 	cp $^ $@
 	perl -pi -e 's/%HOSTNAME%/${HOSTNAME}/g' $@
-	perl -pi -e 's/%HAVE_SSL%/${HAVE_SSL}/g' $@
 	perl -pi -e 's,%APACHE%,${APACHE},g' $@
 	perl -pi -e 's,%APACHE_CONF%,${APACHE_CONF},g' $@
 	perl -pi -e 's/%APACHE_USER%/${APACHE_USER}/g' $@
 	perl -pi -e 's/%APACHE_GROUP%/${APACHE_GROUP}/g' $@
+	perl -pi -e 's,%FID_FILE%,${PID_FILE},g' $@
 	perl -pi -e 's/%DB_NAME%/${DB_NAME}/g' $@
 	perl -pi -e 's/%DBI_USER%/${DBI_USER}/g' $@
 	perl -pi -e 's/%DBI_PASS%/${DBI_PASS}/g' $@
 	perl -pi -e 's,%compdir%,${compdir},g' $@
 	perl -pi -e 's,%datadir%,${datadir},g' $@
+	perl -pi -e 's/%HAVE_SSL%/${HAVE_SSL}/g' $@
+
+
+${CONF_HTTPD}: ${CONF_HTTPD}.in
+	cp $^ $@
+	perl -pi -e 's,%PID_FILE%,${PID_FILE},g' $@
+
+
+lib/Makefile:
+	cd ${LIB} && perl Makefile.PL
 
 
 # and here are our document files.
-doc: Changes TODO License
+doc: Changes TODO License configure_options
 	cd ${DOC} && ${MAKE} -e
 
 TODO:
@@ -293,6 +342,11 @@ Changes:
 License:
 	${POD2TEXT} lib/Bric/License.pod >$@
 
+test:
+	cd ${LIB} && make test
+
+configure_options:
+	echo ${CONFIG_STRING} > $@
 
 
 # TODO: Make this recursively generate tag files in all directories
@@ -303,21 +357,22 @@ endif
 
 
 clean: docclean
-	${RM} -f Changes TODO License tags conf/bricolage.tmp.conf inst/bric.sql
+	--${RM} -f 	Changes TODO License tags conf/bricolage.tmp.conf \
+				${INST}/bric.sql ${INST}/configuration
+	--cd ${LIB} && make clean
 
 dist-clean: 
-	${RM} -f ${INST}/install.log 
-
+	--${RM} -rf ${INST}/install.log ${INST}/installed-database ${INST}/pguser.sql ${BLIB}
 
 docclean:
 	cd $(DOC) && ${MAKE} -e clean
 
 
 
-.PHONY : clean dep clean cpan doc install installdirs \
+.PHONY : clean dep clean cpan doc libs install installdirs \
 		 install-bin install-comp install-conf install-data \
 		 install-lib install-doc install-html install-man \
-		 uninstall uninstalldirs config \
+		 uninstall uninstalldirs config database \
 		 uninstall-bin uninstall-comp uninstall-conf uninstall-data \
 		 uninstall-lib uninstall-doc uninstall-html uninstall-man 
 

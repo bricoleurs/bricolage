@@ -355,6 +355,7 @@ my $save_object = sub {
     # Only update the workflow ID if they've just created the template
     if ($work_id) {
         $fa->set_workflow_id($work_id);
+	$fa->activate;
 
         my $wf = Bric::Biz::Workflow->lookup({'id' => $work_id});
         log_event('formatting_add_workflow', $fa, {Workflow => $wf->get_name});
@@ -385,7 +386,6 @@ my $checkin = sub {
 	    log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
 	}
 	$fa->checkin();
-	$fa->activate();
 	$fa->save();
 
 	my $desk_id = $param->{"$widget|desk"};

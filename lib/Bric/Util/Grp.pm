@@ -7,15 +7,15 @@ Bric::Util::Grp - A Class for associating Objects
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:46 $
+$Date: 2002-02-14 21:59:40 $
 
 =head1 SYNOPSIS
 
@@ -1181,7 +1181,7 @@ are placed on the member object.   This will add the object to the group.
 
 Supported Keys:
 
-=over4
+=over 4
 
 =item *
 

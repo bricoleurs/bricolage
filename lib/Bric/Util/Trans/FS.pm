@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:37 $
+$Date: 2002-02-14 21:59:41 $
 
 =head1 SYNOPSIS
 
@@ -578,6 +578,7 @@ B<Notes:> Uses File::Path::mkpath() internally.
 sub mk_path {
     my $self = shift;
     my $ret;
+    File::Basename::fileparse_set_fstype( $^O );
     eval { $ret = mkpath @_ };
     die $gen->new({ msg => "Error creating path @_.", payload => $@ }) if $@;
     return $ret;
@@ -1080,11 +1081,11 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<File::Copy|File::Copy>, 
-L<File::Path|File::Path>, 
-L<File::Basename|File::Basename>, 
-L<File::Find|File::Find>, 
+L<Bric|Bric>,
+L<File::Copy|File::Copy>,
+L<File::Path|File::Path>,
+L<File::Basename|File::Basename>,
+L<File::Find|File::Find>,
 L<File::Spec|File::Spec>
 
 =cut

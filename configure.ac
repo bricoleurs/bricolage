@@ -12,8 +12,10 @@ AC_PREFIX_DEFAULT(/usr/local/bricolage)
 # Use braces instead of parens because sh, perl, etc. also accept them.
 datadir='${prefix}/data'
 sysconfdir='${prefix}/conf'
-# Capture the config string early
-CONFIG_STRING="$@"
+# Capture the config string early.  This will wind up stored in
+# a clear text file with open read perms, so get rid of the
+# passwords.
+CONFIG_STRING=`echo $@ | sed -e 's/ --with-dbi-pass=[^ ]*//g'`
 
 # Additional --with-switches
 # SYNTAX: AC_VAR_WITH(VARNAME,switchname,default)
@@ -27,13 +29,13 @@ AC_VAR_WITH(HOSTNAME,hostname,`hostname --fqdn || true`)
 AC_VAR_WITH(ADMINISTRATOR,administrator,root)
 AC_VAR_WITH(DB_NAME,db-name,wwwdata)
 AC_VAR_WITH(DBI_USER,dbi-user,nobody)
-AC_VAR_WITH(DBI_PASS,dbi-pass,ChangeMeNow)
+AC_VAR_WITH(DBI_PASS,dbi-pass)
 AC_VAR_WITH(POSTGRES_ROOT_USER,pgroot-user,postgres)
 AC_VAR_WITH(POSTGRES_SYSTEM_USER,pgsystem-user,postgres)
 # TODO: System defaults for these can be determined from $APACHE -V
 AC_VAR_WITH(SERVER_ROOT,server_root,/usr/local/apache)
 AC_VAR_WITH(APACHE_CONF,apache-conf,'${prefix}/conf/httpd.conf')
-AC_VAR_WITH(LOGDIR,lod_dir,${SERVER_ROOT}/logs)
+AC_VAR_WITH(LOGDIR,log_dir,${SERVER_ROOT}/logs)
 AC_VAR_WITH(ERROR_LOG,error_log,${LOGDIR}/error.log)
 AC_VAR_WITH(ACCESS_LOG,access_log,${LOGDIR}/access.log)
 AC_VAR_WITH(SSL_LOG,ssl_log,${LOGDIR}/ssl_engine_log)
@@ -73,6 +75,10 @@ fi
 # Checks for programs
 AC_PROG_APACHE(1.3.12)
 AC_PROG_POSTGRES(PGHOME, 7.1.3)
+AC_PATH_PROG(PSQL, psql)
+AC_PATH_PROG(DROPDB, dropdb)
+AC_PATH_PROG(DROPUSER, dropuser)
+AC_PATH_PROG(CREATEDB, createdb)
 AC_POSTGRES_ENCODING(UNICODE)
 AC_PROG_PERL(PERL, 5.6.1)
 AC_PATH_PROG(POD2HTML, pod2html)
@@ -87,6 +93,22 @@ AC_CACHE_SAVE
 
 
 # Checks for libraries.
+
+# Check to see if apache has mod_perl compiled in
+AC_CHECK_APACHE_MOD_PERL(AMOD_PERL,APACHE)
+# If not, we're going to have to share the bad news
+# and fail.  Bricolage requires a compiled in mod_perl
+if test "${AMOD_PERL}" != "yes" ; then
+	AC_MSG_ERROR([
+
+	It appears that your apache binary was compiled without
+	mod_perl support.  Bricolage will not run correctly 
+	without mod_perl compiled into the Apache.
+
+	])
+fi
+
+# Check for ssl option, and find ssl if yes
 CHECK_SSL
 SSL_COMMENT=
 if test "${HAVE_SSL}" != "yes" ;then
@@ -95,8 +117,11 @@ fi
 AC_SUBST(SSL_COMMENT)
 AC_CACHE_SAVE
 
+
+
 # Checks for CPAN modules
 # TODO: make sure CPAN itself works
+CHECK_CPAN_MODULE(MISSING_MOD, Bundle::Bricolage)
 CHECK_CPAN_MODULE(MISSING_MOD, Time::HiRes, 01.20)
 CHECK_CPAN_MODULE(MISSING_MOD, Storable, 1.0.10)
 CHECK_CPAN_MODULE(MISSING_MOD, Unix::Syslog, 0.95)
@@ -134,6 +159,17 @@ AC_CACHE_SAVE
 AC_ARG_VAR(PG_ROOT_PASS)
 AC_CACHE_SAVE
 CHECK_FOR_PGPASS
+
+if test "x${DBI_PASS}" = "x" ; then
+	defaults=no
+	AC_PROMPT_USER_NO_DEFINE(DBI_PASS,[
+We will be creating a new database user: ${DBI_USER}.
+Please enter a password for this user.])
+fi
+
+if test "x${DBI_PASS}" = "x" ; then
+	AC_MSG_ERROR(No database user password defined)
+fi
 
 # predefined
 AC_SUBST(VERSION)

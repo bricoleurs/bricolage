@@ -8,11 +8,11 @@ debug - Output some debuging information
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-02-12 00:59:17 $
+$Date: 2002-02-14 21:59:38 $
 
 =head1 SYNOPSIS
 
