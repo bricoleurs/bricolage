@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.6.2.2 $
+$Revision: 1.6.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-13 01:45:09 $
+$Date: 2002-11-14 01:32:13 $
 
 =head1 SYNOPSIS
 
@@ -214,7 +214,7 @@ sub handle_err {
     clear_events();
 
     # Send the error to the apache error log.
-    $apreq->log->error($err->get_msg . ': ' . $err->get_payload .
+    $apreq->log->error($err->get_msg . ': ' . ($err->get_payload || '') .
                        ($more_err ? "\n\n$more_err" : '') . "\nStack Trace:\n" .
                        join("\n", map { ref $_ ? join(' - ', @{$_}[1,2,3]) : $_ }
                             @{$err->get_stack}) . "\n\n");
