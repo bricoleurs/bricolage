@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-13 13:22:49 $
+$Date: 2003-03-16 14:03:00 $
 
 =head1 SYNOPSIS
 
@@ -181,6 +181,7 @@ BEGIN {
               cover_date                => Bric::FIELD_RDWR,
               publish_status            => Bric::FIELD_RDWR,
               primary_oc_id             => Bric::FIELD_RDWR,
+              alias_id                  => Bric::FIELD_READ,
 
               # Private Fields
               _contributors             => Bric::FIELD_NONE,
@@ -459,7 +460,14 @@ sub my_meths {
                               type     => 'short',
                               props    => { type => 'date' }
                              };
-
+    $meths->{alias_id}     = {
+                              name     => 'alias_id',
+                              get_meth => sub { shift->get_alias_id },
+                              get_args => [],
+                              disp     => 'Alias',
+                              len      => 10,
+                              type     => 'short',
+                             };
     # Copy the data for the title from name.
     $meths->{title} = { %{ $meths->{name} } };
     $meths->{title}{name} = 'title';
@@ -733,6 +741,9 @@ NONE
 
 sub get_contributors {
     my $self = shift;
+    if(my $alias_id = $self->_get('alias_id')) {
+        return ref($self)->lookup({id => $alias_id})->get_contributors();
+    }
     my $contribs = $self->_get_contributors;
 
     my @ret;
@@ -1400,10 +1411,15 @@ NONE
 
 sub get_tile {
     my ($self) = @_;
+    my $object = $self;
+    if(my $alias_id = $self->_get('alias_id')) {
+        # use my target story if I am an alias
+        $object = ref($self)->lookup({ id => $alias_id });
+    }
     my $tile = $self->_get('_tile');
     unless ($tile) {
         ($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list(
-          { object    => $self,
+          { object    => $object,
             parent_id => undef,
             active    => 1 });
         $self->_set( { '_tile' => $tile });
@@ -1626,6 +1642,10 @@ B<Notes:> NONE
 
 sub get_keywords {
     my $self = shift;
+    my $object = $self;
+    if(my $alias_id = $self->_get('alias_id')) {
+        $object = ref($self)->lookup({id => $alias_id});
+    }
     return Bric::Biz::Keyword->list({ object => $self });
 }
 
@@ -1646,6 +1666,9 @@ B<Notes:> NONE
 
 sub get_all_keywords {
     my $self = shift;
+    if(my $alias_id = $self->_get('alias_id')) {
+        return ref($self)->lookup({id => $alias_id})->get_all_keywords();
+    }
     my %kw = map { ($_->get_id, $_) } 
       ( Bric::Biz::Keyword->list({ object => $self }), 
         $self->_get_category_keywords() );
@@ -1925,55 +1948,148 @@ sub _init {
       {msg => "Method not implemented"}) unless ref $self;
 
     die Bric::Util::Fault::Exception::GEN->new(
-      { msg => "Cannot create an asset without an Element"})
-      unless $init->{element__id} || $init->{element};
+      { msg => "Cannot create an asset without an Element or alias_id"})
+      unless $init->{element__id} || $init->{element} || $init->{alias_id};
 
-    die Bric::Util::Fault::Exception::GEN->new( {
-      msg => "Can not create asset with out Source "})
-      unless $init->{'source__id'};
+    die Bric::Util::Fault::Exception::GEN->new(
+      { msg => "Cannot create an asset with both Element and alias_id"})
+      if ( ($init->{element__id} || $init->{element}) && $init->{alias_id});
 
-    if ($init->{'cover_date'}) {
-        $self->set_cover_date( $init->{'cover_date'} );
-        delete $init->{'cover_date'};
-        my $source = Bric::Biz::Org::Source->lookup
-          ({id => $init->{'source__id'}});
-        if (my $expire = $source->get_expire) {
-            # add the days to the cover date and set the expire date
-            my $date = local_date($self->_get('cover_date'), 'epoch');
-            my $new_date = $date + ($expire * 24 * 60 * 60);
-            $new_date = strfdate($new_date);
-            $new_date = db_date($new_date);
-            $self->_set( { expire_date => $new_date });
+    die Bric::Util::Fault::Exception::GEN->new(
+      { msg => "Cannot create an asset without a site" })
+      unless $init->{site_id};
+
+    if ($init->{alias_id}) {
+        my $alias_target = ref($self)->lookup(
+          { id => $init->{alias_id} });
+
+        die Bric::Util::Fault::Exception::GEN->new(
+          { msg => "Cannot create an alias to an asset in the same site" })
+          if($alias_target->get_site_id == $init->{site_id});
+
+        die Bric::Util::Fault::Exception::GEN->new(
+          { msg => "Cannot create an alias to an asset that is an alias" })
+          if($alias_target->get_alias_id);
+
+        $self->_set(['alias_id'], [$init->{alias_id}]);
+
+
+        my $at = $alias_target->_get_element_object;
+        my $at_exists = 0;
+        foreach my $site (@{$at->get_sites}) {
+            if($site->get_id == $init->{site_id}) {
+                $at_exists++;
+                last;
+            }
         }
-    }
 
-    # Get the element object.
-    if ($init->{element}) {
-        $init->{element__id} = $init->{element}->get_id;
+        die Bric::Util::Fault::Exception::GEN->new(
+          { msg => "Cannot create an alias to an asset that belongs to an ".
+            "element that is not associated with this site" })
+          unless($at_exists);
+
+
+        $self->set_source__id( $alias_target->get_source__id );
+        $self->set_cover_date( $alias_target->get_cover_date );
+
+        $self->add_output_channels(
+           map { ($_->is_enabled &&
+                  $_->get_site_id == $init->{site_id}) ? $_ : () }
+                                   $at->get_output_channels);
+
+
+        $self->set_primary_oc_id($at->get_primary_oc_id
+                                 ($init->{site_id}));
+
+        die Bric::Util::Fault::Exception::GEN->new( 
+          { msg => "Cannot create an alias to an asset because this element ".
+          "does not have any OutputChannels selected for this site" })
+          unless(@{$self->get_output_channels});
+
+        if ($self->can('get_primary_category')) {
+            my $primary = 0;
+            foreach my $cat ($alias_target->get_primary_category,
+                             $alias_target->get_secondary_categories) {
+
+                my $new_cat = Bric::Biz::Category->lookup
+                  ({ uri => $cat->get_uri , site_id => $init->{site_id}});
+                if(!$new_cat && !$primary) {
+                    # Nothing found and this was the primary
+                    # use the site root
+                    $new_cat = Bric::Biz::Category->site_root_category
+                      ( $init->{site_id} );
+                } elsif(!$new_cat) {
+                    # Nothing found for secondary, skip it ?
+                    next;
+                }
+                $self->add_categories([$new_cat]);
+                $self->set_primary_category($new_cat) unless($primary++);
+            }
+        }
+        $self->_set(['slug'], [$alias_target->_get('slug')])
+        if($alias_target->_get('slug'));
+        $self->_set(['name'], [$alias_target->_get('name')])
+        if($alias_target->_get('name'));
+        $self->_set(['element__id'], [$alias_target->_get('element__id')]);
+
+        $self->_set
+          ([qw(current_version publish_status modifier
+               checked_out     version)],
+           [          0,              0,  $init->{user__id}, 
+                      1,       0]);
+
+                    
     } else {
-        $init->{element} =
-          Bric::Biz::AssetType->lookup({ id => $init->{element__id}});
-    }
+        die Bric::Util::Fault::Exception::GEN->new( {
+          msg => "Can not create asset with out Source "})
+          unless $init->{'source__id'};
 
-    # Set up the output channels.
-    if ($init->{element}->get_top_level) {
-        $self->add_output_channels( map { $_->is_enabled ? $_ : () }
-                                    $init->{element}->get_output_channels);
-        $self->set_primary_oc_id($init->{element}->get_primary_oc_id(100));
-    }
+        if ($init->{'cover_date'}) {
+            $self->set_cover_date( $init->{'cover_date'} );
+            delete $init->{'cover_date'};
+            my $source = Bric::Biz::Org::Source->lookup
+              ({id => $init->{'source__id'}});
+            if (my $expire = $source->get_expire) {
+                # add the days to the cover date and set the expire date
+                my $date = local_date($self->_get('cover_date'), 'epoch');
+                my $new_date = $date + ($expire * 24 * 60 * 60);
+                $new_date = strfdate($new_date);
+                $new_date = db_date($new_date);
+                $self->_set( { expire_date => $new_date });
+            }
+        }
 
-    # Let's create the new tile as well.
-    my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new
-      ({ object     => $self,
-         element_id => $init->{element__id},
-         element    => $init->{element}
-       });
+        # Get the element object.
+        if ($init->{element}) {
+            $init->{element__id} = $init->{element}->get_id;
+        } else {
+            $init->{element} =
+              Bric::Biz::AssetType->lookup({ id => $init->{element__id}});
+        }
 
-    $self->_set([qw(version current_version checked_out _tile modifier
+        # Set up the output channels.
+        if ($init->{element}->get_top_level) {
+            $self->add_output_channels(
+               map { ($_->is_enabled &&
+                      $_->get_site_id == $init->{site_id}) ? $_ : () }
+                   $init->{element}->get_output_channels);
+
+            $self->set_primary_oc_id($init->{element}->get_primary_oc_id
+                                     ($init->{site_id}));
+        }
+
+        # Let's create the new tile as well.
+        my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new
+          ({ object     => $self,
+             element_id => $init->{element__id},
+             element    => $init->{element}
+           });
+
+        $self->_set([qw(version current_version checked_out _tile modifier
                     element__id _element_object publish_status)],
-                [0, 0, 1, $tile, @{$init}{qw(user__id element__id element)},
-                 0]);
-
+                    [0, 0, 1, $tile, @{$init}{qw(user__id element__id element)},
+                     0]);
+    }
     $self->_set__dirty;
 }
 
@@ -2080,14 +2196,23 @@ NONE
 sub _get_element_object {
     my ($self) = @_;
 
-        my $dirty = $self->_get__dirty();
+    my $dirty = $self->_get__dirty();
 
     my $at_obj = $self->_get('_element_object');
     return $at_obj if $at_obj;
-    $at_obj = Bric::Biz::AssetType->lookup({ id => $self->_get('element__id')});
+
+    if($self->_get('alias_id')) {
+        return ref($self)->lookup
+          ({ id => $self->_get('alias_id') })->
+            _get_element_object;
+    } else {
+        $at_obj = Bric::Biz::AssetType->lookup
+          ({ id => $self->_get('element__id')});
+    }
+
     $self->_set(['_element_object'], [$at_obj]);
 
-        $self->_set__dirty($dirty);
+    $self->_set__dirty($dirty);
     return $at_obj;
 }
 

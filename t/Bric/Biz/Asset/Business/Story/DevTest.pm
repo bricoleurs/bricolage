@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
+use Test::Exception;
 use Bric::Util::DBI qw(:standard);
 use Bric::Biz::ATType;
 use Bric::Biz::AssetType;
@@ -68,6 +69,7 @@ sub construct {
 ##############################################################################
 # Test the clone() method.
 ##############################################################################
+
 sub test_clone : Test(15) {
 
     my $self = shift;
@@ -598,6 +600,7 @@ sub test_select_methods: Test(44) {
 ###############################################################################
 ## Test primary_oc_id property.
 ###############################################################################
+
 sub test_primary_oc_id : Test(8) {
     my $self = shift;
     my $class = $self->class;
@@ -628,6 +631,7 @@ sub test_primary_oc_id : Test(8) {
 ##############################################################################
 # Test output channel associations.
 ##############################################################################
+
 sub test_oc : Test(35) {
     my $self = shift;
     my $class = $self->class;
@@ -693,6 +697,185 @@ sub test_oc : Test(35) {
     is( scalar @ocs, 1, "Check for 1 OC 4" );
     is( $ocs[0]->get_name, $ocname, "Check OC name 4" );
 }
+##############################################################################
+# Test output channel associations.
+##############################################################################
 
+sub test_alias : Test(28) {
+    my $self = shift;
+    throws_ok {
+        Bric::Biz::Asset::Business::Story->new({})
+      } qr/Cannot create an asset without an Element or alias_id/,
+        "Check that you cannot create empty stories";
+
+    throws_ok {
+        Bric::Biz::Asset::Business::Story->new(
+          { alias_id => 1, element__id => 1});
+    } qr/Cannot create an asset with both Element and alias_id/,
+      "Check that you cannot create a story with both element__id and an ".
+      "alias";
+
+    throws_ok {
+        Bric::Biz::Asset::Business::Story->new(
+          { alias_id => 1, element => 1});
+    } qr/Cannot create an asset with both Element and alias_id/,
+      "Check that you cannot create a story with both element and an ".
+      "alias";
+
+
+    ok( my $story = Bric::Biz::Asset::Business::Story->new(
+      { element       => $self->get_elem,
+        user__id      => $self->user_id,
+        name          => 'Victor', 
+        slug          => 'hugo',
+        source__id    => 1,
+        site_id       => 100,
+      }), "Construct story" );
+
+    $story->add_categories( [ $CATEGORY ] );
+    $story->set_primary_category($CATEGORY);
+
+    ok( $story->save, "Save story" );
+
+
+    # Save the ID for cleanup.
+    ok( my $sid = $story->get_id, "Get ID" );
+    my $key = $self->class->key_name;
+    $self->add_del_ids([$sid], $key);
+
+    ok( $story = Bric::Biz::Asset::Business::Story->lookup
+        ({id => $story->get_id }), "Reload");
+
+
+    throws_ok {
+        Bric::Biz::Asset::Business::Story->new(
+          { alias_id => $story->get_id })
+      } qr /Cannot create an asset without a site/,
+        "Check that you need the Site parameter";
+
+    throws_ok {
+        Bric::Biz::Asset::Business::Story->new(
+          { alias_id => $story->get_id, site_id => 100 })
+      } qr /Cannot create an alias to an asset in the same site/,
+        "Check that you cannot create alias to a story in the same site";
+
+
+    # Create extra site
+    my $site1 = Bric::Biz::Site->new( { name => __PACKAGE__ . "1",
+                                        domain_name => __PACKAGE__ . "1",
+                                      });
+
+    ok( $site1->save(), "Create first dummy site");
+    my $site1_id = $site1->get_id;
+    $self->clean_site($site1_id);
+
+    throws_ok {
+        Bric::Biz::Asset::Business::Story->new(
+          { alias_id => $story->get_id, site_id => $site1_id })
+      } qr "Cannot create an alias to an asset that belongs to an element that is not associated with this site",
+        "Check that a element needs to be associated with a site ".
+        "for a target to aliasable";
+
+    my $element = $story->_get_element_object();
+    $element->add_sites([$site1]);
+    $element->save();
+
+    throws_ok {
+        Bric::Biz::Asset::Business::Story->new(
+          { alias_id => $story->get_id, site_id => $site1_id })
+      } qr /Cannot create an alias to an asset because this element does not have any OutputChannels selected for this site/,
+        "Check that the element associated to alias target has any output ".
+        "channels for this site";
+
+    #Lets create an output channel here
+
+    # Add a new output channel.
+    ok( my $oc = Bric::Biz::OutputChannel->new({name    => __PACKAGE__ . "1",
+                                                site_id => $site1_id}),
+        "Create OC" );
+    ok( $oc->save, "Save OC" );
+    ok( my $ocid = $oc->get_id, "Get OC ID" );
+    $self->add_del_ids($ocid, 'output_channel');
+
+    $element->add_output_channels([$ocid]);
+    $element->set_primary_oc_id($ocid, $site1_id);
+    $element->save();
+
+
+
+    ok( my $alias_story = Bric::Biz::Asset::Business::Story->new(
+      { alias_id => $story->get_id, 
+        site_id  => $site1_id,
+        user__id => $self->user_id,
+      }),
+        "Create an alias story");
+
+    isnt($alias_story->_get_element_object,
+         undef, "Check that we get a element object");
+
+    is($alias_story->_get_element_object->get_id,
+       $story->_get_element_object->get_id,
+       "Check that alias_story has a element object");
+
+    ok( $alias_story->save , "Try to save it");
+    my $alias_id = $alias_story->get_id;
+    like($alias_id, qr/^\d+$/, "alias id should be a number");
+
+    ok( $alias_story = 
+        Bric::Biz::Asset::Business::Story->lookup
+        ( { id => $alias_id }),
+        "Refetch the alias");
+    isa_ok($alias_story, "Bric::Biz::Asset::Business::Story", "Checking that ".
+          "we got $alias_id back");
+#    sleep;
+    is($alias_story->get_alias_id, $story->get_id,
+       "Does it still point to the correct story");
+
+
+    is($alias_story->get_slug, $story->get_slug, "Check slug");
+
+    is_deeply($story->get_tile, $alias_story->get_tile,
+              "Should get identical tiles");
+
+    is_deeply([$alias_story->get_all_keywords],
+              [$story->get_all_keywords],
+              "Check get_all_keywords");
+
+    is_deeply([$alias_story->get_keywords],
+              [$story->get_keywords],
+              "Check get_keywords");
+
+    is_deeply([$alias_story->get_contributors],
+              [$story->get_contributors],
+              "Check get_contributors");
+
+    $element->remove_sites([$site1]);
+    $element->save();
+
+
+    Bric::Util::DBI::prepare(qq{
+        DELETE FROM element__site
+        WHERE  site__id = $site1_id
+    })->execute;
+
+    Bric::Util::DBI::prepare(qq{
+        DELETE FROM story
+        WHERE  site__id = $site1_id
+    })->execute;
+
+}
+
+sub clean_site {
+    my ($self, $id) = @_;
+    # Make sure we delete the site and the secret asset group.
+    $self->add_del_ids($id, 'site');
+    $self->add_del_ids($id, 'grp');
+    # Schedule the secret user gropus for deletion.
+    $self->add_del_ids(scalar Bric::Util::Grp::User->list_ids
+                       ({ description => "__Site $id Users__",
+                          all         => 1 }), 'grp');
+
+
+}
 1;
 __END__
