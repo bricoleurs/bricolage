@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-12-07 22:35:12 $
+$Date: 2001-12-27 20:15:58 $
 
 =head1 DESCRIPTION
 
@@ -104,10 +104,11 @@ information.
 
 =item *
 
-Turn on DBI_DEBUG in your bricolage.conf.  DBI_DEBUG causes every
-database call made in the application to generate a subroutine call
-trace in the logs.  This generates a lot of data but it can be very
-helpful.
+Set DBI_DEBUG and DBI_CALL_TRACE to 1 in your bricolage.conf.
+DBI_DEBUG records every database call in the logs complete with SQL
+and arguments.  DBI_CALL_TRACE adds a a subroutine call trace for each
+statement showing where the database call originated.  This generates
+a lot of data but it can be very helpful.
 
 =item *
 

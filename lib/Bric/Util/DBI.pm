@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-07 22:35:37 $
+$Date: 2001-12-27 20:15:58 $
 
 =head1 SYNOPSIS
 
@@ -85,8 +85,8 @@ use DBI qw(looks_like_number);
 ################################################################################
 # Constants
 ################################################################################
-use constant TRACE => 0;
-use constant DEBUG => TRACE || DBI_DEBUG || 0;
+use constant CALL_TRACE => DBI_CALL_TRACE || 0;
+use constant DEBUG => DBI_DEBUG || 0;
 # You can set DBI_TRACE from 0 (Disabled) through 9 (super verbose).
 use constant DBI_TRACE => 0;
 
@@ -398,7 +398,7 @@ B<Notes:> NONE.
 sub prepare {
     &$connect();
     print STDERR "############# Query: $_[0]\n\n" if $_[2] || DEBUG;
-    if (TRACE) {
+    if (CALL_TRACE) {
 	my $n = 0;
 	while (my @c = caller($n++)) {
 	    local $" = ' - ';
@@ -454,7 +454,7 @@ B<Notes:> NONE.
 sub prepare_c {
     &$connect();
     print STDERR "############# Query: $_[0]\n\n" if $_[2] || DEBUG;
-    if (TRACE) {
+    if (CALL_TRACE) {
 	my $n = 0;
 	while (my @c = caller($n++)) {
 	    local $" = ' - ';
@@ -510,7 +510,7 @@ B<Notes:> NONE.
 sub prepare_ca {
     &$connect();
     print STDERR "############# Query: $_[0]\n\n" if $_[2] || DEBUG;
-    if (TRACE) {
+    if (CALL_TRACE) {
 	my $n = 0;
 	while (my @c = caller($n++)) {
 	    local $" = ' - ';

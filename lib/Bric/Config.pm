@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-13 03:07:58 $
+$Date: 2001-12-27 20:15:58 $
 
 =head1 SYNOPSIS
 
@@ -51,6 +51,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    DBI_USER
 		    DBI_PASS
 		    DBI_DEBUG
+		    DBI_CALL_TRACE
 		    MASON_COMP_ROOT
 		    MASON_DATA_ROOT
 		    MASON_ARGS_METHOD
@@ -146,7 +147,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 			       DSN_STRING
 			       DBI_USER
 			       DBI_PASS
-			       DBI_DEBUG)],
+			       DBI_DEBUG
+			       DBI_CALL_TRACE)],
 		    mason => [qw(MASON_COMP_ROOT
 				 MASON_DATA_ROOT
 				 MASON_ARGS_METHOD)],
@@ -354,6 +356,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant DBI_USER                => $config->{DBI_USER} || 'castellan';
     use constant DBI_PASS                => $config->{DBI_PASS} || 'nalletsac';
     use constant DBI_DEBUG               => $config->{DBI_DEBUG} || 0;
+    use constant DBI_CALL_TRACE          => $config->{DBI_CALL_TRACE} || 0;
 
     # Distribution Settings.
     use constant ENABLE_DIST => $config->{ENABLE_DIST};
