@@ -8,6 +8,7 @@ use Bric::Util::Burner;
 use Bric::Biz::Asset::Formatting;
 use Bric::Util::Trans::FS;
 use Bric::Biz::Category;
+use Bric::Biz::Asset::Formatting::DevTest;
 use Bric::Config qw(:temp);
 
 sub table { 'alert_type' }
@@ -21,13 +22,11 @@ sub test_deploy : Test(28) {
     my $oc_id = 1;
     my $oc_dir  = 'oc_' . $oc_id;
     # Create a template to deploy.
-    ok( my $tmpl = Bric::Biz::Asset::Formatting->new
-        ({ output_channel__id => $oc_id,
-           user__id           => $self->user_id,
-           category_id        => 0,
-           data               => '% print "hello world\n"',
-           name               => $name }),
+    ok( my $tmpl = Bric::Biz::Asset::Formatting::DevTest->construct
+        (  data => '% print "hello world\n"',
+           name => $name ),
         "Create template" );
+
     ok( $tmpl->save, "Save template" );
     $self->add_del_ids($tmpl->get_id, 'formatting');
 
