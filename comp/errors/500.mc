@@ -1,6 +1,9 @@
+% # Check to see if this is a preview screen.
+% my $prev = $r->uri =~ m:workflow/profile/preview:;
 <& '/widgets/wrappers/sharky/header.mc',
 	title => 'Error',
-        useSideNav => $r->uri =~ m:workflow/profile/preview: ? 0 : 1,
+        useSideNav => !$prev,
+        no_toolbar => !$prev,
 	context => 'An error occured.',
   debug => Bric::Config::QA_MODE
  &>

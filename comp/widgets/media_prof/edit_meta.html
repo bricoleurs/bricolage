@@ -122,7 +122,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td width=150 align=right><span class="label">Download:</span></td>
   <td>
 % if (my $uri = $media->get_local_uri()) {
-	<a href="<% $uri %>" target="download" class="darkBlueLink"><% $media->get_file_name %></a>
+	<a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>" class="darkBlueLink"><% $media->get_file_name %></a>
 % } else {
 	No file has been uploaded
 % }

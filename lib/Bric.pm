@@ -10,7 +10,7 @@ Release Version: 1.1.0
 
 File (CVS) Version:
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.1.0";
 
 =head1 DATE
 
-$Date: 2001-10-04 17:36:36 $
+$Date: 2001-10-05 20:07:16 $
 
 =head1 SYNOPSIS
 
@@ -713,10 +713,11 @@ sub _set {
     my $dirt = $self->{_dirty};
     # Disable warnings to prevent "Use of uninitialized value in string ne"
     # messages.
-    local $^W = undef;
     for my $i (0..$#$k) {
 	eval {
-	    if ($self->{$k->[$i]} ne $v->[$i]) {
+	    if ((defined $self->{$k->[$i]} && !defined $v->[$i])
+		|| (!defined $self->{$k->[$i]} && defined $v->[$i])
+		|| $self->{$k->[$i]} ne $v->[$i]) {
 		$self->{$k->[$i]} = $v->[$i];
 		$dirt = 1;
 	    };
@@ -803,8 +804,8 @@ perl(1).
 =head1 REVISION HISTORY
 
 $Log: Bric.pm,v $
-Revision 1.7  2001-10-04 17:36:36  samtregar
-Merged from Release_1_0
+Revision 1.8  2001-10-05 20:07:16  samtregar
+Merged changes from Release_1_0
 
 
 =cut

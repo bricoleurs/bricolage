@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2001-10-04 17:36:36 $
+$Date: 2001-10-05 20:07:16 $
 
 =head1 INTRODUCTION
 
@@ -345,6 +345,34 @@ media object. These are text values of the form 'image/jpeg'.
 
 The 'get_size' method will return the file size of the media file.
 
+=head1 USING XML
+
+In order to simplify the template developer's life to some degree,
+we've created configuration directives that, when turned on, will add
+a global variable to all templates called $writer. This variable
+contains an XML::Writer object that can be used to output XML from
+your templates. Of course one can simply use Mason for outputting XML,
+but if one needs to output a B<lot> of XML, one may wish to take
+advantage of the convenience interface priveded by XML::Writer.
+
+To use $writer, simply set the INCLUDE_XML_WRITER configuration to
+"Yes" in bricolage.conf. Another directive, XML_WRITER_ARGS, can be
+used to pass extra arguments to the XML::Writer instantiator (see
+L<XML::Writer> for details of the arguments it accepts -- just don't
+use the OUTPUT argument, as Bricolage needs to set this argument in
+order to ensure that all XML is properly output). Then all you need do
+is use $writer inside a %perl section. Here's an example:
+
+  <%perl>
+  $writer->startTag("greeting",
+                    "class" => "simple");
+  $writer->characters("Hello, world!");
+  $writer->endTag("greeting");
+  $writer->end();
+  </%perl>
+
+For more details on how to use XML::Writer, see L<XML::Writer>.
+
 =head1 AUTHOR
 
 Garth Webb <garth@perijove.com>
@@ -365,8 +393,8 @@ Bric::Util::Burner(10)
 =head1 REVISION HISTORY
 
 $Log: AdvTemplates.pod,v $
-Revision 1.4  2001-10-04 17:36:36  samtregar
-Merged from Release_1_0
+Revision 1.5  2001-10-05 20:07:16  samtregar
+Merged changes from Release_1_0
 
 
 =cut

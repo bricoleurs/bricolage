@@ -97,6 +97,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 		$param->{fb_vals} =~ s/\r/\n/g;
 		$param->{fb_vals} =~ s/\n{2,}/\n/g;
 		$param->{fb_vals} =~ s/\s*,\s*/,/g;
+		my $tmp;
+		foreach my $line (split /\n/, $param->{fb_vals}) {
+		    $tmp .= $line =~ /,/ ? "$line\n" : "$line,$line\n";
+		}
+		$param->{fb_vals} = $tmp;
 	    }
 
 	    my $max = $param->{fb_maxlength} ? $param->{fb_maxlength}
@@ -185,11 +190,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2001-10-04 17:36:38 $
+$Date: 2001-10-05 20:03:42 $
 
 =head1 SYNOPSIS
 
@@ -203,8 +208,8 @@ processed was submitted from the Element Profile page.
 =head1 REVISION HISTORY
 
 $Log: element.mc,v $
-Revision 1.3  2001-10-04 17:36:38  samtregar
-Merged from Release_1_0
+Revision 1.4  2001-10-05 20:03:42  samtregar
+Merged changes from Release_1_0
 
 
 </%doc>

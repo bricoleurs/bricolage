@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.7 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-04 17:36:37 $
+$Date: 2001-10-05 20:07:16 $
 
 =head1 SYNOPSIS
 
@@ -2045,8 +2045,8 @@ L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>
 =head1 REVISION HISTORY
 
 $Log: Media.pm,v $
-Revision 1.6  2001-10-04 17:36:37  samtregar
-Merged from Release_1_0
+Revision 1.7  2001-10-05 20:07:16  samtregar
+Merged changes from Release_1_0
 
 
 =cut

@@ -184,13 +184,14 @@ if ($class eq 'formatting') {
       : 'blackMedUnderlinedLink';
     if ($class eq 'media') {
 	if (my $uri = $obj->get_local_uri) {
-	    $name = qq{<a href="$uri" class="$c" target="preview">$name</a>};
+	    $name = qq{<a href="$uri" class="$c" target="preview_}
+              . SERVER_WINDOW_NAME . qq{">$name</a>};
 	}
 	$cat = $cats->{$obj->get_category__id} ||= $obj->get_category_object;
 	$cat = $cat->get_name if $cat;
     } else {
 	$name = qq{<a href="/workflow/profile/preview/$id" class="$c"}
-	  . qq{target="preview">$name</a>};
+	  . qq{target="preview_} . SERVER_WINDOW_NAME . qq{">$name</a>};
 	$cat = $obj->get_primary_category;
 	$cat = $cat->get_name if $cat;
 	$cat ||= '&nbsp;';
@@ -210,11 +211,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:05 $
+$Date: 2001-10-05 20:03:42 $
 
 =head1 DESCRIPTION
 
@@ -223,7 +224,13 @@ This element handles the display of individual assets on a desk or workspace.
 =head1 REVISION HISTORY
 
 $Log: desk_item.html,v $
-Revision 1.1  2001-09-06 21:52:05  wheeler
-Initial revision
+Revision 1.2  2001-10-05 20:03:42  samtregar
+Merged changes from Release_1_0
+
+Revision 1.1.1.1.2.1  2001/10/05 08:52:15  wheeler
+Added server name to all new window names opened by window.open() or <a target>.
+
+Revision 1.1.1.1  2001/09/06 21:52:05  wheeler
+Upload to SourceForge.
 
 </%doc>

@@ -8,15 +8,15 @@ An asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-04 17:36:36 $
+$Date: 2001-10-05 20:07:16 $
 
 =head1 SYNOPSIS
 
@@ -1771,8 +1771,8 @@ L<Bric.pm>,L<Bric::Util::Group::AssetVersion>
 =head1 REVISION HISTORY
 
 $Log: Asset.pm,v $
-Revision 1.4  2001-10-04 17:36:36  samtregar
-Merged from Release_1_0
+Revision 1.5  2001-10-05 20:07:16  samtregar
+Merged changes from Release_1_0
 
 
 =cut

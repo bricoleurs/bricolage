@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2001-10-04 17:36:36 $
+$Date: 2001-10-05 20:07:16 $
 
 =head1 DESCRIPTION
 
@@ -45,7 +45,7 @@ Perl Modules:
 
 =item DBI 1.19
 
-=item Cache::Cache 0.08
+=item Cache::Cache 0.09
 
 =item Digest::MD5 2.12
 
@@ -58,6 +58,8 @@ Perl Modules:
 =item HTML::Parser3.23
 
 =item MIME::Base64 2.12
+
+=item XML::Writer 0.4
 
 =item libwww-perl 5.50
 
@@ -656,6 +658,21 @@ C<$BRICOLAGE_ROOT/burn/comp> if not specified.
 B<BURN_DATA_ROOT:> The directory where Mason stores Templates once it has
 compiled them. Defaults to C<$BRICOLAGE_ROOT/burn/data> if not specified. Make
 sure that SYS_USER has permission to write to this directory.
+
+=item *
+
+B<INCLUDE_XML_WRITER:> This directive, when switched on, causes Bricolage to
+instantiate an XML::Writer object and to include it in all templates as a global
+variable named $writer. See the XML::Writer documentation for more information.
+Defaults to off if unspecified.
+
+=item *
+
+B<XML_WRITER_ARGS:> If INCLUDE_XML_WRITER is switched on, then this direcive is
+passed to the instantiation method of the XML::Writer object. All arguments to
+XML::Writer->new() are supported except the OUTPUT argument, which Bricolage
+handles internally to ensure that data is sent directly to the template's output
+file. Defaults to no arguments if not specified.
 
 =back
 
@@ -1503,8 +1520,8 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: Admin.pod,v $
-Revision 1.8  2001-10-04 17:36:36  samtregar
-Merged from Release_1_0
+Revision 1.9  2001-10-05 20:07:16  samtregar
+Merged changes from Release_1_0
 
 
 =cut
