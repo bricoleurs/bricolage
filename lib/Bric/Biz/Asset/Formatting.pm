@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 03:48:16 $
+$Date: 2002-03-12 06:04:20 $
 
 =head1 SYNOPSIS
 
@@ -345,75 +345,59 @@ NONE
 =cut
 
 sub new {
-	my ($class, $init) = @_;
+    my ($class, $init) = @_;
+    my $self = bless {}, $class;
 
-	my $self = bless {}, $class;
+    # set active unless we we passed another value
+    $init->{_active} = delete $init->{active} ? 1 : 0;
+    $init->{modifier} = $init->{user__id};
+    $init->{checked_out} = 1;
+    $init->{deploy_status} = 0;
+    $init->{priority} ||= 3;
 
-	# set active unless we we passed another value
-	$init->{'_active'} = exists $init->{'active'} ? $init->{'active'} : 1;
-	# remove active from our list
-	delete $init->{'active'};
-	$init->{'modifier'} = $init->{'user__id'};
-	$init->{'checked_out'} = 1;
-	$init->{'deploy_status'} = 0;
-	$init->{priority} ||= 3;
+    # file type defaults to 'mc'
+    $init->{file_type} ||= 'mc';
 
-	# file type defaults to 'mc'
-	$init->{file_type} ||= 'mc';
+    # check for required output_channel__id, element__id,
+    # and category
+    die Bric::Util::Fault::Exception::GEN->new( {
+	msg =>  'missing required param output channel or asset type'})
+      unless (defined $init->{'output_channel'} ||
+	      defined $init->{'output_channel__id'});
 
-	# check for required output_channel__id, element__id, 
-	# and category
-	die Bric::Util::Fault::Exception::GEN->new( {
-		msg =>  'missing required param output channel or asset type'})
-			 unless (defined $init->{'output_channel'} || 
-					defined $init->{'output_channel__id'});
-
-	my $name; # used to construct file name
-	if (defined $init->{'element'}) {
-	    $init->{'element__id'} = $init->{'element'}->get_id();
-	    $name = $init->{'element'}->get_name();
-	} elsif (defined $init->{'element__id'}) {
-	    my $at = Bric::Biz::AssetType->lookup({id => $init->{'element__id'}});
-	    $name = $at->get_name();
-	} else {
-	    if ($init->{file_type} eq 'mc') {
-		$name = 'autohandler';
-	    } elsif ($init->{file_type} eq 'pl' or $init->{file_type} eq 'tmpl') {
-		$name = 'category';
-	    }
+    my $name; # used to construct file name
+    if (defined $init->{element}) {
+	$init->{element__id} = $init->{element}->get_id;
+	$name = $init->{element}->get_name;
+    } elsif (defined $init->{element__id}) {
+	my $at = Bric::Biz::AssetType->lookup({ id => $init->{element__id} });
+	$name = $at->get_name;
+    } else {
+	if ($init->{file_type} eq 'mc') {
+	    $name = 'autohandler';
+	} elsif ($init->{file_type} eq 'pl' or $init->{file_type} eq 'tmpl') {
+	    $name = 'category';
 	}
+    }
 
-	my ($pre, $post);
-	if (defined $init->{'output_channel'}) {
-		$init->{'output_channel__id'} = $init->{'output_channel'}->get_id();
-		# need to check this!
-		$pre = $init->{'output_channel'}->get_pre_path();
-		$post = $init->{'output_channel'}->get_post_path();
-	} else {
-		my $channel = Bric::Biz::OutputChannel->lookup( { 
-				id => $init->{'output_channel__id'}	});
+    $init->{output_channel__id} = $init->{output_channel}->get_id
+      if defined $init->{output_channel};
 
-		$pre = $channel->get_pre_path();
-		$post = $channel->get_post_path();
-	}
+    my $cat;
+    if (defined $init->{category}) {
+	$init->{category_id} = $init->{category}->get_id;
+	$cat = $init->{category};
+    } elsif (defined $init->{category_id}) {
+	$cat = Bric::Biz::Category->lookup( { id => $init->{category_id} });
+    }
 
-	my $cat_path;
-	if (defined $init->{'category'}) {
-		$init->{'category_id'} = $init->{'category'}->get_id();
-		$cat_path = $init->{'category'}->ancestry_dir();
-	} elsif (defined $init->{'category_id'}) {
-		my $cat = Bric::Biz::Category->lookup( { id => $init->{'category_id'}});
-		$cat_path = $cat->ancestry_dir();
-	}
+    @{$init}{qw(version current_version name)} = (0, 0, $name);
+    $self->SUPER::new($init);
 
-	@{$init}{qw(version current_version name)} = (0, 0, $name);
-	$self->SUPER::new($init);
-
-	# construct the file name now that the object is in place
-	$self->_set(['file_name'], 
-		    [ $self->_build_file_name($init->{file_type}) ]);
-
-	return $self;
+    # construct the file name now that the object is in place
+    $self->_set(['file_name'],
+		[ $self->_build_file_name($init->{file_type}, $name, $cat) ]);
+    return $self;
 }
 
 ################################################################################
