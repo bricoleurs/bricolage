@@ -139,6 +139,11 @@ Added instructions for installing readline library to README.MacOSX. [David]
 
 Fixed some inaccurate image sizes. [Geoff Richards]
 
+=item *
+
+Added "uri" to the possible search options in
+C<< Bric::SOAP::Category->list_ids >>. [David]
+
 =back
 
 =head1 VERSION 1.4.5

@@ -29,15 +29,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.9.2.2 $
+$Revision: 1.9.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-08 23:12:52 $
+$Date: 2003-01-03 23:21:34 $
 
 =head1 SYNOPSIS
 
@@ -94,6 +94,10 @@ The category's name.
 
 The category's directory, the last element in the path.
 
+=item uri (M)
+
+The URI path of the category.
+
 =item path
 
 The category's complete path from the root.
@@ -122,7 +126,7 @@ should be fixed by adding them to the underlying list().
 
 {
 # hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(name directory path parent active);
+my %allowed = map { $_ => 1 } qw(name directory path uri parent active);
 
 sub list_ids {
     my $self = shift;
@@ -165,7 +169,7 @@ sub list_ids {
 
     } else {
         # normal searches pass through to list
-        @cat_ids = map { $_->get_id } Bric::Biz::Category->list($args);
+        @cat_ids = Bric::Biz::Category->list_ids($args);
     }
 
     # name the results
