@@ -286,6 +286,11 @@ allow users with READ permission to a user to see the permissions. [David]
 
 Users can now edit their own user-overrideable preferences. [David]
 
+=item *
+
+Group management now works more correctly in user profiles where users have on
+READ access to the user object. [David]
+
 =back
 
 =head1 VERSION 1.7.3 (2004-03-01)
