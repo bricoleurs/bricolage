@@ -635,7 +635,7 @@ my $handle_recall = sub {
     my ($widget, $field, $param) = @_;
     my $ids = $param->{$widget.'|recall_cb'};
     $ids = ref $ids ? $ids : [$ids];
-    my %wfs;
+    my ($co,%wfs);
 
     foreach (@$ids) {
         my ($o_id, $w_id) = split('\|', $_);
@@ -656,12 +656,17 @@ my $handle_recall = sub {
             $start_desk->save;
             log_event('media_moved', $ba, { Desk => $start_desk->get_name });
             log_event('media_checkout', $ba);
+            $co++;
         } else {
-            add_msg($lang->maketext('Permission to checkout [_1] denied', "&quot;" . $ba->get_name. "&quot;"));
+            add_msg($lang->maketext('Permission to checkout [_1] denied', "&quot;"
+                                    . $ba->get_name. "&quot;"));
         }
     }
 
-    if (@$ids > 1) {
+    # Just bail if they don't have the proper permissions.
+    return unless $co;
+
+    if ($co > 1) {
         # Go to 'my workspace'
         set_redirect("/");
     } else {

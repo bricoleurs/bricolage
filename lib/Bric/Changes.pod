@@ -85,6 +85,12 @@ Fixed CPAN installer to correctly update the list of modules to be installed
 after a module hass been successfully installed. Reported by Perrin Harkins.
 [David]
 
+=item *
+
+Checkout checkboxes no longer appear for assets that users don't have
+permission to check out. Thanks to Alexander Ling for the spot! [David]
+
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)

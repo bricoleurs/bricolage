@@ -168,7 +168,7 @@ elsif ($field eq "$widget|return_cb") {
 # Pull a template back from the dead and on to the workflow.
 elsif ($field eq "$widget|recall_cb") {
     my $ids = $param->{$widget.'|recall_cb'};
-    my %wfs;
+    my ($co,%wfs);
     $ids = ref $ids ? $ids : [$ids];
 
     foreach (@$ids) {
@@ -190,12 +190,17 @@ elsif ($field eq "$widget|recall_cb") {
             $start_desk->save;
             log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
             log_event('formatting_checkout', $fa);
+            $co++;
         } else {
-            add_msg($lang->maketext("Permission to checkout [_1] denied","&quot;" . $fa->get_name. "&quot;"));
+            add_msg($lang->maketext("Permission to checkout [_1] denied","&quot;"
+                                    . $fa->get_name. "&quot;"));
         }
     }
 
-    if (@$ids > 1) {
+    # Just bail if they don't have the proper permissions.
+    return unless $co;
+
+    if ($co > 1) {
         # Go to 'my workspace'
         set_redirect("/");
     } else {
@@ -216,7 +221,8 @@ elsif ($field eq "$widget|checkout_cb") {
             $t_obj->save;
             log_event("formatting_checkout", $t_obj);
         } else {
-            add_msg($lang->maketext("Permission to checkout [_1] denied","&quot;" . $t_obj->get_file_name . "&quot;"));
+            add_msg($lang->maketext("Permission to checkout [_1] denied","&quot;"
+                                    . $t_obj->get_file_name . "&quot;"));
         }
     }
 
