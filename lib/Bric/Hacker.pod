@@ -657,8 +657,8 @@ it is all functioning correctly. Users won't be running these tests, as they
 muck up the database. But that's okay for our validation of the release
 tarball. Use C<make uninstall> to clean up the mess. If you have to go back
 and make any changes, be sure to update the tag of any files you change and
-commit to CVS, then do the whole thing over again. Once everything appears to
-be working properly, release!
+commit to Subversion, then do the whole thing over again. Once everything
+appears to be working properly, release!
 
 =head2 Where to Send Notices
 

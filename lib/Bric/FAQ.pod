@@ -298,8 +298,8 @@ Sometimes you might need to update your CPAN bundle, itself:
 
 =head3 Why does C<make install> exit with the error 'Missing or empty inst/bricolage.sql!'?
 
-You downloaded Bricolage from CVS and didn't run C<make dist>. Do something
-like this:
+You downloaded Bricolage from Subversion and didn't run C<make dist>.
+Do something like this:
 
     # make dist
     [lots of output...]

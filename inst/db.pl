@@ -166,7 +166,7 @@ sub load_db {
     my $db_file = catfile('inst', 'Pg.sql');
     unless (-e $db_file and -s _) {
         my $errmsg = "Missing or empty $db_file!\n\n"
-          . "If you're using CVS, you need to `make dist` first.\n"
+          . "If you're using Subversion sources, you need to `make dist` first.\n"
           . "See `perldoc Bric::FAQ` for more information.";
         hard_fail($errmsg);
     }

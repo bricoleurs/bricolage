@@ -122,8 +122,7 @@ sub create_paths {
 sub copy_files {
     my $root = shift;
     return if /\.$/;
-    return if /CVS/;
-    return if /\.cvsignore$/;
+    return if /\.svn/;
     return if $UPGRADE and m!/data/!; # Don't upgrade data files.
     return if $UPGRADE and /bconf/ and /\.conf$/; # Don't upgrade .conf files.
 
