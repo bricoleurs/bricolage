@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.5.2.2 $
+$Revision: 1.5.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.5.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-09 00:13:25 $
+$Date: 2002-03-10 03:43:13 $
 
 =head1 SYNOPSIS
 
@@ -198,7 +198,7 @@ NONE
 
 sub burn_one {
     my $self = shift;
-    my ($story, $at, $oc, $cat) = @_;
+    my ($story, $oc, $cat, $at) = @_;
 
     print STDERR __PACKAGE__, "::burn_one() called.\n"
 	if DEBUG;

@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.7.2.2 $
+$Revision: 1.7.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-09 00:13:25 $
+$Date: 2002-03-10 03:43:13 $
 
 =head1 SYNOPSIS
 
@@ -196,7 +196,7 @@ A category in which to publish.
 
 sub burn_one {
     my $self = shift;
-    my ($ba, $at, $oc, $cat) = @_;
+    my ($ba, $oc, $cat, $at) = @_;
     my ($outbuf, $retval);
 
     # Create a parser and allow some global variables.

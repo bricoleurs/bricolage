@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.12.2.2 $
+$Revision: 1.12.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 02:16:10 $
+$Date: 2002-03-10 03:43:13 $
 
 =head1 SYNOPSIS
 
@@ -409,8 +409,8 @@ NONE
 
 sub burn_one {
     my $self = shift;
-    my $burner = $self->_get_subclass($_[0]);
-    $burner->burn_one(@_);
+    my ($burner, $at) = $self->_get_subclass($_[0]);
+    $burner->burn_one(@_, $at);
 }
 
 =item my $bool = $burner->chk_syntax($ba, \$err)
@@ -429,7 +429,7 @@ B<Notes:> NONE.
 
 sub chk_syntax {
     my $self = shift;
-    my $burner = $self->_get_subclass($_[0]);
+    my ($burner) = $self->_get_subclass($_[0]);
     $burner->chk_syntax(@_);
 }
 
@@ -453,21 +453,33 @@ B<Notes:> NONE.
 =cut
 
 sub _get_subclass {
-    my ($self, $ba) = @_;
-    my $at = $ba->get_element_object
-      || die $gen->new({ msg => 'No element object associated with template.'});
-    my $which_burner = $at->get_burner || BURNER_MASON;
-
-    my $burner_class = "Bric::Util::Burner::";
-    if ($which_burner == BURNER_MASON) {
-      $burner_class .= "Mason";
-    } elsif ($which_burner == BURNER_TEMPLATE) {
-      $burner_class .= "Template";
+    my ($self, $asset) = @_;
+    my $burner_class = 'Bric::Util::Burner::';
+    my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element__id});
+    if ($at) {
+	# Easy to get it
+	my $b = $at->get_burner || BURNER_MASON;
+	$burner_class .= $b == BURNER_MASON ? 'Mason' : 'Template';
+    } else {
+	 # There is no asset type. It could be a template. Find out.
+	$asset->key_name eq 'formatting'
+	  || die $gen->new({msg => 'No element associated with asset.'});
+	# Okay, it's a template. Figure out the proper burner from the file name.
+	my $file_name = $asset->get_file_name;
+	if ($file_name =~ /autohandler$/ || $file_name =~ /\.mc$/) {
+	    # It's a mason component.
+	    $burner_class .= 'Mason';
+	} elsif ($file_name =~ /\.tmpl$/ || $file_name =~ /\.pl$/) {
+	    # It's an HTML::Template template.
+	    $burner_class .= 'Template';
+	} else {
+	    die $gen->new({msg => 'Cannot determine template burner subclass.'});
+	}
     }
-
     # instantiate the proper subclass and call burn_one()
-    return $burner_class->new($self);
+    return ($burner_class->new($self), $at);
 }
+
 
 1;
 __END__
