@@ -59,7 +59,7 @@ Workspace" views for media that have no associated file. [David]
 =item *
 
 C<make upgrade> now uses the correct PostgreSQL root username and password,
-instead of the default "postgres" username and emtpy password. Thanks to Paul
+instead of the default "postgres" username and empty password. Thanks to Paul
 Cory for the spot! [David]
 
 =item *
@@ -86,7 +86,7 @@ Fixed typo in Media Type manager that broke it. Reported by Lari Huttunen.
 =item *
 
 Fixed problem where an attempt to add new output channels to a new element
-before saving that element cause errors. Mainly noticable when creating
+before saving that element cause errors. Mainly noticeable when creating
 elements via SOAP. Thanks to Mark for the spot. [David]
 
 =item *
@@ -240,7 +240,7 @@ recreated if users wanted to change them. [Scott]
 Granting of permission to database objects during installation has been moved
 to its own make target. This is to allow it to be run by C<make upgrade>, too,
 thus ensuring that the Bricolage database user always has the appropriate
-permissions ot access the database. [David]
+permissions to access the database. [David]
 
 =item *
 
@@ -282,7 +282,7 @@ Bricolage since the beginning! Thanks to Mark for the spot. [David]
 
 =item *
 
-Stories with subelements containting no field elements no longer cause an
+Stories with subelements containing no field elements no longer cause an
 error when the container profile is looking for contextual information to
 display about a a subelement. Thanks to Chris Jantzen for the spot. [David]
 
@@ -291,7 +291,7 @@ display about a a subelement. Thanks to Chris Jantzen for the spot. [David]
 Bulk editing a field without first going through the element profile and
 without adding or removing or reordering field elements now preserves the
 data. This is another bug that has been in the code since the beginning of
-time, and was only recently identifyed. Thanks to Rachel Murray for the spot.
+time, and was only recently identified. Thanks to Rachel Murray for the spot.
 [David]
 
 =item *
@@ -462,16 +462,16 @@ once in the category profile. [David]
 
 =item *
 
-Assets will no longer appear to randomly dissappear from workflow. [David]
+Assets will no longer appear to randomly disappear from workflow. [David]
 
 =item *
 
-Added constraints to the "media_type_member" group that were inadvertantly
+Added constraints to the "media_type_member" group that were inadvertently
 left out of 1.5.1. [David]
 
 =item *
 
-Permissions are now once again properly checked for asets in categories,
+Permissions are now once again properly checked for assets in categories,
 workflows, and on desks. [Mark]
 
 =back
@@ -589,13 +589,13 @@ duration of a request for now, but can be expanded later. [David]
 
 =item *
 
-Updated F<INSTALL.MacOSX> to reflect changes thanks to the new Mac OS X suport
-included in libapreq 1.1. [David]
+Updated F<INSTALL.MacOSX> to reflect changes thanks to the new Mac OS X
+support included in libapreq 1.1. [David]
 
 =item *
 
 Added "Super Bulk Edit", which is a bulk edit interface allowing users to
-editall of the fields in an element at once using POD-like tags, rather than
+edit all of the fields in an element at once using POD-like tags, rather than
 just a single repeatable field. [Garth]
 
 =item *
@@ -684,7 +684,7 @@ Modified C<< Grp->get_objects() >> to use use the C<grp_id> parameter to
 C<list()>, now that support for that parameter has been added to all groupable
 classes. Also went through all existing code to make sure that it uses this
 approach, rather than constructing the relevant objects one-at-a-time from
-each Member object. This should provide a drammatic speedup in many
+each Member object. This should provide a dramatic speedup in many
 operations.
 
 =item *
@@ -729,7 +729,7 @@ the catch! [David]
 =item *
 
 Fixed asset class date parameters to list(). The asset classes were neglecting
-to change the dates pased in to list() to database dates before querying the
+to change the dates passed in to list() to database dates before querying the
 database. This lead to the wrong stories being returned for everyone not using
 UTC as their local time zone. Thanks to Bill Cappel for the spot! [David]
 
@@ -753,7 +753,7 @@ extension. Thanks to Todd Tyree for the spot. [David]
 
 Fixed the description of the root category in the permissions profile for user
 groups so that it properly displays its URI instead of its name. This only
-affects the display of the root category in the permisisons profile for people
+affects the display of the root category in the permissions profile for people
 who installed (rather than upgraded to) Bricolage 1.4.5 or later. [David]
 
 =item *
@@ -786,12 +786,12 @@ the root category. Thanks to Sam for the spot! [David]
 =item *
 
 Removed C<< Bric::Biz::AssetType->remove >>. It shouldn't be used anywhere,
-and might be responsible for the mysterious dissappearance of elements in
+and might be responsible for the mysterious disappearance of elements in
 general. Thanks to JoE<atilde>o Pedro for the spot. [David]
 
 =item *
 
-Assigned apporpriate permissions to allow the default "Story Editors," "Media
+Assigned appropriate permissions to allow the default "Story Editors," "Media
 Producers," and "Template Developers" to access the default workflow and desks
 relevant to them. They hadn't had that access by default before. [David]
 
@@ -809,7 +809,7 @@ the spot. [David]
 =item *
 
 Fixed duplicate URI checking for media assets so that all output channels a
-media asset is in will be checked for dupliate URIs instead of just the
+media asset is in will be checked for duplicate URIs instead of just the
 primary URI. [David]
 
 =item *
@@ -842,7 +842,7 @@ files, as well. Thanks to Alex Wheeler for the spot! [David]
 
 Media types now can be added to groups. This means that permissions can be set
 so that users can administer media types. Previously, only members of the
-"Global Admins" group could administer meida types. [David]
+"Global Admins" group could administer media types. [David]
 
 =back
 
@@ -989,7 +989,7 @@ can click a link to open the new window with the Bricolage UI. [David]
 
 =item *
 
-Improved the interface for the assocation of output channels in Element
+Improved the interface for the association of output channels in Element
 Profile. It now uses a list of output channels rather than a double list, and
 a radio button to select the primary output channel. Also, each associated
 output channel can be marked as "Enabled" or not, indicating whether a new
@@ -1038,7 +1038,7 @@ element. [David]
 Added the methods C<prev_page_file()>, C<prev_page_uri()>,
 C<next_page_file()>, and C<next_page_uri()> to Bric::Util::Burner. These
 methods return the strings representing the file names or URIs of the previous
-and next pages of a stsory, relative to the page that is currently being
+and next pages of a story, relative to the page that is currently being
 burned and, in the case of the C<*_uri()> methods, appropriate to the
 currently-burning Output Channel. Also updated the
 L<Bric::Templates|Bric::Templates> and
@@ -1056,7 +1056,7 @@ methods. [David]
 The Bricolage CSS document is now a static file served by Apache rather than a
 Mason component processed by mod_perl. This allows the style sheet to be
 cached by the browser so that it doesn't have to request it for every page in
-Bricolage. It also cuts down on procesing time, since it doesn't have to be
+Bricolage. It also cuts down on processing time, since it doesn't have to be
 managed dynamically as a Mason component anymore. Also, all font sizes are now
 specified in pixels instead of points, in order to maximize the consistency of
 cross-browser font rendering. [David]
@@ -1072,7 +1072,7 @@ The main Bricolage JavaScript library has had several other JavaScript
 libraries rolled into it, and is now a static file served by Apache rather
 than a Mason component processed by mod_perl. This allows the JS to be cached
 by the browser so that it doesn't have to request it for every page in
-Bricolage. It also cuts down on procesing time, since it doesn't have to be
+Bricolage. It also cuts down on processing time, since it doesn't have to be
 managed dynamically as a Mason component anymore. [David]
 
 =item *
@@ -1132,14 +1132,14 @@ Added a preference for naming the Bricolage instance. [Scott]
 
 Added search by Category URI to Find Stories. Although one could use the
 search by URI feature for this before, it didn't allow for search by secondary
-categories. Now stories can be searhed for in both primary and secondary
+categories. Now stories can be searched for in both primary and secondary
 categories. [David]
 
 =item *
 
 Added the methods C<page_file()> and C<page_uri()> to Bric::Util::Burner. When
 passed a page number argument, these methods return the strings representing
-the file names or URIs of the given page in the curently-burning story and, in
+the file names or URIs of the given page in the currently-burning story and, in
 the case of the C<page_uri()> method, appropriate to the currently-burning
 Output Channel. These methods are best used in burners that don't burn one
 page at a time, such as Burner::Template. [David]
@@ -1208,7 +1208,7 @@ media object would cause an SQL error. [Sam]
 
 The F<bric_apachectl>, F<bric_clean_tmp>, F<bric_dist_mon>, and F<bric_ftpd>
 scripts are now smarter about loading Bricolage libraries and reporting
-relevant errors when they can't load Bricoalge libraries. Thanks to Geoff
+relevant errors when they can't load Bricolage libraries. Thanks to Geoff
 Richards for the patch. [David]
 
 =item *
@@ -1419,7 +1419,7 @@ soon as they were created. [David]
 =item *
 
 Permissions are now properly checked for category and workflow settings when
-new stories, media, and tempmlate assets are created. [David]
+new stories, media, and template assets are created. [David]
 
 =item *
 
@@ -1500,7 +1500,7 @@ Improved error messages thrown in exceptions in Bric::Util::Trans::FTP.
 
 =item *
 
-Removed code and documentation for PostgreSQL 7.3 compatability. With the
+Removed code and documentation for PostgreSQL 7.3 compatibility. With the
 release of 7.3b2, it's no longer needed. [David]
 
 =item *
@@ -1545,7 +1545,7 @@ Baio for the spot. [David]
 Assets on Desks and My Workspace that are checked out to the the user whose
 viewing them will now always preview the version as currently edited by the
 user, rather than the last checked-in version. Other users still can only
-previewe the last checked-in version. [David]
+preview the last checked-in version. [David]
 
 =item *
 
@@ -1557,7 +1557,7 @@ deployed. [David]
 
 =item *
 
-Fixed a bug in Bric::Util::Class where classesn't couldn't be looked up by
+Fixed a bug in Bric::Util::Class where classes couldn't be looked up by
 package name. This affected the "Access Denied" page. [David]
 
 =item *
@@ -1614,7 +1614,7 @@ Geoff Richards for the spot. [David]
 
 =item *
 
-Fixed inconsistencey between container element methods and their convenience
+Fixed inconsistency between container element methods and their convenience
 accessors in Bric::Biz::Asset::Business. Thanks to Philip Fibiger for the
 spot. [David]
 
@@ -1678,7 +1678,7 @@ index that already exists (and that will be dropped, anyway). [David]
 
 =item *
 
-Removed documentation for intalling mod_proxy with Apache. [David]
+Removed documentation for installing mod_proxy with Apache. [David]
 
 =item *
 
@@ -1701,7 +1701,7 @@ Fixed some SQL errors uncovered by the release of PostgreSQL 7.3b1. [David]
 
 =item *
 
-Added code and documentation for compatability with PostgreSQL 7.3. [David]
+Added code and documentation for compatibility with PostgreSQL 7.3. [David]
 
 =item *
 
@@ -1755,7 +1755,7 @@ object, which appears in the user group permissions page. [David]
 
 =item *
 
-Hitting the "enter" key after filling in a serach field now properly submits
+Hitting the "enter" key after filling in a search field now properly submits
 the search as if the "Search" button had been clicked. [David]
 
 =item *
@@ -1789,7 +1789,7 @@ PID file. [David]
 =item *
 
 The side navigation layer is now better aware of its context, and changes the
-colors of some of its graphics depending on the context. Also recreaed the
+colors of some of its graphics depending on the context. Also recreated the
 "WORKFLOW" tab graphics. It looks like this has been broken for over a year,
 and I only just noticed it! [David]
 
@@ -1839,7 +1839,7 @@ Fixed misnamed database constraint. [David]
 
 =item *
 
-Templates can once again be retreived from the library and checked out for
+Templates can once again be retrieved from the library and checked out for
 revising. [David]
 
 =item *
@@ -1953,7 +1953,7 @@ Corrected a bunch of spelling errors in this file. [David]
 
 Calling C<get_data()> on a container element in templates (or elsewhere, for
 that matter) now properly ignores container subelements. Likewise for
-C<get_container()>, whicn how properly ignores data subelements. [David]
+C<get_container()>, which how properly ignores data subelements. [David]
 
 =item *
 
