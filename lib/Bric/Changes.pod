@@ -51,6 +51,14 @@ writers to more easily find a single data element, rather than just the value
 of a single data element (as C<get_data()> does). Inspired by a comment from
 Bill Cappel. [David]
 
+=item *
+
+Added the C<YEAR_SPAN_BEFORE> and C<YEAR_SPAN_AFTER> F<bricolage.conf>
+directives. These directives enable you to control how many years before and
+after the current year to display in the list of years in the date and time
+select widget. The default values are 10 for each, meaning that if the current
+year is 2003, then the date span will be from 1993 to 2013.
+
 =back
 
 =head1 VERSION 1.6.0

@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.62 $
+$Revision: 1.63 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.62 $ )[-1];
+our $VERSION = (qw$Revision: 1.63 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-15 09:05:05 $
+$Date: 2003-06-04 00:34:00 $
 
 =head1 SYNOPSIS
 
@@ -136,6 +136,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ALLOW_WORKFLOW_TRANSFER
                     MOD_PERL
                     ALLOW_ALL_SITES_CX
+                    YEAR_SPAN_BEFORE
+                    YEAR_SPAN_AFTER
                     CACHE_DEBUG_MODE
                     STORY_URI_WITH_FILENAME
                    );
@@ -198,6 +200,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      ALLOW_ALL_SITES_CX
                                      SERVER_WINDOW_NAME
                                      LANGUAGE
+                                     YEAR_SPAN_BEFORE
+                                     YEAR_SPAN_AFTER
                                      NO_TOOLBAR)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],
@@ -480,6 +484,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant ALLOW_WORKFLOW_TRANSFER => $config->{ALLOW_WORKFLOW_TRANSFER};
     use constant ALLOW_ALL_SITES_CX      => $config->{ALLOW_ALL_SITES_CX};
     use constant FULL_SEARCH =>          => $config->{FULL_SEARCH};
+    use constant YEAR_SPAN_BEFORE        => $config->{YEAR_SPAN_BEFORE} || 10;
+    use constant YEAR_SPAN_AFTER         => $config->{YEAR_SPAN_AFTER}  || 10;
 
     # Asset settings.
     use constant STORY_URI_WITH_FILENAME => $config->{STORY_URI_WITH_FILENAME};

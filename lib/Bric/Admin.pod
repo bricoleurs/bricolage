@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.105 $
+$Revision: 1.106 $
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:38 $
+$Date: 2003-06-04 00:33:59 $
 
 =head1 DESCRIPTION
 
@@ -1369,6 +1369,14 @@ trade-off to be worth it. Defaults to "Off" if not specified.
 B<ALLOW_ALL_SITES_CX:> Allow users to select "All Sites" from their site
 context menu. This will enable them to see the workflows for all sites to
 which they have at least READ access. Defaults to "Off" of not specified.
+
+=item *
+
+B<YEAR_SPAN_BEFORE and YEAR_SPAN_AFTER:> These directives enable you to
+control how many years before and after the current year to display in the
+list of years in the date and time select widget. The default values are 10
+for each, meaning that if the current year is 2003, then the date span will be
+from 1993 to 2013.
 
 =back
 

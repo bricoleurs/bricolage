@@ -8,11 +8,11 @@ select_time - A widget to facilitate time input.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:44 $
+$Date: 2003-06-04 00:33:58 $
 
 =head1 SYNOPSIS
 
@@ -146,11 +146,8 @@ $repopulate      => 0
 <%once>
 my $widget = 'select_time';
 
-my @t = localtime;
-# Get a good 6 year range starting from last year.
-my @year = ($t[5]+1899..$t[5]+1905);
-my @mon  = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
-$_ = $lang->maketext($_) for (@mon);
+my @mon = map { $lang->maketext($_) }
+ qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
 my @day  = ('01'..'31');
 my @hour = ('00'..'23');
 my @min  = ('00'..'59');
@@ -191,7 +188,9 @@ $s->{'hour'} ||= $t[3] || $def_hour || '';
 $s->{'min'}  ||= $t[4] || $def_min || '';
 
 my @time = localtime;
-my @year = $t[0] ? ($t[0]-10..$t[0]+10) :  ($time[5]+1890..$time[5]+1910);
+my @year = $t[0] ?
+ ($t[0] - YEAR_SPAN_BEFORE .. $t[0] + YEAR_SPAN_AFTER) :
+ ($time[5] + 1900 - YEAR_SPAN_BEFORE .. $time[5] + 1900 + YEAR_SPAN_AFTER);
 
 my %fields;
 $fields{'year'} = \@year unless $no_year;
