@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.60 $
+$Revision: 1.61 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.60 $ )[-1];
+our $VERSION = (qw$Revision: 1.61 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-29 23:58:14 $
+$Date: 2003-11-12 00:44:46 $
 
 =head1 SYNOPSIS
 
@@ -1209,23 +1209,24 @@ sub upload_file {
     my $at_obj = $self->_get_element_object;
     my $oc_obj = $self->get_primary_oc;
 
+    my $new_loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
+
     # Set the location, name, and URI.
-    if (not defined $old_fn or not defined $uri or $old_fn ne $name) {
+    if (not defined $old_fn or not defined $uri or $old_fn ne $name or $loc ne $new_loc) {
         $self->_set(['file_name'], [$name]);
         $uri = Bric::Util::Trans::FS->cat_uri
           ($self->_construct_uri($self->get_category_object, $oc_obj),
            $oc_obj->get_filename($self));
 
-        $loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
         $self->_set([qw(location uri   _update_uri)] =>
-                    [   $loc,    $uri, 1]);
+                    [   $new_loc,    $uri, 1]);
     }
 
     if (my $auto_fields = $self->_get_auto_fields) {
         # We need to autopopulate data field values. Get the top level element
         # construct a MediaFunc object.
         my $tile = $self->get_tile;
-        my $path = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $loc);
+        my $path = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $new_loc);
         my $media_func = Bric::App::MediaFunc->new({ file_path => $path });
 
         # Iterate through all the elements.
