@@ -42,15 +42,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 17:05:38 $
+$Date: 2004-03-24 00:54:40 $
 
 =head1 SYNOPSIS
 
@@ -218,6 +218,10 @@ sub list_ids {
         $args->{category_id} = $category_id;
         delete $args->{category};
     }
+
+    # handle site => site_id conversion
+    $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
+      if exists $args->{site};
 
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
@@ -513,8 +517,8 @@ my $allowed = {
     list_ids => { map { $_ => 1 } qw(element file_name output_channel category
                                      workflow simple priority publish_status
                                      element deploy_date_start deploy_date_end
-                                     expire_date_start expire_date_end Order
-                                     OrderDirection Offset Limit),
+                                     expire_date_start expire_date_end site
+                                     Order OrderDirection Offset Limit),
                   grep { /^[^_]/}
                     keys %{ Bric::Biz::Asset::Formatting->PARAM_WHERE_MAP }
                 },

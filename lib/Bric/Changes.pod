@@ -64,18 +64,23 @@ paths. [David]
 
 =item *
 
-Added constant HAS_MULTISITE => 0 to Bric.pm, so that all classes properly
-declare themselves on search results. [JoE<atilde>o Pedro]
+Added constant C<HAS_MULTISITE> to the Bric base classe so that all classes
+properly declare themselves for UI search results. [JoE<atilde>o Pedro]
 
 =item *
 
-Story and Media SOAP calls now correctly use the element's key_name to identify
-the element. [JoE<atilde>o Pedro]
+Story and Media SOAP calls now correctly use the element's key name to
+identify the element. [JoE<atilde>o Pedro]
 
 =item *
 
-Story creation via SOAP now correctly looks up the Category by uri and site ID.
-[JoE<atilde>o Pedro]
+Story creation via SOAP now correctly looks up the Category by URI and site
+ID. [JoE<atilde>o Pedro]
+
+=item *
+
+The Template SOAP interface now suports the C<site> parameter to
+C<list_ids()>. [David]
 
 =back
 
