@@ -161,7 +161,7 @@ if ($useSideNav) {
     <div id="breadcrumbs">
         <p><% $context %></p>
 % if ($useSideNav) {
-        <form id="sitecontext" name="sitecontext">
+        <form id="sitecontext" action="#">
             <div class="siteContext"><& /widgets/site_context/site_context.mc &></div>
         </form>
 % }
