@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.139 $
+$Revision: 1.140 $
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:08 $
+$Date: 2004-02-08 00:36:11 $
 
 =head1 DESCRIPTION
 
@@ -1521,7 +1521,7 @@ bind to the specified address.
 =item *
 
 B<FTP_LOG:> Set this to the file where you want to FTP logs written
-to. Defaults to $BRICOLAGE_ROOT/ftp.log if not set.
+to. Defaults to F<$BRICOLAGE_ROOT/ftp.log> if not set.
 
 =item *
 
