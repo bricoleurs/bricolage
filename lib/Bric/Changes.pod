@@ -43,8 +43,12 @@ output channel had a post_path. [David]
 
 =item *
 
-Fixed bug where templates often couldn't be found by the
-HTML::Template burner if the output channel had a post_path. [Sam]
+Fixed bug where templates often couldn't be found by the HTML::Template burner
+if the output channel had a post_path. [Sam]
+
+=item *
+
+Fixed some problems with the sideNav menus under Netscape. [David]
 
 =back
 
