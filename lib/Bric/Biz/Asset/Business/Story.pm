@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.85 $
+$Revision: 1.86 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.85 $ )[-1];
+our $VERSION = (qw$Revision: 1.86 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-20 09:56:57 $
+$Date: 2004-02-23 14:09:41 $
 
 =head1 SYNOPSIS
 
@@ -612,7 +612,7 @@ Returns only inactive stories.
 
 =item category_id
 
-Returns a list os stories in the category represented by a category ID. May
+Returns a list of stories in the category represented by a category ID. May
 use C<ANY> for a list of possible values.
 
 =item keyword
