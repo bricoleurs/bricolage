@@ -158,6 +158,16 @@ The C<get_desk_stamps()> method in the asset classes has been removed (it was
 deprecated in Bricolage 1.8.4). The same goes for the C<required_satisfied()>
 method in Bric::Biz::Workflow. Thanks to Marshall Roch for the spot! [David]
 
+=item *
+
+Users must have at least READ permission to sources to add them to stories. If
+upgrading from an earlier version of Bricolage, for purposes of backward
+compatability, members of the "All Users" group (that is to say, all users)
+will be granted READ access to all sources. Change this permission to limit
+access as appropriate. For new installations of Bricolage, the default "Story
+Editors" and "User Producers" groups have READ permission to all sources.
+Suggested by Simon Wilcox. [David]
+
 =back
 
 ##############################################################################

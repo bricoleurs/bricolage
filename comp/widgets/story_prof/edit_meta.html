@@ -130,7 +130,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   selected => $story->get_source__id,
   indent   => 0,
   useTable => 1,
-  disp     => "Source"
+  disp     => "Source",
+  exclude => sub { !chk_authz($_[0], READ, 1) },
 &>
 
 <& '/widgets/profile/displayFormElement.mc',
