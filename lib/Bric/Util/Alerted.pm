@@ -1172,14 +1172,7 @@ $get_em = sub {
         ORDER BY a.id
     }, undef);
 
-warn "        SELECT @qry_cols
-        FROM   alert b, alerted a LEFT JOIN alerted__contact_value v
-               ON a.id = v.alerted__id LEFT JOIN contact c on v.contact__id = c.id
-        WHERE  b.id = a.alert__id
-               $where
-        ORDER BY a.id
-
-";    # Just return the IDs, if they're what's wanted.
+    # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
