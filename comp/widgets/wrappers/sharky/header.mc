@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:39 $
+$Date: 2001-10-09 22:21:02 $
 
 =head1 SYNOPSIS
 
@@ -216,20 +216,24 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 
 <!-- begin content area -->
 
-  <td width=580 valign=top rowspan=2>
+  <td width="580" valign="top" rowspan="2">
 % # top tab, help, logout buttons
-  <table width=580 cellpadding=0 cellspacing=0 border=0>
+  <table width="580" cellpadding="0" cellspacing="0" border="0">
   <tr>
-    <td class=<% $tab %> valign=top width=11><img src="<% $curve_left %>" width=11 height=22></td>
-    <td class=<% $tab %> width=348><% $title %></td>
-    <td valign=top width=11 class=<% $tab %>><img src="<% $curve_right %>" width=11 height=22></td>
+    <td class="<% $tab %>" valign="top" width="11"><img src="<% $curve_left %>" width="11" height="22"></td>
+    <td class="<% $tab %>" width="330"><% $title %></td>
+    <td valign="top" width="11" class="<% $tab %>"><img src="<% $curve_right %>" width="11" height="22"></td>
 % if ($useSideNav) {
-    <td width=200 align=right valign=top><& "/widgets/help/help.mc" &><a href="/workflow/profile/alerts"><img src="/media/images/my_alerts_orange.gif" width=77 height=20 border=0 hspace=3 /></a></td>
-    <td align=right width=70>
-    <a href="/logout"><img src="/media/images/logout.gif" width=70 height=20 border=0></a>
+    <td width="10">&nbsp;</td>
+    <td width="71" align="right" valign="top"><& "/widgets/help/help.mc" &></td>
+    <td width="77" alight="right" valign="top">
+        <a href="/workflow/profile/alerts"><img src="/media/images/my_alerts_orange.gif" width="77" height="20" border="0" hspace="3" /></a>
+    </td>
+    <td align="right" width="70">
+    <a href="/logout"><img src="/media/images/logout.gif" width="70" height="20" border="0"></a>
     </td>
 % } else {
-    <td width="217">&nbsp;</td>
+    <td width="228">&nbsp;</td>
 % }
   </tr>
   </table>
