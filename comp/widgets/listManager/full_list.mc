@@ -180,9 +180,9 @@ $pagination => {}
 
 <%init>;
 # Forms on which to display the 'Check All' table header
-my @$form_names = qw(alert_type category contrib contrib_type destination
+my $form_names = [qw(alert_type category contrib contrib_type destination
 element element_type grp media source story output_channel template
-user workflow);
+user workflow)];
 
 my $url       = $r->uri;
 my $object    = get_state_data($widget, 'object');
