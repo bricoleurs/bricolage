@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-10 23:28:14 $
+$Date: 2002-10-15 21:31:09 $
 
 =head1 SYNOPSIS
 
@@ -432,7 +432,7 @@ B<Notes:> NONE.
 
 sub display_pages {
     my $self = shift;
-    my ($elem_name) = @_;
+    my $elem_name = shift;
     my $interp   = $self->_get('_interp');
     my $page_num = $self->get_page;
 
@@ -446,7 +446,7 @@ sub display_pages {
     # Set the '_more_pages' variable if there are more pages to burn after this.
     $self->_set(['_more_pages'], [(defined($next_page) ? 1 : 0)]);
 
-    $self->display_element($page_elem);
+    $self->display_element($page_elem, @_);
 }
 
 #------------------------------------------------------------------------------#
@@ -465,8 +465,8 @@ B<Notes:> NONE.
 =cut
 
 sub display_element {
-    my ($self, $elem) = @_;
-    return unless $elem;
+    my $self = shift;
+    my $elem = shift or return;
 
     # Call another element if this is a container otherwise output the data.
     if ($elem->is_container) {
@@ -483,7 +483,7 @@ sub display_element {
 	# Display the element
 	{
 	    no strict 'refs';
-	    ${TEMPLATE_BURN_PKG . '::m'}->comp($template) if $template;
+	    ${TEMPLATE_BURN_PKG . '::m'}->comp($template, @_) if $template;
 	}
 
 	# Pop the element back off again.
@@ -519,8 +519,9 @@ us the opportunity to tailor the verbiage to suit our application better.
 =cut
 
 sub chain_next {
+    my $self = shift;
     no strict 'refs';
-    ${TEMPLATE_BURN_PKG . '::m'}->call_next;
+    ${TEMPLATE_BURN_PKG . '::m'}->call_next(@_);
 }
 
 #------------------------------------------------------------------------------#

@@ -185,6 +185,14 @@ conveniently-named constants "PUBLISH_MODE", "PREVIEW_MODE", and
 The documentation in the Bric::Util::Burner class has been updated and
 improved. [David]
 
+=item *
+
+Arguments can now be passed to the C<display_pages()>, C<display_element()>,
+and C<chain_next()> methods of the C<$burner> object in Mason templates. These
+arguments are passed to the templates that are executed just as they are if
+you'd called C<< $m->comp >>, meaning that you can access their values via the
+C<%ARGS> global and in C<< <%args> >> blocks in Mason templates. [David]
+
 =back
 
 =head1 VERSION 1.4.4
