@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-02-10 02:26:57 $
 
 =head1 SYNOPSIS
 
@@ -521,7 +521,7 @@ sub my_meths {
 			     };
     $meths->{source} =       {
 			      name     => 'source',
-			      get_meth => sub { Bric::Biz::Org::Source->lookup({ id => shift->get_source_id(@_) }) },
+			      get_meth => sub { Bric::Biz::Org::Source->lookup({ id => shift->get_source__id(@_) }) },
 			      get_args => [],
 			      disp     => 'Source',
 			      len      => 1,
@@ -1531,7 +1531,7 @@ NONE
 
 sub get_all_keywords {
     my $self = shift;
-    my @kw = _get_category_keywords($self), get_keywords($self);
+    my @kw = (_get_category_keywords($self), get_keywords($self));
     return wantarray ? @kw : \@kw;
 }
 
@@ -1960,7 +1960,7 @@ sub _construct_uri {
     push @path, $self->get_cover_date("%G/%m/%d") unless $fu;
 
     # Add the slug.
-    push @path, $self->get_slug if $self->key_name eq 'story' && !$fu;
+    push @path, $self->get_slug if $self->key_name eq 'story';
 
     # Add the post value.
     push @path, $post if $post;
