@@ -50,13 +50,13 @@ Database name. Defaults to C<PGDATABASE> environment variable.
 
 =item -H
 
-PostgreSQL server host name. Will use C<PGHOST> environment variable and
-defaults to "localhost".
+PostgreSQL server host name. Will use C<PGHOST> environment variable or else
+PostgreSQL assumes that it's connecting via sockets.
 
 =item -o
 
-PostgreSQL server port number. Will use C<PGPORT> environment variable and
-defaults to 5432.
+PostgreSQL server port number. Will use C<PGPORT> environment variable or else
+PostgreSQL assumes that it's connecting via sockets.
 
 =item -c
 
@@ -327,7 +327,9 @@ sub grant_permissions {
     # the results of the below query to a file and then parse the file,
     # but there's not much point in investing the time to do that at this
     # point. So create the DSN.
-    my $dsn = "dbname=$opt_d;host=$opt_H;port=$opt_o";
+    my $dsn = "dbname=$opt_d;";
+    $dsn .= "host=$opt_H;" if $opt_H;
+    $dsn .= "port=$opt_o;" if $opt_o;
 
     # Establish a database connection.
     my $dbh = DBI->connect(join(':','dbi',DBD,$dsn), $opt_u, $opt_p, ATTR);
