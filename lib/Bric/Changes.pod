@@ -103,13 +103,13 @@ elsewhere, too. [David]
 =item *
 
 Fixed bug in navigation bar HTML that caused the bar to disappear on
-certain browsers. [Rachel]
+certain browsers. [Rachel Murray]
 
 =item *
 
 Fixed bug in Bric::SOAP where Bricolage exceptions resulted in an
-uninformative "Application error" message.  Now the full exception
-message is displayed.
+uninformative "Application error" message. Now the full exception message is
+displayed. [Sam]
 
 =back
 
