@@ -271,6 +271,12 @@ channel. [JoE<atilde>o Pedro]
 Added C<first_publish_date> attribute to the SOAP input and output for stories
 and media. [David]
 
+=item *
+
+The category SOAP class now correctly calls C<lookup()> with the site ID to
+prevent multipple categories with the same names but in different sites from
+being looked up. [JoE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.7.3 (2004-03-01)

@@ -26,15 +26,15 @@ Bric::SOAP::Category - SOAP interface to Bricolage categories.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-13 02:08:08 $
+$Date: 2004-03-16 21:42:16 $
 
 =head1 SYNOPSIS
 
@@ -154,6 +154,11 @@ sub list_ids {
     $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
       if exists $args->{site};
 
+   # handle site => site_id conversion
+    $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
+      if exists $args->{site};
+ 
+   
     # perform emulated searches
     if ($args->{parent} or $args->{path}) {
         my $to_find = $args->{parent} ? $args->{parent} : $args->{path};
@@ -360,7 +365,7 @@ sub delete {
                 if DEBUG;
 
         # lookup category
-        my $category = Bric::Biz::Category->lookup({ id => $category_id });
+        my $category = Bric::Biz::Category->lookup({ id => $category_id, site_id => $args->{site_id} });
         throw_ap(error => __PACKAGE__
                    . "::delete : no category found for id \"$category_id\"")
           unless $category;
@@ -461,6 +466,7 @@ sub load_asset {
     my (@category_ids, %paths);
     foreach my $cdata (@{$data->{category}}) {
         my $id = $cdata->{id};
+        my $site_id = site_to_id(__PACKAGE__, $cdata->{site});
 
         # are we updating?
         my $update = exists $to_update{$id};
@@ -478,7 +484,7 @@ sub load_asset {
               unless chk_authz($category, CREATE, 1);
         } else {
             # updating - first look for a checked out version
-            $category = Bric::Biz::Category->lookup({ id => $id });
+            $category = Bric::Biz::Category->lookup({ id => $id, site_id => $site_id  });
             throw_ap(error => __PACKAGE__ . "::update : no category found for \"$id\"")
               unless $category;
             throw_ap(error => __PACKAGE__ . " : access denied.")
@@ -486,7 +492,6 @@ sub load_asset {
         }
 
         # set site
-        my $site_id = site_to_id(__PACKAGE__, $cdata->{site});
         $category->set_site_id($site_id);
 
         # set simple fields
