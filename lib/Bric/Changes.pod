@@ -38,6 +38,11 @@ in without clicking the "Save" button. [David]
 
 Fixed bug where a fixed story's slug was getting used in its URI. [David]
 
+=item *
+
+Fixed broken image autopopulation fields (compression, height, width, etc.)
+[David]
+
 =back
 
 =head1 VERSION 1.2.1
