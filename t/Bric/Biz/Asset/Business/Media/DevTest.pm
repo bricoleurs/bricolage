@@ -417,8 +417,8 @@ sub test_select_methods: Test(53) {
         push @got_ids, $_->get_id();
         push @got_grp_ids, \@{$_->get_grp_ids()};
     }
-    is_deeply( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
-    is_deeply( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    eq_set( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
+    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
     undef @got_ids;
     undef @got_grp_ids;
 
@@ -428,8 +428,8 @@ sub test_select_methods: Test(53) {
         push @got_ids, $_->get_id();
         push @got_grp_ids, \@{$_->get_grp_ids()};
     }
-    is_deeply( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
-    is_deeply( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    eq_set( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
+    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
     undef @got_ids;
     undef @got_grp_ids;
 
@@ -446,7 +446,7 @@ sub test_select_methods: Test(53) {
     foreach (@$got) {
         push @got_ids, $_;
     }
-    is_deeply( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
+    eq_set( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
     undef @got_ids;
 
     ok( $got = class->list_ids({ title => '_test%', Order => 'id' }), 'lets do an ids search by title' );
@@ -454,7 +454,7 @@ sub test_select_methods: Test(53) {
     foreach (@$got) {
         push @got_ids, $_;
     }
-    is_deeply( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
+    eq_set( \@got_ids, $OBJ_IDS->{media}, '... did we get the right list of ids out' );
     undef @got_ids;
 
     # finally do this by grp_ids
