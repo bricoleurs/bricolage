@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =head1 DATE
 
-$Date: 2004-03-26 03:27:49 $
+$Date: 2004-03-26 17:31:39 $
 
 =head1 DESCRIPTION
 
@@ -175,6 +175,10 @@ Open Forum Europe - L<http://www.openforumeurope.org/>
 =item *
 
 The Lab School of Washington - L<http://my.labschool.org/>
+
+=item *
+
+Architectural Energy - L<http://www.archenergy.com/>
 
 =item *
 
