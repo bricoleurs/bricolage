@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-22 05:36:04 $
+$Date: 2003-01-27 05:09:05 $
 
 =head1 SYNOPSIS
 
@@ -60,98 +60,101 @@ triggered the event.
 
 =cut
 
-################################################################################
+##############################################################################
 # Dependencies
-################################################################################
+##############################################################################
 # Standard Dependencies
 use strict;
 
-################################################################################
+##############################################################################
 # Programmatic Dependences
-use Bric::Util::DBI qw(:standard);
+use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::EventType;
 use Bric::Util::AlertType;
-use Bric::Util::Grp::Event;
+#use Bric::Util::Grp::Event;
 use Bric::Biz::Person::User;
 use Bric::Util::Fault::Exception::DP;
 
-################################################################################
+##############################################################################
 # Inheritance
-################################################################################
+##############################################################################
 use base qw(Bric);
 
-################################################################################
+##############################################################################
 # Function and Closure Prototypes
-################################################################################
+##############################################################################
 my ($get_em, $make_obj, $save, $save_attr, $get_et);
 
-################################################################################
+##############################################################################
 # Constants
-################################################################################
+##############################################################################
 use constant DEBUG => 0;
 
-################################################################################
+##############################################################################
 # Fields
-################################################################################
+##############################################################################
 # Public Class Fields
 
-################################################################################
+##############################################################################
 # Private Class Fields
-my @cols = qw(e.id t.id e.usr__id e.obj_id e.timestamp t.key_name t.name
-	      t.description c.pkg_name ta.name ea.value);
-splice @cols, -2, 0,
-  'CASE WHEN e.id in (SELECT event__id from alert) THEN 1 ELSE 0 END';
+my $SEL_COLS = 'e.id, t.id, e.usr__id, e.obj_id, e.timestamp, t.key_name, ' .
+  't.name, t.description, c.pkg_name, ta.name, CASE WHEN e.id in ' .
+  '(SELECT event__id from alert) THEN 1 ELSE 0 END, ea.value'; #, m.grp_id';
 
-my @props = qw(id event_type_id user_id obj_id timestamp key_name name
-	       description class _alert attr);
+my @SEL_PROPS = qw(id event_type_id user_id obj_id timestamp key_name name
+                   description class _alert); # grp_ids);
 
-my @ecols = qw(id event_type__id usr__id obj_id timestamp);
-my @eprops = qw(id event_type_id user_id obj_id timestamp);
+my @PROPS = (@SEL_PROPS, 'attr');
 
-my @ord = qw(name key_name description trig_id trig class timestamp);
-my $meths;
+my @ECOLS = qw(id event_type__id usr__id obj_id timestamp);
+my @EPROPS = qw(id event_type_id user_id obj_id timestamp);
 
-my %num_map = (id => 'e.id = ?',
-	       event_type_id => 't.id = ?',
-	       user_id => 'e.usr__id = ?',
-	       obj_id => 'e.obj_id = ?',
-	       class_id => 't.class__id = ?');
+my @ORD = qw(name key_name description trig_id trig class timestamp);
+my $METHS;
 
-my %txt_map = (key_name => 'LOWER(t.key_name) = ?',
-	       name => 'LOWER(g.name) = ?',
-	       description => 'LOWER(g.description) = ?',
-	       class => 'LOWER(c.name) = ?'
-	      );
+my %NUM_MAP = (id            => 'e.id',
+               event_type_id => 't.id',
+               user_id       => 'e.usr__id',
+               obj_id        => 'e.obj_id',
+               class_id      => 't.class__id');
 
+my %TXT_MAP = (key_name      => 'LOWER(t.key_name)',
+               name          => 'LOWER(t.name)',
+               description   => 'LOWER(t.description)',
+               class         => 'LOWER(c.pkg_name)'
+              );
 
-################################################################################
+my $dp = 'Bric::Util::Fault::Exception::DP';
 
-################################################################################
+##############################################################################
+
+##############################################################################
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 id => Bric::FIELD_READ,
-			 event_type_id => Bric::FIELD_READ,
-			 user_id => Bric::FIELD_READ,
-			 obj_id => Bric::FIELD_READ,
-			 timestamp => Bric::FIELD_READ,
-			 key_name => Bric::FIELD_READ,
-			 name => Bric::FIELD_READ,
-			 description => Bric::FIELD_READ,
-			 class => Bric::FIELD_READ,
-			 attr => Bric::FIELD_READ,
+                         # Public Fields
+                         id => Bric::FIELD_READ,
+                         event_type_id => Bric::FIELD_READ,
+                         user_id => Bric::FIELD_READ,
+                         obj_id => Bric::FIELD_READ,
+                         timestamp => Bric::FIELD_READ,
+                         key_name => Bric::FIELD_READ,
+                         name => Bric::FIELD_READ,
+                         description => Bric::FIELD_READ,
+                         class => Bric::FIELD_READ,
+                         attr => Bric::FIELD_READ,
+#                         grp_ids => Bric::FIELD_READ,
 
-			 # Private Fields
-			 _et => Bric::FIELD_NONE,
-			 _alert => Bric::FIELD_READ,
-			});
+                         # Private Fields
+                         _et => Bric::FIELD_NONE,
+                         _alert => Bric::FIELD_READ,
+                        });
 }
 
-################################################################################
+##############################################################################
 # Class Methods
-################################################################################
+##############################################################################
 
 =head1 INTERFACE
 
@@ -161,18 +164,18 @@ BEGIN {
 
 =item my $event = Bric::Util::Event->new($init)
 
-Instantiates and saves a Bric::Util::Event object. Returns the new event object on
-success and undef on failure. An anonymous hash of initial values must be passed
-with the following keys:
+Instantiates and saves a Bric::Util::Event object. Returns the new event
+object on success and undef on failure. An anonymous hash of initial values
+must be passed with the following keys:
 
 =over 4
 
 =item *
 
-et - A Bric::Util::EventType object, which defines what type of event to log. If
-you happen to have already instantiated a Bric::Util::EventType object, use that
-object rather than its ID to avoid creating a second instantiation of the same
-object inernally.
+et - A Bric::Util::EventType object, which defines what type of event to
+log. If you happen to have already instantiated a Bric::Util::EventType
+object, use that object rather than its ID to avoid creating a second
+instantiation of the same object inernally.
 
 =item *
 
@@ -181,8 +184,8 @@ Bric::Util::EventType object ID will be instantiated internally.
 
 =item *
 
-name - A Bric::Util::EventType object name. May be passed instead of et or et_id.
-A Bric::Util::EventType object ID will be instantiated internally.
+name - A Bric::Util::EventType object name. May be passed instead of et or
+et_id. A Bric::Util::EventType object ID will be instantiated internally.
 
 =item *
 
@@ -190,8 +193,8 @@ obj - The object for which the event will be logged.
 
 =item *
 
-user - The Bric::Biz::Person::User object representing the user who triggered the
-event.
+user - The Bric::Biz::Person::User object representing the user who triggered
+the event.
 
 =item *
 
@@ -210,7 +213,7 @@ B<Throws:>
 
 =item *
 
-No Bric::Util::EventType object, ID, or name passed to Bric::Util::Event::new().
+No Bric::Util::EventType object, ID, or name passed to new().
 
 =item *
 
@@ -264,12 +267,12 @@ B<Notes:> Use new() only to create a completely new event object. It will
 automatically be saved before returning the new event object. Use lookup() or
 list() to fetch pre-existing event objects.
 
-In the future, attributes may not need to be passed for all attribute logging.
-That is, if the attributes can be collected direct from the object of this
-event via accessors, they need not be passed in via this anonymous hash. The
-accessors must be named 'get_' plus the name of the attribute to be fetched
-(such as 'get_slug') in order for the method-call approach to collecting
-atrributes to work. But this is not yet implemented.
+In the future, attributes may not need to be passed for all attribute
+logging. That is, if the attributes can be collected direct from the object of
+this event via accessors, they need not be passed in via this anonymous
+hash. The accessors must be named 'get_' plus the name of the attribute to be
+fetched (such as 'get_slug') in order for the method-call approach to
+collecting atrributes to work. But this is not yet implemented.
 
 =cut
 
@@ -280,15 +283,15 @@ sub new {
     # Make sure we've got full EventType object.
     my $et = $init->{et};
     unless ($et) {
-	if (defined $init->{et_id}) {
-	    $et = Bric::Util::EventType->lookup({ id => $init->{et_id} });
-	} elsif ($init->{key_name}) {
-	    $et = Bric::Util::EventType->lookup({ key_name => $init->{key_name} });
-	} else {
-	    die Bric::Util::Fault::Exception::DP->new({
+        if (defined $init->{et_id}) {
+            $et = Bric::Util::EventType->lookup({ id => $init->{et_id} });
+        } elsif ($init->{key_name}) {
+            $et = Bric::Util::EventType->lookup({ key_name => $init->{key_name} });
+        } else {
+            die Bric::Util::Fault::Exception::DP->new({
               msg => "No Bric::Util::EventType object, ID, or name passed to " .
                      __PACKAGE__ . '::new()' });
-	}
+        }
     }
 
     my ($class, $et_id) = ($et->_get('class', 'id'));
@@ -307,15 +310,15 @@ sub new {
 
     # Inititialize the standard Bric::Util::Event properties.
     $self->SUPER::new({event_type_id => $et_id,
-		       user_id       => $user->get_id,
-		       obj_id        => $obj->get_id,
-		       timestamp     => db_date($init->{timestamp}, 1),
-		       name          => $et->get_name,
-		       key_name      => $et->get_key_name,
-		       description   => $et->get_description,
-		       class         => $et->get_class,
-		       _et           => $et
-		      });
+                       user_id       => $user->get_id,
+                       obj_id        => $obj->get_id,
+                       timestamp     => db_date($init->{timestamp}, 1),
+                       name          => $et->get_name,
+                       key_name      => $et->get_key_name,
+                       description   => $et->get_description,
+                       class         => $et->get_class,
+                       _et           => $et
+                      });
 
     my $id = &$save($self);             # Save this event to the database.
 
@@ -331,14 +334,14 @@ sub new {
     return $self;
 }
 
-################################################################################
+##############################################################################
 
 =item my $event = Bric::Util::Event->lookup({id => $id})
 
 Looks up and instantiates a new Bric::Util::Event object based on the
-Bric::Util::Event object ID. If the existing object is not found in the database,
-lookup() returns undef. If the ID or name is found more than once, lookup()
-returns zero (0). This should not happen.
+Bric::Util::Event object ID. If the existing object is not found in the
+database, lookup() returns undef. If the ID or name is found more than once,
+lookup() returns zero (0). This should not happen.
 
 B<Throws:>
 
@@ -374,8 +377,8 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> If $id is found, populates the new Bric::Biz::Person object with data
-from the database before returning it.
+B<Side Effects:> If C<$id> is found, populates the new Bric::Biz::Person
+object with data from the database before returning it.
 
 B<Notes:> NONE.
 
@@ -389,12 +392,12 @@ sub lookup {
     return @$event ? $event->[0] : undef;
 }
 
-################################################################################
+##############################################################################
 
 =item my (@events || $events_aref) = Bric::Util::Event->list($params)
 
-Returns a list of Bric::Util::Event objects based on the search parameters passed
-via an anonymous hash. The supported lookup keys are:
+Returns a list of Bric::Util::Event objects based on the search parameters
+passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
@@ -412,19 +415,43 @@ class_id
 
 =item *
 
+class
+
+=item *
+
+key_name
+
+=item *
+
+name
+
+=item *
+
+description
+
+=item *
+
 obj_id
 
 =item *
 
 timestamp
 
+=begin comment
+
+=item *
+
+grp_id
+
+=end comment
+
 =back
 
-If timestamp is passed as a scalar, events that occurred at that exact time will
-be returned. If it is passed as an anonymous hash, the first two values will be
-assumed to represent a range of dates between which to retrieve Bric::Util::Event
-objects. Any combination of the above keys may be used, although the most common
-may be a combination of class_id and obj_id.
+If timestamp is passed as a scalar, events that occurred at that exact time
+will be returned. If it is passed as an anonymous hash, the first two values
+will be assumed to represent a range of dates between which to retrieve
+Bric::Util::Event objects. Any combination of the above keys may be used,
+although the most common may be a combination of class_id and obj_id.
 
 B<Throws:>
 
@@ -438,7 +465,7 @@ Unable to connect to database.
 
 Unable to prepare SQL statement.
 
-=item *
+
 
 Unable to select column into arrayref.
 
@@ -465,7 +492,7 @@ B<Notes:> NONE.
 
 sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
-################################################################################
+##############################################################################
 
 =item $meths = Bric::Util::Event->my_meths
 
@@ -540,8 +567,8 @@ The property or attribute is required.
 
 =item props
 
-An anonymous hash of properties used to display the property or
-attribute. Possible keys include:
+An anonymous hash of properties used to display the property or attribute.
+Possible keys include:
 
 =over 4
 
@@ -604,66 +631,66 @@ sub my_meths {
     my ($pkg, $ord) = @_;
 
     # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
-      if $meths;
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}]
+      if $METHS;
 
     # We don't got 'em. So get 'em!
-    $meths = {
-	      name      => {
-			     name     => 'name',
-			     get_meth => sub { shift->get_name(@_) },
-			     get_args => [],
-			     disp     => 'Name',
-			     len      => 64,
-			    },
-	      description      => {
-			     name     => 'description',
-			     get_meth => sub { shift->get_description(@_) },
-			     get_args => [],
-			     disp     => 'Description',
-			     len      => 256,
-			    },
-	      class      => {
-			     name     => 'class',
-			     get_meth => sub { shift->get_class(@_) },
-			     get_args => [],
-			     disp     => 'Class',
-			     len      => 128,
-			    },
-	      timestamp  => {
-			     name     => 'timestamp',
-			     get_meth => sub { shift->get_timestamp(@_) },
-			     get_args => [],
-			     disp     => 'Timestamp',
-			     search   => 1,
-			     len      => 128,
-			    },
-	      user_id  => {
-			     name     => 'user_id',
-			     get_meth => sub { shift->get_user_id(@_) },
-			     get_args => [],
-			     disp     => 'Triggered By',
-			     len      => 256,
-			    },
-	      trig  => {
-			     name     => 'trig',
-			     get_meth => sub { shift->get_user(@_)->get_name },
-			     get_args => [],
-			     disp     => 'Triggered By',
-			     len      => 256,
-			    },
-	      attr       => {
-			     name     => 'attr',
-			     get_meth => sub { shift->get_attr(@_) },
-			     get_args => [],
-			     disp     => 'Attributes',
-			     len      => 128,
-			    },
-	     };
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    $METHS = {
+              name      => {
+                             name     => 'name',
+                             get_meth => sub { shift->get_name(@_) },
+                             get_args => [],
+                             disp     => 'Name',
+                             len      => 64,
+                            },
+              description      => {
+                             name     => 'description',
+                             get_meth => sub { shift->get_description(@_) },
+                             get_args => [],
+                             disp     => 'Description',
+                             len      => 256,
+                            },
+              class      => {
+                             name     => 'class',
+                             get_meth => sub { shift->get_class(@_) },
+                             get_args => [],
+                             disp     => 'Class',
+                             len      => 128,
+                            },
+              timestamp  => {
+                             name     => 'timestamp',
+                             get_meth => sub { shift->get_timestamp(@_) },
+                             get_args => [],
+                             disp     => 'Timestamp',
+                             search   => 1,
+                             len      => 128,
+                            },
+              user_id  => {
+                             name     => 'user_id',
+                             get_meth => sub { shift->get_user_id(@_) },
+                             get_args => [],
+                             disp     => 'Triggered By',
+                             len      => 256,
+                            },
+              trig  => {
+                             name     => 'trig',
+                             get_meth => sub { shift->get_user(@_)->get_name },
+                             get_args => [],
+                             disp     => 'Triggered By',
+                             len      => 256,
+                            },
+              attr       => {
+                             name     => 'attr',
+                             get_meth => sub { shift->get_attr(@_) },
+                             get_args => [],
+                             disp     => 'Attributes',
+                             len      => 128,
+                            },
+             };
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
 }
 
-################################################################################
+##############################################################################
 
 =back
 
@@ -687,7 +714,7 @@ B<Notes:> NONE.
 
 sub DESTROY {}
 
-################################################################################
+##############################################################################
 
 =head2 Public Class Methods
 
@@ -695,8 +722,8 @@ sub DESTROY {}
 
 =item my (@eids || $eids_aref) = Bric::Biz::Person->list_ids($params)
 
-Functionally identical to list(), but returns Bric::Util::Event object IDs rather
-than objects. See list() for a description of its interface.
+Functionally identical to list(), but returns Bric::Util::Event object IDs
+rather than objects. See list() for a description of its interface.
 
 B<Throws:>
 
@@ -736,7 +763,7 @@ B<Notes:> NONE.
 
 sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
-################################################################################
+##############################################################################
 
 =back
 
@@ -864,8 +891,8 @@ B<Notes:> NONE.
 
 =item my $u = $event->get_user
 
-Returns the Bric::Biz::Person::User object representing the person who triggered the
-event.
+Returns the Bric::Biz::Person::User object representing the person who
+triggered the event.
 
 B<Throws:>
 
@@ -915,8 +942,8 @@ sub get_user { Bric::Biz::Person::User->lookup({ id => $_[0]->_get('user_id') })
 
 =item my $uid = $event->get_user_id
 
-Returns the ID of the Bric::Biz::Person::User object representing the person who
-triggered the event.
+Returns the ID of the Bric::Biz::Person::User object representing the person
+who triggered the event.
 
 B<Throws:>
 
@@ -1068,7 +1095,7 @@ B<Notes:> NONE.
 
 sub get_timestamp { local_date($_[0]->_get('timestamp'), $_[1]) }
 
-################################################################################
+##############################################################################
 
 =item my $key_name = $event->get_key_name
 
@@ -1246,7 +1273,7 @@ B<Notes:> NONE.
 
 sub has_alerts { $_[0]->_get('_alert') ? $_[0] : undef }
 
-################################################################################
+##############################################################################
 
 =item $self = $event->save;
 
@@ -1263,7 +1290,7 @@ B<Notes:> NONE.
 
 sub save { $_[0] }
 
-################################################################################
+##############################################################################
 
 =back
 
@@ -1285,9 +1312,9 @@ NONE.
 
 =item my $events_ids_aref = &$get_em( $pkg, $search_href, 1 )
 
-Function used by lookup() and list() to return a list of Bric::Biz::Person objects
-or, if called with an optional third argument, returns a listof Bric::Biz::Person
-object IDs (used by list_ids()).
+Function used by lookup() and list() to return a list of Bric::Biz::Person
+objects or, if called with an optional third argument, returns a listof
+Bric::Biz::Person object IDs (used by list_ids()).
 
 B<Throws:>
 
@@ -1326,74 +1353,95 @@ B<Notes:> NONE.
 =cut
 
 $get_em = sub {
-    my ($pkg, $params, $ids) = @_;
-    my (@wheres, @params);
+    my ($pkg, $params, $ids, $href) = @_;
+    my $tables = 'event e LEFT JOIN (event_attr ea JOIN event_type_attr ta ' .
+                 '                  ON ea.event_type_attr__id = ta.id) ' .
+                 'ON e.id = ea.event__id, class c, event_type t'; # .
+#                 ', member m, event_member em';
+    my $wheres = 'e.event_type__id = t.id AND t.class__id = c.id'; # .
+#      ' AND e.id = em.object_id AND m.id = em.member__id';
+    my @params;
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'timestamp') {
-	    # It's a date column.
-	    if (ref $v) {
-		# It's an arrayref of dates.
-		push @wheres, "e.$k BETWEEN ? AND ?";
-		push @params, (db_date($v->[0]), db_date($v->[1]));
-	    } else {
-		# It's a single value.
-		push @wheres, "e.$k = ?";
-		push @params, db_date($v);
-	    }
-       	} elsif ($num_map{$k}) {
-	    # It's a numeric column.
-	    push @wheres, $num_map{$k};
-	    push @params, $v;
-	} elsif ($txt_map{$k}) {
-	    # It's a text-based column.
-	    push @wheres, $txt_map{$k};
-	    push @params, lc $v;
-	}
+        if ($k eq 'timestamp') {
+            # It's a date column.
+            if (ref $v) {
+                # It's an arrayref of dates.
+                $wheres .= " AND e.$k BETWEEN ? AND ?";
+                push @params, (db_date($v->[0]), db_date($v->[1]));
+            } else {
+                # It's a single value.
+                $wheres .= " AND e.$k = ?";
+                push @params, db_date($v);
+            }
+        } elsif ($NUM_MAP{$k}) {
+            # It's a numeric column.
+            $wheres .= " AND $NUM_MAP{$k} = ?";
+            push @params, $v;
+        } elsif ($TXT_MAP{$k}) {
+            # It's a text-based column.
+            $wheres .= " AND $TXT_MAP{$k} LIKE ?";
+            push @params, lc $v;
+#        } elsif ($k eq 'grp_id') {
+#            # Add in the group tables a second time and join to them.
+#            $tables .= ", member m2, event_member em2";
+#            $wheres .= " AND e.id = em2.object_id AND em2.member__id = m2.id" .
+#              " AND m2.grp__id = ?";
+#            push @params, $v;
+        } else {
+	    # We're horked.
+	    die $dp->new({ msg => "Invalid property '$k'."});
+        }
     }
 
-    local $" = ' AND ';
-    my $where = @wheres ? " AND @wheres" : '';
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT e.id', 'e.id') :
+      (\$SEL_COLS, 'e.timestamp, e.id');
 
-    my $qry_cols = $ids ? ['e.id'] : \@cols;
-    $" = ', ';
     my $sel = prepare_c(qq{
-        SELECT @$qry_cols
-        FROM   event e LEFT JOIN
-                   (event_attr ea JOIN
-                       event_type_attr ta ON ea.event_type_attr__id = ta.id)
-                   ON e.id = ea.event__id,
-               class c, event_type t
-        WHERE  e.event_type__id = t.id
-               AND t.class__id = c.id
-              $where
-        ORDER BY e.timestamp, e.id
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
-    my ($last, @d, @init, $attr, $val, @events) = (-1);
-    bind_columns($sel, \@d[0..$#props - 1], \$attr, \$val);
+    my (@d, @events, $attrs, $key, $val); # , $grp_ids, %seen
     $pkg = ref $pkg || $pkg;
+    bind_columns($sel, \@d[0..$#SEL_PROPS], \$key, \$val);
+    my $last = -1;
     while (fetch($sel)) {
-	if ($d[0] != $last) {
-	    # Create a new object.
-	    push @events, &$make_obj($pkg, \@init) unless $last == -1;
-	    # Get the new record.
-	    $last = $d[0];
-	    @init = (@d, {});
-	}
-	# Grab any attributes.
-	$init[$#init]->{$attr} = $val if $attr;
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Empty the grp_ids check hash.
+#            %seen = ();
+            # Get a reference to the array of group IDs and mark that we've
+#            # seen this one.
+#            $grp_ids = $d[$#d] = [$d[$#SEL_PROPS]];
+#            $seen{$grp_ids->[0]} = 1;
+
+            # Start the attribute hash and add it to the array.
+            $attrs = $d[$#SEL_PROPS + 1] = { $key => $val };
+
+            # Create a new event object.
+            my $self = &$make_obj($pkg, \@d);
+
+            push @events, $self;
+        } else {
+            # Add the current group ID to the array unless we've seen it
+            # already.
+#            push @$grp_ids, $d[$#SEL_PROPS] unless $seen{$d[$#SEL_PROPS]};
+            # Mark that we've seen this group ID.
+#            $seen{$d[$#SEL_PROPS]} = 1;
+            # Grab the attribute and value for this row.
+            $attrs->{$key} = $val;
+        }
     }
-    # Grab the last object.
-    push @events, &$make_obj($pkg, \@init) if @init;
-    # Return the objects.
     return \@events;
 };
 
-################################################################################
+##############################################################################
 
 =item &$save($self)
 
@@ -1438,20 +1486,20 @@ B<Notes:> NONE.
 $save = sub {
     my $self = shift;
     local $" = ', ';
-    my $fields = join ', ', next_key('event'), ('?') x $#ecols;
+    my $fields = join ', ', next_key('event'), ('?') x $#ECOLS;
     my $ins = prepare_c(qq{
-        INSERT INTO event (@ecols)
+        INSERT INTO event (@ECOLS)
         VALUES ($fields)
     }, undef, DEBUG);
     # Don't try to set ID - it will fail!
-    execute($ins, $self->_get(@eprops[1..$#eprops]));
+    execute($ins, $self->_get(@EPROPS[1..$#EPROPS]));
     # Now grab the ID.
     my $id = last_key('event');
     $self->_set({ id => $id });
     return $id;
 };
 
-################################################################################
+##############################################################################
 
 =item &$save_attr($event_id, $et, $attr)
 
@@ -1503,13 +1551,13 @@ $save_attr = sub {
     my $ret;
     my $et_attr = $et->get_attr;
     while (my ($aid, $name) = each %$et_attr) {
-	execute($ins, $eid, $aid, $attr->{$name} || $attr->{lc $name});
-	$ret->{$name} = $attr->{$name};
+        execute($ins, $eid, $aid, $attr->{$name} || $attr->{lc $name});
+        $ret->{$name} = $attr->{$name};
     }
     return $ret;
 };
 
-################################################################################]
+##############################################################################]
 
 =item my $event = &$make_obj( $pkg, $init )
 
@@ -1547,10 +1595,10 @@ $make_obj = sub {
     my ($pkg, $init) = @_;
     my $self = bless {}, $pkg;
     $self->SUPER::new;
-    $self->_set(\@props, $init);
+    $self->_set(\@PROPS, $init);
 };
 
-################################################################################
+##############################################################################
 
 =item &$get_et($self)
 
@@ -1605,7 +1653,8 @@ Bric::_set() - Problems setting fields.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Uses Bric::Util::EventType->lookup() internally and caches the object.
+B<Notes:> Uses Bric::Util::EventType->lookup() internally and caches the
+object.
 
 =cut
 
@@ -1633,9 +1682,9 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::EventType|Bric::Util::EventType>, 
-L<Bric::Util::AlertType|Bric::Util::AlertType>, 
+L<Bric|Bric>,
+L<Bric::Util::EventType|Bric::Util::EventType>,
+L<Bric::Util::AlertType|Bric::Util::AlertType>,
 L<Bric::Util::Alert|Bric::Util::Alert>
 
 =cut

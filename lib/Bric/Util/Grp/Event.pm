@@ -6,16 +6,16 @@ Bric::Util::Grp::Event - Interface to Bric::Util::Event Groups
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:47 $
+$Date: 2003-01-27 05:09:05 $
 
 =head1 SYNOPSIS
 
@@ -24,6 +24,9 @@ See Bric::Util::EventType.
 =head1 DESCRIPTION
 
 See Bric::Util::EventType.
+
+B<Note:> This class appears not to be used at this point. Bric::Util::Event
+doesn't use it and there's no event_member table.
 
 =cut
 
