@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.21 $
+$Revision: 1.21.2.22 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.22 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-10-15 19:58:11 $
+$Date: 2004-03-16 00:12:11 $
 
 =head1 SYNOPSIS
 
@@ -949,7 +949,7 @@ sub where_clause {
     return $where, \@args;
 }
 
-=item = order_by
+=item my $order_by = order_by
 
 Builds up the ORDER BY clause
 
