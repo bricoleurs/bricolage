@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2004-02-17 15:18:39 $
 
 =head1 SYNOPSIS
 
@@ -2462,8 +2462,12 @@ sub send_alerts {
         my $op = $rule->get_operator;
         my $chk = $rule->get_value;
         # Perform a regular expression or simple comparison.
-        return unless eval( $op eq '=~' || $op eq '!~' ? qq|\$value $op m/$chk/i|
-          : qq|lc '$chk' $op lc '$value'| );
+        if ($op eq '=~' || $op eq '!~') {
+            my $re = qr/$chk/i;
+            return unless eval qq|\$value $op \$re|;
+        } else {
+            return unless eval qq|lc '$chk' $op lc '$value'|;
+        }
     }
 
     # If we're here, send out alerts!
