@@ -295,6 +295,8 @@ Friends who have spotted bugs include:
 
 =item Frank Holtz
 
+=item Martin Bacovsky
+
 =back
 
 Bricolage's translation team:

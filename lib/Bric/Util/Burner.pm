@@ -898,12 +898,13 @@ sub preview {
         # We don't need to execute the job if it has already been executed.
         $job->execute_me unless $job->get_comp_time;
 
+        # Make sure there are some files to redirect to.
+        unless (@$res) {
+            status_msg("No output to preview.") if $do_status_msg;
+            return;
+        }
+
         if (PREVIEW_LOCAL) {
-            # Make sure there are some files to redirect to.
-            unless (@$res) {
-                status_msg("No output to preview.") if $do_status_msg;
-                return;
-            }
             # Copy the files for previewing locally.
             foreach my $rsrc (@$res) {
                 $fs->copy($rsrc->get_path,
@@ -915,7 +916,8 @@ sub preview {
         } else {
             # Return the redirection URL, if we have one
             if (@$bat) {
-                return 'http://' . ($bat->[0]->get_servers)[0]->get_host_name
+                return ($oc->get_protocol || 'http://')
+                  . ($bat->[0]->get_servers)[0]->get_host_name
                   . $res->[0]->get_uri;
             }
         }

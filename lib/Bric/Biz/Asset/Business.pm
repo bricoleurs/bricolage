@@ -1866,7 +1866,7 @@ B<Notes:> Uses C<get_keywords()> internally.
 
 sub has_keyword {
     my ($self, $kw) = @_;
-    $self->get_keywords($kw->get_id);
+    scalar($self->get_keywords($kw->get_id))->[0];
 }
 
 ###############################################################################

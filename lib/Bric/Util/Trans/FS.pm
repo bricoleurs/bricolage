@@ -108,9 +108,6 @@ my $osen = { mac => 'MacOS',
              msdos => 'MSDOS',
              amiga => 'AmigaOS',
              amigaos => 'AmigaOS',
-             somenix => 'unix',
-             unix => 'unix',
-             linux => 'unix',
            };
 my $escape_uri;
 
@@ -860,7 +857,9 @@ File::Basename::fileparse_set_fstype() internally.
 =cut
 
 sub base_name {
-    File::Basename::fileparse_set_fstype($_[2] ? $osen->{ lc $_[2] } :  $^O);
+    File::Basename::fileparse_set_fstype(
+        $_[2] ? ($osen->{lc $_[2]} || $^O) :  $^O
+    );
     return File::Basename::basename($_[1]);
 }
 

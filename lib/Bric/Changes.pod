@@ -196,6 +196,29 @@ C<bric_queued>. [Mark and David]
 Jobs now get a "Job Created" event logged when they are created. Reported by
 Rachel Murray. [David and Mark]
 
+=item *
+
+Eliminated "Use of uninitialized value in pattern match (m//)" warnings when
+uploading media files. Repoted by Scott Lanning. [David]
+
+=item *
+
+Preview redirections now use the protocol setting of the preview output
+channel if it's available, and falls back on using "http://" when it's not,
+instead of using the hard-coded "http://". Thanks to Martin Bacovsky for the
+spot! [David]
+
+=item *
+
+The C<has_keyword()> method in the Business class (from which the story and
+media classes inherit) now works. Thanks to Clare Parkinson for the spot!
+[David]
+
+=item *
+
+Templates that abort during calls C<preview_another()> now properly abort
+when not using C<PREVIEW_LOCAL>. [Paul Orrock]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)

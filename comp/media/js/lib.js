@@ -479,7 +479,6 @@ var requiredFields         = new Object();
 var specialCharacterFields = new Object();
 var specialOCFields = new Object();
 function confirmChanges(obj) {
-    
     if (confirming || submitting) return false;
     confirming = true
     var ret = true;
@@ -522,7 +521,7 @@ function confirmChanges(obj) {
             }
         }
     }
-   
+
     // examine registered special character fields
     if (typeof specialCharacterFields != "undefined") {         
         for (field in specialCharacterFields) {
@@ -553,7 +552,6 @@ function confirmChanges(obj) {
             }
         }
     }  
-
 
     // if we get this far, we've got a live submission.
     // if there is a 2xLM,
@@ -589,7 +587,6 @@ function confirmChanges(obj) {
     }
     confirming = false
     submitting = ret
-    return ret
 }
 
 function inArray(what, arr) {
