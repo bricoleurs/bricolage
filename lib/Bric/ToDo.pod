@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.21 $
+$Revision: 1.13.2.22 $
 
 =head1 DATE
 
-$Date: 2001-11-05 20:04:06 $
+$Date: 2001-11-06 19:37:44 $
 
 =head1 DESCRIPTION
 
@@ -68,12 +68,6 @@ asset [David].
 =item *
 
 Write distribution documentation [David].
-
-=item *
-
-Filter categories and asset types in Asset editing screens by permission. Users
-who don't have READ permission on a category or asset type should't see it in
-the select lists [David].
 
 =item *
 
