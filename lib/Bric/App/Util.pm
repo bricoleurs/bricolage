@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.18.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-21 05:03:26 $
+$Date: 2003-05-27 12:57:16 $
 
 =head1 SYNOPSIS
 
@@ -155,7 +155,7 @@ NONE
 
 =over 4
 
-=item (1 || undef) = add_msg(@txt)
+=item (1 || undef) = add_msg($txt)
 
 Add a new warning message to the current list of messages.
 
