@@ -1,0 +1,232 @@
+#!/usr/bin/perl -w
+use strict;
+
+=head1 NAME
+
+bric_soap - a command-line client for the Bricolage SOAP interface
+
+=head1 SYNOPSIS
+
+bric_soap module command [options] [ids or filenames or -]
+
+Modules (more to come):
+
+  story
+  media
+
+Commands:
+
+  list_ids
+  export
+  create
+  update
+  delete
+
+Options:
+
+  --help - shows this screen
+
+  --man - shows the full documentation
+
+  --server - specifies the Bricolage server URL, defaults to
+             http://localhost:80
+
+  --username - the Bricolage username, defaults to the BRICOLAGE_USER 
+               environment variable if set, 'admin' otherwise
+
+  --password - the password for the Bricolage user.  Default to the
+               BRICOLAGE_PASSWORD environment variable if set
+
+  --export-related-stories - tell export to include related stories
+
+  --export-related-media - tell export to include related media
+
+  --all - synonym for setting --export-related-stories and
+          --export-related-media
+
+  --search "field=value" - specify a search for list_ids, field must
+                           be a valid search field for the list_ids()
+                           method of the appropriate module.
+
+  --verbose - print a running description to STDERR.  Add a second
+              --verbose and you'll get debugging output too.
+
+
+=head1 EXAMPLES
+
+Here are some example command-lines.  These all assume you've setup
+BRICOLAGE_USER and BRICOLAGE_PASSWORD and that your Bricolage server
+is on http://localhost:80.  If not you'll need to add --username,
+--password and --server arguments as appropriate.
+
+Output an XML dump of the story with story_id 1024 into the file
+1024.xml:
+
+  bric_soap story export 1024 > 1024.xml
+
+Upload that story to the server at some.host.org:
+
+  bric_soap story create --server http://some.host.org 1024.xml
+
+A simpler way to do the above two steps:
+
+  bric_soap story export 1024 \
+  | bric_soap story create --server http://some.host.org -  
+
+Copy all stories from the local Bricolage to the server at some.host.org:
+
+  bric_soap story list_ids 
+  | bric_soap story export - \
+  | bric_soap story create --server http://some.host.org -
+
+Copy the story titled "Annoying Ad Turns Man Pro-Whaling" to the
+server at some.host.org along with any related media and related
+stories:
+
+  bric_soap story list_ids--search \
+     "title=Annoying Ad Turns Man Pro-Whaling" \
+  | bric_soap story export --all -
+  | bric_soap story create --server http://some.host.org -
+
+Delete all stories (gasp!):
+
+  bric_soap story list_ids | bric_soap story delete -
+
+=head1 AUTHOR
+
+Sam Tregar <stregar@about-inc.com>
+
+=head1 SEE ALSO
+
+L<Bric::SOAP>
+
+=cut
+
+use Getopt::Long;
+use Pod::Usage;
+use SOAP::Lite;
+import SOAP::Data 'name';
+use HTTP::Cookies;
+
+our $module;
+our $command;
+our %search;
+our $export_related_stories = 0;
+our $export_related_media   = 0;
+our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
+our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
+our $server                 = 'http://localhost:80';
+our $verbose                = 0;
+our ($help, $man);
+GetOptions("help"                   => \$help, 
+	   "man"                    => \$man,
+	   "verbose+"               => \$verbose,
+	   "username=s"             => \$username,
+	   "password=s"             => \$password,
+	   "server=s"               => \$server,
+	   "search=s"               => \%search,
+	   "export-related-stories" => \$export_related_stories,
+	   "export-related-media"   => \$export_related_media,
+	   "all"                    => sub { $export_related_stories = 1;
+					     $export_related_media   = 1; },
+	  ) or  pod2usage(2);
+
+pod2usage(1)             if $help;
+pod2usage(-verbose => 2) if $man;
+
+# make sure we have what we need
+foreach my $opt (qw(username password server)) {
+  no strict 'refs';
+  pod2usage("Missing required $opt option.")
+    unless $$opt;
+}
+
+# get module
+$module = shift @ARGV;
+pod2usage("Missing required module and command parameters.")
+  unless $module;
+$module = ucfirst lc $module;
+pod2usage("Unknown module \"$module\".")
+  unless $module eq 'Story' or 
+         $module eq 'Media';
+
+# get command
+$command = shift @ARGV;
+pod2usage("Missing required command parameter.")
+  unless $command;
+$command = lc $command;
+pod2usage("Unknown command \"$command\".")
+  unless $command eq 'list_ids' or
+         $command eq 'export'   or
+         $command eq 'create'   or
+         $command eq 'update'   or
+         $command eq 'delete';
+
+# setup soap object to login with
+my $soap = new SOAP::Lite
+  uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth';
+$soap->proxy($server . '/soap',
+	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
+
+
+
+# login
+print STDERR "Authenticating to Bricolage...\n" if $verbose;
+my $response = $soap->login(name(username => $username), 
+			    name(password => $password));
+die "Login failed.\n" if $response->fault;
+print STDERR "Login success.\n" if $verbose;
+
+# switch to requested module
+$soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $module);
+print STDERR "Switched to $module module.\n" if $verbose;
+
+# execute the command
+if ($command eq 'list_ids') {  
+  print STDERR "Calling Bric::SOAP::$module->$command with search: (",
+    join(', ', map { "$_ => $search{$_}" } keys %search), ")\n"
+      if $verbose;
+  $response = $soap->list_ids(map { name($_ => $search{$_}) } keys %search);
+  die "Call to Bric::SOAP::$module->$command failed : \n" .
+    $response->faultstring
+      if $response->fault;
+  my $list = $response->result;
+  foreach (@$list) {
+    print $_, "\n";
+  }
+
+} elsif ($command eq 'export') {
+  # collect ids
+  my @ids;
+  foreach (@ARGV) {
+    if ($_ eq '-') {
+      print STDERR "Reading ids from STDIN...\n" if $verbose;
+      push @ids, map { chomp; $_ } <STDIN>;
+    } else { 
+      push @ids, $_;
+    }
+  }
+  die "No ids found for export.\n"
+    unless @ids;
+  die "Non-numeric ids found in id list (", join(', ', @ids), ")\n"
+    if grep { $_ !~ /^\d+$/ } @ids;
+  
+  print STDERR "Calling Bric::SOAP::$module->$command with id: ", 
+    join(', ', @ids), "\n"
+      if $verbose;
+
+  my @opts;
+  push @opts, name(lc $module . '_ids', \@ids);
+  push @opts, name(export_related_stories => 1) if $export_related_stories;
+  push @opts, name(export_related_media   => 1) if $export_related_media;
+
+  $response = $soap->export(@opts);
+  die "Call to Bric::SOAP::$module->$command failed : \n" .
+    $response->faultstring
+      if $response->fault;
+
+  print $response->result;
+
+} else {
+  die "Sorry, $command is not yet implemented.\n";
+}
