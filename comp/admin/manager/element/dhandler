@@ -119,13 +119,13 @@ $m->comp('/widgets/listManager/listManager.mc',
 );
 
 # Output the form closing tag if necessary.
-if ($can_del && !$id) {
-
+if ($can_del) {
     $m->out(qq{<br><input type="image" src="/media/images/delete_checked_red.gif" border=0 name="action"}
 	    . qq{value="$sel_label Checked" />\n</form>});
-} else  {
-
+} elsif ($id) {
     $m->out(qq{<br><input type="image" src="/media/images/add_elements_lgreen.gif" border=0 name="element|doRedirect_cb" value="1" />\n</form>});
+} else  {
+    $m->out('</form>');
 }
 
 # Output the footer.
@@ -141,11 +141,11 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:46 $
+$Date: 2001-09-28 08:44:03 $
 
 =head1 SYNOPSIS
 
@@ -158,7 +158,10 @@ This manager manages element objects.
 =head1 REVISION HISTORY
 
 $Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:46  wheeler
-Initial revision
+Revision 1.2  2001-09-28 08:44:03  wheeler
+Fixed button display for when no Elements listed in the Element Manager.
+
+Revision 1.1.1.1  2001/09/06 21:51:46  wheeler
+Upload to SourceForge.
 
 </%doc>
