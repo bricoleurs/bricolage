@@ -411,6 +411,8 @@ my $handle_create = sub {
     my $gid = $wf->get_all_desk_grp_id;
     chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
 
+    my $site_id = $wf->get_site_id;
+
     # get the asset type
     my $at_id = $param->{"$widget|at_id"};
     my $element = Bric::Biz::AssetType->lookup({ id => $at_id });
@@ -424,7 +426,8 @@ my $handle_create = sub {
                  cover_date   => $param->{cover_date},
                  title        => $param->{title},
                  user__id     => get_user_id,
-                 category__id => $param->{"$widget|category__id"}
+                 category__id => $param->{"$widget|category__id"},
+                 site_id      => $site_id,
                };
 
     # Create the media object.
@@ -432,9 +435,6 @@ my $handle_create = sub {
 
     # Set the workflow this media should be in.
     $media->set_workflow_id($WORK_ID);
-
-    $media->set_site_id($param->{site_id})
-      if exists $param->{site_id};
 
     # Save the media object.
     $media->save;
