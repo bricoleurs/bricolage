@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.21.2.8 $
+$Revision: 1.21.2.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21.2.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-11 20:18:28 $
+$Date: 2002-12-12 16:19:38 $
 
 =head1 SYNOPSIS
 
@@ -779,6 +779,7 @@ sub set_category__id {
     });
     return $self;
 }
+sub get_primary_uri { shift->get_uri }
 
 ################################################################################
 
