@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.2.1 $
 
 =head1 DATE
 
-$Date: 2004-02-27 01:41:54 $
+$Date: 2004-04-18 15:28:01 $
 
 =head1 SYNOPSIS
 
@@ -20,13 +20,8 @@ $Date: 2004-02-27 01:41:54 $
 =cut
 
 </%doc>
-
-<%args>
-</%args>
-
 <%once>;
-
-
+my %users;
 my $pl_name = { map { $_ => get_class_info($_)->get_plural_name }
                 qw(story media formatting) };
 
@@ -49,9 +44,13 @@ my $profile = sub {
 
 my $select = sub {
     my $o = shift;
-    return if defined $o->get_user__id;
-
-    if ($o->get_workflow_id && chk_authz($o, EDIT, 1)) {
+    my $u_id = $o->get_user__id;
+    if (defined $u_id) {
+        # Just return the name of the user who has the asset checked out.
+        return $users{$u_id} ||= Bric::Biz::Person::User->lookup({
+          id => $u_id
+      })->format_name;
+    } elsif ($o->get_workflow_id && chk_authz($o, EDIT, 1)) {
         # Allow checkout if they can see the desk the asset is on.
         return ['Checkout', "$widg\_prof|checkout_cb"]
           if $desk_chk->{$o->get_desk_id}[0];
@@ -154,3 +153,7 @@ $wf = $wf->get_name;
 <input type="image" src="/media/images/<% $lang_key %>/checkout_red.gif" border="0" name="Checkout" value="Checkout">
 </form>
 <& /widgets/wrappers/sharky/footer.mc &>
+<%cleanup>;
+# Clear out the cache of user names.
+%users = ();
+</%cleanup>

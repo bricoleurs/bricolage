@@ -30,6 +30,12 @@ The F<inst/upgrade/1.7.0/data_tile_key_name.pl> upgrade script now skips
 upgrading "key_name" if it would be no different than "name". This can save a
 lot of time during upgrade if your database is large. [Scott]
 
+=item *
+
+For checked-out media, stories, and documents listed in the "Active" and
+"Find" interfaces, added the name of the user who has each checked out to the
+empty column that would otherwise contain a "Checkout" checkbox. [David]
+
 =back
 
 =head2 Bug Fixes
