@@ -33,6 +33,11 @@ default. [David]
 Added F<bric_media_upload>, a media file bulk import utility, into
 F<contrib>. Thanks to Matt Vella for the contribution.
 
+=item *
+
+New help pages for the event log and the workflow trail. Thanks to Geoff
+Richards for the contribution.
+
 =back
 
 =head2 Bug Fixes
@@ -74,6 +79,10 @@ should now be properly separated. [David]
 =item *
 
 Deleting a story or media subelement no longer results in an error. [David]
+
+=item *
+
+Help has been restored. [David]
 
 =back
 
