@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.125 $
+$Revision: 1.126 $
 
 =head1 DATE
 
-$Date: 2003-10-16 18:33:28 $
+$Date: 2003-11-18 20:55:06 $
 
 =head1 DESCRIPTION
 
@@ -146,6 +146,12 @@ sort items until the end of a session.
 Add a "preview" action to the Workflow SOAP interfaces. It will work just like
 "publish" except, of course, that it "previews" and doesn't checkin the assets
 or remove them from desks or workflows.
+
+=item *
+
+Implement a funky hack so that we can have story components like
+/story.mc inherit based on the location to which we're publishing
+(/foo/bar/story), not the actual location of the component.
 
 =back
 
