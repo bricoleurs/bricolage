@@ -87,6 +87,7 @@ check_dist      :
 distclean	: clean
 	-rm -rf bricolage-$(BRIC_VERSION)
 	-rm -f  bricolage-$(BRIC_VERSION).tar.gz
+	-rm -f inst/Pg.sql
 	-rm -rf dist
 
 dist_dir	:

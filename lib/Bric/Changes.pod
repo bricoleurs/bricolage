@@ -195,6 +195,10 @@ In lists of objects a cell with a value of "0" (zero) will now be displayed.
 In "Find Templates," the list of templates in the search results will now be
 sorted by the file name, instead of not at all. [David]
 
+=item *
+
+C<make distclean> now properly deletes F<inst/Pg.sql>. [David]
+
 =back
 
 =head1 VERSION 1.5.2
