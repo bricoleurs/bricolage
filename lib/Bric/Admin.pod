@@ -1612,6 +1612,11 @@ given the same category, cover date, and priority as the current document.
 
 =item *
 
+B<MEDIA_UPLOAD_LIMIT:> Set this to a number, so that no files larger than that
+number of kilobytes can be uploaded. Defaults to 0, which means no limit.
+
+=item *
+
 B<YEAR_SPAN_BEFORE and YEAR_SPAN_AFTER:> These directives enable you to
 control how many years before and after the current year to display in the
 list of years in the date and time select widget. The default values are 10
