@@ -126,6 +126,15 @@ its label, rather than a value, it'll stay that way. This was first noticed
 with the "Expire Date" in stories. Thanks to Philip Fibiger for the spot.
 [David]
 
+=item *
+
+Modified installation CREATE DATABASE command to always create the database
+with the encoding set to UTF-8 (UNICODE). [David]
+
+=item *
+
+Added instructions for installing readline library to README.MacOSX. [David]
+
 =back
 
 =head1 VERSION 1.4.5

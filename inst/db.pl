@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.7.2.4 $
+$Revision: 1.7.2.5 $
 
 =head1 DATE
 
-$Date: 2002-12-06 00:59:31 $
+$Date: 2002-12-24 03:40:02 $
 
 =head1 DESCRIPTION
 
@@ -80,7 +80,8 @@ sub db_connect {
 sub create_db {
     my $dbh = shift;
     print "Creating database named $PG->{db_name}...\n";
-    my $result = $dbh->do("CREATE DATABASE $PG->{db_name}");
+    my $result = $dbh->do("CREATE DATABASE $PG->{db_name} WITH " .
+                          "ENCODING = 'UNICODE'");
 
     # if the database already exists offer to drop it
     if (not $result and
