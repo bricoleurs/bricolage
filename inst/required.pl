@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2003-10-30 18:47:14 $
+$Date: 2003-10-31 11:31:01 $
 
 =head1 DESCRIPTION
 
@@ -155,7 +155,7 @@ sub find_pg {
     print "Found acceptable version of Postgres: $x.$y.$z.\n";
 
     print "However, version 7.3.0 or later is strongly recommended.\n",
-      "Please consider upgrading.\n";
+      "Please consider upgrading.\n"
 	unless (($x > 7) or ($x == 7 and $y >= 3));
 
     $REQ{PG_VERSION} = [$x,$y,$z];
