@@ -1,6 +1,6 @@
 package Bric::Util::Grp::AssetLanguage;
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 use strict;
 
@@ -37,5 +37,7 @@ sub get_supported_classes {
 						};
 	return $allowed_classes;
 }
+
+1;
 
 __END__
