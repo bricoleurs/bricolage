@@ -8,8 +8,8 @@ $param
 # Set the uri for use in expiring the search criteria.
 set_state_data($widget, 'crit_set_uri', $r->uri);
 
-# reset search paging offset to start at the first record
-set_state_data( 'listManager', 'offset', 0 );
+# reset search paging offset to start at the first record.
+set_state_data( 'listManager', 'offset', undef);
 
 if ($field eq "$widget|substr_cb") {
     my $val_fld = $widget.'|value';

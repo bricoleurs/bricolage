@@ -121,6 +121,11 @@ those assets that are not in workflow. Reported by Kevin Elliott. [David]
 Extra blank lines between subelement tags in super bulk edit no longer causes
 an error. Thanks to Kevin Elliott for the spot! [David]
 
+=item *
+
+Searches no longer return unexpected results or all objects when pagination is
+enabled. Thanks to Kevin Elliott for the spot! [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)
