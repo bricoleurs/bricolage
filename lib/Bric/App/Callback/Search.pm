@@ -224,7 +224,7 @@ $init_state = sub {
     set_state_data($self->class_key, 'crit_set_uri', $r->uri);
 
     # reset search paging offset to start at the first record
-    set_state_data('listManager', 'offset', 0);
+    set_state_data('listManager', 'offset', undef);
 };
 
 1;
