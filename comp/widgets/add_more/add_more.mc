@@ -72,7 +72,9 @@ for my $i (0..$num) {
 	    $m->out('    <td>');
 	    # Grab any existing value from when the 'Add More' button was
 	    # clicked.
-	    $meths->{$f}{value} = $param->{$f}[ $no_ed->{$f} ? $i - $#$objs - 1 : $i];
+            $param->{$f} = [ $param->{$f} ] unless ref $param->{$f};
+	    $meths->{$f}{value} =
+              $param->{$f}[ $no_ed->{$f} ? $i - $#$objs - 1 : $i];
 	    $m->comp('/widgets/profile/displayFormElement.mc', key => $f,
 	             vals => $meths->{$f}, name => '', useTable => 0);
 	    $m->out("</td>\n");
@@ -181,11 +183,11 @@ my $no_ed = { map { $_ => 1 } @$no_edit };
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.2.1 $
 
 =head1 DATE
 
-$Date: 2002-06-29 09:08:16 $
+$Date: 2002-12-17 03:56:10 $
 
 =head1 SYNOPSIS
 

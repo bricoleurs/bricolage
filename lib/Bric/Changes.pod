@@ -107,6 +107,12 @@ now always have an appropriate value. [David]
 The URI is now properly updated in media assets when some part of the URI is
 changed in the UI. Thanks to Sean Greathouse for the spot. [David]
 
+=item *
+
+The Add More widget no longer throws an exception when "Add More" is clicked
+and only one field currently exists. This had affected Keywords entry in
+stories. Thanks to Sam for the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.5
