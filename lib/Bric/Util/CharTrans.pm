@@ -1,24 +1,22 @@
 package Bric::Util::CharTrans;
 
-
-
 =head1 NAME
 
 Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-23 15:57:33 $
+$Date: 2003-02-18 03:38:20 $
 
 =head1 SYNOPSIS
 
@@ -30,7 +28,7 @@ $Date: 2002-04-23 15:57:33 $
   my $charset     = $chartrans->charset('iso-8859-1');
 
   my $utf8_text   = $chartrans->to_utf8($target_text);
-  my $target_text = $chartrans->from_utf8($utf8_text); 
+  my $target_text = $chartrans->from_utf8($utf8_text);
 
   $chartrans->to_utf(\$some_data);
   $chartrans->from_utf(\$some_data);
@@ -116,11 +114,17 @@ BEGIN {
 
 =item my $chartrans = Bric::Util::CharTrans->new($charset)
 
+B<Throws:>
+
 =over 4
 
-B<Throws:> errors on invalid or missing character sets
+=item *
 
-B<Side Effects:> 
+Unspecified charset
+
+=back
+
+B<Side Effects:>
 
 B<Notes:> Use new() to get a working CharTrans object.
 
@@ -138,12 +142,13 @@ sub new {
     return $self;
 }
 
-
 ################################################################################
+
+=back
 
 =head2 Public Class Methods
 
-none
+None.
 
 =head2 Public Instance Methods
 
@@ -313,13 +318,11 @@ sub charset {
     die $@ if $@;
 
     $self->{'_charset'} = $new_charset;
-    
+
     return($self->{'_charset'});
 }
 
-
-
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -329,18 +332,20 @@ NONE.
 
 =head2 Private Instance Methods
 
+NONE.
+
 =head2 Private Functions
 
 NONE.
 
 =cut
 
-
 1;
 __END__
 
 =head1 NOTES
 
+None.
 
 =head1 AUTHOR
 
@@ -348,9 +353,8 @@ Paul Lindner <lindner@inuus.com>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<iconv|iconv>, 
-L</usr/bin/iconv|/usr/bin/iconv>
+L<Bric|Bric>,
+L<Text::Iconv|Text::Iconv>
 
 =cut
 

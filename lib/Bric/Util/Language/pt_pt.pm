@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-13 16:12:04 $
+$Date: 2003-02-18 03:38:22 $
 
 =head1 SYNOPSIS
 
@@ -523,6 +523,3 @@ ClE<aacute>udio Valente <cvalente@co.sapo.pt>
 L<Bric::Util::Language|Bric::Util::Language>
 
 =cut
-
-
-1;

@@ -3,19 +3,19 @@ package Bric::Util::Grp::Asset;
 
 =head1 NAME
 
-  Bric::Util::Grp::Category - A module to group assets into categories.
+Bric::Util::Grp::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-27 03:04:40 $
+$Date: 2003-02-18 03:41:24 $
 
 =head1 SYNOPSIS
 
@@ -201,7 +201,15 @@ NONE
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
+
+=item $self->DESTROY
+
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY
 
 =cut
 
@@ -210,7 +218,9 @@ sub DESTROY {
     # making Bricolage's autoload method try to find it.
 }
 
-#--------------------------------------#
+##############################################################################
+
+=back
 
 =head2 Public Class Methods
 
@@ -225,9 +235,7 @@ NONE
 
 =head2 Public Instance Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $class_id = Bric::Util::Grp::Asset->get_class_id()
 
@@ -493,6 +501,8 @@ sub remove {
 
 #==============================================================================#
 
+=back
+
 =head2 Private Methods
 
 =cut
@@ -505,11 +515,6 @@ NONE
 
 =cut
 
-
-# Add methods here that do not require an object be instantiated, and should not
-# be called outside this module (e.g. utility functions for class methods).
-# Use same POD comment style as above for 'new'.
-
 #--------------------------------------#
 
 =head2 Private Instance Methods
@@ -518,14 +523,8 @@ NONE
 
 =cut
 
-# Add methods here that apply to an instantiated object, but should not be 
-# called directly (e.g. utility functions for instance methods).
-# Use same POD comment style as above for 'new'.
-
 1;
 __END__
-
-=back
 
 =head1 NOTES
 
@@ -541,4 +540,4 @@ Bricolage Engineering
 L<perl>, L<Bric>, L<Bric::Util::Grp>
 
 =cut
- 
+

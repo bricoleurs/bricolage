@@ -8,18 +8,18 @@ Bric::Util::Time - Bricolage Time & Date Functions
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-04-03 21:26:56 $
+$Date: 2003-02-18 03:38:21 $
 
 =head1 SYNOPSIS
 
@@ -308,7 +308,7 @@ __END__
 
 =pod
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -338,9 +338,7 @@ David E. Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
+L<Bric|Bric>,
 L<Bric::Util::DBI|Bric::Util::DBI>
 
 =cut
-
-

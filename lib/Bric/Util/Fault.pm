@@ -7,15 +7,15 @@ Bric::Util::Fault - base class for all Exceptions
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2003-02-18 03:38:21 $
 
 =head1 SYNOPSIS
 
@@ -175,8 +175,11 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
+=back
 
 =head2 Destructors
+
+=over
 
 =item $self->DESTROY
 
@@ -191,16 +194,15 @@ sub DESTROY {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
 
-=cut
-
-# Add methods here that do not require an object be instantiated to call them.
-# Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
+None.
 
 =head2 Public Instance Methods
+
+=over 4
 
 =item $string = $obj->error_info;
 
@@ -353,9 +355,9 @@ B<Notes:> NONE.
 
 sub get_stack { shift->{stack} };
 
-=back
-
 #------------------------------------------------------------------------------#
+
+=back
 
 =head1 PRIVATE
 

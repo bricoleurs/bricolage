@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:46 $
+$Date: 2003-02-18 03:38:20 $
 
 =head1 SYNOPSIS
 
@@ -37,13 +37,13 @@ $Date: 2002-11-09 01:43:46 $
 
 =head1 DESCRIPTION
 
-This module exports a number of database functions for use by Bricolage object classes.
-These functions have been designed to maximize database independence by
-implementing separate driver modules for each database platform. These modules,
-Bric::DBD::*, export into Bric::Util::DBI the variables and functions necessary to
-provide database-independent functions for getting and setting primary keys and
-dates in the format required by the database (but see Bric::Util::Time for the
-time formatting functions).
+This module exports a number of database functions for use by Bricolage object
+classes. These functions have been designed to maximize database independence
+by implementing separate driver modules for each database platform. These
+modules, Bric::DBD::*, export into Bric::Util::DBI the variables and functions
+necessary to provide database-independent functions for getting and setting
+primary keys and dates in the format required by the database (but see
+Bric::Util::Time for the time formatting functions).
 
 Bric::Util::DBI also provides the principal avenue to querying the database. No
 other Bricolage module should C<use DBI>. The advantage to this approach (other than
@@ -253,7 +253,7 @@ by Bric::Util::Time instead.
 
 =back
 
-=back 4
+=back
 
 Each of the functions below that will directly access the database will first
 check for a connection to the database and establish the connection if it does
@@ -305,7 +305,6 @@ B<Notes:> NONE.
 
 =item $sth = prepare($sql, $attr, $DEBUG)
 
-
 Returns an $sth from $dbh->prepare. Pass any attributes you want associated
 with your $sth via the $attr hashref. If $DEBUG is true, it will also issue a
 warning that prints $sql. In general, use prepare_c() instead of prepare().
@@ -346,7 +345,7 @@ But it should not be necessary. Better yet, anytime you find yourself wanting
 to use $select->fetchrow_hashref(), take it as a cue to go back, look at your 
 code design, and decide whether you are making the best design decisions.
 
-=back 4
+=back
 
 B<Throws:>
 
@@ -641,7 +640,7 @@ Unable to execute SQL statement.
 
 =back
 
-B<Side Effects:> Calls $sth->execute().
+B<Side Effects:> Calls C<< $sth->execute >>.
 
 B<Notes:> NONE.
 
@@ -1010,6 +1009,8 @@ sub fetch_em {
 
 =end comment
 
+=cut
+
 ################################################################################
 
 =pod
@@ -1174,6 +1175,8 @@ Unable to connect to database.
 
 Unable to select column into arrayref.
 
+=back
+
 B<Side Effects:> Calls $dbh->selectcol_arrayref().
 
 B<Notes:> NONE.
@@ -1275,7 +1278,7 @@ sub last_key {
     return row_aref($sth)->[0];
 } # last_key()
 
-=back 4
+=back
 
 =head1 PRIVATE
 
