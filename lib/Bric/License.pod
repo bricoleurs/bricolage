@@ -161,6 +161,8 @@ Folks who have submitted patches include:
 
 =item Nate Perry-Thistle
 
+=item Josh Berkus
+
 =back
 
 Friends who have spotted bugs include:

@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-01-08 13:21:02 $
+$Date: 2004-02-10 08:43:18 $
 
 =head1 SYNOPSIS
 
@@ -124,7 +124,7 @@ our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref
 		    col_aref last_key next_key db_date_parts DB_DATE_FORMAT
 		    clean_params bind_columns bind_col bind_param begin commit
 		    rollback finish is_num row_array all_aref fetch_objects
-		    order_by build_query_with_unions build_query where_clause
+		    order_by build_query build_simple_query where_clause
 		    tables);
 
 # But you'll generally just want to import a few standard ones or all of them
@@ -658,7 +658,7 @@ sub rollback {
 
 ##############################################################################
 
-=item = fetch_objects( $pkg, $sql, $fields, $args )
+=item fetch_objects( $pkg, $sql, $fields, $args )
 
 fetch_objects takes a package name, a sql statement, an arrayref of fields,
 and a list of arguments. It uses the results from the sql statement to
@@ -723,35 +723,37 @@ NONE
 sub fetch_objects {
     my ($pkg, $sql, $fields, $args, $limit, $offset) =  @_;
     my (@objs, @d, $grp_ids);
-    # make offset numeric
-    $offset = $offset || 0;
-    # figure out the fields we need to fill
-    my $count = @$fields - 1;
     # set and execute the query
+    $offset ||= 0;
+
+    # Prepare and execute the query
     my $select = prepare_ca($sql, undef);
     execute($select, @$args);
-    bind_columns($select, \@d[0 .. $count]);
+    bind_columns($select, \@d[0 .. $#$fields + 3]);
+
     # loop through the list, looking for different grp__id columns in
     # matching lines.  Note: this works for all sort orders except grp__id
     my $obj_col = $pkg->OBJECT_SELECT_COLUMN_NUMBER || 0;
     my $last = -1;
-    my $i;
+    my ($i, %seen);
     while (fetch($select)) {
         if ($d[$obj_col] != $last) {
             last if $limit && @objs >= $limit;
             $last = $d[$obj_col];
             next unless $i++ >= $offset;
             my $obj = bless {}, $pkg;
-            $grp_ids = $d[$#d] = [$d[$#d]];
-            $obj ->_set($fields, [@d, $grp_ids]);
+            %seen = ();
+            # The group IDs are in the last four columns.
+            $grp_ids = $d[-4] = [grep { defined && !$seen{$_}++ } @d[-4..-1]];
+            $obj ->_set($fields, \@d);
             $obj->_set__dirty(0);
             $obj = bless $obj, Bric::Util::Class->lookup(
               { id => $obj->get_class_id })->get_pkg_name()
               if $pkg->HAS_CLASS_ID;
             push @objs, $obj->cache_me;
         } else {
-            # Append the ID.
-            push @$grp_ids, $d[$#d];
+            # Append the group IDs.
+            push @$grp_ids, grep { defined && !$seen{$_}++ } @d[-4..-1];
         }
     }
     finish($select);
@@ -759,9 +761,9 @@ sub fetch_objects {
     return (wantarray ? @objs : \@objs);
 }
 
-=item = _build_query($cols, $tables, $where_clause, $order)
+=item build_query($cols, $tables, $where_clause, $order);
 
-Called by list will return objects or ids depending on who is calling
+Builds a query.
 
 B<Throws:>
 
@@ -778,51 +780,17 @@ NONE
 =cut
 
 sub build_query {
-    my ($cols, $tables, $where_clause, $order) = @_;
+    my ($pkg, $cols, $tables, $where_clause, $order) = @_;
+
     # get the various parts of the query
-    return qq{ SELECT DISTINCT $cols
+    return qq{ SELECT $cols
                FROM   $tables
                WHERE  $where_clause
                $order
              };
 }
 
-=item = _build_query_with_unions($cols, $tables, $where_clause, $order);
-
-Called by list will return objects or ids depending on who is calling
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub build_query_with_unions {
-    my ($pkg, $cols, $tables, $where_clause, $order) = @_;
-    my (@queries);
-    # loop through the relations building a query
-    foreach my $rel ( @{$pkg->RELATIONS} ) {
-        my $rcol = ($cols =~ /,/) ? ', ' . $pkg->RELATION_COL->{$rel} : '';
-        my $rtables = ", " . $pkg->RELATION_TABLES->{$rel};
-        my $rwhere_clause = $pkg->RELATION_JOINS->{$rel};
-        $rtables = "" if length($rtables) == 2;
-        push @queries, qq{ SELECT DISTINCT $cols$rcol
-                           FROM   $tables$rtables
-                           WHERE  $where_clause AND $rwhere_clause
-                         };
-    }
-    return join("UNION\n", @queries) . "$order";
-}
-
-=item = $params = clean_params($params)
+=item $params = clean_params($params)
 
 Parameters for Asset objects should be run through this before sending them to
 the query building functions.
@@ -883,7 +851,7 @@ sub clean_params {
     return $param;
 }
 
-=item = _select_tables
+=item tables
 
 The from clause for the main select is built here.
 
@@ -905,15 +873,14 @@ sub tables {
     my ($pkg, $param) = @_;
     my $from = $pkg->FROM;
     foreach (keys %$param) {
-        next unless $pkg->PARAM_FROM_MAP->{$_};
-        my $t = $pkg->PARAM_FROM_MAP->{$_};
+        my $t = $pkg->PARAM_FROM_MAP->{$_} or next;
         next if $from =~ m/$t/;
         $from .= ', ' . $t;
     }
     return $from;
 }
 
-=item = where_clause
+=item where_clause
 
 The where clause for the main select is built here.
 
@@ -935,21 +902,16 @@ sub where_clause {
     my ($pkg, $param) = @_;
     my (@args, $where, $and);
     $where = $pkg->WHERE;
-    foreach (keys %$param) {
-        next unless $pkg->PARAM_WHERE_MAP->{$_};
-        next unless defined $param->{$_};
-        my $sql = $pkg->PARAM_WHERE_MAP->{$_};
-        $where .= ' AND ' . $sql;
-        my $i;
-        my $count = $sql =~ s/\?//g;
-        while ( $i++ < $count ) { 
-            push @args, $param->{$_};
-        }
+    while (my ($k, $v) = each %$param) {
+        next unless defined $v;
+        my $sql = $pkg->PARAM_WHERE_MAP->{$k} or next;
+        $where .= " AND $sql";
+        push @args, ($v) x $sql =~ s/\?//g;
     }
     return $where, \@args;
 }
 
-=item = order_by
+=item order_by
 
 Builds up the ORDER BY clause
 
@@ -970,30 +932,28 @@ NONE
 sub order_by {
     my ($pkg, $param) = @_;
 
-    if ($param->{Order}) {
-        # Grab the order map.
-        my $map = $pkg->PARAM_ORDER_MAP;
-
-        # Make sure it's legit.
-        my $ord = $map->{$param->{Order}}
-          or throw_da "Bad Order parameter '$param->{Order}'";
-
-        # Set up the order direction.
-        my $dir = 'ASC';
-        if ($param->{OrderDirection}) {
-            # Make sure it's legit.
-            throw_da 'OrderDirection parameter must either ASC or DESC.'
-              if $param->{OrderDirection} ne 'ASC'
-              and $param->{OrderDirection} ne 'DESC';
-            # Grab it.
-            $dir = $param->{OrderDirection};
-        }
-        # Return the ORDER BY clause with the ID column.
-        return "ORDER BY $ord $dir, id";
-    }
-
     # Default to returning ID.
-    return "ORDER BY id";
+    return "ORDER BY id" unless $param->{Order};
+
+    # Grab the order map.
+    my $map = $pkg->PARAM_ORDER_MAP;
+
+    # Make sure it's legit.
+    my $ord = $map->{$param->{Order}}
+      or throw_da "Bad Order parameter '$param->{Order}'";
+
+    # Set up the order direction.
+    my $dir = 'ASC';
+    if ($param->{OrderDirection}) {
+        # Make sure it's legit.
+        throw_da 'OrderDirection parameter must either ASC or DESC.'
+          if $param->{OrderDirection} ne 'ASC'
+            and $param->{OrderDirection} ne 'DESC';
+        # Grab it.
+        $dir = $param->{OrderDirection};
+    }
+    # Return the ORDER BY clause with the ID column.
+    return "ORDER BY $ord $dir, id";
 }
 
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.66 $
+$Revision: 1.67 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.66 $ )[-1];
+our $VERSION = (qw$Revision: 1.67 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-06 19:46:07 $
+$Date: 2004-02-10 08:43:18 $
 
 =head1 SYNOPSIS
 
@@ -72,7 +72,7 @@ use constant TABLE  => 'media';
 
 use constant VERSION_TABLE => 'media_instance';
 
-use constant ID_COL => 'mt.id';
+use constant ID_COL => 'DISTINCT mt.id';
 
 use constant COLS           => qw( element__id
                                    priority
@@ -135,6 +135,7 @@ use constant VERSION_FIELDS => qw( name
                                    checked_out);
 
 use constant RO_FIELDS      => qw( class_id );
+use constant RO_COLUMNS     => qw(at.biz_class__id);
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Media';
 use constant INSTANCE_GROUP_ID => 32;
@@ -145,45 +146,19 @@ use constant CAN_DO_LIST => 1;
 use constant CAN_DO_LOOKUP => 1;
 use constant HAS_CLASS_ID => 1;
 
-# relations to loop through in the big query
-use constant RELATIONS => [qw( media category desk workflow)];
-
-use constant RELATION_COL =>
-    {
-        media     => 'at.biz_class__id, m.grp__id',
-        category  => 'at.biz_class__id, o.asset_grp_id AS grp__id',
-        desk      => 'at.biz_class__id, o.asset_grp AS grp__id',
-        workflow  => 'at.biz_class__id, o.asset_grp_id AS grp__id',
-    };
-
-use constant RELATION_TABLES =>
-    {
-        media      => 'media_member mm, member m, at_type at, element e',
-        category   => 'category o, at_type at, element e',
-        desk       => 'desk o, at_type at, element e',
-        workflow   => 'workflow o, at_type at, element e',
-    };
-
-use constant RELATION_JOINS =>
-    {
-        media      => 'mm.object_id = mt.id '
-                    . 'AND m.id = mm.member__id '
-                    . 'AND m.active = 1 '
-                    . 'AND e.id = mt.element__id '
-                    . 'AND at.id = e.type__id ',
-        category   => 'o.id = i.category__id '
-                    . 'AND e.id = mt.element__id '
-                    . 'AND at.id = e.type__id ',
-        desk       => 'o.id = mt.desk__id '
-                    . 'AND e.id = mt.element__id '
-                    . 'AND at.id = e.type__id ',
-        workflow   => 'o.id = mt.workflow__id '
-                    . 'AND e.id = mt.element__id '
-                    . 'AND at.id = e.type__id ',
-    };
+use constant GROUP_COLS => qw(m.grp__id
+                              c.asset_grp_id
+                              d.asset_grp
+                              w.asset_grp_id);
 
 # the mapping for building up the where clause based on params
-use constant WHERE => 'mt.id = i.media__id';
+use constant WHERE => 'mt.id = i.media__id '
+  . 'AND mm.object_id = mt.id '
+  . 'AND m.id = mm.member__id '
+  . 'AND m.active = 1 '
+  . 'AND c.id = i.category__id '
+  . 'AND e.id = mt.element__id '
+  . 'AND at.id = e.type__id ';
 
 use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', ' 
             . join(', i.', 'i.id AS version_id', VERSION_COLS);
@@ -197,15 +172,22 @@ use constant PARAM_FROM_MAP =>
     {
      keyword            => 'media_keyword mk, keyword k',
      output_channel_id  => 'media__output_channel moc',
-     simple             => 'media mt LEFT OUTER JOIN media_keyword mk LEFT ' .
-                           'OUTER JOIN keyword k ON (mk.keyword_id = k.id) ' .
-                           'ON (mt.id = mk.media_id)',
-     _not_simple        => TABLE . ' mt',
+     _not_simple        => 'media_member mm, member m, at_type at, element e, '
+                           . 'category c, ' . TABLE . ' mt '
+                           . 'LEFT OUTER JOIN desk d ON mt.desk__id = d.id '
+                           . 'LEFT OUTER JOIN workflow w ON mt.workflow__id = w.id',
      grp_id             => 'member m2, media_member mm2',
      category_uri       => 'category c',
      data_text          => 'media_data_tile md',
      contrib_id         => 'media__contributor sic',
     };
+
+PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple}
+  . ' LEFT OUTER JOIN ('
+  . 'SELECT mk.media_id, k.name '
+  . 'FROM   media_keyword mk, keyword k '
+  . 'WHERE  mk.keyword_id = k.id'
+  . ') mkk ON (s.id = mkk.media_id)';
 
 use constant PARAM_WHERE_MAP =>
     {
@@ -260,7 +242,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'm2.active = 1 AND '
                              . 'mm2.member__id = m2.id AND '
                              . 'mt.id = mm2.object_id',
-      simple                => '( LOWER(k.name) LIKE LOWER(?) OR '
+      simple                => '( LOWER(mkk.name) LIKE LOWER(?) OR '
                              . 'LOWER(i.name) LIKE LOWER(?) OR '
                              . 'LOWER(i.uri) LIKE LOWER(?) OR '
                              . 'LOWER(i.description) LIKE LOWER(?) )',
@@ -1334,7 +1316,7 @@ B<Notes:> NONE.
 
 ##############################################################################
 
-=item $media = $story->revert();
+=item $media = $media->revert();
 
 Reverts the current version to a prior version
 
@@ -1907,7 +1889,7 @@ sub _do_update {
 
 =item $attr_object = $self->_get_attr_obj()
 
-returns the attribute object for this story
+returns the attribute object for this media
 
 B<Throws:> NONE.
 

@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-06 06:34:55 $
+$Date: 2004-02-10 08:43:18 $
 
 =head1 SYNOPSIS
 
@@ -134,6 +134,7 @@ use base qw(Bric);
 
 use constant DEBUG => 0;
 use constant RO_FIELDS => ();
+use constant RO_COLUMNS => ();
 
 use constant HAS_MULTISITE => 1;
 
@@ -247,12 +248,11 @@ sub lookup {
     my $tables =  tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
-    my $sql = build_query_with_unions($pkg, $pkg->COLUMNS, $tables, $where,
-                                      $order);
+    my $sql = build_query($pkg, $pkg->COLUMNS . ', '
+                          . join(', ', $pkg->RO_COLUMNS,$pkg->GROUP_COLS),
+                          $tables, $where, $order);
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
                    $pkg->RO_FIELDS, 'grp_ids' ];
-    # Send so many arguments as we have relations
-    $args = [ (@$args) x @{$pkg->RELATIONS} ];
     my @obj = fetch_objects( $pkg, $sql, $fields, $args, $param->{Limit},
                              $param->{Offset});
     return unless $obj[0];
@@ -292,10 +292,9 @@ sub list {
     my $order = order_by($pkg, $param);
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
                    $pkg->RO_FIELDS, 'grp_ids' ];
-    my $sql = build_query_with_unions($pkg, $pkg->COLUMNS, $tables, $where,
-                                      $order);
-    # Send so many arguments as we have relations
-    $args = [ (@$args) x @{$pkg->RELATIONS} ];
+    my $sql = build_query($pkg, $pkg->COLUMNS . ', '
+                          . join(', ', $pkg->RO_COLUMNS,$pkg->GROUP_COLS),
+                          $tables, $where, $order);
     my @objs = fetch_objects($pkg, $sql, $fields, $args, $param->{Limit},
                              $param->{Offset});
     return unless $objs[0];
@@ -335,14 +334,7 @@ sub list_ids {
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
     # choose the query type, without grp_ids is faster
-    my $sql;
-    if ( $param->{grp_id} ) {
-        $sql = build_query_with_unions($pkg, $cols, $tables, $where, $order);
-        # Send so many arguments as we have relations
-        $args = [ (@$args) x @{$pkg->RELATIONS} ];
-    } else {
-        $sql = build_query($cols, $tables, $where, $order);
-    }
+    my $sql = build_query($pkg, $cols, $tables, $where, $order);
     my $select = prepare_ca($sql, undef);
     my $return = col_aref($select, @$args);
     return unless $return->[0];

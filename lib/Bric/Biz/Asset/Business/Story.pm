@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.71 $
+$Revision: 1.72 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.71 $ )[-1];
+our $VERSION = (qw$Revision: 1.72 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-17 00:39:58 $
+$Date: 2004-02-10 08:43:18 $
 
 =head1 SYNOPSIS
 
@@ -196,7 +196,7 @@ use constant TABLE      => 'story';
 
 use constant VERSION_TABLE => 'story_instance';
 
-use constant ID_COL => 's.id';
+use constant ID_COL => 'DISTINCT s.id';
 
 use constant COLS       => qw( priority
                                source__id
@@ -258,38 +258,18 @@ use constant CAN_DO_LIST_IDS => 1;
 use constant CAN_DO_LIST => 1;
 use constant CAN_DO_LOOKUP => 1;
 
-# relations to loop through in the big query
-use constant RELATIONS => [qw( story category desk workflow )];
-
-use constant RELATION_COL =>
-    {
-        story     => 'm.grp__id',
-        category  => 'o.asset_grp_id AS grp__id',
-        desk      => 'o.asset_grp AS grp__id',
-        workflow  => 'o.asset_grp_id AS grp__id',
-    };
-
-use constant RELATION_TABLES =>
-    {
-        story      => 'story_member sm, member m',
-        category   => 'story__category sc, category o',
-        desk       => 'desk o',
-        workflow   => 'workflow o',
-    };
-
-use constant RELATION_JOINS =>
-    {
-        story      => 'sm.object_id = s.id '
-                    . 'AND m.id = sm.member__id '
-                    . 'AND m.active = 1',
-        category   => 'sc.story_instance__id = i.id '
-                    . 'AND o.id = sc.category__id ',
-        desk       => 'o.id = s.desk__id ',
-        workflow   => 'o.id = s.workflow__id ',
-    };
+use constant GROUP_COLS => qw(m.grp__id
+                              c.asset_grp_id
+                              d.asset_grp
+                              w.asset_grp_id);
 
 # the mapping for building up the where clause based on params
-use constant WHERE => 's.id = i.story__id';
+use constant WHERE => 's.id = i.story__id '
+  . 'AND sm.object_id = s.id '
+  . 'AND m.id = sm.member__id '
+  . 'AND m.active = 1 '
+  . 'AND sc.story_instance__id = i.id '
+  . 'AND c.id = sc.category__id ';
 
 use constant COLUMNS => join(', s.', 's.id', COLS) . ', ' 
             . join(', i.', 'i.id AS version_id', VERSION_COLS);
@@ -303,12 +283,10 @@ use constant PARAM_FROM_MAP =>
     {
        keyword            => 'story_keyword sk, keyword k',
        output_channel_id  => 'story__output_channel soc',
-       simple             => 'story s '
-                           . 'LEFT OUTER JOIN story_keyword sk '
-                           . 'LEFT OUTER JOIN keyword k '
-                           . 'ON (sk.keyword_id = k.id) '
-                           . 'ON (s.id = sk.story_id)',
-       _not_simple        => TABLE . ' s',
+       _not_simple        => 'story_member sm, member m, story__category sc, '
+                             . 'category c, ' . TABLE . ' s '
+                             . 'LEFT OUTER JOIN desk d ON s.desk__id = d.id '
+                             . 'LEFT OUTER JOIN workflow w ON s.workflow__id = w.id',
        grp_id             => 'member m2, story_member sm2',
        category_id        => 'story__category sc2',
        category_uri       => 'story__category sc2, category c',
@@ -316,6 +294,13 @@ use constant PARAM_FROM_MAP =>
        contrib_id         => 'story__contributor sic',
        element_key_name   => 'element e'
     };
+
+PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple}
+  . ' LEFT OUTER JOIN ('
+  . 'SELECT sk.story_id, k.name '
+  . 'FROM   story_keyword sk, keyword k '
+  . 'WHERE  sk.keyword_id = k.id'
+  . ') skk ON (s.id = skk.story_id)';
 
 use constant PARAM_WHERE_MAP =>
     {
@@ -370,7 +355,7 @@ use constant PARAM_WHERE_MAP =>
                               . 'm2.active = 1 AND '
                               . 'sm2.member__id = m2.id AND '
                               . 's.id = sm2.object_id',
-      simple                 => '( LOWER(k.name) LIKE LOWER(?) OR '
+      simple                 => '( LOWER(skk.name) LIKE LOWER(?) OR '
                               . 'LOWER(i.name) LIKE LOWER(?) OR '
                               . 'LOWER(i.description) LIKE LOWER(?) OR '
                               . 'LOWER(s.primary_uri) LIKE LOWER(?) )',

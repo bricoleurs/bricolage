@@ -172,6 +172,13 @@ inheritance to autohandlers to work properly. [David & Dave Rolsky]
 memberships cannot be edited, but their permissions can. Inspired by a bug
 report from Patrick Walsh. [David]
 
+=item *
+
+Queries for stories, media, and templates have been greatly optimized. Thanks
+to a large database from I<The Register> and query optimization from Josh
+Berkus, searches for stories are now up to ten times faster than they were
+before. [David]
+
 =back
 
 =head2 Bug Fixes

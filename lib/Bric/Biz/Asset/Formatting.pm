@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.55 $ )[-1];
+our $VERSION = (qw$Revision: 1.56 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-17 00:39:57 $
+$Date: 2004-02-10 08:43:18 $
 
 =head1 SYNOPSIS
 
@@ -156,7 +156,7 @@ use constant UTILITY_TEMPLATE => 3;
 # constants for the Database
 use constant TABLE      => 'formatting';
 use constant VERSION_TABLE => 'formatting_instance';
-use constant ID_COL => 'f.id';
+use constant ID_COL => 'DISTINCT f.id';
 use constant COLS       => qw( name
                                priority
                                description
@@ -216,37 +216,17 @@ use constant CAN_DO_LIST_IDS => 1;
 use constant CAN_DO_LIST => 1;
 use constant CAN_DO_LOOKUP => 1;
 
-# relations to loop through in the big query
-use constant RELATIONS => [qw( formatting category desk workflow )];
-
-use constant RELATION_COL =>
-    {
-        formatting => 'm.grp__id',
-        category   => 'o.asset_grp_id AS grp__id',
-        desk       => 'o.asset_grp AS grp__id',
-        workflow   => 'o.asset_grp_id AS grp__id',
-    };
-
-use constant RELATION_TABLES =>
-    {
-        formatting => 'formatting_member fm, member m',
-        category   => 'category o',
-        desk       => 'desk o',
-        workflow   => 'workflow o',
-    };
-
-use constant RELATION_JOINS =>
-    {
-        formatting      => 'fm.object_id = f.id '
-                         . 'AND m.id = fm.member__id '
-                         . 'AND m.active = 1',
-        category        => 'o.id = f.category__id ',
-        desk            => 'o.id = f.desk__id ',
-        workflow        => 'o.id = f.workflow__id ',
-    };
+use constant GROUP_COLS => qw(m.grp__id
+                              c.asset_grp_id
+                              d.asset_grp
+                              w.asset_grp_id);
 
 # the mapping for building up the where clause based on params
-use constant WHERE => 'f.id = i.formatting__id';
+use constant WHERE => 'f.id = i.formatting__id '
+  . 'AND fm.object_id = f.id '
+  . 'AND m.id = fm.member__id '
+  . 'AND m.active = 1 '
+  . 'AND c.id = f.category__id ';
 
 use constant COLUMNS => join(', f.', 'f.id', COLS) . ', ' 
             . join(', i.', 'i.id AS version_id', VERSION_COLS);
@@ -259,11 +239,15 @@ use constant FROM => VERSION_TABLE . ' i';
 use constant PARAM_FROM_MAP =>
     {
        category_uri       =>  'category c',
-       simple             =>  TABLE . ' f',
-       _not_simple        =>  TABLE . ' f',
+        _not_simple        => 'formatting_member fm, member m, '
+                            . 'category c, ' . TABLE . ' f '
+                            . 'LEFT OUTER JOIN desk d ON f.desk__id = d.id '
+                            . 'LEFT OUTER JOIN workflow w ON f.workflow__id = w.id',
        grp_id             =>  'member m2, formatting_member fm2',
        element_key_name   => 'element e',
     };
+
+PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple};
 
 use constant PARAM_WHERE_MAP =>
     {
@@ -304,8 +288,8 @@ use constant PARAM_WHERE_MAP =>
                              . 'm2.grp__id = ? AND '
                              . 'f.id = fm2.object_id AND '
                              . 'fm2.member__id = m2.id',
-      simple                => '(LOWER(f.name) LIKE ? OR '
-                             . 'LOWER(f.file_name) LIKE ?)',
+      simple                => '(LOWER(f.name) LIKE LOWER(?) OR '
+                             . 'LOWER(f.file_name) LIKE LOWER(?))',
     };
 
 use constant PARAM_ORDER_MAP =>
