@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.1 $
+$Revision: 1.1.1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:04 $
+$Date: 2001-11-29 23:54:56 $
 
 =head1 SYNOPSIS
 
@@ -88,7 +88,7 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
 <& '/widgets/listManager/listManager.mc',
    'object'   => $object,
    title      => '%n Found',
-   'fields'   => [qw(id name file_name)],
+   'fields'   => [qw(id name file_name output_channel_name)],
    'profile'  => $profile,
    exclude    => $exclude,
    addition   => $addition,
