@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-20 00:02:44 $
+$Date: 2001-11-30 21:00:02 $
 
 =head1 SYNOPSIS
 
@@ -527,6 +527,10 @@ element__id
 =item *
 
 priority
+
+=item *
+
+publish_status - set to 1 to only return stories that have been published
 
 =item *
 
@@ -1597,7 +1601,7 @@ sub _do_list {
 
     # Build the where clause for the trivial story table fields.
     foreach my $f (qw(workflow__id primary_uri element__id 
-		      priority active id)) {
+		      priority active id publish_status)) {
 	next unless exists $param->{$f};
 
 	if ($f eq 'primary_uri') {
