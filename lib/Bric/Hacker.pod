@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.37.2.5 $
+$Revision: 1.37.2.6 $
 
 =head1 DATE
 
-$Date: 2003-04-29 00:02:46 $
+$Date: 2003-05-29 23:12:47 $
 
 =head1 DESCRIPTION
 
@@ -54,6 +54,11 @@ subscribe:
 http://lists.sourceforge.net/lists/listinfo/bricolage-bugs
 
 =back
+
+=head1 IRC
+
+You can often find folks hanging out and occasionally discussing development
+issues on the #bricolage channel on the Rhizomatic IRC network.
 
 =head1 CVS - THE CUTTING EDGE
 
