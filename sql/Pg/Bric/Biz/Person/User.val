@@ -1,9 +1,9 @@
 
 -- Project:      Bricolage Business API
 -- File:    User.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-12-18 01:20:03 $
 -- Author: David Wheeler <david@wheeler.net>
 
 -- Administrator. Password: 'change me now!'.
@@ -18,7 +18,7 @@ VALUES (1, 2, 2, 1);
 INSERT INTO user_member (id, object_id, member__id)
 VALUES (0, 0, 1); 
 
--- Add 'em to the 'Administrators' Group.
+-- Add 'em to the 'Global Admins' Group.
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (2, 6, 2, 1);
 
