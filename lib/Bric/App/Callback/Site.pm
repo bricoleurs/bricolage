@@ -18,7 +18,7 @@ sub delete : Callback {
     my $self = shift;
 
     my $flag;
-    foreach my $id (@{ mk_aref($self->param_field) }) {
+    foreach my $id (@{ mk_aref($self->value) }) {
         my $site = $class->lookup({ id => $id }) || next;
         if (chk_authz($site, EDIT, 1)) {
             $site->deactivate;

@@ -227,7 +227,7 @@ sub relate_media : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
-    $tile->set_related_media($self->param_field);
+    $tile->set_related_media($self->value);
     &$handle_related_up;
 }
 
@@ -252,7 +252,7 @@ sub relate_story : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
-    $tile->set_related_instance_id($self->param_field);
+    $tile->set_related_instance_id($self->value);
     &$handle_related_up;
 }
 
@@ -270,8 +270,8 @@ sub related_up : Callback {
 
 sub lock_val : Callback {
     my $self = shift;
-    my $value = $self->param_field;
-    my $autopop = ref $self->param_field ? $self->param_field : [$self->param_field];
+    my $value = $self->value;
+    my $autopop = ref $self->value ? $self->value : [$self->value];
     my $tile    = get_state_data(CLASS_KEY, 'tile');
 
     # Map all the data tiles into a hash keyed by Tile::Data ID.

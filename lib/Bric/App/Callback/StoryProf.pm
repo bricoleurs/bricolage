@@ -1,57 +1,60 @@
 package Bric::App::Callback::StoryProf;
 
+# XXX: this has the same deal as MediaProf where
+# some callbacks have extra parameters ($story, $new)
+
+
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'story_prof');
 use strict;
+use Bric::App::Authz qw(:all);
+use Bric::App::Event qw(log_event);
+use Bric::App::Session qw(:state :user);
+use Bric::App::Util qw(:all);
+use Bric::Biz::Asset::Business::Story;
+use Bric::Biz::Category;
+use Bric::Biz::Keyword;
+use Bric::Biz::OutputChannel;
+use Bric::Biz::Workflow;
+use Bric::Biz::Workflow::Parts::Desk;
+use Bric::Util::DBI;
+use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Grp::Parts::Member::Contrib;
 
 my $SEARCH_URL = '/workflow/manager/story/';
 my $ACTIVE_URL = '/workflow/active/story/';
 my $DESK_URL = '/workflow/profile/desk/';
 
-my $handle_delete = sub {
-    my $story = shift;
-    my $desk = $story->get_current_desk();
-    $desk->checkin($story);
-    $desk->remove_asset($story);
-    $desk->save;
-    log_event("story_rem_workflow", $story);
-    $story->set_workflow_id(undef);
-    $story->deactivate;
-    $story->save;
-    log_event("story_deact", $story);
-    add_msg($lang->maketext("Story [_1] deleted.","&quot;" . $story->get_title . "&quot;"));
-};
 
-################################################################################
-
-my $handle_view = sub {
-    my ($widget, $field, $param, $story, $new) = @_;
-    $story ||= get_state_data($widget, 'story');
+sub view : Callback {
+    my $self = shift;
+    my $widget = CLASS_KEY;
+    my $story = get_state_data($widget, 'story');
     # Abort this save if there were any errors.
-    return unless &$save_data($param, $widget, $story);
-    my $version = $param->{"$widget|version"};
+    return unless &$save_data($self->param, $widget, $story);
+    my $version = $self->param->{"$widget|version"};
     my $id = $story->get_id();
     set_redirect("/workflow/profile/story/$id/?version=$version");
-};
+}
 
-################################################################################
-
-my $handle_revert = sub {
-    my ($widget, $field, $param, $story, $new) = @_;
-    $story ||= get_state_data($widget, 'story');
-    my $version = $param->{"$widget|version"};
+sub revert : Callback {
+    my $self = shift;
+    my $widget = CLASS_KEY;
+    my $story = get_state_data($widget, 'story');
+    my $version = $self->param->{"$widget|version"};
     $story->revert($version);
     $story->save();
-    add_msg($lang->maketext("Story [_1] reverted to V.[_2].","&quot;" . $story->get_title . "&quot;",$version));
+    my $msg = "Story [_1] reverted to V.[_2].";
+    my @args = ('&quot;' . $story->get_title . '&quot;', $version);
+    add_msg($self->lang->maketext($msg, @args));
     clear_state($widget);
-};
+}
 
-################################################################################
-
-my $handle_save = sub {
-    my ($widget, $field, $param, $story, $new) = @_;
-    $story ||= get_state_data($widget, 'story');
-
+sub save : Callback {
+    my $self = shift;
+    my $widget = CLASS_KEY;
+    my $story = get_state_data($widget, 'story');
+    my $param = $self->param;
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
@@ -62,7 +65,8 @@ my $handle_save = sub {
         # Save the story.
         $story->save;
         log_event(($new ? 'story_create' : 'story_save'), $story);
-        add_msg($lang->maketext("Story [_1] saved.","&quot;" . $story->get_title . "&quot;"));
+        my $arg = '&quot;' . $story->get_title . '&quot;';
+        add_msg($self->lang->maketext("Story [_1] saved.", $arg));
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -85,14 +89,13 @@ my $handle_save = sub {
     } else {
         set_redirect("/");
     }
-};
+}
 
-################################################################################
-
-my $handle_checkin = sub {
-    my ($widget, $field, $param, $story, $new) = @_;
-    $story ||= get_state_data($widget, 'story');
-
+sub checkin : Callback {
+    my $self = shift;
+    my $widget = CLASS_KEY;
+    my $story = get_state_data($widget, 'story');
+    my $param = $self->param;
     # Abort this save if there were any errors.
     return unless &$save_data($param, $widget, $story);
 
@@ -104,7 +107,7 @@ my $handle_checkin = sub {
         $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
         log_event('story_add_workflow', $story,
                   { Workflow => $wf->get_name });
-        $story->checkout({ user__id => get_user_id })
+        $story->checkout({ user__id => get_user_id() })
           unless $story->get_checked_out;
     }
 
@@ -124,7 +127,8 @@ my $handle_checkin = sub {
         log_event('story_checkout', $story) if $work_id;
         log_event('story_checkin', $story);
         log_event("story_rem_workflow", $story);
-        add_msg($lang->maketext("Story [_1] saved and shelved.","&quot;" . $story->get_title . "&quot;"));
+        my $arg = '&quot;' . $story->get_title . '&quot;';
+        add_msg($self->lang->maketext("Story [_1] saved and shelved.", $arg));
     } elsif ($desk_id eq 'publish') {
         # Publish the story and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -158,7 +162,10 @@ my $handle_checkin = sub {
         my $dname = $pub_desk->get_name;
         log_event('story_moved', $story, { Desk => $dname })
           unless $no_log;
-        add_msg($lang->maketext("Story [_1] saved and checked in to [_2].","&quot;" . $story->get_title . "&quot;", "&quot;$dname&quot;"));
+        my $msg = "Story [_1] saved and checked in to [_2].";
+        my @args = ('&quot;' . $story->get_title . '&quot;',
+                    "&quot;$dname&quot;");
+        add_msg($self->lang->maketext($msg, @args));
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
@@ -184,7 +191,10 @@ my $handle_checkin = sub {
         log_event('story_checkin', $story);
         my $dname = $desk->get_name;
         log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
-        add_msg($lang->maketext("Story [_1] saved and moved to [_2].","&quot;" . $story->get_title . "&quot;","&quot;$dname&quot;"));
+        my $msg = "Story [_1] saved and moved to [_2].";
+        my @args = ('&quot;' . $story->get_title . '&quot;',
+                    "&quot;$dname&quot;");
+        add_msg($self->lang->maketext($msg, @args));
     }
 
     # Publish the story, if necessary.
@@ -197,6 +207,7 @@ my $handle_checkin = sub {
         Bric::Util::DBI::begin(1);
 
         # Use the desk callback to save on code duplication.
+        # XXX: BOING!
         $m->comp('/widgets/desk/callback.mc',
                  widget => $widget,
                  field => "$widget|publish_cb",
@@ -207,17 +218,16 @@ my $handle_checkin = sub {
     # Clear the state out and set redirect.
     clear_state($widget);
     set_redirect("/");
-};
+}
 
-################################################################################
-
-my $handle_save_stay = sub {
-    my ($widget, $field, $param, $story, $new) = @_;
-
+sub save_stay : Callback {
+    my $self = shift;
+    my $widget = CLASS_KEY;
+    my $param = $self->param;
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
-    $story ||= get_state_data($widget, 'story');
+    my $story = get_state_data($widget, 'story');
 
     if ($param->{"$widget|delete"}) {
         # Delete the story.
@@ -230,30 +240,31 @@ my $handle_save_stay = sub {
         $story->activate;
         $story->save;
         log_event(($new ? 'story_create' : 'story_save'), $story);
-        add_msg($lang->maketext("Story [_1] saved.","&quot;" . $story->get_title . "&quot;"));
+        my $arg = '&quot;' . $story->get_title . '&quot;';
+        add_msg($self->lang->maketext("Story [_1] saved.", $arg));
     }
-};
+}
 
-################################################################################
+sub cancel : Callback {
+    my $self = shift;
 
-my $handle_cancel = sub {
-    my ($widget, $field, $param) = @_;
-    my $story = get_state_data($widget, 'story');
+    my $story = get_state_data(CLASS_KEY, 'story');
     $story->cancel_checkout();
     $story->save();
     log_event('story_cancel_checkout', $story);
-    clear_state($widget);
+    clear_state(CLASS_KEY);
     set_redirect("/");
-    add_msg($lang->maketext("Story [_1] check out canceled.","&quot;" . $story->get_title . "&quot;"));
-};
+    my $msg = "Story [_1] check out canceled.";
+    my $arg = '&quot;' . $story->get_title . '&quot;';
+    add_msg($self->lang->maketext($msg, $arg));
+}
 
-################################################################################
-
-my $handle_workspace_return = sub {
-    my ($widget, $field, $param) = @_;
+sub workspace_return : Callback {
+    my $self = shift;
+    my $widget = CLASS_KEY;
     my $version_view = get_state_data($widget, 'version_view');
 
-        my $story = get_state_data($widget, 'story');
+    my $story = get_state_data($widget, 'story');
 
     if ($version_view) {
         my $story_id = $story->get_id();
@@ -279,12 +290,12 @@ my $handle_workspace_return = sub {
         clear_state($widget);
         set_redirect($url);
     }
-};
+}
 
-################################################################################
-
-my $handle_create = sub {
-    my ($widget, $field, $param) = @_;
+sub create : Callback {
+    my $self = shift;
+    my $widget = CLASS_KEY;
+    my $param = $self->param;
 
     # Check permissions.
     my $work_id = get_state_data($widget, 'work_id');
@@ -325,7 +336,7 @@ my $handle_create = sub {
     my $init = { element__id => $param->{"$widget|at_id"},
                  source__id  => $param->{"$widget|source__id"},
                  site_id     => $wf->get_site_id,
-                 user__id    => get_user_id };
+                 user__id    => get_user_id() };
 
     my $story = Bric::Biz::Asset::Business::Story->new($init);
 
@@ -354,8 +365,8 @@ my $handle_create = sub {
     log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
     log_event('story_moved', $story, { Desk => $start_desk->get_name });
     log_event('story_save', $story);
-    add_msg($lang->maketext("Story [_1] created and saved.", "&quot;" .
-                            $story->get_title . "&quot;"));
+    my $arg = '&quot;' . $story->get_title . '&quot;';
+    add_msg($self->lang->maketext("Story [_1] created and saved.", $arg));
 
     # Put the story into the session and clear the workflow ID.
     set_state_data($widget, 'story', $story);
@@ -366,14 +377,13 @@ my $handle_create = sub {
 
     # As far as history is concerned, this page should be part of the story
     # profile stuff.
-    pop_page;
-};
+    pop_page();
+}
 
-################################################################################
-
-my $handle_notes = sub {
-    my ($widget, $field, $param) = @_;
-
+sub notes : Callback {
+    my $self = shift;
+    my $widget = CLASS_KEY;
+    my $param = $self->param;
     # Return if there were data errors.
     return unless &$save_data($param, $widget);
 
@@ -381,13 +391,12 @@ my $handle_notes = sub {
     my $id    = $story->get_id();
     my $action = $param->{$widget.'|notes_cb'};
     set_redirect("/workflow/profile/story/${action}_notes.html?id=$id");
-};
+}
 
-################################################################################
-
-my $handle_delete_cat = sub {
-    my ($widget, $field, $param) = @_;
-    my $cat_ids = mk_aref($param->{"$widget|delete_cat"});
+sub delete_cat : Callback {
+    my $self = shift;
+    my $widget = CLASS_KEY;
+    my $cat_ids = mk_aref($self->param->{"$widget|delete_cat"});
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
     $story->delete_categories($cat_ids);
@@ -397,36 +406,37 @@ my $handle_delete_cat = sub {
     foreach my $cid (@$cat_ids) {
         my $cat = Bric::Biz::Category->lookup({ id => $cid });
         log_event('story_del_category', $story, { Category => $cat->get_name });
-        add_msg($lang->maketext("Category [_1] disassociated.","&quot;" . $cat->get_name . "&quot;"));
+        my $arg = '&quot;' . $cat->get_name . '&quot;';
+        add_msg($self->lang->maketext("Category [_1] disassociated.", $arg));
     }
     set_state_data($widget, 'story', $story);
-};
+}
 
-################################################################################
-
-my $handle_update_primary = sub {
-    my ($widget, $field, $param) = @_;
+sub update_primary : Callback {
+    my $self = shift
+    my $widget = CLASS_KEY;
     my $story   = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
-    my $primary = $param->{"$widget|primary_cat"};
+    my $primary = $self->param->{"$widget|primary_cat"};
     $story->set_primary_category($primary);
     $story->save();
     set_state_data($widget, 'story', $story);
-};
+}
 
-################################################################################
-
-my $handle_add_category = sub {
-    my ($widget, $field, $param) = @_;
+sub add_category : Callback {
+    my $self = shift;
+    my $widget = CLASS_KEY;
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
-    my $cat_id = $param->{"$widget|new_category_id"};
+    my $cat_id = $self->param->{"$widget|new_category_id"};
     if (defined $cat_id) {
         $story->add_categories([ $cat_id ]);
-        my $msg = $story->check_uri(get_user_id);
+        my $msg = $story->check_uri(get_user_id());
         if ($msg) {
             $story->delete_categories([ $cat_id ]);
-            add_msg($lang->maketext("The category was not added, as it would have caused a URI clash with story [_1].","'$msg'"));
+            my $langmsg = "The category was not added, "
+              . "as it would have caused a URI clash with story [_1].";
+            add_msg($self->lang->maketext($langmsg, "'$msg'"));
             $story->save();
             set_state_data($widget, 'story', $story);
             return;
@@ -434,112 +444,102 @@ my $handle_add_category = sub {
         $story->save();
         my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
         log_event('story_add_category', $story, { Category => $cat->get_name });
-        add_msg($lang->maketext("Category [_1] added.","&quot;" . $cat->get_name . "&quot;"));
+        my $arg = '&quot;' . $cat->get_name . '&quot;';
+        add_msg($self->lang->maketext("Category [_1] added.", $arg));
     }
     set_state_data($widget, 'story', $story);
-};
+}
 
-##############################################################################
+sub add_oc : Callback {
+    my $self = shift;
 
-my $handle_add_oc = sub {
-    my ($widget, $field, $param) = @_;
-    my $story = get_state_data($widget, 'story');
+    my $story = get_state_data(CLASS_KEY, 'story');
     chk_authz($story, EDIT);
-    my $oc = Bric::Biz::OutputChannel->lookup({ id => $param->{$field} });
+    my $oc = Bric::Biz::OutputChannel->lookup({ id => $self->value });
     $story->add_output_channels($oc);
     log_event('story_add_oc', $story, { 'Output Channel' => $oc->get_name });
     $story->save;
-    set_state_data($widget, 'story', $story);
-};
+    set_state_data(CLASS_KEY, 'story', $story);
+}
 
-################################################################################
+sub view_notes : Callback {
+    my $self = shift;
 
-my $handle_view_notes = sub {
-    my ($widget, $field, $param) = @_;
-    my $story = get_state_data($widget, 'story');
+    my $story = get_state_data(CLASS_KEY, 'story');
     my $id = $story->get_id();
     set_redirect("/workflow/profile/story/comments.html?id=$id");
-};
+}
 
-################################################################################
-
-my $handle_trail = sub {
-    my ($widget, $field, $param) = @_;
+sub trail : Callback {
+    my $self = shift;
 
     # Return if there were data errors
-    return unless &$save_data($param, $widget);
+    return unless &$save_data($self->param, CLASS_KEY);
 
-    my $story = get_state_data($widget, 'story');
+    my $story = get_state_data(CLASS_KEY, 'story');
     my $id = $story->get_id();
     set_redirect("/workflow/trail/story/$id");
-};
+}
 
-################################################################################
+sub view_trail : Callback {
+    my $self = shift;
 
-my $handle_view_trail = sub {
-    my ($widget, $field, $param) = @_;
-    my $story = get_state_data($widget, 'story');
+    my $story = get_state_data(CLASS_KEY, 'story');
     my $id = $story->get_id();
     set_redirect("/workflow/trail/story/$id");
-};
+}
 
-################################################################################
+sub update : Callback {
+    my $self = shift;
 
-my $handle_update = sub {
-    my ($widget, $field, $param) = @_;
-    &$save_data($param, $widget);
-};
+    &$save_data($self->param, CLASS_KEY);
+}
 
-################################################################################
+sub keywords : Callback {
+    my $self = shift;
 
-my $handle_keywords = sub {
-    my ($widget, $field, $param) = @_;
 
     # Return if there were data errors
-    return unless &$save_data($param, $widget);
+    return unless &$save_data($self->param, CLASS_KEY);
 
-    my $story = get_state_data($widget, 'story');
+    my $story = get_state_data(CLASS_KEY, 'story');
     my $id = $story->get_id();
     set_redirect("/workflow/profile/story/keywords.html");
-};
+}
 
-################################################################################
+sub contributors : Callback {
+    my $self = shift;
 
-my $handle_contributors = sub {
-    my ($widget, $field, $param) = @_;
 
     # Return if there were data errors
-    return unless &$save_data($param, $widget);
+    return unless &$save_data($self->param, CLASS_KEY);
     set_redirect("/workflow/profile/story/contributors.html");
-};
+}
 
-################################################################################
+sub assoc_contrib : Callback {
+    my $self = shift;
 
-my $handle_assoc_contrib = sub {
-    my ($widget, $field, $param) = @_;
-    my $story = get_state_data($widget, 'story');
+    my $story = get_state_data(CLASS_KEY, 'story');
     chk_authz($story, EDIT);
-    my $contrib_id = $param->{$field};
+    my $contrib_id = $self->value;
     my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
     my $roles = $contrib->get_roles;
     if (scalar(@$roles)) {
-        set_state_data($widget, 'contrib', $contrib);
+        set_state_data(CLASS_KEY, 'contrib', $contrib);
         set_redirect("/workflow/profile/story/contributor_role.html");
     } else {
         $story->add_contributor($contrib);
         log_event('story_add_contrib', $story, { Name => $contrib->get_name });
-#       add_msg("Contributor &quot;" . $contrib->get_name . "&quot; associated.");
     }
-};
+}
 
-################################################################################
+sub assoc_contrib_role : Callback {
+    my $self = shift;
 
-my $handle_assoc_contrib_role = sub {
-    my ($widget, $field, $param) = @_;
-    my $story   = get_state_data($widget, 'story');
+    my $story   = get_state_data(CLASS_KEY, 'story');
     chk_authz($story, EDIT);
-    my $contrib = get_state_data($widget, 'contrib');
-    my $role    = $param->{$widget.'|role'};
+    my $contrib = get_state_data(CLASS_KEY, 'contrib');
+    my $role    = $self->param->{CLASS_KEY.'|role'};
 
     # Add the contributor
     $story->add_contributor($contrib, $role);
@@ -547,75 +547,67 @@ my $handle_assoc_contrib_role = sub {
 
     # Go back to the main contributor pick screen.
     set_redirect(last_page);
-#    add_msg("Contributor &quot;" . $contrib->get_name . "&quot; associated.");
 
     # Remove this page from the stack.
-    pop_page;
-};
+    pop_page();
+}
 
-################################################################################
+sub unassoc_contrib : Callback {
+    my $self = shift;
 
-my $handle_unassoc_contrib = sub {
-    my ($widget, $field, $param) = @_;
-    my $story = get_state_data($widget, 'story');
+    my $story = get_state_data(CLASS_KEY, 'story');
     chk_authz($story, EDIT);
-    my $cids = mk_aref($param->{$field});
+    my $cids = mk_aref($self->value);
     $story->delete_contributors($cids);
 
     # Log the dissociations.
     foreach my $cid (@$cids) {
         my $c = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $cid });
         log_event('story_del_contrib', $story, { Name => $c->get_name });
-#       add_msg("Contributor &quot;" . $contrib->get_name . "&quot; disassociated.");
     }
-};
+}
 
-##############################################################################
+sub save_contrib : Callback {
+    my $self = shift;
 
-my $handle_save_contrib = sub {
-    my ($widget, $field, $param) = @_;
-    $save_contrib->($widget, $param);
+    $save_contrib->(CLASS_KEY, $self->param);
     # Set a redirect for the previous page.
     set_redirect(last_page);
     # Pop this page off the stack.
-    pop_page;
-};
+    pop_page();
+}
 
-##############################################################################i
+sub save_and_stay_contrib : Callback {
+    my $self = shift;
 
-my $handle_save_and_stay_contrib = sub {
-    my ($widget, $field, $param) = @_;
-    $save_contrib->($widget, $param);
-};
+    $save_contrib->(CLASS_KEY, $self->param);
+}
 
-###############################################################################
+sub leave_contrib : Callback {
+    my $self = shift;
 
-my $handle_leave_contrib = sub {
-    my ($widget, $field, $param) = @_;
     # Set a redirect for the previous page.
     set_redirect(last_page);
     # Pop this page off the stack.
-    pop_page;
-};
+    pop_page();
+}
 
-################################################################################
+sub exit : Callback {
+    my $self = shift;
 
-my $handle_exit = sub {
-    my ($widget, $field, $param) = @_;
-    set_state($widget, {});
+    set_state(CLASS_KEY, {});
     # Set the redirect to the page we were at before here.
     set_redirect(last_page || "/workflow/search/story/");
     # Remove this page from history.
-    pop_page;
-};
+    pop_page();
+}
 
-################################################################################
-
-my $handle_add_kw = sub {
-    my ($widget, $field, $param) = @_;
+sub add_kw : Callback {
+    my $self = shift;
+    my $param = $self->param;
 
     # Grab the story.
-    my $story = get_state_data($widget, 'story');
+    my $story = get_state_data(CLASS_KEY, 'story');
     chk_authz($story, EDIT);
 
     # Add new keywords.
@@ -636,33 +628,34 @@ my $handle_add_kw = sub {
       if defined $param->{del_keyword};
 
     # Save the changes
-    set_state_data($widget, 'story', $story);
+    set_state_data(CLASS_KEY, 'story', $story);
 
     set_redirect(last_page);
 
     add_msg("Keywords saved.");
 
     # Take this page off the stack.
-    pop_page;
-};
+    pop_page();
+}
 
-################################################################################
+sub checkout : Callback {
+    my $self = shift;
 
-my $handle_checkout = sub {
-    my ($widget, $field, $param) = @_;
-    my $ids = $param->{$field};
+    my $ids = $self->value;
     $ids = ref $ids ? $ids : [$ids];
 
     foreach (@$ids) {
         my $ba = Bric::Biz::Asset::Business::Story->lookup({'id' => $_});
         if (chk_authz($ba, EDIT, 1)) {
-            $ba->checkout({'user__id' => get_user_id});
+            $ba->checkout({'user__id' => get_user_id()});
             $ba->save;
 
             # Log Event.
             log_event('story_checkout', $ba);
         } else {
-            add_msg($lang->maketext("Permission to checkout [_1] denied","&quot;" . $ba->get_name . "&quot;"));
+            my $msg = "Permission to checkout [_1] denied";
+            my $arg = '&quot;' . $ba->get_name . '&quot;';
+            add_msg($self->lang->maketext($msg, $arg));
         }
     }
 
@@ -673,13 +666,12 @@ my $handle_checkout = sub {
         # Go to the profile screen
         set_redirect('/workflow/profile/story/'.$ids->[0].'?checkout=1');
     }
-};
+}
 
-################################################################################
+sub recall : Callback {
+    my $self = shift;
 
-my $handle_recall = sub {
-    my ($widget, $field, $param) = @_;
-    my $ids = $param->{$widget.'|recall_cb'};
+    my $ids = $self->param->{CLASS_KEY.'|recall_cb'};
     $ids = ref $ids ? $ids : [$ids];
     my %wfs;
 
@@ -704,12 +696,14 @@ my $handle_recall = sub {
 
             # Put this formatting asset on to the start desk.
             $start_desk->accept({'asset' => $ba});
-            $start_desk->checkout($ba, get_user_id);
+            $start_desk->checkout($ba, get_user_id());
             $start_desk->save;
             log_event('story_moved', $ba, { Desk => $start_desk->get_name });
             log_event('story_checkout', $ba);
         } else {
-            add_msg($lang->maketext("Permission to checkout [_1] denied","&quot;" . $ba->get_name . "&quot;"));
+            my $msg = "Permission to checkout [_1] denied";
+            my $arg = '&quot;' . $ba->get_name . '&quot;';
+            add_msg($self->lang->maketext($msg, $arg));
         }
     }
 
@@ -721,11 +715,11 @@ my $handle_recall = sub {
         # Go to the profile screen
         set_redirect('/workflow/profile/story/'.$o_id.'?checkout=1');
     }
-};
+}
 
-my $handle_clone = sub {
-
-};
+sub clone : Callback {
+    # empty
+}
 
 
 ###
@@ -759,12 +753,13 @@ my $save_contrib = sub {
             delete $existing->{$contrib_id};
             log_event('story_del_contrib', $story,
                       { Name => $contrib->get_name });
-            add_msg($lang->maketext('Contributor [_1] disassociated.','&quot;' . $contrib->get_name . '&quot;'));
+            my $msg = 'Contributor [_1] disassociated.';
+            my $arg = '&quot;' . $contrib->get_name . '&quot;';
+            add_msg($self->lang->maketext($msg, $arg));
         }
     }
 
-    # get the remaining
-    # and reorder
+    # get the remaining and reorder
     foreach (keys %$existing) {
         my $key = $widget . '|reorder_' . $_;
         my $place = $param->{$key};
@@ -772,14 +767,12 @@ my $save_contrib = sub {
     }
     my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
     $story->reorder_contributors(@no);
-
-    # and that's that
 };
 
 # removes repeated error messages
 my $unique_msgs = sub {
     my (%seen, @msgs);
-    while (my $msg = next_msg) {
+    while (my $msg = next_msg()) {
         push @msgs, $msg unless $seen{$msg}++;
     }
     add_msg($_) for @msgs;
@@ -789,12 +782,12 @@ my $save_data = sub {
     my ($param, $widget, $story) = @_;
     my $data_errors = 0;
 
-    $story ||= get_state_data($widget, 'story');
+    my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
 
     # Make sure the story is active.
     $story->activate;
-    my $uid = get_user_id;
+    my $uid = get_user_id();
 
     if (($story->get_slug() || '') ne ($param->{'slug'} || '')) {
         my $old_slug = $story->get_slug();
@@ -807,15 +800,17 @@ my $save_data = sub {
             my $msg = $story->check_uri($uid);
             if ($msg) {
                 if ($old_slug) {
-                    add_msg(lang->maketext("The slug has been reverted to [_1], as " .
-                             "the slug [_2] caused this story " .
-                             "to have a URI conflicting with that of story " .
-                             "[_3].","'$old_slug'","'$param->{slug}'","'$msg'"));
+                    my $langmsg = "The slug has been reverted to [_1], as "
+                      . "the slug [_2] caused this story to have a URI "
+                      . "conflicting with that of story [_3].";
+                    my @args = ("'$old_slug'", "'$param->{slug}'", "'$msg'");
+                    add_msg(lang->maketext($langmsg, @args));
                     $story->set_slug($old_slug);
                 } else {
-                    add_msg($lang->maketext("The slug, category and cover date you selected " .
-                             "would have caused this story to have a URI " .
-                             "conflicting with that of story [_1].","'$msg'"));
+                    my $langmsg = "The slug, category and cover date you selected "
+                      . "would have caused this story to have a URI "
+                      . "conflicting with that of story [_1]."
+                    add_msg($self->lang->maketext($langmsg, "'$msg'"));
                 }
                 $data_errors = 1;
             }
@@ -836,8 +831,8 @@ my $save_data = sub {
         my $del_oc_ids = mk_aref($param->{rem_oc});
         foreach my $delid (@$del_oc_ids) {
             if ($delid == $param->{primary_oc_id}) {
-                add_msg("Cannot both delete and make primary a single " .
-                            "output channel.");
+                add_msg("Cannot both delete and make primary a single "
+                          . "output channel.");
                 $param->{__data_errors__} = 1;
             } else {
                 my ($oc) = $story->get_output_channels($delid);
@@ -859,14 +854,16 @@ my $save_data = sub {
         my $msg = $story->check_uri($uid);
         if ($msg) {
             if ($old_date) {
-                add_msg($lang->maketext("The cover date has been reverted to [_1], " .
-                         "as it caused this story to have a URI conflicting " .
-                         "with that of story '[_2].",$old_date,"'$msg'"));
+                my $langmsg = "The cover date has been reverted to [_1], "
+                  . "as it caused this story to have a URI conflicting "
+                  . "with that of story '[_2].";
+                add_msg($self->lang->maketext($langmsg, $old_date,"'$msg'"));
                 $story->set_cover_date($old_date);
             } else {
-                add_msg($lang->maketext("The slug, category and cover date you selected " .
+                my $langmsg = "The slug, category and cover date you selected " .
                          "would have caused this story to have a URI " .
-                         "conflicting with that of story [_1].","'$msg'"));
+                         "conflicting with that of story [_1].";
+                add_msg($self->lang->maketext($langmsg, "'$msg'"));
             }
             $data_errors = 1;
         }
@@ -895,6 +892,21 @@ my $save_data = sub {
 
     $param->{__data_errors__} = $data_errors;
     return not $data_errors;
+};
+
+my $handle_delete = sub {
+    my $story = shift;
+    my $desk = $story->get_current_desk();
+    $desk->checkin($story);
+    $desk->remove_asset($story);
+    $desk->save;
+    log_event("story_rem_workflow", $story);
+    $story->set_workflow_id(undef);
+    $story->deactivate;
+    $story->save;
+    log_event("story_deact", $story);
+    my $arg = '&quot;' . $story->get_title . '&quot;';
+    add_msg($self->lang->maketext("Story [_1] deleted.", $arg));
 };
 
 

@@ -40,7 +40,7 @@ my $pl_name = get_class_info($type)->get_plural_name;
 sub checkin : Callback {
     my $self = shift;
 
-    my $a_id    = $self->param_field;
+    my $a_id    = $self->value;
     my $a_class = $self->param->{$widget.'|asset_class'};
     my $pkg     = get_package_name($a_class);
     my $a_obj   = $pkg->lookup({'id' => $a_id, checkout => 1});
@@ -54,7 +54,7 @@ sub checkin : Callback {
 sub checkout : Callback {
     my $self = shift;
 
-    my $a_id    = $self->param_field;
+    my $a_id    = $self->value;
     my $a_class = $self->param->{$widget.'|asset_class'};
     my $pkg     = get_package_name($a_class);
     my $a_obj   = $pkg->lookup({'id' => $a_id});
@@ -266,7 +266,7 @@ sub deploy : Callback {
 sub clone : Callback {
     my $self = shift;
 
-    my $aid = $self->param_field;
+    my $aid = $self->value;
     # Lookup the story and log that it has been cloned.
     my $story = Bric::Biz::Asset::Business::Story->lookup({ id => $aid });
     log_event('story_clone', $story);

@@ -14,7 +14,7 @@ my $class = get_package_name($type);
 sub cancel : Callback {
     my $self = shift;
 
-    foreach my $id (@{ mk_aref($self->param_field) }) {
+    foreach my $id (@{ mk_aref($self->value) }) {
         my $job = $class->lookup({ id => $id }) || next;
         if (chk_authz($job, EDIT)) {
             if ($job->is_pending) {

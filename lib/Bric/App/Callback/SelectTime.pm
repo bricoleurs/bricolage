@@ -24,7 +24,7 @@ sub refresh : Callback(priority => 0) {
     return if $is_clear_state->($param);
 
     # There might be many time widgets on this page.
-    my $base = mk_aref($self->param_field);
+    my $base = mk_aref($self->value);
 
     foreach my $b (@$base) {
         # Keep this widget with this base name distict from others on the page.

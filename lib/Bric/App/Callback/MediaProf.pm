@@ -509,7 +509,7 @@ sub add_oc : Callback {
     my $self = shift;
     my $media = get_state_data(CLASS_KEY, 'media');
     chk_authz($media, EDIT);
-    my $oc = Bric::Biz::OutputChannel->lookup({ id => $self->param_field });
+    my $oc = Bric::Biz::OutputChannel->lookup({ id => $self->value });
     $media->add_output_channels($oc);
     log_event('media_add_oc', $media, { 'Output Channel' => $oc->get_name });
     $media->save;
@@ -521,7 +521,7 @@ sub assoc_contrib : Callback {
     my $self = shift;
     my $media = get_state_data(CLASS_KEY, 'media');
     chk_authz($media, EDIT);
-    my $contrib_id = $self->param_field;
+    my $contrib_id = $self->value;
     my $contrib =
       Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
     my $roles = $contrib->get_roles;
@@ -559,7 +559,7 @@ sub unassoc_contrib : Callback {
     my $self = shift;
     my $media = get_state_data(CLASS_KEY, 'media');
     chk_authz($media, EDIT);
-    my $contrib_id = $self->param_field;
+    my $contrib_id = $self->value;
     $media->delete_contributors([$contrib_id]);
     my $contrib =
       Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
@@ -713,7 +713,7 @@ sub recall : Callback {
 
 sub checkout : Callback {
     my $self = shift;
-    my $ids = $self->param_field;
+    my $ids = $self->value;
     $ids = ref $ids ? $ids : [$ids];
 
     foreach (@$ids) {

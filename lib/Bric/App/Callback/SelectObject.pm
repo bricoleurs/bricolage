@@ -22,7 +22,7 @@ if ($field eq "$widget|$object-selected_id_cb") {
 
 sub clear : Callback {
     my $self = shift;
-    my $trigger = $self->param_field;
+    my $trigger = $self->value;
 
     # If the trigger field was submitted with a true value, clear state!
     if ($self->param->{$trigger}) {

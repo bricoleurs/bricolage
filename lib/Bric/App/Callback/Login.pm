@@ -40,7 +40,7 @@ sub masquerade : Callback {
     my $self = shift;
     my $r = $self->apache_req;
 
-    my $un = $self->param_field;
+    my $un = $self->value;
     my ($res, $msg) = Bric::App::Auth::masquerade($r, $un);
 
     if ($res) {

@@ -12,7 +12,7 @@ my $c = Bric::App::Cache->new();   # singleton
 
 sub change_context : Callback {
     my $self = shift;
-    $c->set_user_cx(get_user_id(), $self->param_field);
+    $c->set_user_cx(get_user_id(), $self->value);
 }
 
 1;

@@ -30,13 +30,13 @@ sub alpha : Callback {
     my $self = shift;
     $init_state->($self);
 
-    my $crit = $self->param_field ? $self->param_field.'%' : '';
+    my $crit = $self->value ? $self->value.'%' : '';
 
     # Add a '%' to create a prefix search by first letter.
     set_state_data(CLASS_KEY, 'criterion', $crit);
 
     # Clear the substr search box and set the letter selector
-    set_state_data(CLASS_KEY, 'crit_letter', $self->param_field);
+    set_state_data(CLASS_KEY, 'crit_letter', $self->value);
     set_state_data(CLASS_KEY, 'crit_field', '');
 }
 
