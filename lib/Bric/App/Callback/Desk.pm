@@ -211,6 +211,7 @@ sub publish : Callback {
 
     if (%$story_pub or %$media_pub) {                      # XXX
         # Instant publish!
+        # XXX: how do we get $m?
         $m->comp('/widgets/publish/callback.mc',
                  field   => 'publish',
                  widget  => 'publish',
