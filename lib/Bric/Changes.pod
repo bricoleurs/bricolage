@@ -89,6 +89,14 @@ groups now have READ permission to the members of the "All Sites" group so
 that they can properly select a site context and gain access to the workflows
 in their site context. [David]
 
+=item *
+
+Added new permissions "RECALL" and "PUBLISH", which apply only to asset
+groups, including desks, categories, and workflows. Now users must have RECALL
+permission to recall assets from the library and bring them into workflow, and
+PUBLISH permission to publish assets. This should make it much easier to
+create more flexible permissions to manage approval processes. [David]
+
 =back
 
 =head2 Bug Fixes

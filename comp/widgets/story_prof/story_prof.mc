@@ -8,11 +8,11 @@ story_prof.mc - The profile of stories widget
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-03-19 02:06:18 $
+$Date: 2003-12-22 03:21:15 $
 
 =head1 SYNOPSIS
 
@@ -115,8 +115,8 @@ if ($id) {
 
     my $s_uid = $story->get_user__id;
     if ((defined $s_uid && $s_uid == get_user_id) && chk_authz($story, EDIT, 1)) {
-		# Don't go into edit mode if this is a previous version.
-		$state_name = 'edit' unless defined($version);
+        # Don't go into edit mode if this is a previous version.
+        $state_name = 'edit' unless defined($version);
     }
 
     # Set the state to either edit or view.

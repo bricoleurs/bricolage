@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-12-17 22:04:20 $
+$Date: 2003-12-22 03:21:15 $
 
 =head1 SYNOPSIS
 
@@ -47,17 +47,16 @@ my $profile = sub {
 
 my $select = sub {
     my $o = shift;
-    my $u = $o->get_user__id;
-
-    if (! defined $u && chk_authz($o, EDIT, 1)) {
-	if ($o->get_workflow_id) {
+    unless (defined $o->get_user__id) {
+	if ($o->get_workflow_id && chk_authz($o, EDIT, 1)) {
             # Allow checkout if they can see the desk the asset is on.
 	    return ['Checkout', "$widg\_prof|checkout_cb"]
               if $desk_chk->{$o->get_desk_id}[0];
 	} else {
-            # Allow checkout only if they have access to the start desk.
+            # Allow checkout only if they have recall permission to the asset and
+            # access to the start desk.
 	    return ['Checkout', "$widg\_prof|recall_cb", $o->get_id.'|'.$work_id]
-              if $start_desk_ok;
+              if $start_desk_ok && chk_authz($o, RECALL, 1);
 	}
     }
     return;

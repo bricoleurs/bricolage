@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2003-12-22 03:21:16 $
 
 =head1 SYNOPSIS
 
@@ -159,7 +159,15 @@ EDIT => 2
 
 =item *
 
-CREATE => 3
+RECALL => 3
+
+=item *
+
+CREATE => 4
+
+=item *
+
+PUBLISH => 5
 
 =item *
 
@@ -589,20 +597,24 @@ Returns an anonymous hash or anonymous array of the possible values for a
 privilege object. The vals_href() method returns an anonymous array in which the
 privilege values are the keys and their corresponding names are the values:
 
-    { &READ   => 'READ',
-      &EDIT   => 'EDIT',
-      &CREATE => 'CREATE',
-      &DENY   => 'DENY'
+    { &READ    => 'READ',
+      &EDIT    => 'EDIT',
+      &RECALL  => 'RECALL',
+      &CREATE  => 'CREATE',
+      &PUBLISH => 'PUBLISH',
+      &DENY    => 'DENY'
     }
 
 The vals_aref() method returns an anonymous array of anonymous arrays. The first
 value of each embedded anonymous array is the privilege value, whereas the
 second value is the name for that value:
 
-    [ [ &READ   => 'READ'   ],
-      [ &EDIT   => 'EDIT'   ],
-      [ &CREATE => 'CREATE' ],
-      [ &DENY   => 'DENY'   ]
+    [ [ &READ    => 'READ'    ],
+      [ &EDIT    => 'EDIT'    ],
+      [ &RECALL  => 'RECALL'  ],
+      [ &CREATE  => 'CREATE'  ],
+      [ &PUBLISH => 'PUBLISH' ],
+      [ &DENY    => 'DENY'    ]
     ]
 
 B<Throws:> NONE.
@@ -615,18 +627,22 @@ B<Notes:> NONE.
 =cut
 
 sub vals_href {
-    return { &READ   => 'READ',
-             &EDIT   => 'EDIT',
-             &CREATE => 'CREATE',
-             &DENY   => 'DENY'
+    return { &READ    => 'READ',
+             &EDIT    => 'EDIT',
+             &RECALL  => 'RECALL',
+             &CREATE  => 'CREATE',
+             &PUBLISH => 'PUBLISH',
+             &DENY    => 'DENY'
            }
 }
 
 sub vals_aref {
-    return [ [ &READ   => 'READ'   ],
-             [ &EDIT   => 'EDIT'   ],
-             [ &CREATE => 'CREATE' ],
-             [ &DENY   => 'DENY'   ]
+    return [ [ &READ    => 'READ'    ],
+             [ &EDIT    => 'EDIT'    ],
+             [ &RECALL  => 'RECALL'  ],
+             [ &CREATE  => 'CREATE'  ],
+             [ &PUBLISH => 'PUBLISH' ],
+             [ &DENY    => 'DENY'    ]
            ]
 }
 

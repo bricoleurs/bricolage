@@ -6,16 +6,16 @@ Bric::Util::Priv::Parts::Const - Exports Bricolage Privilege Constants
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:37 $
+$Date: 2003-12-22 03:21:16 $
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,15 @@ EDIT
 
 =item *
 
+RECALL - Used only for assets.
+
+=item *
+
 CREATE
+
+=item *
+
+PUBLISH - Used only for assets.
 
 =item *
 
@@ -61,25 +69,25 @@ use strict;
 ################################################################################
 use base qw(Exporter);
 
-# You can explicitly import any of the functions in this class. The last two
-# should only ever be imported by Bric::Util::Time, however.
-our @EXPORT_OK = qw(READ EDIT CREATE DENY);
+# You can explicitly import any of the functions in this class.
+our @EXPORT_OK = qw(READ EDIT RECALL CREATE PUBLISH DENY);
 
-# But you'll generally just want to import a few standard ones or all of them
-# at once.
+# But you'll generally just want to import all of them at once.
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ################################################################################
 # Function Prototypes
 ################################################################################
-
+# NONE.
 
 ################################################################################
 # Constants
 ################################################################################
 use constant READ => 1;
 use constant EDIT => 2;
-use constant CREATE => 3;
+use constant RECALL => 3;
+use constant CREATE => 4;
+use constant PUBLISH => 5;
 use constant DENY => 255;
 
 ################################################################################
@@ -146,8 +154,7 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::Priv|Bric::Util::Priv>, 
-L<Bric::Biz::Person::User::Parts::ACL|Bric::Biz::Person::User::Parts::ACL>
+L<Bric|Bric>,
+L<Bric::Util::Priv|Bric::Util::Priv>
 
 =cut

@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:12 $
+$Date: 2003-12-22 03:21:14 $
 
 =head1 SYNOPSIS
 
@@ -199,7 +199,7 @@ if (defined $objs && @$objs > $obj_offset) {
         my $pub = '';
         if ($desk_type eq 'workflow') {
             # Figure out publishing stuff, if necessary.
-            if ($can_edit && $desk->can_publish) {
+            if ($desk->can_publish && chk_authz($obj, PUBLISH, 1)) {
                 $pub = $m->scomp('/widgets/profile/checkbox.mc',
                             name  => "$widget|${class}_pub_ids",
                             id    => "$widget\_$aid",

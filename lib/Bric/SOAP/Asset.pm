@@ -8,6 +8,7 @@ use Bric::App::Authz  qw(chk_authz CREATE);
 use Bric::Util::Fault qw(throw_ap throw_mni);
 use Bric::App::Event  qw(log_event);
 use Bric::App::Util   qw(get_package_name);
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 use IO::Scalar;
 
@@ -358,7 +359,7 @@ sub delete {
         throw_ap(error => "$pkg\::$method : no $module found for id \"$id\"")
           unless $asset;
         throw_ap(error => "$pkg\::$method : access denied for $module \"$id\".")
-          unless chk_authz($asset, CREATE, 1);
+          unless chk_authz($asset, EDIT, 1);
 
         # delete the asset
         $asset->deactivate;

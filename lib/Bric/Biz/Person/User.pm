@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-12-12 16:53:25 $
+$Date: 2003-12-22 03:21:15 $
 
 =head1 SYNOPSIS
 
@@ -972,7 +972,7 @@ sub what_can {
     }
 
     # Administrators can do anything.
-    return CREATE if $is_admin;
+    return PUBLISH if $is_admin;
 
     # Set $acl, if necessary.
     unless ($acl) {

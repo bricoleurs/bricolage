@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-11-30 01:32:17 $
+$Date: 2003-12-22 03:21:16 $
 
 =head1 DESCRIPTION
 
@@ -47,6 +47,7 @@ use Bric::Util::Time qw(:all);
 use Bric::App::Authz qw(:all);
 use Bric::Util::Burner;
 use Bric::Biz::Asset::Formatting;
+use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::FTP::DirHandle;
 use Net::FTPServer::FileHandle;
 use IO::Scalar;
@@ -219,12 +220,23 @@ sub status {
     # works with the web login caching system.
     my $priv = $self->{ftps}{user_obj}->what_can($template);
     my $mode;
+    my $twid = $template->get_workflow_id;
     if (!$priv or $priv == DENY) {
         # They can't touch it.
         $mode = 0000;
-    } elsif ($priv >= EDIT) {
+    } elsif ($priv >= RECALL) {
         # They have full access.
         $mode = 0777;
+    } elsif ($twid and my $d = $template->get_current_desk) {
+        # See if they have access to the desk.
+        if (chk_authz(undef, READ, $d->get_asset_grp, $d->get_grp_ids)
+            && $priv >= EDIT) {
+            # They have full access.
+            $mode = 0777;
+        } else {
+            # They can read it.
+            $mode = 0444;
+        }
     } else {
         # They can read it.
         $mode = 0444;
@@ -312,6 +324,7 @@ sub can_write  {
     return 0;
   }
 }
+
 *can_append = \&can_write;
 
 =back

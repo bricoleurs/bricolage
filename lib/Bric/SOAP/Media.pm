@@ -15,6 +15,7 @@ use Bric::Util::Fault   qw(throw_ap);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ CREATE);
 use Bric::App::Event    qw(log_event);
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 use Bric::SOAP::Util qw(category_path_to_id
                         site_to_id
@@ -40,15 +41,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:32 $
+$Date: 2003-12-22 03:21:15 $
 
 =head1 SYNOPSIS
 
@@ -472,7 +473,7 @@ sub delete {
             throw_ap(error => __PACKAGE__ . "::delete : no media found for id \"$media_id\"")
               unless $media;
             throw_ap(error => __PACKAGE__ . "::delete : access denied for media \"$media_id\".")
-              unless chk_authz($media, CREATE, 1);
+              unless chk_authz($media, EDIT, 1);
             $media->checkout({ user__id => get_user_id });
             log_event("media_checkout", $media);
         }
@@ -691,14 +692,14 @@ sub load_asset {
                            "::update : media \"$id\" is checked out to another user.")
                   unless $media->get_user__id == get_user_id;
                 throw_ap(error => __PACKAGE__ . " : access denied.")
-                  unless chk_authz($media, CREATE, 1);
+                  unless chk_authz($media, EDIT, 1);
             } else {
                 # try a non-checked out version
                 $media = Bric::Biz::Asset::Business::Media->lookup({ id => $id });
                 throw_ap(error => __PACKAGE__ . "::update : no media found for \"$id\"")
                   unless $media;
                 throw_ap(error => __PACKAGE__ . " : access denied.")
-                  unless chk_authz($media, CREATE, 1);
+                  unless chk_authz($media, RECALL, 1);
 
                 # FIX: race condition here - between lookup and checkout
                 #      someone else could checkout...

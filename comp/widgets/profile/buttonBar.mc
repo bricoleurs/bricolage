@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:42 $
+$Date: 2003-12-22 03:21:14 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -62,7 +62,7 @@ if ($desks) {
         $deskText .= " selected" if $id == $cd->get_id;
         $deskText .= ">to " .  $d->get_name . "</option>";
         $can_pub = 1 if $d->can_publish and
-          chk_authz(undef, EDIT, 1, $ag_id);
+          chk_authz(undef, PUBLISH, 1, $ag_id);
     }
 
     # Set up choice to remove from workflow.

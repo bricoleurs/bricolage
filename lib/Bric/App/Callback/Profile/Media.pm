@@ -18,6 +18,7 @@ use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Util::DBI;
 use Bric::Util::Grp::Parts::Member::Contrib;
+use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::MediaType;
 use Bric::Util::Trans::FS;
 use HTTP::BrowserDetect;
@@ -583,7 +584,7 @@ sub recall : Callback {
     foreach my $id (@$ids) {
         my ($o_id, $w_id) = split('\|', $id);
         my $ba = Bric::Biz::Asset::Business::Media->lookup({'id' => $o_id});
-        if (chk_authz($ba, EDIT, 1)) {
+        if (chk_authz($ba, RECALL, 1)) {
             my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
 
             # Put this formatting asset into the current workflow and log it.

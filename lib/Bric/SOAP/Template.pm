@@ -16,6 +16,7 @@ use Bric::Util::Fault   qw(throw_ap);
 use Bric::Biz::Person::User;
 use Bric::Util::Burner;
 use File::Basename qw(fileparse basename);
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 use Bric::SOAP::Util qw(category_path_to_id
                         site_to_id
@@ -41,15 +42,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 02:02:08 $
+$Date: 2003-12-22 03:21:16 $
 
 =head1 SYNOPSIS
 
@@ -455,7 +456,7 @@ sub delete {
                 unless $template;
             throw_ap(error => __PACKAGE__ .
                        "::delete : access denied for template \"$template_id\".")
-                unless chk_authz($template, CREATE, 1);
+                unless chk_authz($template, EDIT, 1);
             $template->checkout({ user__id => get_user_id });
             log_event("formatting_checkout", $template);
         }
@@ -718,14 +719,14 @@ sub load_asset {
                   if defined $template->get_user__id
                     and $template->get_user__id != get_user_id;
                 throw_ap(error => __PACKAGE__ . " : access denied.")
-                    unless chk_authz($template, CREATE, 1);
+                    unless chk_authz($template, EDIT, 1);
             } else {
                 # try a non-checked out version
                 $template = Bric::Biz::Asset::Formatting->lookup({id => $id});
                 throw_ap(error => __PACKAGE__ . "::update : no template found for \"$id\"")
                     unless $template;
                 throw_ap(error => __PACKAGE__ . " : access denied.")
-                    unless chk_authz($template, CREATE, 1);
+                    unless chk_authz($template, RECALL, 1);
 
                 # FIX: race condition here - between lookup and checkout
                 #      someone else could checkout...

@@ -13,6 +13,7 @@ use Bric::Biz::Asset::Formatting;
 use Bric::Biz::AssetType;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
+use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Burner;
 use Bric::Util::Fault qw(rethrow_exception);
 
@@ -227,7 +228,7 @@ sub recall : Callback {
     foreach (@$ids) {
         my ($o_id, $w_id) = split('\|', $_);
         my $fa = Bric::Biz::Asset::Formatting->lookup({'id' => $o_id});
-        if (chk_authz($fa, EDIT, 1)) {
+        if (chk_authz($fa, RECALL, 1)) {
             my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
 
             # Put this formatting asset into the current workflow

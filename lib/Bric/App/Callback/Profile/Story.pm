@@ -20,6 +20,7 @@ use Bric::Config qw(:ui ISO_8601_FORMAT);
 use Bric::Util::DBI;
 use Bric::Util::Fault qw(:all);
 use Bric::Util::Grp::Parts::Member::Contrib;
+use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::App::Callback::Search;
 
 my $SEARCH_URL = '/workflow/manager/story/';
@@ -670,7 +671,7 @@ sub recall : Callback {
     foreach my $id (@$ids) {
         my ($o_id, $w_id) = split('\|', $id);
         my $ba = Bric::Biz::Asset::Business::Story->lookup({'id' => $o_id});
-        if (chk_authz($ba, EDIT, 1)) {
+        if (chk_authz($ba, RECALL, 1)) {
             my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
 
             # Make sure the workflow ID is valid.

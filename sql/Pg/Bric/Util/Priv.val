@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Priv.val
--- VERSION: $Revision: 1.7 $
+-- VERSION: $Revision: 1.8 $
 --
--- $Date: 2003-12-18 01:34:44 $
+-- $Date: 2003-12-22 03:21:16 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 /*
@@ -44,9 +44,9 @@ VALUES(5, 4);
 
 */
 
--- Give Story Editors CREATE rights to All Stories.
+-- Give Story Editors PUBLISH rights to All Stories.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(6, 7, 3);
+VALUES(6, 7, 5);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(6, 31);
@@ -100,16 +100,16 @@ VALUES(34, 7, 2);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(34, 63);
 
--- Give Story Editors EDIT rights to the Publish desk.
+-- Give Story Editors PUBLISH rights to the Publish desk.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(35, 7, 2);
+VALUES(35, 7, 5);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(35, 64);
 
--- Give Media Producers CREATE rights to All Media.
+-- Give Media Producers PUBLISH rights to All Media.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(7, 8, 3);
+VALUES(7, 8, 5);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(7, 32);
@@ -156,16 +156,16 @@ VALUES(38, 8, 2);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(38, 63);
 
--- Give Media Producers EDIT rights to the Publish desk.
+-- Give Media Producers PUBLISH rights to the Publish desk.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(39, 8, 2);
+VALUES(39, 8, 5);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(39, 64);
 
--- Give Template Developers CREATE rights to All Templates.
+-- Give Template Developers PUBLISH rights to All Templates.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(8, 9, 3);
+VALUES(8, 9, 5);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(8, 33);
@@ -205,9 +205,9 @@ VALUES(41, 9, 3);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(41, 66);
 
--- Give Template Developers EDIT rights to the Deploy desk.
+-- Give Template Developers PUBLISH rights to the Deploy desk.
 INSERT INTO grp_priv (id, grp__id, value)
-VALUES(42, 9, 2);
+VALUES(42, 9, 5);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(42, 67);

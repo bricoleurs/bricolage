@@ -17,6 +17,7 @@ use Bric::App::Authz    qw(chk_authz READ CREATE);
 use Bric::App::Event    qw(log_event);
 use XML::Writer;
 use IO::Scalar;
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 use Bric::SOAP::Util qw(category_path_to_id
                         site_to_id
@@ -43,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:33 $
+$Date: 2003-12-22 03:21:16 $
 
 =head1 SYNOPSIS
 
@@ -614,7 +615,7 @@ sub delete {
             throw_ap(error => __PACKAGE__ . "::delete : no story found for id \"$story_id\"")
               unless $story;
             throw_ap(error => __PACKAGE__ . "::delete : access denied for story \"$story_id\".")
-              unless chk_authz($story, CREATE, 1);
+              unless chk_authz($story, EDIT, 1);
             $story->checkout({ user__id => get_user_id });
             log_event("story_checkout", $story);
         }
@@ -815,14 +816,14 @@ sub load_asset {
                            "::update : story \"$id\" is checked out to another user.")
                   unless $story->get_user__id == get_user_id;
                 throw_ap(error => __PACKAGE__ . " : access denied.")
-                  unless chk_authz($story, CREATE, 1);
+                  unless chk_authz($story, EDIT, 1);
             } else {
                 # try a non-checked out version
                 $story = Bric::Biz::Asset::Business::Story->lookup({ id => $id });
                 throw_ap(error => __PACKAGE__ . "::update : no story found for \"$id\"")
                   unless $story;
                 throw_ap(error => __PACKAGE__ . " : access denied.")
-                  unless chk_authz($story, CREATE, 1);
+                  unless chk_authz($story, RECALL, 1);
 
                 # FIX: race condition here - between lookup and checkout
                 #      someone else could checkout...

@@ -16,6 +16,7 @@ use Bric::App::Event    qw(log_event);
 use Bric::Util::Time    qw(strfdate local_date);
 use Bric::Util::MediaType;
 use Bric::Util::Fault qw(throw_ap);
+use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Dist::Job;
 use Bric::Dist::ServerType;
 use Bric::Dist::Resource;
@@ -47,15 +48,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:33 $
+$Date: 2003-12-22 03:21:16 $
 
 =head1 SYNOPSIS
 
@@ -223,9 +224,9 @@ sub publish {
         throw_ap(error => "Cannot publish checked-out $types{$type}: \"".$id."\".")
             if $obj->get_checked_out and not $preview;
 
-        # Check for EDIT permission, or READ if previewing
+        # Check for PUBLISH permission, or READ if previewing
         throw_ap(error => "Access denied.")
-          unless chk_authz($obj, EDIT, 1) or ($preview and chk_authz($obj, READ, 1));
+          unless chk_authz($obj, PUBLISH, 1) or ($preview and chk_authz($obj, READ, 1));
 
         # schedule related stuff if requested
         if ($args->{publish_related_stories} or
@@ -323,8 +324,8 @@ sub deploy {
         throw_ap(error => "Cannot deloy checked-out template : \"$id\".")
             if $fa->get_checked_out;
 
-        # Check for EDIT permission
-        throw_ap(error => "Access denied.") unless chk_authz($fa, EDIT, 1);
+        # Check for PUBLISH permission
+        throw_ap(error => "Access denied.") unless chk_authz($fa, PUBLISH, 1);
 
         $burner->deploy($fa);
         log_event($fa->get_deploy_status ?
@@ -457,17 +458,20 @@ sub checkout {
         throw_ap(error => "Cannot check-out already checked-out $types{$type}: \"".$id->value."\".")
             if $obj->get_checked_out;
 
-        # Check for EDIT permission
-        throw_ap(error => "Access denied.")
-          unless chk_authz($obj, EDIT, 1);
-
         # make sure we're not trying to checkout stuff repeatedly
         next if $seen{$type}{$id};
         $seen{$type}{$id} = 1;
 
         # might need to assign a workflow here, if this item was just
         # published, for example.
-        unless ($obj->get_workflow_id) {
+        if ($obj->get_workflow_id) {
+            # Check for EDIT permission
+            throw_ap(error => "Access denied.")
+              unless chk_authz($obj, EDIT, 1);
+        } else {
+            # Check for RECALL permission
+            throw_ap(error => "Access denied.")
+              unless chk_authz($obj, RECALL, 1);
             my $workflow = (Bric::Biz::Workflow->list
                             ({ type => $wf_types{$type} }))[0];
 
