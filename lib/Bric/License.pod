@@ -209,6 +209,8 @@ Bricolage's translation team:
 
 =item Kang-min Liu (Traditional Chinese)
 
+=item Gerfried Fuchs (German)
+
 =back
 
 Others who contributed to its support and development:
