@@ -3,17 +3,19 @@ Bric::Mech
 This is a subclass of WWW::Mechanize which provides convenience
 methods for navigating the Bricolage (content management system)
 browser interface. In other words, it makes it easier to write
-Bricolage scripts.
+Bricolage scripts. In particular, I want to use it to write UI test
+scripts, and possibly to replace bric_soap. Although currently in
+contrib, it might get integrated into the "core".
 
 
 INSTALLATION
 
 To install this module, type the following:
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+   perl Build.PL
+   ./Build
+   ./Build test
+   ./Build install
 
 Most of the tests will be skipped unless you have set the following
 environment variables:
@@ -22,8 +24,27 @@ environment variables:
   BRICOLAGE_USERNAME
   BRICOLAGE_PASSWORD
 
-and a Bricolage server is running. These rudimentary tests
-will make no database changes.
+and a Bricolage server is running. These tests will make
+no database changes. They should pass when run against
+any Bricolage (1.10+) installation, though some cases may
+fail (for example, if you run as a user with restricted
+permissions).
+
+In addition you can run UI tests (in t/UI), which are only
+intended for Bricolage developers, with the following:
+
+  ./Build uitest
+
+You should never run this against a production database
+because it will modify the database. It assumes that you
+have a newly created Bricolage database. See the TESTING
+section of Bric::Hacker for how to get a clean database.
+
+
+MAINTAINER NOTES
+
+The shell script `dist.sh' can be run to test and create
+a distribution tarball.
 
 
 COPYRIGHT AND LICENCE

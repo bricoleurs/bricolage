@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: Bric-Mech
-version: 0.03
+version: 0.04
 author:
   - Scott Lanning <lannings@who.int>
 abstract: browse Bricolage using WWW::Mechanize
@@ -12,5 +12,5 @@ requires:
 provides:
   Bric::Mech:
     file: lib/Bric/Mech.pm
-    version: 0.03
+    version: 0.04
 generated_by: Module::Build version 0.2608

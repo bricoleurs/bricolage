@@ -1,7 +1,10 @@
+0.04  2005-03-06
+  - added 'uitest' Build action and the corresponding tests in t/UI
+
 0.03  2005-03-02
   - now uses Module::Build instead of ExtUtils::MakeMaker
   - improved the 'skip' part of the tests, added several tests
-  - added collapse_admin_menus
+  - added collapse_admin_menus method
 
 0.02  2005-02-28
   - added 'base' parameter to `new', to allow switching to another
