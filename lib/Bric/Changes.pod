@@ -162,6 +162,13 @@ objects of that type. Thanks to Sam for the spot (though not for the bug!).
 Fixed bric_pgimport so that it uses DBI to drop and create the database, rather
 than relying on a hard-coded location for pgsql binaries. [David]
 
+=item *
+
+Fixed permission granting in bric_pgimport so that the Bricolage database use
+has DELETE permissions on all objects in the Bricolage database. It looks like
+this permission was ignored in PosgreSQL 7.1 and earlier, or problems would have
+shown up a long time ago! [David]
+
 =back
 
 =head1 VERSION 1.2.0
