@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-16 00:16:14 $
+$Date: 2003-01-18 23:43:49 $
 
 =head1 SYNOPSIS
 
@@ -113,6 +113,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Parts::Member;
 use Bric::Util::Attribute::Grp;
 use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault::Exception::DP;
 use Bric::Util::Class;
 use Bric::Util::Coll::Member;
 
@@ -156,6 +157,10 @@ use constant GROUP_PACKAGE     => 'Bric::Util::Grp::Grp';
 #--------------------------------------#
 # Private Class Fields
 my ($meths, $class, $mem_class);
+my $sel_cols = 'g.id, g.parent_id, g.class__id, g.name, g.description, ' .
+  'g.secret, g.permanent, g.active, m.grp__id';
+my @sel_props = qw(id parent_id class_id name description secret permanent
+                   _active grp_ids);
 
 #--------------------------------------#
 # Instance Fields
@@ -171,6 +176,7 @@ BEGIN {
            parent_id      => Bric::FIELD_RDWR,
            secret         => Bric::FIELD_READ,
            permanent      => Bric::FIELD_READ,
+           grp_ids        => Bric::FIELD_READ,
 
            # Private Fields
            _memb_coll     => Bric::FIELD_NONE,
@@ -190,7 +196,7 @@ BEGIN {
 
 # This runs after this package has compiled, but before the program runs.
 
-CHECK { use Bric::Util::Grp::Grp }
+INIT { use Bric::Util::Grp::Grp }
 #==============================================================================#
 # Interface Methods                    #
 #======================================#
@@ -255,34 +261,14 @@ If COLS var changes index of class ID must change.
 
 sub lookup {
     my ($class, $params) = @_;
-
-    # Make sure proper arguments have been passed
-    die Bric::Util::Fault::Exception::GEN->new
-      ({ msg => "Missing Required Parameter 'id' " })
-      unless defined $params->{'id'};
-
-    # Populate from database or return.
-    my $ret = _select_group('id = ?', $params->{id}) or return;
-
-    # Determine if this was called on the Bric::Util::Grp class or one of its
-    # sub classes
-    my $bless_class;
-    if ($class->get_class_id == $ret->[0]->[2]) {
-        # called on one of the subclasses bless this class
-        $bless_class = $class;
-    } else {
-        # called on Bric::Util::Grp::Subclass
-        # determine the class
-        my $c_obj = Bric::Util::Class->lookup({ id => $ret->[0]->[2] });
-        $bless_class = $c_obj->get_pkg_name;
-    }
-    my $self = bless {}, $bless_class;
-    $self->_set( [ 'id', FIELDS], $ret->[0]);
-    $self->SUPER::new;
-    # clear the dirty bit
-    $self->_set__dirty(0);
-    # Return the object
-    return $self;
+    # Make sure we don't exclude secrete groups.
+    $params->{all} = 1;
+    my $grp = _do_list($class, $params);
+    # We want @$grp to have only one value.
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+      if @$grp > 1;
+    return @$grp ? $grp->[0] : undef;
 }
 
 ##############################################################################
@@ -301,15 +287,15 @@ object.
 
 =item package
 
-A Bricolage class name. Use in combination with C<obj_id> to have
-C<_do_list()> return group objects with member objects representing a
-particular Bricolage object.
+A Bricolage class name. Use in combination with C<obj_id> to have C<list()>
+return group objects with member objects representing a particular Bricolage
+object.
 
 =item obj_id
 
-A Bricolage object ID. Use in combination with C<package> to have
-C<_do_list()> return group objects with member objects representing a
-particular Bricolage object.
+A Bricolage object ID. Use in combination with C<package> to have C<list()>
+return group objects with member objects representing a particular Bricolage
+object.
 
 =item parent_id
 
@@ -332,6 +318,11 @@ The name of a group.
 =item permananent
 
 A boolean to return permanent or non-permanent groups.
+
+=item grp_id
+
+A Bric::Util::Grp::Grp group ID. All groups that are members of the
+corresponding Bric::Util::Grp::Grp object will be returned.
 
 =item Order
 
@@ -460,10 +451,7 @@ this method must be called from a subclass.
 
 =cut
 
-sub list_ids {
-    my ($class, $params) = @_;
-    _do_list($class, $params, 1);
-}
+sub list_ids { _do_list(@_, 1) }
 
 ##############################################################################
 
@@ -2039,44 +2027,6 @@ NONE.
 
 =over 4
 
-=item $ret = _select_group( $where, [$bind] )
-
-takes the where clause and the bind vars and preforms the query
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _select_group {
-    my ($where, $bind) = @_;
-    # declare vars for returned rows and all that will be returned from this
-    # function
-    my (@d, @ret);
-
-    # construct the query
-    my $sql = 'SELECT ' . join(',', 'id', COLS) . ' FROM ' . TABLE;
-    $sql .= ' WHERE ' . $where if $where;
-
-    # execute the query
-    my $sth = prepare_c($sql, undef, DEBUG);
-    execute($sth, $bind);
-    bind_columns($sth, \@d[0 .. (scalar COLS)]);
-
-    while (fetch($sth)) {
-        push @ret, \@d;
-    }
-    # finish the query and return.
-    finish($sth);
-    return unless @ret;
-    return \@ret;
-}
-
-##############################################################################
-
 =item my $memb_coll = $get_memb_coll->($self)
 
 Returns the collection of members for this group. The collection is a
@@ -2786,134 +2736,133 @@ this function must be called from a subclass.
 =cut
 
 sub _do_list {
-    my ($class, $criteria, $ids) = @_;
-    my ($sql, @where_clause, @where_param, $chk);
-    # if an object is passed this has to join with the member table
+    my ($class, $criteria, $ids, @params) = @_;
+    my @wheres = ('g.id = c.object_id', 'c.member__id = m.id');
+    my $tables = "grp g, member m, grp_member c";
+    # If an object is passed then we have to join to the member table again.
     if (($criteria->{obj}) ||
         ($criteria->{package} && $criteria->{obj_id}) ) {
-        $chk = 1;
         my ($pkg, $obj_id);
         if ($criteria->{obj}) {
-            # figure out what table this needs to be joined to
+            # Figure out what table this needs to be joined to.
             $pkg = ref $criteria->{obj};
-            # Get the object id
+            # Get the object id.
             $obj_id = $criteria->{obj}->get_id;
         } else {
             $pkg = $criteria->{package};
             $obj_id = $criteria->{obj_id};
         }
 
-        # Now get the short name to construct the table
-        my $short_name = $class->get_supported_classes->{$pkg};
-        my $table = $short_name . '_member';
+        # Now construct the member table name.
+        my $motable = $class->get_supported_classes->{$pkg} . '_member';
 
         # build the query
-        $sql = qq{
-            SELECT g.id, g.parent_id, g.class__id, g.name, g.description,
-                   g.secret, g.permanent, g.active
-            FROM   grp g, member m, $table mo
-        };
-        push @where_clause, ( "mo.object_id=? ", 'mo.member__id = m.id',
-                              'm.grp__id = g.id');
-        push @where_param, $obj_id;
+        $tables .= ", member mm, $motable mo";
+        push @wheres, ( "mo.object_id = ? ", 'mo.member__id = mm.id',
+                        'mm.grp__id = g.id');
+        push @params, $obj_id;
 
-        # if an active param has been passed in add it here remember that
-        # groups can not be deactivated
-        push @where_clause, 'm.active = ?';
-        push @where_param, exists $criteria->{active} ?
+        # If an active param has been passed in add it here remember that
+        # groups cannot be deactivated.
+        push @wheres, 'mm.active = ?';
+        push @params, exists $criteria->{active} ?
           $criteria->{active} : 1;
-
-    } else { # end the if Object Block
-        # no need for complex join
-        $sql = qq{
-            SELECT id, parent_id, class__id, name, description, secret,
-                   permanent, active
-            FROM  grp
-        };
     }
 
     # Add other parameters to the query
-    if ( $criteria->{'parent_id'} ) {
-        push @where_clause, $chk ? 'g.parent_id=?' : 'parent_id=?';
-        push @where_param, $criteria->{'parent_id'};
+    if ( defined $criteria->{id} ) {
+        push @wheres, 'g.id = ?';
+        push @params, $criteria->{id};
     }
 
-    if ( $criteria->{'inactive'} ) {
-        push @where_clause, $chk ? 'g.active=?' : 'active=?';
-        push @where_param, 0;
-    } else {
-        push @where_clause, $chk ? 'g.active=?' : 'active=?';
-        push @where_param, 1;
+    if ( $criteria->{parent_id} ) {
+        push @wheres, 'g.parent_id = ?';
+        push @params, $criteria->{parent_id};
     }
 
-    unless ( $criteria->{'all'} ) {
-        push @where_clause, $chk ? 'g.secret=?' : 'secret=?';
-        push @where_param, 0;
+    if ( $criteria->{inactive} ) {
+        push @wheres, 'g.active = ?';
+        push @params, 0;
+    } elsif (! defined $criteria->{id}) {
+        push @wheres, 'g.active = ?';
+        push @params, 1;
+    }
+
+    unless ( $criteria->{all} ) {
+        push @wheres, 'g.secret = ?';
+        push @params, 0;
     }
 
     my $cid = $class->get_class_id;
     if ( $cid != __PACKAGE__->get_class_id ) {
-        push @where_clause, $chk ? 'g.class__id=?' : 'class__id=?';
-        push @where_param, $cid;
+        push @wheres, 'g.class__id = ?';
+        push @params, $cid;
     }
 
-    if ( $criteria->{'name'} ) {
-        push @where_clause, $chk ? 'LOWER(g.name) LIKE ?' : 'LOWER(name) LIKE ?';
-        push @where_param, lc($criteria->{'name'});
+    if ( $criteria->{name} ) {
+        push @wheres, 'LOWER(g.name) LIKE ?';
+        push @params, lc($criteria->{name});
     }
 
     if ( exists $criteria->{permanent} ) {
-        push @where_clause, $chk ? 'g.permanent = ?' : 'permanent = ?';
-        push @where_param, $criteria->{permanent} ? 1 : 0;
+        push @wheres, 'g.permanent = ?';
+        push @params, $criteria->{permanent} ? 1 : 0;
     }
 
-    if (@where_clause) {
-        $sql .= ' WHERE ';
-        $sql .= join ' AND ', @where_clause;
+    if (exists $criteria->{grp_id}) {
+        $tables .= ", member m2, grp_member c2";
+        push @wheres, ("g.id = c2.object_id", "c2.member__id = m2.id",
+                       "m2.grp__id = ?");
+        push @params, $criteria->{grp_id};
     }
 
-    my $ord = $criteria->{Order} || 'name';
-    $sql .= $chk ? " ORDER BY g.$ord " : " ORDER BY $ord ";
-    $sql .= $criteria->{OrderDirection} if $criteria->{OrderDirection};
-    my $select = prepare_c($sql, undef, DEBUG);
+    my $where = join ' AND ', @wheres;
+    my $ord = $criteria->{Order} || $ids ? 'g.id' : 'g.name';
+    my $direction = $criteria->{OrderDirection} || '';
+    my $qry_cols = $ids? \'DISTINCT g.id' : \$sel_cols;
+    my $select = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $where
+        ORDER BY $ord $direction
+    }, undef , DEBUG);
 
-    # this was a call to list ids
-    if ($ids) {
-        my $return;
-        $return = col_aref($select,@where_param);
-        finish($select);
-        return wantarray ? @{ $return } : $return;
-    } else { # end list ids section
+    # Just return the IDs, if they're what's wanted.
+    return wantarray ? @{col_aref($select, @params)} :
+      col_aref($select, @params) if $ids;
 
-        my @objs;
-        execute($select,@where_param);
-        my %classes;
-        while (my $row = fetch($select) ) {
-            my $bless_class;
-            if ($class->get_class_id() != 6) {
-                $bless_class = $class;
-            } else {
-                if (exists $classes{$row->[2]}) {
-                    $bless_class = $classes{$row->[2]};
+    execute($select, @params);
+    my (@d, @grps, %classes, $grp_ids);
+    my $last = -1;
+    bind_columns($select, \@d[0..$#sel_props]);
+    $class = ref $class || $class;
+    my $not_grp_class = $class->get_class_id != get_class_id();
+    while (fetch($select)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Figure out what class to bless it into.
+            my $bless_class = $class;
+            unless ($not_grp_class) {
+                if (exists $classes{$d[2]}) {
+                    $bless_class = $classes{$d[2]};
                 } else {
-                    my $c_obj = Bric::Util::Class->lookup({ id => $row->[2] });
-                    $bless_class = $c_obj->get_pkg_name();
-                    $classes{$row->[2]} = $bless_class;
+                    $classes{$d[2]} = $bless_class =
+                      Bric::Util::Class->lookup({ id => $d[2] })->get_pkg_name;
                 }
             }
-
+            # Create a new Grp object.
             my $self = bless {}, $bless_class;
             $self->SUPER::new;
-            $self->_set([qw(id parent_id class_id name description secret
-                            permanent _active)], $row);
-
-            # Clear the dirty bit.
-            $self->_set__dirty(0);
-            push @objs, $self;
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@sel_props, \@d);
+            $self->_set__dirty; # Disable the dirty flag.
+            push @grps, $self
+        } else {
+            # Append the ID.
+            push @$grp_ids, $d[$#d];
         }
-        finish($select);
-        return wantarray ? @objs : \@objs;
     }
+    return wantarray ? @grps : \@grps;
 }
 
 1;

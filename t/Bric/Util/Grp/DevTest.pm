@@ -33,6 +33,10 @@ use Bric::Util::Grp::Workflow;
 
 sub table { 'grp' }
 
+my %grp = ( name => 'Testing',
+            description => 'Description'
+          );
+
 ##############################################################################
 # Test the lookup() method and various accessors.
 sub test_lookup : Test(14) {
@@ -64,7 +68,8 @@ sub test_lookup : Test(14) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(12) {
+sub test_list : Test(36) {
+    my $self = shift;
     ok( my @grps = Bric::Util::Grp->list({ name => 'All%' }),
         "get all All groups" );
     ok( @grps == 18, "Check number of All groups" );
@@ -84,6 +89,56 @@ sub test_list : Test(12) {
     ok( UNIVERSAL::isa($grps[0], 'Bric::Util::Grp::Pref'),
     "Check 'All Preferences' class" );
     is( $grps[0]->get_name, 'All Preferences', "Check 'All Preferences' name" );
+
+    # Create a new group group.
+    ok( my $grpgrp = Bric::Util::Grp::Grp->new
+        ({ name => 'Test GrpGrp' }),
+        "Create group" );
+
+    # Create some test records.
+    for my $n (1..5) {
+        my %args = %grp;
+        # Make sure the directory name is unique.
+        $args{name} .= $n if $n % 2;
+        ok( my $grp = Bric::Util::Grp::ContribType->new(\%args),
+            "Create $args{name}" );
+        ok( $grp->save, "Save $args{name}" );
+        # Save the ID for deleting.
+        $self->add_del_ids([$grp->get_id]);
+        $grpgrp->add_member({ obj => $grp }) if $n % 2;
+    }
+
+    ok( $grpgrp->save, "Save group group" );
+    ok( my $grp_id = $grpgrp->get_id, "Get group group ID" );
+    $self->add_del_ids([$grp_id]);
+
+    # Try name.
+    ok( @grps = Bric::Util::Grp->list({ name => $grp{name} }),
+        "Look up name $grp{name}" );
+    is( scalar @grps, 2, "Check for 2 groups" );
+
+    # Try name + wildcard.
+    ok( @grps = Bric::Util::Grp->list({ name => "$grp{name}%" }),
+        "Look up name $grp{name}%" );
+    is( scalar @grps, 5, "Check for 5 groups" );
+
+    # Try grp_id.
+    my $all_grp_id = Bric::Util::Grp::INSTANCE_GROUP_ID;
+    ok( @grps = Bric::Util::Grp->list({ grp_id => $grp_id }),
+        "Look up grp_id $grp_id" );
+    is( scalar @grps, 3, "Check for 3 groups" );
+    # Make sure we've got all the Group IDs we think we should have.
+    foreach my $grp (@grps) {
+        my %grp_ids = map { $_ => 1 } $grp->get_grp_ids;
+        ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
+          "Check for both IDs" );
+    }
+
+    # Try obj + all (so that it also returns the "All Groups" secret group.
+    my $gid = $grps[0]->get_id;
+    ok( @grps = Bric::Util::Grp::Grp->list({ obj => $grps[0], all => 1 }),
+        "Look up for group ID $gid" );
+    is( scalar @grps, 2, "Check for 2 groups" );
 }
 
 ##############################################################################
@@ -195,6 +250,7 @@ sub test_persistence : Test(19) {
     ok( my $o = Bric::Biz::Org->new({ name => 'IDG' }), "Create Org" );
     ok( $o->save, "Save Org" );
     $self->add_del_ids([$o->get_id], 'org');
+
     ok( my $grp = Bric::Util::Grp::Org->new({ name => 'Test Orgs'}),
         "Create org grp" );
     ok( $grp->add_members([{ obj => $o }]), "Add org" );
@@ -204,8 +260,7 @@ sub test_persistence : Test(19) {
     $self->add_del_ids([$gid]);
     ok( $grp = Bric::Util::Grp->lookup({ id => $gid }),
         "Lookup new org grp" );
-    ok( UNIVERSAL::isa($grp, 'Bric::Util::Grp::Org'),
-        "Confirm org grp class" );
+    isa_ok($grp, 'Bric::Util::Grp::Org');
     is( $grp->get_name, 'Test Orgs', "Check Test Orgs name" );
     ok( my @mems = $grp->get_members, "Get test members" );
     ok( @mems == 1, "Check for one test member" );
