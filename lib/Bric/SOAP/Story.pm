@@ -38,15 +38,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-13 03:35:03 $
+$Date: 2002-02-14 21:31:39 $
 
 =head1 SYNOPSIS
 
@@ -84,8 +84,6 @@ $Date: 2002-02-13 03:35:03 $
 =head1 DESCRIPTION
 
 This module provides a SOAP interface to manipulating Bricolage stories.
-
-=cut
 
 =head1 INTERFACE
 
