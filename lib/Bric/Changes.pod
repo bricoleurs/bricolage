@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.7.0 ()
+=head1 VERSION 1.7.0 (2003-10-14)
 
 =head2 New Features
 
@@ -295,7 +295,7 @@ separate host. [Thorston Biel]
 
 =back
 
-=head1 VERSION 1.6.7 ()
+=head1 VERSION 1.6.7 (Forthcoming)
 
 =head2 Bug Fixes
 
