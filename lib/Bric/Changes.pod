@@ -55,6 +55,28 @@ just giving an error message. [Scott]
 
 =back
 
+=head1 VERSION 1.8.1 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Bulk Publish now ensures that users have at least READ access to catgories
+they wish to publish from. [Scott]
+
+=item *
+
+Eliminated 'Bareword "ENABLE_HTMLAREA" not allowed while "strict subs" in use'
+warning that prevented startup for some installations. [Scott]
+
+=back
+
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.8.0 "Portland" ()
 
 =head2 Bug Fixes

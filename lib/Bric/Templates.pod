@@ -10,7 +10,7 @@ $Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-12-09 17:14:20 $
+$Date: 2003/12/09 17:14:20 $
 
 =head1 BACKGROUND
 

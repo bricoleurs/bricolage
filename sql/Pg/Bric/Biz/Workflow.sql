@@ -1,7 +1,7 @@
 -- Project: Bricolage
 -- VERSION: $Revision: 1.4 $
 --
--- $Date: 2003-04-01 04:57:26 $
+-- $Date: 2003/04/01 04:57:26 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --

@@ -42,7 +42,7 @@ our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-15 14:47:26 $
+$Date: 2004/03/15 14:47:26 $
 
 =over 4
 

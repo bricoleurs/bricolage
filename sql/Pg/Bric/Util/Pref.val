@@ -2,7 +2,7 @@
 -- File:    Pref.val
 -- VERSION: $Revision: 1.9 $
 --
--- $Date: 2004-05-05 02:27:09 $
+-- $Date: 2004/05/05 02:27:09 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)

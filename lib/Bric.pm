@@ -23,11 +23,11 @@ our $VERSION = '1.9.0';
 
 =item Date
 
-$Date: 2004-04-13 00:34:00 $
+$Date: 2004/04/13 00:34:00 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.57 2004-04-13 00:34:00 wheeler Exp $
+$Id: Bric.pm,v 1.57 2004/04/13 00:34:00 wheeler Exp $
 
 =back
 

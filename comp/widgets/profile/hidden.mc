@@ -11,7 +11,7 @@ $Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2003-09-19 13:35:35 $
+$Date: 2003/09/19 13:35:35 $
 
 =head1 SYNOPSIS
 

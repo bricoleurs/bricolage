@@ -1,7 +1,7 @@
 -- Project: Bricolage
 -- VERSION: $Revision: 1.6 $
 --
--- $Date: 2004-02-14 19:15:11 $
+-- $Date: 2004/02/14 19:15:11 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 

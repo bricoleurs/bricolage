@@ -2,7 +2,7 @@
 -- File:    Grp.val
 -- VERSION: $Revision: 1.1 $
 --
--- $Date: 2003-02-02 19:46:48 $
+-- $Date: 2003/02/02 19:46:48 $
 
 -- Create the 'Bio' attribute.
 INSERT INTO attr_grp (id, subsys, name, sql_type, active)

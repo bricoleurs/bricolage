@@ -48,6 +48,7 @@ directory to @INC by using Makefile.PL. Just a thought.
 use strict;
 use Bric::App::ApacheStartup;
 use constant DEBUGGING => 0;
+use Bric::Constant qw(:ui);
 
 do {
     my $names = 'NameVirtualHost ' . NAME_VHOST . ':' . LISTEN_PORT . "\n";
