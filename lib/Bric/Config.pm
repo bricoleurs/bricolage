@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.83 $
+$Revision: 1.84 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.83 $ )[-1];
+our $VERSION = (qw$Revision: 1.84 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:08 $
+$Date: 2004-01-15 02:03:59 $
 
 =head1 SYNOPSIS
 
@@ -322,16 +322,17 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
                     PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER ENABLE_SFTP_V2
                     ENABLE_WEBDAV_MOVER ALWAYS_USE_SSL ALLOW_WORKFLOW_TRANSFER
-                    ALLOW_ALL_SITES_CX STORY_URI_WITH_FILENAME ENABLE_CATEGORY_BROWSER
-                    QUEUE_PUBLISH_JOBS))
+                    ALLOW_ALL_SITES_CX STORY_URI_WITH_FILENAME
+                    ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }
 
-        foreach (qw(LOAD_LANGUAGES LOAD_CHAR_SETS)) {
-            $config->{$_} = [ split /\s*;\s*/, $config->{$_} ];
-        }
+        $config->{LOAD_LANGUAGES} = [ split /\s*;\s*/,
+                                      $config->{LOAD_LANGUAGES} || 'en_us' ];
+        $config->{LOAD_CHAR_SETS} = [ split /\s*;\s*/,
+                                      $config->{LOAD_CHAR_SETS} || 'UTF-8' ];
 
         # Special case for the SSL_ENABLE configuration directive.
         if (my $ssl = lc $config->{SSL_ENABLE}) {
