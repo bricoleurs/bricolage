@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =head1 DATE
 
-$Date: 2003-01-30 01:26:49 $
+$Date: 2003-02-02 18:45:16 $
 
 =head1 DESCRIPTION
 
@@ -77,12 +77,12 @@ bug and fix them.  For more things to do see L<Bric::ToDo|Bric::ToDo>.
 
 =head1 SUBMITTING PATCHES
 
-Patches should be generated using a C<cvs diff -uw> command on each of
+Patches should be generated using a C<cvs diff -u> command on each of
 the files modified, from the root directory.  For example, if you made
 changes to lib/Bric/Changes.pod and comp/foo.mc, you would generate a
 diff by running this command from the root of your CVS checkout:
 
-  cvs diff -uw lib/Bric/Changes.pod comp/foo.mc > patch.txt
+  cvs diff -u lib/Bric/Changes.pod comp/foo.mc > patch.txt
 
 If you created one or more new files in your changes then you'll have
 to add them to the patch separately using normal C<diff> against
@@ -90,7 +90,7 @@ C</dev/null>.  For example, if you created the file
 C<inst/upgrade/1.9.1/solve_fermat.pl> then you would add this to
 patch.txt with:
 
-  diff -uw /dev/null inst/upgrade/1.9.1/solve_fermat.pl >> patch.txt
+  diff -u /dev/null inst/upgrade/1.9.1/solve_fermat.pl >> patch.txt
 
 Always create patches using the most recent CVS version if possible.
 Send your patches to the bricolage-devel list mentioned above.
