@@ -265,6 +265,8 @@ Friends who have spotted bugs include:
 
 =item Joshua Edelstein
 
+=item Will Trillich
+
 =back
 
 Bricolage's translation team:

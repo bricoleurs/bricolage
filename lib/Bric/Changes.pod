@@ -109,7 +109,7 @@ site permission user groups. Reported by Will Trillich. [David]
 =item *
 
 The "Alias Story" interface now works properly when the C<USE_THUMBNAILS>
-directive is enabled. [David]
+directive is enabled. Reported by Ben Bangert. [David]
 
 =back
 
