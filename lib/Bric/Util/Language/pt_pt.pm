@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 23:05:47 $
+$Date: 2004-02-18 12:34:53 $
 
 =head1 SYNOPSIS
 
@@ -264,8 +264,8 @@ use constant key => 'pt_pt';
   'Pending ' => 'Pendentes',
   'Pending %n' => '%n Pendentes',
   'Position' => 'Posição',
-  'Post' => 'Pós',
-  'Pre' => 'Pré',
+  'URI Suffix' => 'Pós',
+  'URI Prefix' => 'Pré',
   'Preferences' => 'Preferências',
   'Prefix' => 'Título',
   'Previews' => 'Previsualiza',
