@@ -137,6 +137,13 @@ Added HTML::Mason Custom tags support, allowing template developers
 to write code blocks that are context sensitive.
 See L<Bric::AdvTemplates> for documentation on this. [JoE<atilde>o Pedro]
 
+=item *
+
+Added new page extesion support to the burner, which allows temlate developers
+to set string extensions to use for successive file names, rather than the
+traditional use of numeric file name extensions for successive file names.
+[Clive Jones]
+
 =back
 
 =head2 Bug Fixes

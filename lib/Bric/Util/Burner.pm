@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2003-09-05 00:37:15 $
 
 =head1 SYNOPSIS
 
@@ -32,6 +32,18 @@ $Date: 2003-08-14 23:24:12 $
 
  # Burn an asset given an output chanels and category
  $burner->burn_one($asset, $output_channel, $category);
+
+ # set list of page extensions
+ $burner->set_page_extensions(@page_extensions);
+
+ # get list of page extensions
+ @page_extensions = $burner->get_page_extensions();
+
+ # set page numbering start
+ $burner->set_page_numb_start($start);
+
+ # retrieve page numbering start
+ $page_numb_start = burner->get_page_numb_start;
 
 =head1 DESCRIPTION
 
@@ -180,6 +192,7 @@ BEGIN {
           data_dir        => Bric::FIELD_RDWR,
           comp_dir        => Bric::FIELD_RDWR,
           out_dir         => Bric::FIELD_RDWR,
+          page_numb_start => Bric::FIELD_RDWR,
           mode            => Bric::FIELD_READ,
           story           => Bric::FIELD_READ,
           oc              => Bric::FIELD_READ,
@@ -190,6 +203,8 @@ BEGIN {
           output_path     => Bric::FIELD_READ,
           base_path       => Bric::FIELD_READ,
           base_uri        => Bric::FIELD_READ,
+          # Private Fields
+          _page_extensions => Bric::FIELD_NONE,
       });
 }
 
@@ -271,6 +286,8 @@ sub new {
     $init->{data_dir} ||= BURN_DATA_ROOT;
     $init->{comp_dir} ||= BURN_COMP_ROOT;
     $init->{out_dir}  ||= STAGE_ROOT;
+    $init->{page_numb_start} ||= 1;
+    $init->{_page_extensions}  ||= [''];
 
     # create the object using mother's constructor and return it
     return $class->SUPER::new($init);
@@ -471,6 +488,87 @@ B<Notes:> NONE.
 
 Returns the base URI to the directory into which all files created by the
 current burn will be written.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item  $b = $b->set_page_extensions(@page_extensions)
+
+Sets page extensions to be used during burning. Will revert to page
+numbering once the extensions are all used.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:>
+
+Example:
+
+   $burner->set_page_extensions(qw(intro main conc));
+   $burner->display_pages('page');
+
+for a 3 page story with a slug of story and a filetype of html will
+produce burnt pages with filenames storyintro.html, storymain.html,
+and storyconc.html.
+
+=cut
+
+sub set_page_extensions {
+    my $self = shift;
+    $self->_set(['_page_extensions'], [\@_]);
+    return $self;
+}
+
+=item  my @page_extensions = $b->get_page_extensions();
+
+Returns the page extensions to be used during burning.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_page_extensions {
+    my $self = shift;
+    my $page_extensions = $self->{_page_extensions};
+    return @$page_extensions;
+}
+
+=item  $b = $b->set_page_numb_start($start);
+
+Sets the start to be used when numbering pages after array
+passed to set_page_extensions has been exhausted.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> 
+
+Normally after all page extension strings have been used, pages are
+numbered using the page number, where the first page after the
+explicitly named pages is page 1.
+
+Setting page extensions to qw(en de)
+and burning three pages will give:
+
+storyen.html
+storyde.html
+story1.html
+
+If you want numbering to correspond to the actual story page number,
+then you would pass the number of page extensions plus 1.
+
+=item  my $page_numb_start = $b->get_page_numb_start;
+
+Returns the page extension start.
 
 B<Throws:> NONE.
 
@@ -910,7 +1008,8 @@ sub burn_one {
     my ($story, $oc, $cat) = @_;
 
     # Figure out the base URI and output path.
-    my $base_uri = $story->get_uri($cat, $oc, 1);
+#    my $base_uri = $story->get_uri($cat, $oc, 1);
+    my $base_uri = $fs->cat_uri($cat->get_uri, $story->get_id, $story->get_slug);
     my $path = $fs->cat_dir($self->get_base_path, $fs->uri_to_dir($base_uri));
 
     # Create the output directory.
@@ -983,7 +1082,15 @@ sub page_file {
     throw_gen(error => "Page number '$number' not greater than zero")
       unless $number > 0;
     my ($fn, $ext) = $self->_get(qw(output_filename output_ext));
-    $number = $number == 1 ? '' : $number - 1;
+    my @page_extensions = $self->get_page_extensions;
+    my $start = $self->get_page_numb_start;
+
+    if ($number <= @page_extensions) {
+        $number = $page_extensions[--$number];
+    } else {
+        $number += $start - @page_extensions - 1;
+    }
+
     return "$fn$number.$ext";
 }
 
