@@ -40,6 +40,7 @@ AC_VAR_WITH(ERROR_LOG,error_log,${LOGDIR}/error.log)
 AC_VAR_WITH(ACCESS_LOG,access_log,${LOGDIR}/access.log)
 AC_VAR_WITH(SSL_LOG,ssl_log,${LOGDIR}/ssl_engine_log)
 AC_VAR_WITH(PID_FILE,pid_file,${LOGDIR}/httpd.pid)
+AC_VAR_WITH(CPAN,cpan,'yes' set to 'no' to turn off the check for a working CPAN Module)
 
 # Warn if the specified user doesn't seem to 
 # exist
@@ -91,7 +92,6 @@ AC_PATH_PROG(FIND, find)
 AC_PATH_PROG(CTAGS, ctags)
 AC_CACHE_SAVE
 
-
 # Checks for libraries.
 
 # Check to see if apache has mod_perl compiled in
@@ -118,7 +118,13 @@ AC_SUBST(SSL_COMMENT)
 AC_CACHE_SAVE
 
 # check to see if CPAN Module is working correctly
-AC_CHECK_CPAN(CPAN_WORKS)
+if "${CPAN}" = "no" ; then
+	CPAN_WORKS=no
+elif "${CPAN}" = "yes"
+	CPAN_WORKS=yes
+else
+	AC_CHECK_CPAN(CPAN_WORKS)
+fi
 if test "${CPAN_WORKS}" != "yes"; then
   AC_MSG_WARN([
 

@@ -13,6 +13,7 @@ MKDIR = @MKDIR@
 FIND = @FIND@
 CTAGS = @CTAGS@
 PSQL = @PSQL@
+PG_CONFIG = @PG_CONFIG@
 
 
 # directories
@@ -296,6 +297,8 @@ dep: cpan
 # provided we have net access...
 cpan: ${INST}/missing_modules
 ifeq (CPAN_WORKS,yes)
+	export POSTGRES_INCLUDE=`${PG_CONFIG} --includedir`
+	export POSTGRES_LIB=`${PG_CONFIG} --libdir`
 	${PERL} -MCPAN -e 'install Bundle::Bricolage' 
 endif
 
