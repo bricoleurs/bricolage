@@ -210,6 +210,11 @@ perceived caching of changes that were canceled in a profile, noticed only
 when one canceled an edit of a story or media document and immediately edited
 the same document. [David]
 
+=item *
+
+Clicking the "Add More" button to add more keywords to a new category no
+longer causes an error. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
