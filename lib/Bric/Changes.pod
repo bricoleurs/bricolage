@@ -56,6 +56,13 @@ Added a makefile parameter that, when set to "QUIET", eliminates many of the
 questions asked during installation, falling back on the default values. [Rod
 Taylor]
 
+=item *
+
+Added C<move()> method to the virtual FTP interface. This means that to deploy
+a template, rather than having to rename it locally to append ".deploy", one
+can simply move in FTP to its new name with ".deploy" on appended to the new
+name. [JoE<atilde>o Pedro]
+
 =back
 
 =head2 Improvements
