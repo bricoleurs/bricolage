@@ -51,40 +51,75 @@ if (defined $id) {
       || $memb_pkg eq 'Bric::Biz::Person::User'
       ? get_pref('List Name Format') : undef;
 
+    my(%dup);
+
     if ($class_name eq 'Bric::Util::Grp::Source') {
         # Get existing members.
-	foreach my $obj ( $grp->get_objects ) {
-	    push @$right, { value =>  $obj->get_id,
-			    description => $obj->get_source_name };
+        foreach my $obj ( $grp->get_objects ) {
+            push @$right, { value =>  $obj->get_id,
+                    description => $obj->get_source_name };
+
+            }
+        # Get potential members.
+        foreach my $obj ( $memb_pkg->list ) {
+            push @$left, { value =>  $obj->get_id,
+                   description => $obj->get_source_name };
         }
-	# Get potential members.
-	foreach my $obj ( $memb_pkg->list ) {
-	    push @$left, { value =>  $obj->get_id,
-			   description => $obj->get_source_name };
-	}
     } elsif ($class_name eq 'Bric::Util::Grp::CategorySet') {
-        # Get existing members.
-	foreach my $obj ( $grp->get_objects ) {
-	    push @$right, { value =>  $obj->get_id,
-			    description => $obj->get_uri };
+            # Get existing members.
+            foreach my $obj ( $grp->get_objects ) {
+                push @$right, { value =>  $obj->get_id,
+                    description => $obj->get_uri,
+                    site  => $obj->get_site_id };
+                $dup{lc $right->[-1]->{description}}++;
+            }
+        # Get potential members.
+        foreach my $obj ( $memb_pkg->list ) {
+            push @$left, { value =>  $obj->get_id,
+                   description => $obj->get_uri,
+                   site => $obj->get_site_id };
+
+            $dup{lc $left->[-1]->{description}}++;
         }
-	# Get potential members.
-	foreach my $obj ( $memb_pkg->list ) {
-	    push @$left, { value =>  $obj->get_id,
-			   description => $obj->get_uri };
-	}
     } else {
+
+        my $robjs = $grp->get_objects;
+        my $lobjs = $memb_pkg->list({ active => 1 });
+
+        my $has_site = 1 if ($robjs->[0] && $robjs->[0]->can('get_site_id')) ||
+                            ($lobjs->[0] && $lobjs->[0]->can('get_site_id'));
+
         # Get existing members.
-	foreach my $obj ( $grp->get_objects ) {
-	    push @$right, { value =>  $obj->get_id,
-			    description => $obj->get_name($format) };
+        foreach my $obj ( @$robjs ) {
+            push @$right, { value =>  $obj->get_id,
+                    description => $obj->get_name($format),
+                    site => $has_site && $obj->get_site_id };
+
+            $dup{lc $right->[-1]->{description}}++;
         }
-	# Get potential members.
-	foreach my $obj ( $memb_pkg->list({ active => 1 }) ) {
-	    push @$left, { value =>  $obj->get_id,
-			   description => $obj->get_name($format) };
-	}
+        # Get potential members.
+        foreach my $obj ( @$lobjs ) {
+            push @$left, { value =>  $obj->get_id,
+                   description => $obj->get_name($format),
+                   site => $has_site && $obj->get_site_id };
+
+            $dup{lc $left->[-1]->{description}}++;
+        }
     }
+
+    # Add to the description site name, if there are duplicate  descriptions.
+    # Only run if sites are already cached ( which means there is more than one site).
+    my $sites = $c->get('__SITES__') || Bric::Biz::Site->list();
+    if($sites) {
+        my %sites;
+        $sites{$_->get_id} = $_->get_name for @$sites;
+        for my $row (@$left, @$right) {
+            if ($dup{lc($row->{description})} > 1 && $row->{site}) {
+                $row->{description} .= ' ('. $sites{$row->{site} } . ') ';
+            }
+        }
+    }
+
     # Load up the double-list manager.
     $m->comp( "/widgets/doubleListManager/doubleListManager.mc", rightSort => 1,
 	      leftOpts => $left, rightOpts => $right, formName => 'grp_profile',
@@ -200,11 +235,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:48 $
+$Date: 2003-08-25 19:28:01 $
 
 =head1 DESCRIPTION
 
