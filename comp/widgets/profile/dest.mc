@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:18 $
+$Date: 2001-09-20 21:23:33 $
 
 =head1 SYNOPSIS
 
@@ -25,8 +25,13 @@ processed was submitted from the Destination Profile page.
 =head1 REVISION HISTORY
 
 $Log: dest.mc,v $
-Revision 1.1  2001-09-06 21:52:18  wheeler
-Initial revision
+Revision 1.2  2001-09-20 21:23:33  wheeler
+Added "Next" button to new destinations. This puts the user back on the
+destination screen after creating the initial values so that they can add
+actions and servers.
+
+Revision 1.1.1.1  2001/09/06 21:52:18  wheeler
+Upload to SourceForge.
 
 </%doc>
 
@@ -105,10 +110,15 @@ if ($used) {
 } else {
     # Save it!
     $dest->save;
-    log_event('dest_' . (defined $param->{dest_id} ? 'save' : 'new'), $dest);
-    # Send a message to the browser.
-    add_msg("$disp_name profile $name saved.");
-    # Set the redirection.
-    set_redirect("/admin/manager/dest");
+    if (defined $dest_id) {
+	log_event('dest_' . (defined $param->{dest_id} ? 'save' : 'new'), $dest);
+	# Send a message to the browser.
+	add_msg("$disp_name profile $name saved.");
+	# Set the redirection.
+	set_redirect("/admin/manager/dest");
+    } else {
+	# It's a new destination. Let them add Actions and Servers.
+	return $dest;
+    }
 }
 </%init>

@@ -73,12 +73,23 @@ if (defined $id) {
 	     select =>    $no_del ? undef : ['Delete', 'server|delete_cb'],
 	     number => 4
 	    );
+    $m->comp('/widgets/profile/formButtons.mc',
+	     type => $type,
+	     section => $section,
+	     no_del => $no_del,
+	     return => "/admin/manager/dest",
+	     no_save => $no_edit);
+} else {
+    $m->comp('/widgets/profile/formButtons.mc',
+	     type => $type,
+	     val => 'next_dkgreen',
+	     section => $section,
+	     no_del => $no_del,
+	     return => "/admin/manager/dest",
+	     no_save => $no_edit);
 }
 </%perl>
 <br />
-<& '/widgets/profile/formButtons.mc', type => $type, section => $section,
-   no_del => $no_del, return => "/admin/manager/dest",
-  no_save => $no_edit  &>
 </form>
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
 
@@ -127,11 +138,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:49 $
+$Date: 2001-09-20 21:23:32 $
 
 =head1 DESCRIPTION
 
@@ -140,7 +151,12 @@ This element handles the display for editing destination profiles.
 =head1 REVISION HISTORY
 
 $Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:49  wheeler
-Initial revision
+Revision 1.2  2001-09-20 21:23:32  wheeler
+Added "Next" button to new destinations. This puts the user back on the
+destination screen after creating the initial values so that they can add
+actions and servers.
+
+Revision 1.1.1.1  2001/09/06 21:51:49  wheeler
+Upload to SourceForge.
 
 </%doc>
