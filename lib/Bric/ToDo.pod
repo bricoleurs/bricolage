@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.73 $
+$Revision: 1.74 $
 
 =head1 DATE
 
-$Date: 2002-09-18 21:51:21 $
+$Date: 2002-10-23 01:31:25 $
 
 =head1 DESCRIPTION
 
@@ -114,18 +114,7 @@ to the fields of the related story element itself.
 
 =item *
 
-Add "Clone Asset" button to Media and Story profiles (I think that the API and
-maybe even the callbacks are already done).
-
-=item *
-
 Add ability to "undeploy" templates without deactivating them.
-
-=item *
-
-Add a check that a user has selected at least one output channel when creating
-a new story type element or media type element. Top-level elements without
-output channels cause Bricolage indigestion.
 
 =item *
 
@@ -164,11 +153,6 @@ email address or URI. The error page (500.mc) would have a form with all the
 details in hidden fields, and a button. When the button is pressed, the info
 in the form would either be sent to the specified email adddress or to the
 specified URL (on the assumption that that URL would process the form data).
-
-=item *
-
-Change the behavior of the popup window so that it doesn't pop-up, but instead
-presents a simple page with a link to the new window.
 
 =item *
 
@@ -220,15 +204,6 @@ Add support for Instant messaging (using Jabber server) in Alerts.
 
 =item *
 
-Chage output channels such that, when they're associated with a story type (or
-media type), they will be output channels to which a story of that type I<may>
-be published. Each output channel has an associated checkbox indicating
-whether a story of that type is published to the given output channel by
-default. In the story profile, you see this list, and check a checkbox for
-those output channels you want the story published to.
-
-=item *
-
 Add a new preference to Bricolage to optinally allow assets to be transferred
 across workflows. The default will be for them not to.
 
@@ -258,15 +233,6 @@ viewed across a series of pages.
 Add "Check all" button that uses JS to select all the select checkboxes on a
 publish desk and My Workspace. There's a button in My Alerts that can be copied
 for this purpose.
-
-=item *
-
-Modify JavaScript and CSS to work outside of Mason, that is, without
-server-side client identification. This way, the script files can just be sent
-to the browser once, rather than re-executing the Mason versions of these
-files for every request. Note that this is how the CSS for the help pages
-currently works, although their reliance on a JavaScript browser sniffer can
-be removed.
 
 =item *
 
