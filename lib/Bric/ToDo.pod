@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.100 $
+$Revision: 1.101 $
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:38 $
+$Date: 2003-05-15 14:13:55 $
 
 =head1 DESCRIPTION
 
@@ -310,6 +310,10 @@ post_path for templates but ultimately this should be fixed the right way. If
 you choose to accept this mission you'll need to write an upgrade script to
 correct template entries in the database and move deployed templates on the
 filesystem.
+
+=item *
+
+Add a sprintf version of $burner->display_element.
 
 =back
 
