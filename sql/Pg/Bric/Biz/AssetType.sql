@@ -71,7 +71,7 @@ CREATE TABLE element__site (
     element__id    INTEGER         NOT NULL,
     site__id       INTEGER         NOT NULL,
     active         BOOLEAN         NOT NULL DEFAULT TRUE,
-    primary_oc__id  INTEGER        NOT NULL
+    primary_oc__id  INTEGER        NOT NULL,
     CONSTRAINT pk_element__site__id PRIMARY KEY (id)
 );
 
