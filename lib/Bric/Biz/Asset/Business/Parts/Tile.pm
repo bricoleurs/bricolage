@@ -8,15 +8,15 @@ Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:03 $
+$Date: 2003-02-25 05:12:22 $
 
 =head1 SYNOPSIS
 
@@ -34,30 +34,27 @@ $Date: 2003-01-29 06:46:03 $
 
 =head1 DESCRIPTION
 
-Tile maps the asset part to a particular formatting asset.   There are data 
-tiles which map to the particular data points and container tiles that 
-contain other tiles.
+Tile maps the asset part to a particular formatting asset. There are data
+tiles which map to the particular data points and container tiles that contain
+other tiles.
 
 =cut
 
-#==============================================================================## Dependencies                         #
+#==============================================================================#
+# Dependencies                         #
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
 use Bric::Util::Fault::Exception::MNI;
 
-#==============================================================================## Inheritance                          #
+#==============================================================================#
+# Inheritance                          #
 #======================================#
-
-# The parent module should have a 'use' line if you need to import from it.
-# use Bric;
 use base qw(Bric);
 
 #=============================================================================#
@@ -66,66 +63,63 @@ use base qw(Bric);
 
 # None
 
-#==============================================================================## Constants                            #
+#==============================================================================#
+# Constants                            #
 #======================================#
 
 # None
 
-#==============================================================================## Fields                               #
+#==============================================================================#
+# Fields                               #
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-# Public fields should use 'vars'
-#use vars qw();
+# Public Class Fields
+# None.
 
 #--------------------------------------#
-# Private Class Fields                  
-
-# Private fields use 'my'
+# Private Class Fields
+my ($METHS, @ORD);
 
 #--------------------------------------#
-# Instance Fields                       
+# Instance Fields
 
-# None
-
-# This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-	Bric::register_fields({
- 		# Public Fields
-		'name'				=> Bric::FIELD_RDWR,
-		'description'		=> Bric::FIELD_RDWR,	
+        Bric::register_fields({
+                # Public Fields
+                'name'                          => Bric::FIELD_RDWR,
+                'description'                   => Bric::FIELD_RDWR,
 
-		# the parent id of this tile
-		'parent_id'			=> Bric::FIELD_RDWR,
+                # the parent id of this tile
+                'parent_id'                     => Bric::FIELD_RDWR,
 
-		# the order in which this tile should be returned
-		'place'				=> Bric::FIELD_RDWR,
+                # the order in which this tile should be returned
+                'place'                         => Bric::FIELD_RDWR,
 
-		# The data base id of the Tile
-		'id'				=> Bric::FIELD_RDWR,
+                # The data base id of the Tile
+                'id'                            => Bric::FIELD_RDWR,
 
-		# The type of object that this tile is associated with
-		# will also be used to determine what table to put the data into
-		# ( story || media )
-		'object_type'		=> Bric::FIELD_RDWR,
+                # The type of object that this tile is associated with
+                # will also be used to determine what table to put the data into
+                # ( story || media )
+                'object_type'           => Bric::FIELD_RDWR,
 
-		# the id of the object that this is a tile for
-		'object_id'			=> Bric::FIELD_RDWR,
+                # the id of the object that this is a tile for
+                'object_id'                     => Bric::FIELD_RDWR,
 
-		# Private Fields
+                # Private Fields
 
-		# the reference to the object
-		'_object'			=> Bric::FIELD_NONE,
+                # the reference to the object
+                '_object'                       => Bric::FIELD_NONE,
 
-		# The active flag
-		'_active'			=> Bric::FIELD_NONE
+                # The active flag
+                '_active'                       => Bric::FIELD_NONE
 
-	});
+        });
 }
 
-#==============================================================================## Interface Methods                    #
+#==============================================================================#
+# Interface Methods                    #
 #======================================#
 
 =head1 INTERFACE
@@ -137,14 +131,13 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors                          
-
+# Constructors
 #------------------------------------------------------------------------------#
 
 =item $tile = Bric::Biz::Asset::Business::Parts::Tile->new( {format => $fa})
 
-This will return a new Tile object with the optional initial state of 
-format and data
+This will return a new Tile object with the optional initial state of format
+and data
 
 Supported Keys:
 
@@ -181,7 +174,7 @@ sub new {
 ################################################################################
 
 =item ($tile_list, @tiles) = Bric::Biz::Asset::Business::Parts::Tile->list
-	( $criteria )
+        ( $criteria )
 
 This will return a list ( or list ref) of tile objects that match the given
 criteria.
@@ -234,6 +227,181 @@ sub DESTROY {
 
 =over 4
 
+=item $meths = Bric::Biz::Asset::Business::Parts::Tile->my_meths
+
+=item (@meths || $meths_aref) = Bric::Biz::Asset::BusinessParts::Tile->my_meths(TRUE)
+
+=item my (@meths || $meths_aref) = Bric::Biz:::Asset::BusinessParts::Tile->my_meths(0, TRUE)
+
+Returns an anonymous hash of introspection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
+introspection data. If a second true argument is passed instead of a first,
+then a list or anonymous array of introspection data will be returned for
+properties that uniquely identify an object (excluding C<id>, which is
+assumed).
+
+Each hash key is the name of a property or attribute of the object. The value
+for a hash key is another anonymous hash containing the following keys:
+
+=over 4
+
+=item *
+
+name - The name of the property or attribute. Is the same as the hash key when
+an anonymous hash is returned.
+
+=item *
+
+disp - The display name of the property or attribute.
+
+=item *
+
+get_meth - A reference to the method that will retrieve the value of the
+property or attribute.
+
+=item *
+
+get_args - An anonymous array of arguments to pass to a call to get_meth in
+order to retrieve the value of the property or attribute.
+
+=item *
+
+set_meth - A reference to the method that will set the value of the
+property or attribute.
+
+=item *
+
+set_args - An anonymous array of arguments to pass to a call to set_meth in
+order to set the value of the property or attribute.
+
+=item *
+
+type - The type of value the property or attribute contains. There are only
+three types:
+
+=over 4
+
+=item short
+
+=item date
+
+=item blob
+
+=back
+
+=item *
+
+len - If the value is a 'short' value, this hash key contains the length of the
+field.
+
+=item *
+
+search - The property is searchable via the list() and list_ids() methods.
+
+=item *
+
+req - The property or attribute is required.
+
+=item *
+
+props - An anonymous hash of properties used to display the property or attribute.
+Possible keys include:
+
+=over 4
+
+=item type
+
+The display field type. Possible values are
+
+=item text
+
+=item textarea
+
+=item password
+
+=item hidden
+
+=item radio
+
+=item checkbox
+
+=item select
+
+=back
+
+=item *
+
+length - The Length, in letters, to display a text or password field.
+
+=item *
+
+maxlength - The maximum length of the property or value - usually defined by the
+SQL DDL.
+
+=item *
+
+rows - The number of rows to format in a textarea field.
+
+=item *
+
+cols - The number of columns to format in a textarea field.
+
+=item *
+
+vals - An anonymous hash of key/value pairs reprsenting the values and display
+names to use in a select list.
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+
+sub my_meths {
+    my ($pkg, $ord, $ident) = @_;
+    return if $ident;
+
+    # We don't got 'em. So get 'em!
+    $METHS ||= {
+                name        => { name     => 'name',
+                                 get_meth => sub { shift->get_name(@_) },
+                                 get_args => [],
+                                 set_meth => sub { shift->set_name(@_) },
+                                 set_args => [],
+                                 disp     => 'Name',
+                                 type     => 'short',
+                                 len      => 256,
+                                 req      => 1,
+                                 props    => { type      => 'text',
+                                               length    => 32,
+                                               maxlength => 256
+                                             }
+                               },
+                description => { name     => 'description',
+                                 get_meth => sub { shift->get_description(@_) },
+                                 get_args => [],
+                                 set_meth => sub { shift->set_description(@_) },
+                                 set_args => [],
+                                 disp     => 'Description',
+                                 len      => 256,
+                                 type     => 'short',
+                                 props    => { type => 'textarea',
+                                               cols => 40,
+                                               rows => 4
+                                             }
+                               }
+               };
+
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
+}
+
+##############################################################################
+
 =item list_ids - Method not implemented
 
 If you want to get a list of objects just use list, if you only want the ids
@@ -254,9 +422,9 @@ NONE
 =cut
 
 sub list_ids {
-	Bric::Util::Fault::Exception::MNI->new( {
-			msg => "Method Not Implemented"
-		});
+        Bric::Util::Fault::Exception::MNI->new( {
+                        msg => "Method Not Implemented"
+                });
 }
 
 ################################################################################
@@ -341,11 +509,11 @@ NONE
 =cut
 
 sub activate {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	$self->_set( {'_active' => 1 });
+        $self->_set( {'_active' => 1 });
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -369,11 +537,11 @@ NONE
 =cut
 
 sub deactivate {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	$self->_set( {'_active' => 0 });
+        $self->_set( {'_active' => 0 });
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -397,10 +565,10 @@ NONE
 =cut
 
 sub is_active {
-	my ($self) = @_;
+        my ($self) = @_;
 
 
-	return $self->_get('_active') ? $self : undef;
+        return $self->_get('_active') ? $self : undef;
 }
 
 ################################################################################
