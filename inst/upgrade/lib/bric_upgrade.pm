@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-14 01:52:28 $
+$Date: 2002-04-22 22:36:01 $
 
 =head1 SYNOPSIS
 
@@ -55,28 +55,38 @@ user with administrative permissions.
 =cut
 
 use strict;
-use Bric::Config qw(:dbi);
-use Bric::Util::DBI qw(:all);
 require Exporter;
 use base qw(Exporter);
 our @EXPORT_OK = qw(do_sql test_sql fetch_sql is_later);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
-BEGIN {
-    $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
-    eval { require Bric };
-    if ($@) {
-	# We need to set PERL5LIB.
-	require File::Spec::Functions;
-	my $lib =  File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib');
-	unshift @INC, $lib;
-	$ENV{PERL5LIB} = $lib;
+use File::Spec::Functions qw(catdir);
 
-	# Try again.
-	eval { require Bric };
-	die "Cannot locate Bricolage libraries.\n" if $@;
-    }
-};
+BEGIN {
+    # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
+    $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
+
+    # use $BRICOLAGE_ROOT/lib if exists 
+    $_ = catdir($ENV{BRICOLAGE_ROOT}, "lib");
+    unshift(@INC, $_) if -e $_;
+    
+    # make sure Bric is found
+    eval "use Bric";
+    die <<'END' if $@;
+######################################################################
+
+Cannot locate Bricolage libraries.  Please set the environment
+variable BRICOLAGE_ROOT to the location of your Bricolage
+installation or set the environment variable PERL5LIB to the
+directory where Bricolage's libraries are installed.
+
+######################################################################
+END
+}
+
+# load Bricolage libraries
+use Bric::Config qw(:dbi);
+use Bric::Util::DBI qw(:all);
 
 # Get the options.
 use Getopt::Std;
