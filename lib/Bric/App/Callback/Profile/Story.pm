@@ -981,8 +981,8 @@ $save_data = sub {
       if exists $param->{title};
     $story->set_description($param->{description})
       if exists $param->{description};
-    $story->set_source__id($param->{"$widget|source_id"})
-      if exists $param->{"$widget|source_id"};
+    $story->set_source__id($param->{"$widget|source__id"})
+      if exists $param->{"$widget|source__id"};
     $story->set_priority($param->{priority})
       if exists $param->{priority};
 
