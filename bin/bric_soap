@@ -74,6 +74,8 @@ Options:
 
   --to-preview           - use to_preview option for workflow publish
 
+  --timeout              - specify the HTTP timeout for SOAP requests in 
+                           seconds.  Defaults to 30.
 
 =head1 EXAMPLES
 
@@ -168,6 +170,7 @@ BEGIN {
     our $with_related_stories = 0;
     our $with_related_media   = 0;
     our $to_preview           = 0;
+    our $timeout              = 30;
     our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
     our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
     our $server                 = 'http://localhost';
@@ -189,6 +192,7 @@ BEGIN {
 	       "to-preview"             => \$to_preview,
 	       "desk=s"                 => \$desk,
 	       "workflow=s"             => \$workflow,
+               "timeout=s"              => \$timeout,
 	      ) or  pod2usage(2);
     
     pod2usage(1)             if $help;
@@ -196,7 +200,8 @@ BEGIN {
     $verbose ||= 0;
 }
 our ($module, $command, %search, $with_related_stories, $with_related_media,
-     $to_preview, $username, $password, $server, $verbose, $desk, $workflow);
+     $to_preview, $username, $password, $server, $verbose, $desk, $workflow,
+     $timeout);
 
 use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ());
 import SOAP::Data 'name';
@@ -277,7 +282,9 @@ my $soap = new SOAP::Lite
     readable => $verbose > 2 || 0;
 $server = "http://$server" unless $server =~ m!^http://!;
 $soap->proxy($server . '/soap',
-	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
+	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1), 
+             timeout    => $timeout,
+            );
 
 # login
 print STDERR "$module $command: Authenticating to Bricolage...\n" if $verbose;
