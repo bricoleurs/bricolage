@@ -105,7 +105,7 @@
 %     if ($empty_search) {
   <tr><td style="border-style:solid; border-color:#cccc99;" colspan="<% scalar @$fields %>">&nbsp;</td></tr>
 %     } else {
-  <tr><td colspan="<% scalar @$fields %>">No <% lc(get_class_info($object)->get_plural_name) %> were found</td></tr>
+  <tr><td style="border-style:solid; border-color:#cccc99;" colspan="<% scalar @$fields %>">No <% lc(get_class_info($object)->get_plural_name) %> were found</td></tr>
 %     }
 % }
 </table>
