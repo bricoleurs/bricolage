@@ -101,38 +101,41 @@ use base qw(Bric::Util::Job);
 my $dp = 'Bric::Util::Fault::Exception::DP';
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 
-=head2 Constructors
-
 ################################################################################
+
+=head2 Constructors
 
 =head3 my (@jobs || $jobs_aref) = Bric::Util::Job::Pub->list($params)
 
 Inherited from L<Bric::Util::Job|Bric::Util::Job>
 
-################################################################################
-
 =head3 my (@job_ids || $job_ids_aref) = Bric::Util::Job->list_ids($params)
 
 Inherited from L<Bric::Util::Job|Bric::Util::Job>
 
-=head2 Public Instance Methods
+=head2 Private Instance Methods
+
+=cut
 
 ################################################################################
 
-=head3 $self = $job->execute_me
+=head3 $self = $job->_do_it
 
-Executes the job. This sends the Story or Media object contained by the job to
-the burner.  In case of a template error the job is released to be executed
-again.  Three such errors are considered a failure, in which case the job is
-marked as such.  The most recent error message is stored in the error_message
-field.  At the end of the process, a completion time will be saved to the
-database. Attempting to execute a job before its scheduled time will throw an
-exception.
+Carries out the actions that constitute the job. This method is called by
+C<execute_me()> in Bric::Dist::Job and should therefore never be called
+directly.
 
-B<Throws:> Quite a few exceptions can be thrown here. Check the do_it() methods
-on all Bric::Publish::Action subclasses, as well as the put_res() methods of the
-mover classes (e.g., Bric::Util::Trans::FS). Here are the exceptions thrown from
-withing this method itself.
+Sends the Story or Media object contained by the job to the burner. In case of
+a template error the job is released to be executed again. Three such errors
+are considered a failure, in which case the job is marked as such. The most
+recent error message is stored in the error_message field. At the end of the
+process, a completion time will be saved to the database. Attempting to
+execute a job before its scheduled time will throw an exception.
+
+B<Throws:> Quite a few exceptions can be thrown here. Check the do_it()
+methods on all Bric::Publish::Action subclasses, as well as the put_res()
+methods of the mover classes (e.g., Bric::Util::Trans::FS). Here are the
+exceptions thrown from withing this method itself.
 
 =over 4
 
@@ -176,34 +179,23 @@ B<Notes:> NONE.
 
 =cut
 
-sub execute_me {
+sub _do_it {
     my $self = shift;
-    $self = $self->SUPER::execute_me;
     # Check to see if we have story or media id
     if (my $sid = $self->get_story_id) {
-        my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
+        my $burner = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
         # Instantiate the story.
         my $s = Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
-        eval {
-            $b->publish($s, 'story', $self->get_user_id,
-                        $self->get_sched_time(ISO_8601_FORMAT), 1);
-        };
+        $burner->publish($s, 'story', $self->get_user_id,
+                         $self->get_sched_time(ISO_8601_FORMAT), 1);
     } elsif (my $mid = $self->get_media_id) {
-        my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
+        my $burner = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
         # Instantiate the media.
         my $m = Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
-        eval {
-            $b->publish($m, 'media', $self->get_user_id,
-                        $self->get_sched_time(ISO_8601_FORMAT), 1);
-        };
+        $burner->publish($m, 'media', $self->get_user_id,
+                         $self->get_sched_time(ISO_8601_FORMAT), 1);
     }
-
-    # Throw any exceptions.
-    $self->handle_error($@) if $@;
-
-    # Mark it complete, unlock it, and we're done!
-    $self->_set([qw(comp_time _executing)], [db_date(0, 1), 0]);
-    $self->save;
+    return $self;
 }
 
 __END__

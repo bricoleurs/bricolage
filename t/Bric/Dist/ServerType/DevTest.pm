@@ -5,7 +5,7 @@ use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Dist::ServerType;
 use Bric::Dist::Server;
-use Bric::Util::Job;
+use Bric::Util::Job::Pub;
 use Bric::Util::Grp::Dest;
 
 sub table {'server_type'}
@@ -50,8 +50,8 @@ sub test_list : Test(45) {
         "Create group" );
 
     # Create a new distribution job.
-    ok( my $job = Bric::Util::Job->new({ name => 'Test Job',
-                                         user_id => $self->user_id }),
+    ok( my $job = Bric::Util::Job::Pub->new({ name => 'Test Job',
+                                              user_id => $self->user_id }),
         "Create job" );
 
     # Create some test records.
@@ -240,8 +240,8 @@ sub test_list_ids : Test(38) {
         "Create group" );
 
     # Create a new distribution job.
-    ok( my $job = Bric::Util::Job->new({ name => 'Test Job',
-                                         user_id => 0 }),
+    ok( my $job = Bric::Util::Job::Pub->new({ name => 'Test Job',
+                                              user_id => 0 }),
         "Create job" );
 
     # Create some test records.

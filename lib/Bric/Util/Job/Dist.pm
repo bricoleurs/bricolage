@@ -99,32 +99,35 @@ use base qw(Bric::Util::Job);
 my $dp = 'Bric::Util::Fault::Exception::DP';
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 
-=head2 Constructors
-
 ################################################################################
+
+=head2 Constructors
 
 =head3 my (@jobs || $jobs_aref) = Bric::Util::Job::Dist->list($params)
 
 Inherited from L<Bric::Util::Job|Bric::Util::Job>
 
-################################################################################
-
 =head3 my (@job_ids || $job_ids_aref) = Bric::Util::Job->list_ids($params)
 
 Inherited from L<Bric::Util::Job|Bric::Util::Job>
 
-=head2 Public Instance Methods
+=head2 Private Instance Methods
+
+=cut
 
 ################################################################################
 
-=head3 $self = $job->execute_me
+=head3 $self = $job->_do_it
 
-Executes the job. This means the for each of the server types associated with
-this job, the list of actions will be performed on each file, hopefully
-culminating in the distribution of the resources to the servers associated with
-the server type. At the end of the process, a completion time will be saved
-to the database. Attempting to execute a job before its scheduled time will
-throw an exception.
+Carries out the actions that constitute the job. This method is called by
+C<execute_me()> in Bric::Dist::Job and should therefore never be called
+directly.
+
+For each of the server types associated with this job, the list of actions
+will be performed on each file, hopefully culminating in the distribution of
+the resources to the servers associated with the server type. At the end of
+the process, a completion time will be saved to the database. Attempting to
+execute a job before its scheduled time will throw an exception.
 
 B<Throws:> Quite a few exceptions can be thrown here. Check the do_it() methods
 on all Bric::Dist::Action subclasses, as well as the put_res() methods of the
@@ -173,66 +176,56 @@ B<Notes:> NONE.
 
 =cut
 
-sub execute_me {
+sub _do_it {
     my $self = shift;
-    $self = $self->SUPER::execute_me();
-    eval {
-        # Grab all of the resources.
-        my $resources = $self->get_resources;
-        # Figure out what we're doing here.
-        if ($self->get_type) {
-            # This is an expiration job.
-            foreach my $st ($self->get_server_types) {
-                # Go through the actions in reverse order.
-                foreach my $a (reverse $st->get_actions) {
-                    # Undo the action.
-                    my $ret = $a->undo_it($resources, $st);
-                    if ($ret) {
-                        my $type = $a->get_type;
-                        next if $type eq 'Move';
-                    grep { log_event('resource_undo_action', $_,
-                                     { Action => $type } ) } @$resources;
-                    }
-                }
-            }
-        } else {
-            # A Delivery job. Go through the server types one at a time.
-            foreach my $st ($self->get_server_types) {
-                if ($st->can_copy) {
-                    # The resources should be copied to a temporary directory.
-                    my $fs = Bric::Util::Trans::FS->new;
-                    foreach my $res (@$resources) {
-                        # Create the temporary resource path.
-                        my $path = $res->get_path;
-                        my $tmp_path = catdir TEMP_DIR, $path;
-                        # Copy the resources to the tmp location.
-                        $fs->copy($path, $tmp_path);
-                        # Add the temporary path to the resource.
-                        $res->set_tmp_path($tmp_path);
-                    }
-                }
-                # Okay, we know where the resources are on disk. Let's
-                # perform each of the actions in turn.
-                foreach my $a ($st->get_actions) {
-                    # Execute the action.
-                    $a->do_it($resources, $st);
-                    # Grab the action type and log the action for each resource.
+    # Grab all of the resources.
+    my $resources = $self->get_resources;
+    # Figure out what we're doing here.
+    if ($self->get_type) {
+        # This is an expiration job.
+        foreach my $st ($self->get_server_types) {
+            # Go through the actions in reverse order.
+            foreach my $a (reverse $st->get_actions) {
+                # Undo the action.
+                my $ret = $a->undo_it($resources, $st);
+                if ($ret) {
                     my $type = $a->get_type;
                     next if $type eq 'Move';
-                    grep { log_event('resource_action', $_,
-                                     { Action => $type } ) } @$resources;
+                    log_event('resource_undo_action', $_, { Action => $type })
+                      for @$resources;
                 }
             }
         }
-    };
-
-    if ($@) {
-        $self->handle_error($@) if $@;
     } else {
-        # Mark it complete, unlock it, and we're done!
-        $self->_set([qw(comp_time _executing)], [db_date(0, 1), 0]);
-        $self->save;
+        # A Delivery job. Go through the server types one at a time.
+        foreach my $st ($self->get_server_types) {
+            if ($st->can_copy) {
+                # The resources should be copied to a temporary directory.
+                my $fs = Bric::Util::Trans::FS->new;
+                foreach my $res (@$resources) {
+                    # Create the temporary resource path.
+                    my $path = $res->get_path;
+                    my $tmp_path = catdir TEMP_DIR, $path;
+                    # Copy the resources to the tmp location.
+                    $fs->copy($path, $tmp_path);
+                    # Add the temporary path to the resource.
+                    $res->set_tmp_path($tmp_path);
+                }
+            }
+            # Okay, we know where the resources are on disk. Let's
+            # perform each of the actions in turn.
+            foreach my $a ($st->get_actions) {
+                # Execute the action.
+                $a->do_it($resources, $st);
+                # Grab the action type and log the action for each resource.
+                my $type = $a->get_type;
+                next if $type eq 'Move';
+                log_event('resource_action', $_, { Action => $type })
+                  for @$resources;
+            }
+        }
     }
+    return $self;
 }
 
 __END__
@@ -242,6 +235,8 @@ __END__
 NONE.
 
 =head1 AUTHOR
+
+David Wheeler <david@kineticode.com>
 
 Mark Jaroski <jaroskim@who.int>
 

@@ -101,6 +101,17 @@ The distribution monitor, F<bric_dist_mon>, now prints error information to
 STDERR when there is an error, instead of just printing it to the system log.
 [David]
 
+=item *
+
+Existing jobs are now executed within their own transactions, as opposed to no
+transaction specification. This means that each must succeed or fail
+independent of any other jobs. New jobs are executed before being inserted
+into the database so as to keep them atomic within their surrouding
+transaction (generally a UI request). All this means that transactionality is
+much more intelligent for jobs and will hopefully eliminate job deadlocks.
+Reported by Mark Jaroski, Serge Sozonoff, Patrick Michael Kane, and others.
+[David]
+
 =back
 
 =head2 Bug Fixes
