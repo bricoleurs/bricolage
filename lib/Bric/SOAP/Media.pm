@@ -39,15 +39,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.20.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.20.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:50 $
+$Date: 2003-04-24 14:31:23 $
 
 =head1 SYNOPSIS
 
@@ -801,6 +801,27 @@ sub _load_media {
         die __PACKAGE__ . "::create : no primary output channel defined!"
             unless defined $media->get_primary_oc_id;
 
+        # remove all keywords if updating
+        $media->delete_keywords(scalar $media->get_keywords) if $update;
+
+        # add keywords, if we have any
+        if ($mdata->{keywords} and $mdata->{keywords}{keyword}) {
+
+            # collect keyword objects
+            my @kws;
+            foreach (@{$mdata->{keywords}{keyword}}) {
+                my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+                unless ($kw) {
+                    $kw = Bric::Biz::Keyword->new({ name => $_})->save;
+                    log_event('keyword_new', $kw);
+                }
+                push @kws, $kw;
+            }
+
+            # add keywords to the media
+            $media->add_keywords(\@kws);
+        }
+
         # updates are in-place, no need to futz with workflows and desks
         my $desk;
         unless ($update) {
@@ -907,6 +928,13 @@ sub _serialize_media {
         $writer->dataElement(output_channel => $oc->get_name);
     }
     $writer->endTag("output_channels");
+
+    # output keywords
+    $writer->startTag("keywords");
+    foreach my $k ($media->get_keywords) {
+        $writer->dataElement(keyword => $k->get_name);
+    }
+    $writer->endTag("keywords");
 
     # output contributors
     $writer->startTag("contributors");
