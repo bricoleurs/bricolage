@@ -40,6 +40,18 @@ if (db_version ge '7.3') {
     }
 }
 
+my @drops;
+# It's possible that the 1.6.10 upgrade script won't have been run
+# (bad admin!). So we'll just drop these indexes if they actually
+# exist.
+if (test_index('fdx_story__workflow__id')) {
+    push @drops,
+      q{DROP INDEX fdx_story__workflow__id},
+      q{DROP INDEX fdx_media__workflow__id},
+      q{DROP INDEX fdx_formatting__workflow__id},
+}
+
+
 do_sql
   # Create the new desk and workflow.
   q{INSERT INTO desk (id, name, description, asset_grp, publish, active)
@@ -67,11 +79,9 @@ do_sql
   q{CREATE INDEX fdx_formatting__desk__id ON formatting(desk__id)},
 
   # Recreate the workflow foreign key indexes.
-  q{DROP INDEX fdx_story__workflow__id},
+  @drops,
   q{CREATE INDEX fdx_story__workflow__id ON story(workflow__id)},
-  q{DROP INDEX fdx_media__workflow__id},
   q{CREATE INDEX fdx_media__workflow__id ON media(workflow__id)},
-  q{DROP INDEX fdx_formatting__workflow__id},
   q{CREATE INDEX fdx_formatting__workflow__id ON formatting(workflow__id)},
   @alters,
   ;
