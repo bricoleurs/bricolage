@@ -44,6 +44,7 @@ sub update_all {
         $key_name = incr_kn($name, $key_name, \%seen)
           if $seen{$key_name};
         execute($set_key_name, $key_name, $id);
+        $seen{$key_name} = 1;
     }
 }
 
