@@ -58,9 +58,9 @@ dist            : check_dist distclean inst/bricolage.sql dist_dir rm_sql \
                   rm_use rm_CVS rm_tmp dist/INSTALL dist/Changes dist/License \
                   dist_tar
 
-# this makes FreeBSD's make happier than "print $$Bric::Version" for
-# some reason.
-BRIC_VERSION := $(shell perl -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib/Bric.pm)
+# can't load Bric since it loads Bric::Config which has dependencies
+# that won't be solved till make install.
+BRIC_VERSION = `perl -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib/Bric.pm`
 
 check_dist      :
 	perl inst/check_dist.pl $(BRIC_VERSION)
@@ -93,13 +93,13 @@ rm_tmp		:
 	find dist/ -name '#*#' -o -name '*~' | xargs rm -rf
 
 dist/INSTALL	: lib/Bric/Admin.pod
-	pod2text --loose lib/Bric/Admin.pod   > dist/INSTALL
+	pod2text lib/Bric/Admin.pod   > dist/INSTALL
 
 dist/Changes	: lib/Bric/Changes.pod
-	pod2text --loose lib/Bric/Changes.pod > dist/Changes
+	pod2text lib/Bric/Changes.pod > dist/Changes
 
 dist/License	: lib/Bric/License.pod
-	pod2text --loose lib/Bric/License.pod > dist/License
+	pod2text lib/Bric/License.pod > dist/License
 
 dist_tar	:
 	mv dist bricolage-$(BRIC_VERSION)
