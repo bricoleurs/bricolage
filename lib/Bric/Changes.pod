@@ -162,6 +162,12 @@ works properly. Reported by Serge Sozonoff. [David]
 The publish status and version is once again properly set for media when they
 are published. Reported by Serge Sozonoff. [David]
 
+=item *
+
+The group manager now properly displays the names of the sites that member
+objects are associated with if the class of the objects being managed knows
+that its objects are associated with sites. Reported by Ho Yin Au. [David]
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
