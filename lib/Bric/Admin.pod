@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.124 $
+$Revision: 1.125 $
 
 =head1 DATE
 
-$Date: 2003-10-22 06:01:15 $
+$Date: 2003-10-24 15:37:04 $
 
 =head1 DESCRIPTION
 
@@ -124,7 +124,7 @@ START MODULE LIST
 
 =item Apache::Request 1.0
 
-=item HTML::Mason 1.16
+=item HTML::Mason 1.23
 
 =item DBD::Pg
 
