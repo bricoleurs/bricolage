@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31.2.8 $
+$Revision: 1.31.2.9 $
 
 =head1 DATE
 
-$Date: 2002-02-08 21:04:13 $
+$Date: 2002-02-08 21:44:20 $
 
 =head1 DESCRIPTION
 
@@ -731,10 +731,12 @@ bric_apachectl.
 =item *
 
 B<LISTEN_PORT:> The TCP/IP Port on which the Bricolage server should listen for
-requests. Defaults to 80 if not specified. B<Note:> If the C<SSL_ENABLE>
-directive has been turned on, then C<LISTEN_PORT> I<must> be set to 80. The
-Bricolage server will not start if C<SSL_ENABLE> is on and C<LISTEN_PORT> is set
-to a value other than 80.
+requests. Defaults to 80 if not specified. You must also tell Apache to listen
+on this port in the configuration file specified in C<APACHE_CONF> (using
+Listen, Port, or BindAddress). B<Note:> If the C<SSL_ENABLE> directive has been
+turned on, then C<LISTEN_PORT> I<must> be set to 80. The Bricolage server will
+not start if C<SSL_ENABLE> is on and C<LISTEN_PORT> is set to a value other than
+80.
 
 =item *
 
