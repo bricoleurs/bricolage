@@ -87,6 +87,11 @@ the spot! [David]
 Attempting to publish a story or media document with brackets in the title no
 longer causes an error. Reported by Serge Sozonoff. [David]
 
+=item *
+
+Fixed a bric_soap list_ids bug [712] with the no_workflow option. Reported by
+Clive Jones.
+
 =back
 
 =cut
