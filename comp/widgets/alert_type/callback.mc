@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6.4.1 $
+$Revision: 1.6.4.2 $
 
 =head1 DATE
 
-$Date: 2003-06-22 17:07:07 $
+$Date: 2004-02-03 05:22:49 $
 
 =head1 SYNOPSIS
 
@@ -21,6 +21,8 @@ $Date: 2003-06-22 17:07:07 $
 
 This element is called by submits from the Alert Type Manager, where one or
 more Alert Types have been marked for deletion.
+
+=cut
 
 </%doc>
 
