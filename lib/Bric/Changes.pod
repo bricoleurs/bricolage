@@ -129,6 +129,10 @@ request that does a "Check in and Publish", since we now require PostgreSQL
 7.3 and the bug that the hacked worked around was fixed in that release.
 [David]
 
+=item *
+
+Added missing constraint to the "type" column of the "workflow" table. [David]
+
 =back
 
 =head2 Bug Fixes
