@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.8 $
+$Revision: 1.13.2.9 $
 
 =head1 DATE
 
-$Date: 2001-10-02 13:13:58 $
+$Date: 2001-10-02 14:36:00 $
 
 =head1 DESCRIPTION
 
@@ -37,11 +37,6 @@ significant (including the addition of new libraries).
 
 Document the use of Cache::FileCache in Bric::Admin, especially how it lives in
 /tmp/FileCache [David].
-
-=item *
-
-Add ability to set permissions on assets based on the categories they're in
-[David].
 
 =item *
 
