@@ -146,6 +146,11 @@ delete the old primary category. This fix prevents previews and publishes
 from breaking on stories and media that had no categories. Thanks to Mark fo
 the heads-up. [David]
 
+=item *
+
+An overhaul of the burn system had regressed the Output Channel preview 
+functionality.  I've put it back now.  [Mark]
+
 =back
 
 =head2 New Features

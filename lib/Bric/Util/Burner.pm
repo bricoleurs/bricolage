@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 00:04:29 $
+$Date: 2002-05-16 08:23:56 $
 
 =head1 SYNOPSIS
 
@@ -411,7 +411,7 @@ NONE
 sub preview {
     my $self = shift;
     my ($ats, $oc_sts) = ({}, {});
-    my ($ba, $key, $user_id, $m) = @_;
+    my ($ba, $key, $user_id, $m, $oc_id) = @_;
     my $send_msg = $m ? sub { $m->comp('/lib/util/status_msg.mc', @_) } :
 	                sub { 0; };
     my $comp_root = MASON_COMP_ROOT->[0][1];
@@ -428,7 +428,7 @@ sub preview {
     my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
     my $bats = {};
     my $res = [];
-    my $ocs = [ Bric::Biz::OutputChannel->lookup({ id => $at->get_primary_oc_id }) ];
+    my $ocs = [ Bric::Biz::OutputChannel->lookup({ id => $oc_id ? $oc_id : $at->get_primary_oc_id }) ];
 	
     # Iterate through each output channel.
     foreach my $oc (@$ocs) {

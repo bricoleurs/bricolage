@@ -10,13 +10,9 @@ $media_id => undef
 my $fs = PREVIEW_LOCAL ? Bric::Util::Trans::FS->new : undef;
 my $send_msg = sub { $m->comp('/lib/util/status_msg.mc', @_) };
 my $comp_root = $m->interp->comp_root->[0][1];
-my $i_oc_id;
 </%once>
 
 <%init>;
-# amazing what you have to do to get an argument into a 'shared' section
-$i_oc_id = $oc_id;
-
 # Hunt the wumpus
 $field = 'publish' if $field eq "$widget|publish_cb";
 return unless $field eq 'preview' or $field eq "publish";
@@ -38,7 +34,7 @@ if ($field eq 'preview') {
 	}
 
 	# Move out the story and then redirect to preview.
-	my $url = $b->preview($media, 'media', get_user_id(), $m);
+	my $url = $b->preview($media, 'media', get_user_id(), $m, $oc_id);
 	&$send_msg("Redirecting to preview.");
 	redirect_onload($url);
     } else {
@@ -57,10 +53,10 @@ if ($field eq 'preview') {
 			$r->get_title.'&quot; because it is checked out');
 		next;
 	    }
-	    $b->preview($r, 'media', get_user_id(), $m);
+	    $b->preview($r, 'media', get_user_id(), $m, $oc_id);
 	}
 	# Move out the story and then redirect to preview.
-	my $url = $b->preview($s, 'story', get_user_id(), $m);
+	my $url = $b->preview($s, 'story', get_user_id(), $m, $oc_id);
 	&$send_msg("Redirecting to preview.");
 	redirect_onload($url);
     }
