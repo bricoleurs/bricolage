@@ -10,7 +10,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:22 $
+$Date: 2003-02-27 20:54:35 $
 
 =head1 SYNOPSIS
 
@@ -599,7 +599,6 @@ sub cache_me {
         # Cache it under its ID.
         $r->pnotes("$pkg|id|$self->{id}", $self);
         # Cache it under other unique identifiers.
-        warn "Object: $self\n";
         foreach my $m ($self->my_meths(0, 1)) {
             $r->pnotes("$pkg|$m->{name}|" . lc $m->{get_meth}->($self), $self);
         }
