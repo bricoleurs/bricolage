@@ -1815,7 +1815,8 @@ sub handle_error {
             # the error message and mark the job as failed, and no longer
             # executing.
             $self->_set([qw(_executing error_message _failed)], [0, "$err", 1]);
-            # log the event
+            # Log the failure. It's okay that it logs for the user executing
+            # the job rather than the user who scheduled it.
             log_event( $self->KEY_NAME . '_failed', $self);
         } else {
             # We're gonna try again. Unlock the job.
