@@ -133,6 +133,7 @@ var selectOrderNames = new Array("include_pos")
 $m->comp("/widgets/profile/formButtons.mc",
 	 type => $type,
 	 section => $widget,
+         widget => $type,
 	 val => $button,
 	 no_del => $no_del,
 	 no_save => $no_edit);
@@ -159,11 +160,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.11.2.1 $
+$Revision: 1.11.2.2 $
 
 =head1 DATE
 
-$Date: 2003-06-11 09:46:41 $
+$Date: 2003-07-03 15:15:05 $
 
 =head1 SYNOPSIS
 
