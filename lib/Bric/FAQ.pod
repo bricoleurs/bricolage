@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =head1 DATE
 
-$Date: 2004-03-29 23:54:06 $
+$Date: 2004-04-02 22:43:10 $
 
 =head1 DESCRIPTION
 
@@ -500,6 +500,12 @@ The solution is to give the new version of the field a different name, but
 make the "Label" the same. So you might have a name like "new_paragraph" and
 the label "Paragraph". Just remember to change any references to the old field
 name in your templates to use the new field name.
+
+=head3 I created a new subelement type element but it does not appear in the list of elements for which I can choose to create a template. Where is it?
+
+Did you add it as a subelement to a document type element, or as a subelement
+to any element that's part of a document type element hierarchy? If not, it
+won't show up in the template select list.
 
 =head2 Miscellaneous
 
