@@ -151,6 +151,15 @@ outputting something other than Perl utf8 decoded data, they can specify what
 they're outputting, and the file opened for output will from the templates
 will be set to the proper mode. Applies to Perl 5.8.0 only. [David]
 
+=item *
+
+Added example use for C<< $burner->display_pages >> to Bric::AdvTemplates.
+[Cinly Ooi]
+
+=item *
+
+Added F<README.Mandrake>. [Cameron Miller]
+
 =back
 
 =head2 Bug Fixes
