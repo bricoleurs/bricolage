@@ -16,7 +16,7 @@ if ($field eq "$widget|save_cb") {
 	$delete_fa->($fa);
     } else {
         # Check syntax.
-        return unless $check_syntax->($widget);
+        return unless $check_syntax->($widget, $fa);
 	# Make sure the fa is activated and then save it.
 	$fa->activate;
 	$fa->save;
@@ -47,8 +47,10 @@ if ($field eq "$widget|save_cb") {
 }
 
 elsif ($field eq "$widget|checkin_cb") {
-    return unless $check_syntax->($widget);
-    $checkin->($widget, $param);
+    my $fa = get_state_data($widget, 'fa');
+    $save_meta->($param, $widget, $fa);
+    return unless $check_syntax->($widget, $fa);
+    $checkin->($widget, $param, $fa);
 }
 
 elsif ($field eq "$widget|save_and_stay_cb") {
@@ -64,7 +66,7 @@ elsif ($field eq "$widget|save_and_stay_cb") {
 	clear_state($widget);
     } else {
         # Check syntax.
-        return unless $check_syntax->($widget);
+        return unless $check_syntax->($widget, $fa);
 	# Make sure the template is activated and then save it.
 	$fa->activate;
 	$fa->save;
@@ -258,7 +260,6 @@ my $save_meta = sub {
     $fa->set_description($param->{description}) if $param->{description};
     $fa->set_expire_date($param->{'expire_date'}) if $param->{'expire_date'};
     $fa->set_data($param->{"$widget|code"});
-
     return set_state_data($widget, 'fa', $fa);
 };
 
@@ -297,7 +298,7 @@ my $save_object = sub {
 
 
 my $checkin = sub {
-    my ($widget, $param) = @_;
+    my ($widget, $param, $fa) = @_;
     my $fa = get_state_data($widget, 'fa');
     my $new = defined $fa->get_id ? 0 : 1;
     $save_meta->($param, $widget, $fa);
@@ -407,8 +408,7 @@ my $checkin = sub {
 };
 
 my $check_syntax = sub {
-    my ($widget) = @_;
-    my $fa = get_state_data($widget, 'fa');
+    my ($widget, $fa) = @_;
     my $burner = Bric::Util::Burner->new;
     my $err;
     # Return success if the syntax checks out.

@@ -274,6 +274,14 @@ viewing them will now always preview the version as currently edited by the
 user, rather than the last checked-in version. Other users still can only
 previewe the last checked-in version. [David]
 
+=item *
+
+Clicking the "Check In" or "Check In/Deploy" buttons in a template profile now
+properly updates the template with any new data entered into the template
+profile before attempting a syntax check. This ensures that the latest data
+you've entered gets its syntax checked before the template is checked in or
+deployed. [David]
+
 =back
 
 =head1 VERSION 1.4.3
