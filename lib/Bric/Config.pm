@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-07 00:05:31 $
+$Date: 2002-07-16 14:44:12 $
 
 =head1 SYNOPSIS
 
@@ -380,8 +380,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
       (eval "$config->{XML_WRITER_ARGS}" ) : ();
 
     # System User (The user and group under which the server children run). use
-    use constant SYS_USER => scalar getpwnam $config->{SYS_USER} || "nobody";
-    use constant SYS_GROUP => scalar getgrnam $config->{SYS_GROUP} || "nobody";
+    use constant SYS_USER => scalar getpwnam($config->{SYS_USER} or "nobody");
+    use constant SYS_GROUP => scalar getgrnam($config->{SYS_GROUP} or "nobody");
 
     # Cookie/Session Settings.
     # AUTH_TTL is in seconds.

@@ -216,6 +216,12 @@ Changed Category manager to display no categories by default, only display
 them after a search. This is because some folks have a I<lot> of categories.
 [David]
 
+=item *
+
+Fixed bug where when C<SYS_USER> and/or C<SYS_GROUP> wasn't in
+F<bricolage.conf>, Bric::Config would use the username "nobody" instead of the
+UID for the user "nobody". [David]
+
 =back
 
 =head1 VERSION 1.3.2
