@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2003-12-24 22:00:52 $
+$Date: 2004-01-27 11:15:37 $
 
 =head1 DESCRIPTION
 
@@ -495,6 +495,11 @@ full substring query. Or you can enable on the "FULL_SEARCH" F<bricolage.conf>
 directive and restart Bricolage. But know that either of these methods I<will>
 a lot slower (though you probably won't notice much until you have 1000s of
 documents).
+
+=head3 Why can't I see all the stories I should see in Find Stories/Find Media/Find Templates ?
+
+What is your 'Filter search results by site context' preference set to? When this preference is set to 'On',
+Bricolage filters search results according to the Site context selected.
 
 =head3 Does Bricolage have a memory leak?
 

@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-16 19:00:40 $
+$Date: 2004-01-27 11:15:38 $
 
 =head1 SYNOPSIS
 
@@ -104,6 +104,9 @@ my $get_em;
 #======================================#
 
 use constant DEBUG => 1;
+
+use constant HAS_MULTISITE => 1;
+
 use constant ASSET_GRP_PKG => 'Bric::Util::Grp::Asset';
 use constant DESK_PKG => 'Bric::Biz::Workflow::Parts::Desk';
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Workflow';

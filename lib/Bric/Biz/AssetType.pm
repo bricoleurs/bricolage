@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.57 $
+$Revision: 1.58 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.57 $ )[-1];
+our $VERSION = (qw$Revision: 1.58 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-27 02:52:24 $
+$Date: 2004-01-27 11:15:39 $
 
 =head1 SYNOPSIS
 
@@ -142,6 +142,7 @@ my ($get_oc_coll, $get_site_coll, $remove, $make_key_name);
 #======================================#
 
 use constant DEBUG => 0;
+use constant HAS_MULTISITE => 1;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Element';
 use constant INSTANCE_GROUP_ID => 27;
 use constant ORD => qw(name key_name description type_name  burner active);
@@ -2573,6 +2574,16 @@ sub _do_list {
             push @$grp_ids, $d[$#d];
         }
     }
+
+    # Multisite elements are all the top-level for the site,
+    # plus all non top-level elements.
+    if($params->{site_id} && !defined($params->{top_level})) {
+        delete $params->{site_id};
+        $params->{top_level} = 0;
+        push @elems, _do_list($pkg, $params);
+
+    }
+
     return wantarray ? @elems : \@elems;
 }
 

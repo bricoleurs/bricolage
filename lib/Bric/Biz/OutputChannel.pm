@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:10 $
+$Date: 2004-01-27 11:15:38 $
 
 =head1 SYNOPSIS
 
@@ -109,6 +109,7 @@ my ($get_inc, $parse_uri_format);
 #======================================#
 
 use constant DEBUG => 0;
+use constant HAS_MULTISITE => 1;
 use constant INSTANCE_GROUP_ID => 23;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::OutputChannel';
 

@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$Revision: 1.54 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.53 $ )[-1];
+our $VERSION = (qw$Revision: 1.54 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-04 18:18:55 $
+$Date: 2004-01-27 11:15:39 $
 
 =head1 SYNOPSIS
 
@@ -103,6 +103,7 @@ my $get_kw_coll;
 # Constants                            #
 #======================================#
 use constant DEBUG => 0;
+use constant HAS_MULTISITE => 1;
 use constant ORD => qw(name description site_id uri directory ad_string
                        ad_string2);
 

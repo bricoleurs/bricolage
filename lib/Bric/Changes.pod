@@ -151,6 +151,12 @@ media, and formatting classes. This makes it easier to use the name of a story
 type element, media type element, or template element to search for assets,
 rather than the C<element__id> parameter, which isn't as friendly. [David]
 
+=item *
+
+Added "Filter by Site Context" preference. When active, search results only 
+return assets relative to the site context instead of all the sites the user
+has access to [JoE<atilde>o Pedro]
+
 =back
 
 =head2 Bug Fixes

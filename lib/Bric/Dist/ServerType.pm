@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2004-01-27 11:15:38 $
 
 =head1 SYNOPSIS
 
@@ -129,6 +129,7 @@ my ($get_em, $get_coll);
 # Constants
 ##############################################################################
 use constant DEBUG => 0;
+use constant HAS_MULTISITE => 1;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Dest';
 use constant INSTANCE_GROUP_ID => 29;
 
