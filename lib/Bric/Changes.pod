@@ -36,8 +36,8 @@ Preview works again. [David]
 
 Document and contributor type field information (label, options) is no longer
 pushed through Locale::Maketext, thus preventing errors when element and
-contributor type admins create field options with brackets in them. Reported
-by Kevin Elliott. [David]
+contributor type administrators create field options with brackets in
+them. Reported by Kevin Elliott. [David]
 
 =item *
 
@@ -104,7 +104,7 @@ the vast majority of cases.
 
 =item *
 
-Fixed error looking up alert types in the dataase, which affected the alert
+Fixed error looking up alert types in the database, which affected the alert
 type manager on some platforms. Reported by Radu Greab. [David]
 
 =item *
@@ -114,7 +114,7 @@ Deactivated alert types are once again available via the UI. [David]
 =item *
 
 Text input fields no longer impose a default maximum field length. This is so
-that element fields that have their maximum length set to 0 can truely be
+that element fields that have their maximum length set to 0 can truly be
 unlimited in length. Reported by Kevin Elliott. [David]
 
 =item *
