@@ -223,7 +223,7 @@ sub checkin : Callback {
     set_redirect("/");
 }
 
-sub save_stay : Callback {
+sub save_and_stay : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $param = $self->request_args;
