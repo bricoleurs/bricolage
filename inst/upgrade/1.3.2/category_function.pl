@@ -23,7 +23,7 @@ exit if fetch_sql( qq{
        SELECT category_full_path(0), 1
 } );
 
-my @sql = (qq{
+my @sql = (q{
         CREATE FUNCTION category_full_path(INT) RETURNS VARCHAR AS'
         DECLARE v_category_grp_id ALIAS FOR $1
         ;
