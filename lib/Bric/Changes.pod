@@ -113,8 +113,15 @@ displayed. [Sam]
 
 =item *
 
-Fixed installation to work under Debian Linux 3.0 (testing).  Thanks
-to Mark Jaroski for a helpful patch.  [Sam]
+Fixed installation to work under Debian Linux 3.0 (testing). Thanks to Mark
+Jaroski for a helpful patch. [Sam]
+
+=item *
+
+Changed length of Bric::Dist::Job name attribute from 64 characters to 256.
+This allows long asset names to be used. Also added code to Bric::Dist::Job
+to ensure that the name property is truncated if it's longer than 256
+characters. Thanks to Josh Cox for the spot. [David]
 
 =back
 

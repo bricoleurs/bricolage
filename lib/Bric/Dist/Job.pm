@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:23 $
+$Date: 2002-05-15 18:17:49 $
 
 =head1 SYNOPSIS
 
@@ -724,7 +724,6 @@ Returns the name of the Bric::Dist::Job object.
 
 B<Throws:>
 
-
 =item *
 
 Bad AUTOLOAD method format.
@@ -751,31 +750,15 @@ B<Notes:> NONE.
 
 Sets the server type name.
 
-B<Throws:>
-
-=over 4
-
-=item *
-
-Bad AUTOLOAD method format.
-
-=item *
-
-Cannot AUTOLOAD private methods.
-
-=item *
-
-Access denied: WRITE access for field 'name' required.
-
-=item *
-
-No AUTOLOAD method.
-
-=back
+B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=cut
+
+sub set_name { $_[0]->_set('name', substr $_[1], 0, 256) }
 
 =item my $user_id = $job->get_user_id
 

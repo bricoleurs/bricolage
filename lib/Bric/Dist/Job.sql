@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:45 $
+-- $Date: 2002-05-15 18:17:49 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -19,7 +19,7 @@ CREATE SEQUENCE seq_job_member START 1024;
 CREATE TABLE job (
     id            NUMERIC(10, 0)    NOT NULL
                                     DEFAULT NEXTVAL('seq_job'),
-    name          VARCHAR(64)       NOT NULL,
+    name          VARCHAR(256)      NOT NULL,
     usr__id       NUMERIC(10, 0)    NOT NULL,
     sched_time    TIMESTAMP	    NOT NULL
 				    DEFAULT CURRENT_TIMESTAMP,
