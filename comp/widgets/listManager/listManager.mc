@@ -90,6 +90,14 @@ order, then specify which field defines that order here.
 
 =item *
 
+def_sort_order
+
+Use this when results should be sorted either ascending or descending by default.
+Default is undefined, which has no effect.  Possible values are 'ascending' or
+'decending'.
+
+=item *
+
 userSort
 
 A flag controlling whether the user is allowed to resort the list based on the 
@@ -366,6 +374,7 @@ $featured_color => '#cccc99'    # The color for the bkground of the featured row
 $number         => 0
 $objs           => undef        # These are user objects to be listed.
 $def_sort_field => undef
+$def_sort_order => undef        # Whether to sort in descending order by default
 $cx_filter      => 1            # Make false to override Filter by Site Context.
 </%args>
 
@@ -457,6 +466,9 @@ $load_featured_objs->(\@objects, $pkg, \%featured_lookup) if scalar(@$featured);
 
 #--------------------------------------#
 # Sort the objects.
+
+my $sortOrder = get_state_data($widget, 'sortOrder') || $def_sort_order;
+set_state_data($widget, 'sortOrder', $sortOrder);
 
 my @sort_objs = $sort_objects->(\@objects, $meth, $exclude);
 
@@ -753,7 +765,7 @@ my $multisort = sub {
         $val = $sort_get->($a, @$sort_arg) <=>
           $sort_get->($b, @$sort_arg);
     } elsif ($type eq 'date') {
-        # Pass in the ISO format so that it always sorts properl.
+        # Pass in the ISO format so that it always sorts properly.
         $val = $sort_get->($a, ISO_8601_FORMAT) cmp
           $sort_get->($b, ISO_8601_FORMAT);
     } else {

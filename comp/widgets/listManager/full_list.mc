@@ -24,9 +24,9 @@
 
       my ($sort_sign, $class);
       if ($sortBy eq $f) {
-          $class = qq{ class="} . (($sortOrder !~ /^reverse$/) ? "sortdown" : "sortup") . qq{"};
+          $class = qq{ class="} . (($sortOrder =~ /^descending/) ? "sortdown" : "sortup") . qq{"};
           $sort_col = $i;
-          $sort_sign = '-' if ($userSort && $sortOrder !~ /^reverse$/);
+          $sort_sign = '-' if ($userSort && $sortOrder !~ /^descending$/);
       }
       
       $m->out(qq{    <th$class>});
@@ -50,7 +50,7 @@
 
 %# Output the rows of data
 % my $first;
-% if ($sortOrder eq 'reverse') {
+% if ($sortOrder eq 'descending') {
 %     @$data = reverse @$data;
 % }
 

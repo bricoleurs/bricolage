@@ -74,6 +74,7 @@ BEGIN { require Bric::App::Callback::CharTrans if ENCODE_OK }
 use Bric::App::Callback::ContainerProf;
 use Bric::App::Callback::Desk;
 use Bric::App::Callback::Element;
+use Bric::App::Callback::Event;
 use Bric::App::Callback::ListManager;
 use Bric::App::Callback::Login;
 use Bric::App::Callback::Nav;

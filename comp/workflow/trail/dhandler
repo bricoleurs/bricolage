@@ -3,13 +3,25 @@
     context => "Workflow | Profile | $disp->{$type} | &quot;"
                . $obj->get_name . "&quot; | Desk Stamps" &>
 
+<form method="post" action="<% $r->uri %>" name="theForm">
+
 <& '/widgets/eventList/eventList.mc',
     title   => $lang->maketext("Events"),
     object => $type,
     obj_id => $id,
+    def_sort_order => 'descending',
     constrain => { key_name => "${type}_moved"} &>
 
-<& '/lib/util/back_button.mc' &>
+<& '/widgets/profile/button.mc',
+    disp    => 'Return',
+    widget  => 'event',
+    cb      => 'return_cb',
+    button  => 'return_dgreen',
+    useTable => 0
+&>
+
+</form>
+
 <& '/widgets/wrappers/sharky/footer.mc' &>
 
 <%args>

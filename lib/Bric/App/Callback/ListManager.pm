@@ -58,9 +58,9 @@ sub sortBy : Callback {
 
     # Leading '-' means reverse the sort
     if ($value =~ s/^-//) {
-        set_state_data('listManager', 'sortOrder', 'reverse');
+        set_state_data('listManager', 'sortOrder', 'descending');
     } else {
-        set_state_data('listManager', 'sortOrder', '');
+        set_state_data('listManager', 'sortOrder', 'ascending');
     }
     set_state_data('listManager', 'sortBy', $value);
 }
