@@ -71,6 +71,18 @@ are stored in the "bricolage" subdirectory of the local tmp, e.g.,
 Fixed bug where cancelled checkouts of template appeared to work in some views,
 but not others. Thanks to Matt Vella for the report. [David]
 
+=item *
+
+Fixed bug where story titles were accentally getting bogus hyperlinking markup.
+Thanks to Chris Brody for the report. [David]
+
+=item *
+
+Fixed a bug where the "Generic" check box on the "New Template" screen was
+partially ignored, leading to possibly corrupted data, and at least to the
+inability to create autohandlers. Thanks to Sam Tregar for the bug report that
+led to finding this bug. [David]
+
 =back
 
 =head1 VERSION 1.0.1
