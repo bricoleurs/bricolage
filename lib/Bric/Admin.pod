@@ -743,6 +743,8 @@ This step will check your system for all required packages.  It will
 also ask you questions regarding your installation.  In most cases the
 default answer will be correct and you can just press return.
 
+[TODO: add detailed information on each of the questions here]
+
 Note that if you use 'IDENT sameuser' authentication in PostgreSQL,
 you have to 1) use the same username for 'Bricolage Postgres Username'
 as you did for 'Apache User' (so that the apache process has permission
