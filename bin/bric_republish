@@ -277,7 +277,7 @@ sub soap_connect {
     our ($server, $username, $password, $timeout, $soap);
 
     # fixup server if missing http://
-    $server = "http://$server" unless $server =~ m!^http://!;
+    $server = "http://$server" unless $server =~ m!^https?://!;
 
     # setup soap object to login with
     $soap = new SOAP::Lite
