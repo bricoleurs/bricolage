@@ -1,0 +1,19 @@
+Description:
+  o Initializes a new Bricolage installation.
+Usage:
+  o You should first configure the %conf hash. Then
+    run this program as your apache user. Only run it once.
+    Note that this program can contain passwords and so is
+    a possible security risk.
+Bugs:
+  o  You have to run this as your apache user (nobody) because
+     some things (like saving Preferences) require write
+     permission to the cache; alternatively, change the perms
+     of /tmp/bricolage/cache and add yourself to apache's group.
+  o  It seems that the Story doesn't get checked into the Edit
+     desk unless you've already logged in when you run the script.
+Todo:
+  o  Probably should generalize this to a "bric_admin" tool
+     or add some SOAP modules and add functionality to bric_soap.
+Author:
+  o  Scott Lanning, 2003-01-15
