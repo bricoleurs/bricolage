@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:42 $
+$Date: 2002-03-22 23:01:29 $
 
 =head1 SYNOPSIS
 
@@ -817,11 +817,14 @@ sub add_data {
         object_type        => $self->_get('object_type'),
         object_instance_id => $self->_get('object_id'),
         element_data       => $atd,
-	(defined $place ? (place => $place) : ()),
       });
 
     $data_tile->set_data($data);
     $self->add_tile($data_tile);
+    
+    # have to do this after add_tile() since add_tile() modifies place
+    $data_tile->set_place($place) if defined $place;
+    
     return $self;
 }
 

@@ -30,15 +30,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-08 02:40:18 $
+$Date: 2002-03-22 23:01:29 $
 
 =head1 SYNOPSIS
 
@@ -278,7 +278,9 @@ sub _deserialize_tile {
 			unless $at;
 
 	    # add data to container
-	    $element->add_data($at, $d->{content}, $d->{order});
+	    $element->add_data($at, 
+			       exists $d->{content} ? $d->{content} : '',
+			       $d->{order});
 	    $element->save; # I'm not sure why this is necessary after
                             # every add, but removing it causes errors
 	}

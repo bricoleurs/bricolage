@@ -92,6 +92,11 @@ destination and PREVIEW_LOCAL off would result in a Mason error. [Sam]
 
 =item *
 
+Fixed bug in Bric::SOAP::Story->create() where data element order was
+getting lost. Thanks to Mike Slattery for the spot. [Sam]
+
+=item *
+
 All fixes in the soon-to-be-released 1.2.2 version.  See below for details.
 
 =back
