@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-11 16:49:58 $
+$Date: 2001-12-19 02:00:09 $
 
 =head1 SYNOPSIS
 
@@ -130,7 +130,10 @@ sub uri_handler {
     my $r = shift;
     my $ret = eval {
 	# Decline the request unless it's coming from the preview directory.
-	return DECLINED unless $r->header_in('referer') =~ m{$prev_qr};
+	{
+	    local $^W;
+	    return DECLINED unless $r->header_in('referer') =~ m{$prev_qr};
+	}
 	# Grab the URI and break it up into its constituent parts.
 	my $uri = $r->uri;
 	my @dirs = $fs->split_uri($uri);
