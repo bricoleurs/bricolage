@@ -25,6 +25,11 @@ This document lists the Changes to Bricolage introduced with each release.
 Warnings are no longer fatal. This was only the case ouside of mod_perl, and
 so was probably quite rare, anyway. [David]
 
+=item *
+
+Upgrades no longer cause an error during the execution of
+F<inst/db_grant.pl>. Reported by Abdul Halim Mazahar. [David]
+
 =back
 
 =head1 VERSION 1.6.11 "Green" (2004-03-17)

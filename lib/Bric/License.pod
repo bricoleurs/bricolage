@@ -229,6 +229,8 @@ Friends who have spotted bugs include:
 
 =item Patrick Walsh
 
+=item Abdul Halim Mazahar
+
 =back
 
 Bricolage's translation team:

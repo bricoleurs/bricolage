@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.18 $
+$Revision: 1.38.2.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 21:10:59 $
+$Date: 2004-04-05 21:01:25 $
 
 =head1 SYNOPSIS
 
@@ -2157,7 +2157,7 @@ sub _build_file_name {
       if ($old =~ /autohandler$/) {
         $file_type = 'mc';
       } else {
-        ($file_type) = $old =~ /\.(.+)$/;
+          ($file_type) = $old =~ /(\.[^.]+)$/;
       }
     }
 
