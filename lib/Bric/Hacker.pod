@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-05-03 20:17:40 $
+$Date: 2002-05-03 20:46:34 $
 
 =head1 DESCRIPTION
 
@@ -120,9 +120,11 @@ Here are some tips to help you find bugs faster:
 
 Turn on QA_MODE in your bricolage.conf.  This will cause the UI to
 display a bunch of useful data the bottom of every page including
-session state, cache state, cookies and CGI args.  Also, QA_MODE turns
-on PerlWarn (use warnings) and causes error messages to include more
-information.
+session state, cache state, cookies and CGI args.  QA_MODE turns on
+PerlWarn (use warnings) and causes error messages to include more
+information.  QA_MODE also enables Apache::Status at the URL
+/perl-status which you can use to examine the state of the Perl
+interpreter inside Apache.
 
 =item *
 
