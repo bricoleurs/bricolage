@@ -29,7 +29,10 @@ if ($object) {
     $type = $types{ref $object} || 'story';
 } elsif ($type && defined $id) {
     if ($type eq 'story') {
-	$object = Bric::Biz::Asset::Business::Story->lookup({ 'id' => $id });
+	$object = get_state_data('story_prof', 'story');
+	unless ($object && $object->get_id != $id) {
+	    $object = Bric::Biz::Asset::Business::Story->lookup({ 'id' => $id });
+	}
     } elsif ($type eq 'template') {
 	$object = Bric::Biz::Asset::Formatting->lookup({ 'id' => $id });
     } elsif ($type eq 'media') {
