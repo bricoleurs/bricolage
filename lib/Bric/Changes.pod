@@ -72,6 +72,10 @@ during a burn. [Mark]
 
 Many minor HTML corrections. [Gerfried Fuchs]
 
+=item *
+
+Fix for SQL error when searching for media by file name. [David]
+
 =back
 
 =head1 VERSION 1.6.1
