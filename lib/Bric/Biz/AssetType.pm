@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-16 11:25:37 $
+$Date: 2003-03-16 13:30:03 $
 
 =head1 SYNOPSIS
 
@@ -900,7 +900,7 @@ sub set_primary_oc_id {
     my $oc_site = $self->_get('_site_primary_oc_id');
 
     # If it is set and it is the same then don't bother
-    return $self if ref $oc_site && exists $oc_site->{$site}
+    return $self if ref $oc_site && defined $id && exists $oc_site->{$site}
       && $oc_site->{$site} == $id;
 
     $oc_site = {} unless ref $oc_site;
@@ -1630,7 +1630,7 @@ B<Notes:> NONE.
 sub delete_output_channels {
     my ($self, $ocs) = @_;
     my $oc_coll = $get_oc_coll->($self);
-
+    no warnings 'uninitialized';
     foreach my $oc (@$ocs) {
         $oc = Bric::Biz::OutputChannel->lookup({ id => $oc }) unless ref($oc);
         throw_dp "Cannot delete a primary output channel"
