@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2004-04-07 20:35:58 $
 
 =head1 SYNOPSIS
 
@@ -495,10 +495,11 @@ sub add_new_objs {
 =item $self = $coll->del_objs(@obj_ids)
 
 Deletes the objects in C<@objs> or identified by the IDs in C<@obj_ids> from
-the collection, if they're a part of the collection. All arguments can be
-either objects or object IDs; however, if you've constructed an object
-already, pass it in rather than the ID, as C<del_objs()> likely will have to
-construct the object from the ID, anyway.
+the collection, if they're a part of the collection, even if they've been
+added by C<add_new_objs()> and the collection has not yet been C<save()>d. All
+arguments can be either objects or object IDs; however, if you've constructed
+an object already, pass it in rather than the ID, as C<del_objs()> likely will
+have to construct the object from the ID, anyway.
 
 B<Throws:>
 
@@ -554,24 +555,62 @@ sub del_objs {
     # catch bugs where someone tries to delete an object that isn't in
     # the collection.
     $self->_populate if QA_MODE;
-    my ($objs, $del_objs) = $self->_get('objs', 'del_obj');
+    my ($objs, $del_objs, $new_objs) = $self->_get(qw(objs del_obj new_obj));
+
+    # Create a hash of newly added objects, so that we can delete any from
+    # there that have IDs.
+    # XXX Next time, use a hash for new objects!
+    my %new_idx;
+    for (my $i = 0; $i <= $#$new_objs; $i++) {
+        my $id = $new_objs->[$i]->get_id;
+        next unless defined $id;
+        $new_idx{$id} = $i;
+    }
+
+    my @remove_new;
     if ($self->is_populated) {
         foreach my $o (@_) {
             # Grab the ID.
             my $id = ref $o ? $o->get_id : $o;
             # Do some error checking if we're in QA_MODE.
             throw_da(error => "Object '$o' not in collection")
-              if QA_MODE && ! $objs->{$id};
+              if QA_MODE && ! $objs->{$id} && ! $new_idx{$id};
+            if (defined $new_idx{$id}) {
+                # Just skip to the next one if we're removing one that
+                # hasn't been saved.
+                push @remove_new, delete $new_idx{$id};
+                next;
+            }
             # Add the object to be deleted to the del_obj hash.
             $del_objs->{$id} = delete $objs->{$id} if $objs->{$id};
         }
     } else {
         foreach my $o (@_) {
+            my $id = $o;
             if (ref $o) {
-                $del_objs->{$o->get_id} = $o;
+                $id = $o->get_id;
             } else {
-                $del_objs->{$o} = $self->class_name->lookup({ id => $o });
+                $o = $self->class_name->lookup({ id => $id });
             }
+
+            # Just skip to the next one if we're removing one that
+            # hasn't been saved.
+            if (defined $new_idx{$id}) {
+                # Just skip to the next one if we're removing one that
+                # hasn't been saved.
+                push @remove_new, delete $new_idx{$id};
+                next;
+            }
+            # Otherwise, store it away for deletion from the database.
+            $del_objs->{$id} = $o;
+        }
+    }
+
+    # Remove any items from new_objs.
+    if (@remove_new) {
+        # Do it in reverse order so that the numbers don't change!
+        for my $idx (sort { $b <=> $a } @remove_new) {
+            splice @$new_objs, $idx, 1;
         }
     }
     return $self;
