@@ -146,6 +146,11 @@ Jablonski. [Marshall]
 Deleted sites will no longer be displayed in the site context menu in the
 UI. Reported by Ed Stevenson. [David]
 
+=item *
+
+Sorting templates based on Asset Type (Element) no longer causes an error.
+[David]
+
 =back
 
 =cut
