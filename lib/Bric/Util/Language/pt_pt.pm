@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-18 12:34:53 $
+$Date: 2004-02-19 14:08:48 $
 
 =head1 SYNOPSIS
 
@@ -700,6 +700,7 @@ To translate:
   'This job has failed'
   'The error message is available below.  No further execution attempts will be made on this job.  Please leave it in the queue until your administrator has seen the error message.'
   'First Published' => 'First Published',
+  'You do not have permission to add "[_1]" objects'
 
 =end comment
 

@@ -133,6 +133,12 @@ method. [David]
 
 Updated the German localization. [Thorsten Biel]
 
+=item *
+
+Users can no longer sneakily add subelements for which they do not have at
+least READ permission to the corresponding element via the Super Bulk
+Edit. Reported by Patrick Walsh. [David]
+
 =back
 
 =head2 Bug Fixes

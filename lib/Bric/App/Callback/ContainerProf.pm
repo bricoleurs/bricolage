@@ -5,6 +5,7 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'container_prof';
 
 use strict;
+use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:msg :aref :history);
 use Bric::App::Event qw(log_event);
@@ -810,6 +811,12 @@ sub _super_save_data {
                      'object_type'  => 'story' });
             } else {
                 $atc = $at->get_containers($name);
+                # Make sure they have permission to add elements of this type.
+                unless (chk_authz($atc, READ, 1)) {
+                    add_msg('You do not have permission to add "[_1]" objects',
+                            $atc->get_name);
+                    next;
+                }
                 $t = Bric::Biz::Asset::Business::Parts::Tile::Container->new
                   ({ element     => $atc,
                      object_type => 'story' });
