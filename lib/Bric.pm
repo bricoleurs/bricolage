@@ -10,7 +10,7 @@ Release Version: 1.0.1
 
 File (CVS) Version:
 
-$Revision: 1.4.2.1 $
+$Revision: 1.4.2.2 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.0.1";
 
 =head1 DATE
 
-$Date: 2001-10-01 10:31:05 $
+$Date: 2001-10-04 16:21:47 $
 
 =head1 SYNOPSIS
 
@@ -713,10 +713,11 @@ sub _set {
     my $dirt = $self->{_dirty};
     # Disable warnings to prevent "Use of uninitialized value in string ne"
     # messages.
-    local $^W = undef;
     for my $i (0..$#$k) {
 	eval {
-	    if ($self->{$k->[$i]} ne $v->[$i]) {
+	    if ((defined $self->{$k->[$i]} && !defined $v->[$i])
+		|| (!defined $self->{$k->[$i]} && defined $v->[$i])
+		|| $self->{$k->[$i]} ne $v->[$i]) {
 		$self->{$k->[$i]} = $v->[$i];
 		$dirt = 1;
 	    };
@@ -803,7 +804,11 @@ perl(1).
 =head1 REVISION HISTORY
 
 $Log: Bric.pm,v $
-Revision 1.4.2.1  2001-10-01 10:31:05  wheeler
+Revision 1.4.2.2  2001-10-04 16:21:47  wheeler
+Changed _set() to check for definedness vs. non-definedness because '' ne undef,
+and this was causing some problems.
+
+Revision 1.4.2.1  2001/10/01 10:31:05  wheeler
 Changed behavior of Bric::Util::Burner->display_element() such that it does
 *not* write out new files for each paginated element. Now only display_pages()
 does that. Updated the template documentation to reflect this change. Also
