@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.89 $
+$Revision: 1.90 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.89 $ )[-1];
+our $VERSION = (qw$Revision: 1.90 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-09 21:08:42 $
+$Date: 2004-03-11 23:17:06 $
 
 =head1 SYNOPSIS
 
@@ -323,6 +323,7 @@ use constant PARAM_WHERE_MAP =>
       cover_date_end         => 's.cover_date <= ?',
       expire_date_start      => 's.expire_date >= ?',
       expire_date_end        => 's.expire_date <= ?',
+      unexpired              => '(s.expire_date IS NULL OR s.expire_date > ?)',
       desk_id                => 's.desk_id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
       data_text              => 'LOWER(sd.short_val) LIKE LOWER(?) AND sd.object_instance_id = i.id',
@@ -709,6 +710,11 @@ Returns a list of stories with a expire date on or after a given date/time.
 =item expire_date_end
 
 Returns a list of stories with a expire date on or before a given date/time.
+
+=item unexpired
+
+A boolean parameter. Returns a list of stories without an expire date, or with
+an expire date set in the future.
 
 =item Order
 

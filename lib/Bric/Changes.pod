@@ -169,6 +169,12 @@ those key names. [David]
 The C<ANY()> subroutine will now throw an exception if no arguments are passed
 to it. Suggested by Dave Rolsky. [David]
 
+=item *
+
+Added the C<unexpired> parameter to the C<list()> method of the story and
+media classes. It selects for stories without an expire date, or with an
+expire date set in the future. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -229,6 +235,12 @@ was required before version 1.7.0. [JoE<atilde>o Pedro]
 
 C<< Bric::SOAP::Category->list_ids >> now converts site names to site IDs.
 [JoE<atilde>o Pedro]
+
+=item *
+
+Date parameters to the C<list()> methods of the story, media, and template
+classes are now properly converted to UTC (and the database internal format)
+before being passed to the database. [David]
 
 =back
 

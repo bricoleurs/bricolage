@@ -6,16 +6,16 @@ Bric::Util::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 21:16:44 $
+$Date: 2004-03-11 23:17:07 $
 
 =head1 SYNOPSIS
 
@@ -439,7 +439,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub list { 
+sub list {
     my ($pkg, $params) = @_;
     my $class = ref $pkg || $pkg;
     $params->{_class_id} = $class->CLASS_ID unless $class eq __PACKAGE__;

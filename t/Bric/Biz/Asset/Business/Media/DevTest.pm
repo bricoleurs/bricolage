@@ -7,6 +7,7 @@ use Test::Exception;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Media::Image;
 use Bric::Biz::Keyword;
+use Bric::Util::Time qw(strfdate);
 sub class { 'Bric::Biz::Asset::Business::Media' }
 sub table { 'media' }
 
@@ -53,7 +54,7 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(80) {
+sub test_select_methods: Test(90) {
     my $self = shift;
     my $class = $self->class;
 
@@ -593,6 +594,24 @@ sub test_select_methods: Test(80) {
     ok( $got = class->list({ contrib_id => $self->contrib->get_id }),
        "Try contrib_id" );
     is( @$got, 3, 'Check for three stories' );
+
+    # Tets unexpired.
+    ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
+    is( scalar @$got, 6, 'Check for six media');
+
+    # Set an expire date in the future.
+    ok( $media[3]->set_expire_date(strfdate(time + 3600)),
+        'Set future expire date.');
+    ok( $media[3]->save, 'Save future expire media');
+    ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
+    is( scalar @$got, 6, 'Check for six media again');
+
+    # Set an expire date in the past.
+    ok( $media[2]->set_expire_date(strfdate(time - 3600)),
+        'Set future expire date.');
+    ok( $media[2]->save, 'Save future expire media');
+    ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
+    is( scalar @$got, 5, 'Check for five media now');
 }
 
 ###############################################################################

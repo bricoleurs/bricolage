@@ -5,6 +5,7 @@ use base qw(Bric::Biz::Asset::Business::DevTest);
 use Test::More;
 use Test::Exception;
 use Bric::Util::DBI qw(:standard :junction);
+use Bric::Util::Time qw(strfdate);
 use Bric::Biz::ATType;
 use Bric::Biz::AssetType;
 use Bric::Biz::Asset::Business::Story;
@@ -94,7 +95,7 @@ sub test_clone : Test(17) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(101) {
+sub test_select_methods: Test(111) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -282,7 +283,7 @@ sub test_select_methods: Test(101) {
     push @{$OBJ_IDS->{story}}, $story[1]->get_id();
     $self->add_del_ids( $story[1]->get_id());
 
-    # Try doing a lookup 
+    # Try doing a lookup
     $expected = $story[1];
     ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[1] }),
         'can we call lookup on a Story with multiple categories' );
@@ -441,7 +442,7 @@ sub test_select_methods: Test(101) {
 
     # add it to the workflow
 
-    # Try doing a lookup 
+    # Try doing a lookup
     $expected = $story[4];
     ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[4] }),
         'can we call lookup on a Story' );
@@ -492,7 +493,7 @@ sub test_select_methods: Test(101) {
 
     # add it to the workflow
 
-    # Try doing a lookup 
+    # Try doing a lookup
     $expected = $story[5];
     ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[5] }),
         'can we call lookup on a Story' );
@@ -687,6 +688,24 @@ sub test_select_methods: Test(101) {
     ok( $got = class->list({ contrib_id => $self->contrib->get_id }),
        "Try contrib_id" );
     is( @$got, 3, 'Check for three stories' );
+
+    # Tets unexpired.
+    ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
+    is( scalar @$got, 6, 'Check for six stories');
+
+    # Set an expire date in the future.
+    ok( $story[3]->set_expire_date(strfdate(time + 3600)),
+        'Set future expire date.');
+    ok( $story[3]->save, 'Save future expire story');
+    ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
+    is( scalar @$got, 6, 'Check for six stories again');
+
+    # Set an expire date in the past.
+    ok( $story[2]->set_expire_date(strfdate(time - 3600)),
+        'Set future expire date.');
+    ok( $story[2]->save, 'Save future expire story');
+    ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
+    is( scalar @$got, 5, 'Check for five stories now');
 }
 
 
@@ -714,13 +733,13 @@ sub test_add_get_categories: Test(4) {
                        });
     # make a couple of categories
     my $cats = [];
-    $cats->[0] = Bric::Biz::Category->new({ 
+    $cats->[0] = Bric::Biz::Category->new({
                                            name => "_test_$time.1",
                                            description => '',
                                            directory => "_test_$time.1",
                                            id => 1,
                                         });
-    $cats->[1] = Bric::Biz::Category->new({ 
+    $cats->[1] = Bric::Biz::Category->new({
                                            name => "_test_$time.2",
                                            description => '',
                                            directory => "_test_$time.2",

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.86 $
+$Revision: 1.87 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.86 $ )[-1];
+our $VERSION = (qw$Revision: 1.87 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-05 19:27:29 $
+$Date: 2004-03-11 23:17:06 $
 
 =head1 SYNOPSIS
 
@@ -212,6 +212,7 @@ use constant PARAM_WHERE_MAP =>
       cover_date_end        => 'mt.cover_date <= ?',
       expire_date_start     => 'mt.expire_date >= ?',
       expire_date_end       => 'mt.expire_date <= ?',
+      unexpired              => '(mt.expire_date IS NULL OR mt.expire_date > ?)',
       desk_id               => 'mt.desk_id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
       data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
@@ -481,101 +482,106 @@ listed.
 
 =item active
 
-Boolean indicating whether to return active or inactive stories.
+Boolean indicating whether to return active or inactive media.
 
 =item inactive
 
-Returns only inactive stories.
+Returns only inactive media.
 
 =item category_id
 
-Returns a list of stories in the category represented by a category ID. May
+Returns a list of media in the category represented by a category ID. May
 use C<ANY> for a list of possible values.
 
 =item keyword
 
-Returns stories associated with a given keyword string (not object).
+Returns media associated with a given keyword string (not object).
 
 =item workflow__id
 
-Return a list of stories in the workflow represented by the workflow ID. May
+Return a list of media in the workflow represented by the workflow ID. May
 use C<ANY> for a list of possible values.
 
 =item uri
 
-Returns a list of stories with a given URI. May use C<ANY> for a list of
+Returns a list of media with a given URI. May use C<ANY> for a list of
 possible values.
 
 =item category_uri
 
-Returns a list of stories with a given category URI. May use C<ANY> for a list
+Returns a list of media with a given category URI. May use C<ANY> for a list
 of possible values. May use C<ANY> for a list of possible values.
 
 =item element__id
 
-Returns a list of stories associated with a given element ID. May use C<ANY>
+Returns a list of media associated with a given element ID. May use C<ANY>
 for a list of possible values.
 
 =item source__id
 
-Returns a list of stories associated with a given source ID. May use C<ANY>
+Returns a list of media associated with a given source ID. May use C<ANY>
 for a list of possible values.
 
 =item output_channel_id
 
-Returns a list of stories associated with a given output channel ID. May use
+Returns a list of media associated with a given output channel ID. May use
 C<ANY> for a list of possible values.
 
 =item primary_oc_id
 
-Returns a list of stories associated with a given primary output channel
+Returns a list of media associated with a given primary output channel
 ID. May use C<ANY> for a list of possible values.
 
 =item priority
 
-Returns a list of stories associated with a given priority value. May use
+Returns a list of media associated with a given priority value. May use
 C<ANY> for a list of possible values.
 
 =item contrib_id
 
-Returns a list of stories associated with a given contributor ID. May use
+Returns a list of media associated with a given contributor ID. May use
 C<ANY> for a list of possible values.
 
 =item publish_status
 
-Boolean value indicating whether to return published or unpublished stories.
+Boolean value indicating whether to return published or unpublished media.
 
 =item first_publish_date_start
 
-Returns a list of stories first published on or after a given date/time.
+Returns a list of media first published on or after a given date/time.
 
 =item first_publish_date_end
 
-Returns a list of stories first published on or before a given date/time.
+Returns a list of media first published on or before a given date/time.
 
 =item publish_date_start
 
-Returns a list of stories last published on or after a given date/time.
+Returns a list of media last published on or after a given date/time.
 
 =item publish_date_end
 
-Returns a list of stories last published on or before a given date/time.
+Returns a list of media last published on or before a given date/time.
 
 =item cover_date_start
 
-Returns a list of stories with a cover date on or after a given date/time.
+Returns a list of media with a cover date on or after a given date/time.
 
 =item cover_date_end
 
-Returns a list of stories with a cover date on or before a given date/time.
+Returns a list of media with a cover date on or before a given date/time.
 
 =item expire_date_start
 
-Returns a list of stories with a expire date on or after a given date/time.
+Returns a list of media with a expire date on or after a given date/time.
 
 =item expire_date_end
 
-Returns a list of stories with a expire date on or before a given date/time.
+Returns a list of media with a expire date on or before a given date/time.
+
+=item unexpired
+
+A boolean parameter. Returns a list of media without an expire date, or with
+an expire date set in the future.
 
 =item Order
 

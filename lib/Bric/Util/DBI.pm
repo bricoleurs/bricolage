@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-03-10 23:59:12 $
+$Date: 2004-03-11 23:17:07 $
 
 =head1 SYNOPSIS
 
@@ -798,17 +798,11 @@ sub build_query {
 Parameters for Asset objects should be run through this before sending them to
 the query building functions.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> Bric::Util::Time must be loaded before this method is called.
 
 =cut
 
@@ -851,6 +845,21 @@ sub clean_params {
         $param->{_null_workflow_id} = 1;
         delete $param->{workflow__id};
     }
+
+    # Convert dates to UTC. Note that Bric::Util::Time must be loaded external
+    # to Bric::Util::DBI, or else we run into nasty mutual dependencies.
+    for my $df (qw(publish_date publish_date_start publish_date_end
+                   first_publish_date first_publish_date_start first_publish_date_end
+                   cover_date cover_date_start cover_date_end
+                   expire_date expire_date_start expire_date_end)) {
+        $param->{$df} = Bric::Util::Time::db_date($param->{$df}) if $param->{$df};
+    }
+
+    # Fixup unexpired to use the current UTC time.
+    $param->{unexpired} = Bric::Util::Time::db_date(undef, 1)
+      if delete $param->{unexpired};
+
+    # Return the parameters.
     return $param;
 }
 
@@ -858,17 +867,11 @@ sub clean_params {
 
 The from clause for the main select is built here.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -887,17 +890,11 @@ sub tables {
 
 The where clause for the main select is built here.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -925,15 +922,15 @@ Builds up the ORDER BY clause
 
 B<Throws:>
 
-OrderDirection parameter must either ASC or DESC.
+=over 4
 
-B<Side Effects:>
+=item OrderDirection parameter must either ASC or DESC.
 
-NONE
+=back
 
-B<Notes:>
+B<Side Effects:> NONE.
 
-NONE
+B<Notes:> NONE.
 
 =cut
 
