@@ -14,11 +14,12 @@ Modules:
   Story
   Media
   Template
+  Element
   Workflow
 
 Commands:
 
-  Asset Commands (Story, Media, Template):
+  Asset Commands (Story, Media, Template, Element):
 
     list_ids
     export
@@ -104,11 +105,11 @@ Publish all unpublished stories:
   | bric_soap workflow publish -
 
 Republish all published stories.  This is useful when a template
-change needs to reflected across a site.  The C<sort -n> is a crude
-way to make sure that newer stories overwrite older ones.
+change needs to reflected across a site.  The C<sort -k2 -t_ -n> is a
+crude way to make sure that newer stories overwrite older ones.
 
   bric_soap story list_ids --search "publish_status=1" \
-  | sort -n \
+  | sort -k2 -t_ -n
   | bric_soap workflow publish -
 
 Copy the story titled "Annoying Ad Turns Man Pro-Whaling" to the
@@ -202,6 +203,13 @@ our %jump = (
 			  delete   => \&delete,
 			 },
 	     Template => {
+			  list_ids => \&list_ids,
+			  export   => \&export,
+			  create   => \&create,
+			  update   => \&update,
+			  delete   => \&delete,
+			 },
+	     Element => {
 			  list_ids => \&list_ids,
 			  export   => \&export,
 			  create   => \&create,
