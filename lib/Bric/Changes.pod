@@ -673,6 +673,10 @@ HTML::Mason (>1.09). [Sam]
 
 The F<bric_dist_mon> program works again. [David]
 
+=item *
+
+Fixed exception class name in Handler.pm. [Scott]
+
 =back
 
 =head1 VERSION 1.3.3
