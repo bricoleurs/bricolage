@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.3.0
+=head1 VERSION 1.3.1
 
 =head2 New Features
 
@@ -22,9 +22,14 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Bricolage SOAP interface partially implemented.  Bric::SOAP::Story,
-Bric::SOAP::Media and Bric::SOAP::Template are fully implemented and
-tested.  The command-line client - bric_soap - is complete. [Sam]
+Bricolage SOAP interface partially implemented. Bric::SOAP::Story,
+Bric::SOAP::Media and Bric::SOAP::Template are fully implemented and tested. The
+command-line client - bric_soap - is complete. [Sam]
+
+=item *
+
+Bricoalge now comes with a configure script and a Makefile for easier
+installation and configuration. [Mark Jaroski]
 
 =back
 
@@ -58,7 +63,7 @@ All fixes in the soon-to-be-released 1.2.1 version.  See below for details.
 
 =back
 
-=head1 VERSION 1.2.1 (unreleased)
+=head1 VERSION 1.2.1
 
 =head2 New Features
 
@@ -66,7 +71,10 @@ All fixes in the soon-to-be-released 1.2.1 version.  See below for details.
 
 =item *
 
-Created new method of configuring Bricolage in Apache. [David]
+Created new method of configuring Bricolage in Apache. For mod_perl 1.26 and
+earlier, a custom config file will be written to the bricolage temp directory
+every time Bricolage is started or restarted. For mod_perl 1.27 and later, no
+temp file will be written. [David]
 
 =item *
 
@@ -81,6 +89,16 @@ Changed password for the default "admin" user to "change me now!" [David]
 The slug is stored in the database for both fixed and non-fixed stories. This is
 in anticipation of adding the ability to use the slug for fixed story URIs later
 on. Thanks to Darren Graves for the patch.
+
+=item *
+
+Added DISABLE_NAV_LAYER directive. It's off by default, but if you turn it on in
+bricolage.conf, the side navigation layer will be rendered as plain HTML in
+every page instead of as a separate layer. [David]
+
+=item *
+
+Documented PERL_LOADER directive in Bric::AdvTemplates. [David]
 
 =back
 
@@ -218,6 +236,15 @@ shown up a long time ago! [David]
 Fixed a bug where the time a distribution job is scheduled was not properly
 converted to UTC for storage in the database. Thanks to Mike Slattery for the
 great code archaeology! [David]
+
+=item *
+
+Fixed the spelling of "contributor" in several spots. [Andrew Baio]
+
+=item *
+
+Fixed bug where changing a story's primary category left it with B<no> primary
+category. [Matt Vella]
 
 =back
 

@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =head1 DATE
 
-$Date: 2002-02-22 18:57:23 $
+$Date: 2002-02-26 03:38:45 $
 
 =head1 DESCRIPTION
 
@@ -24,7 +24,7 @@ them:
 
 =item *
 
-Perl 5.6.1
+Perl 5.6.0 (recommend 5.6.1)
 
 =item *
 
@@ -662,6 +662,17 @@ See L<Bric::DBA/> for more information on database security. You may want to
 alter the default security policy. Also, bric_import uses a TCP/IP connection so
 you may need to run postmaster with the I<-i> option.
 
+=item *
+
+Configure Apache to use Bricolage. To have Bricolage run as the main server
+process on your Apache server, simply add the following two lines to your
+httpd.conf file (an example is provided in conf/httpd.conf):
+
+  PerlPassEnv BRICOLAGE_ROOT
+  PerlModule Bric::App::ApacheConfig
+
+But you can also configure Bricolage to run on a virutal host. See
+<"Configuration"> below.
 
 =item *
 
@@ -1209,6 +1220,21 @@ possibilities see the documentation for Net::FTPServer.
 Once the server is up and running connect to it with an FTP client and
 start editing templates. For more information see
 L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>.
+
+=head2 UI Configuration
+
+=over 4
+
+=item *
+
+B<DISABLE_NAV_LAYER:> Rather than have the UI's left side navigation menu
+rendered in its own separate layer, make it a part of the raw HTML of the page.
+This may be necessary if you encounter problems with the side navigation layer
+in your browser. Note that by setting this directive to a true value, any
+changes made to a form in the UI will be lost by clicking a menu item rather
+than the "Save" button. Defaults to "0" if not specified.
+
+=back
 
 =head1 DIRECTORY PERMISSIONS
 

@@ -61,10 +61,6 @@ our %VirtualHost;
 our @NameVirtualHost = ([ NAME_VHOST . ':' . LISTEN_PORT ]);
 
 do {
-    # Set up string matching for mod_perl pre-1.27 bug. Perhaps after a while we
-    # can require 1.27 or later and remove this crap.
-    my $match = $mod_perl::VERSION < 1.27 ? '^' : '';
-
     # Set up the basic configuration.
     my %config = ( DocumentRoot       => MASON_COMP_ROOT->[0][1],
 		   ServerName         => VHOST_SERVER_NAME,
@@ -85,13 +81,13 @@ do {
     }
 
     # This URI will handle logging users out.
-    my %locs = ("$match/logout"  => {
+    my %locs = ("/logout"  => {
         PerlAccessHandler  => 'Bric::App::AccessHandler::logout_handler',
         PerlCleanupHandler => 'Bric::App::CleanupHandler'
     });
 
     # This URI will handle logging users in.
-    $locs{"$match/login"} = {
+    $locs{"/login"} = {
         SetHandler         => 'perl-script',
         PerlAccessHandler  => 'Bric::App::AccessHandler::okay',
         PerlHandler        => 'Bric::App::Handler',
@@ -99,14 +95,14 @@ do {
     };
 
     # This URI will handle all non-Mason stuff that we server (graphics, etc.).
-    $locs{"$match/media"} = {
+    $locs{"/media"} = {
         SetHandler         => 'default-handler',
         PerlAccessHandler  => 'Apache::OK',
         PerlCleanupHandler => 'Apache::OK'
     };
 
     # This will serve media assets and previews.
-    $locs{"$match/data"} = { SetHandler => 'default-handler' };
+    $locs{"/data"} = { SetHandler => 'default-handler' };
 
     # This will run the SOAP server.
     $locs{'/soap'} = {
@@ -117,7 +113,7 @@ do {
 
     if (ENABLE_DIST) {
 	# This URI will run the distribution server.
-	$locs{"$match/dist"} = {
+	$locs{"/dist"} = {
             SetHandler  => 'perl-script',
             PerlHandler => 'Bric::Dist::Handler'
         };
@@ -126,7 +122,7 @@ do {
     if (QA_MODE) {
 	# Turn on Perl warnings and run Apache::Status.
 	$config{PerlWarn} = 'On';
-	$locs{"$match/perl-status"} = {
+	$locs{"/perl-status"} = {
             SetHandler         => 'perl-script',
             PerlHandler        => 'Apache::Status',
             PerlAccessHandler  => 'Apache::OK',
@@ -135,7 +131,7 @@ do {
     }
 
     if (PREVIEW_LOCAL) {
-	my $prev_loc = "$match/" . join('/', PREVIEW_LOCAL);
+	my $prev_loc = "/" . join('/', PREVIEW_LOCAL);
 	if (PREVIEW_MASON) {
 	    # We need to take some special steps to ensure that Mason properly
 	    # handles the request.
@@ -159,7 +155,7 @@ do {
 	push @NameVirtualHost, [ NAME_VHOST . ':443' ];
 	my %ssl_config = (%config, SSLEngine => 'on');
 	my %ssl_locs = %locs;
-	$ssl_locs{"$match/login"} = {
+	$ssl_locs{"/login"} = {
             SetHandler         => 'perl-script',
             PerlAccessHandler  => 'Bric::App::AccessHandler::okay',
             PerlHandler        => 'Bric::App::Handler',
@@ -168,8 +164,66 @@ do {
 	$ssl_config{Location} = \%ssl_locs;
 	$VirtualHost{NAME_VHOST . ':443'} = \%ssl_config;
     }
+
+    unless ($mod_perl::VERSION > 1.26) {
+
+	# If we get here, then <Perl> sections are broken. See the discussion here:
+	# http://mathforum.org/epigone/modperl/rorphaltwin. As a quick and dirty
+	# fix, let's dump the config to a temp file and just use the include
+	# directive.
+	use File::Spec::Functions qw(tmpdir);
+	use Bric::Util::Trans::FS;
+	my $conffile = Bric::Util::Trans::FS->cat_dir(tmpdir, 'bricolage',
+						      'bric_httpd.conf');
+	open CONF, ">$conffile" or die "Cannot open $conffile for output: $!\n";
+	select CONF;
+
+	# Output the NameVirtualHost directives.
+	print "NameVirtualHost $_->[0]\n" for @NameVirtualHost;
+	@NameVirtualHost = ();
+
+	# Output the rest.
+	while (my ($k, $v) = each %VirtualHost) {
+	    print "<VirtualHost $k>\n";
+	    print_bric_directive(undef, $v, 2);
+	    print "</VirtualHost>\n";
+	}
+	%VirtualHost = ();
+	close CONF;
+	select STDOUT;
+	our $Include = $conffile;
+    }
 };
 
+
+# This function is required for outputting a configuration file from mod_perl
+# version 1.26 and earlier.
+sub print_bric_directive {
+    my ($directive, $value, $i) = @_;
+    my $indent = ' ' x $i;
+    if ($directive) {
+	if ($directive eq 'Location') {
+	    while (my ($k, $v) = each %$value) {
+		print "$indent<Location $k>\n";
+		print_bric_directive(undef, $v, $i + 2);
+		print "$indent</Location>\n";
+	    }
+	} else {
+	    if (ref $value) {
+		print "$indent<$directive>\n";
+		print_bric_directive(undef, $value, $i + 2);
+		print "$indent</$directive>\n";
+	    }
+	    else {
+		print "$indent$directive $value\n";
+	    }
+	}
+    } else {
+	while (my ($k, $v) = each %$value) {
+	    print_bric_directive($k, $v, $i + 2);
+	}
+    }
+}
 
 1;
 

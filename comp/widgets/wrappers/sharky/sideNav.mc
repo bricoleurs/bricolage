@@ -94,7 +94,7 @@ unless ($workflows) {
 }
 
 </%perl>
-% if ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla' ) {
+% if (!DISABLE_NAV_LAYER && ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla')) {
 <html>
 <meta http-equiv="Expires" content="Mon, 06, Jan 1990 00:00:01 GMT">
 <head>
@@ -416,7 +416,7 @@ foreach my $wf (@$workflows) {
 % }
 % # end debug widget
 
-% if ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla') {
+% if (!DISABLE_NAV_LAYER && ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla')) {
 </body>
 </html>
 %}
@@ -442,10 +442,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:37 $
+$Date: 2002-02-26 03:38:44 $
 
 </%doc>
