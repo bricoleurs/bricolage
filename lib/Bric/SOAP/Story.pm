@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-27 02:50:34 $
+$Date: 2002-03-13 20:38:56 $
 
 =head1 SYNOPSIS
 
@@ -135,6 +135,12 @@ and keywords.
 
 The name of the workflow containing the story.  (ex. Story)
 
+=item no_workflow
+
+Set to 1 to return only stories that are out of workflow.  This is
+true after stories are published and until they are recalled into
+workflow for editing.
+
 =item primary_uri (M)
 
 The primary uri of the story.
@@ -146,7 +152,8 @@ The priority of the story.
 =item publish_status
 
 Stories that have been published have a publish_status of "1",
-otherwise "0".
+otherwise "0".  This value never changes after being turned on.  For a
+more accurate read on a story's current status see no_workflow above.
 
 =item element
 
@@ -218,11 +225,12 @@ Notes: NONE
 # hash of allowed parameters
 my %allowed = map { $_ => 1 } qw(title description slug category 
 				 keyword simple primary_uri priority
-				 workflow publish_status element
+				 workflow no_workflow publish_status element
 				 publish_date_start publish_date_end
 				 cover_date_start cover_date_end
 				 expire_date_start expire_date_end
 				 Order OrderDirection Limit Offset);
+
 sub list_ids {
     my $self = shift;
     my $env = pop;
@@ -247,7 +255,13 @@ sub list_ids {
 	$args->{workflow__id} = $workflow_id;
 	delete $args->{workflow};
     }
-    
+
+    # no_workflow means workflow__id => undef
+    if ($args->{no_workflow}) {
+	$args->{workflow__id} = undef;
+	delete $args->{no_workflow};
+    }
+        
     # handle element => element__id conversion
     if (exists $args->{element}) {
 	my ($element_id) = Bric::Biz::AssetType->list_ids(
