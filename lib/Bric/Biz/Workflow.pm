@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-09-24 09:37:05 $
 
 =head1 SYNOPSIS
 
@@ -768,7 +768,7 @@ sub allowed_desks {
     # the publish desk is last.
     my @mem = sort {($self->is_start_desk($b)||0) <=> ($self->is_start_desk($a)||0) ||
 		      ($a->can_publish || 0) <=> ($b->can_publish || 0) ||
-			$b->get_id <=> $a->get_id}
+			$a->get_id <=> $b->get_id}
               map  {$_->get_object} $all_grp->get_members;
 
     # Drop any inactive desks from the list.
@@ -1295,7 +1295,10 @@ L<Bric>, L<Bric::Biz::Workflow::Parts::Desk>, L<perl>
 =head1 REVISION HISTORY
 
 $Log: Workflow.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-09-24 09:37:05  wheeler
+Fixed desk sorting.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:53:34  wheeler
