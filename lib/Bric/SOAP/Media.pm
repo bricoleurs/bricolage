@@ -41,15 +41,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 17:05:38 $
+$Date: 2004-03-23 18:24:07 $
 
 =head1 SYNOPSIS
 
@@ -668,7 +668,7 @@ sub load_asset {
         if (exists $mdata->{element} and not $aliased) {
             unless ($melems{$mdata->{element}}) {
                 my $e = (Bric::Biz::AssetType->list
-                         ({ name => $mdata->{element}, media => 1 }))[0]
+                         ({ key_name => $mdata->{element}, media => 1 }))[0]
                            or throw_ap(error => __PACKAGE__ .
                                          "::create : no media element found " .
                                          "matching (element => \"$mdata->{element}\")");

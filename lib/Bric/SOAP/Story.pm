@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.58 $
+$Revision: 1.59 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58 $ )[-1];
+our $VERSION = (qw$Revision: 1.59 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 17:05:38 $
+$Date: 2004-03-23 18:24:07 $
 
 =head1 SYNOPSIS
 
@@ -297,7 +297,7 @@ sub list_ids {
     # handle element => element__id conversion
     if (exists $args->{element}) {
         my ($element_id) = Bric::Biz::AssetType->list_ids(
-                              { name => $args->{element}, media => 0 });
+                              { key_name => $args->{element}, media => 0 });
         throw_ap(error => __PACKAGE__ . "::list_ids : no story element found matching "
                    . "(element => \"$args->{element}\")")
           unless defined $element_id;

@@ -56,6 +56,13 @@ paths. [David]
 Added constant HAS_MULTISITE => 0 to Bric.pm, so that all classes properly
 declare themselves on search results. [JoE<atilde>o Pedro]
 
+=item *
+
+Story and Media SOAP calls now correctly use the element's key_name to identify
+the element. [JoE<atilde>o Pedro]
+
+
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
