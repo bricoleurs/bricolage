@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-11 09:38:55 $
+$Date: 2003-01-13 06:52:11 $
 
 =head1 SYNOPSIS
 
@@ -126,21 +126,28 @@ use constant INSTANCE_GROUP_ID => 1;
 # Identifies databse columns and object keys.
 my @cols = qw(id prefix fname mname lname suffix active);
 my @props = qw(id prefix fname mname lname suffix _active);
+
+my @sel_cols = qw(p.id p.prefix p.fname p.mname p.lname p.suffix p.active
+                  m.grp__id);
+my @sel_props = qw(id prefix fname mname lname suffix _active);
 my @ord = qw(prefix fname mname lname suffix name active);
+my $table = 'person';
+my $mem_table = 'member';
+my $map_table = $table . "_$mem_table";
 
 ################################################################################
-
 ################################################################################
 # Instance Fields
 BEGIN {
     Bric::register_fields({
 			 # Public Fields
-			 id =>  Bric::FIELD_READ,
-			 prefix => Bric::FIELD_RDWR,
-			 lname => Bric::FIELD_RDWR,
-			 fname => Bric::FIELD_RDWR,
-			 mname => Bric::FIELD_RDWR,
-			 suffix => Bric::FIELD_RDWR,
+			 id      => Bric::FIELD_READ,
+			 prefix  => Bric::FIELD_RDWR,
+			 lname   => Bric::FIELD_RDWR,
+			 fname   => Bric::FIELD_RDWR,
+			 mname   => Bric::FIELD_RDWR,
+			 suffix  => Bric::FIELD_RDWR,
+			 grp_ids => Bric::FIELD_READ,
 
 			 # Private Fields
 			 _active => Bric::FIELD_NONE,
@@ -1768,15 +1775,15 @@ $get_em = sub {
     my (@txt_wheres, @num_wheres, @params);
     while (my ($k, $v) = each %$params) {
 	if ($k eq 'id') {
-	    push @num_wheres, $k;
+	    push @num_wheres, "p.$k";
 	    push @params, $v;
 	} else {
-	    push @txt_wheres, "LOWER($k)";
+	    push @txt_wheres, "LOWER(p.$k)";
 	    push @params, lc $v;
 	}
     }
 
-    my $where = defined $params->{id} ? '' : 'active = 1 ';
+    my $where = defined $params->{id} ? '' : 'p.active = 1 ';
     local $" = ' = ? AND ';
     $where .= $where ? "AND @num_wheres = ?" : "@num_wheres = ?" if @num_wheres;
     local $" = ' LIKE ? AND ';
@@ -1784,11 +1791,12 @@ $get_em = sub {
       if @txt_wheres;
 
     local $" = ', ';
-    my @qry_cols = $ids ? ('id') : @cols;
+    my $qry_cols = $ids ? ['p.id'] : \@sel_cols;
     my $sel = prepare_c(qq{
-        SELECT @qry_cols
-        FROM   person
-        WHERE  $where
+        SELECT @$qry_cols
+        FROM   $table p, $mem_table m, $map_table c
+        WHERE  p.id = c.object_id and c.member__id = m.id
+               AND $where
         ORDER BY lname, fname, mname
     }, undef, DEBUG);
 
@@ -1796,17 +1804,22 @@ $get_em = sub {
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
-    my (@d, @people);
-    bind_columns($sel, \@d[0..$#cols]);
+    my (@d, @people, $grp_ids);
+    bind_columns($sel, \@d[0..$#sel_cols]);
     $pkg = ref $pkg || $pkg;
+    my $last = -1;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	push @people, $self
+        if ($d[0] != $last) {
+            # Create a new Person object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@sel_props, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @people, $self
+        }
+        push @$grp_ids, $d[$#d];
     }
-    finish($sel);
     return \@people;
 };
 
