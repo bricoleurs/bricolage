@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:53 $
+$Date: 2003-03-12 05:59:02 $
 
 =head1 SYNOPSIS
 
@@ -787,12 +787,11 @@ sub allowed_desks {
 
     return unless $all_grp;
 
-    # Sort desks so that the start desk is first, normal desks come next and 
+    # Sort desks so that the start desk is first, normal desks come next and
     # the publish desk is last.
     my @mem = sort {($self->is_start_desk($b)||0) <=> ($self->is_start_desk($a)||0) ||
                       ($a->can_publish || 0) <=> ($b->can_publish || 0) ||
-                        $a->get_id <=> $b->get_id}
-              map  {$_->get_object} $all_grp->get_members;
+                        $a->get_id <=> $b->get_id} $all_grp->get_objects;
 
     # Drop any inactive desks from the list.
     @mem = grep($_->is_active, @mem);
@@ -854,8 +853,7 @@ sub required_desks {
 
     return unless $req_grp;
 
-    my @mem = sort {$a->get_id <=> $b->get_id}
-              map  {$_->get_object} $req_grp->get_members;
+    my @mem = sort { $a->get_id <=> $b->get_id } $req_grp->get_members;
 
     # Drop any inactive desks from the list.
     @mem = grep($_->is_active, @mem);

@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.95 $
+$Revision: 1.96 $
 
 =head1 DATE
 
-$Date: 2003-03-07 16:38:13 $
+$Date: 2003-03-12 05:59:02 $
 
 =head1 DESCRIPTION
 
@@ -180,13 +180,6 @@ two columns in it, one for story IDs and one for URIs, and put all of the URIs
 in it. Then we could just query against that table to compare URIs. All the
 possible URIs for a story would have to be included in the table, for all
 combinations of category and output channel Do the same for media.
-
-=item *
-
-Modify C<< Grp->get_objects() >> to use use the C<grp_id> parameter to
-C<list()>, once support for that parameter has been added to all classes. Go
-through all the code and make sure that it uses this approach, rather than
-constructing the relevant objects one-at-a-time from each Member object.
 
 =item *
 

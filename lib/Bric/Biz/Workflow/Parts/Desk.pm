@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:57 $
+$Date: 2003-03-12 05:59:02 $
 
 
 =head1 SYNOPSIS
@@ -659,12 +659,9 @@ NONE
 
 sub assets {
     my $self = shift;
-    my $asset_grp = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp', 
+    my $asset_grp = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp',
                                         '_asset_grp_obj');
-
-    my @a = map {$_->get_object} $asset_grp->get_members;
-
-    return wantarray ? @a : \@a;
+    $asset_grp->get_objects;
 }
 
 #------------------------------------------------------------------------------#
@@ -927,13 +924,10 @@ NONE
 
 sub get_assets {
     my $self = shift;
-    my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG, 
-                                            'asset_grp', '_asset_grp_obj');
-
-    return unless $asset_grp_obj;
-
-    # Return all the assets on this desk.
-    return map { $_->get_object } $asset_grp_obj->get_members;
+    my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp',
+                                            '_asset_grp_obj')
+      or return;
+    $asset_grp_obj->get_objects;
 }
 
 #------------------------------------------------------------------------------#

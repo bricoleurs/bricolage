@@ -53,8 +53,7 @@ if (defined $id) {
 
     # Get the existing members.
     if ($class_name eq 'Bric::Util::Grp::Source') {
-	foreach my $mem ( $grp->get_members ) {
-	    my $obj = $mem->get_object;
+	foreach my $obj ( $grp->get_objects ) {
 	    push @$right, { value =>  $obj->get_id,
 			    description => $obj->get_source_name };
     }
@@ -64,8 +63,7 @@ if (defined $id) {
 			   description => $obj->get_source_name };
 	}
     } elsif ($class_name eq 'Bric::Util::Grp::CategorySet') {
-	foreach my $mem ( $grp->get_members ) {
-	    my $obj = $mem->get_object;
+	foreach my $obj ( $grp->get_objects ) {
 	    push @$right, { value =>  $obj->get_id,
 			    description => $obj->get_uri };
         }
@@ -75,8 +73,7 @@ if (defined $id) {
 			   description => $obj->get_uri };
 	}
     } else {
-	foreach my $mem ( $grp->get_members ) {
-	    my $obj = $mem->get_object;
+	foreach my $obj ( $grp->get_objects ) {
 	    push @$right, { value =>  $obj->get_id,
 			    description => $obj->get_name($format) };
     }
@@ -199,11 +196,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:44 $
+$Date: 2003-03-12 05:59:01 $
 
 =head1 DESCRIPTION
 

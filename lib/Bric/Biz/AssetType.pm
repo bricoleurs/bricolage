@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:42 $
+$Date: 2003-03-12 05:59:02 $
 
 =head1 SYNOPSIS
 
@@ -1810,9 +1810,7 @@ sub get_containers {
     my $self = shift;
     my ($field) = @_;
     my $grp = $self->_get_asset_type_grp;
-    my $mbs = $grp->get_members;
-
-    my @at = map { $_->get_object } @$mbs;
+    my @at = $grp->get_objects;
 
     if ($field) {
 	my ($val) = grep($make_key_name->($_->get_name) eq $field, @at);

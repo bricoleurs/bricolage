@@ -190,7 +190,7 @@ sub test_href_class_keys : Test(6) {
 # Member tests.
 ##############################################################################
 sub test_members : Test(33) {
-# First, get a well-known group to play with.
+    # First, get a well-known group to play with.
     ok( my $grp = Bric::Util::Grp->lookup({ id => 22 }), "Get Prefs grp" );
 
     # Now test the get_members method.
@@ -255,6 +255,27 @@ sub test_members : Test(33) {
         "Look up story element group again" );
     ok( @mems = $grp->get_members, "Get story element members" );
     is( scalar @mems, 2, "Check number of story element mems" );
+}
+
+##############################################################################
+# Test the get_objects() method.
+sub test_get_objects : Test(8) {
+    my $self = shift;
+    # First, get a well-known group to play with.
+    ok( my $grp = Bric::Util::Grp->lookup({ id => 22 }), "Get Prefs grp" );
+
+    # Now get the objects.
+    ok( my @prefs = $grp->get_objects, "Get pref objects" );
+    is( scalar @prefs, 7, "Check number of pref mems" );
+    isa_ok( $prefs[0], 'Bric::Util::Pref' );
+
+    # Try an element group, just for the heck of it.
+    my $story_elem_grp_id = 330;
+    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+        "Look up story element group" );
+    ok( my @ats = $grp->get_objects, "Get story element objects" );
+    is( scalar @ats, 2, "Check number of story elements" );
+    isa_ok( $ats[0], 'Bric::Biz::AssetType');
 }
 
 ##############################################################################

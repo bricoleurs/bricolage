@@ -226,6 +226,15 @@ the POD errors it found, too. [David]
 
 Test suite now runs all tests with warnings enabled. [David]
 
+=item *
+
+Modified C<< Grp->get_objects() >> to use use the C<grp_id> parameter to
+C<list()>, now that support for that parameter has been added to all groupable
+classes. Also went through all existing code to make sure that it uses this
+approach, rather than constructing the relevant objects one-at-a-time from
+each Member object. This should provide a drammatic speedup in many
+operations.
+
 =back
 
 =head2 Bug Fixes

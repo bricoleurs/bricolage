@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-11 16:23:46 $
+$Date: 2003-03-12 05:59:03 $
 
 =head1 SYNOPSIS
 
@@ -1275,7 +1275,8 @@ sub get_members {
 =item my (@objs || $objs_aref) = $grp->get_objects
 
 Returns a list or anonymous arry of all of the Bricolage objects underlying
-the member objects in the group.
+the member objects in the group. Only returns object if the group object has
+been saved and has an ID.
 
 B<Throws:> NONE.
 
@@ -1287,9 +1288,12 @@ B<Notes:> NONE.
 
 sub get_objects {
     my $self = shift;
-    return wantarray ?
-      ( map { $_->get_object } $self->get_members ) :
-      [ map { $_->get_object } $self->get_members ];
+    my $id = $self->_get('id') or return;
+    my @objs;
+    foreach my $class (keys %{ $self->get_supported_classes }) {
+        push @objs, $class->list({ grp_id => $id });
+    }
+    return wantarray ? @objs : \@objs;
 }
 
 ##############################################################################
