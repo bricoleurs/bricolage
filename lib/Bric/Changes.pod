@@ -226,6 +226,11 @@ enabled. Thanks to Kevin Elliott for the spot! [David]
 The searches for documents by beginning and ending cover dates were not
 inclusive of the end date. Now they are! Reported by Kevin Elliott. [David]
 
+=item *
+
+Fixed spelling of "contributor" in the description of the contributor type
+class in the database. Noticed by Radu Greab. [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

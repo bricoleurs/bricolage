@@ -151,6 +151,8 @@ Folks who have submitted patches include:
 
 =item Cinly Ooi
 
+=item Radu Greab
+
 =back
 
 Friends who have spotted bugs include:
