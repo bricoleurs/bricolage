@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.12 $
+$Revision: 1.25.2.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-08 01:13:03 $
+$Date: 2003-04-10 20:14:17 $
 
 =head1 SYNOPSIS
 
@@ -1293,6 +1293,8 @@ sub set_workflow_id {
             next if $gid == $ag_id;
             push @grp_ids, $gid;
         }
+    } else {
+        @grp_ids = $self->get_grp_ids;
     }
 
     if ($workflow_id) {
