@@ -104,15 +104,16 @@ unless ($workflows) {
 <head>
   <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
   <script type="text/javascript">
-function resizeframe() {
-	var ifrm = parent.document.getElementById("sideNav");
-	
-	if (window.opera) {
-	    ifrm.style.height = document.body.scrollHeight + "px";
-	} else {
-	    ifrm.style.height = document.body.offsetHeight + "px";
+    function resizeframe() {
+      var ifrm = parent.document.getElementById("sideNav");
+      if (window.opera || (document.all && document.getElementById)) {
+        // Opera and IE5 only
+        ifrm.style.height = document.body.scrollHeight + "px";
+      } else {
+        // Everyone else
+        ifrm.style.height = document.body.offsetHeight + "px";
+      }
     }
-}
   </script>
 % unless ($agent->nav4) {
   <script language="javascript">
