@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.15.2.4 $
+$Revision: 1.15.2.5 $
 
 =head1 DATE
 
-$Date: 2002-01-23 23:27:57 $
+$Date: 2002-01-29 22:04:30 $
 
 =head1 SYNOPSIS
 
@@ -33,7 +33,6 @@ $debug => undef
 </%args>
 
 <%init>;
-
 if ($useSideNav) {
     # first, let's bail if we need to...
     do_queued_redirect();
@@ -72,9 +71,9 @@ if ($agent->{browser} eq "Netscape") {
     $layer = "iframe";
     $properties = ($agent->{os} eq "MacOS")
       ? qq { width="150" height="100%" border="0" scrolling="no" }
-        . qq{frameborder="no" style="z-index:10;" }
+        . qq{frameborder="no" marginwidth="0" style="z-index:10;" }
       : qq{ width="150" height="100%" border="0" scrolling="no" }
-	. qq{frameborder="no" style="z-index:10;" };
+	. qq{frameborder="no" marginwidth="0" style="z-index:10;" };
 }
 
 # clean up the title
@@ -151,23 +150,17 @@ Please activate JavaScript in your browser before continuing.
 % # this is the Netscape doNav function.  IE looks for it in the iframe file (ie: sideNav.mc)
 <script language="javascript">
 function doNav(callback) {
-
-% if ($agent->{os} eq "SomeNix") {
-
+% if ($agent->{browser} ne 'Mozilla' && $agent->{os} eq "SomeNix") {
     window.location.href = callback;
     return false;
-
 % } else {
-
     var rndNum = Math.round(Math.random() * 10000);
     document.layers["sideNav"].src = callback + "&uri=<% $r->uri %>&rnd=" + rndNum
     return false;
-
 % }
 }
 
 function doLink(link) {
-
     window.location.href = link
     return false
 }
@@ -183,12 +176,12 @@ function doLink(link) {
 # handle the various states of the side nav
 # login screen: no side nav
 # Netscape (non Unix platforms): include as src of a layer
-# IE: include as an iframe
+# IE & Mozilla: include as an iframe
 # Netscape (Unix platforms): include as plain html
 
 if ($useSideNav) {
 
-    if ($agent->{os} eq "SomeNix") {
+    if ($agent->{browser} ne 'Mozilla' && $agent->{os} eq "SomeNix") {
 	$m->comp("/widgets/wrappers/sharky/sideNav.mc", debug => $debug);
     } else {
 	my $uri = $r->uri;
@@ -200,9 +193,7 @@ if ($useSideNav) {
 	$m->out( qq {<$layer name="sideNav" src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" $properties>} );
 	$m->out("</$layer>\n");
     }
-
 }
-
 
 $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 </%perl>
@@ -258,8 +249,8 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 my $firstMsg = 1;
 while (my $txt = next_msg) {
      # insert whitespace on top to balance the line break the form tag inserts after these messages.
-    if ($firstMsg) {	
-	$m->out("<P>");
+    if ($firstMsg) {
+	$m->out("<p>");
 	$firstMsg = 0;
     }
 </%perl>
@@ -271,7 +262,7 @@ while (my $txt = next_msg) {
   </tr>
   </table>
 % }
-
+<br />
 
 
 

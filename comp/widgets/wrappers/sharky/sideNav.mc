@@ -94,15 +94,13 @@ unless ($workflows) {
 }
 
 </%perl>
-
-% if ($agent->{os} ne "SomeNix") {
+% if ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla' ) {
 <html>
 <meta http-equiv="Expires" content="Mon, 06, Jan 1990 00:00:01 GMT">
 <head>
 </head>
 
-% if ($agent->{browser} eq "Internet Explorer") {
-
+% if ($agent->{browser} ne "Netscape") {
     <script language="javascript">
     function doNav(callback) {
 	document.location.href = callback;
@@ -114,11 +112,8 @@ unless ($workflows) {
 	return false;
     }
     </script>
-
     <& "/widgets/wrappers/sharky/css.mc" &>
-
 % }
-
 <body marginwidth=0 marginheight=0 leftmargin=0 topmargin=0 bgcolor="#666633">
 % }
 
@@ -421,7 +416,7 @@ foreach my $wf (@$workflows) {
 % }
 % # end debug widget
 
-% if ($agent->{os} ne "SomeNix") {
+% if ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla') {
 </body>
 </html>
 %}
@@ -447,10 +442,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.6.2.1 $
+$Revision: 1.6.2.2 $
 
 =head1 DATE
 
-$Date: 2002-01-23 23:16:57 $
+$Date: 2002-01-29 22:04:30 $
 
 </%doc>
