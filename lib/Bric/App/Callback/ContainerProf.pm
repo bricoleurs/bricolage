@@ -103,7 +103,7 @@ sub view : Callback {
     my $field = $self->trigger_key;
 
     my $tile = get_state_data($self->class_key, 'tile');
-    my $tile_id = $param->{'edit_view_bulk_tile_id'};
+    my $tile_id = $self->value;
     my ($view_tile) = grep(($_->get_id == $tile_id), $tile->get_containers);
 
     # Push this child tile on top of the stack

@@ -17,6 +17,7 @@
   <tr>
   <td bgcolor="white" colspan=4><img src="/media/images/spacer.gif" width="1" height="1" /></td>
   </tr>
+  <input type="hidden" name="<% $widget %>|view_cb" value="" />
 
 % foreach my $dt (@tiles) {
 % my $sep = 1;
@@ -32,13 +33,11 @@
       <td width="<% 578 - $infoIndent - 24 %>" colspan="2">
 <&
     '/widgets/profile/imageSubmit.mc',
-      formName => 'theForm',
-      callback => 'container_prof|view_cb',
-      image    => 'view_dgreen'
-&>
-<&  '/widgets/profile/hidden.mc',
-      'name' => 'edit_view_bulk_tile_id',
-      'value' => $dt->get_id()
+      formName  => 'theForm',
+      callback  => 'container_prof|view_cb',
+      image     => 'view_dgreen',
+      value     => $dt->get_id,
+      useHidden => 0,
 &>
       </td>
 %   } else {
