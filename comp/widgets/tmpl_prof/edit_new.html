@@ -136,7 +136,7 @@ $get_subs = sub {
 my $get_elems = sub {
     my $site_id = shift;
     my ($seen, @tops, @objs) = ({});
-    for my $e (Bric::Biz::AssetType->list({ site_id => $site_id })) {
+    for my $e (Bric::Biz::AssetType->list({ site_id => $site_id, top_level => 1 })) {
         push @tops, $e;
         push @objs, $get_subs->($e, $seen);
     }
