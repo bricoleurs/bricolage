@@ -13,7 +13,12 @@ exit if test_function 'append_id';
 
 do_sql
   q{CREATE   FUNCTION append_id(TEXT, NUMERIC(10,0))
-    RETURNS  TEXT AS 'SELECT $1 || '' '' || CAST($2 AS TEXT)'
+    RETURNS  TEXT AS '
+    SELECT CASE WHEN $2 = 0 THEN
+                $1
+           ELSE
+                $1 || '' '' || CAST($2 AS TEXT)
+           END;'
     LANGUAGE 'sql'
     WITH     (ISCACHABLE, ISSTRICT)},
 

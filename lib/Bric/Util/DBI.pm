@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-14 02:10:08 $
+$Date: 2004-02-14 19:15:10 $
 
 =head1 SYNOPSIS
 
@@ -737,7 +737,7 @@ sub fetch_objects {
     while (fetch($select)) {
         my $obj = bless {}, $pkg;
         # The group IDs are in the last four columns.
-        $grp_ids = $d[-$grp_col_cnt] = [grep {$_} map { split } @d[-$grp_col_cnt..-1]];
+        $grp_ids = $d[-$grp_col_cnt] = [map { split } @d[-$grp_col_cnt..-1]];
         $obj ->_set($fields, \@d);
         $obj->_set__dirty(0);
         $obj = bless $obj, Bric::Util::Class->lookup({

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2004-02-14 02:10:08 $
+-- $Date: 2004-02-14 19:15:11 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -21,9 +21,16 @@ LANGUAGE 'sql'
 WITH     (ISCACHABLE);
 
 -- This function is used to append a space followed by a number to a TEXT
--- string. It is used primarily for the id_list aggregate (below).
+-- string. It is used primarily for the id_list aggregate (below). We omit
+-- the ID 0 because it is a hidden, secret group to which permissions do not
+-- apply.
 CREATE   FUNCTION append_id(TEXT, NUMERIC(10,0))
-RETURNS  TEXT AS 'SELECT $1 || '' '' || CAST($2 AS TEXT)'
+RETURNS  TEXT AS '
+    SELECT CASE WHEN $2 = 0 THEN
+                $1
+           ELSE
+                $1 || '' '' || CAST($2 AS TEXT)
+           END;'
 LANGUAGE 'sql'
 WITH     (ISCACHABLE, ISSTRICT);
 
