@@ -151,7 +151,7 @@ sub publish : Callback {
         # versions of documents always have checked_out set to 0, even when the
         # current version is checked out.
         if ($s->get_workflow_id
-            && !$s->get_user__id # Not checked out.
+            && !defined $s->get_user__id # Not checked out.
             && $s->get_version == $s->get_current_version # Is the current version.
         ) {
             $s->set_workflow_id(undef);
