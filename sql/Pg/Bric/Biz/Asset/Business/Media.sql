@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.7 $
+-- VERSION: $Revision: 1.8 $
 --
--- $Date: 2003-08-08 06:07:11 $
+-- $Date: 2004-02-11 06:15:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -55,8 +55,8 @@ CREATE TABLE media (
     publish_date      TIMESTAMP,
     expire_date       TIMESTAMP,
     cover_date        TIMESTAMP,
-    workflow__id      NUMERIC(10,0),
-    desk__id          NUMERIC(10,0),
+    workflow__id      NUMERIC(10,0)   NOT NULL,
+    desk__id          NUMERIC(10,0)   NOT NULL,
     publish_status    NUMERIC(1,0)    NOT NULL
                                       DEFAULT 0
                                       CONSTRAINT ck_media__publish_status 
@@ -293,3 +293,4 @@ CREATE INDEX idx_attr_media_meta__name ON attr_media_meta(LOWER(name));
 CREATE INDEX fkx_attr_media__attr_media_meta ON attr_media_meta(attr__id);
 
 CREATE INDEX fdx_media__desk__id ON media(desk__id);
+CREATE INDEX fdx_media__workflow__id ON media(workflow__id);

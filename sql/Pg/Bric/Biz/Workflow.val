@@ -1,10 +1,14 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2003-04-24 23:57:39 $
+-- $Date: 2004-02-11 06:15:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
+
+INSERT INTO workflow (id, name, description, asset_grp_id, all_desk_grp_id,
+                      req_desk_grp_id, head_desk_id, type, active, site__id)
+VALUES (0, 'Shelved', 'Hidden workflow for shelved assets', 0, 41, 42, 0, 2, 0, 100);
 
 INSERT INTO workflow (id, name, description, asset_grp_id, all_desk_grp_id,
                       req_desk_grp_id, head_desk_id, type, active, site__id)

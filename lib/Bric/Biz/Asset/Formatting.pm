@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.56 $
+$Revision: 1.57 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.56 $ )[-1];
+our $VERSION = (qw$Revision: 1.57 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-10 08:43:18 $
+$Date: 2004-02-11 06:15:05 $
 
 =head1 SYNOPSIS
 
@@ -226,7 +226,9 @@ use constant WHERE => 'f.id = i.formatting__id '
   . 'AND fm.object_id = f.id '
   . 'AND m.id = fm.member__id '
   . 'AND m.active = 1 '
-  . 'AND c.id = f.category__id ';
+  . 'AND c.id = f.category__id '
+  . 'AND f.desk__id = d.id '
+  . 'AND f.workflow__id = w.id';
 
 use constant COLUMNS => join(', f.', 'f.id', COLS) . ', ' 
             . join(', i.', 'i.id AS version_id', VERSION_COLS);
@@ -240,9 +242,7 @@ use constant PARAM_FROM_MAP =>
     {
        category_uri       =>  'category c',
         _not_simple        => 'formatting_member fm, member m, '
-                            . 'category c, ' . TABLE . ' f '
-                            . 'LEFT OUTER JOIN desk d ON f.desk__id = d.id '
-                            . 'LEFT OUTER JOIN workflow w ON f.workflow__id = w.id',
+                            . 'category c, desk d, workflow w, ' . TABLE . ' f ',
        grp_id             =>  'member m2, formatting_member fm2',
        element_key_name   => 'element e',
     };

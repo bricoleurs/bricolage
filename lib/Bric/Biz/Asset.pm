@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-10 21:01:11 $
+$Date: 2004-02-11 06:15:05 $
 
 =head1 SYNOPSIS
 
@@ -191,7 +191,6 @@ BEGIN {
                         _update_attrs     => Bric::FIELD_NONE,
                         _versions         => Bric::FIELD_NONE,
                         _desk             => Bric::FIELD_NONE,
-                        _workflow_id      => Bric::FIELD_NONE
         });
 }
 
@@ -210,6 +209,12 @@ BEGIN {
 #--------------------------------------#
 # Constructors
 #------------------------------------------------------------------------------#
+
+sub new {
+    my ($pkg, $init) = @_;
+    @{$init}{qw(workflow_id desk_id)} = (0, 0);
+    $pkg->SUPER::new($init);
+}
 
 =item $asset = Bric::Biz::Asset::Business::Story->lookup({ id => $id })
 
@@ -1205,7 +1210,7 @@ sub get_desk_stamps {
 
 ################################################################################
 
-=item $self = $self->set_current_desk ( $desk_object );
+=item $self = $self->set_current_desk($desk_object);
 
 This method takes a desk stamp object and adds it to the asset object
 
@@ -1218,23 +1223,22 @@ Adds the asset_grp_id of the desk to grp_ids (unless it was already there).
 sub set_current_desk {
     my ($self, $desk) = @_;
     # grp_ids may change as a side effect
-    my @grp_ids;
-    my $c_desk = $self->get_current_desk();
-    foreach ($self->get_grp_ids()) {
-        next if ($c_desk && $_ == $c_desk->get_asset_grp());
-        push @grp_ids, $_;
+    my $dgid = 0;
+    if (my $c_desk = $self->get_current_desk) {
+        $dgid = $c_desk->get_asset_grp;
     }
-    push @grp_ids, $desk->get_asset_grp();
+
+    my @grp_ids = ((grep { $_ != $dgid } $self->get_grp_ids), $desk->get_asset_grp);
     $self->_set({grp_ids => \@grp_ids});
+
     # now set the actual value
-    my $desk_id = $desk->get_id();
-    $self->_set([qw(desk_id _desk)], [$desk_id, $desk]);
+    $self->_set([qw(desk_id _desk)] => [$desk->get_id, $desk]);
     return $self;
 }
 
 ################################################################################
 
-=item $ld = $self->get_current_desk ( );
+=item $ld = $self->get_current_desk;
 
 This returns the desk stamp of the desk that the object is currently at
 
@@ -1250,9 +1254,9 @@ sub get_current_desk {
     my $self = shift;
     my ($id, $desk) = $self->_get(qw(desk_id _desk));
     return $desk if $desk;
-    return unless $id;
+    return unless $id; # Desk ID 0 is the same as no desk.
     $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ id => $id });
-    $self->_set(['_desk'], [$desk]);
+    $self->_set(['_desk'] => [$desk]);
     return $desk;
 }
 
@@ -1272,7 +1276,7 @@ B<Notes:> NONE.
 =cut
 
 sub remove_from_desk {
-    shift->_set([qw(desk_id _desk)], []);
+    shift->_set([qw(desk_id _desk)], [0]);
 }
 
 ###############################################################################
@@ -1323,12 +1327,14 @@ Sets the workflow that this asset is a member of
 
 B<Side Effects:>
 
-Adds the asset_grp_id of the workflow to grp_ids unless it was already there.
+Adds the asset group ID of the workflow to grp_ids unless it was already there.
 
 =cut
 
 sub set_workflow_id {
     my ($self, $workflow_id) = @_;
+    $workflow_id ||= 0;
+
     # grp_ids may change as a side effect
     my $grp_ids = [];
     if (my $wf = $self->get_workflow_object) {
@@ -1338,12 +1344,15 @@ sub set_workflow_id {
             push @$grp_ids, $gid;
         }
     } else {
-        $grp_ids = $self->get_grp_ids;
+        $grp_ids = [ grep { $_ != 0 } $self->get_grp_ids ];
     }
 
     if ($workflow_id) {
         my $wf = Bric::Biz::Workflow->lookup({ id => $workflow_id });
         push @$grp_ids, $wf->get_asset_grp_id;
+    } else {
+        # Set workflow ID to 0 if there is no associated workflow.
+        push @$grp_ids, 0;
     }
 
     # Now set the workflow ID and the group IDs.
@@ -1372,8 +1381,7 @@ NONE
 
 sub get_workflow_object {
     my ($self) = @_;
-    my $w_id = $self->get_workflow_id;
-
+    my $w_id = $self->get_workflow_id or return;
     return Bric::Biz::Workflow->lookup({'id' => $w_id});
 }
 

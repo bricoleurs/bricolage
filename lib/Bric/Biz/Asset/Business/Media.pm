@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.67 $
+$Revision: 1.68 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.67 $ )[-1];
+our $VERSION = (qw$Revision: 1.68 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-10 08:43:18 $
+$Date: 2004-02-11 06:15:05 $
 
 =head1 SYNOPSIS
 
@@ -158,7 +158,9 @@ use constant WHERE => 'mt.id = i.media__id '
   . 'AND m.active = 1 '
   . 'AND c.id = i.category__id '
   . 'AND e.id = mt.element__id '
-  . 'AND at.id = e.type__id ';
+  . 'AND at.id = e.type__id '
+  . 'AND mt.desk__id = d.id '
+  . 'AND mt.workflow__id = w.id';
 
 use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', ' 
             . join(', i.', 'i.id AS version_id', VERSION_COLS);
@@ -173,9 +175,7 @@ use constant PARAM_FROM_MAP =>
      keyword            => 'media_keyword mk, keyword k',
      output_channel_id  => 'media__output_channel moc',
      _not_simple        => 'media_member mm, member m, at_type at, element e, '
-                           . 'category c, ' . TABLE . ' mt '
-                           . 'LEFT OUTER JOIN desk d ON mt.desk__id = d.id '
-                           . 'LEFT OUTER JOIN workflow w ON mt.workflow__id = w.id',
+                           . 'category c, desk d, workflow w,' . TABLE . ' mt ',
      grp_id             => 'member m2, media_member mm2',
      category_uri       => 'category c',
      data_text          => 'media_data_tile md',

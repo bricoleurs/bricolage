@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.72 $
+$Revision: 1.73 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.72 $ )[-1];
+our $VERSION = (qw$Revision: 1.73 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-10 08:43:18 $
+$Date: 2004-02-11 06:15:05 $
 
 =head1 SYNOPSIS
 
@@ -269,7 +269,9 @@ use constant WHERE => 's.id = i.story__id '
   . 'AND m.id = sm.member__id '
   . 'AND m.active = 1 '
   . 'AND sc.story_instance__id = i.id '
-  . 'AND c.id = sc.category__id ';
+  . 'AND c.id = sc.category__id '
+  . 'AND s.desk__id = d.id '
+  . 'AND s.workflow__id = w.id';
 
 use constant COLUMNS => join(', s.', 's.id', COLS) . ', ' 
             . join(', i.', 'i.id AS version_id', VERSION_COLS);
@@ -284,9 +286,7 @@ use constant PARAM_FROM_MAP =>
        keyword            => 'story_keyword sk, keyword k',
        output_channel_id  => 'story__output_channel soc',
        _not_simple        => 'story_member sm, member m, story__category sc, '
-                             . 'category c, ' . TABLE . ' s '
-                             . 'LEFT OUTER JOIN desk d ON s.desk__id = d.id '
-                             . 'LEFT OUTER JOIN workflow w ON s.workflow__id = w.id',
+                             . 'category c, desk d, workflow w, ' . TABLE . ' s ',
        grp_id             => 'member m2, story_member sm2',
        category_id        => 'story__category sc2',
        category_uri       => 'story__category sc2, category c',
