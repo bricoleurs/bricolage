@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-05 23:02:13 $
+$Date: 2002-11-06 16:57:48 $
 
 =head1 SYNOPSIS
 
@@ -214,6 +214,17 @@ sub burn_one {
         push @$comp_root, [ $inc_dir => $fs->cat_dir($comp_dir, $inc_dir) ];
     }
 
+    # Save an existing Mason request object and Bricolage objects.
+    my ($curr_req, %bric_objs);
+    {
+        no strict 'refs';
+        if ($curr_req = ${TEMPLATE_BURN_PKG . '::m'}) {
+            for (qw(story burner element writer)) {
+                $bric_objs{$_} = ${TEMPLATE_BURN_PKG . "::$_"};
+            }
+        }
+    }
+
     # Create the interpreter
     my $interp = HTML::Mason::Interp->new('parser'     => $parser,
                                           'comp_root'  => $comp_root,
@@ -252,17 +263,6 @@ sub burn_one {
         # dhandler for it if there isn't one already.
         _create_dhandler($comp_root, $oc, $cat, $tmpl_name)
           unless $interp->lookup($fs->cat_uri($tmpl_path, 'dhandler'));
-    }
-
-    # Save an existing Mason request object and Bricolage objects.
-    my ($curr_req, %bric_objs);
-    {
-        no strict 'refs';
-        if ($curr_req = ${TEMPLATE_BURN_PKG . '::m'}) {
-            for (qw(story burner element writer)) {
-                $bric_objs{$_} = ${TEMPLATE_BURN_PKG . "::$_"};
-            }
-        }
     }
 
     while (1) {
