@@ -209,7 +209,7 @@ sub test_oc : Test(51) {
     # Now add the new output channel to the column element.
     ok( my $col = Bric::Biz::AssetType->lookup({ id => $column_elem_id }),
         "Lookup column element" );
-    ok( $col->add_output_channels([$oc]), "Add Foober to column" );
+    ok( $col->add_output_channels([$oc->get_id]), "Add Foober to column" );
     ok( $col->save, "Save column element" );
 
     # Look up column and make sure it has two output channels.
@@ -227,7 +227,7 @@ sub test_oc : Test(51) {
     # Now delete it.
     my $i = 5;
     for my $e ($at, $col) {
-        ok( $e->delete_output_channels([$oc]), "Delete OC" );
+        ok( $e->delete_output_channels([$oc->get_id]), "Delete OC" );
         ok( $oces = $e->get_output_channels, "Get existing OCs " . ++$i );
         is( scalar @$oces, 1, "Check for one OC again" );
 
