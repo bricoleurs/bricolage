@@ -333,7 +333,7 @@ my $checkin = sub {
         # Publish the template and remove it from workflow.
         my ($pub_desk, $no_log);
         # Find a publish desk.
-        if ($cur_desk->can_publish) {
+        if ($cur_desk and $cur_desk->can_publish) {
             # We've already got one.
             $pub_desk = $cur_desk;
             $no_log = 1;
@@ -345,10 +345,15 @@ my $checkin = sub {
                 $pub_desk = $d and last if $d->can_publish;
             }
             # Transfer the template to the publish desk.
-            $cur_desk->transfer({ to    => $pub_desk,
-                                  asset => $fa });
-            $cur_desk->save;
-            $pub_desk->save;
+            if ($cur_desk) {
+                $cur_desk->transfer({ to    => $pub_desk,
+                                      asset => $fa });
+                $cur_desk->save;
+                $pub_desk->save;
+            } else {
+                $pub_desk->accept({ asset => $fa });
+                $pub_desk->save;
+            }
         }
 
         $fa->save;
