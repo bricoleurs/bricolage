@@ -34,6 +34,11 @@ The media simple search now searched by URI again. [Mark]
 Now HTML-escaping the contents of the context content displayed for
 subelements so as to prevent HTML in fields from messing up thedisplay. [Mark]
 
+=item *
+
+Fix for 'Can't call method "out_method" on an undefined value' generated
+during a burn. [Mark]
+
 =back
 
 =head1 VERSION 1.6.1
