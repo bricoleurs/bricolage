@@ -80,8 +80,14 @@ Steele. [David]
 
 =item *
 
-Fixed typo in Media Type manager that broke it. Reported by Lari
-Huttunen. [Scott]
+Fixed typo in Media Type manager that broke it. Reported by Lari Huttunen.
+[Scott]
+
+=item *
+
+Fixed problem where an attempt to add new output channels to a new element
+before saving that element cause errors. Mainly noticable when creating
+elements via SOAP. Thanks to Mark for the spot. [David]
 
 =back
 

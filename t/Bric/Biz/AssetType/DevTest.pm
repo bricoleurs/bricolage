@@ -144,6 +144,26 @@ sub test_list : Test(36) {
 }
 
 ##############################################################################
+# Test save().
+sub test_save : Test(6) {
+    my $self = shift;
+    # Now create a new element.
+    ok( my $elem = Bric::Biz::AssetType->new(\%elem), "Create a new element");
+
+    # Add a new output channel.
+    ok( my $oc = Bric::Biz::OutputChannel->new({ name => 'Foober' }),
+        "Create 'Foober' OC" );
+    ok( $oc->save, "Save Foober" );
+    ok( my $ocid = $oc->get_id, "Get Foober ID" );
+    $self->add_del_ids($ocid, 'output_channel');
+    ok( $elem->add_output_channels([$oc]), "Add Foober" );
+
+    # Save it.
+    ok( $elem->save, "Save new element" );
+    $self->add_del_ids($elem->get_id);
+}
+
+##############################################################################
 # Test Output Channel methods.
 ##############################################################################
 sub test_oc : Test(32) {
@@ -201,13 +221,6 @@ sub test_oc : Test(32) {
     ok( $oces = $at->get_output_channels, "Get existing OCs 7" );
     is( scalar @$oces, 1, "Check for one OC 4" );
     is( $oces->[0]->get_name, "Web", "Check name 'Web' again" );
-
-    # And finally, clean out the OC table.
-    Bric::Util::DBI::prepare(qq{
-        DELETE FROM output_channel
-        WHERE  id = $ocid
-    })->execute;
-
 }
 
 1;

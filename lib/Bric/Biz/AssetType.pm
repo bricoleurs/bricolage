@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.34.2.1 $
+$Revision: 1.34.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-25 22:18:43 $
+$Date: 2003-05-25 02:47:34 $
 
 =head1 SYNOPSIS
 
@@ -2040,9 +2040,6 @@ sub save {
     # Save the group information.
     $self->_get_asset_type_grp->save;
 
-    # Save the parts and the output channels.
-    $oc_coll->save if $oc_coll;
-
     # Don't do anything else unless the dirty bit is set.
     return $self unless $self->_get__dirty;
 
@@ -2055,13 +2052,21 @@ sub save {
     }
 
     # First save the main object information
-    $id ? $self->_update_asset_type : $self->_insert_asset_type;
+    if ($id) {
+        $self->_update_asset_type;
+    } else {
+        $self->_insert_asset_type;
+        $id = $self->_get('id');
+    }
 
     # Save the attribute information.
     $self->_save_attr;
 
     # Save the parts.
     $self->_sync_parts;
+
+    # Save the output channels.
+    $oc_coll->save($id) if $oc_coll;
 
     # Call our parents save method.
     $self->SUPER::save;
