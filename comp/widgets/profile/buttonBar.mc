@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-03-12 03:25:47 $
+$Date: 2003-03-13 11:08:57 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -160,6 +160,6 @@ if ($work_id) {
   <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
   <td><input type="image" src="/media/images/<% $lang_key %>/cancel_lgreen.gif" border="0" name="<% $widget %>|return_cb" value="Return To Desk"></td>
   <td><input type="image" src="/media/images/<% $lang_key %>/cancel_check_out_lgreen.gif" border="0" name="<% $widget %>|cancel_cb" value="Cancel Checkout"></td>
-  <td width="60"><img src="/media/images/<% $lang_key %>/spacer.gif" width="60" height="1"></td>
+  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
 </tr>
 </table>
