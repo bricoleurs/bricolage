@@ -26,7 +26,7 @@ sub update_all {
 
     while (fetch($get_key_name)) {
         my $key_name = lc($name);
-        $key_name =~ y/a-z/_/cs;
+        $key_name =~ y/a-z0-9/_/cs;
         execute($set_key_name, $key_name, $name);
     }
 }

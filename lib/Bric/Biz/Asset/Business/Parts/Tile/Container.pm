@@ -1,4 +1,4 @@
-package Bric::Biz::Asset::Business::Parts::Tile::Container;
+y/package Bric::Biz::Asset::Business::Parts::Tile::Container;
 ###############################################################################
 
 =head1 NAME
@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2003-10-01 18:37:40 $
 
 =head1 SYNOPSIS
 
@@ -872,7 +872,7 @@ sub get_container {
     # If we find any illegal characters, warn the user to start using the key
     # name rather than the display name.
     if ($name =~ /[^a-z]/) {
-        ($name = lc($name)) =~ y/a-z/_/cs;
+        ($name = lc($name)) =~ y/a-z0-9/_/cs;
         my $msg = "Warning:  Use of element's 'name' field is deprecated for use with element method 'get_container'.  Please use the element's 'key_name' field instead.";
         Bric::App::Util::add_msg($msg);
     }

@@ -8,15 +8,15 @@ Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:34 $
+$Date: 2003-10-01 18:37:40 $
 
 =head1 SYNOPSIS
 
@@ -478,9 +478,7 @@ sub has_name {
     my $self = shift;
     my ($test_name) = @_;
     my $name = $self->get_key_name;
-
-    $test_name =~ y/a-z/_/cs;
-
+    $test_name =~ y/a-z0-9/_/cs;
     return $name eq lc($test_name);
 }
 
