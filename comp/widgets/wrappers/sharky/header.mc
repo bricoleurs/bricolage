@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2002-10-16 03:38:14 $
+$Date: 2002-10-22 17:55:58 $
 
 =head1 SYNOPSIS
 
@@ -119,9 +119,8 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 % } # if
 </script>
 <meta http-equiv="expires" content="Wed, 20 Feb 2000 08:30:00 GMT">
+<link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
-
-<& "/widgets/wrappers/sharky/css.mc" &>
 
 <body bgcolor="#ffffff" <% $margins %> onLoad="init()" marginwidth="8" marginheight="8" topmargin="8" leftmargin="8">
 <noscript>

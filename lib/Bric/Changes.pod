@@ -220,6 +220,21 @@ Added C<source__id> to list of criteria by which stories can be searched via
 the Bric::Biz::Asset::Business::Story C<list()> and C<list_ids()>
 methods. [David]
 
+=item *
+
+The Bricolage CSS document is now a static file rather than a Mason
+component. This allows the style sheet to be cached by the browser so that it
+doesn't have to request it for every page in Bricolage. It also cuts down on
+procesing time, since it doesn't have to be managed dynamically as a Mason
+component anymore. Also, all font sizes are now specified in pixels instead of
+points, in order to maximize the consistency of cross-browser font
+rendering. [David]
+
+=item *
+
+Added a new style for the template profile, so that template code is now
+displayed in its textarea box in a monospaced font. [David]
+
 =back
 
 =head1 VERSION 1.4.4

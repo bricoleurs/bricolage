@@ -146,13 +146,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   </td>
   <td width=500>
-<& '/widgets/profile/textarea.mc', 
-  'name'     => $widget.'|code',
-  'value'    => $fa->get_data,
-  'cols'     => ($agent->{browser} eq "Internet Explorer") ? 60 : 72,
-  'rows'     => 20 ,
-  'useTable' => 0
-&>
+  <textarea name="<% "$widget|code" %>" rows="20" cols="<% $agent->{browser} eq "Internet Explorer" ? 60 : 72 %>" width="200" wrap="hard" class="codeArea"><% escape_html($fa->get_data) %></textarea>
 </td>
 </tr>
 </table>
