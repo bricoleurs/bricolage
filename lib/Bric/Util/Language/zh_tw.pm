@@ -6,7 +6,7 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$LastChangedRevision$
 
 =cut
 
@@ -14,7 +14,7 @@ our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date$
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

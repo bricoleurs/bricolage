@@ -1,4 +1,4 @@
-xpackage Bric::Util::Language::zh_cn;
+package Bric::Util::Language::zh_cn;
 
 =head1 NAME
 
@@ -6,7 +6,7 @@ Bric::Util::Language::zh_cn - Bricolage 簡体中文翻译
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$LastChangedRevision$
 
 =cut
 
@@ -14,7 +14,7 @@ our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date$
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
