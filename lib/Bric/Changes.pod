@@ -316,6 +316,13 @@ the utf8 flag set on the Perl strings that store it. This allows fields that
 have a maximum length to be truncated to that length in characters instead of
 bytes. Thanks to Kang-min Liu for the spot! [David]
 
+=item *
+
+C<< Bric::Biz::OutputChannel->list_ids >> no longer returns duplicate
+IDs. This incidentally allows output channels that happen to be in groups to
+be edited, eliminating the 'name "Web" is already used by another Output
+Channel' error. Thanks to John Greene for the spot! [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
