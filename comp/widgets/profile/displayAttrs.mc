@@ -67,7 +67,7 @@ foreach my $attr (@$attr) {
     if ($usePosition) {
 	$m->out("</td><td width=100 align=center>\n");
 	$m->comp('/widgets/profile/select.mc',
-		 disp     => 'Position',
+		 disp     => '',
 		 value    => $curField++,
 		 options  => $sel_opts,
 		 useTable => 0,
