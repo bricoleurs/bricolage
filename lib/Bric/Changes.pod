@@ -291,6 +291,12 @@ Some cases in which it was impossible to add actions to a destination have
 been fixed. Reported by Marshall Roch. Thanks to Jason Edgecombe for making
 available a server that exhibits the problem. [David]
 
+=item *
+
+The virtual FTP server no longer saves a template for every line in the
+template when the FTP client uses ASCII mode. Thanks to Keith Grennan for the
+spot! [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)

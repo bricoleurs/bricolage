@@ -189,10 +189,10 @@ if (FTP_ADDRESS() ne "") {
 }
 
 # setup log and PID file.
-push(@ARGV, 
-            '-o', 'xfer logging='.FTP_LOG,  
-           '-o', 'error log='.FTP_LOG,
-            '-P', => FTP_PID_FILE);
+push @ARGV,
+  '-o', 'xfer logging=' . FTP_LOG,
+  '-o', 'error log=' . FTP_LOG,
+  '-P', FTP_PID_FILE;
 
 # set debug mode
 if (FTP_DEBUG) {
