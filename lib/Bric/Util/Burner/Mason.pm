@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-28 22:14:16 $
+$Date: 2002-11-05 23:02:13 $
 
 =head1 SYNOPSIS
 
@@ -254,11 +254,15 @@ sub burn_one {
           unless $interp->lookup($fs->cat_uri($tmpl_path, 'dhandler'));
     }
 
-    # Save an existing Mason request object.
-    my $curr_req;
+    # Save an existing Mason request object and Bricolage objects.
+    my ($curr_req, %bric_objs);
     {
         no strict 'refs';
-        $curr_req = ${TEMPLATE_BURN_PKG . '::m'};
+        if ($curr_req = ${TEMPLATE_BURN_PKG . '::m'}) {
+            for (qw(story burner element writer)) {
+                $bric_objs{$_} = ${TEMPLATE_BURN_PKG . "::$_"};
+            }
+        }
     }
 
     while (1) {
@@ -276,10 +280,13 @@ sub burn_one {
         last unless $self->_get('more_pages');
     }
 
-    # Restore any existing Mason request object.
+    # Restore any existing Mason request object and Bricolage objects.
     if ($curr_req) {
         no strict 'refs';
         ${TEMPLATE_BURN_PKG . '::m'} = $curr_req;
+        for (qw(story burner element writer)) {
+            ${TEMPLATE_BURN_PKG . "::$_"} = $bric_objs{$_};
+        }
     }
 
 
