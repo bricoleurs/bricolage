@@ -97,6 +97,11 @@ If the installer notices that you're attempting to install Bricolage in a
 directory with an existing installation, it will suggest that you consider
 running C<make upgrade>, instead. Suggested by Bruce Albrecht. [David]
 
+=item *
+
+The list manager now sorts version numbers as numbers rather than strings.
+[JoE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.6.1

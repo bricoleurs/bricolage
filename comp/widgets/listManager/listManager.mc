@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.22.4.1 $
+$Revision: 1.22.4.2 $
 
 =head1 DATE
 
-$Date: 2003-04-24 22:53:57 $
+$Date: 2003-07-02 16:37:07 $
 
 =head1 SYNOPSIS
 
@@ -721,7 +721,7 @@ my $multisort = sub {
     my $type = $meth->{$sort_by}{props}{type};
 
     my $val;
-    if ($sort_by eq 'id') {
+    if ($sort_by eq 'id'|| $sort_by eq 'version') {
         # Do a numeric sorting.
         $val = $sort_get->($a, @$sort_arg) <=>
           $sort_get->($b, @$sort_arg);
