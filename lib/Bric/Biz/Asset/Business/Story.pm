@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-31 19:49:15 $
+$Date: 2003-02-14 02:01:58 $
 
 =head1 SYNOPSIS
 
@@ -2169,6 +2169,10 @@ sub _get_attribute_object {
 
 ################################################################################
 
+=begin comment
+
+Commented out this method because it shouldn't actually be used anywhere.
+
 =item $self = $self->_do_delete()
 
 Removes the row from the database
@@ -2185,7 +2189,7 @@ B<Notes:>
 
 NONE
 
-=cut
+#=cut
 
 sub _do_delete {
     my ($self) = @_;
@@ -2195,6 +2199,10 @@ sub _do_delete {
     }, undef, DEBUG);
     execute($delete, $self->_get('id'));
 }
+
+=end comment
+
+=cut
 
 ################################################################################
 
