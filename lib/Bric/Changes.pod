@@ -184,6 +184,11 @@ in the current user's sandbox and properly burn them to the preview root
 rather than to the staging root used for publishing. Reported by Serge
 Sozonoff. [David]
 
+=item *
+
+Contributor fields for roles other than the default role now properly store
+and retain their values. [David]
+
 =back
 
 =cut

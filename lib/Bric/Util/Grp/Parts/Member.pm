@@ -1565,7 +1565,7 @@ sub _set_attr {
     my $dirty = $self->_get__dirty;
 
     # check to see if we have an id, get attr obj if we do
-    # otherwise put it into a cache 
+    # otherwise put it into a cache
     if ( $self->_get('id') ) {
         my $attr_obj = $self->_get_attr_obj();
 
@@ -1640,7 +1640,7 @@ sub _get_attr {
         # get the cache if it exists or create if it does not
         my $attr_cache = $self->_get('_attr_cache') || {};
 
-        # get the data to return 
+        # get the data to return
         $attr =
           $attr_cache->{ $param->{'subsys'} }->{ $param->{'name'} }->{'value'};
     }
@@ -1649,9 +1649,11 @@ sub _get_attr {
     if ( $group && !$attr ) {
         my $group_obj = $self->_get_group_obj();
         if ( $group == GROUP ) {
+            # XXX Yow!
             $attr = $group_obj->METHOD_NAME_HERE();
         }
         elsif ( $group == GROUP_AND_PARENTS ) {
+            $param->{subsys} = MEMBER_SUBSYS;
             $attr = $group_obj->get_member_attr($param);
         }
     }
@@ -1730,8 +1732,8 @@ sub _delete_attr {
 
 =item $attr_hash = $self->_get_attr_hash( $param, $group)
 
-will return a hash of the attrs that match the param.   will return 
-defaults from the group and it's parents if the flags are passed
+Returns a hash of the attributes that match the parameters. It will also
+return default values from the group if the C<$group> argument is passed.
 
 B<Throws:>
 
@@ -1771,9 +1773,11 @@ sub _get_attr_hash {
         my $group_obj = $self->_get_group_obj();
         my $attrs2    = {};
         if ( $group == GROUP ) {
+            # XXXX Yow!
             $attrs2 = $group_obj->METHOD_NAME_HERE($param);
         }
         elsif ( $group == GROUP_AND_PARENTS ) {
+            $param->{subsys} = MEMBER_SUBSYS;
             $attrs2 = $group_obj->get_member_attr_hash($param);
         }
 
@@ -1875,7 +1879,7 @@ sub _get_meta {
         }
     }
     if ( $group == GROUP ) {
-
+        # XXX Yow!
         # get from group but not its parents
         if ( $param->{'field'} ) {
             unless ($meta) {
