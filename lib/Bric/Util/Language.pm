@@ -7,15 +7,15 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-12 12:13:14 $
+$Date: 2004-03-04 00:38:08 $
 
 =head1 SYNOPSIS
 
@@ -111,6 +111,13 @@ character set.
 Copy F<comp/media/js/en_us_messages.js> to a new JavaScript file named with
 your language key substituted for "en_us". Translate the JavaScript messages
 in your new JavaScript file. Be sure to use the UTF-8 character set.
+
+=item *
+
+Copy F<contrib/button_gen/bric_buttons.de_de.txt> to a new file named with
+your language key substituted for "de_de". Translate the button labels in your
+new text file. Make sure that the character set you use is supported by the
+GiMP.
 
 =back
 
