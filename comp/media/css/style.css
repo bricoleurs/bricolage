@@ -1,6 +1,7 @@
 body       { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 td         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 th         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:12px;}
+pre        { font-size:11px;}
 
 p          { font-size:11px; line-height:16px; }
 h3         { font-size:12px; line-height:17px;}

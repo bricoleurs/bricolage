@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-24 06:50:15 $
+$Date: 2003-09-18 21:19:09 $
 
 =head1 SYNOPSIS
 
@@ -65,6 +65,7 @@ require 5.006;
 use base qw(Test::Class);
 use File::Spec;
 use File::Path;
+use Bric::Test::TieOut;
 
 # Set up the temporary directory. This must be readable and writable
 # by the person running the tests, and so must be different from the
@@ -80,13 +81,21 @@ BEGIN {
 # after the one below that actually runs the tests.
 END { File::Path::rmtree($ENV{BRIC_TEMP_DIR}) }
 
+# Tie off STDERR and STDOUT so that we don't output anything, but then can
+# read from them in our tests. Also tie off STDIN so we can print stuff to
+# it.
+my $stdout = tie *STDOUT, 'Bric::Test::TieOut'
+  or die "Cannot tie STDOUT: $!\n";
+my $stderr = tie *STDERR, 'Bric::Test::TieOut'
+  or die "Cannot tie STDERR: $!\n";
+my $stdin = tie *STDIN, 'Bric::Test::TieOut'
+  or die "Cannot tie STDIN: $!\n";
+
 =head1 INTERFACE
 
 =head2 Class Methods
 
-=over 4
-
-=item C<user_id>
+=head3 user_id
 
   my $user_id = Bric::Test::Base->user_id;
 
@@ -97,10 +106,45 @@ this user when you construct it!
 
 sub user_id { 0 }
 
+=head3 read_stdout
+
+=head3 read_std_err
+
+  my $stdout = Bric::Test::Base->read_stdout;
+  $stdout = $test->read_stdout;
+
+  my $stderr = Bric::Test::Base->read_stderr;
+  $stderr = $test->read_stderr;
+
+Returns everything printed to C<STDOUT> or C<STDERR> since the last time it
+was read from. Bric::Test::Base ties C<STDOUT> and C<STDERR> off to
+Bric::Test::TieOut in order to prevent any code that prints to these file
+handles from messing with the output the Test::Harness expects to read. But
+it's also useful for checking what your Bricolage output in your tests, too.
+They can also be used as instance methods.
+
+=cut
+
+sub read_stdout { $stdout->read }
+sub read_stderr { $stderr->read }
+
+=head3 print_stdin
+
+  Bric::Test::Base->print_stdin(@msgs);
+  $test->print_stdin(@msgs);
+
+Sends C<@msgs> to C<STDIN> as if a user had input data. Any code that read
+from C<STDIN> will of course read in what you've input.
+
+=cut
+
+sub print_stdin {
+    shift;
+    print STDIN @_;
+}
+
 1;
 __END__
-
-=back
 
 =head1 AUTHOR
 

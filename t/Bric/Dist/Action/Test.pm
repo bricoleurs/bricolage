@@ -4,6 +4,9 @@ use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
 use Bric::Dist::Action;
+use Bric::Dist::Action::Mover;
+use Bric::Dist::Action::Email;
+use Bric::Dist::Action::DTDValidate;
 
 ##############################################################################
 # Test the constructor.
@@ -33,13 +36,17 @@ sub test_const : Test(11) {
 
 ##############################################################################
 # Test list_types. Increase the number of tests for each new action added.
-sub test_list_types : Test(3) {
+sub test_list_types : Test(7) {
     my $self = shift;
     ok( my @types = Bric::Dist::Action->list_types, "Get types" );
+    my $i;
     foreach my $type (@types) {
-        $type = 'Mover' if $type eq 'Move';
-        use_ok("Bric::Dist::Action::$type");
+        ++$i;
+        ok( my $act = Bric::Dist::Action->new({ type => $type }),
+            "Create $type action" );
+        isa_ok($act, 'Bric::Dist::Action');
     }
+    return "Remaining types not loaded" if $i < 7;
 }
 
 1;

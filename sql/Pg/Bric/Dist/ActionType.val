@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    ActionType.val
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-07-10 09:27:47 $
+-- $Date: 2003-09-18 21:19:09 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO action_type ( id, name, description, active)
@@ -16,6 +16,21 @@ VALUES (4, 'Email', 'Email resources.', 1);
 
 INSERT INTO action_type__media_type (action_type__id, media_type__id)
 VALUES (4, 0);
+
+INSERT INTO action_type ( id, name, description, active)
+VALUES (5, 'DTD Validation', 'XML DTD validation.', 1);
+
+/* Associate with text/html */
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES (5, 77);
+
+/* Associate with text/xml */
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES (5, 86);
+
+/* Associate with application/xhtml+xml */
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES (5, 92);
 
 /*
 

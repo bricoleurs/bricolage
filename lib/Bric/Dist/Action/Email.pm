@@ -10,20 +10,20 @@ Bric::Dist::Action::Email - Class to email distribution resources
 
 =item Version
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =item Date
 
-$Date: 2003-09-18 06:24:53 $
+$Date: 2003-09-18 21:19:09 $
 
 =item CVS ID
 
-$Id: Email.pm,v 1.2 2003-09-18 06:24:53 wheeler Exp $
+$Id: Email.pm,v 1.3 2003-09-18 21:19:09 wheeler Exp $
 
 =back
 
@@ -68,6 +68,7 @@ use Bric::Util::Fault qw(throw_undef);
 # Inheritance
 ################################################################################
 use base qw(Bric::Dist::Action);
+__PACKAGE__->_register_action('Email');
 
 ################################################################################
 # Function and Closure Prototypes

@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 03:47:11 $
+$Date: 2003-09-18 21:19:08 $
 
 =head1 SYNOPSIS
 
@@ -151,6 +151,10 @@ use MasonX::Interp::WithCallbacks;
                            :aref
                            :browser);
 
+    use Bric::Dist::Action;
+    use Bric::Dist::Action::Mover;
+    use Bric::Dist::Action::Email;
+    use Bric::Dist::Action::DTDValidate;
     use Bric::Dist::Job;
     use Bric::Dist::Resource;
 

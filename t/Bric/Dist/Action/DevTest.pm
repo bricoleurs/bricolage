@@ -6,6 +6,8 @@ use Test::More;
 use Bric::Dist::ServerType;
 use Bric::Dist::ActionType;
 use Bric::Dist::Action;
+use Bric::Dist::Action::Mover;
+use Bric::Dist::Action::Email;
 
 sub table {'action'}
 sub class { 'Bric::Dist::Action' }

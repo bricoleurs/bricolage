@@ -4,6 +4,7 @@ use warnings;
 use base qw(Bric::Dist::Action::DevTest);
 use Cwd;
 use File::Spec::Functions qw(catfile);
+use Bric::Dist::Action::Email;
 use Test::More;
 
 sub class { 'Bric::Dist::Action::Email' }

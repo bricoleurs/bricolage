@@ -6,16 +6,16 @@ Bric::Dist::ActionType - Interface to types of actions supported by Bricolage di
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2003-09-18 21:19:08 $
 
 =head1 SYNOPSIS
 
@@ -576,9 +576,9 @@ B<Notes:> NONE.
 
 =item my (@medias || $medias_aref) = $at->get_media_types
 
-Returns a list or anonymous array of the MEDIA types that apply to this
+Returns a list or anonymous array of the media types that apply to this
 action. Returns an empty list (or undef in a scalar context) if this action
-applies to  B<all> MEDIA types.
+applies to B<all> media types.
 
 B<Throws:>
 

@@ -6,16 +6,16 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-09-18 21:19:09 $
 
 =head1 SYNOPSIS
 
@@ -56,6 +56,7 @@ if (ENABLE_WEBDAV_MOVER) {
 # Inheritance
 ################################################################################
 use base qw(Bric::Dist::Action);
+__PACKAGE__->_register_action('Move');
 
 ################################################################################
 # Function and Closure Prototypes

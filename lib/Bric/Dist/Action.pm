@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2003-09-18 21:19:08 $
 
 =head1 SYNOPSIS
 
@@ -132,16 +132,7 @@ my $meths;
 ################################################################################
 # Private Class Fields
 # Load the names of the various action classes.
-my $acts;
-while (my $l = <DATA>) {
-    chomp $l;
-    my ($key, $class) = split / => /, $l, 2;
-    $acts->{$key} = $class;
-    eval "require $class";
-    throw_gen(error => $@) if $@;
-}
-
-################################################################################
+my ($acts, $types);
 
 ################################################################################
 # Instance Fields
@@ -545,7 +536,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub list_types { return wantarray ? sort keys %$acts : [ sort keys %$acts ] }
+sub list_types { return wantarray ? @$types : $types }
 
 ################################################################################
 
@@ -727,7 +718,7 @@ sub my_meths {
                               req      => 1,
                               type     => 'short',
                               props    => {   type => 'select',
-                                              vals => [sort keys %$acts ]
+                                              vals => $types
                                           }
                              },
               ord   => {
@@ -1415,7 +1406,32 @@ sub undo_it { shift }
 
 =head2 Private Class Methods
 
-NONE.
+=over 4
+
+=item __PACKAGE__->_register_action($key)
+
+Protected method called by action subclasses at startup time so they can
+register theselves as available actions. Some may wish to not register
+themselves under certain circumstances. For example,
+Bric::Dist::Action::DTDValidate should only be registered if XML::LibXML has
+been installed. Thus that class only registers itself if XML::LibXML does not
+load.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _register_action {
+    my ($class, $key) = @_;
+    $acts->{$key} = $class;
+    push @$types, $key;
+}
+
+=back
 
 =head2 Private Instance Methods
 
@@ -1769,6 +1785,7 @@ $reorder = sub {
 };
 
 1;
+__END__
 
 =back
 
@@ -1778,21 +1795,17 @@ $reorder = sub {
 
 =item *
 
-Add a new subclass for Bric::Dist::Action. Use Bric::Dist::Actcion::Email as a
-model.
+Add a new subclass for Bric::Dist::Action. Use Bric::Dist::Actcion::Email
+and Bric::Dist::Action::DTDValidate as models. Be sure to call
+C<< __PACKAGE__->_register_action($key) >> to register your action subclass.
 
 =item *
 
-Add the name and class name for the new class to the C<__DATA__> section of
-Bric::Dist::Action. This will allow Bric::Dist::Action to register and load
-your subclass.
-
-=item *
-
-Add inserts to F<sql/Pg/Bric/Dist/ActionType.val>. If your action can act on
-files of any type, add one record to the action_type__media_type table with
-the media_type__id column set to 0, which corresponds to no (and therefore
-all) media types.
+Add inserts to F<sql/Pg/Bric/Dist/ActionType.val>. Note that the name inserted
+here must be exactly the same as the $key argument to your call
+C<_register_action()>. If your action can act on files of any type, add one
+record to the action_type__media_type table with the media_type__id column set
+to 0, which corresponds to no (and therefore all) media types.
 
 =item *
 
@@ -1807,6 +1820,10 @@ Use Bric::Dist::Action::Email::DevTest as a model.
 =item *
 
 Run C<make devtest> to make sure that all tests pass.
+
+=item *
+
+Add a C<use> statement for your new action to Bric::App::Handler.
 
 =item *
 
@@ -1828,7 +1845,3 @@ David Wheeler <david@wheeler.net>
 L<Bric|Bric>
 
 =cut
-
-__DATA__
-Move => Bric::Dist::Action::Mover
-Email => Bric::Dist::Action::Email
