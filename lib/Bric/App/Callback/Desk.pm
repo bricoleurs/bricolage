@@ -3,7 +3,7 @@ package Bric::App::Callback::Desk;
 # XXX: there is a problem -- comp/widgets/desk/callback.mc
 # has two extra %args: $story_pub => {}, $media_pub => {}
 # How do we deal with that?
-
+# I see: the callbacks are called from other components..
 
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'desk');
@@ -11,6 +11,7 @@ use strict;
 use Bric::App::Session qw(:state :user);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
+use Bric::App::Callback::Publish;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Formatting;
@@ -136,11 +137,12 @@ sub move : Callback {
 
 sub publish : Callback {
     my $self = shift;
+    my $param = $self->request_args;
 
     my $mpkg = 'Bric::Biz::Asset::Business::Media';
     my $spkg = 'Bric::Biz::Asset::Business::Story';
-    my $story = mk_aref($self->request_args->{$widget.'|story_pub_ids'});
-    my $media = mk_aref($self->request_args->{$widget.'|media_pub_ids'});
+    my $story = mk_aref($param->{$widget.'|story_pub_ids'});
+    my $media = mk_aref($param->{$widget.'|media_pub_ids'});
     my (@rel_story, @rel_media);
 
     # start with the objects checked for publish
@@ -211,13 +213,26 @@ sub publish : Callback {
 
     if (%$story_pub or %$media_pub) {                      # XXX
         # Instant publish!
-        # XXX: how do we get $m?
-        $m->comp('/widgets/publish/callback.mc',
-                 field   => 'publish',
-                 widget  => 'publish',
-                 instant => 1,
-                 param   => { pub_date => Bric::Util::Time::strfdate }
-                );
+#        $m->comp('/widgets/publish/callback.mc',
+#                 field   => 'publish',
+#                 widget  => 'publish',
+#                 instant => 1,
+#                 param   => { pub_date => Bric::Util::Time::strfdate }
+#                );
+        # XXX: is this right?
+        my $pkg_key = 'publish';
+        my $cb_key = 'publish';
+        my $pub = Bric::App::Callback::Publish->new(
+            'ah' => $self->ah,
+            'apache_req' => $self->apache_req,
+            'request_args' => {
+                'instant' => 1,
+                'pub_date' => Bric::Util::Time::strfdate,
+            },
+            'cb_key' => $cb_key,
+            'trigger_key' => "${pkg_key}|${cb_key}_cb",    # unused, actually
+        );
+        $pub->publish();
     } else {
         set_redirect('/workflow/profile/publish');
     }
