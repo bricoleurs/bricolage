@@ -35,6 +35,13 @@ Options:
                       Default to the BRICOLAGE_PASSWORD environment
                       variable if set.
 
+  --oc              - the output channel the temlates are in. Useful if
+                      there is more than one output channel on the server.
+
+  --site            - the site the templates are in. Useful if there is more
+                      than one site on the server, or more than one output
+                      channel with the name specified by --oc.
+
   --patch-options   - options to pass to patch, defaults to "-p1",
                       which is a good setting for patches produced by
                       bric_template_diff.
@@ -81,17 +88,6 @@ This program requires GNU C<patch> to be installed and in your path.
 This program will neither create new templates nor delete existing
 ones.  See C<bric_dev_sync> if you need that functionality.
 
-=item *
-
-This program does not yet support output channels, so if you have more than
-one output channel on one or both of your Bricolage servers, you might get
-strange results.
-
-=item *
-
-The patched template is automatically redeployed after it is patched. A future
-option may be added to simply save it to My Workspace, instead.
-
 =back
 
 =head1 AUTHOR
@@ -114,7 +110,7 @@ BEGIN {
     our $password        = $ENV{BRICOLAGE_PASSWORD};
     our $VERBOSE              = 0;
     our $timeout              = 60;
-    our ($help, $man);
+    our ($help, $man, $oc, $site);
     our $patch_options        = '-p1';
     our $dry_run              = 0;
     our $force                = 0;
@@ -124,6 +120,8 @@ BEGIN {
 	       "verbose+"               => \$VERBOSE,
 	       "username=s"             => \$username,
 	       "password=s"             => \$password,
+	       "oc=s"                   => \$oc,
+	       "site=s"                 => \$site,
                "timeout=s"              => \$timeout,
                "dry-run"                => \$dry_run,
                "patch-options=s"        => \$patch_options,
@@ -305,16 +303,20 @@ sub read_diff {
 # get all templates from a server
 sub fetch_templates {
     my ($dir) = @_;
-    our ($url, $soap, @filenames);
+    our ($url, $soap, $oc, $site, @filenames);
     our %templates;
 
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Template');
+
+    my @search;
+    push @search, name(output_channel => $oc) if $oc;
+    push @search, name(site           => $oc) if $site;
 
     # fetch each filename in turn
     foreach my $filename (@filenames) {
 
         # find template ID for this filename
-        my $response = $soap->list_ids(name(file_name => $filename));
+        my $response = $soap->list_ids(@search, name(file_name => $filename));
         _print_fault($response) if $response->fault;
         my $template_id = $response->result->[0];
         next unless $template_id;

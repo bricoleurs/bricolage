@@ -27,6 +27,17 @@ server to export all of the templates in a single output channel. [David]
 
 =back
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Added site and output channel support to F<bric_template_diff> and
+F<bric_template_patch> in F<contrib>. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4

@@ -42,6 +42,16 @@ Options:
                       Default to the BRICOLAGE_PASSWORD environment
                       variable if set.
 
+  --from-oc         - the name of the output channel to get the list
+                      of templates from on the from_url server. Useful
+                      if there is more than one output channel.
+
+  --from-site       - The name of the site that the templates are in
+                      on the from_url server. Useful if there is more
+                      than one site on the server, or more than one
+                      output channel with the name specified by
+                      --from-oc.
+
   --to-username     - the Bricolage username to use on the to_url
                       server(s).  Defaults to the BRICOLAGE_USERNAME
                       environment variable if set.
@@ -49,6 +59,16 @@ Options:
   --to-password     - the password to use on the to_url server(s).
                       Default to the BRICOLAGE_PASSWORD environment
                       variable if set.
+
+  --to-oc           - the name of the output channel to get the list of
+                      templates from on the to_url server(s). Useful if there
+                      is more than one output channel.
+
+  --to-site         - The name of the site that the templates are in
+                      on the to_url server. Useful if there is more
+                      than one site on the server, or more than one
+                      output channel with the name specified by
+                      --to-oc.
 
   --template        - pass the name of a template here and only this template
                       file will be included in the diff.
@@ -83,12 +103,6 @@ diff.
 
 This program requires GNU C<diff> to be installed and in your path.
 
-=item *
-
-This program does not yet support output channels, so if you have more than
-one output channel on one or both of your Bricolage servers, you might get
-strange results.
-
 =back
 
 =head1 AUTHOR
@@ -111,7 +125,7 @@ BEGIN {
     our $to_password          = $ENV{BRICOLAGE_PASSWORD};
     our $VERBOSE              = 0;
     our $timeout              = 60;
-    our ($help, $man);
+    our ($help, $man, $from_oc, $to_oc, $from_site, $to_site);
     our $template_name;
     our $diff_options         = '-ur';
     GetOptions("help"                   => \$help,
@@ -119,8 +133,12 @@ BEGIN {
 	       "verbose+"               => \$VERBOSE,
 	       "from-username=s"        => \$from_username,
 	       "from-password=s"        => \$from_password,
+	       "from-oc=s"              => \$from_oc,
+	       "from-site=s"            => \$from_site,
 	       "to-username=s"          => \$to_username,
 	       "to-password=s"          => \$to_password,
+	       "to-oc=s"                => \$to_oc,
+	       "to-site=s"              => \$to_site,
                "timeout=s"              => \$timeout,
                "template=s"             => \$template_name,
                "diff-options=s"         => \$diff_options,
@@ -163,20 +181,23 @@ use File::Path qw(mkpath);
 use XML::Simple qw(XMLin);
 use MIME::Base64 qw(decode_base64);
 use Cwd qw(cwd);
+use File::Spec::Unix;
 
 main();
 
 # main is where it's at
 sub main {
-    our ($from, $from_url, $to, $to_url);
+    our ($from, $from_url, $to, $to_url, $from_oc, $from_site, $to_oc,
+         $to_site);
 
     # connect and login to SOAP servers
     soap_connect();
 
     # fetch templates from from and to
     my $temp = tempdir(CLEANUP => 1);
-    fetch_templates($from_url, $from, catdir($temp, 'from'));
-    fetch_templates($to_url, $to, catdir($temp, 'to'));
+    fetch_templates($from_url, $from, catdir($temp, 'from'), $from_oc,
+                    $from_site);
+    fetch_templates($to_url, $to, catdir($temp, 'to'), $to_oc, $to_site);
 
     # make'um diff'um
     make_diff($temp);
@@ -207,14 +228,15 @@ sub make_diff {
 
 # get all templates from a server
 sub fetch_templates {
-    my ($url, $soap, $dir) = @_;
+    my ($url, $soap, $dir, $oc, $site) = @_;
     our $template_name;
     mkpath([$dir]) unless -d $dir;
 
+    # Set up the search parameters.
     my @search;
-    if ($template_name) {
-        push(@search, name(file_name => $template_name));
-    }
+    push @search, name(file_name      => $template_name) if $template_name;
+    push @search, name(output_channel => $oc)            if $oc;
+    push @search, name(site           => $oc)            if $site;
 
     # get list of template IDs
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Template');
@@ -239,7 +261,7 @@ sub fetch_templates {
             if $VERBOSE;
 
         # construct target location
-        my $path = catdir($dir, $filename);
+        my $path = catfile($dir, File::Spec::Unix->splitdir($filename));
 
         # make directory if needed
         my @parts = splitdir($path);
