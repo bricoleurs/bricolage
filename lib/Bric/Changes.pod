@@ -52,10 +52,11 @@ Orrock/Digital Craftsmen]
 
 =item *
 
-Added a feature to display image thumbnails in the search results for media
-objects that are image objects. This feature uses the Perl module Imager and
-the relevant image library for each format you want to display. It can be
-turned on or off using the C<USE_THUMBNAILS> F<bricolage.conf> directive. See
+Added a feature to display image thumbnails in the search results and active
+view for media objects that are image objects. This feature uses the Perl
+module Imager from CPAN and the relevant image library for each format you
+want to display. It can be turned on or off using the C<USE_THUMBNAILS>
+F<bricolage.conf> directive. See
 L<Bric::Biz::Asset::Business::Media::Image|Bric::Biz::Asset::Business::Media::Image>
 for more information. [Paul Orrock/ Digital Craftsmen]
 

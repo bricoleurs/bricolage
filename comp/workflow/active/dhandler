@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-12-17 21:52:42 $
+$Date: 2004-03-02 04:12:37 $
 
 =head1 SYNOPSIS
 
@@ -31,7 +31,11 @@ if ($type eq 'templates') {
     $fields = [qw(file_name version priority desk)];
     $obj_type = 'formatting';
 } else {
-    $fields = [qw(title version priority desk)];
+    if (USE_THUMBNAILS && $type eq 'media') {
+        $fields = [qw(thumb title version priority desk)];
+    } else {
+        $fields = [qw(title version priority desk)];
+    }
     $obj_type = $type;
     $previewer = sub {
         $m->comp('/widgets/profile/preview_link.mc',
@@ -70,7 +74,9 @@ $wf = $wf->get_name;
      alter        => {priority => sub { $pri[$_[0]-1] },
                       title    => $previewer },
      field_titles => { desk    => $lang->maketext('Desk'),
-                       version => $lang->maketext('V.'), },
+                       version => $lang->maketext('V.'),
+                       thumb   => $lang->maketext('Thumb'),
+                     },
      field_values => $values,
      constrain    => {'workflow__id' => $work_id},
   &>
@@ -185,6 +191,12 @@ my $values = sub {
             my $a_id = $o->get_id;
             return qq{<a href="$uri?$widget|checkout_cb=$a_id">Checkout</a>};
         }
+    } elsif ($f eq 'thumb') {
+        # If we get a thumbnail URI, we have an image. Otherwise, simply
+        # return a space to fill the column properly because we aren't an
+        # image object but USE_THUMBNAILS is on.
+        my $thumb_uri = $o->thumbnail_uri or return '&nbsp;';
+        return qq{ <img src="$thumb_uri" />};
     }
     return;
 };
