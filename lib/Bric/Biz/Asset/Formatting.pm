@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.3 $
+$Revision: 1.38.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-17 16:43:12 $
+$Date: 2003-03-19 02:53:07 $
 
 =head1 SYNOPSIS
 
@@ -249,6 +249,7 @@ use constant FROM => VERSION_TABLE . ' i, member m';
 use constant PARAM_FROM_MAP =>
     {
        category_uri       =>  'category c',
+       simple             =>  TABLE . ' f',
        _not_simple        =>  TABLE . ' f',
        grp_id             =>  'member m2, formatting_member fm2'
     };
