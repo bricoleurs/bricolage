@@ -27,15 +27,15 @@ Bric::SOAP::Desk - SOAP interface to Bricolage desks
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 11:48:41 $
+$Date: 2004-03-18 13:38:21 $
 
 =head1 SYNOPSIS
 
@@ -292,11 +292,17 @@ sub delete {
           if DEBUG;
 
         # lookup the desk
-        my $asset = $pkg->class->lookup({ id => $id });
+        my $desk = $pkg->class->lookup({ id => $id });
         throw_ap(error => "$pkg\::$method : no $module found for id \"$id\"")
-          unless $asset;
+          unless $desk;
         throw_ap(error => "$pkg\::$method : access denied for $module \"$id\".")
-          unless chk_authz($asset, EDIT, 1);
+          unless chk_authz($desk, EDIT, 1);
+
+        # don't delete desks with assets still on them
+        my @assets = $desk->assets;
+        throw_ap(error => "$pkg\::$method : can't delete desk with assets "
+                   . "for $module \"$id\".")
+          if @assets;
 
         # remove desk from all its workflows
         my @workflows = Bric::Biz::Workflow->list({ desk_id => $id });
@@ -306,9 +312,9 @@ sub delete {
         }
 
         # delete the desk
-        $asset->deactivate;
-        $asset->save;
-        log_event("$module\_deact", $asset);
+        $desk->deactivate;
+        $desk->save;
+        log_event("$module\_deact", $desk);
     }
     return name(result => 1);
 }
