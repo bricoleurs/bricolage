@@ -117,11 +117,25 @@ fi
 AC_SUBST(SSL_COMMENT)
 AC_CACHE_SAVE
 
+# check to see if CPAN Module is working correctly
+AC_CHECK_CPAN(CPAN_WORKS)
+if test "${CPAN_WORKS}" != "yes"; then
+  AC_MSG_WARN([
 
+  It would appear that you don't have the perl CPAN Module
+  or that it can't connect to the net right now.  If you
+  have net access and want the build process to fetch and
+  install the required modules you should make sure that
+  CPAN is installed and configured correctly, and that you
+  are connected to the net and then re-run ./configure.  
+
+  Otherwise you'll have to install the missing modules by
+  hand.  After you runnning 'make' you'll find a list of
+  these in the file inst/missing_modules.
+])
+fi
 
 # Checks for CPAN modules
-# TODO: make sure CPAN itself works
-CHECK_CPAN_MODULE(MISSING_MOD, Bundle::Bricolage)
 CHECK_CPAN_MODULE(MISSING_MOD, Time::HiRes, 01.20)
 CHECK_CPAN_MODULE(MISSING_MOD, Storable, 1.0.10)
 CHECK_CPAN_MODULE(MISSING_MOD, Unix::Syslog, 0.95)
