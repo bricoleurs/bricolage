@@ -104,6 +104,7 @@ sub set_offset : Callback {
 sub show_all_records : Callback {
     my $self = shift;
     set_state_data($self->class_key, 'pagination', 0);
+    set_state_data($self->class_key, 'show_all', 1);
 }
 
 
