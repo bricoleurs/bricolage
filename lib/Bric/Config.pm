@@ -169,7 +169,10 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ENCODE_OK
                     LOAD_CHAR_SETS
                     LOAD_TIME_ZONES
-                    ENABLE_HTMLAREA
+                    ENABLE_WYSIWYG
+                    WYSIWYG_EDITOR
+                    XINHA_PLUGINS
+                    XINHA_TOOLBAR
                     HTMLAREA_TOOLBAR
                     ENABLE_GZIP
                    );
@@ -258,7 +261,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      YEAR_SPAN_AFTER
                                      NO_TOOLBAR
                                      ENABLE_CATEGORY_BROWSER
-                                     ENABLE_HTMLAREA
+                                     ENABLE_WYSIWYG
+                                     WYSIWYG_EDITOR
+                                     XINHA_PLUGINS
+                                     XINHA_TOOLBAR
                                      HTMLAREA_TOOLBAR
                                      USE_XHTML)],
                     email     => [qw(SMTP_SERVER)],
@@ -379,6 +385,22 @@ require Bric; our $VERSION = Bric->VERSION;
             ($config->{SERVER_WINDOW_NAME} =
              $config->{VHOST_SERVER_NAME} || '_default_') =~ s/\W+/_/g;
 
+            # Set default plugins for Xinha
+            $config->{XINHA_PLUGINS} ||= "['FullScreen','SpellChecker']";
+             
+            # Set default toolbar for Xinha
+            $config->{XINHA_TOOLBAR} ||= "[['popupeditor','separator']," . 
+                                         "['bold','italic','underline'," . 
+                                         " 'strikethrough','separator']," .
+                                         "['subscript','superscript'," .
+                                         " 'separator']," .
+                                         "(HTMLArea.is_gecko ? [] : " .
+                                         "  ['cut','copy','paste'])," .
+                                         "['space','undo','redo','separator'],".
+                                         "['createlink','separator']," .
+                                         "['killword','removeformat'," .
+                                         " 'separator','htmlmode']]";
+              
             # Set default toolbar for HtmlArea
             $config->{HTMLAREA_TOOLBAR} ||= "['bold','italic','underline'," .
               "'strikethrough','separator','subscript','superscript'," .
@@ -402,7 +424,7 @@ require Bric; our $VERSION = Bric->VERSION;
                     STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
-                    USE_THUMBNAILS ENABLE_HTMLAREA AUTOGENERATE_SLUG
+                    USE_THUMBNAILS ENABLE_WYSIWYG AUTOGENERATE_SLUG
                     RELATED_MEDIA_UPLOAD ENABLE_GZIP MEDIA_UNIQUE_FILENAME
                     LDAP_TLS))
         {
@@ -609,10 +631,15 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant USE_THUMBNAILS          => $config->{USE_THUMBNAILS};
     use constant THUMBNAIL_SIZE          => $config->{THUMBNAIL_SIZE} || 75;
 
-    # Enable HTMLAREA WYSIWYG Editor ?
-    use constant ENABLE_HTMLAREA         => $config->{ENABLE_HTMLAREA};
+    # Enable WYSIWYG editor?
+    use constant ENABLE_WYSIWYG          => $config->{ENABLE_WYSIWYG};
+    use constant WYSIWYG_EDITOR          => $config->{WYSIWYG_EDITOR};
+    
+    # WYSIWYG editor settings
+    use constant XINHA_PLUGINS           => $config->{XINHA_PLUGINS};
+    use constant XINHA_TOOLBAR           => $config->{XINHA_TOOLBAR};
     use constant HTMLAREA_TOOLBAR        => $config->{HTMLAREA_TOOLBAR};
-
+    
     # The minimum login name and password lengths users can enter.
     use constant LOGIN_LENGTH            => $config->{LOGIN_LENGTH} || 5;
     use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 5;

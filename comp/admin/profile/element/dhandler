@@ -4,9 +4,9 @@
     context => "Admin | Profile | $disp | $crumb",
   jsInit => (defined $id) ? "showForm('text')" : ""
 &>
-% if (ENABLE_HTMLAREA) {
-% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
-<& /widgets/htmlarea/load.mc &>
+% if (ENABLE_WYSIWYG) {
+% # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
+<& /widgets/wysiwyg/load.mc &>
 % }
 <form method="post" action="<% $r->uri %>" name="cont_profile" id="cont_profile" onSubmit="return confirmChanges('cont_profile')">
 <%perl>;
@@ -283,10 +283,6 @@ if (!$no_edit && defined $id) {
 
 </%perl>
 </form>
-% if (ENABLE_HTMLAREA) {
-% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
-<& /widgets/htmlarea/timeout.mc &>
-% }
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#

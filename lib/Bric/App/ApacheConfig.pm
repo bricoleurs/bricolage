@@ -163,10 +163,16 @@ do {
       "    ForceType           \"text/css\"\n" .
       "  </Location>";
 
-    # Enable CGI for htmlarea spellchecker.
-    if (ENABLE_HTMLAREA){
+    # Enable CGI for spellchecker.
+    if (ENABLE_WYSIWYG){
         push @locs,
-          "  <Location /media/htmlarea/plugins/SpellChecker>\n" .
+          "  <Location /media/wysiwyg/htmlarea/plugins/SpellChecker>\n" .
+          "    SetHandler None\n" .
+          "    AddHandler perl-script .cgi\n" .
+          "    PerlHandler Apache::Registry\n" .
+          "  </Location>";
+        push @locs,
+          "  <Location /media/wysiwyg/xinha/plugins/SpellChecker>\n" .
           "    SetHandler None\n" .
           "    AddHandler perl-script .cgi\n" .
           "    PerlHandler Apache::Registry\n" .

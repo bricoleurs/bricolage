@@ -1,8 +1,7 @@
 <input type="hidden" name="container_prof|update_cb" value="1">
-% if (ENABLE_HTMLAREA) {
-% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
-<& /widgets/htmlarea/load.mc &>
-% }
+% if (ENABLE_WYSIWYG) {
+<& /widgets/wysiwyg/load.mc &>
+%}
 <%perl>;
 # Show the story summary if needed.
 $m->comp('/widgets/summary/summary.mc', asset => $asset, number => 1)
@@ -380,10 +379,6 @@ if ($at->is_related_media) {
   </td>
 </tr>
 </table>
-% }
-% if (ENABLE_HTMLAREA) {
-% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
-<& /widgets/htmlarea/timeout.mc &>
 % }
 %# this script creates an array with the names
 %# of select boxes that need ordering

@@ -1,0 +1,27 @@
+<script type="text/javascript">
+  _editor_url = "/media/wysiwyg/htmlarea/";
+  _editor_lang = "<% $lang_key %>";
+</script>
+<script type="text/javascript" src="/media/wysiwyg/htmlarea/htmlarea.js"></script>
+<script type="text/javascript" src="/media/wysiwyg/htmlarea/lang/en.js"></script>
+<script type="text/javascript" src="/media/wysiwyg/htmlarea/dialog.js"></script>
+<script type="text/javascript">  
+  
+  HTMLArea.loadPlugin("SpellChecker");
+  
+  var editors = new Array();
+  
+  function inithtmlareas() {
+    var tmp;
+       
+    while (tmp = editors.pop()){
+      var editor = new HTMLArea(tmp);
+%     my $htmlareatoolbar = HTMLAREA_TOOLBAR;
+      editor.config.toolbar = <% $htmlareatoolbar %>;
+      editor.registerPlugin(SpellChecker);
+      editor.generate();
+    }
+  }
+
+  setTimeout('inithtmlareas();',1000);
+</script>

@@ -314,7 +314,7 @@ textarea_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:
 %}
 textarea_table     += '</td></tr></table></form>&nbsp;'
 
-% if (ENABLE_HTMLAREA) {
+% if (ENABLE_WYSIWYG) {
 var wysiwyg_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=wysiwyg>"
 wysiwyg_table      += '<input type=hidden name=fb_allowMultiple value=1>'
 wysiwyg_table      += '<table width=340 cellpadding=3><tr><td valign=top><span class=label><%$lang->maketext('Key Name')%>:</span><br>'
@@ -438,7 +438,7 @@ date_table     += '</td></tr></table></form>&nbsp;'
         <b><% $lang->maketext('Text Area') %></b>
     </td>
   </tr>
-% if (ENABLE_HTMLAREA){
+% if (ENABLE_WYSIWYG){
   <tr>
     <td style="border-style:solid; border-color:#cccc99;">
       <input type=radio name=formElement value=wysiwyg onClick="showForm('wysiwyg')">

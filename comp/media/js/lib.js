@@ -718,3 +718,27 @@ function resizeframe() {
       ifrm.style.height = document.body.offsetHeight + "px";
     }
 }
+
+
+/*
+ * Handle multiple onload events
+ * By Marshall Roch, 2005-03-25
+ *
+ * To use, instead of writing "window.onload = someFunction" or 
+ * "<body onload='someFunction'>", use "multiOnload.onload('someFunction')".
+ */
+var multiOnload = new Object();
+multiOnload.onload = multiOnload_addOnload;
+window.onload = multiOnload_onload;
+
+function multiOnload_onload() {
+    if (multiOnload.events) {
+        for (var i=0; i < multiOnload.events.length; i++) {
+            eval(multiOnload.events[i] + "()");
+        }
+    }
+}
+function multiOnload_addOnload(eventFn) {
+    if(!this.events) { this.events = new Array(); }
+    this.events[this.events.length] = eventFn;
+}

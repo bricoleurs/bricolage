@@ -171,6 +171,13 @@ to authenticate against any LDAP server. Includes support for authenticating
 users only if they are members of a specific user group in the LDAP database.
 Users must still exist in Bricolage, however. [David]
 
+=item *
+
+Added support for multiple WYSIWYG editors.  C<ENABLE_HTMLAREA> has been 
+replaced by C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>.  You can now choose between
+htmlArea 3 and the new Xinha, a more active fork of htmlArea (recommended).
+More editors possibly coming soon. See Bric::Admin for details. [Marshall]
+
 =back
 
 =head2 Improvements

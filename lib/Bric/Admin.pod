@@ -272,6 +272,10 @@ htmlArea 3.0 or later (optional)
 
 =item *
 
+Xinha WYSIWYG editor (optional)
+
+=item *
+
 GNU Aspell 0.50 or later (optional)
 
 =back
@@ -1004,10 +1008,31 @@ create other user accounts.
 =head2 htmlArea (Optional)
 
 To install htmlArea, an optional application that offers WYSIWYG editing in
-the Bricolage UI, simply download it from L<http://www.htmlarea.com/>,
-decompress the files, and move them to the F<comp/media/htmlarea> directory in
-your Bricolage root. You will also need to enable the C<ENABLE_HTMLAREA>
-F<bricolage.conf> directive (see L<UI Configuration|/"UI Configuration">).
+the Bricolage UI, simply download it from 
+L<http://www.dynarch.com/projects/htmlarea/>, decompress the files,
+and move them to the F<comp/media/wysiwyg/htmlarea> directory in your Bricolage 
+root. 
+
+As of 2005-03-25, there is a bug in htmlArea regarding form handling that 
+requires a patch.  After installing, apply the patch while in your Bricolage 
+root: C<patch -p0 < inst/patches/xinha.diff>
+
+You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR> 
+F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
+
+=head2 Xinha (Optional)
+
+To install Xinha, an optional application that offers WYSIWYG editing in
+the Bricolage UI, simply download it from L<http://www.xinha.org/>, 
+decompress the files, and move them to the F<comp/media/wysiwyg/xinha> 
+directory in your Bricolage root.  
+
+As of 2005-03-25, there is a bug in Xinha regarding form handling that requires 
+a patch.  After installing, apply the patch while in your Bricolage root:
+C<patch -p0 < inst/patches/xinha.diff>
+
+You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR> 
+F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
 
 =head2 GNU Aspell (Optional)
 
@@ -1748,18 +1773,18 @@ default.
 
 =item *
 
-B<ENABLE_HTMLAREA and HTMLAREA_TOOLBAR:> These directives control the htmlArea
-WYSIWYG editor in Bricolage. htmlArea 3.0 must be installed in
-F<comp/media/htmlarea>. Download it from
-L<http://www.interactivetools.com/products/htmlarea/> and simply rename the
-decompressed archive file to F<comp/media/htmlarea> in your Bricolage root.
+B<ENABLE_WYSIWYG and WYSIWYG_EDITOR:> These directives control the WYSIWYG 
+editor in Bricolage.  Currently supported are htmlArea and Xinha (a fork of
+htmlArea).  After installing htmlArea or Xinha (see dependency info above), set
+C<WYSIWYG_EDITOR> appropriately.
 
-Once it's installed and C<ENABLE_HTMLAREA> has been enabled, you can specify
-exactly what shows up in your htmlArea toolbar and how it is displayed. This
-is useful for ensuring that content remains separate from presentation. For
-example, you usually won't want to include the font control buttons, as these
-are generally best managed in templates. Here is a complete list of the
-available buttons:
+=item *
+
+B<HTMLAREA_TOOLBAR and XINHA_TOOLBAR:> You can specify exactly what shows up in 
+your Xinha/htmlArea toolbar and how it is displayed. This is useful for 
+ensuring that content remains separate from presentation. For example, you 
+usually won't want to include the font control buttons, as these are generally 
+best managed in templates. Here is a complete list of the available buttons:
 
 =over 8
 
@@ -1835,8 +1860,8 @@ available buttons:
 
 =back
 
-In addition to the button specifications, htmlArea configuration supports a
-few other toolbar configuration options:
+In addition to the button specifications, Xinha and htmlArea configurations 
+support a few other toolbar configuration options:
 
 =over 8
 
@@ -1855,13 +1880,6 @@ Starts a new line in the toolbar. Subsequent controls will be inserted on the
 new line.
 
 =back
-
-The default value for C<HTMLAREA_TOOLBAR> is:
-
-  ['bold', 'italic', 'underline', 'strikethrough', 'separator', 'subscript',
-   'superscript', 'separator', 'copy', 'cut', 'paste', 'space', 'undo',
-   'redo', 'createlink', 'htmlmode', 'separator', 'popupeditor', 'separator',
-   'showhelp', 'about']
 
 =back
 
