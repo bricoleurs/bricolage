@@ -226,6 +226,7 @@ use constant PARAM_WHERE_MAP =>
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
       version               => 'i.version = ?',
+      published_version     => 'mt.published_version = i.version AND i.checked_out = 0',
       user__id              => 'i.usr__id = ?',
       user_id              => 'i.usr__id = ?',
       uri                   => 'LOWER(i.uri) LIKE LOWER(?)',
@@ -518,6 +519,12 @@ most recent version. May use C<ANY> for a list of possible values.
 
 A boolean value indicating whether to return only checked out or not checked
 out media.
+
+=item published_version
+
+Returns the version of the media documents as they were last published. The
+C<checked_out> parameter will be ignored if this parameter is passed a true
+value.
 
 =item return_versions
 

@@ -43,6 +43,15 @@ Added F<contrib/bric_import_contribs> to import contributors from a
 tab-delimited file. Development by Kineticode, sponsored by the RAND
 Corporation. [David]
 
+=item *
+
+Added the C<published_version> parameter to the C<list()> methods of the
+story, media, and template classes. This parameter forces the search to return
+the versions of the assets as they were last published, rather than the most
+recent version. This will be most useful to those looking up other documents
+in templates and publishing them, as a way of avoiding pulling documents out
+from other anyone who might have them checked out! [David]
+
 =back
 
 =head2 Bug Fixes

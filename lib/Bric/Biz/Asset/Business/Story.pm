@@ -338,6 +338,7 @@ use constant PARAM_WHERE_MAP =>
       title                  => 'LOWER(i.name) LIKE LOWER(?)',
       description            => 'LOWER(i.description) LIKE LOWER(?)',
       version                => 'i.version = ?',
+      published_version      => 's.published_version = i.version AND i.checked_out = 0',
       slug                   => 'LOWER(i.slug) LIKE LOWER(?)',
       user__id               => 'i.usr__id = ?',
       user_id                => 'i.usr__id = ?',
@@ -646,6 +647,12 @@ most recent version. May use C<ANY> for a list of possible values.
 
 A boolean value indicating whether to return only checked out or not checked
 out stories.
+
+=item published_version
+
+Returns the version of the stories as they were last published. The
+C<checked_out> parameter will be ignored if this parameter is passed a true
+value.
 
 =item return_versions
 

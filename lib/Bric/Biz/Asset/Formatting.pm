@@ -271,6 +271,7 @@ use constant PARAM_WHERE_MAP =>
       title                 => 'LOWER(f.name) LIKE LOWER(?)',
       description           => 'LOWER(f.description) LIKE LOWER(?)',
       version               => 'i.version = ?',
+      published_version     => 'f.published_version = i.version AND i.checked_out = 0',
       user__id              => 'i.usr__id = ?',
       user_id               => 'i.usr__id = ?',
       _checked_in_or_out    => 'i.checked_out = '
@@ -705,6 +706,12 @@ use C<ANY> for a list of possible values.
 
 A boolean value indicating whether to return only checked out or not checked
 out templates.
+
+=item published_version
+
+Returns the version of the templates as they were last deployed. The
+C<checked_out> parameter will be ignored if this parameter is passed a true
+value.
 
 =item category_uri
 
