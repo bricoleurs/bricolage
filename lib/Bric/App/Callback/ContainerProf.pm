@@ -1,7 +1,5 @@
 package Bric::App::Callback::ContainerProf;
 
-# XXX: fix postcallback
-
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'container_prof');
 use strict;
@@ -28,143 +26,110 @@ my $regex = {
 };
 
 
-sub drift_correction : PreCallback {
+sub edit : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
-    # XXX: has to only execute before 'container_prof' callbacks
-    # (is this necessary/possible?)
-    return unless $self->class_key eq CLASS_KEY;
-
-    my $param = $self->request_args;
-
-    # Don't do anything if we've already corrected ourselves.
-    return if $param->{'_drift_corrected_'};
-
-    # Update the state name
-    set_state_name(CLASS_KEY, $param->{CLASS_KEY.'|state_name'});
-
-    # Get the tile ID this page thinks its displaying.
-    my $tile_id = $param->{CLASS_KEY.'|top_stack_tile_id'};
-
-    # Return if the page doesn't send us a tile_id
-    return unless $tile_id;
-
-    my $tile  = get_state_data(CLASS_KEY, 'tile');
-    # Return immediately if everything is already in sync.
-    if ($tile->get_id == $tile_id) {
-        $param->{'_drift_corrected_'} = 1;
-        return;
-    }
-
-    my $stack = get_state_data(CLASS_KEY, 'tiles');
-    my @tmp_stack;
-
-    while (@$stack > 0) {
-        # Get the next tile on the stack.
-        $tile = pop @$stack;
-        # Finish this loop if we find our tile.
-        last if $tile->get_id == $tile_id;
-        # Push this tile on our temp stack just in case we can't find our ID.
-        unshift @tmp_stack, $tile;
-        # Undef the tile since its not the one we're looking for.
-        $tile = undef;
-    }
-
-    # If we found the tile, make it the head tile and save the remaining stack.
-    if ($tile) {
-        set_state_data(CLASS_KEY, 'tile', $tile);
-        set_state_data(CLASS_KEY, 'tiles', $stack);
-    }
-    # If we didn't find the tile, abort, and restore the tile stack
-    else {
-        add_msg("Warning! State inconsistent: Please use the buttons provided "
-                ."by the application rather than the 'Back'/'Forward' buttons");
-
-        # Set this flag so that nothing gets changed on this request.
-        $param->{'_inconsistant_state_'} = 1;
-
-        set_state_data(CLASS_KEY, 'tiles', \@tmp_stack);
-    }
-
-    # Drift has now been corrected.
-    $param->{'_drift_corrected_'} = 1;
-}
-
-
-# XXX: change this to use a hidden field for tile ID
-#      so that it is not a PostCallback
-sub default : PostCallback {
-    my $self = shift;
     my $r = $self->apache_req;
-
-    # XXX:
-#    my ($param, $field) = @{ $self->request_args }['param', 'field'];
-    # parse $param for field I guess
+    my $param = $self->request_args;
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
 
-    if ($field =~ /^container_prof\|edit(\d+)_cb/ ) {
-        # Update the existing fields and get the child tile matching ID $1
-        my $edit_tile = $update_parts->(CLASS_KEY, $param, $1);
+    # Update the existing fields and get the child tile matching ID
+    my $edit_tile = $update_parts->(CLASS_KEY, $param);
 
-        # Push this child tile on top of the stack
-        $push_tile_stack->(CLASS_KEY, $edit_tile);
+    # Push this child tile on top of the stack
+    $push_tile_stack->(CLASS_KEY, $edit_tile);
 
-        # Don't redirect if we're already on the right page.
-        if ($tile->get_object_type eq 'media') {
-            unless ($r->uri eq "$MEDIA_CONT/edit.html") {
-                set_redirect("$MEDIA_CONT/edit.html");
-            }
-        } else {
-            unless ($r->uri eq "$CONT_URL/edit.html") {
-                set_redirect("$CONT_URL/edit.html");
-            }
+    # Don't redirect if we're already on the right page.
+    if ($tile->get_object_type eq 'media') {
+        unless ($r->uri eq "$MEDIA_CONT/edit.html") {
+            set_redirect("$MEDIA_CONT/edit.html");
         }
-
-    } elsif ($field =~ /^container_prof\|view(\d+)_cb/ ) {
-        my ($view_tile) = grep(($_->get_id == $1), $tile->get_containers);
-
-        # Push this child tile on top of the stack
-        $push_tile_stack->(CLASS_KEY, $view_tile);
-
-        if ($tile->get_object_type eq 'media') {
-            set_redirect("$MEDIA_CONT/") unless $r->uri eq "$MEDIA_CONT/";
-        } else {
-            set_redirect("$CONT_URL/") unless $r->uri eq "$CONT_URL/";
+    } else {
+        unless ($r->uri eq "$CONT_URL/edit.html") {
+            set_redirect("$CONT_URL/edit.html");
         }
-    } elsif ($field =~ /^container_prof\|bulk_edit-(\d+)_cb/) {
-        my $tile_id   = $1;
-        # Update the existing fields and get the child tile matching ID $tile_id
-        my $edit_tile = $update_parts->(CLASS_KEY, $param, $tile_id);
-
-        # Push the current tile onto the stack.
-        $push_tile_stack->(CLASS_KEY, $edit_tile);
-
-        # Get the name of the field to bulk edit
-        my $field = $param->{CLASS_KEY.'|bulk_edit_tile_field-'.$tile_id};
-
-        # Save the bulk edit field name
-        set_state_data(CLASS_KEY, 'field', $field);
-        set_state_data(CLASS_KEY, 'view_flip', 0);
-
-        my $state_name = $field eq '_super_bulk_edit' ? 'edit_super_bulk'
-                                                      : 'edit_bulk';
-
-        set_state_name(CLASS_KEY, $state_name);
-
-        my $uri  = $tile->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-
-        set_redirect("$uri/$state_name.html");
     }
 }
 
+sub bulk_edit : Callback {
+    my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
+    my $r = $self->apache_req;
+    my $param = $self->request_args;
+    my $field = $self->trigger_key;
+
+    my $tile = get_state_data(CLASS_KEY, 'tile');
+    my $tile_id = $param->{'edit_view_bulk_tile_id'};
+    # Update the existing fields and get the child tile matching ID $tile_id
+    my $edit_tile = $update_parts->(CLASS_KEY, $param);
+
+    # Push the current tile onto the stack.
+    $push_tile_stack->(CLASS_KEY, $edit_tile);
+
+    # Get the name of the field to bulk edit
+    my $field = $param->{CLASS_KEY.'|bulk_edit_tile_field-'.$tile_id};
+
+    # Save the bulk edit field name
+    set_state_data(CLASS_KEY, 'field', $field);
+    set_state_data(CLASS_KEY, 'view_flip', 0);
+
+    my $state_name = $field eq '_super_bulk_edit' ? 'edit_super_bulk'
+                                                  : 'edit_bulk';
+    set_state_name(CLASS_KEY, $state_name);
+
+    my $uri  = $tile->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    set_redirect("$uri/$state_name.html");
+}
+
+sub view : Callback {
+    my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
+    my $r = $self->apache_req;
+    my $param = $self->request_args;
+    my $field = $self->trigger_key;
+
+    my $tile = get_state_data(CLASS_KEY, 'tile');
+    my $tile_id = $param->{'edit_view_bulk_tile_id'};
+    my ($view_tile) = grep(($_->get_id == $tile_id), $tile->get_containers);
+
+    # Push this child tile on top of the stack
+    $push_tile_stack->(CLASS_KEY, $view_tile);
+
+    if ($tile->get_object_type eq 'media') {
+        set_redirect("$MEDIA_CONT/") unless $r->uri eq "$MEDIA_CONT/";
+    } else {
+        set_redirect("$CONT_URL/") unless $r->uri eq "$CONT_URL/";
+    }
+}
+
+sub reorder : Callback {
+    # don't do anything, handled by the update_parts code now
+}
+
+sub delete : Callback {
+    # don't do anything, handled by the update_parts code now
+}
 
 sub clear : Callback {
+    my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     clear_state(CLASS_KEY);
 }
 
 sub add_element : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     my $r = $self->apache_req;
 
     # get the tile
@@ -208,6 +173,8 @@ sub add_element : Callback {
 
 sub update : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     $update_parts->(CLASS_KEY, $self->request_args);
     my $tile = get_state_data(CLASS_KEY, 'tile');
@@ -216,6 +183,8 @@ sub update : Callback {
 
 sub pick_related_media : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
     my $object_type = $tile->get_object_type();
@@ -225,6 +194,8 @@ sub pick_related_media : Callback {
 
 sub relate_media : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
     $tile->set_related_media($self->value);
@@ -233,6 +204,8 @@ sub relate_media : Callback {
 
 sub unrelate_media : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
     $tile->set_related_media(undef);
@@ -241,6 +214,8 @@ sub unrelate_media : Callback {
 
 sub pick_related_story : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
     my $object_type = $tile->get_object_type();
@@ -250,6 +225,8 @@ sub pick_related_story : Callback {
 
 sub relate_story : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
     $tile->set_related_instance_id($self->value);
@@ -258,6 +235,8 @@ sub relate_story : Callback {
 
 sub unrelate_story : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data(CLASS_KEY, 'tile');
     $tile->set_related_instance_id(undef);
@@ -265,11 +244,18 @@ sub unrelate_story : Callback {
 }
 
 sub related_up : Callback {
+    my ($self) = @_;     # @_ for &$handle_related_up
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     &$handle_related_up;
 }
 
 sub lock_val : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     my $value = $self->value;
     my $autopop = ref $self->value ? $self->value : [$self->value];
     my $tile    = get_state_data(CLASS_KEY, 'tile');
@@ -294,6 +280,8 @@ sub lock_val : Callback {
 
 sub save_and_up : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     if ($self->request_args->{CLASS_KEY . '|delete_element'}) {
         $delete_element->(CLASS_KEY);
@@ -314,6 +302,8 @@ sub save_and_up : Callback {
 
 sub save_and_stay : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     if ($self->request_args->{CLASS_KEY . '|delete_element'}) {
         $delete_element->(CLASS_KEY);
@@ -333,6 +323,9 @@ sub save_and_stay : Callback {
 
 sub up : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     $pop_and_redirect->($self, CLASS_KEY);
 }
 
@@ -340,6 +333,9 @@ sub up : Callback {
 
 sub resize : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     my $param = $self->request_args;
 
     $split_fields->(CLASS_KEY, $param->{CLASS_KEY.'|text'});
@@ -349,6 +345,8 @@ sub resize : Callback {
 
 sub change_default_field : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     my $def  = $self->request_args->{CLASS_KEY.'|default_field'};
     my $tile = get_state_data(CLASS_KEY, 'tile');
@@ -360,6 +358,9 @@ sub change_default_field : Callback {
 
 sub change_sep : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     my $param = $self->request_args;
     my ($data, $sep);
 
@@ -389,11 +390,16 @@ sub change_sep : Callback {
 
 sub recount : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     $split_fields->(CLASS_KEY, $self->request_args->{CLASS_KEY.'|text'});
 }
 
 sub bulk_edit_this : Callback {
     my $self = shift;
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
 
     my $be_field = $self->request_args->{CLASS_KEY . '|bulk_edit_field'};
 
@@ -414,14 +420,26 @@ sub bulk_edit_this : Callback {
 }
 
 sub bulk_save : Callback {
+    my ($self) = @_;     # @_ for &$handle_related_up
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     &$handle_bulk_save;
 }
 
 sub bulk_up : Callback {
+    my ($self) = @_;     # @_ for &$handle_bulk_up
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     &$handle_bulk_up;
 }
 
 sub bulk_save_and_up : Callback {
+    my ($self) = @_;     # @_ for &$handle_bulk_*
+    $drift_correction->($self);
+    return if $param->{'_inconsistent_state_'};
+
     &$handle_bulk_save;
     &$handle_bulk_up;
 }
@@ -516,23 +534,25 @@ my $delete_element = sub {
         set_redirect($uri);
     }
 
-    add_msg($self->lang->maketext("Element [_1] deleted.",
-                                  "&quot;" . $tile->get_name . "&quot;"));
+    my $arg = '&quot;' . $tile->get_name . '&quot;';
+    add_msg($self->lang->maketext('Element [_1] deleted.', $arg));
     return;
 };
 
 
 my $update_parts = sub {
-    my ($widget, $param, $locate_id) = @_;
+    my ($widget, $param) = @_;
+    my (@curr_tiles, @delete, $locate_tile);
+
+    my $locate_id = exists $param->{'edit_view_bulk_tile_id'}
+      ? $param->{'edit_view_bulk_tile_id'}
+      : -1;    # invalid ID
     my $tile = get_state_data($widget, 'tile');
-    my $locate_tile;
 
     # Don't delete unless either the 'Save...' or 'Delete' buttons were pressed
     my $do_delete = ($param->{$widget.'|delete_cb'} ||
                      $param->{$widget.'|save_and_up_cb'} ||
                      $param->{$widget.'|save_and_stay_cb'});
-
-    my (@curr_tiles, @delete);
 
     # Save data to tiles and put them in a usable order
     foreach my $t ($tile->get_tiles) {
@@ -544,8 +564,8 @@ my $update_parts = sub {
         if ($do_delete && ($param->{$widget . "|delete_cont$id"} ||
                            $param->{$widget . "|delete_data$id"})) {
 
-            add_msg($self->lang->maketext("Element [_1] deleted.","&quot;" .
-                                    $t->get_name . "&quot;"));
+            my $arg = '&quot;' . $t->get_name . '&quot;';
+            add_msg($self->lang->maketext("Element [_1] deleted.", $arg));
             push @delete, $t;
             next;
         }
@@ -561,8 +581,9 @@ my $update_parts = sub {
                 $val = '' unless defined $val;
                 if ( $param->{$widget . "|${id}-partial"} ) {
                     # The date is only partial. Send them back to to it again.
-                    add_msg($self->lang->maketext("Invalid date value for [_1] field.",
-                                            "&quot;" . $_->get_name. "&quot;"));
+                    my $msg = 'Invalid date value for [_1] field.';
+                    my $arg = '&quot;' . $_->get_name. '&quot;';
+                    add_msg($self->lang->maketext($msg, $arg));
                     set_state_data($widget, '__NO_SAVE__', 1);
                 } else {
                     # Truncate the value, if necessary, then set it.
@@ -707,8 +728,8 @@ my $handle_bulk_save = sub {
         $split_fields->(CLASS_KEY, $param->{CLASS_KEY.'|text'});
         $save_data->(CLASS_KEY);
         my $data_field = get_state_data(CLASS_KEY, 'field');
-        add_msg($self->lang->maketext("[_1] Elements saved.",
-                                      "&quot;$data_field&quot;"));
+        my $arg = "&quot;$data_field&quot;";
+        add_msg($self->lang->maketext("[_1] Elements saved.", $arg));
     } else {
         $split_super_bulk->(CLASS_KEY, $param->{CLASS_KEY.'|text'});
         unless (num_msg() > 0) {
@@ -865,7 +886,6 @@ my $compare_soundex = sub {
 
 my $compare_levenshtein = sub {
     my ($a, $b) = @_;
-
     return Text::Levenshtein::distance($a, $b);
 };
 
@@ -875,8 +895,7 @@ my $compare_levenshtein = sub {
 # Alias to the comparison method to use.  First check for Text::levenshtein and
 # then the less effective Text::Soundex
 
-my $compare = $Text::Levenshtein::VERSION ? $compare_levenshtein
-  : $compare_soundex;
+my $compare = $Text::Levenshtein::VERSION ? $compare_levenshtein : $compare_soundex;
 
 #------------------------------------------------------------------------------#
 # closest
@@ -972,7 +991,7 @@ my $split_super_bulk = sub {
                 $repeatable = $atd->get_quantifier || 0;
             } elsif (my $atc = $at->get_containers($type)) {
                 # Containers are currently always repeatable
-                $repeatable = 1; #$at->is_repeatable($atc) || 0;
+                $repeatable = 1;    #$at->is_repeatable($atc) || 0;
             }
 
             # If this field is not repeatable and we already have one of these
@@ -1006,7 +1025,6 @@ my $split_super_bulk = sub {
         else {
             $type ||= $def_field || $chunks[-1]->[0];
             $acc .= $acc ? " $l" : $l;
-
             $blanks = 0;
         }
     }
@@ -1021,6 +1039,65 @@ my $split_super_bulk = sub {
     set_state_data($widget, 'data', \@chunks);
 };
 
+
+###
+
+my $drift_correction = {
+    my ($self) = @_;
+    my $param = $self->request_args;
+
+    # Don't do anything if we've already corrected ourselves.
+    return if $param->{'_drift_corrected_'};
+
+    # Update the state name
+    set_state_name(CLASS_KEY, $param->{CLASS_KEY.'|state_name'});
+
+    # Get the tile ID this page thinks its displaying.
+    my $tile_id = $param->{CLASS_KEY.'|top_stack_tile_id'};
+
+    # Return if the page doesn't send us a tile_id
+    return unless $tile_id;
+
+    my $tile  = get_state_data(CLASS_KEY, 'tile');
+    # Return immediately if everything is already in sync.
+    if ($tile->get_id == $tile_id) {
+        $param->{'_drift_corrected_'} = 1;
+        return;
+    }
+
+    my $stack = get_state_data(CLASS_KEY, 'tiles');
+    my @tmp_stack;
+
+    while (@$stack > 0) {
+        # Get the next tile on the stack.
+        $tile = pop @$stack;
+        # Finish this loop if we find our tile.
+        last if $tile->get_id == $tile_id;
+        # Push this tile on our temp stack just in case we can't find our ID.
+        unshift @tmp_stack, $tile;
+        # Undef the tile since its not the one we're looking for.
+        $tile = undef;
+    }
+
+    # If we found the tile, make it the head tile and save the remaining stack.
+    if ($tile) {
+        set_state_data(CLASS_KEY, 'tile', $tile);
+        set_state_data(CLASS_KEY, 'tiles', $stack);
+    }
+    # If we didn't find the tile, abort, and restore the tile stack
+    else {
+        add_msg("Warning! State inconsistent: Please use the buttons provided "
+                ."by the application rather than the 'Back'/'Forward' buttons");
+
+        # Set this flag so that nothing gets changed on this request.
+        $param->{'_inconsistent_state_'} = 1;
+
+        set_state_data(CLASS_KEY, 'tiles', \@tmp_stack);
+    }
+
+    # Drift has now been corrected.
+    $param->{'_drift_corrected_'} = 1;
+}
 
 
 1;
