@@ -282,6 +282,10 @@ Added Template Toolkit burner support. [Arthur/Fotango]
 
 Made Bric::SOAP::Element work with multi-sites. [Scott + David]
 
+=item *
+
+Allowed --server=https:// in bric_soap to work. [Geoff Richards]
+
 =back
 
 =head1 VERSION 1.6.6 ()
