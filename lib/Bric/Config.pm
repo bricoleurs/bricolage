@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.26.2.5 $
+$Revision: 1.26.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.26.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-08 20:46:59 $
+$Date: 2002-02-08 21:04:13 $
 
 =head1 SYNOPSIS
 
@@ -40,7 +40,7 @@ and their use.
 # Standard Dependencies
 use strict;
 use File::Spec::Functions qw(catdir);
-use Config::General::Extended;
+use Apache::ConfigFile;
 
 #--------------------------------------#
 # Programatic Dependencies
@@ -237,9 +237,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
 	# Grab the Apache configuration file.
 	$config->{APACHE_CONF} ||= '/usr/local/apache/conf/httpd.conf';
-	$aconf = {
-          Config::General::Extended->new(-file => $config->{APACHE_CONF},
-					 -LowerCaseNames => "yes")->getall };
+	$aconf = Apache::ConfigFile->new(file => $config->{APACHE_CONF},
+					 ignore_case => 1);
     }
 
     # Apache Settings.
@@ -249,7 +248,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
       || '/usr/local/apache/bin/httpd';
     use constant APACHE_CONF             => $config->{APACHE_CONF};
 
-    use constant PID_FILE                => $aconf->{pidfile}
+    use constant PID_FILE                => $aconf->pidfile
       || '/usr/local/apache/logs/httpd.pid';
 
     use constant LISTEN_PORT             => $config->{LISTEN_PORT} || 80;
