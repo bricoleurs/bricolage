@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.3 $
+$Revision: 1.7.2.4 $
 
 =head1 DATE
 
-$Date: 2003-04-25 00:29:38 $
+$Date: 2003-04-25 00:31:52 $
 
 =head1 DESCRIPTION
 
@@ -224,7 +224,8 @@ sections.
 
 =head3 What does "Bricolage" mean?
 
-See the "About" section of the online help.
+Click on the Bricolage log in in the UI to see the "About" section of the
+online help.
 
 =head3 How did Bricolage get started? What is its history?
 
