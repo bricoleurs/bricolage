@@ -67,6 +67,11 @@ Users without EDIT access to an element no longer see a link to Edit fields
 of that element, but a link to View them, instead. They will also no longer
 see an "Add Subelements" button. [David]
 
+=item *
+
+Fixed bug that triggered an invalid error message when a story URI is non-unique.
+Reported by Kevin Elliott. [David]
+
 =back
 
 =head1 VERSION 1.6.7 (2003-10-22)

@@ -44,7 +44,7 @@ my $save_data = sub {
             my $msg = $story->check_uri($uid);
             if ($msg) {
                 if ($old_slug) {
-                    add_msg(lang->maketext("The slug has been reverted to [_1], as " .
+                    add_msg($lang->maketext("The slug has been reverted to [_1], as " .
                              "the slug [_2] caused this story " .
                              "to have a URI conflicting with that of story " .
                              "[_3].","'$old_slug'","'$param->{slug}'","'$msg'"));
