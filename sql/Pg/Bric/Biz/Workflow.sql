@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-13 18:52:14 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -33,6 +33,7 @@ CREATE TABLE workflow (
                                   DEFAULT 1
                                   CONSTRAINT ck_workflow__active
                                     CHECK (active IN (0,1)),
+    site__id         NUMERIC(10)  NOT NULL,
     CONSTRAINT pk_workflow__id PRIMARY KEY (id)
 );
 
@@ -52,7 +53,10 @@ CREATE TABLE workflow_member (
 -- 
 -- INDEXES.
 --
-CREATE UNIQUE INDEX udx_workflow__name ON workflow(LOWER(name));
+-- Need to drop udx_workflow__name in upgrade script XXX 
+
+CREATE UNIQUE INDEX udx_workflow__name__site__id ON workflow(site__id, name);
+CREATE INDEX fkx_site__workflow__site__id ON workflow(site__id);
 CREATE INDEX fkx_workflow__workflow_member ON workflow_member(object_id);
 CREATE INDEX fkx_member__workflow_member ON workflow_member(member__id);
 

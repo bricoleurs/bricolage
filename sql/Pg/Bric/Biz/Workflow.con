@@ -1,9 +1,18 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-13 18:52:13 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
+
+--
+-- TABLE: workflow
+--
+
+ALTER TABLE    workflow
+ADD CONSTRAINT fk_site__workflow__site__id FOREIGN KEY (site__id)
+REFERENCES     site(id) ON DELETE CASCADE;
+
 
 -- 
 -- TABLE: workflow_member

@@ -11,27 +11,33 @@ sub table { 'workflow' };
 my $story_wf_id = 101;
 my $edit_desk_id = 101;
 
-my %wf = ( name => 'Test Workflow',
+my %wf = ( name        => 'Test Workflow',
            description => 'Testing Workflow API',
-           start_desk => $edit_desk_id,
-           type => Bric::Biz::Workflow::STORY_WORKFLOW );
+           start_desk  => $edit_desk_id,
+           type        => Bric::Biz::Workflow::STORY_WORKFLOW,
+           site_id     => 100,  #Use the default site_id
+         );
 
 
 ##############################################################################
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(2) {
+sub test_lookup : Test(4) {
     my $self = shift;
     # Look up the ID in the database.
     ok( my $wf = Bric::Biz::Workflow->lookup({ id => $story_wf_id }),
         "Look up story workflow" );
     is( $wf->get_id, $story_wf_id, "Check that the ID is the same" );
+
+    ok( $wf = Bric::Biz::Workflow->lookup
+        ({ site_id => 100, name => 'Story' }), "Look up story workflow" );
+    is( $wf->get_id, $story_wf_id, "Check that the ID is the same" );
 }
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(30) {
+sub test_list : Test(32) {
     my $self = shift;
 
     # Create a new workflow group.
@@ -103,11 +109,18 @@ sub test_list : Test(30) {
         "Look up desk_id '$wf{start_desk}'" );
     # There shoudl be 6 because of the default "Story" workflow.
     is( scalar @wfs, 6, "Check for 6 workflows" );
+
+    # Try site_id
+    ok( @wfs = Bric::Biz::Workflow->list({ site_id => 100 }),  #query default site
+        "Look up site_id '100'");
+    # There shoudl be 8 because of the default workflows
+    is( scalar @wfs, 8, "Check for 8 workflows" );
+
 }
 
 ##############################################################################
 # Test the list_ids() method.
-sub test_list_ids : Test(23) {
+sub test_list_ids : Test(25) {
     my $self = shift;
 
     # Create a new workflow group.
@@ -166,6 +179,14 @@ sub test_list_ids : Test(23) {
         "Look up desk_id '$wf{start_desk}'" );
     # There shoudl be 6 because of the default "Story" workflow.
     is( scalar @wf_ids, 6, "Check for 6 workflow IDs" );
+
+    # Try site_id
+    ok( @wf_ids = Bric::Biz::Workflow->list_ids
+        ({ site_id => 100 }),  #query default site
+        "Look up site_id '100'");
+    # There shoudl be 8 because of the default workflows
+    is( scalar @wf_ids, 8, "Check for 8 workflows" );
+
 }
 
 ##############################################################################

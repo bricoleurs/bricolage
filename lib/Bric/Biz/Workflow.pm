@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 05:59:02 $
+$Date: 2003-03-13 18:52:11 $
 
 =head1 SYNOPSIS
 
@@ -124,12 +124,12 @@ use constant WORKFLOW_TYPE_MAP => { &STORY_WORKFLOW => 'Story',
 my $meths;
 my $table = 'workflow';
 my @cols = qw(name description all_desk_grp_id head_desk_id req_desk_grp_id
-              type active);
+              type active site__id);
 my @props = qw(name description all_desk_grp_id head_desk_id req_desk_grp_id
-               type _active);
+               type _active site_id);
 
 my $sel_cols = 'a.id, a.name, a.description, a.all_desk_grp_id, ' .
-  'a.head_desk_id, a.req_desk_grp_id, a.type, a.active, m.grp__id';
+  'a.head_desk_id, a.req_desk_grp_id, a.type, a.active, a.site__id, m.grp__id';
 my @sel_props = ('id', @props, 'grp_ids');
 
 my @ord = qw(name description type active);
@@ -148,6 +148,9 @@ BEGIN {
                          'head_desk_id'         => Bric::FIELD_READ,
                          'type'                 => Bric::FIELD_RDWR,
                          'grp_ids'              => Bric::FIELD_READ,
+
+                         #Which site is this Workflow associated with
+                         'site_id'              => Bric::FIELD_RDWR,
 
                          # Private Fields
                          '_all_desk_grp_obj'    => Bric::FIELD_NONE,
@@ -620,6 +623,33 @@ sub my_meths {
                                             vals => [ [STORY_WORKFLOW,    'Story'],
                                                       [MEDIA_WORKFLOW,    'Media'],
                                                       [TEMPLATE_WORKFLOW, 'Template'] ],
+                                          }
+                             },
+              site_id     => {
+                              get_meth => sub { shift->get_site_id(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_site_id(@_) },
+                              set_args => [],
+                              name     => 'site_id',
+                              disp     => 'Site',
+                              len      => 10,
+                              req      => 1,
+                              type     => 'short',
+                              props    => {}
+                             },
+              site        => {
+                              name     => 'site',
+                              get_meth => sub { my $s = Bric::Biz::Site->lookup
+                                                  ({ id => shift->get_site_id })
+                                                  or return;
+                                                $s->get_name;
+                                            },
+                              disp     => 'Site',
+                              type     => 'short',
+                              req      => 0,
+                              props    => { type       => 'text',
+                                            length     => 10,
+                                            maxlength  => 10
                                           }
                              },
               active      => {
@@ -1319,6 +1349,9 @@ $get_em = sub {
             $wheres .= ' AND a.all_desk_grp_id = m3.grp__id AND ' .
               'm3.id = c3.member__id AND m3.active = 1 AND ' .
               'c3.object_id = ?';
+            push @params, $v;
+        } elsif($k eq 'site_id') {
+            $wheres .= " AND a.site__id = ?";
             push @params, $v;
         } else {
             $wheres .= " AND a.$k = ?";

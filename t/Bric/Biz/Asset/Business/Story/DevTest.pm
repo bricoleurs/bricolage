@@ -178,6 +178,7 @@ sub test_select_methods: Test(44) {
                                         name => "_test_$time.$i",
                                         start_desk => $desk,
                                         description => 'test',
+                                        site_id => 100, #Use default site_id
                                      });
         $workflow->save();
         push @ALL_DESK_GRP_IDS, $workflow->get_all_desk_grp_id;
