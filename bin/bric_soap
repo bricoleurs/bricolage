@@ -44,7 +44,7 @@ Options:
   --server - specifies the Bricolage server URL, defaults to
              http://localhost:80
 
-  --username - the Bricolage username, defaults to the BRICOLAGE_USER
+  --username - the Bricolage username, defaults to the BRICOLAGE_USERNAME
                environment variable if set, 'admin' otherwise
 
   --password - the password for the Bricolage user.  Default to the
@@ -71,7 +71,7 @@ Options:
 =head1 EXAMPLES
 
 Here are some example command-lines.  These all assume you've setup
-BRICOLAGE_USER and BRICOLAGE_PASSWORD and that your Bricolage server
+BRICOLAGE_USERNAME and BRICOLAGE_PASSWORD and that your Bricolage server
 is on http://localhost:80.  If you haven't, you'll need to add --username,
 --password and --server arguments as appropriate.
 
