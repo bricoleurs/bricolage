@@ -23,6 +23,12 @@ This document lists the Changes to Bricolage introduced with each release.
 Can once again check out multiple assets at once. Thanks to Andrew Baio for
 the spot. [David]
 
+=item *
+
+Templates once again behave themselves. There were some circumstances where
+they couldn't be checked in, generating "Cannot checkin non checked out
+versions" errors. These have been fixed. [David]
+
 =head1 VERSION 1.4.1
 
 =head2 Bug Fixes

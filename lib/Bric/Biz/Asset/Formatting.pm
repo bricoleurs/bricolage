@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.27.2.1 $
+$Revision: 1.27.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.27.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-20 21:29:53 $
+$Date: 2002-09-27 03:31:55 $
 
 =head1 SYNOPSIS
 
@@ -438,35 +438,43 @@ NONE
 sub lookup {
     my ($class, $param) = @_;
     my $self = bless {}, (ref $class ? ref $class : $class);
-    
-	my $sql = 'SELECT f.id, ' . join(', ', map {"f.$_ "} COLS) .
-				', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
-				' FROM ' . TABLE . ' f, ' . VERSION_TABLE . ' i ' .
-				' WHERE f.id=? AND i.formatting__id=f.id ';
 
-	my @where;
-	push @where, $param->{'id'};
+    my $sql = 'SELECT f.id, ' . join(', ', map {"f.$_ "} COLS) .
+      ', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
+      ' FROM ' . TABLE . ' f, ' . VERSION_TABLE . ' i ';
 
-	if ($param->{'version'}) {
-		$sql .= ' AND i.version=? ';
-		push @where, $param->{'version'};
-	} else {
-		$sql .= ' AND f.current_version=i.version ';
-	}
+    my @where;
+    if ($param->{'id'}) {
+        $sql .= ' WHERE f.id=? AND i.formatting__id=f.id ';
+        push @where, $param->{'id'};
+    } elsif ($param->{'version_id'}) {
+        $sql .= ' WHERE i.id=? AND i.formatting__id=f.id ';
+        push @where, $param->{'version_id'};
+    } else {
+        die Bric::Util::Fault::Excepction::GEN->new
+          ({ msg => 'Missing required parameters "id" or "version_id"' });
+    }
 
-	my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
-	my @d;
-	my $sth = prepare_ca($sql, undef, DEBUG);
-	execute($sth, @where);
-	bind_columns($sth, \@d[0 .. $count ]);
-	fetch($sth);
+    if ($param->{'version'}) {
+        $sql .= ' AND i.version=? ';
+        push @where, $param->{'version'};
+    } elsif ($param->{'checkout'}) {
+        $sql .= ' AND i.checked_out=? ';
+        push @where, 1;
+    } else {
+        $sql .= ' AND f.current_version=i.version ';
+    }
 
-	$self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
+    my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
+    my @d;
+    my $sth = prepare_ca($sql, undef, DEBUG);
+    execute($sth, @where);
+    bind_columns($sth, \@d[0 .. $count ]);
+    fetch($sth);
 
-	return unless $self->_get('id');
-
-	$self->_set__dirty(0);
-
+    $self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
+    return unless $self->_get('id');
+    $self->_set__dirty(0);
     return $self;
 }
 
