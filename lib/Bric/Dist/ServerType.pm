@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-03 21:57:39 $
+$Date: 2002-09-21 00:41:30 $
 
 =head1 SYNOPSIS
 
@@ -1919,7 +1919,7 @@ sub save {
     # Okay, now save any changes to associated servers and actions.
     $servers->save($id) if $servers;
     $actions->save($id) if $actions;
-    $ocs->save($id) if $ocs;
+    $ocs->save(server_type => $id) if $ocs;
     $self->SUPER::save;
     return $self;
 }

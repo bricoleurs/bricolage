@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-18 20:08:34 $
+$Date: 2002-09-21 00:41:30 $
 
 =head1 SYNOPSIS
 
@@ -248,10 +248,7 @@ sub new {
     delete $init->{active};
     $init->{priority} ||= 3;
     $init->{name} = delete $init->{title} if exists $init->{title};
-    $self = bless {}, ref $self || $self;
-    $self->_init($init);
     $self->SUPER::new($init);
-    return $self;
 }
 
 ################################################################################

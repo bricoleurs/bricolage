@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-18 19:57:25 $
+$Date: 2002-09-21 00:41:30 $
 
 =head1 SYNOPSIS
 
@@ -155,19 +155,25 @@ my %bool_map = ( active  => 'oc.active = ?',
                  use_slug => 'oc.use_slug = ?',
 );
 
-my %txt_map = ( name             => 'LOWER(oc.name) LIKE ?',
+my %txt_map = ( name            => 'LOWER(oc.name) LIKE ?',
                 description      => 'LOWER(oc.description) LIKE ?',
                 pre_path         => 'LOWER(oc.pre_path) LIKE ?',
                 post_path        => 'LOWER(oc.post_path) LIKE ?',
                 uri_format       => 'LOWER(oc.uri_format) LIKE ?',
                 fixed_uri_format => 'LOWER(oc.fixed_uri_format) LIKE ?',
 );
-my %num_map = ( primary => 'oc.primary_ce = ?',
-                id      => 'oc.id = ?',
-                uri_case => 'oc.uri_case = ?',
-                server_type_id => 'id in (select output_channel__id from '
-                                  . 'server_type__output_channel where '
-                                  . 'server_type__id = ?)',
+my %num_map = ( primary          => 'oc.primary_ce = ?',
+                id                => 'oc.id = ?',
+                uri_case          => 'oc.uri_case = ?',
+                server_type_id    => 'oc.id IN (SELECT output_channel__id '
+                                     . 'FROM server_type__output_channel '
+                                     . 'WHERE server_type__id = ?)',
+                media_instance_id => 'oc.id IN (SELECT output_channel__id '
+                                     . 'FROM media__output_channel '
+                                     . 'WHERE media_instance__id = ?)',
+                story_instance_id => 'oc.id IN (SELECT output_channel__id '
+                                     . 'FROM story__output_channel '
+                                     . 'WHERE story_instance__id = ?)',
                 include_parent_id => 'inc.output_channel__id = ?'
 );
 
@@ -386,6 +392,14 @@ server_type_id
 =item *
 
 include_parent_id
+
+=item *
+
+story_instance_id
+
+=item *
+
+media_instance_id
 
 =item *
 

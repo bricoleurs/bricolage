@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-11 02:54:05 $
+$Date: 2002-09-21 00:41:30 $
 
 =head1 SYNOPSIS
 
@@ -573,13 +573,13 @@ sub publish {
     my @cats = $key eq 'story' ? $ba->get_categories : ();
     # Grab the asset type.
     my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
-    my $ocs = $at->get_output_channels;
+    my $ocs = $ba->get_output_channels;
 
     foreach my $oc (@$ocs) {
         my $ocid = $oc->get_id;
         # Get a list of server types this categroy applies to.
         my $bat = $oc_sts->{$ocid} ||=
-	    Bric::Dist::ServerType->list({ "can_publish" => 1,
+	    Bric::Dist::ServerType->list({ can_publish => 1,
 					   output_channel_id => $ocid });
 
         # Make sure we have some destinations.

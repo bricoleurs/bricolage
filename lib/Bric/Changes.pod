@@ -47,8 +47,8 @@ and F<t/lib/Bric/Util/Grp/DevTest.pm>. [David]
 
 =item *
 
-Added F<t/lib/Bric/Test/PodTest.pm>, which uses L<Pod::Checker|Pod::Checker>
-to examine the POD in all the Bricolage modules, scripts, and test modules and
+Added F<t/Bric/Test/PodTest.pm>, which uses L<Pod::Checker|Pod::Checker> to
+examine the POD in all the Bricolage modules, scripts, and test modules and
 report errors. Currently, all the errors are "TODO" tests, which means that,
 technically, they'll pass. But as soon as all existing POD errors are cleaned
 out, errors will turn into test failures. This will help us to keep all of our
@@ -58,7 +58,7 @@ POD valid. These tests run as a part of C<make devtest>. [David]
 
 Removed all old-style test scripts. Their contents have been copied into new
 unit testing classes. These classes each execute a single test, and the old
-testing contents are at the end of the file, after the __END__ symbol. Thus
+testing contents are at the end of the file, after the C<__END__> symbol. Thus
 we'll be able to use the old tests to write the new tests. [David]
 
 =item *
@@ -69,7 +69,7 @@ L<Bric::Hacker|Bric::Hacker>. [David]
 =item *
 
 Removed the URI Format and URI Case preferences and put them into Output
-Channel objects, instead. They are now output-channel specific. [David]
+Channel objects, instead. They are now output channel-specific. [David]
 
 =item *
 
@@ -83,7 +83,7 @@ The slug can now be used in the Fixed URI Format. [David]
 =item *
 
 The slug can now be used for story file names. The option is supported on an
-Output Channel basis, and will only work for stories that have a slug. [David]
+output channel basis, and will only work for stories that have a slug. [David]
 
 =item *
 
@@ -120,6 +120,14 @@ L<Bric::Biz::AssetType|Bric::Biz::AssetType> with a new
 L<Bric::Util::Coll|Bric::Util::Coll> subclass that does it all. This is a lot
 more efficient in terms of programmer time (and probably performance,
 too). [David]
+
+=item *
+
+Modified Bric::Biz::Asset::Business to manage the association between business
+assets and output channels by making use of the
+Bric::Util::Coll::OutputChannel class. It also automatically adds all of the
+"enabled" output channels of the element object as initial output channel
+associations for new business assets. [David]
 
 =back
 

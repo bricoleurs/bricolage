@@ -903,6 +903,10 @@ my $handle_recall = sub {
     }
 };
 
+my $handle_clone = sub {
+
+};
+
 
 ###########################
 ## Callbacks Definitions ##
@@ -937,6 +941,7 @@ my %cbs = (
            checkin_cb               => $handle_checkin,
            save_contrib_cb          => $handle_save_contrib,
            save_and_stay_contrib_cb => $handle_save_and_stay_contrib,
+           clone_cb                 => $handle_clone,
           );
 </%once>
 

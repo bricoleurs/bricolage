@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2002-06-11 22:21:22 $
+-- $Date: 2002-09-21 00:41:30 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -31,6 +31,15 @@ ALTER TABLE story_instance
 ADD CONSTRAINT fk_usr__story_instance FOREIGN KEY (usr__id)
 	REFERENCES usr(id) ON DELETE SET NULL;
 
+
+-- Story to output channel mapping constraints
+ALTER TABLE story__output_channel 
+ADD CONSTRAINT fk_story__oc__story FOREIGN KEY (story_instance__id)
+	REFERENCES story_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE story__output_channel 
+ADD CONSTRAINT fk_story__oc__oc FOREIGN KEY (output_channel__id)
+	REFERENCES output_channel(id) ON DELETE CASCADE;
 
 -- Story to Category mapping constraints
 ALTER TABLE story__category 

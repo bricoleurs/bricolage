@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-18 19:57:25 $
+$Date: 2002-09-21 00:41:30 $
 
 =head1 SYNOPSIS
 
@@ -1418,9 +1418,9 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> The objects returned will be Brci::Biz::OutputChannel::Element
-objects, and these objects contain extra information relevant to the assocation
-between each output channel and this element object.
+B<Notes:> The objects returned will be Bric::Biz::OutputChannel::Element
+objects, and these objects contain extra information relevant to the
+assocation between each output channel and this element object.
 
 =cut
 
@@ -2596,9 +2596,10 @@ sub _get_parts {
 
 =item my $oc_coll = $get_oc_coll->($self)
 
-Returns the collection of members for this group. The collection is a
-L<Bric::Util::Coll::Member|Bric::Util::Coll::Member> object. See that class
-and its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface details.
+Returns the collection of output channels for this element. The collection is
+a L<Bric::Util::Coll::OCElement|Bric::Util::Coll::OCElement> object. See that
+class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface
+details.
 
 B<Throws:>
 

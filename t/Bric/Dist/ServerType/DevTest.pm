@@ -54,7 +54,7 @@ sub cleanup : Test(teardown => 0) {
     my $self = shift;
 
     # Clean up output channels.
-    if (my $ocids = $self->{ocids}) {
+    if (my $ocids = delete $self->{ocids}) {
         $ocids = join ', ', @$ocids;
         Bric::Util::DBI::prepare(qq{
             DELETE FROM output_channel
@@ -63,7 +63,7 @@ sub cleanup : Test(teardown => 0) {
     }
 
     # Clean up server types.
-    if (my $stids = $self->{stids}) {
+    if (my $stids = delete $self->{stids}) {
         $stids = join ', ', @$stids;
         Bric::Util::DBI::prepare(qq{
             DELETE FROM server_type

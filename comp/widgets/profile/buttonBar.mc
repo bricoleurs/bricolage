@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-09-13 22:01:46 $
+$Date: 2002-09-21 00:41:29 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -115,16 +115,21 @@ if ($work_id) {
    $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
 }
 </%perl>
-<table border=0 cellpadding=0 cellspacing=0>
+<table border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td>
-% # Add clone button here.
+% if ($type eq 'story') {
+      <input type="image" src="/media/images/clone.gif" width="53" height="20"
+             border="0" name="<% $widget %>|clone_cb" value="clone" />
+% } else {
+      &nbsp;
+% }
     </td>
   </tr>
   </table>
   </td>
   <td align="right" widht="33%">
-  <table border=0 cellpadding=0 cellspacing=0>
+  <table border="0" cellpadding="0" cellspacing="0">
   <tr>
 % if ($versions && @$versions > 1) {
     <td valign="middle"><input type="image" src="/media/images/revert_dgreen.gif" border=0 name="<% $widget %>|revert_cb" value="revert"></td>

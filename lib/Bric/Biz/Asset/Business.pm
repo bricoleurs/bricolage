@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-10 23:28:14 $
+$Date: 2002-09-21 00:41:30 $
 
 =head1 SYNOPSIS
 
@@ -74,6 +74,11 @@ $Date: 2002-09-10 23:28:14 $
  $obj   = $asset->get_workflow_object;
  $asset = $asset->set_workflow_id($id);
 
+ # Output channel associations.
+ my @ocs = $asset->get_output_channels;
+ $asset->add_output_channels(@ocs);
+ $asset->del_output_channels(@ocs);
+
  # Access note information
  $asset                 = $asset->add_note($note)
  ($note_list || @notes) = $asset->get_notes()
@@ -122,7 +127,7 @@ use Bric::Biz::Asset::Business::Parts::Tile::Container;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel qw(:case_constants);
 use Bric::Biz::Org::Source;
-
+use Bric::Util::Coll::OutputChannel;
 use Bric::Util::Pref;
 
 #=============================================================================#
@@ -134,8 +139,7 @@ use base qw( Bric::Biz::Asset );
 #============================================================================+
 # Function Prototypes                  #
 #======================================#
-
-# None
+my $get_oc_coll;
 
 #=============================================================================#
 # Constants                            #
@@ -153,44 +157,45 @@ use constant DEBUG => 0;
 # None
 
 #--------------------------------------#
-# Private Class Fields 
+# Private Class Fields
 my $meths;
 my @ord;
 
 my %uri_format_hash = ( 'categories' => '',
-			'day'        => '%d',
-			'month'      => '%m',
-			'slug'       => '',
-			'year'       => '%Y' );
+                        'day'        => '%d',
+                        'month'      => '%m',
+                        'slug'       => '',
+                        'year'       => '%Y' );
 #--------------------------------------#
-# Instance Fields 
-
+# Instance Fields
 
 BEGIN {
-	Bric::register_fields({
-	     # Public Fields
-	     source__id            	=> Bric::FIELD_RDWR,
-	     element__id        	=> Bric::FIELD_RDWR,
-	     related_grp__id       	=> Bric::FIELD_READ,
-	     primary_uri           	=> Bric::FIELD_READ,
-	     publish_date          	=> Bric::FIELD_RDWR,
-	     cover_date            	=> Bric::FIELD_RDWR,
-	     publish_status        	=> Bric::FIELD_RDWR,
+        Bric::register_fields
+            ({
+              # Public Fields
+              source__id                => Bric::FIELD_RDWR,
+              element__id               => Bric::FIELD_RDWR,
+              related_grp__id           => Bric::FIELD_READ,
+              primary_uri               => Bric::FIELD_READ,
+              publish_date              => Bric::FIELD_RDWR,
+              cover_date                => Bric::FIELD_RDWR,
+              publish_status            => Bric::FIELD_RDWR,
 
 
-	     # Private Fields
-		_contributors			=> Bric::FIELD_NONE,
-		_queried_contrib		=> Bric::FIELD_NONE,
-		_del_contrib			=> Bric::FIELD_NONE,
-		_update_contributors	=> Bric::FIELD_NONE,
-	     _related_grp_obj      	=> Bric::FIELD_NONE,
-	     _tile                 	=> Bric::FIELD_NONE,
-		_queried_cats			=> Bric::FIELD_NONE,
-	     _categories           	=> Bric::FIELD_NONE,
-	     _del_categories       	=> Bric::FIELD_NONE,
-	     _new_categories       	=> Bric::FIELD_NONE,
-		_element_object		=> Bric::FIELD_NONE
-	    });
+              # Private Fields
+              _contributors             => Bric::FIELD_NONE,
+              _queried_contrib          => Bric::FIELD_NONE,
+              _del_contrib              => Bric::FIELD_NONE,
+              _update_contributors      => Bric::FIELD_NONE,
+              _related_grp_obj          => Bric::FIELD_NONE,
+              _tile                     => Bric::FIELD_NONE,
+              _queried_cats             => Bric::FIELD_NONE,
+              _categories               => Bric::FIELD_NONE,
+              _del_categories           => Bric::FIELD_NONE,
+              _new_categories           => Bric::FIELD_NONE,
+              _element_object           => Bric::FIELD_NONE,
+              _oc_coll                  => Bric::FIELD_NONE,
+            });
     }
 
 #=============================================================================#
@@ -204,7 +209,7 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors 
+# Constructors
 
 #-----------------------------------------------------------------------------#
 
@@ -228,9 +233,9 @@ NONE
 
 sub new {
     my ($self, $init) = @_;
-    bless {}, $self unless ref $self;
+    $self = bless {}, $self unless ref $self;
+    $self->_init($init);
     $self->SUPER::new($init);
-    return $self;
 }
 
 ###############################################################################
@@ -255,10 +260,10 @@ NONE
 =cut
 
 sub lookup {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	die Bric::Util::Fault::Exception::MNI->new( {
-			msg => "Method not implemented" });
+        die Bric::Util::Fault::Exception::MNI->new( {
+                        msg => "Method not implemented" });
 }
 
 ###############################################################################
@@ -266,8 +271,8 @@ sub lookup {
 
 =item ($obj_list||@objs) = Bric::Biz::Asset::Business->list( $criteria )
 
-This will return a list or list ref of Business assets that match the 
-given criteria
+This will return a list or list ref of Business assets that match the given
+criteria
 
 B<Throws:>
 
@@ -284,14 +289,14 @@ NONE
 =cut
 
 sub list {
-	my ($class, $param) = @_;
+        my ($class, $param) = @_;
 
-	my @stories = Bric::Biz::Asset::Business::Story->list($param);
-	my @media = Bric::Biz::Asset::Business::Media->list($param);
+        my @stories = Bric::Biz::Asset::Business::Story->list($param);
+        my @media = Bric::Biz::Asset::Business::Media->list($param);
 
-	my @all = (@stories, @media);
+        my @all = (@stories, @media);
 
-	return wantarray ? @all : \@all;
+        return wantarray ? @all : \@all;
 }
 
 ###############################################################################
@@ -312,8 +317,8 @@ Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
 =cut
 
 sub DESTROY {
-	# This method should be here even if its empty so that we don't waste time
-	# making Bricolage's autoload method try to find it.
+        # This method should be here even if its empty so that we don't waste time
+        # making Bricolage's autoload method try to find it.
 }
 
 ###############################################################################
@@ -346,8 +351,8 @@ NONE
 =cut
 
 sub list_ids {
-	die Bric::Util::Fault::Exception::MNI->new(
-		{ msg => "Method Not Implemented" });
+        die Bric::Util::Fault::Exception::MNI->new(
+                { msg => "Method Not Implemented" });
 }
 
 ################################################################################
@@ -507,43 +512,43 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     foreach my $meth (__PACKAGE__->SUPER::my_meths(1)) {
-	$meths->{$meth->{name}} = $meth;
-	push @ord, $meth->{name};
-	push (@ord, 'title') if $meth->{name} eq 'name';
+        $meths->{$meth->{name}} = $meth;
+        push @ord, $meth->{name};
+        push (@ord, 'title') if $meth->{name} eq 'name';
     }
     push @ord, qw(source_id source publish_date), pop @ord;
 
     $meths->{source_id} =    {
-			      name     => 'source_id',
-			      get_meth => sub { shift->get_source__id(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_source__id(@_) },
-			      set_args => [],
-			      disp     => 'Source ID',
-			      len      => 1,
-			      req      => 1,
-			      type     => 'short',
-			     };
+                              name     => 'source_id',
+                              get_meth => sub { shift->get_source__id(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_source__id(@_) },
+                              set_args => [],
+                              disp     => 'Source ID',
+                              len      => 1,
+                              req      => 1,
+                              type     => 'short',
+                             };
     $meths->{source} =       {
-			      name     => 'source',
-			      get_meth => sub { Bric::Biz::Org::Source->lookup({ id => shift->get_source__id(@_) }) },
-			      get_args => [],
-			      disp     => 'Source',
-			      len      => 1,
-			      type     => 'short',
-			     };
+                              name     => 'source',
+                              get_meth => sub { Bric::Biz::Org::Source->lookup({ id => shift->get_source__id(@_) }) },
+                              get_args => [],
+                              disp     => 'Source',
+                              len      => 1,
+                              type     => 'short',
+                             };
     $meths->{publish_date} = {
-			      name     => 'publish_date',
-			      get_meth => sub { shift->get_publish_date(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_publish_date(@_) },
-			      set_args => [],
-			      disp     => 'Publish Date',
-			      len      => 64,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'date' }
-			     };
+                              name     => 'publish_date',
+                              get_meth => sub { shift->get_publish_date(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_publish_date(@_) },
+                              set_args => [],
+                              disp     => 'Publish Date',
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'date' }
+                             };
 
     # Copy the data for the title from name.
     $meths->{title} = { %{ $meths->{name} } };
@@ -579,11 +584,7 @@ title is the same as the name field
 
 =cut
 
-sub get_title {
-	my ($self) = @_;
-
-	return $self->_get('name');
-}
+sub get_title { $_[0]->_get('name') }
 
 ################################################################################
 
@@ -605,13 +606,7 @@ title is the same as the name field
 
 =cut
 
-sub set_title {
-    my ($self, $title) = @_;
-
-    $self->_set( { 'name' => $title });
-
-    return $self;
-}
+sub set_title { $_[0]->_set(['name'] => [$_[1]]) }
 
 ################################################################################
 
@@ -675,10 +670,42 @@ NONE
 
 ################################################################################
 
-=item $story->add_contributor($contrib, $role );
+=item $biz = $biz->set_element__id($at_id)
 
-Takes a contributor object or id and their role in the context of this 
-story and associates them
+Sets the asset type id that this story is associated with.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub set_element__id {
+    my ($self, $eid) = @_;
+    my $old_eid = $self->_get('element__id');
+    return $self if $eid == $old_eid;
+    my $oc_coll = $get_oc_coll->($self);
+    $oc_coll->del_objs;
+    my $elem = Bric::Biz::AssetType->lookup({ id => $eid });
+    $oc_coll->add_new_objs( map { $_->is_enabled ? $_ : () }
+                            $elem->get_output_channels );
+    $self->_set([qw(element__id element)], [$eid, $elem]);
+}
+
+################################################################################
+
+=item $biz->add_contributor($contrib, $role );
+
+Takes a contributor object or id and their role in the context of this story
+and associates them
 
 B<Throws:>
 
@@ -703,13 +730,13 @@ sub add_contributor {
     my $c_id = ref $contrib ? $contrib->get_id() : $contrib;
     my $place = scalar keys %$contribs;
     if (exists $contribs->{$c_id}) {
-	# already a contrib, update role if need be
-	$contribs->{$c_id}->{'role'} = $role;
-	$contribs->{$c_id}->{'obj'} = ref $contrib ? $contrib : undef;
-	unless ($contribs->{$c_id}->{'action'} &&
-		$contribs->{$c_id}->{'action'} eq 'insert') {
-	    $contribs->{$c_id}->{'action'} = 'update';
-	}
+        # already a contrib, update role if need be
+        $contribs->{$c_id}->{'role'} = $role;
+        $contribs->{$c_id}->{'obj'} = ref $contrib ? $contrib : undef;
+        unless ($contribs->{$c_id}->{'action'} &&
+                $contribs->{$c_id}->{'action'} eq 'insert') {
+            $contribs->{$c_id}->{'action'} = 'update';
+        }
     } else {
         $contribs->{$c_id}->{'role'} = $role;
         $contribs->{$c_id}->{'obj'} = ref $contrib ? $contrib : undef;
@@ -718,9 +745,9 @@ sub add_contributor {
     }
 
     $self->_set({
-		 '_contributors' => $contribs,
-		 '_update_contributors' => 1
-		});
+                 '_contributors' => $contribs,
+                 '_update_contributors' => 1
+                });
 
     $self->_set__dirty($dirty);
     return $self;
@@ -820,30 +847,30 @@ sub delete_contributors {
     my $delete = $self->_get('_del_contrib');
 
     foreach (@$contributors) {
-	my $id = ref $_ ? $_->get_id : $_;
-	if ($contribs->{$id}->{'action'}
-	    && $contribs->{$id}->{'action'} eq 'insert') {
-	    delete $contribs->{$id};
-	} else {
-	    $delete->{$id} = delete $contribs->{$id};
-	}
+        my $id = ref $_ ? $_->get_id : $_;
+        if ($contribs->{$id}->{'action'}
+            && $contribs->{$id}->{'action'} eq 'insert') {
+            delete $contribs->{$id};
+        } else {
+            $delete->{$id} = delete $contribs->{$id};
+        }
     }
 
     # update the order fields for the remaining contribs
     my $i = 0;
     foreach (keys %$contribs) {
-	if ($contribs->{$_}->{'place'} != $i) {
-	    $contribs->{$_}->{'place'} = $i;
+        if ($contribs->{$_}->{'place'} != $i) {
+            $contribs->{$_}->{'place'} = $i;
             $contribs->{$_}->{action} ||= 'update';
-	}
-	$i++;
+        }
+        $i++;
     }
 
     $self->_set( {
-		  _contributors       	=> $contribs,
-		  _update_contributors 	=> 1,
-		  _del_contrib			=> $delete
-		 });
+                  _contributors         => $contribs,
+                  _update_contributors  => 1,
+                  _del_contrib                  => $delete
+                 });
 
     $self->_set__dirty($dirty);
     return $self;
@@ -868,37 +895,230 @@ NONE
 =cut
 
 sub reorder_contributors {
-	my $self = shift;
-	my @new_order = @_;
+        my $self = shift;
+        my @new_order = @_;
 
-	my $dirty = $self->_get__dirty();
+        my $dirty = $self->_get__dirty();
 
-	my $existing = $self->_get_contributors();
+        my $existing = $self->_get_contributors();
 
-	if ((scalar @new_order) != (scalar (keys %$existing))) {
-		die Bric::Util::Fault::Exception::GEN->new( 
-			{ 'msg' => 'Improper Args to reorder contributors' });
-	}
+        if ((scalar @new_order) != (scalar (keys %$existing))) {
+                die Bric::Util::Fault::Exception::GEN->new( 
+                        { 'msg' => 'Improper Args to reorder contributors' });
+        }
 
-	my $i = 0;
-	foreach (@new_order) {
-		if (exists $existing->{$_}) {
-			unless ($existing->{$_}->{'place'} == $i) {
-				$existing->{$_}->{'place'} = $i;
-				$existing->{$_}->{'action'} = 'update' 
-					unless $existing->{$_}->{'action'} eq 'insert';
-			}
-			$i++;
-		} else {
-        	die Bric::Util::Fault::Exception::GEN->new(
-			 { 'msg' => 'Improper Args to reorder contributors' });
-		}
-	}
-	$self->_set( { '_contributors' => $existing });
+        my $i = 0;
+        foreach (@new_order) {
+                if (exists $existing->{$_}) {
+                        unless ($existing->{$_}->{'place'} == $i) {
+                                $existing->{$_}->{'place'} = $i;
+                                $existing->{$_}->{'action'} = 'update' 
+                                        unless $existing->{$_}->{'action'} eq 'insert';
+                        }
+                        $i++;
+                } else {
+                die Bric::Util::Fault::Exception::GEN->new(
+                         { 'msg' => 'Improper Args to reorder contributors' });
+                }
+        }
+        $self->_set( { '_contributors' => $existing });
 
-	$self->_set__dirty($dirty);
+        $self->_set__dirty($dirty);
 
-	return $self;
+        return $self;
+}
+
+################################################################################
+
+=item my @ocs = $biz->get_output_channels
+
+=item my $ocs_aref = $biz->get_output_channels
+
+Returns a list or anonymous array of the output channels the business asset
+will be output to when it is published.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_output_channels { $get_oc_coll->(shift)->get_objs }
+
+##############################################################################
+
+=item $ba = $ba->add_output_channels(@ocs)
+
+Adds output channels to the list of output channels to which this story will
+be output upon publication.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_output_channels {
+    my $self = shift;
+    my $oc_coll = $get_oc_coll->($self);
+    $oc_coll->add_new_objs(@_);
+    return $self;
+}
+
+##############################################################################
+
+=item $biz = $biz->del_output_channels(@ocs)
+
+=item $biz = $biz->del_output_channels(@oc_ids)
+
+Removes output channels from this asset, so that it won't be output to these
+output channels when it is published.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub del_output_channels {
+    my $self = shift;
+    my $oc_coll = $get_oc_coll->($self);
+    $oc_coll->del_objs(@_);
+    return $self;
 }
 
 ################################################################################
@@ -923,13 +1143,13 @@ NONE
 =cut
 
 sub get_element_name {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $tile = $self->get_tile();
+        my $tile = $self->get_tile();
 
-	my $name = $tile->get_name();
+        my $name = $tile->get_name();
 
-	return $name;
+        return $name;
 }
 
 ################################################################################
@@ -954,13 +1174,13 @@ NONE
 =cut
 
 sub get_possible_data {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $tile = $self->get_tile();
+        my $tile = $self->get_tile();
 
-	my $parts = $tile->get_possible_data();
+        my $parts = $tile->get_possible_data();
 
-	return wantarray ? @$parts : $parts;
+        return wantarray ? @$parts : $parts;
 }
 
 ################################################################################
@@ -1187,9 +1407,9 @@ sub _find_related {
 
     # Check all the children for related assets.
     foreach my $c (@children) {
-	my @r = $self->_find_related($c);
+        my @r = $self->_find_related($c);
 
-	push @related, @r if @r;
+        push @related, @r if @r;
     }
 
     return (wantarray ? @related : \@related) if @related;
@@ -1220,11 +1440,11 @@ sub get_tile {
     my ($self) = @_;
     my $tile = $self->_get('_tile');
     unless ($tile) {
-	($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list(
-	  { object    => $self,
-	    parent_id => undef,
-	    active    => 1 });
-	$self->_set( { '_tile' => $tile });
+        ($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list(
+          { object    => $self,
+            parent_id => undef,
+            active    => 1 });
+        $self->_set( { '_tile' => $tile });
     }
     return $tile;
 }
@@ -1251,8 +1471,8 @@ sub get_primary_uri {
     my $uri = $self->_get('primary_uri');
 
     unless ($uri) {
-	$uri = $self->get_uri;
-	$self->_set(['primary_uri'], [$uri]);
+        $uri = $self->get_uri;
+        $self->_set(['primary_uri'], [$uri]);
     }
     return $uri;
 }
@@ -1279,13 +1499,13 @@ NONE
 =cut
 
 sub get_tiles {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $tile = $self->get_tile();
+        my $tile = $self->get_tile();
 
-	my $tiles = $tile->get_tiles();
+        my $tiles = $tile->get_tiles();
 
-	return wantarray ? @$tiles : $tiles;
+        return wantarray ? @$tiles : $tiles;
 }
 
 ###############################################################################
@@ -1309,13 +1529,13 @@ NONE
 =cut
 
 sub add_data {
-	my ($self, $element_data, $data) = @_;
+        my ($self, $element_data, $data) = @_;
 
-	my $tile = $self->get_tile;
+        my $tile = $self->get_tile;
 
-	$tile->add_data($element_data,$data, $self);
+        $tile->add_data($element_data,$data, $self);
 
-	return $self;
+        return $self;
 }
 
 ###############################################################################
@@ -1340,13 +1560,13 @@ NONE
 =cut
 
 sub add_container {
-	my ($self, $element_container) = @_;
+        my ($self, $element_container) = @_;
 
-	my $tile = $self->get_tile();
+        my $tile = $self->get_tile();
 
-	my $new_container = $tile->add_container($element_container, $self);
+        my $new_container = $tile->add_container($element_container, $self);
 
-	return $new_container;
+        return $new_container;
 }
 
 ###############################################################################
@@ -1370,13 +1590,13 @@ NONE
 =cut
 
 sub get_data {
-	my ($self, $name, $obj_order) = @_;
+        my ($self, $name, $obj_order) = @_;
 
-	my $tile = $self->get_tile();
+        my $tile = $self->get_tile();
 
-	my $data = $tile->get_data($name, $obj_order);
+        my $data = $tile->get_data($name, $obj_order);
 
-	return $data;
+        return $data;
 }
 
 ###############################################################################
@@ -1401,13 +1621,13 @@ NONE
 =cut
 
 sub get_container {
-	 my ($self, $name, $obj_order) = @_;
+         my ($self, $name, $obj_order) = @_;
 
-	my $tile = $self->get_tile();
+        my $tile = $self->get_tile();
 
-	my $container = $tile->get_container($name, $obj_order);
+        my $container = $tile->get_container($name, $obj_order);
 
-	return $container;
+        return $container;
 }
 
 ###############################################################################
@@ -1567,19 +1787,19 @@ NONE
 =cut
 
 sub cancel {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	# the user has decided to uncheck this out.
-	# this will result in a delete from the data base of this 
-	# row
+        # the user has decided to uncheck this out.
+        # this will result in a delete from the data base of this 
+        # row
 
-	if ( not defined $self->_get('user_id')) {
-		# this is not checked out, it can not be deleted
-		die Bric::Util::Fault::Exception::GEN->new( {
-			msg => "Can not cancel a non checked out asset" });
-	}
+        if ( not defined $self->_get('user_id')) {
+                # this is not checked out, it can not be deleted
+                die Bric::Util::Fault::Exception::GEN->new( {
+                        msg => "Can not cancel a non checked out asset" });
+        }
 
-	$self->_set( { '_delete' => 1});
+        $self->_set( { '_delete' => 1});
 }
 
 ################################################################################
@@ -1603,10 +1823,10 @@ NONE
 =cut
 
 sub is_current {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	return ($self->_get('current_version') == $self->_get('version'))
-		? $self : undef;
+        return ($self->_get('current_version') == $self->_get('version'))
+                ? $self : undef;
 }
 
 ################################################################################
@@ -1630,43 +1850,48 @@ NONE
 =cut
 
 sub checkout {
-	my ($self, $param) = @_;
+        my ($self, $param) = @_;
 
-	# make sure that this version is the most current
-	unless ($self->_get('version') == $self->_get('current_version') ) {
-		die Bric::Util::Fault::Exception::GEN->new( { msg =>
-			"Unable to checkout old_versions" });
-	}
-	# Make sure that the object is not already checked out
-	if (defined $self->_get('user__id')) {
-		die Bric::Util::Fault::Exception::GEN->new( {
-			msg => "Already Checked Out" });
-	}
-	unless (defined $param->{'user__id'}) {
-		die Bric::Util::Fault::Exception::GEN->new( { msg =>
-			"Must be checked out to users" });
-	}
+        # make sure that this version is the most current
+        unless ($self->_get('version') == $self->_get('current_version') ) {
+                die Bric::Util::Fault::Exception::GEN->new( { msg =>
+                        "Unable to checkout old_versions" });
+        }
+        # Make sure that the object is not already checked out
+        if (defined $self->_get('user__id')) {
+                die Bric::Util::Fault::Exception::GEN->new( {
+                        msg => "Already Checked Out" });
+        }
+        unless (defined $param->{'user__id'}) {
+                die Bric::Util::Fault::Exception::GEN->new( { msg =>
+                        "Must be checked out to users" });
+        }
 
-	my $tile = $self->get_tile();
-	$tile->prepare_clone();
+        my $tile = $self->get_tile();
+        $tile->prepare_clone();
 
-	my $contribs = $self->_get_contributors();
-	# clone contributors
-	foreach (keys %$contribs ) {
-		$contribs->{$_}->{'action'} = 'insert';
-	}
+        my $contribs = $self->_get_contributors();
+        # clone contributors
+        foreach (keys %$contribs ) {
+                $contribs->{$_}->{'action'} = 'insert';
+        }
 
+        # Clone output channels.
+        my $oc_coll = $get_oc_coll->($self);
+        my @ocs = $oc_coll->get_objs;
+        $oc_coll->del_objs;
+        $oc_coll->add_new_objs(@ocs);
 
-	$self->_set( {
-		user__id => $param->{'user__id'} ,
-		modifier => $param->{'user__id'},
-		version_id => undef,
-		checked_out => 1
-	});
+        $self->_set( {
+                user__id => $param->{'user__id'} ,
+                modifier => $param->{'user__id'},
+                version_id => undef,
+                checked_out => 1
+        });
 
-	$self->_set( { '_update_contributors' => 1 }) if $contribs;
+        $self->_set( { '_update_contributors' => 1 }) if $contribs;
 
-	return $self;
+        return $self;
 }
 
 ##############################################################################
@@ -1696,24 +1921,24 @@ Need to add tile stuff here (maybe)
 =cut
 
 sub checkin {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	die Bric::Util::Fault::Exception::GEN->new( 
-		{ msg => "Cannot checkin non checked out versions"
-		}) unless $self->_get('checked_out');
+        die Bric::Util::Fault::Exception::GEN->new( 
+                { msg => "Cannot checkin non checked out versions"
+                }) unless $self->_get('checked_out');
 
-	my $version = $self->_get('version');
+        my $version = $self->_get('version');
 
-	$version++;
-	$self->_set( {
-		user__id => undef,
-		version   => $version,
-		current_version => $version,
-		checked_out => 0,
-		_checkin => 1
-	});
+        $version++;
+        $self->_set( {
+                user__id => undef,
+                version   => $version,
+                current_version => $version,
+                checked_out => 0,
+                _checkin => 1
+        });
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1737,32 +1962,32 @@ NONE
 =cut
 
 sub save {
-	my ($self) = @_;
+    my $self = shift;
 
-	my ($related_obj, $tile) = $self->_get('_related_grp_obj', '_tile');
+    my ($related_obj, $tile, $oc_coll, $ci, $co, $vid) =
+      $self->_get(qw(_related_grp_obj _tile _oc_coll _checkin _checkout
+                     version_id));
 
-	if ($self->_get('_checkout') ) {
-		$tile->prepare_clone;
-		$self->_set( { '_checkout'	=> undef });
-	}
+    if ($co) {
+        $tile->prepare_clone;
+        $self->_set(['_checkout'], []);
+    }
 
-	if ($self->_get('_checkin') ) {
+    # Is this necessary? Seems kind of pointless. [David 2002-09-19]
+    $self->_set(['_checkin'], []) if $ci;
 
-		$self->_set( { '_checkin' => undef });
-	}
+    $self->_sync_attributes;
 
-	$self->_sync_attributes();
-	if ($tile) {
-		$tile->set_object_instance_id($self->_get('version_id'));
-		$tile->save();
-	}
-	$related_obj->save() if $related_obj;
+    if ($tile) {
+        $tile->set_object_instance_id($vid);
+        $tile->save;
+    }
 
-	$self->_sync_contributors();
-
-	$self->SUPER::save;
-
-	$self->_set__dirty(0);
+    $related_obj->save if $related_obj;
+    $self->_sync_contributors;
+    $oc_coll->save($self->key_name => $vid) if $oc_coll;
+    $self->SUPER::save;
+    $self->_set__dirty(0);
 }
 
 ###############################################################################
@@ -1806,48 +2031,53 @@ sub _init {
       {msg => "Method not implemented"}) unless ref $self;
 
     die Bric::Util::Fault::Exception::GEN->new(
-      { msg => "Cannot create an asset without AssetType"})
-      unless $init->{'element__id'} || $init->{'element'};
+      { msg => "Cannot create an asset without an Element"})
+      unless $init->{element__id} || $init->{element};
 
     die Bric::Util::Fault::Exception::GEN->new( {
       msg => "Can not create asset with out Source "})
       unless $init->{'source__id'};
 
     if ($init->{'cover_date'}) {
-	$self->set_cover_date( $init->{'cover_date'} );
-	delete $init->{'cover_date'};
-	my $source = Bric::Biz::Org::Source->lookup({id => $init->{'source__id'}});
-	my $expire = $source->get_expire();
-	if ($expire) {
-	    # add the days to the cover date and set the expire date
-	    my $date = local_date($self->_get('cover_date'), 'epoch');
-	    my $new_date = $date + ($expire * 24 * 60 * 60);
-	    $new_date = strfdate($new_date);
-	    $new_date = db_date($new_date);
-	    $self->_set( { expire_date => $new_date });
-	}
+        $self->set_cover_date( $init->{'cover_date'} );
+        delete $init->{'cover_date'};
+        my $source = Bric::Biz::Org::Source->lookup
+          ({id => $init->{'source__id'}});
+        if (my $expire = $source->get_expire) {
+            # add the days to the cover date and set the expire date
+            my $date = local_date($self->_get('cover_date'), 'epoch');
+            my $new_date = $date + ($expire * 24 * 60 * 60);
+            $new_date = strfdate($new_date);
+            $new_date = db_date($new_date);
+            $self->_set( { expire_date => $new_date });
+        }
     }
 
-    # lets create the new tile as well
-    my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new( {
-      'object'     => $self,
-      'element_id' => $init->{'element__id'},
-      'element'	   => $init->{'element'} });
-
-    if ($init->{'element'}) {
-	$init->{'element__id'} = $init->{'element'}->get_id();
-	delete $init->{'element'};
+    # Get the element object.
+    if ($init->{element}) {
+        $init->{element__id} = $init->{element}->get_id;
+    } else {
+        $init->{element} =
+          Bric::Biz::AssetType->lookup({ id => $init->{element__id}});
     }
 
-    $self->_set( { version => 0,
-		   current_version => 0,
-		   checked_out => 1,
-		   _tile => $tile,
-		   modifier => $init->{'user__id'},
-		   publish_status => 0
-		 });
-    $self->_set__dirty();
-    return $self;
+    # Set up the output channels.
+    $self->add_output_channels( map { $_->is_enabled ? $_ : () }
+                                $init->{element}->get_output_channels);
+
+    # Let's create the new tile as well.
+    my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new
+      ({ object     => $self,
+         element_id => $init->{element__id},
+         element    => $init->{element}
+       });
+
+    $self->_set([qw(version current_version checked_out _tile modifier
+                    element__id _element_object publish_status)],
+                [0, 0, 1, $tile, @{$init}{qw(user__id element__id element)},
+                 0]);
+
+    $self->_set__dirty;
 }
 
 ###############################################################################
@@ -1902,17 +2132,17 @@ sub _construct_uri {
     foreach my $token( @tokens ) {
         next unless $token;
         if( $uri_format_hash{$token}  ne '' ) {
-	    # Add the cover date value.
-	    push @path, $self->get_cover_date( $uri_format_hash{ $token } );
-	} else {
-	    if( $token eq 'categories' ) {
-	        # Add Category
-	        push @path, $cat_obj->ancestry_path if $cat_obj;
-	    } elsif( $token eq 'slug' ) {
-		# Add the slug.
-	        push @path, $self->get_slug if $self->key_name eq 'story';
-	    }
-	}
+            # Add the cover date value.
+            push @path, $self->get_cover_date( $uri_format_hash{ $token } );
+        } else {
+            if( $token eq 'categories' ) {
+                # Add Category
+                push @path, $cat_obj->ancestry_path if $cat_obj;
+            } elsif( $token eq 'slug' ) {
+                # Add the slug.
+                push @path, $self->get_slug if $self->key_name eq 'story';
+            }
+        }
     }
 
     # Add the post value.
@@ -1952,14 +2182,14 @@ NONE
 sub _get_element_object {
     my ($self) = @_;
 
-	my $dirty = $self->_get__dirty();
+        my $dirty = $self->_get__dirty();
 
     my $at_obj = $self->_get('_element_object');
     return $at_obj if $at_obj;
     $at_obj = Bric::Biz::AssetType->lookup({ id => $self->_get('element__id')});
     $self->_set(['_element_object'], [$at_obj]);
 
-	$self->_set__dirty($dirty);
+        $self->_set__dirty($dirty);
     return $at_obj;
 }
 
@@ -2007,7 +2237,7 @@ sub _sync_contributors {
     }
 
     $self->_set( {
-                  '_del_contrib'	=> $del_contribs,
+                  '_del_contrib'        => $del_contribs,
                   '_update_contributors' => undef,
                   '_contributors' => $contribs
                  });
@@ -2037,49 +2267,114 @@ NONE
 =cut
 
 sub _get_category_keywords {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $categories = $self->_get('_categories');
+        my $categories = $self->_get('_categories');
 
-	my %keywords;
-	foreach my $c_id (keys %$categories) {
+        my %keywords;
+        foreach my $c_id (keys %$categories) {
 
-		my $cat;
-		if ($categories->{$c_id}->{'object'}) {
-			$cat = $categories->{$c_id}->{'object'};
-		} else {
-			$cat = Bric::Biz::Category->lookup({ id => $c_id });
-			$categories->{$c_id}->{'object'} = $cat;
-		}
+                my $cat;
+                if ($categories->{$c_id}->{'object'}) {
+                        $cat = $categories->{$c_id}->{'object'};
+                } else {
+                        $cat = Bric::Biz::Category->lookup({ id => $c_id });
+                        $categories->{$c_id}->{'object'} = $cat;
+                }
 
-		my $kw_list = $cat->keywords();
-		foreach (@$kw_list) {
-			my $kw_id = $_->get_id();
-			$keywords{$kw_id} = $_;
-		}
-	}
+                my $kw_list = $cat->keywords();
+                foreach (@$kw_list) {
+                        my $kw_id = $_->get_id();
+                        $keywords{$kw_id} = $_;
+                }
+        }
 
-	my @list = sort { lc $a->get_sort_name cmp lc $b->get_sort_name }
-	  values %keywords;
+        my @list = sort { lc $a->get_sort_name cmp lc $b->get_sort_name }
+          values %keywords;
 
-	return wantarray ? @list : \@list;
+        return wantarray ? @list : \@list;
 }
 
 ###############################################################################
-
-#--------------------------------------#
 
 =back
 
 =head2 Private Functions
 
-NONE.
+=over 4
+
+=item my $oc_coll = $get_oc_coll->($ba)
+
+Returns the collection of output channels for this asset.
+L<Bric::Util::Coll::OutputChannel|Bric::Util::Coll::OutputChannel>
+object. See that class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>,
+for interface details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
+
+$get_oc_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my ($id, $oc_coll) = $self->_get('version_id', '_oc_coll');
+    return $oc_coll if $oc_coll;
+    $oc_coll = Bric::Util::Coll::OutputChannel->new
+      (defined $id ? {$self->key_name . '_instance_id' => $id} : undef);
+    $self->_set(['_oc_coll'], [$oc_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $oc_coll;
+};
 
 1;
 
 __END__
+
+=back
 
 =head1 NOTES
 
@@ -2087,7 +2382,7 @@ NONE
 
 =head1 AUTHOR
 
-michael soderstrom - miraso@pacbell.net
+michael soderstrom <miraso@pacbell.net>
 
 =head1 SEE ALSO
 

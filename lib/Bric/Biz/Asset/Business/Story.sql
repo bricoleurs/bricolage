@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.8 $
+-- VERSION: $Revision: 1.9 $
 --
--- $Date: 2002-07-19 11:29:37 $
+-- $Date: 2002-09-21 00:41:30 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -36,13 +36,11 @@ CREATE SEQUENCE seq_attr_story_meta START 1024;
 
 
 -- -----------------------------------------------------------------------------
--- Table story
+-- Table: story
 --
--- Description: The story properties.   Versioning info might get added 
---                              here and the rights info might get removed.
---
---                              It is also possible that the asset type field will need
---                              a cascading delete.
+-- Description: The story properties. Versioning info might get added here and
+--              the rights info might get removed. It is also possible that
+--              the asset type field will need a cascading delete.
 
 
 CREATE TABLE story (
@@ -95,7 +93,21 @@ CREATE TABLE story_instance (
                                    CHECK (checked_out IN (0,1)),
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
-                                                                                        
+
+-- -----------------------------------------------------------------------------
+-- Table story__output_channel
+-- 
+-- Description: Mapping Table between stories and output channels.
+--
+--
+
+CREATE TABLE story__output_channel (
+    story_instance__id  NUMERIC(10, 0)  NOT NULL,
+    output_channel__id  NUMERIC(10, 0)  NOT NULL,
+    CONSTRAINT pk_story_output_channel
+      PRIMARY KEY (story_instance__id, output_channel__id)
+);
+
 
 -- -----------------------------------------------------------------------------
 -- Table story__category
@@ -218,6 +230,10 @@ CREATE UNIQUE INDEX udx_story_category__story__cat ON story__category(story_inst
 CREATE INDEX fkx_story__story__category ON story__category(story_instance__id);
 CREATE INDEX fkx_category__story__category ON story__category(category__id);
 
+-- story__output_channel
+CREATE INDEX fkx_story__oc__story ON story__output_channel(story_instance__id);
+CREATE INDEX fkx_story__oc__oc ON story__output_channel(output_channel__id);
+
 --story__contributor
 CREATE INDEX fkx_story__story__contributor ON story__contributor(story_instance__id);
 CREATE INDEX fkx_member__story__contributor ON story__contributor(member__id);
@@ -244,6 +260,3 @@ CREATE INDEX idx_attr_story_meta__name ON attr_story_meta(LOWER(name));
 
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_story__attr_story_meta ON attr_story_meta(attr__id);
-
-
-

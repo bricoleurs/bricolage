@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-26 06:03:47 $
+$Date: 2002-09-21 00:41:30 $
 
 =head1 SYNOPSIS
 
@@ -270,11 +270,11 @@ my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-    Bric::register_fields({
-                        # Public Fields
-                        slug            => Bric::FIELD_RDWR
-
-                        # Private Fields
+    Bric::register_fields
+        ({
+          # Public Fields
+          slug            => Bric::FIELD_RDWR
+          # Private Fields
         });
 }
 
@@ -368,10 +368,7 @@ sub new {
     delete $init->{'active'};
     $init->{priority} ||= 3;
     $init->{name} = delete $init->{title} if exists $init->{title};
-    $self = bless {}, $self unless ref $self;
-    $self->_init($init);
     $self->SUPER::new($init);
-    return $self;
 }
 
 ################################################################################
@@ -999,7 +996,7 @@ sub check_uri {
     my $s_eid = $self->get_element__id() ||
       die $gen->new({ msg => 'Cannot retrieve the element_id of this story' });
     my $s_el = Bric::Biz::AssetType->lookup({id => $s_eid}) ||
-      die $gen->new({ msg => 'Cannot retrieve the Asset Type of this story' });
+      die $gen->new({ msg => 'Cannot retrieve the element for this story' });
     my @ocs = $s_el->get_output_channels();
     die $gen->new({ msg => 'Cannot retrieve any output channels associated ' .
                            "with this story's story type element" })
@@ -1022,7 +1019,7 @@ sub check_uri {
               die $gen>new({ msg => 'Cannot retrieve the element_id of this ' .
                                     'story' });
             my $st_el = Bric::Biz::AssetType->lookup({id => $st_eid}) ||
-              die $gen->new({ msg => 'Cannotretrieve the Asset Type of this' .
+              die $gen->new({ msg => 'Cannot retrieve the element for this' .
                                      'story' });
             my @st_ocs = $st_el->get_output_channels();
 
@@ -1468,17 +1465,22 @@ NONE
 sub clone {
     my ($self) = @_;
     my $tile = $self->get_tile();
-    $tile->prepare_clone();
+    $tile->prepare_clone;
 
-    my $contribs = $self->_get_contributors();
+    my $contribs = $self->_get_contributors;
     # clone contributors
     foreach (keys %$contribs ) {
-        $contribs->{$_}->{'action'} = 'insert';
+        $contribs->{$_}->{action} = 'insert';
     }
 
     # Clone the category associations
     my $cats = $self->_get_categories;
     map { $cats->{$_}->{action} = 'insert' } keys %$cats;
+
+    # Clone the output channel associations.
+    my @ocs = $self->get_output_channels;
+    $self->del_output_channels(@ocs);
+    $self->add_output_channels(@ocs);
 
     # Grab the keywords.
     my $kw = $self->get_keywords;

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.8 $
+-- VERSION: $Revision: 1.9 $
 --
--- $Date: 2002-06-11 22:21:22 $
+-- $Date: 2002-09-21 00:41:30 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -100,6 +100,20 @@ CREATE TABLE media_instance (
 );
 
 -- -----------------------------------------------------------------------------
+-- Table media__output_channel
+-- 
+-- Description: Mapping Table between stories and output channels.
+--
+--
+
+CREATE TABLE media__output_channel (
+    media_instance__id  NUMERIC(10, 0)  NOT NULL,
+    output_channel__id  NUMERIC(10, 0)  NOT NULL,
+    CONSTRAINT pk_media_output_channel
+      PRIMARY KEY (media_instance__id, output_channel__id)
+);
+
+-- -----------------------------------------------------------------------------
 -- Table: media_fields
 -- 
 -- Description: A mapping table between Media classes and functions that
@@ -121,7 +135,7 @@ CREATE TABLE media_fields (
 -- -----------------------------------------------------------------------------
 -- Table media__contributor
 -- 
--- Description: mapping tables between story instances and contributors
+-- Description: mapping tables between media instances and contributors
 --
 --
 
@@ -270,6 +284,10 @@ CREATE INDEX fkx_media__media_instance ON media_instance(media__id);
 CREATE INDEX fkx_usr__media_instance ON media_instance(usr__id);
 CREATE INDEX fkx_media_type__media_instance ON media_instance(media_type__id);
 CREATE INDEX fkx_category__media_instance ON media_instance(category__id);
+
+-- media__output_channel
+CREATE INDEX fkx_media__oc__media ON media__output_channel(media_instance__id);
+CREATE INDEX fkx_media__oc__oc ON media__output_channel(output_channel__id);
 
 -- media_member.
 CREATE INDEX fkx_media__media_member ON media_member(object_id);

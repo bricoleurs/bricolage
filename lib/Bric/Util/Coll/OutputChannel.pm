@@ -8,15 +8,15 @@ Channels.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-18 19:57:25 $
+$Date: 2002-09-21 00:41:30 $
 
 =head1 SYNOPSIS
 
@@ -38,6 +38,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Biz::OutputChannel;
 use Bric::Util::DBI qw(:standard);
+use Bric::Util::Fault::Exception::DP;
 
 ################################################################################
 # Inheritance
@@ -125,17 +126,42 @@ sub class_name { 'Bric::Biz::OutputChannel' }
 
 =over 4
 
-=item $self = $coll->save
+=item $self = $coll->save($key => $id)
 
-=item $self = $coll->save($server_type_id)
+Saves the changes made to all the objects in the collection. The C<$key>
+argument indicates the type of object with which each output channel should be
+associated. The available keys are:
 
-Saves the changes made to all the objects in the collection. Pass in a
-Bric::Dist::ServerType object ID to make sure all the Bric::Biz::OutputChannel
-objects are properly associated with that server type.
+=over 4
+
+=item server_type
+
+Indicates a L<Bric::Dist::ServerType|Bric::Dist::ServerType> association.
+
+=item story
+
+Indicates a
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>
+association.
+
+=item media
+
+Indicates a
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>
+association.
+
+=back
+
+The C<$id> argument is the ID of the object with which each output channel
+should be associated.
 
 B<Throws:>
 
 =over 4
+
+=item *
+
+Invalid key.
 
 =item *
 
@@ -174,32 +200,67 @@ B<Notes:> NONE.
 =cut
 
 sub save {
-    my ($self, $st_id) = @_;
+    my ($self, $type, $id) = @_;
     my ($new_objs, $del_objs) = $self->_get(qw(new_obj del_obj));
 
-    if (@$new_objs) {
-	my $ins = prepare_c(qq{
-            INSERT INTO server_type__output_channel (server_type__id, output_channel__id)
-            VALUES (?, ?)
-        });
-
-	foreach my $oc (@$new_objs) {
-	    $oc->save;
-	    execute($ins, $st_id, $oc->get_id);
-	}
-	$self->add_objs(@$new_objs);
-	@$new_objs = ();
-    }
-
     if (@$del_objs) {
-	my $del = prepare_c(qq{
-            DELETE FROM server_type__output_channel
-            WHERE  server_type__id = ?
-                   AND output_channel__id = ?
-        });
-	execute($del, $st_id, $_->get_id) for @$del_objs;
-	@$del_objs = ();
+        my $del;
+        if ($type eq 'story') {
+            $del = prepare_c(qq{
+                DELETE FROM story__output_channel
+                WHERE  story_instance__id = ?
+                       AND output_channel__id = ?
+            });
+        } elsif ($type eq 'media') {
+            $del = prepare_c(qq{
+                DELETE FROM media__output_channel
+                WHERE  media_instance__id = ?
+                       AND output_channel__id = ?
+            });
+        } elsif ($type eq 'server_type') {
+            $del = prepare_c(qq{
+                DELETE FROM server_type__output_channel
+                WHERE  server_type__id = ?
+                       AND output_channel__id = ?
+            });
+        }
+        execute($del, $id, $_->get_id) for @$del_objs;
+        @$del_objs = ();
     }
+
+    if (@$new_objs) {
+        my $ins;
+        if ($type eq 'story') {
+            $ins = prepare_c(qq{
+                INSERT INTO story__output_channel
+                            (story_instance__id, output_channel__id)
+                VALUES (?, ?)
+            });
+        } elsif ($type eq 'media') {
+            $ins = prepare_c(qq{
+                INSERT INTO media__output_channel
+                            (media_instance__id, output_channel__id)
+                VALUES (?, ?)
+            });
+        } elsif ($type eq 'server_type') {
+            $ins = prepare_c(qq{
+                INSERT INTO server_type__output_channel
+                            (server_type__id, output_channel__id)
+                VALUES (?, ?)
+            });
+        } else {
+            die Bric::Util::Fault::Exception::DP->new
+              ({ msg => "Invalid key '$type'" });
+        }
+
+        foreach my $oc (@$new_objs) {
+            $oc->save;
+            execute($ins, $id, $oc->get_id);
+        }
+        $self->add_objs(@$new_objs);
+        @$new_objs = ();
+    }
+
     return $self;
 }
 
@@ -234,8 +295,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::Coll|Bric::Util::Coll>, 
+L<Bric|Bric>,
+L<Bric::Util::Coll|Bric::Util::Coll>,
 L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel>
 
 =cut
