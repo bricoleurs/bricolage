@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-25 23:53:18 $
+$Date: 2002-11-06 20:31:57 $
 
 =head1 SYNOPSIS
 
@@ -385,6 +385,10 @@ primary_oc_id
 =item *
 
 priority
+
+=item *
+
+publish_status
 
 =item *
 
@@ -1305,7 +1309,7 @@ sub _do_list {
 
     # include trivial media table fields
     foreach my $f (qw(id active priority element__id
-                      workflow__id source__id)) {
+                      workflow__id source__id publish_status)) {
         next unless exists $param->{$f};
         push @where, "m.$f=?";
         push @bind, $param->{$f};

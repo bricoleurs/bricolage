@@ -336,6 +336,26 @@ no longer. [David]
 The correct source is now displayed in the Story and Media edit profiles.
 [David]
 
+=item *
+
+An attempt to install Bricolage to use an existing PostgreSQL user no longer
+causes an installation error when you decline drop the user. [David]
+
+=item *
+
+The burner no longer fails when it publishes an asset that's not on a
+desk. [David]
+
+=item *
+
+SOAP now does the proper thing when deleting assets, removing them from desks
+and workflow only if they're on desks and in workflow. [David]
+
+=item *
+
+Added support for the missing C<publish_status> parameter to
+Bric::Biz::Asset::Business::Media->list(). [David]
+
 =back
 
 

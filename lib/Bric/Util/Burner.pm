@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-29 21:30:06 $
+$Date: 2002-11-06 20:31:57 $
 
 =head1 SYNOPSIS
 
@@ -696,14 +696,20 @@ sub publish {
         $ba->set_published_version($ba->get_current_version);
         # Now log that we've published and get it out of workflow.
         log_event($key . ($repub ? '_republish' : '_publish'), $ba);
-        my $d = $ba->get_current_desk;
-        $d->remove_asset($ba);
-        $d->save;
-        # Remove this asset from the workflow by setting is workflow ID to undef
-        $ba->set_workflow_id(undef);
-        $ba->save;
 
-        log_event("${key}_rem_workflow", $ba);
+        # Remove it from the desk it's on.
+        if (my $d = $ba->get_current_desk) {
+            $d->remove_asset($ba);
+            $d->save;
+        }
+        # Remove it from the workflow by setting is workflow ID to undef
+        if ($ba->get_workflow_id) {
+            $ba->set_workflow_id(undef);
+            log_event("${key}_rem_workflow", $ba);
+        }
+
+        # Save it!
+        $ba->save;
     }
 
     $self->_set(['mode'], [undef]);

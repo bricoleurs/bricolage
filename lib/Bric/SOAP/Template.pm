@@ -10,6 +10,7 @@ use Bric::Biz::Category;
 use Bric::Biz::Workflow qw(TEMPLATE_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
+use Bric::App::Event    qw(log_event);
 use IO::Scalar;
 use XML::Writer;
 use Bric::Biz::Person::User;
@@ -30,7 +31,7 @@ require Data::Dumper if DEBUG;
 
 # this is needed by Template.pl so it can test create() and update()
 # without damaging the system.
-use constant ALLOW_DUPLICATE_TEMPLATES => 0;
+use constant ALLOW_DUPLICATE_TEMPLATES => 1;
 
 =head1 NAME
 
@@ -38,15 +39,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-02 00:15:46 $
+$Date: 2002-11-06 20:31:57 $
 
 =head1 SYNOPSIS
 
@@ -495,60 +496,71 @@ my %allowed = map { $_ => 1 } qw(template_id template_ids);
 sub delete {
     my $pkg = shift;
     my $env = pop;
-    my $args = $env->method || {};    
-    
-    print STDERR __PACKAGE__ . "->delete() called : args : ", 
-	Data::Dumper->Dump([$args],['args']) if DEBUG;
-    
+    my $args = $env->method || {};
+
+    print STDERR __PACKAGE__ . "->delete() called : args : ",
+      Data::Dumper->Dump([$args],['args']) if DEBUG;
+
     # check for bad parameters
     for (keys %$args) {
 	die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
-	    unless exists $allowed{$_};
+          unless exists $allowed{$_};
     }
 
     # template_id is sugar for a one-element template_ids arg
-    $args->{template_ids} = [ $args->{template_id} ] 
-	if exists $args->{template_id};
+    $args->{template_ids} = [ $args->{template_id} ]
+      if exists $args->{template_id};
 
     # make sure template_ids is an array
     die __PACKAGE__ . "::delete : missing required template_id(s) setting.\n"
-	unless defined $args->{template_ids};
+      unless defined $args->{template_ids};
     die __PACKAGE__ . "::delete : malformed template_id(s) setting.\n"
-	unless ref $args->{template_ids} and 
-	       ref $args->{template_ids} eq 'ARRAY';
+      unless ref $args->{template_ids} and 
+        ref $args->{template_ids} eq 'ARRAY';
 
     # delete the template
     foreach my $template_id (@{$args->{template_ids}}) {
 	print STDERR __PACKAGE__ . 
-	    "->delete() : deleting template_id $template_id\n"
-		if DEBUG;
-      
+          "->delete() : deleting template_id $template_id\n"
+            if DEBUG;
+
 	# first look for a checked out version
-	my $template = Bric::Biz::Asset::Formatting->lookup(
-				{ id => $template_id, checkout => 1 });
+	my $template = Bric::Biz::Asset::Formatting->lookup
+          ({ id => $template_id, checkout => 1 });
+
 	unless ($template) {
 	    # settle for a non-checked-out version and check it out
-	    $template = Bric::Biz::Asset::Formatting->lookup(
-				           {id => $template_id});
+	    $template = Bric::Biz::Asset::Formatting->lookup
+              ({ id => $template_id });
 	    die __PACKAGE__ . 
-		"::delete : no template found for id \"$template_id\"\n"
-		    unless $template;
+              "::delete : no template found for id \"$template_id\"\n"
+                unless $template;
 	    die __PACKAGE__ . 
-		"::delete : access denied for template \"$template_id\".\n"
-		    unless chk_authz($template, CREATE, 1);
-	    
+              "::delete : access denied for template \"$template_id\".\n"
+                unless chk_authz($template, CREATE, 1);
 	    $template->checkout({ user__id => get_user_id });
+            log_event("formatting_checkout", $template);
 	}
-	
-	# deletion dance sampled from widgets/workspace/callback.mc
-	my $desk = $template->get_current_desk;
-	$desk->checkin($template);
-	$desk->remove_asset($template);
-	$desk->save;
-	$template->deactivate;
-	$template->save;
+
+        # Remove the template from any desk it's on.
+        if (my $desk = $template->get_current_desk) {
+            $desk->checkin($template);
+            $desk->remove_asset($template);
+            $desk->save;
+        }
+
+        # Remove the template from workflow.
+        if ($template->get_workflow_id) {
+            $template->set_workflow_id(undef);
+            log_event("formatting_rem_workflow", $template);
+        }
+
+        # Deactivate the template and save it.
+        $template->deactivate;
+        $template->save;
+        log_event("formatting_deact", $template);
     }
-    
+
     return name(result => 1);
 }
 }
