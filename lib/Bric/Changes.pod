@@ -124,6 +124,11 @@ developers. [David]
 Categories now default to sorting by URI, and the URI is the searchable field,
 rather than name. [David]
 
+=item *
+
+Vastly improved the speed at which categories can be imported via SOAP.
+[David]
+
 =back
 
 =head2 Bug Fixes
