@@ -312,15 +312,18 @@ function showForm(which) {
     var name, caption, vals, length, maxlength;
 
     // get handle to fb form object
-    var fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all ? document.all.fbDiv.all.fb_form : document.getElementById('fbDiv').getElementsByTagName('form')[0];
+    var fb_obj = (document.layers) 
+        ? document.layers["fbDiv"].document.fb_form 
+        : document.all ? document.all.fbDiv.all.fb_form 
+        : document.getElementById('fbDiv').getElementsByTagName('form')[0];
 
     // gather the current values the user may have entered in the form
-    if (typeof fb_obj != "undefined" ) { // prevent error if first time
-        name      = fb_obj.fb_name.value;
-        caption   = fb_obj.fb_disp.value;
-        vals      = (typeof (fb_obj.fb_vals)      != "undefined" && fb_obj.fb_vals.value)      ? fb_obj.fb_vals.value   : '';
-        length    = (typeof (fb_obj.fb_length)    != "undefined" && fb_obj.fb_length.value)    ? fb_obj.fb_length.value : '';
-        maxlength = (typeof (fb_obj.fb_maxlength) != "undefined" && fb_obj.fb_maxlength.value) ? fb_obj.fb_maxlength.value : '';
+    if (fb_obj) { // prevent an error if first time (nothing could have been inputted yet)
+        name    = (fb_obj.fb_name) ? (fb_obj.fb_name.value) : '';
+        caption = (fb_obj.fb_disp) ? (fb_obj.fb_disp.value) : '';
+        vals    = (fb_obj.fb_vals) ? (fb_obj.fb_vals.value) : '';
+        length  = (fb_obj.fb_length) ? (fb_obj.fb_length.value) : '';
+        maxlength   = (fb_obj.fb_length) ? (fb_obj.fb_maxlength.value) : '';
     }
 
     // put the html together and write it to the div
@@ -330,19 +333,28 @@ function showForm(which) {
     writeDiv("fbDiv", html);
 
     // repopulate the new form with any values that may have been present in the old form, where applicable.
-    if (typeof fb_obj != "undefined" ) { // prevent error if first time
-        fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all ? document.all.fbDiv.all.fb_form : document.getElementById('fbDiv').getElementsByTagName('form')[0];
+    if (fb_obj) { // prevent an error if first time (nothing could have been inputted yet)
+
+        fb_obj = (document.layers) 
+            ? document.layers["fbDiv"].document.fb_form 
+            : document.all ? document.all.fbDiv.all.fb_form 
+            : document.getElementById('fbDiv').getElementsByTagName('form')[0];
+
         fb_obj.fb_name.value = name;
         fb_obj.fb_disp.value = caption;
-        if (typeof fb_obj.fb_vals      != "undefined" && vals) fb_obj.fb_vals.value = vals;
-        if (typeof fb_obj.fb_length    != "undefined" && length) fb_obj.fb_length.value = length;
-        if (typeof fb_obj.fb_maxlength != "undefined" && maxlength) fb_obj.fb_maxlength.value = maxlength;
+        if (fb_obj.fb_vals) fb_obj.fb_vals.value = vals;
+        if (fb_obj.fb_length) fb_obj.fb_length.value = length;
+        if (fb_obj.fb_maxlength) fb_obj.fb_maxlength.value = maxlength;
     }
+
     // get handle to new form
-    fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all ? document.all.fbDiv.all.fb_form : document.getElementById('fbDiv').getElementsByTagName('form')[0];
- 
+    fb_obj = (document.layers) 
+        ? document.layers["fbDiv"].document.fb_form 
+        : document.all ? document.all.fbDiv.all.fb_form 
+        : document.getElementById('fbDiv').getElementsByTagName('form')[0];
+            
     // move the focus to the name field
-    if (typeof fb_obj != "undefined" ) fb_obj.fb_name.focus();
+    if (fb_obj) fb_obj.fb_name.focus();
 }
 
 /*
