@@ -8,11 +8,11 @@ images
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
@@ -406,7 +406,7 @@ sub create_thumbnail {
     unless ($Imager::formats{$format}) {
         warn qq{It looks like the image libraries to handle the "$format" }
           . 'have not installed. No thumbnail will be created for file '
-          . "'$path'";
+          . "'$path'\n";
         return;
     }
 
