@@ -17,6 +17,19 @@ File::Find::find({no_chdir => 1,
 		  }},
 		 File::Spec->curdir);
 
+# skip manifying PODs if '!' is given as MAN_DIR
+sub MY::manifypods {
+    if (exists $CONFIG->{MAN_DIR} && $CONFIG->{MAN_DIR} eq '!') {
+        return '
+manifypods:
+	@$(NOOP)
+';
+    } else {
+        package MY;
+        return shift->SUPER::manifypods(@_);
+    }
+}
+
 # Write out the Makefile
 WriteMakefile(NAME           => 'bric_bin',
 	      EXE_FILES      => \@EXE,
