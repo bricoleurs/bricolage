@@ -28,7 +28,7 @@ if ($field eq 'preview') {
     my $b = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
     if (defined $media_id) {
 	my $m = get_state_data('media_prof', 'media');
-	unless ($m && $m->get_id != $media_id) {
+	unless ($m && defined $media_id && $m->get_id == $media_id) {
 	    $m = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id });
 	}
 
@@ -38,7 +38,7 @@ if ($field eq 'preview') {
 	redirect_onload($url);
     } else {
 	my $s = get_state_data('story_prof', 'story');
-	unless ($s && defined $story_id && $s->get_id != $story_id) {
+	unless ($s && defined $story_id && $s->get_id == $story_id) {
 	    $s = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
 	}
 
