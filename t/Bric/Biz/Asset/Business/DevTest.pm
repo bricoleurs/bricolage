@@ -17,14 +17,6 @@ BEGIN { __PACKAGE__->test_class }
 sub class { 'Bric::Biz::Asset::Business' }
 
 ##############################################################################
-# The element object we'll use throughout. Override in subclass if necessary.
-my $elem;
-sub get_elem {
-    $elem ||= Bric::Biz::AssetType->lookup({ id => 1 });
-    $elem;
-}
-
-##############################################################################
 # Arguments to the new() constructor. Used by construct(). Override as
 # necessary in subclasses.
 sub new_args {
@@ -114,30 +106,6 @@ sub test_oc : Test(40) {
     ok( @ocs = $ba->get_output_channels, "Get OCs 4" );
     is( scalar @ocs, 1, "Check for 1 OC 4" );
     is( $ocs[0]->get_name, $ocname, "Check OC name 4" );
-}
-
-##############################################################################
-# Clean up our mess.
-##############################################################################
-sub cleanup : Test(teardown => 0) {
-    my $self = shift;
-
-    # Clean up assets.
-    my $key = $self->class->key_name;
-    if (my $baids = delete $self->{$key}) {
-        $baids = join ', ', @$baids;
-        # Delete from the asset table...
-        Bric::Util::DBI::prepare(qq{
-            DELETE FROM $key
-            WHERE  id in ($baids)
-        })->execute;
-
-        # ...and from the instance table.
-        Bric::Util::DBI::prepare(qq{
-            DELETE FROM ${key}_instance
-            WHERE  ${key}__id in ($baids)
-        })->execute;
-    }
 }
 
 1;
