@@ -825,7 +825,7 @@ sub load_asset {
 
                 # Upload the file into the media object; let it figure out the
                 # media type.
-                $media->upload_file($fh, $filename, undef, $size);
+                $media->upload_file($fh, @{$mdata->{file}}{qw(name media_type size)});
                 log_event('media_upload', $media);
             } else {
                 # clear the media object by uploading an empty file - this
@@ -834,9 +834,7 @@ sub load_asset {
                 # some point and use it here.
                 my $data = "";
                 my $fh  = new IO::Scalar \$data;
-                $media->upload_file($fh, "empty");
-                $media->set_size(0);
-                $media->set_media_type_id(0);
+                $media->upload_file($fh, "empty", 0, 0);
             }
         }
 
@@ -1055,6 +1053,7 @@ sub serialize_asset {
             $writer->startTag("file");
             $writer->dataElement(name => $file_name);
             $writer->dataElement(size => $media->get_size);
+            $writer->dataElement(media_type => $media->get_media_type->get_name);
 
             # read in file data
             my $fh   = $media->get_file;

@@ -104,6 +104,11 @@ element, but it does the trick. [David]
 The list of elements to select from when creating a new template is now in
 alphabetical order. [David]
 
+=item *
+
+The XML representation of media documents used by the SOAP server now supports
+the media type of the file. [David]
+
 =back
 
 =head2 Bug Fixes

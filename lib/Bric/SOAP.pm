@@ -597,6 +597,13 @@ The XSD source:
                          </xs:restriction>
                        </xs:simpleType>
                      </xs:element>
+                     <xs:element name="media_type">
+                       <xs:simpleType>
+                         <xs:restriction base="xs:string">
+                           <xs:maxLength value="256"/>
+                         </xs:restriction>
+                       </xs:simpleType>
+                     </xs:element>
                      <xs:element name="size">
                        <xs:simpleType>
                          <xs:restriction base="xs:integer">
