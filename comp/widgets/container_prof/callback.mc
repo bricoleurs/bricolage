@@ -156,6 +156,9 @@ my $update_parts = sub {
 			. "&quot; field.");
 		set_state_data($widget, '__NO_SAVE__', 1);
 	    } else {
+		# Truncate the value, if necessary, then set it.
+		my $max = $_->get_element_data_obj->get_meta('html_info')->{maxlength};
+		$val = substr($val, 0, $max) if $max && length $val > $max;
 		$_->set_data($val);
 	    }
 	}
