@@ -14,6 +14,7 @@ my %elem = ( name => 'Test Element',
              primary_oc_id => 1);
 
 my $story_elem_id = 1;
+my $column_elem_id = 2;
 
 sub table { 'element' };
 
@@ -166,7 +167,7 @@ sub test_save : Test(6) {
 ##############################################################################
 # Test Output Channel methods.
 ##############################################################################
-sub test_oc : Test(32) {
+sub test_oc : Test(51) {
     my $self = shift;
     ok( my $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
         "Lookup story element" );
@@ -205,22 +206,43 @@ sub test_oc : Test(32) {
     isa_ok($oces->[0], 'Bric::Biz::OutputChannel::Element');
     isa_ok($oces->[1], 'Bric::Biz::OutputChannel::Element');
 
-    # Now delete it.
-    ok( $at->delete_output_channels([$oc]), "Delete OC" );
-    ok( $oces = $at->get_output_channels, "Get existing OCs 5" );
-    is( scalar @$oces, 1, "Check for one OC again" );
+    # Now add the new output channel to the column element.
+    ok( my $col = Bric::Biz::AssetType->lookup({ id => $column_elem_id }),
+        "Lookup column element" );
+    ok( $col->add_output_channels([$oc]), "Add Foober to column" );
+    ok( $col->save, "Save column element" );
 
-    # Save the element object, then check the output channels again.
-    ok( $at->save, "Save story element again" );
-    ok( $oces = $at->get_output_channels, "Get existing OCs 6" );
-    is( scalar @$oces, 1, "Check for one OC 3" );
+    # Look up column and make sure it has two output channels.
+    ok( $col = Bric::Biz::AssetType->lookup({ id => $column_elem_id }),
+        "Lookup column element again" );
+    ok( $oces = $at->get_output_channels, "Get column OCs" );
+    is( scalar @$oces, 2, "Check for two column OCs" );
 
-    # Now look it up and check it one last time.
+    # Lookup the story element from the database again and try get_ocs again.
     ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
         "Lookup story element again" );
-    ok( $oces = $at->get_output_channels, "Get existing OCs 7" );
-    is( scalar @$oces, 1, "Check for one OC 4" );
-    is( $oces->[0]->get_name, "Web", "Check name 'Web' again" );
+    ok( $oces = $at->get_output_channels, "Get existing OCs 5" );
+    is( scalar @$oces, 2, "Check for two OCs 3" );
+
+    # Now delete it.
+    my $i = 5;
+    for my $e ($at, $col) {
+        ok( $e->delete_output_channels([$oc]), "Delete OC" );
+        ok( $oces = $e->get_output_channels, "Get existing OCs " . ++$i );
+        is( scalar @$oces, 1, "Check for one OC again" );
+
+        # Save the element object, then check the output channels again.
+        ok( $e->save, "Save element" );
+        ok( $oces = $e->get_output_channels, "Get existing OCs " . ++$i );
+        is( scalar @$oces, 1, "Check for one OC 3" );
+
+        # Now look it up and check it one last time.
+        ok( $e = Bric::Biz::AssetType->lookup({ id => $e->get_id }),
+            "Lookup element again" );
+        ok( $oces = $e->get_output_channels, "Get existing OCs " . ++$i );
+        is( scalar @$oces, 1, "Check for one OC 4" );
+        is( $oces->[0]->get_name, "Web", "Check name 'Web' again" );
+    }
 }
 
 1;

@@ -265,6 +265,12 @@ Elements added with the same name as an existing, active or inactive element
 no longer trigger an SQL error to be displayed. Thanks to Clive Jones for the
 spot! [David]
 
+=item *
+
+Fixed issue where adding an output channel to a document type element removed
+that output channel from another document type element. Thanks to Clive Jones
+for the spot! [David]
+
 =back
 
 =head1 VERSION 1.6.1
