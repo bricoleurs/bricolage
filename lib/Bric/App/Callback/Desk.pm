@@ -309,7 +309,8 @@ sub clone : Callback {
     log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
     log_event('story_moved', $story, { Desk => $desk->get_name });
     log_event('story_checkout', $story);
-    $self->set_redirect('/workflow/profile/workspace');
+    $self->set_redirect('/workflow/profile/story/' . $story->get_id
+                        . '/?checkout=1');
 }
 
 ### PRIVATE ###
