@@ -19,10 +19,8 @@
   <tr>
     <td align="right" colspan="2">
       <input type="image" src="/media/images/<% "$lang_key/$chk_cb" %>_assets_<% $color1 %>.gif" border="0" name="<% "$widget|$chk_cb" %>_cb" value="<% $chk_label %>">
-% if (!$desk or $desk->can_publish) {
       <a href="#" onClick="checkAll('<% $checkbox_name %>');"><img src="/media/images/<% $lang_key %>/select_all_lgreen.gif" border="0"></a>
       <input type="image" src="/media/images/<% "$lang_key/$act_label" %>.gif" border="0" name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
-% }
     </td>
   </tr>
 </table>
@@ -43,17 +41,31 @@ my $num_objs = @{$d->{story}} + @{$d->{media}} + @{$d->{formatting}};
 return unless $num_objs;
 $wf ||= Bric::Biz::Workflow->lookup({ id => $w_id }) if defined $w_id;
 $desk ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $d_id }) if defined $d_id;
-my ($chk_label, $chk_cb, $act_label, $act_cb) = $desk
-  ? ('Move Assets', 'move',
-     $wf && $wf->get_type == TEMPLATE_WORKFLOW
-       ? ('deploy_checked_red', 'deploy')
-       : ('publish_checked_red', 'publish'))
-  : ('Check In Assets', 'checkin', 'delete_checked_red', 'delete');
+my ($chk_label, $chk_cb, $act_label, $act_cb);
+if ($desk) {
+    $chk_label = 'Move Assets';
+    $chk_cb    = 'move';
+} else {
+    $chk_label = 'Check In Assets';
+    $chk_cb    = 'checkin';
+}
+if ($desk && $desk->can_publish) {
+    if ($wf && $wf->get_type == TEMPLATE_WORKFLOW) {
+        $act_label = 'deploy_checked_red';
+        $act_cb    = 'deploy';
+    } else {
+        $act_label = 'publish_checked_red';
+        $act_cb    = 'publish';
+    }
+} else {
+    $act_label = 'delete_checked_red';
+    $act_cb    = 'delete';
+}
 
 my $color1 = ($chk_cb eq 'move') ? 'lgreen' : 'red';
 my $color2 = ($act_cb) ? 'red' : 'red';
 my $mod    = ($chk_cb eq 'move') ? 'assets': 'checked';
-my $checkbox_name = $desk ? 'desk_asset|' : '_delete_ids';
+my $checkbox_name = $act_cb eq 'delete' ? '_delete_ids' : 'desk_asset|';
 
 # Paging
 my $limit = get_pref('Search Results / Page');

@@ -7,10 +7,12 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'desk_asset';
 
 use strict;
+use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:msg :pkg :aref);
 use Bric::App::Callback::Publish;
+use Bric::App::Callback::Workspace;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Formatting;
@@ -19,6 +21,13 @@ use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Config qw(:ui :pub);
 use Bric::Util::Burner;
 use Bric::Util::Time qw(strfdate);
+
+my $pkgs = {
+    story => 'Bric::Biz::Asset::Business::Story',
+    media => 'Bric::Biz::Asset::Business::Media',
+    formatting => 'Bric::Biz::Asset::Formatting',
+};
+my $keys = [ keys %$pkgs ];
 
 my $type = 'formatting';
 my $disp_name = 'Template';
@@ -312,6 +321,38 @@ sub clone : Callback {
     $self->set_redirect('/workflow/profile/story/' . $story->get_id
                         . '/?checkout=1');
 }
+
+# This is quite similar to Workspace::delete
+sub delete : Callback {
+    my $self = shift;
+    my $burn = Bric::Util::Burner->new;
+
+    # Deleting assets.
+    foreach my $key (@$keys) {
+        foreach my $aid (@{ mk_aref($self->params->{"${key}_delete_ids"}) }) {
+	    my $a = $pkgs->{$key}->lookup({ id => $aid });
+	    if (chk_authz($a, EDIT, 1)) {
+		my $d = $a->get_current_desk;
+		$d->remove_asset($a);
+		$d->save;
+		log_event("${key}_rem_workflow", $a);
+                $a->set_workflow_id(undef);
+		$a->deactivate;
+		$a->save;
+
+                if($key eq 'formatting') {
+                    $burn->undeploy($a);
+                    my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
+                    $sb->undeploy($a);
+                }
+		log_event("${key}_deact", $a);
+	    } else {
+                add_msg('Permission to delete "[_1]" denied.', $a->get_name);
+	    }
+	}
+    }
+}
+
 
 ### PRIVATE ###
 

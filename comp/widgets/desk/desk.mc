@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2003-12-22 03:21:14 $
+$Date: 2004-03-10 18:18:42 $
 
 =head1 SYNOPSIS
 
@@ -198,18 +198,7 @@ if (defined $objs && @$objs > $obj_offset) {
         my ($user);
         my $pub = '';
         if ($desk_type eq 'workflow') {
-            # Figure out publishing stuff, if necessary.
-            if ($desk->can_publish && chk_authz($obj, PUBLISH, 1)) {
-                $pub = $m->scomp('/widgets/profile/checkbox.mc',
-                            name  => "$widget|${class}_pub_ids",
-                            id    => "$widget\_$aid",
-                            value => $aid)
-                  . qq{<label for="$widget\_$aid">}
-                  . ($class eq 'formatting' ? 'Deploy' : 'Publish')
-                  . '</label>'
-                  unless $obj->get_checked_out;
-            }
-            # Now figure out the checkout/edit link.
+            # Figure out the checkout/edit link.
             if (defined $user_id) {
                 if (get_user_id() == $user_id) {
                     $label = 'Check In';
@@ -220,6 +209,28 @@ if (defined $objs && @$objs > $obj_offset) {
                     my $uid = $obj->get_user__id;
                     $user = $users{$uid} ||= Bric::Biz::Person::User->lookup
                       ({ id => $uid })->format_name;
+                }
+            }
+            # Make a checkbox for Publish/Deploy if publishing is authorized
+            # and the asset isn't checked out; otherwise, a Delete checkbox
+            my $checkname = "${class}_delete_ids";
+            my $checklabel = $lang->maketext('Delete');
+            # Only show Delete checkbox if user can edit the story
+            # (Publish checkbox when PUBLISH permission, but PUBLISH > EDIT anyway)
+            if ($can_edit) {
+                my $can_pub = $desk->can_publish && chk_authz($obj, PUBLISH, 1);
+                if ($can_pub and ! $obj->get_checked_out) {
+                    $checkname = "$widget|${class}_pub_ids";
+                    $checklabel = $lang->maketext($class eq 'formatting' ? 'Deploy' : 'Publish');
+                }
+
+                # We don't want both Delete and Publish on the same page
+                unless ($desk->can_publish && $checkname =~ /_delete_ids$/) {
+                    $pub = $m->scomp('/widgets/profile/checkbox.mc',
+                                     name  => $checkname,
+                                     id    => "$widget\_$aid",
+                                     value => $aid)
+                      . qq{<label for="$widget\_$aid">$checklabel</label>};
                 }
             }
         } else {
@@ -257,8 +268,6 @@ if (defined $objs && @$objs > $obj_offset) {
                 add_msg('Warning: object "[_1]" had no associated desk.  It has been assigned to the "[_2]" desk.',
                         $obj->get_name, $desk->get_name);
             }
-
-
 
             $desk_id = $desk->get_id;
             $label = $lang->maketext('Check In to [_1]',$desk->get_name);

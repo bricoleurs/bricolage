@@ -105,6 +105,11 @@ slug, and cover date, because otherwise an identical story is created, which
 would cause errors for some stories. Clones are no longer allowed to have URIs
 that are identical to the stories they were cloned from. [Scott & David]
 
+=item *
+
+Added the ability to Delete from desks (same as My Workspace). Note however,
+that you can't delete from a publish desk. [Scott]
+
 =back
 
 =head2 Bug Fixes
