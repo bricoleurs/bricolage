@@ -41,6 +41,12 @@ q{ALTER TABLE element DROP CONSTRAINT fk_output_channel__element},
 q{ALTER TABLE element RENAME COLUMN primary_oc__id TO primary_oc__id__old},
 
 q{DROP INDEX fkx_output_channel__element},
+
+q{CREATE INDEX fkx_element__element__site__element__id ON element__site(element__id)},
+
+q{CREATE INDEX fkx_site__element__site__site__id ON element__site(site__id)},
+
+q{CREATE INDEX fkx_output_channel__element__site ON element__site(primary_oc__id)},
   ;
 
 1;

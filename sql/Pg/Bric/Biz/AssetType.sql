@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
--- $Date: 2003-03-12 21:03:51 $
+-- $Date: 2003-03-13 13:51:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -235,6 +235,11 @@ CREATE INDEX idx_attr_at_meta__name ON attr_element_meta(LOWER(name));
 
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_at__attr_at_meta ON attr_element_meta(attr__id);
+
+-- FK index on element__site.
+CREATE INDEX fkx_element__element__site__element__id ON element__site(element__id);
+CREATE INDEX fkx_site__element__site__site__id ON element__site(site__id);
+CREATE INDEX fkx_output_channel__element__site ON element__site(primary_oc__id);
 
 
 
