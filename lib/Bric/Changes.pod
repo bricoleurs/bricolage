@@ -42,6 +42,10 @@ When cloning a story, you can now select a new primary output channel, in
 addition to category, slug, cover date, etc. Suggested by Serge Sozonoff.
 [David]
 
+=item *
+
+Spell checking now works in HTMLArea. [Eric Sellers]
+
 =back
 
 =head2 Bug Fixes

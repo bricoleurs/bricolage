@@ -124,11 +124,12 @@ do {
       "  </Location>";
 
     # Enable CGI for htmlarea spellchecker.
-    # XXX Currently doesn't seem to work...
     if (ENABLE_HTMLAREA){
         push @locs,
           "  <Location /media/htmlarea/plugins/SpellChecker>\n" .
-          "    SetHandler      cgi-script\n" .
+          "    SetHandler None\n" .
+          "    AddHandler perl-script .cgi\n" .
+          "    PerlHandler Apache::Registry\n" .
           "  </Location>";
     }
 
