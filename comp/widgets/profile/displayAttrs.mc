@@ -12,19 +12,16 @@ $readOnly    => 0
 $localize    => 0
 $useEdit     => 0
 </%args>
-
-<%once>
-my @meta_props = qw(type length maxlength rows cols multiple size);
+<%once>;
+my @meta_props = qw(type length maxlength rows cols multiple size precision);
 </%once>
-
-<%perl>
-
+<%perl>;
 my $num_fields = @$attr;
 my $sel_opts = [(1..$num_fields)];
 my $curField = 1;
 my $width = 578 - 100 * $useDelete - 100 * $usePosition;
 
-$m->out("<table cellpadding=0 cellspacing=0 border=0 width=578>");
+$m->out(qq{<table cellpadding="0" cellspacing="0" border="0" width="578">});
 
 foreach my $attr (@$attr) {
     # Assemble the properties.
@@ -44,7 +41,7 @@ foreach my $attr (@$attr) {
     # Assemble the vals argument.
     my $vals = { value => $attr->{value},
 		 props => $props,
-		 disp  => $attr->{meta}{disp}{value}
+		 disp  => $attr->{meta}{disp}{value},
 	       };
 
     # Spit out a hidden field.
@@ -60,7 +57,7 @@ foreach my $attr (@$attr) {
     $m->comp('/widgets/profile/displayFormElement.mc',
 	     key => "attr|$attr->{name}",
 	     vals => $vals,
-	     useTable => ($vals->{props}{type} eq 'date') ? 0:1,
+	     useTable => $vals->{props}{type} eq 'date' ? 0 : 1,
 	     width => $width,
 	     indent => FIELD_INDENT,
 	     localize => $localize,

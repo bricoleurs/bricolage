@@ -7,7 +7,7 @@ use Bric::Util::DBI qw(DB_DATE_FORMAT);
 use Bric::Config qw(:time);
 use Bric::Util::Pref;
 use Bric::Util::Time qw(:all);
-use POSIX ();
+use DateTime;
 
 my $USE_CORE = 1;
 my $epoch = CORE::time;
@@ -27,21 +27,21 @@ BEGIN {
 ##############################################################################
 my $format = '%m/%d/%Y at %T';
 my $pref_format = Bric::Util::Pref->lookup_val('Date/Time Format');
+(my $short_iso_format = ISO_8601_FORMAT) =~ s/\.%6N$//;
 
-my $db_date = POSIX::strftime(DB_DATE_FORMAT, gmtime($epoch));
+my $now = DateTime->from_epoch( epoch => $epoch, time_zone => 'UTC');
+my $db_date = $now->strftime(DB_DATE_FORMAT);
+my $utc_date = $now->strftime($pref_format);
+my $utc_iso_date = $now->strftime(ISO_8601_FORMAT);
+my $utc_iso_short_date = $now->strftime($short_iso_format);
+my $fmt_utc = $now->strftime($format);
 
-my $utc_date = POSIX::strftime($pref_format, gmtime($epoch));
-my $utc_iso_date = POSIX::strftime(ISO_8601_FORMAT, gmtime($epoch));
-my $fmt_utc = POSIX::strftime($format, gmtime($epoch));
-
-my ($local_date, $local_iso_date, $fmt_local);
-{
-    local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
-    POSIX::tzset;
-    $local_date = POSIX::strftime($pref_format, localtime($epoch));
-    $local_iso_date = POSIX::strftime(ISO_8601_FORMAT, localtime($epoch));
-    $fmt_local = POSIX::strftime($format, localtime($epoch));
-}
+my $tz = Bric::Util::Pref->lookup_val('Time Zone');
+$now->set_time_zone($tz);
+my $local_date = $now->strftime($pref_format);
+my $local_iso_date = $now->strftime(ISO_8601_FORMAT);
+my $local_iso_short_date = $now->strftime($short_iso_format);
+my $fmt_local = $now->strftime($format);
 
 ##############################################################################
 # Setup and teardown methods.
@@ -67,44 +67,35 @@ sub test_strfdate : Test(4) {
 
 ##############################################################################
 # Test local_date().
-sub test_local_date : Test(5) {
-    is( local_date($utc_date), $local_date,
+sub test_local_date : Test(6) {
+    is( local_date($utc_iso_date), $local_date,
         "Check local date is '$local_date'" );
-    is( local_date($utc_date, $format), $fmt_local,
+    is( local_date($utc_iso_short_date), $local_date,
+        "Check short local date is '$local_date'" );
+    is( local_date($utc_iso_date, $format), $fmt_local,
         "Check local date is '$fmt_local'" );
-    is( local_date($utc_date, 'epoch'), $epoch,
+    is( local_date($utc_iso_date, 'epoch'), $epoch,
         "Check that local date is '$epoch'" );
 
-    my $current;
-    {
-        # Make sure to use the time zone from the preferences.
-        local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
-        POSIX::tzset;
-        $current = POSIX::strftime(ISO_8601_FORMAT, localtime);
-
-    }
     # Check the local date with a known format argument.
+    my $current = DateTime->now(time_zone => $tz)->strftime(ISO_8601_FORMAT);
     is( local_date(undef, ISO_8601_FORMAT, 1), $current,
         "Check local date is current" );
 
-    {
-        # Make sure to use the time zone from the preferences.
-        local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
-        POSIX::tzset;
-        $current = POSIX::strftime($pref_format, localtime);
-    }
     # Check the local date in the preferred format.
+    $current = DateTime->now(time_zone => $tz)->strftime($pref_format);
     is( local_date(undef, undef, 1), $current,
         "Check local date is current" );
 }
 
 ##############################################################################
 # Test db_date().
-sub test_db_date : Test(2) {
+sub test_db_date : Test(3) {
     is( db_date($local_iso_date), $db_date, "Check db date is '$db_date'" );
+    is( db_date($local_iso_short_date), $db_date,
+        "Check short db date is '$db_date'" );
     # Hope that the clock doesn't click over during this test.
-    is( db_date(undef, 1),
-        POSIX::strftime(DB_DATE_FORMAT, gmtime),
+    is( db_date(undef, 1), DateTime->now->strftime(DB_DATE_FORMAT),
         "Check db date is curent" );
 }
 

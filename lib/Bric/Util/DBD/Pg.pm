@@ -10,20 +10,20 @@ Bric::Util::DBD::Pg - Bricolage PostgreSQL database adaptor
 
 =item Version
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =item Date
 
-$Date: 2003-09-10 18:39:07 $
+$Date: 2004-04-30 00:14:19 $
 
 =item CVS ID
 
-$Id: Pg.pm,v 1.12 2003-09-10 18:39:07 wheeler Exp $
+$Id: Pg.pm,v 1.13 2004-04-30 00:14:19 wheeler Exp $
 
 =back
 
@@ -72,7 +72,7 @@ use constant DSN_STRING => 'dbname=' . DB_NAME
 ##############################################################################
 use base qw(Exporter);
 our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING
-		    TRANSACTIONAL);
+		    db_datetime TRANSACTIONAL);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ##############################################################################
@@ -106,6 +106,25 @@ sub next_key_sql {
 } # next_key()
 
 ##############################################################################
+
+sub db_datetime {
+    my $date = shift;
+    my $dt = eval {
+        $date =~ m/^(\d\d\d\d).(\d\d).(\d\d).(\d\d).(\d\d).(\d\d)(\.\d*)?$/;
+        DateTime->new( year      => $1,
+                       month     => $2,
+                       day       => $3,
+                       hour      => $4,
+                       minute    => $5,
+                       second    => $6,
+                       time_zone => 'UTC',
+                       nanosecond => $7 ? $7 * 1.0E9 : 0
+                   );
+    };
+    throw_dp "Unable to parse date: $@" if $@;
+    return $dt;
+}
+
 sub db_date_parts {
     # This function unpacks a date/time string as it is formatted for the
     # database and returns a list of time tokens for use by timelocal(). Used by

@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
--- VERSION: $Revision: 1.7 $
+-- VERSION: $Revision: 1.8 $
 --
--- $Date: 2004-01-27 11:15:37 $
+-- $Date: 2004-04-30 00:14:19 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)
@@ -1280,7 +1280,19 @@ INSERT INTO pref_opt (pref__id, value, description)
 VALUES (5, '%Y-%m-%d %T', 'ISO-8601 Compliant (CCYY-MM-DD hh:mm:ss)');
 
 INSERT INTO pref_opt (pref__id, value, description)
+VALUES (5, '%Y-%m-%d %T.%3N', 'ISO-8601 Compliant with miliseconds (CCYY-MM-DD hh:mm:ss.000)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (5, '%Y-%m-%d %T.%6N', 'ISO-8601 Compliant with microseconds (CCYY-MM-DD hh:mm:ss.000000)');
+
+INSERT INTO pref_opt (pref__id, value, description)
 VALUES (5, '%Y-%m-%dT%T', 'ISO-8601 Strict (CCYY-MM-DDThh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (5, '%Y-%m-%dT%T.%3N', 'ISO-8601 Strict with miliseconds (CCYY-MM-DDThh:mm:ss.000)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (5, '%Y-%m-%dT%T.%6N', 'ISO-8601 Strict with microseconds (CCYY-MM-DDThh:mm:ss.000000)');
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (5, '%m/%d/%Y %T', 'U.S. (MM/DD/CCYY hh:mm:ss)');

@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$Revision: 1.51 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+our $VERSION = (qw$Revision: 1.51 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-04-10 00:22:29 $
+$Date: 2004-04-30 00:14:18 $
 
 =head1 SYNOPSIS
 
@@ -100,7 +100,7 @@ use constant CONNECT_PASS => $ENV{BRIC_DBI_PASS} || DBI_PASS;
 DBI->trace(DBI_TRACE);
 
 # The strftime format for DB dates. Used by Bric::Util::Time::db_date().
-use constant DB_DATE_FORMAT => '%Y-%m-%d %T';
+use constant DB_DATE_FORMAT => Bric::Config::ISO_8601_FORMAT;
 
 # Package constant variables. This one is for the DB connection attributes.
 my $ATTR =  { RaiseError => 1,
@@ -121,11 +121,11 @@ use base qw(Exporter);
 # You can explicitly import any of the functions in this class. The last two
 # should only ever be imported by Bric::Util::Time, however.
 our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref
-		    col_aref last_key next_key db_date_parts DB_DATE_FORMAT
-		    clean_params bind_columns bind_col bind_param begin commit
-		    rollback finish is_num row_array all_aref fetch_objects
-		    order_by group_by build_query build_simple_query
-                    where_clause tables ANY);
+		    col_aref last_key next_key db_date_parts db_datetime
+		    DB_DATE_FORMAT clean_params bind_columns bind_col
+		    bind_param begin commit rollback finish is_num row_array
+		    all_aref fetch_objects order_by group_by build_query
+		    build_simple_query where_clause tables ANY);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.

@@ -5,23 +5,25 @@
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-17 02:19:48 $
+$Date: 2004-04-30 00:14:00 $
 
 =head1 SYNOPSIS
-$m->comp(
-    "/widgets/formBuilder/formBuilder.mc",
-    widget                 => $path_to_widget,
-    optionalFieldsLocation => $path_to_any_optional_fields,
-    numFields              => $num_of_already_existing_field (default is 0 - no display of  this feature)
-);
+
+  $m->comp(
+           "/widgets/formBuilder/formBuilder.mc",
+           widget                 => $path_to_widget,
+           optionalFieldsLocation => $path_to_any_optional_fields,
+           numFields              => $num_of_already_existing_field
+  );
+
 =head1 DESCRIPTION
 
 Displays a table with radio buttons for each form element type. By default
@@ -44,6 +46,7 @@ The stay argument, when passed a true value, causes a "Save and Stay" button
 to be added, with a callback value of "save_n_stay_cb."
 
 =cut
+
 </%doc>
 <%args>
 $target                 => $r->uri
@@ -61,8 +64,7 @@ $useRequired            => 0
 $useQuantifier          => 0
 $stay                   => undef
 </%args>
-<%init>
-
+<%init>;
 my ($section, $mode, $type) = parse_uri($r->uri);
 my $agent        = detect_agent();
 my $div          = 'div';
@@ -79,56 +81,61 @@ unless ($agent->nav4) {
     $textareaCols = 25;
 }
 
+# Put together the precision select list with localized options.
+my $precision_select = '<select name="fb_precision">'
+  . join('', map { sprintf '<option value="%s"%s>%s</option>',
+                   $_->[0], ( $_->[0] == MINUTE ? ' selected="selected"' : ''),
+                   $lang->maketext($_->[1]) }
+         @{&PRECISIONS} )
+  . '</select>';
+
 # hack.  why wouldn't the div tag work in NS for this case? a mystery to solve when
 # there is time.
 if ($agent->nav4) {
-	$div = "layer position=\"relative\"";
-	$closeDiv = "layer";
-	$name = "name";
-	$position = "left=350";
+        $div = "layer position=\"relative\"";
+        $closeDiv = "layer";
+        $name = "name";
+        $position = "left=350";
 }
 
 # build the numFields select box
 if ($numFields != -1) {
         $numFieldsTxt = '<span class=label>'. $lang->maketext('Position') .':</span><br><select name=fb_position size=1>';
-	for my $i (1 .. $numFields+1) {
-		$numFieldsTxt .= "<option value=$i";
-		$numFieldsTxt .= " selected" if ($i == $numFields+1);
-		$numFieldsTxt .= "> $i </option>";
-	}
-	$numFieldsTxt .= '</select>';
+        for my $i (1 .. $numFields+1) {
+                $numFieldsTxt .= "<option value=$i";
+                $numFieldsTxt .= " selected" if ($i == $numFields+1);
+                $numFieldsTxt .= "> $i </option>";
+        }
+        $numFieldsTxt .= '</select>';
 }
 </%init>
-
-
 % # add hidden fields to recieve the values of the fbuilder
-<input type=hidden name=fb_name value=''>
-<input type=hidden name=fb_type value=''>
-<input type=hidden name=fb_disp value=''>
-<input type=hidden name=fb_vals value=''>
-<input type=hidden name=fb_value value=''>
-<input type=hidden name=fb_rows value=''>
-<input type=hidden name=fb_cols value=''>
-<input type=hidden name=fb_size value=''>
-<input type=hidden name=fb_position value=''>
-<input type=hidden name=fb_maxlength value=''>
-<input type=hidden name=fb_req value=''>
-<input type=hidden name=fb_quant value=''>
-<input type=hidden name=fb_allowMultiple value=''>
-<input type=hidden name=<% $addCallback %> value=0>
-<input type=hidden name=<% $saveCallback %> value=0>
-<input type=hidden name=<% $stayCallback %> value=0>
-<input type=hidden name=delete value=0>
-
+<input type="hidden" name="fb_name" value="">
+<input type="hidden" name="fb_type" value="">
+<input type="hidden" name="fb_disp" value="">
+<input type="hidden" name="fb_vals" value="">
+<input type="hidden" name="fb_value" value="">
+<input type="hidden" name="fb_rows" value="">
+<input type="hidden" name="fb_cols" value="">
+<input type="hidden" name="fb_size" value="">
+<input type="hidden" name="fb_position" value="">
+<input type="hidden" name="fb_maxlength" value="">
+<input type="hidden" name="fb_req" value="">
+<input type="hidden" name="fb_quant" value="">
+<input type="hidden" name="fb_allowMultiple" value="">
+<input type="hidden" name="fb_precision" value="">
+<input type="hidden" name="<% $addCallback %>" value="0">
+<input type="hidden" name="<% $saveCallback %>" value="0">
+<input type="hidden" name="<% $stayCallback %>" value="0">
+<input type="hidden" name="delete" value="0">
 % # close the current form context
 </form>
 
-<script language=javascript>
-
+<script language="javascript">
 var curSub = 'text'
 var cancelValidation = false
 
-var text_table = '<form name=fb_form target="<% $target %>"><input type=hidden name=fb_type value=text>'
+var text_table = '<form name=fb_form target="<% $target %>"><input type="hidden" name="fb_type" value="text">'
 text_table    += "<table width=330 cellpadding=3>"
 text_table    += "    <tr>"
 text_table    += '    <td valign=top width=170><span class=label> <% $lang->maketext('Key Name') %>:</span><br />'
@@ -166,19 +173,19 @@ var radio_table = "<form name=fb_form target=<% $target %>><input type=hidden na
 radio_table    += "<table width=340 cellpadding=3>"
 radio_table    += "<tr><td valign=top>"
 radio_table    += '    <span class=label><% $lang->maketext('Key Name') %>:</span><br />'
-radio_table    += '	<input type=text name=fb_name><br />'
+radio_table    += '     <input type=text name=fb_name><br />'
 radio_table    += '    <span class=label><% $lang->maketext('Group Label') %>:</span><br />'
-radio_table    += '	<input type=text name=fb_disp><br />'
+radio_table    += '     <input type=text name=fb_disp><br />'
 radio_table    += '    <span class=label><% $lang->maketext('Default Value') %>:</span><br />'
-radio_table    += '	<input type=text name=fb_value>'
+radio_table    += '     <input type=text name=fb_value>'
 radio_table    += '</td>'
-radio_table    += "	<td valign=top>"
+radio_table    += "     <td valign=top>"
 radio_table    += '    <span class=label><%$lang->maketext('Options, Label')%><br>(<% $lang->maketext('one per line')%>):</span><br />'
-radio_table    += '	<textarea rows=<% $textareaRows %> cols=<% $textareaCols %> name=fb_vals></textarea>'
+radio_table    += '     <textarea rows=<% $textareaRows %> cols=<% $textareaCols %> name=fb_vals></textarea>'
 radio_table    += '</td></tr>'
 radio_table    += '</table><table width=340 cellpadding=3>'
 radio_table    += "<tr><td valign=top>"
-radio_table    += '	<% $numFieldsTxt %>'
+radio_table    += '     <% $numFieldsTxt %>'
 radio_table    += '    </td><td>'
 %if ($useRequired){
 radio_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
@@ -195,16 +202,16 @@ var checkbox_table = "<form name=fb_form target=<% $target %>><input type=hidden
 checkbox_table    += "<table width=340 cellpadding=3>"
 checkbox_table    += "<tr><td valign=top>"
 checkbox_table    += " <span class=label><% $lang->maketext('Key Name') %>:</span><br />"
-checkbox_table    += '	<input type=text name=fb_name>'
+checkbox_table    += '  <input type=text name=fb_name>'
 checkbox_table    += '</td></tr>'
 checkbox_table    += '</table><table width=340 cellpadding=3>'
 checkbox_table    += '<tr><td valign=top>'
 checkbox_table    += ' <span class=label><% $lang->maketext('Label') %>:</span><br />'
-checkbox_table    += ' 	<input type=text name=fb_disp>'
+checkbox_table    += '  <input type=text name=fb_disp>'
 checkbox_table    += "</td></tr></table>"
 checkbox_table    += "<table width=340 cellpadding=3>"
 checkbox_table    += "<tr><td valign=top>"
-checkbox_table    += '	<% $numFieldsTxt %>'
+checkbox_table    += '  <% $numFieldsTxt %>'
 checkbox_table    += '    </td><td>'
 %if ($useRequired){
 checkbox_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
@@ -221,19 +228,19 @@ checkbox_table    += '</form>&nbsp;'
 var pulldown_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=select>"
 pulldown_table     += '<table width=340 cellpadding=3>'
 pulldown_table     += '<tr><td valign=top width=170>'
-pulldown_table     += '		<span class=label><%$lang->maketext('Key Name')%>:</span><br />'
-pulldown_table     += '		<input type=text name=fb_name><br />'
+pulldown_table     += '         <span class=label><%$lang->maketext('Key Name')%>:</span><br />'
+pulldown_table     += '         <input type=text name=fb_name><br />'
 pulldown_table     += '                <span class=label><% $lang->maketext('Label') %>:</span><br />'
-pulldown_table     += '  	<input type=text name=fb_disp><br />'
+pulldown_table     += '         <input type=text name=fb_disp><br />'
 pulldown_table     += '                <span class=label><% $lang->maketext('Default Value') %>:</span><br />'
-pulldown_table     += ' 	<input type=text name=fb_value>'
-pulldown_table 	   += '</td><td valign=top width=170>'
+pulldown_table     += '         <input type=text name=fb_value>'
+pulldown_table     += '</td><td valign=top width=170>'
 pulldown_table     += '                <span class=label><% $lang->maketext('Option, Label') %><br />(<% $lang->maketext('one per line') %>):</span><br />'
-pulldown_table 	   += "  	<textarea rows=<% $textareaRows %> cols=<% $textareaCols %> name=fb_vals></textarea>"
+pulldown_table     += "         <textarea rows=<% $textareaRows %> cols=<% $textareaCols %> name=fb_vals></textarea>"
 pulldown_table     += "</td></tr>"
 pulldown_table     += '</table><table width=340 cellpadding=3>'
 pulldown_table     += '<tr><td>'
-pulldown_table     += '		<% $numFieldsTxt %>'
+pulldown_table     += '         <% $numFieldsTxt %>'
 pulldown_table     += '    </td><td>'
 %if ($useRequired){
 pulldown_table     += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
@@ -246,29 +253,29 @@ pulldown_table     += "</td></tr></table>"
 pulldown_table     += '</form>&nbsp;'
 
 var select_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=select>"
-select_table 	 += '<table width=340 cellpadding=3>'
+select_table     += '<table width=340 cellpadding=3>'
 select_table     += '<tr><td valign=top>'
 select_table     += '  <span class=label><% $lang->maketext('Key Name') %>:</span><br />'
-select_table     += '	<input type=text name=fb_name size=20> <br />'
+select_table     += '   <input type=text name=fb_name size=20> <br />'
 select_table     += '   <span class=label><% $lang->maketext('Label') %>:</span><br />'
-select_table     += '	<input type=text name=fb_disp size=20><br />'
+select_table     += '   <input type=text name=fb_disp size=20><br />'
 select_table     += '   <span class=label><% $lang->maketext('Default Value') %>:</span><br />'
-select_table     += '	<input type=text name=fb_value size=20>'
-select_table  	 += '</td><td valign=top>'
+select_table     += '   <input type=text name=fb_value size=20>'
+select_table     += '</td><td valign=top>'
 select_table     += '   <span class=label><% $lang->maketext('Option, Label') %><br>(<% $lang->maketext('one per line') %>):</span><br>'
-select_table     += '	<textarea rows=<% $textareaRows %> cols=<% $textareaCols %> name=fb_vals></textarea>'
+select_table     += '   <textarea rows=<% $textareaRows %> cols=<% $textareaCols %> name=fb_vals></textarea>'
 select_table     += "</td></tr>"
-select_table 	 += '</table><table width=300 border=0 cellpadding=3>'
+select_table     += '</table><table width=300 border=0 cellpadding=3>'
 select_table     += "<tr><td valign=top"
 select_table     += '   <span class=label><% $lang->maketext('Size') %>:</span><br />'
-select_table     += '	<input type=text name=fb_size value=5 size=3>'
-select_table 	 += '</td><td valign=top>'
+select_table     += '   <input type=text name=fb_size value=5 size=3>'
+select_table     += '</td><td valign=top>'
 select_table     += '  <span class=label><% $lang->maketext('Allow multiple') %>?</span><br />'
-select_table     += '	<input type=checkbox name=fb_allowMultiple>'
+select_table     += '   <input type=checkbox name=fb_allowMultiple>'
 select_table     += "</td><td>"
 select_table     += '<% $numFieldsTxt %>'
 select_table     += "</td></tr>"
-select_table 	 += '</table><table width=300 border=0 cellpadding=3>'
+select_table     += '</table><table width=300 border=0 cellpadding=3>'
 select_table     += '    <tr><td>'
 select_table     += '    </td><td>'
 %if ($useRequired){
@@ -281,9 +288,9 @@ select_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:</
 select_table     += '</td></tr></table></form>&nbsp;'
 
 var textarea_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=textarea>"
-textarea_table 	   += '<table width=340 cellpadding=3><tr><td valign=top><span class=label><%$lang->maketext('Key Name')%>:</span><br>'
+textarea_table     += '<table width=340 cellpadding=3><tr><td valign=top><span class=label><%$lang->maketext('Key Name')%>:</span><br>'
 textarea_table     += '<input type=text name=fb_name></td>'
-textarea_table 	   += '<td valign=top><span class=label><%$lang->maketext('Rows')%>:</span><br>'
+textarea_table     += '<td valign=top><span class=label><%$lang->maketext('Rows')%>:</span><br>'
 textarea_table     += '<input type=text name=fb_rows value=4 size=3></td>'
 textarea_table     += '<td valign=top><span class=label><% $lang->maketext('Max size') %>:</span><br>'
 textarea_table     += '<input type="text" name="fb_maxlength" value="0" size="4" /></td></tr>'
@@ -310,9 +317,9 @@ textarea_table     += '</td></tr></table></form>&nbsp;'
 % if (ENABLE_HTMLAREA) {
 var wysiwyg_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=wysiwyg>"
 wysiwyg_table      += '<input type=hidden name=fb_allowMultiple value=1>'
-wysiwyg_table 	   += '<table width=340 cellpadding=3><tr><td valign=top><span class=label><%$lang->maketext('Key Name')%>:</span><br>'
+wysiwyg_table      += '<table width=340 cellpadding=3><tr><td valign=top><span class=label><%$lang->maketext('Key Name')%>:</span><br>'
 wysiwyg_table     += '<input type=text name=fb_name></td>'
-wysiwyg_table 	   += '<td valign=top colspan="2"><span class=label><%$lang->maketext('Rows')%>:</span><br>'
+wysiwyg_table      += '<td valign=top colspan="2"><span class=label><%$lang->maketext('Rows')%>:</span><br>'
 wysiwyg_table     += '<input type=text name=fb_rows value=8 size=3 onChange="if (this.value < 8) {this.value=8;}"></td></tr>'
 wysiwyg_table     += '<tr><td valign=top><span class=label><% $lang->maketext('Label') %>:</span><br>'
 wysiwyg_table     += '<input type=text name=fb_disp></td>'
@@ -335,10 +342,13 @@ wysiwyg_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:<
 wysiwyg_table     += '</td></tr></table></form>&nbsp;'
 % }
 
-var date_table 	= "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=date>"
+var date_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=date>"
 date_table     += "<table width=340 cellpadding=3><tr>"
 date_table     += '<td valign=top><span class=label><% $lang->maketext('Key Name') %>:</span><br>'
-date_table     += '<input type=text name=fb_name></td></tr>'
+date_table     += '<input type=text name=fb_name></td>'
+
+date_table     += '<td valign="top"><span class="label"><% $lang->maketext('Precision') %>:</span><br>'
+date_table     += '<% $precision_select %></td></tr>'
 date_table     += '<tr><td valign=top><span class=label><% $lang->maketext('Label') %>:</span><br>'
 date_table     += '<input type=text name=fb_disp></td>'
 date_table     += "</tr>"
@@ -347,7 +357,7 @@ date_table     += "<tr><td>"
 date_table     += '<% $numFieldsTxt %>'
 date_table     += '    </td><td>'
 %if ($useRequired){
-date_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
+date_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>'
 %}
 date_table    += '    </td><td>'
 %if ($useQuantifier){
@@ -375,8 +385,8 @@ date_table     += '</td></tr></table></form>&nbsp;'
 % }
 
 % $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%  	 caption => $caption,
-%	 number  => $num,
+%        caption => $caption,
+%        number  => $num,
 %        height  => 230);
 
 <table border=0 cellpadding=0 cellspacing=0 width=570 height=230>
@@ -420,7 +430,7 @@ date_table     += '</td></tr></table></form>&nbsp;'
     <td style="border-style:solid; border-color:#cccc99;">
       <input type=radio name=formElement value=select onClick="showForm('select')">
         <b><% $lang->maketext('Select') %></b>
-	</td>
+        </td>
   </tr>
   <tr>
     <td style="border-style:solid; border-color:#cccc99;">
@@ -470,14 +480,14 @@ date_table     += '</td></tr></table></form>&nbsp;'
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 $m->comp('/widgets/profile/displayFormElement.mc',
-	 key => 'delete',
+         key => 'delete',
          vals => { disp => '<span class="burgandyLabel">'.$lang->maketext('Delete this Profile').'</span>',
-		   props => { type => 'checkbox',
-			      label_after => 1 },
-#		   value => '0'
-		 },
-	 useTable => 0
-	);
+                   props => { type => 'checkbox',
+                              label_after => 1 },
+#                  value => '0'
+                 },
+         useTable => 0
+        );
 $m->out("<br />\n");
 
 </%perl>

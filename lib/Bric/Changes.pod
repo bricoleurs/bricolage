@@ -16,6 +16,29 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.9.0 "Back to the Future" (change that if you want :)
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added support for sub-second precision to date and time management in
+Bricolage. This means that dates can be stored in the database with
+microsecond precision. This was done by modifying Bricolage's date and time
+handling to use the DateTime module from CPAN under the hood. The upshot is
+that you can use the full suite of C<strftime> formats supported by DateTime,
+including the formats for milliseconds and microseconds. [David]
+
+=item *
+
+Added new "Precision" option to DateTime fields added to elements and
+contributor types. The supported precisions are "Year", "Month", "Day",
+"Hour", "Minute", "Second", "Millisecond", and "Microsecond". For purposes of
+backwards compatability, the default precision for custom DateTime fields is
+"Minute". [David]
+
+=back
+
 =head2 Improvements
 
 =over 4

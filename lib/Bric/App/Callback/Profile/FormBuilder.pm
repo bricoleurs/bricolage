@@ -26,6 +26,7 @@ my %meta_props = (
     'multiple'  => 'fb_allowMultiple',
     'vals'      => 'fb_vals',
     'pos'       => 'fb_position',
+    'precision' => 'fb_precision',
 );
 
 my %conf = (

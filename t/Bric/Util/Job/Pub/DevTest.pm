@@ -24,7 +24,7 @@ use Bric::Util::DBI qw(:junction);
 
 sub table {'job '}
 
-my $date = '2003-01-22 14:43:23';
+my $date = '2003-01-22 14:43:23.000000';
 
 my %job = (
             name => 'Test Job',

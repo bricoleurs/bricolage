@@ -69,7 +69,7 @@ sub save : Callback {
             $set_meta_number->($ed, $f, $param);
         }
 
-        for my $f (qw(disp value vals)) {
+        for my $f (qw(disp value vals precision)) {
             $set_meta_string->($ed, $f, $param);
         }
 

@@ -12,10 +12,12 @@ my $defs = {
     min  => '00',
     hour => '00',
     day  => '01',
+    sec  => '00',
+    mic  => '00',
+    mon  => '01',
 };
 
 my ($is_clear_state);
-
 
 sub refresh : Callback(priority => 0) {
     my $self = shift;
@@ -35,22 +37,50 @@ sub refresh : Callback(priority => 0) {
         # then stopped.
         my $has_data = 0;
 
-        foreach my $unit (qw(year mon day hour min)) {
-            my $f = $b . '_' . $unit;
-            my $v = $param->{$f};
+        # Set up the basic parts.
+        foreach my $unit (qw(year mon day hour min sec)) {
+            if (exists $param->{"$b\_$unit"}) {
+                my $v = $param->{"$b\_$unit"};
 
-            # Set the incomplete flag and stop if we get an unset date value.
-            if ($v eq '-1') {
-                $defs->{$unit} ? (push @vals, $defs->{$unit}) : ($incomplete = 1);
+                # Set the incomplete flag and stop if we get an unset date
+                # value.
+                if ($v eq '-1') {
+                    $defs->{$unit} ? (push @vals, $defs->{$unit}) : ($incomplete = 1);
+                } else {
+                    $has_data = 1;
+
+                    # Collect the values.
+                    push @vals, $v || '0';
+                }
+                set_state_data($sub_widget, $unit, $v) if defined $v;
             } else {
-                $has_data = 1;
-
-                # Collect the values.
-                push @vals, ($v || '0');
+                # There was no field for this date part. So use the default.
+                push @vals, $defs->{$unit};
+                set_state_data($sub_widget, $unit, $defs->{$unit});
             }
 
             # Update all the time values.
-            set_state_data($sub_widget, $unit, $v) if defined $v;
+        }
+
+        # Set up the microseconds.
+        if (my $mil = $param->{"$b\_mil"}) {
+            if ($mil =~ /^\d{1,3}$/) {
+                # It's a valid number of milliseconds. Multiply by 1000
+                # to get microseconds and save.
+                push @vals, $mil * 1000;
+                set_state_data($sub_widget, 'mil', $vals[-1]);
+            } else {
+                $incomplete = 1;
+            }
+        } else {
+            my $mic = $param->{"$b\_mic"} || $defs->{mic};
+            if ($mic =~ /^\d{1,6}$/) {
+                # It's a valid number of microseconds. Save it.
+                push @vals, $mic;
+                set_state_data($sub_widget, 'mic', $mic);
+            } else {
+                $incomplete = 1;
+            }
         }
 
         if ($incomplete) {
@@ -62,9 +92,8 @@ sub refresh : Callback(priority => 0) {
                 $param->{$b} = undef;
             }
         } else {
-            my $date = sprintf('%04d-%02d-%02d %02d:%02d:00', @vals);
             # Write the date to the parameters.
-            $param->{$b} = $date;
+            $param->{$b} = sprintf('%04d-%02d-%02d %02d:%02d:%02d.%06d', @vals);
         }
     }
 }

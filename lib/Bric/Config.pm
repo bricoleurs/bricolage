@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.102 $
+$Revision: 1.103 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.102 $ )[-1];
+our $VERSION = (qw$Revision: 1.103 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-19 09:29:07 $
+$Date: 2004-04-30 00:14:02 $
 
 =head1 SYNOPSIS
 
@@ -155,6 +155,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     LOAD_LANGUAGES
                     ENCODE_OK
                     LOAD_CHAR_SETS
+                    LOAD_TIME_ZONES
                     ENABLE_HTMLAREA
                     HTMLAREA_TOOLBAR
                    );
@@ -234,7 +235,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      USE_XHTML)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],
-                    time      => [qw(ISO_8601_FORMAT)],
+                    time      => [qw(ISO_8601_FORMAT
+                                     LOAD_TIME_ZONES)],
                     alert     => [qw(ALERT_FROM
                                      ALERT_TO_METH)],
                     apachectl => [qw(APACHE_BIN
@@ -526,7 +528,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant TEMPLATE_QA_MODE        => $config->{TEMPLATE_QA_MODE} || 0;
 
     # Time constants.
-    use constant ISO_8601_FORMAT         => "%Y-%m-%d %T";
+    use constant ISO_8601_FORMAT         => "%Y-%m-%d %T.%6N";
+    use constant LOAD_TIME_ZONES         => $config->{LOAD_TIME_ZONES} || 'UTC';
 
     # Admin group ID. This will go away once permissions are implemented.
     use constant ADMIN_GRP_ID            => 6;

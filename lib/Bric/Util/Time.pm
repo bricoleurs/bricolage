@@ -8,18 +8,18 @@ Bric::Util::Time - Bricolage Time & Date Functions
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-03-11 21:29:15 $
+$Date: 2004-04-30 00:14:18 $
 
 =head1 SYNOPSIS
 
@@ -27,6 +27,7 @@ $Date: 2004-03-11 21:29:15 $
   my $formatted_date = strfdate($epoch_time, $format, $utc);
   my $local_date = local_date($db_date, $format);
   my $db_date = db_date($iso_local_date);
+  my $dt = datetime($iso_format_date, $tz);
 
 =head1 DESCRIPTION
 
@@ -35,105 +36,108 @@ into other Bricolage packages and classes.
 
 =cut
 
-################################################################################
+##############################################################################
 # Dependencies
-################################################################################
+##############################################################################
 use strict;
-use Time::Local;
+use DateTime;
+use DateTime::TimeZone;
 use Bric::Config qw(:time);
-use Bric::Util::Fault qw(throw_ap throw_gen);
-use Bric::Util::DBI qw(db_date_parts DB_DATE_FORMAT);
+use Bric::Util::Fault qw(throw_dp);
+use Bric::Util::DBI qw(db_datetime DB_DATE_FORMAT);
 use Bric::Util::Pref;
-use POSIX ();
 
-################################################################################
-# Constants
-################################################################################
-use constant DEBUG => 0;
-my $fsub; # Will be used in BEGIN.
-
-# ISO 8601 Date Settings. (almost, see NOTES below)
-my $ISO_TEMPLATE =  'a4 x a2 x a2 x a2 x a2 x a2';
-
-################################################################################
+##############################################################################
 # Inheritance
-################################################################################
+##############################################################################
 use base 'Exporter';
 # You can explicitly import any of the functions in this class.
-our @EXPORT_OK = qw(strfdate local_date db_date);
+our @EXPORT_OK = qw(strfdate local_date db_date datetime MICROSECOND
+                    MILLISECOND SECOND MINUTE HOUR DAY MONTH YEAR PRECISIONS);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 $ENV{TZ} = 'UTC';
-POSIX::tzset;
 
-############################################################################
-# Private Functions
-############################################################################
-# Decide on a time formatting function. Use Apache::Util::ht_time in an
-# Apache Environment, and POSIX::strftime elsewhere.
-BEGIN {
-    if ($ENV{MOD_PERL}) {
-	require Apache::Util;
-	throw_gen(error => $@) if $@;
-	$fsub = sub {
-	    my ($t, $f) = @_;
-	    $t ||= time;
-	    $f ||= ISO_8601_FORMAT;
-	    my $time;
-	    eval {
-		$time = Apache::Util::ht_time($t, $f, 0);
-	    };
-            throw_ap(error => "Unable to format date.", payload => $@)
-              if $@;
-	    return $time;
-	};
-    } else {
-	$fsub = sub {
-	    my ($t, $f) = @_;
-	    $t ||= time;
-	    $f ||= ISO_8601_FORMAT;
-	    my $time;
-	    eval {
-	     $time = POSIX::strftime($f || ISO_8601_FORMAT, localtime($t));
-	    };
-	    throw_ap(error => "Unable to format date.", payload => $@)
-              if $@;
-	    return $time;
-	};
-    }
+use constant YEAR        => 1;
+use constant MONTH       => 2;
+use constant DAY         => 3;
+use constant HOUR        => 4;
+use constant MINUTE      => 5;
+use constant SECOND      => 6;
+use constant MILLISECOND => 7;
+use constant MICROSECOND => 8;
+#use constant NANOSECOND  => 9;
+use constant PRECISIONS  => [
+    [ YEAR,        'Year'        ],
+    [ MONTH,       'Month'       ],
+    [ DAY,         'Day'         ],
+    [ HOUR,        'Hour'        ],
+    [ MINUTE,      'Minute'      ],
+    [ SECOND,      'Second'      ],
+    [ MILLISECOND, 'Millisecond' ],
+    [ MICROSECOND, 'Microsecond' ],
+#    [ NANOSECOND,  'Nanosecond'  ],
+];
+
+# Load time zones.
+for my $tz (split ' ', LOAD_TIME_ZONES) {
+    eval "use DateTime::TimeZone::" . join '::', split('/', $tz);
+    die $@ if $@;
 }
 
-################################################################################
-my $iso_parts = sub {
-    # Takes an ISO 8601-formatted (almost, see NOTES below) date
-    # string and returns its parts in the order and format expected by
-    # strftime. A similar function, db_date_parts(), is imported from
-    # the database driver module.
-    my @t;
-    eval { @t = unpack($ISO_TEMPLATE, shift) };
-    throw_ap(error => "Unable to unpack date.", payload => $@)
-      if $@;
-    $t[0] -= 1900;
-    $t[1] -= 1;
-    return reverse @t;
-}; # &$iso_parts()
-
-################################################################################
+##############################################################################
 # Exportable Functions
-################################################################################
-
-=pod
+##############################################################################
 
 =head1 INTERFACE
 
-To use any of the functons in Bric::Util::Time, you must explicitly import them
-into your module's namespace. This can be done in one of two ways: All of them
-can be imported at once, or they can be imported individually, one a a time:
+To use any of the functons in Bric::Util::Time, you must explicitly import
+them into your module's namespace. This can be done in one of two ways: All of
+them can be imported at once, or they can be imported individually, one a a
+time:
 
   use Bric::Util::Time qw(:all);               # Imports them all.
   use Bric::Util::Time qw(local_date db_date); # Imports only those listed.
+
+=head2 Constants
+
+These constants define values that can be used comparatively to determine
+which are the more precise time parts. The higher the value, the more precise
+the time part.
+
+=over 4
+
+=item YEAR
+
+=item MONTH
+
+=item DAY
+
+=item HOUR
+
+=item MINUTE
+
+=item SECOND
+
+=item MILLISECOND
+
+=item MICROSECOND
+
+=begin comment
+
+=item NANOSECOND
+
+=end comment
+
+=back
+
+=head3 PRECISIONS
+
+This constant contains an array reference of array references with strings
+corresponding to the numeric value of each time part. This constant is
+suitable for passing to a select list for display.
 
 =head2 Constructors
 
@@ -157,12 +161,13 @@ NONE.
 
 =item strfdate([$time[, $format[, $utc]]])
 
-Returns a formatted date/time string. $time is the epoch time to be formatted.
-It will use the Time Zone preference set via Bric::App::Pref unless $utc is true,
-in which case the time will be formatted is UTC time. Use POSIX::setlocale to
-have the strfdate() output a localized format of $time - otherwise it defaults
-to the system's locale. $format is the stftime format in which $time should be
-formatted; defaults to ISO 8601-compliant time formatting ("%Y-%m-%d %T").
+Returns a formatted date/time string. C<$time> is the epoch time to be
+formatted. It will use the Time Zone preference set via Bric::App::Pref unless
+C<$utc> is true, in which case the time will be formatted in UTC time. Use
+C<< DateTime->DefaultLocale() >> to have the C<strfdate()> output a localized
+format of C<$time>--otherwise it defaults to the "English" locale. C<$format>
+is the stftime format in which C<$time> should be formatted; defaults to ISO
+8601-compliant time formatting ("%Y-%m-%d %T.%6N").
 
 B<Throws:> NONE.
 
@@ -181,19 +186,15 @@ Unable to format date.
 =cut
 
 sub strfdate {
-    my $ret;
-    {
-        local $ENV{TZ} = $_[2] ? 'UTC' : Bric::Util::Pref->lookup_val('Time Zone');
-        POSIX::tzset;
-        $ret = &$fsub(@_[0..1]);
-    }
-    POSIX::tzset;
-    return $ret;
+    my ($epoch, $format, $utc) = @_;
+    my $dt = DateTime->from_epoch(
+        epoch     => ( defined $epoch ? $epoch : time),
+        time_zone => $utc ? 'UTC' : Bric::Util::Pref->lookup_val('Time Zone')
+    );
+    return $dt->strftime($format || ISO_8601_FORMAT);
 }
 
-################################################################################
-
-=pod
+##############################################################################
 
 =item local_date($db_date)
 
@@ -203,16 +204,17 @@ sub strfdate {
 
 =item local_date(undef, $format, $bool)
 
-Takes a date/time string formatted for the database, converts it to the local
-time zone, and returns it in the strftime format provided by $format. If $format
-is not provided, the date/time will be returned in the format specified by the
-Date/Time Format preference. If $format is 'epoch', it will return the time in
-epoch seconds. Set $ENV{TZ} to get a different localtime. If $db_date is not
-provided and $bool is false, then local_date() returns undef. If $db_date is not
-provided and $bool is true, then local_date() returns the current date/time.
+Takes a date/time string formatted for the database, converts it to the time
+zone set in the "Time Zone" preference, and returns it in the C<strftime>
+format provided by C<$format>. If C<$format> is not provided, the date/time
+will be returned in the format set in the "Date/Time Format" preference. If
+C<$format> is 'epoch', it will return the time in epoch seconds. If
+C<$db_date> is not provided and C<$bool> is false, then C<local_date()>
+returns C<undef>. If C<$db_date> is not provided and C<$bool> is true, then
+C<local_date()> returns the current date/time.
 
-Use this function in your accessors to return a localized date/time string to
-your object users.
+Use this function in Bricolage accessor methods to return a localized
+date/time string.
 
   sub get_date { local_date($_[0]->_get('date'), $_[1]); }
 
@@ -222,11 +224,7 @@ B<Throws:>
 
 =item *
 
-Unable to unpack date.
-
-=item *
-
-Unable to format date.
+Unable to parse date.
 
 =back
 
@@ -242,25 +240,12 @@ sub local_date {
     my ($db_date, $format, $bool) = @_;
     return unless $db_date || $bool;
     $format ||= Bric::Util::Pref->lookup_val('Date/Time Format');
-    my $ret;
-    {
-        # Set the time zone.
-        local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
-        POSIX::tzset;
-        if ($format eq 'epoch') {
-            $ret = $db_date ? timegm(db_date_parts($db_date)) : time;
-        } else {
-            $ret = $fsub->($db_date ? timegm(db_date_parts($db_date))
-                           : undef, $format);
-        }
-    }
-    POSIX::tzset;
-    return $ret;
+    my $dt = $db_date ? db_datetime($db_date) : DateTime->now;
+    $dt->set_time_zone(Bric::Util::Pref->lookup_val('Time Zone'));
+    return $format eq 'epoch' ? $dt->epoch : $dt->strftime($format);
 } # strfdate()
 
-################################################################################
-
-=pod
+##############################################################################
 
 =item db_date($local_date)
 
@@ -268,12 +253,12 @@ sub local_date {
 
 =item db_date($local_date, undef, $tz)
 
-Takes an ISO 8601 formatted date/time string (almost, see NOTES below)
-in the local time zone, converts it to UTC, and returns it in the
-format required by the database. If $local_date is not provided, it
-returns undef, unless $now is true, in which case it provides the
-current UTC time.  If $tz is set db_date() uses the supplied time-zone
-instead of using the local time-zone.
+Takes an ISO 8601 formatted date/time string in the time zone set in the "Time
+Zone" preference, converts it to UTC, and returns it in the format required by
+the database. If C<$local_date> is not provided, it returns C<undef>, unless
+C<$now> is true, in which case it provides the current UTC time. If C<$tz> is
+set, then C<db_date()> uses the supplied time zone instead of using the local
+time zone.
 
 Use this function to convert a date/time string provided by your object's
 consumer into the format required by the database.
@@ -286,11 +271,7 @@ B<Throws:>
 
 =item *
 
-Unable to unpack date.
-
-=item *
-
-Unable to format date.
+Unable to parse date.
 
 =back
 
@@ -302,24 +283,55 @@ B<Notes:> NONE.
 
 sub db_date {
     my ($date, $now, $tz) = @_;
-
-    # Return if there's no date and they don't want the current date.
-    return unless $date || $now;
-
-    # Set the time zone, default to Time Zone preference if none supplied.
-    local $ENV{TZ} = $tz ? $tz : Bric::Util::Pref->lookup_val('Time Zone');
-    POSIX::tzset;
-
-    # get the local date or now
-    my $local_date = $date ? timelocal(&$iso_parts($date)) : time;
-
-    # Set the time zone to UTC to get db date
-    $ENV{TZ} = 'UTC';
-    POSIX::tzset;
-
-    # Format the date and return it.
-    &$fsub($local_date, DB_DATE_FORMAT);
+    return datetime($date, $tz)->set_time_zone('UTC')->strftime(DB_DATE_FORMAT)
+      if $date;
+    return DateTime->now->strftime(DB_DATE_FORMAT) if $now;
+    return;
 } # db_date_format()
+
+=item datetime($iso_formatted_date)
+
+=item datetime($iso_formatted_date, $tz)
+
+Takes an ISO 8601 formatted date/time string and returns a DateTime object.
+The timze zone set on the DateTime object will be either the value of C<$tz>
+or the value set in the "Time Zone" preference.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to parse date.
+
+=back
+
+B<Side Effects>: NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub datetime {
+    my ($date, $tz) = @_;
+    return unless $date;
+    $tz ||= Bric::Util::Pref->lookup_val('Time Zone');
+    my $dt = eval {
+        $date =~ m/^(\d\d\d\d).(\d\d).(\d\d).(\d\d).(\d\d).(\d\d)(\.\d*)?$/;
+        DateTime->new( year       => $1,
+                       month      => $2,
+                       day        => $3,
+                       hour       => $4,
+                       minute     => $5,
+                       second     => $6,
+                       time_zone  => $tz,
+                       nanosecond => $7 ? $7 * 1.0E9 : 0
+                   );
+    };
+    throw_dp "Unable to parse date: $@" if $@;
+    return $dt;
+}
 
 1;
 __END__
@@ -346,9 +358,9 @@ NONE.
 
 =head1 NOTES
 
-ISO 8601 date support is incomplete.  Currently, time-zone information
-in the date string is ignored.  Also, date and time parts (CCYY, MM,
-DD, hh, mm and ss) must be separated by a single character.
+ISO 8601 date support is incomplete. Currently, time-zone information in the
+date string is ignored. Also, date and time parts (CCYY, MM, DD, hh, mm and
+ss) must be separated by a single character.
 
 =head1 AUTHOR
 

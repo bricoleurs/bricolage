@@ -25,11 +25,19 @@
     'value' => $meta->{'value'}, 'disp' => $_[0]->[1],
     'checked' => $meta->{$_[0]->[0]} &>
 </%def>
+<%def .precision>
+<& '/widgets/profile/select.mc',
+   name    => $_[0]->[0],
+   value   => $meta->{$_[0]->[0]},
+   disp    => $_[0]->[1],
+   options => Bric::Util::Time::PRECISIONS,
+&>
+</%def>
 <%args>
 $field
 </%args>
 <%shared>
-my ($meta, %conf);
+my $meta;
 </%shared>
 <%init>
 my $textStyle    = 'style="width:120px"';
@@ -39,8 +47,9 @@ $meta = $field->get_meta('html_info');
 
 # Note: don't confuse $meta->{'disp'} with a row in %conf
 # beginning with 'disp'
-
-%conf = (
+</%init>
+<%once>;
+my %conf = (
     # XXX: how this turned into a hash of 2-d arrays, i'm not sure...
     # feel free to change it to something better
     'text' => [
@@ -84,7 +93,7 @@ $meta = $field->get_meta('html_info');
     ],
     'date' => [
         ['disp' => 'Caption', '.text'],
+        ['precision' => 'Precision', '.precision'],
     ],
 );
-
-</%init>
+</%once>

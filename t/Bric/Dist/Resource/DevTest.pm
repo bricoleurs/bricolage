@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
-use Bric::Config qw(:temp);
+use Bric::Config qw(:temp :time);
 use Bric::Dist::Resource;
 use Bric::Util::Job::Dist;
 use Bric::Util::Time qw(strfdate);
@@ -137,7 +137,8 @@ sub test_lookup : Test(9) {
     is( $res->get_path, $self->{res}[0]->get_path, "Check path" );
     is( $res->get_uri, $self->{res}[0]->get_uri, "Check uri" );
     is( $res->get_size, $self->{res}[0]->get_size, "Check size" );
-    is( $res->get_mod_time, strfdate((stat $self->{res}[0]->get_path)[9]),
+    is( $res->get_mod_time(ISO_8601_FORMAT),
+        strfdate((stat $self->{res}[0]->get_path)[9]),
         "Check mod time" );
     ok( !$res->is_dir, "Check it's not a directory" );
 }

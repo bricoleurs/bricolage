@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.66 $
+$Revision: 1.67 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.66 $ )[-1];
+our $VERSION = (qw$Revision: 1.67 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-20 19:12:31 $
+$Date: 2004-04-30 00:14:03 $
 
 =head1 SYNOPSIS
 
@@ -172,7 +172,7 @@ use MasonX::Interp::WithCallbacks;
     use Bric::Util::Pref;
     use Bric::Util::Priv;
     use Bric::Util::Priv::Parts::Const qw(:all);
-    use Bric::Util::Time qw(strfdate);
+    use Bric::Util::Time qw(:all);
     use Bric::Util::Trans::FS;
     use Bric::Util::UserPref;
 

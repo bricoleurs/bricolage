@@ -5,27 +5,30 @@
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2003-09-29 18:41:48 $
+$Date: 2004-04-30 00:14:00 $
 
 =head1 SYNOPSIS
-$m->comp("/widgets/profile/select.mc",
-$disp      => ''
-$value     => ''
-$name      => ''
-$options   => {}
-$js        => ''
-);
+
+  $m->comp("/widgets/profile/select.mc",
+           disp      => ''
+           value     => ''
+           name      => ''
+           options   => {}
+           js        => ''
+  );
+
 =head1 DESCRIPTION
+
 Pretty little wrapper for displayFormElement.mc.
+
 =cut
+
 </%doc>
-
 <%args>
-
 $disp      => ''
 $value     => ''
 $name      => ''
@@ -41,32 +44,27 @@ $readOnly  => 0
 $localize  => 1
 $id        => undef
 </%args>
-
-<%perl>
-
+<%perl>;
 my $vals = {
-	    disp      => $disp,
-	    value     => $value,
-	    props     => { 
-                         size     => $size,
-                         multiple =>  $multiple,
-			 type     => 'select',
-			 vals     => $options
-			 },
-            js        => $js,
-            req       => $req,
-
+	    disp  => $disp,
+	    value => $value,
+	    props => { size     => $size,
+                       multiple =>  $multiple,
+                       type     => 'select',
+                       vals     => $options
+                     },
+            js    => $js,
+            req   => $req,
 	   };
 
 $m->comp("/widgets/profile/displayFormElement.mc",
 	 key      => $name,
 	 vals     => $vals,
          useTable => $useTable,
-	 readOnly  => $readOnly,
-	 width     => $width,
-	 indent    => $indent,
-	 localize  => $localize,
-         id        => $id,
+	 readOnly => $readOnly,
+	 width    => $width,
+	 indent   => $indent,
+	 localize => $localize,
+         id       => $id,
 );
-
 </%perl>

@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 20:44:18 $
+$Date: 2004-04-30 00:14:19 $
 
 =head1 SYNOPSIS
 
@@ -710,6 +710,9 @@ To translate:
   'Object Groups' => 'Object Groups',
   '[_1] Site Categories' => '[_1] Site Categories',
   'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
+  'Milliseconds' => 'Milliseconds',
+  'Microseconds' => 'Microseconds',
+  'Precision' => 'Precision',
 
 =end comment
 

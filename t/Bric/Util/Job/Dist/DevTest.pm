@@ -17,7 +17,7 @@ use Bric::Dist::Action::Mover;
 
 sub table {'job '}
 
-my $date = '2003-01-22 14:43:23';
+my $date = '2003-01-22 14:43:23.000000';
 
 my %job = ( name => 'Test Job',
             user_id => __PACKAGE__->user_id,
