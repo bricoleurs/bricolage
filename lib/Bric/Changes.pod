@@ -84,6 +84,12 @@ Fixed Media Upload bug where the full local path was being used, by adding
 a 'winxp' key to Bric::Util::Trans::FS to account for an update to
 HTTP::BrowserDetect. [Mark Kennedy]
 
+=item *
+
+A call to C<< $element->get_elements >> in an array context when the element
+contains no subelements no longer returns an array reference. Reported by
+Clinton Gormley. [David]
+
 =back
 
 =cut

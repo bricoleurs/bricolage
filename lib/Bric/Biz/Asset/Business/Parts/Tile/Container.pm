@@ -1101,7 +1101,7 @@ sub get_elements {
     my $subelems = $self->_get('_subelems');
 
     # Do not attempt to get the AssetType tiles if we don't yet have an ID.
-    return [] unless $subelems || $self->get_id;
+    return wantarray ? () : [] unless $subelems || $self->get_id;
 
     unless ($subelems) {
         my $cont = Bric::Biz::Asset::Business::Parts::Tile::Container->list({
