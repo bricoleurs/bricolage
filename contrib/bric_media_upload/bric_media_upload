@@ -113,6 +113,8 @@ BEGIN {
     our $media_type		= 'Photograph';
     our $timeout                = 60;
     our $content_source         = 'Internal';
+    our $site                   = 'Default Site';
+    our $BRIC_SOAP = "$FindBin::Bin/bric_soap";
     our ($help, $man);
     GetOptions("help"                   => \$help,
                "man"                    => \$man,
@@ -124,6 +126,8 @@ BEGIN {
 	       "media-type=s"		=> \$media_type,
                "timeout=s"              => \$timeout,
                "content-source=s"       => \$content_source,
+               "site=s"                 => \$site,
+               "bric_soap=s"            => \$BRIC_SOAP,
               ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
@@ -150,7 +154,7 @@ BEGIN {
 
 our $VERBOSE;
 our $START_PATH;
-our $BRIC_SOAP = "$FindBin::Bin/bric_soap";
+our $BRIC_SOAP;
 our $media_list;
 
 main();
@@ -221,7 +225,7 @@ sub open_media_source {
 sub build_image_list {
     my $path = $File::Find::dir;
     my $file = $_;
-    return unless -f $File::Find::name;
+    return unless -f $_;
     return if $file =~ /^\./;
 
     $path =~ s/$START_PATH//;
@@ -292,7 +296,7 @@ sub upload_media {
 
 # creates xml for category, then uses bric_soap to upload it
 sub create_category {
-    our ($timeout, $temp_dir);
+    our ($timeout, $temp_dir, $site);
     my ($category, $targ_url) = @_;
 
     # put vars into xml skeleton
@@ -301,6 +305,7 @@ sub create_category {
 
 <assets xmlns="http://bricolage.sourceforge.net/assets.xsd">
  <category id="">
+  <site>$site</site>
   <name>$category</name>
   <description>$category</description>
   <path>$category</path>
@@ -347,7 +352,7 @@ sub check_media_exist {
 }
 
 sub create_or_update_media {
-    our ($timeout, $temp_dir, $media_type, $content_source);
+    our ($timeout, $temp_dir, $media_type, $content_source, $site);
     my ($media,$targ_url,$media_id) = @_;
 
     $media_id = '' if !$media_id;
@@ -372,6 +377,7 @@ sub create_or_update_media {
 
 <assets xmlns="http://bricolage.sourceforge.net/assets.xsd">
  <media id="$media_id" element="$media_type">
+  <site>$site</site>
   <name>$media_name</name>
   <description></description>
   <uri>$media_uri</uri>
