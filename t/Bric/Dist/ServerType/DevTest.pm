@@ -7,7 +7,7 @@ use Bric::Dist::ServerType;
 use Bric::Dist::Job;
 use Bric::Util::Grp::Dest;
 
-sub table {'server_type '}
+sub table {'server_type'}
 
 my $web_oc_id = 1;
 
