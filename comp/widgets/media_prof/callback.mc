@@ -588,6 +588,13 @@ my $handle_checkout = sub {
 					$ba->get_name . "&quot; denied");
 		}
 	}
+    if (@$ids > 1) {
+	# Go to 'my workspace'
+	set_redirect("/");
+    } else {
+	# Go to the profile screen
+	set_redirect('/workflow/profile/media/'.$ids->[0].'?checkout=1');
+    }
 };
 
 
