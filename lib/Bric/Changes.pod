@@ -86,6 +86,11 @@ generic error page, instead of its custom error page. [David]
 
 Alert types can once again be deleted from the alert type profile. [David]
 
+=item *
+
+Users can now only add subelements to a story if they have at least READ
+permission to those subelements. Thanks to Mark for the spot. [David]
+
 =back
 
 =head1 VERSION 1.6.1
