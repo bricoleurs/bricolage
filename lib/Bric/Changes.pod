@@ -152,6 +152,11 @@ names to find corresponding templates. [David]
 Management of user groups in a double list manager UI no longer causes an SQL
 error. Spotted by Alexander Ling. [David]
 
+=item *
+
+Sites added to a site group will now be listed as members of the site group in
+the site group's profile. Thanks to Alexander Ling for the spot. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)

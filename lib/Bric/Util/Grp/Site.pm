@@ -10,20 +10,20 @@ Bric::Util::Grp::Site - Interface to Bric::Biz::Site Groups
 
 =item Version
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-12 09:00:47 $
+$Date: 2003-11-30 01:14:44 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.2 2003-03-12 09:00:47 wheeler Exp $
+$Id: Site.pm,v 1.3 2003-11-30 01:14:44 wheeler Exp $
 
 =back
 
@@ -102,6 +102,23 @@ member table names and the foreign key in the table.
 =cut
 
 sub get_supported_classes { { 'Bric::Biz::Site' => 'site' } }
+
+##############################################################################
+
+=head3 get_list_classes
+
+  my @list_classes = Bric::Util::Grp::Site->get_list_classes
+
+Returns a list or anonymous array of the supported classes in the group that
+can have their C<list()> methods called in succession to assemble a list of
+member objects. This data varies from that stored in the keys in the hash
+reference returned by C<get_supported_classes> in that some classes' C<list()>
+methods may inherit from others, and we don't want the same C<list()> method
+executed more than once.
+
+=cut
+
+sub get_list_classes { ('Bric::Biz::Site') }
 
 ##############################################################################
 
