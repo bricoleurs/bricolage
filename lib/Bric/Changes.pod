@@ -83,6 +83,11 @@ partially ignored, leading to possibly corrupted data, and at least to the
 inability to create autohandlers. Thanks to Sam Tregar for the bug report that
 led to finding this bug. [David]
 
+=item *
+
+Fixed bug where element checkboxes weren't remembering if they were checked or
+not. Thanks to Matt Vella for the spot. [David]
+
 =back
 
 =head1 VERSION 1.0.1
