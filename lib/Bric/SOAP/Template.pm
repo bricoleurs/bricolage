@@ -40,15 +40,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-26 15:36:09 $
+$Date: 2003-09-16 05:43:03 $
 
 =head1 SYNOPSIS
 
@@ -816,7 +816,8 @@ sub _load_template {
 
         # checkin and save
         $template->checkin();
-        log_event('formatting_checkin', $template);
+        log_event('formatting_checkin', $template,
+                  { Version => $template->get_version });
         $template->save();
         log_event('formatting_save', $template);
 

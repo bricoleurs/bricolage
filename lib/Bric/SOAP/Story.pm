@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-26 15:36:09 $
+$Date: 2003-09-16 05:43:03 $
 
 =head1 SYNOPSIS
 
@@ -1019,8 +1019,8 @@ sub _load_stories {
 
         # checkin and save
         $story->checkin;
-        log_event('story_checkin', $story);
         $story->save;
+        log_event('story_checkin', $story, { Version => $story->get_version });
         log_event('story_save', $story);
 
         # all done, setup the story_id

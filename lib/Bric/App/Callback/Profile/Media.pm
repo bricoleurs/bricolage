@@ -215,7 +215,7 @@ sub checkin : Callback {
         $media->save;
         log_event('media_save', $media);
         log_event('media_checkout', $media) if $work_id;
-        log_event('media_checkin', $media);
+        log_event('media_checkin', $media, { Version => $media->get_version });
         log_event("media_rem_workflow", $media);
         add_msg('Media "[_1]" saved and shelved.', $media->get_title);
     } elsif ($desk_id eq 'publish') {
@@ -248,7 +248,7 @@ sub checkin : Callback {
 
         # Log it!
         log_event('media_save', $media);
-        log_event('media_checkin', $media);
+        log_event('media_checkin', $media, { Version => $media->get_version });
         my $dname = $pub_desk->get_name;
         log_event('media_moved', $media, { Desk => $dname })
           unless $no_log;
@@ -292,7 +292,7 @@ sub checkin : Callback {
         $desk->save;
         $media->save;
         log_event('media_save', $media);
-        log_event('media_checkin', $media);
+        log_event('media_checkin', $media, { Version => $media->get_version });
         my $dname = $desk->get_name;
         log_event('media_moved', $media, { Desk => $dname }) unless $no_log;
         add_msg('Media "[_1]" saved and moved to "[_2]".',

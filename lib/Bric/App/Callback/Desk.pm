@@ -35,7 +35,7 @@ sub checkin : Callback {
 
     $d->checkin($a_obj);
     $d->save;
-    log_event("${a_class}_checkin", $a_obj);
+    log_event("${a_class}_checkin", $a_obj, { Version => $a_obj->get_version });
 }
 
 sub checkout : Callback {

@@ -35,7 +35,7 @@ sub checkin : Callback {
 	my $curr = $desks{$from_id} ||= $dskpkg->lookup({ id => $from_id });
 	my $next = $desks{$to_id} ||= $dskpkg->lookup({ id => $to_id });
 	$curr->checkin($a);
-	log_event("${key}_checkin", $a);
+	log_event("${key}_checkin", $a, { Version => $a->get_version });
 
         if ($curr->get_id != $next->get_id) {
             $curr->transfer({ to    => $next,

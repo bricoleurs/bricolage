@@ -47,15 +47,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2003-09-16 05:43:03 $
 
 =head1 SYNOPSIS
 
@@ -593,7 +593,7 @@ sub checkin {
         $obj->save;
 
         # log the checkin
-        log_event("${type}_checkin", $obj);
+        log_event("${type}_checkin", $obj, { Version => $obj->get_version });
     }
 
 

@@ -325,7 +325,7 @@ $checkin = sub {
         $fa->set_workflow_id(undef);
         $fa->save;
         log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
-        log_event('formatting_checkin', $fa);
+        log_event('formatting_checkin', $fa, { Version => $fa->get_version });
         log_event("formatting_rem_workflow", $fa);
         add_msg('Template "[_1]" saved and shelved.', $fa->get_name);
     } elsif ($desk_id eq 'deploy') {
@@ -357,7 +357,7 @@ $checkin = sub {
         $fa->save;
         # Log it!
         log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
-        log_event('formatting_checkin', $fa);
+        log_event('formatting_checkin', $fa, { Version => $fa->get_version });
         my $dname = $pub_desk->get_name;
         log_event('formatting_moved', $fa, { Desk => $dname })
           unless $no_log;
@@ -384,7 +384,7 @@ $checkin = sub {
         $desk->save;
         $fa->save;
         log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
-        log_event('formatting_checkin', $fa);
+        log_event('formatting_checkin', $fa, { Version => $fa->get_version });
         my $dname = $desk->get_name;
         log_event('formatting_moved', $fa, { Desk => $dname }) unless $no_log;
         add_msg('Template "[_1]" saved and moved to "[_2]".', $fa->get_name, $dname);

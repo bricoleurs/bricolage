@@ -43,15 +43,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-26 15:36:09 $
+$Date: 2003-09-16 05:43:03 $
 
 =head1 SYNOPSIS
 
@@ -929,8 +929,8 @@ sub _load_media {
 
         # checkin and save
         $media->checkin;
-        log_event('media_checkin', $media);
         $media->save;
+        log_event('media_checkin', $media, { Version => $media->get_version });
         log_event('media_save', $media);
 
         # all done, setup the media_id

@@ -122,7 +122,7 @@ sub checkin : Callback {
         $story->save;
         log_event('story_save', $story);
         log_event('story_checkout', $story) if $work_id;
-        log_event('story_checkin', $story);
+        log_event('story_checkin', $story, { Version => $story->get_version });
         log_event("story_rem_workflow", $story);
         add_msg('Story "[_1]" saved and shelved.', $story->get_title);
     } elsif ($desk_id eq 'publish') {
@@ -155,7 +155,7 @@ sub checkin : Callback {
 
         # Log it!
         log_event('story_save', $story);
-        log_event('story_checkin', $story);
+        log_event('story_checkin', $story, { Version => $story->get_version });
         my $dname = $pub_desk->get_name;
         log_event('story_moved', $story, { Desk => $dname })
           unless $no_log;
@@ -199,7 +199,7 @@ sub checkin : Callback {
         $desk->save;
         $story->save;
         log_event('story_save', $story);
-        log_event('story_checkin', $story);
+        log_event('story_checkin', $story, { Version => $story->get_version });
         my $dname = $desk->get_name;
         log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
         add_msg('Story "[_1]" saved and moved to "[_2]".',
