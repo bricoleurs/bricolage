@@ -66,6 +66,12 @@ Set this to the password for the USER account.
 Set this to 1 to see debugging text including the full XML for every
 SOAP method call and response.  Highly educational.
 
+=item DELETE_TEST_STORIES
+
+The test script will create new stories to test create() and update().
+If you set this constant to 0 then you'll be able to examine them in
+the GUI after the test.
+
 =back
 
 =head1 AUTHOR
@@ -76,6 +82,7 @@ Sam Tregar <stregar@about-inc.com>
 
 use strict;
 use constant DEBUG => 0;
+use constant DELETE_TEST_STORIES => 1;
 
 use constant USER     => 'admin';
 use constant PASSWORD => 'bric';
@@ -227,6 +234,14 @@ foreach my $story_id (@$story_ids) {
     exit 1 if $response->fault;
     my $ids = $response->result;
     isa_ok($ids, 'ARRAY');
+
+    # delete copies unless debugging and NO_DELETE unset
+    if (DELETE_TEST_STORIES) {
+      $response = $soap->delete(name(story_ids => [ map { name(story_id => $_) } @$ids ]));
+      ok(!$response->fault, 'SOAP delete() result is not a fault');
+      exit 1 if $response->fault;
+      ok($response->result, "SOAP delete() result check");
+    }
 
   }
 }

@@ -34,15 +34,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-31 01:02:33 $
+$Date: 2002-01-31 22:34:39 $
 
 =head1 SYNOPSIS
 
@@ -666,6 +666,65 @@ Side Effects: NONE
 Notes: NONE
 
 =back 4
+
+=cut
+
+# hash of allowed parameters
+{
+my %allowed = map { $_ => 1 } qw(story_id story_ids);
+
+sub delete {
+    my $pkg = shift;
+    our $ef;
+    my $env = pop;
+    my $args = $env->method || {};    
+    
+    print STDERR __PACKAGE__ . "->delete() called : args : ", 
+	Data::Dumper->Dump([$args],['args']) if DEBUG;
+    
+    # check for bad parameters
+    for (keys %$args) {
+	die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
+	    unless exists $allowed{$_};
+    }
+
+    # story_id is sugar for a one-element story_ids arg
+    $args->{story_ids} = [ $args->{story_id} ] if exists $args->{story_id};
+
+    # make sure story_ids is an array
+    die __PACKAGE__ . "::delete : missing required story_id(s) setting.\n"
+	unless defined $args->{story_ids};
+    die __PACKAGE__ . "::delete : malformed story_id(s) setting.\n"
+	unless ref $args->{story_ids} and ref $args->{story_ids} eq 'ARRAY';
+
+    # delete the stories
+    foreach my $story_id (@{$args->{story_ids}}) {
+      print STDERR __PACKAGE__ . "->delete() : deleting story_id $story_id\n"
+	if DEBUG;
+      
+      # first look for a checked out version
+      my $story = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id, checkout => 1 });
+      unless ($story) {
+	# settle for a non-checked-out version and check it out
+	$story = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
+	die __PACKAGE__ . "::delete : no story found for id \"$story_id\"\n"
+	  unless $story;
+	$story->checkout({ user__id => get_user_id });
+      }
+
+      # deletion dance sampled from widgets/workspace/callback.mc
+      my $desk = $story->get_current_desk;
+      $desk->checkin($story);
+      $desk->remove_asset($story);
+      $desk->save;
+      $story->deactivate;
+      $story->save;
+    }
+
+    return name(result => 1);
+}
+}
+
 
 =head2 Private Class Methods
 
