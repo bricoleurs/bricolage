@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.66 $
+$Revision: 1.67 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.66 $ )[-1];
+our $VERSION = (qw$Revision: 1.67 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-10 09:27:47 $
+$Date: 2003-07-15 22:11:26 $
 
 =head1 SYNOPSIS
 
@@ -311,7 +311,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         # While these default to 0.
         foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER MANUAL_APACHE
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
-                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER_MOVER ENABLE_SFTP_V2
+                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER ENABLE_SFTP_V2
                     ENABLE_WEBDAV_MOVER ALWAYS_USE_SSL ALLOW_WORKFLOW_TRANSFER
                     ALLOW_ALL_SITES_CX STORY_URI_WITH_FILENAME))
         {
