@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.12 $
+$Revision: 1.21.2.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.13 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-08 22:42:08 $
+$Date: 2003-08-11 15:13:11 $
 
 =head1 SYNOPSIS
 
@@ -797,7 +797,7 @@ sub clean_params {
     # add default order 
     $param->{Order} = $class->DEFAULT_ORDER unless $param->{Order};
     # support of NULL workflow__id
-    if( exists $param->{workflow_id} && ! defined $param->{workflow_id} ) {
+    if( exists $param->{workflow__id} && ! defined $param->{workflow__id} ) {
         $param->{_null_workflow_id} = 1;
         delete $param->{workflow_id};
     }

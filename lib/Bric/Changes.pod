@@ -110,6 +110,12 @@ unlimited in length. Reported by Kevin Elliott. [David]
 Template output channel associations no longer trigger an error when importing
 templates via the SOAP interface [Clive Jones]
 
+=item *
+
+Passing an undef via the C<workflow__id> parameters to the C<list()> method of
+Story, Media, or Template once again causes Bricolage to correctly return only
+those assets that are not in workflow. Reported by Kevin Elliott. [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)
