@@ -8,11 +8,11 @@ container_prof - The container profile editor.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.2.1 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:39 $
+$Date: 2002-03-02 02:01:17 $
 
 =head1 SYNOPSIS
 
@@ -76,7 +76,7 @@ if ($state eq 'edit_bulk') {
 	set_state_data($widget, 'dtiles',    \@dtiles);
 	set_state_data($widget, 'data',      \@data);
 	init_state_data($widget, 'separator', "\n");
-	init_state_data($widget, 'cols',      80);
+	init_state_data($widget, 'cols',      78);
 	init_state_data($widget, 'rows',      30);
     }
 }
