@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.9.2.2 $
+$Revision: 1.9.2.3 $
 
 =head1 DATE
 
-$Date: 2003-04-17 01:05:49 $
+$Date: 2003-06-05 16:12:03 $
 
 =head1 DESCRIPTION
 
@@ -202,45 +202,50 @@ necessary, and make a guesstimate of the amount of memory you are willing to
 give to the database server.
 
 After you have decided how much memory to allocate, there are a couple of
-settings to make. First you will need to set your kernel to allow for the
-shared memory allocation.
+settings to make. First is the shared memory setting, which in PostgreSQL can
+be set via the C<shared_buffers> setting in the F<postgresql.conf> file in
+your PostgreSQL data directory. This setting controls the number of shared
+buffers that the database server. Each buffer is 8Kb. It's important to
+remember that this is only a holding area, and I<not> the total memory
+available to the server. As such, resist the urge to set this number to a
+large portion of your RAM, as doing so will actually degrade performance on
+many OSs. Members of the pgsql-performance mailing list have found useful
+values in the range of 1000-6000, depending on available RAM, database size,
+and number of concurrent queries. No one has yet reported positive results
+for any number over 6000.
 
-On a Linux 2.2.x or 2.4.x systems shared memory is controlled through settings
-in the F</proc> filesystem. If for instance you have decided to give
-PostgreSQL up to 128MB of shared memory here's how you would make the kernel
-setting:
+It's important that your shared memory settings not exceed the actual amount
+of physical RAM minus the amount of memory the kernel needs, since this would
+involve using swap, thereby erase the performance gains of granting the shared
+memory to PostgreSQL!
 
-    $ echo 134217728 >/proc/sys/kernel/shmall
-    $ echo 134217728 >/proc/sys/kernel/shmmax
+Since Bricolage is a large database and we recommend the use of a server with
+lots of RAM, you will likely want to set C<shared_buffers> to a value between
+2048 and 4096. (Bricolage typically doesn't have too many concurrent
+connections.) In the following example, we'll domonstrate how to set the value
+to 4096 (32 MB).
+
+First you may need to set your kernel to allow for the shared memory
+allocation. On a Linux 2.2.x or 2.4.x systems shared memory is controlled
+through settings in the F</proc> filesystem. So, for our example, where we've
+decided to give PostgreSQL up to 32MB of shared memory, here's how you would
+make the kernel setting (note that the kernel setting is in bytes, so our
+setting is C<32 * 1024 * 1024 = 33554432>):
+
+  $ echo 33554432 >/proc/sys/kernel/shmall
+  $ echo 33554432 >/proc/sys/kernel/shmmax
 
 Now you can update your F<postgresql.conf> file's shared memory buffers
-setting to take advantage of this shared memory. Each buffer is 8Kb, so we
-simply divide the number above by 8192 (8 * 1024) to get C16777216. Here's
-what the setting looks like in C<postgresql.conf>:
+setting to take advantage of this shared memory:
 
-    shared_buffers = 16384
+  shared_buffers = 4096
 
-It's probably also a good idea to boost your sort memory to get a better
+Next, it's probably also a good idea to boost your sort memory to get a better
 response time to the very large queries used to look up Bricolage objects. The
 default setting is 1024 (again these are 8Kb buffers). You'll probably want
 this set to at least 8192 (32 MB).
 
-    sort_mem = 8192
-
-In at least one very large Bricolage installation adequate performance has
-been achieved with the following settings:
-
-    $ echo 2956162560 >/proc/sys/kernel/shmall
-    $ echo 2956162560 >/proc/sys/kernel/shmmax
-
-    shared_buffers = 200000
-    sort_mem = 128672
-
-Note that this represents almost 3Gb of shared memory. The machine has 4Gb of
-physical RAM. It's important that your shared memory settings not exceed the
-actual amount of physical RAM minus the amount of memory the kernel needs,
-since this would involve using swap, thereby erase the performance gains of
-granting the shared memory to PostgreSQL!
+  sort_mem = 8192
 
 See Bruce Momjian's article "PostgreSQL Hardware Performance Tuning" at
 L<http://www.ca.postgresql.org/docs/momjian/hw_performance/> for more on
