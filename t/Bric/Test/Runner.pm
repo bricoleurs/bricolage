@@ -1,5 +1,43 @@
 package Bric::Test::Runner;
 
+=head1 NAME
+
+Bric::Test::Base - Bricolage Development Testing Base Class
+
+=head1 VERSION
+
+$Revision: 1.3 $
+
+=cut
+
+# Grab the Version Number.
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
+
+=head1 DATE
+
+$Date: 2003-02-18 07:37:29 $
+
+=head1 SYNOPSIS
+
+  use Test::Harness qw(runtests);
+  runtests(File::Spec->catfile(qw(t Bric Test Runner.pm)));
+
+=head1 DESCRIPTION
+
+This class functions as the sole test script for Bricolage. It locates all of
+the Bricolage test classes and executes them. See F<inst/runtests.pl> for
+its complete usage.
+
+=head1 AUTHOR
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+L<Bric::Test::Base|Bric::Test::Base>, F<inst/runtests.pl>.
+
+=cut
+
 use strict;
 use warnings;
 use File::Find;
