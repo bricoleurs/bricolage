@@ -16,6 +16,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.7.1 ()
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Eliminated the need for the Apache::ConfigFile module, and thus some annoying
+problems with the CPAN indexer when trying to install it. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
