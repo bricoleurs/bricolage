@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2003-01-19 02:40:07 $
+-- $Date: 2003-01-22 03:09:57 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -190,6 +190,50 @@ VALUES (217, 46, 45, 1);
 
 INSERT INTO desk_member(id, object_id, member__id)
 VALUES (117, 107, 217);
+
+/* All Desks Group */
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (171, 34, 45, 1);
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES (121, 101, 171);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (172, 34, 45, 1);
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES (122, 102, 172);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (173, 34, 45, 1);
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES (123, 103, 173);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (174, 34, 45, 1);
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES (124, 104, 174);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (175, 34, 45, 1);
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES (125, 105, 175);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (176, 34, 45, 1);
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES (126, 106, 176);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (177, 34, 45, 1);
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES (127, 107, 177);
 
 
 

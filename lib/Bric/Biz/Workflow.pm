@@ -7,38 +7,38 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-13 17:41:21 $
+$Date: 2003-01-22 03:09:57 $
 
 =head1 SYNOPSIS
 
- my $flow = new Bric::Biz::Workflow($param);
+  my $flow = new Bric::Biz::Workflow($param);
 
- $id    = $flow->get_id;
+  $id    = $flow->get_id;
 
- $name  = $flow->get_name;
- $flow  = $flow->set_name($name);
+  $name  = $flow->get_name;
+  $flow  = $flow->set_name($name);
 
- $desc  = $flow->get_description;
- $flow  = $flow->set_description($desc);
+  $desc  = $flow->get_description;
+  $flow  = $flow->set_description($desc);
 
- $flow  = $flow->add_desk($param);
+  $flow  = $flow->add_desk($param);
 
- # Returns a list of allowed desks.
- @desks = $flow->allowed_desks();
+  # Returns a list of allowed desks.
+  @desks = $flow->allowed_desks();
 
- # Lists the required desks
- @desks = $flow->required_desks();
+  # Lists the required desks
+  @desks = $flow->required_desks();
 
- # Returns true if the asset object has been through all required desks.
- $bool  = $flow->required_satisfied($asset_obj);
+  # Returns true if the asset object has been through all required desks.
+  $bool  = $flow->required_satisfied($asset_obj);
 
 =head1 DESCRIPTION
 
@@ -60,13 +60,11 @@ route through the desks that can be arbitrarily complex.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Desk;
 use Bric::Util::Grp::Workflow;
@@ -81,84 +79,83 @@ use Bric::Biz::Workflow::Parts::Desk;
 use base qw( Bric Exporter );
 
 our @EXPORT_OK = qw(TEMPLATE_WORKFLOW
-		    STORY_WORKFLOW
-		    MEDIA_WORKFLOW
-		    WORKFLOW_TYPE_MAP
-		   );
+                    STORY_WORKFLOW
+                    MEDIA_WORKFLOW
+                    WORKFLOW_TYPE_MAP
+                   );
 
 our %EXPORT_TAGS = (wf_const => [qw(TEMPLATE_WORKFLOW
-				    STORY_WORKFLOW
-				    MEDIA_WORKFLOW
-				    WORKFLOW_TYPE_MAP)],
-		   );
+                                    STORY_WORKFLOW
+                                    MEDIA_WORKFLOW
+                                    WORKFLOW_TYPE_MAP)],
+                   );
 
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
-
+my $get_em;
 
 #==============================================================================#
 # Constants                            #
 #======================================#
 
 use constant DEBUG => 1;
-
 use constant DESK_PKG => 'Bric::Biz::Workflow::Parts::Desk';
-
-use constant TABLE  => 'workflow';
-use constant COLS   => qw(name description all_desk_grp_id req_desk_grp_id 
-			 head_desk_id type active);
-use constant FIELDS => qw(name description all_desk_grp_id req_desk_grp_id 
-			 head_desk_id type _active);
-use constant ORD => qw(name description type active);
-
+use constant GROUP_PACKAGE => 'Bric::Util::Grp::Workflow';
+use constant INSTANCE_GROUP_ID => 25;
 use constant TEMPLATE_WORKFLOW => 1;
 use constant STORY_WORKFLOW    => 2;
 use constant MEDIA_WORKFLOW    => 3;
 use constant WORKFLOW_TYPE_MAP => { &STORY_WORKFLOW => 'Story',
-				    &MEDIA_WORKFLOW => 'Media',
-				    &TEMPLATE_WORKFLOW => 'Template' };
+                                    &MEDIA_WORKFLOW => 'Media',
+                                    &TEMPLATE_WORKFLOW => 'Template' };
 
-use constant GROUP_PACKAGE => 'Bric::Util::Grp::Workflow';
-use constant INSTANCE_GROUP_ID => 25;
 
 #==============================================================================#
 # Fields                               #
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-
+# Public Class Fields
+# None.
 
 #--------------------------------------#
 # Private Class Fields
 my $meths;
+my $table = 'workflow';
+my @cols = qw(name description all_desk_grp_id head_desk_id req_desk_grp_id
+              type active);
+my @props = qw(name description all_desk_grp_id head_desk_id req_desk_grp_id
+               type _active);
+
+my $sel_cols = 'a.id, a.name, a.description, a.all_desk_grp_id, ' .
+  'a.head_desk_id, a.req_desk_grp_id, a.type, a.active, m.grp__id';
+my @sel_props = ('id', @props, 'grp_ids');
+
+my @ord = qw(name description type active);
 
 
 #--------------------------------------#
-# Instance Fields                       
-
-# This method of Bricolage will call 'use fields' for you and set some permissions.
+# Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 'id'                   => Bric::FIELD_READ,
-			 'name'                 => Bric::FIELD_RDWR,
-			 'description'          => Bric::FIELD_RDWR,
-			 'all_desk_grp_id'      => Bric::FIELD_READ,
-			 'req_desk_grp_id'      => Bric::FIELD_READ,
-			 'head_desk_id'         => Bric::FIELD_READ,
-			 'type'                 => Bric::FIELD_RDWR,
+                         # Public Fields
+                         'id'                   => Bric::FIELD_READ,
+                         'name'                 => Bric::FIELD_RDWR,
+                         'description'          => Bric::FIELD_RDWR,
+                         'all_desk_grp_id'      => Bric::FIELD_READ,
+                         'req_desk_grp_id'      => Bric::FIELD_READ,
+                         'head_desk_id'         => Bric::FIELD_READ,
+                         'type'                 => Bric::FIELD_RDWR,
+                         'grp_ids'              => Bric::FIELD_READ,
 
-			 # Private Fields
-			 '_all_desk_grp_obj'    => Bric::FIELD_NONE,
-			 '_req_desk_grp_obj'    => Bric::FIELD_NONE,
-			 '_head_desk_obj'       => Bric::FIELD_NONE,
-			 '_active'              => Bric::FIELD_NONE,
-			 '_remove'              => Bric::FIELD_NONE,
-			});
+                         # Private Fields
+                         '_all_desk_grp_obj'    => Bric::FIELD_NONE,
+                         '_req_desk_grp_obj'    => Bric::FIELD_NONE,
+                         '_head_desk_obj'       => Bric::FIELD_NONE,
+                         '_active'              => Bric::FIELD_NONE,
+                         '_remove'              => Bric::FIELD_NONE,
+                        });
 }
 
 #==============================================================================#
@@ -168,11 +165,6 @@ BEGIN {
 =head2 Constructors
 
 =over 4
-
-=cut
-
-
-#------------------------------------------------------------------------------#
 
 =item $success = $obj = new Bric::Biz::Workflow($param);
 
@@ -215,25 +207,16 @@ NONE
 =cut
 
 sub new {
-    my $self = shift;
-    my ($init) = @_;
+    my ($self, $init) = @_;
 
-    # Create the object via fields which returns a blessed object.
-    $self = bless {}, ref $self || $self;
-
-    my $sd = delete $init->{'start_desk'};
+    my $sd = delete $init->{start_desk};
+    $init->{_active} = 1;
 
     # Call the parent's constructor.
-    $self->SUPER::new($init);
-
-    # Make sure the active flag is set.
-    $self->activate;
+    my $self = $self->SUPER::new($init);
 
     # Add the start desk if passed.
-    if ($sd) {
-	my $id = ref $sd ? $sd->get_id : $sd;
-	$self->set_start_desk($id);
-    }
+    $self->set_start_desk(ref $sd ? $sd->get_id : $sd) if $sd;
 
     # Since this is a new object, set the dirty bit so it will be saved.
     $self->_set__dirty(1);
@@ -244,53 +227,61 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $obj = lookup Bric::Biz::Workflow($wf_id);
+=item my $wf = Bric::Biz::Workflow->lookup({ id => $wf_id });
 
-Takes a workflow ID and returns a workflow object.
+Takes a workflow ID and returns the corresponding workflow object.
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Unable to prepare SQL statement.
 
-B<Notes:>
+=item *
 
-NONE
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub lookup {
-    my $class = shift;
-    my ($param) = @_;
-    my $wf_id = ref $param ? $param->{'id'} : $param;
-
-    # Create the object via fields which returns a blessed object.
-    my $self = bless {}, $class;
-
-    # Call the parent's constructor.
-    $self->SUPER::new();
-
-    my $ret = _select_workflow('id=?', [$wf_id]);
-
-    # Set the columns selected as well as the passed ID.
-    $self->_set(['id', FIELDS], $ret->[0]);
-
-    return unless $self->get_id;
-
-    # Clear the dirty bit since this has all just been loaded.
-    $self->_set__dirty(0);
-
-    return $self;
+    my $wf = &$get_em(@_);
+    # We want @$wf to have only one value.
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+      if @$wf > 1;
+    return @$wf ? $wf->[0] : undef;
 }
 
 #------------------------------------------------------------------------------#
 
-=item (@all || $all) = Bric::Biz::Workflow->list($param);
+=item (@all || $all) = Bric::Biz::Workflow->list($params);
 
-Return a list of all known workflow types.  Keys of $param are:
+Return a list of all known workflow types. Keys of the $params hash reference
+are:
 
 =over 4
 
@@ -316,99 +307,96 @@ constants.
 
 Return all worfkflows containing a desk with this desk ID.
 
+=item C<grp_id>
+
+Return all workflows in the group corresponding to this group ID.
+
 =back
-
-Seaches against C<name> and C<description> use the LIKE operator, so '%' can
-be used for substring searching.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub list {
-    my $class = shift;
-    my ($param, $id_only) = @_;
-
-    # Make sure to set active explictly if its not passed.
-    $param->{active} = exists $param->{active} ? $param->{active} : 1;
-
-    my (@wheres, @params);
-    while (my ($k, $v) = each %$param) {
-        if ($k eq 'desk_id') {
-            # Yes, this is a hack. It requires too much knowledge of the Group
-            # schema. This will go away once Workflow has this group stuff
-            # refactored out of it.
-            push @wheres, qq{all_desk_grp_id IN (
-              SELECT grp__id
-              FROM   member m, desk_member d
-              WHERE m.id = d.member__id
-                    AND d.object_id = ?)};
-            push @params, $v;
-        } elsif ($k eq 'id' || $k eq 'active' || $k eq 'type') {
-            push @wheres, "$k = ?";
-            push @params, $v;
-        } else {
-            push @wheres, "LOWER($k) LIKE ?";
-            push @params, lc $v;
-        }
-    }
-
-    my $where = join ' AND ', @wheres;
-
-    my $ret = _select_workflow($where, \@params, $id_only);
-
-    # $ret is just a bunch of IDs if the $id_only flag is set.  Return them.
-    return wantarray ? @$ret : $ret if $id_only;
-
-    my @all;
-
-    foreach my $d (@$ret) {
-	# Create the object via fields which returns a blessed object.
-	my $self = bless {}, $class;
-
-	# Call the parent's constructor.
-	$self->SUPER::new();
-
-	# Set the columns selected as well as the passed ID.
-	$self->_set(['id', FIELDS], $d);
-
-	push @all, $self;
-    }
-
-    return wantarray ? @all : \@all;
-}
-
-#------------------------------------------------------------------------------#
-
-=item (@ids || $ids) = Bric::Biz::Workflow->list_ids();
-
-Return a list of IDs for all known workflow types.
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Unable to prepare SQL statement.
 
-B<Notes:>
+=item *
 
-NONE
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> Seaches against C<name> and C<description> use the LIKE operator, so
+'%' can be used for substring searching.
 
 =cut
 
-sub list_ids {
-    my $self = shift;
-    my ($param) = @_;
+sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
-    return $self->list($param, 1);
-}
+#------------------------------------------------------------------------------#
 
+=item (@ids || $ids) = Bric::Biz::Workflow->list_ids($params);
+
+Return a list of workflow IDs. See C<list()> for a list of the relevant keys
+in the C<$params> hash reference.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> Seaches against C<name> and C<description> use the LIKE operator, so
+'%' can be used for substring searching.
+
+=cut
+
+sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 #--------------------------------------#
 
@@ -441,8 +429,8 @@ sub DESTROY {
 
 =item my (@meths || $meths_aref) = Bric::Biz::Workflow->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -574,73 +562,73 @@ sub my_meths {
     my ($pkg, $ord) = @_;
 
     # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{&ORD} : [@{$meths}{&ORD}]
+    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
       if $meths;
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      name        => {
-			      name     => 'name',
-			      get_meth => sub { shift->get_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_name(@_) },
-			      set_args => [],
-			      disp     => 'Name',
-			      type     => 'short',
-			      len      => 64,
-			      req      => 1,
-			      search   => 1,
-			      props    => { type       => 'text',
-					    length     => 32,
-					    maxlength => 64
-					  }
-			     },
-	      description => {
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_description(@_) },
-			      set_args => [],
-			      name     => 'description',
-			      disp     => 'Description',
-			      len      => 256,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'textarea',
-					    cols => 40,
-					    rows => 4
-					  }
-			     },
-	      type        => {
-			      get_meth => sub { shift->get_type(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_type(@_) },
-			      set_args => [],
-			      name     => 'type',
-			      disp     => 'Type',
-			      len      => 1,
-			      req      => 1,
-			      type     => 'short',
-			      props    => { type => 'select',
-					    vals => [ [STORY_WORKFLOW,    'Story'],
-						      [MEDIA_WORKFLOW,    'Media'],
-						      [TEMPLATE_WORKFLOW, 'Template'] ],
-					  }
-			     },
-	      active      => {
-			      name     => 'active',
-			      get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			      get_args => [],
-			      set_meth => sub { $_[1] ? shift->activate(@_)
-						  : shift->deactivate(@_) },
-			      set_args => [],
-			      disp     => 'Active',
-			      len      => 1,
-			      req      => 1,
-			      type     => 'short',
-			      props    => { type => 'checkbox' }
-			     }
-	     };
-    return !$ord ? $meths : wantarray ? @{$meths}{&ORD} : [@{$meths}{&ORD}];
+              name        => {
+                              name     => 'name',
+                              get_meth => sub { shift->get_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_name(@_) },
+                              set_args => [],
+                              disp     => 'Name',
+                              type     => 'short',
+                              len      => 64,
+                              req      => 1,
+                              search   => 1,
+                              props    => { type       => 'text',
+                                            length     => 32,
+                                            maxlength => 64
+                                          }
+                             },
+              description => {
+                              get_meth => sub { shift->get_description(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_description(@_) },
+                              set_args => [],
+                              name     => 'description',
+                              disp     => 'Description',
+                              len      => 256,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'textarea',
+                                            cols => 40,
+                                            rows => 4
+                                          }
+                             },
+              type        => {
+                              get_meth => sub { shift->get_type(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_type(@_) },
+                              set_args => [],
+                              name     => 'type',
+                              disp     => 'Type',
+                              len      => 1,
+                              req      => 1,
+                              type     => 'short',
+                              props    => { type => 'select',
+                                            vals => [ [STORY_WORKFLOW,    'Story'],
+                                                      [MEDIA_WORKFLOW,    'Media'],
+                                                      [TEMPLATE_WORKFLOW, 'Template'] ],
+                                          }
+                             },
+              active      => {
+                              name     => 'active',
+                              get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                              get_args => [],
+                              set_meth => sub { $_[1] ? shift->activate(@_)
+                                                  : shift->deactivate(@_) },
+                              set_args => [],
+                              disp     => 'Active',
+                              len      => 1,
+                              req      => 1,
+                              type     => 'short',
+                              props    => { type => 'checkbox' }
+                             }
+             };
+    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
 #--------------------------------------#
@@ -695,15 +683,15 @@ sub add_desk {
     push @all, @{$param->{'allowed'}} if $param->{'allowed'};
 
     if ($param->{'required'}) {
-	push @all, @{$param->{'required'}};
-	push @req, @{$param->{'required'}};
+        push @all, @{$param->{'required'}};
+        push @req, @{$param->{'required'}};
     }
 
     # Add all the desks to the desk group.
     $all_grp->add_members([map {ref $_ ? {'obj'=>$_} 
-				       : {'id'=>$_,'package'=>DESK_PKG}} @all]);
+                                       : {'id'=>$_,'package'=>DESK_PKG}} @all]);
     $req_grp->add_members([map {ref $_ ? {'obj'=>$_} 
-				       : {'id'=>$_,'package'=>DESK_PKG}} @req]);
+                                       : {'id'=>$_,'package'=>DESK_PKG}} @req]);
 
     return $self;
 }
@@ -745,10 +733,10 @@ sub del_desk {
             push @$vals, { package => DESK_PKG, id => $d };
         }
 
-	# Clear out the head desk stuff if they delete the head desk.
-	if ($self->get_head_desk_id == $id) {
-	    $self->_set(['head_desk_id', '_head_desk_obj'], [undef, undef]);
-	}
+        # Clear out the head desk stuff if they delete the head desk.
+        if ($self->get_head_desk_id == $id) {
+            $self->_set(['head_desk_id', '_head_desk_obj'], [undef, undef]);
+        }
     }
 
     # Delete the desks from the desk groups.
@@ -787,8 +775,8 @@ sub allowed_desks {
     # Sort desks so that the start desk is first, normal desks come next and 
     # the publish desk is last.
     my @mem = sort {($self->is_start_desk($b)||0) <=> ($self->is_start_desk($a)||0) ||
-		      ($a->can_publish || 0) <=> ($b->can_publish || 0) ||
-			$a->get_id <=> $b->get_id}
+                      ($a->can_publish || 0) <=> ($b->can_publish || 0) ||
+                        $a->get_id <=> $b->get_id}
               map  {$_->get_object} $all_grp->get_members;
 
     # Drop any inactive desks from the list.
@@ -917,7 +905,7 @@ sub required_satisfied {
 
     # Look for each required desk.
     foreach my $d (@req) {
-	return unless $stamp_search{$d->get_id};
+        return unless $stamp_search{$d->get_id};
     }
 
     return $self;
@@ -1092,34 +1080,34 @@ sub save {
 
     # Make sure they don't try to save with out setting a start desk.
     unless ($self->get_start_desk) {
-	my $err_msg = 'No start desk: A start desk must be defined using '.
-            	      "'set_start_desk' before 'save' is called";
-	die Bric::Util::Fault::Exception::AP->new({'msg' => $err_msg});
+        my $err_msg = 'No start desk: A start desk must be defined using '.
+                      "'set_start_desk' before 'save' is called";
+        die Bric::Util::Fault::Exception::AP->new({'msg' => $err_msg});
     }
 
     unless ($self->_get('_remove')) {
-	$all_grp->save if $all_grp;
-	$req_grp->save if $req_grp;
-	
-	# Set the ID if the objects were saved.
-	$self->_set(['all_desk_grp_id'], [$all_grp->get_id]) if $all_grp;
-	$self->_set(['req_desk_grp_id'], [$req_grp->get_id]) if $req_grp;
+        $all_grp->save if $all_grp;
+        $req_grp->save if $req_grp;
 
-	# Only update if anything has changed.
-	return unless $self->_get__dirty;
-	
-	if ($id) {
-	    $self->_update_workflow;
-	} else {
-	    $self->_insert_workflow;
-	}
-	
-	$self->SUPER::save();
+        # Set the ID if the objects were saved.
+        $self->_set(['all_desk_grp_id'], [$all_grp->get_id]) if $all_grp;
+        $self->_set(['req_desk_grp_id'], [$req_grp->get_id]) if $req_grp;
+
+        # Only update if anything has changed.
+        return unless $self->_get__dirty;
+
+        if ($id) {
+            $self->_update_workflow;
+        } else {
+            $self->_insert_workflow;
+        }
+
+        $self->SUPER::save();
     } else {
-	$all_grp->deactivate and $all_grp->save if $all_grp;
-	$req_grp->deactivate and $req_grp->save if $req_grp;
+        $all_grp->deactivate and $all_grp->save if $all_grp;
+        $req_grp->deactivate and $req_grp->save if $req_grp;
 
-	$self->_remove_workflow;
+        $self->_remove_workflow;
     }
 
     return $self;
@@ -1148,16 +1136,16 @@ NONE.
 sub _get_all_desk_grp {
     my $self = shift;
     my ($id, $grp) = $self->_get('all_desk_grp_id', '_all_desk_grp_obj');
-    
+
     # Return the group if we have it
     return $grp if $grp;
 
     if ($id) {
-	$grp = Bric::Util::Grp::Desk->lookup({'id' => $id});
+        $grp = Bric::Util::Grp::Desk->lookup({'id' => $id});
     } else {
-	my $desc = 'All desks available to a workflow';
-	$grp = Bric::Util::Grp::Desk->new({'name'        => 'All Workflow Desks',
-					 'description' => $desc});
+        my $desc = 'All desks available to a workflow';
+        $grp = Bric::Util::Grp::Desk->new({'name'        => 'All Workflow Desks',
+                                         'description' => $desc});
     }
 
     $self->_set(['_all_desk_grp_obj'], [$grp]);
@@ -1168,16 +1156,16 @@ sub _get_all_desk_grp {
 sub _get_req_desk_grp {
     my $self = shift;
     my ($id, $grp) = $self->_get('req_desk_grp_id', '_req_desk_grp_obj');
-    
-    # Return the group if we have it
+
+   # Return the group if we have it
     return $grp if $grp;
 
     if ($id) {
-	$grp = Bric::Util::Grp::Desk->lookup({'id' => $id});
+        $grp = Bric::Util::Grp::Desk->lookup({'id' => $id});
     } else {
-	my $desc = 'Desks required in a workflow';
-	$grp = Bric::Util::Grp::Desk->new({'name'        => 'Required Workflow Desks',
-					 'description' => $desc});
+        my $desc = 'Desks required in a workflow';
+        $grp = Bric::Util::Grp::Desk->new({'name'        => 'Required Workflow Desks',
+                                         'description' => $desc});
     }
 
     $self->_set(['_req_desk_grp_obj'], [$grp]);
@@ -1185,51 +1173,20 @@ sub _get_req_desk_grp {
     return $grp;
 }
 
-sub _select_workflow {
-    my ($where, $bind, $id_only) = @_;
-    my (@d, @ret);
-    my @cols = 'id';
-
-    # Don't bother selecting the other columns if they just want the IDs.
-    push @cols, COLS unless $id_only;
-
-    my $sql = 'SELECT '.join(',',@cols).' FROM '.TABLE;
-    $sql   .= ' WHERE '.$where if $where;
-    $sql   .= ' ORDER BY name';
-
-    my $sth = prepare_ca($sql);
-
-    if ($id_only) {
-	my $ids = col_aref($sth,@$bind);
-
-	return wantarray ? @$ids : $ids;
-    } else {
-	execute($sth, @$bind);
-	bind_columns($sth, \@d[0..(scalar COLS)]);
-
-	while (fetch($sth)) {
-	    push @ret, [@d];
-	}
-
-	finish($sth);
-
-	return \@ret;
-    }
-}
-
 sub _insert_workflow {
     my $self = shift;
-    my $nextval = next_key(TABLE);
+    my $nextval = next_key($table);
 
     # Create the insert statement.
-    my $sql = 'INSERT INTO '.TABLE." (id,".join(',',COLS).") ".
-              "VALUES ($nextval,".join(',', ('?') x COLS).')';
+    my $ins = prepare_c(qq{
+        INSERT INTO $table (id, ${\join(', ', @cols)})
+        VALUES ($nextval, ${\join(', ', ('?') x @cols)})
+    });
 
-    my $sth = prepare_c($sql);
-    execute($sth, $self->_get(FIELDS));
-  
+    execute($ins, $self->_get(@props));
+
     # Set the ID of this object.
-    $self->_set(['id'],[last_key(TABLE)]);
+    $self->_set(['id'],[last_key($table)]);
 
     # And finally, register this person in the "All Workflows" group.
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
@@ -1239,13 +1196,10 @@ sub _insert_workflow {
 
 sub _update_workflow {
     my $self = shift;
-
-    my $sql = 'UPDATE '.TABLE.
-              " SET ".join(',', map {"$_=?"} COLS)." WHERE id=?";
-    
+    my $sql = "UPDATE $table SET " .
+      join(',', map { "$_ = ?" } @cols) . " WHERE id = ?";
     my $sth = prepare_c($sql);
-    execute($sth, $self->_get(FIELDS), $self->get_id);
-    
+    execute($sth, $self->_get(@props), $self->get_id);
     return 1;
 }
 
@@ -1271,8 +1225,7 @@ NONE
 
 sub _remove_workflow {
     my $self = shift;
-    
-    my $sth = prepare_c('DELETE FROM '.TABLE.' WHERE id=?');
+    my $sth = prepare_c("DELETE FROM $table WHERE id = ?");
     execute($sth, $self->get_id);
 
     return $self;
@@ -1282,12 +1235,125 @@ sub _remove_workflow {
 
 =head2 Private Functions
 
-NONE
+=over 4
+
+=item my $wf_aref = &$get_em( $pkg, $search_href )
+
+=item my $wf_ids_aref = &$get_em( $pkg, $search_href, 1 )
+
+Function used by C<lookup()> and C<list()> to return a list of
+Bric::Biz::Workflow objects or, if called with an optional third argument,
+returns a list of Bric::Biz::Workflow object IDs (used by C<list_ids()>).
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
+$get_em = sub {
+    my ($pkg, $params, $ids) = @_;
+
+    # Make sure to set active explictly if its not passed.
+    $params->{active} = exists $params->{active} ?
+      $params->{active} ? 1 : 0 : 1;
+
+    my $tables = "$table a, member m, workflow_member c";
+    my $wheres = 'a.id = c.object_id AND c.member__id = m.id';
+    my @params;
+    while (my ($k, $v) = each %$params) {
+        if ($k eq 'name' or $k eq 'description') {
+            $wheres .= " AND LOWER(a.$k) LIKE ?";
+            push @params, lc $v;
+        } elsif ($k eq 'grp_id') {
+            $tables .= ", member m2, workflow_member c2";
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.grp__id = ?";
+            push @params, $v;
+        } elsif ($k eq 'desk_id') {
+            # Yes, this is a hack. It requires too much knowledge of the Group
+            # schema. This will go away once Workflow has this group stuff
+            # refactored out of it.
+            $tables .= ", member m3, desk_member c3";
+            $wheres .= ' AND a.all_desk_grp_id = m3.grp__id AND ' .
+              'm3.id = c3.member__id AND c3.object_id = ?';
+            push @params, $v;
+        } else {
+            $wheres .= " AND a.$k = ?";
+            push @params, $v;
+        }
+    }
+
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :
+      (\$sel_cols, 'a.name, a.id');
+
+    my $sel = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
+    }, undef, DEBUG);
+
+    # Just return the IDs, if they're what's wanted.
+    return col_aref($sel, @params) if $ids;
+
+    execute($sel, @params);
+    my (@d, @wfs, $grp_ids);
+    bind_columns($sel, \@d[0..$#sel_props]);
+    my $last = -1;
+    $pkg = ref $pkg || $pkg;
+    while (fetch($sel)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new workflow object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@sel_props, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @wfs, $self
+        } else {
+            push @$grp_ids, $d[$#d];
+        }
+    }
+    return \@wfs;
+};
+
 1;
 __END__
+
+=back
 
 =head1 NOTES
 

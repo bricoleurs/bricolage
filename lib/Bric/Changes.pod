@@ -57,6 +57,11 @@ who installed (rather than upgraded to) Bricolage 1.4.5 or later. [David]
 FTP and File System movers now atomically copy files to their destination
 servers. [JoE<atilde>o Pedro]
 
+=item *
+
+Added "All Desks" group for managing the permission to access all desks.
+[David]
+
 =back
 
 =head1 VERSION 1.5.0

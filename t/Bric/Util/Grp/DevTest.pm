@@ -61,7 +61,7 @@ sub test_lookup : Test(14) {
     }
     is( $grp->get_permanent, 1, "Check 1's permanance" );
     ok( my @pids = $grp->get_all_parent_ids, "Get 1's parent_ids" );
-    ok( @pids == 1, "Check for 1 parent ID" );
+    is( scalar @pids, 1, "Check for 1 parent ID" );
     is( $pids[0], 0, "Check parent ID is root" );
     ok( $grp->is_active, "Check active" );
 }
@@ -72,20 +72,20 @@ sub test_list : Test(36) {
     my $self = shift;
     ok( my @grps = Bric::Util::Grp->list({ name => 'All%' }),
         "get all All groups" );
-    ok( @grps == 18, "Check number of All groups" );
+    is( scalar @grps, 19, "Check number of All groups" );
     ok( @grps = Bric::Util::Grp->list({ name => 'All Users' }),
         "get All Users group" );
-    ok( @grps == 1, "Check for one 'All Users' group" );
+    is( scalar @grps, 1, "Check for one 'All Users' group" );
     is( $grps[0]->get_name, 'All Users', "Check 'All Users' name" );
     ok( UNIVERSAL::isa($grps[0], 'Bric::Util::Grp::User'),
         "Check 'All Users' class" );
     ok( @grps = Bric::Util::Grp->list({ permanent => 1 }),
         "get all permanent groups" );
-    ok( @grps == 18, "Check number of permanent groups" );
+    is( scalar @grps, 19, "Check number of permanent groups" );
     ok( @grps = Bric::Util::Grp::Pref->list({ obj_id => 1,
                                               package => 'Bric::Util::Pref' }),
         "get all groups with pref 1 in them" );
-    ok( @grps == 1, "Check for one 'Pref' group" );
+    is( scalar @grps, 1, "Check for one 'Pref' group" );
     ok( UNIVERSAL::isa($grps[0], 'Bric::Util::Grp::Pref'),
     "Check 'All Preferences' class" );
     is( $grps[0]->get_name, 'All Preferences', "Check 'All Preferences' name" );
@@ -146,19 +146,19 @@ sub test_list : Test(36) {
 sub test_list_ids : Test(10) {
     ok( my @grp_ids = Bric::Util::Grp->list_ids({ name => 'All%' }),
         "get all All groups" );
-    ok( @grp_ids == 18, "Check number of All group IDs" );
+    is( scalar @grp_ids, 19, "Check number of All group IDs" );
     ok( @grp_ids = Bric::Util::Grp->list_ids({ name => 'All Users' }),
         "get All Users group ID" );
-    ok( @grp_ids == 1, "Check for one 'All Users' group" );
+    is( scalar @grp_ids, 1, "Check for one 'All Users' group" );
     is( $grp_ids[0], 2, "Check 'All Users' ID" );
     ok( @grp_ids = Bric::Util::Grp->list_ids({ permanent => 1 }),
         "get all permanent group IDs" );
-    ok( @grp_ids == 18, "Check number of permanent group IDs" );
+    is( scalar @grp_ids, 19, "Check number of permanent group IDs" );
     ok( @grp_ids = Bric::Util::Grp::Pref->list_ids
         ({ obj_id => 1,
            package => 'Bric::Util::Pref' }),
         "get all group IDs with pref 1 in them" );
-    ok( @grp_ids == 1, "Check for one 'Pref' group ID" );
+    is( scalar @grp_ids, 1, "Check for one 'Pref' group ID" );
     is( $grp_ids[0], 22, "Check 'All Preferences' ID" );
 }
 
@@ -263,19 +263,19 @@ sub test_persistence : Test(19) {
     isa_ok($grp, 'Bric::Util::Grp::Org');
     is( $grp->get_name, 'Test Orgs', "Check Test Orgs name" );
     ok( my @mems = $grp->get_members, "Get test members" );
-    ok( @mems == 1, "Check for one test member" );
+    is( scalar @mems, 1, "Check for one test member" );
     is( $mems[0]->get_obj_id, $o->get_id, "Check test member ID" );
     # Reload the group before removing the member.
     ok( $grp = Bric::Util::Grp->lookup({ id => $gid }),
         "Reload new org grp" );
     ok( $grp->delete_members([$o]),"Delete org member" );
     @mems = $grp->get_members;
-    ok( @mems == 0, "Check for no members" );
+    is( scalar @mems, 0, "Check for no members" );
     ok( $grp->save, "Save org grp again" );
     ok( $grp = Bric::Util::Grp->lookup({ id => $gid }),
         "Lookup org grp again" );
     @mems = $grp->get_members;
-    ok( @mems == 0, "Check for no members again" );
+    is( scalar @mems, 0, "Check for no members again" );
 }
 
 1;

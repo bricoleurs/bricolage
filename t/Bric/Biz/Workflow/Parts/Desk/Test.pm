@@ -11,6 +11,24 @@ sub _test_load : Test(1) {
     use_ok('Bric::Biz::Workflow::Parts::Desk');
 }
 
+##############################################################################
+# Test the constructor.
+##############################################################################
+sub test_const : Test(6) {
+    my $self = shift;
+    my $args = { name => 'Bogus',
+                 description => 'Bogus Desk' };
+
+    ok ( my $desk = Bric::Biz::Workflow::Parts::Desk->new($args),
+         "Test construtor" );
+    ok( ! defined $desk->get_id, 'Undefined ID' );
+    is( $desk->get_name, $args->{name}, "Name is '$args->{name}'" );
+    is( $desk->get_description, $args->{description},
+        "Description is '$args->{description}'" );
+    ok( $desk->is_active, "Check that it's activated" );
+    ok( !$desk->can_publish, "Check that it's not a publish desk" );
+}
+
 1;
 __END__
 

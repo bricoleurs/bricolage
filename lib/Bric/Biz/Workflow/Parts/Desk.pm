@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-01-10 03:57:08 $
+$Date: 2003-01-22 03:09:57 $
 
 
 =head1 SYNOPSIS
@@ -57,13 +57,13 @@ $Date: 2003-01-10 03:57:08 $
 
 =head1 DESCRIPTION
 
-A desk is something that defines the steps in a workflow.  Assets arrive at a
-desk and remain there until they are approved and moved to the next desk in the
-workflow.
+A desk is something that defines the steps in a workflow. Assets arrive at a
+desk and remain there until they are approved and moved to the next desk in
+the workflow.
 
-A desk may have any number of assets associated with it at any time.  Users may
+A desk may have any number of assets associated with it at any time. Users may
 checkout copies of these assets from the desk, make changes to them and check
-them back into the desk.  Users may also get read only copies.
+them back into the desk. Users may also get read only copies.
 
 =cut
 
@@ -72,13 +72,11 @@ them back into the desk.  Users may also get read only copies.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Asset;
 use Bric::Util::Fault::Exception::DP;
@@ -92,40 +90,39 @@ use base qw(Bric);
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
-
+my $get_em;
 
 #==============================================================================#
 # Constants                            #
 #======================================#
-
-use constant TABLE  => 'desk';
-use constant COLS   => qw(name description pre_chk_rules 
-			  post_chk_rules asset_grp publish active);
-use constant FIELDS => qw(name description pre_chk_rules 
-			  post_chk_rules asset_grp _publish _active);
-
+use constant DEBUG => 0;
 use constant ASSET_GRP_PKG => 'Bric::Util::Grp::Asset';
-use constant ORD => qw(name description publish active);
+use constant GROUP_PACKAGE => 'Bric::Util::Grp::Desk';
+use constant INSTANCE_GROUP_ID => 34;
 
 #==============================================================================#
 # Fields                               #
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-our $METH;
+# Public Class Fields
 
 #--------------------------------------#
-# Private Class Fields                  
+# Private Class Fields
+my $METH;
+my $TABLE = 'desk';
+my @COLS = qw(name description pre_chk_rules post_chk_rules asset_grp publish
+              active);
+my @PROPS = qw(name description pre_chk_rules post_chk_rules asset_grp
+               _publish _active);
+my @ORD = qw(name description publish active);
 
-
+my $SEL_COLS = 'a.id, a.name, a.description, a.pre_chk_rules, ' .
+  'a.post_chk_rules, a.asset_grp, a.publish, a.active, m.grp__id';
+my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
 
 #--------------------------------------#
-# Instance Fields                       
-
-# This method of Bricolage will call 'use fields' for you and set some permissions.
+# Instance Fields
 BEGIN {
     Bric::register_fields({
 			 # Public Fields
@@ -135,6 +132,7 @@ BEGIN {
 			 'pre_chk_rules'  => Bric::FIELD_READ,
 			 'post_chk_rules' => Bric::FIELD_READ,
 			 'asset_grp'      => Bric::FIELD_READ,
+			 'grp_ids'        => Bric::FIELD_READ,
 
 			 # Private Fields
 			 '_publish'       => Bric::FIELD_NONE,
@@ -155,15 +153,11 @@ BEGIN {
 
 =over 4
 
-=cut
-
-#------------------------------------------------------------------------------#
-
 =item $success = $obj = new Bric::Biz::Workflow::Parts::Desk($init);
 
 The following is a list of parameter keys and their assiociated values.
 
-Keys for $init are: 
+Keys for $init are:
 
 =over 4
 
@@ -202,16 +196,17 @@ sub new {
     # Create the object via fields which returns a blessed object.
     $self = bless {}, $self unless ref $self;
 
-    $init->{_active} = !defined $init->{active} ? 1 : $init->{active} ? 1 : 0;
-    $init->{_publish} = $init->{publish} ? 1 : 0;
+
+    # Set up the default values for active and publish.
+    $init->{_active} = !defined $init->{active} ? 1 :
+      delete $init->{active} ? 1 : 0;
+    $init->{_publish} = delete $init->{publish} ? 1 : 0;
 
     # Call the parent's constructor.
     $self->SUPER::new($init);
 
-    $self->activate;
-
     # Make sure these are initialized as array refs.
-    $self->_set(['_checkin', '_checkout', '_transfer'], [[],[],[]]);
+    $self->_set([qw(_checkin _checkout _transfer)], [[],[],[]]);
 
     $self->_set__dirty(1);
 
@@ -221,60 +216,53 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $obj = lookup Bric::Biz::Workflow::Parts::Desk($param);
+=item my $wf = Bric::Biz::Workflow::Parts::Desk->lookup({ id => $desk_id });
 
-Look up a desk object by ID.  Keys for param are:
+Takes a desk ID and returns a corresponding desk object.
+
+B<Throws:>
 
 =over 4
 
 =item *
 
-id
+Unable to prepare SQL statement.
 
-A desk ID
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
 
 =back
 
-B<Throws:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub lookup {
-    my $class = shift;
-    my ($param) = @_;
-    my $id = $param->{'id'};
-
-    # Create the object via fields which returns a blessed object.
-    my $self = bless {}, ref $class || $class;
-
-    # Call the parent's constructor.
-    $self->SUPER::new();
-
-    my $ret = _select_desk('id=?', [$id]);
-
-    # Set the columns selected as well as the passed ID.
-    $self->_set(['id', FIELDS], $ret->[0]);
-
-    # Do not return anything if the lookup failed.
-    return unless $self->get_id;
-
-    # Make sure these are initialized as array refs.
-    $self->_set(['_checkin', '_checkout', '_transfer'], [[],[],[]]);
-
-    $self->_set__dirty(0);
-
-    # Return the object.
-    return $self;
+    my $desk = &$get_em(@_);
+    # We want @$desk to have only one value.
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+      if @$desk > 1;
+    return @$desk ? $desk->[0] : undef;
 }
 
 #------------------------------------------------------------------------------#
@@ -285,123 +273,120 @@ Returns a list of desk objects based on $param.  Keys of $param are:
 
 =over 4
 
-=item *
-
-name
+=item C<name>
 
 Return all desks matching a certain name
 
-=item *
-
-description
+=item C<description>
 
 Return all desks with a matching description.
 
-=item *
+=item C<publish>
 
-active
+Boolean; returns all desks that can or cannot publish assets.
 
-Boolean; Return all in/active workflows
+=item C<active>
+
+Boolean; Return all in/active desks.
+
+=item C<grp_id>
+
+Return all desks in the group corresponding to this group ID.
 
 =back
 
-All searches except 'active' are done using the LIKE operator, so '%' can be 
-used for substring searching.
-
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Unable to prepare SQL statement.
 
-B<Notes:>
+=item *
 
-NONE
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> Seaches against C<name> and C<description> use the LIKE operator, so
+'%' can be used for substring searching.
 
 =cut
 
-sub list {
-    my $class = shift;
-    my ($param, $id_only) = @_;
+sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
-    my (@num, @txt);
+##############################################################################
 
-    # Make sure to set active explictly if its not passed.
-    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
+=item (@ids || $ids) = Bric::Biz::Workflow::Parts::Desk->list_ids($params);
 
-    foreach (keys %$param) {
-	if (/^name$/ or /^description$/) {
-	    push @txt, $_;
-	    $param->{$_} = lc $param->{$_};
-	} else {
-	    push @num, $_;
-	}
-    }
-
-    my $where = join(' AND ', (map { "$_=?" }             @num),
-			      (map { "LOWER($_) LIKE ?" } @txt));
-	
-    my $ret = _select_desk($where, [@$param{@num,@txt}], $id_only);
-
-    # $ret is just a bunch of IDs if the $id_only flag is set.  Return them.
-    return wantarray ? @$ret : $ret if $id_only;
-
-    my @all;
-	
-    foreach my $d (@$ret) {
-	# Create the object via fields which returns a blessed object.
-	my $self = bless {}, $class;
-
-	# Call the parent's constructor.
-	$self->SUPER::new();
-
-	# Set the columns selected as well as the passed ID.
-	$self->_set(['id', FIELDS], $d);
-
-	# Make sure these are initialized as array refs.
-	$self->_set(['_checkin', '_checkout', '_transfer'], [[],[],[]]);
-
-	# Clear the dirty flag from the previous '_set'
-	$self->_set__dirty(0);
-
-	push @all, $self;
-    }
-
-    return wantarray ? @all : \@all;
-}
-
-#------------------------------------------------------------------------------#
-
-=item @objs = Bric::Biz::Workflow::Parts::Desk->list($param);
-
-Returns a list of IDs for all desk objects.  See 'list' for legal parameters.
+Return a list of desk IDs. See C<list()> for a list of the relevant keys in
+the C<$params> hash reference.
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Unable to prepare SQL statement.
 
-B<Notes:>
+=item *
 
-NONE
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> Seaches against C<name> and C<description> use the LIKE operator, so
+'%' can be used for substring searching.
 
 =cut
 
-sub list_ids {
-    my $self = shift;
-    my ($param) = @_;
-
-    return $self->list($param, 1);
-}
+sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -416,20 +401,18 @@ sub DESTROY {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
 
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item my $meths = Bric::Biz::Workflow::Parts::Desk->my_meths
 
 =item my (@meths || $meths_aref) = Bric::Biz::Workflow::Parts::Desk->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -438,39 +421,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -482,29 +465,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -522,27 +507,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -558,7 +544,7 @@ sub my_meths {
     my ($pkg, $ord) = @_;
 
     # Return 'em if we got em.
-    return !$ord ? $METH : wantarray ? @{$METH}{&ORD} : [@{$METH}{&ORD}]
+    return !$ord ? $METH : wantarray ? @{$METH}{@ORD} : [@{$METH}{@ORD}]
       if $METH;
 
     # We don't got 'em. So get 'em!
@@ -622,16 +608,16 @@ sub my_meths {
 			     props    => { type => 'checkbox' }
 			    },
 	     };
-    return !$ord ? $METH : wantarray ? @{$METH}{&ORD} : [@{$METH}{&ORD}];
+    return !$ord ? $METH : wantarray ? @{$METH}{@ORD} : [@{$METH}{@ORD}];
 }
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Instance Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item @assets = $desk->assets();
 
@@ -1125,7 +1111,7 @@ sub save {
 
 	# Save all the grouped objects.
 	$asset_grp_obj->save;
-	
+
 	# Save the IDs if we have them.
 	if ($self->get_asset_grp != $asset_grp_obj->get_id) {
 	    $self->_set(['asset_grp'], [$asset_grp_obj->get_id]);
@@ -1146,21 +1132,21 @@ sub save {
 
 #==============================================================================#
 
+=back
+
 =head1 PRIVATE
-
-=cut
-
-#--------------------------------------#
 
 =head2 Private Class Methods
 
 NONE
 
-=cut
-
-#--------------------------------------#
-
 =head2 Private Instance Methods
+
+A few of these still need documenting.
+
+=over 4
+
+=item _sync_checkin
 
 =cut
 
@@ -1173,6 +1159,10 @@ sub _sync_checkin {
     }
 }
 
+=item _sync_checkout
+
+=cut
+
 sub _sync_checkout {
     my $self = shift;
     my $chkout = $self->_get('_checkout');
@@ -1182,6 +1172,10 @@ sub _sync_checkout {
     }
 }
 
+=item _sync_transfer
+
+=cut
+
 sub _sync_transfer {
     my $self = shift;
     my $xfer = $self->_get('_transfer');
@@ -1190,8 +1184,6 @@ sub _sync_transfer {
 	$a->save;
     }
 }
-
-#------------------------------------------------------------------------------#
 
 =item $obj = $desk->_get_grp_obj($id_field, $obj_field)
 
@@ -1222,64 +1214,11 @@ sub _get_grp_obj {
 
     unless ($obj) {
 	$obj = $pkg->lookup({'id' => $id});
-	
 	$self->_set([$obj_field], [$obj]);
-	
 	$self->_set__dirty($dirty);
     }
 
     return $obj;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $desk = $desk->_select_desk
-
-Select values from the desk table.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _select_desk {
-    my ($where, $bind, $id_only) = @_;
-    my (@d, @ret);
-    my @cols = 'id';
-
-    # Don't bother selecting the other columns if they just want the IDs.
-    push @cols, COLS unless $id_only;
-
-    my $sql = 'SELECT '.join(',',@cols).' FROM '.TABLE.
-              ' WHERE '.$where if $where;
-
-    my $sth = prepare_c($sql);
-
-    if ($id_only) {
-	my $ids = col_aref($sth,@$bind);
-	
-	return wantarray ? @$ids : $ids;
-    } else {
-	execute($sth, @$bind);
-	bind_columns($sth, \@d[0..(scalar COLS)]);
-	
-	while (fetch($sth)) {
-	    push @ret, [@d];
-	}
-	
-	finish($sth);
-	
-	return \@ret;
-    }
 }
 
 #------------------------------------------------------------------------------#
@@ -1304,17 +1243,21 @@ NONE
 
 sub _insert_desk {
     my $self = shift;
-    my $nextval = next_key(TABLE);
+    my $nextval = next_key($TABLE);
 
     # Create the insert statement.
-    my $sql = 'INSERT INTO '.TABLE.' (id,'.join(',',COLS).") ".
-              "VALUES ($nextval,".join(',', ('?') x COLS).')';
+    my $ins = prepare_c(qq{
+        INSERT INTO $TABLE (id, ${\join(', ', @COLS)})
+        VALUES ($nextval, ${\join(', ', ('?') x @COLS)})
+    });
 
-    my $sth = prepare_c($sql);
-    execute($sth, $self->_get(FIELDS));
+    execute($ins, $self->_get(@PROPS));
 
     # Set the ID of this object.
-    $self->_set(['id'],[last_key(TABLE)]);
+    $self->_set(['id'],[last_key($TABLE)]);
+
+    # And finally, register this person in the "All Desks" group.
+    $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
 
     return $self;
 }
@@ -1342,12 +1285,13 @@ NONE
 sub _update_desk {
     my $self = shift;
 
-    my $sql = 'UPDATE '.TABLE.
-              ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
+    my $upd = prepare_c(qq{
+        UPDATE $TABLE
+        SET    ${\join(', ', map {"$_ = ?"} @COLS)}
+        WHERE  id = ?
+    });
 
-    my $sth = prepare_c($sql);
-    execute($sth, $self->_get(FIELDS), $self->get_id);
-
+    execute($upd, $self->_get(@PROPS, 'id'));
     return $self;
 }
 
@@ -1373,25 +1317,126 @@ NONE
 
 sub _remove_desk {
     my $self = shift;
-
-    my $sth = prepare_c('DELETE FROM '.TABLE.' WHERE id=?');
-    execute($sth, $self->get_id);
-
+    my $sth = prepare_c("DELETE FROM $TABLE WHERE id = ?");
+    execute($sth, $self->_get('id'));
     return $self;
 }
 
-
 #--------------------------------------#
+
+=back
 
 =head2 Private Functions
 
-NONE
+=over 4
+
+=item my $desk_aref = &$get_em( $pkg, $search_href )
+
+=item my $desk_ids_aref = &$get_em( $pkg, $search_href, 1 )
+
+Function used by C<lookup()> and C<list()> to return a list of
+Bric::Biz::Workflow::Parts::Desk objects or, if called with an optional third
+argument, returns a list of Bric::Biz::Workflow::Parts::Desk object IDs (used
+by C<list_ids()>).
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
-# Add functions here that can be used only internally to the class. They should
-# not be publicly available (hence the prefernce for closures). Use the same POD
-# comment style as above for 'new'.
+$get_em = sub {
+    my ($pkg, $params, $ids) = @_;
+
+    # Make sure to set active explictly if its not passed.
+    $params->{active} = exists $params->{active} ?
+      $params->{active} ? 1 : 0 : 1;
+    $params->{publish} = $params->{publish} ? 1 : 0
+      if exists $params->{publish};
+
+    my $tables = "$TABLE a, member m, desk_member c";
+    my $wheres = 'a.id = c.object_id AND c.member__id = m.id';
+    my @params;
+    while (my ($k, $v) = each %$params) {
+        if ($k eq 'name' or $k eq 'description') {
+            $wheres .= " AND LOWER(a.$k) LIKE ?";
+            push @params, lc $v;
+        } elsif ($k eq 'grp_id') {
+            $tables .= ", member m2, desk_member c2";
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.grp__id = ?";
+            push @params, $v;
+        } else {
+            $wheres .= " AND a.$k = ?";
+            push @params, $v;
+        }
+    }
+
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :
+      (\$SEL_COLS, 'a.name, a.id');
+
+    my $sel = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
+    }, undef, DEBUG);
+
+    # Just return the IDs, if they're what's wanted.
+    return col_aref($sel, @params) if $ids;
+
+    execute($sel, @params);
+    my (@d, @desks, $grp_ids);
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
+    $pkg = ref $pkg || $pkg;
+    while (fetch($sel)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new desk object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @desks, $self
+        } else {
+            push @$grp_ids, $d[$#d];
+        }
+    }
+    return \@desks;
+};
 
 1;
 __END__
@@ -1404,8 +1449,7 @@ NONE
 
 =head1 AUTHOR
 
- "Garth Webb" <garth@perijove.com>
- Creative Engines Engineering
+Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 
