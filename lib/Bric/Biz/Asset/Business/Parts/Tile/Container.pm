@@ -1,4 +1,4 @@
-y/package Bric::Biz::Asset::Business::Parts::Tile::Container;
+package Bric::Biz::Asset::Business::Parts::Tile::Container;
 ###############################################################################
 
 =head1 NAME
@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-10-01 18:37:40 $
+$Date: 2003-10-01 22:53:35 $
 
 =head1 SYNOPSIS
 
