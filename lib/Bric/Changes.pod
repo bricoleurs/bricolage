@@ -42,9 +42,15 @@ Eliminated bogus "Use of element's 'name' field is deprecated" warnings. Key
 names are allowed to have digits and underscores, and we weren't consistent
 about that. [David]
 
+=item *
+
+The C<display_element()> method in the Mason burner once again passes
+component arguments on to components. And now, so does C<sdisplay_element()>.
+[David]
+
 =back
 
-=head1 VERSION 1.7.0 (2003-10-22)
+=Head1 VERSION 1.7.0 (2003-10-22)
 
 =head2 New Features
 
