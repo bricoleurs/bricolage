@@ -46,7 +46,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
-use Template;
+use Template 2.14;
 use Bric::Util::Fault qw(throw_gen throw_burn_error);
 use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
@@ -277,7 +277,11 @@ sub burn_one {
     while(1) {
         use utf8;
         warn "Processing $template\n";
-	$tt->process($template) or throw_burn_error
+	$tt->process($template, ( ENCODE_OK
+                                  ? (undef, undef, binmode => ':utf8')
+                                  : ()
+                                 ))
+          or throw_burn_error
           error   => "Error executing '$template'",
           payload => $tt->error,
           mode    => $self->get_mode,

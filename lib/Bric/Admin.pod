@@ -177,7 +177,7 @@ START MODULE LIST
 
 =item HTML::Template::Expr (optional)
 
-=item Template 2.09 (optional)
+=item Template 2.14 (optional)
 
 =item Encode (optional)
 

@@ -52,6 +52,12 @@ recent version. This will be most useful to those looking up other documents
 in templates and publishing them, as a way of avoiding pulling documents out
 from other anyone who might have them checked out! [David]
 
+=item *
+
+For those using the Template Toolkit burner, the required version is now 2.14,
+so as to take advantage of the improved Unicode support in that version.
+[David]
+
 =back
 
 =head2 Bug Fixes
