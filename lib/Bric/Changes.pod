@@ -14,6 +14,27 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.6.10 ()
+
+=head2 Bug Fixes
+
+=item *
+
+Added missing index to the C<workflow__id> column of the story, media, and
+formatting (template) tables. [David]
+
+=item *
+
+Made index on the C<desk__id> column of the story, media, and formatting
+(template) tables a partial index, since the column will usually be
+NULL. [David]
+
+=item *
+
+Added an index to the description column of the story_instance,
+media_instance, and formatting (template) tables to speed up simple
+searches. [David]
+
 =head1 VERSION 1.6.9 (2004-02-06)
 
 =head2 Bug Fixes

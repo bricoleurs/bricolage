@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.2.2.1 $
 --
--- $Date: 2003-03-05 21:25:49 $
+-- $Date: 2004-02-10 02:35:33 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -223,6 +223,7 @@ CREATE INDEX fdx_element__story ON story(element__id);
 
 -- story_instance
 CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));
+CREATE INDEX idx_story_instance__description ON story_instance(LOWER(description));
 CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
 CREATE INDEX fdx_story__story_instance ON story_instance(story__id);
 CREATE INDEX fdx_usr__story_instance ON story_instance(usr__id);
@@ -264,5 +265,6 @@ CREATE INDEX idx_attr_story_meta__name ON attr_story_meta(LOWER(name));
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_story__attr_story_meta ON attr_story_meta(attr__id);
 
-CREATE INDEX fdx_story__desk__id ON story(desk__id);
+CREATE INDEX fdx_story__desk__id ON story(desk__id) WHERE desk__id IS NOT NULL;
+CREATE INDEX fdx_story__workflow__id ON story(workflow__id) WHERE workflow__id IS NOT NULL;
 
