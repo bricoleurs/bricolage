@@ -177,6 +177,13 @@ the contributor manager. [David]
 Creating a new story that has a URI that conflicts with an existing story no
 longer creates an extra story. Reported by Clive Jones. [David]
 
+=item *
+
+Changed "Cannot publish asset because there are no Destinations associated
+with its output channels" to instead include the name of the output channel
+missing Desination associations so that the user can tell which output
+channels need a Destination association. [Clive Jones]
+
 =back
 
 =head1 VERSION 1.6.1

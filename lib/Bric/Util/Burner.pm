@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32.4.3 $
+$Revision: 1.32.4.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32.4.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.4.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-22 17:07:07 $
+$Date: 2003-07-21 17:40:38 $
 
 =head1 SYNOPSIS
 
@@ -721,11 +721,12 @@ sub publish {
         unless (@$bat) {
             $die_err
               ? die "Cannot publish asset &quot;" . $ba->get_name
-              . "&quot; because there are no Destinations associated with "
-              . "its output channels."
+              . "&quot; to &quot;" . $oc->get_name . "&quot; because there "
+              . "are no Destinations associated with this output channel."
               : add_msg("Cannot publish asset &quot;" . $ba->get_name
-                        . "&quot; because there are no Destinations associated "
-                        . "with its output channels.");
+                        . "&quot; to &quot;" . $oc->get_name 
+                        . "&quot; because there are no Destinations "
+                        . "associated with this output channel.");
             next;
         }
 
