@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.71 $
+$Revision: 1.71.2.1 $
 
 =head1 DATE
 
-$Date: 2002-08-31 00:50:28 $
+$Date: 2002-12-04 21:32:56 $
 
 =head1 DESCRIPTION
 
@@ -189,6 +189,11 @@ to keep the interface basically the same as it is now.
 =item *
 
 Merge use of IO::String and IO::Stringy.
+
+=item *
+
+The installation system should allow the PostgreSQL database to exist
+on a separarate machine.  Currently only a local database will work.
 
 =back
 
