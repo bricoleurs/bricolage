@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-03-23 01:59:46 $
+$Date: 2004-04-08 00:19:34 $
 
 =head1 SYNOPSIS
 
@@ -740,10 +740,12 @@ sub fetch_objects {
         $grp_ids = $d[-$grp_col_cnt] = [map { split } @d[-$grp_col_cnt..-1]];
         $obj ->_set($fields, \@d);
         $obj->_set__dirty(0);
+        # Cache the object before reblessing it.
+        $obj->cache_me;
         $obj = bless $obj, Bric::Util::Class->lookup({
             id => $obj->get_class_id })->get_pkg_name
             if $pkg->HAS_CLASS_ID;
-        push @objs, $obj->cache_me;
+        push @objs, $obj;
     }
     finish($select);
     # Return the objects.

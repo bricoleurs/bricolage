@@ -157,6 +157,11 @@ Thanks to the improvements to the collection class, cloning stories and
 putting them into new output channels to ensure that they have unique URIs now
 works properly. Reported by Serge Sozonoff. [David]
 
+=item *
+
+The publish status and version is once again properly set for media when they
+are published. Reported by Serge Sozonoff. [David]
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
