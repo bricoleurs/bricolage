@@ -10,9 +10,11 @@ use Bric::App::Util qw(:all);
 my $type = 'perm';
 my $disp_name = get_class_info($type)->get_plural_name;
 my $class = get_package_name($type);
-my $grp_type = 'grp';
-my $grp_class = get_package_name($grp_type);
-my $not = {qw(usr obj obj usr)};
+my $grp_class = get_package_name('grp');
+my $not = {
+    'usr' => 'obj',
+    'obj' => 'usr',
+};
 
 
 sub save {
@@ -84,5 +86,6 @@ sub save {
     add_msg("$disp_name saved.");
     set_redirect("/admin/profile/grp/$gid");
 }
+
 
 1;
