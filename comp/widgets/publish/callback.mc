@@ -8,6 +8,8 @@ $media_id => undef
 <%once>;
 my $fs = PREVIEW_LOCAL ? Bric::Util::Trans::FS->new : undef;
 my $send_msg = sub { $m->comp('/lib/util/status_msg.mc', @_) };
+my $comp_root = $m->interp->comp_root;
+$comp_root = $comp_root->[0][1] if PREVIEW_MASON;
 </%once>
 
 <%init>;
@@ -23,6 +25,8 @@ if (my $d = get_state_data($widget)) {
 } elsif (! defined $story_id && ! defined $media_id ) { return }
 
 if ($field eq 'preview') {
+    # Instantiate the Burner object.
+    my $b = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
     if (defined $media_id) {
 	my $m = get_state_data('media_prof', 'media');
 	unless ($m && $m->get_id != $media_id) {
@@ -30,7 +34,7 @@ if ($field eq 'preview') {
 	}
 
 	# Move out the story and then redirect to preview.
-	my $url = &$publish($m, 'media', $param, $field);
+	my $url = &$publish($m, $b, 'media', $param, $field);
 	&$send_msg("Redirecting to preview.");
 	redirect_onload($url);
     } else {
@@ -49,14 +53,16 @@ if ($field eq 'preview') {
 			$r->get_title.'&quot; because it is checked out');
 		next;
 	    }
-	    &$publish($r, 'media', $param, $field);
+	    &$publish($r, $b, 'media', $param, $field);
 	}
 	# Move out the story and then redirect to preview.
-	my $url = &$publish($s, 'story', $param, $field);
+	my $url = &$publish($s, $b, 'story', $param, $field);
 	&$send_msg("Redirecting to preview.");
 	redirect_onload($url);
     }
 } else {
+    # Instantiate the Burner object.
+    my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
     my $stories = mk_aref($story_pub_ids);
     my $media = mk_aref($media_pub_ids);
 
@@ -64,13 +70,13 @@ if ($field eq 'preview') {
     foreach my $sid (@$stories) {
 	# Instantiate the story.
 	my $s = Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
-	&$publish($s, 'story', $param, $field);
+	&$publish($s, $b, 'story', $param, $field);
     }
 
     foreach my $mid (@$media) {
 	# Instantiate the media.
 	my $m = Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
-	&$publish($m, 'media', $param, $field);
+	&$publish($m, $b, 'media', $param, $field);
     }
 
     redirect_onload(last_page());
@@ -78,11 +84,9 @@ if ($field eq 'preview') {
 </%init>
 
 <%shared>;
-# Instantiate the Burner object.
-my $b = Bric::Util::Burner->new;
 my ($ats, $oc_sts, $uid) = ({}, {}, get_user_id());
 my $publish = sub {
-    my ($ba, $key, $param, $field) = @_;
+    my ($ba, $b, $key, $param, $field) = @_;
     # Check for EDIT permission for publish or READ permission for preview.
     if (chk_authz($ba, EDIT, 1) || (chk_authz($ba, READ, 1)
 				    && $field eq 'preview')) {
@@ -206,8 +210,6 @@ my $publish = sub {
 	$job->execute_me unless ENABLE_DIST;
 	if (PREVIEW_LOCAL) {
 	    # Copy the files for previewing locally.
-	    my $comp_root = $m->interp->comp_root;
-	    $comp_root = $comp_root->[0][1] if PREVIEW_MASON;
 	    foreach my $rsrc (@$res) {
 		$fs->copy($rsrc->get_path,
 			  $fs->cat_dir($comp_root, PREVIEW_LOCAL,
