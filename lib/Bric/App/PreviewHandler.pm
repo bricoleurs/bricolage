@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.2.2.3 $
+$Revision: 1.2.2.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-16 00:19:39 $
+$Date: 2001-11-16 01:30:27 $
 
 =head1 SYNOPSIS
 
@@ -75,7 +75,7 @@ use constant ERROR_FILE =>
 # Private Class Fields
 my $dp = 'Bric::Util::Fault::Exception::DP';
 my $fs = Bric::Util::Trans::FS->new;
-my $puri_re = qx/${ \$fs->cat_uri(PREVIEW_LOCAL) }/;
+#my $puri_re = qx/${ \$fs->cat_uri(PREVIEW_LOCAL) }/;
 
 ################################################################################
 # Instance Fields
@@ -123,11 +123,6 @@ B<Notes:> NONE.
 sub uri_handler {
     my $r = shift;
     my $ret = eval {
-	# Set the headers to always expire the document.
-	my $headers = $r->headers_out;
-	$headers->{'Pragma'} = $headers->{'Cache-control'} = 'no-cache';
-	$r->no_cache(1);
-
 	# Grab the URI and break it up into its constituent parts.
 	my $uri = $r->uri;
 	my @dirs = $fs->split_uri($uri);
@@ -141,6 +136,30 @@ sub uri_handler {
 	return DECLINED;
     };
     return $@ ? handle_err($r, $@) : $ret;
+}
+
+=item my $status = no_cache_handler()
+
+Used for local previewing to turn off browser caching so that users are assured
+of always seeing the most-recently burned version of their documents, regardless
+of whether the browser cached it.
+
+B<Throws:> NONE.
+
+B<Side Effects:> This handler will cause a page to be re-requested from the server
+every time it's loaded.
+
+B<Notes:> NONE.
+
+=cut
+
+sub no_cache_handler {
+    my $r = shift;
+    # Set the headers to always expire the document.
+    my $headers = $r->headers_out;
+    $headers->{'Pragma'} = $headers->{'Cache-control'} = 'no-cache';
+    $r->no_cache(1);
+    return DECLINED;
 }
 
 =item my $status = fixup_handler()
@@ -163,9 +182,9 @@ B<Notes:> NONE.
 
 sub fixup_handler {
     my $r = shift;
+    # Start by disabling browser caching.
+    no_cache_handler($r);
     my $ret = eval {
-	# Just return if it's not in preview.
-	return OK unless $r->uri =~ /$puri_re/;
 	# Just return if it's an httpd content type.
 	my $ctype = $r->content_type;
 	return OK if $ctype =~ /^httpd/;
