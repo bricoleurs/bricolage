@@ -245,7 +245,7 @@ apache_ssl 1.3.22+ssl_1.47 Apache SSL (optional)
 
 =item *
 
-HTMLArea 3.0 or later (optional)
+htmlArea 3.0 or later (optional)
 
 =item *
 
@@ -866,18 +866,17 @@ create other user accounts.
 
 =back
 
-=head2 HTMLArea (Optional)
+=head2 htmlArea (Optional)
 
-To install HTMLArea, an optional application that offers WYSIWYG editing in
-the Bricolage UI, simply download it from
-L<http://www.interactivetools.com/products/htmlarea/>, decompress the files,
-and move them to the F<comp/media/htmlarea> directory in your Bricolage root.
-You will also need to enable the C<ENABLE_HTMLAREA> F<bricolage.conf> directive
-(see L<UI Configuration|/"UI Configuration">).
+To install htmlArea, an optional application that offers WYSIWYG editing in
+the Bricolage UI, simply download it from L<http://www.htmlarea.com/>,
+decompress the files, and move them to the F<comp/media/htmlarea> directory in
+your Bricolage root. You will also need to enable the C<ENABLE_HTMLAREA>
+F<bricolage.conf> directive (see L<UI Configuration|/"UI Configuration">).
 
 =head2 GNU Aspell (Optional)
 
-To use the spell-checking feature of HTMLArea, the GNU Aspell library must be
+To use the spell-checking feature of htmlArea, the GNU Aspell library must be
 installed, along with the appropriate distionaries. These must be installed
 before the Text::Aspell module is installed from CPAN. Download GNU Aspell and
 the associated dictionaries from L<http://aspell.net/>.
@@ -1472,14 +1471,14 @@ default.
 
 =item *
 
-B<ENABLE_HTMLAREA and HTMLAREA_TOOLBAR:> These directives control the HTMLArea
-WYSIWYG editor in Bricolage. HTMLArea 3.0 must be installed in
+B<ENABLE_HTMLAREA and HTMLAREA_TOOLBAR:> These directives control the htmlArea
+WYSIWYG editor in Bricolage. htmlArea 3.0 must be installed in
 F<comp/media/htmlarea>. Download it from
 L<http://www.interactivetools.com/products/htmlarea/> and simply rename the
 decompressed archive file to F<comp/media/htmlarea> in your Bricolage root.
 
 Once it's installed and C<ENABLE_HTMLAREA> has been enabled, you can specify
-exactly what shows up in your HTMLArea toolbar and how it is displayed. This
+exactly what shows up in your htmlArea toolbar and how it is displayed. This
 is useful for ensuring that content remains separate from presentation. For
 example, you usually won't want to include the font control buttons, as these
 are generally best managed in templates. Here is a complete list of the
@@ -1559,7 +1558,7 @@ available buttons:
 
 =back
 
-In addition to the button specifications, HTMLArea configuration supports a
+In addition to the button specifications, htmlArea configuration supports a
 few other toolbar configuration options:
 
 =over 8
