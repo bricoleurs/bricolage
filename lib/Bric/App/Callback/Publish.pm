@@ -14,7 +14,6 @@ use Bric::Util::Burner;
 use Bric::Util::Job::Pub;
 use Bric::App::Event qw(log_event);
 
-
 sub preview : Callback {
     my $self = shift;
     my $param = $self->params;
