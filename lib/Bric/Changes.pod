@@ -94,6 +94,14 @@ groups now have READ permission to access members of the All Categories and
 All Elements groups, which allow them create assets based on elements and
 within categories. [David]
 
+=item *
+
+Workflow and Desk permissions are a little more sensible now. CREATE
+permission can be granted for the start desk in each workflow now, instead of
+for the entire workflow. This allows a lower permission to be set on the
+workflow (e.g., READ), and then higher permissions on the individual desks in
+the workflow. [David]
+
 =back
 
 =head1 VERSION 1.5.1
