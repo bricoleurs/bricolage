@@ -37,49 +37,50 @@ $m->comp('/widgets/select_object/select_object.mc',
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-# Manage Output Channels if this is a top-level container.
-if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
-    my $primid = $comp->get_primary_oc_id;
-    my $oc_sub = sub {
-        my $ocid = $_[0]->get_id;
-        if ($_[1] eq 'primary') {
-            # Output a hidden field for this included OC.
-            $m->scomp('/widgets/profile/radio.mc',
-                      name => 'primary_oc_id',
-                      value => $ocid,
-                      checked => $ocid == $primid,
-                      useTable => 0
-                     );
-        } elsif ($_[1] eq 'enabled') {
-            $m->scomp('/widgets/profile/checkbox.mc',
-                      name => 'enabled',
-                      value => $ocid,
-                      checked => $_[0]->is_enabled,
-                      useTable => 0
-                     );
+if (defined $id) {
+
+    # Manage Output Channels if this is a top-level container.
+    if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
+        my $primid = $comp->get_primary_oc_id;
+        my $oc_sub = sub {
+            my $ocid = $_[0]->get_id;
+            if ($_[1] eq 'primary') {
+                # Output a hidden field for this included OC.
+                $m->scomp('/widgets/profile/radio.mc',
+                          name => 'primary_oc_id',
+                          value => $ocid,
+                          checked => $ocid == $primid,
+                          useTable => 0
+                         );
+            } elsif ($_[1] eq 'enabled') {
+                $m->scomp('/widgets/profile/checkbox.mc',
+                          name => 'enabled',
+                          value => $ocid,
+                          checked => $_[0]->is_enabled,
+                          useTable => 0
+                         );
         }
-    };
+        };
 
-    my $sel_sub = sub {
-        return if $_[0]->get_id == $primid;
-        return ['Delete', 'rem_oc'];
-    };
+        my $sel_sub = sub {
+            return if $_[0]->get_id == $primid;
+            return ['Delete', 'rem_oc'];
+        };
 
-    $m->comp('/widgets/listManager/listManager.mc',
-	     object => 'output_channel',
-	     userSort => 0,
-	     def_sort_field => 'name',
-	     title => 'Output Channels',
-	     objs => scalar $comp->get_output_channels,
-	     addition => undef,
-	     fields => [qw(name description enabled primary)],
-	     field_titles => { primary => 'Primary', enabled => 'Enabled' },
-	     field_values => $oc_sub,
-	     profile => undef,
-	     select => $sel_sub,
-	     number => ++$num
-	    );
-
+        $m->comp('/widgets/listManager/listManager.mc',
+                 object => 'output_channel',
+                 userSort => 0,
+                 def_sort_field => 'name',
+                 title => 'Output Channels',
+                 objs => scalar $comp->get_output_channels,
+                 addition => undef,
+                 fields => [qw(name description enabled primary)],
+                 field_titles => { primary => 'Primary', enabled => 'Enabled' },
+                 field_values => $oc_sub,
+                 profile => undef,
+                 select => $sel_sub,
+                 number => ++$num
+                );
 </%perl>
 <table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
 <tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
@@ -96,13 +97,11 @@ if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
 </table>
 <br />
 <%perl>;
-    $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
-}
+        $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
+    }
 
 
-# display elements contained by this asset type
-if (defined $id) {
-
+    # display elements contained by this asset type
     my $i;
     my $label = $no_edit ? 'View' : 'Edit';
     # Output the actions.
@@ -241,11 +240,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2002-12-05 00:16:06 $
+$Date: 2003-02-03 20:38:07 $
 
 =head1 DESCRIPTION
 
