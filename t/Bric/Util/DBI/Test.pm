@@ -75,7 +75,7 @@ use constant PARAM_WHERE_MAP =>
       category_id         => 'i.id = c.story_instance__id AND c.category_id = ?',
       category_uri        => 'i.id = c.story_instance__id AND c.category__id in (SELECT id FROM category WHERE LOWER(uri) LIKE LOWER(?))',
       keyword             => 'sk.story_id = s.id AND k.id = sk.keyword_id AND LOWER(k.name) LIKE LOWER(?)',
-      _no_return_versions => 's.current_version = i.version',
+      _no_returned_versions => 's.current_version = i.version',
       grp_id              => 's.id IN ( SELECT DISTINCT sm.object_id FROM story_member sm, member m WHERE m.grp__id = ? AND sm.member__id = m.id )',
       simple              => '(LOWER(k.name) LIKE LOWER(?) OR LOWER(i.name) LIKE LOWER(?) OR LOWER(i.description) LIKE LOWER(?) OR LOWER(s.primary_uri) LIKE LOWER(?))',
     };
@@ -271,8 +271,8 @@ sub test_where: Test(70) {
     is( $cols, $base . ' AND sk.story_id = s.id AND k.id = sk.keyword_id AND LOWER(k.name) LIKE LOWER(?)', 'check keyword param');
     is_deeply( $args, [1], ' ... and the arg');
     # return_versions
-    ($cols, $args) = where_clause($CLASS, { _no_return_versions => 1 });
-    is( $cols, $base . ' AND s.current_version = i.version', 'check _no_return_versions param');
+    ($cols, $args) = where_clause($CLASS, { _no_returned_versions => 1 });
+    is( $cols, $base . ' AND s.current_version = i.version', 'check _no_returned_versions param');
     is_deeply( $args, [], ' ... and the arg');
     # grp_id
     ($cols, $args) = where_clause($CLASS, { grp_id => 1 });
@@ -308,7 +308,7 @@ sub test_where: Test(70) {
                     category_id         => 22,
                     category_uri        => 23,
                     keyword             => 24,
-                    _no_return_versions => 25,
+                    _no_returned_versions => 25,
                     grp_id              => 26,
                   };
     ($cols, $args) = where_clause($CLASS, $param);
@@ -412,12 +412,12 @@ sub testclean_params: Test(7) {
     is_deeply( clean_params($CLASS, { Order => 'slug' }), $exp, 'Order works right');
     $exp = { 
              active => 1,
-             returned_versions => 1,
+             return_versions => 1,
              _checked_out => 0,
              _not_simple => 1,
              Order => 'cover_date',
            };
-    is_deeply( clean_params($CLASS, { returned_versions => 1 }), $exp, 'add returned versions');
+    is_deeply( clean_params($CLASS, { return_versions => 1 }), $exp, 'add returned versions');
     $exp = { 
              active => 1,
              _no_returned_versions => 1,

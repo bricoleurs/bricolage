@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 05:58:18 $
+$Date: 2003-03-19 06:49:17 $
 
 =head1 SYNOPSIS
 
@@ -259,9 +259,9 @@ sub burn_one {
     }
 
     while (1) {
-	# Run the biz asset through the template
-	eval { $retval = $interp->exec($template) if $template };
-	die ref $@ ? $@ :
+        # Run the biz asset through the template
+        eval { $retval = $interp->exec($template) if $template };
+        die ref $@ ? $@ :
           $ap->new({ msg     => "Error executing template '$template'.",
                      payload => $@ })
           if $@;
@@ -309,6 +309,8 @@ B<Notes:> NONE.
 
 sub chk_syntax {
     my ($self, $ba, $err_ref) = @_;
+    # Just succeed if there is no template source code.
+    my $data = $ba->get_data or return $self;
 
     # Create the interpreter
     my $interp = HTML::Mason::Interp->new('allow_globals' => [qw($story
@@ -320,7 +322,7 @@ sub chk_syntax {
                                           'data_dir'   => $self->get_data_dir);
 
     # Try to create a component.
-    my $comp = eval { $interp->make_component(comp_source => $ba->get_data()) };
+    my $comp = eval { $interp->make_component(comp_source => $data) };
     if ($@) {
         $$err_ref = $@;   # $@->as_line()?
         return;

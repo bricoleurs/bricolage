@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 02:06:19 $
+$Date: 2003-03-19 06:49:17 $
 
 =head1 SYNOPSIS
 
@@ -157,10 +157,18 @@ use constant RELATION_TABLES =>
 
 use constant RELATION_JOINS =>
     {
-        media      => 'mm.object_id = mt.id AND m.id = mm.member__id',
-        category   => 'cm.object_id = i.category__id AND m.id = cm.member__id',
-        desk       => 'dm.object_id = mt.desk__id AND m.id = dm.member__id',
-        workflow   => 'wm.object_id = mt.workflow__id AND m.id = wm.member__id',
+        media      => 'mm.object_id = mt.id '
+                    . 'AND m.id = mm.member__id '
+                    . 'AND m.active = 1',
+        category   => 'cm.object_id = i.category__id '
+                    . 'AND m.id = cm.member__id '
+                    . 'AND m.active = 1',
+        desk       => 'dm.object_id = mt.desk__id '
+                    . 'AND m.id = dm.member__id '
+                    . 'AND m.active = 1',
+        workflow   => 'wm.object_id = mt.workflow__id '
+                    . 'AND m.id = wm.member__id '
+                    . 'AND m.active = 1',
     };
 
 # the mapping for building up the where clause based on params
@@ -222,8 +230,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'k.id = mk.keyword_id AND '
                              . 'LOWER(k.name) LIKE LOWER(?)',
       _no_returned_versions => 'mt.current_version = i.version',
-      grp_id                => 'mt.current_version = i.version AND '
-                             . 'm2.grp__id = ? AND '
+      grp_id                => 'm2.grp__id = ? AND '
                              . 'mm2.member__id = m2.id AND '
                              . 'mt.id = mm2.object_id',
       simple                => '( LOWER(k.name) LIKE LOWER(?) OR '

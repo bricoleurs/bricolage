@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
--- $Date: 2003-03-15 13:54:48 $
+-- $Date: 2003-03-19 06:49:18 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --

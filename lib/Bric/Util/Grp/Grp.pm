@@ -6,16 +6,16 @@ Bric::Util::Grp::Grp - Interface to Bric::Util::Grp Groups
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 05:16:20 $
+$Date: 2003-03-19 06:49:18 $
 
 =head1 SYNOPSIS
 

@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-03-15 05:16:21 $
+$Date: 2003-03-19 06:49:18 $
 
 =head1 SYNOPSIS
 
@@ -704,6 +704,10 @@ use constant key => 'pt_pt';
       'Value of [_1] cannot be empty' => 'Value of [_1] cannot be empty',
       'A site with the [_1] '[_2]' already exists' =>
         'A site with the [_1] '[_2]' already exists'
+      'Published Version' => 'Published Version',
+      'Deployed Version' => 'Deployed Version',
+      'Needs to be Published' => 'Needs to be Published',
+      'Needs to be Deployed' => 'Needs to be Deployed',
   );
 
 =cut

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 02:06:19 $
+$Date: 2003-03-19 06:49:17 $
 
 =head1 SYNOPSIS
 
@@ -224,10 +224,18 @@ use constant RELATION_TABLES =>
 
 use constant RELATION_JOINS =>
     {
-        formatting      => 'fm.object_id = f.id AND m.id = fm.member__id',
-        category        => 'cm.object_id = f.category__id AND m.id = cm.member__id',
-        desk            => 'dm.object_id = f.desk__id AND m.id = dm.member__id',
-        workflow        => 'wm.object_id = f.workflow__id AND m.id = wm.member__id',
+        formatting      => 'fm.object_id = f.id '
+                         . 'AND m.id = fm.member__id '
+                         . 'AND m.active = 1',
+        category        => 'cm.object_id = f.category__id '
+                         . 'AND m.id = cm.member__id '
+                         . 'AND m.active = 1',
+        desk            => 'dm.object_id = f.desk__id '
+                         . 'AND m.id = dm.member__id '
+                         . 'AND m.active = 1',
+        workflow        => 'wm.object_id = f.workflow__id '
+                         . 'AND m.id = wm.member__id '
+                         . 'AND m.active = 1',
     };
 
 # the mapping for building up the where clause based on params
@@ -243,8 +251,10 @@ use constant FROM => VERSION_TABLE . ' i, member m';
 use constant PARAM_FROM_MAP =>
     {
        category_uri       =>  'category c',
+       simple             =>  TABLE . ' f',
        _not_simple        =>  TABLE . ' f',
        grp_id             =>  'member m2, formatting_member fm2'
+
     };
 
 use constant PARAM_WHERE_MAP =>

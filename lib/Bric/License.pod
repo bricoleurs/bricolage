@@ -156,6 +156,8 @@ Friends who have spotted bugs include:
 
 =item Ilia Chipitsine
 
+=item Alex Epshteyn
+
 =back
 
 Bricolage's translation team:

@@ -6,16 +6,16 @@ Bric::Util::Grp::Workflow - Interface to Bric::Biz::Workflow Groups
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 05:16:21 $
+$Date: 2003-03-19 06:49:18 $
 
 =head1 SYNOPSIS
 

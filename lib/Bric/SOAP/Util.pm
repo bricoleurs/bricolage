@@ -32,15 +32,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:22:03 $
+$Date: 2003-03-19 06:49:17 $
 
 =head1 SYNOPSIS
 
@@ -254,35 +254,35 @@ output channels in an asset will be left unchanged.
 sub load_ocs {
     my ($asset, $ocdata, $elem_ocs, $key, $update) = @_;
     # Note the current output channels.
-        my %ocs =  map { $_->get_name => $_ } $asset->get_output_channels;
+    my %ocs =  map { $_->get_name => $_ } $asset->get_output_channels;
 
-        # Update the output channels.
-        foreach my $ocdata (@$ocdata) {
-            # Construct the output channel.
-            my $ocname = ref $ocdata ? $ocdata->{content} : $ocdata;
-            my $oc = delete $ocs{$ocname};
-            unless ($oc) {
-                # We have to add the new output channel to the media. Grab the
-                # OC object from the element.
-                $oc = $elem_ocs->{$ocname} or
-                  die __PACKAGE__ . "::create : output channel matching " .
-                  "(name => \"$ocname\") not allowed or cannot be found\n";
+    # Update the output channels.
+    foreach my $ocdata (@$ocdata) {
+        # Construct the output channel.
+        my $ocname = ref $ocdata ? $ocdata->{content} : $ocdata;
+        my $oc = delete $ocs{$ocname};
+        unless ($oc) {
+            # We have to add the new output channel to the media. Grab the
+            # OC object from the element.
+            $oc = $elem_ocs->{$ocname} or
+              die __PACKAGE__ . "::create : output channel matching " .
+                "(name => \"$ocname\") not allowed or cannot be found\n";
                 $asset->add_output_channels($oc);
-                log_event("${key}_add_oc", $asset,
-                          { 'Output Channel' => $oc->get_name });
-            }
-
-            # Set the primary OC ID, if necessary.
-            $asset->set_primary_oc_id($oc->get_id)
-              if ref $ocdata and $ocdata->{primary};
-        }
-
-        # Delete any remaining output channels.
-        foreach my $oc (values %ocs) {
-            log_event("${key}_del_oc", $asset,
+            log_event("${key}_add_oc", $asset,
                       { 'Output Channel' => $oc->get_name });
-            $asset->del_output_channels($oc->get_id);
         }
+
+        # Set the primary OC ID, if necessary.
+        $asset->set_primary_oc_id($oc->get_id)
+          if ref $ocdata and $ocdata->{primary};
+    }
+
+    # Delete any remaining output channels.
+    foreach my $oc (values %ocs) {
+        log_event("${key}_del_oc", $asset,
+                  { 'Output Channel' => $oc->get_name });
+        $asset->del_output_channels($oc->get_id);
+    }
 }
 
 =item @relations = deseralize_elements(object => $story, data => $data,

@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-03-07 16:38:12 $
+$Date: 2003-03-19 06:49:16 $
 
 =head1 DESCRIPTION
 
@@ -164,11 +164,13 @@ Bricolage started working again.
 On another occasion, a user noticed that the files F<comp/login/dhandler> and
 F<comp/login/welcome.html> were empty. This caused the equivalent of a
 "Document Contains No Data" error, only it didn't. In fact, in my tests, under
-these circumstances, the browser had no HTML source at all. At any rate, the
-problem was fixed by reinstalling Bricolage (a C<make upgrade> would probably
-do the trick, too), but it's likely that simply copying these two files from
-the Bricolage source directories to your installed component root will correct
-the problem. Holler on the bricolage-general mail list if it doesn't.
+these circumstances, the browser had no HTML source at all (although I was
+later told that a Mozilla setting can force the C<< <html><head></head></html>
+>> to be added). At any rate, the problem was fixed by reinstalling Bricolage
+(a C<make upgrade> would probably do the trick, too), but it's likely that
+simply copying these two files from the Bricolage source directories to your
+installed component root will correct the problem. Holler on the
+bricolage-general mail list if it doesn't.
 
 =head2 Element Administration
 

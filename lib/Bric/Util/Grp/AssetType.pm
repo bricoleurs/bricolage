@@ -7,15 +7,15 @@ Bric::Util::Grp::AssetType - A group of AssetTypes.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 05:16:20 $
+$Date: 2003-03-19 06:49:18 $
 
 =head1 SYNOPSIS
 
