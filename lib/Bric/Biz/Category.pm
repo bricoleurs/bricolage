@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-16 02:18:48 $
+$Date: 2003-01-17 01:35:49 $
 
 =head1 SYNOPSIS
 
@@ -1368,7 +1368,8 @@ sub _do_list {
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
-    return col_aref($sel, @params) if $ids;
+    return wantarray ? @{col_aref($sel, @params)} : col_aref($sel, @params)
+      if $ids;
 
     execute($sel, @params);
     my (@d, @cats, $grp_ids);
@@ -1384,7 +1385,7 @@ sub _do_list {
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@sel_props, \@d);
             # Add the attribute object.
-            # Hack: Get rid of this object!
+            # HACK: Get rid of this object!
             $self->_set( ['_attr_obj'],
                          [ Bric::Util::Attribute::Category->new
                            ({ object_id => $d[0],

@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-16 02:33:11 $
+$Date: 2003-01-17 01:35:48 $
 
 =head1 SYNOPSIS
 
@@ -134,18 +134,9 @@ my $get_oc_coll;
 #======================================#
 
 use constant DEBUG => 0;
-
-# Constants for DB access.
-use constant TABLE  => 'element';
-use constant COLS   => qw(name description burner reference 
-			  type__id at_grp__id primary_oc__id active);
-use constant FIELDS => qw(name description burner reference 
-			  type__id at_grp__id primary_oc_id _active);
-
-use constant ORD => qw(name description type_name  burner active);
-
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Element';
 use constant INSTANCE_GROUP_ID => 27;
+use constant ORD => qw(name description type_name  burner active);
 
 # possible values for burner
 use constant BURNER_MASON    => 1;
@@ -162,16 +153,23 @@ our @EXPORT_OK = qw(BURNER_MASON BURNER_TEMPLATE);
 our %EXPORT_TAGS = ( all => \@EXPORT_OK);
 
 #--------------------------------------#
-# Private Class Fields                  
-
-# NONE
+# Private Class Fields
+my $table = 'element';
+my $mem_table = 'member';
+my $map_table = $table . "_$mem_table";
+my @cols = qw(name description burner reference type__id at_grp__id
+              primary_oc__id active);
+my @props = qw(name description burner reference type__id at_grp__id
+               primary_oc_id _active);
+my $sel_cols = "a.id, a.name, a.description, a.burner, a.reference, " .
+  "a.type__id, a.at_grp__id, a.primary_oc__id, a.active, m.grp__id";
+my @sel_props = ('id', @props, 'grp_ids');
 
 #--------------------------------------#
-# Instance Fields                       
+# Instance Fields
 
-# None
-
-# This method of Bricolage will call 'use fields' for you and set some permissions.
+# This method of Bricolage will call 'use fields' for you and set some
+# permissions.
 BEGIN {
     Bric::register_fields({
 
@@ -199,6 +197,9 @@ BEGIN {
 
                          # The type of this asset type.
                          'type__id'             => Bric::FIELD_READ,
+
+			 # The IDs of the groups this asset type is in.
+			 'grp_ids'             => Bric::FIELD_READ,
 
 			 # Private Fields
 			 # The active flag
@@ -343,32 +344,12 @@ NONE
 =cut
 
 sub lookup {
-    my $class = shift;
-    my ($param) = @_;
-    my $self = bless {}, $class;
-
-    # Call our parents constructor.
-    $self->SUPER::new();
-    
-    # Throw an exception if the wrong parameters are given.
-    unless (exists $param->{'id'}) {
-	my $msg = "Missing required paramter 'id'";
-	die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-    }
-    
-    # NOTE: Combine these two queries in a generalized select.
-    # Load the values for this object from the element table.
-    return unless $self->_select_asset_type('id=?', $param->{'id'});
-    
-    my $id = $self->get_id;
-    my $a_obj = Bric::Util::Attribute::AssetType->new({'object_id' => $id,
-						     'subsys'    => "id_$id"});
-    $self->_set(['_attr_obj'], [$a_obj]);
-    
-    # Clear the dirty bit for looked up objects.
-    $self->_set__dirty(0);
-
-    return $self;
+    my $elem = shift->_do_list(@_);
+    # We want @$cat to have only one value.
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => 'Too many Bric::Biz::Person objects found.' })
+      if @$elem > 1;
+    return @$elem ? $elem->[0] : undef;
 }
 
 #------------------------------------------------------------------------------#
@@ -418,7 +399,7 @@ set to 1 to return only top-level elements
 
 =item media
 
-match against a particular media asste type (att.media)
+match against a particular media asset type (att.media)
 
 =back
 
@@ -436,13 +417,7 @@ NONE
 
 =cut
 
-sub list {
-    my $class = shift;
-    my ($param) = @_;
-
-    # Note that we're not passing the return IDs flag.
-    return _do_list($class, $param);
-}
+sub list { _do_list(@_) }
 
 #------------------------------------------------------------------------------#
 
@@ -466,13 +441,7 @@ NONE
 
 =cut
 
-sub list_ids {
-    my $class = shift;
-    my ($param) = @_;
-    
-    # Call this with the return ID flag set to 1.
-    return _do_list($class, $param, 1);
-}
+sub list_ids { _do_list(@_, 1) }
 
 #--------------------------------------#
 
@@ -2061,7 +2030,7 @@ sub remove {
     # Don't try anything unless we actually have an ID.
     return unless $id;
 
-    my $sql = 'DELETE FROM '.TABLE.' WHERE id=?';
+    my $sql = "DELETE FROM $table WHERE id = ?";
 
     my $sth = prepare_c($sql, undef, DEBUG);
     execute($sth, $id);
@@ -2153,123 +2122,122 @@ NONE
 =cut
 
 sub _do_list {
-    my $class = shift;
-    my ($param, $ids) = @_;
-    my ($sql, $sth, %from, @where, @bind);
+    my ($pkg, $params, $ids) = @_;
+    my $tables = "$table a, $mem_table m, $map_table c";
+    my @wheres = ('a.id = c.object_id','c.member__id = m.id');
+    my @params;
 
-    # Make sure to set active explictly if its not passed.
-    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
-
-    # add parameters for output channel and field.
-    $sql = 'SELECT '.join(',', map { "a.$_" } 'id', COLS).' '.
-           'FROM '.TABLE." a ";
-
-    # Add parameters based on a particular output channel.
-    if ($param->{'output_channel'} ) {
-	$from{'element__output_channel'} = 'ao';
-	push @where, ('ao.output_channel__id=?', 'ao.element__id=a.id');
-	push @bind, $param->{'output_channel'};
+    # Set up the active parameter.
+    if (exists $params->{active}) {
+        push @wheres, "a.active = ?";
+        push @params, delete $params->{active} ? 1 : 0;
+    } elsif (! exists $params->{id}) {
+        push @wheres, "a.active = ?";
+        push @params, 1;
+    } else {
+        # Do nothing -- let ID return even deactivated elements.
     }
-    
-    # Add parameters based on an AssetType::Data name or a map type ID.
-    if ($param->{'data_name'} || $param->{'map_type__id'}) {
-	$from{'element_data'} = 'd';
-	push @where, 'd.element__id=a.id';
-	if ($param->{'data_name'}) {
-	    push @where, 'd.name=?';
-	    push @bind, $param->{'data_name'};
+
+    # Set up paramters based on an AssetType::Data name or a map type ID.
+    if (exists $params->{data_name} or exists $params->{map_type__id}) {
+        # Add the element_data table.
+        $tables .= ', at_data d';
+	push @wheres, 'd.element__id = a.id';
+	if (exists $params->{data_name}) {
+	    push @wheres, 'LOWER(d.name) LIKE ?';
+	    push @params, lc delete $params->{data_name};
 	}
-	if ($param->{'map_type__id'}) {
-	    push @where, 'd.map_type__id=?';
-	    push @bind, $param->{'map_type__id'};
+	if (exists $params->{map_type__id}) {
+	    push @wheres, 'd.map_type__id = ?';
+	    push @params, delete $params->{map_type__id};
 	}
     }
 
-    # Check active
-    # Bug. This should test for exists (as should type__id below). Note that
-    # when this is fixed, we'll have to fix comp/widgets/formBuilder/element.mc,
-    # as well. Maybe other places, too.
-    if ($param->{'active'}) {
-	push @where, 'a.active=?';
-	push @bind, $param->{'active'};
+    # Set up parameters based on asset types.
+    if (exists $params->{top_level} or exists $params->{media}) {
+        $tables .= ', at_type att';
+	push @wheres, 'att.id = a.type__id';
+        if (exists $params->{top_level}) {
+	    push @wheres, 'att.top_level = ?';
+	    push @params, delete $params->{top_level} ? 1 : 0;
+        }
+        if (exists $params->{media}) {
+	    push @wheres, 'att.media = ?';
+	    push @params, delete $params->{media} ? 1 : 0;
+        }
     }
 
-    # Add type__id
-    if ($param->{'type__id'}) {
-	push @where, 'a.type__id=?';
-	push @bind, $param->{'type__id'};
+    # Set up the rest of the parameters.
+    while (my ($k, $v) = each %$params) {
+        if ($k eq 'output_channel') {
+            $tables .= ', element__output_channel ao';
+            push @wheres, ('ao.output_channel__id = ?',
+                           'ao.element__id = a.id');
+            push @params, $v;
+        } elsif ($k eq 'type__id' or $k eq 'id') {
+            push @wheres, "a.$k = ?";
+            push @params, $v;
+        } elsif ($k eq 'grp_id') {
+            # Fancy-schmancy second join.
+            $tables .= ", $mem_table m2, $map_table c2";
+            push @wheres, ('a.id = c2.object_id', 'c2.member__id = m2.id',
+                           'm2.grp__id = ?');
+            push @params, $v;
+        } else {
+            # The "name" and "description" properties.
+            push @wheres, "LOWER(a.$k) LIKE ?";
+            push @params, lc $v;
+        }
     }
 
-    # Let them search on all top level asset types.
-    if (exists $param->{'top_level'}) {
-	$from{'at_type'} = 'att';
-	push @where, 'att.id=a.type__id';
-	push @where, 'att.top_level=?', 'a.type__id=att.id';
-	push @bind, ($param->{'top_level'} ? 1 : 0);
+    # Create the where clause and the select columns.
+    my $where = join ' AND ', @wheres;
+    my $qry_cols = $ids ? \'DISTINCT a.id' : \$sel_cols;
+
+    # Prepare the statement.
+    my $sel = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $where
+        ORDER BY a.name
+    }, undef, DEBUG);
+
+    # Just return the IDs, if they're what's wanted.
+    return wantarray ? @{col_aref($sel, @params)} : col_aref($sel, @params)
+      if $ids;
+
+    execute($sel, @params);
+    my (@d, @elems, $grp_ids);
+    bind_columns($sel, \@d[0..$#sel_props]);
+    $pkg = ref $pkg || $pkg;
+    my $last = -1;
+    while (fetch($sel)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new element object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@sel_props, \@d);
+            # Add the attribute object.
+            # HACK: Get rid of this object!
+            $self->_set( ['_attr_obj'],
+                         [ Bric::Util::Attribute::AssetType->new
+                           ({ object_id => $d[0],
+                              subsys => "id_$d[0]" })
+                         ]
+                       );
+            $self->_set__dirty; # Disable the dirty flag.
+            push @elems, $self
+        } else {
+            # Append the ID.
+            push @$grp_ids, $d[$#d];
+        }
     }
-
-    # Let them search on all media asset types.
-    if (exists $param->{'media'}) {
-	$from{'at_type'} = 'att';
-	push @where, 'att.id=a.type__id';
-	push @where, 'att.media=?';
-	push @bind, ($param->{'media'} ? 1 : 0);
-    }
-
-    # Handle all the searchable fields.
-    foreach my $f (qw(name description)) {
-	next unless exists $param->{$f};
-	
-	push @where, "LOWER(a.$f) LIKE ?";
-	push @bind, lc($param->{$f});
-    }
-
-    # Add any additional FROM criteria
-    $sql .= ','.join(',', map {$_.' '.$from{$_}} keys %from) if %from;
-
-    # Add any additional WHERE criteria
-    $sql .= ' WHERE '.join(' AND ', @where) if @where;
-    $sql .= ' ORDER BY a.name';
-    $sth = prepare_ca($sql, undef, DEBUG);
-
-    # If called from list_ids give em what they want
-    if ($ids) {
-	my $return = col_aref($sth,@bind);
-		
-	# Finish this select
-	finish($sth);
-
-	return wantarray ? @$return : $return;
-    } 
-    # Otherwise collect the full data
-    else {
-	my (@objs, @d);
-	
-	execute($sth, @bind);
-	bind_columns($sth, \@d[0..(scalar COLS)]);
-	
-	while (fetch($sth)) {
-	    my $self = bless {}, $class;
-	    $self->SUPER::new();
-	    $self->_set(['id', FIELDS], [@d]);
-	    
-	    my $id = $self->get_id;
-	    my $a_obj = Bric::Util::Attribute::AssetType->new(
-						     {'object_id' => $id,
-						      'subsys'    => "id_$id"});
-	    $self->_set(['_attr_obj'], [$a_obj]);
-
-	    push @objs, $self;
-	}
-	
-	# Finish this select
-	finish($sth);
-
-	return wantarray ? @objs : \@objs;
-    }
+    return wantarray ? @elems : \@elems;
 }
 
-#--------------------------------------#
+##############################################################################
 
 =back
 
@@ -2462,49 +2430,6 @@ sub _sync_parts {
 
 #------------------------------------------------------------------------------#
 
-=item $self = $self->_select_asset_type($id);
-
-Select columns from the element table with primary key $id.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _select_asset_type {
-    my $self = shift;
-    my ($where, @bind) = @_;
-    my @d;
-
-    my $sql = 'SELECT id,'.join(',',COLS).' FROM '.TABLE;
-
-    # Add a where clause if necessary.
-    $sql .= " WHERE $where" if $where;
-
-    my $sth  = prepare_c($sql, undef, DEBUG);
-    my $rows = execute($sth, @bind);
-    bind_columns($sth, \@d[0..(scalar COLS)]);
-    fetch($sth);
-    finish($sth);
-
-    # Set the columns selected as well as the passed ID.
-    $self->_set(['id', FIELDS], [@d]);
-
-    return if $rows eq '0E0';
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
 =item $self = $self->_update_asset_type();
 
 Update values in the element table.
@@ -2526,12 +2451,12 @@ NONE
 sub _update_asset_type {
     my $self = shift;
 
-    my $sql = 'UPDATE '.TABLE.
-              ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
+    my $sql = "UPDATE $table".
+              ' SET '.join(',', map {"$_=?"} @cols).' WHERE id=?';
 
 
     my $sth = prepare_c($sql, undef, DEBUG);
-    execute($sth, $self->_get(FIELDS), $self->get_id);
+    execute($sth, $self->_get(@props), $self->get_id);
 
     return $self;
 }
@@ -2558,17 +2483,17 @@ NONE
 
 sub _insert_asset_type {
     my $self = shift;
-    my $nextval = next_key(TABLE);
+    my $nextval = next_key($table);
 
     # Create the insert statement.
-    my $sql = 'INSERT INTO '.TABLE.' (id,'.join(',',COLS).') '.
-              "VALUES ($nextval,".join(',', ('?') x COLS).')';
+    my $sql = "INSERT INTO $table (".join(', ', 'id', @cols).') '.
+              "VALUES ($nextval,".join(',', ('?') x @cols).')';
 
     my $sth = prepare_c($sql, undef, DEBUG);
-    execute($sth, $self->_get(FIELDS));
+    execute($sth, $self->_get(@props));
 
     # Set the ID of this object.
-    $self->_set(['id'],[last_key(TABLE)]);
+    $self->_set(['id'],[last_key($table)]);
 
     # And finally, register this person in the "All Elements" group.
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
