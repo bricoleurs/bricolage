@@ -297,6 +297,15 @@ separate host. [Thorston Biel]
 
 Wrote context-sensitive help for pages that were missing it. [Scott]
 
+=item *
+
+C<make upgrade> no longer simply overwrites the contents of the UI component
+root (F<$BRICOLAGE_ROOT/comp>), but renames it F<$BRICOLAGE_ROOT/comp.old> and
+writes out a new one. This is both so that deleted UI component files don't
+remain behind after an upgrade, and so that users can access any files that
+they've changed in the old component root. Most users can just delete it after
+upgrading. [David]
+
 =back
 
 =head1 VERSION 1.6.7 (Forthcoming)
