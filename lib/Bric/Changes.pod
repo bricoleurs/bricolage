@@ -25,6 +25,11 @@ This document lists the Changes to Bricolage introduced with each release.
 Custom select fields now correctly pay attention to the size attribute.
 Reported by Dave Rolsky. [David]
 
+=item *
+
+The element type manager now displays "Subelement" instead of "Story" for
+subelement element types. Suggested by Dave Rolsky. [David]
+
 =back
 
 =head1 VERSION 1.6.7 (2003-10-22)

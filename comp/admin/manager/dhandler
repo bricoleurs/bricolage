@@ -275,12 +275,12 @@ my $def = {
 			       srch_field => 'name',
 			       alter => { val_name => sub { escape_html($_[0]) } },
 			       constrain => {} },
-	   element_type => { alter => { biz_class_id => sub { get_disp_name($_[0]) },
+	   element_type =>  { alter => { biz_class_id => sub {
+                                             return 'Subelement' unless $_[1]->get_top_level;
+                                             return get_disp_name($_[0]);
+                                         },
 					  paginated => $yes_no,
 					  fixed_url => $yes_no },
-#			       field_values => sub { return unless $_[1] eq 'biz_class_id';
-#						     get_disp_name($_[0]->get_biz_class_id);
-#						 },
 			       list_fields => [qw(name description biz_class_id paginated fixed_url)],
 			       behavior => 'narrow',
 			       srch_field => 'name',
@@ -369,11 +369,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.23.2.6 $
+$Revision: 1.23.2.7 $
 
 =head1 DATE
 
-$Date: 2003-08-10 16:02:53 $
+$Date: 2003-10-28 02:02:49 $
 
 =head1 SYNOPSIS
 
