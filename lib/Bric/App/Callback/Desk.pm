@@ -37,8 +37,8 @@ sub checkin : Callback {
     $d->save;
 
     if ($a_class eq 'formatting') {
-        my $b = Bric::Util::Burner->new({user_id => get_user_id()});
-           $b->undeploy($a_obj);
+        my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
+           $sb->undeploy($a_obj);
     }
 
     log_event("${a_class}_checkin", $a_obj, { Version => $a_obj->get_version });
@@ -62,8 +62,8 @@ sub checkout : Callback {
 
     my $profile;
     if ($a_class eq 'formatting') {
-        my $b = Bric::Util::Burner->new({user_id => get_user_id() });
-        $b->deploy($a_obj);
+        my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
+        $sb->deploy($a_obj);
 
         $profile = '/workflow/profile/templates';
     } elsif ($a_class eq 'media') {

@@ -41,8 +41,8 @@ sub save : Callback {
         # Save it.
         $fa->save;
 
-        my $b = Bric::Util::Burner->new({user_id => get_user_id() });
-        $b->deploy($fa);
+        my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
+        $sb->deploy($fa);
 
         log_event('formatting_save', $fa);
         add_msg('Template "[_1]" saved.', $fa->get_name);
@@ -128,8 +128,8 @@ sub cancel : Callback {
     my $fa = get_state_data($self->class_key, 'fa');
     $fa->cancel_checkout;
     $fa->save;
-    my $b = Bric::Util::Burner->new({user_id => get_user_id()});
-       $b->undeploy($fa);
+    my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
+       $sb->undeploy($fa);
     log_event('formatting_cancel_checkout', $fa);
     clear_state($self->class_key);
     set_redirect("/");
@@ -243,8 +243,8 @@ sub recall : Callback {
             $start_desk->save;
             log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
             log_event('formatting_checkout', $fa);
-            my $b = Bric::Util::Burner->new({user_id => get_user_id()});
-            $b->deploy($fa);
+            my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
+            $sb->deploy($fa);
 
         } else {
             add_msg('Permission to checkout "[_1]" denied.', $fa->get_name);
@@ -273,8 +273,8 @@ sub checkout : Callback {
             $t_obj->checkout({ user__id => get_user_id() });
             $t_obj->save;
             log_event("formatting_checkout", $t_obj);
-            my $b = Bric::Util::Burner->new({user_id => get_user_id() });
-            $b->deploy($t_obj);
+            my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
+            $sb->deploy($t_obj);
         } else {
             add_msg('Permission to checkout "[_1]" denied.', $t_obj->get_file_name);
         }
