@@ -136,7 +136,7 @@ if ($at->is_related_media) {
     my $key =  $widget . '|' . $dt->get_id;
 
     # Get the value.
-    $vals->{value} = $dt->get_data;
+    $vals->{value} = $dt->get_data(ISO_8601_FORMAT);
     $vals->{value} = $vals->{props}{value} unless defined $vals->{value};
     if ($vals->{props}{type} eq 'checkbox') {
 	$vals->{props}{chk} = $vals->{value};
