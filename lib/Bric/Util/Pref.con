@@ -1,8 +1,8 @@
 --
 -- Project: Bricolage Business API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:24 $
+-- $Date: 2001-10-09 20:48:55 $
 -- Author: David Wheeler <david@wheeler.net>
 
 
@@ -26,10 +26,4 @@ ALTER TABLE    pref_member
 ADD CONSTRAINT fk_member__pref_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
-/*
-Change Log:
-$Log: Pref.con,v $
-Revision 1.1  2001-09-06 21:55:24  wheeler
-Initial revision
 
-*/

@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-10-05 20:07:16 $
+$Date: 2001-10-09 20:48:53 $
 
 =head1 INTRODUCTION
 
@@ -389,12 +389,5 @@ Bric::Biz::Asset::Business::Parts::Tile(7),
 Bric::Biz::Asset::Business::Parts::Tile::Data(8),
 Bric::Biz::Asset::Business::Parts::Tile::Container(9),
 Bric::Util::Burner(10)
-
-=head1 REVISION HISTORY
-
-$Log: AdvTemplates.pod,v $
-Revision 1.5  2001-10-05 20:07:16  samtregar
-Merged changes from Release_1_0
-
 
 =cut

@@ -1,14 +1,14 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:52 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
 -- -----------------------------------------------------------------------------
 -- Attribute.con
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
 
 /* Commented out because attr_person won't be used in production (in this version).
@@ -38,10 +38,4 @@ ALTER TABLE attr_person_meta ADD
 
 */
 
-/*
-Change Log:
-$Log: Attribute.con,v $
-Revision 1.1  2001-09-06 21:54:52  wheeler
-Initial revision
 
-*/

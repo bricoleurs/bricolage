@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:53:58 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -37,10 +37,4 @@ ALTER TABLE attr_at_data_meta ADD
     REFERENCES attr_at_data(id) ON DELETE CASCADE;
 
 
-/*
-Change Log:
-$Log: Data.con,v $
-Revision 1.1  2001-09-06 21:53:58  wheeler
-Initial revision
 
-*/

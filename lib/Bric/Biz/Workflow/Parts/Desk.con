@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:15 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 
@@ -31,10 +31,3 @@ ALTER TABLE    desk_member
 ADD CONSTRAINT fk_member__desk_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
-/*
-Change Log:
-$Log: Desk.con,v $
-Revision 1.1  2001-09-06 21:54:15  wheeler
-Initial revision
-
-*/

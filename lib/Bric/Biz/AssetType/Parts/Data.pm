@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-10-09 20:48:54 $
 
 
 =head1 SYNOPSIS
@@ -1370,15 +1370,6 @@ michael soderstrom ( miraso@pacbell.net )
 =head1 SEE ALSO
 
 L<perl>,L<Bric>,L<Bric::Biz::Asset::Business::Story>,L<Bric::Biz::AssetType>,
-
-=head1 REVISION HISTORY
-
-$Log: Data.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:54:00  wheeler
-Upload to SourceForge.
 
 =cut
 

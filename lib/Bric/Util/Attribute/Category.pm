@@ -8,15 +8,15 @@ Bric::Util::Attribute::Category - Groups of Bric::Biz::Category objects.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:39 $
+$Date: 2001-10-09 20:48:55 $
 
 =head1 SYNOPSIS
 
@@ -180,11 +180,5 @@ Bricolage Engineering
 =head1 SEE ALSO
 
 L<perl>, L<Bric>, L<Bric::Util::Attribute>, L<Bric::Biz::Category>
-
-=head1 REVISION HISTORY
-
-$Log: Category.pm,v $
-Revision 1.1  2001-09-06 21:55:39  wheeler
-Initial revision
 
 =cut

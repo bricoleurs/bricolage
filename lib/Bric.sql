@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:52:42 $
+-- $Date: 2001-10-09 20:48:53 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -19,10 +19,4 @@
 -- WITH     (iscachable);
 
 
-/*
-Change Log:
-$Log: Bric.sql,v $
-Revision 1.1  2001-09-06 21:52:42  wheeler
-Initial revision
 
-*/

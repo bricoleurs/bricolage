@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:53:58 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -99,10 +99,4 @@ CREATE INDEX fkx_media_instance__md_tile ON media_data_tile(object_instance_id);
 CREATE INDEX fkx_element__md_tile ON media_data_tile(element_data__id);
 CREATE INDEX fkx_sc_tile__md_tile ON media_data_tile(parent_id);
 
-/*
-Change Log:
-$Log: Data.sql,v $
-Revision 1.1  2001-09-06 21:53:58  wheeler
-Initial revision
 
-*/

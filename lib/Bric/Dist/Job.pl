@@ -184,9 +184,3 @@ if (my $err = $@) {
       ($err->get_payload || '') . "\n" : "$err\n";
 }
 
-__END__
-Change Log:
-$Log: Job.pl,v $
-Revision 1.1  2001-09-06 21:54:24  wheeler
-Initial revision
-

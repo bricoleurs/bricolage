@@ -1,14 +1,14 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:55 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
 -- -----------------------------------------------------------------------------
 -- Attribute.sql
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
 -- This SQL creates the tables necessary for the attribute object.  This file
 -- applies to attributes on the Bric::Person class.  Any other classes that 
@@ -119,10 +119,4 @@ CREATE INDEX fkx_attr_person__attr_person_meta ON attr_person_meta(attr__id);
 
 */
 
-/*
-Change Log:
-$Log: Attribute.sql,v $
-Revision 1.1  2001-09-06 21:54:55  wheeler
-Initial revision
 
-*/

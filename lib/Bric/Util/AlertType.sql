@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:48 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -80,10 +80,4 @@ CREATE INDEX fkx_alert_type__at_user__cont ON alert_type__usr__contact(alert_typ
 CREATE INDEX fkx_contact__at_usr__contact  ON alert_type__usr__contact(contact__id);
 CREATE INDEX fkx_usr__at_usr__contact ON alert_type__usr__contact(usr__id);
 
-/*
-Change Log:
-$Log: AlertType.sql,v $
-Revision 1.1  2001-09-06 21:54:48  wheeler
-Initial revision
 
-*/

@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for sending email.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:56:07 $
+$Date: 2001-10-09 20:48:56 $
 
 =head1 SYNOPSIS
 
@@ -1025,11 +1025,5 @@ File::Path(4),
 File::Basename(5),
 File::Find(6),
 File::Spec(7)
-
-=head1 REVISION HISTORY
-
-$Log: FS.pm,v $
-Revision 1.1  2001-09-06 21:56:07  wheeler
-Initial revision
 
 =cut

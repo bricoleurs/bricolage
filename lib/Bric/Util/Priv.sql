@@ -1,8 +1,8 @@
 --
 -- Project: Bricolage API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:33 $
+-- $Date: 2001-10-09 20:48:55 $
 -- Author: David Wheeler <david@wheeler.net>
 
 
@@ -163,10 +163,4 @@ CREATE TABLE usr_priv__grp_member(
 
 */
 
-/*
-Change Log:
-$Log: Priv.sql,v $
-Revision 1.1  2001-09-06 21:55:33  wheeler
-Initial revision
 
-*/

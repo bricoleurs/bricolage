@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2001-09-27 15:41:46 $
+-- $Date: 2001-10-09 20:48:53 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -63,17 +63,3 @@ CREATE INDEX idx_output_channel__file_ext ON output_channel(LOWER(file_ext));
 CREATE INDEX fkx_output_channel__oc_member ON output_channel_member(object_id);
 CREATE INDEX fkx_member__oc_member ON output_channel_member(member__id);
 
-/*
-Change Log:
-$Log: OutputChannel.sql,v $
-Revision 1.2  2001-09-27 15:41:46  wheeler
-Added filename and file_ext columns to OutputChannel API. Also added a
-configuration directive to CE::Config to specify the default filename and
-extension for the system. Will need to document later that these can be set, or
-move them into preferences. Will also need to use the filename and file_ext
-properties of Bric::Biz::OutputChannel in the Burn System.
-
-Revision 1.1.1.1  2001/09/06 21:53:28  wheeler
-Upload to SourceForge.
-
-*/

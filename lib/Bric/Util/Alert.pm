@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-26 14:54:23 $
+$Date: 2001-10-09 20:48:54 $
 
 =head1 SYNOPSIS
 
@@ -1379,18 +1379,6 @@ Bric (2)
 Bric::Util::AlertType(3)
 Bric::Util::EventType(4)
 Bric::Util::Event(5)
-
-=head1 REVISION HISTORY
-
-$Log: Alert.pm,v $
-Revision 1.2  2001-09-26 14:54:23  wheeler
-Fixed a bug where the wrong information was getting entered into the database
-regarding an alert. Instead of the contact type ID getting in, the contact value
-ID was getting in. This has been fixed, so now the proper contact type is always
-referenced, and the contact value is copied over.
-
-Revision 1.1.1.1  2001/09/06 21:54:43  wheeler
-Upload to SourceForge.
 
 =cut
 

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:00 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -43,10 +43,3 @@ CREATE UNIQUE INDEX udx_class__key_name ON class(LOWER(key_name));
 CREATE UNIQUE INDEX udx_class__pkg_name ON class(LOWER(pkg_name));
 CREATE UNIQUE INDEX udx_class__disp__name ON class(LOWER(disp_name));
 
-/*
-Change Log:
-$Log: Class.sql,v $
-Revision 1.1  2001-09-06 21:55:00  wheeler
-Initial revision
-
-*/

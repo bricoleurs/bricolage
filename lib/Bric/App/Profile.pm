@@ -7,15 +7,15 @@ CE::App::Profile.pm
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-10-09 20:48:53 $
 
 =head1 SYNOPSIS
 
@@ -261,14 +261,5 @@ dave@creationengines.com
 =head1 SEE ALSO
 
 [Mention resources, related modules, etc]
-
-=head1 REVISION HISTORY
-
-$Log: Profile.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:01  wheeler
-Upload to SourceForge.
 
 =cut

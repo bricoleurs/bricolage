@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.7 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.8 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-05 20:07:16 $
+$Date: 2001-10-09 20:48:53 $
 
 =head1 SYNOPSIS
 
@@ -2110,13 +2110,5 @@ michael soderstrom - miraso@pacbell.net
 =head1 SEE ALSO
 
 L<Bric>, L<Bric::Biz::Asset>
-
-=head1 REVISION HISTORY
-
-$Log: Formatting.pm,v $
-Revision 1.7  2001-10-05 20:07:16  samtregar
-Merged changes from Release_1_0
-
-
 
 =cut

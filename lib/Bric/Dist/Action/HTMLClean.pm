@@ -6,16 +6,16 @@ Bric::Dist::Action::HTMLClean - Class to Clean up and reformat HTML files.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:40 $
+$Date: 2001-10-09 20:48:54 $
 
 =head1 SYNOPSIS
 
@@ -241,12 +241,6 @@ David Wheeler <david@wheeler.net>
 perl(1),
 Bric (2),
 Bric::Dist::Action(3)
-
-=head1 REVISION HISTORY
-
-$Log: HTMLClean.pm,v $
-Revision 1.1  2001-09-06 21:54:40  wheeler
-Initial revision
 
 =cut
 

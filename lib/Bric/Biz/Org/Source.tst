@@ -1,9 +1,9 @@
 
 -- Project:      Bricolage Business API
 -- File:    Source.tst
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:08 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Author: David Wheeler <david@wheeler.net>
 
 
@@ -63,10 +63,4 @@ VALUES (17, 7, 435);
 
 
 
-/*
-Change Log:
-$Log: Source.tst,v $
-Revision 1.1  2001-09-06 21:54:08  wheeler
-Initial revision
 
-*/

@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    ServerType.sql
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:38 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -80,10 +80,4 @@ CREATE INDEX fkx_dest__dest_member ON dest_member(object_id);
 CREATE INDEX fkx_member__dest_member ON dest_member(member__id);
 
 
-/*
-Change Log:
-$Log: ServerType.sql,v $
-Revision 1.1  2001-09-06 21:54:38  wheeler
-Initial revision
 
-*/

@@ -50,10 +50,3 @@ if (my $err = $@) {
       . "\n" : "$err\n";
 }
 
-__END__
-Change Log:
-$Log: ActionType.pl,v $
-Revision 1.1  2001-09-06 21:54:21  wheeler
-Initial revision
-
-Revision 1.8.2.2  2001/09/05 19:00:36  david

@@ -1,9 +1,9 @@
 
 -- Project:      Bricolage Business API
 -- File:    Org.tst
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:53:26 $
+-- $Date: 2001-10-09 20:48:53 $
 -- Author: David Wheeler <david@wheeler.net>
 
 INSERT INTO org (id, name, long_name, active)
@@ -96,10 +96,4 @@ VALUES (714, 3, 3, 1);
 INSERT INTO org_member (id, object_id, member__id)
 VALUES (21, 11, 714); 
 
-/*
-Change Log:
-$Log: Org.tst,v $
-Revision 1.1  2001-09-06 21:53:26  wheeler
-Initial revision
 
-*/

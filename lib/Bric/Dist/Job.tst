@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Job.tst
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:27 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 DELETE FROM job;
@@ -45,10 +45,4 @@ VALUES (2, 2, 725);
 --VALUES (2, 2);
 
 
-/*
-Change Log:
-$Log: Job.tst,v $
-Revision 1.1  2001-09-06 21:54:27  wheeler
-Initial revision
 
-*/

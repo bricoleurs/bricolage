@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-17 16:19:43 $
+$Date: 2001-10-09 20:48:53 $
 
 =head1 SYNOPSIS
 
@@ -2136,19 +2136,6 @@ michael soderstrom - miraso@pacbell.net
 =head1 SEE ALSO
 
 L<Bric>, L<Bric::Biz::Asset>
-
-=head1 REVISION HISTORY
-
-$Log: Business.pm,v $
-Revision 1.3  2001-09-17 16:19:43  wheeler
-Corrected spelling of "contributor" but grepping through files and fixing them,
-plus deleting some files, renaming them, and then adding them back in.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:38  wheeler
-Upload to SourceForge.
 
 =cut
 

@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-13 16:55:19 $
+$Date: 2001-10-09 20:48:54 $
 
 =head1 SYNOPSIS
 
@@ -1833,18 +1833,6 @@ Bricolage Engineering
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
 L<Bric::Biz::Asset::Business::Parts::Tile>
-
-=head1 REVISION HISTORY
-
-$Log: Container.pm,v $
-Revision 1.3  2001-09-13 16:55:19  samtregar
-Fixed two bugs - category_id is really category__id and user__id can be 0
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:56  wheeler
-Upload to SourceForge.
 
 =cut
 

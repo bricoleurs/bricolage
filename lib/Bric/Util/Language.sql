@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:20 $
+-- $Date: 2001-10-09 20:48:55 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -41,10 +41,3 @@ CREATE UNIQUE INDEX udx_language__name ON language(LOWER(name));
 */
 
 
-/*
-Change Log:
-$Log: Language.sql,v $
-Revision 1.1  2001-09-06 21:55:20  wheeler
-Initial revision
-
-*/

@@ -6,16 +6,16 @@ Bric::App::ReqCache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-10-09 20:48:53 $
 
 =head1 SYNOPSIS
 
@@ -327,14 +327,5 @@ Bric (2),
 Bric::App::Cache(3),
 Bric::App::Session(4),
 Apache::Session(5)
-
-=head1 REVISION HISTORY
-
-$Log: ReqCache.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:01  wheeler
-Upload to SourceForge.
 
 =cut

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:11 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -87,10 +87,3 @@ CREATE SEQUENCE seq_addr_part START 1024;
 CREATE SEQUENCE seq_addr_part_type START 1024;
 
 
-/*
-Change Log:
-$Log: Addr.sql,v $
-Revision 1.1  2001-09-06 21:54:11  wheeler
-Initial revision
-
-*/

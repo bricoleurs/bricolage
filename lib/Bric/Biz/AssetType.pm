@@ -8,16 +8,16 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-28 08:24:09 $
+$Date: 2001-10-09 20:48:53 $
 
 =head1 SYNOPSIS
 
@@ -2741,18 +2741,6 @@ michael soderstrom ( miraso@pacbell.net )
 =head1 SEE ALSO
 
 L<perl>,L<Bric>,L<Bric::Biz::Asset>
-
-=head1 REVISION HISTORY
-
-$Log: AssetType.pm,v $
-Revision 1.3  2001-09-28 08:24:09  wheeler
-Updated the meta attributes of autopopulated fields.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:14  wheeler
-Upload to SourceForge.
 
 =cut
 

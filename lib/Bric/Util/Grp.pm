@@ -7,15 +7,15 @@ Bric::Util::Grp - A Class for associating Objects
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:18 $
+$Date: 2001-10-09 20:48:55 $
 
 =head1 SYNOPSIS
 
@@ -3251,11 +3251,5 @@ michael soderstrom ( miraso@pacbell.net )
 
 
 L<Bric.pm>,L<Bric::Util::Grp::Parts::Member>
-
-=head1 REVISION HISTORY
-
-$Log: Grp.pm,v $
-Revision 1.1  2001-09-06 21:55:18  wheeler
-Initial revision
 
 =cut

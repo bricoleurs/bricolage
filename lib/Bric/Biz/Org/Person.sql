@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:05 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -39,10 +39,3 @@ CREATE INDEX fdx_org__person_org ON person_org(org__id);
 
 CREATE SEQUENCE seq_person_org START 1024;
 
-/*
-Change Log:
-$Log: Person.sql,v $
-Revision 1.1  2001-09-06 21:54:05  wheeler
-Initial revision
-
-*/

@@ -1,14 +1,14 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:56:01 $
+-- $Date: 2001-10-09 20:48:56 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
 -- -----------------------------------------------------------------------------
 -- Member.sql
 -- 
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
 -- The member table and the tables that map member back to their respective 
 -- objects. The member table contains an id and a group id. The table that 
@@ -51,10 +51,4 @@ CREATE INDEX fkx_grp__grp_member ON grp_member(object_id);
 CREATE INDEX fkx_member__grp_member ON grp_member(member__id);
 
 
-/*
-Change Log:
-$Log: Grp_Member.sql,v $
-Revision 1.1  2001-09-06 21:56:01  wheeler
-Initial revision
 
-*/

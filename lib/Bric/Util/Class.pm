@@ -7,15 +7,15 @@ Bric::Util::Class - A module to provide access to the class table
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:59 $
+$Date: 2001-10-09 20:48:54 $
 
 =head1 SYNOPSIS
 
@@ -610,11 +610,5 @@ Bricolage Engineering
 =head1 SEE ALSO
 
 L<perl>, L<Bric>
-
-=head1 REVISION HISTORY
-
-$Log: Class.pm,v $
-Revision 1.1  2001-09-06 21:54:59  wheeler
-Initial revision
 
 =cut

@@ -6,16 +6,16 @@ Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-27 10:35:25 $
+$Date: 2001-10-09 20:48:54 $
 
 =head1 SYNOPSIS
 
@@ -1247,21 +1247,6 @@ Bric (2)
 Bric::Util::AlertType(3)
 Bric::Util::EventType(4)
 Bric::Util::Event(5)
-
-=head1 REVISION HISTORY
-
-$Log: Alerted.pm,v $
-Revision 1.3  2001-09-27 10:35:25  wheeler
-Made timestamp the default sort field.
-
-Revision 1.2  2001/09/26 14:54:23  wheeler
-Fixed a bug where the wrong information was getting entered into the database
-regarding an alert. Instead of the contact type ID getting in, the contact value
-ID was getting in. This has been fixed, so now the proper contact type is always
-referenced, and the contact value is copied over.
-
-Revision 1.1.1.1  2001/09/06 21:54:50  wheeler
-Upload to SourceForge.
 
 =cut
 

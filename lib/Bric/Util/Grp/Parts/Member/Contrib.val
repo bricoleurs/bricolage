@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Grp.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:56:04 $
+-- $Date: 2001-10-09 20:48:56 $
 
 -- Create the 'Bio' attribute.
 INSERT INTO attr_grp (id, subsys, name, sql_type, active)
@@ -43,10 +43,3 @@ VALUES (1, 39, 1, 1);
 INSERT INTO attr_grp_val(id, object__id, attr__id, active)
 VALUES (2, 40, 1, 1);
 
-/*
-Change Log:
-$Log: Contrib.val,v $
-Revision 1.1  2001-09-06 21:56:04  wheeler
-Initial revision
-
-*/

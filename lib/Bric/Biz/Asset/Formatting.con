@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:53:38 $
+-- $Date: 2001-10-09 20:48:53 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -74,10 +74,4 @@ ALTER TABLE attr_formatting_meta ADD
     REFERENCES attr_formatting(id) ON DELETE CASCADE;
 
 
-/*
-Change Log:
-$Log: Formatting.con,v $
-Revision 1.1  2001-09-06 21:53:38  wheeler
-Initial revision
 
-*/

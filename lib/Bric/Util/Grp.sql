@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:18 $
+-- $Date: 2001-10-09 20:48:55 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -49,10 +49,4 @@ CREATE INDEX fkx_grp__grp ON grp(parent_id);
 CREATE INDEX fkx_class__grp ON grp(class__id);
 
 
-/*
-Change Log:
-$Log: Grp.sql,v $
-Revision 1.1  2001-09-06 21:55:18  wheeler
-Initial revision
 
-*/

@@ -8,15 +8,15 @@ Bric::Util::Trans::Jabber - Utility class for sending instant messages.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:56:05 $
+$Date: 2001-10-09 20:48:56 $
 
 =head1 SYNOPSIS
 
@@ -425,11 +425,5 @@ David Wheeler <david@wheeler.net>
 perl(1),
 Bric (2),
 Net::Jabber(3)
-
-=head1 REVISION HISTORY
-
-$Log: Jabber.pm,v $
-Revision 1.1  2001-09-06 21:56:05  wheeler
-Initial revision
 
 =cut

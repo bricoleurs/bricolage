@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- ATType.val
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
 -- This is the SQL that will create initial value for the at_type table
 --
@@ -79,10 +79,3 @@ VALUES (427, 28, 37, 1);
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES (7, 7, 427); 
 
-/*
-Change Log:
-$Log: ATType.val,v $
-Revision 1.1  2001-09-06 21:53:05  wheeler
-Initial revision
-
-*/

@@ -1,16 +1,9 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:53:23 $
+-- $Date: 2001-10-09 20:48:53 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
 -- No contraints on org.
 
-/*
-Change Log:
-$Log: Org.con,v $
-Revision 1.1  2001-09-06 21:53:23  wheeler
-Initial revision
-
-*/

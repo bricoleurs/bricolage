@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:08 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -26,10 +26,3 @@ ADD CONSTRAINT fk_person_org__pers_org_addr FOREIGN KEY (person_org__id)
 REFERENCES     person_org(id) ON DELETE CASCADE;
 
 
-/*
-Change Log:
-$Log: Addr.con,v $
-Revision 1.1  2001-09-06 21:54:08  wheeler
-Initial revision
-
-*/

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:56:03 $
+-- $Date: 2001-10-09 20:48:56 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -29,10 +29,4 @@ ALTER TABLE attr_member_meta ADD
     REFERENCES attr_member(id) ON DELETE CASCADE;
 
 
-/*
-Change Log:
-$Log: Member_Attr.con,v $
-Revision 1.1  2001-09-06 21:56:03  wheeler
-Initial revision
 
-*/

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:19 $
+-- $Date: 2001-10-09 20:48:55 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -111,10 +111,4 @@ CREATE INDEX idx_attr_grp_meta__name ON attr_grp_meta(LOWER(name));
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_grp__attr_grp_meta ON attr_grp_meta(attr__id);
 
-/*
-Change Log:
-$Log: Grp_Attr.sql,v $
-Revision 1.1  2001-09-06 21:55:19  wheeler
-Initial revision
 
-*/

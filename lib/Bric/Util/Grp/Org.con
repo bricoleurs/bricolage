@@ -1,7 +1,7 @@
 -- Project: Bricolage Business API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:56 $
+-- $Date: 2001-10-09 20:48:56 $
 -- Author: David Wheeler <david@wheeler.net>
 
 ALTER TABLE    org_member
@@ -12,11 +12,5 @@ ALTER TABLE    org_member
 ADD CONSTRAINT fk_member__org_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
-/*
-Change Log:
-$Log: Org.con,v $
-Revision 1.1  2001-09-06 21:55:56  wheeler
-Initial revision
 
-*/
 

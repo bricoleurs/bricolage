@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:14 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -60,10 +60,3 @@ ALTER TABLE usr ADD CONSTRAINT ck_usr__login
 CREATE INDEX idx_usr__login ON usr(LOWER(login));
 
 
-/*
-Change Log:
-$Log: User.sql,v $
-Revision 1.1  2001-09-06 21:54:14  wheeler
-Initial revision
-
-*/

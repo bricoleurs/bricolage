@@ -4,11 +4,11 @@ Bric::Alert - Bricolage Alert Management Guide.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:48 $
+$Date: 2001-10-09 20:48:53 $
 
 =head1 DESCRIPTION
 
@@ -328,11 +328,5 @@ perl(1),
 Bric (2),
 Bric::Util::AlertType(3),
 Bric::Util::Alert(4).
-
-=head1 REVISION HISTORY
-
-$Log: Alert.pod,v $
-Revision 1.1  2001-09-06 21:52:48  wheeler
-Initial revision
 
 =cut

@@ -8,16 +8,16 @@ package Bric::Group;
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:52 $
+$Date: 2001-10-09 20:48:53 $
 
 
 =head1 SYNOPSIS
@@ -671,11 +671,5 @@ __END__
 =head1 SEE ALSO
 
  Bric.pm
-
-=head1 REVISION HISTORY
-
-$Log: Group.pm,v $
-Revision 1.1  2001-09-06 21:52:52  wheeler
-Initial revision
 
 =cut

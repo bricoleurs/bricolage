@@ -36,9 +36,3 @@ if (my $err = $@) {
     }
 }
 
-__END__
-Change Log:
-$Log: Contrib.pl,v $
-Revision 1.1  2001-09-06 21:56:03  wheeler
-Initial revision
-

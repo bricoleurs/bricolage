@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:18 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -68,10 +68,3 @@ CREATE INDEX fkx_desk__desk_member ON desk_member(object_id);
 CREATE INDEX fkx_member__desk_member ON desk_member(member__id);
 
 
-/*
-Change Log:
-$Log: Desk.sql,v $
-Revision 1.1  2001-09-06 21:54:18  wheeler
-Initial revision
-
-*/

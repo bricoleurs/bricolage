@@ -7,15 +7,15 @@ Bric::Util::Fault::Error::Auth - Authentication Error
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:46 $
+$Date: 2001-10-09 20:48:55 $
 
 =head1 SYNOPSIS
 
@@ -166,11 +166,5 @@ matthew d. p. k. strelchun-lanier - matt@lanier.org
 =head1 SEE ALSO
 
 [Mention resources, related modules, etc]
-
-=head1 REVISION HISTORY
-
-$Log: Auth.pm,v $
-Revision 1.1  2001-09-06 21:55:46  wheeler
-Initial revision
 
 =cut

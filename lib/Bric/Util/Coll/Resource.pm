@@ -7,15 +7,15 @@ Bric::Util::Coll::Resource - Interface for managing collections of resources.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:43 $
+$Date: 2001-10-09 20:48:55 $
 
 =head1 SYNOPSIS
 
@@ -236,11 +236,5 @@ perl(1),
 Bric (2),
 Bric::Util::Coll(3),
 Bric::Dist::Resource(4),
-
-=head1 REVISION HISTORY
-
-$Log: Resource.pm,v $
-Revision 1.1  2001-09-06 21:55:43  wheeler
-Initial revision
 
 =cut

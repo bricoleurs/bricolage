@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:22 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -49,10 +49,4 @@ CREATE INDEX fkx_media_type__at_mt ON action_type__media_type(media_type__id);
 CREATE INDEX fkx_action_type__at_mt ON action_type__media_type(action_type__id);
 
 
-/*
-Change Log:
-$Log: ActionType.sql,v $
-Revision 1.1  2001-09-06 21:54:22  wheeler
-Initial revision
 
-*/

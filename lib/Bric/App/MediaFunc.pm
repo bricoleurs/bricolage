@@ -6,16 +6,16 @@ Bric::App::MediaFunc - Location for functions that query uploaded media files.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-03 19:32:14 $
+$Date: 2001-10-09 20:48:53 $
 
 =head1 SYNOPSIS
 
@@ -414,20 +414,5 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2)
-
-=head1 REVISION HISTORY
-
-$Log: MediaFunc.pm,v $
-Revision 1.3  2001-10-03 19:32:14  samtregar
-Fixed errors that caused the server not to start after the merge from
-Release_1_0.  It seems that these modules weren't returning true on
-compilation.  I don't know if this was a an artifact of the merge or
-indicative of a problem on the Release_1_0 branch.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:00  wheeler
-Upload to SourceForge.
 
 =cut

@@ -8,15 +8,15 @@ package Bric::Util::Attribute;
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-05 20:07:16 $
+$Date: 2001-10-09 20:48:54 $
 
 =head1 SYNOPSIS
 
@@ -1872,12 +1872,5 @@ NONE
 =head1 SEE ALSO
 
 L<perl>, L<Bric>, L<Bric::Util::Group>
-
-=head1 REVISION HISTORY
-
-$Log: Attribute.pm,v $
-Revision 1.3  2001-10-05 20:07:16  samtregar
-Merged changes from Release_1_0
-
 
 =cut

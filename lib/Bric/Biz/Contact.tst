@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Contact.tst
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:53:21 $
+-- $Date: 2001-10-09 20:48:53 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 --DELETE FROM map_contact_value;
@@ -103,10 +103,3 @@ INSERT INTO person__contact_value (person__id, contact_value__id)
 VALUES (5, 13);
 
 
-/*
-Change Log:
-$Log: Contact.tst,v $
-Revision 1.1  2001-09-06 21:53:21  wheeler
-Initial revision
-
-*/

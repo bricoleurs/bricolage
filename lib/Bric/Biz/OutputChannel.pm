@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - The manner of keeping track of output channels
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.8 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.9 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-05 20:07:16 $
+$Date: 2001-10-09 20:48:53 $
 
 =head1 SYNOPSIS
 
@@ -1141,13 +1141,6 @@ NONE
 
  L<perl>,L<Bric>,L<Bric::Biz::Asset::Business>,L<Bric::Biz::element>,
  L<Bric::Biz::Asset::Formatting> 
-
-=head1 REVISION HISTORY
-
-$Log: OutputChannel.pm,v $
-Revision 1.8  2001-10-05 20:07:16  samtregar
-Merged changes from Release_1_0
-
 
 =cut
 

@@ -100,9 +100,3 @@ eval {
 
 print "Error: $@", if $@
 
-__END__
-Change Log:
-$Log: MediaType.pl,v $
-Revision 1.1  2001-09-06 21:55:20  wheeler
-Initial revision
-

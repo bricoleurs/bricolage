@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:51 $
+-- $Date: 2001-10-09 20:48:55 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -23,10 +23,3 @@ REFERENCES     member(id) ON DELETE CASCADE;
 
 
 
-/*
-Change Log:
-$Log: ContribType.con,v $
-Revision 1.1  2001-09-06 21:55:51  wheeler
-Initial revision
-
-*/

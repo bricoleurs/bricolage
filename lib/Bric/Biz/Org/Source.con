@@ -1,8 +1,8 @@
 --
 -- Project: Bricolage Business API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:05 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Author: David Wheeler <david@wheeler.net>
 
 
@@ -11,10 +11,4 @@ ADD CONSTRAINT fk_org__source FOREIGN KEY (org__id)
 REFERENCES     org(id) ON DELETE CASCADE;
 
 
-/*
-Change Log:
-$Log: Source.con,v $
-Revision 1.1  2001-09-06 21:54:05  wheeler
-Initial revision
 
-*/

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:37 $
+-- $Date: 2001-10-09 20:48:55 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -36,10 +36,4 @@ CREATE INDEX idx_alert_type_rule__value ON alert_type_rule(LOWER(value));
 CREATE INDEX fkx_alert_type__at_rule ON alert_type_rule(alert_type__id);
 
 
-/*
-Change Log:
-$Log: Rule.sql,v $
-Revision 1.1  2001-09-06 21:55:37  wheeler
-Initial revision
 
-*/

@@ -1,8 +1,8 @@
 --
 -- Project: Bricolage API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:26 $
+-- $Date: 2001-10-09 20:48:55 $
 -- Author: David Wheeler <david@wheeler.net>
 
 
@@ -65,10 +65,4 @@ CREATE INDEX fkx_pref__pref_member ON pref_member(object_id);
 CREATE INDEX fkx_member__pref_member ON pref_member(member__id);
 
 
-/*
-Change Log:
-$Log: Pref.sql,v $
-Revision 1.1  2001-09-06 21:55:26  wheeler
-Initial revision
 
-*/

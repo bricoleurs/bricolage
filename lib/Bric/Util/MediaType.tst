@@ -1,18 +1,12 @@
 -- Project: Bricolage Business API
 -- File:    MeidiaType.tst
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:22 $
+-- $Date: 2001-10-09 20:48:55 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 -- No test values - there are plenty of default values to play with!
 
 
 
-/*
-Change Log:
-$Log: MediaType.tst,v $
-Revision 1.1  2001-09-06 21:55:22  wheeler
-Initial revision
 
-*/

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:56:03 $
+-- $Date: 2001-10-09 20:48:56 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -103,10 +103,4 @@ CREATE INDEX idx_attr_member_meta__name ON attr_member_meta(LOWER(name));
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_member__attr_member_meta ON attr_member_meta(attr__id);
 
-/*
-Change Log:
-$Log: Member_Attr.sql,v $
-Revision 1.1  2001-09-06 21:56:03  wheeler
-Initial revision
 
-*/

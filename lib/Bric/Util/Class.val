@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -229,10 +229,3 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES (71, 'perm', 'Bric::Util::Priv', 'Permission', 'Permissions', 'Permission objects', 0);
 
 
-/*
-Change Log:
-$Log: Class.val,v $
-Revision 1.1  2001-09-06 21:55:01  wheeler
-Initial revision
-
-*/

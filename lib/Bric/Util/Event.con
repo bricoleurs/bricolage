@@ -1,9 +1,9 @@
 --
 -- ER/Studio 4.0 SQL Code Generation
 -- Project:      Bricolage Business API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:05 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Target DBMS : Oracle 8
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -24,10 +24,4 @@ ADD CONSTRAINT fk_event_type_attr__event_attr FOREIGN KEY (event_type_attr__id)
 REFERENCES     event_type_attr(id) ON DELETE CASCADE;
 
 
-/*
-Change Log:
-$Log: Event.con,v $
-Revision 1.1  2001-09-06 21:55:05  wheeler
-Initial revision
 
-*/

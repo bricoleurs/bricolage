@@ -116,9 +116,3 @@ if (my $err = $@) {
     }
 }
 
-__END__
-Change Log:
-$Log: Source.pl,v $
-Revision 1.1  2001-09-06 21:54:05  wheeler
-Initial revision
-

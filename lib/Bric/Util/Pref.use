@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Pref.use
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:26 $
+-- $Date: 2001-10-09 20:48:55 $
 -- Author: David Wheeler <david@wheeler.net>
 
 SELECT p.id, p.name, p.description, p.value, p.def, o.value, o.description
@@ -20,10 +20,4 @@ UPDATE pref
 SET    value = 'UTC'
 WHERE  id = 1;
 
-/*
-Change Log:
-$Log: Pref.use,v $
-Revision 1.1  2001-09-06 21:55:26  wheeler
-Initial revision
 
-*/

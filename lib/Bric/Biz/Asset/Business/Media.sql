@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2001-09-17 16:19:43 $
+-- $Date: 2001-10-09 20:48:53 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -273,14 +273,4 @@ CREATE INDEX idx_attr_media_meta__name ON attr_media_meta(LOWER(name));
 CREATE INDEX fkx_attr_media__attr_media_meta ON attr_media_meta(attr__id);
 
 
-/*
-Change Log:
-$Log: Media.sql,v $
-Revision 1.2  2001-09-17 16:19:43  wheeler
-Corrected spelling of "contributor" but grepping through files and fixing them,
-plus deleting some files, renaming them, and then adding them back in.
 
-Revision 1.1.1.1  2001/09/06 21:53:46  wheeler
-Upload to SourceForge.
-
-*/

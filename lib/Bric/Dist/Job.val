@@ -1,16 +1,10 @@
 -- Project: Bricolage Business API
 -- File:    Job.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:27 $
+-- $Date: 2001-10-09 20:48:54 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 -- No default values for Job.
 
-/*
-Change Log:
-$Log: Job.val,v $
-Revision 1.1  2001-09-06 21:54:27  wheeler
-Initial revision
 
-*/

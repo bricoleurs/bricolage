@@ -6,16 +6,16 @@ Bric::Util::Grp::Media - Interface to Bric::Biz::Asset::Business::Media Groups.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:56 $
+$Date: 2001-10-09 20:48:56 $
 
 =head1 SYNOPSIS
 
@@ -259,12 +259,6 @@ perl(1),
 Bric (2),
 Bric::Biz::Asset::Business::Media(3)
 Bric::Util::Grp(4)
-
-=head1 REVISION HISTORY
-
-$Log: Media.pm,v $
-Revision 1.1  2001-09-06 21:55:56  wheeler
-Initial revision
 
 =cut
 
