@@ -118,7 +118,8 @@ $pkg => undef
 # Load some values.
 my $url       = $r->uri;
 my $object    = get_state_data($widget, 'object');
-my $sortBy    = get_state_data($widget, 'sortBy');
+my $sortBy    = get_state_data($widget, 'sortBy')
+  || get_state_data($widget, 'defaultSort');
 my $sort_col  = 0;
 
 # Figure out where we are.

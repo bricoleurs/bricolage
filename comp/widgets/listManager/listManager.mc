@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2001-12-10 21:39:21 $
+$Date: 2001-12-20 21:48:05 $
 
 =head1 SYNOPSIS
 
@@ -76,6 +76,17 @@ sortBy
 Provide the a default column by which to sort all the elements of the list.  If
 this argument is not passed the listManager will display the elements in the
 order they were returned by the objects 'list' function.
+
+=item *
+
+def_sort_field
+
+Use this only if you you don't pass sortBy and if you know that the objects will
+be returned from list (or are stored in the objs argument -- see below) in an
+order different that the default that will be returned by inspecting
+my_methds(). For example, if normally my_meths() says that the objects are
+sorted by name, but you're passing them via the objs argument in a different
+order, then specify which field defines that order here.
 
 =item *
 
@@ -332,25 +343,26 @@ $pkg->list({'name'        => $param->{'name_field'},
 
 <%args>
 $object                        # The object type to display
-$style         => 'full_list'  # The list style (full or paginated)
-$title         => 'Existing %n'# Text for the title of this list.
-$sortBy        => ''           # Default to sorting by ID
-$userSort      => 1            # A flag for whether the user can resort the list
-$profile       => ['Edit', ''] # URL to the profile for this object.
-$select        => ['Delete', ''] # Add a checkbox
-$addition      => ['Add', '']  # Label and URL for adding an object to the list
-$search_widget => 'search'     # Where to look for search criterion
-$fields        => undef
-$field_titles  => {}
-$field_values  => undef
-$constrain     => {}           # Always constrain the search on a set of params
-$behavior      => 'narrow'     # How this list behaves.
-$exclude       => undef           # Exclude certain objects from tjhe list.
-$alter         => {}           # Alter the data for one field
-$featured      => undef        # Make one row a featured row
-$featured_color=> '#cccc99'    # The color for the bkground of the featured row 
-$number        => 0            
-$objs          => undef        # These are user objects to be listed.
+$style          => 'full_list'  # The list style (full or paginated)
+$title          => 'Existing %n'# Text for the title of this list.
+$sortBy         => ''           # Default to sorting by ID
+$userSort       => 1            # A flag for whether the user can resort the list
+$profile        => ['Edit', ''] # URL to the profile for this object.
+$select         => ['Delete', ''] # Add a checkbox
+$addition       => ['Add', '']  # Label and URL for adding an object to the list
+$search_widget  => 'search'     # Where to look for search criterion
+$fields         => undef
+$field_titles   => {}
+$field_values   => undef
+$constrain      => {}           # Always constrain the search on a set of params
+$behavior       => 'narrow'     # How this list behaves.
+$exclude        => undef           # Exclude certain objects from tjhe list.
+$alter          => {}           # Alter the data for one field
+$featured       => undef        # Make one row a featured row
+$featured_color => '#cccc99'    # The color for the bkground of the featured row
+$number         => 0
+$objs           => undef        # These are user objects to be listed.
+$def_sort_field => undef
 </%args>
 
 <%init>
@@ -384,7 +396,8 @@ my %featured_lookup = map { ($_,1) } @$featured;
 #--------------------------------------#
 # Find constraint and list objects.
 
-my $list_arg = build_constraints($search_widget, $constrain, $meth, $sortBy);
+my $list_arg = build_constraints($search_widget, $constrain, $meth, $sortBy,
+				 $def_sort_field);
 my $param = {%$list_arg, %$constrain};
 
 # Load the user provided objects into the @objs array.
@@ -592,7 +605,7 @@ sub output_profile_controls {
 }
 
 sub build_constraints {
-    my ($search_widget, $constrain, $meth, $sortBy) = @_;
+    my ($search_widget, $constrain, $meth, $sortBy, $def_sort_field) = @_;
 
     # Only get the criterion if we are still on the same page where it was set.
     my $prev = get_state_data($search_widget, 'crit_set_uri') || '';
@@ -604,14 +617,16 @@ sub build_constraints {
     substr($cur, -1, 1)  = '' unless substr($cur, -1) ne '/';
 
     # Find the default search field.
-    my $def_search_field;
-    foreach my $f (keys %$meth) {
-	# Break out of the loop if we find the searchable field.
-	$def_search_field = $f and last if $meth->{$f}->{'search'};
+    unless ($def_sort_field) {
+        foreach my $f (keys %$meth) {
+	    # Break out of the loop if we find the searchable field.
+	    $def_sort_field = $f and last if $meth->{$f}->{'search'};
+	}
     }
 
     # Initialize the sort column with the default search field.
-    init_state_data($widget, 'sortBy', $sortBy || $def_search_field);
+    init_state_data($widget, 'sortBy', $sortBy);
+    set_state_data($widget, 'defaultSort', $def_sort_field);
 
     my $crit = $cur eq $prev ? get_state_data($search_widget, 'criterion')
                              : undef;
@@ -620,12 +635,12 @@ sub build_constraints {
 
     # If any criteria were passed then we need to constrain our list.
     if ($crit && $crit_field) {
-	# If field is an array, build a hash with the fields as the keys and 
+	# If field is an array, build a hash with the fields as the keys and
         # $crit for vals
 	if (ref $crit_field) {
 	    @{$list_arg}{@$crit_field} = @$crit;
 	} else {
-	    $crit_field = $def_search_field if $crit_field eq '_default';
+	    $crit_field = $def_sort_field if $crit_field eq '_default';
 	    $list_arg->{$crit_field} = $crit;
 	}
     }
