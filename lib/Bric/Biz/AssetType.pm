@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 22:18:43 $
+$Date: 2003-03-13 11:20:33 $
 
 =head1 SYNOPSIS
 
@@ -1778,9 +1778,14 @@ sub remove_sites {
     my $oces = $self->get_output_channels();
     my @delete_oc;
     for my $site (@$sites) {
+        my $site_id = (ref($site) ? $site->get_id : $site);
         foreach my $oce (@$oces) {
-            push @delete_oc, $oce
-              if ((ref($site) ? $site->get_id : $site) == $oce->get_site_id);
+            if ($site_id == $oce->get_site_id) {
+                push @delete_oc, $oce;
+                $self->set_primary_oc_id(undef, $oce->get_site_id)
+                  if ($self->get_primary_oc_id($site_id) == $oce->get_id);
+
+            }
         }
     }
     $self->delete_output_channels(\@delete_oc);
