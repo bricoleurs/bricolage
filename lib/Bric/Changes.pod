@@ -222,7 +222,7 @@ class' C<new()> constructor works again. Reported by Clive Jones. [David]
 
 =item *
 
-Added Localization support to widgets that were missing it. Added pt_pt 
+Added Localization support to widgets that were missing it. Added pt_pt
 localized images. [JoE<atilde>o Pedro]
 
 =item *
@@ -258,6 +258,12 @@ Cookie hash mismatch from [IP address] (Hostname '[hostname]') for user
 '[username].'
 
 =back
+
+=item *
+
+Elements added with the same name as an existing, active or inactive element
+no longer trigger an SQL error to be displayed. Thanks to Clive Jones for the
+spot! [David]
 
 =back
 
