@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-10-03 22:18:49 $
+$Date: 2003-10-10 10:21:49 $
 
 =head1 SYNOPSIS
 
@@ -218,7 +218,7 @@ my $len_sub = sub {
     my ($vals) = @_;
     my $max = $vals->{props}{maxlength};
     my $len = $vals->{props}{length} || 32;
-    return qq{ size="$len"} . ($max ? q{ maxlength="$max"} : '');
+    return qq{ size="$len"} . ($max ? qq{ maxlength="$max"} : '');
 };
 
 my $inpt_sub = sub {
