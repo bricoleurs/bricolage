@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2003-10-10 19:51:26 $
+$Date: 2003-10-11 02:15:22 $
 
 =head1 DESCRIPTION
 
@@ -123,7 +123,7 @@ sub create_bricolage_conf {
 sub set_bric_conf_var {
     my ($conf, $var, $val) = @_;
     return unless defined $val and $val ne '';
-    unless ($$conf =~ s/^(\s*$var\s+=\s*).*$/$1$val/mi) {
+    unless ($$conf =~ s/^\s*#?(\s*$var\s+=\s*).*$/$1$val/mi) {
         hard_fail("Unable to set bricolage.conf variable $var to \"$val\".");
     }
 }
