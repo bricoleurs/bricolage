@@ -409,7 +409,7 @@ my $check_syntax = sub {
 	# Add the global variables so we get no complaints about them
 	$code = '% my ($story, $burner, $element);'."\n$code";
 
-	my $c = $parser->make_element(script   => $code,
+	my $c = $parser->make_component(script   => $code,
 					error    => \$error) 
 	  or die "Template compile failed: $error\n";
     };
@@ -444,7 +444,10 @@ my $delete_fa = sub {
 
 <%doc>
 $Log: callback.mc,v $
-Revision 1.1  2001-09-06 21:52:32  wheeler
-Initial revision
+Revision 1.2  2001-09-13 16:53:32  samtregar
+Fixed apparent typo - there is no make_element in HTML::Mason::Parser.
+
+Revision 1.1.1.1  2001/09/06 21:52:32  wheeler
+Upload to SourceForge.
 
 </%doc>
