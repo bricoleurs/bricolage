@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.3.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.3.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 07:37:29 $
+$Date: 2003-09-11 00:00:59 $
 
 =head1 SYNOPSIS
 
@@ -88,6 +88,17 @@ BEGIN {
     foreach my $c (@classes) {
         eval "require $c";
         die "Error loading $c: $@" if $@;
+    }
+
+    # XXX Delete Bric::Util::DBI::_disconnect() unless we're running dev
+    # tests or arbitrary tests (in which case it's likely that database-
+    # specific tests are being run). This is to prevent `make test` from
+    # throwing an exception when it can't connect to the database in
+    # _disconnect().
+    unless ($ENV{BRIC_DEV_TEST} or $ENV{BRIC_TEST_CLASSES}) {
+        require Bric::Util::DBI;
+        no warnings 'redefine';
+        *Bric::Util::DBI::_disconnect = sub {};
     }
 }
 
