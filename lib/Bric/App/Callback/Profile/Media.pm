@@ -1,11 +1,5 @@
 package Bric::App::Callback::Profile::Media;
 
-# XXX: david msg
-# BTW, are you naming the new callback classes for these three callbacks
-# Callback::Profile::Story, Callback::Profile::Media, and
-# Callback::Profile::Template?
-# -- move under Profile
-
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'media_prof');
 use strict;
