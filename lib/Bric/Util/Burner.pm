@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 01:17:04 $
+$Date: 2003-09-18 06:21:08 $
 
 =head1 SYNOPSIS
 
@@ -122,7 +122,7 @@ use strict;
 # Programatic Dependencies
 
 use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
-                         isa_bric_exception);
+                         isa_bric_exception isa_exception);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST);
 use Bric::Biz::AssetType qw(:all);
@@ -846,8 +846,11 @@ sub preview {
     # it to be displayed properly in the error component. So pass the real
     # exception as the payload.
     rethrow_exception $err if isa_bric_exception $err, 'Exception::Burner';
-    throw_burn_error error   => $err->error,
-                     payload => $err,
+    my $pay = isa_bric_exception($err)
+      ? $err->payload
+      : undef;
+    throw_burn_error error   => (isa_exception($err) ? $err->error : $err),
+                     payload => $pay,
                      cat     => ($cat ? $cat->get_uri : ''),
                      mode    => PREVIEW_MODE,
                      oc      => $oc->get_name,
