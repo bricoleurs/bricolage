@@ -86,6 +86,11 @@ if ($param->{delete}) { # Deactivate it.
 		$param->{fb_vals} =~ s/\r/\n/g;
 		$param->{fb_vals} =~ s/\n{2,}/\n/g;
 		$param->{fb_vals} =~ s/\s*,\s*/,/g;
+		my $tmp;
+		foreach my $line (split /\n/, $param->{fb_vals}) {
+		    $tmp .= $line =~ /,/ ? "$line\n" : "$line,$line\n";
+		}
+		$param->{fb_vals} = $tmp;
 	    }
 
 	    # Record the metadata so we can properly display the form element.
@@ -134,11 +139,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:08 $
+$Date: 2001-10-05 15:28:20 $
 
 =head1 SYNOPSIS
 
@@ -151,7 +156,11 @@ processed was submitted from the User Profile page.
 
 =head1 REVISION HISTORY
 $Log: contrib_type.mc,v $
-Revision 1.1  2001-09-06 21:52:08  wheeler
-Initial revision
+Revision 1.1.1.1.2.1  2001-10-05 15:28:20  wheeler
+Changed formBuilder fields that accept multiple values (select lists, radio
+buttons, etc.) can take single values per line.
+
+Revision 1.1.1.1  2001/09/06 21:52:08  wheeler
+Upload to SourceForge.
 
 </%doc>
