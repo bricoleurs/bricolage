@@ -22,8 +22,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Eliminated "Use of uninitialized value in concatenation (.) or string" warning
-in Bric::SOAP::Handler. [David]
+Bric::SAOP::Handler now properly logs fatal errors that are strings rather than
+exceptions. [David]
 
 =back
 
