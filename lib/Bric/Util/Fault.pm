@@ -160,7 +160,7 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 #--------------------------------------#
 # Programatic Dependencies
-use overload q{""} => \&error_info;
+use overload q{""} => \&error_info, fallback => 1;
 use HTML::Mason::Exceptions ();
 
 #=============================================================================#
