@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.65 $
+$Revision: 1.66 $
 
 =head1 DATE
 
-$Date: 2002-07-06 00:25:49 $
+$Date: 2002-07-06 03:24:35 $
 
 =head1 DESCRIPTION
 
@@ -328,16 +328,26 @@ be added.
 
 Add keywords to media.  The underlying API and database changes are
 complete - all that is left to do is add the user-interface.
- 
+
 =item *
 
-Add new and/or custom form fields to the formBuilder (WHO request -- need more
-information on what exactly they want). One important example is a "Relational"
-option, where the user can specify a link to another object in Bricolage, pick a
-field name for that object, and have it appear in a select list. For some
-objects, they may wish to narrow the field some (such as with categories -- only
-list subcategories of a given category). Perhaps we can somehow allow them to
-pass in arguments to list()?
+Add a callback option to custom fields. This feature would allow custom Perl
+code to be associated with the field, and to be executed when the field is
+filled in by a user. This would perhaps be the best way to allow fields to be
+"customized," e.g., when a field needs to be looked up in another database via
+the DBI. Yes, this could be a security issue (a serious one!), but we put the
+onus on the Bricolage administrator to ensure that the people with access
+can't bollocks things up. We just have to make it difficult for people to hack
+in and exploit such a field.
+
+=item *
+
+Add a Relational custom field option. This field would allow a a link to be
+made to another arbitrary object in Bricolage. The custom field form would
+have a select list of Bricolage object names (e.g., Story, User, Output
+Channel, Event, etc.). When the user wishes to make the link, she's presented
+with a manager-type search interface from which to find a pick the object she
+wants.
 
 =item *
 
