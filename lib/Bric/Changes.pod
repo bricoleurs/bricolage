@@ -128,6 +128,14 @@ delimiters for another file system. Thanks to Mike Slattery for the spot.
 Required content fields in stories and elements are now displayed in the order
 specified in the Element profile. Thanks to Sam Tregar for the spot. [David]
 
+=item *
+
+All assets now start with the version number 0 until the first time they are
+checked in. Also, they will show up on desks and in the Find views after the
+first time they are saved. It was inconsistent before, and some items could not
+be seen in the desk and Find views until they were checked in. Thanks to Sam for
+spotting the inconsistency. [David]
+
 =back
 
 =head1 VERSION 1.2.0
