@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.12.2.1 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:23:17 $
+$Date: 2002-10-17 00:43:46 $
 
 =head1 INTRODUCTION
 
@@ -18,28 +18,6 @@ This document discusses some templating techniques that require existing
 knowledge of the Bricolage publishing system. The text and examples will assume
 the reader has already read and understood the first template document,
 'Producing Templates on the Bricolage System'.
-
-The topics discussed in this document will be:
-
-=over 4
-
-=item *
-
-Autohandler Templates
-
-=item *
-
-Multi-page stories
-
-=item *
-
-Multi-page stories using autohandlers
-
-=item *
-
-Including related stories and media
-
-=back
 
 =head1 AUTOHANDLER TEMPLATES
 
