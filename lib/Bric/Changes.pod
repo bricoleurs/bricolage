@@ -124,6 +124,12 @@ setting. Thanks to Sam Tregar for the spot. [David]
 The Element select list on the new Template profile no longer lists media
 elements, since media assets don't use templates. [David]
 
+=item *
+
+Removed old XML::Writer stuff from Bric::Util::Burner, since I moved it to
+Bric::Util::Burner::Mason a while ago and it was causing some problems. Thanks
+to Michael Robinton for the spot. [David]
+
 =back
 
 =head1 VERSION 1.2.1
