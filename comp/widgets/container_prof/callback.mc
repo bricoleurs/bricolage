@@ -81,8 +81,6 @@ my $pop_and_redirect = sub {
 	my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
 	my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
-	print STDERR "REDIR TO PARENT : $widget : $page : ", $r->uri, "\n";
-
 	#  Don't redirect if we're already at the right URI
 	set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
     }

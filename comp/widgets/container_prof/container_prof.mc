@@ -8,11 +8,11 @@ container_prof - The container profile editor.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:39 $
+$Date: 2002-02-05 20:45:40 $
 
 =head1 SYNOPSIS
 
@@ -53,8 +53,20 @@ set_state_data($widget, 'tile', $tile);
 set_state_data($widget, 'start', $start_count);
 my $state = get_state_name($widget);
 
-# Don't change the state unless $action isn't 'edit'.
-$state = $action unless $action eq 'edit';
+
+# Always set $state to $action
+$state = $action;
+
+# The old code here read:
+#
+#   # Don't change the state unless $action isn't 'edit'.
+#   $state = $action unless $action eq 'edit';
+# 
+# Note that the comment and the code diagree.  Also, this exception
+# was causing the container_prof code to occasionally show a view
+# screen rather than an edit screen.  Maybe there was a good reason
+# for this exception and the bug is really in another place in
+# container_prof?
 
 # Set the state name if it has not been set.
 $state = set_state_name($widget, $state || 'edit');
