@@ -83,7 +83,11 @@ while (fetch($oc_sel)) {
 	my $old_file = $fs->cat_dir(BURN_COMP_ROOT, $oc_dir, @old_dirs);
 	# Skip it unless it exists on the file system.
 	next unless -e $old_file;
+	# Get the new file name and directory name.
 	my $new_file = $fs->cat_dir(BURN_COMP_ROOT, $oc_dir, @dirs);
+	my $new_dir = $fs->dir_name($new_file);
+	# Create the new directory and move the file.
+	$fs->mk_path($new_dir);
 	$fs->move($old_file, $new_file);
 	# Make sure that the permissions are properly set.
 	chown SYS_USER, SYS_GROUP, $new_file;
