@@ -33,7 +33,7 @@ error. Reported by Christian Hauser. [David]
 =item *
 
 Errors in the C<PERL_LOADER> F<bricolage.conf> directive no longer silently
-fail. [David]
+fails. [David]
 
 =back
 
