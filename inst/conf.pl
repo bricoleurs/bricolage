@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-08-18 23:43:19 $
+$Date: 2002-08-21 20:18:34 $
 
 =head1 DESCRIPTION
 
@@ -194,7 +194,7 @@ sub create_httpd_conf {
     # up in the morning
     if ($AP->{dso}) {
 	my $dso_section = "# Load DSOs\n\n";
-	foreach my $mod (qw(perl rewrite proxy ssl log_config mime alias apache_ssl)) {
+	foreach my $mod (qw(perl log_config mime alias ssl apache_ssl)) {
 	    # static modules need no load
 	    next if exists $AP->{static_modules}{"mod_$mod"};
 	    next if $mod eq 'apache_ssl' && exists $AP->{static_modules}{apache_ssl};
