@@ -186,7 +186,6 @@ BEGIN {
                         _active           => Bric::FIELD_NONE,
                         _delete           => Bric::FIELD_NONE,
                         _notes            => Bric::FIELD_NONE,
-                        _desk_stamps      => Bric::FIELD_NONE,
                         _attribute_object => Bric::FIELD_NONE,
                         _attr_cache       => Bric::FIELD_NONE,
                         _update_attrs     => Bric::FIELD_NONE,
@@ -1176,42 +1175,6 @@ NONE
 =cut
 
 sub get_expire_date { local_date($_[0]->_get('expire_date'), $_[1]) }
-
-################################################################################
-
-=item $list or @list = $self->get_desk_stamps();
-
-This returns a reference to a list of desk stamps in scalar context
-or an array in array context
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE 
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_desk_stamps {
-    my ($self) = @_;
-    my $ds = $self->_get_attr_hash({ subsys => 'deskstamps' });
-
-    # This needs to be a numerical sort (perl defaults to a alphanumeric sort)
-    my @keys = sort {$a <=> $b} keys %$ds;
-
-    my (%dc, @desks);
-    foreach (@keys) {
-        push @desks, $dc{$ds->{$_}} ||=
-          Bric::Biz::Workflow::Parts::Desk->lookup({id => $ds->{$_}});
-    }
-    return wantarray ? @desks : \@desks;
-}
 
 ################################################################################
 

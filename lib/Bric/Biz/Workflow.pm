@@ -972,41 +972,6 @@ sub desk_in_required {
 
 #------------------------------------------------------------------------------#
 
-=item $bool = $flow->required_satisfied($asset_obj);
-
-Returns true if a assetref has been through all required desks.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-=cut
-
-sub required_satisfied {
-    my $self = shift;
-    my ($asset_obj) = @_;
-    my @stamps      = $asset_obj->get_desk_stamps;
-    my @req         = $self->required_desks;
-
-    # Load the stamps into a hash so they can be searched more quickly.
-    my %stamp_search = map { $_->get_id => 1 } @stamps;
-
-    # Look for each required desk.
-    foreach my $d (@req) {
-        return unless $stamp_search{$d->get_id};
-    }
-
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
 =item $desk = $flow->get_start_desk();
 
 =item ($flow || undef) = $flow->set_start_desk($desk_id);

@@ -152,6 +152,12 @@ and template classes. This parameter can be used to exclude one or more asset
 IDs from the list of objects returned by the call to C<list()> and friends.
 Suggested by Curtis Poe. [David]
 
+=item *
+
+The C<get_desk_stamps()> method in the asset classes has been removed (it was
+deprecated in Bricolage 1.8.4). The same goes for the C<required_satisfied()>
+method in Bric::Biz::Workflow. Thanks to Marshall Roch for the spot! [David]
+
 =back
 
 ##############################################################################
