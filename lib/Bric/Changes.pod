@@ -22,6 +22,11 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Fixed C<bric_soap> to accept a C<--server> argument starting with "https",
+which is more friendly to an SSI environment. [Geoff Richards]
+
+=item *
+
 The PostgreSQL admin username and password arguments were reversed during
 C<make upgrade>. [Thorston Biel]
 

@@ -341,7 +341,7 @@ die "The --chunks option only works with the Workflow publish command.\n"
 my $soap = new SOAP::Lite
     uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
     readable => $verbose > 2 || 0;
-$server = "http://$server" unless $server =~ m!^http://!;
+$server = "http://$server" unless $server =~ m!^https?://!;
 my $cookie_string;
 
 if  ($save_cookie) {
