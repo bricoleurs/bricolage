@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.96.2.1 $
+$Revision: 1.96.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-12 16:20:41 $
+$Date: 2003-03-21 01:15:22 $
 
 =head1 DESCRIPTION
 
@@ -303,11 +303,6 @@ filesystem.
 =head2 Low Priority Major Items
 
 =over 4
-
-=item *
-
-Add keywords to media. The underlying API and database changes are complete -
-all that is left to do is add the user-interface.
 
 =item *
 

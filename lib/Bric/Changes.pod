@@ -245,6 +245,10 @@ C<%HTML::Mason::Commands::session> hash. [Scott]
 Subelement can now nest. That is, they can contain themselves. Not in a story,
 of course, but in the document model (element administration). [David]
 
+=item *
+
+Keywords can now be associated with media assets. [David]
+
 =back
 
 =head2 Bug Fixes

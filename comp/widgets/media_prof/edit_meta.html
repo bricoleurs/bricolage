@@ -193,30 +193,59 @@ $m->comp('/widgets/profile/asset_ocs.mc',
 $m->out("$ieSpacer<br />\n");
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-         caption => "Contributors",
+         caption => "Associations",
          number => $num++);
 </%perl>
 
-
-<table border=0 cellpadding=0 cellspacing=0 width=578>
+<table border=0 width=578 cellpadding=0 cellspacing=0>
 <tr>
-  <td width=<% $infoIndent %> align="right"><span class=label><% $lang->maketext('Contributors') %>:</span></td>
-  <td width=<% 578 - $infoIndent - 70 %>>
+  <td width=120 align=right valign=top><span class=label><% $lang->maketext('Keywords') %>:&nbsp;</span></td>
+  <td width=378 valign=top>
 <%perl>
-my @existing_contribs = map { $_->get_name } $media->get_contributors;
-$m->out((scalar(@existing_contribs)) ? "&nbsp;" . join(", ", @existing_contribs) : "&nbsp;".$lang->maketext('No contributors defined'));
+my @keywords;
+foreach my $kw ($media->get_keywords) {
+    push @keywords, $kw->get_name;
+}
+
+$m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords defined."));
+
 </%perl>
   </td>
-  <td width=70><& '/widgets/profile/imageSubmit.mc',
-                  formName => "theForm",
-                  callback => $widget ."|contributors_cb",
-                  image    => "edit_lgreen",
-                  vspace   => 3
+  <td width=80 align="center" valign=top><& '/widgets/profile/imageSubmit.mc',
+             formName => "theForm",
+             callback => "$widget|keywords_cb",
+             image    => "edit_lgreen",
+             vspace   => 4
+&></td>
+</tr>
+</table>
+<table border=0 cellpadding=0 cellspacing=0 width=578>
+<tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
+</table>
+<table border=0 cellpadding=0 cellspacing=0 width=578>
+<tr>
+  <td align=right width=120 valign=top><span class=label><% $lang->maketext('Contributors') %>:&nbsp;</span></td>
+  <td width=378 valign=top>
+
+<%perl>
+my @contribs;
+foreach my $cntr ($media->get_contributors) {
+    push @contribs,  $cntr->get_name;
+}
+$m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
+
+</%perl>
+
+  </td>
+  <td width=80 align="center" valign=top><&
+  '/widgets/profile/imageSubmit.mc',
+    formName => "theForm",
+    callback => $widget . "|contributors_cb",
+    image    => "edit_lgreen",
+    vspace   => 3
   &></td>
 </tr>
 </table>
-
-
 <%perl>
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 

@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.7 $
+$Revision: 1.25.2.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-20 15:44:15 $
+$Date: 2003-03-21 01:15:22 $
 
 =head1 SYNOPSIS
 
@@ -1567,9 +1567,6 @@ B<Notes:> NONE.
 
 sub checkin {
     my $self = shift;
-
-    print STDERR Dumper($self);
-
     die Bric::Util::Fault::Exception::GEN->new
       ({ msg => "Cannot checkin non checked out versions" })
       unless $self->_get('checked_out');
