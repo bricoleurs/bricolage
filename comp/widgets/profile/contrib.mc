@@ -66,12 +66,26 @@ if ($param->{delete}) {
  	$obj->save;
 
 	# Update attributes.
+	# We'll need these to get the SQL type and max length of attributes.
+	my $all = $contrib->all_for_subsys;
+	my $mem_attr = Bric::Util::Attribute::Grp->new({ id => $contrib->get_grp_id,
+						         susbsys => '_MEMBER_SUBSYS' });
+
 	foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
-	    $contrib->set_attr( { subsys   => $param->{subsys},
-				  name     => $aname,
-				  value    => $param->{"attr|$aname"},
-				  sql_type => 'short'
-				});
+	    # Grab the SQL type.
+	    my $sqltype = $mem_attr->get_sqltype({ name => $aname,
+						   subsys => $param->{subsys} });
+
+	    # Truncate the value, if necessary.
+	    my $max = $all->{$aname}{meta}{maxlength}{value};
+	    my $value = $param->{"attr|$aname"};
+	    $value = substr($value, 0, $max) if $max && length $value > $max;
+
+	    # Set the attribute.
+	    $contrib->set_attr({ subsys   => $param->{subsys},
+				 name     => $aname,
+				 value    => $value,
+				 sql_type => $sqltype });
 	}
 
 	# Save the contributor
@@ -116,11 +130,11 @@ if ($param->{delete}) {
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.2 $
+$Revision: 1.1.1.1.2.3 $
 
 =head1 DATE
 
-$Date: 2001-10-11 20:38:36 $
+$Date: 2001-10-23 20:58:11 $
 
 =head1 SYNOPSIS
 

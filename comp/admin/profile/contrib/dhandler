@@ -236,9 +236,8 @@ my $showAttrs = sub {
     # end contact info
 
     # display attrs
-    $m->comp('/widgets/profile/hidden.mc',
-	     value => $subsys,
-	     name => 'subsys') unless $ro;
+    $m->comp('/widgets/profile/hidden.mc', value => $subsys, name => 'subsys')
+      unless $ro;
 
     # if this is a new extension, get the meta data from the default instance
     my $default = $contrib->all_for_subsys;
@@ -259,7 +258,7 @@ my $showAttrs = sub {
     if ($num_fields) {
 	# display attrs
 	$m->comp("/widgets/wrappers/sharky/table_top.mc",
-		 caption => $preCaption . " Fields",
+		 caption => $preCaption . " Custom Fields",
 		 number  => 3);
 	$m->comp("/widgets/profile/displayAttrs.mc",
 		 attr        => $attr,
@@ -336,11 +335,11 @@ my $stepOneOfTwo = sub {
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.3 $
+$Revision: 1.1.1.1.2.4 $
 
 =head1 DATE
 
-$Date: 2001-10-11 20:38:25 $
+$Date: 2001-10-23 20:58:11 $
 
 =head1 DESCRIPTION
 

@@ -87,8 +87,9 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 	    $no_save = 1;
 	} else {
 	    my $sqltype = $param->{fb_type} eq 'date' ? 'date'
-	      : $param->{fb_type} eq 'textarea' && $param->{fb_size} > 1024
-		? 'blob' : 'short';
+	      : $param->{fb_type} eq 'textarea'
+	      && (!$param->{fb_maxlength} || $param->{fb_maxlength} > 1024)
+	      ? 'blob' : 'short';
 
 	    my $value = $sqltype eq 'date' ? undef : $param->{fb_value};
 
@@ -190,11 +191,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.3 $
+$Revision: 1.1.1.1.2.4 $
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:03 $
+$Date: 2001-10-23 20:58:11 $
 
 =head1 SYNOPSIS
 
