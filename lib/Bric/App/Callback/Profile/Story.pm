@@ -262,7 +262,7 @@ sub cancel : Callback {
     add_msg($self->lang->maketext($msg, $arg));
 }
 
-sub workspace_return : Callback {
+sub return : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $version_view = get_state_data($widget, 'version_view');
