@@ -43,7 +43,7 @@ BEGIN {
 	require File::Spec::Functions;
 	my $lib =  File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib');
 	unshift @INC, $lib;
-	$ENV{PERL5LIB} = $lib;
+	$ENV{PERL5LIB} = defined $ENV{PERL5LIB} ? "$ENV{PERL5LIB}:$lib" : $lib;
 
 	# Try again.
 	eval { require Bric };
