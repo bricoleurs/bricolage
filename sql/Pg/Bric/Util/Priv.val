@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Priv.val
--- VERSION: $Revision: 1.2.4.1 $
+-- VERSION: $Revision: 1.2.4.2 $
 --
--- $Date: 2003-03-27 23:48:11 $
+-- $Date: 2003-04-01 04:36:56 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 /*
@@ -98,7 +98,7 @@ INSERT INTO grp_priv (id, grp__id, value)
 VALUES(36, 8, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-VALUES(36, 50);
+VALUES(36, 51);
 
 -- Give Media Producers EDIT rights to the Art desk.
 INSERT INTO grp_priv (id, grp__id, value)
@@ -133,7 +133,7 @@ INSERT INTO grp_priv (id, grp__id, value)
 VALUES(40, 9, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-VALUES(40, 51);
+VALUES(40, 52);
 
 -- Give Template Developers EDIT rights to the Development desk.
 INSERT INTO grp_priv (id, grp__id, value)
