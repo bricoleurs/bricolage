@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.32.2.1 $
+$Revision: 1.32.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.32.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 06:45:46 $
+$Date: 2003-03-05 22:37:36 $
 
 =head1 SYNOPSIS
 
@@ -70,8 +70,7 @@ use Carp qw(croak);
 
     # Load all modules to be used from elements.
     use Apache::Util qw(escape_html escape_uri);
-    use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa
-                        :search);
+    use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa);
     use Bric::Biz::Asset::Business::Media;
     use Bric::Biz::Asset::Business::Media::Audio;
     use Bric::Biz::Asset::Business::Media::Image;

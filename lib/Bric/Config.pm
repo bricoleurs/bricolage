@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.58 $
+$Revision: 1.58.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58 $ )[-1];
+our $VERSION = (qw$Revision: 1.58.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-12 15:52:53 $
+$Date: 2003-03-05 22:37:35 $
 
 =head1 SYNOPSIS
 
@@ -135,6 +135,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MANUAL_APACHE
                     ALLOW_WORKFLOW_TRANSFER
                     MOD_PERL
+                    ALLOW_ALL_SITES_CX
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -190,7 +191,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     char      => [qw(CHAR_SET)],
                     ui        => [qw(FIELD_INDENT
                                      DISABLE_NAV_LAYER
+                                     FULL_SEARCH
                                      ALLOW_WORKFLOW_TRANSFER
+                                     ALLOW_ALL_SITES_CX
                                      SERVER_WINDOW_NAME
                                      LANGUAGE
                                      NO_TOOLBAR)],
@@ -221,7 +224,6 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MANUAL_APACHE)],
                     media     => [qw(MEDIA_URI_ROOT
                                      MEDIA_FILE_ROOT)],
-                    search    => [qw(FULL_SEARCH)],
                     ftp       => [qw(ENABLE_FTP_SERVER
                                      FTP_PORT
                                      FTP_ADDRESS
@@ -294,8 +296,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         # While these default to 0.
         foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER MANUAL_APACHE
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
-                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER 
-                    ENABLE_WEBDAV_MOVER ALWAYS_USE_SSL ALLOW_WORKFLOW_TRANSFER))
+                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER
+                    ENABLE_WEBDAV_MOVER ALWAYS_USE_SSL ALLOW_WORKFLOW_TRANSFER
+                    ALLOW_ALL_SITES_CX))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -452,11 +455,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
     # UI Settings.
     use constant FIELD_INDENT => 125;
-    use constant DISABLE_NAV_LAYER => $config->{DISABLE_NAV_LAYER};
+    use constant DISABLE_NAV_LAYER       => $config->{DISABLE_NAV_LAYER};
     use constant ALLOW_WORKFLOW_TRANSFER => $config->{ALLOW_WORKFLOW_TRANSFER};
-
-    # Search Settings
-    use constant FULL_SEARCH => => $config->{FULL_SEARCH};
+    use constant ALLOW_ALL_SITES_CX      => $config->{ALLOW_ALL_SITES_CX};
+    use constant FULL_SEARCH =>          => $config->{FULL_SEARCH};
 
     # FTP Settings
     use constant ENABLE_FTP_SERVER => $config->{ENABLE_FTP_SERVER} || 0;

@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.95 $
+$Revision: 1.95.2.1 $
 
 =head1 DATE
 
-$Date: 2003-02-28 00:19:09 $
+$Date: 2003-03-05 22:37:35 $
 
 =head1 DESCRIPTION
 
@@ -1180,8 +1180,6 @@ passwords can be of infinite length. Defaults to "6" if not specified.
 
 =head2 L10N & I18N Configuration
 
-
-
 =over 4
 
 =item *
@@ -1217,25 +1215,6 @@ Italian.
 =back
 
 Defaults to "en_us" if not specified.
-
-=back
-
-=head2 Workflow Transfer Configuration
-
-This directive affects the transfer of assets across workflows in the
-Bricolage UI.
-
-=over 4
-
-=item *
-
-B<ALLOW_WORKFLOW_TRANSFER:> Allow assets to be transfered across workflows via
-shared desks. By default, a desk that is shared between workflows appears in
-both workflows, but any asset on that desk can only be transfered to other
-desks in the workflow from which the asset originated. To allow assets to
-optionally be able to move to desks in any of the workflows a desk is a member
-of, set this directive to "Yes", "On" or "1". Defaults to "Off" of not
-specified.
 
 =back
 
@@ -1331,6 +1310,46 @@ L<http://www.webdav.org/> for information on the WebDAV protocol.
 
 =back
 
+=head2 UI Configuration
+
+=over 4
+
+=item *
+
+B<DISABLE_NAV_LAYER:> Rather than have the UI's left side navigation menu
+rendered in its own separate layer, make it a part of the raw HTML of the page.
+This may be necessary if you encounter problems with the side navigation layer
+in your browser. Note that by setting this directive to a true value, any
+changes made to a form in the UI will be lost by clicking a menu item rather
+than the "Save" button. Defaults to "0" if not specified.
+
+=item *
+
+B<ALLOW_WORKFLOW_TRANSFER:> Allow assets to be transfered across workflows via
+shared desks. By default, a desk that is shared between workflows appears in
+both workflows, but any asset on that desk can only be transfered to other
+desks in the workflow from which the asset originated. To allow assets to
+optionally be able to move to desks in any of the workflows a desk is a member
+of, set this directive to "Yes", "On" or "1". Defaults to "Off" of not
+specified.
+
+=item *
+
+B<FULL_SEARCH:> Enables Bricolage to perform sub-string searches in its database
+queries, rather than merely to search at the beginning of a string. Full
+sub-string searches are more expensive, since they cannot use database indexes,
+but that may not matter if there are few records in your database. Many users
+find the sub-string searches to be more intuitive, so enable it if you find the
+trade-off to be worth it. Defaults to "Off" if not specified.
+
+=item *
+
+B<ALLOW_ALL_SITES_CX:> Allow users to select "All Sites" from their site
+context menu. This will enable them to see the workflows for all sites to
+which they have at least READ access. Defaults to "Off" of not specified.
+
+=back
+
 =head2 Alert Configuration
 
 The Bricolage alerting system allows users to receive notifications upon the
@@ -1371,21 +1390,6 @@ It might be worthwhile in a future version to allow Alert Type owners to set
 this themselves.
 
 =end comment
-
-=back
-
-=head2 Search Configuration
-
-=over 4
-
-=item *
-
-B<FULL_SEARCH:> Enables Bricolage to perform sub-string searches in its database
-queries, rather than merely to search at the beginning of a string. Full
-sub-string searches are more expensive, since they cannot use database indexes,
-but that may not matter if there are few records in your database. Many users
-find the sub-string searches to be more intuitive, so enable it if you find the
-trade-off to be worth it. Defaults to "Off" if not specified.
 
 =back
 
@@ -1494,21 +1498,6 @@ possibilities see the documentation for Net::FTPServer.
 Once the server is up and running connect to it with an FTP client and
 start editing templates. For more information see
 L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>.
-
-=head2 UI Configuration
-
-=over 4
-
-=item *
-
-B<DISABLE_NAV_LAYER:> Rather than have the UI's left side navigation menu
-rendered in its own separate layer, make it a part of the raw HTML of the page.
-This may be necessary if you encounter problems with the side navigation layer
-in your browser. Note that by setting this directive to a true value, any
-changes made to a form in the UI will be lost by clicking a menu item rather
-than the "Save" button. Defaults to "0" if not specified.
-
-=back
 
 =head1 DIRECTORY PERMISSIONS
 

@@ -43,7 +43,7 @@ unless ($user_sites) {
         }
 
         # Create an option for all available sites.
-        push @$user_sites, [0, 'All Sites'];
+        push @$user_sites, [0, 'All Sites'] if ALLOW_ALL_SITES_CX;
 
         # Save their list of site and their context.
         set_state_data($widget, $usites_key => $user_sites);
@@ -56,7 +56,7 @@ unless ($user_sites) {
 }
 
 # Do nothing if there are fewer than two sites for this user.
-return unless @$user_sites > 2;
+return unless @$user_sites > (ALLOW_ALL_SITES_CX ? 2 : 1);
 
 # Give 'em a select list.
 #$m->print($lang->maketext("[_1] Context", $disp_name), ': ');
@@ -79,11 +79,11 @@ $m->comp('/widgets/profile/select.mc',
 
 =head1 VERSION
 
-$Revision: 1.1.2.1 $
+$Revision: 1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-05 22:10:55 $
+$Date: 2003-03-05 22:37:34 $
 
 =head1 SYNOPSIS
 
