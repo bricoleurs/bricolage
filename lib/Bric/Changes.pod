@@ -73,6 +73,11 @@ Pedro]
 Fetching objects from Bric::Biz::Asset::Business::Media has been optimized for
 greater speed.. [JoE<atilde>o Pedro]
 
+=item *
+
+All Bricolage F<.pod> files are now installed and converted to C<man> pages
+along with all of the F<.pm> files. [David]
+
 =back
 
 =head1 VERSION 1.3.3
