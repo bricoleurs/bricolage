@@ -170,6 +170,12 @@ message, without causing an error. [Petar Bojkov]
 
 Fixed exception class name in Handler.pm. [Scott]
 
+=item *
+
+Fixed installation system bug caused by inst/conf.pl loading
+Bric::Config during "make install".  Thanks to Louis Moore for the
+report. [Sam]
+
 =back
 
 =head1 VERSION 1.4.4

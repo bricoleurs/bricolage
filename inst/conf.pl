@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.2.1 $
 
 =head1 DATE
 
-$Date: 2002-08-27 19:43:22 $
+$Date: 2002-11-13 20:23:23 $
 
 =head1 DESCRIPTION
 
@@ -49,14 +49,12 @@ do "./postgres.db" or die "Failed to read postgres.db : $!";
 our $REQ;
 do "./required.db" or die "Failed to read required.db : $!";
 
-# determine version being installed
-use lib './lib';
-require "lib/Bric.pm";
-our $VERSION = $Bric::VERSION;
-
 # check if we're upgrading
 our $UPGRADE;
 $UPGRADE = 1 if $ARGV[0] and $ARGV[0] eq 'UPGRADE';
+
+# get version from Makefile
+our $VERSION = $ARGV[1];
 
 print "\n\n==> Creating Bricolage Conf Files <==\n\n";
 
