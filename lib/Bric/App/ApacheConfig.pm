@@ -55,11 +55,16 @@ use Bric::App::Handler;
 use Bric::App::AccessHandler;
 use Bric::App::CleanupHandler;
 use Bric::App::Auth;
+use mod_perl;
 our %VirtualHost;
 
 our @NameVirtualHost = ([ NAME_VHOST . ':' . LISTEN_PORT ]);
 
 do {
+    # Set up string matching for mod_perl pre-1.27 bug. Perhaps after a while we
+    # can require 1.27 or later and remove this crap.
+    my $match = $mod_perl::VERSION < 1.27 ? '^' : '';
+
     # Set up the basic configuration.
     my %config = ( DocumentRoot       => MASON_COMP_ROOT->[0][1],
 		   ServerName         => VHOST_SERVER_NAME,
@@ -67,7 +72,9 @@ do {
 		   SetHandler         => 'perl-script',
 		   PerlHandler        => 'Bric::App::Handler',
 		   PerlAccessHandler  => 'Bric::App::AccessHandler',
-		   PerlCleanupHandler => 'Bric::App::CleanupHandler'
+		   PerlCleanupHandler => 'Bric::App::CleanupHandler',
+		   RedirectMatch      =>
+		     'permanent .*\/favicon\.ico$ /media/images/favicon.ico'
     );
 
     if (PREVIEW_LOCAL) {
@@ -78,13 +85,13 @@ do {
     }
 
     # This URI will handle logging users out.
-    my %locs = ('^/logout'  => {
+    my %locs = ("$match/logout"  => {
         PerlAccessHandler  => 'Bric::App::AccessHandler::logout_handler',
         PerlCleanupHandler => 'Bric::App::CleanupHandler'
     });
 
     # This URI will handle logging users in.
-    $locs{'^/login'} = {
+    $locs{"$match/login"} = {
         SetHandler         => 'perl-script',
         PerlAccessHandler  => 'Bric::App::AccessHandler::okay',
         PerlHandler        => 'Bric::App::Handler',
@@ -92,14 +99,14 @@ do {
     };
 
     # This URI will handle all non-Mason stuff that we server (graphics, etc.).
-    $locs{'^/media'} = {
+    $locs{"$match/media"} = {
         SetHandler         => 'default-handler',
         PerlAccessHandler  => 'Apache::OK',
         PerlCleanupHandler => 'Apache::OK'
     };
 
     # This will serve media assets and previews.
-    $locs{'^/data'} = { SetHandler => 'default-handler' };
+    $locs{"$match/data"} = { SetHandler => 'default-handler' };
 
     # This will run the SOAP server.
     $locs{'/soap'} = {
@@ -110,7 +117,7 @@ do {
 
     if (ENABLE_DIST) {
 	# This URI will run the distribution server.
-	$locs{'^/dist'} = {
+	$locs{"$match/dist"} = {
             SetHandler  => 'perl-script',
             PerlHandler => 'Bric::Dist::Handler'
         };
@@ -119,7 +126,7 @@ do {
     if (QA_MODE) {
 	# Turn on Perl warnings and run Apache::Status.
 	$config{PerlWarn} = 'On';
-	$locs{'^/perl-status'} = {
+	$locs{"$match/perl-status"} = {
             SetHandler         => 'perl-script',
             PerlHandler        => 'Apache::Status',
             PerlAccessHandler  => 'Apache::OK',
@@ -128,7 +135,7 @@ do {
     }
 
     if (PREVIEW_LOCAL) {
-	my $prev_loc = '^/' . join('/', PREVIEW_LOCAL);
+	my $prev_loc = "$match/" . join('/', PREVIEW_LOCAL);
 	if (PREVIEW_MASON) {
 	    # We need to take some special steps to ensure that Mason properly
 	    # handles the request.
@@ -152,7 +159,7 @@ do {
 	push @NameVirtualHost, [ NAME_VHOST . ':443' ];
 	my %ssl_config = (%config, SSLEngine => 'on');
 	my %ssl_locs = %locs;
-	$ssl_locs{'^/login'} = {
+	$ssl_locs{"$match/login"} = {
             SetHandler         => 'perl-script',
             PerlAccessHandler  => 'Bric::App::AccessHandler::okay',
             PerlHandler        => 'Bric::App::Handler',
