@@ -14,6 +14,28 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.6.1
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+C<make clone> now properly creates F<inst/Pg.sql> instead of
+F<inst/bricolage.sql>. It also once again properly resolves the circular
+dependency between the "usr" table and the C<login_avail()> PostgreSQL
+function. [David]
+
+=item *
+
+The FTP distributor now deletes existing copies of files before renaming a
+temporary file when connecting to Win32 servers. This is because the IIS FTP
+server doesn't seem to support renaming a file to the same name as an existing
+file. [David]
+
+=back
+
 =head1 VERSION 1.6.0
 
 =head2 New Features
