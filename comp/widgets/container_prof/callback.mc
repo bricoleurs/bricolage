@@ -627,14 +627,27 @@ my $super_save_data = sub {
     }
 
     # Delete any remaining tiles that haven't been filled.
-    foreach my $p (values %$tpool) {
+    while (my ($n,$p) = each %$tpool) {
         next unless $p and scalar(@$p);
 
         if ($p->[0]->is_container) {
-            my $name = $p->[0]->get_name;
-            add_msg("Note: Container element '$name' removed in bulk edit but ".
+            add_msg("Note: Container element '$n' removed in bulk edit but ".
                     "will not be deleted.");
+            # Put these container tiles back in the list
+            push @$dtiles, @$p;
             next;
+        } else {
+            my $atd = $at->get_data($n);
+
+            if ($atd->get_required) {
+                unless (grep { $_ eq $n } map {my $n = lc($_->get_name);
+                                               $n =~ y/a-z0-9/_/cs;
+                                               $n} @$dtiles) {
+                    add_msg("Note: Data element '$n' is required and cannot ".
+                            "be comletely removed.  Will delete all but one");
+                    push @$dtiles, shift @$p;
+                }
+            }
         }
         $tile->delete_tiles($p) if scalar(@$p);
     }
@@ -773,21 +786,35 @@ my $split_super_bulk = sub {
     # Check each line of the text
     my @chunks;
     my %seen;
-    foreach my $l (split(/[\n\r]/, $text)) {
+    my $blanks = 0;
+
+    foreach my $l (split(/\r?\n/, $text)) {
         chomp($l);
 
         # See if we have a blank line
         if ($l =~ /^\s*$/) {
-            # If we have any accumulated text, then save it off
-            if ($acc) {
+            $blanks++;
+
+            # If we have any accumulated text or if we have more than two
+            # blank lines in a row, then save it off
+            if ($acc or ($blanks > 1)) {
                 $type = $def_field if not $type;
                 push @chunks, [$type, $acc];
                 $acc  = '';
                 $type = '';
+                $blanks = 0;
             }
         }
         # This line starts with a '=' marking a new element
         elsif ($l =~ /^=(\S+)\s*$/) {
+            # If someone neglects to add a double space after a data element
+            # with no content, make sure not to delete that element.  We can
+            # only do this when the two fields involved are not the default
+            # field and are explicitly listed using the '=tag' syntax.
+            if ($type) {
+                push @chunks, [$type, $acc];
+            }
+
             $type = $1;
 
             # See if this field is repeatable.
@@ -822,18 +849,22 @@ my $split_super_bulk = sub {
                 $acc  = '';
                 $type = '';
             }
+
+            $blanks = 0;
         }
         # Nothing special about this line, push it into the accumulator
         else {
             $type ||= $def_field || $chunks[-1]->[0];
             $acc .= $l;
+
+            $blanks = 0;
         }
     }
 
     # Add any leftover data
-    if ($acc) {
+    if ($acc or $type) {
         $type = $def_field if not $type;
-        
+
         push @chunks, [$type, $acc];
     }
 

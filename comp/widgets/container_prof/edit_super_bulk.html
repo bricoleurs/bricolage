@@ -167,7 +167,8 @@ foreach my $t (@$data) {
     $name = $simple_name->($name);
 
     $text .= "=$name\n\n" unless $name eq $default_field;
-    $text .= "$data\n\n" if $data;
+    $text .= "$data\n" if $data;
+    $text .= "\n" unless $tile->get_container($name);
 }
 
 my ($i, $words, $bytes, @tmp);
