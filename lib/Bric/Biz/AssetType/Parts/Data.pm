@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.12.2.4 $
+$Revision: 1.12.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.5 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-14 21:08:47 $
+$Date: 2004-02-03 05:12:56 $
 
 
 =head1 SYNOPSIS
@@ -1518,10 +1518,10 @@ sub _select_data {
     my ($id) = @_;
     my @d;
     my $sql = 'SELECT '.join(',',COLS).' FROM '.TABLE.
-              ' WHERE id = ? AND active = ?';
+              ' WHERE id = ?';
 
     my $sth = prepare_ca($sql, undef);
-    execute($sth, $id, 1);
+    execute($sth, $id);
     bind_columns($sth, \@d[0..(scalar COLS - 1)]);
     fetch($sth);
     finish($sth);
