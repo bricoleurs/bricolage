@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.36.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.36.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:24 $
+$Date: 2003-03-03 01:14:23 $
 
 =head1 SYNOPSIS
 
@@ -2288,7 +2288,9 @@ B<Notes:> NONE.
 =cut
 
 $set_elem = sub {
-    my $init = shift;    if ($init->{element}) {
+    my $init = shift;
+
+    if ($init->{element}) {
         $init->{element__id} = $init->{element}->get_id;
     } elsif (defined $init->{element__id}) {
         $init->{element} =
@@ -2296,9 +2298,10 @@ $set_elem = sub {
     } else {
         die Bric::Util::Fault::Exception::DP->new
           ({ msg => "Missing required parameter 'element' or " .
-                    "'element__id'"});
+             "'element__id'"});
     }
-    return $init->{element}->get_name;
+
+    return $init->{element}->get_key_name;
 };
 
 =item my $name = $set_cat->($init)
