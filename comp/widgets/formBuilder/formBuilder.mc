@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2001-12-14 00:48:59 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -134,14 +134,14 @@ text_table    += "    <tr>"
 text_table    += '    <td valign=top width=170><span class=label>Name:</span><br />'
 text_table    += '    <input type=text name=fb_name size=20 <% $textStyle %>></td>'
 text_table    += '    <td valign=top width=160><span class=label>Size:</span><br />'
-text_table    += '    <input type=text name=fb_size value=32 size=3></td>'
+text_table    += '    <input type="text" name="fb_size" value="32" size="3"></td>'
 text_table    += "    </tr>"
 text_table    += "</table><table width=330 cellpadding=3>"
 text_table    += "    <tr><td valign=top width=170>"
 text_table    += '    <span class=label>Label:</span><br />'
 text_table    += '    <input type=text name=fb_disp size=20 <% $textStyle %>></td>'
 text_table    += '    <td valign=top width=160><span class=label>Maximum size:</span><br />'
-text_table    += '    <input type=text name=fb_maxlength value=32 size=3>'
+text_table    += '    <input type="text" name="fb_maxlength" value="32" size="3">'
 text_table    += "    </td></tr>"
 text_table    += "</table><table width=330 cellpadding=3>"
 text_table    += '    <tr><td>'
@@ -295,7 +295,7 @@ textarea_table     += '<input type=text name=fb_name></td>'
 textarea_table 	   += '<td valign=top><span class=label>Rows:</span><br>'
 textarea_table     += '<input type=text name=fb_rows value=4 size=3></td>'
 textarea_table 	   += '<td valign=top><span class=label>Max size:</span><br>'
-textarea_table     += '<input type=text name=fb_maxlength value=1024 size=4></td></tr>'
+textarea_table     += '<input type=text name=fb_maxlength value="0" size=4 /></td></tr>'
 textarea_table 	   += '<tr><td valign=top><span class=label>Label:</span><br>'
 textarea_table     += '<input type=text name=fb_disp></td>'
 textarea_table 	   += '<td valign=top><span class=label>Columns:</span><br>'
