@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-18 10:50:48 $
+$Date: 2004-02-18 11:39:28 $
 
 =head1 SYNOPSIS
 
@@ -1292,7 +1292,7 @@ $replace = sub {
     # Ah, it's an object property. So grab it from the object.
     my ($meth, $args) = @{$omeths}{'get_meth', 'get_args'};
     my $prop = &$meth($obj, @$args) || '';
-    if (UNIVERSAL::isa($prop, 'HASH')) {
+    if (UNIVERSAL::isa($prop, 'Bric')) {
         # If it's an object, like $category or $source,
         # return its name instead of a stringified hashref.
         $prop = $prop->get_name;
