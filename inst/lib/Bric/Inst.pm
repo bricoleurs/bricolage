@@ -10,7 +10,8 @@ $LastChangedRevision$
 
 =cut
 
-use Bric; our $VERSION = Bric->VERSION;
+# XXX: using Bric doesn't work before Bric is installed
+# use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
