@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-08 23:52:14 $
+$Date: 2002-07-15 19:48:29 $
 
 =head1 SYNOPSIS
 
@@ -1483,7 +1483,8 @@ sub deactivate {
     my $recurse = $param->{'recurse'};
 
     # Do not allow deactivation of the root category.
-    return if $self->get_id == ROOT_CATEGORY_ID;
+    my $id = $self->get_id;
+    return if !defined $id || $id == ROOT_CATEGORY_ID;
 
     $self->_set(['_active'], [0]);
 
@@ -1527,22 +1528,22 @@ sub save {
     my $id = $self->get_id;
     my ($a_obj, $cat_obj, $kw_obj);
 
-    if (!$self->get_directory && $id != ROOT_CATEGORY_ID) {
-        # Set a default directory name.
-        my $dir = $self->get_name;
-        $dir =~ y/[a-z]//cd if $dir;
-        
-        $self->set_directory(lc($dir));
-    }
+    my ($dir, $a_obj, $cat_obj) =
+      $self->_get(qw(directory _asset_grp_obj _category_grp_obj));
 
-    # Get object references.
-    ($a_obj, $cat_obj) = $self->_get(qw(_asset_grp_obj
-                                        _category_grp_obj));
+#    if (!$self->get_directory && $id != ROOT_CATEGORY_ID) {
+    unless (defined $dir && $dir ne '' ||
+            (defined $id && $id == ROOT_CATEGORY_ID)) {
+        # Set a default directory name.
+        my $dir = lc $self->get_name;
+        $dir =~ y/[a-z]//cd if $dir;
+        $self->set_directory($dir);
+    }
 
     # Save changes made to these objects if they exist.
     $cat_obj->save if $cat_obj;
     $a_obj->save   if $a_obj;
-    $kw_obj->save  if $kw_obj;
+#    $kw_obj->save  if $kw_obj;
 
     # Make sure the IDs are set.
     $self->_set(['category_grp_id'], [$cat_obj->get_id]) if $cat_obj;
