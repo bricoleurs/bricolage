@@ -85,11 +85,11 @@ the current version. [Scott]
 
 =item *
 
-Added Bric::Util::Job::Pub (and bric_queued). Publication can be placed into a
-queue, and deferred until a scheduled time. This along with the addition of a
-bric_queue daemon or the use of a carefully tuned instance of Bricolage allow
-the Bricolage administrator to control the amount of system resources given
-over to publishing. [Mark]
+Added Bric::Util::Job::Pub (and C<bric_queued>). Publication can now be placed
+into a queue and deferred until a scheduled time. Along with the addition of
+the C<bric_queue> daemon or the use of a carefully tuned instance of
+Bricolage, this change allows the Bricolage administrator to control the
+amount of system resources given over to publishing. [Mark]
 
 =item *
 
