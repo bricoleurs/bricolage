@@ -67,7 +67,9 @@ do {
 		   SetHandler         => 'perl-script',
 		   PerlHandler        => 'Bric::App::Handler',
 		   PerlAccessHandler  => 'Bric::App::AccessHandler',
-		   PerlCleanupHandler => 'Bric::App::CleanupHandler'
+		   PerlCleanupHandler => 'Bric::App::CleanupHandler',
+		   RedirectMatch      =>
+		     'permanent .*\/favicon\.ico$ /media/images/favicon.ico'
     );
 
     if (PREVIEW_LOCAL) {
