@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.24.2.3 $
+$Revision: 1.24.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-08 01:25:04 $
+$Date: 2002-11-13 22:29:12 $
 
 =head1 SYNOPSIS
 
@@ -308,44 +308,7 @@ classes even if it just calls 'die'.
 
 =cut
 
-sub list {
-    my $class = shift;
-    my ($param) = @_;
-    my ($ret, @objs);
-    my (@num, @txt);
-
-    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} :  1;
-    # If 'all' is passed as the value of active, don't select based on active.
-    delete $param->{'active'} if $param->{'active'} eq 'all';
-
-    foreach (keys %$param) {
-        if ($_ eq 'directory' or $_ eq 'name' or 
-            $_ eq 'uri' or $_ eq 'description') { push @txt, $_ }
-        else { push @num, $_ }
-    }
-
-    my $where = join(' AND ', (map { "$_=?" }             @num),
-                              (map { "LOWER($_) LIKE ?" } @txt));
-
-    $ret = _select_category($where, [@$param{@num,@txt}]);
-
-    foreach my $d (@$ret) {
-        # Instantiate object
-        my $self = bless {}, $class;
-
-        # Set the columns selected as well as the passed ID.
-        $self->_set(['id', FIELDS], $d);
-
-        my $id = $self->get_id;
-        my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
-                                                        'subsys'    => $id});
-        $self->_set(['_attr_obj'], [$a_obj]);
-
-        push @objs, $self;
-    }
-
-    return wantarray ? @objs : \@objs;
-}
+sub list { _do_list(@_) }
 
 #--------------------------------------#
 
@@ -614,6 +577,22 @@ sub my_meths {
 }
 
 ##############################################################################
+
+=item my (@person_ids || $person_ids_aref) = Bric::Biz::Person->list_ids($params)
+
+Returns a list or anonymous array of Bric::Biz::Category object IDs based on the
+search criteria passed via an anonymous hash. The supported lookup keys are the
+same as those for C<list()>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub list_ids { _do_list(@_[0, 1], 1) }
 
 =back
 
@@ -1361,6 +1340,46 @@ NONE
 
 =cut
 
+sub _do_list {
+    my $class = shift;
+    my ($param, $ids) = @_;
+    my ($ret, @objs);
+    my (@num, @txt);
+
+    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} :  1;
+    # If 'all' is passed as the value of active, don't select based on active.
+    delete $param->{'active'} if $param->{'active'} eq 'all';
+
+    foreach (keys %$param) {
+        if ($_ eq 'directory' or $_ eq 'name' or 
+            $_ eq 'uri' or $_ eq 'description') { push @txt, $_ }
+        else { push @num, $_ }
+    }
+
+    my $where = join(' AND ', (map { "$_=?" }             @num),
+                              (map { "LOWER($_) LIKE ?" } @txt));
+
+    $ret = _select_category($where, [@$param{@num,@txt}], $ids);
+    return wantarray ? @$ret : $ret if $ids;
+
+    foreach my $d (@$ret) {
+        # Instantiate object
+        my $self = bless {}, $class;
+
+        # Set the columns selected as well as the passed ID.
+        $self->_set(['id', FIELDS], $d);
+
+        my $id = $self->get_id;
+        my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
+                                                        'subsys'    => $id});
+        $self->_set(['_attr_obj'], [$a_obj]);
+
+        push @objs, $self;
+    }
+
+    return wantarray ? @objs : \@objs;
+}
+
 
 sub _save_attr {
     my $self = shift;
@@ -1377,17 +1396,17 @@ sub _save_attr {
                               'sql_type' => 'short',
                               'value'    => $v});
         }
-        
+
         while (my ($k,$m) = each %$meta) {
             foreach (@$m) {
                 my ($f, $v) = @$_;
-                
+
                 $a_obj->add_meta({'name'  => $k,
                                   'field' => $f,
                                   'value' => $v});
             }
         }
-        
+
     }
 
     $a_obj->save;
@@ -1422,14 +1441,18 @@ sub _load_grp {
 }
 
 sub _select_category {
-    my ($where, $bind) = @_;
+    my ($where, $bind, $ids) = @_;
     my (@ret, @d);
 
-    my $sql = 'SELECT '.join(',','id', COLS).' FROM '.TABLE;
+    my $sql = 'SELECT '. ($ids ? 'id' : join(',', 'id', COLS)). ' FROM ' . TABLE;
     $sql .= " WHERE $where" if $where;
     $sql .= " ORDER BY uri";
 
     my $sth = prepare_c($sql);
+
+    # Just return the IDs, if they're what's wanted.
+    return col_aref($sth, @$bind) if $ids;
+
     execute($sth, @$bind);
     bind_columns($sth, \@d[0..(scalar COLS)]);
     while (fetch($sth)) {

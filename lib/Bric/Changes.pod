@@ -176,6 +176,10 @@ Fixed installation system bug caused by inst/conf.pl loading
 Bric::Config during "make install".  Thanks to Louis Moore for the
 report. [Sam]
 
+=item *
+
+Added missing C<list_ids()> method to Bric::Biz::Category. [David]
+
 =back
 
 =head1 VERSION 1.4.4
