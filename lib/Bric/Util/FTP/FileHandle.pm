@@ -18,7 +18,7 @@ our $VERSION = substr(q$Revision 1.0$, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 00:03:02 $
+$Date: 2001-10-12 00:04:19 $
 
 =head1 DESCRIPTION
 
@@ -138,7 +138,7 @@ sub open {
 
     # create a tied scalar and return an IO::Scalar attached to it
     my $data;
-    tie $data, 'Bric::Util::FTP::FileHandle::SCALAR', $template;
+    tie $data, 'Bric::Util::FTP::FileHandle::SCALAR', $template, $self->{ftps}{user_obj};
     my $handle = new IO::Scalar \$data;
 
     # seek if appending
@@ -281,11 +281,13 @@ use warnings;
 
 use Bric::Config qw(FTP_DEBUG);
 use Bric::Util::Time qw(:all);
+use Bric::Util::Event;
 
 sub TIESCALAR {
   my $pkg = shift;
   my $template = shift;
-  my $self = { template => $template };
+  my $user = shift;
+  my $self = { template => $template, user => $user };
   print STDERR __PACKAGE__, "::TIESCALAR()\n" if FTP_DEBUG;
   return bless $self, $pkg;
 }
@@ -300,11 +302,20 @@ sub STORE {
   my $self = shift;
   my $data = shift;
   my $template = $self->{template};
+  my $user = $self->{user};
   print STDERR __PACKAGE__, "::STORE()\n" if FTP_DEBUG;
 
   # save the new code
   $template->set_data($data);
   $template->save();
+
+  # log the save
+  Bric::Util::Event->new({ key_name  => 'formatting_save', 
+                           obj       => $template,
+                           user      => $user,
+                           timestamp => strfdate(),
+                           attr      => undef,
+                         });
 
   # get a new burner
   my $burner = Bric::Util::Burner->new;
@@ -314,6 +325,14 @@ sub STORE {
   $template->set_deploy_date(strfdate());
   $template->set_deploy_status(1);
   $template->save();
+
+  # log the deploy
+  Bric::Util::Event->new({ key_name  => $template->get_deploy_status ? 'formatting_redeploy' : 'formatting_deploy',
+                           obj       => $template,
+                           user      => $user,
+                           timestamp => strfdate(),
+                           attr      => undef,
+                         });
 
   # get the current desk
   my $desk = $template->get_current_desk;
