@@ -7,15 +7,15 @@
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-23 17:25:57 $
+$Date: 2004-03-03 23:04:23 $
 
 =head1 SYNOPSIS
 
@@ -211,10 +211,10 @@ if ($showRightList) {
 if ($showLeftList && $showRightList && !$readOnly) {
     $m->out(qq{ <tr><td>&nbsp;</td><td align="right"> });
     $m->out(qq{ <a href="#" onClick="return addToList('} .$formName . qq{', '$leftName', '$rightName'); $leftJs;">});
-    $m->out(qq{<img src="/media/images/$lang_key/add_to_list_lgreen.gif" border=0 width=97 height=20 /></a>} );
+    $m->out(qq{<img src="/media/images/$lang_key/add_to_list_lgreen.gif" border=0 /></a>} );
     $m->out(qq{ </td><td align="left"> } );
     $m->out(qq{ <a href="#" onClick="return removeFromList('} .$formName . qq{', '$leftName', '$rightName'); $rightJs;">} );
-    $m->out(qq{<img src="/media/images/$lang_key/remove_from_list_red.gif" border=0 width=134 height=20 /></a>} );
+    $m->out(qq{<img src="/media/images/$lang_key/remove_from_list_red.gif" border=0 /></a>} );
     $m->out(qq{	</td><td>&nbsp;</td></tr> });
 }
 </%perl>
