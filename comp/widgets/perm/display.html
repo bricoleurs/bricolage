@@ -7,7 +7,7 @@ my $perm_sel = {
         'object'   => 'Object Groups',
         'workflow' => ucfirst($wf_pl),
         'desk'     => ucfirst($dsk_pl),
-#        'category' => ucfirst($cat_pl),
+        'category' => ucfirst($cat_pl),
     ) : (),
 };
 
@@ -31,7 +31,6 @@ if ($is_user) {
          'value' => $perm_type,
     );
     $m->out('<p></p>');
-
 
     # $is_user means $perm_type is one of
     # object, workflow, desk, (category)
@@ -120,28 +119,29 @@ if ($perm_type eq 'desk' || $perm_type eq 'all') {
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
 }
 
-# if ($perm_type eq 'category' || $perm_type eq 'all') {
-#    # And finally, do it for categories.
-#    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
-#             caption => "$cat_disp Permissions", border => 0);
-#    $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to access assets in these"
-#                  ." categories.","&quot;$name&quot;"));
-#
-#    foreach my $cat_grp ($cat_grp_pkg->list({ name => 'Category Assets',
-#                                              Order => 'description',
-#                                              all  => 1 })) {
-#	my $gid = $cat_grp->get_id;
-#	$m->comp($row_comp,
-#		 grp => $cat_grp,
-#		 gid => $gid,
-#		 type => 'obj',
-#		 perm => $perms{$gid},
-#		 name => $cat_grp->get_description
-#		);
-#    }
-#   $m->out(qq{</table>\n});
-#   $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
-# }
+if ($perm_type eq 'category' || $perm_type eq 'all') {
+    # And finally, do it for categories.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
+             caption => "$cat_disp Permissions", border => 0);
+    $m->comp($head_comp,
+             $lang->maketext("Grant [_1] members permission to access assets in these"
+                               ." categories.","&quot;$name&quot;"));
+
+    foreach my $cat_grp ($cat_grp_pkg->list({ name => 'Category Assets',
+                                              Order => 'description',
+                                              all  => 1 })) {
+	my $gid = $cat_grp->get_id;
+	$m->comp($row_comp,
+		 grp => $cat_grp,
+		 gid => $gid,
+		 type => 'obj',
+		 perm => $perms{$gid},
+		 name => $cat_grp->get_description
+             );
+    }
+    $m->out(qq{</table>\n});
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+}
 
 if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
     # Now get the permissions on this group that are granted to user groups.

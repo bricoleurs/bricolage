@@ -110,6 +110,10 @@ names, thanks to reports from Nate Perry-Thistle. [David]
 
 Made in the index on field key names case-insensitively unique. [David]
 
+=item *
+
+Restored category assest group permissions in user group profiles. [David]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
