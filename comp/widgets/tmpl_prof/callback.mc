@@ -386,6 +386,7 @@ my $checkin = sub {
 	    log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
 	}
 	$fa->checkin();
+	$fa->activate();
 	$fa->save();
 
 	my $desk_id = $param->{"$widget|desk"};
