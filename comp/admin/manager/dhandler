@@ -284,6 +284,11 @@ my $def = {
 						!chk_authz($_[0], READ, 1);
 					    },
 			       select => $sel_sub },
+	   org            => { list_fields => [qw(name long_name description)],
+			       srch_field => 'name',
+			       constrain => {active => 1},
+			       behavior => 'expand',
+			       select => $sel_sub },
 	   grp            => { title => 'Group Manager',
 			       list_fields => [qw(name member_type)],
 			       srch_field => 'name',
@@ -420,11 +425,11 @@ unless (Bric::Config::ENCODE_OK) {
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.41.2.1 $
 
 =head1 DATE
 
-$Date: 2004-03-03 19:07:05 $
+$Date: 2004-04-21 21:34:02 $
 
 =head1 SYNOPSIS
 

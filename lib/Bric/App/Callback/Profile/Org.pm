@@ -1,23 +1,23 @@
-package Bric::App::Callback::Profile::Keyword;
+package Bric::App::Callback::Profile::Org;
 
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
-use constant CLASS_KEY => 'keyword';
+use constant CLASS_KEY => 'org';
 
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:msg);
 
-my $disp_name = 'Keyword';
-my $class = 'Bric::Biz::Keyword';
+my $disp_name = 'Org';
+my $class = 'Bric::Biz::Org';
 
 
 sub save : Callback {
     my $self = shift;
     return unless $self->has_perms;
 
-    my $keyword = $self->obj;
-    my $name = $keyword->get_name;
+    my $org = $self->obj;
+    my $name = $org->get_name;
 
     my $widget = $self->class_key;
     my $param = $self->params;
@@ -25,25 +25,25 @@ sub save : Callback {
 
     if ($param->{delete}) {
         # Delete this Profile
-        $keyword->deactivate;
-        $keyword->save;
+        $org->deactivate;
+        $org->save;
 
-        log_event("$widget\_deact", $keyword);
+        log_event("$widget\_deact", $org);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
     } else {
         # Roll in the changes. Assume it's active.
-        foreach my $meth ($keyword->my_meths(1)) {
-            $meth->{set_meth}->($keyword, @{$meth->{set_args}},
+        foreach my $meth ($org->my_meths(1)) {
+            $meth->{set_meth}->($org, @{$meth->{set_args}},
                                 $param->{$meth->{name}})
               if defined $meth->{set_meth};
         }
-        $keyword->save;
+        $org->save;
 
-        log_event($widget . ($is_saving ? '_save' : '_new'), $keyword);
+        log_event($widget . ($is_saving ? 'save' : 'new'), $org);
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
     }
     $self->set_redirect("/admin/manager/$widget");
-    $param->{'obj'} = $keyword;
+    $param->{'obj'} = $org;
     return;
 }
 

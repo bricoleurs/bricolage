@@ -1,0 +1,82 @@
+%#-- Begin HTML --#
+<& '/widgets/wrappers/sharky/header.mc',
+   title => "$disp Profile",
+   context => "Admin | Profile | $disp | $crumb"
+&>
+<form method="post" action="<% $r->uri %>" name="org_profile" onSubmit="return confirmChanges(this)">
+<%perl>;
+$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'org_id')
+  if defined $id;
+
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+         caption => "Properties",
+         number  => 1 );
+
+$m->comp('/widgets/profile/dumpRemainingFields.mc',
+         objref => $obj,
+         fieldsUsed => { active => 1 },
+         readOnly => $no_edit);
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+
+</%perl>
+<& '/widgets/profile/formButtons.mc', type => $type, section => $section,
+   no_del => $no_del, no_save => $no_edit, widget => $type &>
+</form>
+<intput type="button" name="org|save_cb" />
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+
+%#-- End HTML --#
+
+
+%#-- Once Section --#
+<%once>;
+# XXX: should probably be set in comp/admin/profile/autohandler
+my ($section, undef, $type) = parse_uri($r->uri);
+my $class = get_package_name($type);
+my $disp = get_disp_name($type);
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+
+%#-- Init Section --#
+<%init>;
+# Instantiate an object.
+my $obj = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id ||= $obj->get_id;
+
+# Check authorization.
+chk_authz($obj, $id ? READ : CREATE);
+my $no_edit = !chk_authz($obj, ($id ? EDIT : CREATE), 1);
+my $no_del = !$id || $no_edit;
+
+# Get the name for the breadcrumb trail.
+my $crumb = $obj->get_name;
+$crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
+</%init>
+
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+/admin/profile/org/dhandler - Interface for managing orgs.
+
+=head1 VERSION
+
+$Revision: 1.1.2.1 $
+
+=head1 DATE
+
+$Date: 2004-04-21 21:34:22 $
+
+=head1 DESCRIPTION
+
+This profile handles the display for editing orgs.
+
+</%doc>

@@ -40,6 +40,11 @@ empty column that would otherwise contain a "Checkout" checkbox. [David]
 
 Keyword names are now always editable in the keyword manager. [David]
 
+=item *
+
+Events are now properly logged for keywords managed in the keyword profile.
+[David]
+
 =back
 
 =head2 Bug Fixes
