@@ -152,6 +152,11 @@ directive to your F<httpd.conf>:
     ForceType => "application/x-javascript; charset=utf-8"
   </Location>
 
+=item *
+
+The virtual FTP server no longer displays templates in subcategories of the
+current subcategory directory. Thanks to George Harrison for the spot! [David]
+
 =back
 
 =head1 VERSION 1.6.0
