@@ -55,8 +55,9 @@ their titles. [David]
 
 =item *
 
-Added Field Profile, so you can edit Fields rather than having
-to delete and recreate them. [Scott]
+Added Field Profile, so that element Fields can be edited. This is a marked
+improvement over the old interface, which required that fields be deleted and
+recreated if users wanted to change them. [Scott]
 
 =back
 
