@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-03-13 21:47:15 $
+$Date: 2003-03-18 04:17:11 $
 
 =head1 SYNOPSIS
 
@@ -52,10 +52,15 @@ if ($param->{delete}) {
     add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
 } else {
     my $wf_id = $param->{"${type}_id"};
+    my $site_id = $param->{site_id} || $wf->get_site_id;
+
     # Make sure the name isn't already in use.
     my $used;
-    my @wfs = ($class->list_ids({ name => $param->{name} }),
-	       $class->list_ids({ name => $param->{name}, active => 0 }) );
+    my @wfs = ($class->list_ids({ name => $param->{name},
+                                  site_id => $site_id }),
+	       $class->list_ids({ name => $param->{name},
+                                  site_id => $site_id,
+                                  active => 0 }) );
     if (@wfs > 1) { $used = 1 }
     elsif (@wfs == 1 && !defined $wf_id) { $used = 1 }
     elsif (@wfs == 1 && defined $wf_id
@@ -66,10 +71,11 @@ if ($param->{delete}) {
     $wf->set_name($param->{name}) unless $used;
     $wf->set_description($param->{description});
     $wf->set_type($param->{type}) if exists $param->{type};
-    if (! defined $param->{workflow_id}) {
-        $wf->set_site_id($param->{site_id});
-
+    if (! defined $wf_id) {
 	# It's a new workflow. Set the start desk.
+
+        $wf->set_site_id($site_id);
+
 	if ($param->{new_desk_name}) {
 	    # They're creating a brand new desk.
 	    my $d = (Bric::Biz::Workflow::Parts::Desk->list({ name => $param->{new_desk_name} }))[0]
