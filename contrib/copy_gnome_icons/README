@@ -2,7 +2,13 @@ NAME
     copy_gnome_icons
 
 SYNOPSIS
+    For icons files starting with "gnome-":
+
       copy_gnome_icons *.png
+
+    For icons files starting with "gnome-mime-":
+
+      copy_gnome_icons --strip gnome-mime- *.png
 
 DESCRIPTION
     This script is designed to convert a collection of GNOME MIME type icons
@@ -21,7 +27,24 @@ DESCRIPTION
 
     This script was developed using the GNOME MIME type icons downloaded
     from <http://developer.ximian.com/images/art-devel/mime-icons.tgz>.
-    Updates happily accepted.
+    (linked to from <http://developer.ximian.com/themes/icons/>), but
+    appears as though it would work with the files in a mimetypes
+    subdirectory of most PNG icon distributions downloadable from
+    <http://art.gnome.org/themes/icon/index.php>. Updates happily accepted.
+
+OPTIONS
+  "--strip"
+    GNOME MIME type icon files typically start with a string that preceeds
+    the MIME type they're named for. Use the "--strip" option to specify
+    what that string is that needs to be stripped from the file name. The
+    remainder of the file name is assumed to be the full MIME type name,
+    with a dash in place of the usual slash. So the GNOME MIME type icon
+    file name for "application/msword" might be gnome-application-msword.png
+    or gnome-mime-application-msword.png or something similar. In the former
+    example, the default value for "--strip", "gnome-", can be used to strip
+    off the "gnome-" and leave "appplication-msword.png". In the latter
+    example specify "gnome-mime-" for the "--strip" option. Note that the
+    "--strip" option can be a regular expression.
 
 AUTHOR
     David Wheeler <david@kineticode.com>

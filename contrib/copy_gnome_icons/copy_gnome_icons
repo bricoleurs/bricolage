@@ -11,7 +11,13 @@ copy_gnome_icons
 
 =head1 SYNOPSIS
 
+For icons files starting with "gnome-":
+
   copy_gnome_icons *.png
+
+For icons files starting with "gnome-mime-":
+
+  copy_gnome_icons --strip gnome-mime- *.png
 
 =head1 DESCRIPTION
 
@@ -31,7 +37,26 @@ F<comp/media/mime/text/html.png>.
 
 This script was developed using the GNOME MIME type icons downloaded from
 L<http://developer.ximian.com/images/art-devel/mime-icons.tgz>. (linked to
-from L<http://developer.ximian.com/themes/icons/>). Updates happily accepted.
+from L<http://developer.ximian.com/themes/icons/>), but appears as though it
+would work with the files in a F<mimetypes> subdirectory of most PNG icon
+distributions downloadable from
+L<http://art.gnome.org/themes/icon/index.php>. Updates happily accepted.
+
+=head1 OPTIONS
+
+=head2 C<--strip>
+
+GNOME MIME type icon files typically start with a string that preceeds the
+MIME type they're named for. Use the C<--strip> option to specify what that
+string is that needs to be stripped from the file name. The remainder of the
+file name is assumed to be the full MIME type name, with a dash in place of
+the usual slash. So the GNOME MIME type icon file name for
+"application/msword" might be F<gnome-application-msword.png> or
+F<gnome-mime-application-msword.png> or something similar. In the former
+example, the default value for C<--strip>, "gnome-", can be used to strip off
+the "gnome-" and leave "appplication-msword.png". In the latter example
+specify "gnome-mime-" for the C<--strip> option. Note that the C<--strip>
+option can be a regular expression.
 
 =head1 AUTHOR
 
@@ -77,14 +102,23 @@ BEGIN {
 use File::Path qw(mkpath);
 use File::Copy qw(cp);
 use Bric::Config qw(MASON_COMP_ROOT);
+use Getopt::Long qw(:config);
+use File::Basename qw(basename);
+
+my $strip = 'gnome-';
+
+GetOptions(
+    'strip|s=s' => \$strip,
+);
 
 my $mime_dir = catdir($ENV{BRICOLAGE_ROOT}, qw(comp media mime));
 
 my %seen;
 for my $file (@ARGV) {
-    $_ = $file;
+    $_ = basename($file);
     s/\.png$// or next;
-    my ($gnome, $cat, $type) = split /-/, $_, 3;
+    s/^$strip//;
+    my ($cat, $type) = split /-/, $_, 3;
     if ($type) {
         mkpath catdir($mime_dir, $cat) unless $seen{$cat}++;
         cp $file, catfile($mime_dir, $cat, "$type.png");
