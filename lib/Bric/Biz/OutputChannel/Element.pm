@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel::Element - Maps Output Channels to Elements.
 
 =head1 VERSION
 
-$Revision: 1.2.4.1 $
+$Revision: 1.2.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-10 02:30:08 $
+$Date: 2003-06-13 17:26:04 $
 
 =head1 SYNOPSIS
 
@@ -78,8 +78,11 @@ my $SEL_COLS = Bric::Biz::OutputChannel::SEL_COLS() .
   ', eoc.id, eoc.element__id, eoc.enabled';
 my @SEL_PROPS = (Bric::Biz::OutputChannel::SEL_PROPS(),
                  qw(_map_id element_id _enabled));
-my $SEL_TABLES = Bric::Biz::OutputChannel::SEL_TABLES() .
-  ', element__output_channel eoc';
+
+# Grabbed knowledge from parent, but the outer join depends on it. :-(
+my $SEL_TABLES = 'output_channel oc LEFT OUTER JOIN ' .
+  'element__output_channel eoc ON (oc.id = eoc.output_channel__id), ' .
+  'member m, output_channel_member sm';
 
 sub SEL_PROPS { @SEL_PROPS }
 sub SEL_COLS { $SEL_COLS }
@@ -201,6 +204,8 @@ sub new {
     }
     # Set the necessary properties and return.
     $self->_set([qw(_enabled element_id)], [$en, $eid]);
+    # New relationships should always trigger a save.
+    $self->_set__dirty(1);
 }
 
 ##############################################################################

@@ -32,7 +32,7 @@ sub test_href : Test(12) {
 
 ##############################################################################
 # Test the new() constructor.
-sub test_new : Test(10) {
+sub test_new : Test(16) {
     my $self = shift;
     # Try creating one from an OC ID.
     ok( my $oce = Bric::Biz::OutputChannel::Element->new({ oc_id => 1 }),
@@ -52,6 +52,22 @@ sub test_new : Test(10) {
     ok( $oce = Bric::Biz::OutputChannel::Element->new({ enabled => 0 }),
         "Create disabled OC" );
     ok( ! $oce->is_enabled, "disabled OC is not enabled" );
+
+    # Create a new output channel object.
+    ok( my $oc = Bric::Biz::OutputChannel->new({ name => 'Foober' }),
+        "Create new OC" );
+    ok( $oc->save, "Save OC" );
+    ok( my $ocid = $oc->get_id, "Get ID" );
+    $self->add_del_ids([$ocid]);
+
+    # Create a new OCElement.
+    ok( $oce = Bric::Biz::OutputChannel::Element->new({ oc_id => $ocid }),
+        "Create OCE from OC ID $ocid" );
+    # It should not yet have a Map ID!
+    ok(! defined $oce->_get('_map_id'), "Map ID is undefined" );
+    # It should have only one group membership.
+    my @gids = $oce->get_grp_ids;
+    is( scalar @gids, 1, "Check for one group ID" );
 }
 
 ##############################################################################
