@@ -1,85 +1,270 @@
-Version  To Do Items
--------  ------------------------------------------------------------------
-1.0      * Change name (and references to it) to "Bricolage" [David & Sam].
-         * Clean Up Time Zones (Bug # 287) [David].
-         * Finish Element Administration Documentation [David].
-         * Change Version Number to 1.0 and decide how it should work in
-           all the packages [David & Sam].
-         * Create installation makefile (Sam or David?).
+=head1 NAME
 
-1.2      * Context-sensitive, online help [Sam].
-         * Make SSL optional (and off by default) [David or Sam].
-         * XML::Writer (or related) support in Templates [David].
-         * HTML::Template support in Templates [Sam].
-         * User-created help (add a "Help Text" field to Form Builder)
-           [David or Sam].
-         * Simplify associating media with stories (ugh) [David & Sam].
-         * Have CE::Util::Class use CE::Util::Cache [David].
-         * Add file-naming conventions to Burn system (Bug # 748) [David].
-         * Change CE::_set() to only set if the values are different.
-         * Add keywords to media.
-         * Resolve "Adding Element and hitting Cancel" issue (Bug # 723).
-         * Add preference for Contributors to be automatically added to
-           assets as keywords (Bug # 366) [David].
-         * Add HTML Cleaning Action [David].
-         * Add HTML Checking Action [David].
-         * Add Akamaization Action [David].
-         * Add new move methods (FTP, SCP, etc.).
-         * Add regression test suite.
-         * Preferences Improvements (Bug # 282) [David].
-         * Add listManager preferences (Bug # 280) [David].
-         * Change "asset_type" key to "element" and "component_type" key
-           to "element_type" (Bug # 283) [David or Sam].
-         * Add interface for editing Contact Types (Bug # 285) [David].
-         * Add check for existing people before adding new ones (Bug #
-           325) [David].
-         * Add URI Case preference (Bug # 674) [David].
-         * Add Keyword Rules preference (Bug # 689) [David].
-         * Add category selector to template profile (maybe - Bug # 577).
+Bric::ToDo - Bricolage To Do List
 
-1.4      * Scheduled Burning/Syndication (Bug # 329).
-         * Basic project management.
-         * Add pagination to listManager (maybe - Bug # 281).
-         * Make Session an object (Bug # 279).
-         * Add Category object flags (Bug # 288).
-         * Integrate with CVS and/or Subversion.
-         * Integrate with WebDAV (Slide? mod_dav?).
-         * Improved Attribute/Field editing and design.
-         * Improved Element editing and design (Bug # 742 & Bug # 780).
-         * Full-text indexing (Bug # 745).
-         * Add file system-like asset browsing (especially for templates
-           and media -- Bug # 746).
-         * Directory Support (as in MPS).
-         * Add support for Organizations [David].
-         * Add support for addresses [David].
-         * Add support for contributor contracts [David].
-         * Have objects load their group IDs when they're selected to save
-           time checking permissions.
-         * Add strong type checking.
-         * Add previewing to Template Editing (Bug # 370).
-         *
+=head1 VERSION
+
+$Revision: 1.2 $
+
+=head1 DATE
+
+$Date: 2001-09-18 00:01:52 $
+
+=head1 DESCRIPTION
+
+This document lists the items on Bricolage's To Do list, and also serves as a
+road map.
+
+=head1 OVERVIEW
 
 This is a pretty rough draft, although I've tried to include everything
 we've thought of so far. This should be the begininning of a comprehensive
-feature list. Bugs should just go into Bugzilla, I think. Let me know if
-I've missed anything. I expect that I'll have to move a lot of these
-things around, and add 1.6, 1.8, and maybe 2.0 versions to the map before
-long.
+feature list. Bugs should just go into BugzillA
 
-David
+=head2 VERSION 1.0.1
 
--- 
-David Wheeler                                         AIM: dwTheory
-David@Wheeler.net                                     ICQ: 15726394
-                                                   Yahoo!: dew7e
-                                                   Jabber: Theory@jabber.org
+=over 4
 
+=item *
 
+Change name (and references to it) to "Bricolage" [David & Sam].
 
+=item *
 
+Clean Up Time Zones (Bug # 287) [David].
 
+=item *
 
+Finish Element Administration Documentation [David].
 
+=item *
 
+Change Version Number to 1.0.1 and decide how it should work in all the packages
+[David & Sam].
 
+=item *
 
+Create installation makefile [Sam or David?].
+
+=back
+
+=head2 VERSION 1.2.0
+
+=over 4
+
+=item *
+
+Context-sensitive, online help [Sam].
+
+=item *
+
+Make SSL optional (and off by default) [David or Sam].
+
+=item *
+
+XML::Writer (or related) support in Templates [David].
+
+=item *
+
+HTML::Template support in Templates [Sam].
+
+=item *
+
+User-created help (add a "Help Text" field to Form Builder) [David or Sam].
+
+=item *
+
+Simplify associating media with stories (ugh) [David & Sam].
+
+=item *
+
+Have CE::Util::Class use CE::Util::Cache [David].
+
+=item *
+
+Add file-naming conventions to Burn system (Bug # 748) [David].
+
+=item *
+
+Change CE::_set() to only set if the values are different.
+
+=item *
+
+Add keywords to media.
+
+=item *
+
+Resolve "Adding Element and hitting Cancel" issue (Bug # 723).
+
+=item *
+
+Add preference for Contributors to be automatically added to
+
+=item *
+
+assets as keywords (Bug # 366) [David].
+
+=item *
+
+Add HTML Cleaning Action [David].
+
+=item *
+
+Add HTML Checking Action [David].
+
+=item *
+
+Add Akamaization Action [David].
+
+=item *
+
+Add new move methods (FTP, SCP, etc.).
+
+=item *
+
+Add regression test suite.
+
+=item *
+
+Preferences Improvements (Bug # 282) [David].
+
+=item *
+
+Add listManager preferences (Bug # 280) [David].
+
+=item *
+
+Change "asset_type" key to "element" and "component_type" key
+
+=item *
+
+to "element_type" (Bug # 283) [David or Sam].
+
+=item *
+
+Add interface for editing Contact Types (Bug # 285) [David].
+
+=item *
+
+Add check for existing people before adding new ones (Bug #
+
+=item *
+
+325) [David].
+
+=item *
+
+Add URI Case preference (Bug # 674) [David].
+
+=item *
+
+Add Keyword Rules preference (Bug # 689) [David].
+
+=item *
+
+Add category selector to template profile (maybe - Bug # 577).
+
+=back
+
+VERSION 1.4.0
+
+=over 4
+
+=item *
+
+Scheduled Burning/Syndication (Bug # 329).
+
+=item *
+
+Basic project management.
+
+=item *
+
+Add pagination to listManager (maybe - Bug # 281).
+
+=item *
+
+Make Session an object (Bug # 279).
+
+=item *
+
+Add Category object flags (Bug # 288).
+
+=item *
+
+Integrate with CVS and/or Subversion.
+
+=item *
+
+Integrate with WebDAV (Slide? mod_dav?).
+
+=item *
+
+Improved Attribute/Field editing and design.
+
+=item *
+
+Improved Element editing and design (Bug # 742 & Bug # 780).
+
+=item *
+
+Full-text indexing (Bug # 745).
+
+=item *
+
+Add file system-like asset browsing (especially for templates
+
+=item *
+
+and media -- Bug # 746).
+
+=item *
+
+Directory Support (as in MPS).
+
+=item *
+
+Add support for Organizations [David].
+
+=item *
+
+Add support for addresses [David].
+
+=item *
+
+Add support for contributor contracts [David].
+
+=item *
+
+Have objects load their group IDs when they're selected to save
+
+=item *
+
+time checking permissions.
+
+=item *
+
+Add strong type checking.
+
+=item *
+
+Add previewing to Template Editing (Bug # 370).
+
+=back
+
+=head1 AUTHOR
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+perl(1),
+Bric (2).
+
+=head1 REVISION HISTORY
+
+$Log: ToDo.pod,v $
+Revision 1.2  2001-09-18 00:01:52  wheeler
+Podified.
+
+=cut
