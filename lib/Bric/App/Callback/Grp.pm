@@ -6,7 +6,6 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Cache;
 use Bric::App::Event qw(log_event);
-use Bric::App::Session;
 use Bric::App::Util qw(:all);
 
 
