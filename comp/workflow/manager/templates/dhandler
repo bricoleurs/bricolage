@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:37 $
+$Date: 2003-07-18 23:45:14 $
 
 =head1 SYNOPSIS
 
@@ -79,13 +79,12 @@ my $exclude = sub { ! chk_authz($_[0], READ, 1) };
 # Get the workflow ID.
 ($w_id) = $r->uri =~ m!/(\d+)/?$!;
 
-# Grab the workflow from the cache.
-my $wf = $c->get('__WORKFLOWS__');
-for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
+# Grab the workflow from the database.
+my $wf = Bric::Biz::Workflow->lookup({ id => $w_id })->get_name;
 </%init>
 <& '/widgets/wrappers/sharky/header.mc',
    title => "Find $plural",
-   context => "Workflow | $wf | Find $plural"
+   context => "Workflow | &quot;$wf&quot; | Find $plural"
  &>
 
 <& '/widgets/search/search.mc',

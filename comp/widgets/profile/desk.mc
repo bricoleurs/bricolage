@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:34 $
+$Date: 2003-07-18 23:45:14 $
 
 =head1 SYNOPSIS
 
@@ -31,6 +31,15 @@ my $wf_type = 'workflow';
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
 my $wf_disp_name = get_disp_name($wf_type);
+# We'll use this function to expire the cache for workflows that this desk
+# appears in.
+my $expire_wf_cache = sub {
+    my $did = shift;
+    # Expire the cache for all workflows that contain this desk.
+    foreach my $wf (Bric::Biz::Workflow->list({ desk_id => $did })) {
+        $c->set('__WORKFLOWS__' . $wf->get_site_id, 0);
+    }
+};
 </%once>
 <%args>
 $widget
@@ -47,7 +56,7 @@ if ($param->{delete}) {
     # Deactivate it.
     $desk->deactivate;
     $desk->save;
-    $c->set('__WORKFLOWS__', 0);
+    $expire_wf_cache->($param->{"${type}_id"});
     log_event("${type}_deact", $desk);
     add_msg($lang->maketext("$disp_name profile [_1] deleted from all workflows.",$name));
     set_redirect(defined $param->{workflow_id} ?
@@ -63,8 +72,8 @@ if ($param->{delete}) {
 	elsif (@desks == 1 && !defined $desk_id) { $used = 1 }
 	elsif (@desks == 1 && defined $desk_id
 	       && $desks[0] != $desk_id) { $used = 1 }
-        add_msg($lang->maketext("The name [_1] is already used by another [_2].",$name,$disp_name))
-	  if $used;
+        add_msg($lang->maketext("The name [_1] is already used by another [_2].",
+                                $name, $disp_name)) if $used;
     }
 
     # Roll in the changes.
@@ -77,7 +86,7 @@ if ($param->{delete}) {
     }
     unless ($used) {
 	$desk->save;
-	$c->set('__WORKFLOWS__', 0);
+        $expire_wf_cache->($desk_id);
 	log_event($type . (defined $param->{desk_id} ? '_save' : '_new'), $desk);
     } else {
 	$param->{new_desk} = 1;
@@ -88,7 +97,7 @@ if ($param->{delete}) {
 	my $wf = Bric::Biz::Workflow->lookup({ id => $param->{workflow_id} });
 	$wf->add_desk({ allowed => [$desk->get_id] });
 	$wf->save;
-	$c->set('__WORKFLOWS__', 0);
+        $expire_wf_cache->($desk_id);
 	log_event('workflow_add_desk', $wf, { Desk => $desk->get_name });
 	set_redirect("/admin/profile/workflow/$param->{workflow_id}");
     } else {

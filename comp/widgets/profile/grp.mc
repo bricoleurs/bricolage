@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:53 $
+$Date: 2003-07-18 23:45:14 $
 
 =head1 SYNOPSIS
 
@@ -31,20 +31,30 @@ my $type = 'grp';
 my $disp_name = get_disp_name($type);
 
 my $reset_cache = sub {
-    my $class = shift;
+    my ($grp, $class) = @_;
     if ($class eq 'Bric::Util::Grp::User') {
         # Note that a user has been updated to force all users logged
         # into the system to reload their user objects from the
         # database.
         $c->set_lmu_time;
         # Also, clear out the site and workflow caches, since they
-        # may have been affected by permission changes.
-        $c->set('__WORKFLOWS__', 0);
+        # may have been affected by permission changes. The workflows
+        # are cached on a site_id basis, and since site IDs are also
+        # always grp IDs, we can just expire the workflow cache for
+        # all GRP ids for which each user has membership.
         $c->set('__SITES__', 0);
+        foreach my $u ($grp->get_objects) {
+            foreach my $gid ($u->get_grp_ids) {
+                $c->set("__WORKFLOWS__$gid", 0)
+                  if $c->get("__WORKFLOWS__$gid");
+            }
+        }
     } elsif ($class eq 'Bric::Util::Grp::Workflow') {
         # There may have been permission and member changes. Reset
-        # the cache.
-        $c->set('__WORKFLOWS__', 0);
+        # the cache
+        foreach my $wf ($grp->get_objects) {
+            $c->set('__WORKFLOWS__' . $wf->get_site_id, 0);
+        }
     } elsif ($class eq 'Bric::Util::Grp::Site') {
         # There may have been permission and member changes. Reset
         # the cache.
@@ -66,7 +76,7 @@ my $save_sub = sub {
             $grp->save;
 	    log_event('grp_deact', $grp);
             # Reset the cache.
-            $reset_cache->($class);
+            $reset_cache->($grp, $class);
             add_msg($lang->maketext("$disp_name profile [_1] deleted.", $name));
         }
         # Set redirection back to the manager.
@@ -108,7 +118,7 @@ my $save_sub = sub {
 	# Redirect back to the manager.
 	set_redirect($redir);
         # Reset the cache.
-        $reset_cache->($class);
+        $reset_cache->($grp, $class);
 	return;
     } else {
 	# Save the group.

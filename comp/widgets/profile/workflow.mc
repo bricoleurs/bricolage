@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-03-18 04:17:11 $
+$Date: 2003-07-18 23:45:14 $
 
 =head1 SYNOPSIS
 
@@ -40,13 +40,14 @@ $obj
 return unless $field eq "$widget|save_cb";
 # Instantiate the workflow object and grab its name.
 my $name = "&quot;$param->{name}&quot;";
-
 my $wf = $obj;
+my $site_id = $param->{site_id} || $wf->get_site_id;
+
 if ($param->{delete}) {
     # Deactivate it.
     $wf->deactivate;
     $wf->save;
-    $c->set('__WORKFLOWS__', 0);
+    $c->set("__WORKFLOWS__$site_id", 0);
     log_event("${type}_deact", $wf);
     set_redirect('/admin/manager/workflow');
     add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
@@ -65,7 +66,8 @@ if ($param->{delete}) {
     elsif (@wfs == 1 && !defined $wf_id) { $used = 1 }
     elsif (@wfs == 1 && defined $wf_id
 	   && $wfs[0] != $wf_id) { $used = 1 }
-    add_msg($lang->maketext("The name [_1] is already used by another $disp_name.",$name)) if $used;
+    add_msg($lang->maketext("The name [_1] is already used by another $disp_name.",
+                            $name)) if $used;
 
     # Roll in the changes.
     $wf->set_name($param->{name}) unless $used;
@@ -78,7 +80,8 @@ if ($param->{delete}) {
 
 	if ($param->{new_desk_name}) {
 	    # They're creating a brand new desk.
-	    my $d = (Bric::Biz::Workflow::Parts::Desk->list({ name => $param->{new_desk_name} }))[0]
+	    my $d = (Bric::Biz::Workflow::Parts::Desk->list
+                     ({ name => $param->{new_desk_name} }))[0]
 	      || Bric::Biz::Workflow::Parts::Desk->new;
 	    $d->set_name($param->{new_desk_name});
 	    $d->save;
@@ -89,14 +92,16 @@ if ($param->{delete}) {
 	    # Set the start desk from the menu choice.
 	    $wf->set_start_desk($param->{first_desk});
 	    $param->{new_desk_name} =
-	      Bric::Biz::Workflow::Parts::Desk->lookup({ id => $param->{first_desk} })->get_name;
+	      Bric::Biz::Workflow::Parts::Desk->lookup
+                  ({ id => $param->{first_desk} })->get_name;
 	}
 	unless ($used) {
 	    $wf->deactivate;
 	    $wf->save;
 	    $param->{id} = $wf->get_id;
-	    $c->set('__WORKFLOWS__', 0);
-	    log_event("${type}_add_desk", $wf, { Desk => $param->{new_desk_name} });
+	    $c->set("__WORKFLOWS__$site_id", 0);
+	    log_event("${type}_add_desk", $wf,
+                      { Desk => $param->{new_desk_name} });
 	    log_event($type . '_new', $wf);
 	}
 	return $wf;
@@ -127,7 +132,7 @@ if ($param->{delete}) {
 	} else {
 	    $wf->activate;
 	    $wf->save;
-	    $c->set('__WORKFLOWS__', 0);
+	    $c->set("__WORKFLOWS__$site_id", 0);
             add_msg($lang->maketext("$disp_name profile [_1] saved.",$name));
 	    log_event($type . '_save', $wf);
 	    set_redirect('/admin/manager/workflow');

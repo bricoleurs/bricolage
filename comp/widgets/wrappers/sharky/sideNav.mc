@@ -46,6 +46,7 @@ my $printLink = sub {
 </%once>
 
 <%perl>
+my $site_id = $c->get_user_cx(get_user_id);
 # Figure out where we are (assume it's "My Workspace").
 my ($section, $mode, $type) = split '/', substr($ARGS{uri}, 1);
 ($section, $mode, $type) = qw(workflow profile workspace) unless $section;
@@ -62,7 +63,7 @@ my $workspaceGraphic          = $type eq "workspace" ?
   "/media/images/$lang_key/my_workspace_on.gif" :
   "/media/images/$lang_key/my_workspace_off.gif";
 
-my $workflows = $c->get('__WORKFLOWS__');
+my $workflows = $c->get('__WORKFLOWS__'. $site_id);
 
 $uri ||= $r->uri;
 $uri = '/workflow/profile/workspace' unless $uri && $uri ne '/';
@@ -73,7 +74,7 @@ unless ($workflows) {
     $workflows = [];
     my $tmp = 0;
 
-    foreach my $w (Bric::Biz::Workflow->list) {
+    foreach my $w (Bric::Biz::Workflow->list({site_id => $site_id})) {
         # account for New/Find/Active links and whitespace
         $tmp += 6;
         # account for desks
@@ -95,7 +96,7 @@ unless ($workflows) {
     # account for open admin links
     $tmp += 16;
     $c->set("__NUM_LINKS__", $tmp) if $numLinks != $tmp;
-    $c->set('__WORKFLOWS__', $workflows);
+    $c->set('__WORKFLOWS__'. $site_id, $workflows);
 }
 
 </%perl>
@@ -142,7 +143,7 @@ unless ($workflows) {
 
 # Begin Workflows -------------------------------------
 # iterate thru workflows
-my $site_id = $c->get_user_cx(get_user_id);
+
 foreach my $wf (@$workflows) {
     next if $site_id && $site_id != $wf->{site_id};
     # Check permissions.
@@ -454,10 +455,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =head1 DATE
 
-$Date: 2003-04-15 09:04:55 $
+$Date: 2003-07-18 23:45:13 $
 
 </%doc>

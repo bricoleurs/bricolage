@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:11 $
+$Date: 2003-07-18 23:45:13 $
 
 =head1 SYNOPSIS
 
@@ -46,15 +46,14 @@ if ($type eq 'templates') {
     };
 }
 
-# Grab the workflow from the cache.
-my $wf = $c->get('__WORKFLOWS__');
-for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $work_id }
+# Grab the workflow from the database.
+my $wf = Bric::Biz::Workflow->lookup({ id => $work_id })->get_name;
 </%init>
 
 <& '/widgets/wrappers/sharky/header.mc',
     title => "Active $pl_name->{$obj_type}",
     no_hist => 1,
-    context => "Workflow | $wf | Active $pl_name->{$obj_type}"
+    context => "Workflow | &quot;$wf&quot; | Active $pl_name->{$obj_type}"
 &>
 
 <form method="post" action="<% $r->uri %>" name="theForm">

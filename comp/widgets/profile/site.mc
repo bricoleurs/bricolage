@@ -20,7 +20,7 @@ if ($param->{delete}) {
     $site->save;
     $c->set_lmu_time;
     $c->set('__SITES__', 0);
-    $c->set('__WORKFLOWS__', 0);
+    $c->set('__WORKFLOWS__' . $site->get_id, 0);
     log_event("${type}_deact", $site);
     set_redirect('/admin/manager/site');
     add_msg($lang->maketext("$disp_name profile &quot;[_1]&quot; deleted.",
@@ -35,7 +35,7 @@ eval {
     $site->set_domain_name($param->{domain_name});
     $site->save;
     $c->set('__SITES__', 0);
-    $c->set('__WORKFLOWS__', 0);
+    $c->set('__WORKFLOWS__' . $site->get_id, 0);
     add_msg($lang->maketext("$disp_name profile [_1] saved.", $param->{name}));
     log_event($type . '_save', $site);
 
@@ -85,11 +85,11 @@ return $site;
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:53 $
+$Date: 2003-07-18 23:45:14 $
 
 =head1 SYNOPSIS
 

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:53 $
+$Date: 2003-07-18 23:45:14 $
 
 =head1 SYNOPSIS
 
@@ -169,8 +169,11 @@ foreach my $grp ( map { Bric::Util::Grp->lookup({ id => $_ }) }
 # and sites must be reloaded in the sideNav and header, as permissions may
 # have changed.
 $c->set_lmu_time;
-$c->set('__WORKFLOWS__', 0);
 $c->set('__SITES__', 0);
+foreach my $gid ($user->get_grp_ids) {
+    $c->set("__WORKFLOWS__$gid", 0)
+      if $c->get("__WORKFLOWS__$gid");
+}
 
 # Redirect. Use redirect_onload because the User profile has been using SSL.
 get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')
