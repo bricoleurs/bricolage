@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-09-16 03:47:11 $
+$Date: 2003-10-30 18:47:14 $
 
 =head1 DESCRIPTION
 
@@ -78,14 +78,14 @@ $RESULTS{APACHE}  = find_apache();
 $RESULTS{EXPAT}   = find_expat();
 
 # print error message and fail if something not found
-unless ($RESULTS{PG} and $RESULTS{APACHE} and 
+unless ($RESULTS{PG} and $RESULTS{APACHE} and
 	$RESULTS{EXPAT}) {
   hard_fail("Required software not found:\n\n",
-	    $RESULTS{PG}     ? "" : 
+	    $RESULTS{PG}     ? "" :
 	    "\tPostgreSQL >= 7.1.0 (http://postgresql.org)\n",
-	    $RESULTS{APACHE} ? "" : 
+	    $RESULTS{APACHE} ? "" :
 	    "\tApache >= 1.3.12    (http://apache.org)\n",
-	    $RESULTS{EXPAT}  ? "" : 
+	    $RESULTS{EXPAT}  ? "" :
 	    "\texpat >= 1.95.0     (http://expat.sourceforge.net)\n",
 	    "\nSee INSTALL for details.\n"
 	   );
@@ -134,7 +134,7 @@ sub find_pg {
             $REQ{PG_CONFIG} = 'NONE';
             ask_confirm("Enter path to pg_config", \$REQ{PG_CONFIG});
         } else {
-            return soft_fail("Failed to find pg_config.  Looked in:", 
+            return soft_fail("Failed to find pg_config.  Looked in:",
                              map { "\n\t$_" } @paths);
         }
     }
@@ -153,6 +153,11 @@ sub find_pg {
 		     "7.1.0 or greater required.")
 	unless (($x > 7) or ($x == 7 and $y >= 1));
     print "Found acceptable version of Postgres: $x.$y.$z.\n";
+
+    print "However, version 7.3.0 or later is strongly recommended.\n",
+      "Please consider upgrading.\n";
+	unless (($x > 7) or ($x == 7 and $y >= 3));
+
     $REQ{PG_VERSION} = [$x,$y,$z];
 
     return 1;
@@ -161,9 +166,9 @@ sub find_pg {
 # look for apache
 sub find_apache {
     print "Looking for Apache with version >= 1.3.12...\n";
-    
-    # find Apache by looking for executables called httpd, httpsd, 
-    # apache-perl or apache, in that order.  First search user's 
+
+    # find Apache by looking for executables called httpd, httpsd,
+    # apache-perl or apache, in that order.  First search user's
     # path then some standard locations.
     my @paths = (path(), qw(/usr/local/apache/bin
 			    /usr/local/bin
