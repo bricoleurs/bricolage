@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.11.2.1 $
+$Revision: 1.11.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.2 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-03-02 22:10:06 $
+$Date: 2003-03-03 03:04:28 $
 
 
 =head1 SYNOPSIS
@@ -105,6 +105,8 @@ use Bric::Util::DBI qw(:all);
 
 use Bric::Util::Attribute::AssetTypeData;
 
+use Bric::Util::Fault::Exception::GEN;
+
 #==============================================================================#
 # Inheritance                          #
 #======================================#
@@ -128,7 +130,7 @@ use constant DEBUG => 0;
 use constant TABLE => 'at_data';
 use constant COLS  => qw(
                          element__id
-                         name
+                         key_name
                          description
                          place
                          required
@@ -168,13 +170,13 @@ BEGIN {
                          'id'                  => Bric::FIELD_READ,
 
                          # the asset type that this is associated with
-                         'element__id'      => Bric::FIELD_RDWR,
+                         'element__id'         => Bric::FIELD_RDWR,
 
                          # The meta object ID.
                          'map_type__id'        => Bric::FIELD_RDWR,
 
                          # The human readable name field
-                         'name'                => Bric::FIELD_RDWR,
+                         'key_name'            => Bric::FIELD_RDWR,
 
                          # The human readable description Field
                          'description'         => Bric::FIELD_RDWR,
@@ -249,7 +251,7 @@ meta_object
 
 =item *
 
-name
+key_name
 
 =item *
 
@@ -400,7 +402,7 @@ C<$params> hash reference. Supported criteria are:
 
 =item map_type__id
 
-=item name
+=item key_name
 
 =item max_length
 
@@ -666,9 +668,10 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $field = $field->set_name( $name )
+=item $field = $field->set_key_name( $name )
 
-Sets the human readable field name
+Sets the key name for this field.  The display name is stored in the 'disp'
+attribute.
 
 B<Throws:>
 
@@ -684,11 +687,16 @@ NONE
 
 =cut
 
+sub get_name {
+    my $msg = "WARNING: Something called the depreciated method 'get_name'";
+    die Bric::Util::Fault::Exception::GEN->new({msg => $msg});
+}
+
 #------------------------------------------------------------------------------#
 
-=item $name = $field->get_name()
+=item $name = $field->get_key_name()
 
-Returns the human readable field name
+Returns the key name.  The display name is stored in the 'disp' attribute
 
 B<Throws:>
 
@@ -953,7 +961,7 @@ sub set_attr {
                              'value'    => $val});
     } else {
         $attr->{$name} = $val;
-        
+
         $self->_set(['_attr'], [$attr]);
     }
 
@@ -1023,9 +1031,9 @@ sub set_meta {
                              'value' => $val});
     } else {
         $meta->{$name}->{$field} = $val;
-        
-        $self->_set(['_meta'], [$meta]);        
-    }   
+
+        $self->_set(['_meta'], [$meta]);
+    }
 
     return $val;
 }
@@ -1236,9 +1244,9 @@ sub _do_list {
         push @bind, $param->{'map_type__id'};
     }
 
-    if (exists $param->{'name'} ) {
-        push @where, 'name=?';
-        push @bind, $param->{'name'};
+    if (exists $param->{'key_name'} ) {
+        push @where, 'key_name=?';
+        push @bind, $param->{'key_name'};
     }
 
     if (exists $param->{'max_length'} ) {
