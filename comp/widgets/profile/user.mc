@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:58 $
+$Date: 2002-08-17 23:49:45 $
 
 =head1 SYNOPSIS
 
@@ -154,7 +154,7 @@ my $del_ids = mk_aref($param->{rem_grp});
 foreach my $grp ( map { Bric::Util::Grp->lookup({ id => $_ }) }
 		  @$del_ids ) {
     # Deactivate the user's group membership.
-    foreach my $mem ($grp->has_member($user)) {
+    foreach my $mem ($grp->has_member({ obj => $user })) {
 	$mem->deactivate;
 	$mem->save;
     }

@@ -6,16 +6,16 @@ Bric::Util::Grp::User - Interface to Bric::Biz::Person::User Groups
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 00:29:45 $
+$Date: 2002-08-17 23:49:47 $
 
 =head1 SYNOPSIS
 
@@ -125,6 +125,22 @@ B<Notes:> NONE.
 =cut
 
 sub get_supported_classes { { 'Bric::Biz::Person::User' => 'user' } }
+
+################################################################################
+
+=item $class_id = Bric::Util::Grp::User->get_object_class_id
+
+Forces all Objects to be considered as this class.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_object_class_id { 2 }
 
 ################################################################################
 

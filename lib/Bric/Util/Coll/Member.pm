@@ -1,29 +1,30 @@
-package Bric::Util::Grp::Element;
+package Bric::Util::Coll::Member;
+###############################################################################
 
 =head1 NAME
 
-Bric::Util::Grp::Element - Interface to Element Groups
+Bric::Util::Coll::OutputChannel - Interface for managing collections of group
+members
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.1 $
 
 =cut
 
-# Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:47 $
+$Date: 2002-08-17 23:49:46 $
 
 =head1 SYNOPSIS
 
-See Bric::Util::Grp
+See Bric::Util::Coll.
 
 =head1 DESCRIPTION
 
-See Bric::Util::Grp.
+See Bric::Util::Coll.
 
 =cut
 
@@ -35,22 +36,21 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
+use Bric::Util::Grp::Parts::Member;
 
 ################################################################################
 # Inheritance
 ################################################################################
-use base qw(Bric::Util::Grp::AssetType);
+use base qw(Bric::Util::Coll);
 
 ################################################################################
-# Function Prototypes
+# Function and Closure Prototypes
 ################################################################################
-
 
 ################################################################################
 # Constants
 ################################################################################
 use constant DEBUG => 0;
-use constant CLASS_ID => 70;
 
 ################################################################################
 # Fields
@@ -59,13 +59,12 @@ use constant CLASS_ID => 70;
 
 ################################################################################
 # Private Class Fields
-my ($class);
 
 ################################################################################
 
 ################################################################################
 # Instance Fields
-BEGIN { Bric::register_fields() }
+BEGIN { }
 
 ################################################################################
 # Class Methods
@@ -75,13 +74,13 @@ BEGIN { Bric::register_fields() }
 
 =head2 Constructors
 
-Inherited from Bric::Util::Grp.
+Inherited from Bric::Util::Coll.
 
 =head2 Destructors
 
 =over 4
 
-=item $attr->DESTROY
+=item $org->DESTROY
 
 Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
 
@@ -101,28 +100,11 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
-=over
+=over 4
 
-=item $class_id = Bric::Util::Grp::Element->get_class_id()
+=item Bric::Util::Coll->class_name()
 
-This will return the class ID that this group is associated with.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub get_class_id { CLASS_ID }
-
-################################################################################
-
-=item my $secret = Bric::Util::Grp::Element->get_secret()
-
-Returns false, because this is not a secret type of group, but one that can be
-used by users.
+Returns the name of the class of objects this collection manages.
 
 B<Throws:> NONE.
 
@@ -132,26 +114,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_secret { 0 }
-
-################################################################################
-
-=item my $class = Bric::Util::Grp::Element->my_class()
-
-Returns a Bric::Util::Class object describing this class.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> Uses Bric::Util::Class->lookup() internally.
-
-=cut
-
-sub my_class {
-    $class ||= Bric::Util::Class->lookup({ id => CLASS_ID });
-    return $class;
-}
+sub class_name { 'Bric::Util::Grp::Parts::Member' }
 
 ################################################################################
 
@@ -159,13 +122,85 @@ sub my_class {
 
 =head2 Public Instance Methods
 
-Inherited from Bric::Util::Grp.
+=item $self = $coll->save
+
+=item $self = $coll->save($server_type_id)
+
+Saves the changes made to all the objects in the collection. Pass in a
+Bric::Dist::ServerType object ID to make sure all the Bric::Biz::OutputChannel
+objects are properly associated with that server type.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to select row.
+
+=item *
+
+Incorrect number of args to _set.
+
+=item *
+
+Bric::_set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub save {
+    my ($self, $grp) = @_;
+    my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
+    # Save the deleted objects.
+    foreach my $mem (@$del_objs) {
+	$mem->save if $mem->get_id;
+    }
+    @$del_objs = ();
+
+    # Save the existing and new objects.
+    foreach my $mem (values %$objs, @$new_objs) {
+	$mem->save;
+    }
+
+    # Add the new objects to the main list of objects.
+    if ($grp->get_object_class_id) {
+        # Reference off the underlying object IDs.
+        $objs->{$_->get_obj_id} = $_ for @$new_objs;
+    } else {
+        # Use the default behavior of using the member object IDs.
+        $self->add_objs(@$new_objs);
+    }
+
+    # Reset the new_objs array and return.
+    @$new_objs = ();
+    return $self;
+}
+
+=back 4
 
 =head1 PRIVATE
-
-=head2 Private Constructors
-
-NONE.
 
 =head2 Private Class Methods
 
@@ -195,7 +230,9 @@ David Wheeler <david@wheeler.net>
 =head1 SEE ALSO
 
 L<Bric|Bric>,
-L<Bric::Biz::AssetType|Bric::Biz::AssetType>,
-L<Bric::Util::Grp|Bric::Util::Grp>
+L<Bric::Util::Coll|Bric::Util::Coll>,
+L<Bric::Util::Grp|Bric::Util::Grp>,
+L<Bric::Util::Grp::Parts::Member|Bric::Util::Grp::Parts::Member>
+
 
 =cut

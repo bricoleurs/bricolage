@@ -7,15 +7,15 @@ Bric::Util::Grp::AssetType - A group of AssetTypes.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:22 $
+$Date: 2002-08-17 23:49:46 $
 
 =head1 SYNOPSIS
 
@@ -231,7 +231,21 @@ sub get_supported_classes {
     return { &PACKAGE => TABLE };
 }	
 
-#==============================================================================#
+################################################################################
+
+=item $class_id = Bric::Util::Grp::AssetType->get_object_class_id
+
+Forces all Objects to be considered as this class.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_object_class_id { 22 }
 
 ################################################################################
 

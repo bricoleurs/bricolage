@@ -7,15 +7,15 @@ package Bric::Util::Grp::CategorySet;
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:47 $
+$Date: 2002-08-17 23:49:46 $
 
 =head1 SYNOPSIS
 
@@ -106,7 +106,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $obj = new Bric::Util::Grp::Category($init);
+=item $obj = new Bric::Util::Grp::CategorySet($init);
 
 Inherited
 
@@ -126,7 +126,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item @objs = lookup Bric::Util::Grp::Category($cat_id);
+=item @objs = lookup Bric::Util::Grp::CategorySet($cat_id);
 
 Inherited
 
@@ -147,7 +147,7 @@ classes even if it just calls 'die'.
 
 #------------------------------------------------------------------------------#
 
-=item @objs = list Bric::Util::Grp::Category($param);
+=item @objs = list Bric::Util::Grp::CategorySet($param);
 
 Inherited.
 
@@ -226,7 +226,7 @@ sub member_class {
 
 #------------------------------------------------------------------------------#
 
-=item $class_id = Bric::Util::Grp::Category->get_class_id()
+=item $class_id = Bric::Util::Grp::CategorySet->get_class_id()
 
 This will return the class id that this group is associated with
 it should have an id that maps to the class object instance that is
@@ -252,7 +252,7 @@ sub get_class_id {
 
 ################################################################################
 
-=item $class_id = Bric::Util::Grp::Person->get_object_class_id()
+=item $class_id = Bric::Util::Grp::CategorySet->get_object_class_id()
 
 Forces all Objects to be considered as this class.
 

@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 use Test::More tests => 31;
-use Carp;
 
 BEGIN { use_ok('Bric::Util::Grp::Parts::Member') }
 BEGIN { use_ok('Bric::Util::Pref') }
@@ -63,14 +62,13 @@ is $memb[0], 401, "Check one member ID ID";
 # the usual one in other classes, in that it has a hashref of hashrefs.
 ok my $memb_href = Bric::Util::Grp::Parts::Member->href
   ({ grp_package => 'Bric::Util::Grp::Pref' }), "Get all members";
-ok $memb_href->{'Bric::Util::Pref'}{401}, "Hashref memb 401 exists";
-ok $memb_href->{'Bric::Util::Pref'}{402}, "Hashref memb 402 exists";
+ok $memb_href->{1}, "Hashref memb obj 1 exists";
+ok $memb_href->{2}, "Hashref memb obj 2 exists";
 
 # Now just grab one!
 ok $memb_href = Bric::Util::Grp::Parts::Member->href
   ({ grp_package => 'Bric::Util::Grp::Pref',
      object      => $pref }),
   "Get one href object member";
-ok $memb_href->{'Bric::Util::Pref'}{401}, "Hashref memb 401 exists";
-ok ! $memb_href->{'Bric::Util::Pref'}{402}, "Hashref memb 402 don't exist";
-
+ok $memb_href->{1}, "Hashref memb obj 1 exists again";
+ok ! $memb_href->{2}, "Hashref memb 2 doesn't exist";

@@ -6,16 +6,16 @@ Bric::Util::Grp::ContribType - Interface to Bric::Util::Grp::Person Groups
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:37 $
+$Date: 2002-08-17 23:49:47 $
 
 =head1 SYNOPSIS
 
@@ -120,6 +120,22 @@ B<Notes:> NONE.
 =cut
 
 sub get_supported_classes { { 'Bric::Util::Grp::Person' => 'contrib_type' } }
+
+################################################################################
+
+=item $class_id = Bric::Util::Grp::ContribType->get_object_class_id
+
+Forces all Objects to be considered as this class.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_object_class_id { 9 }
 
 ################################################################################
 

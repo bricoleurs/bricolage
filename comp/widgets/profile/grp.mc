@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-08-17 23:49:45 $
 
 =head1 SYNOPSIS
 
@@ -67,7 +67,7 @@ my $save_sub = sub {
             # Deactivate members.
             foreach my $id (ref $param->{objects} ? @{$param->{objects}}
                             : $param->{objects}) {
-                foreach my $mem ($grp->has_member($pkg->lookup({id => $id}) ) ) {
+                foreach my $mem ($grp->has_member({ obj => $pkg->lookup({ id => $id }) }) ) {
 		    $mem->deactivate;
                     $mem->save;
                 }

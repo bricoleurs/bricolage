@@ -7,15 +7,15 @@ Bric::Biz::Org - Bricolage Interface to Organizations
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 00:29:45 $
+$Date: 2002-08-17 23:49:45 $
 
 =head1 SYNOPSIS
 
@@ -1140,7 +1140,7 @@ sub save {
 	unless ($self->_get('active')) {
 	    # Deactivate all group memberships if we've deactivated the org.
 	    foreach my $grp (Bric::Util::Grp::Org->list({ obj => $self })) {
-		foreach my $mem ($grp->has_member($self)) {
+		foreach my $mem ($grp->has_member({ obj => $self })) {
 		    next unless $mem;
 		    $mem->deactivate;
 		    $mem->save;

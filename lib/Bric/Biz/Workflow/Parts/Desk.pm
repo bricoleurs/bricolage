@@ -10,16 +10,16 @@ package Bric::Biz::Workflow::Parts::Desk;
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:44 $
+$Date: 2002-08-17 23:49:45 $
 
 
 =head1 SYNOPSIS
@@ -722,7 +722,7 @@ sub checkout {
 					'_asset_grp_obj');
 
     # Don't do anything unless this asset is already on this desk.
-    return unless $asset_grp->has_member($a_obj);
+    return unless $asset_grp->has_member({ obj => $a_obj });
 
     my $chkout = $self->_get('_checkout');
 
@@ -1103,9 +1103,9 @@ sub save {
 	unless ($asset_grp_obj) {
 	    my $dirty = $self->_get__dirty;
 	    my $desc = 'A group for holding assets for Desk objects';
-	    $asset_grp_obj = Bric::Util::Grp::Asset->new(
-							 {'name' => 'Desk Assets',
-							  'description' => $desc});
+	    $asset_grp_obj = Bric::Util::Grp::Asset->new
+              ({ name        => 'Desk Assets',
+                 description => $desc});
 
 	    # Throw an error if we could not create the group.
 	    my $err_msg = 'Could not create a new Grp object';

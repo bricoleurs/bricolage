@@ -10,7 +10,7 @@ Release Version: 1.3.2 -- Development Track for 1.4.0
 
 File (CVS) Version:
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.3.3";
 
 =head1 DATE
 
-$Date: 2002-06-10 22:20:08 $
+$Date: 2002-08-17 23:49:45 $
 
 =head1 SYNOPSIS
 
@@ -555,9 +555,8 @@ sub register_instance {
     $grp_pkg ||= $self->GROUP_PACKAGE || return;
 
     # Add the object to the group.
-    my $grp = $grp_pkg->lookup({'id' => $grp_id}) || return;
-    $grp->add_members([{'obj' => $self}]);
-
+    my $grp = $grp_pkg->lookup({ id => $grp_id }) || return;
+    $grp->add_member({ obj => $self, no_check => 1 });
     return $self if $grp->save;
 }
 

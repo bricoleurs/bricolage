@@ -1,43 +1,11 @@
 package Bric::Util::Grp::AssetLanguage;
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+# dummy class to keep upgraded installations from breaking when
+# Bric::Util::Grp loads classes based on the contents of the contents of the
+# Class table. Unfortunately trying to delete from the Class table triggeres a
+# cascading delete of dangerous proportions. If we find a way around that then
+# we can remove this file.
 
-use strict;
-
-use base qw(Bric::Util::Grp);
-
-
-BEGIN {
-	Bric::register_fields()
-}
-
-
-#sub new {
-#	my $class = shift;
-#
-#	my $self = fields::new($class);
-#
-#	$self->SUPER::new();
-#
-#	$self->{'class_id'} = 1;
-#
-#	return $self;
-#
-#}
-
-sub get_class_id {
-	# Get real ID
-	return 26;
-}
-
-sub get_supported_classes {
-
-	my $allowed_classes = { 
-						'Bric::Util::Grp::AssetVersion'	=> 'grp'
-						};
-	return $allowed_classes;
-}
+sub get_secret { 1 };
 
 1;
-
-__END__

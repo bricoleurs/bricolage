@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-07-16 19:06:54 $
+$Date: 2002-08-17 23:49:45 $
 
 =head1 SYNOPSIS
 
@@ -1286,7 +1286,7 @@ sub save {
 	unless ($act) {
 	    # Deactivate all group memberships if we've deactivated the user.
 	    foreach my $grp (Bric::Util::Grp::User->list({ obj => $self })) {
-		foreach my $mem ($grp->has_member($self)) {
+		foreach my $mem ($grp->has_member({ obj => $self })) {
 		    next unless $mem;
 		    $mem->deactivate;
 		    $mem->save;

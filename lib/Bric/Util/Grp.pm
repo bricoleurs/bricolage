@@ -3,73 +3,98 @@ package Bric::Util::Grp;
 
 =head1 NAME
 
-Bric::Util::Grp - A Class for associating Objects 
+Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-14 21:08:46 $
+$Date: 2002-08-17 23:49:46 $
 
 =head1 SYNOPSIS
 
- # Creation of Objects
- $grp = Bric::Util::Grp->new( $init );
- $grp = Bric::Util::Grp->lookup( { id => $id } )
- (@grps || $grp_list) = Bric::Util::Grp->list( $params )
+  # Constructors.
+  my $grp = Bric::Util::Grp->new($init);
+  $grp = Bric::Util::Grp->lookup({ id => $id });
+  my @grps = Bric::Util::Grp->list($params);
 
- # List of object ids
- (@g_ids || $g_ids) = Bric::Util::Grp->list_ids( $params )
+  # Class methods.
+  my @grp_ids = Bric::Util::Grp->list_ids($params)
+  my $class_id = Bric::Util::Grp->get_class_id;
+  my $supported_classes = Bric::Util::Grp->get_supported_classes;
+  my $class_keys_href = Bric::Util::Grp->href_grp_class_keys;
+  my $secret = Bric::Util::Grp->get_secret;
+  my $class = Bric::Util::Grp->my_class;
+  my $member_class = Bric::Util::Grp->member_class;
+  my $obj_class_id = Bric::Util::Grp->get_object_class_id;
+  my @member_ids = Bric::Util::Grp->get_member_ids($grp_id);
+  my $meths = Bric::Util::Grp->my_meths;
 
- # Manipulation of Grp Name
- $grp = $grp->set_name( $name )
- $name = $grp->get_name()
+  # Instance methods.
+  $id = $grp->get_id;
+  my $name = $grp->get_name;
+  $grp = $grp->set_name($name)
+  my $desc = $grp->get_description;
+  $grp = $grp->set_description($desc);
+  my $parent_id = $grp->get_parent_id;
+  $grp = $grp->set_parent_id($parent_id);
+  my $class_id = $grp->get_class_id;
+  my $perm = $grp->get_permanent;
+  my $secret = $grp->get_secret;
+  my @parent_ids = $grp->get_all_parent_ids;
 
- # Manipulation of Description Field
- $grp = $grp->set_description()
- $desc = $grp->get_description()
+  $grp = $grp->activate;
+  $grp = $grp->deactivate;
+  $grp = $grp->is_active;
 
- # Return the class of the Grp
- $class_id = $grp->get_class_id()
+  # Instance methods for managing members.
+  my @members = $grp->get_members;
+  my @member_obss = $grp->get_objects;
+  $grp->add_member(\%member_spec);
+  $grp->add_members(\@member_specs);
+  $grp = $grp->delete_member(\%member_spec);
+  $grp = $grp->delete_members(\@member_specs);
+  my $member = $grp->has_member({ obj => $obj });
 
- # the id of the parent Grp
- $parent_id = $grp->get_parent_id()
- $grp = $grp->set_parent_id()
+  # Instance methods for managing member attributes.
+  $grp = $grp->set_member_attr($params);
+  $grp = $grp->delete_member_attr($params);
+  $grp = $grp->set_member_attrs(\@attr_specs);
+  $grp = $grp->set_member_meta($params);
+  my $meta = $grp->get_member_meta($params);
+  $grp = $grp->delete_member_meta($params);
+  my $attrs = $grp->all_for_member_subsys($subsys)
+  my $attr = $grp->get_member_attr($params);
+  my $attr_href = $grp->get_member_attr_hash($params);
+  my @attrs = $grp->get_member_attrs(\@params);
 
- # the id of this grp
- $id = $grp->get_id()
+  # Instance methods for managing group attributes.
+  @attrs = $grp->get_group_attrs(\@params);
+  $grp = $grp->set_group_attr($params);
+  $attr = $grp->get_group_attr($params);
+  $grp = $grp->delete_group_attr($params);
+  $grp = $grp->set_group_attrs(\@params);
+  $grp = $grp->set_group_meta($meta)
+  $meta = $grp->get_group_meta($params);
+  $grp = $grp->set_group_meta($params);
+  $grp = $grp->delete_group_meta($params);
+  $attr_href = $grp->get_group_attr_hash;
+  $attrs = $grp->all_for_group_subsys($subsys);
 
- # manipulation of the member objects
- $grp = $grp->add_members( [$obj || { type => $type, id => $id}] )
- (@members || $member_aref) = $grp->get_members()
- $grp = $grp->delete_members([$obj || $member || {type=> $t,id=> $id}])
- ($member || undef) = $grp->has_member(($obj||{type =>$t, id =>$id},$attr) 
-
- # mainipulation of attributes assigned to members
- (@vals || $val_aref) = $grp->get_member_attrs( [ { name => $name } ])
- $group = $grp->set_member_attrs([ { name => $name, value => $value } ] )
-
- # mainpulation of attributes assignes to the grp
- (@vals || $val_aref) = $grp->get_grp_attrs( [ $name ] )
- $success = $grp->set_grp_attrs([ {name => $name, value => $value }])
-
- # save the changes to the database
- $group = $grp->save()
+  # Save the changes to the database
+  $grp = $grp->save;
 
 =head1 DESCRIPTION
 
-Grp is a class that associates Objects together.   These can be
-assigned Attributes as a group or to the member class which will 
-allow attributes to be set on an object in association with a group.
-
-The class is called Grp because group is a reserved oracle word.   So for
-the sake of consistancy throughout the class is called grp.
+Grp is a class that associates Bricolages objects. Attributes can be assigned
+to the group as a whole, or to the members of the group. In the latter case,
+the attribute values may be changed for individual members.
 
 =cut
 
@@ -78,34 +103,28 @@ the sake of consistancy throughout the class is called grp.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
+# Programatic Dependencies
 use Bric::Config qw(:admin);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Parts::Member;
 use Bric::Util::Attribute::Grp;
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Class;
-
-use Data::Dumper;
+use Bric::Util::Coll::Member;
 
 #==============================================================================#
 # Inheritance                          #
 #======================================#
-
-# The parent module should have a 'use' line if you need to import from it.
-# use Bric;
 use base qw(Bric);
 
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
-#NONE
+my $get_memb_coll;
 
 #==============================================================================#
 # Constants                            #
@@ -113,102 +132,59 @@ use base qw(Bric);
 
 use constant DEBUG => 0;
 
-use constant GRP_SUBSYS => '_GRP_SUBSYS';
-use constant MEMBER_SUBSYS => Bric::Util::Grp::Parts::Member::MEMBER_SUBSYS;
+use constant TABLE  => 'grp';
+use constant COLS   => qw(parent_id class__id name description secret permanent
+                        active);
+use constant FIELDS => qw(parent_id class_id name description secret permanent
+                          _active);
+use constant ORD    => qw(name description parent_id class_id member_type active);
 
-use constant TABLE => 'grp';
-use constant COLS => qw(parent_id class__id name description 
-                                                secret permanent active);
-use constant FIELDS => qw(parent_id class_id name description 
-                                                secret permanent _active);
-use constant ORD => qw(name description parent_id class_id member_type active);
-
+use constant GRP_SUBSYS        => '_GRP_SUBSYS';
+use constant MEMBER_SUBSYS     => Bric::Util::Grp::Parts::Member::MEMBER_SUBSYS;
 use constant INSTANCE_GROUP_ID => 35;
-use constant GROUP_PACKAGE => 'Bric::Util::Grp::Grp';
+use constant GROUP_PACKAGE     => 'Bric::Util::Grp::Grp';
+
 
 #==============================================================================#
 # Fields                               #
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-# Public fields should use 'vars'
-#use vars qw();
+# Public Class Fields
+# None.
 
 #--------------------------------------#
-# Private Class Fields                  
-
-# Private fields use 'my'
+# Private Class Fields
 my ($meths, $class, $mem_class);
 
 #--------------------------------------#
-# Instance Fields                       
-
+# Instance Fields
 # NONE
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-    Bric::register_fields({
-                        # Public Fields
+    Bric::register_fields
+        ({ id            => Bric::FIELD_READ,
+           name          => Bric::FIELD_RDWR,
+           description   => Bric::FIELD_RDWR,
+           class_id      => Bric::FIELD_READ,
+           parent_id     => Bric::FIELD_RDWR,
+           secret        => Bric::FIELD_READ,
+           permanent     => Bric::FIELD_READ,
 
-                        # The Name of the group
-                        'name'                          => Bric::FIELD_RDWR,
+           # Private Fields
+           _memb_coll    => Bric::FIELD_NONE,
+           _memb_hash    => Bric::FIELD_NONE,
+           _queried      => Bric::FIELD_NONE,
+           _parent_obj   => Bric::FIELD_NONE,
+           _attr_obj     => Bric::FIELD_NONE,
+           _attr_cache   => Bric::FIELD_NONE,
+           _meta_cache   => Bric::FIELD_NONE,
+           _update_attrs => Bric::FIELD_NONE,
+           _parents      => Bric::FIELD_NONE,
+           _active       => Bric::FIELD_NONE
 
-                        # the human readable description field
-                        'description'           => Bric::FIELD_RDWR,
-
-                        # The database id field
-                        'id'                            => Bric::FIELD_READ,
-
-                        # The id from the class table
-                        'class_id'                      => Bric::FIELD_READ,
-
-                        # The parent id ( if any )
-                        'parent_id'                     => Bric::FIELD_RDWR,
-                        'secret'                        => Bric::FIELD_READ,
-                        'permanent'                     => Bric::FIELD_READ,
-
-                        # Private Fields
-
-                        # A List of Member Objects                      
-                        '_members'                      => Bric::FIELD_NONE,
-
-                        '_del_members'          => Bric::FIELD_NONE,
-
-                        # Delete me after Changes
-                        '_meta_store'           => Bric::FIELD_NONE,
-
-                        '_new_members'          => Bric::FIELD_NONE,
-
-                        # flag that states if the member object has
-                        # been _queried yet
-                        '_queried'                      => Bric::FIELD_NONE,
-
-                        '_update_members'     => Bric::FIELD_NONE,
-
-                        # the parent group object
-                        '_parent_obj'           => Bric::FIELD_NONE,
-
-                        # The attribute object
-                        '_attr_obj'                     => Bric::FIELD_NONE,    
-
-                        # Storage for attribute information before we can get
-                        # an attribute object
-                        # attributes
-                        '_attr_cache'           => Bric::FIELD_NONE,
-
-                        # meta information about the attributes
-                        '_meta_cache'           => Bric::FIELD_NONE,
-
-                        # flag to update attrs come save time
-                        '_update_attrs'         => Bric::FIELD_NONE,
-
-                        '_parents'                      => Bric::FIELD_NONE,
-
-                        '_active'                       => Bric::FIELD_NONE
-
-        });     
+        });
 }
 
 # This runs after this package has compiled, but before the program runs.
@@ -227,11 +203,10 @@ CHECK { use Bric::Util::Grp::Grp }
 =cut
 
 #--------------------------------------#
-# Constructors                          
-
+# Constructors
 #------------------------------------------------------------------------------#
 
-=item $group = Bric::Util::Grp->new( $initial_state )
+=item $grp = Bric::Util::Grp->new($init)
 
 This will create a new group object with optional initial state.
 
@@ -239,163 +214,368 @@ Supported Keys:
 
 =over 4
 
-=item *
+=item name
 
-name
-
-=item *
-
-description
+=item description
 
 =back
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub new {
-        my ($self, $init) = @_;
-
-        $self = bless {}, $self unless ref $self;
-
-        $init->{'_active'} = exists $init->{'active'} ? 0 : 1;
-        $init->{'permanent'} = exists $init->{'permanent'} ? 1 : 0;
-
-        $self->_set({ 'secret' => $self->get_secret(),
-                                        'class_id' => $self->get_class_id() });
-        # pass the defined initial state to the super's new method 
-        # this should set them in register fields
-        $self->SUPER::new($init);
-
-        $self->_set({ '_queried' => 1} );
-
-        return $self;
-
+    my ($self, $init) = @_;
+    $self = bless {}, $self unless ref $self;
+    $init->{_active} = exists $init->{active} ? 0 : 1;
+    $init->{permanent} = exists $init->{permanent} ? 1 : 0;
+    $self->_set({ secret   => $self->get_secret,
+                  class_id => $self->get_class_id });
+    # pass the defined initial state to the super's new method
+    # this should set them in register fields
+    $self->SUPER::new($init);
+    $self->_set({ '_queried' => 1} );
+    return $self;
 }
 
+##############################################################################
 
+=item $grp = Bric::Util::Grp->lookup({ id => $id })
 
-=item $group = Bric::Util::Grp->lookup( { id => $id } )
+This will lookup an existing group based on the given ID.
 
-This will lookup an existing group based on the given id.
+B<Throws:> NONE.
 
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE 
+B<Side Effects:> NONE.
 
 B<Notes:>
 
-If COLS var changes index of class id must change
+If COLS var changes index of class ID must change.
 
 =cut
 
 sub lookup {
-        my ($class, $params) = @_;
+    my ($class, $params) = @_;
 
-        # Make sure proper arguments have been passed 
-        die Bric::Util::Fault::Exception::GEN->new( 
-                { msg => "Missing Required Parameter 'id' " })
-                unless defined $params->{'id'};
+    # Make sure proper arguments have been passed
+    die Bric::Util::Fault::Exception::GEN->new
+      ({ msg => "Missing Required Parameter 'id' " })
+      unless defined $params->{'id'};
 
-        # Populate from database 
-        my $ret = _select_group('id=?', $params->{'id'});
+    # Populate from database or return.
+    my $ret = _select_group('id = ?', $params->{id}) or return;
 
-        # return undef if nothing found
-        return unless $ret;
-                                
-        # Determine if this was called on the Bric::Util::Grp class
-        # or one of its sub classes
-        my $bless_class;
-        if ($class->get_class_id() == $ret->[0]->[2]) {
-                # called on one of the subclasses bless this class
-                $bless_class = $class;
-        } else {
-                # called on Bric::Util::Grp::Subclass
-                # determine the class
-                my $c_obj = Bric::Util::Class->lookup({ id => $ret->[0]->[2] });
-                $bless_class = $c_obj->get_pkg_name();
-#               eval " require $bless_class ";
-        }
-
-        my $self = bless {}, $bless_class;
-
-        $self->_set( [ 'id', FIELDS], $ret->[0]);
-
-        $self->SUPER::new();
-
-        # clear the dirty bit
-        $self->_set__dirty(0);
-
-        # Return the object
-        return $self;
+    # Determine if this was called on the Bric::Util::Grp class or one of its
+    # sub classes
+    my $bless_class;
+    if ($class->get_class_id == $ret->[0]->[2]) {
+        # called on one of the subclasses bless this class
+        $bless_class = $class;
+    } else {
+        # called on Bric::Util::Grp::Subclass
+        # determine the class
+        my $c_obj = Bric::Util::Class->lookup({ id => $ret->[0]->[2] });
+        $bless_class = $c_obj->get_pkg_name;
+    }
+    my $self = bless {}, $bless_class;
+    $self->_set( [ 'id', FIELDS], $ret->[0]);
+    $self->SUPER::new;
+    # clear the dirty bit
+    $self->_set__dirty(0);
+    # Return the object
+    return $self;
 }
 
-=item (@groups || $group_aref) = Bric::Util::Grp->list( $criteria )
+##############################################################################
 
-Given the criteria this will return a list or a list ref of objects
-that match.
+=item my (@grps || $grps_aref) = Bric::Util::Grp->list($params);
 
-Supported Keys:
+Returns a list or anonymous array of Bric::Util::Grp objects. The supported
+keys in the C<$params> hash reference are:
+
+=over 4
+
+=item obj
+
+A Bricolage object. The groups returned will have member objects for this
+object.
+
+=item package
+
+A Bricolage class name. Use in combination with C<obj_id> to have
+C<_do_list()> return group objects with member objects representing a
+particular Bricolage object.
+
+=item obj_id
+
+A Bricolage object ID. Use in combination with C<package> to have
+C<_do_list()> return group objects with member objects representing a
+particular Bricolage object.
+
+=item parent_id
+
+A group parent ID.
+
+=item inactive
+
+Inactive groups will be returned if this parameter is true. Otherwise, only
+active groups will be returned.
+
+=item all
+
+Both secret and non-secret groups will be returned if this parameter is true.
+Otherwise only non-secret groups will be returned.
+
+=item name
+
+The name of a group.
+
+=item permananent
+
+A boolean to return permanent or non-permanent groups.
+
+=back
+
+B<Throws:>
 
 =over 4
 
 =item *
 
-name
+Unable to connect to database.
 
-=item * 
+=item *
 
-obj
+Unable to prepare SQL statement.
 
-=item * 
+=item *
 
-parent_id
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> If the C<obj> or C<obj_id> & C<package> parameters are used, then
+this method must be called from a subclass.
+
+=cut
+
+sub list { _do_list(@_) }
+
+=back
+
+##############################################################################
+
+=head2 Destructors
+
+=item $self->DESTROY
+
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY
+
+=cut
+
+sub DESTROY {
+    # This method should be here even if its empty so that we don't waste time
+    # making Bricolage's autoload method try to find it.
+}
+
+##############################################################################
+
+=head2 Public Class Methods
+
+=over 4
+
+=item my (@grp_ids || $grp_ids_aref) = Bric::Util::Grp->list_ids($params);
+
+Returns a list or anonymous array of Bric::Util::Grp IDs. The supported keys
+in the C<$params> hash reference are the same as for the C<list()> method.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+
+=over 4
+
+=item obj
+
+A Bricolage object. The groups returned will have member objects for this
+object.
+
+=item package
+
+A Bricolage class name. Use in combination with C<obj_id> to have
+C<_do_list()> return group objects with member objects representing a
+particular Bricolage object.
+
+=item obj_id
+
+A Bricolage object ID. Use in combination with C<package> to have
+C<_do_list()> return group objects with member objects representing a
+particular Bricolage object.
+
+=item parent_id
+
+A group parent ID.
+
+=item inactive
+
+Inactive groups will be returned if this parameter is true. Otherwise, only
+active groups will be returned.
+
+=item all
+
+Both secret and non-secret groups will be returned if this parameter is true.
+Otherwise only non-secret groups will be returned.
+
+=item name
+
+The name of a group.
+
+=item permananent
+
+A boolean to return permanent or non-permanent groups.
 
 =back
 
 B<Throws:>
 
-NONE 
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE 
+Unable to connect to database.
 
-B<Notes:>
+=item *
 
-NONE 
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> If the C<obj> or C<obj_id> & C<package> parameters are used, then
+this method must be called from a subclass.
 
 =cut
 
-sub list {
-        my ($class, $params) = @_;
-
-        # Send to _do_list function which will return objects
-        _do_list($class,$params,undef);
-
+sub list_ids {
+    my ($class, $params) = @_;
+    _do_list($class, $params, 1);
 }
 
-=over
+##############################################################################
 
-=item my (%class_keys || $class_keys_href) = Bric::Util::Grp->href_grp_class_keys
+=item $class_id = Bric::Util::Grp->get_class_id
 
-=item my (%class_keys || $class_keys_href) = Bric::Util::Grp->href_grp_class_keys(1)
+Returns the class ID representing the Bricolage class that this group is
+associated with.
 
-Returns an anonymous hash representing the subclasses of Bric::Util::Grp. The hash
-keys are the key_names of those classes, and the hash values are their plural
-display names. By default, it will return only those classes whose group
-instances are not secret. To get B<all> group subclasses, pass in a true value.
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:>
+
+Subclasses should override this method.
+
+=cut
+
+sub get_class_id { 6 }
+
+##############################################################################
+
+=item $supported_classes = Bric::Util::Grp->get_supported_classes
+
+Returns a hash reference of the supported classes in the group as keys with
+the short name as a value. The short name is used to construct the member
+table names and the foreign key in the table.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:>
+
+Subclasses should override this method.
+
+=cut
+
+sub get_supported_classes { undef }
+
+##############################################################################
+
+=item (1 || undef) = Bric::Util::Grp->get_secret
+
+Returns true if this Grp class is available for end user management. Secret
+groups are used by Bricolage only for internal purposes.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_secret { 1 }
+
+##############################################################################
+
+=item my (%class_keys || $class_keys_href) =
+Bric::Util::Grp->href_grp_class_keys
+
+=item my (%class_keys || $class_keys_href) =
+Bric::Util::Grp->href_grp_class_keys(1)
+
+Returns an anonymous hash representing the subclasses of Bric::Util::Grp. The
+hash keys are the key_names of those classes, and the hash values are their
+plural display names. By default, it will return only those classes whose
+group instances are not secret. To get B<all> group subclasses, pass in a true
+value.
 
 B<Throws:>
 
@@ -429,132 +609,38 @@ B<Notes:> NONE.
 
 =cut
 
-my $class_keys;
-my $all_class_keys;
-sub href_grp_class_keys {
-    my ($pkg, $all) = @_;
-    unless ($class_keys) {
-        my $sel = prepare_c(qq{
-            SELECT key_name, plural_name, pkg_name
-            FROM   class
-            WHERE  id in (
-                       SELECT DISTINCT class__id
-                       FROM   grp
-                   )
-        });
-        execute($sel);
-        my ($key, $name, $pkg_name);
-        bind_columns($sel, \$key, \$name, \$pkg_name);
-        while (fetch($sel)) {
-            next if $key eq 'ce';
-            $all_class_keys->{$key} = $name;
-#           eval "require $pkg_name";
-            $class_keys->{$key} = $name unless $pkg_name->get_secret;
+{
+    my $class_keys;
+    my $all_class_keys;
+
+    sub href_grp_class_keys {
+        my ($pkg, $all) = @_;
+        unless ($class_keys) {
+            my $sel = prepare_c(qq{
+                SELECT key_name, plural_name, pkg_name
+                FROM   class
+                WHERE  id in (
+                           SELECT DISTINCT class__id
+                           FROM   grp
+                       )
+            });
+            execute($sel);
+            my ($key, $name, $pkg_name);
+            bind_columns($sel, \$key, \$name, \$pkg_name);
+            while (fetch($sel)) {
+                next if $key eq 'ce';
+                $all_class_keys->{$key} = $name;
+                $class_keys->{$key} = $name unless $pkg_name->get_secret;
+            }
         }
+        my $ret = $all ? $all_class_keys : $class_keys;
+        return wantarray ? %$ret : $ret;
     }
-    my $ret = $all ? $all_class_keys : $class_keys;
-    return wantarray ? %$ret : $ret;
 }
 
-=back
+##############################################################################
 
-#--------------------------------------#
-
-=head2 Destructors
-
-=item $self->DESTROY
-
-Dummy method to prevent wasting time trying to AUTOLOAD DESTROY
-
-=cut                           
-
-sub DESTROY {
-    # This method should be here even if its empty so that we don't waste time
-    # making Bricolage's autoload method try to find it.
-}
-
-#--------------------------------------#
-
-=head2 Public Class Methods                  
-
-=cut
-
-=item $class_id = Bric::Util::Grp->get_class_id()
-
-This will return the class id that this group is associated with
-it should have an id that maps to the class object instance that is
-associated with the class of the grp ie Bric::Util::Grp::AssetVersion
-
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-Overwite this in your sub classes
-
-=cut
-
-sub get_class_id {
-        return 6;
-}
-
-=item $supported_classes = Bric::Util::Grp->get_supported_classes()
-
-This will return a has_ref of the supported classes in the group as 
-keys with the short name as a value.   The short name is used to construct 
-the member table names and the foreign key in the table
-
-B<Throws:>
-
-"Method not implemented"
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-Overwite this in your sub classes
-
-=cut
-
-sub get_supported_classes {
-        return undef;
-}       
-
-=item (1 || undef) = Bric::Util::Grp->get_secret()
-
-This will determine if this is an end user manageable group or not
-the default is that it is not.   Override in your sub class if it is.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_secret {
-        return 1;
-        # or 0 if it is not
-}
-
-################################################################################
-
-=item my $class = Bric::Util::Grp::ElementType->my_class()
+=item my $class = Bric::Util::Grp->my_class
 
 Returns a Bric::Util::Class object describing this class.
 
@@ -571,9 +657,9 @@ sub my_class {
     return $class;
 }
 
-################################################################################
+##############################################################################
 
-=item my $class = Bric::Util::Grp::ElementType->member_class()
+=item my $class = Bric::Util::Grp->member_class
 
 Returns a Bric::Util::Class object describing the members of this group.
 
@@ -590,127 +676,61 @@ sub member_class {
     return $mem_class;
 }
 
-################################################################################
+##############################################################################
 
-=item ($id_list || @ids) = Bric::Util::Grp->list_ids( $criteria )
+=item $obj_class_id = Bric::Util::Grp->get_object_class_id;
 
-This returns a list of ids that match the defined criteria
+If this method returns a value, then all members of the group will be assumed
+to be a member of the class for which the value is the ID.
 
-Supported Keys:
+B<Throws:> NONE.
 
-=over 4
+B<Side Effects:> NONE.
 
-=item *
-
-name
-
-=back
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-sub list_ids {
-        my ($class, $criteria) = @_;
+sub get_object_class_id { undef }
 
-        # send to _do_list which will return the ids
-        _do_list($class,$criteria,1);
-}
-
-=item (1 || undef) Bric::Util::Grp->can_get_member_ids()
-
-Overwrite this in your sub classes if you wish to use the get_member_ids
-feature
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-I can not remember why this is here, find out
-
-=cut
-
-sub can_get_member_ids {
-
-        return 1;
-}
-
-=item $obj_class_id = Bric::Util::Grp->get_object_class_id();
-
-Forces all members to be considered as being of this class if supported
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_object_class_id {
-        return undef;
-}
+##############################################################################
 
 =item ($member_ids || @member_ids) = Bric::Util::Grp->get_member_ids($grp_id)
 
-Returns a list of the object ids that are members of this group
+Returns a list of the IDs representing the objects underlying the
+Bric::Util::Grp::Parts::Member objects that are members of the grp represented
+by C<$grp_id>.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> This method must be called from a subclass of Bric::Util::Grp.
 
 =cut
 
 sub get_member_ids {
-        my ($class, $grp_id) = @_;
-
-        # going to assume that there is onle one class here because otherwise
+    my ($class, $grp_id) = @_;
+    my $short;
+    if (my $cid = $class->get_object_class_id) {
+        $short = Bric::Util::Class->lookup({ id => $cid })->get_key_name;
+    } else {
+        # Assuming that there is only one class here because otherwise
         # allowing this method would be daft!
-        my $sc = $class->get_supported_classes();
-
-        my $short = (values %$sc)[-1];
-
-        my $ids = Bric::Util::Grp::Parts::Member->get_all_object_ids($grp_id, $short);
-
-        return wantarray ? @$ids : $ids;
+        my $sc = $class->get_supported_classes;
+        $short = (values %$sc)[-1];
+    }
+    return Bric::Util::Grp::Parts::Member->get_all_object_ids($grp_id, $short);
 }
+
+##############################################################################
 
 =item my $meths = Bric::Util::Grp->my_meths
 
 =item my (@meths || $meths_aref) = Bric::Util::Grp->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -740,8 +760,8 @@ order to retrieve the value of the property or attribute.
 
 =item *
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+set_meth - A reference to the method that will set the value of the property
+or attribute.
 
 =item *
 
@@ -765,8 +785,8 @@ three types:
 
 =item *
 
-len - If the value is a 'short' value, this hash key contains the length of the
-field.
+len - If the value is a 'short' value, this hash key contains the length of
+the field.
 
 =item *
 
@@ -778,8 +798,8 @@ req - The property or attribute is required.
 
 =item *
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+props - An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
@@ -809,8 +829,8 @@ length - The Length, in letters, to display a text or password field.
 
 =item *
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+maxlength - The maximum length of the property or value - usually defined by
+the SQL DDL.
 
 =item *
 
@@ -923,183 +943,221 @@ sub my_meths {
 
 =back
 
+##############################################################################
+
 =head2 Public Instance Methods
 
-=item (@parents || $parents) = $grp->get_all_parents()
+=item $id = $grp->get_id
 
-Returns a list of all of this groups parents
+Returns the database ID of the group object
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
-
-B<Side Effects:>
-
-NONE
+B<Side Effects:> NONE.
 
 B<Notes:>
 
-Remember if this returns an assending or descending list
+Returns C<undef> if the ID the group is new and its C<save()> method has not
+yet been called.
+
+=item my $name = $grp->get_name
+
+Returns the name of the group.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $grp = $grp->set_name($name)
+
+Sets the name of the group.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $desc = $grp->get_description
+
+Returns the description of the group.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $grp = $grp->set_description($desc)
+
+Sets the description of the group.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $parent_id = $grp->get_parent_id
+
+Returns the ID of this group's parent, and C<undef> if this is the root group.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $grp = $grp->set_parent_id($parent_id)
+
+Sets the ID for the parent of this group.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $class_id = $grp->get_class_id
+
+Returns the ID of Bric::Util::Class object representing the members of this
+group.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $perm = $grp->get_permanent
+
+Returns true if the group is permanent, and false if it's not. Permanant
+groups cannot be deleted.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $secret = $grp->get_secret
+
+Returns true if the group is a secrete group, and false if it's not. Secret
+groups are used internally by the API, and are not designed to be managed by
+users via the UI.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
-sub get_all_parents {
+##############################################################################
+
+=item my (@pids || $pids_aref) = $grp->get_all_parent_ids
+
+Returns a list of all of this group's parent group IDs.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_all_parent_ids {
     my ($self) = @_;
     my $dirty = $self->_get__dirty;
     my $parents = $self->_get('_parents');
 
     unless ($parents) {
-        push @$parents, $self->_get('parent_id');
-        push @$parents, $self->_get_all_parents($self->_get('parent_id','id'));
-
+        my ($pid, $id) = $self->_get('parent_id', 'id');
+        @$parents = $self->_get_all_parent_ids($pid, $id);
+        unshift @$parents, $pid;
         $self->_set(['_parents'], [$parents]);
-        
         # This is a set that does not need to be saved in 'save'
         $self->_set__dirty($dirty);
     }
 
     return wantarray ? @$parents : $parents;
 }
-        
 
-=item $name = $group->get_name( )
+##############################################################################
 
-Returns the name that has been given to the group
+=item $grp = $grp->activate
 
-B<Throws:>
+Sets the active flag for the object
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
+sub activate { $_[0]->_set(['_active'], [1]) }
 
+##############################################################################
 
-=item $group = $group->set_name( $name )
+=item $grp = $grp->deactivate
 
-sets the name to the given name
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-
-
-=item $desc = $group->get_description( )
-
-Returns the description that was given to the group 
+Sets the active flag to inactive
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Cannot deactivate permanent group.
 
-B<Notes:>
+=back
 
-NONE
+B<Side Effects:> NONE.
 
-=cut
-
-
-
-=item $group = $group->set_description( $desc )
-
-Sets the description to the given argument
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
+sub deactivate {
+    my $self = shift;
+    my ($id, $perm) = $self->_get(qw(id permanent));
+        if ($perm || $id == ADMIN_GRP_ID) {
+            die Bric::Util::Fault::Exception::GEN->new
+              ({ msg => 'Cannot deactivate permanent group.' });
+        }
+    $self->_set( { '_active' => 0 } );
+    return $self;
+}
 
+##############################################################################
 
-=item $group = $group->set_parent_id( $parent_id )
+=item ($grp || undef) = $grp->is_active
 
-Sets the id for the parent of this group
+Returns self if the object is active undef otherwise
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-
-=item $group->get_parent_id( $parent_id )
-
-Returns the id of this groups parent, undef if it is the top level
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
+sub is_active {
+    my $self = shift;
+    return $self->_get('_active') ? $self : undef;
+}
 
-=item $id = $group->get_id()
+##############################################################################
 
-Returns the database id of the group object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-This will return undef if the id has yet to be defined, so if you call
-get_id before the group is saved, there there will be none
-
-=cut
-
-=item $member = $group->add_member({ obj => $obj, attr => $attributes });
+=item my $member = $grp->add_member({ obj => $obj, attr => $attributes });
 
 Adds an object to the group. The supported parameters are:
 
@@ -1112,11 +1170,12 @@ The object to be added as a member of the group.
 =item package
 
 The package name of the class to which the object to be added as a member of
-the group belongs.
+the group belongs. Use in combination with the C<id> parameter.
 
 =item id
 
-The ID of the object to be added as a member of the group.
+The ID of the object to be added as a member of the group. Use in combination
+with the C<package> parameter.
 
 =item attrs
 
@@ -1154,9 +1213,9 @@ B<Notes:> NONE.
 
 sub add_member {
     my ($self, $param ) = @_;
-    my $dirty   = $self->_get__dirty;
+    my $dirty = $self->_get__dirty;
 
-    # get the package and ids
+    # Get the package and ids
     my ($package, $id);
     if ($param->{obj}) {
         $package = ref $param->{obj};
@@ -1169,11 +1228,11 @@ sub add_member {
         die Bric::Util::Fault::Exception::GEN->new({msg => $msg});
     }
 
-    my $members;
+    # Grab the member collection and then see if it already has the new
+    # object, unless no_check is true.
+    my $memb_coll = $get_memb_coll->($self);
     unless ($param->{no_check}) {
-        # See if the object is already a member
-        $members = $self->_get_members;
-        return $self if exists $members->{$package}->{$id};
+        return $self if $self->has_member($param);
     }
 
     # Make sure that we can add these kinds of objects to the group
@@ -1185,31 +1244,24 @@ sub add_member {
     }
 
     # Create a new member object for this object.
-    my $member = Bric::Util::Grp::Parts::Member->new
+    my $member = $memb_coll->new_obj
       ({ object          => $param->{obj},
          obj_id          => $id,
          object_class_id => $self->get_object_class_id,
          object_package  => $package,
-         group           => $self
+         grp             => $self,
+         grp_id          => $self->_get('id'),
+         attr            => $param->{attrs}
     });
-
-    # See if any attributes were passed in
-    $member->set_attrs($param->{attrs}) if $param->{'attrs'};
-
-    # Add this member to the hash of members.
-    $members->{$package}->{$id} = $member if $members;
-
-    # set the new member data structure
-    $self->_set(['_members', '_update_members'], [$members, 1]);
 
     # This doesn't warrant an object update.
     $self->_set__dirty($dirty);
-
     return $member;
 }
 
+##############################################################################
 
-=item $group = $group->add_members(\@member_params);
+=item $grp = $grp->add_members(\@member_params);
 
 Convenience method that calls C<< $grp->add_member >> on each in an array
 reference of new member object parameters. See C<add_member()> for
@@ -1232,1014 +1284,749 @@ B<Notes:> NONE.
 =cut
 
 sub add_members {
-    my ($self, $params) = @_;
-    map { $self->add_member($_) } @$params;
+    my ($self, $membs) = @_;
+    $self->add_member($_) for @$membs;
     return $self;
 }
 
+##############################################################################
 
-=item (@members || $member_aref) = $group->get_members();
+=item (@members || $member_aref) = $grp->get_members
 
-Returns a list or a list ref of the member objects that are in the group
+Returns a list or a anonymous array of the member objects that are in the
+group.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE 
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE 
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub get_members {
-        my ($self) = @_;
-
-        my $members = $self->_get_members();
-
-        my @member_objects;
-        foreach my $package (keys %{ $members }) {
-                foreach (keys %{ $members->{$package} } ) {
-                        push @member_objects, $members->{$package}->{$_};
-                }
-        }
-
-        return wantarray ? @member_objects : \@member_objects;
+    my $self = shift;
+    my $memb_coll = $get_memb_coll->($self);
+    return $memb_coll->get_objs;
 }
 
-=item get_objects {
+##############################################################################
 
-returns the objects instead of the member objects
+=item my (@objs || $objs_aref) = $grp->get_objects
 
-B<Throws:>
+Returns a list or anonymous arry of all of the Bricolage objects underlying
+the member objects in the group.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub get_objects {
-        my ($self) = @_;
-
-        my $members = $self->_get_members();
-
-        my @objects;
-        foreach my $package (keys %{ $members }) {
-                foreach (keys %{ $members->{$package} } ) {
-                        push @objects, $members->{$package}->{$_}->get_object();
-                }
-        }
-
-        return wantarray ? @objects : \@objects;
-}
-
-=item $group = $group->delete_member($param);
-
-removes a member from the group
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-<Notes:>
-
-NONE
-
-=cut
-
-sub delete_member {
-    my ($self, $param) = @_;
-    my $dirty          = $self->_get__dirty;
-    my $members        = $self->_get_members();
-    my $delete_members = $self->_get('_delete_members');
-
-    # see if they have passed a member object
-    my ($id, $package);
-    if (substr(ref $param, 0, 28) eq 'Bric::Util::Grp::Parts::Member') {
-        # Member Object has been passed
-        $id      = $param->get_obj_id();
-        $package = $param->get_object_package();
-    } elsif (ref $param eq 'HASH') {
-        # package and id args have been passed
-        my $msg = "Improper args for delete member";
-        die Bric::Util::Fault::Exception::GEN->new({msg => $msg}) 
-          unless ($param->{'id'} && $param->{'package'});
-        
-        $id      = $param->{'id'};
-        $package = $param->{'package'};
-    } else {
-        # object has been passed
-        $id      = $param->get_id();
-        $package = ref $param;
-    }
-    my $member_object = $members->{$package}->{$id};
-
-    # object is not a member of the group; silently allow it to pass
-    return $self unless $member_object;
-
-    $member_object->remove();
-
-    # add to delete list
-    push @$delete_members, $member_object;
-
-    delete $members->{$package}->{$id};
-
-    $self->_set(['_members', '_delete_members', '_update_members'],
-                [$members,   $delete_members,   1]);
-
-    # This doesn't warrant an object update.
-    $self->_set__dirty($dirty);
-
-    return $self;
-}
-
-=item $success = $self->delete_members($members);
-
-Takes a lsit of objects or their unique identifiers ard removes them from the
-group.   This will delete them, call deactivate on the member objects 
-if that is your desire
-
-B<Throws:>
-NONE 
-
-B<Side Effects:>
-Will delete members for the database ( ie. not make them inactive)
-
-B<Notes:>
-NONE
-
-=cut
-
-sub delete_members {
-        my ($self, $param) = @_;
-
-        foreach ( @$param ) {
-                $self->delete_member($_);
-        }
-
-        return $self;
-}
-
-
-=item ($member || undef) = $group->has_member( $obj,  $attr);
-
-Responds with the member object if object is a member or undef otherwise
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-
-sub has_member {
-    my ($self, $obj, $attr) = @_;
-    my ($package, $id) = (ref $obj, $obj->get_id);
-    my $members        = $self->_get_members();
-    my $mem            = $members->{$package}->{$id};
-
-    # Return if this member doesn't exist.
-    return unless $mem;
-    # Return the member only if it has the attributes in $attr
-    return $mem->has_attrs($attr) if $attr;
-    # Otherwise just return the member.
-    return $mem;
-}
-
-=item $group = $group->set_member_attr($param)
-
-Sets an individual attribute for the members of this group
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub set_member_attr {
-    my ($self, $param) = @_;
-
-    # set a default subsys if one has not been passed
-    $param->{'subsys'}   ||= MEMBER_SUBSYS;
-        
-    # set the sql_type as short if it was not passed in
-    $param->{'sql_type'} ||= 'short';
-
-    # set attribute
-    $self->_set_attr($param);
-
-    return $self;
-}
-
-################################################################################
-
-=item $group = $group->delete_member_attr($param)
-
-Deletes attributes that apply to members
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub delete_member_attr {
-    my ($self, $param) = @_;
-
-    # set a default subsys if one has not been passed
-    $param->{'subsys'} ||= MEMBER_SUBSYS;
-
-    $self->_delete_attr($param,1);
-
-    return $self;
-}
-
-################################################################################
-
-
-=item $group = $group->set_member_attrs(
-        [ { name => $name, subsys => $subsys, value => $value, 
-                sql_type =>$sql_type, new => 1 } ] )
-
-Takes a list of attributes and sets them to apply to the members
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub set_member_attrs {
-    my ($self, $attrs) = @_;
-
-    foreach (@$attrs) {
-        # set to the member defualt unless passed in
-        $_->{'subsys'}   ||= MEMBER_SUBSYS;
-
-        # set a default sql type
-        $_->{'sql_type'} ||= 'short';
-
-        # set the attr
-        $self->_set_attr($_);
-    }
-
-    return $self;
-}
-
-=item $group = $group->set_member_meta($param)
-
-Sets meta information on member attributes
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-
-sub set_member_meta {
-    my ($self, $param) = @_;
-
-    # set a defualt member subsys unless one was passed in
-    $param->{'subsys'} ||= MEMBER_SUBSYS;
-
-    # set the meta info
-    $self->_set_meta($param);
-
-    return $self;
-}
-
-
-=item $meta = $group->get_member_meta($param)
-
-Returns the member meta attributes
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-
-sub get_member_meta {
-    my ($self, $param) = @_;
-
-    # set defualt subsys unless one was passed in
-    $param->{'subsys'} ||= MEMBER_SUBSYS;
-
-    # get the meta info pass the flag to return parental defaults
-    my $meta = $self->_get_meta($param, 1);
-
-    return $meta;
-}
-
-################################################################################
-
-=item $group = $group->delete_member_meta()
-
-Deletes the meta information for these attributes.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub delete_member_meta {
-    my ($self, $param) = @_;
-
-    # set defualt subsys unless one was passed in
-    $param->{'subsys'} ||= MEMBER_SUBSYS;
-
-    $self->_delete_meta($param, 1);
-
-    return $self;
-}
-
-################################################################################
-
-
-=item $attrs = $grp->all_for_member_subsys( $subsys )
-
-Returns all the attrs as a hashref for a given member subsystem
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub all_for_member_subsys {
-        my ($self, $subsys) = @_;
-
-        my $all;
-
-        # get all the attrs for this subsystem
-        my $attr = $self->get_member_attr_hash({'subsys' => $subsys});
-
-        # now get the meta for all the attributes
-        foreach my $name (keys %$attr) {
-                # call the get meta function for this name
-                my $meta = $self->get_member_meta({     
-                        'subsys' => $subsys,
-                        'name'   => $name
-                        });
-                # add it to the return data structure
-                $all->{$name} = {       
-                        'value' => $attr->{$name},
-                        'meta'  => $meta
-                        };
-        }
-
-        return $all;
-}
-
-
-=item $attr = $group->get_member_attr($param)
-
-Returns an individual attribute for given parameters
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_member_attr {
-    my ($self, $param) = @_;
-
-    # set a defualt subsystem if none was passed
-    $param->{'subsys'} ||= MEMBER_SUBSYS;
-
-    # get the value
-    my $val = $self->_get_attr($param);
-
-    return $val;
-}
-
-
-=item $hash = $group->get_member_attr_hash( $param )
-
-Returns a hash of the attributes for a given subsys
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_member_attr_hash {
-    my ($self, $param) = @_;
-
-    # add a default subsys if none was passed
-    $param->{'subsys'} ||= MEMBER_SUBSYS;
-
-    my $attrs = $self->_get_attr_hash($param, 1);
-
-    return $attrs;
-}
-
-=item (@vals || $val_aref) = $group->get_member_attrs( $param )
-
-Retrieves the value of the attribute that has been assigned as a default
-for members that has the given name and subsystem
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-
-sub get_member_attrs {
-        my ($self, $param) = @_;
-
-        # return values
-        my @values;
-        foreach (@$param) {
-                # set a defualt subsystem if one was not passed in
-                $_->{'subsys'} ||= GRP_SUBSYS;
-
-                # push the value onto the return array
-                # check the parent for defualts
-                push @values, $self->_get_attr($_, 1);
-        }
-
-        return wantarray ? @values : \@values;
-}
-
-
-
-=item (@vals || $val_aref) = $group->get_group_attrs( [ $param ])
-
-Get attributes that describe the group but do not apply to members.
-This retrieves the value in the attribute object from a special subsystem 
-which contains these.   This will be returned as a list of values
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_group_attrs {
-        my ($self, $param) = @_;
-
-        my @values;
-
-        foreach (@$param) {
-                # set the subsystem for group attrs
-                $_->{'subsys'} = GRP_SUBSYS;
-
-                # push the return value onto the return array
-                # check parents as well
-                push @values, $self->_get_attr( $_, 1 );
-        }
-        return wantarray ? @values : \@values;
-}
-
-=item $group = $group->set_group_attr( $param )
-
-Sets a single attribute on this group
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub set_group_attr {
-        my ($self, $param) = @_;
-
-        # set the subsystem to the special group subsystem
-        $param->{'subsys'} = GRP_SUBSYS;
-
-        # allow a default sql type as convience
-        $param->{'sql_type'} ||= 'short';
-
-        # send to the internal method that will do the bulk of the work
-        $self->_set_attr( $param );
-
-        return $self;
-}
-
-=item $attr = $group->get_group_attr( $param )
-
-Returns a single attribute that pretains to the group
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_group_attr {
-        my ($self, $param) = @_;
-
-        # set the group subsys
-        $param->{'subsys'} = GRP_SUBSYS;
-
-        # set a default sql type in case one has not been passed
-        $param->{'sql_type'} ||= 'short';
-
-        # return result from internal method
-        # pass a flag to check the parent for attributes as well
-        my $attr = $self->_get_attr( $param, 1 );
-
-        return $attr;
-}
-
-################################################################################
-
-=item $group = $group->delete_group_attr()
-
-Deletes the attributes from the group
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub delete_group_attr {
-        my ($self, $param) = @_;
-
-        # set the group subsys
-        $param->{'subsys'} = GRP_SUBSYS;
-
-        $self->_delete_attr($param);
-
-        return $self;
-}
-
-################################################################################
-
-=item $group = $group->set_group_attrs([ $param ])
-
-Sets attributes that describe the group but do not apply to members.
-This sets the value in the attribute object to a special subsystem 
-which contains these
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-
-sub set_group_attrs {
-        my ($self, $param) = @_;
-
-        foreach (@$param) {
-                # set the group subsystem
-                $_->{'subsys'} = GRP_SUBSYS;
-
-                # set a default sql_type if one is not already there
-                $_->{'sql_type'} ||= 'short';
-
-                $self->_set_attr( $_ );
-        }
-
-        return $self;
-}
-
-=item $group = $group->set_group_meta($meta)
-
-Sets meta information on group attributes
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub set_group_meta {
-        my ($self, $param) = @_;
-
-        # set the subsystem for groups
-        $param->{'subsys'} = GRP_SUBSYS;
-
-        # set the meta info
-        $self->_set_meta( $param );
-
-        return $self;
-}
-
-=item $meta = $grp->get_group_meta($param)
-
-Returns group meta information
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<notes:>
-
-NONE
-
-=cut
-
-sub get_group_meta {
-        my ($self, $param) = @_;
-
-        # set the subsystem for groups
-        $param->{'subsys'} = GRP_SUBSYS;
-
-        # get the meta info to return
-        my $meta = $self->_get_meta( $param, 1);
-
-        return $meta;
-}
-
-################################################################################
-
-=item $group = $group->delete_group_meta($param)
-
-deletes meta information that pretains to this here group.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub delete_group_meta {
-        my ($self, $param) = @_;
-
-        # set the subsystem for groups
-        $param->{'subsys'} = GRP_SUBSYS;
-
-        $self->_delete_meta($param);
-
-        return $self;
-}
-
-################################################################################
-
-=item $attr_hash = $group->get_group_attr_hash()
-
-Returns all of the group attrs as a hash ref
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_group_attr_hash {
-        my ($self) = @_;
-
-        # args to pass to _get_attr_hash 
-        my $param->{'subsys'} = GRP_SUBSYS;
-
-        my $attrs = $self->_get_attr_hash($param, 1);
-
-        return $attrs;
-}
-
-=item $attrs = $group->all_for_group_subsys()
-
-Returns all the attributes and their meta information for the 
-group subsys 
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub all_for_group_subsys {
-        my ($self) = @_;
-
-        my $all;
-
-        # get all the attributes
-        my $attr = $self->get_group_attr_hash();
-
-        foreach my $name (keys %$attr) {
-                # get the meta information
-                my $meta = $self->_get_meta({
-                        'subsys' => GRP_SUBSYS,
-                        'name'   => $name
-                        });
-                # add it to the return data structure
-                $all->{$name} = {
-                        'value' => $attr->{$name},
-                        'meta'  => $meta
-                        };
-        }
-
-        return $all;
-}
-
-=item $grp = $grp->activate()
-
-Sets the active flag for the object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub activate {
     my $self = shift;
-
-    $self->_set( { '_active' => 1 } );
-
-    return $self;
+    return wantarray ?
+      ( map { $_->get_object } $self->get_members ) :
+      [ map { $_->get_object } $self->get_members ];
 }
 
-=item $grp = $grp->deactivate()
+##############################################################################
 
-Sets the active flag to inactive
+=item $grp = $grp->delete_member($member);
+
+=item $grp = $grp->delete_member($object);
+
+=item $grp = $grp->delete_member($param);
+
+Removes a member object from the group. If the argument to this method is a
+Bric::Util::Grp::Parts::Member object, then that object will be removed from
+the group. If the argument to this method is any other Bricolage object, the
+member object representing that object will be constructed and removed from
+this group. If the argument to this method is a hash reference, the supported
+parameter are the same as for the C<has_member()> method.
 
 B<Throws:>
 
-=over 4
+=over
 
 =item *
 
-Cannot permanent group.
+Parameters 'id' and/or 'package' not passed to delete_member().
 
 =back
 
 B<Side Effects:>
 
-NONE
+Will delete members for the database ( ie. not make them inactive)
 
-B<Notes:>
-
-NONE
+<Notes:> NONE.
 
 =cut
 
-sub deactivate {
-    my $self = shift;
-    my ($id, $perm) = $self->_get(qw(id permanent));
-        if ($perm || $id == ADMIN_GRP_ID) {
-            die Bric::Util::Fault::Exception::GEN->new({
-              msg => 'Cannot deactivate permanent group.' });
-        }
+sub delete_member {
+    my ($self, $params) = @_;
 
-    $self->_set( { '_active' => 0 } );
+    # See if they have passed a member object
+    my $mem;
+    if (substr(ref $params, 0, 28) eq 'Bric::Util::Grp::Parts::Memb') {
+        # Member object has been passed
+        $mem = $params;
+    } elsif (ref $params eq 'HASH') {
+        # Parameters have been passed.
+        $mem = $self->has_member($params) or return;
+    } else {
+        # An object has been passed.
+        $mem = $self->has_member({ obj => $params }) or return;
+    }
 
+    # Remove the member object and return.
+    my $memb_coll = $get_memb_coll->($self);
+    $mem->remove;
+    $memb_coll->del_objs($self->get_object_class_id ?
+                         $mem->get_obj_id :
+                         $mem->get_id);
     return $self;
 }
 
-=item ($grp || undef) = $grp->is_active()
+##############################################################################
 
-Returns self if the object is active undef otherwise
+=item $grp = $grp->delete_members($members);
+
+Convenience method that takes a reference to an array of objects or their
+unique identifiers and removes them from the group.
 
 B<Throws:>
 
-NONE
+=over
 
-B<Side Effects:>
+=item *
 
-NONE
+Parameters 'id' and/or 'package' not passed to delete_member().
 
-B<Notes:>
+=back
 
-NONE
+B<Side Effects:> Calls C<delete_member()> on every item in the array reference
+passed as the argument.
+
+B<Notes:> NONE.
 
 =cut
 
-sub is_active {
-    my $self = shift;
-
-    return $self->_get('_active') ? $self : undef;
+sub delete_members {
+    my ($self, $membs) = @_;
+    $self->delete_member($_) for @$membs;
+    return $self;
 }
 
+##############################################################################
 
-=item $group = $group->save()
+=item ($member || undef) = $grp->has_member($params);
+
+Returns a Bric::Util::Grp::Parts::Member object representing the membership in
+the group of a Bricolage object if the object is a member, and undef if it's
+not a member. The C<$params> hash reference accepts the following keys:
+
+=over 4
+
+=item obj
+
+The object that may be a member of the group.
+
+=item id
+
+The ID of the object that may be a member of the group. Use in combination
+with C<package>.
+
+=item package
+
+The class package name of the object that may be a member of the group. Use in
+combination with C<id>.
+
+=item attr
+
+An attribute of the member object. The member object will only be returned if
+it contains this attribute. Optional.
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub has_member {
+    my ($self, $params) = @_;
+    my $memb_coll = $get_memb_coll->($self);
+    my $mem;
+    if ($memb_coll->is_populated) {
+        # Just use the set.
+        if ($self->get_object_class_id) {
+            # It's in one class. Do an easy grab.
+            ($mem) = $memb_coll->get_objs($params->{id} ||
+                                          $params->{obj}->get_id)
+            or return;
+        } else {
+            # Ugh, we need to convert it to a special hash. See if we have it
+            # already.
+            my $memb_hash = $self->_get('_memb_hash');
+            unless ($memb_hash) {
+                # We must build it.
+                foreach my $m ($memb_coll->get_objs) {
+                    $memb_hash->{$_->get_object_package}{$_->get_obj_id} = $_;
+                }
+                $self->_set(['_memb_hash'], [$memb_hash]);
+            }
+            my $pkg = $params->{package} || ref $params->{obj};
+            my $id = $params->{id} || $params->{obj}->get_id;
+            $mem = $memb_hash->{$pkg}{$id} or return;
+        }
+    } else {
+        # Just look it up.
+        my %args = $params->{obj} ? ( object => $params->{obj} ) :
+          ( object_package => $params->{package}, object_id => $params->{id}) ;
+        $args{grp} = $self;
+        ($mem) = Bric::Util::Grp::Parts::Member->list(\%args);
+        return unless $mem;
+    }
+
+    # Return the member only if it has the attributes in $attr
+    return $mem->has_attrs($params->{attr}) if $params->{attr};
+    # Otherwise just return the member.
+    return $mem;
+}
+
+##############################################################################
+
+=item $grp = $grp->set_member_attr($params)
+
+Sets an individual attribute for the members of this group
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_member_attr {
+    my ($self, $param) = @_;
+    # set a default subsys if one has not been passed
+    $param->{subsys}   ||= MEMBER_SUBSYS;
+    # set the sql_type as short if it was not passed in
+    $param->{sql_type} ||= 'short';
+    # set attribute
+    $self->_set_attr($param);
+    return $self;
+}
+
+##############################################################################
+
+=item $grp = $grp->delete_member_attr($params)
+
+Deletes attributes that apply to members
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub delete_member_attr {
+    my ($self, $param) = @_;
+    # set a default subsys if one has not been passed
+    $param->{subsys} ||= MEMBER_SUBSYS;
+    $self->_delete_attr($param,1);
+    return $self;
+}
+
+##############################################################################
+
+=item $grp = $grp->set_member_attrs(
+        [ { name => $name, subsys => $subsys, value => $value,
+                sql_type =>$sql_type, new => 1 } ] )
+
+Takes a list of attributes and sets them to apply to the members
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_member_attrs {
+    my ($self, $attrs) = @_;
+    foreach (@$attrs) {
+        # set to the member defualt unless passed in
+        $_->{subsys}   ||= MEMBER_SUBSYS;
+        # set a default sql type
+        $_->{sql_type} ||= 'short';
+        # set the attr
+        $self->_set_attr($_);
+    }
+    return $self;
+}
+
+##############################################################################
+
+=item $grp = $grp->set_member_meta($params)
+
+Sets meta information on member attributes
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_member_meta {
+    my ($self, $param) = @_;
+    # set a defualt member subsys unless one was passed in
+    $param->{subsys} ||= MEMBER_SUBSYS;
+    # set the meta info
+    $self->_set_meta($param);
+    return $self;
+}
+
+##############################################################################
+
+=item $meta = $grp->get_member_meta($params)
+
+Returns the member meta attributes
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_member_meta {
+    my ($self, $param) = @_;
+    # set defualt subsys unless one was passed in
+    $param->{subsys} ||= MEMBER_SUBSYS;
+    # get the meta info pass the flag to return parental defaults
+    my $meta = $self->_get_meta($param, 1);
+    return $meta;
+}
+
+##############################################################################
+
+=item $grp = $grp->delete_member_meta($params)
+
+Deletes the meta information for these attributes.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub delete_member_meta {
+    my ($self, $param) = @_;
+    # set defualt subsys unless one was passed in
+    $param->{subsys} ||= MEMBER_SUBSYS;
+    $self->_delete_meta($param, 1);
+    return $self;
+}
+
+##############################################################################
+
+=item $attrs = $grp->all_for_member_subsys($subsys)
+
+Returns all the attrs as a hashref for a given member subsystem
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub all_for_member_subsys {
+    my ($self, $subsys) = @_;
+    my $all;
+
+    # get all the attrs for this subsystem
+    my $attr = $self->get_member_attr_hash({ subsys => $subsys});
+
+    # now get the meta for all the attributes
+    foreach my $name (keys %$attr) {
+        # call the get meta function for this name
+        my $meta = $self->get_member_meta({ subsys => $subsys,
+                                            name   => $name });
+        # add it to the return data structure
+        $all->{$name} = { value => $attr->{$name},
+                          meta  => $meta };
+    }
+    return $all;
+}
+
+##############################################################################
+
+=item $attr = $grp->get_member_attr($params)
+
+Returns an individual attribute for given parameters
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_member_attr {
+    my ($self, $param) = @_;
+    # set a defualt subsystem if none was passed
+    $param->{subsys} ||= MEMBER_SUBSYS;
+    # get the value
+    my $val = $self->_get_attr($param);
+    return $val;
+}
+
+##############################################################################
+
+=item $hash = $grp->get_member_attr_hash($params)
+
+Returns a hash of the attributes for a given subsys
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_member_attr_hash {
+    my ($self, $param) = @_;
+    # add a default subsys if none was passed
+    $param->{subsys} ||= MEMBER_SUBSYS;
+    my $attrs = $self->_get_attr_hash($param, 1);
+    return $attrs;
+}
+
+##############################################################################
+
+=item (@vals || $val_aref) = $grp->get_member_attrs(\@params)
+
+Retrieves the value of the attribute that has been assigned as a default for
+members that has the given name and subsystem
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_member_attrs {
+    my ($self, $param) = @_;
+    # return values
+    my @values;
+    foreach (@$param) {
+        # set a defualt subsystem if one was not passed in
+        $_->{subsys} ||= GRP_SUBSYS;
+        # push the value onto the return array check the parent for defualts
+        push @values, $self->_get_attr($_, 1);
+    }
+    return wantarray ? @values : \@values;
+}
+
+##############################################################################
+
+=item (@vals || $val_aref) = $grp->get_group_attrs(\@params)
+
+Get attributes that describe the group but do not apply to members. This
+retrieves the value in the attribute object from a special subsystem which
+contains these. This will be returned as a list of values
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_group_attrs {
+    my ($self, $param) = @_;
+    my @values;
+    foreach (@$param) {
+        # set the subsystem for group attrs
+        $_->{subsys} = GRP_SUBSYS;
+        # push the return value onto the return array check parents as well
+        push @values, $self->_get_attr( $_, 1 );
+    }
+    return wantarray ? @values : \@values;
+}
+
+##############################################################################
+
+=item $grp = $grp->set_group_attr($params)
+
+Sets a single attribute on this group
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_group_attr {
+    my ($self, $param) = @_;
+    # set the subsystem to the special group subsystem
+    $param->{subsys} = GRP_SUBSYS;
+    # allow a default sql type as convience
+    $param->{sql_type} ||= 'short';
+    # send to the internal method that will do the bulk of the work
+    $self->_set_attr( $param );
+    return $self;
+}
+
+##############################################################################
+
+=item $attr = $grp->get_group_attr($params)
+
+Returns a single attribute that pretains to the group
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_group_attr {
+    my ($self, $param) = @_;
+    # set the group subsys
+    $param->{subsys} = GRP_SUBSYS;
+    # set a default sql type in case one has not been passed
+    $param->{sql_type} ||= 'short';
+    # return result from internal method
+    # pass a flag to check the parent for attributes as well
+    my $attr = $self->_get_attr( $param, 1 );
+    return $attr;
+}
+
+##############################################################################
+
+=item $grp = $grp->delete_group_attr
+
+Deletes the attributes from the group
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub delete_group_attr {
+    my ($self, $param) = @_;
+    # set the group subsys
+    $param->{subsys} = GRP_SUBSYS;
+    $self->_delete_attr($param);
+    return $self;
+}
+
+##############################################################################
+
+=item $grp = $grp->set_group_attrs(\@params)
+
+Sets attributes that describe the group but do not apply to members. This sets
+the value in the attribute object to a special subsystem which contains these
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_group_attrs {
+    my ($self, $param) = @_;
+    foreach (@$param) {
+        # set the group subsystem
+        $_->{subsys} = GRP_SUBSYS;
+        # set a default sql_type if one is not already there
+        $_->{sql_type} ||= 'short';
+        $self->_set_attr( $_ );
+    }
+    return $self;
+}
+
+##############################################################################
+
+=item $grp = $grp->set_group_meta($meta)
+
+Sets meta information on group attributes
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_group_meta {
+    my ($self, $param) = @_;
+    # set the subsystem for groups
+    $param->{subsys} = GRP_SUBSYS;
+    # set the meta info
+    $self->_set_meta( $param );
+    return $self;
+}
+
+##############################################################################
+
+=item $meta = $grp->get_group_meta($params)
+
+Returns group meta information
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<notes:> NONE.
+
+=cut
+
+sub get_group_meta {
+    my ($self, $param) = @_;
+    # set the subsystem for groups
+    $param->{subsys} = GRP_SUBSYS;
+    # get the meta info to return
+    my $meta = $self->_get_meta( $param, 1);
+    return $meta;
+}
+
+##############################################################################
+
+=item $grp = $grp->delete_group_meta($params)
+
+deletes meta information that pretains to this here group.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub delete_group_meta {
+    my ($self, $param) = @_;
+    # set the subsystem for groups
+    $param->{subsys} = GRP_SUBSYS;
+    $self->_delete_meta($param);
+    return $self;
+}
+
+##############################################################################
+
+=item $attr_hash = $grp->get_group_attr_hash
+
+Returns all of the group attrs as a hash ref
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_group_attr_hash {
+    my ($self) = @_;
+    # args to pass to _get_attr_hash
+    my $param->{subsys} = GRP_SUBSYS;
+    my $attrs = $self->_get_attr_hash($param, 1);
+    return $attrs;
+}
+
+##############################################################################
+
+=item $attrs = $grp->all_for_group_subsys
+
+Returns all the attributes and their meta information for the group subsys
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub all_for_group_subsys {
+    my $self = shift;
+    my $all;
+    # get all the attributes
+    my $attr = $self->get_group_attr_hash();
+
+    foreach my $name (keys %$attr) {
+        # get the meta information
+        my $meta = $self->_get_meta({ subsys => GRP_SUBSYS,
+                                     name   => $name });
+
+        # add it to the return data structure
+        $all->{$name} = { value => $attr->{$name},
+                          meta  => $meta };
+    }
+    return $all;
+}
+
+##############################################################################
+
+=item $grp = $grp->save
 
 Updates the database to reflect the changes made to the object
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE 
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub save {
-    my ($self) = @_;
+    my $self = shift;
 
     # Don't save unless the object has changed.
     if ($self->_get__dirty) {
-        if ($self->_get('id')) {
-            # do an update
-            $self->_do_update();
-        } else {
-            $self->_do_insert();
-        }
-    }   
+        $self->_get('id') ? $self->_do_update : $self->_do_insert;
+    }
 
-    # sync the attributes
-    $self->_sync_attributes();
-    $self->_sync_members();
-
-    # Clear the dirty bit.
-    $self->_set__dirty(0);
-
-    return $self;
+    # Save the members and attributes, then git!
+    $get_memb_coll->($self)->save($self);
+    $self->_sync_attributes;
+    return $self->SUPER::save;
 }
-
 
 #==============================================================================#
 # Private Methods                      #
@@ -2247,163 +2034,163 @@ sub save {
 
 =head1 PRIVATE
 
-=cut
+=head2 Private Class Methods
 
-#--------------------------------------#
-
-=head2 Private Class Methods                 
-
-NONE
+NONE.
 
 =cut
 
-#--------------------------------------#
+##############################################################################
 
-=head2 Private Instance Methods              
+=head2 Private Instance Methods
 
 =item $ret = _select_group( $where, [$bind] )
 
 takes the where clause and the bind vars and preforms the query
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _select_group {
-        my ($where, $bind) = @_;
+    my ($where, $bind) = @_;
+    # declare vars for returned rows and all that will be returned from this
+    # function
+    my (@d, @ret);
 
-        # declare vars for returned rows and all that will be returned 
-        # from this function
-        my (@d, @ret);
+    # construct the query
+    my $sql = 'SELECT ' . join(',', 'id', COLS) . ' FROM ' . TABLE;
+    $sql .= ' WHERE ' . $where if $where;
 
-        # construct the query
-        my $sql = 'SELECT ' . join(',', 'id', COLS) . ' FROM ' . TABLE;
-        $sql .= ' WHERE ' . $where if $where;
+    # execute the query
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $bind);
+    bind_columns($sth, \@d[0 .. (scalar COLS)]);
 
-        # execute the query
-        my $sth = prepare_c($sql, undef, DEBUG);
-        execute($sth, $bind);
-        bind_columns($sth, \@d[0 .. (scalar COLS)]);
-
-        while (fetch($sth)) {
-                push @ret, [@d];
-        }
-
-        # finish the query
-        finish($sth);
-
-        return unless @ret;
-
-        return \@ret;
+    while (fetch($sth)) {
+        push @ret, \@d;
+    }
+    # finish the query and return.
+    finish($sth);
+    return unless @ret;
+    return \@ret;
 }
 
+##############################################################################
 
-=item $members = $grp->_get_members()
+=item my $memb_coll = $get_memb_coll->($self)
 
-Internal method to select the members of this group
+Returns the collection of members for this group. The collection is a
+L<Bric::Util::Coll::Member|Bric::Util::Coll::Member> object. See that class
+and its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface details.
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item *
 
-NONE
+Bric::_get() - Problems retrieving fields.
 
-B<Notes:>
+=item *
 
-NONE
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
-sub _get_members {
-    my ($self) = @_;
-    my $dirty   = $self->_get__dirty;
-    my $members = $self->_get('_members');
+$get_memb_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my ($id, $memb_coll) = $self->_get('id', '_memb_coll');
+    return $memb_coll if $memb_coll;
+    $memb_coll = Bric::Util::Coll::Member->new
+      (defined $id ? {grp => $self} : undef);
+    $self->_set(['_memb_coll'], [$memb_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $memb_coll;
+};
 
-    # Lookup the members if they haven't been yet but not if there is no ID yet.
-    unless ($members || not defined($self->get_id)) {
-        my $stored = Bric::Util::Grp::Parts::Member->list({grp => $self}) || [];
-        foreach (@$stored) {
-            my $package = $_->get_object_package();
-            my $obj_id  = $_->get_obj_id();
+##############################################################################
 
-            $members->{$package}->{$obj_id} = $_;
-        }
-        
-        $self->_set(['_members'], [$members]);
+=item $attribute_obj = $self->_get_attribute_obj
 
-        # This is a change that doesn't need to be saved.
-        $self->_set__dirty($dirty);
-    }
+Will return the attribute object. Methods that need it should check to see if
+they have it and if not then get it from here. If there is an ID defined then
+it will look up based on it otherwise it will create a new one.
 
-    return $members;
-}
+B<Throws:> NONE.
 
-=item $attribute_obj = $self->_get_attribute_obj()
+B<Side Effects:> NONE.
 
-Will return the attribute object.    Methods that need it should check to 
-see if they have it and if not then get it from here.   If there is an ID
-defined then it will look up based on it otherwise it will create a new one.
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _get_attr_obj {
-    my ($self) = @_;
+    my $self = shift;
     my $dirty    = $self->_get__dirty;
     my $attr_obj = $self->_get('_attr_obj');
 
     unless ($attr_obj) {
         # Let's Create a new one if one does not exist
-        $attr_obj = Bric::Util::Attribute::Grp->new({id => $self->get_id});
-        
+        $attr_obj = Bric::Util::Attribute::Grp->new({ id => $self->get_id });
         $self->_set(['_attr_obj'], [$attr_obj]);
-
         # This is a change that doesn't need to be saved.
         $self->_set__dirty($dirty);
     }
-
     return $attr_obj;
 }
 
-=item $self = $self->_set_attr( $param )
+##############################################################################
 
-Internal method which either sets the attribute upon the attribute 
-object, or if we can not get one yet into a cached area
+=item $self = $self->_set_attr($param)
 
-B<Throws:>
+Internal method which either sets the attribute upon the attribute object, or
+if we can not get one yet into a cached area.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -2411,56 +2198,47 @@ sub _set_attr {
     my ($self, $param) = @_;
     my $dirty = $self->_get__dirty;
 
-        # check to see if we have an id, get attr obj if we do
-        # otherwise put it into a cache 
-        if ($self->_get('id') ) {
-                my $attr_obj = $self->_get_attr_obj();
+    # check to see if we have an id, get attr obj if we do otherwise put it
+    # into a cache
+    if ($self->_get('id') ) {
+        my $attr_obj = $self->_get_attr_obj();
+        # param should have been passed in an acceptable manner
+        # send it straight to the attr obj
+        $attr_obj->set_attr( $param );
+    } else {
+        # get the cache or create a new one if necessary
+        my $attr_cache = $self->_get('_attr_cache') || {};
 
-                # param should have been passed in an acceptable manner
-                # send it straight to the attr obj
-                $attr_obj->set_attr( $param );
-        } else {
-                # get the cache or create a new one if necessary
-                my $attr_cache = $self->_get('_attr_cache') || {};
+        # the value for this subsys/name combo
+        $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'value'} =
+          $param->{'value'};
 
-                # the value for this subsys/name combo
-                $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'value'} =
-                        $param->{'value'};
+        # the sql type 
+        $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'type'} =
+          $param->{'sql_type'};
 
-                # the sql type 
-                $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'type'} =
-                        $param->{'sql_type'};
+        # store the cache so we can access it later
+        $self->_set( { '_attr_cache' => $attr_cache });
+    }
 
-                # store the cache so we can access it later
-                $self->_set( { '_attr_cache' => $attr_cache });
-        }
-
-        # set the flag to update the attrs
-        $self->_set(['_update_attrs'], [1]);
-
-        # This is a change that doesn't need to be saved.
-        $self->_set__dirty($dirty);
-
-        return $self;
+    # set the flag to update the attrs
+    $self->_set(['_update_attrs'], [1]);
+    # This is a change that doesn't need to be saved.
+    $self->_set__dirty($dirty);
+    return $self;
 }
 
-################################################################################
+##############################################################################
 
 =item $self = $self->_delete_attr($param)
 
 Deletes the attributes from this group and its members
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> Deletes from all the members as well.
 
-B<Side Effects:>
-
-Deletes from all the members as well
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -2468,163 +2246,132 @@ sub _delete_attr {
     my ($self, $param, $mem) = @_;
     my $dirty = $self->_get__dirty;
 
-        if ($self->_get('id') ) {
-                my $attr_obj = $self->_get_attr_obj();
+    if ($self->_get('id') ) {
+        my $attr_obj = $self->_get_attr_obj();
+        $attr_obj->delete_attr($param);
+    } else {
+        my $attr_cache = $self->_get('_attr_cache');
+        delete $attr_cache->{$param->{'subsys'}}->{$param->{'name'}};
+        $self->_set( { '_attr_cache' => $attr_cache });
+    }
 
-                $attr_obj->delete_attr($param);
-        } else {
-                my $attr_cache = $self->_get('_attr_cache');
-
-                delete $attr_cache->{$param->{'subsys'}}->{$param->{'name'}};
-
-                $self->_set( { '_attr_cache' => $attr_cache });
+    if ($mem) {
+        foreach ($self->get_members) {
+            $_->delete_attr($param);
         }
+    }
 
-        if ($mem) {
-                my $members = $self->get_members();
-
-                foreach (@$members) {
-                        $_->delete_attr($param);
-                }
-        }
-
-        $self->_set(['_update_attrs'], [1]);
-
-        # This is a change that doesn't need to be saved.
-        $self->_set__dirty($dirty);
-
-        return $self;
+    $self->_set(['_update_attrs'], [1]);
+    # This is a change that doesn't need to be saved.
+    $self->_set__dirty($dirty);
+    return $self;
 }
 
-################################################################################
+##############################################################################
 
 =item $attr = $self->_get_attr( $param )
 
 Internal Method to return attributes from the object or the cache
 
-B<Throws:> 
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _get_attr {
-        my ($self, $param, $parent) = @_;
+    my ($self, $param, $parent) = @_;
+    # the data that will be returned
+    my $attr;
 
-        # the data that will be returned
-        my $attr;
-
-        # check for an id to see if we need to access the cache or
-        # the attribute object
-        if ($self->_get('id') ) {
-                # we have an id so get the attribute object
-                my $attr_obj = $self->_get_attr_obj();
-
-                # param should have been passed in a valid format
-                # send directly to the attr object
-                $attr = $attr_obj->get_attr( $param );
-                        
-        } else {
-
-                # get the cache if it exists or create if it does not
-                my $attr_cache = $self->_get('_attr_cache') || {};
-
-                # get the data to return 
-                $attr = 
-                        $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'value'};
+    # check for an id to see if we need to access the cache or
+    # the attribute object
+    if ($self->_get('id') ) {
+        # we have an id so get the attribute object
+        my $attr_obj = $self->_get_attr_obj();
+        # param should have been passed in a valid format send directly to the
+        # attr object
+        $attr = $attr_obj->get_attr( $param );
+    } else {
+        # get the cache if it exists or create if it does not
+        my $attr_cache = $self->_get('_attr_cache') || {};
+        # get the data to return
+        $attr = $attr_cache->{$param->{subsys}}->{$param->{name}}->{value};
+    }
+    # check to see if the get from parent flag is set
+    if ($parent && !$attr) {
+        # no attr set upon this group check parent for defaults
+        # check if it has a parent
+        if ($self->_get('parent_id')) {
+            # check for the parent
+            my $parent_obj = $self->_get_parent_object();
+            if ($parent_obj) {
+                $attr = $parent_obj->_get_attr($param);
+            }
         }
-        # check to see if the get from parent flag is set
-        if ($parent && !$attr) {
-                # no attr set upon this group check parent for defaults
-                # check if it has a parent
-                if ($self->_get('parent_id')) {
-                        # check for the parent
-                        my $parent_obj = $self->_get_parent_object();
-                        if ($parent_obj) {
-                                $attr = $parent_obj->_get_attr($param);
-                        }
-                }
-        }
-
-        return $attr;
+    }
+    return $attr;
 }
+
+##############################################################################
 
 =item $attrs = $self->_get_attr_hash( $param, $parent)
 
 returns all attrs for a given subsystem
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _get_attr_hash {
-        my ($self, $param, $parent) = @_;
-
-        my $attrs;
-        # determine if we can get the attr_object
-        if ($self->_get('id')) {
-                # get the attribute object
-                my $attr_obj = $self->_get_attr_obj();
-
-                # get the attrs
-                $attrs = $attr_obj->get_attr_hash($param);
-        } else {
-                # grab the cache
-                my $attr_cache = $self->_get('_attr_cache');
-
-                # get the info that is desired
-                foreach (keys %{ $attr_cache->{$param->{'subsys'}} } ) {
-                        $attrs->{$_} = $attr_cache->{$param->{'subsys'}}->{$_}->{'value'};
-                }
+    my ($self, $param, $parent) = @_;
+    my $attrs;
+    # determine if we can get the attr_object
+    if ($self->_get('id')) {
+        # get the attribute object
+        my $attr_obj = $self->_get_attr_obj();
+        # get the attrs
+        $attrs = $attr_obj->get_attr_hash($param);
+    } else {
+        # grab the cache
+        my $attr_cache = $self->_get('_attr_cache');
+        # get the info that is desired
+        foreach (keys %{ $attr_cache->{$param->{subsys}} } ) {
+            $attrs->{$_} = $attr_cache->{$param->{subsys}}->{$_}->{value};
         }
-        # check if we need to hit the parents
-        if ($parent) {
-                # the parent object
-                my $parent_obj = $self->_get_parent_object();
-                if ($parent_obj) {
-                        # call parents method
-                        my $parent_attrs = $parent_obj->_get_attr_hash($param, 1);
-                        # combine the two
-                        %$attrs = (%$parent_attrs, %$attrs);
-                }
+    }
+    # check if we need to hit the parents
+    if ($parent) {
+        # the parent object
+        my $parent_obj = $self->_get_parent_object();
+        if ($parent_obj) {
+            # call parents method
+            my $parent_attrs = $parent_obj->_get_attr_hash($param, 1);
+            # combine the two
+            %$attrs = (%$parent_attrs, %$attrs);
         }
-        return $attrs;
+    }
+    return $attrs;
 }
+
+##############################################################################
 
 =item $self = $self->_set_meta( $param )
 
-Sets the meta information for this group on the attr object or
-caches it for later storage
+Sets the meta information for this group on the attr object or caches it for
+later storage
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -2632,51 +2379,38 @@ sub _set_meta {
     my ($self, $param) = @_;
     my $dirty = $self->_get__dirty;
 
-        # determin if we get the object or cache the data
-        if ($self->_get('id')) {
-                # get the attr object
-                my $attr_obj = $self->_get_attr_obj();
-
-                # set the meta information as it was given with the 
-                # arg
-                $attr_obj->add_meta( $param );
-        } else {
-                # get the meta info's cache
-                my $mc = $self->_get('_meta_cache') || {};
-
-                # set the information into the cache
-                $mc->{$param->{'subsys'}}->{$param->{'name'}}->{$param->{'field'}} =
-                                $param->{'value'};
-
-                # store the cache for future use
-                $self->_set({ '_meta_cache' => $mc });
-        }
-
-        $self->_set(['_update_attrs'], [1]);
-
-        # This is a change that doesn't need to be saved.
-        $self->_set__dirty($dirty);
-
-        return $self;
+    # Determine if we get the object or cache the data
+    if ($self->_get('id')) {
+        # get the attr object
+        my $attr_obj = $self->_get_attr_obj();
+        # set the meta information as it was given with the arg
+        $attr_obj->add_meta( $param );
+    } else {
+        # get the meta info's cache
+        my $mc = $self->_get('_meta_cache') || {};
+        # set the information into the cache
+        $mc->{$param->{subsys}}->{$param->{name}}->{$param->{field}} =
+          $param->{value};
+        # store the cache for future use
+        $self->_set({ '_meta_cache' => $mc });
+    }
+    $self->_set(['_update_attrs'], [1]);
+    # This is a change that doesn't need to be saved.
+    $self->_set__dirty($dirty);
+    return $self;
 }
 
-################################################################################
+##############################################################################
 
 =item $self = $self->_delete_meta( $param, $mem);
 
 Deletes the meta info from the group and possibly its members
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -2684,116 +2418,93 @@ sub _delete_meta {
     my ($self, $param, $mem) = @_;
     my $dirty = $self->_get__dirty;
 
-        if ($self->_get('id')) {
-                my $attr_obj = $self->_get_attr_obj();
-
-                $attr_obj->delete_meta( $param );
-        } else {
-                my $meta_cache = $self->_get('meta_cache') || {};
-
-                delete
-                $meta_cache->{$param->{'subsys'}}->
-                        {$param->{'name'}}->{$param->{'field'}};
+    if ($self->_get('id')) {
+        my $attr_obj = $self->_get_attr_obj;
+        $attr_obj->delete_meta( $param );
+    } else {
+        my $meta_cache = $self->_get('meta_cache') || {};
+        delete
+          $meta_cache->{$param->{subsys}}->{$param->{name}}->{$param->{field}};
         }
 
-        if ($mem) {
-                my $members = $self->get_members();
-
-                foreach (@$members) {
-                        $_->delete_meta($param);
-                }
+    if ($mem) {
+        foreach ($self->get_members) {
+            $_->delete_meta($param);
         }
-
-        $self->_set(['_update_attrs'], [1]);
-
-        # This is a change that doesn't need to be saved.
-        $self->_set__dirty($dirty);
-
-        return $self;
+    }
+    $self->_set(['_update_attrs'], [1]);
+    # This is a change that doesn't need to be saved.
+    $self->_set__dirty($dirty);
+    return $self;
 }
 
-################################################################################
+##############################################################################
 
 =item $meta = $self->_get_meta( $param )
 
-Returns stored meta information from the attr object or the attribute 
-cache
+Returns stored meta information from the attr object or the attribute cache
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _get_meta {
-        my ($self, $param, $parent) = @_;
-
-        my $meta;
-        if ($self->_get('id')) {
-                # we can have an attribute object so get it
-                my $attr_obj = $self->_get_attr_obj();
-                $meta = $attr_obj->get_meta($param);
+    my ($self, $param, $parent) = @_;
+    my $meta;
+    if ($self->_get('id')) {
+        # we can have an attribute object so get it
+        my $attr_obj = $self->_get_attr_obj();
+        $meta = $attr_obj->get_meta($param);
+    } else {
+        # get the cache if we have one
+        my $mc = $self->_get('_meta_cache') || {};
+        # see if they want just a field or it all
+        if (defined $param->{field}) {
+            $meta =
+              $mc->{$param->{subsys}}->{$param->{name}}->{$param->{field}};
         } else {
-                # get the cache if we have one
-                my $mc = $self->_get('_meta_cache') || {};
-
-                # see if they want just a field or it all
-                if (defined $param->{'field'}) {
-                        $meta = 
-                $mc->{$param->{'subsys'}}->{$param->{'name'}}->{$param->{'field'}};
-                } else {
-                        $meta = $mc->{$param->{'subsys'}};
-                }
+            $meta = $mc->{$param->{subsys}};
         }
+    }
 
-        # determine if we need to check the parent for anything
-        if ($parent) {
-                # see if we asked for a hash or a scalar
-                if ($param->{'field'}) {
-                        unless ($meta) {
-                                # get parent object
-                                my $parent_obj = $self->_get_parent_object();
-                                if ($parent_obj) {
-                                        $meta = $parent->get_meta($param);
-                                } # end if parent
-                        } # end unless meta
-                } else {
-                        # get the hash to be merged
-                        my $parent_obj = $self->_get_parent_object();
-                        if ($parent_obj) {
-                                my $meta2 = $parent_obj->get_meta($param);
-                                %$meta = (%$meta2, %$meta);
-                        }
-                } # end if else field block
-        } # end if parent block
-
-        return $meta;
+    # determine if we need to check the parent for anything
+    if ($parent) {
+        # see if we asked for a hash or a scalar
+        if ($param->{field}) {
+            unless ($meta) {
+                # get parent object
+                my $parent_obj = $self->_get_parent_object;
+                if ($parent_obj) {
+                    $meta = $parent->get_meta($param);
+                } # end if parent
+            } # end unless meta
+        } else {
+            # get the hash to be merged
+            my $parent_obj = $self->_get_parent_object;
+            if ($parent_obj) {
+                my $meta2 = $parent_obj->get_meta($param);
+                %$meta = (%$meta2, %$meta);
+            }
+        } # end if else field block
+    } # end if parent block
+    return $meta;
 }
 
-=item $parent_obj = $self->_get_parent_object()
+##############################################################################
 
-Will return the group that is this groups' parent if one has been 
-defined
+=item $parent_obj = $self->_get_parent_object
 
-B<Throws:>
+Will return the group that is this groups' parent if one has been defined
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -2801,444 +2512,408 @@ sub _get_parent_object {
     my ($self) = @_;
     my $dirty  = $self->_get__dirty;
     my $parent = $self->_get('_parent_obj');
-
     # see if there is a parent to get
     unless ($parent) {
         my $p_id = $self->_get('parent_id');
-
         if ($p_id) {
             $parent = Bric::Util::Grp->lookup({id => $p_id});
             $self->_set(['_parent_obj'], [$parent]);
-        
             # This is a change that doesn't need to be saved.
             $self->_set__dirty($dirty);
         }
     }
-
     return $parent;
 }
 
+##############################################################################
 
-=item $parents = $self->_get_all_parents()
+=item my $pids_aref = $self->_get_all_parent_ids
 
-Internal method that recursivly calls its self to determine all of its 
-parents
+Internal method that recursivly calls itself to determine all of its parents.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-sub _get_all_parents {
-        my ($self, $parent, $child) = @_;
-        my($id,@ids);
+sub _get_all_parent_ids {
+    my ($self, $parent, $child) = @_;
+    my @ids;
 
-        my $sql = 'SELECT p.id, p.parent_id ' .
-                                ' FROM grp p, grp c ' .
-                                ' WHERE c.parent_id=? AND ' .
-                                ' c.id=? AND '.
-                                ' p.id=c.parent_id ';
-        my $sth = prepare_c($sql,undef, DEBUG);
+    my $sth = prepare(q{
+        SELECT p.parent_id, p.id
+        FROM   grp p, grp c
+        WHERE  c.parent_id = ?
+               AND c.id = ?
+               AND p.id = c.parent_id
+    }, undef, DEBUG);
 
-        execute($sth,$parent,$child);
-        while (my $row = fetch($sth)) {
-                push(@ids, $row->[1]);
-                push(@ids, $self->_get_all_parents($row->[1],$row->[0]));
+    execute($sth, $parent, $child);
+    while (my $row = fetch($sth)) {
+        if (defined $row->[0]) {
+            push @ids, $row->[0];
+            push @ids, $self->_get_all_parent_ids(@$row);
         }
-        finish($sth);
-        return @ids;
+    }
+    finish($sth);
+    return @ids;
 }
 
+##############################################################################
 
-=item $grp = $grp->_do_insert()
+=item $grp = $grp->_do_insert
 
 Called from save it will do the insert for the grp object
 
-B<Throws:>
-NONE 
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub _do_insert {
-        my ($self) = @_;
+    my $self = shift;
 
-        # Build insert statement
-        my $sql = "INSERT INTO " . TABLE . 
-                        " (id, " . join(', ', COLS) . ") " .
-                        "VALUES (${\next_key(TABLE)}," . 
-                        join(',',('?') x COLS) .") ";
-
-        my $sth = prepare_c($sql, undef, DEBUG);
-        execute($sth, $self->_get( FIELDS ) );
-
-        # Now get the id that was created
-        $self->_set( { 'id' => last_key(TABLE) } );
-
-        # Add the group to the 'All Groups' group.
-        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
-
-        return $self;
-}
-
-
-=item $self = $self->_do_update()
-
-Called by the save method, this will update the record
-
-B<Throws:>
-
-NONE 
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-
-sub _do_update {
-    my ($self) = @_;
-
-    my $sql = 'UPDATE '.TABLE.
-              ' SET ' . join(', ', map { "$_=?" } COLS).
-              ' WHERE id=? ';
+    # Build insert statement
+    my $sql = "INSERT INTO " . TABLE .
+      " (id, " . join(', ', COLS) . ") " .
+      "VALUES (${\next_key(TABLE)}," .
+      join(',',('?') x COLS) .") ";
 
     my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get( FIELDS ) );
 
-    execute($sth,($self->_get( FIELDS )), $self->_get('id'));
-
+    # Now get the id that was created
+    $self->_set(['id'] => [last_key(TABLE)]);
+    # Add the group to the 'All Groups' group.
+    $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     return $self;
 }
 
-=item $self = $self->_sync_attributes()
+##############################################################################
 
-Internal method that stores the attributes and meta information 
-from a save
+=item $self = $self->_do_update
 
-B<Throws:>
+Called by the save method, this will update the record
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
+B<Notes:> NONE.
 
-B<Notes:>
+=cut
 
-NONE
+sub _do_update {
+    my $self = shift;
+
+    my $sql = 'UPDATE '.TABLE .
+      ' SET ' . join(', ', map { "$_=?" } COLS) .
+      ' WHERE id=? ';
+
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth,($self->_get( FIELDS )), $self->_get('id'));
+    return $self;
+}
+
+##############################################################################
+
+=item $self = $self->_sync_attributes
+
+Internal method that stores the attributes and meta information from a save
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub _sync_attributes {
-        my ($self) = @_;
+    my $self = shift;
 
-        # check to see if anything needs to be done
-        return $self unless $self->_get('_update_attrs');
+    # check to see if anything needs to be done
+    return $self unless $self->_get('_update_attrs');
 
-        # get the attribute object
-        my $attr_obj = $self->_get_attr_obj();
+    # get the attribute object
+    my $attr_obj = $self->_get_attr_obj();
 
-        # see if we have attr in the cache to be stored...
-        my $attr_cache = $self->_get('_attr_cache');
-        if ($attr_cache) {
-                # retrieve cache and store it on the attribute object
-                foreach my $subsys (keys %$attr_cache) {
-                        foreach my $name (keys %{ $attr_cache->{$subsys} }) {
-                                # set the attribute
-                                $attr_obj->set_attr( {
-                                                subsys => $subsys,
-                                                name => $name,
-                                                sql_type => $attr_cache->{$subsys}->{$name}->{'type'},
-                                                value => $attr_cache->{$subsys}->{$name}->{'value'}
-                                        });
-                        }
-                }
-
-                # clear the attribute cache
-                $self->_set( { '_attr_cache' => undef });
+    # see if we have attr in the cache to be stored...
+    my $attr_cache = $self->_get('_attr_cache');
+    if ($attr_cache) {
+        # retrieve cache and store it on the attribute object
+        foreach my $subsys (keys %$attr_cache) {
+            foreach my $name (keys %{ $attr_cache->{$subsys} }) {
+                # set the attribute
+                $attr_obj->set_attr
+                  ({ subsys   => $subsys,
+                     name     => $name,
+                     sql_type => $attr_cache->{$subsys}->{$name}->{type},
+                     value    => $attr_cache->{$subsys}->{$name}->{value}
+                   });
+            }
         }
 
-        # see if we have a meta cache to store
-        my $meta_cache = $self->_get('_meta_cache');
-        if ($meta_cache) {
-                # retrieve meta cache and set it upon the attribute object
-                foreach my $subsys (keys %$meta_cache) {
-                        foreach my $name (keys %{ $meta_cache->{$subsys} }) {
-                                foreach my $field (keys %{ $meta_cache->{$subsys}->{$name}}) {
-                                        $attr_obj->add_meta( {
-                                                subsys => $subsys,
-                                                name => $name,
-                                                field => $field,
-                                                value => $meta_cache->{$subsys}->{$name}->{$field}
-                                        });
-                                } # end foreach field
-                        } # end foreach name
-                } # end foreach subsys
+        # clear the attribute cache
+        $self->_set( { '_attr_cache' => undef });
+    }
 
-                $self->_set( { '_meta_cache' => undef });
-        }
+    # see if we have a meta cache to store
+    my $meta_cache = $self->_get('_meta_cache');
+    if ($meta_cache) {
+        # retrieve meta cache and set it upon the attribute object
+        foreach my $subsys (keys %$meta_cache) {
+            foreach my $name (keys %{ $meta_cache->{$subsys} }) {
+                foreach my $field (keys %{ $meta_cache->{$subsys}->{$name}}) {
+                    $attr_obj->add_meta
+                      ( { subsys => $subsys,
+                          name => $name,
+                          field => $field,
+                          value => $meta_cache->{$subsys}->{$name}->{$field}
+                        });
+                } # end foreach field
+            } # end foreach name
+        } # end foreach subsys
 
-        # clear the update flag
-        $self->_set( { '_update_attrs' => undef });
+        $self->_set( { '_meta_cache' => undef });
+    }
 
-        # call save on the attribute object
-        $attr_obj->save();
-
-        return $self;
+    # clear the update flag
+    $self->_set({ '_update_attrs' => undef });
+    # call save on the attribute object
+    $attr_obj->save;
+    return $self;
 }
 
-=item = $self = $self->_sync_members();
-
-Called By save this will sync all the group's member objects
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _sync_members {
-        my ($self) = @_;
-
-        return $self unless $self->_get('_update_members');
-
-        my $members = $self->_get_members();
-        my $delete_members = $self->_get('_delete_members');
-
-        # lets call save on all the delete members here
-        foreach (@$delete_members) {
-                $_->save if $_->get_id();
-        }
-
-        foreach my $package (keys %$members) {
-                # go through each of this packages objects
-                foreach my $id (keys %{ $members->{$package} }) {
-                        # call save on the object
-                        unless ($members->{$package}->{$id}->get_grp_id()) {
-                                # no group id set on member yet, set it now
-                                $members->{$package}->{$id}->set_grp_id($self->_get('id'));
-                        }
-                        $members->{$package}->{$id}->save();
-                }
-        }
-
-        $self->_set( {
-                '_delete_members' => undef,
-                '_update_members' => undef
-                });
-
-        return $self;
-}
-
-=cut
-
-#--------------------------------------#
+##############################################################################
 
 =head2 Private Functions
 
-=item $results = _do_list( $criteria );
+=over 4
 
-Takes the criteria passed into list and list ids, constructs a query
-and returns the results to them
+=item my (@grps || $grps_aref) = _do_list($params);
+
+=item my (@grp_ids || $grp_ids_aref) = _do_list($params, 1);
+
+Returns the results of a query for Bric::Util::Grp objects. The parameters
+supported by the C<$params> hash reference are:
+
+=over 4
+
+=item obj
+
+A Bricolage object. The groups returned will have member objects for this
+object.
+
+=item package
+
+A Bricolage class name. Use in combination with C<obj_id> to have
+C<_do_list()> return group objects with member objects representing a
+particular Bricolage object.
+
+=item obj_id
+
+A Bricolage object ID. Use in combination with C<package> to have
+C<_do_list()> return group objects with member objects representing a
+particular Bricolage object.
+
+=item parent_id
+
+A group parent ID.
+
+=item inactive
+
+Inactive groups will be returned if this parameter is true. Otherwise, only
+active groups will be returned.
+
+=item all
+
+Both secret and non-secret groups will be returned if this parameter is true.
+Otherwise only non-secret groups will be returned.
+
+=item name
+
+The name of a group.
+
+=item permananent
+
+A boolean to return permanent or non-permanent groups.
+
+=back
 
 B<Throws:>
-"Database error in _do_list.  Error: $@\n";
 
-B<Side Effects:>
-NONE
+=over 4
 
-B<Notes:>
-NONE
+=item *
 
-=cut 
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> If the C<obj> or C<obj_id> & C<package> parameters are used, then
+this function must be called from a subclass.
+
+=cut
 
 sub _do_list {
-        my ($class, $criteria,$ids) = @_;
-
-        
-        my $sql;
-        my @where_clause;
-        my @where_param;
-        my $chk;
-        # if an objject is passed this has to join with the member table
-        if (($criteria->{'obj'}) ||
-                        ($criteria->{'package'} && $criteria->{'obj_id'}) ) {
-            $chk = 1;
-                my ($pkg,$obj_id);
-                if ($criteria->{'obj'}) {
-                        # figure out what table this needs to be joined to
-                        $pkg = ref $criteria->{'obj'};
-                        # Get the object id
-                        $obj_id = $criteria->{'obj'}->get_id();
-                } else {
-                        $pkg = $criteria->{'package'};
-                        $obj_id = $criteria->{'obj_id'};
-                }
-
-                # Now get the short name to construct the table
-                my $short_name = $class->get_supported_classes->{$pkg};
-
-                my $table = $short_name . '_member';
-
-                # build the query
-                $sql = qq{
-                        SELECT
-                                g.id, g.parent_id, g.class__id, g.name, g.description, 
-                                g.secret, g.permanent, g.active
-                        FROM
-                                grp g, member m, $table mo
-                };
-                push @where_clause, ( "mo.object_id=? ", 'mo.member__id = m.id',
-                                      'm.grp__id = g.id');
-                push @where_param, $obj_id;
-
-                # if an active param has been passed in add it here
-                # remember that groups can not be deactivated
-                push @where_clause, 'm.active = ?';
-                push @where_param, exists $criteria->{active} ?
-                  $criteria->{active} : 1;
-
-        } else { # end the if Object Block
-
-                # no need for complex join
-                $sql = qq{
-                        SELECT
-                                id, parent_id, class__id, name, description, 
-                                secret, permanent, active
-                        FROM
-                                grp
-                        };
-        }
-
-        # Add other parameters to the query
-
-        if ( $criteria->{'parent_id'} ) {
-                push @where_clause, $chk ? 'g.parent_id=?' : 'parent_id=?';
-                push @where_param, $criteria->{'parent_id'};
-        }
-
-        if ( $criteria->{'inactive'} ) {
-                push @where_clause, $chk ? 'g.active=?' : 'active=?';
-                push @where_param, 0;
+    my ($class, $criteria, $ids) = @_;
+    my ($sql, @where_clause, @where_param, $chk);
+    # if an object is passed this has to join with the member table
+    if (($criteria->{obj}) ||
+        ($criteria->{package} && $criteria->{obj_id}) ) {
+        $chk = 1;
+        my ($pkg, $obj_id);
+        if ($criteria->{obj}) {
+            # figure out what table this needs to be joined to
+            $pkg = ref $criteria->{obj};
+            # Get the object id
+            $obj_id = $criteria->{obj}->get_id;
         } else {
-                push @where_clause, $chk ? 'g.active=?' : 'active=?';
-                push @where_param, 1;
+            $pkg = $criteria->{package};
+            $obj_id = $criteria->{obj_id};
         }
 
-        unless ( $criteria->{'all'} ) {
-                push @where_clause, $chk ? 'g.secret=?' : 'secret=?';
-                push @where_param, 0;
-        }
+        # Now get the short name to construct the table
+        my $short_name = $class->get_supported_classes->{$pkg};
+        my $table = $short_name . '_member';
 
-        if ( $class->get_class_id != 6 ) {
-                push @where_clause, $chk ? 'g.class__id=?' : 'class__id=?';
-                push @where_param, $class->get_class_id;
-        }
+        # build the query
+        $sql = qq{
+            SELECT g.id, g.parent_id, g.class__id, g.name, g.description,
+                   g.secret, g.permanent, g.active
+            FROM   grp g, member m, $table mo
+        };
+        push @where_clause, ( "mo.object_id=? ", 'mo.member__id = m.id',
+                              'm.grp__id = g.id');
+        push @where_param, $obj_id;
 
-        if ( $criteria->{'name'} ) {
-                push @where_clause, $chk ? 'LOWER(g.name) LIKE ?' : 'LOWER(name) LIKE ?';
-                push @where_param, lc($criteria->{'name'});
-        }
+        # if an active param has been passed in add it here remember that
+        # groups can not be deactivated
+        push @where_clause, 'm.active = ?';
+        push @where_param, exists $criteria->{active} ?
+          $criteria->{active} : 1;
 
+    } else { # end the if Object Block
+        # no need for complex join
+        $sql = qq{
+            SELECT id, parent_id, class__id, name, description, secret,
+                   permanent, active
+            FROM  grp
+        };
+    }
 
-        if ( exists $criteria->{permanent} ) {
-                push @where_clause, $chk ? 'g.permanent = ?' : 'permanent = ?';
-                push @where_param, $criteria->{permanent} ? 1 : 0;
-        }
+    # Add other parameters to the query
+    if ( $criteria->{'parent_id'} ) {
+        push @where_clause, $chk ? 'g.parent_id=?' : 'parent_id=?';
+        push @where_param, $criteria->{'parent_id'};
+    }
 
-        if (@where_clause) {
-                $sql .= ' WHERE ';
-                $sql .= join ' AND ', @where_clause;
-        }
+    if ( $criteria->{'inactive'} ) {
+        push @where_clause, $chk ? 'g.active=?' : 'active=?';
+        push @where_param, 0;
+    } else {
+        push @where_clause, $chk ? 'g.active=?' : 'active=?';
+        push @where_param, 1;
+    }
 
-        $sql .= $chk ? ' ORDER BY g.name' : ' ORDER BY name';
-        my $select = prepare_c($sql, undef, DEBUG);
+    unless ( $criteria->{'all'} ) {
+        push @where_clause, $chk ? 'g.secret=?' : 'secret=?';
+        push @where_param, 0;
+    }
 
-        # this was a call to list ids
-        if ($ids) {
-                my $return;
-                $return = col_aref($select,@where_param);
-                finish($select);
+    if ( $class->get_class_id != 6 ) {
+        push @where_clause, $chk ? 'g.class__id=?' : 'class__id=?';
+        push @where_param, $class->get_class_id;
+    }
 
-                return wantarray ? @{ $return } : $return;
+    if ( $criteria->{'name'} ) {
+        push @where_clause, $chk ? 'LOWER(g.name) LIKE ?' : 'LOWER(name) LIKE ?';
+        push @where_param, lc($criteria->{'name'});
+    }
 
-        } else { # end list ids section
+    if ( exists $criteria->{permanent} ) {
+        push @where_clause, $chk ? 'g.permanent = ?' : 'permanent = ?';
+        push @where_param, $criteria->{permanent} ? 1 : 0;
+    }
 
-                my @objs;
+    if (@where_clause) {
+        $sql .= ' WHERE ';
+        $sql .= join ' AND ', @where_clause;
+    }
 
+    $sql .= $chk ? ' ORDER BY g.name' : ' ORDER BY name';
+    my $select = prepare_c($sql, undef, DEBUG);
 
-                execute($select,@where_param);
+    # this was a call to list ids
+    if ($ids) {
+        my $return;
+        $return = col_aref($select,@where_param);
+        finish($select);
+        return wantarray ? @{ $return } : $return;
+    } else { # end list ids section
 
-                my %classes;
-
-                while (my $row = fetch($select) ) {
-
-                        my $bless_class;
-                        if ($class->get_class_id() != 6) {
-                                $bless_class = $class;
-                        } else {
-                                if (exists $classes{$row->[2]}) {
-                                        $bless_class = $classes{$row->[2]};
-                                } else {
-                                        my $c_obj = Bric::Util::Class->lookup({ id => $row->[2] });
-                                        $bless_class = $c_obj->get_pkg_name();
-#                                       eval " require $bless_class ";
-                                        $classes{$row->[2]} = $bless_class;
-                                }
-                        } 
-
-                        my $self = bless {}, $bless_class;
-                        $self->SUPER::new();
-
-                        $self->_set(
-                                        {       'id'                    => $row->[0], 
-                                                'parent_id'     => $row->[1], 
-                                                'class_id'              => $row->[2], 
-                                                'name'                  => $row->[3], 
-                                                'description'   => $row->[4],
-                                                'secret'                => $row->[5],
-                                                'permanent'             => $row->[6],
-                                                '_active'               => $row->[7]
-                                        }); 
-
-                        # Clear the dirty bit.
-                        $self->_set__dirty(0);
-
-                        push @objs, $self;
+        my @objs;
+        execute($select,@where_param);
+        my %classes;
+        while (my $row = fetch($select) ) {
+            my $bless_class;
+            if ($class->get_class_id() != 6) {
+                $bless_class = $class;
+            } else {
+                if (exists $classes{$row->[2]}) {
+                    $bless_class = $classes{$row->[2]};
+                } else {
+                    my $c_obj = Bric::Util::Class->lookup({ id => $row->[2] });
+                    $bless_class = $c_obj->get_pkg_name();
+                    $classes{$row->[2]} = $bless_class;
                 }
-                finish($select);
+            }
 
+            my $self = bless {}, $bless_class;
+            $self->SUPER::new;
+            $self->_set([qw(id parent_id class_id name description secret
+                            permanent _active)], $row);
 
-                return wantarray ? @objs : \@objs;
-
+            # Clear the dirty bit.
+            $self->_set__dirty(0);
+            push @objs, $self;
         }
+        finish($select);
+        return wantarray ? @objs : \@objs;
+    }
 }
 
 1;
@@ -3253,7 +2928,8 @@ their children and so on as well
 
 =head1 AUTHOR
 
-Michael Soderstrom <miraso@pacbell.net>
+Michael Soderstrom <miraso@pacbell.net>. Member management and documentation
+by David Wheeler <david@wheeler.net>.
 
 =head1 SEE ALSO:
 

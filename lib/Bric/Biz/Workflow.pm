@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:40 $
+$Date: 2002-08-17 23:49:45 $
 
 =head1 SYNOPSIS
 
@@ -801,10 +801,8 @@ sub desk_in_allowed {
     my $self = shift;
     my ($desk_obj) = @_;
     my $all_grp = $self->_get_all_desk_grp;
-
     return unless $all_grp;
-
-    return $all_grp->has_member($desk_obj);
+    return $all_grp->has_member({ obj => $desk_obj });
 }
 
 #------------------------------------------------------------------------------#
@@ -866,10 +864,8 @@ sub desk_in_required {
     my $self = shift;
     my ($desk_obj) = @_;
     my $req_grp = $self->_get_req_desk_grp;
-
     return unless $req_grp;
-
-    return $req_grp->has_member($desk_obj);
+    return $req_grp->has_member({ obj => $desk_obj });
 }
 
 #------------------------------------------------------------------------------#

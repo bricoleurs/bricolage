@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 00:29:45 $
+$Date: 2002-08-17 23:49:46 $
 
 =head1 SYNOPSIS
 
@@ -2276,7 +2276,7 @@ sub save {
 	unless ($self->_get('active')) {
 	    # Deactivate all group memberships if we've deactivated the at.
 	    foreach my $grp (Bric::Util::Grp::AlertType->list({ obj => $self })) {
-		foreach my $mem ($grp->has_member($self)) {
+		foreach my $mem ($grp->has_member({ obj => $self })) {
 		    next unless $mem;
 		    $mem->deactivate;
 		    $mem->save;

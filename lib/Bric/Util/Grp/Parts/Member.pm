@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-14 21:08:46 $
+$Date: 2002-08-17 23:49:47 $
 
 =head1 SYNOPSIS
 
@@ -62,7 +62,8 @@ use strict;
 use Bric::Util::Class;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Attribute::Member;
-use Data::Dumper;
+use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault::Exception::DP;
 
 #==============================================================================#
 # Inheritance                          #
@@ -205,7 +206,6 @@ B<Notes:> NONE.
 
 sub new {
     my ( $class, $init ) = @_;
-
     # bless the object
     my $self = bless {}, $class;
 
@@ -323,11 +323,12 @@ sub list {
 
 =item my $memb_href = Bric::Util::Grp::Parts::Member->href($params);
 
-Returns an anonymous hash of group members. The keys to the hash are Bric
-package names, and the values are anonymous hashes. The keys in these
-second-level anonymous hashes are Bric::Util::Grp::Parts::Member IDs, and the
-values are the corresponding Bric::Util::Grp::Parts::Member objects. Takes
-the same arguments as the C<list()> method.
+Returns an anonymous hash of group members. The hash values are
+Bric::Util::Grp::Parts::Member objects. Takes the same arguments as the
+C<list()> method, although either the C<grp> or C<grp_package> parameter is
+required. If the group class method C<get_object_class_id()> returns a value,
+then the hash keys will be the IDs of the objecs represented by the members.
+Otherwise, the keys will be the IDs of the member objects themselves.
 
 B<Throws:> NONE.
 
@@ -1101,7 +1102,6 @@ NONE
 sub remove {
     my ($self) = @_;
     $self->_set( { '_delete' => 1 } );
-    return $self;
 }
 
 =item $member = $member->save()
@@ -1110,7 +1110,13 @@ Saves changes to the data base
 
 B<Throws:>
 
-NONE
+=over 4
+
+=item *
+
+The grp_id or grp property is required.
+
+=back
 
 B<Side Effects:>
 
@@ -1126,25 +1132,22 @@ sub save {
     my ($self) = @_;
 
     if ( $self->_get__dirty ) {
-        if ( $self->get_id ) {
-            if ( $self->_get('_delete') ) {
-                return $self->_do_delete();
-            }
-            else {
-                $self->_do_update();
-            }
+        my ($id, $gid, $grp, $del) = $self->_get(qw(id grp_id grp _delete));
+        unless (defined $gid) {
+            $gid = $grp->get_id if $grp;
+            die Bric::Util::Fault::Exception::GEN->new
+              ({ msg => 'The grp_id or grp property is required'})
+              unless defined $gid;
+            $self->_set(['grp_id'], [$gid]);
         }
-        else {
-            if ( $self->_get('_delete') ) {
-                return $self;
-            }
-            else {
-                $self->_do_insert();
-            }
+        if ($id) {
+            $del ? return $self->_do_delete : $self->_do_update;
+        } else {
+            $del ? return $self : $self->_do_insert;
         }
     }
 
-    $self->_sync_attributes();
+    $self->_sync_attributes;
     $self->_set__dirty(0);
     return $self;
 }
@@ -1183,27 +1186,27 @@ sub _do_list {
     # set up the supported param
     # process Grp info
     my ( $supported, $force, $grp_id );
-    if ( $param->{'grp'} ) {
+    if ( $param->{grp} ) {
 
         # group object passed in
-        $supported = $param->{'grp'}->get_supported_classes();
-        $force     = $param->{'grp'}->get_object_class_id();
-        $grp_id    = $param->{'grp'}->get_id();
+        $supported = $param->{grp}->get_supported_classes;
+        $force     = $param->{grp}->get_object_class_id;
+        $grp_id    = $param->{grp}->get_id;
+        $param->{grp_package} = ref $param->{grp};
     }
-    elsif ( $param->{'grp_package'} ) {
-#        eval "require $param->{'grp_package'} ";
-        $supported = $param->{'grp_package'}->get_supported_classes();
-        $force     = $param->{'grp_package'}->get_object_class_id();
+    elsif ( $param->{grp_package} ) {
+        $supported = $param->{grp_package}->get_supported_classes;
+        $force     = $param->{grp_package}->get_object_class_id;
     }
 
     my ( $object_id, $package );
-    if ( $param->{'object'} ) {
-        $package   = ref $param->{'object'};
-        $object_id = $param->{'object'}->get_id();
+    if ( $param->{object} ) {
+        $package   = ref $param->{object};
+        $object_id = $param->{object}->get_id;
     }
-    elsif ( $param->{'object_id'} && $param->{'object_package'} ) {
-        $object_id = $param->{'object_id'};
-        $package   = $param->{'object_package'};
+    elsif ( $param->{object_id} && $param->{object_package} ) {
+        $object_id = $param->{object_id};
+        $package   = $param->{object_package};
     }
 
     my @objs;
@@ -1241,10 +1244,18 @@ sub _do_list {
             push @objs, _do_select( $class, $grp_id, $param->{all} );
         }
     }
+
+    # HACK: This should probably be added to the _do_joined_select and
+    # _do_select funtions so as to avoid going through the list of objects
+    # twice. But it will do for now.
     if ($href) {
         my %objs;
-        foreach my $m (@objs) {
-            $objs{$m->get_object_package}->{$m->get_id} = $m;
+        if ($param->{grp_package}->get_object_class_id) {
+            # It's just one class of object. Use the object IDs.
+            map { $objs{$_->get_obj_id} = $_ } @objs;
+        } else {
+            # Use the member ID.
+            map { $objs{$_->get_id} = $_ } @objs;
         }
         return \%objs;
     }
@@ -2047,11 +2058,10 @@ sub _do_insert {
     my $sth = prepare_c( $sql, undef, DEBUG );
     execute( $sth, $self->_get(MEMBER_FIELDS) );
 
-    # get the id that was created
+    # Get the id that was created
     $self->_set( { 'id' => last_key(TABLE) } );
 
-    # now insert into the mapping table for the 
-    # proper class
+    # Now insert into the mapping table for the proper class
     my $map_table = $self->_get_map_table_name();
 
     $sql =
