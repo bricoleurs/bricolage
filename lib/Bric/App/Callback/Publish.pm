@@ -28,10 +28,9 @@ sub preview : Callback {
     }
 
     # Grab the story and media IDs from the session.
-    my ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub);
+    my ($story_pub_ids, $media_pub_ids);
     if (my $d = get_state_data($self->class_key)) {
-        ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub) =
-          @{$d}{qw(story media story_pub media_pub)};
+        ($story_pub_ids, $media_pub_ids) = @{$d}{qw(story media)};
         clear_state($self->class_key);
     } elsif (! defined $story_id && ! defined $media_id ) {
         return;
@@ -97,10 +96,9 @@ sub publish : Callback {
     my $media_id = $param->{'media_id'};
 
     # Grab the story and media IDs from the session.
-    my ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub);
+    my ($story_pub_ids, $media_pub_ids);
     if (my $d = get_state_data($self->class_key)) {
-        ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub) =
-          @{$d}{qw(story media story_pub media_pub)};
+        ($story_pub_ids, $media_pub_ids) = @{$d}{qw(story media)};
         clear_state($self->class_key);
     } elsif (! defined $story_id && ! defined $media_id ) {
         return;
