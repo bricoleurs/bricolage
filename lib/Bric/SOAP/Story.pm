@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-16 19:00:41 $
+$Date: 2004-02-20 10:11:41 $
 
 =head1 SYNOPSIS
 
@@ -1020,9 +1020,9 @@ sub load_asset {
     # if we have any media objects, create them
     my (%media_ids, @media_ids);
     if ($data->{media}) {
-        @media_ids = Bric::SOAP::Media->_load_media({ data       => $data,
-                                                      internal   => 1,
-                                                      upload_ids => []    });
+        @media_ids = Bric::SOAP::Media->load_asset({ data       => $data,
+                                                     internal   => 1,
+                                                     upload_ids => []    });
 
         # correlate to relative ids
         for (0 .. $#media_ids) {
