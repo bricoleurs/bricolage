@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.2';
 
 =item Date
 
-$Date: 2003-12-18 22:32:30 $
+$Date: 2003-12-18 22:38:40 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.45 2003-12-18 22:32:30 autarch Exp $
+$Id: Bric.pm,v 1.46 2003-12-18 22:38:40 autarch Exp $
 
 =back
 
@@ -588,7 +588,7 @@ sub cache_me {
 
 ##############################################################################
 
-=head3 cache_me
+=head3 uncache_me
 
   $obj->uncache_me;
 
