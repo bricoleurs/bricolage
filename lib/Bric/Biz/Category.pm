@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-05 18:52:19 $
+$Date: 2002-11-06 23:50:08 $
 
 =head1 SYNOPSIS
 
@@ -790,37 +790,6 @@ sub set_parent_id {
     $self->_set(['parent_id', '_update_uri'], [$pid, 1]);
 }
 
-#------------------------------------------------------------------------------#
-
-=item my @grp_ids = $cat->get_grp_ids;
-
-=item my $grp_ids_aref = $cat->get_grp_ids;
-
-Returns a list of group IDs to which this category belongs.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-# FIXME This is only here to prevent the Bric->get_grp_ids() method from
-# overriding Bric->get_$something().  When all of the assets have been
-# converted to carry their group Ids around with them it will be possible
-# to remove Bric->get_grp_ids() so this will no longer be necessary.
-sub get_grp_ids {
-    my $self = shift;
-    return INSTANCE_GROUP_ID unless ref $self and $self->_get('id');
-    wantarray ? @{ $self->_get('grp_ids') } : $self->_get('grp_ids')
-}
 
 #------------------------------------------------------------------------------#
 

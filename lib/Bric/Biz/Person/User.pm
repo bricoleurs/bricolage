@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:45 $
+$Date: 2002-11-06 23:50:08 $
 
 =head1 SYNOPSIS
 
@@ -874,12 +874,13 @@ sub chk_password {
 
 ################################################################################
 
-=item $priv = $u->what_can($obj)
+=item $priv = $u->what_can($obj || $pkg)
 
-=item $priv = $u->what_can($obj, @group_ids)
+=item $priv = $u->what_can(($obj || $pkg), @group_ids)
 
-Returns the permission (as exported by Bric::Util::Priv::Parts::Const) that the
-user object has to $obj. A false value is no permission.
+Takes an object $obj or package name $pkg and  returns the permission (as
+exported by Bric::Util::Priv::Parts::Const) that the user object has to
+$obj, or to the "All" group in $pkg. A false value is no permission.
 
 Pass in a list of group IDs and they will be treated as if they are groups to
 which $obj is a member. Thus you can affect the permission returned by $obj by

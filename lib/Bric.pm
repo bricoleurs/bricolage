@@ -10,7 +10,7 @@ Release Version: 1.5.0 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.5.0";
 
 =head1 DATE
 
-$Date: 2002-11-02 00:15:44 $
+$Date: 2002-11-06 23:50:08 $
 
 =head1 SYNOPSIS
 
@@ -489,9 +489,11 @@ sub AUTOLOAD {
 
 #------------------------------------------------------------------------------#
 
-=item $ids = $obj->get_grp_ids();
+=item $ids = $obj->get_grp_ids || $pkg->get_grp_ids;
 
-Get a list of grp IDs of groups this object belongs to.
+Return a list of IDs for the Bric::Util::Grp objects to which the object
+belongs. When called as a class method, return the value of the class'
+C<INSTANCE_GROUP_ID> constant.
 
 B<Throws:>
 
@@ -518,6 +520,10 @@ sub get_grp_ids {
 
     # Get the ID. If $self is a package name, we won't be able to get an ID.
     my $id = ref $self ? $self->get_id : undef;
+
+    # If this is an object and $self->{grp_ids} exists return it
+    return wantarray ? @{$self->{grp_ids}} : $self->{grp_ids}
+      if defined $id && exists $self->{grp_ids};
 
     # If $id is defined, get group IDs. Otherwise, just return
     # INSTANCE_GROUP_ID.
