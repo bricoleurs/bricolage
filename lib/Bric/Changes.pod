@@ -229,6 +229,12 @@ Added C<best_uri()> method to Bric::Util::Burner to return the most
 appropriate URI (in Bricolage's opinion) for a document. Mainly useful when
 multiple sites and document aliases are used. [David]
 
+=item *
+
+Greatly simplified burner subclassing by adding a new registration method to
+Bric::Util::Burner. This cuts down on the number of files that need to be
+edited to add a new burner. [David]
+
 =back
 
 =head1 VERSION 1.6.5 ()

@@ -14,6 +14,7 @@ use Bric::App::Authz    qw(chk_authz READ CREATE);
 use Bric::App::Event    qw(log_event);
 use Bric::Util::Fault   qw(throw_ap);
 use Bric::Biz::Person::User;
+use Bric::Util::Burner;
 
 use Bric::SOAP::Util qw(category_path_to_id
                         site_to_id
@@ -39,15 +40,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:33 $
+$Date: 2003-09-18 01:17:04 $
 
 =head1 SYNOPSIS
 
@@ -596,14 +597,17 @@ sub load_asset {
           unless defined $init{output_channel__id};
 
         # figure out file_type
-        if ($tdata->{file_name} =~ /\.(\w+)$/) {
-            $init{file_type} = $1;
-        } elsif ($tdata->{file_name} =~ /autohandler$/) {
-            $init{file_type} = 'mc';
-        } else {
+        my ($fn, $dir, $ext) = fileparse($tdata->{file_name}, qr/\..*$/);
+        if ($ext) {
+            $ext =~ s/^\.//;
+            $init{file_type} = $ext;
+        } elsif (Bric::Util::Burner->class_for_cat_fn($fn)) {
+            # It's okay, it's a category template. Only complain if it's
+            # mandated to have an extension.
             throw_ap(error => __PACKAGE__ .
                      " : unable to determine file_type for file_name " .
-                     "\"$tdata->{file_name}\".");
+                     "\"$tdata->{file_name}\".")
+              if Bric::Util::Burner->cat_fn_has_ext($fn);
         }
 
         # get element and name for asset type unless this generic
@@ -811,9 +815,8 @@ sub serialize_asset {
     my $name = $template->get_name;
     $writer->dataElement(element => $name);
 
-    # oh, god, I feel so dirty.  This is the only way to decide
-    # if a template object is "generic".
-    if ($name eq 'autohandler' or $name eq 'category') {
+    # Determine if it's a category template.
+    if (Bric::Util::Burner->class_for_cat_fn($name)) {
         $writer->dataElement(generic => 1);
     } else {
         $writer->dataElement(generic => 0);

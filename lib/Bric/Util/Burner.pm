@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-17 19:47:09 $
+$Date: 2003-09-18 01:17:04 $
 
 =head1 SYNOPSIS
 
@@ -60,7 +60,7 @@ through C<deploy()> and C<undeploy()>.
 
 Manages the process of publishing and previewing business assets via the
 C<publish()> and C<preview()> methods, respectively. The actual work of
-publishing is done by one of Bric::Util::Burner's sub-classes depending on the
+publishing is done by one of Bric::Util::Burner's subclasses depending on the
 C<burner_type> of the asset being published. See L<Bric::Util::Burner::Mason>
 and L<Bric::Util::Burner::Template> for details.
 
@@ -68,60 +68,38 @@ and L<Bric::Util::Burner::Template> for details.
 
 =head1 ADDING A NEW BURNER
 
-We anticipate that new Burner sub-classes will be added to the system. Here's
+We anticipate that new Burner subclasses will be added to the system. Here's
 a brief guide to adding a new Burner to Bricolage:
 
 =over 4
 
 =item *
 
-Write Bric::Util::Burner::Foo
+Write Bric::Util::Burner::Foo.
 
-You'll need to create a new sub-class of Bric::Util::Burner that implements
+You'll need to create a new subclass of Bric::Util::Burner that implements
 three methods - C<new()>, C<chk_syntax()>, and C<burn_one()>. You can use an
-existing sub-class as a model for the interface and implementation of these
+existing subclasses as a model for the interface and implementation of these
 methods. Make sure that when you execute your templates, you do it in the
 namespace reserved by the C<TEMPLATE_BURN_PKG> directive -- get this constant
 by adding
 
   use Bric::Config qw(:burn);
 
-To your new Burner subclass.
+to your new Burner subclass.
+
+Your burner class will also need to call the C<_register_burner()> method when
+it loads. Again, see the existing subclasses for some examples.
 
 =item *
 
-Modify Bric::Biz::AssetType
+Modify Bric::Biz::AssetType.
 
 To use your Burner you'll need to be able to assign elements to it. To do this
 edit Bric::Biz::AssetType and add a constant for your burner. For example,
 Bric::Util::Burner::Template's constant is C<BURNER_TEMPLATE>. Next, edit the
 C<my_meths()> entry for the "burner" type to include an entry for your
 constant.
-
-=item *
-
-Modify Bric::Util::Burner
-
-You'll need to make a modification to Bric::Util::Burner to make it call your
-module when it sees an element assigned to your burner. The code you're
-looking for is in the C<_get_subclass()> method. Add the approprate C<elsif>s
-to assign the appropriate class name for your burner.
-
-=item *
-
-Modify Bric::Biz::Asset::Formatting
-
-Here you'll make modifications to support the template files needed by your
-burner. Do a search for the string "tmpl" and you'll find the appropriate
-sections. This is where you'll setup your naming convention and allowed filename
-extensions.
-
-=item *
-
-Modify F<comp/widgets/tmpl_prof/edit_new.html>.
-
-Add your template filename extensions to the C<file_type> select entry so that
-users can create new template files for your burner.
 
 =item *
 
@@ -151,6 +129,7 @@ use Bric::Biz::AssetType qw(:all);
 use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
 use Bric::Biz::Site;
+use File::Basename qw(fileparse);
 use URI;
 
 #==============================================================================#
@@ -317,7 +296,67 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
-NONE.
+=over 4
+
+=item my $burner_class = Bric::Util::Burner->class_for_ext($ext);
+
+Returns the name of the burner class that handles templates with the extension
+passed in. The extension must be the full extension name, starting with the
+".", such as ".mc" or ".tmpl".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $burner_class = Bric::Util::Burner->class_for_cat_fn($filename);
+
+Returns the name of the burner class that handles category templates with the
+base file name passed in. The file name must be the base file name, omitting
+any exception, such as "autohandler" or "category".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $burner_class = Bric::Util::Burner->cat_fn_has_ext($filename);
+
+Returns true if the category template with the base file name C<$filename> has
+a file extension, and fase if it doesn't. For example Mason category templates
+have no extension, so this method returns false for the C<$filename>
+"autohandler". On the other hand, HTML::Template templates do have extensions,
+so this method returns true for the C<$filename> "category".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $file_types = Bric::Util::Burner->list_file_types
+
+Returns an array reference of array references of burner file name extesions
+mapped to labels for each. Suitable for use in select widgets.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+my ($classes, $exts, $cat_fn_class, $cat_ext_fn, $opts, $cat_fn_has_ext);
+sub class_for_ext    { $exts->{$_[1]} }
+sub class_for_cat_fn { $cat_fn_class->{$_[1]} }
+sub cat_fn_for_ext   { $cat_ext_fn->{$_[1]} }
+sub cat_fn_has_ext   { $cat_fn_has_ext->{$_[1]} }
+sub list_file_types  { $opts }
+
+=back
 
 =cut
 
@@ -1412,6 +1451,57 @@ sub throw_error {
 
 =back
 
+=head2 Protected Class Methods
+
+=over 4
+
+=item __PACKAGE__->_register_burner(@args)
+
+  __PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_TEMPLATE,
+                                 category_fn => 'category',
+                                 exts        =>
+                                   { '.pl'   => 'HTML::Template Script (.pl)',
+                                     '.tmpl' => 'HTML::Template Template (.tmpl)'
+                                   }
+                               );
+
+Protected method only called by Burner subclasses when they're loaded. This
+method registers the subclasses, along with their Bric::Biz::AssetType
+constants, file names, and file extenstions. Note that the C<category_fn> and
+must be unique among all burners, as must the file extensions passed via the
+C<exts> directive.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _register_burner {
+    my $class = shift;
+    my $burner = shift;
+
+    # Register the class with the constant.
+    $classes->{$burner} = $class;
+
+    # Save the file name specs.
+    my %p = @_;
+    $cat_fn_class->{$p{category_fn}} = $class;
+    $cat_fn_has_ext->{$p{category_fn}} = $p{cat_fn_has_ext};
+    while (my ($e, $label) = each %{$p{exts}}) {
+        $exts->{$e} = $class;
+        push @$opts, [$e => $label];
+        $cat_ext_fn->{$e} = $p{category_fn};
+    }
+}
+
+
+##############################################################################
+
+=back
+
 =head2 Private Instance Methods
 
 =over 4
@@ -1431,15 +1521,11 @@ B<Notes:> NONE.
 
 sub _get_subclass {
     my ($self, $asset) = @_;
-    my $burner_class = 'Bric::Util::Burner::';
     if (my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element__id})) {
         # Easy to get it
         my $b = $at->get_burner || BURNER_MASON;
-        $burner_class .= $b == BURNER_MASON
-          ? 'Mason'
-          : $b == BURNER_TEMPLATE
-            ? 'Template'
-            : throw_gen 'Cannot determine template burner subclass.';
+        my $burner_class = $classes->{$b}
+          or throw_gen 'Cannot determine template burner subclass.';
 
         # Instantiate the proper subclass.
         return ($burner_class->new($self), $at);
@@ -1450,21 +1536,17 @@ sub _get_subclass {
           || throw_gen 'No element associated with asset.';
         # Okay, it's a template. Figure out the proper burner from the file name.
         my $file_name = $asset->get_file_name;
-        if ($file_name =~ /autohandler$/ || $file_name =~ /\.mc$/) {
-            # It's a mason component.
-            $burner_class .= 'Mason';
-        } elsif ($file_name =~ /\.tmpl$/ || $file_name =~ /\.pl$/) {
-            # It's an HTML::Template template.
-            $burner_class .= 'Template';
-        } else {
-            throw_gen 'Cannot determine template burner subclass.';
-        }
+        my ($fn, $dir, $ext) = fileparse($file_name, qr/\..*$/);
+        # Remove the dot.
+        $ext =~ s/^\.//;
+        my $burner_class = $self->class_for_ext($ext)
+          || $self->class_for_cat_fn($fn)
+          or throw_gen 'Cannot determine template burner subclass.';
 
         # Instantiate the proper subclass.
         return $burner_class->new($self);
     }
 }
-
 
 1;
 __END__

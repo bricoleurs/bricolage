@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2003-09-18 01:17:06 $
 
 =head1 DESCRIPTION
 
@@ -55,6 +55,7 @@ use Carp qw(confess croak);
 use Net::FTPServer::DirHandle;
 use Bric::Util::FTP::FileHandle;
 use Bric::Util::Priv::Parts::Const qw(:all);
+use File::Basename qw(fileparse);
 
 ################################################################################
 # Inheritance
@@ -75,9 +76,9 @@ is looked up from the database.
 sub new {
   my $class       = shift;
   my $ftps        = shift;       # FTP server object.
-  my $pathname    = shift || "/"; 
-  my $oc_id       = shift;           
-  my $category_id = shift;     
+  my $pathname    = shift || "/";
+  my $oc_id       = shift;
+  my $category_id = shift;
 
   # Create object.
   my $self = Net::FTPServer::DirHandle->new($ftps, $pathname);
@@ -86,10 +87,10 @@ sub new {
   # get output channel and cagetory_id from args, default to dummy value
   $self->{oc_id}       = defined $oc_id       ? $oc_id       : -1;
   $self->{category_id} = defined $category_id ? $category_id : -1;
-  
+
   print STDERR __PACKAGE__, "::new() : $self->{oc_id} : $self->{category_id}\n"
     if FTP_DEBUG;
-  
+
   return $self;
 }
 
@@ -120,11 +121,11 @@ sub get {
 
   # look for a template by that name
   my $list = Bric::Biz::Asset::Formatting->list(
-	       {
-		output_channel__id => $oc_id,
-		category_id       => $category_id,
-		file_name          => "%/$filename",
-	       });
+               {
+                output_channel__id => $oc_id,
+                category_id       => $category_id,
+                file_name          => "%/$filename",
+               });
 
   if ($list and @$list) {
     # warn on multiple templates
@@ -135,9 +136,9 @@ sub get {
     my $template = $list->[0];
     return new Bric::Util::FTP::FileHandle ($self->{ftps},
                                             $template,
-					    $oc_id,
+                                            $oc_id,
                                             $category_id,
-					   )
+                                           )
       # Allow access only to template if the user has READ access to it.
       if $self->{ftps}{user_obj}->can_do($template, READ);
   }
@@ -146,11 +147,11 @@ sub get {
   if ($oc_id == -1) {
       my ($id) = Bric::Biz::OutputChannel->list_ids({ name => $filename });
       if ($id) {
-	  return Bric::Util::FTP::DirHandle->new($self->{ftps},
-						 "/" . $filename . "/",
-						 $id,
-						 0,
-						);
+          return Bric::Util::FTP::DirHandle->new($self->{ftps},
+                                                 "/" . $filename . "/",
+                                                 $id,
+                                                 0,
+                                                );
       }
   }
 
@@ -164,7 +165,7 @@ sub get {
     if ($cats->{$child_id}{directory} eq $filename) {
       return Bric::Util::FTP::DirHandle->new($self->{ftps},
                                              $self->pathname . $filename . "/",
-					     $oc_id,
+                                             $oc_id,
                                              $child_id,
                                             );
     }
@@ -193,24 +194,23 @@ sub open {
   print STDERR __PACKAGE__, "::open($filename, $mode)\n" if FTP_DEBUG;
 
   if ($oc_id == -1) {
-      print STDERR __PACKAGE__, "::open() called without oc_id!\n" 
-	  if FTP_DEBUG;
+      print STDERR __PACKAGE__, "::open() called without oc_id!\n"
+          if FTP_DEBUG;
       return undef;
   }
 
   if ($category_id == -1) {
       print STDERR __PACKAGE__, "::open() called without category_id!\n"
-	  if FTP_DEBUG;
+          if FTP_DEBUG;
       return undef;
   }
 
   # find filename
-  my $list = Bric::Biz::Asset::Formatting->list(
-	       {
-		output_channel__id => $oc_id,
-		category_id       => $category_id,
-		file_name          => "%/$filename"
-	       });
+  my $list = Bric::Biz::Asset::Formatting->list
+    ({ output_channel__id => $oc_id,
+       category_id       => $category_id,
+       file_name          => "%/$filename"
+     });
 
   if ($list) {
     # warn on multiple templates
@@ -222,7 +222,7 @@ sub open {
     # Allow access only to template if the user has READ access to it.
     return Bric::Util::FTP::FileHandle->new($self->{ftps},
                                             $template,
-					    $oc_id,
+                                            $oc_id,
                                             $category_id
                                            )->open($mode)
       if $self->{ftps}{user_obj}->can_do($template, READ);
@@ -231,60 +231,50 @@ sub open {
   print STDERR __PACKAGE__, "::open($filename, $mode) : creating new template\n";
 
   # create a new template
-  my ($name, $file_type) = split(/\./, $filename);
-
-  # autohandler special case
-  $file_type = 'mc' if $name eq 'autohandler' and not $file_type;
+  my ($name, $dir, $file_type) = fileparse($filename, qr/\..*$/);
+  # Remove the dot.
+  $file_type =~ s/^\.//;
 
   # don't look for an asset for generic templates
   my $at;
-  unless (($name eq 'autohandler' and $file_type eq 'mc') or
-	  ($name eq 'category'
-	   and ($file_type eq 'pl' or $file_type eq 'tmpl'))) {
+  unless ( Bric::Util::Burner->class_for_cat_fn($name)) {
+      # It's not a category template. Look for an element to associate it with.
+      $at = Bric::Biz::AssetType->lookup({ key_name => $name });
 
-    # look for a match (if I could figure out how to express this in
-    # SQL then I guess I could use list() directly...)
-    foreach my $this_at (Bric::Biz::AssetType->list()) {
-      my $this_at_name = lc $this_at->get_name;
-      $this_at_name =~ s/\W+/_/g;
-
-      if ($name eq $this_at_name) {
-	# found it
-	$at = $this_at;
-	last;
+      # If we didn't find an element then Formatting.pm will assume it's a
+      # utility template.
+      if (FTP_DEBUG) {
+          if ($at) {
+              print STDERR __PACKAGE__, "::open($filename, $mode) : matched",
+                " asset type : ", $at->get_name, "\n";
+          } else {
+              print STDERR __PACKAGE__, "::open($filename, $mode) : failed",
+                " to find matching asset type\n";
+          }
       }
-    }
-
-    # if we didn't find a match then fail
-    unless ($at) {
-      print STDERR __PACKAGE__, "::open($filename, $mode) : failed to find matching asset type\n" if FTP_DEBUG;
-      return undef;
-    }
-    print STDERR __PACKAGE__, "::open($filename, $mode) : matched asset type : ", $at->get_name, "\n" if FTP_DEBUG;
   }
 
-    
-  print STDERR __PACKAGE__, "::open($filename, $mode) : creating : ", $self->pathname, $filename, "\n" if FTP_DEBUG;
+  print STDERR __PACKAGE__, "::open($filename, $mode) : creating : ",
+    $self->pathname, $filename, "\n" if FTP_DEBUG;
 
   ## create the new template object
-  my $template = Bric::Biz::Asset::Formatting->new(
-		  {
-		   'element'     	=> $at,
-		   'file_type'          => $file_type,
-		   'output_channel__id' => $oc_id,
-		   'category_id'        => $category_id,
-		   'priority'           => 3,
-		   'name'               => ($at ? lc($at->get_name) : undef),
-		   'user__id'           => $self->{ftps}{user_obj}->get_id,
-		  });
+  my $template = Bric::Biz::Asset::Formatting->new
+    ({ 'element'            => $at,
+       'file_type'          => $file_type,
+       'output_channel__id' => $oc_id,
+       'category_id'        => $category_id,
+       'priority'           => 3,
+       'name'               => ($at ? lc $at->get_key_name : undef),
+       'user__id'           => $self->{ftps}{user_obj}->get_id,
+     });
 
   # find a template workflow.  Might be nice if
   # Bric::Biz::Workflow->list too a type key...
   foreach my $workflow (Bric::Biz::Workflow->list()) {
       if ($workflow->get_type == TEMPLATE_WORKFLOW) {
-	  $template->set_workflow_id($workflow->get_id());
-	  $template->checkin();
-	  last;
+          $template->set_workflow_id($workflow->get_id());
+          $template->checkin();
+          last;
       }
   }
 
@@ -294,10 +284,10 @@ sub open {
 
   # now pass off to FileHandle
   return Bric::Util::FTP::FileHandle->new($self->{ftps},
-					  $template,
-					  $oc_id,
-					  $category_id,
-					 )->open($mode);
+                                          $template,
+                                          $oc_id,
+                                          $category_id,
+                                         )->open($mode);
 }
 
 =item list($wildcard)
@@ -321,7 +311,7 @@ sub list {
   my $ftps        = $self->{ftps};
 
   print STDERR __PACKAGE__, "::list() : ", $wildcard || "", "\n" if FTP_DEBUG;
-  
+
   my @results;
 
   # translate wildcard to like
@@ -336,15 +326,15 @@ sub list {
       my @ocs  = Bric::Biz::OutputChannel->list({name => ($like || '%')});
       foreach my $oc (@ocs) {
           ##############################################################
-          # NOTE! Should probably exclude certain output channels here according
+          # XXX Should probably exclude certain output channels here according
           # to permissions -- same with comp/tmpl_prof/edit_new.html!
           # next unless $self->{ftps}{user_obj}->can_do($oc, READ);
           ##############################################################
-	  my $dirh = Bric::Util::FTP::DirHandle->new($self->{ftps},
-						     "/" . $oc->get_name . "/",
-						     $oc->get_id(),
-						     0);
-	  push @results, [ $oc->get_name, $dirh ];
+          my $dirh = Bric::Util::FTP::DirHandle->new($self->{ftps},
+                                                     "/" . $oc->get_name . "/",
+                                                     $oc->get_id(),
+                                                     0);
+          push @results, [ $oc->get_name, $dirh ];
       }
       @results = sort { $a->[0] cmp $b->[0] } @results;
       return \@results;
@@ -354,28 +344,27 @@ sub list {
   if ($like) {
       my $results = Bric::Biz::Category->list({ directory => $like,
                                                 parent_id => $category_id });
-      
       # create dirhandles
       foreach my $cat (@$results) {
           # Allow access only to categories the user has READ access to.
           next unless $self->{ftps}{user_obj}->can_do($cat, READ);
-	  my $dirh = new Bric::Util::FTP::DirHandle ($self->{ftps},
-						     $self->pathname . 
+          my $dirh = new Bric::Util::FTP::DirHandle ($self->{ftps},
+                                                     $self->pathname . 
                                                      $cat->get_directory,
-						     $oc_id,
-						     $cat->get_id);
-	  
-	  push @results, [ $cat->get_directory, $dirh ];
+                                                     $oc_id,
+                                                     $cat->get_id);
+
+          push @results, [ $cat->get_directory, $dirh ];
       }
   } else {
       if ($cats->{children}{$category_id}) {
-	  foreach my $child_id (@{$cats->{children}{$category_id}}) {
-	      my $dirh = new Bric::Util::FTP::DirHandle ($self->{ftps},
-							 $self->pathname . $cats->{$child_id}{directory} . "/",
-							 $oc_id,
-							 $child_id);
-	      push(@results, [ $cats->{$child_id}{directory}, $dirh ]);
-	  }
+          foreach my $child_id (@{$cats->{children}{$category_id}}) {
+              my $dirh = new Bric::Util::FTP::DirHandle ($self->{ftps},
+                                                         $self->pathname . $cats->{$child_id}{directory} . "/",
+                                                         $oc_id,
+                                                         $child_id);
+              push(@results, [ $cats->{$child_id}{directory}, $dirh ]);
+          }
       }
   }
 
@@ -384,16 +373,16 @@ sub list {
   if ($like) {
       $list = Bric::Biz::Asset::Formatting->list(
        {
-	output_channel__id => $oc_id,
-	category_id       => $category_id, 
-	file_name         => "%/" . ($like || '%')
+        output_channel__id => $oc_id,
+        category_id       => $category_id,
+        file_name         => "%/" . ($like || '%')
        });
   } else {
       $list = Bric::Biz::Asset::Formatting->list(
-	{
-	 output_channel__id => $oc_id,
-	 category_id       => $category_id,
-	});
+        {
+         output_channel__id => $oc_id,
+         category_id       => $category_id,
+        });
   }
 
   # create filehandles
@@ -450,18 +439,18 @@ sub parent {
   print STDERR __PACKAGE__, "::parent() : ", $category_id, "\n" if FTP_DEBUG;
 
   return $self if $self->is_root;
-  
+
   # get a new directory handle and change category_id to parent's
   my $dirh = $self->SUPER::parent;
   $dirh->{category_id} = $cats->{$category_id}{parent_id} || -1;
-  
+
   # magic to get the right oc_id
   if ($self->{category_id} == 0) {
       $dirh->{oc_id} = -1;
   } else {
       $dirh->{category_id} = $self->{oc_id};
   }
-  
+
   return bless $dirh, ref $self;
 }
 
@@ -504,7 +493,7 @@ the FTP interface will probably never be supported.
 
 =cut
 
-sub move   { 
+sub move   {
   $_[0]->{error} = "Categories cannot be modified through the FTP interface.";
   -1;
 }
@@ -516,7 +505,7 @@ the FTP interface will probably never be supported.
 
 =cut
 
-sub delete { 
+sub delete {
   $_[0]->{error} = "Categories cannot be modified through the FTP interface.";
   -1;
 }
@@ -528,7 +517,7 @@ the FTP interface will probably never be supported.
 
 =cut
 
-sub mkdir  { 
+sub mkdir  {
   $_[0]->{error} = "Categories cannot be modified through the FTP interface.";
   -1;
 }

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+our $VERSION = (qw$Revision: 1.52 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-15 13:01:15 $
+$Date: 2003-09-18 01:17:04 $
 
 =head1 SYNOPSIS
 
@@ -131,6 +131,7 @@ use Bric::Biz::AssetType;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
 use Bric::Util::Attribute::Formatting;
+use File::Basename qw(fileparse);
 
 #==============================================================================#
 # Inheritance                          #
@@ -343,7 +344,7 @@ use constant DEFAULT_ORDER => 'deploy_date';
 
 #--------------------------------------#
 # Private Class Fields
-my ($meths, @ord, $set_elem, $set_cat, $set_util);
+my ($meths, @ord, $set_elem, $set_util);
 # None
 
 #--------------------------------------#
@@ -466,9 +467,10 @@ category__id - the category id
 
 =item *
 
-file_type - the type of the template file - this will be used as the
-extension for the file_name derived from the element name.  Currently
-supported file_type values are 'mc', 'pl' and 'tmpl'.
+file_type - the type of the template file - this will be used as the extension
+for the file_name derived from the element name. Supported file_type values
+are those returned as the first value in each array reference in the array
+reference returned by C<< Bric::Util::Burner->list_file_types >>.
 
 =back
 
@@ -546,7 +548,8 @@ sub new {
             $name = $set_elem->($init);
         } elsif ($t == CATEGORY_TEMPLATE) {
             # It's a category template. Set the name based on the file type.
-            $name = $set_cat->($init);
+            $name = Bric::Util::Burner->cat_fn_for_ext($init->{file_type})
+              or throw_dp "Invalid file_type parameter '$init->{file_type}'";
         } elsif ($t == UTILITY_TEMPLATE) {
             $name = $set_util->($init);
         } else {
@@ -565,7 +568,8 @@ sub new {
         } else {
             # It's a category template. Get set up the file name.
             $init->{tplate_type} = CATEGORY_TEMPLATE;
-            $name = $set_cat->($init);
+            $name = Bric::Util::Burner->cat_fn_for_ext($init->{file_type})
+              or throw_dp "Invalid file_type parameter '$init->{file_type}'";
         }
     }
 
@@ -589,8 +593,9 @@ sub new {
 
     # construct the file name now that the object is in place
     $self->_set(['file_name'],
-                [ $self->_build_file_name($init->{file_type}, $name, $cat,
-                                          $init->{output_channel__id}) ]);
+                [ $self->_build_file_name( $init->{file_type}, $name, $cat,
+                                           $init->{output_channel__id},
+                                           $init->{tplate_type} ) ]);
     # set the starter grp_ids
     $self->_set({ grp_ids => \@grp_ids });
     return $self;
@@ -1109,7 +1114,7 @@ sub set_deploy_date {
     return $self;
 }
 
-*set_cover_date = *set_deploy_date;
+*set_cover_date = \&set_deploy_date;
 
 ################################################################################
 
@@ -1135,7 +1140,7 @@ NONE
 
 sub get_deploy_date { local_date($_[0]->_get('deploy_date'), $_[1]) }
 
-*get_cover_date = *get_deploy_date;
+*get_cover_date = \&get_deploy_date;
 
 ################################################################################
 
@@ -1823,7 +1828,6 @@ sub _get_output_channel_object {
 
     unless ($oc_obj) {
         $oc_obj = Bric::Biz::OutputChannel->lookup({'id' => $oc_id});
-        
         $self->_set(['_output_channel_obj'], [$oc_obj]);
 
         # Restore the original dirty value.
@@ -1862,7 +1866,6 @@ sub _get_element_object {
 
     unless ($at_obj) {
         $at_obj = Bric::Biz::AssetType->lookup({'id' => $at_id});
-        
         $self->_set(['_element_obj'], [$at_obj]);
 
         # Restore the original dirty value.
@@ -2170,16 +2173,15 @@ B<Notes:> NONE.
 =cut
 
 sub _build_file_name {
-    my ($self, $file_type, $name, $cat, $oc_id) = @_;
+    my ($self, $file_type, $name, $cat, $oc_id, $tplate_type) = @_;
 
     # compute file_type from file_name if not set
-    unless ($file_type) {
+    if ($file_type) {
+      $file_type = ".$file_type";
+  } else {
       my $old = $self->_get('file_name');
-      if ($old =~ /autohandler$/) {
-        $file_type = 'mc';
-      } else {
-        ($file_type) = $old =~ /\.(.+)$/;
-      }
+      # Scalar context grabs the last return value, which is the extention.
+      $file_type = fileparse($old, qr/\..*$/);
     }
 
     # Get the name and category object.
@@ -2191,7 +2193,8 @@ sub _build_file_name {
     # Mangle the file name.
     my $file = lc $name;
     $file    =~ y/a-z0-9/_/cs;
-    $file   .= ".$file_type" unless $name eq 'autohandler';
+    $file   .= $file_type if $tplate_type != CATEGORY_TEMPLATE
+      or Bric::Util::Burner->cat_fn_has_ext($name);
 
     # Create the file name.
     my $fn = Bric::Util::Trans::FS->cat_dir(($cat ? $cat->ancestry_path : ()),
@@ -2199,14 +2202,14 @@ sub _build_file_name {
     # Make sure that the filename isn't already in use for this output channel.
     my @existing;
     push @existing, $self->list_ids(
-        { 
-            file_name => $fn, 
+        {
+            file_name => $fn,
             checked_out => 'all',
-            output_channel__id => $oc_id 
+            output_channel__id => $oc_id
         });
     push @existing, $self->list_ids(
-        { 
-            file_name => $fn, 
+        {
+            file_name => $fn,
             checked_out => 'all',
             output_channel__id => $oc_id,
             active => 0,
@@ -2259,40 +2262,6 @@ $set_elem = sub {
     }
 
     return $init->{element}->get_key_name;
-};
-
-=item my $name = $set_cat->($init)
-
-Sets the name of the template as a category template, based on the C<file_type>
-parameter.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Invalid file_type parameter.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-$set_cat = sub {
-    my $init = shift;
-    if ($init->{file_type} eq 'mc') {
-        return 'autohandler';
-    } elsif ($init->{file_type} eq 'pl' or
-             $init->{file_type} eq 'tmpl') {
-        return 'category';
-    } else {
-        throw_dp(error => "Invalid file_type parameter " .
-                 "'$init->{file_type}'");
-    }
 };
 
 =item my $name = $set_util->($init)

@@ -465,7 +465,7 @@ $create_fa = sub {
         }
     } elsif ($tplate_type == Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE) {
         $name = $param->{"$widget|name"};
-    } # Otherwise, it'll default to an autohandler.
+    } # Otherwise, it'll default to a category template.
 
     # Check permissions.
     my $work_id = get_state_data($widget, 'work_id');

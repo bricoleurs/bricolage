@@ -58,11 +58,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
                value => 'mc',
                props => {
                           type => 'select',
-                          vals => {
-                                    'mc'   => 'Mason Component (.mc)',
-                                    'pl'   => 'HTML::Template Script (.pl)',
-                                    'tmpl' => 'HTML::Template Template (.tmpl)'
-                                  }
+                          vals => Bric::Util::Burner->list_file_types
                          }
          });
 $m->out($ieSpacer);

@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-17 17:30:25 $
+$Date: 2003-09-18 01:17:05 $
 
 =head1 SYNOPSIS
 
@@ -53,6 +53,7 @@ use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
 use Bric::Config qw(:burn);
 use Bric::Util::Burner qw(:modes);
+use Bric::Biz::AssetType;
 require XML::Writer if INCLUDE_XML_WRITER;
 
 
@@ -106,6 +107,13 @@ BEGIN {
                          '_page_place'     => Bric::FIELD_NONE,
                         });
 }
+
+__PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_MASON,
+                               category_fn    => 'autohandler',
+                               cat_fn_has_ext => 0,
+                               exts           =>
+                                 { mc => 'Mason Component (.mc)' }
+                             );
 
 #==============================================================================#
 
@@ -312,7 +320,6 @@ sub chk_syntax {
     my ($self, $ba, $err_ref) = @_;
     # Just succeed if there is no template source code.
     my $data = $ba->get_data or return $self;
-
 
     # Create the interpreter
     my $interp = HTML::Mason::Interp->new( $self->_interp_args,

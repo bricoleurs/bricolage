@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-17 17:30:25 $
+$Date: 2003-09-18 01:17:05 $
 
 =head1 SYNOPSIS
 
@@ -95,6 +95,15 @@ BEGIN {
                            _footer          => Bric::FIELD_NONE,
                           });
 }
+
+__PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_TEMPLATE,
+                               category_fn    => 'category',
+                               cat_fn_has_ext => 0,
+                               exts           =>
+                                 { pl   => 'HTML::Template Script (.pl)',
+                                   tmpl => 'HTML::Template Template (.tmpl)'
+                                 }
+                             );
 
 #==============================================================================#
 
