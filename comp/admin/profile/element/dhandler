@@ -56,10 +56,6 @@ if (defined $id) {
 
         };
 
-        my $sel_sub = sub {
-            return ['Delete', 'rem_site'];
-        };
-
         $m->comp('/widgets/listManager/listManager.mc',
                  object => 'site',
                  userSort => 0,
@@ -74,12 +70,13 @@ if (defined $id) {
                  select => $sel_sub,
                  number => ++$num
                 );
+my %sites = map { $_->get_id => 1 } $comp->get_sites;
 </%perl>
 <table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
 <tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
     object => 'site',
     field  => 'name',
-    exclude => [ map { $_->get_id } $comp->get_sites ],
+    exclude => sub { $sites{$_[0]->get_id} || ! chk_authz($_[0], EDIT, 1) },
     no_persist => 1,
     name   => 'formBuilder|add_site_id_cb',
     default => ['' => 'Add Site'],
@@ -97,6 +94,7 @@ if (defined $id) {
         my $oc_sub = sub {
             my $ocid = $_[0]->get_id;
             if ($_[1] eq 'enabled') {
+                return 'Yes' if $comp->get_primary_oc_id($_[0]->get_site_id);
                 $m->scomp('/widgets/profile/checkbox.mc',
                           name => 'enabled',
                           value => $ocid,
@@ -127,7 +125,8 @@ if (defined $id) {
                 );
         my @available_ocs;
         foreach my $site ($comp->get_sites) {
-            push @available_ocs, Bric::Biz::OutputChannel->list({ site_id => $site->get_id});
+            push @available_ocs, Bric::Biz::OutputChannel->list
+              ({ site_id => $site->get_id});
         }
 </%perl>
 <table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
@@ -251,6 +250,10 @@ my $class = 'Bric::Biz::AssetType';
 my $type = 'element';
 my $section = 'admin';
 my $disp = get_disp_name('element'); # HACK!
+my $sel_sub = sub {
+    return unless chk_authz($_[0], EDIT, 1);
+    return ['Delete', 'rem_site'];
+};
 </%once>
 
 %#-- Args Section --#
@@ -289,11 +292,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =head1 DATE
 
-$Date: 2003-03-21 05:03:25 $
+$Date: 2003-03-30 18:34:18 $
 
 =head1 DESCRIPTION
 

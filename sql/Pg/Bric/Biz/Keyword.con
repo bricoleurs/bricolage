@@ -1,0 +1,13 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2003-03-30 18:34:20 $
+-- Author: David Wheeler <david@kineticode.com>
+
+ALTER TABLE    keyword_member
+ADD CONSTRAINT fk_keyword__keyword_member FOREIGN KEY (object_id)
+REFERENCES     keyword(id) ON DELETE CASCADE;
+
+ALTER TABLE    keyword_member
+ADD CONSTRAINT fk_member__keyword_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;

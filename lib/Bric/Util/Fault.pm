@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:37 $
+$Date: 2003-03-30 18:34:20 $
 
 =head1 SYNOPSIS
 
@@ -121,12 +121,18 @@ use Exception::Class
        isa => 'Bric::Util::Fault::Error',
        alias => 'throw_not_unique',
      },
+   'Bric::Util::Fault::Error::Undef' =>
+     { description => 'Undefined value error',
+       isa => 'Bric::Util::Fault::Error',
+       alias => 'throw_undef',
+     },
   );
 
 require Exporter;
 *import = \&Exporter::import;
 our @EXPORT_OK = qw(isa_bric_exception rethrow_exception throw_ap throw_da
-                    throw_dp throw_gen throw_mni throw_error throw_not_unique);
+                    throw_dp throw_gen throw_mni throw_error throw_not_unique
+                    throw_undef);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 #--------------------------------------#

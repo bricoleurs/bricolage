@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
+use Test::Exception;
 use Bric::Biz::Site;
 use Bric::Util::Grp::Site;
 use Bric::Biz::Person::User;
@@ -59,14 +60,55 @@ sub setup_sites : Test(setup => 13) {
 # Test constructors.
 ##############################################################################
 # Test new().
-sub test_new : Test(0) {
+sub test_new : Test(11) {
     my $self = shift;
-    # All handled by setup_sites().
+
+    # Make sure that passing in an empty string to the new name parameter
+    # throws an exception.
+    throws_ok { Bric::Biz::Site->new({ name => '' }) }
+      'Bric::Util::Fault::Error::Undef', "Test new site null string name";
+
+    # Make sure that an attempt to assign an undefined value to name does the
+    # same thing.
+    ok( my $site = $self->{test_sites}[0], "Grab test site" );
+    throws_ok { $site->set_name(undef) } 'Bric::Util::Fault::Error::Undef',
+      "Test set undefined name";
+
+    # And finally, make sure that when we try to save a site with no
+    # name, we get an exception.
+    ok( my $s = Bric::Biz::Site->new, "Construct Site" );
+    throws_ok { $s->save } 'Bric::Util::Fault::Error::Undef',
+      "Test saving site without name";
+
+    # Make sure that passing in an empty string to the new domain_name
+    # parameter throws an exception.
+    throws_ok { Bric::Biz::Site->new({ domain_name => '' }) }
+      'Bric::Util::Fault::Error::Undef',
+      "Test new site null string domain name";
+
+    # Make sure that an attempt to assign an undefined value to domain_name does the
+    # same thing.
+    throws_ok { $site->set_domain_name(undef) }
+      'Bric::Util::Fault::Error::Undef', "Test set undefined domain name";
+
+    # And finally, make sure that when we try to save a site with no
+    # domain_name, we get an exception.
+    ok( $s = Bric::Biz::Site->new, "Construct Site" );
+    throws_ok { $s->save } 'Bric::Util::Fault::Error::Undef',
+      "Test saving site without domain name";
+
+    # Now try to create a site with the same name as an existing site.
+    throws_ok { $site->new({ name => $site->get_name }) }
+      'Bric::Util::Fault::Error::NotUnique', "Test for non-unique site";
+
+    # Now try to create a site with the same domain name as an existing site.
+    throws_ok { $site->new({ domain_name => $site->get_domain_name }) }
+      'Bric::Util::Fault::Error::NotUnique', "Test for non-unique site";
 }
 
 ##############################################################################
 # Test lookup().
-sub test_lookup : Test(20) {
+sub test_lookup : Test(18) {
     my $self = shift;
 
     ok( my $sid = $self->{test_sites}[0]->get_id, "Get site ID" );
@@ -97,10 +139,8 @@ sub test_lookup : Test(20) {
     ok( ! Bric::Biz::Site->lookup({ name => -1 }), "Look up bogus name" );
 
     # Try too many sites by name.
-    eval { Bric::Biz::Site->lookup({ name => "$init{name}%" }) };
-    ok( my $err = $@, "Grab exception" );
-    ok( isa_bric_exception($err, 'Exception::DA'),
-        "Is a Exception::DA exception" );
+    throws_ok { Bric::Biz::Site->lookup({ name => "$init{name}%" }) }
+    'Bric::Util::Fault::Exception::DA', "Is a Exception::DA exception";
 
     # Try domain_name.
     my $dn = "ww1.$init{domain_name}";
@@ -114,11 +154,8 @@ sub test_lookup : Test(20) {
         "Look up bogus domain name" );
 
     # Try too many sites by domain_name.
-    eval { Bric::Biz::Site->lookup({ domain_name => "ww%" }) };
-    ok( $err = $@, "Grab exception" );
-    ok( isa_bric_exception($err, 'Exception::DA'),
-        "Is a Exception::DA exception" );
-
+    throws_ok { Bric::Biz::Site->lookup({ domain_name => "ww%" }) }
+    'Bric::Util::Fault::Exception::DA', "Is a Exception::DA exception";
 }
 
 ##############################################################################

@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Grp.val
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2003-03-23 06:57:01 $
+-- $Date: 2003-03-30 18:34:20 $
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (0, NULL, 6, 'Root Group', 'The mother of all groups.', 1, 1);
@@ -414,6 +414,16 @@ VALUES (152, 24, 9, 1);
 
 INSERT INTO contrib_type_member (id, object_id, member__id)
 VALUES (2, 39, 152);
+
+-- All Keywords.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (50, NULL, 28, 'All Keywords', 'All keywords in the system.', 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (190, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (60, 50, 190);
 
 -- All Sites.
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-30 18:34:20 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -13,6 +13,7 @@
 
 -- Unique IDs for the main keyword table
 CREATE SEQUENCE seq_keyword START 1024;
+CREATE SEQUENCE seq_keyword_member START 1024;
 
 
 -- -----------------------------------------------------------------------------
@@ -70,12 +71,30 @@ CREATE TABLE category_keyword (
     PRIMARY KEY (category_id, keyword_id)
 );
 
+--
+-- TABLE: keyword_member
+--
+
+CREATE TABLE keyword_member (
+    id          NUMERIC(10,0)  NOT NULL
+                               DEFAULT NEXTVAL('seq_keyword_member'),
+    object_id   NUMERIC(10,0)  NOT NULL,
+    member__id  NUMERIC(10,0)  NOT NULL,
+    CONSTRAINT pk_keyword_member__id PRIMARY KEY (id)
+);
+
+
+
 
 -- -----------------------------------------------------------------------------
 -- Indexes
 
-CREATE INDEX idx_keyword__name        ON keyword(LOWER(name));
+CREATE UNIQUE INDEX udx_keyword__name ON keyword(LOWER(name));
 CREATE INDEX idx_keyword__screen_name ON keyword(LOWER(screen_name));
 CREATE INDEX idx_keyword__sort_name   ON keyword(LOWER(sort_name));
+
+CREATE INDEX fkx_keyword__keyword_member ON keyword_member(object_id);
+CREATE INDEX fkx_member__keyword_member ON keyword_member(member__id);
+
 
 

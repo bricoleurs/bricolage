@@ -2,13 +2,46 @@ package Bric::Biz::Keyword::Test;
 use strict;
 use warnings;
 use base qw(Bric::Test::Base);
+use Bric::Biz::Keyword;
 use Test::More;
 
 ##############################################################################
-# Test class loading.
+# Test constructors.
 ##############################################################################
-sub _test_load : Test(1) {
-    use_ok('Bric::Biz::Keyword');
+# Test new().
+sub test_new : Test(21) {
+    my $self = shift;
+    ok( my $keyword = Bric::Biz::Keyword->new, "Construct new keyword" );
+    ok( !defined $keyword->get_id, "Check for undef id" );
+    ok( !defined $keyword->get_name, "Check for undef name" );
+    ok( !defined $keyword->get_screen_name, "Check for undef screen name" );
+    ok( !defined $keyword->get_sort_name, "Check for undef sort name" );
+    ok( $keyword->is_active, "Check keyword is active" );
+
+    # Don't mess with name it forces a database lookup to ensure uniqueness.
+
+    # Mess with the screen_name.
+    ok( $keyword->set_screen_name('desc'), "Set screen name to 'desc'" );
+    is( $keyword->get_screen_name, 'desc', "Check screen name 'desc'" );
+    ok( $keyword->set_screen_name('foo'), "Set screen name to 'foo'" );
+    is( $keyword->get_screen_name, 'foo', "Check screen name 'foo'" );
+
+    # Mess with the sort_name.
+    ok( $keyword->set_sort_name('desc'), "Set sort name to 'desc'" );
+    is( $keyword->get_sort_name, 'desc', "Check sort name 'desc'" );
+    ok( $keyword->set_sort_name('foo'), "Set sort name to 'foo'" );
+    is( $keyword->get_sort_name, 'foo', "Check sort name 'foo'" );
+
+    # Mess with the active attribute.
+    ok( $keyword->deactivate, "Deactivate keyword" );
+    ok( !$keyword->is_active, "Keyword is deactivated" );
+    ok( $keyword->activate, "Reactivate keyword" );
+    ok( $keyword->is_active, "Check keyword is active again" );
+
+    # Verify initial group membership.
+    ok( my @grp_ids = $keyword->get_grp_ids, "Get group IDs" );
+    is( scalar @grp_ids, 1, "Check for 1 group ID" );
+    is( $grp_ids[0], 50, "Check for group ID 50" );
 }
 
 ##############################################################################
@@ -32,61 +65,17 @@ sub test_my_meths : Test(11) {
     is( $meths[0]->{get_meth}->($kw), 'NewFoo', "Check name 'NewFoo'" );
 }
 
+##############################################################################
+# Test group methods.
+sub test_grp : Test(5) {
+    my $self = shift;
+    is( Bric::Biz::Keyword->GROUP_PACKAGE, 'Bric::Util::Grp::Keyword',
+        "Check group package" );
+    is( Bric::Biz::Keyword->INSTANCE_GROUP_ID, 50, "Check group instance" );
+    ok( my @grp_ids = Bric::Biz::Keyword->get_grp_ids, "Get group IDs" );
+    is( scalar @grp_ids, 1, "Check for 1 group ID" );
+    is( $grp_ids[0], 50, "Check for group ID 47" );
+}
+
 1;
 __END__
-
-# Here is the original test script for reference. If there's something usable
-# here, then use it. Otherwise, feel free to discard it once the tests have
-# been fully written above.
-
-#!/usr/bin/perl -w
-use strict;
-
-use Carp::Heavy; # I'd love to know why I have to do this...
-use Test::More 'no_plan';
-use Bric::Biz::Keyword;
-use Bric::Biz::Asset::Business::Story;
-
-# create a new keyword for testing
-srand(time);
-my $name = 'test keyword ' . rand();
-my $key = Bric::Biz::Keyword->new({ name => $name});
-isa_ok($key, "Bric::Biz::Keyword");
-is($key->get_name, $name, 'name test');
-$key->save();
-ok($key->get_id, "id test");
-
-# find a new story for testing
-my ($story) = Bric::Biz::Asset::Business::Story->list({Limit => 1});
-
-# add keyword to story
-ok($key->associate($story), 'associate story');
-
-# test has_keyword
-ok($story->has_keyword($key), 'has_keyword');
-
-# dissociate keyword from story
-ok($key->dissociate($story), 'dissociate story');
-
-# add keyword to story using add_keywords
-ok($story->add_keywords([$key]), 'add_keywords');
-
-# test has_keyword
-ok($story->has_keyword($key), 'has_keyword');
-
-# do a search based on keyword
-my @stories = Bric::Biz::Asset::Business::Story->list({ keyword => $name });
-ok(@stories == 1, 'story search');
-ok((grep { $_->get_id == $story->get_id } @stories), 'story search');
-
-# test simple search
-@stories = Bric::Biz::Asset::Business::Story->list({ simple => $name });
-ok(@stories == 1, 'simple search');
-ok((grep { $_->get_id == $story->get_id } @stories), 'simple search');
-
-# add keyword to story using delete_keywords
-ok($story->delete_keywords([$key]), 'delete_keywords');
-
-# all done - invalidate this keyword
-$key->remove();
-$key->save();

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 02:06:19 $
+$Date: 2003-03-30 18:34:20 $
 
 =head1 SYNOPSIS
 
@@ -131,6 +131,7 @@ use Bric::Biz::Category;
 use Bric::Biz::OutputChannel qw(:case_constants);
 use Bric::Biz::Org::Source;
 use Bric::Util::Coll::OutputChannel;
+use Bric::Util::Coll::Keyword;
 use Bric::Util::Pref;
 
 #=============================================================================#
@@ -142,7 +143,7 @@ use base qw( Bric::Biz::Asset );
 #============================================================================+
 # Function Prototypes                  #
 #======================================#
-my $get_oc_coll;
+my ($get_oc_coll, $get_kw_coll);
 
 #=============================================================================#
 # Constants                            #
@@ -199,6 +200,7 @@ BEGIN {
               _new_categories           => Bric::FIELD_NONE,
               _element_object           => Bric::FIELD_NONE,
               _oc_coll                  => Bric::FIELD_NONE,
+              _kw_coll                  => Bric::FIELD_NONE,
               _alias_obj                => Bric::FIELD_NONE,
             });
     }
@@ -1638,12 +1640,18 @@ sub get_container {
 
 ###############################################################################
 
-=item $asset = $asset->add_keywords(\@keywords)
+=item $ba = $ba->add_keywords(@keywords);
 
-Adds the given keywords to the asset.  Accepts keyword objects or
-keyword object ids.
+=item $ba = $ba->add_keywords(\@keywords);
 
-B<Throws:> NONE
+=item $ba = $ba->add_keywords(@keyword_ids);
+
+=item $ba = $ba->add_keywords(\@keyword_ids);
+
+Associates a each of the keyword in a list or array reference of keywords with
+the business asset.
+
+B<Throws:> NONE.
 
 B<Side Effects:> NONE
 
@@ -1651,34 +1659,21 @@ B<Notes:> NONE
 
 =cut
 
-
 sub add_keywords {
-    my ($self, $keywords) = @_;
-    my $keyword;
-
-    foreach my $k (@$keywords) {
-        # find object for id
-        if (ref $k) {
-            $keyword = $k;
-        } else {
-            $keyword = Bric::Biz::Keyword->lookup({id => $k});
-            throw_gen "No keyword object found for id '$k'"
-              unless defined $keyword;
-        }
-
-        # associate keyword with this asset
-        $keyword->associate($self);
-    }
-
-    return $self;
+    my $self = shift;
+    my $kw_coll = &$get_kw_coll($self);
+    $self->_set__dirty(1);
+    $kw_coll->add_new_objs(ref $_[0] eq 'ARRAY' ? @{$_[0]} : @_);
 }
 
 ###############################################################################
 
-=item $kw_aref || @kws = $asset->get_keywords()
+=item @keywords = $cat->get_keywords;
 
-Returns an array ref or an array of keyword objects, assigned to this
-Business Asset.
+=item @keywords = $cat->get_keywords(@keyword_ids);
+
+Returns a list of keyword objects associated with this business asset. If
+passed a list of keyword IDs, it will return only those keyword objects.
 
 B<Throws:> NONE
 
@@ -1690,8 +1685,8 @@ B<Notes:> NONE
 
 sub get_keywords {
     my $self = shift;
-    my $object = $self->_get_alias || $self;
-    return Bric::Biz::Keyword->list({ object => $self });
+    my $kw_coll = &$get_kw_coll($self);
+    $kw_coll->get_objs(@_);
 }
 
 ###############################################################################
@@ -1711,24 +1706,41 @@ B<Notes:> NONE
 
 sub get_all_keywords {
     my $self = shift;
-    if (my $alias_obj = $self->_get_alias) {
-        return $alias_obj->get_all_keywords;
+    my %kw = map { $_->get_id => $_ } $self->get_keywords;
+    my $cats = $self->_get('_categories');
+    foreach my $cid (keys %$cats) {
+
+        my $cat = $cats->{$cid}->{object};
+        unless ($cat) {
+            $cat = Bric::Biz::Category->lookup({ id => $cid });
+            $cats->{$cid}->{object} = $cat;
+        }
+
+        foreach my $k ($cat->get_keywords) {
+            $kw{$k->get_id} = $k;
+        }
     }
-    my %kw = map { ($_->get_id, $_) } 
-      ( Bric::Biz::Keyword->list({ object => $self }),
-        $self->_get_category_keywords() );
+
     my @kw = sort { lc $a->get_sort_name cmp lc $b->get_sort_name }
       values %kw;
 
     return wantarray ? @kw : \@kw;
 }
 
-=item $asset = $asset->delete_keywords([$kw]);
+###############################################################################
 
-Takes a list of keywords and disassociates them from the object. Category
-keywords can not be disassociated from the asset.
+=item $ba = $ba->del_keywords(@keywords);
 
-B<Throws:> NONE
+=item $ba = $ba->del_keywords(\@keywords);
+
+=item $ba = $ba->del_keywords(@keyword_ids);
+
+=item $ba = $ba->del_keywords(\@keyword_ids);
+
+Dissociates a list or array reference of keyword objects or IDs from the
+business asset.
+
+B<Throws:> NONE.
 
 B<Side Effects:> NONE
 
@@ -1736,25 +1748,11 @@ B<Notes:> NONE
 
 =cut
 
-sub delete_keywords {
-    my ($self,$keywords) = @_;
-
-    my $keyword;
-    foreach my $k (@$keywords) {
-        # find object for id
-        if (ref $k) {
-            $keyword = $k;
-        } else {
-            $keyword = Bric::Biz::Keyword->lookup({id => $k});
-            throw_gen "No keyword object found for id '$k'"
-              unless defined $keyword;
-        }
-
-        # dissociate keyword with this asset
-        $keyword->dissociate($self);
-    }
-
-    return $self;
+sub del_keywords {
+    my $self = shift;
+    my $kw_coll = &$get_kw_coll($self);
+    $self->_set__dirty(1);
+    $kw_coll->del_objs(ref $_[0] eq 'ARRAY' ? @{$_[0]} : @_);
 }
 
 ###############################################################################
@@ -1762,15 +1760,19 @@ sub delete_keywords {
 
 =item ($self || undef) = $ba->has_keyword($keyword)
 
-Returns true is the keyword object is associated with this asset.
+Returns true if the keyword object is associated with this asset.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE
+
+B<Notes:> Uses C<get_keywords()> internally.
 
 =cut
 
 sub has_keyword {
-    my ($self,$keyword) = @_;
-    my $keyword_id = $keyword->get_id;
-    my @keywords = $self->get_keywords();
-    return $self if grep { $keyword_id == $_->get_id } @keywords;
+    my ($self, $kw) = @_;
+    return unless $self->get_keywords($kw->get_id);
     return;
 }
 
@@ -1782,7 +1784,7 @@ Called upon a checked out asset.   This unchecks it out.
 
 B<Throws:>
 
-"Can not cancel a non checked out asset"
+"Cannot cancel a non checked out asset"
 
 B<Side Effects:>
 
@@ -1802,7 +1804,7 @@ sub cancel {
 
     if ( not defined $self->_get('user_id')) {
         # this is not checked out, it can not be deleted
-        throw_gen "Can not cancel a non checked out asset";
+        throw_gen "Cannot cancel a non checked out asset";
     }
     $self->_set( { '_delete' => 1});
 }
@@ -2084,6 +2086,10 @@ sub _init {
         $self->_set(['category__id'], [$alias_target->_get('category__id')])
           if $alias_target->_get('category__id');
 
+        # Copy the keywords.
+#        $self->save; # HACK!
+#        $self->add_keywords(scalar $alias_target->get_keywords);
+
         $self->_set
           ([qw(current_version publish_status modifier
                checked_out     version site_id
@@ -2318,56 +2324,6 @@ sub _sync_contributors {
     return $self;
 }
 
-################################################################################
-
-=item $cat_keywords = $ba->_get_category_keywords();
-
-Returns the keywords that are associated with the categories that this asset 
-is associated with 
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_category_keywords {
-        my ($self) = @_;
-
-        my $categories = $self->_get('_categories');
-
-        my %keywords;
-        foreach my $c_id (keys %$categories) {
-
-                my $cat;
-                if ($categories->{$c_id}->{'object'}) {
-                        $cat = $categories->{$c_id}->{'object'};
-                } else {
-                        $cat = Bric::Biz::Category->lookup({ id => $c_id });
-                        $categories->{$c_id}->{'object'} = $cat;
-                }
-
-                my $kw_list = $cat->keywords();
-                foreach (@$kw_list) {
-                        my $kw_id = $_->get_id();
-                        $keywords{$kw_id} = $_;
-                }
-        }
-
-        my @list = sort { lc $a->get_sort_name cmp lc $b->get_sort_name }
-          values %keywords;
-
-        return wantarray ? @list : \@list;
-}
-
 ###############################################################################
 
 =back
@@ -2441,6 +2397,74 @@ $get_oc_coll = sub {
     $self->_set(['_oc_coll'], [$oc_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $oc_coll;
+};
+
+##############################################################################
+
+=item my $kw_coll = &$get_kw_coll($self)
+
+Returns the collection of keywords for this business asset. The collection is
+a Bric::Util::Coll::Keyword object. See that class and its parent,
+Bric::Util::Coll, for interface details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_kw_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my $kw_coll = $self->_get('_kw_coll');
+    return $kw_coll if $kw_coll;
+    $kw_coll = Bric::Util::Coll::Keyword->new
+      (defined $self->get_id ? { object => $self } : undef);
+    $self->_set(['_kw_coll'], [$kw_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $kw_coll;
 };
 
 1;

@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-23 06:57:00 $
+$Date: 2003-03-30 18:34:19 $
 
 =head1 SYNOPSIS
 
@@ -33,8 +33,6 @@ $Date: 2003-03-23 06:57:00 $
  my $site_id = $cat->get_site_id;
  $cat = $cat->set_site_id($site_id);
 
- # Return a list of keywords associated with this category.
- @keys   = $cat->keywords();
  # Return a list of child categories of this category.
  @cats   = $cat->get_children();
  # Return the parent of this category.
@@ -56,9 +54,10 @@ $Date: 2003-03-23 06:57:00 $
  $cat->add_child([$cat || $cat_id]);
  $cat->del_child([$cat || $cat_id]);
 
- # Add/Delete keywords associated with this category.
- $cat->add_keyword([$kw_id]);
- $cat->del_keyword([$kw_id]);
+ # Manage keyword associations.
+ @keys = $cat->get_keywords;
+ $cat->add_keywords(@keywords);
+ $cat->del_keywords(@keywords);
 
  # Save information for this category to the database.
  $cat->save;
@@ -88,18 +87,18 @@ use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::DP;
 use Bric::Util::DBI qw(:standard col_aref);
 use Bric::Util::Grp::Asset;
+use Bric::Util::Coll::Keyword;
+use Carp ();
 
 #==============================================================================#
 # Inheritance                          #
 #======================================#
-
 use base qw(Bric);
 
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
-
+my $get_kw_coll;
 
 #==============================================================================#
 # Constants                            #
@@ -110,6 +109,7 @@ use constant ORD => qw(name description site_id uri directory ad_string
 
 use constant INSTANCE_GROUP_ID => 26;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::CategorySet';
+use constant key_name => 'category';
 
 #==============================================================================#
 # Fields                               #
@@ -159,6 +159,7 @@ BEGIN {
                          '_meta'             => Bric::FIELD_NONE,
                          '_save_children'    => Bric::FIELD_NONE,
                          '_update_uri'       => Bric::FIELD_RDWR,
+                         '_kw_coll'          => Bric::FIELD_RDWR,
                         });
 }
 
@@ -1153,21 +1154,32 @@ sub get_meta {
 
 #------------------------------------------------------------------------------#
 
-=item @keys = $cat->keywords();
+=item @keys = $cat->get_keywords;
 
-Returns a list of keywords associated with this category.
+=item @keys = $cat->get_keywords(@keyword_ids);
+
+Returns a list of keyword objects associated with this category. If passed
+a list of keyword IDs, it will return only those keyword objects.
 
 B<Throws:> NONE
 
 B<Side Effects:> NONE
 
-B<Notes:> NONE
+B<Notes:> The old C<keywords()> method has been deprecated. Please use
+C<get_keywords()>, instead.
 
 =cut
 
-sub keywords {
+sub get_keywords {
     my $self = shift;
-    return Bric::Biz::Keyword->list({ object => $self });
+    my $kw_coll = &$get_kw_coll($self);
+    $kw_coll->get_objs(@_);
+}
+
+sub keywords {
+    Carp::cluck(__PACKAGE__ . "->keywords has been deprecated.\n" .
+                "Use ", __PACKAGE__, "->keyword instead");
+    $_[0]->get_keywords;
 }
 
 #------------------------------------------------------------------------------#
@@ -1258,75 +1270,72 @@ sub add_child {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $cat->add_keyword([$kw || $kw_id]);
+=item $cat = $cat->add_keywords(@keywords);
 
-Associates a keyword with this category.
+=item $cat = $cat->add_keywords(\@keywords);
 
-B<Throws:>
+=item $cat = $cat->add_keywords(@keyword_ids);
 
-No keyword object found for id '$k'
+=item $cat = $cat->add_keywords(\@keyword_ids);
+
+Associates a each of the keyword in a list or array reference of keywords with
+the category object.
+
+B<Throws:> NONE.
 
 B<Side Effects:> NONE
 
-B<Notes:> NONE
+B<Notes:> The old C<add_keyword()> method has been deprecated. Please use
+C<add_keywords()>, instead.
 
 =cut
 
+sub add_keywords {
+    my $self = shift;
+    my $kw_coll = &$get_kw_coll($self);
+    $self->_set__dirty(1);
+    $kw_coll->add_new_objs(@_);
+}
+
 sub add_keyword {
-    my ($self, $keywords) = @_;
-    my $keyword;
-
-    foreach my $k (@$keywords) {
-        # find object for id
-        if (ref $k) {
-            $keyword = $k;
-        } else {
-            $keyword = Bric::Biz::Keyword->lookup({id => $k});
-            die $gen->new({ msg => "No keyword object found for id '$k'" })
-              unless defined $keyword;
-        }
-
-        # associate keyword with this category
-        $keyword->associate($self);
-    }
+    Carp::cluck(__PACKAGE__ . "->add_keyword has been deprecated.\n" .
+                "Use ", __PACKAGE__, "->add_keywords instead");
+    $_[0]->add_keywords(@{$_[1]})
 }
 
 #------------------------------------------------------------------------------#
 
-=item $success = $cat->del_keyword([$kw || $kw_id]);
+=item $cat = $cat->del_keywords(@keywords);
 
-Removes keyword associations from this category.
+=item $cat = $cat->del_keywords(\@keywords);
 
-B<Throws:>
+=item $cat = $cat->del_keywords(@keyword_ids);
 
-No keyword object found for id '$k'
+=item $cat = $cat->del_keywords(\@keyword_ids);
+
+Dissociates a list or array reference of keyword objects or IDs from the
+category object.
+
+B<Throws:> NONE.
 
 B<Side Effects:> NONE
 
-B<Notes:> NONE
+B<Notes:> The old C<add_keyword()> method has been deprecated. Please use
+C<add_keywords()>, instead.
 
 =cut
 
+sub del_keywords {
+    my $self = shift;
+    my $kw_coll = &$get_kw_coll($self);
+    $self->_set__dirty(1);
+    $kw_coll->del_objs(ref $_[0] eq 'ARRAY' ? @{$_[0]} : @_);
+}
+
 sub del_keyword {
-    my ($self, $keywords) = @_;
-
-    my $keyword;
-    foreach my $k (@$keywords) {
-        # find object for id
-        if (ref $k) {
-            $keyword = $k;
-        } else {
-            $keyword = Bric::Biz::Keyword->lookup({id => $k});
-            die Bric::Util::Fault::Exception::GEN->new(
-                 { msg => "No keyword object found for id '$k'" } )
-              unless defined $keyword;
-        }
-
-        # dissociate keyword with this category.
-        $keyword->dissociate($self);
-    }
-
-    return $self;
+    Carp::cluck(__PACKAGE__ . "->del_keyword has been deprecated.\n" .
+                "Use ", __PACKAGE__, "->del_keywords instead");
+    $_[0]->add_keywords(@{$_[1]})
 }
 
 #------------------------------------------------------------------------------#
@@ -1431,7 +1440,7 @@ sub deactivate {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $cat->save
+=item $cat = $cat->save
 
 Save this category
 
@@ -1453,7 +1462,7 @@ sub save {
     my $self = shift;
     my $id = $self->get_id;
 
-    my $dir = $self->_get(qw(directory));
+    my ($dir, $kw_coll) = $self->_get(qw(directory _kw_coll));
 
     # Set the directory unless its set ('' counts) and its not the root category
     unless ((defined $dir && $dir ne '') || $self->is_root_category) {
@@ -1477,6 +1486,9 @@ sub save {
         }
         $self->_set(['_save_children'], [undef]);
     }
+
+    # Update the keywords.
+    $kw_coll->save($self) if $kw_coll;
 
     $self->_save_attr;
     return $self;
@@ -1748,6 +1760,74 @@ sub _insert_category {
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     return $self;
 }
+
+##############################################################################
+
+=item my $kw_coll = &$get_kw_coll($self)
+
+Returns the collection of keywords for this category. The collection is a
+Bric::Util::Coll::Keyword object. See that class and its parent,
+Bric::Util::Coll, for interface details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_kw_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my $kw_coll = $self->_get('_kw_coll');
+    return $kw_coll if $kw_coll;
+    $kw_coll = Bric::Util::Coll::Keyword->new
+      (defined $self->get_id ? { object => $self } : undef);
+    $self->_set(['_kw_coll'], [$kw_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $kw_coll;
+};
 
 1;
 __END__

@@ -102,10 +102,7 @@ if ($field eq "$widget|save_cb") {
             my $kw = Bric::Biz::Keyword->lookup({ id => $_ }) || next;
             push @$old, $kw;
         }
-        $cat->del_keyword($old) if $old;
-
-        # Save changes.
-        $cat->save;
+        $cat->del_keywords(@$old) if $old;
 
         # Add new keywords.
         my $new;
@@ -118,12 +115,15 @@ if ($field eq "$widget|save_cb") {
             }
             push @$new, $kw;
         }
-        $cat->add_keyword($new) if $new;
+        $cat->add_keywords(@$new) if $new;
 
         log_event($type . (defined $param->{category_id} ? '_save' : '_new'),
                   $cat);
 
-    # Take care of group managment.
+        # Save changes.
+        $cat->save;
+
+        # Take care of group managment.
         if ($param->{add_grp} or $param->{rem_grp}) {
 
             my @add_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
@@ -178,11 +178,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2003-03-14 21:32:58 $
+$Date: 2003-03-30 18:34:18 $
 
 =head1 SYNOPSIS
 

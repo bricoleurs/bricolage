@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-13 19:27:28 $
+$Date: 2003-03-30 18:34:20 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.3 2003-03-13 19:27:28 arthurbergman Exp $
+$Id: Site.pm,v 1.4 2003-03-30 18:34:20 wheeler Exp $
 
 =back
 
@@ -75,7 +75,7 @@ use Bric::Util::Grp::Site;
 use Bric::Util::Grp::User;
 use Bric::Util::Grp::Asset;
 use Bric::Util::DBI qw(:standard col_aref);
-use Bric::Util::Fault qw(throw_da throw_not_unique);
+use Bric::Util::Fault qw(throw_da throw_not_unique throw_undef);
 use Bric::Util::Priv;
 use Bric::Config qw(:qa);
 use Bric::Biz::Category;
@@ -163,6 +163,8 @@ B<Throws:>
 
 =item Exception::DA
 
+=item Error::Undef
+
 =item Error::NotUnique
 
 =back
@@ -171,12 +173,13 @@ B<Throws:>
 
 sub new {
     my ($invocant, $init) = @_;
+    my $class = ref $invocant || $invocant;
     $init->{_active} = 1;
     $init->{grp_ids} = [INSTANCE_GROUP_ID];
     my ($name, $domain_name) = delete @{$init}{qw(name domain_name)};
-    my $self = $invocant->SUPER::new($init);
-    $self->set_name($name) if $name;
-    $self->set_domain_name($domain_name) if $domain_name;
+    my $self = $class->SUPER::new($init);
+    $self->set_name($name) if defined $name;
+    $self->set_domain_name($domain_name) if defined $domain_name;
     return $self;
 }
 
@@ -324,7 +327,7 @@ sub list_ids { $get_em->(@_, 1) }
   my @meths = Bric::Biz::Site->my_meths(1);
   my $meths_aref = Bric::Biz::Site->my_meths(1);
   @meths = Bric::Biz::Site->my_meths(0, 1);
-  $meths_aref = Bric::Biz::Person->my_meths(0, 1);
+  $meths_aref = Bric::Biz::Site->my_meths(0, 1);
 
 Returns Bric::Biz::Site attribute accessor introspection data. See
 L<Bric|Bric> for complete documtation of the format of that data. Returns
@@ -441,6 +444,8 @@ B<Throws:>
 
 =over
 
+=item Error::Undef
+
 =item Error::NotUnique
 
 =back
@@ -468,6 +473,8 @@ C<set_domain_name()>, an exception will be thrown.
 B<Throws:>
 
 =over
+
+=item Error::Undef
 
 =item Error::NotUnique
 
@@ -517,6 +524,8 @@ B<Thows:>
 
 =over 4
 
+=item Error::Undef
+
 =item Exception::DA
 
 =back
@@ -526,7 +535,20 @@ B<Thows:>
 sub save {
     my $self = shift;
     return $self unless $self->_get__dirty;
-    my $id = $self->_get('id');
+    my ($id, $name, $dn) = $self->_get(qw(id name domain_name));
+
+    # Make sure we have a name.
+    unless (defined $name and $name ne '') {
+        my $disp = $self->my_meths->{name}{disp};
+        throw_undef error    => "Value of $disp cannot be empty",
+                    maketext => ["Value of [_1] cannot be empty", $disp];
+    }
+
+    unless (defined $dn and $dn ne '') {
+        my $disp = $self->my_meths->{domain_name}{disp};
+        throw_undef error    => "Value of $disp cannot be empty",
+                    maketext => ["Value of [_1] cannot be empty", $disp];
+    }
 
     if ($id) {
         # Update the record in the database.
@@ -671,6 +693,8 @@ B<Throws:>
 
 =over 4
 
+=item Error::Undef
+
 =item Error::NotUnique
 
 =back
@@ -682,13 +706,13 @@ $set_unique_attr = sub {
 
     my $disp = $self->my_meths->{$field}{disp};
     # Make sure we have a value.
-    throw_not_unique error    => "Value of $disp cannot be empty",
-                     maketext => ["Value of [_1] cannot be empty", $disp]
-      unless $value;
+    throw_undef error    => "Value of $disp cannot be empty",
+                maketext => ["Value of [_1] cannot be empty", $disp]
+      unless defined $value and $value ne '';
 
     my $old_value = $self->_get($field);
     # Just succeed if the new value is the same as the old value.
-    return $self if $old_value and lc $value eq lc $old_value;
+    return $self if defined $old_value and lc $value eq lc $old_value;
 
     # Check the database for any existing sites with the new value.
     if ($self->list_ids({ $field => $value })) {
@@ -725,6 +749,11 @@ create a SQL search query.
 =item C<$ids_only>
 
 A boolean indicating whether to return site objects or site IDs only.
+
+=item C<$href>
+
+A boolean indicating whether to return the site objects as a hash
+reference. Used by C<href()>.
 
 =back
 

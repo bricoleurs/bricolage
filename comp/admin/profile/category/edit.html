@@ -63,7 +63,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 # Output the keywords.
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption => "Keywords", number  => 2);
-my $kws = $cat->keywords;
+my $kws = $cat->get_keywords;
 $m->comp('/widgets/add_more/add_more.mc', type => 'keyword', param => \%ARGS,
 	 fields => [qw(keyword)], name => 'keyword', deleteLabelOnly => 1,
 	 reset_key => $reset, objs => $kws, incr => 4, no_edit => [qw(keyword)],
@@ -207,11 +207,11 @@ my $cat_excl = sub { my $cx = $c->get_user_cx(get_user_id);
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:51 $
+$Date: 2003-03-30 18:34:17 $
 
 =head1 DESCRIPTION
 

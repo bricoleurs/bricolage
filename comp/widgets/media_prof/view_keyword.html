@@ -7,7 +7,7 @@ foreach my $cat ($media->get_category) {
 	    . qq{<span class=label>} . $cat->get_name
 	    . "</span></td></tr>\n");
     my $flag = '<span class="label">Keywords</span>';
-    foreach my $kw ($cat->keywords) {
+    foreach my $kw ($cat->get_keywords) {
         $m->out(qq{<tr><td width=145 align="right">$flag</td><td width=405>}
 		. $kw->get_name . "</td></tr>\n");
         $flag = '&nbsp;';

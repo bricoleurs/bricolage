@@ -64,7 +64,7 @@ sub construct {
     $story->add_categories( [ $CATEGORY ] );
     $story->set_primary_category($CATEGORY);
     $story->save;
-    $self->add_del_ids($story->get_id);
+    $self->add_del_ids($story->get_id) if ref $self;
     return $story;
 }
 

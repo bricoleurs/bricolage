@@ -1,55 +1,61 @@
 package Bric::Biz::Keyword;
-###############################################################################
 
 =head1 NAME
 
-Bric::Biz::Keyword - A general class to manage keywords.
+Bric::Biz::Keyword - Interface to Bricolage Keyword Objects
 
-=head1 VERSION
+=head1 VITALS
 
-$Revision: 1.15 $
+=over 4
+
+=item Version
+
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+# Grab the Version Number.
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
-=head1 DATE
+=item Date
 
-$Date: 2003-03-01 02:18:29 $
+$Date: 2003-03-30 18:34:20 $
+
+=item CVS ID
+
+$Id: Keyword.pm,v 1.16 2003-03-30 18:34:20 wheeler Exp $
+
+=back
 
 =head1 SYNOPSIS
 
  use Bric::Biz::Keyword;
 
- # Create a new keyword object.
- my $key = new Bric::Biz::Keyword($init);
+  # Constructors.
+  my $keyword = Bric::Biz::Keyword->new($init);
+  $keyword = Bric::Biz::Keyword->lookup({ id => $id });
+  my @keywords = Bric::Biz::Keyword->list($params);
 
- # Lookup an existing keyword.
- my $key = new Bric::Biz::Keyword($key_id);
+  # Class Methods.
+  my @keyword_ids = Bric::Biz::Keyword->list_ids($params);
+  my $keywords_href = Bric::Biz::Keyword->href($params);
+  my $meths = Bric::Biz::Keyword->my_meths;
 
- # Create a list of keyword objects.
- my $key = list Bric::Biz::Keyword($param);
+  # Instance methods.
+  $id = $keyword->get_id;
+  my $name = $keyword->get_name;
+  $keyword = $keyword->set_name($name)
+  my $screen_name = $keyword->get_screen_name;
+  $keyword = $keyword->set_screen_name($screen_name)
+  my $sort_name = $keyword->get_sort_name;
+  $keyword = $keyword->set_sort_name($sort_name)
 
- # Get/set the keyword name.
- $name    = $key->get_name();
- $success = $key->set_name($name);
+  $keyword = $keyword->activate;
+  $keyword = $keyword->deactivate;
+  $keyword = $keyword->is_active;
 
- # Get/set the screen (display) name.
- $screen  = $key->get_screen_name();
- $success = $key->set_screen_name($screen);
-
- # Mark this keyword inactive
- $success = $key->delete();
-
- # Save this asset to the database.
- $success = $key->save();
-
- # Link a keyword with a story (or media object or category)
- $key->associate($story);
-
- # Break the link between a keyword and a story (or media object or category)a
- $key->dissociate($story);
-
+  # Save the changes to the database
+  $keyword = $keyword->save;
 
 =head1 DESCRIPTION
 
@@ -59,884 +65,730 @@ particular topic.
 
 =cut
 
-#==============================================================================#
-# Dependencies                         #
-#======================================#
-
-#--------------------------------------#
+##############################################################################
+# Dependencies
+##############################################################################
 # Standard Dependencies
 use strict;
 
-#--------------------------------------#
-# Programatic Dependencies
+##############################################################################
+# Programmatic Dependences
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Keyword;
+use Bric::Util::Fault qw(:all);
+use Carp ();
 
-#==============================================================================#
-# Inheritance                          #
-#======================================#
-
+##############################################################################
+# Inheritance
+##############################################################################
 use base qw(Bric);
 
-#=============================================================================#
-# Function Prototypes                  #
-#======================================#
+##############################################################################
+# Function and Closure Prototypes
+##############################################################################
+my ($get_em);
 
+##############################################################################
+# Constants
+##############################################################################
+use constant DEBUG => 0;
+use constant GROUP_PACKAGE => 'Bric::Util::Grp::Keyword';
+use constant INSTANCE_GROUP_ID => 50;
 
-#==============================================================================#
-# Constants                            #
-#======================================#
-
-use constant TABLE  => 'keyword';
-use constant COLS   => qw(name screen_name sort_name active);
-
-
-#==============================================================================#
-# FIELDS                               #
-#======================================#
-
-#--------------------------------------#
-# Public Class Fields
-# None.
-
-#--------------------------------------#
+##############################################################################
+# Fields
+##############################################################################
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::GEN';
-my $METHS;
-my @ORD = qw(name screen_name sort_name);
+my $TABLE = 'keyword';
+my @COLS =  qw(id name screen_name sort_name active);
+my @PROPS = qw(name screen_name sort_name _active);
 
-#--------------------------------------#
+my $SEL_COLS = 'a.' . join(', a.', @COLS) . ', m.grp__id';
+my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
+
+##############################################################################
 # Instance Fields
-
-# This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-    Bric::register_fields({
-                         # Public Fields
-                         'id'             => Bric::FIELD_RDWR,
-                         'name'           => Bric::FIELD_RDWR,
-                         'screen_name'    => Bric::FIELD_RDWR,
-                         'sort_name'      => Bric::FIELD_RDWR,
-                         'active'         => Bric::FIELD_RDWR,
-                        });
+    Bric::register_fields
+        ({
+          # Public Fields
+          id             => Bric::FIELD_RDWR,
+          name           => Bric::FIELD_RDWR,
+          screen_name    => Bric::FIELD_RDWR,
+          sort_name      => Bric::FIELD_RDWR,
+
+          # Private Fields
+          _active        => Bric::FIELD_NONE,
+         });
 }
 
-#==============================================================================#
+##############################################################################
+# Constructors.
+##############################################################################
 
 =head1 INTERFACE
 
 =head2 Constructors
 
-=over 4
+=head3 new
 
-=cut
+  my $keyword = Bric::Biz::Keyword->new;
+  $keyword = Bric::Biz::Keyword->new($init);
 
-#--------------------------------------#
-# Constructors
-#------------------------------------------------------------------------------#
-
-=item $obj = Bric::Biz::Keyword->new(\%init);
-
-Creates a new keyword and keyword object.  Keys for %init are:
-
-=over 4
-
-=item C<name>
-
-The name of this keyword - required.
-
-=item C<screen_name>
-
-The way this name should be displayed on screen (ie name='George',
-screen name='George Washington').  If not specified name will be used
-for screen_name.
-
-=item C<sort_name>
-
-The word used to sort keywords.  If not specified then name will be
-used for sort_name.
-
-=back
-
-Throws: NONE
-
-Side Effects: NONE
-
-Notes: NONE
-
-=cut
-
-sub new {
-    my ($pkg, $init) = @_;
-
-    # Map state to active since state is just overriding active's role.
-    $init->{'active'} = exists $init->{'state'} ? delete $init->{'state'} : 1;
-    # construct the object
-    my $self = $pkg->SUPER::new($init);
-
-    # Return the object.
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $obj = Bric::Biz::Keyword->lookup({ id   => $key_id    });
-
-=item $obj = Bric::Biz::Keyword->lookup({ name => "key name" });
-
-Retrieves a single existing keyword from the database.  Takes either a
-keyword ID or the keyword name.
-
-Throws:
-
-=over 4
-
-=item *
-
-Bad parameters passed to 'lookup'
-
-=back
-
-Side Effects: NONE
-
-Notes: NONE
-
-=cut
-
-sub lookup {
-    my ($pkg, $param) = @_;
-    my $self = $pkg->cache_lookup($param);
-    return $self if $self;
-
-    my $ret;
-    if (exists $param->{'id'}) {
-        $ret = _select_keywords('id = ?', [$param->{'id'}]);
-    } elsif (exists $param->{'name'}) {
-        $ret = _select_keywords('LOWER(name) LIKE ?', [lc $param->{'name'}]);
-    } else {
-        die $gen->new({ msg => "Bad parameters passed to 'lookup'"});
-    }
-
-    # return nothing if we got nothing
-    return unless @$ret;
-
-    # return the object
-    return $ret->[0];
-}
-
-#------------------------------------------------------------------------------#
-
-=item @objs = list Bric::Biz::Keyword($param);
-
-Searches for keywords returning matches ordered by sort_name.  The
-possible keys to $param are the following;
-
-=over 4
-
-=item C<name>
-
-Search for keywords by name.  Matched with LIKE.
-
-=item C<screen_name>
-
-Search for keywords by screen name.  Matched with LIKE.
-
-=item C<sort_name>
-
-Search for keywords by sort name.  Matched with LIKE.
-
-=item C<active>
-
-Search for keywords by active flag.  If you don't set this flag then
-active => 1 is implicitely used.
-
-=item C<synonyms>
-
-Returns all the synonyms for the given keyword or keyword ID.  Cannot
-be legally combined with the object param.
-
-=item C<object>
-
-Returns all keywords for a given object - may be a
-Bric::Biz::Category, Bric::Biz::Asse::Business::Media or a
-Bric::Biz::Asse::Business::Story object.  Cannot be legally combined
-with the synonyms param.
-
-=back
-
-Throws:
-
-=over 4
-
-=item *
-
-Unsupported object type : $ref
-
-=item *
-
-Synonyms search cannot be combined with object search.
-
-=back
-
-Side Effects: NONE
-
-Notes: NONE
-
-=cut
-
-sub list {
-    my ($pkg, $param) = @_;
-    my (@select, $from, @where, @bind);
-
-    # Make sure to set active explictly if its not passed.
-    $param->{active} = 1 unless exists $param->{active};
-
-    # default from clause
-    $from = TABLE . ' k';
-
-    # Build a list of selected columns.
-    @select = ('k.id', map { "k.$_" } COLS);
-
-    # handle text fields
-    foreach my $f (qw(name screen_name sort_name )) {
-        next unless exists $param->{$f};
-        push @where, "LOWER(k.$f) LIKE ?";
-        push @bind,  lc $param->{$f};
-    }
-
-    # handle numeric fields (id is supported here because the old
-    # Bric::Biz::Keyword supported it and I can't be sure something
-    # isn't using it.  Really lookup() is a better choice for getting
-    # keywords by id.
-    foreach my $f (qw(id active)) {
-        next unless exists $param->{$f};
-        push @where, "$f = ?";
-        push @bind,  lc $param->{$f};
-    }
-
-    # handle searches for object keywords
-    if (exists $param->{object}) {
-        my $obj = $param->{object};
-
-        # determine table and field name for search
-        my ($table, $field) = _get_db_data_for_object($obj);
-
-        # setup from and where clauses
-        $from = "$table x, keyword k";
-        push @where, ("x.keyword_id = k.id", "x.$field = ?");
-        push @bind, $obj->get_id;
-    }
-
-    # build SQL
-    my $sql = "SELECT " . join(',','id',COLS) . " FROM " . $from;
-    $sql   .= ' WHERE ' . join(' AND ', @where) if @where;
-    $sql   .= ' ORDER BY sort_name';
-
-    # prepare and execute select
-    my $sth = prepare_c($sql);
-    execute($sth, @bind);
-
-    # fetch data and build result objects
-    my (@d, $keyword, @ret);
-    bind_columns($sth, \@d[0..(scalar COLS)]);
-    while (fetch($sth)) {
-        # create a new keyword object and push it on the return array
-        $keyword = __PACKAGE__->SUPER::new();
-        $keyword->_set(['id', COLS], \@d);
-        push @ret, $keyword->cache_me;
-    }
-    finish($sth);
-
-    return wantarray ? @ret : \@ret;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $success = $key->delete;
-
-Marks a keyword inactive in the database.  Equivalent to calling
-set_active(0).
-
-Throws: NONE
-
-Side Effects: NONE
-
-Notes: NONE
-
-=cut
-
-sub remove {
-    my $self = shift;
-    $self->set_active(0);
-    return $self;
-}
-
-#--------------------------------------#
-
-=back
-
-=head2 Public Class Methods
-
-=over 4
-
-=item $meths = Bric::Biz::Keyword->my_meths
-
-=item (@meths || $meths_aref) = Bric::Biz::Keyword->my_meths(TRUE)
-
-=item my (@meths || $meths_aref) = Bric::Biz::Keyword->my_meths(0, TRUE)
-
-Returns an anonymous hash of introspection data for this object. If called
-with a true argument, it will return an ordered list or anonymous array of
-introspection data. If a second true argument is passed instead of a first,
-then a list or anonymous array of introspection data will be returned for
-properties that uniquely identify an object (excluding C<id>, which is
-assumed).
-
-Each hash key is the name of a property or attribute of the object. The value
-for a hash key is another anonymous hash containing the following keys:
+Constructs a new keyword object and returns it. An anonymous hash of initial
+values may be passed. The supported keys for that hash references are:
 
 =over 4
 
 =item name
 
-The name of the property or attribute. Is the same as the hash key when an
-anonymous hash is returned.
+The name of this keyword.
 
-=item disp
+=item screen_name
 
-The display name of the property or attribute.
+The way this name should be displayed on screen (ie name='George', screen
+name='George Washington'). If not specified name will be used for screen_name.
 
-=item get_meth
+=item sort_name
 
-A reference to the method that will retrieve the value of the property or
-attribute.
-
-=item get_args
-
-An anonymous array of arguments to pass to a call to get_meth in order to
-retrieve the value of the property or attribute.
-
-=item set_meth
-
-A reference to the method that will set the value of the property or
-attribute.
-
-=item set_args
-
-An anonymous array of arguments to pass to a call to set_meth in order to set
-the value of the property or attribute.
-
-=item type
-
-The type of value the property or attribute contains. There are only three
-types:
-
-=over 4
-
-=item short
-
-=item date
-
-=item blob
+The word used to sort keywords. If not specified then name will be used for
+sort_name.
 
 =back
 
-=item len
-
-If the value is a 'short' value, this hash key contains the length of the
-field.
-
-=item search
-
-The property is searchable via the list() and list_ids() methods.
-
-=item req
-
-The property or attribute is required.
-
-=item props
-
-An anonymous hash of properties used to display the property or
-attribute. Possible keys include:
-
-=over 4
-
-=item type
-
-The display field type. Possible values are
-
-=over 4
-
-=item text
-
-=item textarea
-
-=item password
-
-=item hidden
-
-=item radio
-
-=item checkbox
-
-=item select
-
-=back
-
-=item length
-
-The Length, in letters, to display a text or password field.
-
-=item maxlength
-
-The maximum length of the property or value - usually defined by the SQL DDL.
-
-=back
-
-=item rows
-
-The number of rows to format in a textarea field.
-
-=item cols
-
-The number of columns to format in a textarea field.
-
-=item vals
-
-An anonymous hash of key/value pairs reprsenting the values and display names
-to use in a select list.
-
-=back
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub my_meths {
-    my ($pkg, $ord, $ident) = @_;
-
-    # Create 'em if we haven't got 'em.
-    unless ($METHS) {
-        $METHS =
-          { 'name'        => { 'name'     => 'name',
-                               'get_meth' => sub {shift->get_name(@_)},
-                               'get_args' => [],
-                               'set_meth' => sub {shift->set_name(@_)},
-                               'set_args' => [],
-                               'disp'     => 'Keyword Name',
-                               'search'   => 1,
-                               'len'      => 256,
-                               'type'     => 'short',
-                               'props'    => {'type'       => 'text',
-                                              'length'     => 32,
-                                              'max_length' => 256,}
-                             },
-            'screen_name' => { 'name'     => 'screen_name',
-                               'get_meth' => sub {shift->get_screen_name(@_)},
-                               'get_args' => [],
-                               'set_meth' => sub {shift->set_screen_name(@_)},
-                               'set_args' => [],
-                               'disp'     => 'Keyword screen name',
-                               'search'   => 0,
-                               'len'      => 256,
-                               'type'     => 'short',
-                               'props'    => {'type'       => 'text',
-                                              'length'     => 64,
-                                              'max_length' => 256,}
-                             },
-            'sort_name'   => { 'sort_name'     => 'name',
-                               'get_meth' => sub {shift->get_sort_name(@_)},
-                               'get_args' => [], 
-                               'set_meth' => sub {shift->set_sort_name(@_)},
-                               'set_args' => [],
-                               'disp'     => 'Sort order name',
-                               'search'   => 0,
-                               'len'      => 256,
-                               'type'     => 'short',
-                               'props'    => {'type'       => 'text',
-                                              'length'     => 64,
-                                              'max_length' => 256,}
-                             },
-          };
-        $METHS->{keyword} = $METHS->{name};
-    }
-
-    if ($ord) {
-        return wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
-    } elsif ($ident) {
-        return wantarray ? $METHS->{name} : [$METHS->{name}];
-    } else {
-        return $METHS;
-    }
-
-}
-
-#--------------------------------------#
-
-=back
-
-=head2 Public Instance Methods
-
-=over 4
-
-=item $key->associate($obj)
-
-Associates a keyword with an object.  The object must by of a type
-that supports keywords - currently Bric::Biz::Asset::Business::Story,
-Bric::Biz::Asset:::Business::Media and Bric::Biz::Category.  This call
-commits the change directly to the database.  There is no need to call
-save() afterward.
-
-Returns 0 if $key is already associated with $obj, 1 if a new
-relationship was created.
-
-Throws:
-
-=over 4
-
-=item *
-
-Unsupported object type : $ref.
-
-=back
-
-Side Effects: NONE
-
-Notes: Cannot be called on an unsaved keyword.  Call save() first.
-
-=cut
-
-sub associate {
-    my ($self, $obj) = @_;
-    my $id           = $self->get_id;
-    my $obj_id       = $obj->get_id;
-
-    # determine table and field name for this relationship
-    my ($table, $field) = _get_db_data_for_object($obj);
-
-    # check if this keyword is already associated with this category
-    my ($exists) = row_array("SELECT 1 FROM $table ".
-                             "WHERE $field = ? AND keyword_id = ?",
-                             $obj_id, $id);
-    return 0 if defined $exists and $exists == 1;
-
-    # insert a new relationship
-    my $sth = prepare("INSERT INTO $table ($field, keyword_id) ".
-                      "VALUES (?, ?)");
-    execute($sth, $obj_id, $id);
-    finish($sth);
-
-    return 1;
-}
-
-=item $key->dissociate($obj)
-
-Dissociates a keyword from an object.  The object must by of a type
-that supports keywords - currently Bric::Biz::Asset::Business::Story,
-Bric::Biz::Asset:::Business::Media and Bric::Biz::Category.  This call
-commits the change directly to the database.  There is no need to call
-save() afterward.
-
-Returns 0 if $key is not associated with $obj, 1 if the relationship
-was successfully removed.
-
-Throws:
-
-Unsupported object type : $ref.
-
-Side Effects: NONE
-
-Notes: Cannot be called on an unsaved keyword.  Call save() first.
-
-=cut
-
-sub dissociate {
-    my ($self, $obj) = @_;
-    my $id           = $self->get_id;
-    my $obj_id       = $obj->get_id;
-
-    # determine table and field name for this relationship
-    my ($table, $field) = _get_db_data_for_object($obj);
-
-    # delete relationship
-    my $sth = prepare("DELETE FROM $table WHERE $field = ? AND keyword_id = ?");
-    execute($sth, $obj_id, $id);
-    finish($sth);
-
-    return 1;
-}
-
-=item $name = $key->get_name();
-
-Returns the name of this keyword
-
-B<Throws:> NONE
-
-B<Side Effects:> NONE
-
-B<Notes:> NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $name = $key->set_name($name);
-
-Sets the name of this keyword
-
-B<Throws:> NONE
-
-B<Side Effects:> NONE
-
-B<Notes:> NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $name = $key->get_screen_name();
-
-Returns the screen name of this keyword.  The screen name is how the
-synonym should be displayed on screen (i.e. name='george'
-screen_name='Washington, George')
-
-B<Throws:> NONE
-
-B<Side Effects:> NONE
-
-B<Notes:> NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $name = $key->set_screen_name($name);
-
-Sets the screen name of this keyword.
-
-B<Throws:> NONE
-
-B<Side Effects:> NONE
-
-B<Notes:> NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $state = $key->get_state();
-
-Deprecated alias for get_active().
-
-B<Throws:> NONE
-
-B<Side Effects:> NONE
-
-B<Notes:> NONE
-
-=cut
-
-sub get_state { shift->get_active }
-
-#------------------------------------------------------------------------------#
-
-=item $state = $key->set_state();
-
-Deprecated alias for set_active().
-
-B<Throws:> NONE
-
-B<Side Effects:> NONE
-
-B<Notes:> NONE
-
-=cut
-
-sub set_state { shift->set_active(@_) }
-
-#------------------------------------------------------------------------------#
-
-=item $success = $key->save;
-
-Save the keyword to the database.
+The C<name> and C<domain_name> attributes must be globally unique or an
+exception will be thrown.
 
 B<Throws:>
 
-"Unable to save";
+=over
 
-B<Side Effects:>
+=item Exception::DA
 
-Will give default values to screen_name and sort_name if they are not set.
+=item Error::NotUnique
 
-B<Notes:> NONE
+=back
+
+=cut
+
+sub new {
+    my ($invocant, $init) = @_;
+    my $class = ref $invocant || $invocant;
+    $init->{_active} = 1;
+    $init->{grp_ids} = [INSTANCE_GROUP_ID];
+    my $name = delete $init->{name};
+    my $self = $class->SUPER::new($init);
+    $self->set_name($name) if defined $name;
+    return $self;
+}
+
+################################################################################
+
+=head3 lookup
+
+  my $keyword = Bric::Biz::Keyword->lookup({ id => $id });
+  $keyword = Bric::Biz::Keyword->lookup({ name => $name });
+
+Looks up and constructs an existing keyword object in the database and returns
+it. A Keyword ID or name name can be used as the keyword object unique
+identifier to look up. If no keyword object is found in the database, then
+C<lookup()> will return C<undef>.
+
+B<Throws:>
+
+=over 4
+
+=item Exception::DA
+
+=back
+
+=cut
+
+sub lookup {
+    my $invocant = shift;
+    # Look for the keyword in the cache, first.
+    my $keyword = $invocant->cache_lookup(@_);
+    return $keyword if $keyword;
+
+    # Look up the keyword in the database.
+    my $class = ref $invocant || $invocant;
+    $keyword = $get_em->($class, @_) or return;
+
+    # Throw an exception if we looked up more than one keyword.
+    throw_da "Too many $class objects found" if @$keyword > 1;
+
+    return $keyword->[0];
+}
+
+##############################################################################
+
+=head3 list
+
+  my @keywords = Bric::Biz::Keyword->list($params);
+  my $keywords_aref = Bric::Biz::Keyword->list($params);
+
+Returns a list or anonymous array of keyword objects based on the search
+parameters passed via an anonymous hash. The supported lookup keys that may
+use valid SQL wild card characters are:
+
+=over
+
+=item name
+
+=item screen_name
+
+=item sort_name
+
+=back
+
+The supported lookup keys that must be an exact value are:
+
+=over 4
+
+=item active
+
+A boolean value indicating if the keyword is active.
+
+=item grp_id
+
+A Bric::Util::Grp::Keyword object ID.
+
+=item object
+
+Returns all keywords for a given object - may be a Bric::Biz::Category,
+Bric::Biz::Asset::Business::Media or a Bric::Biz::Asset::Business::Story
+object.
+
+=back
+
+B<Throws:>
+
+=over 4
+
+=item Exception::DA
+
+=back
+
+=cut
+
+sub list { $get_em->(@_) }
+
+##############################################################################
+
+=head3 href
+
+  my $keywords_href = Bric::Biz::Keyword->href($params);
+
+Returns an anonymous hash of keyword objects based on the search parameters
+passed via an anonymous hash. The hash keys will be the keyword IDs, and the
+values will be the corresponding keywords. The supported lookup keys are the
+same as those for C<list()>.
+
+B<Throws:>
+
+=over 4
+
+=item Exception::DA
+
+=back
+
+=cut
+
+sub href { $get_em->(@_, undef, 1) }
+
+##############################################################################
+# Class Methods
+##############################################################################
+
+=head2 Class Methods
+
+=head3 list_ids
+
+  my @keyword_ids = Bric::Biz::Keyword->list_ids($params);
+  my $keyword_ids_aref = Bric::Biz::Keyword->list_ids($params);
+
+Returns a list or anonymous array of keyword object IDs based on the search
+parameters passed via an anonymous hash. The supported lookup keys are the
+same as for the C<list()> method.
+
+B<Throws:>
+
+=over 4
+
+=item Exception::DA
+
+=back
+
+=cut
+
+sub list_ids { $get_em->(@_, 1) }
+
+##############################################################################
+
+=head3 my_meths
+
+  my $meths = Bric::Biz::Keyword->my_meths
+  my @meths = Bric::Biz::Keyword->my_meths(1);
+  my $meths_aref = Bric::Biz::Keyword->my_meths(1);
+  @meths = Bric::Biz::Keyword->my_meths(0, 1);
+  $meths_aref = Bric::Biz::Keyword->my_meths(0, 1);
+
+Returns Bric::Biz::Keyword attribute accessor introspection data. See
+L<Bric|Bric> for complete documtation of the format of that data. Returns
+accessor introspection data for the following attributes:
+
+=over
+
+=item name
+
+The keyword name. A unique identifier attribute.
+
+=item screen_name
+
+The keyword display name.
+
+=item sort_name
+
+The keyword sort name.
+
+=item active
+
+The keyword's active status boolean.
+
+=back
+
+=cut
+
+{
+    my @ORD = qw(name screen_name sort_name);
+    my $METHS =
+      { name        => { name     => 'name',
+                         get_meth => sub {shift->get_name(@_)},
+                         get_args => [],
+                         set_meth => sub {shift->set_name(@_)},
+                         set_args => [],
+                         disp     => 'Keyword Name',
+                         search   => 1,
+                         len      => 256,
+                         type     => 'short',
+                         props    => { type       => 'text',
+                                       length     => 32,
+                                       max_length => 256,
+                                     },
+                       },
+        screen_name => { name     => 'screen_name',
+                         get_meth => sub {shift->get_screen_name(@_)},
+                         get_args => [],
+                         set_meth => sub {shift->set_screen_name(@_)},
+                         set_args => [],
+                         disp     => 'Keyword screen name',
+                         search   => 0,
+                         len      => 256,
+                         type     => 'short',
+                         props    => { type       => 'text',
+                                       length     => 64,
+                                       max_length => 256,
+                                     },
+                       },
+        sort_name   => { name     => 'sort_name',
+                         get_meth => sub {shift->get_sort_name(@_)},
+                         get_args => [],
+                         set_meth => sub {shift->set_sort_name(@_)},
+                         set_args => [],
+                         disp     => 'Sort order name',
+                         search   => 0,
+                         len      => 256,
+                         type     => 'short',
+                         props    => { type       => 'text',
+                                       length     => 64,
+                                       max_length => 256,
+                                     },
+                       },
+        active      => { name     => 'active',
+                         get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                         get_args => [],
+                         set_meth => sub { $_[1] ? shift->activate(@_)
+                                             : shift->deactivate(@_)
+                                         },
+                         set_args => [],
+                         disp     => 'Active',
+                         len      => 1,
+                         req      => 1,
+                         props    => { type => 'checkbox' }
+                       },
+      };
+    $METHS->{keyword} = $METHS->{name};
+
+    sub my_meths {
+        my ($invocant, $ord, $ident) = @_;
+        if ($ord) {
+            return wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
+        } elsif ($ident) {
+            return wantarray ? $METHS->{name} : [$METHS->{name}];
+        } else {
+            return $METHS;
+        }
+    }
+}
+
+##############################################################################
+# Instance Methods
+##############################################################################
+
+=head2 Accessors
+
+=head3 id
+
+  my $id = $keyword->get_id;
+
+Returns the keyword object's unique database ID.
+
+=head3 name
+
+  my $name = $keyword->get_name;
+  $keyword = $keyword->set_name($name);
+
+Get and set the keyword object's unique name. The value of this attribute must be
+case-insensitively globally unique. If a non-unique value is passed to
+C<set_name()>, an exception will be thrown.
+
+B<Side Effects:> The <screen_name> and C<sort_name> attributes will be set to
+the same value as the C<name> attribute if they are not yet defined.
+
+B<Throws:>
+
+=over
+
+=item Error::NotUnique
+
+=item Error::Undef
+
+=back
+
+=cut
+
+sub set_name {
+    my ($self, $name) = @_;
+    my $disp = $self->my_meths->{name}{disp};
+    # Make sure we have a name.
+        throw_undef error    => "Value of $disp cannot be empty",
+                    maketext => ["Value of [_1] cannot be empty", $disp]
+      unless $name and $name ne '';
+
+    my ($old_name, $screen, $sort) =
+      $self->_get(qw(name screen_name sort_name));
+
+    # Just succeed if the new name is the same as the old name.
+    return $self if defined $old_name and lc $name eq lc $old_name;
+
+    # Check the database for any existing keywords with the new name.
+    if ($self->list_ids({ name => $name })) {
+        throw_not_unique
+          error    => "A keyword with the $disp '$name' already exists",
+          maketext => ["A keyword with the [_1] '[_2]' already exists",
+                       $disp, $name];
+    }
+
+    # Success! Set the screen and sort names, if necessary.
+    $screen = $name unless defined $screen and $screen ne '';
+    $sort = $name unless defined $sort and $sort ne '';
+    $self->_set([qw(name screen_name sort_name)], [$name, $screen, $sort]);
+}
+
+=head3 screen_name
+
+  my $screen_name = $keyword->get_screen_name;
+  $keyword = $keyword->set_screen_name($screen_name);
+
+Get and set the keywordy object's screen_name.
+
+=head3 sort_name
+
+  my $sort_name = $keyword->get_sort_name;
+  $keyword = $keyword->set_sort_name($sort_name);
+
+Get and set the keyword object's sort_name.
+
+=head3 active
+
+  $keyword = $keyword->activate;
+  $keyword = $keyword->deactivate;
+  $keyword = $keyword->is_active;
+
+Get and set the keyword object's active status. C<activate()> and
+C<deactivate()> each return the keyword object. C<is_active()> returns the
+keyword object when the keyword is active, and C<undef> when it is not.
+
+B<Note:> The old C<remove()>, C<get_state()> C<set_state()>, C<get_active()>,
+and C<set_active()> methods have been deprecated. Please use C<is_active()>,
+C<activate()>, and C<deactivate()> instead.
+
+=cut
+
+sub activate   { $_[0]->_set(['_active'], [1]) }
+sub deactivate { $_[0]->_set(['_active'], [0]) }
+sub is_active  { $_[0]->_get('_active') ? $_[0] : undef }
+sub remove     {
+    Carp::cluck(__PACKAGE__ . "->remove has been deprecated.\n" .
+                "Use ", __PACKAGE__, "->deactivate instead");
+    $_[0]->deactivate;
+}
+
+sub get_state {
+    Carp::cluck(__PACKAGE__ . "->get_state has been deprecated.\n" .
+                "Use ", __PACKAGE__, "->is_active instead");
+    $_[0]->is_active;
+}
+
+sub set_state {
+    Carp::cluck(__PACKAGE__ . "->set_state has been deprecated.\n" .
+                "Use activate() and deactivate() instead");
+    $_[1] ? $_[0]->activate : $_[0]->deactivate;
+}
+
+sub get_active {
+    Carp::cluck(__PACKAGE__ . "->get_active has been deprecated.\n" .
+                "Use ", __PACKAGE__, "->is_active instead");
+    $_[0]->is_active;
+}
+
+sub set_active {
+    Carp::cluck(__PACKAGE__ . "->set_active has been deprecated.\n" .
+                "Use activate() and deactivate() instead");
+    $_[1] ? $_[0]->activate : $_[0]->deactivate;
+}
+
+sub associate {
+    my ($self, $obj) = @_;
+    Carp::cluck(__PACKAGE__ . "->associate has been deprecated.\n" .
+                "Use the keyword accessors on the asset or category instead");
+    $obj->add_keywords($obj);
+}
+
+sub dissociate {
+    my ($self, $obj) = @_;
+    Carp::cluck(__PACKAGE__ . "->dissociate has been deprecated.\n" .
+                "Use the keyword accessors on the asset or category instead");
+    $obj->del_keywords($obj);
+}
+
+=head2 Instance Methods
+
+=head3 save
+
+  $keyword = $keyword->save;
+
+Saves any changes to the keyword object to the database. Returns the keyword
+object on success and throws an exception on failure.
+
+B<Thows:>
+
+=over 4
+
+=item Error::Undef
+
+=item Exception::DA
+
+=back
 
 =cut
 
 sub save {
     my $self = shift;
-    my $id = $self->get_id;
+    return $self unless $self->_get__dirty;
+    my ($id, $name) = $self->_get(qw(id name));
 
-    return unless $self->_get__dirty;
-
-    # Set some defaults if these values aren't already set.
-    my ($name, $scrn, $sort) = $self->_get('name', 'screen_name', 'sort_name');
-    $scrn = $name unless defined $scrn;
-    $sort = $name unless defined $sort;
-    $self->_set(['screen_name', 'sort_name'], [$scrn, $sort]);
-
-    if ($id) {
-        $self->_update_keyword();
-    } else {
-        $self->_insert_keyword();
+    # Make sure we have a name.
+    unless (defined $name and $name ne '') {
+        my $disp = $self->my_meths->{name}{disp};
+        throw_undef error    => "Value of $disp cannot be empty",
+                    maketext => ["Value of [_1] cannot be empty", $disp];
     }
 
-    $self->_set__dirty(0);
+    if ($id) {
+        # Update the record in the database.
+        my $set_cols = join ' = ?, ', @COLS;
+        my $upd = prepare_c(qq{
+            UPDATE $TABLE
+            SET    $set_cols = ?
+            WHERE  id = ?
+        }, undef, DEBUG);
 
-    return $self;
+        # Make it so.
+        execute($upd, $self->_get('id', @PROPS), $id);
+    } else {
+        # Insert a new record into the database.
+        my $value_cols = join ', ', next_key('keyword'), ('?') x @PROPS;
+        my $ins_cols = join ', ', @COLS;
+        my $ins = prepare_c(qq{
+            INSERT INTO $TABLE ($ins_cols)
+            VALUES ($value_cols)
+        }, undef, DEBUG);
+
+        # Make it so.
+        execute($ins, $self->_get(@PROPS));
+
+        # Now grab the new ID.
+        $self->_set(['id'], [last_key('keyword')]);
+
+        # And finally, register this keyword in the "All Keywords" group.
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+    }
+
+    # Finish up.
+    $self->SUPER::save;
 }
 
-#==============================================================================#
+##############################################################################
+
+=begin private
+
+=head2 Private Functions
+
+=head3 $get_em
+
+  $get_em->($invocant, $params, $ids_only, $href);
+
+Function used by C<lookup()>, C<list()>, and C<list_ids()> to retrieve
+keyword objects from the database. The arguments are as follows:
+
+=over
+
+=item C<$invocant>
+
+The class name or object that invoked the method call.
+
+=item C<$params>
+
+The hashref of parameters supported by the method and that can be used to
+create a SQL search query.
+
+=item C<$ids_only>
+
+A boolean indicating whether to return keyword objects or keyword IDs only.
+
+=item C<$href>
+
+A boolean indicating whether to return the keyword objects as a hash
+reference. Used by C<href()>.
 
 =back
 
-=head2 Private Methods
-
-=cut
-
-#--------------------------------------#
-
-=head2 Private Class Methods
-
-NONE
-
-=cut
-
-#--------------------------------------#
-
-=head2 Private Instance Methods
+B<Throws:>
 
 =over 4
 
-=item $keywords = _select_keywords($where, $bind)
+=item Exception::DA
 
-=item @keywords = _select_keywords($where, $bind)
-
-Selects keywords from the database given an SQL where clause and a ref
-to an array of bind parameters.  Returns fully constructed
-Bric::Biz::Keyword objects.
+=back
 
 =cut
 
-sub _select_keywords {
-    my ($where, $bind) = @_;
-    my (@d, @ret);
+$get_em = sub {
+    my ($invocant, $params, $ids_only, $href) = @_;
+    my $tables = "$TABLE a, member m, keyword_member c";
+    my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND ' .
+      'm.active = 1';
+    my @params;
 
-    my $sql = 'SELECT '.join(',','id',COLS).' FROM '.TABLE;
-    $sql   .= ' WHERE '.$where if $where;
-    $sql   .= ' ORDER BY sort_name';
-
-    my $sth = prepare_c($sql);
-    execute($sth, @$bind);
-    bind_columns($sth, \@d[0..(scalar COLS)]);
-
-    my ($keyword);
-    while (fetch($sth)) {
-        # create a new keyword object and push it on the return array
-        $keyword = __PACKAGE__->SUPER::new();
-        $keyword->_set(['id', COLS], \@d);
-        push @ret, $keyword->cache_me;
+    foreach my $k (keys %$params) {
+        if ($k eq 'id') {
+            # Simple lookup by ID.
+            $wheres .= " AND a.id = ?";
+            push @params, $params->{$k};
+        } elsif ($k eq 'active') {
+            # Simple lookup by "active" boolean.
+            $wheres .= " AND a.active = ?";
+            push @params, $params->{$k} ? 1 : 0;
+        } elsif ($k eq 'grp_id') {
+            # Look up by group membership.
+            $tables .= ", member m2, keyword_member c2";
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.active = 1 AND m2.grp__id = ?";
+            push @params, $params->{$k};
+        } elsif ($k eq 'object') {
+            # Look up by object association.
+            my $key = $params->{$k}->key_name;
+            $tables .= ", $key\_keyword o";
+            $wheres .= " AND o.keyword_id = a.id AND o.$key\_id = ?";
+            push @params, $params->{$k}->get_id;
+        } else {
+            # Simple string comparison.
+            $wheres .= " AND LOWER(a.$k) LIKE ?";
+            push @params, lc $params->{$k};
+        }
     }
 
-    finish($sth);
+    my ($qry_cols, $order) = $ids_only ? (\'DISTINCT a.id', 'a.id') :
+      (\$SEL_COLS, 'a.sort_name, a.id');
 
-    return wantarray ? @ret : \@ret;
-}
+    my $sel = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
+    }, undef, DEBUG);
 
-=item $self->_update_keyword()
+    # Just return the IDs, if they're what's wanted.
+    if ($ids_only) {
+        my $ids = col_aref($sel, @params);
+        return unless @$ids;
+        return wantarray ? @$ids : $ids;
+    }
 
-Updates the keyword object in the database.
+    execute($sel, @params);
+    my (@d, @keywords, %keywords, $grp_ids);
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
+    my $class = ref $invocant || $invocant;
+    while (fetch($sel)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new keyword object.
+            my $self = $class->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            $href ? $keywords{$d[0]} = $self->cache_me :
+              push @keywords, $self->cache_me;
+        } else {
+            push @$grp_ids, $d[$#d];
+        }
+    }
 
-=cut
-
-sub _update_keyword {
-    my $self = shift;
-    my $sql = 'UPDATE '.TABLE.
-              ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
-
-
-    my $sth = prepare_c($sql);
-    execute($sth, $self->_get(COLS), $self->get_id);
-    return 1;
-}
-
-=item $self->_insert_keyword()
-
-Inserts the new keyword object into the database.
-
-=cut
-
-sub _insert_keyword {
-    my $self = shift;
-    my $nextval = next_key(TABLE);
-
-    # Create the insert statement.
-    my $sql = 'INSERT INTO '.TABLE." (id,".join(',',COLS).") ".
-              "VALUES ($nextval,".join(',', ('?') x COLS).')';
-
-    my $sth = prepare_c($sql);
-    execute($sth, $self->_get(COLS));
-
-    # Set the ID of this object.
-    $self->_set(['id'],[last_key(TABLE)]);
-
-    return 1;
-}
-
-=item ($table, $field) = _get_db_data_for_object($obj)
-
-Returns the correct relationship table and field name for a given
-supported object.  For example, for a story object it returns
-("story_keyword", "story_id").
-
-Throws:
-
-Unsupported object type : $ref.
-
-Side Effects: NONE
-
-Notes: NONE
-
-=cut
-
-sub _get_db_data_for_object {
-    my $obj = shift;
-    my $ref = ref $obj;
-    return ("story_keyword",    "story_id")    if $ref =~ /Story$/;
-    return ("media_keyword",    "media_id")    if $ref =~ /Media$/;
-    return ("category_keyword", "category_id") if $ref =~ /Category$/;
-    die $gen->new({msg => "Unsupported object type : $ref."});
-}
+    return \%keywords if $href;
+    return unless @keywords;
+    return wantarray ? @keywords : \@keywords;
+};
 
 1;
 __END__
 
-=back
+=pod
 
-=head1 NOTES
+=end private
 
-NONE
+=head1 AUTHORS
 
-=head1 AUTHOR
-
-"Garth Webb" <garth@perijove.com> Bricolage Engineering
+Garth Webb <garth@perijove.com>
 
 Sam Tregar <stregar@about-inc.com>
 
+David Wheeler <david@kineticode.com>
+
 =head1 SEE ALSO
 
-L<Bric>
+=over 4
+
+=item L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business>
+
+Business assets, including stories and media, can be associated with keywords.
+
+=item L<Bric::Biz::Category|Bric::Biz::Category>
+
+Categories can be associated with key words.
+
+=back
 
 =cut
