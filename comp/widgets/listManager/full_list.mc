@@ -119,7 +119,8 @@ my $page_link = sub {
     $class ||= 'subHeader';
     my $offset = ($page_num - 1) * $limit;
     return qq{ <a href="$url?listManager|set_offset_cb=$offset" } .
-      qq{class="redLinkLarge"><span class="$class">$lang->maketext($label)</span></a> };
+      qq{class="redLinkLarge"><span class="$class">} .
+      $lang->maketext($label) . q{</span></a>};
 };
 </%once>
 
