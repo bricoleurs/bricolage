@@ -63,6 +63,10 @@ and then clicking a button other than the output channel "Delete" button or
 the "Save" or "Save and Stay" buttons no longer causes an error. Reported by
 Delfim Machado. [David]
 
+=item *
+
+Login redirection now works properly with Safari. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -123,6 +127,10 @@ Bulk publish no longer marks checked-out stories as published when it hasn't
 published them. It also is no longer redundant when it reports that
 checked-out assets won't be published. Thanks to Serge Sozonoff for the spot!
 [David]
+
+=item *
+
+Safari users will no longer be stuck on the login page. [David]
 
 =back
 
