@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.4.1 $
 
 =head1 DATE
 
-$Date: 2003-02-02 19:46:35 $
+$Date: 2003-07-06 02:13:54 $
 
 =head1 DESCRIPTION
 
@@ -36,12 +36,24 @@ BEGIN {
     eval { require 5.006 };
     if ($@) {
 	print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
-Bricolage requires Perl version 5.6.0.  Please upgrade your version of
-Perl before re-running make.  You can find the latest versions of Perl 
-at 'http://perl.com'.
+Bricolage requires Perl version 5.6.0 or later. 5.8.0 or later is strongly
+recommended for its better Unicode support. Please upgrade your version of
+Perl before re-running make. You can find the latest versions of Perl
+at 'http://perl.com/'.
 
 END
 	exit 1;
+    }
+
+    eval { require 5.008 };
+    if ($@) {
+	print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
+Found Bricolage 5.6.x, but Perl 5.8.0 or later is strongly recommended for its
+better Unicode support. If you need good Unicode support, please upgrade your
+version of of Perl before re-running make. You can find the latest versions of
+Perl at 'http://perl.com/'.
+
+END
     }
 }
 
@@ -50,7 +62,6 @@ use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions;
 use Data::Dumper;
-use Config;
 
 our %REQ;
 our %RESULTS;

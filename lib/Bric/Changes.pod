@@ -126,6 +126,10 @@ URL that's not a Bricolage distribution server. [David]
 Enabled the C<PERL_LOADER> F<bricolage.conf> configuration directive and gave
 it a default value that's actualy useful. [David]
 
+=item *
+
+Perl 5.8.0 or later is now strongly recommended for better Unicode support.
+
 =back
 
 =head1 VERSION 1.6.1
