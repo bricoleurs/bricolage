@@ -72,6 +72,12 @@ and then is clicked again, it will uncheck all of the check boxes. [David]
 
 Login redirection now works properly with Safari. [David]
 
+=item *
+
+The installation script now provides more information (and questions) when it
+attempts to create a database user that already exists. Suggested by Marshall
+Roch. [David]
+
 =head2 Bug Fixes
 
 =over 4
