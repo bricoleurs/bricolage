@@ -9,12 +9,6 @@ Bric::Config - A class to hold configuration settings.
 
 $LastChangedRevision$
 
-=cut
-
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
-
 =head1 DATE
 
 $LastChangedDate$
@@ -214,7 +208,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      DEF_MEDIA_TYPE
                                      DIST_ATTEMPTS
                                      PREVIEW_LOCAL)],
-                    qa        => [qw(QA_MODE 
+                    qa        => [qw(QA_MODE
                                      TEMPLATE_QA_MODE)],
                     err       => [qw(ERROR_URI)],
                     ui        => [qw(FIELD_INDENT
@@ -282,6 +276,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      ENCODE_OK
                                      LOAD_CHAR_SETS)],
                    );
+
+# This has to come after the EXPORT vars so that other Bricolage modules
+# will load properly.
+require Bric; our $VERSION = Bric->VERSION;
 
 #=============================================================================#
 # Function Prototypes                  #

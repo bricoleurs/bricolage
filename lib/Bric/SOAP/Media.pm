@@ -47,12 +47,7 @@ $LastChangedRevision$
 
 =cut
 
-{
-    no warnings;
-    INIT {
-        require Bric; our $VERSION = Bric->VERSION
-    }
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 

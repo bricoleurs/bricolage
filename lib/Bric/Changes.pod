@@ -151,6 +151,12 @@ message. Reported by Marshall Roch. [David]
 Bricolage no longer attempts to email alerts to an empty list of recipients.
 This will make your SMTP server happier. [David]
 
+=item *
+
+The version numbering issues of Bricolage modules have all been worked out
+after the confusion in 1.8.1. This incidentally allows the HTML::Template and
+Template Toolkit burners to be available again. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
