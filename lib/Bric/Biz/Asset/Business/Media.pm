@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-10 23:28:14 $
+$Date: 2002-09-18 20:08:34 $
 
 =head1 SYNOPSIS
 
@@ -244,11 +244,11 @@ B<Notes:> NONE.
 sub new {
     my ($self, $init) = @_;
     # default to active unless passed otherwise
-    $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
-    delete $init->{'active'};
+    $init->{_active} = (exists $init->{active}) ? $init->{active} : 1;
+    delete $init->{active};
     $init->{priority} ||= 3;
     $init->{name} = delete $init->{title} if exists $init->{title};
-    $self = bless {}, $self unless ref $self;
+    $self = bless {}, ref $self || $self;
     $self->_init($init);
     $self->SUPER::new($init);
     return $self;
@@ -304,7 +304,7 @@ sub lookup {
 
     my $element = $self->_get_element_object();
     my $biz_class = $element->get_biz_class();
-    if ($biz_class && $biz_class ne $self) {
+    if ($biz_class && $biz_class ne ref $self) {
         $self = bless $self, $biz_class;
     }
 
@@ -947,9 +947,8 @@ sub upload_file {
     Bric::Util::Trans::FS->mk_path($dir);
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
-    open FILE, ">$path" or die
-      Bric::Util::Fault::Exception::GEN->new
-          ({ msg => "Unable to open '$path': $!" });
+    open FILE, ">$path" or die Bric::Util::Fault::Exception::GEN->new
+      ({ msg => "Unable to open '$path': $!" });
     my $buffer;
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
@@ -968,30 +967,28 @@ sub upload_file {
     my $loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
     $self->_set([qw(location uri)], [$loc, $uri]);
 
-    # determine what needs to get autopopulated
-    my $auto_fields = $self->_get_auto_fields();
-
-    # get the top level tile
-    my $tile = $self->get_tile();
-
-    # itterate through all the tiles
-    foreach my $dt ($tile->get_tiles()) {
-
-        # skip if this is a container
-        next if $dt->is_container();
-        # see if this is an auto populated field
-        my $name = $dt->get_name();
+    if (my $auto_fields = $self->_get_auto_fields) {
+        # We need to autopopulate data field values. Get the top level element
+        # construct a MediaFunc object.
+        my $tile = $self->get_tile;
         my $path = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $loc);
         my $media_func = Bric::App::MediaFunc->new({ file_path => $path });
-        if ($auto_fields->{$name} ) {
-            # check the tile to see if we can override it
-#           next if $dt->is_locked;
-            # get the value
-            my $method = $auto_fields->{$name};
-            my $val = $media_func->$method();
-            $val = 'No Val returned' unless $val;
-            $dt->set_data($val);
-            $dt->save();
+
+        # Iterate through all the elements.
+        foreach my $dt ($tile->get_tiles) {
+            # Skip container elements.
+            next if $dt->is_container;
+            # See if this is an auto populated field.
+            my $name = $dt->get_name;
+            if ($auto_fields->{$name} ) {
+                # Check the tile to see if we can override it.
+                next if $dt->is_locked;
+                # Get and set the value
+                my $method = $auto_fields->{$name};
+                my $val = $media_func->$method();
+                $dt->set_data(defined $val ? $val : '');
+                $dt->save;
+            }
         }
     }
     return $self;

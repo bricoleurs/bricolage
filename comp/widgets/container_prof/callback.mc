@@ -131,41 +131,44 @@ my $update_parts = sub {
     my (@curr_tiles, @delete);
 
     # Save data to tiles and put them in a usable order
-    foreach ($tile->get_tiles()) {
-	my $id = $_->get_id();
+    foreach my $t ($tile->get_tiles) {
+	my $id = $t->get_id();
 
 	# Grab the tile we're looking for
 	local $^W = undef;
-	$locate_tile = $_ if $id == $locate_id;
+	$locate_tile = $t if $id == $locate_id;
 	if ($do_delete && ($param->{"$widget|delete_cont$id"} ||
 			   $param->{"$widget|delete_data$id"})) {
-	    add_msg("Element &quot;" . $_->get_name . "&quot; deleted.");
-	    push @delete, $_;
+	    add_msg("Element &quot;" . $t->get_name . "&quot; deleted.");
+	    push @delete, $t;
 	    next;
 	}
 
 	my ($order, $redir);
-	if ($_->is_container) {
+	if ($t->is_container) {
 	    $order = $param->{"$widget|reorder_con$id"};
 	} else {
-	    $order = $param->{"$widget|reorder_dat$id"};
-	    my $val = $param->{"$widget|$id"} || '';
-	    if ( $param->{"$widget|${id}-partial"} ) {
-		# The date is only partial. Send them back to to it again.
-		add_msg("Invalid date value for &quot;" . $_->get_name
-			. "&quot; field.");
-		set_state_data($widget, '__NO_SAVE__', 1);
-	    } else {
-		# Truncate the value, if necessary, then set it.
-		my $info = $_->get_element_data_obj->get_meta('html_info');
-		$val = join('__OPT__', @$val) if $info->{multiple} && ref $val;
-		my $max = $info->{maxlength};
-		$val = substr($val, 0, $max) if $max && length $val > $max;
-		$_->set_data($val);
-	    }
-	}
+            $order = $param->{"$widget|reorder_dat$id"};
+            if (! $t->is_autopopulated or exists
+                $param->{"$widget|lock_val_$id"}) {
+                my $val = $param->{"$widget|$id"} || '';
+                if ( $param->{"$widget|${id}-partial"} ) {
+                    # The date is only partial. Send them back to to it again.
+                    add_msg("Invalid date value for &quot;" . $t->get_name
+                            . "&quot; field.");
+                    set_state_data($widget, '__NO_SAVE__', 1);
+                } else {
+                    # Truncate the value, if necessary, then set it.
+                    my $info = $t->get_element_data_obj->get_meta('html_info');
+                    $val = join('__OPT__', @$val) if $info->{multiple} && ref $val;
+                    my $max = $info->{maxlength};
+                    $val = substr($val, 0, $max) if $max && length $val > $max;
+                    $t->set_data($val);
+                }
+            }
+        }
 
-	$curr_tiles[$order] = $_;
+	$curr_tiles[$order] = $t;
     }
 
     # Delete tiles as necessary.
@@ -254,7 +257,7 @@ my $split_fields = sub {
 my $drift_correction = sub {
     my ($widget, $param) = @_;
     # Don't do anything if we've already corrected ourselves.
-    return if $param->{'_drift_corrected_'};;
+    return if $param->{'_drift_corrected_'};
 
     # Update the state name
     set_state_name($widget, $param->{$widget.'|state_name'});
