@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-03 21:57:39 $
+$Date: 2002-07-05 19:56:05 $
 
 =head1 SYNOPSIS
 
@@ -259,7 +259,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
         }
         # Process boolean directives here. These default to 1.
-        foreach (qw(ENABLE_DIST PREVIEW_LOCAL PREVIEW_MASON)) {
+        foreach (qw(ENABLE_DIST PREVIEW_LOCAL)) {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }

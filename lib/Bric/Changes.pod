@@ -141,6 +141,12 @@ Fixed conflict in list manager that prevented some lists from working
 properly. Probably never showed up before, as we only noticed it with the new
 Media Type manager. Thanks to Scott for the heads-up. [David]
 
+=item *
+
+The C<PREVIEW_MASON> configuration directive no longer is no longer defaulting
+to on in one context and off in another. It is now off by default. Thanks to
+Michael Slattery for the spot! [David]
+
 =back
 
 =head1 VERSION 1.3.2
