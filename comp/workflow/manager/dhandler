@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-09-12 00:54:28 $
+$Date: 2003-09-17 05:49:49 $
 
 =head1 SYNOPSIS
 
@@ -29,7 +29,7 @@ my $pl_name = { map { $_ => get_class_info($_)->get_plural_name }
 		qw(story media formatting) };
 
 my ($start_desk_ok, $desk_chk);
-my ($type, $work_id);
+my ($type, $work_id, $widg);
 
 my $profile = sub {
     my $o = shift;
@@ -51,11 +51,11 @@ my $select = sub {
 
     if (not defined $u && chk_authz($o, EDIT, 1)) {
 	if ($o->get_workflow_id) {
-	    return ['Checkout', "$type\_prof|checkout_cb"]
+	    return ['Checkout', "$widg\_prof|checkout_cb"]
               if $desk_chk->{$o->get_desk_id}[1];
 	} else {
             # Allow checkout only if they have access to the start desk.
-	    return ['Checkout', "$type\_prof|recall_cb", $o->get_id.'|'.$work_id]
+	    return ['Checkout', "$widg\_prof|recall_cb", $o->get_id.'|'.$work_id]
               if $start_desk_ok;
 	}
     }
@@ -92,7 +92,8 @@ my $fields = { formatting => [qw(file_name version output_channel_name publish_s
 <%init>;
 # Get the workflow ID.
 ($type, $work_id) = split('/', $m->dhandler_arg);
-$type = 'formatting' if $type eq 'templates';
+$widg = $type;
+($type, $widg) = ('formatting', 'tmpl') if $type eq 'templates';
 
 # Grab the workflow and start desk permissions.
 my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
