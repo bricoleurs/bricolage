@@ -177,6 +177,8 @@ Folks who have submitted patches include:
 
 =item Cameron Miller
 
+=item Mark Kennedy
+
 =back
 
 Friends who have spotted bugs include:
