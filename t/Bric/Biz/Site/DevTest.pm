@@ -59,6 +59,7 @@ sub setup_sites : Test(setup => 13) {
     $self->add_del_ids($grp_id, 'grp');
     $self->{test_sites} = \@sites;
     $self->{test_grp} = $grp;
+
 }
 
 ##############################################################################
@@ -229,8 +230,7 @@ sub test_href : Test(25) {
     }
 
     # Try a bogus name.
-    ok( ! Bric::Biz::Site->href({ name => -1 }), "List bogus name" );
-
+    is_deeply(Bric::Biz::Site->href({ name => -1 }) , {}, "List bogus name" );
     # Try description.
     ok( $sites = Bric::Biz::Site->href({ description => $init{description} }),
         "List description '$init{description}'" );
@@ -238,13 +238,13 @@ sub test_href : Test(25) {
     is( scalar keys %$sites, 2, "Check for 2 sites" );
 
     # Try description + wildcard.
-    ok( $sites = Bric::Biz::Site->list
+    ok( $sites = Bric::Biz::Site->href
         ({ description => "$init{description}%" }),
         "List description '$init{description}%'" );
     is( scalar keys %$sites, 5, "Check for 5 sites" );
 
     # Try a bogus description.
-    ok( ! Bric::Biz::Site->href({ description => -1 }),
+    is_deeply( Bric::Biz::Site->href({ description => -1 }), {}, 
         "List bogus description" );
 
     # Try domain_name.
@@ -258,7 +258,7 @@ sub test_href : Test(25) {
     is( scalar keys %$sites, 6, "Check for 6 sites" );
 
     # Try a bogus domain_name.
-    ok( ! Bric::Biz::Site->href({ domain_name => -1 }),
+    is_deeply( Bric::Biz::Site->href({ domain_name => -1 }), {},
         "List bogus domain name" );
 
     # Try grp_id.
