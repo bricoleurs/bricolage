@@ -39,19 +39,13 @@ parent. Thanks to Joao Pedro Goncalves for the patch. [David]
 
 =item *
 
-Fixed bug in side navigation where an HTML table was opened but not closed.
-[Charles Albrecht]
+Fixed bug where installation system would chown all of the chosen TEMP_DIR to
+SYS_USER. Thanks to Dave Rolsky for the report. [Sam]
 
 =item *
 
-Fixed bug where installation system would chown all of the chosen
-TEMP_DIR to SYS_USER.  Thanks to Dave Rolsky for the report.  [Sam]
-
-=item *
-
-Fixed a bug in the installation system that was creating empty
-comp/comp and data/data directories BRICOLAGE_ROOT.  Thanks to Michael
-for the spot.  [Sam]
+Fixed a bug in the installation system that was creating empty comp/comp and
+data/data directories BRICOLAGE_ROOT. Thanks to Michael for the spot. [Sam]
 
 =back
 
