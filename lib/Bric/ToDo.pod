@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =head1 DATE
 
-$Date: 2001-12-23 20:26:35 $
+$Date: 2001-12-27 20:46:05 $
 
 =head1 DESCRIPTION
 
@@ -166,6 +166,12 @@ maybe even the callbacks are already done).
 =item *
 
 Add ability to "undeploy" templates without deactivating them.
+
+=item *
+
+Add a check that a user has selected at least one output channel when
+creating a new element.  Elements without output channels cause
+Bricolage indigestion.
 
 =back
 
