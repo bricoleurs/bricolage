@@ -110,6 +110,12 @@ well as the story keywords. Thanks to Darren Graves for the patch.
 Removed quotation marks from DEF_MEDIA_TYPE setting in bricolage.conf. Thanks to
 Darren Graves for the spot. [David]
 
+=item *
+
+Sorting assets by ID in "Find X" and Workspace/Desk view now properly does a
+numeric sort rather than an alphanumeric sort. Thanks to Sam Tregar for the
+spot. [David]
+
 =back
 
 =head1 VERSION 1.2.0
