@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.18.2.10 $
+$Revision: 1.18.2.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-12 18:33:13 $
+$Date: 2003-07-04 09:32:54 $
 
 =head1 SYNOPSIS
 
@@ -600,8 +600,8 @@ sub status_msg {
     my $key = '_status_msg_';
     my $space = '&nbsp;' x 20;
 
-    my $r = Apache::Request->instance;
     if (my $m = HTML::Mason::Request->instance) {
+        my $r = $m->apache_req;
         my $old_autoflush = $m->autoflush;   # autoflush is restored below
         $m->autoflush(1);
         unless ( $r->pnotes($key) ) {
@@ -612,14 +612,6 @@ sub status_msg {
         map $m->print(qq{$space<span class="errorMsg">$_</span><br />\n}), @_;
         $m->flush_buffer;
         $m->autoflush($old_autoflush);
-    } else {
-        unless ( $r->pnotes($key) ) {
-            # We haven't called this thing yet. Throw up some initial information.
-            $r->print("<br />\n" x 2);
-            $r->pnotes($key, 1);
-        }
-        map $r->print(qq{$space<span class="errorMsg">$_</span><br />\n}), @_;
-        # Might need to do something to flush the mod_perl buffer to the browser?
     }
 }
 
