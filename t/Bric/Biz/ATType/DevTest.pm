@@ -201,6 +201,25 @@ sub test_list_ids : Test(21) {
 }
 
 ##############################################################################
+# Test my_meths().
+sub test_my_meths : Test(11) {
+    ok( my $meths = Bric::Biz::ATType->my_meths, "Get my_meths" );
+    isa_ok($meths, 'HASH', "my_meths is a hash" );
+    is( $meths->{name}{type}, 'short', "Check name type" );
+    ok( $meths = Bric::Biz::ATType->my_meths(1), "Get my_meths array ref" );
+    isa_ok( $meths, 'ARRAY', "my_meths(1) is an array" );
+    (is $meths->[0]->{name}, 'name', "Check first meth name" );
+
+    # Try the identifier methods.
+    ok( my $att = Bric::Biz::ATType->new({ name => 'NewFoo' }),
+        "Create ATType" );
+    ok( my @meths = $att->my_meths(0, 1), "Get ident meths" );
+    is( scalar @meths, 1, "Check for 1 meth" );
+    is( $meths[0]->{name}, 'name', "Check for 'name' meth" );
+    is( $meths[0]->{get_meth}->($att), 'NewFoo', "Check name 'NewFoo'" );
+}
+
+##############################################################################
 # Test instance methods.
 ##############################################################################
 # Test save()

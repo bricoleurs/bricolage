@@ -1,7 +1,7 @@
-package Bric::Util::Time::Test;
+package Bric::Util::Time::DevTest;
 use strict;
 use warnings;
-use base qw(Bric::Test::Base);
+use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Util::DBI qw(DB_DATE_FORMAT);
 use Bric::Config qw(:time);

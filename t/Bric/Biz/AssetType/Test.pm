@@ -13,33 +13,6 @@ sub _test_load : Test(2) {
 }
 
 ##############################################################################
-# Test the constructor.
-##############################################################################
-sub test_const : Test(9) {
-    my $self = shift;
-
-    my %elem = ( name => 'Test Element',
-                 description => 'Testing Element API',
-                 burner => Bric::Biz::AssetType->BURNER_MASON,
-                 type__id => 1,
-                 reference => 0,
-                 primary_oc_id => 1);
-
-    ok( my $elem = Bric::Biz::AssetType->new, "Create empty element" );
-    isa_ok($elem, 'Bric::Biz::AssetType');
-    isa_ok($elem, 'Bric');
-
-    ok( $elem = Bric::Biz::AssetType->new(\%elem), "Create a new element");
-    # Check a few of the attributes.
-    is( $elem->get_name, $elem{name}, "Check name" );
-    is( $elem->get_description, $elem{description}, "Check description" );
-    is( $elem->get_burner, $elem{burner}, "Check burner" );
-    is( $elem->get_type__id, $elem{type__id}, "Check type__id" );
-    is( $elem->get_primary_oc_id, $elem{primary_oc_id},
-        "Check primary_oc_id" );
-}
-
-##############################################################################
 # Test class methods.
 ##############################################################################
 # Test my_meths().
