@@ -71,6 +71,14 @@ Beautified the list paging interface. [David]
 
 Added new Media Type manager. [Scott]
 
+=item *
+
+Added list reverse feature. [Scott]
+
+=item *
+
+Added SFTP mover. [Scott]
+
 =over 4
 
 =back
