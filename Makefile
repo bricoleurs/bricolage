@@ -41,9 +41,8 @@ dep: cpan
 
 cpan:
 	${INSTALL_MISSING}
-	echo "Installed: ${MISSING_MODULES}" >$@
 
 clean:
 
 
-.PHONY : clean dep clean
+.PHONY : clean dep clean cpan
