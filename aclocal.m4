@@ -64,7 +64,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.5 2001-12-12 18:07:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.6 2001-12-20 16:58:24 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -76,7 +76,7 @@ AC_DEFUN([CHECK_CPAN_MODULE],[
     AC_MSG_RESULT(yes)
  else
     AC_MSG_RESULT(no)
-    if test "x${$1}" == "x" ;then
+    if test -z "${$1}" ; then
         NEW_LIST="$2" ;
     else
         NEW_LIST="${$1} $2";
@@ -94,7 +94,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.5 2001-12-12 18:07:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.6 2001-12-20 16:58:24 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[

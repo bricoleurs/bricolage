@@ -16,6 +16,7 @@ AC_PATH_PROG(POD2MAN, pod2man)
 AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(MKDIR, mkdir)
 AC_PATH_PROG(FIND, find)
+AC_PATH_PROG(CTAGS, ctags)
 
 # Checks for libraries.
 CHECK_SSL
