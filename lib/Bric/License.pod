@@ -145,8 +145,6 @@ Folks who have submitted patches include:
 
 =item Kevin White
 
-=item Kang-min Liu
-
 =back
 
 Friends who have spotted bugs include:
@@ -204,6 +202,8 @@ Bricolage's translation team:
 =item ClE<aacute>udio Valente (Portuguese)
 
 =item Marco Ghezzi (Italian)
+
+=item Kang-min Liu (Traditional Chinese)
 
 =back
 
