@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2001-09-27 15:58:04 $
+$Date: 2001-09-28 12:41:49 $
 
 =head1 DESCRIPTION
 
@@ -41,11 +41,38 @@ Add script for cleaning out /tmp that users can run from a cron job [Sam].
 
 =item *
 
-Create installation makefile [Sam or David?].
+Create installation makefile [Mark].
+
+=item *
+
+Limit rendering of Workflows and Desks in the leftNav by permissions. If a user
+doesn't have READ permission on a Desk or Workflow, don't display it [David].
+
+=item *
+
+When clicking "New" for an existing contributor, allow choice of Contributor
+Type, and B<then> role. Right now, if you want an existing to be a contributor
+of a different type, you have to create a new person, and this duplication is
+bad [David].
+
+=item *
+
+Create different "Notes" icon (different color) for when there actually B<are>
+notes in an asset. This way users won't have to go to the Notes screen just to
+find out if they have notes [David].
+
+Add interface for navigating Catgegories hierarchically when creating a new
+asset [David].
 
 =item *
 
 Write distribution documentation [David].
+
+=item *
+
+Filter categories and asset types in Asset editing screens by permission. Users
+who don't have READ permission on a category or asset type shoul't see it in the
+select lists [David].
 
 =item *
 
@@ -83,6 +110,11 @@ Context-sensitive, online help [Sam].
 
 =item *
 
+Add separate interface for editing templates (via FTP [bleh!] or SCP or
+somesuch) [Sam].
+
+=item *
+
 Make SSL optional (and off by default) [David or Sam].
 
 =item *
@@ -92,6 +124,16 @@ XML::Writer (or related) support in Templates [David].
 =item *
 
 HTML::Template support in Templates [Sam].
+
+=item *
+
+Add ordering to desks, such that their position in workflow can be ordered. This
+will likely need some sort of attribute on the desks's membership in the group
+for a workflow (since desks can be in multiple workflows).
+
+=item *
+
+Add new and/or custom form fields to the formBuilder [WHO].
 
 =item *
 
@@ -294,7 +336,11 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ToDo.pod,v $
-Revision 1.11  2001-09-27 15:58:04  wheeler
+Revision 1.12  2001-09-28 12:41:49  wheeler
+Added a bunch more to do items. About to go through them all and get them better
+organized.
+
+Revision 1.11  2001/09/27 15:58:04  wheeler
 Closed out To Dos for 1.0.1. Added a few more to 1.0.2. More to come.
 
 Revision 1.10  2001/09/27 15:41:46  wheeler
