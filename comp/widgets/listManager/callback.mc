@@ -44,12 +44,6 @@ if ($field eq "$widget|delete_cb") {
 
 } elsif ($field eq "$widget|sortBy_cb") {
     set_state_data('listManager', 'sortBy', $param->{$field});
-} elsif ( $field eq "$widget|start_page_cb" ) {
-    # ensure paging is turned on
-    set_state_data( $widget, 'multiple_pages', 1 );
-
-    # set the page of results to be displayed to the passed value
-    set_state_data( $widget, 'start_page', $param->{ $field } );
 }
 # Try to match a custom select action.
 elsif ($field =~ /$widget\|select-(.+)_cb/) {
@@ -68,9 +62,14 @@ elsif ($field =~ /$widget\|select-(.+)_cb/) {
 	    add_msg("Permission to $method $name denied.");
 	}
     }
-} elsif( $field eq "$widget|show_all_listings_cb" ) {
-    # turn off paging
-    set_state_data( $widget, 'multiple_pages', 0 );
 }
-
+# set offset from beginning record in @sort_objs at which array slice begins
+elsif ($field eq "$widget|set_offset_cb") {
+    set_state_data($widget,'pagination',1);
+    set_state_data( $widget, 'offset', $param->{$field});
+}
+# call back to display all results
+elsif ($field eq "$widget|show_all_records_cb") {
+    set_state_data($widget,'pagination',0);
+}
 </%init>

@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:58 $
+$Date: 2002-06-27 22:37:43 $
 
 =head1 SYNOPSIS
 
@@ -428,13 +428,47 @@ my $no_results = (scalar(@sort_objs) == 0) && (scalar(keys(%$list_arg)) > 0);
 #--------------------------------------#
 # Build the table data array
 
+# Search Paging vars - also see $insert_footer and build_table_data()
+# number of records returned from lookup
+my $count = scalar @sort_objs;
+
+# limit the number of results to display per page
+my $limit = Bric::Util::Pref->lookup_val( "Search Results / Page" ) || 0;
+
+# tells whether we're showing all results or not
+my $pagination = get_state_data($widget, 'pagination');
+if (not defined $pagination) {
+    $pagination = $limit ? 1 : 0;
+}
+
+my ($offset, $pages, $current_page) = (0,1,1);
+if ($limit) {
+    # starting at what index do we retrieve $limit records
+    $offset = get_state_data( $widget, 'offset' ) || 0;
+
+    # determine the total number of pages
+    $pages = int( ($count / $limit) + ($count % $limit ? 1 : 0));
+    
+    # which page don't we link
+    $current_page = $offset && $pages > 1 ?
+      int($offset / $limit + ($offset % $limit >= 0 ? 1 : 0)) : 1;
+}
+
+# save persistent values
+set_state_data('listManager','pagination', $pagination);
+set_state_data('listManager','offset', $offset);
+
 my ($rows, $cols, $data) = build_table_data(\@sort_objs,
 					    $meth,
 					    $fields,
 					    $select,
 					    $profile,
 					    $alter,
-					    \%featured_lookup);
+					    \%featured_lookup,
+                                            $count,
+                                            $limit,
+                                            $offset,
+                                            $pagination);
 
 # Call the element to show this list
 $m->comp("$style.mc", widget          => $widget,
@@ -451,6 +485,9 @@ $m->comp("$style.mc", widget          => $widget,
 	              number          => $number,
 	              empty_search    => $empty_search,
 	);
+
+# print out paging footer here
+$m->out(&$insert_footer($current_page,$limit,$pages,$r->uri,$pagination)) if $pages > 1;
 
 </%init>
 
@@ -500,8 +537,54 @@ my $get_my_meths = sub {
     return $meths;
 };
 
+
+my $insert_footer = sub {
+    my($current_page, $limit, $pages, $url, $pagination) = @_;
+    my $align = QA_MODE ? "left" : "center";
+
+    # returns a link to the page specified with the given label
+    my $page_link = sub {
+        my ($page_num, $label) = @_;  
+        my $offset = ($page_num - 1) * $limit;
+        return qq{ <a href="$url?listManager|set_offset_cb=$offset">$label</a> };
+    };
+
+    $m->out(qq{<table align="$align" border="0" cellpadding="0" cellspacing="0" width="435"><tr>});
+
+    unless ($pagination) {
+        $m->out("<td>" . $page_link->(0, 'Paginate Results') . "</td>");
+    } else {
+        $m->out('<td align="left">');
+
+        # previous link, if applicable
+        if( $current_page - 1 >= 1 ) {
+            $m->out($page_link->($current_page - 1, "Previous") . '&nbsp;' );
+        }
+
+        # links to other pages by number
+        foreach ( 1..$pages ) {
+            if ($_ == $current_page) {
+                $m->out(" $_ ");
+            } else {
+                $m->out($page_link->($_, $_));
+            }
+        }
+
+        # next link, if applicable
+        if( $current_page + 1 <= $pages ) {
+            $m->out('&nbsp;' . $page_link->($current_page + 1, "Next"));
+        }
+
+        $m->out(<<EOF);
+</td>
+<td align="right"><a href="$url?listManager|show_all_records_cb=1">Show All</a></td>
+EOF
+    }
+    $m->out(qq{</tr></table>});
+};
+
 sub build_table_data {
-    my ($sort_objs, $meth, $fields, $select, $profile, $alter, $featured) = @_;
+    my ($sort_objs, $meth, $fields, $select, $profile, $alter, $featured, $count, $limit, $offset, $pagination) = @_;
     my $data = [[map { $meth->{$_}->{'disp'} } @$fields]];
     my $cols = scalar @$fields;
     my $rows = 1 + scalar @$sort_objs;
@@ -510,8 +593,21 @@ sub build_table_data {
     # Start at row 1 since we already have $fields loaded in $data
     my $r = 1;
 
+    my $slice;
+    if ($pagination) {
+        # make sure $limit + $offset is within range
+        my $end = $limit + $offset > $count - 1 ? $count - 1 : 
+          ($limit + $offset - 1);
+
+        # extract array slice
+        @$slice = @$sort_objs[$offset..$end];
+    } else {
+        # if pagination is off show everything
+        $slice = $sort_objs;
+    }
     # Output the rows of data
-    foreach my $o (@$sort_objs) {
+    foreach my $o (@$slice) {
+
 	# Push the object id as the first value to be used in the listing comp.
 	push @{$data->[$r]}, $o->get_id;
 
@@ -541,7 +637,7 @@ sub build_table_data {
 	$prf_cols = scalar @prf > $prf_cols ? scalar @prf : $prf_cols;
 
 	push @{$data->[$r]}, @prf if @prf;
-	
+
 	## Add the select items if any
 	if (@sel) {
 	    $sel_cols = 1;

@@ -49,7 +49,22 @@
 
   # Adjust the tabel size.
   if (scalar @$fields < $cols) {
-      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;"><img src="/media/images/spacer.gif" width=1 height=19></th>');
+      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;">' );
+
+      # insert 'Check All' link if necessary. see &$insert_check_all below or
+      # check_all in lib.js for more info...
+      my $form_name = lc(get_disp_name($pkg));
+      if (&$insert_check_all($form_name, $form_names, $url)) {
+          $m->out(<<EOF);
+<script language="JavaScript">
+// checkbox field name suffixes to search
+var args = new Array('recall_cb','checkout_cb','deactivate_cb','delete_cb');
+</script>
+<a class="blackLink" href="javascript:check_all( '$form_name\_manager', args )">Check All</a>
+EOF
+      }
+
+      $m->out('</th>');
   }
 </%perl>
 
@@ -59,7 +74,7 @@
 % my $first;
 
 % # here's where the rows diplayed are limited - see lines 209-18
-% foreach my $r ($start..$end) {
+% foreach my $r (0..$#{$data}) {
 % my $o_id = shift @{$data->[$r]};
   <tr <% $featured->{$o_id} ? "bgcolor=\"$featured_color\"" : "" %>>
 <%perl>
@@ -94,45 +109,30 @@
 % }
 </table>
 
-%# Paging footer stuff
-% if( $rppg && ( $rows - 1 ) > $rppg ) {
-%     my $align = QA_MODE ? "left" : "center";
-<table align="<% $align %>" border="0" cellpadding="0" cellspacing="0" width="435">
-<tr>
-
-<%perl>
-my $sprint_string = qq( <a href="$url?$param) . qq(listManager|start_page_cb=%d">%s</a> );
-
-if( $multiple_pages ) {
-    my $pages = sprintf( "%d", ( ( $rows - 1 ) / $rppg ) ) + ( ( $rows - 1 ) % $rppg ? 1 : 0 )
-	if( defined( $rppg ) );
-    my $next = sprintf( $sprint_string, $current_page + 1, 'Next' )
-	if( $current_page + 1 <= $pages );
-    my $prev = sprintf( $sprint_string, $current_page - 1, 'Previous' )
-	if( $current_page - 1 >= 1 );
-
-    $m->out( '<td align="left">' . ($prev || '') . '&nbsp;' );
-
-    for my $i( 1..$pages ) {
-	$m->out( $i != $current_page ? sprintf( $sprint_string, $i, $i ) : $i );
-    }
-
-    $m->out( '&nbsp;' . ($next || '') . '</td>' );
-
-    $m->out( "<td align=\"right\"><a href=\"$url?$param" .
-             "listManager|show_all_listings_cb=1\">Show All</a></td>" );
-
-} else {
-    $m->out( qq{ <td align="left"> } . sprintf( $sprint_string, 1, 'Paginate Records' ) . "</td>" );
-}
-</%perl>
-
-</tr>
-</table>
-% }
-%# End Paging Footer Stuff
 
 %#--- END HTML ---#
+
+<%once>;
+# determines whether to insert the 'Check All' link based on
+# the package name of the items being listed, the list of
+# packages that should have the link inserted (@$form_names)
+# and the url of the current screen.
+# if we return 1 then the link is inserted and a click on
+# the last column heading of the list_manager results in a
+# call to function check_all in lib.js
+my $insert_check_all = sub {
+    my ($form_name, $forms, $url) = @_;
+    my $bool = 0;
+    $form_name =~ s| |_|g;
+    $form_name =~ s|utor||;
+    $form_name = $form_name eq 'group' ? 'grp' : $form_name;
+
+    my $names = join("|",@$forms);
+    $bool = 1 if $form_name =~ /^(?:$names)$/ && $url !~ /change_user/;
+
+    return $bool;
+};
+</%once>
 
 %#--- Arguments ---#
 
@@ -155,70 +155,10 @@ $pkg => undef
 %#--- Initialization ---#
 
 <%init>;
-# Setup paging vars
-my ($current_page, $end, $start);
-
-# indicates whether search paging is on and if so
-# how many rows to show per page
-my $rppg = Bric::Util::Pref->lookup_val( 'Search Results / Page' ) || 0;
-
-# set 'show all rows' bool
-my $multiple_pages = get_state_data( 'listManager', 'multiple_pages' ) || 0;
-
-# checking the query string to see if we're in the Elements admin
-# if we are the query string will have to be prepended to the paging
-# links; see lines 104-29
-my $param = grep( /elem_type/, $r->param ) ?
-    "elem_type=" . $r->param('elem_type') . "&" :
-    "";
-
-# block for setting $new_params...this block is designed to support
-# proper paging associated with the admin->publishing->elements.
-# if a different element type is selected from the drop down we
-# want to reset the current_page to 1. the past element type if any
-# is grabbed from the 'params' var.  if a new query string is supplied
-# to the mason component then $new_params is set to 1.
-my $new_params = 0;
-if ($param) {
-    my $old_param = get_state_data( $widget, 'params' ) || '';
-
-    if ( $old_param eq '' ||
-         ( $old_param && $param ne $old_param ) ) {
-        set_state_data( $widget, 'params', $param );
-        $new_params = 1;
-    }
-}
-
-# Enter here if the multiple page flag bool is set of if search paging is
-# turned on and we're looking at a new item from the Elements drop-down list
-if ( $multiple_pages != 0 ||
-     ( $rppg && $new_params ) ) {
-
-    $multiple_pages ||= 1;
-
-    # resets $current_page and the session value 'start_page' to 1 if:
-    # 'start_page' is undefined OR
-    # 'start_page' eq 'x' OR
-    # $new_params is non-zero (hence a new query string was supplied
-    # by /admin/profile/element)
-    if( not ( $current_page = get_state_data( $widget, 'start_page' ) )
-        || $current_page eq 'x'
-        || $new_params ) {
-	set_state_data( $widget, 'start_page', 1 );
-	$current_page = 1;
-    }
-
-    $end = ( $current_page * $rppg ) - 1;
-    $end = $#{ $data } - 1
-        if( ( ( $current_page * $rppg ) - 1 ) > ( $#{ $data } - 1 ) );
-    $start = 0;
-    $start = ( $current_page - 1 ) * $rppg
-        if( $current_page - 1 > 0 );
-} else {
-# show all rows of data...
-    $end = $#{ $data } - 1;
-    $start = 0;
-}
+# Forms on which to display the 'Check All' table header
+my @$form_names = qw(alert_type category contrib contrib_type destination
+element element_type grp media source story output_channel template
+user workflow);
 
 my $url       = $r->uri;
 my $object    = get_state_data($widget, 'object');

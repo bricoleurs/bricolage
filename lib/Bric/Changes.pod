@@ -42,6 +42,12 @@ timeouts on large workloads.  Currently only supports the "worflow
 publish" command but it will be expanded to other long-running
 commands in the future.  [Sam]
 
+=item *
+
+Improved performance of search paging.  ListManager now only builds
+the output rows that will actually be shown on the screen.  For large
+data sets this results in a huge gain in search speed.  [Adam and Sam]
+
 =over 4
 
 =back

@@ -11,14 +11,8 @@ use Bric::Config qw(:search);
 # Set the uri for use in expiring the search criteria.
 set_state_data($widget, 'crit_set_uri', $r->uri);
 
-# Setting the paging pref to 'Off' yields' a value of '0' in the if test
-if( Bric::Util::Pref->lookup_val( 'Search Results / Page' ) ) {
-    # turn on paging
-    set_state_data( 'listManager', 'multiple_pages', 1 );
-
-    # reset to page 1
-    set_state_data( 'listManager', 'start_page', 1 );
-}
+# reset search paging offset to start at the first record
+set_state_data( 'listManager', 'offset', 0 );
 
 if ($field eq "$widget|substr_cb") {
     my $val_fld = $widget.'|value';
