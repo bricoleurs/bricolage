@@ -30,6 +30,10 @@ which is more friendly to an SSI environment. [Geoff Richards]
 The PostgreSQL admin username and password arguments were reversed during
 C<make upgrade>. [Thorston Biel]
 
+=item *
+
+Fixed broken foreign key index on element table. [Dave Rolsky]
+
 =back
 
 =head1 VERSION 1.6.6 (2003-10-03)
