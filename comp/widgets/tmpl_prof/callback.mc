@@ -349,8 +349,9 @@ my $checkin = sub {
                                   asset => $fa });
             $cur_desk->save;
             $pub_desk->save;
-            $fa->save;
         }
+
+        $fa->save;
         # Log it!
         log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
         log_event('formatting_checkin', $fa);
