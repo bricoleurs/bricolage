@@ -298,7 +298,7 @@ sub create : Callback {
     my $ret;
 
     # Create a slug based on title if there is no slug.
-    ($param->{slug} = substr $param->{title}, 0, 32) =~ y/a-z0-9/_/cs
+    ($param->{slug} = substr($param->{title}, 0, 32)) =~ y/a-z0-9/_/cs
       unless defined $param->{slug} && $param->{slug} =~ /\S/;
 
     # Check the story type.
