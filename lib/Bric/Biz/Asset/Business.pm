@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:22 $
+$Date: 2002-06-25 18:58:15 $
 
 =head1 SYNOPSIS
 
@@ -157,10 +157,10 @@ my $meths;
 my @ord;
 
 my %uri_format_hash = ( 'categories' => '',
-			'day'       => '%d',
+			'day'        => '%d',
 			'month'      => '%m',
 			'slug'       => '',
-			'year'       => '%G' );
+			'year'       => '%Y' );
 #--------------------------------------#
 # Instance Fields 
 

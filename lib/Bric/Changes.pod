@@ -72,6 +72,11 @@ Fixed remote previews to redirect to a better URL. [Mark]
 Fixed a bug where trying to create a story through the SOAP interface
 containing a contributor with an empty middle name would fail.  [Sam]
 
+=item *
+
+Changed strttime instances of '%G' to '%Y' in URI preference, as this seems to
+be more portable. [David]
+
 =back
 
 =head1 VERSION 1.3.2
@@ -418,7 +423,7 @@ Goncalves for the spot. [David]
 
 =item *
 
-Changed all strttime instances of '%G' to '%Y', as this seems to be
+Changed all strftime instances of '%G' to '%Y', as this seems to be
 more portable. [David]
 
 =item *
