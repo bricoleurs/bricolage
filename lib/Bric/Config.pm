@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.58.4.2 $
+$Revision: 1.58.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.58.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-26 02:13:29 $
+$Date: 2003-03-29 06:00:36 $
 
 =head1 SYNOPSIS
 
@@ -322,7 +322,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         if (not -e $config->{APACHE_CONF} and $ENV{BRIC_TEMP_DIR}) {
             # We're testing and can't find the httpd.conf. Try to find one
             # in our root directory.
-            $config->{APACHE_CONF} = catfile $ENV{BRICOLAGE_ROOT},
+            $config->{APACHE_CONF} =
+              catfile $ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage',
               'httpd.conf';
             # And try just a local directory if all else fails. This would
             # most likely be used during `make test`.
