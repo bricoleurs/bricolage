@@ -44,6 +44,10 @@ prevents some upgraded Bricolage installations from breaking. [David]
 
 Added Net::FTPServer and Net::SFTP to the list of optional modules. [David]
 
+=item *
+
+Fixed some SQL errors uncovered by the release of PostgreSQL 7.3b1. [David]
+
 =back
 
 =head1 VERSION 1.4.0
