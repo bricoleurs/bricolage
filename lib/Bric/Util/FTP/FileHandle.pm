@@ -256,8 +256,6 @@ sub status {
     }
     return ( 'f', $mode, 1, "nobody", "ci", $size,  $date);
   }
-
-
 }
 
 =item move()
