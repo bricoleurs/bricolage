@@ -7,15 +7,15 @@ Bric::Util::Grp::Desk - A class to impliment desk groups
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 05:44:14 $
+$Date: 2003-03-11 16:23:52 $
 
 =head1 SYNOPSIS
 
@@ -64,6 +64,8 @@ use base qw( Bric::Util::Grp );
 #======================================#
 
 use constant PACKAGE => 'Bric::Biz::Workflow::Parts::Desk';
+use constant CLASS_ID => 40;
+use constant OBJECT_CLASS_ID => 45;
 
 #==============================================================================#
 # Fields                               #
@@ -203,7 +205,7 @@ Overwite this in your sub classes
 =cut
 
 sub get_class_id {
-    return 40;
+    return CLASS_ID;
 }
 
 #------------------------------------------------------------------------------#
@@ -244,7 +246,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_object_class_id { 45 }
+sub get_object_class_id { OBJECT_CLASS_ID }
 
 #==============================================================================#
 

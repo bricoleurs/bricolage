@@ -6,16 +6,16 @@ Bric::Util::Grp::Media - Interface to Bric::Biz::Asset::Business::Media Groups.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:37 $
+$Date: 2003-03-11 16:24:02 $
 
 =head1 SYNOPSIS
 
@@ -51,6 +51,7 @@ use base qw(Bric::Util::Grp);
 ################################################################################
 use constant DEBUG => 0;
 use constant CLASS_ID => 66;
+use constant OBJECT_CLASS_ID => 46;
 
 ################################################################################
 # Fields
@@ -157,7 +158,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_object_class_id { 46 }
+sub get_object_class_id { OBJECT_CLASS_ID }
 
 ################################################################################
 
@@ -174,7 +175,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_secret { 0 }
+sub get_secret { Bric::Util::Grp::NONSECRET_GRP }
 
 ################################################################################
 
@@ -210,7 +211,7 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 =cut
 
 sub member_class {
-    $mem_class ||= Bric::Util::Class->lookup({ id => 46 });
+    $mem_class ||= Bric::Util::Class->lookup({ id => OBJECT_CLASS_ID });
     return $mem_class;
 }
 

@@ -6,16 +6,16 @@ Bric::Util::Grp::Element - Interface to Element Groups
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:47 $
+$Date: 2003-03-11 16:23:53 $
 
 =head1 SYNOPSIS
 
@@ -32,6 +32,7 @@ See Bric::Util::Grp.
 ################################################################################
 # Standard Dependencies
 use strict;
+use Bric::Util::Grp;
 
 ################################################################################
 # Programmatic Dependences
@@ -132,7 +133,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_secret { 0 }
+sub get_secret { Bric::Util::Grp::NONSECRET_GRP }
 
 ################################################################################
 

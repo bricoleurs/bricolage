@@ -6,16 +6,16 @@ Bric::Util::Grp::Event - Interface to Bric::Util::Event Groups
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-27 05:09:05 $
+$Date: 2003-03-11 16:23:57 $
 
 =head1 SYNOPSIS
 
@@ -53,6 +53,8 @@ use base qw(Bric::Util::Grp);
 # Constants
 ################################################################################
 use constant DEBUG => 0;
+use constant CLASS_ID => 7;
+use constant OBJECT_CLASS_ID => 5;
 
 ################################################################################
 # Fields
@@ -137,7 +139,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_object_class_id { 5 }
+sub get_object_class_id { OBJECT_CLASS_ID }
 
 ################################################################################
 
@@ -153,7 +155,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_class_id { 7 }
+sub get_class_id { CLASS_ID }
 
 ################################################################################
 
@@ -169,7 +171,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_secret { 1 }
+sub get_secret { Bric::Util::Grp::SECRET_GRP }
 
 ################################################################################
 
@@ -186,7 +188,7 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 =cut
 
 sub my_class {
-    $class ||= Bric::Util::Class->lookup({ id => 7 });
+    $class ||= Bric::Util::Class->lookup({ id => CLASS_ID });
     return $class;
 }
 
@@ -205,7 +207,7 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 =cut
 
 sub member_class {
-    $mem_class ||= Bric::Util::Class->lookup({ id => 5 });
+    $mem_class ||= Bric::Util::Class->lookup({ id => OBJECT_CLASS_ID });
     return $mem_class;
 }
 

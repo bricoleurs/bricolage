@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-02 08:16:21 $
+$Date: 2003-03-11 16:23:46 $
 
 =head1 SYNOPSIS
 
@@ -144,7 +144,8 @@ use constant GRP_SUBSYS        => '_GRP_SUBSYS';
 use constant MEMBER_SUBSYS     => Bric::Util::Grp::Parts::Member::MEMBER_SUBSYS;
 use constant INSTANCE_GROUP_ID => 35;
 use constant GROUP_PACKAGE     => 'Bric::Util::Grp::Grp';
-
+use constant SECRET_GRP => 1;
+use constant NONSECRET_GRP => 0;
 
 #==============================================================================#
 # Fields                               #
@@ -510,7 +511,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_secret { 1 }
+sub get_secret { SECRET_GRP }
 
 ##############################################################################
 

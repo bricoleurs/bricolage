@@ -6,16 +6,16 @@ Bric::Util::Grp::OutputChannel - Interface to Bric::Biz::OutputChannel Groups
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-18 19:57:25 $
+$Date: 2003-03-11 16:24:04 $
 
 =head1 SYNOPSIS
 
@@ -51,6 +51,7 @@ use base qw(Bric::Util::Grp);
 ################################################################################
 use constant DEBUG => 0;
 use constant CLASS_ID => 59;
+use constant OBJECT_CLASS_ID => 21;
 
 ################################################################################
 # Fields
@@ -139,7 +140,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_object_class_id { 21 }
+sub get_object_class_id { OBJECT_CLASS_ID }
 
 ################################################################################
 
@@ -172,7 +173,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_secret { 0 }
+sub get_secret { Bric::Util::Grp::NONSECRET_GRP }
 
 ################################################################################
 
@@ -208,7 +209,7 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 =cut
 
 sub member_class {
-    $mem_class ||= Bric::Util::Class->lookup({ id => 21 });
+    $mem_class ||= Bric::Util::Class->lookup({ id => OBJECT_CLASS_ID });
     return $mem_class;
 }
 

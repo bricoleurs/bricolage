@@ -7,15 +7,15 @@ Bric::Util::Grp::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 03:41:24 $
+$Date: 2003-03-11 16:23:47 $
 
 =head1 SYNOPSIS
 
@@ -98,6 +98,7 @@ use constant AUDIO_PKG => 'Bric::Biz::Asset::Business::Media::Audio';
 use constant IMAGE_PKG => 'Bric::Biz::Asset::Business::Media::Image';
 use constant VIDEO_PKG => 'Bric::Biz::Asset::Business::Media::Video';
 use constant CLASS_ID => 43;
+use constant OBJECT_CLASS_ID => 69;
 
 #==============================================================================#
 # Fields                               #
@@ -253,7 +254,7 @@ NONE
 
 B<Notes:>
 
-Overwite this in your sub classes
+Overwrite this in your sub classes
 
 =cut
 
@@ -323,7 +324,7 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 =cut
 
 sub member_class {
-    $mem_class ||= Bric::Util::Class->lookup({ id => 69 });
+    $mem_class ||= Bric::Util::Class->lookup({ id => OBJECT_CLASS_ID });
     return $mem_class;
 }
 

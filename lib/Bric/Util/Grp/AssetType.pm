@@ -7,15 +7,15 @@ Bric::Util::Grp::AssetType - A group of AssetTypes.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-16 19:51:31 $
+$Date: 2003-03-11 16:23:48 $
 
 =head1 SYNOPSIS
 
@@ -58,7 +58,8 @@ use base qw( Bric::Util::Grp );
 
 use constant PACKAGE      => 'Bric::Biz::AssetType';
 use constant TABLE        => 'element';
-use constant GRP_CLASS_ID => 24;
+use constant CLASS_ID => 24;
+use constant OBJECT_CLASS_ID => 22;
 
 #==============================================================================#
 # Fields                               #
@@ -199,7 +200,7 @@ Overwite this in your sub classes
 =cut
 
 sub get_class_id {
-    return GRP_CLASS_ID;
+    return CLASS_ID;
 }
 
 #------------------------------------------------------------------------------#
@@ -240,7 +241,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_object_class_id { 22 }
+sub get_object_class_id { OBJECT_CLASS_ID }
 
 ################################################################################
 
@@ -257,7 +258,7 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 =cut
 
 sub my_class {
-    $class ||= Bric::Util::Class->lookup({ id => GRP_CLASS_ID });
+    $class ||= Bric::Util::Class->lookup({ id => CLASS_ID });
     return $class;
 }
 
@@ -276,7 +277,7 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 =cut
 
 sub member_class {
-    $mem_class ||= Bric::Util::Class->lookup({ id => 22 });
+    $mem_class ||= Bric::Util::Class->lookup({ id => OBJECT_CLASS_ID });
     return $mem_class;
 }
 

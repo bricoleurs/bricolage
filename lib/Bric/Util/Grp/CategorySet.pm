@@ -7,15 +7,15 @@ Bric::Util::Grp::CategorySet - A module to hold sets of categories.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-16 00:24:21 $
+$Date: 2003-03-11 16:23:50 $
 
 =head1 SYNOPSIS
 
@@ -59,6 +59,8 @@ use base qw( Bric::Util::Grp );
 #======================================#
 
 use constant PACKAGE => 'Bric::Biz::CategorySet';
+use constant CLASS_ID => 47;
+use constant OBJECT_CLASS_ID => 20;
 
 #==============================================================================#
 # Fields                               #
@@ -189,7 +191,7 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 =cut
 
 sub my_class {
-    $class ||= Bric::Util::Class->lookup({ id => 47 });
+    $class ||= Bric::Util::Class->lookup({ id => CLASS_ID });
     return $class;
 }
 
@@ -208,7 +210,7 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 =cut
 
 sub member_class {
-    $mem_class ||= Bric::Util::Class->lookup({ id => 20 });
+    $mem_class ||= Bric::Util::Class->lookup({ id => OBJECT_CLASS_ID });
     return $mem_class;
 }
 
@@ -241,7 +243,7 @@ Overwite this in your sub classes
 =cut
 
 sub get_class_id {
-    return 47;
+    return CLASS_ID;
 }
 
 ################################################################################
@@ -264,7 +266,7 @@ NONE
 
 =cut
 
-sub get_object_class_id { 20 }
+sub get_object_class_id { OBJECT_CLASS_ID }
 
 #------------------------------------------------------------------------------#
 
@@ -303,7 +305,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_secret { 0 }
+sub get_secret { Bric::Util::Grp::NONSECRET_GRP }
 
 #==============================================================================#
 

@@ -1,8 +1,9 @@
 package Bric::Util::Grp::AssetVersion;
 use strict;
 use base qw(Bric::Util::Grp);
-sub get_secret { 1 }
-sub get_class_id { 25 }
+use constant CLASS_ID => 25;
+sub get_secret { Bric::Util::Grp::SECRET_GRP }
+sub get_class_id { CLASS_ID }
 
 1;
 __END__

@@ -6,16 +6,16 @@ Bric::Util::Grp::ElementType - Interface to Bric::Biz::ATType Groups
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:47 $
+$Date: 2003-03-11 16:23:55 $
 
 =head1 SYNOPSIS
 
@@ -51,6 +51,7 @@ use base qw(Bric::Util::Grp);
 ################################################################################
 use constant DEBUG => 0;
 use constant CLASS_ID => 64;
+use constant OBJECT_CLASS_ID => 37;
 
 ################################################################################
 # Fields
@@ -135,7 +136,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_object_class_id { 37 }
+sub get_object_class_id { OBJECT_CLASS_ID }
 
 ################################################################################
 
@@ -204,7 +205,7 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 =cut
 
 sub member_class {
-    $mem_class ||= Bric::Util::Class->lookup({ id => 37 });
+    $mem_class ||= Bric::Util::Class->lookup({ id => OBJECT_CLASS_ID });
     return $mem_class;
 }
 
