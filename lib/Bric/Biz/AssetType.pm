@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-21 00:41:30 $
+$Date: 2002-10-25 01:32:01 $
 
 =head1 SYNOPSIS
 
@@ -1409,10 +1409,13 @@ sub get_meta {
 
 #------------------------------------------------------------------------------#
 
-=item ($oc_list || @oc_list) = $element->get_output_channels();
+=item ($oc_list || @oc_list) = $element->get_output_channels;
 
-This returns a list of output channels that have been associated
-with this asset type.
+=item ($oc_list || @oc_list) = $element->get_output_channels(@oc_ids);
+
+This returns a list of output channels that have been associated with this
+asset type. If C<@oc_ids> is passed, then only the output channels with those
+IDs are returned, if they're associated with this asset type.
 
 B<Throws:> NONE.
 
@@ -1424,7 +1427,7 @@ assocation between each output channel and this element object.
 
 =cut
 
-sub get_output_channels { $get_oc_coll->(shift)->get_objs }
+sub get_output_channels { $get_oc_coll->(shift)->get_objs(@_) }
 
 #------------------------------------------------------------------------------#
 
