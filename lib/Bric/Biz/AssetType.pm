@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+our $VERSION = (qw$Revision: 1.52 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:31 $
+$Date: 2003-10-01 09:20:36 $
 
 =head1 SYNOPSIS
 
@@ -149,6 +149,7 @@ use constant ORD => qw(name key_name description type_name  burner active);
 # possible values for burner
 use constant BURNER_MASON    => 1;
 use constant BURNER_TEMPLATE => 2;
+use constant BURNER_TT       => 3;
 
 #==============================================================================#
 # Fields                               #
@@ -157,7 +158,7 @@ use constant BURNER_TEMPLATE => 2;
 #--------------------------------------#
 # Public Class Fields
 our $METHS;
-our @EXPORT_OK = qw(BURNER_MASON BURNER_TEMPLATE);
+our @EXPORT_OK = qw(BURNER_MASON BURNER_TEMPLATE BURNER_TT);
 our %EXPORT_TAGS = ( all => \@EXPORT_OK);
 
 #--------------------------------------#
@@ -691,7 +692,9 @@ sub my_meths {
 			      type     => 'short',
 			      props    => { type => 'select',
 					    vals => [[BURNER_MASON, 'Mason'],
-						     [BURNER_TEMPLATE, 'HTML::Template']],
+						     [BURNER_TEMPLATE, 'HTML::Template'],
+						     [BURNER_TT,'Template::Toolkit'],
+						     ],
 					  }
 			     },
 	      type_name      => {
