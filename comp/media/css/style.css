@@ -25,31 +25,39 @@ body {
 #help             { background: white; }
 
 #bricLogo { padding: 8px 8px 2px 8px; background: white; }
-#mainContainer { position: relative; margin: 0 8px 8px 8px; }
-#navContainer { position: absolute; top: 0; left: 0; width: 150px; }
-* html #navContainer { 
-    /* IE5/Win hack... messy fix for bug 801. */
-    top: -35px; t\op: 0; 
-    left: -8px; lef\t: 0; 
-}
+#mainContainer { position: relative; margin: 0 18px 8px 8px; }
+#sideNav { position: absolute; top: 0; left: 0; width: 150px; z-index: 200; border: 0; }
 #contentContainer { padding-left: 158px; }
 
 .adminBox,
 .workflowBox,
 .loginBox,
-.searchBox                     { margin-bottom: 10px; }
+.searchBox                     { position: relative; margin-bottom: 10px; }
+
+/***************************************************
+ * PAGE HEADER
+ ***************************************************/
+#headerContainer               { position: relative; width: 100%; }
 #headerContainer .adminBox,
 #headerContainer .workflowBox,
-#headerContainer .loginBox     { width: 100%; margin-bottom: 0; }
+#headerContainer .loginBox     { margin-bottom: 0; margin-right: 240px; }
+#headerContainer .buttons      { position: absolute; top: 0; right: 0; width: 240px; text-align: right; }
+#headerContainer .buttons a    { margin: 0 2px; }
+#breadcrumbs                   { position: relative; width: 100%; background-color: #999966; margin-bottom: 1em; }
+#breadcrumbs p                 { margin: 0; padding: 3px 6px; }
+#breadcrumbs .siteContext      { position: absolute; top: 0; right: 0; }
 
-.header           { position: relative; }
-.header .caption  { background-color: #CCCC99; }
-.fullHeader       { position: relative; color: white; font-weight: bold; }
-.fullHeader a     { color: white; }
-.adminBox .fullHeader .caption    { background-color: #CC6633; }
-.workflowBox .fullHeader .caption { background-color: #006666; }
-.loginBox .fullHeader .caption    { background-color: #006666; }
-.searchBox .fullHeader .caption   { background-color: #666633; }
+
+.header                    { position: relative; width: 100%; }
+.header .caption           { background-color: #CCCC99; }
+.fullHeader                { position: relative; color: white; font-weight: bold; width: 100%; }
+.fullHeader a              { color: white; }
+.fullHeader .number,
+.fullHeader .rightText     { width: 8px; }
+.adminBox .fullHeader      { background-color: #CC6633; }
+.workflowBox .fullHeader   { background-color: #006666; }
+.loginBox .fullHeader      { background-color: #006666; }
+.searchBox .fullHeader     { background-color: #666633; }
 
 .number { 
     position: absolute;
@@ -65,8 +73,6 @@ body {
     text-align: center;
     font-weight: bold;
 }
-.fullHeader .number,
-.fullHeader .rightText       { width: 7px; background-color: #006666; }
 .workflowBox .header .number { background-color: #669999; }
 .adminBox .header .number    { background-color: #D7713E; }
 .caption                     { 
@@ -80,13 +86,11 @@ body {
 .rightText { 
     position: absolute;
     top: 0;
-    right: 0;
+    right: -1px; /* Fix strange 1px showing in IE */
     width: 30%;
-    background-image: url("/media/images/curve_right.gif");
-    background-repeat: no-repeat;
-    background-position: top right; 
-    padding-top: 3px;
-    padding-right: 10px;
+    height: 2em;
+    background: transparent url("/media/images/curve_right.gif") top right no-repeat;
+    padding: 3px 10px 0 0;
     text-align: right;
 }
 .border              { border-style: solid; border-width: 0 1px 1px 1px; }
@@ -129,7 +133,7 @@ body {
 .burgandyLabel { font-size:10px; font-weight:bold; color:#993300}
 .whiteLabel  { font-size:10px; font-weight:bold; color:white}
 .description { font-size:10px; color:blue}
-.errorMsg    { font-size:12px; color:red; font-weight:bold}
+.errorMsg    { color: red; font-weight: bold}
 .statusMsg   { display: none; } /* Status messages are sent to the browser before the */
                                 /* stylesheet.  If this style ever gets applied, that */
                                 /* means there was an error and these messages should */

@@ -47,4 +47,4 @@ my $widget = 'help';
   $uri .= '.html' unless $uri =~ /\.html$/;
 
 #  print STDERR "HELP : help uri : $uri\n" if $DEBUG;
-</%perl><a href="#" onClick="window.open('<% $uri %>', 'Help_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505');return false;"><img src="/media/images/<% $lang_key %>/help.gif" border="0" alt="Help"></a>
+</%perl><a href="#" title="Help" onclick="window.open('<% $uri %>', 'Help_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505');return false;"><img src="/media/images/<% $lang_key %>/help.gif" alt="Help" /></a>

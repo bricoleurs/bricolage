@@ -52,39 +52,9 @@ $context = join ' | ', @context;
 my ($section, $mode, $type) = parse_uri($r->uri);
 $section ||= 'workflow';
 
-my ($layer, $properties);
-my $agent       = detect_agent();
-my $tab         = $section eq "admin" ? "adminTab" : "workflowTab";
+my ($properties);
 my @title       = split (/ /, $title);
 my $uri         = $r->uri;
-my $curve_left  = $section eq "admin"
-  ? "/media/images/CC6633_curve_left.gif"
-  : "/media/images/006666_curve_left.gif";
-my $curve_right = $section eq "admin"
-  ? "/media/images/CC6633_curve_right.gif"
-  : "/media/images/006666_curve_right.gif";
-
-# calculate number of links displayed by side nav and pad out this table cell
-# to make the page long enough (in the browser's mind) to render a scroll bar
-# if needed
-my $nav = get_state_data("nav");
-
-# define variables to output sideNav layer or iframe
-if ($agent->nav4) {
-    $layer = "layer";
-    $properties = qq { width="150" height="200%" border="0" scrolling="auto" frameborder="no" z-index="100" left="8" top="35"};
-} else {
-    $layer = "iframe";
-    $properties = $agent->mac
-      ? qq { width="150" border="0" scrolling="no" }
-        . qq{frameborder="no" marginwidth="0" style="z-index:200;" }
-      : qq{ width="150" border="0" scrolling="no" }
-	. qq{frameborder="no" marginwidth="1" style="z-index:200; visibility:visible; position: absolute; left: 8; top: 35;"};
-}
-
-my $margins = DISABLE_NAV_LAYER && $agent->gecko
-  ? 'marginwidth="5" marginheight="5"'
-  : '';
 
 if(ref($title) eq 'ARRAY') {
     $title = $lang->maketext(@$title);
@@ -93,7 +63,6 @@ if(ref($title) eq 'ARRAY') {
     $title = $lang->maketext( join ' ', map { ucfirst($_) } split / /, $title);
 }
 
-# XXX Doctype is a lie...for now.
 </%init>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -111,14 +80,7 @@ if(ref($title) eq 'ARRAY') {
 var checkboxValues = new Array();
 
 function init() {
-
     <% $jsInit %>;
-% # the following is a hack for pc/ns because it fails to obey
-% # the style rule when it is first drawn.
-% if ($agent->nav4 && $jsInit =~ /showForm/) {
-    <% $jsInit %>;
-% }
-
 }
 
 % if ($no_toolbar) {
@@ -132,7 +94,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 </script>
 </head>
 
-<body bgcolor="#ffffff" <% $margins %> onLoad="init()" marginwidth="8" marginheight="8" topmargin="8" leftmargin="8">
+<body onload="init()">
 <noscript>
 <h1><% $lang->maketext("Warning! Bricolage is designed to run with JavaScript enabled.") %></h1>
 <% $lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.') %>
@@ -141,111 +103,71 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 <!-- begin top table -->
 <div id="bricLogo">
 % if ($useSideNav) {
-        <a href="#" onClick="window.open('/help/<% $lang_key %>/about.html', 'About_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'); return false;"><img src="/media/images/<% $lang_key %>/bricolage.gif" width="150" height="25" border="0" /></a>
+        <a href="#" title="About Bricolage"
+           onclick="window.open('/help/<% $lang_key %>/about.html', 
+                                'About_<% SERVER_WINDOW_NAME %>', 
+                                'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'
+                                ); return false;">
+            <img src="/media/images/<% $lang_key %>/bricolage.gif" />
+        </a>
 % } else {
-        <img src="/media/images/<% $lang_key %>/bricolage.gif" width="150" height="25" border="0" />
+        <img src="/media/images/<% $lang_key %>/bricolage.gif" alt="Bricolage" />
 % }
 </div>
 <!-- end top tab table -->
 
-% # this is the Netscape doNav function.  IE looks for it in the iframe file (ie: sideNav.mc)
-<script type="text/javascript">
-function doNav(callback) {
-% if (DISABLE_NAV_LAYER || ((! $agent->gecko) && $agent->user_agent =~ /(linux|freebsd|sunos)/)) {
-    window.location.href = callback;
-    return false;
-% } else {
-    var rndNum = Math.round(Math.random() * 10000);
-    document.layers["sideNav"].src = callback + "&uri=<% $r->uri %>&rnd=" + rndNum
-    return false;
-% }
-}
-
-function doLink(link) {
-    window.location.href = link
-    return false
-}
-</script>
-
 <div id="mainContainer">
-<div id="navContainer">
 <%perl>;
 # handle the various states of the side nav
-# login screen: no side nav
-# Netscape (non Unix platforms): include as src of a layer
-# IE & Mozilla: include as an iframe
-# Netscape (Unix platforms): include as plain html
-
 if ($useSideNav) {
 
-    if (DISABLE_NAV_LAYER || ((! $agent->gecko) && $agent->user_agent =~ /(linux|freebsd|sunos)/)) {
-	$m->comp("/widgets/wrappers/sharky/sideNav.mc", debug => $debug);
+    if (DISABLE_NAV_LAYER) {
+        $m->comp("/widgets/wrappers/sharky/sideNav.mc", debug => $debug);
     } else {
-	my $uri = $r->uri;
-	$uri .= "&debug=$debug" if $debug;
-	# create a unique uri to defeat browser caching attempts.
-	$uri .= "&rnd=" . time;
-	chomp $uri;
-	$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } ) if $agent->nav4;
-	$m->out( qq {<$layer name="sideNav" id="sideNav" src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" $properties>} );
-	$m->out("</$layer>\n");
+        my $uri = $r->uri;
+        $uri .= "&amp;debug=$debug" if $debug;
+        # create a unique uri to defeat browser caching attempts.
+        $uri .= "&amp;rnd=" . time;
+        chomp $uri;
+        $m->out( qq{<iframe name="sideNav" id="sideNav" } .
+                 qq{        src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" } .
+                 qq{        scrolling="no" frameborder="no"></iframe>} );
     }
 }
 
 </%perl>
-</div>
 
 <!-- begin content area -->
 <div id="contentContainer">
 % # top tab, help, logout buttons
     <div id="headerContainer">
-  <table width="580" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td width="330">
-    <div class="<% $section %>Box">
-        <div class="fullHeader">
-            <div class="number">&nbsp;</div>
-            <div class="caption"><% $title %></div>
-            <div class="rightText">&nbsp;</div>
+        <div class="<% $section %>Box">
+            <div class="fullHeader">
+                <div class="number">&nbsp;</div>
+                <div class="caption"><% $title %></div>
+                <div class="rightText">&nbsp;</div>
+            </div>
         </div>
-    </div>
-    </td>
 % if ($useSideNav) {
-    <td width="10">&nbsp;</td>
-    <td valign="top"><& "/widgets/help/help.mc", context => $context, page => $title &></td>
-    <td valign="top">
-        <a href="/workflow/profile/alerts"><img src="/media/images/<% $lang_key %>/my_alerts_orange.gif" border="0" hspace="3" /></a>
-    </td>
-    <td valign="top">
-    <a href="/logout"><img src="/media/images/<% $lang_key %>/logout.gif" border="0"></a>
-    </td>
-% } else {
-    <td width="228">&nbsp;</td>
+        <div class="buttons">
+            <& "/widgets/help/help.mc", context => $context, page => $title &>
+            <a href="/workflow/profile/alerts" title="My Alerts"><img src="/media/images/<% $lang_key %>/my_alerts_orange.gif" alt="My Alerts" /></a>
+            <a href="/logout" title="Logout"><img src="/media/images/<% $lang_key %>/logout.gif" alt="Logout" /></a>
+        </div>
 % }
-  </tr>
-  </table>
     </div>
 
 % # top message table
-  <table width=580 cellpadding=0 cellspacing=0 border=0>
-  <tr class="medHeader"><td colspan="2"><img src="/media/images/spacer.gif" height="2" /></td></tr>
-  <tr class="medHeader" height="16">
-    <td>&nbsp;&nbsp;<% $context %></td>
+    <div id="breadcrumbs">
+    <p><% $context %></p>
 % if ($useSideNav) {
-    <td align="right"><& /widgets/site_context/site_context.mc &>&nbsp;</td>
+    <div class="siteContext"><& /widgets/site_context/site_context.mc &></div>
 % }
-  </tr>
-  <tr class="medHeader"><td colspan="2"><img src="/media/images/spacer.gif" height="2" /></td></tr>
-  </table>
+    </div>
 <%perl>;
 # handle error messaging
-my $firstMsg = 1;
 while (my $txt = next_msg) {
      # insert whitespace on top to balance the line break the form tag inserts after these messages.
-    if ($firstMsg) {
-	$m->out("<p>");
-	$firstMsg = 0;
-    }
     if ($txt =~ /(.*)<span class="l10n">(.*)<\/span>(.*)/) {
         $txt = escape_html($1) . '<span class="l10n">'
           . escape_html($2) . '</span>' . escape_html($3);
@@ -253,12 +175,7 @@ while (my $txt = next_msg) {
         $txt = escape_html($txt);
     }
 </%perl>
-<table width="580" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td height="20" valign="center">
-      <span class="errorMsg"><% $txt %></span>
-    </td>
-  </tr>
-  </table>
+<p class="errorBox">
+    <span class="errorMsg"><% $txt %></span>
+</p>
 % }
-<br />
