@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.4 $
+$Revision: 1.13.2.5 $
 
 =head1 DATE
 
-$Date: 2001-10-02 07:37:00 $
+$Date: 2001-10-02 07:39:04 $
 
 =head1 DESCRIPTION
 
@@ -323,6 +323,11 @@ document.
 
 Add the ability to use HTML::Template Templates without breaking the use of
 Mason [Sam].
+
+=item *
+
+Create a different way of distinguishing which desks are shared and which are
+not, rather than relying solely on the desk name.
 
 =item *
 
