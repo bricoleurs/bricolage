@@ -232,6 +232,17 @@ converted to Unix so that they are displayed properly in most mail clients.
 Documented required C<user__id> parameter to the C<new()> method in the story
 and media classes. Reported by Rod Taylor. [David]
 
+=item *
+
+Image buttons now correctly execute the C<onsubmit()> method for forms that
+define an C<onsubmit> attribute. This means that, among other things, changes
+to a group profile will persist when you click the "Permissions" button.
+[David]
+
+=item *
+
+Media type groups now properly display their members.
+
 =back
 
 =cut

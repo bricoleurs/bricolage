@@ -88,9 +88,8 @@ $reset_cache = sub {
     my ($grp, $class, $self) = @_;
     my $cache = $self->cache;
     if ($class eq 'Bric::Util::Grp::User') {
-        # Note that a user has been updated to force all users logged
-        # into the system to reload their user objects from the
-        # database.
+        # Note that a user group has been updated to force all users logged
+        # into the system to reload their user objects from the database.
         $cache->set_lmu_time;
         # Also, clear out the site and workflow caches, since they
         # may have been affected by permission changes. The workflows
@@ -185,7 +184,7 @@ $save_sub = sub {
 
             # Add any new members.
             if (exists $param->{members}) {
-                  my $ids = ref $param->{members} ? $param->{members}
+                my $ids = ref $param->{members} ? $param->{members}
                   : [ $param->{members} ];
                 # Assemble the new member information.
                 my @add = map { { package => $pkg, id => $_ } } @$ids;
