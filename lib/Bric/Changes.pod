@@ -195,6 +195,13 @@ Changes to a stroy's slug, cover date, or primary category will now be
 displayed before the story is saved. Suggested by a coworker of Andy Baio.
 [David]
 
+=item *
+
+The Find Stories, Find Media, and Find Templates interfaces now disallow
+searching for and returning all of the stories and media in the database. This
+will help prevent thousands or tens of thousands of assets from being
+displayed in the UI and sucking up all the resources on the server. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -54,11 +54,8 @@ sub story : Callback {
     _build_date_fields($self->class_key, $self->params, \@field, \@crit,
 		       [qw(cover_date publish_date expire_date)]);
 
-    # Default to displaying everything if the leave all fields blank
-    unless (@field) {
-	push @field, 'name';
-	push @crit,  '%';
-    }
+    # Display no results for an empty search.
+    return unless @field;
 
     set_state_data($self->class_key, 'criterion', \@crit);
     set_state_data($self->class_key, 'field', \@field);
@@ -75,11 +72,8 @@ sub media : Callback {
     _build_date_fields($self->class_key, $self->params, \@field, \@crit,
 		       [qw(cover_date publish_date expire_date)]);
 
-    # Default to displaying everything if the leave all fields blank
-    unless (@field) {
-	push @field, 'name';
-	push @crit,  '%';
-    }
+    # Display no results for an empty search.
+    return unless @field;
 
     set_state_data($self->class_key, 'criterion', \@crit);
     set_state_data($self->class_key, 'field', \@field);
@@ -93,14 +87,11 @@ sub formatting : Callback {
 
     _build_fields($self, \@field, \@crit, [qw(simple name file_name)]);
 
-    _build_date_fields($self->class_key, $self->params, \@field, \@crit, 
+    _build_date_fields($self->class_key, $self->params, \@field, \@crit,
 		       [qw(cover_date publish_date expire_date)]);
 
-    # Default to displaying everything if the leave all fields blank
-    unless (@field) {
-	push @field, 'name';
-	push @crit,  '%';
-    }
+    # Display no results for an empty search.
+    return unless @field;
 
     set_state_data($self->class_key, 'criterion', \@crit);
     set_state_data($self->class_key, 'field', \@field);
