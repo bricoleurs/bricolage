@@ -80,11 +80,17 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 % if (@ocs == 1) {
   <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
                                     type  => 'story',
-                                    title => $story->get_primary_uri,
+                                    title => $short_story_uri,
                                     doc   => $story,
                                     style => 'blackUnderlinedLink') %></td>
 % } else {
-  <td width="470">&nbsp;<% $story->get_primary_uri %></td>
+  <td width="470">&nbsp;
+% if (!($short_story_uri eq $story_uri)) {
+        <span class="shortCategory" title="<% $story->get_primary_uri %>"><% $short_story_uri %></span>
+% } else {
+        <% $story_uri %>
+% }
+  </td>
   </tr>
   <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
@@ -448,6 +454,13 @@ my $asset_type = Bric::Biz::AssetType->lookup({id => $at});
 my @aocs = $asset_type->get_output_channels;
 my @ocs = $story->get_output_channels;
 my $primocid = $story->get_primary_oc_id;
+
+my $story_uri = $story->get_primary_uri;
+# Truncate long category URLs so they fit in the desk
+my $story_uri_len = length($story_uri);
+# Each slash should count as 1/2 a char
+$story_uri_len -= ($story_uri =~ tr/\///) * .5;
+my $short_story_uri = ($story_uri_len > 80) ? substr($story_uri, 0, 30) . "..." . substr($story_uri, -40) : $story_uri;
 
 my $oc_select = '<select name="ocSelect">';
 foreach my $oc (@ocs) {

@@ -9,7 +9,13 @@
   <div class="body">
     <dl>
       <dt><% $lang->maketext('Category') %></dt>
-      <dd<% $classes->{category_name} || $classes->{location} || '' %>><% $cat %></dd>
+      <dd<% $classes->{category_name} || $classes->{location} || '' %>>
+% if ($short_cat) {
+        <span class="shortCategory" title="<% $cat %>"><% $short_cat %></span>
+% } else {
+        <% $cat %>
+% }
+      </dd>
       <dt><% $lang->maketext('Site') %></dt>
       <dd<% $classes->{site_id} || '' %>><% $site %></dd>
       <dt><% $lang->maketext(($class eq 'formatting' ? 'Output Channel' : $disp  . ' Type')) %></dt>
@@ -129,6 +135,13 @@ if ($class eq 'formatting') {
     $header_class = 'aliasHeader' if $obj->get_alias_id;
 }
 $cat ||= '&nbsp;';
+# Truncate long category URLs so they fit in the desk
+my $cat_len = length($cat);
+# Each slash should count as 1/2 a char
+$cat_len -= ($cat =~ tr/\///) * .5;
+# Replace all but the first 15 and last 20 characters with an ellipsis
+my $short_cat = substr($cat, 0, 15) . "..." .  substr($cat, -25) if $cat_len > 40;
+
 my $classes = { $highlight => ' class="sorted"' };
 my $rowspan = 5;
 
