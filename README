@@ -1,8 +1,8 @@
 
                        Bricolage Content Management System
 
-                                 Version 1.2.1
-                                25 February 2002
+                                 Version 1.2.2
+                                 15 March 2002
 
 Bricolage is a full-featured, enterprise-class content management system. It
 offers a browser-based interface for ease-of use, a full-fledged templating
@@ -10,11 +10,12 @@ system with complete programming language support for flexibility, and many
 other features. It operates in an Apache/mod_perl environment, and uses the
 PostgreSQL RDBMS for its repository.
 
+This release is a bug-fix release. No new features have been added, but plenty
+of bugs have been fixed. See Changes for more information.
+
 For installation instructions, see INSTALL.
 
 For copying information, see License.
-
-For the latest news, see Changes.
 
 Enjoy!
 
