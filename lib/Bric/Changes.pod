@@ -224,6 +224,11 @@ class' C<new()> constructor works again. Reported by Clive Jones. [David]
 
 Localized caption in side navigation layer. [JoE<atilde>o Pedro]
 
+=item *
+
+Documents are no longer distributed to deleted (deactivated) destinations.
+Reported by Mark. [David]
+
 =back
 
 =head1 VERSION 1.6.1
