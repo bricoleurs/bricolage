@@ -186,9 +186,10 @@ if ($class eq 'formatting') {
     $name = $obj->get_name;
     $date = $obj->get_cover_date;
     $date_label = 'Cover Date';
+    my $co = $vlabel eq 'Edit';
     my $c = $highlight eq 'name' ? 'whiteMedUnderlinedLink'
       : 'blackMedUnderlinedLink';
-    $name = qq{<a href="/workflow/profile/preview/$class/$id" class="$c"}
+    $name = qq{<a href="/workflow/profile/preview/$class/$id?checkout=$co" class="$c"}
       . ' ' . qq{target="preview_} . SERVER_WINDOW_NAME . qq{">$name</a>};
     if ($class eq 'media') {
 	$cat = $cats->{$obj->get_category__id} ||= $obj->get_category_object;
@@ -213,11 +214,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.13.2.1 $
 
 =head1 DATE
 
-$Date: 2002-06-29 01:55:44 $
+$Date: 2002-10-16 04:42:27 $
 
 =head1 DESCRIPTION
 
