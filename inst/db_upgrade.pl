@@ -6,16 +6,19 @@ db_upgrade.pl - installation script to run db upgrade scripts
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2003-12-24 21:12:17 $
+$Date: 2003-12-25 18:11:52 $
 
 =head1 DESCRIPTION
 
 This script is called by "make upgrade" to run the database upgrade
 scripts.  Uses upgrade.db to determine which ones to run.
+
+When multiple scripts are run, they are run in sorted ASCII-betical
+order (via perl's C<sort()> function).
 
 =head1 AUTHOR
 
@@ -56,7 +59,7 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
     my @scripts = grep { -f $_ } map { catfile($dir, $_) } sort readdir(DIR);
     closedir DIR;
 
-    foreach my $script (sort @scripts) {
+    foreach my $script (@scripts) {
 	print "Running 'perl $script'.\n";
 	my $ret = system("perl", "-I$CONFIG->{MODULE_DIR}", $script, '-u',
                          $PG->{root_user}, '-p', $PG->{root_pass});
