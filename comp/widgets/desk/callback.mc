@@ -234,8 +234,9 @@ elsif ($field eq "$widget|deploy_cb") {
         $name = '&quot;' . $fa->get_name . '&quot;' if $c == 1;
     }
     # Let 'em know we've done it!
-    add_msg($name ? "$disp_name deployed."
-            : ($num{$c} || $c) . " $pl_name deployed.");
+    my $msg = '[_1] deployed.';
+    my $arg = $name ? $disp_name : ($num{$c} || $c) . " $pl_name";
+    add_msg($lang->maketext($msg, $arg));
 }
 
 elsif ($field eq "$widget|clone_cb") {
