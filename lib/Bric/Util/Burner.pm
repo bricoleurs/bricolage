@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-24 18:02:45 $
+$Date: 2002-07-11 20:53:03 $
 
 =head1 SYNOPSIS
 
@@ -422,8 +422,12 @@ sub preview {
 				      user_id => $user_id,
 				      name => 'Preview' . " &quot;" .
 				      $ba->get_name . "&quot;" });
-    # Get a list of the relevant categories.
-    my @cats = $key eq 'story' ? $ba->get_categories : ();
+
+    # Get a list of the relevant categories, put primary category first
+    my @cats = ($key eq 'story') ?
+      ($ba->get_primary_category, $ba->get_secondary_categories) :
+      ();
+
     # Grab the asset type.
     my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
     my $bats = {};
