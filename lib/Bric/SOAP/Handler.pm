@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-09 22:16:37 $
+$Date: 2002-11-08 23:12:53 $
 
 =head1 SYNOPSIS
 
@@ -41,7 +41,7 @@ Bric::SOAP modules.
 Array of SOAP interface module names.  The handler will only dispatch
 calls to these classes.
 
-=back 4
+=back
 
 =head1 INTERFACE
 
@@ -60,7 +60,7 @@ Side Effects: NONE
 
 Notes: NONE
 
-=back 4
+=back
 
 =head1 AUTHOR
 
@@ -85,14 +85,14 @@ use Bric::App::Session;
 use Apache::Constants qw(OK);
 
 use constant SOAP_CLASSES => [qw(
-				 Bric::SOAP::Auth
-				 Bric::SOAP::Story
-				 Bric::SOAP::Media
-				 Bric::SOAP::Template
-				 Bric::SOAP::Element
-				 Bric::SOAP::Category
-				 Bric::SOAP::Workflow
-				)];
+                                 Bric::SOAP::Auth
+                                 Bric::SOAP::Story
+                                 Bric::SOAP::Media
+                                 Bric::SOAP::Template
+                                 Bric::SOAP::Element
+                                 Bric::SOAP::Category
+                                 Bric::SOAP::Workflow
+                                )];
 
 my $SERVER = SOAP::Transport::HTTP::Apache->dispatch_to(@{SOAP_CLASSES()});
 
@@ -117,12 +117,12 @@ sub SOAP::Serializer::as_Bric__Util__Fault__Exception__DA {
 }
 
 # dispatch to $SERVER->handler()
-sub handler { 
-  my ($r) = @_;  
+sub handler {
+  my ($r) = @_;
   my $action = $r->header_in('SOAPAction') || '';
 
   print STDERR __PACKAGE__ . "::handler called : $action.\n" if DEBUG;
-    
+
   # setup user session
   Bric::App::Session::setup_user_session($r);
 
@@ -132,7 +132,7 @@ sub handler {
 
   # check auth
   my ($res, $msg) = Bric::App::Auth::auth($r);
-  
+
   if ($res) {
     return $SERVER->handler(@_);
   } else {
@@ -142,11 +142,11 @@ sub handler {
     # SOAP::Lite without reinventing some wheels...
     print <<END;
 <?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope 
- xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" 
- xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" 
- xmlns:xsd="http://www.w3.org/1999/XMLSchema" 
- SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+<SOAP-ENV:Envelope
+ xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance"
+ xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+ xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+ SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Body>
     <SOAP-ENV:Fault xmlns="http://schemas.xmlsoap.org/soap/envelope/">
@@ -167,8 +167,8 @@ END
     no warnings;
     use overload;
     sub SOAP::Serializer::gen_id { 
-	overload::StrVal($_[1]) =~ /\((0x\w+)\)/o; 
-	$1;
+        overload::StrVal($_[1]) =~ /\((0x\w+)\)/o;
+        $1;
     }
 }
 

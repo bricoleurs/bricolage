@@ -8,18 +8,19 @@ use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Category;
 use Bric::Util::Time qw(db_date local_date strfdate);
 use Bric::Config qw(:time);
+use Bric::App::Event    qw(log_event);
 
 use XML::Simple qw(XMLin);
 
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(
-		    category_path_to_id 
-		    xs_date_to_db_date db_date_to_xs_date
-		    parse_asset_document
-		    serialize_elements
-		    deserialize_elements
-		   );
+                    category_path_to_id 
+                    xs_date_to_db_date db_date_to_xs_date
+                    parse_asset_document
+                    serialize_elements
+                    deserialize_elements
+                   );
 
 # set to 1 to see debugging output on STDERR
 use constant DEBUG => 0;
@@ -30,15 +31,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.11.2.3 $
+$Revision: 1.11.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-08 19:52:13 $
+$Date: 2002-11-08 23:12:54 $
 
 =head1 SYNOPSIS
 
@@ -59,7 +60,7 @@ Bric::SOAP classes.
 
 =over 4
 
-=item * $category_id = category_path_to_id($path)
+=item $category_id = category_path_to_id($path)
 
 Returns a category_id for the path specified or undef if none match.
 
@@ -75,7 +76,7 @@ sub category_path_to_id {
     (Bric::Biz::Category->list_ids({ uri => shift }))[0]
 }
 
-=item * $db_date = xs_date_to_db_date($xs_date)
+=item $db_date = xs_date_to_db_date($xs_date)
 
 Transforms an XML Schema dateTime format date to a database format
 date.  Returns undef if the input date is invalid.
@@ -100,7 +101,7 @@ sub xs_date_to_db_date {
     return $db;
 }
 
-=item * $xs_date = db_date_to_xs_date($db_date)
+=item $xs_date = db_date_to_xs_date($db_date)
 
 Transforms a database format date into an XML Schema dataTime format
 date.  Returns undef if the input date is invalid.
@@ -120,7 +121,7 @@ sub db_date_to_xs_date {
     return $xs;
 }
 
-=item * $data = parse_asset_document($document, @extra_force_array)
+=item $data = parse_asset_document($document, @extra_force_array)
 
 Parses an XML asset document and returns a hash structure.  Inside the
 hash singular elements are stored as keys with scalar values.
@@ -146,15 +147,15 @@ sub parse_asset_document {
     my $document = shift;
     my @extra_force_array = @_;
 
-    return XMLin($document, 
-		 keyattr       => [],
-		 suppressempty => '',
-		 forcearray    => [qw( contributor category
-	                               keyword element container 
-				       data story media template ),
-				   @extra_force_array
-				  ]
-		);
+    return XMLin($document,
+                 keyattr       => [],
+                 suppressempty => '',
+                 forcearray    => [qw( contributor category
+                                       keyword element container
+                                       data story media template ),
+                                   @extra_force_array
+                                  ]
+                );
 }
 
 =item @related = seralize_elements(writer => $writer, object => $story, args => $args)
@@ -179,28 +180,28 @@ sub serialize_elements {
 
     # first serialize all data elements
     foreach my $e (@e) {
-	next if $e->is_container;
-	push(@related, _serialize_tile(writer  => $writer,
-				       element => $e,
-				       args    => $options{args},
-				      ));	  
+        next if $e->is_container;
+        push(@related, _serialize_tile(writer  => $writer,
+                                       element => $e,
+                                       args    => $options{args},
+                                      ));
     }
 
     # then all containers
     foreach my $e (@e) {
-	next unless $e->is_container;
-	push(@related, _serialize_tile(writer  => $writer,
-				      element => $e,
-				      args    => $options{args},
-				     ));	  
+        next unless $e->is_container;
+        push(@related, _serialize_tile(writer  => $writer,
+                                      element => $e,
+                                      args    => $options{args},
+                                     ));
     }
+
     $writer->endTag("elements");
-   
     return @related;
 }
 
-
-=item @relations = deseralize_elements(object => $story, data => $data)
+=item @relations = deseralize_elements(object => $story, data => $data,
+                                       type   => 'story')
 
 Loads an asset object with element data from the data hash.  Calls
 _deserialize_tile recursively down through containers.
@@ -215,12 +216,9 @@ Notes:
 
 sub deserialize_elements {
     my %options = @_;
-    my $object = $options{object};
-
-    return _deserialize_tile(element   => $object->get_tile,
-			     data      => $options{data});
+    $options{element} = $options{$object}->get_tile;
+    return _deserialize_tile(%options);
 }
-
 
 =back
 
@@ -247,84 +245,90 @@ contain the kung-fu necessary for this task.
 sub _deserialize_tile {
     my %options   = @_;
     my $element   = $options{element};
-    my $data      = $options{data}; 
+    my $data      = $options{data};
+    my $object    = $options{object};
+    my $type      = $options{type};
     my @relations;
-	
+
     # make sure we have an empty element - Story->new() helpfully (?)
     # creates empty data elements for required elements.
     if (my @e = $element->get_elements) {
-	$element->delete_tiles(\@e);
-	$element->save; # required for delete to "take"
+        $element->delete_tiles(\@e);
+        $element->save; # required for delete to "take"
     }
 
     # get lists of possible data types and possible containers that
     # can be added to this element.  Hash on names for quick lookups.
     my %valid_data      = map { ($_->get_name, $_) }
-	$element->get_possible_data();
-    my %valid_container = map { ($_->get_name, $_) } 
-	$element->get_possible_containers();
+        $element->get_possible_data();
+    my %valid_container = map { ($_->get_name, $_) }
+        $element->get_possible_containers();
 
     # load data elements
     if ($data->{data}) {
-	foreach my $d (@{$data->{data}}) {
-	    my $at = $valid_data{$d->{element}};
-	    die "Error loading data element for " . 
-		$element->get_element_name .
-		    " cannot add data element $d->{element} here.\n"
-			unless $at;
+        foreach my $d (@{$data->{data}}) {
+            my $at = $valid_data{$d->{element}};
+            die "Error loading data element for " .
+                $element->get_element_name .
+                    " cannot add data element $d->{element} here.\n"
+                        unless $at;
 
-            if ($at->get_sql_type() eq 'date') {
+            if ($at->get_sql_type eq 'date') {
                 # add date data to container
-                $element->add_data($at, 
-                                   exists $d->{content} ? 
+                $element->add_data($at,
+                                   exists $d->{content} ?
                                    xs_date_to_db_date($d->{content}) : '',
                                    $d->{order});
             } else {
-                # add data to container                
-                $element->add_data($at, 
+                # add data to container
+                $element->add_data($at,
                                    exists $d->{content} ? $d->{content} : '',
                                    $d->{order});
             }
 
-	    $element->save; # I'm not sure why this is necessary after
+            $element->save; # I'm not sure why this is necessary after
                             # every add, but removing it causes errors
-	}
-    }	    
+        }
+    }
 
     # load containers
     if ($data->{container}) {
-	foreach my $c (@{$data->{container}}) {
-	    my $at = $valid_container{$c->{element}};
-	    die "Error loading container element for " . 
-		$element->get_element_name .
-		    " cannot add data element $c->{element} here.\n"
-			unless $at;
+        foreach my $c (@{$data->{container}}) {
+            my $at = $valid_container{$c->{element}};
+            die "Error loading container element for " .
+                $element->get_element_name .
+                    " cannot add data element $c->{element} here.\n"
+                        unless $at;
 
-	    # setup container object
-	    my $container = $element->add_container($at);
-	    $container->set_place($c->{order});
-	    $element->save; # I'm not sure why this is necessary after
+            # setup container object
+            my $container = $element->add_container($at);
+            $container->set_place($c->{order});
+            $element->save; # I'm not sure why this is necessary after
                             # every add, but removing it causes errors
-	    
 
-	    # deal with related stories and media
-	    if ($c->{related_media_id}) {
-		# store fixup information - the object to be updated
-		# and the external id
-		push(@relations, { container => $container, 
-				   media_id  => $c->{related_media_id},
-				   relative  => $c->{relative} || 0 });
-	    } elsif ($c->{related_story_id}) {
-		push(@relations, { container => $container, 
-				   story_id  => $c->{related_story_id}, 
-				   relative  => $c->{relative} || 0 });
-	    }
+            # deal with related stories and media
+            if ($c->{related_media_id}) {
+                # store fixup information - the object to be updated
+                # and the external id
+                push(@relations, { container => $container,
+                                   media_id  => $c->{related_media_id},
+                                   relative  => $c->{relative} || 0 });
+            } elsif ($c->{related_story_id}) {
+                push(@relations, { container => $container,
+                                   story_id  => $c->{related_story_id},
+                                   relative  => $c->{relative} || 0 });
+            }
 
-	    # recurse
-	    push @relations, _deserialize_tile(element   => $container,
-					       data      => $c);
-	}
+            # recurse
+            push @relations, _deserialize_tile(element   => $container,
+                                               data      => $c);
+        }
     }
+
+    # Log it.
+    log_event("${type}_add_element", $object,
+              { Element => $element->get_name }) if $type && $object;
+
     return @relations;
 }
 
@@ -344,56 +348,56 @@ sub _serialize_tile {
     my $element  = $options{element};
     my $writer   = $options{writer};
     my @related;
-    
+
     if ($element->is_container) {
-	my %attr  = (element => $element->get_element_name,
-		     order   => $element->get_place);
-	my @e = $element->get_elements();
-	
-	# look for related stuff and tag relative if we'll include in
-	# the assets dump.
-	my ($related_story, $related_media);
-	if ($related_story = $element->get_related_story) {
-	    $attr{related_story_id} = $related_story->get_id;
-	    if ($options{args}{export_related_stories}) {
-		$attr{relative} = 1;
-		push(@related, [ story => $attr{related_story_id} ]);
-	    }
-	} elsif ($related_media = $element->get_related_media) {
-	    $attr{related_media_id} = $related_media->get_id;
-	    if ($options{args}{export_related_media}) {
-		$attr{relative} = 1;
-		push(@related, [ media => $attr{related_media_id} ]);
-	    }
-	}
-	
-	if (@e) {
-	    # recurse over contained elements
-	    $writer->startTag("container", %attr);
+        my %attr  = (element => $element->get_element_name,
+                     order   => $element->get_place);
+        my @e = $element->get_elements();
 
-	    # first serialize all data elements
-	    foreach my $e (@e) {
-		next if $e->is_container;
-		push(@related, _serialize_tile(writer  => $writer,
-					       element => $e,
-					       args    => $options{args},
-					      ));	  
-	    }
+        # look for related stuff and tag relative if we'll include in
+        # the assets dump.
+        my ($related_story, $related_media);
+        if ($related_story = $element->get_related_story) {
+            $attr{related_story_id} = $related_story->get_id;
+            if ($options{args}{export_related_stories}) {
+                $attr{relative} = 1;
+                push(@related, [ story => $attr{related_story_id} ]);
+            }
+        } elsif ($related_media = $element->get_related_media) {
+            $attr{related_media_id} = $related_media->get_id;
+            if ($options{args}{export_related_media}) {
+                $attr{relative} = 1;
+                push(@related, [ media => $attr{related_media_id} ]);
+            }
+        }
 
-	    # then all containers
-	    foreach my $e (@e) {
-		next unless $e->is_container;
-		push(@related, _serialize_tile(writer  => $writer,
-					       element => $e,
-					       args    => $options{args},
-					      ));	  
-	    }
+        if (@e) {
+            # recurse over contained elements
+            $writer->startTag("container", %attr);
 
-	    $writer->endTag("container");
-	} else {
-	    # produce clean empty tag
-	    $writer->emptyTag("container", %attr);
-	}
+            # first serialize all data elements
+            foreach my $e (@e) {
+                next if $e->is_container;
+                push(@related, _serialize_tile(writer  => $writer,
+                                               element => $e,
+                                               args    => $options{args},
+                                              ));
+            }
+
+            # then all containers
+            foreach my $e (@e) {
+                next unless $e->is_container;
+                push(@related, _serialize_tile(writer  => $writer,
+                                               element => $e,
+                                               args    => $options{args},
+                                              ));
+            }
+
+            $writer->endTag("container");
+        } else {
+            # produce clean empty tag
+            $writer->emptyTag("container", %attr);
+        }
     } else {
         my $data;
 
@@ -405,15 +409,15 @@ sub _serialize_tile {
             $data = $element->get_data();
         }
 
-	if (defined $data and length $data) {
-	    $writer->dataElement("data", $data,
-				 element => $element->get_element_name,
-				 order   => $element->get_place);
-	} else {
-	    $writer->emptyTag("data", 
-			      element => $element->get_element_name,
-			      order   => $element->get_place);
-	}
+        if (defined $data and length $data) {
+            $writer->dataElement("data", $data,
+                                 element => $element->get_element_name,
+                                 order   => $element->get_place);
+        } else {
+            $writer->emptyTag("data",
+                              element => $element->get_element_name,
+                              order   => $element->get_place);
+        }
     }
 
     return @related;

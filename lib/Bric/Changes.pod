@@ -144,6 +144,10 @@ from a desk. [David]
 Added missing debugging statement to Bric::Util::DBI. Thanks to Mark for the
 spot. [David]
 
+=item *
+
+The SOAP interface now properly logs events for its activities. [David]
+
 =back
 
 =head1 VERSION 1.4.4
