@@ -74,6 +74,11 @@ workflows. Reported by Patrick Walsh. [David]
 Pushing the cancel button in a desk profile and then in a workflow profile
 no longer redirects back to the desk profile. [David]
 
+=item *
+
+Made publish_date not be empty when publish is done through
+the SOAP API and no publish_date argument is passed. [Scott]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)

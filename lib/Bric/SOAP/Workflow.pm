@@ -46,15 +46,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.12.4.1 $
+$Revision: 1.12.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 21:10:59 $
+$Date: 2004-01-10 21:47:33 $
 
 =head1 SYNOPSIS
 
@@ -236,7 +236,7 @@ sub publish {
             }
         }
             my $published = $preview ? $burner->preview($obj, $type, get_user_id)
-              : $burner->publish($obj, $type, get_user_id, $args->{publish_date}, 1);
+              : $burner->publish($obj, $type, get_user_id, $pub_date, 1);
         # record the publish
         push(@published, name("${type}_id", $id)) if $published;
     }
