@@ -29,7 +29,7 @@ if ($is_user) {
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-    # We need to do it for workflows and desks, too.
+    # We need to do it for workflows, desks, and categories, too.
     # Do the workflows, first.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
              caption => "$wf_disp Permissions");
@@ -67,6 +67,26 @@ if ($is_user) {
 		 type => 'obj',
 		 perm => $perms{$gid},
 		 name => $dsk->get_name);
+    }
+    $m->out(qq{</table>\n});
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    # And finally, do it for categories.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
+             caption => "$cat_disp Permissions");
+
+    $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
+	     . "access asssets in these $cat_pl.");
+
+    foreach my $cat_grp ($cat_grp_pkg->list({ all => 1 })) {
+	my $gid = $cat_grp->get_id;
+	$m->comp($row_comp,
+		 grp => $cat_grp,
+		 gid => $gid,
+		 type => 'obj',
+		 perm => $perms{$gid},
+		 name => $cat_grp->get_name
+		);
     }
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
@@ -131,6 +151,13 @@ my $dsk_pl = lc get_class_info($dsk_key)->get_plural_name;
 my $dsk_grp_key = 'desk_grp';
 my $dsk_grp_disp = get_disp_name($dsk_grp_key);
 my $dsk_grp_pkg = get_package_name($dsk_grp_key);
+my $cat_key = 'category';
+my $cat_pkg = get_package_name($cat_key);
+my $cat_disp = get_disp_name($cat_key);
+my $cat_pl = lc get_class_info($cat_key)->get_plural_name;
+my $cat_grp_key = 'category_grp';
+my $cat_grp_disp = get_disp_name($cat_grp_key);
+my $cat_grp_pkg = get_package_name($cat_grp_key);
 my $grp_key = 'grp';
 my $grp_pkg = get_package_name($grp_key);
 my $grp_disp = lc get_disp_name($grp_key);
@@ -263,7 +290,11 @@ my $opts = $create || ($type ne 'usr' && $grp->get_permanent) ?
 %#--- Log History ---#
 <%doc>
 $Log: display.html,v $
-Revision 1.1  2001-09-06 21:52:16  wheeler
-Initial revision
+Revision 1.1.1.1.2.1  2001-10-02 13:32:04  wheeler
+Added ability to grant permissions to members of groups on assets within
+categories.
+
+Revision 1.1.1.1  2001/09/06 21:52:16  wheeler
+Upload to SourceForge.
 
 </%doc>
