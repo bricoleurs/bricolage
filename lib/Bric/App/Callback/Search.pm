@@ -9,12 +9,10 @@ use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
 use Bric::Config qw(FULL_SEARCH);
 
-my ($build_fields, $build_id_fields, $build_date_fields, $init_state);
-
 
 sub substr : Callback {
     my $self = shift;
-    $init_state->($self);
+    $self->_init_state;
     my $param = $self->params;
 
     my $val_fld = $self->class_key.'|value';
@@ -32,7 +30,7 @@ sub substr : Callback {
 
 sub alpha : Callback {
     my $self = shift;
-    $init_state->($self);
+    $self->_init_state;
 
     my $crit = $self->value ? $self->value.'%' : '';
 
@@ -46,15 +44,15 @@ sub alpha : Callback {
 
 sub story : Callback {
     my $self = shift;
-    $init_state->($self);
+    $self->_init_state;
 
     my (@field, @crit);
 
-    $build_fields->($self, \@field, \@crit,
+    _build_fields($self, \@field, \@crit,
                     [qw(simple title primary_uri category_uri keyword data_text)]);
-    $build_id_fields->($self, \@field, \@crit, [qw(element__id)]);
-    $build_date_fields->($self->class_key, $self->params, \@field, \@crit,
-			 [qw(cover_date publish_date expire_date)]);
+    _build_id_fields($self, \@field, \@crit, [qw(element__id)]);
+    _build_date_fields($self->class_key, $self->params, \@field, \@crit,
+		       [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
     unless (@field) {
@@ -68,14 +66,14 @@ sub story : Callback {
 
 sub media : Callback {
     my $self = shift;
-    $init_state->($self);
+    $self->_init_state;
 
     my (@field, @crit);
 
-    $build_fields->($self, \@field, \@crit, [qw(simple name uri data_text)]);
-    $build_id_fields->($self, \@field, \@crit, [qw(element__id)]);
-    $build_date_fields->($self->class_key, $self->params, \@field, \@crit,
-			 [qw(cover_date publish_date expire_date)]);
+    _build_fields($self, \@field, \@crit, [qw(simple name uri data_text)]);
+    _build_id_fields($self, \@field, \@crit, [qw(element__id)]);
+    _build_date_fields($self->class_key, $self->params, \@field, \@crit,
+		       [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
     unless (@field) {
@@ -89,14 +87,14 @@ sub media : Callback {
 
 sub formatting : Callback {
     my $self = shift;
-    $init_state->($self);
+    $self->_init_state;
 
     my (@field, @crit);
 
-    $build_fields->($self, \@field, \@crit, [qw(simple name file_name)]);
+    _build_fields($self, \@field, \@crit, [qw(simple name file_name)]);
 
-    $build_date_fields->($self->class_key, $self->params, \@field, \@crit, 
-			 [qw(cover_date publish_date expire_date)]);
+    _build_date_fields($self->class_key, $self->params, \@field, \@crit, 
+		       [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
     unless (@field) {
@@ -110,7 +108,7 @@ sub formatting : Callback {
 
 sub generic : Callback {
     my $self = shift;
-    $init_state->($self);
+    $self->_init_state;
     my $param = $self->params;
 
     # Callback in 'leech' mode.  Any old page can send search criteria here
@@ -153,28 +151,28 @@ sub generic : Callback {
 
 sub clear : Callback {
     my $self = shift;
-    $init_state->($self);
+    $self->_init_state;
 
     clear_state($self->class_key);
 }
 
 sub set_advanced : Callback {
     my $self = shift;
-    $init_state->($self);
+    $self->_init_state;
 
     set_state_data($self->class_key, 'advanced_search', 1);
 }
 
 sub unset_advanced : Callback {
     my $self = shift;
-    $init_state->($self);
+    $self->_init_state;
 
     set_state_data($self->class_key, 'advanced_search', 0);
 }
 
 ###
 
-$build_fields = sub {
+sub _build_fields {
     my ($self, $field, $crit, $add) = @_;
     my $widget = $self->class_key;
     my $param = $self->params;
@@ -193,7 +191,7 @@ $build_fields = sub {
     }
 };
 
-$build_id_fields = sub {
+sub _build_id_fields {
     my ($self, $field, $crit, $add) = @_;
     my $widget = $self->class_key;
     my $param = $self->params;
@@ -212,7 +210,7 @@ $build_id_fields = sub {
     }
 };
 
-$build_date_fields = sub {
+sub _build_date_fields {
     my ($widget, $param, $field, $crit, $add) = @_;
 
     foreach my $f (@$add) {
@@ -239,7 +237,7 @@ $build_date_fields = sub {
     }
 };
 
-$init_state = sub {
+sub _init_state {
     my $self = shift;
     my $r = $self->apache_req;
 
