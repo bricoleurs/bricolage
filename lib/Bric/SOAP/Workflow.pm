@@ -45,15 +45,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:46 $
+$Date: 2003-01-18 01:08:59 $
 
 =head1 SYNOPSIS
 
@@ -124,19 +124,20 @@ Set this to true to publish to the preview destination instead of the
 publish destination.  This will fail if PREVIEW_LOCAL is On in
 bricolage.conf.
 
+=item publish_date
+
+The date and time (in ISO-8601 format) at which to publish the assets.
+
 =back
 
-Throws: NONE
+B<Throws:> NONE.
 
-Side Effects: Stories and media have their publish_status field set to
+B<Side Effects:> Stories and media have their publish_status field set to
 true.
 
-Notes: Would be nice to implement "publish_date" option for delayed
-publish here.
-
-The code for this method came mostly from
-comp/widgets/publish/callback.mc.  It would be nice to collect this
-code in a module so it could be kept in one place.
+B<Notes:> The code for this method came mostly from
+F<comp/widgets/publish/callback.mc>. It would be nice to collect this code in
+a module so it could be kept in one place.
 
 =cut
 
@@ -145,6 +146,7 @@ code in a module so it could be kept in one place.
 my %allowed = map { $_ => 1 } qw(story_id media_id publish_ids
                                  publish_related_stories
                                  publish_related_media
+                                 publish_date
                                  to_preview);
 
 sub publish {
@@ -160,6 +162,8 @@ sub publish {
         die __PACKAGE__ . "::publish : unknown parameter \"$_\".\n"
             unless exists $allowed{$_};
     }
+
+    $args->{publish_date} ||= strfdate();
 
     my $preview = (exists $args->{to_preview} and $args->{to_preview}) ? 1 : 0;
     die __PACKAGE__ . "::publish : cannot publish to_preview with ".
@@ -229,7 +233,7 @@ sub publish {
             }
         }
             my $published = $preview ? $burner->preview($obj, $type, get_user_id)
-              : $burner->publish($obj, $type, get_user_id, '', 1);
+              : $burner->publish($obj, $type, get_user_id, $args->{publish_date}, 1);
         # record the publish
         push(@published, name("${type}_id", $id)) if $published;
     }

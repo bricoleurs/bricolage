@@ -31,6 +31,11 @@ Improved testing support with lots more tests. Many more remain to be
 written. See the new testing documentation in L<Bric::Hacker|Bric::Hacker> for
 details. [David]
 
+=item *
+
+Added ability to publish assets at a future time to Bric::SOAP::Workflow.
+Includes addition of new C<--publish-date> option to F<bric_soap>. [David]
+
 =back
 
 =head1 VERSION 1.5.0

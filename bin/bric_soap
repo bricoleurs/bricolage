@@ -42,7 +42,7 @@ Options:
   --man                  - shows the full documentation
 
   --server               - specifies the Bricolage server URL, defaults to
-                           the BRICOLAGE_SERVER environment variable if set, 
+                           the BRICOLAGE_SERVER environment variable if set,
                            http://localhost otherwise.
 
   --username             - the Bricolage username, defaults to the
@@ -70,12 +70,16 @@ Options:
 
   --verbose              - print a running description to STDERR.  Add
                            a second --verbose and you'll get debugging
-                           output too.  Add a third and you'll see a full 
+                           output too.  Add a third and you'll see a full
                            XML trace.
 
   --to-preview           - use to_preview option for workflow publish
 
-  --timeout              - specify the HTTP timeout for SOAP requests in 
+  --publish-date         - date and time to publish assets for workflow
+                           publish. Use format CCYY-MM-DDThh:mm:ssZ, where
+                           the "Z" stands for UTC (GMT).
+
+  --timeout              - specify the HTTP timeout for SOAP requests in
                            seconds.  Defaults to 30.
 
   --save-cookie-file	 - specify a file to save cookies to for later use-
@@ -141,6 +145,11 @@ Publish all unpublished stories:
   bric_soap story list_ids --search publish_status=0
   | bric_soap workflow publish -
 
+Publish all unpublished stories at a future time:
+
+  bric_soap story list_ids --search publish_status=0
+  | bric_soap workflow publish --publish-date 2005-01-01T00:00:00Z -
+
 Publish all unpublished stories, in chunks of 5 to avoid timeouts
 
   bric_soap story list_ids --search publish_status=0
@@ -205,6 +214,7 @@ BEGIN {
     our $with_related_stories = 0;
     our $with_related_media   = 0;
     our $to_preview           = 0;
+    our $publish_date;
     our $timeout              = 30;
     our $chunks               = 0;
     our $continue             = 0;
@@ -212,7 +222,7 @@ BEGIN {
     our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
     our $server                 = $ENV{BRICOLAGE_SERVER} || 'http://localhost';
     our $use_cookie;
-    our $save_cookie; 
+    our $save_cookie;
     our $verbose;
     our $desk;
     our $workflow;
@@ -229,6 +239,7 @@ BEGIN {
 	       "all"                    => sub { $with_related_stories = 1;
 						 $with_related_media   = 1; },
 	       "to-preview"             => \$to_preview,
+	       "publish-date=s"         => \$publish_date,
 	       "desk=s"                 => \$desk,
 	       "workflow=s"             => \$workflow,
                "timeout=s"              => \$timeout,
@@ -237,14 +248,15 @@ BEGIN {
                "chunks=s",              => \$chunks,
                "continue-on-errors"     => \$continue,
 	      ) or  pod2usage(2);
-    
+
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
     $verbose ||= 0;
 }
 our ($module, $command, %search, $with_related_stories, $with_related_media,
-     $to_preview, $username, $password, $server, $verbose, $desk, $workflow,
-     $timeout, $use_cookie, $save_cookie, $chunks, $continue);
+     $to_preview, $publish_date, $username, $password, $server, $verbose,
+     $desk, $workflow, $timeout, $use_cookie, $save_cookie, $chunks,
+     $continue);
 
 use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ()),
   on_fault => \&_handle_fault;
@@ -336,22 +348,26 @@ if  ($save_cookie) {
     $cookie_string = $save_cookie;
 } elsif ($use_cookie) {
     $cookie_string = $use_cookie;
-} 
+}
 
 $soap->proxy($server . '/soap',
-	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1, file => $cookie_string, autosave=>1), 
+	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1,
+                                              file => $cookie_string,
+                                              autosave=>1),
              timeout    => $timeout,
             );
 
 # login
-if (!$use_cookie) { 
-    print STDERR "$module $command: Authenticating to Bricolage...\n" if $verbose;
-    my $response = $soap->login(name(username => $username), 
+if (!$use_cookie) {
+    print STDERR "$module $command: Authenticating to Bricolage...\n"
+      if $verbose;
+    my $response = $soap->login(name(username => $username),
                                 name(password => $password));
     die "Login failed.\n" if $response->fault;
     print STDERR "$module $command: Login success.\n" if $verbose;
 } else {
-     print STDERR "$module $command: Attempting to use cookie file $use_cookie\n" if $verbose;
+     print STDERR "$module $command: Attempting to use cookie file $use_cookie\n"
+       if $verbose;
 }
 
 # switch to requested module
@@ -372,7 +388,7 @@ sub list_ids {
 	"with search: (",
 	    join(', ', map { "$_ => $search{$_}" } keys %search), ")\n"
 		if $verbose;
-    my $response = $soap->list_ids(map { name($_ => $search{$_}) } 
+    my $response = $soap->list_ids(map { name($_ => $search{$_}) }
                                    keys %search);
     my $list = $response->result;
     foreach (@$list) {
@@ -406,7 +422,7 @@ sub create {
 	    print STDERR "$module $command: Reading document from STDIN...\n"
 		if $verbose;
 	    $document = join('', <STDIN>);
-	} else { 
+	} else {
 	    print STDERR "$module $command: Reading document \"$_\"...\n"
 		if $verbose;
 	    open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
@@ -414,9 +430,9 @@ sub create {
 	    close(DOC);
 	}
 
-	print STDERR "$module $command: Calling Bric::SOAP::$module->$command with document:  ",
-	    length($document), " bytes\n"
-		if $verbose;
+	print STDERR "$module $command: Calling Bric::SOAP::$module->$command " .
+          "with document:  ", length($document), " bytes\n"
+          if $verbose;
 
 	# print out response ids
 	_print_ids($soap->create(name(document => $document)->type('base64')));
@@ -466,9 +482,10 @@ sub update {
 
 sub publish {
     my @opts;
-    push @opts, name(publish_related_stories => 1) if $with_related_stories;
-    push @opts, name(publish_related_media   => 1) if $with_related_media;
-    push @opts, name(to_preview              => 1) if $to_preview;
+    push @opts, name(publish_related_stories  => 1) if $with_related_stories;
+    push @opts, name(publish_related_media    => 1) if $with_related_media;
+    push @opts, name(to_preview               => 1) if $to_preview;
+    push @opts, name(publish_date => $publish_date) if $publish_date;
 
     # publish by chunks
     _foreach_chunks {
@@ -567,7 +584,7 @@ sub _foreach_chunks (&@) {
             $end = $#_ if $end > $#_;
             $code->(@_[$start .. $end]);
 	}
-    }   
+    }
 }
 
 # prints out ids from a SOAP response
