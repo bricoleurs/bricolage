@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.65 $
+$Revision: 1.66 $
 
 =head1 DATE
 
-$Date: 2002-06-10 17:52:24 $
+$Date: 2002-07-03 21:57:39 $
 
 =head1 DESCRIPTION
 
@@ -1119,6 +1119,19 @@ B<DEF_MEDIA_TYPE:> Designates the default media type for assets where Bricolage
 cannot ascertain the media type. The value of this directive must be present in
 the database -- see Bric::Util::MediaType for more information. Defaults to
 "text/html" if not specified.
+
+=item *
+
+B<ENABLE_SFTP_MOVER:> This directive indicates whether the Bricolage server
+may distribute resources using the SFTP mover. Setting this to "On" or "Yes"
+or "1" will enable the SFTP mover. In order to use the SFTP mover, you must
+manually install Net::SFTP (the installer doesn't currently support optional
+modules). Furthermore, you should login to the remote server as Apache user
+(e.g. "nobody") in order to initialize `~/.ssh/known_hosts' before using the
+SFTP mover (you might also need to create the directory /.ssh with write
+permission for "nobody", in case nobody's home directory is something like
+`/bin/false' and ssh falls back to `/' as the home directory). Defaults to
+"Off" if not specified.
 
 =back
 

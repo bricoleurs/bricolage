@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 00:29:45 $
+$Date: 2002-07-03 21:57:39 $
 
 =head1 SYNOPSIS
 
@@ -113,6 +113,7 @@ use Bric::Util::Coll::Action;
 use Bric::Util::Coll::OutputChannel;
 use Bric::Util::Fault::Exception::DP;
 use Bric::Util::Grp::Dest;
+use Bric::Config qw(:dist);
 
 ################################################################################
 # Inheritance
@@ -526,10 +527,11 @@ B<Notes:> NONE.
 =cut
 
 sub list_move_methods {
+    my $and_sftp = ENABLE_SFTP_MOVER ? '' : q{AND key_name != 'sftp'};
     my $sel = prepare_ca(qq{
         SELECT disp_name
         FROM   class
-        WHERE  distributor = 1
+        WHERE  distributor = 1  $and_sftp
         ORDER BY disp_name
     });
     return wantarray ? @{ col_aref($sel) } : col_aref($sel);

@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-02 00:58:26 $
+$Date: 2002-07-03 21:57:39 $
 
 =head1 SYNOPSIS
 
@@ -88,6 +88,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     DIST_ATTEMPTS
                     MEDIA_URI_ROOT
                     DEF_MEDIA_TYPE
+                    ENABLE_SFTP_MOVER
                     MEDIA_FILE_ROOT
                     SMTP_SERVER
                     ALERT_FROM
@@ -161,6 +162,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MASON_COMP_ROOT
                                      PREVIEW_MASON)],
                     dist      => [qw(ENABLE_DIST
+                                     ENABLE_SFTP_MOVER
                                      DEF_MEDIA_TYPE
                                      DIST_ATTEMPTS
                                      PREVIEW_LOCAL)],
@@ -264,7 +266,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         # While these default to 0.
         foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER SSL_ENABLE
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
-                    PROFILE CHECK_PROCESS_SIZE))
+                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -325,6 +327,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant PREVIEW_LOCAL => $config->{PREVIEW_LOCAL} ? qw(data preview) : 0;
     use constant PREVIEW_MASON => $config->{PREVIEW_MASON};
     use constant DEF_MEDIA_TYPE => $config->{DEF_MEDIA_TYPE} || 'text/html';
+    use constant ENABLE_SFTP_MOVER => $config->{ENABLE_SFTP_MOVER};
 
     # Mason settings.
     use constant MASON_COMP_ROOT         => PREVIEW_LOCAL && PREVIEW_MASON ?

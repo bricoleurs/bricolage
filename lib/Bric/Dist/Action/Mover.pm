@@ -6,16 +6,16 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-14 01:18:06 $
+$Date: 2002-07-03 21:57:40 $
 
 =head1 SYNOPSIS
 
@@ -43,6 +43,11 @@ use Bric::App::Event qw(log_event);
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Trans::FS;
 use Bric::Util::Trans::FTP;
+use Bric::Config qw(:dist);
+if (ENABLE_SFTP_MOVER) {
+    require Net::SFTP;
+    require Bric::Util::Trans::SFTP;
+}
 
 ################################################################################
 # Inheritance
@@ -250,7 +255,7 @@ of Bricolage. Use inst/upgrade/1.3.1/mover.pl as an example.
 
 =item *
 
-Add C<use Bric::Util::Trans::MyMover;> to Bric::Dist::Job::Mover, so that your
+Add C<use Bric::Util::Trans::MyMover;> to Bric::Dist::Action::Mover, so that your
 mover loads on startup.
 
 =item *
