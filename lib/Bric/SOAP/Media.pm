@@ -38,15 +38,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.12.2.6 $
+$Revision: 1.12.2.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:30:24 $
+$Date: 2002-11-21 16:13:09 $
 
 =head1 SYNOPSIS
 
@@ -742,6 +742,11 @@ sub _load_media {
             my $size     = $mdata->{file}{size};
             my $data     = MIME::Base64::decode_base64($mdata->{file}{data}[0]);
             my $fh       = new IO::Scalar \$data;
+
+            # empty or non-numeric size causes an SQL error
+            die __PACKAGE__ . 
+              "::create : bad data found in file size element.\n"
+                unless defined $size and $size =~ /^\d+$/;
 
             # upload the file into the media object
             $media->upload_file($fh, $filename);

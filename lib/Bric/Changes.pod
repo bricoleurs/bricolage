@@ -45,6 +45,11 @@ added instead of the appropriate subelement. [David]
 Fixed bug in publish code that was attempting to use the Apache request object
 as a media asset. Thanks to John Greene for the spot. [David]
 
+=item *
+
+Fixed bug where an empty or non-numeric <size> element in an imported
+media object would cause an SQL error.  [Sam]
+
 =back
 
 =head1 VERSION 1.4.5
