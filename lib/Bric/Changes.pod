@@ -118,9 +118,16 @@ and David]
 
 =item *
 
-Make slug actually be required when ALLOW_SLUGLESS_NONFIXED isn't enabled,
+Make slug actually be required when C<ALLOW_SLUGLESS_NONFIXED> isn't enabled,
 in particular on the clone page. Thanks to Dharmender Yadav at Enabling
 Dimensions for part of the patch. [Scott]
+
+=item *
+
+Removed the hack that commits a database transaction in the middle of a
+request that does a "Check in and Publish", since we now require PostgreSQL
+7.3 and the bug that the hacked worked around was fixed in that release.
+[David]
 
 =back
 

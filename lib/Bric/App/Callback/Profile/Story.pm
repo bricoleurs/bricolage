@@ -169,13 +169,6 @@ sub checkin : Callback(priority => 6) {
         add_msg('Story "[_1]" saved and checked in to "[_2]".',
                 '<span class="l10n">' . $story->get_title . '</span>', $dname);
 
-        # HACK: Commit this checkin. WHY?? Because Postgres does NOT like
-        # it when you insert and delete a record within the same
-        # transaction. This will be fixed in PostgreSQL 7.3. Be sure to
-        # start a new transaction!
-        Bric::Util::DBI::commit(1);
-        Bric::Util::DBI::begin(1);
-
         # Use the desk callback to save on code duplication.
         my $pub = Bric::App::Callback::Desk->new
           ( cb_request   => $self->cb_request,
