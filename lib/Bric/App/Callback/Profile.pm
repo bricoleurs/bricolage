@@ -4,18 +4,21 @@ use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'profile');
 use strict;
 use Bric::App::Authz qw(:all);
+use Bric::App::Callback::Util qw(parse_uri);
 use Bric::App::Util qw(:all);
 
 
 my $excl = { desk => 1, action => 1, server => 1 };
 
 
-sub somename : Callback {
-    # XXX: BOING!
-    my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
+sub SOMENAMES : Callback {
+    my $self = shift;
+
+    my $type = (parse_uri($self->apache_req->uri))[2];
 
     # Get the class name.
-    my $key = $type eq 'contrib' && ! defined $param->{contrib_id} ? 'person'
+    my $key = $type eq 'contrib' && ! defined $param->{contrib_id}
+      ? 'person'
       : $type;
 
     my $class = get_package_name($key);
@@ -37,8 +40,13 @@ sub somename : Callback {
     }
 
     # Process its data
-    # XXX: BOING!
+    # action, alert_type, category, contrib, desk, dest, element_data,
+    # element_type, grp, job, media_type, output_channel, pref,
+    # server, site, source, user, workflow
     $param->{obj} = $m->comp("$type.mc", %ARGS, obj => $obj, class => $class);
 }
+
+
+
 
 1;

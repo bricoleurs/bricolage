@@ -3,6 +3,12 @@ package Bric::App::Callback::StoryProf;
 # XXX: this has the same deal as MediaProf where
 # some callbacks have extra parameters ($story, $new)
 
+# XXX: david msg
+# BTW, are you naming the new callback classes for these three callbacks
+# Callback::Profile::Story, Callback::Profile::Media, and
+# Callback::Profile::Template?
+# -- move under Profile
+
 
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'story_prof');
