@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-31 00:17:30 $
+$Date: 2002-01-31 00:24:32 $
 
 =head1 SYNOPSIS
 
@@ -1365,7 +1365,7 @@ sub checkout {
 				"Unable to checkout old_versions" });
 	}
 	# Make sure that the object is not already checked out
-	if ($self->_get('user__id')) {
+	if (defined $self->_get('user__id')) {
 		die Bric::Util::Fault::Exception::GEN->new( {
 			msg => "Already Checked Out" });
 	}

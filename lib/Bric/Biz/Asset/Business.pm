@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-01-31 00:24:32 $
 
 =head1 SYNOPSIS
 
@@ -1638,7 +1638,7 @@ sub cancel {
 	# this will result in a delete from the data base of this 
 	# row
 
-	if ( !$self->_get('user_id')) {
+	if ( not defined $self->_get('user_id')) {
 		# this is not checked out, it can not be deleted
 		die Bric::Util::Fault::Exception::GEN->new( {
 			msg => "Can not cancel a non checked out asset" });
@@ -1703,7 +1703,7 @@ sub checkout {
 			"Unable to checkout old_versions" });
 	}
 	# Make sure that the object is not already checked out
-	if ($self->_get('user__id')) {
+	if (defined $self->_get('user__id')) {
 		die Bric::Util::Fault::Exception::GEN->new( {
 			msg => "Already Checked Out" });
 	}
