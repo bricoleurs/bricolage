@@ -8,15 +8,15 @@ types.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-08 23:55:39 $
+$Date: 2003-02-18 05:55:08 $
 
 =head1 SYNOPSIS
 
@@ -204,7 +204,7 @@ sub save {
     return $self;
 }
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -235,8 +235,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::Coll|Bric::Util::Coll>, 
+L<Bric|Bric>,
+L<Bric::Util::Coll|Bric::Util::Coll>,
 L<Bric::Dist::ServerType|Bric::Dist::ServerType>
 
 =cut

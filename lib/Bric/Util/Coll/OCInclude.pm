@@ -7,15 +7,15 @@ Bric::Util::Coll::OCInclude - Interface for managing Output Channels includes.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-15 18:58:13 $
+$Date: 2003-02-18 05:55:08 $
 
 =head1 SYNOPSIS
 
@@ -204,7 +204,7 @@ sub save {
     return $self;
 }
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -258,8 +258,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::Coll|Bric::Util::Coll>, 
+L<Bric|Bric>,
+L<Bric::Util::Coll|Bric::Util::Coll>,
 L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel>
 
 =cut

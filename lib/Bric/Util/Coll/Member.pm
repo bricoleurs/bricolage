@@ -7,15 +7,15 @@ Bric::Util::Coll::Member - Interface for managing collections of group members
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-08 23:55:39 $
+$Date: 2003-02-18 05:55:08 $
 
 =head1 SYNOPSIS
 
@@ -202,7 +202,7 @@ sub save {
     return $self;
 }
 
-=back 4
+=back
 
 =head1 PRIVATE
 

@@ -7,15 +7,15 @@ Bric::Util::Fault::Exception - base class for all Exceptions
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:37 $
+$Date: 2003-02-18 05:55:09 $
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,7 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies              
- 
+
 # A sample use module.
 
 #==============================================================================#
@@ -81,11 +81,11 @@ use base qw( Bric::Util::Fault );
 
 =head2 Constructors
 
-=over 4
-
-=cut
+NONE.
 
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -100,62 +100,34 @@ sub DESTROY {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
 
-=cut
-
-# Add methods here that do not require an object be instantiated to call them.
-# Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
+NONE.
 
 =head2 Public Instance Methods
 
-=cut
-
-# Add methods here that only apply to an instantiated object of this class.
-# Use same POD comment style as above for 'new'.
-
-#------------------------------------------------------------------------------#
+NONE.
 
 =head1 PRIVATE
 
-=cut
-
-#--------------------------------------#
-
 =head2 Private Class Methods
 
-=cut
-
-
-# Add methods here that do not require an object be instantiated, and should not
-# be called outside this module (e.g. utility functions for class methods).
-# Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
+NONE.
 
 =head2 Private Instance Methods
 
-=cut
-
-# Add methods here that apply to an instantiated object, but should not be
-# called directly. Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
+NONE.
 
 =head2 Private Functions
 
-=cut
+NONE.
 
-# Add functions here that can be used only internally to the class. They should
-# not be publicly available (hence the prefernce for closures). Use the same POD
-# comment style as above for 'new'.
+=cut
 
 1;
 __END__
-
-=back
 
 =head1 NOTES
 
