@@ -8,7 +8,7 @@ use bric_upgrade qw(:all);
 exit if fetch_sql(qq{
     SELECT 1
     FROM   class
-    WHERE  id = 75
+    WHERE  id = 74
 });
 
 do_sql(qq{
