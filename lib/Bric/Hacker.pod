@@ -671,6 +671,20 @@ and make any changes, be sure to commit them to the Subversion repository and
 then to update the tag, then do the whole thing over again. Once everything
 appears to be working properly, release!
 
+=head2 Documentation Generation
+
+Once the new version of Bricolage has been released, you'll need to regenerate
+the documentation on the Web site. There is documentation for each major
+version of Bricolage. The documentation for each version is generated from the
+latest minor release. So if you've just released, say, version 1.8.4, then the
+documentation should be generated for the "1.8" Documentation section. If
+you've just released 1.10.0, then you'll need to create a new "1.10" section
+and add a link to it on the documentation page of the Web site.
+
+The documentation is generated with the F<pod_browser> script, which is in the
+"distutils" directory in Subversion. Read its instructions carefully, and then
+generate the documentation on the Web server.
+
 =head2 Where to Send Notices
 
 =head3 Mail Lists
