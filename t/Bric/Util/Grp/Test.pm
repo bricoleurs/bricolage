@@ -90,10 +90,10 @@ sub test_mem_ids : Test(3) {
 # Test my_meths.
 sub test_my_meths : Test(6) {
     ok( my $meths = Bric::Util::Grp->my_meths, "Get my_meths" );
-    is( ref $meths, 'HASH', "my_meths is a hash" );
+    isa_ok( $meths, 'HASH', "my_meths is a hash" );
     is( $meths->{name}{type}, 'short', "Check name type" );
     ok( $meths = Bric::Util::Grp->my_meths(1), "Get my_meths array ref" );
-    is( ref $meths, 'ARRAY', "my_meths(1) is an array" );
+    isa_ok( $meths, 'ARRAY', "my_meths(1) is an array" );
     (is $meths->[0]->{name}, 'name', "Check first meth name" );
 }
 
