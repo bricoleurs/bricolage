@@ -5,7 +5,7 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'alias';
 
 use strict;
-use Bric::App::Authz;
+use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
@@ -34,7 +34,7 @@ my ($get_dynamic, $work_it, $handle_asset);
 sub make_alias : Callback {
     my $self = shift;
     my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->($self);
- 
+
     my $aliased_id = $self->value;
     my $aliased = $classes{$class_key}->lookup({ id => $aliased_id });
 
