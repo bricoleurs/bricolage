@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.33.2.1 $
+$Revision: 1.33.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.33.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 19:19:51 $
+$Date: 2003-04-01 23:21:24 $
 
 =head1 SYNOPSIS
 
@@ -234,6 +234,7 @@ NONE
 sub new {
     my ($self, $init) = @_;
     $self = bless {}, $self unless ref $self;
+    $init->{grp_ids} = [ $self->INSTANCE_GROUP_ID ];
     $self->_init($init);
     $self->SUPER::new($init);
 }

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.11 $
+$Revision: 1.38.2.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 19:19:53 $
+$Date: 2003-04-01 23:21:24 $
 
 =head1 SYNOPSIS
 
@@ -342,7 +342,6 @@ my ($meths, @ord, $set_elem, $set_cat, $set_util);
 # Instance Fields
 
 
-my $all_formatting_grp_id;
 BEGIN {
         Bric::register_fields
             ({
@@ -378,8 +377,6 @@ BEGIN {
               _category_obj       => Bric::FIELD_NONE,
               _revert_obj         => Bric::FIELD_NONE
              });
-    $all_formatting_grp_id = Bric::Util::Grp->lookup(
-      { name => 'All Templates' })->get_id();
 }
 
 #==============================================================================#
@@ -510,7 +507,7 @@ B<Notes:> NONE.
 sub new {
     my ($class, $init) = @_;
     my $self = bless {}, $class;
-    my @grp_ids = ($all_formatting_grp_id);
+    my @grp_ids = ($class->INSTANCE_GROUP_ID);
 
     # set active unless we we passed another value
     $init->{_active} = exists $init->{active} ?

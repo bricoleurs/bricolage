@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40.2.10 $
+$Revision: 1.40.2.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40.2.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 19:19:57 $
+$Date: 2003-04-01 23:21:24 $
 
 =head1 SYNOPSIS
 
@@ -291,7 +291,6 @@ my $gen = 'Bric::Util::Fault::Exception::GEN';
 #--------------------------------------#
 # Instance Fields
 
-my $all_media_grp_id;
 BEGIN {
     Bric::register_fields(
                         {
@@ -308,8 +307,6 @@ BEGIN {
                          _file           => Bric::FIELD_NONE,
                          _media_type_obj => Bric::FIELD_NONE,
                         });
-    $all_media_grp_id = Bric::Util::Grp->lookup(
-      { name => 'All Media' })->get_id();
 }
 
 #==============================================================================#
@@ -402,7 +399,6 @@ sub new {
     delete $init->{active};
     $init->{priority} ||= 3;
     $init->{name} = delete $init->{title} if exists $init->{title};
-    $init->{grp_ids} = [ $all_media_grp_id ];
     $self->SUPER::new($init);
 }
 

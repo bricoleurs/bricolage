@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.9 $
+$Revision: 1.39.2.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 19:20:01 $
+$Date: 2003-04-01 23:21:25 $
 
 =head1 SYNOPSIS
 
@@ -417,7 +417,6 @@ my $da = 'Bric::Util::Fault::Exception::DA';
 # NONE.
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
-my $all_stories_grp_id;
 BEGIN {
     Bric::register_fields
         ({
@@ -425,8 +424,6 @@ BEGIN {
           slug            => Bric::FIELD_RDWR
           # Private Fields
         });
-    $all_stories_grp_id = Bric::Util::Grp->lookup(
-      { name => 'All Stories' })->get_id();
 }
 
 #==============================================================================#
@@ -521,7 +518,6 @@ sub new {
     $init->{_queried_cats} = {};
     $init->{_categories} = {};
     $init->{name} = delete $init->{title} if exists $init->{title};
-    $init->{grp_ids} = [ $all_stories_grp_id ];
     $self->SUPER::new($init);
 }
 
