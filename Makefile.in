@@ -106,6 +106,7 @@ DATA_FILES = $(foreach dir, \
 					$(shell cd ${DATA} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
 DATA_TARGETS = $(addprefix ${datadir}/,${DATA_FILES})
 
+
 # Canned sequence for installation
 
 define install-files
@@ -116,6 +117,16 @@ chown ${APACHE_USER}.${APACHE_GROUP} $@
 @echo $@ >>${INST}/install.log
 endef
 
+
+# Set up the option string for the database
+# Documenation in bin/bric_importdb --help
+PGIMPORT_OPTIONS := -w .
+PGIMPORT_OPTIONS += -u ${POSTGRES_ROOT_USER}
+PGIMPORT_OPTIONS += -p ${POSTGRES_ROOT_PASS}
+PGIMPORT_OPTIONS += -d ${DB_NAME}
+PGIMPORT_OPTIONS += -c
+PGIMPORT_OPTIONS += -m '${DBI_USER}:${DBI_PASS}'
+PGIMPORT_OPTIONS += -g ${DBI_USER}
 
 
 # Now we'll define the installed files according to our log
@@ -248,9 +259,9 @@ ${DOC_TARGETS}: ${docdir}/%: %
 
 
 install-database:
-	${POST_INSTALL}
+	@${POST_INSTALL}
 ifdef PGHOME
-	su --command='bin/bric_pgimport -w . -u ${POSTGRES_ROOT_USER} -p ${POSTGRES_ROOT_PASS} -d ${DB_NAME} -c -m ${DBI_USER}:${DBI_PASS} -g ${DBI_USER}' ${POSTGRES_ROOT_USER}
+	su --command="bin/bric_pgimport ${PGIMPORT_OPTIONS}" ${POSTGRES_ROOT_USER}
 endif
 
 
