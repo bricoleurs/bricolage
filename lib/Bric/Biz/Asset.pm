@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.13 $
+$Revision: 1.25.2.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-10 20:14:17 $
+$Date: 2003-04-10 20:16:56 $
 
 =head1 SYNOPSIS
 
@@ -1293,13 +1293,11 @@ sub set_workflow_id {
             next if $gid == $ag_id;
             push @grp_ids, $gid;
         }
-    } else {
-        @grp_ids = $self->get_grp_ids;
     }
 
     if ($workflow_id) {
         my $workflow = Bric::Biz::Workflow->lookup({ id => $workflow_id });
-        push @grp_ids, $workflow->get_asset_grp_id;
+        @grp_ids = ($self->get_grp_ids, $workflow->get_asset_grp_id);
     }
 
     # Now set the workflow ID and the group IDs.
