@@ -78,8 +78,9 @@ $m->comp('/widgets/profile/formButtons.mc',
          type    => $type,
          section => $section,
          no_del  => $no_del,
-         return  => "/admin/manager/site",
-         no_save => $no_edit);
+         return  => '/admin/manager/site',
+         no_save => $no_edit,
+         widget  => $type);
 </%perl>
 <br />
 </form>
@@ -130,11 +131,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:52 $
+$Date: 2003-06-10 10:24:54 $
 
 =head1 DESCRIPTION
 
