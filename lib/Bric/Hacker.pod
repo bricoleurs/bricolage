@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =head1 DATE
 
-$Date: 2002-10-09 22:22:45 $
+$Date: 2003-01-17 03:03:12 $
 
 =head1 DESCRIPTION
 
@@ -189,6 +189,65 @@ and haven't yet been re-tabbed.
 
 The expandtab setting does the Right Thing under the new rules, in that it
 doesn't use tabs at all, only spaces.
+
+=head1 TESTING
+
+All Bricolage patches should be accompanied by the necessary tests. You are
+strongly encouraged to write comprehensive tests that thorougly test whatever
+changes or additions you make to the Bricolage API. You are also strongly
+encouraged to write tests for the current API, if you find that adequate tests
+have not yet been written (and this is true in a great many places,
+unfortunately). Although Bricolage does not yet support UI tests, we take our
+API testing seriously, and so should you. Here's what you need to know to
+write tests for Bricolage.
+
+Bricolage contains a test suite based on L<Test::Class|Test::Class>. The test
+classes live in the F<t/Bric> directory, and all subclass Bric::Test::Base. If
+you're familiar with L<Test::More|Test::More>, then the syntax for how the
+Test::Class-based classes work should be pretty readily apparent. See the
+L<Test::Class|Test::Class> documentation for details. It's definitely worth a
+read. If you have't used Test::More, its documentation is also a must-read.
+
+Bricolage has two different sets of tests, those run by C<make test> and those
+run by C<make devtest>. The former are standalone tests that don't rely on the
+presence of a Bricolage database to be run. They can thus be run before
+C<make install>. The idea here is that we offer a basic set of tests that can
+be run via the standard Perl installation pattern of
+
+  perl Makefile.PL
+  make
+  make test
+  make install
+
+The tests run by <make devtest> are intended to be run during development.
+They require that a Bricolage database be installed and running. They will
+C<SELECT>, C<INSERT>, C<UPDATE>, and C<DELETE> data from that database, so
+C<make devtest> should B<never> be run against a production database. Indeed,
+you should in general have a clean, fresh database installation to run the
+tests against. Although the test suite makes every effort to clean up after
+itself by C<DELETE>ing data it has added to the database, it is unfortunately
+imperfect, and extra data will be left, especially in Group-related and
+Attribute-related tables.
+
+So, once more, B<C<make devtest> should B<never> be run against a production
+database.>. 'Nuff said.
+
+All of the tests are run by the F<inst/runtests.pl> script, which in turn
+tells L<Test::Harness|Test::Harness> to execute F<t/Bric/Test/Runner.pm>. This
+file will find all the necessary test classes, load them, and then run their
+tests. F<inst/runtests.pl> takes a number of arguments to simplify the running
+of scripts, including a list of Test files or classes to run, so that you can
+just run the tests you need to run while you're developing new tests.
+C<perldoc inst/runtests.pl> for more information.
+
+Be sure to use the testing base classes in your test classes. For non-database
+dependent tests (which are always in files named F<Test.pm>, use
+L<Bric::Test::Base|Bric::Test::Base>. For development tests, use
+L<Bric::Test::DevBase|Bric::Test::DevBase>, which inherits from
+Bric::Test::Base. Be sure to read the documentation in these classes, as it
+will help you to write your tests more effectively. Pay special attention to
+the methods added to Bric::Test::DevBase, as they're there to help you clean
+up any new records you've added to the database.
 
 =head1 DEBUGGING
 
@@ -423,6 +482,8 @@ CVS. Once everything appears to be working properly, release!
 =head1 AUTHOR
 
 Sam Tregar <stregar@about-inc.com>
+
+David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
