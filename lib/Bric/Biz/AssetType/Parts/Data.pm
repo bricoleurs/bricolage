@@ -21,13 +21,13 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
- $field = Bric::Biz::element::Parts::Data->new( $initial_state )
+ $field = Bric::Biz::AssetType::Parts::Data->new( $initial_state )
 
- $field = Bric::Biz::element::Parts::Data->lookup( { id => $id } )
+ $field = Bric::Biz::AssetType::Parts::Data->lookup( { id => $id } )
 
- ($field_list || @fields) = Bric::Biz::element::Parts::Data->list($criteria)
+ ($field_list || @fields) = Bric::Biz::AssetType::Parts::Data->list($criteria)
 
- ($ids || @ids) = Bric::Biz::element::Parts::Data->list_ids($criteria)
+ ($ids || @ids) = Bric::Biz::AssetType::Parts::Data->list_ids($criteria)
 
 
  $id    = $field->get_id()
@@ -347,7 +347,7 @@ sub copy {
 
 #------------------------------------------------------------------------------#
 
-=item $field = Bric::Biz::element::Parts::Data->lookup( { id => $id } )
+=item $field = Bric::Biz::AssetType::Parts::Data->lookup( { id => $id } )
 
 Returns an existing Asset type field object that has the id that was given
 as an argument
@@ -384,7 +384,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item ($parts || @parts) = Bric::Biz::element::Parts::Data->list($params)
+=item ($parts || @parts) = Bric::Biz::AssetType::Parts::Data->list($params)
 
 Returns a list (or list ref) of field objects that match the criteria in the
 C<$params> hash reference. Supported criteria are:
@@ -726,7 +726,7 @@ sub my_meths {
 
 ##############################################################################
 
-=item ($ids || @ids) = Bric::Biz::element::Parts::Field->list_ids($params)
+=item ($ids || @ids) = Bric::Biz::AssetType::Parts::Field->list_ids($params)
 
 Returns the ids of the field objects that match the given criteria in the
 C<$params> hash reference. See C<list()> for a list of supported parameters.
@@ -1608,6 +1608,8 @@ sub _insert_data {
     # Create the insert statement.
     my $sql = 'INSERT INTO '.TABLE.' (id,'.join(',',COLS).") ".
               "VALUES ($nextval,".join(',', ('?') x COLS).')';
+
+    warn "Inserting $self->{element__id} => $self->{key_name}\n";
 
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(COLS));
