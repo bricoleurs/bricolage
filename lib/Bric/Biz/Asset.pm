@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-10 08:43:18 $
+$Date: 2004-02-10 21:01:11 $
 
 =head1 SYNOPSIS
 
@@ -102,12 +102,12 @@ number the same but will associate a user with the object.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
+# Standard Dependencies
 
 use strict;
 
 #--------------------------------------#
-# Programmatic Dependencies              
+# Programmatic Dependencies
 
 use Bric::Util::Fault qw(throw_gen throw_mni);
 use Bric::Biz::Workflow;
@@ -133,8 +133,8 @@ use base qw(Bric);
 #======================================#
 
 use constant DEBUG => 0;
-use constant RO_FIELDS => ();
-use constant RO_COLUMNS => ();
+sub RO_FIELDS () { return }
+sub RO_COLUMNS () { return }
 
 use constant HAS_MULTISITE => 1;
 
@@ -143,7 +143,7 @@ use constant HAS_MULTISITE => 1;
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
+# Public Class Fields
 
 # Public fields should use 'vars'
 #use vars qw();
