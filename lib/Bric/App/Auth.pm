@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-09-20 02:30:44 $
 
 =head1 SYNOPSIS
 
@@ -155,7 +155,7 @@ sub auth {
     }
     $c ||= Bric::App::Cache->new;
     my $u = get_user_object();
-    if ( !$u || $c->get_lmu_time > $lul) {
+    if ( !$u || $c->get_lmu_time || 0 > $lul) {
 	# There have been changes to the users. Reload this user from the
 	# database.
 	return &$fail($r, 'User does not exist or is disabled.') unless
@@ -374,7 +374,10 @@ Bric (2),
 =head1 REVISION HISTORY
 
 $Log: Auth.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-09-20 02:30:44  wheeler
+Eliminated 'Use of uninitialized value in numeric gt (>)' warning.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:52:57  wheeler
