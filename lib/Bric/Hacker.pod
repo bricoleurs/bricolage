@@ -637,14 +637,9 @@ So to create a branch, make the copy from the F<trunk>:
     http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
     -m 'New branch for maintenance of Bricolage 1.8.x.'
 
-If you've just created the branch, or if you haven't already checked out the
-existing branch, do so now. You'll need it to fix bugs and release future
-minor releases of Bricolage, anyway, so it's good to have on hand.
+Now export the branch and create the distribution tarball.
 
-  % svn co cp http://svn.bricolage.cc/bricolage/branches/rev_1_8
-
-Now create the distribution tarball.
-
+  % svn export http://svn.bricolage.cc/bricolage/branches/rev_1_8
   % cd rev_1_8
   % make dist
 
