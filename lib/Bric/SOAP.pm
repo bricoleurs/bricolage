@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -20,11 +20,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =head1 DATE
 
-$Date: 2002-07-12 19:33:25 $
+$Date: 2002-08-02 18:10:50 $
 
 =head1 SYNOPSIS
 
@@ -316,440 +316,440 @@ The XSD source:
      </xs:annotation>
      <xs:complexType mixed="0">
        <xs:sequence maxOccurs="unbounded">
-	 <xs:element name="story" minOccurs="0" maxOccurs="unbounded">
-	   <xs:complexType>
-	     <xs:sequence>
-	       <xs:element name="name">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="256"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="description">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="1024"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="slug">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="64"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="primary_uri">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="128"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="priority">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:int">
-		     <xs:minInclusive value="1"/>
-		     <xs:maxInclusive value="5"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="publish_status" type="xs:boolean"/>
-	       <xs:element name="active" type="xs:boolean"/>
-	       <xs:element name="source">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="128"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="cover_date" type="xs:dateTime"/>
-	       <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
-		 <xs:annotation>
-		   <xs:documentation>omitted if no expire date</xs:documentation>
-		 </xs:annotation>
-	       </xs:element>
-	       <xs:element name="publish_date" type="xs:dateTime" minOccurs="0">
-		 <xs:annotation>
-		   <xs:documentation>omitted if not published</xs:documentation>
-		 </xs:annotation>
-	       </xs:element>
-	       <xs:element name="categories">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="category" maxOccurs="unbounded">
-		       <xs:complexType>
-			 <xs:simpleContent>
-			   <xs:extension base="xs:string">
-			     <xs:attribute name="primary" type="xs:boolean" use="optional"/>
-			   </xs:extension>
-			 </xs:simpleContent>
-		       </xs:complexType>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	       <xs:element name="keywords">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="keyword" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-		       <xs:annotation>
-			 <xs:documentation>This is just a list of keyword names. if we ever start using the full capabilities of Bric::Biz::Keyword then this will need expansion.  It would probably make sense to do a Bric::SOAP::Keyword in that case.</xs:documentation>
-		       </xs:annotation>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	       <xs:element name="contributors">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="contributor" minOccurs="0" maxOccurs="unbounded">
-		       <xs:annotation>
-			 <xs:documentation>This is incomplete...  Either this element should be expanded to properly serialize all the available contributor data or it should reference a top-level contributor element serviced by Bric::SOAP::Contrib.</xs:documentation>
-		       </xs:annotation>
-		       <xs:complexType>
-			 <xs:sequence>
-			   <xs:element name="fname" type="xs:string"/>
-			   <xs:element name="mname" type="xs:string"/>
-			   <xs:element name="lname" type="xs:string"/>
-			   <xs:element name="type" type="xs:string"/>
-			   <xs:element name="role" type="xs:string"/>
-			 </xs:sequence>
-		       </xs:complexType>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	       <xs:element name="elements">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="data" minOccurs="0" maxOccurs="unbounded">
-		       <xs:complexType>
-			 <xs:simpleContent>
-			   <xs:extension base="xs:string">
-			     <xs:attribute name="element" type="xs:string" use="required"/>
-			     <xs:attribute name="order" type="xs:int" use="required"/>
-			   </xs:extension>
-			 </xs:simpleContent>
-		       </xs:complexType>
-		     </xs:element>
-		     <xs:element name="container" type="container_type" minOccurs="0" maxOccurs="unbounded"/>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	     </xs:sequence>
-	     <xs:attribute name="element" type="xs:string" use="required"/>
-	     <xs:attribute name="id" type="xs:int" use="required"/>
-	   </xs:complexType>
-	 </xs:element>
-	 <xs:element name="media" minOccurs="0" maxOccurs="unbounded">
-	   <xs:complexType>
-	     <xs:sequence>
-	       <xs:element name="name">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="256"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="description">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="1024"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="uri">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="128"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="priority">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:int">
-		     <xs:minInclusive value="1"/>
-		     <xs:maxInclusive value="5"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="publish_status" type="xs:boolean"/>
-	       <xs:element name="active" type="xs:boolean"/>
-	       <xs:element name="source">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="128"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="cover_date" type="xs:dateTime"/>
-	       <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
-		 <xs:annotation>
-		   <xs:documentation>omitted if no expire date</xs:documentation>
-		 </xs:annotation>
-	       </xs:element>
-	       <xs:element name="publish_date" type="xs:dateTime" minOccurs="0">
-		 <xs:annotation>
-		   <xs:documentation>omitted if not published</xs:documentation>
-		 </xs:annotation>
-	       </xs:element>
-	       <xs:element name="category" type="xs:string"/>
-	       <xs:element name="contributors">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="contributor" minOccurs="0" maxOccurs="unbounded">
-		       <xs:annotation>
-			 <xs:documentation>This is incomplete...  Either this element should be expanded to properly serialize all the available contributor data or it should reference a top-level contributor element serviced by Bric::SOAP::Contrib.</xs:documentation>
-		       </xs:annotation>
-		       <xs:complexType>
-			 <xs:sequence>
-			   <xs:element name="fname" type="xs:string"/>
-			   <xs:element name="mname" type="xs:string"/>
-			   <xs:element name="lname" type="xs:string"/>
-			   <xs:element name="type" type="xs:string"/>
-			   <xs:element name="role" type="xs:string"/>
-			 </xs:sequence>
-		       </xs:complexType>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	       <xs:element name="elements">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="data" minOccurs="0" maxOccurs="unbounded">
-		       <xs:complexType>
-			 <xs:simpleContent>
-			   <xs:extension base="xs:string">
-			     <xs:attribute name="element" type="xs:string" use="required"/>
-			     <xs:attribute name="order" type="xs:int" use="required"/>
-			   </xs:extension>
-			 </xs:simpleContent>
-		       </xs:complexType>
-		     </xs:element>
-		     <xs:element name="container" type="container_type" minOccurs="0" maxOccurs="unbounded"/>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	       <xs:element name="file" minOccurs="0">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="name">
-		       <xs:simpleType>
-			 <xs:restriction base="xs:string">
-			   <xs:maxLength value="256"/>
-			 </xs:restriction>
-		       </xs:simpleType>
-		     </xs:element>
-		     <xs:element name="size">
-		       <xs:simpleType>
-			 <xs:restriction base="xs:integer">
-			   <xs:minInclusive value="0"/>
-			   <xs:maxInclusive value="9999999999"/>
-			 </xs:restriction>
-		       </xs:simpleType>
-		     </xs:element>
-		     <xs:element name="data">
-		       <xs:simpleType>
-			 <xs:restriction base="xs:base64Binary">
-			   <xs:minLength value="0"/>
-			   <xs:maxLength value="9999999999"/>
-			 </xs:restriction>
-		       </xs:simpleType>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	     </xs:sequence>
-	     <xs:attribute name="element" type="xs:string" use="required"/>
-	     <xs:attribute name="id" type="xs:int" use="required"/>
-	   </xs:complexType>
-	 </xs:element>
-	 <xs:element name="template" minOccurs="0" maxOccurs="unbounded">
-	   <xs:complexType>
-	     <xs:sequence>
-	       <xs:element name="element">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="64"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="generic" type="xs:boolean"/>
-	       <xs:element name="file_name">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="256"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="description">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="1024"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="priority">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:int">
-		     <xs:minInclusive value="1"/>
-		     <xs:maxInclusive value="5"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="deploy_status" type="xs:boolean"/>
-	       <xs:element name="active" type="xs:boolean"/>
-	       <xs:element name="category" type="xs:string"/>
-	       <xs:element name="output_channel" type="xs:string"/>
-	       <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
-		 <xs:annotation>
-		   <xs:documentation>omitted if no expire date</xs:documentation>
-		 </xs:annotation>
-	       </xs:element>
-	       <xs:element name="deploy_date" type="xs:dateTime" minOccurs="0">
-		 <xs:annotation>
-		   <xs:documentation>omitted if not deployed</xs:documentation>
-		 </xs:annotation>
-	       </xs:element>
-	       <xs:element name="data" type="xs:base64Binary" minOccurs="0"/>
-	     </xs:sequence>
-	     <xs:attribute name="id" type="xs:int" use="required"/>
-	   </xs:complexType>
-	 </xs:element>
-	 <xs:element name="element" minOccurs="0" maxOccurs="unbounded">
-	   <xs:complexType>
-	     <xs:sequence>
-	       <xs:element name="name">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="64"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="description">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="256"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="burner">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string"/>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="type">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string"/>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="active" type="xs:boolean"/>
-	       <xs:element name="top_level" type="xs:boolean"/>
-	       <xs:element name="output_channels" minOccurs="0">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="output_channel" maxOccurs="unbounded">
-		       <xs:complexType>
-			 <xs:simpleContent>
-			   <xs:extension base="xs:string">
-			     <xs:attribute name="primary" type="xs:boolean" use="optional"/>
-			   </xs:extension>
-			 </xs:simpleContent>
-		       </xs:complexType>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	       <xs:element name="subelements">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="subelement" minOccurs="0" maxOccurs="unbounded">
-		       <xs:simpleType>
-			 <xs:restriction base="xs:string">
-			   <xs:maxLength value="64"/>
-			 </xs:restriction>
-		       </xs:simpleType>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	       <xs:element name="fields">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="field" minOccurs="0" maxOccurs="unbounded">
-		       <xs:complexType>
-			 <xs:sequence>
-			   <xs:element name="type" type="xs:string"/>
-			   <xs:element name="name" type="xs:string"/>
-			   <xs:element name="label" type="xs:string"/>
-			   <xs:element name="required" type="xs:boolean"/>
-			   <xs:element name="repeatable" type="xs:boolean"/>
-			   <xs:element name="default" type="xs:string" minOccurs="0"/>
-			   <xs:element name="options" type="xs:string" minOccurs="0"/>
-			   <xs:element name="multiple" type="xs:boolean" minOccurs="0"/>
-			   <xs:element name="size" type="xs:int" minOccurs="0"/>
-			   <xs:element name="max_size" type="xs:int" minOccurs="0"/>
-			   <xs:element name="rows" type="xs:int" minOccurs="0"/>
-			   <xs:element name="cols" type="xs:int" minOccurs="0"/>
-			 </xs:sequence>
-		       </xs:complexType>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	     </xs:sequence>
-	     <xs:attribute name="id" type="xs:integer" use="required"/>
-	   </xs:complexType>
-	 </xs:element>
-	 <xs:element name="category" minOccurs="0" maxOccurs="unbounded">
-	   <xs:complexType>
-	     <xs:sequence>
-	       <xs:element name="name">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string"/>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="description">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="256"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="path">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string"/>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="active" type="xs:boolean"/>
-	       <xs:element name="adstring">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string"/>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="adstring2">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string"/>
-		 </xs:simpleType>
-	       </xs:element>
-	       <xs:element name="keywords">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="keyword" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-		       <xs:annotation>
-			 <xs:documentation>This is just a list of keyword names. if we ever start using the full capabilities of Bric::Biz::Keyword then this will need expansion.  It would probably make sense to do a Bric::SOAP::Keyword in that case.</xs:documentation>
-		       </xs:annotation>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	     </xs:sequence>
-	     <xs:attribute name="id" type="xs:int" use="required"/>
-	   </xs:complexType>
-	 </xs:element>
+         <xs:element name="story" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="1024"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="slug">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="primary_uri">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="128"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="priority">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:int">
+                     <xs:minInclusive value="1"/>
+                     <xs:maxInclusive value="5"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="publish_status" type="xs:boolean"/>
+               <xs:element name="active" type="xs:boolean"/>
+               <xs:element name="source">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="128"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="cover_date" type="xs:dateTime"/>
+               <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
+                 <xs:annotation>
+                   <xs:documentation>omitted if no expire date</xs:documentation>
+                 </xs:annotation>
+               </xs:element>
+               <xs:element name="publish_date" type="xs:dateTime" minOccurs="0">
+                 <xs:annotation>
+                   <xs:documentation>omitted if not published</xs:documentation>
+                 </xs:annotation>
+               </xs:element>
+               <xs:element name="categories">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="category" maxOccurs="unbounded">
+                       <xs:complexType>
+                         <xs:simpleContent>
+                           <xs:extension base="xs:string">
+                             <xs:attribute name="primary" type="xs:boolean" use="optional"/>
+                           </xs:extension>
+                         </xs:simpleContent>
+                       </xs:complexType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+               <xs:element name="keywords">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="keyword" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                       <xs:annotation>
+                         <xs:documentation>This is just a list of keyword names. if we ever start using the full capabilities of Bric::Biz::Keyword then this will need expansion.  It would probably make sense to do a Bric::SOAP::Keyword in that case.</xs:documentation>
+                       </xs:annotation>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+               <xs:element name="contributors">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="contributor" minOccurs="0" maxOccurs="unbounded">
+                       <xs:annotation>
+                         <xs:documentation>This is incomplete...  Either this element should be expanded to properly serialize all the available contributor data or it should reference a top-level contributor element serviced by Bric::SOAP::Contrib.</xs:documentation>
+                       </xs:annotation>
+                       <xs:complexType>
+                         <xs:sequence>
+                           <xs:element name="fname" type="xs:string"/>
+                           <xs:element name="mname" type="xs:string"/>
+                           <xs:element name="lname" type="xs:string"/>
+                           <xs:element name="type" type="xs:string"/>
+                           <xs:element name="role" type="xs:string"/>
+                         </xs:sequence>
+                       </xs:complexType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+               <xs:element name="elements">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="data" minOccurs="0" maxOccurs="unbounded">
+                       <xs:complexType>
+                         <xs:simpleContent>
+                           <xs:extension base="xs:string">
+                             <xs:attribute name="element" type="xs:string" use="required"/>
+                             <xs:attribute name="order" type="xs:int" use="required"/>
+                           </xs:extension>
+                         </xs:simpleContent>
+                       </xs:complexType>
+                     </xs:element>
+                     <xs:element name="container" type="container_type" minOccurs="0" maxOccurs="unbounded"/>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+             <xs:attribute name="element" type="xs:string" use="required"/>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="media" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="1024"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="uri">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="128"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="priority">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:int">
+                     <xs:minInclusive value="1"/>
+                     <xs:maxInclusive value="5"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="publish_status" type="xs:boolean"/>
+               <xs:element name="active" type="xs:boolean"/>
+               <xs:element name="source">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="128"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="cover_date" type="xs:dateTime"/>
+               <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
+                 <xs:annotation>
+                   <xs:documentation>omitted if no expire date</xs:documentation>
+                 </xs:annotation>
+               </xs:element>
+               <xs:element name="publish_date" type="xs:dateTime" minOccurs="0">
+                 <xs:annotation>
+                   <xs:documentation>omitted if not published</xs:documentation>
+                 </xs:annotation>
+               </xs:element>
+               <xs:element name="category" type="xs:string"/>
+               <xs:element name="contributors">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="contributor" minOccurs="0" maxOccurs="unbounded">
+                       <xs:annotation>
+                         <xs:documentation>This is incomplete...  Either this element should be expanded to properly serialize all the available contributor data or it should reference a top-level contributor element serviced by Bric::SOAP::Contrib.</xs:documentation>
+                       </xs:annotation>
+                       <xs:complexType>
+                         <xs:sequence>
+                           <xs:element name="fname" type="xs:string"/>
+                           <xs:element name="mname" type="xs:string"/>
+                           <xs:element name="lname" type="xs:string"/>
+                           <xs:element name="type" type="xs:string"/>
+                           <xs:element name="role" type="xs:string"/>
+                         </xs:sequence>
+                       </xs:complexType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+               <xs:element name="elements">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="data" minOccurs="0" maxOccurs="unbounded">
+                       <xs:complexType>
+                         <xs:simpleContent>
+                           <xs:extension base="xs:string">
+                             <xs:attribute name="element" type="xs:string" use="required"/>
+                             <xs:attribute name="order" type="xs:int" use="required"/>
+                           </xs:extension>
+                         </xs:simpleContent>
+                       </xs:complexType>
+                     </xs:element>
+                     <xs:element name="container" type="container_type" minOccurs="0" maxOccurs="unbounded"/>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+               <xs:element name="file" minOccurs="0">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="name">
+                       <xs:simpleType>
+                         <xs:restriction base="xs:string">
+                           <xs:maxLength value="256"/>
+                         </xs:restriction>
+                       </xs:simpleType>
+                     </xs:element>
+                     <xs:element name="size">
+                       <xs:simpleType>
+                         <xs:restriction base="xs:integer">
+                           <xs:minInclusive value="0"/>
+                           <xs:maxInclusive value="9999999999"/>
+                         </xs:restriction>
+                       </xs:simpleType>
+                     </xs:element>
+                     <xs:element name="data">
+                       <xs:simpleType>
+                         <xs:restriction base="xs:base64Binary">
+                           <xs:minLength value="0"/>
+                           <xs:maxLength value="9999999999"/>
+                         </xs:restriction>
+                       </xs:simpleType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+             <xs:attribute name="element" type="xs:string" use="required"/>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="template" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="element">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="generic" type="xs:boolean"/>
+               <xs:element name="file_name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="1024"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="priority">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:int">
+                     <xs:minInclusive value="1"/>
+                     <xs:maxInclusive value="5"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="deploy_status" type="xs:boolean"/>
+               <xs:element name="active" type="xs:boolean"/>
+               <xs:element name="category" type="xs:string"/>
+               <xs:element name="output_channel" type="xs:string"/>
+               <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
+                 <xs:annotation>
+                   <xs:documentation>omitted if no expire date</xs:documentation>
+                 </xs:annotation>
+               </xs:element>
+               <xs:element name="deploy_date" type="xs:dateTime" minOccurs="0">
+                 <xs:annotation>
+                   <xs:documentation>omitted if not deployed</xs:documentation>
+                 </xs:annotation>
+               </xs:element>
+               <xs:element name="data" type="xs:base64Binary" minOccurs="0"/>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="element" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="burner">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string"/>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="type">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string"/>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="active" type="xs:boolean"/>
+               <xs:element name="top_level" type="xs:boolean"/>
+               <xs:element name="output_channels" minOccurs="0">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="output_channel" maxOccurs="unbounded">
+                       <xs:complexType>
+                         <xs:simpleContent>
+                           <xs:extension base="xs:string">
+                             <xs:attribute name="primary" type="xs:boolean" use="optional"/>
+                           </xs:extension>
+                         </xs:simpleContent>
+                       </xs:complexType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+               <xs:element name="subelements">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="subelement" minOccurs="0" maxOccurs="unbounded">
+                       <xs:simpleType>
+                         <xs:restriction base="xs:string">
+                           <xs:maxLength value="64"/>
+                         </xs:restriction>
+                       </xs:simpleType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+               <xs:element name="fields">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="field" minOccurs="0" maxOccurs="unbounded">
+                       <xs:complexType>
+                         <xs:sequence>
+                           <xs:element name="type" type="xs:string"/>
+                           <xs:element name="name" type="xs:string"/>
+                           <xs:element name="label" type="xs:string"/>
+                           <xs:element name="required" type="xs:boolean"/>
+                           <xs:element name="repeatable" type="xs:boolean"/>
+                           <xs:element name="default" type="xs:string" minOccurs="0"/>
+                           <xs:element name="options" type="xs:string" minOccurs="0"/>
+                           <xs:element name="multiple" type="xs:boolean" minOccurs="0"/>
+                           <xs:element name="size" type="xs:int" minOccurs="0"/>
+                           <xs:element name="max_size" type="xs:int" minOccurs="0"/>
+                           <xs:element name="rows" type="xs:int" minOccurs="0"/>
+                           <xs:element name="cols" type="xs:int" minOccurs="0"/>
+                         </xs:sequence>
+                       </xs:complexType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:integer" use="required"/>
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="category" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string"/>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="path">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string"/>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="active" type="xs:boolean"/>
+               <xs:element name="adstring">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string"/>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="adstring2">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string"/>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="keywords">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="keyword" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                       <xs:annotation>
+                         <xs:documentation>This is just a list of keyword names. if we ever start using the full capabilities of Bric::Biz::Keyword then this will need expansion.  It would probably make sense to do a Bric::SOAP::Keyword in that case.</xs:documentation>
+                       </xs:annotation>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
        </xs:sequence>
      </xs:complexType>
    </xs:element>
@@ -759,21 +759,21 @@ The XSD source:
      </xs:annotation>
      <xs:sequence>
        <xs:element name="data" minOccurs="0" maxOccurs="unbounded">
-	 <xs:complexType>
-	   <xs:simpleContent>
-	     <xs:extension base="xs:string">
-	       <xs:attribute name="element" type="xs:string" use="required"/>
-	       <xs:attribute name="order" type="xs:int" use="required"/>
-	     </xs:extension>
-	   </xs:simpleContent>
-	 </xs:complexType>
+         <xs:complexType>
+           <xs:simpleContent>
+             <xs:extension base="xs:string">
+               <xs:attribute name="element" type="xs:string" use="required"/>
+               <xs:attribute name="order" type="xs:int" use="required"/>
+             </xs:extension>
+           </xs:simpleContent>
+         </xs:complexType>
        </xs:element>
        <xs:element name="container" minOccurs="0" maxOccurs="unbounded">
-	 <xs:complexType>
-	   <xs:complexContent>
-	     <xs:extension base="container_type"/>
-	   </xs:complexContent>
-	 </xs:complexType>
+         <xs:complexType>
+           <xs:complexContent>
+             <xs:extension base="container_type"/>
+           </xs:complexContent>
+         </xs:complexType>
        </xs:element>
      </xs:sequence>
      <xs:attribute name="element" type="xs:string" use="required"/>
