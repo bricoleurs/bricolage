@@ -222,6 +222,7 @@ elsif ($field eq "$widget|create_cb") {
     log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
     log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
     log_event('formatting_save', $fa);
+    add_msg("Template &quot;" . $fa->get_name . "&quot; created and saved.");
 
     # Put the template into the session and clear the workflow ID.
     set_state_data($widget, 'fa', $fa);
