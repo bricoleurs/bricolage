@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.58 $
+$Revision: 1.59 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58 $ )[-1];
+our $VERSION = (qw$Revision: 1.59 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-28 00:12:46 $
+$Date: 2004-02-28 00:59:11 $
 
 =head1 SYNOPSIS
 
@@ -46,7 +46,6 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
-use HTML::Mason::Exceptions;
 use HTML::Mason::Interp;
 use HTML::Mason::Compiler::ToObject;
 use Bric::Util::Fault qw(throw_gen rethrow_exception isa_exception
@@ -282,7 +281,9 @@ sub burn_one {
         eval { $retval = $interp->exec($tmpl_path) };
         if (my $err = $@) {
             my $msg;
-	    if (isa_mason_exception($err, 'TopLevelNotFound')) {
+	    if (HTML::Mason::Exceptions::isa_mason_exception(
+                  $err, 'TopLevelNotFound'
+              )) {
                 # We'll handle this exception ourselves to prevent it from
                 # percolating back up to the UI and returning a 404.
 		$err = "Mason error: ". $err->message;
