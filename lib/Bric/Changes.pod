@@ -297,6 +297,13 @@ Added a FAQ. [Scott]
 
 Added a preference for naming the Bricolage instance. [Scott]
 
+=item *
+
+Added search by Category URI to Find Stories. Although one could use the
+search by URI feature for this before, it didn't allow for search by secondary
+categories. Now stories can be searhed for in both primary and secondary
+categories. [David]
+
 =back
 
 =head1 VERSION 1.4.6

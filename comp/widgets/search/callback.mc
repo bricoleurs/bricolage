@@ -36,10 +36,10 @@ elsif ($field eq "$widget|alpha_cb") {
 elsif ($field eq "$widget|story_cb") {
     my (@field, @crit);
 
-    $build_fields->($widget, $param, \@field, \@crit, 
-		    [qw(simple title primary_uri keyword)]);
+    $build_fields->($widget, $param, \@field, \@crit,
+		    [qw(simple title primary_uri category_uri keyword)]);
 
-    $build_date_fields->($widget, $param, \@field, \@crit, 
+    $build_date_fields->($widget, $param, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -54,10 +54,10 @@ elsif ($field eq "$widget|story_cb") {
 elsif ($field eq "$widget|media_cb") {
     my (@field, @crit);
 
-    $build_fields->($widget, $param, \@field, \@crit, 
+    $build_fields->($widget, $param, \@field, \@crit,
 		    [qw(simple name uri)]);
 
-    $build_date_fields->($widget, $param, \@field, \@crit, 
+    $build_date_fields->($widget, $param, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -71,10 +71,10 @@ elsif ($field eq "$widget|media_cb") {
 }
 elsif ($field eq "$widget|formatting_cb") {
     my (@field, @crit);
-    
-    $build_fields->($widget, $param, \@field, \@crit, 
+
+    $build_fields->($widget, $param, \@field, \@crit,
 		    [qw(simple name file_name)]);
-    
+
     $build_date_fields->($widget, $param, \@field, \@crit, 
 			 [qw(cover_date publish_date expire_date)]);
 
@@ -97,7 +97,7 @@ elsif ($field eq "$widget|generic_cb") {
     # the object field names in $flist above
     my $clist  = $param->{"$widget|generic_criteria"};
 
-    # A '+' separated list of object fields that are meant to be substring 
+    # A '+' separated list of object fields that are meant to be substring
     # searches and thus should be wrapped in '%'
     my $substr = $param->{"$widget|generic_set_substr"};
 
@@ -114,7 +114,7 @@ elsif ($field eq "$widget|generic_cb") {
 	    splice @$fields, $i, 1;
 	    splice @$crit,   $i, 1;
         }
-	
+
 	# Check for searches that should be substring searches.
 	if ($sub{$fields->[$i]}) {
 	    $crit->[$i] = '%'.$crit->[$i].'%';
@@ -141,18 +141,15 @@ elsif ($field eq "$widget|unset_advanced_cb") {
 </%init>
 
 <%once>
-
-use Bric::Config qw(:search);
-
 my $build_fields = sub {
     my ($widget, $param, $field, $crit, $add) = @_;
-    
+
     foreach my $f (@$add) {
 	my $v = $param->{$widget."|$f"};
-	
+
 	# Save the value so we can repopulate the form.
 	set_state_data($widget, $f, $v);
-	
+
 	# Skip it if its blank
 	next unless $v;
 

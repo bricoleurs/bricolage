@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.79 $
+$Revision: 1.80 $
 
 =head1 DATE
 
-$Date: 2002-12-05 22:08:49 $
+$Date: 2002-12-05 22:32:59 $
 
 =head1 DESCRIPTION
 
@@ -127,10 +127,9 @@ Add "make uninstall" support to installation system.
 
 =item *
 
-Add search by category (including secondary categories) and search by
-story/media type to the Find Stories and Find Media interfaces. This feature
-would be in the Advanced search interface, but for those who want to have it
-present all the time, see the next item.
+Add search story/media element type to the Find Stories and Find Media
+interfaces. This feature would be in the Advanced search interface, but for
+those who want to have it present all the time, see the next item.
 
 =item *
 

@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:44 $
+$Date: 2002-12-05 22:32:57 $
 
 =head1 SYNOPSIS
 
@@ -662,7 +662,7 @@ my $build_constraints = sub {
     my $prev = get_state_data($search_widget, 'crit_set_uri') || '';
     my $cur  = $r->uri || '';
 
-    # Remove trailing slashes if they exsist.  Fixes a problem 
+    # Remove trailing slashes if they exsist.  Fixes a problem
     # not realizing that '/foo/bar' and '/foo/bar/' are the same URL.
     substr($prev, -1, 1) = '' unless substr($prev, -1) ne '/';
     substr($cur, -1, 1)  = '' unless substr($cur, -1) ne '/';

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-06 21:45:50 $
+$Date: 2002-12-05 22:33:00 $
 
 =head1 SYNOPSIS
 
@@ -509,7 +509,11 @@ stories with no workflow.
 
 =item *
 
-primary_url
+primary_uri
+
+=item *
+
+category_uri
 
 =item *
 
@@ -1635,8 +1639,19 @@ sub _do_list {
     push @tables, TABLE.' s', VERSION_TABLE.' i';
 
     # Put the story__category mapping table in if they are searching by category
-    if (defined($param->{'category_id'})) {
+    if (defined $param->{category_id} or defined $param->{category_uri}) {
         push @tables, 'story__category c';
+        push @where, 'i.id = c.story_instance__id';
+        if (defined $param->{'category_id'}) {
+            push @where, 'c.category__id = ?';
+            push @bind, $param->{category_id};
+        } else {
+            push @where, q{c.category__id in
+                               (SELECT id
+                                FROM   category
+                                WHERE  LOWER(uri) LIKE ?)};
+            push @bind, lc $param->{category_uri};
+        }
     }
 
     if ($param->{'keyword'}) {
@@ -1736,12 +1751,6 @@ sub _do_list {
                 push @bind, $end;
             }
         }
-    }
-
-    if (defined $param->{'category_id'}) {
-        push @where, 'i.id = c.story_instance__id';
-        push @where, 'c.category__id = ?';
-        push @bind, $param->{'category_id'};
     }
 
     push @where, 's.id=i.story__id';

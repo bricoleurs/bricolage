@@ -20,18 +20,18 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
 
 <table border=0 cellpadding=0 cellspacing=0 width=580>
 <tr>
-  <td class=darkHeader valign=top width=13><img src="/media/images/666633_curve_left.gif" width=13 height=19></td>
+  <td class="darkHeader" valign="top" width="13"><img src="/media/images/666633_curve_left.gif" width="13" height="19"></td>
 % unless ($advanced_search) {
-  <td class=darkHeader width=556>SEARCH [ <a href="<% $r->uri %>?<% $widget %>|set_advanced_cb=1" class="whiteUnderlinedLink">Advanced Search</a> ]</td>
+  <td class="darkHeader" width=556>SEARCH [ <a href="<% $r->uri %>?<% $widget %>|set_advanced_cb=1" class="whiteUnderlinedLink">Advanced Search</a> ]</td>
 % } else {
-  <td class=darkHeader width=556>ADVANCED SEARCH [ <a href="<% $r->uri %>?<% $widget %>|unset_advanced_cb=1" class="whiteUnderlinedLink">Simple Search</a> ]</td>
+  <td class="darkHeader" width=556>ADVANCED SEARCH [ <a href="<% $r->uri %>?<% $widget %>|unset_advanced_cb=1" class="whiteUnderlinedLink">Simple Search</a> ]</td>
 % }
-  <td class=darkHeader valign=top width=13 align=right><img src="/media/images/666633_curve_right.gif" width=13 height=19></td>
+  <td class="darkHeader" valign="top" width="13" align="right"><img src="/media/images/666633_curve_right.gif" width="13" height="19"></td>
 </tr>
 </table>
 <table border=0 cellpadding=0 cellspacing=0 width=578>
 <tr>
-  <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
+  <td class="darkHeader"><img src="/media/images/spacer.gif" width=1 height=1></td>
   <td class=lightHeader>
 <% $spacerRow %>
             <table>
@@ -53,16 +53,16 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
               <tr>
                 <td align="right"><span class=label>Title:</span></td>
                 <td>
-                  <& /widgets/profile/text.mc, 
+                  <& /widgets/profile/text.mc,
                      name     => $widget.'|title',
                      value    => get_state_data($widget, 'title') || '',
                      useTable => 0 &>
                 </td>
               </tr>             
               <tr>
-                <td align="right"><span class=label>URL:</span></td>
+                <td align="right"><span class=label>URI:</span></td>
                 <td>
-                  <& /widgets/profile/text.mc, 
+                  <& /widgets/profile/text.mc,
                      name     => $widget.'|primary_uri',
                      value    => get_state_data($widget, 'primary_uri') || '',
                      useTable => 0 &>
@@ -71,12 +71,21 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
               <tr>
                 <td align="right"><span class=label>Keyword:</span></td>
                 <td>
-                  <& /widgets/profile/text.mc, 
+                  <& /widgets/profile/text.mc,
                      name     => $widget.'|keyword',
                      value    => get_state_data($widget, 'keyword') || '',
                      useTable => 0 &>
                 </td>
               </tr>
+              <tr>
+                <td align="right"><span class=label>Category URI:</span></td>
+                <td>
+                  <& /widgets/profile/text.mc,
+                     name     => $widget.'|category_uri',
+                     value    => get_state_data($widget, 'category_uri') || '',
+                     useTable => 0 &>
+                </td>
+              </tr>             
               <tr>
                 <td align="right"><span class=label>Teaser:</span></td>
                 <td>
@@ -169,10 +178,10 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
 % } # unless ($advanced_search) {
             </table>
   </td>
-  <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
+  <td class="darkHeader"><img src="/media/images/spacer.gif" width=1 height=1></td>
 </tr>
 <tr>
-  <td class=darkHeader width=580 colspan=2><img src="/media/images/spacer.gif" width=580 height=1></td>
+  <td class="darkHeader" width=580 colspan=2><img src="/media/images/spacer.gif" width=580 height=1></td>
 </tr>
 </table>
 % if ($advanced_search) {
