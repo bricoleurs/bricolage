@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2003-10-02 20:17:38 $
+$Date: 2003-10-02 20:24:51 $
 
 =head1 DESCRIPTION
 
@@ -26,7 +26,7 @@ Bricolage might have.
 =head3 Does Bricolage support databases other than PostgreSQL?
 
 Currently only PostgreSQL support is maintained. There is an Oracle driver,
-but it's old and not known to work. A port to MySQL 4.1 xis reportedly
+but it's old and not known to work. A port to MySQL 4.1 is reportedly
 underway.
 
 =head3 How well does Bricolage perform?
@@ -36,7 +36,7 @@ other content management systems. But the performance of Bricolage is
 irrelevant to a public facing site. As a back office content management and
 publishing system, Bricolage does not host web sites or serve content. Rather,
 when documents are published in Bricolage, they are pushed through templates
-and the resulting files are distributed to your Web server. So if youre
+and the resulting files are distributed to your Web server. So if your
 Bricolage templates output static HTML, your public Web server should serve
 your content very fast indeed.
 
