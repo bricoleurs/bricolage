@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2003-02-19 18:56:45 $
+$Date: 2003-03-04 20:50:36 $
 
 =head1 DESCRIPTION
 
@@ -127,6 +127,47 @@ run `make dist`. Do something like this:
 This only happens the first time your browser accesses Bricolage.
 It is harmless and indicates that no Bricolage session cookie
 has been set yet.
+
+=head3 Why do I get a 404 when I connect to the Bricolage UI and get an
+error like the following in Apache's F<error_log>?
+
+  [error] [client 127.0.0.1] Error executing AccessHandler: Bric::App::Session -- /usr/local/lib/perl5/site_perl/5.8.0/Bric/App/Session.pm -- 236
+  Difficulties tie'ing the session hash to file '/tmp/bricolage/session'
+
+Most likely it is because one or more files or directories in your Bricolage
+temp directory are no longer writable by the Apache user. You need to C<chown>
+the temp file directories and restart Bricolage:
+
+  sudo chown -R nobody:nobody /tmp/bricolage
+  sudo bric_apachectl restart
+
+=head3 When I try to login to Bricolage, I get redirected to F</login>, but
+the page is blank. There's nothing in the HTML source except C<<
+<html><head></head></html> >> or nothing at all. There are no errors in the
+error log or the access log. What's wrong?
+
+I've seen this a couple of times, but the cause was different each time. On
+one occasion, there was a F<FilesMatch> directive in a separate VirtualHost
+directive in F<httpd.conf> that was preventing Mason from seeing any of the
+Bricolage UI components. The directive that caused the problem looked like
+this:
+
+  <FilesMatch "\.mas">
+    SetHandler  perl-script
+    PerlHandler Bric::App::Handler
+  </FilesMatch>
+
+I have no idea why this would have caused a problem, but when it was removed,
+Bricolage started working again.
+
+On another occasion, a user noticed that the files F<comp/login/dhandler> and
+F<comp/login/welcome.html> were empty. This caused the equivalent of a
+"Document Contains No Data" error, only it didn't. In fact, in my tests, under
+these circumstances, the browser had no HTML source at all. At any rate, the
+problem was fixed by reinstalling Bricolage (a C<make upgrade> would probably
+do the trick, too), but it's likely that simply copying these two files from
+the Bricolage source directories to your installed component root will correct
+the problem. Holler on the bricolage-general mail list if it doesn't.
 
 =head2 Element Administration
 
