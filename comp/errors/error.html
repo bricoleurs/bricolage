@@ -18,11 +18,11 @@
 <b>Package:</b> <% $fault->package %><br />
 <b>Filename:</b> <% $fault->file %><br />
 <b>Line:</b> <% $fault->line %><br />
-<b>Message:</b> <% $fault->error . ($more_err ? "\n\n$more_err" : '') %>
+<b>Message:</b> <% $fault->error . ($more_err ? "\n\n$more_err" : '') |h %>
 % if ($is_burner_error) {
 </p>
 % } else {
-<br /><b>Payload:</b> <% "$pay" %></p>
+<br /><b>Payload:</b> <% "$pay" |h %></p>
 % }
 </font>
 
@@ -31,7 +31,7 @@
 % foreach my $arg (keys %req_args) {
     <tr>
         <td align="right"><span class="label"><% $arg %>:</span></td>
-        <td align="left"><% $req_args{$arg} %></td>
+        <td align="left"><% $req_args{$arg} |h %></td>
     </tr>
 % }
 </table>

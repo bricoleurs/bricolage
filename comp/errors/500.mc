@@ -10,7 +10,7 @@
 
 <p class="header"><% $lang->maketext('An error occurred while processing your request:')%></p>
 
-<p class="errorMsg"><% $fault->error %></p>
+<p class="errorMsg"><% $fault->error |h %></p>
 % if (TEMPLATE_QA_MODE) {
 <font face="Verdana, Helvetica, Arial">
 <p><b>An exception was thrown:</b></p>
@@ -19,13 +19,13 @@
 <b>Package:</b> <% $fault->package %><br />
 <b>Filename:</b> <% $fault->file %><br />
 <b>Line:</b> <% $fault->line %><br />
-<b>Message:</b> <% $fault->error . ($more_err ? "\n\n$more_err" : '') %>
+<b>Message:</b> <% $fault->error . ($more_err ? "\n\n$more_err" : '') |h %>
 % if ($is_burner_error) {
 </p>
 % } else {
 <br /><b>Payload:</b>
 <font size="-1"><pre>
-<% "$pay" %>
+<% "$pay" |h %>
 </pre></font>
 </p>
 % }
@@ -36,7 +36,7 @@
 % foreach my $arg (keys %req_args) {
     <tr>
         <td align="right"><span class="label"><% $arg %>:</span></td>
-        <td align="left"><% $req_args{$arg} %></td>
+        <td align="left"><% $req_args{$arg} |h %></td>
     </tr>
 % }
 </table>
@@ -96,7 +96,7 @@
     </tr>
 </table>
 % } elsif ($pay) {
-<p class="errorMsg"><% "$pay" %></p>
+<p class="errorMsg"><% "$pay" |h %></p>
 % }
 <p class="header">Please report this error to your administrator.</p>
 % }
