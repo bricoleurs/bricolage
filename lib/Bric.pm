@@ -6,19 +6,19 @@ Bric - The Bricolage base class.
 
 =head1 VERSION
 
-Release Version: 1.4.0
+Release Version: 1.5.0 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = "1.4.0";
+our $VERSION = "1.5.0";
 
 =head1 DATE
 
-$Date: 2002-09-04 00:02:58 $
+$Date: 2002-09-04 00:20:31 $
 
 =head1 SYNOPSIS
 
@@ -81,17 +81,14 @@ my $gen = 'Bric::Util::Fault::Exception::GEN';
 # Public Instance Fields
 
 # All subclasses should use the RegisterFields function rather than the below
-# code. See 'Example.pm' in the CVS module 'doc/codingStandards' for an example
-# subclass.
+# code. See 'Example.pm' in the CVS module 'doc/codingStandards' for an
+# example subclass.
 
-sub ACCESS { 
-    return { 
-            debug  => FIELD_RDWR,  # public field
-            _dirty => FIELD_NONE,  # private field
+sub ACCESS {
+    return { debug  => FIELD_RDWR,  # public field
+             _dirty => FIELD_NONE,  # private field
            };
 }
-
-
 
 #==============================================================================#
 # Methods                              #
@@ -345,20 +342,22 @@ sub register_fields {
         my %ACCESS = ( %{$parent->ACCESS()}, %$fields );
         *{"${pkg}::ACCESS"} = sub { \%ACCESS };
     };
-    
+
     die $gen->new({msg => "Unable to register field names", payload => $@})
       if $@;
 }
 
 ########################################
 
+=back
+
 =head2 Private Class Methods
 
-=cut
-
-########################################
+NONE.
 
 =head2 Public Instance Methods
+
+=over 4
 
 =cut
 
@@ -437,12 +436,12 @@ sub AUTOLOAD {
 
     # Get the permissions for this field 
     $perm = $pkg->ACCESS()->{$field} || FIELD_INVALID;
-    
+
     # field doesn't exist!
     die $gen->new({ msg => "Access denied: '$field' is not a valid field for ".
                            "package $pkg." })
       if $perm & FIELD_INVALID;
- 
+
     # A get request
     if ($op eq 'get') {
         # check permissions
@@ -480,7 +479,7 @@ sub AUTOLOAD {
     }
 
     # otherwise, fail
-    else {	
+    else {
 	die $gen->new({msg => "No AUTOLOAD method: $AUTOLOAD"});
     }
 
@@ -631,7 +630,11 @@ sub save {
 
 ########################################
 
+=back
+
 =head2 Private Instance Methods
+
+=over 4
 
 =cut
 
@@ -730,7 +733,7 @@ sub _set {
             };
             die $gen->new({ msg => "Error setting value for '$key' in _set().",
                             payload => $@ }) if $@;
-        }	
+        }
     }
 
     # Set the dirty flag to show that this objects needs an update.
@@ -759,6 +762,7 @@ Error checking and exception throwing is only performed in QA_MODE for
 performance reasons.
 
 =cut
+
 sub _get {
     my $self = shift;
 
@@ -768,21 +772,21 @@ sub _get {
     # debugging code
     if (QA_MODE) {
         my @return;
-        
+
         # Iterate through the keys and build up a return array.
         for (@_) {
             # If this is a private field, we need to access it differently.
             eval { push @return, $self->{$_}};
-            
+
             if ($@) {
                 my $msg = "Problems retrieving field '$_'";
                 die Bric::Util::Fault::Exception::GEN->new({'msg'     => $msg,
                                                             'payload' => $@});
             }
         }
-        
-        # Syntax sugar.  Let the user say $n = get_foo rather than 
-        # ($n) = get_foo
+
+        # Syntax sugar. Let the user say $n = get_foo rather than ($n) =
+        # get_foo
         return wantarray ? @return : $return[0];
     }
 
@@ -807,7 +811,7 @@ B<Notes:>
 
 =cut
 
-sub _get_ref { 
+sub _get_ref {
     my $self = shift;
     # a faster version for production use
     return [ @{$self}{@_} ] unless QA_MODE;
@@ -817,6 +821,7 @@ sub _get_ref {
     return [$self->_get(@_)] if QA_MODE;
 }
 
+=back
 
 =head1 AUTHOR
 
