@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.6 $
+$Revision: 1.5.2.7 $
 
 =head1 DATE
 
-$Date: 2001-10-05 10:08:40 $
+$Date: 2001-10-05 16:15:36 $
 
 =head1 DESCRIPTION
 
@@ -45,7 +45,7 @@ Perl Modules:
 
 =item DBI 1.19
 
-=item Cache::Cache 0.08
+=item Cache::Cache 0.09
 
 =item Digest::MD5 2.12
 
@@ -1456,7 +1456,12 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: Admin.pod,v $
-Revision 1.5.2.6  2001-10-05 10:08:40  wheeler
+Revision 1.5.2.7  2001-10-05 16:15:36  wheeler
+Updated Cache::Cache requirement to 0.9, since that's the first version to ship
+with the Artistic License as well as the GPL. Previous verions were GPL only,
+and we need to steer clear of that license in order to maintain our own.
+
+Revision 1.5.2.6  2001/10/05 10:08:40  wheeler
 Added XML::Writer to the list of required Perl modules.
 
 Revision 1.5.2.5  2001/10/05 09:33:31  wheeler
