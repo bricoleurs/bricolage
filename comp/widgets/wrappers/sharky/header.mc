@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2001-10-04 17:36:38 $
+$Date: 2001-10-05 20:02:31 $
 
 =head1 SYNOPSIS
 
@@ -27,6 +27,7 @@ $title   => "Bricolage"
 $jsInit  => ""
 $context
 $useSideNav => 1
+$no_toolbar => 1
 $no_hist => 0
 $debug => undef
 </%args>
@@ -101,12 +102,11 @@ function init() {
 
 }
 
-% if ($agent->{browser} ne 'Internet Explorer') {
+% if ($no_toolbar && $agent->{browser} ne 'Internet Explorer') {
 %     # We have to strip out non-alphanumeric chars because Netscape is lame!
-%     (my $hostname = $r->hostname) =~ s/\W/_/g;
 if (window.toolbar.visible == true) {
     // Turn off the toolbar, back button, etc.
-    window.open("<% $uri %>", 'Bricolage_<% $hostname %>',
+    window.open("<% $uri %>", 'Bricolage_<% SERVER_WINDOW_NAME %>',
                 'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1');
     self.close();
 }
@@ -130,7 +130,7 @@ Please activate JavaScript in your browser before continuing.
 <tr>
 	<td width=150>
 % if ($useSideNav) {
-        <a href="#" onClick="window.open('/help/about.html', 'About', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=620'); return false;"><img src="/media/images/bricolage.gif" width="150" height="25" border="0" /></a>
+        <a href="#" onClick="window.open('/help/about.html', 'About_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=620'); return false;"><img src="/media/images/bricolage.gif" width="150" height="25" border="0" /></a>
 % } else {
         <img src="/media/images/bricolage.gif" width="150" height="25" border="0" />
 % }
@@ -224,7 +224,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
     <td class=<% $tab %> width=348><% $title %></td>
     <td valign=top width=11 class=<% $tab %>><img src="<% $curve_right %>" width=11 height=22></td>
 % if ($useSideNav) {
-    <td width=140 align=right valign=top>&nbsp;<a href="/workflow/profile/alerts"><img src="/media/images/my_alerts_orange.gif" width=77 height=20 border=0 hspace=3 /></a></td>
+    <td width=200 align=right valign=top><& "/widgets/help/help.mc" &><a href="/workflow/profile/alerts"><img src="/media/images/my_alerts_orange.gif" width=77 height=20 border=0 hspace=3 /></a></td>
     <td align=right width=70>
     <a href="/logout"><img src="/media/images/logout.gif" width=70 height=20 border=0></a>
     </td>
@@ -266,8 +266,10 @@ while (my $txt = next_msg) {
 <%doc>
 
 $Log: header.mc,v $
-Revision 1.4  2001-10-04 17:36:38  samtregar
-Merged from Release_1_0
+Revision 1.5  2001-10-05 20:02:31  samtregar
+Added call to widget/help/help.mc and merged changes from Release_1_0.
+Next time I'll be smart and commit merged changes before I commit real
+changes!
 
 
 </%doc>
