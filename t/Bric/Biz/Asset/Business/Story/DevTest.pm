@@ -92,7 +92,7 @@ sub test_clone : Test(15) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(87) {
+sub test_select_methods: Test(89) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -205,6 +205,7 @@ sub test_select_methods: Test(87) {
 
     $story[0]->add_categories([ $OBJ->{category}->[0] ]);
     $story[0]->set_primary_category($OBJ->{category}->[0]);
+    $story[0]->add_contributor($self->contrib, 'DEFAULT');
     $story[0]->checkin();
     $story[0]->save();
     $story[0]->checkout({ user__id => $self->user_id });
@@ -321,6 +322,7 @@ sub test_select_methods: Test(87) {
 
     $story[2]->add_categories([ $OBJ->{category}->[0] ]);
     $story[2]->set_primary_category( $OBJ->{category}->[0] );
+    $story[2]->add_contributor($self->contrib, 'DEFAULT');
     $story[2]->checkin();
     $story[2]->save();
     push @{$OBJ_IDS->{story}}, $story[2]->get_id();
@@ -429,6 +431,7 @@ sub test_select_methods: Test(87) {
     $story[4]->add_categories([ $OBJ->{category}->[0] ]);
     $story[4]->set_primary_category($OBJ->{category}->[0]);
     $story[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
+    $story[4]->add_contributor($self->contrib, 'DEFAULT');
     $story[4]->checkin();
     $story[4]->save();
     push @{$OBJ_IDS->{story}}, $story[4]->get_id();
@@ -642,6 +645,11 @@ sub test_select_methods: Test(87) {
                              Offset => 1 }),
         'try setting an offset of 2 for a search that just returned 3 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
+
+    # Test contrib_id.
+    ok( $got = class->list({ contrib_id => $self->contrib->get_id }),
+       "Try contrib_id" );
+    is( @$got, 3, 'Check for three stories' );
 }
 
 

@@ -6,6 +6,8 @@ use Test::More;
 use Test::Exception;
 use Bric::Biz::Asset::Business;
 use Bric::Biz::AssetType;
+use Bric::Biz::Person;
+use Bric::Util::Grp::Parts::Member::Contrib;
 
 ##############################################################################
 # Utility methods
@@ -41,6 +43,25 @@ sub pe {
 sub construct {
     my $self = shift;
     $self->class->new({ $self->new_args, @_ });
+}
+
+##############################################################################
+# Constructs a new contributor object.
+sub contrib {
+    my $self = shift;
+    return $self->{contrib} if $self->{contrib};
+    my $person = Bric::Biz::Person->new({ lname => 'Wall',
+                                          fname => 'Larry' });
+    $person->save;
+
+    # Grab the "Writers" group and add Larry.
+    my $group = Bric::Util::Grp::Person->lookup({ id => 39 });
+    my $member = $group->add_member({ obj => $person });
+    $group->save;
+    $self->add_del_ids($member->get_id, 'member');
+    $self->add_del_ids($person->get_id, 'person');
+    return $self->{contrib} = Bric::Util::Grp::Parts::Member::Contrib->lookup
+      ({ id => $member->get_id });
 }
 
 ##############################################################################

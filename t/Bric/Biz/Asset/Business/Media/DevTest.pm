@@ -53,7 +53,7 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(70) {
+sub test_select_methods: Test(72) {
     my $self = shift;
     my $class = $self->class;
 
@@ -170,6 +170,7 @@ sub test_select_methods: Test(70) {
                              site_id     => 100,
                            });
     $media[0]->set_category__id($OBJ->{category}->[0]->get_id());
+    $media[0]->add_contributor($self->contrib, 'DEFAULT');
     $media[0]->checkin();
     $media[0]->save();
     $media[0]->checkout({ user__id => $self->user_id });
@@ -280,6 +281,7 @@ sub test_select_methods: Test(70) {
                              site_id     => 100,
                            });
     $media[2]->set_category__id( $OBJ->{category}->[0]->get_id() );
+    $media[2]->add_contributor($self->contrib, 'DEFAULT');
     $media[2]->save();
     $media[2]->save();
     push @{$OBJ_IDS->{media}}, $media[2]->get_id();
@@ -385,6 +387,7 @@ sub test_select_methods: Test(70) {
                              checked_out => 1,
                              site_id     => 100,
                            });
+    $media[4]->add_contributor($self->contrib, 'DEFAULT');
     $media[4]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $media[4]->save;
@@ -563,6 +566,11 @@ sub test_select_methods: Test(70) {
                              user_id => $admin_id }),
         'try setting an offset of 2 for a search that just returned 6 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
+
+    # Test contrib_id.
+    ok( $got = class->list({ contrib_id => $self->contrib->get_id }),
+       "Try contrib_id" );
+    is( @$got, 3, 'Check for three stories' );
 }
 
 ###############################################################################

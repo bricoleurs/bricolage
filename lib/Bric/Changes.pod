@@ -147,9 +147,8 @@ traditional use of numeric file name extensions for successive file names.
 =item *
 
 Added "Text to search" option in the Advanced search of Media and Stories.
-This will return assets with the searched text in their data elements.
+This option will return assets with the searched text in their data elements.
 [JoE<atilde>o Pedro]
-
 
 =item *
 
@@ -169,6 +168,13 @@ Added ability to preview stories in a selection of output channels in the View
 
 Combined the asset "Find" managers into a single component, thus eliminating a
 lot of redundant code. [David]
+
+=item *
+
+Added C<contrib_id> parameter to the C<list()> methods of
+Bric::Biz::Asset::Business::Story and Bric::Biz::Asset::Business::Media to
+return a lisdt of story or media documents associated with a given
+contributor. [David]
 
 =back
 
