@@ -1,0 +1,526 @@
+#!/usr/bin/perl
+
+eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+
+=head1 NAME
+
+bric_media_mech - command-line client for importing media
+
+=head1 SYNOPSIS
+
+  $ bric_media_mech [options] --workflow $id --element Illustration $dir_name
+
+=head1 DESCRIPTION
+
+Upload media using WWW::Mechanize rather than bric_soap.
+The motivation is that for large media files (e.g. 25MB PDF)
+encoding in MIME::Base64 and enveloping in SOAP is very inefficient
+and can smash your server, so we upload directly as if through
+the UI.
+
+The C<dir_name> argument should be a directory in which
+all your media are placed. Note that it does one directory
+only and doesn't recurse into subdirectories. It will fetch
+all files, so don't put several different element types in
+the same directory at the same time.
+
+There are many options, though only --workflow and --element are
+required. In general, if you pass a name to an option, it tries to
+check if it exists with bric_soap; whereas if you pass an ID, it doesn't
+(can't) do a check. Furthermore, some things like workflow can't be
+checked if --pre18 is given, because bric_soap didn't support it
+before Bricolage 1.8. If you do manage to pass an invalid value,
+such as an --element that doesn't exist on --site, you'll probably
+get an error such as
+
+    Illegal value '5' for field 'media_prof|at_id' at
+     /usr/local/share/perl/5.8.4/WWW/Mechanize.pm line 507
+
+which means the value you tried to pass to the form was not one
+of the possible values.
+
+
+Options:
+
+=over
+
+=item --pre18      (optional)
+
+If this boolean flag is present, it indicates that this script
+should assume we're using a version of Bricolage before 1.8.
+Before 1.8, there were no sites, and workflows couldn't be looked
+up through bric_soap. Versions before 1.6 aren't supported.
+
+=item --site       (optional)
+
+The Site for which to create the media. This argument is ignored if
+--pre18 is given. If no --site argument is given, defaults to
+'Default Site'. Unless --pre18 is given, if it is a site name,
+it will be looked up with bric_soap and will fail if the site
+isn't found. If it is a number, optionally prefixed with 'site_',
+it isn't looked up with bric_soap.
+
+=item --workflow
+
+The workflow on which to create the media. If --pre18 is not given
+and it is a workflow name, it will be looked up with bric_soap and
+will fail if the workflow isn't found on the site specified by the
+--site argument (or 'Default Site' if there was no --site argument).
+If --pre18 is given, you have to give an ID. If the value is a
+number, optionally prefixed with 'workflow_', it isn't looked up
+with bric_soap.
+
+=item --element
+
+The Media Type on the "create new media" page (that is a particular
+Element, not to be confused with a Media Type, aka MIME type). If it's
+a name, it will be looked up with bric_soap and will fail if it's not
+found (note: the check is unable to determine if the element exists on
+a particular site because site_id hasn't been added to list_ids in
+Bric::SOAP::Element yet (note to self: add that)). If it's a number,
+optionally prefixed with 'element_', it isn't looked up with bric_soap.
+
+=item --source     (optional)
+
+The Source of the media. Can be either a name or a number. If it's a
+number, can be optionally prefixed with 'source_'. If not given,
+defaults to whatever the default is in the UI (the first item in
+the 'Source' select list when you create a new media, which would
+be 'Internal' in a default Bricolage installation). Source isn't
+supported yet by bric_soap, so it can't be looked up.
+
+=item --category   (optional)
+
+The category to upload the media to. If it's a number, optionally
+prefixed with 'category_', it isn't looked up with bric_soap.
+Otherwise, it's assumed to be the complete URI from the root and
+will be looked up with bric_soap and will fail if the category
+isn't found. Defaults to the root category (/).
+
+=item --sleep      (optional)
+
+The number of seconds to sleep between media uploads. Defaults
+to 0.
+
+=item --username   (optional)
+
+Defaults to $ENV{BRICOLAGE_USERNAME} || 'admin'.
+
+=item --password   (optional)
+
+Defaults to $ENV{BRICOLAGE_PASSWORD} || ''.
+
+=item --server     (optional)
+
+Defaults to $ENV{BRICOLAGE_SERVER} || 'http://localhost'.
+
+=item --bricsoap   (optional)
+
+Path to the bric_soap executable to use. Defaults to
+"$ENV{BRICOLAGE_ROOT}/bin/bric_soap".
+
+=item --verbose    (optional)
+
+Print some information that normally would not be displayed. Giving more
+than one --verbose argument prints more information.
+
+=item --help       (optional)
+
+Show the SYNOPSIS.
+
+=item --man        (optional)
+
+Show the entire POD.
+
+=back
+
+=head1 AUTHOR
+
+Scott Lanning <lannings@who.int>
+
+=head1 SEE ALSO
+
+  L<WWW::Mechanize|WWW::Mechanize>, L<Bric::SOAP|Bric::SOAP>
+
+=cut
+
+use 5.006_001;
+use strict;
+use warnings;
+
+use File::Spec;
+use Getopt::Long;
+use Pod::Usage;
+use WWW::Mechanize;
+
+BEGIN {
+    our ($help, $man, $verbose, $directory);
+    our $username  = $ENV{'BRICOLAGE_USERNAME'} || 'admin';
+    our $password  = $ENV{'BRICOLAGE_PASSWORD'} || '';
+    our $server    = $ENV{'BRICOLAGE_SERVER'}   || 'http://localhost';
+    our $bricsoap  = $ENV{'BRICOLAGE_ROOT'} . '/bin/bric_soap';
+    our $sleep       = 0;
+    our $pre18       = 0;
+    our $workflow    = '';
+    our $site        = 'Default Site';
+    our $element     = '';
+    our $source      = '';
+    our $category    = '/';
+
+    GetOptions(
+        'pre18!'          => \$pre18,
+        'workflow=s'      => \$workflow,
+        'site=s'          => \$site,
+        'element=s'       => \$element,
+        'source=s'        => \$source,
+        'category=s'      => \$category,
+        'bricsoap=s'      => \$bricsoap,
+        'sleep=s'         => \$sleep,
+        'help'            => \$help,
+        'man'             => \$man,
+        'verbose+'        => \$verbose,
+        'username=s'      => \$username,
+        'password=s'      => \$password,
+        'server=s'        => \$server,
+    ) || pod2usage(2);
+
+    pod2usage(1) if $help;
+    pod2usage('-verbose' => 2) if $man;
+
+    $verbose ||= 0;
+
+    # Check that --workflow argument was given
+    pod2usage('Missing required --workflow "option"')
+      unless $workflow;
+
+    # Check that --element argument was given
+    pod2usage('Missing required --element "option"')
+      unless $element;
+
+    # Check that a directory was given
+    $directory = shift @ARGV;
+    pod2usage('Missing required dir_name argument')
+        unless defined $directory;
+
+    # Check that bric_soap exists and is executable
+    pod2usage("Cannot find bric_soap executable at '$bricsoap'")
+      unless -x $bricsoap;
+
+    # Check that --sleep is a whole number
+    pod2usage("Invalid --sleep argument '$sleep'")
+      if $sleep =~ /\D/;
+}
+
+main();
+
+
+sub main {
+    our ($directory, $sleep);
+    my ($ua);
+
+    $ua = WWW::Mechanize->new();
+    login($ua);
+    check_opts($ua);
+    set_site_context($ua);
+
+    verbosity("opendir '$directory'", 2);
+    opendir(DIR, $directory) || die "Can't opendir '$directory': $!";
+    foreach my $file (grep { ! /^\./ && -f "$directory/$_" && -r _ } readdir(DIR)) {
+        verbosity("file '$file'", 2);
+        new_media_page($ua, $file);
+        upload_media_page($ua, $file);
+
+        if ($sleep) {
+            verbosity("sleeping $sleep seconds", 2);
+            sleep $sleep;
+        }
+    }
+    closedir(DIR);
+}
+
+sub login {
+    my $ua = shift;
+    our ($username, $password, $server);
+    my ($s);
+
+    verbosity("login to server '$server'");
+
+    # Get cookie
+    verbosity('Getting cookie', 2);
+    $s = get_server_url();
+    $ua->get("$s/login");
+    die('Getting cookie failed: ', $ua->status)
+      unless good_status($ua);
+
+    # Login
+    verbosity("Login as user '$username'", 2);
+    $ua->set_visible($username, $password);
+    $ua->click();
+    die('login failed: ', $ua->status)
+      unless good_status($ua);
+}
+
+# Note: as a side-effect, this changes $workflow, $site,
+# $element, and $category into IDs. It changes $source to
+# an ID if it's of the form /source_\d+/. If makes $directory
+# an absolute path from the root directory.
+sub check_opts {
+    my $ua = shift;
+    our ($workflow, $site, $element, $category, $source, $directory, $pre18);
+    my (%lookedup_ids);
+
+    verbosity('check_opts');
+
+    # Do bric_soap checks
+    # XXX: some of this could be factored out
+
+    # Check that site exists
+    unless ($pre18 || $site =~ /^(?:site_)?\d+$/) {
+        verbosity("lookup site '$site'", 2);
+        my $args = "--search name='$site'";
+        my $res = bric_soap('site', $args, 'list_ids');
+        chomp $res;
+        if ($res =~ /^site_(\d+)$/s) {
+            $lookedup_ids{'site'} = $1;
+        } else {
+            $res =~ s/Usage.*/bric_soap error\n/s;   # strip off bric_soap usage
+            die("site lookup failed: $res");
+        }
+    } else {
+        verbosity("didn't lookup site", 2);
+    }
+
+    # Check the workflow
+    if ($pre18 && $workflow !~ /^(?:workflow_)?\d+$/) {
+        die('--workflow must be an ID if --pre18 is given');
+    }
+    unless ($pre18 || $workflow =~ /^(?:workflow_)?\d+$/) {
+        verbosity("lookup workflow '$workflow'", 2);
+        my $args = "--search name='$workflow' --search site='$site'";
+        my $res = bric_soap('workflow', $args, 'list_ids');
+        chomp $res;
+        if ($res =~ /^workflow_(\d+)$/s) {
+            $lookedup_ids{'workflow'} = $1;
+        } else {
+            $res =~ s/Usage.*/bric_soap error\n/s;   # strip off bric_soap usage
+            die("workflow lookup failed: $res");
+        }
+    } else {
+        verbosity("didn't lookup workflow", 2);
+    }
+
+    # Check that category exists
+    unless ($category =~ /^(?:category_)?\d+$/) {
+        verbosity("lookup category '$category'", 2);
+
+        die("Invalid category '$category'")
+          unless $category =~ m{^/};
+
+        my $args = "--search uri='$category'";
+        $args .= " --search site='$site'" unless $pre18;
+        my $res = bric_soap('category', $args, 'list_ids');
+        chomp $res;
+        if ($res =~ /^category_(\d+)$/s) {
+            $lookedup_ids{'category'} = $1;
+        } else {
+            $res =~ s/Usage.*/bric_soap error\n/s;   # strip off bric_soap usage
+            die("category lookup failed: $res");
+        }
+    } else {
+        verbosity("didn't lookup category", 2);
+    }
+
+    # Check that element exists
+    unless ($element =~ /^(?:element_)?\d+$/) {
+        verbosity("lookup element '$element'", 2);
+        my $args = "--search name='$element'";
+        # XXX: uncomment this when site_id is added to list_ids
+#        $args .= " --search site='$site'" unless $pre18;
+        my $res = bric_soap('element', $args, 'list_ids');
+        chomp $res;
+        # XXX: might this fail if the element name is associated to
+        # more than one site?
+        if ($res =~ /^element_(\d+)$/s) {
+            $lookedup_ids{'element'} = $1;
+        } else {
+            $res =~ s/Usage.*/bric_soap error\n/s;   # strip off bric_soap usage
+            die("element lookup failed: $res");
+        }
+    } else {
+        verbosity("didn't lookup element", 2);
+    }
+
+    # Check source (can be a name or an ID)
+    $source =~ s/^source_(\d+)$/$1/;
+
+    # Make $workflow, $site, $element, and $category be IDs
+
+    if (exists $lookedup_ids{'workflow'}) {
+        $workflow = $lookedup_ids{'workflow'};
+    } else {
+        $workflow =~ s/^workflow_//;
+    }
+    die("Invalid workflow ID '$workflow'") if $workflow =~ /\D/;
+    verbosity("workflow ID '$workflow'");
+
+    if ($pre18) {
+        $site = 0;
+    } else {
+        if (exists $lookedup_ids{'site'}) {
+            $site = $lookedup_ids{'site'};
+        } else {
+            $site =~ s/^site_//;
+        }
+        die("Invalid site ID '$site'") if $site =~ /\D/;
+    }
+    verbosity("site ID '$site'");
+
+    if (exists $lookedup_ids{'category'}) {
+        $category = $lookedup_ids{'category'};
+    } else {
+        $category =~ s/^category_//;
+    }
+    die("Invalid category ID '$category'") if $category =~ /\D/;
+    verbosity("category ID '$category'");
+
+    if (exists $lookedup_ids{'element'}) {
+        $element = $lookedup_ids{'element'};
+    } else {
+        $element =~ s/^element_//;
+    }
+    die("Invalid element ID '$element'") if $element =~ /\D/;
+    verbosity("element ID '$element'");
+
+    # Make $directory an absolute path and check it
+    $directory = File::Spec->rel2abs($directory);
+    die("Invalid directory '$directory'")
+      unless -d $directory;
+    die("Directory unreadable '$directory'")
+      unless -r $directory;
+    verbosity("absolute directory '$directory'", 2);
+}
+
+sub set_site_context {
+    my $ua = shift;
+    our ($site, $pre18);
+
+    unless ($pre18) {
+        # XXX: wasn't sure how to handle this with WWW::Mechanize,
+        # so we do manually what the JavaScript would've done
+
+        my $s = get_server_url();
+        my $url = "$s/?site_context|change_context_cb=$site";
+        $ua->get($url);
+        die('Switching site context failed: ', $ua->status)
+          unless good_status($ua);
+    }
+}
+
+sub new_media_page {
+    my ($ua, $file) = @_;
+    our ($workflow, $category, $site, $element, $source, $pre18);
+    my ($url, $s, $form);
+
+    verbosity('new media page');
+
+    # XXX: cheating a little as we don't open up the workflow
+    # in the left nav first - I think it'd be difficult because
+    # it's in an IFRAME, so we'd have to follow the link first,
+    # then select the correct workflow, etc...
+
+    # Get new media page
+    verbosity('Getting new media page', 2);
+    $s = get_server_url();
+    $url = "$s/workflow/profile/media/new/$workflow";
+    $ua->get($url);
+    die('Getting new media page failed: ', $ua->status)
+      unless good_status($ua);
+
+    # Fill in and submit form
+    verbosity('Submitting new media page', 2);
+
+    # According to the HTML::Form docs for $input->value_names,
+    # you can set the value using the "name" (label) instead of
+    # the actual value, so don't be confused that we're setting
+    # source__id to a string instead of numbers
+    # (XXX: it's possible to have something like
+    # { val1 => 'name1', name1 => 'name2' } in which case I'm not sure
+    # how it would decide which to set, but in our case it presumably
+    # won't happen because the values are ID numbers and it would be
+    # stupid to use a number for a source name.)
+    $ua->set_fields('title'                   => $file,
+                    'media_prof|at_id'        => $element,
+                    'media_prof|category__id' => $category);
+    if ($source) {
+        $ua->set_fields('media_prof|source__id' => $source);
+    }
+    $ua->click();
+    die('Submitting new media page failed: ', $ua->status)
+      unless good_status($ua);
+}
+
+sub upload_media_page {
+    my ($ua, $file) = @_;
+    our ($directory, $pre18);
+    my ($filepath, $update_cb);
+
+    verbosity('upload media page');
+
+    # Upload the media file
+    verbosity('uploading media file', 2);
+    $filepath = File::Spec->catfile($directory, $file);
+
+    # This is simple in retrospect, but represents a good hour of hair
+    # pulling and cursing. It emulates the customSubmit JavaScript
+    # function by setting update_cb and submitting the form.
+    $update_cb = $pre18 ? 'update_pc' : 'update_cb';
+    $ua->set_fields('media_prof|file' => $filepath,
+                    "media_prof|$update_cb" => 1);
+    $ua->submit() || die "Submit upload failed";
+    die('Upload failed: ', $ua->status)
+      unless good_status($ua) && $ua->content =~ /$file/s;
+
+    # Save the media profile
+    verbosity('saving media profile', 2);
+    $ua->click('media_prof|save_cb')
+      || die "Didn't click Save";
+    die('Save failed: ', $ua->status)
+      unless good_status($ua);
+}
+
+
+### helper functions
+
+sub good_status {
+    my $ua = shift;
+    return $ua->status == '200';
+}
+
+sub get_server_url {
+    our ($server);
+    my $s = $server;
+    $s =~ s{/$}{};
+    $s = "http://$s" unless $s =~ m{^https?://};
+    return $s;
+}
+
+sub verbosity {
+    my $msg = shift;
+    my $minverbose = shift || 1;
+    our ($verbose);
+
+    print STDERR "$msg\n" unless $verbose < $minverbose;
+}
+
+sub bric_soap {
+    my ($module, $args, $command) = @_;
+    our ($bricsoap, $username, $password, $server);
+
+    $args .= " --username '$username' --password '$password' "
+      . "--server '$server' --timeout 111";
+    verbosity("$bricsoap $module $args $command", 2);
+
+    my $res = `$bricsoap $module $args $command 2>&1`;
+    return $res;
+}

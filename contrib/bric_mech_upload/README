@@ -1,0 +1,71 @@
+This is yet another script for uploading media files.
+It uses WWW::Mechanize to directly upload the files through
+the UI, rather than using SOAP. See `perldoc ./bric_media_mech`
+for details.
+
+I timed uploading 9 small jpegs using both methods to upload
+to a local 1.8 server:
+
+  WWW::Mechanize - with error checking
+  real    0m33.133s
+  user    0m6.560s
+  sys     0m0.210s
+
+  WWW::Mechanize - without error checking (use IDs instead of names)
+  real    0m20.722s
+  user    0m5.870s
+  sys     0m0.120s
+
+  bric_soap
+  real    0m14.876s
+  user    0m3.610s
+  sys     0m0.280s
+
+So bric_soap does beat it in terms of time, at least for small files.
+
+-rw-rw-r--    1 slanning slanning     3645 May 11 00:57 agent-smith-face.jpg
+-rw-r--r--    1 slanning slanning     2794 May 10 21:08 foo1.jpg
+-rw-rw-r--    1 slanning slanning     3681 May 11 00:57 grb-avatar.jpg
+-rw-r--r--    1 slanning slanning    17961 May 11 00:57 grb.jpg
+-rw-r--r--    1 slanning slanning     2794 May 11 00:57 jeffk-cropped.jpg
+-rw-r--r--    1 slanning slanning     3869 May 11 00:57 marv.jpg
+-rw-r--r--    1 slanning slanning     2420 May 11 00:57 matrix4.jpg
+-rw-r--r--    1 slanning slanning     3791 May 11 00:57 rupert_murdoch-avatar.jpg
+-rw-rw-r--    1 slanning slanning     3246 May 11 00:57 smith2-3b-copy.jpg
+
+However, if I take larger files
+
+-rw-r--r--    1 slanning slanning   177572 Jun 11 18:24 oeh41consejo.pdf
+-rw-r--r--    1 slanning slanning   270245 Jun 11 18:24 oeh41dircouncil.pdf
+-rw-r--r--    1 slanning slanning   458035 Jun 11 18:24 oehafroabidjan.pdf
+-rw-r--r--    1 slanning slanning    81317 Jun 11 18:24 oehafroharare.pdf
+-rw-r--r--    1 slanning slanning   242883 Jun 11 18:24 oehafropretoria.pdf
+-rw-r--r--    1 slanning slanning   379970 Jun 11 18:24 oehamplanreg.pdf
+-rw-r--r--    1 slanning slanning   239780 Jun 11 18:24 oehamregplan.pdf
+-rw-r--r--    1 slanning slanning   168671 Jun 11 18:24 oehamrodatos.pdf
+-rw-r--r--    1 slanning slanning   272810 Jun 11 18:24 oehamworkershealth.pdf
+-rw-r--r--    1 slanning slanning   502998 Jun 11 18:24 oehemhealthcareworkers.pdf
+-rw-r--r--    1 slanning slanning   316980 Jun 11 18:24 oeheurcountryprofiles.pdf
+-rw-r--r--    1 slanning slanning   259235 Jun 11 18:24 oeheurfitness.pdf
+-rw-r--r--    1 slanning slanning   350253 Jun 11 18:24 oeheurlondondeclaration.pdf
+-rw-r--r--    1 slanning slanning   544460 Jun 11 18:24 oeheurnursing.pdf
+-rw-r--r--    1 slanning slanning   350934 Jun 11 18:24 oeheuroccmedicine.pdf
+-rw-r--r--    1 slanning slanning   408917 Jun 11 18:24 oeheurqualitymanagement.pdf
+-rw-r--r--    1 slanning slanning    84620 Jun 11 18:24 oeheurworkplaceprotect.pdf
+-rw-r--r--    1 slanning slanning  3401399 Jun 11 18:24 oehhigiene.pdf
+-rw-r--r--    1 slanning slanning    83100 Jun 11 18:24 oehpromocionsalud.pdf
+-rw-r--r--    1 slanning slanning   160508 Jun 11 18:24 oehwproguidelines.pdf
+
+the timing works out as follows:
+
+  WWW::Mechanize - without error checking
+  real    0m51.514s
+  user    0m12.770s
+  sys     0m0.920s
+
+  bric_soap
+  real    2m13.831s
+  user    0m10.100s
+  sys     0m3.470s
+
+bric_soap takes a particularly long time to process the 3.4MB file.
