@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.5 $
+$Revision: 1.38.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 19:32:29 $
+$Date: 2003-03-20 15:44:16 $
 
 =head1 SYNOPSIS
 
@@ -277,6 +277,8 @@ use constant PARAM_WHERE_MAP =>
       description           => 'LOWER(f.description) LIKE LOWER(?)',
       version               => 'i.version = ?',
       user__id              => 'i.usr__id = ?',
+      checkout              => 'i.checked_out = ?',
+      checked_out           => 'i.checked_out = ?',
       _checked_out          => 'i.checked_out = ?',
       category_id           => 'f.category__id = ?',
       category_uri          => 'f.category__id = c.id AND '
