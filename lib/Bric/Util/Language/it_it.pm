@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-13 16:12:51 $
+$Date: 2003-02-13 16:34:27 $
 
 =head1 SYNOPSIS
 
@@ -237,7 +237,8 @@ our %Lexicon = (
     'Add a New Workflow' => 'Crea un nuovo Workflow',
     'No categories were found' => 'Nessuna categoria presente',
     'Cannot publish checked-out story [_1]' => 'Non Â possibile pubblicare la Storia in check out [_1]',
- Ê		   'Grant [_1] members permission to access assets in these workflows.' => 'Consenti ai membri del gruppo [_1] l\'accesso agli asset di questo workflow.',
+    'Grant [_1] members permission to access assets in these workflows.' =>
+      'Consenti ai membri del gruppo [_1] l\'accesso agli asset di questo workflow.',
    'Choose Related Media' => 'Scegli i Media Correlati',
    'Output Channels' => 'Canali di distribuzione',
    'Passwords must be at least [_1] characters!' => 'La password deve contenere almeno [_1] caratteri!',
