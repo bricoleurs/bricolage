@@ -14,6 +14,20 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.7.5 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Bricolage no longer tries to display thumbnails for related stories, since
+stories don't have thumbnails and would therefore create an error. [Eric
+Sellers]
+
+=back
+
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
 
 =head2 New Features

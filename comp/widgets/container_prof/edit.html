@@ -500,7 +500,7 @@ my $related_summary = sub {
 
   if ($rel) {
       my $thumb = '';
-      if (USE_THUMBNAILS) {
+      if (USE_THUMBNAILS && $type ne 'story') {
           if ($thumb =  $rel->thumbnail_uri) {
               $thumb = qq{<img src="$thumb" />&nbsp;};
           }
