@@ -19,7 +19,7 @@ my $web_oc_id = 1;
 # Clean out possible test values from OutputChannel.tst. We can delete this if
 # we ever delete the .tst files.
 ##############################################################################
-sub _clean_test_vals : Test(0) {
+sub _clean_test_vals : Test(startup) {
     my $self = shift;
     $self->add_del_ids([2, 3, 4]);
 }
@@ -45,9 +45,9 @@ sub test_lookup : Test(16) {
     is ($oc->get_post_path,   '',                  "Check post_path" );
     is ($oc->get_filename,    'index',             "Check filename" );
     is ($oc->get_file_ext,    'html',              "Check file_ext" );
-    is ($oc->get_uri_format,  '/categories/year/month/day/slug/',
+    is ($oc->get_uri_format,  '/%{categories}/%Y/%m/%d/%{slug}/',
           "Check uri_format" );
-    is ($oc->get_fixed_uri_format, '/categories/',
+    is ($oc->get_fixed_uri_format, '/%{categories}/',
           "Check fixed_uri_format" );
     is ($oc->get_uri_case, Bric::Biz::OutputChannel::MIXEDCASE(),
         "Check uri_case" );
@@ -73,7 +73,7 @@ sub test_list : Test(79) {
                                               site_id     => 100}),
         "Create server type" );
 
-    my $alt_format = '/year/month/categories/day/slug/';
+    my $alt_format = '/%Y/%m/%{categories}/%d/%{slug}/';
     # Create some test records.
     for my $n (1..5) {
         my %args = %oc;
@@ -222,9 +222,9 @@ sub test_list : Test(79) {
     # Bric::Biz::Asset::Business::Media::DevTest.
 
     # Try uri_format.
-    ok( @ocs = Bric::Biz::OutputChannel->list({ uri_format => '/cate%' }),
-        "Try uri_format '/cate%'" );
-    is( $ocs[0]->get_uri_format, '/categories/year/month/day/slug/',
+    ok( @ocs = Bric::Biz::OutputChannel->list({ uri_format => '/\\%{cate%' }),
+        "Try uri_format '/\\%{cate%'" );
+    is( $ocs[0]->get_uri_format, '/%{categories}/%Y/%m/%d/%{slug}/',
           "Check uri_format" );
     ok( @ocs = Bric::Biz::OutputChannel->list({ uri_format => $alt_format }),
         "Try uri_format '$alt_format'" );
@@ -232,9 +232,9 @@ sub test_list : Test(79) {
 
     # Try fixed_uri_format.
     ok( @ocs = Bric::Biz::OutputChannel->list
-        ({ fixed_uri_format => '/cate%' }),
-        "Try fixed_uri_format '/cate%'" );
-    is( $ocs[0]->get_fixed_uri_format, '/categories/',
+        ({ fixed_uri_format => '/\\%{cate%' }),
+        "Try fixed_uri_format '/\\%{cate%'" );
+    is( $ocs[0]->get_fixed_uri_format, '/%{categories}/',
           "Check fixed_uri_format" );
     ok( @ocs = Bric::Biz::OutputChannel->list
         ({ fixed_uri_format => $alt_format }),
@@ -312,15 +312,15 @@ sub test_href : Test(30) {
 
     # Try uri_format.
     ok( $ocs = Bric::Biz::OutputChannel->href
-        ({ uri_format => '/cate%' }), "Try href uri_format '/cate%'" );
-    is( $ocs->{1}->get_uri_format, '/categories/year/month/day/slug/',
+        ({ uri_format => '/\\%{cate%' }), "Try href uri_format '/\\%{cate%'" );
+    is( $ocs->{1}->get_uri_format, '/%{categories}/%Y/%m/%d/%{slug}/',
           "Check uri_format" );
 
     # Try fixed_uri_format.
     ok( $ocs = Bric::Biz::OutputChannel->href
-        ({ fixed_uri_format => '/cate%' }),
-        "Try href fixed_uri_format '/cate%'" );
-    is( $ocs->{1}->get_fixed_uri_format, '/categories/',
+        ({ fixed_uri_format => '/\\%{cate%' }),
+        "Try href fixed_uri_format '/\\%{cate%'" );
+    is( $ocs->{1}->get_fixed_uri_format, '/%{categories}/',
           "Check fixed_uri_format" );
 
     # Try uri_case.
@@ -391,12 +391,12 @@ sub test_list_ids : Test(25) {
 
     # Try uri_format.
     ok( @ids = Bric::Biz::OutputChannel->list_ids
-        ({ uri_format => '/cate%' }), "Try list_id uri_format '/cate%'" );
+        ({ uri_format => '/\\%{cate%' }), "Try list_id uri_format '/\\%{cate%'" );
 
     # Try fixed_uri_format.
     ok( @ids = Bric::Biz::OutputChannel->list_ids
-        ({ fixed_uri_format => '/cate%' }),
-        "Try list_id fixed_uri_format '/cate%'" );
+        ({ fixed_uri_format => '/\\%{cate%' }),
+        "Try list_id fixed_uri_format '/\\%{cate%'" );
 
     # Try uri_case.
     ok( @ids = Bric::Biz::OutputChannel->list_ids

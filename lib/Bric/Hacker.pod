@@ -23,63 +23,61 @@ Bricolage has a number of mailing-lists that are relevant to developers:
 
 =over 4
 
-=item bricolage-general@lists.sourceforge.net
+=item users@lists.bricolage.cc
 
 Questions, installation problems, bug reports, job and site announcements,
 other general discussion. Posts to this list are subscriber-only, because
 otherwise we would be inundated with spam. Please subscribe before posting.
 
-Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-general>
+Subscribe: L<http://www.bricolage.cc/support/lists/>
 
 Archives: L<http://marc.theaimsgroup.com/?l=bricolage-general>
 
-=item bricolage-announce@lists.sourceforge.net
+=item announce@lists.bricolage.cc
 
-Official announcements from the Bricolage team. These are always Cc'd to
-Bricolage-General, so you need not subscribe to both. Very low
-traffic. (read-only except for core developers)
+Official announcements from the Bricolage team. These are always Cc'd to the
+users list, so you need not subscribe to both. Very low traffic. (read-only
+except for core developers)
 
-Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-announce>
+Subscribe: L<http://www.bricolage.cc/support/lists/>
 
 Archives: L<http://marc.theaimsgroup.com/?l=bricolage-announce>
 
-=item bricolage-devel@lists.sourceforge.net
+=item devel@lists.bricolage.cc
 
 In-depth discussions about new development directions, proposed features,
 implementation details. Posts to this list are subscriber-only, because
 otherwise we would be inundated with spam. Please subscribe before posting.
 
-Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-devel>
+Subscribe: L<http://www.bricolage.cc/support/lists/>
 
 Archives: L<http://marc.theaimsgroup.com/?l=bricolage-devel>
 
-=item bricolage-commits@lists.sourceforge.net
+=item commits@lists.bricolage.cc
 
-CVS context diffs for all checkins to the Bricolage repository. (read-only).
+Subversion context diffs for all checkins to the Bricolage repository. (read-only).
 
-Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-commits>
+Subscribe: L<http://www.bricolage.cc/support/lists/>
 
 Archives: L<http://marc.theaimsgroup.com/?l=bricolage-commits>
 
-=item bricolage-bugs@lists.sourceforge.net
+=item bugs@lists.bricolage.cc
 
 Bricolage Bugzilla activity. This list is read-only. To report a bug in
 Bricolage, please use our Bugzilla server.
 
-Bugzilla: L<http://bugzilla.bricolage.cc/>
+Bugzilla: L<http://bugs.bricolage.cc/>
 
-Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-bugs>
+Subscribe: L<http://www.bricolage.cc/support/lists/>
 
 Archives: L<http://marc.theaimsgroup.com/?l=bricolage-bugs>
-
-Bugzilla: L<http://bugzilla.bricolage.cc/>
 
 =back
 
 =head1 IRC
 
 You can often find folks hanging out and occasionally discussing development
-issues on the #bricolage channel on the Rhizomatic IRC network.
+issues on the #bricolage channel on the MagNet IRC network.
 
 =head1 SUBVERSION
 
@@ -126,7 +124,7 @@ you would add this to patch.txt with:
   diff -u /dev/null inst/upgrade/1.9.1/solve_fermat.pl >> patch.txt
 
 Always create patches using an up-to-date Subversion checkout if possible.
-Send your patches to the bricolage-devel list mentioned above.
+Send your patches to the devel list mentioned above.
 
 =head1 APPLYING PATCHES
 
@@ -599,7 +597,7 @@ Resolve any conflicts (hopefully none, but they do happen occasionally).
 Notice above that the result of the merge is a conflict in
 F<lib/Bric/Hacker.pod>. To resolve the conflicts, follow the directions in the
 Subversion book, published online here:
-L<http://svnbook.red-bean.com/svnbook/ch03s05.html#svn-ch-3-sect-4.4>.
+L<http://svnbook.red-bean.com/en/1.1/ch03s05.html#svn-ch-3-sect-5.4>.
 
 =item 5
 
@@ -664,7 +662,7 @@ Now export the branch and create the distribution tarball.
   % cd rev_1_8
   % make dist
 
-This will create a distribution tarball in the bricolage directory. Copy this
+This will create a distribution tarball in the F<rev_1_8> directory. Copy this
 tarball somewhere, and do a full test with it, to make sure that Bricolage
 does indeed build and properly install itself.
 
@@ -721,11 +719,11 @@ then generate the documentation on the Web server.
 
 =over 4
 
-=item bricolage-announce@lists.sourceforge.net
+=item announce@lists.bricolage.cc
 
-=item bricolage-general@lists.sourceforge.net
+=item users@lists.bricolage.cc
 
-=item bricolage-devel@lists.sourceforge.net
+=item devel@lists.bricolage.cc
 
 =item mason-announce@lists.sourceforge.net
 

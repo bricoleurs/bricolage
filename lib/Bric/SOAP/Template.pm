@@ -17,6 +17,7 @@ use Bric::Biz::Person::User;
 use Bric::Util::Burner;
 use File::Basename qw(fileparse basename);
 use Bric::Util::Priv::Parts::Const qw(:all);
+use Bric::Config qw(:l10n);
 
 use Bric::SOAP::Util qw(category_path_to_id
                         output_channel_name_to_id
@@ -650,6 +651,18 @@ sub load_asset {
         $init{priority}    = $tdata->{priority};
         $init{description} = $tdata->{description};
 
+        unless ($update && $no_wf_or_desk_param) {
+            unless (exists $args->{workflow}) {  # already done above
+                $workflow = (Bric::Biz::Workflow->list({
+                    type => TEMPLATE_WORKFLOW,
+                    site_id => $init{site_id}
+                }))[0];
+            }
+            unless (exists $args->{desk}) {   # already done above
+                $desk = $workflow->get_start_desk;
+            }
+        }
+
         # get base template object
         my $template;
         unless ($update) {
@@ -668,7 +681,7 @@ sub load_asset {
 
             # is this is right way to check create access for template?
             throw_ap(error => __PACKAGE__ . " : access denied.")
-                unless chk_authz($template, CREATE, 1);
+                unless chk_authz($template, CREATE, 1, $desk->get_asset_grp);
 
             # check that there isn't already an active template with the same
             # output channel and file_name (which is composed of category,
@@ -744,17 +757,9 @@ sub load_asset {
         $template->save;
 
         unless ($update && $no_wf_or_desk_param) {
-            unless (exists $args->{workflow}) {  # already done above
-                $workflow = (Bric::Biz::Workflow->list({ type => TEMPLATE_WORKFLOW,
-                                                         site_id => $init{site_id} }))[0];
-            }
             $template->set_workflow_id($workflow->get_id);
             log_event("formatting_add_workflow", $template,
                       { Workflow => $workflow->get_name });
-
-            unless (exists $args->{desk}) {   # already done above
-                $desk = $workflow->get_start_desk;
-            }
             if ($update) {
                 my $olddesk = $template->get_current_desk;
                 if (defined $olddesk) {
@@ -857,6 +862,7 @@ sub serialize_asset {
 
     # output data
     my $data = $template->get_data;
+    Encode::_utf8_off($data) if ENCODE_OK;
     $writer->dataElement(data => MIME::Base64::encode_base64($data,''))
         if $data;
 

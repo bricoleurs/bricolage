@@ -480,11 +480,16 @@ sub load_asset {
             foreach my $sitedata (@{$edata->{sites}{site}}) {
                 # get site ID
                 my $name = ref $sitedata ? $sitedata->{content} : $sitedata;
-                my $site =  Bric::Biz::Site->lookup({ name => $name });
-                throw_ap __PACKAGE__ ."::create : no site found"
-                         . " matching (site => \"$name\")"
-                  unless defined $site;
-                $sites{$name} = $site->get_id;
+                unless ($sites{$name}) {
+                    my $site = Bric::Biz::Site->lookup({ name => $name });
+                    throw_ap __PACKAGE__ ."::create : no site found"
+                      . " matching (site => \"$name\")"
+                      unless defined $site;
+                    $sites{$name} = $site->get_id;
+                }
+
+                # Add the site.
+                $element->add_site($sites{$name});
 
                 # get primary OC ID
                 my $primary_oc_name = $sitedata->{primary_oc}
@@ -500,7 +505,7 @@ sub load_asset {
                   unless defined $primary_oc_id;
 
                 # Set the primary output channel for this site.
-                $element->set_primary_oc_id($primary_oc_id, $site->get_id);
+                $element->set_primary_oc_id($primary_oc_id, $sites{$name});
             }
 
             throw_ap __PACKAGE__ . " : no sites defined!"

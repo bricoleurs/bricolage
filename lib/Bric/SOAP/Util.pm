@@ -33,6 +33,7 @@ our @EXPORT_OK = qw(
                     deserialize_elements
                     load_ocs
                     site_to_id
+                    resolve_relations
                    );
 
 # set to 1 to see debugging output on STDERR
@@ -269,8 +270,24 @@ sub serialize_elements {
     my @related;
 
     # output element data
-    $writer->startTag("elements");
     my $element = $object->get_tile;
+    my %attr;
+    if (my $related_story = $element->get_related_story) {
+        $attr{related_story_id} = $related_story->get_id;
+        if ($options{args}{export_related_stories}) {
+            $attr{relative} = 1;
+            push(@related, [ story => $attr{related_story_id} ]);
+        }
+    }
+    if (my $related_media = $element->get_related_media) {
+        $attr{related_media_id} = $related_media->get_id;
+        if ($options{args}{export_related_media}) {
+            $attr{relative} = 1;
+            push(@related, [ media => $attr{related_media_id} ]);
+        }
+    }
+
+    $writer->startTag("elements", %attr);
     my $elems = $element->get_elements;
 
     if (@$elems) {
@@ -398,7 +415,9 @@ Notes:
 sub deserialize_elements {
     my %options = @_;
     $options{element} = $options{object}->get_tile;
-    return _deserialize_tile(%options);
+    $options{site_id} = $options{object}->get_site_id;
+    return _load_relateds(@options{qw(element data site_id)}),
+      _deserialize_tile(%options);
 }
 
 =back
@@ -429,6 +448,7 @@ sub _deserialize_tile {
     my $data      = $options{data};
     my $object    = $options{object};
     my $type      = $options{type};
+    my $site_id   = $options{site_id};
     my @relations;
 
     # make sure we have an empty element - Story->new() helpfully (?)
@@ -487,21 +507,12 @@ sub _deserialize_tile {
             $element->save; # I'm not sure why this is necessary after
                             # every add, but removing it causes errors
 
-            # deal with related stories and media
-            if ($c->{related_media_id}) {
-                # store fixup information - the object to be updated
-                # and the external id
-                push(@relations, { container => $container,
-                                   media_id  => $c->{related_media_id},
-                                   relative  => $c->{relative} || 0 });
-            } elsif ($c->{related_story_id}) {
-                push(@relations, { container => $container,
-                                   story_id  => $c->{related_story_id},
-                                   relative  => $c->{relative} || 0 });
-            }
+            # Deal with related media
+            push @relations, _load_relateds($container, $c, $site_id);
 
             # recurse
             push @relations, _deserialize_tile(element   => $container,
+                                               site_id   => $site_id,
                                                data      => $c);
             # Log it.
             log_event("${type}_add_element", $object,
@@ -513,6 +524,42 @@ sub _deserialize_tile {
     return @relations;
 }
 
+
+sub _load_relateds {
+    my ($container, $cdata, $site_id) = @_;
+    my @relations;
+    if ($cdata->{related_media_id}) {
+        # store fixup information - the object to be updated
+        # and the external id
+        push(@relations, {
+            container => $container,
+            media_id  => $cdata->{related_media_id},
+            relative  => $cdata->{relative} || 0
+        });
+    } elsif ($cdata->{related_media_uri}) {
+        push @relations, {
+            container => $container,
+            media_uri => $cdata->{related_media_uri},
+            site_id   => $cdata->{related_site_id} || $site_id,
+        };
+    }
+
+    # Deal with realted story.
+    if ($cdata->{related_story_id}) {
+        push(@relations, {
+            container => $container,
+            story_id  => $cdata->{related_story_id},
+            relative  => $cdata->{relative} || 0
+        });
+    } elsif ($cdata->{related_story_uri}) {
+        push @relations, {
+            container => $container,
+            story_uri => $cdata->{related_story_uri},
+            site_id   => $cdata->{related_site_id} || $site_id,
+        };
+    }
+    return @relations;
+}
 
 
 =item @related = _serialize_tile(writer => $writer, element => $element, args => $args)
@@ -545,7 +592,8 @@ sub _serialize_tile {
                 $attr{relative} = 1;
                 push(@related, [ story => $attr{related_story_id} ]);
             }
-        } elsif ($related_media = $element->get_related_media) {
+        }
+        if ($related_media = $element->get_related_media) {
             $attr{related_media_id} = $related_media->get_id;
             if ($options{args}{export_related_media}) {
                 $attr{relative} = 1;
@@ -603,6 +651,66 @@ sub _serialize_tile {
     }
 
     return @related;
+}
+
+sub resolve_relations {
+    my ($story_ids, $media_ids) = (shift, shift);
+    foreach my $r (@_) {
+        if ($r->{relative}) {
+            # handle relative links
+            if ($r->{story_id}) {
+                throw_ap(error => __PACKAGE__ .
+                           " : Unable to find related story by relative id " .
+                           "\"$r->{story_id}\"")
+                  unless exists $story_ids->{$r->{story_id}};
+                $r->{container}->
+                    set_related_instance_id($story_ids->{$r->{story_id}});
+            }
+            if ($r->{media_id}) {
+                throw_ap(error => __PACKAGE__ .
+                           " : Unable to find related media by relative id " .
+                           "\"$r->{media_id}\"")
+                  unless exists $media_ids->{$r->{media_id}};
+                $r->{container}->
+                    set_related_media($media_ids->{$r->{media_id}});
+            }
+        } else {
+            # handle absolute links
+            if ($r->{story_id}) {
+                throw_ap(error => __PACKAGE__ . " : related story_id \"$r->{story_id}\""
+                           . " not found.")
+                  unless Bric::Biz::Asset::Business::Story->list_ids({
+                      id => $r->{story_id}
+                  });
+                $r->{container}->set_related_instance_id($r->{story_id});
+            } elsif ($r->{story_uri}) {
+                my ($sid) = Bric::Biz::Asset::Business::Story->list_ids({
+                    primary_uri => $r->{story_uri},
+                    site_id     => $r->{site_id},
+                });
+                throw_ap(error => __PACKAGE__ . qq{ : related story_uri "$r->{story_uri}"}
+                           . qq{ not found in site "$r->{site_id}"}) unless $sid;
+                $r->{container}->set_related_instance_id($sid);
+            }
+            if ($r->{media_id}) {
+                throw_ap(error => __PACKAGE__ . " : related media_id \"$r->{media_id}\""
+                           . " not found.")
+                  unless Bric::Biz::Asset::Business::Media->list_ids({
+                      id => $r->{media_id}
+                  });
+                $r->{container}->set_related_media($r->{media_id});
+            } elsif ($r->{media_uri}) {
+                my ($mid) = Bric::Biz::Asset::Business::Media->list_ids({
+                    uri     => $r->{media_uri},
+                    site_id => $r->{site_id},
+                });
+                throw_ap(error => __PACKAGE__ . qq{ : related media_uri "$r->{media_uri}"}
+                           . qq{ not found in site "$r->{site_id}"}) unless $mid;
+                $r->{container}->set_related_media($mid);
+            }
+        }
+        $r->{container}->save;
+    }
 }
 
 

@@ -2842,9 +2842,7 @@ sub _do_list {
     my @wheres = ('g.id = c.object_id', 'c.member__id = m.id',
                   "m.active = '1'");
     my $tables = "grp g, member m, grp_member c";
-    # If an object is passed then we have to join to the member table again.
-    if (($criteria->{obj}) ||
-        ($criteria->{package} && $criteria->{obj_id}) ) {
+    if ($criteria->{obj} || ($criteria->{package} && $criteria->{obj_id})) {
         my ($pkg, $obj_id);
         if ($criteria->{obj}) {
             $pkg = ref $criteria->{obj};
@@ -2852,12 +2850,16 @@ sub _do_list {
                 # Assume they're all of the same class.
                 $pkg = ref $criteria->{obj}[0];
                 my @ids = grep { defined } map { $_->get_id } @{$criteria->{obj}};
-                $obj_id = ANY(@ids) if @ids;
+                # If no object has an ID, they will not yet be in any groups.
+                return unless @ids;
+                $obj_id = ANY(@ids);
             } else {
                 # Figure out what table this needs to be joined to.
                 $pkg = ref $criteria->{obj};
                 # Get the object id.
                 $obj_id = $criteria->{obj}->get_id;
+                # If the object has no ID, it's not yet in any groups.
+                return unless defined $obj_id;
             }
         } else {
             $pkg = $criteria->{package};

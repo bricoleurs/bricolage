@@ -13,9 +13,9 @@
 			 &></td>
     <td align="right" width=288>&nbsp;
 % if ($link1) {
-<a href="<% $link1 %>"><img src="/media/images/<% $lang_key . '/' . lc ($lab1) %>_dgreen.gif" border=0 hspace=2></a>
+<a href="#<% $link1 %>"><img src="/media/images/<% "$lang_key/$img1" %>_dgreen.gif" border=0 hspace=2></a>
 % } if ($link2) {
-<a href="<% $link2 %>"><img src="/media/images/<% $lang_key . '/' . lc($lab2) %>_dgreen.gif" border=0 hspace=2></a>
+<a href="#<% $link2 %>"><img src="/media/images/<% "$lang_key/$img2" %>_dgreen.gif" border=0 hspace=2></a>
 % }
     </td>
 </tr>
@@ -29,18 +29,18 @@ $others => {}
 </%args>
 <%init>;
 $caption ||= $pl_names->{$class};
-my ($link1, $link2, $lab1, $lab2);
+my ($link1, $link2, $lab1, $lab2, $img1, $img2);
 if ($class eq 'story') {
-    ($link1, $lab1) = ('#media', $pl_names->{media}) if $others->{media};
-    ($link2, $lab2) = ('#formatting', $pl_names->{formatting})
+    ($link1, $lab1, $img1) = ('media', $pl_names->{media}, 'media') if $others->{media};
+    ($link2, $lab2, $img2) = ('formatting', $pl_names->{formatting}, 'templates')
       if $others->{formatting};
 } elsif ($class eq 'media') {
-    ($link1, $lab1) = ('#story', $pl_names->{story}) if $others->{story};
-    ($link2, $lab2) = ('#formatting', $pl_names->{formatting})
+    ($link1, $lab1, $img1) = ('story', $pl_names->{story}, 'stories') if $others->{story};
+    ($link2, $lab2, $img2) = ('formatting', $pl_names->{formatting}, 'templates')
       if $others->{formatting};
 } else {
-    ($link1, $lab1) = ('#story', $pl_names->{story}) if $others->{story};
-    ($link2, $lab2) = ('#media', $pl_names->{media}) if $others->{media};
+    ($link1, $lab1, $img1) = ('story', $pl_names->{story}, 'stories') if $others->{story};
+    ($link2, $lab2, $img2) = ('media', $pl_names->{media}, 'media') if $others->{media};
 
 }
 

@@ -4,6 +4,7 @@ package Bric::SOAP::Asset;
 use strict;
 use warnings;
 
+use Bric::Config qw(:l10n);
 use Bric::App::Authz  qw(chk_authz CREATE);
 use Bric::Util::Fault qw(throw_ap throw_mni);
 use Bric::App::Event  qw(log_event);
@@ -171,6 +172,7 @@ sub export {
     $document_handle->close();
 
     # name, type and return
+    Encode::_utf8_off($document) if ENCODE_OK;
     return name(document => $document)->type('base64');
 }
 

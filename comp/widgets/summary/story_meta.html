@@ -99,14 +99,15 @@ my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 # get output channel info
 my $at = $story->get_element__id();
 my $asset_type = Bric::Biz::AssetType->lookup({id => $at});
-my @ocs = $asset_type->get_output_channels();
+
+my @ocs = $story->get_output_channels();
+my $primocid = $story->get_primary_oc_id;
 
 my $oc_select = '<select name="ocSelect">';
-my $pocid = $asset_type->get_primary_oc_id($story->get_site_id);
 foreach my $oc (@ocs) {
-    my $selected = '';
-    $selected = ' selected' if $oc->get_id() == $pocid;
-    $oc_select .= '<option value="' . $oc->get_id() . '"' . $selected . '>' . $oc->get_name() . '</option>';
+    my $ocid = $oc->get_id;
+    my $selected = $ocid == $primocid ? ' selected' : '';
+    $oc_select .= qq{<option value="$ocid" $selected>} . $oc->get_name . '</option>';
 }
 $oc_select .= '</select>';
 </%init>

@@ -46,7 +46,8 @@ sub new_args {
       source__id    => 1,
       primary_oc_id => 1,
       site_id       => 100,
-      category__id  => 1
+      category__id  => 1,
+      cover_date    => '2005-03-22 21:07:56',
     )
 }
 
@@ -54,7 +55,7 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(90) {
+sub test_select_methods: Test(101) {
     my $self = shift;
     my $class = $self->class;
 
@@ -171,6 +172,7 @@ sub test_select_methods: Test(90) {
                              site_id     => 100,
                            });
     $media[0]->set_category__id($OBJ->{category}->[0]->get_id());
+    $media[0]->set_cover_date('2005-03-23 06:11:29');
     $media[0]->add_contributor($self->contrib, 'DEFAULT');
     $media[0]->checkin();
     $media[0]->save();
@@ -183,7 +185,7 @@ sub test_select_methods: Test(90) {
     push @{$OBJ_IDS->{media}}, $media[0]->get_id();
     $self->add_del_ids( $media[0]->get_id() );
 
-    # Try doing a lookup 
+    # Try doing a lookup
     $expected = $media[0];
     ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[0] }),
         'can we call lookup on a Media' );
@@ -240,6 +242,7 @@ sub test_select_methods: Test(90) {
                             site_id     => 100,
                            });
     $media[1]->set_category__id($OBJ->{category}->[1]->get_id());
+    $media[1]->set_cover_date('2005-03-23 06:11:29');
     $media[1]->save();
     $media[1]->save();
     push @{$OBJ_IDS->{media}}, $media[1]->get_id();
@@ -282,8 +285,11 @@ sub test_select_methods: Test(90) {
                              site_id     => 100,
                            });
     $media[2]->set_category__id( $OBJ->{category}->[0]->get_id() );
+    $media[2]->set_cover_date('2005-03-23 06:11:29');
     $media[2]->add_contributor($self->contrib, 'DEFAULT');
+    $media[2]->checkin();
     $media[2]->save();
+    $media[2]->checkout({ user__id => $self->user_id });
     $media[2]->save();
     push @{$OBJ_IDS->{media}}, $media[2]->get_id();
     $self->add_del_ids( $media[2]->get_id() );
@@ -328,6 +334,7 @@ sub test_select_methods: Test(90) {
                              site_id     => 100,
                            });
     $media[3]->set_category__id( $OBJ->{category}->[0]->get_id );
+    $media[3]->set_cover_date('2005-03-23 06:11:29');
     $media[3]->save();
     $media[3]->save();
     push @{$OBJ_IDS->{media}}, $media[3]->get_id();
@@ -390,6 +397,7 @@ sub test_select_methods: Test(90) {
                            });
     $media[4]->add_contributor($self->contrib, 'DEFAULT');
     $media[4]->set_category__id($OBJ->{category}->[0]->get_id());
+    $media[4]->set_cover_date('2005-03-23 06:11:29');
     $media[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $media[4]->save;
     $media[4]->save;
@@ -436,6 +444,7 @@ sub test_select_methods: Test(90) {
                              site_id     => 100,
                            });
     $media[5]->set_category__id( $OBJ->{category}->[0]->get_id );
+    $media[5]->set_cover_date('2005-03-23 06:11:29');
     $media[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id );
     $media[5]->save;
 
@@ -455,7 +464,7 @@ sub test_select_methods: Test(90) {
     is( $got->get_name, $expected->get_name,
       '... does it have the right name');
     is( $got->get_description, $expected->get_description,
-      '... does it have the right desc'); 
+      '... does it have the right desc');
     # check the URI
     $exp_uri = $OBJ->{category}->[0]->get_uri;
     like( $got->get_primary_uri, qr/^$exp_uri/,
@@ -478,11 +487,9 @@ sub test_select_methods: Test(90) {
     my @got_ids;
     my @got_grp_ids;
 
-    ok( my @got = class->list({ name => '_test%', user_id => $admin_id }),
-        'lets do a search by name' );
-    ok( $got = class->list({ name => '_test%', user_id => $admin_id,
-                             Order => 'name' }),
-        'lets do a search by name' );
+    ok( $got = class->list({ name    => '_test%',
+                             Order   => 'name' }),
+        'lets do a search by name, ordered by name' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id;
@@ -519,8 +526,7 @@ sub test_select_methods: Test(90) {
     undef @got_grp_ids;
 
     ok( $got = class->list({ title   => '_test%',
-                             Order   => 'name',
-                             user_id => $admin_id }),
+                             Order   => 'name' }),
         'lets do a search by title' );
     # check the ids
     foreach (@$got) {
@@ -538,8 +544,7 @@ sub test_select_methods: Test(90) {
 
     # finally do this by grp_ids
     ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id,
-                             Order => 'name',
-                             user_id => $admin_id }),
+                             Order => 'name' }),
         'getting by grp_id' );
     my $number = @$got;
     is( $number, 2, 'there should be two media in the first grp' );
@@ -549,16 +554,14 @@ sub test_select_methods: Test(90) {
 
     # try listing IDs, again at least one key per table
     ok( $got = class->list_ids({ name    => '_test%',
-                                 Order   => 'name',
-                                 user_id => $admin_id }),
+                                 Order   => 'name' }),
         'lets do an IDs search by name' );
     # check the ids
     is_deeply( $got, $OBJ_IDS->{media},
                '... did we get the right list of ids out' );
 
     ok( $got = class->list_ids({ title   => '_test%',
-                                 Order   => 'name',
-                                 user_id => $admin_id }),
+                                 Order   => 'name' }),
         'lets do an ids search by title' );
     # check the ids
     is_deeply( $got, $OBJ_IDS->{media},
@@ -566,8 +569,7 @@ sub test_select_methods: Test(90) {
 
     # finally do this by grp_ids
     ok( $got = class->list_ids({ grp_id  => $OBJ->{media_grp}->[0]->get_id,
-                                 Order   => 'name',
-                                 user_id => $admin_id }),
+                                 Order   => 'name' }),
         'getting by grp_id' );
     $number = @$got;
     is( $number, 2, 'there should be three media in the first grp' );
@@ -577,16 +579,14 @@ sub test_select_methods: Test(90) {
 
     # now let's try a limit
     ok( $got = class->list({ Order   => 'name',
-                             Limit   => 3,
-                             user_id => $admin_id }),
+                             Limit   => 3 }),
         'try setting a limit of 3');
     is( @$got, 3, '... did we get exactly 3 media back' );
 
     # test Offset
     ok( $got = class->list({ grp_id  => $OBJ->{media_grp}->[0]->get_id,
                              Order   => 'name',
-                             Offset  => 1,
-                             user_id => $admin_id }),
+                             Offset  => 1 }),
         'try setting an offset of 2 for a search that just returned 6 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
 
@@ -612,6 +612,56 @@ sub test_select_methods: Test(90) {
     ok( $media[2]->save, 'Save future expire media');
     ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
     is( scalar @$got, 5, 'Check for five media now');
+
+    # User ID should return only assets checked out to the user.
+    ok $got = class->list({
+        title   => '_test%',
+        Order   => 'title',
+        user_id => $admin_id,
+    }), 'Get media for user';
+    is @$got, 4, 'Should have four media checked out to user';
+
+    # Now try the checked_out parameter. Four media should be checked out.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'title',
+        checked_out => 1,
+    }), 'Get checked out media';
+    is @$got, 4, 'Should have four checked out media';
+
+    # With checked_out => 0, we should get the other two media.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'title',
+        checked_out => 0,
+    }), 'Get non-checked out media';
+    is @$got, 2, 'Should have two non-checked out media';
+
+    # Try the checked_in parameter, which should return all six media.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'name',
+        checked_in  => 1,
+    }), 'Get checked in media';
+    is @$got, 6, 'Should have six checked in media';
+
+    # And even the checked-out media should return us the checked-in
+    # version.
+    is_deeply [ map { $_->get_checked_out } @$got ], [0, 1, 0, 1, 1, 0],
+      "We should get the checked-in copy of the checked-out media";
+
+    # Without checked_in parameter we should get the the checked-out
+    # media.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'name',
+    }), 'Get all media';
+    is @$got, 6, 'Should have six media';
+
+    # And now the checked-out media should return us the checked-in
+    # version.
+    is_deeply [ map { $_->get_checked_out } @$got ], [0, 1, 1, 1, 1, 0],
+      "We should get the checked-out media where available";
 }
 
 ###############################################################################

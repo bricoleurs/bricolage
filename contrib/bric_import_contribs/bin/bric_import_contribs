@@ -212,11 +212,11 @@ of the file. Optional.
 
 =item C<--contact-field>
 
-Use this option to specify that one ore more tab-delimited fields following
-the required name fields contains contact data. Pass in the type of contact
+Use this option to specify that one or more tab-delimited fields following the
+required name fields contains contact data. Pass in the type of contact
 information is in each field, such as "Primary Email" or "Business Phone".
 Contact fields B<must> preceed any custom fields in the tab-delimited file. To
- specify more than one contact field, simply use the option multiple times:
+specify more than one contact field, simply use the option multiple times:
 
   --contact-field 'Business Phone' --contact-field 'Primary Email'
 

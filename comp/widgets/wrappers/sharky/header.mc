@@ -68,6 +68,7 @@ if(ref($title) eq 'ARRAY') {
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
+<meta name="bricolage-version" content="<% Bric->VERSION %>" />
 <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 <link rel="stylesheet" type="text/css" href="/media/css/<% $lang_key %>.css" />
 <title><% $title %></title>
@@ -85,7 +86,7 @@ function init() {
 
 % if ($no_toolbar) {
 if (window.name == 'sideNav') { parent.location.href = location.href; }
-if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != "sideNav") {
+if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideNav') {
     // Redirect to the window opening page.
     location.href = '/login/welcome.html?referer=<% $r->uri %>';
 } else {

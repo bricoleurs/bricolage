@@ -41,12 +41,13 @@ sub preview : Callback {
     if (defined $media_id) {
         my $media = get_state_data('media_prof', 'media');
         unless ($media && (defined $media_id) && ($media->get_id == $media_id)) {
-            $media = Bric::Biz::Asset::Business::Media->lookup
-              ({ id => $media_id,
-                 checkout => $param->{checkout} });
+            $media = Bric::Biz::Asset::Business::Media->lookup({
+                id => $media_id,
+                $param->{checkout} ? () : (checked_in => 1),
+            });
         }
 
-        # Move out the story and then redirect to preview.
+        # Move out the media document and then redirect to preview.
         if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id)) {
             status_msg("Redirecting to preview.");
             # redirect_onload() prevents any other callbacks from executing.
@@ -55,9 +56,10 @@ sub preview : Callback {
     } else {
         my $s = get_state_data('story_prof', 'story');
         unless ($s && defined $story_id && $s->get_id == $story_id) {
-            $s = Bric::Biz::Asset::Business::Story->lookup
-              ({ id => $story_id,
-                 checkout => $param->{checkout} });
+            $s = Bric::Biz::Asset::Business::Story->lookup({
+                id => $story_id,
+                $param->{checkout} ? () : (checked_in => 1),
+             });
         }
 
         # Get all the related media to be previewed as well
@@ -135,6 +137,8 @@ sub publish : Callback {
             priority      => $s->get_priority(),
         });
         $job->save();
+        log_event('job_new', $job);
+
         # Report publishing if the job was executed on save, otherwise
         # report scheduling
         my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
@@ -145,8 +149,15 @@ sub publish : Callback {
             $d->remove_asset($s);
             $d->save;
         }
+
         # Remove it from the workflow by setting its workflow ID to undef
-        if ($s->get_workflow_id) {
+        # Yes, we have to use user__id instead of checked_out because non-current
+        # versions of documents always have checked_out set to 0, even when the
+        # current version is checked out.
+        if ($s->get_workflow_id
+            && !defined $s->get_user__id # Not checked out.
+            && $s->get_version == $s->get_current_version # Is the current version.
+        ) {
             $s->set_workflow_id(undef);
             log_event("story_rem_workflow", $s);
         }
@@ -166,6 +177,7 @@ sub publish : Callback {
             priority      => $m->get_priority,
         });
         $job->save();
+        log_event('job_new', $job);
         # Report publishing if the job was executed on save, otherwise
         # report scheduling
         my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';

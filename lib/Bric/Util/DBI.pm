@@ -785,7 +785,6 @@ sub build_query {
 
     $sql .= qq{      LIMIT $limit\n} if $limit;
     $sql .= qq{      OFFSET $offset\n} if $offset;
-
     return \$sql;
 }
 
@@ -820,15 +819,18 @@ sub clean_params {
         # this will override the above
         $param->{_checked_out} = $param->{checkout} if exists $param->{checkout};
         # this is last because it's most important for defining a workspace
-        $param->{_checked_out} = 1 if defined $param->{user__id};
+        $param->{_checked_out} = 1
+          if defined $param->{user__id} || defined $param->{user_id};
         if (defined $param->{_checked_out}) {
             # Make sure we have valid checkout values -- that is, no null
             # strings!
             @{$param}{qw(_not_checked_out _checked_out)} = (0, 0)
               unless $param->{_checked_out};
+            # Checked out and checked in don't mix.
+            delete $param->{checked_in};
         } else {
             # finally the default
-            $param->{_checked_in_or_out} = 1 unless defined $param->{_checked_out};
+            $param->{_checked_in_or_out} = 1 unless $param->{checked_in};
         }
 
         # trim cruft
@@ -858,7 +860,6 @@ sub clean_params {
                    expire_date expire_date_start expire_date_end)) {
         $param->{$df} = Bric::Util::Time::db_date($param->{$df}) if $param->{$df};
     }
-
     # Return the parameters.
     return $param;
 }
@@ -1803,7 +1804,7 @@ sub _debug_execute {
     my $sig = _statement_signature(\$sth);
     print STDERR "+++++++++++++ Execute Query [$sig]\n";
     print STDERR "+++++++++++++ ARGS: ", 
-	join(', ', map { defined $_ ? $_ : 'NULL' } @{$_[0]}),
+	join(', ', map { defined $_ ? $_ : 'NULL' } @$args),
 	    "\n\n";
     _print_call_trace() if CALL_TRACE;
 }

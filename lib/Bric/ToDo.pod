@@ -474,6 +474,11 @@ among keywords and/or support for a prefered keyword among a group of
 synonymous keywords. Past versions of Bricolage (pre 1.3.2) included an
 incomplete implementation that you might use as inspiration.
 
+=item *
+
+Add a max size option to media Element profiles, for setting a per-element
+size cap on uploaded media.
+
 =back
 
 =cut

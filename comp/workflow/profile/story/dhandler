@@ -57,7 +57,7 @@ $m->comp("/widgets/wrappers/sharky/header.mc",
 
 </%init>
 %# Output the content.
-<form method="post" action="<% $r->uri %>" name="theForm" enctype="multipart/form-data" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onSubmit="return confirmChanges('theForm')">
 <% $content %>
 </form>
 <& /widgets/wrappers/sharky/footer.mc &>

@@ -204,6 +204,7 @@ use constant PARAM_WHERE_MAP => {
       _null_workflow_id     => 'mt.workflow__id IS NULL',
       element__id           => 'mt.element__id = ?',
       element_id            => 'mt.element__id = ?',
+      version_id            => 'i.id = ?',
       element_key_name      => 'mt.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
       source__id            => 'mt.source__id = ?',
       source_id             => 'mt.source__id = ?',
@@ -237,6 +238,12 @@ use constant PARAM_WHERE_MAP => {
                              . 'WHERE version = i.version '
                              . 'AND media__id = i.media__id '
                              . 'ORDER BY checked_out DESC LIMIT 1 )',
+      checked_in            => 'i.checked_out = '
+                             . '( SELECT checked_out '
+                             . 'FROM media_instance '
+                             . 'WHERE version = i.version '
+                             . 'AND media__id = i.media__id '
+                             . 'ORDER BY checked_out ASC LIMIT 1 )',
       _checked_out          => 'i.checked_out = ?',
       checked_out           => 'i.checked_out = ?',
       _not_checked_out       => "i.checked_out = '0' AND mt.id not in "
@@ -514,6 +521,11 @@ possible values.
 
 The media document version number. May use C<ANY> for a list of possible values.
 
+=item version_id
+
+The ID of a version of a media document. May use C<ANY> for a list of possible
+values.
+
 =item file_name
 
 The media document file name. May use C<ANY> for a list of possible values.
@@ -527,6 +539,19 @@ most recent version. May use C<ANY> for a list of possible values.
 
 A boolean value indicating whether to return only checked out or not checked
 out media.
+
+=item checked_in
+
+If passed a true value, this parameter causes the checked in version of the
+most current version of the media document to be returned. When a media
+document is checked out, there are two instances of the current version: the
+one checked in last, and the one currently being edited. When the
+C<checked_in> parameter is a true value, then the instance last checked in is
+returned, rather than the instance currently checked out. This is useful for
+users who do not currently have a media document checked out and wish to see
+the media document as of the last check in, rather than as currently being
+worked on in the current checkout. If a media document is not currently
+checked out, this parameter has no effect.
 
 =item published_version
 
@@ -1390,8 +1415,16 @@ sub get_media_type {
 
 =item $media = $media->upload_file($file_handle, $file_name)
 
-Reads a file from the passed $file_handle and stores it in the media
-object under $file_name.
+=item $media = $media->upload_file($file_handle, $file_name, $media_type)
+
+=item $media = $media->upload_file($file_handle, $file_name, $media_type, $size)
+
+Reads a file from the passed $file_handle and stores it in the media object
+under $file_name. If $media_type is passed, it will be used to set the media
+type of the file. Otherwise, C<upload_file()> will use Bric::Util::MediaType
+to determine the media type. If $size is passed, its value will be used for
+the size of the file; otherwise, C<upload_file()> will figure out the file
+size itself.
 
 B<Throws:> NONE.
 
@@ -1403,7 +1436,8 @@ B<Notes:> NONE.
 =cut
 
 sub upload_file {
-    my ($self, $fh, $name) = @_;
+    my ($self, $fh, $name, $type, $size) = @_;
+
     my ($id, $v, $old_fn, $loc, $uri) =
       $self->_get(qw(id version file_name location uri));
     my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $id, $v);
@@ -1439,6 +1473,23 @@ sub upload_file {
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
     close FILE;
+
+    # Set the media type and the file size.
+    if ($type = defined $type
+        ? Bric::Util::MediaType->lookup({name => $type})
+        : undef)
+    {
+        # We got a valid type.
+        $self->_set(['media_type_id', '_media_type_obj'], [$type->get_id, $type]);
+    } elsif (my $mid = Bric::Util::MediaType->get_id_by_ext($name)) {
+        # We figured out the type by the filename extension.
+        $self->_set(['media_type_id', '_media_type_obj'], [$mid, undef]);
+    } else {
+        # We have no idea what the type is. :-(
+        $self->_set(['media_type_id', '_media_type_obj'], [0, undef]);
+    }
+
+    $self->set_size(defined $size ? $size : -S $path);
 
     # Get the Output Channel object.
     my $at_obj = $self->_get_element_object;
@@ -1615,7 +1666,6 @@ sub revert {
     my $revert_obj = __PACKAGE__->lookup({
         id          => $self->_get_id,
         version     => $version,
-        checked_out => 0
     }) or throw_gen "The requested version does not exist";
 
 
@@ -1646,7 +1696,9 @@ sub revert {
     $new_tile->prepare_clone;
     $self->_set({ _delete_tile => $tile,
                   _tile        => $new_tile});
-    return $self;
+
+    # Make sure the current version is cached.
+    return $self->cache_me;
 }
 
 ################################################################################

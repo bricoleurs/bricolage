@@ -1,5 +1,3 @@
-%#--- Documentation ---#
-
 <%doc>
 
 =head1 NAME
@@ -25,7 +23,6 @@ The Widget for displaying media objects
 =cut
 
 </%doc>
-
 <%once>
 my $widget = 'media_prof';
 
@@ -50,11 +47,8 @@ my $needs_reload = sub {
     # No reload is necessary
     return 0;
 };
-
 </%once>
-
 %#--- Arguments ---#
-
 <%args>
 $id		=> undef
 $work_id => undef
@@ -64,17 +58,14 @@ $param    => undef
 $section
 $return	=> undef
 </%args>
-
 %#-- Initialization --#
-
 <%init>
-
 # clear state if this is new
 if ($section eq 'new') {
     # A hacky fix for the 'sidenav query string breakin shit' problem.
     # Get an existing workflow ID if we weren't passed one.
     $work_id ||= get_state_data($widget, 'work_id');
-    
+
     set_state( $widget, 'edit', { 'work_id' => $work_id});
 } else {
 	# get the id that was passed in or get it from state
@@ -91,8 +82,8 @@ if ($id) {
     if ($needs_reload->($media, $id, $checkout, $version)) {
 	my $param = {'id' => $id};
 
-	$param->{checkout} = $checkout if defined($checkout);
-	$param->{version}  = $version  if defined($version);
+	$param->{checked_in} = 1 unless $checkout;
+	$param->{version} = $version if defined $version;
 	$media = Bric::Biz::Asset::Business::Media->lookup($param);
 
 	# Clear the media state data
@@ -124,7 +115,6 @@ if ($return) {
     set_state_data($widget, 'return', $return);
 }
 
-
 my $state = get_state_name($widget);
 
 if (my $media = get_state_data($widget, 'media')) {
@@ -136,7 +126,6 @@ if (my $media = get_state_data($widget, 'media')) {
 
 $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
 </%init>
-
 %#--- Log History ---#
 
 

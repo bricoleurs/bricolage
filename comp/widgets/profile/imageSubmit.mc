@@ -19,7 +19,7 @@ $value     => 1
 $image
 $vspace    => undef
 $hspace    => undef
-$js        => qq{onClick="return customSubmit('$formName', '$callback', '$value')"}
+$js        => qq{onclick="return customSubmit('$formName', '$callback', '$value')"}
 $useHidden => 1
 $useGlobalImage => 0
 </%args>

@@ -78,10 +78,9 @@ $LastChangedDate$
  $asset       = $asset->set_expire_date($date)
  $expire_date = $asset->get_expire_date()
 
- # Desk stamp information
- ($desk_stamp_list || @desk_stamps) = $asset->get_desk_stamps()
- $desk_stamp                        = $asset->get_current_desk()
- $asset                             = $asset->set_current_desk($desk_stamp)
+ # Desk information
+ $desk        = $asset->get_current_desk;
+ $asset       = $asset->set_current_desk($desk);
 
  # Workflow methods.
  $id    = $asset->get_workflow_id;
@@ -254,6 +253,7 @@ use constant PARAM_WHERE_MAP => {
     no_site_id            => 'f.output_channel__id = oc.id AND oc.site__id <> ?',
     workflow__id          => 'f.workflow__id = ?',
     workflow_id           => 'f.workflow__id = ?',
+    version_id            => 'i.id = ?',
     _null_workflow_id     => 'f.workflow__id IS NULL',
     element__id           => 'f.element__id = ?',
     element_key_name      => 'f.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
@@ -280,6 +280,12 @@ use constant PARAM_WHERE_MAP => {
                            . 'WHERE version = i.version '
                            . 'AND formatting__id = i.formatting__id '
                            . 'ORDER BY checked_out DESC LIMIT 1 )',
+    checked_in            => 'i.checked_out = '
+                           . '( SELECT checked_out '
+                           . 'FROM formatting_instance '
+                           . 'WHERE version = i.version '
+                           . 'AND formatting__id = i.formatting__id '
+                           . 'ORDER BY checked_out ASC LIMIT 1 )',
     checked_out           => 'i.checked_out = ?',
     _checked_out          => 'i.checked_out = ?',
     _not_checked_out      => "i.checked_out = '0' AND f.id not in "
@@ -690,6 +696,11 @@ values.
 
 The template version number. May use C<ANY> for a list of possible values.
 
+=item version_id
+
+The ID of a version of a template. May use C<ANY> for a list of possible
+values.
+
 =item active
 
 Defaults to true
@@ -727,6 +738,19 @@ Indicates whether to list templates that are checked out or not. If "0", then
 only non-checked out templates will be returned. If "1", then only checked-out
 templates will be returned. If "all", then the checked_out attributed will be
 ignored (unless the C<user__id> parameter is passed).
+
+=item checked_in
+
+If passed a true value, this parameter causes the checked in version of the
+most current version of the template to be returned. When a template is
+checked out, there are two instances of the current version: the one checked
+in last, and the one currently being edited. When the C<checked_in> parameter
+is a true value, then the instance last checked in is returned, rather than
+the instance currently checked out. This is useful for users who do not
+currently have a template checked out and wish to see the template as of the
+last check in, rather than as currently being worked on in the current
+checkout. If a template is not currently checked out, this parameter has no
+effect.
 
 =item return_versions
 
@@ -1821,12 +1845,13 @@ sub revert {
 
     my $revert_obj = __PACKAGE__->lookup({
         id              => $self->_get_id,
-        checked_out     => 0,
         version         => $version
     }) or throw_gen "The requested version does not exist";
 
     $self->_set(['data'], [$revert_obj->get_data]);
-    return $self;
+
+    # Make sure the current version is cached.
+    return $self->cache_me;
 }
 
 ################################################################################

@@ -203,7 +203,7 @@ sub move_onto_desk {
     my $user = $self->{user_obj};
 
     unless ($desk) {
-        if (my $wf = Bric::Biz::Workflow->lookup({ id => $template->getworkflow_id})) {
+        if (my $wf = Bric::Biz::Workflow->lookup({ id => $template->get_workflow_id})) {
             $desk = $wf->get_start_desk;
         } else {
             warn "No workflow available to checkout template";

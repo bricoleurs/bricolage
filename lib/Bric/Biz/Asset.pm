@@ -57,10 +57,9 @@ $LastChangedDate$
  $asset           = $asset->set_expire_date($date)
  $expire_date = $asset->get_expire_date()
 
- # Desk stamp information
- ($desk_stamp_list || @desk_stamps) = $asset->get_desk_stamps()
- $desk_stamp                        = $asset->get_current_desk()
- $asset                             = $asset->set_current_desk($desk_stamp)
+ # Desk information
+ $desk        = $asset->get_current_desk;
+ $asset       = $asset->set_current_desk($desk);
 
  # Workflow methods.
  $id    = $asset->get_workflow_id;
@@ -1164,11 +1163,11 @@ Unable to format date.
 
 =back
 
-B<Side Effects:> 
+B<Side Effects:>
 
 NONE
 
-B<Notes:> 
+B<Notes:>
 
 NONE
 
@@ -1888,17 +1887,6 @@ NONE
 1;
 
 __END__
-
-=head1 NOTES
-
-define supported keys for list
-
-are desk_stamps objects or just data
-
-rewrite description to reflect current state
-
-accessor for asset_version_id (what does get_id return the asset id or the
-asset version group? )
 
 =head1 AUTHOR
 

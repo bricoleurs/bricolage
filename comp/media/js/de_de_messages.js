@@ -2,6 +2,7 @@
 var slug_chars_msg =
   "Der Kurzname darf nur alphanumerische Zeichen (A-Z, 0-9, - oder _) enthalten!";
 var role_msg = "Sie müssen einen eindeutigen Namen für diese Rolle angeben!";
+var login_space = "Usernames cannot have spaces at the beginning or end!";
 var login_msg1 = "Benutzername muß mindestens ";
 var login_msg2 = " Zeichen lang sein!";
 var passwd_msg1 = "Passwörter müssen mindestens ";

@@ -1,5 +1,5 @@
 // set up global to track names of double list managers
- var doubleLists = new Array();
+var doubleLists = new Array();
 var formObj = '';
 
 function validateStory(obj) {
@@ -20,17 +20,8 @@ function wordCount(obj, targetName, wordResultName, charResultName) {
     var target = obj[targetName];
     var word   = obj[wordResultName];
     var chars  = obj[charResultName];
-    var tmp    = new Array();
-    var words  = new Array();
-
-    tmp = target.value.split(" ");
-    for (i=0; i<tmp.length; i++) {
-        if ( tmp[i].length && tmp[i] != "\r" ) {
-            words[words.length] = tmp[i];
-        }
-    }
-
-    word.value  = words.length;
+   
+    word.value  = target.value.split(/\s+/g).length;
     chars.value = target.value.length
     return false;
 }
@@ -63,6 +54,10 @@ function checkLogin(obj, length, pass1, pass2, passwd_length) {
         alert(login_msg1 + length + login_msg2);
         obj.focus();
         return false;
+    } else if (what.match(/^\s+/) || what.match(/\s+$/)) {
+        alert(login_space);
+        obj.focus();
+        return false;
     }
     return checkPasswords(pass1, pass2, passwd_length);
 }
@@ -78,7 +73,7 @@ function checkPasswords(obj1, obj2, passwd_length) {
 
     if (!newUser && pass1.length == 0) return true;
     
-    // No fewer than 6 characters.
+    // No fewer than passwd_length characters.
     if (pass1.length < passwd_length) {
         alert(passwd_msg1 + passwd_length + passwd_msg2);
         obj1.focus();
@@ -94,15 +89,17 @@ function checkPasswords(obj1, obj2, passwd_length) {
         return false;
     }
 
-    // No preceding or trailing spaces.
-    if (pass1.substring(0,1) == " ") {
+    // XXX: These could be combined if we can get translators to update the
+    //      messages into "Passwords cannot have spaces at the beginning or
+    //      end!"
+    if (pass1.match(/^\s+/)) {
         alert(passwd_start_msg);
         obj1.value = "";
         obj2.value = "";
         obj1.focus();
         return false;      
     }
-    if (pass1.substring(pass1.length-1, pass1.length) == " ") {
+    if (pass1.match(/\s+$/)) {
         alert(passwd_end_msg);
         obj1.value = "";
         obj2.value = "";
@@ -119,7 +116,6 @@ evaluated before the form is submitted. Input: name of the form to be
 submitted, an array of callbacks to be sent, an array of optional statements
 Output: returns false to cancel the link action.
 */
-
 function customSubmit(formName, cbNames, cbValues, optFunctions) {
 
     var frm = document.forms[formName];
@@ -172,6 +168,8 @@ function hasSpecialCharactersOC(what) {
 
 /*
 general textarea cleanup function
+
+XXX: Can this be done using only the text variable?
 */
 function textUnWrap (text) {
     var text2 = text.replace( /\r\n/g, "\n");    //Change Windows newlines to Unix newlines.
@@ -479,12 +477,15 @@ var requiredFields         = new Object();
 var specialCharacterFields = new Object();
 var specialOCFields = new Object();
 function confirmChanges(obj) {
-    
     if (confirming || submitting) return false;
     confirming = true
     var ret = true;
     var tmp;
     var confirmed = false;
+
+    // Sometimes just an ID can be passed in.
+    if (typeof obj != "object")
+        obj = document.getElementById(obj);
 
     // Check for slug.
     if (typeof obj["slug"] != "undefined") {
@@ -522,7 +523,7 @@ function confirmChanges(obj) {
             }
         }
     }
-   
+
     // examine registered special character fields
     if (typeof specialCharacterFields != "undefined") {         
         for (field in specialCharacterFields) {
@@ -536,8 +537,7 @@ function confirmChanges(obj) {
                 }
             }
         }
-    }  
-
+    }
 
     // examine registered special output channel fields(with slash allowed).
     if (typeof specialOCFields != "undefined") {         
@@ -554,42 +554,36 @@ function confirmChanges(obj) {
         }
     }  
 
-
     // if we get this far, we've got a live submission.
     // if there is a 2xLM,
     // find the items that are new on the right, mark them 
     // selected, and send it on.
-    if (formObj) {       
+    if (formObj) {
         // loop thru the array of 2xLM names
         for (var i=0; i < doubleLists.length; i++) {
-            var tmp = doubleLists[i].split(":");
-            var leftObj  = formObj.elements[tmp[0]]; // get handle to lVals
-            var rightObj = formObj.elements[tmp[1]]; // get handle to rVals on form
-            var lVals = eval(tmp[0] + "_values");     // get handle to original lVals array
-            var rVals = eval(tmp[1] + "_values");     // get handle to original rVals array
+            var Objs = new Array(
+                formObj.elements[doubleLists[i][0]], // get handle to lVals
+                formObj.elements[doubleLists[i][1]] // get handle to rVals on form
+            );
 
-            // loop thru the right vals in the list...
-            for (var j=0; j < rightObj.length; j++) {
-                if (!inArray(rightObj[j].value, rVals)) { // if value not in original rvals list, mark it selected
-                    rightObj[j].selected = true;
-                } else {  // else mark it not selected (to keep it from accidentally being submitted)
-                    rightObj[j].selected = false;
-                }
-            }
-
-            // loop thru the left vals in the list...
-            for (var j=0; j < leftObj.length; j++) {
-                if (!inArray(leftObj[j].value, lVals)) { // if value not in original rvals list, mark it selected
-                    leftObj[j].selected = true;
-                } else {  // else mark it not selected (to keep it from accidentally being submitted)
-                    leftObj[j].selected = false;
+            for (var k in [0, 1]) {
+                var obj = Objs[k];
+                if (movedItems[obj.id]) {
+                    // mark all moved items as selected and all others unselected.
+                    for (var j=0; j < obj.length; j++) {
+                        if (movedItems[obj.id][obj[j].value]) {
+                            obj[j].selected = true;
+                        } else {
+                            obj[j].selected = false;
+                        }
+                    }
                 }
             }
         }
     }
-    confirming = false
-    submitting = ret
-    return ret
+    confirming = false;
+    submitting = ret;
+    return ret;
 }
 
 function inArray(what, arr) {
@@ -611,110 +605,51 @@ function isInList(what, list) {
 
 // begin double list manager functions
 
-/*
-Input: handle to form button, names of left and right list objects.
-Output: Adds any selected values from the list on the left to the list on the right.  The selected values are then removed from
-the list on the left.
-*/
-function addToList(formName,  leftName, rightName) {
-    
-    formObj           = document.forms[formName]; // sets this globally for use by verify
-    var rightOpt      = formObj[rightName];
-    var leftOpt       = formObj[leftName];
-    var newLeftOpt    = new Array('');
-    newLeftOpt.length = 0;
-    var leftReadOnly  = eval(leftName + "_readOnly");
-    cleanLeftOpt(leftOpt);
+var movedItems = new Array;
 
-    // loop thru all left options
-    for (var i=0; i<leftOpt.length; i++) {
+// Originally by Saqib Khan - http://js-x.com/ 
+// Modified (quite heavily) by Marshall Roch, 2005-03-14
+function move_item(formName, fromObj, toObj) {
+    var found;
 
-        // if we find a selected option, 
-        if (leftOpt[i].selected) {
-            // that's not already on the right, and  isn't in the readOnly array for this list
-            if ( !isInList(leftOpt[i].value, rightOpt) && !inArray(leftOpt[i].value, leftReadOnly) ) {
-                // create new option object for the right side list, give it the value and text
-                var opt = new Option(leftOpt[i].text, leftOpt[i].value);
-                rightOpt[rightOpt.length] = opt;
-            } else {
-                // put it in the new list for the left side
-                newLeftOpt[newLeftOpt.length] = new Option(leftOpt[i].text, leftOpt[i].value);
+    formObj = document.forms[formName]; // sets this globally for use by verify
+
+    var from = document.getElementById(fromObj);
+    var to = document.getElementById(toObj);
+
+    if (!movedItems[from.id]) movedItems[from.id] = new Array();
+    if (!movedItems[to.id])   movedItems[to.id]   = new Array();
+
+    if (from.options.length >0) {
+        for (i=0; i<from.length; i++) {
+
+            found = false;
+
+            if (from.options[i].selected && !from.options[i].disabled) {
+
+                to.options[to.length] = new Option(
+                    from.options[i].text,
+                    from.options[i].value
+                );
+
+                if (movedItems[from.id][from.options[i].value]) {
+                    movedItems[from.id].splice(from.options[i].value, 1);
+                    found = true;
+                }
+
+                if (movedItems[to.id][from.options[i].value]) {
+                    movedItems[to.id].splice(from.options[i].value, 1);
+                }
+
+                if (!found) {
+                    // Might we have a use for the index (length-1) someday?
+                    // Not using the actual index because 0 is false.
+                    movedItems[to.id][from.options[i].value] = to.length;
+                }
+
+                from.options[i]=null;
+                i--; /* make the loop go through them all */
             }
-        } else {
-            // put it in the newLeftOpt list, cuz it's staying on the left
-            newLeftOpt[newLeftOpt.length] = new Option(leftOpt[i].text, leftOpt[i].value);
-            
-        }
-    }
-    
-    // zero out the left side options
-    for (var i=0; i < leftOpt.length; i++) {
-        leftOpt[i] = null;
-    }
-   
-    // adjust size of left side option array, taking wacky browser behavior into account
-    if (newLeftOpt.length == 0) {
-        leftOpt.length = 1
-        leftOpt[0] = new Option ('','_RESERVED_FOR_ZATHRAS_'); // hack. NS/Unix acts strangely when the number of elements is set to 0
-    } else {
-        leftOpt.length = newLeftOpt.length;
-    }
-
-    // populate the left option list
-    for (var i=0; i < newLeftOpt.length; i++) {
-        leftOpt[i] = newLeftOpt[i];
-    }
-
-    cleanLeftOpt(leftOpt);
-    return false;
-}
-
-/*
-Input: handle to form button, names of left and right list objects.
-Output: Removes any selected values from the list on the right and adds them to the list on the left.  
-*/
-function removeFromList(formName, leftName, rightName) {
-    
-    formObj           = document.forms[formName];
-    var rightOpt      = formObj[rightName];
-    var leftOpt       = formObj[leftName];
-    var newRightOpt   = new Array();
-    var newLeftOpt    = new Array();
-    var curOpt        = 0;
-    var rightReadOnly = eval(rightName + "_readOnly");
-
-    cleanLeftOpt(leftOpt);
-
-    for (var i=0; i<rightOpt.length; i++) {
-        // if option is selected, and not in the right side readOnly list
-        if (rightOpt[i].selected && !inArray(rightOpt[i].value, rightReadOnly)) {
-            // add it to the options on the left
-            
-            newLeftOpt[newLeftOpt.length] = new Option(rightOpt[i].text, rightOpt[i].value);
-        } else {
-            // keep it on the right
-            newRightOpt[curOpt++] = new Option(rightOpt[i].text, rightOpt[i].value);
-        }
-    }
-        
-    rightOpt.length = newRightOpt.length;
-    // reset right list with options that were not selected
-    for (var i=0; i < curOpt; i++) {
-        rightOpt[i] =  newRightOpt[i];
-    }
-    
-    for (var i=0; i < newLeftOpt.length; i++) {
-        leftOpt[leftOpt.length] = newLeftOpt[i];
-    }
-
-    return false;
-        
-}
-
-function cleanLeftOpt(opt) {
-    for (var i=0; i < opt.length; i++) {
-        if (opt[i].value == "_RESERVED_FOR_ZATHRAS_") {
-            opt[i] = null
         }
     }
 }
@@ -724,12 +659,10 @@ Check all the checkboxes whose name matches "str"
 */
 var all_checked = false;
 function checkAll(str) {
-    for (var i=0; i < document.forms.length; i++) {
-        var tmp = document.forms[i];
-        for (var j=0; j < tmp.elements.length; j++) {
-            if (tmp.elements[j].type == "checkbox" && tmp.elements[j].name.indexOf(str) != -1) {
-                tmp.elements[j].checked = all_checked ? false : true
-            }
+    var checkboxes = document.getElementsByTagName("input");
+    for (var i=0; i < checkboxes.length; i++) {
+        if (checkboxes[i].name.indexOf(str) != -1) {
+            checkboxes[i].checked = all_checked ? false : true
         }
     }
     all_checked = all_checked ? false : true;

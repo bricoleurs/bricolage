@@ -29,6 +29,7 @@ sub get_story {
                                });
    $story->add_categories([1]);
    $story->set_primary_category(1);
+   $story->set_cover_date('2005-03-22 21:07:56');
    $story->save;
    $self->add_del_ids([$story->get_id], $story->key_name);
    return $story;

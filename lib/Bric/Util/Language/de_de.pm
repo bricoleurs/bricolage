@@ -717,6 +717,7 @@ any error pointers.
 
 To Translate:
 
+  'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.' => 'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.'
   'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"',
   'Template "[_1]" deployed.' => 'Vorlage "[_1]" ausgebracht',
   'Story "[_1]" scheduled for publication.' => 'Beitrag "[_1]" veröffentlicht.',
@@ -734,6 +735,7 @@ To Translate:
   'You do not have permission to publish media "[_1]"' => 'You do not have permission to publish media "[_1]"',
   'You do not have permission to auto-publish story "[_1]"' => 'You do not have permission to auto-publish story "[_1]"',
   'You do not have permission to auto-publish media "[_1]"' => 'You do not have permission to auto-publish media "[_1]"',
+  'Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".' => 'Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".',
 
 =end comment
 

@@ -211,10 +211,11 @@ sub publish {
             $type = 'media';
             $obj  = Bric::Biz::Asset::Business::Media->lookup({
                 id => $id->value,
-                published_version => $published_only
+                ( $published_only ? ( published_version => 1 ) : ())
             });
 
-            throw_ap(error => "Unable to find media object for media_id \"$id\".")
+            throw_ap(error => 'Unable to find media object for media_id "'
+                              . $id->value . '".')
               unless $obj;
 
         } else {

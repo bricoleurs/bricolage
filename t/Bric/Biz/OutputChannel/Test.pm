@@ -33,7 +33,7 @@ sub test_new : Test(18) {
                   post_path   => 'en',
                   protocol    => 'http://',
                   site_id     => 100,
-                  uri_format  => '/categories/year/month/',
+                  uri_format  => '/%{categories}/%Y/%m/',
                   active      => 1
                 };
 
@@ -48,9 +48,9 @@ sub test_new : Test(18) {
     is( $oc->get_site_id, 100, "Check site ID" );
     is( $oc->get_protocol, 'http://', "Check protocol" );
 
-    is( $oc->get_uri_format, '/categories/year/month/',
+    is( $oc->get_uri_format, '/%{categories}/%Y/%m/',
           "Check uri_format" );
-    is( $oc->get_fixed_uri_format, '/categories/',
+    is( $oc->get_fixed_uri_format, '/%{categories}/',
           "Check fixed_uri_format" );
     is( $oc->get_uri_case, Bric::Biz::OutputChannel::MIXEDCASE(),
         "Check uri_case" );
@@ -85,13 +85,15 @@ sub test_my_meths : Test(11) {
 # Test uri_format attribute.
 sub test_uri_format : Test(12) {
     ok( my $oc = Bric::Biz::OutputChannel->new, "Create new OC" );
-    is( $oc->get_uri_format, '/categories/year/month/day/slug/',
+    is( $oc->get_uri_format, '/%{categories}/%Y/%m/%d/%{slug}/',
           "Check uri_format" );
-    ok( $oc->set_uri_format('/day/month/slug'), "Set new category" );
-    is( $oc->get_uri_format, '/day/month/slug/', "Check new category" );
-    ok( $oc->set_uri_format('/slug/categories/year'),
+    ok( $oc->set_uri_format('/%{categories}/%d/%m/%{slug}'),
+        "Set new category" );
+    is( $oc->get_uri_format, '/%{categories}/%d/%m/%{slug}/',
+        "Check new category" );
+    ok( $oc->set_uri_format('/%{slug}/%{categories}/%Y/'),
         "Set another new category" );
-    is( $oc->get_uri_format, '/slug/categories/year/',
+    is( $oc->get_uri_format, '/%{slug}/%{categories}/%Y/',
         "Check another new category" );
 
     # Try an empty string format.
@@ -102,12 +104,12 @@ sub test_uri_format : Test(12) {
     is( $ex->get_msg, 'No URI Format value specified',
         "Check empty string ex message" );
 
-    # Try a format with bogus tokens.
-    eval { $oc->set_uri_format('/categories/foo') };
+    # Try a format without %{categories}.
+    eval { $oc->set_uri_format('/foo') };
     ok( $ex = $@, "Catch bogus token exception" );
     isa_ok( $ex, 'Bric::Util::Fault::Exception::DP',
             'Bogus token exception is a DP' );
-    is( $ex->get_msg, 'Invalid URI Format token: foo',
+    is( $ex->get_msg, 'Missing the %{categories} token from URI Format',
         "Check bogus token ex message" );
 }
 
@@ -115,13 +117,15 @@ sub test_uri_format : Test(12) {
 # Test fixed_uri_format attribute.
 sub test_fixed_uri_format : Test(12) {
     ok( my $oc = Bric::Biz::OutputChannel->new, "Create new OC" );
-    is( $oc->get_fixed_uri_format, '/categories/',
+    is( $oc->get_fixed_uri_format, '/%{categories}/',
           "Check fixed_uri_format" );
-    ok( $oc->set_fixed_uri_format('/day/month/slug'), "Set new category" );
-    is( $oc->get_fixed_uri_format, '/day/month/slug/', "Check new category" );
-    ok( $oc->set_fixed_uri_format('/slug/categories/year'),
+    ok( $oc->set_fixed_uri_format('/%{categories}/%d/%m/%{slug}'),
+        "Set new category" );
+    is( $oc->get_fixed_uri_format, '/%{categories}/%d/%m/%{slug}/',
+        "Check new category" );
+    ok( $oc->set_fixed_uri_format('/%{slug}/%{categories}/%Y'),
         "Set another new category" );
-    is( $oc->get_fixed_uri_format, '/slug/categories/year/',
+    is( $oc->get_fixed_uri_format, '/%{slug}/%{categories}/%Y/',
         "Check another new category" );
 
     # Try an empty string format.
@@ -132,12 +136,12 @@ sub test_fixed_uri_format : Test(12) {
     is( $ex->get_msg, 'No Fixed URI Format value specified',
         "Check empty string ex message" );
 
-    # Try a format with bogus tokens.
-    eval { $oc->set_fixed_uri_format('/categories/foo') };
+    # Try a format without %{categories}.
+    eval { $oc->set_fixed_uri_format('/foo') };
     ok( $ex = $@, "Catch bogus token exception" );
     isa_ok( $ex, 'Bric::Util::Fault::Exception::DP',
             'Bogus token exception is a DP' );
-    is( $ex->get_msg, 'Invalid Fixed URI Format token: foo',
+    is( $ex->get_msg, 'Missing the %{categories} token from Fixed URI Format',
         "Check bogus token ex message" );
 }
 

@@ -3,6 +3,7 @@ var slug_chars_msg =
 var role_msg = "你必须替这个角色取个独特的名字！";
 var login_msg1 = "使用者名称至少要 ";
 var login_msg2 = " 个字元！";
+var login_space = "Usernames cannot have spaces at the beginning or end!";
 var passwd_msg1 = "密码至少要";
 var passwd_msg2 = " 个字元！";
 var passwd_match_msg = "密码一定要匹配！";

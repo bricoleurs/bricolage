@@ -57,7 +57,7 @@ my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
     context => "Workflow | Profile | $disp | " . $r->pnotes('media_prof|title')
 &>
 
-<form method="post" action="<% $r->uri %>" enctype="multipart/form-data" name="theForm" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" enctype="multipart/form-data" id="theForm" name="theForm" onSubmit="return confirmChanges('theForm')">
 <% $content %>
 </form>
 

@@ -10,7 +10,6 @@ $m->comp('/widgets/summary/summary.mc', asset => $asset, number => 1)
 
 # COUNT FOR REORDER JAVA SCRIPT
 my $total = scalar @tiles;
-my $diff =  $total ? $tiles[-1]->get_place - $total + 1 : 0;
 my $ord_vals = [ map { [ $_ - 1, $_ ] } 1..$total ];
 my $x=0;
 
@@ -44,7 +43,7 @@ if (@tiles || @$elem_opts ) {
 % } # END if (scalar(@tiles)) {
 
 % # BEGIN FOREACH TILES
-% my $no_hide;
+% my $no_hide; my $num = 0;
 % foreach my $dt (@tiles) {
 % my $no_del;
 
@@ -209,12 +208,15 @@ if ($at->is_related_media) {
 %   $dt->get_id;
 <& /widgets/profile/displayFormElement.mc,
    key => $f_key,
-   vals => { value => $dt->get_place - $diff,
-         props => { type => 'select',
-            vals => $ord_vals, },
-         js    => 'onChange="reorder(this, \'theForm\')"'
+   vals => {
+       value => $num++,
+       js    => 'onChange="reorder(this, \'theForm\')"',
+       props => {
+           type => 'select',
+           vals => $ord_vals,
        },
-  useTable => 0
+   },
+   useTable => 0
 &>
                                                     
   </td>
@@ -385,7 +387,7 @@ if ($at->is_related_media) {
 % }
 %# this script creates an array with the names
 %# of select boxes that need ordering
-<script language="javascript">
+<script type="text/javascript">
 <%perl>;
 $m->out("var selectOrderNames = new Array(" );
 
