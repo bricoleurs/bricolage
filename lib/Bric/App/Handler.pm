@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.18.2.3 $
+$Revision: 1.18.2.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-12 03:22:02 $
+$Date: 2002-12-11 18:34:24 $
 
 =head1 SYNOPSIS
 
@@ -357,19 +357,20 @@ sub load_args {
     return unless $apr->param;
 
     # We'll be checking to see if the data is already Unicode below.
-    my $utf = $ct->charset eq 'UTF-8';
     my %args;
     foreach my $key ($apr->param) {
 	my @values = $apr->param($key);
 
 	# Translate value to Unicode, unless it's already Unicode
-        eval { $ct->to_utf8(\@values) } unless $utf;
+        unless (CHAR_SET eq 'UTF-8') {
+            eval { $ct->to_utf8(\@values) };
 
-        if ($@) {
-            my $msg = 'Error translating from '.$ct->charset.' to UTF-8.';
-            die ref $@ ? $@
-                       : Bric::Util::Fault::Exception::DP->new({msg     => $msg,
-                                                                payload => $@});
+            if ($@) {
+                my $msg = 'Error translating from '.$ct->charset.' to UTF-8.';
+                die ref $@ ? $@
+                  : Bric::Util::Fault::Exception::DP->new({ msg     => $msg,
+                                                            payload => $@ });
+            }
         }
 
         # Build up our own argument hash of converted values.
@@ -410,7 +411,7 @@ B<Notes:> NONE.
 
 sub filter {
     # Just get it over with if we're not supposed to do translation.
-    if ($no_trans or $ct->charset eq 'UTF-8') {
+    if (CHAR_SET eq 'UTF-8' or $no_trans) {
 	print STDOUT $_[0];
 	return;
     }
@@ -418,7 +419,7 @@ sub filter {
     # Do the translation.
     my $ret;
     eval { $ret = $ct->from_utf8($_[0]) };
-    
+
     # Do error processing, if necessary.
     if (my $err = $@) {
         $no_trans = 1; # So we don't translate error.html.
