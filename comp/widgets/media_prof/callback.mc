@@ -12,8 +12,6 @@ my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
 my $DESK_URL = '/workflow/profile/desk/';
 
-
-
 #######################
 ## Callback Handlers ##
 #######################
@@ -35,26 +33,26 @@ my $handle_update = sub {
 
     # set the name
     $media->set_title($param->{title})
-      if $param->{title};
+      if exists $param->{title};
 
     # set the description
     $media->set_description($param->{description})
-      if $param->{description};
+      if exists $param->{description};
 
     $media->set_priority($param->{priority})
-      if $param->{priority};
+      if exists $param->{priority};
 
     # Set the dates.
     $media->set_cover_date($param->{cover_date})
-      if $param->{cover_date};
+      if exists $param->{cover_date};
     $media->set_expire_date($param->{expire_date})
-      if $param->{expire_date};
+      if exists $param->{expire_date};
 
-    # check for file
+    # Check for file
     if ($param->{"$widget|file"} ) {
-	my $upload = $r->upload();
-	my $fh = $upload->fh();
-	my $filename = Bric::Util::Trans::FS->base_name($upload->filename(),
+	my $upload = $r->upload;
+	my $fh = $upload->fh;
+	my $filename = Bric::Util::Trans::FS->base_name($upload->filename,
 	  $m->comp('/widgets/util/detectAgent.mc')->{os});
 	$media->upload_file($fh, $filename);
 	$media->set_size($upload->size);

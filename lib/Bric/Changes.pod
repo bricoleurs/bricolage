@@ -113,6 +113,16 @@ Changed libapreq requirement in Bric::Admin to read "Apache::Request
 1.0". This should make the installer install the most recent version of
 libapreq, instead of relying on whatever the OS provides. [David]
 
+=item *
+
+Changed value of autopopulated media asset data fields to an empty string when
+the value returned by the autopopulation method is C<undef>. [David]
+
+=item *
+
+Fixed bug where autopopulated media asset data fields weren't properly
+autopopulated. [David]
+
 =back
 
 =head1 VERSION 1.4.0
