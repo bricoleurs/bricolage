@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-03-15 20:43:24 $
+$Date: 2002-03-20 20:02:53 $
 
 =head1 DESCRIPTION
 
@@ -77,10 +77,24 @@ bug and fix them.  For more things to do see L<Bric::ToDo|Bric::ToDo>.
 
 =head1 SUBMITTING PATCHES
 
-Patches should be generated using the "cvs diff -u" command on each of
-the files modified.  Always create patches using the most recent CVS
-version if possible.  Send your patches to the bricolage-devel list
-mentioned above.
+Patches should be generated using a C<cvs diff -u> command on each of
+the files modified, from the root directory.  For example, if you made
+changes to lib/Bric/Changes.pod and comp/foo.mc, you would generate a
+diff by running this command from the root of your CVS checkout:
+
+  cvs diff -u lib/Bric/Changes.pod comp/foo.mc > patch.txt
+
+Always create patches using the most recent CVS version if possible.
+Send your patches to the bricolage-devel list mentioned above.
+
+=head1 APPLYING PATCHES
+
+Patches created using the method above can be applied using C<patch>
+with the C<-p0> option from the root of your CVS checkout:
+
+  patch -p0 < patch.txt
+
+Make sure you check the results with C<cvs diff> before commiting.
 
 =head1 CODING STANDARDS
 
