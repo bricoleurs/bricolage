@@ -99,6 +99,7 @@ unless ($workflows) {
 % if (!DISABLE_NAV_LAYER && ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla')) {
 <html>
 <meta http-equiv="Expires" content="Mon, 06, Jan 1990 00:00:01 GMT">
+<link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 <head>
 </head>
 
@@ -114,7 +115,6 @@ unless ($workflows) {
         return false;
     }
     </script>
-    <& "/widgets/wrappers/sharky/css.mc" &>
 % }
 <body marginwidth=0 marginheight=0 leftmargin=0 topmargin=0 bgcolor="#666633">
 % }
@@ -445,10 +445,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2002-09-26 00:17:35 $
+$Date: 2002-10-22 20:28:20 $
 
 </%doc>
