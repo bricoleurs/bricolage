@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:47 $
+$Date: 2001-12-21 18:26:01 $
 
 =head1 SYNOPSIS
 
@@ -666,7 +666,7 @@ sub cat_uri { shift; return File::Spec::Unix->catdir(@_) }
 
 ################################################################################
 
-=item my $dir = $fs->split_dir(@dir_parts)
+=item my @dir_parts = $fs->split_dir($dir)
 
 Takes a local filesystem directory name and and returns its directory parts.
 
@@ -682,9 +682,9 @@ sub split_dir { shift; return File::Spec::Functions::splitdir(@_) }
 
 ################################################################################
 
-=item my $uri = $fs->split_uri(@uri_parts)
+=item my @uri_parts = $fs->split_uri($uri)
 
-Takes a list of URI parts and concatenates them.
+Takes a URI and and returns its directory parts.
 
 B<Throws:> NONE.
 
