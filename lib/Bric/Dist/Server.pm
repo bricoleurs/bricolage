@@ -7,16 +7,16 @@ distributed.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-03 21:26:56 $
+$Date: 2002-05-03 14:42:39 $
 
 =head1 SYNOPSIS
 
@@ -203,6 +203,7 @@ sub new {
     my ($pkg, $init) = @_;
     my $self = ref $pkg || $pkg;
     $init->{host_name} = lc $init->{host_name} if $init->{host_name};
+    $init->{os} ||= $OS{$^O} ? $^O : 'Unix';
     $init->{_active} = 1;
     $self->SUPER::new($init);
 }
