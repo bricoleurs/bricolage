@@ -237,9 +237,9 @@ is pressed. [JoE<atilde>o Pedro]
 
 =item *
 
-select_object.mc correctly saves its selected_id state so that,
-for example, dropdown menus in New Story remember the item
-that was selected last time.
+Select lists now correctly save their states so that, for example, dropdown
+menus in New Story remember the element and category that was selected last
+time. [Scott]
 
 =item *
 
