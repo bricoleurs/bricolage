@@ -61,6 +61,51 @@ unit testing classes. These classes each execute a single test, and the old
 testing contents are at the end of the file, after the __END__ symbol. Thus
 we'll be able to use the old tests to write the new tests. [David]
 
+=item *
+
+Added documentation on merging CVS branches to
+L<Bric::Hacker|Bric::Hacker>. [David]
+
+=back
+
+=head1 VERSION 1.4.1
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Upgrading from from a version prior to 1.3.3 no longer tries to create an
+index that already exists (and that will be dropped, anyway). [David]
+
+=item *
+
+Removed documentation for intalling mod_proxy with Apache. [David]
+
+=item *
+
+Improved documentation for upgrading from older versions of Bricolage that
+were not installed by C<make install>. Thanks to Andrew Baio for helping to
+identify the problems. [David]
+
+=item *
+
+Added C<use Bric::Util::Grp::Keyword;> back into Bric::Biz::Keyword. This
+prevents some upgraded Bricolage installations from breaking. [David]
+
+=item *
+
+Added Net::FTPServer and Net::SFTP to the list of optional modules. [David]
+
+=item *
+
+Fixed some SQL errors uncovered by the release of PostgreSQL 7.3b1. [David]
+
+=item *
+
+Added code and documentation for compatability with PostgreSQL 7.3. [David]
+
 =back
 
 =head1 VERSION 1.4.0

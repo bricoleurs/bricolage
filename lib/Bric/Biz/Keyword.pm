@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:22 $
+$Date: 2002-09-06 22:30:14 $
 
 =head1 SYNOPSIS
 
@@ -72,6 +72,7 @@ use strict;
 # Programatic Dependencies              
  
 use Bric::Util::DBI qw(:all);
+use Bric::Util::Grp::Keyword;
 
 #==============================================================================#
 # Inheritance                          #

@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.10 $
+-- VERSION: $Revision: 1.11 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -10,7 +10,7 @@
 -- Table: class
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES (0, 'bric', 'Bricolage', 'Bricolage', 'Bricolage Root Class', 0);
+VALUES (0, 'bric', 'Bric', 'Bricolage', 'Bricolagen', 'Bricolage Root Class', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (1, 'person', 'Bric::Biz::Person', 'Person', 'People', 'Person objects', 0);
