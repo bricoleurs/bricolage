@@ -119,7 +119,8 @@ $m->comp('/widgets/profile/formButtons.mc',
 	 no_del  => $no_del,
 	 no_save => $no_edit,
 	 val     => $blabel,
-	 formName => 'wf_profile'
+	 formName => 'wf_profile',
+         widget  => $type,
 	);
 ($no_edit, $no_del) = ();
 </%perl>
@@ -204,11 +205,11 @@ if ($new_desk) {
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-15 18:14:22 $
+$Date: 2003-06-10 10:28:43 $
 
 =head1 DESCRIPTION
 
