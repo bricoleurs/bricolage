@@ -253,6 +253,7 @@ use constant PARAM_WHERE_MAP => {
     no_site_id            => 'f.output_channel__id = oc.id AND oc.site__id <> ?',
     workflow__id          => 'f.workflow__id = ?',
     workflow_id           => 'f.workflow__id = ?',
+    version_id            => 'i.id = ?',
     _null_workflow_id     => 'f.workflow__id IS NULL',
     element__id           => 'f.element__id = ?',
     element_key_name      => 'f.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
@@ -684,6 +685,11 @@ The template ID. May use C<ANY> for a list of possible values.
 =item version
 
 The template version number. May use C<ANY> for a list of possible values.
+
+=item version_id
+
+The ID of a version of a template. May use C<ANY> for a list of possible
+values.
 
 =item active
 

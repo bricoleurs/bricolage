@@ -309,6 +309,7 @@ use constant PARAM_WHERE_MAP => {
       alias_id               => 's.alias_id = ?',
       site_id                => 's.site__id = ?',
       no_site_id             => 's.site__id <> ?',
+      version_id             => 'i.id = ?',
       workflow__id           => 's.workflow__id = ?',
       workflow_id            => 's.workflow__id = ?',
       _null_workflow_id      => 's.workflow__id IS NULL',
@@ -635,6 +636,10 @@ The story ID. May use C<ANY> for a list of possible values.
 =item version
 
 The story version number. May use C<ANY> for a list of possible values.
+
+=item version_id
+
+The ID of a version of a story. May use C<ANY> for a list of possible values.
 
 =item slug
 

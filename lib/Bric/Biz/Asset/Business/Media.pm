@@ -203,6 +203,7 @@ use constant PARAM_WHERE_MAP => {
       _null_workflow_id     => 'mt.workflow__id IS NULL',
       element__id           => 'mt.element__id = ?',
       element_id            => 'mt.element__id = ?',
+      version_id            => 'i.id = ?',
       element_key_name      => 'mt.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
       source__id            => 'mt.source__id = ?',
       source_id             => 'mt.source__id = ?',
@@ -506,6 +507,11 @@ The media document ID. May use C<ANY> for a list of possible values.
 =item version
 
 The media document version number. May use C<ANY> for a list of possible values.
+
+=item version_id
+
+The ID of a version of a media document. May use C<ANY> for a list of possible
+values.
 
 =item file_name
 
