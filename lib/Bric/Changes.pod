@@ -30,6 +30,11 @@ installation doesn't know the installed version of PostgreSQL. [David]
 Adding notes to image, video, or audio media documents no longer causes na
 error. Reported by Christian Hauser. [David]
 
+=item *
+
+Errors in the C<PERL_LOADER> F<bricolage.conf> directive no longer silently
+fail. [David]
+
 =back
 
 =head1 VERSION 1.6.13 "Tripled" (2004-04-10)
