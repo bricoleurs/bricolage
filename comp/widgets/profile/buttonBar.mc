@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.2.1 $
 
 =head1 DATE
 
-$Date: 2002-08-15 21:03:02 $
+$Date: 2002-11-08 00:05:45 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -33,8 +33,8 @@ $obj
 <%init>;
 # browser spacing stuff
 my $agent = $m->comp("/widgets/util/detectAgent.mc");
-my $ieSpacer = ($agent->{os} ne "SomeNix") ?
-  qq{<tr><td colspan="3"><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>}
+my $ieSpacer = $agent->{os} ne "SomeNix" ?
+  qq{<tr><td colspan="3"><img src="/media/images/spacer.gif" width="5" height="5" /></td></tr>}
   : '';
 
 my $deskText = qq{<select name="$widget|desk">};
@@ -81,7 +81,7 @@ if ($versions) {
   </table>
   </td>
   <td width="34%" align="center">
-<%perl>
+<%perl>;
 my $wf;
 my $work_id = get_state_data($widget, 'work_id');
 my $type;
@@ -95,20 +95,19 @@ if ($widget eq 'story_prof') {
 
 my $story = get_state_data($widget, $type);
 if ($work_id) {
-   $wf = Bric::Biz::Workflow->lookup( { id => $work_id }); 
+   $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
 } else {
    $work_id = $story->get_workflow_id();
-   $wf = Bric::Biz::Workflow->lookup( { id => $work_id });      
-}  
-
-# get desks for workflow
-my @desk = $wf->allowed_desks();
-my $has_perms = 0;
+   $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
+}
 
 # Find publish desk for this workflow
-foreach my $desk (@desk) {
+my $pkg = get_package_name($type);
+my $has_perms = 0;
+foreach my $desk ($wf->allowed_desks) {
     if ($desk->can_publish) {
-	$has_perms = 1 if ( chk_authz($desk, EDIT, 1) );
+	$has_perms = 1
+          if chk_authz($pkg, EDIT, 1, $desk->get_asset_grp);
     }
 }
 
@@ -117,7 +116,7 @@ if ( $has_perms ) {
 my ($act, $cb) = $widget eq 'tmpl_prof' ?
   ('deploy', 'deploy') : ('publish', 'and_pub');
 </%perl>
-<table border=0 cellpadding=0 cellspacing=0>
+<table border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td>
       <input type="image" src="/media/images/checkin_and_<% $act %>_dgreen.gif" border="0" name="<% $widget %>|checkin_<% $cb %>_cb" value="Check In And Publish" />
@@ -127,12 +126,12 @@ my ($act, $cb) = $widget eq 'tmpl_prof' ?
 % }
   </td>
   <td align="right" widht="33%">
-  <table border=0 cellpadding=0 cellspacing=0>
+  <table border="0" cellpadding="0" cellspacing="0">
   <tr>
 % if ($versions && @$versions > 1) {
-    <td valign="middle"><input type="image" src="/media/images/revert_dgreen.gif" border=0 name="<% $widget %>|revert_cb" value="revert"></td>
+    <td valign="middle"><input type="image" src="/media/images/revert_dgreen.gif" border="0" name="<% $widget %>|revert_cb" value="revert"></td>
     <td valign="middle">&nbsp;to <% $versionText %></td>
-    <td valign="middle"><input type="image" src="/media/images/view_text_dgreen.gif" border=0 hspace=5 name="<% $widget %>|view_cb" value="view"></td>
+    <td valign="middle"><input type="image" src="/media/images/view_text_dgreen.gif" border="0" hspace="5" name="<% $widget %>|view_cb" value="view"></td>
 % } else {
   <td>&nbsp;</td>
 % }
@@ -144,19 +143,19 @@ my ($act, $cb) = $widget eq 'tmpl_prof' ?
 </tr>
 <% $ieSpacer %> 
 <tr>
-  <td class=lightHeader colspan="3"><img src="/media/images/spacer.gif" width=580 height=1></td>
+  <td class=lightHeader colspan="3"><img src="/media/images/spacer.gif" width="580" height="1"></td>
 </tr>
 <% $ieSpacer %> 
 </table>
 
-<table width=580 cellpadding=0 cellspacing=0>
+<table width="580" cellpadding="0" cellspacing="0">
 <tr>
-  <td width=60><img src="/media/images/spacer.gif" width=60 height=1></td>
-  <td><input type="image" src="/media/images/save_red.gif" border=0 name="<% $widget %>|save_cb" value="Save"></td>
+  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
+  <td><input type="image" src="/media/images/save_red.gif" border="0" name="<% $widget %>|save_cb" value="Save"></td>
   <td><input type="image" src="/media/images/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_cb"></td>
-  <td width=60><img src="/media/images/spacer.gif" width=60 height=1></td>
-  <td><input type="image" src="/media/images/cancel_lgreen.gif" border=0 name="<% $widget %>|return_cb" value="Return To Desk"></td>
-  <td><input type="image" src="/media/images/cancel_check_out_lgreen.gif" border=0 name="<% $widget %>|cancel_cb" value="Cancel Checkout"></td>
-  <td width=60><img src="/media/images/spacer.gif" width=60 height=1></td>
+  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
+  <td><input type="image" src="/media/images/cancel_lgreen.gif" border="0" name="<% $widget %>|return_cb" value="Return To Desk"></td>
+  <td><input type="image" src="/media/images/cancel_check_out_lgreen.gif" border="0" name="<% $widget %>|cancel_cb" value="Cancel Checkout"></td>
+  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
 </tr>
 </table>

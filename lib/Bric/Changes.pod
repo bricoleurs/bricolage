@@ -115,6 +115,13 @@ new stories, media, and tempmlate assets are created. [David]
 
 New templates are now active by default. [David]
 
+=item *
+
+Fixed bug where the "Checkin/Publish" (and "Checkin/Deploy") button wasn't
+provided to users who had EDIT access to a the assets on a desk. Permissions
+are now properly checked and the button displayed for those who can publish
+from a desk. [David]
+
 =back
 
 =head1 VERSION 1.4.4
