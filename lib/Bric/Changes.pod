@@ -34,6 +34,10 @@ subelement element types. Suggested by Dave Rolsky. [David]
 
 Updated to work with PostgreSQL 7.4. [David]
 
+=item *
+
+Improved error message in Bric::Util::Trans::SFTP. [David]
+
 =back
 
 =head1 VERSION 1.6.7 (2003-10-22)

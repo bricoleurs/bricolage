@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.98.2.18 $
+$Revision: 1.98.2.19 $
 
 =head1 DATE
 
-$Date: 2003-10-22 05:53:30 $
+$Date: 2003-11-13 00:21:39 $
 
 =head1 DESCRIPTION
 
@@ -1343,11 +1343,14 @@ B<ENABLE_SFTP_MOVER:> This directive indicates whether the Bricolage server
 may distribute resources using the SFTP mover. Setting this to "On" or "Yes"
 or "1" will enable the SFTP mover. In order to use the SFTP mover, you must
 manually install the Net::SFTP module from the CPAN. Furthermore, you should
-login to the remote server as Apache user (e.g. "nobody") in order to
-initialize `~/.ssh/known_hosts' before using the SFTP mover (you might also
-need to create the directory /.ssh with write permission for "nobody", in case
-nobody's home directory is something like `/bin/false' and ssh falls back to
-`/' as the home directory). Defaults to "Off" if not specified.
+login to the remote server in order to initialize F<~/.ssh/known_hosts> before
+using the SFTP mover. You might also need to create the directory F</.ssh> on
+the Bricolage server (and possibly on the destination server, too) with write
+permission for "nobody", in case nobody's home directory is something like
+F</bin/false> and ssh falls back to F</> as the home directory). To use a
+private key, it must be named F<~/.ssh/identity> for F<~/.ssh/id_rsa>, as
+those are the files that Net::SSH::Perl looks for. Defaults to "Off" if not
+specified.
 
 =item *
 

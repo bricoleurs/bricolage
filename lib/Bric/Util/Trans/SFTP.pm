@@ -6,16 +6,16 @@ Bric::Util::Trans::SFTP - SFTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.3.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.3.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 20:10:54 $
+$Date: 2003-11-13 00:21:40 $
 
 =head1 SYNOPSIS
 
@@ -137,10 +137,15 @@ sub put_res {
 	next unless $s->is_active;
 	my $hn = $s->get_host_name;
 	# Instantiate a Net::SFTP object and login.
-	my $sftp = Net::SFTP->new($hn, debug => DEBUG,
-				  user => $s->get_login,
-				  password => $s->get_password)
-	  || die $gen->new({msg => "Unable to login to remote server '$hn'." });
+        my $sftp = eval {
+            Net::SFTP->new($hn, debug => DEBUG,
+                           user => $s->get_login,
+                           password => $s->get_password)
+        };
+        die $gen->new({ msg     => "Unable to login to remote server '$hn'.",
+                        payload => $@ })
+          if $@;
+
 	# Get the document root.
 	my $doc_root = $s->get_doc_root;
 
