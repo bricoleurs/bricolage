@@ -761,6 +761,8 @@ then generate the documentation on the Web server.
 
 =item L<http://use.perl.org/>
 
+=item L<http://bugs.bricolage.cc/>
+
 =back
 
 =head1 AUTHORS
