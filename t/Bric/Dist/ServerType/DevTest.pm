@@ -4,6 +4,7 @@ use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Dist::ServerType;
+use Bric::Dist::Server;
 use Bric::Dist::Job;
 use Bric::Util::Grp::Dest;
 
@@ -395,5 +396,54 @@ sub test_save : Test(9) {
     is( $dest->get_name, $new_name, "Check name is '$new_name'" );
 }
 
+##############################################################################
+# Test server associations.
+sub test_servers : Test(24) {
+    my $self = shift;
+
+    # Create a new destination.
+    my %args = %dest;
+    ok( my $dest = Bric::Dist::ServerType->new(\%args),
+        "Create destination" );
+    ok( $dest->save, "Save the destination" );
+    ok( my $did = $dest->get_id, "Get the destination ID" );
+    $self->add_del_ids($did);
+
+    # Create a couple of servers and add them to the destination.
+    for my $n (1..3) {
+        ok( my $server = $dest->new_server({ host_name => "example.com.$n",
+                                             doc_root  => '/tmp' }),
+            "Create server 'example.com.$n'" );
+        ok( $server->save, "Save server" );
+        $self->add_del_ids($server->get_id, 'server');
+    }
+
+    # Save the destination again.
+    ok( $dest->save, "Save destination again" );
+
+    # Make sure we have the correct number of servers.
+    ok( my @servers = $dest->get_servers, "Get the servers" );
+    is( scalar @servers, 3, "Check for 3 servers" );
+
+    # Now look it up in the database and check again.
+    ok( $dest = $dest->lookup({ id => $did }), "Look up destination" );
+    ok( @servers = $dest->get_servers, "Get the servers again" );
+    is( scalar @servers, 3, "Check for 3 servers again" );
+
+    # Now delete one of the servers and try again.
+    ok( $dest->del_servers($servers[0]->get_id), "Delete a server" );
+    ok( @servers = $dest->get_servers, "Get the servers" );
+    is( scalar @servers, 2, "Check for 2 servers" );
+
+    # Save and check again.
+    ok( $dest->save, "Save after delete" );
+    ok( @servers = $dest->get_servers, "Get the servers" );
+    is( scalar @servers, 2, "Check for 2 servers" );
+
+    # Now look it up in the database and check again.
+    ok( $dest = $dest->lookup({ id => $did }), "Look up destination" );
+    ok( @servers = $dest->get_servers, "Get the servers again" );
+    is( scalar @servers, 2, "Check for 2 servers again" );
+}
 1;
 __END__
