@@ -77,7 +77,12 @@ with existing category.
 
 Upload media from a directory structure to localhost:
 
-  bric_media_upload /home/picperson/pics http://localhost
+  bric_media_upload pics/ http://localhost
+
+Note that the directory paths are used to figure out the categories
+being used.  An extra slash (/) is added to the front of the path as
+needed.  This means you will probably want to use relative paths to
+specify the directory to start in.
 
 Upload from a .tar file to a hosts named bricky and bricolat, creating
 categories as needed, and saving media as type 'Illustration'.
@@ -160,6 +165,7 @@ BEGIN {
 
 our $VERBOSE;
 our $START_PATH;
+our $TRIM_START;
 our $BRIC_SOAP;
 our $media_list;
 
@@ -207,7 +213,11 @@ sub organize_media {
     }
 
     # unzip/untar file to /tmp if nessecary
-    $START_PATH = open_media_source($media_source_type) if (!$START_PATH);
+    if (!$START_PATH) {
+        $START_PATH = open_media_source($media_source_type);
+        $TRIM_START = $START_PATH;
+    }
+
     File::Find::find(\&build_image_list, $START_PATH);
 }
 
@@ -234,15 +244,18 @@ sub build_image_list {
     return unless -f $_;
     return if $file =~ /^\./;
 
-    $path =~ s/$START_PATH//;
+    my $full_path = "$path/$file";
+
+    $path =~ s/^$TRIM_START// if defined $TRIM_START;
 
     my $temp;
-    my $full_path = "$START_PATH$path/$file";
     print "Found Media: $full_path \n" if $VERBOSE;
+
     $path = "/" if (!$path);
 
     $temp->{name} = $file;
     $temp->{category} = $path;
+    $temp->{category} =  "/$temp->{category}" unless $temp->{category} =~ m,^/,;
     $temp->{full_path} = $full_path;
 
     push @$media_list, $temp;
