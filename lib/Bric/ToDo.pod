@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.2 $
+$Revision: 1.13.2.3 $
 
 =head1 DATE
 
-$Date: 2001-09-28 16:22:45 $
+$Date: 2001-10-01 10:31:05 $
 
 =head1 DESCRIPTION
 
@@ -35,27 +35,15 @@ significant (including the addition of new libraries).
 
 =item *
 
-Change Bric::Util::Burner->display_element() so that it doesn't paginate. All
-paginated pages will be treated instead as regular elements. This will be useful
-for things like printer-freindly pages [David].
-
-=item *
-
-Add filename and file_ext to the Output Channel UI. They're already in the
-Bric::Biz::OutputChannel library [David].
-
-=item *
-
-Use the Output Channel filename and file_ext properties to name files in the
-burn system [David].
-
-=item *
-
 Add script for cleaning out /tmp that users can run from a cron job [Sam].
 
 =item *
 
 Create installation makefile [Mark].
+
+=item *
+
+Get rid of browser direction buttons [David]
 
 =item *
 
@@ -96,10 +84,6 @@ Change the term "attribute" to "field" in the UI [Michele].
 
 =item *
 
-Change CE::_set() to only set if the values are different [David].
-
-=item *
-
 Check new desk names to make sure there isn't an existing desk with the same
 name [David].
 
@@ -113,7 +97,7 @@ XML::Writer (or related) support in Templates [David].
 
 =item *
 
-Have CE::Util::Class use CE::Util::Cache [David].
+Have Bric::Util::Class use Bric::Util::Cache [David].
 
 =item *
 
@@ -341,6 +325,16 @@ Add file system-like asset browsing (especially for templates and media).
 
 =item *
 
+Create localization libraries for all text.
+
+=item *
+
+Revamp Exceptions so that they use numbers to look themselves up -- so there's a
+central repository of possible exceptions, and they are therefore easier to
+document.
+
+=item *
+
 Add directory Support (as in MPS).
 
 =item *
@@ -468,3 +462,5 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2).
+
+=cut
