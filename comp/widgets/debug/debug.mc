@@ -38,7 +38,6 @@ my $keys_meth = $Cache::Cache::VERSION > 0.9 ? 'get_keys' : 'get_identifiers';
 %#--- Initialization ---#
 
 <%init>
-
 my $old_indent = $Data::Dumper::Indent;
 
 $Data::Dumper::Indent = 1;

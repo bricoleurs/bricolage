@@ -26,7 +26,6 @@ Finish off the HTML.
 % if (Bric::Config::QA_MODE) {
 <& '/widgets/debug/debug.mc', %{$ARGS{param}} &>
 % }
-	
 	</td>
 </tr>
 
