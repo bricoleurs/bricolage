@@ -1209,118 +1209,233 @@ fi;
 
  echo "$as_me:1210: checking for CPAN module Time::HiRes" >&5
 echo $ECHO_N "checking for CPAN module Time::HiRes... $ECHO_C" >&6
-  echo "$as_me:1212: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Time::HiRes" 2>/dev/null ;then
+    echo "$as_me:1213: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1216: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1215: checking for CPAN module Storable" >&5
+ echo "$as_me:1220: checking for CPAN module Storable" >&5
 echo $ECHO_N "checking for CPAN module Storable... $ECHO_C" >&6
-  echo "$as_me:1217: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Storable" 2>/dev/null ;then
+    echo "$as_me:1223: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1226: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1220: checking for CPAN module Unix::Syslog" >&5
+ echo "$as_me:1230: checking for CPAN module Unix::Syslog" >&5
 echo $ECHO_N "checking for CPAN module Unix::Syslog... $ECHO_C" >&6
-  echo "$as_me:1222: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Unix::Syslog" 2>/dev/null ;then
+    echo "$as_me:1233: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1236: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1225: checking for CPAN module Bundle::libnet" >&5
-echo $ECHO_N "checking for CPAN module Bundle::libnet... $ECHO_C" >&6
-  echo "$as_me:1227: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ echo "$as_me:1240: checking for CPAN module Bundle::Libnet" >&5
+echo $ECHO_N "checking for CPAN module Bundle::Libnet... $ECHO_C" >&6
+ if perl -e "use Bundle::Libnet" 2>/dev/null ;then
+    echo "$as_me:1243: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1246: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1230: checking for CPAN module Devel::Symdump" >&5
+ echo "$as_me:1250: checking for CPAN module Devel::Symdump" >&5
 echo $ECHO_N "checking for CPAN module Devel::Symdump... $ECHO_C" >&6
-  echo "$as_me:1232: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Devel::Symdump" 2>/dev/null ;then
+    echo "$as_me:1253: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1256: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1235: checking for CPAN module DBI" >&5
+ echo "$as_me:1260: checking for CPAN module DBI" >&5
 echo $ECHO_N "checking for CPAN module DBI... $ECHO_C" >&6
-  echo "$as_me:1237: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use DBI" 2>/dev/null ;then
+    echo "$as_me:1263: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1266: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1240: checking for CPAN module Cache::Cache" >&5
+ echo "$as_me:1270: checking for CPAN module Cache::Cache" >&5
 echo $ECHO_N "checking for CPAN module Cache::Cache... $ECHO_C" >&6
-  echo "$as_me:1242: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Cache::Cache" 2>/dev/null ;then
+    echo "$as_me:1273: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1276: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1245: checking for CPAN module Digest::MD5" >&5
+ echo "$as_me:1280: checking for CPAN module Digest::MD5" >&5
 echo $ECHO_N "checking for CPAN module Digest::MD5... $ECHO_C" >&6
-  echo "$as_me:1247: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Digest::MD5" 2>/dev/null ;then
+    echo "$as_me:1283: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1286: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1250: checking for CPAN module MD5" >&5
+ echo "$as_me:1290: checking for CPAN module MD5" >&5
 echo $ECHO_N "checking for CPAN module MD5... $ECHO_C" >&6
-  echo "$as_me:1252: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use MD5" 2>/dev/null ;then
+    echo "$as_me:1293: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1296: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1255: checking for CPAN module URI" >&5
+ echo "$as_me:1300: checking for CPAN module URI" >&5
 echo $ECHO_N "checking for CPAN module URI... $ECHO_C" >&6
-  echo "$as_me:1257: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use URI" 2>/dev/null ;then
+    echo "$as_me:1303: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1306: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1260: checking for CPAN module HTML::Tagset" >&5
+ echo "$as_me:1310: checking for CPAN module HTML::Tagset" >&5
 echo $ECHO_N "checking for CPAN module HTML::Tagset... $ECHO_C" >&6
-  echo "$as_me:1262: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use HTML::Tagset" 2>/dev/null ;then
+    echo "$as_me:1313: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1316: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1265: checking for CPAN module HTML::Parser" >&5
+ echo "$as_me:1320: checking for CPAN module HTML::Parser" >&5
 echo $ECHO_N "checking for CPAN module HTML::Parser... $ECHO_C" >&6
-  echo "$as_me:1267: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use HTML::Parser" 2>/dev/null ;then
+    echo "$as_me:1323: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1326: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1270: checking for CPAN module MIME::Base64" >&5
+ echo "$as_me:1330: checking for CPAN module MIME::Base64" >&5
 echo $ECHO_N "checking for CPAN module MIME::Base64... $ECHO_C" >&6
-  echo "$as_me:1272: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use MIME::Base64" 2>/dev/null ;then
+    echo "$as_me:1333: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1336: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1275: checking for CPAN module XML::Writer" >&5
+ echo "$as_me:1340: checking for CPAN module XML::Writer" >&5
 echo $ECHO_N "checking for CPAN module XML::Writer... $ECHO_C" >&6
-  echo "$as_me:1277: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use XML::Writer" 2>/dev/null ;then
+    echo "$as_me:1343: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1346: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1280: checking for CPAN module LWP" >&5
+ echo "$as_me:1350: checking for CPAN module LWP" >&5
 echo $ECHO_N "checking for CPAN module LWP... $ECHO_C" >&6
-  echo "$as_me:1282: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use LWP" 2>/dev/null ;then
+    echo "$as_me:1353: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1356: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1285: checking for CPAN module Image::Info" >&5
+ echo "$as_me:1360: checking for CPAN module Image::Info" >&5
 echo $ECHO_N "checking for CPAN module Image::Info... $ECHO_C" >&6
-  echo "$as_me:1287: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Image::Info" 2>/dev/null ;then
+    echo "$as_me:1363: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1366: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1290: checking for CPAN module Text::Iconv" >&5
+ echo "$as_me:1370: checking for CPAN module Text::Iconv" >&5
 echo $ECHO_N "checking for CPAN module Text::Iconv... $ECHO_C" >&6
-  echo "$as_me:1292: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Text::Iconv" 2>/dev/null ;then
+    echo "$as_me:1373: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1376: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1295: checking for CPAN module MLDBM" >&5
+ echo "$as_me:1380: checking for CPAN module MLDBM" >&5
 echo $ECHO_N "checking for CPAN module MLDBM... $ECHO_C" >&6
-  echo "$as_me:1297: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use MLDBM" 2>/dev/null ;then
+    echo "$as_me:1383: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1386: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1300: checking for CPAN module Params::Validate" >&5
+ echo "$as_me:1390: checking for CPAN module Params::Validate" >&5
 echo $ECHO_N "checking for CPAN module Params::Validate... $ECHO_C" >&6
-  echo "$as_me:1302: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Params::Validate" 2>/dev/null ;then
+    echo "$as_me:1393: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1396: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1305: checking for CPAN module HTML::Mason" >&5
+ echo "$as_me:1400: checking for CPAN module HTML::Mason" >&5
 echo $ECHO_N "checking for CPAN module HTML::Mason... $ECHO_C" >&6
-  echo "$as_me:1307: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use HTML::Mason" 2>/dev/null ;then
+    echo "$as_me:1403: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1406: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1310: checking for CPAN module DBD::Pg" >&5
+ echo "$as_me:1410: checking for CPAN module DBD::Pg" >&5
 echo $ECHO_N "checking for CPAN module DBD::Pg... $ECHO_C" >&6
-  echo "$as_me:1312: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use DBD::Pg" 2>/dev/null ;then
+    echo "$as_me:1413: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1416: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1315: checking for CPAN module Apache::Session" >&5
+ echo "$as_me:1420: checking for CPAN module Apache::Session" >&5
 echo $ECHO_N "checking for CPAN module Apache::Session... $ECHO_C" >&6
-  echo "$as_me:1317: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Apache::Session" 2>/dev/null ;then
+    echo "$as_me:1423: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1426: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
- echo "$as_me:1320: checking for CPAN module Apache::libapreq" >&5
+ echo "$as_me:1430: checking for CPAN module Apache::libapreq" >&5
 echo $ECHO_N "checking for CPAN module Apache::libapreq... $ECHO_C" >&6
-  echo "$as_me:1322: result: maaaaybeee..." >&5
-echo "${ECHO_T}maaaaybeee..." >&6
+ if perl -e "use Apache::libapreq" 2>/dev/null ;then
+    echo "$as_me:1433: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+ else
+    echo "$as_me:1436: result: no" >&5
+echo "${ECHO_T}no" >&6
+ fi
 
 ac_config_files="$ac_config_files Makefile doc/Makefile"
 
@@ -1433,7 +1548,7 @@ rm -f confdef2opt.sed
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:1436: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:1551: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -1600,7 +1715,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:1603: error: ambiguous option: $1
+    { { echo "$as_me:1718: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -1619,7 +1734,7 @@ Try \`$0 --help' for more information." >&2;}
     ac_need_defaults=false;;
 
   # This is an error.
-  -*) { { echo "$as_me:1622: error: unrecognized option: $1
+  -*) { { echo "$as_me:1737: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -1656,7 +1771,7 @@ do
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
-  *) { { echo "$as_me:1659: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:1774: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -1850,7 +1965,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:1853: creating $ac_file" >&5
+    { echo "$as_me:1968: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -1868,7 +1983,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:1871: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:1986: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -1881,7 +1996,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:1884: error: cannot find input file: $f" >&5
+           { { echo "$as_me:1999: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;

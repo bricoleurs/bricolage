@@ -46,27 +46,34 @@ dnl notice of this special exception to the GPL from your
 dnl modified version. 
 
 
-dnl @synopsis CHECK_CPAN_MODULE{Module::Name [,Version ][,PathToPerl]}
+dnl @synopsis CHECK_CPAN_MODULE{VARIABLE, Module::Name [,Version ][,PathToPerl]}
 dnl
 dnl This macro searches the installed base of CPAN modules
 dnl determine the the requested module is installed.
 dnl
+dnl If the module is found the given variable will be set to
+dnl 'yes' otherwise it will remain empty.
 dnl
-dnl @version $Id: aclocal.m4,v 1.1 2001-12-11 10:00:58 markjaroski Exp $
+dnl
+dnl @version $Id: aclocal.m4,v 1.2 2001-12-11 11:59:33 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
  AC_MSG_CHECKING(for CPAN module $1)
- dnl TODO:
- AC_MSG_RESULT(maaaaybeee...)
+ if perl -e "use $1" 2>/dev/null ;then
+    AC_MSG_RESULT(yes)
+ else
+    AC_MSG_RESULT(no)
+ fi
 ])
+
 
 dnl @synopsis AC_PROG_POSTGRESQL{[version]}
 dnl
 dnl This macro searches for an installation of PostgreSQL
 dnl
 dnl
-dnl @version $Id: aclocal.m4,v 1.1 2001-12-11 10:00:58 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.2 2001-12-11 11:59:33 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRESQL],[
@@ -74,6 +81,7 @@ AC_DEFUN([AC_PROG_POSTGRESQL],[
  dnl TODO:
  AC_MSG_RESULT(maaaaybeee...) 
 ])
+
 
 dnl @author Loic Dachary <loic@senga.org> 
 dnl modified by Mark Jaroski <mark@geekhive.net> to add
