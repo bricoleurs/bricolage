@@ -39,6 +39,7 @@ if (defined $id) {
         # Store the class name.
         $m->comp('/widgets/profile/hidden.mc', name => 'grp_type',
                  value => $class_name);
+        $m->print("\n");
 
         # Create a double list so they can move objects around.
         my ($right, $left) = ([], []);

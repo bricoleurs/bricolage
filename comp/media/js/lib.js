@@ -561,34 +561,32 @@ function confirmChanges(obj) {
     // if there is a 2xLM,
     // find the items that are new on the right, mark them 
     // selected, and send it on.
-    if (formObj) {       
+    if (formObj) {
         // loop thru the array of 2xLM names
         for (var i=0; i < doubleLists.length; i++) {
-            var tmp = doubleLists[i].split(":");
-            var leftObj  = formObj.elements[tmp[0]]; // get handle to lVals
-            var rightObj = formObj.elements[tmp[1]]; // get handle to rVals on form
-            
-            // mark all moved items on the left as selected
-            for (var j=0; j < leftObj.length; j++) {
-                if (!inArray(leftObj[j].value, movedItems[leftObj.id])) {
-                    leftObj[j].selected = false;
-                } else {
-                    leftObj[j].selected = true;
-                }
-            }
-            
-            for (var j=0; j < rightObj.length; j++) {
-                if (!inArray(rightObj[j].value, movedItems[rightObj.id])) {
-                    rightObj[j].selected = false;
-                } else {
-                    rightObj[j].selected = true;
+            var Objs = new Array(
+                formObj.elements[doubleLists[i][0]], // get handle to lVals
+                formObj.elements[doubleLists[i][1]] // get handle to rVals on form
+            );
+
+            for (var k in [0, 1]) {
+                var obj = Objs[k];
+                if (movedItems[obj.id]) {
+                    // mark all moved items as selected
+                    for (var j=0; j < obj.length; j++) {
+                        if (movedItems[obj.id][obj[j].value]) {
+                            obj[j].selected = true;
+                        } else {
+                            obj[j].selected = false;
+                        }
+                    }
                 }
             }
         }
     }
-    confirming = false
-    submitting = ret
-    return ret
+    confirming = false;
+    submitting = ret;
+    return ret;
 }
 
 function inArray(what, arr) {
@@ -614,45 +612,43 @@ var movedItems = new Array;
 
 // Originally by Saqib Khan - http://js-x.com/ 
 // Modified (quite heavily) by Marshall Roch, 2005-03-14
-function move_item(formName, fromObj, toObj)
-{
-    var found;    
+function move_item(formName, fromObj, toObj) {
+    var found;
 
     formObj = document.forms[formName]; // sets this globally for use by verify
-    
+
     var from = document.getElementById(fromObj);
     var to = document.getElementById(toObj);
-    
-    if (!movedItems[from.id]) { movedItems[from.id] = new Array(); }
-    if (!movedItems[to.id]) { movedItems[to.id] = new Array(); }
-    
-    if(from.options.length>0) {
-        for(i=0;i<from.length;i++) {
-            
-            found = false;      
-            
-            if(from.options[i].selected && !from.options[i].disabled) {
-                
-                to.options[to.length]=new Option(from.options[i].text,from.options[i].value);
-                                
-                for(j=0;j<movedItems[from.id].length;j++) {
-                    if(movedItems[from.id][j] == from.options[i].value) {
-                        movedItems[from.id].splice(j,1);
-                        found = true;
-                    }
+
+    if (!movedItems[from.id]) movedItems[from.id] = new Array();
+    if (!movedItems[to.id])   movedItems[to.id]   = new Array();
+
+    if (from.options.length >0) {
+        for (i=0; i<from.length; i++) {
+
+            found = false;
+
+            if (from.options[i].selected && !from.options[i].disabled) {
+
+                to.options[to.length] = new Option(
+                    from.options[i].text,
+                    from.options[i].value
+                );
+
+                if (movedItems[from.id][from.options[i].value]) {
+                    movedItems[from.id].splice(from.options[i].value, 1);
+                    found = true;
                 }
-                for(j=0;j<movedItems[to.id].length;j++) {
-                    if(movedItems[to.id][j] == from.options[i].value) {
-                        movedItems[to.id].splice(j,1);
-                    }
+
+                if (movedItems[to.id][from.options[i].value]) {
+                    movedItems[to.id].splice(from.options[i].value, 1);
                 }
-                                
-                if (!found) { 
-                    movedItems[to.id].push(from.options[i].value);
+
+                if (!found) {
+                    movedItems[to.id][from.options[i].value] = 1;
                 }
-                                               
+
                 from.options[i]=null;
-                
                 i--; /* make the loop go through them all */
             }
         }

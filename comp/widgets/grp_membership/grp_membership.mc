@@ -48,6 +48,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 $m->comp('/widgets/profile/hidden.mc',
          name => "$widget|manage_grps_cb",
          value => 1) unless $no_cb;
+$m->print("\n");
 
 ##############################################################################
 # Get groups for double-list manager.

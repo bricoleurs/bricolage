@@ -44,11 +44,9 @@ to the right side list by the user will be sent to the server when the form
 is submitted.
 
 </%doc>
-
 <%once>;
 my $widget = 'doubleListManager';
 </%once>
-
 <%args>
 @leftOpts	=> ()
 @rightOpts 	=> ()
@@ -69,9 +67,7 @@ $rightSort      => 0
 $formName       => 'theForm'
 $size           => 10
 </%args>
-
 <%init>;
-
 my ($left, $right, %seen) = ('', '');
 my (@leftVals, @rightVals);
 
@@ -82,89 +78,39 @@ my %ror = map { $_ => undef } @readOnlyRight;
 
 # Build the right-hand list.
 
-foreach my $opt ($rightSort ? sort { lc $a->{description} cmp lc $b->{description} } @rightOpts : @rightOpts) {
+foreach my $opt ($rightSort
+                   ? sort { lc $a->{description} cmp lc $b->{description} } @rightOpts
+                   : @rightOpts)
+{
     $seen{$opt->{value}} = 1;
     $rightVals[@rightVals] = $opt->{value};
     my $ro = exists $ror{$opt->{value}} ? ' disabled="disabled"' : '';
-    $right .= (!$readOnly) ? qq{   <option value="$opt->{value}"$ro>$opt->{description}</option>\n} : $opt->{description} . "<br />";
+    $right .= !$readOnly
+      ? qq{   <option value="$opt->{value}"$ro>$opt->{description}</option>\n}
+      : $opt->{description} . "<br />";
 }
 
 # Build the left-hand list.
-foreach my $opt ($leftSort ? sort { lc $a->{description} cmp lc $b->{description} } @leftOpts : @leftOpts) {
+foreach my $opt ($leftSort
+                 ? sort { lc $a->{description} cmp lc $b->{description} } @leftOpts
+                 : @leftOpts)
+{
     next if $seen{$opt->{value}};
     $leftVals[@leftVals] = $opt->{value};
     my $ro = exists $rol{$opt->{value}} ? ' disabled="disabled"' : '';
-    $left .= (!$readOnly) ?  qq{   <option value="$opt->{value}"$ro>$opt->{description}</option>\n} : $opt->{description} . "<br />";
+    $left .= !$readOnly
+      ?  qq{   <option value="$opt->{value}"$ro>$opt->{description}</option>\n}
+      : $opt->{description} . "<br />";
 }
 
+# Track the form element names for use when cleaning up submission
+$m->out(qq{<script type="text/javascript">\n},
+        qq{doubleLists[doubleLists.length] = ["$leftName", "$rightName"];\n},
+        qq{</script>\n});
 </%init>
-
-<%perl>
-# if there are elements in the read only arrays, put them
-# on the page in a javascript array
-
-$m->out('<script language="javascript">'."\n");
-
-# track the form element names for use when cleaning up submission
-$m->out('doubleLists[doubleLists.length] = "' . $leftName . ":"  . $rightName . '"' . "\n\n");
-
-# verify will need the form name too...
-$m->out("formObj = false\n\n");
-
-my $txt = '';
-
-# write any read only values for the left side
-$m->out("var $leftName"."_readOnly = new Array(" );
-foreach my $opt (@readOnlyLeft) {
-	$txt .= '"' . $opt . '", ';
-}
-$txt = substr($txt, 0, length($txt) - 2);
-$m->out($txt);
-$m->out(")\n\n");
-
-$txt = ''; 
-
-# write any read only values for the right side
-$m->out("var $rightName"."_readOnly = new Array(" );
-foreach my $opt (@readOnlyRight) {
-	$txt .= '"' . $opt . '", ';
-}
-$txt = substr($txt, 0, length($txt) - 2);
-$m->out($txt);
-$m->out(")\n\n");
-
-$txt = ''; 
-
-# write all original right values
-$m->out("var $rightName"."_values = new Array(" );
-foreach my $val (@rightVals) {
-	$txt .= '"' . $val . '", ';
-}
-$txt = substr($txt, 0, length($txt) - 2);
-$m->out($txt);
-$m->out(")\n\n");
-
-$txt = ''; 
-
-# write all original left values 
-$m->out("var $leftName"."_values = new Array(" );
-foreach my $val (@leftVals) {
-	$txt .= '"' . $val . '", ';
-}
-$txt = substr($txt, 0, length($txt) - 2);
-$m->out($txt);
-$m->out(")\n\n");
-
-$m->out("\n</script>");
-
-
-</%perl>
-
 % # begin html ---------------
-
-
 <table width=578 border=0 cellpadding=0 cellspacing=0>
-<%perl>
+<%perl>;
 if ($showLeftList) {
     $m->out(qq{  <td width=50><img src="/media/images/spacer.gif" width=50 height=1 /></td>
                  <td width=230 align=center><span class=label>$leftCaption</span></td>}  );
@@ -173,7 +119,7 @@ if ($showLeftList) {
 }
 </%perl>
 <td width=18 rowspan=3><img src="/media/images/spacer.gif" width=18 height=1 /></td>
-<%perl>
+<%perl>;
 if ($showRightList) {
     $m->out(qq { <td align=center width=230><span class=label>$rightCaption</span></td>
                  <td width=50><img src="/media/images/spacer.gif" width=50 height=1 /></td>} );
@@ -208,9 +154,7 @@ if ($showRightList) {
     </td>
     <td>&nbsp;</td>
 </tr>
-
-<%perl>
-
+<%perl>;
 if ($showLeftList && $showRightList && !$readOnly) {
     $m->out(qq{ <tr><td>&nbsp;</td><td align="right"> });
     $m->out(qq{ <a href="#" onclick="move_item('} . $formName . qq{', '} . $leftName . qq{', '} . $rightName . qq{'); return false;">});
@@ -221,9 +165,4 @@ if ($showLeftList && $showRightList && !$readOnly) {
     $m->out(qq{ </td><td>&nbsp;</td></tr> });
 }
 </%perl>
-
 </table>
-
-
-<%doc>
-</%doc>
