@@ -1,13 +1,14 @@
 -- -----------------------------------------------------------------------------
 -- OutputChannel.val
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
 -- Create Output Channels.
 --
 
-INSERT INTO output_channel (id, name, description, pre_path, post_path, primary_ce)
-VALUES (1, 'Web', 'Ouput to the Web', '', '', 1);
+INSERT INTO output_channel (id, name, description, pre_path, post_path,
+	                    filename, file_ext, primary_ce)
+VALUES (1, 'Web', 'Ouput to the Web', '', '', 'index', 'html', 1);
 
 
 -- Add 'em to the 'All Output Channels' Group.

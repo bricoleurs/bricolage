@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2001-09-26 15:12:09 $
+$Date: 2001-09-27 15:41:46 $
 
 =head1 DESCRIPTION
 
@@ -20,16 +20,6 @@ road map.
 This is a pretty rough draft, although I've tried to include everything
 we've thought of so far. This should be the begininning of a comprehensive
 feature list. Bugs should just go into Bugzilla.
-
-=head2 VERSION 1.0.1
-
-=over 4
-
-=item *
-
-Finish Element Administration Documentation [David].
-
-=back
 
 =head2 VERSION 1.0.2
 
@@ -294,7 +284,14 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ToDo.pod,v $
-Revision 1.9  2001-09-26 15:12:09  wheeler
+Revision 1.10  2001-09-27 15:41:46  wheeler
+Added filename and file_ext columns to OutputChannel API. Also added a
+configuration directive to CE::Config to specify the default filename and
+extension for the system. Will need to document later that these can be set, or
+move them into preferences. Will also need to use the filename and file_ext
+properties of Bric::Biz::OutputChannel in the Burn System.
+
+Revision 1.9  2001/09/26 15:12:09  wheeler
 Added quite a few more tasks. Will go over it in detail in the next few days and
 work out a more realistic road map.
 

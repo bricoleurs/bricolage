@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - The manner of keeping track of output channels
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-25 08:33:35 $
+$Date: 2001-09-27 15:41:46 $
 
 =head1 SYNOPSIS
 
@@ -72,30 +72,35 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies              
 
+use Bric::Config qw(:oc);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::OutputChannel;
 
-#==============================================================================## Inheritance                          #
+#==============================================================================
+## Inheritance                         #
 #======================================#
 
 # The parent module should have a 'use' line if you need to import from it.
 # use Bric;
 use base qw(Bric);
 
-#=============================================================================#
-# Function Prototypes                  #
+#=============================================================================
+## Function Prototypes                 #
 #======================================#
 
 # None
 
-#==============================================================================## Constants                            #
+#==============================================================================
+## Constants                           #
 #======================================#
 
 use constant DEBUG => 0;
 
 use constant TABLE => 'output_channel';
-use constant FIELDS => qw(name description pre_path post_path primary _active);
-use constant COLS => qw(name description pre_path post_path primary_ce active);
+use constant FIELDS => qw(name description pre_path post_path primary filename
+                          file_ext _active);
+use constant COLS => qw(name description pre_path post_path primary_ce filename
+                        file_ext active);
 use constant ORD => qw(name description pre_path post_path active);
 
 use constant INSTANCE_GROUP_ID => 23;
@@ -136,6 +141,11 @@ BEGIN {
 
 			# same as prepath
 			'post_path'		=> Bric::FIELD_RDWR,
+
+                        # These will be used to construct file names
+                        # for content files burned to the Output Channel.
+                        'filename'              => Bric::FIELD_RDWR,
+                        'file_ext'              => Bric::FIELD_RDWR,
 
 			# the flag as to wheather this is a primary
 			# output channel
@@ -211,17 +221,12 @@ NONE
 
 sub new {
 	my ($class, $init) = @_;
-
-	my $active = $init->{'active'} ? $init->{'active'} : 1;
-
-	delete $init->{'active'};
-
+	$init->{_active} = exists $init->{active}
+	  ? delete $init->{active} : 1;
+	$init->{filename} ||= DEFAULT_FILENAME;
+	$init->{file_ext} ||= DEFAULT_FILE_EXT;
 	my $self = bless {}, $class;
-
 	$self->SUPER::new($init);
-
-	$self->_set( { '_active' => $active } ); 
-
 	return $self;
 }
 
@@ -844,18 +849,8 @@ NONE
 
 sub save {
 	my ($self) = @_;
-
 	return $self unless $self->_get__dirty();
-
-	if ($self->_get('id') ) {
-
-		$self->_do_update();
-
-	} else {
-
-		$self->_do_insert()
-
-	}
+	defined $self->_get('id') ? $self->_do_update : $self->_do_insert;
 }
 
 
@@ -1027,19 +1022,15 @@ NONE
 sub _do_insert {
     my ($self) = @_;
 
-	my $sql = 'INSERT INTO ' . TABLE . '(id, ' . join(', ', COLS) . ')' .
-				'VALUES (' . ${\next_key(TABLE)} . ', '. 
-				join (',', ('?') x COLS) . ')';
+    my $sql = 'INSERT INTO ' . TABLE . '(id, ' . join(', ', COLS) . ')' .
+      'VALUES (' . ${\next_key(TABLE)} . ', '.
+	join (',', ('?') x COLS) . ')';
 
-	my $insert = prepare_c($sql, undef, DEBUG);
-	execute($insert, $self->_get( FIELDS ) ); 
-
-	$self->_set( { 'id' => last_key(TABLE) } );
-
-	$self->_set__dirty(undef);
-
+    my $insert = prepare_c($sql, undef, DEBUG);
+    execute($insert, $self->_get( FIELDS ) );
+    $self->_set( { 'id' => last_key(TABLE) } );
+    $self->_set__dirty(undef);
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
-
     return $self;
 }
 
@@ -1062,7 +1053,14 @@ NONE
 =head1 REVISION HISTORY
 
 $Log: OutputChannel.pm,v $
-Revision 1.3  2001-09-25 08:33:35  wheeler
+Revision 1.4  2001-09-27 15:41:46  wheeler
+Added filename and file_ext columns to OutputChannel API. Also added a
+configuration directive to CE::Config to specify the default filename and
+extension for the system. Will need to document later that these can be set, or
+move them into preferences. Will also need to use the filename and file_ext
+properties of Bric::Biz::OutputChannel in the Burn System.
+
+Revision 1.3  2001/09/25 08:33:35  wheeler
 Fixed bug where if the server_type_id argument to _do_list() was undefined it
 ignored it, rather than looking for NULL, which makes more sense.
 

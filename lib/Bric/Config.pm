@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-26 10:38:56 $
+$Date: 2001-09-27 15:41:46 $
 
 =head1 SYNOPSIS
 
@@ -110,6 +110,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    PREVIEW_LOCAL
 		    PREVIEW_MASON
                     FULL_SEARCH
+                    DEFAULT_FILENAME
+                    DEFAULT_FILE_EXT
 		   );
 
 our %EXPORT_TAGS = (all => [qw(:dbi
@@ -127,6 +129,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 			       :email
 			       :alert
 			       :burn
+                               :oc
                                :search)],
 		    dbi => [qw(DBD_PACKAGE
 			       DBD_TYPE
@@ -139,7 +142,11 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 		    burn => [qw(BURN_ROOT
 				BURN_COMP_ROOT
 			        BURN_DATA_ROOT
+                                DEFAULT_FILENAME
+                                DEFAULT_FILE_EXT
 				BURN_ARGS_METHOD)],
+                    oc => [qw(DEFAULT_FILENAME
+                              DEFAULT_FILE_EXT)],
 		    sys_user => [qw(SYS_USER
 				    SYS_GROUP)],
 		    auth => [qw(AUTH_TTL
@@ -385,6 +392,10 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 
     # Search Settings
     use constant FULL_SEARCH => => $config->{FULL_SEARCH};
+
+    # Output Channel Settings.
+    use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
+    use constant DEFAULT_FILE_EXT => => $config->{DEFAULT_FILE_EXT} || 'html';
 }
 
 #==============================================================================#
@@ -476,7 +487,14 @@ L<perl>, L<DBC>
 =head1 REVISION HISTORY
 
 $Log: Config.pm,v $
-Revision 1.5  2001-09-26 10:38:56  wheeler
+Revision 1.6  2001-09-27 15:41:46  wheeler
+Added filename and file_ext columns to OutputChannel API. Also added a
+configuration directive to CE::Config to specify the default filename and
+extension for the system. Will need to document later that these can be set, or
+move them into preferences. Will also need to use the filename and file_ext
+properties of Bric::Biz::OutputChannel in the Burn System.
+
+Revision 1.5  2001/09/26 10:38:56  wheeler
 Unset debugging settings.
 
 Revision 1.4  2001/09/25 13:34:31  wheeler
