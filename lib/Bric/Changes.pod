@@ -251,6 +251,13 @@ PostgreSQL permissions. [David]
 
 C<make clone> works again. [David]
 
+=item *
+
+Fixed database building installer scripts to use the C<$PGHOST> environment
+variable when it has been explicitly set to "localhost", both to override
+existing instances of that variable on a system, and to allow tunneling
+to work properly. [Thorsten Biel]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)

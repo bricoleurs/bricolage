@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:51 $
+$Date: 2004-02-21 19:40:30 $
 
 =head1 DESCRIPTION
 
@@ -160,7 +160,7 @@ sub load_db {
         hard_fail($errmsg);
     }
 
-    print "Loading Bricolage Database (this could take a few minutes).\n";
+    print "Loading Bricolage Database (this may take a few minutes).\n";
     my $err = exec_sql(0, $db_file);
     hard_fail("Error loading database. The database error was\n\n$err\n")
       if $err;

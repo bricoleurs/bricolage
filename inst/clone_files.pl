@@ -6,11 +6,11 @@ clone.pl - installation script to copy files for clone distributions
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2004-02-11 06:46:26 $
+$Date: 2004-02-21 19:40:30 $
 
 =head1 DESCRIPTION
 
@@ -33,7 +33,7 @@ use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 
-our $CONFIG;
+our ($CONFIG, $CLONE);
 do "./config.db" or die "Failed to read config.db : $!";
 do "./clone.db" or die "Failed to read clone.db : $!";
 
