@@ -220,6 +220,14 @@ my ($et, $var_sel_vals);
 if (defined $id) {
     $et = $at->get_event_type;
     $meths->{attr}{props}{vals} = $et->get_alert_props;
+    # hack: we don't include $trig_password, because it doesn't
+    # have a get_meth, and it's useless anyway
+    foreach my $i (0 .. $#{ $meths->{attr}{props}{vals} }) {
+        if ($meths->{attr}{props}{vals}[$i][0] eq 'trig_password') {
+            splice(@{ $meths->{attr}{props}{vals} }, $i, 1);
+            last;
+        }
+    }
 
     # Set up the variable select list values.
     $var_sel_vals = [ map { '$' . $_->[0] } @{ $meths->{attr}{props}{vals} } ];
@@ -297,11 +305,11 @@ $no_edit => 0
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:47 $
+$Date: 2004-02-18 15:08:35 $
 
 =head1 DESCRIPTION
 
