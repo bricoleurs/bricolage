@@ -1,12 +1,5 @@
 package Bric::App::Callback::Profile::Desk;
 
-# XXX: this is the only Profile subclass with a name conflict really.
-# The classes in Callback with the same name as ones here usually
-# just have a 'delete' callback, so we can just merge them into
-# the Profile callbacks. But Desk has many callbacks, and I don't
-# think they're profile-related (are the delete callbacks?)
-# Only callback here is 'save'.
-
 use base qw(Bric::App::Callback::Package);
 __PACKAGE__->register_subclass('class_key' => 'desk');
 use strict;
