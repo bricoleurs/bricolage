@@ -367,7 +367,7 @@ my $def = {
 			       srch_field => 'name',
 			       constrain => { active => 1 },
 			       select => $sel_sub },
-           keyword        => { list_fields => [qw(name screen_name)],
+           keyword        => { list_fields => [qw(sort_name name screen_name)],
                                srch_field => 'name',
                                behavior => 'expand',
                                constrain => {active => 1},
@@ -383,11 +383,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =head1 DATE
 
-$Date: 2003-08-24 15:16:53 $
+$Date: 2003-09-16 04:45:30 $
 
 =head1 SYNOPSIS
 
