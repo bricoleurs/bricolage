@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32.4.6 $
+$Revision: 1.32.4.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32.4.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.4.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-21 22:08:26 $
+$Date: 2003-07-22 22:25:27 $
 
 =head1 SYNOPSIS
 
@@ -582,7 +582,8 @@ sub preview {
     my $ocid = $oc->get_id;
     # Get a list of server types this categroy applies to.
     my $bat = $oc_sts->{$ocid} ||=
-      Bric::Dist::ServerType->list({ can_preview => 1,
+      Bric::Dist::ServerType->list({ can_preview       => 1,
+                                     active            => 1,
                                      output_channel_id => $ocid });
     # Make sure we have some destinations.
     unless (@$bat) {
@@ -719,7 +720,8 @@ sub publish {
         my $ocid = $oc->get_id;
         # Get a list of server types this categroy applies to.
         my $bat = $oc_sts->{$ocid} ||=
-            Bric::Dist::ServerType->list({ can_publish => 1,
+            Bric::Dist::ServerType->list({ can_publish       => 1,
+                                           active            => 1,
                                            output_channel_id => $ocid });
 
         # Make sure we have some destinations.
