@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-23 02:54:21 $
+$Date: 2003-12-24 21:28:13 $
 
 =head1 SYNOPSIS
 
@@ -257,6 +257,32 @@ sub test_constraint($$) {
                AND c.relname = '$table'
                AND r.contype = 'c'
                AND r.conname = '$con'
+    });
+}
+
+##############################################################################
+
+=head2 test_foreign_key
+
+  exit if test_foreign_key $table_name, $foreign_key_name;
+
+This function returns true if the specified foreign key constrinat
+exists on the specified table in the Bricolage database, and false if
+it does not. This is useful in upgrade scripts that add a new foreign
+key, and want to verify that the constraint has not already been
+created.
+
+=cut
+
+sub test_foreign_key($$) {
+    my ($table, $fk) = @_;
+    return fetch_sql(qq{
+        SELECT 1
+        FROM   pg_class c, pg_constraint r
+        WHERE  r.conrelid = c.oid
+               AND c.relname = '$table'
+               AND r.contype = 'f'
+               AND r.conname = '$fk'
     });
 }
 
