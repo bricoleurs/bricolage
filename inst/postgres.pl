@@ -45,7 +45,7 @@ print "\n\n==> Probing PostgreSQL Configuration <==\n\n";
 our %PG;
 
 # setup some defaults
-$PG{root_user} = 'pgsql';
+$PG{root_user} = 'postgres';
 $PG{root_pass} = '';
 $PG{sys_user}  = 'bric';
 $PG{sys_pass}  = 'NONE';
