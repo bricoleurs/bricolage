@@ -34,6 +34,8 @@ Added the ability to use HTML::Template Templates. [Sam]
 
 =back
 
+=head2 Bug Fixes
+
 =over 4
 
 =item *
@@ -45,6 +47,12 @@ the Bricoalge UI. Thanks to Sara for the spot. [David]
 
 Fixed a bug where Mason component calls failed in previews when the
 PREVIEW_MASON directive was enabled. [David]
+
+=item *
+
+Changed default value for text area fields added via the form builder (i.e., in
+Contributor Type and Element profiles) to 0. The values 0 and "" always make the
+the new field unlimited in length. [David]
 
 =back
 
