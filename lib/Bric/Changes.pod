@@ -65,6 +65,11 @@ transactions when they are triggered by the user interface. This is to reduce
 the chances of a deadlock between long-running publishing transactions.
 [David]
 
+=item *
+
+The installer now requires PostgreSQL 7.3 or later. This is becauase 7.2
+hasn't worked properly with Bricolage since 1.8.0. [David]
+
 =back
 
 =head2 Bug Fixes

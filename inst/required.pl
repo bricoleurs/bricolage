@@ -82,7 +82,7 @@ unless ($RESULTS{PG} and $RESULTS{APACHE} and
 	$RESULTS{EXPAT}) {
   hard_fail("Required software not found:\n\n",
 	    $RESULTS{PG}     ? "" :
-	    "\tPostgreSQL >= 7.1.0 (http://postgresql.org)\n",
+	    "\tPostgreSQL >= 7.3.0 (http://postgresql.org)\n",
 	    $RESULTS{APACHE} ? "" :
 	    "\tApache >= 1.3.12    (http://apache.org)\n",
 	    $RESULTS{EXPAT}  ? "" :
@@ -102,7 +102,7 @@ exit 0;
 
 # look for postgresql
 sub find_pg {
-    print "Looking for PostgreSQL with version >= 7.2.0...\n";
+    print "Looking for PostgreSQL with version >= 7.3.0...\n";
 
     # find PostgreSQL by looking for pg_config.  First search user's path
     # then some standard locations.
@@ -151,13 +151,9 @@ sub find_pg {
 	unless defined $x and defined $y;
     $z ||= 0;
     return soft_fail("Found old version of Postgres: $x.$y.$z - ",
-		     "7.2.0 or greater required.")
-	unless (($x > 7) or ($x == 7 and $y >= 2));
-    print "Found acceptable version of Postgres: $x.$y.$z.\n";
-
-    print "However, version 7.3.0 or later is strongly recommended.\n",
-      "Please consider upgrading.\n"
+		     "7.3.0 or greater required.")
 	unless (($x > 7) or ($x == 7 and $y >= 3));
+    print "Found acceptable version of Postgres: $x.$y.$z.\n";
 
     $REQ{PG_VERSION} = [$x,$y,$z];
 
