@@ -141,6 +141,10 @@ spotting the inconsistency. [David]
 The bric_clean_tmp script has been changed to avoid deleting the Bricolage
 cache file.  [Sam]
 
+=item *
+
+Fixed typo that broke Bric::Dist::Client. [Mike Slattery]
+
 =back
 
 =head1 VERSION 1.2.0
