@@ -26,7 +26,7 @@ do_sql
     q{UPDATE job SET failed = 0},
 
     # priority defaults to 3
-    q{UPDATE job SET priority = 0},
+    q{UPDATE job SET priority = 3},
 
     # update the existing class rows
     q{UPDATE  class 
