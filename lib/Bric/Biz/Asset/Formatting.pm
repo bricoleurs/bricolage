@@ -277,7 +277,7 @@ use constant PARAM_WHERE_MAP => {
                            . '( SELECT checked_out '
                            . 'FROM formatting_instance '
                            . 'WHERE version = i.version '
-                           . 'AND formatting__id = i.media__id '
+                           . 'AND formatting__id = i.formatting__id '
                            . 'ORDER BY checked_out DESC LIMIT 1 )',
     checked_out           => 'i.checked_out = ?',
     _checked_out          => 'i.checked_out = ?',
