@@ -9,10 +9,6 @@ if ($param->{tplate_type}) {
              name => 'tplate_type',
              value => $param->{tplate_type});
 
-    $m->comp('/widgets/profile/hidden.mc',
-             name => 'site_id',
-             value => $param->{site_id});
-
     if ($param->{tplate_type} ==
         Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE) {
         # It's an element template. Offer them a list of elements to
@@ -24,9 +20,6 @@ if ($param->{tplate_type}) {
                  reset_key => $rk,
                  exclude   => $excl_media_sub,
                  disp      => 'Element');
-
-
-
     } elsif ($param->{tplate_type} ==
              Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE) {
         # It's a utiltiy template. Offer a name field.
@@ -37,43 +30,11 @@ if ($param->{tplate_type}) {
     } else {
         # Do nothing for a category template. This should never happen.
     }
-    $m->comp('/widgets/select_object/select_object.mc',
-             'object'    => 'output_channel',
-             'name'      => $widget.'|oc_id',
-             'field'     => 'name',
-             'reset_key' => $rk,
-             selected    => $param->{"$widget|oc_id"},
-             constrain   => { active => 1, site_id => $param->{site_id} },
-             req         => 1,
-             'disp'      => 'Output Channel');
-    $m->out($ieSpacer);
-    $m->comp('/widgets/select_object/select_object.mc',
-             'object'    => 'category',
-             'name'      => $widget.'|cat_id',
-             selected    => $param->{"$widget|cat_id"},
-             'reset_key' => $rk,
-             'field'     => 'uri',
-             sort_field  => 'uri',
-             constrain   => { site_id => $param->{site_id} },
-             exclude     => $excl_sub,
-             req         => 1,
-             'disp'      => 'Category');
-    $m->out($ieSpacer);
-
 } else {
     # Let them decide what type of template they want.
     $m->comp('/widgets/profile/displayFormElement.mc',
              vals => Bric::Biz::Asset::Formatting->my_meths->{tplate_type},
              key => 'tplate_type'
-            );
-    $m->comp('/widgets/select_object/select_object.mc',
-             object    => 'site',
-             name      => 'site_id',
-             field     => 'name',
-             disp      => 'Site',
-             req       => 1,
-             exclude   => sub { ! chk_authz($_[0], EDIT, 1) },
-             selected  => scalar $c->get_user_cx(get_user_id),
             );
 }
 $m->out($ieSpacer);
@@ -93,7 +54,27 @@ $m->comp('/widgets/profile/displayFormElement.mc',
          });
 $m->out($ieSpacer);
 
-
+$m->comp('/widgets/select_object/select_object.mc',
+         'object'    => 'output_channel',
+         'name'      => $widget.'|oc_id',
+         'field'     => 'name',
+         'reset_key' => $rk,
+         selected    => $param->{"$widget|oc_id"},
+         constrain   => { active => 1 },
+         req         => 1,
+         'disp'      => 'Output Channel');
+$m->out($ieSpacer);
+$m->comp('/widgets/select_object/select_object.mc',
+         'object'    => 'category',
+         'name'      => $widget.'|cat_id',
+         selected    => $param->{"$widget|cat_id"},
+         'reset_key' => $rk,
+         'field'     => 'uri',
+         sort_field  => 'uri',
+         exclude     => $excl_sub,
+         req         => 1,
+         'disp'      => 'Category');
+$m->out($ieSpacer);
 $m->comp('/widgets/profile/displayFormElement.mc',
          key => "priority",
          vals => $pmeth);
@@ -108,7 +89,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <table width=<% FIELD_INDENT + 150 %> cellpadding=0 cellspacing=0>
 <tr>
   <td width="<% FIELD_INDENT - 10%>"><img src="/media/images/spacer.gif" width="<% FIELD_INDENT - 10%>" height="1" /></td>
-  <td width=150><input type="image" src="/media/images/<% $lang_key %>/<% $button %>.gif" border=0 name="<% "$widget|$cb" %>"></td>
+  <td width=150><input type="image" src="/media/images/<% $button %>.gif" border=0 name="<% "$widget|$cb" %>"></td>
 </tr>
 </table>
 
