@@ -1,4 +1,4 @@
-package Bric::Util::Language::pt_pt;
+package Bric::Util::Language::de_de;
 
 =head1 NAME
 
@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-23 23:30:06 $
+$Date: 2003-12-22 18:05:27 $
 
 =head1 SYNOPSIS
 
