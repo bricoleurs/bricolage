@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 18:11:02 $
+$Date: 2003-07-30 20:24:38 $
 
 =head1 SYNOPSIS
 
@@ -639,7 +639,7 @@ sub preview {
     if (PREVIEW_LOCAL) {
         # Make sure there are some files to redirect to.
         unless (@$res) {
-            $send_msg->("No output to preview.");
+            status_msg("No output to preview.");
             return;
         }
         # Copy the files for previewing locally.
