@@ -1,8 +1,8 @@
 --
 -- Project: Bricolage API
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-12-18 22:32:31 $
+-- $Date: 2003-12-19 18:56:05 $
 -- Author: David Wheeler <david@wheeler.net>
 
 
@@ -29,7 +29,9 @@ CREATE TABLE pref (
     def          VARCHAR(256),
     manual	 NUMERIC(1,0) NOT NULL DEFAULT 0,
     opt_type     VARCHAR(16)  NOT NULL,
-    can_be_overridden  BOOL   NOT NULL DEFAULT 'f',
+    can_be_overridden  NUMERIC(1,0)   NOT NULL DEFAULT 0,
+                                      CONSTRAINT ck_pref__can_be_overridden
+                                        CHECK (can_be_overridden IN (0,1)),
     CONSTRAINT ck_pref__manual CHECK (manual IN (0,1)),
     CONSTRAINT pk_pref__id PRIMARY KEY (id)
 );
