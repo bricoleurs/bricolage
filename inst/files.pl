@@ -6,11 +6,11 @@ files.pl - installation script to create directories and copy files
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-04-23 22:24:33 $
+$Date: 2002-06-11 17:54:02 $
 
 =head1 DESCRIPTION
 
@@ -74,7 +74,7 @@ sub create_paths {
     mkpath([catdir($CONFIG->{MASON_COMP_ROOT}, "data"),
 	    $CONFIG->{MASON_DATA_ROOT},
 	    catdir($CONFIG->{BRICOLAGE_ROOT}, "conf"),
-	    $CONFIG->{TEMP_DIR},
+	    catdir($CONFIG->{TEMP_DIR}, "bricolage"),
 	    $CONFIG->{LOG_DIR}],
 	   1,
 	   0755);
@@ -111,7 +111,7 @@ sub assign_permissions {
     system("chown", "-R", $AP->{user} . ':' . $AP->{group}, 
 	   $CONFIG->{MASON_DATA_ROOT});
     system("chown", "-R", $AP->{user} . ':' . $AP->{group}, 
-	   catdir($CONFIG->{TEMP_DIR}));
+	   catdir($CONFIG->{TEMP_DIR}, "bricolage"));
     system("chown", "-R", $AP->{user} . ':' . $AP->{group}, 
 	   catdir($CONFIG->{LOG_DIR}));
 }
