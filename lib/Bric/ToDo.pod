@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =head1 DATE
 
-$Date: 2002-02-14 21:59:39 $
+$Date: 2002-02-19 23:53:38 $
 
 =head1 DESCRIPTION
 
@@ -91,6 +91,11 @@ having an existing person record as an existing contributor or user. [David]
 =item *
 
 Write context-sensitive help for those pages that are still missing it.
+
+=item *
+
+Pare down number of default User groups. I suggest eliminating those that relate
+to only a single admin menu item.
 
 =item *
 

@@ -7,15 +7,15 @@ Bric::Util::Grp - A Class for associating Objects
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-14 21:59:40 $
+$Date: 2002-02-19 23:53:44 $
 
 =head1 SYNOPSIS
 

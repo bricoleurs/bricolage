@@ -157,7 +157,9 @@ my $update_parts = sub {
 		set_state_data($widget, '__NO_SAVE__', 1);
 	    } else {
 		# Truncate the value, if necessary, then set it.
-		my $max = $_->get_element_data_obj->get_meta('html_info')->{maxlength};
+		my $info = $_->get_element_data_obj->get_meta('html_info');
+		$val = join('__OPT__', @$val) if $info->{multiple} && ref $val;
+		my $max = $info->{maxlength};
 		$val = substr($val, 0, $max) if $max && length $val > $max;
 		$_->set_data($val);
 	    }

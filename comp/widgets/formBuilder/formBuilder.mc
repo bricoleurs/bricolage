@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-14 21:59:38 $
+$Date: 2002-02-19 23:53:36 $
 
 =head1 SYNOPSIS
 $m->comp(

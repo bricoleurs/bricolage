@@ -70,17 +70,17 @@ Created new method of configuring Bricolage in Apache. [David]
 
 =item *
 
-Changed password for the default "admin" user to "change me now!" [David]
-
-=item *
-
 Added support for Mozilla (and there was much rejoicing!). [David]
 
 =item *
 
-The slug is stored in the database for both fixed and non-fixed
-stories. This is in anticipation of adding the ability to use the slug
-for fixed story URIs later on. Thanks to Darren Graves for the patch.
+Changed password for the default "admin" user to "change me now!" [David]
+
+=item *
+
+The slug is stored in the database for both fixed and non-fixed stories. This is
+in anticipation of adding the ability to use the slug for fixed story URIs later
+on. Thanks to Darren Graves for the patch.
 
 =back
 
@@ -120,7 +120,8 @@ Fixed some problems with the sideNav menus under Netscape. [David]
 
 =item *
 
-Fixed broken "Preview" button in Read-only story profile. [Matt Vella]
+Fixed broken "Preview" button in Read-only story profile and in related story
+elements. [Matt Vella]
 
 =item *
 
@@ -184,6 +185,21 @@ spotting the inconsistency. [David]
 
 The bric_clean_tmp script has been changed to avoid deleting the Bricolage
 cache file.  [Sam]
+
+=item *
+
+Fixed typo that broke Bric::Dist::Client. [Mike Slattery]
+
+=item *
+
+Fixed multiple select custom fields for Elements and Contributors. Thanks to
+Mike Slattery for the spot. [David]
+
+=item *
+
+Fixed ugly bug where deleting a "Media Type" Element would delete all the media
+objects of that type. Thanks to Sam for the spot (though not for the bug!).
+[David]
 
 =back
 

@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-02-14 21:59:40 $
+$Date: 2002-02-19 23:53:43 $
 
 
 =head1 SYNOPSIS
