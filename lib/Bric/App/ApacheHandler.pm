@@ -6,16 +6,16 @@ Bric::App::ApacheHandler - subclass of HTML::Mason::ApacheHandler
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.6.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.6.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-07 03:31:43 $
+$Date: 2003-05-02 08:14:43 $
 
 =head1 DESCRIPTION
 
@@ -33,7 +33,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use HTML::Mason::ApacheHandler;
+use Bric::App::Callback;
 use Bric::Util::Fault::Exception::DP;
 use Bric::Config qw(:char);
 use Bric::Util::CharTrans;
@@ -41,7 +41,7 @@ use Bric::Util::CharTrans;
 ################################################################################
 # Inheritance
 ################################################################################
-use base qw(HTML::Mason::ApacheHandler);
+use base qw(MasonX::ApacheHandler::WithCallbacks);
 
 ################################################################################
 # Function and Closure Prototypes
@@ -72,7 +72,13 @@ my $ct = Bric::Util::CharTrans->new(CHAR_SET);
 
 =head2 Constructors
 
-Inherited.
+=cut
+
+sub new {
+    my $class = shift;
+    my $self = $class->SUPER::new(@_, cb_classes => 'ALL');
+    return $self;
+}
 
 =head2 Destructors
 
