@@ -367,7 +367,10 @@ sub resize : Callback {
 
     my $param = $self->request_args;
 
-    $split_fields->($self->class_key, $param->{$self->class_key.'|text'});
+    my $splitter = get_state_name($widget) eq 'edit_bulk'
+      ? $split_fields : $split_super_bulk;
+    $splitter->($self->class_key, $param->{$self->class_key.'|text'});
+
     set_state_data($self->class_key, 'rows', $param->{$self->class_key.'|rows'});
     set_state_data($self->class_key, 'cols', $param->{$self->class_key.'|cols'});
 }
