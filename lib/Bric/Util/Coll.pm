@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-20 00:29:52 $
+$Date: 2002-09-21 00:52:11 $
 
 =head1 SYNOPSIS
 
@@ -376,6 +376,28 @@ sub get_objs {
         return wantarray ? ($self->_sort_objs($objs), @$new_objs)
           : [($self->_sort_objs($objs), @$new_objs)];
     }
+}
+
+=item my (@objs || $objs_aref) = $coll->get_new_objs
+
+Returns a list or array reference of all of the objects that have been added
+to the collection via C<new_objs()>. Note that, once C<save()> has been
+called, the new objects are themselves saved, and are no longer considered new
+objects. If there are no new objects, C<get_new_objs() will return an empty
+list in an array context, and undef in a scalar context.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_new_objs {
+    my $new_objs = $_[0]->_get('new_obj');
+    return unless @$new_objs;
+    return wantarray ? @$new_objs : $new_objs;
 }
 
 =item my $obj = $coll->new_obj($init_href)

@@ -47,7 +47,7 @@ my $printLink = sub {
 
 <%perl>
 # Figure out where we are (assume it's "My Workspace").
-my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
+my ($section, $mode, $type) = split '/', substr($ARGS{uri}, 1);
 ($section, $mode, $type) = qw(workflow profile workspace) unless $section;
 
 my $agent                     = $m->comp("/widgets/util/detectAgent.mc");
@@ -122,7 +122,7 @@ unless ($workflows) {
 <table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=130>
 <tr>
 
-  <td><img src="<% $workflowGraphic %>" width=150 height=22></td>
+  <td><img src="<% $workflowGraphic %>" width="150" height="22" /></td>
 </tr>
 <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width=1 height=2></td>
@@ -445,10 +445,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2002-06-29 09:08:16 $
+$Date: 2002-09-21 00:52:10 $
 
 </%doc>

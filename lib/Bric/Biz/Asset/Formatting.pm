@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:39 $
+$Date: 2002-09-21 00:52:10 $
 
 =head1 SYNOPSIS
 
@@ -1368,44 +1368,6 @@ sub checkout {
 
 ################################################################################
 
-=item $fa = $fa->checkin()
-
-This preforms a checkin.   It will make sure that there is not another
-conflict version that exists.   If so it will fail and one must merge the
-conflicts.   Otherwise it will promote the version and disassociate the 
-user from the object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-						
-sub checkin {
-	my ($self) = @_;
-
-	my $version = $self->_get('version');
-
-	$version++;
-	$self->_set({'user__id'        => undef,
-		     'version'         => $version,
-		     'current_version' => $version,
-		     'checked_out'     => 0,
-		    });
-
-	return $self;
-}
-
-################################################################################
-
 =item ($fa || undef) = $fa->is_current()
 
 Return whether this is the most current version or not.
@@ -1632,10 +1594,10 @@ sub _do_list {
     if (exists $param->{'user__id'}) {
 	push @where, 'f.usr__id=?', 'i.checked_out=?';
 	push @bind,  $param->{'user__id'}, 1;
-    }# else {
-#	push @where, 'i.checked_out=?';
-#	push @bind,  0;
-#    }
+    } else {
+	push @where, 'i.checked_out=?';
+	push @bind,  0;
+    }
 
     unless ($param->{'return_versions'}) {
 	push @where, 'f.current_version=i.version';
@@ -1649,12 +1611,12 @@ sub _do_list {
 	if (($f eq 'name') || ($f eq 'file_name')) {
 	    push @where, "LOWER(f.$f) LIKE ?";
 	    push @bind,  lc($param->{$f});
-	} else { 
+	} else {
 	    push @where, "f.$f=?";
 	    push @bind,  $param->{$f};
 	}
     }
-    
+
     if ($param->{'simple'}) {
       push @where, ('(LOWER(f.name) LIKE ? OR LOWER(f.file_name) LIKE ?)');
       push @bind, (lc($param->{'simple'})) x 2;

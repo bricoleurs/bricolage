@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-13 22:01:55 $
+$Date: 2002-09-21 00:52:11 $
 
 =head1 SYNOPSIS
 
@@ -164,25 +164,26 @@ my ($meths, $class, $mem_class);
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields
-        ({ id            => Bric::FIELD_READ,
-           name          => Bric::FIELD_RDWR,
-           description   => Bric::FIELD_RDWR,
-           class_id      => Bric::FIELD_READ,
-           parent_id     => Bric::FIELD_RDWR,
-           secret        => Bric::FIELD_READ,
-           permanent     => Bric::FIELD_READ,
+        ({ id             => Bric::FIELD_READ,
+           name           => Bric::FIELD_RDWR,
+           description    => Bric::FIELD_RDWR,
+           class_id       => Bric::FIELD_READ,
+           parent_id      => Bric::FIELD_RDWR,
+           secret         => Bric::FIELD_READ,
+           permanent      => Bric::FIELD_READ,
 
            # Private Fields
-           _memb_coll    => Bric::FIELD_NONE,
-           _memb_hash    => Bric::FIELD_NONE,
-           _queried      => Bric::FIELD_NONE,
-           _parent_obj   => Bric::FIELD_NONE,
-           _attr_obj     => Bric::FIELD_NONE,
-           _attr_cache   => Bric::FIELD_NONE,
-           _meta_cache   => Bric::FIELD_NONE,
-           _update_attrs => Bric::FIELD_NONE,
-           _parents      => Bric::FIELD_NONE,
-           _active       => Bric::FIELD_NONE
+           _memb_coll     => Bric::FIELD_NONE,
+           _memb_hash     => Bric::FIELD_NONE,
+           _new_memb_hash => Bric::FIELD_NONE,
+           _queried       => Bric::FIELD_NONE,
+           _parent_obj    => Bric::FIELD_NONE,
+           _attr_obj      => Bric::FIELD_NONE,
+           _attr_cache    => Bric::FIELD_NONE,
+           _meta_cache    => Bric::FIELD_NONE,
+           _update_attrs  => Bric::FIELD_NONE,
+           _parents       => Bric::FIELD_NONE,
+           _active        => Bric::FIELD_NONE
 
         });
 }
@@ -1464,37 +1465,68 @@ sub has_member {
     my ($self, $params) = @_;
     my $memb_coll = $get_memb_coll->($self);
     my $mem;
-    if ($memb_coll->is_populated) {
-        # Just use the set.
-        if ($self->get_object_class_id) {
-            # It's in one class. Do an easy grab.
-            ($mem) = $memb_coll->get_objs($params->{id} ||
-                                          $params->{obj}->get_id)
-            or return;
-        } else {
-            # Ugh, we need to convert it to a special hash. See if we have it
-            # already.
-            my $memb_hash = $self->_get('_memb_hash');
-            unless ($memb_hash) {
-                # We must build it.
-                foreach my $m ($memb_coll->get_objs) {
-                    $memb_hash->{$m->get_object_package}{$m->get_obj_id} = $m;
+  MEMCHK: {
+        my $oid = $params->{id} || $params->{obj}->get_id;
+        if ($memb_coll->is_populated) {
+            # Just use the set.
+            if ($self->get_object_class_id) {
+                # It's in one class. Do an easy grab.
+                ($mem) = $memb_coll->get_objs($params->{id} ||
+                                              $params->{obj}->get_id);
+                last MEMCHK if $mem;
+                # Try to get it from the new members.
+                if (my $new_memb = $memb_coll->get_new_objs) {
+                    foreach my $m (@$new_memb) {
+                        $mem = $m and last MEMCHK if $m->get_obj_id == $oid;
+                    }
                 }
-                $self->_set(['_memb_hash'], [$memb_hash]);
+            } else {
+                # Ugh, we need to convert it to a special hash. See if we have it
+                # already.
+                my $memb_hash = $self->_get('_memb_hash');
+                unless ($memb_hash) {
+                    # We must build it.
+                    foreach my $m ($memb_coll->get_objs) {
+                        $memb_hash->{$m->get_object_package}{$m->get_obj_id} = $m;
+                    }
+                    $self->_set(['_memb_hash'], [$memb_hash]);
+                }
+                my $pkg = $params->{package} || ref $params->{obj};
+                $mem = $memb_hash->{$pkg}{$oid} and last MEMCHK;
             }
-            my $pkg = $params->{package} || ref $params->{obj};
-            my $id = $params->{id} || $params->{obj}->get_id;
-            $mem = $memb_hash->{$pkg}{$id} or return;
+        } else {
+            # Check to see if the object has been added, but not yet saved.
+            if (my $new_memb = $memb_coll->get_new_objs) {
+                if ($self->get_object_class_id) {
+                    # It's in one class. Just look for the object ID.
+                    foreach my $m (@$new_memb) {
+                        $mem = $m and last MEMCHK if $mem->get_obj_id == $oid;
+                    }
+                } else {
+                    # Ugh, we need to convert it to a special hash. See if we have it
+                    # already.
+                    my $memb_hash = $self->_get('_new_memb_hash');
+                    unless ($memb_hash) {
+                        # We must build it.
+                        foreach my $m (@$new_memb) {
+                            $memb_hash->{$m->get_object_package}{$m->get_obj_id} = $m;
+                        }
+                        $self->_set(['_new_memb_hash'], [$memb_hash]);
+                    }
+                    my $pkg = $params->{package} || ref $params->{obj};
+                    $mem = $memb_hash->{$pkg}{$oid} and last MEMCHK;
+                }
+            }
+
+            # If we get here, just look it up. This will fail if a member has
+            # been added, but the group hasn't been saved.
+            my %args = $params->{obj} ? ( object => $params->{obj} ) :
+              ( object_package => $params->{package}, object_id => $params->{id});
+            $args{grp} = $self;
+            ($mem) = Bric::Util::Grp::Parts::Member->list(\%args);
+            return unless $mem;
         }
-    } else {
-        # Just look it up. This will fail if a member has been added, but the
-        # group hasn't been saved.
-        my %args = $params->{obj} ? ( object => $params->{obj} ) :
-          ( object_package => $params->{package}, object_id => $params->{id});
-        $args{grp} = $self;
-        ($mem) = Bric::Util::Grp::Parts::Member->list(\%args);
-        return unless $mem;
-    }
+    } #MEMCHK:
 
     # Return the member only if it has the attributes in $attr
     return $mem->has_attrs($params->{attr}) if $params->{attr};

@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-09-11 02:54:04 $
+$Date: 2002-09-21 00:52:10 $
 
 =head1 SYNOPSIS
 
@@ -247,39 +247,45 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
 
             # HACK:  Stop the 'allowed_desks' error.
             unless ($a_wf) {
-                my ($msg, $name);
-                if (ref($obj) =~ /Story$/) {
-                    ($a_wf) = Bric::Biz::Workflow->list({'type' => 2});
-                    $name = 'Story';
-                } elsif (ref($obj) =~ /Media/) {
-                    ($a_wf) = Bric::Biz::Workflow->list({'type' => 3});
-                    $name = 'Media';
-                } elsif (ref($obj) =~ /Formatting$/) {
-                    ($a_wf) = Bric::Biz::Workflow->list({'type' => 1});
-                    $name = 'Template';
-                }
+                if ($obj->is_active) {
+                    # Find a workflow to put it on.
+                    my ($msg, $name);
+                    if (ref($obj) =~ /Story$/) {
+                        ($a_wf) = Bric::Biz::Workflow->list({'type' => 2});
+                        $name = 'Story';
+                    } elsif (ref($obj) =~ /Media/) {
+                        ($a_wf) = Bric::Biz::Workflow->list({'type' => 3});
+                        $name = 'Media';
+                    } elsif (ref($obj) =~ /Formatting$/) {
+                        ($a_wf) = Bric::Biz::Workflow->list({'type' => 1});
+                        $name = 'Template';
+                    }
 
-                $obj->set_workflow_id($a_wf->get_id);
-                $obj->save;
+                    $obj->set_workflow_id($a_wf->get_id);
+                    $obj->save;
 
-                $msg = "Warning: $name object '".$obj->get_name.
-                       "' had no associated workflow.  It has been ".
+                    $msg = "Warning: $name object '".$obj->get_name.
+                      "' had no associated workflow.  It has been ".
                        "assigned to the '".$a_wf->get_name."' workflow.";
 
-                if ($desk) {
-                    my @ad = $a_wf->allowed_desks;
-                    unless (grep($desk->get_id == $_->get_id, @ad)) {
-                        my $st = $a_wf->get_start_desk;
-                        $desk->transfer({'to'    => $st,
-                                         'asset' => $obj});
-                        $desk->save;
-
-                        $msg .= "  This change also required that this ".
-                                lc($name)." be moved to the '".$st->get_name.
+                    if ($desk) {
+                        my @ad = $a_wf->allowed_desks;
+                        unless (grep($desk->get_id == $_->get_id, @ad)) {
+                            my $st = $a_wf->get_start_desk;
+                            $desk->transfer({'to'    => $st,
+                                             'asset' => $obj});
+                            $desk->save;
+                            $msg .= "  This change also required that this ".
+                              lc($name)." be moved to the '".$st->get_name.
                                 "' desk";
+                        }
                     }
+                    add_msg($msg);
+                } else {
+                    # Remove it from the desk!
+                    $desk->remove_asset($obj) if $desk;
+                    next;
                 }
-                add_msg($msg);
             }
 
             foreach ($a_wf->allowed_desks) {

@@ -240,6 +240,59 @@ the value returned by the autopopulation method is C<undef>. [David]
 Fixed bug where autopopulated media asset data fields weren't properly
 autopopulated. [David]
 
+=item *
+
+Fixed problem with category upgrade script failing on category data
+created with 1.3.2. [Sam]
+
+=item *
+
+During installation, entering a directory name when prompted for the "PID File
+Location" now results in Bricolage using a file called "httpd.pid" in that
+directory, rather than trying (and failing) to use the directory itself as the
+PID file. [David]
+
+=item *
+
+The side navigation layer is now better aware of its context, and changes the
+colors of some of its graphics depending on the context. Also recreaed the
+"WORKFLOW" tab graphics. It looks like this has been broken for over a year,
+and I only just noticed it! [David]
+
+=item *
+
+Slightly improved handling of assets that have forgotten where they
+are. [David]
+
+=item *
+
+Checked-out templates are now displayed only once (instead of twice) in the
+"Find Templates" manager. [David]
+
+=item *
+
+Added C<get_new_objs()> method to Bric::Util::Coll so that Bric::Util::Grp's
+C<has_member()> method can see a member even if it hasn't been saved to the
+database. Also changed Bric::Util::Grp to check for members in this way, of
+course. [David]
+
+=item *
+
+Assets retrieved from the library now appear on the desk they're checked out
+into only once (instead of twice). This thanks to the above-noted changes to
+Bric::Util::Grp. [David]
+
+=item *
+
+Added upgrade script F<inst/upgrade/1.4.1/clean_desks.pl> to clean up existing
+duplicate listings of assets on desks. [David]
+
+=item *
+
+Removed the C<checkin()> method from Bric::Biz::Asset::Formatting and
+Bric::Biz::Asset::Business and put it into Bric::Biz::Asset, instead, since
+it's exactly the same for all assets. [David]
+
 =back
 
 =head1 VERSION 1.4.0

@@ -10,16 +10,16 @@ package Bric::Biz::Workflow::Parts::Desk;
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-08-28 22:23:01 $
+$Date: 2002-09-21 00:52:10 $
 
 
 =head1 SYNOPSIS
@@ -83,8 +83,8 @@ use strict;
 # Programatic Dependencies              
 
 use Bric::Util::DBI qw(:all);
-
 use Bric::Util::Grp::Asset;
+use Bric::Util::Fault::Exception::DP;
 
 #==============================================================================#
 # Inheritance                          #
@@ -718,24 +718,18 @@ sub checkin {
 sub checkout {
     my $self = shift;
     my ($a_obj, $user_id) = @_;
-    my $asset_grp = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp', 
+    my $asset_grp = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp',
 					'_asset_grp_obj');
 
-    # Don't do anything unless this asset is already on this desk.
-#    return unless $asset_grp->has_member({ obj => $a_obj });
+    # Throw an exception if this asset isn't already on the desk.
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => 'Cannot checkout asset not on desk' })
+      unless $asset_grp->has_member({ obj => $a_obj });
 
-    # The doesn't actually work because of the recent Grp.pm
-    # refactorings. has_member() might return false if new members haven't
-    # been saved to the database. This might get fixed eventually, but in the
-    # meantime, I see no reason not to just add the asset to the desk, even if
-    # it has already been added via accept().
-    $asset_grp->add_asset([$a_obj]);
-
+    # Checkout the asset.
     my $chkout = $self->_get('_checkout');
-
     $a_obj->checkout({'user__id' => $user_id});
     push @$chkout, $a_obj;
-
     return $a_obj;
 }
 

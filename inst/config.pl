@@ -6,11 +6,11 @@ config.pl - installation script to probe user configuration
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-06-11 21:29:05 $
+$Date: 2002-09-21 00:52:10 $
 
 =head1 DESCRIPTION
 
@@ -72,52 +72,52 @@ probably save you the trouble.  Your choices are:
 END
 
     $CONFIG{set} = ask_choice("Your choice?", 
-			      [ "s", "m" ], "s");
+                              [ "s", "m" ], "s");
 
     # setup the default
     if ($CONFIG{set} eq 's') {
-	# single system defaults
-	$CONFIG{BRICOLAGE_ROOT}  = '/usr/local/bricolage';
-	$CONFIG{TEMP_DIR}        = tmpdir();
-	$CONFIG{MODULE_DIR}      = $Config{sitelib};
-	$CONFIG{BIN_DIR}         = $Config{scriptdir};
-	$CONFIG{MAN_DIR}         = $Config{man3dir};
-	$CONFIG{MASON_COMP_ROOT} = '$CONFIG{BRICOLAGE_ROOT}/comp';
-	$CONFIG{MASON_DATA_ROOT} = '$CONFIG{BRICOLAGE_ROOT}/data';
+        # single system defaults
+        $CONFIG{BRICOLAGE_ROOT}  = '/usr/local/bricolage';
+        $CONFIG{TEMP_DIR}        = tmpdir();
+        $CONFIG{MODULE_DIR}      = $Config{sitelib};
+        $CONFIG{BIN_DIR}         = $Config{scriptdir};
+        $CONFIG{MAN_DIR}         = $Config{man3dir};
+        $CONFIG{MASON_COMP_ROOT} = '$CONFIG{BRICOLAGE_ROOT}/comp';
+        $CONFIG{MASON_DATA_ROOT} = '$CONFIG{BRICOLAGE_ROOT}/data';
 
-	# remove man3 trailer
-	$CONFIG{MAN_DIR} =~ s!/man3!!;
-	
-	# construct default system-wide log directory based on Apache
-	# error_log setting
-	if (file_name_is_absolute($AP->{DEFAULT_ERRORLOG})) {
-	    $CONFIG{LOG_DIR} = (splitpath($AP->{DEFAULT_ERRORLOG}))[1];
-	} else {
-	    $CONFIG{LOG_DIR} = (splitpath(catfile($AP->{HTTPD_ROOT}, 
-						  $AP->{DEFAULT_ERRORLOG})))[1];
-	}
+        # remove man3 trailer
+        $CONFIG{MAN_DIR} =~ s!/man3!!;
 
-	# construct default system-wide pid file location
-	if (file_name_is_absolute($AP->{DEFAULT_PIDLOG})) {
-	    $CONFIG{PID_FILE} = $AP->{DEFAULT_PIDLOG};
-	} else {
-	    $CONFIG{PID_FILE} = catfile($AP->{HTTPD_ROOT}, 
-					$AP->{DEFAULT_PIDLOG});
-	}
+        # construct default system-wide log directory based on Apache
+        # error_log setting
+        if (file_name_is_absolute($AP->{DEFAULT_ERRORLOG})) {
+            $CONFIG{LOG_DIR} = (splitpath($AP->{DEFAULT_ERRORLOG}))[1];
+        } else {
+            $CONFIG{LOG_DIR} = (splitpath(catfile($AP->{HTTPD_ROOT},
+                                                  $AP->{DEFAULT_ERRORLOG})))[1];
+        }
+
+        # construct default system-wide pid file location
+        if (file_name_is_absolute($AP->{DEFAULT_PIDLOG})) {
+            $CONFIG{PID_FILE} = $AP->{DEFAULT_PIDLOG};
+        } else {
+            $CONFIG{PID_FILE} = catfile($AP->{HTTPD_ROOT},
+                                        $AP->{DEFAULT_PIDLOG});
+        }
 
     } else {
-	# multi system defaults
-	$CONFIG{BRICOLAGE_ROOT}     = "NONE"; # no default
+        # multi system defaults
+        $CONFIG{BRICOLAGE_ROOT}     = "NONE"; # no default
 
-	# evaluated after BRICOLAGE_ROOT is set
-	$CONFIG{TEMP_DIR}         = '$CONFIG{BRICOLAGE_ROOT}/tmp';
-	$CONFIG{MODULE_DIR}       = '$CONFIG{BRICOLAGE_ROOT}/lib';
-	$CONFIG{BIN_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/bin';
-	$CONFIG{MAN_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/man';
-	$CONFIG{LOG_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/log';
-	$CONFIG{PID_FILE}         = '$CONFIG{BRICOLAGE_ROOT}/log/httpd.pid';
-	$CONFIG{MASON_COMP_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/comp';
-	$CONFIG{MASON_DATA_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/data';
+        # evaluated after BRICOLAGE_ROOT is set
+        $CONFIG{TEMP_DIR}         = '$CONFIG{BRICOLAGE_ROOT}/tmp';
+        $CONFIG{MODULE_DIR}       = '$CONFIG{BRICOLAGE_ROOT}/lib';
+        $CONFIG{BIN_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/bin';
+        $CONFIG{MAN_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/man';
+        $CONFIG{LOG_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/log';
+        $CONFIG{PID_FILE}         = '$CONFIG{BRICOLAGE_ROOT}/log/httpd.pid';
+        $CONFIG{MASON_COMP_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/comp';
+        $CONFIG{MASON_DATA_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/data';
       }
   }
 
@@ -136,16 +136,16 @@ sub confirm_settings {
 
 
   # make sure this directory doesn't already house a Bricolage install
-  if (-e $CONFIG{BRICOLAGE_ROOT} and 
+  if (-e $CONFIG{BRICOLAGE_ROOT} and
       -e catfile($CONFIG{BRICOLAGE_ROOT}, "conf", "bricolage.conf")) {
       print "That directory already contains a Bricolage installation.\n";
       exit 1 unless ask_yesno("Continue and overwrite existing installation? ".
-			      "[no] ", 0);
+                              "[no] ", 0);
   }
 
   # some prefs are based on BRICOLAGE_ROOT, need to eval them now
-  foreach (qw(TEMP_DIR MODULE_DIR BIN_DIR MAN_DIR LOG_DIR PID_FILE 
-	      MASON_COMP_ROOT MASON_DATA_ROOT)) {
+  foreach (qw(TEMP_DIR MODULE_DIR BIN_DIR MAN_DIR LOG_DIR PID_FILE
+              MASON_COMP_ROOT MASON_DATA_ROOT)) {
     $CONFIG{$_} = eval qq{"$CONFIG{$_}"};
   }
 
@@ -155,6 +155,8 @@ sub confirm_settings {
   ask_confirm("Man-Page Directory",        \$CONFIG{MAN_DIR});
   ask_confirm("Log Directory",             \$CONFIG{LOG_DIR});
   ask_confirm("PID File Location",         \$CONFIG{PID_FILE});
+  $CONFIG{PID_FILE} = catfile($CONFIG{PID_FILE}, 'httpd.pid')
+    if -d $CONFIG{PID_FILE};
   ask_confirm("Mason Component Directory", \$CONFIG{MASON_COMP_ROOT});
   ask_confirm("Mason Data Directory",      \$CONFIG{MASON_DATA_ROOT});
 }

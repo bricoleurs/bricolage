@@ -15,7 +15,6 @@ do_sql(q{ ALTER TABLE category ADD COLUMN uri VARCHAR(256) },
        q{ CREATE UNIQUE INDEX udx_category__uri ON category(uri) },
        q{ CREATE INDEX idx_category__lower_uri ON category(LOWER(uri)) },
        q{ CREATE INDEX idx_category__parent_id ON category(parent_id) },
-#       q{ CREATE INDEX fkx_subcat_grp__category ON category(category_grp_id) },
       );
 
 
@@ -33,13 +32,23 @@ sub update_kids {
   my ($id, $sp, $uri, $pid) = @_;
   my $get_grp = prepare("SELECT category_grp_id FROM category WHERE id=?");
   my $get_dir = prepare("SELECT directory FROM category WHERE id=?");
-  my ($dirname, $grp_id);
+  my $get_active = prepare("SELECT active FROM category WHERE id=?");
+  my ($dirname, $grp_id, $active);
+
+  # skip inactive categories since they may have duplicate URIs
+  execute($get_active, $id);
+  bind_columns($get_active, \$active);
+  fetch($get_active);
+  return unless $active;
 
   $uri =~ s!/$!!;
 
   execute($get_dir, $id);
   bind_columns($get_dir, \$dirname);
   while (fetch($get_dir)) {
+    # remove slashes in the dirname.  These are no longer allowed and
+    # mess up the generated URI.
+    $dirname =~ s/\///g;
     do_sql("UPDATE category SET uri='$uri/$dirname' WHERE id=$id");
     do_sql("UPDATE category SET parent_id=$pid WHERE id=$id");
   }
