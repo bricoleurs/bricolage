@@ -14,6 +14,15 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.4.2
+
+=head2 Bug Fixes
+
+=item *
+
+Can once again check out multiple assets at once. Thanks to Andrew Baio for
+the spot. [David]
+
 =head1 VERSION 1.4.1
 
 =head2 Bug Fixes
