@@ -75,6 +75,11 @@ When a template is deployed, Bricolage now checks to see if its file name has
 changed since it was last deployed, and if it has, it deletes the old
 file. Reported by Kevin Elliott. [David]
 
+=item *
+
+Optimized performance of Bric::Dist::Resource queries and wrote lots of tests
+for them. [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)
