@@ -157,7 +157,7 @@ my $update_parts = sub {
                 if ( $param->{"$widget|${id}-partial"} ) {
                     # The date is only partial. Send them back to to it again.
                     add_msg($lang->maketext("Invalid date value for [_1] field.",
-                                            "&quot;" . $_->get_name. "&quot;"));
+                                            "&quot;" . $t->get_name. "&quot;"));
                     set_state_data($widget, '__NO_SAVE__', 1);
                 } else {
                     # Truncate the value, if necessary, then set it.

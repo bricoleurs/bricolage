@@ -96,6 +96,11 @@ Arthur. [David]
 An upgrade script failure will now cause C<make upgrade> to halt installation
 so that any issues are immediately identified and correctable. [David]
 
+=item *
+
+An invalid date in a date element field no longer causes an error. Thanks to
+Arthur for the spot! [David]
+
 =back
 
 =head2 Bug Fixes
