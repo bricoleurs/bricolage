@@ -12,7 +12,7 @@ $Revision $
 
 =cut
 
-our $VERSION = substr(q$Revision 1.0$, 10, -1);
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =pod
 

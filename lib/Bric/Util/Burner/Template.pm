@@ -7,15 +7,15 @@ Bric::Util::Burner::Template - Bric::Util::Burner subclass to publish business a
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-19 21:37:36 $
+$Date: 2001-11-27 18:28:38 $
 
 =head1 SYNOPSIS
 

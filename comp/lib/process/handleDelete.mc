@@ -8,16 +8,15 @@ getList.mc - generate an array of hashes to be displayed by /widgets/listManager
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
-
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-20 00:04:05 $
+$Date: 2001-11-27 18:28:28 $
 
 =head1 SYNOPSIS
 

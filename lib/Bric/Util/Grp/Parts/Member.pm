@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-10-23 18:30:19 $
+$Date: 2001-11-27 18:28:39 $
 
 =head1 SYNOPSIS
 

@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.7 $, 10, -1);
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-19 21:37:36 $
+$Date: 2001-11-27 18:28:38 $
 
 =head1 SYNOPSIS
 
