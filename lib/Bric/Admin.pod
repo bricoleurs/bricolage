@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.96 $
+$Revision: 1.97 $
 
 =head1 DATE
 
-$Date: 2003-03-04 16:07:47 $
+$Date: 2003-03-04 17:13:07 $
 
 =head1 DESCRIPTION
 
@@ -160,7 +160,7 @@ START MODULE LIST
 
 =item Pod::Simple (optional)
 
-=item Test::Pod (optional)
+=item Test::Pod 0.95 (optional)
 
 =item Devel::Profiler 0.03 (optional)
 
