@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-10 21:39:29 $
+$Date: 2001-12-13 01:54:10 $
 
 =head1 SYNOPSIS
 
@@ -405,8 +405,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 6;
 
     # Error Page Setting.
-#    use constant ERROR_URI => '/errors/500.mc';
-    use constant ERROR_URI => '/errors/error.html';
+    use constant ERROR_URI => QA_MODE ? '/errors/error.html' : '/errors/500.mc';
 
     # Distribution Settings.
     use constant ENABLE_DIST => $config->{ENABLE_DIST};
