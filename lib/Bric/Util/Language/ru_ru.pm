@@ -703,7 +703,7 @@ our %Lexicon = (
   'Remaining' => 'Осталось',
   'Object Groups' => 'Группы объектов',
   '[_1] Site Categories' => '[_1] Категории сайта',
-  'You do not have permission to override user "[_1]"' => 'У вас нет прав обходить пользователя "[_1]"'
+  'You do not have permission to override user "[_1]"' => 'У вас нет прав обходить пользователя "[_1]"',
    '_AUTO' => 1,
 );
 
