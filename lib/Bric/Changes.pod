@@ -46,6 +46,12 @@ Documentation for C<< Bric::Biz::Workflow->list >> has been improved, and the
 method used for finding workflows and desks to put imported assets on in
 Bric::SOAP has been simplified. [David]
 
+=item *
+
+Added printing of a message regarding the filenames being processed by
+F<bric_soap>'s C<create> and C<update> commands when its C<--verbose> option
+is set. [David]
+
 =back
 
 =head1 VERSION 1.4.4
