@@ -79,7 +79,6 @@ templates) no longer prevent each other from being added to a desk that can
 contain different classes of assets. Thanks to Scott for the spot and doing
 the research that lead to the replication of the problem. [David]
 
-
 =back
 
 =head1 VERSION 1.6.7 (2003-10-22)
