@@ -325,6 +325,10 @@ attempt to publish a media or story document from that desk in the context of
 the template workflow, it will now properly publish the story or media
 document instead of throwing an error. Reported by Serge Sozonoff. [David]
 
+=item *
+
+Fixed previewing with multiple OCs. [Serge Sozonoff]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
