@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-02 19:00:29 $
+$Date: 2003-02-03 18:28:10 $
 
 =head1 SYNOPSIS
 
@@ -216,7 +216,7 @@ sub new {
     $self = $self->SUPER::new($init);
 
     # Add the start desk if passed.
-    $self->set_start_desk(ref $sd ? $sd->get_id : $sd) if $sd;
+    $self->set_start_desk($sd) if $sd;
 
     # Since this is a new object, set the dirty bit so it will be saved.
     $self->_set__dirty(1);
@@ -957,16 +957,13 @@ sub set_start_desk {
     my $self = shift;
     my ($val) = @_;
 
-    # Just grab an ID if they pass an object.
-    my $id = ref $val ? $val->get_id : $val;
+    # Grab an ID if they pass a desk object.
+    my ($id, $desk) = ref $val ? ($val->get_id, $val) : ($val);
 
     # Add desk to the required list.  Should do nothing if its already there.
-    $self->add_desk({'required' => [$id]});
+    $self->add_desk({ required => [$id] });
 
-    $self->_set(['head_desk_id'], [$id]);
-    $self->_set(['_head_desk_obj'], [undef]);
-
-    return $self;
+    $self->_set([qw(head_desk_id _head_desk_obj)], [$id, $desk])
 }
 
 sub is_start_desk {

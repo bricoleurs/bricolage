@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-02-03 18:07:51 $
+$Date: 2003-02-03 18:28:10 $
 
 
 =head1 SYNOPSIS
@@ -1116,8 +1116,10 @@ sub save {
         $asset_grp_obj->save;
 
         # Save the IDs if we have them.
-        if ($self->get_asset_grp != $asset_grp_obj->get_id) {
-            $self->_set(['asset_grp'], [$asset_grp_obj->get_id]);
+        my $ag = $self->get_asset_grp;
+        my $newagid = $asset_grp_obj->get_id;
+        if (! defined $ag or $ag != $newagid) {
+            $self->_set(['asset_grp'], [$newagid]);
         }
 
         if ($self->_get__dirty) {
