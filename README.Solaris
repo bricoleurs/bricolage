@@ -1,0 +1,37 @@
+Bricolage Solaris README
+========================
+
+Here are a few notes to help you successfully install Bricolage on Solaris:
+
+- Ensure the following packages are installed from sunfreeware:
+
+    gcc
+    binutils
+    gdbm
+    db3.3
+    strip
+
+- Make sure you add /usr/local/lib to your LD_LIBRARY_PATH setting before
+  doing ANYTHING.
+
+- The Bric CPAN Bundle won't work -- go through the INSTALL/Bric::Admin docs
+  and install the modules via CPAN one by one. There are a few you may have to
+  download and compile yourself -- these have differed from install to
+  install.
+
+- DB_File is a pain. To make it work, I had to create symlinks for
+
+    /usr/local/Berkeley.../include/db.h in /usr/include
+    /usr/local/Berkeley.../lib/libdb.a in /usr/local/lib
+
+  There's probably another way to do this. Copying the files also worked, but
+  setting LD_LIBRARY_PATH and various LIB settings didn't work for me.
+
+- When compiling mod_perl & apache on Solaris 9/Intel, make sure that
+  /usr/ccs/bin is in your PATH, and ahead of /usr/local/bin. If not, Apache
+  will compile, but you'll never get it to start the httpd daemon. (this cost
+  me hours and hours of troubleshooting)
+
+- When compiling Bricolage, remove /usr/ccs/bin from the PATH
+
+- Have lots of caffeine on hand!
