@@ -51,7 +51,7 @@ use Bric::Config qw(:char);
 use constant DEBUGGING => 0;
 
 do {
-    my @names = ('NameVirtualHost ' . NAME_VHOST . ':' . LISTEN_PORT);
+    my $names = 'NameVirtualHost ' . NAME_VHOST . ':' . LISTEN_PORT . "\n";
     # Set up the basic configuration.
     my @config = (
         '  DocumentRoot           ' . MASON_COMP_ROOT->[0][1],
@@ -148,7 +148,7 @@ do {
         # Turn on Perl warnings and run Apache::Status.
         push @config, '  PerlWarn               On';
         push @locs,
-          "  <Location /dist>\n" .
+          "  <Location /perl-status>\n" .
           "    SetHandler          perl-script\n" .
           "    PerlHandler         Apache::Status\n" .
           "    PerlAccessHandler   Apache::OK\n" .
@@ -178,14 +178,13 @@ do {
         }
     }
 
-    my @sections = (
+    my $config = join "\n",
         "<VirtualHost " . NAME_VHOST . ':' . LISTEN_PORT . ">",
           @config, @locs,
-        '</VirtualHost>'
-    );
+        '</VirtualHost>';
 
     if (SSL_ENABLE) {
-        push @names, 'NameVirtualHost ' . NAME_VHOST . ':' . SSL_PORT;
+        $names .=  'NameVirtualHost ' . NAME_VHOST . ':' . SSL_PORT . "\n";
         push @config,
             '  SSLCertificateFile     ' . SSL_CERTIFICATE_FILE,
             '  SSLCertificateKeyFile  ' . SSL_CERTIFICATE_KEY_FILE;
@@ -224,7 +223,7 @@ do {
               "  </IfModule>";
         }
 
-        push @sections,
+        $config .= join "\n", '',
           "<VirtualHost " . NAME_VHOST . ':' . SSL_PORT . ">",
             @config, @locs,
           '</VirtualHost>';
@@ -236,7 +235,7 @@ do {
         my $conffile = Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage',
                                                       'bric_httpd.conf');
         open CONF, ">$conffile" or die "Cannot open $conffile for output: $!\n";
-        print CONF $_, $/ for (@names, @sections);
+        print CONF $names, $config;
         close CONF;
 
         # Place Include directive in Apache's scope
@@ -245,7 +244,7 @@ do {
     } else {
         # place VirtualHost stuff in Apache's scope
         package Apache::ReadConfig;
-        our $PerlConfig = join "\n", @names, @sections;
+        our $PerlConfig = $names . $config;
     }
 };
 
