@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.24.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:48 $
+$Date: 2003-06-10 02:30:07 $
 
 =head1 SYNOPSIS
 
@@ -1564,8 +1564,8 @@ B<Notes:> NONE.
 
 sub _do_list {
     my ($pkg, $params, $ids, $href) = @_;
-    my $tables = $SEL_TABLES;
-    my $wheres = $SEL_WHERES;
+    my $tables = $pkg->SEL_TABLES;
+    my $wheres = $pkg->SEL_WHERES;
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id' or $k eq 'uri_case') {
@@ -1620,13 +1620,16 @@ sub _do_list {
         }
     }
 
-    my ($order, $props, $qry_cols) = ($SEL_ORDER, \@SEL_PROPS, \$SEL_COLS);
+    my @sel_props = $pkg->SEL_PROPS;
+    my $sel_cols = $pkg->SEL_COLS;
+    my $sel_order = $pkg->SEL_ORDER;
+    my ($order, $props, $qry_cols) = ($sel_order, \@sel_props, \$sel_cols);
     if ($ids) {
         $qry_cols = \'oc.id';
         $order = 'oc.id';
     } elsif ($params->{include_parent_id}) {
-        $qry_cols = \"$SEL_COLS, inc.id";
-        $props = [@SEL_PROPS, '_include_id'];
+        $qry_cols = \"$sel_cols, inc.id";
+        $props = [@sel_props, '_include_id'];
     } # Else nothing!
 
     # Assemble and prepare the query.
@@ -1647,6 +1650,7 @@ sub _do_list {
     bind_columns($sel, \@d[0..$#$props]);
     my $last = -1;
     $pkg = ref $pkg || $pkg;
+    my $grp_id_idx = $pkg->GRP_ID_IDX;
     while (fetch($sel)) {
         if ($d[0] != $last) {
             $last = $d[0];

@@ -157,6 +157,11 @@ directive to your F<httpd.conf>:
 The virtual FTP server no longer displays templates in subcategories of the
 current subcategory directory. Thanks to George Harrison for the spot! [David]
 
+=item *
+
+Output channel associations in story type and media type elements can now be
+deleted again. Thanks to Arthur Bergman for the spot! [David]
+
 =back
 
 =head1 VERSION 1.6.0

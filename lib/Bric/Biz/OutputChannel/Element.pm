@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel::Element - Maps Output Channels to Elements.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-24 06:50:13 $
+$Date: 2003-06-10 02:30:08 $
 
 =head1 SYNOPSIS
 
@@ -80,10 +80,10 @@ my @SEL_PROPS = (Bric::Biz::OutputChannel::SEL_PROPS(),
                  qw(_map_id element_id _enabled));
 my $SEL_TABLES = Bric::Biz::OutputChannel::SEL_TABLES() .
   ', element__output_channel eoc';
-my $SEL_WHERES = Bric::Biz::OutputChannel::SEL_WHERES() .
-  ' AND oc.id = eoc.output_channel__id AND eoc.element__id = ?';
-my $SEL_ORDER = Bric::Biz::OutputChannel::SEL_ORDER();
-my $GRP_ID_IDX = Bric::Biz::OutputChannel::GRP_ID_IDX();
+
+sub SEL_PROPS { @SEL_PROPS }
+sub SEL_COLS { $SEL_COLS }
+sub SEL_TABLES { $SEL_TABLES }
 
 ##############################################################################
 # Instance Fields
@@ -257,30 +257,37 @@ sub href {
     # HACK: Really there's too much going on here getting information from
     # the parent class. Perhaps one day we'll have a SQL factory class to
     # handle all this stuff, but this will have to do for now.
+    my $ord = $pkg->SEL_ORDER;
+    my $cols = $pkg->SEL_COLS;
+    my $tables = $pkg->SEL_TABLES;
+    my $wheres = $pkg->SEL_WHERES .
+      ' AND oc.id = eoc.output_channel__id AND eoc.element__id = ?';
     my $sel = prepare_c(qq{
-        SELECT $SEL_COLS
-        FROM   $SEL_TABLES
-        WHERE  $SEL_WHERES
-        ORDER BY $SEL_ORDER
+        SELECT $cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $ord
     }, undef, DEBUG);
 
     execute($sel, $params->{element_id});
     my (@d, %ocs, $grp_ids);
-    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my @sel_props = $pkg->SEL_PROPS;
+    bind_columns($sel, \@d[0..$#sel_props]);
     my $last = -1;
     $pkg = ref $pkg || $pkg;
+    my $grp_id_idx = $pkg->GRP_ID_IDX;
     while (fetch($sel)) {
         if ($d[0] != $last) {
             $last = $d[0];
             # Create a new server type object.
             my $self = $pkg->SUPER::new;
             # Get a reference to the array of group IDs.
-            $grp_ids = $d[$GRP_ID_IDX] = [$d[$GRP_ID_IDX]];
-            $self->_set(\@SEL_PROPS, \@d);
+            $grp_ids = $d[$grp_id_idx] = [$d[$grp_id_idx]];
+            $self->_set(\@sel_props, \@d);
             $self->_set__dirty; # Disables dirty flag.
             $ocs{$d[0]} = $self;
         } else {
-            push @$grp_ids, $d[$GRP_ID_IDX];
+            push @$grp_ids, $d[$grp_id_idx];
         }
     }
     # Return the objects.
