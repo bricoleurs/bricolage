@@ -6,16 +6,16 @@ Bric::Dist::Handler - Apache/mod_perl handler for executing distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:08 $
+$Date: 2004-03-02 15:43:40 $
 
 =head1 SYNOPSIS
 
@@ -27,9 +27,9 @@ $Date: 2004-01-13 16:39:08 $
 =head1 DESCRIPTION
 
 This module is a simple Apache/mod_perl handler for executing Bricolage distribution
-jobs. It responds to a request with the headers "execute" and/or expire, where
+jobs. It responds to a request with the headers "execute" and/or "expire", where
 the values are a comma-separated list of Bric::Util::Job IDs. Bric::Dist::Handler
-will instantiate and execute and/ore expire each of those jobs in turn. See
+will instantiate and execute and/or expire each of those jobs in turn. See
 Bric::Dist::Client for an interface to send those headers.
 
 =cut
