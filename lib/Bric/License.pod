@@ -231,6 +231,8 @@ Friends who have spotted bugs include:
 
 =item Alexander Ling
 
+=item Adeola Awoyemi
+
 =back
 
 Bricolage's translation team:
