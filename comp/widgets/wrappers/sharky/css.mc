@@ -38,6 +38,7 @@ my ( # my, hey, hey rock and roll is here to stay
     $orangeLinkBold,
     $redLink,
     $whiteLink,
+    $whiteUnderlinedLink,
     $whiteMedUnderlinedLink,
     $blackLink,
     $blackUnderlinedLink,
@@ -110,6 +111,7 @@ $darkBlueLink  = "{$fontFamily $fontSizeSmall color:#006666;}";
 $redLink       = "{$fontFamily $fontSizeSmall color:#993300; font-weight:bold}";
 $redLinkLarge  = "{$fontFamily $fontSizeMed   color:#993300; font-weight:bold}";
 $whiteLink     = "{$fontFamily $fontSizeSmall color:#ffffff; text-decoration:none}";
+$whiteUnderlinedLink     = "{$fontFamily $fontSizeSmall color:#ffffff;}";
 $whiteMedUnderlinedLink = "{$fontFamily $fontSizeMed color:#ffffff;}";
 $blackLink     = "{$fontFamily $fontSizeSmall color:#000000; text-decoration:none}";
 $blackMedUnderlinedLink = "{$fontFamily $fontSizeMed color:#006666;}";
@@ -161,6 +163,7 @@ TH         <% $header %>
 .redLink        <% $redLink %>
 .redLinkLarge   <% $redLinkLarge %>
 .whiteLink      <% $whiteLink %>
+.whiteUnderlinedLink      <% $whiteUnderlinedLink %>
 .blackLink      <% $blackLink %>
 .blackLinkBold  <% $blackLinkBold %>
 .whiteMedUnderlinedLink <% $whiteMedUnderlinedLink %>
@@ -209,11 +212,11 @@ TH         <% $header %>
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:35 $
+$Date: 2001-09-27 08:43:15 $
 
 =head1 SYNOPSIS
 
@@ -226,7 +229,10 @@ Generate platform specific stylesheets.
 =head1 LOG
 
 $Log: css.mc,v $
-Revision 1.1  2001-09-06 21:52:35  wheeler
-Initial revision
+Revision 1.2  2001-09-27 08:43:15  wheeler
+Added whiteUnderlinedLink style.
+
+Revision 1.1.1.1  2001/09/06 21:52:35  wheeler
+Upload to SourceForge.
 
 </%doc>
