@@ -9,28 +9,30 @@ use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
 
 
+# XXX: as far as I can tell, this is never used anywhere  ???
+
 # Try to match a custom select action.
-sub select-(.+) : Callback {          # XXX: callback subversion
-    my $method = $1;                  # XXX
+# sub select-(.+) : Callback {          # XXX: callback subversion
+#     my $method = $1;                  # XXX
 
-    my $self = shift;
-    my $value = $self->value;
-    my $ids = ref $value ? $value : [$value];
-    my $pkg = get_state_data(CLASS_KEY, 'pkg_name');
+#     my $self = shift;
+#     my $value = $self->value;
+#     my $ids = ref $value ? $value : [$value];
+#     my $pkg = get_state_data(CLASS_KEY, 'pkg_name');
 
-    foreach my $id (@$ids) {
-        my $obj = $pkg->lookup({'id' => $id});
-        if (chk_authz($obj, EDIT, 1)) {
-            $obj->$method;
-            $obj->save;
-        } else {
-            my $msg = "Permission to delete [_1] denied.";
-            my $name = defined($obj->get_name) ?
-              '&quot;' . $obj->get_name . '&quot' : 'Object';
-            add_msg($self->lang->maketext($msg, "$method $name"));
-        }
-    }
-}
+#     foreach my $id (@$ids) {
+#         my $obj = $pkg->lookup({'id' => $id});
+#         if (chk_authz($obj, EDIT, 1)) {
+#             $obj->$method;
+#             $obj->save;
+#         } else {
+#             my $msg = "Permission to delete [_1] denied.";
+#             my $name = defined($obj->get_name) ?
+#               '&quot;' . $obj->get_name . '&quot' : 'Object';
+#             add_msg($self->lang->maketext($msg, "$method $name"));
+#         }
+#     }
+# }
 
 sub delete : Callback {
     my $self = shift;
@@ -78,23 +80,21 @@ sub deactivate : Callback {
 
 sub sortBy : Callback {
     my $self = shift;
-    my $param = $self->request_args;
-    my $field = $self->trigger_key;
+    my $value = $self->value;
 
     # Leading '-' means reverse the sort
-    if ($param->{$field} =~ s/^-//) {
+    if ($value =~ s/^-//) {
         set_state_data('listManager', 'sortOrder', 'reverse');
     } else {
         set_state_data('listManager', 'sortOrder', '');
     }
-    set_state_data('listManager', 'sortBy', $param->{$field});
+    set_state_data('listManager', 'sortBy', $value);
 }
 
 # set offset from beginning record in @sort_objs at which array slice begins
 sub set_offset : Callback {
-    my $self = shift;
     set_state_data(CLASS_KEY, 'pagination', 1);
-    set_state_data(CLASS_KEY, 'offset', $self->value);
+    set_state_data(CLASS_KEY, 'offset', $_[0]->value);
 }
 
 # call back to display all results
