@@ -102,6 +102,11 @@ running C<make upgrade>, instead. Suggested by Bruce Albrecht. [David]
 The list manager now sorts version numbers as numbers rather than strings.
 [JoE<atilde>o Pedro]
 
+=item *
+
+The media type profile again allows extensions to be added and removed.
+Reported by Tobias. [David]
+
 =back
 
 =head1 VERSION 1.6.1
