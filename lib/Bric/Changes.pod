@@ -16,6 +16,18 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.6.6 ()
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added F<README.Solaris>, with thanks to Oscar Sodani.
+
+=back
+
+=head2 Bug Fixes
+
 =over 4
 
 =item *
