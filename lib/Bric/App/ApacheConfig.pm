@@ -45,7 +45,12 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 =cut
 
-1;
+# start Apache::DB if we're debugging.  This is done here so that
+# modules loaded below will get debugging symbols.
+if(Apache->define('BRICOLAGE_DEBUG')) {
+  require Apache::DB;
+  Apache::DB->init;
+}
 
 package Apache::ReadConfig;
 use strict;
@@ -72,6 +77,10 @@ do {
 		   RedirectMatch      =>
 		     'permanent .*\/favicon\.ico$ /media/images/favicon.ico'
     );
+
+    # are we debugging?  If so, insert Apache::DB fixup handler to
+    # trigger debugger.
+    $config{PerlFixupHandler} = 'Apache::DB' if Apache->define('BRICOLAGE_DEBUG');
 
     if (PREVIEW_LOCAL) {
 	# This will slow down every request; thus we recommend that previews

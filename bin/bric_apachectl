@@ -15,12 +15,15 @@ bric_apachectl
 
    bric_apachectl restart
 
+   bric_apachectl debug
+
 =head1 DESCRIPTION
 
 This script controls the Bricolage Apache server. The usage of the script is the
 same as the normal apache "apachectl" script but only "start", "stop" and
 "restart" are supported. Also, "restart" performs a hard stop and start since a
-SIGHUP isn't enough for mod_perl.
+SIGHUP isn't enough for mod_perl.  The "debug" command starts the server under 
+the Perl debugger - see L<Bric::Hacker|Bric::Hacker> for details.
 
 Usage information can be obtained by running the script with no arguments.
 
@@ -164,15 +167,33 @@ if ($command eq 'restart') {
     }
 }
 
+if ($command eq 'debug') {
+    if ($running) {
+	print "bric_apachectl $command: httpd (pid $pid) already running\n";
+	exit;
+    }
+
+    # clear the cache before starting the server to avoid stale cache data
+    require Bric::App::Cache;
+    Bric::App::Cache->clear();
+
+    print "bric_apachectl $command: starting httpd -X\n";    
+
+    # use exec since with -X this command won't return till the server
+    # is killed.
+    exec "$httpd -X -D BRICOLAGE_DEBUG";
+}
+
 usage();
 
 sub usage {
   print <<END;
-usage: bric_apachectl (start|stop|restart)
+usage: bric_apachectl (start|stop|restart|debug)
 
 start      - start httpd
 stop       - stop httpd
 restart    - restart httpd if running
+debug      - start httpd in the debugger
 
 END
 

@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-05-01 02:16:37 $
+$Date: 2002-05-03 20:05:45 $
 
 =head1 DESCRIPTION
 
@@ -123,6 +123,17 @@ display a bunch of useful data the bottom of every page including
 session state, cache state, cookies and CGI args.  Also, QA_MODE turns
 on PerlWarn (use warnings) and causes error messages to include more
 information.
+
+=item *
+
+Run Bricolage under the Perl debugger using the debug command with
+bric_apachectl:
+
+   bric_apachectl debug
+
+This will start Apache in single-process mode ("httpd -X") and setup
+Apache::DB to start the debugger on the each hit to the server.
+You'll need to install the Apache::DB Perl module to use this command.
 
 =item *
 
