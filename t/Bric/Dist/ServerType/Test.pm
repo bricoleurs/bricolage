@@ -14,11 +14,12 @@ sub _test_load : Test(1) {
 ##############################################################################
 # Test the constructor.
 ##############################################################################
-sub test_const : Test(9) {
+sub test_const : Test(10) {
     my $self = shift;
-    my $args = { name => 'Bogus',
+    my $args = { name        => 'Bogus',
                  description => 'Bogus ServerType',
-                 move_method => 'File System'
+                 move_method => 'File System',
+                 site_id     => 100,
                };
 
     ok ( my $st = Bric::Dist::ServerType->new($args), "Test construtor" );
@@ -26,6 +27,7 @@ sub test_const : Test(9) {
     is( $st->get_name, $args->{name}, "Name is '$args->{name}'" );
     is( $st->get_description, $args->{description},
         "Description is '$args->{description}'" );
+    is( $st->get_site_id, 100, "Check site ID is '$args->{site_id}'" );
     is( $st->get_move_method, $args->{move_method},
         "Move method is '$args->{move_method}'" );
     ok( $st->is_active, "Check that it's activated" );

@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.18.2.1 $
+$Revision: 1.18.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-10 19:23:14 $
+$Date: 2003-03-11 00:47:48 $
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,8 @@ $Date: 2003-03-10 19:23:14 $
   $st = $st->set_description($description);
   my $move_method = $st->get_move_method;
   $st = $st->set_move_method($move_method);
-
+  my $site_id = $st->get_site_id;
+  $st = $st->set_site_id($site_id);
   print "ST is ", $st->can_copy ? '' : 'not ', "copyable.\n";
   $st->copy;
   $st->no_copy;
@@ -245,9 +246,9 @@ sub new {
 =item my $st = Bric::Dist::ServerType->lookup({ name => $name, site_id => $site_id })
 
 Looks up and instantiates a new Bric::Dist::ServerType object based on the
-Bric::Dist::ServerType object ID or name and site ID passed. If C<$id> or 
-C<$name> and C<$site_id> is not found in the database, C<lookup()> 
-returns C<undef>.
+Bric::Dist::ServerType object ID or name and site ID passed. If C<$id> or
+C<$name> and C<$site_id> is not found in the database, C<lookup()> returns
+C<undef>.
 
 B<Throws:>
 

@@ -299,7 +299,7 @@ my $def = {
                                constrain => { active => 1 },
                                select => $sel_sub,
                              },
-	   output_channel => { list_fields => [qw(name description)],
+	   output_channel => { list_fields => [qw(name site description)],
 			       srch_field => 'name',
 			       behavior => 'narrow',
 	                       constrain => {active => 1},
@@ -332,8 +332,7 @@ my $def = {
 			       srch_field => 'lname',
 			       constrain => {no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID},
 			       select => $sel_sub },
-	   category       => { list_fields => [qw(uri site_id name)],
-                               alter => { site_id => $site_name },
+	   category       => { list_fields => [qw(uri site name)],
 			       behavior => 'expand',
 			       srch_field => 'uri',
 			       constrain => {},
@@ -347,7 +346,7 @@ my $def = {
 			       },
 			       constrain => {},
 			       select => $sel_sub },
-	   dest           => { list_fields => [qw(name description publish preview)],
+	   dest           => { list_fields => [qw(name site description publish preview)],
 			       behavior => 'narrow',
 			       srch_field => 'name',
 			       constrain => { active => 1 },
@@ -378,11 +377,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.22.2.3 $
+$Revision: 1.22.2.4 $
 
 =head1 DATE
 
-$Date: 2003-03-08 04:11:36 $
+$Date: 2003-03-11 00:47:47 $
 
 =head1 SYNOPSIS
 
