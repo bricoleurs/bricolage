@@ -7,15 +7,15 @@ package Bric::Util::Grp::Asset;
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.5.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.5.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:47 $
+$Date: 2002-02-27 00:42:48 $
 
 =head1 SYNOPSIS
 
@@ -94,7 +94,9 @@ use base qw( Bric::Util::Grp );
 use constant STORY_PKG  => 'Bric::Biz::Asset::Business::Story';
 use constant MEDIA_PKG  => 'Bric::Biz::Asset::Business::Media';
 use constant FORMAT_PKG => 'Bric::Biz::Asset::Formatting';
+use constant AUDIO_PKG => 'Bric::Biz::Asset::Business::Media::Audio';
 use constant IMAGE_PKG => 'Bric::Biz::Asset::Business::Media::Image';
+use constant VIDEO_PKG => 'Bric::Biz::Asset::Business::Media::Video';
 use constant CLASS_ID => 43;
 
 #==============================================================================#
@@ -273,7 +275,9 @@ sub get_supported_classes {
     return { &STORY_PKG  => 'story',
 	     &MEDIA_PKG  => 'media',
 	     &FORMAT_PKG => 'formatting',
+	     &AUDIO_PKG => 'audio'
 	     &IMAGE_PKG => 'media'
+	     &VIDEO_PKG => 'video'
 	   }
 }
 
