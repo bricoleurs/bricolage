@@ -155,6 +155,8 @@ Folks who have submitted patches include:
 
 =item Thorston Biel
 
+=item Dave Rolsky
+
 =back
 
 Friends who have spotted bugs include:

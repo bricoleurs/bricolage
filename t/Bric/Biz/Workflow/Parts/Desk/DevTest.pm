@@ -189,7 +189,7 @@ sub test_save : Test(8) {
 
 ##############################################################################
 # Make sure that we can put different assets on a desk and get them back.
-sub test_assets : Test(16) {
+sub test_assets : Test(31) {
     my $self = shift;
     ok( my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
         ({ id => $edit_desk_id }),
@@ -208,6 +208,19 @@ sub test_assets : Test(16) {
     is( scalar keys %$assets, 1, "Check for one type of asset" );
     is( scalar @{$assets->{story}}, 1, "Check for one story asset" );
 
+    # Create another story and put it on the desk.
+    ok( $s = Bric::Biz::Asset::Business::Story::DevTest->construct,
+        "Create another new story" );
+    ok( $s->save, "Save new story" );
+    $self->add_del_ids($s->get_id, 'story');
+    ok( $desk->accept({ asset => $s }), "Check new story into desk" );
+    ok( $desk->save, "Save desk again" );
+
+    # Check the assets again.
+    ok( $assets = $desk->get_assets_href, "Get assets href 2" );
+    is( scalar keys %$assets, 1, "Check for one type of asset 2" );
+    is( scalar @{$assets->{story}}, 2, "Check for two story assets" );
+
     # Create a media and put it on the desk.
     ok( my $m = Bric::Biz::Asset::Business::Media::DevTest->construct,
         "Create new media" );
@@ -219,8 +232,22 @@ sub test_assets : Test(16) {
     # Check the assets again.
     ok( $assets = $desk->get_assets_href, "Get assets href again" );
     is( scalar keys %$assets, 2, "Check for two types of asset" );
-    is( scalar @{$assets->{story}}, 1, "Check for one story asset" );
+    is( scalar @{$assets->{story}}, 2, "Check for two story assets" );
     is( scalar @{$assets->{media}}, 1, "Check for one media asset" );
+
+    # Create another media and put it on the desk.
+    ok( $m = Bric::Biz::Asset::Business::Media::DevTest->construct,
+        "Create another new media" );
+    ok( $m->save, "Save new media" );
+    $self->add_del_ids($m->get_id, 'media');
+    ok( $desk->accept({ asset => $m }), "Check new media into desk" );
+    ok( $desk->save, "Save desk" );
+
+    # Check the assets again.
+    ok( $assets = $desk->get_assets_href, "Get assets href again" );
+    is( scalar keys %$assets, 2, "Check for two types of asset" );
+    is( scalar @{$assets->{story}}, 2, "Check for two story assets" );
+    is( scalar @{$assets->{media}}, 2, "Check for two media assets" );
 }
 
 1;
