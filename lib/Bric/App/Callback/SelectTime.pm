@@ -19,7 +19,7 @@ my ($is_clear_state);
 
 sub refresh : Callback(priority => 0) {
     my $self = shift;
-    my $param = self->request_args;
+    my $param = $self->request_args;
     return if $is_clear_state->($self);
 
     # There might be many time widgets on this page.
