@@ -34,7 +34,8 @@ sub save : Callback {
     } else {
         my $source_id = $param->{"${type}_id"};
         # Make sure the name isn't already in use.
-        my @sources = $class->list_ids({ source_name => $param->{source_name} });
+        my @sources = $class->list_ids({ source_name => $param->{source_name},
+                                         all         => 1});
         if (@sources > 1) {
             $used = 1;
         } elsif (@sources == 1 && !defined $source_id) {
