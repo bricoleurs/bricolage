@@ -46,14 +46,47 @@ dnl notice of this special exception to the GPL from your
 dnl modified version. 
 
 
-dnl @synopsis AC_PROG_PERL()
+dnl @synopsis AC_PROG_PERL(VAR[, VERSION]])
 dnl 
 dnl A cheap quickie version of a perl macro.  
 dnl
 dnl @author Mark Jaroski <mark@geekhive.net>
 AC_DEFUN([AC_PROG_PERL],[
-  AC_PATH_PROG(PERL, perl)  
+  AC_PATH_PROG($1, perl)  
+  #
+  # Collect perl version number. If for nothing else, this
+  # guaranties that perl is a working perl executable.
+  #
+  changequote(<<, >>)dnl
+  PERL_VERSION=`${$1} -v | grep 'This is perl' | sed -e 's;.* v\([0-9\.][0-9\.]*\).*;\1;'`
+  changequote([, ])dnl
+  if test -z "$PERL_VERSION" ; then
+      AC_MSG_ERROR("could not determine perl version number");
+  fi
+  changequote(<<, >>)dnl
+  PERL_MAJOR=`expr $PERL_VERSION : '\([0-9]*\)'`
+  PERL_MINOR=`expr $PERL_VERSION : "$PERL_MAJOR.\([0-9]*\)"`
+  PERL_SUBMINOR=`expr $PERL_VERSION : "$PERL_MAJOR.$PERL_MINOR.\([0-9]*\)"`
+  changequote([, ])dnl
+  #
+  # Check that perl version matches requested version or above
+  #
+  if test -n "$2" ; then
+    AC_MSG_CHECKING(perl version >= $2)
+    changequote(<<, >>)dnl
+    PERL_REQUEST_MAJOR=`expr $2 : '\([0-9]*\)'`
+    PERL_REQUEST_MINOR=`expr $2 : "$PERL_REQUEST_MAJOR.\([0-9]*\)"`
+    PERL_REQUEST_SUBMINOR=`expr $2 : "$PERL_REQUEST_MAJOR.$PERL_REQUEST_MINOR.\([0-9]*\)"`
+    changequote([, ])dnl
+    if test "$PERL_MAJOR" -lt "$PERL_REQUEST_MAJOR" -o "$PERL_MINOR" -lt "$PERL_REQUEST_MINOR" -o "$PERL_SUBMINOR" -lt "$PERL_REQUEST_SUBMINOR" ; then
+      AC_MSG_RESULT(no)
+      AC_MSG_ERROR(perl version is $PERL_VERSION)
+    else
+      AC_MSG_RESULT(yes)
+    fi
+  fi
 ])
+
 
 
 dnl @synopsis CHECK_CPAN_MODULE{VARIABLE, Module::Name [,Version [,PathToPerl]]}
@@ -64,15 +97,15 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.6 2001-12-20 16:58:24 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.7 2001-12-21 11:38:31 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
- AC_MSG_CHECKING(for CPAN module $2)
+ AC_MSG_CHECKING(for CPAN module $2 $3)
  #
  # use perl itself to check for the module
  #
- if perl -e "use $2" 2>/dev/null ;then
+ if perl -e "use $2 $3" 2>/dev/null ;then
     AC_MSG_RESULT(yes)
  else
     AC_MSG_RESULT(no)
@@ -86,7 +119,6 @@ AC_DEFUN([CHECK_CPAN_MODULE],[
 ])
 
 
-
 dnl @synopsis AC_PROG_POSTGRES{VARIABLE, [version]}
 dnl
 dnl This macro searches for an installation of PostgreSQL
@@ -94,7 +126,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.6 2001-12-20 16:58:24 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.7 2001-12-21 11:38:31 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -148,7 +180,7 @@ AC_DEFUN([AC_PROG_POSTGRES],[
  fi
  #
  # Collect postgres version number. If for nothing else, this
- # guaranties that httpd is a working postgres executable.
+ # guaranties that postgres is a working postgres executable.
  #
  changequote(<<, >>)dnl
  POSTGRES_VERSION=`$PG_CONFIG --version | grep 'PostgreSQL' | sed -e 's;.*PostgreSQL \([0-9\.][0-9\.]*\).*;\1;'`
@@ -162,14 +194,14 @@ AC_DEFUN([AC_PROG_POSTGRES],[
  POSTGRES_SUBMINOR=`expr $POSTGRES_VERSION : "$POSTGRES_MAJOR.$POSTGRES_MINOR.\([0-9]*\)"`
  changequote([, ])dnl
  #
- # Check that apache version matches requested version or above
+ # Check that postgres version matches requested version or above
  #
  if test -n "$2" ; then
    AC_MSG_CHECKING(postgres version >= $2)
    changequote(<<, >>)dnl
-   POSTGRES_REQUEST_MAJOR=`expr $POSTGRES_VERSION : '\([0-9]*\)'`
-   POSTGRES_REQUEST_MINOR=`expr $POSTGRES_VERSION : "$POSTGRES_MAJOR.\([0-9]*\)"`
-   POSTGRES_REQUEST_SUBMINOR=`expr $POSTGRES_VERSION : "$POSTGRES_MAJOR.$POSTGRES_MINOR.\([0-9]*\)"`
+   POSTGRES_REQUEST_MAJOR=`expr $2 : '\([0-9]*\)'`
+   POSTGRES_REQUEST_MINOR=`expr $2 : "$POSTGRES_REQUEST_MAJOR.\([0-9]*\)"`
+   POSTGRES_REQUEST_SUBMINOR=`expr $2 : "$POSTGRES_REQUEST_MAJOR.$POSTGRES_REQUEST_MINOR.\([0-9]*\)"`
    changequote([, ])dnl
    if test "$POSTGRES_MAJOR" -lt "$POSTGRES_REQUEST_MAJOR" -o "$POSTGRES_MINOR" -lt "$POSTGRES_REQUEST_MINOR" -o "$POSTGRES_SUBMINOR" -lt "$POSTGRES_REQUEST_SUBMINOR" ; then
      AC_MSG_RESULT(no)
@@ -229,11 +261,11 @@ AC_DEFUN([AC_PROG_APACHE],
     # If not specified by caller, search in standard places
     #
     if test -z "$APACHE" ; then
+      # original for non-Debian systems
+      AC_PATH_PROG(APACHE, httpd, , /usr/local/apache/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin)
       # added for Debian compatibility
       AC_PATH_PROG(APACHE, apache-perl, , /usr/local/apache/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin)
       AC_PATH_PROG(APACHE, apache, , /usr/local/apache/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin)
-      # original for non-Debian systems
-      AC_PATH_PROG(APACHE, httpd, , /usr/local/apache/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin)
     fi
     AC_SUBST(APACHE)
     if test -z "$APACHE" ; then

@@ -42,7 +42,7 @@ APACHE_USER =
 APACHE_GROUP = 
 
 # A list of any missing modules
-MISSING_MODULES = 
+MISSING_MODULES = Devel::Symdump Apache::libapreq
 MODULE_COMMAND = $(foreach mod,${MISSING_MODULES},${PERL} -MCPAN -e "install ${mod}" ;)
 
 
