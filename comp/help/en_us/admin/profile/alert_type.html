@@ -44,9 +44,9 @@ make it inactive.</dd>
 <dt>Rules</dt>
 <dd>Rules must be determined to be true for an event in order
     for it to trigger an alert. A rule compares data related
-    to the event (the "attribute) to a value that you enter.
-    (One thing to note here is that "Trig" is short for
-    "Triggerer", that is the user who triggered the event.)
+    to the event (the &quot;attribute&quot;) to a value that you enter.
+    (One thing to note here is that &quot;Trig&quot; is short for
+    &quot;Triggerer&quot;, that is the user who triggered the event.)
     Comparisons are case-insensitive (it doesn't matter if you
     enter upper or lower case letters) and use one of a number
     of operators to compare the value:
@@ -55,10 +55,10 @@ make it inactive.</dd>
 
     <dt>=</dt>
     <dd>Equal. This will probably be the most-frequently used operator.
-        It is true if the value <b>exactly</b> matches the event data.</dd>
+        It is true if the value <strong>exactly</strong> matches the event data.</dd>
 
     <dt>&lt;&gt;</dt>
-    <dd>Not equal. It is true if the value does not <b>exactly</b>
+    <dd>Not equal. It is true if the value does not <strong>exactly</strong>
         match the event data.</dd>
 
     <dt>&gt;</dt>
@@ -76,34 +76,33 @@ make it inactive.</dd>
     <dt>=~</dt>
     <dd>Match against a Perl regular expression. Explaining regular
         expressions is outside the scope of this documentation, but
-        here we give a few examples.
+        here are a few examples:
 
         <dl>
 
         <dt>Partially match a value</dt>
-        <dd>Whereas using 'Equal' above matches the value exactly, if you
-        enter something here it will match <b>anywhere</b> within the string.
-        For example, a value of "Spain" would match "Barcelona, Spain".</dd>
+        <dd>Whereas using &quot;=&quot; above matches the value exactly, if you
+        enter something here it will match <strong>anywhere</strong> within the string.
+        For example, a value of <code>Spain</code> would match &quot;Barcelona, Spain&quot;.</dd>
 
         <dt>Match one of several values</dt>
-        <dd>You can enclose several values
-        in parentheses and separate them by '|', and this will match
-        <b>any</b> of those values. For example, (Spain|France|England)
+        <dd>You can separate several values by '|', and this will match
+        <strong>any</strong> of those values. For example, <code>Spain|France|England</code>
         would match any of those three countries. Note that to require
-        that <b>all</b> of those values match, you would use three separate
-        'Equals' rules.</dd>
+        that <strong>all</strong> of those values match, you would use three separate
+        &quot;=&quot; rules.</dd>
 
         <dt>A fuzzy value</dt>
         <dd>Say you wanted to match
-        either "Paris, France" or "Paratroopers in France". You could
-        use this value: "Par.*France". The '.' means any character, and
+        either &quot;Paris, France&quot; or &quot;Paratroopers in France&quot;. You could
+        use this value: <code>Par.*France</cdoe>. The '.' means any character, and
         following it by a '*' means to match any number of characters.</dd>
 
         </dl>
     </dd>
 
     <dt>!~</dt>
-    <dd>Don't match a Perl regular expression. This is the opposite of '=~'.</dd>
+    <dd>Don't match a Perl regular expression. This is the opposite of &quot;=~&quot;.</dd>
 
     </dl>
 </dd>
@@ -114,20 +113,20 @@ be the subject of the email, and the message is the body of the email.
 You can enter whatever you want into the text fields, but by using the
 select menus you can add event-specific information. There is a menu
 for each field, and they are provided for convenience in inserting
-"variables" into the fields. Whenever you select an item from the
+&quot;variables&quot; into the fields. Whenever you select an item from the
 menu, it automatically goes into the field. The values in the menu
-correspond to the "attributes" in the Rules section above. You don't
+correspond to the &quot;attributes&quot; in the Rules section above. You don't
 even have to use the menus; you can just enter the variable directly
-into the field. Note that dollar signs ($) are special because they
+into the field. Note that dollar signs (<code>$</code>) are special because they
 indicate variables, so to include a literal dollar sign you have to
-precede it with a backslash, like "Cost: \$500".</dd>
+precede it with a backslash, like <code>Cost: \$500</code>.</dd>
 
 <dt>Recipients</dt>
 <dd>Recipients are those users who will receive this alert.
-There are three types of "contact" that can be sent emails:
+There are three types of &quot;contact&quot; that can be sent emails:
 Primary Email, Secondary Email, and Pager Email. Note especially
 that you set these values in the User Profile, where user accounts
-are edited. If you select a recipient to receive an event, but there
+are edited. If you select a recipient to receive an event, but the
 user doesn't have the contact information entered in their User Profile,
 they won't receive the event. Users with multiple addresses will
 be sent alerts to each of those addresses.</dd>
@@ -137,9 +136,9 @@ be sent alerts to each of those addresses.</dd>
 
 <p>When you are done, click the Save button at the bottom, or Cancel
 to discard your changes. To delete the Alert Type, check the
-"Delete this Profile" button and click Save.</p>
+&quot;Delete this Profile&quot; button and click Save.</p>
 
 <p>For more information on Alerts, see
-   <a href="http://bricolage.cc/docs/Bric/Alert.html">Bric::Alert</a>.</p>
+   <a href="http://bricolage.cc/docs/Bric/Alert.html" onclick="var newWin = window.open('http://bricolage.cc/docs/Bric/Alert.html'); newWin.focus(true); return false;">Bric::Alert</a>.</p>
 
 </help>
