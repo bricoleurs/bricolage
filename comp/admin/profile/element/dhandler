@@ -64,7 +64,7 @@ if (defined $id) {
                           no_persist => 1,
                           name   => "formBuilder|primary_oc_site${siteid}_cb",
                           useTable => 0,
-                          selected => $comp->get_primary_oc_id,
+                          selected => $comp->get_primary_oc_id($siteid),
                          );
             }
 
@@ -108,18 +108,9 @@ if (defined $id) {
 
         # Manage Output Channels if this is a top-level container.
 
-        my $primid = $comp->get_primary_oc_id;
         my $oc_sub = sub {
             my $ocid = $_[0]->get_id;
-            if ($_[1] eq 'primary') {
-                # Output a hidden field for this included OC.
-                $m->scomp('/widgets/profile/radio.mc',
-                          name => 'primary_oc_id',
-                          value => $ocid,
-                          checked => $ocid == $primid,
-                          useTable => 0
-                         );
-            } elsif ($_[1] eq 'enabled') {
+            if ($_[1] eq 'enabled') {
                 $m->scomp('/widgets/profile/checkbox.mc',
                           name => 'enabled',
                           value => $ocid,
@@ -130,7 +121,7 @@ if (defined $id) {
         };
 
         $sel_sub = sub {
-            return if $_[0]->get_id == $primid;
+            return if $_[0]->get_id == $comp->get_primary_oc_id($_[0]->get_site_id);
             return ['Delete', 'rem_oc'];
         };
 
@@ -141,8 +132,8 @@ if (defined $id) {
                  title => 'Output Channels',
                  objs => scalar $comp->get_output_channels,
                  addition => undef,
-                 fields => [qw(name description site enabled primary)],
-                 field_titles => { primary => 'Primary', enabled => 'Enabled' },
+                 fields => [qw(name description site enabled)],
+                 field_titles => { enabled => 'Enabled' },
                  field_values => $oc_sub,
                  profile => undef,
                  select => $sel_sub,
@@ -312,11 +303,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2003-03-12 17:24:49 $
+$Date: 2003-03-13 11:28:51 $
 
 =head1 DESCRIPTION
 
