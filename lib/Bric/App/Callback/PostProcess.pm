@@ -6,7 +6,7 @@ package Bric::App::Callback::PostProcess;
 
 use strict;
 use base qw(Bric::App::Callback);
-use Bric::App::Util qw(:history del_redirect);
+use Bric::App::Util qw(:history);
 use constant CLASS_KEY => 'post_process';
 __PACKAGE__->register_subclass;
 
