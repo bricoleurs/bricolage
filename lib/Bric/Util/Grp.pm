@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.39.2.4 $
+$Revision: 1.39.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-21 23:14:38 $
+$Date: 2003-08-08 20:18:35 $
 
 =head1 SYNOPSIS
 
@@ -235,6 +235,7 @@ sub new {
     $self = bless {}, $self unless ref $self;
     $init->{_active} = exists $init->{active} ? 0 : 1;
     $init->{permanent} = exists $init->{permanent} ? 1 : 0;
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $self->_set({ secret   => $self->get_secret,
                   class_id => $self->get_class_id });
     # pass the defined initial state to the super's new method

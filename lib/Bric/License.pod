@@ -203,6 +203,8 @@ Friends who have spotted bugs include:
 
 =item Tobias Kremer
 
+=item Kevin Elliott
+
 =back
 
 Bricolage's translation team:

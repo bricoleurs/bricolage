@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.44.4.1 $
+$Revision: 1.44.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.44.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-20 17:14:29 $
+$Date: 2003-08-08 20:18:34 $
 
 =head1 SYNOPSIS
 
@@ -208,6 +208,7 @@ NONE
 sub new {
     my ($pkg, $init) = @_;
     $init->{_active} = 1;
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $pkg->SUPER::new($init);
 }
 

@@ -46,6 +46,11 @@ Updated Bric::Admin (F<INSTALL> to instruct users encountering installation
 problems to first check the list archives and post to the mailing list before
 filing a bug. [Cinly Ooi]
 
+=item *
+
+Permissions granted on the "All" groups work again. Reported by Kevin Elliott.
+[David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

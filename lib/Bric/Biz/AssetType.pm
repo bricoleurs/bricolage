@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.34.2.3 $
+$Revision: 1.34.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-11 01:22:59 $
+$Date: 2003-08-08 20:18:34 $
 
 =head1 SYNOPSIS
 
@@ -269,13 +269,14 @@ B<Notes:> NONE.
 
 sub new {
     my ($class, $init) = @_;
-
     my $self = bless {}, ref $class || $class;
-
     $init->{_active} = 1;
 
     # Set reference unless explicitly set.
     $init->{reference} = $init->{reference} ? 1 : 0;
+
+    # Set the instance group ID.
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
 
     $self->SUPER::new($init);
 

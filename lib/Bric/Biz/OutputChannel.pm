@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.24.4.1 $
+$Revision: 1.24.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-10 02:30:07 $
+$Date: 2003-08-08 20:18:34 $
 
 =head1 SYNOPSIS
 
@@ -259,32 +259,33 @@ B<Notes:> NONE.
 =cut
 
 sub new {
-        my ($class, $init) = @_;
-        # Set active attribute.
-        $init->{_active} = exists $init->{active}
-          ? delete $init->{active} : 1;
+    my ($class, $init) = @_;
+    # Set active attribute.
+    $init->{_active} = exists $init->{active}
+      ? delete $init->{active} : 1;
 
-        # Set file naming attributes.
-        $init->{filename} ||= DEFAULT_FILENAME;
-        $init->{file_ext} ||= DEFAULT_FILE_EXT;
+    # Set file naming attributes.
+    $init->{filename} ||= DEFAULT_FILENAME;
+    $init->{file_ext} ||= DEFAULT_FILE_EXT;
 
-        # Set URI formatting attributes.
-        $init->{uri_format} = $init->{uri_format} ?
-          $parse_uri_format->($class->my_meths->{uri_format}{disp},
-                              $init->{uri_format})
-          : DEFAULT_URI_FORMAT;
-        $init->{fixed_uri_format} = $init->{fixed_uri_format} ?
-          $parse_uri_format->($class->my_meths->{fixed_uri_format}{disp},
-                              $init->{fixed_uri_format})
-          : DEFAULT_FIXED_URI_FORMAT;
+    # Set URI formatting attributes.
+    $init->{uri_format} = $init->{uri_format} ?
+      $parse_uri_format->($class->my_meths->{uri_format}{disp},
+                          $init->{uri_format})
+      : DEFAULT_URI_FORMAT;
+    $init->{fixed_uri_format} = $init->{fixed_uri_format} ?
+      $parse_uri_format->($class->my_meths->{fixed_uri_format}{disp},
+                          $init->{fixed_uri_format})
+      : DEFAULT_FIXED_URI_FORMAT;
 
-        # Set URI case and use slug attributes.
-        $init->{uri_case} ||= DEFAULT_URI_CASE;
-        $init->{_use_slug} = exists $init->{use_slug} && $init->{use_slug}
-          ? 1 : 0;
+    # Set URI case and use slug attributes.
+    $init->{uri_case} ||= DEFAULT_URI_CASE;
+    $init->{_use_slug} = exists $init->{use_slug} && $init->{use_slug}
+      ? 1 : 0;
 
-        # Construct this puppy!
-        return $class->SUPER::new($init);
+    # Construct this puppy!
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
+    return $class->SUPER::new($init);
 }
 
 =item $oc = Bric::Biz::OutputChannel->lookup({ id => $id })

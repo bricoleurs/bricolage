@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.15.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.15.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:40 $
+$Date: 2003-08-08 20:18:34 $
 
 =head1 SYNOPSIS
 
@@ -201,6 +201,7 @@ sub new {
     # Set active to true and biz_class_id to the story class ID.
     $init->{_active} = 1;
     $init->{biz_class_id} ||= STORY_CLASS_ID;
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
 
     # Set other boolean values.
     for (qw(top_level media paginated fixed_url related_story related_media)) {

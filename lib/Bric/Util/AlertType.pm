@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.13.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 21:02:21 $
+$Date: 2003-08-08 20:18:35 $
 
 =head1 SYNOPSIS
 
@@ -252,6 +252,7 @@ sub new {
     my $self = bless {}, ref $pkg || $pkg;
     $init->{_active} = 1;
     $init->{_del} = 0;
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $self->SUPER::new($init);
 }
 

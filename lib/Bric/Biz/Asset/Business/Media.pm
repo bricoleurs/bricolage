@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40.2.15 $
+$Revision: 1.40.2.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40.2.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-04 03:34:10 $
+$Date: 2003-08-08 20:18:34 $
 
 =head1 SYNOPSIS
 
@@ -400,6 +400,7 @@ sub new {
     delete $init->{active};
     $init->{priority} ||= 3;
     $init->{name} = delete $init->{title} if exists $init->{title};
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $self->SUPER::new($init);
 }
 
@@ -894,7 +895,7 @@ B<Notes:> NONE.
 
 sub set_category__id {
     my ($self, $cat_id) = @_;
-    my $cat = Bric::Biz::Category->lookup( { id => $cat_id });
+    my $cat = Bric::Biz::Category->lookup({ id     => $cat_id });
     my $oc = $self->get_primary_oc;
     my $c_cat = $self->get_category_object();
     my @grp_ids;
@@ -974,7 +975,8 @@ sub set_cover_date {
       = $self->_get(qw(_category_obj category__id file_name));
     return $self unless defined $fn;
 
-    $cat ||= Bric::Biz::Category->lookup({ id => $cat_id });
+    $cat ||= Bric::Biz::Category->lookup({ id     => $cat_id,
+                                           active => 'all' });
 
     my $oc = $self->get_primary_oc;
     return $self unless $cat and $oc;

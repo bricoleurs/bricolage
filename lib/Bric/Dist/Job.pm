@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.18.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:59 $
+$Date: 2003-08-08 20:18:35 $
 
 =head1 SYNOPSIS
 
@@ -244,6 +244,8 @@ sub new {
 
     # Default schedule time to now.
     $init->{sched_time} = db_date($init->{sched_time}, 1);
+
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $self->SUPER::new($init);
 }
 

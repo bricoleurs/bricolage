@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.15 $
+$Revision: 1.39.2.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-05 16:03:01 $
+$Date: 2003-08-08 20:18:34 $
 
 =head1 SYNOPSIS
 
@@ -519,6 +519,7 @@ sub new {
     $init->{_queried_cats} = {};
     $init->{_categories} = {};
     $init->{name} = delete $init->{title} if exists $init->{title};
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $self->SUPER::new($init);
 }
 
@@ -1030,7 +1031,8 @@ sub get_uri {
 
     # Get the category object.
     if ($cat) {
-        $cat = Bric::Biz::Category->lookup({ id => $cat})
+        $cat = Bric::Biz::Category->lookup({ id => $cat,
+                                             active => 'all'})
           unless ref $cat;
         my $cats = $self->_get_categories();
         die $da->new({ msg => "Category '" . $cat->get_uri . "' not " .
@@ -1257,7 +1259,8 @@ sub get_primary_category {
             if ($cats->{$c_id}->{'object'} ) {
                 return $cats->{$c_id}->{'object'};
             } else {
-                return Bric::Biz::Category->lookup( { id => $c_id });
+                return Bric::Biz::Category->lookup({ id     => $c_id,
+                                                     active => 'all' });
             }
         }
     }
@@ -1335,7 +1338,8 @@ sub get_secondary_categories {
         if ($cats->{$c_id}->{'object'} ) {
             push @seconds, $cats->{$c_id}->{'object'};
         } else {
-            push @seconds, Bric::Biz::Category->lookup( { id => $c_id });
+            push @seconds, Bric::Biz::Category->lookup({ id => $c_id,
+                                                         active => 'all' });
         }
     }
     return wantarray ? @seconds : \@seconds;
@@ -1362,7 +1366,7 @@ sub add_categories {
         # get the id
         my $cat_id = ref $c ? $c->get_id() : $c;
         my $asset_grp_id = ref $c ? $c->get_asset_grp_id()
-          : Bric::Biz::Category->lookup({ id => $c })->get_asset_grp_id();
+          : Bric::Biz::Category->lookup({ id => $c })->get_asset_grp_id;
         # if it already is associated make sure it is not going to be deleted
         if (exists $cats->{$cat_id}) {
             $cats->{$cat_id}->{'action'} = undef;
@@ -1416,7 +1420,8 @@ sub delete_categories {
             $cats->{$cat_id}->{'action'} = 'delete';
         }
         my $asset_grp_id = ref $c ? $c->get_asset_grp_id()
-          : Bric::Biz::Category->lookup({ id => $c })->get_asset_grp_id();
+          : Bric::Biz::Category->lookup({ id => $c,
+                                          active => 'all' })->get_asset_grp_id;
         my @n_grp_ids;
         foreach (@grp_ids) {
             push @n_grp_ids, $_ unless $_ == $asset_grp_id;
