@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =head1 DATE
 
-$Date: 2003-09-16 16:52:26 $
+$Date: 2003-11-10 13:57:41 $
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,13 @@ my @context =  split /\|/, $context;
 
 for (@context){
     s/^\s+|\s+$//g;
-    s /^(\"?)(.+?)(\"?)$/$1.$lang->maketext($2).$3/e;
+    if (/^(\"?)(.+?)(\"?)$/) {
+        my $startquote = $1;
+        my $endquote = $3;
+        my $text = $2;
+        $text =~ s/([\[\],~])/~$1/g;
+        $_ = $startquote . $lang->maketext($text) . $endquote;
+    }
 }
 
 $context = join ' |',@context;
