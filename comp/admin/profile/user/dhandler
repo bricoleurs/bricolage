@@ -74,6 +74,40 @@ if (!$no_edit) {
 }
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
+my @prefs = Bric::Util::Pref->list({ can_be_overridden => 1 });
+
+if (@prefs) {
+    $m->comp('/widgets/listManager/listManager.mc',
+             behavior => 'narrow',
+             object => 'pref',
+             addition => undef,
+             profile =>
+             sub { ['Edit', "/admin/profile/user_pref/" . $_[0]->get_id,
+                    'user_id=' . $id] },
+             select  => sub { my $up =
+                                  Bric::Util::UserPref->lookup
+                                      ({ user_id => $id,
+                                         pref_id => $_[0]->get_id });
+                              $up ? ['Reset', 'user_pref|delete_cb', $up->get_id] : undef },
+             title => 'User Preferences',
+             number => 5,
+             fields => [qw(name description val_name)],
+             alter => { val_name =>
+                        sub { my $up =
+                                  Bric::Util::UserPref->lookup
+                                      ({ user_id => $id,
+                                         pref_id => $_[1]->get_id });
+
+                              if ($up) {
+                                  return escape_html($up->get_val_name);
+                              } else {
+                                  escape_html($_[0])
+                                  . ' (' . $lang->maketext('Default Value') . ')'
+                              } } },
+             objs => \@prefs,
+            );
+}
+
 </%perl>
 
 <& '/widgets/profile/formButtons.mc', type => $type, section => $section,
@@ -145,11 +179,11 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2003-12-16 21:40:56 $
+$Date: 2003-12-18 22:32:30 $
 
 =head1 DESCRIPTION
 

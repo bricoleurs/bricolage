@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.54 $ )[-1];
+our $VERSION = (qw$Revision: 1.55 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-12 05:10:27 $
+$Date: 2003-12-18 22:32:30 $
 
 =head1 SYNOPSIS
 
@@ -52,12 +52,12 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Config qw(:mason :char :sys_user :err);
+use Bric::Config qw(:mason :sys_user :err);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::Trans::FS;
 use Bric::App::Event qw(clear_events);
-use Bric::App::Util qw(del_redirect add_msg);
+use Bric::App::Util qw(del_redirect add_msg get_pref);
 use Apache::Constants qw(OK);
 use Apache::Log;
 use HTML::Mason '1.16';
@@ -108,6 +108,7 @@ use Bric::App::Callback::Profile::Source;
 use Bric::App::Callback::Profile::Story;
 use Bric::App::Callback::Profile::Template;
 use Bric::App::Callback::Profile::User;
+use Bric::App::Callback::Profile::UserPref;
 use Bric::App::Callback::Profile::Workflow;
 use MasonX::Interp::WithCallbacks;
 
@@ -171,6 +172,7 @@ use MasonX::Interp::WithCallbacks;
     use Bric::Util::Priv::Parts::Const qw(:all);
     use Bric::Util::Time qw(strfdate);
     use Bric::Util::Trans::FS;
+    use Bric::Util::UserPref;
 
     use Bric::SOAP;
 
@@ -179,17 +181,13 @@ use MasonX::Interp::WithCallbacks;
     eval { require Text::Levenshtein };
     require Text::Soundex if $@;
 
-    use vars qw($c $widget_dir $lang $lang_key);
+    use vars qw($c $widget_dir $lang $lang_key $ct);
 
     # Where our widgets live under the element root.
     $widget_dir = 'widgets';
 
     # A global that makes the cache available everywhere.
     $c = Bric::App::Cache->new;
-
-    # A global for localization purposes
-    $lang = Bric::Util::Language->get_handle(LANGUAGE);
-    $lang_key = $lang->key;
 }
 
 ################################################################################
@@ -217,9 +215,8 @@ use constant ERROR_FILE =>
 
 ################################################################################
 # Private Class Fields
-my $no_trans = 0;
 
-my ($ah, $ct);
+my ($ah);
 {
     my %args = ( comp_root            => MASON_COMP_ROOT,
                  data_dir             => MASON_DATA_ROOT,
@@ -233,14 +230,6 @@ my ($ah, $ct);
                  decline_dirs         => 0,
                  args_method          => MASON_ARGS_METHOD,
                );
-
-    if (CHAR_SET ne 'UTF-8') {
-        # Load the character translation code and set up the pieces we'll
-        # need to do it.
-        require Bric::Util::CharTrans;
-        $ct = Bric::Util::CharTrans->new(CHAR_SET);
-        $args{out_method} = \&filter;
-    }
 
     $ah = HTML::Mason::ApacheHandler->new(%args);
 }
@@ -297,12 +286,30 @@ sub handler {
     my ($r) = @_;
     # Handle the request.
     my $status;
+
+    my $lang_name = get_pref('Language');
+    my $char_set  = get_pref('Character Set');
+
+    # A global for localization purposes
+    local $HTML::Mason::Commands::lang =
+        Bric::Util::Language->get_handle($lang_name);
+    local $HTML::Mason::Commands::lang_key = $HTML::Mason::Commands::lang->key;
+
+    # This needs to be reset on every request
+    local $HTML::Mason::Commands::ct;
+    if ($char_set ne 'UTF-8') {
+        # Load the character translation code and set up the pieces we'll
+        # need to do it.
+        require Bric::Util::CharTrans;
+        $HTML::Mason::Commands::ct = Bric::Util::CharTrans->new($char_set);
+    }
+
     eval {
         # Prevent browsers from caching pages.
         $r->no_cache(1);
         # Set up the language and content type headers.
-        $r->content_languages([LANGUAGE]);
-        $r->content_type('text/html; charset=' . lc CHAR_SET);
+        $r->content_languages([$lang_name]);
+        $r->content_type('text/html; charset=' . lc $char_set);
 
 	# Start the database transactions.
 	begin(1);
@@ -358,10 +365,6 @@ sub handle_err {
     # Send the error to the apache error log.
     $r->log->error($text . ($more_err ? "\n$more_err\n" : ''));
 
-    # Make sure we go back to translating character sets, or we'll be
-    # screwed on the next request.
-    $no_trans = 0;
-
     # Process the exception for the user.
     # Instead of using $interp->exec we start over a la PreviewHandler.
     # The 'BRIC_*' args are used in errors/500.mc
@@ -372,55 +375,6 @@ sub handle_err {
 
     $gah->handle_request($r);
     return OK;
-}
-
-################################################################################
-
-=item filter($output)
-
-This function translates data going out from Mason from Unicode into the users
-preferred character set.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Error translating from UTF-8.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub filter {
-    # Just get it over with if we're not supposed to do translation.
-    if ($no_trans) {
-	print STDOUT $_[0];
-	return;
-    }
-
-    # Do the translation.
-    eval { $ct->from_utf8($_[0]) };
-
-    # Do error processing, if necessary.
-    if (my $err = $@) {
-        $no_trans = 1; # So we don't translate error.html.
-        if (isa_exception($err)) {
-            rethrow_exception($err);
-        } else {
-            throw_dp error   => 'Error translating from UTF-8 to '
-                                . $ct->charset,
-                     payload => $err;
-        }
-    }
-
-    # Dump the data.
-    print STDOUT $_[0];
 }
 
 ##############################################################################

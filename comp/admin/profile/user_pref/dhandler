@@ -1,25 +1,29 @@
 %#-- Begin HTML --#
 <%perl>
-# Make sure we've got an ID.
-redirect('/admin/manager/pref') unless defined $id;
-# Instantiate an object.
-my $pref = $class->lookup({ id => $id});
-# Check authorization.
-chk_authz($pref, $id ? READ : CREATE);
-my $no_edit = !chk_authz($pref, EDIT, 1);
+redirect("/admin/manager/user") unless defined $user_id && defined $pref_id;
 
-# Output the header and other necessities.
+my $pref = Bric::Util::Pref->lookup({ id => $pref_id});
+
+redirect("/admin/profile/user/$user_id") unless $pref->get_can_be_overridden;
+
+my $user = Bric::Biz::Person::User->lookup({ id => $user_id});
+
+my $user_pref = $class->lookup({ pref_id => $pref_id, user_id => $user_id });
+
+my $no_edit = chk_authz($user, EDIT) ? 0 : 1;
+
 $m->comp('/widgets/wrappers/sharky/header.mc',
          title => "$disp Profile",
-	 context => "Admin | Profile | $disp | &quot;" . $pref->get_name .  "&quot;"
+	 context =>
+         "Admin | Profile | User | &quot;" . $user->get_name .
+         "&quot; | $disp | " . $pref->get_name,
 );
-$m->out(qq{<form method="post" name="pref_profile" action="} . $r->uri
+$m->out(qq{<form method="post" name="user_pref_profile" action="} . $r->uri
         . qq{" onSubmit="return confirmChanges(this)">\n});
 
-# Output a hidden field with the ID.
-$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'pref_id');
+$m->comp('/widgets/profile/hidden.mc', value => $pref_id, name => 'pref_id');
+$m->comp('/widgets/profile/hidden.mc', value => $user_id, name => 'user_id');
 
-# Grab the name and output the hidden field.
 my $name = $pref->get_name;
 
 # Set up the select list data.
@@ -52,14 +56,7 @@ $m->comp('/widgets/profile/displayFormElement.mc', key => 'value',
          readOnly => $no_edit,
          vals => { props => $props,
                    disp => 'Value',
-                   value => $pref->get_value } );
-
-$m->comp('/widgets/profile/displayFormElement.mc', key => 'can_be_overridden',
-         readOnly => $no_edit,
-         vals => { props => { type => 'checkbox',
-                              chk  => $pref->get_can_be_overridden },
-                   disp => 'Can be Overridden?',
-                   value => 1 } );
+                   value => $user_pref ? $user_pref->get_value : $pref->get_value } );
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
@@ -76,26 +73,31 @@ $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
 
 %#-- Once Section --#
 <%once>;
-my $class = 'Bric::Util::Pref';
+my $class = 'Bric::Util::UserPref';
 my $widget = 'profile';
-my $type = 'pref';
+my $type = 'user_pref';
 my $disp = get_disp_name($type);
 </%once>
 
 %#-- Args Section --#
 <%args>
-$id => undef
+$user_id
 </%args>
+
+<%init>
+my $pref_id = $ARGS{id};
+</%init>
+
 <%doc>
 ###############################################################################
 
 =head1 NAME
 
-/admin/profile/preferences/dhandler - Manages application global preferences.
+/admin/profile/user_pref/dhandler - Manages per-user preferences
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.1 $
 
 =head1 DATE
 
@@ -103,6 +105,6 @@ $Date: 2003-12-18 22:32:30 $
 
 =head1 DESCRIPTION
 
-Simple interface for managing global preferences.
+Simple interface for managing per-user preferences.
 
 </%doc>

@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.2';
 
 =item Date
 
-$Date: 2003-12-16 17:57:55 $
+$Date: 2003-12-18 22:32:30 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.44 2003-12-16 17:57:55 autarch Exp $
+$Id: Bric.pm,v 1.45 2003-12-18 22:32:30 autarch Exp $
 
 =back
 
@@ -581,6 +581,49 @@ sub cache_me {
         foreach my $m ($self->my_meths(0, 1)) {
             $Bric::DEBUG_CACHE{"$pkg|$m->{name}|" . lc $m->{get_meth}->($self)}
               = $self;
+        }
+    }
+    return $self;
+}
+
+##############################################################################
+
+=head3 cache_me
+
+  $obj->uncache_me;
+
+Remove an object from the cache.  This should be done before an
+object's associated data is permanently deleted from the database.
+
+=cut
+
+sub uncache_me {
+    my $self = shift;
+    if (defined MOD_PERL) {
+        my $pkg = ref $self or return;
+        # Skip unsaved objects.
+        return unless defined $self->{id};
+        my $req = Apache->request;
+        # We may be called during Apache startup
+        return $self unless $req;
+        my $r = Apache::Request->instance($req);
+
+        # Cache it under its ID.
+        $r->pnotes("$pkg|id|$self->{id}", undef);
+        # Cache it under other unique identifiers.
+        foreach my $m ($self->my_meths(0, 1)) {
+            $r->pnotes("$pkg|$m->{name}|" . lc $m->{get_meth}->($self), undef);
+        }
+    }
+    if(CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
+        my $pkg = ref $self or return;
+        # Skip unsaved objects.
+        return unless defined $self->{id};
+
+        $Bric::DEBUG_CACHE{"$pkg|id|$self->{id}"} = undef;
+        foreach my $m ($self->my_meths(0, 1)) {
+            $Bric::DEBUG_CACHE{"$pkg|$m->{name}|" . lc $m->{get_meth}->($self)}
+              = undef;
         }
     }
     return $self;

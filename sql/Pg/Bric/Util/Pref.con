@@ -1,10 +1,22 @@
 --
 -- Project: Bricolage Business API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-12-18 22:32:31 $
 -- Author: David Wheeler <david@wheeler.net>
 
+
+-- 
+-- TABLE: usr_pref
+--
+
+ALTER TABLE    usr_pref
+ADD CONSTRAINT fk_pref__usr_pref FOREIGN KEY (pref__id)
+REFERENCES     pref(id) ON DELETE CASCADE;
+
+ALTER TABLE    usr_pref
+ADD CONSTRAINT fk_usr__usr_pref FOREIGN KEY (usr__id)
+REFERENCES     usr(id) ON DELETE CASCADE;
 
 -- 
 -- TABLE: pref_opt

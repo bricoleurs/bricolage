@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2003-09-30 15:20:04 $
+-- $Date: 2003-12-18 22:32:31 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)
@@ -1447,3 +1447,124 @@ VALUES (13, 'element', 'Media Type');
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (13, 'id', 'ID');
+
+
+-- Character Set
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES (14, 'Character Set',
+        'The default character set to use for display.',
+        'UTF-8', 'UTF-8', 0, 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (900, 22, 48, 1);
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES (14, 14, 900);
+
+-- These values were hand-picked from Encode::Supported
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'UTF-8', 'UTF-8');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-1', 'ISO-8859-1');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-2', 'ISO-8859-2');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-3', 'ISO-8859-3');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-4', 'ISO-8859-4');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-5', 'ISO-8859-5');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-6', 'ISO-8859-6');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-7', 'ISO-8859-7');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-8', 'ISO-8859-8');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-9', 'ISO-8859-9');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-10', 'ISO-8859-10');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-11', 'ISO-8859-11');
+
+-- There is no ISO-8859-12
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-13', 'ISO-8859-13');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-14', 'ISO-8859-14');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-15', 'ISO-8859-15');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-8859-16', 'ISO-8859-16');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'viscii', 'Viscii (Vietnamese)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'gb-2312', 'GB-2312');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'Big5', 'Big5');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'euc-jp', 'EUC-JP');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'shiftjis', 'ShiftJIS');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-2022-jp', 'ISO-2022-JP');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'euc-kr', 'EUC-KR');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (14, 'iso-2022-kr', 'ISO-2022-KR');
+
+
+-- Language
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES (15, 'Language',
+        'The default language to use for display.',
+        'en_us', 'en_us', 0, 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (901, 22, 48, 1);
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES (15, 15, 901);
+
+-- These values are based on the current localizations offered
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'en_us', 'en_us');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'de_de', 'de_de');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'it_it', 'it_it');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'pt_pt', 'pt_pt');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'zh_tw', 'zh_tw');

@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-30 18:21:13 $
+$Date: 2003-12-18 22:32:31 $
 
 =head1 SYNOPSIS
 
@@ -101,9 +101,9 @@ use constant INSTANCE_GROUP_ID => 22;
 ################################################################################
 # Private Class Fields
 my $SEL_COLS = 'p.id, p.name, p.description, p.def, p.value, p.manual, ' .
-  'p.opt_type, o.description, m.grp__id';
+  'p.opt_type, o.description, p.can_be_overridden, m.grp__id';
 my @SEL_PROPS = qw(id name description default value manual opt_type val_name
-                   grp_ids);
+                   can_be_overridden grp_ids);
 
 my @ORD = @SEL_PROPS[1..$#SEL_PROPS-1];
 my $prefkey = '__PREF__';
@@ -124,7 +124,7 @@ BEGIN {
                          value => Bric::FIELD_RDWR,
                          default => Bric::FIELD_READ,
                          manual => Bric::FIELD_READ,
-                         opt_type => Bric::FIELD_READ,
+                         can_be_overridden => Bric::FIELD_RDWR,
                          opt_type => Bric::FIELD_READ,
                          grp_ids => Bric::FIELD_READ,
 
@@ -203,6 +203,7 @@ sub lookup {
     return $pref if $pref;
 
     $pref = $get_em->($pkg, @_);
+
     # We want @$pref to have only one value.
     throw_dp(error => 'Too many Bric::Util::Pref objects found.')
       if @$pref > 1;
@@ -237,6 +238,10 @@ val_name
 =item *
 
 manual
+
+=item *
+
+can_be_overridden
 
 =item *
 
@@ -632,6 +637,19 @@ sub my_meths {
                                            rows => 4
                                          }
                             },
+              can_be_overridden =>
+                            {
+                             name     => 'can_be_overridden',
+                             get_meth => sub { shift->get_can_be_overridden(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_can_be_overridden(@_) },
+                             set_args => [],
+                             disp     => 'Can be Overriden',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' },
+                            },
               opt_type   => {
                              name     => 'opt_type',
                              get_meth => sub { shift->get_opt_type(@_) },
@@ -842,6 +860,62 @@ B<Notes:> NONE.
 sub set_value {
     my ($self, $val) = @_;
     $self->_set([qw(value _val_ch)], [$val, 1]);
+}
+
+=item my $can_be_overridden = $pref->get_can_be_overridden
+
+Returns a boolean indicating whether the value can be overridden on a
+per-user basis.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
+
+=item *
+
+Access denied: READ access for field 'can_be_overridden' required.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $self = $pref->set_can_be_overridden($can_be_overridden)
+
+Sets whether the value can be overridden on a per-user basis.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Incorrect number of args to _set().
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_can_be_overridden {
+    my ($self, $val) = @_;
+    $self->_set(['can_be_overridden'], [$val]);
 }
 
 =item my $opt_type = $pref->get_opt_type
@@ -1094,22 +1168,23 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
     return unless $self->_get__dirty;
-    my ($id, $name, $value) = $self->_get(qw(id name value));
+    my ($id, $name, $value, $cbo) = $self->_get(qw(id name value can_be_overridden));
     throw_dp(error => "Cannot create a new preference.")
       unless $id;
     my $upd = prepare_c(qq{
         UPDATE pref
-        SET    value = ?
+        SET    value = ?,
+               can_be_overridden = ?
         WHERE  id = ?
     }, undef);
     # Update the database.
-    execute($upd, $value, $id);
+    execute($upd, $value, $cbo, $id);
 
     if( $self->get_manual ) {
     my $upd2 = prepare_c( qq {
        UPDATE pref_opt
        SET    value = ?,
-              description = ?
+              description = ?,
        WHERE  pref__id = ?
     }, undef);
     execute( $upd2, $value, $value, $id );
@@ -1204,6 +1279,9 @@ $get_em = sub {
             $wheres .= " AND p.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
+        } elsif ($k eq 'can_be_overridden') {
+            $wheres .= " AND p.can_be_overridden = ?";
+            push @params, $v ? 1 : 0;
         } elsif ($k eq 'active') {
             # Preferences have no active column.
             next;

@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-04 22:03:59 $
+$Date: 2003-12-18 22:32:30 $
 
 =head1 SYNOPSIS
 
@@ -39,7 +39,7 @@ use strict;
 # Programmatic Dependencies
 #use CGI::Cookie;
 #use Bric::Config qw(:qa :cookies);
-use Bric::App::Session qw(:state);
+use Bric::App::Session qw(:state :user);
 use Bric::Config qw(:cookies :mod_perl);
 use Bric::Util::Class;
 use Bric::Util::Pref;
@@ -386,7 +386,22 @@ B<Notes:> Uses Bric::Util::Pref->lookup_val() internally.
 
 =cut
 
-sub get_pref { Bric::Util::Pref->lookup_val(shift) }
+sub get_pref {
+    my $pref = Bric::Util::Pref->lookup({ name => shift });
+
+    if ($pref->get_can_be_overridden) {
+        my $user = get_user_object;
+
+        if ($user) {
+            my $user_pref = Bric::Util::UserPref->lookup({ pref_id => $pref->get_id,
+                                                           user_id => $user->get_id });
+
+            return $user_pref->get_value if $user_pref;
+        }
+    }
+
+    return $pref->get_value();
+}
 
 #------------------------------------------------------------------------------#
 

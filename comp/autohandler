@@ -6,6 +6,22 @@ local $SIG{__DIE__} = sub { die &Bric::App::Handler::_make_fault } if QA_MODE;
 # Execute the dhandlers.
 $m->call_next(%ARGS);
 </%perl>
+<%filter>
+if ($ct) {
+    eval { $ct->from_utf8($_[0]) };
+}
+
+# Do error processing, if necessary.
+if (my $err = $@) {
+    if (isa_exception($err)) {
+        rethrow_exception($err);
+    } else {
+        throw_dp error   => 'Error translating from UTF-8 to '
+                            . $ct->charset,
+                 payload => $err;
+    }
+}
+</%filter>
 <%doc>
 ###############################################################################
 
@@ -15,11 +31,11 @@ autohandler - The first Mason element to execute during a request.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:47 $
+$Date: 2003-12-18 22:32:30 $
 
 =head1 SYNOPSIS
 

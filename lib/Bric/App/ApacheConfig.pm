@@ -47,19 +47,21 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 use strict;
 use Bric::App::ApacheStartup;
-use Bric::Config qw(:char);
+use Bric::App::Util qw(get_pref);
 our $DEBUGGING;
 
 my $silent_config = ! MANUAL_APACHE && $mod_perl::VERSION > 1.26;
 my %VirtualHost_lcl;
 my @NameVirtualHost_lcl = ([ NAME_VHOST . ':' . LISTEN_PORT ]);
 do {
+    my $char_set = get_pref('Character Set');
+
     # Set up the basic configuration.
     my %config = ( DocumentRoot       => MASON_COMP_ROOT->[0][1],
 		   ServerName         => VHOST_SERVER_NAME,
-		   DefaultType        => '"text/html; charset=' . lc CHAR_SET . '"',
+		   DefaultType        => '"text/html; charset=' . $char_set . '"',
                    AddType            => 'image/x-icon .ico',
-                   AddDefaultCharset  => lc CHAR_SET,
+                   AddDefaultCharset  => lc $char_set,
 		   SetHandler         => 'perl-script',
 		   PerlHandler        => 'Bric::App::Handler',
 		   PerlAccessHandler  => 'Bric::App::AccessHandler',
@@ -114,7 +116,7 @@ do {
         (PerlFixupHandler  => 'Apache::OK') : ()),
     };
     $locs{"/media/js"} = {
-         ForceType => '"application/x-javascript; charset=' . lc CHAR_SET . '"'
+         ForceType => '"application/x-javascript; charset=' . lc $char_set . '"'
     };
 
     # This will serve media assets and previews.

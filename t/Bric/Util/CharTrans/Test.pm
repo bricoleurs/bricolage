@@ -6,7 +6,6 @@ use Test::More;
 use File::Spec::Functions qw(catfile);
 use File::Basename;
 use Storable qw(dclone);
-use Bric::Config qw(:char);
 use constant HAVE_ENCODE => eval { require Encode };
 require Bric::Util::CharTrans if HAVE_ENCODE;
 

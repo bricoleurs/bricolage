@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.80 $
+$Revision: 1.81 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.80 $ )[-1];
+our $VERSION = (qw$Revision: 1.81 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-30 17:32:35 $
+$Date: 2003-12-18 22:32:30 $
 
 =head1 SYNOPSIS
 
@@ -68,7 +68,6 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     SYS_USER
                     SYS_GROUP
                     SERVER_WINDOW_NAME
-                    LANGUAGE
                     NO_TOOLBAR
                     APACHE_BIN
                     APACHE_CONF
@@ -81,7 +80,6 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     SSL_PORT
                     SSL_CERTIFICATE_FILE
                     SSL_CERTIFICATE_KEY_FILE
-                    CHAR_SET
                     AUTH_TTL
                     AUTH_SECRET
                     AUTH_COOKIE
@@ -198,7 +196,6 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     qa        => [qw(QA_MODE 
                                      TEMPLATE_QA_MODE)],
                     err       => [qw(ERROR_URI)],
-                    char      => [qw(CHAR_SET LANGUAGE)],
                     ui        => [qw(FIELD_INDENT
                                      DISABLE_NAV_LAYER
                                      FULL_SEARCH
@@ -206,7 +203,6 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      ALLOW_ALL_SITES_CX
                                      ALLOW_SLUGLESS_NONFIXED
                                      SERVER_WINDOW_NAME
-                                     LANGUAGE
                                      YEAR_SPAN_BEFORE
                                      YEAR_SPAN_AFTER
                                      NO_TOOLBAR
@@ -378,7 +374,6 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant MANUAL_APACHE           => $config->{MANUAL_APACHE};
     use constant SERVER_WINDOW_NAME      => $config->{SERVER_WINDOW_NAME};
     use constant NO_TOOLBAR              => $config->{NO_TOOLBAR};
-    use constant LANGUAGE                => $config->{LANGUAGE} || 'en_us';
 
     use constant APACHE_BIN              => $config->{APACHE_BIN}
       || '/usr/local/apache/bin/httpd';
@@ -468,9 +463,6 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # QA Mode settings.
     use constant QA_MODE                 => $config->{QA_MODE} || 0;
     use constant TEMPLATE_QA_MODE        => $config->{TEMPLATE_QA_MODE} || 0;
-
-    # Character translation settings.
-    use constant CHAR_SET                => $config->{CHAR_SET} || 'UTF-8';
 
     # Time constants.
     use constant ISO_8601_FORMAT         => "%Y-%m-%d %T";

@@ -1,8 +1,8 @@
 --
 -- Project: Bricolage API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-12-18 22:32:31 $
 -- Author: David Wheeler <david@wheeler.net>
 
 
@@ -11,6 +11,7 @@
 --
 
 CREATE SEQUENCE seq_pref START 1024;
+CREATE SEQUENCE seq_usr_pref START 1024;
 CREATE SEQUENCE seq_pref_member START 1024;
 
 
@@ -28,8 +29,22 @@ CREATE TABLE pref (
     def          VARCHAR(256),
     manual	 NUMERIC(1,0) NOT NULL DEFAULT 0,
     opt_type     VARCHAR(16)  NOT NULL,
+    can_be_overridden  BOOL   NOT NULL DEFAULT 'f',
     CONSTRAINT ck_pref__manual CHECK (manual IN (0,1)),
     CONSTRAINT pk_pref__id PRIMARY KEY (id)
+);
+
+-- 
+-- TABLE: usr_pref
+--        Preferences overridden by a specific usr.
+
+CREATE TABLE usr_pref (
+    id           NUMERIC(10, 0)  NOT NULL
+                                 DEFAULT NEXTVAL('seq_usr_pref'),
+    pref__id     NUMERIC(10, 0)  NOT NULL,
+    usr__id      NUMERIC(10, 0)  NOT NULL,
+    value        VARCHAR(256)    NOT NULL,
+    CONSTRAINT pk_usr_pref__pref__id__value PRIMARY KEY (id)
 );
 
 -- 
@@ -63,6 +78,8 @@ CREATE TABLE pref_member (
 --
 
 CREATE UNIQUE INDEX udx_pref__name ON pref(LOWER(name));
+CREATE UNIQUE INDEX udx_usr_pref__pref__id__usr__id ON usr_pref(pref__id, usr__id);
+CREATE INDEX idx_usr_pref__usr__id ON usr_pref(usr__id);
 CREATE INDEX fkx_pref__pref__opt ON pref_opt(pref__id);
 CREATE INDEX fkx_pref__pref_member ON pref_member(object_id);
 CREATE INDEX fkx_member__pref_member ON pref_member(member__id);
