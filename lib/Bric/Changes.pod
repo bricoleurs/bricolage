@@ -157,6 +157,11 @@ Fixed ugly bug where deleting a "Media Type" Element would delete all the media
 objects of that type. Thanks to Sam for the spot (though not for the bug!).
 [David]
 
+=item *
+
+Fixed bric_pgimport so that it uses DBI to drop and create the database, rather
+than relying on a hard-coded location for pgsql binaries. [David]
+
 =back
 
 =head1 VERSION 1.2.0
