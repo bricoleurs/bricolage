@@ -24,11 +24,14 @@ do_sql
   qq{ALTER TABLE action
      ALTER COLUMN active SET DEFAULT 1},
 
+  # Make sure that it isn't null.
+  qq{UPDATE action SET actve = 1},
+
   # Make sure it can never be null.
   qq{ALTER TABLE    action
-     ADD CONSTRAINT ck_action__null CHECK (active IS NOT NULL)},
+     ADD CONSTRAINT ck_action__active__null CHECK (active IS NOT NULL)},
 
   # Constrain its value to 0 and 1.
   qq{ALTER TABLE    action
-     ADD CONSTRAINT chk_action__active CHECK (active IN (1,0))},
+     ADD CONSTRAINT ck_action__active CHECK (active IN (1,0))},
   ;
