@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2004-02-27 22:33:36 $
+$Date: 2004-03-08 15:23:01 $
 
 =head1 SYNOPSIS
 
@@ -1032,7 +1032,7 @@ B<Side Effects:> Will shift the remaining tiles to fit. So if tiles with ids
 of 2, 4, 7, 8, and 10 are contained and 4 and 8 are removed the new list of
 tiles will be 2,7, and 10
 
-B<Notes:> Doesn\'t actually do any deletions, just schedules them. Call
+B<Notes:> Doesn't actually do any deletions, just schedules them. Call
 C<save()> to complete the deletion.
 
 =cut
@@ -1120,7 +1120,7 @@ sub delete_tiles {
 
 ################################################################################
 
-=item $container = $container->perpare_clone()
+=item $container = $container->prepare_clone()
 
 When a business asset needs to clone its self. It can call this here method
 that will set the id to undef so that this here tile will clone its self.
