@@ -245,6 +245,12 @@ PROFILE configuration option.  [Sam]
 Added support for Apache::SizeLimit to keep Apache process size under
 control.  [Adam]
 
+=item *
+
+Revised Bric::App::Cache to improve performance.  The new system is a
+two-level cache with Cache:Mmap and Cache::Cache.  This results in a
+2x speedup on some cache-sensitive operations.  [Sam]
+
 =back
 
 =head1 VERSION 1.3.1

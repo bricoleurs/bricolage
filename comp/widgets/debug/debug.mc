@@ -8,11 +8,11 @@ debug - Output some debugging information
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:58 $
+$Date: 2002-06-04 22:14:26 $
 
 =head1 SYNOPSIS
 
@@ -46,8 +46,8 @@ $Data::Dumper::Indent = 1;
 my $s = Data::Dumper::Dumper(\%HTML::Mason::Commands::session);
 my $e = Data::Dumper::Dumper(\%ENV);
 my $cache;
-foreach my $id ($$c->$keys_meth) {
-    $cache->{$id} = $$c->get($id);
+foreach my $id ($Bric::App::Cache::STORE->$keys_meth) {
+    $cache->{$id} = $Bric::App::Cache::STORE->get($id);
 }
 $cache = Data::Dumper::Dumper($cache);
 my %rcache = $rc->get_all;
