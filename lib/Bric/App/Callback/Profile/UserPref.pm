@@ -5,6 +5,7 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'user_pref';
 
 use strict;
+use Bric::App::Authz qw(chk_authz EDIT);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:aref :msg);
 
@@ -14,9 +15,14 @@ my $disp_name = 'User Preference';
 sub save : Callback {
     my $self = shift;
 
-#    return unless $self->has_perms;
-
     my $param = $self->params;
+
+    my $user = Bric::Biz::Person::User->lookup({ id => $param->{user_id} });
+    unless (chk_authz($user, EDIT, 1)) {
+        add_msg("Changes not saved: permission denied.");
+        return;
+    }
+
     my $user_pref = Bric::Util::UserPref->lookup({ pref_id => $param->{pref_id},
                                                    user_id => $param->{user_id} });
 
@@ -36,9 +42,13 @@ sub save : Callback {
 sub delete : Callback {
     my $self = shift;
 
-#    return unless $self->has_perms;
-
     my $param = $self->params;
+
+    my $user = Bric::Biz::Person::User->lookup({ id => $param->{user_id} });
+    unless (chk_authz($user, EDIT, 1)) {
+        add_msg("Changes not saved: permission denied.");
+        return;
+    }
 
     foreach my $id (@{ mk_aref($param->{'user_pref|delete_cb'}) }) {
         my $user_pref = Bric::Util::UserPref->lookup({ id => $id });
