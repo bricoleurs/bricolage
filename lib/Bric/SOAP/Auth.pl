@@ -39,10 +39,10 @@ Sam Tregar <stregar@about-inc.com>
 =cut
 
 use strict;
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 
 use constant USER     => 'admin';
-use constant PASSWORD => 'bric';
+use constant PASSWORD => 'change me now!';
 
 use Test::More qw(no_plan);
 use SOAP::Lite (DEBUG ? (trace => [qw(debug)]) : ());
