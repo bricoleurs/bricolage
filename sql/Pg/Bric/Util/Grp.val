@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Grp.val
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2003-03-30 18:34:20 $
+-- $Date: 2003-12-22 17:28:25 $
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (0, NULL, 6, 'Root Group', 'The mother of all groups.', 1, 1);
@@ -484,6 +484,26 @@ VALUES (703, 3, 6, 1);
 
 INSERT INTO grp_member (id, object_id, member__id)
 VALUES (703, 203, 703);
+
+-- Create the Default site RECALL secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (204, 0, 8, 'Default Site RECALL Users', '__Site 100 Users__', 1, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (704, 3, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (704, 204, 704);
+
+-- Create the Default site PUBLISH secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (205, 0, 8, 'Default Site PUBLISH Users', '__Site 100 Users__', 1, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (705, 3, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (705, 205, 705);
 
 -- Illustrators.
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)

@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Priv.val
--- VERSION: $Revision: 1.9 $
+-- VERSION: $Revision: 1.10 $
 --
--- $Date: 2003-12-22 03:29:44 $
+-- $Date: 2003-12-22 17:28:25 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 /*
@@ -409,3 +409,17 @@ VALUES(53, 203, 255);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(53, 100);
+
+-- Give "Default Site RECALL Users" RECALL rights to the default Site's asset group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(57, 204, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(57, 100);
+
+-- Give "Default Site PUBLISH Users" PUBLISH rights to the default Site's asset group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(58, 205, 5);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(58, 100);

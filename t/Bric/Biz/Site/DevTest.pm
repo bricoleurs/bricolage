@@ -451,7 +451,7 @@ sub test_save : Test(36) {
 
 ##############################################################################
 # Test permission groups.
-sub test_grps : Test(87) {
+sub test_grps : Test(99) {
     my $self = shift;
     my $site = $self->{test_sites}[0];
     # Look at a site we've created.
@@ -465,7 +465,7 @@ sub test_grps : Test(87) {
 
 ##############################################################################
 # Test Permissions.
-sub test_privs : Test(53) {
+sub test_privs : Test(65) {
     my $self = shift;
     my $site = $self->{test_sites}[0];
     compare_privs($site);
@@ -485,7 +485,7 @@ sub compare_grps {
 
     # Make sure that there are four user groups for this site.
     ok( my @grps = $site->list_priv_grps, "Get user groups" );
-    is( scalar @grps, 4, "Check for four Groups" );
+    is( scalar @grps, 6, "Check for six Groups" );
 
     # Check their names.
     ok( my $name = $site->get_name, "Get name" );
@@ -530,24 +530,24 @@ sub compare_privs {
     # Grab the permissions for this sucker.
     ok( my @privs = Bric::Util::Priv->list({ obj_grp_id => $site->get_id }),
         "List the permissions" );
-    is( scalar @privs, 4, "Check for 4 permissions" );
+    is( scalar @privs, 6, "Check for six permissions" );
 
     # Check their values. There should be one for each permission.
     my %perms = %{ Bric::Util::Priv->vals_href };
     my %seen;
     foreach my $priv (@privs) {
-        next if $priv->get_value == RECALL
-          || $priv->get_value == PUBLISH;
         ok( delete $perms{$priv->get_value}, "Get value" );
         $seen{$priv->get_id} = 1;
     }
 
     my $name = $site->get_name;
     my %grp_privs =
-      ( "$name READ Users"   => READ,
-        "$name EDIT Users"   => EDIT,
-        "$name CREATE Users" => CREATE,
-        "$name DENY Users"   => DENY,
+      ( "$name READ Users"    => READ,
+        "$name EDIT Users"    => EDIT,
+        "$name RECALL Users"  => RECALL,
+        "$name CREATE Users"  => CREATE,
+        "$name PUBLISH Users" => PUBLISH,
+        "$name DENY Users"    => DENY,
       );
 
     # Grab the permissions associated with the user groups.
@@ -555,8 +555,6 @@ sub compare_privs {
         ok( my @p = Bric::Util::Priv->list({ usr_grp_id => $ugrp->get_id }),
             "List user privs" );
         is( scalar @p, 1, "Check for one priv" );
-        next if $p[0]->get_value == RECALL
-          || $p[0]->get_value == PUBLISH;
         ok( delete $seen{$p[0]->get_id}, "Check we've seen it" );
         is( $p[0]->get_value, $grp_privs{$ugrp->get_name}, "Check value" );
     }
