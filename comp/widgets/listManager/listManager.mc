@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.1 $
+$Revision: 1.1.1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:03 $
+$Date: 2001-10-10 19:23:55 $
 
 =head1 SYNOPSIS
 
@@ -446,7 +446,11 @@ my $widget = 'listManager';
 
 my $get_my_meths = sub {
     my ($pkg, $field_titles, $field_values) = @_;
-    my $meths = $pkg->my_meths();
+
+    # If there are field titles or values to override the originals, we'll
+    # want to make a copy of my_meths. Otherwise, we can just us a reference.
+    my $meths = $field_titles || $field_values ? { %{ $pkg->my_meths } }
+      : $pkg->my_meths;
 
     # Cook the display values
     while (my ($f, $t) = each %$field_titles) {
@@ -461,7 +465,6 @@ my $get_my_meths = sub {
 	    # Try to return a value from $field_values first.
 	    my $cooked = sub { return ($field_values->($_[0], $f) ||
 				       $meth->(@_)) };
-	    
 	    $meths->{$f}->{'get_meth'} = $cooked;
 	}
     }
