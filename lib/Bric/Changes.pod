@@ -74,9 +74,10 @@ is now properly orange instead of green. Reported by Ho Yin Au. [David]
 
 =item *
 
-Bricolage works with Perl 5.6.x again, although it's pretty strongly deprecated.
-Perl 5.8.0 or later is required for character set conversion and if any content
-uses characters outside of US ASCII. [David]
+Bricolage works with Perl 5.6.x again, although it's pretty strongly
+deprecated. Perl 5.8.0 or later is required for character set conversion and
+if any content uses characters outside of US ASCII. Thanks to John Greene for
+the spot! [David]
 
 =item *
 
