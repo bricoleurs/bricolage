@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2001-12-27 20:56:47 $
+$Date: 2001-12-27 21:24:29 $
 
 =head1 DESCRIPTION
 
@@ -1386,39 +1386,49 @@ maintenance.
 
 =head2 Database
 
-By default, the Bricolage database is stored where all PostgreSQL databases are stored
--- that is, /usr/local/pgsql/data. Depending on the needs of your environment,
-the database can become quite large. We therefore recommend you place this
-directory on a separate partition. Better yet, place it on its own disk in order
-to optimize disk access time by preventing database access from competing with
-other disk processes.
+By default, the Bricolage database is stored where all PostgreSQL databases are
+stored -- that is, /usr/local/pgsql/data. Depending on the needs of your
+environment, the database can become quite large. We therefore recommend you
+place this directory on a separate partition. Better yet, place it on its own
+disk in order to optimize disk access time by preventing database access from
+competing with other disk processes.
 
-A great deal more maintenance is important for the database. See L<Bric::DBA> for
-more detail.
+A great deal more maintenance is important for the database. See L<Bric::DBA>
+for more detail.
 
 =head2 Application
 
 Bricolage stores all of its application files -- including the UI elements and
 Perl libraries -- in C<$BRICOLAGE_ROOT>. Bricolage will make a lot of disk
-accesses to be to C<$BRICOLAGE_ROOT/data>, which is where all of the UI elements
-are compiled and stored. The Perl libraries are stored in
-C<$BRICOLAGE_ROOT/lib>, although mostly they will only be read on startup.
+accesses to be to MASON_DATA_ROOT, which is where all of the UI elements are
+compiled and stored. The Perl libraries are stored in C<$BRICOLAGE_ROOT/lib>,
+although mostly they will only be read on startup.
 
 Bricolage creates a great many files on the filesystem, too, however. The
-BURN_ROOT houses the templates that are used to format stories - you'll want to
-be sure to back it up regularly. The C<$BRICOLAGE_ROOT/comp/data/preview>
-directory gets formatted story files written to it if the PREVIEW_LOCAL
-directive is set to true. This directory doesn't need backing up, as these files
-are used only for previewing purposes.
+C<$BURN_ROOT/comp> directory houses the templates that are used to format
+stories - you'll want to be sure to back it up regularly. The
+C<$BURN_ROOT/stage> and C<$BURN_ROOT/preview> directories will get burned files
+written to them upon publish and preview, respectively. These will be good
+targets for periodic cleanup if you need to reclaim disk space, as generally the
+files stored there will not be much accessed after they're created. If you
+decide to clean some of them out to reclaim file space, just be sure not to
+delete any files for which there are pending distribution jobs, otherwise the
+distribution jobs will fail!
 
-The C<$BRICOLAGE_ROOT/comp/data/media> directory gets all media asset files
+The C<$MASON_COMP_ROOT/data/preview> directory gets formatted story files copied
+to it from C<$BURN_ROOT/preview> if the PREVIEW_LOCAL directive is set to true.
+This directory doesn't need backing up, as these files are used only for
+previewing purposes.
+
+the C<$BRICOLAGE_ROOT/comp/data/media> directory gets all media asset files
 written to it. This last directory is perhaps the most important, from a system
 administration perspective, because if Bricolage is used to manage large
 documents (e.g., QuickTime movies), this directory will start to use a lot of
-space - and especially if the media files themselves are versioned. Thus in
+space -- and especially if the media files themselves are versioned. Thus in
 environments where many large media assets will be managed, it might make sense
 to put this directory on its own partition or disk, as well. And remember to
-back it up to prvent the loss of all of your media assets!
+back it up to prvent the loss of all of your media assets -- they aren't stored
+anywhere else!
 
 Bricolage also create temporary files for caching user session data and
 application data. All of these files are stored in sub directories of the local
@@ -1429,7 +1439,7 @@ directory). Session files are stored in C<$TMP/bricolage/session> and
 C<$TMP/bricolage/lock>. These directories should stay relatively free of cruft,
 as the session files are regularly deleted when users logout or their login
 sessions expire and they attempt to log back in. (However, in some cases we've
-noticed a buildup of files in the lock directory.) 
+noticed a buildup of files in the lock directory.)
 
 Bricolage also uses a cross-process caching mechanism to shara data between
 Apache processes and applications. The data for this cache is stored in
