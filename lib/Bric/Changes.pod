@@ -52,6 +52,11 @@ no longer looks for it. [David]
 C<make clone> no longer assumes that the F<conf> directory is in
 C<$BRICOLAGE_ROOT>, and prompts the user to find out. [David]
 
+=item *
+
+Bricolage once again works with Perl 5.6.1 (and all of its lovely bugs).
+[David]
+
 =back
 
 =head1 VERSION 1.6.9 (2004-02-06)
