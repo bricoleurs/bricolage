@@ -822,7 +822,7 @@ sub clean_params {
     $param->{_checked_out} = 1 if defined $param->{user__id};
     if (defined $param->{_checked_out}) {
         # Make sure we have a valid checkout value -- that is, no null string!
-        $param->{_checked_out} = 0 unless $param->{_checked_out};
+        $param->{_not_checked_out} = 0 unless $param->{_checked_out};
     } else {
         # finally the default
         $param->{_checked_in_or_out} = 1 unless defined $param->{_checked_out};

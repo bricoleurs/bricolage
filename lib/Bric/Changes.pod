@@ -100,6 +100,13 @@ Instances of a required custom field in story elements is no longer required
 once it has been deleted from the element definition in the element manager.
 Reported by Rod Taylor. [David]
 
+=item *
+
+A false value passed to the C<checked_out> parameter of the C<list()> and
+C<list_ids()> methods of thestory, media, and template (formatting) classes
+now properly returns only objects or IDs for assets that are not checked out.
+[David]
+
 =back
 
 =cut

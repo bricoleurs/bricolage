@@ -237,6 +237,10 @@ use constant PARAM_WHERE_MAP =>
                              . 'WHERE version = i.version '
                              . 'AND media__id = i.media__id)',
       _checked_out          => 'i.checked_out = ?',
+      _not_checked_out       => 'i.checked_out = 0 AND mt.id not in '
+                              . '(SELECT media__id FROM media_instance '
+                              . 'WHERE mt.id = media_instance.media__id '
+                              . 'AND media_instance.checked_out = 1)',
       primary_oc_id         => 'i.primary_oc__id = ?',
       output_channel_id     => '(i.id = moc.media_instance__id AND '
                              . '(moc.output_channel__id = ? OR '

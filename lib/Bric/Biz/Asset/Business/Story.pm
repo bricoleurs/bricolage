@@ -347,6 +347,10 @@ use constant PARAM_WHERE_MAP =>
                               . 'WHERE version = i.version '
                               . 'AND story__id = i.story__id )',
       _checked_out           => 'i.checked_out = ?',
+      _not_checked_out       => 'i.checked_out = 0 AND s.id not in '
+                              . '(SELECT story__id FROM story_instance '
+                              . 'WHERE s.id = story_instance.story__id '
+                              . 'AND story_instance.checked_out = 1)',
       primary_oc_id          => 'i.primary_oc__id = ?',
       output_channel_id      => '(i.id = soc.story_instance__id AND '
                               . '(soc.output_channel__id = ? OR '

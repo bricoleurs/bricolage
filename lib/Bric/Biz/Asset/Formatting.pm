@@ -279,6 +279,10 @@ use constant PARAM_WHERE_MAP =>
                              . 'WHERE version = i.version '
                              . 'AND formatting__id = i.formatting__id )',
       _checked_out          => 'i.checked_out = ?',
+      _not_checked_out      => 'i.checked_out = 0 AND f.id not in '
+                             . '(SELECT formatting__id FROM formatting_instance '
+                             . 'WHERE f.id = formatting_instance.formatting__id '
+                             . 'AND formatting_instance.checked_out = 1)',
       category_id           => 'f.category__id = ?',
       category_uri          => 'f.category__id = c.id AND '
                              . 'LOWER(c.uri) LIKE LOWER(?))',
