@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =head1 DATE
 
-$Date: 2002-02-12 00:58:51 $
+$Date: 2002-02-12 16:44:08 $
 
 =head1 DESCRIPTION
 
@@ -315,6 +315,11 @@ post_path for templates but ultimately this should be fixed the right way. If
 you choose to accept this mission you'll need to write an upgrade script to
 correct template entries in the database and move deployed templates on the
 filesystem.
+
+=item *
+
+Add interface for editing Media Types (a.k.a. MIME types) so that new ones can
+be added.
 
 =back
 
