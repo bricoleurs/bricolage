@@ -118,6 +118,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <% $ieSpacer %>
 <& '/widgets/select_object/select_object.mc',
   object        => 'category',
+  constrain => { site_id => $media->get_site_id },
   name          => "$widget|category__id",
   field         => "uri",
   sort_field    => "uri",

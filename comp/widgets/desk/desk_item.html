@@ -98,6 +98,17 @@ if ($desk_type eq 'workflow') {
     </td>
 
 </tr>
+
+<tr>
+<% &$onePixCell(3) %>
+</tr>
+<tr>
+    <td align="right" class="medHeader"><%$lang->maketext('Site')%>: </td>
+    <% &$onePixCell(0, 18) %>
+    <td<% $classes->{priority} || '' %>>&nbsp;<span class="subHeader"><% $site || '&nbsp;' %></span></td>
+</tr>
+
+
 <tr>
 <% &$onePixCell(3) %>
 </tr>
@@ -169,6 +180,9 @@ my $cats = $r->pnotes("desk.cats") || {};
 my ($name, $date, $date_label, $cat);
 my $header_class = 'lightHeader';
 
+my $site_id = $obj->get_site_id;
+my $site = Bric::Biz::Site->lookup({id => $site_id})->get_name || '&nbsp;';
+
 if ($class eq 'formatting') {
     $date = $obj->get_deploy_date || '&nbsp';
     $date_label = 'Deployed Date';
@@ -209,7 +223,7 @@ if ($class eq 'formatting') {
 }
 $cat ||= '&nbsp;';
 my $classes = $highlight ? { $highlight => ' class="tealHighlight"' } : {};
-my $rowspan = 4;
+my $rowspan = 5;
 </%init>
 
 <%doc>
@@ -221,11 +235,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:11 $
+$Date: 2003-07-18 23:51:55 $
 
 =head1 DESCRIPTION
 
