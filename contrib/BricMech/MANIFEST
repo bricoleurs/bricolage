@@ -1,4 +1,5 @@
 Changes
+Build.PL
 Makefile.PL
 MANIFEST
 README
@@ -10,4 +11,4 @@ t/40-profile.t
 t/50-workspace.t
 t/60-attribute.t
 lib/Bric/Mech.pm
-META.yml                                 Module meta-data (added by MakeMaker)
+META.yml

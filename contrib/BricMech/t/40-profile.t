@@ -6,16 +6,17 @@ use strict;
 require 5.006001;
 use warnings;
 
-#use Test::More tests => 0;    # must match `skip' below
-use Test::More skip_all => 'profile tests not done';
 use Bric::Mech;
+use Test::More;
 
-SKIP: {
-    my $msg = "Bricolage env vars not set.\n"
+if (exists $ENV{BRICOLAGE_SERVER} && exists $ENV{BRICOLAGE_USERNAME}
+      && exists $ENV{BRICOLAGE_PASSWORD}) {
+#    plan tests => 17;
+    plan skip_all => 'profile tests not started';
+} else {
+    plan skip_all => "Bricolage env vars not set.\n"
       . "See 'README' for installation instructions.";
-    skip($msg, 0) unless exists $ENV{BRICOLAGE_SERVER}
-      && exists $ENV{BRICOLAGE_USERNAME} && exists $ENV{BRICOLAGE_PASSWORD};
+}
 
 #    my $mech = Bric::Mech->new();
 #    $mech->login();
-}

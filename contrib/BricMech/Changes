@@ -1,3 +1,8 @@
+0.03  2005-03-02
+  - now uses Module::Build instead of ExtUtils::MakeMaker
+  - improved the 'skip' part of the tests, added several tests
+  - added collapse_admin_menus
+
 0.02  2005-02-28
   - added 'base' parameter to `new', to allow switching to another
     WWW::Mechanize-like base class (e.g. Win32::IE::Mechanize)

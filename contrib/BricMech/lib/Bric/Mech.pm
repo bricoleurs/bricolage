@@ -1,7 +1,7 @@
 package Bric::Mech;
 
 require 5.006001;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use strict;
 use warnings;
@@ -241,8 +241,8 @@ sub logout {
         carp "wasn't logged in, so didn't logout\n";
     }
 
-    $self->{workflow} = 0;
     $self->{logged_in} = 0;
+    $self->{workflow} = 0;
     return $self;
 }
 
@@ -306,9 +306,6 @@ sub enter_leftnav {
 
     $self->follow_link(tag => 'iframe') unless $self->in_leftnav;
     unless ($self->in_leftnav) {
-
-print $self->content, $/;
-
         $self->_croak("getting left nav");
     }
 
@@ -564,14 +561,7 @@ sub expand_admin_menus {
     my $self = shift;
 
     $self->enter_leftnav();
-
-    unless ($self->find_link(url_regex => qr/admin_cb=0/)) {
-        # XXX: is it possible for ADMIN menu not to exist?
-        $self->follow_link(url_regex => qr/admin_cb=1/);
-        unless ($self->success && $self->in_leftnav) {
-            $self->_croak('expanding ADMIN menu');
-        }
-    }
+    $self->_expand_admin();
 
     foreach my $submenu (qw(adminSystem adminPublishing distSystem)) {
         next if $self->find_link(url_regex => qr/$submenu\_cb=0/);
@@ -589,13 +579,42 @@ sub expand_admin_menus {
 
 =head2 collapse_admin_menus
 
-  Not yet implemented. Who cares?
+  $self->collapse_admin_menus();
+
+Collapses all ADMIN menus in the left nav (SYSTEM, PUBLISHING, DISTRIBUTION).
+Already collapsed menus will stay that way. Any profile or manager that you
+were visiting will be lost. You can collapse menus whether or not you're
+already in the left nav.
+
+=head3 Args:
+
+None.
+
+=head3 Returns:
+
+$self->in_leftnav will return C<true> since this goes into the left nav.
 
 =cut
 
 sub collapse_admin_menus {
     my $self = shift;
-    $self->_croak('not yet implemented');
+
+    $self->enter_leftnav();
+    $self->_expand_admin();
+
+    foreach my $submenu (qw(adminSystem adminPublishing distSystem)) {
+        next if $self->find_link(url_regex => qr/$submenu\_cb=1/);
+        my $link = $self->find_link(url_regex => qr/$submenu\_cb=0/);
+        next unless defined $link; # user might not have perm for an ADMIN menu
+        $self->get($link);
+        unless ($self->success && $self->in_leftnav) {
+            $self->_croak("collapsing $submenu menu");
+        }
+    }
+
+    $self->_collapse_admin();
+
+    return $self;
 }
 
 
@@ -1132,15 +1151,12 @@ sub _init_double_lists {
 
 sub _init_lang_key {
     my ($self, $html) = @_;
-    return unless $self->logged_in;
-    return unless defined $html && $html;
+    return unless defined $html;
     return if $self->in_leftnav;
 
     # didn't want to fire up HTML::TokeParser::Simple just for this
-    if ($html =~ m{href="/media/css/([^.]+)\.css"}) {
+    if ($html =~ m{href="/media/css/(?!style)(.+)\.css"}) {
         $self->{lang_key} = $1;
-    } else {
-        $self->_croak("didn't find lang key (shouldn't happen - let me know)", 1);
     }
 }
 
@@ -1204,6 +1220,32 @@ sub _get_sites {
     }
 
     return \@sites;
+}
+
+sub _expand_admin {
+    my $self = shift;
+
+    # assumes already entered leftnav
+    unless ($self->find_link(url_regex => qr/admin_cb=0/)) {
+        # XXX: is it possible for ADMIN menu not to exist?
+        $self->follow_link(url_regex => qr/admin_cb=1/);
+        unless ($self->success && $self->in_leftnav) {
+            $self->_croak('expanding ADMIN menu', 1);
+        }
+    }
+}
+
+sub _collapse_admin {
+    my $self = shift;
+
+    # assumes already entered leftnav
+    unless ($self->find_link(url_regex => qr/admin_cb=1/)) {
+        # XXX: is it possible for ADMIN menu not to exist?
+        $self->follow_link(url_regex => qr/admin_cb=0/);
+        unless ($self->success && $self->in_leftnav) {
+            $self->_croak('collapsing ADMIN menu', 1);
+        }
+    }
 }
 
 sub _croak {
