@@ -94,7 +94,7 @@ and media profiles. [Scott]
 
 =item *
 
-The element admin profile now automatically addes the currently selected site
+The element admin profile now automatically adds the currently selected site
 context to new elements, thus generally saving a step when creating new
 elements. [JoE<atilde>o Pedro]
 
@@ -333,7 +333,7 @@ hasn't created them because there are no custom fields. [David]
 =item *
 
 In the formBuilder interface used by the Element and Contributor Type
-profiles, the maximum length of text and textarea fields is no "0", or
+profiles, the maximum length of text and textarea fields is now "0", or
 unlimited. [David]
 
 =item *
@@ -499,8 +499,8 @@ C<< <%chk_syntax> >> tags now work as advertised. Reported by Ben Bangert.
 
 =item *
 
-Publication of stories and media the automatically schedule expiration jobs no
-longer cause an error. Reported by Marshall Bloch. [David]
+Publication of stories and media that automatically schedule expiration jobs no
+longer causes an error. Reported by Marshall Bloch. [David]
 
 =back
 
@@ -562,7 +562,7 @@ scheduled distribution. [Mark]
 
 Added the C<bric_queued> daemon to take advantage of the new publication
 scheduling of Bric::Util::Job::Pub. Together with the use of a carefully tuned
-instance of Bricolage, these new features allows the Bricolage administrator
+instance of Bricolage, these new features allow the Bricolage administrator
 to control the amount of system resources given over to publishing. [Mark]
 
 =item *
@@ -720,7 +720,7 @@ names, thanks to reports from Nate Perry-Thistle. [David]
 
 =item *
 
-Made in the index on field key names case-insensitively unique. [David]
+Made the index on field key names case-insensitively unique. [David]
 
 =item *
 
@@ -1029,7 +1029,7 @@ from Bill Cappel. [David]
 =item *
 
 Added the C<YEAR_SPAN_BEFORE> and C<YEAR_SPAN_AFTER> F<bricolage.conf>
-directives. These directives enable control how many years before and after
+directives. These directives control how many years before and after
 the current year to display in the list of years in the date and time select
 widget. The default values are 10 for each, meaning that if the current year
 is 2003, then the date span will be from 1993 to 2013.
