@@ -74,6 +74,18 @@ publish to one or more email addresses. [David]
 Callbacks moved from Mason components to modules based on
 MasonX::ApacheHandler::WithCallbacks. [Scott]
 
+=item *
+
+Optimized performance of URI uniqueness checks by adding database tables to do
+the job, rather than constructing the URIs for all other documents in the same
+categories as the document being checked. This was the last major bottleneck
+affecting SOAP performance, as well as document editing in general. [David]
+
+=item *
+
+Added C<instance()> class method to Bric::Util::Language, so that non-OO
+functions can get access to the current language handle. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2003-06-13 16:49:17 $
+-- $Date: 2003-08-08 06:07:11 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -52,6 +52,15 @@ ADD CONSTRAINT fk_usr__media_instance FOREIGN KEY (usr__id)
 ALTER TABLE media_instance
 ADD CONSTRAINT fk_primary_oc__media_instance FOREIGN KEY (primary_oc__id)
 	REFERENCES output_channel(id) ON DELETE CASCADE;
+
+-- Media URI constraint.
+ALTER TABLE media_uri
+ADD CONSTRAINT fk_media__media_uri FOREIGN KEY (media__id)
+    REFERENCES media(id) ON DELETE CASCADE;
+
+ALTER TABLE media_uri
+ADD CONSTRAINT fk_media__site__id FOREIGN KEY (site__id)
+REFERENCES site(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Media to output channel mapping constraints

@@ -36,11 +36,12 @@ sub get_elem {
 ##############################################################################
 # Arguments to the new() constructor. Used by construct(). Override as
 # necessary in subclasses.
+my $z;
 sub new_args {
     my $self = shift;
     ( element       => $self->get_elem,
       user__id      => $self->user_id,
-      file_name     => 'fun.foo',
+      file_name     => 'fun.foo' . ++$z,
       source__id    => 1,
       primary_oc_id => 1,
       site_id       => 100,
@@ -159,7 +160,7 @@ sub test_select_methods: Test(70) {
     # A media with one category (admin user)
     $time = time;
     $media[0] = class->new({ name        => "_test_$time",
-                             file_name   => 'test.foo',
+                             file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
                              source__id  => 1,
@@ -226,15 +227,15 @@ sub test_select_methods: Test(70) {
     # ... with multiple cats
     $time = time;
     $media[1] = class->new({
-                               name        => "_test_$time",
-                               file_name   => 'test.foo',
-                               description => 'this is a test',
-                               priority    => 1,
-                               source__id  => 1,
-                               user__id    => $admin_id,
-                               element     => $element, 
-                               checked_out => 1,
-                               site_id     => 100,
+                            name        => "_test_$time",
+                            file_name   => 'test.foo' . ++$z,
+                            description => 'this is a test',
+                            priority    => 1,
+                            source__id  => 1,
+                            user__id    => $admin_id,
+                            element     => $element,
+                            checked_out => 1,
+                            site_id     => 100,
                            });
     $media[1]->set_category__id($OBJ->{category}->[1]->get_id());
     $media[1]->save();
@@ -269,7 +270,7 @@ sub test_select_methods: Test(70) {
     # ... as a grp member
     $time = time;
     $media[2] = class->new({ name        => "_test_$time",
-                             file_name   => 'test.foo',
+                             file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
                              source__id  => 1,
@@ -314,7 +315,7 @@ sub test_select_methods: Test(70) {
     # ... a bunch of grps
     $time = time;
     $media[3] = class->new({ name        => "_test_$time",
-                             file_name   => 'test.foo',
+                             file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
                              source__id  => 1,
@@ -375,7 +376,7 @@ sub test_select_methods: Test(70) {
     # ... now try a workflow
     $time = time;
     $media[4] = class->new({ name        => "_test_$time",
-                             file_name   => 'test.foo',
+                             file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
                              source__id  => 1,
@@ -421,7 +422,7 @@ sub test_select_methods: Test(70) {
     # ... desk
     $time = time;
     $media[5] = class->new({ name        => "_test_$time",
-                             file_name   => 'test.foo',
+                             file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
                              source__id  => 1,
@@ -679,7 +680,7 @@ sub test_new_grp_ids: Test(4) {
     $self->add_del_ids($cat->get_id(), 'category');
     # first we'll try it with no cats
     my $media = class->new({ name        => "_test_$time",
-                             file_name   => 'test.foo',
+                             file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
                              source__id  => 1,
@@ -705,7 +706,7 @@ sub test_new_grp_ids: Test(4) {
               'does adding cats get the right asset_grp_ids?');
 
     $media = class->new({ name        => "_test_$time",
-                          file_name   => 'test.foo',
+                          file_name   => 'test.foo' . ++$z,
                           description => 'this is a test',
                           priority    => 1,
                           source__id  => 1,

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2003-03-16 01:33:53 $
+-- $Date: 2003-08-08 06:07:11 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -97,6 +97,17 @@ CREATE TABLE story_instance (
                                    CONSTRAINT ck_story_instance__checked_out
                                      CHECK (checked_out IN (0,1)),
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
+);
+
+-- -----------------------------------------------------------------------------
+-- Table story_uri
+--
+-- Description: Tracks all URIs for stories.
+--
+CREATE TABLE story_uri (
+    story__id NUMERIC(10)     NOT NULL,
+    site__id NUMERIC(10)      NOT NULL,
+    uri       TEXT            NOT NULL
 );
 
 -- -----------------------------------------------------------------------------
@@ -213,7 +224,6 @@ CREATE TABLE attr_story_meta (
 );
 
 
-
 -- -----------------------------------------------------------------------------
 -- Indexes.
 --
@@ -232,6 +242,11 @@ CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
 CREATE INDEX fdx_story__story_instance ON story_instance(story__id);
 CREATE INDEX fdx_usr__story_instance ON story_instance(usr__id);
 CREATE INDEX fdx_primary_oc__story_instance ON story_instance(primary_oc__id);
+
+-- story_uri
+CREATE INDEX fkx_story__story_uri ON story_uri(story__id);
+CREATE UNIQUE INDEX udx_story_uri__site_id__uri
+ON story_uri(lower_text_num(uri, site__id));
 
 -- story__category
 CREATE UNIQUE INDEX udx_story_category__story__cat ON story__category(story_instance__id, category__id);

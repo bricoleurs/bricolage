@@ -610,15 +610,15 @@ sub _handle_fault {
         if ($r->faultstring eq 'Application error' and
             ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
             # this is a bric exception, the interesting stuff is in detail
-            print STDERR "Call to Bric::SOAP::$module->$command failed : \n" .
-              join("\n", values %{$r->faultdetail});
+            print STDERR "Call to Bric::SOAP::$module->$command failed:\n\n",
+              join("\n", values %{$r->faultdetail}), $/, $/;
         } else {
-            print STDERR "Call to Bric::SOAP::$module->$command failed : \n" .
-              $r->faultstring;
+            print STDERR "Call to Bric::SOAP::$module->$command failed:\n\n",
+              $r->faultstring, $/, $/;
         }
         print STDERR "Check the Apache error log for more detail.\n";
     } else {
-        print STDERR "TRANSPORT ERROR:", $soap->transport->status, "\n";
+        print STDERR "TRANSPORT ERROR: ", $soap->transport->status, "\n";
         print STDERR "Check the Apache error log for more information.\n";
     }
 

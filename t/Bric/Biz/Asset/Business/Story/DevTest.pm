@@ -36,10 +36,12 @@ my @EXP_GRP_IDS;
 
 ##############################################################################
 # Constructs a new object.
+my $z;
 sub construct {
     my $s = shift->SUPER::construct(@_);
     $s->add_categories([1]);
     $s->set_primary_category(1);
+    $s->set_slug('slug' . ++$z);
     return $s;
 }
 
@@ -61,6 +63,7 @@ sub test_clone : Test(15) {
 
     # Clone the story.
     ok( $story->clone, "Clone story" );
+#    ok( $story->set_slug('jarkko'), "Change the slug" );
     ok( $story->save, "Save cloned story" );
     ok( my $cid = $story->get_id, "Get cloned ID" );
     $self->add_del_ids([$cid], $key);
@@ -263,7 +266,7 @@ sub test_select_methods: Test(87) {
                               description => 'this is a test',
                               priority    => 1,
                               source__id  => 1,
-                              slug        => 'test',
+                              slug        => 'test' . ++$z,
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,
@@ -310,7 +313,7 @@ sub test_select_methods: Test(87) {
                               description => 'this is a test',
                               priority    => 1,
                               source__id  => 1,
-                              slug        => 'test',
+                              slug        => 'test' . ++$z,
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,
@@ -356,7 +359,7 @@ sub test_select_methods: Test(87) {
                               description => 'this is a test',
                               priority    => 1,
                               source__id  => 1,
-                              slug        => 'test',
+                              slug        => 'test' . ++$z,
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,
@@ -417,7 +420,7 @@ sub test_select_methods: Test(87) {
                               description => 'this is a test',
                               priority    => 1,
                               source__id  => 1,
-                              slug        => 'test',
+                              slug        => 'test' . ++$z,
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,
@@ -463,7 +466,7 @@ sub test_select_methods: Test(87) {
                               description => 'this is a test',
                               priority    => 1,
                               source__id  => 1,
-                              slug        => 'test',
+                              slug        => 'test' . ++$z,
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,

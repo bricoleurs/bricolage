@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-15 09:05:19 $
+$Date: 2003-08-08 06:07:11 $
 
 =head1 SYNOPSIS
 
@@ -1677,11 +1677,9 @@ NONE
 =cut
 
 sub save {
-        my ($self) = @_;
-
-        $self->_sync_attributes();
-
-        return $self;
+    my $self = shift;
+    $self->_sync_attributes;
+    return $self->SUPER::save;
 }
 
 ################################################################################

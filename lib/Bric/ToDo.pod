@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.106 $
+$Revision: 1.107 $
 
 =head1 DATE
 
-$Date: 2003-07-30 05:49:12 $
+$Date: 2003-08-08 06:07:10 $
 
 =head1 DESCRIPTION
 
@@ -189,14 +189,6 @@ it recognizes any other burners tha may be added to the system.
 =head2 High Priority Major Items
 
 =over 4
-
-=item *
-
-Remove C<check_uri()> bottleneck in Story.pm and Media.pm. Create a table with
-two columns in it, one for story IDs and one for URIs, and put all of the URIs
-in it. Then we could just query against that table to compare URIs. All the
-possible URIs for a story would have to be included in the table, for all
-combinations of category and output channel Do the same for media.
 
 =item *
 

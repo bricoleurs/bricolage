@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:27 $
+$Date: 2003-08-08 06:07:11 $
 
 =head1 SYNOPSIS
 
@@ -127,6 +127,11 @@ use Exception::Class
        isa => 'Bric::Util::Fault::Error',
        alias => 'throw_undef',
      },
+   'Bric::Util::Fault::Error::Invalid' =>
+     { description => 'Invalid value error',
+       isa => 'Bric::Util::Fault::Error',
+       alias => 'throw_invalid',
+     },
   );
 
 # $err->as_string() will include the stack trace
@@ -136,7 +141,7 @@ require Exporter;
 *import = \&Exporter::import;
 our @EXPORT_OK = qw(isa_bric_exception isa_exception rethrow_exception throw_ap
                     throw_da throw_dp throw_gen throw_mni throw_error
-                    throw_not_unique throw_undef);
+                    throw_not_unique throw_undef throw_invalid);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 #--------------------------------------#

@@ -7,15 +7,15 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:27 $
+$Date: 2003-08-08 06:07:11 $
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,7 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
-use Bric::Util::Fault::Exception::MNI;
+use Bric::Util::Fault qw(throw_mni);
 
 #==============================================================================#
 # Inheritance                          #
@@ -47,14 +47,18 @@ use Bric::Util::Fault::Exception::MNI;
 use base qw(Locale::Maketext);
 #use Bric::Config qw(:char);
 
+my $INSTANCE;
+sub get_handle { $INSTANCE = shift->SUPER::get_handle(@_) }
+sub instance { $INSTANCE }
+
 sub maketext { shift->SUPER::maketext(ref $_[0] ? @{$_[0]} : @_) }
 
 sub key {
     my $self = shift;
     my $pkg = ref $self || $self;
-    die Bric::Util::Fault::Exception::MNI->new
-      ({ msg => "Method $pkg->key not implemented" })
+    throw_mni "Method $pkg->key not implemented";
 }
+
 
 1;
 __END__

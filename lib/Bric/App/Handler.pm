@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 18:11:01 $
+$Date: 2003-08-08 06:07:10 $
 
 =head1 SYNOPSIS
 
@@ -53,20 +53,62 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::App::ApacheHandler;
 use Bric::Config qw(:mason :char :sys_user :err);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
-use Bric::Util::CharTrans;
 use Bric::Util::Trans::FS;
 use Bric::App::Event qw(clear_events);
-use Bric::App::Util qw(del_redirect);
+use Bric::App::Util qw(del_redirect add_msg);
 use Apache::Constants qw(OK);
 use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
 use HTML::Mason::Exceptions;
 use Carp qw(croak);
+
+use Bric::App::Callback::AddMore;
+use Bric::App::Callback::Alert;
+use Bric::App::Callback::Alias;
+use Bric::App::Callback::AssetMeta;
+use Bric::App::Callback::CharTrans;
+use Bric::App::Callback::ContainerProf;
+use Bric::App::Callback::Desk;
+use Bric::App::Callback::Element;
+use Bric::App::Callback::ListManager;
+use Bric::App::Callback::Login;
+use Bric::App::Callback::Nav;
+use Bric::App::Callback::Perm;
+use Bric::App::Callback::Profile;
+use Bric::App::Callback::Publish;
+use Bric::App::Callback::Search;
+use Bric::App::Callback::SelectObject;
+use Bric::App::Callback::SelectTime;
+use Bric::App::Callback::SiteContext;
+use Bric::App::Callback::Workspace;
+
+use Bric::App::Callback::Profile::Action;
+use Bric::App::Callback::Profile::AlertType;
+use Bric::App::Callback::Profile::Category;
+use Bric::App::Callback::Profile::Contrib;
+use Bric::App::Callback::Profile::Desk;
+use Bric::App::Callback::Profile::Dest;
+use Bric::App::Callback::Profile::ElementData;
+use Bric::App::Callback::Profile::ElementType;
+use Bric::App::Callback::Profile::FormBuilder;
+use Bric::App::Callback::Profile::Grp;
+use Bric::App::Callback::Profile::Job;
+use Bric::App::Callback::Profile::Media;
+use Bric::App::Callback::Profile::MediaType;
+use Bric::App::Callback::Profile::OutputChannel;
+use Bric::App::Callback::Profile::Pref;
+use Bric::App::Callback::Profile::Server;
+use Bric::App::Callback::Profile::Site;
+use Bric::App::Callback::Profile::Source;
+use Bric::App::Callback::Profile::Story;
+use Bric::App::Callback::Profile::Template;
+use Bric::App::Callback::Profile::User;
+use Bric::App::Callback::Profile::Workflow;
+use Bric::App::ApacheHandler;
 
 {
     # Now let's set up our Mason space.
@@ -169,7 +211,6 @@ use constant ERROR_FILE =>
 
 ################################################################################
 # Private Class Fields
-my $ct;
 my $no_trans = 0;
 
 my %interp_args =
@@ -181,19 +222,26 @@ my %interp_args =
   );
 
 my $interp = HTML::Mason::Interp->new(%interp_args);
-my ($ah, $gah);
+my ($ah, $gah, $ct);
 if (CHAR_SET eq 'UTF-8') {
-    $ah = Bric::App::ApacheHandler->new(%interp_args,
-                                        decline_dirs => 0,
-                                        args_method => MASON_ARGS_METHOD);
+    $ah = Bric::App::ApacheHandler->new
+      (%interp_args,
+       decline_dirs         => 0,
+       cb_classes           => 'ALL',
+       cb_exception_handler => \&cb_exception_handler,
+       exec_null_cb_values  => 0,
+       args_method          => MASON_ARGS_METHOD);
 } else {
     require Bric::Util::CharTrans;
     $ct = Bric::Util::CharTrans->new(CHAR_SET);
-
-    $ah = Bric::App::ApacheHandler->new(%interp_args,
-                                        decline_dirs => 0,
-                                        args_method => MASON_ARGS_METHOD,
-                                        out_method => \&filter);
+    $ah = Bric::App::ApacheHandler->new
+      (%interp_args,
+       decline_dirs         => 0,
+       cb_classes           => 'ALL',
+       cb_exception_handler => \&cb_exception_handler,
+       exec_null_cb_values  => 0,
+       args_method          => MASON_ARGS_METHOD,
+       out_method           => \&filter);
 }
 
 $gah = HTML::Mason::ApacheHandler->new(%interp_args,
@@ -367,6 +415,14 @@ sub filter {
 
     # Dump the data.
     print STDOUT $ret;
+}
+
+##############################################################################
+
+sub cb_exception_handler {
+    my $err = shift;
+    rethrow_exception $err unless isa_bric_exception($err, 'Error');
+    add_msg($err->maketext);
 }
 
 =back

@@ -138,7 +138,7 @@ sub test_primary_oc_id : Test(8) {
 ##############################################################################
 # Test aliasing.
 ##############################################################################
-sub test_alias : Test(29) {
+sub test_alias : Test(30) {
     my $self = shift;
     my $class = $self->class;
     ok( my $key = $class->key_name, "Get key" );
@@ -188,7 +188,7 @@ sub test_alias : Test(29) {
     throws_ok { $class->new({ alias_id => $ba->get_id,
                               site_id => $site1_id }) }
       qr/Cannot create an alias to an asset based on an element that is not associated with this site/,
-      "Check that a element needs to be associated with a site ".
+      "Check that an element needs to be associated with a site ".
       "for a target to aliasable";
 
     my $element = $ba->_get_element_object();
@@ -220,11 +220,22 @@ sub test_alias : Test(29) {
         "Create an alias asset" );
 
     isnt($alias_asset->_get_element_object, undef,
-         "Check that we get a element object");
+         "Check that we get an element object");
 
     is($alias_asset->_get_element_object->get_id,
        $ba->_get_element_object->get_id,
-       "Check that alias_asset has a element object");
+       "Check that alias_asset has an element object");
+
+    if ($class->key_name eq 'story') {
+        is($alias_asset->get_slug, $ba->get_slug, "Check slug");
+          # Change the slug to ensure it has a unique URI.
+        ok( $alias_asset->set_slug('slug'), "Set slug" );
+
+    } else {
+      SKIP: {
+            skip "No slug on media assets", 1;
+        }
+    }
 
     ok( $alias_asset->save , "Try to save it");
     my $alias_id = $alias_asset->get_id;
@@ -239,14 +250,6 @@ sub test_alias : Test(29) {
 
     is($alias_asset->get_alias_id, $ba->get_id,
        "Does it still point to the correct asset");
-
-    if ($class->key_name eq 'story') {
-        is($alias_asset->get_slug, $ba->get_slug, "Check slug")
-    } else {
-      SKIP: {
-            skip "No slug on media assets", 1;
-        }
-    }
 
     is_deeply($ba->get_tile, $alias_asset->get_tile,
               "Should get identical tiles");

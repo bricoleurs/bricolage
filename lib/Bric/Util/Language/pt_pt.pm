@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:28 $
+$Date: 2003-08-08 06:07:11 $
 
 =head1 SYNOPSIS
 
@@ -480,14 +480,8 @@ use constant key => 'pt_pt';
    'Template [_1] saved.' => 'Modelo [_1] guardado.',
    'Templates Found' => 'Modelos Encontrados',
 
-   'The category was not added, as it would have caused a URI clash with story [_1].' =>
-     'A categoria não foi adicionada, uma vez que teria provocado um conflito de URI com o artigo [_1].',
-
    'The slug can only contain alphanumeric characters (A-Z, 0-9, - or _)!' =>
      'O identificador no URL só pode conter caracteres alfanuméricos (A-Z, 0-9, - ou _)!',
-
-   'The slug has been reverted to [_1], as the slug [_2] caused this story to have a URI conflicting with that of story [_3].' =>
-     'O identificador do url foi revertido para [-1], uma vez que o identificador [_2] fez com que este artigo tivesse um URI que entra em conflito com o do artigo [_3].',
 
    'The slug, category and cover date you selected would have caused this story to have a URI conflicting with that of story [_1].' =>
      'O identificador de URL, categoria e data de publicação que seleccionou teriam causado um conflito entre o URI deste artigo e o do artigo [_1].',
@@ -586,14 +580,9 @@ use constant key => 'pt_pt';
    'Template compile failed: [_1]' =>
      'Compilação do modelo falhou: [_1]',
 
-   'The URI of this media conflicts with that of [_1]. Please change the category, file name, or slug.' =>
-     'O URI deste medium entra em conflito com o de [_1]. Por favor altere a categoria, nome de ficheiro ou identificador no URL.',
-
    'The URL you requested, <b>[_1]</b>, was not found on this server' =>
      'O URL que pediu, <b>[_1]</b>, não foi encontrado no servidor',
 
-   'The cover date has been reverted to [_1], as it caused this story to have a URI conflicting with that of story \'[_2].' =>
-     'A data de destaque foi alterada para [_1], uma vez que deu origem a um URI que entra em conflito com o do artigo [_2].',
 
    'The name [_1] is already used by another Element Type.' =>
      'O nome [_1] já está a ser usado por outro Tipo de Elemento.',
@@ -716,6 +705,8 @@ use constant key => 'pt_pt';
       'Alias to [_1] created and saved.' => 'Alias to [_1] created and saved.',
       'Field profile [_1] deleted.' => 'Field profile [_1] deleted.',
       'Field profile [_1] saved.' => 'Field profile [_1] saved.',
+      'The URI "[_1]" is not unique. Please change the cover date, output channels, category, or file name as necessary to make the URIs unique.'
+      'The URI "[_1]" is not unique. Please change the cover date, output channels, or categories as necessary to make the URIs unique.'
   );
 
 =cut

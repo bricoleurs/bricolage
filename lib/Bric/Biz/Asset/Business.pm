@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:15 $
+$Date: 2003-08-08 06:07:11 $
 
 =head1 SYNOPSIS
 
@@ -120,6 +120,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
+use Bric::Config qw(:mod_perl);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Fault qw(:all);
@@ -202,6 +203,7 @@ BEGIN {
               _oc_coll                  => Bric::FIELD_NONE,
               _kw_coll                  => Bric::FIELD_NONE,
               _alias_obj                => Bric::FIELD_NONE,
+              _update_uri               => Bric::FIELD_NONE,
             });
     }
 
@@ -746,6 +748,17 @@ sub add_contributor {
     return $self;
 }
 
+sub _get_alias {
+    my $self = shift;
+    my ($alias_id, $alias_obj) = $self->_get(qw(alias_id _alias_obj));
+    return unless $alias_id;
+    unless ($alias_obj) {
+        $alias_obj = ref($self)->lookup({ id => $alias_id });
+        $self->_set(['_alias_obj'] => [$alias_obj]);
+    }
+    return $alias_obj;
+}
+
 =item ($contribs || @contribs) = $story->get_contributors()
 
 Returns a list or list ref of the contributors that have been assigned
@@ -764,17 +777,6 @@ B<Notes:>
 NONE
 
 =cut
-
-sub _get_alias {
-    my $self = shift;
-    my ($alias_id, $alias_obj) = $self->_get(qw(alias_id _alias_obj));
-    return unless $alias_id;
-    unless ($alias_obj) {
-        $alias_obj = ref($self)->lookup({ id => $alias_id });
-        $self->_set(['_alias_obj'] => [$alias_obj]);
-    }
-    return $alias_obj;
-}
 
 sub get_contributors {
     my $self = shift;
@@ -1055,9 +1057,10 @@ B<Notes:> NONE.
 
 sub add_output_channels {
     my $self = shift;
+    return unless @_;
     my $oc_coll = $get_oc_coll->($self);
     $oc_coll->add_new_objs(@_);
-    return $self;
+    $self->_set(['_update_uri'] => [1]);
 }
 
 ##############################################################################
@@ -1123,9 +1126,10 @@ B<Notes:> NONE.
 
 sub del_output_channels {
     my $self = shift;
+    return unless @_;
     my $oc_coll = $get_oc_coll->($self);
     $oc_coll->del_objs(@_);
-    return $self;
+    $self->_set(['_update_uri'] => [1]);
 }
 
 ################################################################################
@@ -1271,17 +1275,26 @@ Bric::set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> 
+B<Side Effects:>
 
 NONE
 
-B<Notes:> 
+B<Notes:>
 
 NONE
 
 =cut
 
-sub set_cover_date { $_[0]->_set(['cover_date'], [db_date($_[1])]) }
+sub set_cover_date {
+    my $self = shift;
+    my $cover_date = db_date(shift);
+    my $old = $self->_get('cover_date');
+    $self->_set([qw(cover_date _update_uri)] => [$cover_date, 1])
+      if (not defined $cover_date && defined $old)
+      || (defined $cover_date && not defined $old)
+      || ($cover_date ne $old);
+    return $self;
+}
 
 ################################################################################
 
@@ -1936,7 +1949,74 @@ sub save {
     $oc_coll->save($self->key_name => $vid) if $oc_coll;
     $kw_coll->save($self) if $kw_coll;
     $self->SUPER::save;
-    $self->_set__dirty(0);
+}
+
+################################################################################
+
+=item $story_name = $story->check_uri;
+
+=item $story_name = $story->check_uri($user_id);
+
+Returns name of story that has clashing URI.
+
+C<Notes:> This method has been deprecated. URI uniqueness is now checked by
+C<save()>, so this method is no longer strictly necessary.
+
+=cut
+
+sub check_uri {
+    my $self = shift;
+
+    # Warn 'em.
+    require Carp;
+    Carp::carp(__PACKAGE__ . "->check_uri has been deprecated and will be" .
+               " removed in a future version of Bricolage");
+
+    my $id = $self->_get('id');
+    my $key = $self->key_name;
+    my @ocs = $self->get_output_channels;
+    my %seen;
+    my $sel = prepare_c(qq{
+        SELECT $key\__id
+        FROM   $key\_uri
+        WHERE  $key\__id <> ?
+               AND LOWER(uri) = ?});
+
+    if ($key eq 'story') {
+        for my $cat ($self->get_categories) {
+            for my $oc (@ocs) {
+                my $uri = lc $self->get_uri($cat, $oc);
+                # Skip it if we've seen it before.
+                next if $seen{$uri};
+                if (my $ret = $self->_check_uri_table($sel, $id, $uri)) {
+                    return $ret;
+                }
+                $seen{$uri} = 1;
+            }
+        }
+    } else {
+        for my $oc (@ocs) {
+            my $uri = lc $self->get_uri($oc);
+            # Skip it if we've seen it before.
+            next if $seen{$uri};
+            if (my $ret = $self->_check_uri_table($sel, $id, $uri)) {
+                return $ret;
+            }
+            $seen{$uri} = 1;
+        }
+    }
+}
+
+sub _check_uri_table {
+    my ($self, $sel, $id, $uri) = @_;
+    # Make it so.
+    execute($sel, $id, $uri);
+    my $sid;
+    bind_columns($sel, \$sid);
+    if (fetch($sel)) {
+        finish($sel);
+        return $self->lookup({ id => $sid })->get_title;
+    }
 }
 
 ###############################################################################
@@ -2037,7 +2117,6 @@ sub _init {
             "element that is not associated with this site"
           unless $at_exists;
 
-
         $self->set_source__id( $alias_target->get_source__id );
         $self->set_cover_date( $alias_target->get_cover_date );
 
@@ -2070,7 +2149,7 @@ sub _init {
 
                 my $new_cat = Bric::Biz::Category->lookup
                   ({ uri => $cat->get_uri, site_id => $init->{site_id}})
-                    or next;
+                  or next;
                 $self->add_categories([$new_cat]);
                 $self->set_primary_category($new_cat);
                 last;
@@ -2334,7 +2413,127 @@ sub _sync_contributors {
     return $self;
 }
 
-###############################################################################
+################################################################################
+
+=item $self = $self->_delete_uris;
+
+Deletes the URI records for this document. Called by C<save()> when the document
+has been deactivated.
+
+B<Throws:>
+
+=over
+
+=item Exception::DA
+
+=back
+
+=cut
+
+sub _delete_uris {
+    my $self = shift;
+    my $id = $self->_get('id') or return;
+    my $key = $self->key_name;
+
+    my $del = prepare_c(qq{
+        DELETE FROM $key\_uri
+        WHERE  $key\__id = ?
+    });
+
+    execute($del, $id);
+    return $self;
+}
+
+################################################################################
+
+=item $self = $self->_update_uris;
+
+Updates the URI records for this document.
+
+B<Throws:>
+
+=over
+
+=item Error::NotUnique
+
+=item Exception::DA
+
+=back
+
+=cut
+
+sub _update_uris {
+    my $self = shift;
+    my ($id, $site_id, $pub_status) = $self->_get(qw(id site_id publish_status));
+    my $key = $self->key_name;
+
+    # First, expire or delete all existing URIs for this document.
+    $self->_delete_uris;
+
+    # Prepare the insert that we'll use.
+    my $ins = prepare_c(qq{
+        INSERT INTO $key\_uri ($key\__id, site__id, uri)
+        VALUES (?, ?, ?)
+    });
+
+    # Now, go through all of the URIs for this document and either update them
+    # or insert them.
+    my @ocs = $self->get_output_channels;
+    my (%seen, $uri);
+    eval {
+        if ($key eq 'media') {
+            for my $oc (@ocs) {
+                $uri = lc $self->get_uri($oc);
+                # Skip it if we've seen it before.
+                next if $seen{$uri};
+                # Insert the URI.
+                execute($ins, $id, $site_id, $uri);
+                $seen{$uri} = 1;
+            }
+        } else {
+            for my $cat ($self->get_categories) {
+                for my $oc (@ocs) {
+                    $uri = lc $self->get_uri($cat, $oc);
+                    # Skip it if we've seen it before.
+                    next if $seen{$uri};
+                    # Insert the URI.
+                    execute($ins, $id, $site_id, $uri);
+                    $seen{$uri} = 1;
+                }
+            }
+        }
+    };
+
+    if (my $err = $@) {
+        # Just die if its any exception other than the one we're interested in.
+        die $err unless $err->get_payload =~
+          /Cannot insert a duplicate key into unique index udx_$key\_uri__site_id__uri/;
+        # There's a URI conflict. Rollback the database changes if we're in
+        # mod_perl (otherwise, save() will roll it back for us.
+        if (MOD_PERL) {
+            rollback(1);
+            # Start a new transaction, since Bricolage's Apache handler will
+            # commit it, anyway.
+            begin(1);
+        } else {
+            # Nothing! Leaving this in keeps the compiler from emitting the
+            # "Useless use of a constant in void context" warning.
+        }
+        my $things = $key eq 'media'
+          ? 'category, or file name'
+          : 'or categories';
+        throw_not_unique
+          error    => "The URI '$uri' is not unique.",
+          maketext => ['The URI "[_1]" is not unique. Please change the' .
+                       " cover date, output channels, $things as necessary" .
+                       " to make the URIs unique.", $uri];
+    }
+
+    # If we succeeded, then mark it!
+    $self->_set(['_update_uri'] => [0]);
+}
+
+################################################################################
 
 =back
 

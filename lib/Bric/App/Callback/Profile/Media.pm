@@ -90,8 +90,9 @@ sub update : Callback(priority => 1) {
     if ($param->{"$widget|file"}) {
         my $upload = $self->apache_req->upload;
         my $fh = $upload->fh;
-        my $agent = new HTTP::BrowserDetect;
-        my $filename = Bric::Util::Trans::FS->base_name($upload->filename, $agent->os_string);
+        my $agent = HTTP::BrowserDetect->new;
+        my $filename = Bric::Util::Trans::FS->base_name($upload->filename,
+                                                        $agent->os_string);
         $media->upload_file($fh, $filename);
         $media->set_size($upload->size);
 
@@ -130,10 +131,10 @@ sub revert : Callback {
     my $media = get_state_data($widget, 'media');
     my $version = $self->request_args->{"$widget|version"};
     $media->revert($version);
-    $media->save();
+    $media->save;
     my $msg = "Media [_1] reverted to V.[_2]";
     my $arg1 = '&quot;' . $media->get_title . '&quot;';
-    add_msg($self->lang->maketext($msg, $arg1, $version));
+    add_msg($msg, $arg1, $version);
     clear_state($widget);
 }
 
@@ -145,13 +146,6 @@ sub save : Callback {
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
 
-    if (my $msg = $media->check_uri(get_user_id())) {
-        my $langmsg = "The URI of this media conflicts with that of [_1]. "
-          . "Please change the category or file name.";
-        add_msg($self->lang->maketext($langmsg, '&quot;' . $msg . '&quot;'));
-        return;
-    }
-
     # Just return if there was a problem with the update callback.
     return if delete $self->request_args->{__data_errors__};
 
@@ -162,10 +156,10 @@ sub save : Callback {
     } else {
         # Make sure the media is activated and then save it.
         $media->activate();
-        $media->save();
+        $media->save;
         log_event('media_save', $media);
         my $arg = '&quot;' . $media->get_title . '&quot;';
-        add_msg($self->lang->maketext("Media [_1] saved.", $arg));
+        add_msg("Media [_1] saved.", $arg);
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -195,13 +189,6 @@ sub checkin : Callback {
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     my $param = $self->request_args;
-
-    if (my $msg = $media->check_uri(get_user_id())) {
-        my $langmsg = "The URI of this media conflicts with that of [_1]. "
-          . "Please change the category, file name, or slug.";
-        add_msg($self->lang->maketext($langmsg, "'$msg'"));
-        return;
-    }
 
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
@@ -236,7 +223,7 @@ sub checkin : Callback {
         log_event("media_rem_workflow", $media);
         my $msg = 'Media [_1] saved and shelved.';
         my $arg = '&quot;' . $media->get_title . '&quot;';
-        add_msg($self->lang->maketext($msg, $arg));
+        add_msg($msg, $arg);
     } elsif ($desk_id eq 'publish') {
         # Publish the media asset and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -264,6 +251,7 @@ sub checkin : Callback {
         }
 
         $media->save;
+
         # Log it!
         log_event('media_save', $media);
         log_event('media_checkin', $media);
@@ -273,7 +261,7 @@ sub checkin : Callback {
         my $msg = "Media [_1] saved and checked in to [_2].";
         my @args = ('&quot;' . $media->get_title . '&quot;',
                     "&quot;$dname&quot;");
-        add_msg($self->lang->maketext($msg, @args));
+        add_msg($msg, @args);
 
         # HACK: Commit this checkin WHY?? Because Postgres does NOT like
         # it when you insert and delete a record within the same
@@ -289,6 +277,7 @@ sub checkin : Callback {
             request_args => { media_pup => { $media->get_id => $media } },
           );
         $pub->publish;
+
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
@@ -317,7 +306,7 @@ sub checkin : Callback {
         my $msg = "Media [_1] saved and moved to [_2].";
         my @args = ('&quot;' . $media->get_title . '&quot;',
                     "&quot;$dname&quot;");
-        add_msg($self->lang->maketext($msg, @args));
+        add_msg($msg, @args);
     }
 
     # Clear the state out and set redirect.
@@ -335,15 +324,8 @@ sub save_and_stay : Callback {
     chk_authz($media, EDIT);
     my $work_id = get_state_data($widget, 'work_id');
 
-    $media->activate();
-    $media->save();
-
-    if (my $msg = $media->check_uri(get_user_id())) {
-        my $langmsg = "The URI of this media conflicts with that of [_1]. "
-          . "Please change the category, file name, or slug.";
-        add_msg($self->lang->maketext($langmsg, "'$msg'"));
-        return;
-    }
+    $media->activate;
+    $media->save;
 
     # Just return if there was a problem with the update callback.
     return if delete $self->request_args->{__data_errors__};
@@ -362,7 +344,7 @@ sub save_and_stay : Callback {
         log_event('media_save', $media);
         my $msg = "Media [_1] saved.";
         my $arg = '&quot;' . $media->get_title . '&quot;';
-        add_msg($self->lang->maketext($msg, $arg));
+        add_msg($msg, $arg);
     }
 
     # Set the state.
@@ -375,13 +357,13 @@ sub cancel : Callback {
     my $self = shift;
     my $media = get_state_data($self->class_key, 'media');
     $media->cancel_checkout();
-    $media->save();
+    $media->save;
     log_event('media_cancel_checkout', $media);
     clear_state($self->class_key);
     set_redirect("/");
     my $msg = "Media [_1] check out canceled.";
     my $arg = '&quot;' . $media->get_name . '&quot;';
-    add_msg($self->lang->maketext($msg, $arg));
+    add_msg($msg, $arg);
 }
 
 ################################################################################
@@ -473,7 +455,7 @@ sub create : Callback {
     log_event('media_save', $media);
     my $msg = 'Media [_1] created and saved.';
     my $arg = '&quot;' . $media->get_title . '&quot;';
-    add_msg($self->lang->maketext($msg, $arg));
+    add_msg($msg, $arg);
 
     # Put the media asset into the session and clear the workflow ID.
     set_state_data($widget, 'media', $media);
@@ -594,7 +576,7 @@ $save_contrib = sub {
         }
     }
     my $msg = '[quant,_1,Contributor] [_2] associated.';
-    add_msg($self->lang->maketext($msg, $contrib_number, $contrib_string))
+    add_msg($msg, $contrib_number, $contrib_string)
       if $contrib_number;
 
     # get the remaining
@@ -687,7 +669,7 @@ sub recall : Callback {
         } else {
             my $msg = 'Permission to checkout [_1] denied';
             my $arg = '&quot;' . $ba->get_name. '&quot;';
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg($msg, $arg);
         }
     }
 
@@ -719,7 +701,7 @@ sub checkout : Callback {
         } else {
             my $msg = 'Permission to checkout [_1] denied';
             my $arg = '&quot;' . $ba->get_name. '&quot;';
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg($msg, $arg);
         }
     }
 
@@ -766,7 +748,7 @@ sub add_kw : Callback {
     # Delete old keywords.
     $media->del_keywords(mk_aref($param->{del_keyword}))
       if defined $param->{del_keyword};
-    $media->save();
+    $media->save;
 
     # Save the changes
     set_state_data($self->class_key, 'media', $media);
@@ -795,7 +777,7 @@ $handle_delete = sub {
     log_event("media_deact", $media);
     my $msg = 'Media [_1] deleted.';
     my $arg = '&quot;' . $media->get_title . '&quot;';
-    add_msg($self->lang->maketext($msg, $arg));
+    add_msg($msg, $arg);
 };
 
 

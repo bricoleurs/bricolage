@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 18:11:01 $
+$Date: 2003-08-08 06:07:10 $
 
 =head1 SYNOPSIS
 
@@ -48,6 +48,7 @@ use Apache::Request;
 use HTML::Mason::Request;
 use Apache::Constants qw(HTTP_OK);
 use HTTP::BrowserDetect;
+use Bric::Util::Language;
 
 #==============================================================================#
 # Inheritance                          #
@@ -182,10 +183,11 @@ NONE
 =cut
 
 sub add_msg {
-    my $txt = shift or return;
+    return unless @_;
     my $session = Bric::App::Session->instance;
     my $msg = $session->{_msg} ||= [];
-    push @$msg, $txt;
+    my $lang = Bric::Util::Language->instance;
+    push @$msg, $lang->maketext(@_);
 }
 
 #------------------------------------------------------------------------------#

@@ -12,6 +12,12 @@ use Bric::App::Event    qw(log_event);
 
 use XML::Simple qw(XMLin);
 
+# XXX For some reason, Bricolage breaks using SAX. This keeps it happy. It'd
+# be nice to fix this, as XML::LibXML + SAX is probably more efficient, but
+# this will do for now.
+
+$XML::Simple::PREFERRED_PARSER = 'XML::Parser';
+
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(
@@ -33,15 +39,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-24 15:45:31 $
+$Date: 2003-08-08 06:07:11 $
 
 =head1 SYNOPSIS
 

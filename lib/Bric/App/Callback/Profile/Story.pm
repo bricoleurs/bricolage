@@ -45,17 +45,11 @@ sub revert : Callback {
     my $story = get_state_data($widget, 'story');
     my $version = $self->request_args->{"$widget|version"};
     $story->revert($version);
-    eval { $story->save };
-    if (my $err = $@) {
-        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-        add_msg($self->lang->maketext($err->maketext));
-        return;
-    } else {
-        my $msg = "Story [_1] reverted to V.[_2].";
-        my @args = ('&quot;' . $story->get_title . '&quot;', $version);
-        add_msg($self->lang->maketext($msg, @args));
-        clear_state($widget);
-    }
+    $story->save;
+    my $msg = "Story [_1] reverted to V.[_2].";
+    my @args = ('&quot;' . $story->get_title . '&quot;', $version);
+    add_msg($msg, @args);
+    clear_state($widget);
 }
 
 sub save : Callback {
@@ -72,16 +66,10 @@ sub save : Callback {
         return unless $handle_delete->($story, $self);
     } else {
         # Save the story.
-        eval { $story->save };
-        if (my $err = $@) {
-            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-            add_msg($self->lang->maketext($err->maketext));
-            return;
-        }
-
+        $story->save;
         log_event('story_save', $story);
         my $arg = '&quot;' . $story->get_title . '&quot;';
-        add_msg($self->lang->maketext("Story [_1] saved.", $arg));
+        add_msg("Story [_1] saved.", $arg);
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -134,19 +122,13 @@ sub checkin : Callback {
         # Remove from the current desk and from the workflow.
         $cur_desk->remove_asset($story)->save if $cur_desk;
         $story->set_workflow_id(undef);
-        eval { $story->save };
-        if (my $err = $@) {
-            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-            add_msg($self->lang->maketext($err->maketext));
-            return;
-        }
-
+        $story->save;
         log_event('story_save', $story);
         log_event('story_checkout', $story) if $work_id;
         log_event('story_checkin', $story);
         log_event("story_rem_workflow", $story);
         my $arg = '&quot;' . $story->get_title . '&quot;';
-        add_msg($self->lang->maketext("Story [_1] saved and shelved.", $arg));
+        add_msg("Story [_1] saved and shelved.", $arg);
     } elsif ($desk_id eq 'publish') {
         # Publish the story and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -173,12 +155,8 @@ sub checkin : Callback {
             $pub_desk->save;
         }
 
-        eval { $story->save };
-        if (my $err = $@) {
-            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-            add_msg($self->lang->maketext($err->maketext));
-            return;
-        }
+        $story->save;
+
         # Log it!
         log_event('story_save', $story);
         log_event('story_checkin', $story);
@@ -188,7 +166,7 @@ sub checkin : Callback {
         my $msg = "Story [_1] saved and checked in to [_2].";
         my @args = ('&quot;' . $story->get_title . '&quot;',
                     "&quot;$dname&quot;");
-        add_msg($self->lang->maketext($msg, @args));
+        add_msg($msg, @args);
 
         # HACK: Commit this checkin WHY?? Because Postgres does NOT like
         # it when you insert and delete a record within the same
@@ -225,12 +203,7 @@ sub checkin : Callback {
         }
 
         $desk->save;
-        eval { $story->save };
-        if (my $err = $@) {
-            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-            add_msg($self->lang->maketext($err->maketext));
-            return;
-        }
+        $story->save;
         log_event('story_save', $story);
         log_event('story_checkin', $story);
         my $dname = $desk->get_name;
@@ -238,7 +211,7 @@ sub checkin : Callback {
         my $msg = "Story [_1] saved and moved to [_2].";
         my @args = ('&quot;' . $story->get_title . '&quot;',
                     "&quot;$dname&quot;");
-        add_msg($self->lang->maketext($msg, @args));
+        add_msg($msg, @args);
     }
 
     # Clear the state out and set redirect.
@@ -264,16 +237,10 @@ sub save_and_stay : Callback {
     } else {
         # Make sure the story is activated and then save it.
         $story->activate;
-        eval { $story->save };
-        if (my $err = $@) {
-            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-            add_msg($self->lang->maketext($err->maketext));
-            return;
-        }
-
+        $story->save;
         log_event('story_save', $story);
         my $arg = '&quot;' . $story->get_title . '&quot;';
-        add_msg($self->lang->maketext("Story [_1] saved.", $arg));
+        add_msg("Story [_1] saved.", $arg);
     }
 }
 
@@ -282,18 +249,13 @@ sub cancel : Callback {
 
     my $story = get_state_data($self->class_key, 'story');
     $story->cancel_checkout();
-    eval { $story->save };
-    if (my $err = $@) {
-        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-        add_msg($self->lang->maketext($err->maketext));
-        return;
-    }
+    $story->save;
     log_event('story_cancel_checkout', $story);
     clear_state($self->class_key);
     set_redirect("/");
     my $msg = "Story [_1] check out canceled.";
     my $arg = '&quot;' . $story->get_title . '&quot;';
-    add_msg($self->lang->maketext($msg, $arg));
+    add_msg($msg, $arg);
 }
 
 sub return : Callback {
@@ -380,22 +342,12 @@ sub create : Callback {
     $story->set_workflow_id($work_id);
 
     # Save the story.
-    eval { $story->save };
-    if (my $err = $@) {
-        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-        add_msg($self->lang->maketext($err->maketext));
-        return;
-    }
+    $story->save;
 
     # Send this story to the first desk.
     $start_desk->accept({ asset => $story });
     $start_desk->save;
-    eval { $story->save };
-    if (my $err = $@) {
-        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-        add_msg($self->lang->maketext($err->maketext));
-        return;
-    }
+    $story->save;
 
     # Log that a new story has been created and generally handled.
     log_event('story_new', $story);
@@ -404,7 +356,7 @@ sub create : Callback {
     log_event('story_moved', $story, { Desk => $start_desk->get_name });
     log_event('story_save', $story);
     my $arg = '&quot;' . $story->get_title . '&quot;';
-    add_msg($self->lang->maketext("Story [_1] created and saved.", $arg));
+    add_msg("Story [_1] created and saved.", $arg);
 
     # Put the story into the session and clear the workflow ID.
     set_state_data($widget, 'story', $story);
@@ -438,19 +390,14 @@ sub delete_cat : Callback {
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
     $story->delete_categories($cat_ids);
-    eval { $story->save };
-    if (my $err = $@) {
-        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-        add_msg($self->lang->maketext($err->maketext));
-        return;
-    }
+    $story->save;
 
     # Log events.
     foreach my $cid (@$cat_ids) {
         my $cat = Bric::Biz::Category->lookup({ id => $cid });
         log_event('story_del_category', $story, { Category => $cat->get_name });
         my $arg = '&quot;' . $cat->get_name . '&quot;';
-        add_msg($self->lang->maketext("Category [_1] disassociated.", $arg));
+        add_msg("Category [_1] disassociated.", $arg);
     }
     set_state_data($widget, 'story', $story);
 }
@@ -462,11 +409,7 @@ sub update_primary : Callback {
     chk_authz($story, EDIT);
     my $primary = $self->request_args->{"$widget|primary_cat"};
     $story->set_primary_category($primary);
-    eval { $story->save };
-    if (my $err = $@) {
-        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-        add_msg($self->lang->maketext($err->maketext));
-    }
+    $story->save;
     set_state_data($widget, 'story', $story);
 }
 
@@ -478,34 +421,23 @@ sub add_category : Callback {
     my $cat_id = $self->request_args->{"$widget|new_category_id"};
     if (defined $cat_id) {
         $story->add_categories([ $cat_id ]);
-        eval { $story->save };
-        if (my $err = $@) {
-            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-            $story->delete_categories([ $cat_id ]);
-            add_msg($self->lang->maketext($err->maketext));
-        } else {
-            my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
-            log_event('story_add_category', $story, { Category => $cat->get_name });
-            my $arg = '&quot;' . $cat->get_name . '&quot;';
-            add_msg($self->lang->maketext("Category [_1] added.", $arg));
-        }
+        $story->save;
+        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
+        log_event('story_add_category', $story, { Category => $cat->get_name });
+        my $arg = '&quot;' . $cat->get_name . '&quot;';
+        add_msg("Category [_1] added.", $arg);
     }
     set_state_data($widget, 'story', $story);
 }
 
 sub add_oc : Callback {
     my $self = shift;
-
     my $story = get_state_data($self->class_key, 'story');
     chk_authz($story, EDIT);
     my $oc = Bric::Biz::OutputChannel->lookup({ id => $self->value });
     $story->add_output_channels($oc);
     log_event('story_add_oc', $story, { 'Output Channel' => $oc->get_name });
-    eval { $story->save };
-    if (my $err = $@) {
-        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-        add_msg($self->lang->maketext($err->maketext));
-    }
+    $story->save;
     set_state_data($self->class_key, 'story', $story);
 }
 
@@ -556,8 +488,6 @@ sub keywords : Callback {
 
 sub contributors : Callback {
     my $self = shift;
-
-
     # Return if there were data errors
     return unless &$save_data($self, $self->request_args, $self->class_key);
     set_redirect("/workflow/profile/story/contributors.html");
@@ -626,7 +556,6 @@ sub save_contrib : Callback {
 
 sub save_and_stay_contrib : Callback {
     my $self = shift;
-
     $save_contrib->($self->class_key, $self->request_args, $self);
 }
 
@@ -673,15 +602,11 @@ sub add_kw : Callback {
     # Delete old keywords.
     $story->del_keywords(mk_aref($param->{del_keyword}))
       if defined $param->{del_keyword};
-#    $story->save();
 
-    # Save the changes
+    # Save the changes.
     set_state_data($self->class_key, 'story', $story);
-
     set_redirect(last_page());
-
     add_msg("Keywords saved.");
-
     # Take this page off the stack.
     pop_page();
 }
@@ -703,7 +628,7 @@ sub checkout : Callback {
         } else {
             my $msg = "Permission to checkout [_1] denied";
             my $arg = '&quot;' . $ba->get_name . '&quot;';
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg($msg, $arg);
         }
     }
 
@@ -750,7 +675,7 @@ sub recall : Callback {
         } else {
             my $msg = "Permission to checkout [_1] denied";
             my $arg = '&quot;' . $ba->get_name . '&quot;';
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg($msg, $arg);
         }
     }
 
@@ -763,13 +688,6 @@ sub recall : Callback {
         set_redirect('/workflow/profile/story/'.$o_id.'?checkout=1');
     }
 }
-
-sub clone : Callback {
-    # empty
-}
-
-
-###
 
 $save_contrib = sub {
     my ($widget, $param, $self) = @_;
@@ -802,7 +720,7 @@ $save_contrib = sub {
                       { Name => $contrib->get_name });
             my $msg = 'Contributor [_1] disassociated.';
             my $arg = '&quot;' . $contrib->get_name . '&quot;';
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg($msg, $arg);
         }
     }
 
@@ -839,7 +757,7 @@ $save_data = sub {
     eval { $story->set_slug($param->{slug}) };
     if (my $err = $@) {
         rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-        add_msg($self->lang->maketext($err->maketext));
+        add_msg($err->maketext);
         $data_errors = 1;
     }
 
@@ -907,29 +825,18 @@ $save_data = sub {
 $handle_delete = sub {
     my ($story, $self, $param) = @_;
     my $desk = $story->get_current_desk();
-    eval {
-        $desk->checkin($story);
-        $desk->remove_asset($story);
-        $desk->save;
-        $story->set_workflow_id(undef);
-        $story->deactivate;
-        $story->save;
-    };
-
-    if (my $err = $@) {
-        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-        add_msg($self->lang->maketext($err->maketext));
-        # Force story_prof.mc to lookup the story from the database again.
-        $self->request_args->{checkout} = 1;
-        return;
-    }
-
+    $desk->checkin($story);
+    $desk->remove_asset($story);
+    $desk->save;
+    $story->set_workflow_id(undef);
+    $story->deactivate;
+    $story->save;
     log_event("story_rem_workflow", $story);
     log_event("story_deact", $story);
     my $arg = '&quot;' . $story->get_title . '&quot;';
-    add_msg($self->lang->maketext("Story [_1] deleted.", $arg));
+    add_msg("Story [_1] deleted.", $arg);
     return 1;
 };
 
-
 1;
+__END__

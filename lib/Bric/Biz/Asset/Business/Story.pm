@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.54 $ )[-1];
+our $VERSION = (qw$Revision: 1.55 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:26 $
+$Date: 2003-08-08 06:07:11 $
 
 =head1 SYNOPSIS
 
@@ -176,8 +176,7 @@ use Bric::Util::Time qw(:all);
 use Bric::Util::Attribute::Story;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Story;
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::DA;
+use Bric::Util::Fault qw(:all);
 use Bric::Biz::Asset::Business;
 use Bric::Biz::Keyword;
 use Bric::Biz::Site;
@@ -1090,7 +1089,7 @@ Sets the slug for this story
 
 B<Throws:>
 
-'Invalid characters found in slug'
+Slug Must conform to URL character rules.
 
 B<Side Effects:>
 
@@ -1104,13 +1103,16 @@ NONE
 
 sub set_slug {
     my ($self, $slug) = @_;
-#    my $dirty = $self->_get__dirty();
-    if ($slug =~ m/\W/) {
-        die $gen->new({ msg => 'Slug Must conform to URL character rules' });
-    } else {
-        $self->_set( { slug => $slug });
-    }
-#    $self->_set__dirty($dirty);
+    throw_invalid
+      error    => 'Slug Must conform to URL character rules',
+      maketext => ['Slug Must conform to URL character rules']
+      if defined $slug && $slug =~ m/\W/;
+
+    my $old = $self->_get('slug');
+    $self->_set([qw(slug _update_uri)] => [$slug, 1])
+      if (not defined $slug && defined $old)
+      || (defined $slug && not defined $old)
+      || ($slug ne $old);
     return $self;
 }
 
@@ -1133,63 +1135,6 @@ B<Notes:>
 NONE
 
 =cut
-
-################################################################################
-
-=item $story_name = $story->check_uri;
-
-=item $story_name = $story->check_uri($user_id);
-
-Returns name of story that has clashing URI.
-
-=cut
-
-sub check_uri {
-    my ($self, $uid) = @_;
-    my $msg;
-    my $id = $self->_get('id') || 0;
-
-    # Get the current story's output channels.
-    my @ocs = $self->get_output_channels;
-    die $gen->new({ msg => 'Cannot retrieve any output channels associated ' .
-                           "with this story's story type element" })
-      if !$ocs[0];
-    # Then loop thru each category for this story.
-  OUTER: foreach my $category ($self->get_categories) {
-        # get stories in the same category
-        my $params = { category_id => $category->get_id,
-                       active      => 1,
-                       site_id     => $self->get_site_id,
-                     };
-
-        my $stories = $self->list($params);
-        # HACK: Get stories for the current user, too.
-        if (defined $uid) {
-            $params->{user__id} = $uid;
-            push @$stories, $self->list($params);
-        }
-
-        # For each story that shares this category...
-        foreach my $st (@$stories) {
-            # Don't want to compare current story with itself.
-            next if ($st->get_id == $id);
-
-            # For each output channel, throw an error for conflicting URI.
-            foreach my $st_oc ($st->get_output_channels) {
-                foreach my $oc (@ocs) {
-                    if ($st->get_uri($category, $st_oc) eq
-                        $self->get_uri($category, $oc)) {
-                        # HACK: Must get rid of the message and throw an
-                        # exception, instead.
-                        $msg = $st->get_name;
-                        last OUTER;
-                    }
-                }
-            }
-        }
-    }
-    return $msg;
-}
 
 ################################################################################
 
@@ -1357,6 +1302,7 @@ sub add_categories {
     my ($self, $categories) = @_;
     my $cats = $self->_get_categories();
     my @grp_ids = $self->get_grp_ids();
+    my $check = 0;
     foreach my $c (@$categories) {
         # get the id
         my $cat_id = ref $c ? $c->get_id() : $c;
@@ -1367,13 +1313,14 @@ sub add_categories {
             $cats->{$cat_id}->{'action'} = undef;
         } else {
             $cats->{$cat_id}->{'action'} = 'insert';
-              $cats->{$cat_id}->{'object'} = ref $c ? $c : undef;
+            $cats->{$cat_id}->{'object'} = ref $c ? $c : undef;
             push @grp_ids, $asset_grp_id;
+            $check = 1;
         }
     }
     # store the values
-    $self->_set({ grp_ids => \@grp_ids });
-    $self->_set({ _categories => $cats });
+    $self->_set([qw(grp_ids _categories _update_uri)] =>
+                [\@grp_ids, $cats, $check]);
     # set the dirty flag
     $self->_set__dirty(1);
     return $self;
@@ -1403,6 +1350,7 @@ sub delete_categories {
     my ($self, $categories) = @_;
     my ($cats) = $self->_get_categories();
     my @grp_ids = $self->get_grp_ids();
+    my $check = 0;
     foreach my $c (@$categories) {
         # get the id if there was an object passed
         my $cat_id = ref $c ? $c->get_id() : $c;
@@ -1413,6 +1361,7 @@ sub delete_categories {
             delete $cats->{$cat_id};
         } else {
             $cats->{$cat_id}->{'action'} = 'delete';
+            $check = 1;
         }
         my $asset_grp_id = ref $c ? $c->get_asset_grp_id()
           : Bric::Biz::Category->lookup({ id => $c })->get_asset_grp_id();
@@ -1423,8 +1372,8 @@ sub delete_categories {
         @grp_ids = @n_grp_ids;
     }
     # set the values.
-    $self->_set({ grp_ids => \@grp_ids });
-    $self->_set( {  '_categories' => $cats });
+    $self->_set([qw(grp_ids   _categories _update_uri)] =>
+                [  \@grp_ids, $cats,      $check]);
     $self->_set__dirty(1);
     return $self;
 }
@@ -1613,14 +1562,11 @@ sub clone {
     # object other than for desks, we'll have to find a way to clone it, too.
     $self->_set([qw(version current_version version_id id publish_date
                     publish_status _update_contributors _queried_cats
-                    _attribute_object)],
-                [0, 0, undef, undef, undef, 0, 1, 0, undef]);
+                    _attribute_object _update_uri)],
+                [0, 0, undef, undef, undef, 0, 1, 0, undef, 0]);
 
     # Prepare to be saved.
     $self->_set__dirty(1);
-
-    # HACK: Save ourselves (required by keywords -- boo!)!
-    $self->save;
 
     # Add the keywords back in and return
     $self->add_keywords($kw);
@@ -1645,42 +1591,62 @@ NONE
 =cut
 
 sub save {
-    my ($self) = @_;
+    my $self = shift;
 
     # Make sure the primary uri is up to date.
-    $self->_set(['primary_uri'], [$self->get_uri])
-      unless ($self->get_primary_uri eq $self->get_uri);
+    my $uri = $self->get_uri;
+    $self->_set(['primary_uri'], [$uri])
+      unless $self->get_primary_uri eq $uri;
 
-    if ($self->_get('id')) {
-        # make any necessary updates to the Main table
-        $self->_update_story();
-        if ($self->_get('version_id')) {
-            if ($self->_get('_cancel')) {
-                $self->_delete_instance();
-                if ($self->_get('version') == 0) {
-                    $self->_delete_story();
-                }
-                $self->_set( {'_cancel' => undef });
+    my ($id, $active, $update_uris) = $self->_get(qw(id _active _update_uri));
+
+    # Start a transaction.
+    begin();
+    eval {
+        if ($id) {
+            # make any necessary updates to the Main table
+            $self->_update_story();
+            if ($self->_get('version_id')) {
+                if ($self->_get('_cancel')) {
+                    $self->_delete_instance();
+                    if ($self->_get('version') == 0) {
+                        $self->_delete_story();
+                    }
+                    $self->_set( {'_cancel' => undef });
                 return $self;
+                } else {
+                    $self->_update_instance();
+                }
             } else {
-                $self->_update_instance();
+                $self->_insert_instance();
             }
         } else {
-            $self->_insert_instance();
+            if ($self->_get('_cancel')) {
+                return $self;
+            } else {
+                # This is Brand new insert both Tables
+                $self->_insert_story();
+                $self->_insert_instance();
+            }
         }
-    } else {
-        if ($self->_get('_cancel')) {
-            return $self;
+
+        $self->_sync_categories();
+
+        if ($active) {
+            $self->_update_uris if $update_uris;
         } else {
-            # This is Brand new insert both Tables
-            $self->_insert_story();
-            $self->_insert_instance();
+            $self->_delete_uris;
         }
+
+        $self->SUPER::save();
+        commit();
+    };
+
+    if (my $err = $@) {
+        rollback();
+        die $err;
     }
 
-    $self->_sync_categories();
-    $self->SUPER::save();
-    $self->_set__dirty(0);
     return $self;
 }
 
@@ -2278,8 +2244,6 @@ sub _delete_story {
     execute($sth, $self->_get('id'));
     return $self;
 }
-
-################################################################################
 
 1;
 __END__

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2003-06-13 16:49:17 $
+-- $Date: 2003-08-08 06:07:11 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -15,7 +15,7 @@ CREATE SEQUENCE seq_media START 1024;
 
 CREATE SEQUENCE seq_media_instance START 1024;
 
--- Unique ids for the story_contributor table
+-- Unique ids for the media_contributor table
 CREATE SEQUENCE seq_media__contributor START 1024;
 
 -- Unique IDs for the media_member table
@@ -98,6 +98,17 @@ CREATE TABLE media_instance (
                                         CONSTRAINT ck_media_instance__checked_out 
                                         CHECK (checked_out IN(0,1)),
     CONSTRAINT pk_media_instance__id PRIMARY KEY (id)
+);
+
+-- -----------------------------------------------------------------------------
+-- Table media_uri
+--
+-- Description: Tracks all URIs for stories.
+--
+CREATE TABLE media_uri (
+    media__id NUMERIC(10)     NOT NULL,
+    site__id  NUMERIC(10)     NOT NULL,
+    uri       TEXT            NOT NULL
 );
 
 -- -----------------------------------------------------------------------------
@@ -244,6 +255,11 @@ CREATE INDEX fkx_usr__media_instance ON media_instance(usr__id);
 CREATE INDEX fkx_media_type__media_instance ON media_instance(media_type__id);
 CREATE INDEX fkx_category__media_instance ON media_instance(category__id);
 CREATE INDEX fdx_primary_oc__media_instance ON media_instance(primary_oc__id);
+
+-- media_uri
+CREATE INDEX fkx_media__media_uri ON media_uri(media__id);
+CREATE UNIQUE INDEX udx_media_uri__site_id__uri
+ON media_uri(lower_text_num(uri, site__id));
 
 -- media__output_channel
 CREATE INDEX fkx_media__oc__media ON media__output_channel(media_instance__id);

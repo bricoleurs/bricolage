@@ -9,29 +9,6 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Util qw(:all);
 
-use Bric::App::Callback::Profile::Action;
-use Bric::App::Callback::Profile::AlertType;
-use Bric::App::Callback::Profile::Category;
-use Bric::App::Callback::Profile::Contrib;
-use Bric::App::Callback::Profile::Desk;
-use Bric::App::Callback::Profile::Dest;
-use Bric::App::Callback::Profile::ElementData;
-use Bric::App::Callback::Profile::ElementType;
-use Bric::App::Callback::Profile::FormBuilder;
-use Bric::App::Callback::Profile::Grp;
-use Bric::App::Callback::Profile::Job;
-use Bric::App::Callback::Profile::Media;
-use Bric::App::Callback::Profile::MediaType;
-use Bric::App::Callback::Profile::OutputChannel;
-use Bric::App::Callback::Profile::Pref;
-use Bric::App::Callback::Profile::Server;
-use Bric::App::Callback::Profile::Site;
-use Bric::App::Callback::Profile::Source;
-use Bric::App::Callback::Profile::Story;
-use Bric::App::Callback::Profile::Template;
-use Bric::App::Callback::Profile::User;
-use Bric::App::Callback::Profile::Workflow;
-
 my $excl = {'desk' => 1, 'action' => 1, 'server' => 1};
 
 my ($get_class);

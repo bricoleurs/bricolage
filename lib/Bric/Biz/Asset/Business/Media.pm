@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+our $VERSION = (qw$Revision: 1.52 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:25 $
+$Date: 2003-08-08 06:07:11 $
 
 =head1 SYNOPSIS
 
@@ -45,8 +45,7 @@ use Bric::Util::Time qw(:all);
 use Bric::App::MediaFunc;
 use File::Temp qw( tempfile );
 use Bric::Config qw(:media);
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::DA;
+use Bric::Util::Fault qw(:all);
 
 #==============================================================================#
 # Inheritance                          #
@@ -834,8 +833,6 @@ sub my_meths {
     $meths->{category} = {
                           get_meth => sub { shift->get_category_object(@_) },
                           get_args => [],
-                          set_meth => sub { shift->set_category_object(@_) },
-                          set_args => [],
                           name     => 'category',
                           disp     => 'Category',
                           len      => 64,
@@ -895,7 +892,7 @@ Associates this media asset with the given category
 
 B<Throws:> NONE.
 
-B<Side Effects:> NONE.
+B<Side Effects:> Updates the media document's URI and group associations.
 
 B<Notes:> NONE.
 
@@ -903,7 +900,12 @@ B<Notes:> NONE.
 
 sub set_category__id {
     my ($self, $cat_id) = @_;
-    my $cat = Bric::Biz::Category->lookup( { id => $cat_id });
+    my $old_cat_id = $self->_get('category__id');
+    return $self unless (defined $cat_id && not defined $old_cat_id)
+      || (not defined $cat_id && defined $old_cat_id)
+      || ($cat_id != $old_cat_id);
+
+    my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
     my $oc = $self->get_primary_oc;
 
     my $c_cat = $self->get_category_object();
@@ -918,13 +920,13 @@ sub set_category__id {
         $uri = Bric::Util::Trans::FS->cat_uri
           ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
     }
-    $self->_set({ _category_obj => $cat,
-                  category__id  => $cat_id,
-                  uri           => $uri,
-                  grp_ids       => \@grp_ids,
-    });
+
+    $self->_set([qw(_category_obj category__id uri    grp_ids   _update_uri)] =>
+                [   $cat,         $cat_id,     $uri, \@grp_ids, 1]);
+
     return $self;
 }
+
 sub get_primary_uri { shift->get_uri }
 
 ################################################################################
@@ -971,7 +973,7 @@ Bric::set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> NONE.
+B<Side Effects:> Changes the media document's URI.
 
 B<Notes:> NONE.
 
@@ -979,22 +981,26 @@ B<Notes:> NONE.
 
 sub set_cover_date {
     my $self = shift;
-    $self->SUPER::set_cover_date(@_);
+    my $cover_date = db_date(shift);
+    my ($old, $cat, $cat_id, $fn) =
+      $self->_get(qw(cover_date _category_obj category__id file_name));
 
-    my ($cat, $cat_id, $fn)
-      = $self->_get(qw(_category_obj category__id file_name));
-    return $self unless defined $fn;
+    return $self unless (not defined $cover_date && defined $old)
+      || (defined $cover_date && not defined $old)
+      || ($cover_date ne $old);
 
-    $cat ||= Bric::Biz::Category->lookup({ id => $cat_id });
+    my $uri;
+    if (defined $fn) {
+        $cat ||= Bric::Biz::Category->lookup({ id => $cat_id });
+        my $oc = $self->get_primary_oc;
+        if ($cat and $oc) {
+            my $uri = Bric::Util::Trans::FS->cat_uri
+              ($self->_construct_uri($cat, $oc), $fn);
+        }
+    }
 
-    my $oc = $self->get_primary_oc;
-    return $self unless $cat and $oc;
-
-    my $uri = Bric::Util::Trans::FS->cat_uri($self->_construct_uri($cat, $oc),
-                                             $fn);
-
-    $self->_set({ _category_obj => $cat,
-                  uri           => $uri });
+    $self->_set([qw(cover_date _update_uri _category_obj uri)] =>
+                [$cover_date,  1,          $cat,         $uri]);
 }
 
 ################################################################################
@@ -1017,12 +1023,14 @@ sub get_category_object {
     my $self = shift;
     my $cat = $self->_get( '_category_obj' );
     return $cat if $cat;
-    $cat = Bric::Biz::Category->lookup( { id => $self->_get('category__id') });
-    $self->_set({ '_category_obj' => $cat });
+    $cat = Bric::Biz::Category->lookup({ id => $self->_get('category__id') });
+    $self->_set({ _category_obj => $cat });
     return $cat;
 }
 
-*get_category = *get_category_object;
+{ no warnings;
+  *get_category = \&get_category_object;
+}
 
 ##############################################################################
 
@@ -1142,7 +1150,8 @@ object under $file_name.
 
 B<Throws:> NONE.
 
-B<Side Effects:> Closes the $file_handle after reading.
+B<Side Effects:> Closes the C<$file_handle> after reading. Updates the media
+document's URI.
 
 B<Notes:> NONE.
 
@@ -1150,7 +1159,8 @@ B<Notes:> NONE.
 
 sub upload_file {
     my ($self, $fh, $name) = @_;
-    my ($id, $v) = $self->_get(qw(id version));
+    my ($id, $v, $old_fn, $loc, $uri) =
+      $self->_get(qw(id version file_name location uri));
     my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $id, $v);
     Bric::Util::Trans::FS->mk_path($dir);
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
@@ -1167,13 +1177,16 @@ sub upload_file {
     my $oc_obj = $self->get_primary_oc;
 
     # Set the location, name, and URI.
-    $self->_set(['file_name'], [$name]);
-    my $uri = Bric::Util::Trans::FS->cat_uri
-      ($self->_construct_uri($self->get_category_object, $oc_obj),
-       $oc_obj->get_filename($self));
+    if (not defined $old_fn or not defined $uri or $old_fn ne $name) {
+        $self->_set(['file_name'], [$name]);
+        $uri = Bric::Util::Trans::FS->cat_uri
+          ($self->_construct_uri($self->get_category_object, $oc_obj),
+           $oc_obj->get_filename($self));
 
-    my $loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
-    $self->_set([qw(location uri)], [$loc, $uri]);
+        $loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
+        $self->_set([qw(location uri   _update_uri)] =>
+                    [   $loc,    $uri, 1]);
+    }
 
     if (my $auto_fields = $self->_get_auto_fields) {
         # We need to autopopulate data field values. Get the top level element
@@ -1269,61 +1282,7 @@ B<Notes:> NONE.
 
 =cut
 
-################################################################################
-
-=item $media_name = $media->check_uri
-
-=item $media_name = $media->check_uri($uid)
-
-Returns name of media with conflicting URI, if any.
-
-=cut
-
-sub check_uri {
-    my ($self, $uid) = @_;
-    my $id = $self->_get('id') || 0;
-
-    # Get the category.
-    my $media_cat = defined $self->get_category__id or die $gen->new
-      ({ msg => 'Unable to retrieve category__id of this media' });
-
-    # Get the current media's output channels.
-    my @ocs = $self->get_output_channels;
-    die $gen->new({ msg => 'Cannot retrieve any output channels associated ' .
-                           "with this media asset's media type element" })
-      if !$ocs[0];
-
-    # Get all media in the same category.
-    my $params = { category__id => $media_cat,
-                   active      => 1,
-                   site_id     => $self->get_site_id,
-                 };
-
-    my $medias = $self->list($params);
-    if (defined $uid) {
-        $params->{user__id} = $uid;
-        push @$medias, $self->list($params);
-    }
-
-    # For each media asset that shares this category...
-    foreach my $med (@$medias) {
-        # Don't want to compare current media with itself.
-        next if ($med->get_id == $id);
-
-        # For each output channel, throw an error for conflicting URI.
-        foreach my $med_oc ($med->get_output_channels) {
-            foreach my $oc (@ocs) {
-                # HACK: Must get rid of the message and throw an
-                # exception, instead.
-                return $med->get_name if
-                  $med->get_uri($med_oc) eq $self->get_uri($oc);
-            }
-        }
-    }
-    return;
-}
-
-################################################################################
+##############################################################################
 
 =item $media = $story->revert();
 
@@ -1436,24 +1395,30 @@ B<Notes:> NONE.
 
 sub save {
     my $self = shift;
-    if ($self->_get('id')) {
-        # we have the main id make sure there's a instance id
-        $self->_update_media();
 
-        if ($self->_get('version_id')) {
-            if ($self->_get('_cancel')) {
-                $self->_delete_instance();
-                if ($self->_get('version') == 0) {
-                    $self->_delete_media();
+    my ($id, $active, $update_uris) = $self->_get(qw(id _active _update_uri));
+
+    # Start a transaction.
+    begin();
+    eval {
+        if ($id) {
+            # we have the main id make sure there's a instance id
+            $self->_update_media();
+
+            if ($self->_get('version_id')) {
+                if ($self->_get('_cancel')) {
+                    $self->_delete_instance();
+                    if ($self->_get('version') == 0) {
+                        $self->_delete_media();
+                    }
+                    $self->_set( {'_cancel' => undef });
+                    return $self;
+                } else {
+                    $self->_update_instance();
                 }
-                $self->_set( {'_cancel' => undef });
-                return $self;
             } else {
-                $self->_update_instance();
+                $self->_insert_instance();
             }
-        } else {
-            $self->_insert_instance();
-        }
         } else {
             # insert both
             if ($self->_get('_cancel')) {
@@ -1463,7 +1428,22 @@ sub save {
                 $self->_insert_instance();
             }
         }
-    $self->SUPER::save();
+
+        if ($active) {
+            $self->_update_uris if $update_uris;
+        } else {
+            $self->_delete_uris;
+        }
+
+        $self->SUPER::save();
+        commit();
+    };
+
+    if (my $err = $@) {
+        rollback();
+        die $err;
+    }
+
     return $self;
 }
 
@@ -1897,8 +1877,6 @@ sub _get_attr_obj {
     $self->_set( { '_attr_obj' => $attr_obj });
     return $attr_obj;
 }
-
-################################################################################
 
 1;
 __END__
