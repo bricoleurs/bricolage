@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
--- VERSION: $Revision: 1.9 $
+-- VERSION: $Revision: 1.10 $
 --
--- $Date: 2002-05-07 23:16:07 $
+-- $Date: 2002-09-21 01:11:11 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO pref (id, name, description, value, def, manual)
@@ -1682,9 +1682,6 @@ VALUES (156, 22, 48, 1);
 INSERT INTO pref_member (id, object_id, member__id)
 VALUES (6, 6, 156); 
 
--- Some useful defaults not found in /usr/share/zoneinfo/zone.tab, though there
--- might be some overlap.
-
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (6, 'radio', 'Radio Buttons');
 
@@ -1692,57 +1689,11 @@ INSERT INTO pref_opt (pref__id, value, description)
 VALUES (6, 'select', 'Select List');
 
 
--- URI Format Prefs
-
-INSERT INTO pref (id, name, description, value, def, manual)
-VALUES ('7', 'URI Format', 'Controls format of assets URIs',
-	'/categories/year/month/day/slug/', '/categories/year/month/day/slug/', 1);
-
-INSERT INTO member (id, grp__id, class__id, active)
-VALUES (164, 22, 48, 1);
-
-INSERT INTO pref_member (id, object_id, member__id)
-VALUES (7, 7, 164); 
-
-INSERT INTO pref_opt (pref__id, value, description)
-VALUES (7, '/categories/year/month/day/slug/', '/categories/year/month/day/slug/');
-
-
-INSERT INTO pref (id, name, description, value, def, manual)
-VALUES ('8', 'Fixed URI Format', 'Controls URI format for assets with fixed URIs', '/categories/', '/categories/', 1);
-
-INSERT INTO member (id, grp__id, class__id, active)
-VALUES (165, 22, 48, 1);
-
-INSERT INTO pref_member (id, object_id, member__id)
-VALUES (8, 8, 165); 
-
-INSERT INTO pref_opt (pref__id, value, description)
-VALUES (8, '/categories/', '/categories/');
-
-
-INSERT INTO pref (id, name, description, value, def, manual)
-VALUES (9, 'URI Case', 'Controls the case of the characters that make up URIs', 'mixed', 'mixed', 0);
-
-INSERT INTO member (id, grp__id, class__id, active)
-VALUES (166, 22, 48, 1);
-
-INSERT INTO pref_member (id, object_id, member__id)
-VALUES (9, 9, 166); 
-
-INSERT INTO pref_opt (pref__id, value, description)
-VALUES (9, 'lower', 'Lowercase Characters [a-z]');
-
-INSERT INTO pref_opt (pref__id, value, description)
-VALUES (9, 'upper', 'Uppercase Characters [A-Z]');
-
-INSERT INTO pref_opt (pref__id, value, description)
-VALUES (9, 'mixed', 'URI tokens unaltered');
-
-
 -- Search Paging
 INSERT INTO pref (id, name, description, value, def, manual)
-VALUES ('10', 'Search Results / Page', 'Controls the number of records displayed per page from searches', 0, 0, 0);
+VALUES ('10', 'Search Results / Page',
+        'Controls the number of records displayed per page from searches',
+        0, 0, 0);
 
 INSERT INTO member (id, grp__id, class__id, active) VALUES (167, 22, 48, 1);
 
