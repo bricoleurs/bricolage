@@ -97,6 +97,11 @@ someone checks them out. [David]
 The "Or Pick a Type" menus in the Group manager, the Contributor manager, and
 the Element manager all work again. [David]
 
+=item *
+
+Changing category names now updates the name of the category asset group
+object, which appears in the user group permissions page. [David]
+
 =back
 
 =head1 VERSION 1.4.0

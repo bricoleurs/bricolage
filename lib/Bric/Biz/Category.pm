@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.24.2.1 $
+$Revision: 1.24.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-13 18:40:24 $
+$Date: 2002-09-13 19:52:26 $
 
 =head1 SYNOPSIS
 
@@ -141,6 +141,7 @@ BEGIN {
 
                          # Private Fields
                          '_attr_obj'         => Bric::FIELD_NONE,
+                         '_asset_grp'        => Bric::FIELD_NONE,
                          '_attr'             => Bric::FIELD_NONE,
                          '_meta'             => Bric::FIELD_NONE,
                          '_save_children'    => Bric::FIELD_NONE,
@@ -871,6 +872,19 @@ B<Notes:>
 
 NONE
 
+=cut
+
+sub set_name {
+    my ($self, $name) = @_;
+    if (my $agid = $self->_get('asset_grp_id')) {
+        # Change the name in the asset group description.
+        my $ag = Bric::Util::Grp::Asset->lookup({ id => $agid });
+        $ag->set_description($name);
+        $self->_set(['_asset_grp'], [$ag]);
+    }
+    $self->_set(['name'], [$name]);
+}
+
 =item $name = $cat->get_description;
 
 Returns the description of this category.
@@ -1443,7 +1457,7 @@ sub _select_category {
 
 sub _update_category {
     my $self = shift;
-    my $id = $self->_get('id');
+    my ($id, $ag) = $self->_get(qw(id _asset_grp));
 
     my $sql = 'UPDATE '.TABLE.
               " SET ".join(',', map {"$_=?"} COLS)." WHERE id=?";
@@ -1469,6 +1483,7 @@ sub _update_category {
             $subcat->_update_category;
         }
     }
+    $ag->save if $ag;
 
     return 1;
 }
