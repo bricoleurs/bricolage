@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -20,11 +20,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =head1 DATE
 
-$Date: 2003-01-17 23:59:15 $
+$Date: 2003-04-24 15:58:04 $
 
 =head1 SYNOPSIS
 
@@ -319,6 +319,13 @@ The XSD source:
          <xs:element name="story" minOccurs="0" maxOccurs="unbounded">
            <xs:complexType>
              <xs:sequence>
+               <xs:element name="site">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
                <xs:element name="name">
                  <xs:simpleType>
                    <xs:restriction base="xs:string">
@@ -455,12 +462,20 @@ The XSD source:
                </xs:element>
              </xs:sequence>
              <xs:attribute name="element" type="xs:string" use="required"/>
+             <xs:attribute name="alias_id" type="xs:string" use="required"/>
              <xs:attribute name="id" type="xs:int" use="required"/>
            </xs:complexType>
          </xs:element>
          <xs:element name="media" minOccurs="0" maxOccurs="unbounded">
            <xs:complexType>
              <xs:sequence>
+               <xs:element name="site">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
                <xs:element name="name">
                  <xs:simpleType>
                    <xs:restriction base="xs:string">
