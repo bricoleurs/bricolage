@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2004-02-19 07:44:34 $
+$Date: 2004-02-24 21:42:01 $
 
 
 =head1 SYNOPSIS
@@ -1442,7 +1442,7 @@ sub _do_list {
         execute($select, @bind);
         bind_columns($select, \@d[0..(scalar COLS)]);
 
-        while ($select->fetch()) {
+        while (fetch($select)) {
             my $self = bless {}, $class;
 
             $self->_set(['id', COLS], [@d]);
