@@ -224,7 +224,7 @@ use constant PARAM_WHERE_MAP => {
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
       version               => 'i.version = ?',
-      published_version     => 'mt.published_version = i.version AND i.checked_out = 0',
+      published_version     => "mt.published_version = i.version AND i.checked_out = '0'",
       user__id              => 'i.usr__id = ?',
       user_id              => 'i.usr__id = ?',
       uri                   => 'LOWER(i.uri) LIKE LOWER(?)',
@@ -238,7 +238,7 @@ use constant PARAM_WHERE_MAP => {
                              . 'ORDER BY checked_out DESC LIMIT 1 )',
       _checked_out          => 'i.checked_out = ?',
       checked_out           => 'i.checked_out = ?',
-      _not_checked_out       => 'i.checked_out = 0 AND mt.id not in '
+      _not_checked_out       => "i.checked_out = '0' AND mt.id not in "
                               . '(SELECT media__id FROM media_instance '
                               . 'WHERE mt.id = media_instance.media__id '
                               . "AND media_instance.checked_out = '1')",

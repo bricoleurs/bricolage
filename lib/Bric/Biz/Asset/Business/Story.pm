@@ -336,7 +336,7 @@ use constant PARAM_WHERE_MAP => {
       title                  => 'LOWER(i.name) LIKE LOWER(?)',
       description            => 'LOWER(i.description) LIKE LOWER(?)',
       version                => 'i.version = ?',
-      published_version      => 's.published_version = i.version AND i.checked_out = 0',
+      published_version      => "s.published_version = i.version AND i.checked_out = '0'",
       slug                   => 'LOWER(i.slug) LIKE LOWER(?)',
       user__id               => 'i.usr__id = ?',
       user_id                => 'i.usr__id = ?',
@@ -348,7 +348,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'ORDER BY checked_out DESC LIMIT 1 )',
       _checked_out           => 'i.checked_out = ?',
       checked_out            => 'i.checked_out = ?',
-      _not_checked_out       => 'i.checked_out = 0 AND s.id not in '
+      _not_checked_out       => "i.checked_out = '0' AND s.id not in "
                               . '(SELECT story__id FROM story_instance '
                               . 'WHERE s.id = story_instance.story__id '
                               . "AND story_instance.checked_out = '1')",
