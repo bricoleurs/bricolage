@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-17 01:35:48 $
+$Date: 2003-01-18 23:30:36 $
 
 =head1 SYNOPSIS
 
@@ -347,7 +347,7 @@ sub lookup {
     my $elem = shift->_do_list(@_);
     # We want @$cat to have only one value.
     die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Too many Bric::Biz::Person objects found.' })
+      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
       if @$elem > 1;
     return @$elem ? $elem->[0] : undef;
 }

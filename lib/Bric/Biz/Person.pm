@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-16 02:18:48 $
+$Date: 2003-01-18 23:30:36 $
 
 =head1 SYNOPSIS
 
@@ -279,8 +279,9 @@ method.
 sub lookup {
     my $person = &$get_em(@_);
     # We want @$person to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Biz::Person objects found.' }) if @$person > 1;
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+      if @$person > 1;
     return @$person ? $person->[0] : undef;
 }
 

@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-17 01:35:49 $
+$Date: 2003-01-18 23:30:35 $
 
 =head1 SYNOPSIS
 
@@ -240,10 +240,10 @@ NONE
 =cut
 
 sub lookup {
-    my $cat = shift->_do_list(@_);
+    my $cat = _do_list(@_);
     # We want @$cat to have only one value.
     die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Too many Bric::Biz::Person objects found.' })
+      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
       if @$cat > 1;
     return @$cat ? $cat->[0] : undef;
 }
@@ -569,7 +569,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub list_ids { _do_list(@_[0, 1], 1) }
+sub list_ids { _do_list(@_, 1) }
 
 =back
 
