@@ -93,6 +93,13 @@ Removed hard-coding of the local preview directory in httpd.conf and
 httpd-ssl.conf. Now using the values stored in PREVIEW_LOCAL, instead, to
 determine the proper directory. [David]
 
+=item *
+
+Added the DEF_MEDIA_TYPE directive. Bricolage will use the value in this
+directive to assign a Media Type to all file resources if they Bricolage can't
+figure it out from their file extentions. This fixes a bug where Bricolage would
+choke if it couldn't figure out the MediaType itself. [David]
+
 =back
 
 =head1 VERSION 1.0.2
