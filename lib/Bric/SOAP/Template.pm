@@ -42,15 +42,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 00:54:40 $
+$Date: 2004-03-24 00:55:27 $
 
 =head1 SYNOPSIS
 
@@ -120,6 +120,10 @@ from the root.  Example: "/news/linux".
 =item workflow
 
 The name of the workflow containing the template.
+
+=item site
+
+The name of the site that the template is in.
 
 =item simple (M)
 
