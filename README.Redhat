@@ -45,3 +45,7 @@ that this is set in your shell in order to install Bricolage and all of its
 modules, and you may need to include it in your httpd.conf file, as well:
 
   PerlSetEnv LANG en_US
+
+We've also heard that you can set the LANG environment variable globally in
+the /etc/sysconfig/il8n file. Then you wouldn't need to worry about it
+anywhere else.

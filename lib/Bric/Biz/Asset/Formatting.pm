@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.7 $
+$Revision: 1.38.2.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-21 18:06:50 $
+$Date: 2003-03-22 23:57:28 $
 
 =head1 SYNOPSIS
 
@@ -166,6 +166,7 @@ use constant COLS       => qw( name
                                category__id
                                file_name
                                current_version
+                               published_version
                                deploy_status
                                deploy_date
                                expire_date
@@ -189,6 +190,7 @@ use constant FIELDS     => qw( name
                                category_id
                                file_name
                                current_version
+                               published_version
                                deploy_status
                                deploy_date
                                expire_date
