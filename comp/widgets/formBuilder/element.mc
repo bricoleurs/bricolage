@@ -78,8 +78,14 @@ if ($param->{delete} &&
     if ($param->{primary_oc_id}) {
         $comp->set_primary_oc_id($param->{primary_oc_id});
     } elsif ($field eq "$widget|add_oc_id_cb" && ! $comp->get_primary_oc_id) {
-        # Their adding the first one. Make it the primary.
+        # They're adding the first one. Make it the primary.
         $comp->set_primary_oc_id($param->{"$widget|add_oc_id_cb"});
+    } elsif (! exists $param->{element_type_id} and !$comp->get_primary_oc_id
+             and Bric::Biz::ATType->lookup({ id => $comp->get_type__id })
+             ->get_top_level) {
+        # They need to add an output channel.
+        $no_save = 1;
+        add_msg("Element must be associated with at least one output channel.")
     }
 
     # Update existing attributes. Get them from the Parts::Data class rather than from
@@ -241,11 +247,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2002-10-09 17:40:25 $
+$Date: 2002-10-16 03:57:51 $
 
 =head1 SYNOPSIS
 
