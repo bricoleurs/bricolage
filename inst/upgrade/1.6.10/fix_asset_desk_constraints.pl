@@ -11,7 +11,7 @@ exit if fetch_sql q{
         FROM   pg_class c, pg_constraint r
         WHERE  r.conrelid = c.oid
                AND c.relname = 'story'
-               AND r.contype = 'c'
+               AND r.contype = 'f'
                AND r.conname = 'fk_desk__story'
 };
 
