@@ -15,7 +15,7 @@ if ($ARGS{site_id}) {
     $m->comp('edit.html', id => $id, %ARGS);
 } else {
     # Get a list of sites that we have EDIT access to
-    my $sites = Bric::Biz::Site->list;
+    my $sites = $c->get('__SITES__');
     $sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
 
     if (@$sites == 1) {
@@ -35,14 +35,16 @@ if ($ARGS{site_id}) {
 
 =head1 VERSION
 
-$Revision: 1.10.2.4 $
+$Revision: 1.10.2.5 $
 
 =head1 DATE
 
-$Date: 2003-03-07 17:02:33 $
+$Date: 2003-03-09 02:39:01 $
 
 =head1 DESCRIPTION
 
 This element handles the display for editing categories.
+
+=cut
 
 </%doc>
