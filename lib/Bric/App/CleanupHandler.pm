@@ -131,7 +131,16 @@ sub handler {
     # Log any errors.
     if (my $err = $@) {
 	rollback(1);
-	$r->log->error(ref $err ? $err->as_text : $err);
+        $r->log->error($err->full_message);
+
+        # Exception::Class::Base provides trace->as_string, but trace_as_text is
+        # not guaranteed. Use print STDERR to avoid escaping newlines.
+        print STDERR $err->can('trace_as_text')
+          ? $err->trace_as_text
+            : join ("\n",
+                    map {sprintf "  [%s:%d]", $_->filename, $_->line }
+                      $err->trace->frames),
+          "\n";
     }
 
     eval {

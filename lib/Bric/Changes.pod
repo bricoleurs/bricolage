@@ -120,6 +120,11 @@ The Advanced Search interface for stories and media now displays only the
 top-level elements associated with the site the workflow is in when searching
 for stories and media "By Type". [David]
 
+=item *
+
+Improved error logging for more recent versions of Apache, which unfortunately
+escape newlines. [David]
+
 =back
 
 =cut

@@ -194,10 +194,19 @@ sub log_err {
     clear_events();
 
     # Send the error to the client.
-    $r->print($err->message);
+    $r->print($err->full_message);
 
-    # Log it!
-    $r->log->crit($err->as_text);
+    # Send the error(s) to the apache error log.
+    $r->log->crit($err->full_message);
+
+    # Exception::Class::Base provides trace->as_string, but trace_as_text is
+    # not guaranteed. Use print STDERR to avoid escaping newlines.
+    print STDERR $err->can('trace_as_text')
+      ? $err->trace_as_text
+      : join ("\n",
+              map {sprintf "  [%s:%d]", $_->filename, $_->line }
+                $err->trace->frames),
+        "\n";
 }
 
 1;

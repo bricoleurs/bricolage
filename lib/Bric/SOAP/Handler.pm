@@ -215,13 +215,19 @@ sub handle_err {
     # Clear out events so that they won't be logged.
     clear_events();
 
-    # Exception::Class::Base provides as_string, but as_text is not
-    # guaranteed.
-    my $text = $err->can('as_text') ? $err->as_text : $err->as_string;
-
-    # Send the error to the apache error log.
+    # Send the error(s) to the apache error log.
     my $log = Apache->server->log;
-    $log->error($text . ($more_err ? "\n\n$more_err\n" : ''));
+    $log->error($err->full_message);
+    $log->error($more_err) if $more_err;
+
+    # Exception::Class::Base provides trace->as_string, but trace_as_text is
+    # not guaranteed. Use print STDERR to avoid escaping newlines.
+    print STDERR $err->can('trace_as_text')
+      ? $err->trace_as_text
+      : join ("\n",
+              map {sprintf "  [%s:%d]", $_->filename, $_->line }
+                $err->trace->frames),
+        "\n";
 }
 
 sub handle_soap_err {
