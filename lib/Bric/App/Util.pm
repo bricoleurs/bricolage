@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-30 00:16:52 $
+$Date: 2003-11-05 21:23:55 $
 
 =head1 SYNOPSIS
 
@@ -740,7 +740,11 @@ NONE
 =cut
 
 sub pop_page {
-    return shift @{Bric::App::Session->instance->{'_history'}};
+    my $sess = Bric::App::Session->instance;
+    my $hist = $sess->{_history};
+    my $ret = shift @$hist;
+    $sess->{_history} = $hist;
+    return $ret;
 }
 
 #------------------------------------------------------------------------------#
