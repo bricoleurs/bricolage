@@ -84,6 +84,16 @@ When the "Filter by Site Context" preference is enabled, it no longer filters
 documents when searching for documents to alias. Reported by Patrick
 Walsh. [David]
 
+=item *
+
+The "Cancel Checkout" button in the Story, Media, and Template profiles now
+tries to do the right thing instead of just leaving the asset on a desk in
+workfow every time. If the asset was just created by the user, it will be
+deleted. If it was just recalled from the library by the user, it will be
+removed from workflow and shelved in the library. Otherwise, clicking the
+"Cancel Checkout" button will leave the asset in workflow. Requested by Sara
+Wood, Rachel Murray, and others. [David]
+
 =back
 
 =head2 Bug Fixes

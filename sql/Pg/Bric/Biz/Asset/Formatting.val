@@ -5,6 +5,10 @@
 -- Name: formatting Type: TABLE DATA Owner: castellan
 --
 
+/***************************************************************************
+* Don't forget to update the event log in Bric/Util/Event.val!
+***************************************************************************/
+
 INSERT INTO formatting (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element__id,
                         category__id, file_name, current_version, workflow__id, desk__id,

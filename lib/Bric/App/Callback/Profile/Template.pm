@@ -132,14 +132,56 @@ sub cancel : Callback {
     my $self = shift;
 
     my $fa = get_state_data($self->class_key, 'fa');
-    $fa->cancel_checkout;
-    $fa->save;
-    my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
-       $sb->undeploy($fa);
-    log_event('formatting_cancel_checkout', $fa);
+    if ($fa->get_version == 0) {
+        # If the version number is 0, the template was never checked in to a
+        # desk. So just delete it.
+        $delete_fa->($self, $fa);
+    } else {
+        # Cancel the checkout and undeploy the template from the user's
+        # sand box.
+        $fa->cancel_checkout;
+        log_event('formatting_cancel_checkout', $fa);
+        my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
+        $sb->undeploy($fa);
+
+        # If the template was last recalled from the library, then remove it
+        # from the desk and workflow. We can tell this because there will
+        # only be one formatting_moved event and one formatting_checkout event
+        # since the last formatting_add_workflow event.
+        my @events = Bric::Util::Event->list({
+            class => ref $fa,
+            obj_id => $fa->get_id
+        });
+        my ($desks, $cos) = (0, 0);
+        while ($events[-1]->get_key_name ne 'formatting_add_workflow') {
+            my $kn = pop(@events)->get_key_name;
+            if ($kn eq 'formatting_moved') {
+                $desks++;
+            } elsif ($kn eq 'formatting_checkout') {
+                $cos++
+            }
+        }
+
+        # If one move to desk, and one checkout, and this isn't the first
+        # time the template has been in workflow since it was created...
+        if ($desks == 1 && $cos == 1 && @events > 2) {
+            # It was just recalled from the library. So remove it from the
+            # desk and from workflow.
+            my $desk = $fa->get_current_desk;
+            $desk->remove_asset($fa);
+            $fa->set_workflow_id(undef);
+            $desk->save;
+            $fa->save;
+            log_event("formatting_rem_workflow", $fa);
+        } else {
+            # Just save the cancelled checkout. It will be left in workflow for
+            # others to find.
+            $fa->save;
+        }
+        add_msg('Template "[_1]" check out canceled.', $fa->get_file_name);
+    }
     clear_state($self->class_key);
     $self->set_redirect("/");
-    add_msg('Template "[_1]" check out canceled.', $fa->get_file_name);
 }
 
 sub notes : Callback {

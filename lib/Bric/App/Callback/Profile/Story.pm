@@ -241,12 +241,53 @@ sub cancel : Callback {
     my $self = shift;
 
     my $story = get_state_data($self->class_key, 'story');
-    $story->cancel_checkout();
-    $story->save;
-    log_event('story_cancel_checkout', $story);
+    if ($story->get_version == 0) {
+        # If the version number is 0, the story was never checked in to a
+        # desk. So just delete it.
+        return unless $handle_delete->($story, $self);
+    } else {
+        # Cancel the checkout.
+        $story->cancel_checkout;
+        log_event('story_cancel_checkout', $story);
+
+        # If the story was last recalled from the library, then remove it
+        # from the desk and workflow. We can tell this because there will
+        # only be one story_moved event and one story_checkout event
+        # since the last story_add_workflow event.
+        my @events = Bric::Util::Event->list({
+            class => ref $story,
+            obj_id => $story->get_id
+        });
+        my ($desks, $cos) = (0, 0);
+        while ($events[-1]->get_key_name ne 'story_add_workflow') {
+            my $kn = pop(@events)->get_key_name;
+            if ($kn eq 'story_moved') {
+                $desks++;
+            } elsif ($kn eq 'story_checkout') {
+                $cos++
+            }
+        }
+
+        # If one move to desk, and one checkout, and this isn't the first
+        # time the story has been in workflow since it was created...
+        if ($desks == 1 && $cos == 1 && @events > 2) {
+            # It was just recalled from the library. So remove it from the
+            # desk and from workflow.
+            my $desk = $story->get_current_desk;
+            $desk->remove_asset($story);
+            $story->set_workflow_id(undef);
+            $desk->save;
+            $story->save;
+            log_event("story_rem_workflow", $story);
+        } else {
+            # Just save the cancelled checkout. It will be left in workflow for
+            # others to find.
+            $story->save;
+        }
+        add_msg('Story "[_1]" check out canceled.', $story->get_title);
+    }
     clear_state($self->class_key);
     $self->set_redirect("/");
-    add_msg('Story "[_1]" check out canceled.', $story->get_title);
 }
 
 sub return : Callback {
@@ -492,7 +533,6 @@ sub view_trail : Callback {
 
 sub update : Callback(priority => 1) {
     my $self = shift;
-
     &$save_data($self, $self->params, $self->class_key);
 }
 
@@ -962,7 +1002,7 @@ $save_data = sub {
 $handle_delete = sub {
     my ($story, $self, $param) = @_;
     my $desk = $story->get_current_desk();
-    $desk->checkin($story);
+    $desk->checkin($story) if $story->get_checked_out;
     $desk->remove_asset($story);
     $story->set_workflow_id(undef);
     $story->deactivate;
