@@ -200,10 +200,11 @@ sub publish {
             $type = 'story';
             $obj  = Bric::Biz::Asset::Business::Story->lookup({
                 id => $id->value,
-                published_version => $published_only
+                ( $published_only ? ( published_version => 1) : ())
             });
 
-            throw_ap(error => "Unable to find story for story_id \"$id\".")
+            throw_ap(error => 'Unable to find story for story_id "'
+                              . $id->value . '".')
               unless $obj;
 
         } elsif ($id->name eq 'media_id') {

@@ -32,6 +32,12 @@ The new support for a false value to the C<checked_out> parameter to the
 C<list()> methods of the story, media, and template classes is now properly
 supported by the SOAP C<list_ids> method, as well. [David]
 
+=item *
+
+Calls to publish documents via SOAP will no longer fail if the
+C<published_version> attribute is not specified and the document to be
+published has never been published before. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
