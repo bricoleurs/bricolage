@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.3 $
+$Revision: 1.25.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 03:59:48 $
+$Date: 2003-03-19 03:32:20 $
 
 =head1 SYNOPSIS
 
@@ -737,23 +737,15 @@ NONE
 =cut
 
 sub get_versions {
-        my ($self) = @_;
-
-        my $dirty = $self->_get__dirty();
-        
-        my $versions = $self->_get('_versions');
-
-        return $versions if $versions;
-
-        my $pkg = ref $self;
-
-        $versions = $pkg->list( { id => $self->get_id(), return_versions => 1 });
-
-        $self->_set( { _versions => $versions });
-
-        $self->_set__dirty($dirty);
-
-        return $versions;
+    my ($self) = @_;
+    my $dirty = $self->_get__dirty();
+    my $versions = $self->_get('_versions');
+    return $versions if $versions;
+    my $pkg = ref $self;
+    $versions = $pkg->list({ id => $self->get_id, return_versions => 1 });
+    $self->_set({ _versions => $versions });
+    $self->_set__dirty($dirty);
+    return $versions;
 }
 
 ################################################################################
