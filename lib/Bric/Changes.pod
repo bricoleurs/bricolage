@@ -88,6 +88,11 @@ led to finding this bug. [David]
 Fixed bug where element checkboxes weren't remembering if they were checked or
 not. Thanks to Matt Vella for the spot. [David]
 
+=item *
+
+Fixed bug where element select lists weren't populate with their list of values.
+Thanks to Matt Vella for the report. [David]
+
 =back
 
 =head1 VERSION 1.0.1
