@@ -413,9 +413,10 @@ my $repeatable_opts;
 my @pos_data = $tile->get_possible_data();
 foreach (@pos_data) {
     my $key = 'data_' . $_->get_id();
-    $elem_opts->{$key} = $_->get_meta('html_info')->{disp};
+    my $disp = $_->get_meta('html_info')->{disp};
+    $elem_opts->{$key} = $disp;
     if ($_->get_quantifier()) {
-	$repeatable_opts->{$_->get_name()} = $_->get_name;
+	$repeatable_opts->{$_->get_name()} = $disp;
     }
 }
 
@@ -451,7 +452,7 @@ my $repeatable_elem_opts = sub {
     foreach ($t->get_possible_data()) {
 	if ($_->get_quantifier()) {
 	    # Pass the name with the tile ID as the value
-	    $opts->{$_->get_name()} = $_->get_name();
+	    $opts->{$_->get_name()} = $_->get_meta('html_info')->{disp};
 	}
     }
 

@@ -92,6 +92,11 @@ category object and the URI without the media asset needing to be checked in.
 Eliminated "Template compile failed" errors for templates with <%init> sections.
 [David]
 
+=item *
+
+Field elements now show up with their display names in the bulk edit select
+lists, instead of with their names (which are really keys). [David]
+
 =back
 
 =head1 VERSION 1.2.1
