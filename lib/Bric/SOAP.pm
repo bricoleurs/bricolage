@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -20,11 +20,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2002-03-08 22:58:51 $
+$Date: 2002-03-13 23:39:55 $
 
 =head1 SYNOPSIS
 
@@ -844,21 +844,24 @@ or, if Bricolage's bin directory isn't in your path:
 A script that publishes a set of stories based on a simple criteria
 entered on the command line.  Will be designed to be used from cron.
 
-B<NOT YET IMPLEMENTED>
+See bric_republish in bin/ for an implementation that republishes
+already published stories.  More general automated publishing can be
+performed through bric_soap.
 
 =item Dev Sync Tool
 
 A script that grabs the element tree and templates from a source
 server and updates a list of target servers to match.
 
-B<NOT YET IMPLEMENTED>
+See bric_dev_sync in bin/ for a complete implementation.
 
 =item Story Migration Tool
 
 A script that copies stories and all their dependencies (media, other
 stories) from one bricolage sever to another.
 
-B<NOT YET IMPLEMENTED>
+This script was found to be unecessary since bric_soap provides a
+convenient interface for coping stories and media between server.
 
 =back
 
