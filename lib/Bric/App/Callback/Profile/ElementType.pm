@@ -5,10 +5,10 @@ __PACKAGE__->register_subclass('class_key' => 'element_type');
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
+use Bric::Biz::ATType;
 
 my $type = CLASS_KEY;
 my $class = get_package_name($type);
-eval "require $class";
 my $disp_name = get_disp_name($type);
 my $story_pkg_id = get_class_info('story')->get_id;
 my $media_pkg_id = get_class_info('media')->get_id;

@@ -6,11 +6,11 @@ use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 use Bric::Biz::Org;
+use Bric::Biz::Org::Source;
 
 my $type = CLASS_KEY;
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
-eval "require $class";
 
 
 sub save : Callback {

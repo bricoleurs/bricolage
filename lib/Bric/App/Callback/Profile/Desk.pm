@@ -6,11 +6,11 @@ use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 use Bric::Biz::Workflow;
+use Bric::Biz::Workflow::Parts::Desk;
 
 my $type = 'desk';
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
-eval "require $class";
 
 sub save : Callback {
     my $self = shift;

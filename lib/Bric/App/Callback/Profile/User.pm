@@ -7,13 +7,13 @@ use Bric::App::Callback::Util::Contact qw(update_contacts);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
+use Bric::Biz::Person::User;
 use Bric::Config qw(LISTEN_PORT :auth_len);
 use Bric::Util::Grp;
 
 my $type = CLASS_KEY;
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
-eval "require $class";
 my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 
 
