@@ -1,0 +1,9 @@
+^_build
+^Build$
+^blib
+~$
+\.bak$
+^MANIFEST\.SKIP$
+^bric_template_dump-
+^www
+CVS

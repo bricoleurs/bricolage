@@ -1,0 +1,256 @@
+#!/usr/bin/perl -w
+use strict;
+
+=head1 NAME
+
+bric_template_dump - Dump all of the templates in a single output channel
+
+=head1 SYNOPSIS
+
+Dump all of the templates in the "XHTML" output channel into the current
+directory:
+
+  bric_template_dump XHTML
+
+Dump all of the templates in the "XHTML" output channel to a specific
+directory:
+
+  bric_template_dump --output-to /my/path XHTML
+
+=head1 OPTIONS
+
+bric_template_dump [options] OutputChannel
+
+=head2 Arguments
+
+=over 4
+
+=item OutputChannel
+
+The name of the output channel to dump templates from.
+
+=back
+
+=head2 Options
+
+=over 4
+
+=item C<--username>
+
+The Bricolage username to use to connect to the server. Defaults to the
+C<BRICOLAGE_USERNAME> environment variable if set.
+
+=item C<--password>
+
+The password to use when connecting to the Bricolage server with the username
+specified by C<--username>. Defaults to the C<BRICOLAGE_PASSWORD> environment
+variable if set.
+
+=item C<--server>
+
+The URL to the Bricolage server. Defaults to "http://localhost/".
+
+=item C<--output-to>
+
+Specifies a directory to act as the category root for the output of all the
+templates in the output channel. The directory will be created if it doesn't
+exist. Defaults to the current directory.
+
+=item C<--help>
+
+Shows this screen.
+
+=item C<--man>
+
+Shows the full documentation.
+
+=item C<--version>
+
+Shows the version number.
+
+=item C<--verbose>
+
+Prints a running dialogue of operations. Repeat up to three times of
+successively larger amounts of debugging information.
+
+=item C<--timeout>
+
+Specifies the HTTP timeout for SOAP requests in seconds. Defaults to 60.
+
+=back
+
+=head1 DESCRIPTION
+
+This program dumps all of the current, active templats in a single output
+channel. The templates will be written to the current directory unless the
+C<--output-to> option is used. F<bric_template_dump> will recreate the
+category structure of for the templates in the specified output channel as
+necessary to properly output all of the templates.
+
+=head1 AUTHOR
+
+David Wheeler <david@kineticode.com>.
+
+Based on code from F<bric_template_diff>, by Sam Tregar.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2004 Kineticode, Inc. All rightgs reserved.
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+=cut
+
+use Getopt::Long;
+use Pod::Usage;
+use File::Spec::Functions qw(curdir canonpath catdir splitdir catfile);
+
+my ($username, $password, $server, $output_to, $VERBOSE, $timeout, $help,
+    $man, $oc, $show_ver);
+
+BEGIN {
+    our $VERSION = '0.10';
+
+    # Get parameters from command line. Do so at compile time so that $VERBOSE
+    # can effect use options and such.
+    $username        = $ENV{BRICOLAGE_USERNAME};
+    $password        = $ENV{BRICOLAGE_PASSWORD};
+    $server          = 'http://localhost/';
+    $output_to       = curdir;
+    $VERBOSE         = 0;
+    $timeout         = 60;
+    GetOptions("help"                   => \$help,
+	       "man"                    => \$man,
+	       "verbose+"               => \$VERBOSE,
+	       "username=s"             => \$username,
+	       "password=s"             => \$password,
+	       "server=s"               => \$server,
+               "timeout=s"              => \$timeout,
+               "output-to=s"            => \$output_to,
+               "version+"               => \$show_ver,
+	      ) or pod2usage(2);
+
+    pod2usage(1)             if $help;
+    pod2usage(-verbose => 2) if $man;
+    print "$0 version $VERSION\n" and exit if $show_ver;
+
+    # Check required options
+    pod2usage("Missing required --username option ".
+	      "and BRICOLAGE_USERNAME environment variable unset.")
+	unless defined $username;
+    pod2usage("Missing required --password option ".
+	      "and BRICOLAGE_PASSWORD environment variable unset.")
+	unless defined $password;
+
+    # Get the Output Channel name.
+    $oc = shift @ARGV or pod2usage("Missing required OutputChannel argument");
+};
+
+##############################################################################
+
+use SOAP::Lite ($VERBOSE > 2 ? (trace => [qw(debug)]) : ());
+import SOAP::Data 'name';
+use HTTP::Cookies;
+use File::Path qw(mkpath);
+use MIME::Base64 qw(decode_base64 encode_base64);
+use XML::Simple qw(XMLin);
+use File::Spec::Unix;
+
+##############################################################################
+
+# Connect to the SOAP server.
+my $soap = login($username, $password, $server, $timeout);
+fetch_templates($soap, $oc, $output_to);
+print STDERR "$0 finished okay\n" if $VERBOSE;
+
+##############################################################################
+# This subroutine connects to the Bricolage server and returns the SOAP::Lite
+# object.
+##############################################################################
+sub login {
+    my ($username, $password, $server, $timeout) = @_;
+
+    # Fixup url if missing "http://" or ending in "/".
+    $server = "http://$server" unless $server =~ m!^https?://!;
+    $server =~ s|/$||;
+
+    # setup soap object to login with
+    my $soap = SOAP::Lite->new(
+	uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
+        readable => $VERBOSE >= 2 ? 1 : 0
+    );
+
+    $soap->proxy($server . '/soap',
+		 cookie_jar => HTTP::Cookies->new(ignore_discard => 1),
+		 timeout    => $timeout);
+
+    # Log in.
+    print STDERR "Logging in to $server as $username...\n" if $VERBOSE;
+    my $response = $soap->login(name(username => $username),
+				name(password => $password));
+    die "Login to $server as $username failed.\n" if $response->fault;
+    print STDERR "Login to $server success.\n" if $VERBOSE;
+    return $soap;
+}
+
+##############################################################################
+# This subroutine fetches all of the templates for the output channel from
+# the Bricolage server.
+##############################################################################
+sub fetch_templates {
+    my ($soap, $oc, $output_to) = @_;
+    $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Template');
+    my $response = $soap->list_ids(name(output_channel => $oc));
+
+    _print_fault($response) if $response->fault;
+    my @template_ids = @{ $response->result };
+    print STDERR "Found template IDs: ", join(',', @template_ids), "\n"
+      if $VERBOSE;
+
+    foreach my $template_id (@template_ids) {
+        # Export the template.
+        $response = $soap->export(name( template_id => $template_id));
+        _print_fault($response) if $response->fault;
+
+        # Parse the XML and extract the template code and file name.
+        my $xml = XMLin($response->result);
+        my $code = $xml->{template}{data}
+          ? decode_base64($xml->{template}{data})
+          : '';
+        my $filename = $xml->{template}{file_name};
+        print STDERR "Extracted template '$filename' ($template_id): "
+          . length($code) . " bytes.\n"
+          if $VERBOSE;
+
+        # Construct the target location.
+        my $path = catfile($output_to, File::Spec::Unix->splitdir($filename));
+
+        # Make the target directory, if needed.
+        my @parts = splitdir($path);
+        my $loc = catdir(@parts[0..$#parts-1]);
+        mkpath([$loc]) unless -d $loc;
+
+        # Write out the template.
+        print STDERR "Writing '$path'\n" if $VERBOSE;
+        open(TEMPLATE, ">$path") or die "Unable to open $path : $!";
+        print TEMPLATE $code;
+        close TEMPLATE or die $!;
+    }
+}
+
+##############################################################################
+# This subroutine prints out a relevant SOAP error message and dies.
+##############################################################################
+sub _print_fault {
+    my $r = shift;
+    if ($r->faultstring eq 'Application error' and
+	ref $r->faultdetail and ref $r->faultdetail eq 'HASH') {
+	# This is a Bricolage exception, the interesting stuff is in detail.
+	die "Call to Bric::SOAP failed : \n" .
+	    join("\n", values %{$r->faultdetail});
+    } else {
+        # Just die with the fault string.
+	die "Call to Bric::SOAP failed : \n" . $r->faultstring;
+    }
+}
