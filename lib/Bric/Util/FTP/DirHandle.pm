@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-08 02:22:15 $
+$Date: 2004-02-08 18:50:30 $
 
 =head1 DESCRIPTION
 
@@ -620,6 +620,10 @@ data in a package global and returns the cached data if already
 called.
 
 =cut
+
+# XXX This caching of all categories is suboptimal for systems with
+# 1000s of categories. It sould probably be changed to be more dynamic,
+# less caching.
 
 # returns a data structure for categories - caches in a global
 # variable.
