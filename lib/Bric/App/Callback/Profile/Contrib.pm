@@ -4,6 +4,7 @@ use base qw(Bric::App::Callback::Package);
 __PACKAGE__->register_subclass('class_key' => 'contrib');
 use strict;
 use Apache::Util qw(escape_uri);
+use Bric::App::Callback::Util::Contact qw(update_contacts);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
@@ -66,9 +67,7 @@ sub save : Callback {
             my $obj = $contrib->get_obj;
 
             # update contacts on this person object
-            $m->comp("/widgets/profile/updateContacts.mc",
-                     param => $param,
-                     obj   => $obj);
+            update_contacts($param, $obj);
             $obj->save;
 
             # Update attributes.

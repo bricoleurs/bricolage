@@ -1,9 +1,16 @@
-<%args>
-$param
-$obj
-</%args>
+package Bric::App::Callback::Util::Contact;
 
-<%init>
+use strict;
+use Bric::App::Util qw(:all);
+
+use base qw(Exporter);
+our @EXPORT_OK = qw(update_contacts);
+our %EXPORT_TAGS = (all => \@EXPORT_OK);
+
+
+sub update_contacts {
+    my ($param, $obj) = @_;
+
     my $cids = mk_aref($param->{contact_id});
     for (my $i = 0; $i < @{$param->{value}}; $i++) {
 	if (my $id = $cids->[$i]) {
@@ -16,6 +23,10 @@ $obj
 				       $param->{value}[$i]);
 	}
     }
-    $obj->del_contacts(@{ mk_aref($param->{del_contact})} ) if $param->{del_contact};
 
-</%init>
+    $obj->del_contacts(@{ mk_aref($param->{del_contact}) })
+      if $param->{del_contact};
+}
+
+
+1;

@@ -3,6 +3,7 @@ package Bric::App::Callback::Profile::User;
 use base qw(Bric::App::Callback::Package);
 __PACKAGE__->register_subclass('class_key' => 'user');
 use strict;
+use Bric::App::Callback::Util::Contact qw(update_contacts);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
@@ -83,7 +84,7 @@ sub save : Callback {
     }
 
     # Take care of contact info.
-    $m->comp('/widgets/profile/updateContacts.mc',param => $param, obj => $user);
+    update_contacts($param, $user);
 
     # Change the password, if necessary.
     if (!$no_save && (my $pass = $param->{pass_1})) {
