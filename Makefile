@@ -175,7 +175,7 @@ db    		: inst/db.pl postgres.db
 
 conf		: inst/conf.pl files required.db config.db postgres.db \
                   apache.db
-	$(PERL) inst/conf.pl
+	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
 
 done		: conf db files bin lib cpan
 	$(PERL) inst/done.pl
@@ -203,7 +203,8 @@ upgrade_files   :
 	$(PERL) inst/files.pl UPGRADE
 
 upgrade_conf    :
-	$(PERL) inst/conf.pl UPGRADE
+
+	$(PERL) inst/conf.pl UPGRADE $(BRIC_VERSION)
 
 upgrade_done    :
 	@echo

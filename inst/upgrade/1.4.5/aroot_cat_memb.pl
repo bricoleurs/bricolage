@@ -6,8 +6,6 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
-# We're changing the value column from VARCHAR to TEXT. With TEXT, the value
-# of atttypmod is -1.
 exit if fetch_sql(q{SELECT 1 FROM category_member WHERE id = 1});
 
 do_sql
