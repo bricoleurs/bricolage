@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.18.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:22:01 $
+$Date: 2003-07-22 21:55:38 $
 
 =head1 SYNOPSIS
 
@@ -28,8 +28,7 @@ $Date: 2003-02-28 20:22:01 $
   # Look up an existing object.
   $st = Bric::Dist::ServerType->lookup({ id => 1 });
   # Get a list of server type objects.
-  my @servers = Bric::Dist::ServerType->list(
-    { move_method => 'FTP Transport' });
+  my @sts = Bric::Dist::ServerType->list({ move_method => 'FTP Transport' });
   # Get an anonymous hash of server type objects.
   my $sts_href = Bric::Dist::ServerType->href({ description => 'Preview%' });
 
@@ -151,9 +150,9 @@ my %BOOL_MAP = ( active      => 's.active = ?',
                  can_publish => 's.publish = ?',
                  can_preview => 's.preview = ?');
 
-my @SCOL_ARGS = ('Bric::Util::Coll::Server', '_servers');
-my @ACOL_ARGS = ('Bric::Util::Coll::Action', '_actions');
-my @OCOL_ARGS = ('Bric::Util::Coll::OutputChannel', '_ocs');
+my @SCOL_ARGS = ('Bric::Util::Coll::Server', '_servers', { active => 1 });
+my @ACOL_ARGS = ('Bric::Util::Coll::Action', '_actions', {});
+my @OCOL_ARGS = ('Bric::Util::Coll::OutputChannel', '_ocs', {});
 
 my @ORD = qw(name description move_method copy publish preview active);
 my $meths;
@@ -2175,12 +2174,13 @@ B<Notes:> NONE.
 =cut
 
 $get_coll = sub {
-    my ($self, $class, $key) = @_;
+    my ($self, $class, $key, $params) = @_;
     my $dirt = $self->_get__dirty;
     my ($id, $coll) = $self->_get('id', $key);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $coll if $coll;
-    $coll = $class->new(defined $id ? { server_type_id => $id } : undef);
+    $params->{server_type_id} = $id;
+    $coll = $class->new(defined $id ? $params : undef);
     $self->_set([$key], [$coll]);
     $self->_set__dirty; # Unset the dirty flag.
     return $coll;
