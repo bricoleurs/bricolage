@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.4.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.4.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-13 17:46:17 $
+$Date: 2003-03-14 21:30:12 $
 
 =head1 SYNOPSIS
 
@@ -276,7 +276,7 @@ our %Lexicon = (
    'Current Version' => 'Versione Corrente',
    'Create a New Category' => 'Creare un Nuova Categoria',
    'First' => 'Nome',
-   'URI [_1] is already in use. Please try a different directory name or Parent.' => 'URI [_1] già in uso Per favore utilizza un nome di categoria o \'parent\' differente.',
+   'URI [_1] is already in use. Please try a different directory name or parent category.' => 'URI [_1] già in uso Per favore utilizza un nome di categoria o \'parent\' differente.',
    'Related Media' => 'Media Correlato',
    'Month' => 'Mese',
    'Story [_1] saved.' => 'Storia [_1] salvata.',

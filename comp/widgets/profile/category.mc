@@ -71,16 +71,17 @@ if ($field eq "$widget|save_cb") {
                     my $uri = Bric::Util::Trans::FS->cat_uri(
                       $par->get_uri, $param->{directory}
                     );
-                    add_msg($lang->maketext("Directory name [_1] contains "
-                            . "invalid characters. Please try a different "
-                            . "directory name.","'$param->{directory}'"));
+                    add_msg($lang->maketext
+                            ('URI [_1] is already in use. Please ' .
+                             'try a different directory name or ' .
+                             'parent category.', $uri ));
                     return $cat;
                 }
                 if ($param->{directory} =~ /[^\w.-]+/) {
                     add_msg($lang->maketext("Directory name [_1] contains "
                             . "invalid characters. Please try a different "
                             . "directory name.","'$param->{directory}'"));
-                    return $cat; 
+                    return $cat;
                 } else {
                     $cat->set_directory($param->{directory});
                 }
@@ -170,11 +171,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.4.1 $
 
 =head1 DATE
 
-$Date: 2003-03-01 19:25:59 $
+$Date: 2003-03-14 21:30:08 $
 
 =head1 SYNOPSIS
 
