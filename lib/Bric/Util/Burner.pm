@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.62 $
+$Revision: 1.63 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.62 $ )[-1];
+our $VERSION = (qw$Revision: 1.63 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-03 21:39:43 $
+$Date: 2004-01-07 16:25:19 $
 
 =head1 SYNOPSIS
 
@@ -1038,7 +1038,8 @@ sub publish {
         $ba->set_publish_status(1);
         # Set published version if we've reverted
         # (i.e. unless we're republishing published_version)
-        if ($ba->get_version > $ba->get_published_version) {
+        my $pubversion = $ba->get_published_version || 0;
+        if ($ba->get_version > $pubversion) {
             $ba->set_published_version($ba->get_version);
         }
         # Now log that we've published and get it out of workflow.
