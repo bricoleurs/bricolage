@@ -128,6 +128,12 @@ listed in the select list for story type and media type elements. [David]
 When a document fails to publish because there are no destinations configured,
 the UI no longer displays a message saying that it was published. [David]
 
+=item *
+
+Its possible to create new stories again without running into errors saying
+that a URI is not unique because the cover date and slug were accidentally
+exclued from the URI. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)

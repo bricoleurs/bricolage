@@ -340,7 +340,9 @@ sub create : Callback {
     # Set the workflow this story should be in.
     $story->set_workflow_id($work_id);
 
-    # Save the story.
+    # Set the slug and cover date and save the story.
+    $story->set_slug($param->{slug});
+    $story->set_cover_date($param->{cover_date});
     $story->save;
 
     # Send this story to the first desk.
