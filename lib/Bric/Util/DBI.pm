@@ -899,6 +899,11 @@ sub where_clause {
         next unless defined $v;
         my $sql = $pkg->PARAM_WHERE_MAP->{$k} or next;
         if (UNIVERSAL::isa($v, 'Bric::Util::DBI::ANY')) {
+            # The WHERE clause may be in two parts.
+            if (my $any = $pkg->PARAM_ANYWHERE_MAP->{$k}) {
+                $where .= " AND $any->[0]";
+                $sql = $any->[1];
+            }
             $where .= ' AND (' . join(' OR ', ($sql) x @$v) . ')';
             push @args, (@$v) x  $sql =~ s/\?//g;
         } else {

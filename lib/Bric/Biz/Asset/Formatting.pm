@@ -291,6 +291,15 @@ use constant PARAM_WHERE_MAP =>
                              . 'LOWER(f.file_name) LIKE LOWER(?))',
     };
 
+use constant PARAM_ANYWHERE_MAP => {
+    element_key_name       => [ 'f.element__id = e.id',
+                                'e.key_name LIKE LOWER(?)' ],
+    category_uri           => [ 'f.category__id = c.id',
+                                'LOWER(c.uri) LIKE LOWER(?))' ],
+    grp_id                 => [ 'm2.active = 1 AND fm2.member__id = m2.id AND f.id = fm2.object_id',
+                                'm2.grp__id = ?' ],
+};
+
 use constant PARAM_ORDER_MAP =>
     {
       active              => 'active',
@@ -636,119 +645,166 @@ Inherited from Bric::Biz::Asset.
 
 =item ($fa_list || @fas) = Bric::Biz::Asset::Formatting->list( $criteria )
 
-This will return a list of blessed objects that match the defined criteria
+Returns a list or anonymous array of Bric::Biz::Asset::Formatting objects
+based on the search parameters passed via an anonymous hash. The supported
+lookup keys are:
 
 Supported Keys:
 
 =over 4
 
-=item *
+=item name
 
-active - defaults to true
+The name of a template. May use C<ANY> for a list of possible values.
 
-=item *
+=item title
 
-user__id - if defined will return the versions checked out to the user with
-this id. Otherwise , unless C<checked_out> is passed, it will return the most
+Same as C<name>.
+
+=item file_name
+
+The file name of a template. May use C<ANY> for a list of possible values.
+
+=item description
+
+Template description. May use C<ANY> for a list of possible values.
+
+=item id
+
+The template ID. May use C<ANY> for a list of possible values.
+
+=item version
+
+The template version number. May use C<ANY> for a list of possible values.
+
+=item active
+
+Defaults to true
+
+=item user_id
+
+If defined will return the versions checked out to the user with this
+id. Otherwise , unless C<checked_out> is passed, it will return the most
 current non-checked out versions.
 
-=item *
+=item site_id
 
-checked_out - A boolean value indicating whether to return only checked out or
-not checked out templates.
+Returns a list of templates associated with a given site ID. May use C<ANY>
+for a list of possible values.
 
-=item *
+=item category_id
 
-checked_out - Indicates whether to list templates that are checked out or
-not. If "0", then only non-checked out templates will be returned. If "1",
-then only checked-out templates will be returned. If "all", then the
-checked_out attributed will be ignored (unless the C<user__id> parameter is
-passed).
+Returns a list of templates in the category represented by a category ID. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item checked_out
 
-return_versions - will return all the versions of the given templates
+A boolean value indicating whether to return only checked out or not checked
+out templates.
 
-=item *
+=item category_uri
 
-id
+Returns a list of templates with a given category URI. May use C<ANY> for a
+list of possible values.
 
-=item *
+=item checked_out
 
-workflow_id
+Indicates whether to list templates that are checked out or not. If "0", then
+only non-checked out templates will be returned. If "1", then only checked-out
+templates will be returned. If "all", then the checked_out attributed will be
+ignored (unless the C<user__id> parameter is passed).
 
-=item *
+=item return_versions
 
-output_channel_id
+Will return all the versions of the given templates
 
-=item *
+=item element_id
 
-tplate_type
+Returns a list of templates associated with a given element ID. May use C<ANY>
+for a list of possible values.
 
-=item *
+=item element_key_name
 
-element_id
+Returns a list of templates associated with an element with the given key
+name. May use C<ANY> for a list of possible values.
 
-=item *
+=item workflow_id
 
-category_id
+Return a list of templates in the workflow represented by the workflow ID. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item desk_id
 
-name
+Returns a list of templates on a desk with the given ID. May use C<ANY> for a
+list of possible values.
 
-=item *
+=item output_channel_id
 
-file_name
+Returns a list of templates associated with a given output channel ID. May use
+C<ANY> for a list of possible values.
 
-=item *
+=item priority
 
-deploy_date_start
+Returns a list of templates associated with a given priority value. May use
+C<ANY> for a list of possible values.
 
-=item *
+=item deploy_status
 
-deploy_date_stop
+Boolean value indicating whether to return deployed or undeployed templates.
 
-=item *
+=item deploy_date_start
 
-expire_date_start
+Returns a list of templates last deployed on or after a given date/time.
 
-=item *
+=item deploy_date_end
 
-expire_date_stop
+Returns a list of templates last deployed on or before a given date/time.
 
-=item *
+=item expire_date_start
 
-Order - A property name to order by.
+Returns a list of templates with a expire date on or after a given date/time.
 
-=item *
+=item expire_date_end
 
-OrderDirection - The direction in which to order the records, either "ASC" for
-ascending (the default) or "DESC" for descending.
+Returns a list of templates with a expire date on or before a given date/time.
 
-=item *
+=item grp_id
 
-Limit - A maximum number of objects to return. If not specified, all objects
-that match the query will be returned.
+Returns a list of templates that are members of the group with the specified
+group ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item active
 
-Offset - The number of objects to skip before listing the remaining objcts or
-the number of objects specified by C<Limit>.
+Boolean indicating whether to return active or inactive templates.
 
-=item *
+=item simple
 
-simple - a single OR search that hits name and filename
+Triggers a single OR search that hits name and file name.
+
+=item Order
+
+A property name to order by.
+
+=item OrderDirection
+
+The direction in which to order the records, either "ASC" for ascending (the
+default) or "DESC" for descending.
+
+=item Limit
+
+A maximum number of objects to return. If not specified, all objects that
+match the query will be returned.
+
+=item Offset
+
+The number of objects to skip before listing the remaining objcts or the
+number of objects specified by C<Limit>.
 
 =back
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
-
-B<Side Effects:>
-
-NONE
+B<Side Effects:> NONE.
 
 B<Notes:>
 

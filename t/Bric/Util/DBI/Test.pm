@@ -70,6 +70,11 @@ use constant PARAM_WHERE_MAP =>
       simple              => '(LOWER(k.name) LIKE LOWER(?) OR LOWER(i.name) LIKE LOWER(?) OR LOWER(i.description) LIKE LOWER(?) OR LOWER(s.primary_uri) LIKE LOWER(?))',
     };
 
+use constant PARAM_ANYWHERE_MAP => {
+      keyword             => [ 'sk.story_id = s.id AND k.id = sk.keyword_id',
+                               'LOWER(k.name) LIKE LOWER(?)' ],
+};
+
 use constant PARAM_ORDER_MAP =>
     {
       active              => 'active',
@@ -118,7 +123,7 @@ sub test_build_query: Test(2) {
     is( $$got, $expected, 'check the normal query builder' );
 }
 
-sub test_where: Test(70) {
+sub test_where: Test(72) {
     my $self = shift;
     my (@match_count, $cols);
     my $base = 's.id = i.story__id'; # the base output
@@ -240,6 +245,11 @@ sub test_where: Test(70) {
     ($cols, $args) = where_clause($CLASS, { keyword => 1 });
     is( $cols, $base . ' AND sk.story_id = s.id AND k.id = sk.keyword_id AND LOWER(k.name) LIKE LOWER(?)', 'check keyword param');
     is_deeply( $args, [1], ' ... and the arg');
+    # ANY(keyword)
+    ($cols, $args) = where_clause($CLASS, { keyword => ANY('foo', 'bar') });
+    is( $cols, $base . ' AND sk.story_id = s.id AND k.id = sk.keyword_id AND (LOWER(k.name) LIKE LOWER(?) OR LOWER(k.name) LIKE LOWER(?))', 'check ANY(keyword) param');
+    is_deeply( $args, ['foo', 'bar'], ' ... and the arg');
+
     # return_versions
     ($cols, $args) = where_clause($CLASS, { _no_return_versions => 1 });
     is( $cols, $base . ' AND s.current_version = i.version', 'check _no_return_versions param');

@@ -95,7 +95,7 @@ sub test_clone : Test(17) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(113) {
+sub test_select_methods: Test(116) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -593,6 +593,17 @@ sub test_select_methods: Test(113) {
     is( scalar @$got, 2, 'Check for two stories');
     is( $got->[0]->get_id, $story[-2]->get_id, "Check first story" );
     is( $got->[1]->get_id, $story[-1]->get_id, "Check last story" );
+
+    # Try a complex ANY specification.
+    ok( $got = $self->class->list({
+        Order        => 'name',
+        category_uri => ANY($OBJ->{category}->[0]->get_uri,
+                            $OBJ->{category}->[1]->get_uri)
+    }), "List by category_uri => ANY");
+    is( scalar @$got, 6, 'Check for six stories');
+    # Make sure we got the correct stories.
+    is_deeply( [ map { $_->get_id } @$got ], $OBJ_IDS->{story},
+               "Got correct six stories");
 
     # Try primary_uri + Order by title.
     ok( $got = class->list({ primary_uri => '/_test%', Order => 'title' }),

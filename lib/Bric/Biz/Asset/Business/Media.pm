@@ -264,6 +264,25 @@ use constant PARAM_WHERE_MAP =>
       contrib_id            => 'i.id = sic.media_instance__id AND sic.member__id = ?',
     };
 
+use constant PARAM_ANYWHERE_MAP => {
+    element_key_name       => [ 'mt.element__id = e.id',
+                                'e.key_name LIKE LOWER(?)' ],
+    subelement_key_name    => [ 'i.id = mct.object_instance_id',
+                                'mct.key_name LIKE LOWER(?)' ],
+    data_text              => [ 'md.object_instance_id = i.id',
+                                'LOWER(md.short_val) LIKE LOWER(?)' ],
+    output_channel_id      => [ 'i.id = moc.media_instance__id',
+                                'i.primary_oc__id = ?' ],
+    category_uri           => [ 'i.category__id = c.id',
+                                'LOWER(c.uri) LIKE LOWER(?)' ],
+    keyword                => [ 'mk.media_id = mt.id AND k.id = mk.keyword_id',
+                                'LOWER(k.name) LIKE LOWER(?)' ],
+    grp_id                 => [ 'm2.active = 1 AND mm2.member__id = m2.id AND mt.id = mm2.object_id',
+                                'm2.grp__id = ?' ],
+    contrib_id             => [ 'i.id = sic.media_instance__id',
+                                'sic.member__id = ?' ],
+};
+
 use constant PARAM_ORDER_MAP =>
     {
       active              => 'active',
@@ -513,24 +532,35 @@ Returns only inactive media.
 Returns a list of media in the category represented by a category ID. May
 use C<ANY> for a list of possible values.
 
+=item category_uri
+
+Returns a list of media with a given category URI. May use C<ANY> for a list
+of possible values.
+
 =item keyword
 
-Returns media associated with a given keyword string (not object).
+Returns media associated with a given keyword string (not object). May use
+C<ANY> for a list of possible values.
 
 =item workflow_id
 
 Return a list of media in the workflow represented by the workflow ID. May
 use C<ANY> for a list of possible values.
 
+=item desk_id
+
+Returns a list of media on a desk with the given ID. May use C<ANY> for a list
+of possible values.
+
 =item uri
 
 Returns a list of media with a given URI. May use C<ANY> for a list of
 possible values.
 
-=item category_uri
+=item site_id
 
-Returns a list of media with a given category URI. May use C<ANY> for a list
-of possible values. May use C<ANY> for a list of possible values.
+Returns a list of media associated with a given site ID. May use C<ANY>
+for a list of possible values.
 
 =item element_id
 
@@ -561,6 +591,11 @@ C<ANY> for a list of possible values.
 
 Returns a list of media associated with a given contributor ID. May use
 C<ANY> for a list of possible values.
+
+=item grp_id
+
+Returns a list of media that are members of the group with the specified group
+ID. May use C<ANY> for a list of possible values.
 
 =item publish_status
 
@@ -603,14 +638,25 @@ Returns a list of media with a expire date on or before a given date/time.
 A boolean parameter. Returns a list of media without an expire date, or with
 an expire date set in the future.
 
+=item element_key_name
+
+The key name for the media type element. May use C<ANY> for a list of possible
+values.
+
 =item subelement_key_name
 
-The key name for a container element that's a subelement of a media document.
+The key name for a container element that's a subelement of a media
+document. May use C<ANY> for a list of possible values.
 
 =item data_text
 
-Text stored in the fields of the media element or any of its subelements.
-Only fields that use the "short" storage type will be searched.
+Text stored in the fields of the media element or any of its subelements. Only
+fields that use the "short" storage type will be searched. May use C<ANY> for
+a list of possible values.
+
+=item simple
+
+Triggers a single OR search that hits title, description, uri and keywords.
 
 =item Order
 
@@ -630,10 +676,6 @@ match the query will be returned.
 
 The number of objects to skip before listing the remaining objcts or the
 number of objects specified by C<Limit>.
-
-=item simple
-
-Triggers a single OR search that hits title, description, uri and keywords.
 
 =back
 
