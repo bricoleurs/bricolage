@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:17 $
+$Date: 2003-03-21 05:03:26 $
 
 =head1 SYNOPSIS
 
@@ -155,7 +155,7 @@ NONE
 
 =over 4
 
-=item (1 || undef) = add_msg($txt)
+=item (1 || undef) = add_msg(@txt)
 
 Add a new warning message to the current list of messages.
 
@@ -163,15 +163,7 @@ B<Throws:>
 
 NONE
 
-B<Side Effects:>
-
-=over
-
-=item *
-
-Sets global variable %HTML::Mason::Commands::session
-
-=back
+B<Side Effects:> Adds the message to the session.
 
 B<Notes:>
 
@@ -180,12 +172,10 @@ NONE
 =cut
 
 sub add_msg {
-    my ($txt) = @_;
-    my $session = Bric::App::Session->instance();
-    my $msg = $session->{'_msg'};
+    my $txt = shift or return;
+    my $session = Bric::App::Session->instance;
+    my $msg = $session->{_msg} ||= [];
     push @$msg, $txt;
-    $session->{'_msg'} = $msg;
-    return 1;
 }
 
 #------------------------------------------------------------------------------#

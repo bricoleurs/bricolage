@@ -71,8 +71,6 @@ if ($param->{delete} &&
       if exists $param->{element_type_id} && !defined $param->{element_id};
     $comp->activate;
     $comp->set_name($param->{name});
-        
-
 
     # Normalize the key name
     my $kn = lc($param->{key_name});
@@ -92,6 +90,8 @@ if ($param->{delete} &&
             next unless $key =~/primary_oc_site(\d+)_cb/;
             my $siteid = $1;
             $comp->set_primary_oc_id($param->{$key}, $siteid);
+            $comp->add_output_channel($param->{$key})
+              unless @{ $comp->get_output_channels($param->{$key}) };
             $oc_ids{$siteid} = $param->{$key};
         }
 
@@ -99,8 +99,9 @@ if ($param->{delete} &&
             unless ($oc_ids{$siteid}) {
                 $no_save = 1;
                 my $site = Bric::Biz::Site->lookup({id => $siteid});
-                add_msg("Site '" . $site->get_name . "' does not have a",
-                        "primary output channel");
+                add_msg($lang->maketext
+                        ("Site [_1] requires a primary output channel",
+                         '&quot;' . $site->get_name . '&quot;'));
             }
         }
     } elsif($field eq "$widget|add_oc_id_cb") {
@@ -311,11 +312,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =head1 DATE
 
-$Date: 2003-03-13 11:26:30 $
+$Date: 2003-03-21 05:03:25 $
 
 =head1 SYNOPSIS
 

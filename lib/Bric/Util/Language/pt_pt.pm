@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:18 $
+$Date: 2003-03-21 05:03:26 $
 
 =head1 SYNOPSIS
 
@@ -708,6 +708,8 @@ use constant key => 'pt_pt';
       'Deployed Version' => 'Deployed Version',
       'Needs to be Published' => 'Needs to be Published',
       'Needs to be Deployed' => 'Needs to be Deployed',
+      'Site [_1] requires a primary output channel' =>
+        'Site [_1] requires a primary output channel',
   );
 
 =cut
