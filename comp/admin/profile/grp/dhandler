@@ -51,8 +51,6 @@ if (defined $id) {
       || $memb_pkg eq 'Bric::Biz::Person::User'
       ? get_pref('List Name Format') : undef;
 
-    my(%dup);
-
     if ($class_name eq 'Bric::Util::Grp::Source') {
         # Get existing members.
         foreach my $obj ( $grp->get_objects ) {
@@ -71,7 +69,6 @@ if (defined $id) {
                 push @$right, { value =>  $obj->get_id,
                     description => $obj->get_uri,
                     site  => $obj->get_site_id };
-                $dup{lc $right->[-1]->{description}}++;
             }
         # Get potential members.
         foreach my $obj ( $memb_pkg->list ) {
@@ -79,7 +76,6 @@ if (defined $id) {
                    description => $obj->get_uri,
                    site => $obj->get_site_id };
 
-            $dup{lc $left->[-1]->{description}}++;
         }
     } else {
 
@@ -95,7 +91,6 @@ if (defined $id) {
                     description => $obj->get_name($format),
                     site => $has_site && $obj->get_site_id };
 
-            $dup{lc $right->[-1]->{description}}++;
         }
         # Get potential members.
         foreach my $obj ( @$lobjs ) {
@@ -103,18 +98,18 @@ if (defined $id) {
                    description => $obj->get_name($format),
                    site => $has_site && $obj->get_site_id };
 
-            $dup{lc $left->[-1]->{description}}++;
         }
     }
 
     # Add to the description site name, if there are duplicate  descriptions.
     # Only run if sites are already cached ( which means there is more than one site).
     my $sites = $c->get('__SITES__') || Bric::Biz::Site->list();
-    if($sites) {
+    if(@$sites > 1) {
+
         my %sites;
         $sites{$_->get_id} = $_->get_name for @$sites;
         for my $row (@$left, @$right) {
-            if ($dup{lc($row->{description})} > 1 && $row->{site}) {
+            if ($row->{site}) {
                 $row->{description} .= ' ('. $sites{$row->{site} } . ') ';
             }
         }
@@ -256,11 +251,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-12-06 00:01:48 $
+$Date: 2004-01-14 17:19:59 $
 
 =head1 DESCRIPTION
 

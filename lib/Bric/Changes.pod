@@ -205,13 +205,19 @@ the spot! [David]
 =item *
 
 Templates are now correctly saved to the user's sandbox when "Save and Stay"
-is pressed. [oE<atilde>o Pedro]
+is pressed. [JoE<atilde>o Pedro]
 
 =item *
 
 select_object.mc correctly saves its selected_id state so that,
 for example, dropdown menus in New Story remember the item
 that was selected last time.
+
+=item *
+
+Group membership now correctly shows the site name for each object when
+there is more than one site in the installation. [JoE<atilde>o Pedro]
+
 
 =back
 
