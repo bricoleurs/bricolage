@@ -152,13 +152,12 @@ Filter by site context now works. [Joao Pedro]
 
 =item *
 
-Alert Type rule regexp matching (=~, !~) now handles patterns
-containing slashes (important for URIs, for example). [Scott]
-
-=item *
-
-Alert Type attributes no longer show up as stringified hash
-references in subject or message variable substitution. [Scott]
+Several Alert Type fixes. Rule regexp matching (=~, !~) now handles
+patterns containing slashes (important for URIs, for example).
+Attributes no longer show up as stringified hash
+references in subject or message variable substitution.
+$trig_password was removed from the Profile as it caused
+an error and was useless anyway. [Scott]
 
 =back
 
