@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2003-12-11 11:18:08 $
+$Date: 2004-04-19 08:59:44 $
 
 =head1 INTRODUCTION
 
@@ -157,20 +157,20 @@ For example, say we have a 'Column' story that contains 'Page' elements. These
 'Page' elements are paginated elements. Here is some template code for 'Page'
 (assume page contains just paragraphs):
 
-        <!-- Code for 'page.mc' -->
+    <!-- Code for 'page.mc' -->
     % my $n = 1;
     % while (my $p = $element->get_data('paragraph', $n++)) {
         <p><% $p %></p>
     % }
 
-Here is some template code for 'column':
+Here is some template code for 'Column':
 
-    <!-- Code for 'column' -->
+    <!-- Code for 'column.mc' -->
     <html>
         <head><title><% $story->get_title %></title></head>
         <body>
 
-    % may $n = 1;
+    % my $n = 1;
     % while (my $pg = $element->get_container('page', $n++)) {
     %     $burner->display_element($pg);
     % }
@@ -184,7 +184,7 @@ a single page:
 
 index.html :
 
-    <!-- Code for 'column' -->
+    <!-- Code for 'column.mc' -->
     <html>
         <head><title>Our Column Title</title></head>
         <body>
@@ -223,7 +223,7 @@ template with each succeeding page.
 So we can use our earlier example with just a minor change to produce the
 output we want:
 
-    <!-- Code for 'column' -->
+    <!-- Code for 'column.mc' -->
     <html>
         <head><title><% $story->get_title %></title></head>
         <body>
@@ -233,7 +233,7 @@ output we want:
         </body>
     </html>
 
-The code for the 'page' template:
+The code for the 'Page' template:
 
         <!-- Code for 'page.mc' -->
     % my $n = 1;
@@ -245,7 +245,7 @@ This approach will output the following files:
 
 index.html:
 
-    <!-- Code for 'column' -->
+    <!-- Code for 'column.mc' -->
     <html>
         <head><title>Our Column Title</title></head>
         <body>
@@ -259,7 +259,7 @@ index.html:
 
 index1.html:
 
-    <!-- Code for 'column' -->
+    <!-- Code for 'column.mc' -->
     <html>
         <head><title>Our Column Title</title></head>
         <body>
@@ -273,7 +273,7 @@ index1.html:
 
 index2.html:
 
-    <!-- Code for 'column' -->
+    <!-- Code for 'column.mc' -->
     <html>
         <head><title>Our Column Title</title></head>
         <body>
