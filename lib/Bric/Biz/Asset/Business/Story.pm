@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:24 $
+$Date: 2003-02-27 20:00:57 $
 
 =head1 SYNOPSIS
 
@@ -1032,17 +1032,15 @@ Returns name of story that has clashing URI.
 sub check_uri {
     my ($self, $uid) = @_;
     my $msg;
-    # get element type and output channel info for current story
-    my $s_eid = $self->get_element__id() ||
-      die $gen->new({ msg => 'Cannot retrieve the element_id of this story' });
-    my $s_el = Bric::Biz::AssetType->lookup({id => $s_eid}) ||
-      die $gen->new({ msg => 'Cannot retrieve the element for this story' });
-    my @ocs = $s_el->get_output_channels();
+    my $id = $self->_get('id') || 0;
+
+    # Get the current story's output channels.
+    my @ocs = $self->get_output_channels;
     die $gen->new({ msg => 'Cannot retrieve any output channels associated ' .
                            "with this story's story type element" })
       if !$ocs[0];
-    # then loop thru each category for this story
-  OUTER: foreach my $category ($self->get_categories()) {
+    # Then loop thru each category for this story.
+  OUTER: foreach my $category ($self->get_categories) {
         # get stories in the same category
         my $params = { category_id => $category->get_id,
                        active      => 1 };
@@ -1054,26 +1052,19 @@ sub check_uri {
             push @$stories, $self->list($params);
         }
 
-        # for each story that shares this category
+        # For each story that shares this category...
         foreach my $st (@$stories) {
-            # dont want to compare current story with itself
-            next if (defined $self->get_id and $st->get_id == $self->get_id);
+            # Don't want to compare current story with itself.
+            next if ($st->get_id == $id);
 
-            # get element type and output channel info
-            my $st_eid = $st->get_element__id() ||
-              die $gen>new({ msg => 'Cannot retrieve the element_id of this ' .
-                                    'story' });
-            my $st_el = Bric::Biz::AssetType->lookup({id => $st_eid}) ||
-              die $gen->new({ msg => 'Cannot retrieve the element for this' .
-                                     'story' });
-            my @st_ocs = $st_el->get_output_channels();
-
-            # for each output channel, throw an error for conflicting URI.
-            foreach my $st_oc(@st_ocs) {
+            # For each output channel, throw an error for conflicting URI.
+            foreach my $st_oc ($st->get_output_channels) {
                 foreach my $oc (@ocs) {
-                    if ($st->get_uri($category,$st_oc) eq
-                        $self->get_uri($category,$oc)) {
-                        $msg = $st->get_name();
+                    if ($st->get_uri($category, $st_oc) eq
+                        $self->get_uri($category, $oc)) {
+                        # HACK: Must get rid of the message and throw an
+                        # exception, instead.
+                        $msg = $st->get_name;
                         last OUTER;
                     }
                 }

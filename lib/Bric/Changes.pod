@@ -243,6 +243,12 @@ relevant to them. They hadn't had that access by default before. [David]
 Changed the plural name of the "Category Group" class from "Category Group" to
 "Category Groups". [David]
 
+=item *
+
+Fixed bug introduced in 1.5.0 where stories where checked for duplicate URIs
+for output channels that they weren't actually in. Thanks to Bill Cappel for
+the spot. [David]
+
 =back
 
 =head1 VERSION 1.5.0
