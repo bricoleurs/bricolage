@@ -6,15 +6,15 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:16 $
+$Date: 2003-08-08 17:49:48 $
 
 =head1 SYNOPSIS
 
@@ -345,7 +345,7 @@ our %Lexicon = (
     'Pending ' => 'Sospesa',
     'Permission Denied' => '權限慘遭拒絕',
     'Permission to checkout [_1] denied' => '取出 [_1] 的權限慘遭拒絕',
-    'Permission to delete [_1] denied.' => '刪除 [_1] 權限慘遭拒絕',
+    'Permission to delete "[_1]" denied.' => '刪除 [_1] 權限慘遭拒絕',
     'Permissions saved.' => '權限已儲存',
     'Please check the URL and try again. If you feel you have reached this page as a result of a server error or other bug, please notify the server administrator. Be sure to include as much detail as possible, including the type of browser, operating system, and the steps leading up to your arrival here.' => '請仔細檢查URL並且再試一次。如果你覺得你是因為某種伺服器產生的錯誤而來到這個頁面，請儘速通知管理員，並請附上盡量詳細的資訊，包括使用的瀏覽器、作業系統、以及達到這一頁的每個步驟。',
     'Please select a primary category.' => '請選擇一個主要的分類',

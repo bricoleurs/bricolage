@@ -122,9 +122,7 @@ sub delete : Callback {
             $dest->save;
             log_event("${type}_deact", $dest);
         } else {
-            my $name = '&quot;' . $dest->get_name . '&quot';
-            my $msg = "Permission to delete [_1] denied.";
-            add_msg($self->lang->maketext($msg, $name));
+            add_msg('Permission to delete "[_1]" denied.', $dest->get_name);
         }
     }
 }

@@ -76,9 +76,7 @@ sub deactivate : Callback {
             $grp->save;
             log_event('grp_deact', $grp);
         } else {
-            my $msg = 'Permission to delete [_1] denied.';
-            my $arg = '&quot;' . $grp->get_name . '&quot;';
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg('Permission to delete "[_1]" denied.', $grp->get_name);
         }
     }
 }

@@ -63,9 +63,7 @@ sub delete : Callback {
 		$burn->undeploy($a) if $key eq 'formatting';
 		log_event("${key}_deact", $a);
 	    } else {
-                my $msg = 'Permission to delete [_1] denied.';
-                my $arg = '&quot;' . $a->get_name. '&quot;';
-                add_msg($self->lang->maketext($msg, $arg));
+                add_msg('Permission to delete "[_1]" denied.', $a->get_name);
 	    }
 	}
     }

@@ -62,9 +62,7 @@ sub cancel : Callback {
                 log_event('job_cancel', $job);
             }
         } else {
-            my $msg = 'Permission to delete [_1] denied.';
-            my $arg = '&quot;' . $job->get_name . '&quot;';
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg('Permission to delete "[_1]" denied.', $job->get_name);
         }
     }
 }

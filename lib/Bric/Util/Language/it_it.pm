@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:28 $
+$Date: 2003-08-08 17:49:48 $
 
 =head1 SYNOPSIS
 
@@ -435,7 +435,7 @@ our %Lexicon = (
    'No existing notes.' => 'Nessuna nota presente',
    'Invalid page request' => 'Richiesta di Pagina non valida',
    'Group Memberships' => 'Gruppi Associati',
-   'Permission to delete [_1] denied.' => 'Permesso di cancellare [_1] negato.',
+   'Permission to delete "[_1]" denied.' => 'Permesso di cancellare "[_1]" negato.',
    'Template Includes' => 'Template Include',
    'Published Version' => 'Versione Pubblicata',
    'Cannot cancel [_1] because it is currently executing.' => 'Non è possibile cancellare [_1] perché in esecuzione.',

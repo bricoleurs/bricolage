@@ -140,9 +140,7 @@ sub delete : Callback {
             log_event("${type}_deact", $wf);
             $flag = 1;
         } else {
-            my $msg = "Permission to delete [_1] denied.";
-            my $arg = '&quot;' . $wf->get_name . '&quot';
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg('Permission to delete "[_1]" denied.', $wf->get_name);
         }
     }
     if ($flag) {

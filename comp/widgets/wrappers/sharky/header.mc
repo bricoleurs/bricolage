@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:59 $
+$Date: 2003-08-08 17:49:48 $
 
 =head1 SYNOPSIS
 
@@ -32,9 +32,7 @@ $no_hist => 0
 $debug => undef
 </%args>
 <%init>;
-
 $title = $lang->maketext($title);
-
 my @context =  split /\|/, $context;
 for (@context){
     s/^\s|\s$//g;
@@ -265,10 +263,10 @@ while (my $txt = next_msg) {
 	$firstMsg = 0;
     }
 </%perl>
-<table width=580 cellpadding=0 cellspacing=0 border=0>
+<table width="580" cellpadding="0" cellspacing="0" border="0">
   <tr>
-    <td height=20 valign=center>
-%    $m->out("<span class=errorMsg>$txt</span>\n");
+    <td height="20" valign="center">
+      <span class="errorMsg"><% escape_html($txt) %></span>
     </td>
   </tr>
   </table>

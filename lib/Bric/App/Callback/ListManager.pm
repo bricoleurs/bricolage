@@ -28,7 +28,7 @@ use Bric::App::Util qw(:all);
 #             $obj->$method;
 #             $obj->save;
 #         } else {
-#             my $msg = "Permission to delete [_1] denied.";
+#             my $msg = "Permission to delete "[_1]" denied.";
 #             my $name = defined($obj->get_name) ?
 #               '&quot;' . $obj->get_name . '&quot' : 'Object';
 #             add_msg($self->lang->maketext($msg, "$method $name"));
@@ -50,10 +50,9 @@ sub delete : Callback {
             $obj->save;
             log_event($obj_key.'_del', $obj);
         } else {
-            my $msg = "Permission to delete [_1] denied.";
-            my $name = defined($obj->get_name) ?
-              '&quot;' . $obj->get_name . '&quot' : 'Object';
-            add_msg($self->lang->maketext($msg, $name));
+            my $name = $obj->get_name;
+            $name = 'Object' unless defined $name;
+            add_msg('Permission to delete "[_1]" denied.', $name);
         }
     }
 }
@@ -72,10 +71,9 @@ sub deactivate : Callback {
             $obj->save;
             log_event($obj_key.'_deact', $obj);
         } else {
-            my $msg = "Permission to delete [_1] denied.";
-            my $name = defined($obj->get_name) ?
-              '&quot;' . $obj->get_name . '&quot' : 'Object';
-            add_msg($self->lang->maketext($msg, $name));
+            my $name = $obj->get_name;
+            $name = 'Object' unless defined $name;
+            add_msg('Permission to delete "[_1]" denied.', $name);
         }
     }
 }

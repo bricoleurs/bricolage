@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:28 $
+$Date: 2003-08-08 17:49:48 $
 
 =head1 SYNOPSIS
 
@@ -582,8 +582,8 @@ use constant key => 'de_de';
    'Permission Denied' => 'Acesso não-permitido',
    'Permission to checkout [_1] denied' =>
      'Permissão para reservar [_1] negada.',
-   'Permission to delete [_1] denied.' =>
-     'Não está autorizado a apagar [_1].',
+   'Permission to delete "[_1]" denied.' =>
+     'Não está autorizado a apagar «[_1]».',
    'Problem adding [_1]' => 'Problemas ao criar [_1].',
    'Problem deleting [_1]' => 'Problemas ao apagar [_1].',
    'Template compile failed: [_1]' =>

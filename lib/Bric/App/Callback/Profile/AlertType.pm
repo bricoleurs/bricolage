@@ -88,7 +88,6 @@ sub delete : Callback {
     my $self = shift;
     my $at = $self->obj;
 
-    my $msg = 'Permission to delete [_1] denied.';
     foreach my $id (@{ mk_aref($self->value) }) {
         my $at = $class->lookup({'id' => $id}) || next;
         if (chk_authz($at, EDIT, 1)) {
@@ -96,8 +95,7 @@ sub delete : Callback {
             $at->save();
             log_event($self->class_key . '_del', $at);
         } else {
-            my $name = '&quot;' . $at->get_name() . '&quot';
-            add_msg($self->lang->maketext($msg, $name));
+            add_msg('Permission to delete "[_1]: denied.', $at->get_name);
         }
     }
 }
