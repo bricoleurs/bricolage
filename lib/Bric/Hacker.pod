@@ -687,9 +687,9 @@ Be sure to run C<make devtest> after everything is installed to ensure that it
 is all functioning correctly. Users won't be running these tests, as they muck
 up the database. But that's okay for our validation of the release tarball.
 Use C<make uninstall> to clean up the mess. If you have to go back and make
-any changes, be sure to commit them to the Subversion repository and then to
-update the tag, then do the whole thing over again. Once everything appears to
-be working properly, release!
+any changes, be sure to commit them to the Subversion repository and then do
+the whole thing over again. Once everything appears to be working properly,
+release!
 
 Now that the new version of Bricolage is out free in the world, it's time to
 tag the release. Again, it's a simple copy:

@@ -266,7 +266,7 @@ This will make your SMTP server happier. [David]
 
 The version numbering issues of Bricolage modules have all been worked out
 after the confusion in 1.8.1. This incidentally allows the HTML::Template and
-Template Toolkit burners to be available again (reported by Mike W.). [David]
+Template Toolkit burners to be available again. Reported by Mike W. [David]
 
 =item *
 
@@ -464,6 +464,9 @@ The output channel and element profiles no longer display deactivated output
 channels in their output channel select lists (for output channel includes in
 the output channel profile and for primary output channels in the element
 profile). [David]
+
+The side navigation layer now works correctly with Internet Explorer 5.5 for
+Windows. [Marshall]
 
 =back
 
