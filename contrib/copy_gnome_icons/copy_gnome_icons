@@ -123,8 +123,6 @@ for my $file (@ARGV) {
         mkpath catdir($mime_dir, $cat) unless $seen{$cat}++;
         cp $file, catfile($mime_dir, $cat, "$type.png");
     } else {
-        # GNOME's default "document" is our default "none".
-        $cat = 'none' if $cat eq 'document';
         cp $file, catfile($mime_dir, "$cat.png");
     }
 }
