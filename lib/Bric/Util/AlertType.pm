@@ -2444,6 +2444,7 @@ sub send_alerts {
         }
         $e_attr->{__SEEN__} = 1;
     }
+
     foreach my $rule ($self->get_rules) {
         # String naming the data to grab.
         my $attr = $rule->get_attr;
@@ -2492,7 +2493,6 @@ sub send_alerts {
         }
     }
 
-    warn "Send alert for ", $self->get_name, $/;
     # If we're here, send out alerts!
     Bric::Util::Alert->new({ at => $self, obj => $obj,
                            user => $user, event => $event });
