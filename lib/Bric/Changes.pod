@@ -41,6 +41,21 @@ Media assets with no associated media file now generate a message indicating
 that no file will be distributed, and are properly removed from workflow when
 published. [David]
 
+=item *
+
+Some media asset events weren't geting logged properly Now they are. [David]
+
+=item *
+
+Database transactions are now properly maintained whe publishing
+assets. Everything was working, but DBI C<AutoCommit> was getting turned on,
+and this likely slowed some things down a bit. [David]
+
+=item *
+
+Assets can once again be found via the "Find" pages and recalled into a
+worfklow without error. [David]
+
 =back
 
 =head1 VERSION 1.3.3

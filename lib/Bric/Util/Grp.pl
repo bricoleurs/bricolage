@@ -173,6 +173,9 @@ ok( $grp->has_member({ package => 'Bric::Util::Pref', id => 2 }),
     "Yes, has_member" );
 ok( ! $grp->has_member({ package => 'Bric::Util::Pref', id => -1 }),
     "No has_member" );
+TODO: {
+    
+}
 
 ##############################################################################
 # Persistence tests. These tests assume that the test data is in the database.
