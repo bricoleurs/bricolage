@@ -7,15 +7,15 @@ Bric::Util::Burner::TemplateToolkit - Bric::Util::Burner subclass to publish bus
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 17:16:57 $
+$Date: 2003-10-01 17:22:37 $
 
 =head1 SYNOPSIS
 
@@ -195,35 +195,25 @@ A category in which to publish.
 
 =cut
 
-    use Template;
-
 sub burn_one {
     my $self = shift;
     my ($story, $oc, $cat, $at) = @_;
-
 
     my $element = $story->get_tile();
 
     my($ba);  #gone
 
-
-
-
     print STDERR __PACKAGE__, "::burn_one() called.\n"
 	if DEBUG;
-
 
     my ($outbuf, $retval);
 
     # Determine the component roots.
     my $comp_dir = $self->get_comp_dir;
 
- 
     my $comp_dir = $self->get_comp_dir;
     my $template_roots = [ map { $fs->cat_dir($comp_dir, "oc_" . $_->get_id) }
                            ($oc, $oc->get_includes) ];
-   
-
 
     # Save an existing TemplateToolkit request object and Bricolage objects.
     my (%bric_objs);
@@ -233,7 +223,7 @@ sub burn_one {
     {
 	# search up category hierarchy for wrappers
 	my @cats = map { $_->get_directory } $self->get_cat->ancestry;
-	
+
 	do {
 	    # if the file exists, return it
 	    foreach my $troot (@$template_roots) {
@@ -264,8 +254,6 @@ sub burn_one {
 	    story   => $story,
 	    element => $element,
 	},
-	
-	    
     });
 
 
@@ -273,7 +261,6 @@ sub burn_one {
     {
 	my @cats = map { $_->get_directory } $self->get_cat->ancestry;
 	my $tmpl_name = _fmt_name($element->get_name) . '.tt';
-	
         do {
 	    # if the file exists, return it
 	    print STDERR "Trying: ", join('/',@cats),"\n";
@@ -304,7 +291,7 @@ sub burn_one {
 	if($outbuf !~ /^\s*$/) {
 	    my $file = $self->page_filepath($page);
 	    my $uri  = $self->page_uri($page);
-	
+
 	    # Save the page we've created so far.
 	    open(OUT, ">$file")
 		|| die $gen->new({ msg => "Unable to open '$file' for writing",
@@ -319,7 +306,7 @@ sub burn_one {
 	last unless $self->_get('more_pages');
     }
     $self->_pop_element;
-    
+
     $self->_set(['_tt','_comp_root'],[undef,undef]);
     my $ret = $self->_get('_res') || return;
     $self->_set(['_res', 'page'], [[], 0]);
@@ -621,10 +608,9 @@ sub display_element {
         my $tt = $self->_get('_tt');
 
         # Set the elem global to the current element.
-	
         # Push this element on to the stack
         $self->_push_element($elem);
-	
+
         my $template = $self->_load_template_element($elem);
 	print STDERR "Including $template\n";
 	$data .= $tt->context->include($template, {
@@ -637,9 +623,7 @@ sub display_element {
         # Set the elem global to the previous element
 
     } else {
-
 	$data .= $elem->get_data();
-	
     }
     return $data;
 }
