@@ -269,6 +269,12 @@ htmlArea in CVS. [David & Marshall]
 
 Logging now works properly with the virtual FTP server. [Keith Grennan]
 
+=item *
+
+Some cases in which it was impossible to add actions to a destination have
+been fixed. Reported by Marshall Roch. Thanks to Jason Edgecombe for making
+available a server that exhibits the problem. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
