@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-10-03 19:25:19 $
+$Date: 2001-10-04 17:36:38 $
 
 =head1 SYNOPSIS
 
@@ -1354,8 +1354,8 @@ perl(1), DBI(2), Bric (3), Bric::Util::Time(4), Bric::Util::DBD::Oracle(5).
 =head1 REVISION HISTORY
 
 $Log: DBI.pm,v $
-Revision 1.3  2001-10-03 19:25:19  samtregar
-Merge from Release_1_0 to HEAD
+Revision 1.4  2001-10-04 17:36:38  samtregar
+Merged from Release_1_0
 
 
 =cut

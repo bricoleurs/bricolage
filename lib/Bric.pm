@@ -10,7 +10,7 @@ Release Version: 1.1.0
 
 File (CVS) Version:
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.1.0";
 
 =head1 DATE
 
-$Date: 2001-10-03 19:25:19 $
+$Date: 2001-10-04 17:36:36 $
 
 =head1 SYNOPSIS
 
@@ -803,8 +803,8 @@ perl(1).
 =head1 REVISION HISTORY
 
 $Log: Bric.pm,v $
-Revision 1.6  2001-10-03 19:25:19  samtregar
-Merge from Release_1_0 to HEAD
+Revision 1.7  2001-10-04 17:36:36  samtregar
+Merged from Release_1_0
 
 
 =cut

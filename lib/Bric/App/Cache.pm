@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-03 19:25:19 $
+$Date: 2001-10-04 17:36:36 $
 
 =head1 SYNOPSIS
 
@@ -386,21 +386,8 @@ Apache::Session(4)
 =head1 REVISION HISTORY
 
 $Log: Cache.pm,v $
-Revision 1.3  2001-10-03 19:25:19  samtregar
-Merge from Release_1_0 to HEAD
+Revision 1.4  2001-10-04 17:36:36  samtregar
+Merged from Release_1_0
 
-Revision 1.2.2.2  2001/10/03 09:18:44  wheeler
-Moved cache files into bricolage subdirectory of the local tmp directory, e.g.,
-/tmp/bricolage/cache.
-
-Revision 1.2.2.1  2001/10/03 08:51:14  wheeler
-Moved cache files to /tmp/bricolage_cache (or, to be more specific, to the
-"bricolage_cache" subdirectory of the local system's tmp directory).
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:52:58  wheeler
-Upload to SourceForge.
 
 =cut

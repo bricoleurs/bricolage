@@ -185,11 +185,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-10-03 19:25:18 $
+$Date: 2001-10-04 17:36:38 $
 
 =head1 SYNOPSIS
 
@@ -201,15 +201,10 @@ This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the Element Profile page.
 
 =head1 REVISION HISTORY
+
 $Log: element.mc,v $
-Revision 1.2  2001-10-03 19:25:18  samtregar
-Merge from Release_1_0 to HEAD
+Revision 1.3  2001-10-04 17:36:38  samtregar
+Merged from Release_1_0
 
-Revision 1.1.1.1.2.1  2001/10/03 12:43:42  wheeler
-Always giving checkboxes a default value of 1. Part of resolution of
-http://bricolage-bugzilla.about.com/show_bug.cgi?id=9.
-
-Revision 1.1.1.1  2001/09/06 21:52:08  wheeler
-Upload to SourceForge.
 
 </%doc>

@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.7 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.8 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-02 16:23:59 $
+$Date: 2001-10-04 17:36:36 $
 
 =head1 SYNOPSIS
 
@@ -225,7 +225,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 #======================================#
 {
     # We'll store the settings loaded from the configuration file here.
-    my $config = {};
+    my $config;
 
     BEGIN {
 	# Load the configuration file, if it exists.
@@ -255,6 +255,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 	    my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
+
     }
 
     # Apache Settings.
@@ -413,6 +414,13 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
     use constant FTP_LOG           => $config->{FTP_LOG}           || 
                                       catdir($ENV{BRICOLAGE_ROOT}, 'ftp.log');
+
+
+    # Okay, now load the end-user's code, if any.
+    if ($config->{PERL_LOADER}) {
+	package Bric::Util::Burner;
+	eval "$config->{PERL_LOADER}";
+    }
 }
 
 #==============================================================================#
@@ -504,30 +512,8 @@ L<perl>, L<DBC>
 =head1 REVISION HISTORY
 
 $Log: Config.pm,v $
-Revision 1.7  2001-10-02 16:23:59  samtregar
-Added FTP interface to templates
+Revision 1.8  2001-10-04 17:36:36  samtregar
+Merged from Release_1_0
 
-Revision 1.6  2001/09/27 15:41:46  wheeler
-Added filename and file_ext columns to OutputChannel API. Also added a
-configuration directive to CE::Config to specify the default filename and
-extension for the system. Will need to document later that these can be set, or
-move them into preferences. Will also need to use the filename and file_ext
-properties of Bric::Biz::OutputChannel in the Burn System.
-
-Revision 1.5  2001/09/26 10:38:56  wheeler
-Unset debugging settings.
-
-Revision 1.4  2001/09/25 13:34:31  wheeler
-Changed FULL_SEARCH to allow standard setting arguments in bricolage.conf,
-and to default to 0.
-
-Revision 1.3  2001/09/20 02:12:29  wheeler
-Undid changes I accidentally committed.
-
-Revision 1.2  2001/09/20 02:11:40  wheeler
-Removed files that I'd put in the wrong place!
-
-Revision 1.1.1.1  2001/09/06 21:52:50  wheeler
-Upload to SourceForge.
 
 =cut

@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-03 19:25:19 $
+$Date: 2001-10-04 17:36:36 $
 
 =head1 SYNOPSIS
 
@@ -217,7 +217,7 @@ sub setup_user_session {
 
     # Try to tie the session variable to a session file.
     eval { tie %HTML::Mason::Commands::session,
-	     'Apache::Session::File', $cookie ? $cookie->value : undef, OPTS; };
+	     'Apache::Session::File', ($cookie ? $cookie->value : undef), OPTS; };
 
     # Test to see if the tie succeeded.
     if ($@) {
@@ -877,17 +877,8 @@ L<perl>, L<Bric>, L<Apache::Session::File>
 =head1 REVISION HISTORY
 
 $Log: Session.pm,v $
-Revision 1.3  2001-10-03 19:25:19  samtregar
-Merge from Release_1_0 to HEAD
+Revision 1.4  2001-10-04 17:36:36  samtregar
+Merged from Release_1_0
 
-Revision 1.2.2.1  2001/10/03 09:18:08  wheeler
-Moved session and lock files into subdirectories of a single tmp directory,
-e.g., /tmp/bricolage/.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:03  wheeler
-Upload to SourceForge.
 
 =cut

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2001-10-03 19:25:18 $
+$Date: 2001-10-04 17:36:38 $
 
 =head1 SYNOPSIS
 
@@ -102,13 +102,16 @@ function init() {
 }
 
 % if ($agent->{browser} ne 'Internet Explorer') {
+%     # We have to strip out non-alphanumeric chars because Netscape is lame!
+%     (my $hostname = $r->hostname) =~ s/\W/_/g;
 if (window.toolbar.visible == true) {
     // Turn off the toolbar, back button, etc.
-    var win1 = window.open("<% $uri %>", "Bricolage", 'menubar=0,location=0,'
-                             + 'toolbar=0,personalbar=0,status=1,scrollbars=1');
+    window.open("<% $uri %>", 'Bricolage_<% $hostname %>',
+                'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1');
     self.close();
 }
 % } # if
+
 </script>
 <meta http-equiv="expires" content="Wed, 20 Feb 2000 08:30:00 GMT">
 </head>
@@ -126,7 +129,11 @@ Please activate JavaScript in your browser before continuing.
 <table border=0 cellpadding=0 cellspacing=0 width=750>
 <tr>
 	<td width=150>
-        <img src="/media/images/bricolage.gif" width=150 height=25>
+% if ($useSideNav) {
+        <a href="#" onClick="window.open('/help/about.html', 'About', 'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=620'); return false;"><img src="/media/images/bricolage.gif" width="150" height="25" border="0" /></a>
+% } else {
+        <img src="/media/images/bricolage.gif" width="150" height="25" border="0" />
+% }
 	</td>
 	<td width=600 align=right>
 	 &nbsp;
@@ -259,27 +266,9 @@ while (my $txt = next_msg) {
 <%doc>
 
 $Log: header.mc,v $
-Revision 1.3  2001-10-03 19:25:18  samtregar
-Merge from Release_1_0 to HEAD
+Revision 1.4  2001-10-04 17:36:38  samtregar
+Merged from Release_1_0
 
-Revision 1.2.2.3  2001/10/02 14:24:57  wheeler
-Fixed hiding of toolbars, etc., to leave the scrollbars and to work properly
-with Netscape et al., but to ignore IE.
-
-Revision 1.2.2.2  2001/10/02 13:27:54  wheeler
-Disabled JavaScript that hides browser stuff because it wasn't working with
-Netscape and was removing too many elements of the browser (though this latter
-issue can easily be corrected).
-
-Revision 1.2.2.1  2001/10/01 13:52:36  wheeler
-Added JavaScript to get rid of menus, buttons, etc.
-
-Revision 1.2  2001/09/25 12:52:33  wheeler
-Fixed variable interpolation problem (a variable *wasn't* getting
-interpolated!).
-
-Revision 1.1.1.1  2001/09/06 21:52:35  wheeler
-Upload to SourceForge.
 
 </%doc>
 

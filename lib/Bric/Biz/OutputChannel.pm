@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - The manner of keeping track of output channels
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.7 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-03 19:25:19 $
+$Date: 2001-10-04 17:36:37 $
 
 =head1 SYNOPSIS
 
@@ -1145,35 +1145,9 @@ NONE
 =head1 REVISION HISTORY
 
 $Log: OutputChannel.pm,v $
-Revision 1.6  2001-10-03 19:25:19  samtregar
-Merge from Release_1_0 to HEAD
+Revision 1.7  2001-10-04 17:36:37  samtregar
+Merged from Release_1_0
 
-Revision 1.5.2.1  2001/10/01 10:27:56  wheeler
-Added support for custom file naming on a per-output channel basis. The filename
-is specified in the Output Channel profile, and used during the burn phase to
-name files on the file system. Configuration directives specifying default
-values for the filename fields have also been added and documented in
-Bric::Admin.
-
-Revision 1.5  2001/09/27 15:54:49  wheeler
-Documented pre_path, post_path, filename, and file_ext.
-
-Revision 1.4  2001/09/27 15:41:46  wheeler
-Added filename and file_ext columns to OutputChannel API. Also added a
-configuration directive to CE::Config to specify the default filename and
-extension for the system. Will need to document later that these can be set, or
-move them into preferences. Will also need to use the filename and file_ext
-properties of Bric::Biz::OutputChannel in the Burn System.
-
-Revision 1.3  2001/09/25 08:33:35  wheeler
-Fixed bug where if the server_type_id argument to _do_list() was undefined it
-ignored it, rather than looking for NULL, which makes more sense.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:28  wheeler
-Upload to SourceForge.
 
 =cut
 
