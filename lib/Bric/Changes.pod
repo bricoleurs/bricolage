@@ -250,6 +250,13 @@ Added F<bricolage.conf> directive "ALLOW_WORKFLOW_TRANSFER" to allow assets on
 shared desks to be able to be transferred across workflows via that shared
 desk. [David]
 
+=item *
+
+Changed Bric::Util::Burner to set C<publish_status> after publishing, rather
+than before. Thus it is only set if the publish is successful, while at the
+same time templates can check C<publish_status> to determine if a story is
+being published for the first time. [David]
+
 =back
 
 =head1 VERSION 1.4.4
