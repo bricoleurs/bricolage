@@ -37,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2002-10-19 23:03:57 $
 
 =head1 SYNOPSIS
 
@@ -67,7 +67,7 @@ $Date: 2002-08-30 22:13:41 $
 
   # get a list of media_ids for all Illustrations (a Media Type)
   my $media_ids = $soap->list_ids(name(element => 'Illustration'));
-  
+
 =head1 DESCRIPTION
 
 This module provides a SOAP interface to manipulating Bricolage media.
@@ -163,7 +163,7 @@ Lower bound on cover date.  Given in XML Schema dateTime format
 Upper bound on cover date.  Given in XML Schema dateTime format
 (CCYY-MM-DDThh:mm:ssTZ).
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -273,7 +273,7 @@ Specifies a single media_id to be retrieved.
 Specifies a list of media_ids.  The value for this option should be an
 array of interger "media_id" elements.
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -362,7 +362,7 @@ Available options:
 The XML document containing objects to be created.  The document must
 contain at least one media object.
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -431,7 +431,7 @@ include objects in the document that are not listed in update_ids then
 they will be treated as in create().  For that reason an update() with
 an empty update_ids list is equivalent to a create().
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -493,7 +493,7 @@ Specifies a single media_id to be deleted.
 
 Specifies a list of media_ids to delete.
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -561,7 +561,7 @@ sub delete {
 }
 }
 
-=back 4
+=back
 
 =head2 Private Class Methods
 

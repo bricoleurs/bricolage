@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2002-10-19 23:06:39 $
 
 =head1 SYNOPSIS
 
@@ -79,7 +79,7 @@ $Date: 2002-08-30 22:13:41 $
   my $story_ids = $soap->create(name(document => $xml_document),
                                 name(update_ids => 
                                      [ name(story_id => 1024) ]))->result;
-  
+
 =head1 DESCRIPTION
 
 This module provides a SOAP interface to manipulating Bricolage stories.
@@ -211,7 +211,7 @@ The number of objects to skip before listing the number of objects
 specified by "Limit". Not used if "Limit" is not defined, and when
 "Limit" is defined and "Offset" is not, no objects will be skipped.
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -343,7 +343,7 @@ stories will also be returned.  The story element will refer to the
 included story objects using relative references (see the XML Schema
 document in L<Bric::SOAP|Bric::SOAP> for details).
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -456,7 +456,7 @@ The XML document containing objects to be created.  The document must
 contain at least one story and may contain any number of related media
 objects.
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -525,7 +525,7 @@ include objects in the document that are not listed in update_ids then
 they will be treated as in create().  For that reason an update() with
 an empty update_ids list is equivalent to a create().
 
-=back 4
+=back
 
 Throws: NONE
 
@@ -587,7 +587,7 @@ Specifies a single story_id to be deleted.
 
 Specifies a list of story_ids to delete.
 
-=back 4
+=back
 
 Throws: NONE
 
