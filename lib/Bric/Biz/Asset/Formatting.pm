@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2001-12-04 23:17:32 $
 
 =head1 SYNOPSIS
 
@@ -409,16 +409,10 @@ sub new {
 
 	# construct File Path for FA
 	(my $file = $name) =~ s/\W+/_/g;
-<<<<<<< variant A
 	
 	# Don't put the file_type extension on if this is an
 	# autohandler.
 	$file .= '.' . $init->{file_type} unless $name eq 'autohandler';
->>>>>>> variant B
-
-	# Don't put the '.mc' extension on if this is an autohandler.
-	$file .= '.mc' unless $name eq 'autohandler';
-======= end
 
 	$init->{file_name} =
 	  Bric::Util::Trans::FS->cat_dir('', $pre, $cat_path, $post, $file);
