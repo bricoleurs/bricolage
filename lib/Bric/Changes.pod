@@ -47,6 +47,11 @@ C<story>, C<media>, and C<formatting> (template) tables. [David]
 C<make clone> no longer fails when it can't find F<httpd.conf>, because it
 no longer looks for it. [David]
 
+=item *
+
+C<make clone> no longer assumes that the F<conf> directory is in
+C<$BRICOLAGE_ROOT>, and prompts the user to find out. [David]
+
 =back
 
 =head1 VERSION 1.6.9 (2004-02-06)

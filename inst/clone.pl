@@ -6,11 +6,11 @@ clone.pl - installation script to gather clone information
 
 =head1 VERSION
 
-$Revision: 1.1.6.1 $
+$Revision: 1.1.6.2 $
 
 =head1 DATE
 
-$Date: 2004-02-10 07:46:16 $
+$Date: 2004-02-10 09:07:35 $
 
 =head1 DESCRIPTION
 
@@ -89,19 +89,23 @@ sub get_bricolage_root {
     ask_confirm("Bricolage Root Directory to Clone?",
 		\$CLONE{BRICOLAGE_ROOT});
 
+    $CLONE{CONFIG_DIR} = catdir $CLONE{BRICOLAGE_ROOT}, 'conf';
+    ask_confirm("Bricolage Config Directory",
+		\$CLONE{CONFIG_DIR});
+
     # verify that we have a Bricolage install here
     hard_fail("No Bricolage installation found in $CLONE{BRICOLAGE_ROOT}.\n")
-	unless -e catfile($CLONE{BRICOLAGE_ROOT}, "conf", "bricolage.conf");
+	unless -e catfile($CLONE{CONFIG_DIR}, "bricolage.conf");
 
     # verify that this Bricolage was installed with "make install"
     hard_fail("The Bricolage Installation found in $CLONE{BRICOLAGE_ROOT}\n",
 	      "was installed manually and cannot be cloned.")
-	unless -e catfile($CLONE{BRICOLAGE_ROOT}, "conf", "install.db");
+	unless -e catfile($CLONE{CONFIG_DIR}, "install.db");
 }
 
 # read the install.db file from the chosen bricolage root
 sub read_install_db {
-    my $install_file = catfile($CLONE{BRICOLAGE_ROOT}, "conf", "install.db");
+    my $install_file = catfile($CLONE{CONFIG_DIR}, "install.db");
     if (-e $install_file) {
 	# read it in if it exists
 	do $install_file or die "Failed to read $install_file : $!";
