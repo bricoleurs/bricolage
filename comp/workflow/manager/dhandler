@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2003-10-03 02:33:52 $
+$Date: 2003-10-28 00:35:50 $
 
 =head1 SYNOPSIS
 
@@ -85,8 +85,8 @@ my $alter = { publish_status => sub {
             };
 
 my $fields = { formatting => [qw(file_name version output_channel_name publish_status)],
-               story      => [ qw(title version cover_date publish_status) ],
-               media      => [ qw(title version cover_date publish_status) ],
+               story      => [ qw(title version cover_date publish_status site) ],
+               media      => [ qw(title version cover_date publish_status site) ],
              };
 </%once>
 <%init>;

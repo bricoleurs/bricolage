@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:13 $
+$Date: 2003-10-28 00:35:50 $
 
 =head1 SYNOPSIS
 
@@ -147,11 +147,11 @@ use constant DEBUG => 0;
 #--------------------------------------#
 # Private Class Fields
 my $meths;
-my @ord = qw(id name description priority uri cover_date  version element needs_publish publish_status expire_date active site_id);
+my @ord = qw(id name description priority uri cover_date version element
+             needs_publish publish_status expire_date active site_id site);
 
 #--------------------------------------#
-# Instance Fields                       
-
+# Instance Fields
 # None
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
@@ -715,6 +715,16 @@ sub my_meths {
                               type     => 'short',
                               props    => {}
                              },
+              site       => {
+                  get_meth => sub {
+                      Bric::Biz::Site->lookup({ id => shift->get_site_id(@_) })->get_name
+                    },
+                  get_args => [],
+                  name     => 'site',
+                  disp     => 'Site',
+                  type     => 'short',
+                  props    => {}
+              },
 
              };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];

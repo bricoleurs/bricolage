@@ -66,6 +66,11 @@ spot. [David]
 Redirection after some publishes and previews works again, instead of
 returning a text page to the browser. [David]
 
+=item *
+
+Now displaying the name of the site each story and media document is in in
+Find Stories and Find Media. Suggested by Arthur. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)
