@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.6 $
+$Revision: 1.7.2.7 $
 
 =head1 DATE
 
-$Date: 2003-06-03 16:06:10 $
+$Date: 2003-06-23 16:19:39 $
 
 =head1 DESCRIPTION
 
@@ -80,6 +80,13 @@ Ad Council - L<http://www.adcouncil.org/>
 Open Forum Europe - L<http://www.openforumeurope.org/>
 
 =back
+
+=head3 Are there any commercial support offerings for Bricolage?
+
+Yes. Kineticode, founded by Bricolage maintainer and lead developer David
+Wheeler, offers a range of technical support and templating support options,
+as well as Bricolage consulting services. Learn more at
+L<http://kineticode.com/services/>.
 
 =head2 Installation
 
