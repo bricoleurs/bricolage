@@ -9,9 +9,11 @@ use Bric::Util::Grp::Asset;
 
 exit unless fetch_sql(q{ SELECT 1 FROM class WHERE id = 23 });
 
+do_sql( q{ DROP INDEX fkx_subcat_grp__category });
+
 move_privs();
 
-do_sql(q{ UPDATE category set __category_grp_id__ = NULL },
+do_sql(q{ UPDATE category set category_grp_id = NULL },
        q{ DELETE FROM class WHERE id = 23 },
        q{ ALTER TABLE    category
           ADD CONSTRAINT ck_category__asset_grp_id
@@ -27,7 +29,7 @@ sub move_privs {
 
     # This query will get the two IDs we're interested in.
     my $sel = prepare(qq{
-        SELECT id, name, __category_grp_id__
+        SELECT id, name, category_grp_id
         FROM   category
     });
 
