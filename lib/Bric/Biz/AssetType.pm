@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.34.2.4 $
+$Revision: 1.34.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 20:18:34 $
+$Date: 2003-08-11 22:09:50 $
 
 =head1 SYNOPSIS
 
@@ -1505,12 +1505,8 @@ sub get_data {
     my @all;
 
     # Include the yet to be added parts.
-    while (my ($id,$obj) = each %$new_parts) {
-	if ($id == -1) {
-	    push @all, @$obj;
-	} else {
-	    push @all, $obj;
-	}
+    while (my ($id, $obj) = each %$new_parts) {
+        push @all, $id == -1 ? @$obj : $obj;
     }
 
     push @all, values %$parts;
@@ -1518,9 +1514,10 @@ sub get_data {
     if ($field) {
 	# Return just the field they asked for.
 	$field = $make_key_name->($field);
-	my ($val) = grep($make_key_name->($_->get_name) eq $field, @all);
-	return unless $val;
-	return $val;
+        for my $d (@all) {
+            return $d if $make_key_name->($d->get_name) eq $field;
+        }
+	return;
     } else {
 	# Return all the fields.
 	return wantarray ?  sort { $a->get_place <=> $b->get_place } @all :
