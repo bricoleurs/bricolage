@@ -16,6 +16,12 @@ my %types = (
     'Bric::Biz::Asset::Business::Story' => ['story_prof', 'story'],
     'Bric::Biz::Asset::Business::Media' => ['media_prof', 'media'],
 );
+
+for my $sub (qw(Image Audio Video)) {
+    $types{"Bric::Biz::Asset::Busines::Media::$sub"} =
+      $types{'Bric::Biz::Asset::Business::Media'};
+}
+
 my $key = CLASS_KEY . '|note';
 
 sub add_note : Callback {
