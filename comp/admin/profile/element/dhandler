@@ -159,6 +159,7 @@ if (!$no_edit && defined $id) {
     $m->comp('/widgets/formBuilder/formBuilder.mc',
 	     numFields => 0,
 	     widget    => 1,
+	     stay      => 1,
 	     formName  => 'cont_profile',
 	     numFields => $num_fields,
 	     num       => ++$num,
@@ -230,11 +231,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.2.2.1 $
+$Revision: 1.2.2.2 $
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:02 $
+$Date: 2001-11-05 20:03:40 $
 
 =head1 DESCRIPTION
 
