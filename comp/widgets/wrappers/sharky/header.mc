@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.15.2.5 $
+$Revision: 1.15.2.6 $
 
 =head1 DATE
 
-$Date: 2002-01-29 22:04:30 $
+$Date: 2002-02-23 00:14:54 $
 
 =head1 SYNOPSIS
 
@@ -76,6 +76,9 @@ if ($agent->{browser} eq "Netscape") {
 	. qq{frameborder="no" marginwidth="0" style="z-index:10;" };
 }
 
+my $margins = DISABLE_NAV_LAYER && $agent->{browser} eq 'Mozilla' ?
+  'marginwidth="5" marginheight="5"' : '';
+
 # clean up the title
 $title = '';
 foreach my $t (@title) {
@@ -123,7 +126,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 
 <& "/widgets/wrappers/sharky/css.mc" &>
 
-<body bgcolor="#ffffff" onLoad="init()">
+<body bgcolor="#ffffff" <% $margins %> onLoad="init()">
 <noscript>
 <h1>Warning! Bricolage is designed to run with JavaScript enabled.</h1>
 Using Bricolage without JavaScript can result in corrupt data and system instability.
@@ -181,7 +184,7 @@ function doLink(link) {
 
 if ($useSideNav) {
 
-    if ($agent->{browser} ne 'Mozilla' && $agent->{os} eq "SomeNix") {
+    if (DISABLE_NAV_LAYER || ($agent->{browser} ne 'Mozilla' && $agent->{os} eq "SomeNix")) {
 	$m->comp("/widgets/wrappers/sharky/sideNav.mc", debug => $debug);
     } else {
 	my $uri = $r->uri;

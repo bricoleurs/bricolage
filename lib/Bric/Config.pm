@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.26.2.6 $
+$Revision: 1.26.2.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.26.2.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-08 21:04:13 $
+$Date: 2002-02-23 00:14:54 $
 
 =head1 SYNOPSIS
 
@@ -108,6 +108,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     FTP_ADDRESS
                     FTP_LOG
                     FTP_DEBUG
+		    DISABLE_NAV_LAYER
 		   );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -153,6 +154,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 		    err       => [qw(ERROR_URI)],
 		    char      => [qw(CHAR_SET)],
 		    ui        => [qw(FIELD_INDENT
+				     DISABLE_NAV_LAYER
 				     SERVER_WINDOW_NAME)],
 		    email     => [qw(SMTP_SERVER)],
 		    admin     => [qw(ADMIN_GRP_ID)],
@@ -226,7 +228,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
 	# While these default to 0.
-	foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER SSL_ENABLE)) {
+	foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER SSL_ENABLE
+                    DISABLE_NAV_LAYER))
+	{
 	    my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
@@ -345,6 +349,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
     # UI Settings.
     use constant FIELD_INDENT => 125;
+    use constant DISABLE_NAV_LAYER => $config->{DISABLE_NAV_LAYER};
 
     # Search Settings
     use constant FULL_SEARCH => => $config->{FULL_SEARCH};
