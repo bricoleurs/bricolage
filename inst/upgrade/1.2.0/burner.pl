@@ -5,6 +5,8 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
+# Check the version number.
+exit unless is_later(1.2.0);
 
 # Check to see if we've run this before.
 exit if test_sql('SELECT burner FROM element');

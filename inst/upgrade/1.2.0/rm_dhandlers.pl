@@ -3,12 +3,14 @@
 use strict;
 use File::Find;
 use File::Spec::Functions ();
-BEGIN {
-    $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
-    unshift(@INC, File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib'));
-};
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use bric_upgrade qw(is_later);
 use Bric::Config qw(BURN_COMP_ROOT);
 use Bric::Util::Trans::FS;
+
+# Check the version number.
+exit unless is_later(1.2.0);
 
 my $fs = Bric::Util::Trans::FS->new;
 
