@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.31.4.5 $
+$Revision: 1.31.4.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31.4.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.31.4.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-17 18:35:52 $
+$Date: 2003-12-31 01:02:35 $
 
 =head1 SYNOPSIS
 
@@ -673,7 +673,7 @@ B<Notes:> NONE.
 sub _add_resource {
     my $self = shift;
     my ($file, $uri) = @_;
-    my ($story, $ext) = $self->_get(qw(story ext));
+    my ($story, $ext) = $self->_get(qw(story output_ext));
 
     # Create a resource for the distribution stuff.
     my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
