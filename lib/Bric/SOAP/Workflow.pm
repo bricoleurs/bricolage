@@ -192,8 +192,7 @@ sub publish {
                           { out_dir => $preview ? PREVIEW_ROOT : STAGE_ROOT });
 
     # iterate through ids publishing shiznats
-    my %seen;
-    my @published;
+    my (%seen, @published, %desks);
     while (my $id = shift @ids) {
         my $obj;
         my $type;
@@ -254,8 +253,18 @@ sub publish {
         throw_ap(error => "Cannot publish checked-out $types{$type}: \"".$id."\".")
             if $obj->get_checked_out and not $preview;
 
+        if (not $preview && $obj->get_workflow_id) {
+            # It must be on a publish desk.
+            my $did = $obj->get_desk_id;
+            my $desk = $desks{$did}
+              ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $did });
+            throw_ap qq{Cannot publish $types{$type} "$id" because it }
+              . "is not on a publish desk"
+                unless $desk->can_publish;
+        }
+
         # Check for PUBLISH permission, or READ if previewing
-        throw_ap(error => "Access denied.")
+        throw_ap(error => "Access to publish $types{$type} \"$id\" denied.")
           unless chk_authz($obj, PUBLISH, 1) or ($preview and chk_authz($obj, READ, 1));
 
         # schedule related stuff if requested
@@ -263,13 +272,11 @@ sub publish {
             $args->{publish_related_media}) {
             # loop through related objects, adding to the todo list as
             # appropriate
-            my @rel = $obj->get_related_objects;
-            foreach my $rel (@rel) {
-                if ($args->{publish_related_stories} and
-                    ref($rel) =~ /Story$/) {
+            foreach my $rel ($obj->get_related_objects) {
+                # Add it in.
+                if ($args->{publish_related_stories} and $type eq 'story') {
                     push(@ids, name(story_id => $rel->get_id));
-                } elsif ($args->{publish_related_media} and
-                         ref($rel) =~ /Media$/) {
+                } elsif ($args->{publish_related_media} and $type eq 'media') {
                     push(@ids, name(media_id => $rel->get_id));
                 }
             }
@@ -1478,7 +1485,6 @@ sub _add_desk {
         $asset->set_start_desk($desk);
     }
 }
-
 
 =back
 
