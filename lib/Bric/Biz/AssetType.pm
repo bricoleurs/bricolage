@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.34.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.34.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 05:59:02 $
+$Date: 2003-03-25 22:18:43 $
 
 =head1 SYNOPSIS
 
@@ -127,7 +127,7 @@ use base qw( Bric Exporter );
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-my ($get_oc_coll, $make_key_name);
+my ($get_oc_coll, $make_key_name, $remove);
 
 #==============================================================================#
 # Constants                            #
@@ -2049,7 +2049,7 @@ sub save {
     unless ($self->is_active) {
 	# Check to see if this AT is reference anywhere. If not, delete it.
 	unless ($self->_is_referenced) {
-	    $self->remove;
+	    $self->$remove;
 	    return $self;
 	}
     }
@@ -2258,6 +2258,36 @@ sub _is_referenced {
 
     return 0;
 }
+
+#------------------------------------------------------------------------------#
+
+=item (undef || $self) = $field->$remove
+
+Removes this object completely from the DB. Returns 1 if active or undef
+otherwise
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+$remove = sub {
+    my $self = shift;
+    my $id = $self->get_id or return;
+    my $sth = prepare_c("DELETE FROM $table WHERE id = ?",
+                        undef, DEBUG);
+    execute($sth, $id);
+    return $self;
+};
 
 =item _get_attr_obj
 
