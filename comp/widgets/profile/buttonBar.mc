@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-09-21 00:41:29 $
+$Date: 2002-09-26 01:39:12 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -118,12 +118,7 @@ if ($work_id) {
 <table border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td>
-% if ($type eq 'story') {
-      <input type="image" src="/media/images/clone.gif" width="53" height="20"
-             border="0" name="<% $widget %>|clone_cb" value="clone" />
-% } else {
       &nbsp;
-% }
     </td>
   </tr>
   </table>

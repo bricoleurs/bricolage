@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-21 00:41:30 $
+$Date: 2002-09-26 01:39:12 $
 
 =head1 SYNOPSIS
 
@@ -1485,9 +1485,12 @@ sub clone {
     # Grab the keywords.
     my $kw = $self->get_keywords;
 
+    # Reset properties. Note that if we start to make use of the attribute
+    # object other than for desks, we'll have to find a way to clone it, too.
     $self->_set([qw(version current_version version_id id publish_date
-                    publish_status _update_contributors _queried_cats)],
-                [1, 1, undef, undef, undef, 0, 1, 0]);
+                    publish_status _update_contributors _queried_cats
+                    _attribute_object)],
+                [0, 0, undef, undef, undef, 0, 1, 0, undef]);
 
     # Prepare to be saved.
     $self->_set__dirty(1);

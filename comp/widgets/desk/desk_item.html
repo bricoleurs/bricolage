@@ -68,19 +68,27 @@ my $onePixCell = sub {
         <tr>
             <% &$onePixCell(0, 18) %>
             <td>
-% my $link = $ppage . '/' . $aid;
-% if ($desk_type eq 'workflow') {
-%	$link .= '?return=' . $did;	
-%	if ($vlabel eq 'Edit') {
-%		$link .= '&checkout=1';
-%	}
-% } else {
-%	if ($vlabel eq 'Edit') {
-%		$link .= '?checkout=1';
-%	}
-% }
+<%perl>;
+my $link = $ppage . '/' . $aid;
+my $item_label = 'Trail';
+my $item_url = "/workflow/trail/$class/$aid";
+if ($desk_type eq 'workflow') {
+    $link .= '?return=' . $did;
+    if ($vlabel eq 'Edit') {
+        $link .= '&checkout=1';
+    }
+} else {
+    if ($vlabel eq 'Edit') {
+        $link .= '?checkout=1';
+    }
+    if ($class eq 'story') {
+        $item_label = 'Clone';
+        $item_url = $r->uri . "?$widget|clone_cb=$aid";
+    }
+}
+</%perl>
                 <a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>" class="blackUnderlinedLink">Notes</a>&nbsp;&nbsp;
-                <a href="/workflow/trail/<% $class %>/<% $aid %>" class="blackUnderlinedLink">Trail</a>&nbsp;&nbsp;
+                <a href="<% $item_url %>" class="blackUnderlinedLink"><% $item_label %></a>&nbsp;&nbsp;
                 <a href="<% $link %>" class="blackUnderlinedLink"><% $vlabel %></a>&nbsp;&nbsp;
                 <a href="/workflow/events/<% $class %>/<% $aid %>" class="blackUnderlinedLink">Log</a>&nbsp;&nbsp;
                 <% $pub %>
@@ -213,11 +221,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2002-06-29 01:55:44 $
+$Date: 2002-09-26 01:39:12 $
 
 =head1 DESCRIPTION
 

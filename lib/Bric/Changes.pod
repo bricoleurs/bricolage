@@ -143,6 +143,12 @@ with anything, but can be used as includes). [David]
 Templates are now guaranteed to have unique file name/output channel
 combintations at the API and database levels. [David]
 
+=item *
+
+For stories on My Workspace, Replaced "Trail" with "Clone". Clicking this link
+will make an exact copy of the story with the words "Clone of " prepended to
+the story title. [David]
+
 =back
 
 =head1 VERSION 1.4.1

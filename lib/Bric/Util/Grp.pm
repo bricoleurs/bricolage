@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-26 00:17:36 $
+$Date: 2002-09-26 01:39:13 $
 
 =head1 SYNOPSIS
 
@@ -1503,13 +1503,14 @@ sub has_member {
                         $mem = $m and last MEMCHK if $mem->get_obj_id == $oid;
                     }
                 } else {
-                    # Ugh, we need to convert it to a special hash. See if we have it
-                    # already.
+                    # Ugh, we need to convert it to a special hash. See if we
+                    # have it already.
                     my $memb_hash = $self->_get('_new_memb_hash');
                     unless ($memb_hash) {
                         # We must build it.
                         foreach my $m (@$new_memb) {
-                            $memb_hash->{$m->get_object_package}{$m->get_obj_id} = $m;
+                            $memb_hash->{$m->get_object_package}{$m->get_obj_id}
+                              = $m;
                         }
                         $self->_set(['_new_memb_hash'], [$memb_hash]);
                     }

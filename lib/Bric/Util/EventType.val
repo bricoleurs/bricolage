@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2002-06-29 09:08:16 $
+-- $Date: 2002-09-26 01:39:12 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -25,6 +25,16 @@
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'story_republish', 'Story Republished', 'Story was republished.', 10, 1);
+
+-- ********** 'story_clone' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'story_clone', 'Story Cloned', 'Story was cloned.', 10, 1);
+
+-- ********** 'story_clone_create' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'story_clone_create', 'Story Created as Clone', 'Story was created by cloning.', 10, 1);
 
 -- ********** 'media_publish' ************ --
 

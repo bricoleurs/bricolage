@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-26 00:17:36 $
+$Date: 2002-09-26 01:39:12 $
 
 =head1 SYNOPSIS
 
@@ -1635,22 +1635,18 @@ NONE
 =cut
 
 sub _get_attr_hash {
-	my ($self, $param) = @_;
-
-	my $attrs;
-	if ($self->_get('id')) {
-		my $attr_obj = $self->_get_attribute_object();
-
-		$attrs = $attr_obj->get_attr_hash( $param);
-	} else {
-		my $attr_cache = $self->_get('_attr_cache');
-
-		foreach (keys %{ $attr_cache->{$param->{'subsys'}} } ) {
-			$attrs->{$_} = $attr_cache->{$param->{'subsys'}}->{$_}->{'value'};
-		}
-	}
-
-	return $attrs;
+    my ($self, $param) = @_;
+    my $attrs;
+    if ($self->_get('id')) {
+        my $attr_obj = $self->_get_attribute_object();
+        $attrs = $attr_obj->get_attr_hash( $param);
+    } else {
+        my $attr_cache = $self->_get('_attr_cache');
+        foreach (keys %{ $attr_cache->{$param->{'subsys'}} } ) {
+            $attrs->{$_} = $attr_cache->{$param->{'subsys'}}->{$_}->{'value'};
+        }
+    }
+    return $attrs;
 }
 
 ################################################################################

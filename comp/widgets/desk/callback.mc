@@ -220,6 +220,29 @@ elsif ($field eq "$widget|deploy_cb") {
     add_msg($name ? "$disp_name deployed."
 	    : ($num{$c} || $c) . " $pl_name deployed.");
 }
+
+elsif ($field eq "$widget|clone_cb") {
+    my $aid = $param->{$field};
+    # Lookup the story and log that it has been cloned.
+    my $story = Bric::Biz::Asset::Business::Story->lookup({ id => $aid });
+    log_event('story_clone', $story);
+    # Look it up again to avoid the event above being logged on the clone
+    # instead of the original story.
+    $story = Bric::Biz::Asset::Business::Story->lookup({ id => $aid });
+    # Get the current desk.
+    my $desk = $story->get_current_desk;
+    # Clone and save the story.
+    $story->clone;
+    $story->set_title('Clone of ' . $story->get_title);
+    $story->save;
+    # Put the cloned story on the desk.
+    $desk->accept({ asset => $story });
+    $desk->save;
+    # Log events.
+    log_event('story_clone_create', $story);
+    log_event('story_moved', $story, { Desk => $desk->get_name });
+    log_event('story_checkout', $story);
+}
 </%init>
 
 %#--- Log History ---#
