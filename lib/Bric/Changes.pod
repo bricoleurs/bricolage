@@ -68,6 +68,10 @@ C<< Bric::Biz::Asset::Business::Story->get_secondary_categories()> will no
 longer return categories deleted from the story. Thanks to Scott for the
 spot. [David]
 
+=item *
+
+Removed some unnecessary JavaScript validation. [David]
+
 =back
 
 =head2 Bug Fixes
