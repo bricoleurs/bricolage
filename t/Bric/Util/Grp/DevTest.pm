@@ -2,10 +2,12 @@ package Bric::Util::Grp::DevTest;
 
 use strict;
 use warnings;
-use base qw(Bric::Test::Base);
+use base qw(Bric::Test::DevBase);
 use Test::More; # tests => 5;
 use Bric::Util::Grp::Org;
 use Bric::Biz::Org;
+
+sub table { 'grp' }
 
 ##############################################################################
 # Persistence tests. These tests assume that the test data is in the database.
@@ -13,14 +15,17 @@ use Bric::Biz::Org;
 # database.
 ##############################################################################
 sub test_persistence : Test(19) {
+    my $self = shift;
     ok( my $o = Bric::Biz::Org->new({ name => 'IDG' }), "Create Org" );
     ok( $o->save, "Save Org" );
+    $self->add_del_ids([$o->get_id], 'org');
     ok( my $grp = Bric::Util::Grp::Org->new({ name => 'Test Orgs'}),
         "Create org grp" );
     ok( $grp->add_members([{ obj => $o }]), "Add org" );
     ok( $grp->has_member({ obj => $o }), "Check with has_member" );
     ok( $grp->save, "Save org grp" );
     ok( my $gid = $grp->get_id, "Get org grp ID" );
+    $self->add_del_ids([$gid]);
     ok( $grp = Bric::Util::Grp->lookup({ id => $gid }),
         "Lookup new org grp" );
     ok( UNIVERSAL::isa($grp, 'Bric::Util::Grp::Org'),

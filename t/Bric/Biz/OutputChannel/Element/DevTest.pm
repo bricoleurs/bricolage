@@ -1,7 +1,7 @@
 package Bric::Biz::OutputChannel::Element::DevTest;
 use strict;
 use warnings;
-use base qw(Bric::Test::Base);
+use base qw(Bric::Biz::OutputChannel::DevTest);
 use Test::More;
 use Bric::Biz::OutputChannel::Element;
 

@@ -1,7 +1,7 @@
 package Bric::Util::Class::DevTest;
 use strict;
 use warnings;
-use base qw(Bric::Test::Base);
+use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Util::Class;
 

@@ -20,13 +20,13 @@ sub test_clone : Test(15) {
     # Save the ID for cleanup.
     ok( my $sid = $story->get_id, "Get ID" );
     my $key = $self->class->key_name;
-    push @{ $self->{$key} }, $sid;
+    $self->add_del_ids([$sid], $key);
 
     # Clone the story.
     ok( $story->clone, "Clone story" );
     ok( $story->save, "Save cloned story" );
     ok( my $cid = $story->get_id, "Get cloned ID" );
-    push @{ $self->{$key} }, $cid;
+    $self->add_del_ids([$cid], $key);
 
     # Lookup the original story.
     ok( my $orig = $self->class->lookup({ id => $sid }),

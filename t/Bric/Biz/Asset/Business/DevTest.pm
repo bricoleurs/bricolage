@@ -52,7 +52,7 @@ sub test_oc : Test(36) {
     # Save the asset object.
     ok( $ba->save, "Save ST" );
     ok( my $baid = $ba->get_id, "Get ST ID" );
-    push @{ $self->{$key} }, $baid;
+    $self->add_del_ids([$baid], $key);
 
     # Grab the element's first OC.
     ok( my $oc = $eocs[0], "Grab the first OC" );
@@ -111,7 +111,7 @@ sub test_primary_oc_id : Test(8) {
 
     # Save the ID for cleanup.
     ok( my $id = $ba->get_id, "Get ID" );
-    push @{ $self->{$key} }, $id;
+    $self->add_del_ids([$id], $key);
 
     is( $ba->get_primary_oc_id, 1, "Check primary OC ID" );
 

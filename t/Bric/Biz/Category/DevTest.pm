@@ -1,7 +1,7 @@
 package Bric::Biz::Category::DevTest;
 use strict;
 use warnings;
-use base qw(Bric::Test::Base);
+use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Biz::Category;
 use Bric::Util::Grp::CategorySet;
@@ -11,6 +11,8 @@ my %cat = ( name => 'Testing',
             parent_id => 0,
             directory => 'testing',
           );
+
+sub table { 'category' }
 
 ##############################################################################
 # Test constructors.
@@ -23,7 +25,8 @@ sub test_lookup : Test(7) {
     ok( $cat->save, "Save $cat{name}" );
     ok( my $id = $cat->get_id, "Check for ID" );
     # Save the ID for deleting.
-    $self->add_del_ids($id);
+    $self->add_del_ids([$id]);
+    $self->add_del_ids([$cat->get_asset_grp_id], 'grp');
     # Look up the ID in the database.
     ok( $cat = Bric::Biz::Category->lookup({ id => $id }),
         "Look up $cat{name}" );
@@ -51,13 +54,14 @@ sub test_list : Test(22) {
         ok( my $cat = Bric::Biz::Category->new(\%args), "Create $args{name}" );
         ok( $cat->save, "Save $args{name}" );
         # Save the ID for deleting.
-        $self->add_del_ids($cat->get_id);
+        $self->add_del_ids([$cat->get_id]);
+        $self->add_del_ids([$cat->get_asset_grp_id], 'grp');
         $grp->add_member({ obj => $cat }) if $n % 2;
     }
 
     ok( $grp->save, "Save group" );
     ok( my $grp_id = $grp->get_id, "Get group ID" );
-    $self->add_grp_del_ids($grp_id);
+    $self->add_del_ids([$grp_id], 'grp');
 
     # Try name.
     ok( my @cats = Bric::Biz::Category->list({ name => $cat{name} }),
@@ -84,46 +88,6 @@ sub test_list : Test(22) {
           "Check for both IDs" );
     }
 }
-
-##############################################################################
-
-##############################################################################
-# Clean up our mess.
-##############################################################################
-sub cleanup : Test(teardown => 0) {
-    my $self = shift;
-
-    # Delete any persons we've created.
-    if (my $ids = delete $self->{del_ids}) {
-        $ids = join ', ', @$ids;
-        Bric::Util::DBI::prepare(qq{
-            DELETE FROM category
-            WHERE  id IN ($ids)
-        })->execute;
-    }
-
-    if (my $ids = delete $self->{grp_del_ids}) {
-        $ids = join ', ', @$ids;
-        Bric::Util::DBI::prepare(qq{
-            DELETE FROM grp
-            WHERE  id IN ($ids)
-        })->execute;
-    }
-}
-
-##############################################################################
-# Use this method to store IDs to be deleted from the database when a test
-# method finishes running.
-sub add_del_ids {
-    my $self = shift;
-    push @{$self->{del_ids}}, @_;
-}
-
-sub add_grp_del_ids {
-    my $self = shift;
-    push @{$self->{grp_del_ids}}, @_;
-}
-
 
 1;
 __END__

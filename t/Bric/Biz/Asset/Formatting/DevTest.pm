@@ -159,7 +159,7 @@ sub test_new_util : Test(23) {
     ok( $t->save, "Save utility template" );
     # Save the ID for cleanup.
     ok( my $tid = $t->get_id, "Get template ID" );
-    push @{$self->{$key}}, $tid;
+    $self->add_del_ids([$tid], $key);
 
     # Create a conflicting utility template.
     eval { $self->construct };

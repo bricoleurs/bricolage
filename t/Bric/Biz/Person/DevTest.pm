@@ -1,7 +1,7 @@
 package Bric::Biz::Person::DevTest;
 use strict;
 use warnings;
-use base qw(Bric::Test::Base);
+use base qw(Bric::Test::DevBase);
 use Bric::Biz::Person;
 use Bric::Util::Grp::Person;
 use Test::More;
@@ -13,6 +13,8 @@ my %name = ( lname => 'Whorf',
              suffix => 'Ph.D.'
            );
 
+sub table { 'person' };
+
 ##############################################################################
 # Test constructors.
 ##############################################################################
@@ -23,7 +25,7 @@ sub test_lookup : Test(5) {
     ok( $p->save, "Save $name{lname}" );
     ok( my $id = $p->get_id, "Check for ID" );
     # Save the ID for deleting.
-    $self->add_del_ids($id);
+    $self->add_del_ids([$id]);
     # Look up the ID in the database.
     ok( $p = Bric::Biz::Person->lookup({ id => $id }),
         "Look up $name{lname}" );
@@ -47,13 +49,13 @@ sub test_list : Test(26) {
         ok( my $p = Bric::Biz::Person->new(\%args), "Create $args{lname}" );
         ok( $p->save, "Save $args{lname}" );
         # Save the ID for deleting.
-        $self->add_del_ids($p->get_id);
+        $self->add_del_ids([$p->get_id]);
         $grp->add_member({ obj => $p }) if $n % 2;
     }
 
     ok( $grp->save, "Save group" );
     ok( my $grp_id = $grp->get_id, "Get group ID" );
-    $self->add_grp_del_ids($grp_id);
+    $self->add_del_ids([$grp_id], 'grp');
 
     # Try fname.
     ok( my @ps = Bric::Biz::Person->list({ fname => $name{fname} }),
@@ -87,45 +89,6 @@ sub test_list : Test(26) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
-}
-
-##############################################################################
-
-##############################################################################
-# Clean up our mess.
-##############################################################################
-sub cleanup : Test(teardown => 0) {
-    my $self = shift;
-
-    # Delete any persons we've created.
-    if (my $ids = delete $self->{del_ids}) {
-        $ids = join ', ', @$ids;
-        Bric::Util::DBI::prepare(qq{
-            DELETE FROM person
-            WHERE  id IN ($ids)
-        })->execute;
-    }
-
-    if (my $ids = delete $self->{grp_del_ids}) {
-        $ids = join ', ', @$ids;
-        Bric::Util::DBI::prepare(qq{
-            DELETE FROM grp
-            WHERE  id IN ($ids)
-        })->execute;
-    }
-}
-
-##############################################################################
-# Use this method to store IDs to be deleted from the database when a test
-# method finishes running.
-sub add_del_ids {
-    my $self = shift;
-    push @{$self->{del_ids}}, @_;
-}
-
-sub add_grp_del_ids {
-    my $self = shift;
-    push @{$self->{grp_del_ids}}, @_;
 }
 
 1;
