@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-01-16 00:27:19 $
+$Date: 2002-01-30 00:44:55 $
 
 =head1 SYNOPSIS
 
@@ -360,6 +360,33 @@ Supported Keys:
 
 =over 4
 
+=item object
+
+The object to search for containers - must be a
+Bric::Biz::Asset::Business subclass. You must specify this parameter
+or object_type.
+
+=item object_type
+
+The type of object to find containers for - 'story' or 'media'.  You
+must specify this parameter or object.
+
+=item active
+
+Find inactive stuff by setting this to 0, active with 1.
+
+=item element_id
+
+Find containers of a particular AssetType.
+
+=item name
+
+The name of the AssetType for the container
+
+=item parent_id
+
+Find containers with a given parent container.
+
 =back
 
 B<throws:>
@@ -408,6 +435,33 @@ This will return a list or list ref of tile ids that match the given criteria
 Supported Keys:
 
 =over 4
+
+=item object
+
+The object to search for containers - must be a
+Bric::Biz::Asset::Business subclass. You must specify this parameter
+or object_type.
+
+=item object_type
+
+The type of object to find containers for - 'story' or 'media'.  You
+must specify this parameter or object.
+
+=item active
+
+Find inactive stuff by setting this to 0, active with 1.
+
+=item element_id
+
+Find containers of a particular AssetType.
+
+=item name
+
+The name of the AssetType for the container
+
+=item parent_id
+
+Find containers with a given parent container.
 
 =back
 
@@ -659,6 +713,8 @@ sub get_element_name {
 =item ($data || @data) = $container->get_possible_data()
 
 Returns the data fields that are allowed to be added to the container
+at this moment.  Takes into account the current set of data elements
+added.
 
 B<Throws:>
 
@@ -704,7 +760,9 @@ sub get_possible_data {
 
 =item (@tiles || $tiles) = $container->get_possible_containers()
 
-Returns a list of the possible containers that can be added to this object
+Returns a list of the possible containers that can be added to this
+object.  This is synonymous with AssetType->get_containers() since
+containers don't support occurence constraints.
 
 B<Throws:>
 
@@ -716,7 +774,7 @@ NONE
 
 B<Notes:>
 
-Looks like this still needs to be finished
+NONE
 
 =cut
 
@@ -732,10 +790,11 @@ sub get_possible_containers {
 
 ################################################################################
 
-=item $container = $container->add_data($atd, data, $object);
+=item $container = $container->add_data($atd, $data, ?$order?);
 
-Takes an asset type data object and the data and the object to add it to and
-creates a tile and then adds the tile to its self. Now that's service.
+Takes an asset type data object and the data and creates a tile and
+then adds the tile to its self.  Optionally accepts an $order argument
+to set the object_order property.  Now that's service.
 
 B<Throws:>
 
@@ -752,12 +811,14 @@ NONE
 =cut
 
 sub add_data {
-    my ($self, $atd, $data) = @_;
+    my ($self, $atd, $data, $order) = @_;
     my $data_tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new(
       { active             => 1,
         object_type        => $self->_get('object_type'),
         object_instance_id => $self->_get('object_id'),
-        element_data       => $atd });
+        element_data       => $atd,
+	(defined $order ? (object_order => $order) : ()),
+      });
 
     $data_tile->set_data($data);
     $self->add_tile($data_tile);
@@ -1017,7 +1078,8 @@ and 10 are contained and 4 and 8 are removed the new list of tiles will be
 
 B<Notes:>
 
-NONE 
+Doesn't actually do any deletions, just schedules them.  Call save()
+to complete the deletion.
 
 =cut
 
