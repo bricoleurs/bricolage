@@ -4,6 +4,7 @@ use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'site');
 use strict;
 use Bric::App::Authz qw(:all);
+use Bric::App::Cache;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
