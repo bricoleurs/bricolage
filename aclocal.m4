@@ -109,7 +109,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.9 2002-01-07 17:38:51 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.10 2002-01-08 18:18:48 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -138,7 +138,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.9 2002-01-07 17:38:51 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.10 2002-01-08 18:18:48 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -147,10 +147,16 @@ AC_DEFUN([AC_PROG_POSTGRES],[
  # a bit easier, might as well ask for that first
  # 
  AC_ARG_WITH(pg_config,
-  [  --with-pg_config=PATH absolute path name of the wonderful pg_config
-    script which can tell us so much about your postgres installation
-    (default is to search for pg_config in
-    /usr/local/postgresql/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin)],
+  [
+  --with-pg_config=PATH   absolute path name of the wonderful pg_config
+                          script which can tell us so much about your 
+                          postgres installation (default is to search 
+                          for pg_config in: 
+                            /usr/local/postgresql/bin:
+                            /usr/local/bin:
+                            /usr/local/sbin:
+                            /usr/bin:
+                            /usr/sbin)],
   [
     #
     # Run this if -with or specified
@@ -163,7 +169,9 @@ AC_DEFUN([AC_PROG_POSTGRES],[
  # Or we can just take the postgres home location
  # 
  AC_ARG_WITH(pghome,
-  [  --with-pghome=PATH absolute path name of pg_config script(default is /usr/local/pgsql)],
+  [
+  --with-pghome=PATH      absolute path name of pg_config script
+                          (default is /usr/local/pgsql)],
   [
     #
     # Run this if -with or specified
@@ -233,7 +241,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.9 2002-01-07 17:38:51 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.10 2002-01-08 18:18:48 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -262,9 +270,15 @@ AC_DEFUN([AC_PROG_APACHE],
 [
  AC_MSG_CHECKING(if apache is wanted)
  AC_ARG_WITH(apache,
-  [  --with-apache=PATH absolute path name of apache server (default is to search httpd in
-    /usr/local/apache/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin),
-    --without-apache to disable apache detection],
+  [
+  --with-apache=PATH      absolute path name of apache server (default is 
+                          to search httpd in:
+                             /usr/local/apache/bin:
+                             /usr/local/bin:
+                             /usr/local/sbin:
+                             /usr/bin:/usr/sbin),
+
+  --without-apache        to disable apache detection],
   [
     #
     # Run this if -with or -without was specified
@@ -359,9 +373,10 @@ AC_DEFUN([AC_PROG_APACHE],
 dnl @author Mark Ethan Trostler <trostler@juniper.net> 
 AC_DEFUN([CHECK_SSL],
 [AC_MSG_CHECKING(if ssl is wanted)
-AC_ARG_WITH(ssl,
-[  --with-ssl enable ssl [will check /usr/local/ssl
-                            /usr/lib/ssl /usr/ssl /usr/pkg /usr/local /usr ]
+AC_ARG_WITH(ssl,[
+  --with-ssl              enable ssl [will check /usr/local/ssl
+                            /usr/lib/ssl /usr/ssl /usr/pkg 
+                            /usr/local /usr ]
 ],
 [   AC_MSG_RESULT(yes)
     for dir in $withval /usr/local/ssl /usr/lib/ssl /usr/ssl /usr/pkg /usr/local /usr; do
@@ -421,7 +436,7 @@ dnl DEFAULT value if the user merely hits return.  Also calls
 dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
 dnl be entered into the config.h file as well.
 dnl
-dnl @version $Id: aclocal.m4,v 1.9 2002-01-07 17:38:51 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.10 2002-01-08 18:18:48 markjaroski Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER],

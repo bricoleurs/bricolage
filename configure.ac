@@ -53,27 +53,34 @@ AC_ARG_VAR_DEFAULT(DB_NAME, www-data)
 AC_ARG_VAR_DEFAULT(DBI_USER, nobody)
 AC_ARG_VAR_DEFAULT(DBI_PASS, c@st3l!@n)
 AC_ARG_VAR_DEFAULT(POSTGRES_ROOT_USER, postgres)
-AC_ARG_VAR(POSTGRES_ROOT_USER_PASS)
-AC_ARG_VAR(POSTGRES_ROOT_PASS)
+AC_ARG_VAR_DEFAULT(PG_SYSTEM_USER, postgres)
+AC_ARG_VAR(PG_ROOT_PASS)
 
-if test -z "${POSTGRES_ROOT_USER_PASS}" -a -z "$POSTGRES_ROOT_PASS" ;then
-  AC_MSG_ERROR([You must define one of the following:
 
-    POSTGRES_ROOT_PASS
-    the Postgres password for the Postgres root user
+AC_MSG_CHECKING([whether we will wave the PG_ROOT_PASS requirement])
+AC_ARG_WITH(no-pgroot-pass,[
+  --with-no-pgroot-pass   Use this flag to specify that you want 
+                          the db installer to su $PG_SYSTEM_USER and
+                          try to log into psql with no password.
+                          (Some systems are set up this way for security)],[
+    if test "$withval" = "yes" ;then
+	  PG_NO_PASS="true"
+	  AC_MSG_RESULT(yes)
+	else 
+      PG_NO_PASS="false"
+	  AC_MSG_RESULT(no)
+	fi
+  ],[
+    PG_NO_PASS="false"
+	AC_MSG_RESULT(no)
+  ])
 
-    -or-
-
-    POSTGRES_ROOT_USER_PASS
-    the system password for the Postgres root user
-
-    You may do so in the shell or while issuing the 
-    ./configure command like so:
-
-	  ./configure POSTGRES_ROOT_USER_PASS=poiu0987
-
+if test "${PG_NO_PASS}" = "false" ;then
+  AC_MSG_ERROR([You must define PG_ROOT_PASS
+    -or- use the flag --with-no-pgroot-pass
 ])
 fi
+
 
 # write out the makefiles
 AC_CONFIG_FILES([Makefile doc/Makefile install/bric.sql])
