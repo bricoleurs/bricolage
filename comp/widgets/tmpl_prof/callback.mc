@@ -293,7 +293,7 @@ my $save_meta = sub {
     $fa ||= get_state_data($widget, 'fa');
     chk_authz($fa, EDIT);
     $fa->set_priority($param->{priority}) if $param->{priority};
-    $fa->set_category_id($param->{category_id}) if $param->{category_id};
+    $fa->set_category_id($param->{category_id}) if exists $param->{category_id};
     $fa->set_description($param->{description}) if $param->{description};
     $fa->set_expire_date($param->{'expire_date'}) if $param->{'expire_date'};
     $fa->set_data($param->{"$widget|code"});
