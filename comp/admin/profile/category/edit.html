@@ -86,24 +86,23 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 
 # Get the group's membership listed
-$m->comp("/widgets/grp_membership/grp_membership.mc", 
-         grp_class => 'Bric::Util::Grp::CategorySet', 
-         obj => $cat, 
+$m->comp("/widgets/grp_membership/grp_membership.mc",
+         grp_class => 'Bric::Util::Grp::CategorySet',
+         obj => $cat,
          formName => 'cat_profile',
          no_edit => $no_edit,
          widget  => $type,
          no_cb   => 1,
-         extra_code => $m->scomp('/widgets/profile/checkbox.mc',
-                        name        => 'grp_cascade',
-                        label_after => 1,
-                        value       => 1,
-                        disp        => "<span class=burgandyLabel>" .
-                                       $lang->maketext('Cascade into Subcategories') .
-                                       "</span>"
-                        ) . '<br />'
-
-
-
+         extra_code => defined $cat->get_id
+           ? $m->scomp('/widgets/profile/checkbox.mc',
+                       name        => 'grp_cascade',
+                       label_after => 1,
+                       value       => 1,
+                       disp        => "<span class=burgandyLabel>" .
+                         $lang->maketext('Cascade into Subcategories') .
+                           "</span>"
+                       ) . '<br />'
+           : undef
 );
 
 # Add a checkbox to cascade delete.

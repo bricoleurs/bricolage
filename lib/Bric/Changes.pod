@@ -215,6 +215,12 @@ the same document. [David]
 Clicking the "Add More" button to add more keywords to a new category no
 longer causes an error. [David]
 
+=item *
+
+Adding a new category to a group and asking it to cascade that group
+membership into subcategories no longer causes an error. Thanks to Adam
+Rinehart for the spot! [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
