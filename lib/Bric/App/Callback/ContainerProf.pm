@@ -130,7 +130,7 @@ sub delete : Callback {
     # don't do anything, handled by the update_parts code now
 }
 
-sub clear : Callback {
+sub clear : Callback(priority => 1) {
     my $self = shift;
     $drift_correction->($self);
     my $param = $self->request_args;

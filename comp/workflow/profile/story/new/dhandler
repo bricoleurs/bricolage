@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-04-03 21:06:02 $
+$Date: 2003-08-06 20:25:08 $
 
 =head1 DESCRIPTION
 
@@ -47,7 +47,7 @@ chk_authz('Bric::Biz::Asset::Business::Story', CREATE, 0, $gid);
 &>
 
 <form action="<% $r->uri %>" method="post" name="theForm" onSubmit="return confirmChanges(this)">
-<input type="hidden" name="container_prof|clear_pc" value="">
+<input type="hidden" name="container_prof|clear_cb" value="">
 
 <& /widgets/story_prof/story_prof.mc, section  => 'new',
                                       work_id  => $w_id &>
