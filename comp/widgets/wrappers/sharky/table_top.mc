@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:38 $
+$Date: 2002-07-30 19:24:51 $
 
 =head1 SYNOPSIS
 
@@ -55,7 +55,7 @@ if ($number > 0 && $number < 10) {
 </%init>
 
 % if ($number) {
-<a name="section<% $number %>" />
+<a name="section<% $number %>"></a>
 % }
 
 % if ($ghostly) {
