@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+our $VERSION = (qw$Revision: 1.52 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 14:37:42 $
+$Date: 2003-09-18 14:57:18 $
 
 =head1 SYNOPSIS
 
@@ -122,7 +122,7 @@ use strict;
 # Programatic Dependencies
 
 use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
-                         isa_bric_exception isa_exception);
+                         rethrow_exception);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST);
 use Bric::Biz::AssetType qw(:all);
