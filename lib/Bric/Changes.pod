@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.8.2 ()
+=head1 VERSION 1.8.2 (2004-11-13)
 
 =head2 Improvements
 
@@ -44,8 +44,8 @@ details. Thanks to Marshall Roch for finding that link. [David]
 =item *
 
 The New Story and New Media profiles by default no longer have a value
-selected for the Story Type or Media type (respecively), so as to prevent
-the inadvertant creation of documents of the wrong type. [David]
+selected for the Story Type or Media type (respectively), so as to prevent
+the inadvertent creation of documents of the wrong type. [David]
 
 =item *
 
@@ -68,7 +68,7 @@ Scott Lanning. [David]
 
 Search by site is now supported in the "Advanced Search" interface of "Find
 Stories", "Find Media", and "Find Templates" when there is more than one site
-and the "Filter by Site Context" peference is not turned on. [David]
+and the "Filter by Site Context" preference is not turned on. [David]
 
 =item *
 
@@ -106,7 +106,7 @@ STDERR when there is an error, instead of just printing it to the system log.
 Existing jobs are now executed within their own transactions, as opposed to no
 transaction specification. This means that each must succeed or fail
 independent of any other jobs. New jobs are executed before being inserted
-into the database so as to keep them atomic within their surrouding
+into the database so as to keep them atomic within their surrounding
 transaction (generally a UI request). All this means that transactionality is
 much more intelligent for jobs and will hopefully eliminate job deadlocks.
 Reported by Mark Jaroski, Serge Sozonoff, Patrick Michael Kane, and others.
@@ -116,7 +116,7 @@ Reported by Mark Jaroski, Serge Sozonoff, Patrick Michael Kane, and others.
 
 The workflow, destination, and output channel profiles only display site
 information if the user had EDIT access to more than one site. The "Find
-Stories" and "Find Media" managers only display the site information fo the
+Stories" and "Find Media" managers only display the site information for the
 listed documents if there is more than one site in Bricolage. Suggested by
 Scott Lanning. [David]
 
@@ -212,7 +212,7 @@ F<bin/Makefile.PL> files from the source directory. [David]
 =item *
 
 Fixed the C<my_meths()> method of Bric::Biz::AssetType::Parts::Data to return
-metdata forthe the C<key_name> attribute instead of an C<undef> for the
+metadata for the the C<key_name> attribute instead of an C<undef> for the
 removed C<name> attribute. [Scott]
 
 =item *
@@ -350,9 +350,8 @@ navigation without a reboot. [David]
 
 =item *
 
-Creating a story, checking it in, checking it out, and then cancelling the
-checkout no longer incorectly removes the story from workflow. Reported by .
-[David]
+Creating a story, checking it in, checking it out, and then canceling the
+checkout no longer incorrectly removes the story from workflow. [David]
 
 =item *
 
@@ -377,14 +376,14 @@ header to the browser. Thanks to Marshall Roch for the spot! [David]
 =item *
 
 The Output Channel URI Prefix and URI Suffix fields are once again allowed to
-include a slash ("/"). Reported by Kevin Elliott. [David]
+include a slash (F</>). Reported by Kevin Elliott. [David]
 
 =item *
 
 An attempt to create a new template with the proper extension as part of the
-name (e.g., "foo.mc" fora Mason template) now keeps the extension instead of
+name (e.g., F<foo.mc> for a Mason template) now keeps the extension instead of
 changing the dot to an underscore and adding the extension (e.g., it stays
-"foo.mc" instead of becoming "foo_mc.mc"). This is especially useful when
+F<foo.mc> instead of becoming F<foo_mc.mc>). This is especially useful when
 creating utility templates and for users of C<bric_dev_sync>. Thanks to Paul
 Orrock for the spot! [David]
 
@@ -397,7 +396,7 @@ and user permissions. Reported by Hal Creech. [David]
 
 =item *
 
-Content submitted to Bricoalge in the UTF-8 character set is now always has
+Content submitted to Bricolage in the UTF-8 character set is now always has
 the utf8 flag set on the Perl strings that store it. This allows fields that
 have a maximum length to be truncated to that length in characters instead of
 bytes. Thanks to Kang-min Liu for the spot! [David]
