@@ -8,87 +8,87 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 03:48:16 $
+$Date: 2002-09-18 19:57:25 $
 
 =head1 SYNOPSIS
 
- # Create new types of assets.
- $element = Bric::Biz::AssetType->new($init)
- $element = Bric::Biz::AssetType->lookup({id => $id})
- ($at_list || @ats) = Bric::Biz::AssetType->list($param)
- ($id_list || @ids) = Bric::Biz::AssetType->list_ids($param)
+  # Create new types of assets.
+  $element = Bric::Biz::AssetType->new($init)
+  $element = Bric::Biz::AssetType->lookup({id => $id})
+  ($at_list || @ats) = Bric::Biz::AssetType->list($param)
+  ($id_list || @ids) = Bric::Biz::AssetType->list_ids($param)
 
- # Return the ID of this object.
- $id = $element->get_id()
+  # Return the ID of this object.
+  $id = $element->get_id()
 
- # Get/set this asset type's name.
- $element = $element->set_name( $name )
- $name       = $element->get_name()
+  # Get/set this asset type's name.
+  $element = $element->set_name( $name )
+  $name       = $element->get_name()
 
- # Get/set the description for this asset type
- $element  = $element->set_description($description)
- $description = $element->get_description()
+  # Get/set the description for this asset type
+  $element  = $element->set_description($description)
+  $description = $element->get_description()
 
- # Get/set the primary output channel ID for this asset type.
- $element = $element->set_primary_oc_id($oc_id);
- $oc_id = $element->get_primary_oc_id;
+  # Get/set the primary output channel ID for this asset type.
+  $element = $element->set_primary_oc_id($oc_id);
+  $oc_id = $element->get_primary_oc_id;
 
- # Attribute methods.
- $val  = $element->set_attr($name, $value);
- $val  = $element->get_attr($name);
- \%val = $element->all_attr;
+  # Attribute methods.
+  $val  = $element->set_attr($name, $value);
+  $val  = $element->get_attr($name);
+  \%val = $element->all_attr;
 
- # Attribute metadata methods.
- $val = $element->set_meta($name, $meta, $value);
- $val = $element->get_meta($name, $meta);
+  # Attribute metadata methods.
+  $val = $element->set_meta($name, $meta, $value);
+  $val = $element->get_meta($name, $meta);
 
- # Manage output channels.
- $element        = $element->add_output_channels([$output_channel])
- ($oc_list || @ocs) = $element->get_output_channels()
- $element        = $element->delete_output_channels([$output_channel])
+  # Manage output channels.
+  $element        = $element->add_output_channels([$output_channel])
+  ($oc_list || @ocs) = $element->get_output_channels()
+  $element        = $element->delete_output_channels([$output_channel])
 
- # Manage the parts of an asset type.
- $element            = $element->add_data($field);
- $element_data       = $element->new_data($param);
- $element            = $element->copy_data($at, $field);
- ($part_list || @parts) = $element->get_data($field);
- $element            = $element->del_data($field);
+  # Manage the parts of an asset type.
+  $element            = $element->add_data($field);
+  $element_data       = $element->new_data($param);
+  $element            = $element->copy_data($at, $field);
+  ($part_list || @parts) = $element->get_data($field);
+  $element            = $element->del_data($field);
 
- # Add, retrieve and delete containers from this asset type.
- $element            = $element->add_containers($at || [$at]);
- (@at_list || $at_list) = $element->get_containers();
- $element            = $element->del_containers($at || [$at]);
+  # Add, retrieve and delete containers from this asset type.
+  $element            = $element->add_containers($at || [$at]);
+  (@at_list || $at_list) = $element->get_containers();
+  $element            = $element->del_containers($at || [$at]);
 
- # Set the repeatability of a field.
- ($element || 0) = $element->is_repeatable($at_container);
- $element        = $element->make_repeatable($at_container);
- $element        = $element->make_nonrepeatable($at_container);
+  # Set the repeatability of a field.
+  ($element || 0) = $element->is_repeatable($at_container);
+  $element        = $element->make_repeatable($at_container);
+  $element        = $element->make_nonrepeatable($at_container);
 
- # Get/set the active flag.
- $element  = $element->activate()
- $element  = $element->deactivate()
- (undef || 1) = $element->is_active()
+  # Get/set the active flag.
+  $element  = $element->activate()
+  $element  = $element->deactivate()
+  (undef || 1) = $element->is_active()
 
- # Save this asset type.
- $element = $element->save()
+  # Save this asset type.
+  $element = $element->save()
 
 =head1 DESCRIPTION
 
 The asset type class registers new type of assets that will go through work
-flow.   The individual parts will describe how the fields of the story will
-be laid out.
+flow. The individual parts will describe how the fields of the story will be
+laid out.
 
-The AssetType object is composed of AssetType Parts Data objects and
-AssetType Parts Container objects.   These hold the fields that will become
-Assets when they enter workflow.   Rules can be set upon these.
+The AssetType object is composed of AssetType Parts Data objects and AssetType
+Parts Container objects. These hold the fields that will become Assets when
+they enter workflow. Rules can be set upon these.
 
 The AssetType object also holds what output channels this asset will be
 allowed to go through.
@@ -115,7 +115,8 @@ use Bric::Biz::AssetType::Parts::Data;
 use Bric::Util::Attribute::AssetType;
 use Bric::Biz::ATType;
 use Bric::Util::Class;
-use Bric::Biz::OutputChannel;
+use Bric::Biz::OutputChannel::Element;
+use Bric::Util::Coll::OCElement;
 
 #==============================================================================#
 # Inheritance                          #
@@ -126,8 +127,7 @@ use base qw( Bric Exporter );
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
-# NONE
+my $get_oc_coll;
 
 #==============================================================================#
 # Constants                            #
@@ -203,14 +203,9 @@ BEGIN {
 			 # Private Fields
 			 # The active flag
 			 '_active'	        => Bric::FIELD_NONE,
-			 # The list of output channels
-			 '_output_channels'     => Bric::FIELD_NONE,
 
-			 # A holding pen for new output channels to be added.
-			 '_new_output_channels' => Bric::FIELD_NONE,
-
-			 # A holding pen for output chanels to be deleted.
-			 '_del_output_channels' => Bric::FIELD_NONE,
+			 # Stores the collection of output channels
+                         '_oc_coll'             => Bric::FIELD_NONE,
 
 			 # A list of contained parts
 			 '_parts'	        => Bric::FIELD_NONE,
@@ -369,9 +364,6 @@ sub lookup {
     # Load the values for this object from the element table.
     return unless $self->_select_asset_type('id=?', $param->{'id'});
     
-    # now lets get the appropriate output channels for this AssetType
-    $self->_select_output_channel_id($param->{'id'});
-    
     my $id = $self->get_id;
     my $a_obj = Bric::Util::Attribute::AssetType->new({'object_id' => $id,
 						     'subsys'    => "id_$id"});
@@ -387,8 +379,8 @@ sub lookup {
 
 =item ($at_list || @at_list) = Bric::Biz::AssetType->list($param);
 
-This will return a list of objects that match the criteria defined 
- 
+This will return a list of objects that match the criteria defined.
+
 Supported Keys:
 
 =over 4
@@ -403,12 +395,12 @@ The description of the asset type.  Matched with case-insentive LIKE.
 
 =item output_channel
 
-The ID of an output channel.  Returned will be all AssetType objects that 
+The ID of an output channel. Returned will be all AssetType objects that
 contain this output channel.
 
 =item data_name
 
-The name of an AssetType::Data object.  Returned will be all AssetType objects 
+The name of an AssetType::Data object. Returned will be all AssetType objects
 that reference this particular AssetType::Data object.
 
 =item map_type__id
@@ -417,8 +409,8 @@ The map_type__id of an AssetType::Data object.
 
 =item active
 
-Set to 0 to return active and inactive asset types.  1, the default,
-returns only active asset types.
+Set to 0 to return active and inactive asset types. 1, the default, returns
+only active asset types.
 
 =item type__id
 
@@ -1420,150 +1412,88 @@ sub get_meta {
 =item ($oc_list || @oc_list) = $element->get_output_channels();
 
 This returns a list of output channels that have been associated
-with this asset type
+with this asset type.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> The objects returned will be Brci::Biz::OutputChannel::Element
+objects, and these objects contain extra information relevant to the assocation
+between each output channel and this element object.
 
 =cut
 
-sub get_output_channels {
-    my $self = shift;
-    my ($ocs, $ocs_new) = $self->_get('_output_channels',
-				      '_new_output_channels');
+sub get_output_channels { $get_oc_coll->(shift)->get_objs }
 
-    # Make sure to lookup all the current output channels
-    foreach my $id (keys %$ocs) {
-	# Skip if the object has already been looked up.
-	next if ref $ocs->{$id};
-	
-	$ocs->{$id} = Bric::Biz::OutputChannel->lookup({'id' => $id})
-    }
+#------------------------------------------------------------------------------#
 
-    # and all the existing output channels
-    foreach my $id (keys %$ocs_new) {
-	# Skip if the object has already been looked up.
-	next if ref $ocs->{$id};
-	
-	$ocs->{$id} = Bric::Biz::OutputChannel->lookup({'id' => $id})
-    }
+=item my $oce = $element->add_output_channel($oc)
 
-    # Return all existing output channels and those to be added.
-    my @all = (values %$ocs, values %$ocs_new);
+=item my $oce = $element->add_output_channel($oc_id)
 
-    return wantarray ? @all : \@all;
+Adds an output channel to this element object and returns the resulting
+Bric::Biz::OutputChannel::Element object. Can pass in either an output channel
+object or an output channel ID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> If a Bric::Biz::OutputChannel object is passed in as the
+first argument, it will be converted into a Bric::Biz::OutputChannel::Element
+object.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_output_channel {
+    my ($self, $oc) = @_;
+    my $oc_coll = $get_oc_coll->($self);
+    $oc_coll->new_obj({ (ref $oc ? 'oc' : 'oc_id') => $oc,
+                        element_id => $self->_get('id') });
 }
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->add_output_channels( [ $output_channel])
+=item $element = $element->add_output_channels([$output_channels])
 
-This accepts a list of output channels to be associated with this 
-asset type
+This accepts an array reference of output channel objects to be associated
+with this asset type.
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> Any Bric::Biz::OutputChannel objects passed in will be
+converted into Bric::Biz::OutputChannel::Element objects.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub add_output_channels {
-    my $self = shift;
-    my ($output_channels) = @_;
-    my ($ocs, $ocs_new, $ocs_del) = $self->_get('_output_channels',
-						'_new_output_channels',
-						'_del_output_channels');
-
-    foreach my $oc (@$output_channels) {
-	# Get an ID if we were passed an object
-	my $oc_id = ref $oc ? $oc->get_id() : $oc;
-
-	# Skip adding this oc if it already exists.
-	next if exists $ocs->{$oc_id};
-
-	# Add the ID to the list of new oc's.  Add the object as a value.
-	$ocs_new->{$oc_id} ||= ref $oc ? $oc : undef;
-	
-	# Remove this value from the deletion list if its there.
-	delete $ocs_del->{$oc_id};
-    }
-
-    # Set these values.
-    $self->_set(['_new_output_channels', '_del_output_channels'],
-		[$ocs_new              , $ocs_del]);
-
-    # Set the dirty bit since something has changed.
-    $self->_set__dirty(1);
-
+    my ($self, $ocs) = @_;
+    $self->add_output_channel($_) for @$ocs;
     return $self;
 }
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->delete_output_channels([$output_channel]) 
+=item $element = $element->delete_output_channels([$output_channels])
 
-This takes a list of output channels and removes their association from
-the object
+This takes an array reference of output channels and removes their association
+from the object.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub delete_output_channels {
-    my $self = shift;
-    my ($output_channels) = @_;
-    my ($ocs, $ocs_new, $ocs_del) = $self->_get('_output_channels',
-						'_new_output_channels',
-						'_del_output_channels');
-    
-    foreach my $oc (@$output_channels) {
-	# Get the ID if we were passed an object.
-	my $oc_id = ref $oc ? $oc->get_id() : $oc;
-	
-	# Delete this oc from the list and put it on the deletion list.
-	if (exists $ocs->{$oc_id}) {
-	    my $obj = delete $ocs->{$oc_id};
-	    # Try to add the object as a value if it can be found.
-	    $ocs_del->{$oc_id} = $obj || (ref $oc ? $oc : undef);
-	}
-	
-	# Remove this value from the addition list if its there.
-	delete $ocs_new->{$oc_id};
-    }
-    
-    # Set these values.
-    $self->_set(['_output_channels',
-		 '_new_output_channels',
-		 '_del_output_channels'], 
-		[$ocs, $ocs_new, $ocs_del]);
-    
-    # Set the dirty bit since something has changed.
-    $self->_set__dirty(1);
-
+    my ($self, $ocs) = @_;
+    my $oc_coll = $get_oc_coll->($self);
+    $oc_coll->del_objs(@$ocs);
     return $self;
 }
 
@@ -2161,19 +2091,17 @@ sub save {
     return unless $self->_get__dirty;
 
     unless ($self->is_active) {
-	# Check to see if this AT is reference anywhere.  If not, delete it.
+	# Check to see if this AT is reference anywhere. If not, delete it.
 	unless ($self->_is_referenced) {
 	    $self->remove;
 	    return $self;
 	}
     }
 
+    my ($id, $oc_coll) = $self->_get(qw(id _oc_coll));
     # First save the main object information
-    if ($self->_get('id') ) {
-	$self->_update_asset_type();
-    } else {
-	$self->_insert_asset_type();
-    }
+    $id ? $self->_update_asset_type : $self->_insert_asset_type;
+
 
     # Save the attribute information.
     $self->_save_attr;
@@ -2182,7 +2110,7 @@ sub save {
     $grp->save;
 
     # Save the parts and the output channels.
-    $self->_sync_output_channels;
+    $oc_coll->save if $oc_coll;
     $self->_sync_parts;
 
     # Call our parents save method.
@@ -2454,32 +2382,6 @@ sub _get_asset_type_grp {
     return $atg_obj;
 }
 
-sub _sync_output_channels {
-    my $self = shift;
-    my ($ocs, $ocs_new, $ocs_del) = $self->_get('_output_channels',
-						'_new_output_channels',
-						'_del_output_channels');
-    # Insert the new output channels.
-    foreach my $oc_id (keys %$ocs_new) {
-	# Insert this ID into the mapping table.
-	$self->_insert_output_channel_id($oc_id);
-	# Add this ID (and possible object) to the current output channel list.
-	$ocs->{$oc_id} = $ocs_new->{$oc_id};
-	# Delete this ID from the new list.
-	delete $ocs_new->{$oc_id};
-    }
-    
-    # Delete the output channel mappings listed in the delete list.
-    foreach my $oc_id (keys %$ocs_del) {
-	# Insert this ID into the mapping table.
-	$self->_delete_output_channel_id($oc_id);
-	# Delete this ID from the deletion list.
-	delete $ocs_del->{$oc_id};
-    }
-
-    return $self;
-}
-
 sub _sync_parts {
     my $self = shift;
     my $parts = $self->_get_parts();
@@ -2643,122 +2545,6 @@ sub _insert_asset_type {
 
 #------------------------------------------------------------------------------#
 
-=item $self = $self->_select_output_channel_id
-
-Select the output channel ID from the element output_channel mapping table.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _select_output_channel_id {
-    my $self = shift;
-    my ($id) = @_;
-    my (%ids, $out_id);
-
-    my $sql = 'SELECT output_channel__id '.
-              'FROM element__output_channel '.
-	      'WHERE element__id=?';
-
-    my $sth = prepare_ca($sql, undef, DEBUG);
-    execute($sth, $id);
-    bind_columns($sth, \$out_id);
-
-    while (fetch($sth)) {
-	$ids{$out_id} = undef;
-    }
-
-    $sth->finish;
-
-    # Set the columns selected as well as the passed ID.
-    $self->_set(['_output_channels'], [\%ids]);
-
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $self = $self->_insert_output_channel_id
-
-Insert a new output_channel ID in the AssetType OutputChannel mapping table.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _insert_output_channel_id {
-    my $self = shift;
-    my ($oc_id) = @_;
-    my $nextval = next_key('element__output_channel');
-    my $at_id   = $self->get_id;
-
-    # Create the insert statement.
-    my $sql = 'INSERT INTO element__output_channel '.
-              "(id,element__id,output_channel__id) VALUES ($nextval,?,?)";
-
-    my $sth = prepare_c($sql, undef, DEBUG);
-    execute($sth, $at_id, $oc_id);
-
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $self = $self->_delete_output_channel_id
-
-Delete an output_channel ID from the AssetType OutputChannel mapping table.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _delete_output_channel_id {
-    my $self = shift;
-    my ($oc_id) = @_;
-    my $at_id   = $self->get_id;
-
-    # Create the insert statement.
-    my $sql = 'DELETE FROM element__output_channel '.
-              'WHERE element__id=? AND output_channel__id=?';
-
-    my $sth = prepare_c($sql, undef, DEBUG);
-    execute($sth, $at_id, $oc_id);
-
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
 =item $self = $self->_get_parts
 
 Call the list function of Bric::Biz::AssetType::Parts::Container to return a list
@@ -2802,11 +2588,77 @@ sub _get_parts {
     return $p_table;
 }
 
+##############################################################################
+
 =head2 Private Functions
 
-NONE
+=over 4
+
+=item my $oc_coll = $get_oc_coll->($self)
+
+Returns the collection of members for this group. The collection is a
+L<Bric::Util::Coll::Member|Bric::Util::Coll::Member> object. See that class
+and its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
+
+$get_oc_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my ($id, $oc_coll) = $self->_get('id', '_oc_coll');
+    return $oc_coll if $oc_coll;
+    $oc_coll = Bric::Util::Coll::OCElement->new
+      (defined $id ? {element_id => $id} : undef);
+    $self->_set(['_oc_coll'], [$oc_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $oc_coll;
+};
 
 1;
 __END__
@@ -2815,18 +2667,16 @@ __END__
 
 =head1 NOTES
 
-supported new Keys
-Define supported list keys
-Define supported list_ids keys
-Check the languages stuff
+NONE.
 
 =head1 AUTHOR
 
-michael soderstrom ( miraso@pacbell.net )
+michael soderstrom <miraso@pacbell.net>
 
 =head1 SEE ALSO
 
-L<perl>,L<Bric>,L<Bric::Biz::Asset>
+L<Bric|Bric>, L<Bric::Biz::Asset|Bric::Biz::Asset>,
+L<Bric::Util::Coll::OCElement|Bric::Util::Coll::OCElement>.
 
 =cut
 

@@ -1,18 +1,18 @@
-package Bric::Util::Coll::OutputChannel;
+package Bric::Util::Coll::OCElement;
 ###############################################################################
 
 =head1 NAME
 
-Bric::Util::Coll::OutputChannel - Interface for managing collections of Output
-Channels.
+Bric::Util::Coll::OCElement - Interface for managing collections of
+Bric::Biz::OutputChannel::Element objects.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.1 $ )[-1];
 
 =head1 DATE
 
@@ -36,8 +36,6 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Biz::OutputChannel;
-use Bric::Util::DBI qw(:standard);
 
 ################################################################################
 # Inheritance
@@ -115,7 +113,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub class_name { 'Bric::Biz::OutputChannel' }
+sub class_name { 'Bric::Biz::OutputChannel::Element' }
 
 ################################################################################
 
@@ -127,11 +125,7 @@ sub class_name { 'Bric::Biz::OutputChannel' }
 
 =item $self = $coll->save
 
-=item $self = $coll->save($server_type_id)
-
-Saves the changes made to all the objects in the collection. Pass in a
-Bric::Dist::ServerType object ID to make sure all the Bric::Biz::OutputChannel
-objects are properly associated with that server type.
+Saves the changes made to all the objects in the collection
 
 B<Throws:>
 
@@ -174,32 +168,27 @@ B<Notes:> NONE.
 =cut
 
 sub save {
-    my ($self, $st_id) = @_;
-    my ($new_objs, $del_objs) = $self->_get(qw(new_obj del_obj));
+    my $self = shift;
+    my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
+    # Save the deleted objects.
+    foreach my $oce (@$del_objs) {
+        if ($oce->get_id) {
+            $oce->remove;
+            $oce->save;
+        }
+    }
+    @$del_objs = ();
 
-    if (@$new_objs) {
-	my $ins = prepare_c(qq{
-            INSERT INTO server_type__output_channel (server_type__id, output_channel__id)
-            VALUES (?, ?)
-        });
-
-	foreach my $oc (@$new_objs) {
-	    $oc->save;
-	    execute($ins, $st_id, $oc->get_id);
-	}
-	$self->add_objs(@$new_objs);
-	@$new_objs = ();
+    # Save the existing and new objects.
+    foreach my $oce (values %$objs, @$new_objs) {
+	$oce->save;
     }
 
-    if (@$del_objs) {
-	my $del = prepare_c(qq{
-            DELETE FROM server_type__output_channel
-            WHERE  server_type__id = ?
-                   AND output_channel__id = ?
-        });
-	execute($del, $st_id, $_->get_id) for @$del_objs;
-	@$del_objs = ();
-    }
+    # Add the new objects to the main list of objects.
+    $self->add_objs(@$new_objs);
+
+    # Reset the new_objs array and return.
+    @$new_objs = ();
     return $self;
 }
 
@@ -234,8 +223,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Util::Coll|Bric::Util::Coll>, 
-L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel>
+L<Bric|Bric>,
+L<Bric::Util::Coll|Bric::Util::Coll>,
+L<Bric::Biz::OutputChannel::Element|Bric::Biz::OutputChannel::Element>
 
 =cut

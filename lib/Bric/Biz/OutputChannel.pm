@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-10 23:28:13 $
+$Date: 2002-09-18 19:57:25 $
 
 =head1 SYNOPSIS
 
@@ -27,7 +27,7 @@ $Date: 2002-09-10 23:28:13 $
   my $ocs_aref = Bric::Biz::OutputChannel->list($params);
   my @ocs = Bric::Biz::OutputChannel->list($params);
 
-  # Class Methos.
+  # Class Methods.
   my $id_aref = Bric::Biz::OutputChannel->list_ids($params);
   my @ids = Bric::Biz::OutputChannel->list_ids($params);
 

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2002-09-18 19:57:25 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -43,8 +43,9 @@ VALUES (410, 27, 22, 1);
 INSERT INTO element_member (id, object_id, member__id)
 VALUES (11, 1, 410); 
 
-INSERT INTO element__output_channel (id, element__id, output_channel__id, active)
-VALUES (1, 1, 1, 1);
+INSERT INTO element__output_channel (id, element__id, output_channel__id,
+                                     enabled, active)
+VALUES (1, 1, 1, 1, 1);
 
 INSERT INTO element (id, name, description, type__id, at_grp__id, primary_oc__id, active)
 VALUES (2, 'Column', 'A weekly column element', 1, 331, 1, 1);
@@ -55,8 +56,9 @@ VALUES (411, 27, 22, 1);
 INSERT INTO element_member (id, object_id, member__id)
 VALUES (12, 2, 411); 
 
-INSERT INTO element__output_channel (id, element__id, output_channel__id, active)
-VALUES (4, 2, 1, 1);
+INSERT INTO element__output_channel (id, element__id, output_channel__id,
+                                     enabled, active)
+VALUES (4, 2, 1, 1, 1);
 
 INSERT INTO element (id, name, description, type__id, at_grp__id, primary_oc__id, active)
 VALUES (3, 'Book Review', 'A book review element', 1, 332, 1, 1);
@@ -67,8 +69,9 @@ VALUES (412, 27, 22, 1);
 INSERT INTO element_member (id, object_id, member__id)
 VALUES (13, 3, 412); 
 
-INSERT INTO element__output_channel (id, element__id, output_channel__id, active)
-VALUES (7, 3, 1, 1);
+INSERT INTO element__output_channel (id, element__id, output_channel__id,
+                                     enabled, active)
+VALUES (7, 3, 1, 1, 1);
 
 
 -- Create some media asset types.
@@ -81,8 +84,9 @@ VALUES (413, 27, 22, 1);
 INSERT INTO element_member (id, object_id, member__id)
 VALUES (14, 4, 413); 
 
-INSERT INTO element__output_channel (id, element__id, output_channel__id, active)
-VALUES (10, 4, 1, 1);
+INSERT INTO element__output_channel (id, element__id, output_channel__id,
+                                     enabled, active)
+VALUES (10, 4, 1, 1, 1);
 
 
 INSERT INTO element (id, name, description, type__id, at_grp__id, primary_oc__id, active)
@@ -94,8 +98,9 @@ VALUES (414, 27, 22, 1);
 INSERT INTO element_member (id, object_id, member__id)
 VALUES (15, 5, 414); 
 
-INSERT INTO element__output_channel (id, element__id, output_channel__id, active)
-VALUES (13, 5, 1, 1);
+INSERT INTO element__output_channel (id, element__id, output_channel__id,
+                                     enabled, active)
+VALUES (13, 5, 1, 1, 1);
 
 
 -- Create some sub-elements.
@@ -173,8 +178,9 @@ VALUES (438, 27, 22, 1);
 INSERT INTO element_member (id, object_id, member__id)
 VALUES (23, 13, 438); 
 
-INSERT INTO element__output_channel (id, element__id, output_channel__id, active)
-VALUES (14, 13, 1, 1);
+INSERT INTO element__output_channel (id, element__id, output_channel__id,
+                                     enabled, active)
+VALUES (14, 13, 1, 1, 1);
 
 -- Create members
 

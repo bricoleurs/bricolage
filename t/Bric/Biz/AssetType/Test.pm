@@ -10,11 +10,12 @@ BEGIN { __PACKAGE__->test_class }
 ##############################################################################
 # Test class loading.
 ##############################################################################
-sub test_load : Test(1) {
+sub _test_load : Test(2) {
+    use_ok('Bric::Biz::AssetType::Parts::Data');
     use_ok('Bric::Biz::AssetType');
 }
 
-
+1;
 __END__
 
 # Here is the original test script for reference. If there's something usable

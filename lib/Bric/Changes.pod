@@ -104,6 +104,23 @@ Changed the way the "Checkin and Publish" and "Checkin and Deploy" callbacks
 work to use existing code in the desk and publish widgets to do the dirty
 work. This greatly reduces code duplication. [David]
 
+=item *
+
+Created a new class,
+L<Bric::Biz::OutputChannel::Element|Bric::Biz::OutputChannel::Element>, which
+is a subclass of L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel>. This
+new class better manages the mapping of output channels to elements than the
+old approach did. It also adds a new property, C<enabled>, which will be put
+to use shortly. [David]
+
+=item *
+
+Replaced all the custom handling of output channel objects in
+L<Bric::Biz::AssetType|Bric::Biz::AssetType> with a new
+L<Bric::Util::Coll|Bric::Util::Coll> subclass that does it all. This is a lot
+more efficient in terms of programmer time (and probably performance,
+too). [David]
+
 =back
 
 =head1 VERSION 1.4.1

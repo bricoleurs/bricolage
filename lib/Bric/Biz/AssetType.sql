@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.9 $
+-- VERSION: $Revision: 1.10 $
 --
--- $Date: 2002-02-19 23:53:40 $
+-- $Date: 2002-09-18 19:57:25 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -38,9 +38,9 @@ CREATE SEQUENCE seq_attr_element_meta START 1024;
 -- -----------------------------------------------------------------------------
 -- Table: element
 --
--- Description:	The table that holds the information for a given asset type.  
--- 		Holds name and description information and is references by 
---		element_contaner and element_data rows.
+-- Description: The table that holds the information for a given asset type.  
+--              Holds name and description information and is references by 
+--              element_contaner and element_data rows.
 --
 
 CREATE TABLE element  (
@@ -67,14 +67,18 @@ CREATE TABLE element  (
 -- Table: element__output_channel
 --
 -- Description: Holds a reference to the asset type table, the output channel 
---		table and an active flag
+--              table and an active flag
 --
 
 CREATE TABLE element__output_channel (
     id                  NUMERIC(10,0)  NOT NULL
-                                 DEFAULT NEXTVAL('seq_element__output_channel'),
-    element__id      NUMERIC(10,0)  NOT NULL,
+                                       DEFAULT NEXTVAL('seq_element__output_channel'),
+    element__id         NUMERIC(10,0)  NOT NULL,
     output_channel__id  NUMERIC(10,0)  NOT NULL,
+    enabled             NUMERIC(1,0)   NOT NULL
+                                       DEFAULT 1
+                                       CONSTRAINT ck_at__oc__enabled
+                                         CHECK (enabled IN (0,1)),
     active              NUMERIC(1,0)   NOT NULL
                                        DEFAULT 1
                                        CONSTRAINT ck_at__oc__active
@@ -86,7 +90,7 @@ CREATE TABLE element__output_channel (
 -- Table: element__language
 --
 -- Description: Holds a reference to the asset type table, the language 
---		table and an active flag
+--              table and an active flag
 --
 
 /*
