@@ -124,6 +124,11 @@ was introduced because, with the introduction of permission checking on these
 select lists, it's possible for them to show up empty where it wasn't possible
 before. [David]
 
+=item *
+
+Renamed programs in bin/ so that they all start with "bric_". Update any links
+to the old names, because they're gone. [David]
+
 =back
 
 =head2 Bug Fixes
