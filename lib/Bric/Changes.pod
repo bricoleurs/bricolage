@@ -77,6 +77,10 @@ Fixed broken "Preview" button in Read-only story profile. [Matt Vella]
 Updated debugging code to accommodate new syntax in Cache::Cache. Thanks to Sam
 Tregar for the spot. [David]
 
+=item *
+
+Fixed problem with Element names containing non-alphanumeric characters. [Sam]
+
 =back
 
 =head1 VERSION 1.2.0
