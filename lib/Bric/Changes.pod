@@ -39,6 +39,10 @@ is to preven users from giving themselves higher permissions. [David]
 The "Checkout" checkbox is no longer missing in the Find interface for documents
 and templates that are already in workflow. [David]
 
+=item *
+
+Category groups can be edited again. Reported by Alexander Ling. [David]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
