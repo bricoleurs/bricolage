@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-10 00:41:30 $
+$Date: 2002-07-18 13:04:23 $
 
 =head1 SYNOPSIS
 
@@ -691,7 +691,7 @@ sub get_object {
     my ( $obj, $id ) = $self->_get(qw(obj obj_id));
     my $package = $self->get_object_package();
     unless ($obj) {
-        eval " require $package ";
+#        eval " require $package ";
         $obj = $package->lookup( { id => $id } );
         $self->_set( ['obj'], [$obj] );
 
@@ -1226,7 +1226,7 @@ sub _do_list {
         $grp_id    = $param->{'grp'}->get_id();
     }
     elsif ( $param->{'grp_package'} ) {
-        eval "require $param->{'grp_package'} ";
+#        eval "require $param->{'grp_package'} ";
         $supported = $param->{'grp_package'}->get_supported_classes();
         $force     = $param->{'grp_package'}->get_object_class_id();
     }

@@ -7,15 +7,15 @@ Bric::Util::Grp - A Class for associating Objects
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-03 14:21:25 $
+$Date: 2002-07-18 13:04:23 $
 
 =head1 SYNOPSIS
 
@@ -325,7 +325,7 @@ sub lookup {
 		# determine the class
 		my $c_obj = Bric::Util::Class->lookup({ id => $ret->[0]->[2] });
 		$bless_class = $c_obj->get_pkg_name();
-		eval " require $bless_class ";
+#		eval " require $bless_class ";
 	}
 
 	my $self = bless {}, $bless_class;
@@ -448,7 +448,7 @@ sub href_grp_class_keys {
 	while (fetch($sel)) {
 	    next if $key eq 'ce';
 	    $all_class_keys->{$key} = $name;
-	    eval "require $pkg_name";
+#	    eval "require $pkg_name";
 	    $class_keys->{$key} = $name unless $pkg_name->get_secret;
 	}
     }
@@ -3199,7 +3199,7 @@ sub _do_list {
 				} else {
 					my $c_obj = Bric::Util::Class->lookup({ id => $row->[2] });
 					$bless_class = $c_obj->get_pkg_name();
-					eval " require $bless_class ";
+#					eval " require $bless_class ";
 					$classes{$row->[2]} = $bless_class;
 				}
 			} 
