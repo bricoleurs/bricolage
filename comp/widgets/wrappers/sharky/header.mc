@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.11 $
+$Revision: 1.2.2.12 $
 
 =head1 DATE
 
-$Date: 2001-10-19 23:52:50 $
+$Date: 2001-10-27 00:14:27 $
 
 =head1 SYNOPSIS
 
@@ -102,15 +102,17 @@ function init() {
 
 }
 
-%# if ($no_toolbar && $agent->{browser} ne 'Internet Explorer') {
 % if ($no_toolbar) {
-%     # We have to strip out non-alphanumeric chars because Netscape is lame!
 if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
+    // Send the current window to the browser's home page.
+    if (navigator.appName == 'Microsoft Internet Explorer')
+        history.go(-history.length);
+    else
+        window.home();
+
     // Turn off the toolbar, back button, etc.
-    window.open("<% $uri %>", 'Bricolage_<% SERVER_WINDOW_NAME %>',
-                'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1');
-    self.close();
-}
+    var newWin = window.open("<% $uri %>", 'Bricolage_<% SERVER_WINDOW_NAME %>',
+                'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1');}
 % } # if
 </script>
 <meta http-equiv="expires" content="Wed, 20 Feb 2000 08:30:00 GMT">
