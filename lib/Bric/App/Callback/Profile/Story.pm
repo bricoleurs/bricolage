@@ -481,7 +481,7 @@ sub delete_cat : Callback {
                 '<span class="l10n">' . $cat->get_name . '</span>');
     }
 
-    $story->delete_categories(@to_delete);
+    $story->delete_categories(\@to_delete);
     $story->save;
     log_event(@$_) for @to_log;
     set_state_data($widget, 'story', $story);

@@ -90,6 +90,10 @@ A call to C<< $element->get_elements >> in an array context when the element
 contains no subelements no longer returns an array reference. Reported by
 Clinton Gormley. [David]
 
+=item *
+
+Fix bug 839 so that categories can be deleted. [Scott]
+
 =back
 
 =cut
