@@ -19,8 +19,8 @@ bric_dbprof [options] logfile
   --n        - how many results to print, 0 for all.  Defaults to 10.
 
   --mode     - select an output mode.  The default is 'total'.
-               Possibilities are: 
-                 
+               Possibilities are:
+
                  total   - total time across all executions (default)
 
                  longest - longest single execution time
