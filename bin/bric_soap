@@ -67,6 +67,8 @@ Options:
   --verbose - print a running description to STDERR.  Add a second
               --verbose and you'll get debugging output too.
 
+  --force - use force option for Bric::SOAP::Element->delete()
+
 
 =head1 EXAMPLES
 
@@ -161,6 +163,7 @@ our $command;
 our %search;
 our $with_related_stories = 0;
 our $with_related_media   = 0;
+our $force                = 0;
 our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
 our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
 our $server                 = 'http://localhost:80';
@@ -179,6 +182,7 @@ GetOptions("help"                   => \$help,
 	   "with-related-media"     => \$with_related_media,
 	   "all"                    => sub { $with_related_stories = 1;
 					     $with_related_media   = 1; },
+	   "force"                  => \$force,
 	   "desk=s"                 => \$desk,
 	   "workflow=s"             => \$workflow,
 	  ) or  pod2usage(2);
@@ -214,7 +218,7 @@ our %jump = (
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
-			  delete   => \&delete,
+			  delete   => \&delete_with_force,
 			 },
 	     Category => {
 			  list_ids => \&list_ids,
@@ -259,6 +263,7 @@ foreach my $opt (qw(username password server)) {
 my $soap = new SOAP::Lite
     uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
     readable => $ENV{DEBUG} || 0;
+$server = "http://$server" unless $server =~ m!^http://!;
 $soap->proxy($server . '/soap',
 	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 
@@ -319,6 +324,17 @@ sub delete {
     my @ids = _read_ids(lc($module) . "_id");
 
     $response = $soap->delete(name(lc $module . '_ids', \@ids));
+    die "Call to Bric::SOAP::$module->$command failed : \n" .
+	$response->faultstring
+	    if $response->fault;
+}
+
+sub delete_with_force {
+    # collect ids
+    my @ids = _read_ids(lc($module) . "_id");
+
+    $response = $soap->delete(name(lc $module . '_ids', \@ids),
+			      $force ? name(force => 1) : ());
     die "Call to Bric::SOAP::$module->$command failed : \n" .
 	$response->faultstring
 	    if $response->fault;
