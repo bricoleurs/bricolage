@@ -8,11 +8,11 @@ audios
 
 =head1 VERSION
 
-$Revision: 1.7.4.1 $
+$Revision: 1.7.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.4.2 $ )[-1];
 
 =head1 DATE
 
@@ -144,8 +144,8 @@ NONE
 =cut
 
 sub new {
-    my ($pkg, $init) = @_;
-    my $self = bless {}, $self unless ref $pkg;
+    my ($self, $init) = @_;
+    $self = bless {}, $self unless ref $self;
     return $self->SUPER::new($init);
 }
 
