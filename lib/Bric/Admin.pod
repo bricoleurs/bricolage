@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.136 $
+$Revision: 1.137 $
 
 =head1 DATE
 
-$Date: 2003-12-12 21:25:42 $
+$Date: 2003-12-15 20:54:23 $
 
 =head1 DESCRIPTION
 
@@ -88,8 +88,6 @@ START MODULE LIST
 =item Unix::Syslog
 
 =item Net::Cmd
-
-=item Bundle::libnet
 
 =item Devel::Symdump
 
