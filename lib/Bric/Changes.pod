@@ -40,6 +40,11 @@ output channel is already in use if it happens to be true. [David]
 Bric::Config now does its best to find a workable F<httpd.conf> file when
 tests are begin run. [David]
 
+=item *
+
+Subclasses of Bric::Biz::Asset::Business::Media work again, and can have
+keywords associated with them, too. [David]
+
 =back
 
 =head1 VERSION 1.5.1
