@@ -102,7 +102,7 @@ my $delete_element = sub {
     # if our tile has parents, show the regular edit screen.
     if ($parent->get_parent_id) {
         my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-        my $page = get_state_name($widget) eq 'view' ? '' : 'edit';
+        my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
         set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
@@ -381,7 +381,7 @@ my $handle_related_up = sub {
     # If our tile has parents, show the regular edit screen.
     if ($tile->get_parent_id) {
 	my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-	my $page = get_state_name($widget) eq 'view' ? '' : 'edit';
+	my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
 	#  Don't redirect if we're already at the right URI
 	set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
