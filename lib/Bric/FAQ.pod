@@ -1,0 +1,145 @@
+=head1 NAME
+
+Bric::FAQ - Bricolage Frequently Asked Questions
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2002-11-27 04:09:20 $
+
+
+=head1 DESCRIPTION
+
+This document tries to answer questions asked frequently
+on the mailing list or other questions that people might
+have when starting out with or evaluating Bricolage.
+
+
+=head1 FAQs
+
+
+=head2 Evaluating Bricolage
+
+This section answers questions that someone evaluating
+Bricolage might have.
+
+=over
+
+=item Does Bricolage support databases other than PostgreSQL?
+
+Currently only PostgreSQL support is maintained. There is
+an Oracle driver, but it's old and not known to work. David
+says there is also a MySQL driver somewhere, though I don't
+see it in the sources.
+
+Many people have asked whether Bricolage will support
+MySQL. The problem used to be that MySQL didn't support
+transactions; now it can, but there is no support in
+Bricolage for it yet. Patches are welcome.
+
+=item How well does Bricolage perform?
+
+I dunno. [compare to mod_perl, CGI, static, other CMSs ... ?]
+
+=item How does Bricolage compare to other content management systems?
+
+It has received praise for being as good as or better than
+commercial alternatives. For example, see
+L<http:E<sol>E<sol>www.eweek.comE<sol>article2E<sol>0,3959,652977,00.asp>
+
+=item Who uses Bricolage?
+
+Some that we know of are:
+
+=over 4
+
+=item *
+
+The PIRT Group - L<http:E<sol>E<sol>thepirtgroup.com>
+
+=item *
+
+World Health Organization - L<http:E<sol>E<sol>www.who.intE<sol>>
+
+=item *
+
+DFA - L<http:E<sol>E<sol>dfafunds.comE<sol>>
+
+=item *
+
+Macworld - L<http:E<sol>E<sol>www.macworld.comE<sol>>
+
+=back
+
+=back
+
+
+=head2 Error Messages
+
+This section contains questions about error messages output
+by Bricolage.
+
+=over 4
+
+=item Why does `make install` exit with the following error?
+
+    Missing or empty inst/bricolage.sql!
+
+You downloaded Bricolage from CVS and didn't
+run `make dist`. Do something like this:
+
+    # make dist
+    [lots of output...]
+    # cd bricolage-1.5.0
+    # make install
+
+=item Why do I get an error like the following in Apache's 'error_log'?
+
+    [error] access to / failed for 127.0.0.1, reason: No cookies found.
+
+This only happens the first time your browser accesses Bricolage.
+It is harmless and indicates that no Bricolage session cookie
+has been set yet.
+
+=back
+
+
+=head2 Miscellaneous
+
+This section contains questions that didn't fit in the other
+sections.
+
+=over 4
+
+=item What does "Bricolage" mean?
+
+See the "About" section of the online help.
+
+=item How did Bricolage get started? What is its history?
+
+[In the beginning there was chaos....]
+
+=item Where can I get more information?
+
+Read the F<README> document in the directory where you
+unpacked Bricolage to learn about other documents on
+specific things like Bricolage administration, usage,
+or hacking. The project's website is L<http:E<sol>E<sol>www.bricolage.ccE<sol>>.
+The website lists information about mailing lists.
+
+=back
+
+
+=head1 AUTHOR
+
+Scott Lanning <slanning@theworld.com>
+
+=head1 SEE ALSO
+
+F<README>,
+L<Bric::Admin|Bric::Admin>
+
+=cut
