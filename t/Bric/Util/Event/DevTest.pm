@@ -4,16 +4,20 @@ use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Util::Event;
+use Bric::Biz::Workflow;
 
 sub table { 'event' }
 
-my $et_key = 'user_new';
+my $et_key = 'workflow_new';
 my $et = Bric::Util::EventType->lookup({ key_name => $et_key });
-my $user = Bric::Biz::Person::User->lookup({ id => __PACKAGE__->user_id });
-my $et_key2 = 'user_save';
+my $et_key2 = 'workflow_add_desk';
 my $et2 = Bric::Util::EventType->lookup({ key_name => $et_key2 });
 
-my %event = ( obj  => $user,
+my $user = Bric::Biz::Person::User->lookup({ id => __PACKAGE__->user_id });
+my $wfid = 101; # The story workflow.
+my $wf = Bric::Biz::Workflow->lookup({ id => $wfid });
+
+my %event = ( obj  => $wf,
               user => $user,
               et   => $et );
 
@@ -21,13 +25,13 @@ my %event = ( obj  => $user,
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(10) {
+sub test_lookup : Test(24) {
     my $self = shift;
 
     # Construct a new event object.
     my %args = %event;
     ok( my $e = Bric::Util::Event->new(\%args), "Construct event" );
-    # The even constructor calls save() itself.
+    # The event constructor calls save() itself.
     ok( my $eid = $e->get_id, "Get ID" );
     $self->add_del_ids($eid);
 
@@ -38,10 +42,36 @@ sub test_lookup : Test(10) {
     # Check a few attributes.
     is( $e->get_user_id, $user->get_id, "Check user ID" );
     is( $e->get_event_type_id, $et->get_id, "Check ET ID" );
-    is( $e->get_obj_id, $user->get_id, "Check object ID" );
+    is( $e->get_obj_id, $wfid, "Check object ID" );
     is( $e->get_name, $et->get_name, "Check name" );
     is( $e->get_description, $et->get_description, "Check description" );
     is( $e->get_class, $et->get_class, "Check class" );
+    # There should be no attributes or alerts.
+    ok( ! defined $e->get_attr, "No attributes" );
+    ok( ! defined $e->has_alerts, "No alerts" );
+
+    # Now try the other event type.
+    %args = %event;
+    $args{et} = $et2;
+    $args{attr} = { Desk => 'Whoo-wee!' };
+    ok( $e = Bric::Util::Event->new(\%args), "Construct event" );
+    # The event constructor calls save() itself.
+    ok( $eid = $e->get_id, "Get ID" );
+    $self->add_del_ids($eid);
+    is( $e->get_user_id, $user->get_id, "Check user ID" );
+    is( $e->get_event_type_id, $et2->get_id, "Check ET ID" );
+    is( $e->get_obj_id, $wfid, "Check object ID" );
+    is( $e->get_name, $et2->get_name, "Check name" );
+    is( $e->get_description, $et2->get_description, "Check description" );
+    is( $e->get_class, $et2->get_class, "Check class" );
+    # There should be no alerts.
+    ok( ! defined $e->has_alerts, "No alerts" );
+
+    # Check the attributes.
+    ok( my $attr = $e->get_attr, "Get attributes" );
+    is( scalar keys %$attr, 1, "Check for one attribute" );
+    is( $attr->{Desk}, 'Whoo-wee!', "Check desk attribute" );
+
 }
 
 ##############################################################################
@@ -55,6 +85,7 @@ sub test_list : Test(30) {
         if ($n % 2) {
             # There'll be three of these.
             $args{et} = $et2;
+            $args{attr} = { Desk => 'Whiney' };
         } else {
             # There'll be two of these.
         }
@@ -83,18 +114,18 @@ sub test_list : Test(30) {
     is(scalar @events, 5, "Check for 5 events");
 
     # Try obj_id.
-    ok(@events = Bric::Util::Event->list({ obj_id => $uid }),
-       "List obj_id '$uid'" );
+    ok(@events = Bric::Util::Event->list({ obj_id => $wfid }),
+       "List obj_id '$wfid'" );
     is(scalar @events, 5, "Check for 5 events");
 
     # Try class_id.
-    my $cid = Bric::Util::Class->lookup({ key_name => 'user' })->get_id;
+    my $cid = Bric::Util::Class->lookup({ key_name => 'workflow' })->get_id;
     ok(@events = Bric::Util::Event->list({ class_id => $cid }),
        "List class_id '$cid'" );
     is(scalar @events, 5, "Check for 5 events");
 
     # Try class.
-    my $class = 'Bric::Biz::Person::User';
+    my $class = 'Bric::Biz::Workflow';
     ok(@events = Bric::Util::Event->list({ class => $class }),
        "List class '$class'" );
     is(scalar @events, 5, "Check for 5 events");
@@ -159,18 +190,18 @@ sub test_list_ids : Test(30) {
     is(scalar @event_ids, 5, "Check for 5 event IDs");
 
     # Try obj_id.
-    ok(@event_ids = Bric::Util::Event->list_ids({ obj_id => $uid }),
-       "List IDs obj_id '$uid'" );
+    ok(@event_ids = Bric::Util::Event->list_ids({ obj_id => $wfid }),
+       "List IDs obj_id '$wfid'" );
     is(scalar @event_ids, 5, "Check for 5 event IDs");
 
     # Try class_id.
-    my $cid = Bric::Util::Class->lookup({ key_name => 'user' })->get_id;
+    my $cid = Bric::Util::Class->lookup({ key_name => 'workflow' })->get_id;
     ok(@event_ids = Bric::Util::Event->list_ids({ class_id => $cid }),
        "List IDs class_id '$cid'" );
     is(scalar @event_ids, 5, "Check for 5 event IDs");
 
     # Try class.
-    my $class = 'Bric::Biz::Person::User';
+    my $class = 'Bric::Biz::Workflow';
     ok(@event_ids = Bric::Util::Event->list_ids({ class => $class }),
        "List IDs class '$class'" );
     is(scalar @event_ids, 5, "Check for 5 event IDs");

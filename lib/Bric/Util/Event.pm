@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-02-03 21:24:48 $
 
 =head1 SYNOPSIS
 
@@ -99,8 +99,8 @@ use constant DEBUG => 0;
 ##############################################################################
 # Private Class Fields
 my $SEL_COLS = 'e.id, t.id, e.usr__id, e.obj_id, e.timestamp, t.key_name, ' .
-  't.name, t.description, c.pkg_name, ta.name, CASE WHEN e.id in ' .
-  '(SELECT event__id from alert) THEN 1 ELSE 0 END, ea.value'; #, m.grp_id';
+  't.name, t.description, c.pkg_name, CASE WHEN e.id IN ' .
+  '(SELECT event__id FROM alert) THEN 1 ELSE 0 END, ta.name, ea.value'; #, m.grp_id';
 
 my @SEL_PROPS = qw(id event_type_id user_id obj_id timestamp key_name name
                    description class _alert); # grp_ids);
@@ -1426,7 +1426,7 @@ $get_em = sub {
 #            $seen{$grp_ids->[0]} = 1;
 
             # Start the attribute hash and add it to the array.
-            $attrs = $d[$#SEL_PROPS + 1] = { $key => $val };
+            $attrs = $d[$#SEL_PROPS + 1] = { $key => $val } if $key;
 
             # Create a new event object.
             my $self = bless {}, $pkg;
@@ -1441,7 +1441,7 @@ $get_em = sub {
             # Mark that we've seen this group ID.
 #            $seen{$d[$#SEL_PROPS]} = 1;
             # Grab the attribute and value for this row.
-            $attrs->{$key} = $val;
+            $attrs->{$key} = $val if $key;
         }
     }
     return \@events;
