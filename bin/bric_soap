@@ -86,6 +86,12 @@ Options:
 			   option no username or password are
 			   required.
 
+  --chunks               - perform actions in chunks of this many ids.
+                           Currently implemented only for "workflow
+                           publish" but may be expanded to other
+                           commands as needed.  Defaults to 0 which means no
+                           chunking.
+
 =head1 EXAMPLES
 
 Here are some example command-lines.  The examples assume that you've
@@ -122,6 +128,11 @@ Publish all unpublished stories:
 
   bric_soap story list_ids --search publish_status=0
   | bric_soap workflow publish -
+
+Publish all unpublished stories, in chunks of 5 to avoid timeouts
+
+  bric_soap story list_ids --search publish_status=0
+  | bric_soap workflow publish --chunks 5 -
 
 Republish all published stories.  This is useful when a template
 change needs to reflected across a site.  The C<sort -k2 -t_ -n> is a
@@ -180,6 +191,7 @@ BEGIN {
     our $with_related_media   = 0;
     our $to_preview           = 0;
     our $timeout              = 30;
+    our $chunks               = 0;
     our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
     our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
     our $server                 = $ENV{BRICOLAGE_SERVER} || 'http://localhost';
@@ -206,6 +218,7 @@ BEGIN {
                "timeout=s"              => \$timeout,
 	       "save-cookie-file=s"     => \$save_cookie,
 	       "use-cookie-file=s"      => \$use_cookie,
+               "chunks=s",              => \$chunks,
 	      ) or  pod2usage(2);
     
     pod2usage(1)             if $help;
@@ -214,7 +227,7 @@ BEGIN {
 }
 our ($module, $command, %search, $with_related_stories, $with_related_media,
      $to_preview, $username, $password, $server, $verbose, $desk, $workflow,
-     $timeout, $use_cookie, $save_cookie);
+     $timeout, $use_cookie, $save_cookie, $chunks);
 
 use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ());
 import SOAP::Data 'name';
@@ -289,6 +302,10 @@ foreach my $opt (@options) {
     pod2usage("Missing required $opt option.")
 	unless $$opt;
 }
+
+# make sure chunking isn't requested for a non-chunk-supporting command
+die "The --chunks option only works with the Workflow publish command.\n"
+  if $chunks and $module ne 'Workflow' and $command ne 'publish';
 
 # setup soap object to login with
 my $soap = new SOAP::Lite
@@ -445,11 +462,28 @@ sub publish {
     push @opts, name(publish_related_media   => 1) if $with_related_media;
     push @opts, name(to_preview              => 1) if $to_preview;
 
-    $response = $soap->publish(name(publish_ids => \@ids), @opts);
-    _print_fault($response) if $response->fault;
+    if ($chunks == 0) {
+        $response = $soap->publish(name(publish_ids => \@ids), @opts);
+        _print_fault($response) if $response->fault;
 
-    # print out ids
-    _print_ids($response);
+        # print out ids
+        _print_ids($response);
+    } else {
+        # step through @ids $chunks at a time
+        my ($start, $end);
+        for ($start = 0; $start <= $#ids; $start = $end + 1) {
+            $end = $start + $chunks - 1;
+            $end = $#ids if $end > $#ids;
+	    
+            $response = $soap->publish(name(publish_ids => 
+                                            [@ids[$start .. $end]],
+                                            @opts));
+            _print_fault($response) if $response->fault;
+            
+            # print out ids for this chunk
+            _print_ids($response);
+	}
+    }   
 }
 
 sub deploy {

@@ -35,6 +35,13 @@ Added new --save-cookie-file and --use-cookie-file options to
 bric_soap to allow authentication to span bric_soap calls.  This can
 result in significant time savings across multiple invocations.  [Matt]
 
+=item *
+
+Added new --chunks option to the bric_soap tool to avoid problems with
+timeouts on large workloads.  Currently only supports the "worflow
+publish" command but it will be expanded to other long-running
+commands in the future.  [Sam]
+
 =over 4
 
 =back
