@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-13 01:54:10 $
+$Date: 2001-12-13 03:07:58 $
 
 =head1 SYNOPSIS
 
@@ -279,6 +279,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
 
+	# Set the Mason component root to its default here.
+	$config->{MASON_COMP_ROOT} ||= catdir($ENV{BRICOLAGE_ROOT}, 'comp');
     }
 
     # Apache Settings.
@@ -353,10 +355,18 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant DBI_PASS                => $config->{DBI_PASS} || 'nalletsac';
     use constant DBI_DEBUG               => $config->{DBI_DEBUG} || 0;
 
+    # Distribution Settings.
+    use constant ENABLE_DIST => $config->{ENABLE_DIST};
+    use constant DIST_ATTEMPTS => $config->{DIST_ATTEMPTS} || 3;
+    use constant PREVIEW_LOCAL => $config->{PREVIEW_LOCAL} ? qw(data preview) : 0;
+    use constant PREVIEW_MASON => $config->{PREVIEW_MASON};
 
     # Mason settings.
-    use constant MASON_COMP_ROOT         => $config->{MASON_COMP_ROOT}
-      || catdir($ENV{BRICOLAGE_ROOT}, 'comp');
+    use constant MASON_COMP_ROOT         => PREVIEW_LOCAL && PREVIEW_MASON ?
+      [[bric_ui => $config->{MASON_COMP_ROOT}],
+       [bric_preview => catdir($config->{MASON_COMP_ROOT}, PREVIEW_LOCAL)]]
+	: $config->{MASON_COMP_ROOT};
+
     use constant MASON_DATA_ROOT         => $config->{MASON_DATA_ROOT}
       || catdir($ENV{BRICOLAGE_ROOT}, 'data');
     use constant MASON_ARGS_METHOD       => 'mod_perl';  # Could also be 'CGI'
@@ -406,12 +416,6 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 
     # Error Page Setting.
     use constant ERROR_URI => QA_MODE ? '/errors/error.html' : '/errors/500.mc';
-
-    # Distribution Settings.
-    use constant ENABLE_DIST => $config->{ENABLE_DIST};
-    use constant DIST_ATTEMPTS => $config->{DIST_ATTEMPTS} || 3;
-    use constant PREVIEW_LOCAL => $config->{PREVIEW_LOCAL} ? qw(data preview) : 0;
-    use constant PREVIEW_MASON => $config->{PREVIEW_MASON};
 
     # Email Settings.
     use constant SMTP_SERVER => $config->{SMTP_SERVER} || SERVER_NAME;
