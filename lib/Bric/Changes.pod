@@ -274,7 +274,106 @@ Added Template Toolkit burner support. [Arthur/Fotango]
 
 =back
 
-=head1 VERSION 1.6.5 ()
+=head1 VERSION 1.6.6 ()
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added F<README.Solaris>, with thanks to Oscar Sodani and Thorsten Biel.
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+When an asset is published or deployed directly from the asset profile, it is
+now properly removed from the publish or deploy desk. Repoted by Andy Baio's
+coworker. [David]
+
+=item *
+
+The "desk_id" attribute of assets is now properly cleared when an asset is
+removed from workflow. [David]
+
+=item *
+
+Fixed 1.6.5 upgrade script to look for Bric::Config in the proper location.
+[David]
+
+=item *
+
+Templates now display their output channel associations instead of their
+element associations on desks. This seems to be more useful, since the element
+association is usually obvious from the name. [David]
+
+=item *
+
+The category URI is now displayed for assets on desks, rather than the
+name. This is consistent with the display of the category elsewhere. [David]
+
+=item *
+
+Elements to which no subelements can be added will no longer display an empty
+select list and "Add Element" button. [Geoff Richards]
+
+=item *
+
+C<< Bric::Biz::Asset::Business::Story->get_secondary_categories()> will no
+longer return categories deleted from the story. Thanks to Scott for the
+spot. [David]
+
+=item *
+
+Removed some unnecessary JavaScript validation. [David]
+
+=item *
+
+Bug fix when deploying to multiple output channels. If the output channel IDs
+matched each other partly, it could cause a file to be removed after it just
+had been uploaded. [Arthur / Fotango]
+
+=item *
+
+Users with CREATE access to a start desk can once again create stories on that
+desk even when they don't have CREATE access to "All Stories." Reported by
+Simon Wilcox. [David]
+
+=item *
+
+Each upgrade script is now run within the confines of a single database
+transaction. If any database changes within an upgrade script encounter an
+error, all of the changes in that script will be rolled back. Suggested by
+Arthur. [David]
+
+=item *
+
+An upgrade script failure will now cause C<make upgrade> to halt installation
+so that any issues are immediately identified and correctable. [David]
+
+=item *
+
+An invalid date in a date element field no longer causes an error. Thanks to
+Arthur for the spot! [David]
+
+=item *
+
+With C<(STORY_URI_WITH_FILENAME> enabled and when there is no defined file
+extension Bricolage now doesn't insert an ending '.' (dot). [Arthur/Fotango]
+
+=item *
+
+Slight fix to virtual FTP server to handle bad FTP clients that try and use
+directories as files. [Arthur]
+
+=back
+
+=head1 VERSION 1.6.5 (2003-09-10)
 
 =head2 Bug Fixes
 

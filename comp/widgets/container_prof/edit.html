@@ -1,6 +1,5 @@
 <input type="hidden" name="container_prof|update_cb" value="1">
-
-<%perl>
+<%perl>;
 # Show the story summary if needed.
 if ($show_summary) {
     my $type  = $tile->get_object_type;
@@ -16,18 +15,15 @@ my $diff =  $total ? $tiles[-1]->get_place - $total + 1 : 0;
 my $ord_vals = [ map { [ $_ - 1, $_ ] } 1..$total ];
 my $x=0;
 
+# Check if we should display elements.
+if (@tiles || @$elem_opts ) {
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+             caption => $title,
+             number  => $num++
+            );
 </%perl>
 
-% # check if we should display
-% if (@tiles || $elem_opts ) {
-
-% $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%    caption => $title,
-%    number => $num++
-%    );
-
 <table border="0" width="578" cellpadding="0" cellspacing="0">
-
 % # COLUMN HEADER ROW
 % my $rowspan = scalar(@tiles) + 2;
 % $rowspan++ if ($repeatable_opts);
@@ -271,7 +267,7 @@ if ($at->is_related_media) {
 
 <table border=0 width="578" cellpadding="0" cellspacing="0">
 %# Begin element picker
-% if ($elem_opts) {
+% if (@$elem_opts) {
 <tr>
   <td width=<% FIELD_INDENT - 10 %> align="right" class="medHeader"><& '/widgets/profile/imageSubmit.mc',
   formName => "theForm",

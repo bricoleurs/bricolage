@@ -1,0 +1,42 @@
+Bricolage Solaris README
+========================
+
+Here are a few notes to help you successfully install Bricolage on Solaris:
+
+- Make sure you have the newest Recommended and Security Patches from Sun
+  installed.
+
+- Ensure the following packages are installed from sunfreeware:
+
+    gcc
+    binutils
+    gdbm
+    db3.3
+    strip
+
+- Make sure you add /usr/local/lib (or whever you installed gdbm, db, etc.) to
+  your LD_LIBRARY_PATH setting before doing ANYTHING.
+
+- Some of the required modules won't simply install using CPAN.pm or `make
+  cpan.` Likly offenders are DB_File and libapreq. Install these manually
+  first, and then `make cpan` or `perl -MCPAN -e 'install Bundle::Bricolage'`.
+
+- Using DB_File with Berkeley DB is a pain. To make it work create symlinks
+  for
+
+    /usr/local/Berkeley.../include/db.h in /usr/include
+    /usr/local/Berkeley.../lib/libdb.a in /usr/local/lib
+
+  There's probably another way to do this. Copying the files also works, but
+  setting LD_LIBRARY_PATH and various LIB settings doesn't seem to work.
+
+  On the other hand, DB_File will probably work fine on its own without
+  Berkeley DB.
+
+- When compiling mod_perl & apache, make sure that /usr/ccs/bin is in your
+  PATH, and perhaps ahead of /usr/local/bin. If not, Apache will compile, but
+  you'll never get it to start the httpd daemon.
+
+- When compiling Bricolage, you may need to remove /usr/ccs/bin from the PATH.
+
+- Have lots of caffeine on hand!

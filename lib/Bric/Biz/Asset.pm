@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-17 19:47:08 $
+$Date: 2003-10-03 05:58:13 $
 
 =head1 SYNOPSIS
 
@@ -1223,29 +1223,21 @@ sub set_current_desk {
     $self->_set({grp_ids => \@grp_ids});
     # now set the actual value
     my $desk_id = $desk->get_id();
-    $self->_set({desk_id => $desk_id});
+    $self->_set([qw(desk_id _desk)], [$desk_id, $desk]);
     return $self;
 }
-
 
 ################################################################################
 
 =item $ld = $self->get_current_desk ( );
 
-This returns the desk stamp of the desk that the object is currently 
-at
+This returns the desk stamp of the desk that the object is currently at
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE 
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE 
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -1253,11 +1245,30 @@ sub get_current_desk {
     my $self = shift;
     my ($id, $desk) = $self->_get(qw(desk_id _desk));
     return $desk if $desk;
+    return unless $id;
     $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ id => $id });
     $self->_set(['_desk'], [$desk]);
     return $desk;
 }
 
+
+##############################################################################
+
+=item $self = $self->remove_from_desk
+
+Removes the asset from the current desk.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub remove_from_desk {
+    shift->_set([qw(desk_id _desk)], []);
+}
 
 ###############################################################################
 

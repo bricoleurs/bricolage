@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-10-01 16:50:58 $
+$Date: 2003-10-03 05:58:14 $
 
 =head1 DESCRIPTION
 
@@ -587,6 +587,13 @@ sub _get_cats {
   }
 
   return $CATS;
+}
+
+
+# Handle bad FTP clients that try and use directories as files.
+sub dir {
+    my $self = shift;
+    return $self;
 }
 
 =item _forget_cats()

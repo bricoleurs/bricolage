@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.64 $
+$Revision: 1.65 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.64 $ )[-1];
+our $VERSION = (qw$Revision: 1.65 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-19 13:35:36 $
+$Date: 2003-10-03 05:58:13 $
 
 =head1 SYNOPSIS
 
@@ -1080,7 +1080,7 @@ sub get_uri {
           $oc->get_filename;
         if ($fname) {
             my $ext = $oc->get_file_ext;
-            $fname .= ".$ext";
+            $fname .= ".$ext" if($ext ne '');
             $uri = Bric::Util::Trans::FS->cat_uri($uri, $fname);
         }
     }
@@ -1153,7 +1153,7 @@ NONE
 =item ($categories || @categories) = $ba->get_categories()
 
 This will return a list of categories that have been associated with
-the business asset
+the business asset.
 
 B<Throws:>
 
@@ -1284,17 +1284,26 @@ NONE
 sub get_secondary_categories {
     my ($self) = @_;
     my $cats = $self->_get_categories();
-
     my @seconds;
+    my $reset;
     foreach my $c_id (keys %$cats) {
         next if $cats->{$c_id}->{'primary'};
+
         next if $cats->{$c_id}->{'action'}
           && $cats->{$c_id}->{'action'} eq 'delete';
         if ($cats->{$c_id}->{'object'} ) {
             push @seconds, $cats->{$c_id}->{'object'};
         } else {
-            push @seconds, Bric::Biz::Category->lookup({ id => $c_id });
+            my $cat = Bric::Biz::Category->lookup({ id => $c_id });
+            $cats->{$c_id}->{'object'} = $cat;
+            $reset = 1;
+            push @seconds, $cat;
         }
+    }
+    if ($reset) {
+        my $dirty = $self->_get__dirty();
+        $self->_set({ '_categories' => $cats });
+        $self->_set__dirty($dirty);
     }
     return wantarray ? @seconds : \@seconds;
 }

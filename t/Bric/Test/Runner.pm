@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-11 17:25:13 $
+$Date: 2003-10-03 05:58:14 $
 
 =head1 SYNOPSIS
 

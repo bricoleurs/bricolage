@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.76 $
+$Revision: 1.77 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.76 $ )[-1];
+our $VERSION = (qw$Revision: 1.77 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 11:19:53 $
+$Date: 2003-10-03 05:58:13 $
 
 =head1 SYNOPSIS
 

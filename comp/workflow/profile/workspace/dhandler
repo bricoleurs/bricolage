@@ -7,11 +7,11 @@ dhandler -- Implement the user workspace.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-09-30 08:53:26 $
+$Date: 2003-10-03 05:58:12 $
 
 =head1 DESCRIPTION
 
@@ -36,6 +36,7 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 	 'title' => ['Workspace for [_1]', get_user_object->format_name],
 	  context => 'My Workspace');
 
+# Change confirmation required for delete checkbox.
 $m->out(qq{<form method="post" action="} . $r->uri .
  qq {" name="desk" onSubmit="return confirmChanges(this)">});
 

@@ -12,7 +12,7 @@
       <dd<% $classes->{category_name} || $classes->{location} || '' %>><% $cat %></dd>
       <dt><% $lang->maketext('Site') %></dt>
       <dd<% $classes->{site_id} || '' %>><% $site %></dd>
-      <dt><% $lang->maketext(($class eq 'formatting' ? 'Asset' : $disp ) . ' Type') %></dt>
+      <dt><% $lang->maketext(($class eq 'formatting' ? 'Output Channel' : $disp ) . ' Type') %></dt>
       <dd<% $classes->{element} || '' %>><% $type || '&nbsp;' %></dd>
       <dt><% $lang->maketext($date_label) %></dt>
       <dd<% $classes->{cover_date} || '' %>><% $date || '&nbsp;' %></dd>
@@ -86,7 +86,7 @@ if ($class eq 'formatting') {
     my $cat_id = $obj->get_category_id;
     if (defined $cat_id) {
 	unless ($cat = $cats->{$cat_id}) {
-	    $cat = Bric::Biz::Category->lookup({ id => $cat_id })->get_name;
+	    $cat = Bric::Biz::Category->lookup({ id => $cat_id })->get_uri;
 	    $cats->{$cat_id} = $cat;
 	    $r->pnotes("desk.cats", $cats);
 	}
@@ -111,7 +111,7 @@ if ($class eq 'formatting') {
     }
     if ($class eq 'media') {
 	$cat = $cats->{$obj->get_category__id} ||= $obj->get_category_object;
-	$cat = $cat->get_name if $cat;
+	$cat = $cat->get_uri if $cat;
         $name = $m->comp('/widgets/profile/preview_link.mc',
                          type  => $class,
                          doc   => $obj,
@@ -119,7 +119,7 @@ if ($class eq 'formatting') {
           if $obj->get_file_name;
     } else {
 	$cat = $obj->get_primary_category;
-	$cat = $cat->get_name if $cat;
+	$cat = $cat->get_uri if $cat;
 	$cat ||= '&nbsp;';
         $name = $m->comp('/widgets/profile/preview_link.mc',
                          type  => $class,
@@ -163,11 +163,11 @@ my $elink = $user ? $user : $label ? '<a href="' . $r->uri . "?"
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =head1 DATE
 
-$Date: 2003-10-03 02:37:13 $
+$Date: 2003-10-03 05:58:12 $
 
 =head1 DESCRIPTION
 

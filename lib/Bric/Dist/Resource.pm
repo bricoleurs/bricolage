@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2003-10-03 05:58:13 $
 
 =head1 SYNOPSIS
 
@@ -38,11 +38,11 @@ $Date: 2003-08-14 23:24:11 $
   # Instance methods.
   my $id = $res->get_id;
   my $path = $res->get_path;
-  $res = $res->set_path($size);
+  $res = $res->set_path($path);
   my $uri = $res->get_uri;
-  $res = $res->set_uri($size);
+  $res = $res->set_uri($uri);
   my $tmp_path = $res->get_tmp_path;
-  $res = $res->set_tmp_path($size);
+  $res = $res->set_tmp_path($tmp_path);
   my $size = $res->get_size;
   $res = $res->set_size($size);
   my $mod_time = $res->get_mod_time;
