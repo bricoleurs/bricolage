@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-03-16 18:31:04 $
+$Date: 2004-03-23 00:53:02 $
 
 =head1 SYNOPSIS
 
@@ -772,10 +772,10 @@ sub build_query {
     my ($pkg, $cols, $grp_cols, $tables, $where_clause, $order, $limit,
         $offset) = @_;
 
-    # Strip out any AS clauses, just leaving the alias.
+    # Add the GROUP BY clause.
     my $grp_by = '';
     if ($grp_cols) {
-        $grp_by = "GROUP  BY $cols";
+        $grp_by = "GROUP BY  $cols";
         $cols .= ", $grp_cols";
     }
 
@@ -854,10 +854,6 @@ sub clean_params {
                    expire_date expire_date_start expire_date_end)) {
         $param->{$df} = Bric::Util::Time::db_date($param->{$df}) if $param->{$df};
     }
-
-    # Fixup unexpired to use the current UTC time.
-    $param->{unexpired} = Bric::Util::Time::db_date(undef, 1)
-      if delete $param->{unexpired};
 
     # Return the parameters.
     return $param;

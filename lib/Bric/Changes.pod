@@ -38,7 +38,7 @@ Serge Sozonoff for the spot. [David]
 
 =item *
 
-Fixed clone interface for IE users. Spotted by Serge. [Scott]
+Fixed clone interface for IE users. Spotted by Serge Sozonoff. [Scott]
 
 =back
 
