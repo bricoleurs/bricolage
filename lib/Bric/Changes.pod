@@ -27,6 +27,10 @@ to its own make target. This is to allow it to be run by C<make upgrade>, too,
 thus ensuring that the Bricolage database user always has the appropriate
 permissions ot access the database. [David]
 
+=item *
+
+Assets can once again be removed from workflow. [David]
+
 =back
 
 =head1 VERSION 1.5.2

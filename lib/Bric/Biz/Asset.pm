@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.11 $
+$Revision: 1.25.2.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 19:19:49 $
+$Date: 2003-04-08 01:13:03 $
 
 =head1 SYNOPSIS
 
@@ -1287,17 +1287,22 @@ sub set_workflow_id {
     my ($self, $workflow_id) = @_;
     # grp_ids may change as a side effect
     my @grp_ids;
-    my $workflow = $self->get_workflow_object();
-    foreach ($self->get_grp_ids()) {
-        next if ($workflow && $_ == $workflow->get_asset_grp_id());
-        push @grp_ids, $_;
+    if (my $wf = $self->get_workflow_object) {
+        my $ag_id = $wf->get_asset_grp_id;
+        foreach my $gid ($self->get_grp_ids) {
+            next if $gid == $ag_id;
+            push @grp_ids, $gid;
+        }
     }
-    $workflow = Bric::Biz::Workflow->lookup({ id => $workflow_id });
-    push @grp_ids, $workflow->get_asset_grp_id();
-    $self->_set({grp_ids => \@grp_ids});
-    # now set the actual value
-    $self->_set({workflow_id => $workflow_id});
-    return $self;
+
+    if ($workflow_id) {
+        my $workflow = Bric::Biz::Workflow->lookup({ id => $workflow_id });
+        push @grp_ids, $workflow->get_asset_grp_id;
+    }
+
+    # Now set the workflow ID and the group IDs.
+    $self->_set([qw(grp_ids)], [\@grp_ids]) if @grp_ids;
+    $self->_set([qw(workflow_id)], [$workflow_id]);
 }
 
 ################################################################################
