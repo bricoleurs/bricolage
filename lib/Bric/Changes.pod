@@ -50,6 +50,17 @@ C<make upgrade> now uses the correct PostgreSQL root username and password,
 instead of the default "postgres" username and emtpy password. Thanks to Paul
 Cory for the spot! [David]
 
+=item *
+
+Burn-time exceptions are once again properly displayed in the error
+page. [David]
+
+=item *
+
+When the C<STORY_URI_WITH_FILENAME> F<bricolage.conf> directive is enabled,
+stories are now written to the proper file when previewed or published. Thanks
+to Kevin White for the spot! [David]
+
 =back
 
 =head1 VERSION 1.6.0
@@ -96,6 +107,7 @@ their titles. [David]
 Added Field Profile, so that element Fields can be edited. This is a marked
 improvement over the old interface, which required that fields be deleted and
 recreated if users wanted to change them. [Scott]
+
 
 =back
 
