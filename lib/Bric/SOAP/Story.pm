@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.56 $
+$Revision: 1.57 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.56 $ )[-1];
+our $VERSION = (qw$Revision: 1.57 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 16:24:05 $
+$Date: 2004-03-18 16:52:39 $
 
 =head1 SYNOPSIS
 
@@ -256,10 +256,9 @@ Throws:
 
 Side Effects: NONE
 
-Notes: In addition to the parameters listed above, you can use
-most of the parameters listed in the documentation for the
-list method in Bric::Biz::Asset::Business::Story. (More precisely,
-you can try any of the parameters in the PARAM_WHERE_MAP constant.)
+Notes: In addition to the parameters listed above, you can use most of the
+parameters listed in the documentation for the list method in
+Bric::Biz::Asset::Business::Story.
 
 =cut
 

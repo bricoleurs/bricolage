@@ -41,15 +41,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 16:24:05 $
+$Date: 2004-03-18 16:52:38 $
 
 =head1 SYNOPSIS
 
@@ -225,10 +225,9 @@ Throws:
 
 Side Effects: NONE
 
-Notes: In addition to the parameters listed above, you can use
-most of the parameters listed in the documentation for the
-list method in Bric::Biz::Asset::Business::Media. (More precisely,
-you can try any of the parameters in the PARAM_WHERE_MAP constant.)
+Notes: In addition to the parameters listed above, you can use most of the
+parameters listed in the documentation for the list method in
+Bric::Biz::Asset::Business::Media.
 
 =cut
 
