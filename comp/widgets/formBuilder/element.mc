@@ -2,16 +2,16 @@
 my $type = 'element';
 my $class = get_package_name($type);
 my $disp_name = get_disp_name($type);
-my %meta_props = ( disp => 'fb_disp',
-		   value => 'fb_value',
-		   type => 'fb_type',
-		   length => 'fb_size',
+my %meta_props = ( disp      => 'fb_disp',
+		   value     => 'fb_value',
+		   type      => 'fb_type',
+		   length    => 'fb_size',
 		   maxlength => 'fb_maxlength',
-		   rows => 'fb_rows',
-		   cols => 'fb_cols',
-		   multiple => 'fb_allowMultiple',
-		   vals => 'fb_vals',
-		   pos => 'fb_position'
+		   rows      => 'fb_rows',
+		   cols      => 'fb_cols',
+		   multiple  => 'fb_allowMultiple',
+		   vals      => 'fb_vals',
+		   pos       => 'fb_position'
 		 );
 </%once>
 
@@ -29,7 +29,6 @@ return unless $field eq "$widget|save_cb"
   || $field eq "$widget|addElement_cb"
   || $field eq "$widget|add_oc_id_cb";
 return unless $param->{$field}; # prevent multiple calls to this file
-
 
 # Instantiate the element object and grab its name.
 my $comp = $obj;
@@ -249,11 +248,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22.4.2 $
+$Revision: 1.22.4.3 $
 
 =head1 DATE
 
-$Date: 2003-03-28 05:07:00 $
+$Date: 2003-03-29 06:33:30 $
 
 =head1 SYNOPSIS
 
