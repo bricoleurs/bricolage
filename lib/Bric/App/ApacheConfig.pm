@@ -102,7 +102,7 @@ do {
     $locs{'^/data'} = { SetHandler => 'default-handler' };
 
     # This will run the SOAP server.
-    $locs{'^/soap'} = {
+    $locs{'/soap'} = {
         SetHandler         => 'perl-script',
         PerlHandler        => 'Bric::SOAP::Handler',
         PerlAccessHandler  => 'Apache::OK'
