@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-17 13:44:30 $
+$Date: 2004-02-19 12:35:18 $
 
 =head1 SYNOPSIS
 
@@ -202,8 +202,10 @@ use constant key => 'de_de';
   'Fields' => 'Felder',
   'File Name' => 'Dateiname',
   'File Path' => 'Dateipfad',
+  'File Type' => 'Dateityp',
   'First' => 'Vorname',
   'First Name' => 'Vorname',
+  'First Published' => 'Erste Ver\xc3\xb6ffentlichung',
   'Fixed' => 'Fester URL',
   'Generic' => 'Generisch',
   'Group Type' => 'Gruppentyp',
@@ -224,6 +226,7 @@ use constant key => 'de_de';
   'Mason' => 'Mason',
   'Max size' => 'Max. Größe',
   'Maximum size' => 'Maximale Größe',
+  'MEDIA' => 'MEDIEN',
   'Media' => 'Medien',
   'Media Profile' => 'Medienprofil',
   'Media Type' => 'Medientyp',
@@ -232,6 +235,7 @@ use constant key => 'de_de';
   'Member Type  ' => 'Mitgliedstyp',
   'Members' => 'Mitglieder',
   'My Alerts' => 'Meine Meldungen',
+  'MY WORKSPACE' => 'MEIN ARBEITSBEREICH',
   'My Workspace' => 'Mein Arbeitsbereich',
   'NAME' => 'NAME',
   'Name' => 'Name',
@@ -297,11 +301,14 @@ use constant key => 'de_de';
   'Sources' => 'Quellen',
   'Start Desk' => 'Anfangsb&uuml;ro',
   'Statistics' => 'Statistiken',
+  'STORY' => 'BEITRAG',
   'Story' => 'Beitrag',
   'Story Type' => 'Beitragstyp',
   'Subelements' => 'Subelemente',
   'Teaser' => 'Kurzumschreibung',
+  'TEMPLATE' => 'VORLAGE',
   'Template Name' => 'Vorlagenname',
+  'Template Type' => 'Vorlagentyp',
   'Text box' => 'Textfeld',
   'Title' => 'Titel',
   'Trail' => 'Protokoll',
@@ -329,6 +336,7 @@ use constant key => 'de_de';
    'Add New Field' => 'Neues Feld hinzufügen',
    'Add a New Alert Type' => 'Neuen Meldungstyp hinzufügen',
    'Add a New Category' => 'Neue Kategorie hinzufügen',
+   'Add a New Contributor' => 'Neuen Mitarbeiter hinzufügen',
    'Add a New Contributor Type' => 'Neuen Mitarbeitertypen hinzufügen',
    'Add a New Desk' => 'Neues B&uuml;ro hinzufügen',
    'Add a New Destination' => 'Neues Ziel hinzufügen',
@@ -416,7 +424,7 @@ use constant key => 'de_de';
 
 # System reply messages
   '"[_1]" Elements saved.' => '"[_1]" Elemente gespeichert.',
-  '%n Found' => '%n Gefunden',
+  '%n Found' => 'Gefundene %n',
   '404 NOT FOUND' => '404 - SEITE NICHT GEFUNDEN',
   'A site with the [_1] "[_2]" already exists' => 'Eine Site mit [_1] "[_2]" existiert bereits',
   'Action profile "[_1]" deleted.' => 'Aktionsprofil "[_1]" gelöscht.',
@@ -516,7 +524,7 @@ use constant key => 'de_de';
   'Login "[_1]" is already in use. Please try again.' => 'Benutzername "[_1]" ist bereits vergeben. Bitte wählen Sie einen anderen Namen.',
   'Login cannot be blank. Please enter a login.' => 'Benutzername darf nicht leer sein. Bitte tragen Sie einen Benutzernamen ein.',
   'Login must be at least [_1] characters.' => 'Benutzername muß mindestens [_1] Zeichen lang sein.',
-  'MEDIA FOUND' => 'MEDIEN GEFUNDEN',
+  'MEDIA FOUND' => 'GEFUNDENE MEDIEN',
   'Media "[_1]" check out canceled.' => 'Checkout des Mediums "[_1]" abgebrochen.',
   'Media "[_1]" created and saved.' => 'Medium "[_1]" erzeugt und gespeichert.',
   'Media "[_1]" deleted.' => 'Medium "[_1]" gelöscht.',
@@ -631,7 +639,7 @@ use constant key => 'de_de';
   'Template compile failed: [_1]' => 'Compilierung der Vorlage gescheitert: [_1]',
   'Template deployed.' => 'Vorlage ausgebracht',
   'Templates' => 'Vorlagen',
-  'Templates Found' => 'Vorlagen gefunden',
+  'Templates Found' => 'Gefundene Vorlagen',
   'Text to search' => 'Suchbegriff',
   'The URI "[_1]" is not unique. Please change the cover date, output channels, category, or file name as necessary to make the URIs unique.' => 'Der URI "[_1]"  ist nicht eindeutig. Bitte ändern Sie das Deckblattdatum, Ausgabekanal, Kategorie oder Dateinamen wie benötigt um den URI eindeutig zu machen.',
   'The URL you requested, <b>[_1]</b>, was not found on this server' => 'Der von Ihnen angeforderte URL, <b>[_1]</b>, konnte auf diesem Server nicht gefunden werden',

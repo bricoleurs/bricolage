@@ -129,6 +129,10 @@ developers, at least. [David]
 Added C<primary_category_id> parameter to the story class' C<list()>
 method. [David]
 
+=item *
+
+Updated the German localization. [Thorsten Biel]
+
 =back
 
 =head2 Bug Fixes
