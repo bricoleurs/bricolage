@@ -68,27 +68,29 @@ if (is_nav6up) {
     ss.context.all.backgroundColor = '#999966';
 } else if (is_ie) {
     var ss = document.styleSheets[0];
-    var i = 0;
-    ss.addRule(".redLink", "color:#993300;", i++);
     if (is_win) {
+        var i = 0;
         ss.addRule("body", "background:white; font-family:Verdana,Helvetica,Arial,sans-serif;", i++);
         ss.addRule(".light", "background:#cccc99; font-size:7pt;", i++);
         ss.addRule(".tab", "background:#006666; color:white; font-weight:bold; font-size:10pt;", i++);
         ss.addRule(".context", "background:#999966; font-size:7.25pt; line-height:9pt;", i++);
+        ss.addRule(".redLink", "color:#993300;", i++);
         ss.addRule("h3", "font-size:10pt; line-height:12pt;", i++);
         ss.addRule("p", "font-size:8pt; line-height:11pt;", i++);
         ss.addRule("dt", " font-size:8pt; line-height:11pt; font-weight:bold;", i++);
         ss.addRule("dd", "font-size:8pt; line-height:11pt;", i++);
         ss.addRule("li", "font-size:8pt; line-height:11pt;", i++);
     } else if (is_mac) {
-        ss.addRule("body", "background:white; font-family:Verdana,Helvetica,Arial,sans-serif;", i++);
-        ss.addRule(".tab", "background:#006666; color:white; font-weight:bold; font-size:11pt;", i++);
-        ss.addRule(".context", "background:#999966; font-size:7.5pt; line-height:10.5pt;", i++);
-        ss.addRule("h3", "font-size:11pt; line-height:13pt;", i++);
-        ss.addRule("p", "font-size:7.5pt; line-height:10.5pt;", i++);
-        ss.addRule("dt", " font-size:7.5pt; line-height:10.5pt; font-weight:bold;", i++);
-        ss.addRule("dd", "font-size:7.5pt; line-height:10.5pt;", i++);
-        ss.addRule("li", "font-size:7.5pt; line-height:10.5pt;", i++);
+        ss.addRule("body", "background:white; font-family:Verdana,Helvetica,Arial,sans-serif;");
+        ss.addRule(".tab", "background:#006666; color:white; font-weight:bold; font-size:10pt;");
+        ss.addRule(".light", "background:#cccc99; font-size:7pt;");
+        ss.addRule(".context", "background:#999966; font-size:7.5pt; line-height:10.5pt;");
+        ss.addRule(".redLink", "color:#993300;");
+        ss.addRule("h3", "font-size:10pt; line-height:13pt;");
+        ss.addRule("p", "font-size:8pt; line-height:11.5pt;");
+        ss.addRule("dt", " font-size:8pt; line-height:11.5pt; font-weight:bold;");
+        ss.addRule("dd", "font-size:8pt; line-height:11.5pt;");
+        ss.addRule("li", "font-size:8pt; line-height:11.5pt;");
     }
 } else {
     // It's something else.
