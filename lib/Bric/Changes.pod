@@ -196,6 +196,13 @@ Fixed bug where stories with related media associated with them were displaying
 the story as an Element rather than as a story after editing the related media.
 [David]
 
+=item *
+
+Removed all file system location dependencies for the operation of Bricolage.
+Bricolage will still assume that everything's in /usr/local/bricolage, but any
+location is fine as long as the BRICOLAGE_ROOT environment variable is set to
+the proper location. [David]
+
 =back
 
 =head1 VERSION 1.0.1
