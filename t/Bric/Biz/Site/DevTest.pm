@@ -348,7 +348,7 @@ sub test_save : Test(36) {
 
 ##############################################################################
 # Test permission groups.
-sub test_grps : Test(71) {
+sub test_grps : Test(75) {
     my $self = shift;
     my $site = $self->{test_sites}[0];
     # Look at a site we've created.
@@ -414,6 +414,10 @@ sub compare_grps {
     isa_ok($grp, 'Bric::Util::Grp::Asset');
     is( $grp->get_id, $site->get_id, "Check asset group ID is site ID" );
     is( $grp->get_name, 'Secret Site Asset Group', "Check site name" );
+
+    # Reset the name.
+    ok( $site->set_name($name), "Set name to '$name'" );
+    ok( $site->save, "Save site with original name" );
 }
 
 ##############################################################################
