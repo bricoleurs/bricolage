@@ -5,21 +5,28 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
-my $add_col = q/ALTER TABLE element ADD key_name VARCHAR(64) NOT NULL/;
-my $pop_col = q/UPDATE element /.
-              q/SET    key_name = TRANSLATE(LOWER(name), ' ', '_') /.
-              q/WHERE  key_name IS NULL/;
+# Just exit if these changes have already been made.
+exit if test_sql "SELECT 1 WHERE EXISTS (SELECT key_name FROM element)";
 
-# Add the new column if its not already there.  Not using 'test_sql' here since
-# table alterations seem to be outside of begin() and end() transaction scope.
-eval { do_sql $add_col };
 
-# Unless the error tells us we've already added this column, die.
-if ($@ and $@ !~ /"key_name" already exists/) {
-    die "Error adding column 'key_name':\n\n$@\n";
-}
+do_sql
+  # Add the new column.
+  q/ALTER TABLE element ADD key_name VARCHAR(64)/,
 
-# Populate the new key_name field
-do_sql $pop_col;
+  # Populate it with data. I think that this may not be the best approach...
+  # What about non-ascii characters?
+  q/UPDATE element SET key_name = TRANSLATE(LOWER(name), ' ', '_')/,
+
+  # Add a NOT NULL constraint.
+  q{ALTER TABLE element
+      ADD CONSTRAINT ck_key_name__null
+      CHECK (key_name IS NOT NULL)},
+
+  # Add an index.
+  qq{CREATE UNIQUE INDEX udx_element__key_name ON element(LOWER(key_name))},
+
+  # Drop the old index on the name column.
+  qq{DROP INDEX udx_element__name}
+  ;
 
 __END__
