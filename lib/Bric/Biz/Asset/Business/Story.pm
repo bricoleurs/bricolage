@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-07 01:28:20 $
+$Date: 2002-03-13 20:20:41 $
 
 =head1 SYNOPSIS
 
@@ -514,7 +514,8 @@ keyword - a string (not an object)
 
 =item *
 
-workflow__id
+workflow__id - workflow containing the story.  Set to undef to return
+stories with no workflow.
 
 =item *
 
@@ -1607,7 +1608,10 @@ sub _do_list {
 	if ($f eq 'primary_uri') {
 	    push @where, "LOWER(s.$f) LIKE ?";
 	    push @bind,  lc($param->{$f});
-	} else { 
+	} elsif ($f eq 'workflow__id' and not defined $param->{$f}){ 
+	    # support search for NULL workflow__id
+	    push @where, "s.$f IS NULL";
+	} else {
 	    push @where, "s.$f=?";
 	    push @bind,  $param->{$f};
 	}
