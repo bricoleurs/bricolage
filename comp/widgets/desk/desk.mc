@@ -38,7 +38,7 @@ $work_id => undef
 $style   => 'standard'
 $action  => undef
 $wf      => undef
-$sort_by => 'cover_date'
+$sort_by => get_pref('Default Asset Sort') || 'cover_date'
 $offset  => 0
 $show_all => undef
 </%args>

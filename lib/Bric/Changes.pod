@@ -168,6 +168,11 @@ When a user overrides the global "Date/Time Format" and "Time Zone"
 preferences, the affects of the overrides are now properly reflected in the
 UI. [David]
 
+=item *
+
+The "Default Asset Sort" preference now actually works. Reported by Simon
+Wilcox. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
