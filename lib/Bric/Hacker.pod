@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.37.2.6 $
+$Revision: 1.37.2.7 $
 
 =head1 DATE
 
-$Date: 2003-05-29 23:12:47 $
+$Date: 2003-06-12 20:18:35 $
 
 =head1 DESCRIPTION
 
@@ -449,39 +449,29 @@ hadn't been merged before.
 
 =item 2
 
-If a new directory has been added to the branch since the last merge, you must
-first manually add it to the trunk. This probably won't happen often, and is
-most likely in the F<inst/upgrade> directory, where new directories are added
-for upgrade scripts. If a directory is in the branch but not in the trunk,
-simply create it and add it.
-
-  mkdir inst/upgrade/1.4.1
-  cvs -z3 -q add inst/upgrade/1.4.1
-
-=item 3
-
 If the branch has not been merged into the trunk before, C<cd> into a checkout
 from HEAD, make sure it's fully up-to-date, and do a simple merge:
 
   cd bricolage-head-checkout/
   cvs -z3 -q update
-  cvs -z3 -q update -kk -j rev_1_4
+  cvs -z3 -q update -d -kk -j rev_1_4
 
 Otherwise, do a merge from the most recently-dated merge tag. In the above
 example, that would be "rev_1_4_merge-2002-08-31".
 
   cd bricolage-head-checkout/
   cvs -z3 -q update
-  cvs -z3 -q update -kk -j rev_1_4_merge-2002-08-31 \
+  cvs -z3 -q update -d -kk -j rev_1_4_merge-2002-08-31 \
     -j rev_1_4
 
-Note the use of the C<-kk> option. This option tells CVS not to evaluate
-keywords in the files. This is crucial for merges, since keywords such as
-C<$Revision $> B<will> be different. Not to worry, though; the keyword values
-are always restored before releasing a new version. See
-L<Creating Distributions|"CREATING DISTRIBUTIONS"> below.
+The C<-d> option will allow new directories and their contents added to the
+branch to be merged into HEAD. Note also the use of the C<-kk> option. This
+option tells CVS not to evaluate keywords in the files. This is crucial for
+merges, since keywords such as C<$Revision $> B<will> be different. Not to
+worry, though; the keyword values are always restored before releasing a new
+version. See L<Creating Distributions|"CREATING DISTRIBUTIONS"> below.
 
-=item 4
+=item 3
 
 Resolve any conflicts (hopefully none, but they do happen occasionally) and
 then rebuild the database and run all of the tests:
@@ -490,13 +480,13 @@ then rebuild the database and run all of the tests:
 
 If there are any test failures, you'll need to fix those, too.
 
-=item 5
+=item 4
 
 And finally, commit the changes to the trunk.
 
   cvs -z3 -q commit
 
-=item 6
+=item 5
 
 Tag the branch with today's date, so that future merges can decide to merge
 only from this date on.
