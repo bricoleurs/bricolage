@@ -217,7 +217,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES (22, 21, 133); 
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES (22, 0, 58, 'All Preferences', 'All prefernces in the system.', 0, 1);
+VALUES (22, 0, 58, 'All Preferences', 'All preferences in the system.', 0, 1);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (134, 35, 6, 1);
