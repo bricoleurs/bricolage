@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.34.2.2 $
+$Revision: 1.34.2.3 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.0';
 
 =item Date
 
-$Date: 2003-03-07 21:52:02 $
+$Date: 2003-03-07 22:11:07 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.34.2.2 2003-03-07 21:52:02 wheeler Exp $
+$Id: Bric.pm,v 1.34.2.3 2003-03-07 22:11:07 wheeler Exp $
 
 =back
 
@@ -377,7 +377,7 @@ sub my_meths {}
 
 ##############################################################################
 
-=begin comment
+=begin private
 
 =head2 Destructors
 
@@ -387,7 +387,7 @@ This is the default destructor method. Even if nothing is defined within it,
 it should still be here so that Perl wont waste time trying to find it in the
 C<AUTOLOAD()> method.
 
-=end comment
+=end private
 
 =cut
 
@@ -697,7 +697,7 @@ sub register_fields {
 
 ##############################################################################
 
-=begin comment
+=begin private
 
 =head2 Private Instance Methods
 
@@ -875,7 +875,7 @@ $SIG{__WARN__} = sub { Carp::cluck(@_) } unless MOD_PERL;
 
 ##############################################################################
 
-=end comment
+=end private
 
 =head1 AUTHOR
 

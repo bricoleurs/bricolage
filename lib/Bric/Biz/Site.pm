@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.4 $
+$Revision: 1.1.2.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.5 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-07 21:54:03 $
+$Date: 2003-03-07 22:11:10 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.4 2003-03-07 21:54:03 wheeler Exp $
+$Id: Site.pm,v 1.1.2.5 2003-03-07 22:11:10 wheeler Exp $
 
 =back
 
@@ -565,7 +565,7 @@ sub save {
 
 ##############################################################################
 
-=begin comment
+=begin private
 
 =head2 Private Functions
 
@@ -722,7 +722,7 @@ __END__
 
 =pod
 
-=end comment
+=end private
 
 =head1 AUTHOR
 
