@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7.2.1 $
+$Revision: 1.7.2.2 $
 
 =head1 DATE
 
-$Date: 2002-11-08 00:05:45 $
+$Date: 2002-11-08 21:47:54 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -84,25 +84,27 @@ if ($versions) {
 <%perl>;
 my $wf;
 my $work_id = get_state_data($widget, 'work_id');
-my $type;
+my ($type, $pkg);
 if ($widget eq 'story_prof') {
     $type = 'story';
+    $pkg = get_package_name($type);
 } elsif ($widget eq 'media_prof') {
     $type = 'media';
+    $pkg = get_package_name($type);
 } else {
     $type = 'fa';
+    $pkg = get_package_name('formatting');
 }
 
-my $story = get_state_data($widget, $type);
+my $asset = get_state_data($widget, $type);
 if ($work_id) {
    $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
 } else {
-   $work_id = $story->get_workflow_id();
+   $work_id = $asset->get_workflow_id();
    $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
 }
 
 # Find publish desk for this workflow
-my $pkg = get_package_name($type);
 my $has_perms = 0;
 foreach my $desk ($wf->allowed_desks) {
     if ($desk->can_publish) {
