@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-10 18:39:07 $
+$Date: 2003-10-22 03:42:22 $
 
 =head1 SYNOPSIS
 
@@ -322,7 +322,8 @@ sub new {
 
     # Send out any alerts specified for this event.
     $init->{event} = $self;
-    for my $at (Bric::Util::AlertType->list({ event_type_id => $et_id })) {
+    for my $at (Bric::Util::AlertType->list({ event_type_id => $et_id,
+                                              active        => 1 })) {
         $at->send_alerts($init);
     }
     return $self;

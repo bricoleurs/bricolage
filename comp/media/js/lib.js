@@ -150,7 +150,7 @@ returns true if characters that would be illegal for a url are found, false othe
 */
 function hasSpecialCharacters(what) {
 
-    var regExp = new RegExp("[^a-zA-Z0-9/_-]");
+    var regExp = new RegExp("[^a-zA-Z0-9_-.]");
     return regExp.test(what);
 
 }

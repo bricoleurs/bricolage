@@ -344,6 +344,22 @@ An upgrade script failure will I<really> now cause C<make upgrade> to halt
 installation so that any issues are immediately identified and correctable.
 [David]
 
+=item *
+
+Updated slug RegExen. They were a bit too strict, and should be better now,
+allowing dots, dashes, and underscores. Spotted by Creighton Higgins. [David]
+
+=item *
+
+The C<$name> variable no longer shows up twice in the list of available
+content variables for alert types on media documents. Thanks to Scott for the
+spot! [David]
+
+=item *
+
+Inactive alert types no longer trigger the sending of alerts. Thanks to Scott
+for the spot. [David]
+
 =back
 
 =head1 VERSION 1.6.6 (2003-10-03)

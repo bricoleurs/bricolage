@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.66 $
+$Revision: 1.67 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.66 $ )[-1];
+our $VERSION = (qw$Revision: 1.67 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-08 12:21:10 $
+$Date: 2003-10-22 03:42:21 $
 
 =head1 SYNOPSIS
 
@@ -1116,7 +1116,7 @@ sub set_slug {
     throw_invalid
       error    => 'Slug Must conform to URL character rules',
       maketext => ['Slug Must conform to URL character rules']
-      if defined $slug && $slug =~ m/\W/;
+      if defined $slug && $slug =~ m/^\w.-_/;
 
     my $old = $self->_get('slug');
     $self->_set([qw(slug _update_uri)] => [$slug, 1])
