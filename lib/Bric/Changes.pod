@@ -68,6 +68,11 @@ Fixed some problems with the sideNav menus under Netscape. [David]
 
 Fixed broken "Preview" button in Read-only story profile. [Matt Vella]
 
+=item *
+
+Updated debugging code to accommodate new syntax in Cache::Cache. Thanks to Sam
+Tregar for the spot. [David]
+
 =back
 
 =head1 VERSION 1.2.0
