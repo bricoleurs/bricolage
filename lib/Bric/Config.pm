@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$Revision: 1.50.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+our $VERSION = (qw$Revision: 1.50.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-18 23:43:19 $
+$Date: 2002-10-15 21:57:36 $
 
 =head1 SYNOPSIS
 
@@ -411,7 +411,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant TEMPLATE_QA_MODE        => $config->{TEMPLATE_QA_MODE} || 0;
 
     # Character translation settings.
-    use constant CHAR_SET                => $config->{CHAR_SET} || 'ISO-8859-1';
+    use constant CHAR_SET                => $config->{CHAR_SET} || 'UTF-8';
 
     # Time constants.
     use constant ISO_8601_FORMAT         => "%Y-%m-%d %T";
