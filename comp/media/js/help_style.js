@@ -21,6 +21,7 @@ if (is_nav6up) {
     ss.insertRule("h3 { font-size:" + lgSize + "; line-height:" + lgHeight + "; }", i++);
     ss.insertRule("p { font-size:" + size + "; line-height:" + height + "; }", i++);
     ss.insertRule(".redLink { color:#993300; }", i++);
+    ss.insertRule(".blackLink { color:#000000; }", i++);
     ss.insertRule("td { font-size:" + size + "; line-height:" + height + "; }", i++);
     ss.insertRule("dt {  font-size:" + size + "; line-height:" + lgHeight + "; font-weight:bold; }", i++);
     ss.insertRule("dd { font-size:" + size + "; line-height:" + height + "; }", i++);
@@ -75,6 +76,7 @@ if (is_nav6up) {
     ss.light.all.backgroundColor = '#cccc99';
 
     ss.redLink.all.color = '#993300';
+    ss.blackLink.all.color = '#000000';
 
     ss.context.all.fontFamily = 'Verdana,Helvetica,Arial,sans-serif';
     ss.context.all.fontSize = smSize;
@@ -88,6 +90,7 @@ if (is_nav6up) {
         ss.addRule(".tab", "background:#006666; color:white; font-weight:bold; font-size:10pt;", i++);
         ss.addRule(".context", "background:#999966; font-size:7.25pt; line-height:9pt;", i++);
         ss.addRule(".redLink", "color:#993300;", i++);
+        ss.addRule(".blackLink", "color:#000000;", i++);
         ss.addRule("h3", "font-size:10pt; line-height:12pt;", i++);
         ss.addRule("p", "font-size:8pt; line-height:11pt;", i++);
         ss.addRule("dt", " font-size:8pt; line-height:11pt; font-weight:bold;", i++);
@@ -99,6 +102,7 @@ if (is_nav6up) {
         ss.addRule(".light", "background:#cccc99; font-size:7pt;");
         ss.addRule(".context", "background:#999966; font-size:7.5pt; line-height:10.5pt;");
         ss.addRule(".redLink", "color:#993300;");
+        ss.addRule(".blackLink", "color:#000000;");
         ss.addRule("h3", "font-size:10pt; line-height:13pt;");
         ss.addRule("p", "font-size:8pt; line-height:11.5pt;");
         ss.addRule("dt", " font-size:8pt; line-height:11.5pt; font-weight:bold;");
