@@ -22,10 +22,6 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Added Template Toolkit burner support. [Arthur / Fotango]
-
-=item *
-
 Added Bric::Biz::Site. This class will be worked into the rest of the API and
 the UI over the next few weeks in order to add true multisite capabilities to
 Bricolage. [David]
@@ -270,7 +266,11 @@ Added a preference to set the default Story/Media sorting. [Scott]
 =item *
 
 Added the ability to test templates without having to deploy them by using
-'template sandboxes' for each template developer. [JoE<atilde>o Pedro]
+"template sandboxes" for each template developer. [JoE<atilde>o Pedro]
+
+=item *
+
+Added Template Toolkit burner support. [Arthur/Fotango]
 
 =back
 
