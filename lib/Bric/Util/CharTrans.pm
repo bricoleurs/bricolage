@@ -6,17 +6,17 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 04:20:24 $
+$Date: 2003-10-14 00:34:18 $
 
 =head1 SYNOPSIS
 
@@ -255,6 +255,8 @@ sub _convert {
 
 1;
 __END__
+
+=back
 
 =head1 NOTES
 
