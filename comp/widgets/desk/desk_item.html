@@ -12,7 +12,7 @@
       <dd<% $classes->{category_name} || $classes->{location} || '' %>><% $cat %></dd>
       <dt><% $lang->maketext('Site') %></dt>
       <dd<% $classes->{site_id} || '' %>><% $site %></dd>
-      <dt><% $lang->maketext(($class eq 'formatting' ? 'Output Channel' : $disp ) . ' Type') %></dt>
+      <dt><% $lang->maketext(($class eq 'formatting' ? 'Output Channel' : $disp  . ' Type')) %></dt>
       <dd<% $classes->{element} || '' %>><% $type || '&nbsp;' %></dd>
       <dt><% $lang->maketext($date_label) %></dt>
       <dd<% $classes->{cover_date} || '' %>><% $date || '&nbsp;' %></dd>
@@ -163,11 +163,11 @@ my $elink = $user ? $user : $label ? '<a href="' . $r->uri . "?"
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:12 $
+$Date: 2003-10-23 23:43:16 $
 
 =head1 DESCRIPTION
 
