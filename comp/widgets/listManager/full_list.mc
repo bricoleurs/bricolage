@@ -30,10 +30,10 @@
 
       my ($aclass, $thclass);
       if ($sortBy eq $f) {
-	  ($aclass, $thclass) = ('whiteLink', $sort_class);
-	  $sort_col = $i;
+          ($aclass, $thclass) = ('whiteLink', $sort_class);
+          $sort_col = $i;
       } else {
-	  ($aclass, $thclass) = ('blackLink', 'medHeader')
+          ($aclass, $thclass) = ('blackLink', 'medHeader')
       }
 
       $m->out(qq{<th class=$thclass style="border-style:solid; border-color:#cccc99;">&nbsp;});
@@ -52,7 +52,7 @@
           $m->out(qq{<a class="$aclass" href="$url?listManager|sortBy_cb=$sortsign$f">} .
                   ($disp || "") . "&nbsp;$sortsymbol</a>");
       } else {
-	  $m->out($disp);
+          $m->out($disp);
       }
       $m->out("</th>");
   }
@@ -95,9 +95,9 @@ EOF
   foreach my $c (0..$#{$data->[$r]}) {
       my $val   = $data->[$r]->[$c];
       if ($c eq $sort_col) {
-	  $m->out(qq{<td height=25 valign=top style="border-style:solid; border-color:#cccc99;"><b>$val</b></td>\n});
+          $m->out(qq{<td height=25 valign=top style="border-style:solid; border-color:#cccc99;"><b>$val</b></td>\n});
       } else {
-	  $m->out(qq{<td height=25 valign=top style="border-style:solid; border-color:#cccc99;">$val</td>\n});
+          $m->out(qq{<td height=25 valign=top style="border-style:solid; border-color:#cccc99;">$val</td>\n});
       }
   }
 

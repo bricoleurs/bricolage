@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2002-07-03 04:48:20 $
+$Date: 2002-07-03 04:59:22 $
 
 =head1 SYNOPSIS
 
@@ -509,31 +509,31 @@ my $get_my_meths = sub {
 
     # Cook the value methods
     if ($field_titles && !$field_values) {
-	# Cook the display values
-	while (my ($f, $t) = each %$field_titles) {
-	    $meths->{$f} = { %{ $meths->{$f} } }; # Copy.
-	    $meths->{$f}->{disp} = $t;
-	}
+        # Cook the display values
+        while (my ($f, $t) = each %$field_titles) {
+            $meths->{$f} = { %{ $meths->{$f} } }; # Copy.
+            $meths->{$f}->{disp} = $t;
+        }
     } elsif ($field_values) {
-	$field_titles ||= {};
-	foreach my $f (keys %$meths) {
-	    # Copy the method metadata.
-	    $meths->{$f} = { %{ $meths->{$f} } };
-	    # Install the new display name, if there is one.
-	    $meths->{$f}->{disp} = delete $field_titles->{$f}
-	      if exists $field_titles->{$f};
+        $field_titles ||= {};
+        foreach my $f (keys %$meths) {
+            # Copy the method metadata.
+            $meths->{$f} = { %{ $meths->{$f} } };
+            # Install the new display name, if there is one.
+            $meths->{$f}->{disp} = delete $field_titles->{$f}
+              if exists $field_titles->{$f};
 
-	    my $meth = $meths->{$f}->{get_meth};
-	    # Try to return a value from $field_values first.
-	    my $cooked = sub { return ($field_values->($_[0], $f) ||
-				       $meth->(@_)) };
-	    $meths->{$f}->{get_meth} = $cooked;
-	}
-	# Check to see if there are some bonus fields to be added.
-	while (my ($f, $t) = each %$field_titles) {
-	    $meths->{$f}{disp} = $t;
-	    $meths->{$f}{get_meth} = sub { return $field_values->($_[0], $f) };
-	}
+            my $meth = $meths->{$f}->{get_meth};
+            # Try to return a value from $field_values first.
+            my $cooked = sub { return ($field_values->($_[0], $f) ||
+                                       $meth->(@_)) };
+            $meths->{$f}->{get_meth} = $cooked;
+        }
+        # Check to see if there are some bonus fields to be added.
+        while (my ($f, $t) = each %$field_titles) {
+            $meths->{$f}{disp} = $t;
+            $meths->{$f}{get_meth} = sub { return $field_values->($_[0], $f) };
+        }
     }
     return $meths;
 };
@@ -549,12 +549,12 @@ my $output_select_controls = sub {
     $vals = ref($vals->[0]) eq 'ARRAY' ? $vals : [$vals];
 
     foreach my $v (@$vals) {
-	my ($label, $name, $value) = @$v;
-	$value ||= $o->get_id;
+        my ($label, $name, $value) = @$v;
+        $value ||= $o->get_id;
 
-	push @cntl, $m->scomp('/widgets/profile/checkbox.mc', name  => $name,
-	      	                                              value => $value).
-		    $label;
+        push @cntl, $m->scomp('/widgets/profile/checkbox.mc', name  => $name,
+                                                              value => $value).
+                    $label;
     }
 
     return @cntl;
@@ -571,16 +571,16 @@ my $output_profile_controls = sub {
     $vals = ref($vals->[0]) eq 'ARRAY' ? $vals : [$vals];
 
     foreach my $v (@$vals) {
-	my ($label, $url, $value) = @$v;
+        my ($label, $url, $value) = @$v;
 
-	# Don't set a default value if they passed the empty string.
-	if ((not defined $value) or (length($value) > 0)) {
-	    $value ||= 'id='.$o->get_id;
-	    # Add the query string '?' if its not there already.
-	    $value = "?$value" unless substr($value, 0, 1) eq '?';
-	}
+        # Don't set a default value if they passed the empty string.
+        if ((not defined $value) or (length($value) > 0)) {
+            $value ||= 'id='.$o->get_id;
+            # Add the query string '?' if its not there already.
+            $value = "?$value" unless substr($value, 0, 1) eq '?';
+        }
 
-	push @cntl, "<a href='$url$value' class=redLink>$label</a>&nbsp;";
+        push @cntl, "<a href='$url$value' class=redLink>$label</a>&nbsp;";
     }
 
     return @cntl;
@@ -611,43 +611,43 @@ my $build_table_data = sub {
     # Output the rows of data
     foreach my $o (@$slice) {
 
-	# Push the object id as the first value to be used in the listing comp.
-	push @{$data->[$r]}, $o->get_id;
+        # Push the object id as the first value to be used in the listing comp.
+        push @{$data->[$r]}, $o->get_id;
 
-	# Load a flag to tell if this object is a featured object or not.
-	my %flags = ('featured' => $featured->{$o->get_id});
+        # Load a flag to tell if this object is a featured object or not.
+        my %flags = ('featured' => $featured->{$o->get_id});
 
-	# Output for each field.
-	foreach my $f (@$fields) {
-	    my $val;
-	    if ($meth->{$f}->{get_meth}) {
-		# Try to call the get method.
-		$val = $meth->{$f}->{get_meth}->($o,@{$meth->{$f}->{get_args}});
-		# See if there is an existing alter method.
-		$val = exists $alter->{$f} ? $alter->{$f}->($val, $o, \%flags)
+        # Output for each field.
+        foreach my $f (@$fields) {
+            my $val;
+            if ($meth->{$f}->{get_meth}) {
+                # Try to call the get method.
+                $val = $meth->{$f}->{get_meth}->($o,@{$meth->{$f}->{get_args}});
+                # See if there is an existing alter method.
+                $val = exists $alter->{$f} ? $alter->{$f}->($val, $o, \%flags)
                                            : $val;
-	    }
+            }
 
-	    # Add this value to the return data.
-	    push @{$data->[$r]}, ($val || '&nbsp');
-	}
+            # Add this value to the return data.
+            push @{$data->[$r]}, ($val || '&nbsp');
+        }
 
-	my @sel = $output_select_controls->($o, $select, \%flags);
-	my @prf = $output_profile_controls->($o, $profile, \%flags);
+        my @sel = $output_select_controls->($o, $select, \%flags);
+        my @prf = $output_profile_controls->($o, $profile, \%flags);
 
-	## Add the profile controls if any
-	# MAX function
-	$prf_cols = scalar @prf > $prf_cols ? scalar @prf : $prf_cols;
+        ## Add the profile controls if any
+        # MAX function
+        $prf_cols = scalar @prf > $prf_cols ? scalar @prf : $prf_cols;
 
-	push @{$data->[$r]}, @prf if @prf;
+        push @{$data->[$r]}, @prf if @prf;
 
-	## Add the select items if any
-	if (@sel) {
-	    $sel_cols = 1;
-	    push @{$data->[$r]}, join('<br>', @sel);
-	}
+        ## Add the select items if any
+        if (@sel) {
+            $sel_cols = 1;
+            push @{$data->[$r]}, join('<br>', @sel);
+        }
 
-	$r++;
+        $r++;
     }
 
     $cols += $sel_cols + $prf_cols;
@@ -670,9 +670,9 @@ my $build_constraints = sub {
     # Find the default search field.
     unless ($def_sort_field) {
         foreach my $f (keys %$meth) {
-	    # Break out of the loop if we find the searchable field.
-	    $def_sort_field = $f and last if $meth->{$f}->{'search'};
-	}
+            # Break out of the loop if we find the searchable field.
+            $def_sort_field = $f and last if $meth->{$f}->{'search'};
+        }
     }
 
     # Initialize the sort column with the default search field.
@@ -686,14 +686,14 @@ my $build_constraints = sub {
 
     # If any criteria were passed then we need to constrain our list.
     if ($crit && $crit_field) {
-	# If field is an array, build a hash with the fields as the keys and
+        # If field is an array, build a hash with the fields as the keys and
         # $crit for vals
-	if (ref $crit_field) {
-	    @{$list_arg}{@$crit_field} = @$crit;
-	} else {
-	    $crit_field = $def_sort_field if $crit_field eq '_default';
-	    $list_arg->{$crit_field} = $crit;
-	}
+        if (ref $crit_field) {
+            @{$list_arg}{@$crit_field} = @$crit;
+        } else {
+            $crit_field = $def_sort_field if $crit_field eq '_default';
+            $list_arg->{$crit_field} = $crit;
+        }
     }
 
     return $list_arg;
@@ -706,8 +706,8 @@ my $load_featured_objs = sub {
 
     # Load any unloaded features.
     foreach (keys %$featured) {
-	next if $loaded{$_};
-	push @$objs, $pkg->lookup({'id' => $_});
+        next if $loaded{$_};
+        push @$objs, $pkg->lookup({'id' => $_});
     }
 
     return $objs;
@@ -720,20 +720,20 @@ my $multisort = sub{
 
     my $val;
     if ($sort_by eq 'id') {
-	# Do a numeric sorting.
-	$val = $sort_get->($a, @$sort_arg) <=>
-	  $sort_get->($b, @$sort_arg);
+        # Do a numeric sorting.
+        $val = $sort_get->($a, @$sort_arg) <=>
+          $sort_get->($b, @$sort_arg);
     } else {
-	# Do the case insensitive comparison
-	$val = lc($sort_get->($a, @$sort_arg)) cmp
-	  lc($sort_get->($b, @$sort_arg));
+        # Do the case insensitive comparison
+        $val = lc($sort_get->($a, @$sort_arg)) cmp
+          lc($sort_get->($b, @$sort_arg));
     }
 
     # See if we need to do more comparisons or not.
     if (scalar(@sort_list) > 0) {
-	return $val || multisort($meth, @sort_list);
+        return $val || multisort($meth, @sort_list);
     } else {
-	return $val;
+        return $val;
     }
 };
 
@@ -746,21 +746,21 @@ my $sort_objects = sub {
 
     # Only sort if the sort by was set in the state data.
     if ($sort_by) {
-	# Make sure we pass an array ref to the sort arguments
-	$sort_by = ref $sort_by ? $sort_by : [$sort_by];
-	@sort_objs = sort { $multisort->($meth, @$sort_by) } @$objs;
+        # Make sure we pass an array ref to the sort arguments
+        $sort_by = ref $sort_by ? $sort_by : [$sort_by];
+        @sort_objs = sort { $multisort->($meth, @$sort_by) } @$objs;
     } else {
-	@sort_objs = @$objs;
+        @sort_objs = @$objs;
     }
 
     # Exclude objects with certain IDs.
     if ($exclude) {
-	# Convert the exclude array into a HASH ref and return as a sub ref.
-	if (ref $exclude eq 'ARRAY') {
-	    my %h = map { $_ => '' } @$exclude;
-	    $exclude = sub { exists $h{$_[0]->get_id} };
-	}
-	@sort_objs = grep(not($exclude->($_)), @sort_objs);
+        # Convert the exclude array into a HASH ref and return as a sub ref.
+        if (ref $exclude eq 'ARRAY') {
+            my %h = map { $_ => '' } @$exclude;
+            $exclude = sub { exists $h{$_[0]->get_id} };
+        }
+        @sort_objs = grep(not($exclude->($_)), @sort_objs);
     }
 
     return @sort_objs;

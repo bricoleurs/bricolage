@@ -13,15 +13,15 @@ if ($field eq "$widget|delete_cb") {
 
     foreach (@$id) {
         my $obj = $pkg->lookup({'id' => $_});
-	if (chk_authz($obj, EDIT, 1)) {
-	    $obj->delete;
-	    $obj->save;
-	    log_event($obj_key.'_del', $obj);
-	} else {
-	    my $name = defined($obj->get_name) ?
-	      '&quot;' . $obj->get_name . '&quot' : 'Object';
-	    add_msg("Permission to delete $name denied.");
-	}
+        if (chk_authz($obj, EDIT, 1)) {
+            $obj->delete;
+            $obj->save;
+            log_event($obj_key.'_del', $obj);
+        } else {
+            my $name = defined($obj->get_name) ?
+              '&quot;' . $obj->get_name . '&quot' : 'Object';
+            add_msg("Permission to delete $name denied.");
+        }
     }
 } elsif ($field eq "$widget|deactivate_cb") {
     my $id  = mk_aref($param->{$field});
@@ -30,15 +30,15 @@ if ($field eq "$widget|delete_cb") {
 
     foreach (@$id) {
         my $obj = $pkg->lookup({'id' => $_});
-	if (chk_authz($obj, EDIT, 1)) {
-	    $obj->deactivate;
-	    $obj->save;
-	    log_event($obj_key.'_deact', $obj);
-	} else {
-	    my $name = defined($obj->get_name) ?
-	      '&quot;' . $obj->get_name . '&quot' : 'Object';
-	    add_msg("Permission to delete $name denied.");
-	}
+        if (chk_authz($obj, EDIT, 1)) {
+            $obj->deactivate;
+            $obj->save;
+            log_event($obj_key.'_deact', $obj);
+        } else {
+            my $name = defined($obj->get_name) ?
+              '&quot;' . $obj->get_name . '&quot' : 'Object';
+            add_msg("Permission to delete $name denied.");
+        }
     }
 #} elsif ($field eq "$widget|add_cb") {
 
@@ -59,14 +59,14 @@ elsif ($field =~ /$widget\|select-(.+)_cb/) {
 
     foreach (@$id) {
         my $obj = $pkg->lookup({'id' => $_});
-	if (chk_authz($obj, EDIT, 1)) {
-	    $obj->$method;
-	    $obj->save;
-	} else {
-	    my $name = defined($obj->get_name) ?
-	      '&quot;' . $obj->get_name . '&quot' : 'Object';
-	    add_msg("Permission to $method $name denied.");
-	}
+        if (chk_authz($obj, EDIT, 1)) {
+            $obj->$method;
+            $obj->save;
+        } else {
+            my $name = defined($obj->get_name) ?
+              '&quot;' . $obj->get_name . '&quot' : 'Object';
+            add_msg("Permission to $method $name denied.");
+        }
     }
 }
 # set offset from beginning record in @sort_objs at which array slice begins
