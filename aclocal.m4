@@ -110,7 +110,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.1 2002-01-14 18:07:50 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -139,7 +139,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.1 2002-01-14 18:07:50 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -242,7 +242,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.1 2002-01-14 18:07:50 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -437,7 +437,7 @@ dnl DEFAULT value if the user merely hits return.  Also calls
 dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
 dnl be entered into the config.h file as well.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.1 2002-01-14 18:07:50 markjaroski Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER],
@@ -463,7 +463,7 @@ dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl there is a password, and if so what it is.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.1 2002-01-14 18:07:50 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_FOR_PGPASS],[
@@ -501,12 +501,12 @@ dnl @synopsis AC_VAR_WITH(VAR,with,default)
 dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.1 2002-01-14 18:07:50 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_VAR_WITH],[
 AC_ARG_WITH($2,AC_HELP_STRING([
-  --with-$2],[defaults to '$3']),
+  --with-$2],[defaults to $3]),
   $1=${withval},
   $1=$3)
 AC_SUBST($1)

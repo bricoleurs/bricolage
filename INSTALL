@@ -2,10 +2,10 @@ NAME
     Bric::Admin - Bricolage System Administration Guide.
 
 VERSION
-    $Revision: 1.1 $
+    $Revision: 1.1.2.1 $
 
 DATE
-    $Date: 2001-12-13 14:26:33 $
+    $Date: 2002-01-14 18:07:50 $
 
 DESCRIPTION
     This guide is intended for the system administrator in charge of
@@ -66,6 +66,8 @@ INSTALLATION
     At some point, we hope to have a makefile that will automate the
     installation of all of these packages for you. Until then, the following
     instructions will get you through installing all the needed components.
+    If you're upgrading from an older version of Bricolage see the UPGRADING
+    section below.
 
   Perl
 
@@ -444,6 +446,46 @@ INSTALLATION
     Bricolage sources can't just use that login to get into *your*
     installation! Now use the admin login to create other user accounts.
 
+UPGRADING
+    To upgrade Bricolage, first stop the server:
+
+      bin/bric_apachectl stop
+
+    Save a copy of your bricolage.conf file, so you don't overwrite it:
+
+      cp conf/bricolage.conf conf/bricolage.conf.old
+
+    Then copy in the new sources from the distribution into you bricolage
+    directory.
+
+      cp -a /path/to/new/bricolage .
+
+    Run the upgrade scripts needed for upgrading to the new version. The
+    upgrade scripts are in the install/upgrade/ directory. Run .sql scripts
+    with psql and .pl scripts with perl. For example, to upgrade from 1.0.2
+    to 1.2.0:
+
+      psql -U postgres_user -f install/upgrade/1.2.0/burner.sql bric_database_name
+
+      psql -U postgres_user -f install/upgrade/1.2.0/oc_include.sql bric_database_name
+
+      perl install/upgrade/1.2.0/rm_dhandlers.pl
+
+    You'll need to adjust the psql line to match your PostrgeSQL settings
+    (postgres_user and bric_database_name). Also, you may need to edit
+    oc_include.sql if you need to GRANT access to your database to a user
+    other than "nobody". The GRANT statements are at the bottom of the file.
+
+    Now edit the new bricolage.conf file to match your old settings using
+    the bricolage.conf.old settings you saved as a guide. Don't just copy
+    the old settings back into place - there may be new configuration
+    variables that you'll need to set for the new version. See the
+    CONFIGURATION section below for details.
+
+    Start up Bricolage and enjoy the new features!
+
+      bin/bric_apachectl start
+
 CONFIGURATION
     Configuration of Bricolage is handled via two interfaces. The first is
     the user interface, where application administrators can set preferences
@@ -795,16 +837,8 @@ CONFIGURATION
 
     *   BURN_ROOT: The staging area directory where the burn system places
         content files upon publication or preview. Defaults to
-        "$BRICOLAGE_ROOT/data/burn" if not specified. Make sure that
-        SYS_USER has permission to write to this directory.
-
-    *   BURN_COMP_ROOT: The directory templates are deployed to. Defaults to
-        "$BRICOLAGE_ROOT/burn/comp" if not specified.
-
-    *   BURN_DATA_ROOT: The directory where Mason stores Templates once it
-        has compiled them. Defaults to "$BRICOLAGE_ROOT/burn/data" if not
-        specified. Make sure that SYS_USER has permission to write to this
-        directory.
+        "$MASON_DATA_ROOT/burn" if not specified. Make sure that SYS_USER
+        has permission to write to this directory.
 
     *   INCLUDE_XML_WRITER: This directive, when switched on, causes
         Bricolage to instantiate an XML::Writer object and to include it in
@@ -812,12 +846,16 @@ CONFIGURATION
         XML::Writer documentation for more information. Defaults to off if
         unspecified.
 
+        Note: Only the Mason burner supports XML::Writer.
+
     *   XML_WRITER_ARGS: If INCLUDE_XML_WRITER is switched on, then this
         direcive is passed to the instantiation method of the XML::Writer
         object. All arguments to XML::Writer->new() are supported except the
         OUTPUT argument, which Bricolage handles internally to ensure that
         data is sent directly to the template's output file. Defaults to no
         arguments if not specified.
+
+        Note: Only the Mason burner supports XML::Writer.
 
   Authentication Configuration
 
@@ -909,6 +947,12 @@ CONFIGURATION
         Defaults to "0" if not specified, and has no affect unless the
         PREVIEW_LOCAL directive has been activated (see above).
 
+    *   DEF_MEDIA_TYPE: Designates the default media type for assets where
+        Bricolage cannot ascertain the media type. The value of this
+        directive must be present in the database -- see
+        Bric::Util::MediaType for more information. Defaults to "text/html"
+        if not specified.
+
   Alert Configuration
 
     The Bricolage alerting system allows users to receive notifications upon
@@ -976,6 +1020,56 @@ CONFIGURATION
         warned that this code is executed at server startup time, so beware
         loading any variables that don't survive forks very well (such as
         database handles). Defaults to load nothing if not specified.
+
+        Note: Only the Mason burner supports PERL_LOADER.
+
+  Virtual FTP Server Configuration
+
+    Bricolage includes a virtual FTP server that can be used to allow access
+    to Bricolage templates. This may provide a more comfortable development
+    environment for programmers working on templates. Many editors provide
+    FTP modes that make editing files via FTP almost as easy as editing
+    files localy (ange-ftp for Emacs, for example).
+
+    There are security risks to consider - FTP sends passwords unencrypted
+    over the network. If you are running Bricolage behind a firewall this
+    might not be a problem.
+
+    To enable the FTP server you'll need to install the Net::FTPServer Perl
+    module. After that you can configure the FTP server with the following
+    options:
+
+    *   ENABLE_FTP_SERVER: Set this to 1 if you want to use the FTP server.
+        Defaults to 0.
+
+    *   FTP_PORT: The port that the FTP server will run on. Users will need
+        to know this port to connect to the FTP server. Since you won't be
+        running the server as root you'll need to choose a port above 1024.
+        Defaults to 2121.
+
+    *   FTP_ADDRESS: Normally the FTP server will bind to all the available
+        IP addresses for your machine. If you set this variable then the
+        server will only bind to the specified address.
+
+    *   FTP_LOG: Set this to the file where you want to FTP logs written to.
+        Defaults to $BRICOLAGE_ROOT/ftp.log if not set.
+
+    *   FTP_DEBUG: If you set this to 1 you'll see a lot of useful tracing
+        information in the FTP logfile. This can help diagnose errors but is
+        probably only of intertest to developers. Defaults to 0.
+
+    Next you'll need to start the FTP server as the same user that Apache
+    runs as. For example, if you run Apache as "nobody" you would use this
+    command to start the FTP server:
+
+       su nobody -c "/usr/local/bricolage/bin/bric_ftpd -S"
+
+    The -S option to ftpd runs the FTP server in the background. For other
+    possibilities see the documentation for Net::FTPServer.
+
+    Once the server is up and running connect to it with an FTP client and
+    start editing templates. For more information see
+    Bric::Util::FTP::Server.
 
 DIRECTORY PERMISSIONS
     As noted above, you need to supply the user and group names under which
@@ -1071,28 +1165,36 @@ SYSTEM ADMINISTRATION
 
     Bricolage stores all of its application files -- including the UI
     elements and Perl libraries -- in "$BRICOLAGE_ROOT". Bricolage will make
-    a lot of disk accesses to be to "$BRICOLAGE_ROOT/data", which is where
-    all of the UI elements are compiled and stored. The Perl libraries are
-    stored in "$BRICOLAGE_ROOT/lib", although mostly they will only be read
-    on startup.
+    a lot of disk accesses to be to MASON_DATA_ROOT, which is where all of
+    the UI elements are compiled and stored. The Perl libraries are stored
+    in "$BRICOLAGE_ROOT/lib", although mostly they will only be read on
+    startup.
 
     Bricolage creates a great many files on the filesystem, too, however.
-    The BURN_ROOT houses the templates that are used to format stories -
-    you'll want to be sure to back it up regularly. The
-    "$BRICOLAGE_ROOT/comp/data/preview" directory gets formatted story files
-    written to it if the PREVIEW_LOCAL directive is set to true. This
-    directory doesn't need backing up, as these files are used only for
-    previewing purposes.
+    The "$BURN_ROOT/comp" directory houses the templates that are used to
+    format stories - you'll want to be sure to back it up regularly. The
+    "$BURN_ROOT/stage" and "$BURN_ROOT/preview" directories will get burned
+    files written to them upon publish and preview, respectively. These will
+    be good targets for periodic cleanup if you need to reclaim disk space,
+    as generally the files stored there will not be much accessed after
+    they're created. If you decide to clean some of them out to reclaim file
+    space, just be sure not to delete any files for which there are pending
+    distribution jobs, otherwise the distribution jobs will fail!
 
-    The "$BRICOLAGE_ROOT/comp/data/media" directory gets all media asset
+    The "$MASON_COMP_ROOT/data/preview" directory gets formatted story files
+    copied to it from "$BURN_ROOT/preview" if the PREVIEW_LOCAL directive is
+    set to true. This directory doesn't need backing up, as these files are
+    used only for previewing purposes.
+
+    the "$BRICOLAGE_ROOT/comp/data/media" directory gets all media asset
     files written to it. This last directory is perhaps the most important,
     from a system administration perspective, because if Bricolage is used
     to manage large documents (e.g., QuickTime movies), this directory will
-    start to use a lot of space - and especially if the media files
+    start to use a lot of space -- and especially if the media files
     themselves are versioned. Thus in environments where many large media
     assets will be managed, it might make sense to put this directory on its
     own partition or disk, as well. And remember to back it up to prvent the
-    loss of all of your media assets!
+    loss of all of your media assets -- they aren't stored anywhere else!
 
     Bricolage also create temporary files for caching user session data and
     application data. All of these files are stored in sub directories of
@@ -1119,60 +1221,9 @@ SYSTEM ADMINISTRATION
     This will run nightly at 2AM and clean out all files older than 12
     hours. See the documentation in bin/clean_tmp.pl for more details.
 
-  Virtual FTP Server Configuration
-
-    Bricolage includes a virtual FTP server that can be used to allow access
-    to Bricolage templates. This may provide a more comfortable development
-    environment for programmers working on templates. Many editors provide
-    FTP modes that make editing files via FTP almost as easy as editing
-    files localy (ange-ftp for Emacs, for example).
-
-    There are security risks to consider - FTP sends passwords unencrypted
-    over the network. If you are running Bricolage behind a firewall this
-    might not be a problem.
-
-    WARNING: The FTP server component is an experimental feature and has not
-    been fully tested of completely implemented!
-
-    To enable the FTP server you'll need to install the Net::FTPServer Perl
-    module. After that you can configure the FTP server with the following
-    options:
-
-    *   ENABLE_FTP_SERVER: Set this to 1 if you want to use the FTP server.
-        Defaults to 0.
-
-    *   FTP_PORT: The port that the FTP server will run on. Users will need
-        to know this port to connect to the FTP server. Since you won't be
-        running the server as root you'll need to choose a port above 1024.
-        Defaults to 2121.
-
-    *   FTP_ADDRESS: Normally the FTP server will bind to all the available
-        IP addresses for your machine. If you set this variable then the
-        server will only bind to the specified address.
-
-    *   FTP_LOG: Set this to the file where you want to FTP logs written to.
-        Defaults to $BRICOLAGE_ROOT/ftp.log if not set.
-
-    *   FTP_DEBUG: If you set this to 1 you'll see a lot of useful tracing
-        information in the FTP logfile. This can help diagnose errors but is
-        probably only of intertest to developers. Defaults to 0.
-
-    Next you'll need to start the FTP server as the same user that Apache
-    runs as. For example, if you run Apache as "nobody" you would use this
-    command to start the FTP server:
-
-       su nobody -c "/usr/local/bricolage/bin/ftpd -S"
-
-    The -S option to ftpd runs the FTP server in the background. For other
-    possibilities see the documentation for Net::FTPServer.
-
-    Once the server is up and running connect to it with an FTP client and
-    start editing templates. For more information see the documenation for
-    Bric::Util::FTP::Server.
-
 AUTHOR
     David Wheeler <david@wheeler.net>
 
 SEE ALSO
-    perl(1), Bric (2).
+    Bric
 

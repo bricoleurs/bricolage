@@ -1,5 +1,6 @@
-# settings
+# standard
 SHELL = /bin/sh
+
 
 # Programatic dependancies
 PERL = @PERL@
@@ -13,14 +14,32 @@ MKDIR = @MKDIR@
 FIND = @FIND@
 CTAGS = @CTAGS@
 
+
 # directories
 BIN = bin
 COMP = comp
 CONF = conf
 DATA = data
 LIB = lib
+BLIB = blib
 DOC = doc
 INST = install
+HTML = ${DOC}/html
+MAN = ${DOC}/man
+
+
+# Bricolage configuration info
+APACHE_USER = @APACHE_USER@
+APACHE_GROUP = @APACHE_GROUP@
+APACHE_CONF = @APACHE_CONF@
+DB_NAME = @DB_NAME@
+DBI_USER = @DBI_USER@
+DBI_PASS = @DBI_PASS@
+POSTGRES_ROOT_USER = @POSTGRES_ROOT_USER@
+POSTGRES_SYSTEM_USER = @POSTGRES_SYSTEM_USER@
+POSTGRES_ROOT_PASS = @PG_ROOT_PASS@
+HAVE_SSL = @HAVE_SSL@
+
 
 # Installation related variables
 # Most of these are standard --with-switches
@@ -30,34 +49,109 @@ exec_prefix  = @exec_prefix@
 bindir  = @bindir@
 datadir  = @datadir@
 compdir = @compdir@
-sysconfdir  = @sysconfdir@
-libdir  = @libdir@
-libexecdir  = @libexecdir@
+confdir = @sysconfdir@
+blibdir = @blibdir@
+libdir = @libdir@
+htmldir = @htmldir@
 mandir  = @mandir@
-infodir  = @infodir@
-sbindir  = @sbindir@
-localstatedir  = @localstatedir@
-sharedstatedir  = @sharedstatedir@
 VPATH = @srcdir@
 
 
-# now we'll use some perl and some builtin 
+
+# now we'll use some builtin 
 # regex to get a list of targets
 # and sources
-BIN_FILES = $(shell cd ${BIN} && ls | sed -e 's/CVS//')
+# bin is easy
+BIN_FILES = $(filter-out CVS,$(shell cd ${BIN} && ls))
 BIN_TARGETS = $(addprefix ${bindir}/,${BIN_FILES})
-CONF_FILES = $(shell cd ${CONF} && ls | sed -e 's/CVS//')
-CONF_TARGETS = $(addprefix ${confdir}/,${CONF_FILES})
-COMP_FILES = $(shell cd ${COMP} && ls | sed -e 's/CVS//')
+HTML_FILES = $(filter-out CVS,$(shell cd ${HTML} && ls))
+HTML_TARGETS = $(addprefix ${htmldir}/,${HTML_FILES})
+MAN_FILES = $(filter-out CVS,$(shell cd ${MAN} && ls))
+MAN_TARGETS = $(addprefix ${mandir}/,${MAN_FILES})
+
+# the conf files have to be handled more gingerly
+ifeq (${HAVE_SSL},yes)
+	CONF_HTTPD = ${CONF}/httpd-ssl.conf
+else
+	CONF_HTTPD = ${CONF}/httpd.conf
+endif
+CONF_HTTPD_TARGET = ${confdir}/httpd.conf
+CONF_APACHE_TARGET = ${APACHE_CONF}/httpd.conf
+CONF_BRIC = ${CONF}/bricolage.tmp.conf
+CONF_BRIC_TARGET = ${confdir}/bricolage.conf
+CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_APACHE_TARGET} ${CONF_HTTPD_TARGET}
+
+# And the various doc files in text form
+DOC_TARGETS = ${docdir}/README ${docdir}/Changes \
+			  ${docdir}/License ${docdir}/TODO ${docdir}/INSTALL
+
+
+# now the heart of the matter.  We are just copying
+# we need to produce a list of directories to make
+# and a list of files to put in them, matched with 
+# the originals, so we can check timestamps...
+# TODO: I should be able to define these as functions
+# 		to minimise the repetition...
+LIB_SUBDIRS = $(subst ./,, \
+					$(shell cd ${LIB} && \
+						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
+LIB_FILES = $(foreach dir, \
+				${LIB_SUBDIRS}, \
+					$(shell cd ${LIB} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
+LIB_TARGETS = $(addprefix ${libdir}/,${LIB_FILES})
+# same thing we did with LIB
+COMP_SUBDIRS = $(subst ./,, \
+					$(shell cd ${COMP} && \
+						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
+COMP_FILES = $(foreach dir, \
+				${COMP_SUBDIRS}, \
+					$(shell cd ${COMP} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
 COMP_TARGETS = $(addprefix ${compdir}/,${COMP_FILES})
-DATA_FILES = $(shell cd ${DATA} && ls | sed -e 's/CVS//')
+## again
+DATA_SUBDIRS = $(subst ./,, \
+					$(shell cd ${DATA} && \
+						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
+DATA_FILES = $(foreach dir, \
+				${DATA_SUBDIRS}, \
+					$(shell cd ${DATA} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
 DATA_TARGETS = $(addprefix ${datadir}/,${DATA_FILES})
-LIB_FILES = $(shell cd ${LIB} && ls | sed -e 's/CVS//')
-LIB_TARGETS = $(addprefix ${libdir}/,${LIB_FILES})
-LIB_FILES = $(shell cd ${LIB} && ls | sed -e 's/CVS//')
-LIB_TARGETS = $(addprefix ${libdir}/,${LIB_FILES})
-DOC_FILES = $(shell cd ${DOC} && ls | sed -e 's/CVS//')
-DOC_TARGETS = $(addprefix ${libdir}/,${DOC_FILES})
+#
+BLIB_SUBDIRS = $(subst ./,, \
+					$(shell cd ${BLIB} && \
+						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
+BLIB_FILES = $(foreach dir, \
+				${BLIB_SUBDIRS}, \
+					$(shell cd ${BLIB} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
+BLIB_TARGETS = $(addprefix ${blibdir}/,${BLIB_FILES})
+
+
+# Canned sequence for installation
+
+define install-files
+@${INST}/mkinstalldirs $(@D)
+cp $^ $@
+@echo $@ >>${INST}/install.log
+endef
+
+
+
+# Now we'll define the installed files according to our log
+# this is because there may be files installed which are not 
+# relevant to the current checkout, so we can't just use our 
+# targets.  Also we prefer to leave the user's data alone.
+INSTALLED_FILES = $(shell cat ${INST}/install.log | sort -u)
+
+# we don't have to be so careful with dirs, since we're only 
+# going to be removing empty ones.  sort removes duplicates, 
+# so it appears here just in case execprefix and prefix are 
+# the same.
+INSTALLED_DIRS = ${bindir} ${datadir} \
+                 ${compdir} ${confdir} \
+                 ${blibdir} ${libdir} \
+                 ${htmldir} ${mandir} \
+				 $(sort ${execprefix} ${prefix})
+
+
 
 # these are standard variable that a lot of people 
 # use in automagical build routines.  Bascially they
@@ -72,62 +166,100 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 
-# Bricolage configuration info
-APACHE_USER = @APACHE_USER@
-APACHE_GROUP = @APACHE_GROUP@
-DB_NAME = @DB_NAME@
-DBI_USER = @DBI_USER@
-DBI_PASS = @DBI_PASS@
-POSTGRES_ROOT_USER = @POSTGRES_ROOT_USER@
-POSTGRES_SYSTEM_USER = @POSTGRES_SYSTEM_USER@
-POSTGRES_ROOT_PASS = @PG_ROOT_PASS@
-
 # A list of any missing modules
-MISSING_MODULES = @MISSING_MOD@
-MODULE_COMMAND = $(foreach mod,${MISSING_MODULES},${PERL} -MCPAN -e "install ${mod}" ;)
+MISSING_MODULES = Devel::Symdump Apache::libapreq
+CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
 
+
+
+# ****************************************************************
+# *  RULES follow
+# ****************************************************************
 # Standard targets follow.  These are discussed at length
-# in the GNU Make manual: http://www.gnu.org/manuals/make
+# in the GNU Make manual: http://www.gnu.org/manual/
 all:  doc
-
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
 		 install-man install-html
 installdirs:
-	${INST}/mkinstalldirs 	${prefix} ${exec_prefix} \
-							${bindir} ${datadir} \
-							${sysconfdir} ${libdir} \
-							${libexecdir} ${includedir} \
-							${oldincludedir} ${mandir} \
-							${infodir} ${sbindir} \
-							${localstatedir} ${sharedstatedir} \
-							${compdir} ${docdir} \
-							${htmldir} ${mandir}
+	@${INST}/mkinstalldirs ${prefix} ${exec_prefix} \
+                           ${bindir} ${datadir} \
+                           ${confdir} ${libdir} \
+                           ${compdir} ${blibdir} \
+                           ${htmldir} ${mandir}
+uninstall: uninstallfiles uninstalldirs dist-clean
+uninstalldirs:
+	@echo removing installed dirs 
+	@for D in ${INSTALLED_DIRS} ; do \
+		rmdir --ignore-fail-on-non-empty `find $$D -depth -type d`; \
+	done
+uninstallfiles:
+	@echo removing previously installed files
+	@rm -f ${INSTALLED_FILES}
 
-# specific install targets including the list
-# determined by find/perl/etc up above
+
+
+
+# specific install and uninstall targets including the list
+# determined by find up above
+# BIN is pretty easy
+#
+# The main hurdle in understanding what's  
+# going on here is to understand that make is checking 
+# timestamps for targets and their dependencies, and then
+# deciding what to copy based on that.
+# for CONF we have to do it by hand more or less.
+install-conf: ${CONF_TARGETS}
+${CONF_BRIC_TARGET}: ${CONF_BRIC}
+	${install-files}
+${CONF_HTTPD_TARGET}: ${CONF_HTTPD}
+	${install-files}
+ifneq (${CONF_APACHE_TARGET},${CONF_HTTPD_TARGET})
+${CONF_APACHE_TARGET}:
+	ln ${CONF_HTTPD_TARGET} $@
+	@echo $@ >>${INST}/install.log
+endif
+
+# From lib on down we're going to do them basically the
+# same way.  It's pretty simple really. Just a matter of
+# finding the original file for every target in the 
+# target list, and giving that to make as the dependency.
+install-lib: ${LIB_TARGETS}
+${LIB_TARGETS}: ${libdir}%: ${LIB}%
+	${install-files}
+install-blib: ${BLIB_TARGETS}
+${BLIB_TARGETS}: ${blibdir}%: ${BLIB}%
+	${install-files}
+install-comp: ${COMP_TARGETS}
+${COMP_TARGETS}: ${compdir}%: ${COMP}% 
+	${install-files}
+install-data: ${DATA_TARGETS}
+${DATA_TARGETS}: ${datadir}%: ${DATA}%
+	${install-files}
+install-man: ${MAN_TARGETS}
+${MAN_TARGETS}: ${mandir}%: ${MAN}%
+	${install-files}
+install-html: ${HTML_TARGETS}
+${HTML_TARGETS}: ${htmldir}%: ${HTML}%
+	${install-files}
 install-bin: ${BIN_TARGETS}
-${BIN_TARGETS}: 
-	@echo $@
-#${BIN_TARGETS}: ${ORIG}
-#	echo ${BIN}${ORIG} ${dindir}/
-#	cp ${BIN}/${ORIG} ${bindir}/
-install-comp:
-install-conf:
-install-data:
-install-lib:
-install-doc:
-install-man:
-install-html:
+${BIN_TARGETS}: ${bindir}%: ${BIN}%
+	${install-files}
+${DOC_TARGETS}: ${docdir}%: ${DOC}%
+	${install-files}
+
 
 # obviously we depend on the cpan stuff
 dep: cpan
-cpan:
-	${INSTALL_MISSING}
-	echo Installed ${MISSING_MODULES} >>${INST}install.log
+cpan: ${CPAN_TARGETS} 
+${CPAN_TARGETS}:
+	${PERL} -MCPAN -e '$$m = "$(@F)" ;$$m =~ s/\./:/g ; install $$m' 
+	touch $@
 
 
 
+
+# and here are our document files.
 doc: Changes INSTALL TODO License
 	cd ${DOC} && ${MAKE} -e
 
@@ -145,23 +277,32 @@ License:
 
 
 
-# TODO: Make this recursively generate tags files in all directories
+# TODO: Make this recursively generate tag files in all directories
 tags:
 ifdef CTAGS
 	${CTAGS} -R
 endif
 
 
-
 clean: docclean
 	${RM} -f Changes INSTALL TODO License tags
+
+dist-clean: 
+	${RM} -f ${INST}/install.log 
 
 
 docclean:
 	cd $(DOC) && ${MAKE} -e clean
 
 
+
 .PHONY : clean dep clean cpan doc install installdirs \
 		 install-bin install-comp install-conf install-data \
 		 install-lib install-doc install-html install-man \
-		 ${BIN_TARGETS}
+		 uninstall uninstalldirs \
+		 uninstall-bin uninstall-comp uninstall-conf uninstall-data \
+		 uninstall-lib uninstall-doc uninstall-html uninstall-man 
+
+
+# vim: sw=4
+# vim: ts=4
