@@ -586,6 +586,24 @@ function confirmChanges(obj) {
     return ret;
 }
 
+// Used to confirm that output channel formats are legit.
+function confirmURIFormats(obj) {
+    var formats = [
+        obj['uri_format'],
+        obj['fixed_uri_format']
+    ];
+        
+    for (var i in formats) {
+        var format = formats[i].value;
+        if (!format.match(/%\{categories\}/)) {
+            alert(uri_format_msg);
+            format.focus;
+            return false;
+        }
+    }
+    return true;
+}
+
 function inArray(what, arr) {
 
     for (var i=0; i < arr.length; i++) {
