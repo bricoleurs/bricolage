@@ -89,6 +89,12 @@ there's no start desk for them to check them in to. But they can still check
 them out from other desks that they have EDIT access to. Reported by Rachel
 Murray. [David]
 
+=item *
+
+Time zone issues have been fixed to be more portable. Some platforms that
+experienced Bricolage unexpectedly shifting cover dates and other dates and
+times by several hours should no longer see this problem. [David]
+
 =back
 
 =head1 VERSION 1.6.4 (2003-08-12)
