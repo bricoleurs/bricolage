@@ -15,12 +15,13 @@ use XML::Simple qw(XMLin);
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(
-                    category_path_to_id 
+                    category_path_to_id
                     xs_date_to_db_date db_date_to_xs_date
                     parse_asset_document
                     serialize_elements
                     deserialize_elements
                     load_ocs
+                    site_to_id
                    );
 
 # set to 1 to see debugging output on STDERR
@@ -32,15 +33,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:17 $
+$Date: 2003-04-24 15:45:31 $
 
 =head1 SYNOPSIS
 
@@ -74,6 +75,26 @@ Notes: NONE
 =cut
 
 sub category_path_to_id { (Bric::Biz::Category->list_ids({ uri => shift }))[0] }
+
+=item $site_id = site_path_to_id($path)
+
+Returns a site_id for the path specified or undef if none match.
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+sub site_to_id {
+    my ($pkg, $site) = @_;
+    my ($site_id) = Bric::Biz::Site->list_ids({ name => $site });
+    die qq{$pkg::list_ids: no site found matching (site => "$site")\n}
+        unless defined $site_id;
+    return $site_id;
+}
 
 =item $db_date = xs_date_to_db_date($xs_date)
 
@@ -344,9 +365,9 @@ sub _deserialize_tile {
 
     # get lists of possible data types and possible containers that
     # can be added to this element.  Hash on names for quick lookups.
-    my %valid_data      = map { ($_->get_name, $_) }
+    my %valid_data      = map { ($_->get_key_name, $_) }
         $element->get_possible_data();
-    my %valid_container = map { ($_->get_name, $_) }
+    my %valid_container = map { ($_->get_key_name, $_) }
         $element->get_possible_containers();
 
     # load data elements
@@ -354,7 +375,7 @@ sub _deserialize_tile {
         foreach my $d (@{$data->{data}}) {
             my $at = $valid_data{$d->{element}};
             die "Error loading data element for " .
-                $element->get_element_name .
+                $element->get_key_name .
                     " cannot add data element $d->{element} here.\n"
                         unless $at;
 
@@ -381,7 +402,7 @@ sub _deserialize_tile {
         foreach my $c (@{$data->{container}}) {
             my $at = $valid_container{$c->{element}};
             die "Error loading container element for " .
-                $element->get_element_name .
+                $element->get_key_name .
                     " cannot add data element $c->{element} here.\n"
                         unless $at;
 
@@ -409,7 +430,7 @@ sub _deserialize_tile {
                                                data      => $c);
             # Log it.
             log_event("${type}_add_element", $object,
-                      { Element => $container->get_name })
+                      { Element => $container->get_key_name })
               if $type && $object;
 
         }
@@ -436,7 +457,7 @@ sub _serialize_tile {
     my @related;
 
     if ($element->is_container) {
-        my %attr  = (element => $element->get_element_name,
+        my %attr  = (element => $element->get_key_name,
                      order   => $element->get_place - $diff);
         my @e = $element->get_elements();
 
@@ -497,11 +518,11 @@ sub _serialize_tile {
 
         if (defined $data and length $data) {
             $writer->dataElement("data", $data,
-                                 element => $element->get_element_name,
+                                 element => $element->get_key_name,
                                  order   => $element->get_place - $diff);
         } else {
             $writer->emptyTag("data",
-                              element => $element->get_element_name,
+                              element => $element->get_key_name,
                               order   => $element->get_place - $diff);
         }
     }

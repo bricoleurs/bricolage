@@ -7,6 +7,7 @@ use warnings;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
+use Bric::Biz::Site;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
@@ -16,8 +17,10 @@ use XML::Writer;
 use IO::Scalar;
 use MIME::Base64;
 
-use Bric::SOAP::Util qw(category_path_to_id 
-                        xs_date_to_db_date db_date_to_xs_date
+use Bric::SOAP::Util qw(category_path_to_id
+                        site_to_id
+                        xs_date_to_db_date
+                        db_date_to_xs_date
                         parse_asset_document
                         serialize_elements
                         deserialize_elements
@@ -39,15 +42,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:50 $
+$Date: 2003-04-24 15:45:31 $
 
 =head1 SYNOPSIS
 
@@ -185,7 +188,8 @@ my %allowed = map { $_ => 1 } qw(title description file_name
                                  workflow element category
                                  publish_date_start publish_date_end
                                  cover_date_start cover_date_end
-                                 expire_date_start expire_date_end);
+                                 expire_date_start expire_date_end
+                                 site alias_id);
 sub list_ids {
     my $self = shift;
     my $env = pop;
@@ -231,6 +235,10 @@ sub list_ids {
         $args->{category__id} = $category_id;
         delete $args->{category};
     }
+
+    # handle site => site_id conversion
+    $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
+      if exists $args->{site};
 
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
@@ -297,53 +305,52 @@ your Media types then you'll have to manually fetch the relations.
 sub export {
     my $pkg = shift;
     my $env = pop;
-    my $args = $env->method || {};    
-    
-    print STDERR __PACKAGE__ . "->export() called : args : ", 
+    my $args = $env->method || {};
+
+    print STDERR __PACKAGE__ . "->export() called : args : ",
         Data::Dumper->Dump([$args],['args']) if DEBUG;
-    
+
     # check for bad parameters
     for (keys %$args) {
         die __PACKAGE__ . "::export : unknown parameter \"$_\".\n"
             unless exists $allowed{$_};
     }
-    
+
     # media_id is sugar for a one-element media_ids arg
     $args->{media_ids} = [ $args->{media_id} ] if exists $args->{media_id};
-    
+
     # make sure media_ids is an array
     die __PACKAGE__ . "::export : missing required media_id(s) setting.\n"
         unless defined $args->{media_ids};
     die __PACKAGE__ . "::export : malformed media_id(s) setting.\n"
         unless ref $args->{media_ids} and ref $args->{media_ids} eq 'ARRAY';
-    
+
     # setup XML::Writer
     my $document        = "";
     my $document_handle = new IO::Scalar \$document;
     my $writer          = XML::Writer->new(OUTPUT      => $document_handle,
                                            DATA_MODE   => 1,
                                            DATA_INDENT => 1);
-    
+
     # open up an assets document, specifying the schema namespace
     $writer->xmlDecl("UTF-8", 1);
     $writer->startTag("assets", 
                       xmlns => 'http://bricolage.sourceforge.net/assets.xsd');
-    
-    
+
     # iterate through media_ids, serializing media objects as we go
-    foreach my $media_id (@{$args->{media_ids}}) {      
-        $pkg->_serialize_media(writer   => $writer, 
+    foreach my $media_id (@{$args->{media_ids}}) {
+        $pkg->_serialize_media(writer   => $writer,
                                media_id => $media_id,
                                args     => $args);
     }
-    
+
     # end the assets element and end the document
     $writer->endTag("assets");
     $writer->end();
     $document_handle->close();
-    
+
     # name, type and return
-    return name(document => $document)->type('base64');   
+    return name(document => $document)->type('base64');
 }
 }
 
@@ -382,11 +389,11 @@ my %allowed = map { $_ => 1 } qw(document);
 sub create {
     my $pkg = shift;
     my $env = pop;
-    my $args = $env->method || {};    
-    
-    print STDERR __PACKAGE__ . "->create() called : args : ", 
+    my $args = $env->method || {};
+
+    print STDERR __PACKAGE__ . "->create() called : args : ",
       Data::Dumper->Dump([$args],['args']) if DEBUG;
-    
+
     # check for bad parameters
     for (keys %$args) {
         die __PACKAGE__ . "::create : unknown parameter \"$_\".\n"
@@ -452,11 +459,11 @@ my %allowed = map { $_ => 1 } qw(document update_ids);
 sub update {
     my $pkg = shift;
     my $env = pop;
-    my $args = $env->method || {};    
-    
-    print STDERR __PACKAGE__ . "->update() called : args : ", 
+    my $args = $env->method || {};
+
+    print STDERR __PACKAGE__ . "->update() called : args : ",
       Data::Dumper->Dump([$args],['args']) if DEBUG;
-    
+
     # check for bad parameters
     for (keys %$args) {
         die __PACKAGE__ . "::update : unknown parameter \"$_\".\n"
@@ -613,29 +620,45 @@ sub _load_media {
         # are we updating?
         my $update = exists $to_update{$id};
 
+        # are we aliasing?
+        my $aliased = $mdata->{alias_id} && ! $update ?
+          Bric::Biz::Asset::Business::Media->lookup({ id => $mdata->{alias_id} })
+          : undef;
+
         # setup init data for create
         my %init;
 
         # get user__id from Bric::App::Session
         $init{user__id} = get_user_id;
 
-        unless ($melems{$mdata->{element}}) {
-            my $e = (Bric::Biz::AssetType->list
-              ({ name => $mdata->{element}, media => 1 }))[0]
-                or die __PACKAGE__ . "::create : no media element found " .
-                "matching (element => \"$mdata->{element}\")\n";
-            $melems{$mdata->{element}} =
-              [ $e->get_id,
-                { map { $_->get_name => $_ } $e->get_output_channels } ];
+        # Get the site ID.
+        $init{site_id} = site_to_id(__PACKAGE__, $mdata->{site});
+
+        if (exists $mdata->{element} and not $aliased) {
+            unless ($melems{$mdata->{element}}) {
+                my $e = (Bric::Biz::AssetType->list
+                         ({ name => $mdata->{element}, media => 1 }))[0]
+                           or die __PACKAGE__ . "::create : no media element found " .
+                             "matching (element => \"$mdata->{element}\")\n";
+                $melems{$mdata->{element}} =
+                  [ $e->get_id,
+                    { map { $_->get_name => $_ } $e->get_output_channels } ];
+            }
+
+            # get element object for asset type
+            $init{element__id} = $melems{$mdata->{element}}->[0];
+
+        } elsif ($aliased) {
+            # It's an alias.
+            $init{alias_id} = $mdata->{alias_id};
+        } else {
+            # It's bogus.
+            die __PACKAGE__ . "::create: No media element or alias ID found";
         }
 
-
-        # get element object for asset type
-        $init{element__id} = $melems{$mdata->{element}}->[0];
-
         # get source__id from source
-        ($init{source__id}) = Bric::Biz::Org::Source->list_ids(
-                                 { source_name => $mdata->{source} });
+        ($init{source__id}) = Bric::Biz::Org::Source->list_ids
+          ({ source_name => $mdata->{source} });
         die __PACKAGE__ . "::create : no source found matching " .
             "(source => \"$mdata->{source}\")\n"
                 unless defined $init{source__id};
@@ -673,7 +696,19 @@ sub _load_media {
             # is this is right way to check create access for media?
             die __PACKAGE__ . " : access denied.\n"
                 unless chk_authz($media, CREATE, 1);
-            log_event('media_new', $media);
+            if ($aliased) {
+                # Log that we've created an alias.
+                my $origin_site = Bric::Biz::Site->lookup
+                  ({ id => $aliased->get_site_id });
+                log_event("media_alias_new", $media,
+                          { 'From Site' => $origin_site->get_name });
+                my $site = Bric::Biz::Site->lookup({ id => $init{site_id} });
+                log_event("media_aliased", $aliased,
+                          { 'To Site' => $site->get_name });
+            } else {
+                # Log that we've created a new media asset.
+                log_event('media_new', $media);
+            }
 
         } else {
             # updating - first look for a checked out version
@@ -705,6 +740,7 @@ sub _load_media {
             }
 
             # update %init fields
+            delete @init{qw(element__id alias_id)};
             $media->_set([keys(%init)],[values(%init)]);
         }
 
@@ -716,67 +752,69 @@ sub _load_media {
         $media->set_publish_status($mdata->{publish_status}) if $update;
 
         # remove all contributors if updating
-        if ($update) {
-            if (my $contribs = $media->get_contributors) {
-                $media->delete_contributors($contribs);
-                foreach my $contrib (@$contribs) {
-                    log_event('media_del_contrib', $media,
+        unless ($aliased) {
+            if ($update) {
+                if (my $contribs = $media->get_contributors) {
+                    $media->delete_contributors($contribs);
+                    foreach my $contrib (@$contribs) {
+                        log_event('media_del_contrib', $media,
+                                  { Name => $contrib->get_name });
+                    }
+                }
+            }
+
+            # add contributors, if any
+            if ($mdata->{contributors} and $mdata->{contributors}{contributor}) {
+                foreach my $c (@{$mdata->{contributors}{contributor}}) {
+                    my %init = (fname => $c->{fname},
+                                mname => $c->{mname},
+                                lname => $c->{lname});
+                    my ($contrib) =
+                      Bric::Util::Grp::Parts::Member::Contrib->list(\%init);
+                    die __PACKAGE__ . "::create : no contributor found matching " .
+                      "(contributer => " .
+                        join(', ', map { "$_ => $c->{$_}" } keys %$c)
+                          unless defined $contrib;
+                $media->add_contributor($contrib, $c->{role});
+                    log_event('media_add_contrib', $media,
                               { Name => $contrib->get_name });
                 }
             }
-        }
 
-        # add contributors, if any
-        if ($mdata->{contributors} and $mdata->{contributors}{contributor}) {
-            foreach my $c (@{$mdata->{contributors}{contributor}}) {
-                my %init = (fname => $c->{fname},
-                            mname => $c->{mname},
-                            lname => $c->{lname});
-                my ($contrib) = 
-                    Bric::Util::Grp::Parts::Member::Contrib->list(\%init);
-                die __PACKAGE__ . "::create : no contributor found matching " .
-                    "(contributer => " .
-                        join(', ', map { "$_ => $c->{$_}" } keys %$c)
-                    unless defined $contrib;
-                $media->add_contributor($contrib, $c->{role});
-                log_event('media_add_contrib', $media,
-                          { Name => $contrib->get_name });
+            # deal with file data if we have one
+            if ($mdata->{file}) {
+                my $filename = $mdata->{file}{name};
+                my $size     = $mdata->{file}{size};
+                my $data     = MIME::Base64::decode_base64($mdata->{file}{data}[0]);
+                my $fh       = new IO::Scalar \$data;
+
+                # empty or non-numeric size causes an SQL error
+                die __PACKAGE__ . 
+                  "::create : bad data found in file size element.\n"
+                    unless defined $size and $size =~ /^\d+$/;
+
+                # upload the file into the media object
+                $media->upload_file($fh, $filename);
+                $media->set_size($size);
+                log_event('media_upload', $media);
+
+                # lookup MediaType by extension, if we have one
+                my ($ext) = $filename =~ /\.(.*)$/;
+                my $media_type;
+                $media_type = Bric::Util::MediaType->lookup({'ext' => $ext})
+                  if $ext;
+                $media->set_media_type_id($media_type ? $media_type->get_id : 0);
+            } else {
+                # clear the media object by uploading an empty file - this
+                # is functionality that isn't actually supported by
+                # Bricolage.  We should add a Media->delete_file() method at
+                # some point and use it here.
+                my $data = "";
+                my $fh  = new IO::Scalar \$data;
+                $media->upload_file($fh, "empty");
+                $media->set_size(0);
+                $media->set_media_type_id(0);
             }
-        }
-
-        # deal with file data if we have one
-        if ($mdata->{file}) {
-            my $filename = $mdata->{file}{name};
-            my $size     = $mdata->{file}{size};
-            my $data     = MIME::Base64::decode_base64($mdata->{file}{data}[0]);
-            my $fh       = new IO::Scalar \$data;
-
-            # empty or non-numeric size causes an SQL error
-            die __PACKAGE__ . 
-              "::create : bad data found in file size element.\n"
-                unless defined $size and $size =~ /^\d+$/;
-
-            # upload the file into the media object
-            $media->upload_file($fh, $filename);
-            $media->set_size($size);
-            log_event('media_upload', $media);
-
-            # lookup MediaType by extension, if we have one
-            my ($ext) = $filename =~ /\.(.*)$/;
-            my $media_type;
-            $media_type = Bric::Util::MediaType->lookup({'ext' => $ext})
-                if $ext;
-            $media->set_media_type_id($media_type ? $media_type->get_id : 0);
-        } else {
-            # clear the media object by uploading an empty file - this
-            # is functionality that isn't actually supported by
-            # Bricolage.  We should add a Media->delete_file() method at
-            # some point and use it here.
-            my $data = "";
-            my $fh  = new IO::Scalar \$data;
-            $media->upload_file($fh, "empty");
-            $media->set_size(0);
-            $media->set_media_type_id(0);
         }
 
         # make sure this media won't create a duplicate URI
@@ -801,12 +839,34 @@ sub _load_media {
         die __PACKAGE__ . "::create : no primary output channel defined!"
             unless defined $media->get_primary_oc_id;
 
+        # remove all keywords if updating
+        $media->delete_keywords($media->get_keywords) if $update;
+
+        # add keywords, if we have any
+        if ($mdata->{keywords} and $mdata->{keywords}{keyword}) {
+
+            # collect keyword objects
+            my @kws;
+            foreach (@{$mdata->{keywords}{keyword}}) {
+                my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+                unless ($kw) {
+                    $kw = Bric::Biz::Keyword->new({ name => $_})->save;
+                    log_event('keyword_new', $kw);
+                }
+                push @kws, $kw;
+            }
+
+            # add keywords to the media
+            $media->add_keywords(@kws);
+        }
+
         # updates are in-place, no need to futz with workflows and desks
         my $desk;
         unless ($update) {
             # find a suitable workflow and desk for the media.
             my $workflow = (Bric::Biz::Workflow->list
-                            ({ type => MEDIA_WORKFLOW }))[0];
+                            ({ type => MEDIA_WORKFLOW,
+                               site_id => $init{site_id} }))[0];
             $media->set_workflow_id($workflow->get_id);
             log_event("media_add_workflow", $media,
                       { Workflow => $workflow->get_name });
@@ -818,7 +878,8 @@ sub _load_media {
         # add element data
         deserialize_elements(object => $media,
                              type   => 'media',
-                             data   => $mdata->{elements} || {});
+                             data   => $mdata->{elements} || {})
+          unless $aliased;
 
         # save the media and desk after activating if desired
         $media->activate if $mdata->{active};
@@ -864,9 +925,15 @@ sub _serialize_media {
         unless chk_authz($media, READ, 1);
 
     # open a media element
-    $writer->startTag("media", 
-                      id => $media_id, 
-                      element => $media->get_element_name);
+    my $alias_id = $media->get_alias_id;
+    $writer->startTag("media",
+                      id => $media_id,
+                      ( $alias_id ? (alias_id => $alias_id) :
+                        (element => $media->get_element_name)));
+
+    # Write out the name of the site.
+    my $site = Bric::Biz::Site->lookup({ id => $media->get_site_id });
+    $writer->dataElement('site' => $site->get_name);
 
     # write out simple elements in schema order
     foreach my $e (qw(name description uri
@@ -878,8 +945,7 @@ sub _serialize_media {
     $writer->dataElement(active => ($media->is_active ? 1 : 0));
 
     # get source name
-    my $src = Bric::Biz::Org::Source->lookup({
-                                              id => $media->get_source__id });
+    my $src = Bric::Biz::Org::Source->lookup({id => $media->get_source__id });
     die __PACKAGE__ . "::export : unable to find source\n"
         unless $src;
     $writer->dataElement(source => $src->get_source_name);
@@ -908,39 +974,47 @@ sub _serialize_media {
     }
     $writer->endTag("output_channels");
 
-    # output contributors
-    $writer->startTag("contributors");
-    foreach my $c ($media->get_contributors) {
-        my $p = $c->get_person;
-        $writer->startTag("contributor");
-        $writer->dataElement(fname  => $p->get_fname);
-        $writer->dataElement(mname  => $p->get_mname);
-        $writer->dataElement(lname  => $p->get_lname);
-        $writer->dataElement(type   => $c->get_grp->get_name);
-        $writer->dataElement(role   => $media->get_contributor_role($c));
-        $writer->endTag("contributor");
+    # output keywords
+    $writer->startTag("keywords");
+    foreach my $k ($media->get_keywords) {
+        $writer->dataElement(keyword => $k->get_name);
     }
-    $writer->endTag("contributors");
+    $writer->endTag("keywords");
 
-    # output elements, ignore related media
-    serialize_elements(writer => $writer,
-                       args   => \%options,
-                       object => $media);
+    # output contributors
+    unless ($alias_id) {
+        $writer->startTag("contributors");
+        foreach my $c ($media->get_contributors) {
+            my $p = $c->get_person;
+            $writer->startTag("contributor");
+            $writer->dataElement(fname  => $p->get_fname);
+            $writer->dataElement(mname  => $p->get_mname);
+            $writer->dataElement(lname  => $p->get_lname);
+            $writer->dataElement(type   => $c->get_grp->get_name);
+            $writer->dataElement(role   => $media->get_contributor_role($c));
+            $writer->endTag("contributor");
+        }
+        $writer->endTag("contributors");
 
-    # output file if we've got one
-    my $file_name = $media->get_file_name;
-    if ($file_name) {
-        $writer->startTag("file");
-        $writer->dataElement(name => $file_name);
-        $writer->dataElement(size => $media->get_size);
+        # output elements, ignore related media
+        serialize_elements(writer => $writer,
+                           args   => \%options,
+                           object => $media);
 
-        # read in file data
-        my $fh   = $media->get_file;
-        my $data = join('',<$fh>);
-        $writer->dataElement(data => MIME::Base64::encode_base64($data,''));
-        close $fh;
+        # output file if we've got one
+        if (my $file_name = $media->get_file_name) {
+            $writer->startTag("file");
+            $writer->dataElement(name => $file_name);
+            $writer->dataElement(size => $media->get_size);
 
-        $writer->endTag("file");
+            # read in file data
+            my $fh   = $media->get_file;
+            my $data = join('',<$fh>);
+            $writer->dataElement(data => MIME::Base64::encode_base64($data,''));
+            close $fh;
+
+            $writer->endTag("file");
+        }
     }
 
     # close the media

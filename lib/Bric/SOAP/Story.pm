@@ -7,6 +7,7 @@ use warnings;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
+use Bric::Biz::Site;
 use Bric::Biz::OutputChannel;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Biz::Workflow qw(STORY_WORKFLOW);
@@ -17,7 +18,9 @@ use XML::Writer;
 use IO::Scalar;
 
 use Bric::SOAP::Util qw(category_path_to_id
-                        xs_date_to_db_date db_date_to_xs_date
+                        site_to_id
+                        xs_date_to_db_date
+                        db_date_to_xs_date
                         parse_asset_document
                         serialize_elements
                         deserialize_elements
@@ -40,15 +43,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-21 20:44:48 $
+$Date: 2003-04-24 15:45:31 $
 
 =head1 SYNOPSIS
 
@@ -232,7 +235,7 @@ my %allowed = map { $_ => 1 } qw(title description slug category keyword simple
                                  publish_date_end cover_date_start
                                  cover_date_end expire_date_start
                                  expire_date_end Order OrderDirection Limit
-                                 Offset);
+                                 Offset site alias_id);
 
 sub list_ids {
     my $self = shift;
@@ -285,6 +288,10 @@ sub list_ids {
         $args->{category_id} = $category_id;
         delete $args->{category};
     }
+
+    # handle site => site_id conversion
+    $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
+      if exists $args->{site};
 
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
@@ -704,28 +711,47 @@ sub _load_stories {
         # are we updating?
         my $update = exists $to_update{$id};
 
+        # are we aliasing?
+        my $aliased = $sdata->{alias_id} && ! $update ?
+          Bric::Biz::Asset::Business::Story->lookup
+              ({ id => $story_ids{$sdata->{alias_id}} || $sdata->{alias_id} })
+          : undef;
+
         # setup init data for create
         my %init;
 
         # get user__id from Bric::App::Session
         $init{user__id} = get_user_id;
 
-        unless ($selems{$sdata->{element}}) {
-            my $e = (Bric::Biz::AssetType->list
-              ({ name => $sdata->{element}, media => 0 }))[0]
-                or die __PACKAGE__ . "::create : no story element found " .
-                "matching (element => \"$sdata->{element}\")\n";
-            $selems{$sdata->{element}} =
-              [ $e->get_id,
-                { map { $_->get_name => $_ } $e->get_output_channels } ];
+        # Get the site ID.
+        $init{site_id} = site_to_id(__PACKAGE__, $sdata->{site});
+
+        if (exists $sdata->{element} and not $aliased) {
+            # It's a normal story.
+            unless ($selems{$sdata->{element}}) {
+                my $e = (Bric::Biz::AssetType->list
+                         ({ name => $sdata->{element}, media => 0 }))[0]
+                           or die __PACKAGE__ . "::create : no story element found " .
+                             "matching (element => \"$sdata->{element}\")\n";
+                $selems{$sdata->{element}} =
+                  [ $e->get_id,
+                    { map { $_->get_name => $_ } $e->get_output_channels } ];
+            }
+
+            # get element__id from story element
+            $init{element__id} = $selems{$sdata->{element}}->[0];
+
+        } elsif ($aliased) {
+            # It's an alias.
+            $init{alias_id} = $sdata->{alias_id};
+        } else {
+            # It's bogus.
+            die __PACKAGE__ . "::create: No story element or alias ID found";
         }
 
-        # get element__id from story element
-        $init{element__id} = $selems{$sdata->{element}}->[0];
-
         # get source__id from source
-        ($init{source__id}) = Bric::Biz::Org::Source->list_ids(
-                                 { source_name => $sdata->{source} });
+        ($init{source__id}) = Bric::Biz::Org::Source->list_ids
+          ({ source_name => $sdata->{source} });
         die __PACKAGE__ . "::create : no source found matching " .
             "(source => \"$sdata->{source}\")\n"
                 unless defined $init{source__id};
@@ -743,7 +769,19 @@ sub _load_stories {
             # is this is right way to check create access for stories?
             die __PACKAGE__ . " : access denied.\n"
                 unless chk_authz($story, CREATE, 1);
-            log_event('story_new', $story);
+            if ($aliased) {
+                # Log that we've created an alias.
+                my $origin_site = Bric::Biz::Site->lookup
+                  ({ id => $aliased->get_site_id });
+                log_event("story_alias_new", $story,
+                          { 'From Site' => $origin_site->get_name });
+                my $site = Bric::Biz::Site->lookup({ id => $init{site_id} });
+                log_event("story_aliased", $aliased,
+                          { 'To Site' => $site->get_name });
+            } else {
+                # Log that we've created a new story asset.
+                log_event('story_new', $story);
+            }
 
         } else {
             # updating - first look for a checked out version
@@ -775,7 +813,8 @@ sub _load_stories {
             }
 
             # update %init fields
-            $story->set_element__id($init{element__id});
+#            $story->set_element__id($init{element__id});
+#            $story->set_alias_id($init{alias_id});
             $story->set_source__id($init{source__id});
         }
 
@@ -845,31 +884,33 @@ sub _load_stories {
           . $story->get_uri . "' is already taken.\n"
             if $story->check_uri;
 
-        if ($update) {
-            if (my $contribs = $story->get_contributors) {
-                foreach my $contrib (@$contribs) {
-                    log_event('story_del_contrib', $story,
+        unless ($aliased) {
+            if ($update) {
+                if (my $contribs = $story->get_contributors) {
+                    foreach my $contrib (@$contribs) {
+                        log_event('story_del_contrib', $story,
+                                  { Name => $contrib->get_name });
+                    }
+                    $story->delete_contributors($contribs);
+                }
+            }
+
+            # add contributors, if any
+            if ($sdata->{contributors} and $sdata->{contributors}{contributor}) {
+                foreach my $c (@{$sdata->{contributors}{contributor}}) {
+                    my %init = (fname => defined $c->{fname} ? $c->{fname} : "",
+                                mname => defined $c->{mname} ? $c->{mname} : "",
+                                lname => defined $c->{lname} ? $c->{lname} : "");
+                    my ($contrib) =
+                      Bric::Util::Grp::Parts::Member::Contrib->list(\%init);
+                    die __PACKAGE__ . "::create : no contributor found matching " .
+                      "(contributer => " . 
+                        join(', ', map { "$_ => $c->{$_}" } keys %$c)
+                          unless defined $contrib;
+                    $story->add_contributor($contrib, $c->{role});
+                    log_event('story_add_contrib', $story,
                               { Name => $contrib->get_name });
                 }
-                $story->delete_contributors($contribs);
-            }
-        }
-
-        # add contributors, if any
-        if ($sdata->{contributors} and $sdata->{contributors}{contributor}) {
-            foreach my $c (@{$sdata->{contributors}{contributor}}) {
-                my %init = (fname => defined $c->{fname} ? $c->{fname} : "",
-                            mname => defined $c->{mname} ? $c->{mname} : "",
-                            lname => defined $c->{lname} ? $c->{lname} : "");
-                my ($contrib) =
-                    Bric::Util::Grp::Parts::Member::Contrib->list(\%init);
-                die __PACKAGE__ . "::create : no contributor found matching " .
-                    "(contributer => " . 
-                        join(', ', map { "$_ => $c->{$_}" } keys %$c)
-                    unless defined $contrib;
-                $story->add_contributor($contrib, $c->{role});
-                log_event('story_add_contrib', $story,
-                          { Name => $contrib->get_name });
             }
         }
 
@@ -891,8 +932,7 @@ sub _load_stories {
             unless defined $story->get_primary_oc_id;
 
         # remove all keywords if updating
-        $story->delete_keywords([ $story->get_keywords ])
-            if $update and $story->get_keywords;
+        $story->delete_keywords($story->get_keywords) if $update;
 
         # add keywords, if we have any
         if ($sdata->{keywords} and $sdata->{keywords}{keyword}) {
@@ -909,7 +949,7 @@ sub _load_stories {
             }
 
             # add keywords to the story
-            $story->add_keywords(\@kws);
+            $story->add_keywords(@kws);
         }
 
         # updates are in-place, no need to futz with workflows and desks
@@ -917,7 +957,8 @@ sub _load_stories {
         unless ($update) {
             # find a suitable workflow and desk for the story.
             my $workflow = (Bric::Biz::Workflow->list
-                            ({ type => STORY_WORKFLOW }))[0];
+                            ({ type => STORY_WORKFLOW,
+                               site_id => $init{site_id} }))[0];
             $story->set_workflow_id($workflow->get_id());
             log_event("story_add_workflow", $story,
                       { Workflow => $workflow->get_name });
@@ -930,7 +971,8 @@ sub _load_stories {
         push @relations,
             deserialize_elements(object => $story,
                                  type   => 'story',
-                                 data   => $sdata->{elements} || {});
+                                 data   => $sdata->{elements} || {})
+              unless $aliased;
 
         # save the story and desk after activating if desired
         $story->activate if $sdata->{active};
@@ -1028,9 +1070,15 @@ sub _serialize_story {
         unless chk_authz($story, READ, 1);
 
     # open a story element
+    my $alias_id = $story->get_alias_id;
     $writer->startTag("story",
                       id => $story_id,
-                      element => $story->get_element_name);
+                      ( $alias_id ? (alias_id => $alias_id) :
+                        (element => $story->get_element_name)));
+
+    # Write out the name of the site.
+    my $site = Bric::Biz::Site->lookup({ id => $story->get_site_id });
+    $writer->dataElement('site' => $site->get_name);
 
     # write out simple elements in schema order
     foreach my $e (qw(name description slug primary_uri
@@ -1042,8 +1090,7 @@ sub _serialize_story {
     $writer->dataElement(active => ($story->is_active ? 1 : 0));
 
     # get source name
-    my $src = Bric::Biz::Org::Source->lookup({
-                                              id => $story->get_source__id });
+    my $src = Bric::Biz::Org::Source->lookup({id => $story->get_source__id });
     die __PACKAGE__ . "::export : unable to find source\n"
         unless $src;
     $writer->dataElement(source => $src->get_source_name);
@@ -1087,26 +1134,28 @@ sub _serialize_story {
     $writer->endTag("keywords");
 
     # output contributors
-    $writer->startTag("contributors");
-    foreach my $c ($story->get_contributors) {
-        my $p = $c->get_person;
-        $writer->startTag("contributor");
-        $writer->dataElement(fname  => 
-                             defined $p->get_fname ? $p->get_fname : "");
-        $writer->dataElement(mname  => 
-                             defined $p->get_mname ? $p->get_mname : "");
-        $writer->dataElement(lname  => 
-                             defined $p->get_lname ? $p->get_lname : "");
-        $writer->dataElement(type   => $c->get_grp->get_name);
-        $writer->dataElement(role   => $story->get_contributor_role($c));
-        $writer->endTag("contributor");
-    }
-    $writer->endTag("contributors");
+    unless ($alias_id) {
+        $writer->startTag("contributors");
+        foreach my $c ($story->get_contributors) {
+            my $p = $c->get_person;
+            $writer->startTag("contributor");
+            $writer->dataElement(fname  =>
+                                 defined $p->get_fname ? $p->get_fname : "");
+            $writer->dataElement(mname  =>
+                                 defined $p->get_mname ? $p->get_mname : "");
+            $writer->dataElement(lname  =>
+                                 defined $p->get_lname ? $p->get_lname : "");
+            $writer->dataElement(type   => $c->get_grp->get_name);
+            $writer->dataElement(role   => $story->get_contributor_role($c));
+            $writer->endTag("contributor");
+        }
+        $writer->endTag("contributors");
 
     # output elements
-    @related = serialize_elements(writer => $writer, 
+    @related = serialize_elements(writer => $writer,
                                   args   => $options{args},
                                   object => $story);
+    }
 
     # close the story
     $writer->endTag("story");
