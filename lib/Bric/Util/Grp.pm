@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-18 20:44:08 $
+$Date: 2002-08-21 21:56:34 $
 
 =head1 SYNOPSIS
 
@@ -383,9 +383,9 @@ this method must be called from a subclass.
 
 sub list { _do_list(@_) }
 
-=back
-
 ##############################################################################
+
+=back
 
 =head2 Destructors
 
@@ -941,9 +941,9 @@ sub my_meths {
     return !$ord ? $meths : wantarray ? @{$meths}{&ORD} : [@{$meths}{&ORD}];
 }
 
-=back
-
 ##############################################################################
+
+=back
 
 =head2 Public Instance Methods
 
