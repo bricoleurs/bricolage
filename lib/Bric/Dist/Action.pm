@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-14 01:18:06 $
+$Date: 2003-01-08 22:05:37 $
 
 =head1 SYNOPSIS
 
@@ -138,9 +138,9 @@ my $meths;
 # Private Class Fields
 # Load the names of the various action classes.
 my $acts;
-while (<DATA>) {
-    chomp;
-    my ($key, $class) = split / => /;
+while (my $l = <DATA>) {
+    chomp $l;
+    my ($key, $class) = split / => /, $l, 2;
     $acts->{$key} = $class;
     eval "require $class";
 }
