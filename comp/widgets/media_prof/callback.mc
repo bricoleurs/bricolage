@@ -285,31 +285,30 @@ my $handle_return = sub {
 	my $media = get_state_data($widget, 'media');
 
     if ($version_view) {
-		my $media_id = $media->get_id();
-
-		clear_state($widget);
-		set_redirect("/workflow/profile/media/$media_id/?checkout=1");
-
+	my $media_id = $media->get_id();
+	clear_state($widget);
+	set_redirect("/workflow/profile/media/$media_id/?checkout=1");
     } else {
 	my $state = get_state_name($widget);
 	my $url;
 	my $return = get_state_data($widget, 'return') || '';
+	my $wid = $media->get_workflow_id;
 
 	if ($return eq 'search') {
-	    $url = $SEARCH_URL . $media->get_workflow_id . '/';
+	    $wid = get_state_data('workflow', 'work_id') || $wid;
+	    $url = $SEARCH_URL . $wid . '/';
 	} elsif ($return eq 'active') {
-	    $url = $ACTIVE_URL . $media->get_workflow_id;
+	    $url = $ACTIVE_URL . $wid;
 	} elsif ($return =~ /\d+/) {
-	    my $workflow_id = $media->get_workflow_id();
-	    $url = $DESK_URL . $workflow_id . '/' . $return . '/';
+	    $url = $DESK_URL . $wid . '/' . $return . '/';
 	} else {
 	    $url = '/';
 	}
 
-		# Clear the state and send 'em home.
-		clear_state($widget);
-		set_redirect($url);
-	}
+	# Clear the state and send 'em home.
+	clear_state($widget);
+	set_redirect($url);
+    }
 };
 
 ################################################################################

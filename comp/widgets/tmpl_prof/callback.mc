@@ -195,18 +195,18 @@ elsif ($field eq "$widget|return_cb") {
 		my $fa_id = $fa->get_id();
 
 		clear_state($widget);
-		set_redirect("/workflow/profile/story/$fa_id/?checkout=1");
+		set_redirect("/workflow/profile/templates/$fa_id/?checkout=1");
     } else {
 	my $url;
 	my $return = get_state_data($widget, 'return') || '';
-
+	my $wid = $fa->get_workflow_id;
 	if ($return eq 'search') {
-	    $url = $SEARCH_URL . $fa->get_workflow_id . '/';
+	    $wid = get_state_data('workflow', 'work_id') || $wid;
+	    $url = $SEARCH_URL . $wid . '/';
 	} elsif ($return eq 'active') {
-	    $url = $ACTIVE_URL . $fa->get_workflow_id;
+	    $url = $ACTIVE_URL . $wid;
 	} elsif ($return =~ /\d+/) {
-	    my $workflow_id = $fa->get_workflow_id();
-	    $url = $DESK_URL . $workflow_id . '/' . $return . '/';
+	    $url = $DESK_URL . $wid . '/' . $return . '/';
 	} else {
 	    $url = '/';
 	}
@@ -444,7 +444,12 @@ my $delete_fa = sub {
 
 <%doc>
 $Log: callback.mc,v $
-Revision 1.2  2001-09-13 16:53:32  samtregar
+Revision 1.3  2001-09-27 10:10:16  wheeler
+Now collecting the workflow ID from the state (as saved by
+workflow/manager/autohandler) so that we can be sure to always *have* a workflow
+ID when redirecting.
+
+Revision 1.2  2001/09/13 16:53:32  samtregar
 Fixed apparent typo - there is no make_element in HTML::Mason::Parser.
 
 Revision 1.1.1.1  2001/09/06 21:52:32  wheeler

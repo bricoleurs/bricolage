@@ -304,20 +304,21 @@ my $handle_workspace_return = sub {
 	my $story = get_state_data($widget, 'story');
 
     if ($version_view) {
-		my $story_id = $story->get_id();
-		clear_state($widget);
-		set_redirect("/workflow/profile/story/$story_id/?checkout=1");
+	my $story_id = $story->get_id();
+	clear_state($widget);
+	set_redirect("/workflow/profile/story/$story_id/?checkout=1");
     } else {
 	my $url;
 	my $return = get_state_data($widget, 'return') || '';
+	my $wid = $story->get_workflow_id;
 
 	if ($return eq 'search') {
-	    $url = $SEARCH_URL . $story->get_workflow_id . '/';
+	    $wid = get_state_data('workflow', 'work_id') || $wid;
+	    $url = $SEARCH_URL . $wid . '/';
 	} elsif ($return eq 'active') {
-	    $url = $ACTIVE_URL . $story->get_workflow_id;
+	    $url = $ACTIVE_URL . $wid;
 	} elsif ($return =~ /\d+/) {
-	    my $workflow_id = $story->get_workflow_id();
-	    $url = $DESK_URL . $workflow_id . '/' . $return . '/';
+	    $url = $DESK_URL . $wid . '/' . $return . '/';
 	} else {
 	    $url = '/';
 	}
