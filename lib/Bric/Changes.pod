@@ -88,6 +88,15 @@ for creating XML in your templates. XML_WRITER_ARGS allows certain arguments to
 be passed to the XML::Writer instantiator. See Bric::AdvTemplates for more
 information.
 
+=item *
+
+Added URI information to associated categories in the story profile. [David]
+
+=item *
+
+Changed category selection for new Templates to use the category URI rather than
+the name, in line with how Story and Media work. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -120,6 +129,11 @@ not. Thanks to Matt Vella for the spot. [David]
 
 Fixed bug where element select lists weren't populate with their list of values.
 Thanks to Matt Vella for the report. [David]
+
+=item *
+
+Fixed select lists and radio buttons in formBuilder so that they can take just
+values as well as value/name pairs. [David]
 
 =back
 
