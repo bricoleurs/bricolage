@@ -4,7 +4,7 @@ use strict;
 use Bric::App::Session qw(:state);
 
 use base qw(Exporter);
-our @EXPORT_OK = qw(parse_uri detect_agent);
+our @EXPORT_OK = qw(parse_uri detect_agent status_msg);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 my $statmsg_key = '_status_msg_';
