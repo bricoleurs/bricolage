@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-13 19:28:43 $
+$Date: 2003-03-13 21:43:15 $
 
 =head1 SYNOPSIS
 
@@ -661,10 +661,10 @@ sub my_meths {
                               disp     => 'Site',
                               type     => 'short',
                               req      => 0,
-                              props    => { type       => 'text',
-                                            length     => 10,
-                                            maxlength  => 10
-                                          }
+               #               props    => { type       => 'text',
+               #                             length     => 10,
+               #                             maxlength  => 10
+               #                           }
                              },
               active      => {
                               name     => 'active',
