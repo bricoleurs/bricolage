@@ -139,6 +139,11 @@ to allow profiling of Bricolage database performance.  [Sam]
 Added C<bric_apachectl debug> command to run Bricolage under the Perl
 debugger using Apache::DB.  [Sam]
 
+=item *
+
+Added checks to make sure Story and Media URIs are unique within the
+system.  [Matt]
+
 =back
 
 =head1 VERSION 1.3.1

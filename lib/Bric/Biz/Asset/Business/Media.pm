@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-23 23:45:42 $
+$Date: 2002-05-07 22:46:36 $
 
 =head1 SYNOPSIS
 
@@ -1014,6 +1014,35 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
+
+################################################################################
+
+=item $media_name = $media->check_uri()
+
+Returns name of media with conflicting URI, if any.
+
+=cut
+
+sub check_uri {
+    my $self = shift;
+    my $media_cat = $self->get_category__id();
+    die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the category__id of this media' }) if ( not defined $media_cat);
+
+    # get media in the same category
+    my %parm;
+    $parm{'category_id'} = $media_cat;
+    $parm{'active'} = '1';
+    my @medias = Bric::Biz::Asset::Business::Media->list(\%parm);
+    foreach my $med (@medias) {
+        # skip if current media
+        next if ($med->get_id == $self->get_id);
+
+        if ($med->get_uri() eq $self->get_uri()) {
+            return $med->get_name();
+        }
+    }
+    return 0;
+}
 
 ################################################################################
 

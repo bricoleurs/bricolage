@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-23 23:45:42 $
+$Date: 2002-05-07 22:46:36 $
 
 =head1 SYNOPSIS
 
@@ -1005,6 +1005,54 @@ B<Notes:>
 NONE
 
 =cut
+
+################################################################################
+
+=item $story_name = $story->check_uri();
+
+Returns name of story that has clashing URI.
+
+=cut
+
+sub check_uri {
+    my ($self) = @_;
+    my $msg;
+    # get element type and output channel info for currnt story
+    my $s_eid = $self->get_element__id() || die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the element__id of this story' });
+    my $s_el = Bric::Biz::AssetType->lookup({id => $s_eid}) || die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the Asset Type of this story' });
+    my @ocs = $s_el->get_output_channels();
+    die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve any output channels associated with his storys asset type' }) if !$ocs[0];
+    # then loop thru each category for this story
+    OUTER: foreach my $category ($self->get_categories()) {
+        # get stories in the same category
+        my %parm;
+        $parm{'category_id'} = $category->get_id;
+        $parm{'active'} = '1';
+        my @stories = $self->list(\%parm);
+
+        # for each story that shares this category
+        foreach my $st (@stories) {
+            # dont want to compare current story with itself
+            next if (defined $self->get_id and $st->get_id == $self->get_id);
+
+            # get element type and output channel info
+            my $st_eid = $st->get_element__id() || die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the element__id of this story' });
+            my $st_el = Bric::Biz::AssetType->lookup({id => $st_eid}) || die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the Asset Type of this story' });
+            my @st_ocs = $st_el->get_output_channels();
+
+            # for each output channel, throw an error for conflicting URI.
+            foreach my $st_oc(@st_ocs) {
+                foreach my $oc (@ocs) {
+                    if ($st->get_uri($category,$st_oc) eq $self->get_uri($category,$oc)) {
+                    $msg = $st->get_name();
+                    last OUTER;
+                    }
+                }
+            }
+        }
+    }
+    return $msg;
+}
 
 ################################################################################
 

@@ -113,6 +113,14 @@ my $handle_save = sub {
     my ($widget, $field, $param, $WORK_ID, $media) = @_;
     $media ||= get_state_data($widget, 'media');
     chk_authz($media, EDIT);
+
+    my $msg = $media->check_uri();
+
+    if ($msg) {
+        add_msg("The URI of this media conflicts with that of '$msg'.  Please change the category or file name.");
+        return;
+    }
+
     my $work_id = get_state_data($widget, 'work_id');
 
     if ($work_id) {
@@ -170,6 +178,13 @@ my $handle_save = sub {
 my $handle_checkin = sub {
     my ($widget, $field, $param, $WORK_ID, $media) = @_;
     $media ||= get_state_data($widget, 'media');
+
+    my $msg = $media->check_uri();
+
+    if ($msg) {
+        add_msg("The URI of this media conflicts with that of '$msg'.  Please change the category, file name, or slug.");
+        return;
+    }
 
     my $work_id = get_state_data($widget, 'work_id');
 
@@ -312,6 +327,13 @@ my $handle_save_stay = sub {
 
     $media->activate();
     $media->save();
+
+    my $msg = $media->check_uri();
+
+    if ($msg) {
+        add_msg("The URI of this media conflicts with that of '$msg'.  Please change the category, file name, or slug.");
+        return;
+    }
 
     if ($work_id) {
 	$media->set_workflow_id($work_id);
