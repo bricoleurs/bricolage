@@ -18,7 +18,7 @@ my $uri = escape_html($doc->get_primary_uri);
 # output channel ID.
 return qq{<a href="$uri" } .
   qq{onclick="var newWin = window.open('/workflow/profile/preview/$type/$id?checkout=$co', 'preview_} . SERVER_WINDOW_NAME . q{'); newWin.focus(true); return false;" } .
-  qq{class="$style" itle="$uri" alt="Preview">$title</a>}
+  qq{class="$style" title="$uri" alt="Preview">$title</a>}
   unless $oc_js;
 
 # If we got here, We need to actually load the link based on an oc ID.
