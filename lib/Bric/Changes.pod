@@ -22,6 +22,9 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Deactivated groups no longer affect permission checking. Discovered thanks to
+a bug report from Serge Sozonoff. [David]
+
 =back
 
 =head1 VERSION 1.6.12 "Tov" (2004-04-09)
