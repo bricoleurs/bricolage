@@ -151,6 +151,7 @@ div.debug dt:after {
 }
 
 .desk_item .head .title {
+    font-size: 11px;
     float: left;
     width: 456px;
     color: black;
