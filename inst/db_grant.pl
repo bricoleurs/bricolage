@@ -28,12 +28,22 @@ sub grant_permissions {
     print "Granting privileges...\n";
 
     # get a list of all tables and sequences that don't start with pg
-    my $sql = qq{
-       SELECT relname
-       FROM   pg_class
-       WHERE  relkind IN ('r', 'S')
-              AND relname NOT LIKE 'pg%';
-    };
+    my $sql = $PG->{version} ge '7.3'
+      ? qq{
+        SELECT n.nspname || '.' || c.relname
+        FROM   pg_catalog.pg_class c
+               LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner
+               LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+        WHERE  c.relkind IN ('r', 'S')
+               AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
+               AND pg_catalog.pg_table_is_visible(c.oid)
+      }
+      : qq{
+        SELECT relname
+        FROM   pg_class
+        WHERE  relkind IN ('r', 'S')
+               AND relname NOT LIKE 'pg%';
+      };
 
     my @objects;
     my $err = exec_sql($sql, 0, 0, \@objects);

@@ -6,11 +6,11 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.4.4.1 $
 
 =head1 DATE
 
-$Date: 2003-02-02 19:46:35 $
+$Date: 2003-11-12 17:13:27 $
 
 =head1 DESCRIPTION
 
@@ -54,6 +54,7 @@ get_include_dir();
 get_lib_dir();
 get_bin_dir();
 get_psql();
+get_version();
 get_users();
 
 # all done, dump out apache database, announce success and exit
@@ -101,6 +102,16 @@ sub get_psql {
     hard_fail("Unable to locate psql executable.")
 	unless -e $psql and -x $psql;
     $PG{psql} = $psql;
+}
+
+sub get_version {
+    print "Finding PostgreSQL version.\n";
+    my $data = `$REQ->{PG_CONFIG} --version`;
+    hard_fail("Unable to extract needed data from $REQ->{PG_CONFIG}.")
+      unless $data;
+    chomp $data;
+    $data =~ s/\s*PostgreSQL\s+(\d\.\d(\.\d)?).*/$1/;
+    $PG{version} = $data;
 }
 
 # ask the user for user settings

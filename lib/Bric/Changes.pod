@@ -30,6 +30,10 @@ Reported by Dave Rolsky. [David]
 The element type manager now displays "Subelement" instead of "Story" for
 subelement element types. Suggested by Dave Rolsky. [David]
 
+=item *
+
+Updated to work with PostgreSQL 7.4. [David]
+
 =back
 
 =head1 VERSION 1.6.7 (2003-10-22)
