@@ -1,21 +1,21 @@
-package CE::BL::Profile;
+package CE::App::Profile;
 ###############################################################################
 
 =head1 NAME
 
-CE::BL::Profile.pm
+CE::App::Profile.pm
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:01 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
@@ -105,8 +105,8 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-%values = CE::BL::Profile::get_profile($id, $type); - return hash with object fields => {properties hash}
-$bool = CE::BL::Profile::set_profile($id, $type); returns 1 if object successfully updated, 0 if not
+%values = CE::App::Profile::get_profile($id, $type); - return hash with object fields => {properties hash}
+$bool = CE::App::Profile::set_profile($id, $type); returns 1 if object successfully updated, 0 if not
 
 =cut
 
@@ -119,7 +119,7 @@ sub get_profile {
 
 	# get translation from object type to CE package
 	# $pkgType = getPackageTypeFromDictionary($type);
-	$pkgType = "CE::BC::Person";
+	$pkgType = "CE::Biz::Person";
 	
 	# get handle to object.  If necessary, create a new one.
 	if ($id ne "add") {
@@ -265,7 +265,10 @@ dave@creationengines.com
 =head1 REVISION HISTORY
 
 $Log: Profile.pm,v $
-Revision 1.1  2001-09-06 21:53:01  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:01  wheeler
+Upload to SourceForge.
 
 =cut

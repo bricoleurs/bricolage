@@ -1,36 +1,36 @@
-package Bric::BC::Asset::Business::Parts::Tile::Container;
+package Bric::Biz::Asset::Business::Parts::Tile::Container;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Asset::Business::Parts::Tile::Container - The class that contains other
+Bric::Biz::Asset::Business::Parts::Tile::Container - The class that contains other
 tiles
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:56 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
 
  # Creation of Objects
- $tile = Bric::BC::Asset::Business::Parts::Tile::Container->new
+ $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new
 		($initial_state)
- $tile = Bric::BC::Asset::Business::Parts::Tile::Container->lookup
+ $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->lookup
 		( { id => $id })
  ($tile_list, @tiles) = 
-	Bric::BC::Asset::Business::Parts::Tile::Container->list( $criteria )
+	Bric::Biz::Asset::Business::Parts::Tile::Container->list( $criteria )
  ($id_list || @ids) = 
-	Bric::BC::Asset::Business::Parts::Tile::Container->list_ids($criteria)
+	Bric::Biz::Asset::Business::Parts::Tile::Container->list_ids($criteria)
 
 
  $tile = $tile->add_contained( [ $tiles])
@@ -60,8 +60,8 @@ use strict;
 # Programatic Dependencies              
 
 use Bric::Util::DBI qw(:all);
-use Bric::BC::Asset::Business::Parts::Tile::Data;
-use Bric::BC::AssetType;
+use Bric::Biz::Asset::Business::Parts::Tile::Data;
+use Bric::Biz::AssetType;
 
 #==============================================================================#
 # Inheritance                          #
@@ -69,7 +69,7 @@ use Bric::BC::AssetType;
 
 # The parent module should have a 'use' line if you need to import from it.
 # use Bric;
-use base qw( Bric::BC::Asset::Business::Parts::Tile );
+use base qw( Bric::Biz::Asset::Business::Parts::Tile );
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -176,7 +176,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $tile = Bric::BC::Asset::Business::Parts::Tile::Container->new($init)
+=item $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new($init)
 
 This will create a new tile object with the given state defined by the 
 optional initial state argument
@@ -240,9 +240,9 @@ sub new {
 		$init->{'object_instance_id'} = $init->{'object'}->get_version_id();
 		my $class = ref $init->{'object'};
 
-		if (substr($class, 0,30) eq 'Bric::BC::Asset::Business::Media') {
+		if (substr($class, 0,30) eq 'Bric::Biz::Asset::Business::Media') {
 			$init->{'object_type'} = 'media';
-		} elsif ($class eq 'Bric::BC::Asset::Business::Story') {
+		} elsif ($class eq 'Bric::Biz::Asset::Business::Story') {
 			$init->{'object_type'} = 'story';
 		} else {
 			die Bric::Util::Fault::Exception::GEN->new( { 
@@ -257,7 +257,7 @@ sub new {
 	} else {
 		# not sure why this needs to be here
 		delete $init->{'element'};
-		$init->{'_element_obj'} = Bric::BC::AssetType->lookup({ 
+		$init->{'_element_obj'} = Bric::Biz::AssetType->lookup({ 
 				'id' => $init->{'element_id'} });
 
 	}
@@ -288,7 +288,7 @@ sub new {
 
 ################################################################################
 
-=item $tile = Bric::BC::Asset::Business::Parts::Tile->lookup( { id => $id } )
+=item $tile = Bric::Biz::Asset::Business::Parts::Tile->lookup( { id => $id } )
 
 This will return an existing tile object that is defined by the given 
 id
@@ -329,12 +329,12 @@ sub lookup {
 		# get the package to determine the object field
 		my $obj_class = ref $param->{'object'};
 
-		if ($obj_class eq 'Bric::BC::Asset::Business::Story') {
+		if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
 			# set object type to story and add the object
 			$self->_set( { 	'object_type' 	=> 'story',
 							'_object'		=> $param->{'object'} });
 
-		} elsif ($obj_class eq 'Bric::BC::Asset::Business::Media') {
+		} elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
 			$self->_set( { 	'object_type'	=> 'media',
 							'_object'		=> $param->{'object'} });;
 		} else {
@@ -358,7 +358,7 @@ sub lookup {
 
 ################################################################################
 
-=item (@tiles||$tiles) = Bric::BC::Assets::Parts::Tile::Container->list($param)  
+=item (@tiles||$tiles) = Bric::Biz::Assets::Parts::Tile::Container->list($param)  
 
 This will return a list or list ref of tiles that match the given criteria
 
@@ -408,7 +408,7 @@ sub DESTROY {
 
 =cut
 
-=item (@ids||$ids) = Bric::BC::Assets::Parts::Tile::Container->list_ids($param)
+=item (@ids||$ids) = Bric::Biz::Assets::Parts::Tile::Container->list_ids($param)
 
 This will return a list or list ref of tile ids that match the given criteria
 
@@ -517,7 +517,7 @@ sub get_related_story {
     $rel_obj = undef if $rel_obj and ($rel_obj->get_id != $rel_id);
 
     unless ($rel_obj) {
-	$rel_obj = Bric::BC::Asset::Business::Story->lookup({'id' => $rel_id});
+	$rel_obj = Bric::Biz::Asset::Business::Story->lookup({'id' => $rel_id});
 	
 	$self->_set(['_related_instance_obj'], [$rel_obj]) if $rel_obj;
 
@@ -595,7 +595,7 @@ sub get_related_media {
     $media_obj = undef if $media_obj and $media_obj->get_id != $media_id;
 
     unless ($media_obj) {
-	$media_obj = Bric::BC::Asset::Business::Media->lookup({id => $media_id});
+	$media_obj = Bric::Biz::Asset::Business::Media->lookup({id => $media_id});
 
 	$self->_set({'_related_media_obj' => $media_obj});
 
@@ -762,7 +762,7 @@ NONE
 sub add_data {
 	my ($self, $atd, $data) = @_;
 
-	my $data_tile = Bric::BC::Asset::Business::Parts::Tile::Data->new(
+	my $data_tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new(
 				{   'active' 				=> 1,
 					'object_type'			=> $self->_get('object_type'),
 					'object_instance_id'	=> $self->_get('object_id'),
@@ -800,7 +800,7 @@ sub add_container {
 	my ($self, $atc) = @_;
 
 	# create a new Container Object with this one as its parent
-	my $container_tile = Bric::BC::Asset::Business::Parts::Tile::Container->new(
+	my $container_tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new(
 					{ 	'active'				=> 1,
 						'object_type'       	=> $self->_get('object_type'),
 						'object_instance_id'	=> $self->_get('object_id'),
@@ -1051,9 +1051,9 @@ sub delete_tiles {
 	    } else {
 		die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
 	    }
-	} elsif (ref $_ eq 'Bric::BC::Asset::Business::Parts::Tile::Data') {
+	} elsif (ref $_ eq 'Bric::Biz::Asset::Business::Parts::Tile::Data') {
 	    $del_data{$_->get_id()} = undef;
-	} elsif (ref $_ eq 'Bric::BC::Asset::Business::Parts::Tile::Container') {
+	} elsif (ref $_ eq 'Bric::Biz::Asset::Business::Parts::Tile::Container') {
 	    $del_cont{$_->get_id()} = undef;
 	} else {
 	    die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
@@ -1369,11 +1369,11 @@ sub _do_list {
 
 	if ($param->{'object'}) {
 		my $obj_class = ref $param->{'object'};
-		if ($obj_class eq 'Bric::BC::Asset::Business::Story') {
+		if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
 			$table = S_TABLE;
 			$obj_type = 'story';
 
-		} elsif (substr($obj_class,0,30) eq 'Bric::BC::Asset::Business::Media') {
+		} elsif (substr($obj_class,0,30) eq 'Bric::Biz::Asset::Business::Media') {
 			$table = M_TABLE;
 			$obj_type = 'media';
 
@@ -1590,7 +1590,7 @@ sub _get_element_obj {
 	my ($at_obj, $at_id) = $self->_get('_element_obj', 'element_id');
 
 	unless ($at_obj) {
-	    $at_obj = Bric::BC::AssetType->lookup({id => $at_id});
+	    $at_obj = Bric::Biz::AssetType->lookup({id => $at_id});
 
 	    $self->_set(['_element_obj'], [$at_obj]);
 
@@ -1729,14 +1729,14 @@ sub _get_tiles {
     return [] unless $self->get_id;
 
     unless ($tiles) {
-	my $cont = Bric::BC::Asset::Business::Parts::Tile::Container->list(
+	my $cont = Bric::Biz::Asset::Business::Parts::Tile::Container->list(
 		   {
 		    'parent_id'   => $self->get_id,
 		    'active'      => 1,
 		    'object_type' => $self->_get('object_type')
 		   });
 
-	my $data = Bric::BC::Asset::Business::Parts::Tile::Data->list(
+	my $data = Bric::Biz::Asset::Business::Parts::Tile::Data->list(
 		   {
 		    'parent_id'   => $self->get_id,
 		    'active'      => 1,
@@ -1831,14 +1831,17 @@ Bricolage Engineering
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::BC::Asset>, L<Bric::BC::Asset::Business>, 
-L<Bric::BC::Asset::Business::Parts::Tile>
+L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
+L<Bric::Biz::Asset::Business::Parts::Tile>
 
 =head1 REVISION HISTORY
 
 $Log: Container.pm,v $
-Revision 1.1  2001-09-06 21:53:56  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:56  wheeler
+Upload to SourceForge.
 
 =cut
 

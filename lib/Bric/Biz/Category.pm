@@ -1,30 +1,30 @@
-package Bric::BC::Category;
+package Bric::Biz::Category;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Category - A module to group assets into categories.
+Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:17 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
  # Return a new category object.
- my $cat = new Bric::BC::Category($init);
+ my $cat = new Bric::Biz::Category($init);
 
- my $cat = lookup Bric::BC::Category({'id' => $cat_id});
+ my $cat = lookup Bric::Biz::Category({'id' => $cat_id});
 
- my $cat = list Bric::BC::Category($crit);
+ my $cat = list Bric::Biz::Category($crit);
 
  $cat->get_name;
  $cat->get_description;
@@ -175,9 +175,9 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $obj = new Bric::BC::Category($init);
+=item $obj = new Bric::Biz::Category($init);
 
-Create a new object of type Bric::BC::Category
+Create a new object of type Bric::Biz::Category
 
 Keys for $init are:
 
@@ -242,7 +242,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item @objs = lookup Bric::BC::Category($cat_id);
+=item @objs = lookup Bric::Biz::Category($cat_id);
 
 Return an object given an ID.
 
@@ -288,7 +288,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item @objs = list Bric::BC::Category($crit);
+=item @objs = list Bric::Biz::Category($crit);
 
 Return a list of category objects based on certain criteria
 
@@ -1286,7 +1286,7 @@ sub add_keyword {
 
     #$self->_set(['keyword_grp_id'], [$kw_obj->get_id]);
 
-    my $t = 'Bric::BC::Keyword';
+    my $t = 'Bric::Biz::Keyword';
     # Map any IDs we are passed to a hash ref of ID and type.
     $kw_obj->add_members([map {ref($_) ? {'obj'=>$_} 
                                        : {'package'=>$t,'id'=>$_}} @$kw]);
@@ -1325,7 +1325,7 @@ sub del_keyword {
     }
 
     foreach (@$kw) {
-	$kw_obj->delete_members([{'package' => 'Bric::BC::Keyword', 
+	$kw_obj->delete_members([{'package' => 'Bric::Biz::Keyword', 
 				  'id'      => ref $_ ? $_->get_id : $_}]);
     }
 
@@ -1367,7 +1367,7 @@ sub add_asset {
 
     #$self->_set(['asset_grp_id'], [$a_obj->get_id]);
 
-    my $t = 'Bric::BC::Asset';
+    my $t = 'Bric::Biz::Asset';
     # Map any IDs we are passed to a hash ref of ID and type.
     $a_obj->add_members([map {ref{$_} ? {'obj'=>$_} 
 			              : {'package'=>$t,'id'=>$_}} @$a]);
@@ -1406,7 +1406,7 @@ sub del_asset {
 	die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
     }
 
-    my $t = 'Bric::BC::Asset';
+    my $t = 'Bric::Biz::Asset';
     # Map any IDs we are passed to a hash ref of ID and type.
     $a_obj->delete_members([map {ref{$_} ? $_ : {'package'=>$t,'id'=>$_}} @$a]);
 }
@@ -1715,12 +1715,15 @@ Bricolage Engineering
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric::Util::Grp::Category>, L<Bric>, L<Bric::BC::Keyword>, L<Bric::BC::Asset>
+L<perl>, L<Bric::Util::Grp::Category>, L<Bric>, L<Bric::Biz::Keyword>, L<Bric::Biz::Asset>
 
 =head1 REVISION HISTORY
 
 $Log: Category.pm,v $
-Revision 1.1  2001-09-06 21:53:17  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:17  wheeler
+Upload to SourceForge.
 
 =cut

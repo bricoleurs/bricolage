@@ -1,28 +1,28 @@
-package Bric::BL::Handler;
+package Bric::App::Handler;
 
 =head1 NAME
 
-Bric::BL::Handler - The center of the application, as far as Apache is concerned.
+Bric::App::Handler - The center of the application, as far as Apache is concerned.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:00 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
   <Perl>
   use lib '/usr/local/bricolage/lib';
   </Perl>
-  PerlModule Bric::BL::Handler
+  PerlModule Bric::App::Handler
   PerlFreshRestart    On
   DocumentRoot "/usr/local/bricolage/comp"
   <Directory "/usr/local/bricolage/comp">
@@ -31,9 +31,9 @@ $Date: 2001-09-06 21:53:00 $
       Order allow,deny
       Allow from all
       SetHandler perl-script
-      PerlAccessHandler Bric::BL::AccessHandler
-      PerlHandler Bric::BL::Handler
-      PerlCleanupHandler Bric::BL::CleanupHandler
+      PerlAccessHandler Bric::App::AccessHandler
+      PerlHandler Bric::App::Handler
+      PerlCleanupHandler Bric::App::CleanupHandler
   </Directory>
 
 =head1 DESCRIPTION
@@ -58,7 +58,7 @@ use Bric::Util::Fault::Exception::AP;
 use Bric::Util::Fault::Exception::DP;
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::CharTrans;
-use Bric::BL::Event qw(clear_events);
+use Bric::App::Event qw(clear_events);
 use Apache::Log;
 use HTML::Mason;
 use Carp qw(croak);
@@ -73,30 +73,30 @@ use HTML::Mason::ApacheHandler (args_method => MASON_ARGS_METHOD);
     # Load all modules to be used from elements.
     use Apache::Util qw(escape_html escape_uri);
     use Bric::Config qw(:auth_len :admin :time :dist :ui);
-    use Bric::BC::Asset::Business::Media;
-    use Bric::BC::Asset::Business::Media::Image;
-    use Bric::BC::Asset::Business::Parts::Tile::Container;
-    use Bric::BC::Asset::Business::Story;
-    use Bric::BC::Asset::Formatting;
-    use Bric::BC::AssetType;
-    use Bric::BC::Category;
-    use Bric::BC::Contact;
-    use Bric::BC::Keyword;
-    use Bric::BC::Org::Person;
-    use Bric::BC::Org::Source;
-    use Bric::BC::OutputChannel;
-    use Bric::BC::Person;
-    use Bric::BC::Person::User;
-    use Bric::BC::Workflow qw(:wf_const);
-    use Bric::BC::Workflow::Parts::Desk;
+    use Bric::Biz::Asset::Business::Media;
+    use Bric::Biz::Asset::Business::Media::Image;
+    use Bric::Biz::Asset::Business::Parts::Tile::Container;
+    use Bric::Biz::Asset::Business::Story;
+    use Bric::Biz::Asset::Formatting;
+    use Bric::Biz::AssetType;
+    use Bric::Biz::Category;
+    use Bric::Biz::Contact;
+    use Bric::Biz::Keyword;
+    use Bric::Biz::Org::Person;
+    use Bric::Biz::Org::Source;
+    use Bric::Biz::OutputChannel;
+    use Bric::Biz::Person;
+    use Bric::Biz::Person::User;
+    use Bric::Biz::Workflow qw(:wf_const);
+    use Bric::Biz::Workflow::Parts::Desk;
 
-    use Bric::BL::Auth qw(:all);
-    use Bric::BL::Authz qw(:all);
-    use Bric::BL::Cache;
-    use Bric::BL::ReqCache;
-    use Bric::BL::Event qw(log_event);
-    use Bric::BL::Session qw(:state :user);
-    use Bric::BL::Util qw(:msg
+    use Bric::App::Auth qw(:all);
+    use Bric::App::Authz qw(:all);
+    use Bric::App::Cache;
+    use Bric::App::ReqCache;
+    use Bric::App::Event qw(log_event);
+    use Bric::App::Session qw(:state :user);
+    use Bric::App::Util qw(:msg
                         :redir
 			:pkg
 			:history
@@ -121,10 +121,10 @@ use HTML::Mason::ApacheHandler (args_method => MASON_ARGS_METHOD);
     $widget_dir = 'widgets';
 
     # A global that makes the cache available everywhere.
-    $c = Bric::BL::Cache->new;
+    $c = Bric::App::Cache->new;
 
     # A global that maes the request cache available everywhere.
-    $rc = Bric::BL::ReqCache->new;
+    $rc = Bric::App::ReqCache->new;
 }
 
 ################################################################################
@@ -340,7 +340,7 @@ sub load_args {
     # We need to apply preferences for the character set.
     # Commented out because we're using the setting in Bric::Config, instead, and
     # that's set only once, at server startup time.
-#    eval { $ct->charset(Bric::BL::Default::get_pref("Character Set") || $defset)};
+#    eval { $ct->charset(Bric::App::Default::get_pref("Character Set") || $defset)};
 #    die ref $@ ? $@ : $dp->new({
 #      msg => "Error setting Bric::Util::CharTrans character set.",
 #      payload => $@ }) if $@;
@@ -372,7 +372,7 @@ sub load_args {
     #   ...without taking a closer look I'd say you cannot depend on having
     #   access to a full request object in the argument handler. Again, this API
     #   is due for a revamp.
-#    Bric::BL::Session::handle_callbacks($m, \%args);
+#    Bric::App::Session::handle_callbacks($m, \%args);
     return %args;
 }
 
@@ -458,7 +458,10 @@ Bric (2)
 =head1 REVISION HISTORY
 
 $Log: Handler.pm,v $
-Revision 1.1  2001-09-06 21:53:00  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:00  wheeler
+Upload to SourceForge.
 
 =cut

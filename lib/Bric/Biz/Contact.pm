@@ -1,43 +1,43 @@
-package Bric::BC::Contact;
+package Bric::Biz::Contact;
 
 =head1 NAME
 
-Bric::BC::Contact - Interface to Contacts
+Bric::Biz::Contact - Interface to Contacts
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:20 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  use Bric::BC::Contact
+  use Bric::Biz::Contact
 
   # Constructors.
-  my $c = Bric::BC::Contact->new($init);
-  my $c = Bric::BC::Contact->lookup({ id => $id });
-  my @c = Bric::BC::Contact->list($params);
+  my $c = Bric::Biz::Contact->new($init);
+  my $c = Bric::Biz::Contact->lookup({ id => $id });
+  my @c = Bric::Biz::Contact->list($params);
 
   # Class Methods.
-  my @cids = Bric::BC::Contact->list_ids($params);
-  my $methods = Bric::BC::Contact->my_meths;
+  my @cids = Bric::Biz::Contact->list_ids($params);
+  my $methods = Bric::Biz::Contact->my_meths;
 
   # Contact Type managment.
-  my @types = Bric::BC::Contact->list_types;
-  my $types_href = Bric::BC::Contact->href_types;
-  my @types = Bric::BC::Contact->list_alertable_types;
-  my $types_href = Bric::BC::Contact->href_alertable_types;
-  my $type_ids_href = Bric::BC::Contact->href_alertable_type_ids;
-  my $bool = Bric::BC::Contact->edit_type($type, $description);
-  my $bool = Bric::BC::Contact->deactivate_type($type);
+  my @types = Bric::Biz::Contact->list_types;
+  my $types_href = Bric::Biz::Contact->href_types;
+  my @types = Bric::Biz::Contact->list_alertable_types;
+  my $types_href = Bric::Biz::Contact->href_alertable_types;
+  my $type_ids_href = Bric::Biz::Contact->href_alertable_type_ids;
+  my $bool = Bric::Biz::Contact->edit_type($type, $description);
+  my $bool = Bric::Biz::Contact->deactivate_type($type);
 
   # Instance Methods.
   my $id = $c->get_id;
@@ -56,16 +56,16 @@ $Date: 2001-09-06 21:53:20 $
 =head1 DESCRIPTION
 
 This class manages contacts. Currently, contacts are only associated with
-Bric::BC::Person objects, but they could conceivabley be associated with other
-objects, e.g., Bric::BC::Org.
+Bric::Biz::Person objects, but they could conceivabley be associated with other
+objects, e.g., Bric::Biz::Org.
 
 A contact is a method (other than snail mail) to contact a person. Default
 contact types include "Primary Email," "Secondary Email," "Office Phone,"
 "Mobile Phone," "AOL Instant Messenger," etc. These types can be modifed and new
 contact types can be added via this class' class methods. Each individual
-Bric::BC::Contact object has an associated type, the types' description, and
+Bric::Biz::Contact object has an associated type, the types' description, and
 a value. Each is also associated with another object, so they will often be
-accessed from that object (see Bric::BC::Person for an example).
+accessed from that object (see Bric::Biz::Person for an example).
 
 =cut
 
@@ -141,11 +141,11 @@ BEGIN {
 
 =over 4
 
-=item my $c = Bric::BC::Contact->new()
+=item my $c = Bric::Biz::Contact->new()
 
-=item my $c = Bric::BC::Contact->new($init)
+=item my $c = Bric::Biz::Contact->new($init)
 
-Instantiates a Bric::BC::Contact object. An anonymous hash of initial values may be
+Instantiates a Bric::Biz::Contact object. An anonymous hash of initial values may be
 passed. The supported initial value keys are:
 
 =over 4
@@ -192,10 +192,10 @@ sub new {
 
 ################################################################################
 
-=item my $c = Bric::BC::Contact->lookup({ id => $id })
+=item my $c = Bric::Biz::Contact->lookup({ id => $id })
 
-Looks up and instantiates a new Bric::BC::Contact object based on the
-Bric::BC::Contact object ID passed. If $id is not found in the database, lookup()
+Looks up and instantiates a new Bric::Biz::Contact object based on the
+Bric::Biz::Contact object ID passed. If $id is not found in the database, lookup()
 returns undef.
 
 B<Throws:>
@@ -204,7 +204,7 @@ B<Throws:>
 
 =item *
 
-Too many Bric::BC::Contact objects found.
+Too many Bric::Biz::Contact objects found.
 
 =item *
 
@@ -232,7 +232,7 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> If $id is found, populates the new Bric::BC::Contact object with
+B<Side Effects:> If $id is found, populates the new Bric::Biz::Contact object with
 data from the database before returning it.
 
 B<Notes:> NONE.
@@ -243,15 +243,15 @@ sub lookup {
     my $contact = &$get_em(@_);
     # We want @$contact to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::BC::Contact objects found.' }) if @$contact > 1;
+      msg => 'Too many Bric::Biz::Contact objects found.' }) if @$contact > 1;
     return @$contact ? $contact->[0] : undef;
 }
 
 ################################################################################
 
-=item my (@contacts || $contact_aref) = Bric::BC::Contact->list($params)
+=item my (@contacts || $contact_aref) = Bric::Biz::Contact->list($params)
 
-Returns a list or anonymous array of Bric::BC::Contact objects based on the search
+Returns a list or anonymous array of Bric::Biz::Contact objects based on the search
 parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
@@ -302,7 +302,7 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Populates each Bric::BC::Contact object with data from the
+B<Side Effects:> Populates each Bric::Biz::Contact object with data from the
 database before returning them all.
 
 B<Notes:> NONE.
@@ -313,10 +313,10 @@ sub list {  wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
 ################################################################################
 
-=item my $contacts_href = Bric::BC::Contact->href($params)
+=item my $contacts_href = Bric::Biz::Contact->href($params)
 
 Works the same as list(), with the same arguments, except it returns a hash or
-hashref of Bric::BC::Contact objects, where the keys are the contact IDs, and the
+hashref of Bric::Biz::Contact objects, where the keys are the contact IDs, and the
 values are the contact objects.
 
 B<Throws:>
@@ -349,7 +349,7 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Populates each Bric::BC::Contact object with data from the
+B<Side Effects:> Populates each Bric::Biz::Contact object with data from the
 database before returning them all.
 
 B<Notes:> NONE.
@@ -386,9 +386,9 @@ sub DESTROY {}
 
 =over 4
 
-=item my (@c_ids || $c_ids_aref) = Bric::BC::Contact->list_ids($params)
+=item my (@c_ids || $c_ids_aref) = Bric::Biz::Contact->list_ids($params)
 
-Returns a list or anonymous array of Bric::BC::Contact object IDs based on the
+Returns a list or anonymous array of Bric::Biz::Contact object IDs based on the
 search parameters passed via an anonymous hash. The supported lookup keys are
 the same as those for list().
 
@@ -434,9 +434,9 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 ################################################################################
 
-=item $meths = Bric::BC::Person->my_meths
+=item $meths = Bric::Biz::Person->my_meths
 
-=item (@meths || $meths_aref) = Bric::BC::Person->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::Person->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -627,7 +627,7 @@ sub my_meths {
 
 ################################################################################
 
-=item my (@types || $type_aref) = Bric::BC::Contact->list_types
+=item my (@types || $type_aref) = Bric::Biz::Contact->list_types
 
 Returns a list or anonymous array of all the possible types of contacts. Use
 these types to set the type of a contact via $c->set_type().
@@ -670,7 +670,7 @@ sub list_types { &$get_types() }
 
 ################################################################################
 
-=item my $type_href = Bric::BC::Contact->href_types
+=item my $type_href = Bric::Biz::Contact->href_types
 
 Returns a hash list or anonymous hash of all the possible types of contacts. The
 hash keys are the type names, and the hash values are the descriptions.
@@ -713,7 +713,7 @@ sub href_types { &$get_types(1) }
 
 ################################################################################
 
-=item my (@types || $type_aref) = Bric::BC::Contact->list_alertable_types
+=item my (@types || $type_aref) = Bric::Biz::Contact->list_alertable_types
 
 Returns a list or anonymous array of contact types that are alertable, that is,
 contacts of these types may be used for sending alerts.
@@ -756,7 +756,7 @@ sub list_alertable_types { &$get_types(undef, 1) }
 
 ################################################################################
 
-=item my $types_aref = Bric::BC::Contact->href_alertable_types
+=item my $types_aref = Bric::Biz::Contact->href_alertable_types
 
 Returns a hash list or anonymous hash of contact types that are alertable, that
 is, contacts of these types may be used for sending alerts. The hash keys are
@@ -800,7 +800,7 @@ sub href_alertable_types { &$get_types(1, 1) }
 
 ################################################################################
 
-=item my $types_aref = Bric::BC::Contact->href_alertable_type_ids
+=item my $types_aref = Bric::Biz::Contact->href_alertable_type_ids
 
 Returns a hash list or anonymous hash of contact types that are alertable, that
 is, contacts of these types may be used for sending alerts. The hash keys are
@@ -844,7 +844,7 @@ sub href_alertable_type_ids { &$get_types(1, 1, 1) }
 
 ################################################################################
 
-=item my $success = Bric::BC::Contact->edit_type($type, $description)
+=item my $success = Bric::Biz::Contact->edit_type($type, $description)
 
 Adds or alters a contact type. If the type exists, it's description will be
 updated and it will be activated. If it does not exist, it will be created.
@@ -894,7 +894,7 @@ sub edit_type {
 
 ################################################################################
 
-=item my $success = Bric::BC::Contact->deactivate_type($type)
+=item my $success = Bric::Biz::Contact->deactivate_type($type)
 
 Deletes a type. All contacts of this type will be automatically deactivated. To
 reactivate a type, use edit_type(); all existing contacts of that type will then
@@ -947,7 +947,7 @@ sub deactivate_type {
 
 =item my $id = $c->get_id
 
-Returns the ID of the Bric::BC::Contact object.
+Returns the ID of the Bric::Biz::Contact object.
 
 B<Throws:>
 
@@ -973,13 +973,13 @@ No AUTOLOAD method.
 
 B<Side Effects:> NONE.
 
-B<Notes:> If the Bric::BC::Contact object has been instantiated via the new()
+B<Notes:> If the Bric::Biz::Contact object has been instantiated via the new()
 constructor and has not yet been C<save>d, the object will not yet have an ID,
 so this method call will return undef.
 
 =item my $type = $c->get_type
 
-Returns the type of the Bric::BC::Contact object.
+Returns the type of the Bric::Biz::Contact object.
 
 B<Throws:>
 
@@ -1040,7 +1040,7 @@ sub set_type {
 
 =item my $description = $c->get_description
 
-Returns the description of the Bric::BC::Contact object. If the contact has not
+Returns the description of the Bric::Biz::Contact object. If the contact has not
 been looked up from the database or if it's type has changed, description
 will be undef.
 
@@ -1072,7 +1072,7 @@ B<Notes:> NONE.
 
 =item my $value =  $c->get_value
 
-Returns the value of the Bric::BC::Contact object.
+Returns the value of the Bric::Biz::Contact object.
 
 B<Throws:>
 
@@ -1102,7 +1102,7 @@ B<Notes:> NONE.
 
 =item $self = $c->set_value($value)
 
-Sets the value of the Bric::BC::Contact object. Returns $self on success and undef
+Sets the value of the Bric::Biz::Contact object. Returns $self on success and undef
 on failure.
 
 B<Throws:>
@@ -1133,8 +1133,8 @@ B<Notes:> NONE.
 
 =item $self = $c->activate
 
-Activates the Bric::BC::Contact object. Call $p->save to make the change
-persistent. Bric::BC::Contact objects instantiated by new() are active by default.
+Activates the Bric::Biz::Contact object. Call $p->save to make the change
+persistent. Bric::Biz::Contact objects instantiated by new() are active by default.
 
 B<Throws:>
 
@@ -1163,7 +1163,7 @@ sub activate {
 
 =item $self = $c->deactivate
 
-Deactivates (deletes) the Bric::BC::Contact object. Call $p->save to make the
+Deactivates (deletes) the Bric::Biz::Contact object. Call $p->save to make the
 change persistent.
 
 B<Throws:>
@@ -1193,7 +1193,7 @@ sub deactivate {
 
 =item $self = $c->is_active
 
-Returns $self if the Bric::BC::Contact object is active, and undef if it is not.
+Returns $self if the Bric::Biz::Contact object is active, and undef if it is not.
 
 B<Throws:>
 
@@ -1220,9 +1220,9 @@ sub is_active {
 
 =item $self = $p->save
 
-Saves any changes to the Bric::BC::Contact object, including changes to associated
-contacts (Bric::BC::Attribute::Contact::Contact objects) and attributes
-(Bric::BC::Attribute::Contact objects). Returns $self on success and undef on
+Saves any changes to the Bric::Biz::Contact object, including changes to associated
+contacts (Bric::Biz::Attribute::Contact::Contact objects) and attributes
+(Bric::Biz::Attribute::Contact objects). Returns $self on success and undef on
 failure.
 
 B<Throws:>
@@ -1259,8 +1259,8 @@ Bric::_set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> Cleans out internal cache of Bric::BC::Attr::Contact::Contact and
-Bric::BC::Attribute::Contact objects to reflect what is in the database.
+B<Side Effects:> Cleans out internal cache of Bric::Biz::Attr::Contact::Contact and
+Bric::Biz::Attribute::Contact objects to reflect what is in the database.
 
 B<Notes:> NONE.
 
@@ -1337,8 +1337,8 @@ NONE.
 
 =item my $contacts_ids_aref = &$get_em( $pkg, $search_href, 1 )
 
-Function used by lookup() and list() to return a list of Bric::BC::Contact objects
-or, if called with an optional third argument, returns a listof Bric::BC::Contact
+Function used by lookup() and list() to return a list of Bric::Biz::Contact objects
+or, if called with an optional third argument, returns a listof Bric::Biz::Contact
 object IDs (used by list_ids()).
 
 B<Throws:>
@@ -1549,7 +1549,10 @@ Bric (2)
 =head1 REVISION HISTORY
 
 $Log: Contact.pm,v $
-Revision 1.1  2001-09-06 21:53:20  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:20  wheeler
+Upload to SourceForge.
 
 =cut

@@ -1,33 +1,33 @@
-package Bric::BC::Asset::Business::Parts::Tile::Data;
+package Bric::Biz::Asset::Business::Parts::Tile::Data;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Asset::Business::Parts::Tile::Data - The tile class that 
+Bric::Biz::Asset::Business::Parts::Tile::Data - The tile class that 
 contains the business data
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:58 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
  # Creation of New Objects
- $tile = Bric::BC::Asset::Business::Parts::Tile::Data->new( $param)
- $tile = Bric::BC::Asset::Business::Parts::Tile::Data->lookup( { id => $id })
- ($tile_list, @tiles) = Bric::BC::Asset::Business::Parts::Tile::Data->list
+ $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new( $param)
+ $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->lookup( { id => $id })
+ ($tile_list, @tiles) = Bric::Biz::Asset::Business::Parts::Tile::Data->list
 		( $criteria )
 
  # Retrieval of Object IDs
- ($id_list || @ids) = = Bric::BC::Asset::Business::Parts::Tile::Data->list_ids
+ ($id_list || @ids) = = Bric::Biz::Asset::Business::Parts::Tile::Data->list_ids
 		( $criteria )
 
  # Manipulation of Data Field
@@ -54,7 +54,7 @@ use strict;
 
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Fault::Exception::GEN;
-use Bric::BC::AssetType::Parts::Data;
+use Bric::Biz::AssetType::Parts::Data;
 
 #==============================================================================#
 # Inheritance                          #
@@ -62,7 +62,7 @@ use Bric::BC::AssetType::Parts::Data;
 
 # The parent module should have a 'use' line if you need to import from it.
 # use Bric;
-use base qw(Bric::BC::Asset::Business::Parts::Tile);
+use base qw(Bric::Biz::Asset::Business::Parts::Tile);
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -172,7 +172,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $tile = Bric::BC::Asset::Business::Parts::Tile::Data->new($init)
+=item $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new($init)
 
 This will create a new tile object with the given state defined by the 
 optional initial state argument
@@ -232,9 +232,9 @@ sub new {
 	$init->{'object_instance_id'} = $obj->get_id();
 	my $class = ref $obj;
 	
-	if ($class eq 'Bric::BC::Asset::Business::Media') {
+	if ($class eq 'Bric::Biz::Asset::Business::Media') {
 	    $init->{'object_type'} = 'media';
-	} elsif ($class eq 'Bric::BC::Asset::Business::Story') {
+	} elsif ($class eq 'Bric::Biz::Asset::Business::Story') {
 	    $init->{'object_type'} = 'story';
 	} else {
 	    my $err_msg = 'Object of type $class not allowed';
@@ -267,7 +267,7 @@ sub new {
 
 ################################################################################
 
-=item $tile = Bric::BC::Asset::Business::Parts::Tile::Data->lookup( $criteria )
+=item $tile = Bric::Biz::Asset::Business::Parts::Tile::Data->lookup( $criteria )
 
 This will return an existing tile object that is defined by the given 
 criteria
@@ -299,9 +299,9 @@ sub lookup {
     if ($param->{'obj'}) {
 	my $obj_class = ref $param->{'obj'};
 	
-	if ($obj_class eq 'Bric::BC::Asset::Business::Story') {
+	if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
 	    $short = 'story';
-	} elsif ($obj_class eq 'Bric::BC::Asset::Business::Media') {
+	} elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
 	    $short = 'media';
 	}
     } else {
@@ -334,7 +334,7 @@ sub lookup {
 
 ################################################################################
 
-=item (@ts||$ts) = Bric::BC::Assets::Business::Parts::Tile::Data->list($param)
+=item (@ts||$ts) = Bric::Biz::Assets::Business::Parts::Tile::Data->list($param)
 
 This will return a list or list ref of tiles that match the given criteria
 
@@ -419,7 +419,7 @@ sub DESTROY {
 
 =cut
 
-=item (@ids || $ids) = Bric::BC::Assets::Business::Parts::Tile::Data->list_ids($p)
+=item (@ids || $ids) = Bric::Biz::Assets::Business::Parts::Tile::Data->list_ids($p)
 
 This will return a list or list ref of tile ids that match the given criteria
 
@@ -482,7 +482,7 @@ sub get_element_data_obj {
 
     unless ($atd) {
 	my $atd_id = $self->_get('element_data_id');
-	$atd = Bric::BC::AssetType::Parts::Data->lookup({id => $atd_id});
+	$atd = Bric::Biz::AssetType::Parts::Data->lookup({id => $atd_id});
 
 	$self->_set(['_element_obj'], [$atd]);
 	$self->_set__dirty($dirty);
@@ -803,9 +803,9 @@ sub _do_list {
 	my $obj_class = ref $param->{'object'};
 
 	# Get the object type.
-	if ($obj_class eq 'Bric::BC::Asset::Business::Story') {
+	if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
 	    $obj_type = 'story';
-	} elsif ($obj_class eq 'Bric::BC::Asset::Business::Media') {
+	} elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
 	    $obj_type = 'media';
 	}
 
@@ -961,7 +961,7 @@ sub _get_element_object {
 
     unless ($at_obj) {
 	my $at_id = $self->_get('element_data_id');
-	$at_obj = Bric::BC::AssetType::Parts::Data->lookup({id => $at_id});
+	$at_obj = Bric::Biz::AssetType::Parts::Data->lookup({id => $at_id});
 
 	$self->_set(['_element_obj'], [$at_obj]);
 	$self->_set__dirty($dirty);
@@ -1061,14 +1061,17 @@ Bricolage Engineering
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::BC::Asset>, L<Bric::BC::Asset::Business>, 
-L<Bric::BC::Asset::Business::Parts::Tile>
+L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
+L<Bric::Biz::Asset::Business::Parts::Tile>
 
 =head1 REVISION HISTORY
 
 $Log: Data.pm,v $
-Revision 1.1  2001-09-06 21:53:58  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:58  wheeler
+Upload to SourceForge.
 
 =cut
 

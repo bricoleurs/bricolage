@@ -1,26 +1,26 @@
-package Bric::BL::Session;
+package Bric::App::Session;
 ###############################################################################
 
 =head1 NAME
 
-  Bric::BL::Session - A class to handle user sessions
+  Bric::App::Session - A class to handle user sessions
 
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:03 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  use Bric::BL::Session;
+  use Bric::App::Session;
 
   #- Methods called from the apache perl handler -#
 
@@ -337,10 +337,10 @@ executes before any dhandlers:
   <%perl>;
   unless ($ARGS{__CB_DONE}) {
       # Setup the global session variable.
-      Bric::BL::Session::setup_user_session($r);
+      Bric::App::Session::setup_user_session($r);
 
       # Execute an callbacks set for this request.
-      Bric::BL::Session::handle_callbacks($m, \%ARGS);
+      Bric::App::Session::handle_callbacks($m, \%ARGS);
   }
   $m->call_next(%ARGS);
   </%perl>
@@ -745,7 +745,7 @@ B<Side Effects:>
 
 =item *
 
-Uses Bric::BL::Util::get_pref() and Bric::BL::Util::set_pref().
+Uses Bric::App::Util::get_pref() and Bric::App::Util::set_pref().
 
 =back
 
@@ -869,7 +869,10 @@ L<perl>, L<Bric>, L<Apache::Session::File>
 =head1 REVISION HISTORY
 
 $Log: Session.pm,v $
-Revision 1.1  2001-09-06 21:53:03  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:03  wheeler
+Upload to SourceForge.
 
 =cut

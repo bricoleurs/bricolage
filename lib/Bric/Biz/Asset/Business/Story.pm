@@ -1,34 +1,34 @@
-package Bric::BC::Asset::Business::Story;
+package Bric::Biz::Asset::Business::Story;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Asset::Business::Story - The interface to the Story Object
+Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:50 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
  # creation of new objects
- $story = Bric::BC::Asset::Business::Story->new( $init )
- $story = Bric::BC::Asset::Business::Story->lookup( $param )
- ($stories || @stories) = Bric::BC::Asset::Business::Story->list($param)
+ $story = Bric::Biz::Asset::Business::Story->new( $init )
+ $story = Bric::Biz::Asset::Business::Story->lookup( $param )
+ ($stories || @stories) = Bric::Biz::Asset::Business::Story->list($param)
 
  # list of object ids
- ($ids || @ids) = Bric::BC::Asset::Business::Story->list_ids($param)
+ ($ids || @ids) = Bric::Biz::Asset::Business::Story->list_ids($param)
 
 
- ## METHODS INHERITED FROM Bric::BC::Asset ##
+ ## METHODS INHERITED FROM Bric::Biz::Asset ##
 
   # General information
  $asset       = $asset->get_id()
@@ -67,7 +67,7 @@ $Date: 2001-09-06 21:53:50 $
  ($asset || undef) = $asset->is_active()
 
 
- ## METHODS INHERITED FROM Bric::BC::Asset::Business ##
+ ## METHODS INHERITED FROM Bric::Biz::Asset::Business ##
 
  # General info
  $name = $biz->get_name()
@@ -124,7 +124,7 @@ $Date: 2001-09-06 21:53:50 $
  $biz            = $biz->checkout($param)
 
 
- ## INSTANCE METHODS FOR Bric::BC::Asset::Business::Story
+ ## INSTANCE METHODS FOR Bric::Biz::Asset::Business::Story
 
  # Manipulation of slug field
  $slug  = $story->get_slug()
@@ -184,7 +184,7 @@ use Bric::Util::Grp::Story;
 # The parent module should have a 'use' line if you need to import from it.
 # use Bric;
 
-use base qw( Bric::BC::Asset::Business );
+use base qw( Bric::Biz::Asset::Business );
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -300,7 +300,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $story = Bric::BC::Asset::Business::Story->new( $initial_state )
+=item $story = Bric::Biz::Asset::Business::Story->new( $initial_state )
 
 This will create a new story object with an optionaly defined intiial state
 
@@ -387,7 +387,7 @@ sub new {
 ################################################################################
 
 
-=item $story = Bric::BC::Asset::Business::Story->lookup->( { id => $id })
+=item $story = Bric::Biz::Asset::Business::Story->lookup->( { id => $id })
 
 This will return a story asset that matches the id provided
 
@@ -459,9 +459,9 @@ sub lookup {
 
 ################################################################################
 
-=item (@stories||$stories) = Bric::BC::Asset::Business::Story->list($params)
+=item (@stories||$stories) = Bric::Biz::Asset::Business::Story->list($params)
 
-Returns a list or anonymous array of Bric::BC::Asset::Business::Story objects
+Returns a list or anonymous array of Bric::Biz::Asset::Business::Story objects
 based on the search parameters passed via an anonymous hash. The supported
 lookup keys are:
 
@@ -656,7 +656,7 @@ sub DESTROY {
 
 =cut                  
 
-=item ($ids || @ids) = Bric::BC::Asset::Business::Story->list_ids( $criteria )
+=item ($ids || @ids) = Bric::Biz::Asset::Business::Story->list_ids( $criteria )
 
 Returns a list of the ids that match the given criteria
 
@@ -690,7 +690,7 @@ sub list_ids {
 
 ################################################################################
 
-=item my $key_name = Bric::BC::Asset::Business::Story->key_name()
+=item my $key_name = Bric::Biz::Asset::Business::Story->key_name()
 
 Returns the key name of this class.
 
@@ -706,9 +706,9 @@ sub key_name { 'story' }
 
 ################################################################################
 
-=item $meths = Bric::BC::Asset::Business::Story->my_meths
+=item $meths = Bric::Biz::Asset::Business::Story->my_meths
 
-=item (@meths || $meths_aref) = Bric::BC::Asset::Business::Story->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::Asset::Business::Story->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -929,8 +929,8 @@ sub get_uri {
 	my $dirty = $self->_get__dirty();
 
     if ($cat) {
-		$cat_obj = ref $cat ? $cat : Bric::BC::Category->lookup({'id'=>$cat});
-		$oc_obj  = ref $oc  ? $oc  : Bric::BC::OutputChannel->lookup({'id'=>$oc});
+		$cat_obj = ref $cat ? $cat : Bric::Biz::Category->lookup({'id'=>$cat});
+		$oc_obj  = ref $oc  ? $oc  : Bric::Biz::OutputChannel->lookup({'id'=>$oc});
     } else {
 		$cat_obj = $self->get_primary_category();
 		my $at_obj = $self->_get_element_object();
@@ -1033,7 +1033,7 @@ sub get_categories {
 	if ($cats->{$c_id}->{'object'} ){
 	    push @all, $cats->{$c_id}->{'object'};
 	} else {
-	    my $cat = Bric::BC::Category->lookup({ id => $c_id });
+	    my $cat = Bric::Biz::Category->lookup({ id => $c_id });
 	    $cats->{$c_id}->{'object'} = $cat;
 	    $reset = 1;
 	    push @all, $cat;
@@ -1077,7 +1077,7 @@ sub get_primary_category {
 			if ($cats->{$c_id}->{'object'} ) {
 				return $cats->{$c_id}->{'object'};
 			} else {
-				return Bric::BC::Category->lookup( { id => $c_id });
+				return Bric::Biz::Category->lookup( { id => $c_id });
 			}
 		}
 	}
@@ -1157,7 +1157,7 @@ sub get_secondary_categories {
 		if ($cats->{$c_id}->{'object'} ) {
 			push @seconds, $cats->{$c_id}->{'object'};
 		} else {
-			push @seconds, Bric::BC::Category->lookup( { id => $c_id });
+			push @seconds, Bric::Biz::Category->lookup( { id => $c_id });
 		}
 	}
 	return wantarray ? @seconds : \@seconds;
@@ -1319,10 +1319,10 @@ sub checkout {
 
 =item my (@gids || $gids_aref) = $story->get_grp_ids
 
-=item my (@gids || $gids_aref) = Bric::BC::Asset::Business::Story->get_grp_ids
+=item my (@gids || $gids_aref) = Bric::Biz::Asset::Business::Story->get_grp_ids
 
-Returns a list or anonymous array of Bric::BC::Group object ids representing the
-groups of which this Bric::BC::Asset::Business::Story object is a member.
+Returns a list or anonymous array of Bric::Biz::Group object ids representing the
+groups of which this Bric::Biz::Asset::Business::Story object is a member.
 
 B<Throws:> See Bric::Util::Grp::list().
 
@@ -2388,13 +2388,16 @@ Bricolage Engineering
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::BC::Asset>, L<Bric::BC::Asset::Business>
+L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>
 
 =head1 REVISION HISTORY
 
 $Log: Story.pm,v $
-Revision 1.1  2001-09-06 21:53:50  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:50  wheeler
+Upload to SourceForge.
 
 =cut
 

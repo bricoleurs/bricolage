@@ -1,30 +1,30 @@
-package Bric::BL::CleanupHandler;
+package Bric::App::CleanupHandler;
 
 =head1 NAME
 
-Bric::BL::CleanupHandler - Cleans up at the end of a request.
+Bric::App::CleanupHandler - Cleans up at the end of a request.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:58 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
   <Perl>
   use lib '/usr/local/bricolage/lib';
   </Perl>
-  PerlModule Bric::BL::Handler
-  PerlModule Bric::BL::AccessHandler
-  PerlModule Bric::BL::CleanupHandler
+  PerlModule Bric::App::Handler
+  PerlModule Bric::App::AccessHandler
+  PerlModule Bric::App::CleanupHandler
   PerlFreshRestart    On
   DocumentRoot "/usr/local/bricolage/comp"
   <Directory "/usr/local/bricolage/comp">
@@ -33,9 +33,9 @@ $Date: 2001-09-06 21:52:58 $
       Order allow,deny
       Allow from all
       SetHandler perl-script
-      PerlHandler Bric::BL::Handler
-      PerlAccessHandler Bric::BL::AccessHandler
-      PerlCleanupHandler Bric::BL::CleanupHandler
+      PerlHandler Bric::App::Handler
+      PerlAccessHandler Bric::App::AccessHandler
+      PerlCleanupHandler Bric::App::CleanupHandler
   </Directory>
 
 =head1 DESCRIPTION
@@ -55,9 +55,9 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Apache::Constants qw(OK);
-use Bric::BL::Session;
-use Bric::BL::ReqCache;
-use Bric::BL::Event qw(commit_events);
+use Bric::App::Session;
+use Bric::App::ReqCache;
+use Bric::App::Event qw(commit_events);
 use Bric::Util::DBI qw(:trans);
 
 ################################################################################
@@ -129,8 +129,8 @@ sub handler {
 	commit(1);
 
 	# Sync the user's session data.
-	Bric::BL::Session::sync_user_session($r);
-	Bric::BL::ReqCache->clear;
+	Bric::App::Session::sync_user_session($r);
+	Bric::App::ReqCache->clear;
     };
     # Log any errors.
     if (my $err = $@) {
@@ -181,7 +181,10 @@ Bric (2),
 =head1 REVISION HISTORY
 
 $Log: CleanupHandler.pm,v $
-Revision 1.1  2001-09-06 21:52:58  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:52:58  wheeler
+Upload to SourceForge.
 
 =cut

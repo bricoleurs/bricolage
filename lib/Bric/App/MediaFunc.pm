@@ -1,21 +1,21 @@
-package Bric::BL::MediaFunc;
+package Bric::App::MediaFunc;
 
 =head1 NAME
 
-Bric::BL::MediaFunc - Location for functions that query uploaded media files.
+Bric::App::MediaFunc - Location for functions that query uploaded media files.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:00 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
@@ -84,7 +84,7 @@ BEGIN {
 
 =head2 Constructors
 
-=item $mediafunc = Bric::BL::MediaFunc->new($init);
+=item $mediafunc = Bric::App::MediaFunc->new($init);
 
 Creates a new object to run the given methods against
 
@@ -420,7 +420,10 @@ Bric (2)
 =head1 REVISION HISTORY
 
 $Log: MediaFunc.pm,v $
-Revision 1.1  2001-09-06 21:53:00  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:00  wheeler
+Upload to SourceForge.
 
 =cut

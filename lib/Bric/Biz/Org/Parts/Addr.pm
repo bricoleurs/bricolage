@@ -1,26 +1,26 @@
-package Bric::BC::Org::Parts::Addr;
+package Bric::Biz::Org::Parts::Addr;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Org::Parts::Addr - Organizational Addresses
+Bric::Biz::Org::Parts::Addr - Organizational Addresses
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:11 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  # Constructors are private - construct from Bric::BC::Org objects.
-  my $org = Bric::BC::Org->lookup({ id => $org_id });
+  # Constructors are private - construct from Bric::Biz::Org objects.
+  my $org = Bric::Biz::Org->lookup({ id => $org_id });
   my @addr = $org->get_addresses;
   my $addr = $org->new_address;
 
@@ -44,7 +44,7 @@ $Date: 2001-09-06 21:54:11 $
   $addr = $addr->is_active;
 
   # Print Address Lables.
-  my $p = Bric::BC::Person->lookup({ id => $person_id });
+  my $p = Bric::Biz::Person->lookup({ id => $person_id });
   foreach my $porg ($p->get_orgs) {
       foreach my $addr ($porg->get_addresses($id)) {
           print $p->format_name("%f% M% l"), "\n";
@@ -59,12 +59,12 @@ $Date: 2001-09-06 21:54:11 $
 =head1 DESCRIPTION
 
 This class represents organizational addresses as objects. Organizations are
-represented as Bric::BC::Org or subclassed Bric::BC::Org objects, and a given
-Bric::BC::Org object may have an unlimited number of addresses associated with it,
-each represented by a Bric::BC::Org::Parts::Addr object.
+represented as Bric::Biz::Org or subclassed Bric::Biz::Org objects, and a given
+Bric::Biz::Org object may have an unlimited number of addresses associated with it,
+each represented by a Bric::Biz::Org::Parts::Addr object.
 
-Bric::BC::Org::Parts::Addr objects can only be instantiated via the Bric::BC::Org
-get_addresses() or add_address() method calls. The Bric::BC::Org::Parts::Addr
+Bric::Biz::Org::Parts::Addr objects can only be instantiated via the Bric::Biz::Org
+get_addresses() or add_address() method calls. The Bric::Biz::Org::Parts::Addr
 constructors are therefore private.
 
 =cut
@@ -137,9 +137,9 @@ BEGIN {
 
 =over 4
 
-=item $addr = Bric::BC::Org::Parts::Addr->new($init)
+=item $addr = Bric::Biz::Org::Parts::Addr->new($init)
 
-Instantiates a Bric::BC::Org::Parts::Addr object. A hashref of initial values may
+Instantiates a Bric::Biz::Org::Parts::Addr object. A hashref of initial values may
 be passed. The supported initial value keys are:
 
 =over
@@ -193,7 +193,7 @@ Bric::set() - Problems setting fields.
 
 B<Side Effects:> NONE.
 
-B<Notes:> To be called from Bric::BC::Org only.
+B<Notes:> To be called from Bric::Biz::Org only.
 
 =cut
 
@@ -229,10 +229,10 @@ sub new {
 
 ################################################################################
 
-=item my $addr = Bric::BC::Org::Parts::Addr->lookup({ id => $id })
+=item my $addr = Bric::Biz::Org::Parts::Addr->lookup({ id => $id })
 
-Looks up and instantiates a new Bric::BC::Org::Parts::Addr object based on the
-Bric::BC::Org::Parts::Addr object ID passed. If $id is not found in the database,
+Looks up and instantiates a new Bric::Biz::Org::Parts::Addr object based on the
+Bric::Biz::Org::Parts::Addr object ID passed. If $id is not found in the database,
 lookup() returns undef. If the ID is found more than once, lookup() returns
 zero (0). This should not happen.
 
@@ -242,7 +242,7 @@ B<Throws:>
 
 =item *
 
-Too many Bric::BC::Org::Parts::Addr objects found.
+Too many Bric::Biz::Org::Parts::Addr objects found.
 
 =item *
 
@@ -270,11 +270,11 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> If $id is found, populates the new Bric::BC::Org object with data
+B<Side Effects:> If $id is found, populates the new Bric::Biz::Org object with data
 from the database before returning it.
 
 B<Notes:> There may actually be no use for this method, since
-Bric::BC::Org::Parts::Addr objects will be stored internally in a Bric::BC::Org
+Bric::Biz::Org::Parts::Addr objects will be stored internally in a Bric::Biz::Org
 object, and therefore may not need to be implemented.
 
 =cut
@@ -283,15 +283,15 @@ sub lookup {
     my $addr = &$get_em(@_);
     # We want @$addr to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::BC::Org::Parts::Addr objects found.' }) if @$addr > 1;
+      msg => 'Too many Bric::Biz::Org::Parts::Addr objects found.' }) if @$addr > 1;
     return @$addr ? $addr->[0] : undef;
 }
 
 ################################################################################
 
-=item my (@orgs || $orgs_aref) = Bric::BC::Org::Parts::Addr->list($params)
+=item my (@orgs || $orgs_aref) = Bric::Biz::Org::Parts::Addr->list($params)
 
-Returns a list of Bric::BC::Org::Parts::Addr objects based on the search criteria
+Returns a list of Bric::Biz::Org::Parts::Addr objects based on the search criteria
 passed via a hashref. The lookup searches are case-insensitive. The supported
 lookup parameter keys are:
 
@@ -357,8 +357,8 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Populates each Bric::BC::Org::Parts::Addr object with data from
-the database before returning them all. To be called from Bric::BC::Org only.
+B<Side Effects:> Populates each Bric::Biz::Org::Parts::Addr object with data from
+the database before returning them all. To be called from Bric::Biz::Org only.
 
 B<Notes:> NONE.
 
@@ -368,10 +368,10 @@ sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
 ################################################################################
 
-=item Bric::BC::Org::Parts::Addr->href($params)
+=item Bric::Biz::Org::Parts::Addr->href($params)
 
 Exactly the same as list(), except that it returns all the
-Bric::BC::Org::Parts::Addr objects in an anonymous hash, where the hash keys are
+Bric::Biz::Org::Parts::Addr objects in an anonymous hash, where the hash keys are
 the object IDs and the values are the objects. See list() for syntax.
 
 B<Throws:>
@@ -442,9 +442,9 @@ sub DESTROY {}
 
 =over 4
 
-=item my (@aids || $aids_aref) = Bric::BC::Org::Parts::Addr->list_ids($params)
+=item my (@aids || $aids_aref) = Bric::Biz::Org::Parts::Addr->list_ids($params)
 
-Returns a list or anonymous array of Bric::BC::Org::Parts::Addr object IDs based
+Returns a list or anonymous array of Bric::Biz::Org::Parts::Addr object IDs based
 on the search criteria passed. The search parameters are the same as those for
 list() above.
 
@@ -488,7 +488,7 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 ################################################################################
 
-=item my (@parts || $parts_aref) Bric::BC::Org::Parts::Addr->list_parts
+=item my (@parts || $parts_aref) Bric::Biz::Org::Parts::Addr->list_parts
 
 Returns a list of active address parts.
 
@@ -528,9 +528,9 @@ sub list_parts {
     return wantarray ? @{ col_aref($sel) } : col_aref($sel);
 }
 
-=item $success = Bric::BC::Org::Parts::Addr->add_parts(@parts)
+=item $success = Bric::Biz::Org::Parts::Addr->add_parts(@parts)
 
-Adds new address parts to the Bric::BC::Org::Parts::Addr object. These parts
+Adds new address parts to the Bric::Biz::Org::Parts::Addr object. These parts
 will be available exclusively through the get_parts() instance method.
 
 B<Throws:>
@@ -576,7 +576,7 @@ sub add_parts {
     return 1;
 }
 
-=item $success = Bric::BC::Org::Parts::Addr->del_parts(@parts)
+=item $success = Bric::Biz::Org::Parts::Addr->del_parts(@parts)
 
 Deletes address parts.
 
@@ -623,7 +623,7 @@ sub del_parts {
 
 ################################################################################
 
-=item $meths = Bric::BC::Org::Parts::Addr->my_meths
+=item $meths = Bric::Biz::Org::Parts::Addr->my_meths
 
 Returns an anonymous hash of instrospection data for this object. The format for
 the introspection is as follows:
@@ -718,7 +718,7 @@ sub my_meths {
 
 =item my $id = $addr->get_id
 
-Returns the ID of the Bric::BC::Org::Parts::Addr object.
+Returns the ID of the Bric::Biz::Org::Parts::Addr object.
 
 B<Throws:>
 
@@ -744,8 +744,8 @@ No AUTOLOAD method.
 
 B<Side Effects:> NONE.
 
-B<Notes:> If the Bric::BC::Org::Parts::Addr object has been instantiated via the
-new() private constructor and has not yet been saved, via the Bric::BC::Org
+B<Notes:> If the Bric::Biz::Org::Parts::Addr object has been instantiated via the
+new() private constructor and has not yet been saved, via the Bric::Biz::Org
 save() method, the object will not yet have an ID, so this method call will
 return undef.
 
@@ -1088,7 +1088,7 @@ Bric::set() - Problems setting fields.
 =back
 
 B<Side Effects:> Stores new address lines internally to the object. The lines
-will not persist until the address object is saved via the Bric::BC::Org object's
+will not persist until the address object is saved via the Bric::Biz::Org object's
 save() method.
 
 B<Notes:> NONE.
@@ -1183,8 +1183,8 @@ sub set_part { &$set_part(@_) }
 
 =item $self = $addr->activate
 
-Activates the Bric::BC::Org::Parts::Addr object. The change will not persist until
-the Bric::BC::Org object's save() method is called. Bric::BC::Org::Parts::Addr
+Activates the Bric::Biz::Org::Parts::Addr object. The change will not persist until
+the Bric::Biz::Org object's save() method is called. Bric::Biz::Org::Parts::Addr
 objects instantiated by new() are active by default.
 
 B<Throws:>
@@ -1214,8 +1214,8 @@ sub activate {
 
 =item $self = $addr->deactivate
 
-Deactivates (deletes) the Bric::BC::Org::Parts::Addr object. The change will not
-persist until the Bric::BC::Org object's save() method is called.
+Deactivates (deletes) the Bric::Biz::Org::Parts::Addr object. The change will not
+persist until the Bric::Biz::Org object's save() method is called.
 
 B<Throws:>
 
@@ -1244,7 +1244,7 @@ sub deactivate {
 
 =item $self = $addr->is_active
 
-Returns $self if the Bric::BC::Org::Parts::Addr object is active, and undef if it
+Returns $self if the Bric::Biz::Org::Parts::Addr object is active, and undef if it
 is not.
 
 B<Throws:>
@@ -1270,8 +1270,8 @@ sub is_active {
 
 =item $self = $addr->save
 
-Saves any changes to the Bric::BC::Org::Parts::Addr object, including changes to
-associated address (Bric::BC::Org::Parts::Addr) objects. Returns $self on success
+Saves any changes to the Bric::Biz::Org::Parts::Addr object, including changes to
+associated address (Bric::Biz::Org::Parts::Addr) objects. Returns $self on success
 and undef on failure.
 
 B<Throws:>
@@ -1346,8 +1346,8 @@ NONE.
 
 =item my $org_ids_aref = &$get_em( $pkg, $search_href, 1 )
 
-Function used by lookup() and list() to return a list of Bric::BC::Org objects or,
-if called with an optional third argument, returns a list of Bric::BC::Org object
+Function used by lookup() and list() to return a list of Bric::Biz::Org objects or,
+if called with an optional third argument, returns a list of Bric::Biz::Org object
 IDs (used by list_ids()).
 
 B<Throws:>
@@ -1395,7 +1395,7 @@ $get_em = sub {
 	    push @num_wheres, "a.$k";
 	    push @params, $v;
 	} elsif ($k eq 'org_id') {
-	    # We're looking for a Bric::BC::Org object ID.
+	    # We're looking for a Bric::Biz::Org object ID.
 	    push @num_wheres, "a.org__id";
 	    push @params, $v;
 	} elsif ($k eq 'type') {
@@ -1877,13 +1877,16 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2),
-Bric::BC::Org(3)
-Bric::BC::Person(4)
+Bric::Biz::Org(3)
+Bric::Biz::Person(4)
 
 =head1 REVISION HISTORY
 
 $Log: Addr.pm,v $
-Revision 1.1  2001-09-06 21:54:11  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:54:11  wheeler
+Upload to SourceForge.
 
 =cut

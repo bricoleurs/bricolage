@@ -1,45 +1,45 @@
-package Bric::BC::Asset::Business;
+package Bric::Biz::Asset::Business;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Asset::Business - An object that houses the business Assets
+Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:38 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
  # Constructor
- $biz = Bric::BC::Asset::Business->new($param);
+ $biz = Bric::Biz::Asset::Business->new($param);
  # DB object looukp
- $biz = Bric::BC::Asset::Business->lookup({'id' => $biz_id});
+ $biz = Bric::Biz::Asset::Business->lookup({'id' => $biz_id});
 
  # Getting a list of objects
- ($biz_asset_list||@biz_assets) = Bric::BC::Asset::Business->list( $criteria )
+ ($biz_asset_list||@biz_assets) = Bric::Biz::Asset::Business->list( $criteria )
 
  # Geting a list of ids
- ($biz_ids || @biz_ids) = Bric::BC::Asset::Business->list_ids( $criteria )
+ ($biz_ids || @biz_ids) = Bric::Biz::Asset::Business->list_ids( $criteria )
 
 
- ## METHODS INHERITED FROM Bric::BC::Asset ##
+ ## METHODS INHERITED FROM Bric::Biz::Asset ##
 
  # Class Methods
- $key_name = Bric::BC::Asset->key_name()
- %priorities = Bric::BC::Asset->list_priorities()
- $data = Bric::BC::Asset->my_meths
+ $key_name = Bric::Biz::Asset->key_name()
+ %priorities = Bric::Biz::Asset->list_priorities()
+ $data = Bric::Biz::Asset->my_meths
 
  # looking up of objects
- ($asset_list || @assets) = Bric::BC::Asset->list( $param )
+ ($asset_list || @assets) = Bric::Biz::Asset->list( $param )
 
  # General information
  $asset       = $asset->get_id()
@@ -118,16 +118,16 @@ use Bric::Util::Time qw(:all);
 use Bric::Util::Grp::AssetVersion;
 use Bric::Util::Grp::AssetLanguage;
 use Bric::Util::Grp::Keyword;
-use Bric::BC::Asset::Business::Parts::Tile::Data;
-use Bric::BC::Asset::Business::Parts::Tile::Container;
-use Bric::BC::Category;
-use Bric::BC::Org::Source;
+use Bric::Biz::Asset::Business::Parts::Tile::Data;
+use Bric::Biz::Asset::Business::Parts::Tile::Container;
+use Bric::Biz::Category;
+use Bric::Biz::Org::Source;
 
 #=============================================================================#
 # Inheritance                          #
 #======================================#
 
-use base qw( Bric::BC::Asset );
+use base qw( Bric::Biz::Asset );
 
 #============================================================================+
 # Function Prototypes                  #
@@ -203,9 +203,9 @@ BEGIN {
 
 #-----------------------------------------------------------------------------#
 
-=item $asset = Bric::BC::Asset::Business->new( $initial_state )
+=item $asset = Bric::Biz::Asset::Business->new( $initial_state )
 
-new will only be called by Bric::BC::Asset::Business's inherited classes
+new will only be called by Bric::Biz::Asset::Business's inherited classes
 
 B<Throws:>
 
@@ -234,7 +234,7 @@ sub new {
 ###############################################################################
 
 
-=item $asset = Bric::BC::Asset::Business->lookup( { id => $id} )
+=item $asset = Bric::Biz::Asset::Business->lookup( { id => $id} )
 
 This will die because only the inherited classes will be looked up
 
@@ -262,7 +262,7 @@ sub lookup {
 ###############################################################################
 
 
-=item ($obj_list||@objs) = Bric::BC::Asset::Business->list( $criteria )
+=item ($obj_list||@objs) = Bric::Biz::Asset::Business->list( $criteria )
 
 This will return a list or list ref of Business assets that match the 
 given criteria
@@ -290,8 +290,8 @@ NONE
 sub list {
 	my ($class, $param) = @_;
 
-	my @stories = Bric::BC::Asset::Business::Story->list($param);
-	my @media = Bric::BC::Asset::Business::Media->list($param);
+	my @stories = Bric::Biz::Asset::Business::Story->list($param);
+	my @media = Bric::Biz::Asset::Business::Media->list($param);
 
 	my @all = (@stories, @media);
 
@@ -350,7 +350,7 @@ sub list_ids {
 
 ################################################################################
 
-=item my $key_name = Bric::BC::Asset::Business->key_name()
+=item my $key_name = Bric::Biz::Asset::Business->key_name()
 
 Returns the key name of this class.
 
@@ -366,9 +366,9 @@ sub key_name { 'biz' }
 
 ################################################################################
 
-=item $meths = Bric::BC::Asset::Business->my_meths
+=item $meths = Bric::Biz::Asset::Business->my_meths
 
-=item (@meths || $meths_aref) = Bric::BC::Asset::Business->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::Asset::Business->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -524,7 +524,7 @@ sub my_meths {
 			     };
     $meths->{source} =       {
 			      name     => 'source',
-			      get_meth => sub { Bric::BC::Org::Source->lookup({ id => shift->get_source_id(@_) }) },
+			      get_meth => sub { Bric::Biz::Org::Source->lookup({ id => shift->get_source_id(@_) }) },
 			      get_args => [],
 			      disp     => 'Source',
 			      len      => 1,
@@ -1231,7 +1231,7 @@ sub get_tile {
 	my $tile = $self->_get('_tile');
 
 	unless ($tile) {
-		($tile) = Bric::BC::Asset::Business::Parts::Tile::Container->list(
+		($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list(
 						{ 	object		=> $self,
 							parent_id	=> undef,
 							active		=> 1 });
@@ -1465,7 +1465,7 @@ sub add_keywords {
 
 	}
 
-	my $t = 'Bric::BC::Keyword';
+	my $t = 'Bric::Biz::Keyword';
 	$keyword_obj->add_members([map {ref($_) ? {'obj'=>$_}
 			      	                : {'type'=>$t,'id'=>$_}} @$keywords]);
 
@@ -1582,13 +1582,13 @@ sub delete_keywords {
 			'keyword_grp_id'    => $keyword_obj->get_id });
 	}
 
-	my $t = 'Bric::BC::Keyword';
+	my $t = 'Bric::Biz::Keyword';
 	my $args = [];
 	foreach (@$keywords) {
 		if (ref $_) {
 			push @$args, $_;
 		} else {
-			my $arg = { package => 'Bric::BC::Keyword', id => $_ };
+			my $arg = { package => 'Bric::Biz::Keyword', id => $_ };
 			push @$args, $arg;
 		}
 	}
@@ -1883,7 +1883,7 @@ sub _init {
 	if ($init->{'cover_date'}) {
 		$self->set_cover_date( $init->{'cover_date'} );
 		delete $init->{'cover_date'};
-		my $source = Bric::BC::Org::Source->lookup({id => $init->{'source__id'}});
+		my $source = Bric::Biz::Org::Source->lookup({id => $init->{'source__id'}});
 		my $expire = $source->get_expire();
 		if ($expire) {
 			# add the days to the cover date and set the expire date
@@ -1896,7 +1896,7 @@ sub _init {
 	}
 
 	# lets create the new tile as well
-	my $tile = Bric::BC::Asset::Business::Parts::Tile::Container->new( {
+	my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new( {
 					'object'			=> $self,
 					'element_id'		=> $init->{'element__id'},
 					'element'		=> $init->{'element'} });
@@ -2006,7 +2006,7 @@ sub _get_element_object {
 
     my $at_obj = $self->_get('_element_object');
     return $at_obj if $at_obj;
-    $at_obj = Bric::BC::AssetType->lookup({ id => $self->_get('element__id')});
+    $at_obj = Bric::Biz::AssetType->lookup({ id => $self->_get('element__id')});
     $self->_set(['_element_object'], [$at_obj]);
 
 	$self->_set__dirty($dirty);
@@ -2098,7 +2098,7 @@ sub _get_category_keywords {
 		if ($categories->{$c_id}->{'object'}) {
 			$cat = $categories->{$c_id}->{'object'};
 		} else {
-			$cat = Bric::BC::Category->lookup({ id => $c_id });
+			$cat = Bric::Biz::Category->lookup({ id => $c_id });
 			$categories->{$c_id}->{'object'} = $cat;
 		}
 
@@ -2135,13 +2135,16 @@ michael soderstrom - miraso@pacbell.net
 
 =head1 SEE ALSO
 
-L<Bric>, L<Bric::BC::Asset>
+L<Bric>, L<Bric::Biz::Asset>
 
 =head1 REVISION HISTORY
 
 $Log: Business.pm,v $
-Revision 1.1  2001-09-06 21:53:38  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:38  wheeler
+Upload to SourceForge.
 
 =cut
 

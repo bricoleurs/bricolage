@@ -1,34 +1,34 @@
-package Bric::BC::AssetType::Parts::Data;
+package Bric::Biz::AssetType::Parts::Data;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::element::Parts::Data - The place where fields with in an element 
+Bric::Biz::element::Parts::Data - The place where fields with in an element 
 are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:00 $
+$Date: 2001-09-06 22:30:06 $
 
 
 =head1 SYNOPSIS
 
- $field = Bric::BC::element::Parts::Data->new( $initial_state )
+ $field = Bric::Biz::element::Parts::Data->new( $initial_state )
 
- $field = Bric::BC::element::Parts::Data->lookup( { id => $id } )
+ $field = Bric::Biz::element::Parts::Data->lookup( { id => $id } )
 
- ($field_list || @fields) = Bric::BC::element::Parts::Data->list($criteria)
+ ($field_list || @fields) = Bric::Biz::element::Parts::Data->list($criteria)
 
- ($ids || @ids) = Bric::BC::element::Parts::Data->list_ids($criteria)
+ ($ids || @ids) = Bric::Biz::element::Parts::Data->list_ids($criteria)
 
 
  $id    = $field->get_id()
@@ -230,7 +230,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item  $field = Bric::BC::element::Parts::Data->new( $initial_state )
+=item  $field = Bric::Biz::element::Parts::Data->new( $initial_state )
 
 creates a new element Field Part with the values associated with the 
 initial state
@@ -352,7 +352,7 @@ sub copy {
 
 #------------------------------------------------------------------------------#
 
-=item $field = Bric::BC::element::Parts::Data->lookup( { id => $id } )
+=item $field = Bric::Biz::element::Parts::Data->lookup( { id => $id } )
 
 Returns an existing Asset type field object that has the id that was given
 as an argument
@@ -391,7 +391,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item ($parts || @parts) = Bric::BC::element::Parts::Data->list($param)
+=item ($parts || @parts) = Bric::Biz::element::Parts::Data->list($param)
 
 Returns a list (or list ref) of field objects that match the criteria
 listed
@@ -426,7 +426,7 @@ sub list {
 
 #------------------------------------------------------------------------------#
 
-=item ($ids || @ids) = Bric::BC::element::Parts::Field->list_ids($param)
+=item ($ids || @ids) = Bric::Biz::element::Parts::Field->list_ids($param)
 
  Returns the ids of the field objects that match the given criteria
 
@@ -1369,13 +1369,16 @@ michael soderstrom ( miraso@pacbell.net )
 
 =head1 SEE ALSO
 
-L<perl>,L<Bric>,L<Bric::BC::Asset::Business::Story>,L<Bric::BC::AssetType>,
+L<perl>,L<Bric>,L<Bric::Biz::Asset::Business::Story>,L<Bric::Biz::AssetType>,
 
 =head1 REVISION HISTORY
 
 $Log: Data.pm,v $
-Revision 1.1  2001-09-06 21:54:00  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:54:00  wheeler
+Upload to SourceForge.
 
 =cut
 

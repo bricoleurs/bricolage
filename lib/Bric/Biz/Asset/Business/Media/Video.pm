@@ -1,18 +1,18 @@
-package Bric::BC::Asset::Business::Media::Video;
+package Bric::Biz::Asset::Business::Media::Video;
 ################################################################################
 
 =head1 NAME
 
-Bric::BC::Asset::Business::Media::Video - the media class that represents static
+Bric::Biz::Asset::Business::Media::Video - the media class that represents static
 videos
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
@@ -21,12 +21,12 @@ $Data$
 =head1 SYNOPSIS
 
  # Creation of new Video objects
- $video = Bric::BC::Asset::Business::Media::Video->new( $init )
- $video = Bric::BC::Asset::Business::Media::Video->lookup( { id => $id })
- ($videos || @videos) = Bric::BC::Asset::Business::Media::Video->list( $param)
+ $video = Bric::Biz::Asset::Business::Media::Video->new( $init )
+ $video = Bric::Biz::Asset::Business::Media::Video->lookup( { id => $id })
+ ($videos || @videos) = Bric::Biz::Asset::Business::Media::Video->list( $param)
 
  # list of ids
- ($id_list || @ids) = Bric::BC::Asset::Business::Media::Video->list_ids($param)
+ ($id_list || @ids) = Bric::Biz::Asset::Business::Media::Video->list_ids($param)
 
 =head1 DESCRIPTION
 
@@ -53,7 +53,7 @@ use strict;
 # the parent module should have a 'use' line if you need to import from it.
 # use Bric;
 
-use base qw( Bric::BC::Asset::Business::Media );
+use base qw( Bric::Biz::Asset::Business::Media );
 
 #==============================================================================#
 # Function Prototypes           #
@@ -115,7 +115,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $video = Bric::BC::Asset::Business::Media::Video->new($init)
+=item $video = Bric::Biz::Asset::Business::Media::Video->new($init)
 
 This will create a new video object.
 
@@ -155,7 +155,7 @@ sub new {
 
 ################################################################################
 
-=item $media = Bric::BC::Asset::Business::Media::Video->lookup( { id => $id })
+=item $media = Bric::Biz::Asset::Business::Media::Video->lookup( { id => $id })
 
 This will return the matched looked up object
 
@@ -183,7 +183,7 @@ NONE
 
 ################################################################################
 
-=item ($imgs || @imgs) = Bric::BC::Asset::Business::Media::Video->list($param)
+=item ($imgs || @imgs) = Bric::Biz::Asset::Business::Media::Video->list($param)
 
 Returns a list of video objects that match the params passed in
 
@@ -229,7 +229,7 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-=item (@ids || $ids) = Bric::BC::Asset::Business::Media::Video->list_ids($param)
+=item (@ids || $ids) = Bric::Biz::Asset::Business::Media::Video->list_ids($param)
 
 Returns a list of ids that match the particular params
 
@@ -264,7 +264,7 @@ NONE
 
 ################################################################################
 
-=item $class_id = Bric::BC::Asset::Business::Media::Video->get_class_id()
+=item $class_id = Bric::Biz::Asset::Business::Media::Video->get_class_id()
 
 Returns the class id of the Video class
 
@@ -289,7 +289,7 @@ sub get_class_id { 51 }
 
 ################################################################################
 
-=item my $key_name = Bric::BC::Asset::Business::Media::Video->key_name()
+=item my $key_name = Bric::Biz::Asset::Business::Media::Video->key_name()
 
 Returns the key name of this class.
 
@@ -393,13 +393,16 @@ NONE
 
 =head1 SEE ALSO
 
-L<perl> , L<Bric>, L<Bric::BC::Asset>, L<Bric::BC::Asset::Business>, 
-L<Bric::BC::Asset::Business::Media>
+L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
+L<Bric::Biz::Asset::Business::Media>
 
 =head1 REVISION HISTORY
 
 $Log: Video.pm,v $
-Revision 1.1  2001-09-06 21:53:53  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:53  wheeler
+Upload to SourceForge.
 
 =cut

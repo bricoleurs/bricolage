@@ -1,31 +1,31 @@
-package Bric::BC::OutputChannel;
+package Bric::Biz::OutputChannel;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::OutputChannel - The manner of keeping track of output channels 
+Bric::Biz::OutputChannel - The manner of keeping track of output channels 
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:28 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
- $oc = Bric::BC::OutputChannel->new( $initial_state )
+ $oc = Bric::Biz::OutputChannel->new( $initial_state )
 
- $oc = Bric::BC::OutputChannel->lookup( { id => $id} )
+ $oc = Bric::Biz::OutputChannel->lookup( { id => $id} )
 
- ($ocs_aref || @ocs) = Bric::BC::OutputChannel->list( $criteria )
+ ($ocs_aref || @ocs) = Bric::Biz::OutputChannel->list( $criteria )
 
- ($id_aref || @ids) = Bric::BC::OutputChannel->list_ids( $criteria )
+ ($id_aref || @ids) = Bric::Biz::OutputChannel->list_ids( $criteria )
 
  $oc = $oc->set_name( $name )
 
@@ -167,7 +167,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $oc = Bric::BC::Output_channel->new( $initial_state )
+=item $oc = Bric::Biz::Output_channel->new( $initial_state )
 
 This will create a new Output channel object with the optional 
 defined state
@@ -225,7 +225,7 @@ sub new {
 	return $self;
 }
 
-=item $oc = Bric::BC::Output_channel->lookup( { id => $id} )
+=item $oc = Bric::Biz::Output_channel->lookup( { id => $id} )
 
 Will look up an output channel object for a given id
 
@@ -266,7 +266,7 @@ sub lookup {
 	return $self;
 }
 
-=item ($ocs_aref || @ocs) = Bric::BC::Output_channel->list( $criteria )
+=item ($ocs_aref || @ocs) = Bric::Biz::Output_channel->list( $criteria )
 
 Will return a list of objects that match a given criteria
 
@@ -313,7 +313,7 @@ sub list {
 	_do_list($class, $params, undef);
 }
 
-=item $ocs_href = Bric::BC::OutputChannel->href( $criteria )
+=item $ocs_href = Bric::Biz::OutputChannel->href( $criteria )
 
 Returns an anonymous hash of Output Channel objects, where each hash key is an
 Output Channel ID, and each value is Output Channel object that corresponds to
@@ -358,7 +358,7 @@ sub DESTROY {
 =cut
 
 
-=item ($id_aref || @ids) = Bric::BC::Output_channel->list_ids( $criteria )
+=item ($id_aref || @ids) = Bric::Biz::Output_channel->list_ids( $criteria )
 
 Will return a list of ids that match the given criteria
 
@@ -392,9 +392,9 @@ sub list_ids {
 	_do_list($class, $params, 1);
 }
 
-=item $meths = Bric::BC::AssetType->my_meths
+=item $meths = Bric::Biz::AssetType->my_meths
 
-=item (@meths || $meths_aref) = Bric::BC::AssetType->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::AssetType->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -1056,14 +1056,17 @@ NONE
 
 =head1 SEE ALSO
 
- L<perl>,L<Bric>,L<Bric::BC::Asset::Business>,L<Bric::BC::element>,
- L<Bric::BC::Asset::Formatting> 
+ L<perl>,L<Bric>,L<Bric::Biz::Asset::Business>,L<Bric::Biz::element>,
+ L<Bric::Biz::Asset::Formatting> 
 
 =head1 REVISION HISTORY
 
 $Log: OutputChannel.pm,v $
-Revision 1.1  2001-09-06 21:53:28  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:28  wheeler
+Upload to SourceForge.
 
 =cut
 

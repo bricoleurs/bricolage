@@ -1,38 +1,38 @@
-package Bric::BC::Org::Person;
+package Bric::Biz::Org::Person;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Org::Person - Manages Organizations Related to Persons
+Bric::Biz::Org::Person - Manages Organizations Related to Persons
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:05 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  # How to create brand new Bric::BC::Org::Person object.
-  my $org = Bric::BC::Org->lookup({ id => $org_id });
+  # How to create brand new Bric::Biz::Org::Person object.
+  my $org = Bric::Biz::Org->lookup({ id => $org_id });
   my $porg = $org->add_object($person);
 
-  # How to retreive existing Bric::BC::Org::Person objects.
-  my $person = Bric::BC::Person->lookup({ id => $person_id });
+  # How to retreive existing Bric::Biz::Org::Person objects.
+  my $person = Bric::Biz::Person->lookup({ id => $person_id });
   my @porgs = $person->get_orgs;
 
   # Other contstructors.
-  my $porg = Bric::BC::Org::Person->lookup({ id => $porg_id })
-  my @porgs = Bric::BC::Org::Person->list($search_href);
+  my $porg = Bric::Biz::Org::Person->lookup({ id => $porg_id })
+  my @porgs = Bric::Biz::Org::Person->list($search_href);
 
   # Class Methods.
-  my @porg_ids = Bric::BC::Org::Person->list_ids($search_href);
+  my @porg_ids = Bric::Biz::Org::Person->list_ids($search_href);
 
   # Instance Methods.
   my $id = $porg->get_id;
@@ -59,30 +59,30 @@ $Date: 2001-09-06 21:54:05 $
 
 =head1 DESCRIPTION
 
-This class manages the association between a Bric::BC::Person object and a
-Bric::BC::Org object. There may be numerous adddresses associated with a given
-Bric::BC::Org object, but only some of them may apply to any given person. This
-class limits a Bric::BC::Org objects addresses to those associated with a given
+This class manages the association between a Bric::Biz::Person object and a
+Bric::Biz::Org object. There may be numerous adddresses associated with a given
+Bric::Biz::Org object, but only some of them may apply to any given person. This
+class limits a Bric::Biz::Org objects addresses to those associated with a given
 person. It also manages the details of the person's association with the
 organization by offering properites for the person's title and department within
 the organization.
 
-When a Bric::BC::Person object is created, it automatically has a single
-Bric::BC::Org::Person object associated with it, an object which represents the
-Bric::BC::Person object itself and the personal addresses of the person
-represented. These Bric::BC::Org::Person objects are identified by their role
+When a Bric::Biz::Person object is created, it automatically has a single
+Bric::Biz::Org::Person object associated with it, an object which represents the
+Bric::Biz::Person object itself and the personal addresses of the person
+represented. These Bric::Biz::Org::Person objects are identified by their role
 properties, which will all be "Personal" by default, and by the is_persona()
 method returning $self when the Org is personal, and undef whe it is not.
 
-For example, a Bric::BC::Peron object created for Ian Kallen will have at least
-one Bric::BC::Org::Person object, named for Ian Kallen, and in which Ian's
+For example, a Bric::Biz::Peron object created for Ian Kallen will have at least
+one Bric::Biz::Org::Person object, named for Ian Kallen, and in which Ian's
 personal addresses may be stored. However, Ian has other addresses by his
 association with the companies he works for and other organizations to which he
-belongs. Thus, one can add a Bric::BC::Org object representing About.com and then
-associated create a Bric::BC::Org::Person object by calling $org->add_object,
-passing in Ian Kallen's Bric::BC::Person object. Then one can add addresses to the
-Bric::BC::Org::Person object, either by referencing Bric::BC::Org::Parts::Addr
-object IDs, or by creating new Bric::BC::Org::Parts::Addr objects.
+belongs. Thus, one can add a Bric::Biz::Org object representing About.com and then
+associated create a Bric::Biz::Org::Person object by calling $org->add_object,
+passing in Ian Kallen's Bric::Biz::Person object. Then one can add addresses to the
+Bric::Biz::Org::Person object, either by referencing Bric::Biz::Org::Parts::Addr
+object IDs, or by creating new Bric::Biz::Org::Parts::Addr objects.
 
 =cut
 
@@ -101,7 +101,7 @@ use Bric::Util::Fault::Exception::DP;
 ################################################################################
 # Inheritance
 ################################################################################
-use base qw(Bric::BC::Org);
+use base qw(Bric::Biz::Org);
 
 ################################################################################
 # Function and Closure Prototypes
@@ -168,11 +168,11 @@ BEGIN {
 
 =over 4
 
-=item $porg = Bric::BC::Org::Person->new
+=item $porg = Bric::Biz::Org::Person->new
 
-=item my $porg = Bric::BC::Org::Person->new($init)
+=item my $porg = Bric::Biz::Org::Person->new($init)
 
-Instantiates a Bric::BC::Org::Person object. An anonymous hash of initial values
+Instantiates a Bric::Biz::Org::Person object. An anonymous hash of initial values
 may be passed. The supported intial value keys are:
 
 =over 4
@@ -195,7 +195,7 @@ role
 
 =item *
 
-person - A Bric::BC::Person object.
+person - A Bric::Biz::Person object.
 
 =item *
 
@@ -216,7 +216,7 @@ department
 =item *
 
 _personal - should only be passed a true value by a call from
-Bric::BC::Person->save.
+Bric::Biz::Person->save.
 
 =back
 
@@ -256,10 +256,10 @@ sub new {
 
 ################################################################################
 
-=item my $porg = Bric::BC::Org::Person->lookup({ id => $id })
+=item my $porg = Bric::Biz::Org::Person->lookup({ id => $id })
 
-Looks up and instantiates a new Bric::BC::Org::Person object based on the
-Bric::BC::Org::Person object ID passed. If $id is not found in the database,
+Looks up and instantiates a new Bric::Biz::Org::Person object based on the
+Bric::Biz::Org::Person object ID passed. If $id is not found in the database,
 lookup() returns undef. If the ID is found more than once, lookup() returns zero
 (0). This should not happen.
 
@@ -269,7 +269,7 @@ B<Throws:>
 
 =item *
 
-Too many Bric::BC::Org::Person objects found.
+Too many Bric::Biz::Org::Person objects found.
 
 =item *
 
@@ -297,12 +297,12 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> If $id is found, populates the new Bric::BC::Org::Person object
+B<Side Effects:> If $id is found, populates the new Bric::Biz::Org::Person object
 with data from the database before returning it.
 
-B<Notes:> Bric::BC::Org::Person objects have different IDs than the equivalent
-Bric::BC::Org object. The IDs vary based on the person who is associated with the
-Bric::BC::Org object.
+B<Notes:> Bric::Biz::Org::Person objects have different IDs than the equivalent
+Bric::Biz::Org object. The IDs vary based on the person who is associated with the
+Bric::Biz::Org object.
 
 =cut
 
@@ -310,15 +310,15 @@ sub lookup {
     my $org = &$get_em(@_);
     # We want @$org to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::BC::Org::Person objects found.' }) if @$org > 1;
+      msg => 'Too many Bric::Biz::Org::Person objects found.' }) if @$org > 1;
     return @$org ? $org->[0] : undef;
 }
 
 ################################################################################
 
-=item my (@porgs || $porgs_aref) = Bric::BC::Org::Person->list($params)
+=item my (@porgs || $porgs_aref) = Bric::Biz::Org::Person->list($params)
 
-Returns a list or anonymous array of Bric::BC::Org objects based on the search
+Returns a list or anonymous array of Bric::Biz::Org objects based on the search
 criteria passed via a hashref. The lookup searches are case-insensitive. The
 supported lookup keys are:
 
@@ -376,7 +376,7 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Populates each Bric::BC::Org::Person object with data from the
+B<Side Effects:> Populates each Bric::Biz::Org::Person object with data from the
 database before returning them all.
 
 B<Notes:> NONE.
@@ -415,9 +415,9 @@ sub DESTROY {}
 
 =over 4
 
-=item my (@porg_ids || $porg_ids_aref) = Bric::BC::Org::Person->list_ids($params)
+=item my (@porg_ids || $porg_ids_aref) = Bric::Biz::Org::Person->list_ids($params)
 
-Functionally identical to list(), but returns Bric::BC::Org::Person object IDs rather
+Functionally identical to list(), but returns Bric::Biz::Org::Person object IDs rather
 than objects. See list() for a description of its interface.
 
 B<Throws:>
@@ -460,7 +460,7 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 ################################################################################
 
-=item $meths = Bric::BC::Org::Person->my_meths
+=item $meths = Bric::Biz::Org::Person->my_meths
 
 Returns an anonymous hash of instrospection data for this object. The format for
 the introspection is as follows:
@@ -516,7 +516,7 @@ B<Notes:> NONE.
 
 sub my_meths {
     # Load field members.
-    my $ret = Bric::BC::Org::Person->SUPER::my_meths();
+    my $ret = Bric::Biz::Org::Person->SUPER::my_meths();
     $ret->{role} = { meth => sub {shift->get_role(@_)},
 		     args => [],
 		     disp => 'Role',
@@ -541,15 +541,15 @@ sub my_meths {
 
 =head2 Public Instance Methods
 
-In addition to the Public Instance Methods offered by the Bric::BC::Org API,
-Bric::BC::Org::Person offers the following additional or overridden methods.
+In addition to the Public Instance Methods offered by the Bric::Biz::Org API,
+Bric::Biz::Org::Person offers the following additional or overridden methods.
 
 =over 4
 
 =item my $id = $porg->get_id
 
-Returns the ID of the Bric::BC::Org::Person object. This ID will be different from
-the ID of the equivalent Bric::BC::Org object. Use the get_org_id() method to fetch
+Returns the ID of the Bric::Biz::Org::Person object. This ID will be different from
+the ID of the equivalent Bric::Biz::Org object. Use the get_org_id() method to fetch
 that ID.
 
 B<Throws:>
@@ -576,14 +576,14 @@ No AUTOLOAD method.
 
 B<Side Effects:> NONE.
 
-B<Notes:> If the Bric::BC::Org::Person object has been instantiated via the new()
+B<Notes:> If the Bric::Biz::Org::Person object has been instantiated via the new()
 constructor and has not yet been C<save>d, the object will not yet have an ID,
 so this method call will return undef.
 
 =item my $org_id = $porg->get_org_id
 
-Returns the ID of the Bric::BC::Org object associated with this
-Bric::BC::Org::Person object.
+Returns the ID of the Bric::Biz::Org object associated with this
+Bric::Biz::Org::Person object.
 
 B<Throws:>
 
@@ -613,7 +613,7 @@ B<Notes:> NONE.
 
 =item my $p = $porg->get_person
 
-Returns the Bric::BC::Person object associated with this Bric::BC::Org::Person
+Returns the Bric::Biz::Person object associated with this Bric::Biz::Org::Person
 object.
 
 B<Throws:> NONE.
@@ -626,13 +626,13 @@ B<Notes:> NONE.
 
 sub get_person {
     my $self = shift;
-    Bric::BC::Person->lookup({id => $self->get_id});
+    Bric::Biz::Person->lookup({id => $self->get_id});
 }
 
 =item my $person_id = $porg->get_person_id
 
-Returns the ID of the Bric::BC::Person object referenced by this
-Bric::BC::Org::Person object.
+Returns the ID of the Bric::Biz::Person object referenced by this
+Bric::Biz::Org::Person object.
 
 B<Throws:>
 
@@ -662,8 +662,8 @@ B<Notes:> NONE.
 
 =item my $role = $porg->get_role
 
-Returns the role of person represented by the Bric::BC::Person object in the
-organization represented by the Bric::BC::Org object.
+Returns the role of person represented by the Bric::Biz::Person object in the
+organization represented by the Bric::Biz::Org object.
 
 B<Throws:>
 
@@ -693,8 +693,8 @@ B<Notes:> NONE.
 
 =item $self = $porg->set_role($role)
 
-Sets the role of person represented by the Bric::BC::Person object in the
-organization represented by the Bric::BC::Org object. May be anything, such as
+Sets the role of person represented by the Bric::Biz::Person object in the
+organization represented by the Bric::Biz::Org object. May be anything, such as
 "Work", "Professional", etc.
 
 B<Throws:>
@@ -845,8 +845,8 @@ B<Notes:> NONE.
 
 =item $self = $porg->activate
 
-Activates the Bric::BC::Org::Person object. Call $porg->save to make the change
-persistent. Bric::BC::Org::Person objects instantiated by new() are active by
+Activates the Bric::Biz::Org::Person object. Call $porg->save to make the change
+persistent. Bric::Biz::Org::Person objects instantiated by new() are active by
 default.
 
 B<Throws:>
@@ -863,16 +863,16 @@ Bric::set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> Inherited from Bric::BC::Org, but uses the active value specific
+B<Side Effects:> Inherited from Bric::Biz::Org, but uses the active value specific
 to the user, rather than the person.
 
-B<Notes:> This method only affects the Bric::BC::Org::Person object representing
-the relationship between the underlying Bric::BC::Org object and the
-Bric::BC::Person object.
+B<Notes:> This method only affects the Bric::Biz::Org::Person object representing
+the relationship between the underlying Bric::Biz::Org object and the
+Bric::Biz::Person object.
 
 =item $self = $porg->deactivate
 
-Deactivates (deletes) the Bric::BC::Org::Person object. Call $porg->save to make
+Deactivates (deletes) the Bric::Biz::Org::Person object. Call $porg->save to make
 the change persistent.
 
 B<Throws:>
@@ -889,14 +889,14 @@ Bric::set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> Inherited from Bric::BC::Org, but uses the active value specific
+B<Side Effects:> Inherited from Bric::Biz::Org, but uses the active value specific
 to the user, rather than the person.
 
-B<Notes:> This method only affects the Bric::BC::Org::Person object representing
-the relationship between the underlying Bric::BC::Org object and the
-Bric::BC::Person object. The underlying Bric::BC::Org object must have its
+B<Notes:> This method only affects the Bric::Biz::Org::Person object representing
+the relationship between the underlying Bric::Biz::Org object and the
+Bric::Biz::Person object. The underlying Bric::Biz::Org object must have its
 activate() and deactivate() methods called separately from those called from a
-Bric::BC::Org::Person object.
+Bric::Biz::Org::Person object.
 
 =item $self = $porg->is_active
 
@@ -912,7 +912,7 @@ Bric::_get() - Problems retrieving fields.
 
 =back
 
-B<Side Effects:> Inherited from Bric::BC::Org, but uses the active value specific
+B<Side Effects:> Inherited from Bric::Biz::Org, but uses the active value specific
 to the user, rather than the person.
 
 B<Notes:> See notes for activate() and deactivate() above.
@@ -921,12 +921,12 @@ B<Notes:> See notes for activate() and deactivate() above.
 
 =item my (@addr || $addr_aref) = $porg->get_addr(@address_ids)
 
-Returns a list or anonymous array of Bric::BC::Org::Parts::Addr objects. The
+Returns a list or anonymous array of Bric::Biz::Org::Parts::Addr objects. The
 addresses returned will be a subset of those associated with the underlying
-Bric::BC::Org object, being only the organizational addresses corresponding to a
-particular Bric::BC::Person object. Returns an empty list when there are no
+Bric::Biz::Org object, being only the organizational addresses corresponding to a
+particular Bric::Biz::Person object. Returns an empty list when there are no
 addresses associated with this object, and undef upon failure. See the
-Bric::BC::Org::Parts::Addr documentation for its API.
+Bric::Biz::Org::Parts::Addr documentation for its API.
 
 B<Throws:>
 
@@ -970,13 +970,13 @@ Bric::set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> Stores the list of Bric::BC::Org::Parts::Addr objects internally
-in the Bric::BC::Org::Person object the first time it or any other address method
-is called on a given Bric::BC::Org::Person instance.
+B<Side Effects:> Stores the list of Bric::Biz::Org::Parts::Addr objects internally
+in the Bric::Biz::Org::Person object the first time it or any other address method
+is called on a given Bric::Biz::Org::Person instance.
 
-B<Notes:> Changes made to Bric::BC::Org::Parts::Addr objects retreived from this
+B<Notes:> Changes made to Bric::Biz::Org::Parts::Addr objects retreived from this
 method can be persistently saved to the database only by calling the
-Bric::BC::Org::Person object's save() method.
+Bric::Biz::Org::Person object's save() method.
 
 =cut
 
@@ -988,12 +988,12 @@ sub get_addr {
 
 =item my $address = $porg->new_addr
 
-Adds and returns a new Bric::BC::Org::Parts::Addr object associated with the
-Bric::BC::Org::Person object. Once $porg->save has been called, the new address will
-be associated both with this Bric::BC::Org::Person object I<and> the underlying
-Bric::BC::Org object.
+Adds and returns a new Bric::Biz::Org::Parts::Addr object associated with the
+Bric::Biz::Org::Person object. Once $porg->save has been called, the new address will
+be associated both with this Bric::Biz::Org::Person object I<and> the underlying
+Bric::Biz::Org object.
 
-Returns undef on failure. See the Bric::BC::Org::Parts::Addr documentation for its
+Returns undef on failure. See the Bric::Biz::Org::Parts::Addr documentation for its
 API.
 
 B<Throws:>
@@ -1038,12 +1038,12 @@ Bric::set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> Stores the list of Bric::BC::Org::Parts::Addr objects internally
-in the Bric::BC::Org object the first time it or any other address method is called on
-a given Bric::BC::Org instance.
+B<Side Effects:> Stores the list of Bric::Biz::Org::Parts::Addr objects internally
+in the Bric::Biz::Org object the first time it or any other address method is called on
+a given Bric::Biz::Org instance.
 
 B<Notes:> Changes made to $address objects retreived from this method can be
-persistently saved to the database only by calling the Bric::BC::Org object's save()
+persistently saved to the database only by calling the Bric::Biz::Org object's save()
 method.
 
 =cut
@@ -1056,9 +1056,9 @@ sub new_addr {
 
 =item $self = $porg->add_addr($addr, $addr, ...)
 
-Associates the list of Bric::BC::Org::Parts::Addr objects with the Bric::BC::Person
-identified by the Bric::BC::Org::Person object. The addresses must already be
-associated with the underlying Bric::BC::Org object.
+Associates the list of Bric::Biz::Org::Parts::Addr objects with the Bric::Biz::Person
+identified by the Bric::Biz::Org::Person object. The addresses must already be
+associated with the underlying Bric::Biz::Org object.
 
 B<Throws:>
 
@@ -1102,9 +1102,9 @@ Bric::set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> Stores the list of Bric::BC::Org::Parts::Addr objects internally
-in the Bric::BC::Org object the first time it or any other address method is
-called on a given Bric::BC::Org instance.
+B<Side Effects:> Stores the list of Bric::Biz::Org::Parts::Addr objects internally
+in the Bric::Biz::Org object the first time it or any other address method is
+called on a given Bric::Biz::Org instance.
 
 B<Notes:> NONE.
 
@@ -1121,9 +1121,9 @@ sub add_addr {
 
 =item $self = $porg->del_addr(@address_ids)
 
-If called with no arguments, deletes all Bric::BC::Org::Parts::Addr objects
-associated with the Bric::BC::Org::Person object. Pass Bric::BC::Org::Parts::Addr
-object IDs to delete only those Bric::BC::Org::Parts::Addr objects.
+If called with no arguments, deletes all Bric::Biz::Org::Parts::Addr objects
+associated with the Bric::Biz::Org::Person object. Pass Bric::Biz::Org::Parts::Addr
+object IDs to delete only those Bric::Biz::Org::Parts::Addr objects.
 
 B<Throws:>
 
@@ -1167,14 +1167,14 @@ Bric::set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> Deletes the Bric::BC::Org::Parts::Addr objects from the
-Bric::BC::Org::Person object's internal structure, but retains a list of the IDs.
-These will be used to delete the Bric::BC::Org::Parts::Addr objects from the
-database when $porg->save is called, then are deleted from the Bric::BC::Org
-object's internal structure. The Bric::BC::Org::Parts::Addr objects will not
+B<Side Effects:> Deletes the Bric::Biz::Org::Parts::Addr objects from the
+Bric::Biz::Org::Person object's internal structure, but retains a list of the IDs.
+These will be used to delete the Bric::Biz::Org::Parts::Addr objects from the
+database when $porg->save is called, then are deleted from the Bric::Biz::Org
+object's internal structure. The Bric::Biz::Org::Parts::Addr objects will not
 actually be deleted from the database until $porg->save is called.
 
-B<Notes:> The addresses will not be deleted from the underlying Bric::BC::Org
+B<Notes:> The addresses will not be deleted from the underlying Bric::Biz::Org
 object.
 
 =cut
@@ -1187,8 +1187,8 @@ sub del_addr {
 
 =item $self = $porg->save
 
-Saves any changes to the Bric::BC::Org::Person and underlying Bric::BC::Org objects,
-including changes to associated address (Bric::BC::Org::Parts::Addr) objects.
+Saves any changes to the Bric::Biz::Org::Person and underlying Bric::Biz::Org objects,
+including changes to associated address (Bric::Biz::Org::Parts::Addr) objects.
 Returns $self on success and undef on failure.
 
 B<Throws:>
@@ -1225,7 +1225,7 @@ Bric::_set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> Cleans out internal cache of Bric::BC::Org::Parts::Addr objects
+B<Side Effects:> Cleans out internal cache of Bric::Biz::Org::Parts::Addr objects
 to reflect what is in the database.
 
 B<Notes:> NONE.
@@ -1292,9 +1292,9 @@ NONE.
 
 =item my $org_ids_aref = &$get_em( $pkg, $search_href, 1 )
 
-Function used by lookup() and list() to return a list of Bric::BC::Org::Person
+Function used by lookup() and list() to return a list of Bric::Biz::Org::Person
 objects or, if called with an optional third argument, returns a list of
-Bric::BC::Org::Person object IDs (used by list_ids()).
+Bric::Biz::Org::Person object IDs (used by list_ids()).
 
 B<Throws:>
 
@@ -1459,13 +1459,16 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2),
-Bric::BC::Org(3)
-Bric::BC::Person(4)
+Bric::Biz::Org(3)
+Bric::Biz::Person(4)
 
 =head1 REVISION HISTORY
 
 $Log: Person.pm,v $
-Revision 1.1  2001-09-06 21:54:05  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:54:05  wheeler
+Upload to SourceForge.
 
 =cut

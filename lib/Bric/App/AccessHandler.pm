@@ -1,33 +1,33 @@
-package Bric::BL::AccessHandler;
+package Bric::App::AccessHandler;
 
 =head1 NAME
 
-Bric::BL::AccessHandler - Handles Authentication and Session setup during the
+Bric::App::AccessHandler - Handles Authentication and Session setup during the
 Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:57 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
   <Perl>
   use lib '/usr/local/bricolage/lib';
   </Perl>
-  PerlModule Bric::BL::AccessHandler    <Location /media>
+  PerlModule Bric::App::AccessHandler    <Location /media>
         SetHandler default-handler
     </Location>
 
-  PerlModule Bric::BL::Handler
+  PerlModule Bric::App::Handler
   PerlFreshRestart    On
   DocumentRoot "/usr/local/bricolage/comp"
   <Directory "/usr/local/bricolage/comp">
@@ -36,8 +36,8 @@ $Date: 2001-09-06 21:52:57 $
       Order allow,deny
       Allow from all
       SetHandler perl-script
-      PerlHandler Bric::BL::Handler
-      PerlAccessHandler Bric::BL::AccessHandler
+      PerlHandler Bric::App::Handler
+      PerlAccessHandler Bric::App::AccessHandler
   </Directory>
 
 =head1 DESCRIPTION
@@ -57,9 +57,9 @@ use strict;
 # Programmatic Dependences
 use Apache::Constants qw(:common);
 use Apache::Log;
-use Bric::BL::Session;
-use Bric::BL::Util qw(:redir :history);
-use Bric::BL::Auth qw(auth logout);
+use Bric::App::Session;
+use Bric::App::Util qw(:redir :history);
+use Bric::App::Auth qw(auth logout);
 use Bric::Config qw(:err);
 
 ################################################################################
@@ -129,7 +129,7 @@ sub handler {
 
     my $ret = eval {
 	# Set up the user's session data.
-	Bric::BL::Session::setup_user_session($r);
+	Bric::App::Session::setup_user_session($r);
 	my ($res, $msg) = auth($r);
 	return OK if $res;
 
@@ -167,11 +167,11 @@ sub logout_handler {
 
     my $ret = eval {
 	# Set up the user's session data.
-	Bric::BL::Session::setup_user_session($r);
+	Bric::App::Session::setup_user_session($r);
 	# Logout.
 	logout();
 	# Expire the user's session.
-	Bric::BL::Session::expire_session($r);
+	Bric::App::Session::expire_session($r);
 
 	# Rredirect to the login page.
 	my $hostname = $r->hostname;
@@ -200,7 +200,7 @@ sub okay {
     my $r = shift;
     my $ret = eval {
 	# Set up the user's session data.
-	Bric::BL::Session::setup_user_session($r);
+	Bric::App::Session::setup_user_session($r);
 	return OK;
     };
     return $@ ? handle_err($r, $@) : $ret;
@@ -279,7 +279,10 @@ Bric (2),
 =head1 REVISION HISTORY
 
 $Log: AccessHandler.pm,v $
-Revision 1.1  2001-09-06 21:52:57  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:52:57  wheeler
+Upload to SourceForge.
 
 =cut

@@ -1,21 +1,21 @@
-package Bric::BC::Asset::Business::Media;
+package Bric::Biz::Asset::Business::Media;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Asset::Business::Media - The parent class of all media objects
+Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:46 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Util::Attribute::Media;
 use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Media;
-use Bric::BL::MediaFunc;
+use Bric::App::MediaFunc;
 use File::Temp qw( tempfile );
 use Bric::Config qw(:media);
 
@@ -48,7 +48,7 @@ use Bric::Config qw(:media);
 
 # The parent module should have a 'use' line if you need to import from it.
 # use Bric;
-use base qw( Bric::BC::Asset::Business );
+use base qw( Bric::Biz::Asset::Business );
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -177,7 +177,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $media = Bric::BC::Asset::Business::Media->new( $initial_state )
+=item $media = Bric::Biz::Asset::Business::Media->new( $initial_state )
 
 This will create a new media object with an optionaly defined intiial state
 
@@ -270,7 +270,7 @@ sub new {
 
 ################################################################################
 
-=item $media = Bric::BC::Asset::Business::Media->lookup->( { id => $id })
+=item $media = Bric::Biz::Asset::Business::Media->lookup->( { id => $id })
 
 This will return a media asset that matches the criteria defined
 
@@ -338,7 +338,7 @@ sub lookup {
 
 ################################################################################
 
-=item (@media || $media) =  Bric::BC::Asset::Business::Media->list($param);
+=item (@media || $media) =  Bric::Biz::Asset::Business::Media->list($param);
 
 returns a list or list ref of media objects that match the criteria defined
 
@@ -508,7 +508,7 @@ sub DESTROY {
 
 =cut
                   
-=item (@ids||$id_list) = Bric::BC::Asset::Business::Media->list_ids( $criteria );
+=item (@ids||$id_list) = Bric::Biz::Asset::Business::Media->list_ids( $criteria );
 
 returns a list or list ref of media object ids that match the criteria defined
 
@@ -544,7 +544,7 @@ sub list_ids {
 ################################################################################
 
 =item ($fields || @fields) = 
-	Bric::BC::Asset::Business::Media::autopopulated_fields()
+	Bric::Biz::Asset::Business::Media::autopopulated_fields()
 
 Returns a list of the names of fields that are registered in the database as 
 being autopopulatable for a given sub class
@@ -578,7 +578,7 @@ sub autopopulated_fields {
 
 ################################################################################
 
-=item my $key_name = Bric::BC::Asset::Business::Media->key_name()
+=item my $key_name = Bric::Biz::Asset::Business::Media->key_name()
 
 Returns the key name of this class.
 
@@ -594,9 +594,9 @@ sub key_name { 'media' }
 
 ################################################################################
 
-=item $meths = Bric::BC::Asset::Business::Story->my_meths
+=item $meths = Bric::Biz::Asset::Business::Story->my_meths
 
-=item (@meths || $meths_aref) = Bric::BC::Asset::Business::Story->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::Asset::Business::Story->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -785,7 +785,7 @@ sub my_meths {
 
 ################################################################################
 
-=item $class_id = Bric::BC::Asset::Business::Media->get_class_id()
+=item $class_id = Bric::Biz::Asset::Business::Media->get_class_id()
 
 Returns the class id of the Media class
 
@@ -876,7 +876,7 @@ sub get_category_object {
 
 	return $cat if $cat;
 
-	$cat = Bric::BC::Category->lookup( { id => $self->_get('category__id') });
+	$cat = Bric::Biz::Category->lookup( { id => $self->_get('category__id') });
 
 	$self->_set({ '_category_obj' => $cat });
 
@@ -1026,7 +1026,7 @@ sub upload_file {
 
 		my $path = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $loc);
 
-		my $media_func = Bric::BL::MediaFunc->new({ file_path => $path });
+		my $media_func = Bric::App::MediaFunc->new({ file_path => $path });
 
 		if ($auto_fields->{$name} ) {
 			# check the tile to see if we can override it
@@ -2034,12 +2034,15 @@ Bricolage Engineering
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::BC::Asset>, L<Bric::BC::Asset::Business>
+L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>
 
 =head1 REVISION HISTORY
 
 $Log: Media.pm,v $
-Revision 1.1  2001-09-06 21:53:46  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:46  wheeler
+Upload to SourceForge.
 
 =cut

@@ -1,29 +1,29 @@
-package Bric::BC::Asset::Business::Parts::Tile;
+package Bric::Biz::Asset::Business::Parts::Tile;
 ###############################################################################
 
 =head1 NAME
 
- Bric::BC::Asset::Business::Parts::Tile
+ Bric::Biz::Asset::Business::Parts::Tile
 
  Tile maps a particular Asset Part Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:53 $
+$Date: 2001-09-06 22:30:06 $
 
 
 =head1 SYNOPSIS
 
- ($tile_list,@tiles) = Bric::BC::Asset::Business::Parts::Tile->list($criteria)
+ ($tile_list,@tiles) = Bric::Biz::Asset::Business::Parts::Tile->list($criteria)
 
  $id = $tile->get_id()
 
@@ -144,7 +144,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $tile = Bric::BC::Asset::Business::Parts::Tile->new( {format => $fa})
+=item $tile = Bric::Biz::Asset::Business::Parts::Tile->new( {format => $fa})
 
 This will return a new Tile object with the optional initial state of 
 format and data
@@ -211,7 +211,7 @@ sub lookup {
 
 ################################################################################
 
-=item ($tile_list, @tiles) = Bric::BC::Asset::Business::Parts::Tile->list
+=item ($tile_list, @tiles) = Bric::Biz::Asset::Business::Parts::Tile->list
 	( $criteria )
 
 This will return a list ( or list ref) of tile objects that match the 
@@ -465,14 +465,17 @@ michael soderstrom ( miraso@pacbell.net )
 
 =head1 SEE ALSO
 
-L<perl>,L<Bric>,L<Bric::BC::Asset::Business::Story>,L<Bric::BC::Asset_type>,
-L<Bric::BC::Asset_type::Parts::Data>,L<Bric::BC::Asset::Business::Media> 
+L<perl>,L<Bric>,L<Bric::Biz::Asset::Business::Story>,L<Bric::Biz::Asset_type>,
+L<Bric::Biz::Asset_type::Parts::Data>,L<Bric::Biz::Asset::Business::Media> 
 
 =head1 REVISION HISTORY
 
 $Log: Tile.pm,v $
-Revision 1.1  2001-09-06 21:53:53  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:53  wheeler
+Upload to SourceForge.
 
 =cut
 

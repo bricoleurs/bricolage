@@ -1,25 +1,25 @@
-package Bric::BL::Event;
+package Bric::App::Event;
 
 =head1 NAME
 
-Bric::BL::Event - Exports simple functions for managing events.
+Bric::App::Event - Exports simple functions for managing events.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:58 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  use Bric::BL::Event qw(:all);
+  use Bric::App::Event qw(:all);
   log_event($name, $obj, $init);
   commit_events();
 
@@ -37,7 +37,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::BL::Session qw(get_user_object);
+use Bric::App::Session qw(get_user_object);
 use Bric::Util::Event;
 use Bric::Util::Time qw(:all);
 
@@ -227,7 +227,10 @@ Bric::Util::Event(3)
 =head1 REVISION HISTORY
 
 $Log: Event.pm,v $
-Revision 1.1  2001-09-06 21:52:58  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:52:58  wheeler
+Upload to SourceForge.
 
 =cut

@@ -1,26 +1,26 @@
-package Bric::BL::Cache;
+package Bric::App::Cache;
 
 =head1 NAME
 
-Bric::BL::Cache - Object for managing Application-wide global data.
+Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:58 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  use Bric::BL::Cache;
-  my $c = Bric::BL::Cache->new;
+  use Bric::App::Cache;
+  my $c = Bric::App::Cache->new;
   $c = $c->set($key, $val);
   my $val = $c->get($key);
 
@@ -88,9 +88,9 @@ my $cache;
 
 =over 4
 
-=item my $c = Bric::BL::Cache->new()
+=item my $c = Bric::App::Cache->new()
 
-Instantiates a Bric::BL::Cache object. No initial values may be passed.
+Instantiates a Bric::App::Cache object. No initial values may be passed.
 
 B<Throws:>
 
@@ -118,7 +118,7 @@ sub new {
 
 ################################################################################
 
-=item my $org = Bric::BL::Cache->lookup()
+=item my $org = Bric::App::Cache->lookup()
 
 Not implemented - not needed.
 
@@ -128,7 +128,7 @@ B<Throws:>
 
 =item *
 
-Bric::BL::Cache::lookup() method not implemented.
+Bric::App::Cache::lookup() method not implemented.
 
 =back
 
@@ -145,7 +145,7 @@ sub lookup {
 
 ################################################################################
 
-=item Bric::BL::Cache->list()
+=item Bric::App::Cache->list()
 
 Not implemented - not needed.
 
@@ -155,7 +155,7 @@ B<Throws:>
 
 =item *
 
-Bric::BL::Cache::list() method not implemented.
+Bric::App::Cache::list() method not implemented.
 
 =back
 
@@ -198,7 +198,7 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
-=item Bric::BL::Cache->list_ids()
+=item Bric::App::Cache->list_ids()
 
 Not implemented - not needed.
 
@@ -208,7 +208,7 @@ B<Throws:>
 
 =item *
 
-Bric::BL::Cache::list_ids() method not implemented.
+Bric::App::Cache::list_ids() method not implemented.
 
 =back
 
@@ -375,13 +375,16 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2),
-Bric::BL::Session(3),
+Bric::App::Session(3),
 Apache::Session(4)
 
 =head1 REVISION HISTORY
 
 $Log: Cache.pm,v $
-Revision 1.1  2001-09-06 21:52:58  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:52:58  wheeler
+Upload to SourceForge.
 
 =cut

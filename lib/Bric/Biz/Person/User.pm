@@ -1,40 +1,40 @@
-package Bric::BC::Person::User;
+package Bric::Biz::Person::User;
 
 =pod
 
 =head1 NAME
 
-Bric::BC::Person::User - Interface to Bricolage User Objects
+Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:14 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  use Bric::BC::Person::User;
+  use Bric::Biz::Person::User;
 
   # Constructors.
-  my $u = Bric::BC::Person::User->new;
-  my $u = Bric::BC::Person::User->lookup({ id => $id })
-  my $u = Bric::BC::Person::User->lookup({ login => $login })
-  my @users = Bric::BC::Person::User->list($search_href)
+  my $u = Bric::Biz::Person::User->new;
+  my $u = Bric::Biz::Person::User->lookup({ id => $id })
+  my $u = Bric::Biz::Person::User->lookup({ login => $login })
+  my @users = Bric::Biz::Person::User->list($search_href)
 
   # Class Methods.
-  my @uids = Bric::BC::Person::User->list_ids($search_href)
+  my @uids = Bric::Biz::Person::User->list_ids($search_href)
 
-  # Instance Methods - in addition to those inherited from Bric::BC::Person.
+  # Instance Methods - in addition to those inherited from Bric::Biz::Person.
   my $login = $u->get_login;
   $u = $login->set_login($login);
   $u = $u->set_password($password);
@@ -55,13 +55,13 @@ $Date: 2001-09-06 21:54:14 $
 =head1 DESCRIPTION
 
 This Class provides the basic interface to all Bricolage and users.
-Bric::BC::Person::User objects are special Bric::BC::Person objects that
+Bric::Biz::Person::User objects are special Bric::Biz::Person objects that
 represent members of the Bric::Util::Group::Person group "User". Only members of
-this group can actually I<use> the application. All other Bric::BC::Person
+this group can actually I<use> the application. All other Bric::Biz::Person
 objects cannot use Bricolage, although they can be associated with Bricolage
 objects (e.g., writers can be associated with stories).
 
-Bric::BC::Person::User extends the Bric::BC::Person interface to allow the
+Bric::Biz::Person::User extends the Bric::Biz::Person interface to allow the
 setting and checking of passwords, the setting of login names, and the
 activation or deactivation of the person as a user. It also offers methods by
 which to set permissions for individual users, although these permissions really
@@ -92,7 +92,7 @@ use Bric::Util::Time qw(db_date);
 ################################################################################
 # Inheritance
 ################################################################################
-use base qw(Bric::BC::Person);
+use base qw(Bric::Biz::Person);
 
 ################################################################################
 # Function and Closure Prototypes
@@ -157,9 +157,9 @@ BEGIN {
 
 =over 4
 
-=item my $u = Bric::BC::Person::User->new($init)
+=item my $u = Bric::Biz::Person::User->new($init)
 
-Instantiates a Bric::BC::Person::User object. An anonymous hash of intial values
+Instantiates a Bric::Biz::Person::User object. An anonymous hash of intial values
 may be passed. The supported intial hash keys are:
 
 =over 4
@@ -222,10 +222,10 @@ sub new {
 
 ################################################################################
 
-=item my $p = Bric::BC::Person->lookup($params)
+=item my $p = Bric::Biz::Person->lookup($params)
 
-Looks up and instantiates a new Bric::BC::Person::User object based on the
-Bric::BC::Person::User object ID or login name. If the existing object is not
+Looks up and instantiates a new Bric::Biz::Person::User object based on the
+Bric::Biz::Person::User object ID or login name. If the existing object is not
 found in the database, lookup() returns undef. The two possible lookup
 parameters are:
 
@@ -248,7 +248,7 @@ B<Throws:>
 
 =item *
 
-Too many Bric::BC::Person::User objects found.
+Too many Bric::Biz::Person::User objects found.
 
 =item *
 
@@ -276,11 +276,11 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> If id or login name is found, populates the new Bric::BC::Person
+B<Side Effects:> If id or login name is found, populates the new Bric::Biz::Person
 object with data from the database before returning it.
 
-B<Notes:> This method is overriding the lookup() method of the Bric::BC::Person
-object, including all of its SQL. Thus, the Bric::BC::Person::lookup method will
+B<Notes:> This method is overriding the lookup() method of the Bric::Biz::Person
+object, including all of its SQL. Thus, the Bric::Biz::Person::lookup method will
 not be called here, and it's SQL queries will not be executed.
 
 =cut
@@ -289,15 +289,15 @@ sub lookup {
     my $user = &$get_em(@_);
     # We want @$user to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::BC::User objects found.' }) if @$user > 1;
+      msg => 'Too many Bric::Biz::User objects found.' }) if @$user > 1;
     return @$user ? $user->[0] : undef;
 }
 
 ################################################################################
 
-=item my (@users || $users_aref) = Bric::BC::Person::User->list($params)
+=item my (@users || $users_aref) = Bric::Biz::Person::User->list($params)
 
-Returns a list or anonymous array of Bric::BC::Person::User objects based on the
+Returns a list or anonymous array of Bric::Biz::Person::User objects based on the
 search criteria passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
@@ -358,11 +358,11 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Populates each Bric::BC::Person::User object with data from the
+B<Side Effects:> Populates each Bric::Biz::Person::User object with data from the
 database before returning them all.
 
-B<Notes:> This method is overriding the list() method of the Bric::BC::Person
-object, including all of its SQL. Thus, the Bric::BC::Person::list method will
+B<Notes:> This method is overriding the list() method of the Bric::Biz::Person
+object, including all of its SQL. Thus, the Bric::Biz::Person::list method will
 not be called here, and it's SQL queries will not be executed.
 
 =cut
@@ -433,8 +433,8 @@ Unable to fetch row from statement handle.
 
 B<Side Effects:> NONE.
 
-B<Notes:> This method is overriding the list_ids() method of the Bric::BC::Person
-object, including all of its SQL. Thus, the Bric::BC::Person::list_ids method will
+B<Notes:> This method is overriding the list_ids() method of the Bric::Biz::Person
+object, including all of its SQL. Thus, the Bric::Biz::Person::list_ids method will
 not be called here, and it's SQL queries will not be executed.
 
 =cut
@@ -499,9 +499,9 @@ sub login_avail {
 
 ################################################################################
 
-=item $meths = Bric::BC::Person::User->my_meths
+=item $meths = Bric::Biz::Person::User->my_meths
 
-=item (@meths || $meths_aref) = Bric::BC::Person::User->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::Person::User->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -637,7 +637,7 @@ sub my_meths {
       if $meths;
 
     # We don't got 'em. So get 'em!
-    foreach my $meth (Bric::BC::Person::User->SUPER::my_meths(1)) {
+    foreach my $meth (Bric::Biz::Person::User->SUPER::my_meths(1)) {
 	$meths->{$meth->{name}} = $meth;
 	push @ord, $meth->{name};
     }
@@ -682,16 +682,16 @@ sub my_meths {
 
 =head2 Public Instance Methods
 
-Bric::BC::Person::User inherits from Bric::BC::Person and makes available all
-Bric::BC::Person instance methods. See the Bric::BC::Person documentation for a
+Bric::Biz::Person::User inherits from Bric::Biz::Person and makes available all
+Bric::Biz::Person instance methods. See the Bric::Biz::Person documentation for a
 description of those methods. Additional methods available for
-Bric::BC::Person::User objects only are documented here.
+Bric::Biz::Person::User objects only are documented here.
 
 =over 4
 
 =item my $id = $u->get_id
 
-Returns the ID of the Bric::BC::Person::User object.
+Returns the ID of the Bric::Biz::Person::User object.
 
 B<Throws:>
 
@@ -717,14 +717,14 @@ No AUTOLOAD method.
 
 B<Side Effects:> NONE.
 
-B<Notes:> If the Bric::BC::Person::User object has been instantiated via the new()
+B<Notes:> If the Bric::Biz::Person::User object has been instantiated via the new()
 constructor and has not yet been C<save>d, the object will not yet have an ID,
 so this method call will return undef.
 
 =item $self = $u->set_person($person)
 
-Sets the ID representing Bric::BC::Person object from which the
-Bric::BC::Person::User object inherits.
+Sets the ID representing Bric::Biz::Person object from which the
+Bric::Biz::Person::User object inherits.
 
 B<Throws:>
 
@@ -1074,7 +1074,7 @@ sub no_can_do { return can_do(@_) ? undef : $_[0] }
 
 =item $self = $u->activate
 
-Flags the Bric::BC::Person::User object as an active user in Bricolage. Be sure
+Flags the Bric::Biz::Person::User object as an active user in Bricolage. Be sure
 to call $u->save to save the change to the database. Returns $self on success
 and undef on failure.
 
@@ -1092,12 +1092,12 @@ Bric::set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> Inherited from Bric::BC::Person, but uses the active value
+B<Side Effects:> Inherited from Bric::Biz::Person, but uses the active value
 specific to the user, rather than the person.
 
 B<Notes:> The activate(), deactivate(), and is_active() methods differ from
-those found in Bric::BC::Person. In Bric::BC::Person, they determine whether a
-person is active in the entire database, across groups. In Bric::BC::Person::User,
+those found in Bric::Biz::Person. In Bric::Biz::Person, they determine whether a
+person is active in the entire database, across groups. In Bric::Biz::Person::User,
 they determine only whether the person is an active user of the system. A person
 may be an inactive user but still an active person. Returns $self on success and
 undef on failure.
@@ -1120,7 +1120,7 @@ sub activate {
 
 =item $self = $u->deactivate
 
-Flags the Bric::BC::Person::User object as an inactive user in Bricolage. Be
+Flags the Bric::Biz::Person::User object as an inactive user in Bricolage. Be
 sure to call $u->save to save the change to the database. Returns $self on
 success and undef on failure.
 
@@ -1142,7 +1142,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-B<Side Effects:> Inherited from Bric::BC::Person, but uses the active value
+B<Side Effects:> Inherited from Bric::Biz::Person, but uses the active value
 specific to the user, rather than the person.
 
 B<Notes:> See the notes for the activate() method above.
@@ -1153,7 +1153,7 @@ Returns $self if the MPS::Person::User object is active, and undef if it is not.
 
 B<Throws:> NONE.
 
-B<Side Effects:> Inherited from Bric::BC::Person, but uses the active value
+B<Side Effects:> Inherited from Bric::Biz::Person, but uses the active value
 specific to the user, rather than the person.
 
 B<Notes:> See the notes for the activate() method above.
@@ -1162,17 +1162,17 @@ B<Notes:> See the notes for the activate() method above.
 
 =item my (@gids || $gids_aref) = $u->get_grp_ids
 
-=item my (@gids || $gids_aref) = Bric::BC::Person::User->get_grp_ids
+=item my (@gids || $gids_aref) = Bric::Biz::Person::User->get_grp_ids
 
-Returns a list or anonymous array of Bric::BC::Group object ids representing the
-groups of which this Bric::BC::Person::User object is a member.
+Returns a list or anonymous array of Bric::Biz::Group object ids representing the
+groups of which this Bric::Biz::Person::User object is a member.
 
 B<Throws:> See Bric::Util::Grp::list().
 
 B<Side Effects:> NONE.
 
 B<Notes:> This method returns the group IDs for the current object both as a
-Bric::BC::Person object and as a Bric::BC::Person::User object. [Actually, I've
+Bric::Biz::Person object and as a Bric::Biz::Person::User object. [Actually, I've
 commented this out for now, since it seems more likely at this point that we'll
 want only the user group IDs, not also the person IDs. We can uncomment this
 later if we decide we need it, though.]
@@ -1196,18 +1196,18 @@ later if we decide we need it, though.]
 
 =item my (@groups || $groups_aref) = $u->get_grps
 
-Returns a list or anonymous array of Bric::BC::Group::User objects representing
-the groups of which this Bric::BC::Person::User object is a member.
+Returns a list or anonymous array of Bric::Biz::Group::User objects representing
+the groups of which this Bric::Biz::Person::User object is a member.
 
-Use the Bric::BC::Group::User instance method calls add_members() and
-delete_members() to associate and dissociate Bric::BC::Person::User objects with
-any given Bric::BC::Group::Person::User object.
+Use the Bric::Biz::Group::User instance method calls add_members() and
+delete_members() to associate and dissociate Bric::Biz::Person::User objects with
+any given Bric::Biz::Group::Person::User object.
 
 B<Throws:> See Bric::Util::Grp::Person::list().
 
 B<Side Effects:> Uses Bric::Util::Grp::User internally.
 
-B<Notes:> This method differs from the Bric::BC::Person->get_grps() method in
+B<Notes:> This method differs from the Bric::Biz::Person->get_grps() method in
 that it returns only those groups of which the person is a member as a user,
 rather than as a person.
 
@@ -1217,9 +1217,9 @@ sub get_grps { Bric::Util::Grp::User->list({ obj => $_[0] }) }
 
 =item $self = $u->save
 
-Saves the properties of the Bric::BC::Person::User object to the database,
+Saves the properties of the Bric::Biz::Person::User object to the database,
 including all changes made via the methods inherited from
-Bric::BC::Person. Returns $self on success and undef on failure.
+Bric::Biz::Person. Returns $self on success and undef on failure.
 
 B<Throws:>
 
@@ -1255,9 +1255,9 @@ Bric::_set() - Problems setting fields.
 
 =back
 
-B<Side Effects:> Also calls Bric::BC::Person save() method.
+B<Side Effects:> Also calls Bric::Biz::Person save() method.
 
-B<Notes:> See also Bric::BC::Person save() method documentation.
+B<Notes:> See also Bric::Biz::Person save() method documentation.
 
 =cut
 
@@ -1339,9 +1339,9 @@ NONE.
 
 =item my $user_ids_aref = &$get_em( $pkg, $search_href, 1 )
 
-Function used by lookup() and list() to return a list of Bric::BC::Person::User
+Function used by lookup() and list() to return a list of Bric::Biz::Person::User
 objects or, if called with an optional third argument, returns a list of
-Bric::BC::Person::User object IDs (used by list_ids()).
+Bric::Biz::Person::User object IDs (used by list_ids()).
 
 B<Throws:>
 
@@ -1376,7 +1376,7 @@ Unable to fetch row from statement handle.
 B<Side Effects:> NONE.
 
 B<Notes:> SQL in this function overrides the SQL used in the same function in
-Bric::BC::Person.
+Bric::Biz::Person.
 
 =cut
 
@@ -1467,12 +1467,15 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2),
-Bric::BC::Person(3)
+Bric::Biz::Person(3)
 
 =head1 REVISION HISTORY
 
 $Log: User.pm,v $
-Revision 1.1  2001-09-06 21:54:14  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:54:14  wheeler
+Upload to SourceForge.
 
 =cut

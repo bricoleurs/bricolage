@@ -1,25 +1,25 @@
-package Bric::BL::Authz;
+package Bric::App::Authz;
 
 =head1 NAME
 
-Bric::BL::Authz - Exports functions for checking user authorization.
+Bric::App::Authz - Exports functions for checking user authorization.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:57 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  use Bric::BL::Authz qw(:all);
+  use Bric::App::Authz qw(:all);
 
   chk_authz($obj, READ);
   # If we get here, we can read $obj.
@@ -49,8 +49,8 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::Priv::Parts::Const qw(:all);
-use Bric::BL::Session qw(:user user_is_admin);
-use Bric::BL::ReqCache;
+use Bric::App::Session qw(:user user_is_admin);
+use Bric::App::ReqCache;
 
 ################################################################################
 # Inheritance
@@ -137,7 +137,7 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Will use the Bric::BC::Person::User object's can_do() method internally
+B<Notes:> Will use the Bric::Biz::Person::User object's can_do() method internally
 once Permissions have been implemented. Meanwhile, it ignores $obj and
 $permission and just returns true if the current user is a member of the
 Administrators group.
@@ -148,7 +148,7 @@ sub chk_authz {
     my ($obj, $chk_perm, $no_redir, @gids) = @_;
     my $perm;
     if (my $ref = ref $obj) {
-	$rc ||= Bric::BL::ReqCache->new;
+	$rc ||= Bric::App::ReqCache->new;
 	my $id = $obj->get_id;
 	$id = '' unless defined $id;
 	my $key = "_AUTHZ_:$ref:$id";
@@ -204,12 +204,15 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2),
-Bric::BC::Person::User
+Bric::Biz::Person::User
 
 =head1 REVISION HISTORY
 
 $Log: Authz.pm,v $
-Revision 1.1  2001-09-06 21:52:57  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:52:57  wheeler
+Upload to SourceForge.
 
 =cut

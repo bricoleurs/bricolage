@@ -1,34 +1,34 @@
-package Bric::BC::Keyword;
+package Bric::Biz::Keyword;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Keyword - A general class to manage keywords.
+Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:23 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
- use Bric::BC::Keyword;
+ use Bric::Biz::Keyword;
 
  # Create a new keyword object.
- my $key = new Bric::BC::Keyword($init);
+ my $key = new Bric::Biz::Keyword($init);
 
  # Lookup an existing keyword.
- my $key = new Bric::BC::Keyword($key_id);
+ my $key = new Bric::Biz::Keyword($key_id);
 
  # Create a list of keyword objects.
- my $key = list Bric::BC::Keyword($param);
+ my $key = list Bric::Biz::Keyword($param);
 
  # Get/set the keyword name. 
  $name    = $key->get_name();
@@ -164,7 +164,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $obj = new Bric::BC::Keyword($init);
+=item $obj = new Bric::Biz::Keyword($init);
 
 Keys for $init are:
 
@@ -240,7 +240,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $obj = lookup Bric::BC::Keyword($key_id);
+=item $obj = lookup Bric::Biz::Keyword($key_id);
 
 Retrieves an existing keyword from the database.  Takes either a keyword ID or 
 the keyword itself.
@@ -292,7 +292,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item @objs = list Bric::BC::Keyword($param);
+=item @objs = list Bric::Biz::Keyword($param);
 
 The possible keys to $param are the following;
 
@@ -330,7 +330,7 @@ sub list {
 	my $syn;
 	
 	$kw = ref $kw_param ? $kw_param 
-                            : Bric::BC::Keyword->lookup({'id' => $kw_param});
+                            : Bric::Biz::Keyword->lookup({'id' => $kw_param});
 	# Return nothing if the lookup fails.
 	return unless $kw;
 
@@ -979,12 +979,15 @@ Bricolage Engineering
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::Util::Grp::Keyword>, L<Bric::BC::Category>
+L<perl>, L<Bric>, L<Bric::Util::Grp::Keyword>, L<Bric::Biz::Category>
 
 =head1 REVISION HISTORY
 
 $Log: Keyword.pm,v $
-Revision 1.1  2001-09-06 21:53:23  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:23  wheeler
+Upload to SourceForge.
 
 =cut

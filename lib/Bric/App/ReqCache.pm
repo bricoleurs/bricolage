@@ -1,26 +1,26 @@
-package Bric::BL::ReqCache;
+package Bric::App::ReqCache;
 
 =head1 NAME
 
-Bric::BL::ReqCache - Object for managing Application-wide global data.
+Bric::App::ReqCache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:01 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  use Bric::BL::ReqCache;
-  my $rc = Bric::BL::ReqCache->new;
+  use Bric::App::ReqCache;
+  my $rc = Bric::App::ReqCache->new;
   $rc = $rc->set($key, $val);
   my $val = $rc->get($key);
 
@@ -28,7 +28,7 @@ $Date: 2001-09-06 21:53:01 $
 
 This class offers simple caching of data for the length of an Apache request.
 It is cleaned out during the Apache Cleanup phase. If you need to cache data
-beyond the current request, use Bric::BL::Cache or Bric::BL::Session.
+beyond the current request, use Bric::App::Cache or Bric::App::Session.
 
 =cut
 
@@ -83,9 +83,9 @@ our %req_cache;
 
 =over 4
 
-=item my $rc = Bric::BL::ReqCache->new()
+=item my $rc = Bric::App::ReqCache->new()
 
-Instantiates a Bric::BL::ReqCache object. No initial values may be passed.
+Instantiates a Bric::App::ReqCache object. No initial values may be passed.
 
 B<Throws:>
 
@@ -109,7 +109,7 @@ sub new {
 
 ################################################################################
 
-=item my $org = Bric::BL::ReqCache->lookup()
+=item my $org = Bric::App::ReqCache->lookup()
 
 Not implemented - not needed.
 
@@ -119,7 +119,7 @@ B<Throws:>
 
 =item *
 
-Bric::BL::ReqCache::lookup() method not implemented.
+Bric::App::ReqCache::lookup() method not implemented.
 
 =back
 
@@ -136,7 +136,7 @@ sub lookup {
 
 ################################################################################
 
-=item Bric::BL::ReqCache->list()
+=item Bric::App::ReqCache->list()
 
 Not implemented - not needed.
 
@@ -146,7 +146,7 @@ B<Throws:>
 
 =item *
 
-Bric::BL::ReqCache::list() method not implemented.
+Bric::App::ReqCache::list() method not implemented.
 
 =back
 
@@ -189,7 +189,7 @@ sub DESTROY {}
 
 =head2 Public Class Methods
 
-=item Bric::BL::ReqCache->list_ids()
+=item Bric::App::ReqCache->list_ids()
 
 Not implemented - not needed.
 
@@ -199,7 +199,7 @@ B<Throws:>
 
 =item *
 
-Bric::BL::ReqCache::list_ids() method not implemented.
+Bric::App::ReqCache::list_ids() method not implemented.
 
 =back
 
@@ -257,7 +257,7 @@ sub set {  $req_cache{$_[1]} = $_[2]; $_[0] }
 
 =item $self = $rc->clear()
 
-=item Bric::BL::ReqCache->clear()
+=item Bric::App::ReqCache->clear()
 
 Clears the cache of all its values. Called during the Apache cleanup phase.
 
@@ -324,14 +324,17 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2),
-Bric::BL::Cache(3),
-Bric::BL::Session(4),
+Bric::App::Cache(3),
+Bric::App::Session(4),
 Apache::Session(5)
 
 =head1 REVISION HISTORY
 
 $Log: ReqCache.pm,v $
-Revision 1.1  2001-09-06 21:53:01  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:01  wheeler
+Upload to SourceForge.
 
 =cut

@@ -1,33 +1,33 @@
-package Bric::BC::Person;
+package Bric::Biz::Person;
 
 =head1 NAME
 
-Bric::BC::Person - Interface to Bricolage Person Objects
+Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:31 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  use Bric::BC::Person;
+  use Bric::Biz::Person;
   # Constructors.
-  my $p = Bric::BC::Person->new($init);
-  my $p = Bric::BC::Person->lookup({ id => $id });
-  my @p = Bric::BC::Person->list($params);
+  my $p = Bric::Biz::Person->new($init);
+  my $p = Bric::Biz::Person->lookup({ id => $id });
+  my @p = Bric::Biz::Person->list($params);
 
   # Class Methods.
-  my @pids = Bric::BC::Person->list_ids($params);
-  my $methds = Bric::BC::Person->my_meths;
+  my @pids = Bric::Biz::Person->list_ids($params);
+  my $methds = Bric::Biz::Person->my_meths;
 
   # Instance Methods.
   my $id = $p->get_id;
@@ -62,23 +62,23 @@ $Date: 2001-09-06 21:53:31 $
 =head1 DESCRIPTION
 
 This Class provides the basic interface to all people in Bricolage. A
-Bric::BC::Person object may be thought of as a person who plays any kind of role
+Bric::Biz::Person object may be thought of as a person who plays any kind of role
 in the application. A person may be a user, a writer, a producer, an editor, or
 act in any number of interactive and non-interactive roles. Only those people
-who are added to the Bric::BC::Person::User subclass, however, may actually
+who are added to the Bric::Biz::Person::User subclass, however, may actually
 interact with the application.
 
-Bric::BC::Person objects can do little other than be associated with
+Bric::Biz::Person objects can do little other than be associated with
 organizations or store contact information unless they are associated with
-groups. The interface for managing groups of Bric::BC::Person objects is
+groups. The interface for managing groups of Bric::Biz::Person objects is
 Bric::Util::Grp::Person. Attributes on persons will be associated with
-Bric::BC::Person objects by reference to their membership in certain groups. The
+Bric::Biz::Person objects by reference to their membership in certain groups. The
 Bric::Util::Grp::Person class documents how these groups may be created,
 associated with other objects (e.g., associate members of group "Writers" with
-Bric::BC::Asset::Business::Story objects), and attributes assigned. If a
-Bric::BC::Person object is a member of a Bric::Util::Grp::Person group that
+Bric::Biz::Asset::Business::Story objects), and attributes assigned. If a
+Bric::Biz::Person object is a member of a Bric::Util::Grp::Person group that
 defines attributes for its individual members, those attributes can be accessed
-from the Bric::BC::Person object.
+from the Bric::Biz::Person object.
 
 =cut
 
@@ -92,7 +92,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::DBI qw(:standard col_aref);
 use Bric::Util::Grp::Person;
-use Bric::BC::Org::Person;
+use Bric::Biz::Org::Person;
 use Bric::Util::Coll::Contact;
 use Bric::Util::Pref;
 use Bric::Util::Fault::Exception::DP;
@@ -157,9 +157,9 @@ BEGIN {
 
 =over 4
 
-=item my $p = Bric::BC::Person->new($init)
+=item my $p = Bric::Biz::Person->new($init)
 
-Instantiates a Bric::BC::Person object. An anonymous hash of initial values may be
+Instantiates a Bric::Biz::Person object. An anonymous hash of initial values may be
 passed. The supported initial value keys are:
 
 =over 4
@@ -218,10 +218,10 @@ sub new {
 
 ################################################################################
 
-=item my $p = Bric::BC::Person->lookup({ id => $id })
+=item my $p = Bric::Biz::Person->lookup({ id => $id })
 
-Looks up and instantiates a new Bric::BC::Person object based on the
-Bric::BC::Person object ID passed. If $id is not found in the database, lookup()
+Looks up and instantiates a new Bric::Biz::Person object based on the
+Bric::Biz::Person object ID passed. If $id is not found in the database, lookup()
 returns undef.
 
 B<Throws:>
@@ -230,7 +230,7 @@ B<Throws:>
 
 =item *
 
-Too many Bric::BC::Person objects found.
+Too many Bric::Biz::Person objects found.
 
 =item *
 
@@ -258,11 +258,11 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> If $id is found, populates the new Bric::BC::Person object with
+B<Side Effects:> If $id is found, populates the new Bric::Biz::Person object with
 data from the database before returning it.
 
 B<Notes:> This method is overridden by the lookup() method of
-Bric::BC::Person::User. That class does not call Bric::BC::Person's lookup()
+Bric::Biz::Person::User. That class does not call Bric::Biz::Person's lookup()
 method.
 
 =cut
@@ -271,15 +271,15 @@ sub lookup {
     my $person = &$get_em(@_);
     # We want @$person to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::BC::Person objects found.' }) if @$person > 1;
+      msg => 'Too many Bric::Biz::Person objects found.' }) if @$person > 1;
     return @$person ? $person->[0] : undef;
 }
 
 ################################################################################
 
-=item my (@people || $person_aref) = Bric::BC::Person->list($params)
+=item my (@people || $person_aref) = Bric::Biz::Person->list($params)
 
-Returns a list or anonymous array of Bric::BC::Person objects based on the search
+Returns a list or anonymous array of Bric::Biz::Person objects based on the search
 parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
@@ -336,11 +336,11 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Populates each Bric::BC::Person object with data from the
+B<Side Effects:> Populates each Bric::Biz::Person object with data from the
 database before returning them all.
 
 B<Notes:> This method is overridden by the list() method of
-Bric::BC::Person::User. That class does not call Bric::BC::Person's list() method.
+Bric::Biz::Person::User. That class does not call Bric::Biz::Person's list() method.
 
 =cut
 
@@ -376,9 +376,9 @@ sub DESTROY {}
 
 =over
 
-=item my (@person_ids || $person_ids_aref) = Bric::BC::Person->list_ids($params)
+=item my (@person_ids || $person_ids_aref) = Bric::Biz::Person->list_ids($params)
 
-Returns a list or anonymous array of Bric::BC::Person object IDs based on the
+Returns a list or anonymous array of Bric::Biz::Person object IDs based on the
 search criteria passed via an anonymous hash. The supported lookup keys are the
 same as those for list().
 
@@ -415,7 +415,7 @@ Unable to fetch row from statement handle.
 B<Side Effects:> NONE.
 
 B<Notes:> This method is overridden by the list_ids() method of
-Bric::BC::Person::User. That class does not call Bric::BC::Person's list_ids()
+Bric::Biz::Person::User. That class does not call Bric::Biz::Person's list_ids()
 method.
 
 =cut
@@ -424,9 +424,9 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 ################################################################################
 
-=item $meths = Bric::BC::Person->my_meths
+=item $meths = Bric::Biz::Person->my_meths
 
-=item (@meths || $meths_aref) = Bric::BC::Person->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::Person->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -681,7 +681,7 @@ sub my_meths {
 
 =item my $id = $p->get_id
 
-Returns the ID of the Bric::BC::Person object.
+Returns the ID of the Bric::Biz::Person object.
 
 B<Throws:>
 
@@ -707,13 +707,13 @@ No AUTOLOAD method.
 
 B<Side Effects:> NONE.
 
-B<Notes:> If the Bric::BC::Person object has been instantiated via the new()
+B<Notes:> If the Bric::Biz::Person object has been instantiated via the new()
 constructor and has not yet been C<save>d, the object will not yet have an ID,
 so this method call will return undef.
 
 =item my $prefix = $p->get_prefix
 
-Returns the name prefix for the Bric::BC::Person object.
+Returns the name prefix for the Bric::Biz::Person object.
 
 B<Throws:>
 
@@ -743,7 +743,7 @@ B<Notes:> NONE.
 
 =item $self = $p->set_prefix($prefix)
 
-Sets the prefix (e.g., 'Mr.', 'Ms.', 'Sr.', etc.) of the Bric::BC::Person object.
+Sets the prefix (e.g., 'Mr.', 'Ms.', 'Sr.', etc.) of the Bric::Biz::Person object.
 Returns $self on success and undef on failure.
 
 B<Throws:>
@@ -774,7 +774,7 @@ B<Notes:> NONE.
 
 =item my $fname = $p->get_fname
 
-Returns the first name for the Bric::BC::Person object.
+Returns the first name for the Bric::Biz::Person object.
 
 B<Throws:>
 
@@ -804,7 +804,7 @@ B<Notes:> NONE.
 
 =item $self = $p->set_fname($fname)
 
-Sets the first name of the Bric::BC::Person object. Returns $self on success and
+Sets the first name of the Bric::Biz::Person object. Returns $self on success and
 undef on failure
 
 B<Throws:>
@@ -835,7 +835,7 @@ B<Notes:> NONE.
 
 =item my $mname = $p->get_mname
 
-Returns the middle name for the Bric::BC::Person object.
+Returns the middle name for the Bric::Biz::Person object.
 
 B<Throws:>
 
@@ -865,7 +865,7 @@ B<Notes:> NONE.
 
 =item $self = $p->set_mname($mname)
 
-Sets the middle name of the Bric::BC::Person object. Returns $self on success and
+Sets the middle name of the Bric::Biz::Person object. Returns $self on success and
 undef on failure.
 
 B<Throws:>
@@ -896,7 +896,7 @@ B<Notes:> NONE.
 
 =item my $lname =  $p->get_lname
 
-Returns the last name for the Bric::BC::Person object.
+Returns the last name for the Bric::Biz::Person object.
 
 B<Throws:>
 
@@ -926,7 +926,7 @@ B<Notes:> NONE.
 
 =item $self = $p->set_lname($lname)
 
-Sets the last name of the Bric::BC::Person object. Returns $self on success and
+Sets the last name of the Bric::Biz::Person object. Returns $self on success and
 undef on failure.
 
 B<Throws:>
@@ -957,7 +957,7 @@ B<Notes:> NONE.
 
 =item my $suffix = $p->get_suffix
 
-Returns the name suffix (e.g., 'Jr.,' 'Ph.D., etc.) for the Bric::BC::Person
+Returns the name suffix (e.g., 'Jr.,' 'Ph.D., etc.) for the Bric::Biz::Person
 object.
 
 B<Throws:>
@@ -986,7 +986,7 @@ B<Side Effects:> NONE.
 
 =item $self = $p->set_suffix($suffix)
 
-Sets the suffix property of the Bric::BC::Person object. Returns $self on success
+Sets the suffix property of the Bric::Biz::Person object. Returns $self on success
 and undef on failure.
 
 B<Throws:>
@@ -1017,8 +1017,8 @@ B<Side Effects:> NONE.
 
 =item $self = $p->activate
 
-Activates the Bric::BC::Person object. Call $p->save to make the change
-persistent. Bric::BC::Person objects instantiated by new() are active by default.
+Activates the Bric::Biz::Person object. Call $p->save to make the change
+persistent. Bric::Biz::Person objects instantiated by new() are active by default.
 
 B<Throws:>
 
@@ -1047,7 +1047,7 @@ sub activate {
 
 =item $self = $p->deactivate
 
-Deactivates (deletes) the Bric::BC::Person object. Call $p->save to make the
+Deactivates (deletes) the Bric::Biz::Person object. Call $p->save to make the
 change persistent.
 
 B<Throws:>
@@ -1077,7 +1077,7 @@ sub deactivate {
 
 =item $self = $p->is_active
 
-Returns $self if the Bric::BC::Person object is active, and undef if it is not.
+Returns $self if the Bric::Biz::Person object is active, and undef if it is not.
 
 B<Throws:>
 
@@ -1121,7 +1121,7 @@ In which case, if the person object had a first name "William" and a last name
   $p->format_name($format);
 
 would yield "William Clinton", appropriately omitting the middle name and the
-space preceding it. But if the Bric::BC::Person object also had the middle name
+space preceding it. But if the Bric::Biz::Person object also had the middle name
 "Erin", the same method call would yeild "William Jefferson Clinton". Similarly,
 you can add a comma where you need one, but only if you need one. For example,
 if same person object had a prefix of "Mr." and a suffix of "MA", this method
@@ -1214,13 +1214,13 @@ B<Notes:> The default format is determined by the "Name Format" preference.
   }
   $p->save;
 
-Returns a list or anonymous array of Bric::BC::Contact objects. If Contact IDs are
+Returns a list or anonymous array of Bric::Biz::Contact objects. If Contact IDs are
 passed, it will return only those contacts. Any changes to individual
-Bric::BC::Contact objects will only persist after $p->save has been called.
+Bric::Biz::Contact objects will only persist after $p->save has been called.
 
-Bric::BC::Contact objects each represent a method by which the person represented
-by the Bric::BC::Person object can be contacted (e.g., email, pager, office phone,
-mobile phone, Instant Messenger, etc.). See Bric::BC::Contact for information on
+Bric::Biz::Contact objects each represent a method by which the person represented
+by the Bric::Biz::Person object can be contacted (e.g., email, pager, office phone,
+mobile phone, Instant Messenger, etc.). See Bric::Biz::Contact for information on
 its interface.
 
 B<Throws:>
@@ -1286,10 +1286,10 @@ sub get_contacts {
   $p->new_contact($email_contact_type, $email_address);
   $p->save;
 
-Returns a new Bric::BC::Contact object associated with the Bric::BC::Person object.
-A list of contact type IDs can be retreived from Bric::BC::Contact->list_types().
+Returns a new Bric::Biz::Contact object associated with the Bric::Biz::Person object.
+A list of contact type IDs can be retreived from Bric::Biz::Contact->list_types().
 If $value is passed, it will be saved to the contact object before returning the
-object. Be sure to call $p->save to save this new contact. See Bric::BC::Contact
+object. Be sure to call $p->save to save this new contact. See Bric::Biz::Contact
 for information on its interface.
 
 B<Throws:>
@@ -1359,11 +1359,11 @@ sub new_contact {
   $p->del_contacts; # Delete all contacts.
   $p->save;         # Make the deletions persistent.
 
-Deletes the Bric::BC::Contact objects associated with the Bric::BC::Person object.
-If Bric::BC::Contact objects or their IDs are passed, only those contacts will be
-deleted. If no values are passed, all Bric::BC::Contact objects associated with
-the Bric::BC::Person object will be deleted. The deletions will be reflected in
-future calls to get_contacts() for the current Bric::BC::Person instance, but will
+Deletes the Bric::Biz::Contact objects associated with the Bric::Biz::Person object.
+If Bric::Biz::Contact objects or their IDs are passed, only those contacts will be
+deleted. If no values are passed, all Bric::Biz::Contact objects associated with
+the Bric::Biz::Person object will be deleted. The deletions will be reflected in
+future calls to get_contacts() for the current Bric::Biz::Person instance, but will
 not persist beyond the current instance until $p->save is called.
 
 B<Throws:>
@@ -1425,8 +1425,8 @@ sub del_contacts {
 
 =item my (@gids || $gids_aref) = $p->get_grp_ids
 
-Returns a list or anonymous array of Bric::BC::Group::Person object ids
-representing the groups of which this Bric::BC::Person object is a member.
+Returns a list or anonymous array of Bric::Biz::Group::Person object ids
+representing the groups of which this Bric::Biz::Person object is a member.
 
 B<Throws:> See Bric::Util::Grp::Person::list().
 
@@ -1438,12 +1438,12 @@ B<Notes:> NONE.
 
 =item my (@groups || $groups_aref) = $p->get_grps
 
-Returns a list or anonymous array of Bric::BC::Group::Person objects representing
-the groups of which this Bric::BC::Person object is a member.
+Returns a list or anonymous array of Bric::Biz::Group::Person objects representing
+the groups of which this Bric::Biz::Person object is a member.
 
-Use the Bric::BC::Group::Person instance method calls add_members() and
-delete_members() to associate and dissociate Bric::BC::Person objects with any
-given Bric::BC::Group::Person object.
+Use the Bric::Biz::Group::Person instance method calls add_members() and
+delete_members() to associate and dissociate Bric::Biz::Person objects with any
+given Bric::Biz::Group::Person object.
 
 B<Throws:> See Bric::Util::Grp::Person::list().
 
@@ -1459,20 +1459,20 @@ sub get_grps { Bric::Util::Grp::Person->list({ obj => $_[0] }) }
 
 =item my (@orgs || $orgs_aref) = $p->get_orgs
 
-Returns a list or anonymous array of Bric::BC::Org::Person objects of which this
-Bric::BC::Person object is a member. The first Bric::BC::Org::Person object returned
-will be the default organization created when this Bric::BC::Person object was
-created. This Bric::BC::Org::Person object will contain all the addresses for the
-individual Bric::BC::Person. All the other Bric::BC::Org::Person objects represent
-organizations (companies, etc.) with which this Bric::BC::Person object is
-associated. Use the get_addr() Bric::BC::Org::Person method call to retrieve the
-addresses associated with both the Bric::BC::Org::Person object's parent and this
-Bric::BC::Person object specifically. See Bric::BC::Org::Person for its API.
+Returns a list or anonymous array of Bric::Biz::Org::Person objects of which this
+Bric::Biz::Person object is a member. The first Bric::Biz::Org::Person object returned
+will be the default organization created when this Bric::Biz::Person object was
+created. This Bric::Biz::Org::Person object will contain all the addresses for the
+individual Bric::Biz::Person. All the other Bric::Biz::Org::Person objects represent
+organizations (companies, etc.) with which this Bric::Biz::Person object is
+associated. Use the get_addr() Bric::Biz::Org::Person method call to retrieve the
+addresses associated with both the Bric::Biz::Org::Person object's parent and this
+Bric::Biz::Person object specifically. See Bric::Biz::Org::Person for its API.
 
-To add a Bric::BC::Person object to an existing Bric::BC::Org object, simply call
-the Bric::BC::Org add_object() method, passing it the Bric::BC::Person object. This
-method will return the resulting Bric::BC::Org::Person object. See the documentation
-for Bric::BC::Org and Bric::BC::Org::Person for more information.
+To add a Bric::Biz::Person object to an existing Bric::Biz::Org object, simply call
+the Bric::Biz::Org add_object() method, passing it the Bric::Biz::Person object. This
+method will return the resulting Bric::Biz::Org::Person object. See the documentation
+for Bric::Biz::Org and Bric::Biz::Org::Person for more information.
 
 B<Throws:>
 
@@ -1504,7 +1504,7 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Internally calls the Bric::BC::Org::Person->list() class method.
+B<Side Effects:> Internally calls the Bric::Biz::Org::Person->list() class method.
 
 B<Notes:> NONE.
 
@@ -1512,17 +1512,17 @@ B<Notes:> NONE.
 
 sub get_orgs {
     my $self = shift;
-    Bric::BC::Org::Person->list({ person_id => $self->get_id })
+    Bric::Biz::Org::Person->list({ person_id => $self->get_id })
 }
 
 ################################################################################
 
 =item my (@oids || $oids_aref) = $p->get_org_ids
 
-Returns a list or anonymous array of Bric::BC::Org::Person object IDs representing
-the Bric::BC::Org::Person objects the Bric::BC::Person object is associated with.
-The first Bric::BC::Org::Person ID will be the defalut organization created when
-this Bric::BC::Person object was created.
+Returns a list or anonymous array of Bric::Biz::Org::Person object IDs representing
+the Bric::Biz::Org::Person objects the Bric::Biz::Person object is associated with.
+The first Bric::Biz::Org::Person ID will be the defalut organization created when
+this Bric::Biz::Person object was created.
 
 B<Throws:>
 
@@ -1554,21 +1554,21 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Internally calls the Bric::BC::Org::Person->list_ids() class
+B<Side Effects:> Internally calls the Bric::Biz::Org::Person->list_ids() class
 method.
 
 B<Notes:> NONE.
 
 =cut
 
-sub get_org_ids { Bric::BC::Org::Person->list_ids({person_id => $_[0]->get_id}) }
+sub get_org_ids { Bric::Biz::Org::Person->list_ids({person_id => $_[0]->get_id}) }
 
 ################################################################################
 
 =item $self = $p->save
 
-Saves any changes to the Bric::BC::Person object, including changes to associated
-contacts (Bric::BC::Contact objects). Returns $self on success and undef on
+Saves any changes to the Bric::Biz::Person object, including changes to associated
+contacts (Bric::Biz::Contact objects). Returns $self on success and undef on
 failure.
 
 B<Throws:>
@@ -1650,7 +1650,7 @@ sub save {
 	$self->_set(['id'], [$id]);
 
 	# Now be sure to create a personal org for this person.
-	my $org = Bric::BC::Org::Person->new(
+	my $org = Bric::Biz::Org::Person->new(
             # Should probably use the preferred name format supplied by the
             # customer.
           { name => $self->format_name(Bric::Util::Pref->lookup_val('Name Format')),
@@ -1690,8 +1690,8 @@ NONE.
 
 =item my $people_ids_aref = &$get_em( $pkg, $search_href, 1 )
 
-Function used by lookup() and list() to return a list of Bric::BC::Person objects
-or, if called with an optional third argument, returns a listof Bric::BC::Person
+Function used by lookup() and list() to return a list of Bric::Biz::Person objects
+or, if called with an optional third argument, returns a listof Bric::Biz::Person
 object IDs (used by list_ids()).
 
 B<Throws:>
@@ -1857,14 +1857,17 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2),
-Bric::BC::Contact(3)
-Bric::BC::Org(4)
-Bric::BC::Person::User(5)
+Bric::Biz::Contact(3)
+Bric::Biz::Org(4)
+Bric::Biz::Person::User(5)
 
 =head1 REVISION HISTORY
 
 $Log: Person.pm,v $
-Revision 1.1  2001-09-06 21:53:31  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:31  wheeler
+Upload to SourceForge.
 
 =cut

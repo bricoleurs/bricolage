@@ -1,18 +1,18 @@
-package Bric::BC::Asset::Business::Media::Audio;
+package Bric::Biz::Asset::Business::Media::Audio;
 ################################################################################
 
 =head1 NAME
 
-Bric::BC::Asset::Business::Media::Audio - the media class that represents static
+Bric::Biz::Asset::Business::Media::Audio - the media class that represents static
 audios
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
@@ -21,12 +21,12 @@ $Data$
 =head1 SYNOPSIS
 
  # Creation of new Audio objects
- $audio = Bric::BC::Asset::Business::Media::Audio->new( $init )
- $audio = Bric::BC::Asset::Business::Media::Audio->lookup( { id => $id })
- ($audios || @audios) = Bric::BC::Asset::Business::Media::Audio->list( $param)
+ $audio = Bric::Biz::Asset::Business::Media::Audio->new( $init )
+ $audio = Bric::Biz::Asset::Business::Media::Audio->lookup( { id => $id })
+ ($audios || @audios) = Bric::Biz::Asset::Business::Media::Audio->list( $param)
 
  # list of ids
- ($id_list || @ids) = Bric::BC::Asset::Business::Media::Audio->list_ids($param)
+ ($id_list || @ids) = Bric::Biz::Asset::Business::Media::Audio->list_ids($param)
 
 =head1 DESCRIPTION
 
@@ -53,7 +53,7 @@ use strict;
 # the parent module should have a 'use' line if you need to import from it.
 # use Bric;
 
-use base qw( Bric::BC::Asset::Business::Media );
+use base qw( Bric::Biz::Asset::Business::Media );
 
 #==============================================================================#
 # Function Prototypes           #
@@ -115,7 +115,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $audio = Bric::BC::Asset::Business::Media::Audio->new($init)
+=item $audio = Bric::Biz::Asset::Business::Media::Audio->new($init)
 
 This will create a new audio object.
 
@@ -155,7 +155,7 @@ sub new {
 
 ################################################################################
 
-=item $media = Bric::BC::Asset::Business::Media::Audio->lookup( { id => $id })
+=item $media = Bric::Biz::Asset::Business::Media::Audio->lookup( { id => $id })
 
 This will return the matched looked up object
 
@@ -183,7 +183,7 @@ NONE
 
 ################################################################################
 
-=item ($imgs || @imgs) = Bric::BC::Asset::Business::Media::Audio->list($param)
+=item ($imgs || @imgs) = Bric::Biz::Asset::Business::Media::Audio->list($param)
 
 Returns a list of audio objects that match the params passed in
 
@@ -229,7 +229,7 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-=item (@ids || $ids) = Bric::BC::Asset::Business::Media::Audio->list_ids($param)
+=item (@ids || $ids) = Bric::Biz::Asset::Business::Media::Audio->list_ids($param)
 
 Returns a list of ids that match the particular params
 
@@ -264,7 +264,7 @@ NONE
 
 ################################################################################
 
-=item $class_id = Bric::BC::Asset::Business::Media::Audio->get_class_id()
+=item $class_id = Bric::Biz::Asset::Business::Media::Audio->get_class_id()
 
 Returns the class id of the Audio class
 
@@ -287,7 +287,7 @@ sub get_class_id {
 }
 
 =item ($fields || @fields) = 
-	Bric::BC::Asset::Business::Media::Audio::autopopulated_fields()
+	Bric::Biz::Asset::Business::Media::Audio::autopopulated_fields()
 
 Returns a list of the names of fields that are registered in the database as 
 being autopopulatable
@@ -321,7 +321,7 @@ sub autopopulated_fields {
 
 ################################################################################
 
-=item my $key_name = Bric::BC::Asset::Business::Media::Audio->key_name()
+=item my $key_name = Bric::Biz::Asset::Business::Media::Audio->key_name()
 
 Returns the key name of this class.
 
@@ -425,13 +425,16 @@ NONE
 
 =head1 SEE ALSO
 
-L<perl> , L<Bric>, L<Bric::BC::Asset>, L<Bric::BC::Asset::Business>, 
-L<Bric::BC::Asset::Business::Media>
+L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
+L<Bric::Biz::Asset::Business::Media>
 
 =head1 REVISION HISTORY
 
 $Log: Audio.pm,v $
-Revision 1.1  2001-09-06 21:53:52  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:52  wheeler
+Upload to SourceForge.
 
 =cut

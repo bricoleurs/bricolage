@@ -1,25 +1,25 @@
-package Bric::BC::ATType;
+package Bric::Biz::ATType;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::ATType - A class to represent AssetType types.
+Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:05 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
- use Bric::BC::ATType;
+ use Bric::Biz::ATType;
 
 
 =head1 DESCRIPTION
@@ -125,7 +125,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $obj = new Bric::BC::ATType($init);
+=item $obj = new Bric::Biz::ATType($init);
 
 Keys for $init are:
 
@@ -195,7 +195,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $obj = lookup Bric::BC::ATType($key_id);
+=item $obj = lookup Bric::Biz::ATType($key_id);
 
 Retrieves an existing AT type from the database.  Takes an AT Type ID.
 
@@ -236,7 +236,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item @objs = list Bric::BC::ATType($param);
+=item @objs = list Bric::Biz::ATType($param);
 
 The possible keys to $param are the following;
 
@@ -327,7 +327,7 @@ sub list {
 
 #------------------------------------------------------------------------------#
 
-=item (@ids || $ids) = Bric::BC::Workflow->list_ids();
+=item (@ids || $ids) = Bric::Biz::Workflow->list_ids();
 
 Return a list of IDs for all known at_type types.
 
@@ -864,12 +864,15 @@ Bricolage Engineering
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::BC::AssetType>
+L<perl>, L<Bric>, L<Bric::Biz::AssetType>
 
 =head1 REVISION HISTORY
 
 $Log: ATType.pm,v $
-Revision 1.1  2001-09-06 21:53:05  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:05  wheeler
+Upload to SourceForge.
 
 =cut

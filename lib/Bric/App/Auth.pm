@@ -1,21 +1,21 @@
-package Bric::BL::Auth;
+package Bric::App::Auth;
 
 =head1 NAME
 
-Bric::BL::Auth - Does the dirty work of authentication.
+Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:57 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
@@ -31,7 +31,7 @@ $Date: 2001-09-06 21:52:57 $
       SSLCertificateKeyFile /usr/local/apache/conf/ssl.key/server.key
       <Location /login>
           SetHandler perl-script
-          PerlHandler Bric::BL::Auth
+          PerlHandler Bric::App::Auth
       </Location>
   </VirtualHost>
 
@@ -53,9 +53,9 @@ use Apache::Constants qw(:common);
 use Apache::Log;
 use Apache::Cookie;
 use Bric::Config qw(:auth);
-use Bric::BL::Session qw(:user);
-use Bric::BL::Cache;
-use Bric::BC::Person::User;
+use Bric::App::Session qw(:user);
+use Bric::App::Cache;
+use Bric::Biz::Person::User;
 use Digest::MD5 qw(md5_hex);
 
 use base qw( Exporter );
@@ -122,7 +122,7 @@ NONE.
 =item my ($res, $msg) = auth($r)
 
 Checks to see if the user is logged in to the current session. Used by
-Bric::BL::AccessHandler.
+Bric::App::AccessHandler.
 
 B<Throws:> NONE.
 
@@ -153,13 +153,13 @@ sub auth {
 	return &$fail($r, "Cookie hash mismatch from $ip (Hostname '$host') "
 		      . "for user '$val{user}.'");
     }
-    $c ||= Bric::BL::Cache->new;
+    $c ||= Bric::App::Cache->new;
     my $u = get_user_object();
     if ( !$u || $c->get_lmu_time > $lul) {
 	# There have been changes to the users. Reload this user from the
 	# database.
 	return &$fail($r, 'User does not exist or is disabled.') unless
-	  $u = Bric::BC::Person::User->lookup({ login => $val{user} });
+	  $u = Bric::Biz::Person::User->lookup({ login => $val{user} });
 	set_user($r, $u);
 	$lul = time;
     }
@@ -185,7 +185,7 @@ B<Notes:> NONE.
 
 sub login {
     my ($r, $un, $pw) = @_;
-    my $u = Bric::BC::Person::User->lookup({ login => $un });
+    my $u = Bric::Biz::Person::User->lookup({ login => $un });
 
     # Return failure if authentication fails.
     return (0, 'Invalid username or password. Please try again.')
@@ -199,7 +199,7 @@ sub login {
 
 sub masquerade {
     my ($r, $un) = @_;
-    my $u = Bric::BC::Person::User->lookup({ login => $un });
+    my $u = Bric::Biz::Person::User->lookup({ login => $un });
 
     # Do not continue unless they are already logged in as an admin.
     unless (user_is_admin()) {
@@ -346,9 +346,9 @@ B<Notes:> NONE.
 $fail = sub {
     my ($r, $msg) = @_;
     # Expire the existing session.
-    Bric::BL::Session::expire_session($r);
+    Bric::App::Session::expire_session($r);
     # Now create a new session.
-    Bric::BL::Session::setup_user_session($r, 1);
+    Bric::App::Session::setup_user_session($r, 1);
     # Return the failure message.
     return (0, $msg);
 };
@@ -374,7 +374,10 @@ Bric (2),
 =head1 REVISION HISTORY
 
 $Log: Auth.pm,v $
-Revision 1.1  2001-09-06 21:52:57  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:52:57  wheeler
+Upload to SourceForge.
 
 =cut

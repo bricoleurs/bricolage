@@ -1,34 +1,34 @@
-package Bric::BC::Org::Source;
+package Bric::Biz::Org::Source;
 
 =head1 NAME
 
-Bric::BC::Org::Source - Manages content sources.
+Bric::Biz::Org::Source - Manages content sources.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:07 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
-  use Bric::BC::Org::Source;
+  use Bric::Biz::Org::Source;
 
   # Constructors.
-  my $src = Bric::BC::Org::Source->new($init);
-  $src = Bric::BC::Org::Source->lookup({ id => $id });
-  my @srces = Bric::BC::Org::Source->list($params);
+  my $src = Bric::Biz::Org::Source->new($init);
+  $src = Bric::Biz::Org::Source->lookup({ id => $id });
+  my @srces = Bric::Biz::Org::Source->list($params);
 
   # Class methods.
-  my @sids = Bric::BC::Org::Source->list_ids($params);
-  my $meths = Bric::BC::Org::Source->my_meths;
+  my @sids = Bric::Biz::Org::Source->list_ids($params);
+  my $meths = Bric::Biz::Org::Source->my_meths;
 
   # Instance Methods.
   my $id = $src->get_id;
@@ -59,8 +59,8 @@ expire, and an active flag. The description is a simple free-text
 description of the source. The expire property is a simple integer
 representing the number of days an asset provided by a given source may be used
 before it must be removed as content. The active flag is just like any other
-active flag, except that it is separate from the Bric::BC::Org active flag. Thus a
-Bric::BC::Org::Source object may be deactivated while its parent Bric::BC::Org
+active flag, except that it is separate from the Bric::Biz::Org active flag. Thus a
+Bric::Biz::Org::Source object may be deactivated while its parent Bric::Biz::Org
 object remains active.
 
 =cut
@@ -80,7 +80,7 @@ use Bric::Util::Grp::Source;
 ################################################################################
 # Inheritance
 ################################################################################
-use base qw(Bric::BC::Org);
+use base qw(Bric::Biz::Org);
 
 ################################################################################
 # Function and Closure Prototypes
@@ -146,9 +146,9 @@ BEGIN {
 
 =over 4
 
-=item my $src = Bric::BC::Org::Source->new($init)
+=item my $src = Bric::Biz::Org::Source->new($init)
 
-Instantiates a Bric::BC::Org::Source object. An anonymous hash of initial values
+Instantiates a Bric::Biz::Org::Source object. An anonymous hash of initial values
 may be passed. The supported initial value keys are:
 
 =over 4
@@ -191,10 +191,10 @@ sub new {
 
 ################################################################################
 
-=item my $src = Bric::BC::Org::Source->lookup({ id => $id })
+=item my $src = Bric::Biz::Org::Source->lookup({ id => $id })
 
-Looks up and instantiates a new Bric::BC::Org::Source object based on the
-Bric::BC::Org::Source object ID passed. If $id is not found in the database,
+Looks up and instantiates a new Bric::Biz::Org::Source object based on the
+Bric::Biz::Org::Source object ID passed. If $id is not found in the database,
 lookup() returns undef.
 
 B<Throws:>
@@ -207,7 +207,7 @@ Invalid property.
 
 =item *
 
-Too many Bric::Dist::BC::Org::Source objects found.
+Too many Bric::Dist::Biz::Org::Source objects found.
 
 =item *
 
@@ -239,7 +239,7 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> If $id is found, populates the new Bric::BC::Org::Source object
+B<Side Effects:> If $id is found, populates the new Bric::Biz::Org::Source object
 with data from the database before returning it.
 
 B<Notes:> NONE.
@@ -249,16 +249,16 @@ B<Notes:> NONE.
 sub lookup {
     my $src = &$get_em(@_);
     # We want @$src to have only one value.
-    die $dp->new({  msg => 'Too many Bric::BC::Org::Source objects found.' })
+    die $dp->new({  msg => 'Too many Bric::Biz::Org::Source objects found.' })
       if @$src > 1;
     return @$src ? $src->[0] : undef;
 }
 
 ################################################################################
 
-=item my (@srcs || $srcs_aref) = Bric::BC::Org::Source->list($params)
+=item my (@srcs || $srcs_aref) = Bric::Biz::Org::Source->list($params)
 
-Returns a list or anonymous array of Bric::BC::Org::Source objects based on the
+Returns a list or anonymous array of Bric::Biz::Org::Source objects based on the
 search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
@@ -327,7 +327,7 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Populates each Bric::BC::Org::Source object with data from the
+B<Side Effects:> Populates each Bric::Biz::Org::Source object with data from the
 database before returning them all.
 
 B<Notes:> NONE.
@@ -366,9 +366,9 @@ sub DESTROY {}
 
 =over 4
 
-=item my (@src_ids || $src_ids_aref) = Bric::BC::Org::Source->list_ids($params)
+=item my (@src_ids || $src_ids_aref) = Bric::Biz::Org::Source->list_ids($params)
 
-Returns a list or anonymous array of Bric::BC::Org::Source object IDs based on the
+Returns a list or anonymous array of Bric::Biz::Org::Source object IDs based on the
 search criteria passed via an anonymous hash. The supported lookup keys are the
 same as those for list().
 
@@ -420,9 +420,9 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 ################################################################################
 
-=item my $meths = Bric::BC::Org::Source->my_meths
+=item my $meths = Bric::Biz::Org::Source->my_meths
 
-=item my (@meths || $meths_aref) = Bric::BC::Org::Source->my_meths(TRUE)
+=item my (@meths || $meths_aref) = Bric::Biz::Org::Source->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -558,7 +558,7 @@ sub my_meths {
       if $meths;
 
     # We don't got 'em. So get 'em!
-    foreach my $meth (Bric::BC::Org::Source->SUPER::my_meths(1)) {
+    foreach my $meth (Bric::Biz::Org::Source->SUPER::my_meths(1)) {
 	$meths->{$meth->{name}} = $meth;
 	push @ord, $meth->{name};
     }
@@ -631,14 +631,14 @@ sub my_meths {
 
 =head2 Public Instance Methods
 
-Besides the methods inherited from Bric::BC::Org, Bric::BC::Org::Source offers
+Besides the methods inherited from Bric::Biz::Org, Bric::Biz::Org::Source offers
 accessors relevant to source-specific data.
 
 =over 4
 
 =item my $id = $src->get_id
 
-Returns the ID of the Bric::BC::Org::Source object.
+Returns the ID of the Bric::Biz::Org::Source object.
 
 B<Throws:>
 
@@ -652,7 +652,7 @@ Bric::_get() - Problems retrieving fields.
 
 B<Side Effects:> NONE.
 
-B<Notes:> If the Bric::BC::Org::Source object has been instantiated via the new()
+B<Notes:> If the Bric::Biz::Org::Source object has been instantiated via the new()
 constructor and has not yet been C<save>d, the object will not yet have an ID,
 so this method call will return undef.
 
@@ -664,7 +664,7 @@ sub get_id { $_[0]->_get('src_id') }
 
 =item my $org_id = $src->get_org_id
 
-Returns the ID of the Bric::BC::Org object from which this source object inherits.
+Returns the ID of the Bric::Biz::Org object from which this source object inherits.
 
 B<Throws:>
 
@@ -688,7 +688,7 @@ sub get_org_id { $_[0]->_get('id') }
 
 =item $self = $src->set_org($org)
 
-Sets the ID representing Bric::BC::Org object from which this Bric::BC::Org::Source
+Sets the ID representing Bric::Biz::Org object from which this Bric::Biz::Org::Source
 object inherits.
 
 B<Throws:>
@@ -909,8 +909,8 @@ B<Notes:> NONE.
 
 =item $self = $src->activate
 
-Activates the Bric::BC::Org::Source object. Call $src->save to make the change
-persistent. Bric::BC::Org::Source objects instantiated by new() are active by
+Activates the Bric::Biz::Org::Source object. Call $src->save to make the change
+persistent. Bric::Biz::Org::Source objects instantiated by new() are active by
 default.
 
 B<Throws:>
@@ -929,9 +929,9 @@ Bric::set() - Problems setting fields.
 
 B<Side Effects:> NONE.
 
-B<Notes:> A Bric::BC::Org::Source object's active status is not inherited from
-Bric::BC::Org. A Bric::BC::Org::Source object may be deactivated while its parent
-Bric::BC::Org object remains active.
+B<Notes:> A Bric::Biz::Org::Source object's active status is not inherited from
+Bric::Biz::Org. A Bric::Biz::Org::Source object may be deactivated while its parent
+Bric::Biz::Org object remains active.
 
 =cut
 
@@ -939,7 +939,7 @@ sub activate { $_[0]->_set(['_active'], [1]) }
 
 =item $self = $src->deactivate
 
-Deactivates (deletes) the Bric::BC::Org::Source object. Call $src->save to make
+Deactivates (deletes) the Bric::Biz::Org::Source object. Call $src->save to make
 the change persistent.
 
 B<Throws:>
@@ -966,7 +966,7 @@ sub deactivate { $_[0]->_set(['_active'], [0]) }
 
 =item $self = $src->is_active
 
-Returns $self if the Bric::BC::Org::Source object is active, and undef if it is not.
+Returns $self if the Bric::Biz::Org::Source object is active, and undef if it is not.
 
 B<Throws:>
 
@@ -990,17 +990,17 @@ sub is_active { $_[0]->_get('_active') ? $_[0] : undef }
 
 =item my (@gids || $gids_aref) = $u->get_grp_ids
 
-=item my (@gids || $gids_aref) = Bric::BC::Person::User->get_grp_ids
+=item my (@gids || $gids_aref) = Bric::Biz::Person::User->get_grp_ids
 
-Returns a list or anonymous array of Bric::BC::Group object ids representing the
-groups of which this Bric::BC::Org::Source object is a member.
+Returns a list or anonymous array of Bric::Biz::Group object ids representing the
+groups of which this Bric::Biz::Org::Source object is a member.
 
 B<Throws:> See Bric::Util::Grp::list().
 
 B<Side Effects:> NONE.
 
 B<Notes:> This method returns the group IDs for the current object both as a
-Bric::BC::Org object and as a Bric::BC::Org::Source object. [Actually, I've
+Bric::Biz::Org object and as a Bric::Biz::Org::Source object. [Actually, I've
 commented this out for now, since it seems more likely at this point that we'll
 want only the source group IDs, not also the organization IDs. We can uncomment
 this later if we decide we need it, though.]
@@ -1024,7 +1024,7 @@ this later if we decide we need it, though.]
 
 =item $self = $src->save
 
-Saves any changes to the Bric::BC::Org::Source object. Returns $self on success
+Saves any changes to the Bric::Biz::Org::Source object. Returns $self on success
 and undef on failure.
 
 B<Throws:>
@@ -1097,10 +1097,10 @@ sub save {
 	}
     } else {
         # It's a new source. Insert it.
-	# HACK. I have to fake it into being Bric::BC::Org so that it gets
-	# inserted into the proper group when Bric::BC::Org::save() calls
+	# HACK. I have to fake it into being Bric::Biz::Org so that it gets
+	# inserted into the proper group when Bric::Biz::Org::save() calls
 	# register_instance().
-	$self = bless $self, 'Bric::BC::Org';
+	$self = bless $self, 'Bric::Biz::Org';
         $self->SUPER::save;
 	$self = bless $self, __PACKAGE__;
         local $" = ', ';
@@ -1143,9 +1143,9 @@ NONE.
 
 =item my $src_ids_aref = &$get_em( $pkg, $params, 1 )
 
-Function used by lookup() and list() to return a list of Bric::BC::Org::Source
+Function used by lookup() and list() to return a list of Bric::Biz::Org::Source
 objects or, if called with an optional third argument, returns a listof
-Bric::BC::Org::Source object IDs (used by list_ids()).
+Bric::Biz::Org::Source object IDs (used by list_ids()).
 
 B<Throws:>
 
@@ -1258,7 +1258,10 @@ Bric (2),
 =head1 REVISION HISTORY
 
 $Log: Source.pm,v $
-Revision 1.1  2001-09-06 21:54:07  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:54:07  wheeler
+Upload to SourceForge.
 
 =cut

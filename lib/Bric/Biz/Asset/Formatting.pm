@@ -1,29 +1,29 @@
-package Bric::BC::Asset::Formatting;
+package Bric::Biz::Asset::Formatting;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Asset::Formatting - AN object housing the formatting Assets
+Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:41 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
  # Creation of Objects
- $fa = Bric::BC::Asset::Formatting->new( $init )
- $fa = Bric::BC::Asset::Formatting->lookup( { id => $id })
- ($fa_list || @fas) = Bric::BC::Asset::Formatting->list( $param )
- ($faid_list || @fa_ids) = Bric::BC::Asset::Formatting->list_ids( $param )
+ $fa = Bric::Biz::Asset::Formatting->new( $init )
+ $fa = Bric::Biz::Asset::Formatting->lookup( { id => $id })
+ ($fa_list || @fas) = Bric::Biz::Asset::Formatting->list( $param )
+ ($faid_list || @fa_ids) = Bric::Biz::Asset::Formatting->list_ids( $param )
 
  # get / set the data that is contained with in
  $fa = $fa->set_data()
@@ -45,15 +45,15 @@ $Date: 2001-09-06 21:53:41 $
  # get the category that this is associated with
  $category_id = $fa->get_category_id()
 
- # Methods Inheriated from Bric::BC::Asset
+ # Methods Inheriated from Bric::Biz::Asset
 
  # Class Methods
- $key_name = Bric::BC::Asset->key_name()
- %priorities = Bric::BC::Asset->list_priorities()
- $data = Bric::BC::Asset->my_meths
+ $key_name = Bric::Biz::Asset->key_name()
+ %priorities = Bric::Biz::Asset->list_priorities()
+ $data = Bric::Biz::Asset->my_meths
 
  # looking up of objects
- ($asset_list || @assets) = Bric::BC::Asset->list( $param )
+ ($asset_list || @assets) = Bric::Biz::Asset->list( $param )
 
  # General information
  $asset       = $asset->get_id()
@@ -128,16 +128,16 @@ use Bric::Util::Time qw(:all);
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Formatting;
-use Bric::BC::AssetType;
-use Bric::BC::Category;
-use Bric::BC::OutputChannel;
+use Bric::Biz::AssetType;
+use Bric::Biz::Category;
+use Bric::Biz::OutputChannel;
 use Bric::Util::Attribute::Formatting;
 
 #==============================================================================#
 # Inheritance                          #
 #======================================#
 
-use base qw( Bric::BC::Asset );
+use base qw( Bric::Biz::Asset );
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -271,9 +271,9 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $fa = Bric::BC::Asset::Formatting->new( $initial_state )
+=item $fa = Bric::Biz::Asset::Formatting->new( $initial_state )
 
-new will only be called by Bric::BC::Asset::Formatting's inherited classes
+new will only be called by Bric::Biz::Asset::Formatting's inherited classes
 
 Supported Keys:
 
@@ -365,7 +365,7 @@ sub new {
 	    $init->{'element__id'} = $init->{'element'}->get_id();
 	    $name = $init->{'element'}->get_name();
 	} elsif (defined $init->{'element__id'}) {
-	    my $at = Bric::BC::AssetType->lookup({id => $init->{'element__id'}});
+	    my $at = Bric::Biz::AssetType->lookup({id => $init->{'element__id'}});
 	    $name = $at->get_name();
 	} else {
 	    $name = 'autohandler';
@@ -378,7 +378,7 @@ sub new {
 		$pre = $init->{'output_channel'}->get_pre_path();
 		$post = $init->{'output_channel'}->get_post_path();
 	} else {
-		my $channel = Bric::BC::OutputChannel->lookup( { 
+		my $channel = Bric::Biz::OutputChannel->lookup( { 
 				id => $init->{'output_channel__id'}	});
 
 		$pre = $channel->get_pre_path();
@@ -390,7 +390,7 @@ sub new {
 		$init->{'category_id'} = $init->{'category'}->get_id();
 		$cat_path = $init->{'category'}->ancestry_dir();
 	} elsif (defined $init->{'category_id'}) {
-		my $cat = Bric::BC::Category->lookup( { id => $init->{'category_id'}});
+		my $cat = Bric::Biz::Category->lookup( { id => $init->{'category_id'}});
 		$cat_path = $cat->ancestry_dir();
 	}
 
@@ -411,7 +411,7 @@ sub new {
 
 ################################################################################
 
-=item $formatting = Bric::BC::Formatting->lookup( $param )
+=item $formatting = Bric::Biz::Formatting->lookup( $param )
 
 Returns an object that matches the parameters
 
@@ -481,7 +481,7 @@ sub lookup {
 
 ################################################################################
 
-=item ($fa_list || @fas) = Bric::BC::Asset::Formatting->list( $criteria )
+=item ($fa_list || @fas) = Bric::Biz::Asset::Formatting->list( $criteria )
 
 This will return a list of blessed objects that match the defined criteria
 
@@ -596,7 +596,7 @@ sub DESTROY {
 
 =cut
 
-=item ($ids || @ids) = Bric::BC::Asset::Formatting->list_ids($param)
+=item ($ids || @ids) = Bric::Biz::Asset::Formatting->list_ids($param)
 
 Returns a list of ids that match the given parameters
 
@@ -632,7 +632,7 @@ sub list_ids {
 
 ################################################################################
 
-=item my $key_name = Bric::BC::Asset::Formatting->key_name()
+=item my $key_name = Bric::Biz::Asset::Formatting->key_name()
 
 Returns the key name of this class.
 
@@ -654,9 +654,9 @@ sub key_name { 'formatting' }
 
 ################################################################################
 
-=item $meths = Bric::BC::Asset::Business->my_meths
+=item $meths = Bric::Biz::Asset::Business->my_meths
 
-=item (@meths || $meths_aref) = Bric::BC::Asset::Business->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::Asset::Business->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -1755,7 +1755,7 @@ sub _get_output_channel_object {
     return unless $oc_id;
 
     unless ($oc_obj) {
-	$oc_obj = Bric::BC::OutputChannel->lookup({'id' => $oc_id});
+	$oc_obj = Bric::Biz::OutputChannel->lookup({'id' => $oc_id});
 	
 	$self->_set(['_output_channel_obj'], [$oc_obj]);
 
@@ -1794,7 +1794,7 @@ sub _get_element_object {
     return unless $at_id;
 
     unless ($at_obj) {
-	$at_obj = Bric::BC::AssetType->lookup({'id' => $at_id});
+	$at_obj = Bric::Biz::AssetType->lookup({'id' => $at_id});
 	
 	$self->_set(['_element_obj'], [$at_obj]);
 
@@ -1833,7 +1833,7 @@ sub _get_category_object {
     return unless defined $cat_id;
 
     unless ($cat_obj) {
-	$cat_obj = Bric::BC::Category->lookup({id => $cat_id});
+	$cat_obj = Bric::Biz::Category->lookup({id => $cat_id});
 	$self->_set(['_category_obj'], [$cat_obj]);
 
 	# Restore the original dirty value.
@@ -2111,12 +2111,15 @@ michael soderstrom - miraso@pacbell.net
 
 =head1 SEE ALSO
 
-L<Bric>, L<Bric::BC::Asset>
+L<Bric>, L<Bric::Biz::Asset>
 
 =head1 REVISION HISTORY
 
 $Log: Formatting.pm,v $
-Revision 1.1  2001-09-06 21:53:41  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:41  wheeler
+Upload to SourceForge.
 
 =cut

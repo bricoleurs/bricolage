@@ -1,25 +1,25 @@
-package Bric::BC::Workflow;
+package Bric::Biz::Workflow;
 ###############################################################################
 
 =head1 NAME
  
-Bric::BC::Workflow - Controls the progress of an asset through a series of desks.
+Bric::Biz::Workflow - Controls the progress of an asset through a series of desks.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:34 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
- my $flow = new Bric::BC::Workflow($param);
+ my $flow = new Bric::Biz::Workflow($param);
 
  $id    = $flow->get_id;
 
@@ -72,7 +72,7 @@ use Bric::Util::Grp::Desk;
 use Bric::Util::Grp::Workflow;
 use Bric::Util::Fault::Exception::DP;
 use Bric::Util::Fault::Exception::AP;
-use Bric::BC::Workflow::Parts::Desk;
+use Bric::Biz::Workflow::Parts::Desk;
 
 #==============================================================================#
 # Inheritance                          #
@@ -104,7 +104,7 @@ our %EXPORT_TAGS = (wf_const => [qw(TEMPLATE_WORKFLOW
 
 use constant DEBUG => 1;
 
-use constant DESK_PKG => 'Bric::BC::Workflow::Parts::Desk';
+use constant DESK_PKG => 'Bric::Biz::Workflow::Parts::Desk';
 
 use constant TABLE  => 'workflow';
 use constant COLS   => qw(name description all_desk_grp_id req_desk_grp_id 
@@ -174,7 +174,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $obj = new Bric::BC::Workflow($param);
+=item $success = $obj = new Bric::Biz::Workflow($param);
 
 Keys for $param are:
 
@@ -244,7 +244,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $obj = lookup Bric::BC::Workflow($wf_id);
+=item $success = $obj = lookup Bric::Biz::Workflow($wf_id);
 
 Takes a workflow ID and returns a workflow object.
 
@@ -290,7 +290,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item (@all || $all) = Bric::BC::Workflow->list($param);
+=item (@all || $all) = Bric::Biz::Workflow->list($param);
 
 Return a list of all known workflow types.  Keys of $param are:
 
@@ -375,7 +375,7 @@ sub list {
 
 #------------------------------------------------------------------------------#
 
-=item (@ids || $ids) = Bric::BC::Workflow->list_ids();
+=item (@ids || $ids) = Bric::Biz::Workflow->list_ids();
 
 Return a list of IDs for all known workflow types.
 
@@ -424,9 +424,9 @@ sub DESTROY {
 
 #------------------------------------------------------------------------------#
 
-=item my $meths = Bric::BC::Workflow->my_meths
+=item my $meths = Bric::Biz::Workflow->my_meths
 
-=item my (@meths || $meths_aref) = Bric::BC::Workflow->my_meths(TRUE)
+=item my (@meths || $meths_aref) = Bric::Biz::Workflow->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -936,7 +936,7 @@ sub get_start_desk {
     return $head if $head;
     return unless $id;
 
-    $head = Bric::BC::Workflow::Parts::Desk->lookup({'id' => $id});
+    $head = Bric::Biz::Workflow::Parts::Desk->lookup({'id' => $id});
 
     return unless $head;
 
@@ -1290,12 +1290,15 @@ NONE
 
 =head1 SEE ALSO
 
-L<Bric>, L<Bric::BC::Workflow::Parts::Desk>, L<perl>
+L<Bric>, L<Bric::Biz::Workflow::Parts::Desk>, L<perl>
 
 =head1 REVISION HISTORY
 
 $Log: Workflow.pm,v $
-Revision 1.1  2001-09-06 21:53:34  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:34  wheeler
+Upload to SourceForge.
 
 =cut

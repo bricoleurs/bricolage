@@ -1,18 +1,18 @@
-package Bric::BC::Asset::Business::Media::Image;
+package Bric::Biz::Asset::Business::Media::Image;
 ################################################################################
 
 =head1 NAME
 
-Bric::BC::Asset::Business::Media::Image - the media class that represents static
+Bric::Biz::Asset::Business::Media::Image - the media class that represents static
 images
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
@@ -21,12 +21,12 @@ $Data$
 =head1 SYNOPSIS
 
  # Creation of new Image objects
- $image = Bric::BC::Asset::Business::Media::Image->new( $init )
- $image = Bric::BC::Asset::Business::Media::Image->lookup( { id => $id })
- ($images || @images) = Bric::BC::Asset::Business::Media::Image->list( $param)
+ $image = Bric::Biz::Asset::Business::Media::Image->new( $init )
+ $image = Bric::Biz::Asset::Business::Media::Image->lookup( { id => $id })
+ ($images || @images) = Bric::Biz::Asset::Business::Media::Image->list( $param)
 
  # list of ids
- ($id_list || @ids) = Bric::BC::Asset::Business::Media::Image->list_ids($param)
+ ($id_list || @ids) = Bric::Biz::Asset::Business::Media::Image->list_ids($param)
 
 =head1 DESCRIPTION
 
@@ -53,7 +53,7 @@ use strict;
 # the parent module should have a 'use' line if you need to import from it.
 # use Bric;
 
-use base qw( Bric::BC::Asset::Business::Media );
+use base qw( Bric::Biz::Asset::Business::Media );
 
 #==============================================================================#
 # Function Prototypes           #
@@ -115,7 +115,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $image = Bric::BC::Asset::Business::Media::Image->new($init)
+=item $image = Bric::Biz::Asset::Business::Media::Image->new($init)
 
 This will create a new image object.
 
@@ -155,7 +155,7 @@ NONE
 
 ################################################################################
 
-=item $media = Bric::BC::Asset::Business::Media::Image->lookup( { id => $id })
+=item $media = Bric::Biz::Asset::Business::Media::Image->lookup( { id => $id })
 
 This will return the matched looked up object
 
@@ -183,7 +183,7 @@ NONE
 
 ################################################################################
 
-=item ($imgs || @imgs) = Bric::BC::Asset::Business::Media::Image->list($param)
+=item ($imgs || @imgs) = Bric::Biz::Asset::Business::Media::Image->list($param)
 
 Returns a list of image objects that match the params passed in
 
@@ -229,7 +229,7 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-=item (@ids || $ids) = Bric::BC::Asset::Business::Media::Image->list_ids($param)
+=item (@ids || $ids) = Bric::Biz::Asset::Business::Media::Image->list_ids($param)
 
 Returns a list of ids that match the particular params
 
@@ -264,7 +264,7 @@ NONE
 
 ################################################################################
 
-=item $class_id = Bric::BC::Asset::Business::Media::Image->get_class_id()
+=item $class_id = Bric::Biz::Asset::Business::Media::Image->get_class_id()
 
 Returns the class id of the Image class
 
@@ -292,7 +292,7 @@ sub get_class_id {
 
 ################################################################################
 
-=item my $key_name = Bric::BC::Asset::Business::Media::Image->key_name()
+=item my $key_name = Bric::Biz::Asset::Business::Media::Image->key_name()
 
 Returns the key name of this class.
 
@@ -396,13 +396,16 @@ NONE
 
 =head1 SEE ALSO
 
-L<perl> , L<Bric>, L<Bric::BC::Asset>, L<Bric::BC::Asset::Business>, 
-L<Bric::BC::Asset::Business::Media>
+L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
+L<Bric::Biz::Asset::Business::Media>
 
 =head1 REVISION HISTORY
 
 $Log: Image.pm,v $
-Revision 1.1  2001-09-06 21:53:52  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:52  wheeler
+Upload to SourceForge.
 
 =cut

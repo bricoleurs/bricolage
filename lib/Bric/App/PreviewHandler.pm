@@ -1,29 +1,29 @@
-package Bric::BL::PreviewHandler;
+package Bric::App::PreviewHandler;
 
 =head1 NAME
 
-Bric::BL::PreviewHandler - Special Apache handlers used for local previewing.
+Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:00 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
   <Perl>
       if (PREVIEW_LOCAL) {
-          $PerlTransHandler = 'Bric::BL::PreviewHandler::uri_handler';
+          $PerlTransHandler = 'Bric::App::PreviewHandler::uri_handler';
           if (PREVIEW_MASON) {
-              $PerlFixupHandler = 'Bric::BL::PreviewHandler::fixup_handler';
+              $PerlFixupHandler = 'Bric::App::PreviewHandler::fixup_handler';
           }
       }
   </Perl>
@@ -239,7 +239,10 @@ Bric (2)
 =head1 REVISION HISTORY
 
 $Log: PreviewHandler.pm,v $
-Revision 1.1  2001-09-06 21:53:00  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:00  wheeler
+Upload to SourceForge.
 
 =cut

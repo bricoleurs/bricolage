@@ -1,31 +1,31 @@
-package Bric::BC::AssetType;
+package Bric::Biz::AssetType;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::AssetType - Registers new types of assets with their fields and the
+Bric::Biz::AssetType - Registers new types of assets with their fields and the
 rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:14 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
  # Create new types of assets.
- $element = Bric::BC::AssetType->new($init)
- $element = Bric::BC::AssetType->lookup({id => $id})
- ($at_list || @ats) = Bric::BC::AssetType->list($param)
- ($id_list || @ids) = Bric::BC::AssetType->list_ids($param)
+ $element = Bric::Biz::AssetType->new($init)
+ $element = Bric::Biz::AssetType->lookup({id => $id})
+ ($at_list || @ats) = Bric::Biz::AssetType->list($param)
+ ($id_list || @ids) = Bric::Biz::AssetType->list_ids($param)
 
  # Return the ID of this object.
  $id = $element->get_id()
@@ -113,11 +113,11 @@ use Bric::Util::Fault::Exception::GEN;
 
 use Bric::Util::Grp::AssetType;
 use Bric::Util::Grp::Element;
-use Bric::BC::AssetType::Parts::Data;
+use Bric::Biz::AssetType::Parts::Data;
 use Bric::Util::Attribute::AssetType;
-use Bric::BC::ATType;
+use Bric::Biz::ATType;
 use Bric::Util::Class;
-use Bric::BC::OutputChannel;
+use Bric::Biz::OutputChannel;
 
 #==============================================================================#
 # Inheritance                          #
@@ -247,7 +247,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $element = Bric::BC::AssetType->new($init)
+=item $element = Bric::Biz::AssetType->new($init)
 
 Will return a new asset type object with the optional initial state
 
@@ -314,7 +314,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $element = Bric::BC::AssetType->lookup($param)
+=item $element = Bric::Biz::AssetType->lookup($param)
 
 Keys for $param are:
 
@@ -378,7 +378,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item ($at_list || @at_list) = Bric::BC::AssetType->list($param);
+=item ($at_list || @at_list) = Bric::Biz::AssetType->list($param);
 
 This will return a list of objects that match the criteria defined 
  
@@ -426,7 +426,7 @@ sub list {
 
 #------------------------------------------------------------------------------#
 
-=item ($at_list || @ats) = Bric::BC::AssetType->list_ids($param)
+=item ($at_list || @ats) = Bric::Biz::AssetType->list_ids($param)
 
 This will return a list of objects that match the criteria defined 
 
@@ -479,9 +479,9 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $meths = Bric::BC::AssetType->my_meths
+=item $meths = Bric::Biz::AssetType->my_meths
 
-=item (@meths || $meths_aref) = Bric::BC::AssetType->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::AssetType->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -1362,7 +1362,7 @@ sub get_output_channels {
 	# Skip if the object has already been looked up.
 	next if ref $ocs->{$id};
 	
-	$ocs->{$id} = Bric::BC::OutputChannel->lookup({'id' => $id})
+	$ocs->{$id} = Bric::Biz::OutputChannel->lookup({'id' => $id})
     }
 
     # and all the existing output channels
@@ -1370,7 +1370,7 @@ sub get_output_channels {
 	# Skip if the object has already been looked up.
 	next if ref $ocs->{$id};
 	
-	$ocs->{$id} = Bric::BC::OutputChannel->lookup({'id' => $id})
+	$ocs->{$id} = Bric::Biz::OutputChannel->lookup({'id' => $id})
     }
 
     # Return all existing output channels and those to be added.
@@ -1593,9 +1593,9 @@ sub add_data {
 
 =item $element = $element->new_data($param)
 
-Adds a new data point, creating a new Bric::BC::AssetType::Parts::Data object.
+Adds a new data point, creating a new Bric::Biz::AssetType::Parts::Data object.
 The keys to $param are the same as the keys for the hash ref passed to 
-Bric::BC::AssetType::Parts::Data::new.
+Bric::Biz::AssetType::Parts::Data::new.
 
 B<Throws:>
 
@@ -1617,7 +1617,7 @@ sub new_data {
     my ($new_parts) = $self->_get('_new_parts');
 
     # Create the new part.
-    my $part = Bric::BC::AssetType::Parts::Data->new($param);
+    my $part = Bric::Biz::AssetType::Parts::Data->new($param);
 
     # Add all new values to a special array of new parts until they can be
     # saved and given an ID.
@@ -2311,7 +2311,7 @@ sub _get_at_type_obj {
     return $att_obj if $att_obj;
 
     if ($att_id) {
-	$att_obj = Bric::BC::ATType->lookup({'id' => $att_id});
+	$att_obj = Bric::Biz::ATType->lookup({'id' => $att_id});
 	$self->_set(['_att_obj'], [$att_obj]);
     }
 
@@ -2674,7 +2674,7 @@ sub _delete_output_channel_id {
 
 =item $self = $self->_get_parts
 
-Call the list function of Bric::BC::AssetType::Parts::Container to return a list
+Call the list function of Bric::Biz::AssetType::Parts::Container to return a list
 of conainer parts of this AssetType object, or return the existing parts if
 weve already loaded them.
 
@@ -2703,7 +2703,7 @@ sub _get_parts {
     # Do not load parts via 'list' if we've already done it.
     return $parts if substr(%$parts, 0, index(%$parts, '/'));
 
-    my $cont = Bric::BC::AssetType::Parts::Data->list(
+    my $cont = Bric::Biz::AssetType::Parts::Data->list(
 				          {'element__id' => $self->get_id,
 					   '_active'        => 1}
 							);
@@ -2738,13 +2738,16 @@ michael soderstrom ( miraso@pacbell.net )
 
 =head1 SEE ALSO
 
-L<perl>,L<Bric>,L<Bric::BC::Asset>
+L<perl>,L<Bric>,L<Bric::Biz::Asset>
 
 =head1 REVISION HISTORY
 
 $Log: AssetType.pm,v $
-Revision 1.1  2001-09-06 21:53:14  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:14  wheeler
+Upload to SourceForge.
 
 =cut
 

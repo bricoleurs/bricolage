@@ -1,36 +1,36 @@
-package Bric::BC::Workflow::Parts::Desk;
+package Bric::Biz::Workflow::Parts::Desk;
 ###############################################################################
 
 =head1 NAME
  
- Bric::BC::Workflow::Parts::Desk;
+ Bric::Biz::Workflow::Parts::Desk;
 
  Impliments a desk object as part of a workflow
 
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:17 $
+$Date: 2001-09-06 22:30:06 $
 
 
 =head1 SYNOPSIS
 
- use Bric::BC::Workflow::Parts::Desk;
+ use Bric::Biz::Workflow::Parts::Desk;
 
- my $desk = new Bric::BC::Workflow::Parts::Desk($init);
+ my $desk = new Bric::Biz::Workflow::Parts::Desk($init);
 
- my $desk = lookup Bric::BC::Workflow::Parts::Desk($param);
+ my $desk = lookup Bric::Biz::Workflow::Parts::Desk($param);
 
- my @dsks = list Bric::BC::Workflow::Parts::Desk($param);
+ my @dsks = list Bric::Biz::Workflow::Parts::Desk($param);
 
  my $name = $desk->get_name;
  my $desk = $desk->set_name($name);
@@ -162,7 +162,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $obj = new Bric::BC::Workflow::Parts::Desk($init);
+=item $success = $obj = new Bric::Biz::Workflow::Parts::Desk($init);
 
 The following is a list of parameter keys and their assiociated values.
 
@@ -224,7 +224,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $obj = lookup Bric::BC::Workflow::Parts::Desk($param);
+=item $success = $obj = lookup Bric::Biz::Workflow::Parts::Desk($param);
 
 Look up a desk object by ID.  Keys for param are:
 
@@ -282,7 +282,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item @objs = Bric::BC::Workflow::Parts::Desk->list($param);
+=item @objs = Bric::Biz::Workflow::Parts::Desk->list($param);
 
 Returns a list of desk objects based on $param.  Keys of $param are:
 
@@ -377,7 +377,7 @@ sub list {
 
 #------------------------------------------------------------------------------#
 
-=item @objs = Bric::BC::Workflow::Parts::Desk->list($param);
+=item @objs = Bric::Biz::Workflow::Parts::Desk->list($param);
 
 Returns a list of IDs for all desk objects.  See 'list' for legal parameters.
 
@@ -427,9 +427,9 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item my $meths = Bric::BC::Workflow::Parts::Desk->my_meths
+=item my $meths = Bric::Biz::Workflow::Parts::Desk->my_meths
 
-=item my (@meths || $meths_aref) = Bric::BC::Workflow::Parts::Desk->my_meths(TRUE)
+=item my (@meths || $meths_aref) = Bric::Biz::Workflow::Parts::Desk->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -1390,12 +1390,15 @@ NONE
 
 =head1 SEE ALSO
 
-L<Bric>, L<Bric::BC::Workflow>, L<perl>
+L<Bric>, L<Bric::Biz::Workflow>, L<perl>
 
 =head1 REVISION HISTORY
 
 $Log: Desk.pm,v $
-Revision 1.1  2001-09-06 21:54:17  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:54:17  wheeler
+Upload to SourceForge.
 
 =cut

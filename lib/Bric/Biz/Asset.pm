@@ -1,32 +1,32 @@
-package Bric::BC::Asset;
+package Bric::Biz::Asset;
 ###############################################################################
 
 =head1 NAME
 
-Bric::BC::Asset - A base class of behaviours that all assets must exhibit. 
+Bric::Biz::Asset - A base class of behaviours that all assets must exhibit. 
 An asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:53:08 $
+$Date: 2001-09-06 22:30:06 $
 
 =head1 SYNOPSIS
 
  # Class Methods
- $key_name = Bric::BC::Asset->key_name()
- %priorities = Bric::BC::Asset->list_priorities()
- $data = Bric::BC::Asset->my_meths
+ $key_name = Bric::Biz::Asset->key_name()
+ %priorities = Bric::Biz::Asset->list_priorities()
+ $data = Bric::Biz::Asset->my_meths
 
  # looking up of objects
- ($asset_list || @assets) = Bric::BC::Asset->list( $param )
+ ($asset_list || @assets) = Bric::Biz::Asset->list( $param )
 
  # General information
  $asset       = $asset->get_id()
@@ -105,7 +105,7 @@ use strict;
 # Programatic Dependencies              
 
 use Bric::Util::Fault::Exception::GEN;
-use Bric::BC::Workflow;
+use Bric::Biz::Workflow;
 use Bric::Util::Time qw(:all);
 
 #==============================================================================#
@@ -199,7 +199,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $asset = Bric::BC::Asset->lookup( { id => $id} )
+=item $asset = Bric::Biz::Asset->lookup( { id => $id} )
 
 Method not Implemented.
 
@@ -224,7 +224,7 @@ sub lookup {
 
 ################################################################################
 
-=item ($asset_list || @assets) = Bric::BC::Asset->list( $criteria )
+=item ($asset_list || @assets) = Bric::Biz::Asset->list( $criteria )
 
 This will call list on both the inherited classes
 
@@ -253,8 +253,8 @@ sub list {
 	my ($param) = @_;
 
 	# let the kid's list function handle this
-	my @objs = Bric::BC::Asset::Formatting->list($param);
-	my @objs2 = Bric::BC::Asset::Business->list($param);
+	my @objs = Bric::Biz::Asset::Formatting->list($param);
+	my @objs2 = Bric::Biz::Asset::Business->list($param);
 
 	# chunk them together
 	my @all = (@objs, @objs2);
@@ -287,7 +287,7 @@ sub DESTROY {
 
 =over 4
 
-=item ($id_list || @ids) = Bric::BC::Asset->list_ids( $criteria )
+=item ($id_list || @ids) = Bric::Biz::Asset->list_ids( $criteria )
 
 Method Not Implemented
 
@@ -312,7 +312,7 @@ sub list_ids {
 
 ################################################################################
 
-=item my $key_name = Bric::BC::Asset->key_name()
+=item my $key_name = Bric::Biz::Asset->key_name()
 
 Returns the key name of this class.
 
@@ -354,9 +354,9 @@ sub list_priorities {
 
 ################################################################################
 
-=item $meths = Bric::BC::Asset->my_meths
+=item $meths = Bric::Biz::Asset->my_meths
 
-=item (@meths || $meths_aref) = Bric::BC::Asset->my_meths(TRUE)
+=item (@meths || $meths_aref) = Bric::Biz::Asset->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
@@ -594,7 +594,7 @@ sub my_meths {
 			      name     => 'element',
 			      get_meth => sub {
 				  my $a_id = shift->get_element__id(@_);
-				  my $a = Bric::BC::AssetType->lookup({ id => $a_id });
+				  my $a = Bric::Biz::AssetType->lookup({ id => $a_id });
 				  $a->get_name(); },
 			      get_args => [],
 			      disp     => 'Asset Type',
@@ -1075,7 +1075,7 @@ sub get_desk_stamps {
     my (%dc, @desks);
     foreach (@keys) {
 	push @desks, $dc{$ds->{$_}} ||=
-	  Bric::BC::Workflow::Parts::Desk->lookup({id => $ds->{$_}});
+	  Bric::Biz::Workflow::Parts::Desk->lookup({id => $ds->{$_}});
     }
     return wantarray ? @desks : \@desks;
 }
@@ -1151,7 +1151,7 @@ sub get_current_desk {
 	$cur_key = $n if $cur_key < $n;
     }
 
-    my $desk = Bric::BC::Workflow::Parts::Desk->lookup({id => $ds->{$cur_key}});
+    my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({id => $ds->{$cur_key}});
 
     return $desk;
 }
@@ -1241,7 +1241,7 @@ sub get_workflow_object {
     my ($self) = @_;
     my $w_id = $self->get_workflow_id;
 
-    return Bric::BC::Workflow->lookup({'id' => $w_id});
+    return Bric::Biz::Workflow->lookup({'id' => $w_id});
 }
 
 ################################################################################
@@ -1419,10 +1419,10 @@ sub is_active {
 
 =item my (@gids || $gids_aref) = $asset->get_grp_ids
 
-=item my (@gids || $gids_aref) = Bric::BC::Asset->get_grp_ids
+=item my (@gids || $gids_aref) = Bric::Biz::Asset->get_grp_ids
 
-Returns a list or anonymous array of Bric::BC::Group object ids representing the
-groups of which this Bric::BC::Asset object is a member.
+Returns a list or anonymous array of Bric::Biz::Group object ids representing the
+groups of which this Bric::Biz::Asset object is a member.
 
 B<Throws:> See Bric::Util::Grp::list().
 
@@ -1763,7 +1763,10 @@ L<Bric.pm>,L<Bric::Util::Group::AssetVersion>
 =head1 REVISION HISTORY
 
 $Log: Asset.pm,v $
-Revision 1.1  2001-09-06 21:53:08  wheeler
-Initial revision
+Revision 1.2  2001-09-06 22:30:06  samtregar
+Fixed remaining BL->App, BC->Biz conversions
+
+Revision 1.1.1.1  2001/09/06 21:53:08  wheeler
+Upload to SourceForge.
 
 =cut
