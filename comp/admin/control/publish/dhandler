@@ -1,0 +1,14 @@
+<& '/widgets/wrappers/sharky/header.mc',
+   title => 'Bulk Publish',
+   context => 'Admin | Bulk Publish'
+&>
+
+<form action="<% $r->uri %>" method="post" name="theForm">
+<& 'category.html' &>
+</form>
+
+<& '/widgets/wrappers/sharky/footer.mc' &>
+
+<%init>
+$m->decline unless user_is_admin();
+</%init>

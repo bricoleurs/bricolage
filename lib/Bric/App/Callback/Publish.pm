@@ -92,7 +92,7 @@ sub preview : Callback {
 # published from the publish desk
 sub select_publish : Callback(priority => 1) {  # run this before 'publish'
     my $self = shift;
-    # (this set in comp/widget/publish/publish.mc)
+    # (this was set in comp/widgets/publish/publish.mc)
     my $values = mk_aref($self->value);
 
     my (@story, @media);

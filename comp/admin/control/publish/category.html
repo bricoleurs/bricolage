@@ -1,0 +1,43 @@
+<& '/widgets/search/search.mc',
+   object       => 'category',
+   field        => 'uri',
+   type         => 'singular',
+   use_form_tag => 0
+&>
+<p></p>
+<& '/widgets/listManager/listManager.mc',
+   object    => 'category',
+   title     => 'Publish a Category',
+   select    => $select,
+   fields    => [qw(uri)],
+   addition  => '',
+   profile   => undef,
+   exclude   => $exclude,
+   behavior  => 'expand',
+&>
+
+<p>
+<input type="image" src="/media/images/<% $lang_key %>/publish_checked_red.gif" border="0" name="publish_button" value="Publish" />
+</p>
+
+<%init>
+
+</%init>
+
+<%once>
+my $widget = 'bulk_publish';
+
+my $select = sub {
+    my $cat = shift;
+    my $cat_id = $cat->get_id;
+    return [['Stories', 'bulk_publish|publish_categories_cb', "story=$cat_id"],
+            ['Media',   'bulk_publish|publish_categories_cb', "media=$cat_id"]];
+};
+
+# exclude categories that aren't in the current site
+my $exclude = sub {
+    my $site_id = $c->get_user_cx(get_user_id());
+    my $cat = shift;
+    return $cat->get_site_id != $site_id;
+};
+</%once>

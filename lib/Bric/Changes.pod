@@ -62,6 +62,11 @@ F<bricolage.conf> directive. See
 L<Bric::Biz::Asset::Business::Media::Image|Bric::Biz::Asset::Business::Media::Image>
 for more information. [Paul Orrock/ Digital Craftsmen]
 
+=item *
+
+A 'Bulk Publish' link in ADMIN->PUBLISHING lets you publish assets
+by category. [Scott]
+
 =back
 
 =head2 Improvements
