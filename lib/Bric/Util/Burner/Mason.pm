@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 11:19:55 $
+$Date: 2003-10-25 23:25:59 $
 
 =head1 SYNOPSIS
 
@@ -521,7 +521,7 @@ B<Notes:> NONE.
 sub display_element {
     my $self = shift;
     my $elem = shift or return;
-    $self->_render_element($elem, 1);
+    $self->_render_element($elem, 1, @_);
 }
 
 #------------------------------------------------------------------------------#
@@ -543,7 +543,7 @@ B<Notes:> NONE.
 sub sdisplay_element {
     my $self = shift;
     my $elem = shift or return;
-    return $self->_render_element($elem, 0);
+    return $self->_render_element($elem, 0, @_);
 }
 
 ##############################################################################
@@ -799,8 +799,7 @@ B<Notes:> NONE.
 =cut
 
 sub _render_element {
-    my $self = shift;
-    my ($elem, $display) = @_;
+    my ($self, $elem, $display) = (shift, shift, shift);
     my $html = '';
 
     # Call another element if this is a container otherwise output the data.
@@ -814,15 +813,13 @@ sub _render_element {
         # Push this element on to the stack
         $self->_push_element($elem);
 
-        my $template = $self->_load_template_element($elem);
-
-        # Display the element
-        if ($display) {
-            HTML::Mason::Request->instance->comp($template, @_)
-              if $template;
-        } else {
-            $html = HTML::Mason::Request->instance->scomp($template, @_)
-              if $template;
+        if (my $template = $self->_load_template_element($elem)) {
+            # Display the element
+            if ($display) {
+                HTML::Mason::Request->instance->comp($template, @_);
+            } else {
+                $html = HTML::Mason::Request->instance->scomp($template, @_);
+            }
         }
 
         # Pop the element back off again.
