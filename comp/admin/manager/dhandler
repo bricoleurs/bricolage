@@ -177,12 +177,17 @@ my $prof_sub = sub {
     # Assume user can edit the profile.
     my $edit = ($type eq "contrib")
       ? ['Edit', "/admin/profile/$type/edit/$id", '']
-	: ['Edit', "$prefix/admin/profile/$type/$id", ''];
+      : ['Edit', "$prefix/admin/profile/$type/$id", ''];
     # Change the label to "Edit" if they can edit it.
     $edit->[0] = 'View' unless chk_authz($_[0], EDIT, 1)
       || ($type eq 'user' && $_[0]->get_id == get_user_id())
       || ($type eq 'alert_type' && $_[0]->get_owner_id == get_user_id());
-    return $type ne 'contrib' ? [ $edit, [ 'Log', "/admin/events/$type/$id", ''] ]
+    my $override = ($type eq "user" && chk_authz($_[0], EDIT, 1))
+      ? ['Log In', '/', 'login|masquerade_cb='.$_[0]->get_login] 
+      : undef;
+    return ($type ne 'contrib') 
+      ? ($override) ? [ $edit, [ 'Log', "/admin/events/$type/$id", ''], $override ] 
+                    : [ $edit, [ 'Log', "/admin/events/$type/$id", ''] ]
       : [ $edit, [$_[0]->all_for_subsys
                     ? ('New', "/admin/profile/contrib/extend/$id", '')
                     : ()

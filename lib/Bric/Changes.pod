@@ -96,6 +96,11 @@ for "All") for the same result.  Alpha search is off by default. [Marshall Roch]
 Creating a template that was deactivated now reactivates it instead of
 just giving an error message. [Scott]
 
+=item *
+
+The "User Override" screen has been integrated into the "Users" screen
+since the two pages are mostly redundant except for a few links. [Marshall]
+
 =back
 
 =head1 VERSION 1.8.3 ()

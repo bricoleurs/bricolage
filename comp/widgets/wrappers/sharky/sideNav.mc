@@ -179,8 +179,6 @@ foreach my $wf (@$workflows) {
                     <li><% &$printLink('/admin/manager/grp', $uri, $pl_disp->{grp}) %>
                     <li><% &$printLink('/admin/manager/site', $uri, $pl_disp->{site}) %>
                     <li><% &$printLink('/admin/manager/alert_type', $uri, $pl_disp->{alert_type}) %>
-%                   # Show the change users link if we are an admin.
-                    <li style="padding-top: 1em;"><% &$printLink('/admin/control/change_user', $uri, 'User Override') %>
                 </ul>
             </li>
 % } else { # closed system submenu
