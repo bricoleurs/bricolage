@@ -4,12 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-11-27 04:09:20 $
-
+$Date: 2003-01-17 23:25:54 $
 
 =head1 DESCRIPTION
 
@@ -17,9 +16,7 @@ This document tries to answer questions asked frequently
 on the mailing list or other questions that people might
 have when starting out with or evaluating Bricolage.
 
-
 =head1 FAQs
-
 
 =head2 Evaluating Bricolage
 
@@ -76,7 +73,6 @@ Macworld - L<http:E<sol>E<sol>www.macworld.comE<sol>>
 
 =back
 
-
 =head2 Error Messages
 
 This section contains questions about error messages output
@@ -84,7 +80,7 @@ by Bricolage.
 
 =over 4
 
-=item Why does `make install` exit with the following error?
+=item Why does C<make install> exit with the following error?
 
     Missing or empty inst/bricolage.sql!
 
@@ -96,7 +92,7 @@ run `make dist`. Do something like this:
     # cd bricolage-1.5.0
     # make install
 
-=item Why do I get an error like the following in Apache's 'error_log'?
+=item Why do I get an error like the following in Apache's F<error_log>?
 
     [error] access to / failed for 127.0.0.1, reason: No cookies found.
 
@@ -106,6 +102,23 @@ has been set yet.
 
 =back
 
+=head2 Element Administration
+
+=over 4
+
+=item I added a field to an element and deleted it, and now I can't add a new
+field with the same name. Why not?
+
+Fields cannot have the same name, even if they've been deleted. This is
+because you might have older stories around that use the old name, and still
+republish them to templates that use the old name.
+
+The solution is to give the new version of the field a different name, but
+make the "Label" the same. So you might have a name like "new_paragraph" and
+the label "Paragraph". Just remember to change any references to the old field
+name in your templates to use the new field name.
+
+=back
 
 =head2 Miscellaneous
 
@@ -124,14 +137,12 @@ See the "About" section of the online help.
 
 =item Where can I get more information?
 
-Read the F<README> document in the directory where you
-unpacked Bricolage to learn about other documents on
-specific things like Bricolage administration, usage,
-or hacking. The project's website is L<http:E<sol>E<sol>www.bricolage.ccE<sol>>.
-The website lists information about mailing lists.
+Read the F<README> document in the directory where you unpacked Bricolage to
+learn about other documents on specific things like Bricolage administration,
+usage, or hacking. The project's website is L<http://www.bricolage.cc/>. The
+website lists information about mailing lists.
 
 =back
-
 
 =head1 AUTHOR
 
