@@ -267,6 +267,8 @@ Friends who have spotted bugs include:
 
 =item Will Trillich
 
+=item Adam Rinehart
+
 =back
 
 Bricolage's translation team:
