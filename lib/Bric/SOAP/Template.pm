@@ -40,15 +40,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-25 10:39:14 $
+$Date: 2003-08-26 15:36:09 $
 
 =head1 SYNOPSIS
 
@@ -612,7 +612,20 @@ sub _load_template {
         print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
     }
 
-    # loop over template, filling @template_ids
+    # Determine workflow and desk for templates
+    my ($workflow, $desk, $no_wf_or_desk_param);
+    $no_wf_or_desk_param = ! (exists $args->{workflow} || exists $args->{desk});
+    if (exists $args->{workflow}) {
+        $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
+          || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
+    }
+
+    if (exists $args->{desk}) {
+        $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
+          || throw_ap error => "desk '" . $args->{desk} . "' not found!";
+    }
+
+    # loop over templates, filling @template_ids
     my @template_ids;
     foreach my $tdata (@{$data->{template}}) {
         my $id = $tdata->{id};
@@ -772,27 +785,18 @@ sub _load_template {
         $template->deactivate;
         $template->save;
 
-        my ($workflow, $desk);
-        unless ($update && !(exists $args->{workflow} || exists $args->{desk})) {
-            # find a suitable workflow and desk for the template.
-            if (exists $args->{workflow}) {
-                $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
-                  || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
-            } else {
+        unless ($update && $no_wf_or_desk_param) {
+            unless (exists $args->{workflow}) {  # already done above
                 $workflow = (Bric::Biz::Workflow->list({ type => TEMPLATE_WORKFLOW,
                                                          site_id => $init{site_id} }))[0];
             }
-            $template->set_workflow_id($workflow->get_id());
+            $template->set_workflow_id($workflow->get_id);
             log_event("formatting_add_workflow", $template,
                       { Workflow => $workflow->get_name });
 
-            if (exists $args->{desk}) {
-                $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
-                  || throw_ap error => "desk '" . $args->{desk} . "' not found!";
-            } else {
+            unless (exists $args->{desk}) {   # already done above
                 $desk = $workflow->get_start_desk;
             }
-
             if ($update) {
                 my $olddesk = $template->get_current_desk;
                 if (defined $olddesk) {
@@ -807,20 +811,20 @@ sub _load_template {
             log_event('formatting_moved', $template, { Desk => $desk->get_name });
         }
 
-        # save the template and desk after activating if desired
+        # activate if desired
         $template->activate if $tdata->{active};
-        $desk->save if defined $desk;
-        $template->save;
-        log_event('formatting_save', $template);
 
-        # checkin and save again for good luck
+        # checkin and save
         $template->checkin();
         log_event('formatting_checkin', $template);
         $template->save();
+        log_event('formatting_save', $template);
 
         # all done, setup the template_id
         push(@template_ids, $template->get_id);
     }
+
+    $desk->save if defined $desk;
 
     return name(ids => [ map { name(template_id => $_) } @template_ids ]);
 }

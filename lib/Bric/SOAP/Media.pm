@@ -43,15 +43,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-25 10:39:13 $
+$Date: 2003-08-26 15:36:09 $
 
 =head1 SYNOPSIS
 
@@ -633,6 +633,19 @@ sub _load_media {
         print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
     }
 
+    # Determine workflow and desk for media
+    my ($workflow, $desk, $no_wf_or_desk_param);
+    $no_wf_or_desk_param = ! (exists $args->{workflow} || exists $args->{desk});
+    if (exists $args->{workflow}) {
+        $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
+          || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
+    }
+
+    if (exists $args->{desk}) {
+        $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
+          || throw_ap error => "desk '" . $args->{desk} . "' not found!";
+    }
+
     # loop over media, filling in @media_ids
     my (@media_ids, %melems);
     foreach my $mdata (@{$data->{media}}) {
@@ -880,27 +893,17 @@ sub _load_media {
             $media->add_keywords(@kws);
         }
 
-        my ($workflow, $desk);
-        unless ($update && !(exists $args->{workflow} || exists $args->{desk})) {
-            # find a suitable workflow and desk for the media.
-            if (exists $args->{workflow}) {
-                $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
-                  || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
-            } else {
+        unless ($update && $no_wf_or_desk_param) {
+            unless (exists $args->{workflow}) {  # already done above
                 $workflow = (Bric::Biz::Workflow->list({ type => MEDIA_WORKFLOW,
                                                          site_id => $init{site_id} }))[0];
             }
             $media->set_workflow_id($workflow->get_id);
-            log_event("media_add_workflow", $media,
-                      { Workflow => $workflow->get_name });
+            log_event("media_add_workflow", $media, { Workflow => $workflow->get_name });
 
-            if (exists $args->{desk}) {
-                $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
-                  || throw_ap error => "desk '" . $args->{desk} . "' not found!";
-            } else {
+            unless (exists $args->{desk}) {  # already done above
                 $desk = $workflow->get_start_desk;
             }
-
             if ($update) {
                 my $olddesk = $media->get_current_desk;
                 if (defined $olddesk) {
@@ -921,20 +924,20 @@ sub _load_media {
                              data   => $mdata->{elements} || {})
           unless $aliased;
 
-        # save the media and desk after activating if desired
+        # activate if desired
         $media->activate if $mdata->{active};
-        $desk->save if defined $desk;
+
+        # checkin and save
+        $media->checkin;
+        log_event('media_checkin', $media);
         $media->save;
         log_event('media_save', $media);
-
-        # checkin and save again for good luck
-        $media->checkin;
-        $media->save;
-        log_event('media_checkin', $media);
 
         # all done, setup the media_id
         push(@media_ids, $media->get_id);
     }
+
+    $desk->save if defined $desk;
 
     # return a SOAP structure unless this is an internal call
     unless ($args->{internal}) {

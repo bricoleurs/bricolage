@@ -127,6 +127,10 @@ time as creation or updation. [Scott]
 Added Group Membership sections to most of the profiles.
 [JoE<atilde>o Pedro]
 
+=item *
+
+Some optimizations to Bric::SOAP::(Media|Story|Template) classes. [Scott]
+
 =back
 
 =head2 Bug Fixes

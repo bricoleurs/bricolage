@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-25 10:39:13 $
+$Date: 2003-08-26 15:36:09 $
 
 =head1 SYNOPSIS
 
@@ -723,6 +723,19 @@ sub _load_stories {
       unless ref $data and ref $data eq 'HASH' and exists $data->{story};
     print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
 
+    # Determine workflow and desk for stories if not default
+    my ($workflow, $desk, $no_wf_or_desk_param);
+    $no_wf_or_desk_param = ! (exists $args->{workflow} || exists $args->{desk});
+    if (exists $args->{workflow}) {
+        $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
+          || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
+    }
+
+    if (exists $args->{desk}) {
+        $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
+          || throw_ap error => "desk '" . $args->{desk} . "' not found!";
+    }
+
     # loop over stories, filling in %story_ids and @relations
     my (%story_ids, @story_ids, @relations, %selems);
     foreach my $sdata (@{$data->{story}}) {
@@ -968,27 +981,18 @@ sub _load_stories {
             $story->add_keywords(@kws);
         }
 
-        my ($workflow, $desk);
-        unless ($update && !(exists $args->{workflow} || exists $args->{desk})) {
-            # find a suitable workflow and desk for the story.
-            if (exists $args->{workflow}) {
-                $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
-                  || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
-            } else {
+        unless ($update && $no_wf_or_desk_param) {
+            unless (exists $args->{workflow}) {  # already done above
                 $workflow = (Bric::Biz::Workflow->list({ type => STORY_WORKFLOW,
                                                          site_id => $init{site_id} }))[0];
             }
-            $story->set_workflow_id($workflow->get_id());
-            log_event("story_add_workflow", $story,
-                      { Workflow => $workflow->get_name });
 
-            if (exists $args->{desk}) {
-                $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
-                  || throw_ap error => "desk '" . $args->{desk} . "' not found!";
-            } else {
+            $story->set_workflow_id($workflow->get_id);
+            log_event("story_add_workflow", $story, { Workflow => $workflow->get_name });
+
+            unless (exists $args->{desk}) {  # already done above
                 $desk = $workflow->get_start_desk;
             }
-
             if ($update) {
                 my $olddesk = $story->get_current_desk;
                 if (defined $olddesk) {
@@ -1010,20 +1014,20 @@ sub _load_stories {
                                  data   => $sdata->{elements} || {})
               unless $aliased;
 
-        # save the story and desk after activating if desired
+        # activate if desired
         $story->activate if $sdata->{active};
-        $desk->save if defined $desk;
+
+        # checkin and save
+        $story->checkin;
+        log_event('story_checkin', $story);
         $story->save;
         log_event('story_save', $story);
-
-        # checkin and save again for good luck
-        $story->checkin;
-        $story->save;
-        log_event('story_checkin', $story);
 
         # all done, setup the story_id
         push(@story_ids, $story_ids{$id} = $story->get_id);
     }
+
+    $desk->save if defined $desk;
 
     # if we have any media objects, create them
     my (%media_ids, @media_ids);
@@ -1062,13 +1066,13 @@ sub _load_stories {
             if ($r->{story_id}) {
                 throw_ap(error => __PACKAGE__ . " : related story_id \"$r->{story_id}\""
                            . " not found.")
-                  unless Bric::Biz::Asset::Business::Story->lookup(
+                  unless Bric::Biz::Asset::Business::Story->list_ids(
                                                   {id => $r->{story_id}});
                 $r->{container}->set_related_instance_id($r->{story_id});
             } else {
                 throw_ap(error => __PACKAGE__ . " : related media_id \"$r->{media_id}\""
                            . " not found.")
-                  unless Bric::Biz::Asset::Business::Media->lookup(
+                  unless Bric::Biz::Asset::Business::Media->list_ids(
                                                   {id => $r->{media_id}});
                 $r->{container}->set_related_media($r->{media_id});
             }
