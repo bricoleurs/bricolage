@@ -13,7 +13,9 @@ Story.pl - a test script for Bric::SOAP::Story
 
 This is a Test::More test script for the Bric::SOAP::Story module.  It
 requires a mix of stories in the running Bricolage instance to work
-properly.  The requirements are:
+properly.
+
+Bricolage requirements are:
 
 =over 4
 
@@ -35,6 +37,29 @@ A workflow named 'Story' with stories in it.
 
 =back
 
+Also, to get the most out of the tests you'll need to install the
+Xerces C++ library.  See:
+
+    http://xml.apache.org/xerces-c/index.html
+
+for details.  You need a later version than 1.6.0 which currently
+means the CVS version.  Also, you need to install the sample program
+DOMCount into your path.
+
+You can still run the tests without Xerces C++ installed but the
+schema validation tests will be skipped.
+
+=head1 CONSTANTS
+
+=over 4
+
+=item DEBUG
+
+Set this to 1 to see debugging text including the full XML for every
+SOAP method call and response.  Highly educational.
+
+=back
+
 =head1 AUTHOR
 
 Sam Tregar <stregar@about-inc.com>
@@ -49,6 +74,7 @@ use SOAP::Lite (DEBUG ? (trace => [qw(debug)]) : ());
 import SOAP::Data 'name';
 use Data::Dumper;
 use XML::Simple;
+use File::Temp qw(tempfile);
 use Carp;
 use Carp::Heavy; # for some reason if I remove this I can't get syntax
                  # errors, I just get Carp errors.
@@ -56,6 +82,12 @@ use Carp::Heavy; # for some reason if I remove this I can't get syntax
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::AssetType;
 use Bric::Biz::Workflow;
+
+# check to see if we have Xerces C++ to use for Schema validation
+our $has_xerces = 0;
+my $test;
+eval { $test = `DOMCount -? 2>&1`;    };
+$has_xerces = 1 if $test =~ /This program invokes the DOM parser/;
 
 # setup soap object
 my $soap = new SOAP::Lite
@@ -136,6 +168,10 @@ $story_ids = $response->result;
 isa_ok($story_ids, 'ARRAY');
 ok(@$story_ids, 'list_ids() returned some story_ids');
 
+# get schema ready for checking documents
+my $xsd = extract_schema();
+ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
+
 # try exporting a story
 my $story_id = $story_ids->[0];
 $response = $soap->export(name(story_id => $story_id));
@@ -145,31 +181,68 @@ if ($response->fault) {
   pass('SOAP export() response fault check');  
 
   my $document = $response->result;
-  ok($document, 'Recieved export document');
-  check_doc($document, "first story");
+  ok($document, 'recieved first story document');
+  check_doc($document, $xsd, "first story");
 }
 
-# this will be replaced by a schema validator as soon as I can get
-# one working!
+# done with schema
+unlink $xsd;
+
+
+###############################################################################
+#
+# utility routines
+#
+###############################################################################
+
+# check a document against an xsd schema
 sub check_doc {
-  my ($doc, $name) = @_;
-  my $x = XMLin($doc, 
-		forcearray => [ 'story' ],
-		keyattr    => [],
-		keeproot   => 1);
-
+  my ($doc, $xsd, $name) = @_;
   print "$name :\n$doc\n" if DEBUG;
-  print Data::Dumper->Dump([$x], ['doc']) if DEBUG;
 
-  # check basic structure
-  ok(exists $x->{assets}, "$name has assets");
-  ok(exists $x->{assets}{story}, "$name has at least one story");
+  SKIP: {
+      skip "need Xerces C++ for schema validation", 1 unless $has_xerces;
 
-  # check that all required elements are present
-  foreach my $s (@{$x->{assets}{story}}) {
-      my @missing = grep { not exists $s->{$_} } 
-	  (qw(name description slug primary_uri priority publish_status active 
-	      source cover_date categories keywords elements));
-      ok(!@missing, "has required elements");
-  }
+      # hocus pocus!  The document needs some extra attributes on the root
+      # element to get validation to happen right.
+      $doc =~ s!<assets!<assets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://bricolage.sourceforge.net/assets.xsd $xsd" !;
+      
+      # output into a tempfile
+      my ($fh, $filename) = tempfile("doc_XXXX", SUFFIX => '.xml');
+      print $fh $doc;
+      close $fh;
+      
+      # call DOMCount and look for error lines
+      my $results = `DOMCount -n -s -f -v=always $filename 2>&1`;
+      print "Schema Validation Results: $results\n" if DEBUG;
+      ok($results !~ /Error/, "$name schema validation");
+      
+      unlink $filename;
+  };
+}
+
+# extracts the assets schema from the Bric::SOAP POD, writes it to the
+# filesystem and returns the filename
+sub extract_schema {
+    my $bric_root = $ENV{BRICOLAGE_ROOT} || "/usr/local/bricolage";
+
+    # suck in spec
+    open SPEC, "$bric_root/lib/Bric/SOAP.pm" 
+	or die "Unable to open $bric_root/lib/Bric/SOAP.pm : $!";
+    my $text = join('', <SPEC>);
+    close(SPEC);
+
+    # find the xsd
+    my ($xsd) = $text =~ m!(<\?xml\sversion="1\.0"\sencoding="UTF-8"\?>
+                           .*?
+                           <xs:schema
+                           .*?
+                           </xs:schema>)!xs;
+    die "Unable to extract XSD" unless $xsd;
+    
+    # output xsd into a tempfile and return name
+    my ($fh, $filename) = tempfile("asset_XXXX", SUFFIX => '.xsd');
+    print $fh $xsd;
+    close $fh;
+    return $filename;
 }
