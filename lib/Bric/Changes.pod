@@ -48,12 +48,10 @@ media type. [Mark]
 
 =item *
 
-The German localization module (Bric::Util::Language::de_de) had the
-wrong package name, which meant that attempts to use it failed with
-the error "Can't locate class method
-'Bric::Util::Language::de_de::new' via package
-'Bric::Util::Language::de_de' at
-/usr/share/perl/5.8.2/Locale/Maketext.pm line 319".  [Dave Rolsky]
+The German localization module (Bric::Util::Language::de_de) had the wrong
+package name, which meant that attempts to use it failed with the error "Can't
+locate class method 'Bric::Util::Language::de_de::new' via package
+'Bric::Util::Language::de_de'". [Dave Rolsky]
 
 =item *
 
