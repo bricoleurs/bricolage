@@ -8,12 +8,9 @@ use Test::More;
 # Register this class for testing.
 BEGIN { __PACKAGE__->test_class }
 
-my ($base_coll, $coll_class, $obj_class);
-BEGIN {
-    $base_coll = 'Bric::Util::Coll';
-    $coll_class = 'Bric::Test::Coll::Fake';
-    $obj_class = 'Bric::Test::Coll::FakeClass';
-}
+my $base_coll = 'Bric::Util::Coll';
+my $coll_class = 'Bric::Test::Coll::Fake';
+my $obj_class = 'Bric::Test::Coll::FakeClass';
 
 ##############################################################################
 # Test class loading.

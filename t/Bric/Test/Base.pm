@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-05 23:42:46 $
+$Date: 2003-01-09 01:51:13 $
 
 =head1 SYNOPSIS
 
@@ -53,7 +53,7 @@ nicely with L<Test::Harness|Test::Harness>.
 =head1 INTERFACE
 
 Bric::Test::Base inherits from L<Test::Class|Test::Class>, and therefore the
-entre interface of that class is available to Bric::Test::Base and its
+entire interface of that class is available to Bric::Test::Base and its
 subclasses. Only one class method has been added.
 
 =over 4
@@ -88,7 +88,7 @@ use base qw(Test::Class);
 my $class;
 sub test_class { $class = shift }
 
-# Defer execution until runtime.
-INIT { Test::Class->runtests($class) if $class }
+# Defer execution until everything else has compiled and run.
+END { Test::Class->runtests($class) if $class }
 
 1;
