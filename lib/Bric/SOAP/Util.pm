@@ -5,7 +5,6 @@ use strict;
 use warnings;
 
 use Bric::Biz::Asset::Business::Story;
-use Bric::Biz::AssetType;
 use Bric::Biz::Category;
 use Bric::Util::Time qw(db_date local_date strfdate);
 
@@ -30,15 +29,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-20 21:25:28 $
+$Date: 2002-10-25 22:54:03 $
 
 =head1 SYNOPSIS
 

@@ -133,6 +133,11 @@ The friendly messages confirming publishes are back. [David]
 Fixed bug where selecting a large number of list options in the story
 profile would cause an SQL error.  [Matt]
 
+=item *
+
+Fixed bug where Bric::SOAP would accept story element types for media
+and vice versa.  Thanks to Evan Prodromou for the spot.  [Sam]
+
 =back
 
 =head1 VERSION 1.4.3
