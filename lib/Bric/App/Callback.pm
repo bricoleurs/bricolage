@@ -49,12 +49,7 @@ sub field { $_[0]->trigger_key }
 
 sub param { $_[0]->request_args }
 
-sub param_value {
-    my ($self, $key) = @_;
-    # default to $param->{$field} unless a 2nd arg is passed
-    my $field = defined $key ? $key : $self->field;
-    return $self->param->{$field};
-}
+sub param_field { $_[0]->param->{$_[0]->field} }
 
 
 1;
