@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2003-10-10 18:10:42 $
+$Date: 2003-10-11 03:07:19 $
 
 =head1 SYNOPSIS
 
@@ -395,7 +395,7 @@ my %formSubs = (
 
  	radio => sub {
 	    my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-		$label, $readOnly, $agent) = @_;
+		$label, $readOnly, $agent, $id) = @_;
 	    my $out = '';
 	    # print caption for the group
 	    if ($useTable) {
@@ -436,7 +436,7 @@ my %formSubs = (
 				   keys %$values) {
 			&$inpt_sub('radio', $key, {}, $k, $js, $values->{$k},
 				   $width, $indent, $useTable, $label, $readOnly, $agent,
-				   $value eq $k ? ' checked="checked"' : '');
+				   $id, $value eq $k ? ' checked="checked"' : '');
 			$m->out("<br />\n") if (!$useTable);
 		    }
 		} elsif ($ref eq 'ARRAY') {
@@ -444,7 +444,7 @@ my %formSubs = (
 			$k = [$k, $k] unless ref $k;
 			&$inpt_sub('radio', $key, $k->[0], $k->[0], $js, $k->[1],
 				   $width, $indent, $useTable, $label, $readOnly, $agent,
-				   $value eq $k->[0] ? ' checked="checked"' : '');
+				   $id, $value eq $k->[0] ? ' checked="checked"' : '');
 			$m->out("<br />\n") if (!$useTable);
 		    }
 		}
