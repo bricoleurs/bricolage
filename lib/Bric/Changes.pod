@@ -22,8 +22,9 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-The SOAP server now properly checks CREATE permissions when creating stories,
-media, or templates. Spotted by Alexandra Gershman. [David]
+The SOAP server now properly includes the start desk when it checks CREATE
+permissions for creating stories, media, or templates. Reported by Alexandra
+Gershman. [David]
 
 =back
 
