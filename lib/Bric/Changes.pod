@@ -41,6 +41,12 @@ with C<usemymalloc='n'> I<or> C<-Ubincompat5005>. See
 L<http://perl.apache.org/docs/1.0/guide/install.html#When_DSO_can_be_Used> for
 details. Thanks to Marshall Roch for finding that link. [David]
 
+=item *
+
+The New Story and New Media profiles by default no longer have a value
+selected for the Story Type or Media type (respecively), so as to prevent
+creating stories of the wrong type. [David]
+
 =back
 
 =head2 Bug Fixes
