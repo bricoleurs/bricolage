@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-12 09:01:03 $
+-- $Date: 2003-03-21 05:26:26 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -54,7 +54,7 @@ VALUES (10, 1, 'type', 'textarea', 1);
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type)
-VALUES (2, 10, 'Previous', 'Describes previous page.', 2, 0, '0', 1, 1, 256, 'short');
+VALUES (2, 10, 'previous', 'Describes previous page.', 2, 0, '0', 1, 1, 256, 'short');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES (2, 'id_2', 'html_info', 'short', 1);
