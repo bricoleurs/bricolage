@@ -7,15 +7,15 @@ package Bric::Util::Grp::Category;
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-27 17:10:29 $
+$Date: 2002-06-10 17:52:24 $
 
 =head1 SYNOPSIS
 
@@ -446,14 +446,14 @@ sub _select_by_name {
     my (@ret, @d);
     my $sql;
 
-    $sql = 'SELECT c.id, c.directory, c.asset_grp_id, c.category_grp_id, c.keyword_grp_id, c.active, category_full_path(c.category_grp_id) AS uri '.
+    $sql = 'SELECT c.id, c.directory, c.asset_grp_id, c.category_grp_id, c.keyword_grp_id '.
            'FROM   grp g, category c '.
            'WHERE  LOWER(g.name) LIKE ? AND g.id = c.category_grp_id '.
                    'AND c.active = ?';
 
     my $sth = prepare_c($sql);
     execute($sth, lc($name), $active);
-    bind_columns($sth, \@d[0..6]);
+    bind_columns($sth, \@d[0..4]);
     while (fetch($sth)) {
         push @ret, [@d];
     }

@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.62 $
+$Revision: 1.63 $
 
 =head1 DATE
 
-$Date: 2002-05-27 17:10:29 $
+$Date: 2002-06-10 17:52:24 $
 
 =head1 DESCRIPTION
 
@@ -306,12 +306,6 @@ be added.
 =head2 Low Priority Major Items
 
 =over 4
-
-=item *
-
-Refactor the category object and related code to make the uri tree forms
-more easily searched and sorted.  This might replace or use the
-category_full_path function.
 
 =item *
 

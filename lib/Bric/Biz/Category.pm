@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-28 09:12:14 $
+$Date: 2002-06-10 17:52:24 $
 
 =head1 SYNOPSIS
 
@@ -113,7 +113,7 @@ use constant TABLE  => 'category';
 use constant COLS   => qw(directory asset_grp_id category_grp_id 
                           keyword_grp_id active);
 use constant FIELDS => qw(directory asset_grp_id category_grp_id 
-                              keyword_grp_id _active uri);
+                          keyword_grp_id _active);
 use constant ORD    => qw(name description uri directory ad_string ad_string2);
 
 use constant root_category_id => 0;
@@ -147,7 +147,6 @@ BEGIN {
                          'asset_grp_id'    => Bric::FIELD_READ,
                          'category_grp_id' => Bric::FIELD_READ,
                          'keyword_grp_id'  => Bric::FIELD_READ,
-                         'uri'             => Bric::FIELD_RDWR,
 
                          # Private Fields
                          '_category_grp_obj' => Bric::FIELD_NONE,
@@ -753,8 +752,7 @@ NONE
 =cut
 
 sub ancestry_path {
-    my $self = shift;
-    Bric::Util::Trans::FS->cat_uri('', split ' ', $self->_get('uri'));
+    Bric::Util::Trans::FS->cat_uri('', map { $_->get_directory } ancestry(@_));
 }
 
 #------------------------------------------------------------------------------#
@@ -1650,13 +1648,12 @@ sub _select_category {
     my ($where, $bind) = @_;
     my (@ret, @d);
 
-    my $sql = 'SELECT '.join(',','id', COLS).', category_full_path(category_grp_id) AS uri FROM '.TABLE;
+    my $sql = 'SELECT '.join(',','id', COLS).' FROM '.TABLE;
     $sql .= " WHERE $where" if $where;
 
     my $sth = prepare_c($sql);
     execute($sth, @$bind);
-    # adding one to account for the URI field
-    bind_columns($sth, \@d[0..(scalar COLS) + 1]);
+    bind_columns($sth, \@d[0..(scalar COLS)]);
     while (fetch($sth)) {
         push @ret, [@d];
     }
@@ -1672,11 +1669,7 @@ sub _update_category {
               " SET ".join(',', map {"$_=?"} COLS)." WHERE id=?";
     
     my $sth = prepare_c($sql);
-    # popping 'uri' off of the FIELDS constant since it isn't
-    # a real column
-    my @FIELDS = FIELDS;
-    pop @FIELDS;
-    execute($sth, $self->_get(@FIELDS), $self->get_id);
+    execute($sth, $self->_get(FIELDS), $self->get_id);
     
     return 1;
 }
@@ -1690,11 +1683,7 @@ sub _insert_category {
               "VALUES ($nextval,".join(',', ('?') x COLS).')';
 
     my $sth = prepare_c($sql);
-    # popping 'uri' off of the FIELDS constant since it isn't
-    # a real column
-    my @FIELDS = FIELDS;
-    pop @FIELDS;
-    execute($sth, $self->_get(@FIELDS));
+    execute($sth, $self->_get(FIELDS));
   
     # Set the ID of this object.
     $self->_set(['id'],[last_key(TABLE)]);
@@ -1706,6 +1695,7 @@ sub _insert_category {
 sub _get_category_grp {
     my $self = shift;
    
+
 }
 
 1;

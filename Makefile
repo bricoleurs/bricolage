@@ -75,7 +75,7 @@ dist_dir	:
 	ls | grep -v dist | xargs cp -a --target-directory=dist
 
 rm_sql		:
-	find dist/lib/ -name '*.sql' -o -name '*.val' -o -name '*.con' -o -name '*.plsql' \
+	find dist/lib/ -name '*.sql' -o -name '*.val' -o -name '*.con' \
         | xargs rm -rf
 
 rm_pl           :
@@ -102,7 +102,7 @@ dist_tar	:
 	tar cvf bricolage-$(BRIC_VERSION).tar bricolage-$(BRIC_VERSION)
 	gzip --best bricolage-$(BRIC_VERSION).tar
 
-SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con' -o -name '*.plsql')
+SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
 
 inst/bricolage.sql : $(SQL_FILES)
 	find lib -name '*.sql' -exec grep -v '^--' '{}' ';' >  inst/bricolage.sql
