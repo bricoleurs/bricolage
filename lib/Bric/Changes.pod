@@ -22,12 +22,6 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Removed auto-generation of dhandlers in the Mason Burner. The C<dhandler_name>
-parameter to HTML::Mason::Interp (passed through to HTML::Mason::Request) made
-them unnecessary. Suggested by Dave Rolsky. [David]
-
-=item *
-
 Updated to work with PostgreSQL 7.4. [David]
 
 =back
