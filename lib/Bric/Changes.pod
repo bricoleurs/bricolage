@@ -26,7 +26,7 @@ Bricolage now has a much more robust security policy. Users with permission to
 edit various objects and groups in the administrative interface can no longer
 increase their permissions. Nor can they manage the membership of groups of
 which they are not members or do not have EDIT access to the members. All this
-is to preven users from giving themselves higher permissions. [David]
+is to prevent users from giving themselves higher permissions. [David]
 
 =item *
 
@@ -207,7 +207,7 @@ Made in the index on field key names case-insensitively unique. [David]
 
 =item *
 
-Restored category assest group permissions in user group profiles. [David]
+Restored category asset group permissions in user group profiles. [David]
 
 =item *
 
@@ -221,7 +221,7 @@ Wilcox. [David]
 =item *
 
 Checkin and Publish once again works in the media profile. Thanks to Alexander
-Ling forthe stot. [David]
+Ling for the spot. [David]
 
 =item *
 
