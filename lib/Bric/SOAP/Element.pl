@@ -147,6 +147,28 @@ my $element_ids2 = $response2->result;
 isa_ok($element_ids2, 'ARRAY');
 is(@$element_ids2, 0, 'list_ids() returned 0 element_ids');
 
+
+# get schema ready for checking documents
+my $xsd = extract_schema();
+ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
+
+# try exporting and importing every element object
+my $copy_sym = 1;
+foreach my $element_id (@$element_ids) {
+    $response = $soap->export(name(element_id => $element_id));
+    if ($response->fault) {
+ 	fail('SOAP export() response fault check');
+ 	exit 1;
+    } else {
+ 	pass('SOAP export() response fault check');  
+	
+ 	my $document = $response->result;
+ 	ok($document, "recieved document for element $element_id");
+ 	check_doc($document, $xsd, "element $element_id");
+    }
+}
+
+
 ###############################################################################
 #
 # utility routines
@@ -176,6 +198,7 @@ sub check_doc {
 	ok($results !~ /Error/, "$name schema validation");
 	
 	unlink $filename;
+	exit if $results =~ /Error/;
     };
 }
 

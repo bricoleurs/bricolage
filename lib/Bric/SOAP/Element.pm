@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-02 01:19:04 $
+$Date: 2002-03-02 08:43:18 $
 
 =head1 SYNOPSIS
 
@@ -295,9 +295,6 @@ sub _serialize_element {
 	$writer->dataElement($e => $element->_get($e));
     }
     
-    # get type name
-    $writer->dataElement(type => $element->get_type_name);
-
     # output burner.  It's unfortunate that this isn't a string.  This
     # is another piece of code that would need to be modified to add a
     # new burner...
@@ -310,6 +307,9 @@ sub _serialize_element {
 	die __PACKAGE__ . "::export : unknown burner \"$burner_id\" ".
 	    "for element \"$element_id\".\n";
     }
+
+    # get type name
+    $writer->dataElement(type => $element->get_type_name);
     
     # set active flag
     $writer->dataElement(active => ($element->is_active ? 1 : 0));
@@ -322,6 +322,8 @@ sub _serialize_element {
 	    $writer->dataElement(output_channel => $oc->get_name);
 	}
 	$writer->endTag("output_channels");
+    } else {
+	$writer->dataElement(top_level => 0);
     }
     
     # output subelements
@@ -335,6 +337,8 @@ sub _serialize_element {
     $writer->startTag("fields");
     foreach my $data ($element->get_data) {
 	my $meta = $data->get_meta('html_info');
+	# print STDERR Data::Dumper->Dump([$meta, $data], [qw(meta data)]) 
+	#    if DEBUG;
 
 	# start <field>
 	$writer->startTag("field");
@@ -347,20 +351,20 @@ sub _serialize_element {
 	$writer->dataElement(repeatable => $data->get_quantifier ? 1 : 0);
 	
 	# optional elements
-	$writer->dataElement(default => $meta->{value}) 
-	    if length $meta->{value};
-	$writer->dataElement(options => $meta->{vals})  
-	    if length $meta->{vals};
+	$writer->dataElement(default  => $meta->{value}) 
+	    if defined $meta->{value}    and length $meta->{value};
+	$writer->dataElement(options  => $meta->{vals})  
+	    if defined $meta->{vals}     and length $meta->{vals};
 	$writer->dataElement(multiple => $meta->{multiple} ? 1 : 0)  
-	    if length $meta->{multiple};
-	$writer->dataElement(size => $meta->{length}) 
-	    if length $meta->{length};
-	$writer->dataElement(max_size => $meta->{maxlength}) 
-	    if length $meta->{maxlength};
-	$writer->dataElement(rows => $meta->{rows}) 
-	    if length $meta->{rows};
-	$writer->dataElement(cols => $meta->{cols}) 
-	    if length $meta->{cols};	
+	    if defined $meta->{multiple} and length $meta->{multiple};
+	$writer->dataElement(size     => $meta->{length})
+	    if defined $meta->{length}   and length $meta->{length};
+	$writer->dataElement(max_size => $data->get_max_length)
+	    if $data->get_max_length;
+	$writer->dataElement(rows     => $meta->{rows}) 
+	    if defined $meta->{rows}     and length $meta->{rows};
+	$writer->dataElement(cols     => $meta->{cols}) 
+	    if defined $meta->{cols}     and length $meta->{cols};
 
 	# end <field>
 	$writer->endTag("field");
