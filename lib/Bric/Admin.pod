@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.92 $
+$Revision: 1.93 $
 
 =head1 DATE
 
-$Date: 2003-02-19 18:59:50 $
+$Date: 2003-02-20 19:56:41 $
 
 =head1 DESCRIPTION
 
@@ -27,8 +27,9 @@ Install Perl 5.6.0 or greater.
 
 =item 2
 
-Install Apache 1.3.12 or greater with mod_log_config and mod_perl statically
-compiled in. For SSL also install mod_ssl or apache-ssl.
+Install Apache 1.3.12 or greater with mod_perl statically compiled in and with
+mod_log_config, mod_mime, and mod_alias. For SSL also install mod_ssl or
+apache-ssl.
 
 =item 3
 
