@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.13.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-28 14:38:46 $
+$Date: 2001-09-28 16:11:27 $
 
 =head1 DESCRIPTION
 
@@ -32,6 +32,12 @@ significant (including the addition of new libraries).
 =head2 VERSION 1.0.2
 
 =over 4
+
+=item *
+
+Change Bric::Util::Burner->display_element() so that it doesn't paginate. All
+paginated pages will be treated instead as regular elements. This will be useful
+for things like printer-freindly pages [David].
 
 =item *
 
@@ -462,7 +468,10 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ToDo.pod,v $
-Revision 1.13  2001-09-28 14:38:46  wheeler
+Revision 1.13.2.1  2001-09-28 16:11:27  wheeler
+Added new item for 1.0.2 release.
+
+Revision 1.13  2001/09/28 14:38:46  wheeler
 Added a bunch more, and organized it all. Many of these tasks have assignments,
 and I'm going to move those onto Sourceforge, as well.
 
