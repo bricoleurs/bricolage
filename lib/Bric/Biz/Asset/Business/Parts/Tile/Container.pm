@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.2.1 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-02-14 19:38:45 $
 
 =head1 SYNOPSIS
 
@@ -270,7 +270,7 @@ sub new {
           msg => "Cannot create with out object type." });
     }
 
-    foreach (@$parts) {
+    foreach (sort { $a->get_place <=> $b->get_place } @$parts) {
 	if ($_->get_required()) {
 	    $self->add_data($_);
 	}
