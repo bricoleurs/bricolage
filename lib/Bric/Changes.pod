@@ -47,6 +47,12 @@ The New Story and New Media profiles by default no longer have a value
 selected for the Story Type or Media type (respecively), so as to prevent
 creating stories of the wrong type. [David]
 
+=item *
+
+Alerts triggered to be sent to users who don't have the appropriate contact
+information will now be logged for those users so that they can see them and
+acknowledge them under "My Alerts". [David]
+
 =back
 
 =head2 Bug Fixes
@@ -122,6 +128,11 @@ directive is enabled. Reported by Ben Bangert. [David]
 Attempting to create a new source with the same name as an existing but
 deactivated source no longer throws an SQL error, but provides a nice error
 message. Reported by Marshall Roch. [David]
+
+=item *
+
+Bricolage no longer attempts to email alerts to an empty list of recipients.
+This will make your SMTP server happier. [David]
 
 =back
 
