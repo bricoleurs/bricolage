@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.9.2.4 $
+$Revision: 1.9.2.5 $
 
 =head1 DATE
 
-$Date: 2003-06-05 16:26:43 $
+$Date: 2003-09-29 17:00:39 $
 
 =head1 DESCRIPTION
 
@@ -205,14 +205,14 @@ After you have decided how much memory to allocate, there are a couple of
 settings to make. First is the shared memory setting, which in PostgreSQL can
 be set via the C<shared_buffers> setting in the F<postgresql.conf> file in
 your PostgreSQL data directory. This setting controls the number of shared
-buffers that the database server. Each buffer is 8Kb. It's important to
-remember that this is only a holding area, and I<not> the total memory
+buffers that the database server can use. Each buffer is 8Kb. It's important
+to remember that this is only a holding area, and I<not> the total memory
 available to the server. As such, resist the urge to set this number to a
 large portion of your RAM, as doing so will actually degrade performance on
 many OSs. Members of the pgsql-performance mailing list have found useful
 values in the range of 1000-6000, depending on available RAM, database size,
-and number of concurrent queries. No one has yet reported positive results
-for any number over 6000.
+and number of concurrent queries. No one has yet reported positive results for
+any number over 6000.
 
 It's important that your shared memory settings not exceed the actual amount
 of physical RAM minus the amount of memory the kernel needs, since this would
