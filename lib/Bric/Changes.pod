@@ -67,6 +67,18 @@ folks to have a good backup before upgrading, in case the upgrade fails.
 
 =back
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+A field that is both required and repeatable now allows instances of the field
+after the first instance to be deleted. Setting a field to required
+essentially means that one must always be present in the UI. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
