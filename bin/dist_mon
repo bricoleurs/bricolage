@@ -8,6 +8,7 @@ BEGIN {
 };
 
 use Bric::Dist::Client;
+use Bric::Util::Trans::FS;
 use Bric::App::Auth;
 use Getopt::Std;
 use Unix::Syslog qw(:subs :macros);
@@ -25,10 +26,10 @@ our ($opt_i, $opt_U, $opt_h, $opt_d, $opt_c, $opt_f, $opt_v, $opt_u, $opt_p,
 getopts('i:u:p:hdcvf:U:P:a:');
 
 # Get the version number.
-our $VERSION = substr(q$Revision: 1.1.1.1.2.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.3 $, 10, -1);
 
 # Get the program name.
-my $prog = substr $0, rindex($0, '/') + 1;
+my $prog = Bric::Util::Trans::FS->base_name($0);
 
 # Print a usage statement, if necessary.
 usage() if $opt_h;
@@ -43,7 +44,7 @@ $opt_U ||= URL;
 ################################################################################
 {
     # This Section is for the creation of a fake Apache object that can be
-    # used by Bric::BL::Auth.
+    # used by Bric::App::Auth.
     package FakeConn;
     unless ($opt_a) {
 	require Sys::Hostname;
@@ -104,7 +105,7 @@ sub send_jobs {
     eval {
 	# Create the authentication cookie.
 	my $r = Apache::FakeRequest->new(connection => FakeConn->new);
-	my $cookie = Bric::BL::Auth::login($r, $opt_u, $opt_p);
+	my $cookie = Bric::App::Auth::login($r, $opt_u, $opt_p);
 
 	# Create a client and load the Job IDs.
 	my $client = Bric::Dist::Client->new({ url => $opt_U,
