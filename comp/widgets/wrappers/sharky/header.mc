@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.1 $
+$Revision: 1.2.2.2 $
 
 =head1 DATE
 
-$Date: 2001-10-01 13:52:36 $
+$Date: 2001-10-02 13:27:54 $
 
 =head1 SYNOPSIS
 
@@ -104,12 +104,12 @@ function init() {
 </script>
 
 <script language="JavaScript">
-if (window.toolbar.visible == true) {
+//if (window.toolbar.visible == true) {
     // Turn off the toolbar, back button, etc.
-    var win1 = window.open("<% $uri %>", "Bricolage", toolbar="no",
-                           width=document.width, height=document.height);
-    self.close();
-}
+//    var win1 = window.open("<% $uri %>", "Bricolage", toolbar="no",
+//                           width=document.width, height=document.height);
+//    self.close();
+//}
 </script>
 <meta http-equiv="expires" content="Wed, 20 Feb 2000 08:30:00 GMT">
 </head>
@@ -260,7 +260,12 @@ while (my $txt = next_msg) {
 <%doc>
 
 $Log: header.mc,v $
-Revision 1.2.2.1  2001-10-01 13:52:36  wheeler
+Revision 1.2.2.2  2001-10-02 13:27:54  wheeler
+Disabled JavaScript that hides browser stuff because it wasn't working with
+Netscape and was removing too many elements of the browser (though this latter
+issue can easily be corrected).
+
+Revision 1.2.2.1  2001/10/01 13:52:36  wheeler
 Added JavaScript to get rid of menus, buttons, etc.
 
 Revision 1.2  2001/09/25 12:52:33  wheeler
