@@ -69,7 +69,8 @@ Options:
 
   --verbose              - print a running description to STDERR.  Add
                            a second --verbose and you'll get debugging
-                           output too.
+                           output too.  Add a third and you'll see a full 
+                           XML trace.
 
   --to-preview           - use to_preview option for workflow publish
 
@@ -159,9 +160,6 @@ L<Bric::SOAP>
 
 use Getopt::Long;
 use Pod::Usage;
-use SOAP::Lite ($ENV{DEBUG} ? (trace => [qw(debug)]) : ());
-import SOAP::Data 'name';
-use HTTP::Cookies;
 
 our $module;
 our $command;
@@ -176,24 +174,31 @@ our $verbose                = 0;
 our $desk;
 our $workflow;
 our ($help, $man);
-GetOptions("help"                   => \$help,
-	   "man"                    => \$man,
-	   "verbose+"               => \$verbose,
-	   "username=s"             => \$username,
-	   "password=s"             => \$password,
-	   "server=s"               => \$server,
-	   "search=s"               => \%search,
-	   "with-related-stories"   => \$with_related_stories,
-	   "with-related-media"     => \$with_related_media,
-	   "all"                    => sub { $with_related_stories = 1;
-					     $with_related_media   = 1; },
-	   "to-preview"             => \$to_preview,
-	   "desk=s"                 => \$desk,
-	   "workflow=s"             => \$workflow,
-	  ) or  pod2usage(2);
+BEGIN {
+    GetOptions("help"                   => \$help,
+	       "man"                    => \$man,
+	       "verbose+"               => \$verbose,
+	       "username=s"             => \$username,
+	       "password=s"             => \$password,
+	       "server=s"               => \$server,
+	       "search=s"               => \%search,
+	       "with-related-stories"   => \$with_related_stories,
+	       "with-related-media"     => \$with_related_media,
+	       "all"                    => sub { $with_related_stories = 1;
+						 $with_related_media   = 1; },
+	       "to-preview"             => \$to_preview,
+	       "desk=s"                 => \$desk,
+	       "workflow=s"             => \$workflow,
+	      ) or  pod2usage(2);
+    
+    pod2usage(1)             if $help;
+    pod2usage(-verbose => 2) if $man;
+    $verbose ||= 0;
+}
 
-pod2usage(1)             if $help;
-pod2usage(-verbose => 2) if $man;
+use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ());
+import SOAP::Data 'name';
+use HTTP::Cookies;
 
 # jump table for module commands
 our %jump = (
@@ -267,7 +272,7 @@ foreach my $opt (qw(username password server)) {
 # setup soap object to login with
 my $soap = new SOAP::Lite
     uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
-    readable => $ENV{DEBUG} || 0;
+    readable => $verbose > 2 || 0;
 $server = "http://$server" unless $server =~ m!^http://!;
 $soap->proxy($server . '/soap',
 	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
