@@ -3,11 +3,13 @@ use strict;
 use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
-use Bric::Util::CharTrans;
 use File::Spec::Functions qw(catfile);
 use File::Basename;
 use Storable qw(dclone);
 use Bric::Config qw(:char);
+use constant HAVE_ENCODE => eval { require Encode };
+require Bric::Util::CharTrans if HAVE_ENCODE;
+
 
 # Borrowed these files from the Encode test suite, but renamed them and
 # truncated each of them to 100 lines. I figure if we demonstrate that
@@ -28,6 +30,7 @@ my %test_files =
 ##############################################################################
 sub test_strings : Test(1612) {
     my $self = shift;
+    return "Encode not installed" unless HAVE_ENCODE;
 
     # Failing constructors.
     eval { Bric::Util::CharTrans->new };
@@ -63,6 +66,8 @@ sub test_strings : Test(1612) {
 ##############################################################################
 sub test_structs : Test(24) {
     my $self = shift;
+    return "Encode not installed" unless HAVE_ENCODE;
+
     while (my ($charset, $files) = each %test_files) {
         ok( my $ct = Bric::Util::CharTrans->new($charset),
             "Create new CT for '$charset' charset" );
