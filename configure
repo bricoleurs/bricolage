@@ -1683,6 +1683,7 @@ fi
   # guaranties that perl is a working perl executable.
   #
     PERL_VERSION=`${PERL} -v | grep 'This is perl' | sed -e 's;.* v\([0-9\.][0-9\.]*\).*;\1;'`
+#    PERL_VERSION=`${PERL} -e 'printf "%vd", $^V'`
     if test -z "$PERL_VERSION" ; then
       { { echo "$as_me:1687: error: \"could not determine perl version number\"" >&5
 echo "$as_me: error: \"could not determine perl version number\"" >&2;}
