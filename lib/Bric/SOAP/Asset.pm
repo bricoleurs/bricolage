@@ -28,6 +28,22 @@ our @ISA = qw(SOAP::Server::Parameters);
 use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
+=head1 NAME
+
+Bric::SOAP::Category - SOAP interface to Bricolage categories.
+
+=head1 VERSION
+
+$Revision: 1.7 $
+
+=cut
+
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
+
+=head1 DATE
+
+$Date: 2004-03-12 21:14:19 $
+
 =over 4
 
 =item list_ids
