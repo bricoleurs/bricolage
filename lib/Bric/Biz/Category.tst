@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.7 $
+-- VERSION: $Revision: 1.8 $
 --
 -- Test values.
 --
@@ -80,7 +80,7 @@ VALUES (53, 4, 53);
 
 -- Asset groups.
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES (53, NULL, 43, 'Category Assets', 'Science', 1, 0);
+VALUES (53, NULL, 43, 'Category Assets', '/science', 1, 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (853, 35, 6, 1);
@@ -89,7 +89,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES (253, 53, 853);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES (54, NULL, 43, 'Category Assets', 'Material', 1, 0);
+VALUES (54, NULL, 43, 'Category Assets', '/science/material', 1, 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (854, 35, 6, 1);
@@ -98,7 +98,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES (254, 54, 854);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES (55, NULL, 43, 'Category Assets', 'Physical', 1, 0);
+VALUES (55, NULL, 43, 'Category Assets', '/science/physical', 1, 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (855, 35, 6, 1);
@@ -107,7 +107,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES (255, 55, 855);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES (56, NULL, 43, 'Category Assets', 'Biological', 1, 0);
+VALUES (56, NULL, 43, 'Category Assets', '/science/biological', 1, 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (856, 35, 6, 1);
