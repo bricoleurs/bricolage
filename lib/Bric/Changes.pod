@@ -207,6 +207,10 @@ Pedro]
 Switched POD testing from Pod::Checker to Test::Pod (using Pod::Simple). Fixed
 the POD errors it found, too. [David]
 
+=item *
+
+Test suite now runs all tests with warnings enabled. [David]
+
 =back
 
 =head2 Bug Fixes

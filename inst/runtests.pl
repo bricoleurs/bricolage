@@ -6,11 +6,11 @@ runtests.pl - Runs Bricolage's Tests
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-01-13 06:34:21 $
+$Date: 2003-03-04 21:02:14 $
 
 =head1 SYNOPSIS
 
@@ -99,6 +99,9 @@ if ($opts{V}) {
     # variable is set.
     $verbose = 1 if $ENV{TEST_VERBOSE};
 }
+
+# Make sure that all tests are run with warnings enabled.
+$ENV{HARNESS_PERL_SWITCHES} = '-w';
 
 # Run the tests!
 runtests(File::Spec->catfile(qw(t Bric Test Runner.pm)));

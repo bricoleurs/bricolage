@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:22:04 $
+$Date: 2003-03-04 21:02:21 $
 
 =head1 SYNOPSIS
 
@@ -2553,7 +2553,6 @@ $get_em = sub {
     my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :
       (\$sel_cols, 'a.name, a.usr__id, a.event_type__id');
 
-    my $qry_cols = $ids ? \'a.id' : \$sel_cols;
     my $sel = prepare_c(qq{
         SELECT $$qry_cols
         FROM   $tables

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:24 $
+$Date: 2003-03-04 21:02:18 $
 
 =head1 SYNOPSIS
 
@@ -2092,16 +2092,17 @@ sub _construct_uri {
     # iterate over tokens pushing each onto @path
     foreach my $token( @tokens ) {
         next unless $token;
-        if( $uri_format_hash{$token}  ne '' ) {
+        if ($uri_format_hash{$token}  ne '') {
             # Add the cover date value.
             push @path, $self->get_cover_date( $uri_format_hash{ $token } );
         } else {
-            if( $token eq 'categories' ) {
+            if ($token eq 'categories') {
                 # Add Category
                 push @path, $cat_obj->ancestry_path if $cat_obj;
-            } elsif( $token eq 'slug' ) {
+            } elsif ($token eq 'slug' and $self->key_name eq 'story') {
                 # Add the slug.
-                push @path, $self->get_slug if $self->key_name eq 'story';
+                my $slug = $self->get_slug or next;
+                push @path, $slug;
             }
         }
     }

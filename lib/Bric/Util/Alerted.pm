@@ -6,16 +6,16 @@ Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-03-04 21:02:24 $
 
 =head1 SYNOPSIS
 
@@ -1181,7 +1181,7 @@ $get_em = sub {
     my (@d, @a, @alerteds, $msent);
     bind_columns($sel, \@d[0..$#cols], \@a[0..$#by_cols]);
     my $last = -1;
-    my $pkg = ref $pkg || $pkg;
+    $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
         if ($d[0] != $last) {
             $last = $d[0];
