@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.35.2.6 $
+$Revision: 1.35.2.7 $
 
 =head1 DATE
 
-$Date: 2003-11-10 13:50:09 $
+$Date: 2003-11-30 00:32:32 $
 
 =head1 SYNOPSIS
 
@@ -37,8 +37,9 @@ $title = $lang->maketext($title);
 
 my @context =  split /\|/, $context;
 for (@context){
-    s/^\s|\s$//g;
-    if (/^(\"??)(.+?)(\"??)$/) {
+    s/^\s+//g;
+    s/\s+$//g;
+    if (/^(\"?)(.+?)(\"?)$/) {
         my $startquote = $1;
         my $endquote = $3;
         my $text = $2;
