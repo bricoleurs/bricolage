@@ -63,7 +63,7 @@ if (defined $id) {
         # Get potential members.
         foreach my $obj ( $memb_pkg->list ) {
             push @$left, { value =>  $obj->get_id,
-                   description => $obj->get_source_name };
+                           description => $obj->get_source_name };
         }
     } elsif ($class_name eq 'Bric::Util::Grp::CategorySet') {
             # Get existing members.
@@ -256,11 +256,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2003-12-03 06:54:40 $
+$Date: 2003-12-06 00:01:48 $
 
 =head1 DESCRIPTION
 
