@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 00:24:32 $
+$Date: 2002-08-30 01:43:48 $
 
 =head1 SYNOPSIS
 
@@ -117,13 +117,8 @@ $Bric::Util::DBI::dbh = DBI->connect(join(':', 'DBI', DBD_TYPE,
 
 # Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
 # filter them out.
-open STDERR, "| perl -e 'while (<>) { print unless /^NOTICE:  / }'"
+open STDERR, "| perl -ne 'print unless /^NOTICE:  /'"
   or die "Cannot pipe STDERR: $!\n";
-
-# This would also work, but we *know* that we have already Perl to work with.
-#open STDERR, "| grep -v '^NOTICE:  '"
-#  or die "Cannot pipe STDERR to grep\n";
-
 
 =head1 EXPORTED FUNCTIONS
 

@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-08-30 00:24:32 $
+$Date: 2002-08-30 01:43:47 $
 
 =head1 DESCRIPTION
 
@@ -49,12 +49,8 @@ die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
 
 # Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
 # filter them out.
-open STDERR, "| perl -e 'while (<>) { print unless /^NOTICE:  / }'"
+open STDERR, "| perl -ne 'print unless /^NOTICE:  /'"
   or die "Cannot pipe STDERR: $!\n";
-
-# This would also work, but we *know* that we have already Perl to work with.
-#open STDERR, "| grep -v '^NOTICE:  '"
-#  or die "Cannot pipe STDERR to grep\n";
 
 # setup database and user while connected to dummy template1
 my $dbh = db_connect('template1');
