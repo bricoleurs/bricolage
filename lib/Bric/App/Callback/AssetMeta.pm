@@ -14,13 +14,13 @@ my %types = (
     'Bric::Biz::Asset::Business::Story' => ['story_prof', 'story'],
     'Bric::Biz::Asset::Business::Media' => ['media_prof', 'media'],
 );
+my $key = CLASS_KEY . '|note';
 
 sub add_note : Callback {
     my $self = shift;
     my $param = $self->request_args;
 
     my $obj = get_state_data(CLASS_KEY, 'obj');
-    my $key = CLASS_KEY . '|note';
     my $note = $param->{$key};
     $obj->add_note($note);
     add_msg('Note saved.');
