@@ -94,7 +94,8 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
         my $oc_sub = sub {
             my $ocid = $_[0]->get_id;
             if ($_[1] eq 'enabled') {
-                return 'Yes' if $comp->get_primary_oc_id($_[0]->get_site_id);
+                return 'Yes'
+                  if $comp->get_primary_oc_id($_[0]->get_site_id) == $ocid;
                 $m->scomp('/widgets/profile/checkbox.mc',
                           name => 'enabled',
                           value => $ocid,
@@ -300,11 +301,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =head1 DATE
 
-$Date: 2003-08-04 04:15:31 $
+$Date: 2003-08-04 04:22:31 $
 
 =head1 DESCRIPTION
 
