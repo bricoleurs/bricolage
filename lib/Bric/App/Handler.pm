@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.36.2.9 $
+$Revision: 1.36.2.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.36.2.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.36.2.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-16 10:14:47 $
+$Date: 2003-06-16 14:15:48 $
 
 =head1 SYNOPSIS
 
@@ -54,6 +54,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::App::ApacheHandler;
+use Bric::App::ApacheHandler::CharTrans;
 use Bric::Config qw(:mason :char :sys_user :err);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
@@ -176,19 +177,18 @@ my %interp_args =
 
 my $interp = HTML::Mason::Interp->new(%interp_args);
 my $ah;
-
 if (CHAR_SET eq 'UTF-8') {
     $ah = Bric::App::ApacheHandler->new(%interp_args,
                                         decline_dirs => 0,
-                                        args_method  => MASON_ARGS_METHOD
-                                    );
+                                        args_method => MASON_ARGS_METHOD);
 } else {
+    require Bric::Util::CharTrans;
     $ct = Bric::Util::CharTrans->new(CHAR_SET);
+
     $ah = Bric::App::ApacheHandler->new(%interp_args,
                                         decline_dirs => 0,
-                                        out_method   => \&filter,
-                                        args_method  => MASON_ARGS_METHOD
-                                    );
+                                        args_method => MASON_ARGS_METHOD,
+                                        out_method => \&filter);
 }
 
 # Reset ownership of all files created by Mason at startup.
