@@ -494,14 +494,20 @@ my $related_summary = sub {
   $m->out('<table border=0 cellpadding=0 cellspacing=0 width=578>');
 
   if ($rel) {
-      # The summary info 
+      my $thumb = '';
+      if (USE_THUMBNAILS) {
+          if ($thumb =  $rel->thumbnail_uri) {
+              $thumb = qq{<img src="$thumb" />&nbsp;};
+          }
+      }
+      # The summary info
       $m->out('<tr><td>');
       $m->comp('/widgets/summary/summary.mc',
                 asset  => $rel,
                 type   => $type,
                 header => 'Currently Related '.ucfirst($type),
                 frame  => 0,
-            button => $button );
+            button => $thumb . $button );
       $m->out('</td></tr>');
   } else {
       $m->out('<tr><td width=518>');

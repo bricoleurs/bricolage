@@ -209,6 +209,10 @@ pixels, but are left alone. [David]
 Thumbnails are now displayed when searching media to related to an element.
 [David]
 
+=item *
+
+Thumbnails are now displayed in related media subelements. [David]
+
 =back
 
 =head2 Bug Fixes
