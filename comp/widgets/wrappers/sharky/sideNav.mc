@@ -104,8 +104,6 @@ unless ($workflows) {
 % if (!DISABLE_NAV_LAYER && ($agent->user_agent !~ /(linux|freebsd|sunos)/ || $agent->gecko)) {
 <html>
 <head>
-  <meta http-equiv="Expires" content="Mon, 06, Jan 1990 00:00:01 GMT">
-  <meta http-equiv="Content-Type" content="text/html; charset=<% Bric::Config::CHAR_SET %>" />
   <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
 
@@ -456,10 +454,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:11:00 $
+$Date: 2003-08-18 23:05:29 $
 
 </%doc>
