@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32.4.10 $
+$Revision: 1.32.4.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32.4.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.4.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 22:39:25 $
+$Date: 2003-09-26 11:15:55 $
 
 =head1 SYNOPSIS
 
@@ -830,7 +830,7 @@ sub publish {
         if (my @stale = Bric::Dist::Resource->list
             ({ "$key\_id" => $baid,
                not_job_id => $job->get_id,
-               path       => "$base_path%" }))
+               path       => "$base_path/%" }))
         {
             # Yep, there are old resources to expire.
             my $stale_name = "Expire stale &quot;" . $ba->get_name .
