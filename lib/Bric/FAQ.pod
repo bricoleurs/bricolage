@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2004-02-16 08:44:13 $
+$Date: 2004-03-12 21:24:17 $
 
 =head1 DESCRIPTION
 
@@ -459,6 +459,14 @@ non-ASCII characters. Also, PostgreSQL database for Bricolage must be
 using UNICODE encoding. Please see L<Bric::Admin|Bric::Admin> for further
 information on recommended setup for letting Bricolage correctly handle
 non-ASCII content.
+
+=head3 Accented and other non-ASCII characters look right in Bricolage's internal preview, but not on my own preview server or my production server. What gives?
+
+You need to make sure that your non-Bricolage server or virtual host knows
+that it's server Unicode characters. If you're running an Apache server, just
+add this to your F<httpd.conf> and restart:
+
+  AddDefaultCharset utf-8
 
 =head2 Element Administration
 
