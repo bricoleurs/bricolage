@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:23 $
+$Date: 2002-05-03 17:50:10 $
 
 =head1 SYNOPSIS
 
@@ -399,7 +399,15 @@ sub handle_callbacks {
 
 	    # Delay execution of regular callbacks.
 	    if ($ext eq '_cb') {
-		$param->{$key} = $param->{$field} unless $key eq $field;
+		if ($key ne $field) {
+		    # Some browsers (notably Mozilla) will submit $key as
+		    # well as $key.x and $key.y. So skip it if that's true
+		    # here.
+		    next if exists $param->{$key};
+		    # Otherwise, add the unadorned key to $param.
+		    $param->{$key} = $param->{$field}
+		}
+
 		# Skip callbacks that aren't given a value.
 		next if $param->{$key} eq '';
 

@@ -92,6 +92,14 @@ destinations. Thanks to Mark for the heads-up. [David]
 Fixed bug where attribute metadata wasn't getting deleted when it was
 supposed to. [Joao Pedro Goncalves]
 
+=item *
+
+Fixed bug where some browsers submit an image button with a value stored in
+the image button's name as well as in the name with ".x" and ".y" appended
+to it. This caused callbacks to be triggered twice for a single field! I
+noticed with with Mozilla on Mac OS X, and presume it would happen
+elsewhere, too. [David]
+
 =back
 
 =head2 New Features
