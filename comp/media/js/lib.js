@@ -1,7 +1,3 @@
-// set up global to track names of double list managers
- var doubleLists = new Array();
-var formObj = '';
-
 function validateStory(obj) {
 
     if (hasSpecialCharacters(obj["slug"].value)) {
