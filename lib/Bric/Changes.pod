@@ -96,6 +96,14 @@ Otherwise, PostgreSQL will throw an exception. Hopefully, this will put a stop
 to the mysterious but very rare disappearence of stories from Bricolage.
 [David]
 
+=item *
+
+The distribution monitor, F<bric_dist_mon>, no longer populates HTTP headers
+with lists of Job IDs for execution. Instead, it simply sends a request to the
+distribution handler, and Bric::Dist::Handler looks up the jobs to execute
+itself. This fixes an issue with too many headers being put into the request,
+and makes the operation of Bric::Dist::Handler more efficient. [David]
+
 =back
 
 =head2 Bug Fixes
