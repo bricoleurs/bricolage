@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.126 $
+$Revision: 1.127 $
 
 =head1 DATE
 
-$Date: 2003-11-18 20:55:06 $
+$Date: 2004-02-08 02:22:14 $
 
 =head1 DESCRIPTION
 
@@ -129,12 +129,6 @@ will be preserved as pasted (e.g., when pasting in poetry). When it's not
 checked, the lines will be unwrapped into a single line (as happens now), so
 that they wrap inside the textarea box nicely. It will be unchecked by default
 to keep the interface basically the same as it is now.
-
-=item *
-
-Bric::Util::FTP::DirHandle has code to specifically recoginze templates ending
-in F<.mc>, F<.tmpl>, and F<.pl>. This needs to be made more flexible, so that
-it recognizes any other burners tha may be added to the system.
 
 =item *
 

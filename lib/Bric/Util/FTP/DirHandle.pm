@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-08 01:56:34 $
+$Date: 2004-02-08 02:22:15 $
 
 =head1 DESCRIPTION
 
@@ -149,7 +149,8 @@ sub get {
 
   # Search for a site if we don't have one.
   if ($site_id == -1) {
-      my ($id) = Bric::Biz::Site->list_ids({ name => $filename });
+      my ($id) = Bric::Biz::Site->list_ids({ name => $filename,
+                                             active => 1 });
       return Bric::Util::FTP::DirHandle->new($self->{ftps},
                                              "/" . $filename . "/",
                                              $id,
@@ -162,7 +163,8 @@ sub get {
   # search for an output channel if we don't have one
   if ($oc_id == -1) {
       my ($id) = Bric::Biz::OutputChannel->list_ids({ name => $filename,
-                                                      site_id => $site_id});
+                                                      site_id => $site_id,
+                                                      active => 1});
       if ($id) {
           # Find the root category.
           my ($cid) = Bric::Biz::Category->list_ids({ site_id => $site_id,
@@ -178,11 +180,7 @@ sub get {
   }
 
   # search for a subcategories
-  ##########################################################################
-  # HACK! _get_cats() does a direct query of the database! Naughty, naughty!
-  # There is currently no way to check permissions on categories now.
-  ##########################################################################
-  my $cats = _get_cats();
+  my $cats = $self->_get_cats;
   foreach my $child_id (@{$cats->{children}{$category_id}}) {
     if ($cats->{$child_id}{directory} eq $filename) {
       return Bric::Util::FTP::DirHandle->new($self->{ftps},
@@ -343,7 +341,7 @@ sub list {
   my $site_id     = $self->{site_id};
   my $oc_id       = $self->{oc_id};
   my $category_id = $self->{category_id};
-  my $cats        = _get_cats();
+  my $cats        = $self->_get_cats();
   my $ftps        = $self->{ftps};
 
   print STDERR __PACKAGE__, "::list() : ", $wildcard || "", "\n" if FTP_DEBUG;
@@ -359,13 +357,10 @@ sub list {
   # If no site, just search sites.
   if ($site_id == -1) {
       # get output channels
-      my @sites  = Bric::Biz::Site->list({name => ($like || '%')});
+      my @sites  = Bric::Biz::Site->list({name => ($like || '%'),
+                                          active => 1});
       foreach my $site (@sites) {
-          ##############################################################
-          # XXX Should probably exclude certain sites here according
-          # to permissions -- same with comp/tmpl_prof/edit_new.html!
-          # next unless $self->{ftps}{user_obj}->can_do($site, READ);
-          ##############################################################
+          next unless $self->{ftps}{user_obj}->can_do($site, READ);
           my $dirh = Bric::Util::FTP::DirHandle->new($self->{ftps},
                                                      "/" . $site->get_name . "/",
                                                      $site->get_id,
@@ -382,16 +377,15 @@ sub list {
   if ($oc_id == -1) {
       # get output channels
       my @ocs  = Bric::Biz::OutputChannel->list({name => ($like || '%'),
-                                                 site_id => $site_id});
+                                                 site_id => $site_id,
+                                                 active => 1});
       foreach my $oc (@ocs) {
+          next unless $self->{ftps}{user_obj}->can_do($oc, READ);
+
           # Find its root category ID.
           my ($cid) = Bric::Biz::Category->list_ids({ site_id => $site_id,
                                                       uri     => '/' });
-          ##############################################################
-          # XXX Should probably exclude certain output channels here according
-          # to permissions -- same with comp/tmpl_prof/edit_new.html!
-          # next unless $self->{ftps}{user_obj}->can_do($oc, READ);
-          ##############################################################
+
           my $dirh = Bric::Util::FTP::DirHandle->new($self->{ftps},
                                                      "/" . $oc->get_name . "/",
                                                      $site_id,
@@ -476,7 +470,7 @@ the object.  See the status() method below for details.
 
 =cut
 
-sub list_status { 
+sub list_status {
   my $self = shift;
   my $wildcard = shift;
 
@@ -499,7 +493,7 @@ sub parent {
   my $self = shift;
   my $site_id = $self->{site_id};
   my $category_id = $self->{category_id};
-  my $cats = _get_cats();
+  my $cats = $self->_get_cats;
 
   print STDERR __PACKAGE__, "::parent() : ", $category_id, "\n" if FTP_DEBUG;
 
@@ -629,33 +623,24 @@ called.
 
 # returns a data structure for categories - caches in a global
 # variable.
-##############################################################################
-# HACK! _get_cats() does a direct query of the database! Naughty, naughty!
-# There is currently no way to check permissions on categories. This needs
-# fixing, of course.
-##############################################################################
 sub _get_cats {
   our $CATS;
   return $CATS if $CATS;
+  my $self = shift;
 
-  my ($category_id, $directory, $parent_id);
-  my $sth = prepare_c('SELECT id, directory, parent_id FROM Category', undef);
-  $sth->execute();
-  $sth->bind_columns(\$category_id, \$directory, \$parent_id);
-
-  while($sth->fetch()) {
-    # store data under category_id
-    $CATS->{$category_id}{directory} = $directory;
-    $CATS->{$category_id}{parent_id} = $parent_id;
-
-    # build reverse mapping children->parents
-    if (defined $parent_id) {
-      if (exists $CATS->{children}{$parent_id}) {
-        push(@{$CATS->{children}{$parent_id}}, $category_id);
-      } else {
-        $CATS->{children}{$parent_id} = [ $category_id ];
+  for my $cat (Bric::Biz::Category->list) {
+      next unless $self->{ftps}{user_obj}->can_do($cat, READ);
+      my $parent_id = $cat->get_parent_id;
+      my $cid = $cat->get_id;
+      $CATS->{$cid}{directory} = $cat->get_directory;
+      $CATS->{$cid}{parent_id} = $parent_id;
+      if (defined $parent_id) {
+          if (exists $CATS->{children}{$parent_id}) {
+              push(@{$CATS->{children}{$parent_id}}, $cid);
+          } else {
+              $CATS->{children}{$parent_id} = [ $cid ];
+          }
       }
-    }
   }
 
   return $CATS;

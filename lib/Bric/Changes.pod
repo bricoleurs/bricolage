@@ -278,6 +278,11 @@ of 1.7.0. Now when you log in to the FTP server, the root directory will
 contain a list of sites. When you change directories into one of the site
 directories, you'll see a list of the output channels in that site. [David]
 
+=item *
+
+The virtual FTP server no longer displays output channels or categories (or
+sites) that the user does not have at least READ permission to access. [David]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
