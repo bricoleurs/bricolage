@@ -4,7 +4,7 @@
    context => "Admin | Profile | $disp | $crumb"
  &>
 
-<form method="post" action="<% $r->uri %>" name="user_profile" onSubmit="if ( checkLogin(this.login, <% LOGIN_LENGTH %>, this.pass_1, this.pass_2, <% PASSWD_LENGTH %>) ){ return confirmChanges(this)} else { return false}">
+<form method="post" action="<% $r->uri %>" name="user_profile" onSubmit="if ( checkLogin(this.login, <% LOGIN_LENGTH %>, this.pass_1, this.pass_2, <% PASSWD_LENGTH %>) ){ return confirmChanges(this)} else { return false}" autocomplete="off">
 
 <%perl>;
 $m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Name",
@@ -179,11 +179,11 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2004-03-16 22:12:25 $
+$Date: 2004-04-07 23:51:36 $
 
 =head1 DESCRIPTION
 
