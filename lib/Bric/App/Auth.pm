@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-18 23:43:19 $
+$Date: 2002-09-03 19:53:54 $
 
 =head1 SYNOPSIS
 
@@ -76,6 +76,7 @@ my ($make_cookie, $make_hash, $fail);
 ################################################################################
 # Constants
 ################################################################################
+use constant LOGIN_MARKER_REGEX => qr/${ \LOGIN_MARKER() }/;
 
 ################################################################################
 # Fields
@@ -194,16 +195,17 @@ sub login {
     # Authentication succeeded. Set up session data and the authentication
     # cookie.
     set_user($r, $u);
-    &$make_cookie($r, $un, time);
+    my $cookie = &$make_cookie($r, $un, time);
     # Work around to redirect cookies to second server
-    my $lm = LOGIN_MARKER;
-    return 1 if ($_ = $r->args) =~ /$lm/;
+    my $args = $r->args;
+    return $cookie if defined $args and $args =~ LOGIN_MARKER_REGEX;
     # The presumption is made that any redirect passed to login will properly
     # terminate a trailing directory with '/', otherwise all bets are off!
     my $redirect = del_redirect() || '/'; # root if no redirect
     $redirect .= ($redirect =~ /\?/) ? '&' : '?';
     #       : ($redirect =~ m|/$|) ? '?' : '/?';
-    set_redirect($redirect . $lm .'='. $lm); # return true
+    set_redirect($redirect . LOGIN_MARKER . '=' . LOGIN_MARKER);
+    return $cookie;
 }
 
 sub masquerade {

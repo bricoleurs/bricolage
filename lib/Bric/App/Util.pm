@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-18 23:43:19 $
+$Date: 2002-09-03 19:53:54 $
 
 =head1 SYNOPSIS
 
@@ -469,7 +469,7 @@ sub get_redirect { $HTML::Mason::Commands::session{_redirect} }
 sub del_redirect {
     my $rv = delete $HTML::Mason::Commands::session{_redirect};
     # Behave normally if not login
-    return $rv unless $rv =~ /$login_marker/o;
+    return $rv unless defined $rv and $rv =~ /$login_marker/o;
 
     # Work-around to allow multi port http / https operation by propagating
     # cookies to 2nd server build hash of cookies from blessed reference into
