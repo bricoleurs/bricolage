@@ -58,6 +58,11 @@ Setting a story's cover date to a date that causes one of its URIs to conflict
 with an existing story's URIs no longer causes an error. Thanks to Sam for the
 spot! [David]
 
+=item *
+
+Display of the source was missing from the View screen for stories and media, but
+no longer. [David]
+
 =back
 
 =head1 VERSION 1.4.4
