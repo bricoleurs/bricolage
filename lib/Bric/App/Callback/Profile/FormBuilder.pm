@@ -269,6 +269,7 @@ $do_element = sub {
         my $site_id = $self->value;
         # Only add the site if it has associated output channels.
         if (my @objs = Bric::Biz::OutputChannel->list({ site_id => $site_id })) {
+            # XXX ^ How else to force array context??
             $obj->add_site($site_id);
         } else {
             add_msg 'Site "[_1]" cannot be associated because it has no ' .
