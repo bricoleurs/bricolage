@@ -203,7 +203,8 @@ cycles will be wasted performing this unnecessarily."
 
 This has the effect of keeping your database highly optimized at all times.
 Read the rest of the C<pg_autovacuum> F<README> for installation and
-configuration instructions.
+configuration instructions. When you start it up, we recommend using these
+options: C<-D -v 300 -V 0.5> for optimal vacuum maintenance.
 
 =head1 TUNING
 
