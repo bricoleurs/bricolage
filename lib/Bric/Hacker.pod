@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =head1 DATE
 
-$Date: 2002-09-11 02:52:59 $
+$Date: 2002-09-13 19:54:13 $
 
 =head1 DESCRIPTION
 
@@ -345,6 +345,7 @@ most likely in the F<inst/upgrade> directory, where new directories are added
 for upgrade scripts. If a directory is in the branch but not in the trunk,
 simply create it and add it.
 
+  mkdir inst/upgrade/1.4.1
   cvs -z3 -q add inst/upgrade/1.4.1
 
 =item 3
