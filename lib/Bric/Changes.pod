@@ -62,6 +62,10 @@ Added single underscore parameters to the C<list()> methods of the Story,
 Media, and Template classes to complement those that have the awful double
 underscores. [David]
 
+=item *
+
+Made SOAP modules more tolerant of lack of sites in 1.6. [Scott]
+
 =back
 
 =head2 Bug Fixes
