@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2003-09-10 18:39:07 $
+$Date: 2003-10-02 20:17:38 $
 
 =head1 DESCRIPTION
 
@@ -25,19 +25,20 @@ Bricolage might have.
 
 =head3 Does Bricolage support databases other than PostgreSQL?
 
-Currently only PostgreSQL support is maintained. There is
-an Oracle driver, but it's old and not known to work. David
-says there is also a MySQL driver somewhere, though I don't
-see it in the sources.
-
-Many people have asked whether Bricolage will support
-MySQL. The problem used to be that MySQL didn't support
-transactions; now it can, but there is no support in
-Bricolage for it yet. Patches are welcome.
+Currently only PostgreSQL support is maintained. There is an Oracle driver,
+but it's old and not known to work. A port to MySQL 4.1 xis reportedly
+underway.
 
 =head3 How well does Bricolage perform?
 
-I dunno. [compare to mod_perl, CGI, static, other CMSs ... ?]
+As far as we know, no one has performed any benchmarks comparing Bricolage to
+other content management systems. But the performance of Bricolage is
+irrelevant to a public facing site. As a back office content management and
+publishing system, Bricolage does not host web sites or serve content. Rather,
+when documents are published in Bricolage, they are pushed through templates
+and the resulting files are distributed to your Web server. So if youre
+Bricolage templates output static HTML, your public Web server should serve
+your content very fast indeed.
 
 =head3 How does Bricolage compare to other content management systems?
 
@@ -61,7 +62,7 @@ World Health Organization - L<http://www.who.int/>
 
 =item *
 
-DFA - L<http://dfafunds.com/>
+Dimensional Fund Advisors - L<http://dfafunds.com/>
 
 =item *
 
@@ -73,18 +74,15 @@ MacCentral - L<http://www.maccentral.com/>
 
 =item *
 
+Kineticode - L<http://www.kineticode.com/>
+
+=item *
+
 Ad Council - L<http://www.adcouncil.org/>
 
 =item *
 
 Open Forum Europe - L<http://www.openforumeurope.org/>
-
-=head3 Are there any commercial support offerings for Bricolage?
-
-Yes. Kineticode, founded by Bricolage maintainer and lead developer David
-Wheeler, offers a range of technical support and templating support options,
-as well as Bricolage consulting services. Learn more at
-L<http://kineticode.com/services/>.
 
 =back
 
@@ -93,7 +91,7 @@ L<http://kineticode.com/services/>.
 Yes. Kineticode, founded by Bricolage maintainer and lead developer David
 Wheeler, offers a range of technical support and templating support options,
 as well as Bricolage consulting services. Learn more at
-L<http://kineticode.com/services/>.
+L<http://www.kineticode.com/services/>.
 
 =head2 Installation
 
