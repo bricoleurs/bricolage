@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:03 $
+$Date: 2003-02-02 19:00:32 $
 
 
 =head1 SYNOPSIS
@@ -373,7 +373,7 @@ sub lookup {
     my $self = $class->cache_lookup($param);
     return $self if $self;
 
-    my $self = bless {}, $class;
+    $self = bless {}, $class;
     return unless $param->{'id'};
     $self->SUPER::new();
     $self->_select_data($param->{'id'});

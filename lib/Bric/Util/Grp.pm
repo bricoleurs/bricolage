@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-02-02 19:00:32 $
 
 =head1 SYNOPSIS
 
@@ -2769,7 +2769,7 @@ sub _do_list {
         # groups cannot be deactivated.
         push @wheres, 'mm.active = ?';
         push @params, exists $criteria->{active} ?
-          $criteria->{active} : 1;
+          $criteria->{active} ? 1 : 0 : 1;
     }
 
     # Add other parameters to the query

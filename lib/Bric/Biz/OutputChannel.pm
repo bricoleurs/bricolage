@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:03 $
+$Date: 2003-02-02 19:00:28 $
 
 =head1 SYNOPSIS
 
@@ -340,7 +340,7 @@ sub lookup {
     die $gen->new( { msg => "Missing required param 'id'" } )
       unless $params->{id};
 
-    my $oc = $class->_do_list($params);
+    $oc = $class->_do_list($params);
 
     # We want @$person to have only one value.
     die Bric::Util::Fault::Exception::DP->new({
