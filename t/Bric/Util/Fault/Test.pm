@@ -3,62 +3,21 @@ use strict;
 use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
+use Bric::Util::Fault qw(:all);
 
-##############################################################################
-# Test class loading.
-##############################################################################
-sub _test_load : Test(1) {
-    use_ok('Bric::Util::Fault');
+sub test_alias : Test(8) {
+    my $self = shift;
+    eval { throw_dp error => "Error"; };
+    ok( my $err = $@, "Catch exception" );
+    isa_ok($err, "Bric::Util::Fault::Exception::DP" );
+    isa_ok($err, "Bric::Util::Fault::Exception" );
+    isa_ok($err, "Bric::Util::Fault" );
+    isa_ok($err, "Exception::Class::Base" );
+    ok( isa_bric_exception($err), "Test isa_bric_exception" );
+    eval { rethrow_exception($err) };
+    ok( my $err2 = $@, "Catch rethrown exception" );
+    is( $err2->error, $err->error, "Caught the same exception" );
 }
 
 1;
 __END__
-
-# Here is the original test script for reference. If there's something usable
-# here, then use it. Otherwise, feel free to discard it once the tests have
-# been fully written above.
-
-#!/usr/bin/perl -w
-
-package Bric::Util::Fault::FaultTest;
-
-use strict;
-use Test::More tests => 66;
-
-my @classes;
-BEGIN {
-    @classes = ('Bric::Util::Fault',
-                'Bric::Util::Fault::Exception',
-                'Bric::Util::Fault::Exception::DA'
-               );
-    use_ok $_ for @classes;
-}
-
-my $msg = 'Fault!';
-my $payload = 'Cannot operate heavy machinery under the influence of alcohol';
-
-foreach my $ec (@classes) {
-    eval { die $ec->new({ msg => $msg, payload => $payload }) };
-    ok my $err = $@, "Got $ec exception";
-    isa_ok $err, $ec, "Yes, it isa $ec";
-    isa_ok $err, $classes[0], "Yes, it isa $classes[0]";
-    ok $err->get_timestamp <= time, "$ec: Check time";
-    is $err->get_msg, $msg, "$ec: Check message";
-    is $err->get_payload, $payload, "$ec: Check payload";
-    is $err->get_pkg, __PACKAGE__, "$ec: Check package";
-    is $err->get_filename, 'Fault.pl', "$ec: Check filename";
-    is $err->get_line, 21, "$ec: Check line";
-    is_deeply $err->get_env, \%ENV, "$ec: Check environment";
-    is $err->error_info, __PACKAGE__ . " -- Fault.pl -- 21\n$msg\n\n$payload\n",
-      "$ec: Check error_info";
-    is "$err", $err->error_info, "$ec: Check stringifiation";
-    ok my $stack = $err->get_stack, "$ec: Get stack";
-    ok UNIVERSAL::isa($stack, 'ARRAY'), "$ec: Stack isa array";
-    is $#$stack, 1, "$ec: Count stack";
-    is $stack->[0][1], 'Fault.pl', "$ec: Check 0/1";
-    is $stack->[0][2], 21, "$ec: Check 0/3";
-    is $stack->[0][3], 'Bric::Util::Fault::new', "$ec: Check 0/2";
-    is $stack->[1][1], 'Fault.pl', "$ec: Check 1/1";
-    is $stack->[1][2], 21, "$ec: Check 1/3";
-    is $stack->[1][3], '(eval)', "$ec: Check 1/2";
-}

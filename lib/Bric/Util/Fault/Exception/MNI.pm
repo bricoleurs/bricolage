@@ -1,51 +1,17 @@
 package Bric::Util::Fault::Exception::MNI;
-###############################################################################
-
-=head1 NAME
-
-Bric::Util::Fault::Exception::MNI - Method Not Implemented Exception
-
-=head1 VERSION
-
-$Revision: 1.6 $
-
-=cut
-
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
-
-=head1 APTE
-
-$Date: 2003-02-18 05:55:09 $
-
-=head1 SYNOPSIS
-
-See L<Bric::Util::Fault::Exception|Bric::Util::Fault::Exception>
-
-=head1 DESCRIPTION
-
-See L<Bric::Util::Fault::Exception|Bric::Util::Fault::Exception>
-
-=cut
-
-#==============================================================================#
-# Inheritance                          #
-#======================================#
-
-use base qw( Bric::Util::Fault::Exception );
 
 1;
 __END__
 
-=head1 NOTES
+=head1 NAME
 
-NONE.
+Bric::Util::Exception::MNI - Legacy Exception Class
 
-=head1 AUTHOR
+=head1 DESCRIPTION
 
-matthew d. p. k. strelchun-lanier - matt@lanier.org
-
-=head1 SEE ALSO
-
-See L<Bric::Util::Fault::Exception|Bric::Util::Fault::Exception>
+This is a dummy class to keep Bricolage from breaking when various classes and
+libraries C<use Bric::Util::Fault::Exception::MNI>. Eventually all such use
+statements will be removed and we'll be able to delete this file, as all
+exceptions are now handled internally by L<Bric::Util::Fault|Bric::Util::Fault>.
 
 =cut

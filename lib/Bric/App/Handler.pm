@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-27 21:58:59 $
+$Date: 2003-02-28 00:19:20 $
 
 =head1 SYNOPSIS
 
@@ -54,8 +54,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Config qw(:mason :char :sys_user :err);
-use Bric::Util::Fault::Exception::AP;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::CharTrans;
 use Bric::App::Event qw(clear_events);
@@ -112,6 +111,7 @@ use Carp qw(croak);
     use Bric::Util::Burner::Mason;
     use Bric::Util::Burner::Template;
     use Bric::Util::Class;
+    use Bric::Util::Fault qw(:all);
     use Bric::Util::Language;
     use Bric::Util::Pref;
     use Bric::Util::Priv;
@@ -159,20 +159,16 @@ our %EXPORT_TAGS = (err => [qw(handle_err)]);
 
 ################################################################################
 # Private Class Fields
-my $dp = 'Bric::Util::Fault::Exception::DP';
-my $ap = 'Bric::Util::Fault::Exception::AP';
-#my $defset = 'iso-8859-1';
-my $ct = Bric::Util::CharTrans->new(CHAR_SET);
+my $ct;
 my $no_trans = 0;
 
-my %interp_args = (
-    comp_root         => MASON_COMP_ROOT,
-    data_dir          => MASON_DATA_ROOT,
-    out_method => \&filter,
-    static_source => 0,  # was 'use_reload_file'
-    autoflush => 0,      # was 'out_mode'
-    error_mode   => 'fatal',
-);
+my %interp_args =
+  ( comp_root     => MASON_COMP_ROOT,
+    data_dir      => MASON_DATA_ROOT,
+    static_source => 0,
+    autoflush     => 0,
+    error_mode    => 'fatal',
+  );
 
 my $interp = HTML::Mason::Interp->new(%interp_args);
 my $ah;
@@ -180,12 +176,14 @@ if (CHAR_SET ne 'UTF-8') {
     require Bric::App::ApacheHandler;
     $ah = Bric::App::ApacheHandler->new(%interp_args,
                                         decline_dirs => 0,
-                                        args_method => MASON_ARGS_METHOD
+                                        out_method   => \&filter,
+                                        args_method  => MASON_ARGS_METHOD
                                        );
+    $ct = Bric::Util::CharTrans->new(CHAR_SET);
 } else {
     $ah = HTML::Mason::ApacheHandler->new(%interp_args,
                                         decline_dirs => 0,
-                                        args_method => MASON_ARGS_METHOD
+                                        args_method  => MASON_ARGS_METHOD
                                        );
 }
 
@@ -298,26 +296,26 @@ sub _make_fault {
     my $err = shift;
 
     # Just return bricolage exceptions.
-    return $err if UNIVERSAL::isa($err, 'Bric::Util::Fault');
+    return $err if isa_bric_exception($err);
 
     # Otherwise, create a new exception object.
     my $payload = '';
     if (isa_mason_exception($err)) {
-        if (isa_mason_exception($err, 'Abort') or
-            isa_mason_exception($err, 'Compilation::IncompatibleCompiler')) {
-            # Just let these fall through so that Mason can handle them.
-            die $err;
+        if (QA_MODE) {
+            # Make sure we're not stealing away Mason's internal exceptions.
+            die $err if isa_mason_exception($err, 'Abort') or
+              isa_mason_exception($err, 'Compilation::IncompatibleCompiler');
         }
         my $brief = $err->as_brief;
-        return $brief if UNIVERSAL::isa($brief, 'Bric::Util::Fault');
+        return $brief if isa_bric_exception($brief);
         $payload = $brief;
     } else {
         $payload = $err;
     }
 
     return Bric::Util::Fault::Exception::AP->new
-      ({ msg => "Error processing Mason elements.",
-         payload => $payload });
+      ( error   => "Error processing Mason elements.",
+        payload => $payload );
 }
 
 ################################################################################
@@ -345,7 +343,7 @@ B<Notes:> NONE.
 
 sub filter {
     # Just get it over with if we're not supposed to do translation.
-    if ($no_trans or $ct->charset eq 'UTF-8') {
+    if ($no_trans) {
 	print STDOUT $_[0];
 	return;
     }
@@ -357,9 +355,9 @@ sub filter {
     # Do error processing, if necessary.
     if (my $err = $@) {
         $no_trans = 1; # So we don't translate error.html.
-        my $msg = 'Error translating from UTF-8 to '.$ct->charset;
-        die ref $@ ? $@ : $dp->new({msg     => $msg,
-                                    payload => $@ }) if $@;
+        my $msg = 'Error translating from UTF-8 to ' . $ct->charset;
+        die $err if ref $err;
+        throw_dp error => $msg, payload => $err;
     }
 
     # Dump the data.

@@ -3,19 +3,19 @@ package Bric::Util::Fault;
 
 =head1 NAME
 
-Bric::Util::Fault - base class for all Exceptions
+Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 03:38:21 $
+$Date: 2003-02-28 00:19:22 $
 
 =head1 SYNOPSIS
 
@@ -47,15 +47,13 @@ $Date: 2003-02-18 03:38:21 $
 
 =head1 DESCRIPTION
 
-Bric::Util::Fault is the base class for all Bricolage Exceptions. Do not use
-this class directly if you are looking for an exception to throw. Rather, look
-at L<Bric::Util::Fault::Exception|Bric::Util::Fault::Exception>.
-
-Whereas earlier perl versions could only die ('string'), perl 5.005 and beyond
-can die ($obj). This object can contain rich state information which enables
-the calling eval {} to perform more varied object introspection. This also
-avoids the proliferation of error strings, and makes catching errors very
-simple.
+This class does Exceptions for Bricolage. It replaces a
+home-grown implementation with one based on Exception::Class
+(which is what HTML::Mason uses). For now, we are merely
+emulating the previous functionality, so the above synopsis
+should still be valid, but this will change as we use more
+features of Exception::Class and try to clean exception usage
+throughout the Bricolage API code.
 
 =cut
 
@@ -70,22 +68,62 @@ use strict;
 #==============================================================================#
 # Inheritance                          #
 #======================================#
+use Exception::Class
+  ( 'Bric::Util::Fault' =>
+      { description => 'Bricolage Exception',
+        fields => [qw(payload env)],
+      },
+    'Bric::Util::Fault::Exception' =>
+      { description => 'Remove Me Exception',
+        isa => 'Bric::Util::Fault',
+      },
+    'Bric::Util::Fault::Exception::AP' =>
+      { description => 'Application Exception',
+        isa => 'Bric::Util::Fault::Exception',
+        alias => 'throw_ap',
+      },
+    'Bric::Util::Fault::Exception::DA' =>
+      { description => 'Data Access Exception',
+        isa => 'Bric::Util::Fault::Exception',
+        alias => 'throw_da',
+      },
+    'Bric::Util::Fault::Exception::DP' =>
+      { description => 'Data Processing Exception',
+        isa => 'Bric::Util::Fault::Exception',
+        alias => 'throw_dp',
+      },
+    'Bric::Util::Fault::Exception::GEN' =>
+      { description => 'General Exception',
+        isa => 'Bric::Util::Fault::Exception',
+        alias => 'throw_gen',
+      },
+    'Bric::Util::Fault::Exception::MNI' =>
+      { description => 'Method Not Implemented Exception',
+        isa => 'Bric::Util::Fault::Exception',
+        alias => 'throw_mni',
+      },
+  );
 
+require Exporter;
+*import = \&Exporter::import;
+our @EXPORT_OK = qw(isa_bric_exception rethrow_exception throw_ap throw_da
+                    throw_dp throw_gen throw_mni);
+our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 #--------------------------------------#
 # Programatic Dependencies
 use overload q{""} => \&error_info;
+use HTML::Mason::Exceptions ();
 
 #=============================================================================#
 # Function Prototypes and Closures     #
 #======================================#
 
-# Put any function prototypes and lexicals to be defined as closures here.
 
 #==============================================================================#
 # Constants                            #
 #======================================#
-
+__PACKAGE__->Trace(1);
 
 #==============================================================================#
 # Fields                               #
@@ -112,11 +150,7 @@ use overload q{""} => \&error_info;
 
 =over 4
 
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $obj = new Bric::Util::Fault($init);
+=item $obj = Bric::Util::Fault->new($init);
 
 Creates a new Fault object for processing up the caller stack
 
@@ -134,43 +168,27 @@ Extra error information, e.g., from C<$!> or C<$@>.
 
 =back
 
-B<Throws:>
-
-Um, this can't really throw itself.  or can it?  i dunno.
+B<Throws:> NONE
 
 B<Side Effects:> NONE.
 
 B<Notes:>
 
-This method should only be used within a 'die' context, and one of its
-subclasses should be thrown instead.
+This method should only be used within a C<die> context, and one of its
+subclasses (GEN, MNI, etc..) should be thrown instead.
+We want to change this so that you generally use the C<throw> method
+instead.
 
 =cut
 
 sub new {
-    my ($class, $init) = @_;
+    my $class = shift;
 
-    ## caller
-    my (@stack, $i);
-    $i = 0;
-    while (my @s = caller($i++)) {push @stack, \@s}
+    my %params = ref $_[0] ? %{$_[0]} : @_;
+    $params{'env'} = {%ENV};
+    $params{'error'} = delete $params{'msg'} if exists $params{'msg'};
 
-    my ($pkg, $filename, $line) = @{$stack[0]};
-
-    ## construct parameters
-    my $p = {
-             timestamp => time,
-             pkg => $pkg,
-             filename => $filename,
-             line => $line,
-             env =>  { %ENV },
-             msg => $init->{'msg'},
-             payload => $init->{'payload'},
-             stack => \@stack,
-            };
-
-    # Create the object via fields which returns a blessed object.
-    bless $p, ref $class || $class;
+    return $class->SUPER::new(%params);
 }
 
 #------------------------------------------------------------------------------#
@@ -204,7 +222,7 @@ None.
 
 =over 4
 
-=item $string = $obj->error_info;
+=item $str = $obj->error_info;
 
 Returns error string of type "pkg -- filename -- line -- msg". Also called
 when the exception object is used in a string context.
@@ -213,20 +231,21 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Overloads the double-quoted string operator.
+B<Notes:> Overloads the double-quoted string operator. Should probably
+be deprecated in favor of C<< Exception::Class->as_string >>.
 
 =cut
 
 sub error_info {
-    my ($self) = shift;
-    return join(' -- ', $self->get_pkg, $self->get_filename,
-                $self->get_line) . "\n" . ($self->get_msg || '') . "\n\n"
-                . ($self->get_payload || '') . "\n";
+    my $self = shift;
+    return join(' -- ', $self->package, $self->file,
+                $self->line) . "\n" . ($self->error || '') . "\n\n"
+                . ($self->payload || '') . "\n";
 }
 
 #------------------------------------------------------------------------------#
 
-=item $id = $obj->get_msg;
+=item $str = $obj->get_msg;
 
 Returns the message set by the programmer at error time.
 
@@ -238,7 +257,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_msg { shift->{msg} };
+sub get_msg { shift->error }
 
 
 #------------------------------------------------------------------------------#
@@ -256,7 +275,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_timestamp { shift->{timestamp} };
+sub get_timestamp { shift->time }
 
 #------------------------------------------------------------------------------#
 
@@ -272,7 +291,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_env { shift->{env} };
+sub get_env { shift->env }
 
 #------------------------------------------------------------------------------#
 
@@ -288,7 +307,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_filename { shift->{filename} };
+sub get_filename { shift->file }
 
 #------------------------------------------------------------------------------#
 
@@ -305,7 +324,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_line { shift->{line} };
+sub get_line { shift->line }
 
 #------------------------------------------------------------------------------#
 
@@ -321,7 +340,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_pkg { shift->{pkg} };
+sub get_pkg { shift->package }
 
 #------------------------------------------------------------------------------#
 
@@ -337,7 +356,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_payload { shift->{payload} };
+sub get_payload { shift->payload }
 
 #------------------------------------------------------------------------------#
 
@@ -353,7 +372,126 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_stack { shift->{stack} };
+sub get_stack {
+    # this might need tweaked - can fool with full_message in Exception::Class
+    # as well as Devel::StackTrace
+    # not sure if each frame of trace can be printed
+    # as a string (without calling every accessor method),
+    # but we have to return an arrayref here,
+    # so I just returned the whole stacktrace in
+    # one element of the array
+    return [ shift->trace->as_string() ];
+}
+
+#------------------------------------------------------------------------------#
+
+=item $err->throw(error => 'This is some error we are throwing');
+
+This overrides the C<throw> method in Exception::Class so that
+if we create a new exception from a Bric or HTML::Mason exception,
+we will just use the short error message. Otherwise, exceptions
+can get stringified more than once.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub throw {
+    my ($class, %params) = @_;
+
+    # please only use 'error', not 'message', with Bric exceptions :)
+    if (isa_bric_exception($params{error})) {
+        $params{error} = $params{error}->error;
+    }
+    if (HTML::Mason::Exceptions::isa_mason_exception($params{error})) {
+        $params{error} = $params{error}->error;
+    }
+    if (HTML::Mason::Exceptions::isa_mason_exception($params{message})) {
+        $params{message} = $params{message}->error;
+    }
+    $class->SUPER::throw(%params);
+}
+
+#------------------------------------------------------------------------------#
+
+=back
+
+=head2 Public Functions
+
+=over 4
+
+=item isa_bric_exception($err, 'MNI');
+
+This function tests whether the $err argument is a Bricolage
+exception. The optional second argument can be used to test
+for a specific Bricolage exception.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+"no such exception class $class"
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:>
+
+This function is imported into the calling class.
+
+=cut
+
+sub isa_bric_exception {
+    my ($err, $name) = @_;
+    return unless defined $err;
+
+    if ($name) {
+        my $class = "Bric::Util::Fault::Exception::$name";
+        no strict 'refs';
+
+        # XXX: shouldn't an exception be thrown here instead?
+        # I've copied it from HTML::Mason::Exception.
+        die "no such exception class $class"
+            unless defined(${"${class}::VERSION"});
+        return UNIVERSAL::isa($err, "Bric::Util::Fault::Exception::$name");
+    } else {
+        return UNIVERSAL::isa($err, "Bric::Util::Fault");
+    }
+}
+
+#------------------------------------------------------------------------------#
+
+=item rethrow_exception($err);
+
+This function rethrows the $err argument if it
+C<can> rethrow (i.e. it is a Bricolage or HTML::Mason exception).
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:>
+
+This function is imported into the calling class.
+
+=cut
+
+sub rethrow_exception {
+    my ($err) = @_;
+    return unless $err;
+
+    if (UNIVERSAL::can($err, 'rethrow')) {
+        $err->rethrow();
+    }
+    Bric::Util::Fault->throw(error => $err);
+}
 
 #------------------------------------------------------------------------------#
 
@@ -363,7 +501,33 @@ sub get_stack { shift->{stack} };
 
 =head2 Private Class Methods
 
-NONE.
+=over 4
+
+=item use Bric::Util::Fault;
+
+Imports isa_bric_exception and rethrow_exception into the calling class.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> Overloads the double-quoted string operator.
+
+=cut
+
+#sub import {
+#    my $caller = caller;
+#    NOREFS: {
+#        no strict 'refs';
+#        *{"${caller}::isa_bric_exception"} = \&isa_bric_exception;
+        # XXX: I think it's okay to leave the same name (rethrow_exception)
+        # as in HTML::Mason because there is no overlap in calling classes
+        # which might use both HTML::Mason::Exceptions and Bric::Util::Fault.
+#        *{"${caller}::rethrow_exception"} = \&rethrow_exception;
+#    }
+#}
+
+=back
 
 =head2 Private Instance Methods
 
@@ -375,20 +539,24 @@ NONE.
 
 =cut
 
+
 1;
 __END__
 
 =head1 NOTES
 
-This is the I<only> class file that should use the C<die> operator. Everyone
-else should use the interface specified above.
+This was muchly copied from HTML::Mason::Exceptions.
+This replaces the home-grown exception handling
+written by matthew d. p. k. strelchun-lanier <matt@lanier.org>.
 
 =head1 AUTHOR
 
-matthew d. p. k. strelchun-lanier - matt@lanier.org
+Scott Lanning <lannings@who.int>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, L<Bric::Util::Fault::Exception|Bric::Util::Fault::Exception>
+L<Exception::Class|Exception::Class>,
+L<Devel::StackTrace|Devel::StackTrace>,
+L<HTML::Mason::Exceptions|HTML::Mason::Exceptions>
 
 =cut
