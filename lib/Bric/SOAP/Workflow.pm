@@ -50,15 +50,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflows.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-24 10:24:09 $
+$Date: 2004-03-30 16:14:47 $
 
 =head1 SYNOPSIS
 
@@ -1255,6 +1255,7 @@ sub load_asset {
         throw_ap(error => __PACKAGE__ . " : access denied.")
           unless chk_authz($asset, CREATE, 1);
 
+        $adata->{site} = 'Default Site' unless exists $adata->{site};
         my $site = Bric::Biz::Site->lookup({ name => $adata->{site} });
         unless (defined $site) {
             throw_ap error => __PACKAGE__ . ": site \"" . $adata->{site}

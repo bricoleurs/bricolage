@@ -43,15 +43,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 01:39:09 $
+$Date: 2004-03-30 16:14:44 $
 
 =head1 SYNOPSIS
 
@@ -638,8 +638,8 @@ sub load_asset {
         my $update = exists $to_update{$id};
 
         # are we aliasing?
-        my $aliased = $mdata->{alias_id} && ! $update ?
-          Bric::Biz::Asset::Business::Media->lookup({ id => $mdata->{alias_id} })
+        my $aliased = exists($mdata->{alias_id}) && $mdata->{alias_id} && ! $update
+          ? Bric::Biz::Asset::Business::Media->lookup({ id => $mdata->{alias_id} })
           : undef;
 
         # setup init data for create
@@ -649,6 +649,7 @@ sub load_asset {
         $init{user__id} = get_user_id;
 
         # Get the site ID.
+        $mdata->{site} = 'Default Site' unless exists $mdata->{site}
         $init{site_id} = site_to_id(__PACKAGE__, $mdata->{site});
 
         if (exists $mdata->{element} and not $aliased) {

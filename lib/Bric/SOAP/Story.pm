@@ -46,15 +46,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.63 $
+$Revision: 1.64 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.63 $ )[-1];
+our $VERSION = (qw$Revision: 1.64 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 20:44:18 $
+$Date: 2004-03-30 16:14:44 $
 
 =head1 SYNOPSIS
 
@@ -762,9 +762,9 @@ sub load_asset {
         my $update = exists $to_update{$id};
 
         # are we aliasing?
-        my $aliased = $sdata->{alias_id} && ! $update ?
-          Bric::Biz::Asset::Business::Story->lookup
-              ({ id => $story_ids{$sdata->{alias_id}} || $sdata->{alias_id} })
+        my $aliased = exists($sdata->{alias_id}) && $sdata->{alias_id} && ! $update
+          ? Bric::Biz::Asset::Business::Story->lookup({
+              id => $story_ids{$sdata->{alias_id}} || $sdata->{alias_id}  })
           : undef;
 
         # setup init data for create
@@ -774,6 +774,7 @@ sub load_asset {
         $init{user__id} = get_user_id;
 
         # Get the site ID.
+        $sdata->{site} = 'Default Site' unless exists $sdata->{site};
         $init{site_id} = site_to_id(__PACKAGE__, $sdata->{site});
 
         if (exists $sdata->{element} and not $aliased) {
@@ -905,7 +906,8 @@ sub load_asset {
         foreach my $cdata (@{$sdata->{categories}{category}}) {
             # get cat id
             my $path = ref $cdata ? $cdata->{content} : $cdata;
-            my $cat = Bric::Biz::Category->lookup({ uri => $path, site_id => $init{site_id} });
+            my $cat = Bric::Biz::Category->lookup({ uri => $path,
+                                                    site_id => $init{site_id} });
             throw_ap(error => __PACKAGE__ . "::create : no category found matching "
                        . "(category => \"$path\")")
               unless defined $cat;

@@ -45,15 +45,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 01:39:09 $
+$Date: 2004-03-30 16:14:45 $
 
 =head1 SYNOPSIS
 
@@ -587,6 +587,7 @@ sub load_asset {
         $init{user__id} = get_user_id;
 
         # Get the site ID.
+        $tdata->{site} = 'Default Site' unless exists $tdata->{site};
         $init{site_id} = site_to_id($pkg, $tdata->{site});
 
         # handle output_channel => output_channel__id mapping

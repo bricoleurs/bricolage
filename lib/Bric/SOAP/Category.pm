@@ -26,15 +26,15 @@ Bric::SOAP::Category - SOAP interface to Bricolage categories.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 17:08:20 $
+$Date: 2004-03-30 16:14:43 $
 
 =head1 SYNOPSIS
 
@@ -461,6 +461,7 @@ sub load_asset {
     my (@category_ids, %paths);
     foreach my $cdata (@{$data->{category}}) {
         my $id = $cdata->{id};
+        $cdata->{site} = 'Default Site' unless exists $cdata->{site};
         my $site_id = site_to_id(__PACKAGE__, $cdata->{site});
 
         # are we updating?
