@@ -8,15 +8,15 @@ Bric::Biz::Site objects.
 
 =head1 VERSION
 
-$Revision: 1.1.2.3 $
+$Revision: 1.1.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-11 23:09:54 $
+$Date: 2003-03-11 23:57:49 $
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 
-use Bric::Util::DBI qw(:standard);
+use Bric::Util::DBI qw(:standard col_aref);
 
 ################################################################################
 # Inheritance
