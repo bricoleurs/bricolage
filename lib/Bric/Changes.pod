@@ -162,6 +162,12 @@ UTC as their local time zone. Thanks to Bill Cappel for the spot! [David]
 Fixed bug where expired cookie resulted in a Bric::App::Session
 error. [JoE<atilde>o Pedro]
 
+=item *
+
+Bricolage now does more to determine the media type of uploaded media by using
+both the Apache media type determination and, failing that, a file name
+extension. Thanks to Todd Tyree for the spot. [David]
+
 =back
 
 =head1 VERSION 1.5.0

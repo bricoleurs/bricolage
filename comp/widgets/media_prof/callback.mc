@@ -79,11 +79,18 @@ my $handle_update = sub {
         $media->upload_file($fh, $filename);
         $media->set_size($upload->size);
 
-        my $type          = $upload->type;
-        my $media_type    = Bric::Util::MediaType->lookup({'name' => $type});
-        my $media_type_id = $media_type ? $media_type->get_id : 0;
+        if (my ($mid) = Bric::Util::MediaType->list_ids
+            ({ name => $upload->type })) {
+            # Apache gave us a valid type.
+            $media->set_media_type_id($mid);
+        } elsif ($mid = Bric::Util::MediaType->get_id_by_ext($filename)) {
+            # We figured out the type by the filename extension.
+            $media->set_media_type_id($mid);
+        } else {
+            # We have no idea what the type is. :-(
+            $media->set_media_type_id(0);
+        }
 
-        $media->set_media_type_id($media_type_id);
 
         log_event('media_upload', $media);
     }
