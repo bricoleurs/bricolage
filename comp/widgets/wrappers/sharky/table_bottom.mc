@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-09-26 00:17:35 $
+$Date: 2003-03-06 06:46:42 $
 
 =head1 SYNOPSIS
 
@@ -29,27 +29,32 @@ $border => 1
 </%args>
 <%init>
 
-my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc"); 
+my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
 my $borderColor = ($section eq "admin") ? "999966" : "669999";
 
 </%init>
 % if ($border) {
 </td>
-<td valign="top" bgcolor="<% $borderColor %>" width=1>
+<td valign="top" bgcolor="<% $borderColor %>" width="1">
 <img src="/media/images/spacer.gif" width="1" height="1" border="0">
 </td>
 % }
 </tr>
 </table>
-<table width=580 border=0 cellpadding=0 cellspacing=0>
+<table width="580" border="0" cellpadding="0" cellspacing="0">
+<tr>
+  <td bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
+  <td colspan="2"><img src="/media/images/spacer.gif" width="578" height="6" border="0"></td>
+  <td bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
+</tr>
 % if ($border) {
 <tr>
-  <td valign="top" bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
-  <td valign="top" bgcolor="<% $borderColor %>" colspan=2><img src="/media/images/spacer.gif" width="578" height="1" border="0"></td>
-  <td valign="top" bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
+  <td bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
+  <td bgcolor="<% $borderColor %>" colspan="2"><img src="/media/images/spacer.gif" width="578" height="1" border="0"></td>
+  <td bgcolor="<% $borderColor %>"><img src="/media/images/spacer.gif" width="1" height="1" border="0"></td>
 </tr>
 % }
 <tr>
-  <td colspan=4><img src="/media/images/spacer.gif" width="580" height="10" border="0"></td>
+  <td colspan="4"><img src="/media/images/spacer.gif" width="580" height="10" border="0"></td>
 </tr>
 </table>
