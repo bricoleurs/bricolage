@@ -196,6 +196,7 @@ my $publish = sub {
 	if (PREVIEW_LOCAL) {
 	    # Copy the files for previewing locally.
 	    my $comp_root = $m->interp->comp_root;
+	    $comp_root = $comp_root->[0][1] if PREVIEW_MASON;
 	    foreach my $rsrc (@$res) {
 		$fs->copy($rsrc->get_path,
 			  $fs->cat_dir($comp_root, PREVIEW_LOCAL,
