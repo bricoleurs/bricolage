@@ -476,7 +476,7 @@ upgrading. [David]
 
 =back
 
-=head1 VERSION 1.6.8 ()
+=head1 VERSION 1.6.8 (2003-11-29)
 
 =head2 Bug Fixes
 
