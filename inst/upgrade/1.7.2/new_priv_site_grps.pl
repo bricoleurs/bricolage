@@ -3,15 +3,13 @@
 use strict;
 use File::Spec::Functions qw(catdir updir);
 use FindBin;
+use Cache::FileCache;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 use Bric::Util::Grp::User;
 use Bric::Util::Priv;
 
-BEGIN {
-    eval "use Bric::Biz::Site";
-    eval "use lib catdir \$FindBin::Bin, updir, updir, updir, 'lib'" if $@;
-}
+BEGIN { push @INC, catdir $FindBin::Bin, updir, updir, updir, 'lib' }
 
 use Bric::Biz::Site;
 
