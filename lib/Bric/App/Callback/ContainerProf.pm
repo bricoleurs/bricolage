@@ -614,7 +614,7 @@ sub _update_parts {
                 $val = '' unless defined $val;
                 if ( $param->{$widget . "|${id}-partial"} ) {
                     # The date is only partial. Send them back to to it again.
-                    add_msg('Invalid date value for "[_1]" field.', $_->get_name);
+                    add_msg('Invalid date value for "[_1]" field.', $t->get_name);
                     set_state_data($widget, '__NO_SAVE__', 1);
                 } else {
                     # Truncate the value, if necessary, then set it.
