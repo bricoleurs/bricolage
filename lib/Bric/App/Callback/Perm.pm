@@ -21,7 +21,7 @@ my $not = {
 my ($do_save);
 
 
-sub save {
+sub save : Callback {
     my $gid = &$do_save;
     set_redirect("/admin/profile/grp/$gid");
 }
