@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -15,11 +15,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-01-11 22:55:18 $
+$Date: 2002-01-11 23:58:07 $
 
 =head1 SYNOPSIS
 
@@ -340,13 +340,6 @@ The XSD source:
 		   </xs:restriction>
 		 </xs:simpleType>
 	       </xs:element>
-	       <xs:element name="source">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="128"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
 	       <xs:element name="priority">
 		 <xs:simpleType>
 		   <xs:restriction base="xs:int">
@@ -357,9 +350,24 @@ The XSD source:
 	       </xs:element>
 	       <xs:element name="publish_status" type="xs:boolean"/>
 	       <xs:element name="active" type="xs:boolean"/>
-	       <xs:element name="expire_date" type="xs:date"/>
-	       <xs:element name="cover_date" type="xs:date"/>
-	       <xs:element name="publish_date" type="xs:date"/>
+	       <xs:element name="source">
+		 <xs:simpleType>
+		   <xs:restriction base="xs:string">
+		     <xs:maxLength value="128"/>
+		   </xs:restriction>
+		 </xs:simpleType>
+	       </xs:element>
+	       <xs:element name="cover_date" type="xs:dateTime"/>
+	       <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
+		 <xs:annotation>
+		   <xs:documentation>ommited if no expire date</xs:documentation>
+		 </xs:annotation>
+	       </xs:element>
+	       <xs:element name="publish_date" type="xs:dateTime" minOccurs="0">
+		 <xs:annotation>
+		   <xs:documentation>ommited if not published</xs:documentation>
+		 </xs:annotation>
+	       </xs:element>
 	       <xs:element name="categories">
 		 <xs:complexType>
 		   <xs:sequence>
@@ -371,6 +379,17 @@ The XSD source:
 			   </xs:extension>
 			 </xs:simpleContent>
 		       </xs:complexType>
+		     </xs:element>
+		   </xs:sequence>
+		 </xs:complexType>
+	       </xs:element>
+	       <xs:element name="keywords">
+		 <xs:complexType>
+		   <xs:sequence>
+		     <xs:element name="keyword" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+		       <xs:annotation>
+			 <xs:documentation>This is just a list of keyword names. if we ever start using the full capabilities of Bric::Biz::Keyword then this will need expansion.  It would probably make sense to do a Bric::SOAP::Keyword in that case.</xs:documentation>
+		       </xs:annotation>
 		     </xs:element>
 		   </xs:sequence>
 		 </xs:complexType>
@@ -389,47 +408,6 @@ The XSD source:
 		       </xs:complexType>
 		     </xs:element>
 		     <xs:element name="container" type="container_type" minOccurs="0" maxOccurs="unbounded"/>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	       <xs:element name="keywords">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="keyword" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-		       <xs:annotation>
-			 <xs:documentation>This is just a list of keyword names. if we ever start using the full capabilities of Bric::Biz::Keyword then this will need expansion.  It would probably make sense to do a Bric::SOAP::Keyword in that case.</xs:documentation>
-		       </xs:annotation>
-		     </xs:element>
-		   </xs:sequence>
-		 </xs:complexType>
-	       </xs:element>
-	       <xs:element name="relations">
-		 <xs:complexType>
-		   <xs:sequence>
-		     <xs:element name="related_story" minOccurs="0" maxOccurs="unbounded">
-		       <xs:annotation>
-			 <xs:documentation>If the relative attribute is set then this must reference another story's id attribute in the same assets document.  Otherwise, this must be a valid story_id on the server.</xs:documentation>
-		       </xs:annotation>
-		       <xs:complexType>
-			 <xs:simpleContent>
-			   <xs:extension base="xs:int">
-			     <xs:attribute name="relative" type="xs:boolean" use="optional"/>
-			   </xs:extension>
-			 </xs:simpleContent>
-		       </xs:complexType>
-		     </xs:element>
-		     <xs:element name="related_media" minOccurs="0" maxOccurs="unbounded">
-		       <xs:annotation>
-			 <xs:documentation>If the relative attribute is set then this must reference another media object's id attribute in the same assets document.  Otherwise, this must be a valid media_id on the server.</xs:documentation>
-		       </xs:annotation>
-		       <xs:complexType>
-			 <xs:simpleContent>
-			   <xs:extension base="xs:int">
-			     <xs:attribute name="relative" type="xs:boolean" use="optional"/>
-			   </xs:extension>
-			 </xs:simpleContent>
-		       </xs:complexType>
-		     </xs:element>
 		   </xs:sequence>
 		 </xs:complexType>
 	       </xs:element>
@@ -462,7 +440,13 @@ The XSD source:
        <xs:documentation>An element data container - a recursive type.</xs:documentation>
      </xs:annotation>
      <xs:sequence>
-       <xs:element name="container" type="container_type" minOccurs="0" maxOccurs="unbounded"/>
+       <xs:element name="container" minOccurs="0" maxOccurs="unbounded">
+	 <xs:complexType>
+	   <xs:complexContent>
+	     <xs:extension base="container_type"/>
+	   </xs:complexContent>
+	 </xs:complexType>
+       </xs:element>
        <xs:element name="data" minOccurs="0" maxOccurs="unbounded">
 	 <xs:complexType>
 	   <xs:simpleContent>
@@ -476,8 +460,12 @@ The XSD source:
      </xs:sequence>
      <xs:attribute name="element" type="xs:string" use="required"/>
      <xs:attribute name="order" type="xs:int" use="required"/>
+     <xs:attribute name="related_story_id" type="xs:int" use="optional"/>
+     <xs:attribute name="related_media_id" type="xs:int" use="optional"/>
+     <xs:attribute name="relative" type="xs:boolean" use="optional"/>
    </xs:complexType>
  </xs:schema>
+
 
 =head2 Example Clients
 
