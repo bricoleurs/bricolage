@@ -238,61 +238,10 @@ container element that's a subelement of a story or media document. [David]
 
 =item *
 
-Added the following search parameters to the Bric::SOAP::Story C<list_ids()>
-method (and therefore the SOAP interface):
-
-=over 8
-
-=item element_key_name
-
-=item subelement_key_name
-
-=item unexpired
-
-=item data_text
-
-=item output_channel
-
-=item keyword
-
-=item contrib_id
-
-=back
-
-[David]
-
-=item *
-
-Added the following search parameters to the Bric::SOAP::Media C<list_ids()>
-method (and therefore the SOAP interface):
-
-=over 8
-
-=item element_key_name
-
-=item subelement_key_name
-
-=item unexpired
-
-=item data_text
-
-=item output_channel
-
-=item keyword
-
-=item contrib_id
-
-=item Order
-
-=item OrderDirection
-
-=item Offest
-
-=item Limit
-
-=back
-
-[David]
+Added support for all of the parameters to the C<list_ids()> method of the
+Story, Media, and Template classes to the C<list_ids()> method of the
+corresponding SOAP classes. This allows for much more robust searches via the
+SOAP interface. [David & Scott]
 
 =item *
 
