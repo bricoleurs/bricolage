@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.14.2.1 $
+$Revision: 1.14.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.14.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-03 03:02:08 $
+$Date: 2003-03-09 02:52:58 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -312,7 +312,7 @@ var date_table 	= "<form name=fb_form target=<% $target %>><input type=hidden na
 date_table     += "<table width=340 cellpadding=3><tr>"
 date_table     += '<td valign=top><span class=label><% $lang->maketext('Key Name') %>:</span><br>'
 date_table     += '<input type=text name=fb_name></td></tr>'
-date_table     += '<tr><td valign=top><span class=label><% $lang->maketext('Caption') %>:</span><br>'
+date_table     += '<tr><td valign=top><span class=label><% $lang->maketext('Label') %>:</span><br>'
 date_table     += '<input type=text name=fb_disp></td>'
 date_table     += "</tr>"
 date_table     += '</table><table width=300 border=0 cellpadding=3>'
