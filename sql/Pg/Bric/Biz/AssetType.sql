@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2003-03-14 21:33:00 $
+-- $Date: 2003-10-13 20:51:03 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -199,7 +199,7 @@ CREATE TABLE attr_element_meta (
 --
 CREATE UNIQUE INDEX udx_element__key_name ON element(LOWER(key_name));
 CREATE INDEX fkx_at_type__element ON element(type__id);
-CREATE INDEX fkx_grp__element ON element(type__id);
+CREATE INDEX fkx_grp__element ON element(at_grp__id);
 
 
 CREATE UNIQUE INDEX udx_at_oc_id__at__oc_id ON element__output_channel(element__id, output_channel__id);
