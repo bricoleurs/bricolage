@@ -116,6 +116,12 @@ distribution to take place in the future. Reported by Ashlee Caul. [David]
 Improved context-sensitive help for the "New Template" profile. [Paul Orrock
 and David]
 
+=item *
+
+Make slug actually be required when ALLOW_SLUGLESS_NONFIXED isn't enabled,
+in particular on the clone page. Thanks to Dharmender Yadav at Enabling
+Dimensions for part of the patch. [Scott]
+
 =back
 
 =head2 Bug Fixes

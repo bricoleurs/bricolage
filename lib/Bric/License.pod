@@ -183,6 +183,8 @@ Folks who have submitted patches include:
 
 =item Christian Hauser
 
+=item Dharmender Yadav
+
 =back
 
 Friends who have spotted bugs include:

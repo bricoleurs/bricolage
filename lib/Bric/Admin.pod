@@ -918,7 +918,7 @@ For example, to upgrade from 1.6.13 to 1.8.1, run each of the scripts in
 F<1.6.13/>, F<1.7.5/>, F<1.6.14/>, F<1.8.0/>, and F<1.8.1/> -- B<in that order>.
 Furthermore, the scripts within each directory are run in alphabetical order.
 
-Next, copy in the new sources from the distribution into you bricolage
+Next, copy in the new sources from the distribution into your bricolage
 directory. Be sure B<not> to copy example templates, as they may overwrite
 your own templates. You're best off moving the contents of F<data/> out
 of the way.

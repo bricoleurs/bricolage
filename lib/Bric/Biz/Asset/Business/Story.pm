@@ -163,7 +163,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 use Bric::Biz::Workflow qw(STORY_WORKFLOW);
-use Bric::Config qw(:uri);
+use Bric::Config qw(:uri :ui);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Attribute::Story;
@@ -1091,6 +1091,7 @@ sub my_meths {
                           disp     => 'Slug',
                           len      => 64,
                           type     => 'short',
+                          (ALLOW_SLUGLESS_NONFIXED ? () : (req => 1)),
                           props    => {   type       => 'text',
                                           length     => 32,
                                           maxlength => 64
