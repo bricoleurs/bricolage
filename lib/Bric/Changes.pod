@@ -16,6 +16,18 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.8.1 ()
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+More complete Traditional Chinese and Simplified Chinese localizations. Also,
+the Mandarin localization now simply inherits from the Traditional Chinese
+localization. [Kang-min Liu]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
