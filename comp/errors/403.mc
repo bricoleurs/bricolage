@@ -21,9 +21,11 @@ if ($class) {
 } else {
     $class = 'this page';
 }
-$m->out(qq{
-<p class="header"><% $lang->maketext('You have not been granted <b>[_1]</b> access to the <b>[_2]</b> [_3]',$map->{$perm}, $name, $class) %>.</p>
-});
+$m->out('<p class="header">',
+        $lang->maketext('You have not been granted <b>[_1]</b> ' .
+                        'access to the <b>[_2]</b> [_3]',
+                        $map->{$perm}, $name, $class),
+        "</p>\n");
 $m->comp('/widgets/wrappers/sharky/footer.mc');
 $m->abort;
 </%perl>

@@ -45,6 +45,12 @@ tests are begin run. [David]
 Subclasses of Bric::Biz::Asset::Business::Media work again, and can have
 keywords associated with them, too. [David]
 
+
+=item *
+
+The "Acces Denied" message is back for when someone tries to access an object
+to which they don't have adequate permission. [David]
+
 =back
 
 =head1 VERSION 1.5.1
