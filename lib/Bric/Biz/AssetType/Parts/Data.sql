@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2002-08-25 18:06:01 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -117,7 +117,7 @@ CREATE TABLE attr_at_data_meta (
                               DEFAULT NEXTVAL('seq_attr_at_data_meta'),
     attr__id  NUMERIC(10)     NOT NULL,
     name      VARCHAR(256)    NOT NULL,
-    value     VARCHAR(2048),
+    value     TEXT,
     active    NUMERIC(1)      DEFAULT 1
                               NOT NULL
                               CONSTRAINT ck_attr_at_data_meta__active CHECK (active IN (0,1)),
