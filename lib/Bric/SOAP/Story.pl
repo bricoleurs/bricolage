@@ -112,8 +112,8 @@ isa_ok($soap, 'SOAP::Lite');
 my ($response, $story_ids);
 
 # login
-my $response = $soap->login(name(username => USER), 
-			    name(password => PASSWORD));
+$response = $soap->login(name(username => USER), 
+			 name(password => PASSWORD));
 ok(!$response->fault, 'fault check');
 
 my $success = $response->result;
@@ -121,6 +121,8 @@ ok($success, "login success");
 
 # set uri for Story module
 $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
+
+# if (0) {
 
 # try selecting every story
 $response = $soap->list_ids();
@@ -186,6 +188,8 @@ foreach my $queries (@queries) {
 	    ")");
 }
 
+# }
+
 # select every story
 $response = $soap->list_ids();
 ok(!$response->fault, 'SOAP result is not a fault');
@@ -197,6 +201,8 @@ ok(@$story_ids, 'list_ids() returned some story_ids');
 # get schema ready for checking documents
 my $xsd = extract_schema();
 ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
+
+# if (0) {
 
 # try exporting every story
 foreach my $story_id (@$story_ids) {
@@ -211,6 +217,8 @@ foreach my $story_id (@$story_ids) {
     check_doc($document, $xsd, "story $story_id");
   }
 }
+
+# }
 
 # try importing a story
 $response = $soap->export(name(story_id => $story_ids->[0]),

@@ -7,9 +7,13 @@ use warnings;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
+use Bric::App::Session qw(:user);
 use XML::Writer;
 use IO::Scalar;
 use XML::Simple;
+
+use Bric::SOAP::Util qw(category_path_to_id 
+			xs_date_to_pg_date pg_date_to_xs_date);
 
 use SOAP::Lite;
 import SOAP::Data 'name';
@@ -26,15 +30,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-23 19:52:28 $
+$Date: 2002-01-25 19:29:27 $
 
 =head1 SYNOPSIS
 
@@ -232,16 +236,7 @@ sub list_ids {
     
     # handle category => category_id conversion
     if (exists $args->{category}) {
-	# look through categories for one that matches.  might want to
-	# find a more efficient method someday, although this is
-	# unlikely to be a bottleneck.
-	my $category_id;
-	foreach my $cat (Bric::Biz::Category->list()) {
-	    if ($cat->ancestry_path eq $args->{category}) {
-		$category_id = $cat->get_id;
-		last;
-	    }
-	}
+	my $category_id = category_path_to_id($args->{category});
 	die __PACKAGE__ . "::list_ids : no category found matching " .
 	    "(category => \"$args->{category}\")\n"
 		unless defined $category_id;
@@ -251,23 +246,11 @@ sub list_ids {
     
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
-	print STDERR  __PACKAGE__ . "::list_ids : $name : $args->{$name}\n"
-	    if DEBUG;
-	
-	my ($CC, $YY, $MM, $DD, $hh, $mm, $ss, $tz) =  $args->{$name} =~
-	    /^(\d\d)(\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(.*)$/;
+	my $date = xs_date_to_pg_date($args->{$name});
 	die __PACKAGE__ . "::list_ids : bad date format for $name parameter " .
 	    "\"$args->{$name}\" : must be proper XML Schema dateTime format.\n"
-		unless $CC;
-	$tz = 'UTC' if defined $tz and $tz eq 'Z';
-	
-	# format for postrges
-	$args->{$name} = $CC . $YY . '-' . $MM . '-' . $DD . ' ' . 
-	                 $hh . ':' . $mm . ':' . $ss . 
-	                 (defined $tz ? (' ' . $tz) : '');
-	
-	print STDERR  __PACKAGE__ . "::list_ids : $name : $args->{$name}\n"
-	    if DEBUG;
+		unless defined $date;
+	$args->{$name} = $date;
     }
     
     my @list = Bric::Biz::Asset::Business::Story->list_ids($args);
@@ -480,13 +463,60 @@ sub create {
 
     print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
 
-    # first create empty stories for each of the stories to import
-    foreach my $story (@{$data->{story}}) {
-      
+    # loop over stories
+    foreach my $sdata (@{$data->{story}}) {
+	my %init;
+
+	# get user__id from Bric::App::Session
+	$init{user__id} = get_user_id;
+
+	# get element__id from story element
+	($init{element__id}) = Bric::Biz::AssetType->list_ids(
+                                 { name => $sdata->{element} });
+	die __PACKAGE__ . "::create : no element found matching " .
+	    "(element => \"$sdata->{element}\")\n"
+		unless defined $init{element__id};
+
+	# get source__id from source
+	($init{source__id}) = Bric::Biz::Org::Source->list_ids(
+                                 { source_name => $sdata->{source} });
+	die __PACKAGE__ . "::create : no source found matching " .
+	    "(source => \"$sdata->{source}\")\n"
+		unless defined $init{source__id};
+
+	# create empty story
+	my $story = Bric::Biz::Asset::Business::Story->new(\%init);
+	die __PACKAGE__ . "::create : failed to create empty story object."
+	    unless $story;
+	print STDERR __PACKAGE__ . "::create : created empty story object\n"
+	    if DEBUG;
+
+	# assign categories
+	my @cids;
+	my $primary_cid;
+	foreach my $cdata (@{$sdata->{categories}{category}}) {
+	    # get cat id
+	    my $path = ref $cdata ? $cdata->{content} : $cdata;
+	    my $category_id = category_path_to_id($path);
+	    die __PACKAGE__ . "::create : no category found matching " .
+		"(category => \"$path\")\n"
+		    unless defined $category_id;
+	    
+	    push(@cids, $category_id);
+	    $primary_cid = $category_id 
+		if ref $cdata and $cdata->{primary};
+	}
+	
+	# sanity checks
+	die __PACKAGE__ . "::create : no categories defined!"
+	    unless @cids;
+	die __PACKAGE__ . "::create : no primary category defined!"
+	    unless defined $primary_cid;
+	    
+	# add categories to story
+	$story->add_categories(\@cids);	
+	$story->set_primary_category($primary_cid);
     }
-
-
-
     
     return name(ids => [ name(id => 1) ]);
 }
@@ -597,27 +627,11 @@ sub _serialize_story {
     for my $name qw(cover_date expire_date publish_date) {
 	my $date = $story->_get($name);
 	next unless $date; # skip missing date
-	
-	# extract parts
-	my ($CC, $YY, $MM, $DD, $hh, $mm, $ss, $tz) =  $date =~
-	    /^(\d\d)(\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)(.*)$/;
+	my $xs_date = pg_date_to_xs_date($date);
 	die __PACKAGE__ . "::export : bad date format for $name : $date\n"
-	    unless $CC;
-	
-	# translate timezone 
-	if ($tz) {
-	    if ($tz eq "+00") {
-		$tz = 'Z';
-	    } elsif ($tz =~ /^\+\d\d$/) {
-		$tz .= ':00';
-	    }
-	} else {
-	    $tz = "";
-	}
-	
-	# assemble time
-	$writer->dataElement($name, 
-			     "${CC}${YY}-${MM}-${DD}T${hh}:${mm}:${ss}$tz");
+	    unless defined $xs_date;
+	$writer->dataElement($name, $xs_date);
+
     }
     
     # output categories
