@@ -27,7 +27,7 @@ Bricolage has a number of mailing-lists that are relevant to developers:
 
 Questions, installation problems, bug reports, job and site announcements,
 other general discussion. Posts to this list are subscriber-only, because
-otherwise we would be indundated with spam. Please subscribe before posting.
+otherwise we would be inundated with spam. Please subscribe before posting.
 
 Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-general>
 
@@ -47,7 +47,7 @@ Archives: L<http://marc.theaimsgroup.com/?l=bricolage-announce>
 
 In-depth discussions about new development directions, proposed features,
 implementation details. Posts to this list are subscriber-only, because
-otherwise we would be indundated with spam. Please subscribe before posting.
+otherwise we would be inundated with spam. Please subscribe before posting.
 
 Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-devel>
 
@@ -131,7 +131,7 @@ Send your patches to the bricolage-devel list mentioned above.
 =head1 APPLYING PATCHES
 
 Patches created using the method above can be applied using C<patch> with the
-C<-p0> option from the root of your Subvesion checkout:
+C<-p0> option from the root of your Subversion checkout:
 
   patch -p0 < patch.txt
 
@@ -206,7 +206,7 @@ Rafael Garcia-Suarez has written a Vim indent macro which (for the most
 part) duplicates the behavior of Emacs C<perl-mode>.  It is now, as of Vim
 6.0, included in the Vim distribution and should be found in
 C<$VIMRUNTIME/indent/perl>.  The easiest way to use it though is to place the
-following line in your .vimrc:
+following line in your F<.vimrc> file:
 
     source $VIMRUNTIME/indent.vim
 
@@ -268,7 +268,7 @@ unreadable and unmaintainable as single-letter variables names. You get
 halfway down the page, and you can no longer remember to what tables they
 refer.
 
-The rules above are acutally taken from O'Reilly's "Introduction to PL/SQL
+The rules above are actually taken from O'Reilly's "Introduction to PL/SQL
 Programming," which has an I<excellent> chapter on code cleanliness in SQL and
 SQL-extension languages.
 
@@ -512,8 +512,8 @@ and have no uncommitted changes. You can check for these differences by using
 the Subversion C<status> and C<update> commands. Running C<svn status> will tell
 you if there have been any uncommitted changes to the local copy of the branch
 or trunk. Running C<svn update> will merge in any updates from the copy on the
-Subversion server. So we recommend runing both of these commands in both the
-branch and the trunk and committing any necessary chaanges before continuing.
+Subversion server. So we recommend running both of these commands in both the
+branch and the trunk and committing any necessary changes before continuing.
 
   % cd bricolage-trunk
   % svn status
@@ -561,7 +561,7 @@ C<list> command to find it:
   rev_1_8_merge_5995/
 
 If the branch has never been merged into the trunk you can get the revision
-number at the time the branch was created usinsing C<svn log> command:
+number at the time the branch was created using C<svn log> command:
 
   % svn log --verbose --stop-on-copy \
     http://svn.bricolage.cc/bricolage/branches/rev_1_8
@@ -612,7 +612,7 @@ If there are any test failures, you'll need to fix those, too.
 =item 6
 
 Commit the changes to the trunk. Be sure to specify what revisions were merged
-in, and the name of the new tag you'll creeate for the branch. The final
+in, and the name of the new tag you'll create for the branch. The final
 revision number (represented by HEAD) happened to have been printed out when
 we ran C<svn update> in step one, so it's easy to find and use:
 
