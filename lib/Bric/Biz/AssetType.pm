@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-13 13:43:31 $
+$Date: 2003-03-16 11:25:37 $
 
 =head1 SYNOPSIS
 
@@ -906,7 +906,7 @@ sub set_primary_oc_id {
     $oc_site = {} unless ref $oc_site;
     $oc_site->{$site} = $id;
     $self->_set(['_site_primary_oc_id'], [$oc_site]);
-
+    $self->_set__dirty(1);
     return $self;
 }
 
