@@ -188,8 +188,8 @@ sub xs_date_to_db_date {
     my $xs = shift;
 
     # extract time-zone if present from end of ISO 8601 date
-    my ($tz) = $xs =~ /([A-Za-z]+)$/;
-    $tz = 'UTC' unless defined $tz and $tz ne 'Z';
+    $xs =~ s/(\D+)$//;
+    my $tz = $1 && $1 ne 'Z' ? $1 : 'UTC';
 
     my $db = db_date($xs, undef, $tz);
     print STDERR "xs_date_to_db_date:\n  $xs\n  $db\n\n" if DEBUG;
