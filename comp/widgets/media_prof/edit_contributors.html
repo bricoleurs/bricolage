@@ -1,0 +1,128 @@
+% $m->comp("/widgets/wrappers/sharky/table_top.mc",
+%	caption => "Current Contributors",
+%	);
+
+
+
+<table border=1 width=578 cellspacing=0 bordercolor=#999966>
+<tr>
+  <td class=medHeader align=center>
+  <span class=label>Last Name</span>
+  </td>
+  <td class=medHeader align=center>
+  <span class=label>First Name</span>
+  </td>
+  <td class=medHeader align=center>
+  <span class=label>Type</span>
+  </td>
+  <td class=medHeader align=center>
+  <span class=label>Order</span>
+  </td>
+  <td class=medHeader align=center>
+  <span class=label>Delete</span>
+  </td>
+</tr>
+
+% my $i = 1;
+% my $total = scalar @contribs; 
+% my @sort_array;
+% foreach (@contribs) {
+% my $id = $_->get_id;
+% push @sort_array, qq{"$widget|reorder_$id"};
+% my $person = $_->get_object;
+% my $val = $_->get_grp->get_name();
+% my $media = get_state_data('media_prof', 'media');
+% my $role = $media->get_contributor_role($_);
+% $val .= ' (Role: <a href="'.$r->uri.'?media_prof|assoc_contrib_cb='.$_->get_id.'">'.ucfirst($role).'</a>)' if $role;
+% my $order_vals;
+% foreach (1 .. $total) {
+%	$order_vals->{$_} = $_;
+% }
+<tr>
+  <td>
+  <% $person->get_lname || '&nbsp;' %>
+  </td>
+  <td>
+  <% $person->get_fname || '&nbsp;' %>
+  </td>
+  <td>
+  <% $val %>
+  </td>
+  <td align=center>
+<& '/widgets/profile/displayFormElement.mc',
+   key 	=> "$widget|reorder_$id",
+   useTable => 0,
+   vals	=> { value => $i,
+             props => { type => 'select',
+                        vals => $order_vals,
+                      },
+             js	=> 'onChange="reorder(this, \'theForm\')"'
+	   }
+&>
+  </td>
+  <td align=center>
+  <input type="checkbox" name="<% $widget %>|delete_id" value="<% $_->get_id %>">
+  </td>
+</tr>
+% $i++;
+% }
+</table>
+<script language="javascript">
+var selectOrderNames = new Array(<% join ', ', @sort_array %>);
+</script>
+
+% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+<& /widgets/listManager/listManager.mc,
+   object    => 'contrib',
+   title     => 'Choose Contributors',
+   sortBy    => 'name',
+   select    => undef,
+   profile   => \&contrib_profile,
+   exclude  	=> \@existing_contribs,
+   fields    => [qw(lname fname type)],
+   constrain => { no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID },
+   addition  => ''
+&>
+
+<P></P>
+<input type="image" src="/media/images/save_red.gif" border=0 name="<% $widget %>|save_contrib_cb" value="Save">
+<input type="image" src="/media/images/save_and_stay_lgreen.gif" border=0 name="<% $widget %>|save_and_stay_contrib_cb" value="Save and Stay">
+<input type="image" src="/media/images/return_dgreen.gif" border=0 name="<% $widget %>|leave_contrib_cb">
+
+<%args>
+$widget
+</%args>
+
+<%init>
+my $media = get_state_data($widget, 'media');
+my @existing_contribs = map { $_->get_id } $media->get_contributors;
+my @contribs = $media->get_contributors();
+</%init>
+
+<%once>
+sub contrib_profile {
+    my ($o,$flags) = @_;
+    
+    unless ($flags->{'featured'}) {
+        return ['Associate', $r->uri, "media_prof|assoc_contrib_cb=".$o->get_id];
+    } else {
+        return ['Un-Associate', $r->uri, "media_prof|unassoc_contrib_cb=".$o->get_id];
+    }
+}
+
+sub contrib_alter_type {
+    my ($val, $o, $flags) = @_;
+
+    return $val unless $flags->{'featured'};
+    
+    my $media = get_state_data('media_prof', 'media');
+    my $role  = $media->get_contributor_role($o);
+
+    # Just return the value if there is no role defined for this contributor.
+    return $val unless $role;
+
+    # Show the role if there is one.
+    return $val.' (Role: <a href="'.$r->uri.'?media_prof|assoc_contrib_cb='.$o->get_id.'">'.ucfirst($role).'</a>)';
+}
+</%once>

@@ -153,13 +153,13 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td width=<% $infoIndent %> align="right"><span class=label>Contributors:</span></td>
   <td width=<% 578 - $infoIndent - 70 %>>
 <%perl>
-my @existing_contribs = map { $_->get_name } $media->get_contributers;
+my @existing_contribs = map { $_->get_name } $media->get_contributors;
 $m->out((scalar(@existing_contribs)) ? "&nbsp;" . join(", ", @existing_contribs) : "&nbsp;No contributors defined.");
 </%perl>
   </td>
   <td width=70><& '/widgets/profile/imageSubmit.mc',
                   formName => "theForm",
-                  callback => $widget ."|contributers_cb",
+                  callback => $widget ."|contributors_cb",
                   image    => "edit_lgreen",
                   vspace   => 3
   &></td>

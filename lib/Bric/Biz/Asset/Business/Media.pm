@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-09-17 16:19:43 $
 
 =head1 SYNOPSIS
 
@@ -1215,8 +1215,8 @@ sub clone {
 	my $tile = $self->get_tile();
 	$tile->prepare_clone();
 
-	my $contribs = $self->_get_contributers();
-	# clone contributers
+	my $contribs = $self->_get_contributors();
+	# clone contributors
 	foreach (keys %$contribs ) {
 		$contribs->{$_}->{'action'} = 'insert';
 	}
@@ -1226,7 +1226,7 @@ sub clone {
 			id                      => undef,
 			publish_date            => undef,
 			publish_status          => 0,
-			_update_contributers    => 1
+			_update_contributors    => 1
 		});
 
 	return $self;
@@ -1467,9 +1467,9 @@ sub _do_list {
 
 =head2 Private Instance Methods
 
-=item $contribs = $self->_get_contributers()
+=item $contribs = $self->_get_contributors()
 
-Returns the contributers from a cache or looks em up
+Returns the contributors from a cache or looks em up
 
 B<Throws:>
 
@@ -1485,17 +1485,17 @@ NONE
 
 =cut
 
-sub _get_contributers {
+sub _get_contributors {
 	my ($self) = @_;
 
 	my ($contrib, $queried) = 
-		$self->_get('_contributers', '_queried_contrib');
+		$self->_get('_contributors', '_queried_contrib');
 
 	unless ($contrib) {
 
 		my $dirty = $self->_get__dirty();
 
-		my $sql = 'SELECT member__id, place, role FROM media__contributer ' .
+		my $sql = 'SELECT member__id, place, role FROM media__contributor ' .
 					'WHERE media_instance__id=? ';
 
 		my $sth = prepare_ca($sql, undef, DEBUG);
@@ -1507,7 +1507,7 @@ sub _get_contributers {
 
 		$self->_set( { 
 				'_queried_contrib' 	=> 1,
-				'_contributers' => $contrib 
+				'_contributors' => $contrib 
 			});
 		$self->_set__dirty($dirty);
 	}
@@ -1517,9 +1517,9 @@ sub _get_contributers {
 
 ################################################################################
 
-=item $self = $self->_insert_contributer( $id, $role) 
+=item $self = $self->_insert_contributor( $id, $role) 
 
-Inserts a row into the mapping table for contributers
+Inserts a row into the mapping table for contributors
 
 B<Throws:>
 
@@ -1535,12 +1535,12 @@ NONE
 
 =cut
 
-sub _insert_contributer {
+sub _insert_contributor {
 	my ($self, $id, $role, $place) = @_;
 
-	my $sql = 'INSERT INTO media__contributer ' .
+	my $sql = 'INSERT INTO media__contributor ' .
 				' (id, media_instance__id, member__id, place, role) ' .
-				" VALUES (${\next_key('media__contributer')},?,?,?,?) ";
+				" VALUES (${\next_key('media__contributor')},?,?,?,?) ";
 
 	my $sth = prepare_c($sql, undef, DEBUG);
 	execute($sth, $self->_get('version_id'), $id, $place, $role);
@@ -1550,9 +1550,9 @@ sub _insert_contributer {
 
 ################################################################################
 
-=item $self = $self->_update_contributer($id, $role)
+=item $self = $self->_update_contributor($id, $role)
 
-Updates the contributer mapping table
+Updates the contributor mapping table
 
 B<Throws:>
 
@@ -1568,10 +1568,10 @@ NONE
 
 =cut
 
-sub _update_contributer {
+sub _update_contributor {
 	my ($self, $id, $role, $place) = @_;
 
-	my $sql = 'UPDATE media__contributer ' .
+	my $sql = 'UPDATE media__contributor ' .
 				' SET role=?, place=? ' .
 				' WHERE media_instance__id=? ' .
 				' AND member__id=? ';
@@ -1585,7 +1585,7 @@ sub _update_contributer {
 
 ################################################################################
 
-=item $self = $self->_delete_contributers($id)
+=item $self = $self->_delete_contributors($id)
 
 Deletes the rows from these mapping tables
 
@@ -1603,10 +1603,10 @@ NONE
 
 =cut
 
-sub _delete_contributer {
+sub _delete_contributor {
 	my ($self, $id) = @_;
 
-	my $sql = 'DELETE FROM media__contributer ' .
+	my $sql = 'DELETE FROM media__contributor ' .
 				' WHERE media_instance__id=? ' .
 				' AND member__id=? ';
 
@@ -2039,7 +2039,11 @@ L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>
 =head1 REVISION HISTORY
 
 $Log: Media.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-09-17 16:19:43  wheeler
+Corrected spelling of "contributor" but grepping through files and fixing them,
+plus deleting some files, renaming them, and then adding them back in.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:53:46  wheeler

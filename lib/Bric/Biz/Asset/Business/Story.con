@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:53:47 $
+-- $Date: 2001-09-17 16:19:43 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -46,13 +46,13 @@ ADD CONSTRAINT fk_category__story__category FOREIGN KEY (category__id)
 	REFERENCES category(id) ON DELETE CASCADE;
 
 
--- Story to Contributer mapping constraints
-ALTER TABLE story__contributer
-ADD CONSTRAINT fk_story__story__contributer FOREIGN KEY (story_instance__id)
+-- Story to Contributor mapping constraints
+ALTER TABLE story__contributor
+ADD CONSTRAINT fk_story__story__contributor FOREIGN KEY (story_instance__id)
 	REFERENCES story_instance(id) ON DELETE CASCADE;
 
-ALTER TABLE story__contributer
-ADD CONSTRAINT fk_member__story__contributer FOREIGN KEY (member__id)
+ALTER TABLE story__contributor
+ADD CONSTRAINT fk_member__story__contributor FOREIGN KEY (member__id)
 	REFERENCES member(id) ON DELETE CASCADE;
 
 
@@ -84,7 +84,11 @@ ALTER TABLE attr_story_meta ADD
 /*
 Change Log:
 $Log: Story.con,v $
-Revision 1.1  2001-09-06 21:53:47  wheeler
-Initial revision
+Revision 1.2  2001-09-17 16:19:43  wheeler
+Corrected spelling of "contributor" but grepping through files and fixing them,
+plus deleting some files, renaming them, and then adding them back in.
+
+Revision 1.1.1.1  2001/09/06 21:53:47  wheeler
+Upload to SourceForge.
 
 */

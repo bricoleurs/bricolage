@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:56:04 $
+$Date: 2001-09-17 16:19:43 $
 
 =head1 SYNOPSIS
 
@@ -458,7 +458,7 @@ sub get_role_info {
 
 =item $roles = $contrib->get_person
 
-Return the person object behind this contributer
+Return the person object behind this contributor
 
 B<Throws:> NONE.
 
@@ -698,7 +698,11 @@ Bric::Util::Grp::Parts::Member(4),
 =head1 REVISION HISTORY
 
 $Log: Contrib.pm,v $
-Revision 1.1  2001-09-06 21:56:04  wheeler
-Initial revision
+Revision 1.2  2001-09-17 16:19:43  wheeler
+Corrected spelling of "contributor" but grepping through files and fixing them,
+plus deleting some files, renaming them, and then adding them back in.
+
+Revision 1.1.1.1  2001/09/06 21:56:04  wheeler
+Upload to SourceForge.
 
 =cut

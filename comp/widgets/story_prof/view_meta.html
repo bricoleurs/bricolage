@@ -161,7 +161,7 @@ $m->out(scalar(@keywords) ? join(", ", @keywords) : "No keywords defined.");
 
 <%perl>
 my @contribs;
-foreach my $cntr ($story->get_contributers) {
+foreach my $cntr ($story->get_contributors) {
     push @contribs,  $cntr->get_name;
 }
 $m->out(scalar(@contribs) ? join(", ", @contribs) : "No contributors defined.");

@@ -7,11 +7,11 @@ assets
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:49 $
+$Date: 2001-09-17 16:19:43 $
 
 =head1 BACKGROUND
 
@@ -193,7 +193,7 @@ Keywords - Words that can be set to describe the story
 
 =item *
 
-Contributers - Users that can be associated with this story
+Contributors - Users that can be associated with this story
 
 =item *
 

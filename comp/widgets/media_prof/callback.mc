@@ -363,10 +363,10 @@ my $handle_create = sub {
 
 ################################################################################
 
-my $handle_contributers = sub {
+my $handle_contributors = sub {
     my ($widget, $field, $param) = @_;
 
-    set_redirect("/workflow/profile/media/contributers.html");
+    set_redirect("/workflow/profile/media/contributors.html");
 };
 
 ################################################################################
@@ -381,11 +381,11 @@ my $handle_assoc_contrib = sub {
     my $roles = $contrib->get_roles;
     if (scalar(@$roles)) {
 	set_state_data($widget, 'contrib', $contrib);
-	set_redirect("/workflow/profile/media/contributer_role.html");
+	set_redirect("/workflow/profile/media/contributor_role.html");
     } else {
-	$media->add_contributer($contrib);
+	$media->add_contributor($contrib);
 	log_event('media_add_contrib', $media, { Name => $contrib->get_name });
-#	add_msg("Contributer &quot;" . $contrib->get_name . "&quot; associated.");
+#	add_msg("Contributor &quot;" . $contrib->get_name . "&quot; associated.");
     }
 };
 
@@ -398,10 +398,10 @@ my $handle_assoc_contrib_role = sub {
     my $contrib = get_state_data($widget, 'contrib');
     my $role    = $param->{$widget.'|role'};
     # Add the contributor
-    $media->add_contributer($contrib, $role);
+    $media->add_contributor($contrib, $role);
     log_event('media_add_contrib', $media, { Name => $contrib->get_name });
-#    add_msg("Contributer &quot;" . $contrib->get_name . "&quot; associated.");
-    # Go back to the main contributer pick screen.
+#    add_msg("Contributor &quot;" . $contrib->get_name . "&quot; associated.");
+    # Go back to the main contributor pick screen.
     set_redirect(last_page);
     # Remove this page from the stack.
     pop_page;
@@ -415,10 +415,10 @@ my $handle_unassoc_contrib = sub {
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
     my $contrib_id = $param->{$field};
-    $media->delete_contributers([$contrib_id]);
+    $media->delete_contributors([$contrib_id]);
     my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
     log_event('media_del_contrib', $media, { Name => $contrib->get_name });
-#    add_msg("Contributer &quot;" . $contrib->get_name . "&quot; disassociated.");
+#    add_msg("Contributor &quot;" . $contrib->get_name . "&quot; disassociated.");
 };
 
 ################################################################################
@@ -430,7 +430,7 @@ my $save_contrib = sub {
 	my $media = get_state_data($widget, 'media');
 
 	my $existing;
-	foreach ($media->get_contributers) {
+	foreach ($media->get_contributors) {
 		my $id = $_->get_id();
 		$existing->{$id} = 1;
 	}
@@ -440,8 +440,8 @@ my $save_contrib = sub {
 	my $msg;
 	if ($contrib_id) {
 		if (ref $contrib_id) {
-			$msg = 'Contributers ';
-			$media->delete_contributers($contrib_id);
+			$msg = 'Contributors ';
+			$media->delete_contributors($contrib_id);
 			foreach (@$contrib_id) {
 				my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup(
 					{ id => $_ });
@@ -450,11 +450,11 @@ my $save_contrib = sub {
 			}
 			$msg .= ' disassociated.';
 		} else {
-			$media->delete_contributers([$contrib_id]);
+			$media->delete_contributors([$contrib_id]);
 			my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup(
 				{ id => $contrib_id });
 			delete $existing->{$contrib_id};
-			$msg = 'Contributer &quot;' . $contrib->get_name .
+			$msg = 'Contributor &quot;' . $contrib->get_name .
 			"&quot; disassociated.";
 		}
 	}
@@ -470,7 +470,7 @@ my $save_contrib = sub {
 
 	my @no;
 	@no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
-	$media->reorder_contributers(@no);
+	$media->reorder_contributors(@no);
 
 	# and that's that
 };
@@ -605,7 +605,7 @@ my %cbs = (
 	   # Return to the workspace without saving.
 	   return_cb             => $handle_return,
 	   # downloads the file to the user
-	   contributers_cb       => $handle_contributers,
+	   contributors_cb       => $handle_contributors,
 	   assoc_contrib_cb      => $handle_assoc_contrib,
 	   assoc_contrib_role_cb => $handle_assoc_contrib_role,
 	   unassoc_contrib_cb    => $handle_unassoc_contrib,

@@ -264,7 +264,7 @@ $m->out(scalar(@keywords) ? join(", ", @keywords) : "No keywords defined.");
 
 <%perl>
 my @contribs;
-foreach my $cntr ($story->get_contributers) {
+foreach my $cntr ($story->get_contributors) {
     push @contribs,  $cntr->get_name;
 }
 $m->out(scalar(@contribs) ? join(", ", @contribs) : "No contributors defined.");
@@ -275,7 +275,7 @@ $m->out(scalar(@contribs) ? join(", ", @contribs) : "No contributors defined.");
   <td width=80 align="center" valign=top><&
   '/widgets/profile/imageSubmit.mc',
     formName => "theForm",
-    callback => $widget . "|contributers_cb",
+    callback => $widget . "|contributors_cb",
     image    => "edit_lgreen",
     vspace   => 3
   &></td>

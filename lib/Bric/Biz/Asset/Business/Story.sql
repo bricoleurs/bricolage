@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:53:51 $
+-- $Date: 2001-09-17 16:19:43 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -21,8 +21,8 @@ CREATE SEQUENCE seq_story_instance START 1024;
 -- Unique IDs for the story__category mapping table
 CREATE SEQUENCE seq_story__category START  1024;
 
--- Unique ids for the story_contributer table
-CREATE SEQUENCE seq_story__contributer START 1024;
+-- Unique ids for the story_contributor table
+CREATE SEQUENCE seq_story__contributor START 1024;
 
 -- Unique IDs for the attr_story table
 CREATE SEQUENCE seq_attr_story START 1024;
@@ -117,15 +117,15 @@ CREATE TABLE story__category (
 );
 
 -- -----------------------------------------------------------------------------
--- Table story__contributer
+-- Table story__contributor
 -- 
--- Description: mapping tables between story instances and contributers
+-- Description: mapping tables between story instances and contributors
 --
 --
 
-CREATE TABLE story__contributer (
+CREATE TABLE story__contributor (
     id                  NUMERIC(10,0)	NOT NULL
-                                        DEFAULT NEXTVAL('seq_story__contributer'),
+                                        DEFAULT NEXTVAL('seq_story__contributor'),
     story_instance__id  NUMERIC(10,0)	NOT NULL,
     member__id          NUMERIC(10,0)	NOT NULL,
     place               NUMERIC(3,0)    NOT NULL,
@@ -220,8 +220,8 @@ CREATE INDEX fkx_story__story__category ON story__category(story_instance__id);
 CREATE INDEX fkx_category__story__category ON story__category(category__id);
 
 --story__contributor
-CREATE INDEX fkx_story__story__contributer ON story__contributer(story_instance__id);
-CREATE INDEX fkx_member__story__contributer ON story__contributer(member__id);
+CREATE INDEX fkx_story__story__contributor ON story__contributor(story_instance__id);
+CREATE INDEX fkx_member__story__contributor ON story__contributor(member__id);
 
 -- Unique index on subsystem/name pair
 CREATE UNIQUE INDEX udx_attr_story__subsys__name ON attr_story(subsys, name);
@@ -250,7 +250,11 @@ CREATE INDEX fkx_attr_story__attr_story_meta ON attr_story_meta(attr__id);
 /*
 Change Log:
 $Log: Story.sql,v $
-Revision 1.1  2001-09-06 21:53:51  wheeler
-Initial revision
+Revision 1.2  2001-09-17 16:19:43  wheeler
+Corrected spelling of "contributor" but grepping through files and fixing them,
+plus deleting some files, renaming them, and then adding them back in.
+
+Revision 1.1.1.1  2001/09/06 21:53:51  wheeler
+Upload to SourceForge.
 
 */

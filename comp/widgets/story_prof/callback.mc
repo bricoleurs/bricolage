@@ -501,12 +501,12 @@ my $handle_keywords = sub {
 
 ################################################################################
 
-my $handle_contributers = sub {
+my $handle_contributors = sub {
     my ($widget, $field, $param) = @_;
 
     # Return if there were data errors
     return unless &$save_data($param, $widget);
-    set_redirect("/workflow/profile/story/contributers.html");
+    set_redirect("/workflow/profile/story/contributors.html");
 };
 
 ################################################################################
@@ -520,11 +520,11 @@ my $handle_assoc_contrib = sub {
     my $roles = $contrib->get_roles;
     if (scalar(@$roles)) {
 	set_state_data($widget, 'contrib', $contrib);
-	set_redirect("/workflow/profile/story/contributer_role.html");
+	set_redirect("/workflow/profile/story/contributor_role.html");
     } else {
-	$story->add_contributer($contrib);
+	$story->add_contributor($contrib);
 	log_event('story_add_contrib', $story, { Name => $contrib->get_name });
-#	add_msg("Contributer &quot;" . $contrib->get_name . "&quot; associated.");
+#	add_msg("Contributor &quot;" . $contrib->get_name . "&quot; associated.");
     }
 };
 
@@ -538,12 +538,12 @@ my $handle_assoc_contrib_role = sub {
     my $role    = $param->{$widget.'|role'};
 
     # Add the contributor
-    $story->add_contributer($contrib, $role);
+    $story->add_contributor($contrib, $role);
     log_event('story_add_contrib', $story, { Name => $contrib->get_name });
 
-    # Go back to the main contributer pick screen.
+    # Go back to the main contributor pick screen.
     set_redirect(last_page);
-#    add_msg("Contributer &quot;" . $contrib->get_name . "&quot; associated.");
+#    add_msg("Contributor &quot;" . $contrib->get_name . "&quot; associated.");
 
     # Remove this page from the stack.
     pop_page;
@@ -556,13 +556,13 @@ my $handle_unassoc_contrib = sub {
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
     my $cids = mk_aref($param->{$field});
-    $story->delete_contributers($cids);
+    $story->delete_contributors($cids);
 
     # Log the dissocitations.
     foreach my $cid (@$cids) {
 	my $c = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $cid });
 	log_event('story_del_contrib', $story, { Name => $c->get_name });
-#	add_msg("Contributer &quot;" . $contrib->get_name . "&quot; disassociated.");
+#	add_msg("Contributor &quot;" . $contrib->get_name . "&quot; disassociated.");
     }
 };
 
@@ -574,14 +574,14 @@ my $save_contrib = sub {
     # get the contribs to delete
     my $story = get_state_data($widget, 'story');
 
-    my $existing = { map { $_->get_id => 1 } $story->get_contributers };
+    my $existing = { map { $_->get_id => 1 } $story->get_contributors };
 
     chk_authz($story, EDIT);
     my $contrib_id = $param->{$widget.'|delete_id'};
     my $msg;
     if ($contrib_id) {
         if (ref $contrib_id) {
-            $story->delete_contributers($contrib_id);
+            $story->delete_contributors($contrib_id);
             foreach (@$contrib_id) {
                 my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup(
                     { id => $_ });
@@ -589,15 +589,15 @@ my $save_contrib = sub {
 		log_event('story_del_contrib', $story,
 			  { Name => $contrib->get_name });
             }
-            add_msg('Contributers disassociated.');
+            add_msg('Contributors disassociated.');
         } else {
-            $story->delete_contributers([$contrib_id]);
+            $story->delete_contributors([$contrib_id]);
             my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup(
                 { id => $contrib_id });
 	    delete $existing->{$contrib_id};
 	    log_event('story_del_contrib', $story,
 		      { Name => $contrib->get_name });
-            add_msg('Contributer &quot;' . $contrib->get_name .
+            add_msg('Contributor &quot;' . $contrib->get_name .
 		    "&quot; disassociated.");
         }
     }
@@ -610,7 +610,7 @@ my $save_contrib = sub {
 	$existing->{$_} = $place;
     }
     my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
-    $story->reorder_contributers(@no);
+    $story->reorder_contributors(@no);
 
     # and that's that
 };
@@ -787,7 +787,7 @@ my %cbs = (
 	   view_trail_cb            => $handle_view_trail,
 	   update_pc                => $handle_update,
 	   keywords_cb              => $handle_keywords,
-	   contributers_cb          => $handle_contributers,
+	   contributors_cb          => $handle_contributors,
 	   assoc_contrib_cb         => $handle_assoc_contrib,
 	   assoc_contrib_role_cb    => $handle_assoc_contrib_role,
 	   unassoc_contrib_cb       => $handle_unassoc_contrib,

@@ -107,7 +107,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td width="121" align="right" height="25"><span class=label>Contributors:&nbsp;</span></td>
   <td width="457">
 <%perl>
-my @existing_contribs = map { $_->get_name } $media->get_contributers;
+my @existing_contribs = map { $_->get_name } $media->get_contributors;
 $m->out((scalar(@existing_contribs)) ? "&nbsp;" . join(", ", @existing_contribs) : "&nbsp;No contributors defined.");
 </%perl>
   </td>

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:53:46 $
+-- $Date: 2001-09-17 16:19:43 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -15,8 +15,8 @@ CREATE SEQUENCE seq_media START 1024;
 
 CREATE SEQUENCE seq_media_instance START 1024;
 
--- Unique ids for the story_contributer table
-CREATE SEQUENCE seq_media__contributer START 1024;
+-- Unique ids for the story_contributor table
+CREATE SEQUENCE seq_media__contributor START 1024;
 
 -- Unique IDs for the media_member table
 CREATE SEQUENCE seq_media_member START 1024;
@@ -117,15 +117,15 @@ CREATE TABLE media_fields (
 );
 
 -- -----------------------------------------------------------------------------
--- Table media__contributer
+-- Table media__contributor
 -- 
--- Description: mapping tables between story instances and contributers
+-- Description: mapping tables between story instances and contributors
 --
 --
 
-CREATE TABLE media__contributer (
+CREATE TABLE media__contributor (
     id                  NUMERIC(10,0)   NOT NULL
-                                        DEFAULT NEXTVAL('seq_media__contributer'),
+                                        DEFAULT NEXTVAL('seq_media__contributor'),
     media_instance__id  NUMERIC(10,0)   NOT NULL,
     member__id          NUMERIC(10,0)   NOT NULL,
     place               NUMERIC(3,0)    NOT NULL,
@@ -276,7 +276,11 @@ CREATE INDEX fkx_attr_media__attr_media_meta ON attr_media_meta(attr__id);
 /*
 Change Log:
 $Log: Media.sql,v $
-Revision 1.1  2001-09-06 21:53:46  wheeler
-Initial revision
+Revision 1.2  2001-09-17 16:19:43  wheeler
+Corrected spelling of "contributor" but grepping through files and fixing them,
+plus deleting some files, renaming them, and then adding them back in.
+
+Revision 1.1.1.1  2001/09/06 21:53:46  wheeler
+Upload to SourceForge.
 
 */

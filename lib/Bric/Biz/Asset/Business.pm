@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-09-17 16:19:43 $
 
 =head1 SYNOPSIS
 
@@ -173,10 +173,10 @@ BEGIN {
 
 
 	     # Private Fields
-		_contributers			=> Bric::FIELD_NONE,
+		_contributors			=> Bric::FIELD_NONE,
 		_queried_contrib		=> Bric::FIELD_NONE,
 		_del_contrib			=> Bric::FIELD_NONE,
-		_update_contributers	=> Bric::FIELD_NONE,
+		_update_contributors	=> Bric::FIELD_NONE,
 	     _keyword_grp_obj      	=> Bric::FIELD_NONE,
 	     _related_grp_obj      	=> Bric::FIELD_NONE,
 	     _tile                 	=> Bric::FIELD_NONE,
@@ -671,9 +671,9 @@ NONE
 
 ################################################################################
 
-=item $story->add_contributer($contrib, $role );
+=item $story->add_contributor($contrib, $role );
 
-Takes a contributer object or id and their role in the context of this 
+Takes a contributor object or id and their role in the context of this 
 story and associates them
 
 B<Throws:>
@@ -690,12 +690,12 @@ NONE
 
 =cut
 
-sub add_contributer {
+sub add_contributor {
     my ($self, $contrib, $role) = @_;
     my $dirty = $self->_get__dirty();
-    my $contribs = $self->_get_contributers() || {};
+    my $contribs = $self->_get_contributors() || {};
 
-    # get the contributer id
+    # get the contributor id
     my $c_id = ref $contrib ? $contrib->get_id() : $contrib;
     my $place = scalar keys %$contribs;
 
@@ -715,17 +715,17 @@ sub add_contributer {
 	}
 
     $self->_set({
-		 '_contributers' => $contribs,
-		 '_update_contributers' => 1
+		 '_contributors' => $contribs,
+		 '_update_contributors' => 1
 		});
 
     $self->_set__dirty($dirty);
     return $self;
 }
 
-=item ($contribs || @contribs) = $story->get_contributers()
+=item ($contribs || @contribs) = $story->get_contributors()
 
-Returns a list or list ref of the contributers that have been assigned
+Returns a list or list ref of the contributors that have been assigned
 to this story
 
 B<Throws:>
@@ -742,10 +742,10 @@ NONE
 
 =cut
 
-sub get_contributers {
+sub get_contributors {
 	my ($self) = @_;
 
-	my $contribs = $self->_get_contributers();
+	my $contribs = $self->_get_contributors();
 
 	my @contribs;
 	foreach my $id (sort {
@@ -766,9 +766,9 @@ sub get_contributers {
 
 ################################################################################
 
-=item $role = $biz->get_contributer_role($contrib)
+=item $role = $biz->get_contributor_role($contrib)
 
-Returns the role played by this contributer
+Returns the role played by this contributor
 
 B<Throws:>
 
@@ -784,11 +784,11 @@ NONE
 
 =cut
 
-sub get_contributer_role {
+sub get_contributor_role {
     my $self = shift;
     my ($contrib) = @_;
     my $c_id = ref $contrib ? $contrib->get_id : $contrib;
-    my $contribs = $self->_get_contributers;
+    my $contribs = $self->_get_contributors;
 
     return unless exists $contribs->{$c_id};
     return $contribs->{$c_id}->{'role'};
@@ -796,7 +796,7 @@ sub get_contributer_role {
 
 ################################################################################
 
-=item $story = $story->delete_contributers( $contributers )
+=item $story = $story->delete_contributors( $contributors )
 
 Recieves a list of contributrs or their ids and deletes them from the story
 
@@ -814,13 +814,13 @@ NONE
 
 =cut
 
-sub delete_contributers {
-    my ($self, $contributers) = @_;
+sub delete_contributors {
+    my ($self, $contributors) = @_;
     my $dirty = $self->_get__dirty();
-    my $contribs = $self->_get_contributers();
+    my $contribs = $self->_get_contributors();
     my $delete = $self->_get('_del_contrib');
 
-    foreach (@$contributers) {
+    foreach (@$contributors) {
 	my $id = ref $_ ? $_->get_id : $_;
 	if ($contribs->{$id}->{'action'}
 	    && $contribs->{$id}->{'action'} eq 'insert') {
@@ -844,8 +844,8 @@ sub delete_contributers {
     }
 
     $self->_set( {
-		  _contributers       	=> $contribs,
-		  _update_contributers 	=> 1,
+		  _contributors       	=> $contribs,
+		  _update_contributors 	=> 1,
 		  _del_contrib			=> $delete
 		 });
 
@@ -853,7 +853,7 @@ sub delete_contributers {
     return $self;
 }
 
-=item $asset = $asset->reorder_contributers(@contributers)
+=item $asset = $asset->reorder_contributors(@contributors)
 
 Takes a list of ids and sets the new order upon them
 
@@ -871,17 +871,17 @@ NONE
 
 =cut
 
-sub reorder_contributers {
+sub reorder_contributors {
 	my $self = shift;
 	my @new_order = @_;
 
 	my $dirty = $self->_get__dirty();
 
-	my $existing = $self->_get_contributers();
+	my $existing = $self->_get_contributors();
 
 	if ((scalar @new_order) != (scalar (keys %$existing))) {
 		die Bric::Util::Fault::Exception::GEN->new( 
-			{ 'msg' => 'Improper Args to reorder contributers' });
+			{ 'msg' => 'Improper Args to reorder contributors' });
 	}
 
 	my $i = 0;
@@ -895,10 +895,10 @@ sub reorder_contributers {
 			$i++;
 		} else {
         	die Bric::Util::Fault::Exception::GEN->new(
-			 { 'msg' => 'Improper Args to reorder contributers' });
+			 { 'msg' => 'Improper Args to reorder contributors' });
 		}
 	}
-	$self->_set( { '_contributers' => $existing });
+	$self->_set( { '_contributors' => $existing });
 
 	$self->_set__dirty($dirty);
 
@@ -1722,8 +1722,8 @@ sub checkout {
 	my $tile = $self->get_tile();
 	$tile->prepare_clone();
 
-	my $contribs = $self->_get_contributers();
-	# clone contributers
+	my $contribs = $self->_get_contributors();
+	# clone contributors
 	foreach (keys %$contribs ) {
 		$contribs->{$_}->{'action'} = 'insert';
 	}
@@ -1736,7 +1736,7 @@ sub checkout {
 		checked_out => 1
 	});
 
-	$self->_set( { '_update_contributers' => 1 }) if $contribs;
+	$self->_set( { '_update_contributors' => 1 }) if $contribs;
 
 	return $self;
 }
@@ -1827,7 +1827,7 @@ sub save {
 	$keyword_obj->save() if $keyword_obj;
 	$related_obj->save() if $related_obj;
 
-	$self->_sync_contributers();
+	$self->_sync_contributors();
 
 	$self->SUPER::save;
 
@@ -2015,9 +2015,9 @@ sub _get_element_object {
 
 ################################################################################
 
-=item $self = $self->_sync_contributers()
+=item $self = $self->_sync_contributors()
 
-Syncs the contributers for this story
+Syncs the contributors for this story
 
 B<Throws:>
 
@@ -2033,33 +2033,33 @@ NONE
 
 =cut
 
-sub _sync_contributers {
+sub _sync_contributors {
 	my ($self) = @_;
 
-	return $self unless $self->_get('_update_contributers');
+	return $self unless $self->_get('_update_contributors');
 
-	my $contribs = $self->_get_contributers();
+	my $contribs = $self->_get_contributors();
 	my $del_contribs = $self->_get('_del_contrib');
 
 	foreach my $id (keys %$contribs) {
 		my $role = $contribs->{$id}->{'role'};
 		my $place = $contribs->{$id}->{'place'};
 		if ($contribs->{$id}->{'action'} eq 'insert') {
-			$self->_insert_contributer($id, $role, $place);
+			$self->_insert_contributor($id, $role, $place);
 		} elsif ($contribs->{$id}->{'action'} eq 'update') {
-			$self->_update_contributer($id, $role, $place);
+			$self->_update_contributor($id, $role, $place);
 		}
 		delete $contribs->{$id}->{'action'};
 	}
 	foreach (keys %$del_contribs) {
-		$self->_delete_contributer($_);
+		$self->_delete_contributor($_);
 		delete $del_contribs->{$_};
 	}
 
 	$self->_set( {
 		'_del_contrib'	=> $del_contribs,
-		'_update_contributers' => undef,
-		'_contributers' => $contribs
+		'_update_contributors' => undef,
+		'_contributors' => $contribs
 	});
 
 	return $self;
@@ -2140,7 +2140,11 @@ L<Bric>, L<Bric::Biz::Asset>
 =head1 REVISION HISTORY
 
 $Log: Business.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-09-17 16:19:43  wheeler
+Corrected spelling of "contributor" but grepping through files and fixing them,
+plus deleting some files, renaming them, and then adding them back in.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:53:38  wheeler
