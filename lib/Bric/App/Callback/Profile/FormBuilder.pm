@@ -537,7 +537,7 @@ $save_element_etc = sub {
                 # Record a message and redirect if we're saving.
                 add_msg("$disp_name profile $name saved.");
                 # return to profile if creating new object
-                set_redirect("/admin/manager/key") unless $cb_key eq 'save_n_stay';
+                set_redirect("/admin/manager/$key") unless $cb_key eq 'save_n_stay';
             }
         } elsif ($cb_key eq 'addElement') {
             # redirect, and tack object id onto path
