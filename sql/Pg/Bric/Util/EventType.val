@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.1.4.2 $
+-- VERSION: $Revision: 1.1.4.3 $
 --
--- $Date: 2003-08-06 17:38:38 $
+-- $Date: 2003-08-06 17:39:36 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -598,22 +598,18 @@
     VALUES (NEXTVAL('seq_event_type'), 'org_deact', 'Organization Deactivated', 'Organization profile was deactivated.', 3, 1);
 
 -- ********** 'element_new' ************ --
-   -- HACK: This really should be 'element_new'.
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'element_new', 'Element Created', 'Element profile was created.', 22, 1);
 
 -- ********** 'element_save' ************ --
-   -- HACK: This really should be 'element_save'.
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'element_save', 'Element Changes Saved', 'Element profile changes were saved.', 22, 1);
 
 -- ********** 'element_deact' ************ --
-   -- HACK: This really should be 'element_deact'.
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'element_deact', 'Element Deactivated', 'Element profile was deactivated.', 22, 1);
 
 -- ********** 'element_attr_add' ************ --
-   -- HACK: This really should be 'element_attr_add'.
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'element_attr_add', 'Field Added to Element', 'A field was added to the element profile.', 22, 1);
 
@@ -621,7 +617,6 @@
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
 
 -- ********** 'element_attr_del' ************ --
-   -- HACK: This really should be 'element_attr_del'.
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'element_attr_del', 'Field Deleted from Element', 'A field was deleted from the element profile.', 22, 1);
 
