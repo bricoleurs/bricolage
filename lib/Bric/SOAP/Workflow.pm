@@ -35,15 +35,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-14 23:06:43 $
+$Date: 2002-03-14 23:17:26 $
 
 =head1 SYNOPSIS
 
@@ -151,7 +151,7 @@ sub publish {
  	    unless exists $allowed{$_};
     }
     
-    my $preview = exists $args->{to_preview} and $args->{to_preview};
+    my $preview = (exists $args->{to_preview} and $args->{to_preview}) ? 1 : 0;
     die __PACKAGE__ . "::publish : cannot publish to_preview with ".
 	"PREVIEW_LOCAL set.\n" if $preview and PREVIEW_LOCAL;
 
