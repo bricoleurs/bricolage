@@ -8,7 +8,18 @@ to INSTALL.
 
 RPM notes:
 
+  - You must install the Apache server, mod_perl and devel RPMs.  For
+    example, for Apache 1.3.20 you would install these RPMs:
+
+      apache-1.3.20-16.i386.rpm
+      apache-devel-1.3.20-16.i386.rpm
+      mod_perl-1.24_01-3.i386.rpm
+
   - You must install the PostgreSQL server and devel RPMs in
     order for Bricolage to find PostgreSQL.  This is because the devel
     RPMs contain the pg_config binary that Bricolage uses to find
-    PostgreSQL.
+    PostgreSQL.  For example, for PostgreSQL version 7.1.3 you would
+    install these RPMs:
+
+      postgresql-server-7.1.3-2.i386.rpm
+      postgresql-devel-7.1.3-2.i386.rpm
