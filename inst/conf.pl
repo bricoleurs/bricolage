@@ -203,10 +203,11 @@ sub create_httpd_conf {
 
             if ($mod eq 'log_config'|| $mod eq 'config_log') {
                 # I want to kill whoever decided this was a good idea
-                $dso_section .= "LoadModule \t config_log_module " .
-                  $AP->{load_modules}{"${mod}_module"} . "\n"
-                  if $AP->{load_modules}{"${mod}_module"};
-                $dso_section .= "AddModule \t mod_$mod.c\n\n";
+                if ($AP->{load_modules}{"${mod}_module"}) {
+                    $dso_section .= "LoadModule \t config_log_module " .
+                      $AP->{load_modules}{"${mod}_module"} . "\n" .
+                        "AddModule \t mod_$mod.c\n\n";
+                }
             } elsif ($mod eq 'apache_ssl') {
                 next unless $AP->{ssl} =~ /apache_ssl/;
                 $dso_section .= "LoadModule \t ${mod}_module " .
