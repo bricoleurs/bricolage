@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.5 $
+$Revision: 1.1.2.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.6 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-07 22:11:10 $
+$Date: 2003-03-07 22:17:04 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.5 2003-03-07 22:11:10 wheeler Exp $
+$Id: Site.pm,v 1.1.2.6 2003-03-07 22:17:04 wheeler Exp $
 
 =back
 
@@ -497,7 +497,7 @@ sub get_grp {
 
 ##############################################################################
 
-=head2 save
+=head3 save
 
   $site = $site->save;
 
