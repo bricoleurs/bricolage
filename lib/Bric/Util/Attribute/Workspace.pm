@@ -8,15 +8,15 @@ Bric::Util::Attribute::Workspace - Groups of workspace objects.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:41 $
+$Date: 2001-10-09 21:51:08 $
 
 =head1 SYNOPSIS
 
@@ -174,11 +174,5 @@ Bricolage Engineering
 =head1 SEE ALSO
 
 L<perl>, L<Bric>, L<Bric::Util::Attribute>, L<Bric::Biz::Workspace>
-
-=head1 REVISION HISTORY
-
-$Log: Workspace.pm,v $
-Revision 1.1  2001-09-06 21:55:41  wheeler
-Initial revision
 
 =cut

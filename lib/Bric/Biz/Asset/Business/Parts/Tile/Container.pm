@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.3.2.1 $
+$Revision: 1.3.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3.2.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-10-09 20:28:59 $
+$Date: 2001-10-09 21:51:06 $
 
 =head1 SYNOPSIS
 
@@ -1795,22 +1795,6 @@ Bricolage Engineering
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
 L<Bric::Biz::Asset::Business::Parts::Tile>
-
-=head1 REVISION HISTORY
-
-$Log: Container.pm,v $
-Revision 1.3.2.1  2001-10-09 20:28:59  wheeler
-Fixed bug where an arrayref of tiles was created over and over, deleting other
-tiles added to it. Resolves http://bricolage-bugzilla.about.com/show_bug.cgi?id=13.
-
-Revision 1.3  2001/09/13 16:55:19  samtregar
-Fixed two bugs - category_id is really category__id and user__id can be 0
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:56  wheeler
-Upload to SourceForge.
 
 =cut
 

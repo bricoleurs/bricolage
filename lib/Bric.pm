@@ -10,7 +10,7 @@ Release Version: 1.0.1
 
 File (CVS) Version:
 
-$Revision: 1.4.2.3 $
+$Revision: 1.4.2.4 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.0.1";
 
 =head1 DATE
 
-$Date: 2001-10-09 20:18:54 $
+$Date: 2001-10-09 21:51:05 $
 
 =head1 SYNOPSIS
 
@@ -801,35 +801,6 @@ sub _get_ref { [_get(@_)] }
 =head1 SEE ALSO
 
 perl(1).
-
-=head1 REVISION HISTORY
-
-$Log: Bric.pm,v $
-Revision 1.4.2.3  2001-10-09 20:18:54  wheeler
-Turning off warnings before checking values using eq.
-
-Revision 1.4.2.2  2001/10/04 16:21:47  wheeler
-Changed _set() to check for definedness vs. non-definedness because '' ne undef,
-and this was causing some problems.
-
-Revision 1.4.2.1  2001/10/01 10:31:05  wheeler
-Changed behavior of Bric::Util::Burner->display_element() such that it does
-*not* write out new files for each paginated element. Now only display_pages()
-does that. Updated the template documentation to reflect this change. Also
-updated To Do list to reflect changes, and added Bric::Changes to reflect
-changes from version to version.x
-
-Revision 1.4  2001/09/27 15:59:32  wheeler
-Fixed release version in the POD.
-
-Revision 1.3  2001/09/27 15:59:13  wheeler
-Incremented version to 1.0.1. Release due tomorrow morning.
-
-Revision 1.2  2001/09/19 19:33:38  wheeler
-Changed version number. Will increment to 1.0.1 upon actual release.
-
-Revision 1.1.1.1  2001/09/06 21:52:43  wheeler
-Upload to SourceForge.
 
 =cut
 

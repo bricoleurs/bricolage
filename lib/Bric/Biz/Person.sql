@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:53:31 $
+-- $Date: 2001-10-09 21:51:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -62,10 +62,3 @@ CREATE SEQUENCE seq_person START 1024;
 CREATE SEQUENCE seq_person_member START 1024;
 
 
-/*
-Change Log:
-$Log: Person.sql,v $
-Revision 1.1  2001-09-06 21:53:31  wheeler
-Initial revision
-
-*/

@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    ServerType.tst
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:54:38 $
+-- $Date: 2001-10-09 21:51:07 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 DELETE FROM server_type;
@@ -41,10 +41,4 @@ INSERT INTO server_type__output_channel (server_type__id, output_channel__id)
 VALUES (2, 3);
 
 
-/*
-Change Log:
-$Log: ServerType.tst,v $
-Revision 1.1  2001-09-06 21:54:38  wheeler
-Initial revision
 
-*/

@@ -165,20 +165,14 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:52 $
+$Date: 2001-10-09 21:51:02 $
 
 =head1 DESCRIPTION
 
 This dhandler manages user profiles.
-
-=head1 REVISION HISTORY
-
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:52  wheeler
-Initial revision
 
 </%doc>

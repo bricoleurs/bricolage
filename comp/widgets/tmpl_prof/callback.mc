@@ -434,23 +434,4 @@ my $delete_fa = sub {
 
 %#--- Log History ---#
 
-<%doc>
-$Log: callback.mc,v $
-Revision 1.4.2.1  2001-10-03 10:12:44  wheeler
-Fixed bug where autohandlers weren't getting created properly.
 
-Revision 1.4  2001/09/28 12:20:25  wheeler
-Added canceled checkout event logging, plus some missing template event logging.
-
-Revision 1.3  2001/09/27 10:10:16  wheeler
-Now collecting the workflow ID from the state (as saved by
-workflow/manager/autohandler) so that we can be sure to always *have* a workflow
-ID when redirecting.
-
-Revision 1.2  2001/09/13 16:53:32  samtregar
-Fixed apparent typo - there is no make_element in HTML::Mason::Parser.
-
-Revision 1.1.1.1  2001/09/06 21:52:32  wheeler
-Upload to SourceForge.
-
-</%doc>

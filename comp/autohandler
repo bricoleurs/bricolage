@@ -16,11 +16,11 @@ autohandler - The first Mason element to execute during a request.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:45 $
+$Date: 2001-10-09 21:51:01 $
 
 =head1 SYNOPSIS
 
@@ -29,11 +29,6 @@ N/A
 =head1 DESCRIPTION
 
 This is the root autohandler. It's job is to handle callbacks.
-
-=head1 REVISION HISTORY
-$Log: autohandler,v $
-Revision 1.1  2001-09-06 21:51:45  wheeler
-Initial revision
 
 </%doc>
 

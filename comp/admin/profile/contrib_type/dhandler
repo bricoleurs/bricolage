@@ -127,20 +127,14 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:49 $
+$Date: 2001-10-09 21:51:01 $
 
 =head1 DESCRIPTION
 
 Diplays the profile for contributor types (groups of people).
-
-=REVISION HISTORY
-
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:49  wheeler
-Initial revision
 
 </%doc>

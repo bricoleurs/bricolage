@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- ATType.tst
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
 
 
@@ -18,10 +18,3 @@ VALUES (51, 'paginated', 'A paginated asset type', 1, 10);
 
 */
 
-/*
-Change Log:
-$Log: ATType.tst,v $
-Revision 1.1  2001-09-06 21:53:05  wheeler
-Initial revision
-
-*/

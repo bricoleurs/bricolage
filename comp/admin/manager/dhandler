@@ -345,11 +345,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:46 $
+$Date: 2001-10-09 21:51:01 $
 
 =head1 SYNOPSIS
 
@@ -360,11 +360,5 @@ $Date: 2001-09-06 21:51:46 $
 This is the generalized admin manager for handling the aministration of all
 kinds of admin objects. It uses the URL to determine what type of object it's
 administrating, and then takes care of the listing and search features.
-
-=head1 REVISION HISTORY
-
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:46  wheeler
-Initial revision
 
 </%doc>

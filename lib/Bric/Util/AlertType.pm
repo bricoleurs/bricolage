@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:48 $
+$Date: 2001-10-09 21:51:07 $
 
 =head1 SYNOPSIS
 
@@ -2808,12 +2808,6 @@ Bric (2)
 Bric::Util::Alert(3)
 Bric::Util::EventType(4)
 Bric::Util::Event(5)
-
-=head1 REVISION HISTORY
-
-$Log: AlertType.pm,v $
-Revision 1.1  2001-09-06 21:54:48  wheeler
-Initial revision
 
 =cut
 

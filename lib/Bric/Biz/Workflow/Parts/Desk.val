@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:54:18 $
+-- $Date: 2001-10-09 21:51:07 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -27,10 +27,4 @@ VALUES (106, 'Development', 'Development Desk', NULL, NULL, 66, 0, 1);
 INSERT INTO desk (id, name, description, pre_chk_rules, post_chk_rules, asset_grp, publish, active)
 VALUES (107, 'Deploy', 'Deploy Desk', NULL, NULL, 67, 1, 1);
 
-/*
-Change Log:
-$Log: Desk.val,v $
-Revision 1.1  2001-09-06 21:54:18  wheeler
-Initial revision
 
-*/

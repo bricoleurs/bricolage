@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.2.2.1 $
 --
--- $Date: 2001-09-17 16:19:43 $
+-- $Date: 2001-10-09 21:51:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -247,14 +247,4 @@ CREATE INDEX idx_attr_story_meta__name ON attr_story_meta(LOWER(name));
 CREATE INDEX fkx_attr_story__attr_story_meta ON attr_story_meta(attr__id);
 
 
-/*
-Change Log:
-$Log: Story.sql,v $
-Revision 1.2  2001-09-17 16:19:43  wheeler
-Corrected spelling of "contributor" but grepping through files and fixing them,
-plus deleting some files, renaming them, and then adding them back in.
 
-Revision 1.1.1.1  2001/09/06 21:53:51  wheeler
-Upload to SourceForge.
-
-*/

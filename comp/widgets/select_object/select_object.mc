@@ -8,11 +8,11 @@ select_object - Provide a select box listing all objects of a certain type.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:26 $
+$Date: 2001-10-09 21:51:04 $
 
 =head1 SYNOPSIS
 
@@ -258,9 +258,4 @@ $m->comp($style.'.html',
 
 %#--- Log History ---#
 
-<%doc>
-$Log: select_object.mc,v $
-Revision 1.1  2001-09-06 21:52:26  wheeler
-Initial revision
 
-</%doc>

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:53:05 $
+-- $Date: 2001-10-09 21:51:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -84,10 +84,4 @@ CREATE INDEX fdx_class__at_type ON at_type(biz_class__id);
 CREATE INDEX fkx_comp_type__comp_type_member ON element_type_member(object_id);
 CREATE INDEX fkx_member__comp_type_member ON element_type_member(member__id);
 
-/*
-Change Log:
-$Log: ATType.sql,v $
-Revision 1.1  2001-09-06 21:53:05  wheeler
-Initial revision
 
-*/

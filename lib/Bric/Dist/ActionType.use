@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    ActionType.use
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:54:22 $
+-- $Date: 2001-10-09 21:51:07 $
 -- Author: David Wheeler <david@wheeler.net>
 
 -- SELECT statement.
@@ -13,10 +13,4 @@ WHERE  a.id = m.action_type__id
        AND a.name = 'Ultraseek';
 
 
-/*
-Change Log:
-$Log: ActionType.use,v $
-Revision 1.1  2001-09-06 21:54:22  wheeler
-Initial revision
 
-*/

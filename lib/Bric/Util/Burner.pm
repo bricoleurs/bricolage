@@ -8,15 +8,15 @@ Bric::Biz::Publisher - A class to manage publishing of business assets.
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.2 $
+$Revision: 1.1.1.1.2.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1.1.1.2.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-05 09:32:10 $
+$Date: 2001-10-09 21:51:07 $
 
 =head1 SYNOPSIS
 
@@ -1097,21 +1097,5 @@ Bricolage Engineering
 =head1 SEE ALSO
 
 L<Perl>, L<Bric>
-
-=head1 REVISION HISTORY
-
-$Log: Burner.pm,v $
-Revision 1.1.1.1.2.2  2001-10-05 09:32:10  wheeler
-Added an XML::Writer object to templates.
-
-Revision 1.1.1.1.2.1  2001/10/01 10:28:57  wheeler
-Added support for custom file naming on a per-output channel basis. The filename
-is specified in the Output Channel profile, and used during the burn phase to
-name files on the file system. Configuration directives specifying default
-values for the filename fields have also been added and documented in
-Bric::Admin.
-
-Revision 1.1.1.1  2001/09/06 21:54:57  wheeler
-Upload to SourceForge.
 
 =cut

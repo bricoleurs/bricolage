@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:54:01 $
+-- $Date: 2001-10-09 21:51:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -155,10 +155,4 @@ CREATE INDEX idx_attr_atd_meta__name ON attr_at_data_meta(LOWER(name));
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_atd__attr_atd_meta ON attr_at_data_meta(attr__id);
 
-/*
-Change Log:
-$Log: Data.sql,v $
-Revision 1.1  2001-09-06 21:54:01  wheeler
-Initial revision
 
-*/

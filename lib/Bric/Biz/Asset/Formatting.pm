@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.4.2.1 $
+$Revision: 1.4.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4.2.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-03 09:43:56 $
+$Date: 2001-10-09 21:51:06 $
 
 =head1 SYNOPSIS
 
@@ -2110,24 +2110,5 @@ michael soderstrom - miraso@pacbell.net
 =head1 SEE ALSO
 
 L<Bric>, L<Bric::Biz::Asset>
-
-=head1 REVISION HISTORY
-
-$Log: Formatting.pm,v $
-Revision 1.4.2.1  2001-10-03 09:43:56  wheeler
-Fixed bug where cancelled checkouts weren't fully checked out
-(http://bricolage-bugzilla.about.com/show_bug.cgi?id=8).
-
-Revision 1.4  2001/09/28 12:19:02  wheeler
-Fixed bug where checkouts weren't getting properly cancelled.
-
-Revision 1.3  2001/09/13 16:55:19  samtregar
-Fixed two bugs - category_id is really category__id and user__id can be 0
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:41  wheeler
-Upload to SourceForge.
 
 =cut

@@ -6,16 +6,16 @@ Bric::Util::Grp::Grp - Interface to Bric::Util::Grp Groups
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:55 $
+$Date: 2001-10-09 21:51:09 $
 
 =head1 SYNOPSIS
 
@@ -280,11 +280,5 @@ David Wheeler <david@wheeler.net>
 perl(1),
 Bric (2),
 Bric::Util::Grp(3)
-
-=head1 REVISION HISTORY
-
-$Log: Grp.pm,v $
-Revision 1.1  2001-09-06 21:55:55  wheeler
-Initial revision
 
 =cut

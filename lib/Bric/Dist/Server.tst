@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Server.tst
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:54:34 $
+-- $Date: 2001-10-09 21:51:07 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 DELETE FROM server;
@@ -22,10 +22,4 @@ VALUES (4, 2, 'ww3.foo.com', 'Unix', '/tmp/content', 'upload', 'daolpu', 'seoirn
 INSERT INTO server (id, server_type__id, host_name, os, doc_root, login, password, cookie, active)
 VALUES (5, 2, 'ww4.foo.com', 'Unix', '/tmp/content', 'upload', 'daolpu', 'seoirQ89nfp0893j5vfe90sf', 1);
 
-/*
-Change Log:
-$Log: Server.tst,v $
-Revision 1.1  2001-09-06 21:54:34  wheeler
-Initial revision
 
-*/

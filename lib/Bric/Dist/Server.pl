@@ -85,9 +85,3 @@ if (my $err = $@) {
       . "\n" : "$err\n";
 }
 
-__END__
-Change Log:
-$Log: Server.pl,v $
-Revision 1.1  2001-09-06 21:54:32  wheeler
-Initial revision
-

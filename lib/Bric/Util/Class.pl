@@ -45,9 +45,3 @@ if (my $err = $@) {
 }
 
 1;
-__END__
-Change Log:
-$Log: Class.pl,v $
-Revision 1.1  2001-09-06 21:54:59  wheeler
-Initial revision
-

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:54:43 $
+-- $Date: 2001-10-09 21:51:07 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -37,10 +37,4 @@ CREATE INDEX idx_alert__timestamp ON alert(timestamp);
 CREATE INDEX fkx_alert_type__alert ON alert(alert_type__id);
 CREATE INDEX fkx_event__alert ON alert(event__id);
 
-/*
-Change Log:
-$Log: Alert.sql,v $
-Revision 1.1  2001-09-06 21:54:43  wheeler
-Initial revision
 
-*/

@@ -8,15 +8,15 @@ package Bric::Util::Attribute;
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.1 $
+$Revision: 1.1.1.1.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-04 14:42:23 $
+$Date: 2001-10-09 21:51:07 $
 
 =head1 SYNOPSIS
 
@@ -1872,14 +1872,5 @@ NONE
 =head1 SEE ALSO
 
 L<perl>, L<Bric>, L<Bric::Util::Group>
-
-=head1 REVISION HISTORY
-
-$Log: Attribute.pm,v $
-Revision 1.1.1.1.2.1  2001-10-04 14:42:23  wheeler
-Fixed syntax errors that prevented the deletion of attributes.
-
-Revision 1.1.1.1  2001/09/06 21:54:55  wheeler
-Upload to SourceForge.
 
 =cut

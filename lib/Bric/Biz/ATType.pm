@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.4.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-28 08:06:54 $
+$Date: 2001-10-09 21:51:06 $
 
 =head1 SYNOPSIS
 
@@ -866,20 +866,5 @@ Bricolage Engineering
 =head1 SEE ALSO
 
 L<perl>, L<Bric>, L<Bric::Biz::AssetType>
-
-=head1 REVISION HISTORY
-
-$Log: ATType.pm,v $
-Revision 1.4  2001-09-28 08:06:54  wheeler
-Fixed bug in collecting a list of classes in my_meths().
-
-Revision 1.3  2001/09/27 12:09:16  wheeler
-Added ORDER BY clause to the SELECT statement.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:05  wheeler
-Upload to SourceForge.
 
 =cut

@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:05 $
+$Date: 2001-10-09 21:51:03 $
 
 =head1 SYNOPSIS
 
@@ -262,9 +262,4 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths, $sort_by
 
 %#--- Log History ---#
 
-<%doc>
-$Log: desk.mc,v $
-Revision 1.1  2001-09-06 21:52:05  wheeler
-Initial revision
 
-</%doc>

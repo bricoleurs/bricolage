@@ -6,11 +6,11 @@ Bric::Templates - Producing Templates on the Bricolage System
 
 =head1 VERSION
 
-$Revision: 1.2.2.1 $
+$Revision: 1.2.2.2 $
 
 =head1 DATE
 
-$Date: 2001-10-01 10:31:05 $
+$Date: 2001-10-09 21:51:05 $
 
 =head1 BACKGROUND
 
@@ -1055,18 +1055,5 @@ Bric::Biz::Asset::Business::Parts::Tile(7),
 Bric::Biz::Asset::Business::Parts::Tile::Data(8),
 Bric::Biz::Asset::Business::Parts::Tile::Container(9),
 Bric::Util::Burner(10)
-
-=head1 REVISION HISTORY
-
-$Log: Templates.pod,v $
-Revision 1.2.2.1  2001-10-01 10:31:05  wheeler
-Changed behavior of Bric::Util::Burner->display_element() such that it does
-*not* write out new files for each paginated element. Now only display_pages()
-does that. Updated the template documentation to reflect this change. Also
-updated To Do list to reflect changes, and added Bric::Changes to reflect
-changes from version to version.x
-
-Revision 1.2  2001/09/26 07:59:39  wheeler
-Made a few minor corrections.
 
 =cut

@@ -7,15 +7,15 @@ Bric::Util::Fault - base class for all Exceptions and Errors
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:13 $
+$Date: 2001-10-09 21:51:08 $
 
 =head1 SYNOPSIS
 
@@ -484,11 +484,5 @@ matthew d. p. k. strelchun-lanier - matt@lanier.org
 =head1 SEE ALSO
 
 uh, nothing.
-
-=head1 REVISION HISTORY
-
-$Log: Fault.pm,v $
-Revision 1.1  2001-09-06 21:55:13  wheeler
-Initial revision
 
 =cut

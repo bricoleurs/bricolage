@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-17 16:19:43 $
+$Date: 2001-10-09 21:51:09 $
 
 =head1 SYNOPSIS
 
@@ -694,15 +694,5 @@ Bric (2),
 Bric::Util::Grp(3),
 Bric::Util::Grp::Person(4),
 Bric::Util::Grp::Parts::Member(4),
-
-=head1 REVISION HISTORY
-
-$Log: Contrib.pm,v $
-Revision 1.2  2001-09-17 16:19:43  wheeler
-Corrected spelling of "contributor" but grepping through files and fixing them,
-plus deleting some files, renaming them, and then adding them back in.
-
-Revision 1.1.1.1  2001/09/06 21:56:04  wheeler
-Upload to SourceForge.
 
 =cut

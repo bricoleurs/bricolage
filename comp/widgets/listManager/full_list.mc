@@ -148,9 +148,4 @@ $addition = &$addition($pkg) if ref $addition eq 'CODE';
 
 %#--- Log History ---#
 
-<%doc>
-$Log: full_list.mc,v $
-Revision 1.1  2001-09-06 21:52:10  wheeler
-Initial revision
 
-</%doc>

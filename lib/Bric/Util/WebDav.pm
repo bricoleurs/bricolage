@@ -10,15 +10,15 @@ package Bric::Util::WebDav;
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:35 $
+$Date: 2001-10-09 21:51:08 $
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut 
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =pod
 
@@ -810,12 +810,6 @@ __END__
 
 =head1 AUTHOR
 	michael soderstrom (miraso@pacbell.net)
-
-=head1 REVISION HISTORY
-
-	$Log: WebDav.pm,v $
-	Revision 1.1  2001-09-06 21:55:35  wheeler
-	Initial revision
 
 =cut
 

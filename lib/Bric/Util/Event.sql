@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:55:07 $
+-- $Date: 2001-10-09 21:51:08 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -49,10 +49,4 @@ CREATE INDEX idx_event__timestamp ON event(timestamp);
 CREATE INDEX fkx_event__event_attr ON event_attr(event__id);
 CREATE INDEX fkx_event_type_attr__event_attr ON event_attr(event_type_attr__id);
 
-/*
-Change Log:
-$Log: Event.sql,v $
-Revision 1.1  2001-09-06 21:55:07  wheeler
-Initial revision
 
-*/

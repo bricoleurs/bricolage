@@ -7,15 +7,15 @@ Bric::Util::Coll::Priv - Interface for managing collections of privileges.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:43 $
+$Date: 2001-10-09 21:51:08 $
 
 =head1 SYNOPSIS
 
@@ -220,11 +220,5 @@ Bric::Util::Coll(3),
 Bric::Util::Priv(4)
 Bric::Biz::Person::User(5)
 Bric::Biz::Grp::User(6)
-
-=head1 REVISION HISTORY
-
-$Log: Priv.pm,v $
-Revision 1.1  2001-09-06 21:55:43  wheeler
-Initial revision
 
 =cut

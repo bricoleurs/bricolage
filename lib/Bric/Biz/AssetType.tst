@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- AssetType.tst
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
 -- Test values.
 --
@@ -73,10 +73,3 @@ VALUES (2,4,340);
 
 */
 
-/*
-Change Log:
-$Log: AssetType.tst,v $
-Revision 1.1  2001-09-06 21:53:14  wheeler
-Initial revision
-
-*/

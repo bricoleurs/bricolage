@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:00 $
+$Date: 2001-10-09 21:51:02 $
 
 =head1 SYNOPSIS
 
@@ -21,12 +21,6 @@ $Date: 2001-09-06 21:52:00 $
 
 This element is called by submits from the My Alerts Profile, where one or
 more alerts have been marked for acknowledgement.
-
-=head1 REVISION HISTORY
-
-$Log: callback.mc,v $
-Revision 1.1  2001-09-06 21:52:00  wheeler
-Initial revision
 
 </%doc>
 

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:53:35 $
+-- $Date: 2001-10-09 21:51:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -156,10 +156,4 @@ INSERT INTO desk_member(id, object_id, member__id)
 VALUES (117, 107, 217);
 
 
-/*
-Change Log:
-$Log: Workflow.val,v $
-Revision 1.1  2001-09-06 21:53:35  wheeler
-Initial revision
 
-*/

@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.6.2.3 $
+$Revision: 1.6.2.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.6.2.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.6.2.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-05 09:31:42 $
+$Date: 2001-10-09 21:51:05 $
 
 =head1 SYNOPSIS
 
@@ -506,40 +506,5 @@ NONE
 =head1 SEE ALSO
 
 L<perl>, L<DBC>
-
-=head1 REVISION HISTORY
-
-$Log: Config.pm,v $
-Revision 1.6.2.3  2001-10-05 09:31:42  wheeler
-Added configurations for XML::Writer in templates.
-
-Revision 1.6.2.2  2001/10/05 08:15:42  wheeler
-Added SERVER_WINDOW_NAME for use in window.open() JavaScript calls.
-
-Revision 1.6.2.1  2001/10/04 13:37:38  wheeler
-Added PERL_LOADER and fixed bug where *no* directives were getting loaded!
-
-Revision 1.6  2001/09/27 15:41:46  wheeler
-Added filename and file_ext columns to OutputChannel API. Also added a
-configuration directive to CE::Config to specify the default filename and
-extension for the system. Will need to document later that these can be set, or
-move them into preferences. Will also need to use the filename and file_ext
-properties of Bric::Biz::OutputChannel in the Burn System.
-
-Revision 1.5  2001/09/26 10:38:56  wheeler
-Unset debugging settings.
-
-Revision 1.4  2001/09/25 13:34:31  wheeler
-Changed FULL_SEARCH to allow standard setting arguments in bricolage.conf,
-and to default to 0.
-
-Revision 1.3  2001/09/20 02:12:29  wheeler
-Undid changes I accidentally committed.
-
-Revision 1.2  2001/09/20 02:11:40  wheeler
-Removed files that I'd put in the wrong place!
-
-Revision 1.1.1.1  2001/09/06 21:52:50  wheeler
-Upload to SourceForge.
 
 =cut

@@ -141,11 +141,11 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.3.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-28 09:17:18 $
+$Date: 2001-10-09 21:51:01 $
 
 =head1 SYNOPSIS
 
@@ -154,17 +154,5 @@ $Date: 2001-09-28 09:17:18 $
 =head1 DESCRIPTION
 
 This manager manages element objects.
-
-=head1 REVISION HISTORY
-
-$Log: dhandler,v $
-Revision 1.3  2001-09-28 09:17:18  wheeler
-Fixed bug introduced by last bugfix.
-
-Revision 1.2  2001/09/28 08:44:03  wheeler
-Fixed button display for when no Elements listed in the Element Manager.
-
-Revision 1.1.1.1  2001/09/06 21:51:46  wheeler
-Upload to SourceForge.
 
 </%doc>

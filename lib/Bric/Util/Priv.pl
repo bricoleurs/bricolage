@@ -111,9 +111,3 @@ ok ref $acl eq 'HASH';
 
 print "Error: $@\n" if $@;
 
-__END__
-Change Log:
-$Log: Priv.pl,v $
-Revision 1.1  2001-09-06 21:55:31  wheeler
-Initial revision
-

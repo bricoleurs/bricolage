@@ -1,9 +1,9 @@
 --
 -- ER/Studio 4.0 SQL Code Generation
 -- Project:      Bricolage Business API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:55:09 $
+-- $Date: 2001-10-09 21:51:08 $
 -- Target DBMS : Oracle 8
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -59,10 +59,4 @@ CREATE INDEX fkx_event_type__event_type_attr ON event_type_attr(event_type__id);
 CREATE INDEX fkx_class__event_type ON event_type(class__id);
 
 
-/*
-Change Log:
-$Log: EventType.sql,v $
-Revision 1.1  2001-09-06 21:55:09  wheeler
-Initial revision
 
-*/

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:53:42 $
+-- $Date: 2001-10-09 21:51:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -204,10 +204,4 @@ CREATE INDEX idx_attr_frmt_meta__name ON attr_formatting_meta(LOWER(name));
 CREATE INDEX fkx_attr_frmt__attr_frmt_meta ON attr_formatting_meta(attr__id);
 
 
-/*
-Change Log:
-$Log: Formatting.sql,v $
-Revision 1.1  2001-09-06 21:53:42  wheeler
-Initial revision
 
-*/

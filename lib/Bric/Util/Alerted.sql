@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.2.2.1 $
 --
--- $Date: 2001-09-26 14:54:23 $
+-- $Date: 2001-10-09 21:51:07 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -54,16 +54,4 @@ CREATE INDEX idx_ac_value__cv__value ON alerted__contact_value(contact_value__va
 CREATE INDEX fkx_alerted__alerted__contact ON alerted__contact_value(alerted__id);
 CREATE INDEX fkx_contact__alerted__cont ON alerted__contact_value(contact__id);
 
-/*
-Change Log:
-$Log: Alerted.sql,v $
-Revision 1.2  2001-09-26 14:54:23  wheeler
-Fixed a bug where the wrong information was getting entered into the database
-regarding an alert. Instead of the contact type ID getting in, the contact value
-ID was getting in. This has been fixed, so now the proper contact type is always
-referenced, and the contact value is copied over.
 
-Revision 1.1.1.1  2001/09/06 21:54:50  wheeler
-Upload to SourceForge.
-
-*/

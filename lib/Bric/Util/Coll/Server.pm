@@ -7,15 +7,15 @@ Bric::Util::Coll::Server - Interface for managing collections of servers.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:44 $
+$Date: 2001-10-09 21:51:08 $
 
 =head1 SYNOPSIS
 
@@ -223,11 +223,5 @@ Bric (2),
 Bric::Util::Coll(3),
 Bric::Dist::Server(4),
 Bric::Dist::ServerType(5)
-
-=head1 REVISION HISTORY
-
-$Log: Server.pm,v $
-Revision 1.1  2001-09-06 21:55:44  wheeler
-Initial revision
 
 =cut

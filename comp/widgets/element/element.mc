@@ -54,11 +54,11 @@ return $comp;
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:08 $
+$Date: 2001-10-09 21:51:03 $
 
 =head1 SYNOPSIS
 
@@ -68,10 +68,5 @@ $Date: 2001-09-06 21:52:08 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the element Profile page.
-
-=head1 REVISION HISTORY
-$Log: element.mc,v $
-Revision 1.1  2001-09-06 21:52:08  wheeler
-Initial revision
 
 </%doc>

@@ -39,20 +39,14 @@ my $excl = { desk => 1, action => 1, server => 1 };
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:17 $
+$Date: 2001-10-09 21:51:03 $
 
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
-
-=head1 REVISION HISTORY
-
-$Log: callback.mc,v $
-Revision 1.1  2001-09-06 21:52:17  wheeler
-Initial revision
 
 </%doc>

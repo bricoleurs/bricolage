@@ -13,11 +13,11 @@ $url ||= last_page();
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:57 $
+$Date: 2001-10-09 21:51:02 $
 
 =head1 SYNOPSIS
 
@@ -41,11 +41,5 @@ url - The URL to which the browser is redirected when the back button is
 clicked. Defaults to the value returned by last_page().
 
 =back
-
-=head1 REVISION HISTORY
-
-$Log: back_button.mc,v $
-Revision 1.1  2001-09-06 21:51:57  wheeler
-Initial revision
 
 </%doc>

@@ -131,9 +131,3 @@ eval {
 
 print "Error: $@" if $@;
 
-__END__
-Change Log:
-$Log: Action.pl,v $
-Revision 1.1  2001-09-06 21:54:18  wheeler
-Initial revision
-

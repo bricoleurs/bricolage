@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    ActionType.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:54:22 $
+-- $Date: 2001-10-09 21:51:07 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO action_type ( id, name, description, active)
@@ -32,10 +32,3 @@ VALUES (3, 78);
 
 */
 
-/*
-Change Log:
-$Log: ActionType.val,v $
-Revision 1.1  2001-09-06 21:54:22  wheeler
-Initial revision
-
-*/

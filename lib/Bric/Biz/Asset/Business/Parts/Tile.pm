@@ -9,16 +9,16 @@ package Bric::Biz::Asset::Business::Parts::Tile;
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.1 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-10-09 21:51:06 $
 
 
 =head1 SYNOPSIS
@@ -467,15 +467,6 @@ michael soderstrom ( miraso@pacbell.net )
 
 L<perl>,L<Bric>,L<Bric::Biz::Asset::Business::Story>,L<Bric::Biz::Asset_type>,
 L<Bric::Biz::Asset_type::Parts::Data>,L<Bric::Biz::Asset::Business::Media> 
-
-=head1 REVISION HISTORY
-
-$Log: Tile.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:53  wheeler
-Upload to SourceForge.
 
 =cut
 

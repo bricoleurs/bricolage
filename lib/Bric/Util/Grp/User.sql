@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:56:01 $
+-- $Date: 2001-10-09 21:51:09 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -31,10 +31,4 @@ CREATE INDEX fkx_user__user_member ON user_member(object_id);
 CREATE INDEX fkx_member__user_member ON user_member(member__id);
 
 
-/*
-Change Log:
-$Log: User.sql,v $
-Revision 1.1  2001-09-06 21:56:01  wheeler
-Initial revision
 
-*/

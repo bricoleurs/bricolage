@@ -212,11 +212,11 @@ TH         <% $header %>
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-27 08:43:15 $
+$Date: 2001-10-09 21:51:04 $
 
 =head1 SYNOPSIS
 
@@ -225,14 +225,5 @@ $Date: 2001-09-27 08:43:15 $
 =head1 DESCRIPTION
 
 Generate platform specific stylesheets.
-
-=head1 LOG
-
-$Log: css.mc,v $
-Revision 1.2  2001-09-27 08:43:15  wheeler
-Added whiteUnderlinedLink style.
-
-Revision 1.1.1.1  2001/09/06 21:52:35  wheeler
-Upload to SourceForge.
 
 </%doc>

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:54:34 $
+-- $Date: 2001-10-09 21:51:07 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -38,10 +38,4 @@ ALTER TABLE    dest_member
 ADD CONSTRAINT fk_member__dest_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
-/*
-Change Log:
-$Log: ServerType.con,v $
-Revision 1.1  2001-09-06 21:54:34  wheeler
-Initial revision
 
-*/

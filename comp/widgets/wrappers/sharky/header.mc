@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.8 $
+$Revision: 1.2.2.9 $
 
 =head1 DATE
 
-$Date: 2001-10-05 09:05:18 $
+$Date: 2001-10-09 21:51:04 $
 
 =head1 SYNOPSIS
 
@@ -262,44 +262,6 @@ while (my $txt = next_msg) {
 
 
 
-<%doc>
 
-$Log: header.mc,v $
-Revision 1.2.2.8  2001-10-05 09:05:18  wheeler
-Added no_toolbar argument.
-
-Revision 1.2.2.7  2001/10/05 08:52:15  wheeler
-Added server name to all new window names opened by window.open() or <a target>.
-
-Revision 1.2.2.6  2001/10/04 15:47:49  wheeler
-Added server host name to window name for new toolbar-less window. Resolves
-http://bricolage-bugzilla.about.com/show_bug.cgi?id=15.
-
-Revision 1.2.2.5  2001/10/04 12:47:48  wheeler
-Turned off the link to the "About" page for when the sideNav is off.
-
-Revision 1.2.2.4  2001/10/04 11:10:55  wheeler
-Added a link from the Logo graphic to the "About" page.
-
-Revision 1.2.2.3  2001/10/02 14:24:57  wheeler
-Fixed hiding of toolbars, etc., to leave the scrollbars and to work properly
-with Netscape et al., but to ignore IE.
-
-Revision 1.2.2.2  2001/10/02 13:27:54  wheeler
-Disabled JavaScript that hides browser stuff because it wasn't working with
-Netscape and was removing too many elements of the browser (though this latter
-issue can easily be corrected).
-
-Revision 1.2.2.1  2001/10/01 13:52:36  wheeler
-Added JavaScript to get rid of menus, buttons, etc.
-
-Revision 1.2  2001/09/25 12:52:33  wheeler
-Fixed variable interpolation problem (a variable *wasn't* getting
-interpolated!).
-
-Revision 1.1.1.1  2001/09/06 21:52:35  wheeler
-Upload to SourceForge.
-
-</%doc>
 
 

@@ -8,11 +8,11 @@ audios
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.1 $, 10, -1);
 
 =head1 DATE
 
@@ -427,14 +427,5 @@ NONE
 
 L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
 L<Bric::Biz::Asset::Business::Media>
-
-=head1 REVISION HISTORY
-
-$Log: Audio.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:52  wheeler
-Upload to SourceForge.
 
 =cut

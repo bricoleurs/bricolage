@@ -8,16 +8,16 @@ getAuthLevel.mc
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:57 $
+$Date: 2001-10-09 21:51:02 $
 
 =head1 SYNOPSIS
 
@@ -33,9 +33,3 @@ Determine whether a user has the mojo to edit a element.  Untested stub.
 return 100;
 
 </%perl>
-<%doc>
-$Log: getAuthLevel.mc,v $
-Revision 1.1  2001-09-06 21:51:57  wheeler
-Initial revision
-
-</%doc>

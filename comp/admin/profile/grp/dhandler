@@ -189,23 +189,14 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-28 14:11:03 $
+$Date: 2001-10-09 21:51:02 $
 
 =head1 DESCRIPTION
 
 Diplays the profile for a single group.
-
-=REVISION HISTORY
-
-$Log: dhandler,v $
-Revision 1.2  2001-09-28 14:11:03  wheeler
-Fixed issue with the group type getting listed.
-
-Revision 1.1.1.1  2001/09/06 21:51:51  wheeler
-Upload to SourceForge.
 
 </%doc>

@@ -590,10 +590,4 @@ function isInList(what, list) {
 }
 // end double list manager functions
 
-<%doc>
-/*
-$Log: lib.js,v $
-Revision 1.1  2001-09-06 21:51:55  wheeler
-Initial revision
 
-</%doc>

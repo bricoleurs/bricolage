@@ -1,8 +1,8 @@
 --
 -- Project: Bricolage API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:55:30 $
+-- $Date: 2001-10-09 21:51:08 $
 -- Author: David Wheeler <david@wheeler.net>
 
 -- 
@@ -154,10 +154,4 @@ ALTER TABLE usr_priv__grp_member ADD CONSTRAINT fk_grp__u_p_grp_member
 
 */
 
-/*
-Change Log:
-$Log: Priv.con,v $
-Revision 1.1  2001-09-06 21:55:30  wheeler
-Initial revision
 
-*/

@@ -8,15 +8,15 @@ An asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.2.2.1 $
+$Revision: 1.2.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-02 13:15:13 $
+$Date: 2001-10-09 21:51:06 $
 
 =head1 SYNOPSIS
 
@@ -1767,19 +1767,5 @@ michael soderstrom ( miraso@pacbell.net )
 =head1 SEE ALSO
 
 L<Bric.pm>,L<Bric::Util::Group::AssetVersion>
-
-=head1 REVISION HISTORY
-
-$Log: Asset.pm,v $
-Revision 1.2.2.1  2001-10-02 13:15:13  wheeler
-Added code to add asset category group IDs to get_grp_ids() so that access to
-assets can be controlled by editing permissions on categories as well as
-workflows and desks.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:08  wheeler
-Upload to SourceForge.
 
 =cut

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:54:21 $
+-- $Date: 2001-10-09 21:51:07 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -114,10 +114,4 @@ CREATE INDEX idx_attr_action_meta__name ON attr_action_meta(LOWER(name));
 CREATE INDEX fkx_attr_action__attr_action_meta ON attr_action_meta(attr__id);
 
 
-/*
-Change Log:
-$Log: Action.sql,v $
-Revision 1.1  2001-09-06 21:54:21  wheeler
-Initial revision
 
-*/

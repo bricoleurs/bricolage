@@ -8,11 +8,11 @@ container_prof - The container profile editor.
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.1 $
+$Revision: 1.1.1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:18:28 $
+$Date: 2001-10-09 21:51:02 $
 
 =head1 SYNOPSIS
 
@@ -96,12 +96,4 @@ return $m->comp("$action.html",
 
 %#--- Log History ---#
 
-<%doc>
-$Log: container_prof.mc,v $
-Revision 1.1.1.1.2.1  2001-10-09 20:18:28  wheeler
-Formatting cleanup and such.
 
-Revision 1.1.1.1  2001/09/06 21:52:02  wheeler
-Upload to SourceForge.
-
-</%doc>

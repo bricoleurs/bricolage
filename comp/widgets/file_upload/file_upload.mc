@@ -8,11 +8,11 @@ file_upload - Handles the uploading of files to the system
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:08 $
+$Date: 2001-10-09 21:51:03 $
 
 =head1 SYNOPSIS
 
@@ -50,10 +50,4 @@ if ($file) {
 
 %#--- Log History ---#
 
-<%doc>
 
-$Log: file_upload.mc,v $
-Revision 1.1  2001-09-06 21:52:08  wheeler
-Initial revision
-
-</%doc>

@@ -180,20 +180,14 @@ if ($new_desk) {
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:53 $
+$Date: 2001-10-09 21:51:02 $
 
 =head1 DESCRIPTION
 
 This element handles the display for editing workflows.
-
-=head1 REVISION HISTORY
-
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:53  wheeler
-Initial revision
 
 </%doc>

@@ -6,16 +6,16 @@ Bric::Dist::ActionType - Interface to types of actions supported by Bricolage di
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:22 $
+$Date: 2001-10-09 21:51:07 $
 
 =head1 SYNOPSIS
 
@@ -699,11 +699,5 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2),
-
-=head1 REVISION HISTORY
-
-$Log: ActionType.pm,v $
-Revision 1.1  2001-09-06 21:54:22  wheeler
-Initial revision
 
 =cut

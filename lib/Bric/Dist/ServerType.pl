@@ -165,9 +165,3 @@ if (my $err = $@) {
       . "\n" : "$err\n";
 }
 
-__END__
-Change Log:
-$Log: ServerType.pl,v $
-Revision 1.1  2001-09-06 21:54:34  wheeler
-Initial revision
-

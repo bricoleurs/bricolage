@@ -61,16 +61,16 @@ formButtons.mc
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:20 $
+$Date: 2001-10-09 21:51:03 $
 
 =head1 SYNOPSIS
 
@@ -123,11 +123,5 @@ no_ret - If passed a true value, the "Return" button will not be displayed.
 chk_label - Label for the 'delete' checkbox. Defaults to 'Delete this Profile'.
 
 =back
-
-=head1 REVISION HISTORY
-
-$Log: formButtons.mc,v $
-Revision 1.1  2001-09-06 21:52:20  wheeler
-Initial revision
 
 </%doc>

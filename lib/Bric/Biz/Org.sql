@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:53:26 $
+-- $Date: 2001-10-09 21:51:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -41,10 +41,3 @@ CREATE INDEX idx_org__name ON org (LOWER(name));
 
 CREATE SEQUENCE seq_org START 1024;
 
-/*
-Change Log:
-$Log: Org.sql,v $
-Revision 1.1  2001-09-06 21:53:26  wheeler
-Initial revision
-
-*/

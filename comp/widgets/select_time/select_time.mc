@@ -8,11 +8,11 @@ select_time - A widget to facilitate time input.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:27 $
+$Date: 2001-10-09 21:51:04 $
 
 =head1 SYNOPSIS
 
@@ -216,9 +216,4 @@ set_state_data("$widget.$base_name", {});
 
 %#--- Log History ---#
 
-<%doc>
-$Log: select_time.mc,v $
-Revision 1.1  2001-09-06 21:52:27  wheeler
-Initial revision
 
-</%doc>

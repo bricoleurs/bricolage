@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:53:23 $
+-- $Date: 2001-10-09 21:51:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -69,10 +69,3 @@ CREATE INDEX fkx_keyword__keyword_member ON keyword_member(object_id);
 CREATE INDEX fkx_member__keyword_member ON keyword_member(member__id);
 
 
-/*
-Change Log:
-$Log: Keyword.sql,v $
-Revision 1.1  2001-09-06 21:53:23  wheeler
-Initial revision
-
-*/

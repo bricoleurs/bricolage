@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.2.2.3 $
+$Revision: 1.2.2.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2.2.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 20:20:47 $
+$Date: 2001-10-09 21:51:06 $
 
 =head1 SYNOPSIS
 
@@ -874,30 +874,5 @@ NONE
 =head1 SEE ALSO
 
 L<perl>, L<Bric>, L<Apache::Session::File>
-
-=head1 REVISION HISTORY
-
-$Log: Session.pm,v $
-Revision 1.2.2.3  2001-10-09 20:20:47  wheeler
-Added new layer of callback priority, _p0, which will execute before any _pc or
-_cb callbacks. Needed this because there were places where the value entered for
-the select_time widget needed to be evaluated before the _pc callback in
-container_prof (and elsewhere, no doubt). In some future version, I think it'd
-be cool to figure out how to create a more hierarchically-defined way to set up
-callbacks.
-
-Revision 1.2.2.2  2001/10/04 11:30:34  wheeler
-Fixed bug where wrong arguments were getting passed to tie() when creating the
-session.
-
-Revision 1.2.2.1  2001/10/03 09:18:08  wheeler
-Moved session and lock files into subdirectories of a single tmp directory,
-e.g., /tmp/bricolage/.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:03  wheeler
-Upload to SourceForge.
 
 =cut

@@ -63,20 +63,14 @@ if ($field eq "$widget|checkin_cb") {
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:34 $
+$Date: 2001-10-09 21:51:04 $
 
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
-
-=head1 REVISION HISTORY
-
-$Log: callback.mc,v $
-Revision 1.1  2001-09-06 21:52:34  wheeler
-Initial revision
 
 </%doc>

@@ -8,15 +8,15 @@ contains the business data
 
 =head1 VERSION
 
-$Revision: 1.2.2.1 $
+$Revision: 1.2.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 20:34:27 $
+$Date: 2001-10-09 21:51:06 $
 
 =head1 SYNOPSIS
 
@@ -1055,18 +1055,6 @@ Bricolage Engineering
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>, 
 L<Bric::Biz::Asset::Business::Parts::Tile>
-
-=head1 REVISION HISTORY
-
-$Log: Data.pm,v $
-Revision 1.2.2.1  2001-10-09 20:34:27  wheeler
-Code style neatening.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:58  wheeler
-Upload to SourceForge.
 
 =cut
 

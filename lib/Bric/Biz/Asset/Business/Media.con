@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:53:43 $
+-- $Date: 2001-10-09 21:51:06 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -94,10 +94,4 @@ ALTER TABLE attr_media_meta ADD
     REFERENCES attr_media(id) ON DELETE CASCADE;
 
 
-/*
-Change Log:
-$Log: Media.con,v $
-Revision 1.1  2001-09-06 21:53:43  wheeler
-Initial revision
 
-*/

@@ -6,16 +6,16 @@ Bric::Util::Grp::ContribType - Interface to Bric::Util::Grp::Person Groups
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:52 $
+$Date: 2001-10-09 21:51:09 $
 
 =head1 SYNOPSIS
 
@@ -237,12 +237,6 @@ perl(1),
 Bric (2),
 Bric::Util::Grp::Person(3)
 Bric::Util::Grp(4)
-
-=head1 REVISION HISTORY
-
-$Log: ContribType.pm,v $
-Revision 1.1  2001-09-06 21:55:52  wheeler
-Initial revision
 
 =cut
 

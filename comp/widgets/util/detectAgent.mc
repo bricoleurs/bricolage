@@ -7,11 +7,11 @@ detectAgent.mc - Detects the agent's browser, it's version, and the OS.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:34 $
+$Date: 2001-10-09 21:51:04 $
 
 =head1 SYNOPSIS
 
@@ -66,11 +66,6 @@ Microsoft URL Control.
 
 In the event that a field cannot be recognized, the string "Unknown" is
 returned. This may occur in the browser, version, and os fields.
-
-=head1 REVISION HISTORY
-$Log: detectAgent.mc,v $
-Revision 1.1  2001-09-06 21:52:34  wheeler
-Initial revision
 
 </%doc>
 

@@ -65,9 +65,3 @@ if (my $err = $@) {
     }
 }
 
-__END__
-Change Log:
-$Log: Pref.pl,v $
-Revision 1.1  2001-09-06 21:55:24  wheeler
-Initial revision
-

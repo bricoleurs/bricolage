@@ -18,11 +18,11 @@ set_state_data($widget, "add_$type" => 1);
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:59 $
+$Date: 2001-10-09 21:51:02 $
 
 =head1 SYNOPSIS
 
@@ -31,11 +31,5 @@ $m->comp('/widgets/add_more/callback.mc');
 =head1 DESCRIPTION
 
 This is the callback element for the Add More widget.
-
-=head1 REVISION HISTORY
-
-$Log: callback.mc,v $
-Revision 1.1  2001-09-06 21:51:59  wheeler
-Initial revision
 
 </%doc>

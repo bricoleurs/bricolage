@@ -7,15 +7,15 @@ package Bric::Util::Grp::Asset;
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:49 $
+$Date: 2001-10-09 21:51:08 $
 
 =head1 SYNOPSIS
 
@@ -535,12 +535,6 @@ Bricolage Engineering
 =head1 SEE ALSO
 
 L<perl>, L<Bric>, L<Bric::Util::Grp>
-
-=head1 REVISION HISTORY
-
-$Log: Asset.pm,v $
-Revision 1.1  2001-09-06 21:55:49  wheeler
-Initial revision
 
 =cut
  

@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.3.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-24 09:37:05 $
+$Date: 2001-10-09 21:51:06 $
 
 =head1 SYNOPSIS
 
@@ -1291,17 +1291,5 @@ NONE
 =head1 SEE ALSO
 
 L<Bric>, L<Bric::Biz::Workflow::Parts::Desk>, L<perl>
-
-=head1 REVISION HISTORY
-
-$Log: Workflow.pm,v $
-Revision 1.3  2001-09-24 09:37:05  wheeler
-Fixed desk sorting.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:34  wheeler
-Upload to SourceForge.
 
 =cut

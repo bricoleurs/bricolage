@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.1.1.2.1 $
 --
--- $Date: 2001-09-06 21:54:27 $
+-- $Date: 2001-10-09 21:51:07 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -90,10 +90,4 @@ CREATE INDEX fkx_srvr_type__job__srvr_type ON job__server_type(server_type__id);
 CREATE INDEX fkx_job__job_member ON job_member(object_id);
 CREATE INDEX fkx_member__job_member ON job_member(member__id);
 
-/*
-Change Log:
-$Log: Job.sql,v $
-Revision 1.1  2001-09-06 21:54:27  wheeler
-Initial revision
 
-*/

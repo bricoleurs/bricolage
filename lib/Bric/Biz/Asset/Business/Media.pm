@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.4.2.1 $
+$Revision: 1.4.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4.2.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-02 13:07:22 $
+$Date: 2001-10-09 21:51:06 $
 
 =head1 SYNOPSIS
 
@@ -2041,25 +2041,5 @@ Bricolage Engineering
 =head1 SEE ALSO
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>
-
-=head1 REVISION HISTORY
-
-$Log: Media.pm,v $
-Revision 1.4.2.1  2001-10-02 13:07:22  wheeler
-Added get_category() as an alias for get_category_object(), to make it more in
-line with the interfaces of Formatting and Stories.
-
-Revision 1.4  2001/09/28 08:33:40  wheeler
-Added ORDER BY clause to SELECT statement.
-
-Revision 1.3  2001/09/17 16:19:43  wheeler
-Corrected spelling of "contributor" but grepping through files and fixing them,
-plus deleting some files, renaming them, and then adding them back in.
-
-Revision 1.2  2001/09/06 22:30:06  samtregar
-Fixed remaining BL->App, BC->Biz conversions
-
-Revision 1.1.1.1  2001/09/06 21:53:46  wheeler
-Upload to SourceForge.
 
 =cut

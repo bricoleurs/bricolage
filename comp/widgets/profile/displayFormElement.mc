@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:19 $
+$Date: 2001-10-09 21:51:03 $
 
 =head1 SYNOPSIS
 
@@ -450,9 +450,4 @@ my %formSubs = (
 );
 
 </%once>
-<%doc>
-$Log: displayFormElement.mc,v $
-Revision 1.1  2001-09-06 21:52:19  wheeler
-Initial revision
 
-</%doc>

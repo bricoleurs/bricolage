@@ -125,20 +125,14 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:48 $
+$Date: 2001-10-09 21:51:01 $
 
 =head1 DESCRIPTION
 
 This element handles the display for editing categories.
-
-=head1 REVISION HISTORY
-
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:48  wheeler
-Initial revision
 
 </%doc>

@@ -169,9 +169,3 @@ if (my $err = $@) {
 }
 
 1;
-__END__
-Change Log:
-$Log: Resource.pl,v $
-Revision 1.1  2001-09-06 21:54:28  wheeler
-Initial revision
-

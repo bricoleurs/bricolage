@@ -70,20 +70,14 @@ my $grp_name = $grp->get_name;
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:51 $
+$Date: 2001-10-09 21:51:02 $
 
 =head1 DESCRIPTION
 
 Diplays the permissions for a single group.
-
-=REVISION HISTORY
-
-$Log: perm,v $
-Revision 1.1  2001-09-06 21:51:51  wheeler
-Initial revision
 
 </%doc>
