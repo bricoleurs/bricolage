@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.52 $ )[-1];
+our $VERSION = (qw$Revision: 1.53 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:15 $
+$Date: 2003-07-02 16:06:41 $
 
 =head1 SYNOPSIS
 
@@ -105,7 +105,7 @@ $Date: 2003-06-13 16:49:15 $
  $biz               = $biz->add_keywords(\@kws)
  ($kw_list || @kws) = $biz->get_keywords()
  ($self || undef)   = $biz->has_keyword($keyword)
- $biz               = $biz->delete_keywords([$kw, ...])
+ $biz               = $biz->del_keywords([$kw, ...])
 
  # Related stories
  $biz                   = $biz->add_related([$other_biz, ...])

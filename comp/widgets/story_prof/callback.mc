@@ -809,7 +809,7 @@ my $handle_add_kw = sub {
     $story->add_keywords($new) if $new;
 
     # Delete old keywords.
-    $story->delete_keywords(mk_aref($param->{del_keyword}))
+    $story->del_keywords(mk_aref($param->{del_keyword}))
       if defined $param->{del_keyword};
 
     # Save the changes

@@ -42,15 +42,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-24 15:45:31 $
+$Date: 2003-07-02 16:06:41 $
 
 =head1 SYNOPSIS
 
@@ -840,7 +840,7 @@ sub _load_media {
             unless defined $media->get_primary_oc_id;
 
         # remove all keywords if updating
-        $media->delete_keywords($media->get_keywords) if $update;
+        $media->del_keywords($media->get_keywords) if $update;
 
         # add keywords, if we have any
         if ($mdata->{keywords} and $mdata->{keywords}{keyword}) {
