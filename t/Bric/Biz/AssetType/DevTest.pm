@@ -187,7 +187,7 @@ sub test_oc : Test(39) {
     # Now try to delete the outputchannel when it is still selected
     throws_ok {
         $at->delete_output_channels([$oc]);
-    } qr/You cannot delete an output channel that is marked as primary/,
+    } qr/Cannot delete a primary output channel/,
       "Check that you can't delete an output channel that is primary";
 
     $at->set_primary_oc_id($orig_oc_id, 100);
