@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:58 $
+$Date: 2003-04-15 09:05:16 $
 
 =head1 SYNOPSIS
 
@@ -267,20 +267,21 @@ B<Notes:> NONE.
 
 sub handle_err {
     my ($r, $err) = @_;
-    $err = _make_fault($err);
+
+    $err = Bric::Util::Fault::Exception::AP->new(
+        error   => "Error processing Mason elements.",
+        payload => $err,
+    ) unless isa_exception($err);
 
     # Rollback the database transactions.
     eval { rollback(1) };
     my $more_err = $@ ? "In addition, the database rollback failed: $@" : undef;
 
-    # Clear out events to that they won't be logged.
+    # Clear out events so that they won't be logged.
     clear_events();
 
     # Send the error to the apache error log.
-    $r->log->error($err->error . ': ' . $err->payload
-                   . ($more_err ? "\n\n$more_err" : '')
-                   . "\nStack Trace:\n"
-                   . join("\n", @{$err->get_stack}) . "\n\n");
+    $r->log->error($err->as_text() . ($more_err ? "\n$more_err\n" : ''));
 
     # Make sure we go back to translating character sets, or we'll be
     # screwed on the next request.
@@ -289,34 +290,6 @@ sub handle_err {
     # Process the exception for the user.
     return $interp->exec(ERROR_URI, fault => $err,
 			 __CB_DONE => 1, more_err => $more_err);
-}
-
-##############################################################################
-
-sub _make_fault {
-    my $err = shift;
-
-    # Just return bricolage exceptions.
-    return $err if isa_bric_exception($err);
-
-    # Otherwise, create a new exception object.
-    my $payload = '';
-    if (isa_mason_exception($err)) {
-        if (QA_MODE) {
-            # Make sure we're not stealing away Mason's internal exceptions.
-            $err->rethrow() if isa_mason_exception($err, 'Abort') or
-              isa_mason_exception($err, 'Compilation::IncompatibleCompiler');
-        }
-        my $brief = $err->as_brief;
-        return $brief if isa_bric_exception($brief);
-        $payload = $brief;
-    } else {
-        $payload = $err;
-    }
-
-    return Bric::Util::Fault::Exception::AP->new
-      ( error   => "Error processing Mason elements.",
-        payload => $payload );
 }
 
 ################################################################################
@@ -356,8 +329,8 @@ sub filter {
     # Do error processing, if necessary.
     if (my $err = $@) {
         $no_trans = 1; # So we don't translate error.html.
-        if (isa_bric_exception($err)) {
-            $err->rethrow();
+        if (isa_exception($err)) {
+            rethrow_exception($err);
         } else {
             my $msg = 'Error translating from UTF-8 to ' . $ct->charset;
             throw_dp(error => $msg, payload => $err);

@@ -24,7 +24,7 @@ my $onePixCell = sub {
   <td><img src="/media/images/spacer.gif" width="443" height="10" /></td>
   <td><img src="/media/images/spacer.gif" width="18" height="10" /></td>
 </tr>
-<tr class="lightHeader">
+<tr class="<% $header_class %>">
     <td <% $classes->{id} || '' %> align="right"><span class="label"><% $id %></span>&nbsp;</td>
     <% &$onePixCell(0, 22) %>
     <td align="center"><span class="label">V.<% $obj->get_version %></span></td>
@@ -167,6 +167,7 @@ my $status = $m->comp('publish_status.mc', asset => $obj) || '&nbsp;';
 
 my $cats = $r->pnotes("desk.cats") || {};
 my ($name, $date, $date_label, $cat);
+my $header_class = 'lightHeader';
 
 if ($class eq 'formatting') {
     $date = $obj->get_deploy_date || '&nbsp';
@@ -199,6 +200,7 @@ if ($class eq 'formatting') {
 	$cat = $cat->get_name if $cat;
 	$cat ||= '&nbsp;';
     }
+    $header_class = 'aliasHeader' if $obj->get_alias_id;
 }
 $cat ||= '&nbsp;';
 my $classes = $highlight ? { $highlight => ' class="tealHighlight"' } : {};
@@ -214,11 +216,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2003-03-23 06:56:54 $
+$Date: 2003-04-15 09:04:52 $
 
 =head1 DESCRIPTION
 

@@ -103,9 +103,10 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
                          );
         }
         };
-
+        my %poc_ids = map { $comp->get_primary_oc_id($_->get_id) => 1 }
+          $comp->get_sites;
         $sel_sub = sub {
-            return if $_[0]->get_id == $comp->get_primary_oc_id($_[0]->get_site_id);
+            return if $poc_ids{$_[0]->get_id};
             return ['Delete', 'rem_oc'];
         };
 
@@ -292,11 +293,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2003-03-30 18:34:18 $
+$Date: 2003-04-15 09:04:42 $
 
 =head1 DESCRIPTION
 

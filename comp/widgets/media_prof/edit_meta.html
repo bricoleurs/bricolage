@@ -146,42 +146,13 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <% $ieSpacer %>
 <%perl>;
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-         caption => "Upload a file",
-         number => $num++
+$m->comp('file_section.mc',
+         media     => $media,
+         widget    => $widget,
+         num       => $num++,
+         read_only => $media->get_alias_id,
+         indent    => $infoIndent
         );
-</%perl>
-<table width=578 cellpadding=2 cellspacing=0>
-<tr>
-  <td width=<% $infoIndent %> valign=top align=right><span class="label"><%$lang->maketext('File Path')%>:</span></td>
-  <td width=<% 578 - $infoIndent %>>
-    <input type="file" name="<% $widget %>|file" size="30">
-  </td>
-<tr>
-  <td></td>
-  <td>
-  <& '/widgets/profile/imageSubmit.mc',
-  formName => "theForm",
-  callback => $widget ."|update_pc",
-  image    => "upload_red"
-  &>
-  </td>
-</tr>
-<tr>
-  <td width=150 align=right><span class="label"><% $lang->maketext('Download') %>:</span></td>
-  <td>
-% if (my $uri = $media->get_local_uri()) {
-        <a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>" class="darkBlueLink"><% $media->get_file_name %></a>
-% } else {
-        <% $lang->maketext('No file has been uploaded')%>
-% }
-        </td>
-</tr>
-</table>
-
-<%perl>
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
 $num = $m->comp( '/widgets/container_prof/container_prof.mc',
         tile        => $tile,
         tile_type   => 'media',

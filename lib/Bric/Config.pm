@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.61 $
+$Revision: 1.62 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.61 $ )[-1];
+our $VERSION = (qw$Revision: 1.62 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:26 $
+$Date: 2003-04-15 09:05:05 $
 
 =head1 SYNOPSIS
 
@@ -137,6 +137,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MOD_PERL
                     ALLOW_ALL_SITES_CX
                     CACHE_DEBUG_MODE
+                    STORY_URI_WITH_FILENAME
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -238,6 +239,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MIN_SHARE_SIZE
                                      MAX_UNSHARED_SIZE)],
                     mod_perl  => [qw(MOD_PERL)],
+                    uri       => [qw(STORY_URI_WITH_FILENAME)]
                    );
 
 #=============================================================================#
@@ -255,6 +257,12 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         # Load the configuration file, if it exists.
         my $conf_file = $ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage';
         $conf_file = catdir($conf_file, 'conf', 'bricolage.conf');
+        if (not -e $conf_file and $ENV{BRIC_TEMP_DIR}) {
+            # We're testing but can't find an existing bricolage.conf. Try to
+            # find one that was created during `make`.
+            $conf_file = catfile 'bconf', 'bricolage.conf'
+        }
+
         if (-e $conf_file) {
             open CONF, $conf_file or croak "Cannot open $conf_file: $!\n";
             while (<CONF>) {
@@ -299,7 +307,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
                     PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER
                     ENABLE_WEBDAV_MOVER ALWAYS_USE_SSL ALLOW_WORKFLOW_TRANSFER
-                    ALLOW_ALL_SITES_CX))
+                    ALLOW_ALL_SITES_CX STORY_URI_WITH_FILENAME))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -331,7 +339,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
               'httpd.conf';
             # And try just a local directory if all else fails. This would
             # most likely be used during `make test`.
-            $config->{APACHE_CONF} = catfile 'conf', 'httpd.conf'
+            $config->{APACHE_CONF} = catfile 'bconf', 'httpd.conf'
               unless -e $config->{APACHE_CONF};
         }
 
@@ -472,6 +480,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant ALLOW_WORKFLOW_TRANSFER => $config->{ALLOW_WORKFLOW_TRANSFER};
     use constant ALLOW_ALL_SITES_CX      => $config->{ALLOW_ALL_SITES_CX};
     use constant FULL_SEARCH =>          => $config->{FULL_SEARCH};
+
+    # Asset settings.
+    use constant STORY_URI_WITH_FILENAME => $config->{STORY_URI_WITH_FILENAME};
 
     # FTP Settings
     use constant ENABLE_FTP_SERVER => $config->{ENABLE_FTP_SERVER} || 0;

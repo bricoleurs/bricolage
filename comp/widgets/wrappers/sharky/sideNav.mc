@@ -39,7 +39,7 @@ my $printLink = sub {
     if ($style =~ /Bold/ && !$isLink) {
        $out .= qq {<span class="$style">$caption</span><br />};
     } else {
-        $out .= qq {<a href="#" class="$style" onClick="return doLink('$href')">} . $lang->maketext($caption) .'</a><br />';
+        $out .= qq {<a href="$href" class="$style" target="_parent">} . $lang->maketext($caption) .'</a><br />';
     }
     return $out;
 };
@@ -113,11 +113,6 @@ unless ($workflows) {
         document.location.href = callback;
         return false;
     }
-
-    function doLink(link) {
-        parent.window.location.href = link;
-        return false;
-    }
     </script>
 % }
 <body marginwidth=0 marginheight=0 leftmargin=0 topmargin=0 bgcolor="#666633">
@@ -135,7 +130,7 @@ unless ($workflows) {
 
 <table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>
 <tr>
-  <td class=sideNavActiveCell><a class=sideNavHeaderBold href="#" onClick="return doLink('/workflow/profile/workspace/')"><img src="<% $workspaceGraphic %>" width=150 height=20 border=0></a></td>
+  <td class=sideNavActiveCell><a class=sideNavHeaderBold href="/workflow/profile/workspace/" target="_parent"><img src="<% $workspaceGraphic %>" width=150 height=20 border=0></a></td>
 </tr>
 <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width=1 height=2></td>
@@ -459,10 +454,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:25 $
+$Date: 2003-04-15 09:04:55 $
 
 </%doc>

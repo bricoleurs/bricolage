@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-30 18:34:20 $
+$Date: 2003-04-15 09:05:29 $
 
 =head1 SYNOPSIS
 
@@ -67,6 +67,7 @@ C<maketext()> method.
 #==============================================================================#
 # Dependencies                         #
 #======================================#
+use Bric::Config qw(:qa);
 
 #--------------------------------------#
 # Standard Dependencies
@@ -128,11 +129,14 @@ use Exception::Class
      },
   );
 
+# $err->as_string() will include the stack trace
+Bric::Util::Fault->Trace(1);
+
 require Exporter;
 *import = \&Exporter::import;
-our @EXPORT_OK = qw(isa_bric_exception rethrow_exception throw_ap throw_da
-                    throw_dp throw_gen throw_mni throw_error throw_not_unique
-                    throw_undef);
+our @EXPORT_OK = qw(isa_bric_exception isa_exception rethrow_exception throw_ap
+                    throw_da throw_dp throw_gen throw_mni throw_error
+                    throw_not_unique throw_undef);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 #--------------------------------------#
@@ -254,24 +258,17 @@ None.
 
 =item $str = $obj->error_info;
 
-Returns error string of type "pkg -- filename -- line -- msg". Also called
-when the exception object is used in a string context.
+Returns $obj->as_text.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Overloads the double-quoted string operator. Should probably
-be deprecated in favor of C<< Exception::Class->as_string >>.
+B<Notes:> Overloads the double-quoted string operator.
 
 =cut
 
-sub error_info {
-    my $self = shift;
-    return join(' -- ', $self->package, $self->file,
-                $self->line) . "\n" . ($self->error || '') . "\n\n"
-                . ($self->payload || '') . "\n";
-}
+sub error_info { $_[0]->as_text() }
 
 #------------------------------------------------------------------------------#
 
@@ -444,6 +441,84 @@ sub throw {
 
 #------------------------------------------------------------------------------#
 
+=item $str = $obj->full_message;
+
+Overrides $obj->as_string to include the payload.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub full_message {
+    my $self = shift;
+    my $msg = $self->error;
+    $msg .= ': ' . $self->payload if $self->payload;
+    return $msg;
+}
+
+#------------------------------------------------------------------------------#
+
+=item $str = $obj->as_text;
+
+Displays the exception object as text.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub as_text {
+    my $self = shift;
+    my @frames = $self->_filtered_frames();
+    @frames = map {
+        my $str = sprintf("[%s:%d]", $_->filename, $_->line);
+        if (QA_MODE) {
+            my $sub = $_->subroutine;
+            $sub =~ s/.*:://;
+            $str .= sprintf("\n  %s(%s)", $sub, join(', ', $_->args));
+        }
+        $str;
+    } @frames;
+    my $msg = $self->full_message();
+    my $stack = join "\n", @frames;
+    return sprintf("%s\n%s\n", $msg, $stack);
+}
+
+sub _filtered_frames {
+    my $self = shift;
+
+    my (@frames, $trace, %ignore_subs, $faultregex);
+
+    $trace = $self->trace;
+    %ignore_subs = map { $_ => 1 }
+      qw{
+         (eval)
+         Exception::Class::Base::throw
+         Bric::Util::Fault::__ANON__
+      };
+    $faultregex = qr{/Bric/Util/Fault\.pm|/dev/null};
+
+    while (my $frame = $trace->next_frame) {
+        unless ($frame->filename =~ $faultregex
+                  || $ignore_subs{$frame->subroutine}) {
+            push @frames, $frame;
+        }
+    }
+    unless (@frames) {
+        @frames = grep { $_->filename !~ $faultregex } $trace->frames;
+    }
+    return @frames;
+}
+
+#------------------------------------------------------------------------------#
+
 =back
 
 =head2 Public Functions
@@ -490,6 +565,36 @@ sub isa_bric_exception {
     } else {
         return UNIVERSAL::isa($err, "Bric::Util::Fault");
     }
+}
+
+#------------------------------------------------------------------------------#
+
+=item isa_exception($err);
+
+This function tests whether the $err argument is an
+Exception::Class exception.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+"no such exception class $class"
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:>
+
+This function is imported into the calling class.
+
+=cut
+
+sub isa_exception {
+    my $err = shift;
+    return defined $err && UNIVERSAL::isa($err, 'Exception::Class::Base');
 }
 
 #------------------------------------------------------------------------------#

@@ -208,6 +208,7 @@ elsif ($field eq "$widget|deploy_cb") {
         $b->deploy($fa);
         $fa->set_deploy_date(strfdate());
         $fa->set_deploy_status(1);
+        $fa->set_published_version($fa->get_current_version);
         $fa->save;
         log_event($action, $fa);
 

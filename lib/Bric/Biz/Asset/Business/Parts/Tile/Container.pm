@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-03-19 01:58:34 $
+$Date: 2003-04-15 09:05:26 $
 
 =head1 SYNOPSIS
 
@@ -1626,7 +1626,12 @@ sub _sync_tiles {
     my ($self) = @_;
     my ($tiles,$del_tiles) = $self->_get('_tiles', '_del_tiles');
 
-    return unless $self->_get('_update_tiles');
+    # HACK. I don't think that this was really necessary, because each tile
+    # wil only be saved and trigger a change to the database if it was
+    # actually changed in some way. This is similar to how collections work.
+    # So I'm commenting this out and just saving all the tiles every time.
+    # -DW 2003-04-12.
+#    return unless $self->_get('_update_tiles');
 
     foreach (@$tiles) {
 #               if ($prep_clone) {

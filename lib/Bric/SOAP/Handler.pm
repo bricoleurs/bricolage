@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:26 $
+$Date: 2003-04-15 09:05:29 $
 
 =head1 SYNOPSIS
 
@@ -84,6 +84,7 @@ use Bric::App::Auth;
 use Bric::App::Session;
 use Bric::Util::DBI qw(:trans);
 use Bric::App::Event qw(clear_events);
+use Exception::Class 1.12;
 use Bric::Util::Fault qw(:all);
 use Apache::Constants qw(OK);
 use Apache::Util qw(escape_html);
@@ -110,7 +111,7 @@ BEGIN {
     #     [ $_[2], $_[4], escape_html($_[1]->error) ];
     # }
 
-    foreach my $ec (keys %Exception::Class::CLASSES) {
+    foreach my $ec (Exception::Class::Base->Classes) {
         $ec =~ s/::/__/g;
         eval qq{sub SOAP::Serializer::as_$ec {
             [ \$_[2], \$_[4], escape_html(\$_[1]->error) ];
@@ -199,6 +200,7 @@ sub handle_err {
     $commit = 0;
 
     # Create an exception object unless we already have one.
+    # (is it okay to assume there are no Mason exceptions in SOAP?)
     $err = Bric::Util::Fault::Exception::AP->new
         ( error => "Error executing SOAP command", payload => $err || $string )
         unless isa_bric_exception($err);
@@ -211,9 +213,7 @@ sub handle_err {
     clear_events();
 
     # Send the error to the apache error log.
-    $apreq->log->error($err->error . ': ' . ($err->payload || '') .
-                       ($more_err ? "\n\n$more_err" : '') . "\nStack Trace:\n"
-                       . join("\n", @{$err->get_stack}) . "\n\n");
+    $apreq->log->error($err->as_text() . ($more_err ? "\n\n$more_err\n" : ''));
 }
 
 # silence warnings from SOAP::Lite

@@ -38,8 +38,9 @@ if (defined $id) {
 
 } else {
     # Output a field for the directory.
-    $m->comp('/widgets/profile/displayFormElement.mc', objref => $cat,
-	     key => 'directory');
+    $m->comp('/widgets/profile/displayFormElement.mc',
+             objref => $cat,
+	     key    => 'directory');
 
     # Output a list of parent categories to choose from.
     # Remove any that are children of the category itself.
@@ -51,9 +52,11 @@ if (defined $id) {
 	     name       => 'parent_id',
              field      => 'uri',
              disp       => 'Parent Category',
-	     selected   => (defined($p_id) ? $p_id : exists $ARGS{parent_id} ? $ARGS{parent_id} : undef),
+	     selected   => (defined($p_id) ? $p_id :
+                            exists $ARGS{parent_id} ? $ARGS{parent_id} : undef),
 	     sort_field => 'uri',
              reset_key  => $reset,
+             constrain  => { site_id => $cat->get_site_id },
              req        => 1,
              exclude    => $cat_excl,
             );
@@ -207,11 +210,11 @@ my $cat_excl = sub { my $cx = $c->get_user_cx(get_user_id);
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:24 $
+$Date: 2003-04-15 09:04:41 $
 
 =head1 DESCRIPTION
 

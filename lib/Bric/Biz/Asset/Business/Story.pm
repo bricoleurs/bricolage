@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$Revision: 1.51 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+our $VERSION = (qw$Revision: 1.51 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-03 21:06:23 $
+$Date: 2003-04-15 09:05:20 $
 
 =head1 SYNOPSIS
 
@@ -170,6 +170,7 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
+use Bric::Config qw(:uri);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Attribute::Story;
@@ -1063,6 +1064,18 @@ sub get_uri {
     }
 
     my $uri = $self->_construct_uri($cat, $oc);
+
+    if (STORY_URI_WITH_FILENAME) {
+        my $fname = $oc->can_use_slug ?
+          $self->_get('slug') || $oc->get_filename :
+          $oc->get_filename;
+        if ($fname) {
+            my $ext = $oc->get_file_ext;
+            $fname .= ".$ext";
+            $uri = Bric::Util::Trans::FS->cat_uri($uri, $fname);
+        }
+    }
+
     # Update the 'primary_uri' field if we were called with no arguments.
     $self->_set(['primary_uri'], [$uri]) unless scalar(@_);
     $self->_set__dirty($dirty);

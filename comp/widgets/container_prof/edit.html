@@ -64,6 +64,7 @@ my $x=0;
 # Find a suitable tile to display
 my($disp_buf, $value_buf);
 foreach my $tile ($dt->get_tiles) {
+    next if $tile->is_container;
     my $props = $tile->get_element_data_obj->get_meta('html_info');
     if (my $data = $dt->get_data($tile->get_key_name)) {
         next unless $props->{type} =~ /^text/;
@@ -80,10 +81,9 @@ foreach my $tile ($dt->get_tiles) {
 % } # if ($value_buf)
     <tr>
       <td>
-
 % my $at = $dt->get_element;
 % if ($at->is_related_media || $at->is_related_story) {
-      <table border=0 cellpadding=0 cellspacing=1 width=<% 578 - FIELD_INDENT - 125 %>>
+      <table border=0 cellpadding=0 cellspacing=1>
       <tr>
     <td width=50 class=medHeader align="right">
       <span class=label><% $lang->maketext($at->is_related_media ? "URL" : "Title" )%>:</span>

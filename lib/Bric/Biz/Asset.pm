@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-03 21:06:15 $
+$Date: 2003-04-15 09:05:19 $
 
 =head1 SYNOPSIS
 
@@ -1318,18 +1318,24 @@ Adds the asset_grp_id of the workflow to grp_ids unless it was already there.
 sub set_workflow_id {
     my ($self, $workflow_id) = @_;
     # grp_ids may change as a side effect
-    my @grp_ids;
-    my $workflow = $self->get_workflow_object();
-    foreach ($self->get_grp_ids()) {
-        next if ($workflow && $_ == $workflow->get_asset_grp_id());
-        push @grp_ids, $_;
+    my $grp_ids = [];
+    if (my $wf = $self->get_workflow_object) {
+        my $ag_id = $wf->get_asset_grp_id;
+        foreach my $gid ($self->get_grp_ids) {
+            next if $gid == $ag_id;
+            push @$grp_ids, $gid;
+        }
+    } else {
+        $grp_ids = $self->get_grp_ids;
     }
-    $workflow = Bric::Biz::Workflow->lookup({ id => $workflow_id });
-    push @grp_ids, $workflow->get_asset_grp_id();
-    $self->_set({grp_ids => \@grp_ids});
-    # now set the actual value
-    $self->_set({workflow_id => $workflow_id});
-    return $self;
+
+    if ($workflow_id) {
+        my $wf = Bric::Biz::Workflow->lookup({ id => $workflow_id });
+        push @$grp_ids, $wf->get_asset_grp_id;
+    }
+
+    # Now set the workflow ID and the group IDs.
+    $self->_set([qw(grp_ids workflow_id)], [$grp_ids, $workflow_id]);
 }
 
 ################################################################################

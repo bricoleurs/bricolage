@@ -112,28 +112,12 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 </table>
 
 % $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
-% $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%   caption => "The File",
-%   number => 2
-%   );
-<table border="0" width="578" cellpadding="0" cellspacing="0">
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Download') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;
-% if (my $uri = $media->get_local_uri()) {
-    <a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>" class="darkBlueLink"><% $media->get_file_name %></a>
-% } else {
-    <% $lang->maketext('No file has been uploaded') %>
-% }
-  </td>
-  </tr>
-</table>
-
-% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
-
+% $m->comp('file_section.mc',
+%          media     => $media,
+%          widget    => $widget,
+%          num       => 2,
+%          read_only => 1,
+%          indent    => $infoIndent );
 <& '/widgets/container_prof/container_prof.mc',
   tile        => $tile,
   tile_type   => 'media',

@@ -19,12 +19,16 @@
 # Set the location of Perl.
 PERL = /usr/bin/perl
 
+# can't load Bric since it loads Bric::Config which has dependencies
+# that won't be solved till make install.
+BRIC_VERSION = `$(PERL) -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib/Bric.pm`
+
 #########################
 # build rules           #
 #########################
 
 all 		: required.db modules.db apache.db postgres.db config.db \
-                  build_done
+                  bconf/bricolage.conf build_done
 
 required.db	: inst/required.pl
 	$(PERL) inst/required.pl
@@ -46,7 +50,11 @@ postgres.db 	: inst/postgres.pl required.db
 config.db	: inst/config.pl required.db apache.db postgres.db
 	$(PERL) inst/config.pl
 
-build_done	: required.db modules.db apache.db postgres.db config.db
+bconf/bricolage.conf	:  required.db config.db postgres.db apache.db inst/conf.pl
+	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
+
+build_done	: required.db modules.db apache.db postgres.db config.db \
+                  bconf/bricolage.conf
 	@echo
 	@echo ===========================================================
 	@echo ===========================================================
@@ -72,10 +80,6 @@ build_done	: required.db modules.db apache.db postgres.db config.db
 dist            : check_dist distclean inst/Pg.sql dist_dir \
                   rm_CVS rm_tmp dist/INSTALL dist/Changes \
                   dist/License dist_tar
-
-# can't load Bric since it loads Bric::Config which has dependencies
-# that won't be solved till make install.
-BRIC_VERSION = `$(PERL) -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib/Bric.pm`
 
 check_dist      :
 	$(PERL) inst/check_dist.pl $(BRIC_VERSION)
@@ -154,7 +158,10 @@ clone_tar	:
 # installation rules     #
 ##########################
 
-install 	: all cpan lib bin files db conf done
+install 	: all is_root cpan lib bin files db db_grant done
+
+is_root         : inst/is_root.pl
+	$(PERL) inst/is_root.pl
 
 cpan 		: modules.db postgres.db inst/cpan.pl
 	$(PERL) inst/cpan.pl
@@ -167,30 +174,29 @@ bin 		:
 	-rm -f bin/Makefile
 	cd bin; $(PERL) Makefile.PL; $(MAKE) install
 
-files 		: config.db
+files 		: config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl
 
 db    		: inst/db.pl postgres.db
 	$(PERL) inst/db.pl
 
-conf		: inst/conf.pl files required.db config.db postgres.db \
-                  apache.db
-	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
+db_grant	: inst/db.pl postgres.db
+	$(PERL) inst/db_grant.pl
 
-done		: conf db files bin lib cpan
+done		: bconf/bricolage.conf db files bin lib cpan
 	$(PERL) inst/done.pl
 
-.PHONY 		: install lib bin files db conf done
+.PHONY 		: install is_root lib bin files db done
 
 
 ##########################
 # upgrade rules          #
 ##########################
 
-upgrade		: upgrade.db required.db cpan stop lib bin db_upgrade \
-	          upgrade_files upgrade_conf upgrade_done
+upgrade		: upgrade.db required.db is_root cpan stop lib bin db_upgrade \
+	          db_grant upgrade_files upgrade_conf upgrade_done
 
-upgrade.db	:
+upgrade.db	: 
 	$(PERL) inst/upgrade.pl
 
 db_upgrade	: upgrade.db
@@ -224,7 +230,7 @@ upgrade_done    :
 # uninstall rules        #
 ##########################
 
-uninstall 	: prep_uninstall stop db_uninstall rm_files clean
+uninstall 	: is_root prep_uninstall stop db_uninstall rm_files clean
 
 prep_uninstall	:
 	$(PERL) inst/uninstall.pl
@@ -255,6 +261,7 @@ devtest         :
 clean 		: 
 	-rm -rf *.db
 	-rm -rf build_done
+	-rm -rf bconf
 	cd lib ; $(PERL) Makefile.PL ; $(MAKE) clean
 	-rm -rf lib/Makefile.old
 	cd bin ; $(PERL) Makefile.PL ; $(MAKE) clean

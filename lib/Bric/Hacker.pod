@@ -4,18 +4,18 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:26 $
+$Date: 2003-04-15 09:05:09 $
 
 =head1 DESCRIPTION
 
 This document is designed to provide information useful to Bricolage
-developers.  If you've got questions about hacking Bricolage that
-aren't answered here please post to the Bricolage developer's
-mailing-list (see below) and tell us about it.
+developers. If you've got questions about hacking Bricolage that aren't
+answered here please post to the Bricolage developer's mailing-list (see
+below) and tell us about it.
 
 =head1 MAILING LISTS
 
@@ -57,23 +57,23 @@ http://lists.sourceforge.net/lists/listinfo/bricolage-bugs
 
 =head1 CVS - THE CUTTING EDGE
 
-If you're developing Bricolage then you should be working with the
-latest code from CVS.  You can browse the CVS tree at:
+If you're developing Bricolage then you should be working with the latest code
+from CVS. You can browse the CVS tree at:
 
    http://sourceforge.net/cvs/?group_id=34789
 
-You'll also find information there on connecting to the repository to
-checkout a working copy.
+You'll also find information there on connecting to the repository to checkout
+a working copy.
 
 =head1 BUG TRACKING
 
 Bricolage has a Bugzilla server dedicated to it:
 
-   http://bricolage-bugzilla.about.com
+   http://bugzilla.bricolage.cc/
 
-You should use this system to report bugs in Bricolage.  If you're
-looking for something to do you can also use the system to find open
-bug and fix them.  For more things to do see L<Bric::ToDo|Bric::ToDo>.
+You should use this system to report bugs in Bricolage. If you're looking for
+something to do you can also use the system to find open bugs and fix them. For
+more things to do see L<Bric::ToDo|Bric::ToDo>.
 
 =begin comment
 
@@ -86,28 +86,27 @@ Pod::Perldoc from CPAN to generate HTML files:
 
 =head1 SUBMITTING PATCHES
 
-Patches should be generated using a C<cvs diff -u> command on each of
-the files modified, from the root directory.  For example, if you made
-changes to lib/Bric/Changes.pod and comp/foo.mc, you would generate a
-diff by running this command from the root of your CVS checkout:
+Patches should be generated using a C<cvs diff -u> command on each of the
+files modified, from the root directory. For example, if you made changes to
+F<lib/Bric/Changes.pod> and F<comp/foo.mc>, you would generate a diff by
+running this command from the root of your CVS checkout:
 
   cvs diff -u lib/Bric/Changes.pod comp/foo.mc > patch.txt
 
-If you created one or more new files in your changes then you'll have
-to add them to the patch separately using normal C<diff> against
-C</dev/null>.  For example, if you created the file
-C<inst/upgrade/1.9.1/solve_fermat.pl> then you would add this to
-patch.txt with:
+If you created one or more new files in your changes then you'll have to add
+them to the patch separately using normal C<diff> against C</dev/null>. For
+example, if you created the file C<inst/upgrade/1.9.1/solve_fermat.pl> then
+you would add this to patch.txt with:
 
   diff -u /dev/null inst/upgrade/1.9.1/solve_fermat.pl >> patch.txt
 
-Always create patches using the most recent CVS version if possible.
-Send your patches to the bricolage-devel list mentioned above.
+Always create patches using the most recent CVS version if possible. Send your
+patches to the bricolage-devel list mentioned above.
 
 =head1 APPLYING PATCHES
 
-Patches created using the method above can be applied using C<patch>
-with the C<-p0> option from the root of your CVS checkout:
+Patches created using the method above can be applied using C<patch> with the
+C<-p0> option from the root of your CVS checkout:
 
   patch -p0 < patch.txt
 
@@ -115,10 +114,9 @@ Make sure you check the results with C<cvs diff> before committing.
 
 =head1 CODING STANDARDS
 
-Try to follow the style of the existing Bricolage code.
-Except where it is bad, of course. Basically, write
-in the style you see in most Perl books and documentation,
-particularly `perldoc perlstyle`.
+Try to follow the style of the existing Bricolage code. Except where it is
+bad, of course. Basically, write in the style you see in most Perl books and
+documentation, particularly L<perlstyle>.
 
 Although historically the Bricolage code has not enforced whitespace rules,
 we now request that you use 4-space indents (2 spaces for continued lines)
@@ -154,9 +152,9 @@ settings, as well:
 When editing Bricolage Mason components, C<mmm-mode> can help. It's Mason mode
 will parse Mason component files and use C<sgml-mode> in HTML spaces and
 C<cperl-mode> in Mason blocks. Grab it from
-L<http:E<sol>E<sol>mmm-mode.sourceforge.netE<sol>>, install it,
-and then add the following to your C<~E<sol>.emacs> file to have
-it automatically parse your Bricolage Mason component files:
+L<http://mmm-mode.sourceforge.net/>, install it, and then add the following to
+your C<~/.emacs> file to have it automatically parse your Bricolage Mason
+component files:
 
   (add-to-list 'load-path "/usr/local/share/emacs/site-lisp")
   (require 'mmm-mode)
@@ -199,47 +197,49 @@ doesn't use tabs at all, only spaces.
 =head2 OTHER GOOD PRACTICES
 
 Keep subroutines short. Each subroutine should handle one task. For example,
-if you have a subroutine get_foo, and getting "foo" requires getting "bar"
-and "qux", then make two more subroutines get_bar and get_qux and put them
-in the "private functions" section. Also if you duplicate some code in
-several subroutines, factor it out into another subroutine. It's easier
-to maintain on subroutine than to maintain three.
+if you have a subroutine C<get_foo>, and getting "foo" requires getting "bar"
+and "qux", then make two more subroutines C<get_bar> and C<get_qux> and put
+them in the "private functions" section. Also if you duplicate some code in
+several subroutines, factor it out into another subroutine. It's easier to
+maintain one subroutine than to maintain three.
 
-Limit the width of your code to 80 characters if possible. I'm not sure
-which Bricolage hackers are using VT220 terminals, but maybe there are some.
-Keeping subroutines short helps with code width.
+Limit the width of your code to 80 characters if possible. This makes them
+easier to read. Keeping subroutines short helps to meet this goal, as well.
 
-Make enough comments so that someone maintaining your code can understand
-what is going on. Comments shouldn't be redundant with the code. They should
+Make enough comments so that someone maintaining your code can understand what
+is going on. Comments shouldn't be redundant with the code. They should
 explain non-obvious code. Comments can be bad in some cases if code changes
-and the corresponding comment is not kept in sync.
+and the corresponding comment is not kept in sync. So keep the comments in
+sync!
 
 Use Perl idioms if it is clear and concise, but use them with care.
 Implicit variables can be slick, but hard to understand; add a comment
 if you use uncommon ones.
 
-Use Mason components only for display, and put business logic into
-library modules.
+Use Mason components only for display, and put business logic into library
+modules and callback components. But only for as long as callbacks are in
+components! We hope to move them into libraries soon, at which time this rule
+will become even more rigid.
 
 For POD, generally you copy/paste it from another module. Recently
 we are trying to cut out some of useless things like
 C<< BE<lt>Side Effects:E<gt> NONE >>. For a canonical example, see
 C<Bric::Biz::Site>.
 
-Avoid magic values, i.e. don't hardcode numbers into code. It tends to become
-a maintenance problem if you put the number 1023 throughout a module and
-then somewhere else you have 1021; is 1021 related to 1023 (1023 - 2),
-or is it just another random number, and what does 1023 mean? Instead,
-put a constant at the top of the module and use that.
+Avoid magic values, i.e. don't hard-code numbers into code. It tends to become
+a maintenance problem if you put the number 1023 throughout a module and then
+somewhere else you have 1021; is 1021 related to 1023 (1023 - 2), or is it
+just another random number? And what does 1023 mean? Put a constant at the top
+of the module and use that, instead.
 
 In the end, just try to follow the existing code style, and take into
-consideration any feedback you get from the mailing list when patches
-are submitted.
+consideration any feedback you get from the mailing list when patches are
+submitted.
 
 =head1 TESTING
 
 All Bricolage patches should be accompanied by the necessary tests. You are
-strongly encouraged to write comprehensive tests that thorougly test whatever
+strongly encouraged to write comprehensive tests that thoroughly test whatever
 changes or additions you make to the Bricolage API. You are also strongly
 encouraged to write tests for the current API, if you find that adequate tests
 have not yet been written (and this is true in a great many places,
@@ -252,10 +252,10 @@ classes live in the F<t/Bric> directory, and all subclass Bric::Test::Base. If
 you're familiar with L<Test::More|Test::More>, then the syntax for how the
 Test::Class-based classes work should be pretty readily apparent. See the
 L<Test::Class|Test::Class> documentation for details. It's definitely worth a
-read. If you have't used Test::More, its documentation is also a must-read.
+read. If you haven't used Test::More, its documentation is also a must-read.
 
 Bricolage has two different sets of tests, those run by C<make test> and those
-run by C<make devtest>. The former are standalone tests that don't rely on the
+run by C<make devtest>. The former are stand-alone tests that don't rely on the
 presence of a Bricolage database to be run. They can thus be run before
 C<make install>. The idea here is that we offer a basic set of tests that can
 be run via the standard Perl installation pattern of
@@ -275,8 +275,8 @@ itself by C<DELETE>ing data it has added to the database, it is unfortunately
 imperfect, and extra data will be left, especially in Group-related and
 Attribute-related tables.
 
-So, once more, B<CE<lt>make devtestE<gt> should BE<lt>neverE<gt> be run
-against a production database.>. 'Nuff said.
+So, once more, C<make devtest> should B<never> be run against a production
+database.>. 'Nuff said.
 
 All of the tests are run by the F<inst/runtests.pl> script, which in turn
 tells L<Test::Harness|Test::Harness> to execute F<t/Bric/Test/Runner.pm>. This
@@ -316,13 +316,13 @@ Here are some tips to help you find bugs faster:
 
 =item *
 
-Turn on QA_MODE in your bricolage.conf.  This will cause the UI to
-display a bunch of useful data at the bottom of every page including
-session state, cache state, cookies and CGI args.  QA_MODE turns on
-PerlWarn (use warnings) and causes error messages to include more
-information.  QA_MODE also enables Apache::Status at the URL
-/perl-status which you can use to examine the state of the Perl
-interpreter inside Apache.
+Turn on C<QA_MODE> in your F<bricolage.conf> file. This will cause the UI to
+display a bunch of useful data at the bottom of every page, including session
+state, cache state, cookies, and GET and POST args. C<QA_MODE> turns on
+PerlWarn (C<use warnings>) and causes error messages to include more
+information. C<QA_MODE> also enables Apache::Status at the URL F</perl-status>
+which allows you can to examine the state of the Perl interpreter inside
+Apache.
 
 =item *
 
@@ -332,19 +332,19 @@ Bricolage from popping up a new browser window without a toolbar.
 =item *
 
 Run Bricolage under the Perl debugger using the debug command with
-bric_apachectl:
+F<bric_apachectl>:
 
    bric_apachectl debug
 
-This will start Apache in single-process mode ("httpd -X") and setup
-Apache::DB to start the debugger on the each hit to the server.
-You'll need to install the Apache::DB Perl module to use this command.
+This will start Apache in single-process mode (C<httpd -X>) and setup
+Apache::DB to start the debugger on the each hit to the server. You'll need to
+install the Apache::DB Perl module to use this command.
 
-To run Bricolage under DDD (http://www.gnu.org/software/ddd) start ddd
-as root and load bin/bric_apachectl.  Give it the argument "debug" and
-run it.  When you issue a hit to the server the debugger will stop on
-the first line of Bric::App::Handler::handler().  From there you can
-set breakpoints inside Bricolage and debug normally.
+To run Bricolage under DDD (L<http://www.gnu.org/software/ddd/>), start ddd as
+root and load F<bin/bric_apachectl>. Give it the argument "debug" and run
+it. When you issue a hit to the server the debugger will stop on the first
+line of C<Bric::App::Handler::handler()>. From there you can set breakpoints
+inside Bricolage and debug normally.
 
 If you prefer to run without the debugger using only the Apache single-process
 mode, then run Bricolage using the command
@@ -353,48 +353,45 @@ mode, then run Bricolage using the command
 
 =item *
 
-Set DBI_DEBUG and DBI_CALL_TRACE to 1 in your bricolage.conf.
-DBI_DEBUG records every database call in the logs complete with SQL
-and arguments.  DBI_CALL_TRACE adds a a subroutine call trace for each
-statement showing where the database call originated.  This generates
-a lot of data but it can be very helpful.
+Set C<DBI_DEBUG> and C<DBI_CALL_TRACE> to 1 in your F<bricolage.conf>
+file. C<DBI_DEBUG> records every database call in the logs complete with SQL
+and arguments. C<DBI_CALL_TRACE> adds a a subroutine call trace for each
+statement showing where the database call originated. This generates a lot of
+data but it can be very helpful.
 
 =item *
 
-Look at the database directly using psql.  Many bugs in Bricolage can
-only be successful diagnosed by examining records being created in the
-database.
+Look at the database directly using F<psql>. Many bugs in Bricolage can only
+be successfully diagnosed by examining records created in the database.
 
 =back
 
 =head1 PERFORMANCE TUNING
 
-Bricolage has two separate profiling systems that you can use to
-extract performance data:
+Bricolage has two separate profiling systems that you can use to extract
+performance data:
 
 =over 4
 
 =item *
 
-To run Bricolage under the Devel::Profiler module set the PROFILE
-variable on in your bricolage.conf file and restart your server.  This
-will create a profiler/$$/tmon.out file in your Apache log directory
-for each server process.  You can use dprofpp to analyze these files
-after the server has been stopped with "bric_apachectl stop".  See the
-Devel::Profiler documentation for more details.
+To run Bricolage under the Devel::Profiler module set the C<PROFILE> variable
+on in your F<bricolage.conf> file and restart your server. This will create a
+F<profiler/$$/tmon.out> file in your Apache log directory for each server
+process. You can use F<dprofpp> to analyze these files after the server has
+been stopped with C<bric_apachectl stop>. See the Devel::Profiler
+documentation for more details.
 
 =item *
 
-The database profiler is activated by setting the DBI_PROFILE option
-on in bricolage.conf.  This causes database profiling traces to be
-written to the Aapche error_log during requests.  You can then use
-bric_dbprof to analyze these trace.  See the bric_dbprof manpage for
-details.
+The database profiler is activated by enabling the C<DBI_PROFILE> option in
+F<bricolage.conf>. This causes database profiling traces to be written to the
+Apache error log during requests. You can then use F<bric_dbprof> to analyze
+these trace. See L<bric_dbprof> for details.
 
 =back
 
-B<CAUTION:> Neither of these options is appropriate for a production
-system.
+B<CAUTION:> Neither of these options is appropriate for a production system.
 
 =head1 ACTIONS AND MOVERS
 
@@ -414,7 +411,7 @@ new mover. Consult L<Bric::Dist::Action::Mover> for details on how to do that.
 =head1 MERGING CHANGES FROM BRANCH TO TRUNK
 
 If you're a Bricolage developer with permission to commit to the CVS
-repository, you may occaisionally have to merge changes from a release branch
+repository, you may occasionally have to merge changes from a release branch
 (where bug fixes are generally committed) into the trunk. Here's how to do it
 with a minimum of hassle.
 
@@ -467,7 +464,7 @@ simply create it and add it.
 
 =item 3
 
-If the branch has not been merged into the trunk before, cd into a checkout
+If the branch has not been merged into the trunk before, C<cd> into a checkout
 from HEAD, make sure it's fully up-to-date, and do a simple merge:
 
   cd bricolage-head-checkout/
@@ -519,7 +516,7 @@ tarball. First, tag the release in CVS:
   cvs -z3 tag rel_1_x_x
 
 If this is a major release, you'll need to create a new branch, so that it can
-be maintained for bug fixes separately, and then tag the relase in that
+be maintained for bug fixes separately, and then tag the release in that
 branch.
 
   cvs -z3 tag -b rev_1_x
@@ -534,8 +531,8 @@ option with C<export> so that the version numbers are all properly populated.
   make dist
 
 This will create a distribution tarball in the bricolage directory. Copy this
-tarbal somewhere, and do a full test with it, to make sure that Bricolage does
-indeed build and properly install itself.
+tarball somewhere, and do a full test with it, to make sure that Bricolage
+does indeed build and properly install itself.
 
   cp bricolage-1.x.x.tar.gz /tmp/src
   cd /tmp/src

@@ -6,8 +6,8 @@
 <p></p>
 <a name="results"></a>
 <& /widgets/listManager/listManager.mc,
-   object   => 'story',
-   title    => $lang->maketext("Find a story to alias"),
+   object   => $class_key,
+   title    => $lang->maketext("Find a $class_key to alias"),
    sortBy   => 'name',
    select   => undef,
    profile  => $related_alias,

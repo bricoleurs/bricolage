@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:33 $
+$Date: 2003-04-15 09:04:54 $
 
 =head1 SYNOPSIS
 
@@ -315,7 +315,7 @@ my %formSubs = (
 	      . qq{ width="$indent" valign="top">} if $useTable;
 	    $out .= $name ? qq{<span class="$label">$name:</span><br />\n} : '';
 	    $out .= &$rem_sub($width, $indent) if $useTable;
-	    $value = $value ? escape_html($value) : '';
+	    $value = defined $value ? escape_html($value) : '';
 	    $key = $key ? escape_html($key) : '';
 
 	    if (!$readOnly) {

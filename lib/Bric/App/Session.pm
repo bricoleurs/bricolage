@@ -7,15 +7,15 @@ Bric::App::Session - A class to handle user sessions
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:16 $
+$Date: 2003-04-15 09:05:17 $
 
 =head1 SYNOPSIS
 
@@ -59,9 +59,8 @@ use strict;
 
 #--------------------------------------#
 # Programmatic Dependencies
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::AP;
 use Bric::Config qw(:sys_user :admin :temp :cookies);
+use Bric::Util::Fault qw(:all);
 use Apache::Session::File;
 use Bric::Util::Trans::FS;
 
@@ -142,7 +141,10 @@ unless (-d SESS_DIR && -d LOCK_DIR) {
     mkpath($tmp_dir, 0, 0777);
     mkpath(SESS_DIR, 0, 0777);
     mkpath(LOCK_DIR, 0, 0777);
-    chown SYS_USER, SYS_GROUP, $tmp_dir, SESS_DIR, LOCK_DIR;
+    # Let the Apache user own it unless $ENV{BRIC_TEMP_DIR} is set, in which
+    # case we're running tests and want to keep the current user as owner.
+    chown SYS_USER, SYS_GROUP, $tmp_dir, SESS_DIR, LOCK_DIR
+      unless $ENV{BRIC_TEMP_DIR};
 }
 
 #==============================================================================#
@@ -160,8 +162,6 @@ unless (-d SESS_DIR && -d LOCK_DIR) {
 #--------------------------------------#
 # Private Class Fields
 
-my $ap = 'Bric::Util::Fault::Exception::AP';
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $secret = 'd0 a3rQ#R9JR34$(#ffE*38fhj3#$98jfeER9\'a35T(fgn[*;|ife=ef*R#,{%@';
 
 #------------------------------------------------------------------------------#
@@ -266,8 +266,9 @@ sub setup_user_session {
         }
         # We can't recover so throw an exception.
         else {
-            die $gen->new({ msg => "Difficulties tie'ing the session hash to " .
-                            "file '".OPTS->{Directory}."'\n", payload => $@});
+            throw_gen(error => "Difficulties tie'ing the session hash to " .
+                               "file '".OPTS->{Directory}."'\n",
+                      payload => $@);
         }
     }
 
@@ -317,8 +318,8 @@ NONE
 
 sub sync_user_session {
     untie %HTML::Mason::Commands::session ||
-      die $gen->new({ msg => 'Unable to synchronize user session.',
-                      payload => $@ });
+      throw_gen(error => 'Unable to synchronize user session.',
+                payload => $@);
 }
 
 =item expire_session()
@@ -354,8 +355,8 @@ NONE
 sub expire_session {
     my $r = shift;
     eval { tied(%HTML::Mason::Commands::session)->delete };
-    die $gen->new({ msg => 'Unable to expire user session.',
-                    payload => $@ }) if $@;
+    throw_gen(error => 'Unable to expire user session.', payload => $@)
+      if $@;
 
     # Expire the session cookie.
     my $cookie = Apache::Cookie->new($r,
@@ -485,10 +486,9 @@ sub handle_callbacks {
     };
 
     # Do error processing, if necessary.
-    if (my $err = $@) {
-        die $err if ref $err;
-        # Create an exception object unless we already have one.
-        die $ap->new({msg => "Error handling callbacks.", payload => $err});
+    if ($@) {
+        $@->rethrow() if isa_exception($@);
+        throw_ap(error => "Error handling callbacks.", payload => $@);
     }
     return 1;
 }

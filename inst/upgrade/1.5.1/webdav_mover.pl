@@ -14,6 +14,6 @@ exit if fetch_sql(qq{
 do_sql(qq{
     INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name,
                        description, distributor)
-    VALUES (75, 'webdav', 'Bric::Util::Trans::WebDav', 'WebDAV', 'WebDav Transport',
+    VALUES (74, 'webdav', 'Bric::Util::Trans::WebDav', 'WebDAV', 'WebDav Transport',
             'Class with methods to move files via WebDav', 1)
 });

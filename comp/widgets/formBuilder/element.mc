@@ -60,7 +60,9 @@ if ($param->{delete} &&
            defined $param->{element_id} && 
            $cs[0] != $param->{element_id})            { $no_save = 1 }
 
-    add_msg($lang->maketext('The key name [_1] is already used by another [_2].',$key_name ,$disp_name)) if $no_save;
+    add_msg($lang->maketext('The key name [_1] is already used by another [_2].',
+                            $key_name ,$disp_name))
+      if $no_save;
 
     # Roll in the changes. Create a new object if we need to pass in an Element
     # Type ID.
@@ -79,7 +81,7 @@ if ($param->{delete} &&
 
     # Determine the enabled output channels.
     my %enabled = map { $_ ? ( $_ => 1) : () } @{ mk_aref($param->{enabled}) },
-      $comp->get_primary_oc_id;
+      map { $comp->get_primary_oc_id($_) } $comp->get_sites;
 
     # Set the primary output channel ID per site
     if (($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb") &&
@@ -316,11 +318,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:24 $
+$Date: 2003-04-15 09:04:53 $
 
 =head1 SYNOPSIS
 

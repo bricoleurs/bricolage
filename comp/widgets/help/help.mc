@@ -43,7 +43,7 @@ my $widget = 'help';
   $uri = '/workflow/profile/workspace' unless length $uri;
 
   # add on help and .html
-  $uri = '/help' . $uri;
+  $uri = "/help/$lang_key" . $uri;
   $uri .= '.html' unless $uri =~ /\.html$/;
 
 #  print STDERR "HELP : help uri : $uri\n" if $DEBUG;

@@ -86,6 +86,10 @@ The online help was written by:
 
 =item Chris Brody <chris_brody@hotmail.com>
 
+=item David Wheeler <david@wheeler.net>
+
+=item Geoff Richards <geoffr@gbdirect.co.uk>
+
 =back
 
 Folks who have submitted patches include:
@@ -159,6 +163,8 @@ Friends who have spotted bugs include:
 =item Alex Epshteyn
 
 =item Alex Wheeler
+
+=item Chris Jantzen
 
 =back
 

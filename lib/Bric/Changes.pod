@@ -40,6 +40,97 @@ can create a keyword manager.
 
 =back
 
+=head1 VERSION 1.6.0
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added the C<STORY_URI_WITH_FILENAME> F<bricolage.conf> directive, which, when
+enabled, allows story URIs to include the file name. This is especially useful
+in output channels where "Use Slug as File name" is enabled, since it allows
+stories to essentially have identical URIs except for the file name. Off by
+default. [David]
+
+=item *
+
+Added F<bric_media_upload>, a media file bulk import utility, into
+F<contrib>. Thanks to Matt Vella for the contribution.
+
+=item *
+
+New help pages for the event log and the workflow trail. Thanks to Geoff
+Richards for the contribution.
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Granting of permission to database objects during installation has been moved
+to its own make target. This is to allow it to be run by C<make upgrade>, too,
+thus ensuring that the Bricolage database user always has the appropriate
+permissions ot access the database. [David]
+
+=item *
+
+Assets can once again be removed from workflow. [David]
+
+=item *
+
+The published version attribute is now set on templates when they're
+deployed. Thanks to Geoff Richards for the spot. [David]
+
+=item *
+
+The F<bricolage.conf> and F<httpd.conf> files are now created during C<make>
+rather than C<make install> so that C<make test> can take advantage of them.
+[David]
+
+=item *
+
+Bric::App::Session and Bric::App::Cache no longer C<chown> their files and
+directories during C<make test>. [David]
+
+=item *
+
+Super Bulk Edit no longer joins lines together without a space, so that words
+should now be properly separated. [David]
+
+=item *
+
+Deleting a story or media subelement no longer results in an error. [David]
+
+=item *
+
+Help has been restored. [David]
+
+=item *
+
+A value of "0" (zero) can now be given to element fields. This bug has been in
+Bricolage since the beginning! Thanks to Mark for the spot. [David]
+
+=item *
+
+Stories with subelements containting no field elements no longer cause an
+error when the container profile is looking for contextual information to
+display about a a subelement. Thanks to Chris Jantzen for the spot. [David]
+
+=item *
+
+Bulk editing a field without first going through the element profile and
+without adding or removing or reordering field elements now preserves the
+data. This is another bug that has been in the code since the beginning of
+time, and was only recently identifyed. Thanks to Rachel Murray for the spot!
+[David]
+
+=back
+
 =head1 VERSION 1.5.2
 
 =head2 New Features

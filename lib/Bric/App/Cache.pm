@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:58 $
+$Date: 2003-04-15 09:05:14 $
 
 =head1 SYNOPSIS
 
@@ -131,7 +131,10 @@ use constant CACHE_MMAP =>
 
 unless (-d CACHE_ROOT) {
     mkpath(CACHE_ROOT, 0, 0777);
-    chown SYS_USER, SYS_GROUP, CACHE_ROOT;
+    # Let the Apache user own it unless $ENV{BRIC_TEMP_DIR} is set, in which
+    # case we're running tests and want to keep the current user as owner.
+    chown SYS_USER, SYS_GROUP, CACHE_ROOT
+      unless $ENV{BRIC_TEMP_DIR};
 }
 
 # these could be made into bricolage.conf directives if we decide people will
@@ -224,7 +227,8 @@ sub new {
       if $@;
 
     # chown if creating cache file
-    chown(SYS_USER, SYS_GROUP, CACHE_MMAP) unless $exists;
+    chown(SYS_USER, SYS_GROUP, CACHE_MMAP)
+      unless $exists or $ENV{BRIC_TEMP_DIR};
 
     # bless ref to cache object into this class and return
     return $cache = bless \$mmap, $pkg;
@@ -347,7 +351,9 @@ Notes: NONE.
 sub clear {
     rmtree(CACHE_ROOT);
     mkpath(CACHE_ROOT, 0, 0777);
-    chown(SYS_USER, SYS_GROUP, CACHE_ROOT);
+
+    chown(SYS_USER, SYS_GROUP, CACHE_ROOT)
+      unless $ENV{BRIC_TEMP_DIR};
     undef $cache;
     return 1;
 }
