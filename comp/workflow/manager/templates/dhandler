@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.12.2.7 $
+$Revision: 1.12.2.8 $
 
 =head1 DATE
 
-$Date: 2003-08-31 00:13:12 $
+$Date: 2003-09-10 21:08:43 $
 
 =head1 SYNOPSIS
 
@@ -88,7 +88,7 @@ for (@$wf) { $wf = $_, last if $_->{id} == $w_id }
 $desk_chk = { map { $_->[0] => [chk_authz(0, READ, 1, @{ $_->[2] }),
                                    chk_authz(0, EDIT, 1, @{ $_->[2] }) ] }
                  @{ $wf->{desks} } };
-$start_desk_ok = $desk_chk->{$wf->{desks}[0][1]};
+$start_desk_ok = $desk_chk->{$wf->{desks}[0][0]};
 $wf = "&quot;$wf->{name}&quot;";
 </%init>
 <& '/widgets/wrappers/sharky/header.mc',
