@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.60.2.1 $
+$Revision: 1.60.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.60.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.60.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-27 18:09:58 $
+$Date: 2004-04-29 03:47:13 $
 
 =head1 SYNOPSIS
 
@@ -706,9 +706,11 @@ Sets the asset's primary output channel ID.
 
 B<Throws:> NONE.
 
-B<Side Effects:> NONE.
+B<Side Effects:> The URIs for the asset will be changed.
 
 B<Notes:> NONE.
+
+=cut
 
 ################################################################################
 

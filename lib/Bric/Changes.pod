@@ -96,6 +96,11 @@ Category class. Reported by Paul Orrock. [David]
 Events are now properly logged for keywords managed in the keyword profile.
 [David]
 
+=item *
+
+Media URIs are now properly updated when the primary output channel is changed.
+Reported by Ben Bangert. [David]
+
 =back
 
 =head1 VERSION 1.7.5 "Ashland" (2004-04-11)

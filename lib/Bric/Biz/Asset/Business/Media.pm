@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.95 $
+$Revision: 1.95.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.95 $ )[-1];
+our $VERSION = (qw$Revision: 1.95.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-06 22:53:22 $
+$Date: 2004-04-29 03:47:14 $
 
 =head1 SYNOPSIS
 
@@ -1060,6 +1060,30 @@ sub set_category__id {
 }
 
 sub get_primary_uri { shift->get_uri }
+
+
+##############################################################################
+# Documented in Bric::Biz::Asset::Business.
+
+sub set_primary_oc_id {
+    my ($self, $id) = @_;
+    my $oldid = $self->_get('primary_oc_id');
+    if ((defined $id && ! defined $oldid) || $id != $oldid) {
+        my ($uri, $update_uri);
+        if ($self->get_file_name) {
+            my $oc = Bric::Biz::OutputChannel->lookup({ id => $id });
+            my $cat = $self->get_category_object;
+            $update_uri = 1;
+            $uri = Bric::Util::Trans::FS->cat_uri
+              ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
+        }
+        $self->_set([qw(primary_oc_id uri   _update_uri)] =>
+                    [   $id,          $uri, $update_uri]);
+    }
+    return $self;
+}
+
+
 
 ################################################################################
 
