@@ -169,6 +169,12 @@ has DELETE permissions on all objects in the Bricolage database. It looks like
 this permission was ignored in PosgreSQL 7.1 and earlier, or problems would have
 shown up a long time ago! [David]
 
+=item *
+
+Fixed a bug where the time a distribution job is scheduled was not properly
+converted to UTC for storage in the database. Thanks to Mike Slattery for the
+great code archaeology! [David]
+
 =back
 
 =head1 VERSION 1.2.0
