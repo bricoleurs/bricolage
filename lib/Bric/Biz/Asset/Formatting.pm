@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.66 $
+$Revision: 1.67 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.66 $ )[-1];
+our $VERSION = (qw$Revision: 1.67 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 22:33:36 $
+$Date: 2004-03-11 16:58:55 $
 
 =head1 SYNOPSIS
 
@@ -1371,7 +1371,7 @@ NONE
 =cut
 
 
-sub get_element_key_ame {
+sub get_element_key_name {
     my $self = shift;
     my $at_obj = $self->_get_element_object or return;
     return $at_obj->get_key_name;
