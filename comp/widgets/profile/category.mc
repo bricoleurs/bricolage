@@ -83,15 +83,6 @@ if ($field eq "$widget|save_cb") {
                 $cat->set_directory($param->{directory});
             }
 	}
-	# Add new keywords.
-	my $new;
-	foreach (@{ mk_aref($param->{keyword}) }) {
-	    next unless $_;
-	    my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
-	    $kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
-	    push @$new, $kw;
-	}
-	$cat->add_keyword($new) if $new;
 
 	# Delete old keywords.
 	my $old;
@@ -104,6 +95,16 @@ if ($field eq "$widget|save_cb") {
 
 	# Save changes.
 	$cat->save;
+
+	# Add new keywords.
+	my $new;
+	foreach (@{ mk_aref($param->{keyword}) }) {
+	    next unless $_;
+	    my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+	    $kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
+	    push @$new, $kw;
+	}
+	$cat->add_keyword($new) if $new;
 
 	log_event($type . (defined $param->{category_id} ? '_save' : '_new'),
 		  $cat);
@@ -126,11 +127,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-07-02 22:49:18 $
+$Date: 2002-07-15 20:46:18 $
 
 =head1 SYNOPSIS
 
