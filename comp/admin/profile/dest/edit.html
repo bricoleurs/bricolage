@@ -35,7 +35,8 @@ foreach my $oc ( $id ? $dest->get_output_channels : () ) {
 }
 
 # Get all Output Channels for double-list manager.
-foreach my $oc ( Bric::Biz::OutputChannel->list ) {
+my $site_id = $dest->get_site_id;
+foreach my $oc (Bric::Biz::OutputChannel->list({site_id => $site_id})) {
     push @$left, { value =>  $oc->get_id, description => $oc->get_name };
 }
 
@@ -155,11 +156,11 @@ $dest->set_site_id($ARGS{site_id}) if $ARGS{site_id};
 
 =head1 VERSION
 
-$Revision: 1.1.2.1 $
+$Revision: 1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-10 19:23:01 $
+$Date: 2003-03-12 04:41:14 $
 
 =head1 DESCRIPTION
 
