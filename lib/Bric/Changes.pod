@@ -101,6 +101,11 @@ The C<lookup()> method of the story, media, and template classes once again
 attempt to retrieve objects from the per-request cache before looking them up
 in the database. [David]
 
+=item *
+
+Changed the name of the event logged when templates are checked out from
+"Template Checked Out Canceled" to the correct "Template Checked Out." [David]
+
 =back
 
 =head1 VERSION 1.6.9 (2004-02-06)
