@@ -195,6 +195,13 @@ assignments into subcategories, to category profile. [JoE<atilde>o Pedro]
 The installer will no longer try to load CPAN.pm if all modules are already
 installed. Thanks to Ilia Chipitsine for the prodding. [David]
 
+=item *
+
+The "Content" section of story, media, and subelement profiles now attempts to
+display a bit of text from the first text field in each listed subelement so
+that it's easier to see at a glance which subelement is which. [JoE<atilde>o
+Pedro]
+
 =back
 
 =head2 Bug Fixes

@@ -53,21 +53,27 @@ my $x=0;
 
 % # START CONTENT ROWS
 <tr>
-  <td width=20><img src="/media/images/spacer.gif" width="20" height="20" /></td>
+  <td width="20"><img src="/media/images/spacer.gif" width="20" height="20" /></td>
 % if ($dt->is_container) {
 % # START IF CONTAINER
 
-  <td align="right" colspan=2><span class="label"><% $dt->get_name() %>:</span>&nbsp;</td>
+  <td align="right" colspan="2"><span class="label"><% $dt->get_name %>:</span>&nbsp;</td>
   <td align="left" colspan=3>
-  <table border=0 cellpadding=0 cellspacing=0>
+  <table border="0" cellpadding="0" cellspacing="0">
+% my $first_tile = ($dt->get_tiles)[0];
+% if (my $t_buf = substr($dt->get_data($first_tile->get_name),0,64) ) {
+    <tr>
+      <td colspan="3">
+        <b><% $first_tile->get_element_data_obj->get_meta('html_info')->{disp} %> :</b>
+           <% $t_buf %>
+      </td>
+    </tr>
+% }
     <tr>
       <td>
 
-
 % my $at = $dt->get_element;
-
 % if ($at->is_related_media || $at->is_related_story) {
-
       <table border=0 cellpadding=0 cellspacing=1 width=<% 578 - FIELD_INDENT - 125 %>>
       <tr>
     <td width=50 class=medHeader align="right">
