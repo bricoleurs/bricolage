@@ -107,7 +107,7 @@ sub publish : Callback {
         add_msg($self->lang->maketext("Story [_1] published.", $arg))
           if $count <= 3;
     }
-    add_msg($self->lang->maketext("[_1] stories published."), $count)
+    add_msg($self->lang->maketext("[_1] stories published.", $count))
       if $count > 3;
 
     $count = @$media;
@@ -120,7 +120,7 @@ sub publish : Callback {
         add_msg($self->lang->maketext("Media [_1] published.", $arg))
           if $count <= 3;
     }
-    add_msg($self->lang->maketext("[_1] media published."), $count)
+    add_msg($self->lang->maketext("[_1] media published.", $count))
       if $count > 3;
 
     redirect_onload(last_page()) unless $instant;     # XXX: $instant
