@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.54 $ )[-1];
+our $VERSION = (qw$Revision: 1.55 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 14:32:28 $
+$Date: 2004-03-18 15:26:24 $
 
 =head1 SYNOPSIS
 
@@ -276,7 +276,10 @@ Throws:
 
 Side Effects: NONE
 
-Notes: NONE
+Notes: In addition to the parameters listed above, you can use
+most of the parameters listed in the documentation for the
+list method in Bric::Biz::Asset::Business::Story. (More precisely,
+you can try any of the parameters in the PARAM_WHERE_MAP constant.)
 
 =cut
 
@@ -719,6 +722,7 @@ Returns true if $param is an allowed parameter to the $method method.
 sub is_allowed_param {
     my ($pkg, $param, $method) = @_;
 
+    my @extra_listids = keys %{ Bric::Biz::Asset::Business::Story->PARAM_WHERE_MAP };
     my $allowed = {
         list_ids => { map { $_ => 1 } qw(title description slug category
                                          keyword simple primary_uri priority
@@ -731,7 +735,8 @@ sub is_allowed_param {
                                          site alias_id element_key_name
                                          unexpired data_text output_channel
                                          contrib_id subelement_key_name
-                                         Order OrderDirection Limit Offset) },
+                                         Order OrderDirection Limit Offset),
+                                      @extra_listids },
         export   => { map { $_ => 1 } qw(story_id story_ids
                                          export_related_media
                                          export_related_stories) },

@@ -42,15 +42,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-11 17:07:30 $
+$Date: 2004-03-18 15:26:25 $
 
 =head1 SYNOPSIS
 
@@ -166,9 +166,10 @@ Throws:
 
 Side Effects: NONE
 
-Notes: SQL tweaking paramters (Order, Limit, etc.) as in Bric::SOAP::Story
-are not available here. We should add them to
-Bric::Biz::Asset::Formatting->list() and then support them here too.
+Notes: In addition to the parameters listed above, you can use
+most of the parameters listed in the documentation for the
+list method in Bric::Biz::Asset::Formatting. (More precisely,
+you can try any of the parameters in the PARAM_WHERE_MAP constant.)
 
 =cut
 
@@ -513,12 +514,16 @@ sub is_allowed_param {
     my ($pkg, $param, $method) = @_;
     my $module = $pkg->module;
 
+    my @extra_listids = keys %{ Bric::Biz::Asset::Formatting->PARAM_WHERE_MAP };
+print STDERR "@extra_listids\n";
     my $allowed = {
         list_ids => { map { $_ => 1 } qw(element file_name output_channel
                                          category workflow simple
                                          priority publish_status element
                                          deploy_date_start deploy_date_end
-                                         expire_date_start expire_date_end) },
+                                         expire_date_start expire_date_end
+                                         Order OrderDirection Offset Limit),
+                                      @extra_listids },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
         create   => { map { $_ => 1 } qw(document workflow desk) },
         update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
