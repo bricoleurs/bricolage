@@ -28,13 +28,8 @@ if ($mode eq "new") {
 	     value => $mode,
 	     name => 'mode');
 
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "$disp Profile",
-	     number  => 2);
-
     # choose group
     &$showGroups($no_edit);
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
     &$stepOneOfTwo($type, $section);
 
 } elsif ( $mode eq "edit" ) {
@@ -84,7 +79,7 @@ if ($mode eq "new") {
 		 name => 'mode');
 
 	$m->comp("/widgets/wrappers/sharky/table_top.mc",
-		 caption => "Choose a subsystem:",
+		 caption => "Roles",
 		 number  => 2);
 
 	my $roleOpts;
@@ -93,7 +88,7 @@ if ($mode eq "new") {
 	}
 
 	$m->comp("/widgets/profile/select.mc",
-		 disp    => 'Which role to edit?',
+		 disp    => 'Select Role',
 		 options => $roleOpts,
 		 name    => 'subsys');
 
@@ -107,22 +102,22 @@ if ($mode eq "new") {
 	     value => $mode,
 	     name => 'mode');
 
-    # display a read-only list of roles
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "Name the new role",
+	     caption => "Roles",
 	     number  => 2);
 
-    if (@subsys) {
+    # Display a read-only list of existing roles, if more than one.
+    if (@subsys > 1) {
 	$m->out("<table width=570><tr><td width=130 align=right>");
 	$m->out("<span class=label>Existing roles:</span></td><td width=440>\n");
 	foreach my $ss (@subsys) {
-	    $m->out ( "&#149;$ss<br />\n") if $ss ne '_MEMBER_SUBSYS';
+	    $m->out ( "$ss<br />\n") if $ss ne '_MEMBER_SUBSYS';
 	}
 	$m->out("</ul>\n");
 	$m->out("</td></tr></table>");
     }
 
-    # send the roles to javascript so we can check before submitting
+    # Send the roles to javascript so we can check before submitting
     $m->out('<script language="javascript">' . "\n");
     $m->out("var checkUnique = true\n");
     $m->out("var roles = new Array(");
@@ -136,11 +131,12 @@ if ($mode eq "new") {
 
     # text box for new role name
     $m->comp("/widgets/profile/text.mc",
-	     disp    => 'Name the new role',
+	     disp    => 'New Role Name',
 	     name    => 'subsys',
 	     useTable => 1);
 
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
     &$stepOneOfTwo($type, $section);
 }
 </%perl>
@@ -195,7 +191,7 @@ my $crumb = $contrib->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 my $context   = "Admin | Profile | $disp | $crumb";
-$context .= " (Step 1 of 2)" if  $mode eq "new" || !$id;
+#$context .= " (Step 1 of 2)" if  $mode eq "new" || !$id;
 
 # print standard header
 $m->comp('/widgets/wrappers/sharky/header.mc',
@@ -214,7 +210,8 @@ my $disp = get_disp_name($type);
 
 my $showAttrs = sub {
     my ($contrib, $id, $subsys, $extending, $ro) = @_;
-    my $preCaption = ($subsys eq '_MEMBER_SUBSYS') ? 'Default Role' : $subsys;
+    my $preCaption = '&quot;' . ($subsys eq '_MEMBER_SUBSYS' ? 'Default'
+				 : $subsys) . '&quot; Role';
     my $contacts = $contrib->get_obj->get_contacts;
 
     # Display the Contact info.
@@ -262,7 +259,7 @@ my $showAttrs = sub {
     if ($num_fields) {
 	# display attrs
 	$m->comp("/widgets/wrappers/sharky/table_top.mc",
-		 caption => $preCaption . " Attributes",
+		 caption => $preCaption . " Fields",
 		 number  => 3);
 	$m->comp("/widgets/profile/displayAttrs.mc",
 		 attr        => $attr,
@@ -305,36 +302,28 @@ my $showGroups = sub {
 	  if ($group->get_id != $instanceGrpId);
     }
 
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+	     caption => "Contributor Type",
+	     number  => 2);
+
     $m->comp("/widgets/profile/select.mc",
 	     value     => 'group',
-	     disp      => 'What type of contributor is this?',
+	     disp      => 'Contributor Type',
 	     options   => $options,
 	     name      => 'group',
 	     readOnly => $ro
 	    );
+
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 };
 
 my $stepOneOfTwo = sub {
-
-    # Display the referential fields.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "Continue to next step",
-	     number  => 3);
-
-    $m->out(qq{<table border=0><tr><td width=20><img }
-	    . qq{src="/media/images/spacer.gif" width=20 height=1></td><td>});
-
-    $m->out("<span class=label>Step 1 of 2</span></td><td>");
-
-    # Display the form buttons.
     $m->comp('/widgets/profile/formButtons.mc',
 	     type    => shift,
 	     section => shift,
 	     no_del  => 1,
 	     val     => "next_dkgreen",
 	     return  => '/admin/manager/contrib');
-    $m->out(qq{</td></tr></table>});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 };
 </%once>
 
@@ -347,11 +336,11 @@ my $stepOneOfTwo = sub {
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.2 $
+$Revision: 1.1.1.1.2.3 $
 
 =head1 DATE
 
-$Date: 2001-10-11 19:47:17 $
+$Date: 2001-10-11 20:38:25 $
 
 =head1 DESCRIPTION
 
