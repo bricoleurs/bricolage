@@ -14,7 +14,6 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-<<<<<<< Changes.pod
 =head1 VERSION 1.7.3 ()
 
 =head2 New Features
@@ -202,6 +201,11 @@ hasn't created them because there are no custom fields. [David]
 In the formBuilder interface used by the Element and Contributor Type
 profiles, the maximum length of text and textarea fields is no "0", or
 unlimited. [David]
+
+=item *
+
+When publishing from a publish desk, you can now uncheck related assets in
+order to not publish them. [Scott]
 
 =back
 
