@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-02-02 18:38:49 $
 
 
 =head1 SYNOPSIS
@@ -1090,7 +1090,6 @@ sub save {
     my $id    = $self->get_id;
     my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG,
                                             'asset_grp', '_asset_grp_obj');
-
     unless ($self->_get('_remove')) {
         # Create the asset group for this desk if one doesn't exist.
         unless ($asset_grp_obj) {
@@ -1108,7 +1107,6 @@ sub save {
             $self->_set(['_asset_grp_obj'], [$asset_grp_obj]);
             $self->_set__dirty($dirty);
         }
-
         $self->_sync_checkin;
         $self->_sync_checkout;
         $self->_sync_transfer;
@@ -1433,6 +1431,7 @@ $get_em = sub {
             # Get a reference to the array of group IDs.
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@SEL_PROPS, \@d);
+            $self->_set([qw(_checkin _checkout _transfer)], [[],[],[]]);
             $self->_set__dirty; # Disables dirty flag.
             push @desks, $self->cache_me;
         } else {

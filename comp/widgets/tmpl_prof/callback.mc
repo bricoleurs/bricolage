@@ -190,7 +190,6 @@ elsif ($field eq "$widget|recall_cb") {
             $start_desk->accept({'asset' => $fa});
             $start_desk->checkout($fa, get_user_id);
             $start_desk->save;
-            $fa->save;
             log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
             log_event('formatting_checkout', $fa);
         } else {
