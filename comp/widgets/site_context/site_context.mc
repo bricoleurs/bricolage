@@ -13,7 +13,7 @@ my $cx = $c->get_user_cx($uid);
 
 unless ($sites) {
     # The list of sites has been reset. Grab them all again.
-    $sites = Bric::Biz::Site->list;
+    $sites = Bric::Biz::Site->list({ active => 1 });
     $c->set($cachekey, $sites);
     # Reset the list of user sites.
     $user_sites = undef;
@@ -78,11 +78,11 @@ $m->comp('/widgets/profile/select.mc',
 
 =head1 VERSION
 
-$Revision: 1.1.2.4 $
+$Revision: 1.1.2.5 $
 
 =head1 DATE
 
-$Date: 2003-03-06 02:18:16 $
+$Date: 2003-03-07 22:56:56 $
 
 =head1 SYNOPSIS
 
