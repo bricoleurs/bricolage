@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.118 $
+$Revision: 1.119 $
 
 =head1 DATE
 
-$Date: 2003-09-16 05:46:54 $
+$Date: 2003-09-18 21:37:53 $
 
 =head1 DESCRIPTION
 
@@ -223,6 +223,13 @@ C<Offset> parameter is passed to C<list()>.
 
 MySQL 4.1 also supports this feature, so I feel totally comfortable adding it
 to Bricolage and feeling like it's still portable to other databases.
+
+=item *
+
+Add media type associations to actions and allow users to select the media
+types they want associated with a particular action. Use the hard-coded action
+type media type associations as the default associations when a new action is
+created.
 
 =back
 
