@@ -16,6 +16,23 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.4.5
 
+=head2 Changes
+
+=over 4
+
+=item *
+
+Categories are now displayed by their URIs instead of their names wherever
+possible. [David]
+
+=item *
+
+Added "Order" and "OrderDirection" parameters to C<< Bric::Util::Grp->list >>
+in order to be able to specify a different column and sort order for getting a
+list of groups. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4

@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.24.2.2 $
+$Revision: 1.24.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-13 19:52:26 $
+$Date: 2002-11-08 01:25:04 $
 
 =head1 SYNOPSIS
 
@@ -141,7 +141,6 @@ BEGIN {
 
                          # Private Fields
                          '_attr_obj'         => Bric::FIELD_NONE,
-                         '_asset_grp'        => Bric::FIELD_NONE,
                          '_attr'             => Bric::FIELD_NONE,
                          '_meta'             => Bric::FIELD_NONE,
                          '_save_children'    => Bric::FIELD_NONE,
@@ -160,8 +159,7 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors                          
-
+# Constructors
 #------------------------------------------------------------------------------#
 
 =item $obj = new Bric::Biz::Category($init);
@@ -184,7 +182,7 @@ description
 
 A description of this category
 
-=item * 
+=item *
 
 directory
 
@@ -305,7 +303,7 @@ NONE
 
 B<Notes:>
 
-This is the default list constructor which should be overrided in all derived 
+This is the default list constructor which should be overrided in all derived
 classes even if it just calls 'die'.
 
 =cut
@@ -315,7 +313,7 @@ sub list {
     my ($param) = @_;
     my ($ret, @objs);
     my (@num, @txt);
-    
+
     $param->{'active'} = exists $param->{'active'} ? $param->{'active'} :  1;
     # If 'all' is passed as the value of active, don't select based on active.
     delete $param->{'active'} if $param->{'active'} eq 'all';
@@ -325,24 +323,24 @@ sub list {
             $_ eq 'uri' or $_ eq 'description') { push @txt, $_ }
         else { push @num, $_ }
     }
-        
+
     my $where = join(' AND ', (map { "$_=?" }             @num),
                               (map { "LOWER($_) LIKE ?" } @txt));
-        
+
     $ret = _select_category($where, [@$param{@num,@txt}]);
 
     foreach my $d (@$ret) {
         # Instantiate object
         my $self = bless {}, $class;
-        
+
         # Set the columns selected as well as the passed ID.
         $self->_set(['id', FIELDS], $d);
-        
+
         my $id = $self->get_id;
         my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
                                                         'subsys'    => $id});
         $self->_set(['_attr_obj'], [$a_obj]);
-        
+
         push @objs, $self;
     }
 
@@ -871,19 +869,6 @@ NONE
 B<Notes:>
 
 NONE
-
-=cut
-
-sub set_name {
-    my ($self, $name) = @_;
-    if (my $agid = $self->_get('asset_grp_id')) {
-        # Change the name in the asset group description.
-        my $ag = Bric::Util::Grp::Asset->lookup({ id => $agid });
-        $ag->set_description($name);
-        $self->_set(['_asset_grp'], [$ag]);
-    }
-    $self->_set(['name'], [$name]);
-}
 
 =item $name = $cat->get_description;
 
@@ -1457,70 +1442,76 @@ sub _select_category {
 
 sub _update_category {
     my $self = shift;
-    my ($id, $ag) = $self->_get(qw(id _asset_grp));
+    my ($id) = $self->_get(qw(id));
 
     my $sql = 'UPDATE '.TABLE.
               " SET ".join(',', map {"$_=?"} COLS)." WHERE id=?";
 
     my $sth = prepare_c($sql);
+    my $new_uri;
 
     if ($self->_get('_update_uri') and $id != ROOT_CATEGORY_ID) {
-        my $new_uri = Bric::Util::Trans::FS->cat_uri
+        $self->_set(['_update_uri'], [0]);
+        $new_uri = Bric::Util::Trans::FS->cat_uri
           ( $self->get_parent->get_uri,
             $self->_get('directory')
           );
-
         $self->_set(['uri'], [$new_uri]);
     }
 
     execute($sth, $self->_get(FIELDS), $self->get_id);
 
-    if ($self->_get('_update_uri')) {
-        $self->_set(['_update_uri'], [0]);
-        my $parent_uri = $self->_get('uri');
+    if ($new_uri) {
+        # Change the URI in the asset group description.
+        my $agid = $self->_get('asset_grp_id');
+        my $ag = Bric::Util::Grp::Asset->lookup({ id => $agid });
+        $ag->set_description($new_uri);
+        $ag->save;
+
+        # Update the subcategory URIs.
         for my $subcat ($self->get_children) {
             $subcat->set_directory($subcat->_get('directory'));
             $subcat->_update_category;
         }
     }
-    $ag->save if $ag;
-
-    return 1;
 }
 
 sub _insert_category {
     my $self = shift;
+
+    # Prepare the insert statement.
+    my $nextval = next_key(TABLE);
+    my $sql = 'INSERT INTO '.TABLE." (id,".join(',',COLS).") ".
+              "VALUES ($nextval,".join(',', ('?') x COLS).')';
+
+    my $sth = prepare_c($sql);
+
+    # Set the URI.
+    my $uri = Bric::Util::Trans::FS->cat_uri( $self->get_parent->get_uri,
+                                              $self->_get('directory') );
+
+    $self->_set(['uri'], [$uri]);
+
     # Set up a group. This isn't used anywhere or for anything other than
     # to have a way to get a group ID from a category to track assets. The
     # assets will pretend they're in the group, even though they're really not.
     # See Bric::Biz::Asset->get_grp_ids to see it at work.
     my $ag_obj = Bric::Util::Grp::Asset->new
       ({ name => 'Category Assets',
-         description => $self->_get('name') });
+         description => $uri });
     $ag_obj->save;
     $self->_set(['asset_grp_id'], [$ag_obj->get_id]);
-    my $nextval = next_key(TABLE);
 
-    # Create the insert statement.
-    my $sql = 'INSERT INTO '.TABLE." (id,".join(',',COLS).") ".
-              "VALUES ($nextval,".join(',', ('?') x COLS).')';
-
-    my $sth = prepare_c($sql);
-
-    $self->_set(['uri'], [Bric::Util::Trans::FS->cat_uri(
-      $self->get_parent->get_uri,
-      $self->_get('directory'),
-    )]);
-
+    # Insert the new category.
     execute($sth, $self->_get(FIELDS));
 
     # Set the ID of this object.
     $self->_set(['id'],[last_key(TABLE)]);
-    # Add the category to the 'All Categories' group.
+
+    # Add the category to the 'All Categories' group and return.
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     return $self;
 }
-
 
 1;
 __END__

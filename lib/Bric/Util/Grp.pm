@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.16.2.4 $
+$Revision: 1.16.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-23 19:03:33 $
+$Date: 2002-11-08 01:25:05 $
 
 =head1 SYNOPSIS
 
@@ -338,6 +338,15 @@ The name of a group.
 =item permananent
 
 A boolean to return permanent or non-permanent groups.
+
+=item Order
+
+A property name to order by.
+
+=item OrderDirection
+
+The direction in which to order the records, either "ASC" for ascending (the
+default) or "DESC" for descending.
 
 =back
 
@@ -2904,7 +2913,9 @@ sub _do_list {
         $sql .= join ' AND ', @where_clause;
     }
 
-    $sql .= $chk ? ' ORDER BY g.name' : ' ORDER BY name';
+    my $ord = $criteria->{Order} || 'name';
+    $sql .= $chk ? " ORDER BY g.$ord " : " ORDER BY $ord ";
+    $sql .= $criteria->{OrderDirection};
     my $select = prepare_c($sql, undef, DEBUG);
 
     # this was a call to list ids
