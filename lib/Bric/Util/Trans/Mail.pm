@@ -8,15 +8,15 @@ Bric::Util::Trans::Mail - Utility class for sending email.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:37 $
+$Date: 2003-01-21 20:10:54 $
 
 =head1 SYNOPSIS
 
@@ -670,7 +670,7 @@ sub send {
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 

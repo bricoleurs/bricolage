@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 19:58:44 $
+$Date: 2003-01-21 20:10:52 $
 
 =head1 SYNOPSIS
 
@@ -923,7 +923,7 @@ sub uri_dir_name {
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1067,15 +1067,7 @@ $glob = sub {
 
 Recursively copies the contents of $src to $dst.
 
-B<Throws:>
-
-=over 4
-
-=item *
-
-
-
-=back
+B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 

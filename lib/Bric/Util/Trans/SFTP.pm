@@ -6,16 +6,16 @@ Bric::Util::Trans::SFTP - SFTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:43 $
+$Date: 2003-01-21 20:10:54 $
 
 =head1 SYNOPSIS
 
@@ -298,10 +298,10 @@ B<Notes:> NONE.
 
 $no_warn = sub { };
 
-=cut
-
 1;
 __END__
+
+=back
 
 =head1 NOTES
 
@@ -318,6 +318,6 @@ L<Bric::Dist::Action|Bric::Dist::Action>,
 L<Bric::Dist::Action::Mover|Bric::Dist::Action::Mover>,
 L<Bric::Util::Trans::FS|Bric::Util::Trans::FS>,
 L<Net::SFTP|Net::SFTP>,
-L<Net::SSH::Perl|Net::SSH|Perl>
+L<Net::SSH::Perl|Net::SSH::Perl>
 
 =cut
