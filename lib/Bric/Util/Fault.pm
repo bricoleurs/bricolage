@@ -3,59 +3,57 @@ package Bric::Util::Fault;
 
 =head1 NAME
 
-Bric::Util::Fault - base class for all Exceptions and Errors
+Bric::Util::Fault - base class for all Exceptions
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-07-18 19:04:33 $
 
 =head1 SYNOPSIS
 
- eval {
-	# do something that causes general mayhem.
- 	die Bric::Util::Fault->new ({msg => 'fuck!'});
- };
+  eval {
+      # Do something that causes general mayhem.
+      die Bric::Util::Fault::Subclass->new({ msg => 'Ro-ro!' });
+  };
 
- if ($@) {
+  if (my $err = $@) {
+      print "Oh-oh, something faulted. Let's look at it...";
+      print "Type:      ", ref $err, "\n";
+      print "Message:   ", $err->get_msg, "\n";
+      print "Payload:   ", $err->get_payload, "\n";
+      print "Timestamp: ", $err->get_timestamp, "\n";
+      print "Package:   ", $err->get_pkg, "\n";
+      print "Filename:  ", $err->get_filename. "\n";
+      print "Line"      ", $err->get_line, "\n";
 
-	# do copy because $@ get over-written for every eval
-	my $s = $@; 
+      print "Stack:\n";
+      foreach my $c (@{ $err->get_stack }) {
+          print "\t", (ref $c ? join(' - ', @{$c}[1,3,2]) : $c), "\n";
+      }
 
-	print "uhho.  something faulted.  lets look at it...";
-	print "the fault was of type " . ref ($@) . "\n";
-
-	print "timestamp -- " . $s->get_timestamp . "\n";
-	print "pkg -- " . $s->get_pkg . "\n";
-	print "filename-- " . $s->get_filename. "\n";
-	print "line -- " . $s->get_line . "\n";
-	print "stack -- " . join("\n", $s->get_stack) . "\n";
-	print "env -- " . $s->get_env . "\n";
-	print "msg -- " . $s->get_msg . "\n";
-	print "payload -- " . $s->get_payload . "\n";
- }
-
+      print "Environment:\n";
+      while (my ($k, $v) = each %{ $err->get_env }) {
+          print "\t$k => $v\n";
+      }
+  }
 
 =head1 DESCRIPTION
 
-Bric::Util::Fault.pm is the base class for all Bricolage Exceptions and Errors.  Do not
-use this class directly if you are looking for an error or exception to throw.
-Rather, look at Bric::Util::Fault::Exception or Bric::Util::Fault::Error.
-
-You should only directly interact with this class if you are subclassing it to
-create another type of Fault that is parallel to Fault::Exception and
-Fault::Error.
+Bric::Util::Fault is the base class for all Bricolage Exceptions. Do not use
+this class directly if you are looking for an exception to throw. Rather, look
+at L<Bric::Util::Fault::Exception|Bric::Util::Fault::Exception>.
 
 Whereas earlier perl versions could only die ('string'), perl 5.005 and beyond
-can die ($obj).  This object can contain rich state information which enables
-the calling eval {} to perform more varied object introspection.  This also
+can die ($obj). This object can contain rich state information which enables
+the calling eval {} to perform more varied object introspection. This also
 avoids the proliferation of error strings, and makes catching errors very
 simple.
 
@@ -66,8 +64,7 @@ simple.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #==============================================================================#
@@ -76,12 +73,8 @@ use strict;
 
 
 #--------------------------------------#
-# Programatic Dependencies              
+# Programatic Dependencies
 use overload q{""} => \&error_info;
- 
-# THIS MODULE SHOULD HAVE NO PROGRAMATIC DEPENDENCIES!!!
-# NO, DAVID, NOT EVEN FOR TIME! :-)
-
 
 #=============================================================================#
 # Function Prototypes and Closures     #
@@ -99,18 +92,17 @@ use overload q{""} => \&error_info;
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
+# Public Class Fields
 
 # Public fields should use 'vars'
 
 #--------------------------------------#
-# Private Class Fields                  
+# Private Class Fields
 
 # Private fields use 'my'
 
 #--------------------------------------#
-# Instance Fields                       
-
+# Instance Fields
 
 #==============================================================================#
 
@@ -132,17 +124,13 @@ Keys of $init are:
 
 =over 4
 
-=item *
+=item msg
 
-msg
+The exception message.
 
-programmer message
+=item payload
 
-=item *
-
-payload
-
-programmer payload
+Extra error information, e.g., from C<$!> or C<$@>.
 
 =back
 
@@ -150,50 +138,39 @@ B<Throws:>
 
 Um, this can't really throw itself.  or can it?  i dunno.
 
-B<Side Effects:>
-
-sets some values.  not much more.
+B<Side Effects:> NONE.
 
 B<Notes:>
 
-This method should only be used within a 'die' context, and one of its subclasses should be thrown instead.'
+This method should only be used within a 'die' context, and one of its
+subclasses should be thrown instead.
 
 =cut
 
 sub new {
-	my $class = shift;
-	my ($init) = @_;
+    my ($class, $init) = @_;
 
-	# calculate state information needed for object
+    ## caller
+    my (@stack, $i);
+    $i = 0;
+    while (my @s = caller($i++)) {push @stack, \@s}
 
-	## timestamp
-	my ($timestamp) = time;
+    my ($pkg, $filename, $line) = @{$stack[0]};
 
-	## caller
-	my (@stack, $i);
-	$i = 0;
-	while (my @s = caller($i++)) {push @stack, \@s}
+    ## construct parameters
+    my $p = {
+             timestamp => time,
+             pkg => $pkg,
+             filename => $filename,
+             line => $line,
+             env =>  { %ENV },
+             msg => $init->{'msg'},
+             payload => $init->{'payload'},
+             stack => \@stack,
+            };
 
-	my ($pkg, $filename, $line) = @{$stack[0]};
-
-	## env
-	my ($env) = (\%ENV);
-
-	## construct parameters
-	my $p = {
-		 timestamp => $timestamp,
-		 pkg => $pkg,
-		 filename => $filename,
-		 line => $line,
-		 env => $env,
-		 msg => $init->{'msg'},
-		 payload => $init->{'payload'},
-		 stack => \@stack,
-		};
-
-	# Create the object via fields which returns a blessed object.
-	bless $p, ref $class || $class;
-
+    # Create the object via fields which returns a blessed object.
+    bless $p, ref $class || $class;
 }
 
 #------------------------------------------------------------------------------#
@@ -225,48 +202,37 @@ sub DESTROY {
 
 =head2 Public Instance Methods
 
-=item $string = $obj->error_info();
+=item $string = $obj->error_info;
 
-returns error string of type 'pkg -- filename -- line -- msg'
+Returns error string of type "pkg -- filename -- line -- msg". Also called
+when the exception object is used in a string context.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> Overloads the double-quoted string operator.
 
 =cut
 
 sub error_info {
-	my ($self) = shift;
-	return join(' -- ', $self->get_pkg, $self->get_filename,
-	  $self->get_line) . "\n" . ($self->get_msg || '') . "\n\n"
-	  . ($self->get_payload || '') . "\n";
+    my ($self) = shift;
+    return join(' -- ', $self->get_pkg, $self->get_filename,
+                $self->get_line) . "\n" . ($self->get_msg || '') . "\n\n"
+                . ($self->get_payload || '') . "\n";
 }
 
 #------------------------------------------------------------------------------#
 
-=item $id = $obj->get_msg();
+=item $id = $obj->get_msg;
 
 Returns the message set by the programmer at error time.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -275,21 +241,16 @@ sub get_msg { shift->{msg} };
 
 #------------------------------------------------------------------------------#
 
-=item $id = $obj->get_timestamp();
+=item $id = $obj->get_timestamp;
 
-Returns the timestamp of the error
+Returns the timestamp of the error. The timestamp is the epoch time of the
+error - the number of seconds since January 1, 1970.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -297,21 +258,15 @@ sub get_timestamp { shift->{timestamp} };
 
 #------------------------------------------------------------------------------#
 
-=item $id = $obj->get_env();
+=item $id = $obj->get_env;
 
-Returns the contents of %ENV at time of error
+Returns a hash reference of the contents of %ENV at time of error.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -319,21 +274,15 @@ sub get_env { shift->{env} };
 
 #------------------------------------------------------------------------------#
 
-=item $id = $obj->get_filename();
+=item $id = $obj->get_filename;
 
-Returns the filename that died
+Returns the name of the file in which the error ocurred.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -341,21 +290,16 @@ sub get_filename { shift->{filename} };
 
 #------------------------------------------------------------------------------#
 
-=item $id = $obj->get_line();
+=item $id = $obj->get_line;
 
-Return the line of the file that died
+Return the line number at which the error ocurred in the file returned by
+C<get_filename()>.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -363,21 +307,15 @@ sub get_line { shift->{line} };
 
 #------------------------------------------------------------------------------#
 
-=item $id = $obj->get_pkg();
+=item $id = $obj->get_pkg;
 
-Returns the package that died
+Returns the name of the package in which the error ocurred.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -385,21 +323,15 @@ sub get_pkg { shift->{pkg} };
 
 #------------------------------------------------------------------------------#
 
-=item $id = $obj->get_payload();
+=item $id = $obj->get_payload;
 
-Returns the programmer-specificed payload
+Returns the programmer-specified payload.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -407,66 +339,39 @@ sub get_payload { shift->{payload} };
 
 #------------------------------------------------------------------------------#
 
-=item $id = $obj->get_stack();
+=item $id = $obj->get_stack;
 
-Returns the stack trace
+Returns the stack trace.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub get_stack { shift->{stack} };
 
-
-=cut
-
-
+=back
 
 #------------------------------------------------------------------------------#
 
 =head1 PRIVATE
 
-=cut
-
-#--------------------------------------#
-
 =head2 Private Class Methods
 
-=cut
-
-
-# Add methods here that do not require an object be instantiated, and should not
-# be called outside this module (e.g. utility functions for class methods).
-# Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
+NONE.
 
 =head2 Private Instance Methods
 
-=cut
-
-# Add methods here that apply to an instantiated object, but should not be
-# called directly. Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
+NONE.
 
 =head2 Private Functions
 
-=cut
+NONE.
 
-# Add functions here that can be used only internally to the class. They should
-# not be publicly available (hence the prefernce for closures). Use the same POD
-# comment style as above for 'new'.
+=cut
 
 1;
 __END__
@@ -475,7 +380,8 @@ __END__
 
 =head1 NOTES
 
-This is the *only* class file that should use the command 'die'.  everyone else should use the interface specified above.
+This is the I<only> class file that should use the C<die> operator. Everyone
+else should use the interface specified above.
 
 =head1 AUTHOR
 
@@ -483,7 +389,6 @@ matthew d. p. k. strelchun-lanier - matt@lanier.org
 
 =head1 SEE ALSO
 
-L<uh|uh>, 
-L<nothing|nothing>
+L<Bric|Bric>, L<Bric::Util::Fault::Exception|Bric::Util::Fault::Exception>
 
 =cut

@@ -1,53 +1,44 @@
-use constant DEBUG => 1;
+#!/usr/bin/perl -w
 
-use Bric::Util::Fault;
-use Bric::Util::Fault::Error;
-use Bric::Util::Fault::Exception;
-use Bric::Util::Fault::Exception::DA;
+package Bric::Util::Fault::FaultTest;
 
+use strict;
+use Test::More tests => 66;
 
-
-eval { die Bric::Util::Fault->new ({msg => 'Fault!' }) };
-
- if ($@) {
-
-	# do this because $@ get over-written for every eval
-	my $s = $@; 
-	print "uhho.  something faulted.  lets look at it...";
-	print "the fault was of type " . ref ($s) . "\n";
-
-	print "timestamp -- " . $s->get_timestamp . "\n";
-	print "pkg -- " . $s->get_pkg . "\n";
-	print "filename-- " . $s->get_filename. "\n";
-	print "line -- " . $s->get_line . "\n";
-	print "env -- " . $s->get_env . "\n";
-	print "msg -- " . $s->get_msg . "\n";
-	print "payload -- " . $s->get_payload . "\n";
- }
-
-
-
-eval { die Bric::Util::Fault::Error->new ({msg => 'Error!' }) };
-
-if ($@) {
-	my $r = ref $@;
-	my $s = $@;
-	print "ref of $@ is $r \n and content is " . $@ . "\n\n";
-	print "short error string is " . $s->error_info . "\n";
+my @classes;
+BEGIN {
+    @classes = ('Bric::Util::Fault',
+                'Bric::Util::Fault::Exception',
+                'Bric::Util::Fault::Exception::DA'
+               );
+    use_ok $_ for @classes;
 }
 
-eval { die Bric::Util::Fault::Exception->new ({msg => 'Exception!' }) };
+my $msg = 'Fault!';
+my $payload = 'Cannot operate heavy machinery under the influence of alcohol';
 
-if ($@) {
-	my $r = ref $@;
-	print "ref of $@ is $r \n and content is " . $@ . "\n\n";
+foreach my $ec (@classes) {
+    eval { die $ec->new({ msg => $msg, payload => $payload }) };
+    ok my $err = $@, "Got $ec exception";
+    isa_ok $err, $ec, "Yes, it isa $ec";
+    isa_ok $err, $classes[0], "Yes, it isa $classes[0]";
+    ok $err->get_timestamp <= time, "$ec: Check time";
+    is $err->get_msg, $msg, "$ec: Check message";
+    is $err->get_payload, $payload, "$ec: Check payload";
+    is $err->get_pkg, __PACKAGE__, "$ec: Check package";
+    is $err->get_filename, 'Fault.pl', "$ec: Check filename";
+    is $err->get_line, 21, "$ec: Check line";
+    is_deeply $err->get_env, \%ENV, "$ec: Check environment";
+    is $err->error_info, __PACKAGE__ . " -- Fault.pl -- 21\n$msg\n\n$payload\n",
+      "$ec: Check error_info";
+    is "$err", $err->error_info, "$ec: Check stringifiation";
+    ok my $stack = $err->get_stack, "$ec: Get stack";
+    ok UNIVERSAL::isa($stack, 'ARRAY'), "$ec: Stack isa array";
+    is $#$stack, 1, "$ec: Count stack";
+    is $stack->[0][1], 'Fault.pl', "$ec: Check 0/1";
+    is $stack->[0][2], 21, "$ec: Check 0/3";
+    is $stack->[0][3], 'Bric::Util::Fault::new', "$ec: Check 0/2";
+    is $stack->[1][1], 'Fault.pl', "$ec: Check 1/1";
+    is $stack->[1][2], 21, "$ec: Check 1/3";
+    is $stack->[1][3], '(eval)', "$ec: Check 1/2";
 }
-
-
-eval { die Bric::Util::Fault::Exception::DA->new ({msg => 'DA!' }) };
-
-if ($@) {
-	my $r = ref $@;
-	print "ref of $@ is $r \n and content is " . $@ . "\n\n";
-}
-
