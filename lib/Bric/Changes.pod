@@ -133,6 +133,11 @@ Templates can be deleted again. Thanks to Adeola Awoyemi for the spot! [David]
 Stories and media with non-unique URIs can now be deleted. Reported by Simon
 Wilcox. [David]
 
+=item *
+
+Checkin and Publish once again works in the media profile. Thanks to Alexander
+Ling forthe stot. [David]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
