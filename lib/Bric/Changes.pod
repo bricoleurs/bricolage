@@ -43,6 +43,10 @@ paginated element. [David]
 When errors occur while previewing stories, the leftNav is now turned off.
 [David]
 
+=item *
+
+Browser buttons and menus are now disabled. [David]
+
 =back
 
 =head1 VERSION 1.0.1
