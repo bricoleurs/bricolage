@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-03 18:27:37 $
+$Date: 2001-12-06 00:29:54 $
 
 =head1 DESCRIPTION
 
@@ -46,10 +46,12 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
 use Bric::Biz::Category;
+use Bric::Biz::OutputChannel;
+use Bric::Biz::Workflow qw(TEMPLATE_WORKFLOW);
 use Bric::Biz::Asset::Formatting;
 use Bric::Config qw(:ftp);
+use Bric::Biz::AssetType;
 use Carp qw(confess croak);
-
 use Net::FTPServer::DirHandle;
 use Bric::Util::FTP::FileHandle;
 
@@ -165,6 +167,7 @@ sub open {
   my $list = Bric::Biz::Asset::Formatting->list({ category__id => $self->{category_id}, file_name => "%/$filename" });
 
   if ($list) {
+    # file exists, return it
     my $template = shift @$list;
     return Bric::Util::FTP::FileHandle->new($self->{ftps},
                                             $template,
@@ -172,8 +175,79 @@ sub open {
                                            )->open($mode);
   }
 
-  # not handling creation yet...
-  return undef;
+  print STDERR __PACKAGE__, "::open($filename, $mode) : creating new template\n";
+
+  # create a new template
+  my ($name, $file_type) = split(/\./, $filename);
+
+  # autohandler special case
+  $file_type = 'mc' if $name eq 'autohandler' and not $file_type;
+
+  # don't look for an asset for generic templates
+  my $at;
+  unless (($name eq 'autohandler' and $file_type eq 'mc') or
+	  ($name eq 'category' 
+	   and ($file_type eq 'pl' or $file_type eq 'tmpl'))) {
+
+    # look for a match (if I could figure out how to express this in
+    # SQL then I guess I could use list() directly...)
+    foreach my $this_at (Bric::Biz::AssetType->list()) {
+      my $this_at_name = lc $this_at->get_name;
+      $this_at_name =~ s/\W+/_/g;
+
+      if ($name eq $this_at_name) {
+	# found it
+	$at = $this_at;
+	last;
+      }
+    }
+
+    # if we didn't find a match then fail
+    unless ($at) {
+      print STDERR __PACKAGE__, "::open($filename, $mode) : failed to find matching asset type\n" if FTP_DEBUG;
+      return undef;
+    }
+    print STDERR __PACKAGE__, "::open($filename, $mode) : matched asset type : ", $at->get_name, "\n" if FTP_DEBUG;
+  }
+
+    
+  # get an output channel id - fix this to support multiple output
+  # channels
+  my ($oc_id) = Bric::Biz::OutputChannel->list_ids();
+  
+  print STDERR __PACKAGE__, "::open($filename, $mode) : creating : ", $self->pathname, $filename, "\n" if FTP_DEBUG;
+
+  ## create the new template object
+  my $template = Bric::Biz::Asset::Formatting->new(
+		  {
+		   'element'     	=> $at,
+		   'file_type'          => $file_type,
+		   'output_channel__id' => $oc_id,
+		   'category_id'        => $self->{category_id},
+		   'priority'           => 3,
+		   'name'               => ($at ? lc($at->get_name) : undef),
+		   'user__id'           => $self->{ftps}{user_obj}->get_id,
+		  });
+
+  # find a template workflow.  Might be nice if
+  # Bric::Biz::Workflow->list too a type key...
+  foreach my $workflow (Bric::Biz::Workflow->list()) {
+      if ($workflow->get_type == TEMPLATE_WORKFLOW) {
+	  $template->set_workflow_id($workflow->get_id());
+	  $template->checkin();
+	  last;
+      }
+  }
+
+  # send to the database
+  $template->activate();
+  $template->save();
+
+  # now pass off to FileHandle
+  return Bric::Util::FTP::FileHandle->new($self->{ftps},
+					  $template,
+					  $self->{category_id}
+					 )->open($mode);    
 }
 
 =item list($wildcard)

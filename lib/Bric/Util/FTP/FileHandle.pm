@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-04 23:23:46 $
+$Date: 2001-12-06 00:29:54 $
 
 =head1 DESCRIPTION
 
@@ -197,7 +197,8 @@ sub status {
 
   print STDERR __PACKAGE__, "::status() : ", $template->get_file_name, "\n";  
   
-  my $size = length($template->get_data);
+  my $data = $template->get_data || "";
+  my $size = length($data);
   my $deploy_date = $template->get_deploy_date;
   my $date = 0;
   if ($deploy_date) {

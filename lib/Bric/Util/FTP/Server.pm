@@ -12,7 +12,7 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =pod
 
@@ -34,10 +34,17 @@ template file they recieve the most recent checked-in version of the
 template.  When a file is uploaded it is automatically checked-in and
 deployed.
 
-B<WARNING:> The FTP server component is an experimental feature and
-has not been fully tested!
-
 For installation and configuration instructions see L<Bric::Admin>.
+
+=head1 LIMITATIONS
+
+Only GET, PUT and DELETE are implemented for templates.
+
+The server won't work right if multiple output-channels are defined.
+
+The system doesn't deal with the possibility of having more than one
+active template for a given filename.  This probably won't be fixed -
+rather, Bricolage will soon prevent this situation.
 
 =head1 INTERFACE
 
@@ -151,13 +158,6 @@ sub system_error_hook {
 1;
 
 __END__
-
-=head1 NOTES
-
-Currently only GET and PUT are implemented.  Also, you cannot create a
-new template file using the FTP interface.  You must create a template
-through the web interface and check it in before you can access it
-using FTP.
 
 =head1 AUTHOR
 
