@@ -7,15 +7,15 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-22 18:03:08 $
+$Date: 2003-12-24 22:00:53 $
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,16 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
+use Bric::Config qw(LOAD_LANGUAGES);
 use Bric::Util::Fault qw(throw_mni);
+
+BEGIN {
+    foreach my $lang ( @{ LOAD_LANGUAGES() } ) {
+        my $module = "Bric::Util::Language::$lang";
+        eval "use $module";
+        die $@ if $@;
+    }
+}
 
 #==============================================================================#
 # Inheritance                          #

@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.81 $
+$Revision: 1.82 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.81 $ )[-1];
+our $VERSION = (qw$Revision: 1.82 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-18 22:32:30 $
+$Date: 2003-12-24 22:00:51 $
 
 =head1 SYNOPSIS
 
@@ -142,6 +142,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     STORY_URI_WITH_FILENAME
                     ENABLE_CATEGORY_BROWSER
                     USE_XHTML
+                    LOAD_LANGUAGES
+                    LOAD_CHAR_SETS
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -321,6 +323,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
+        }
+
+        foreach (qw(LOAD_LANGUAGES LOAD_CHAR_SETS)) {
+            $config->{$_} = [ split /\s*;\s*/, $config->{$_} ];
         }
 
         # Special case for the SSL_ENABLE configuration directive.
@@ -535,6 +541,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # XHTML setting.
     use constant USE_XHTML              => $config->{USE_XHTML};
 
+    use constant LOAD_LANGUAGES         => $config->{LOAD_LANGUAGES};
+    use constant LOAD_CHAR_SETS         => $config->{LOAD_CHAR_SETS};
+
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER} and $ENV{MOD_PERL}) {
         my $pkg = TEMPLATE_BURN_PKG;
@@ -545,6 +554,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant MOD_PERL => $ENV{MOD_PERL};
 
     use constant CACHE_DEBUG_MODE => $ENV{BRIC_CACHE_DEBUG_MODE} || 0;
+
 }
 
 #==============================================================================#

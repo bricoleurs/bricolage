@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:51 $
+$Date: 2003-12-24 22:00:52 $
 
 =head1 DESCRIPTION
 
@@ -532,6 +532,20 @@ C<CHECK_PROCESS_SIZE> F<bricolage.conf> directives, and you can tune it using
 the C<MAX_PROCESS_SIZE>, C<CHECK_FREQUENCY>, C<MIN_SHARE_SIZE>, and
 C<MAX_UNSHARED_SIZE> directives, as well. See
 L<Apache::Admin|Apache::Admin/"Apache Configuration"> for details.
+
+=item *
+
+If you are using any character sets besides UTF-8, specify these
+character sets with the C<LOAD_CHAR_SETS> directives.  This will make
+sure that the character sets you are using are pre-loaded during
+server startup.  This is especially important for large character sets
+like Big5 or Shift-JIS.
+
+=item *
+
+If you are using any languages besides "en_us", specify these
+languages with the C<LOAD_LANGUAGES> directives.  This will make sure
+that the languages you are using are pre-loaded during server startup.
 
 =back
 

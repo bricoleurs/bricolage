@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.55 $ )[-1];
+our $VERSION = (qw$Revision: 1.56 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-18 22:32:30 $
+$Date: 2003-12-24 22:00:52 $
 
 =head1 SYNOPSIS
 
@@ -52,7 +52,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Config qw(:mason :sys_user :err);
+use Bric::Config qw(:mason :sys_user :err LOAD_CHAR_SETS);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::Trans::FS;
@@ -281,6 +281,19 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
+
+# I'm not sure if this belongs in this module.  But if not here, where?
+BEGIN {
+    foreach my $char_set ( @{ LOAD_CHAR_SETS() } ) {
+        if ($char_set !~ /utf-8/i) {
+            require Bric::Util::CharTrans;
+            # This seems to be the only way to force Encode to pre-load
+            # various character sets.
+            my $string = 'foo';
+            Encode::encode($char_set, $string);
+        }
+    }
+}
 
 sub handler {
     my ($r) = @_;
