@@ -78,7 +78,7 @@ use constant DEBUG => $ENV{DEBUG} || 0;
 use constant DELETE_TEST_MEDIA => 1;
 
 use constant USER     => 'admin';
-use constant PASSWORD => 'bric';
+use constant PASSWORD => 'change me now!';
 
 use Test::More qw(no_plan);
 use SOAP::Lite (DEBUG ? (trace => [qw(debug)]) : ());
@@ -209,7 +209,8 @@ foreach my $media_id (@$media_ids) {
 	check_doc($document, $xsd, "media $media_id");
 
 	# add (copy) to title and try to create copy
-	$document =~ s!<name>(.*?)</name>!<name>$1 (copy $copy_sym)</name>!;
+	$document =~ s!<name>(.*?)</name>!<name>$1$copy_sym</name>!g;
+        $document =~ s!<uri>(.*?)</uri>!<uri>$1$copy_sym</uri>!;
 	$copy_sym++;
 	$response = $soap->create(name(document => $document)->type('base64'));
 	ok(!$response->fault, 'SOAP create() result is not a fault');
