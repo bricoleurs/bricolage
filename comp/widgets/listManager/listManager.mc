@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.22.4.2 $
+$Revision: 1.22.4.3 $
 
 =head1 DATE
 
-$Date: 2003-07-02 16:37:07 $
+$Date: 2003-07-18 20:22:24 $
 
 =head1 SYNOPSIS
 
@@ -393,11 +393,22 @@ $title =~ s/\%n/$name/;
 # We need a hash of featured IDs to use for later
 my %featured_lookup = map { ($_,1) } @$featured;
 
+# limit the number of results to display per page
+my $limit = Bric::Util::Pref->lookup_val( "Search Results / Page" ) || 0;
+
+#--------------------------------------#
+# Set up pagination data.
+
+my $pagination = get_state_data($widget, 'pagination');
+$pagination = $limit ? 1 : 0 unless defined $pagination;
+my $offset = $limit ? get_state_data( $widget, 'offset' ) || 0 : 0;
+set_state_data($widget, 'offset', 0);
+
 #--------------------------------------#
 # Find constraint and list objects.
 
 my $list_arg = $build_constraints->($search_widget, $constrain, $meth, $sortBy,
-                                    $def_sort_field);
+                                    $def_sort_field, $pagination, $offset);
 my $param = {%$list_arg, %$constrain};
 
 # Load the user provided objects into the @objs array.
@@ -431,31 +442,18 @@ my $no_results = (scalar(@sort_objs) == 0) && (scalar(keys(%$list_arg)) > 0);
 # number of records returned from lookup
 my $count = scalar @sort_objs;
 
-# limit the number of results to display per page
-my $limit = Bric::Util::Pref->lookup_val( "Search Results / Page" ) || 0;
-
-# tells whether we're showing all results or not
-my $pagination = get_state_data($widget, 'pagination');
-if (not defined $pagination) {
-    $pagination = $limit ? 1 : 0;
-}
-
-my ($offset, $pages, $current_page) = (0,1,1);
+my ($pages, $current_page) = (1,1);
 if ($limit) {
-    # starting at what index do we retrieve $limit records
-    $offset = get_state_data( $widget, 'offset' ) || 0;
-
     # determine the total number of pages
     $pages = int( ($count / $limit) + ($count % $limit ? 1 : 0));
-    
+
     # which page don't we link
     $current_page = $offset && $pages > 1 ?
       int($offset / $limit + ($offset % $limit >= 0 ? 1 : 0)) : 1;
 }
 
 # save persistent values
-set_state_data('listManager','pagination', $pagination);
-set_state_data('listManager','offset', $offset);
+set_state_data($widget, 'pagination', $pagination);
 
 my ($rows, $cols, $data) = $build_table_data->(\@sort_objs,
                                                $meth,
@@ -656,7 +654,11 @@ my $build_table_data = sub {
 };
 
 my $build_constraints = sub {
-    my ($search_widget, $constrain, $meth, $sortBy, $def_sort_field) = @_;
+    my ($search_widget, $constrain, $meth, $sortBy, $def_sort_field,
+        $pagination, $offset) = @_;
+
+    # Just return the last search criteria if we're in the middle of pagination.
+    return get_state_data($widget, 'list_params') if $pagination && $offset;
 
     # Only get the criterion if we are still on the same page where it was set.
     my $prev = get_state_data($search_widget, 'crit_set_uri') || '';
@@ -696,6 +698,8 @@ my $build_constraints = sub {
         }
     }
 
+    # Save the search criteria if we're using pagination.
+    set_state_data($widget, 'list_params', $list_arg);
     return $list_arg;
 };
 

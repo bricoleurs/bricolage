@@ -156,6 +156,17 @@ The title and description of a story or media document are now properly
 reverted when the document is reverted to an earlier version. Thanks to Scott
 for the spot. [David]
 
+=item *
+
+Pagination now works properly when searching for groups by type in the group
+manager. [Scott]
+
+=item *
+
+Pagination now works properly when searching for elements by element type in
+the element manager and when searching for contributors by contributor type in
+the contributor manager. [David]
+
 =back
 
 =head1 VERSION 1.6.1

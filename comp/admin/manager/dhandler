@@ -11,6 +11,13 @@ my $behavior = $def->{$type}{behavior};
 my $searchType = "dual";
 # Offer a list of groups to choose from, if this is a group manager.
 if ($type eq 'grp') {
+    my $prev_grp_type = get_state_data($type, 'prev_grp_type');
+    if (defined $prev_grp_type) {
+        unless (exists($ARGS{'grp_type'})) {
+            $ARGS{'grp_type'} = $prev_grp_type;
+        }
+    }
+
     # Set the constraint.
     $constrain = $def->{$type}{constrain};
     if ($ARGS{'search|alpha_cb'} || exists $ARGS{'search|substr_cb'}) {
@@ -21,6 +28,7 @@ if ($type eq 'grp') {
         # set the behavior to ensure that the results are listed.
 	$obj_key = $ARGS{grp_type} || 'grp';
         $behavior = 'narrow';
+        set_state_data($type, 'prev_grp_type', $ARGS{'grp_type'});
     } else {
         # It's the first time accessing.
 	$ARGS{grp} = 'all';
@@ -367,11 +375,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.23.2.1 $
+$Revision: 1.23.2.2 $
 
 =head1 DATE
 
-$Date: 2003-06-04 01:42:28 $
+$Date: 2003-07-18 20:22:24 $
 
 =head1 SYNOPSIS
 
