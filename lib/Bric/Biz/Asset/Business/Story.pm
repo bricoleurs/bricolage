@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.22 $
+$Revision: 1.39.2.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 18:36:48 $
+$Date: 2003-10-01 09:31:47 $
 
 =head1 SYNOPSIS
 
@@ -1062,7 +1062,7 @@ sub get_uri {
           $oc->get_filename;
         if ($fname) {
             my $ext = $oc->get_file_ext;
-            $fname .= ".$ext";
+            $fname .= ".$ext" if($ext ne '');
             $uri = Bric::Util::Trans::FS->cat_uri($uri, $fname);
         }
     }
