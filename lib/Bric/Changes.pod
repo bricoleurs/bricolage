@@ -29,6 +29,12 @@ Also implemented API and database support for Media keywords.  [Sam]
 Added support for search Media by category and file name through the
 SOAP inerface and standard API. [Sam]
 
+=item *
+
+Added new --save-cookie-file and --use-cookie-file options to
+bric_soap to allow authentication to span bric_soap calls.  This can
+result in significant time savings across multiple invocations.  [Matt]
+
 =over 4
 
 =back
