@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:51 $
+$Date: 2004-02-25 19:15:35 $
 
 =head1 SYNOPSIS
 
@@ -230,12 +230,12 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
     <td valign="top" width="11" class="<% $tab %>"><img src="<% $curve_right %>" width="11" height="22"></td>
 % if ($useSideNav) {
     <td width="10">&nbsp;</td>
-    <td width="71" align="right" valign="top"><& "/widgets/help/help.mc", context => $context, page => $title &></td>
-    <td width="77" alight="right" valign="top">
-        <a href="/workflow/profile/alerts"><img src="/media/images/<% $lang_key %>/my_alerts_orange.gif" width="77" height="20" border="0" hspace="3" /></a>
+    <td valign="top"><& "/widgets/help/help.mc", context => $context, page => $title &></td>
+    <td valign="top">
+        <a href="/workflow/profile/alerts"><img src="/media/images/<% $lang_key %>/my_alerts_orange.gif" border="0" hspace="3" /></a>
     </td>
-    <td align="right" width="68">
-    <a href="/logout"><img src="/media/images/<% $lang_key %>/logout.gif" width="68" height="20" border="0"></a>
+    <td valign="top">
+    <a href="/logout"><img src="/media/images/<% $lang_key %>/logout.gif" border="0"></a>
     </td>
 % } else {
     <td width="228">&nbsp;</td>
