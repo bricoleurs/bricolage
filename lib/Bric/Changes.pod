@@ -14,6 +14,25 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.7.1 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Passwords can be changed again. [Mike Slattery]
+
+=item *
+
+It is now much harder to create media type or story type elements without site
+and output channel associations. This should eliminate errors when users try
+to create documents based on types without output channel associations.
+[David]
+
+=back
+
 =head1 VERSION 1.7.0 (2003-10-22)
 
 =head2 New Features
