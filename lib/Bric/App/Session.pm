@@ -7,15 +7,15 @@ Bric::App::Session - A class to handle user sessions
 
 =head1 VERSION
 
-$Revision: 1.20.2.2 $
+$Revision: 1.20.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.20.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-08 08:33:55 $
+$Date: 2003-04-10 19:24:21 $
 
 =head1 SYNOPSIS
 
@@ -141,7 +141,10 @@ unless (-d SESS_DIR && -d LOCK_DIR) {
     mkpath($tmp_dir, 0, 0777);
     mkpath(SESS_DIR, 0, 0777);
     mkpath(LOCK_DIR, 0, 0777);
-    chown SYS_USER, SYS_GROUP, $tmp_dir, SESS_DIR, LOCK_DIR;
+    # Let the Apache user own it unless $ENV{BRIC_TEMP_DIR} is set, in which
+    # case we're running tests and want to keep the current user as owner.
+    chown SYS_USER, SYS_GROUP, $tmp_dir, SESS_DIR, LOCK_DIR
+      unless $ENV{BRIC_TEMP_DIR};
 }
 
 #==============================================================================#

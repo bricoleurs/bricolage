@@ -6,11 +6,11 @@ files.pl - installation script to create directories and copy files
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.4.1 $
 
 =head1 DATE
 
-$Date: 2002-10-26 00:39:02 $
+$Date: 2003-04-10 19:24:17 $
 
 =head1 DESCRIPTION
 
@@ -56,12 +56,23 @@ our $UPGRADE;
 $UPGRADE = 1 if $ARGV[0] and $ARGV[0] eq 'UPGRADE';
 
 create_paths();
+
+# Remove old object files if this is an upgrade.
 rmtree(catdir $CONFIG->{MASON_DATA_ROOT}, 'obj' ) if $UPGRADE;
-find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}) }, 
+
+# Copy the Mason UI components.
+find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}) },
        no_chdir => 1 }, './comp');
-find({ wanted   => sub { copy_files($CONFIG->{MASON_DATA_ROOT}) }, 
-       no_chdir => 1 }, './data')
-    unless $UPGRADE;
+
+# Copy the contents of the bconf directory.
+find({ wanted   => sub { copy_files(catdir $CONFIG->{BRICOLAGE_ROOT}, "conf") },
+       no_chdir => 1 }, './bconf');
+
+unless ($UPGRADE) {
+    # Copy the contents of the data directory.
+    find({ wanted   => sub { copy_files($CONFIG->{MASON_DATA_ROOT}) },
+           no_chdir => 1 }, './data');
+}
 
 assign_permissions();
 
@@ -87,7 +98,8 @@ sub copy_files {
     return if /\.$/;
     return if /CVS/;
     return if /\.cvsignore$/;
-    return if m!/data/! and $UPGRADE;
+    return if $UPGRADE and m!/data/!; # Don't upgrade data files.
+    return if $UPGRADE and /bconf/ and /\.conf$/; # Don't upgrade .conf files.
 
     # construct target by lopping off ^./foo/ and appending to $root
     my $targ;
@@ -95,7 +107,7 @@ sub copy_files {
     return unless length $targ;
     $targ = catdir($root, $targ);
 
-    if (-d) {	
+    if (-d) {
 	mkpath([$targ], 1, 0755) unless -e $targ;
     } else {
 	copy($_, $targ)
@@ -110,10 +122,10 @@ sub copy_files {
 sub assign_permissions {
     system("chown", "-R", $AP->{user} . ':' . $AP->{group},
 	   catdir($CONFIG->{MASON_COMP_ROOT}, "data"));
-    system("chown", "-R", $AP->{user} . ':' . $AP->{group}, 
+    system("chown", "-R", $AP->{user} . ':' . $AP->{group},
 	   $CONFIG->{MASON_DATA_ROOT});
-    system("chown", "-R", $AP->{user} . ':' . $AP->{group}, 
+    system("chown", "-R", $AP->{user} . ':' . $AP->{group},
 	   catdir($CONFIG->{TEMP_DIR}, "bricolage"));
-    system("chown", "-R", $AP->{user} . ':' . $AP->{group}, 
+    system("chown", "-R", $AP->{user} . ':' . $AP->{group},
 	   catdir($CONFIG->{LOG_DIR}));
 }

@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.16.4.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-12 00:29:25 $
+$Date: 2003-04-10 19:24:21 $
 
 =head1 SYNOPSIS
 
@@ -130,7 +130,10 @@ use constant CACHE_MMAP =>
 
 unless (-d CACHE_ROOT) {
     mkpath(CACHE_ROOT, 0, 0777);
-    chown SYS_USER, SYS_GROUP, CACHE_ROOT;
+    # Let the Apache user own it unless $ENV{BRIC_TEMP_DIR} is set, in which
+    # case we're running tests and want to keep the current user as owner.
+    chown SYS_USER, SYS_GROUP, CACHE_ROOT
+      unless $ENV{BRIC_TEMP_DIR};
 }
 
 # these could be made into bricolage.conf directives if we decide
@@ -204,7 +207,7 @@ sub new {
     # creating a new cache?
     my $exists = -e CACHE_MMAP;
 
-    eval { 
+    eval {
         # initialize Cache::Cache backing store
         $STORE = Cache::FileCache->new({ namespace => 'Bricolage_Cache',
                                          cache_root => CACHE_ROOT });
@@ -224,9 +227,9 @@ sub new {
     die $gen->new({ msg => 'Unable to instantiate cache.', payload => $@ })
       if $@;
 
-        
     # chown if creating cache file
-    chown(SYS_USER, SYS_GROUP, CACHE_MMAP) unless $exists;
+    chown(SYS_USER, SYS_GROUP, CACHE_MMAP)
+      unless $exists or $ENV{BRIC_TEMP_DIR};
 
     # bless ref to cache object into this class and return
     return $cache = bless \$mmap, $pkg;
@@ -358,7 +361,8 @@ Notes: NONE.
 sub clear {
     rmtree(CACHE_ROOT);
     mkpath(CACHE_ROOT, 0, 0777);
-    chown(SYS_USER, SYS_GROUP, CACHE_ROOT);
+    chown(SYS_USER, SYS_GROUP, CACHE_ROOT)
+      unless $ENV{BRIC_TEMP_DIR};
 }
 
 =back
