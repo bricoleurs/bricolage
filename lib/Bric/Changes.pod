@@ -263,6 +263,13 @@ Added C<get_more_pages()> method to Bric::Util::Burner::Mason. It returns true
 if more pages remain to be burned, and false if not. However it's only
 enumerated when C<display_pages()> is being used to output pages. [David]
 
+=item *
+
+Optimized Bric::Biz::Category to get a list of Group IDs for each category as
+it is seleccted from the database. This prevents the C<get_grp_ids()> method
+from having to query the database, which was happening for every category
+object for which permissions are checked. [Mark & David]
+
 =back
 
 =head1 VERSION 1.4.4

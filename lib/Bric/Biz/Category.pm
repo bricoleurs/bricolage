@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-13 22:01:54 $
+$Date: 2002-10-25 19:42:42 $
 
 =head1 SYNOPSIS
 
@@ -101,13 +101,17 @@ use base qw(Bric);
 # Constants                            #
 #======================================#
 
-use constant TABLE  => 'category';
-use constant COLS   => qw(directory asset_grp_id  active uri parent_id name description);
-use constant FIELDS => qw(directory asset_grp_id _active uri parent_id name description);
-use constant ORD    => qw(name description uri directory ad_string ad_string2);
+use constant TABLE   => 'category';
+use constant MTABLE  => Bric::Util::Grp::Parts::Member::TABLE;
+use constant CMTABLE => TABLE . '_' . MTABLE;
 
-use constant ROOT_CATEGORY_ID => 0;
+use constant COLS    => qw(a.directory a.asset_grp_id  a.active a.uri
+                           a.parent_id a.name a.description c.grp__id);
+use constant FIELDS  => qw(directory asset_grp_id _active uri parent_id name
+                           description grp_ids);
+use constant ORD     => qw(name description uri directory ad_string ad_string2);
 
+use constant ROOT_CATEGORY_ID   => 0;
 use constant INSTANCE_GROUP_ID => 26;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::CategorySet';
 
@@ -138,6 +142,7 @@ BEGIN {
                          'parent_id'       => Bric::FIELD_RDWR,
                          'name'            => Bric::FIELD_RDWR,
                          'description'     => Bric::FIELD_RDWR,
+                         'grp_ids'         => Bric::FIELD_READ,
 
                          # Private Fields
                          '_attr_obj'         => Bric::FIELD_NONE,
@@ -245,9 +250,9 @@ sub lookup {
     my $ret;
     my $cat_id = $init->{id};
     if (defined $cat_id) {
-        $ret = _select_category('id = ?', [$cat_id]);
+        $ret = _select_category('a.id = ?', [$cat_id]);
     } elsif (my $uri = $init->{uri}) {
-        $ret = _select_category('uri = ?', [$uri]);
+        $ret = _select_category('a.uri = ?', [$uri]);
     } else {
         $dp->new({ msg => "Only 'id' or 'uri' parameter allowed to new" });
     }
@@ -315,7 +320,7 @@ sub list {
     my ($param) = @_;
     my ($ret, @objs);
     my (@num, @txt);
-    
+
     $param->{'active'} = exists $param->{'active'} ? $param->{'active'} :  1;
     # If 'all' is passed as the value of active, don't select based on active.
     delete $param->{'active'} if $param->{'active'} eq 'all';
@@ -325,24 +330,24 @@ sub list {
             $_ eq 'uri' or $_ eq 'description') { push @txt, $_ }
         else { push @num, $_ }
     }
-        
-    my $where = join(' AND ', (map { "$_=?" }             @num),
-                              (map { "LOWER($_) LIKE ?" } @txt));
-        
+
+    my $where = join(' AND ', (map { "a.$_ = ?" }             @num),
+                              (map { "LOWER(a.$_) LIKE ?" } @txt));
+
     $ret = _select_category($where, [@$param{@num,@txt}]);
 
     foreach my $d (@$ret) {
         # Instantiate object
         my $self = bless {}, $class;
-        
+
         # Set the columns selected as well as the passed ID.
         $self->_set(['id', FIELDS], $d);
-        
+
         my $id = $self->get_id;
         my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
                                                         'subsys'    => $id});
         $self->_set(['_attr_obj'], [$a_obj]);
-        
+
         push @objs, $self;
     }
 
@@ -784,6 +789,37 @@ sub set_parent_id {
 }
 
 #------------------------------------------------------------------------------#
+
+=item my @grp_ids = $cat->get_grp_ids;
+
+=item my $grp_ids_aref = $cat->get_grp_ids;
+
+Returns a list of group IDs to which this category belongs.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+# FIXME This is only here to prevent the Bric->get_grp_ids() method from
+# overriding Bric->get_$something().  When all of the assets have been
+# converted to carry their group Ids around with them it will be possible
+# to remove Bric->get_grp_ids() so this will no longer be necessary.
+sub get_grp_ids {
+    wantarray ? @{ $_[0]->_get('grp_ids') } : $_[0]->_get('grp_ids')
+}
+
+#------------------------------------------------------------------------------#
+
 
 =item $val = $element->set_ad_string($value);
 
@@ -1438,20 +1474,45 @@ sub _load_grp {
 
 sub _select_category {
     my ($where, $bind) = @_;
-    my (@ret, @d);
+    my (@ret, @d, $d_tmp);
 
-    my $sql = 'SELECT '.join(',','id', COLS).' FROM '.TABLE;
+    # The left join in here is allows us to return all of the group IDs with
+    # the categories in a single query
+    my $sql = 'SELECT '. join ',', 'a.id', COLS;
+    $sql .= ' FROM ' . TABLE . ' a LEFT JOIN (';
+    $sql .= CMTABLE . ' b JOIN ' . MTABLE . ' c';
+    $sql .= ' ON b.member__id = c.id)';
+    $sql .= ' ON a.id = b.object_id ';
     $sql .= " WHERE $where" if $where;
     $sql .= " ORDER BY uri";
 
     my $sth = prepare_c($sql);
     execute($sth, @$bind);
     bind_columns($sth, \@d[0..(scalar COLS)]);
+    # Since there are now duplicate values in the result set for every column
+    # in category we have to be careful to avoid duplicate objects. This is a
+    # good stage to catch it. We'll test the ID of each row to see if it
+    # matches the previous. This works because we are ordering by URI, which
+    # is unique, and has a 1 to 1 relationship with id.
     while (fetch($sth)) {
-        push @ret, [@d];
+        if ($d_tmp && $d[0] == $d_tmp->[0]) {
+            # we have a matching ID. Just tack the last entry onto the
+            # arrayref in the tmp array
+            push @{ $d_tmp->[$#d] }, $d[$#d];
+        } else {
+            # This is the first row with this ID. Save the old tmp_array if
+            # there is one.
+            push @ret, $d_tmp if $d_tmp;
+            # now load the current row into the tmp aray and convert the last
+            # entry into an arrayref
+            $d_tmp = [@d];
+            $d_tmp->[$#d] = [$d[$#d]];
+        }
     }
+    # There will always be something left in the tmp array if any records have
+    # been fetched.
+    push @ret, $d_tmp if $d_tmp;
     finish($sth);
-
     return \@ret;
 }
 
