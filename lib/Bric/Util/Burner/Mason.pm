@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.31.4.1 $
+$Revision: 1.31.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.31.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 02:21:45 $
+$Date: 2003-05-14 05:23:46 $
 
 =head1 SYNOPSIS
 
@@ -204,13 +204,14 @@ sub burn_one {
     }
 
     # Save an existing Mason request object and Bricolage objects.
-    my ($curr_req, %bric_objs);
-    {
+    my (%bric_objs);
+    # XXX Perhaps we should use and check for a subclass, instead?
+    if (HTML::Mason::Request->instance->out_method) {
+        # If there's an out_method, assume that there's an existing burn
+        # going on.
         no strict 'refs';
-        if ($curr_req = ${TEMPLATE_BURN_PKG . '::m'}) {
-            for (qw(story burner element writer)) {
-                $bric_objs{$_} = ${TEMPLATE_BURN_PKG . "::$_"};
-            }
+        for (qw(m story burner element writer)) {
+            $bric_objs{$_} = ${TEMPLATE_BURN_PKG . "::$_"};
         }
     }
 
@@ -274,16 +275,14 @@ sub burn_one {
     }
 
     # Restore any existing Mason request object and Bricolage objects.
-    if ($curr_req) {
+    if ($bric_objs{story}) {
         no strict 'refs';
-        ${TEMPLATE_BURN_PKG . '::m'} = $curr_req;
-        for (qw(story burner element writer)) {
+        for (qw(m story burner element writer)) {
             ${TEMPLATE_BURN_PKG . "::$_"} = $bric_objs{$_};
         }
     }
 
-
-    $self->_pop_element();
+    $self->_pop_element;
 
     # Return a list of the resources we just burned.
     my $ret = $self->_get('_res') || return;
@@ -521,10 +520,7 @@ sub display_element {
         my $template = $self->_load_template_element($elem);
 
         # Display the element
-        {
-            no strict 'refs';
-            ${TEMPLATE_BURN_PKG . '::m'}->comp($template, @_) if $template;
-        }
+        HTML::Mason::Request->instance->comp($template, @_) if $template;
 
         # Pop the element back off again.
         $self->_pop_element();
@@ -532,8 +528,7 @@ sub display_element {
         # Set the elem global to the previous element
         $interp->set_global('$element', $self->_current_element);
     } else {
-            no strict 'refs';
-            ${TEMPLATE_BURN_PKG . '::m'}->out($elem->get_data);
+        HTML::Mason::Request->instance->out($elem->get_data);
     }
 }
 
@@ -578,8 +573,7 @@ us the opportunity to tailor the verbiage to suit our application better.
 
 sub chain_next {
     my $self = shift;
-    no strict 'refs';
-    ${TEMPLATE_BURN_PKG . '::m'}->call_next(@_);
+    HTML::Mason::Request->instance->call_next(@_);
 }
 
 #------------------------------------------------------------------------------#
@@ -610,12 +604,6 @@ sub end_page {
     my ($page, $buf) = $self->_get(qw(page _buf));
     my $file = $self->page_filepath(++$page);
     my $uri  = $self->page_uri($page);
-
-    # Flush the output buffer before writing the file.
-    {
-        no strict 'refs';
-        ${TEMPLATE_BURN_PKG . '::m'}->flush_buffer;
-    }
 
     # Save the page we've created so far.
     open(OUT, ">$file")
@@ -869,8 +857,8 @@ use Bric::Config qw(:burn);
 sub new { bless {} }
 
 sub print {
-    no strict 'refs';
-    ${TEMPLATE_BURN_PKG . '::m'}->out(@_[1..$#_]);
+    shift;
+    HTML::Mason::Request->instance->out(@_);
 }
 
 1;
