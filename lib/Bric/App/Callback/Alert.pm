@@ -44,7 +44,7 @@ my $msg_redirect = sub {
     $c = $num{$c} || $c;
     add_msg("$c $disp acknowledged.") if $c;
     set_redirect(last_page());
-}
+};
 
 
 1;

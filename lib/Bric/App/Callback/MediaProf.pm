@@ -111,7 +111,7 @@ sub update : Callback {
         log_event('media_upload', $media);
     }
     set_state_data($widget, 'media', $media);
-};
+}
 
 ################################################################################
 
@@ -122,7 +122,7 @@ sub view : Callback {
     my $version = $self->param->{"$widget|version"};
     my $id = $media->get_id();
     set_redirect("/workflow/profile/media/$id/?version=$version");
-};
+}
 
 ################################################################################
 
@@ -137,7 +137,7 @@ sub revert : Callback {
     my $arg1 = '&quot;' . $media->get_title . '&quot;';
     add_msg($self->lang->maketext($msg, $arg1, $version));
     clear_state($widget);
-};
+}
 
 ################################################################################
 
@@ -190,7 +190,7 @@ sub save : Callback {
         set_redirect("/");
     }
 
-};
+}
 
 ################################################################################
 
@@ -332,7 +332,7 @@ sub checkin : Callback {
     # Clear the state out and set redirect.
     clear_state($widget);
     set_redirect("/");
-};
+}
 
 ################################################################################
 
@@ -376,7 +376,7 @@ sub save_stay : Callback {
 
     # Set the state.
     set_state_data($widget, 'media', $media);
-};
+}
 
 ################################################################################
 
@@ -391,7 +391,7 @@ sub cancel : Callback {
     my $msg = "Media [_1] check out canceled.";
     my $arg = '&quot;' . $media->get_name . '&quot;';
     add_msg($self->lang->maketext($msg, $arg));
-};
+}
 
 ################################################################################
 
@@ -426,7 +426,7 @@ sub return : Callback {
         clear_state($widget);
         set_redirect($url);
     }
-};
+}
 
 ################################################################################
 
@@ -494,14 +494,14 @@ sub create : Callback {
     # As far as history is concerned, this page should be part of the media
     # profile stuff.
     pop_page();
-};
+}
 
 ################################################################################
 
 sub contributors : Callback {
     my $self = shift;
     set_redirect("/workflow/profile/media/contributors.html");
-};
+}
 
 ##############################################################################
 
@@ -513,7 +513,7 @@ sub add_oc : Callback {
     $media->add_output_channels($oc);
     log_event('media_add_oc', $media, { 'Output Channel' => $oc->get_name });
     $media->save;
-};
+}
 
 ################################################################################
 
@@ -532,7 +532,7 @@ sub assoc_contrib : Callback {
         $media->add_contributor($contrib);
         log_event('media_add_contrib', $media, { Name => $contrib->get_name });
     }
-};
+}
 
 ################################################################################
 
@@ -550,7 +550,7 @@ sub assoc_contrib_role : Callback {
     set_redirect(last_page);
     # Remove this page from the stack.
     pop_page;
-};
+}
 
 
 ################################################################################
@@ -564,7 +564,7 @@ sub unassoc_contrib : Callback {
     my $contrib =
       Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
     log_event('media_del_contrib', $media, { Name => $contrib->get_name });
-};
+}
 
 ################################################################################
 
@@ -615,7 +615,7 @@ my $save_contrib = sub {
 
     my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
     $media->reorder_contributors(@no);
-};
+}
 
 ################################################################################
 
@@ -626,14 +626,14 @@ sub save_contrib : Callback {
     set_redirect(last_page);
     # Pop this page off the stack.
     pop_page();
-};
+}
 
 ##############################################################################i
 
 sub save_and_stay_contrib : Callback {
     my $self = shift;
     $save_contrib->(CLASS_KEY, $self->param);
-};
+}
 
 ###############################################################################
 
@@ -643,7 +643,7 @@ sub leave_contrib : Callback {
     set_redirect(last_page);
     # Pop this page off the stack.
     pop_page();
-};
+}
 
 ################################################################################
 
@@ -654,7 +654,7 @@ sub notes : Callback {
     my $id    = $media->get_id();
     my $action = $self->param->{"$widget|notes_cb"};
     set_redirect("/workflow/profile/media/${action}_notes.html?id=$id");
-};
+}
 
 ################################################################################
 
@@ -663,7 +663,7 @@ sub trail : Callback {
     my $media = get_state_data(CLASS_KEY, 'media');
     my $id = $media->get_id();
     set_redirect("/workflow/trail/media/$id");
-};
+}
 
 ################################################################################
 
@@ -707,7 +707,7 @@ sub recall : Callback {
         # Go to the profile screen
         set_redirect('/workflow/profile/media/'.$o_id.'?checkout=1');
     }
-};
+}
 
 ################################################################################
 
@@ -738,7 +738,7 @@ sub checkout : Callback {
         # Go to the profile screen
         set_redirect('/workflow/profile/media/'.$ids->[0].'?checkout=1');
     }
-};
+}
 
 ################################################################################
 
@@ -746,7 +746,7 @@ sub keywords : Callback {
     my $self = shift;
     my $id = get_state_data(CLASS_KEY, 'media')->get_id;
     set_redirect("/workflow/profile/media/keywords.html");
-};
+}
 
 ################################################################################
 
@@ -784,7 +784,7 @@ sub add_kw : Callback {
 
     # Take this page off the stack.
     pop_page();
-};
+}
 
 
 ### end of callbacks ###

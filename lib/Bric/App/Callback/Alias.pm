@@ -104,7 +104,7 @@ my $get_dynamic = sub {
     my $site_id = $wf->get_site_id();
     my $site = Bric::Biz::Site->lookup({ id => $site_id });
     return ($class_key, $wf_id, $wf, $gid, $site_id, $site);
-}
+};
 
 my $work_it = sub {
     my ($class_key, $site, $ba, $wf_id, $wf, $aliased, $cat) = @_;
@@ -166,6 +166,6 @@ my $handle_asset = sub {
         $ba->save();
         $work_it->($type, $site, $ba, $wf_id, $wf, $a, $cat);
     }
-}
+};
 
 1;
