@@ -595,11 +595,11 @@ sub add_kw : Callback {
 
     # Add new keywords.
     my $new;
-    foreach (@{ mk_aref($param->{keyword}) }) {
-        next unless $_;
-        my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+    foreach my $kw_name (@{ mk_aref($param->{keyword}) }) {
+        next unless $kw_name;
+        my $kw = Bric::Biz::Keyword->lookup({ name => $kw_name });
         unless ($kw) {
-            $kw = Bric::Biz::Keyword->new({ name => $_})->save;
+            $kw = Bric::Biz::Keyword->new({ name => $kw_name})->save;
             log_event('keyword_new', $kw);
         }
         push @$new, $kw;
@@ -624,8 +624,8 @@ sub checkout : Callback {
     my $ids = $self->value;
     $ids = ref $ids ? $ids : [$ids];
 
-    foreach (@$ids) {
-        my $ba = Bric::Biz::Asset::Business::Story->lookup({'id' => $_});
+    foreach my $id (@$ids) {
+        my $ba = Bric::Biz::Asset::Business::Story->lookup({'id' => $id});
         if (chk_authz($ba, EDIT, 1)) {
             $ba->checkout({'user__id' => get_user_id()});
             $ba->save;
@@ -653,8 +653,8 @@ sub recall : Callback {
     $ids = ref $ids ? $ids : [$ids];
     my %wfs;
 
-    foreach (@$ids) {
-        my ($o_id, $w_id) = split('\|', $_);
+    foreach my $id (@$ids) {
+        my ($o_id, $w_id) = split('\|', $id);
         my $ba = Bric::Biz::Asset::Business::Story->lookup({'id' => $o_id});
         if (chk_authz($ba, EDIT, 1)) {
             my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
@@ -766,10 +766,9 @@ $save_contrib = sub {
     if ($contrib_id) {
         if (ref $contrib_id) {
             $story->delete_contributors($contrib_id);
-            foreach (@$contrib_id) {
-                my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup(
-                    { id => $_ });
-                delete $existing->{$_};
+            foreach my $id (@$contrib_id) {
+                my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({ id => $id });
+                delete $existing->{$id};
                 log_event('story_del_contrib', $story,
                           { Name => $contrib->get_name });
             }
@@ -786,10 +785,10 @@ $save_contrib = sub {
     }
 
     # get the remaining and reorder
-    foreach (keys %$existing) {
-        my $key = $widget . '|reorder_' . $_;
+    foreach my $id (keys %$existing) {
+        my $key = $widget . '|reorder_' . $id;
         my $place = $param->{$key};
-        $existing->{$_} = $place;
+        $existing->{$id} = $place;
     }
     my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
     $story->reorder_contributors(@no);
@@ -809,9 +808,9 @@ $save_category = sub {
     if ($cat_id) {
         if (ref $cat_id) {  # delete more than one category
             $story->delete_categories($cat_id);
-            foreach (@$cat_id) {
-                my $cat = Bric::Biz::Category->lookup({ id => $_ });
-                delete $existing->{$_};
+            foreach my $id (@$cat_id) {
+                my $cat = Bric::Biz::Category->lookup({ id => $id });
+                delete $existing->{$id};
                 log_event('story_del_category', $story, { Name => $cat->get_name });
             }
             add_msg('Categories disassociated.');

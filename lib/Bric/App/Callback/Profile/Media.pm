@@ -580,8 +580,8 @@ sub recall : Callback {
     $ids = ref $ids ? $ids : [$ids];
     my %wfs;
 
-    foreach (@$ids) {
-        my ($o_id, $w_id) = split('\|', $_);
+    foreach my $id (@$ids) {
+        my ($o_id, $w_id) = split('\|', $id);
         my $ba = Bric::Biz::Asset::Business::Media->lookup({'id' => $o_id});
         if (chk_authz($ba, EDIT, 1)) {
             my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
@@ -621,8 +621,8 @@ sub checkout : Callback {
     my $ids = $self->value;
     $ids = ref $ids ? $ids : [$ids];
 
-    foreach (@$ids) {
-        my $ba = Bric::Biz::Asset::Business::Media->lookup({'id' => $_});
+    foreach my $id (@$ids) {
+        my $ba = Bric::Biz::Asset::Business::Media->lookup({'id' => $id});
         if (chk_authz($ba, EDIT, 1)) {
             $ba->checkout({'user__id' => get_user_id()});
             $ba->save;
@@ -663,11 +663,11 @@ sub add_kw : Callback {
 
     # Add new keywords.
     my $new_kw;
-    foreach (@{ mk_aref($param->{keyword}) }) {
-        next unless $_;
-        my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+    foreach my $kw_name (@{ mk_aref($param->{keyword}) }) {
+        next unless $kw_name;
+        my $kw = Bric::Biz::Keyword->lookup({ name => $kw_name });
         unless ($kw) {
-            $kw = Bric::Biz::Keyword->new({ name => $_})->save;
+            $kw = Bric::Biz::Keyword->new({ name => $kw_name})->save;
             log_event('keyword_new', $kw);
         }
         push @$new_kw, $kw;
@@ -761,8 +761,8 @@ $save_contrib = sub {
     # get the contribs to delete
     my $media = get_state_data($widget, 'media');
     my $existing;
-    foreach ($media->get_contributors) {
-        my $id = $_->get_id();
+    foreach my $contrib ($media->get_contributors) {
+        my $id = $contrib->get_id();
         $existing->{$id} = 1;
     }
 
@@ -773,12 +773,11 @@ $save_contrib = sub {
     if ($contrib_id) {
         my $contrib_id_list = ref $contrib_id ? $contrib_id : [ $contrib_id ];
         $media->delete_contributors($contrib_id_list);
-        foreach (@$contrib_id_list) {
-            my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
-                ({ id => $_ });
+        foreach my $id (@$contrib_id_list) {
+            my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({ id => $id });
             push @contrib_strings, $contrib->get_name;
             $contrib_number++;
-            delete $existing->{$_};
+            delete $existing->{$id};
         }
     }
     add_msg("[quant,_1,Contributor] \"[_2]\" associated.",
@@ -787,10 +786,10 @@ $save_contrib = sub {
 
     # get the remaining
     # and reorder
-    foreach (keys %$existing) {
-        my $key = $widget . '|reorder_' . $_;
+    foreach my $id (keys %$existing) {
+        my $key = $widget . '|reorder_' . $id;
         my $place = $param->{$key};
-        $existing->{$_} = $place;
+        $existing->{$id} = $place;
     }
 
     my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
