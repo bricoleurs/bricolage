@@ -8,15 +8,15 @@ contains the business data
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 22:52:23 $
+$Date: 2002-08-23 17:06:58 $
 
 =head1 SYNOPSIS
 
@@ -558,9 +558,13 @@ sub set_data {
 
 ################################################################################
 
-=item $data = $tile->get_data()
+=item $data = $tile->get_data
 
-Returns the given business data from the tile
+=item $data = $tile->get_data($format)
+
+Returns the given business data from the tile. If the SQL type of the data
+object is "date", then $format will be used to format the date, if it is
+passed. Otherwise, the format set in the preferences will be used.
 
 B<throws:>
 
@@ -572,15 +576,15 @@ NONE
 
 B<notes:>
 
-NONE 
+NONE
 
 =cut
 
 sub get_data {
-    my ($self) = @_;
+    my ($self, $format) = @_;
     my $sql_type = $self->_get_sql_type || return;
     return $sql_type eq 'date' ?
-      local_date($self->_get('_'.$sql_type.'_val')) :
+      local_date($self->_get('_'.$sql_type.'_val'), $format) :
       $self->_get('_'.$sql_type.'_val');
 }
 
