@@ -141,13 +141,10 @@ elsif ($field eq "$widget|publish_cb") {
                 next;
 	    }
 
-	    # add related stories to list of objects to cycle through
-	    push(@objs, $r) 
-	      if ref $r eq 'Bric::Biz::Asset::Business::Story';
-
 	    # push onto the appropriate list
 	    if (ref $r eq 'Bric::Biz::Asset::Business::Story') {
 		push @rel_story, $r->get_id;		
+		push(@objs, $r); # recurse through related stories
 	    } else {
 		push @rel_media, $r->get_id;
 	    }
