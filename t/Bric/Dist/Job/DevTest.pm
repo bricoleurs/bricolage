@@ -9,7 +9,7 @@ use Bric::Util::Time qw(:all);
 use Bric::Dist::Server;
 use Bric::Dist::ServerType;
 use Bric::Dist::Resource;
-use Bric::Config qw(TEMP_DIR);
+use Bric::Config qw(:time TEMP_DIR);
 use Bric::Util::Trans::FS;
 use Bric::Util::MediaType;
 
@@ -46,7 +46,7 @@ sub test_lookup : Test(7) {
         "Look up the new job ID '$jid'" );
     is( $job->get_id, $jid, "Check that the ID is the same" );
     # Check a few attributes.
-    my $ret_date = local_date(db_date($date));
+    my $ret_date = local_date(db_date($date), ISO_8601_FORMAT);
     is( $job->get_sched_time, $ret_date, "Scheduled time is $ret_date" );
     my $uid = $self->user_id;
     is( $job->get_user_id, $uid, "Check User ID $uid" );
@@ -320,7 +320,8 @@ sub test_execute_me : Test(29) {
     ok( $job->add_resources(@res), "Add resources" );
     ok( $job->add_server_types($dest), "Add destination" );
     # Set the job to execute now.
-    ok( $job->set_sched_time(local_date(0, 0, 1)), "Set time for now" );
+    ok( $job->set_sched_time(local_date(0, ISO_8601_FORMAT, 1)),
+        "Set time for now" );
     ok( $job->save, "Save job" );
     $self->add_del_ids($job->get_id);
 
