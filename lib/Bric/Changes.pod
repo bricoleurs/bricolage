@@ -52,6 +52,11 @@ syntax errors. [Sam]
 Fixed bug in DBI_DEBUG and DBI_CALL_TRACE options where non-prepared
 queries (row_aref(), all_aref(), etc.) were not being logged. [Sam]
 
+=item *
+
+Fixed bug in Bric::Dist::Resource that was causing publish to run very
+slowly by executing a bad database query.  [Sam]
+
 =back
 
 =head2 New Features

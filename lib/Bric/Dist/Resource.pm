@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-05-01 23:31:46 $
 
 =head1 SYNOPSIS
 
@@ -1646,6 +1646,11 @@ $get_em = sub {
 	    push @params, $v;
 	    push @wheres, "r.id IN (SELECT id FROM resource WHERE parent_id = ?)";
 	} elsif ($k eq 'job_id') {
+	    # if job_id is undef, just return no hits rather than
+	    # toast the database with the index-defeating query 
+            # "WHERE job__id = NULL"
+	    return ($href ? {} : []) unless defined $v;
+		
 	    # We need to do a subselect for the job_id.
 	    push @wheres, "r.id IN (SELECT resource__id FROM job__resource WHERE job__id = ?)";
 	    push @params, $v;
