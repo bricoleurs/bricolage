@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-30 21:00:02 $
+$Date: 2001-11-30 22:21:27 $
 
 =head1 SYNOPSIS
 
@@ -1687,7 +1687,8 @@ sub _do_list {
 	    $sql .= ' ORDER BY s.publish_date';
 	}
     } else {
-	$sql .= ' ORDER BY s.cover_date';
+	# default to ordering by cover_date unless we're just returning ids
+	$sql .= ' ORDER BY s.cover_date' unless $ids;
     }
 
     # check for ORDER BY direction
