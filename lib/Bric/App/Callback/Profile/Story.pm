@@ -1,12 +1,10 @@
 package Bric::App::Callback::Profile::Story;
 
-# XXX: this has the same deal as MediaProf where
-# some callbacks have extra parameters ($story, $new)
-
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'story_prof');
 use strict;
 use Bric::App::Authz qw(:all);
+use Bric::App::Callback::Desk;
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:all);
@@ -63,7 +61,7 @@ sub save : Callback {
     } else {
         # Save the story.
         $story->save;
-        log_event(($new ? 'story_create' : 'story_save'), $story);
+        log_event('story_save', $story);
         my $arg = '&quot;' . $story->get_title . '&quot;';
         add_msg($self->lang->maketext("Story [_1] saved.", $arg));
     }
@@ -122,7 +120,7 @@ sub checkin : Callback {
         $cur_desk->remove_asset($story)->save if $cur_desk;
         $story->set_workflow_id(undef);
         $story->save;
-        log_event(($new ? 'story_create' : 'story_save'), $story);
+        log_event('story_save', $story);
         log_event('story_checkout', $story) if $work_id;
         log_event('story_checkin', $story);
         log_event("story_rem_workflow", $story);
@@ -156,7 +154,7 @@ sub checkin : Callback {
 
         $story->save;
         # Log it!
-        log_event(($new ? 'story_create' : 'story_save'), $story);
+        log_event('story_save', $story);
         log_event('story_checkin', $story);
         my $dname = $pub_desk->get_name;
         log_event('story_moved', $story, { Desk => $dname })
@@ -186,7 +184,7 @@ sub checkin : Callback {
 
         $desk->save;
         $story->save;
-        log_event(($new ? 'story_create' : 'story_save'), $story);
+        log_event('story_save', $story);
         log_event('story_checkin', $story);
         my $dname = $desk->get_name;
         log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
@@ -206,13 +204,14 @@ sub checkin : Callback {
         Bric::Util::DBI::begin(1);
 
         # Use the desk callback to save on code duplication.
-        # XXX: BOING!
-        $m->comp('/widgets/desk/callback.mc',
-                 widget => $widget,
-                 field => "$widget|publish_cb",
-                 story_pub => { $story->get_id => $story },
-                 param => {},
-                );
+        my $pub = Bric::App::Callback::Desk->new(
+            'ah' => $self->ah,
+            'apache_req' => $self->apache_req,
+            'request_args' => {
+                'story_pub' => { $media->get_id => $media },
+            },
+        );
+        $pub->publish();
     }
     # Clear the state out and set redirect.
     clear_state($widget);
@@ -238,7 +237,7 @@ sub save_stay : Callback {
         # Make sure the story is activated and then save it.
         $story->activate;
         $story->save;
-        log_event(($new ? 'story_create' : 'story_save'), $story);
+        log_event('story_save', $story);
         my $arg = '&quot;' . $story->get_title . '&quot;';
         add_msg($self->lang->maketext("Story [_1] saved.", $arg));
     }
