@@ -10,24 +10,24 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =item Release Version
 
-1.7.0 -- Development Track for 1.8.0
+1.7.1 -- Development Track for 1.8.0
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = '1.7.0';
+our $VERSION = '1.7.1';
 
 =item Date
 
-$Date: 2003-09-10 18:39:06 $
+$Date: 2003-10-22 23:58:19 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.40 2003-09-10 18:39:06 wheeler Exp $
+$Id: Bric.pm,v 1.41 2003-10-22 23:58:19 wheeler Exp $
 
 =back
 
