@@ -112,6 +112,10 @@ from within a template to force the burner to burn the current page again,
 creating a new file. This can be useful for creating multi-file output
 without extra paginated subelements. [David]
 
+=item *
+
+Added zh-cn localization, with translation based on zh-tw. [Kang-min Liu]
+
 =back
 
 =head2 Improvements
@@ -153,7 +157,7 @@ rather than the C<element__id> parameter, which isn't as friendly. [David]
 
 =item *
 
-Added "Filter by Site Context" preference. When active, search results only 
+Added "Filter by Site Context" preference. When active, search results only
 return assets relative to the site context instead of all the sites the user
 has access to [JoE<atilde>o Pedro]
 
