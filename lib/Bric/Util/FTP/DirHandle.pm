@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-02-18 05:44:13 $
+$Date: 2003-03-02 19:46:11 $
 
 =head1 DESCRIPTION
 
@@ -54,6 +54,7 @@ use Bric::Biz::AssetType;
 use Carp qw(confess croak);
 use Net::FTPServer::DirHandle;
 use Bric::Util::FTP::FileHandle;
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 ################################################################################
 # Inheritance
@@ -116,7 +117,7 @@ sub get {
   my $category_id = $self->{category_id};
 
   print STDERR __PACKAGE__, "::get() : $filename\n" if FTP_DEBUG;
-  
+
   # look for a template by that name
   my $list = Bric::Biz::Asset::Formatting->list(
 	       {
@@ -125,20 +126,20 @@ sub get {
 		file_name          => "%/$filename",
 	       });
 
-                                   
   if ($list and @$list) {
     # warn on multiple templates
     warn("Multiple template files called $filename in category $self->{category_id}!")
       if @$list > 1;
-    
+
     # found at least one template
     my $template = $list->[0];
     return new Bric::Util::FTP::FileHandle ($self->{ftps},
                                             $template,
 					    $oc_id,
                                             $category_id,
-					   );
-
+					   )
+      # Allow access only to template if the user has READ access to it.
+      if $self->{ftps}{user_obj}->can_do($template, READ);
   }
 
   # search for an output channel if we don't have one
@@ -154,6 +155,10 @@ sub get {
   }
 
   # search for a subcategories
+  ##########################################################################
+  # HACK! _get_cats() does a direct query of the database! Naughty, naughty!
+  # There is currently no way to check permissions on categories now.
+  ##########################################################################
   my $cats = _get_cats();
   foreach my $child_id (@{$cats->{children}{$category_id}}) {
     if ($cats->{$child_id}{directory} eq $filename) {
@@ -194,19 +199,19 @@ sub open {
   }
 
   if ($category_id == -1) {
-      print STDERR __PACKAGE__, "::open() called without category_id!\n" 
+      print STDERR __PACKAGE__, "::open() called without category_id!\n"
 	  if FTP_DEBUG;
       return undef;
   }
-  
+
   # find filename
   my $list = Bric::Biz::Asset::Formatting->list(
-	       { 
+	       {
 		output_channel__id => $oc_id,
-		category__id       => $category_id, 
-		file_name          => "%/$filename" 
+		category__id       => $category_id,
+		file_name          => "%/$filename"
 	       });
-  
+
   if ($list) {
     # warn on multiple templates
     warn("Multiple template files called $filename in category $category_id!")
@@ -214,11 +219,13 @@ sub open {
 
     # file exists, return it
     my $template = $list->[0];
+    # Allow access only to template if the user has READ access to it.
     return Bric::Util::FTP::FileHandle->new($self->{ftps},
                                             $template,
 					    $oc_id,
                                             $category_id
-                                           )->open($mode);
+                                           )->open($mode)
+      if $self->{ftps}{user_obj}->can_do($template, READ);
   }
 
   print STDERR __PACKAGE__, "::open($filename, $mode) : creating new template\n";
@@ -232,7 +239,7 @@ sub open {
   # don't look for an asset for generic templates
   my $at;
   unless (($name eq 'autohandler' and $file_type eq 'mc') or
-	  ($name eq 'category' 
+	  ($name eq 'category'
 	   and ($file_type eq 'pl' or $file_type eq 'tmpl'))) {
 
     # look for a match (if I could figure out how to express this in
@@ -290,7 +297,7 @@ sub open {
 					  $template,
 					  $oc_id,
 					  $category_id,
-					 )->open($mode);    
+					 )->open($mode);
 }
 
 =item list($wildcard)
@@ -328,6 +335,11 @@ sub list {
       # get output channels
       my @ocs  = Bric::Biz::OutputChannel->list({name => ($like || '%')});
       foreach my $oc (@ocs) {
+          ##############################################################
+          # NOTE! Should probably exclude certain output channels here according
+          # to permissions -- same with comp/tmpl_prof/edit_new.html!
+          # next unless $self->{ftps}{user_obj}->can_do($oc, READ);
+          ##############################################################
 	  my $dirh = Bric::Util::FTP::DirHandle->new($self->{ftps},
 						     "/" . $oc->get_name . "/",
 						     $oc->get_id(),
@@ -345,6 +357,8 @@ sub list {
       
       # create dirhandles
       foreach my $cat (@$results) {
+          # Allow access only to categories the user has READ access to.
+          next unless $self->{ftps}{user_obj}->can_do($cat, READ);
 	  my $dirh = new Bric::Util::FTP::DirHandle ($self->{ftps},
 						     $self->pathname . 
                                                      $cat->get_directory,
@@ -369,32 +383,33 @@ sub list {
   my $list;
   if ($like) {
       $list = Bric::Biz::Asset::Formatting->list(
-       { 
+       {
 	output_channel__id => $oc_id,
 	category__id       => $category_id, 
-	file_name         => "%/" . ($like || '%') 
+	file_name         => "%/" . ($like || '%')
        });
   } else {
       $list = Bric::Biz::Asset::Formatting->list(
-	{ 
+	{
 	 output_channel__id => $oc_id,
-	 category__id       => $category_id, 
+	 category__id       => $category_id,
 	});
   }
 
   # create filehandles
   if ($list) {
     foreach my $template (@$list) {
-      my $fileh = new Bric::Util::FTP::FileHandle ($self->{ftps},
-                                                   $template,
-						   $oc_id,
-                                                   $self->{category_id});
-      my $filename = $template->get_file_name;
-      $filename = substr($filename, rindex($filename, '/') + 1);
-      push @results, [ $filename, $fileh ];
+        next unless $self->{ftps}{user_obj}->can_do($template, READ);
+        my $fileh = new Bric::Util::FTP::FileHandle ($self->{ftps},
+                                                     $template,
+                                                     $oc_id,
+                                                     $self->{category_id});
+        my $filename = $template->get_file_name;
+        $filename = substr($filename, rindex($filename, '/') + 1);
+        push @results, [ $filename, $fileh ];
     }
   }
-  
+
   @results = sort { $a->[0] cmp $b->[0] } @results;
 
   return \@results;
@@ -553,6 +568,11 @@ called.
 
 # returns a data structure for categories - caches in a global
 # variable.
+##############################################################################
+# HACK! _get_cats() does a direct query of the database! Naughty, naughty!
+# There is currently no way to check permissions on categories. This needs
+# fixing, of course.
+##############################################################################
 sub _get_cats {
   our $CATS;
   return $CATS if $CATS;
