@@ -387,6 +387,10 @@ Supported Keys:
 
 =item *
 
+user__id - Required.
+
+=item *
+
 active
 
 =item *

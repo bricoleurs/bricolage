@@ -209,6 +209,11 @@ Mail sent for alerts and the like now has DOS and Macintosh line-endings
 converted to Unix so that they are displayed properly in most mail clients.
 [Christian Hauser and David]
 
+=item *
+
+Documented required C<user__id> parameter to the C<new()> method in the story
+and media classes. Reported by Rod Taylor. [David]
+
 =back
 
 =cut
