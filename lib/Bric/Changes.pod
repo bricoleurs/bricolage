@@ -42,11 +42,6 @@ Keyword names are now always editable in the keyword manager. [David]
 
 =item *
 
-Events are now properly logged for keywords managed in the keyword profile.
-[David]
-
-=item *
-
 Added UI for managing organizations, which provide the base data for souces.
 [David]
 
@@ -82,6 +77,17 @@ The "none" media type is no longer editable via the UI. [David]
 =item *
 
 Invalid story cover and expire dates now properly trigger an error message.
+[David]
+
+=item *
+
+Deactivated keywords are no longer returned by the C<get_keywords()> methods
+of the Business asset class (from which Story and Media inherit) or the
+Category class. Reported by Paul Orrock. [David]
+
+=item *
+
+Events are now properly logged for keywords managed in the keyword profile.
 [David]
 
 =back
