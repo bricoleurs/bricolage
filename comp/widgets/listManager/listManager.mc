@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =head1 DATE
 
-$Date: 2004-03-01 17:32:21 $
+$Date: 2004-03-02 18:41:51 $
 
 =head1 SYNOPSIS
 
@@ -666,7 +666,7 @@ my $build_table_data = sub {
         ## Add the select items if any
         if (@sel) {
             $sel_cols = 1;
-            push @{$data->[$r]}, join('<br>', @sel);
+            push @{$data->[$r]}, join('&nbsp;', @sel);
         }
 
         $r++;
