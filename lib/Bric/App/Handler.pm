@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-20 03:22:00 $
+$Date: 2002-07-12 19:57:36 $
 
 =head1 SYNOPSIS
 
@@ -407,22 +407,23 @@ B<Notes:> NONE.
 
 sub filter {
     # Just get it over with if we're not supposed to do translation.
-    if ($no_trans) {
+    if ($no_trans or $ct->charset eq 'UTF-8') {
 	print STDOUT $_[0];
 	return;
     }
 
     # Do the translation.
     my $ret;
-    eval { $ret = $ct->from_utf8($_[0]) } unless $ct->charset eq 'UTF-8';
-
+    eval { $ret = $ct->from_utf8($_[0]) };
+    
     # Do error processing, if necessary.
     if (my $err = $@) {
-	$no_trans = 1; # So we don't translate error.html.
-	my $msg = 'Error translating from UTF-8 to '.$ct->charset;
-	die ref $@ ? $@ : $dp->new({msg     => $msg,
-				    payload => $@ }) if $@;
+        $no_trans = 1; # So we don't translate error.html.
+        my $msg = 'Error translating from UTF-8 to '.$ct->charset;
+        die ref $@ ? $@ : $dp->new({msg     => $msg,
+                                    payload => $@ }) if $@;
     }
+
     # Dump the data.
     print STDOUT $ret;
 }
