@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31.2.10 $
+$Revision: 1.31.2.11 $
 
 =head1 DATE
 
-$Date: 2002-02-09 02:20:49 $
+$Date: 2002-02-23 00:39:57 $
 
 =head1 DESCRIPTION
 
@@ -1156,6 +1156,21 @@ possibilities see the documentation for Net::FTPServer.
 Once the server is up and running connect to it with an FTP client and
 start editing templates. For more information see
 L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>.
+
+=head2 UI Configuration
+
+=over 4
+
+=item *
+
+B<DISABLE_NAV_LAYER:> Rather than have the UI's left side navigation menu
+rendered in its own separate layer, make it a part of the raw HTML of the page.
+This may be necessary if you encounter problems with the side navigation layer
+in your browser. Note that by setting this directive to a true value, any
+changes made to a form in the UI will be lost by clicking a menu item rather
+than the "Save" button. Defaults to "0" if not specified.
+
+=back
 
 =head1 DIRECTORY PERMISSIONS
 
