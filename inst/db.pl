@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2003-02-28 02:02:17 $
+$Date: 2003-02-28 02:08:23 $
 
 =head1 DESCRIPTION
 
@@ -96,8 +96,9 @@ sub create_db {
                 return create_db();
             } else {
                 unlink 'postgres.db';
-                hard_fail("Cannot proceed. Please run 'make postgres.db' ",
-                          "and then run 'make install' again");
+                hard_fail("Cannot proceed. If you want to use the existing ",
+                          "database, run 'make upgrade'\ninstead. To pick a ",
+                          "new database name, please run 'make db' again.\n");
             }
         } else {
             hard_fail("Failed to create database. The database error was\n\n",
