@@ -472,7 +472,7 @@ sub get_role_info {
 
 ################################################################################
 
-=item $roles = $contrib->get_person
+=item $person = $contrib->get_person
 
 Return the person object behind this contributor
 
@@ -484,11 +484,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_person {
-    my $self = shift;
-
-    return $self->get_object;
-}
+sub get_person { shift->get_object }
 
 sub get_name { shift->get_object->format_name(@_) }
 
