@@ -80,6 +80,13 @@ When viewing the contents of a document, the contents now have their HTML
 escaped. This prevents any broken HTML in the content from breaking the
 Bricolage UI. Suggested by Neal Sofge. [David]
 
+=item *
+
+The SOAP interface for importing and exporting elements now properlly has
+"key_name" XML elements instead of "name" XML elements. The changes are
+backwards compatable with XML exported from Bricolage 1.8.0 servers, however.
+Reported by Tony Cowderoy. [David]
+
 =back
 
 =head2 Bug Fixes

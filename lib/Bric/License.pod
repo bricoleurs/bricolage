@@ -261,6 +261,8 @@ Friends who have spotted bugs include:
 
 =item Christian Hauser
 
+=item Tony Cowderoy
+
 =back
 
 Bricolage's translation team:

@@ -236,9 +236,19 @@ sub handle_err {
 sub handle_soap_err {
     my $caller = (caller(2))[3];
     $caller = (caller(3))[3] if $caller =~ /eval/;
-    chomp(my $msg = join ' ', @_);
+    chomp(my $msg = join ' ', grep { defined } @_);
     my $log = Apache->server->log;
-    $log->error(Bric::Util::Fault::Exception->new("$caller: $msg"));
+    my $err = Bric::Util::Fault::Exception->new("$caller: $msg");
+    $log->error($err->full_message);
+
+    # Exception::Class::Base provides trace->as_string, but trace_as_text is
+    # not guaranteed. Use print STDERR to avoid escaping newlines.
+    print STDERR $err->can('trace_as_text')
+      ? $err->trace_as_text
+      : join ("\n",
+              map {sprintf "  [%s:%d]", $_->filename, $_->line }
+                $err->trace->frames),
+        "\n";
 }
 
 # silence warnings from SOAP::Lite
