@@ -11,8 +11,6 @@
 # See INSTALL for details.
 #
 
-SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
-
 #########################
 # build rules           #
 #########################
@@ -46,15 +44,16 @@ build_done	: required.db modules.db apache.db postgres.db config.db
 	@echo ===========================================================
 	@echo ===========================================================
 	@echo
-	touch build_done
+	@touch build_done
 
+.PHONY 		: all
 
 ###########################
 # dist rules              #
 ###########################
 
 dist            : distclean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
-                  INSTALL Changes License dist_tar
+                  dist/INSTALL dist/Changes dist/License dist_tar
 
 BRIC_VERSION := $(shell perl -Ilib -MBric -e 'print $$Bric::VERSION')
 
@@ -82,24 +81,28 @@ rm_CVS		:
 	find dist/ -type d -name 'CVS' | xargs rm -rf
 	find dist/ -name '.cvsignore'  | xargs rm -rf
 
-dist/INSTALL		: lib/Bric/Admin.pod
+dist/INSTALL	: lib/Bric/Admin.pod
 	pod2text --loose lib/Bric/Admin.pod   > dist/INSTALL
 
-dist/Changes		: lib/Bric/Changes.pod
+dist/Changes	: lib/Bric/Changes.pod
 	pod2text --loose lib/Bric/Changes.pod > dist/Changes
 
-dist/License		: lib/Bric/License.pod
+dist/License	: lib/Bric/License.pod
 	pod2text --loose lib/Bric/License.pod > dist/License
 
-dist_tar		:
+dist_tar	:
 	mv dist bricolage-$(BRIC_VERSION)
 	tar cvf bricolage-$(BRIC_VERSION).tar bricolage-$(BRIC_VERSION)
 	gzip --best bricolage-$(BRIC_VERSION).tar
+
+.PHONY 		: distclean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
+                  dist_tar
 
 
 ##########################
 # installation rules     #
 ##########################
+
 install 	: all cpan lib bin files db conf done
 
 cpan 		: modules.db config.db inst/cpan.pl
@@ -119,6 +122,8 @@ files 		: config.db
 db    		: inst/db.pl postgres.db inst/bricolage.sql
 	perl inst/db.pl
 
+SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
+
 inst/bricolage.sql : $(SQL_FILES)	
 	find lib/ -name '*.sql' -exec cat '{}' ';' >  inst/bricolage.sql
 	find lib/ -name '*.val' -exec cat '{}' ';' >> inst/bricolage.sql
@@ -131,7 +136,13 @@ conf		: inst/conf.pl files required.db config.db postgres.db \
 done		: 
 	perl inst/done.pl
 
-# remove working files
+.PHONY 		: install lib bin files db conf done
+
+
+##########################
+# clean rules            #
+##########################
+
 clean : 
 	-rm -rf *.db
 	-rm -rf build_done
@@ -140,6 +151,4 @@ clean :
 	cd bin ; perl Makefile.PL ; $(MAKE) clean
 	-rm -rf bin/Makefile.old
 
-# list of all phony targets
-.PHONY 		: all install lib bin clean uninstall dist db conf done \
-                  cpan files
+.PHONY 		: clean
