@@ -39,6 +39,8 @@ AC_VAR_WITH(ACCESS_LOG,access_log,${LOGDIR}/access.log)
 AC_VAR_WITH(SSL_LOG,ssl_log,${LOGDIR}/ssl_engine_log)
 AC_VAR_WITH(PID_FILE,pid_file,${LOGDIR}/httpd.pid)
 
+# Warn if the specified user doesn't seem to 
+# exist
 AC_CHECK_SYS_USER(ISUSERHERE,${APACHE_USER})
 if test "$ISUSERHERE" = "no" ;then
 	AC_MSG_ERROR([
@@ -53,6 +55,7 @@ if test "$ISUSERHERE" = "no" ;then
 ])
 fi
 
+# Warn if the specified group doesn't seem to exist
 AC_CHECK_SYS_GROUP(ISGROUPHERE,${APACHE_GROUP},${APACHE_USER})
 if test "$ISGROUPHERE" = "no" ;then
 	AC_MSG_ERROR([
@@ -68,7 +71,7 @@ if test "$ISGROUPHERE" = "no" ;then
 fi
 
 # Checks for programs
-AC_PROG_APACHE(1.3.20)
+AC_PROG_APACHE(1.3.12)
 AC_PROG_POSTGRES(PGHOME, 7.1.3)
 AC_POSTGRES_ENCODING(UNICODE)
 AC_PROG_PERL(PERL, 5.6.1)
@@ -118,6 +121,7 @@ CHECK_CPAN_MODULE(MISSING_MOD, HTML::Mason, 1.03)
 CHECK_CPAN_MODULE(MISSING_MOD, DBD::Pg, 1.00)
 CHECK_CPAN_MODULE(MISSING_MOD, Net::FTPServer)
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::Session, 1.53)
+CHECK_CPAN_MODULE(MISSING_MOD, Apache::ConfigFile)
 # FIXME: if there's a version requirement please note it here
 CHECK_CPAN_MODULE(MISSING_MOD, HTML::Template)
 # Apache::libapreq does not define $Apache::libapreq::VERSION
