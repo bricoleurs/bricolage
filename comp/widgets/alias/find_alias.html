@@ -50,10 +50,10 @@ my $link_key;
 my $field_values = sub {
     my ($o, $field) = @_;
     if ($field eq 'title') {
-        my $html = qq{<a href="/workflow/profile/preview/$link_key} . $o->get_id .
-          '" class="blackUnderlinedLink" target="preview_' . SERVER_WINDOW_NAME .
-          '">' . $o->get_title . '</a>';
-        return $html;
+        return $m->comp('/widgets/profile/preview_link.mc',
+                        type  => $_[1]->key_name,
+                        title => '<span class="l10n">' . shift() . '</span>',
+                        doc   => shift);
     } elsif ($field eq 'thumb') {
         # If we get a thumbnail URI, we have an image. Otherwise, simply return
         # a space to fill the column properly because we aren't an image object

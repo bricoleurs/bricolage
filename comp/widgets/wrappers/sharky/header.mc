@@ -41,7 +41,8 @@ for (@context){
     if (/^(\"?)(.+?)(\"?)$/) {
         my ($startquote, $text, $endquote) = ($1, $2, $3);
         $text =~ s/([\[\],~])/~$1/g;
-        $_ = $startquote . $lang->maketext($text) . $endquote;
+        $_ = qq{$startquote<span class="110n">}
+          . $lang->maketext($text) . "</span>$endquote";
     }
 }
 
@@ -237,11 +238,17 @@ while (my $txt = next_msg) {
 	$m->out("<p>");
 	$firstMsg = 0;
     }
+    if ($txt =~ /(.*)<span class="l10n">(.*)<\/span>(.*)/) {
+        $txt = escape_html($1) . '<span class="l10n">'
+          . escape_html($2) . '</span>' . escape_html($3);
+    } else {
+        $txt = escape_html($txt);
+    }
 </%perl>
 <table width="580" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <td height="20" valign="center">
-      <span class="errorMsg"><% escape_html($txt) %></span>
+      <span class="errorMsg"><% $txt %></span>
     </td>
   </tr>
   </table>

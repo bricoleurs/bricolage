@@ -263,6 +263,8 @@ Friends who have spotted bugs include:
 
 =item Tony Cowderoy
 
+=item Joshua Edelstein
+
 =back
 
 Bricolage's translation team:

@@ -241,7 +241,8 @@ my $inpt_sub = sub {
 	$out .= &$rem_sub($width, $indent) if $useTable;
 
 	if (!$readOnly) {
-	    $out .= qq{<input type="$type"$class} . qq{ name="$key"$disp_value$extra$js />};
+            my $idout = $id ? qq{ id="$id"} : '';
+	    $out .= qq{<input type="$type"${idout}$class} . qq{ name="$key"$disp_value$extra$js />};
 	} else {
 	    $out .= ($type ne "password") ? " $value" : "********";
 	}

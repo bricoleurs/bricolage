@@ -47,7 +47,9 @@ sub revert : Callback {
     my $version = $self->params->{"$widget|version"};
     $story->revert($version);
     $story->save;
-    add_msg('Story "[_1]" reverted to V.[_2].', $story->get_title, $version);
+    add_msg('Story "[_1]" reverted to V.[_2].',
+            '<span class="l10n">' . $story->get_title . '</span>',
+            $version);
     set_state_data($widget, 'story');
 }
 
@@ -68,7 +70,9 @@ sub save : Callback {
         # Save the story.
         $story->save;
         log_event('story_save', $story);
-        add_msg('Story "[_1]" saved.', $story->get_title);
+        add_msg('Story "[_1]" saved.',
+                '<span class="l10n">' . $story->get_title . '</span>');
+
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -126,7 +130,8 @@ sub checkin : Callback {
         log_event('story_checkout', $story) if $work_id;
         log_event('story_checkin', $story, { Version => $story->get_version });
         log_event("story_rem_workflow", $story);
-        add_msg('Story "[_1]" saved and shelved.', $story->get_title);
+        add_msg('Story "[_1]" saved and shelved.',
+                '<span class="l10n">' . $story->get_title . '</span>');
     } elsif ($desk_id eq 'publish') {
         # Publish the story and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -162,7 +167,7 @@ sub checkin : Callback {
         log_event('story_moved', $story, { Desk => $dname })
           unless $no_log;
         add_msg('Story "[_1]" saved and checked in to "[_2]".',
-                $story->get_title, $dname);
+                '<span class="l10n">' . $story->get_title . '</span>', $dname);
 
         # HACK: Commit this checkin. WHY?? Because Postgres does NOT like
         # it when you insert and delete a record within the same
@@ -205,7 +210,7 @@ sub checkin : Callback {
         my $dname = $desk->get_name;
         log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
         add_msg('Story "[_1]" saved and moved to "[_2]".',
-                $story->get_title, $dname);
+                '<span class="l10n">' . $story->get_title . '</span>', $dname);
     }
 
     # Clear the state out and set redirect.
@@ -233,7 +238,8 @@ sub save_and_stay : Callback {
         $story->activate;
         $story->save;
         log_event('story_save', $story);
-        add_msg('Story "[_1]" saved.', $story->get_title);
+        add_msg('Story "[_1]" saved.',
+                '<span class="l10n">' . $story->get_title . '</span>');
     }
 }
 
@@ -284,7 +290,8 @@ sub cancel : Callback {
             # others to find.
             $story->save;
         }
-        add_msg('Story "[_1]" check out canceled.', $story->get_title);
+        add_msg('Story "[_1]" check out canceled.',
+                '<span class="l10n">' . $story->get_title . '</span>');
     }
     clear_state($self->class_key);
     $self->set_redirect("/");
@@ -421,7 +428,8 @@ sub create : Callback {
     log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
     log_event('story_moved', $story, { Desk => $start_desk->get_name });
     log_event('story_save', $story);
-    add_msg('Story "[_1]" created and saved.', $story->get_title);
+    add_msg('Story "[_1]" created and saved.',
+            '<span class="l10n">' . $story->get_title . '</span>');
 
     # Put the story into the session and clear the workflow ID.
     set_state_data($widget, 'story', $story);
@@ -461,7 +469,8 @@ sub delete_cat : Callback {
     foreach my $cid (@$cat_ids) {
         my $cat = Bric::Biz::Category->lookup({ id => $cid });
         log_event('story_del_category', $story, { Category => $cat->get_name });
-        add_msg('Category "[_1]" disassociated.', $cat->get_name);
+        add_msg('Category "[_1]" disassociated.',
+                '<span class="l10n">' . $cat->get_name . '</span>');
     }
     set_state_data($widget, 'story', $story);
 }
@@ -488,7 +497,8 @@ sub add_category : Callback {
         $story->save;
         my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
         log_event('story_add_category', $story, { Category => $cat->get_name });
-        add_msg('Category "[_1]" added.', $cat->get_name);
+        add_msg('Category "[_1]" added.',
+                '<span class="l10n">' . $cat->get_name . '</span>');
     }
     set_state_data($widget, 'story', $story);
 }
@@ -691,7 +701,8 @@ sub checkout : Callback {
             # Log Event.
             log_event('story_checkout', $ba);
         } else {
-            add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
+            add_msg('Permission to checkout "[_1]" denied.',
+                    '<span class="l10n">' . $ba->get_title . '</span>');
         }
     }
 
@@ -740,7 +751,8 @@ sub recall : Callback {
             log_event('story_checkout', $ba);
             $co++;
         } else {
-            add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
+            add_msg('Permission to checkout "[_1]" denied.',
+                    '<span class="l10n">' . $ba->get_title . '</span>');
         }
     }
 
@@ -1006,7 +1018,8 @@ $handle_delete = sub {
     $story->save;
     log_event("story_rem_workflow", $story);
     log_event("story_deact", $story);
-    add_msg('Story "[_1]" deleted.', $story->get_title);
+    add_msg('Story "[_1]" deleted.',
+            '<span class="l10n">' . $story->get_title . '</span>');
     return 1;
 };
 

@@ -56,9 +56,14 @@ F<bin/Makefile.PL> files from the source directory. [David]
 
 =item *
 
-In F<lib/Bric/Biz/AssetType/Parts/Data.pm> constant ORD, changed 'name'
-to 'key_name' (name was replaced with key_name throughout that module,
-by the way...) [Scott]
+In F<lib/Bric/Biz/AssetType/Parts/Data.pm> constant C<ORD>, changed 'name' to
+'key_name' (name was replaced with key_name throughout that module, by the
+way...). [Scott]
+
+=item *
+
+Added missing language-specifying HTML attributes so as to properly localize
+story titles and the like. Reported by Joshua Edelstein. [David]
 
 =back
 
