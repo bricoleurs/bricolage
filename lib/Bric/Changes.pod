@@ -137,8 +137,7 @@ during the syntax check, although C<$story> and C<$element> are not. All three
 are in the C<< <%once> >> block during previews and publishes. This means that
 they can all be used in a C<< <%once> >> block like this:
 
-  <%once>
-  my @all_story;
+  <%once>;
   unless ($burner->get_mode == SYNTAX_MODE) {
       # Do stuff with $story or $template.
   }
