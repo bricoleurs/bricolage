@@ -53,8 +53,15 @@ build_done	: required.db modules.db apache.db postgres.db config.db
 # dist rules              #
 ###########################
 
-dist            : clean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
+dist            : distclean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
                   INSTALL Changes License dist_tar
+
+BRIC_VERSION := $(shell perl -Ilib -MBric -e 'print $$Bric::VERSION')
+
+distclean	: clean
+	-rm -rf bricolage-$(BRIC_VERSION)
+	-rm -f  bricolage-$(BRIC_VERSION).tar.gz
+	-rm -rf dist
 
 dist_dir	:
 	-rm -rf dist
@@ -75,9 +82,6 @@ rm_CVS		:
 	find dist/ -type d -name 'CVS' | xargs rm -rf
 	find dist/ -name '.cvsignore'  | xargs rm -rf
 
-rm_empty	:
-	find dist/ -type d 
-
 dist/INSTALL		: lib/Bric/Admin.pod
 	pod2text --loose lib/Bric/Admin.pod   > dist/INSTALL
 
@@ -87,10 +91,7 @@ dist/Changes		: lib/Bric/Changes.pod
 dist/License		: lib/Bric/License.pod
 	pod2text --loose lib/Bric/License.pod > dist/License
 
-BRIC_VERSION := $(shell perl -Ilib -MBric -e 'print $$Bric::VERSION')
-
 dist_tar		:
-	-rm -rf bricolage-$(BRIC_VERSION)
 	mv dist bricolage-$(BRIC_VERSION)
 	tar cvf bricolage-$(BRIC_VERSION).tar bricolage-$(BRIC_VERSION)
 	gzip --best bricolage-$(BRIC_VERSION).tar
