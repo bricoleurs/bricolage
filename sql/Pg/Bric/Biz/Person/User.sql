@@ -1,8 +1,8 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
--- $Date: 2004-03-18 01:51:15 $
--- Target DBMS: PostgreSQL 7.1.2
+-- $Date: 2004-03-18 01:54:29 $
+-- Target DBMS: PostgreSQL 7.2
 -- Author: David Wheeler <david@wheeler.net>
 
 -- This DDL creates the basic table for Bric::Person::Usr objects, and
