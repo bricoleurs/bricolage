@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.67 $
+$Revision: 1.68 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.67 $ )[-1];
+our $VERSION = (qw$Revision: 1.68 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-03 22:55:37 $
+$Date: 2004-03-03 22:56:43 $
 
 =head1 SYNOPSIS
 
@@ -191,6 +191,7 @@ BEGIN {
           base_uri        => Bric::FIELD_READ,
           # Private Fields
           _page_extensions => Bric::FIELD_NONE,
+          _notes           => Bric::FIELD_NONE,
       });
 }
 
