@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.16 $
+$Revision: 1.5.2.17 $
 
 =head1 DATE
 
-$Date: 2001-12-04 00:28:31 $
+$Date: 2001-12-10 21:15:18 $
 
 =head1 DESCRIPTION
 
@@ -856,9 +856,9 @@ documentation <http://www.modssl.org/docs> for more detail.
 
 =item *
 
-B<SSL_ENABLE:> Set this option to 1 to enable SSL support.  Make
-sure you've followed the installation instructions for building a
-mod_ssl Apache.  This is set to 0 by default.
+B<SSL_ENABLE:> Turn on this boolean directive to enable SSL support. Make sure
+you've followed the installation instructions for building a mod_ssl Apache.
+Disabled by default.
 
 =item *
 
