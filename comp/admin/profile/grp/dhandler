@@ -19,131 +19,128 @@ $m->comp('/widgets/profile/hidden.mc',
 $m->comp('/widgets/profile/displayFormElement.mc',
 	 key => 'name',
 	 objref => $grp,
-	 readOnly => $no_edit || $is_admin
+	 readOnly => $no_edit || $is_admin || $is_perm,
 	);
 
 $m->comp('/widgets/profile/displayFormElement.mc',
 	 key => 'description',
 	 objref => $grp,
-	 readOnly => $no_edit
+	 readOnly => $no_edit || $is_perm,
 	);
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 if (defined $id) {
-    # It's an existing group. Give no object choice.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "Members", number  => 2);
+    unless ($is_perm) {
+        # It's an existing group. Give no object choice.
+        $m->comp("/widgets/wrappers/sharky/table_top.mc",
+                 caption => "Members", number  => 2);
 
-    # Store the class name.
-    $m->comp('/widgets/profile/hidden.mc', name => 'grp_type',
-	     value => $class_name);
+        # Store the class name.
+        $m->comp('/widgets/profile/hidden.mc', name => 'grp_type',
+                 value => $class_name);
 
-    # Create a double list so they can move objects around.
-    my ($right, $left) = ([], []);
-    # Grab the Bric::Util::Class object describing the member class.
-    my $memb_class = $grp->member_class;
-    my $memb_pkg = $memb_class->get_pkg_name;
-    my $pl_disp = $memb_class->get_plural_name;
+        # Create a double list so they can move objects around.
+        my ($right, $left) = ([], []);
+        # Grab the Bric::Util::Class object describing the member class.
+        my $memb_class = $grp->member_class;
+        my $memb_pkg = $memb_class->get_pkg_name;
+        my $pl_disp = $memb_class->get_plural_name;
 
-    # Get the List Name Format, for people.
-    my $format = $memb_pkg eq 'Bric::Biz::Person'
-      || $memb_pkg eq 'Bric::Biz::Person::User'
-      ? get_pref('List Name Format') : undef;
+        # Get the List Name Format, for people.
+        my $format = $memb_pkg eq 'Bric::Biz::Person'
+          || $memb_pkg eq 'Bric::Biz::Person::User'
+          ? get_pref('List Name Format') : undef;
 
-    if ($class_name eq 'Bric::Util::Grp::Source') {
-        # Get existing members.
-        foreach my $obj ( $grp->get_objects ) {
-            push @$right, { value =>  $obj->get_id,
-                    description => $obj->get_source_name };
-
-            }
-        # Get potential members.
-        foreach my $obj ( $memb_pkg->list ) {
-            push @$left, { value =>  $obj->get_id,
-                           description => $obj->get_source_name };
-        }
-    } elsif ($class_name eq 'Bric::Util::Grp::CategorySet') {
+        if ($class_name eq 'Bric::Util::Grp::Source') {
             # Get existing members.
             foreach my $obj ( $grp->get_objects ) {
                 push @$right, { value =>  $obj->get_id,
-                    description => $obj->get_uri,
-                    site  => $obj->get_site_id };
+                                description => $obj->get_source_name };
             }
-        # Get potential members.
-        foreach my $obj ( $memb_pkg->list ) {
-            push @$left, { value =>  $obj->get_id,
-                   description => $obj->get_uri,
-                   site => $obj->get_site_id };
-
-        }
-    } else {
-
-        my $robjs = $grp->get_objects;
-        my $lobjs = $memb_pkg->list({ active => 1 });
-
-        my $has_site = 1 if ($robjs->[0] && $robjs->[0]->can('get_site_id')) ||
-                            ($lobjs->[0] && $lobjs->[0]->can('get_site_id'));
-
-        # Get existing members.
-        foreach my $obj ( @$robjs ) {
-            push @$right, { value =>  $obj->get_id,
-                    description => $obj->get_name($format),
-                    site => $has_site && $obj->get_site_id };
-
-        }
-        # Get potential members.
-        foreach my $obj ( @$lobjs ) {
-            push @$left, { value =>  $obj->get_id,
-                   description => $obj->get_name($format),
-                   site => $has_site && $obj->get_site_id };
-
-        }
-    }
-
-    # Add to the description site name, if there are duplicate  descriptions.
-    # Only run if sites are already cached ( which means there is more than one site).
-    my $sites = $c->get('__SITES__') || Bric::Biz::Site->list();
-    if(@$sites > 1) {
-
-        my %sites;
-        $sites{$_->get_id} = $_->get_name for @$sites;
-        for my $row (@$left, @$right) {
-            if ($row->{site}) {
-                $row->{description} .= ' ('. $sites{$row->{site} } . ') ';
+            # Get potential members.
+            foreach my $obj ( $memb_pkg->list ) {
+                push @$left, { value =>  $obj->get_id,
+                               description => $obj->get_source_name };
             }
-        }
-    }
-
-    # All of these negative assertion variable names are annoying!
-    my $no_member_manage = $no_edit;
-    unless ($no_member_manage) {
-        if ($memb_pkg eq 'Bric::Biz::Person::User') {
-            # No member management only if the current user is a global admin
-            # or a member of the group.
-            $no_member_manage = !user_is_admin
-              && !$grp->has_member(get_user_object);
+        } elsif ($class_name eq 'Bric::Util::Grp::CategorySet') {
+            # Get existing members.
+            foreach my $obj ( $grp->get_objects ) {
+                push @$right, { value =>  $obj->get_id,
+                                description => $obj->get_uri,
+                                site  => $obj->get_site_id };
+            }
+            # Get potential members.
+            foreach my $obj ( $memb_pkg->list ) {
+                push @$left, { value =>  $obj->get_id,
+                               description => $obj->get_uri,
+                               site => $obj->get_site_id };
+            }
         } else {
-            # No member management if the current user does not already have
-            # permisssion to edit the members of the group.
-            $no_member_manage = !chk_authz(0, EDIT, 1, $id);
+            my $robjs = $grp->get_objects;
+            my $lobjs = $memb_pkg->list({ active => 1 });
+
+            my $has_site = 1 if ($robjs->[0] && $robjs->[0]->can('get_site_id')) ||
+                                ($lobjs->[0] && $lobjs->[0]->can('get_site_id'));
+
+            # Get existing members.
+            foreach my $obj ( @$robjs ) {
+                push @$right, { value =>  $obj->get_id,
+                                description => $obj->get_name($format),
+                                site => $has_site && $obj->get_site_id };
+            }
+            # Get potential members.
+            foreach my $obj ( @$lobjs ) {
+                push @$left, { value =>  $obj->get_id,
+                               description => $obj->get_name($format),
+                               site => $has_site && $obj->get_site_id };
+            }
         }
+
+        # Add to the description site name, if there are duplicate
+        # descriptions. Only run if sites are already cached (which means
+        # there is more than one site).
+        my $sites = $c->get('__SITES__') || Bric::Biz::Site->list();
+        if(@$sites > 1) {
+
+            my %sites;
+            $sites{$_->get_id} = $_->get_name for @$sites;
+            for my $row (@$left, @$right) {
+                if ($row->{site}) {
+                    $row->{description} .= ' ('. $sites{$row->{site} } . ') ';
+                }
+            }
+        }
+
+        # All of these negative assertion variable names are annoying!
+        my $no_member_manage = $no_edit;
+        unless ($no_member_manage) {
+            if ($memb_pkg eq 'Bric::Biz::Person::User') {
+                # No member management only if the current user is a global admin
+                # or a member of the group.
+                $no_member_manage = !user_is_admin
+                && !$grp->has_member(get_user_object);
+            } else {
+                # No member management if the current user does not already have
+                # permisssion to edit the members of the group.
+                $no_member_manage = !chk_authz(0, EDIT, 1, $id);
+            }
+        }
+
+        # Load up the double-list manager.
+        $m->comp( "/widgets/doubleListManager/doubleListManager.mc", rightSort => 1,
+                  leftOpts     => $left,
+                  rightOpts    => $right,
+                  formName     => 'grp_profile',
+                  leftName     => 'objects',
+                  rightName    => 'members',
+                  readOnly     => $no_member_manage,
+                  leftCaption  => $no_member_manage ? undef : "Available $pl_disp",
+                  showLeftList => !$no_member_manage || 0,
+                  rightCaption => "Current $pl_disp" );
+
+        $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
     }
-
-    # Load up the double-list manager.
-    $m->comp( "/widgets/doubleListManager/doubleListManager.mc", rightSort => 1,
-	      leftOpts     => $left,
-              rightOpts    => $right,
-              formName     => 'grp_profile',
-	      leftName     => 'objects',
-              rightName    => 'members',
-              readOnly     => $no_member_manage,
-	      leftCaption  => $no_member_manage ? undef : "Available $pl_disp",
-              showLeftList => !$no_member_manage || 0,
-	      rightCaption => "Current $pl_disp" );
-
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
 </%perl>
 <table width="580" cellpadding="0" cellspacing="0">
 <tr>
@@ -226,12 +223,10 @@ my $grp = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
   : $class->new;
 $id ||= $grp->get_id;
 
-# Disallow access to the permanent groups.
-$m->comp('/errors/403.mc', obj => $grp) if $grp->get_permanent;
-
 # Check authorization.
 chk_authz($grp, $id ? READ : CREATE);
 my $no_edit = !chk_authz($grp, ($id ? EDIT : CREATE), 1);
+my $is_perm = $grp->get_permanent;
 my $no_del = !$id || $no_edit || $grp->get_permanent || $id == ADMIN_GRP_ID;
 my $class_obj = $grp->my_class;
 my $class_name = $class_obj->get_pkg_name;
@@ -251,11 +246,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2004-01-14 17:19:59 $
+$Date: 2004-02-07 23:27:39 $
 
 =head1 DESCRIPTION
 

@@ -286,14 +286,17 @@ my $def = {
 			       srch_field => 'name',
 			       behavior => 'expand',
 			       sort_by => 'name',
-			       constrain => {permanent => 0},
-			       select => sub {   if ( chk_authz($_[0], EDIT, 1)
-			                              && !$_[0]->get_permanent
-						      && $_[0]->get_id != ADMIN_GRP_ID) {
-						     $can_del = 1;
-						     return ['Delete', 'grp|deactivate_cb'];
-						  }
-                                                  return undef; } },
+			       constrain => {},
+			       select => sub {
+                                   if (chk_authz($_[0], EDIT, 1)
+                                        && !$_[0]->get_permanent
+                                        && $_[0]->get_id != ADMIN_GRP_ID) {
+                                       $can_del = 1;
+                                       return ['Delete', 'grp|deactivate_cb'];
+                                   }
+                                   return undef;
+                               }
+                            },
 	   pref          => { list_fields => [qw(name description val_name can_be_overridden)],
                               select => undef,
                               behavior => 'narrow',
@@ -409,11 +412,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:09 $
+$Date: 2004-02-07 23:27:39 $
 
 =head1 SYNOPSIS
 

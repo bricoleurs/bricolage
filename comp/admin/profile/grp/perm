@@ -60,10 +60,6 @@ my $grp = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
   : $class->new;
 $id ||= $grp->get_id;
 
-# Disallow access to the Global Administrators group and permanent groups.
-$m->comp('/errors/403.mc', obj => $grp) if $id == ADMIN_GRP_ID
-  || $grp->get_permanent;
-
 # Check authorization.
 chk_authz($grp, READ);
 my $no_edit = !chk_authz($grp, ($id ? EDIT : CREATE), 1);
@@ -81,11 +77,11 @@ my $grp_name = $grp->get_name;
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:09 $
+$Date: 2004-02-07 23:27:39 $
 
 =head1 DESCRIPTION
 

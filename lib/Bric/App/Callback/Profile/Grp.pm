@@ -129,23 +129,32 @@ $save_sub = sub {
             # Deactivate it.
             $grp->deactivate;
             $grp->save;
-	    log_event('grp_deact', $grp);
+            log_event('grp_deact', $grp);
             # Reset the cache.
             $reset_cache->($grp, $class, $self);
             add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         }
         # Set redirection back to the manager.
         $self->set_redirect($redir);
-	return;
+        return;
     }
+
+    if ($grp->get_permanent) {
+        # Redirect back to the manager.
+        $self->set_redirect($redir);
+        # Reset the cache.
+        $reset_cache->($grp, $class, $self);
+        return;
+    }
+
     # Roll in the changes.
     $grp->activate;
     $grp->set_name($param->{name}) unless defined $param->{grp_id}
       && $param->{grp_id} == ADMIN_GRP_ID;
     $grp->set_description($param->{description});
     if (defined $param->{grp_id}) {
-	# Get the name of the member package.
-	my $pkg = $grp->member_class->get_pkg_name;
+        # Get the name of the member package.
+        my $pkg = $grp->member_class->get_pkg_name;
         if (exists $param->{members} or exists $param->{objects}) {
 
             # Make sure it isn't an All group.
@@ -197,25 +206,26 @@ $save_sub = sub {
                     }
                 }
             }
-	}
+        }
 
-	# Save the group
-	$grp->save;
+        # Save the group
+        $grp->save;
         unless ($no_log) {
-	    log_event('grp_save', $grp);
+            log_event('grp_save', $grp);
             add_msg("$disp_name profile \"[_1]\" saved.", $name);
         }
-	# Redirect back to the manager.
-	$self->set_redirect($redir);
+
+        # Redirect back to the manager.
+        $self->set_redirect($redir);
         # Reset the cache.
         $reset_cache->($grp, $class, $self);
-	return;
+        return;
     } else {
-	# Save the group.
-	$grp->save;
-	log_event('grp_new', $grp);
-	# Return the group.
-	return $grp;
+        # Save the group.
+        $grp->save;
+        log_event('grp_new', $grp);
+        # Return the group.
+        return $grp;
     }
 };
 

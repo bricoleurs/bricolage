@@ -166,6 +166,12 @@ has access to [JoE<atilde>o Pedro]
 The Mason burner now uses document templates as true dhandlers, enabling
 inheritance to autohandlers to work properly. [David & Dave Rolsky]
 
+=item *
+
+"All *" groups can now be accessed via the Group Manager. Their names and
+memberships cannot be edited, but their permissions can. Inspired by a bug
+report from Patrick Walsh. [David]
+
 =back
 
 =head2 Bug Fixes
