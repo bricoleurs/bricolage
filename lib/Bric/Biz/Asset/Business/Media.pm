@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40.2.11 $
+$Revision: 1.40.2.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40.2.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 23:21:24 $
+$Date: 2003-06-16 19:08:39 $
 
 =head1 SYNOPSIS
 
@@ -236,6 +236,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'mt.id = mm2.object_id',
       simple                => '( LOWER(k.name) LIKE LOWER(?) OR '
                              . 'LOWER(i.name) LIKE LOWER(?) OR '
+                             . 'LOWER(i.uri) LIKE LOWER(?) OR '
                              . 'LOWER(i.description) LIKE LOWER(?) )',
     };
 
