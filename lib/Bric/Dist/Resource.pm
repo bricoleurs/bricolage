@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-19 14:31:27 $
+$Date: 2004-02-19 14:56:08 $
 
 =head1 SYNOPSIS
 
@@ -125,6 +125,7 @@ use constant DEBUG => 0;
 my @rcols = qw(id parent_id path uri size mod_time is_dir);
 my @cols = qw(r.id r.parent_id r.path r.uri r.size r.mod_time r.is_dir t.name);
 my @props = qw(id parent_id path uri size _mod_time _is_dir media_type);
+my @ORD = qw(parent_id path uri size mod_time media_type);
 
 ################################################################################
 
@@ -627,59 +628,72 @@ B<Notes:> NONE.
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
     return if $ident;
-                         id => Bric::FIELD_READ,
-                         media_type => Bric::FIELD_READ,
-                         parent_id => Bric::FIELD_RDWR,
-                         path => Bric::FIELD_RDWR,
-                         uri => Bric::FIELD_RDWR,
-                         tmp_path => Bric::FIELD_RDWR,
-                         size => Bric::FIELD_RDWR,
+
+    # Return 'em if we got em.
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}]
+      if $METHS;
 
     # Load field members.
-    $METHS ||= { path       => { name     => 'path',
-                                 get_meth => sub { shift->get_path(@_) },
-                                 get_args => [],
-                                 set_meth => sub { shift->set_path(@_) },
-                                 set_args => [],
-                                 disp     => 'Path',
-                                 search   => 1,
-                                 len      => 256,
-                                 req      => 1,
-                                 type     => 'short',
-                                 props    => { type      => 'text',
-                                               length    => 64,
-                                               maxlength => 256
-                                             }
-                               },
-                 media_type => { name     => 'media_type',
-                                 get_meth => sub { shift->get_media_type(@_) },
-                                 get_args => [],
-                                 disp     => 'Media Type',
-                                 len      => 128,
-                                 req      => 1,
-                               },
-                 size       => { name     => 'size',
-                                 get_meth => sub { shift->get_size(@_) },
-                                 get_args => [],
-                                 set_meth => sub { shift->set_size(@_) },
-                                 set_args => [],
-                                 disp     => 'Size',
-                                 len      => 10,
-                                 req      => 1,
-                                 type     => 'short',
-                                 props    => { type      => 'text',
-                                               length    => 32,
-                                               maxlength => 10
-                                             }
-                               },
-                 mod_time   => { name     => 'mod_time',
-                                 get_meth => sub { shift->get_mod_time(@_) },
-                                 get_args => [],
-                                 disp     => 'Last Modified Time',
-                                 req      => 1,
-                               },
-              };
-    return $METHS;
+    $METHS = { path       => { name     => 'path',
+                               get_meth => sub { shift->get_path(@_) },
+                               get_args => [],
+                               set_meth => sub { shift->set_path(@_) },
+                               set_args => [],
+                               disp     => 'Path',
+                               search   => 1,
+                               len      => 256,
+                               req      => 1,
+                               type     => 'short',
+                               props    => { type      => 'text',
+                                             length    => 64,
+                                             maxlength => 256
+                                         }
+                           },
+               uri       => { name     => 'uri',
+                               get_meth => sub { shift->get_uri(@_) },
+                               get_args => [],
+                               set_meth => sub { shift->set_uri(@_) },
+                               set_args => [],
+                               disp     => 'URI',
+                               search   => 1,
+                               len      => 256,
+                               req      => 1,
+                               type     => 'short',
+                               props    => { type      => 'text',
+                                             length    => 64,
+                                             maxlength => 256
+                                         }
+                           },
+               media_type => { name     => 'media_type',
+                               get_meth => sub { shift->get_media_type(@_) },
+                               get_args => [],
+                               disp     => 'Media Type',
+                               len      => 128,
+                               req      => 1,
+                           },
+               size       => { name     => 'size',
+                               get_meth => sub { shift->get_size(@_) },
+                               get_args => [],
+                               set_meth => sub { shift->set_size(@_) },
+                               set_args => [],
+                               disp     => 'Size',
+                               len      => 10,
+                               req      => 1,
+                               type     => 'short',
+                               props    => { type      => 'text',
+                                             length    => 32,
+                                             maxlength => 10
+                                         }
+                           },
+               mod_time   => { name     => 'mod_time',
+                               get_meth => sub { shift->get_mod_time(@_) },
+                               get_args => [],
+                               disp     => 'Last Modified Time',
+                               req      => 1,
+                           },
+           };
+
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}]
 }
 
 ################################################################################
