@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =head1 DATE
 
-$Date: 2003-08-08 17:49:48 $
+$Date: 2003-08-18 23:21:46 $
 
 =head1 SYNOPSIS
 
@@ -42,10 +42,7 @@ for (@context){
 $context = join ' |',@context;
 
 if ($useSideNav) {
-    # first, let's bail if we need to...
-    do_queued_redirect();
-
-    # Next, log this page in the URI history
+    # Log this page in the URI history.
     log_history() unless $no_hist;
 }
 
@@ -176,7 +173,7 @@ function doLink(link) {
 <tr>
   <td width=150 valign=top bgcolor="#666633" height="150%">
 
-<%perl>
+<%perl>;
 
 # handle the various states of the side nav
 # login screen: no side nav
