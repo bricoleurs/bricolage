@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.10.4.1 $
+$Revision: 1.10.4.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.10.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:47 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -1252,11 +1252,11 @@ sub save {
         my $del1 = prepare_c(qq{
             DELETE FROM grp_priv__grp_member
             WHERE  grp_priv__id = ?
-        });
+        }, undef);
         my $del2 = prepare_c(qq{
             DELETE FROM grp_priv
             WHERE  id = ?
-        });
+        }, undef);
 
         # Really $del2 should cover $del1 via cascading delete, but I'm playing
         # it safe.
@@ -1270,7 +1270,7 @@ sub save {
             SET    value = ?,
                    mtime = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get('value'), $time, $id);
     } else {
         # It's a new privilege. Insert it.
@@ -1290,7 +1290,7 @@ sub save {
         my $ins2 = prepare_c(qq{
             INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
             VALUES (?, ?)
-        });
+        }, undef);
         execute($ins2, $id, $self->_get('obj_grp_id'));
     }
     $self->SUPER::save;

@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.17.2.3 $
+$Revision: 1.17.2.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.17.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:47 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -925,7 +925,7 @@ sub get_val_name {
         FROM   pref_opt
         WHERE  pref__id = ?
                AND value = ?
-    });
+    }, undef);
     $name = col_aref($sel, $id, $value)->[0];
     $self->_set([qw(val_name _val_ch)], [$name, undef]);
     return $name;
@@ -1102,7 +1102,7 @@ sub save {
         UPDATE pref
         SET    value = ?
         WHERE  id = ?
-    });
+    }, undef);
     # Update the database.
     execute($upd, $value, $id);
 
@@ -1112,7 +1112,7 @@ sub save {
        SET    value = ?,
               description = ?
        WHERE  pref__id = ?
-    } );
+    }, undef);
     execute( $upd2, $value, $value, $id );
   }
     # Update the cache.

@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.23.2.4 $
+$Revision: 1.23.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.23.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:45 $
+$Date: 2003-08-14 22:04:06 $
 
 =head1 SYNOPSIS
 
@@ -1203,7 +1203,7 @@ sub _insert_workflow {
     my $ins = prepare_c(qq{
         INSERT INTO $table (id, ${\join(', ', @cols)})
         VALUES ($nextval, ${\join(', ', ('?') x @cols)})
-    });
+    }, undef);
 
     execute($ins, $self->_get(@props));
 
@@ -1220,7 +1220,7 @@ sub _update_workflow {
     my $self = shift;
     my $sql = "UPDATE $table SET " .
       join(',', map { "$_ = ?" } @cols) . " WHERE id = ?";
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(@props), $self->get_id);
     return 1;
 }
@@ -1247,7 +1247,7 @@ NONE
 
 sub _remove_workflow {
     my $self = shift;
-    my $sth = prepare_c("DELETE FROM $table WHERE id = ?");
+    my $sth = prepare_c("DELETE FROM $table WHERE id = ?", undef);
     execute($sth, $self->get_id);
 
     return $self;

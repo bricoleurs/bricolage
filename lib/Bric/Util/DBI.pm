@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.15 $
+$Revision: 1.21.2.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.16 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:47 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -31,7 +31,7 @@ $Date: 2003-08-14 20:33:47 $
       SELECT @cols
       FROM   person
       WHERE  person_id = ?
-  });
+  }, undef);
 
   $self->_set(\@cols, row_aref($select, $id));
 
@@ -394,8 +394,6 @@ sub prepare {
 
 =pod
 
-=item my $sth = prepare_c($sql)
-
 =item my $sth = prepare_c($sql, $attr)
 
 Returns an $sth from $dbh->prepare_cached. Pass any attributes you want
@@ -437,8 +435,6 @@ sub prepare_c {
 ##############################################################################
 
 =pod
-
-=item my $sth = prepare_ca($sql)
 
 =item my $sth = prepare_ca($sql, $attr)
 
@@ -1290,7 +1286,7 @@ Examples:
       SELECT @cols
       FROM   person
       WHERE  person_id = ?
-  });
+  }, undef);
   # Using row_aref() is faster than using fetch_em() when we're just fetching
   # one row.
   $self->_set(\@cols, row_aref($select, undef, $id));
@@ -1302,7 +1298,7 @@ Examples:
       SELECT @cols
       FROM   person
       WHERE  lname like 'W%'
-  });
+  }, undef);
   # This will fill @people with 'Bric::Biz::Person' objects.
   my @people = fetch_em('Bric::Biz::Person', $select, \@cols);
 
@@ -1315,7 +1311,7 @@ Examples:
       WHERE  p.id = pmg.person_id
              AND pmg.group_id = g.id
              AND p.id = ?
-  });
+  }, undef);
   # This will fill @people with 'Bric::Biz::Person' objects and an anonymous
   # hash of groups keyed by group ID.
   my @people = fetch_em('Bric::Biz::Person', $select, \@cols, [$id],
@@ -1596,7 +1592,7 @@ $db_name is not passed, it defaults to the value stored in $Bric::Cust.
   my $insert = prepare_c(qq{
       INSERT INTO person (@cols)
       VALUES (${\next_key('person')}, ${\join ', ', map '?', @cols[1..$#cols]})
-  });
+  }, undef);
 
   # Don't try to set ID - it will fail!
   execute($insert, $self->_get(@cols[1..$#cols));

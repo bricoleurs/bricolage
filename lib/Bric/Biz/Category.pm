@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.44.4.5 $
+$Revision: 1.44.4.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44.4.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.44.4.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:44 $
+$Date: 2003-08-14 22:04:06 $
 
 =head1 SYNOPSIS
 
@@ -1496,7 +1496,7 @@ sub _update_category {
         UPDATE $table
         SET    ${\join(',', map {"$_=?"} @cols)}
         WHERE  id = ?
-    });
+    }, undef);
     my $new_uri;
 
     if ($self->_get('_update_uri') and $id != ROOT_CATEGORY_ID) {
@@ -1537,7 +1537,7 @@ sub _insert_category {
     my $sql = "INSERT INTO $table (id,".join(',',@cols).") ".
               "VALUES ($nextval,".join(',', ('?') x @cols).')';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
 
     # Set the URI.
     my $uri = Bric::Util::Trans::FS->cat_uri( $self->get_parent->get_uri,

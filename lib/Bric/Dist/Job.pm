@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.18.4.2 $
+$Revision: 1.18.4.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:46 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -1500,7 +1500,7 @@ sub save {
         my $del = prepare_c(qq{
             DELETE FROM job
             WHERE  id = ?
-        });
+        },undef);
         execute($del, $id);
     } elsif (defined $id) {
         # Existing record. Update it.
@@ -1509,7 +1509,7 @@ sub save {
             UPDATE job
             SET    @COLS = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(@PROPS), $id);
     } else {
         # It's a new job. Insert it.
@@ -1954,7 +1954,7 @@ $set_pend = sub {
                tries = ?
         WHERE  id = ?
                AND pending <> ?
-    });
+    }, undef);
     my $ret = execute($upd, $value, $exec, $id, $value);
     return if $ret eq '0E0';
     $self->_set([qw(_pending tries)], [$value, $exec]);

@@ -6,16 +6,16 @@ Bric::Biz::Contact - Interface to Contacts
 
 =head1 VERSION
 
-$Revision: 1.11.2.1 $
+$Revision: 1.11.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:45 $
+$Date: 2003-08-14 22:04:06 $
 
 =head1 SYNOPSIS
 
@@ -878,13 +878,13 @@ sub edit_type {
         SET    description = ?,
                active = ?
         WHERE  type = ?
-    });
+    }, undef);
     return 1 if execute($upd, $desc, 1, $type) > 0;
 
     my $ins = prepare_c(qq{
         INSERT INTO contact (id, type, description, active, alertable)
         VALUES (${\next_key('contact')}, ?, ?, ?, 0)
-    });
+    }, undef);
     execute($ins, $type, $desc, 1);
 }
 
@@ -926,7 +926,7 @@ sub deactivate_type {
         UPDATE contact
         SET    active = ?
         WHERE  type = ?
-    });
+    }, undef);
     execute($upd, 0, $type);
     return 1;
 }
@@ -1286,7 +1286,7 @@ sub save {
                 UPDATE contact_value
                 SET    @val_cols = ?
                 WHERE  id = ?
-            });
+            }, undef);
             execute($upd, $self->_get(@val_props), $id);
         }
     } else {

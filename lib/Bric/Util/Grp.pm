@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.39.2.6 $
+$Revision: 1.39.2.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:47 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -609,7 +609,7 @@ B<Notes:> NONE.
                            SELECT DISTINCT class__id
                            FROM   grp
                        )
-            });
+            }, undef);
             execute($sel);
             my ($key, $name, $pkg_name);
             bind_columns($sel, \$key, \$name, \$pkg_name);

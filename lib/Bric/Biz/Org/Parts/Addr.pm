@@ -7,15 +7,15 @@ Bric::Biz::Org::Parts::Addr - Organizational Addresses
 
 =head1 VERSION
 
-$Revision: 1.9.4.1 $
+$Revision: 1.9.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:45 $
+$Date: 2003-08-14 22:04:06 $
 
 =head1 SYNOPSIS
 
@@ -1941,7 +1941,7 @@ $part_sql = sub {
     my $del = prepare_c(qq{
         DELETE FROM addr_part
         WHERE  id = ?
-    });
+    }, undef);
     return ($ins, $upd, $del);
 };
 

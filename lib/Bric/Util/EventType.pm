@@ -6,16 +6,16 @@ Bric::Util::EventType - Interface to Types of Events
 
 =head1 VERSION
 
-$Revision: 1.9.4.1 $
+$Revision: 1.9.4.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:47 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -373,7 +373,7 @@ sub list_classes {
                    FROM   event_type
                )
         ORDER BY disp_name
-    });
+    }, undef);
 
     execute($sel);
     my ($id, $dis, @ret);

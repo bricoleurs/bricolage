@@ -7,15 +7,15 @@ Bric::Util::Coll::Addr - Interface for managing collections of contacts.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 05:55:09 $
+$Date: 2003-08-14 22:04:08 $
 
 =head1 SYNOPSIS
 
@@ -176,12 +176,12 @@ sub save {
         DELETE FROM person_org__addr
         WHERE  person_org__id = ?
                AND addr__id = ?
-    });
+    }, undef);
 
     my $ins = prepare_c(qq{
         INSERT INTO person_org__addr (person_org__id, addr__id)
         VALUES (?, ?)
-    });
+    }, undef);
 
     foreach my $a (values %$del_objs) { execute($del, $oid, $a->get_id) }
     %$del_objs = ();

@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.13.2.4 $
+$Revision: 1.13.2.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:46 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -525,7 +525,7 @@ sub name_used {
         WHERE  LOWER(name) = ?
                AND usr__id = ?
                $where
-    });
+    }, undef);
 
     return col_aref($sel, @params)->[0];
 }
@@ -2295,7 +2295,7 @@ sub save {
             UPDATE alert_type
             SET    @cols = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(@props), $id);
         $self->SUPER::save;
         unless ($self->_get('active')) {

@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.10.4.1 $
+$Revision: 1.10.4.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.10.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:46 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -1318,7 +1318,7 @@ sub save {
         my $del = prepare_c(qq{
             DELETE FROM action
             WHERE  id = ?
-        });
+        }, undef);
         execute($del, $id);
         &$reorder($st_id);
     } elsif (defined $id) {
@@ -1328,7 +1328,7 @@ sub save {
             SET    server_type__id = ?,
                    action_type__id = (SELECT id FROM action_type WHERE name = ?)
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(qw(server_type_id type)), $id);
         # Reorder the actions, if this one has changed.
         &$reorder($st_id, $old_ord, $ord) if $old_ord && $old_ord != $ord;
@@ -1733,7 +1733,7 @@ $reorder = sub {
         UPDATE action
         SET    ord = ?
         WHERE  id = ?
-    });
+    }, undef);
 
     my $i = 0;
     begin();

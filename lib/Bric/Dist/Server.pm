@@ -7,16 +7,16 @@ distributed.
 
 =head1 VERSION
 
-$Revision: 1.13.4.2 $
+$Revision: 1.13.4.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:46 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -1406,7 +1406,7 @@ sub save {
         my $del = prepare_c(qq{
             DELETE FROM server
             WHERE  id = ?
-        });
+        }, undef);
         execute($del, $id);
     } elsif (defined $id) {
         # Existing record. Update it.
@@ -1415,7 +1415,7 @@ sub save {
             UPDATE server
             SET    @cols = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(@props), $id);
     } else {
         # It's a new server. Insert it.

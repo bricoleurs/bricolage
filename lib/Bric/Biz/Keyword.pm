@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.15.4.3 $
+$Revision: 1.15.4.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15.4.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.15.4.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-31 17:15:57 $
+$Date: 2003-08-14 22:04:06 $
 
 =head1 SYNOPSIS
 
@@ -332,7 +332,7 @@ sub list {
     $sql   .= ' ORDER BY sort_name';
 
     # prepare and execute select
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, @bind);
 
     # fetch data and build result objects
@@ -839,7 +839,7 @@ sub _select_keywords {
     $sql   .= ' WHERE '.$where if $where;
     $sql   .= ' ORDER BY sort_name';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, @$bind);
     bind_columns($sth, \@d[0..(scalar COLS)]);
 
@@ -868,7 +868,7 @@ sub _update_keyword {
               ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
 
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(COLS), $self->get_id);
     return 1;
 }
@@ -887,7 +887,7 @@ sub _insert_keyword {
     my $sql = 'INSERT INTO '.TABLE." (id,".join(',',COLS).") ".
               "VALUES ($nextval,".join(',', ('?') x COLS).')';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(COLS));
 
     # Set the ID of this object.

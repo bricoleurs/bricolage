@@ -6,16 +6,16 @@ Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.
 
 =head1 VERSION
 
-$Revision: 1.12.2.1 $
+$Revision: 1.12.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:47 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -620,7 +620,7 @@ sub ack_by_id {
         UPDATE alerted
         SET    ack_time = ?
         WHERE  id = ?
-    });
+    }, undef);
 
     # Acknowledge each Bric::Util::Alerted object by its ID.
     execute($upd, $date, $_) for @_;

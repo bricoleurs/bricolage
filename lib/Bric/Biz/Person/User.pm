@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.20.4.2 $
+$Revision: 1.20.4.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.20.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.20.4.3 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:46 $
+$Date: 2003-08-14 22:04:06 $
 
 =head1 SYNOPSIS
 
@@ -508,7 +508,7 @@ sub login_avail {
         FROM   usr
         WHERE  LOWER(login) = ?
                AND active = 1
-    });
+    }, undef);
 
     return 1 unless @{ row_aref($sel, lc $login) || [] };
     return;

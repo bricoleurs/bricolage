@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.27.2.2 $
+$Revision: 1.27.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.27.2.3 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:46 $
+$Date: 2003-08-14 22:04:06 $
 
 
 =head1 SYNOPSIS
@@ -1264,7 +1264,7 @@ sub _insert_desk {
     my $ins = prepare_c(qq{
         INSERT INTO $TABLE (id, ${\join(', ', @COLS)})
         VALUES ($nextval, ${\join(', ', ('?') x @COLS)})
-    });
+    }, undef);
 
     execute($ins, $self->_get(@PROPS));
 
@@ -1304,7 +1304,7 @@ sub _update_desk {
         UPDATE $TABLE
         SET    ${\join(', ', map {"$_ = ?"} @COLS)}
         WHERE  id = ?
-    });
+    }, undef);
 
     execute($upd, $self->_get(@PROPS, 'id'));
     return $self;
@@ -1332,7 +1332,7 @@ NONE
 
 sub _remove_desk {
     my $self = shift;
-    my $sth = prepare_c("DELETE FROM $TABLE WHERE id = ?");
+    my $sth = prepare_c("DELETE FROM $TABLE WHERE id = ?", undef);
     execute($sth, $self->_get('id'));
     return $self;
 }

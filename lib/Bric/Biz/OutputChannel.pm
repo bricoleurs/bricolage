@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.24.4.3 $
+$Revision: 1.24.4.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24.4.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.4.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:45 $
+$Date: 2003-08-14 22:04:06 $
 
 =head1 SYNOPSIS
 
@@ -1731,7 +1731,7 @@ sub _do_update {
         UPDATE $TABLE
         SET    @COLS = ?
         WHERE  id = ?
-    });
+    }, undef);
     execute($upd, $self->_get(@PROPS), $id);
     return $self;
 }

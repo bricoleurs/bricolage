@@ -7,15 +7,15 @@ Bric::Util::Attribute - A module to manage attributes for various objects.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 05:06:49 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -479,7 +479,7 @@ sub subsys_names {
               "WHERE a.active=? AND a.id=v.attr__id AND v.object__id=?";
 
     # Execute the SQL
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, (not $inactive), $self->get_object_id);
     bind_columns($sth, \$d);
 
@@ -1716,7 +1716,7 @@ sub _select_table {
     $sql .= 'WHERE '. join(' AND ', @$where) if $where;
 
     # Execute the SQL
-    $sth = prepare_c($sql);
+    $sth = prepare_c($sql, undef);
     execute($sth, $bind ? @$bind : ());
     bind_columns($sth, \@d[0..$#sel]);
 
@@ -1769,7 +1769,7 @@ sub _insert_table {
     my $sql = "INSERT INTO $table (id,".join(',',@$cols).') '.
               "VALUES ($nextval,".join(',', ('?') x @$cols).')';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, map { $bind->{$_} } @$cols);
 
     # Get the ID of this object.
@@ -1807,7 +1807,7 @@ sub _update_table {
     # Add the where clause.
     $sql .= ' WHERE '.join(' AND ', @$where);
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
 
     execute($sth, map { $bind->{$_} } (@$cols, 'id'));
 
@@ -1844,7 +1844,7 @@ sub _delete_from_table {
     return unless $where;
 
     my $sql = "DELETE FROM $table WHERE ".join(' AND ', @$where);
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
 
     execute($sth, @$bind);
 

@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.21.4.2 $
+$Revision: 1.21.4.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:45 $
+$Date: 2003-08-14 22:04:06 $
 
 =head1 SYNOPSIS
 
@@ -1682,7 +1682,7 @@ sub save {
             UPDATE person
             SET   @cols = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(@props), $id);
         unless ($self->_get('_active')) {
             # Deactivate all group memberships if we've deactivated the person.

@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.12.4.2 $
+$Revision: 1.12.4.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:46 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -1607,7 +1607,7 @@ sub save {
             SET    @rcols = ?,
                    media_type__id = (SELECT id FROM media_type WHERE name = ?)
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(@props[0..$#props]), $id);
         log_event('resource_save', $self);
     } else {
@@ -2133,27 +2133,27 @@ $save_ids = sub {
             SET    parent_id = NULL
             WHERE  parent_id = ?
                    AND id = ?
-        });
+        }, undef);
 
         # Prepare the INSERT statement.
         $ins = prepare_c(qq{
             UPDATE resource
             SET    parent_id = ?
             WHERE  id = ?
-        });
+        }, undef);
     } else {
         # It's for Story or Media IDs. Prepare the DELETE statement.
         $del = prepare_c(qq{
             DELETE FROM ${type}__resource
             WHERE  resource__id = ?
                    AND ${type}__id = ?
-        });
+        }, undef);
 
         # Prepare the INSERT statement.
         $ins = prepare_c(qq{
             INSERT INTO ${type}__resource (resource__id, ${type}__id)
             VALUES (?, ?)
-        });
+        }, undef);
     }
 
     # Delete those that need deleting.

@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel::Element - Maps Output Channels to Elements.
 
 =head1 VERSION
 
-$Revision: 1.2.4.4 $
+$Revision: 1.2.4.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2.4.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.4.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:46 $
+$Date: 2003-08-14 22:04:06 $
 
 =head1 SYNOPSIS
 
@@ -456,7 +456,7 @@ sub save {
         my $del = prepare_c(qq{
             DELETE FROM element__output_channel
             WHERE  id = ?
-        });
+        }, undef);
         execute($del, $map_id);
         $self->_set([qw(_map_id _del)], []);
 
@@ -469,7 +469,7 @@ sub save {
                    enabled = ?,
                    active = 1
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $ocid, $eid, $en, $map_id);
 
     } else {
@@ -479,7 +479,7 @@ sub save {
             INSERT INTO element__output_channel
                         (id, element__id, output_channel__id, enabled, active)
             VALUES ($nextval, ?, ?, ?, 1)
-        });
+        }, undef);
         execute($ins, $eid, $ocid, $en);
         $self->_set(['_map_id'], [last_key('element__output_channel')]);
     }

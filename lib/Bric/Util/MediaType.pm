@@ -6,16 +6,16 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.11.4.5 $
+$Revision: 1.11.4.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11.4.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.4.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:47 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -1074,7 +1074,7 @@ sub save {
             UPDATE media_type
             SET   @mcols = ?
             WHERE  id = ?
-        });
+        }, undef);
         execute($upd, $self->_get(@mprops), $id);
     } else {
         # It's a new media type. Insert it.

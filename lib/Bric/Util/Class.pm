@@ -7,15 +7,15 @@ Bric::Util::Class - A module to provide access to the class table
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.12.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -671,7 +671,7 @@ sub _select_class {
     $sql   .= ' WHERE '.$where if $where;
     $sql .= ' ORDER BY disp_name';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, @$bind);
     bind_columns($sth, \@d[0..(scalar COLS)]);
 
@@ -690,7 +690,7 @@ sub _update_class {
               ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
 
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(COLS), $self->get_id);
     return 1;
 }
@@ -706,7 +706,7 @@ sub _insert_class {
     # Create the insert statement.
     my $sql = 'INSERT INTO '.TABLE." (id,".join(',',COLS).") ".
               "VALUES ($nextval,".join(',', ('?') x COLS).')';
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(COLS));
     # Set the ID of this object.
     $self->_set(['id'],[last_key(TABLE)]);

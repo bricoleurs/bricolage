@@ -7,15 +7,15 @@ Bric::Util::Coll::OCInclude - Interface for managing Output Channels includes.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 05:55:08 $
+$Date: 2003-08-14 22:04:07 $
 
 =head1 SYNOPSIS
 
@@ -181,7 +181,7 @@ sub save {
             DELETE FROM output_channel_include
             WHERE  output_channel__id = ?
                    AND include_oc_id = ?
-        });
+        }, undef);
 	execute($del, $oc_id, $_->get_id) for values %$del_objs;
 	%$del_objs = ();
     }
@@ -192,7 +192,7 @@ sub save {
             INSERT INTO output_channel_include (id, output_channel__id,
                                                 include_oc_id)
             VALUES($next, ?, ?)
-        });
+        }, undef);
 
 	foreach my $new (@$new_objs) {
 	    execute($ins, $oc_id, $new->get_id);

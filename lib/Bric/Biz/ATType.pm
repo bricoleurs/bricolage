@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.15.4.2 $
+$Revision: 1.15.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.15.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:44 $
+$Date: 2003-08-14 22:04:06 $
 
 =head1 SYNOPSIS
 
@@ -917,7 +917,7 @@ sub remove {
     my $self = shift;
     my $id   = $self->get_id;
     return unless defined $id;
-    my $sth = prepare_c("DELETE FROM $TABLE WHERE id = ?");
+    my $sth = prepare_c("DELETE FROM $TABLE WHERE id = ?", undef);
     execute($sth, $id);
     return 1;
 }
@@ -1011,7 +1011,7 @@ sub _update_attype {
     my $sql = "UPDATE $TABLE SET " . join(',', map {"$_ = ?"} @COLS) .
       ' WHERE id = ?';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(@PROPS), $self->get_id);
     return 1;
 }
@@ -1054,7 +1054,7 @@ sub _insert_attype {
     my $sql = "INSERT INTO $TABLE (id," . join(', ', @COLS) . ") " .
               "VALUES ($nextval, " . join(', ', ('?') x @COLS) . ')';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(@PROPS));
 
     # Set the ID of this object.
