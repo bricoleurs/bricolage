@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.82 $
+$Revision: 1.83 $
 
 =head1 DATE
 
-$Date: 2003-01-21 03:29:41 $
+$Date: 2003-01-30 00:42:14 $
 
 =head1 DESCRIPTION
 
@@ -133,6 +133,11 @@ those who want to have it present all the time, see the next item.
 
 =item *
 
+Disallow the Find Stories and Find Media interfaces from searching for and
+returning all of the stories and media in the database. [David]
+
+=item *
+
 Add preference to make advanced search in Find Stories and/or Find Media the
 default search form when you go to those screens.
 
@@ -179,6 +184,13 @@ on a separarate machine.  Currently only a local database will work.
 
 =item *
 
+Modify C<< Grp->get_objects() >> to use use the C<grp_id> parameter to
+C<list()>, once support for that parameter has been added to all classes. Go
+through all the code and make sure that it uses this approach, rather than
+constructing the relevant objects one-at-a-time from each Member object.
+
+=item *
+
 Add browser-based UI for scheduled burning/syndication.
 
 =item *
@@ -197,16 +209,11 @@ character set.
 =item *
 
 Revamp the element system. See the proposed functional specification here:
-L<http://sourceforge.net/mailarchive/forum.php?thread_id=527051&forum_id=561>.
+L<http://bricolage.cc/docs/design/ElementRevision/>.
 
 =item *
 
 Add support for Instant messaging (using Jabber server) in Alerts.
-
-=item *
-
-Add a new preference to Bricolage to optinally allow assets to be transferred
-across workflows. The default will be for them not to.
 
 =item *
 
@@ -245,7 +252,7 @@ Add preference for Contributors to be automatically added to assets as keywords.
 
 =item *
 
-Create makefile for distribution engine only.
+Create Makefile for distribution engine only.
 
 =item *
 
@@ -261,11 +268,7 @@ Add HTML Cleaning Action.
 
 =item *
 
-Add HTML Checking Action.
-
-=item *
-
-Add Akamaization Action.
+Add HTML Validation Action.
 
 =item *
 
@@ -279,12 +282,12 @@ expand or narrow behavior.
 
 =item *
 
-Add command-line argument to bric_ftpd that will kill the currently-running
+Add command-line argument to F<bric_ftpd> that will kill the currently-running
 instance.
 
 =item *
 
-Add command-line argument to bric_dist_mon that will kill the
+Add command-line argument to F<bric_dist_mon> that will kill the
 currently-running instance.
 
 =item *
@@ -329,10 +332,10 @@ in and exploit such a field.
 
 =item *
 
-Add option code field to custom fields. This feature will allow a select list
-to offer as options the values returned from C<eval>ed perl expression, such
-as a DBI qeury to another database. Yes, this could be a security issue (a
-serious one!), but we put the onus on the Bricolage administrator to ensure
+Add optional code field to custom fields. This feature will allow a select
+list to offer as options the values returned from C<eval>ed perl expression,
+such as a DBI qeury to another database. Yes, this could be a security issue
+(a serious one!), but we put the onus on the Bricolage administrator to ensure
 that the people with access can't bollocks things up. We just have to make it
 difficult for people to hack in and exploit such a field.
 
@@ -369,11 +372,6 @@ associated with it, and then check that flag in the new asset profiles.
 
 Add a flag to the category object to indicate whether or not the category is
 allowed to have subcategories, and then check that flag in the category profile.
-
-=item *
-
-Allow some preferences to get new options entered by the users (e.g., for name
-and date formats).
 
 =item *
 
@@ -415,11 +413,6 @@ Add explicit directory (a.k.a. story index) support.
 
 =item *
 
-Have objects load their group IDs when they're selected in order to save time
-checking permissions.
-
-=item *
-
 Add an option to all C<list()> methods so that they can take an array of IDs
 and return all the objects with those IDs via the C<WHERE ID IN (...)> SQL
 syntax. Such queries shouldn't be prepared via C<prepare_cached()>, only via
@@ -428,13 +421,7 @@ every time.
 
 =item *
 
-When that last item is done, modify C<< Grp->get_objects() >> to use it! Go
-through all the code and make sure that it uses this approach, rather than
-constructing the relevant objects one-at-a-time from each Member object.
-
-=item *
-
-Add Group cloning so that a new group can start with the settings (including
+Add object so that a new group can start with the settings (including
 permissions) of an existing group.
 
 =item *
@@ -502,7 +489,7 @@ versions of an asset.
 
 =item *
 
-Integrate with CVS and/or Subversion.
+Integrate with Subversion.
 
 =item *
 
@@ -510,11 +497,13 @@ Integrate with WebDAV (Slide? mod_dav?).
 
 =item *
 
-Add full-text indexing of the database.
+Add full-text indexing of the database. See
+L<http://techdocs.postgresql.org/techdocs/fulltextindexing.php> for one
+approach using PostgreSQL.
 
 =item *
 
-Add strong type checking.
+Add stronger type checking.
 
 =item *
 
