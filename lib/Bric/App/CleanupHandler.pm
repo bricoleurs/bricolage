@@ -6,16 +6,16 @@ Bric::App::CleanupHandler - Cleans up at the end of a request.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-02-21 20:47:36 $
 
 =head1 SYNOPSIS
 
@@ -127,16 +127,21 @@ sub handler {
 	begin(1);
 	commit_events();
 	commit(1);
-
-	# Sync the user's session data.
-	Bric::App::Session::sync_user_session($r);
-	Bric::App::ReqCache->clear;
     };
     # Log any errors.
     if (my $err = $@) {
 	rollback();
 	$r->log->error($err);
     }
+
+    eval {
+	# Sync the user's session data.
+	Bric::App::Session::sync_user_session($r);
+	Bric::App::ReqCache->clear;
+    };
+    # If there's a problem with this (unlikely!), then we're hosed. Apache will
+    # hang and need to be rebooted.
+    $r->log->error($@) if $@;
     # Bail (this actually isn't required, but let's be consistent!).
     return OK;
 }
