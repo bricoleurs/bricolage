@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.16.2.4 $
+$Revision: 1.16.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 03:12:57 $
+$Date: 2002-03-12 02:39:38 $
 
 =head1 SYNOPSIS
 
@@ -1647,10 +1647,10 @@ sub _do_list {
     if (exists $param->{'user__id'}) {
 	push @where, 'f.usr__id=?', 'i.checked_out=?';
 	push @bind,  $param->{'user__id'}, 1;
-    } else {
-	push @where, 'i.checked_out=?';
-	push @bind,  0;
-    }
+    }# else {
+#	push @where, 'i.checked_out=?';
+#	push @bind,  0;
+#    }
 
     unless ($param->{'return_versions'}) {
 	push @where, 'f.current_version=i.version';
