@@ -1,13 +1,13 @@
 -- Project: Bricolage Business API
 -- File:    ServerType.tst
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-12 09:01:05 $
+-- $Date: 2003-03-12 18:36:39 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 DELETE FROM server_type;
 
-INSERT INTO server_type (id, class__id, name, description, site__id copyable, publish, preview, active)
+INSERT INTO server_type (id, class__id, name, description, site__id, copyable, publish, preview, active)
 VALUES (1, 12, 'Preview Server', 'Servers of this type handle previews.', 100, 0, 0, 1, 1);
 
 INSERT INTO member (id, grp__id, class__id, active)
@@ -16,7 +16,7 @@ VALUES (726, 29, 52, 1);
 INSERT INTO dest_member (id, object_id, member__id)
 VALUES (1, 1, 726); 
 
-INSERT INTO server_type (id, class__id, name, description, site__id copyable, publish, preview, active)
+INSERT INTO server_type (id, class__id, name, description, site__id, copyable, publish, preview, active)
 VALUES (2, 11, 'Production', 'These are production servers.', 100, 0, 1, 0, 1);
 
 INSERT INTO member (id, grp__id, class__id, active)
