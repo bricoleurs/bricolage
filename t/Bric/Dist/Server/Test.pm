@@ -19,7 +19,7 @@ sub test_const : Test(12) {
                  server_type_id => 1,
                };
 
-    ok ( my $server = Bric::Dist::Server->new($args), "Test construtor" );
+    ok ( my $server = Bric::Dist::Server->new({ %$args }), "Test construtor" );
     isa_ok($server, 'Bric::Dist::Server');
     isa_ok($server, 'Bric');
     ok( ! defined $server->get_id, 'Undefined ID' );
