@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-15 19:48:29 $
+$Date: 2002-07-15 19:50:41 $
 
 =head1 SYNOPSIS
 
@@ -1526,9 +1526,8 @@ NONE
 sub save {
     my $self = shift;
     my $id = $self->get_id;
-    my ($a_obj, $cat_obj, $kw_obj);
 
-    my ($dir, $a_obj, $cat_obj) =
+    my ($dir, $a_obj, $cat_obj, $ag_id) =
       $self->_get(qw(directory _asset_grp_obj _category_grp_obj));
 
 #    if (!$self->get_directory && $id != ROOT_CATEGORY_ID) {
@@ -1543,11 +1542,11 @@ sub save {
     # Save changes made to these objects if they exist.
     $cat_obj->save if $cat_obj;
     $a_obj->save   if $a_obj;
-#    $kw_obj->save  if $kw_obj;
 
     # Make sure the IDs are set.
     $self->_set(['category_grp_id'], [$cat_obj->get_id]) if $cat_obj;
-    $self->_set(['asset_grp_id'],    [$a_obj->get_id])   if $a_obj;
+    $self->_set(['asset_grp_id'], [$a_obj->get_id])
+      unless defined $ag_id || !$a_obj;
 
     # Save our category information
     if (defined $id) {
