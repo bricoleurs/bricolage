@@ -823,17 +823,10 @@ sub load_asset {
                 # new objects must be saved to have an id
                 $media->save;
 
-                # upload the file into the media object
-                $media->upload_file($fh, $filename);
-                $media->set_size($size);
+                # Upload the file into the media object; let it figure out the
+                # media type.
+                $media->upload_file($fh, $filename, undef, $size);
                 log_event('media_upload', $media);
-
-                # lookup MediaType by extension, if we have one
-                my ($ext) = $filename =~ /\.(.*)$/;
-                my $media_type;
-                $media_type = Bric::Util::MediaType->lookup({'ext' => $ext})
-                  if $ext;
-                $media->set_media_type_id($media_type ? $media_type->get_id : 0);
             } else {
                 # clear the media object by uploading an empty file - this
                 # is functionality that isn't actually supported by
