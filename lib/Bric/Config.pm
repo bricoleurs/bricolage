@@ -7,23 +7,28 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-28 18:29:11 $
+$Date: 2002-01-04 00:20:50 $
 
 =head1 SYNOPSIS
 
-use Config
+  # import all configuration constants
+  use Bric::Config qw(:all);
+
+  if (CONFIG_VARIABLE) { ... }
 
 =head1 DESCRIPTION
 
-Holds configuration constants for the publishing system.
+Provides access to configuration variables set in conf/bricolage.conf.
+See L<Bric::Admin|Bric::Admin> for the list of configuration variables
+and their use.
 
 =cut
 
@@ -532,6 +537,6 @@ NONE
 
 =head1 SEE ALSO
 
-L<perl>, L<DBC>
+L<Bric::Admin>
 
 =cut
