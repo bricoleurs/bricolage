@@ -47,7 +47,8 @@ Events are now properly logged for keywords managed in the keyword profile.
 
 =item *
 
-Added UI for managing organizations (which provide the base data for souces). [David]
+Added UI for managing organizations, which provide the base data for souces.
+[David]
 
 =back
 
@@ -68,6 +69,15 @@ The group profile works again for element groups [David]
 
 "Check In To" link misalignment fixed for Konqueror, as well as some other
 miscellaneous CSS fixes. [Marshall Roch]
+
+=item *
+
+The "CREATE" permission is now displayed when granting permission to user
+groups to access the members an "All" group. [David]
+
+=item *
+
+The "none" media type is no longer editable via the UI. [David]
 
 =back
 
@@ -138,8 +148,8 @@ password where it doesn't belong. [David]
 =item *
 
 When the "Filter by Site Context" preference is enabled, it no longer filters
-documents when searching for documents to alias. Reported by Patrick
-Walsh. [David]
+documents when searching for documents to alias. Reported by Patrick Walsh.
+[David]
 
 =item *
 
@@ -267,8 +277,8 @@ to deleted groups in the permissions interface. So it has been removed.
 
 =item *
 
-A "Bulk Publish" link in ADMIN->PUBLISHING that lets members of the Global
-Admins group publish story and media documents by category. [Scott]
+Added "Bulk Publish" feature in ADMIN->PUBLISHING that lets members of the
+Global Admins group publish story and media documents by category. [Scott]
 
 =item *
 
@@ -359,9 +369,9 @@ and media profiles. [Scott]
 
 =item *
 
-The element admin profile now automatically adds the currently selected site
-context to new elements, thus generally saving a step when creating new
-elements. [JoE<atilde>o Pedro]
+The element administration profile now automatically adds the currently
+selected site context to new elements, thus generally saving a step when
+creating new elements. [JoE<atilde>o Pedro]
 
 =item *
 
@@ -460,7 +470,7 @@ pixels, but are left alone. [David]
 
 =item *
 
-Thumbnails are now displayed when searching media to related to an element.
+Thumbnails are now displayed when searching media to relate to an element.
 [David]
 
 =item *
@@ -780,8 +790,8 @@ hasn't created them because there are no custom fields. [David]
 =item *
 
 In the formBuilder interface used by the Element and Contributor Type
-profiles, the maximum length of text and textarea fields is now "0", or
-unlimited. [David]
+profiles, the default maximum length of text and textarea fields is now "0",
+or unlimited. [David]
 
 =item *
 
@@ -1258,8 +1268,8 @@ sites) that the user does not have at least READ permission to access. [David]
 =item *
 
 The members of the "All" groups are prevented from being changed in the
-callbacks now, as well as in the interface, where JS had been preventing it.
-[David]
+callbacks now, as well as in the interface, where a JavaScript function had
+been preventing it. [David]
 
 =back
 
@@ -1446,7 +1456,7 @@ within an element. Also changed the "Display Name" to "Label" [Garth]
 
 =item *
 
-Added a "key word" attribute to elements as the system-wide unique key for
+Added a "key_name" attribute to elements as the system-wide unique key for
 each element, rather than the name. The name is now used as a label. Note that
 the key name only allows certain characters, as it is used to name the
 template files that format the element. This makes the C<has_name()> method a
@@ -1536,7 +1546,7 @@ the default search when you go to those screens. [Scott]
 
 =item *
 
-Added "Check all" button to select all the checkboxes on publish desks or My
+Added "Select all" button to select all the checkboxes on publish desks or My
 Workspace. [Scott]
 
 =item *
