@@ -7,15 +7,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-05-16 00:04:29 $
 
 =head1 SYNOPSIS
 
@@ -122,13 +122,18 @@ BEGIN {
 
 =over 4
 
-=item $org = Bric::Util::Coll->new($params)
+=item my $coll = Bric::Util::Coll->new($params)
 
-Instanticates a new collection by calling the href() method of the class managed
-by the collection. The class name must be identified by the class_name() method
-of Bric::Util::Coll subclasses. That class must have an href() class method that
-works like the list() method, but returns an anonymous hash instead of a list,
-where the hash keys are the object IDs.
+Instanticates a new collection. When data is required from the database, the
+collection object will call the href() method of the class managed by the
+collection (as defined by the class_name() method of the Bric::Util::Coll
+subclasses), passing in the $params hash reference as an argument. If
+$params is not defined, no data will be retreived from the database.
+
+The class name identified by the class_name() method of Bric::Util::Coll
+subclasses must must have an href() class method that works like the list()
+method, but returns an anonymous hash instead of a list, where the hash keys
+uniquely identify the objects returned (usually IDs).
 
 B<Throws:>
 
@@ -153,6 +158,7 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $params) = @_;
     my $self = bless {}, ref $pkg || $pkg;
+    $params ||= 'populated';
     $self->SUPER::new({ objs => {}, params => $params,
 			new_obj => [], del_obj => [] });
 }

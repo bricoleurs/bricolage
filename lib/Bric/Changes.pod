@@ -64,6 +64,14 @@ slowly by executing a bad database query. [Sam]
 
 =item *
 
+Related to the last item, fixed a bug in Bric::Util::Coll that would call
+the href() method on a class and pass in undefined values as parameters.
+This will happen if a collection is created for a new object that does not
+yet have an ID. The fix thus prevents the "= NULL" SQL syntax, which always
+matches nothing. [David]
+
+=item *
+
 Fixed bug where the root category wasn't able to be added to a category
 group. Actually, this fixes a problem where any object with an id of 0
 couldn't be added to a group. Thanks to Mark for the spot. [David]

@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-29 22:58:48 $
+$Date: 2002-05-16 00:04:29 $
 
 =head1 SYNOPSIS
 
@@ -596,7 +596,13 @@ sub publish {
 					   output_channel_id => $ocid });
         # Make sure we have some destinations.
         unless (@$bat) {
-            $die_err ? die "Cannot publish asset &quot;" . $ba->get_name . "&quot; because there are no Destinations associated with its output channels." : add_msg("Cannot publish asset &quot;" . $ba->get_name . "&quot; because there are no Destinations associated with its output channels.");
+            $die_err
+	      ? die "Cannot publish asset &quot;" . $ba->get_name
+	      . "&quot; because there are no Destinations associated with "
+	      . "its output channels."
+	      : add_msg("Cannot publish asset &quot;" . $ba->get_name
+			. "&quot; because there are no Destinations associated "
+			. "with its output channels.");
 	    next;
         }
 	# Force the list of server types into a hash so that they're unique
