@@ -90,7 +90,7 @@ sub save : Callback {
         } else {
             # It's an existing desk. Check to see if we're removing any desks.
             if ($param->{remove_desk}) {
-                # Dissocidate any desks, as necessary.
+                # Dissociate any desks, as necessary.
                 my %desks = map { $_->get_id => $_ } $wf->allowed_desks;
                 my $rem_desks = mk_aref($param->{remove_desk});
                 foreach my $did (@$rem_desks) {
