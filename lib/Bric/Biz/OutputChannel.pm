@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-22 05:36:03 $
+$Date: 2003-01-24 06:50:13 $
 
 =head1 SYNOPSIS
 
@@ -52,7 +52,7 @@ $Date: 2003-01-22 05:36:03 $
   $oc->use_slug_off;
 
   # Output Channel Includes instance methods.
-  my @ocs = >$oc->get_includes(@ocs);
+  my @ocs = $oc->get_includes(@ocs);
   $oc->set_includes(@ocs);
   $oc->add_includes(@ocs);
   $oc->del_includes(@ocs);
@@ -106,21 +106,6 @@ my ($get_inc, $parse_uri_format);
 #======================================#
 
 use constant DEBUG => 0;
-
-use constant TABLE => 'output_channel';
-use constant FIELDS => qw(name description pre_path post_path primary filename
-                          file_ext uri_format fixed_uri_format uri_case
-                          _use_slug _active);
-use constant COLS => qw(name description pre_path post_path primary_ce filename
-                        file_ext uri_format fixed_uri_format uri_case use_slug
-                        active);
-use constant SEL_COLS => qw(oc.name oc.description oc.pre_path oc.post_path
-                            oc.primary_ce oc.filename oc.file_ext oc.uri_format
-                            oc.fixed_uri_format oc.uri_case oc.use_slug
-                            oc.active);
-use constant ORD => qw(name description pre_path post_path filename file_ext
-                       uri_format fixed_uri_format uri_case use_slug active);
-
 use constant INSTANCE_GROUP_ID => 23;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::OutputChannel';
 
@@ -141,41 +126,42 @@ use constant DEFAULT_USE_SLUG => 0;
 
 #--------------------------------------#
 # Public Class Fields
-
 # None.
 
 #--------------------------------------#
 # Private Class Fields
-my $meths;
+my $METHS;
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $dp  = 'Bric::Util::Fault::Exception::DP';
 
+my $TABLE = 'output_channel';
+my $SEL_TABLES = "$TABLE oc, member m, output_channel_member sm";
+my $SEL_WHERES = 'oc.id = sm.object_id AND sm.member__id = m.id';
+my $SEL_ORDER = 'oc.name, oc.id';
 
-my %bool_map = ( active  => 'oc.active = ?',
-                 use_slug => 'oc.use_slug = ?',
-);
+my @COLS = qw(name description pre_path post_path primary_ce filename
+              file_ext uri_format fixed_uri_format uri_case use_slug active);
 
-my %txt_map = ( name            => 'LOWER(oc.name) LIKE ?',
-                description      => 'LOWER(oc.description) LIKE ?',
-                pre_path         => 'LOWER(oc.pre_path) LIKE ?',
-                post_path        => 'LOWER(oc.post_path) LIKE ?',
-                uri_format       => 'LOWER(oc.uri_format) LIKE ?',
-                fixed_uri_format => 'LOWER(oc.fixed_uri_format) LIKE ?',
-);
-my %num_map = ( primary          => 'oc.primary_ce = ?',
-                id                => 'oc.id = ?',
-                uri_case          => 'oc.uri_case = ?',
-                server_type_id    => 'oc.id IN (SELECT output_channel__id '
-                                     . 'FROM server_type__output_channel '
-                                     . 'WHERE server_type__id = ?)',
-                media_instance_id => 'oc.id IN (SELECT output_channel__id '
-                                     . 'FROM media__output_channel '
-                                     . 'WHERE media_instance__id = ?)',
-                story_instance_id => 'oc.id IN (SELECT output_channel__id '
-                                     . 'FROM story__output_channel '
-                                     . 'WHERE story_instance__id = ?)',
-                include_parent_id => 'inc.output_channel__id = ?'
-);
+my @PROPS = qw(name description pre_path post_path primary filename file_ext
+               uri_format fixed_uri_format uri_case _use_slug _active);
+
+my $SEL_COLS = 'oc.id, oc.name, oc.description, oc.pre_path, oc.post_path, ' .
+  'oc.primary_ce, oc.filename, oc.file_ext, oc.uri_format, ' .
+  'oc.fixed_uri_format, oc.uri_case, oc.use_slug, oc.active, m.grp__id';
+my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
+
+my @ORD = qw(name description pre_path post_path filename file_ext  uri_format
+             fixed_uri_format uri_case use_slug active);
+my $GRP_ID_IDX = $#SEL_PROPS;
+
+# These are provided for the OutputChannel::Element subclass to take
+# advantage of.
+sub SEL_PROPS { @SEL_PROPS }
+sub SEL_COLS { $SEL_COLS }
+sub SEL_TABLES { $SEL_TABLES }
+sub SEL_WHERES { $SEL_WHERES }
+sub SEL_ORDER { $SEL_ORDER }
+sub GRP_ID_IDX { $GRP_ID_IDX }
 
 #--------------------------------------#
 # Instance Fields
@@ -186,17 +172,16 @@ BEGIN {
       {
        # Public Fields
        # The human readable name field
-       'name'           => Bric::FIELD_RDWR,
+       'name'                  => Bric::FIELD_RDWR,
 
        # The human readable description field
-       'description'    => Bric::FIELD_RDWR,
+       'description'           => Bric::FIELD_RDWR,
 
-       # might want to be write since if it changes
-       # it will fuck alot up
-       'pre_path'               => Bric::FIELD_RDWR,
+       # Path to insert at the beginning of URIs.
+       'pre_path'              => Bric::FIELD_RDWR,
 
-       # same as prepath
-       'post_path'              => Bric::FIELD_RDWR,
+       # Path to insert at the end of URIs.
+       'post_path'             => Bric::FIELD_RDWR,
 
        # These will be used to construct file names
        # for content files burned to the Output Channel.
@@ -211,18 +196,21 @@ BEGIN {
 
        # the flag as to wheather this is a primary
        # output channel
-       'primary'                => Bric::FIELD_RDWR,
+       'primary'               => Bric::FIELD_RDWR,
 
        # The data base id
-       'id'           => Bric::FIELD_READ,
+       'id'                   => Bric::FIELD_READ,
+
+       # Group IDs.
+       'grp_ids'               => Bric::FIELD_READ,
 
        # Private Fileds
        # The active flag
-       '_active'                => Bric::FIELD_NONE,
+       '_active'               => Bric::FIELD_NONE,
 
        # Storage for includes list of OCs.
-       '_includes'              => Bric::FIELD_NONE,
-       '_include_id'            => Bric::FIELD_NONE,
+       '_includes'             => Bric::FIELD_NONE,
+       '_include_id'           => Bric::FIELD_NONE,
       });
 }
 
@@ -230,18 +218,11 @@ BEGIN {
 ## Interface Methods                   #
 #======================================#
 
-=head1 INTERFACE
+=head1 PUBLIC INTERFACE
 
-=head2 Public Methods
+=head2 Public Constructors
 
 =over 4
-
-=cut
-
-#--------------------------------------#
-# Constructors
-
-#------------------------------------------------------------------------------#
 
 =item $oc = Bric::Biz::OutputChannel->new( $initial_state )
 
@@ -719,11 +700,11 @@ sub my_meths {
     my ($pkg, $ord) = @_;
 
     # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{&ORD} : [@{$meths}{&ORD}]
-      if $meths;
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}]
+      if $METHS;
 
     # We don't got 'em. So get 'em!
-    $meths = {
+    $METHS = {
               name        => {
                                name     => 'name',
                               get_meth => sub { shift->get_name(@_) },
@@ -889,7 +870,7 @@ sub my_meths {
                              props    => { type => 'checkbox' }
                             },
              };
-    return !$ord ? $meths : wantarray ? @{$meths}{&ORD} : [@{$meths}{&ORD}];
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
 }
 
 #--------------------------------------#
@@ -1275,6 +1256,8 @@ sub get_includes {
     return $inc->get_objs(@_);
 }
 
+##############################################################################
+
 =item $job = $job->add_includes(@ocs)
 
 Adds Output Channels to this to the include list for this Output Channel. Output
@@ -1369,6 +1352,8 @@ B<Notes:> NONE.
 
 =cut
 
+##############################################################################
+
 sub del_includes {
     my $self = shift;
     my $inc = &$get_inc($self);
@@ -1407,6 +1392,8 @@ sub set_includes {
     $self->_set__dirty(1);
 }
 
+##############################################################################
+
 =item $self = $oc->activate
 
 Activates the Bric::Biz::OutputChannel object. Call $oc->save to make the change
@@ -1423,6 +1410,8 @@ B<Notes:> NONE.
 
 sub activate { $_[0]->_set({_active => 1 }) }
 
+##############################################################################
+
 =item $self = $oc->deactivate
 
 Deactivates (deletes) the Bric::Biz::OutputChannel object. Call $oc->save to
@@ -1438,6 +1427,8 @@ B<Notes:> NONE.
 
 sub deactivate { $_[0]->_set({_active => 0 }) }
 
+##############################################################################
+
 =item $self = $oc->is_active
 
 Returns $self (true) if the Bric::Biz::OutputChannel object is active, and undef
@@ -1452,6 +1443,8 @@ B<Notes:> NONE.
 =cut
 
 sub is_active { $_[0]->_get('_active') ? $_[0] : undef }
+
+##############################################################################
 
 =item $self = $oc->save
 
@@ -1500,25 +1493,18 @@ B<Notes:> NONE.
 
 sub save {
     my ($self) = @_;
-    return $self unless $self->_get__dirty();
+    return $self unless $self->_get__dirty;
     my ($id, $inc) = $self->_get('id', '_includes');
     defined $id ? $self->_do_update($id) : $self->_do_insert;
     $inc->save($id) if $inc;
     $self->SUPER::save();
 }
 
-
-#==============================================================================
-## Private Methods                     #
-#======================================#
+##############################################################################
 
 =back
 
 =head1 PRIVATE
-
-=cut
-
-#--------------------------------------#
 
 =head2 Private Class Methods
 
@@ -1562,75 +1548,139 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+my %bool_map = ( active  => 'oc.active = ?',
+                 use_slug => 'oc.use_slug = ?',
+);
+
+my %txt_map = ( name            => 'LOWER(oc.name) LIKE ?',
+                description      => 'LOWER(oc.description) LIKE ?',
+                pre_path         => 'LOWER(oc.pre_path) LIKE ?',
+                post_path        => 'LOWER(oc.post_path) LIKE ?',
+                uri_format       => 'LOWER(oc.uri_format) LIKE ?',
+                fixed_uri_format => 'LOWER(oc.fixed_uri_format) LIKE ?',
+);
+my %num_map = ( primary          => 'oc.primary_ce = ?',
+                id                => 'oc.id = ?',
+                uri_case          => 'oc.uri_case = ?',
+                server_type_id    => 'oc.id IN (SELECT output_channel__id '
+                                     . 'FROM server_type__output_channel '
+                                     . 'WHERE server_type__id = ?)',
+                media_instance_id => 'oc.id IN (SELECT output_channel__id '
+                                     . 'FROM media__output_channel '
+                                     . 'WHERE media_instance__id = ?)',
+                story_instance_id => 'oc.id IN (SELECT output_channel__id '
+                                     . 'FROM story__output_channel '
+                                     . 'WHERE story_instance__id = ?)',
+                include_parent_id => 'inc.output_channel__id = ?'
+);
+
 =cut
 
 sub _do_list {
-    my ($class, $params, $ids, $href) = @_;
-    $class = ref $class || $class;
-    my (@wheres, @params);
-
+    my ($pkg, $params, $ids, $href) = @_;
+    my $tables = $SEL_TABLES;
+    my $wheres = $SEL_WHERES;
+    my @params;
     while (my ($k, $v) = each %$params) {
-        if ($txt_map{$k}) {
-            push @wheres, $txt_map{$k};
-            push @params, lc $v;
-        } elsif ($num_map{$k}) {
-            push @wheres, $num_map{$k};
+        if ($k eq 'id' or $k eq 'uri_case') {
+            # Simple numeric comparison.
+            $wheres .= " AND oc.$k = ?";
             push @params, $v;
-        } elsif ($bool_map{$k}) {
-            push @wheres, $bool_map{$k};
+        } elsif ($k eq 'primary') {
+            # Simple numeric comparison.
+            $wheres .= " AND oc.primary_ce = ?";
+            push @params, $v;
+        } elsif ($k eq 'active' or $k eq 'use_slug') {
+            # Simple boolean comparison.
+            $wheres .= " AND oc.$k = ?";
             push @params, $v ? 1 : 0;
-        } elsif ($k eq 'all') {
-            push @wheres, 'active = ?';
-            push @params, 1;
+        } elsif ($k eq 'grp_id') {
+            # Add in the group tables a second time and join to them.
+            $tables .= ", member m2, output_channel_member c2";
+            $wheres .= " AND oc.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.grp__id = ?";
+            push @params, $v;
+        } elsif ($k eq 'include_parent_id') {
+            # Include the parent ID.
+            $tables .= ', output_channel_include inc';
+            $wheres .= ' AND oc.id = inc.include_oc_id ' .
+              'AND inc.output_channel__id = ?';
+            push @params, $v;
+        } elsif ($k eq 'server_type_id') {
+            # Join in the server_type__output_channel table.
+            $tables .= ', server_type__output_channel stoc';
+            $wheres .= ' AND oc.id = stoc.output_channel__id ' .
+              'AND stoc.server_type__id = ?';
+            push @params, $v;
+        } elsif ($k eq 'story_instance_id') {
+            # Join in the story__output_channel table.
+            $tables .= ', story__output_channel soc';
+            $wheres .= ' AND oc.id = soc.output_channel__id ' .
+              'AND soc.story_instance__id = ?';
+            push @params, $v;
+        } elsif ($k eq 'media_instance_id') {
+            # Join in the media__output_channel table.
+            $tables .= ', media__output_channel moc';
+            $wheres .= ' AND oc.id = moc.output_channel__id ' .
+              'AND moc.media_instance__id = ?';
+            push @params, $v;
+        } elsif ($k eq 'include_parent_id') {
+            $wheres .= ' AND inc.output_channel__id = ?';
+            push @params, $v;
         } else {
-            $dp->new({ msg => "Invalid property argument '$k'." });
+            # Simple string comparison!
+            $wheres .= " AND LOWER(oc.$k) LIKE ?";
+            push @params, lc $v;
         }
     }
 
-    local $" = ' AND ';
-    my $where = @wheres ? "WHERE  @wheres" : '';
-    my ($order, $join, $fields, $qry_cols) = ('ORDER BY name', '', ['id', FIELDS]);
-    if (defined $params->{include_parent_id}) {
-        $order = '';
-        $join = ', output_channel_include inc';
-        $where .= ' AND oc.id = inc.include_oc_id';
-        $qry_cols = $ids ? ['oc.id'] : ['oc.id', SEL_COLS, 'inc.id'];
-        push @$fields, '_include_id';
-    } else {
-        $qry_cols = $ids ? ['oc.id'] : ['oc.id', SEL_COLS];
-    }
+    my ($order, $props, $qry_cols) = ($SEL_ORDER, \@SEL_PROPS, \$SEL_COLS);
+    if ($ids) {
+        $qry_cols = \'oc.id';
+        $order = 'oc.id';
+    } elsif ($params->{include_parent_id}) {
+        $qry_cols = \"$SEL_COLS, inc.id";
+        $props = [@SEL_PROPS, '_include_id'];
+    } # Else nothing!
 
     # Assemble and prepare the query.
-    $" = ', ';
     my $sel = prepare_c(qq{
-        SELECT @$qry_cols
-        FROM   ${ \TABLE() } oc$join
-        $where
-        $order
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
     }, undef, DEBUG);
 
-    if ( $ids ) {
-        # called from list_ids give em what they want
-        my $return = col_aref($sel, @params);
-        return wantarray ? @{ $return } : $return;
-    } else { # end if ids
-        # this must have been called from list so give objects
-        my (@d, @objs, %objs);
-        execute($sel, @params);
-        bind_columns($sel, \@d[0 .. (scalar $#$qry_cols)]);
-        while (my $row = fetch($sel) ) {
-            my $self = bless {}, $class;
-            $self->SUPER::new();
-            $self->_set( $fields, \@d);
-            $href ? $objs{$d[0]} = $self : push @objs, $self;
+    # Just return the IDs, if they're what's wanted.
+    return wantarray ? @{ col_aref($sel, @params) } : col_aref($sel, @params)
+      if $ids;
+
+    # Grab all the records.
+    execute($sel, @params);
+    my (@d, @ocs, %ocs, $grp_ids);
+    bind_columns($sel, \@d[0..$#$props]);
+    my $last = -1;
+    $pkg = ref $pkg || $pkg;
+    while (fetch($sel)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new server type object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$GRP_ID_IDX] = [$d[$GRP_ID_IDX]];
+            $self->_set($props, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            $href ? $ocs{$d[0]} = $self : push @ocs, $self
+        } else {
+            push @$grp_ids, $d[$GRP_ID_IDX];
         }
-        return \%objs if $href;
-        return wantarray ? @objs : \@objs;
     }
+    # Return the objects.
+    return $href ? \%ocs : wantarray ? @ocs : \@ocs;
 }
 
-
-#--------------------------------------#
+##############################################################################
 
 =back
 
@@ -1686,13 +1736,15 @@ sub _do_update {
     my ($self, $id) = @_;
     local $" = ' = ?, '; # Simple way to create placeholders with an array.
     my $upd = prepare_c(qq{
-        UPDATE ${ \TABLE() }
-        SET    @{ [COLS] } = ?
+        UPDATE $TABLE
+        SET    @COLS = ?
         WHERE  id = ?
     });
-    execute($upd, $self->_get(FIELDS), $id);
+    execute($upd, $self->_get(@PROPS), $id);
     return $self;
 }
+
+##############################################################################
 
 =item _do_insert
 
@@ -1742,16 +1794,18 @@ sub _do_insert {
     my ($self) = @_;
 
     local $" = ', ';
-    my $fields = join ', ', next_key('output_channel'), ('?') x COLS;
+    my $fields = join ', ', next_key('output_channel'), ('?') x @COLS;
     my $ins = prepare_c(qq{
-        INSERT INTO output_channel (id, @{[COLS()]})
+        INSERT INTO output_channel (id, @COLS)
         VALUES ($fields)
     }, undef, DEBUG);
-    execute($ins, $self->_get( FIELDS ) );
-    $self->_set( { 'id' => last_key(TABLE) } );
+    execute($ins, $self->_get( @PROPS ) );
+    $self->_set( { 'id' => last_key($TABLE) } );
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     return $self;
 }
+
+##############################################################################
 
 =back
 

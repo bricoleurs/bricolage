@@ -18,7 +18,7 @@ sub class { 'Bric::Biz::Asset::Business' }
 sub new_args {
     my $self = shift;
     ( element       => $self->get_elem,
-      user__id      => 1,
+      user__id      => $self->user_id,
       source__id    => 1,
       primary_oc_id => 1
     )
@@ -52,7 +52,7 @@ sub test_oc : Test(36) {
     # Save the asset object.
     ok( $ba->save, "Save ST" );
     ok( my $baid = $ba->get_id, "Get ST ID" );
-    $self->add_del_ids([$baid], $key);
+    $self->add_del_ids($baid, $key);
 
     # Grab the element's first OC.
     ok( my $oc = $eocs[0], "Grab the first OC" );
@@ -85,7 +85,7 @@ sub test_oc : Test(36) {
     # with the new version.
     ok( $ba->checkin, "Checkin asset" );
     ok( $ba->save, "Save new version" );
-    ok( $ba->checkout({ user__id => 1 }), "Checkout new version" );
+    ok( $ba->checkout({ user__id => $self->user_id }), "Checkout new version" );
     ok( $ba->save, "Save new version" );
     ok( my $version = $ba->get_version, "Get Version number" );
     ok( $ba = $class->lookup({ id => $baid }), "Lookup new version of $key" );
@@ -116,7 +116,8 @@ sub test_primary_oc_id : Test(8) {
     is( $ba->get_primary_oc_id, 1, "Check primary OC ID" );
 
     # Try list().
-    ok( my @bas = $class->list({ primary_oc_id => 1, user__id => 1 }),
+    ok( my @bas = $class->list({ primary_oc_id => 1,
+                                 user__id => $self->user_id }),
         "Get asset list" );
     is( scalar @bas, 1, "Check for one asset" );
     is( $bas[0]->get_primary_oc_id, 1, "Check for OC ID 1" );

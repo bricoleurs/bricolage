@@ -3,16 +3,31 @@ use strict;
 use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
-use Bric::Biz::OutputChannel;
+use Bric::Biz::OutputChannel qw(:case_constants);
+use Bric::Dist::ServerType;
 
 sub table { 'output_channel' }
+
+my %oc = ( name => 'Bogus',
+           description => 'Bogus OC',
+         );
+my $web_oc_id = 1;
+
+##############################################################################
+# Clean out possible test values from OutputChannel.tst. We can delete this if
+# we ever delete the .tst files.
+##############################################################################
+sub _clean_test_vals : Test(0) {
+    my $self = shift;
+    $self->add_del_ids([2, 3, 4]);
+}
 
 ##############################################################################
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
 sub test_lookup : Test(14) {
-    ok( my $oc = Bric::Biz::OutputChannel->lookup({ id => 1}),
+    ok( my $oc = Bric::Biz::OutputChannel->lookup({ id => $web_oc_id}),
         "Lookup Web OC" );
 
     # Make sure it's a good OC.
@@ -38,49 +53,154 @@ sub test_lookup : Test(14) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(30) {
+sub test_list : Test(71) {
+    my $self = shift;
+    # Create a new output channel group.
+    ok( my $grp = Bric::Util::Grp::OutputChannel->new
+        ({ name => 'Test OC Grp' }), "Create group" );
+
+    # Look up the default "Web" group.
+    ok( my $web_oc = Bric::Biz::OutputChannel->lookup({ id => $web_oc_id}),
+        "Look up web OC" );
+
+    # Construct a server type.
+    ok( my $st = Bric::Dist::ServerType->new({ name => 'Bogus',
+                                               move_method => 'FTP' }),
+        "Create server type" );
+
+    my $alt_format = '/year/month/categories/day/slug/';
+    # Create some test records.
+    for my $n (1..5) {
+        my %args = %oc;
+        # Make sure the name is unique.
+        $args{name} .= $n;
+        if ($n % 2) {
+            # There'll be three of these.
+            $args{description} .= $n;
+            $args{uri_case} = UPPERCASE;
+            $args{uri_format} = $alt_format;
+            $args{use_slug} = 1;
+            $args{pre_path} = 'foo';
+            $args{primary} = 1;
+        } else {
+            # And two of these.
+            $args{file_name} = 'home';
+            $args{file_ext} = '.pl';
+            $args{fixed_uri_format} = $alt_format;
+            $args{post_path} = 'bar';
+        }
+        ok( my $oc = Bric::Biz::OutputChannel->new(\%args),
+            "Create $args{name}" );
+        # Add three of them as includes in the web OC.
+        $web_oc->add_includes($oc) if $n % 2;
+        ok( $oc->save, "Save $args{name}" );
+        # Save the ID for deleting.
+        $self->add_del_ids($oc->get_id);
+        $grp->add_member({ obj => $oc }) if $n % 2;
+        # Add three two of them to the server type.
+        $st->add_output_channels($oc) unless $n % 2;
+    }
+
+    # Save the group.
+    ok( $grp->save, "Save group" );
+    ok( my $grp_id = $grp->get_id, "Get group ID" );
+    $self->add_del_ids($grp_id, 'grp');
+
+    # Save the server type.
+    ok( $st->save, "Save server type" );
+    ok( my $st_id = $st->get_id, "Get server type ID" );
+    $self->add_del_ids($st->get_id, 'server_type');
+
+    # Save the web output channel.
+    ok( $web_oc->save, "Save web OC" );
+
     # Start with the "name" attribute.
     ok(my @ocs = Bric::Biz::OutputChannel->list({ name => 'Web'}),
        "List name 'Web'" );
-    is($#ocs, 0, "Check name number");
+    is(scalar @ocs, 1, "Check name number = 1");
     is($ocs[0]->get_name, 'Web', "Check name 'Web'" );
-    ok(@ocs = Bric::Biz::OutputChannel->list({ name => 'we%'}),
-       "List name 'We%'" );
-    is($#ocs, 0, "Check wildcard name number");
-    is($ocs[0]->get_name, 'Web', "Check wildcard name 'Web'" );
     @ocs = Bric::Biz::OutputChannel->list({ name => 'foo'});
     ok(!@ocs, "List name 'foo' has no results");
+
+    # Try name + wildcard.
+    ok( @ocs = Bric::Biz::OutputChannel->list({ name => "$oc{name}%" }),
+        "Look up name $oc{name}%" );
+    is( scalar @ocs, 5, "Check for 5 output channels" );
 
     # Try the "description" attribute.
     ok(@ocs = Bric::Biz::OutputChannel->list
        ({ description => 'Output to the web'}),
        "List desc 'Output to the web'" );
-    is($#ocs, 0, "Check desc number");
+    is(scalar @ocs, 1, "Check desc number");
     is($ocs[0]->get_description, 'Output to the web',
        "Check desc 'Output to the web'" );
-    ok(@ocs = Bric::Biz::OutputChannel->list({ description => '%web'}),
-       "List desc '%web'" );
-    is($#ocs, 0, "Check wildcard desc number");
-    is($ocs[0]->get_description, 'Output to the web',
-       "Check wildcard desc 'Output to the web'" );
     @ocs = Bric::Biz::OutputChannel->list({ description => 'foo'});
     ok(!@ocs, "List desc 'foo' has no results");
+
+    # Try description again.
+    ok( @ocs = Bric::Biz::OutputChannel->list
+        ({ description => $oc{description} }),
+        "Look up description '$oc{description}'" );
+    is( scalar @ocs, 2, "Check for 2 output channels" );
+
+    # Try description with wild card.
+    ok( @ocs = Bric::Biz::OutputChannel->list
+        ({ description => "$oc{description}%" }),
+        "Look up description '$oc{description}%'" );
+    is( scalar @ocs, 5, "Check for 5 output channels" );
+
+    # Try pre_path.
+    ok( @ocs = Bric::Biz::OutputChannel->list({ pre_path => 'foo'}),
+        "Look up pre_path 'foo'" );
+    is( scalar @ocs, 3, "Check for 3 output channels" );
+
+    # Try post_path.
+    ok( @ocs = Bric::Biz::OutputChannel->list({ post_path => 'bar'}),
+        "Look up post_path 'bar'" );
+    is( scalar @ocs, 2, "Check for 2 output channels" );
 
     # Try "primary".
     ok( @ocs = Bric::Biz::OutputChannel->list({ primary => 1 }),
         "Try primary 1" );
-    is($#ocs, 0, "Check primary number");
+    is(scalar @ocs, 4, "Check primary number");
     is( $ocs[0]->get_primary, 1, "Check primary is 1" );
 
-    # Try server_type_id.
+    # Try grp_id.
+    ok( @ocs = Bric::Biz::OutputChannel->list({ grp_id => $grp_id }),
+        "Look up grp_id $grp_id" );
+    is( scalar @ocs, 3, "Check for 3 output channels" );
 
-    # Try includ_parent_id.
+    # Make sure we've got all the Group IDs we think we should have.
+    my $all_grp_id = Bric::Biz::OutputChannel::INSTANCE_GROUP_ID;
+    foreach my $dest (@ocs) {
+        my %grp_ids = map { $_ => 1 } $dest->get_grp_ids;
+        ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
+          "Check for both IDs" );
+    }
+
+    # Try include_parent_id.
+    ok( @ocs = Bric::Biz::OutputChannel->list
+        ({ include_parent_id => $web_oc_id }),
+        "Look up with parent ID $web_oc_id" );
+    is( scalar @ocs, 3, "Check for 3 output channels" );
+
+    # Try server_type_id.
+    ok( @ocs = Bric::Biz::OutputChannel->list({ server_type_id => $st_id }),
+        "Look up with server_type_id $st_id" );
+    is( scalar @ocs, 2, "Check for 2 output channels" );
+
+    # story_instance_id and media_instance_id are actually tested by
+    # Bric::Biz::Asset::Business::Story::DevTes and
+    # Bric::Biz::Asset::Business::Media::DevTest.
 
     # Try uri_format.
-    ok( @ocs = Bric::Biz::OutputChannel->list
-        ({ uri_format => '/cate%' }), "Try uri_format '/cate%'" );
+    ok( @ocs = Bric::Biz::OutputChannel->list({ uri_format => '/cate%' }),
+        "Try uri_format '/cate%'" );
     is( $ocs[0]->get_uri_format, '/categories/year/month/day/slug/',
           "Check uri_format" );
+    ok( @ocs = Bric::Biz::OutputChannel->list({ uri_format => $alt_format }),
+        "Try uri_format '$alt_format'" );
+    is( scalar @ocs, 3, "Check for 3 output channels" );
 
     # Try fixed_uri_format.
     ok( @ocs = Bric::Biz::OutputChannel->list
@@ -88,28 +208,36 @@ sub test_list : Test(30) {
         "Try fixed_uri_format '/cate%'" );
     is( $ocs[0]->get_fixed_uri_format, '/categories/',
           "Check fixed_uri_format" );
+    ok( @ocs = Bric::Biz::OutputChannel->list
+        ({ fixed_uri_format => $alt_format }),
+        "Try fixed_uri_format '$alt_format'" );
+    is( scalar @ocs, 2, "Check for 2 output channels" );
 
     # Try uri_case.
-    ok( @ocs = Bric::Biz::OutputChannel->list
-        ({ uri_case => Bric::Biz::OutputChannel::MIXEDCASE() }),
+    ok( @ocs = Bric::Biz::OutputChannel->list({ uri_case => MIXEDCASE }),
         "Try uri_case mixed" );
-    is( $ocs[0]->get_uri_case, Bric::Biz::OutputChannel::MIXEDCASE(),
-        "Check uri_case mixed" );
-    @ocs = Bric::Biz::OutputChannel->list
-      ({ uri_case => Bric::Biz::OutputChannel::LOWERCASE() });
+    is( $ocs[0]->get_uri_case, MIXEDCASE, "Check uri_case mixed" );
+    is( scalar @ocs, 3, "Check for 3 output channels" );
+    @ocs = Bric::Biz::OutputChannel->list({ uri_case => LOWERCASE });
     ok(!@ocs, "List uri_case lower has no results");
+    ok( @ocs = Bric::Biz::OutputChannel->list({ uri_case => UPPERCASE }),
+        "Try user_case upper" );
+    is(scalar @ocs, 3, "List uri_case upper has 3 results");
 
     # Try use_slug.
     ok( @ocs = Bric::Biz::OutputChannel->list({ use_slug => 0 }),
         "Try use_slug 0" );
     ok( ! $ocs[0]->can_use_slug, "Can't use slug" );
-    @ocs = Bric::Biz::OutputChannel->list({ use_slug => 1 });
-    ok(!@ocs, "List use_slug 1 has no results");
+    is( scalar @ocs, 3, "Check for 3 output channels" );
+    ok( @ocs = Bric::Biz::OutputChannel->list({ use_slug => 1 }),
+        "Try use_slug 1" );
+    is( scalar @ocs, 3, "Check for 3 output channels" );
 
     # Try active.
     ok( @ocs = Bric::Biz::OutputChannel->list({ active => 1 }),
         "Try active 1" );
     ok( $ocs[0]->is_active, "Yes, is_active" );
+    is( scalar @ocs, 6, "Check for 6 output channels" );
     @ocs = Bric::Biz::OutputChannel->list({ active => 0 });
     ok(!@ocs, "List active 0 has no results");
 }

@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-17 01:37:30 $
+$Date: 2003-01-24 06:50:15 $
 
 =head1 SYNOPSIS
 
@@ -45,28 +45,17 @@ its subclasses get all of its benefits.
 
 Bric::Test::Base inherits from L<Test::Class|Test::Class>, and therefore the
 entire interface of that class is available to Bric::Test::Base and its
-subclasses. No methods have been added, but they might be later -- the sort of
-thing that might be desireable to do with every test class.
+subclasses. It offers methods generally useful throughout the testing classes.
 
-The one thing that this class I<does> do is set the C<BRIC_TEMP_DIR>
-environment variable. This variable overrides the setting in the
-F<bricolage.conf> file to provide a temporary temp directory just for
-testing. The reason for this is that the temp directory must be readable and
-writable by the person running the tests, and so must be different from the
-default in bricolage.conf, since there may be data owned by another user in
-that directory. Thus Bric::Test::Base creates the temporary directory, and
-then deletes it and all of its contents between tests. This also provents
-prior tests from affecting later tests by leaving older stuff in the temp
-directory.
-
-=head1 AUTHOR
-
-David Wheeler <david@wheeler.net>
-
-=head1 SEE ALSO
-
-L<Bric::Test::DevBase|Bric::Test::DevBase>, L<Test::Class|Test::Class>,
-L<Test::More|Test::More>, L<Test::Simple|Test::Simple>.
+This class also sets the C<BRIC_TEMP_DIR> environment variable. This variable
+overrides the setting in the F<bricolage.conf> file to provide a temporary
+temp directory just for testing. The reason for this is that the temp
+directory must be readable and writable by the person running the tests, and
+so must be different from the default in bricolage.conf, since there may be
+data owned by another user in that directory. Thus Bric::Test::Base creates
+the temporary directory, and then deletes it and all of its contents between
+tests. This also provents prior tests from affecting later tests by leaving
+older stuff in the temp directory.
 
 =cut
 
@@ -91,5 +80,36 @@ BEGIN {
 # after the one below that actually runs the tests.
 END { File::Path::rmtree($ENV{BRIC_TEMP_DIR}) }
 
+=head1 INTERFACE
+
+=head2 Class Methods
+
+=over 4
+
+=item C<user_id>
+
+  my $user_id = Bric::Test::Base->user_id;
+
+Returns a user ID that can be used throughout the tests. Just don't delete
+this user when you construct it!
+
+=cut
+
+sub user_id { 0 }
+
 1;
 __END__
+
+=back
+
+=head1 AUTHOR
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+L<Bric::Test::DevBase|Bric::Test::DevBase>, L<Test::Class|Test::Class>,
+L<Test::More|Test::More>, L<Test::Simple|Test::Simple>.
+
+=cut
+

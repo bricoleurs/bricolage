@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel::Element - Maps Output Channels to Elements.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-18 19:57:25 $
+$Date: 2003-01-24 06:50:13 $
 
 =head1 SYNOPSIS
 
@@ -66,8 +66,6 @@ use base qw(Bric::Biz::OutputChannel);
 # Constants
 ##############################################################################
 use constant DEBUG => 0;
-use constant SEL_COLS => qw(eoc.id eoc.element__id eoc.enabled);
-use constant FIELDS => qw(_map_id element_id _enabled);
 
 ##############################################################################
 # Fields
@@ -76,6 +74,16 @@ use constant FIELDS => qw(_map_id element_id _enabled);
 
 ##############################################################################
 # Private Class Fields
+my $SEL_COLS = Bric::Biz::OutputChannel::SEL_COLS() .
+  ', eoc.id, eoc.element__id, eoc.enabled';
+my @SEL_PROPS = (Bric::Biz::OutputChannel::SEL_PROPS(),
+                 qw(_map_id element_id _enabled));
+my $SEL_TABLES = Bric::Biz::OutputChannel::SEL_TABLES() .
+  ', element__output_channel eoc';
+my $SEL_WHERES = Bric::Biz::OutputChannel::SEL_WHERES() .
+  ' AND oc.id = eoc.output_channel__id AND eoc.element__id = ?';
+my $SEL_ORDER = Bric::Biz::OutputChannel::SEL_ORDER();
+my $GRP_ID_IDX = Bric::Biz::OutputChannel::GRP_ID_IDX();
 
 ##############################################################################
 # Instance Fields
@@ -245,26 +253,37 @@ B<Notes:> NONE.
 sub href {
     my ($pkg, $params) = @_;
     my $class = ref $pkg || $pkg;
-    my $fields = ['id', Bric::Biz::OutputChannel::FIELDS, FIELDS];
-    my $sel_cols = join ', ', 'oc.id', Bric::Biz::OutputChannel::SEL_COLS,
-      SEL_COLS;
-    my $table = Bric::Biz::OutputChannel::TABLE;
 
+    # HACK: Really there's too much going on here getting information from
+    # the parent class. Perhaps one day we'll have a SQL factory class to
+    # handle all this stuff, but this will have to do for now.
     my $sel = prepare_c(qq{
-        SELECT $sel_cols
-        FROM   $table oc, element__output_channel eoc
-        WHERE  oc.id = eoc.output_channel__id
-               AND eoc.element__id = ?
+        SELECT $SEL_COLS
+        FROM   $SEL_TABLES
+        WHERE  $SEL_WHERES
+        ORDER BY $SEL_ORDER
     }, undef, DEBUG);
 
     execute($sel, $params->{element_id});
-    my (@d, %ocs);
-    bind_columns($sel, \@d[0 .. (scalar $#$fields)]);
-    while (fetch($sel) ) {
-        my $self = $class->SUPER::new;
-        $self->_set( $fields, \@d);
-        $ocs{$d[0]} = $self;
+    my (@d, %ocs, $grp_ids);
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
+    $pkg = ref $pkg || $pkg;
+    while (fetch($sel)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new server type object.
+            my $self = $pkg->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$GRP_ID_IDX] = [$d[$GRP_ID_IDX]];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            $ocs{$d[0]} = $self;
+        } else {
+            push @$grp_ids, $d[$GRP_ID_IDX];
+        }
     }
+    # Return the objects.
     return \%ocs;
 }
 

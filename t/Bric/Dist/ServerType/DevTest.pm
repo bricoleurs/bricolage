@@ -40,7 +40,7 @@ sub test_lookup : Test(9) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(39) {
+sub test_list : Test(38) {
     my $self = shift;
 
     # Create a new destination group.
@@ -49,7 +49,7 @@ sub test_list : Test(39) {
 
     # Create a new distribution job.
     ok( my $job = Bric::Dist::Job->new({ name => 'Test Job',
-                                         user_id => 0 }),
+                                         user_id => $self->user_id }),
         "Create job" );
 
     # Create some test records.
@@ -113,15 +113,13 @@ sub test_list : Test(39) {
     ok( @dests = Bric::Dist::ServerType->list
         ({ move_method => $dest{move_method} }),
         "Look up move_method '$dest{move_method}'" );
-    # There'll be an extra because of the default preview destination.
-    is( scalar @dests, 6, "Check for 6 destinations" );
+    is( scalar @dests, 5, "Check for 5 destinations" );
 
     # Try output_channel_id.
-    ok( @dests = Bric::Dist::ServerType->list
-        ({ output_channel_id => $web_oc_id }),
-        "Look up output_channel_id '$web_oc_id'" );
+    @dests = Bric::Dist::ServerType->list
+      ({ output_channel_id => $web_oc_id });
     # Only the two defaults.
-    is( scalar @dests, 2, "Check for 2 destinations" );
+    is( scalar @dests, 0, "Check for 2 destinations" );
 
     # Try can_copy.
     ok( @dests = Bric::Dist::ServerType->list({ can_copy => 1 }),
@@ -131,17 +129,17 @@ sub test_list : Test(39) {
     # Try can_publish.
     ok( @dests = Bric::Dist::ServerType->list({ can_publish => 1 }),
         "Look up can_publish => 1" );
-    is( scalar @dests, 4, "Check for 4 destinations" );
+    is( scalar @dests, 3, "Check for 3 destinations" );
 
     # Try can_preview.
     ok( @dests = Bric::Dist::ServerType->list({ can_preview => 1 }),
         "Look up can_preview => 1" );
-    is( scalar @dests, 3, "Check for 3 destinations" );
+    is( scalar @dests, 2, "Check for 2 destinations" );
 
     # Try active.
     ok( @dests = Bric::Dist::ServerType->list({ active => 1 }),
         "Look up active => 1" );
-    is( scalar @dests, 7, "Check for 7 destinations" );
+    is( scalar @dests, 5, "Check for 5 destinations" );
 
     # Try job_id.
     ok( @dests = Bric::Dist::ServerType->list({ job_id => $job_id }),
@@ -205,7 +203,7 @@ sub test_href : Test(22) {
 # Test class methods.
 ##############################################################################
 # Test the list_ids() method.
-sub test_list_ids : Test(36) {
+sub test_list_ids : Test(35) {
     my $self = shift;
 
     # Create a new destination group.
@@ -272,14 +270,13 @@ sub test_list_ids : Test(36) {
         ({ move_method => $dest{move_method} }),
         "Look up move_method '$dest{move_method}'" );
     # There'll be an extra because of the default preview destination.
-    is( scalar @dest_ids, 6, "Check for 6 destination IDs" );
+    is( scalar @dest_ids, 5, "Check for 5 destination IDs" );
 
     # Try output_channel_id.
-    ok( @dest_ids = Bric::Dist::ServerType->list_ids
-        ({ output_channel_id => $web_oc_id }),
-        "Look up output_channel_id '$web_oc_id'" );
-    # Only the two defaults.
-    is( scalar @dest_ids, 2, "Check for 2 destination IDs" );
+    @dest_ids = Bric::Dist::ServerType->list_ids
+      ({ output_channel_id => $web_oc_id });
+    # We didn't assign any output channels!
+    is( scalar @dest_ids, 0, "Check for 0 destination IDs" );
 
     # Try can_copy.
     ok( @dest_ids = Bric::Dist::ServerType->list_ids({ can_copy => 1 }),
@@ -289,17 +286,17 @@ sub test_list_ids : Test(36) {
     # Try can_publish.
     ok( @dest_ids = Bric::Dist::ServerType->list_ids({ can_publish => 1 }),
         "Look up can_publish => 1" );
-    is( scalar @dest_ids, 4, "Check for 4 destination IDs" );
+    is( scalar @dest_ids, 3, "Check for 3 destination IDs" );
 
     # Try can_preview.
     ok( @dest_ids = Bric::Dist::ServerType->list_ids({ can_preview => 1 }),
         "Look up can_preview => 1" );
-    is( scalar @dest_ids, 3, "Check for 3 destination IDs" );
+    is( scalar @dest_ids, 2, "Check for 2 destination IDs" );
 
     # Try active.
     ok( @dest_ids = Bric::Dist::ServerType->list_ids({ active => 1 }),
         "Look up active => 1" );
-    is( scalar @dest_ids, 7, "Check for 7 destination IDs" );
+    is( scalar @dest_ids, 5, "Check for 5 destination IDs" );
 
     # Try job_id.
     ok( @dest_ids = Bric::Dist::ServerType->list_ids({ job_id => $job_id }),

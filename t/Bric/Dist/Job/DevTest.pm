@@ -19,7 +19,7 @@ my $job_one = 1;
 my $date        = '2003-01-22 14:43:23';
 
 my %job = ( name => 'Test Job',
-            user_id => 0,
+            user_id => __PACKAGE__->user_id,
             sched_time => $date
           );
 
@@ -49,7 +49,8 @@ sub test_lookup : Test(7) {
     # Check a few attributes.
     my $ret_date = local_date(db_date($date));
     is( $job->get_sched_time, $ret_date, "Scheduled time is $ret_date" );
-    is( $job->get_user_id, 0, "Check User ID 0" );
+    my $uid = $self->user_id;
+    is( $job->get_user_id, $uid, "Check User ID $uid" );
 }
 
 ##############################################################################
@@ -126,8 +127,9 @@ sub test_list : Test(44) {
     }
 
     # Try user_id.
-    ok( @jobs = Bric::Dist::Job->list({ user_id => 0 }),
-        "Look up user_id 0" );
+    my $uid = $self->user_id;
+    ok( @jobs = Bric::Dist::Job->list({ user_id => $uid }),
+        "Look up user_id $uid" );
     is( scalar @jobs, 5, "Check for 5 jobs" );
 
     # Try sched_time.
@@ -213,8 +215,9 @@ sub test_list_ids : Test(21) {
     is( scalar @job_ids, 3, "Check for 3 job ids" );
 
     # Try user_id.
-    ok( @job_ids = Bric::Dist::Job->list_ids({ user_id => 0 }),
-        "Look up user_id 0" );
+    my $uid = $self->user_id;
+    ok( @job_ids = Bric::Dist::Job->list_ids({ user_id => $uid }),
+        "Look up user_id $uid" );
     is( scalar @job_ids, 5, "Check for 5 job ids" );
 }
 

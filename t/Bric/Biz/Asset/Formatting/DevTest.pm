@@ -18,7 +18,7 @@ sub class { 'Bric::Biz::Asset::Formatting' }
 sub new_args {
     my $self = shift;
     ( output_channel__id => 1,
-      user__id   => 1,
+      user__id   => $self->user_id,
       category_id => 0,
       name => 'foodoo'
     )
@@ -41,10 +41,13 @@ sub test_new_elem : Test(17) {
       "'Web'";
     is( $err->get_msg, $msg, "Check message" );
 
+    # Create a new output channel.
+    my $oc_id = $self->make_oc;
+
     # Create one that doesn't conflict.
     ok( my $t = $class->new({ $self->new_args,
                               element => $self->get_elem,
-                              output_channel__id => 2
+                              output_channel__id => $oc_id
                             }),
         "Create non-conflicting element template");
     is( $t->get_tplate_type, $class->ELEMENT_TEMPLATE, "Check tplate_type" );
@@ -54,7 +57,7 @@ sub test_new_elem : Test(17) {
     # Do it again explicitly passing in a tplate_type argument.
     ok( $t = $class->new({ $self->new_args,
                               element => $self->get_elem,
-                              output_channel__id => 2,
+                              output_channel__id => $oc_id,
                               tplate_type => 1
                             }),
         "Create non-conflicting with tplate_type");
@@ -64,7 +67,7 @@ sub test_new_elem : Test(17) {
     # Now break it with the right tplate_type, but no parameters.
     eval {
         $class->new({ $self->new_args,
-                      output_channel__id => 2,
+                      output_channel__id => $oc_id,
                       tplate_type => 1
                     })
     };
@@ -98,10 +101,13 @@ sub test_new_cat : Test(18) {
       "'Web'";
     is( $err->get_msg, $msg, "Check message" );
 
+    # Create an OC.
+    my $oc_id = $self->make_oc;
+
     # Create one that doesn't conflict.
     ok( my $t = $class->new({ $self->new_args,
                               name => undef,
-                              output_channel__id => 2
+                              output_channel__id => $oc_id
                             }),
         "Create non-conflicting element template");
     is( $t->get_tplate_type, $class->CATEGORY_TEMPLATE, "Check tplate_type" );
@@ -112,7 +118,7 @@ sub test_new_cat : Test(18) {
     # Do it again explicitly passing in a tplate_type argument.
     ok( $t = $class->new({ $self->new_args,
                               tplate_type => 2,
-                              output_channel__id => 2
+                              output_channel__id => $oc_id
                             }),
         "Create non-conflicting element template");
     is( $t->get_tplate_type, $class->CATEGORY_TEMPLATE, "Check tplate_type" );
@@ -121,7 +127,7 @@ sub test_new_cat : Test(18) {
     # Now break it with the tplate_type, but broken parameters.
     eval {
         $class->new({ $self->new_args,
-                      output_channel__id => 2,
+                      output_channel__id => $oc_id,
                       tplate_type => 2,
                       file_type => 'foo'
                     })
@@ -133,7 +139,7 @@ sub test_new_cat : Test(18) {
 
     # Create an HTML::Template category template.
     ok( $t = $class->new({ $self->new_args,
-                           output_channel__id => 2,
+                           output_channel__id => $oc_id,
                            tplate_type => 2,
                            file_type => 'tmpl'
                          }),
@@ -169,9 +175,12 @@ sub test_new_util : Test(23) {
       "'Web'";
     is( $err->get_msg, $msg, "Check message" );
 
+    # Grab an OC ID.
+    my $oc_id = $self->make_oc;
+
     # Create one that doesn't conflict.
     ok( $t = $class->new({ $self->new_args,
-                              output_channel__id => 2
+                              output_channel__id => $oc_id
                             }),
         "Create non-conflicting element template");
     is( $t->get_tplate_type, $class->UTILITY_TEMPLATE, "Check tplate_type" );
@@ -180,7 +189,7 @@ sub test_new_util : Test(23) {
     # Do it again explicitly passing in a tplate_type argument.
     ok( $t = $class->new({ $self->new_args,
                               tplate_type => 3,
-                              output_channel__id => 2
+                              output_channel__id => $oc_id
                             }),
         "Create non-conflicting element template");
     is( $t->get_tplate_type, $class->UTILITY_TEMPLATE, "Check tplate_type" );
@@ -207,6 +216,17 @@ sub test_new_util : Test(23) {
     is( $t->get_file_name, '/foodoo.tmpl', "Check file_name" );
 }
 
+##############################################################################
+# Utility methods.
+##############################################################################
+sub make_oc {
+    my $self = shift;
+    my $oc = Bric::Biz::OutputChannel->new({ name => 'Bogus'});
+    $oc->save;
+    my $id = $oc->get_id;
+    $self->add_del_ids($id, 'output_channel');
+    return $id;
+}
 
 1;
 __END__

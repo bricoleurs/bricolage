@@ -9,7 +9,7 @@ use Bric::Util::AlertType;
 sub table { 'alert_type' }
 
 my %test_vals = ( event_type_id => 1028,
-                  owner_id      => 0,
+                  owner_id      => __PACKAGE__->user_id,
                   name          => 'Testing!',
                   subject       => 'Test Subject',
                   message       => 'Test Message'
