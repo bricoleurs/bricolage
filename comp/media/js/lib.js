@@ -612,7 +612,8 @@ function isInList(what, list) {
 
 var movedItems = new Array;
 
-// Author: Saqib Khan - http://js-x.com/ 
+// Originally by Saqib Khan - http://js-x.com/ 
+// Modified (quite heavily) by Marshall Roch, 2005-03-14
 function move_item(formName, fromObj, toObj)
 {
     var found;    
