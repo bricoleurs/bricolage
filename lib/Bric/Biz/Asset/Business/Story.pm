@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.69 $
+$Revision: 1.70 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.69 $ )[-1];
+our $VERSION = (qw$Revision: 1.70 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-01 20:29:44 $
+$Date: 2004-01-16 19:00:40 $
 
 =head1 SYNOPSIS
 
@@ -41,7 +41,7 @@ $Date: 2003-12-01 20:29:44 $
 
  # Version information
  $vers_grp_id = $asset->get_version_grp__id();
- $vers_id     = $asset->get_assset_version_id();
+ $vers_id     = $asset->get_asset_version_id();
 
  # Desk stamp information
  ($desk_stamp_list || @desk_stamps) = $asset->get_desk_stamps()

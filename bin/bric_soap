@@ -19,12 +19,14 @@ Modules:
   media_type
   site
   keyword
+  user
+  desk
   workflow
 
 Commands:
 
   Asset Commands (story, media, template, element, category,
-                  media_type, site, keyword):
+                  media_type, site, keyword, user, desk):
 
     list_ids
     export
@@ -333,12 +335,31 @@ our %jump = (
                           update   => \&update,
                           delete   => \&delete,
                        },
+             user => {
+                          list_ids => \&list_ids,
+                          export   => \&export,
+                          create   => \&create,
+                          update   => \&update,
+                          delete   => \&delete,
+                       },
+             desk => {
+                          list_ids => \&list_ids,
+                          export   => \&export,
+                          create   => \&create,
+                          update   => \&update,
+                          delete   => \&delete,
+                       },
 	     workflow => {
 			  publish  => \&publish,
 			  deploy   => \&deploy,
 			  checkin  => \&checkin,
 			  checkout => \&checkout,
 			  move     => \&move,
+                          list_ids => \&list_ids,
+                          export   => \&export,
+                          create   => \&create,
+                          update   => \&update,
+                          delete   => \&delete,
 			 },
 	    );
 
@@ -456,7 +477,7 @@ sub create {
     push @opts, name(workflow => $workflow) if defined $workflow;
     push @opts, name(desk => $desk) if defined $desk;
 
-    # work through documents1
+    # work through documents
     foreach (@ARGV) {
 	my $document;
 	if ($_ eq '-') {
@@ -489,7 +510,7 @@ sub update {
     push @opts, name(workflow => $workflow) if defined $workflow;
     push @opts, name(desk => $desk) if defined $desk;
 
-    # work through documents1
+    # work through documents
     foreach (@ARGV) {
 	my $document;
 	if ($_ eq '-') {

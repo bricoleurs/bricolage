@@ -6,16 +6,16 @@ Bric::Biz::Contact - Interface to Contacts
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:10 $
+$Date: 2004-01-16 19:00:40 $
 
 =head1 SYNOPSIS
 
@@ -56,14 +56,14 @@ $Date: 2003-08-14 23:24:10 $
 =head1 DESCRIPTION
 
 This class manages contacts. Currently, contacts are only associated with
-Bric::Biz::Person objects, but they could conceivabley be associated with other
+Bric::Biz::Person objects, but they could conceivably be associated with other
 objects, e.g., Bric::Biz::Org.
 
 A contact is a method (other than snail mail) to contact a person. Default
 contact types include "Primary Email," "Secondary Email," "Office Phone,"
-"Mobile Phone," "AOL Instant Messenger," etc. These types can be modifed and new
+"Mobile Phone," "AOL Instant Messenger," etc. These types can be modified and new
 contact types can be added via this class' class methods. Each individual
-Bric::Biz::Contact object has an associated type, the types' description, and
+Bric::Biz::Contact object has an associated type, the type's description, and
 a value. Each is also associated with another object, so they will often be
 accessed from that object (see Bric::Biz::Person for an example).
 
@@ -636,8 +636,8 @@ sub my_meths {
 
 =item my (@types || $type_aref) = Bric::Biz::Contact->list_types
 
-Returns a list or anonymous array of all the possible types of contacts. Use
-these types to set the type of a contact via $c->set_type().
+Returns a list or anonymous array of all the possible types (names)
+of contacts. Use these types to set the type of a contact via $c->set_type().
 
 B<Throws:>
 
@@ -843,7 +843,7 @@ sub href_alertable_type_ids { &$get_types(1, 1, 1) }
 
 =item my $success = Bric::Biz::Contact->edit_type($type, $description)
 
-Adds or alters a contact type. If the type exists, it's description will be
+Adds or alters a contact type. If the type exists, its description will be
 updated and it will be activated. If it does not exist, it will be created.
 
 B<Throws:>
@@ -1448,7 +1448,7 @@ If no arguments are passed, a simple list of contact type names is returned.
 
 =item *
 
-The first arugment requires that a hash list or anonymous hash be returned,
+The first argument requires that a hash list or anonymous hash be returned,
 where the hash keys are the contact type names and the values are the contact
 type descriptions.
 

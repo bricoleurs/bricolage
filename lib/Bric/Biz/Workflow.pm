@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 09:58:06 $
+$Date: 2004-01-16 19:00:40 $
 
 =head1 SYNOPSIS
 
@@ -333,7 +333,7 @@ constants.
 
 =item <desk_id>
 
-Return all worfkflows containing a desk with this desk ID.
+Return all workflows containing a desk with this desk ID.
 
 =item C<grp_id>
 

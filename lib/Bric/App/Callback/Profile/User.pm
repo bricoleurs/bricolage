@@ -130,7 +130,7 @@ sub save : Callback {
     log_event(defined $param->{user_id} ? 'user_save' : 'user_new', $user);
     add_msg("$disp_name profile \"[_1]\" saved.", $user->get_name);
 
-    # Take care of group managment, since the use of the redirect_onload()
+    # Take care of group management, since the use of the redirect_onload()
     # function below will prevent it from executing as a callback.
     $self->manage_grps;
 

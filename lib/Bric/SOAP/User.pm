@@ -1,12 +1,14 @@
-package Bric::SOAP::MediaType;
+package Bric::SOAP::User;
 ###############################################################################
 
 use strict;
 use warnings;
 
-use Bric::Util::MediaType;
+use Bric::Biz::Contact;
+use Bric::Biz::Person::User;
 
 use Bric::App::Authz    qw(chk_authz READ CREATE);
+use Bric::App::Cache;
 use Bric::App::Event    qw(log_event);
 use Bric::SOAP::Util    qw(parse_asset_document);
 use Bric::Util::Fault   qw(throw_ap);
@@ -22,15 +24,15 @@ require Data::Dumper if DEBUG;
 
 =head1 NAME
 
-Bric::SOAP::MediaType - SOAP interface to Bricolage media types
+Bric::SOAP::User - SOAP interface to Bricolage users
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.1 $ )[-1];
 
 =head1 DATE
 
@@ -51,15 +53,15 @@ $Date: 2004-01-16 19:00:41 $
   $soap->login(name(username => USER),
                name(password => PASSWORD));
 
-  # set uri for MediaType module
-  $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/MediaType');
+  # set uri for User module
+  $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/User');
 
-  # get a list of all media types
-  my $mt_ids = $soap->list_ids()->result;
+  # get a list of all user IDs
+  my $ids = $soap->list_ids()->result;
 
 =head1 DESCRIPTION
 
-This module provides a SOAP interface to manipulating Bricolage media types.
+This module provides a SOAP interface to manipulating Bricolage users.
 
 =cut
 
@@ -71,8 +73,8 @@ This module provides a SOAP interface to manipulating Bricolage media types.
 
 =item list_ids
 
-This method queries the database for matching mediatypes and returns a
-list of ids.  If no mediatypes are found an empty list will be returned.
+This method queries the database for matching users and returns a
+list of ids.  If no users are found an empty list will be returned.
 
 This method can accept the following named parameters to specify the
 search.  Some fields support matching and are marked with an (M).  The
@@ -83,21 +85,33 @@ results (via ANDs in an SQL WHERE clause).
 
 =over 4
 
-=item name (M)
+=item prefix (M)
 
-The media type's name.
+The user's prefix.
 
-=item description (M)
+=item lname (M)
 
-The media type's description.
+The user's last name.
 
-=item ext
+=item fname (M)
 
-The media type's extension.
+The user's first name.
+
+=item mname (M)
+
+The user's middle name.
+
+=item suffix (M)
+
+The user's suffix.
+
+=item login (M)
+
+The user's login.
 
 =item active
 
-Set false to return deleted media types.
+Set false to return deleted users.
 
 =back
 
@@ -126,14 +140,14 @@ Accepted paramters are:
 
 =over 4
 
-=item media_type_id
+=item user_id
 
-Specifies a single media_type_id to be retrieved.
+Specifies a single user_id to be retrieved.
 
-=item media_type_ids
+=item user_ids
 
-Specifies a list of media_type_ids.  The value for this option should be an
-array of integer "media_type_id" assets.
+Specifies a list of user_ids.  The value for this option should be an
+array of integer "user_id" assets.
 
 =back
 
@@ -205,7 +219,7 @@ of related asset objects.
 
 =item update_ids (required)
 
-A list of "media_type_id" integers for the assets to be updated.  These
+A list of "user_id" integers for the assets to be updated.  These
 must match id attributes on asset elements in the document.  If you
 include objects in the document that are not listed in update_ids then
 they will be treated as in create().  For that reason an update() with
@@ -233,11 +247,11 @@ The delete() method deletes assets.  It takes the following options:
 
 =over 4
 
-=item media_type_id
+=item user_id
 
 Specifies a single asset ID to be deleted.
 
-=item media_type_ids
+=item user_ids
 
 Specifies a list of asset IDs to delete.
 
@@ -251,11 +265,20 @@ Throws:
 
 =back
 
-Side Effects: NONE
+Side Effects: updates the last-modified user time in the cache
+so that the UI reloads the users (unless you're a deleted user :).
 
 Notes: NONE
 
 =cut
+
+sub delete {
+    my $self = shift;
+    my @deleted = $self->SUPER::delete(@_);
+    my $cache = Bric::App::Cache->new;
+    $cache->set_lmu_time;
+    return @deleted;
+}
 
 =item $self->module
 
@@ -264,7 +287,7 @@ to bric_soap.
 
 =cut
 
-sub module { 'media_type' }
+sub module { 'user' }
 
 =item is_allowed_param
 
@@ -279,7 +302,8 @@ sub is_allowed_param {
     my $module = $pkg->module;
 
     my $allowed = {
-        list_ids => { map { $_ => 1 } qw(name description ext active) },
+        # XXX: should add grp (grp_id) to list_ids
+        list_ids => { map { $_ => 1 } qw(prefix lname fname mname suffix login active) },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
         create   => { map { $_ => 1 } qw(document) },
         update   => { map { $_ => 1 } qw(document update_ids) },
@@ -313,7 +337,7 @@ sub load_asset {
 
     # parse and catch errors
     unless ($data) {
-        eval { $data = parse_asset_document($document, $module, 'ext') };
+        eval { $data = parse_asset_document($document, $module, 'contact') };
         throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
           if $@;
         throw_ap(error => __PACKAGE__
@@ -322,8 +346,11 @@ sub load_asset {
         print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
     }
 
-    # loop over mediatype, filling @ids
+    # loop over users, filling @ids
     my (@ids, %paths);
+
+    my %contact_types = map { $_ => 1 } Bric::Biz::Contact->list_types;
+    my $cache = Bric::App::Cache->new;
 
     foreach my $adata (@{ $data->{$module} }) {
         my $id = $adata->{id};
@@ -334,7 +361,7 @@ sub load_asset {
         # get object
         my $asset;
         unless ($update) {
-            # create empty mediatype
+            # create empty user
             $asset = $pkg->class->new;
             throw_ap(error => __PACKAGE__ . " : failed to create empty $module object.")
               unless $asset;
@@ -350,35 +377,65 @@ sub load_asset {
           unless chk_authz($asset, CREATE, 1);
 
         # set simple fields
-        $asset->set_name($adata->{name});
-        $asset->set_description($adata->{description});
+        $asset->set_prefix($adata->{prefix});
+        $asset->set_fname($adata->{fname});
+        $asset->set_mname($adata->{mname});
+        $asset->set_lname($adata->{lname});
+        $asset->set_suffix($adata->{suffix});
+        $asset->set_login($adata->{login});
+        # XXX: currently not possible to change password
 
-        # remove all extensions if updating
-        $asset->del_exts($asset->get_exts)
-            if $update;
-
-        # add extensions, if we have any
-        if ($adata->{exts} and $adata->{exts}{ext}) {
-            $asset->add_exts(@{ $adata->{exts}{ext} });
+        # set contacts
+        if ($update) {
+            # XXX: for some reason, del_contacts with no arguments
+            # doesn't delete anything, though its docs say it should
+            # delete all the contacts (the code (del_objs) doesn't
+            # seem to indicate it would delete anything, actually...)
+            my @contacts = $asset->get_contacts;
+            $asset->del_contacts(@contacts);
+            $asset->save;
+        }
+        foreach my $udata (@{ $adata->{contacts}{contact} }) {
+            unless (ref $udata) {
+                # if there's no attribute, $udata is a scalar (type name)
+                throw_ap error => __PACKAGE__ . ": contact \"$udata\" missing "
+                  . "required 'type' attribute.";
+            }
+            my $value = $udata->{content};
+            my $type = $udata->{type};
+            unless (exists $contact_types{$type}) {
+                throw_ap error => __PACKAGE__ . ": invalid contact type \"$type\".";
+            }
+            my $contact = $asset->new_contact($type, $value);
         }
 
         # save
         $asset->save();
         log_event("$module\_" . ($update ? 'save' : 'new'), $asset);
 
+        # clear workflow caches for the UI
+        foreach my $gid ($asset->get_grp_ids) {
+            $cache->set("__WORKFLOWS__$gid", 0)
+              if $cache->get("__WORKFLOWS__$gid");
+        }
+
         # all done
         push(@ids, $asset->get_id);
     }
+
+    # clear site cache, update last-modified user time for the UI
+    $cache->set('__SITES__', 0);
+    $cache->set_lmu_time;
 
     return name(ids => [ map { name("$module\_id" => $_) } @ids ]);
 }
 
 
-=item $pkg->_serialize_asset( writer        => $writer,
-                              mediatype_id  => $id,
-                              args          => $args)
+=item $pkg->_serialize_asset( writer   => $writer,
+                              user_id  => $id,
+                              args     => $args)
 
-Serializes a single mediatype object into a <mediatype> mediatype using
+Serializes a single user object into a <user> user using
 the given writer and args.
 
 =cut
@@ -398,24 +455,31 @@ sub serialize_asset {
                "::export : access denied for $module \"$id\".")
       unless chk_authz($asset, READ, 1);
 
-    # open mediatype element
+    # open user element
     $writer->startTag($module, id => $id);
 
     # write out simple attributes in schema order
-    $writer->dataElement(name        => $asset->get_name());
-    $writer->dataElement(description => $asset->get_description());
-
-    # set active flag
+    $writer->dataElement(prefix => $asset->get_prefix);
+    $writer->dataElement(fname  => $asset->get_fname);
+    $writer->dataElement(mname  => $asset->get_mname);
+    $writer->dataElement(lname  => $asset->get_lname);
+    $writer->dataElement(suffix => $asset->get_suffix);
+    $writer->dataElement(login  => $asset->get_login);
+    # XXX: currently not possible to change password
+    $writer->dataElement(password => '');
     $writer->dataElement(active => ($asset->is_active ? 1 : 0));
 
-    # output extensions
-    $writer->startTag('exts');
-    foreach my $ext ($asset->get_exts) {
-        $writer->dataElement(ext => $ext);
+    # contacts
+    $writer->startTag('contacts');
+    my @contacts = $asset->get_contacts;
+    foreach my $contact (@contacts) {
+        my $type = $contact->get_type;
+        my $value = $contact->get_value;
+        $writer->dataElement(contact => $value, type => $type);
     }
-    $writer->endTag('exts');
+    $writer->endTag('contacts');
 
-    # close the mediatype element
+    # close user element
     $writer->endTag($module);
 }
 
@@ -423,9 +487,7 @@ sub serialize_asset {
 
 =head1 AUTHOR
 
-Sam Tregar <stregar@about-inc.com>
-
-Scott Lanning <slanning@theworld.com>
+Scott Lanning <lannings@who.int>
 
 =head1 SEE ALSO
 

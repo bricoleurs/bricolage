@@ -100,6 +100,11 @@ German localization completed. [Thorsten Biel]
 Added C<get_parent()> method to Bric::Biz::Asset::Business::Parts::Tile. This
 simplifies getting access to a parent element in an element template. [David]
 
+=item *
+
+Added User and Desk (asset) modules to the SOAP API, added asset commands
+to the Workflow module, and made corresponding changes to bric_soap. [Scott]
+
 =back
 
 =head2 Improvements

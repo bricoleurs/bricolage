@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 04:44:46 $
+$Date: 2004-01-16 19:00:40 $
 
 =head1 SYNOPSIS
 
@@ -1344,7 +1344,7 @@ sub add_new_contacts {
   $p->save;
 
 Returns a new Bric::Biz::Contact object associated with the Bric::Biz::Person object.
-A list of contact type IDs can be retreived from Bric::Biz::Contact->list_types().
+A list of contact type IDs can be retrieved from Bric::Biz::Contact->list_types().
 If $value is passed, it will be saved to the contact object before returning the
 object. Be sure to call $p->save to save this new contact. See Bric::Biz::Contact
 for information on its interface.

@@ -139,7 +139,7 @@ sub export {
 
     # open up an assets document, specifying the schema namespace
     $writer->xmlDecl("UTF-8", 1);
-    $writer->startTag("assets", 
+    $writer->startTag("assets",
                       xmlns => 'http://bricolage.sourceforge.net/assets.xsd');
 
     # iterate through ids, serializing objects as we go

@@ -1,12 +1,13 @@
-package Bric::SOAP::MediaType;
+package Bric::SOAP::Desk;
 ###############################################################################
 
 use strict;
 use warnings;
 
-use Bric::Util::MediaType;
+use Bric::Biz::Workflow::Parts::Desk;
+use Bric::Biz::Workflow;
 
-use Bric::App::Authz    qw(chk_authz READ CREATE);
+use Bric::App::Authz    qw(chk_authz READ CREATE EDIT);
 use Bric::App::Event    qw(log_event);
 use Bric::SOAP::Util    qw(parse_asset_document);
 use Bric::Util::Fault   qw(throw_ap);
@@ -22,15 +23,15 @@ require Data::Dumper if DEBUG;
 
 =head1 NAME
 
-Bric::SOAP::MediaType - SOAP interface to Bricolage media types
+Bric::SOAP::Desk - SOAP interface to Bricolage desks
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.1 $ )[-1];
 
 =head1 DATE
 
@@ -51,15 +52,15 @@ $Date: 2004-01-16 19:00:41 $
   $soap->login(name(username => USER),
                name(password => PASSWORD));
 
-  # set uri for MediaType module
-  $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/MediaType');
+  # set uri for Desk module
+  $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Desk');
 
-  # get a list of all media types
-  my $mt_ids = $soap->list_ids()->result;
+  # get a list of all desk IDs
+  my $ids = $soap->list_ids()->result;
 
 =head1 DESCRIPTION
 
-This module provides a SOAP interface to manipulating Bricolage media types.
+This module provides a SOAP interface to manipulating Bricolage desks.
 
 =cut
 
@@ -71,8 +72,8 @@ This module provides a SOAP interface to manipulating Bricolage media types.
 
 =item list_ids
 
-This method queries the database for matching mediatypes and returns a
-list of ids.  If no mediatypes are found an empty list will be returned.
+This method queries the database for matching desks and returns a
+list of ids.  If no desks are found an empty list will be returned.
 
 This method can accept the following named parameters to specify the
 search.  Some fields support matching and are marked with an (M).  The
@@ -85,19 +86,21 @@ results (via ANDs in an SQL WHERE clause).
 
 =item name (M)
 
-The media type's name.
+The desk's name.
 
-=item description (M)
+=item description
 
-The media type's description.
+The desk's description.
 
-=item ext
+=item publish
 
-The media type's extension.
+Set true to return only publish desks, or false to return
+only non-publish desks. Returns all desks by default.
 
 =item active
 
-Set false to return deleted media types.
+Set false to return deleted desks. Returns only active
+desks by default.
 
 =back
 
@@ -126,14 +129,14 @@ Accepted paramters are:
 
 =over 4
 
-=item media_type_id
+=item desk_id
 
-Specifies a single media_type_id to be retrieved.
+Specifies a single desk_id to be retrieved.
 
-=item media_type_ids
+=item desk_ids
 
-Specifies a list of media_type_ids.  The value for this option should be an
-array of integer "media_type_id" assets.
+Specifies a list of desk_ids.  The value for this option should be an
+array of integer "desk_id" assets.
 
 =back
 
@@ -205,7 +208,7 @@ of related asset objects.
 
 =item update_ids (required)
 
-A list of "media_type_id" integers for the assets to be updated.  These
+A list of "desk_id" integers for the assets to be updated.  These
 must match id attributes on asset elements in the document.  If you
 include objects in the document that are not listed in update_ids then
 they will be treated as in create().  For that reason an update() with
@@ -233,11 +236,11 @@ The delete() method deletes assets.  It takes the following options:
 
 =over 4
 
-=item media_type_id
+=item desk_id
 
 Specifies a single asset ID to be deleted.
 
-=item media_type_ids
+=item desk_ids
 
 Specifies a list of asset IDs to delete.
 
@@ -257,6 +260,59 @@ Notes: NONE
 
 =cut
 
+sub delete {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};
+    my $module = $pkg->module;
+    my $method = 'delete';
+
+    print STDERR "$pkg\->$method() called : args : ",
+        Data::Dumper->Dump([$args],['args']) if DEBUG;
+
+    # check for bad parameters
+    for (keys %$args) {
+        throw_ap(error => "$pkg\::$method : unknown parameter \"$_\".")
+          unless $pkg->is_allowed_param($_, $method);
+    }
+
+    # sugar for one id
+    $args->{"$module\_ids"} = [ $args->{"$module\_id"} ]
+        if exists $args->{"$module\_id"};
+
+    # make sure asset_ids is an array
+    throw_ap(error => "$pkg\::$method : missing required $module\_id(s) setting.")
+      unless defined $args->{"$module\_ids"};
+    throw_ap(error => "$pkg\::$method : malformed $module\_id(s) setting.")
+      unless ref $args->{"$module\_ids"} and ref $args->{"$module\_ids"} eq 'ARRAY';
+
+    # delete the desks
+    foreach my $id (@{$args->{"$module\_ids"}}) {
+        print STDERR "$pkg\->$method() : deleting $module\_id $id\n"
+          if DEBUG;
+
+        # lookup the desk
+        my $asset = $pkg->class->lookup({ id => $id });
+        throw_ap(error => "$pkg\::$method : no $module found for id \"$id\"")
+          unless $asset;
+        throw_ap(error => "$pkg\::$method : access denied for $module \"$id\".")
+          unless chk_authz($asset, EDIT, 1);
+
+        # remove desk from all its workflows
+        my @workflows = Bric::Biz::Workflow->list({ desk_id => $id });
+        foreach my $wf (@workflows) {
+            $wf->del_desk([$id]);
+            $wf->save;
+        }
+
+        # delete the desk
+        $asset->deactivate;
+        $asset->save;
+        log_event("$module\_deact", $asset);
+    }
+    return name(result => 1);
+}
+
 =item $self->module
 
 Returns the module name, that is the first argument passed
@@ -264,7 +320,7 @@ to bric_soap.
 
 =cut
 
-sub module { 'media_type' }
+sub module { 'desk' }
 
 =item is_allowed_param
 
@@ -279,7 +335,7 @@ sub is_allowed_param {
     my $module = $pkg->module;
 
     my $allowed = {
-        list_ids => { map { $_ => 1 } qw(name description ext active) },
+        list_ids => { map { $_ => 1 } qw(name description publish active) },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
         create   => { map { $_ => 1 } qw(document) },
         update   => { map { $_ => 1 } qw(document update_ids) },
@@ -313,7 +369,7 @@ sub load_asset {
 
     # parse and catch errors
     unless ($data) {
-        eval { $data = parse_asset_document($document, $module, 'ext') };
+        eval { $data = parse_asset_document($document, $module) };
         throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
           if $@;
         throw_ap(error => __PACKAGE__
@@ -322,7 +378,7 @@ sub load_asset {
         print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
     }
 
-    # loop over mediatype, filling @ids
+    # loop over desks, filling @ids
     my (@ids, %paths);
 
     foreach my $adata (@{ $data->{$module} }) {
@@ -334,7 +390,7 @@ sub load_asset {
         # get object
         my $asset;
         unless ($update) {
-            # create empty mediatype
+            # create empty desk
             $asset = $pkg->class->new;
             throw_ap(error => __PACKAGE__ . " : failed to create empty $module object.")
               unless $asset;
@@ -352,14 +408,10 @@ sub load_asset {
         # set simple fields
         $asset->set_name($adata->{name});
         $asset->set_description($adata->{description});
-
-        # remove all extensions if updating
-        $asset->del_exts($asset->get_exts)
-            if $update;
-
-        # add extensions, if we have any
-        if ($adata->{exts} and $adata->{exts}{ext}) {
-            $asset->add_exts(@{ $adata->{exts}{ext} });
+        if ($adata->{publish}) {
+            $asset->make_publish_desk;
+        } else {
+            $asset->make_regular_desk;
         }
 
         # save
@@ -374,11 +426,11 @@ sub load_asset {
 }
 
 
-=item $pkg->_serialize_asset( writer        => $writer,
-                              mediatype_id  => $id,
-                              args          => $args)
+=item $pkg->_serialize_asset( writer   => $writer,
+                              desk_id  => $id,
+                              args     => $args)
 
-Serializes a single mediatype object into a <mediatype> mediatype using
+Serializes a single desk object into a <desk> desk using
 the given writer and args.
 
 =cut
@@ -398,24 +450,16 @@ sub serialize_asset {
                "::export : access denied for $module \"$id\".")
       unless chk_authz($asset, READ, 1);
 
-    # open mediatype element
+    # open desk element
     $writer->startTag($module, id => $id);
 
     # write out simple attributes in schema order
-    $writer->dataElement(name        => $asset->get_name());
-    $writer->dataElement(description => $asset->get_description());
+    $writer->dataElement(name        => $asset->get_name);
+    $writer->dataElement(description => $asset->get_description);
+    $writer->dataElement(publish     => ($asset->can_publish ? 1 : 0));
+    $writer->dataElement(active      => ($asset->is_active ? 1 : 0));
 
-    # set active flag
-    $writer->dataElement(active => ($asset->is_active ? 1 : 0));
-
-    # output extensions
-    $writer->startTag('exts');
-    foreach my $ext ($asset->get_exts) {
-        $writer->dataElement(ext => $ext);
-    }
-    $writer->endTag('exts');
-
-    # close the mediatype element
+    # close desk element
     $writer->endTag($module);
 }
 
@@ -425,11 +469,12 @@ sub serialize_asset {
 
 Sam Tregar <stregar@about-inc.com>
 
-Scott Lanning <slanning@theworld.com>
+Scott Lanning <lannings@who.int>
 
 =head1 SEE ALSO
 
-L<Bric::SOAP|Bric::SOAP>, L<Bric::SOAP::Asset|Bric::SOAP::Asset>
+L<Bric::SOAP|Bric::SOAP>, L<Bric::SOAP::Asset|Bric::SOAP::Asset>,
+L<Bric::Biz::Workflow::Parts::Desk|Bric::Biz::Workflow::Parts::Desk>
 
 =cut
 

@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:32 $
+$Date: 2004-01-16 19:00:41 $
 
 =head1 SYNOPSIS
 
@@ -99,6 +99,8 @@ use constant SOAP_CLASSES => [qw(
                                  Bric::SOAP::MediaType
                                  Bric::SOAP::Site
                                  Bric::SOAP::Keyword
+                                 Bric::SOAP::User
+                                 Bric::SOAP::Desk
                                  Bric::SOAP::Workflow
                                 )];
 

@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-22 03:21:16 $
+$Date: 2004-01-16 19:00:41 $
 
 =head1 SYNOPSIS
 
@@ -702,7 +702,7 @@ sub load_asset {
     my $document = $args->{document};
     my %to_update = map { $_ => 1 } @{$args->{update_ids}};
 
-    # parse and catch erros
+    # parse and catch errors
     my $data;
     eval { $data = parse_asset_document($document) };
     throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")

@@ -26,15 +26,15 @@ Bric::SOAP::Keyword - SOAP interface to Bricolage keywords
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:32 $
+$Date: 2004-01-16 19:00:41 $
 
 =head1 SYNOPSIS
 
@@ -311,7 +311,7 @@ sub load_asset {
     my %to_update    = map { $_ => 1 } @{$args->{update_ids}};
     my $module       = $pkg->module;
 
-    # parse and catch erros
+    # parse and catch errors
     unless ($data) {
         eval { $data = parse_asset_document($document, $module) };
         throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")

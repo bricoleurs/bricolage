@@ -26,15 +26,15 @@ Bric::SOAP::Category - SOAP interface to Bricolage categories.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:32 $
+$Date: 2004-01-16 19:00:40 $
 
 =head1 SYNOPSIS
 
@@ -431,7 +431,7 @@ sub load_asset {
     my $data         = $args->{data};
     my %to_update    = map { $_ => 1 } @{$args->{update_ids}};
 
-    # parse and catch erros
+    # parse and catch errors
     unless ($data) {
         eval { $data = parse_asset_document($document) };
         throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")

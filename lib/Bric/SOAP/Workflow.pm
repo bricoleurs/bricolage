@@ -8,7 +8,9 @@ use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Formatting;
 use Bric::Biz::OutputChannel;
-use Bric::Biz::Workflow qw(STORY_WORKFLOW MEDIA_WORKFLOW TEMPLATE_WORKFLOW);
+use Bric::Biz::Site;
+use Bric::Biz::Workflow qw(:wf_const);
+use Bric::App::Cache;
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
 use Bric::Config        qw(STAGE_ROOT PREVIEW_ROOT PREVIEW_LOCAL ISO_8601_FORMAT);
@@ -21,13 +23,12 @@ use Bric::Util::Job;
 use Bric::Dist::ServerType;
 use Bric::Dist::Resource;
 use Bric::Biz::Workflow::Parts::Desk;
-use Bric::SOAP::Util qw(xs_date_to_db_date);
+use Bric::SOAP::Util qw(xs_date_to_db_date parse_asset_document);
 
 use SOAP::Lite;
 import SOAP::Data 'name';
 
-# needed to get envelope on method calls
-our @ISA = qw(SOAP::Server::Parameters);
+use base qw(Bric::SOAP::Asset);
 
 use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
@@ -40,23 +41,24 @@ my %types = ( story      => 'Story',
 # We'll use this for finding workflows.
 my %wf_types = ( story      => STORY_WORKFLOW,
                  media      => MEDIA_WORKFLOW,
-                 formatting => TEMPLATE_WORKFLOW );
+                 formatting => TEMPLATE_WORKFLOW,
+                 template   => TEMPLATE_WORKFLOW );
 
 =head1 NAME
 
-Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
+Bric::SOAP::Workflow - SOAP interface to Bricolage workflows.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:08 $
+$Date: 2004-01-16 19:00:41 $
 
 =head1 SYNOPSIS
 
@@ -70,7 +72,7 @@ $Date: 2004-01-13 16:39:08 $
   $soap->proxy('http://localhost/soap',
                cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
   # login
-  $soap->login(name(username => USER), 
+  $soap->login(name(username => USER),
                name(password => PASSWORD));
 
   # set uri for Workflow module
@@ -79,7 +81,7 @@ $Date: 2004-01-13 16:39:08 $
 =head1 DESCRIPTION
 
 This module provides a SOAP interface to manipulating Bricolage
-workflow.  This include facilities for moving objects onto desks,
+workflows.  This include facilities for moving objects onto desks,
 checkin, checkout, publishing and deploying.
 
 =head1 INTERFACE
@@ -150,18 +152,11 @@ a module so it could be kept in one place.
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(story_id media_id publish_ids
-                                 publish_related_stories
-                                 publish_related_media
-                                 publish_date published_only
-                                 to_preview);
-
 sub publish {
     my $pkg = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'publish';
 
     print STDERR __PACKAGE__ . "->publish() called : args : ",
         Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -169,7 +164,7 @@ sub publish {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::publish : unknown parameter \"$_\".")
-            unless exists $allowed{$_};
+          unless $pkg->is_allowed_param($_, $method);
     }
 
     my $pub_date = exists $args->{publish_date}
@@ -289,7 +284,6 @@ sub publish {
     # name, type and return
     return name(publish_ids => \@published);
 }
-}
 
 =item deploy
 
@@ -325,14 +319,11 @@ not nearly as gnarly as the publish() code though.
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(template_id deploy_ids);
-
 sub deploy {
     my $pkg = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'deploy';
 
     print STDERR __PACKAGE__ . "->deploy() called : args : ",
         Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -340,7 +331,7 @@ sub deploy {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::deploy : unknown parameter \"$_\".")
-            unless exists $allowed{$_};
+          unless $pkg->is_allowed_param($_, $method);
     }
 
     my @ids = _collect_ids("deploy_ids", [ "template_id" ], $env);
@@ -386,7 +377,6 @@ sub deploy {
             if DEBUG;
 
     return name(deploy_ids => \@ids);
-}
 }
 
 =item checkout
@@ -437,14 +427,11 @@ Notes: NONE
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(story_id media_id template_id checkout_ids);
-
 sub checkout {
     my $pkg = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'checkout';
 
     print STDERR __PACKAGE__ . "->checkout() called : args : ",
         Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -452,7 +439,7 @@ sub checkout {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::checkout : unknown parameter \"$_\".")
-            unless exists $allowed{$_};
+          unless $pkg->is_allowed_param($_, $method);
     }
 
     my @ids = _collect_ids("checkout_ids",
@@ -532,7 +519,6 @@ sub checkout {
 
     return name(checkout_ids => \@ids);
 }
-}
 
 =item checkin
 
@@ -582,14 +568,11 @@ Notes: NONE
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(story_id media_id template_id checkin_ids);
-
 sub checkin {
     my $pkg = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'checkin';
 
     print STDERR __PACKAGE__ . "->checkin() called : args : ",
         Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -597,7 +580,7 @@ sub checkin {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::checkin : unknown parameter \"$_\".")
-            unless exists $allowed{$_};
+          unless $pkg->is_allowed_param($_, $method);
     }
 
     my @ids = _collect_ids("checkin_ids",
@@ -663,7 +646,6 @@ sub checkin {
 
     return name(checkin_ids => \@ids);
 }
-}
 
 =item move
 
@@ -717,15 +699,11 @@ Notes: NONE
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(story_id media_id template_id move_ids
-                                 desk workflow);
-
 sub move {
     my $pkg = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'move';
 
     print STDERR __PACKAGE__ . "->move() called : args : ",
         Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -733,7 +711,7 @@ sub move {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::move : unknown parameter \"$_\".")
-            unless exists $allowed{$_};
+          unless $pkg->is_allowed_param($_, $method);
     }
 
     # make sure we have a desk
@@ -859,13 +837,559 @@ sub move {
 
     return name(move_ids => \@ids);
 }
+
+=item list_ids
+
+This method queries the database for matching workflows and returns a
+list of ids.  If no workflows are found an empty list will be returned.
+
+This method can accept the following named parameters to specify the
+search.  Some fields support matching and are marked with an (M).  The
+value for these fields will be interpreted as an SQL match expression
+and will be matched case-insensitively.  Other fields must specify an
+exact string to match.  Match fields combine to narrow the search
+results (via ANDs in an SQL WHERE clause).
+
+=over 4
+
+=item name (M)
+
+The workflow's name.
+
+=item description
+
+The workflow's description.
+
+=item site
+
+The workflow's site name.
+
+=item type
+
+Return workflows of type 'Story', 'Media', or 'Template'.
+By default all workflow types are returned.
+
+=item desk
+
+Given a desk name, return workflows that contain this desk.
+
+=item active
+
+Set false to return deleted workflows. Returns only active
+workflows by default.
+
+=back
+
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+sub list_ids {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};
+    my $method = 'list_ids';
+    my $module = $pkg->module;
+
+    print STDERR __PACKAGE__ . "->$method() called : args : ",
+        Data::Dumper->Dump([$args],['args']) if DEBUG;
+
+    # check for bad parameters
+    for (keys %$args) {
+        throw_ap(error => __PACKAGE__ . "::$method : unknown parameter \"$_\".")
+          unless $pkg->is_allowed_param($_, $method);
+    }
+
+    # convert site name to site_id
+    if (exists $args->{site}) {
+        my $site = delete $args->{site};
+        my $site_id = Bric::Biz::Site->list_ids({ name => $site });
+        if (defined $site_id) {
+            $args->{site_id} = $site_id->[0];
+        } else {
+            throw_ap error => __PACKAGE__ . "::$method: unknown site \""
+              . $args->{site} . "\".";
+        }
+    }
+
+    # convert type to integer
+    if (exists $args->{type}) {
+        if (exists $wf_types{$args->{type}}) {
+            my $type = $wf_types{lc($args->{type})};
+            $args->{type} = $type;
+        } else {
+            throw_ap error => __PACKAGE__ . "::$method: invalid type \""
+              . $args->{type} . "\".";
+        }
+    }
+
+    # convert desk name to desk_id
+    if (exists $args->{desk}) {
+        my $desk = delete $args->{desk};
+        my $desk_id = Bric::Biz::Workflow::Parts::Desk->list_ids({ name => $desk });
+        if (defined $desk_id) {
+            $args->{desk_id} = $desk_id->[0];
+        } else {
+            throw_ap error => __PACKAGE__ . "::$method: unknown desk \""
+              . $args->{desk} . "\".";
+        }
+    }
+
+    $args->{active} = 1 unless exists $args->{active};
+    my @ids = $pkg->class->list_ids($args);
+
+    # name the results
+    my @result = map { name("$module\_id" => $_) } @ids;
+
+    # name the array and return
+    return name("$module\_ids" => \@result);
 }
+
+=item export
+
+The export method retrieves a set of assets from the database,
+serializes them and returns them as a single XML document.  See
+L<Bric::SOAP|Bric::SOAP> for the schema of the returned document.
+
+Accepted paramters are:
+
+=over 4
+
+=item workflow_id
+
+Specifies a single workflow_id to be retrieved.
+
+=item workflow_ids
+
+Specifies a list of workflow_ids.  The value for this option should be an
+array of integer "workflow_id" assets.
+
+=back
+
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+=item create
+
+The create method creates new objects using the data contained in an
+XML document of the format created by export().
+
+Returns a list of new ids created in the order of the assets in the document.
+
+Available options:
+
+=over 4
+
+=item document (required)
+
+The XML document containing objects to be created.  The document must
+contain at least one asset object.
+
+=back
+
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+=item update
+
+The update method updates an asset using the data in an XML document of
+the format created by export().  A common use of update() is to
+export() a selected object, make changes to one or more fields
+and then submit the changes with update().
+
+Returns a list of new ids created in the order of the assets in the
+document.
+
+Takes the following options:
+
+=over 4
+
+=item document (required)
+
+The XML document where the objects to be updated can be found.  The
+document must contain at least one asset and may contain any number
+of related asset objects.
+
+=item update_ids (required)
+
+A list of "workflow_id" integers for the assets to be updated.  These
+must match id attributes on asset elements in the document.  If you
+include objects in the document that are not listed in update_ids then
+they will be treated as in create().  For that reason an update() with
+an empty update_ids list is equivalent to a create().
+
+=back
+
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+=item delete
+
+The delete() method deletes assets.  It takes the following options:
+
+=over 4
+
+=item workflow_id
+
+Specifies a single asset ID to be deleted.
+
+=item workflow_ids
+
+Specifies a list of asset IDs to delete.
+
+=back
+
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
+
+Side Effects: NONE
+
+Notes: The ONLY reason this method needs overridden is
+because of the __WORKFLOWS__ cache.
+
+=cut
+
+sub delete {
+    my $pkg = shift;
+    my $env = pop;
+    my $args = $env->method || {};
+    my $module = $pkg->module;
+    my $method = 'delete';
+
+    my $cache = Bric::App::Cache->new;
+
+    print STDERR "$pkg\->$method() called : args : ",
+        Data::Dumper->Dump([$args],['args']) if DEBUG;
+
+    # check for bad parameters
+    for (keys %$args) {
+        throw_ap(error => "$pkg\::$method : unknown parameter \"$_\".")
+          unless $pkg->is_allowed_param($_, $method);
+    }
+
+    # sugar for one id
+    $args->{"$module\_ids"} = [ $args->{"$module\_id"} ]
+        if exists $args->{"$module\_id"};
+
+    # make sure asset_ids is an array
+    throw_ap(error => "$pkg\::$method : missing required $module\_id(s) setting.")
+      unless defined $args->{"$module\_ids"};
+    throw_ap(error => "$pkg\::$method : malformed $module\_id(s) setting.")
+      unless ref $args->{"$module\_ids"} and ref $args->{"$module\_ids"} eq 'ARRAY';
+
+    # delete the asset
+    foreach my $id (@{$args->{"$module\_ids"}}) {
+        print STDERR "$pkg\->$method() : deleting $module\_id $id\n"
+          if DEBUG;
+
+        # lookup the asset
+        my $asset = $pkg->class->lookup({ id => $id });
+        throw_ap(error => "$pkg\::$method : no $module found for id \"$id\"")
+          unless $asset;
+        throw_ap(error => "$pkg\::$method : access denied for $module \"$id\".")
+          unless chk_authz($asset, EDIT, 1);
+
+        # delete the asset
+        $asset->deactivate;
+        $asset->save;
+        log_event("$module\_deact", $asset);
+        $cache->set('__WORKFLOWS__' . $asset->get_site_id, 0);
+    }
+
+    return name(result => 1);
+}
+
+
+=item $self->module
+
+Returns the module name, that is the first argument passed
+to bric_soap.
+
+=cut
+
+sub module { 'workflow' }
+
+=item is_allowed_param
+
+=item $pkg->is_allowed_param($param, $method)
+
+Returns true if $param is an allowed parameter to the $method method.
+
+=cut
+
+sub is_allowed_param {
+    my ($pkg, $param, $method) = @_;
+    my $module = $pkg->module;
+
+    my $allowed = {
+        publish  => { map { $_ => 1 } qw(story_id media_id publish_ids
+                                         publish_related_stories
+                                         publish_related_media
+                                         publish_date published_only
+                                         to_preview) },
+        deploy   => { map { $_ => 1 } qw(template_id deploy_ids) },
+        checkout => { map { $_ => 1 } qw(story_id media_id template_id checkout_ids) },
+        checkin  => { map { $_ => 1 } qw(story_id media_id template_id checkin_ids) },
+        move     => { map { $_ => 1 } qw(story_id media_id template_id move_ids
+                                         desk workflow) },
+        list_ids => { map { $_ => 1 } qw(name description site type desk active) },
+        export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
+        create   => { map { $_ => 1 } qw(document) },
+        update   => { map { $_ => 1 } qw(document update_ids) },
+        delete   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
+    };
+
+    return exists($allowed->{$method}->{$param});
+}
+
 
 =back
 
 =head2 Private Class Methods
 
 =over 4
+
+=item $pkg->_load_asset($args)
+
+This method provides the meat of both create() and update().  The only
+difference between the two methods is that update_ids will be empty on
+create().
+
+=cut
+
+sub load_asset {
+    my ($pkg, $args) = @_;
+    my $document     = $args->{document};
+    my $data         = $args->{data};
+    my %to_update    = map { $_ => 1 } @{$args->{update_ids}};
+    my $module       = $pkg->module;
+
+    # parse and catch errors
+    unless ($data) {
+        eval { $data = parse_asset_document($document, $module, 'desk') };
+        throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
+          if $@;
+        throw_ap(error => __PACKAGE__
+                   . " : problem parsing asset document : no $module found!")
+          unless ref $data and ref $data eq 'HASH' and exists $data->{$module};
+        print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+    }
+
+    # loop over workflows, filling @ids
+    my (@ids, %paths);
+
+    foreach my $adata (@{ $data->{$module} }) {
+        my $id = $adata->{id};
+
+        # are we updating?
+        my $update = exists $to_update{$id};
+
+        # get object
+        my $asset;
+        unless ($update) {
+            # create empty workflow
+            $asset = $pkg->class->new;
+            throw_ap(error => __PACKAGE__ . " : failed to create empty $module object.")
+              unless $asset;
+            print STDERR __PACKAGE__ . " : created empty module object\n"
+                if DEBUG;
+        } else {
+            # updating
+            $asset = $pkg->class->lookup({ id => $id });
+            throw_ap(error => __PACKAGE__ . "::update : no $module found for \"$id\"")
+              unless $asset;
+        }
+        throw_ap(error => __PACKAGE__ . " : access denied.")
+          unless chk_authz($asset, CREATE, 1);
+
+        my $site = Bric::Biz::Site->lookup({ name => $adata->{site} });
+        unless (defined $site) {
+            throw_ap error => __PACKAGE__ . ": site \"" . $adata->{site}
+              . "\" not found.";
+        }
+
+        # don't create a workflow that's already taken
+        my @wfs = ($pkg->class->list_ids({ name => $adata->{name},
+                                           site_id => $site->get_id }),
+                   $pkg->class->list_ids({ name => $adata->{name},
+                                           site_id => $site->get_id,
+                                           active => 0 }) );
+        if (@wfs > 1) {
+            throw_ap error => __PACKAGE__
+              . ": can't create/update existing inactive workflow "
+              . '"' . $adata->{name} . '" in site "' . $adata->{site} . '".';
+        } elsif (@wfs == 1 && !$update) {
+            throw_ap error => __PACKAGE__
+              . "::create: existing active workflow "
+              . '"' . $adata->{name} . '" in site "' . $adata->{site} . '".';
+        } elsif (@wfs == 1 && $update && $wfs[0] != $id) {
+            throw_ap error => __PACKAGE__
+              . "::update: existing active workflow "
+              . '"' . $adata->{name} . '" in site "' . $adata->{site} . '".';
+        }
+
+        my $type = lc $adata->{type};
+        if (exists $wf_types{$type}) {
+            $type = $wf_types{$type};
+        } else {
+            throw_ap error => __PACKAGE__ . ": invalid type \"$type\".";
+        }
+
+        # set simple fields
+        $asset->set_name($adata->{name});
+        $asset->set_description($adata->{description});
+        $asset->set_site_id($site->get_id);
+        $asset->set_type($type);
+
+        # desks
+        if ($update) {
+            # update desks
+            my %old_desks = map { $_->get_name => $_ } $asset->allowed_desks;
+            my %new_desks = map { (ref($_) ? $_->{content} : $_) => $_  }
+              @{ $adata->{desks}{desk} };
+
+            # delete any desks not in the XML
+            foreach my $old_name (keys %old_desks) {
+                unless (exists $new_desks{$old_name}) {
+                    # check if the desk has assets
+                    my $old_desk = $old_desks{$old_name};
+                    if ($old_desk->assets) {
+                        throw_ap error => __PACKAGE__ . '::update: desk '
+                          . "\"$old_name\" can't be deleted - it has assets."
+                    } else {
+                        $asset->del_desk([$old_desk]);
+                        log_event('workflow_del_desk', $asset, { Desk => $old_name });
+                    }
+                }
+            }
+
+            # add any new desks
+            foreach my $new_name (keys %new_desks) {
+                unless (exists $old_desks{$new_name}) {
+                    my $new_ddata = $new_desks{$new_name};
+                    _add_desk($asset, $new_ddata, $new_name);
+                }
+            }
+        } else {
+            # create - add desks
+            foreach my $ddata (@{ $adata->{desks}{desk} }) {
+                my $name = ref($ddata) ? $ddata->{content} : $ddata;
+                _add_desk($asset, $ddata, $name);
+            }
+        }
+
+        # save
+        $asset->save();
+        log_event("$module\_" . ($update ? 'save' : 'new'), $asset);
+
+        # all done
+        push(@ids, $asset->get_id);
+    }
+
+    return name(ids => [ map { name("$module\_id" => $_) } @ids ]);
+}
+
+
+=item $pkg->_serialize_asset( writer   => $writer,
+                              workflow_id  => $id,
+                              args     => $args)
+
+Serializes a single workflow object into a <workflow> workflow using
+the given writer and args.
+
+=cut
+
+sub serialize_asset {
+    my $pkg         = shift;
+    my %options     = @_;
+    my $module      = $pkg->module;
+    my $id          = $options{"$module\_id"};
+    my $writer      = $options{writer};
+
+    my $asset = $pkg->class->lookup({id => $id});
+    throw_ap(error => __PACKAGE__ . "::export : $module\_id \"$id\" not found.")
+      unless $asset;
+
+    throw_ap(error => __PACKAGE__ .
+               "::export : access denied for $module \"$id\".")
+      unless chk_authz($asset, READ, 1);
+
+    # open workflow element
+    $writer->startTag($module, id => $id);
+
+    my $site = Bric::Biz::Site->lookup({ id => $asset->get_site_id });
+
+    # write out simple attributes in schema order
+    $writer->dataElement(name        => $asset->get_name);
+    $writer->dataElement(description => $asset->get_description);
+    $writer->dataElement(site        => $site->get_name);
+    $writer->dataElement(type        => WORKFLOW_TYPE_MAP->{$asset->get_type});
+    $writer->dataElement(active      => ($asset->is_active ? 1 : 0));
+
+    # write out desks
+    my @desks = grep { chk_authz($_, READ, 1) } $asset->allowed_desks;
+    $writer->startTag('desks');
+    foreach my $desk (@desks) {
+        my $is_start = $asset->is_start_desk($desk);
+        my $is_pub   = $desk->can_publish;
+        $writer->dataElement(desk => $desk->get_name,
+                             ($is_start ? (start => 1) : ()),
+                             ($is_pub ? (publish => 1) : ()) );
+    }
+    $writer->endTag('desks');
+
+    # close workflow element
+    $writer->endTag($module);
+}
+
 
 =item @ids = _collect_ids("publish_ids", [ "story_id", "media_id" ], $env);
 
@@ -909,15 +1433,58 @@ sub _collect_ids {
   return @ids;
 }
 
+=begin comment
+
+Private function to add a desk to a workflow during create/update
+
+=end comment
+
+=cut
+
+sub _add_desk {
+    my ($asset, $ddata, $name) = @_;
+
+    my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $name });
+    unless (defined $desk) {
+        # desk doesn't exist, so create it
+        my $is_publish = (ref($$ddata) && exists($ddata->{publish})
+                            && $ddata->{publish}) ? 1 : 0;
+        $desk = Bric::Biz::Workflow::Parts::Desk->new({
+            name => $name,
+            publish => $is_publish,
+        });
+        $desk->save;
+        log_event('desk_new', $desk);
+
+        # note: if the desk already exists, I don't think we should
+        # change its publishability here based on the publish attribute
+        # because the desk might be on other workflows
+    }
+
+    # add the desk to the workflow
+    $asset->add_desk({ allowed => [$desk] });
+    log_event('workflow_add_desk', $asset, { Desk => $name });
+
+    # set start desk if there's a start attribute;
+    # I guess if they put multiple start desks,
+    # we'll just go with the last one
+    if (ref($ddata) && exists($ddata->{start})) {
+        $asset->set_start_desk($desk);
+    }
+}
+
+
 =back
 
 =head1 AUTHOR
 
 Sam Tregar <stregar@about-inc.com>
 
+Scott Lanning <lannings@who.int>
+
 =head1 SEE ALSO
 
-L<Bric::SOAP|Bric::SOAP>
+L<Bric::SOAP|Bric::SOAP>, L<Bric::Biz::Workflow|Bric::Biz::Workflow>
 
 =cut
 

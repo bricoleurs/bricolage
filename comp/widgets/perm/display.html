@@ -54,7 +54,9 @@ if ($perm_type eq 'object' || $perm_type eq 'all') {
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
              caption => "Object Group Permissions", border => 0);
 
-    $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to access the members of these groups.","&quot;$name&quot;"));
+    $m->comp($head_comp,
+             $lang->maketext("Grant [_1] members permission to access the members of these groups.",
+                             "&quot;$name&quot;"));
     # Get any existing permissions.
     foreach my $perm ($pkg->list({ usr_grp_id => $id }) ) {
 	my $gid = $perm->get_obj_grp_id;

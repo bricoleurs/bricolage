@@ -41,15 +41,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-22 03:21:15 $
+$Date: 2004-01-16 19:00:41 $
 
 =head1 SYNOPSIS
 
@@ -558,7 +558,7 @@ sub load_asset {
     my $data     = $args->{data};
     my %to_update = map { $_ => 1 } @{$args->{update_ids}};
 
-    # parse and catch erros
+    # parse and catch errors
     unless ($data) {
         eval { $data = parse_asset_document($document) };
         throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")

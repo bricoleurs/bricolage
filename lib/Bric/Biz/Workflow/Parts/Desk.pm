@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-10-14 00:36:41 $
+$Date: 2004-01-16 19:00:40 $
 
 
 =head1 SYNOPSIS
@@ -173,6 +173,12 @@ The name of this desk
 description
 
 A description of this desk
+
+=item *
+
+publish
+
+Boolean; true if this is a publish desk
 
 =back
 

@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -13,6 +13,8 @@ use Bric::SOAP::Category;
 use Bric::SOAP::MediaType;
 use Bric::SOAP::Site;
 use Bric::SOAP::Keyword;
+use Bric::SOAP::User;
+use Bric::SOAP::Desk;
 
 1;
 __END__
@@ -23,11 +25,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =head1 DATE
 
-$Date: 2003-10-11 03:04:49 $
+$Date: 2004-01-16 19:00:39 $
 
 =head1 SYNOPSIS
 
@@ -188,10 +190,19 @@ Provides query, export, update, create, and delete for Site objects.
 
 Provides query, export, update, create, and delete for Keyword objects.
 
+=item L<Bric::SOAP::User|Bric::SOAP::User>
+
+Provides query, export, update, create, and delete for User objects.
+
+=item L<Bric::SOAP::User|Bric::SOAP::User>
+
+Provides query, export, update, create, and delete for Desk objects.
+
 =item L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>
 
 Provides the ability to move Story, Media and Formatting objects between
 desks. Also provides checkin, checkout, publish, and deploy.
+And now list_ids, export, create, update, and delete.
 
 =back
 
@@ -911,6 +922,159 @@ The XSD source:
              <xs:attribute name="id" type="xs:int" use="required"/>
            </xs:complexType>
          </xs:element>
+         <xs:element name="desk" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="publish" type="xs:boolean"/>
+               <xs:element name="active" type="xs:boolean"/>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="user" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="prefix">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="32"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="fname">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="mname">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="lname">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="suffix">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="32"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="login">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="128"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="password">
+                 <xs:simpleType>
+                   <xs:annotation>
+                     <xs:documentation>password isn't implemented yet</xs:documentation>
+                   </xs:annotation>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="32"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="active" type="xs:boolean"/>
+               <xs:element name="contacts">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="contact" maxOccurs="unbounded">
+                       <xs:complexType>
+                         <xs:simpleContent>
+                           <xs:extension base="xs:string">
+                             <xs:attribute name="type" type="xs:string" use="required"/>
+                           </xs:extension>
+                         </xs:simpleContent>
+                       </xs:complexType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
+
+         <xs:element name="workflow" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="site">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="type">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:enumeration value="Story"/>
+                     <xs:enumeration value="Media"/>
+                     <xs:enumeration value="Template"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="active" type="xs:boolean"/>
+               <xs:element name="desks">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="desk" maxOccurs="unbounded">
+                       <xs:complexType>
+                         <xs:simpleContent>
+                           <xs:extension base="xs:string">
+                             <xs:attribute name="start" type="xs:boolean" use="optional"/>
+                             <xs:attribute name="publish" type="xs:boolean" use="optional"/>
+                           </xs:extension>
+                         </xs:simpleContent>
+                       </xs:complexType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
        </xs:sequence>
      </xs:complexType>
    </xs:element>
@@ -1041,6 +1205,10 @@ L<Bric::SOAP::MediaType|Bric::SOAP::MediaType>
 L<Bric::SOAP::Site|Bric::SOAP::Site>
 
 L<Bric::SOAP::Keyword|Bric::SOAP::Keyword>
+
+L<Bric::SOAP::User|Bric::SOAP::User>
+
+L<Bric::SOAP::Desk|Bric::SOAP::Desk>
 
 L<bric_soap|bric_soap>
 
