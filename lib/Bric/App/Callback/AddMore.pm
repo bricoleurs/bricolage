@@ -9,6 +9,7 @@ sub add : Callback {
     my $self = shift;
 
     # XXX: note that add_more expects things like 'add_more|contact|add_cb'
+    # XXX: change it so it doesn't do that
     my $field = $self->trigger_key;
     my (undef, $type) = split /\|/, $field;
 
