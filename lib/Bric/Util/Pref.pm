@@ -75,6 +75,7 @@ use Bric::Util::Fault qw(throw_dp);
 use Bric::App::Cache;
 # Use require to prevent circular conflicts.
 require Bric::Util::Grp::Pref;
+require Bric::App::Session;
 
 ################################################################################
 # Inheritance
@@ -376,11 +377,34 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 ################################################################################
 
+=item Bric::Util::Pref->use_user_prefs(1)
+
+Returns true if C<lookup_val()> will return the value of a user preference,
+and false if it will not. Pass in a true or false value to change enable or
+disable the returning of user preferences by C<lookup_val()>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+my $use_user;
+sub use_user_prefs {
+    return @_ > 1 ? $use_user = $_[1] : $use_user;
+}
+
+##############################################################################
+
 =item my $val = Bric::Util::Pref->lookup_val($pref_name)
 
 Looks up and returns the value of a preference without the expense of
 instantiating an object. Plus, it uses caching to keep it quick - the cache
-changes only when a value changes.
+changes only when a value changes. If C<use_user_prefs()> returns true and a
+user is currently logged in, then the value of the preference for that user
+will be returned. Otherwise, the global preference will be returned.
 
 B<Throws:>
 
@@ -427,6 +451,11 @@ B<Notes:> See &$load_cache().
 =cut
 
 sub lookup_val {
+    # XXX I'm sorry to have to do this, but the stupidity that is the date
+    # and time attributes forces it.
+    if ($use_user and my $user = Bric::App::Session::get_user_object()) {
+        return $user->get_pref($_[1]);
+    }
     $cache ||= &$load_cache;
     my $val = $cache->get($prefkey);
     return $val->{$_[1]};

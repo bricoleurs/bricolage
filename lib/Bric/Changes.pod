@@ -162,6 +162,12 @@ Template Toolkit burners to be available again. [David]
 Misspelling the name of a key name tag in Super Bulk Edit no longer causes all
 of the changes in that screen to be lost. [David]
 
+=item *
+
+When a user overrides the global "Date/Time Format" and "Time Zone"
+preferences, the affects of the overrides are now properly reflected in the
+UI. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)

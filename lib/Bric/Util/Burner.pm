@@ -130,6 +130,7 @@ use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
 use Bric::App::Session qw(:user);
 use Bric::Biz::Site;
+use Bric::Util::Pref;
 use File::Basename qw(fileparse);
 use URI;
 
@@ -1255,7 +1256,13 @@ sub burn_one {
 
     # Construct the burner and do it!
     my ($burner, $at) = $self->_get_subclass($story);
-    $burner->burn_one(@_, $at);
+
+    # Never use the local user's preferences during a burn.
+    my $use_user = Bric::Util::Pref->use_user_prefs;
+    Bric::Util::Pref->use_user_prefs(0) if $use_user;
+    my $ret = $burner->burn_one(@_, $at);
+    Bric::Util::Pref->use_user_prefs(1) if $use_user;
+    return wantarray ? @$ret : $ret;
 }
 
 =item my $bool = $burner->chk_syntax($ba, \$err)

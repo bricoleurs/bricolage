@@ -301,6 +301,7 @@ sub handler {
         # Set up the language and content type headers.
         $r->content_languages([$lang_name]);
         $r->content_type('text/html; charset=' . lc $char_set);
+        Bric::Util::Pref->use_user_prefs(1);
 
 	# Start the database transactions.
 	begin(1);
@@ -308,6 +309,8 @@ sub handler {
 	$status = $ah->handle_request($r);
 	# Commit the database transactions.
 	commit(1);
+
+        Bric::Util::Pref->use_user_prefs(0);
     };
 
     # Do error processing, if necessary.
