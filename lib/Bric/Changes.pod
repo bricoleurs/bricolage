@@ -150,6 +150,12 @@ Fixed typo that broke Bric::Dist::Client. [Mike Slattery]
 Fixed multiple select custom fields for Elements and Contributors. Thanks to
 Mike Slattery for the spot. [David]
 
+=item *
+
+Fixed ugly bug where deleting a "Media Type" Element would delete all the media
+objects of that type. Thanks to Sam for the spot (though not for the bug!).
+[David]
+
 =back
 
 =head1 VERSION 1.2.0
