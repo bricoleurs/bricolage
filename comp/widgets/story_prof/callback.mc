@@ -538,36 +538,50 @@ my $handle_create = sub {
     my $gid = Bric::Biz::Workflow->lookup({ id => $work_id })->get_all_desk_grp_id;
     chk_authz('Bric::Biz::Asset::Business::Story', CREATE, 0, $gid);
 
-    my $init = {element__id => $param->{"$widget|at_id"},
-		source__id  => $param->{"$widget|source__id"},
-		user__id    => get_user_id };
+    # Make sure we have the required data. Check the story type.
+    my $ret;
+    unless (defined $param->{"$widget|at_id"}
+            && $param->{"$widget|at_id"} ne '')
+    {
+        add_msg("Please select a story type.");
+        $ret = 1;
+    }
 
+    # Check the category ID.
+    my $cid = $param->{"$widget|new_category_id"};
+    unless (defined $cid && $cid ne '') {
+        add_msg("Please select a primary category.");
+        $ret = 1;
+    }
+
+    # Check the slug.
     if ($param->{'slug'}) {
         # check the form of the slug
         if ($param->{'slug'} =~ m/\W/) {
             add_msg('Slug must conform to URI character rules.');
-	    return;
+            $ret = 1;
 	}
     }
 
+    # Return if there are problems.
+    return if $ret;
+
     # Create a new story with the initial values given.
+    my $init = {element__id => $param->{"$widget|at_id"},
+		source__id  => $param->{"$widget|source__id"},
+		user__id    => get_user_id };
+
     my $story = Bric::Biz::Asset::Business::Story->new($init);
 
     # Set the primary category
-    my $cid = $param->{"$widget|new_category_id"};
     my $cat_event;
-    if (defined $cid) {
-	$story->add_categories([$cid]);
-	$story->set_primary_category($cid);
-	my $cat = Bric::Biz::Category->lookup({ id => $cid });
-	$cat_event = sub {
-	    log_event('story_add_category', $story,
-		      { Category => $cat->get_name })
-	};
-    } else {
-        add_msg("Please select a primary category.");
-        return;
-    }
+    $story->add_categories([$cid]);
+    $story->set_primary_category($cid);
+    my $cat = Bric::Biz::Category->lookup({ id => $cid });
+    $cat_event = sub {
+        log_event('story_add_category', $story,
+                  { Category => $cat->get_name })
+    };
 
     # Save everything else unless there were data errors
     return unless &$save_data($param, $widget, $story);
